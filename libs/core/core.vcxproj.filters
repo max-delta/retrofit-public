@@ -2,8 +2,29 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="macros.h" />
+    <ClInclude Include="ptr\default_creator.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="ptr\ptr_base.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="ptr\ptr_ref.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="ptr\unique_ptr.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
+    <ClInclude Include="ptr\creation_payload.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="ptr">
+      <UniqueIdentifier>{a22c8f13-cc04-4314-83c2-8a4bee11a271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

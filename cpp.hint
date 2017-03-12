@@ -1,0 +1,2 @@
+#define RF_ASSERT(...)
+#define RF_NO_COPY(...)
