@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <crtdbg.h>
 
+
 #define RF_NO_COPY(CLASS) \
 	CLASS(CLASS const &) = delete; \
 	CLASS & operator =(CLASS const &) = delete;
