@@ -1,7 +1,7 @@
 #pragma once
-
 #include "core/macros.h"
 #include "core/ptr/ptr_ref.h"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@ class CreationPayload
 	//
 	// Friends
 private:
-	template<typename T>
-	friend class PtrBase;
+	template<typename T> friend class PtrBase;
 
 
 	//

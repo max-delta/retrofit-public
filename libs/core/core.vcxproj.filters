@@ -18,6 +18,9 @@
     <ClInclude Include="ptr\creation_payload.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="ptr\weak_ptr.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

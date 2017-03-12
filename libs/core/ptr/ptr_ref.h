@@ -1,5 +1,6 @@
 #pragma once
-#include <memory>
+#include "core/macros.h"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,6 +55,11 @@ public:
 			Delete(target);
 			DecreaseWeakCount();
 		}
+	}
+
+	void IncreaseWeakCount()
+	{
+		m_WeakCount++;
 	}
 
 	void DecreaseWeakCount()
