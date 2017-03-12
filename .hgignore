@@ -1,4 +1,5 @@
 .suo$
+.user$
 
 .ipch$
 .sdf$
@@ -9,6 +10,9 @@
 .pch$
 .pdb$
 .obj$
+.exp$
 
+.lib$
 .ilk$
+.dll$
 .exe$

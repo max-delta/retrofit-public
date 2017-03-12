@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "retrofit", "apps\retrofit\retrofit.vcxproj", "{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core", "libs\core\core.vcxproj", "{85E6A570-BCE9-4837-8513-8A5BBA06634C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}.Release|x64.Build.0 = Release|x64
 		{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}.Release|x86.ActiveCfg = Release|Win32
 		{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}.Release|x86.Build.0 = Release|Win32
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Debug|x64.ActiveCfg = Debug|x64
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Debug|x64.Build.0 = Debug|x64
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Debug|x86.ActiveCfg = Debug|Win32
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Debug|x86.Build.0 = Debug|Win32
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Release|x64.ActiveCfg = Release|x64
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Release|x64.Build.0 = Release|x64
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Release|x86.ActiveCfg = Release|Win32
+		{85E6A570-BCE9-4837-8513-8A5BBA06634C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
