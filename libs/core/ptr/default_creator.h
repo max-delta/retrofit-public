@@ -18,14 +18,17 @@ public:
 	//
 	// Public methods
 public:
-	static void Delete( T * p )
+	static void Delete( T * target, PtrRef * ref, void * userData )
 	{
-		delete p;
-	}
-
-	static void DeleteRef( PtrRef * p )
-	{
-		delete p;
+		(void)userData;
+		if( target != nullptr )
+		{
+			delete target;
+		}
+		if( ref != nullptr )
+		{
+			delete ref;
+		}
 	}
 
 	template<typename... U>
@@ -33,7 +36,7 @@ public:
 	{
 		CreationPayload<T> retVal(
 			new T(std::forward<U>(args)...),
-			new PtrRef(&Delete, &DeleteRef) );
+			new PtrRef(&Delete, nullptr) );
 		return retVal;
 	}
 

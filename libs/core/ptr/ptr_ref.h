@@ -14,16 +14,15 @@ class PtrRef
 	// Types
 public:
 	typedef uint32_t CountType;
-	typedef void (*DeletionFunc)(T *);
-	typedef void (*SelfDeletionFunc)(PtrRef *);
+	typedef void (*DeletionFunc)(T *, PtrRef *, void *);
 
 
 	//
 	// Public methods
 public:
-	PtrRef(DeletionFunc deletionFunc, SelfDeletionFunc selfDeletionFunc)
+	PtrRef(DeletionFunc deletionFunc, void * funcUserData)
 		: m_DeletionFunc(deletionFunc)
-		, m_SelfDeletionFunc(selfDeletionFunc)
+		, m_FuncUserData(funcUserData)
 		, m_StrongCount(1)
 		, m_WeakCount(1)
 	{
@@ -34,7 +33,7 @@ public:
 	{
 		RF_ASSERT(p != nullptr);
 		RF_ASSERT(m_DeletionFunc != nullptr);
-		m_DeletionFunc(p);
+		m_DeletionFunc(p, nullptr, m_FuncUserData);
 	}
 
 	CountType GetStrongCount() const
@@ -74,7 +73,7 @@ public:
 		m_WeakCount--;
 		if( m_WeakCount == 0 )
 		{
-			m_SelfDeletionFunc(this);
+			m_DeletionFunc(nullptr, this, m_FuncUserData);
 		}
 	}
 
@@ -83,7 +82,7 @@ public:
 	// Private data
 private:
 	DeletionFunc m_DeletionFunc;
-	SelfDeletionFunc m_SelfDeletionFunc;
+	void * m_FuncUserData;
 	CountType m_StrongCount;
 	CountType m_WeakCount;
 };
