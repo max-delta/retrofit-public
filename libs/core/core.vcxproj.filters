@@ -21,6 +21,9 @@
     <ClInclude Include="ptr\weak_ptr.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="ptr\shared_ptr.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
