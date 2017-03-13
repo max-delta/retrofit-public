@@ -84,6 +84,11 @@ public:
 		std::swap( m_Target, rhs.m_Target );
 	}
 
+	CreationPayload<T> CreateTransferPayload() const
+	{
+		return CreationPayload<T>( m_Target, m_Ref );
+	}
+
 	T * GetTarget() const
 	{
 		return m_Target;

@@ -8,6 +8,7 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/shared_ptr.h"
 #include "core/ptr/weak_ptr.h"
+#include "core/ptr/weak_shared_ptr.h"
 #include <memory>
 
 
@@ -67,6 +68,18 @@ TEST(Temp, QuickHacks)
 		ASSERT_TRUE(sptr != nullptr && *sptr == 2);
 		ASSERT_TRUE(sptr2 == nullptr);
 		ASSERT_TRUE(sptr3 != nullptr && *sptr3 == 2);
+
+		{
+			WeakSharedPtr<int> wsptr = sptr;
+			wsptr = nullptr;
+			wsptr = sptr;
+			{
+				SharedPtr<int> temps = wsptr.Lock();
+			}
+			{
+				WeakPtr<int> temp = wsptr;
+			}
+		}
 
 		WeakPtr<int> wptr( sptr );
 		WeakPtr<int> wptr2( wptr );
