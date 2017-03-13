@@ -47,12 +47,19 @@ public:
 		return m_WeakCount;
 	}
 
-	void DecreaseStrongCount(T * target)
+	void IncreaseStrongCount()
+	{
+		m_StrongCount++;
+	}
+
+	void DecreaseStrongCount(T * & target)
 	{
 		m_StrongCount--;
 		if( m_StrongCount == 0 )
 		{
-			Delete(target);
+			T * deletionTarget = target;
+			target = nullptr;
+			Delete(deletionTarget);
 			DecreaseWeakCount();
 		}
 	}

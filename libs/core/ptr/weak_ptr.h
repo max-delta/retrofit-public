@@ -8,9 +8,6 @@ namespace RF {
 template<typename T>
 class WeakPtr : public PtrBase<T>
 {
-	RF_NO_COPY(WeakPtr);
-
-
 	//
 	// Types
 public:
@@ -32,6 +29,12 @@ public:
 		//
 	}
 
+	WeakPtr( WeakPtr const & rhs )
+		: WeakPtr(rhs.GetTarget(), rhs.GetRef())
+	{
+		IncreaseWeakCount();
+	}
+
 	WeakPtr( T * target, PtrRef * ref )
 		: PtrBase(target, ref)
 	{
@@ -47,6 +50,13 @@ public:
 	~WeakPtr()
 	{
 		DecreaseWeakCount();
+	}
+
+	WeakPtr & operator =(WeakPtr const & rhs)
+	{
+		WeakPtr temp(rhs);
+		Swap( std::move(temp) );
+		return *this;
 	}
 
 	WeakPtr & operator =(WeakPtr && rhs)

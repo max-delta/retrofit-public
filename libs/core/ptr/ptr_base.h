@@ -25,6 +25,11 @@ public:
 		payload.Clean();
 	}
 
+	operator T *() const
+	{
+		return GetTarget();
+	}
+
 
 	//
 	// Protected methods
@@ -39,6 +44,14 @@ public:
 	explicit PtrBase( PtrBase && rhs )
 	{
 		Swap( std::move(rhs) );
+	}
+
+	void IncreaseStrongCount()
+	{
+		if( m_Ref != nullptr )
+		{
+			m_Ref->IncreaseStrongCount();
+		}
 	}
 
 	void DecreaseStrongCount()

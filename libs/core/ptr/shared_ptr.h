@@ -8,11 +8,8 @@ namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-class UniquePtr : public PtrBase<T>
+class SharedPtr : public PtrBase<T>
 {
-	RF_NO_COPY(UniquePtr);
-
-
 	//
 	// Types
 public:
@@ -22,36 +19,49 @@ public:
 	//
 	// Public methods
 public:
-	UniquePtr()
+	SharedPtr()
 		: PtrBase(nullptr, nullptr)
 	{
 		//
 	}
 
-	UniquePtr(nullptr_t)
-		: UniquePtr()
+	SharedPtr(nullptr_t)
+		: SharedPtr()
 	{
 		//
 	}
 
-	UniquePtr( UniquePtr && rhs )
+	SharedPtr( SharedPtr const & rhs )
+		: PtrBase(rhs.GetTarget(), rhs.GetRef())
+	{
+		IncreaseStrongCount();
+	}
+
+	SharedPtr( SharedPtr && rhs )
 		: PtrBase(std::move(rhs))
 	{
 		//
 	}
 
-	UniquePtr( CreationPayload<T> && payload )
+	SharedPtr( CreationPayload<T> && payload )
 		: PtrBase(std::move(payload))
 	{
 		//
 	}
 
-	~UniquePtr()
+	~SharedPtr()
 	{
 		DecreaseStrongCount();
 	}
 
-	UniquePtr & operator =(UniquePtr && rhs)
+	SharedPtr & operator =(SharedPtr const & rhs)
+	{
+		SharedPtr temp(rhs);
+		Swap( std::move(temp) );
+		return *this;
+	}
+
+	SharedPtr & operator =(SharedPtr && rhs)
 	{
 		Swap( std::move(rhs) );
 		return *this;
