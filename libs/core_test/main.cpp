@@ -79,7 +79,7 @@ TEST(Temp, QuickHacks)
 				SharedPtr<int> temps = wsptr.Lock();
 			}
 			{
-				WeakPtr<int> temp = wsptr;
+				WeakPtr<int> temp = wsptr.Weaken();
 			}
 		}
 

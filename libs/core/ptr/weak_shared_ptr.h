@@ -71,7 +71,7 @@ public:
 		return *this;
 	}
 
-	operator WeakPtr<T>() const
+	WeakPtr<T> Weaken() const
 	{
 		return WeakPtr<T>(GetTarget(), GetRef());
 	}
@@ -79,6 +79,7 @@ public:
 	SharedPtr<T> Lock()
 	{
 		IncreaseStrongCount();
+		SanitizeTarget();
 		return CreateTransferPayload();
 	}
 };
