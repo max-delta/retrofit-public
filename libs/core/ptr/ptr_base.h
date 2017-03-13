@@ -25,11 +25,6 @@ public:
 		payload.Clean();
 	}
 
-	operator T *() const
-	{
-		return GetTarget();
-	}
-
 
 	//
 	// Protected methods
@@ -91,6 +86,20 @@ public:
 
 	T * GetTarget() const
 	{
+		return m_Target;
+	}
+
+	T * GetTargetAsWeak() const
+	{
+		if( m_Target == nullptr )
+		{
+			return nullptr;
+		}
+		RF_ASSERT(m_Ref != nullptr);
+		if( m_Ref->GetStrongCount() == 0 )
+		{
+			return nullptr;
+		}
 		return m_Target;
 	}
 

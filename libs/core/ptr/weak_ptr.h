@@ -64,6 +64,11 @@ public:
 		Swap( std::move(rhs) );
 		return *this;
 	}
+
+	operator T *() const
+	{
+		return GetTargetAsWeak();
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
