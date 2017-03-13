@@ -32,7 +32,7 @@ public:
 	WeakPtr( WeakPtr const & rhs )
 		: WeakPtr(rhs.GetTarget(), rhs.GetRef())
 	{
-		IncreaseWeakCount();
+		//
 	}
 
 	WeakPtr( T * target, PtrRef * ref )

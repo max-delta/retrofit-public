@@ -139,6 +139,7 @@
     <ClInclude Include="ptr\shared_ptr.h" />
     <ClInclude Include="ptr\unique_ptr.h" />
     <ClInclude Include="ptr\weak_ptr.h" />
+    <ClInclude Include="ptr\weak_shared_ptr.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
