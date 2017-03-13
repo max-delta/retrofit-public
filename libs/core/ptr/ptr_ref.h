@@ -55,7 +55,10 @@ public:
 
 	void IncreaseStrongCount()
 	{
-		m_StrongCount++;
+		if( m_StrongCount > 0 )
+		{
+			m_StrongCount++;
+		}
 	}
 
 	void DecreaseStrongCount(T * & target)

@@ -84,6 +84,18 @@ public:
 		return CreationPayload<T>( m_Target, m_Ref );
 	}
 
+	void SanitizeTarget()
+	{
+		if( m_Target == nullptr )
+		{
+			return;
+		}
+		if( m_Ref->GetStrongCount() == 0 )
+		{
+			m_Target = nullptr;
+		}
+	}
+
 	T * GetTarget() const
 	{
 		return m_Target;

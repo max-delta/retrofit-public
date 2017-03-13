@@ -6,6 +6,8 @@
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
     <ClCompile Include="unique_ptr.cpp" />
+    <ClCompile Include="shared_ptr.cpp" />
+    <ClCompile Include="weak_shared_ptr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
