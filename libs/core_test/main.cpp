@@ -30,6 +30,8 @@ TEST(Temp, QuickHacks)
 	{
 		std::shared_ptr<int> x ( new int(2) );
 		int* q = x.get();
+		std::weak_ptr<int> y = x;
+		std::shared_ptr<int> z = y.lock();
 	}
 	{
 		UniquePtr<int> uptr( DefaultCreator<int>::Create(2) );

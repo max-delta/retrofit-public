@@ -57,6 +57,11 @@ public:
 		return *this;
 	}
 
+	operator T *() const
+	{
+		return GetTarget();
+	}
+
 	operator WeakPtr<T>() const
 	{
 		return WeakPtr<T>(GetTarget(), GetRef());

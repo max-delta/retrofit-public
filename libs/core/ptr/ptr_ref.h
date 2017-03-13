@@ -36,6 +36,13 @@ public:
 		m_DeletionFunc(p, nullptr, m_FuncUserData);
 	}
 
+	void DeleteSelf()
+	{
+		RF_ASSERT(this != nullptr);
+		RF_ASSERT(m_DeletionFunc != nullptr);
+		m_DeletionFunc(nullptr, this, m_FuncUserData);
+	}
+
 	CountType GetStrongCount() const
 	{
 		return m_StrongCount;
@@ -73,7 +80,7 @@ public:
 		m_WeakCount--;
 		if( m_WeakCount == 0 )
 		{
-			m_DeletionFunc(nullptr, this, m_FuncUserData);
+			DeleteSelf();
 		}
 	}
 

@@ -39,13 +39,6 @@ public:
 			new PtrRef(&Delete, nullptr) );
 		return retVal;
 	}
-
-
-	//
-	// Private data
-private:
-	T * m_Target;
-	PtrRef * m_Ref;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
