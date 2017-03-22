@@ -8,6 +8,7 @@
     <ClCompile Include="unique_ptr.cpp" />
     <ClCompile Include="shared_ptr.cpp" />
     <ClCompile Include="weak_shared_ptr.cpp" />
+    <ClCompile Include="entwined_creator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
