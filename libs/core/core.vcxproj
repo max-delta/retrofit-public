@@ -134,6 +134,7 @@
     <ClInclude Include="macros.h" />
     <ClInclude Include="ptr\creation_payload.h" />
     <ClInclude Include="ptr\default_creator.h" />
+    <ClInclude Include="ptr\entwined_creator.h" />
     <ClInclude Include="ptr\ptr_base.h" />
     <ClInclude Include="ptr\ptr_ref.h" />
     <ClInclude Include="ptr\shared_ptr.h" />
