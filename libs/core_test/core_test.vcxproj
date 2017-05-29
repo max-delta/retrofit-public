@@ -152,6 +152,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
     <ClCompile Include="minclude_unique_destroy.cpp" />
+    <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="shared_ptr.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
