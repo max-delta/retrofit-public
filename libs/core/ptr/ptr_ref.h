@@ -10,6 +10,7 @@ class PtrRef
 {
 	RF_NO_COPY(PtrRef);
 
+
 	//
 	// Types
 public:

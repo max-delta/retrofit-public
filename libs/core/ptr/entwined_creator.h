@@ -7,7 +7,7 @@ namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-class DefaultCreator
+class EntwinedCreator
 {
 	//
 	// Types
@@ -23,20 +23,25 @@ public:
 		(void)userData;
 		if( target != nullptr )
 		{
-			delete target;
+			target->~T();
 		}
 		if( ref != nullptr )
 		{
-			delete ref;
+			ref->~PtrRef();
+			free(ref);
 		}
 	}
 
 	template<typename... U>
 	static CreationPayload<T> Create(U&&... args)
 	{
-		CreationPayload<T> retVal(
-			new T(std::forward<U>(args)...),
-			new PtrRef(&Delete, nullptr) );
+		// Only one allocation, with the ref serving as the root, since it will
+		//  be the longest lived
+		void * mem = malloc( sizeof(PtrRef) + sizeof(T) );
+		PtrRef * newRef = new (mem) PtrRef(&Delete, nullptr);
+		T * newT = new ((char*)mem+sizeof(PtrRef)) T(std::forward<U>(args)...);
+
+		CreationPayload<T> retVal( newT, newRef );
 		return retVal;
 	}
 };
