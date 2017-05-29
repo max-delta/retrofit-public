@@ -149,6 +149,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
     <ClCompile Include="minclude_unique_destroy.cpp" />
