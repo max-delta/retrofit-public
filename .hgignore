@@ -1,12 +1,13 @@
 .suo$
 .user$
-.tss
+.tss$
 
 .ipch$
 .sdf$
 .idb$
 .opendb$
 .VC.db$
+.vcxprojResolveAssemblyReference.cache$
 
 .log$
 .pch$
