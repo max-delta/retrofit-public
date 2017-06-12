@@ -16,6 +16,7 @@ int main()
 	RF::gfx::SimpleGL graphics;
 	graphics.AttachToWindow( hwnd );
 
+	graphics.SetProjectionMode( RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT );
 	graphics.SetBackgroundColor();
 	graphics.SetSurfaceSize();
 	while( RF::platform::windowing::ProcessMessages() )
