@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\stdafx.cpp" />
+    <ClCompile Include="source\wndproc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\stdafx.h" />
