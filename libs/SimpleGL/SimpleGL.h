@@ -21,9 +21,19 @@ struct Vector2f
 class SIMPLEGL_API SimpleGL
 {
 public:
+	enum class ProjectionMode
+	{
+		TRUE_BUFFER_00UPLEFT, // A unit is a buffer pixel
+		NDC01_00UPLEFT, // NDC 0<>1
+		NDC01_00DWNLEFT, // NDC 0<>1
+		NDC11_11UPRIGHT, // NDC -1<>1
+	};
+
+public:
 	bool AttachToWindow( shim::HWND hWnd );
 	bool DetachFromWindow();
 
+	bool SetProjectionMode( ProjectionMode mode );
 	bool SetSurfaceSize( int width = 640, int height = 480 );
 	bool SetBackgroundColor( float r = 1.f, float g = 0.f, float b = 0.f, float a = 0.5f );
 
@@ -39,9 +49,11 @@ private:
 	unsigned int font_base;
 	void BuildFont();
 
+private:
 	shim::HWND hWnd;
 	shim::HDC hDC;
 	shim::HGLRC hRC;
+	ProjectionMode projectionMode;
 	int width;
 	int height;
 };
