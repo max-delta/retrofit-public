@@ -54,6 +54,12 @@ bool SimpleGL::DetachFromWindow()
 	return true;
 }
 
+bool SimpleGL::SetProjectionMode( ProjectionMode mode )
+{
+	projectionMode = mode;
+	return true;
+}
+
 bool SimpleGL::SetSurfaceSize( int width, int height )
 {
 	this->width = width;
@@ -64,8 +70,24 @@ bool SimpleGL::SetSurfaceSize( int width, int height )
 	glMatrixMode( GL_PROJECTION ); // Select The Projection Matrix
 	glLoadIdentity(); // Reset The Projection Matrix
 
-	//glOrtho(0.0f,width,height,0.0f,-1.0f,1.0f); // Create Ortho View (0,0 At Top Left)
-	glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f ); // Create Ortho View (0,0 At Top Left)
+	switch( projectionMode )
+	{
+		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
+			glOrtho(0.0f,width,height,0.0f,-1.0f,1.0f); // Create Ortho View (0,0 At Top Left)
+			break;
+		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
+			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f ); // Create Ortho View (0,0 At Top Left)
+			break;
+		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
+			glOrtho( 0.0f, 1, 0.0f, 1, -1.0f, 1.0f ); // Create Ortho View (0,0 At Bottom Left)
+			break;
+		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
+			glOrtho( -1, 1, -1, 1, -1.0f, 1.0f ); // Create Ortho View (1,1 At Top Right)
+			break;
+		default:
+			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f );
+			break;
+	}
 
 	glMatrixMode( GL_MODELVIEW ); // Select The Modelview Matrix
 	glLoadIdentity(); // Reset The Modelview Matrix
@@ -194,7 +216,7 @@ bool SimpleGL::glPrint( const char *fmt, ... )				// Custom GL "Print" Routine
 	va_end( ap );						// Results Are Stored In Text
 	glPushAttrib( GL_LIST_BIT );				// Pushes The Display List Bits		( NEW )
 	glListBase( font_base - 32 );					// Sets The Base Character to 32	( NEW )
-	glCallLists( strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text	( NEW )
+	glCallLists( (GLsizei)strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text	( NEW )
 	glPopAttrib();						// Pops The Display List Bits	( NEW )
 	return true;
 }
