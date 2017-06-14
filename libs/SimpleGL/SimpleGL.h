@@ -37,9 +37,13 @@ public:
 	bool SetSurfaceSize( int width = 640, int height = 480 );
 	bool SetBackgroundColor( float r = 1.f, float g = 0.f, float b = 0.f, float a = 0.5f );
 
+	unsigned int LoadTexture( char const* filename );
+	bool UnloadTexture( unsigned int textureID );
+
 	bool glPrint( const char *fmt, ... );
 
 	bool DrawLine( Vector2f p0, Vector2f p1 );
+	bool DrawBillboard( unsigned int textureID, Vector2f topLeft, Vector2f bottomRight, float z = 0.f );
 
 	bool BeginFrame();
 	bool RenderFrame();
