@@ -6,7 +6,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <ExceptionHandling>false</ExceptionHandling>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\third_party\googletest\include;$(ProjectDir)..\..\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\third_party\googletest\include;$(ProjectDir)..\..\third_party;$(ProjectDir)..\..\libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4577</DisableSpecificWarnings>
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
