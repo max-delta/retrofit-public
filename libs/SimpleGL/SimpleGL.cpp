@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "SimpleGL.h"
 
+#include "core/macros.h"
+
 #include "core_platform/gdi_shim.h"
 #include "core_platform/gl_inc.h"
 #pragma comment(lib, "opengl32.lib")
+
+#include "stb_image/stb_image.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -103,6 +107,8 @@ bool SimpleGL::SetSurfaceSize( int width, int height )
 							 //then smoothed across the polygon in relation
 							 //to a point's proximity to a vertex.
 
+	glEnable( GL_TEXTURE_2D ); // Enable Texture Mapping
+
 	glEnable( GL_POINT_SMOOTH ); //Enable antialiasing for points.
 	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
 											 //antialiasing for points, we
@@ -129,6 +135,32 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
+unsigned int SimpleGL::LoadTexture( char const* filename )
+{
+	int x, y, n;
+	unsigned char* data = stbi_load( "../../data/textures/common/max_delta_32.png", &x, &y, &n, 4 );
+	RF_ASSERT( data != nullptr );
+	if( data == nullptr )
+	{
+		return 0;
+	}
+
+	unsigned int retVal = 0;
+	glGenTextures( 1, &retVal );
+	glBindTexture( GL_TEXTURE_2D, retVal );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	stbi_image_free( data );
+	return retVal;
+}
+
+bool SimpleGL::UnloadTexture( unsigned int textureID )
+{
+	glDeleteTextures( 1, &textureID );
+	return true;
+}
+
 bool SimpleGL::DrawLine( Vector2f p0, Vector2f p1 )
 {
 	glColor3f( 0, 0, 0 );
@@ -136,6 +168,25 @@ bool SimpleGL::DrawLine( Vector2f p0, Vector2f p1 )
 	glVertex2f( p0.x, p0.y );
 	glVertex2f( p1.x, p1.y );
 	glEnd();
+	return true;
+}
+
+bool SimpleGL::DrawBillboard( unsigned int textureID, Vector2f topLeft, Vector2f bottomRight, float z )
+{
+	glBindTexture( GL_TEXTURE_2D, textureID );
+	float const left = topLeft.x;
+	float const top = topLeft.y;
+	float const right = bottomRight.x;
+	float const bottom = bottomRight.y;
+	glBegin(GL_QUADS);
+	{
+		glTexCoord2f( 0.0f, 0.0f ); glVertex3f( left, top, z );
+		glTexCoord2f( 1.0f, 0.0f ); glVertex3f( right, top, z );
+		glTexCoord2f( 1.0f, 1.0f ); glVertex3f( right, bottom, z );
+		glTexCoord2f( 0.0f, 1.0f ); glVertex3f( left, bottom, z );
+	}
+	glEnd();
+	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
 
