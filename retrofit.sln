@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleGL", "libs\SimpleGL\S
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_platform", "libs\core_platform\core_platform.vcxproj", "{293C2CB7-EC6B-4002-A815-CDB480A2752F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stb_image", "third_party\stb_image\stb_image.vcxproj", "{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -83,11 +85,20 @@ Global
 		{293C2CB7-EC6B-4002-A815-CDB480A2752F}.Release|x64.Build.0 = Release|x64
 		{293C2CB7-EC6B-4002-A815-CDB480A2752F}.Release|x86.ActiveCfg = Release|Win32
 		{293C2CB7-EC6B-4002-A815-CDB480A2752F}.Release|x86.Build.0 = Release|Win32
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Debug|x64.ActiveCfg = Debug|x64
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Debug|x64.Build.0 = Debug|x64
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Debug|x86.ActiveCfg = Debug|Win32
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Debug|x86.Build.0 = Debug|Win32
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Release|x64.ActiveCfg = Release|x64
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Release|x64.Build.0 = Release|x64
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Release|x86.ActiveCfg = Release|Win32
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C8F6C172-56F2-4E76-B5FA-C3B423B31BE7} = {386096D8-50A9-4232-B37F-F7EA18EB3742}
+		{C2ADEEE6-0AB0-4B7C-833F-7B96832F1A01} = {386096D8-50A9-4232-B37F-F7EA18EB3742}
 	EndGlobalSection
 EndGlobal
