@@ -23,7 +23,7 @@ public:
 		//
 	}
 
-	WeakPtr(nullptr_t)
+	WeakPtr(std::nullptr_t)
 		: WeakPtr()
 	{
 		//

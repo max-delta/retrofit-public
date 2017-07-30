@@ -28,7 +28,7 @@ public:
 		//
 	}
 
-	UniquePtr(nullptr_t)
+	UniquePtr(std::nullptr_t)
 		: UniquePtr()
 	{
 		//

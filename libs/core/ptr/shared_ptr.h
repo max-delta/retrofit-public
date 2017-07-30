@@ -25,7 +25,7 @@ public:
 		//
 	}
 
-	SharedPtr(nullptr_t)
+	SharedPtr(std::nullptr_t)
 		: SharedPtr()
 	{
 		//
