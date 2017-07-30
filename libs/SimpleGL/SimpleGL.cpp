@@ -64,7 +64,7 @@ bool SimpleGL::SetProjectionMode( ProjectionMode mode )
 	return true;
 }
 
-bool SimpleGL::SetSurfaceSize( int width, int height )
+bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
 	this->width = width;
 	this->height = height;
@@ -135,7 +135,7 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
-unsigned int SimpleGL::LoadTexture( char const* filename )
+SimpleGL::TextureID SimpleGL::LoadTexture( char const* filename )
 {
 	int x, y, n;
 	unsigned char* data = stbi_load( "../../data/textures/common/max_delta_32.png", &x, &y, &n, 4 );
@@ -155,13 +155,24 @@ unsigned int SimpleGL::LoadTexture( char const* filename )
 	return retVal;
 }
 
-bool SimpleGL::UnloadTexture( unsigned int textureID )
+bool SimpleGL::UnloadTexture( TextureID textureID )
 {
-	glDeleteTextures( 1, &textureID );
+	GLuint const texID = static_cast<GLuint>( textureID );
+	glDeleteTextures( 1, &texID );
 	return true;
 }
 
-bool SimpleGL::DrawLine( Vector2f p0, Vector2f p1 )
+bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
+{
+	glRasterPos2f( pos.x, pos.y );
+	va_list args;
+	va_start( args, fmt );
+	bool retVal = glPrint( fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1 )
 {
 	glColor3f( 0, 0, 0 );
 	glBegin( GL_LINES );
@@ -171,9 +182,10 @@ bool SimpleGL::DrawLine( Vector2f p0, Vector2f p1 )
 	return true;
 }
 
-bool SimpleGL::DrawBillboard( unsigned int textureID, Vector2f topLeft, Vector2f bottomRight, float z )
+bool SimpleGL::DrawBillboard( TextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
 {
-	glBindTexture( GL_TEXTURE_2D, textureID );
+	GLuint const texID = static_cast<GLuint>( textureID );
+	glBindTexture( GL_TEXTURE_2D, texID );
 	float const left = topLeft.x;
 	float const top = topLeft.y;
 	float const right = bottomRight.x;
@@ -256,19 +268,25 @@ void SimpleGL::BuildFont()					// Build Our Bitmap Font
 	shim::DeleteObject( font );					// Delete The Font
 }
 
-bool SimpleGL::glPrint( const char *fmt, ... )				// Custom GL "Print" Routine
+bool SimpleGL::glPrint( char const* fmt, ... )
 {
-	char		text[256];				// Holds Our String
-	va_list		ap;					// Pointer To List Of Arguments
-	if( fmt == nullptr )					// If There's No Text
-		return false;						// Do Nothing
-	va_start( ap, fmt );					// Parses The String For Variables
-	vsprintf_s( text, fmt, ap );				// And Converts Symbols To Actual Numbers
-	va_end( ap );						// Results Are Stored In Text
-	glPushAttrib( GL_LIST_BIT );				// Pushes The Display List Bits		( NEW )
-	glListBase( font_base - 32 );					// Sets The Base Character to 32	( NEW )
-	glCallLists( (GLsizei)strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text	( NEW )
-	glPopAttrib();						// Pops The Display List Bits	( NEW )
+	va_list args;
+	va_start( args, fmt );
+	bool retVal = glPrint( fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+bool SimpleGL::glPrint( char const* fmt, va_list args )
+{
+	char text[256];
+	if( fmt == nullptr )
+		return false;
+	vsprintf_s( text, fmt, args );
+	glPushAttrib( GL_LIST_BIT ); // Pushes The Display List Bits
+	glListBase( font_base - 32 ); // Sets The Base Character to 32
+	glCallLists( (GLsizei)strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text
+	glPopAttrib(); // Pops The Display List Bits
 	return true;
 }
 
