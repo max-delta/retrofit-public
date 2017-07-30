@@ -1,24 +1,16 @@
 #pragma once
 #include "project.h"
 
-#include "core_platform/win_shim.h"
+#include "PPU/DeviceInterface.h"
+
+//#ifdef SIMPLEGL_EXPORTS
+	class SIMPLEGL_API RF::gfx::DeviceInterface;
+//#endif
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO: Shared in core math
-struct Vector2f
-{
-	Vector2f( float x = 0, float y = 0 ) : x( x ), y( y )
-	{
-	}
-	float x;
-	float y;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-
-class SIMPLEGL_API SimpleGL
+class SIMPLEGL_API SimpleGL final : public DeviceInterface
 {
 public:
 	enum class ProjectionMode
@@ -30,20 +22,22 @@ public:
 	};
 
 public:
-	bool AttachToWindow( shim::HWND hWnd );
-	bool DetachFromWindow();
+	bool AttachToWindow( shim::HWND hWnd ) override;
+	bool DetachFromWindow() override;
 
 	bool SetProjectionMode( ProjectionMode mode );
-	bool SetSurfaceSize( int width = 640, int height = 480 );
-	bool SetBackgroundColor( float r = 1.f, float g = 0.f, float b = 0.f, float a = 0.5f );
+	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
+	bool SetBackgroundColor( float r, float g, float b, float a ) override;
 
-	unsigned int LoadTexture( char const* filename );
-	bool UnloadTexture( unsigned int textureID );
+	TextureID LoadTexture( char const* filename ) override;
+	bool UnloadTexture( TextureID textureID ) override;
 
-	bool glPrint( const char *fmt, ... );
+	bool glPrint( char const* fmt, ... );
+	bool glPrint( char const* fmt, va_list args );
 
-	bool DrawLine( Vector2f p0, Vector2f p1 );
-	bool DrawBillboard( unsigned int textureID, Vector2f topLeft, Vector2f bottomRight, float z = 0.f );
+	bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) override;
+	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1 ) override;
+	bool DrawBillboard( TextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 
 	bool BeginFrame();
 	bool RenderFrame();
