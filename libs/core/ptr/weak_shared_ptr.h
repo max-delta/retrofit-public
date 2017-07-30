@@ -23,7 +23,7 @@ public:
 		//
 	}
 
-	WeakSharedPtr(nullptr_t)
+	WeakSharedPtr(std::nullptr_t)
 		: WeakSharedPtr()
 	{
 		//
