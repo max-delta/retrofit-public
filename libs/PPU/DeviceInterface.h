@@ -19,6 +19,7 @@ public:
 
 	virtual bool AttachToWindow( shim::HWND hWnd ) = 0;
 	virtual bool DetachFromWindow() = 0;
+	virtual bool Initialize2DGraphics() = 0;
 
 	virtual bool SetSurfaceSize( uint16_t width, uint16_t height ) = 0;
 	virtual bool SetBackgroundColor( float r, float g, float b, float a ) = 0;
