@@ -24,6 +24,7 @@ public:
 public:
 	bool AttachToWindow( shim::HWND hWnd ) override;
 	bool DetachFromWindow() override;
+	bool Initialize2DGraphics() override;
 
 	bool SetProjectionMode( ProjectionMode mode );
 	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
