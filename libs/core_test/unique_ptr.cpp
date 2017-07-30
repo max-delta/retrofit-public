@@ -120,5 +120,20 @@ TEST(UniquePtr, Move)
 	}
 }
 
+
+
+TEST(UniquePtr, Arrow)
+{
+	struct Test
+	{
+		int test;
+	};
+
+	UniquePtr<Test> uptr = DefaultCreator<Test>::Create();
+	( *uptr ).test = 9;
+	ASSERT_TRUE( ( *uptr ).test == 9 );
+	ASSERT_TRUE( uptr->test == 9 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

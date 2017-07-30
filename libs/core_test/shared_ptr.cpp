@@ -143,5 +143,23 @@ TEST(SharedPtr, Copy)
 	}
 }
 
+
+
+TEST(SharedPtr, Arrow)
+{
+	struct Test
+	{
+		int test;
+	};
+
+	SharedPtr<Test> sptr = DefaultCreator<Test>::Create();
+	WeakPtr<Test> wptr = sptr;
+	( *sptr ).test = 9;
+	ASSERT_TRUE( ( *sptr ).test == 9 );
+	ASSERT_TRUE( ( *wptr ).test == 9 );
+	ASSERT_TRUE( sptr->test == 9 );
+	ASSERT_TRUE( wptr->test == 9 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
