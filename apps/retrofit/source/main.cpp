@@ -15,20 +15,20 @@ int main()
 {
 	shim::HWND hwnd = RF::platform::windowing::CreateNewWindow( 640, 480, WndProc );
 	RF::SharedPtr<RF::gfx::SimpleGL> graphics = RF::DefaultCreator<RF::gfx::SimpleGL>::Create();
-	(*graphics).Initialize2DGraphics();
-	(*graphics).AttachToWindow( hwnd );
-	RF::gfx::SimpleGL::TextureID texture = (*graphics).LoadTexture( "../../data/textures/common/max_delta_32.png" );
-	(*graphics).SetBackgroundColor( 1, 0, 1, 1 );
-	(*graphics).SetSurfaceSize( 640, 480 );
+	graphics->Initialize2DGraphics();
+	graphics->AttachToWindow( hwnd );
+	RF::gfx::SimpleGL::TextureID texture = graphics->LoadTexture( "../../data/textures/common/max_delta_32.png" );
+	graphics->SetBackgroundColor( 1, 0, 1, 1 );
+	graphics->SetSurfaceSize( 640, 480 );
 	while( RF::platform::windowing::ProcessMessages() )
 	{
-		(*graphics).BeginFrame();
-		(*graphics).DrawBillboard( texture, RF::math::Vector2f( -.5f, .5f ), RF::math::Vector2f( .5f, -.5f ), 0.f );
-		(*graphics).RenderFrame();
-		(*graphics).EndFrame();
+		graphics->BeginFrame();
+		graphics->DrawBillboard( texture, RF::math::Vector2f( -.5f, .5f ), RF::math::Vector2f( .5f, -.5f ), 0.f );
+		graphics->RenderFrame();
+		graphics->EndFrame();
 	}
-	(*graphics).UnloadTexture( texture );
-	(*graphics).DetachFromWindow();
+	graphics->UnloadTexture( texture );
+	graphics->DetachFromWindow();
 	graphics = nullptr;
 	return 0;
 }

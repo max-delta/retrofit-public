@@ -7,6 +7,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Unique strong reference to target, shares weak reference to target
 template<typename T>
 class UniquePtr : public PtrBase<T>
 {
@@ -58,6 +59,11 @@ public:
 	}
 
 	operator T *() const
+	{
+		return GetTarget();
+	}
+
+	T* operator ->() const
 	{
 		return GetTarget();
 	}

@@ -7,6 +7,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Shares strong reference to target, shares weak reference to target
 template<typename T>
 class SharedPtr : public PtrBase<T>
 {
@@ -68,6 +69,11 @@ public:
 	}
 
 	operator T *() const
+	{
+		return GetTarget();
+	}
+
+	T* operator ->() const
 	{
 		return GetTarget();
 	}

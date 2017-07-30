@@ -5,6 +5,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Shares weak reference to target
 template<typename T>
 class WeakPtr : public PtrBase<T>
 {
@@ -66,6 +67,11 @@ public:
 	}
 
 	operator T *() const
+	{
+		return GetTargetAsWeak();
+	}
+
+	T* operator ->() const
 	{
 		return GetTargetAsWeak();
 	}
