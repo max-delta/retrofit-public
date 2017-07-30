@@ -5,6 +5,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Shares weak reference to target, can create strong reference to target
 template<typename T>
 class WeakSharedPtr : public PtrBase<T>
 {
