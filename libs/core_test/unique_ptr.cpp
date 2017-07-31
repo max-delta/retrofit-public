@@ -135,5 +135,74 @@ TEST(UniquePtr, Arrow)
 	ASSERT_TRUE( uptr->test == 9 );
 }
 
+
+
+TEST(UniquePtr, CastToBase)
+{
+	struct Base
+	{
+		virtual ~Base() = default;
+		int base;
+	};
+	struct Derived : public Base
+	{
+		int derived;
+	};
+	struct Unrelated
+	{
+		int unrelated;
+	};
+
+	UniquePtr<Derived> uptr_d = nullptr;
+	UniquePtr<Base> uptr_b = nullptr;
+	UniquePtr<Unrelated> uptr_u = nullptr;
+	WeakPtr<Derived> wptr_d = nullptr;
+	WeakPtr<Base> wptr_b = nullptr;
+	WeakPtr<Unrelated> wptr_u = nullptr;
+
+	// Formula:
+	//xptr_b = xptr_b;
+	//xptr_b = xptr_d;
+	//xptr_b = xptr_u; // SHOULD FAIL
+	//xptr_d = xptr_b; // SHOULD FAIL
+	//xptr_d = xptr_d;
+	//xptr_d = xptr_u; // SHOULD FAIL
+	//xptr_u = xptr_b; // SHOULD FAIL
+	//xptr_u = xptr_d; // SHOULD FAIL
+	//xptr_u = xptr_u;
+
+	// Unique->Shared
+	uptr_b = std::move(uptr_b);
+	uptr_b = std::move(uptr_d);
+	//uptr_b = std::move(uptr_u); // SHOULD FAIL
+	//uptr_d = std::move(uptr_b); // SHOULD FAIL
+	uptr_d = std::move(uptr_d);
+	//uptr_d = std::move(uptr_u); // SHOULD FAIL
+	//uptr_u = std::move(uptr_b); // SHOULD FAIL
+	//uptr_u = std::move(uptr_d); // SHOULD FAIL
+	uptr_u = std::move(uptr_u);
+
+	// Unique->Weak:
+	wptr_b = uptr_b;
+	wptr_b = uptr_d;
+	//wptr_b = uptr_u; // SHOULD FAIL
+	//wptr_d = uptr_b; // SHOULD FAIL
+	wptr_d = uptr_d;
+	//wptr_d = uptr_u; // SHOULD FAIL
+	//wptr_u = uptr_b; // SHOULD FAIL
+	//wptr_u = uptr_d; // SHOULD FAIL
+	wptr_u = uptr_u;
+
+	uptr_b = DefaultCreator<Base>::Create();
+	uptr_b = DefaultCreator<Derived>::Create();
+	//uptr_b = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
+	//uptr_d = DefaultCreator<Base>::Create(); // SHOULD FAIL
+	uptr_d = DefaultCreator<Derived>::Create();
+	//uptr_d = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
+	//uptr_u = DefaultCreator<Base>::Create(); // SHOULD FAIL
+	//uptr_u = DefaultCreator<Derived>::Create(); // SHOULD FAIL
+	uptr_u = DefaultCreator<Unrelated>::Create();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -38,6 +38,14 @@ public:
 		IncreaseStrongCount();
 	}
 
+	template<typename DERIVED>
+	SharedPtr( SharedPtr<DERIVED> const & rhs )
+		: PtrBase(rhs.GetTarget(), rhs.GetRef())
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		IncreaseStrongCount();
+	}
+
 	SharedPtr( SharedPtr && rhs )
 		: PtrBase(std::move(rhs))
 	{
@@ -48,6 +56,13 @@ public:
 		: PtrBase(std::move(payload))
 	{
 		//
+	}
+
+	template<typename DERIVED>
+	SharedPtr( CreationPayload<DERIVED> && payload )
+		: PtrBase(std::move(payload))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
 
 	~SharedPtr()
@@ -81,6 +96,13 @@ public:
 	operator WeakPtr<T>() const
 	{
 		return WeakPtr<T>(GetTarget(), GetRef());
+	}
+
+	template<typename BASE>
+	operator WeakPtr<BASE>() const
+	{
+		RF_PTR_ASSERT_CASTABLE( BASE, T );
+		return WeakPtr<BASE>(GetTarget(), GetRef());
 	}
 };
 
