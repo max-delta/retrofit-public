@@ -3,7 +3,7 @@
 #include "PlatformUtils_win32/windowing.h"
 #include "SimpleGL/SimpleGL.h"
 
-#include "core/ptr/shared_ptr.h"
+#include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
 
 // Window Procedure in different file
@@ -14,7 +14,7 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 int main()
 {
 	shim::HWND hwnd = RF::platform::windowing::CreateNewWindow( 640, 480, WndProc );
-	RF::SharedPtr<RF::gfx::SimpleGL> graphics = RF::DefaultCreator<RF::gfx::SimpleGL>::Create();
+	RF::UniquePtr<RF::gfx::DeviceInterface> graphics = RF::DefaultCreator<RF::gfx::SimpleGL>::Create();
 	graphics->Initialize2DGraphics();
 	graphics->AttachToWindow( hwnd );
 	RF::gfx::SimpleGL::TextureID texture = graphics->LoadTexture( "../../data/textures/common/max_delta_32.png" );

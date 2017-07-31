@@ -161,5 +161,85 @@ TEST(SharedPtr, Arrow)
 	ASSERT_TRUE( wptr->test == 9 );
 }
 
+
+
+TEST(SharedPtr, CastToBase)
+{
+	struct Base
+	{
+		virtual ~Base() = default;
+		int base;
+	};
+	struct Derived : public Base
+	{
+		int derived;
+	};
+	struct Unrelated
+	{
+		int unrelated;
+	};
+
+	SharedPtr<Derived> sptr_d = nullptr;
+	SharedPtr<Base> sptr_b = nullptr;
+	SharedPtr<Unrelated> sptr_u = nullptr;
+	WeakPtr<Derived> wptr_d = nullptr;
+	WeakPtr<Base> wptr_b = nullptr;
+	WeakPtr<Unrelated> wptr_u = nullptr;
+
+	// Formula:
+	//xptr_b = xptr_b;
+	//xptr_b = xptr_d;
+	//xptr_b = xptr_u; // SHOULD FAIL
+	//xptr_d = xptr_b; // SHOULD FAIL
+	//xptr_d = xptr_d;
+	//xptr_d = xptr_u; // SHOULD FAIL
+	//xptr_u = xptr_b; // SHOULD FAIL
+	//xptr_u = xptr_d; // SHOULD FAIL
+	//xptr_u = xptr_u;
+
+	// Shared->Shared
+	sptr_b = sptr_b;
+	sptr_b = sptr_d;
+	//sptr_b = sptr_u; // SHOULD FAIL
+	//sptr_d = sptr_b; // SHOULD FAIL
+	sptr_d = sptr_d;
+	//sptr_d = sptr_u; // SHOULD FAIL
+	//sptr_u = sptr_b; // SHOULD FAIL
+	//sptr_u = sptr_d; // SHOULD FAIL
+	sptr_u = sptr_u;
+
+	// Weak->Weak
+	wptr_b = wptr_b;
+	wptr_b = wptr_d;
+	//wptr_b = wptr_u; // SHOULD FAIL
+	//wptr_d = wptr_b; // SHOULD FAIL
+	wptr_d = wptr_d;
+	//wptr_d = wptr_u; // SHOULD FAIL
+	//wptr_u = wptr_b; // SHOULD FAIL
+	//wptr_u = wptr_d; // SHOULD FAIL
+	wptr_u = wptr_u;
+
+	// Shared->Weak:
+	wptr_b = sptr_b;
+	wptr_b = sptr_d;
+	//wptr_b = sptr_u; // SHOULD FAIL
+	//wptr_d = sptr_b; // SHOULD FAIL
+	wptr_d = sptr_d;
+	//wptr_d = sptr_u; // SHOULD FAIL
+	//wptr_u = sptr_b; // SHOULD FAIL
+	//wptr_u = sptr_d; // SHOULD FAIL
+	wptr_u = sptr_u;
+
+	sptr_b = DefaultCreator<Base>::Create();
+	sptr_b = DefaultCreator<Derived>::Create();
+	//sptr_b = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
+	//sptr_d = DefaultCreator<Base>::Create(); // SHOULD FAIL
+	sptr_d = DefaultCreator<Derived>::Create();
+	//sptr_d = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
+	//sptr_u = DefaultCreator<Base>::Create(); // SHOULD FAIL
+	//sptr_u = DefaultCreator<Derived>::Create(); // SHOULD FAIL
+	sptr_u = DefaultCreator<Unrelated>::Create();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
