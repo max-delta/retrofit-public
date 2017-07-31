@@ -36,9 +36,25 @@ public:
 		//
 	}
 
+	template<typename DERIVED>
+	WeakPtr( WeakPtr<DERIVED> const & rhs )
+		: WeakPtr(rhs.GetTarget(), rhs.GetRef())
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+	}
+
 	WeakPtr( T * target, PtrRef * ref )
 		: PtrBase(target, ref)
 	{
+		IncreaseWeakCount();
+	}
+
+	template<typename DERIVED, typename PTRREFDERIVED>
+	WeakPtr( DERIVED * target, PTRREFDERIVED * ref )
+		: PtrBase(target, ref)
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		static_assert( std::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 		IncreaseWeakCount();
 	}
 

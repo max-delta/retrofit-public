@@ -4,6 +4,10 @@
 
 #include <utility>
 
+#define RF_PTR_ASSERT_CASTABLE(BASETYPE, DERIVEDTYPE) \
+	static_assert( std::is_base_of<BASETYPE, DERIVEDTYPE>::value, "Failed to cast PTR<"#DERIVEDTYPE"> to PTR<"#BASETYPE">" ); \
+	static_assert( std::has_virtual_destructor<BASETYPE>::value, "Potentially unsafe deletions due to non-virtual destructor on base class. Please use 'virtual ~Base() = default;' at a minimum." );
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,6 +31,15 @@ public:
 		payload.Clean();
 	}
 
+	template<typename DERIVED>
+	PtrBase( CreationPayload<DERIVED> && payload )
+		: m_Target(static_cast<T*>( payload.m_Target ))
+		, m_Ref(reinterpret_cast<PtrRef*>( payload.m_Ref ))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		payload.Clean();
+	}
+
 
 	//
 	// Protected methods
@@ -36,6 +49,15 @@ public:
 		, m_Ref(ref)
 	{
 		//
+	}
+
+	template<typename DERIVED, typename PTRREFDERIVED>
+	explicit PtrBase( DERIVED * target, PTRREFDERIVED * ref )
+		: m_Target(static_cast<T*>(target))
+		, m_Ref(reinterpret_cast<PtrRef*>(ref))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		static_assert( std::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 	}
 
 	explicit PtrBase( PtrBase && rhs )

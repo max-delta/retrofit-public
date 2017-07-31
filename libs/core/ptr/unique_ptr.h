@@ -41,10 +41,25 @@ public:
 		//
 	}
 
+	template<typename DERIVED>
+	UniquePtr( UniquePtr<DERIVED> && rhs )
+		: PtrBase(std::move(rhs.CreateTransferPayload()))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		assert( rhs == nullptr );
+	}
+
 	UniquePtr( CreationPayload<T> && payload )
 		: PtrBase(std::move(payload))
 	{
 		//
+	}
+
+	template<typename DERIVED>
+	UniquePtr( CreationPayload<DERIVED> && payload )
+		: PtrBase(std::move(payload))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
 
 	~UniquePtr()
@@ -71,6 +86,13 @@ public:
 	operator WeakPtr<T>() const
 	{
 		return WeakPtr<T>(GetTarget(), GetRef());
+	}
+
+	template<typename BASE>
+	operator WeakPtr<BASE>() const
+	{
+		RF_PTR_ASSERT_CASTABLE( BASE, T );
+		return WeakPtr<BASE>(GetTarget(), GetRef());
 	}
 };
 
