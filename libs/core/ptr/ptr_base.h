@@ -61,8 +61,9 @@ public:
 	}
 
 	explicit PtrBase( PtrBase && rhs )
+		: PtrBase( nullptr, nullptr )
 	{
-		Swap( std::move(rhs) );
+		Swap( std::move( rhs ) );
 	}
 
 	void IncreaseStrongCount()
