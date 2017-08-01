@@ -41,6 +41,9 @@
     <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
       <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
+      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
       <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
     </ProjectReference>

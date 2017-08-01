@@ -1,19 +1,16 @@
 #pragma once
 #include "project.h"
 
+#include "PPUFwd.h"
+
 #include "core_math/vector2f.h"
 #include "core_platform/win_shim.h"
-
-#include <stdint.h>
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class DeviceInterface
 {
-public:
-	typedef uint64_t TextureID;
-
 public:
 	virtual ~DeviceInterface();
 
