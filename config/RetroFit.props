@@ -6,7 +6,9 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>RETROFIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
+    <Link />
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
