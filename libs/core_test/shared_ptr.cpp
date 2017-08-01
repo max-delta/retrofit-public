@@ -122,6 +122,20 @@ TEST(SharedPtr, Move)
 
 
 
+TEST( SharedPtr, MoveIntoTrash )
+{
+	SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 5 );
+	{
+		void* alloc = malloc( sizeof( SharedPtr<int> ) );
+		memset( alloc, 0xcc, sizeof( SharedPtr<int> ) );
+		SharedPtr<int>* newAlloc = new (alloc) SharedPtr<int>( std::move( sptr1 ) );
+		newAlloc->~SharedPtr();
+		free( alloc );
+	}
+}
+
+
+
 TEST(SharedPtr, Copy)
 {
 	// Copy to longer-lived shared
