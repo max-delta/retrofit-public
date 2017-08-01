@@ -141,7 +141,7 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
-SimpleGL::TextureID SimpleGL::LoadTexture( char const* filename )
+TextureID SimpleGL::LoadTexture( char const* filename )
 {
 	int x, y, n;
 	unsigned char* data = stbi_load( "../../data/textures/common/max_delta_32.png", &x, &y, &n, 4 );

@@ -1,0 +1,31 @@
+#pragma once
+#include "project.h"
+
+#include "PPUFwd.h"
+
+#include "core/macros.h"
+
+
+namespace RF { namespace gfx {
+///////////////////////////////////////////////////////////////////////////////
+
+class PPU_API Texture
+{
+	RF_NO_COPY(Texture);
+public:
+	Texture();
+	Texture( Texture && ) = default;
+	~Texture();
+	Texture& operator =( Texture && ) = default;
+	TextureID GetDeviceRepresentation() const;
+
+private:
+	void UpdateFrameUsage() const;
+	friend class TextureManager;
+	static FrameID s_MostRecentFrame;
+	mutable FrameID m_LastUsedInFrame;
+	TextureID m_DeviceRepresentation;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}}

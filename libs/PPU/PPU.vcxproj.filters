@@ -4,9 +4,14 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="DeviceInterface.h" />
+    <ClInclude Include="PPUFwd.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Texture.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Texture.cpp" />
   </ItemGroup>
 </Project>

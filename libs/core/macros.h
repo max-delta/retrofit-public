@@ -35,6 +35,15 @@ __pragma(pack(pop))
 			__debugbreak(); \
 		} \
 	} while (false)
+#define RF_ASSERT_MSG(TEST, MSG) \
+	do \
+	{ \
+		if( !!!(TEST) && _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, "", MSG ) == 1 ) \
+		{ \
+			__debugbreak(); \
+		} \
+	} while (false)
 #else
 #define RF_ASSERT(TEST)
+#define RF_ASSERT_MSG(TEST, MSG)
 #endif
