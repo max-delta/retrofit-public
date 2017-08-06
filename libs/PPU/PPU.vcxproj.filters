@@ -7,11 +7,15 @@
     <ClInclude Include="PPUFwd.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="PPUController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PPUController.cpp" />
   </ItemGroup>
 </Project>

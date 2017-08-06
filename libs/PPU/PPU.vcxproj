@@ -151,6 +151,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DeviceInterface.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="PPUController.h" />
     <ClInclude Include="PPUFwd.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
@@ -172,6 +174,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="PPUController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -180,6 +184,11 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

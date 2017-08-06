@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
-#include "PPU/Texture.h"
-#include "PPU/TextureManager.h"
+#include "PPU/PPUController.h"
 
 #include "PlatformUtils_win32/windowing.h"
 #include "SimpleGL/SimpleGL.h"
@@ -18,29 +17,23 @@ int main()
 {
 	using namespace RF;
 
-	UniquePtr<gfx::DeviceInterface> graphics = DefaultCreator<gfx::SimpleGL>::Create();
-	graphics->Initialize2DGraphics();
-
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
-	graphics->AttachToWindow( hwnd );
+	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
+	renderDevice->AttachToWindow( hwnd );
 
-	UniquePtr<gfx::TextureManager> textureManager = DefaultCreator<gfx::TextureManager>::Create();
-	textureManager->AttachToDevice( graphics );
+	UniquePtr<gfx::PPUController> graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
+	graphics->Initialize( 640, 480 );
 
-	textureManager->LoadNewTexture( "Placeholder", "../../data/textures/common/max_delta_32.png" );
-	WeakPtr<gfx::Texture> placeholderTex = textureManager->GetDeviceTextureForRenderFromTextureName( "Placeholder" );
-
-	graphics->SetBackgroundColor( 1, 0, 1, 1 );
-	graphics->SetSurfaceSize( 640, 480 );
 	while( platform::windowing::ProcessMessages() )
 	{
 		graphics->BeginFrame();
-		graphics->DrawBillboard( placeholderTex->GetDeviceRepresentation(), math::Vector2f( -.5f, .5f ), math::Vector2f( .5f, -.5f ), 0.f );
-		graphics->RenderFrame();
+		{
+			// TODO: Do stuff that affects state
+			graphics->SubmitToRender();
+			graphics->WaitForRender();
+		}
 		graphics->EndFrame();
 	}
-	textureManager->DestroyTexture( "Placeholder" );
-	graphics->DetachFromWindow();
 	graphics = nullptr;
 	return 0;
 }
