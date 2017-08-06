@@ -24,6 +24,9 @@ __pragma(pack(pop))
 #define RF_NO_COPY(CLASS) \
 	CLASS(CLASS const &) = delete; \
 	CLASS & operator =(CLASS const &) = delete;
+#define RF_NO_MOVE(CLASS) \
+	CLASS( CLASS && ) = delete; \
+	CLASS& operator =( CLASS && ) = delete;
 
 
 #ifdef _DEBUG

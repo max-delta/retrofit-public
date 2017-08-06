@@ -60,7 +60,7 @@ bool SimpleGL::DetachFromWindow()
 
 bool SimpleGL::Initialize2DGraphics()
 {
-	SetProjectionMode( RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT );
+	SetProjectionMode( RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT );
 	return true;
 }
 
