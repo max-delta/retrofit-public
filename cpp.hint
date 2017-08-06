@@ -1,2 +1,3 @@
 #define RF_ASSERT(...)
 #define RF_NO_COPY(...)
+#define RF_NO_MOVE(...)
