@@ -2,10 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="vector2f.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="math_casts.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="vector2f.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Vector2.inl" />
+    <None Include="math_casts.inl" />
   </ItemGroup>
 </Project>

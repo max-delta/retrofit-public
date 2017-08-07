@@ -3,7 +3,7 @@
 
 #include "PPUFwd.h"
 
-#include "core_math/vector2f.h"
+#include "core_math/vector2.h"
 #include "core_platform/win_shim.h"
 
 namespace RF { namespace gfx {

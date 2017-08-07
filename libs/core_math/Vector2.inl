@@ -1,17 +1,22 @@
-#include "stdafx.h"
-#include "vector2f.h"
+#pragma once
+#include "Vector2.h"
+
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Vector2f::Vector2f()
-	: x( 0.f )
-	, y( 0.f )
+template<typename T>
+inline RF::math::Vector2<T>::Vector2()
+	: x()
+	, y()
 {
 	//
 }
 
-Vector2f::Vector2f( float x, float y )
+
+
+template<typename T>
+inline Vector2<T>::Vector2( T x, T y )
 	: x( x )
 	, y( y )
 {

@@ -8,6 +8,10 @@ namespace RF { namespace platform { namespace windowing {
 
 PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPROC WndProc )
 {
+	// Paradoxically, we must tell Windows we want to do all the new DPI
+	//  scaling stuff, and that will make it NOT do any DPI scaling...
+	win32::SetProcessDPIAware();
+
 	// IDC_ARROW
 	auto idc_arrow = ((win32::LPWSTR)((win32::ULONG_PTR)((win32::WORD)(32512))));
 
@@ -24,14 +28,24 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 	wc.lpszClassName = L"SimpleGL"; // The name of this class.
 	RegisterClassW( &wc ); // Register the attributes for the next call to CreateWindow.
 
+	win32::DWORD const windowStyles = WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE | WS_SIZEBOX;
+
+	// Padding, for stuff like SM_CXFRAME, SM_CYFRAME, SM_CYCAPTION, etc.
+	win32::RECT windRect = {};
+	windRect.right = width;
+	windRect.bottom = height;
+	win32::AdjustWindowRect( &windRect, windowStyles, false );
+	int const windowWidth = windRect.right - windRect.left;
+	int const windowHeight = windRect.bottom - windRect.top;
+
 	win32::HWND hWnd;
 	hWnd = win32::CreateWindowExW( 0,
 		L"SimpleGL", // The window class to use.
 		L"SimpleGl Window", // The name to appear on the window.
-		WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE | WS_SIZEBOX, // Window styles.
+		windowStyles, // Window styles.
 		CW_USEDEFAULT, CW_USEDEFAULT, // Initial window position.
-		width + win32::GetSystemMetrics( SM_CXFRAME ) * 2, // Default window width.
-		height + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION ), // Default window height.
+		windowWidth, // Default window width.
+		windowHeight, // Default window height.
 		nullptr, // The window has no parent.
 		nullptr, // The window has no menu.
 		nullptr,//hInstance, // The application that is managing the window.
