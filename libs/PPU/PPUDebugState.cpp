@@ -1,17 +1,15 @@
-#pragma once
-#include <stdint.h>
+#include "stdafx.h"
+#include "PPUDebugState.h"
 
-namespace RF { namespace math {
+
+namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-class Vector2f final
+void PPUDebugState::Clear()
 {
-public:
-	Vector2f();
-	Vector2f( float x, float y );
-	float x;
-	float y;
-};
+	m_NumStrings = 0;
+	m_NumLines = 0;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

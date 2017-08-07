@@ -29,6 +29,8 @@ int main()
 		graphics->BeginFrame();
 		{
 			// TODO: Do stuff that affects state
+			graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+
 			graphics->SubmitToRender();
 			graphics->WaitForRender();
 		}
