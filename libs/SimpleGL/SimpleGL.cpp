@@ -84,18 +84,28 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 	{
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
 			glOrtho(0.0f,width,height,0.0f,-1.0f,1.0f); // Create Ortho View (0,0 At Top Left)
+			xFudge = 0.5f;
+			yFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
 			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f ); // Create Ortho View (0,0 At Top Left)
+			xFudge = 1.f / width * 0.5f;
+			yFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
 			glOrtho( 0.0f, 1, 0.0f, 1, -1.0f, 1.0f ); // Create Ortho View (0,0 At Bottom Left)
+			xFudge = 1.f / width * 0.5f;
+			yFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
 			glOrtho( -1, 1, -1, 1, -1.0f, 1.0f ); // Create Ortho View (1,1 At Top Right)
+			xFudge = 2.f / width * 0.5f;
+			yFudge = 2.f / height * 0.5f;
 			break;
 		default:
 			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f );
+			xFudge = 1.f / width * 0.5f;
+			yFudge = 1.f / height * 0.5f;
 			break;
 	}
 
@@ -180,10 +190,12 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
 
 bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1 )
 {
+	glBindTexture( GL_TEXTURE_2D, 0 );
 	glColor3f( 0, 0, 0 );
+	glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
 	glBegin( GL_LINES );
-	glVertex2f( p0.x, p0.y );
-	glVertex2f( p1.x, p1.y );
+	glVertex2f( p0.x + xFudge, p0.y + yFudge );
+	glVertex2f( p1.x + xFudge, p1.y + yFudge );
 	glEnd();
 	return true;
 }
@@ -192,6 +204,7 @@ bool SimpleGL::DrawBillboard( TextureID textureID, math::Vector2f topLeft, math:
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glBindTexture( GL_TEXTURE_2D, texID );
+	glColor3f( 1, 1, 1 );
 	float const left = topLeft.x;
 	float const top = topLeft.y;
 	float const right = bottomRight.x;
@@ -219,20 +232,24 @@ bool SimpleGL::BeginFrame()
 bool SimpleGL::RenderFrame()
 {
 	glColor3f( 1, 1, 1 );
-	for( float horizontal = 0; horizontal <= 1; horizontal += 0.1f )
+	#ifdef SIMPLEGL_DBG_GRID
 	{
-		glBegin( GL_LINES );
-		glVertex2d( horizontal, 0 );
-		glVertex2d( horizontal, 1 );
-		glEnd();
+		for( float horizontal = 0; horizontal <= 1; horizontal += 0.1f )
+		{
+			glBegin( GL_LINES );
+			glVertex2d( horizontal, 0 );
+			glVertex2d( horizontal, 1 );
+			glEnd();
+		}
+		for( float vertical = 0; vertical <= 1; vertical += 0.1f )
+		{
+			glBegin( GL_LINES );
+			glVertex2d( 0, vertical );
+			glVertex2d( 1, vertical );
+			glEnd();
+		}
 	}
-	for( float vertical = 0; vertical <= 1; vertical += 0.1f )
-	{
-		glBegin( GL_LINES );
-		glVertex2d( 0, vertical );
-		glVertex2d( 1, vertical );
-		glEnd();
-	}
+	#endif
 	glFlush(); //Makes sure that all buffered commands are sent to the
 				//graphics card. Note that this does NOT insure that the
 				//commands were executed, only that they have been sent.

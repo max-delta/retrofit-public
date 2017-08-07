@@ -9,6 +9,8 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PPUController.h" />
+    <ClInclude Include="PPUState.h" />
+    <ClInclude Include="PPUDebugState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -17,5 +19,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PPUController.cpp" />
+    <ClCompile Include="PPUState.cpp" />
+    <ClCompile Include="PPUDebugState.cpp" />
   </ItemGroup>
 </Project>

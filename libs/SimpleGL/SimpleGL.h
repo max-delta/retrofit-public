@@ -55,6 +55,8 @@ private:
 	ProjectionMode projectionMode;
 	int width;
 	int height;
+	float xFudge; // HACK: Pixel fudge for anti-aliasing repair
+	float yFudge; // HACK: Pixel fudge for anti-aliasing repair
 };
 
 ///////////////////////////////////////////////////////////////////////////////

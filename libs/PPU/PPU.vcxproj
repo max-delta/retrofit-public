@@ -153,7 +153,9 @@
     <ClInclude Include="DeviceInterface.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PPUController.h" />
+    <ClInclude Include="PPUDebugState.h" />
     <ClInclude Include="PPUFwd.h" />
+    <ClInclude Include="PPUState.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Texture.h" />
@@ -176,6 +178,8 @@
     </ClCompile>
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PPUController.cpp" />
+    <ClCompile Include="PPUDebugState.cpp" />
+    <ClCompile Include="PPUState.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

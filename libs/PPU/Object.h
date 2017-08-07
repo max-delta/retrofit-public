@@ -27,9 +27,11 @@ public:
 public:
 	uint16_t m_FramePackID;
 
-	uint8_t m_XCoord;
-	uint8_t m_YCoord;
-	uint8_t m_ZLayer;
+	static_assert( sizeof( PPUCoordElem ) == sizeof( int16_t ), "Re-evaluate packing" );
+	PPUCoordElem m_XCoord;
+	PPUCoordElem m_YCoord;
+	static_assert( sizeof( PPUDepthLayer ) == sizeof( int8_t ), "Re-evaluate packing" );
+	PPUDepthLayer m_ZLayer;
 
 	uint8_t m_GFXModifier;
 	uint8_t m_TimeIndex;
