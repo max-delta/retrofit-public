@@ -122,6 +122,30 @@ TEST(UniquePtr, Move)
 
 
 
+TEST( UniquePtr, MoveDerived )
+{
+	struct Base
+	{
+		virtual ~Base() = default;
+		int base;
+	};
+	struct Derived : public Base
+	{
+		int derived;
+	};
+
+	// Construct into move
+	{
+		UniquePtr<Derived> uptr1 = DefaultCreator<Derived>::Create();
+		ASSERT_TRUE(uptr1 != nullptr);
+		UniquePtr<Base> uptr2( std::move( uptr1 ) );
+		ASSERT_TRUE(uptr1 == nullptr);
+		ASSERT_TRUE(uptr2 != nullptr);
+	}
+}
+
+
+
 TEST( UniquePtr, MoveIntoTrash )
 {
 	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 5 );

@@ -122,6 +122,30 @@ TEST(SharedPtr, Move)
 
 
 
+TEST( SharedPtr, MoveDerived )
+{
+	struct Base
+	{
+		virtual ~Base() = default;
+		int base;
+	};
+	struct Derived : public Base
+	{
+		int derived;
+	};
+
+	// Construct into move
+	{
+		SharedPtr<Derived> sptr1 = DefaultCreator<Derived>::Create();
+		ASSERT_TRUE(sptr1 != nullptr);
+		SharedPtr<Base> sptr2( std::move( sptr1 ) );
+		ASSERT_TRUE(sptr1 == nullptr);
+		ASSERT_TRUE(sptr2 != nullptr);
+	}
+}
+
+
+
 TEST( SharedPtr, MoveIntoTrash )
 {
 	SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 5 );
