@@ -145,6 +145,31 @@ TEST(WeakSharedPtr, Move)
 
 
 
+// Not currently supported. Is there a reason to?
+//TEST( WeakSharedPtr, MoveDerived )
+//{
+//	struct Base
+//	{
+//		virtual ~Base() = default;
+//		int base;
+//	};
+//	struct Derived : public Base
+//	{
+//		int derived;
+//	};
+//
+//	// Construct into move
+//	{
+//		WeakSharedPtr<Derived> wsptr1 = DefaultCreator<Derived>::Create();
+//		ASSERT_TRUE(wsptr1 != nullptr);
+//		WeakSharedPtr<Base> uptr2( std::move( wsptr1 ) );
+//		ASSERT_TRUE(wsptr1 == nullptr);
+//		ASSERT_TRUE(wsptr2 != nullptr);
+//	}
+//}
+
+
+
 TEST(WeakSharedPtr, Copy)
 {
 	// Copy to longer-lived pointer

@@ -30,6 +30,9 @@
     <ClInclude Include="ptr\entwined_creator.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="ptr\ptr_traits.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

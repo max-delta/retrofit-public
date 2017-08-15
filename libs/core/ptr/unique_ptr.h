@@ -15,6 +15,12 @@ class UniquePtr : public PtrBase<T>
 
 
 	//
+	// Friends
+private:
+	template<typename PEER> friend class UniquePtr;
+
+
+	//
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
@@ -43,10 +49,10 @@ public:
 
 	template<typename DERIVED>
 	UniquePtr( UniquePtr<DERIVED> && rhs )
-		: PtrBase(std::move(rhs.CreateTransferPayload()))
+		: PtrBase(std::move(rhs.CreateTransferPayloadAndWipeSelf()))
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
-		assert( rhs == nullptr );
+		RF_ASSERT( rhs == nullptr );
 	}
 
 	UniquePtr( CreationPayload<T> && payload )
