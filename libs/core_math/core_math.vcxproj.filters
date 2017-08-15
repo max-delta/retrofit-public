@@ -4,6 +4,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="math_casts.h" />
+    <ClInclude Include="math_clamps.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -12,5 +13,6 @@
   <ItemGroup>
     <None Include="Vector2.inl" />
     <None Include="math_casts.inl" />
+    <None Include="math_clamps.inl" />
   </ItemGroup>
 </Project>

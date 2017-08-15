@@ -31,6 +31,7 @@ DST integer_truncast( SRC const src )
 	constexpr DST lowestDest = numeric_limits<DST>::lowest();
 	constexpr bool couldOverflow = numeric_limits<SRC>::max() > maxDest;
 	constexpr bool couldUnderflow = numeric_limits<SRC>::lowest() < lowestDest;
+	constexpr bool couldDropSign = std::is_signed<SRC>::value == true && std::is_signed<DST>::value == false;
 
 	if( couldOverflow )
 	{
@@ -44,9 +45,15 @@ DST integer_truncast( SRC const src )
 			return lowestDest;
 	}
 
+	if( couldDropSign )
+	{
+		if( src < 0 )
+			return lowestDest;
+	}
+
 	if( std::is_floating_point<SRC>::value )
 	{
-		return (DST)roundf( src );
+		return (DST)roundf( (float)src );
 	}
 	else
 	{

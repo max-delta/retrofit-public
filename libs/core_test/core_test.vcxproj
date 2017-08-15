@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="math_casts.cpp" />
+    <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
