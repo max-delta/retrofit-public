@@ -11,6 +11,9 @@
     <ClInclude Include="PPUController.h" />
     <ClInclude Include="PPUState.h" />
     <ClInclude Include="PPUDebugState.h" />
+    <ClInclude Include="FramePack.h" />
+    <ClInclude Include="FramePackManager.h" />
+    <ClInclude Include="ResourceManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -21,5 +24,11 @@
     <ClCompile Include="PPUController.cpp" />
     <ClCompile Include="PPUState.cpp" />
     <ClCompile Include="PPUDebugState.cpp" />
+    <ClCompile Include="FramePack.cpp" />
+    <ClCompile Include="FramePackManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FramePack.inl" />
+    <None Include="ResourceManager.inl" />
   </ItemGroup>
 </Project>

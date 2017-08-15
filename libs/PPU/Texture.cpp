@@ -11,7 +11,7 @@ FrameID Texture::s_MostRecentFrame = k_FirstFrameID;
 
 Texture::Texture()
 	: m_LastUsedInFrame( k_InvalidFrameID )
-	, m_DeviceRepresentation( k_InvalidTextureID )
+	, m_DeviceRepresentation( k_InvalidDeviceTextureID )
 {
 	//
 }
@@ -20,12 +20,12 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	RF_ASSERT( m_DeviceRepresentation == k_InvalidTextureID );
+	RF_ASSERT( m_DeviceRepresentation == k_InvalidDeviceTextureID );
 }
 
 
 
-TextureID Texture::GetDeviceRepresentation() const
+DeviceTextureID Texture::GetDeviceRepresentation() const
 {
 	UpdateFrameUsage();
 	return m_DeviceRepresentation;

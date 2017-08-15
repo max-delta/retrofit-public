@@ -11,21 +11,20 @@ namespace RF { namespace gfx {
 
 class PPU_API Object
 {
-	RF_NO_COPY(Object);
-
 	//
 	// Public methods
 public:
 	Object() = default;
-	Object( Object && ) = default;
 	~Object() = default;
-	Object& operator =( Object && ) = default;
+
+	void Animate();
 
 
 	//
 	// Public data
 public:
-	uint16_t m_FramePackID;
+	static_assert( sizeof( ManagedFramePackID ) == sizeof( uint16_t ), "Re-evaluate packing" );
+	ManagedFramePackID m_FramePackID;
 
 	static_assert( sizeof( PPUCoordElem ) == sizeof( int16_t ), "Re-evaluate packing" );
 	PPUCoordElem m_XCoord;
@@ -35,16 +34,20 @@ public:
 
 	uint8_t m_GFXModifier;
 	uint8_t m_TimeIndex;
-	uint8_t m_TimeSlowdown;
+	TimeSlowdownRate m_TimeSlowdown; // 1=60, 2=30, 3=20, 4=15... MAX=pause
+	uint8_t m_SubTimeIndex;
 
-	bool m_Looping : 1;
+	bool m_Paused : 1;
 	bool m_HorizontalFlip : 1;
 	bool m_VerticalFlip : 1;
 	bool m_UseTransform : 1;
-	int reserved : 12;
+	uint8_t reserved1 : 4;
+	uint8_t reserved2 : 8;
 
 	float m_Transform[2][2];
 };
+static_assert( sizeof( Object ) == 32, "Double-check Object storage" );
+static_assert( alignof( Object ) == 4, "Double-check Object alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
