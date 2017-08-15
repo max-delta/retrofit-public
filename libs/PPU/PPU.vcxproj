@@ -151,12 +151,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DeviceInterface.h" />
+    <ClInclude Include="FramePack.h" />
+    <ClInclude Include="FramePackManager.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PPUController.h" />
     <ClInclude Include="PPUDebugState.h" />
     <ClInclude Include="PPUFwd.h" />
     <ClInclude Include="PPUState.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
@@ -176,6 +179,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FramePack.cpp" />
+    <ClCompile Include="FramePackManager.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PPUController.cpp" />
     <ClCompile Include="PPUDebugState.cpp" />
@@ -193,6 +198,10 @@
     <ProjectReference Include="..\core_math\core_math.vcxproj">
       <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FramePack.inl" />
+    <None Include="ResourceManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

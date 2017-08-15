@@ -37,11 +37,15 @@ public:
 	bool AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterface );
 	void UpdateMostRecentFrame( FrameID frame ) const;
 
+	WeakPtr<Texture> GetDeviceTectureForRenderFromManagedTextureID( ManagedTextureID managedTextureID ) const;
 	WeakPtr<Texture> GetDeviceTextureForRenderFromTextureName( TextureName const& textureName ) const;
 
 	Filename GetFilenameFromTextureName( TextureName const& textureName ) const;
 
 	bool LoadNewTexture( TextureName const& textureName, Filename const& filename );
+	ManagedTextureID LoadNewTextureGetID( TextureName const& textureName, Filename const& filename );
+	WeakPtr<Texture> LoadNewTextureGetHandle( TextureName const& textureName, Filename const& filename );
+
 	bool UpdateExistingTexture( TextureName const& textureName, Filename const& filename );
 	bool ReloadExistingTexture( TextureName const& textureName );
 	bool DestroyTexture( TextureName const& textureName );

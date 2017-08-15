@@ -151,10 +151,10 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
-TextureID SimpleGL::LoadTexture( char const* filename )
+DeviceTextureID SimpleGL::LoadTexture( char const* filename )
 {
 	int x, y, n;
-	unsigned char* data = stbi_load( "../../data/textures/common/max_delta_32.png", &x, &y, &n, 4 );
+	unsigned char* data = stbi_load( filename, &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
@@ -171,7 +171,7 @@ TextureID SimpleGL::LoadTexture( char const* filename )
 	return retVal;
 }
 
-bool SimpleGL::UnloadTexture( TextureID textureID )
+bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glDeleteTextures( 1, &texID );
@@ -200,7 +200,7 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1 )
 	return true;
 }
 
-bool SimpleGL::DrawBillboard( TextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glBindTexture( GL_TEXTURE_2D, texID );

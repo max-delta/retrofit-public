@@ -4,6 +4,8 @@
 #include "PPU/DeviceInterface.h"
 #include "PPU/TextureManager.h"
 #include "PPU/Texture.h"
+#include "PPU/FramePackManager.h"
+#include "PPU/FramePack.h"
 
 #include "core_math/math_casts.inl"
 
@@ -55,6 +57,10 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	{
 		return false;
 	}
+
+	// Create frame pack manager
+	RF_ASSERT( m_FramePackManager == nullptr );
+	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create();
 
 	// Prepare device
 	success = m_DeviceInterface->Initialize2DGraphics();
@@ -161,11 +167,29 @@ bool PPUController::EndFrame()
 
 
 
+bool PPUController::DrawObject( Object const& object )
+{
+	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
+	PPUState& targetState = m_PPUState[m_WriteState];
+
+	// TODO: Thread-safe
+	RF_ASSERT( targetState.m_NumObjects < PPUState::k_MaxObjects );
+	Object& targetObject = targetState.m_Objects[targetState.m_NumObjects];
+	targetState.m_NumObjects++;
+
+	targetObject = object;
+
+	return true;
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char * fmt, ... )
 {
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
 	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
 
+	// TODO: Thread-safe
 	RF_ASSERT( targetState.m_NumStrings < PPUDebugState::k_MaxStrings );
 	PPUDebugState::DebugString& targetString = targetState.m_Strings[targetState.m_NumStrings];
 	targetState.m_NumStrings++;
@@ -191,6 +215,7 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
 	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
 
+	// TODO: Thread-safe
 	RF_ASSERT( targetState.m_NumLines < PPUDebugState::k_MaxLines );
 	PPUDebugState::DebugLine& targetLine = targetState.m_Lines[targetState.m_NumLines];
 	targetState.m_NumLines++;
@@ -201,6 +226,20 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
 	targetLine.m_YCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
 
 	return true;
+}
+
+
+
+WeakPtr<gfx::TextureManager> PPUController::DebugGetTextureManager() const
+{
+	return m_TextureManager;
+}
+
+
+
+WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
+{
+	return m_FramePackManager;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,11 +269,11 @@ void PPUController::Render() const
 	PPUState const& targetState = m_PPUState[m_RenderState];
 
 	// HACK: Do some stuff
-	constexpr bool doHack = true;
+	constexpr bool doHack = false;
 	if( doHack )
 	{
 		WeakPtr<gfx::Texture> placeholderTex = m_TextureManager->GetDeviceTextureForRenderFromTextureName( "Placeholder" );
-		gfx::TextureID const tex = placeholderTex->GetDeviceRepresentation();
+		gfx::DeviceTextureID const tex = placeholderTex->GetDeviceRepresentation();
 		constexpr size_t k_SpriteSize = 32;
 		math::Vector2f const size( 1.f/(640/k_SpriteSize), 1.f/(480/k_SpriteSize) );
 		for( float hblank = 0; hblank < 1; hblank += size.y )
@@ -249,6 +288,28 @@ void PPUController::Render() const
 					0.f );
 			}
 		}
+	}
+
+	// Draw objects
+	for( size_t i = 0; i < targetState.m_NumObjects; i++ )
+	{
+		Object const& object = targetState.m_Objects[i];
+		FramePackBase const* const framePack = m_FramePackManager->GetResourceFromManagedResourceID( object.m_FramePackID );
+		RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
+		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.m_TimeIndex );
+		FramePackBase::TimeSlot const & timeSlot = framePack->GetTimeSlots()[slotIndex];
+
+		// TODO: All the obnoxious position calculations
+		timeSlot.m_TextureOriginX;
+		timeSlot.m_TextureOriginY;
+		math::Vector2f const topLeft = CoordToDevice( object.m_XCoord + 0, object.m_YCoord + 0 );
+		math::Vector2f const bottomRight = CoordToDevice( object.m_XCoord + k_TileSize, object.m_YCoord + k_TileSize );
+
+		Texture const* texture = m_TextureManager->GetDeviceTectureForRenderFromManagedTextureID( timeSlot.m_TextureReference );
+		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
+		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
+
+		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
 	}
 
 	// HACK: Draw grid

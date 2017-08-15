@@ -17,14 +17,14 @@ public:
 	Texture( Texture && ) = default;
 	~Texture();
 	Texture& operator =( Texture && ) = default;
-	TextureID GetDeviceRepresentation() const;
+	DeviceTextureID GetDeviceRepresentation() const;
 
 private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
 	static FrameID s_MostRecentFrame;
 	mutable FrameID m_LastUsedInFrame;
-	TextureID m_DeviceRepresentation;
+	DeviceTextureID m_DeviceRepresentation;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -42,8 +42,12 @@ public:
 	bool WaitForRender();
 	bool EndFrame();
 
+	bool DrawObject( Object const& object );
+
 	bool DebugDrawText( PPUCoord pos, const char *fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
+	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
+	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;
 
 
 	//
@@ -62,6 +66,7 @@ private:
 private:
 	UniquePtr<gfx::DeviceInterface> m_DeviceInterface;
 	UniquePtr<gfx::TextureManager> m_TextureManager;
+	UniquePtr<gfx::FramePackManager> m_FramePackManager;
 	uint16_t m_Width;
 	uint16_t m_Height;
 
