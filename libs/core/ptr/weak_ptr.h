@@ -10,6 +10,12 @@ template<typename T>
 class WeakPtr : public PtrBase<T>
 {
 	//
+	// Friends
+private:
+	template<typename PEER> friend class WeakPtr;
+
+
+	//
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;

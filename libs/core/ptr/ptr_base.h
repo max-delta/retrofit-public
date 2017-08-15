@@ -1,12 +1,19 @@
 #pragma once
 #include "core/ptr/ptr_ref.h"
 #include "core/ptr/creation_payload.h"
+#include "core/ptr/ptr_traits.h"
 
 #include <utility>
 
+
 #define RF_PTR_ASSERT_CASTABLE(BASETYPE, DERIVEDTYPE) \
-	static_assert( std::is_base_of<BASETYPE, DERIVEDTYPE>::value, "Failed to cast PTR<"#DERIVEDTYPE"> to PTR<"#BASETYPE">" ); \
-	static_assert( std::has_virtual_destructor<BASETYPE>::value, "Potentially unsafe deletions due to non-virtual destructor on base class. Please use 'virtual ~Base() = default;' at a minimum." );
+	static_assert( \
+		std::is_base_of<BASETYPE, DERIVEDTYPE>::value, \
+		"Failed to cast PTR<"#DERIVEDTYPE"> to PTR<"#BASETYPE">" ); \
+	static_assert( \
+		std::has_virtual_destructor<BASETYPE>::value || \
+		std::is_base_of<::RF::PtrTrait::NoVirtualDestructor, BASETYPE>::value, \
+		"Potentially unsafe deletions due to non-virtual destructor on base class. Please use 'virtual ~Base() = default;' at a minimum." );
 
 
 namespace RF {
@@ -43,7 +50,7 @@ public:
 
 	//
 	// Protected methods
-public:
+protected:
 	explicit PtrBase( T * target, PtrRef * ref )
 		: m_Target(target)
 		, m_Ref(ref)
@@ -107,6 +114,15 @@ public:
 	CreationPayload<T> CreateTransferPayload() const
 	{
 		return CreationPayload<T>( m_Target, m_Ref );
+	}
+
+	CreationPayload<T> CreateTransferPayloadAndWipeSelf()
+	{
+		T * const target = m_Target;
+		PtrRef * const ref = m_Ref;
+		m_Target = nullptr;
+		m_Ref = nullptr;
+		return CreationPayload<T>( target, ref );
 	}
 
 	void SanitizeTarget()

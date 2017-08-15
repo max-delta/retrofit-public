@@ -142,6 +142,7 @@
     <ClInclude Include="ptr\ptr_base.h" />
     <ClInclude Include="ptr\ptr_ref.h" />
     <ClInclude Include="ptr\shared_ptr.h" />
+    <ClInclude Include="ptr\ptr_traits.h" />
     <ClInclude Include="ptr\unique_ptr.h" />
     <ClInclude Include="ptr\weak_ptr.h" />
     <ClInclude Include="ptr\weak_shared_ptr.h" />

@@ -12,6 +12,13 @@ template<typename T>
 class SharedPtr : public PtrBase<T>
 {
 	//
+	// Friends
+private:
+	template<typename PEER> friend class SharedPtr;
+	template<typename LIASON> friend class WeakSharedPtr;
+
+
+	//
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
@@ -50,6 +57,14 @@ public:
 		: PtrBase(std::move(rhs))
 	{
 		//
+	}
+
+	template<typename DERIVED>
+	SharedPtr( SharedPtr<DERIVED> && rhs )
+		: PtrBase(std::move(rhs.CreateTransferPayloadAndWipeSelf()))
+	{
+		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+		RF_ASSERT( rhs == nullptr );
 	}
 
 	SharedPtr( CreationPayload<T> && payload )
