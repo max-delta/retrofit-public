@@ -30,15 +30,15 @@ public:
 	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
 	bool SetBackgroundColor( float r, float g, float b, float a ) override;
 
-	TextureID LoadTexture( char const* filename ) override;
-	bool UnloadTexture( TextureID textureID ) override;
+	DeviceTextureID LoadTexture( char const* filename ) override;
+	bool UnloadTexture( DeviceTextureID textureID ) override;
 
 	bool glPrint( char const* fmt, ... );
 	bool glPrint( char const* fmt, va_list args );
 
 	bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) override;
 	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1 ) override;
-	bool DrawBillboard( TextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
+	bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 
 	bool BeginFrame();
 	bool RenderFrame();
