@@ -10,6 +10,8 @@
     <ClCompile Include="weak_shared_ptr.cpp" />
     <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
+    <ClCompile Include="math_clamps.cpp" />
+    <ClCompile Include="math_casts.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
