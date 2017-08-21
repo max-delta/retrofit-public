@@ -12,6 +12,7 @@
     <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="math_casts.cpp" />
+    <ClCompile Include="static_array.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
