@@ -3,12 +3,19 @@
 
 #include "core_platform/win_shim.h"
 
+#include <stdint.h>
+
+
 namespace RF { namespace platform { namespace windowing {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API shim::HWND CreateNewWindow( int width = 640, int height = 480, shim::WNDPROC WndProc = shim::DefWindowProcW );
 
-PLATFORMUTILS_API bool ProcessMessages();
+// Positive: Number of messages processed
+// Zero: No processing needed
+// Negative: Should quit the application
+PLATFORMUTILS_API int32_t ProcessAllMessages();
+PLATFORMUTILS_API int32_t ProcessSingleMessage();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
