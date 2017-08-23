@@ -3,8 +3,13 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="DigitalInputComponent.h" />
+    <ClInclude Include="InputComponent.h" />
+    <ClInclude Include="InputDevice.h" />
+    <ClInclude Include="AnalogInputComponent.h" />
+    <ClInclude Include="TextInputComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="InputDevice.cpp" />
   </ItemGroup>
 </Project>
