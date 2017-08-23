@@ -51,7 +51,7 @@ int main()
 	testObj.m_YCoord = 0;
 	testObj.m_ZLayer = 0;
 
-	while( platform::windowing::ProcessMessages() )
+	while( platform::windowing::ProcessAllMessages() >= 0 )
 	{
 		graphics->BeginFrame();
 		{

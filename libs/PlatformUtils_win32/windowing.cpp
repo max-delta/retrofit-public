@@ -3,6 +3,7 @@
 
 #include "core_platform/windows_inc.h"
 
+
 namespace RF { namespace platform { namespace windowing {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -56,14 +57,39 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 
 
 
-PLATFORMUTILS_API bool ProcessMessages()
+PLATFORMUTILS_API int32_t ProcessAllMessages()
+{
+	int32_t retVal = 0;
+
+	// Pump until empty
+	int32_t messageResult;
+	while( ( messageResult = ProcessSingleMessage() ) > 0 )
+	{
+		retVal++;
+	}
+
+	if( messageResult < 0 )
+	{
+		// Should quit
+		return -retVal;
+	}
+
+	return retVal;
+}
+
+
+
+PLATFORMUTILS_API int32_t ProcessSingleMessage()
 {
 	bool shouldKeepRunning = true;
+	bool processedMessage = false;
 
 	// Check for any new messages
 	win32::MSG msg;
 	if( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ) )
 	{
+		processedMessage = true;
+
 		if( msg.message == WM_QUIT )
 		{
 			// User wants out
@@ -76,7 +102,17 @@ PLATFORMUTILS_API bool ProcessMessages()
 		}
 	}
 
-	return shouldKeepRunning;
+	if( shouldKeepRunning == false )
+	{
+		return -1;
+	}
+
+	if( processedMessage == false )
+	{
+		return 0;
+	}
+
+	return 1;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
