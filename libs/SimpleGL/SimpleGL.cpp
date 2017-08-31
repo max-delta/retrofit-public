@@ -180,6 +180,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
 {
+	glColor3f( 0, 0, 0 );
 	glRasterPos2f( pos.x, pos.y );
 	va_list args;
 	va_start( args, fmt );
@@ -270,7 +271,7 @@ void SimpleGL::BuildFont()					// Build Our Bitmap Font
 
 	font_base = glGenLists( 96 );					// Storage For 96 Characters ( NEW )
 	font = shim::CreateFontW(
-		-10/*-12*/, // Height Of Font
+		-16/*-12*/, // Height Of Font
 		0, // Width Of Font
 		0, // Angle Of Escapement
 		0, // Orientation Angle

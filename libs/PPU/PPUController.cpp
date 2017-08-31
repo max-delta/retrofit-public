@@ -314,7 +314,7 @@ void PPUController::Render() const
 
 	// HACK: Draw grid
 	// TODO: Configurable
-	constexpr bool drawGrid = true;
+	constexpr bool drawGrid = false;
 	if( drawGrid )
 	{
 		for( PPUCoordElem horizontal = 0; horizontal <= m_Width; horizontal += k_TileSize )
