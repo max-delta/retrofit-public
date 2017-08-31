@@ -11,6 +11,8 @@ class Vector2 final
 	static_assert( std::is_signed<T>::value, "Vector2 must be signed" );
 	static_assert( std::is_arithmetic<T>::value, "Vector2 must support arithmetic operations" );
 public:
+	typedef T ElementType;
+public:
 	Vector2();
 	Vector2( T x, T y );
 	T x;
