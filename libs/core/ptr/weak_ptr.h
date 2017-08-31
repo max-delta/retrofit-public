@@ -88,6 +88,11 @@ public:
 		return *this;
 	}
 
+	T * Get() const
+	{
+		return (T*)( *this );
+	}
+
 	operator T *() const
 	{
 		return GetTargetAsWeak();
