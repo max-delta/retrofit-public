@@ -1,13 +1,28 @@
 #include "stdafx.h"
 
 #include "PlatformUtils_win32/windowing.h"
+#include "PlatformInput_win32/WndProcInputDevice.h"
 #include "SimpleGL/SimpleGL.h"
 
 #include "core_platform/windows_inc.h"
+#include "core/ptr/unique_ptr.h"
+#include "core/macros.h"
+
+RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+
+
 
 // Window Procedure
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam )
 {
+	bool inputIntercepted = false;
+	shim::LRESULT inputResult = 0;
+	RF::input::WndProcInputDevice* const inputDevice = g_WndProcInput;
+	if( inputDevice != nullptr )
+	{
+		inputResult = inputDevice->ExamineTranslatedMessage( hWnd, message, wParam, lParam, inputIntercepted );
+	}
+
 	switch( message )
 	{
 		case WM_CREATE: // lParam: CREATESTRUCT*
@@ -75,6 +90,10 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 		default: // Parameters vary
 				 // We really don't care what just happened, Windows can fuck with it
 				 // to its heart's desire.
+			if( inputIntercepted )
+			{
+				return inputResult;
+			}
 			return shim::DefWindowProcW( hWnd, message, wParam, lParam );
 	}
 }

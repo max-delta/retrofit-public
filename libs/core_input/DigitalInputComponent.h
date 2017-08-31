@@ -10,7 +10,7 @@ namespace RF { namespace input {
 template<typename EventType>
 struct EventParser
 {
-	virtual void OnEvent( EventType const& event ) const = 0;
+	virtual void OnEvent( EventType const& event ) = 0;
 };
 
 template<typename EventType, typename Container>
@@ -22,12 +22,12 @@ struct BufferCopyEventParser : public EventParser<EventType>
 		//
 	}
 
-	virtual void OnEvent( EventType const& event ) const
+	virtual void OnEvent( EventType const& event )
 	{
-		m_Inserter( event );
+		m_Inserter = event;
 	}
 
-	std::back_insert_iterator<Container> const m_Inserter;
+	std::back_insert_iterator<Container> m_Inserter;
 };
 
 
@@ -61,11 +61,21 @@ public:
 
 	struct PhysicalEvent
 	{
+		PhysicalEvent( PhysicalCode code, PinState state )
+			: m_Code( code )
+			, m_NewState( state )
+		{
+		}
 		PhysicalCode m_Code;
 		PinState m_NewState;
 	};
 	struct LogicalEvent
 	{
+		LogicalEvent( LogicalCode code, PinState state )
+			: m_Code( code )
+			, m_NewState( state )
+		{
+		}
 		LogicalCode m_Code;
 		PinState m_NewState;
 	};
