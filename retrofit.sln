@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rftl", "libs\rftl\rftl.vcxp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlatformInput_win32", "libs\PlatformInput_win32\PlatformInput_win32.vcxproj", "{10894604-ED30-4E76-803A-8DE0FEE2E470}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlatformFilesystem", "libs\PlatformFilesystem\PlatformFilesystem.vcxproj", "{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -151,6 +153,14 @@ Global
 		{10894604-ED30-4E76-803A-8DE0FEE2E470}.Release|x64.Build.0 = Release|x64
 		{10894604-ED30-4E76-803A-8DE0FEE2E470}.Release|x86.ActiveCfg = Release|Win32
 		{10894604-ED30-4E76-803A-8DE0FEE2E470}.Release|x86.Build.0 = Release|Win32
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Debug|x64.ActiveCfg = Debug|x64
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Debug|x64.Build.0 = Debug|x64
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Debug|x86.ActiveCfg = Debug|Win32
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Debug|x86.Build.0 = Debug|Win32
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Release|x64.ActiveCfg = Release|x64
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Release|x64.Build.0 = Release|x64
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Release|x86.ActiveCfg = Release|Win32
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,5 +181,6 @@ Global
 		{CF0B2C7F-AD84-4337-BE90-0471E51B180C} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
 		{D27C937A-7856-4C13-BBE5-895766D01E1F} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
 		{10894604-ED30-4E76-803A-8DE0FEE2E470} = {3EC23263-D4ED-4E38-995F-C0391F560049}
+		{A4A81E7C-EF84-4BEB-B7EF-404E3184D6AB} = {3EC23263-D4ED-4E38-995F-C0391F560049}
 	EndGlobalSection
 EndGlobal
