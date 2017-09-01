@@ -8,6 +8,8 @@
 .opendb$
 .VC.db$
 .vcxprojResolveAssemblyReference.cache$
+.db-shm$
+.db-wal$
 
 .log$
 .pch$
