@@ -1,0 +1,19 @@
+#pragma once
+#include "project.h"
+
+#include <filesystem>
+
+
+namespace RF { namespace file {
+///////////////////////////////////////////////////////////////////////////////
+
+class PLATFORMFILESYSTEM_API VFS
+{
+public:
+	VFS();
+
+	std::experimental::filesystem::v1::path a;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}}
