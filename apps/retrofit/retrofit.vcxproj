@@ -41,6 +41,9 @@
     <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
       <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
+      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
       <Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
     </ProjectReference>
