@@ -7,6 +7,7 @@
 
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
+#include "PlatformFilesystem/VFS.h"
 #include "SimpleGL/SimpleGL.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -25,6 +26,15 @@ extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 int main()
 {
 	using namespace RF;
+
+	UniquePtr<file::VFS> vfs = DefaultCreator<file::VFS>::Create();
+	bool const vfsInitialized = vfs->AttemptInitialMount( "../../config/vfs_game.ini", "invalid" );
+	if( vfsInitialized == false )
+	{
+		RF_ASSERT_MSG( false, "Failed to startup VFS" );
+		return 1;
+	}
+	vfs->DebugDumpMountTable();
 
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();

@@ -1,0 +1,75 @@
+#pragma once
+#include "project.h"
+
+#include <string>
+#include <vector>
+
+
+namespace RF { namespace file {
+///////////////////////////////////////////////////////////////////////////////
+
+class PLATFORMFILESYSTEM_API VFSPath
+{
+	//
+	// Friends
+private:
+	friend class VFS;
+
+
+	//
+	// Types
+public:
+	typedef std::string Element;
+private:
+	typedef std::vector<Element> ElementList;
+
+
+	//
+	// Public methods
+public:
+	VFSPath();
+	template<typename...Nodes>
+	VFSPath( Element element, Nodes...elements );
+
+	// Create new path relative to this path
+	VFSPath GetParent() const;
+	VFSPath GetChild( VFSPath const& path ) const;
+	VFSPath GetChild( Element const& element ) const;
+	template<typename ...PathsOrElements>
+	VFSPath GetChild( PathsOrElements ...pathsOrElements ) const;
+
+	// Modify this path
+	VFSPath& GoUp();
+	VFSPath& GoUp( size_t count );
+	VFSPath& Append( VFSPath const& path );
+	VFSPath& Append( Element const& element );
+	template<typename ...PathsOrElements>
+	VFSPath& Append( PathsOrElements ...pathsOrElements );
+
+	// Compare and access
+	bool IsDescendantOf( VFSPath const& closerToRoot ) const;
+	bool IsImmediateDescendantOf( VFSPath const& immediateParent ) const;
+	size_t NumElements() const;
+	Element const& GetElement( size_t index ) const;
+
+
+	//
+	// Private methods
+private:
+	VFSPath& AppendUnroll();
+	VFSPath& AppendUnroll( VFSPath const& path );
+	VFSPath& AppendUnroll( Element const& element );
+	template<typename PathOrElement1, typename PathOrElement2, typename...PathsOrElements>
+	VFSPath& AppendUnroll( PathOrElement1 pathOrElement1, PathOrElement2 pathOrElement2, PathsOrElements...pathsOrElements );
+
+
+	//
+	// Private data
+private:
+	ElementList m_ElementList;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}}
+
+#include "VFSPath.inl"
