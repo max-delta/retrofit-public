@@ -4,11 +4,15 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "SimpleGL/SimpleGL.h"
 
+#include "PPU/PPUController.h"
+
 #include "core_platform/windows_inc.h"
+#include "core_math/math_casts.h"
 #include "core/ptr/unique_ptr.h"
 #include "core/macros.h"
 
 RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 
 
 
@@ -51,22 +55,16 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 
 		case WM_SIZE: // wParam: Sizing type | lParam(LO): width | lParam(HI): height
 		{
-			// LEGACY: Don't do this anymore! 
-			// The size of the window has changed. Since we have certain
-			// requirements as to how the game must be displayed, we will try to
-			// guess the user's intentions and resize the window accordingly.
-			//			int width = LOWORD( lParam );
-			//			int height = HIWORD( lParam );
-			//			float width_scale = float( width ) / float( 640 );
-			//			float height_scale = float( height ) / float( 480 );
-			//			float average_scale = ( ( width_scale - height_scale ) / 2.0f ) + height_scale;
-			//			graphics.scale = int( average_scale );
-			//			SetWindowPos( hWnd, NULL, 0, 0,
-			//				graphics.screen_width*graphics.scale + GetSystemMetrics( SM_CXFRAME ) * 2,
-			//				graphics.screen_height*graphics.scale + GetSystemMetrics( SM_CYFRAME ) * 2 + GetSystemMetrics( SM_CYCAPTION ),
-			//				SWP_NOMOVE );
-			//			graphics.SetupOpenGL(); // OpenGL must be re-initialized with the
-			//									 // new size data.
+			// The size of the window has changed, let graphics know
+			if( g_Graphics != nullptr )
+			{
+				win32::RECT rect;
+				bool success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
+				RF_ASSERT( success );
+				g_Graphics->ResizeSurface(
+					RF::math::integer_cast<uint16_t>( rect.right ),
+					RF::math::integer_cast<uint16_t>( rect.bottom ) );
+			}
 		}
 		return 0;
 

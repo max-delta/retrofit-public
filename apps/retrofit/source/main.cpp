@@ -22,37 +22,40 @@
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
 extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 
+// Global systems
+RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
+RF::UniquePtr<RF::file::VFS> g_Vfs;
 
 
 int main()
 {
 	using namespace RF;
 
-	UniquePtr<file::VFS> vfs = DefaultCreator<file::VFS>::Create();
-	bool const vfsInitialized = vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
+	g_Vfs = DefaultCreator<file::VFS>::Create();
+	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
 	{
 		RF_ASSERT_MSG( false, "Failed to startup VFS" );
 		return 1;
 	}
-	vfs->DebugDumpMountTable();
+	g_Vfs->DebugDumpMountTable();
 
 	{
-		file::FileHandlePtr testFile = vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+		file::FileHandlePtr testFile = g_Vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
 	}
 	{
-		file::FileHandlePtr testFile = vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+		file::FileHandlePtr testFile = g_Vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
 	}
 
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
-	UniquePtr<gfx::PPUController> graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
-	graphics->Initialize( 640, 480 );
+	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
+	g_Graphics->Initialize( 640, 480 );
 
-	WeakPtr<gfx::TextureManager> texMan = graphics->DebugGetTextureManager();
-	WeakPtr<gfx::FramePackManager> framePackMan = graphics->DebugGetFramePackManager();
+	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
+	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
 
 	g_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 
@@ -73,13 +76,13 @@ int main()
 	gfx::Object testObj = {};
 	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", std::move( testFramePack ) );
 	testObj.m_TimeSlowdown = 10;
-	testObj.m_XCoord = 0;
-	testObj.m_YCoord = 0;
+	testObj.m_XCoord = gfx::k_TileSize * 2;
+	testObj.m_YCoord = gfx::k_TileSize * 1;
 	testObj.m_ZLayer = 0;
 
 	while( platform::windowing::ProcessAllMessages() >= 0 )
 	{
-		graphics->BeginFrame();
+		g_Graphics->BeginFrame();
 		{
 			g_WndProcInput->OnTick();
 
@@ -105,7 +108,7 @@ int main()
 				std::u16string textStream;
 				std::string halfAsciid;
 
-				graphics->DebugDrawText( coord, "Input" );
+				g_Graphics->DebugDrawText( coord, "Input" );
 				coord.y += offset;
 
 				logicEvents.clear();
@@ -118,7 +121,7 @@ int main()
 						(int)event.m_Code <<
 						( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 				}
-				graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+				g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
 				coord.y += offset;
 
 				physicEvents.clear();
@@ -131,14 +134,14 @@ int main()
 						(int)event.m_Code <<
 						( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 				}
-				graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+				g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
 				coord.y += offset;
 
 				signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-				graphics->DebugDrawText( coord, "  cax: %f", signalValue );
+				g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
 				coord.y += offset;
 				signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-				graphics->DebugDrawText( coord, "  cay: %f", signalValue );
+				g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
 				coord.y += offset;
 
 				g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
@@ -154,24 +157,24 @@ int main()
 						halfAsciid.push_back( '#' );
 					}
 				}
-				graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+				g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
 				coord.y += offset;
 			}
 
 			constexpr bool drawTest = true;
 			if( drawTest )
 			{
-				graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+				g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
 				testObj.Animate();
-				graphics->DrawObject( testObj );
-				graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+				g_Graphics->DrawObject( testObj );
+				g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
 			}
 
-			graphics->SubmitToRender();
-			graphics->WaitForRender();
+			g_Graphics->SubmitToRender();
+			g_Graphics->WaitForRender();
 		}
-		graphics->EndFrame();
+		g_Graphics->EndFrame();
 	}
-	graphics = nullptr;
+	g_Graphics = nullptr;
 	return 0;
 }
