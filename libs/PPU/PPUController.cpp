@@ -7,7 +7,8 @@
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 
-#include "core_math/math_casts.inl"
+#include "core_math/math_casts.h"
+#include "core_math/math_clamps.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -69,13 +70,15 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	{
 		return false;
 	}
-	success = m_DeviceInterface->SetSurfaceSize( width, height );
+	success = m_DeviceInterface->SetBackgroundColor( 1, 0, 1, 1 );
 	RF_ASSERT( success );
 	if( success == false )
 	{
 		return false;
 	}
-	success = m_DeviceInterface->SetBackgroundColor( 1, 0, 1, 1 );
+
+	// Set initial size
+	success = ResizeSurface( width, height );
 	RF_ASSERT( success );
 	if( success == false )
 	{
@@ -95,6 +98,21 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	// HACK: Throw a texture in
 	m_TextureManager->LoadNewTexture( "Placeholder", "../../data/textures/common/max_delta_32.png" );
 
+	return true;
+}
+
+
+
+bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
+{
+	m_Width = width;
+	m_Height = height;
+	bool const success = m_DeviceInterface->SetSurfaceSize( width, height );
+	RF_ASSERT( success );
+	if( success == false )
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -314,7 +332,7 @@ void PPUController::Render() const
 
 	// HACK: Draw grid
 	// TODO: Configurable
-	constexpr bool drawGrid = false;
+	constexpr bool drawGrid = true;
 	if( drawGrid )
 	{
 		for( PPUCoordElem horizontal = 0; horizontal <= m_Width; horizontal += k_TileSize )
@@ -363,6 +381,17 @@ void PPUController::Render() const
 
 
 
+uint8_t PPUController::GetZoomFactor() const
+{
+	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
+	uint16_t const approximateDiagonalTiles = smallestDimenssion / k_TileSize;
+	constexpr uint8_t desiredDiagonalTiles = 7;
+	uint8_t const zoomFactor = math::Max( 1, approximateDiagonalTiles / desiredDiagonalTiles );
+	return zoomFactor;
+}
+
+
+
 math::Vector2f PPUController::CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const
 {
 	return CoordToDevice( PPUCoord( xCoord, yCoord ) );
@@ -372,20 +401,24 @@ math::Vector2f PPUController::CoordToDevice( PPUCoordElem xCoord, PPUCoordElem y
 
 math::Vector2f PPUController::CoordToDevice( PPUCoord const & coord ) const
 {
-	// TODO: Windowing, scaling, etc
-	constexpr uint8_t zoomFactor = 1;
-	constexpr uint8_t diagonalTiles = 15;
+	// TODO: Windowing
+	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
+	uint8_t const zoomFactor = GetZoomFactor();
+	float const diagonalTiles = ( (float)smallestDimenssion ) / ( k_TileSize*zoomFactor );
 
 	// Baseline
+	// [0-64]
 	float x = coord.x;
 	float y = coord.y;
 
 	// Tiles
+	// [0-2]
 	float const coordToTiles = 1.f / k_TileSize;
 	x *= coordToTiles;
 	y *= coordToTiles;
 
 	// NDC, height only
+	// [0-2/15.3f]
 	float const tilesToPartialNDC = 1.f / diagonalTiles;
 	x *= tilesToPartialNDC;
 	y *= tilesToPartialNDC;
