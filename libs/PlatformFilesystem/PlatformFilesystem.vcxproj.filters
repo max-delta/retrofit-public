@@ -5,12 +5,16 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="VFS.h" />
     <ClInclude Include="VFSPath.h" />
+    <ClInclude Include="VFSMount.h" />
+    <ClInclude Include="FileHandle.h" />
+    <ClInclude Include="VFSFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="VFS.cpp" />
     <ClCompile Include="VFSPath.cpp" />
+    <ClCompile Include="FileHandle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="VFSPath.inl" />

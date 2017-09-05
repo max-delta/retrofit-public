@@ -1,17 +1,23 @@
 #include "stdafx.h"
 #include "VFS.h"
 
-#include "core_math/math_casts.h"
 #include "core/macros.h"
+#include "core/ptr/entwined_creator.h"
+#include "core_math/math_casts.h"
+
+#include "PlatformFilesystem/FileHandle.h"
 
 #include <stdio.h>
 #include <sstream>
+#include <experimental/filesystem>
 
 
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
 
 VFSPath const VFS::k_Root = VFSPath( "RF:" );
+VFSPath const VFS::k_Invalid = VFSPath( "INVALID:" );
+VFSPath const VFS::k_Empty = VFSPath();
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -22,13 +28,58 @@ VFS::VFS()
 
 
 
+FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
+{
+	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
+}
+
+
+
+FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
+{
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
+}
+
+
+
+FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
+{
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
+}
+
+
+
+FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
+{
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
+}
+
+
+
+FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
+{
+	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
+}
+
+
+
 bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string const & userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
 
+	std::string absoluteMountTableFilename = std::experimental::filesystem::v1::absolute( mountTableFile ).generic_string();
+	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteMountTableFilename ) );
+	m_MountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
+	m_ConfigDirectory = m_MountTableFile.GetParent();
+
+	std::string absoluteUserDirectory = std::experimental::filesystem::v1::absolute( userDirectory ).generic_string();
+	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteUserDirectory ) );
+	m_UserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
+
 	FILE* file;
-	errno_t openErr = fopen_s( &file, mountTableFile.c_str(), "r" );
+	std::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
+	errno_t openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 )
 	{
 		RF_ASSERT_MSG( false, "Failed to open mount table file" );
@@ -207,6 +258,13 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 
 void VFS::DebugDumpMountTable() const
 {
+	printf(
+		"Config: \"%s\"\n",
+		CreateStringFromPath( m_ConfigDirectory ).c_str() );
+	printf(
+		"User: \"%s\"\n",
+		CreateStringFromPath( m_UserDirectory ).c_str() );
+
 	for( VFSMount const& mountRule : m_MountTable )
 	{
 		char const* type = nullptr;
@@ -241,13 +299,11 @@ void VFS::DebugDumpMountTable() const
 				permissions = "INVALID";
 				break;
 		}
-		VFSPath virtualMountPoint = k_Root;
-		virtualMountPoint.Append( mountRule.m_VirtualPath );
 		printf(
 			"%s %s \"%s\" \"%s\"\n",
 			type,
 			permissions,
-			CreateStringFromPath( virtualMountPoint ).c_str(),
+			CreateStringFromPath( mountRule.m_VirtualPath ).c_str(),
 			CreateStringFromPath( mountRule.m_RealMount ).c_str() );
 	}
 }
@@ -299,6 +355,40 @@ std::string VFS::CreateStringFromPath( VFSPath const & path )
 	}
 
 	return ss.str();
+}
+
+
+
+VFSPath VFS::CollapsePath( VFSPath const & path )
+{
+	VFSPath retVal;
+	for( VFSPath::Element const& element : path )
+	{
+		// Ascencion
+		if( element == k_PathAscensionElement )
+		{
+			if( retVal.NumElements() == 0 )
+			{
+				RF_ASSERT_MSG( false, "Excessive ascencions found during collapse" );
+				return k_Invalid.GetChild( path );
+			}
+
+			retVal.GoUp();
+			continue;
+		}
+
+		// Current
+		if( element == k_PathCurrentElement )
+		{
+			// Do nothing
+			continue;
+		}
+
+		// Descension
+		retVal.Append( element );
+	}
+
+	return retVal;
 }
 
 
@@ -360,7 +450,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 
 	// Virtual
 	std::string virtualVal = virtualPoint.substr( prefixLen, virtualPoint.size() - affixesLen );
-	retVal.m_VirtualPath = CreatePathFromString( virtualVal );
+	retVal.m_VirtualPath = k_Root.GetChild( CreatePathFromString( virtualVal ) );
 	size_t const numVirtualElements = retVal.m_VirtualPath.NumElements();
 	for( size_t i = 0; i < numVirtualElements; i++ )
 	{
@@ -447,6 +537,116 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 
 	return retVal;
+}
+
+
+
+FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissions const & permissions, char const * openFlags, bool mustExist ) const
+{
+	// Collapse path first, make sure they aren't trying to trivially jump out
+	//  of mount point, also clean it up so we can find the virtual mount point
+	// NOTE: Not actually secure, don't assume this is even remotely a chroot
+	VFSPath path = CollapsePath( uncollapsedPath );
+	if( path.IsDescendantOf( k_Root ) == false )
+	{
+		RF_ASSERT_MSG( false, "Virtual path doesn't descend from root" );
+		return nullptr;
+	}
+
+	// Evaluate each mount point in order
+	for( VFSMount const& mount : m_MountTable )
+	{
+		if( ( (int)mount.m_Permissions & (int)permissions ) != (int)permissions )
+		{
+			// Missing some permissions
+			continue;
+		}
+
+		if( path.IsDescendantOf( mount.m_VirtualPath ) == false )
+		{
+			// Not under this mount point
+			continue;
+		}
+
+		// Where is this actually going to end up?
+		std::string finalFilename;
+		{
+			VFSPath physTarget = k_Invalid;
+
+			// The root is the base
+			VFSPath const* physRoot;
+			switch( mount.m_Type )
+			{
+				case VFSMount::Type::Absolute:
+					physRoot = &k_Empty;
+					break;
+				case VFSMount::Type::ConfigRelative:
+					physRoot = &m_ConfigDirectory;
+					break;
+				case VFSMount::Type::UserRelative:
+					physRoot = &m_UserDirectory;
+					break;
+				default:
+					RF_ASSERT_MSG( false, "Unhandled mount type" );
+					return nullptr;
+			}
+			VFSPath branchRoot = physRoot->GetChild( mount.m_RealMount );
+
+			// The branch from the virtual point is the append
+			bool isBranch = false;
+			VFSPath pathAsBranch = path.GetAsBranchOf( mount.m_VirtualPath, isBranch );
+			RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
+
+			// Final collapse and serialize
+			physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
+			RF_ASSERT_MSG( physTarget.IsDescendantOf( k_Invalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
+			finalFilename = CreateStringFromPath( physTarget );
+		}
+
+		if( mustExist )
+		{
+			bool const exists = std::experimental::filesystem::v1::exists( finalFilename );
+			if( exists == false )
+			{
+				// Not here, maybe it's in an overlapping mount point
+				continue;
+			}
+		}
+
+		// Locked to this mount layer, let's see what happens!
+		FILE* file = nullptr;
+		errno_t openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
+		if( file == nullptr )
+		{
+			// Tough luck, no easy way to tell what went wrong
+			if( mustExist )
+			{
+				RF_ASSERT_MSG( false, "Failed to open file that was reported to exist" );
+			}
+			else
+			{
+				bool const parentExists
+					= std::experimental::filesystem::v1::exists(
+						CreateStringFromPath(
+							CreatePathFromString( finalFilename ).GetParent() ) );
+				if( parentExists == false )
+				{
+					RF_ASSERT_MSG( false, "Failed to open file, perhaps parent is missing?" );
+				}
+				else
+				{
+					RF_ASSERT_MSG( false, "Failed to open file that was supposed to be flagged with creation" );
+				}
+			}
+			return nullptr;
+		}
+
+		// Sweet! Got it
+		return EntwinedCreator<FileHandle>::Create( file );
+	}
+
+	// Couldn't find
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

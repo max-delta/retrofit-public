@@ -20,8 +20,10 @@ private:
 	// Types
 public:
 	typedef std::string Element;
+	typedef std::vector<Element>::const_iterator const_iterator;
 private:
 	typedef std::vector<Element> ElementList;
+	static_assert( std::is_same<ElementList::const_iterator, const_iterator>::value, "Public type differs" );
 
 
 	//
@@ -37,6 +39,7 @@ public:
 	VFSPath GetChild( Element const& element ) const;
 	template<typename ...PathsOrElements>
 	VFSPath GetChild( PathsOrElements ...pathsOrElements ) const;
+	VFSPath GetAsBranchOf( VFSPath const& parent, bool& isBranch ) const;
 
 	// Modify this path
 	VFSPath& GoUp();
@@ -51,6 +54,10 @@ public:
 	bool IsImmediateDescendantOf( VFSPath const& immediateParent ) const;
 	size_t NumElements() const;
 	Element const& GetElement( size_t index ) const;
+
+	// Range support
+	const_iterator begin() const;
+	const_iterator end() const;
 
 
 	//

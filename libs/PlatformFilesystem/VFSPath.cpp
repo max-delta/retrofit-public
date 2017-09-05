@@ -24,7 +24,7 @@ VFSPath VFSPath::GetParent() const
 
 VFSPath VFSPath::GetChild( VFSPath const& path ) const
 {
-	VFSPath retVal;
+	VFSPath retVal = *this;
 	return retVal.AppendUnroll( path );
 }
 
@@ -32,8 +32,31 @@ VFSPath VFSPath::GetChild( VFSPath const& path ) const
 
 VFSPath VFSPath::GetChild( Element const& element ) const
 {
-	VFSPath retVal;
+	VFSPath retVal = *this;
 	return retVal.AppendUnroll( element );
+}
+
+
+
+VFSPath VFSPath::GetAsBranchOf( VFSPath const & parent, bool & isBranch ) const
+{
+	if( IsDescendantOf( parent ) == false )
+	{
+		isBranch = false;
+		return *this;
+	}
+
+	// Descendant, trim off parent
+	VFSPath retVal;
+	size_t const parentNumElements = parent.NumElements();
+	size_t const numElements = m_ElementList.size();
+	RF_ASSERT( parentNumElements < numElements );
+	for( size_t i = parentNumElements; i < numElements; i++ )
+	{
+		retVal.Append( m_ElementList[i] );
+	}
+	isBranch = true;
+	return retVal;
 }
 
 
@@ -131,6 +154,20 @@ size_t VFSPath::NumElements() const
 VFSPath::Element const& VFSPath::GetElement( size_t index ) const
 {
 	return m_ElementList[index];
+}
+
+
+
+VFSPath::const_iterator VFSPath::begin() const
+{
+	return m_ElementList.cbegin();
+}
+
+
+
+VFSPath::const_iterator VFSPath::end() const
+{
+	return m_ElementList.cend();
 }
 
 
