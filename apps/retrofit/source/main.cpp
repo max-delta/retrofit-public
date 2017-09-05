@@ -8,6 +8,7 @@
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
+#include "PlatformFilesystem/FileHandle.h"
 #include "SimpleGL/SimpleGL.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -28,13 +29,20 @@ int main()
 	using namespace RF;
 
 	UniquePtr<file::VFS> vfs = DefaultCreator<file::VFS>::Create();
-	bool const vfsInitialized = vfs->AttemptInitialMount( "../../config/vfs_game.ini", "invalid" );
+	bool const vfsInitialized = vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
 	{
 		RF_ASSERT_MSG( false, "Failed to startup VFS" );
 		return 1;
 	}
 	vfs->DebugDumpMountTable();
+
+	{
+		file::FileHandlePtr testFile = vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+	}
+	{
+		file::FileHandlePtr testFile = vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+	}
 
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
