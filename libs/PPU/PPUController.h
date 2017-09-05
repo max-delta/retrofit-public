@@ -36,6 +36,7 @@ public:
 	~PPUController();
 
 	bool Initialize( uint16_t width, uint16_t height );
+	bool ResizeSurface( uint16_t width, uint16_t height );
 
 	bool BeginFrame();
 	bool SubmitToRender();
@@ -55,6 +56,8 @@ public:
 private:
 	void SignalRender( StateBufferID readyBuffer );
 	void Render() const;
+
+	uint8_t GetZoomFactor() const;
 
 	math::Vector2f CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const;
 	math::Vector2f CoordToDevice( PPUCoord const& coord ) const;
