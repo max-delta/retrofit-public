@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "PlatformFilesystem/VFSFwd.h"
 #include "PlatformFilesystem/VFSMount.h"
 
 
@@ -35,6 +36,8 @@ constexpr char k_MountTokenReadWrite[] = "rw";
 constexpr char k_MountTokenReadExecute[] = "rx";
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 class PLATFORMFILESYSTEM_API VFS
 {
 	//
@@ -48,6 +51,8 @@ private:
 	// Constants
 public:
 	static VFSPath const k_Root;
+	static VFSPath const k_Invalid;
+	static VFSPath const k_Empty;
 
 	static constexpr char k_PathDelimiter = '/';
 	static constexpr char k_PathAscensionElement[] = "..";
@@ -58,6 +63,12 @@ public:
 	// Public methods
 public:
 	VFS();
+
+	FileHandlePtr GetFileForRead( VFSPath const& path ) const; // Must exist, seek start
+	FileHandlePtr GetFileForWrite( VFSPath const& path ) const; // Will create, seek start
+	FileHandlePtr GetFileForModify( VFSPath const& path ) const; // Must exist, seek start
+	FileHandlePtr GetFileForAppend( VFSPath const& path ) const; // Will create, seek end
+	FileHandlePtr GetFileForExecute( VFSPath const& path ) const; // Must exist, seek start
 
 	// The mount table file contains the base rules for all VFS operations
 	// NOTE: Relative entries are relative to the location of the mount file
@@ -73,13 +84,16 @@ public:
 private:
 	static VFSPath CreatePathFromString( std::string const& path );
 	static std::string CreateStringFromPath( VFSPath const& path );
+	static VFSPath CollapsePath( VFSPath const& path );
 	VFSMount ProcessMountRule( std::string const& type, std::string const& permissions, std::string const& virtualPoint, std::string const& realPoint );
+	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
 
 
 	//
 	// Private data
 private:
 	VFSPath m_MountTableFile;
+	VFSPath m_ConfigDirectory;
 	VFSPath m_UserDirectory;
 	MountRules m_MountTable;
 };

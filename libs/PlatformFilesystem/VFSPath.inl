@@ -15,7 +15,7 @@ inline RF::file::VFSPath::VFSPath( Element element, Nodes ...elements )
 template<typename ...PathsOrElements>
 inline VFSPath RF::file::VFSPath::GetChild( PathsOrElements ...pathsOrElements ) const
 {
-	VFSPath retVal;
+	VFSPath retVal = *this;
 	return retVal.AppendUnroll( pathsOrElements... );
 }
 
