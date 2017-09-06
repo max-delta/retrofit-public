@@ -34,15 +34,19 @@ public:
 
 	uint8_t m_GFXModifier;
 	uint8_t m_TimeIndex;
+	uint8_t m_MaxTimeIndex;
 	TimeSlowdownRate m_TimeSlowdown; // 1=60, 2=30, 3=20, 4=15... MAX=pause
 	uint8_t m_SubTimeIndex;
 
+	bool m_Looping : 1;
 	bool m_Paused : 1;
 	bool m_HorizontalFlip : 1;
 	bool m_VerticalFlip : 1;
 	bool m_UseTransform : 1;
-	uint8_t reserved1 : 4;
+	uint8_t reserved1 : 3;
 	uint8_t reserved2 : 8;
+	uint8_t reserved3 : 8;
+	uint8_t reserved4 : 8;
 
 	float m_Transform[2][2];
 };
