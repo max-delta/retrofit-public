@@ -2,6 +2,7 @@
 #include "FramePack.h"
 
 #include "core_math/math_clamps.h"
+#include "core_math/math_casts.h"
 
 
 namespace RF { namespace gfx {
@@ -63,6 +64,27 @@ uint8_t FramePackBase::CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const
 	//  it's rolled over. We'll just calc the wrap, and re-run once to find
 	//  where it lies.
 	return CalculateTimeSlotFromTimeIndex( timeIndex % maxTimeIndex );
+}
+
+
+
+uint8_t FramePackBase::CalculateTimeIndexBoundary() const
+{
+	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );
+
+	uint8_t const* const timeSlotSustains = GetTimeSlotSustains();
+
+	uint64_t accumulator = 0;
+	for( uint8_t i = 0; i < m_NumTimeSlots; i++ )
+	{
+		// User may have put a 0 in, we will count that as a 1
+		uint8_t const timeSlotSustain = math::Max<uint8_t>( timeSlotSustains[i], 1 );
+
+		accumulator += timeSlotSustain;
+	}
+
+	RF_ASSERT_MSG( accumulator < std::numeric_limits<uint8_t>::max(), "Animation length exceeds max time value" );
+	return math::integer_cast<uint8_t>( accumulator );
 }
 
 
