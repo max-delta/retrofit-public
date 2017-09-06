@@ -13,10 +13,12 @@
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
+#include "core_time/clocks.h"
 
 #include "rftl/extension/static_array.h"
 
 #include <sstream>
+#include <thread>
 
 // Window Procedure in different file
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
@@ -61,8 +63,8 @@ int main()
 
 	// TODO: Cleanup
 	UniquePtr<gfx::FramePack_512> testFramePack = DefaultCreator<gfx::FramePack_512>::Create();
-	testFramePack->m_PreferredSlowdownRate = 10;
-	testFramePack->m_NumTimeSlots = 9;
+	testFramePack->m_PreferredSlowdownRate = 3;
+	testFramePack->m_NumTimeSlots = 10;
 	testFramePack->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "test0", "../../data/textures/common/test0_32.png" );
 	testFramePack->m_TimeSlots[1].m_TextureReference = texMan->LoadNewTextureGetID( "test1", "../../data/textures/common/test1_32.png" );
 	testFramePack->m_TimeSlots[2].m_TextureReference = texMan->LoadNewTextureGetID( "test2", "../../data/textures/common/test2_32.png" );
@@ -73,15 +75,43 @@ int main()
 	testFramePack->m_TimeSlots[7].m_TextureReference = texMan->LoadNewTextureGetID( "test7", "../../data/textures/common/test7_32.png" );
 	testFramePack->m_TimeSlots[8].m_TextureReference = texMan->LoadNewTextureGetID( "test8", "../../data/textures/common/test8_32.png" );
 	testFramePack->m_TimeSlots[9].m_TextureReference = texMan->LoadNewTextureGetID( "test9", "../../data/textures/common/test9_32.png" );
+	testFramePack->m_TimeSlotSustains[0] = 11;
+	testFramePack->m_TimeSlotSustains[1] = 11;
+	testFramePack->m_TimeSlotSustains[2] = 11;
+	testFramePack->m_TimeSlotSustains[3] = 11;
+	testFramePack->m_TimeSlotSustains[4] = 11;
+	testFramePack->m_TimeSlotSustains[5] = 11;
+	testFramePack->m_TimeSlotSustains[6] = 11;
+	testFramePack->m_TimeSlotSustains[7] = 11;
+	testFramePack->m_TimeSlotSustains[8] = 11;
+	testFramePack->m_TimeSlotSustains[9] = 11;
+	uint8_t const testAnimationLength = testFramePack->CalculateTimeIndexBoundary();
 	gfx::Object testObj = {};
 	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", std::move( testFramePack ) );
-	testObj.m_TimeSlowdown = 10;
+	testObj.m_MaxTimeIndex = testAnimationLength;
+	testObj.m_TimeSlowdown = 3;
+	testObj.m_Looping = true;
 	testObj.m_XCoord = gfx::k_TileSize * 2;
 	testObj.m_YCoord = gfx::k_TileSize * 1;
 	testObj.m_ZLayer = 0;
 
+	time::PerfClock::duration const desiredFrameTime = std::chrono::milliseconds( 33 );
+	time::PerfClock::time_point frameStart = time::PerfClock::now();
+	time::PerfClock::time_point frameEnd = time::PerfClock::now();
 	while( platform::windowing::ProcessAllMessages() >= 0 )
 	{
+		time::PerfClock::time_point const naturalFrameEnd = time::PerfClock::now();
+		time::PerfClock::duration const naturalFrameTime = naturalFrameEnd - frameStart;
+		if( naturalFrameTime < desiredFrameTime )
+		{
+			time::PerfClock::duration const timeRemaining = desiredFrameTime - naturalFrameTime;
+			std::this_thread::sleep_for( timeRemaining );
+		}
+		frameEnd = time::PerfClock::now();
+		time::PerfClock::duration const frameTime = frameEnd - frameStart;
+		time::FrameClock::add_time( frameTime );
+		frameStart = time::PerfClock::now();
+
 		g_Graphics->BeginFrame();
 		{
 			g_WndProcInput->OnTick();

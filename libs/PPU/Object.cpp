@@ -11,14 +11,24 @@ namespace RF { namespace gfx {
 
 void Object::Animate()
 {
-	// User may have put a 0 in, we will count that as a 1
-	TimeSlowdownRate const timeSlowdown = math::Max<TimeSlowdownRate>( m_TimeSlowdown, 1 );
-
 	if( m_Paused )
 	{
 		// Paused, don't animate
 		return;
 	}
+
+	if( m_Looping == false )
+	{
+		if( m_TimeIndex + 1 == m_MaxTimeIndex )
+		{
+			// Auto-pause on last frame
+			m_Paused = true;
+			return;
+		}
+	}
+
+	// User may have put a 0 in, we will count that as a 1
+	TimeSlowdownRate const timeSlowdown = math::Max<TimeSlowdownRate>( m_TimeSlowdown, 1 );
 
 	// If sub-time overcomes the slow-down, then increment real time
 	// NOTE: There's potential for tiny short-term timing bugs when slowdown
@@ -28,6 +38,12 @@ void Object::Animate()
 	if( m_SubTimeIndex == 0 )
 	{
 		m_TimeIndex++;
+	}
+
+	if( m_TimeIndex == m_MaxTimeIndex )
+	{
+		// Force rollover
+		m_TimeIndex = 0;
 	}
 }
 
