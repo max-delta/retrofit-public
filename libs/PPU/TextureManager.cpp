@@ -4,9 +4,6 @@
 #include "PPU/Texture.h"
 #include "PPU/DeviceInterface.h"
 
-//HACK
-#include <memory>
-
 #include "core/ptr/entwined_creator.h"
 #include "core/ptr/default_creator.h"
 
