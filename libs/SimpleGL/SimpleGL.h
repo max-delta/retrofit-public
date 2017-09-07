@@ -30,7 +30,7 @@ public:
 	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
 	bool SetBackgroundColor( float r, float g, float b, float a ) override;
 
-	DeviceTextureID LoadTexture( char const* filename ) override;
+	DeviceTextureID LoadTexture( char const* filename, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
 	bool glPrint( char const* fmt, ... );

@@ -101,7 +101,7 @@ WeakPtr<Texture> TextureManager::LoadNewTextureGetHandle( TextureName const & te
 	Texture* tex;
 	WeakPtr<Texture> retVal;
 	{
-		UniquePtr<Texture> newTexture = DefaultCreator<Texture>::Create();
+		UniquePtr<Texture> newTexture = EntwinedCreator<Texture>::Create();
 		retVal = newTexture;
 		tex = newTexture;
 		m_Textures.emplace( textureName, std::move( newTexture ) );
@@ -160,7 +160,7 @@ bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename 
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation == k_InvalidDeviceTextureID );
-	texture.m_DeviceRepresentation = m_DeviceInterface->LoadTexture( filename.c_str() );
+	texture.m_DeviceRepresentation = m_DeviceInterface->LoadTexture( filename.c_str(), texture.m_WidthPostLoad, texture.m_HeightPostLoad );
 	texture.UpdateFrameUsage();
 	return true;
 }

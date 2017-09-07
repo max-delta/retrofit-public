@@ -94,6 +94,29 @@ int main()
 	testObj.m_XCoord = gfx::k_TileSize * 2;
 	testObj.m_YCoord = gfx::k_TileSize * 1;
 	testObj.m_ZLayer = 0;
+	UniquePtr<gfx::FramePack_256> testFramePack2 = DefaultCreator<gfx::FramePack_256>::Create();
+	testFramePack2->m_PreferredSlowdownRate = 33 / 4;
+	testFramePack2->m_NumTimeSlots = 4;
+	testFramePack2->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "testx_64", "../../data/textures/common/testx_64.png" );
+	testFramePack2->m_TimeSlots[1].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
+	testFramePack2->m_TimeSlots[2].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
+	testFramePack2->m_TimeSlots[3].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
+	testFramePack2->m_TimeSlots[0].m_TextureOriginX = 0;
+	testFramePack2->m_TimeSlots[0].m_TextureOriginY = 0;
+	testFramePack2->m_TimeSlots[1].m_TextureOriginX = 1;
+	testFramePack2->m_TimeSlots[1].m_TextureOriginY = 0;
+	testFramePack2->m_TimeSlots[2].m_TextureOriginX = 1;
+	testFramePack2->m_TimeSlots[2].m_TextureOriginY = 1;
+	testFramePack2->m_TimeSlots[3].m_TextureOriginX = 0;
+	testFramePack2->m_TimeSlots[3].m_TextureOriginY = 1;
+	gfx::Object testObj2 = {};
+	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", std::move( testFramePack2 ) );
+	testObj2.m_MaxTimeIndex = 4;
+	testObj2.m_TimeSlowdown = 33 / 4;
+	testObj2.m_Looping = true;;
+	testObj2.m_XCoord = gfx::k_TileSize * 4;
+	testObj2.m_YCoord = gfx::k_TileSize * 4;
+	testObj2.m_ZLayer = 0;
 
 	time::PerfClock::duration const desiredFrameTime = std::chrono::milliseconds( 33 );
 	time::PerfClock::time_point frameStart = time::PerfClock::now();
@@ -197,6 +220,8 @@ int main()
 				g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
 				testObj.Animate();
 				g_Graphics->DrawObject( testObj );
+				testObj2.Animate();
+				g_Graphics->DrawObject( testObj2 );
 				g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
 			}
 
