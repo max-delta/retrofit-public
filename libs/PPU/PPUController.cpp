@@ -317,15 +317,15 @@ void PPUController::Render() const
 		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.m_TimeIndex );
 		FramePackBase::TimeSlot const & timeSlot = framePack->GetTimeSlots()[slotIndex];
 
-		// TODO: All the obnoxious position calculations
-		timeSlot.m_TextureOriginX;
-		timeSlot.m_TextureOriginY;
-		math::Vector2f const topLeft = CoordToDevice( object.m_XCoord + 0, object.m_YCoord + 0 );
-		math::Vector2f const bottomRight = CoordToDevice( object.m_XCoord + k_TileSize, object.m_YCoord + k_TileSize );
-
 		Texture const* texture = m_TextureManager->GetDeviceTectureForRenderFromManagedTextureID( timeSlot.m_TextureReference );
 		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
 		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
+
+		// TODO: Transforms
+		PPUCoordElem const x = object.m_XCoord - timeSlot.m_TextureOriginX;
+		PPUCoordElem const y = object.m_YCoord - timeSlot.m_TextureOriginY;
+		math::Vector2f const topLeft = CoordToDevice( x, y );
+		math::Vector2f const bottomRight = CoordToDevice( x + texture->m_WidthPostLoad, y + texture->m_HeightPostLoad );
 
 		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
 	}

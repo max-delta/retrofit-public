@@ -34,6 +34,7 @@ public:
 	template<typename... U>
 	static CreationPayload<T> Create(U&&... args)
 	{
+		static_assert( sizeof( T ) + sizeof( PtrRef ) > 64, "Should use entwined creator instead" );
 		CreationPayload<T> retVal(
 			new T(std::forward<U>(args)...),
 			new PtrRef(&Delete, nullptr) );

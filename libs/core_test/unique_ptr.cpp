@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "core/ptr/unique_ptr.h"
-#include "core/ptr/default_creator.h"
+#include "core/ptr/entwined_creator.h"
 
 
 namespace RF {
@@ -41,7 +41,7 @@ TEST(UniquePtr, SoloLifecycle)
 {
 	// Normal
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+		UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(uptr != nullptr);
 		ASSERT_TRUE(*uptr == 47);
 		*uptr = 53;
@@ -50,7 +50,7 @@ TEST(UniquePtr, SoloLifecycle)
 
 	// Deferred create
 	{
-		auto creation = DefaultCreator<int>::Create(47);
+		auto creation = EntwinedCreator<int>::Create(47);
 		{
 			UniquePtr<int> uptr = std::move(creation);
 			ASSERT_TRUE(uptr != nullptr);
@@ -62,7 +62,7 @@ TEST(UniquePtr, SoloLifecycle)
 
 	// Pre-mature termination
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+		UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(uptr != nullptr);
 		uptr = nullptr;
 		ASSERT_TRUE(uptr == nullptr);
@@ -79,7 +79,7 @@ TEST(UniquePtr, WeakLifecycle)
 		WeakPtr<int> wptr;
 		ASSERT_TRUE(wptr == nullptr);
 		{
-			UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+			UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
 			wptr = uptr;
 			ASSERT_TRUE(wptr != nullptr);
 		}
@@ -88,7 +88,7 @@ TEST(UniquePtr, WeakLifecycle)
 
 	// Unique outlives
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+		UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(uptr != nullptr);
 		{
 			WeakPtr<int> wptr = uptr;
@@ -107,7 +107,7 @@ TEST(UniquePtr, Move)
 		UniquePtr<int> uptr2;
 		ASSERT_TRUE(uptr2 == nullptr);
 		{
-			UniquePtr<int> uptr1 = DefaultCreator<int>::Create(47);
+			UniquePtr<int> uptr1 = EntwinedCreator<int>::Create(47);
 			ASSERT_TRUE(uptr1 != nullptr);
 			ASSERT_TRUE(*uptr1 == 47);
 			uptr2 = std::move(uptr1);
@@ -136,7 +136,7 @@ TEST( UniquePtr, MoveDerived )
 
 	// Construct into move
 	{
-		UniquePtr<Derived> uptr1 = DefaultCreator<Derived>::Create();
+		UniquePtr<Derived> uptr1 = EntwinedCreator<Derived>::Create();
 		ASSERT_TRUE(uptr1 != nullptr);
 		UniquePtr<Base> uptr2( std::move( uptr1 ) );
 		ASSERT_TRUE(uptr1 == nullptr);
@@ -148,7 +148,7 @@ TEST( UniquePtr, MoveDerived )
 
 TEST( UniquePtr, MoveIntoTrash )
 {
-	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 5 );
+	UniquePtr<int> uptr1 = EntwinedCreator<int>::Create( 5 );
 	{
 		void* alloc = malloc( sizeof( UniquePtr<int> ) );
 		memset( alloc, 0xcc, sizeof( UniquePtr<int> ) );
@@ -167,7 +167,7 @@ TEST(UniquePtr, Arrow)
 		int test;
 	};
 
-	UniquePtr<Test> uptr = DefaultCreator<Test>::Create();
+	UniquePtr<Test> uptr = EntwinedCreator<Test>::Create();
 	( *uptr ).test = 9;
 	ASSERT_TRUE( ( *uptr ).test == 9 );
 	ASSERT_TRUE( uptr->test == 9 );
@@ -231,15 +231,15 @@ TEST(UniquePtr, CastToBase)
 	//wptr_u = uptr_d; // SHOULD FAIL
 	wptr_u = uptr_u;
 
-	uptr_b = DefaultCreator<Base>::Create();
-	uptr_b = DefaultCreator<Derived>::Create();
-	//uptr_b = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
-	//uptr_d = DefaultCreator<Base>::Create(); // SHOULD FAIL
-	uptr_d = DefaultCreator<Derived>::Create();
-	//uptr_d = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
-	//uptr_u = DefaultCreator<Base>::Create(); // SHOULD FAIL
-	//uptr_u = DefaultCreator<Derived>::Create(); // SHOULD FAIL
-	uptr_u = DefaultCreator<Unrelated>::Create();
+	uptr_b = EntwinedCreator<Base>::Create();
+	uptr_b = EntwinedCreator<Derived>::Create();
+	//uptr_b = EntwinedCreator<Unrelated>::Create(); // SHOULD FAIL
+	//uptr_d = EntwinedCreator<Base>::Create(); // SHOULD FAIL
+	uptr_d = EntwinedCreator<Derived>::Create();
+	//uptr_d = EntwinedCreator<Unrelated>::Create(); // SHOULD FAIL
+	//uptr_u = EntwinedCreator<Base>::Create(); // SHOULD FAIL
+	//uptr_u = EntwinedCreator<Derived>::Create(); // SHOULD FAIL
+	uptr_u = EntwinedCreator<Unrelated>::Create();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "core/ptr/shared_ptr.h"
-#include "core/ptr/default_creator.h"
+#include "core/ptr/entwined_creator.h"
 
 
 namespace RF {
@@ -41,7 +41,7 @@ TEST(SharedPtr, SoloLifecycle)
 {
 	// Normal
 	{
-		SharedPtr<int> sptr = DefaultCreator<int>::Create(47);
+		SharedPtr<int> sptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(sptr != nullptr);
 		ASSERT_TRUE(*sptr == 47);
 		*sptr = 53;
@@ -50,7 +50,7 @@ TEST(SharedPtr, SoloLifecycle)
 
 	// Deferred create
 	{
-		auto creation = DefaultCreator<int>::Create(47);
+		auto creation = EntwinedCreator<int>::Create(47);
 		{
 			SharedPtr<int> sptr = std::move(creation);
 			ASSERT_TRUE(sptr != nullptr);
@@ -62,7 +62,7 @@ TEST(SharedPtr, SoloLifecycle)
 
 	// Pre-mature termination
 	{
-		SharedPtr<int> sptr = DefaultCreator<int>::Create(47);
+		SharedPtr<int> sptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(sptr != nullptr);
 		sptr = nullptr;
 		ASSERT_TRUE(sptr == nullptr);
@@ -79,7 +79,7 @@ TEST(SharedPtr, WeakLifecycle)
 		WeakPtr<int> wptr;
 		ASSERT_TRUE(wptr == nullptr);
 		{
-			SharedPtr<int> sptr = DefaultCreator<int>::Create(47);
+			SharedPtr<int> sptr = EntwinedCreator<int>::Create(47);
 			wptr = sptr;
 			ASSERT_TRUE(wptr != nullptr);
 		}
@@ -88,7 +88,7 @@ TEST(SharedPtr, WeakLifecycle)
 
 	// Shared outlives
 	{
-		SharedPtr<int> sptr = DefaultCreator<int>::Create(47);
+		SharedPtr<int> sptr = EntwinedCreator<int>::Create(47);
 		ASSERT_TRUE(sptr != nullptr);
 		{
 			WeakPtr<int> wptr = sptr;
@@ -107,7 +107,7 @@ TEST(SharedPtr, Move)
 		SharedPtr<int> sptr2;
 		ASSERT_TRUE(sptr2 == nullptr);
 		{
-			SharedPtr<int> sptr1 = DefaultCreator<int>::Create(47);
+			SharedPtr<int> sptr1 = EntwinedCreator<int>::Create(47);
 			ASSERT_TRUE(sptr1 != nullptr);
 			ASSERT_TRUE(*sptr1 == 47);
 			sptr2 = std::move(sptr1);
@@ -136,7 +136,7 @@ TEST( SharedPtr, MoveDerived )
 
 	// Construct into move
 	{
-		SharedPtr<Derived> sptr1 = DefaultCreator<Derived>::Create();
+		SharedPtr<Derived> sptr1 = EntwinedCreator<Derived>::Create();
 		ASSERT_TRUE(sptr1 != nullptr);
 		SharedPtr<Base> sptr2( std::move( sptr1 ) );
 		ASSERT_TRUE(sptr1 == nullptr);
@@ -148,7 +148,7 @@ TEST( SharedPtr, MoveDerived )
 
 TEST( SharedPtr, MoveIntoTrash )
 {
-	SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 5 );
+	SharedPtr<int> sptr1 = EntwinedCreator<int>::Create( 5 );
 	{
 		void* alloc = malloc( sizeof( SharedPtr<int> ) );
 		memset( alloc, 0xcc, sizeof( SharedPtr<int> ) );
@@ -167,7 +167,7 @@ TEST(SharedPtr, Copy)
 		SharedPtr<int> sptr2;
 		ASSERT_TRUE(sptr2 == nullptr);
 		{
-			SharedPtr<int> sptr1 = DefaultCreator<int>::Create(47);
+			SharedPtr<int> sptr1 = EntwinedCreator<int>::Create(47);
 			ASSERT_TRUE(sptr1 != nullptr);
 			ASSERT_TRUE(*sptr1 == 47);
 			sptr2 = sptr1;
@@ -190,7 +190,7 @@ TEST(SharedPtr, Arrow)
 		int test;
 	};
 
-	SharedPtr<Test> sptr = DefaultCreator<Test>::Create();
+	SharedPtr<Test> sptr = EntwinedCreator<Test>::Create();
 	WeakPtr<Test> wptr = sptr;
 	( *sptr ).test = 9;
 	ASSERT_TRUE( ( *sptr ).test == 9 );
@@ -268,15 +268,15 @@ TEST(SharedPtr, CastToBase)
 	//wptr_u = sptr_d; // SHOULD FAIL
 	wptr_u = sptr_u;
 
-	sptr_b = DefaultCreator<Base>::Create();
-	sptr_b = DefaultCreator<Derived>::Create();
-	//sptr_b = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
-	//sptr_d = DefaultCreator<Base>::Create(); // SHOULD FAIL
-	sptr_d = DefaultCreator<Derived>::Create();
-	//sptr_d = DefaultCreator<Unrelated>::Create(); // SHOULD FAIL
-	//sptr_u = DefaultCreator<Base>::Create(); // SHOULD FAIL
-	//sptr_u = DefaultCreator<Derived>::Create(); // SHOULD FAIL
-	sptr_u = DefaultCreator<Unrelated>::Create();
+	sptr_b = EntwinedCreator<Base>::Create();
+	sptr_b = EntwinedCreator<Derived>::Create();
+	//sptr_b = EntwinedCreator<Unrelated>::Create(); // SHOULD FAIL
+	//sptr_d = EntwinedCreator<Base>::Create(); // SHOULD FAIL
+	sptr_d = EntwinedCreator<Derived>::Create();
+	//sptr_d = EntwinedCreator<Unrelated>::Create(); // SHOULD FAIL
+	//sptr_u = EntwinedCreator<Base>::Create(); // SHOULD FAIL
+	//sptr_u = EntwinedCreator<Derived>::Create(); // SHOULD FAIL
+	sptr_u = EntwinedCreator<Unrelated>::Create();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

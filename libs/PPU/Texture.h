@@ -12,6 +12,9 @@ namespace RF { namespace gfx {
 class PPU_API Texture
 {
 	RF_NO_COPY(Texture);
+private:
+	friend class PPUController;
+
 public:
 	Texture();
 	Texture( Texture && ) = default;
@@ -25,6 +28,8 @@ private:
 	static FrameID s_MostRecentFrame;
 	mutable FrameID m_LastUsedInFrame;
 	DeviceTextureID m_DeviceRepresentation;
+	uint32_t m_WidthPostLoad;
+	uint32_t m_HeightPostLoad;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

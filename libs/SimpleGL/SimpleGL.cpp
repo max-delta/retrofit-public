@@ -2,6 +2,7 @@
 #include "SimpleGL.h"
 
 #include "core/macros.h"
+#include "core_math/math_casts.h"
 
 #include "core_platform/gdi_shim.h"
 #include "core_platform/gl_inc.h"
@@ -151,7 +152,7 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
-DeviceTextureID SimpleGL::LoadTexture( char const* filename )
+DeviceTextureID SimpleGL::LoadTexture( char const* filename, uint32_t& width, uint32_t& height )
 {
 	int x, y, n;
 	unsigned char* data = stbi_load( filename, &x, &y, &n, 4 );
@@ -160,6 +161,9 @@ DeviceTextureID SimpleGL::LoadTexture( char const* filename )
 	{
 		return 0;
 	}
+
+	width = math::integer_cast<uint32_t>( x );
+	height = math::integer_cast<uint32_t>( y );
 
 	unsigned int retVal = 0;
 	glGenTextures( 1, &retVal );
