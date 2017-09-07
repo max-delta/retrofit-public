@@ -29,19 +29,13 @@ RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
 
 
-int main()
+RF::gfx::Object testObj = {};
+RF::gfx::Object testObj2 = {};
+void InitDrawTest()
 {
 	using namespace RF;
 
-	g_Vfs = DefaultCreator<file::VFS>::Create();
-	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
-	if( vfsInitialized == false )
-	{
-		RF_ASSERT_MSG( false, "Failed to startup VFS" );
-		return 1;
-	}
 	g_Vfs->DebugDumpMountTable();
-
 	{
 		file::FileHandlePtr testFile = g_Vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
 	}
@@ -49,17 +43,8 @@ int main()
 		file::FileHandlePtr testFile = g_Vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
 	}
 
-	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
-	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
-	renderDevice->AttachToWindow( hwnd );
-
-	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
-	g_Graphics->Initialize( 640, 480 );
-
 	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
 	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
-
-	g_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 
 	// TODO: Cleanup
 	UniquePtr<gfx::FramePack_512> testFramePack = DefaultCreator<gfx::FramePack_512>::Create();
@@ -86,7 +71,6 @@ int main()
 	testFramePack->m_TimeSlotSustains[8] = 11;
 	testFramePack->m_TimeSlotSustains[9] = 11;
 	uint8_t const testAnimationLength = testFramePack->CalculateTimeIndexBoundary();
-	gfx::Object testObj = {};
 	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", std::move( testFramePack ) );
 	testObj.m_MaxTimeIndex = testAnimationLength;
 	testObj.m_TimeSlowdown = 3;
@@ -109,7 +93,6 @@ int main()
 	testFramePack2->m_TimeSlots[2].m_TextureOriginY = 1;
 	testFramePack2->m_TimeSlots[3].m_TextureOriginX = 0;
 	testFramePack2->m_TimeSlots[3].m_TextureOriginY = 1;
-	gfx::Object testObj2 = {};
 	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", std::move( testFramePack2 ) );
 	testObj2.m_MaxTimeIndex = 4;
 	testObj2.m_TimeSlowdown = 33 / 4;
@@ -117,6 +100,124 @@ int main()
 	testObj2.m_XCoord = gfx::k_TileSize * 4;
 	testObj2.m_YCoord = gfx::k_TileSize * 4;
 	testObj2.m_ZLayer = 0;
+}
+
+
+
+void DrawTest()
+{
+	using namespace RF;
+
+	g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+	testObj.Animate();
+	g_Graphics->DrawObject( testObj );
+	testObj2.Animate();
+	g_Graphics->DrawObject( testObj2 );
+	g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+}
+
+
+
+void DrawInputDebug()
+{
+	using namespace RF;
+
+	std::string buf;
+	gfx::PPUCoord coord( 32, 64 );
+	gfx::PPUCoord::ElementType const offset = 16;
+	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
+	typedef input::DigitalInputComponent::PhysicalEvent PhysicalEvent;
+	typedef rftl::static_array<LogicalEvent, 8> LogicEvents;
+	typedef rftl::static_array<PhysicalEvent, 8> PhysicEvents;
+	typedef input::BufferCopyEventParser<LogicalEvent, LogicEvents> LogicEventParser;
+	typedef input::BufferCopyEventParser<PhysicalEvent, PhysicEvents> PhysicEventParser;
+	LogicEvents logicEvents;
+	PhysicEvents physicEvents;
+	LogicEventParser logicEventParser( logicEvents );
+	PhysicEventParser physicEventParser( physicEvents );
+	std::stringstream logicStream;
+	std::stringstream physStream;
+	float signalValue;
+	std::u16string textStream;
+	std::string halfAsciid;
+
+	g_Graphics->DebugDrawText( coord, "Input" );
+	coord.y += offset;
+
+	logicEvents.clear();
+	g_WndProcInput->m_Digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+	logicStream.clear();
+	for( LogicEvents::value_type const& event : logicEvents )
+	{
+		logicStream <<
+			" " <<
+			(int)event.m_Code <<
+			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
+	}
+	g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+	coord.y += offset;
+
+	physicEvents.clear();
+	g_WndProcInput->m_Digital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
+	physStream.clear();
+	for( PhysicEvents::value_type const& event : physicEvents )
+	{
+		physStream <<
+			" " <<
+			(int)event.m_Code <<
+			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
+	}
+	g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+	coord.y += offset;
+
+	signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
+	g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
+	coord.y += offset;
+	signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
+	g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
+	coord.y += offset;
+
+	g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
+	halfAsciid.clear();
+	for( char16_t const& chr : textStream )
+	{
+		if( chr <= 127 )
+		{
+			halfAsciid.push_back( (char)chr );
+		}
+		else
+		{
+			halfAsciid.push_back( '#' );
+		}
+	}
+	g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+	coord.y += offset;
+}
+
+
+
+int main()
+{
+	using namespace RF;
+
+	g_Vfs = DefaultCreator<file::VFS>::Create();
+	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
+	if( vfsInitialized == false )
+	{
+		RF_ASSERT_MSG( false, "Failed to startup VFS" );
+		return 1;
+	}
+
+	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
+	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
+	renderDevice->AttachToWindow( hwnd );
+
+	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
+	g_Graphics->Initialize( 640, 480 );
+
+	g_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
+
+	InitDrawTest();
 
 	time::PerfClock::duration const desiredFrameTime = std::chrono::milliseconds( 33 );
 	time::PerfClock::time_point frameStart = time::PerfClock::now();
@@ -142,87 +243,13 @@ int main()
 			constexpr bool drawInputDebug = true;
 			if( drawInputDebug )
 			{
-				std::string buf;
-				gfx::PPUCoord coord( 32, 64 );
-				gfx::PPUCoord::ElementType const offset = 16;
-				typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
-				typedef input::DigitalInputComponent::PhysicalEvent PhysicalEvent;
-				typedef rftl::static_array<LogicalEvent, 8> LogicEvents;
-				typedef rftl::static_array<PhysicalEvent, 8> PhysicEvents;
-				typedef input::BufferCopyEventParser<LogicalEvent, LogicEvents> LogicEventParser;
-				typedef input::BufferCopyEventParser<PhysicalEvent, PhysicEvents> PhysicEventParser;
-				LogicEvents logicEvents;
-				PhysicEvents physicEvents;
-				LogicEventParser logicEventParser( logicEvents );
-				PhysicEventParser physicEventParser( physicEvents );
-				std::stringstream logicStream;
-				std::stringstream physStream;
-				float signalValue;
-				std::u16string textStream;
-				std::string halfAsciid;
-
-				g_Graphics->DebugDrawText( coord, "Input" );
-				coord.y += offset;
-
-				logicEvents.clear();
-				g_WndProcInput->m_Digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
-				logicStream.clear();
-				for( LogicEvents::value_type const& event : logicEvents )
-				{
-					logicStream <<
-						" " <<
-						(int)event.m_Code <<
-						( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
-				}
-				g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
-				coord.y += offset;
-
-				physicEvents.clear();
-				g_WndProcInput->m_Digital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
-				physStream.clear();
-				for( PhysicEvents::value_type const& event : physicEvents )
-				{
-					physStream <<
-						" " <<
-						(int)event.m_Code <<
-						( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
-				}
-				g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
-				coord.y += offset;
-
-				signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-				g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
-				coord.y += offset;
-				signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-				g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
-				coord.y += offset;
-
-				g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
-				halfAsciid.clear();
-				for( char16_t const& chr : textStream )
-				{
-					if( chr <= 127 )
-					{
-						halfAsciid.push_back( (char)chr );
-					}
-					else
-					{
-						halfAsciid.push_back( '#' );
-					}
-				}
-				g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
-				coord.y += offset;
+				DrawInputDebug();
 			}
 
 			constexpr bool drawTest = true;
 			if( drawTest )
 			{
-				g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
-				testObj.Animate();
-				g_Graphics->DrawObject( testObj );
-				testObj2.Animate();
-				g_Graphics->DrawObject( testObj2 );
-				g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+				DrawTest();
 			}
 
 			g_Graphics->SubmitToRender();
