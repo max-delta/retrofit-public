@@ -29,6 +29,7 @@ RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
 
 
+constexpr bool drawInputDebug = true;
 RF::gfx::Object testObj = {};
 RF::gfx::Object testObj2 = {};
 void InitDrawTest()
@@ -118,6 +119,7 @@ void DrawTest()
 
 
 
+constexpr bool drawTest = true;
 void DrawInputDebug()
 {
 	using namespace RF;
@@ -217,7 +219,10 @@ int main()
 
 	g_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 
-	InitDrawTest();
+	if( drawInputDebug )
+	{
+		InitDrawTest();
+	}
 
 	time::PerfClock::duration const desiredFrameTime = std::chrono::milliseconds( 33 );
 	time::PerfClock::time_point frameStart = time::PerfClock::now();
@@ -240,13 +245,11 @@ int main()
 		{
 			g_WndProcInput->OnTick();
 
-			constexpr bool drawInputDebug = true;
 			if( drawInputDebug )
 			{
 				DrawInputDebug();
 			}
 
-			constexpr bool drawTest = true;
 			if( drawTest )
 			{
 				DrawTest();
