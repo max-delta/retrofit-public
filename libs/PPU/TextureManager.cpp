@@ -16,7 +16,11 @@ namespace RF { namespace gfx {
 
 TextureManager::~TextureManager()
 {
-	RF_ASSERT_MSG( m_Textures.empty(), "TODO: Cleanup" );
+	while( m_Textures.empty() == false )
+	{
+		DestroyTexture( m_Textures.begin()->first );
+	}
+	RF_ASSERT( m_FileBackedTextures.empty() );
 }
 
 

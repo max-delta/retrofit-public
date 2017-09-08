@@ -37,7 +37,7 @@ public:
 	{
 		// Only one allocation, with the ref serving as the root, since it will
 		//  be the longest lived
-		static_assert( sizeof( T ) + sizeof( PtrRef ) <= 64, "Should not use entwined creator" );
+		static_assert( sizeof( T ) + sizeof( PtrRef ) <= 128, "Should not use entwined creator" );
 		void * mem = malloc( sizeof(PtrRef) + sizeof(T) );
 		PtrRef * newRef = new (mem) PtrRef(&Delete, nullptr);
 		T * newT = new ((char*)mem+sizeof(PtrRef)) T(std::forward<U>(args)...);

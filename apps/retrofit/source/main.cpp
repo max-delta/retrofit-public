@@ -13,6 +13,7 @@
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
+#include "core/ptr/entwined_creator.h"
 #include "core_time/clocks.h"
 
 #include "rftl/extension/static_array.h"
@@ -48,19 +49,20 @@ void InitDrawTest()
 	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
 
 	// TODO: Cleanup
+	file::VFSPath const commonTextures = file::VFS::k_Root.GetChild( "assets", "textures", "common" );
 	UniquePtr<gfx::FramePack_512> testFramePack = DefaultCreator<gfx::FramePack_512>::Create();
 	testFramePack->m_PreferredSlowdownRate = 3;
 	testFramePack->m_NumTimeSlots = 10;
-	testFramePack->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "test0", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test0_32.png" ) );
-	testFramePack->m_TimeSlots[1].m_TextureReference = texMan->LoadNewTextureGetID( "test1", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test1_32.png" ) );
-	testFramePack->m_TimeSlots[2].m_TextureReference = texMan->LoadNewTextureGetID( "test2", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test2_32.png" ) );
-	testFramePack->m_TimeSlots[3].m_TextureReference = texMan->LoadNewTextureGetID( "test3", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test3_32.png" ) );
-	testFramePack->m_TimeSlots[4].m_TextureReference = texMan->LoadNewTextureGetID( "test4", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test4_32.png" ) );
-	testFramePack->m_TimeSlots[5].m_TextureReference = texMan->LoadNewTextureGetID( "test5", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test5_32.png" ) );
-	testFramePack->m_TimeSlots[6].m_TextureReference = texMan->LoadNewTextureGetID( "test6", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test6_32.png" ) );
-	testFramePack->m_TimeSlots[7].m_TextureReference = texMan->LoadNewTextureGetID( "test7", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test7_32.png" ) );
-	testFramePack->m_TimeSlots[8].m_TextureReference = texMan->LoadNewTextureGetID( "test8", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test8_32.png" ) );
-	testFramePack->m_TimeSlots[9].m_TextureReference = texMan->LoadNewTextureGetID( "test9", file::VFS::k_Root.GetChild( "assets", "textures", "common", "test9_32.png" ) );
+	testFramePack->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "test0", commonTextures.GetChild( "test0_32.png" ) );
+	testFramePack->m_TimeSlots[1].m_TextureReference = texMan->LoadNewTextureGetID( "test1", commonTextures.GetChild( "test1_32.png" ) );
+	testFramePack->m_TimeSlots[2].m_TextureReference = texMan->LoadNewTextureGetID( "test2", commonTextures.GetChild( "test2_32.png" ) );
+	testFramePack->m_TimeSlots[3].m_TextureReference = texMan->LoadNewTextureGetID( "test3", commonTextures.GetChild( "test3_32.png" ) );
+	testFramePack->m_TimeSlots[4].m_TextureReference = texMan->LoadNewTextureGetID( "test4", commonTextures.GetChild( "test4_32.png" ) );
+	testFramePack->m_TimeSlots[5].m_TextureReference = texMan->LoadNewTextureGetID( "test5", commonTextures.GetChild( "test5_32.png" ) );
+	testFramePack->m_TimeSlots[6].m_TextureReference = texMan->LoadNewTextureGetID( "test6", commonTextures.GetChild( "test6_32.png" ) );
+	testFramePack->m_TimeSlots[7].m_TextureReference = texMan->LoadNewTextureGetID( "test7", commonTextures.GetChild( "test7_32.png" ) );
+	testFramePack->m_TimeSlots[8].m_TextureReference = texMan->LoadNewTextureGetID( "test8", commonTextures.GetChild( "test8_32.png" ) );
+	testFramePack->m_TimeSlots[9].m_TextureReference = texMan->LoadNewTextureGetID( "test9", commonTextures.GetChild( "test9_32.png" ) );
 	testFramePack->m_TimeSlotSustains[0] = 11;
 	testFramePack->m_TimeSlotSustains[1] = 11;
 	testFramePack->m_TimeSlotSustains[2] = 11;
@@ -82,7 +84,7 @@ void InitDrawTest()
 	UniquePtr<gfx::FramePack_256> testFramePack2 = DefaultCreator<gfx::FramePack_256>::Create();
 	testFramePack2->m_PreferredSlowdownRate = 33 / 4;
 	testFramePack2->m_NumTimeSlots = 4;
-	testFramePack2->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "testx_64", file::VFS::k_Root.GetChild( "assets", "textures", "common", "testx_64.png" ) );
+	testFramePack2->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "testx_64", commonTextures.GetChild( "testx_64.png" ) );
 	testFramePack2->m_TimeSlots[1].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
 	testFramePack2->m_TimeSlots[2].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
 	testFramePack2->m_TimeSlots[3].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
@@ -212,13 +214,13 @@ int main()
 	file::VFS::HACK_SetInstance( g_Vfs );
 
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
-	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
+	UniquePtr<gfx::DeviceInterface> renderDevice = EntwinedCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
 	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
 	g_Graphics->Initialize( 640, 480 );
 
-	g_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
+	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
 	if( drawInputDebug )
 	{
