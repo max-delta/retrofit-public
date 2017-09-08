@@ -17,7 +17,12 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceManager
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManager()
 {
-	RF_ASSERT_MSG( m_Resources.empty(), "TODO: Cleanup" );
+	while( m_ResourceIDs.empty() == false )
+	{
+		DestroyResource( m_ResourceIDs.begin()->first );
+	}
+	RF_ASSERT( m_Resources.empty() );
+	RF_ASSERT( m_FileBackedResources.empty() );
 }
 
 
