@@ -222,7 +222,7 @@ int main()
 
 	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
-	if( drawInputDebug )
+	if( drawTest )
 	{
 		InitDrawTest();
 	}
