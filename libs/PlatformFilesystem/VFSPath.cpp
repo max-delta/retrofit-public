@@ -144,6 +144,13 @@ bool VFSPath::IsImmediateDescendantOf( VFSPath const & immediateParent ) const
 
 
 
+bool VFSPath::Empty() const
+{
+	return m_ElementList.empty();
+}
+
+
+
 size_t VFSPath::NumElements() const
 {
 	return m_ElementList.size();

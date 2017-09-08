@@ -4,6 +4,9 @@
 #include "PPU/Texture.h"
 #include "PPU/DeviceInterface.h"
 
+#include "PlatformFilesystem/VFS.h"
+#include "PlatformFilesystem/FileHandle.h"
+
 #include "core/ptr/entwined_creator.h"
 #include "core/ptr/default_creator.h"
 
@@ -94,7 +97,7 @@ ManagedTextureID TextureManager::LoadNewTextureGetID( TextureName const & textur
 WeakPtr<Texture> TextureManager::LoadNewTextureGetHandle( TextureName const & textureName, Filename const & filename )
 {
 	RF_ASSERT( textureName.empty() == false );
-	RF_ASSERT( filename.empty() == false );
+	RF_ASSERT( filename.Empty() == false );
 
 	RF_ASSERT( m_Textures.count( textureName ) == 0 );
 	RF_ASSERT( m_FileBackedTextures.count( textureName ) == 0 );
@@ -160,7 +163,16 @@ bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename 
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation == k_InvalidDeviceTextureID );
-	texture.m_DeviceRepresentation = m_DeviceInterface->LoadTexture( filename.c_str(), texture.m_WidthPostLoad, texture.m_HeightPostLoad );
+	file::VFS* vfs = file::VFS::HACK_GetInstance();
+	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
+	if( fileHandle == nullptr )
+	{
+		RF_ASSERT_MSG( false, "Failed to load file" );
+		return false;
+	}
+	FILE* fileVal = fileHandle->GetFile();
+	RF_ASSERT( fileVal != nullptr );
+	texture.m_DeviceRepresentation = m_DeviceInterface->LoadTexture( fileVal, texture.m_WidthPostLoad, texture.m_HeightPostLoad );
 	texture.UpdateFrameUsage();
 	return true;
 }
