@@ -15,7 +15,7 @@ WndProcInputDevice::WndProcInputDevice()
 	: InputDevice(
 		DefaultCreator<WndProcDigitalInputComponent>::Create(),
 		EntwinedCreator<WndProcAnalogInputComponent>::Create(),
-		DefaultCreator<WndProcTextInputComponent>::Create() )
+		EntwinedCreator<WndProcTextInputComponent>::Create() )
 	, m_Digital( *(WndProcDigitalInputComponent*)m_DigitalComponent.Get() )
 	, m_Analog( *(WndProcAnalogInputComponent*)m_AnalogComponent.Get() )
 	, m_Text( *(WndProcTextInputComponent*)m_TextComponent.Get() )
