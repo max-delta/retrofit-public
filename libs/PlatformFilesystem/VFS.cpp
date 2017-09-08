@@ -28,6 +28,18 @@ VFS::VFS()
 
 
 
+static WeakPtr<VFS> HACK_Instance = nullptr;
+VFS* VFS::HACK_GetInstance()
+{
+	return HACK_Instance;
+}
+void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
+{
+	HACK_Instance = std::move( instance );
+}
+
+
+
 FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 {
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );

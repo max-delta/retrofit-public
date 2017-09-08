@@ -3,6 +3,8 @@
 
 #include "PPUFwd.h"
 
+#include "PlatformFilesystem/VFSPath.h"
+
 #include "core/ptr/unique_ptr.h"
 
 #include <string>
@@ -19,7 +21,7 @@ class PPU_API TextureManager
 	//
 	// Types
 public:
-	typedef std::string Filename;
+	typedef file::VFSPath Filename;
 	typedef std::string TextureName;
 
 	typedef std::unordered_map<TextureName, UniquePtr<Texture>> TexturesByName;

@@ -152,10 +152,10 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 	return true;
 }
 
-DeviceTextureID SimpleGL::LoadTexture( char const* filename, uint32_t& width, uint32_t& height )
+DeviceTextureID SimpleGL::LoadTexture( FILE* file, uint32_t& width, uint32_t& height )
 {
 	int x, y, n;
-	unsigned char* data = stbi_load( filename, &x, &y, &n, 4 );
+	unsigned char* data = stbi_load_from_file( file, &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{

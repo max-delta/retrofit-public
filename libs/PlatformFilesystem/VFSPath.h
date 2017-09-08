@@ -52,6 +52,7 @@ public:
 	// Compare and access
 	bool IsDescendantOf( VFSPath const& closerToRoot ) const;
 	bool IsImmediateDescendantOf( VFSPath const& immediateParent ) const;
+	bool Empty() const;
 	size_t NumElements() const;
 	Element const& GetElement( size_t index ) const;
 
