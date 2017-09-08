@@ -31,9 +31,6 @@ PPUController::~PPUController()
 {
 	// TODO: Proper, safe cleanup
 
-	// HACK: Cleanup other hack
-	m_TextureManager->DestroyTexture( "Placeholder" );
-
 	m_TextureManager = nullptr;
 
 	m_DeviceInterface->DetachFromWindow();
@@ -94,9 +91,6 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	m_WriteState = k_InvalidStateBufferID;
 	m_QueueToRenderState = k_InvalidStateBufferID;
 	m_RenderState = k_InvalidStateBufferID;
-
-	// HACK: Throw a texture in
-	m_TextureManager->LoadNewTexture( "Placeholder", "../../data/textures/common/max_delta_32.png" );
 
 	return true;
 }
@@ -285,28 +279,6 @@ void PPUController::Render() const
 	RF_ASSERT( m_RenderState != k_InvalidStateBufferID );
 	PPUDebugState const& targetDebugState = m_PPUDebugState[m_RenderState];
 	PPUState const& targetState = m_PPUState[m_RenderState];
-
-	// HACK: Do some stuff
-	constexpr bool doHack = false;
-	if( doHack )
-	{
-		WeakPtr<gfx::Texture> placeholderTex = m_TextureManager->GetDeviceTextureForRenderFromTextureName( "Placeholder" );
-		gfx::DeviceTextureID const tex = placeholderTex->GetDeviceRepresentation();
-		constexpr size_t k_SpriteSize = 32;
-		math::Vector2f const size( 1.f/(640/k_SpriteSize), 1.f/(480/k_SpriteSize) );
-		for( float hblank = 0; hblank < 1; hblank += size.y )
-		{
-			for( float tile = 0; tile < 1; tile += size.x )
-			{
-				math::Vector2f const startPos( tile, hblank );
-				m_DeviceInterface->DrawBillboard(
-					tex,
-					startPos,
-					math::Vector2f( startPos.x + size.x, startPos.y + size.y ),
-					0.f );
-			}
-		}
-	}
 
 	// Draw objects
 	for( size_t i = 0; i < targetState.m_NumObjects; i++ )
