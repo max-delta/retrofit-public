@@ -200,6 +200,43 @@ void DrawInputDebug()
 
 
 
+#include "Scripting_squirrel/squirrel.h"
+constexpr bool squirrelTest = true;
+void SQTest()
+{
+	using RF::script::SquirrelVM;
+
+	RF::script::SquirrelVM vm;
+	wchar_t source[] =
+		L"x <- 5;"
+		L"y <- 7.0;"
+		L"z <- true;"
+		L"s <- \"STRING\";"
+		L"n <- null;"
+		L"a <- [\"first\", \"second\"];"
+		L"\n";
+	bool sourceAdd = vm.AddSourceFromBuffer( source );
+
+	SquirrelVM::Element xElem = vm.GetGlobalVariable( L"x" );
+	SquirrelVM::Integer* x = std::get_if<SquirrelVM::Integer>( &xElem );
+	RF_ASSERT( x != nullptr );
+	SquirrelVM::Element yElem = vm.GetGlobalVariable( L"y" );
+	SquirrelVM::FloatingPoint* y = std::get_if<SquirrelVM::FloatingPoint>( &yElem );
+	RF_ASSERT( y != nullptr );
+	SquirrelVM::Element zElem = vm.GetGlobalVariable( L"z" );
+	SquirrelVM::Boolean* z = std::get_if<SquirrelVM::Boolean>( &zElem );
+	RF_ASSERT( z != nullptr );
+	SquirrelVM::Element sElem = vm.GetGlobalVariable( L"s" );
+	SquirrelVM::String* s = std::get_if<SquirrelVM::String>( &sElem );
+	RF_ASSERT( s != nullptr );
+	SquirrelVM::Element nElem = vm.GetGlobalVariable( L"n" );
+	SquirrelVM::Null* n = std::get_if<SquirrelVM::Null>( &nElem );
+	RF_ASSERT( n != nullptr );
+	SquirrelVM::Element aElem = vm.GetGlobalVariable( L"a" );
+	SquirrelVM::ArrayTag* a = std::get_if<SquirrelVM::ArrayTag>( &aElem );
+	RF_ASSERT( a != nullptr );
+}
+
 int main()
 {
 	using namespace RF;
@@ -212,6 +249,11 @@ int main()
 		return 1;
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
+
+	if( squirrelTest )
+	{
+		SQTest();
+	}
 
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = EntwinedCreator<gfx::SimpleGL>::Create();
