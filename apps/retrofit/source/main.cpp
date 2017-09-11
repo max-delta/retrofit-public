@@ -235,7 +235,17 @@ void SQTest()
 	SquirrelVM::Element aElem = vm.GetGlobalVariable( L"a" );
 	SquirrelVM::ArrayTag* a = std::get_if<SquirrelVM::ArrayTag>( &aElem );
 	RF_ASSERT( a != nullptr );
+	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( L"a" );
+	{
+		RF_ASSERT( aElemArr.size() == 2 );
+		SquirrelVM::String* s1 = std::get_if<SquirrelVM::String>( &aElemArr[0] );
+		RF_ASSERT( s != nullptr );
+		SquirrelVM::String* s2 = std::get_if<SquirrelVM::String>( &aElemArr[1] );
+		RF_ASSERT( s != nullptr );
+	}
 }
+
+
 
 int main()
 {
