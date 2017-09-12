@@ -320,7 +320,7 @@ void VFS::DebugDumpMountTable() const
 	}
 }
 
-///////////////////////////////////////////////////////////////////////////////
+
 
 VFSPath VFS::CreatePathFromString( std::string const & path )
 {
@@ -369,7 +369,7 @@ std::string VFS::CreateStringFromPath( VFSPath const & path )
 	return ss.str();
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
 
 VFSPath VFS::CollapsePath( VFSPath const & path )
 {

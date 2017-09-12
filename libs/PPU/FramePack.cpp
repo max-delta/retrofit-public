@@ -22,6 +22,13 @@ uint8_t const* FramePackBase::GetTimeSlotSustains() const
 
 
 
+uint8_t* FramePackBase::GetMutableTimeSlotSustains()
+{
+	return const_cast<uint8_t*>( GetTimeSlotSustains() );
+}
+
+
+
 FramePackBase::TimeSlot const* FramePackBase::GetTimeSlots() const
 {
 	uint8_t const* const thisPtr = reinterpret_cast<uint8_t const*>( this );
@@ -35,6 +42,13 @@ FramePackBase::TimeSlot const* FramePackBase::GetTimeSlots() const
 	RF_ASSERT( m_MaxTimeSlots == FramePack_512::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_512, m_TimeSlots ) : true );
 	RF_ASSERT( m_MaxTimeSlots == FramePack_256::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_256, m_TimeSlots ) : true );
 	return reinterpret_cast<TimeSlot const*>( thisPtr + offsetOfTimeSlots );
+}
+
+
+
+FramePackBase::TimeSlot* FramePackBase::GetMutableTimeSlots()
+{
+	return const_cast<TimeSlot*>( GetTimeSlots() );
 }
 
 

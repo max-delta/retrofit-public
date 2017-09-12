@@ -42,7 +42,9 @@ public:
 	// Public methods
 public:
 	uint8_t const* GetTimeSlotSustains() const;
+	uint8_t* GetMutableTimeSlotSustains();
 	TimeSlot const* GetTimeSlots() const;
+	TimeSlot* GetMutableTimeSlots();
 
 	uint8_t CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const;
 
