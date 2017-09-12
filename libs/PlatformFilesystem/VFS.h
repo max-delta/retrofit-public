@@ -83,12 +83,13 @@ public:
 
 	void DebugDumpMountTable() const;
 
+	static VFSPath CreatePathFromString( std::string const& path );
+	static std::string CreateStringFromPath( VFSPath const& path );
+
 
 	//
 	// Private methods
 private:
-	static VFSPath CreatePathFromString( std::string const& path );
-	static std::string CreateStringFromPath( VFSPath const& path );
 	static VFSPath CollapsePath( VFSPath const& path );
 	VFSMount ProcessMountRule( std::string const& type, std::string const& permissions, std::string const& virtualPoint, std::string const& realPoint );
 	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
