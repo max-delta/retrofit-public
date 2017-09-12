@@ -117,6 +117,24 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 				file::VFS::k_Root.GetChild( file::VFS::CreatePathFromString( string ) ) );
 	}
 
+	elemArr = vm.GetGlobalVariableAsArray( L"TextureOriginX" );
+	for( size_t i = 0; i < elemArr.size(); i++ )
+	{
+		script::SquirrelVM::Element const& elemRef = elemArr[i];
+		integer = std::get_if<script::SquirrelVM::Integer>( &elemRef );
+		RF_ASSERT( integer != nullptr );
+		retVal->GetMutableTimeSlots()[i].m_TextureOriginX = math::integer_cast<uint8_t>( *integer );
+	}
+
+	elemArr = vm.GetGlobalVariableAsArray( L"TextureOriginY" );
+	for( size_t i = 0; i < elemArr.size(); i++ )
+	{
+		script::SquirrelVM::Element const& elemRef = elemArr[i];
+		integer = std::get_if<script::SquirrelVM::Integer>( &elemRef );
+		RF_ASSERT( integer != nullptr );
+		retVal->GetMutableTimeSlots()[i].m_TextureOriginY = math::integer_cast<uint8_t>( *integer );
+	}
+
 	elemArr = vm.GetGlobalVariableAsArray( L"Sustain" );
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
@@ -138,47 +156,24 @@ void InitDrawTest()
 {
 	using namespace RF;
 
-	g_Vfs->DebugDumpMountTable();
-	{
-		file::FileHandlePtr testFile = g_Vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
-	}
-	{
-		file::FileHandlePtr testFile = g_Vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
-	}
-
 	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
 	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
 
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
-	file::VFSPath const fileName = commonFramepacks.GetChild( "testdigit_loop.fpack.sq" );
-	UniquePtr<gfx::FramePackBase> digitFPack = LoadFramePackFromSquirrel( fileName );
-	uint8_t const testAnimationLength = digitFPack->CalculateTimeIndexBoundary();
+
+	UniquePtr<gfx::FramePackBase> digitFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "testdigit_loop.fpack.sq" ) );
+	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", std::move( digitFPack ) );
-	testObj.m_MaxTimeIndex = testAnimationLength;
+	testObj.m_MaxTimeIndex = digitAnimationLength;
 	testObj.m_TimeSlowdown = 3;
 	testObj.m_Looping = true;
 	testObj.m_XCoord = gfx::k_TileSize * 2;
 	testObj.m_YCoord = gfx::k_TileSize * 1;
 	testObj.m_ZLayer = 0;
 
-	// TODO: Cleanup
-	file::VFSPath const commonTextures = file::VFS::k_Root.GetChild( "assets", "textures", "common" );
-	UniquePtr<gfx::FramePack_256> testFramePack2 = DefaultCreator<gfx::FramePack_256>::Create();
-	testFramePack2->m_PreferredSlowdownRate = 33 / 4;
-	testFramePack2->m_NumTimeSlots = 4;
-	testFramePack2->m_TimeSlots[0].m_TextureReference = texMan->LoadNewTextureGetID( "testx_64", commonTextures.GetChild( "testx_64.png" ) );
-	testFramePack2->m_TimeSlots[1].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
-	testFramePack2->m_TimeSlots[2].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
-	testFramePack2->m_TimeSlots[3].m_TextureReference = testFramePack2->m_TimeSlots[0].m_TextureReference;
-	testFramePack2->m_TimeSlots[0].m_TextureOriginX = 0;
-	testFramePack2->m_TimeSlots[0].m_TextureOriginY = 0;
-	testFramePack2->m_TimeSlots[1].m_TextureOriginX = 1;
-	testFramePack2->m_TimeSlots[1].m_TextureOriginY = 0;
-	testFramePack2->m_TimeSlots[2].m_TextureOriginX = 1;
-	testFramePack2->m_TimeSlots[2].m_TextureOriginY = 1;
-	testFramePack2->m_TimeSlots[3].m_TextureOriginX = 0;
-	testFramePack2->m_TimeSlots[3].m_TextureOriginY = 1;
-	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", std::move( testFramePack2 ) );
+	UniquePtr<gfx::FramePackBase> wiggleFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "test64_wiggle.fpack.sq" ) );
+	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
+	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", std::move( wiggleFPack ) );
 	testObj2.m_MaxTimeIndex = 4;
 	testObj2.m_TimeSlowdown = 33 / 4;
 	testObj2.m_Looping = true;;
@@ -340,6 +335,14 @@ int main()
 		return 1;
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
+
+	g_Vfs->DebugDumpMountTable();
+	{
+		file::FileHandlePtr testFile = g_Vfs->GetFileForWrite( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+	}
+	{
+		file::FileHandlePtr testFile = g_Vfs->GetFileForRead( file::VFS::k_Root.GetChild( "scratch", "test.txt" ) );
+	}
 
 	if( squirrelTest )
 	{
