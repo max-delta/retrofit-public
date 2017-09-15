@@ -1,5 +1,6 @@
 #pragma once
 #include "core_math/Vector2.h"
+#include "core_math/math_clamps.h"
 
 #include <stdint.h>
 
@@ -39,6 +40,14 @@ typedef int8_t PPUDepthLayer;
 constexpr PPUCoordElem k_TileSize = 32;
 constexpr PPUDepthLayer k_FarthestLayer = 100;
 constexpr PPUDepthLayer k_NearestLayer = -100;
+// At 32 tile size, here are some interesting tile ratios:
+//  8x7 = SNES (Internal resolution)
+//  8x7.5 = SNES output (Stretched pixels)
+//  10x7 = Almost QVGA (4:3)
+//  12x7 = Almost WQVGA (16:9 widescreen)
+constexpr PPUCoordElem k_DesiredWidth = k_TileSize * 10;
+constexpr PPUCoordElem k_DesiredHeight = k_TileSize * 7;
+constexpr PPUTileElem k_DesiredDiagonalTiles = math::Min( k_DesiredWidth, k_DesiredHeight ) / k_TileSize;
 
 class Object;
 class Texture;

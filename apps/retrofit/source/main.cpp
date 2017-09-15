@@ -84,12 +84,16 @@ int main()
 		test::SQTest();
 	}
 
-	shim::HWND hwnd = platform::windowing::CreateNewWindow( 640, 480, WndProc );
+	constexpr uint8_t k_WindowScaleFactor = 4;
+	constexpr uint16_t k_Width = gfx::k_DesiredWidth * k_WindowScaleFactor;
+	constexpr uint16_t k_Height = gfx::k_DesiredHeight * k_WindowScaleFactor;
+
+	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = EntwinedCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
 	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
-	g_Graphics->Initialize( 640, 480 );
+	g_Graphics->Initialize( k_Width, k_Height );
 
 	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
