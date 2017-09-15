@@ -45,7 +45,7 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	hRC = shim::wglCreateContext( hDC ); // Create a render context for OpenGL.
 	shim::wglMakeCurrent( hDC, hRC ); // All calls to OpenGL will use this context.
 
-	BuildFont();
+	SetFontScale( 1.f );
 
 	return true;
 }
@@ -149,6 +149,12 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 {
 	glClearColor( r, g, b, a ); //When we call Clear, it will clear to this color
+	return true;
+}
+
+bool SimpleGL::SetFontScale( float scale )
+{
+	BuildFont( math::integer_cast<int8_t>( 16 * scale ) );
 	return true;
 }
 
@@ -268,14 +274,15 @@ bool SimpleGL::EndFrame()
 	return true;
 }
 
-void SimpleGL::BuildFont()					// Build Our Bitmap Font
+void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 {
 	shim::HFONT font;						// Windows Font ID
 	shim::HFONT oldfont;					// Used For Good House Keeping
 
+	glDeleteLists( font_base, 96 );
 	font_base = glGenLists( 96 );					// Storage For 96 Characters ( NEW )
 	font = shim::CreateFontW(
-		-16/*-12*/, // Height Of Font
+		-height/*-12*/, // Height Of Font
 		0, // Width Of Font
 		0, // Angle Of Escapement
 		0, // Orientation Angle
