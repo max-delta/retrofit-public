@@ -29,6 +29,7 @@ public:
 	bool SetProjectionMode( ProjectionMode mode );
 	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
 	bool SetBackgroundColor( float r, float g, float b, float a ) override;
+	bool SetFontScale( float scale ) override;
 
 	DeviceTextureID LoadTexture( FILE* file, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
@@ -46,7 +47,7 @@ public:
 
 private:
 	unsigned int font_base;
-	void BuildFont();
+	void BuildFont( int8_t height );
 
 private:
 	shim::HWND hWnd;

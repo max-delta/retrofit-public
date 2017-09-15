@@ -23,6 +23,7 @@ public:
 
 	virtual bool SetSurfaceSize( uint16_t width, uint16_t height ) = 0;
 	virtual bool SetBackgroundColor( float r, float g, float b, float a ) = 0;
+	virtual bool SetFontScale( float scale ) = 0;
 
 	virtual DeviceTextureID LoadTexture( FILE* file, uint32_t& width, uint32_t& height ) = 0;
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
