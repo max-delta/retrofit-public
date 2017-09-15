@@ -154,7 +154,7 @@ bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 
 bool SimpleGL::SetFontScale( float scale )
 {
-	BuildFont( math::integer_cast<int8_t>( 16 * scale ) );
+	BuildFont( math::integer_cast<int8_t>( 8 * scale ) );
 	return true;
 }
 
@@ -295,7 +295,7 @@ void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 		shim::kCLIP_DEFAULT_PRECIS, // Clipping Precision
 		shim::kANTIALIASED_QUALITY, // Output Quality
 		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family And Pitch
-		L"Courier New" ); // Font Name
+		L"Arial" ); // Font Name
 	oldfont = (shim::HFONT)shim::SelectObject( hDC, font );		// Selects The Font We Want
 	shim::wglUseFontBitmapsW( hDC, 32, 96, font_base );			// Builds 96 Characters Starting At Character 32
 														//wglUseFontOutlines(hDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
