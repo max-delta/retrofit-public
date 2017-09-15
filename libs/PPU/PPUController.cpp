@@ -101,9 +101,15 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 {
 	m_Width = width;
 	m_Height = height;
-	bool const success = m_DeviceInterface->SetSurfaceSize( width, height );
-	RF_ASSERT( success );
-	if( success == false )
+	bool const surfaceSuccess = m_DeviceInterface->SetSurfaceSize( width, height );
+	RF_ASSERT( surfaceSuccess );
+	if( surfaceSuccess == false )
+	{
+		return false;
+	}
+	bool const fontSuccess = m_DeviceInterface->SetFontScale( GetZoomFactor() );
+	RF_ASSERT( fontSuccess );
+	if( fontSuccess == false )
 	{
 		return false;
 	}
@@ -357,7 +363,7 @@ uint8_t PPUController::GetZoomFactor() const
 {
 	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
 	uint16_t const approximateDiagonalTiles = smallestDimenssion / k_TileSize;
-	constexpr uint8_t desiredDiagonalTiles = 7;
+	constexpr uint8_t desiredDiagonalTiles = 8;
 	uint8_t const zoomFactor = math::Max( 1, approximateDiagonalTiles / desiredDiagonalTiles );
 	return zoomFactor;
 }
