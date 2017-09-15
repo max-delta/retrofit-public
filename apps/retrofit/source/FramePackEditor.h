@@ -1,15 +1,17 @@
 #pragma once
 
-
-namespace RF { namespace test {
+namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-void InitDrawTest();
-void DrawTest();
-
-void DrawInputDebug();
-
-void SQTest();
+class FramePackEditor
+{
+	//
+	// Public methods
+public:
+	void Init();
+	void Process();
+	void Render();
+};
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -6,10 +6,12 @@
     <ClCompile Include="source\wndproc.cpp" />
     <ClCompile Include="source\Tests.cpp" />
     <ClCompile Include="source\TEMP_AssetLoadSave.cpp" />
+    <ClCompile Include="source\FramePackEditor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\stdafx.h" />
     <ClInclude Include="source\Tests.h" />
     <ClInclude Include="source\TEMP_AssetLoadSave.h" />
+    <ClInclude Include="source\FramePackEditor.h" />
   </ItemGroup>
 </Project>
