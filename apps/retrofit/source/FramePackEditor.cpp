@@ -14,14 +14,27 @@ namespace RF {
 
 void FramePackEditor::Init()
 {
-	//
+	m_MasterMode = MasterMode::Meta;
 }
 
 
 
 void FramePackEditor::Process()
 {
-	//
+	input::WndProcDigitalInputComponent const& digital = g_WndProcInput->m_Digital;
+
+	if( digital.WasActivatedLogical( 'Z' ) )
+	{
+		m_MasterMode = MasterMode::Meta;
+	}
+	if( digital.WasActivatedLogical( 'X' ) )
+	{
+		m_MasterMode = MasterMode::Texture;
+	}
+	if( digital.WasActivatedLogical( 'C' ) )
+	{
+		m_MasterMode = MasterMode::Colliders;
+	}
 }
 
 
@@ -30,35 +43,20 @@ void FramePackEditor::Render()
 {
 	using namespace RF;
 	gfx::PPUController* const ppu = g_Graphics;
-	enum class Mode : uint8_t
-	{
-		Meta = 0,
-		Texture,
-		Colliders
-	};
-
-	constexpr char k_Footer5[] =
-		"<R>:Reload fpack  "
-		"<A/D>:Change frame  "
-		"<SPACE>:Snap to preview";
-	constexpr char k_Footer6[] =
-		"<Z>:Meta mode  "
-		"<X>:Texture mode  "
-		"<C>:Collider mode";
 
 	constexpr size_t k_NumFooterLines = 6;
 	constexpr gfx::PPUCoordElem k_TextYOffset = gfx::k_TileSize / 3;
 	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - k_TextYOffset * k_NumFooterLines );
+
 	gfx::PPUCoord const footerLine1Start( footerStart.x, footerStart.y );
 	gfx::PPUCoord const footerLine2Start( footerLine1Start.x, footerLine1Start.y + k_TextYOffset );
 	gfx::PPUCoord const footerLine3Start( footerLine2Start.x, footerLine2Start.y + k_TextYOffset );
 	gfx::PPUCoord const footerLine4Start( footerLine3Start.x, footerLine3Start.y + k_TextYOffset );
 	gfx::PPUCoord const footerLine5Start( footerLine4Start.x, footerLine4Start.y + k_TextYOffset );
 	gfx::PPUCoord const footerLine6Start( footerLine5Start.x, footerLine5Start.y + k_TextYOffset );
-	constexpr Mode mode = Mode::Colliders;
-	switch( mode )
+	switch( m_MasterMode )
 	{
-		case Mode::Meta:
+		case MasterMode::Meta:
 		{
 			constexpr char k_Footer4Meta[] =
 				"[META]  "
@@ -67,7 +65,7 @@ void FramePackEditor::Render()
 			ppu->DebugDrawText( footerLine4Start, k_Footer4Meta );
 			break;
 		}
-		case Mode::Texture:
+		case MasterMode::Texture:
 		{
 			constexpr char k_Footer3Texture[] =
 				"[TEXTURE]  "
@@ -81,7 +79,7 @@ void FramePackEditor::Render()
 			ppu->DebugDrawText( footerLine4Start, k_Footer4Texture );
 			break;
 		}
-		case Mode::Colliders:
+		case MasterMode::Colliders:
 		{
 			constexpr char k_Footer1Colliders[] =
 				"[BOX]  "
@@ -110,8 +108,17 @@ void FramePackEditor::Render()
 			break;
 		}
 		default:
+			RF_ASSERT( false );
 			break;
 	}
+	constexpr char k_Footer5[] =
+		"<R>:Reload fpack  "
+		"<A/D>:Change frame  "
+		"<SPACE>:Snap to preview";
+	constexpr char k_Footer6[] =
+		"<Z>:Meta mode  "
+		"<X>:Texture mode  "
+		"<C>:Collider mode";
 	ppu->DebugDrawText( footerLine5Start, k_Footer5 );
 	ppu->DebugDrawText( footerLine6Start, k_Footer6 );
 }
