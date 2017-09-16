@@ -97,32 +97,28 @@ std::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code ) 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentPhysicalState( PhysicalCode code ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
-	return PinState();
+	return m_CurrentPhysicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousPhysicalState( PhysicalCode code ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
-	return PinState();
+	return m_PreviousPhysicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentLogicalState( LogicalCode code ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
-	return PinState();
+	return m_CurrentLogicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousLogicalState( LogicalCode code ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
-	return PinState();
+	return m_PreviousLogicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 

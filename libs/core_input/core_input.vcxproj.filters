@@ -11,5 +11,6 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="InputDevice.cpp" />
+    <ClCompile Include="DigitalInputComponent.cpp" />
   </ItemGroup>
 </Project>
