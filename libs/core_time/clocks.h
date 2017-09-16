@@ -27,11 +27,13 @@ public:
 	typedef std::chrono::time_point<FrameClock> time_point;
 	static constexpr bool is_steady = true;
 	static time_point now();
+	static time_point previous();
 
 	static void add_time( duration const& time );
 
 private:
 	static time_point s_AccumulatedTime;
+	static time_point s_PreviousAccumulatedTime;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
