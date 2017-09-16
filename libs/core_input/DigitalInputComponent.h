@@ -1,6 +1,8 @@
 #pragma once
 #include "core_input/InputComponent.h"
 
+#include "core_time/clocks.h"
+
 #include <iterator>
 
 
@@ -58,26 +60,34 @@ public:
 	virtual PinState GetPreviousPhysicalState( PhysicalCode code ) const = 0;
 	virtual PinState GetCurrentLogicalState( LogicalCode code ) const = 0;
 	virtual PinState GetPreviousLogicalState( LogicalCode code ) const = 0;
+	bool WasActivatedPhysical( PhysicalCode code ) const;
+	bool WasDeactivatedPhysical( PhysicalCode code ) const;
+	bool WasActivatedLogical( LogicalCode code ) const;
+	bool WasDeactivatedLogical( LogicalCode code ) const;
 
 	struct PhysicalEvent
 	{
 		PhysicalEvent( PhysicalCode code, PinState state )
 			: m_Code( code )
 			, m_NewState( state )
+			, m_Time( time::FrameClock::now() )
 		{
 		}
 		PhysicalCode m_Code;
 		PinState m_NewState;
+		time::FrameClock::time_point m_Time;
 	};
 	struct LogicalEvent
 	{
 		LogicalEvent( LogicalCode code, PinState state )
 			: m_Code( code )
 			, m_NewState( state )
+			, m_Time( time::FrameClock::now() )
 		{
 		}
 		LogicalCode m_Code;
 		PinState m_NewState;
+		time::FrameClock::time_point m_Time;
 	};
 
 	virtual void GetPhysicalEventStream( EventParser<PhysicalEvent>& parser, size_t maxEvents ) const = 0;
