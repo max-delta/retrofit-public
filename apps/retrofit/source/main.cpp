@@ -110,14 +110,19 @@ int main()
 
 	FrameLimiter frameLimiter;
 	frameLimiter.Reset();
-	while( platform::windowing::ProcessAllMessages() >= 0 )
+	while( true )
 	{
 		frameLimiter.Stall();
 
+		g_WndProcInput->OnTick();
+
+		if( platform::windowing::ProcessAllMessages() < 0 )
+		{
+			break;
+		}
+
 		g_Graphics->BeginFrame();
 		{
-			g_WndProcInput->OnTick();
-
 			if( k_DrawInputDebug )
 			{
 				test::DrawInputDebug();
