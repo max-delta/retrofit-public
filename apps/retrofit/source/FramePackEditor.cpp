@@ -45,15 +45,37 @@ void FramePackEditor::Render()
 	gfx::PPUController* const ppu = g_Graphics;
 
 	constexpr size_t k_NumFooterLines = 6;
-	constexpr gfx::PPUCoordElem k_TextYOffset = gfx::k_TileSize / 3;
-	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - k_TextYOffset * k_NumFooterLines );
+	gfx::PPUCoord const textOffset( 0, gfx::k_TileSize / 3 );
+	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - textOffset.y * k_NumFooterLines );
 
-	gfx::PPUCoord const footerLine1Start( footerStart.x, footerStart.y );
-	gfx::PPUCoord const footerLine2Start( footerLine1Start.x, footerLine1Start.y + k_TextYOffset );
-	gfx::PPUCoord const footerLine3Start( footerLine2Start.x, footerLine2Start.y + k_TextYOffset );
-	gfx::PPUCoord const footerLine4Start( footerLine3Start.x, footerLine3Start.y + k_TextYOffset );
-	gfx::PPUCoord const footerLine5Start( footerLine4Start.x, footerLine4Start.y + k_TextYOffset );
-	gfx::PPUCoord const footerLine6Start( footerLine5Start.x, footerLine5Start.y + k_TextYOffset );
+	gfx::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::k_TileSize ) - gfx::k_TileSize;
+	gfx::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::PPUCoordElem>( ppu->GetWidth() / 2, gfx::k_TileSize );
+
+	gfx::PPUCoord const headerOffset( gfx::k_TileSize / 6, gfx::k_TileSize / 3 );
+	gfx::PPUCoord const previewHeaderStart = gfx::PPUCoord( 0, 0 ) + headerOffset;
+	ppu->DebugDrawText( previewHeaderStart, "Preview" );
+	int TODOPreviewFPS = 60;
+	ppu->DebugDrawText( previewHeaderStart + textOffset, "Preview FPS: %i <-/+> to change", TODOPreviewFPS );
+	int TODODataFPS = 60;
+	ppu->DebugDrawText( previewHeaderStart + textOffset * 2, "Data FPS: %i", TODODataFPS );
+
+	gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
+	ppu->DebugDrawText( editingHeaderStart, "Editing" );
+	int TODOFrame = 0;
+	ppu->DebugDrawText( editingHeaderStart + textOffset, "Frame: %i", TODOFrame );
+	char const TODOTexture[] = "TODO/TODO.png";
+	ppu->DebugDrawText( editingHeaderStart + textOffset * 2, "Texture: %s", TODOTexture );
+
+
+	ppu->DebugDrawLine( gfx::PPUCoord( 0, horizontalPlaneY ), gfx::PPUCoord( ppu->GetWidth(), horizontalPlaneY ), 1 );
+	ppu->DebugDrawLine( gfx::PPUCoord( verticalPlaneX, 0 ), gfx::PPUCoord( verticalPlaneX, horizontalPlaneY ), 1 );
+
+	gfx::PPUCoord const footerLine1Start( footerStart );
+	gfx::PPUCoord const footerLine2Start( footerLine1Start + textOffset );
+	gfx::PPUCoord const footerLine3Start( footerLine2Start + textOffset );
+	gfx::PPUCoord const footerLine4Start( footerLine3Start + textOffset );
+	gfx::PPUCoord const footerLine5Start( footerLine4Start + textOffset );
+	gfx::PPUCoord const footerLine6Start( footerLine5Start + textOffset );
 	switch( m_MasterMode )
 	{
 		case MasterMode::Meta:
