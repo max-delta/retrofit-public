@@ -38,7 +38,7 @@ public:
 	bool glPrint( char const* fmt, va_list args );
 
 	bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) override;
-	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1 ) override;
+	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 
 	bool BeginFrame();

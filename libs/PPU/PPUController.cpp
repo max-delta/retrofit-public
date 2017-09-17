@@ -118,6 +118,20 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 
 
+PPUCoordElem PPUController::GetWidth() const
+{
+	return m_Width / GetZoomFactor();
+}
+
+
+
+PPUCoordElem PPUController::GetHeight() const
+{
+	return m_Height / GetZoomFactor();
+}
+
+
+
 bool PPUController::BeginFrame()
 {
 	RF_ASSERT_MSG( m_WriteState == k_InvalidStateBufferID, "Write buffer wasn't closed" );
@@ -228,7 +242,7 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char * fmt, ... )
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
 {
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
 	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
@@ -242,6 +256,7 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
 	targetLine.m_YCoord0 = math::integer_cast<PPUCoordElem>( p0.y );
 	targetLine.m_XCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
 	targetLine.m_YCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
+	targetLine.m_Width = width;
 
 	return true;
 }
@@ -319,10 +334,10 @@ void PPUController::Render() const
 			math::Vector2f const posB = CoordToDevice( horizontal-1, 0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( posA.x, 0 ),
-				math::Vector2f( posA.x, 1 ) );
+				math::Vector2f( posA.x, 1 ), 0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( posB.x, 0 ),
-				math::Vector2f( posB.x, 1 ) );
+				math::Vector2f( posB.x, 1 ), 0 );
 		}
 		for( PPUCoordElem vertical = 0; vertical <= m_Height; vertical += k_TileSize )
 		{
@@ -330,10 +345,10 @@ void PPUController::Render() const
 			math::Vector2f const posB = CoordToDevice( 0, vertical-1 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posA.y ),
-				math::Vector2f( 1, posA.y ) );
+				math::Vector2f( 1, posA.y ), 0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posB.y ),
-				math::Vector2f( 1, posB.y ) );
+				math::Vector2f( 1, posB.y ), 0 );
 		}
 	}
 
@@ -343,7 +358,7 @@ void PPUController::Render() const
 		PPUDebugState::DebugLine const& line = targetDebugState.m_Lines[i];
 		math::Vector2f p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
 		math::Vector2f p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-		m_DeviceInterface->DebugDrawLine( p0, p1 );
+		m_DeviceInterface->DebugDrawLine( p0, p1, float( line.m_Width * GetZoomFactor() ) );
 	}
 
 	// Draw text

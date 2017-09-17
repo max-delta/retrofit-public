@@ -199,15 +199,26 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
 	return retVal;
 }
 
-bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1 )
+bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width )
 {
 	glBindTexture( GL_TEXTURE_2D, 0 );
 	glColor3f( 0, 0, 0 );
-	glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
-	glBegin( GL_LINES );
-	glVertex2f( p0.x + xFudge, p0.y + yFudge );
-	glVertex2f( p1.x + xFudge, p1.y + yFudge );
-	glEnd();
+	if( width < 1 )
+	{
+		glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
+		glBegin( GL_LINES );
+		glVertex2f( p0.x + xFudge, p0.y + yFudge );
+		glVertex2f( p1.x + xFudge, p1.y + yFudge );
+		glEnd();
+	}
+	else
+	{
+		glLineWidth( width );
+		glBegin( GL_LINES );
+		glVertex2f( p0.x - xFudge * width, p0.y - yFudge * width );
+		glVertex2f( p1.x - xFudge * width, p1.y - yFudge * width );
+		glEnd();
+	}
 	return true;
 }
 
