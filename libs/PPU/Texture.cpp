@@ -5,12 +5,8 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-FrameID Texture::s_MostRecentFrame = k_FirstFrameID;
-
-///////////////////////////////////////////////////////////////////////////////
-
 Texture::Texture()
-	: m_LastUsedInFrame( k_InvalidFrameID )
+	: m_LastUsedInFrame( time::FrameClock::time_point() )
 	, m_DeviceRepresentation( k_InvalidDeviceTextureID )
 {
 	//
@@ -35,7 +31,7 @@ DeviceTextureID Texture::GetDeviceRepresentation() const
 
 void Texture::UpdateFrameUsage() const
 {
-	m_LastUsedInFrame = s_MostRecentFrame;
+	m_LastUsedInFrame = time::FrameClock::now();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
