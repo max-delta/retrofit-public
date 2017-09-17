@@ -30,8 +30,10 @@ public:
 
 	Vector2 operator +( ElementType const& rhs ) const;
 	Vector2 operator -( ElementType const& rhs ) const;
+	Vector2 operator *( ElementType const& rhs ) const;
 	Vector2& operator +=( ElementType const& rhs );
 	Vector2& operator -=( ElementType const& rhs );
+	Vector2& operator *=( ElementType const& rhs );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

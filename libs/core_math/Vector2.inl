@@ -100,6 +100,14 @@ inline Vector2<T> Vector2<T>::operator-( ElementType const & rhs ) const
 
 
 template<typename T>
+inline Vector2<T> Vector2<T>::operator*( ElementType const & rhs ) const
+{
+	return Vector2( x * rhs, y * rhs );
+}
+
+
+
+template<typename T>
 inline Vector2<T>& Vector2<T>::operator+=( ElementType const & rhs )
 {
 	x += rhs;
@@ -114,6 +122,16 @@ inline Vector2<T>& Vector2<T>::operator-=( ElementType const & rhs )
 {
 	x -= rhs;
 	y -= rhs;
+	return *this;
+}
+
+
+
+template<typename T>
+inline Vector2<T> & Vector2<T>::operator*=( ElementType const & rhs )
+{
+	x *= rhs;
+	y *= rhs;
 	return *this;
 }
 
