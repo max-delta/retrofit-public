@@ -18,6 +18,9 @@ public:
 	T x;
 	T y;
 
+	template <typename OtherT>
+	operator Vector2<OtherT>() const;
+
 	bool operator ==( Vector2 const& rhs ) const;
 
 	Vector2 operator +( Vector2 const& rhs ) const;
