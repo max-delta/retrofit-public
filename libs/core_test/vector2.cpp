@@ -96,6 +96,18 @@ TEST( Vector2, ConstSubtractScalar_CommonTypes )
 
 
 
+TEST( Vector2, ConstMultiplyScalar_CommonTypes )
+{
+	ASSERT_EQ( Vector2f  ( 1, -1 ) * 2, Vector2f  ( 2, -2 ) );
+	ASSERT_EQ( Vector2d  ( 1, -1 ) * 2, Vector2d  ( 2, -2 ) );
+	ASSERT_EQ( Vector2i8 ( 1, -1 ) * 2, Vector2i8 ( 2, -2 ) );
+	ASSERT_EQ( Vector2i16( 1, -1 ) * 2, Vector2i16( 2, -2 ) );
+	ASSERT_EQ( Vector2i32( 1, -1 ) * 2, Vector2i32( 2, -2 ) );
+	ASSERT_EQ( Vector2i64( 1, -1 ) * 2, Vector2i64( 2, -2 ) );
+}
+
+
+
 TEST( Vector2, ThisAddScalar_CommonTypes )
 {
 	ASSERT_EQ( Vector2f  ( 1, -1 ) += 2, Vector2f  ( 3, 1 ) );
@@ -116,6 +128,18 @@ TEST( Vector2, ThisSubtractScalar_CommonTypes )
 	ASSERT_EQ( Vector2i16( 1, -1 ) -= 2, Vector2i16( -1, -3 ) );
 	ASSERT_EQ( Vector2i32( 1, -1 ) -= 2, Vector2i32( -1, -3 ) );
 	ASSERT_EQ( Vector2i64( 1, -1 ) -= 2, Vector2i64( -1, -3 ) );
+}
+
+
+
+TEST( Vector2, ThisMultiplyScalar_CommonTypes )
+{
+	ASSERT_EQ( Vector2f  ( 1, -1 ) *= 2, Vector2f  ( 2, -2 ) );
+	ASSERT_EQ( Vector2d  ( 1, -1 ) *= 2, Vector2d  ( 2, -2 ) );
+	ASSERT_EQ( Vector2i8 ( 1, -1 ) *= 2, Vector2i8 ( 2, -2 ) );
+	ASSERT_EQ( Vector2i16( 1, -1 ) *= 2, Vector2i16( 2, -2 ) );
+	ASSERT_EQ( Vector2i32( 1, -1 ) *= 2, Vector2i32( 2, -2 ) );
+	ASSERT_EQ( Vector2i64( 1, -1 ) *= 2, Vector2i64( 2, -2 ) );
 }
 
 
