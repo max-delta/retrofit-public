@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector2.h"
 
+#include "core_math/math_compare.h"
+
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,6 +23,86 @@ inline Vector2<T>::Vector2( T x, T y )
 	, y( y )
 {
 	//
+}
+
+
+
+template<typename T>
+inline bool Vector2<T>::operator==( Vector2 const & rhs ) const
+{
+	return Equals( x, rhs.x ) && Equals( y, rhs.y );
+}
+
+
+
+template<typename T>
+inline Vector2<T> Vector2<T>::operator+( Vector2 const & rhs ) const
+{
+	return Vector2( x + rhs.x, y + rhs.y );
+}
+
+
+
+template<typename T>
+inline Vector2<T> Vector2<T>::operator-( Vector2 const & rhs ) const
+{
+	return Vector2( x - rhs.x, y - rhs.y );
+}
+
+
+
+template<typename T>
+inline Vector2<T>& Vector2<T>::operator+=( Vector2 const & rhs )
+{
+	x += rhs.x;
+	y += rhs.y;
+	return *this;
+}
+
+
+
+template<typename T>
+inline Vector2<T> & Vector2<T>::operator-=( Vector2 const & rhs )
+{
+	x -= rhs.x;
+	y -= rhs.y;
+	return *this;
+}
+
+
+
+template<typename T>
+inline Vector2<T> Vector2<T>::operator+( ElementType const & rhs ) const
+{
+	return Vector2( x + rhs, y + rhs );
+}
+
+
+
+template<typename T>
+inline Vector2<T> Vector2<T>::operator-( ElementType const & rhs ) const
+{
+	return Vector2( x - rhs, y - rhs );
+}
+
+
+
+template<typename T>
+inline Vector2<T>& Vector2<T>::operator+=( ElementType const & rhs )
+{
+	x += rhs;
+	y += rhs;
+	return *this;
+}
+
+
+
+template<typename T>
+inline Vector2<T>& Vector2<T>::operator-=( ElementType const & rhs )
+{
+	x -= rhs;
+	y -= rhs;
+	return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
