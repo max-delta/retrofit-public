@@ -4,6 +4,7 @@
 #include "PPUFwd.h"
 
 #include "core/macros.h"
+#include "core_time/clocks.h"
 
 
 namespace RF { namespace gfx {
@@ -14,6 +15,7 @@ class PPU_API Texture
 	RF_NO_COPY(Texture);
 private:
 	friend class PPUController;
+	friend class TextureManager;
 
 public:
 	Texture();
@@ -25,8 +27,7 @@ public:
 private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
-	static FrameID s_MostRecentFrame;
-	mutable FrameID m_LastUsedInFrame;
+	mutable time::FrameClock::time_point m_LastUsedInFrame;
 	DeviceTextureID m_DeviceRepresentation;
 	uint32_t m_WidthPostLoad;
 	uint32_t m_HeightPostLoad;

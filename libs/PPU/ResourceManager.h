@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "PPUFwd.h"
+#include "PlatformFilesystem/VFSPath.h"
 
 #include "core/ptr/unique_ptr.h"
 
@@ -22,7 +23,7 @@ class ResourceManager
 public:
 	typedef Resource ResourceType;
 	typedef ManagedResourceID ManagedResourceIDType;
-	typedef std::string Filename;
+	typedef file::VFSPath Filename;
 	typedef std::string ResourceName;
 	typedef ResourceManager<Resource, ManagedResourceID, InvalidResourceID> ResourceManagerType;
 
@@ -68,9 +69,14 @@ public:
 	// Protected methods
 protected:
 	virtual UniquePtr<Resource> AllocateResourceFromFile( Filename const & filename ) = 0;
-	virtual bool PostLoadFromFile( Resource& resource, Filename filename );
-	virtual bool PostLoadFromMemory( Resource& resource );
-	virtual bool PreDestroy( Resource& resource );
+	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
+	virtual bool PostLoadFromMemory( ResourceType& resource );
+	virtual bool PreDestroy( ResourceType& resource );
+
+	// IMPORTANT: Derived classes must call this during deconstructor
+	void InternalShutdown();
+
+	size_t GetNumResources() const;
 
 
 	//
