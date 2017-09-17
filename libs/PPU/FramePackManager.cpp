@@ -13,6 +13,13 @@ FramePackManager::FramePackManager()
 
 
 
+FramePackManager::~FramePackManager()
+{
+	InternalShutdown();
+}
+
+
+
 UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const & filename )
 {
 	RF_ASSERT_MSG( false, "TODO" );

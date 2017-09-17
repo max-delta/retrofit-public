@@ -17,10 +17,8 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceManager
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManager()
 {
-	while( m_ResourceIDs.empty() == false )
-	{
-		DestroyResource( m_ResourceIDs.begin()->first );
-	}
+	// NOTE: Shutdown should've been called before this
+	RF_ASSERT( m_ResourceIDs.empty() );
 	RF_ASSERT( m_Resources.empty() );
 	RF_ASSERT( m_FileBackedResources.empty() );
 }
@@ -187,7 +185,7 @@ std::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourc
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFromFile(Resource& resource, Filename filename)
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFromFile( ResourceType& resource, Filename filename )
 {
 	(void)resource;
 	(void)filename;
@@ -197,7 +195,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFr
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFromMemory( Resource& resource )
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFromMemory( ResourceType& resource )
 {
 	(void)resource;
 	return true;
@@ -206,10 +204,31 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFr
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( Resource & resource )
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceType & resource )
 {
 	(void)resource;
 	return true;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::InternalShutdown()
+{
+	while( m_ResourceIDs.empty() == false )
+	{
+		DestroyResource( m_ResourceIDs.begin()->first );
+	}
+	RF_ASSERT( m_Resources.empty() );
+	RF_ASSERT( m_FileBackedResources.empty() );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline size_t ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetNumResources() const
+{
+	return m_Resources.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -240,7 +259,7 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const & resourceName, Filename const & filename, ManagedResourceID& managedResourceID )
 {
 	RF_ASSERT( resourceName.empty() == false );
-	RF_ASSERT( filename.empty() == false );
+	RF_ASSERT( filename.Empty() == false );
 	managedResourceID = GenerateNewManagedID();
 
 	RF_ASSERT( m_ResourceIDs.count( resourceName ) == 0 );

@@ -14,13 +14,17 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
+TextureManager::TextureManager()
+	: ResourceManagerType()
+{
+	//
+}
+
+
+
 TextureManager::~TextureManager()
 {
-	while( m_Textures.empty() == false )
-	{
-		DestroyTexture( m_Textures.begin()->first );
-	}
-	RF_ASSERT( m_FileBackedTextures.empty() );
+	InternalShutdown();
 }
 
 
@@ -32,133 +36,62 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const & deviceInte
 	m_DeviceInterface = deviceInterface;
 	if( m_DeviceInterface != nullptr )
 	{
-		RF_ASSERT_MSG( m_Textures.empty(), "TODO: Reload textures" );
+		RF_ASSERT_MSG( GetNumResources() == 0, "TODO: Reload textures" );
 	}
 
 	return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 
-
-void TextureManager::UpdateMostRecentFrame( FrameID frame ) const
+UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const & filename )
 {
-	RF_ASSERT( frame > Texture::s_MostRecentFrame );
-	Texture::s_MostRecentFrame = frame;
+	UniquePtr<Texture> newTexture = EntwinedCreator<Texture>::Create();
+
+	// Loading deferred to post-load step
+	return newTexture;
 }
 
 
 
-WeakPtr<Texture> TextureManager::GetDeviceTectureForRenderFromManagedTextureID( ManagedTextureID managedTextureID ) const
+bool TextureManager::PostLoadFromFile( ResourceType& resource, Filename filename )
 {
-	TexturesByName::const_iterator iter;
-	for( iter = m_Textures.begin(); iter != m_Textures.end(); iter++ )
-	{
-		Texture const* const texture = iter->second;
-
-		// Use the pointer as the ID
-		if( (uint64_t)texture == managedTextureID )
-		{
-			return iter->second;
-		}
-	}
-
-	return nullptr;
-}
-
-
-
-WeakPtr<Texture> TextureManager::GetDeviceTextureForRenderFromTextureName( TextureName const & textureName ) const
-{
-	TexturesByName::const_iterator iter = m_Textures.find( textureName );
-	if( iter == m_Textures.end() )
-	{
-		return nullptr;
-	}
-
-	return iter->second;
-}
-
-
-
-bool TextureManager::LoadNewTexture( TextureName const & textureName, Filename const & filename )
-{
-	WeakPtr<Texture> handle = LoadNewTextureGetHandle( textureName, filename );
-	return handle != nullptr;
-}
-
-
-
-ManagedTextureID TextureManager::LoadNewTextureGetID( TextureName const & textureName, Filename const & filename )
-{
-	WeakPtr<Texture> handle = LoadNewTextureGetHandle( textureName, filename );
-
-	// Use the pointer as the ID
-	return reinterpret_cast<ManagedTextureID>( static_cast<void*>( handle ) );
-}
-
-
-
-WeakPtr<Texture> TextureManager::LoadNewTextureGetHandle( TextureName const & textureName, Filename const & filename )
-{
-	RF_ASSERT( textureName.empty() == false );
-	RF_ASSERT( filename.Empty() == false );
-
-	RF_ASSERT( m_Textures.count( textureName ) == 0 );
-	RF_ASSERT( m_FileBackedTextures.count( textureName ) == 0 );
-	Texture* tex;
-	WeakPtr<Texture> retVal;
-	{
-		UniquePtr<Texture> newTexture = EntwinedCreator<Texture>::Create();
-		retVal = newTexture;
-		tex = newTexture;
-		m_Textures.emplace( textureName, std::move( newTexture ) );
-		m_FileBackedTextures.emplace( textureName, filename );
-	}
-	RF_ASSERT( retVal != nullptr );
-
 	if( m_DeviceInterface != nullptr )
 	{
-		bool successfulLoad = LoadToDevice( *tex, filename );
+		bool const successfulLoad = LoadToDevice( resource, filename );
 		RF_ASSERT( successfulLoad );
-		RF_ASSERT( retVal != nullptr );
-		return retVal;
+		return successfulLoad;
 	}
 	else
 	{
 		// Will likely be loaded on next device attach
-		RF_ASSERT( retVal != nullptr );
-		return retVal;
+		return true;
 	}
 }
 
 
 
-bool TextureManager::DestroyTexture( TextureName const & textureName )
+bool TextureManager::PostLoadFromMemory( ResourceType & resource )
 {
-	TexturesByName::iterator iter = m_Textures.find( textureName );
-	if( iter == m_Textures.end() )
-	{
-		RF_ASSERT_MSG( false, "Texture not found" );
-		return false;
-	}
+	RF_ASSERT_MSG( false, "TODO" );
+	return false;
+}
 
-	UniquePtr<Texture>& texture = iter->second;
-	RF_ASSERT( texture != nullptr );
 
-	if( texture->m_DeviceRepresentation == k_InvalidDeviceTextureID )
+
+bool TextureManager::PreDestroy( ResourceType& resource )
+{
+	if( resource.m_DeviceRepresentation == k_InvalidDeviceTextureID )
 	{
 		// Not currently in device, just toss it
+		return true;
 	}
 	else
 	{
 		// In device, must unload first
-		bool unloadSuccess = UnloadFromDevice( *texture );
-		RF_ASSERT( unloadSuccess );
+		bool const unloadSuccess = UnloadFromDevice( resource );
+		return unloadSuccess;
 	}
-
-	m_FileBackedTextures.erase( textureName );
-	m_Textures.erase( iter );
-	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

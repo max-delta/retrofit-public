@@ -15,6 +15,7 @@ class PPU_API FramePackManager final : public ResourceManager<FramePackBase, Man
 	// Public methods
 public:
 	FramePackManager();
+	~FramePackManager();
 
 
 	//
