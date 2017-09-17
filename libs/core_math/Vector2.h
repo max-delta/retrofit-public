@@ -17,6 +17,18 @@ public:
 	Vector2( T x, T y );
 	T x;
 	T y;
+
+	bool operator ==( Vector2 const& rhs ) const;
+
+	Vector2 operator +( Vector2 const& rhs ) const;
+	Vector2 operator -( Vector2 const& rhs ) const;
+	Vector2& operator +=( Vector2 const& rhs );
+	Vector2& operator -=( Vector2 const& rhs );
+
+	Vector2 operator +( ElementType const& rhs ) const;
+	Vector2 operator -( ElementType const& rhs ) const;
+	Vector2& operator +=( ElementType const& rhs );
+	Vector2& operator -=( ElementType const& rhs );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

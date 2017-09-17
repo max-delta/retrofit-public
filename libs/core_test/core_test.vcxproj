@@ -157,6 +157,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math_casts.cpp" />
     <ClCompile Include="math_clamps.cpp" />
+    <ClCompile Include="math_compare.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
@@ -169,11 +170,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="unique_ptr.cpp" />
+    <ClCompile Include="vector2.cpp" />
     <ClCompile Include="weak_shared_ptr.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

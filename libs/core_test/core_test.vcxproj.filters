@@ -13,6 +13,8 @@
     <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="math_casts.cpp" />
     <ClCompile Include="static_array.cpp" />
+    <ClCompile Include="vector2.cpp" />
+    <ClCompile Include="math_compare.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

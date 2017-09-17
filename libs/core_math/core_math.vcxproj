@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClInclude Include="math_casts.h" />
     <ClInclude Include="math_clamps.h" />
+    <ClInclude Include="math_compare.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
@@ -152,6 +153,7 @@
   <ItemGroup>
     <None Include="math_casts.inl" />
     <None Include="math_clamps.inl" />
+    <None Include="math_compare.inl" />
     <None Include="Vector2.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
