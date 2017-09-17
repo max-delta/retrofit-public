@@ -31,7 +31,7 @@ public:
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
 
 	virtual bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) = 0;
-	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1 ) = 0;
+	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) = 0;
 
 	virtual bool BeginFrame() = 0;
 	virtual bool RenderFrame() = 0;
