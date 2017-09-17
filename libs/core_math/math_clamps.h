@@ -13,6 +13,9 @@ constexpr TYPE const& Max( TYPE const& lhs, TYPE const& rhs );
 template<typename TYPE>
 constexpr TYPE const& Clamp( TYPE const& min, TYPE const& value, TYPE const& max );
 
+template<typename TYPE>
+constexpr TYPE SnapNearest( TYPE const& value, TYPE const& step );
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
 

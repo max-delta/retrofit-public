@@ -216,5 +216,21 @@ TEST(MathClamps, ClampNegative)
 	}
 }
 
+
+
+TEST( MathClamps, SnapNearest )
+{
+	// TODO: Floating point support and tests
+	static_assert( SnapNearest( -4, 2 ) == -4, "" );
+	static_assert( SnapNearest( -3, 2 ) == -2, "" );
+	static_assert( SnapNearest( -2, 2 ) == -2, "" );
+	static_assert( SnapNearest( -1, 2 ) ==  0, "" );
+	static_assert( SnapNearest(  0, 2 ) ==  0, "" );
+	static_assert( SnapNearest(  1, 2 ) ==  0, "" );
+	static_assert( SnapNearest(  2, 2 ) ==  2, "" );
+	static_assert( SnapNearest(  3, 2 ) ==  2, "" );
+	static_assert( SnapNearest(  4, 2 ) ==  4, "" );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
