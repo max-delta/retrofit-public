@@ -39,6 +39,7 @@ public:
 		PPUCoordElem m_YCoord0;
 		PPUCoordElem m_XCoord1;
 		PPUCoordElem m_YCoord1;
+		PPUCoordElem m_Width;
 	};
 
 
