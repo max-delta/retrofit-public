@@ -2,6 +2,7 @@
 #include "Vector2.h"
 
 #include "core_math/math_compare.h"
+#include "core_math/math_casts.h"
 
 
 namespace RF { namespace math {
@@ -23,6 +24,17 @@ inline Vector2<T>::Vector2( T x, T y )
 	, y( y )
 {
 	//
+}
+
+
+
+template<typename T>
+template<typename OtherT>
+inline Vector2<T>::operator Vector2<OtherT>() const
+{
+	return Vector2<OtherT>(
+		math::real_cast<OtherT>( x ),
+		math::real_cast<OtherT>( y ) );
 }
 
 

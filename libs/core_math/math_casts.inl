@@ -61,5 +61,23 @@ DST integer_truncast( SRC const src )
 	}
 }
 
+
+
+template<typename DST, typename SRC,
+	typename std::enable_if<std::is_integral<DST>::value, int>::type>
+DST real_cast( SRC const src )
+{
+	return integer_cast<DST>( src );
+}
+
+
+
+template<typename DST, typename SRC,
+	typename std::enable_if<std::is_floating_point<DST>::value, int>::type>
+DST real_cast( SRC const src )
+{
+	return static_cast<DST>( src );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

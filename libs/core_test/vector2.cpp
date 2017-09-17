@@ -118,5 +118,17 @@ TEST( Vector2, ThisSubtractScalar_CommonTypes )
 	ASSERT_EQ( Vector2i64( 1, -1 ) -= 2, Vector2i64( -1, -3 ) );
 }
 
+
+
+TEST( Vector2, CrossCompare_CommonTypes )
+{
+	ASSERT_EQ( Vector2f  ( 1, -1 ), Vector2d  ( 1, -1 ) );
+	ASSERT_EQ( Vector2d  ( 1, -1 ), Vector2i8 ( 1, -1 ) );
+	ASSERT_EQ( Vector2i8 ( 1, -1 ), Vector2i16( 1, -1 ) );
+	ASSERT_EQ( Vector2i16( 1, -1 ), Vector2i32( 1, -1 ) );
+	ASSERT_EQ( Vector2i32( 1, -1 ), Vector2i64( 1, -1 ) );
+	ASSERT_EQ( Vector2i64( 1, -1 ), Vector2f  ( 1, -1 ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
