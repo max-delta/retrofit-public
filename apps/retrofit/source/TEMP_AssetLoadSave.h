@@ -9,7 +9,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPath const& filename );
+RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPath const& filename, size_t minFrames = 0 );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

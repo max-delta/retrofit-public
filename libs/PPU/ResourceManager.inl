@@ -182,6 +182,15 @@ std::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourc
 	return std::vector<ResourceName>();
 }
 
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugLockResourceForDirectModification( ManagedResourceID managedResourceID )
+{
+	// TODO: Resource lock, and return a lock object, block normal access
+	return GetResourceFromManagedResourceID( managedResourceID );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
