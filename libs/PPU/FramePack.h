@@ -47,6 +47,7 @@ public:
 	TimeSlot* GetMutableTimeSlots();
 
 	uint8_t CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const;
+	uint8_t CalculateFirstTimeIndexOfTimeSlot( uint8_t timeSlot ) const;
 
 	// Time index should be reset to 0 on a multiple of this value before it rolls
 	//  over, or the remainder will not have time to complete a full animation

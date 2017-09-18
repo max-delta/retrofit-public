@@ -82,6 +82,34 @@ uint8_t FramePackBase::CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const
 
 
 
+uint8_t FramePackBase::CalculateFirstTimeIndexOfTimeSlot( uint8_t timeSlot ) const
+{
+	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );
+	RF_ASSERT( timeSlot < m_NumTimeSlots );
+
+	uint8_t const* const timeSlotSustains = GetTimeSlotSustains();
+
+	uint8_t rollingTimeIndex = 0;
+	for( uint8_t i = 0; i < m_NumTimeSlots; i++ )
+	{
+		if( i == timeSlot )
+		{
+			// Accumulated enough time, time index falls here
+			return rollingTimeIndex;
+		}
+
+		// User may have put a 0 in, we will count that as a 1
+		uint8_t const timeSlotSustain = math::Max<uint8_t>( timeSlotSustains[i], 1 );
+
+		rollingTimeIndex += timeSlotSustain;
+	}
+
+	RF_ASSERT( false );
+	return 0;
+}
+
+
+
 uint8_t FramePackBase::CalculateTimeIndexBoundary() const
 {
 	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );

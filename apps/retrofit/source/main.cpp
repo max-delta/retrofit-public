@@ -61,7 +61,7 @@ struct FrameLimiter
 	RF::time::PerfClock::time_point m_FrameStart;
 	RF::time::PerfClock::time_point m_FrameEnd;
 };
-RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = std::chrono::milliseconds( 33 );
+RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = std::chrono::nanoseconds( 16666666 );
 
 ///////////////////////////////////////////////////////////////////////////////
 

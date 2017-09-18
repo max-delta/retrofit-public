@@ -139,6 +139,7 @@
     <ClInclude Include="gl_inc.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="windows_inc.h" />
+    <ClInclude Include="winuser_shim.h" />
     <ClInclude Include="win_shim.h" />
   </ItemGroup>
   <ItemGroup>
