@@ -6,6 +6,7 @@
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
+#include "PPU/TextureManager.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
 
@@ -55,6 +56,14 @@ void FramePackEditor::Process()
 	{
 		Command_ChangePreviewSpeed( false );
 	}
+	if( digital.WasActivatedLogical( shim::VK_MULTIPLY ) )
+	{
+		Command_ChangeSustainCount( true );
+	}
+	if( digital.WasActivatedLogical( shim::VK_DIVIDE ) )
+	{
+		Command_ChangeSustainCount( false );
+	}
 
 	if( digital.WasActivatedLogical( 'R' ) )
 	{
@@ -83,15 +92,15 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( 'O' ) )
 			{
-				Command_OpenFramePack();
+				Command_Meta_OpenFramePack();
 			}
 			if( digital.WasActivatedLogical( shim::VK_UP ) )
 			{
-				// Increase preferred framerate
+				Command_Meta_ChangeDataSpeed( true );
 			}
 			if( digital.WasActivatedLogical( shim::VK_DOWN ) )
 			{
-				// Decrease preferred framerate
+				Command_Meta_ChangeDataSpeed( false );
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
@@ -103,11 +112,11 @@ void FramePackEditor::Process()
 		{
 			if( digital.WasActivatedLogical( 'B' ) )
 			{
-				// Insert before
+				Command_Texture_InsertBefore();
 			}
 			if( digital.WasActivatedLogical( 'M' ) )
 			{
-				// Insert after
+				Command_Texture_InsertAfter();
 			}
 			if( digital.WasActivatedLogical( shim::VK_UP ) )
 			{
@@ -166,7 +175,6 @@ void FramePackEditor::Process()
 
 void FramePackEditor::Render()
 {
-	using namespace RF;
 	gfx::PPUController* const ppu = g_Graphics;
 
 	gfx::PPUCoord const textOffset( 0, gfx::k_TileSize / 3 );
@@ -254,7 +262,7 @@ void FramePackEditor::Render()
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DebugDrawText( editingHeaderStart, "Editing" );
 		ppu->DebugDrawText( editingHeaderStart + textOffset, "Frame: %i / %i", m_EditingFrame, numTimeSlots - 1 );
-		ppu->DebugDrawText( editingHeaderStart + textOffset * 2, "Sustain: %i", slotSustain );
+		ppu->DebugDrawText( editingHeaderStart + textOffset * 2, "Sustain: %i </,*> to change", slotSustain );
 		char const TODOTexture[] = "TODO/TODO.png";
 		ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: %s", TODOTexture );
 	}
@@ -360,6 +368,32 @@ void FramePackEditor::Command_ChangePreviewSpeed( bool faster )
 
 
 
+void FramePackEditor::Command_ChangeSustainCount( bool increase )
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
+	RF_ASSERT( m_EditingFrame < fpack->m_NumTimeSlots );
+	uint8_t& sustain = timeSlotSustains[m_EditingFrame];
+	if( increase )
+	{
+		sustain++;
+	}
+	else
+	{
+		sustain--;
+	}
+	sustain = math::Clamp<uint8_t>( 1, sustain, 240 );
+}
+
+
+
 void FramePackEditor::Command_ChangeEditingFrame( bool increase )
 {
 	if( increase )
@@ -374,12 +408,63 @@ void FramePackEditor::Command_ChangeEditingFrame( bool increase )
 
 
 
-void FramePackEditor::Command_OpenFramePack()
+void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	uint8_t& slowdownRate = fpack->m_PreferredSlowdownRate;
+	if( faster )
+	{
+		slowdownRate--;
+	}
+	else
+	{
+		slowdownRate++;
+	}
+	slowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, slowdownRate, 10 );
+}
+
+
+
+void FramePackEditor::Command_Meta_OpenFramePack()
 {
 	// HACK
 	// TODO: File selector
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
 	OpenFramePack( commonFramepacks.GetChild( "testdigit_loop.fpack.sq" ) );
+}
+
+
+
+void FramePackEditor::Command_Texture_InsertBefore()
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	InsertTimeSlotBefore( m_EditingFrame );
+	ChangeTexture( m_EditingFrame );
+}
+
+
+
+void FramePackEditor::Command_Texture_InsertAfter()
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	InsertTimeSlotBefore( m_EditingFrame + 1 );
+	m_EditingFrame = m_EditingFrame + 1;
+	ChangeTexture( m_EditingFrame );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -388,6 +473,51 @@ void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
 	UniquePtr<gfx::FramePackBase> fpack = LoadFramePackFromSquirrel( path );
 	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", std::move( fpack ) );
+}
+
+
+
+void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
+{
+	RF_ASSERT( m_FramePackID != gfx::k_InvalidManagedFramePackID );
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	size_t const& numSlots = fpack->m_NumTimeSlots;
+	RF_ASSERT( numSlots + 1 <= fpack->m_MaxTimeSlots );
+
+	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
+
+	// Push everything over
+	RF_ASSERT( slotIndex <= numSlots );
+	for( size_t i = numSlots; i > slotIndex; i-- )
+	{
+		timeSlots[i] = timeSlots[i - 1];
+		timeSlotSustains[i] = timeSlotSustains[i - 1];
+	}
+
+	timeSlots[slotIndex] = {};
+	timeSlotSustains[slotIndex] = 1;
+}
+
+
+
+void FramePackEditor::ChangeTexture( size_t slotIndex )
+{
+	gfx::PPUController* const ppu = g_Graphics;
+
+	RF_ASSERT( m_FramePackID != gfx::k_InvalidManagedFramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	RF_ASSERT( slotIndex < fpack->m_NumTimeSlots );
+	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].m_TextureReference;
+
+	gfx::TextureManager* const texMan = ppu->DebugGetTextureManager();
+	// TODO
+	textureID = gfx::k_InvalidManagedTextureID;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

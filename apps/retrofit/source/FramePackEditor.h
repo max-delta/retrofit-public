@@ -30,14 +30,22 @@ public:
 	void Render();
 
 	void Command_ChangePreviewSpeed( bool faster );
+	void Command_ChangeSustainCount( bool increase );
 	void Command_ChangeEditingFrame( bool increase );
-	void Command_OpenFramePack();
+
+	void Command_Meta_ChangeDataSpeed( bool faster );
+	void Command_Meta_OpenFramePack();
+
+	void Command_Texture_InsertBefore();
+	void Command_Texture_InsertAfter();
 
 
 	//
 	// Private methods
 private:
 	void OpenFramePack( file::VFSPath const& path );
+	void InsertTimeSlotBefore( size_t slotIndex );
+	void ChangeTexture( size_t slotIndex );
 
 
 	//
