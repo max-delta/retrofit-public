@@ -310,6 +310,12 @@ void PPUController::Render() const
 		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.m_TimeIndex );
 		FramePackBase::TimeSlot const & timeSlot = framePack->GetTimeSlots()[slotIndex];
 
+		if( timeSlot.m_TextureReference == k_InvalidManagedTextureID )
+		{
+			// Invisible frame
+			continue;
+		}
+
 		Texture const* texture = m_TextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
 		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
 		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
