@@ -6,6 +6,7 @@
     <ClInclude Include="gl_inc.h" />
     <ClInclude Include="win_shim.h" />
     <ClInclude Include="gdi_shim.h" />
+    <ClInclude Include="winuser_shim.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

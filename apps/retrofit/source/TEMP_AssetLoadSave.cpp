@@ -19,7 +19,7 @@ extern RF::UniquePtr<RF::file::VFS> g_Vfs;
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPath const& filename )
+RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPath const& filename, size_t minFrames )
 {
 	using namespace RF;
 
@@ -60,19 +60,20 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	elem = vm.GetGlobalVariable( L"NumTimeSlots" );
 	integer = std::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
-	if( *integer <= gfx::FramePack_256::k_MaxTimeSlots )
+	size_t const minFramesToCreate = math::Max<size_t>( minFrames, *integer );
+	if( minFramesToCreate <= gfx::FramePack_256::k_MaxTimeSlots )
 	{
 		retVal = DefaultCreator<gfx::FramePack_256>::Create();
 	}
-	else if( *integer <= gfx::FramePack_512::k_MaxTimeSlots )
+	else if( minFramesToCreate <= gfx::FramePack_512::k_MaxTimeSlots )
 	{
 		retVal = DefaultCreator<gfx::FramePack_512>::Create();
 	}
-	else if( *integer <= gfx::FramePack_1024::k_MaxTimeSlots )
+	else if( minFramesToCreate <= gfx::FramePack_1024::k_MaxTimeSlots )
 	{
 		retVal = DefaultCreator<gfx::FramePack_1024>::Create();
 	}
-	else if( *integer <= gfx::FramePack_4096::k_MaxTimeSlots )
+	else if( minFramesToCreate <= gfx::FramePack_4096::k_MaxTimeSlots )
 	{
 		retVal = DefaultCreator<gfx::FramePack_4096>::Create();
 	}

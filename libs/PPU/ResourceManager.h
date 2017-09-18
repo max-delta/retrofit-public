@@ -63,6 +63,7 @@ public:
 	bool DestroyResource( ResourceName const& resourceName );
 
 	std::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
+	WeakPtr<Resource> DebugLockResourceForDirectModification( ManagedResourceID managedResourceID );
 
 
 	//
