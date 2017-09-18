@@ -4,10 +4,12 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="windowing.h" />
+    <ClInclude Include="dialogs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="windowing.cpp" />
+    <ClCompile Include="dialogs.cpp" />
   </ItemGroup>
 </Project>

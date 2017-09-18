@@ -1,0 +1,15 @@
+#pragma once
+#include "project.h"
+
+#include "core_platform/win_shim.h"
+
+#include <string>
+
+
+namespace RF { namespace platform { namespace dialogs {
+///////////////////////////////////////////////////////////////////////////////
+
+PLATFORMUTILS_API std::string OpenFileDialog();
+
+///////////////////////////////////////////////////////////////////////////////
+}}}
