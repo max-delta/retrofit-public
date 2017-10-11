@@ -268,6 +268,58 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 
 
 
+VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permissions desiredPermissions ) const
+{
+	VFSPath const physicalAsVFS = CreatePathFromString( physicalPath );
+
+	for( VFSMount const& mount : m_MountTable )
+	{
+		// NOTE: Technically faster to check permissions before path, but
+		//  less easy to debug, and not performance-critical at time of writing
+
+		VFSPath const* physRoot;
+		switch( mount.m_Type )
+		{
+			case VFSMount::Type::Absolute:
+				physRoot = &k_Empty;
+				break;
+			case VFSMount::Type::ConfigRelative:
+				physRoot = &m_ConfigDirectory;
+				break;
+			case VFSMount::Type::UserRelative:
+				physRoot = &m_UserDirectory;
+				break;
+			default:
+				RF_ASSERT_MSG( false, "Unhandled mount type" );
+				physRoot = nullptr;
+		}
+		VFSPath const realMount = CollapsePath( physRoot->GetChild( mount.m_RealMount ) );
+		bool const isDescendent = physicalAsVFS.IsDescendantOf( realMount );
+		if( isDescendent == false )
+		{
+			// Unrelated path
+			continue;
+		}
+
+		uint8_t const applicablePermissions = static_cast<uint8_t>( mount.m_Permissions ) & static_cast<uint8_t>( desiredPermissions );
+		if( applicablePermissions != static_cast<uint8_t>( desiredPermissions ) )
+		{
+			// Not all permissions fulfilled
+			continue;
+		}
+
+		// Match! Calculate branch
+		bool isBranch;
+		VFSPath const branchFromMount = physicalAsVFS.GetAsBranchOf( realMount, isBranch );
+		RF_ASSERT( isBranch );
+		return mount.m_VirtualPath.GetChild( branchFromMount );
+	}
+
+	return VFSPath();
+}
+
+
+
 void VFS::DebugDumpMountTable() const
 {
 	printf(

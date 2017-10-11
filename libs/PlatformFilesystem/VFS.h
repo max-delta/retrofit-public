@@ -81,6 +81,12 @@ public:
 	// NOTE: Absolute entries are unbounded
 	bool AttemptInitialMount( std::string const& mountTableFile, std::string const& userDirectory );
 
+	// File paths may come from outside VFS, such as from OS dialogs, and they
+	//  need to be mapped onto VFS layers
+	// NOTE: Paths from outside any VFS layers will cause mapping to fail with
+	//  an empty VFS path
+	VFSPath AttemptMapToVFS( std::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const;
+
 	void DebugDumpMountTable() const;
 
 	static VFSPath CreatePathFromString( std::string const& path );
