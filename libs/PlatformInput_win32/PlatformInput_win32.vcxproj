@@ -186,8 +186,8 @@
     <ProjectReference Include="..\core_input\core_input.vcxproj">
       <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\core_time\core_time.vcxproj">
-      <Project>{f32cd40e-8922-4182-9551-52fdbcf56078}</Project>
+    <ProjectReference Include="..\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
