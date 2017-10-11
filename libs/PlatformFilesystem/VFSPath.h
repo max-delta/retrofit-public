@@ -31,7 +31,7 @@ private:
 public:
 	VFSPath();
 	template<typename...Nodes>
-	VFSPath( Element element, Nodes...elements );
+	explicit VFSPath( Element element, Nodes...elements );
 
 	// Create new path relative to this path
 	VFSPath GetParent() const;
