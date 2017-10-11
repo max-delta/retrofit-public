@@ -27,6 +27,20 @@ PLATFORMUTILS_API std::string OpenFileDialog()
 		return std::string();
 	}
 
+	// Unix-ify the delimiters
+	for( char& ch : filePath )
+	{
+		if(ch == '\0')
+		{
+			break;
+		}
+
+		if( ch == '\\' )
+		{
+			ch = '/';
+		}
+	}
+
 	return std::string( filePath );
 }
 
