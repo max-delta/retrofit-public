@@ -51,12 +51,10 @@ void FramePackEditor::Process()
 		mostRecentEvent = *logicEvents.rbegin();
 		if( mostRecentEvent.m_NewState == input::DigitalInputComponent::PinState::Active )
 		{
-			// HACK: Disable
-			// TODO: At time of writing, FrameClock isn't shared across dlls
-			//RF_ASSERT( mostRecentEvent.m_Time > time::FrameClock::time_point() );
-			RF_ASSERT( time::FrameClock::now() > mostRecentEvent.m_Time );
+			RF_ASSERT( mostRecentEvent.m_Time > time::FrameClock::time_point() );
+			RF_ASSERT( time::FrameClock::now() >= mostRecentEvent.m_Time );
 			time::FrameClock::duration const timePassed = time::FrameClock::now() - mostRecentEvent.m_Time;
-			if( timePassed > std::chrono::seconds( 4 ) )
+			if( timePassed > std::chrono::milliseconds( 200 ) )
 			{
 				mostRecentHold = mostRecentEvent.m_Code;
 			}

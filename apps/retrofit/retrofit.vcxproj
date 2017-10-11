@@ -47,9 +47,6 @@
     <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
       <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_time\core_time.vcxproj">
-      <Project>{f32cd40e-8922-4182-9551-52fdbcf56078}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
       <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
     </ProjectReference>
@@ -67,6 +64,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
       <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

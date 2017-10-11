@@ -1,4 +1,6 @@
 #pragma once
+#include "project.h"
+
 #include <chrono>
 
 
@@ -18,7 +20,7 @@ static_assert(
 ///////////////////////////////////////////////////////////////////////////////
 
 // Frame clock, expected to only increase on frame boundaries
-class FrameClock
+class TIMING_API FrameClock
 {
 public:
 	typedef std::chrono::nanoseconds duration;

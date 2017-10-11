@@ -7,9 +7,10 @@
 #include "PlatformFilesystem/VFS.h"
 #include "SimpleGL/SimpleGL.h"
 
+#include "Timing/clocks.h"
+
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
-#include "core_time/clocks.h"
 
 #include "Tests.h"
 #include "FramePackEditor.h"
