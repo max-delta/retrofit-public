@@ -290,6 +290,54 @@ inline typename static_array<Element, ElementCapacity>::const_iterator static_ar
 
 
 template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::reverse_iterator static_array<Element, ElementCapacity>::rbegin()
+{
+	return reverse_iterator( end() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::rbegin() const
+{
+	return const_reverse_iterator( end() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::crbegin() const
+{
+	return const_reverse_iterator( cend() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::reverse_iterator static_array<Element, ElementCapacity>::rend()
+{
+	return reverse_iterator( begin() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::rend() const
+{
+	return const_reverse_iterator( begin() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::crend() const
+{
+	return const_reverse_iterator( cbegin() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline bool static_array<Element, ElementCapacity>::empty() const
 {
 	return size() == 0;

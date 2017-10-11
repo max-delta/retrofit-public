@@ -174,18 +174,34 @@ TEST( StaticArray, BasicIteratorAccess )
 	ASSERT_TRUE( sa.cbegin() == csa.cend() );
 	ASSERT_TRUE( csa.cbegin() == sa.cend() );
 	ASSERT_TRUE( csa.cbegin() == csa.cend() );
+	ASSERT_TRUE( sa.rbegin() == sa.rend() );
+	ASSERT_TRUE( sa.rbegin() == csa.rend() );
+	ASSERT_TRUE( csa.rbegin() == sa.rend() );
+	ASSERT_TRUE( csa.rbegin() == csa.rend() );
+	ASSERT_TRUE( sa.crbegin() == sa.crend() );
+	ASSERT_TRUE( sa.crbegin() == csa.crend() );
+	ASSERT_TRUE( csa.crbegin() == sa.crend() );
+	ASSERT_TRUE( csa.crbegin() == csa.crend() );
 	sa.push_back( 2 );
 	sa.push_back( 7 );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( csa.size() == 2 );
 	ASSERT_TRUE( *sa.begin() == 2 );
 	ASSERT_TRUE( *csa.begin() == 2 );
+	ASSERT_TRUE( *sa.rbegin() == 7 );
+	ASSERT_TRUE( *csa.rbegin() == 7 );
 	ASSERT_TRUE( csa.begin() + 1 == sa.end() - 1 );
 	ASSERT_TRUE( csa.begin() + 1 == csa.end() - 1 );
 	ASSERT_TRUE( sa.cbegin() + 1 == sa.cend() - 1 );
 	ASSERT_TRUE( sa.cbegin() + 1 == csa.cend() - 1 );
 	ASSERT_TRUE( csa.cbegin() + 1 == sa.cend() - 1 );
 	ASSERT_TRUE( csa.cbegin() + 1 == csa.cend() - 1 );
+	ASSERT_TRUE( csa.rbegin() + 1 == sa.rend() - 1 );
+	ASSERT_TRUE( csa.rbegin() + 1 == csa.rend() - 1 );
+	ASSERT_TRUE( sa.crbegin() + 1 == sa.crend() - 1 );
+	ASSERT_TRUE( sa.crbegin() + 1 == csa.crend() - 1 );
+	ASSERT_TRUE( csa.crbegin() + 1 == sa.crend() - 1 );
+	ASSERT_TRUE( csa.crbegin() + 1 == csa.crend() - 1 );
 	sa.clear();
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
@@ -197,6 +213,14 @@ TEST( StaticArray, BasicIteratorAccess )
 	ASSERT_TRUE( sa.cbegin() == csa.cend() );
 	ASSERT_TRUE( csa.cbegin() == sa.cend() );
 	ASSERT_TRUE( csa.cbegin() == csa.cend() );
+	ASSERT_TRUE( sa.rbegin() == sa.rend() );
+	ASSERT_TRUE( sa.rbegin() == csa.rend() );
+	ASSERT_TRUE( csa.rbegin() == sa.rend() );
+	ASSERT_TRUE( csa.rbegin() == csa.rend() );
+	ASSERT_TRUE( sa.crbegin() == sa.crend() );
+	ASSERT_TRUE( sa.crbegin() == csa.crend() );
+	ASSERT_TRUE( csa.crbegin() == sa.crend() );
+	ASSERT_TRUE( csa.crbegin() == csa.crend() );
 }
 
 
