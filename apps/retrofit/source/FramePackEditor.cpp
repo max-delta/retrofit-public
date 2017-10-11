@@ -8,9 +8,12 @@
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
+#include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_platform/winuser_shim.h"
+
+#include "rftl/extension/static_array.h"
 
 
 // TODO: Singleton manager
@@ -34,6 +37,31 @@ void FramePackEditor::Init()
 void FramePackEditor::Process()
 {
 	input::WndProcDigitalInputComponent const& digital = g_WndProcInput->m_Digital;
+
+	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
+	typedef rftl::static_array<LogicalEvent, 1> LogicEvents;
+	typedef input::BufferCopyEventParser<LogicalEvent, LogicEvents> LogicEventParser;
+	LogicEvents logicEvents;
+	LogicEventParser logicEventParser( logicEvents );
+	digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+	uint8_t mostRecentHold = 0;
+	if( logicEvents.empty() == false )
+	{
+		LogicalEvent mostRecentEvent( 0, input::DigitalInputComponent::PinState::Inactive );
+		mostRecentEvent = *logicEvents.rbegin();
+		if( mostRecentEvent.m_NewState == input::DigitalInputComponent::PinState::Active )
+		{
+			// HACK: Disable
+			// TODO: At time of writing, FrameClock isn't shared across dlls
+			//RF_ASSERT( mostRecentEvent.m_Time > time::FrameClock::time_point() );
+			RF_ASSERT( time::FrameClock::now() > mostRecentEvent.m_Time );
+			time::FrameClock::duration const timePassed = time::FrameClock::now() - mostRecentEvent.m_Time;
+			if( timePassed > std::chrono::seconds( 4 ) )
+			{
+				mostRecentHold = mostRecentEvent.m_Code;
+			}
+		}
+	}
 
 	if( digital.WasActivatedLogical( 'Z' ) )
 	{
@@ -118,21 +146,21 @@ void FramePackEditor::Process()
 			{
 				Command_Texture_InsertAfter();
 			}
-			if( digital.WasActivatedLogical( shim::VK_UP ) )
+			if( digital.WasActivatedLogical( shim::VK_UP ) || mostRecentHold == shim::VK_UP )
 			{
-				// Chamge offset
+				Command_Texture_ChangeOffset( 0, -1 );
 			}
-			if( digital.WasActivatedLogical( shim::VK_DOWN ) )
+			if( digital.WasActivatedLogical( shim::VK_DOWN ) || mostRecentHold == shim::VK_DOWN )
 			{
-				// Chamge offset
+				Command_Texture_ChangeOffset( 0, 1 );
 			}
-			if( digital.WasActivatedLogical( shim::VK_LEFT ) )
+			if( digital.WasActivatedLogical( shim::VK_LEFT ) || mostRecentHold == shim::VK_LEFT )
 			{
-				// Chamge offset
+				Command_Texture_ChangeOffset( -1, 0 );
 			}
-			if( digital.WasActivatedLogical( shim::VK_RIGHT ) )
+			if( digital.WasActivatedLogical( shim::VK_RIGHT ) || mostRecentHold == shim::VK_RIGHT )
 			{
-				// Chamge offset
+				Command_Texture_ChangeOffset( 1, 0 );
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
@@ -200,6 +228,14 @@ void FramePackEditor::Render()
 	{
 		ppu->DebugDrawLine( gfx::PPUCoord( 0, horizontalPlaneY ), gfx::PPUCoord( ppu->GetWidth(), horizontalPlaneY ), 1 );
 		ppu->DebugDrawLine( gfx::PPUCoord( verticalPlaneX, 0 ), gfx::PPUCoord( verticalPlaneX, horizontalPlaneY ), 1 );
+	}
+
+	//
+	// Origin point
+	{
+		gfx::PPUCoord const editingOriginPoint( editingOriginX, horizontalPlaneY );
+		constexpr gfx::PPUCoordElem pointSize = gfx::k_TileSize / 8;
+		ppu->DebugDrawLine( editingOriginPoint - pointSize, editingOriginPoint + pointSize, 1 );
 	}
 
 	//
@@ -467,6 +503,28 @@ void FramePackEditor::Command_Texture_InsertAfter()
 	ChangeTexture( m_EditingFrame );
 }
 
+
+
+void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y )
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	size_t const& numSlots = fpack->m_NumTimeSlots;
+	RF_ASSERT( m_EditingFrame <= numSlots );
+
+	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[m_EditingFrame];
+
+	timeSlot.m_TextureOriginX = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginX - x );
+	timeSlot.m_TextureOriginY = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginY - y );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
@@ -496,9 +554,20 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 		timeSlots[i] = timeSlots[i - 1];
 		timeSlotSustains[i] = timeSlotSustains[i - 1];
 	}
-
-	timeSlots[slotIndex] = {};
-	timeSlotSustains[slotIndex] = 1;
+	
+	if( slotIndex != 0 )
+	{
+		timeSlots[slotIndex] = timeSlots[slotIndex - 1];
+		timeSlots[slotIndex].m_TextureReference = gfx::k_InvalidManagedTextureID;
+		// TODO: Typedef
+		timeSlots[slotIndex].m_ColliderReference = uint64_t(0);
+		timeSlotSustains[slotIndex] = timeSlotSustains[slotIndex - 1];
+	}
+	else
+	{
+		timeSlots[slotIndex] = {};
+		timeSlotSustains[slotIndex] = 1;
+	}
 }
 
 
@@ -515,9 +584,25 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].m_TextureReference;
 
+	// User needs to select texture
+	std::string const filepath = platform::dialogs::OpenFileDialog();
+	if( filepath.empty() )
+	{
+		// User probably cancelled
+		return;
+	}
+
+	// Need to map user choice into VFS
+	file::VFS* const vfs = file::VFS::HACK_GetInstance();
+	file::VFSPath mappedPath = vfs->AttemptMapToVFS( filepath, file::VFSMount::Permissions::ReadOnly );
+	if( mappedPath.Empty() )
+	{
+		RF_ASSERT_MSG( false, "Unable to map to VFS" );
+		return;
+	}
+
 	gfx::TextureManager* const texMan = ppu->DebugGetTextureManager();
-	// TODO
-	textureID = gfx::k_InvalidManagedTextureID;
+	textureID = texMan->LoadNewResourceGetID( filepath, mappedPath );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
