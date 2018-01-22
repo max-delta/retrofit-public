@@ -33,6 +33,7 @@
     <ClInclude Include="ptr\ptr_traits.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="meta\TypeList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
