@@ -15,6 +15,8 @@
     <ClCompile Include="static_array.cpp" />
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="math_compare.cpp" />
+    <ClCompile Include="typelist.cpp" />
+    <ClCompile Include="reflect_inspect_function.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
