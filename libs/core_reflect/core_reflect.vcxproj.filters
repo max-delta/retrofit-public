@@ -4,6 +4,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="FunctionTraits.h" />
     <ClInclude Include="Value.h" />
+    <ClInclude Include="VariableTraits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

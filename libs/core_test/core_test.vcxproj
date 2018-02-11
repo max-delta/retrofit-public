@@ -162,6 +162,7 @@
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="reflect_inspect_function.cpp" />
+    <ClCompile Include="reflect_inspect_variable.cpp" />
     <ClCompile Include="reflect_value.cpp" />
     <ClCompile Include="static_array.cpp" />
     <ClCompile Include="shared_ptr.cpp" />
