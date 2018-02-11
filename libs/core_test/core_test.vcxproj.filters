@@ -18,6 +18,7 @@
     <ClCompile Include="typelist.cpp" />
     <ClCompile Include="reflect_inspect_function.cpp" />
     <ClCompile Include="reflect_value.cpp" />
+    <ClCompile Include="reflect_inspect_variable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
