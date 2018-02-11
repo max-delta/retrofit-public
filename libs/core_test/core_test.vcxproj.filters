@@ -17,6 +17,7 @@
     <ClCompile Include="math_compare.cpp" />
     <ClCompile Include="typelist.cpp" />
     <ClCompile Include="reflect_inspect_function.cpp" />
+    <ClCompile Include="reflect_value.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
