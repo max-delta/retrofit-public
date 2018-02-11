@@ -28,7 +28,6 @@
     <ProjectGuid>{D27C937A-7856-4C13-BBE5-895766D01E1F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>rftl</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
