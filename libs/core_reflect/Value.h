@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/meta/TypeList.h"
-#include "core/macros.h"
 #include <variant>
 #include <cstdint>
 
