@@ -162,6 +162,7 @@
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="reflect_inspect_function.cpp" />
+    <ClCompile Include="reflect_value.cpp" />
     <ClCompile Include="static_array.cpp" />
     <ClCompile Include="shared_ptr.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -181,6 +182,9 @@
     </ProjectReference>
     <ProjectReference Include="..\core_math\core_math.vcxproj">
       <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
+      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
