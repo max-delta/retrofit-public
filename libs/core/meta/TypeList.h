@@ -18,6 +18,11 @@ struct TypeList
 	template<typename Type>
 	struct Contains;
 
+	// Used to search for the index of a type
+	template<typename Type>
+	struct FindIndex;
+
+
 private:
 	// For external access
 	// NOTE: Not actually available externally, but the pattern illustrates how
@@ -26,6 +31,8 @@ private:
 	struct ExternalAccessByIndex;
 	template<typename Type, typename TypeListType>
 	struct ExternalAccessContains;
+	template<typename Type, size_t CurrentIndex, typename TypeListType>
+	struct ExternalAccessFindIndex;
 
 	// Zero-th case
 	template<typename CurrentType, typename... RemainingTypes>
@@ -57,6 +64,22 @@ private:
 		static constexpr bool value = std::disjunction< IsCurrent, ExternalAccessContains<Type, TypeList<RemainingTypes...> > >::value;
 	};
 
+	// 0 case
+	template<typename Type, size_t CurrentIndex>
+	struct ExternalAccessFindIndex<Type, CurrentIndex, TypeList<> >
+	{
+		static constexpr size_t value = -1;
+	};
+
+	// N case
+	template<typename Type, size_t CurrentIndex, typename CurrentType, typename... RemainingTypes>
+	struct ExternalAccessFindIndex<Type, CurrentIndex, TypeList<CurrentType, RemainingTypes...> >
+	{
+		using IsCurrent = std::is_same< Type, CurrentType >;
+		static constexpr size_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
+	};
+
+
 public:
 	// Implemented as external
 	template<size_t Index>
@@ -68,6 +91,13 @@ public:
 	// Implemented as external
 	template<typename Type>
 	struct Contains : ExternalAccessContains< Type, TypeList<Types...> >
+	{
+		//
+	};
+
+	// Implemented as external
+	template<typename Type>
+	struct FindIndex : ExternalAccessFindIndex< Type, 0, TypeList<Types...> >
 	{
 		//
 	};
