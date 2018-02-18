@@ -167,6 +167,7 @@
     <ClCompile Include="Value.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassInfoBuilder.inl" />
     <None Include="Value.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

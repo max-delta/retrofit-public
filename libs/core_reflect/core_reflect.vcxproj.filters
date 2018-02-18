@@ -14,5 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Value.inl" />
+    <None Include="ClassInfoBuilder.inl" />
   </ItemGroup>
 </Project>
