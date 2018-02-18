@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_reflect/ClassInfo.h"
+#include "core_reflect/FunctionTraits.h"
 
 
 namespace RF { namespace reflect { namespace builder {
@@ -49,11 +50,49 @@ void CreateMemberVariableInfo( MemberVariableInfo& variableInfo, T Class::* vari
 
 
 
+template<typename TypeListType>
+struct ParamUnpacker;
+// 0 case
+template<>
+struct ParamUnpacker<TypeList<> >
+{
+	static void Unpack( std::vector<Value::Type>& paramTypes )
+	{
+	}
+};
+// N case
+template<typename CurrentType, typename... RemainingTypes>
+struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...> >
+{
+	static void Unpack( std::vector<Value::Type>& paramTypes )
+	{
+		constexpr Value::Type kType = Value::DetermineType<CurrentType>();
+		paramTypes.push_back( kType );
+		ParamUnpacker<TypeList<RemainingTypes...> >::Unpack( paramTypes );
+	}
+};
+
+
+
 template <typename T>
 void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo& functionInfo, T& function )
 {
 	functionInfo = {};
 	functionInfo.mAddress = function;
+	using FT = FunctionTraits<T>;
+	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
+	{
+		std::vector<Value::Type> paramTypes;
+		paramTypes.reserve( FT::ParamTypes::kNumTypes );
+		ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
+		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );
+		for( size_t i = 0; i < paramTypes.size(); i++ )
+		{
+			ParameterInfo param = {};
+			param.mValueType = paramTypes[i];
+			functionInfo.Parameters.emplace_back( param );
+		}
+	}
 }
 
 
@@ -62,6 +101,21 @@ template <typename T>
 void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function )
 {
 	functionInfo = {};
+	using FT = FunctionTraits<T>;
+	functionInfo.mRequiresConst = FT::kRequiresConst;
+	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
+	{
+		std::vector<Value::Type> paramTypes;
+		paramTypes.reserve( FT::ParamTypes::kNumTypes );
+		ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
+		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );
+		for( size_t i = 0; i < paramTypes.size(); i++ )
+		{
+			ParameterInfo param = {};
+			param.mValueType = paramTypes[i];
+			functionInfo.Parameters.emplace_back( param );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
