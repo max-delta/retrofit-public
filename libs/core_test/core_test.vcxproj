@@ -152,6 +152,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="class_info_builder.cpp" />
     <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math_casts.cpp" />
