@@ -5,6 +5,8 @@
     <ClInclude Include="FunctionTraits.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="VariableTraits.h" />
+    <ClInclude Include="ClassInfo.h" />
+    <ClInclude Include="ClassInfoBuilder.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

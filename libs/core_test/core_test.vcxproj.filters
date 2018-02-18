@@ -19,6 +19,7 @@
     <ClCompile Include="reflect_inspect_function.cpp" />
     <ClCompile Include="reflect_value.cpp" />
     <ClCompile Include="reflect_inspect_variable.cpp" />
+    <ClCompile Include="class_info_builder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
