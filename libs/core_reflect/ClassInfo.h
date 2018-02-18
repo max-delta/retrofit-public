@@ -44,16 +44,34 @@ struct MemberVariableInfo
 
 
 
+struct ReturnInfo
+{
+	Value::Type mValueType;
+};
+
+
+
+struct ParameterInfo
+{
+	Value::Type mValueType;
+};
+
+
+
 struct FreeStandingFunctionInfo
 {
 	void* mAddress;
+	ReturnInfo mReturn;
+	std::vector<ParameterInfo> Parameters;
 };
 
 
 
 struct MemberFunctionInfo
 {
-	// TODO?
+	bool mRequiresConst;
+	ReturnInfo mReturn;
+	std::vector<ParameterInfo> Parameters;
 };
 
 
