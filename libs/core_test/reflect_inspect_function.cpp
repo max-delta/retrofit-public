@@ -99,7 +99,7 @@ TEST( Reflect, FreeFunctions )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( &f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -110,9 +110,9 @@ TEST( Reflect, FreeFunctions )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( &d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
@@ -144,7 +144,7 @@ TEST( Reflect, FreeFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -155,9 +155,9 @@ TEST( Reflect, FreeFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
@@ -185,7 +185,7 @@ TEST( Reflect, StaticFunctions )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( &Class::f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -196,9 +196,9 @@ TEST( Reflect, StaticFunctions )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( &Class::d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
@@ -231,7 +231,7 @@ TEST( Reflect, StaticFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -242,9 +242,9 @@ TEST( Reflect, StaticFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
@@ -277,7 +277,7 @@ TEST( Reflect, NonConstFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -288,9 +288,9 @@ TEST( Reflect, NonConstFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
@@ -323,7 +323,7 @@ TEST( Reflect, ConstFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_f_call_f )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, float>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 1, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, float>::value, "Unexpected type" );
 	};
 
 	struct test_d_call_ifc
@@ -334,9 +334,9 @@ TEST( Reflect, ConstFunctionPointers )
 		static_assert( std::is_same< FT::FunctionPointerType, decltype( ptr_d_call_ifc )>::value, "Unexpected type" );
 		static_assert( std::is_same< FT::ReturnType, double>::value, "Unexpected type" );
 		static_assert( FT::ParamTypes::kNumTypes == 3, "Unexpected size" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::Type, int>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::Type, float>::value, "Unexpected type" );
-		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::Type, char>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<0>::type, int>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<1>::type, float>::value, "Unexpected type" );
+		static_assert( std::is_same< FT::ParamTypes::ByIndex<2>::type, char>::value, "Unexpected type" );
 	};
 }
 
