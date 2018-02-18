@@ -38,6 +38,25 @@ TEST( Reflect, ValueBasics )
 	Value vUInt64( static_cast<uint64_t>( 0ull ) );
 	Value vInt64( static_cast<int64_t>( 0ll ) );
 
+	static_assert( Value::DetermineType<bool>() == Value::Type::Bool );
+	static_assert( Value::DetermineType<void*>() == Value::Type::VoidPtr );
+	static_assert( Value::DetermineType<void const*>() == Value::Type::VoidConstPtr );
+	static_assert( Value::DetermineType<char>() == Value::Type::Char );
+	static_assert( Value::DetermineType<wchar_t>() == Value::Type::WChar );
+	static_assert( Value::DetermineType<char16_t>() == Value::Type::Char16 );
+	static_assert( Value::DetermineType<char32_t>() == Value::Type::Char32 );
+	static_assert( Value::DetermineType<float>() == Value::Type::Float );
+	static_assert( Value::DetermineType<double>() == Value::Type::Double );
+	static_assert( Value::DetermineType<long double>() == Value::Type::LongDouble );
+	static_assert( Value::DetermineType<uint8_t>() == Value::Type::UInt8 );
+	static_assert( Value::DetermineType<int8_t>() == Value::Type::Int8 );
+	static_assert( Value::DetermineType<uint16_t>() == Value::Type::UInt16 );
+	static_assert( Value::DetermineType<int16_t>() == Value::Type::Int16 );
+	static_assert( Value::DetermineType<uint32_t>() == Value::Type::UInt32 );
+	static_assert( Value::DetermineType<int32_t>() == Value::Type::Int32 );
+	static_assert( Value::DetermineType<uint64_t>() == Value::Type::UInt64 );
+	static_assert( Value::DetermineType<int64_t>() == Value::Type::Int64 );
+
 	ASSERT_TRUE( vBool.GetStoredType() == Value::Type::Bool );
 	ASSERT_TRUE( vVoidPtr.GetStoredType() == Value::Type::VoidPtr );
 	ASSERT_TRUE( vVoidConstPtr.GetStoredType() == Value::Type::VoidConstPtr );

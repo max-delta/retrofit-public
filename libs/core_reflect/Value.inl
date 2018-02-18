@@ -23,5 +23,14 @@ typename std::remove_const<T>::type const* Value::GetAs() const
 	return retVal;
 }
 
+
+
+template<typename T>
+constexpr Value::Type Value::DetermineType()
+{
+	constexpr size_t kIndexOfType = ValueTypes::FindIndex<T>::value;
+	return static_cast<Type>( kIndexOfType );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

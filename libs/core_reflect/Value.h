@@ -94,6 +94,8 @@ public:
 	typename std::remove_const<T>::type const* GetAs() const;
 	void const* GetBytes() const;
 	size_t GetNumBytes() const;
+	template<typename T>
+	static constexpr Type DetermineType();
 
 
 	//
