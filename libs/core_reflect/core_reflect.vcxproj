@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ClassInfo.h" />
+    <ClInclude Include="ClassInfoBuilder.h" />
     <ClInclude Include="FunctionTraits.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Value.h" />
