@@ -213,18 +213,46 @@ TEST( ReflectBuilder, FreeStandingFunctionInfos )
 		{
 			return;
 		}
+		static float f_call_f( float )
+		{
+			return 0.f;
+		}
+		static double d_call_ifc( int, float, char )
+		{
+			return 0.;
+		}
 	};
 
 	{
 		FreeStandingFunctionInfo funcInfo;
 		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::v_call_v );
 		ASSERT_TRUE( funcInfo.mAddress == Test::v_call_v );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Invalid );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 0 );
+	}
+	{
+		FreeStandingFunctionInfo funcInfo;
+		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::f_call_f );
+		ASSERT_TRUE( funcInfo.mAddress == Test::f_call_f );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 1 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Float );
+	}
+	{
+		FreeStandingFunctionInfo funcInfo;
+		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::d_call_ifc );
+		ASSERT_TRUE( funcInfo.mAddress == Test::d_call_ifc );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Double );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 3 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Int32 );
+		ASSERT_TRUE( funcInfo.Parameters[1].mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters[2].mValueType == Value::Type::Char );
 	}
 }
 
 
 
-TEST( ReflectBuilder, MemberFunctionInfos )
+TEST( ReflectBuilder, NonConstMemberFunctionInfos )
 {
 	struct Test
 	{
@@ -232,12 +260,87 @@ TEST( ReflectBuilder, MemberFunctionInfos )
 		{
 			return;
 		}
+		float f_call_f( float )
+		{
+			return 0.f;
+		}
+		double d_call_ifc( int, float, char )
+		{
+			return 0.;
+		}
 	};
 
 	{
 		MemberFunctionInfo funcInfo;
 		builder::CreateMemberFunctionInfo( funcInfo, &Test::v_call_v );
-		// TODO?
+		ASSERT_TRUE( funcInfo.mRequiresConst == false );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Invalid );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 0 );
+	}
+	{
+		MemberFunctionInfo funcInfo;
+		builder::CreateMemberFunctionInfo( funcInfo, &Test::f_call_f );
+		ASSERT_TRUE( funcInfo.mRequiresConst == false );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 1 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Float );
+	}
+	{
+		MemberFunctionInfo funcInfo;
+		builder::CreateMemberFunctionInfo( funcInfo, &Test::d_call_ifc );
+		ASSERT_TRUE( funcInfo.mRequiresConst == false );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Double );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 3 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Int32 );
+		ASSERT_TRUE( funcInfo.Parameters[1].mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters[2].mValueType == Value::Type::Char );
+	}
+}
+
+
+
+TEST( ReflectBuilder, ConstMemberFunctionInfos )
+{
+	struct Test
+	{
+		void v_call_v( void ) const
+		{
+			return;
+		}
+		float f_call_f( float ) const
+		{
+			return 0.f;
+		}
+		double d_call_ifc( int, float, char ) const
+		{
+			return 0.;
+		}
+	};
+
+	{
+		MemberFunctionInfo funcInfo;
+		builder::CreateMemberFunctionInfo( funcInfo, &Test::v_call_v );
+		ASSERT_TRUE( funcInfo.mRequiresConst == true );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Invalid );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 0 );
+	}
+	{
+		MemberFunctionInfo funcInfo;
+		builder::CreateMemberFunctionInfo( funcInfo, &Test::f_call_f );
+		ASSERT_TRUE( funcInfo.mRequiresConst == true );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 1 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Float );
+	}
+	{
+		MemberFunctionInfo funcInfo;
+		builder::CreateMemberFunctionInfo( funcInfo, &Test::d_call_ifc );
+		ASSERT_TRUE( funcInfo.mRequiresConst == true );
+		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Double );
+		ASSERT_TRUE( funcInfo.Parameters.size() == 3 );
+		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Int32 );
+		ASSERT_TRUE( funcInfo.Parameters[1].mValueType == Value::Type::Float );
+		ASSERT_TRUE( funcInfo.Parameters[2].mValueType == Value::Type::Char );
 	}
 }
 
