@@ -1,6 +1,7 @@
 #pragma once
 
 #include <type_traits>
+#include <stdint.h>
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,18 +66,18 @@ private:
 	};
 
 	// 0 case
-	template<typename Type, size_t CurrentIndex>
+	template<typename Type, int64_t CurrentIndex>
 	struct ExternalAccessFindIndex<Type, CurrentIndex, TypeList<> >
 	{
-		static constexpr size_t value = -1;
+		static constexpr int64_t value = -1;
 	};
 
 	// N case
-	template<typename Type, size_t CurrentIndex, typename CurrentType, typename... RemainingTypes>
+	template<typename Type, int64_t CurrentIndex, typename CurrentType, typename... RemainingTypes>
 	struct ExternalAccessFindIndex<Type, CurrentIndex, TypeList<CurrentType, RemainingTypes...> >
 	{
 		using IsCurrent = std::is_same< Type, CurrentType >;
-		static constexpr size_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
+		static constexpr int64_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
 	};
 
 
