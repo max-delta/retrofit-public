@@ -33,7 +33,12 @@
     <ClInclude Include="ptr\ptr_traits.h">
       <Filter>ptr</Filter>
     </ClInclude>
-    <ClInclude Include="meta\TypeList.h" />
+    <ClInclude Include="meta\TypeList.h">
+      <Filter>meta</Filter>
+    </ClInclude>
+    <ClInclude Include="meta\MemberTest.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -41,6 +46,9 @@
   <ItemGroup>
     <Filter Include="ptr">
       <UniqueIdentifier>{a22c8f13-cc04-4314-83c2-8a4bee11a271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="meta">
+      <UniqueIdentifier>{dde3f69f-9cf5-4207-8eed-7a0ba4486758}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
