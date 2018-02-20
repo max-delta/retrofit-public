@@ -28,5 +28,11 @@ namespace RF {
 // The test is used in the form RF_HAS_MEMBER_NAME( Class, DesiredMemberName )
 #define RF_HAS_MEMBER_NAME(CLASS, NAME) (___HasMemberWithName_##NAME<CLASS>::value)
 
+// Assumes code similar to as follows:
+//  template<class CLASS, typename std::enable_if<RF_HAS_MEMBER_NAME( CLASS, NAME ), int>::type = 0>
+//  void foo();
+//  template<class CLASS, typename std::enable_if<RF_HAS_MEMBER_NAME( CLASS, NAME ) == false, int>::type = 0>
+//  void foo();
+
 ///////////////////////////////////////////////////////////////////////////////
 }

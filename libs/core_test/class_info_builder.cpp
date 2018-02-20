@@ -135,7 +135,7 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 
 	{
 		FreeStandingVariableInfo varInfo;
-		builder::CreateFreeStandingVariableInfo( varInfo, Test::static_d );
+		builder::CreateFreeStandingVariableInfo( varInfo, &Test::static_d );
 		ASSERT_TRUE( varInfo.mAddress == &Test::static_d );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::static_d ) );
@@ -143,7 +143,7 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 	}
 	{
 		FreeStandingVariableInfo varInfo;
-		builder::CreateFreeStandingVariableInfo( varInfo, Test::static_cd );
+		builder::CreateFreeStandingVariableInfo( varInfo, &Test::static_cd );
 		ASSERT_TRUE( varInfo.mAddress == &Test::static_cd );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::static_cd ) );
@@ -151,7 +151,7 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 	}
 	{
 		FreeStandingVariableInfo varInfo;
-		builder::CreateFreeStandingVariableInfo( varInfo, Test::thread_i );
+		builder::CreateFreeStandingVariableInfo( varInfo, &Test::thread_i );
 		ASSERT_TRUE( varInfo.mAddress == &Test::thread_i );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::thread_i ) );
@@ -159,7 +159,7 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 	}
 	{
 		FreeStandingVariableInfo varInfo;
-		builder::CreateFreeStandingVariableInfo( varInfo, Test::thread_ci );
+		builder::CreateFreeStandingVariableInfo( varInfo, &Test::thread_ci );
 		ASSERT_TRUE( varInfo.mAddress == &Test::thread_ci );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::thread_ci ) );
@@ -167,7 +167,7 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 	}
 	{
 		FreeStandingVariableInfo varInfo;
-		builder::CreateFreeStandingVariableInfo( varInfo, Test::constexpr_u );
+		builder::CreateFreeStandingVariableInfo( varInfo, &Test::constexpr_u );
 		ASSERT_TRUE( varInfo.mAddress == &Test::constexpr_u );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::constexpr_u ) );
@@ -181,6 +181,7 @@ TEST( ReflectBuilder, MemberVariableInfos )
 {
 	struct Test
 	{
+		char unusedPadding[16];
 		float instance_f;
 		float const instance_cf;
 	};
