@@ -82,7 +82,8 @@ template<typename CLASS, typename std::enable_if<RF_HAS_MEMBER_NAME( CLASS, ___R
 
 
 // Created by macro-machinery and exported, this will need to be imported when
-//  bringing a ClassInfo definition cross-module, if 
+//  bringing a ClassInfo definition cross-module, if static ClassInfo was not
+//  exported as part of the class itself
 template<class CLASS>
 ::RF::reflect::ClassInfo const& GetClassInfoWithinModule();
 
@@ -146,7 +147,7 @@ struct CRTCompositionTrigger
 	template<> \
 	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target ); \
 	\
-	namespace RF { namespace rftype { \
+	namespace RF { namespace rftype { /* Opening rftype namespace */ \
 	/* Template specialization for lookup only within module */ \
 	template<> \
 	__declspec( dllexport ) ::RF::reflect::ClassInfo const& GetClassInfoWithinModule<CLASSTYPE>() \
@@ -155,12 +156,15 @@ struct CRTCompositionTrigger
 	} \
 	\
 	/* Template specialization for chaining composition trigger into initialization */ \
+	/* NOTE: This seemingly redundant hop is to escape the namespace before the */ \
+	/*  macro ends, so users don't have to close it themselves, which would be */ \
+	/*  syntactically disastrous on Intellisense, and human sanity (ex: 'MACRO{}}' ) */ \
 	template<> \
 	void CRTCompositionTrigger<CLASSTYPE>::Initialize( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target ) \
 	{ \
 		___rftype_macro_generated_initializer<CLASSTYPE>( ___RFType_Macro_Target ); \
 	} \
-	}} \
+	}} /* Closing rftype namespace */ \
 	\
 	/* Header before user-supplied directives */ \
 	template<> \
