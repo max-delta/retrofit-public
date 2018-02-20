@@ -11,7 +11,7 @@ template <class T>
 void CreateClassInfo( ClassInfo& classInfo );
 
 template <typename T>
-void CreateFreeStandingVariableInfo( FreeStandingVariableInfo& variableInfo, T& variable );
+void CreateFreeStandingVariableInfo( FreeStandingVariableInfo& variableInfo, T* variable );
 
 template <typename T, typename Class>
 void CreateMemberVariableInfo( MemberVariableInfo& variableInfo, T Class::* variable );
