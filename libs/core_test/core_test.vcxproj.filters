@@ -20,6 +20,8 @@
     <ClCompile Include="reflect_value.cpp" />
     <ClCompile Include="reflect_inspect_variable.cpp" />
     <ClCompile Include="class_info_builder.cpp" />
+    <ClCompile Include="class_info_compositor.cpp" />
+    <ClCompile Include="membertest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

@@ -50,10 +50,10 @@ void CreateClassInfo( ClassInfo& classInfo )
 
 
 template<typename T>
-void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T & variable )
+void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T * variable )
 {
 	variableInfo = {};
-	variableInfo.mAddress = reinterpret_cast<void const*>( static_cast<T*>( &variable ) );
+	variableInfo.mAddress = reinterpret_cast<void const*>( static_cast<T*>( variable ) );
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
 	variableInfo.mValueType = Value::DetermineType<T>();
@@ -66,7 +66,7 @@ void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* var
 {
 	variableInfo = {};
 	constexpr Class* kZeroedClass = reinterpret_cast<Class*>( nullptr );
-	T* const offsetIn = &( *reinterpret_cast<Class*>( nullptr ).*variable );
+	T* const offsetIn = &( (*kZeroedClass).*variable );
 	variableInfo.mOffset = reinterpret_cast<ptrdiff_t>( offsetIn );
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
