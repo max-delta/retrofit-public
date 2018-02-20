@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />
+    <ClInclude Include="meta\MemberTest.h" />
     <ClInclude Include="meta\TypeList.h" />
     <ClInclude Include="ptr\creation_payload.h" />
     <ClInclude Include="ptr\default_creator.h" />
