@@ -21,6 +21,10 @@ __pragma(pack(pop))
 #define _CRT_ERRCNT         3
 #endif
 
+#define RF_CONCAT_INNER(LHS, RHS) LHS ## RHS
+#define RF_CONCAT(LHS, RHS) RF_CONCAT_INNER(LHS, RHS)
+#define RF_STRINGIFY(X) #X
+
 #define RF_NO_COPY(CLASS) \
 	CLASS(CLASS const &) = delete; \
 	CLASS & operator =(CLASS const &) = delete;
