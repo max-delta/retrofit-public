@@ -39,6 +39,7 @@
     <ClInclude Include="meta\MemberTest.h">
       <Filter>meta</Filter>
     </ClInclude>
+    <ClInclude Include="compiler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

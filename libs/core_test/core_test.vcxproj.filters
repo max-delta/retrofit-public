@@ -22,6 +22,7 @@
     <ClCompile Include="class_info_builder.cpp" />
     <ClCompile Include="class_info_compositor.cpp" />
     <ClCompile Include="membertest.cpp" />
+    <ClCompile Include="compiler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
