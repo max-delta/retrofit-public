@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="class_info_builder.cpp" />
     <ClCompile Include="class_info_compositor.cpp" />
+    <ClCompile Include="compiler.cpp" />
     <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math_casts.cpp" />
