@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "core_rftype/ClassInfoCompositor.h"
+#include "core_rftype/CreateClassInfoDefinition.h"
 
 
 namespace RF { namespace reflect {
@@ -59,6 +59,8 @@ RFTYPE_CREATE_META( RF::reflect::details::ClassWithStaticClassInfo )
 	RFTYPE_META().Method( "instance_v_call_v", &ClassWithStaticClassInfo::instance_v_call_v );
 	RFTYPE_META().RawProperty( "static_d", &ClassWithStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &ClassWithStaticClassInfo::instance_d );
+
+	static_assert( std::is_same<RFTYPE_METATYPE(), ClassWithStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::ClassWithoutStaticClassInfo )
@@ -68,6 +70,8 @@ RFTYPE_CREATE_META( RF::reflect::details::ClassWithoutStaticClassInfo )
 	RFTYPE_META().Method( "instance_v_call_v", &ClassWithoutStaticClassInfo::instance_v_call_v );
 	RFTYPE_META().RawProperty( "static_d", &ClassWithoutStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &ClassWithoutStaticClassInfo::instance_d );
+
+	static_assert( std::is_same<RFTYPE_METATYPE(), ClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 //////////

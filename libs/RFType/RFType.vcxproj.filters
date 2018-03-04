@@ -3,9 +3,16 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="TypeDatabase.h" />
+    <ClInclude Include="CreateClassInfoDeclaration.h" />
+    <ClInclude Include="CreateClassInfoDefinition.h" />
+    <ClInclude Include="Example.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TypeDatabase.cpp" />
+    <ClCompile Include="CreateClassInfoDefinition.cpp" />
+    <ClCompile Include="Example.cpp" />
   </ItemGroup>
 </Project>

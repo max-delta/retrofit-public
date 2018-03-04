@@ -155,6 +155,7 @@
     <ClCompile Include="class_info_compositor.cpp" />
     <ClCompile Include="compiler.cpp" />
     <ClCompile Include="entwined_creator.cpp" />
+    <ClCompile Include="math_hash.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="math_casts.cpp" />
     <ClCompile Include="math_clamps.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="reflect_inspect_function.cpp" />
     <ClCompile Include="reflect_inspect_variable.cpp" />
     <ClCompile Include="reflect_value.cpp" />
+    <ClCompile Include="rftype_identifier.cpp" />
     <ClCompile Include="static_array.cpp" />
     <ClCompile Include="shared_ptr.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -188,6 +190,9 @@
     </ProjectReference>
     <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
       <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
