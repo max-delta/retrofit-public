@@ -23,6 +23,8 @@
     <ClCompile Include="class_info_compositor.cpp" />
     <ClCompile Include="membertest.cpp" />
     <ClCompile Include="compiler.cpp" />
+    <ClCompile Include="math_hash.cpp" />
+    <ClCompile Include="rftype_identifier.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

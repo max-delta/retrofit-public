@@ -3,8 +3,12 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ClassInfoCompositor.h" />
+    <ClInclude Include="Identifier.h" />
+    <ClInclude Include="CreateClassInfoDeclaration.h" />
+    <ClInclude Include="CreateClassInfoDefinition.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Identifier.cpp" />
   </ItemGroup>
 </Project>

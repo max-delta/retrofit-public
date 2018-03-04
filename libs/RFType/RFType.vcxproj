@@ -158,17 +158,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CreateClassInfoDeclaration.h" />
+    <ClInclude Include="CreateClassInfoDefinition.h" />
+    <ClInclude Include="Example.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TypeDatabase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CreateClassInfoDefinition.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Example.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TypeDatabase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

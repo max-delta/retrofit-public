@@ -6,10 +6,12 @@
     <ClInclude Include="math_casts.h" />
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
+    <ClInclude Include="Hash.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Hash.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
