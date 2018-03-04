@@ -1,8 +1,9 @@
 #pragma once
+#include "core/compiler.h"
+
 #include <assert.h>
 
 // Cuz fuck Windows.h, that's why
-void __cdecl __debugbreak( void );
 #ifdef _DEBUG
 __pragma(pack(push, _CRT_PACKING))
 extern "C" {
@@ -39,7 +40,7 @@ __pragma(pack(pop))
 	{ \
 		if( !!!(TEST) && _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, "", "FAIL" ) == 1 ) \
 		{ \
-			__debugbreak(); \
+			RF_SOFTWARE_INTERRUPT(); \
 		} \
 	} while (false)
 #define RF_ASSERT_MSG(TEST, MSG) \
@@ -47,7 +48,7 @@ __pragma(pack(pop))
 	{ \
 		if( !!!(TEST) && _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, "", MSG ) == 1 ) \
 		{ \
-			__debugbreak(); \
+			RF_SOFTWARE_INTERRUPT(); \
 		} \
 	} while (false)
 #else
