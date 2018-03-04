@@ -12,8 +12,21 @@ TEST(Compiler, Constants)
 	static_assert( kCompiler != Compiler::Invalid, "Unsupported" );
 	static_assert( kArchitecture != Architecture::Invalid, "Unsupported" );
 	static_assert( kMemoryModel != MemoryModel::Invalid, "Unsupported" );
+	static_assert( kEndianness != Endianness::Invalid, "Unsupported" );
 
 	static_assert( RF_PLATFORM_POINTER_BYTES == sizeof( void* ), "Wrong size" );
+}
+
+
+
+TEST( Compiler, Endian )
+{
+	char const bytes[4] = { 1,2,3,4 };
+	#ifdef RF_PLATFORM_LITTLE_ENDIAN
+	ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x04030201 );
+	#else
+	ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x01020304 );
+	#endif
 }
 
 

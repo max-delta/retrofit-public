@@ -23,6 +23,14 @@ enum class MemoryModel
 	Weak
 };
 
+enum class Endianness
+{
+	Invalid = 0,
+	Big, // Normal
+	Little, // Swapped
+	Variable // :(
+};
+
 #ifdef _MSC_VER
 	#define RF_PLATFORM_MSVC
 	constexpr Compiler kCompiler = Compiler::MSVC;
@@ -35,18 +43,22 @@ enum class MemoryModel
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
 		#define RF_PLATFORM_STRONG_MEMORY_MODEL
+		#define RF_PLATFORM_LITTLE_ENDIAN
 		#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
 		#define RF_PLATFORM_POINTER_BYTES 8u
 		constexpr Architecture kArchitecture = Architecture::x86_64;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+		constexpr Endianness kEndianness = Endianness::Little;
 		constexpr bool kAlignedModificationsAreAtomic = true;
 	#elif defined(_M_IX86)
 		#define RF_PLATFORM_X86_32
 		#define RF_PLATFORM_STRONG_MEMORY_MODEL
+		#define RF_PLATFORM_LITTLE_ENDIAN
 		#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
 		#define RF_PLATFORM_POINTER_BYTES 4u
 		constexpr Architecture kArchitecture = Architecture::x86_32;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+		constexpr Endianness kEndianness = Endianness::Little;
 		constexpr bool kAlignedModificationsAreAtomic = true;
 	#elif defined(_M_ARM64)
 		#error Verify and add support
@@ -54,6 +66,7 @@ enum class MemoryModel
 		#define RF_PLATFORM_POINTER_BYTES 8u
 		constexpr Architecture kArchitecture = Architecture::Invalid;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
+		constexpr Endianness kEndianness = Endianness::Variable;
 		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#elif defined(_M_ARM)
 		#error Verify and add support
@@ -61,6 +74,7 @@ enum class MemoryModel
 		#define RF_PLATFORM_POINTER_BYTES 4u
 		constexpr Architecture kArchitecture = Architecture::Invalid;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
+		constexpr Endianness kEndianness = Endianness::Variable;
 		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#else
 		#error Undefined architecture
