@@ -6,6 +6,7 @@
     <ClInclude Include="Identifier.h" />
     <ClInclude Include="CreateClassInfoDeclaration.h" />
     <ClInclude Include="CreateClassInfoDefinition.h" />
+    <ClInclude Include="ClassInfoAccessor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

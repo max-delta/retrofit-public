@@ -13,6 +13,7 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleWithStaticClassInfo )
 	RFTYPE_META().RawProperty( "mExampleStaticVariable", &ExampleWithStaticClassInfo::mExampleStaticVariable );
 	RFTYPE_REGISTER_BY_NAME( "ExampleWithStaticClassInfo" );
 }
+RFTYPE_DEFINE_STATIC_CLASSINFO( RF::rftype_example::ExampleWithStaticClassInfo );
 
 RFTYPE_CREATE_META( RF::rftype_example::ExampleWithoutStaticClassInfo )
 {
