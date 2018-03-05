@@ -6,7 +6,7 @@ namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
 // The test structure must be declared before use
-#define RF_DECLARE_HAS_MEMBER_NAME_TEST(NAME) \
+#define RF_DECLARE_HAS_PUBLIC_MEMBER_NAME_TEST(NAME) \
 	template<typename ___TYPE> \
 	struct ___HasMemberWithName_##NAME \
 	{ \
@@ -25,13 +25,13 @@ namespace RF {
 		static constexpr bool value = std::is_same<std::true_type, ___booltype>::value; \
 	};
 
-// The test is used in the form RF_HAS_MEMBER_NAME( Class, DesiredMemberName )
-#define RF_HAS_MEMBER_NAME(CLASS, NAME) (___HasMemberWithName_##NAME<CLASS>::value)
+// The test is used in the form RF_HAS_PUBLIC_MEMBER_NAME( Class, DesiredMemberName )
+#define RF_HAS_PUBLIC_MEMBER_NAME(CLASS, NAME) (___HasMemberWithName_##NAME<CLASS>::value)
 
 // Assumes code similar to as follows:
-//  template<class CLASS, typename std::enable_if<RF_HAS_MEMBER_NAME( CLASS, NAME ), int>::type = 0>
+//  template<class CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ), int>::type = 0>
 //  void foo();
-//  template<class CLASS, typename std::enable_if<RF_HAS_MEMBER_NAME( CLASS, NAME ) == false, int>::type = 0>
+//  template<class CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ) == false, int>::type = 0>
 //  void foo();
 
 ///////////////////////////////////////////////////////////////////////////////
