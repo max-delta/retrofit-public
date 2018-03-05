@@ -3,26 +3,35 @@
 #include "core/meta/MemberTest.h"
 
 
+RF_DECLARE_HAS_PUBLIC_MEMBER_NAME_TEST( DesiredStaticMemberName );
+RF_DECLARE_HAS_PUBLIC_MEMBER_NAME_TEST( DesiredNonStaticMemberName );
+
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-RF_DECLARE_HAS_MEMBER_NAME_TEST(DesiredMemberName);
-
-
-
-TEST( MemberTest, Basics )
+namespace details
 {
 	struct Has
 	{
-		int DesiredMemberName;
+		static int DesiredStaticMemberName;
+		int DesiredNonStaticMemberName;
 	};
-	static_assert( RF_HAS_MEMBER_NAME( Has, DesiredMemberName ) == true, "Unexpected size" );
 
 	struct HasNot
 	{
 		//
 	};
-	static_assert( RF_HAS_MEMBER_NAME( HasNot, DesiredMemberName ) == false, "Unexpected size" );
+}
+
+
+
+TEST( MemberTest, Basics )
+{
+	static_assert( RF_HAS_PUBLIC_MEMBER_NAME( details::Has, DesiredStaticMemberName ) == true, "Unexpected size" );
+	static_assert( RF_HAS_PUBLIC_MEMBER_NAME( details::HasNot, DesiredStaticMemberName ) == false, "Unexpected size" );
+
+	static_assert( RF_HAS_PUBLIC_MEMBER_NAME( details::Has, DesiredNonStaticMemberName ) == true, "Unexpected size" );
+	static_assert( RF_HAS_PUBLIC_MEMBER_NAME( details::HasNot, DesiredNonStaticMemberName ) == false, "Unexpected size" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

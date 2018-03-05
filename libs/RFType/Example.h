@@ -20,7 +20,9 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
-class RFTYPE_API ExampleWithoutStaticClassInfo
+// NOTE: Dll export not required, but its absence means that the only way to
+//  invoke its functions cross-dll will be via RFType
+class /*RFTYPE_API*/ ExampleWithoutStaticClassInfo
 {
 public:
 	bool ExampleNonStaticFunction( int i, float f, char c );
