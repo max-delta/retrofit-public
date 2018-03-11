@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="macros.h" />
+    <ClInclude Include="meta\LazyInitSingleton.h" />
     <ClInclude Include="meta\MemberTest.h" />
     <ClInclude Include="meta\TypeList.h" />
     <ClInclude Include="compiler.h" />
