@@ -114,6 +114,7 @@ using LogContextBuffer = std::array<char, kMaxContextLen>;
 //  template<> void WriteContextString(
 //   MyClass const& context,
 //   LogContextBuffer buffer );
+// NOTE: Will be called from multiple threads
 template<typename Context>
 void WriteContextString( Context const& context, LogContextBuffer buffer );
 
