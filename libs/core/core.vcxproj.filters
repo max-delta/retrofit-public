@@ -40,9 +40,11 @@
       <Filter>meta</Filter>
     </ClInclude>
     <ClInclude Include="compiler.h" />
+    <ClInclude Include="rf_assert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="rf_assert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ptr">

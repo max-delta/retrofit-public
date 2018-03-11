@@ -166,6 +166,9 @@
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\RFType\RFType.vcxproj">
       <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
     </ProjectReference>

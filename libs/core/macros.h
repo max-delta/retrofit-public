@@ -1,26 +1,11 @@
 #pragma once
+
+// For compiler and platform macros
 #include "core/compiler.h"
 
-#include <assert.h>
+// For assert macros
+#include "core/rf_assert.h"
 
-// Cuz fuck Windows.h, that's why
-#ifdef _DEBUG
-__pragma(pack(push, _CRT_PACKING))
-extern "C" {
-	__declspec(dllimport) int __cdecl _CrtDbgReport(
-		int         _ReportType,
-		char const* _FileName,
-		int         _Linenumber,
-		char const* _ModuleName,
-		char const* _Format,
-		...);
-}
-__pragma(pack(pop))
-#define _CRT_WARN           0
-#define _CRT_ERROR          1
-#define _CRT_ASSERT         2
-#define _CRT_ERRCNT         3
-#endif
 
 #define RF_CONCAT_INNER(LHS, RHS) LHS ## RHS
 #define RF_CONCAT(LHS, RHS) RF_CONCAT_INNER(LHS, RHS)
@@ -32,26 +17,3 @@ __pragma(pack(pop))
 #define RF_NO_MOVE(CLASS) \
 	CLASS( CLASS && ) = delete; \
 	CLASS& operator =( CLASS && ) = delete;
-
-
-#ifdef _DEBUG
-#define RF_ASSERT(TEST) \
-	do \
-	{ \
-		if( !!!(TEST) && _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, "", "FAIL" ) == 1 ) \
-		{ \
-			RF_SOFTWARE_INTERRUPT(); \
-		} \
-	} while (false)
-#define RF_ASSERT_MSG(TEST, MSG) \
-	do \
-	{ \
-		if( !!!(TEST) && _CrtDbgReport(_CRT_ASSERT, __FILE__, __LINE__, "", MSG ) == 1 ) \
-		{ \
-			RF_SOFTWARE_INTERRUPT(); \
-		} \
-	} while (false)
-#else
-#define RF_ASSERT(TEST)
-#define RF_ASSERT_MSG(TEST, MSG)
-#endif
