@@ -19,6 +19,8 @@
 .obj$
 .exp$
 
+.gta.testdurations$
+
 .lib$
 .ilk$
 .dll$
