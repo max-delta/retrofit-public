@@ -26,6 +26,7 @@
     <ClCompile Include="math_hash.cpp" />
     <ClCompile Include="rftype_identifier.cpp" />
     <ClCompile Include="math_bits.cpp" />
+    <ClCompile Include="logging_router.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
