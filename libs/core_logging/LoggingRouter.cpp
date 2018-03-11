@@ -17,12 +17,19 @@ LoggingRouter::LoggingRouter()
 
 
 
-void LoggingRouter::Log( nullptr_t /*context*/, CategoryKey categoryKey, SeverityMask severityMask, char const * format, ... ) const
+void LoggingRouter::Log( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const * format, ... ) const
 {
 	va_list args;
 	va_start( args, format );
-	LogInternal( nullptr, categoryKey, severityMask, format, args );
+	LogInternal( context, categoryKey, severityMask, format, args );
 	va_end( args );
+}
+
+
+
+void LoggingRouter::LogVA( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const
+{
+	LogInternal( context, categoryKey, severityMask, format, args );
 }
 
 
