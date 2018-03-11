@@ -180,6 +180,9 @@
     <ProjectReference Include="..\..\third_party\stb_image\stb_image.vcxproj">
       <Project>{c2adeee6-0ab0-4b7c-833f-7b96832f1a01}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\core_platform\core_platform.vcxproj">
       <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
