@@ -15,7 +15,7 @@ enum Severity : uint64_t
 	RF_SEV_WARNING = 1 << 3,
 	RF_SEV_ERROR = 1 << 4,
 	RF_SEV_CRITICAL = 1 << 5,
-	___RF_SEV_RESERVED_6 = 1 << 6,
+	RF_SEV_MILESTONE = 1 << 6,
 	___RF_SEV_RESERVED_7 = 1 << 7,
 
 	// Bits 9-56 (shifts 8-55) are for custom user severities
@@ -25,7 +25,7 @@ enum Severity : uint64_t
 	___RF_SEV_RESERVED_58 = 1ull << 58,
 	___RF_SEV_RESERVED_59 = 1ull << 59,
 	___RF_SEV_RESERVED_60 = 1ull << 60,
-	___RF_SEV_RESERVED_61 = 1ull << 61,
+	RF_SEV_USER_ATTENTION_REQUESTED = 1ull << 61,
 	RF_SEV_CALLSTACK_VALUABLE = 1ull << 62,
 	RF_SEV_UNRECOVERABLE = 1ull << 63
 };

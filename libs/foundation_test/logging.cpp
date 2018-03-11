@@ -35,6 +35,9 @@ TEST( Logging, MacroResolution )
 		RFLOG_ERROR( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_CRITICAL( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_FATAL( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_NOTIFY( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_TEST_AND_NOTIFY( false, nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_CUSTOM( nullptr, RFCAT_TEST, 1, "This is a test %p", 0x0 );
 	}
 }
 
@@ -58,6 +61,9 @@ TEST( Logging, CustomContext )
 		RFLOG_ERROR( context, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_CRITICAL( context, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_FATAL( context, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_NOTIFY( context, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_TEST_AND_NOTIFY( false, context, RFCAT_TEST, "This is a test %p", 0x0 );
+		RFLOG_CUSTOM( context, RFCAT_TEST, 1, "This is a test %p", 0x0 );
 	}
 }
 
