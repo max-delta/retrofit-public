@@ -135,6 +135,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="math_bits.h" />
     <ClInclude Include="math_casts.h" />
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
@@ -152,6 +153,7 @@
     <ClCompile Include="Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="math_bits.inl" />
     <None Include="math_casts.inl" />
     <None Include="math_clamps.inl" />
     <None Include="math_compare.inl" />
