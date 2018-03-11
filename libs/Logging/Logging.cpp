@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Logging.h"
 
+#include "core/meta/LazyInitSingleton.h"
 #include "core_logging/LoggingRouter.h"
 
 
@@ -9,8 +10,7 @@ namespace RF { namespace logging {
 
 LoggingRouter& GetOrCreateGlobalLoggingInstance()
 {
-	static LoggingRouter router;
-	return router;
+	return GetOrInitFunctionStaticScopedSingleton<LoggingRouter>();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

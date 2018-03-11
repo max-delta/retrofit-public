@@ -41,6 +41,9 @@
     </ClInclude>
     <ClInclude Include="compiler.h" />
     <ClInclude Include="rf_assert.h" />
+    <ClInclude Include="meta\LazyInitSingleton.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
