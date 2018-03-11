@@ -25,6 +25,7 @@
     <ClCompile Include="compiler.cpp" />
     <ClCompile Include="math_hash.cpp" />
     <ClCompile Include="rftype_identifier.cpp" />
+    <ClCompile Include="math_bits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

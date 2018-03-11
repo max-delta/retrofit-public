@@ -7,6 +7,7 @@
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="math_bits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -18,5 +19,6 @@
     <None Include="math_casts.inl" />
     <None Include="math_clamps.inl" />
     <None Include="math_compare.inl" />
+    <None Include="math_bits.inl" />
   </ItemGroup>
 </Project>
