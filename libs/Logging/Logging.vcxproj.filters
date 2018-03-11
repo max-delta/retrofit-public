@@ -2,10 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="LoggingRouter.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="Logging.h" />
+    <ClInclude Include="Constants.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="LoggingRouter.cpp" />
+    <ClCompile Include="Logging.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Logging.inl" />
   </ItemGroup>
 </Project>

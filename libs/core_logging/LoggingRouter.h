@@ -30,8 +30,6 @@ public:
 	using HandlerID = uint64_t;
 	static constexpr HandlerID kInvalidHandlerID = 0;
 	using HandlerFunc = void(*)( LoggingRouter const&, LogEvent const&, va_list args );
-	static constexpr size_t kMaxContextLen = 512;
-	using LogContextBuffer = std::array<char, kMaxContextLen>;
 private:
 	static constexpr HandlerID kInitialHandlerID = kInvalidHandlerID + 1;
 	using ReaderWriterMutex = std::shared_mutex;
@@ -74,9 +72,8 @@ public:
 	LoggingRouter( LoggingRouter && ) = default;
 	LoggingRouter& operator=( LoggingRouter && ) = default;
 
-	template<typename Context>
-	void Log( Context context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, ... ) const;
-	void Log( nullptr_t /*context*/, CategoryKey categoryKey, SeverityMask severityMask, char const* format, ... ) const;
+	void Log( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, ... ) const;
+	void LogVA( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const;
 
 	// Control which handlers are able to handle log events
 	// NOTE: Handlers are run in the order they are registered
@@ -108,16 +105,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-
-// Specialize this to add support for your context
-// EXAMPLE:
-//  template<> void WriteContextString(
-//   MyClass const& context,
-//   LoggingRouter::LogContextBuffer buffer );
-template<typename Context>
-void WriteContextString( Context const& context, LoggingRouter::LogContextBuffer buffer );
-
-///////////////////////////////////////////////////////////////////////////////
 }}
-
-#include "LoggingRouter.inl"
