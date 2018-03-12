@@ -6,10 +6,12 @@
 #include "PPU/PPUController.h"
 
 #include "PlatformUtils_win32/windowing.h"
+#include "PlatformUtils_win32/Console.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
 #include "SimpleGL/SimpleGL.h"
 #include "Logging/Logging.h"
+#include "Logging/ANSIConsoleLogger.h"
 #include "Timing/clocks.h"
 
 #include "core/ptr/default_creator.h"
@@ -29,6 +31,7 @@ extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
 
+constexpr bool k_ConsoleTest = false;
 constexpr bool k_DrawTest = false;
 constexpr bool k_DrawInputDebug = false;
 constexpr bool k_SquirrelTest = false;
@@ -70,6 +73,36 @@ RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = std::chro
 int main()
 {
 	using namespace RF;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main start" );
+
+	bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
+	if( consoleInitialized )
+	{
+		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
+		logging::LoggingRouter& router = logging::GetOrCreateGlobalLoggingInstance();
+		logging::HandlerDefinition def;
+		def.mSupportedSeverities = -1;
+		def.mHandlerFunc = logging::ANSIConsoleLogger;
+		logging::RegisterHandler( def );
+	}
+	else
+	{
+		puts( " == NO ANSI CONSOLE SUPPORT ==" );
+	}
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Console logging initialized" );
+
+	if( k_ConsoleTest )
+	{
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_TRACE, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_DEBUG, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_INFO, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_WARNING, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_ERROR, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_CRITICAL, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_MILESTONE, "Console test" );
+		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, 1ull << 32, "Console test" );
+	}
 
 	g_Vfs = DefaultCreator<file::VFS>::Create();
 	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );

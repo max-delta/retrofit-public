@@ -1,10 +1,10 @@
 #pragma once
+#include "core_logging/LoggingHandler.h"
 #include "core/macros.h"
 
 #include <vector>
 #include <shared_mutex>
 #include <array>
-#include <stdint.h>
 
 
 namespace RF { namespace logging {
@@ -15,21 +15,9 @@ class LoggingRouter
 	RF_NO_COPY( LoggingRouter );
 
 	//
-	// Forwards
-public:
-	struct LogEvent;
-	struct HandlerDefinition;
-
-
-	//
 	// Types and constants
 public:
-	using CategoryKey = char const*;
-	using SeverityMask = uint64_t;
 	using SeverityStrings = std::array<char const*, 64>;
-	using HandlerID = uint64_t;
-	static constexpr HandlerID kInvalidHandlerID = 0;
-	using HandlerFunc = void(*)( LoggingRouter const&, LogEvent const&, va_list args );
 private:
 	static constexpr HandlerID kInitialHandlerID = kInvalidHandlerID + 1;
 	using ReaderWriterMutex = std::shared_mutex;
@@ -37,32 +25,6 @@ private:
 	using WriterLock = std::unique_lock<std::shared_mutex>;
 	using HandlerDefinitionByID = std::pair<HandlerID, HandlerDefinition>;
 	using HandlerDefinitionsByPriority = std::vector<HandlerDefinitionByID>;
-
-
-	//
-	// Structs
-public:
-	struct LogEvent
-	{
-		// Values not gauranteed to be consistent across builds
-		CategoryKey mCategoryKey;
-
-		// May have multiple severities set
-		SeverityMask mSeverityMask;
-
-		// Must be consumed immediately, pointers are not permanent
-		char const* mTransientContextString;
-		char const* mTransientMessageFormatString;
-	};
-
-	struct HandlerDefinition
-	{
-		// May recieve additional severities on multi-severity events
-		SeverityMask mSupportedSeverities;
-
-		// Must support multi-threading
-		HandlerFunc mHandlerFunc;
-	};
 
 
 	//
