@@ -200,6 +200,9 @@
     <ProjectReference Include="..\core_math\core_math.vcxproj">
       <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
       <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
     </ProjectReference>
