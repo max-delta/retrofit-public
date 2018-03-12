@@ -192,7 +192,7 @@ void FramePackEditor::Process()
 			break;
 		}
 		default:
-			RF_ASSERT( false );
+			RF_DBGFAIL();
 			break;
 	}
 }
@@ -369,7 +369,7 @@ void FramePackEditor::Render()
 				break;
 			}
 			default:
-				RF_ASSERT( false );
+				RF_DBGFAIL();
 				break;
 		}
 		constexpr char k_Footer5[] =

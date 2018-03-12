@@ -56,7 +56,7 @@ void const * Value::GetBytes() const
 		case Type::Invalid:      return nullptr;
 		default:
 		{
-			RF_ASSERT( false );
+			RF_DBGFAIL();
 			return nullptr;
 		}
 	}
@@ -91,7 +91,7 @@ size_t Value::GetNumBytes() const
 		case Type::Invalid:      return 0;
 		default:
 		{
-			RF_ASSERT( false );
+			RF_DBGFAIL();
 			return 0;
 		}
 	}
