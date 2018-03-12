@@ -76,6 +76,7 @@ int main()
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main start" );
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing console logging..." );
 	bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
 	if( consoleInitialized )
 	{
@@ -89,8 +90,8 @@ int main()
 	else
 	{
 		puts( " == NO ANSI CONSOLE SUPPORT ==" );
+		RF_DBGFAIL_MSG( "TODO: Non-ANSI console logger" );
 	}
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Console logging initialized" );
 
 	if( k_ConsoleTest )
 	{
@@ -104,6 +105,7 @@ int main()
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, 1ull << 32, "Console test" );
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
 	g_Vfs = DefaultCreator<file::VFS>::Create();
 	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
@@ -112,24 +114,25 @@ int main()
 		return 1;
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
-	g_Vfs->DebugDumpMountTable();
 
 	if( k_SquirrelTest )
 	{
 		test::SQTest();
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	constexpr uint8_t k_WindowScaleFactor = 4;
 	constexpr uint16_t k_Width = gfx::k_DesiredWidth * k_WindowScaleFactor;
 	constexpr uint16_t k_Height = gfx::k_DesiredHeight * k_WindowScaleFactor;
-
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = EntwinedCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
 	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
 	g_Graphics->Initialize( k_Width, k_Height );
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
 	if( k_DrawTest )
@@ -139,12 +142,16 @@ int main()
 
 	if( k_FramePackEditor )
 	{
+		RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
 		g_FramePackEditor = EntwinedCreator<FramePackEditor>::Create();
 		g_FramePackEditor->Init();
 	}
 
 	FrameLimiter frameLimiter;
 	frameLimiter.Reset();
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
+
 	while( true )
 	{
 		frameLimiter.Stall();
