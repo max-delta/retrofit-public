@@ -27,7 +27,6 @@ TEST( Logging, MacroResolution )
 		constexpr char const* RFCAT_TEST = "Test";
 		constexpr uint64_t RFCAT_TEST_SEV_WHITELIST = -1;
 
-		RFLOG_ERROR( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_TRACE( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_DEBUG( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_INFO( nullptr, RFCAT_TEST, "This is a test %p", 0x0 );
@@ -53,7 +52,6 @@ TEST( Logging, CustomContext )
 
 		details::TestLoggingContext context;
 
-		RFLOG_ERROR( context, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_TRACE( context, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_DEBUG( context, RFCAT_TEST, "This is a test %p", 0x0 );
 		RFLOG_INFO( context, RFCAT_TEST, "This is a test %p", 0x0 );
