@@ -1,6 +1,8 @@
 #pragma once
 #include "ResourceManager.h"
 
+#include "Logging/Logging.h"
+
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,7 +33,7 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( managedResourceID );
 	if( resourceIter == m_Resources.end() )
 	{
-		RF_ASSERT_MSG( false, "Could not find ID" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
 		return nullptr;
 	}
 
@@ -52,7 +54,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
 	if( resourceIter == m_Resources.end() )
 	{
-		RF_ASSERT_MSG( false, "Lookups desynced?" );
+		RFLOG_NOTIFY( nullptr, RFCAT_PPU, "Lookups desynced?" );
 		return nullptr;
 	}
 
@@ -150,14 +152,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
 	if( IDIter == m_ResourceIDs.end() )
 	{
-		RF_ASSERT_MSG( false, "Resource ID not found" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
 	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
 	if( resourceIter == m_Resources.end() )
 	{
-		RF_ASSERT_MSG( false, "Resource not found" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
 		return false;
 	}
 

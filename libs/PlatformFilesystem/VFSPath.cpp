@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "VFSPath.h"
 
+#include "Logging/Logging.h"
+
 #include "core/macros.h"
 
 
@@ -99,14 +101,14 @@ bool VFSPath::IsDescendantOf( VFSPath const& closerToRoot ) const
 	size_t const childNumNodes = NumElements();
 	if( childNumNodes == 0 )
 	{
-		RF_ASSERT_MSG( false, "Cannot compare using an empty path" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Cannot compare using an empty path" );
 		return false;
 	}
 
 	size_t const parentNumNodes = closerToRoot.NumElements();
 	if( parentNumNodes == 0 )
 	{
-		RF_ASSERT_MSG( false, "Cannot compare using an empty path" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Cannot compare using an empty path" );
 		return false;
 	}
 

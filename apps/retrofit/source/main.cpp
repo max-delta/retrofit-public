@@ -1,21 +1,22 @@
 #include "stdafx.h"
 
+#include "Tests.h"
+#include "FramePackEditor.h"
+
 #include "PPU/PPUController.h"
 
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
 #include "SimpleGL/SimpleGL.h"
-
+#include "Logging/Logging.h"
 #include "Timing/clocks.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
 
-#include "Tests.h"
-#include "FramePackEditor.h"
-
 #include <thread>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -74,7 +75,7 @@ int main()
 	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
 	{
-		RF_ASSERT_MSG( false, "Failed to startup VFS" );
+		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
 		return 1;
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
