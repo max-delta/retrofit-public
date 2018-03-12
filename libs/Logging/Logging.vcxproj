@@ -156,12 +156,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="FallbackLogger.h" />
     <ClInclude Include="Logging.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FallbackLogger.cpp" />
     <ClCompile Include="Logging.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -176,6 +178,9 @@
     </ProjectReference>
     <ProjectReference Include="..\core_logging\core_logging.vcxproj">
       <Project>{b78d7122-5da0-4173-a556-4aba37431896}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
