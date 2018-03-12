@@ -73,7 +73,7 @@ void WndProcDigitalInputComponent::OnTick()
 
 WndProcDigitalInputComponent::PhysicalCode WndProcDigitalInputComponent::GetMaxPhysicalCode() const
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 	return PhysicalCode();
 }
 
@@ -81,7 +81,7 @@ WndProcDigitalInputComponent::PhysicalCode WndProcDigitalInputComponent::GetMaxP
 
 WndProcDigitalInputComponent::LogicalCode WndProcDigitalInputComponent::GetMaxLogicalCode() const
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 	return LogicalCode();
 }
 
@@ -89,7 +89,7 @@ WndProcDigitalInputComponent::LogicalCode WndProcDigitalInputComponent::GetMaxLo
 
 std::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 	return std::u16string();
 }
 
@@ -147,14 +147,14 @@ void WndProcDigitalInputComponent::GetLogicalEventStream( EventParser<LogicalEve
 
 void WndProcDigitalInputComponent::ClearPhysicalEventStream()
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 }
 
 
 
 void WndProcDigitalInputComponent::ClearLogicalEventStream()
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					state = PinState::Inactive;
 					break;
 				default:
-					RF_ASSERT( false );
+					RF_DBGFAIL();
 					break;
 			}
 			RecordLogical( virtualKey, state );
@@ -249,7 +249,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					state = PinState::Inactive;
 					break;
 				default:
-					RF_ASSERT( false );
+					RF_DBGFAIL();
 					break;
 			}
 
@@ -280,11 +280,11 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					}
 					else
 					{
-						RF_ASSERT( false );
+						RF_DBGFAIL();
 					}
 					break;
 				default:
-					RF_ASSERT( false );
+					RF_DBGFAIL();
 					break;
 			}
 
@@ -357,7 +357,7 @@ WndProcAnalogInputComponent::SignalIndex WndProcAnalogInputComponent::GetMaxSign
 
 std::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIndex ) const
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 	return std::u16string();
 }
 

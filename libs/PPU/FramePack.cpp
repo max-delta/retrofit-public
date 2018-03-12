@@ -104,7 +104,7 @@ uint8_t FramePackBase::CalculateFirstTimeIndexOfTimeSlot( uint8_t timeSlot ) con
 		rollingTimeIndex += timeSlotSustain;
 	}
 
-	RF_ASSERT( false );
+	RF_DBGFAIL();
 	return 0;
 }
 

@@ -79,7 +79,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	}
 	else
 	{
-		RF_ASSERT( false );
+		RF_DBGFAIL();
 	}
 	retVal->m_NumTimeSlots = math::integer_cast<uint8_t>( *integer );
 
