@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "VFS.h"
 
+#include "PlatformFilesystem/FileHandle.h"
+#include "Logging/Logging.h"
+
 #include "core/macros.h"
 #include "core/ptr/entwined_creator.h"
 #include "core_math/math_casts.h"
-
-#include "PlatformFilesystem/FileHandle.h"
 
 #include <stdio.h>
 #include <sstream>
@@ -94,7 +95,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 	errno_t openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 )
 	{
-		RF_ASSERT_MSG( false, "Failed to open mount table file" );
+		RFLOG_NOTIFY( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
 
@@ -137,7 +138,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 				curReadMode = ReadMode::k_ReadingToken;
 				if( tokenBuilder.empty() == false )
 				{
-					RF_ASSERT_MSG( false, "Internal parser failure" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parser failure" );
 					return false;
 				}
 			}
@@ -148,7 +149,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 			}
 			else
 			{
-				RF_ASSERT_MSG( false, "Unknown character encountered when searching for token" );
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Unknown character encountered when searching for token" );
 				return false;
 			}
 		}
@@ -183,7 +184,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 			{
 				if( tokenBuilder[0] != VFSMountTableTokens::k_MountTokenAffix[0] )
 				{
-					RF_ASSERT_MSG( false, "Malformed token prefix at start" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
 					return false;
 				}
 				continue;
@@ -192,7 +193,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 			{
 				if( tokenBuilder[1] != VFSMountTableTokens::k_MountTokenAffix[1] )
 				{
-					RF_ASSERT_MSG( false, "Malformed token prefix at start" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
 					return false;
 				}
 				continue;
@@ -223,7 +224,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 							mountRule.m_Permissions == VFSMount::Permissions::Invalid ||
 							mountRule.m_VirtualPath.NumElements() == 0 )
 						{
-							RF_ASSERT_MSG( false, "Failed to parse mount rule" );
+							RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to parse mount rule" );
 							return false;
 						}
 						tokenStream.clear();
@@ -240,25 +241,25 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 			continue;
 		}
 
-		RF_ASSERT_MSG( false, "Internal parse logic failure" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parse logic failure" );
 		return false;
 	}
 
 	if( curReadMode != ReadMode::k_HuntingForToken )
 	{
-		RF_ASSERT_MSG( false, "Unterminated token at file end" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unterminated token at file end" );
 		m_MountTable.clear();
 		return false;
 	}
 	else if( tokenBuilder.empty() == false )
 	{
-		RF_ASSERT_MSG( false, "Unclean token buffer at file end" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token buffer at file end" );
 		m_MountTable.clear();
 		return false;
 	}
 	else if( tokenStream.empty() == false )
 	{
-		RF_ASSERT_MSG( false, "Unclean token stream at file end" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token stream at file end" );
 		m_MountTable.clear();
 		return false;
 	}
@@ -290,7 +291,7 @@ VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permis
 				physRoot = &m_UserDirectory;
 				break;
 			default:
-				RF_ASSERT_MSG( false, "Unhandled mount type" );
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Unhandled mount type" );
 				physRoot = nullptr;
 		}
 		VFSPath const realMount = CollapsePath( physRoot->GetChild( mount.m_RealMount ) );
@@ -433,7 +434,7 @@ VFSPath VFS::CollapsePath( VFSPath const & path )
 		{
 			if( retVal.NumElements() == 0 )
 			{
-				RF_ASSERT_MSG( false, "Excessive ascencions found during collapse" );
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Excessive ascencions found during collapse" );
 				return k_Invalid.GetChild( path );
 			}
 
@@ -485,7 +486,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 	else
 	{
-		RF_ASSERT_MSG( false, "Invalid mount type" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Invalid mount type" );
 		retVal.m_Type = VFSMount::Type::Invalid;
 		return retVal;
 	}
@@ -506,7 +507,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 	else
 	{
-		RF_ASSERT_MSG( false, "Invalid permissions" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Invalid permissions" );
 		retVal.m_Type = VFSMount::Type::Invalid;
 		retVal.m_Permissions = VFSMount::Permissions::Invalid;
 		return retVal;
@@ -523,17 +524,17 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 		bool badPathElement = false;
 		if( element.empty() )
 		{
-			RF_ASSERT_MSG( false, "Empty path element in virtual path, parser failure?" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Empty path element in virtual path, parser failure?" );
 			badPathElement = true;
 		}
 		else if( element == k_PathAscensionElement )
 		{
-			RF_ASSERT_MSG( false, "Unsupported path ascension element in virtual path" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in virtual path" );
 			badPathElement = true;
 		}
 		else if( element == k_PathCurrentElement )
 		{
-			RF_ASSERT_MSG( false, "Unsupported path current element in virtual path" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path current element in virtual path" );
 			badPathElement = true;
 		}
 
@@ -558,7 +559,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 		bool badPathElement = false;
 		if( element.empty() )
 		{
-			RF_ASSERT_MSG( false, "Empty path element in real path, parser failure?" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Empty path element in real path, parser failure?" );
 			badPathElement = true;
 		}
 		else if(
@@ -566,7 +567,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 				retVal.m_Type != VFSMount::Type::ConfigRelative &&
 				retVal.m_Type != VFSMount::Type::UserRelative ) )
 		{
-			RF_ASSERT_MSG( false, "Unsupported path ascension element in non-relative real path" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in non-relative real path" );
 			badPathElement = true;
 		}
 		else if(
@@ -575,12 +576,12 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 				retVal.m_Type == VFSMount::Type::UserRelative ) &&
 			hasEncounteredDescendToken )
 		{
-			RF_ASSERT_MSG( false, "Unsupported path ascension element in relative real path after descending" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in relative real path after descending" );
 			badPathElement = true;
 		}
 		else if( element == k_PathCurrentElement )
 		{
-			RF_ASSERT_MSG( false, "Unsupported path current element in real path" );
+			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path current element in real path" );
 			badPathElement = true;
 		}
 
@@ -613,7 +614,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 	VFSPath path = CollapsePath( uncollapsedPath );
 	if( path.IsDescendantOf( k_Root ) == false )
 	{
-		RF_ASSERT_MSG( false, "Virtual path doesn't descend from root" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Virtual path doesn't descend from root" );
 		return nullptr;
 	}
 
@@ -651,7 +652,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 					physRoot = &m_UserDirectory;
 					break;
 				default:
-					RF_ASSERT_MSG( false, "Unhandled mount type" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Unhandled mount type" );
 					return nullptr;
 			}
 			VFSPath branchRoot = physRoot->GetChild( mount.m_RealMount );
@@ -685,7 +686,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			// Tough luck, no easy way to tell what went wrong
 			if( mustExist )
 			{
-				RF_ASSERT_MSG( false, "Failed to open file that was reported to exist" );
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was reported to exist" );
 			}
 			else
 			{
@@ -695,11 +696,11 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 							CreatePathFromString( finalFilename ).GetParent() ) );
 				if( parentExists == false )
 				{
-					RF_ASSERT_MSG( false, "Failed to open file, perhaps parent is missing?" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
 				}
 				else
 				{
-					RF_ASSERT_MSG( false, "Failed to open file that was supposed to be flagged with creation" );
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
 				}
 			}
 			return nullptr;

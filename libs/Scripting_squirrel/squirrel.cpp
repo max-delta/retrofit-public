@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "squirrel.h"
 
+#include "Logging/Logging.h"
+
 #include "core/macros.h"
 #include "core_math/math_casts.h"
 
@@ -35,7 +37,7 @@ static std::string GetLastError( HSQUIRRELVM vm )
 static void NotifyLastError( HSQUIRRELVM vm )
 {
 	std::string const error = GetLastError( vm );
-	RF_ASSERT_MSG( false, error.c_str() );
+	RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "%s", error.c_str() );
 }
 
 
@@ -130,7 +132,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_OUTER:
 		default:
 		{
-			RF_ASSERT_MSG( false, "Type not currently supported" );
+			RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Type not currently supported" );
 			retVal = nullptr;
 			break;
 		}
@@ -232,7 +234,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementName const
 	type = sq_gettype( m_Vm, -1 );
 	if( type != OT_ARRAY )
 	{
-		RF_ASSERT_MSG( false, "Not an array" );
+		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an array" );
 		sq_settop( m_Vm, top );
 		return retVal;
 	}

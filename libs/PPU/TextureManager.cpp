@@ -6,6 +6,7 @@
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
+#include "Logging/Logging.h"
 
 #include "core/ptr/entwined_creator.h"
 #include "core/ptr/default_creator.h"
@@ -104,7 +105,7 @@ bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename 
 	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{
-		RF_ASSERT_MSG( false, "Failed to load file" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Failed to load file" );
 		return false;
 	}
 	FILE* fileVal = fileHandle->GetFile();

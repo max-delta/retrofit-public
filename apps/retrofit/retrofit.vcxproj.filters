@@ -13,5 +13,6 @@
     <ClInclude Include="source\Tests.h" />
     <ClInclude Include="source\TEMP_AssetLoadSave.h" />
     <ClInclude Include="source\FramePackEditor.h" />
+    <ClInclude Include="source\project.h" />
   </ItemGroup>
 </Project>

@@ -10,6 +10,7 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
+#include "Logging/Logging.h"
 
 #include "core_platform/winuser_shim.h"
 
@@ -595,7 +596,7 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	file::VFSPath mappedPath = vfs->AttemptMapToVFS( filepath, file::VFSMount::Permissions::ReadOnly );
 	if( mappedPath.Empty() )
 	{
-		RF_ASSERT_MSG( false, "Unable to map to VFS" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEPACKEDITOR, "Unable to map to VFS" );
 		return;
 	}
 
