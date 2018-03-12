@@ -34,7 +34,7 @@ void LoggingRouter::LogVA( char const* context, CategoryKey categoryKey, Severit
 
 
 
-LoggingRouter::HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const & handlerDefinition )
+HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const & handlerDefinition )
 {
 	WriterLock lock( mMultiReaderSingleWriterLock );
 

@@ -154,6 +154,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LogEvent.h" />
+    <ClInclude Include="LoggingHandler.h" />
     <ClInclude Include="LoggingRouter.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

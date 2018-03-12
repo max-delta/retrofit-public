@@ -8,7 +8,7 @@
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void FallbackLogger( LoggingRouter const& router, LoggingRouter::LogEvent const& event, va_list args )
+void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list args )
 {
 	constexpr size_t kBufSize = 512;
 
@@ -27,9 +27,7 @@ void FallbackLogger( LoggingRouter const& router, LoggingRouter::LogEvent const&
 
 void InsertFallbackLogger()
 {
-	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
-
-	LoggingRouter::HandlerDefinition fallbackDef;
+	HandlerDefinition fallbackDef;
 	fallbackDef.mSupportedSeverities =
 		RF_SEV_ERROR |
 		RF_SEV_CRITICAL |
@@ -37,7 +35,7 @@ void InsertFallbackLogger()
 		RF_SEV_USER_ATTENTION_REQUESTED |
 		RF_SEV_UNRECOVERABLE;
 	fallbackDef.mHandlerFunc = FallbackLogger;
-	router.RegisterHandler( fallbackDef );
+	RegisterHandler( fallbackDef );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
