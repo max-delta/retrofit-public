@@ -36,7 +36,11 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 	} while (false)
 #define RF_ASSERT(TEST) ___RF_ASSERT_IMPL___(TEST, "FAIL")
 #define RF_ASSERT_MSG(TEST, MSG) ___RF_ASSERT_IMPL___(TEST, MSG)
+#define RF_DBGFAIL() ___RF_ASSERT_IMPL___(false, "FAIL")
+#define RF_DBGFAIL_MSG(MSG) ___RF_ASSERT_IMPL___(false, MSG)
 #else
 #define RF_ASSERT(TEST)
 #define RF_ASSERT_MSG(TEST, MSG)
+#define RF_DBGFAIL()
+#define RF_DBGFAIL_MSG(MSG)
 #endif

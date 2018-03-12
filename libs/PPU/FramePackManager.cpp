@@ -22,7 +22,7 @@ FramePackManager::~FramePackManager()
 
 UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const & filename )
 {
-	RF_ASSERT_MSG( false, "TODO" );
+	RF_DBGFAIL_MSG( "TODO" );
 	return nullptr;
 }
 
