@@ -43,6 +43,7 @@ void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
 
 FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 {
+	RFLOG_TRACE( nullptr, RFCAT_VFS, "File read request: %s", CreateStringFromPath( path ).c_str() );
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
 }
 
@@ -50,6 +51,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 {
+	RFLOG_TRACE( nullptr, RFCAT_VFS, "File write request: %s", CreateStringFromPath( path ).c_str() );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
 }
 
@@ -57,6 +59,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 {
+	RFLOG_TRACE( nullptr, RFCAT_VFS, "File modify request: %s", CreateStringFromPath( path ).c_str() );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
 }
 
@@ -64,6 +67,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 {
+	RFLOG_TRACE( nullptr, RFCAT_VFS, "File append request: %s", CreateStringFromPath( path ).c_str() );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
 }
 
@@ -71,6 +75,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
 {
+	RFLOG_TRACE( nullptr, RFCAT_VFS, "File execute request: %s", CreateStringFromPath( path ).c_str() );
 	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
 }
 
@@ -81,14 +86,23 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
 
+	std::string absoluteSearchDirectory = std::experimental::filesystem::v1::absolute( "." ).generic_string();
+	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file search directory: %s", absoluteSearchDirectory.c_str() );
+	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file param: %s", mountTableFile.c_str() );
+	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
+
 	std::string absoluteMountTableFilename = std::experimental::filesystem::v1::absolute( mountTableFile ).generic_string();
 	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteMountTableFilename ) );
 	m_MountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( m_MountTableFile ).c_str() );
+
 	m_ConfigDirectory = m_MountTableFile.GetParent();
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( m_ConfigDirectory ).c_str() );
 
 	std::string absoluteUserDirectory = std::experimental::filesystem::v1::absolute( userDirectory ).generic_string();
 	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteUserDirectory ) );
 	m_UserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( m_UserDirectory ).c_str() );
 
 	FILE* file;
 	std::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
@@ -264,6 +278,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 		return false;
 	}
 
+	DebugDumpMountTable();
 	return true;
 }
 
@@ -271,6 +286,8 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 
 VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permissions desiredPermissions ) const
 {
+	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
+
 	VFSPath const physicalAsVFS = CreatePathFromString( physicalPath );
 
 	for( VFSMount const& mount : m_MountTable )
@@ -323,13 +340,7 @@ VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permis
 
 void VFS::DebugDumpMountTable() const
 {
-	printf(
-		"Config: \"%s\"\n",
-		CreateStringFromPath( m_ConfigDirectory ).c_str() );
-	printf(
-		"User: \"%s\"\n",
-		CreateStringFromPath( m_UserDirectory ).c_str() );
-
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table:" );
 	for( VFSMount const& mountRule : m_MountTable )
 	{
 		char const* type = nullptr;
@@ -364,8 +375,10 @@ void VFS::DebugDumpMountTable() const
 				permissions = "INVALID";
 				break;
 		}
-		printf(
-			"%s %s \"%s\" \"%s\"\n",
+		RFLOG_INFO(
+			nullptr,
+			RFCAT_VFS,
+			"  %s %s \"%s\" \"%s\"",
 			type,
 			permissions,
 			CreateStringFromPath( mountRule.m_VirtualPath ).c_str(),
@@ -679,6 +692,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 		}
 
 		// Locked to this mount layer, let's see what happens!
+		RFLOG_TRACE( nullptr, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
 		FILE* file = nullptr;
 		errno_t openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
 		if( file == nullptr )
