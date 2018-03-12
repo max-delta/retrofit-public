@@ -10,7 +10,7 @@ void Log( Context context, char const* categoryKey, uint64_t severityMask, char 
 {
 	LogContextBuffer contextBuffer = LogContextBuffer();
 	WriteContextString( context, contextBuffer );
-	*contextBuffer.rend() = '\0';
+	*contextBuffer.rbegin() = '\0';
 
 	va_list args;
 	va_start( args, format );
