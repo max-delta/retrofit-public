@@ -4,6 +4,8 @@
 #include "core/macros.h"
 #include "Logging/Constants.h"
 
+#include "core_logging/LoggingHandler.h"
+
 #include <cstdarg>
 #include <stddef.h>
 #include <array>
@@ -130,6 +132,8 @@ void WriteContextString( Context const& context, LogContextBuffer buffer );
 //////////////////////////////////////////////////////////////////////////////
 
 LOGGING_API LoggingRouter& GetOrCreateGlobalLoggingInstance();
+LOGGING_API HandlerID RegisterHandler( HandlerDefinition const & handlerDefinition );
+LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 
 //////////////////////////////////////////////////////////////////////////////
 namespace details {

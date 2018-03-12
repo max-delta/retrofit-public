@@ -155,6 +155,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ANSIConsoleLogger.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="FallbackLogger.h" />
     <ClInclude Include="Logging.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ANSIConsoleLogger.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FallbackLogger.cpp" />
     <ClCompile Include="Logging.cpp" />

@@ -7,7 +7,7 @@
 namespace RF { namespace platform { namespace debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
-PLATFORMUTILS_API void RF::platform::debugging::OutputToDebugger( char const * string )
+PLATFORMUTILS_API void OutputToDebugger( char const * string )
 {
 	win32::OutputDebugStringA( string );
 }

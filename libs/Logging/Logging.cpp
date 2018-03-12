@@ -13,6 +13,22 @@ LoggingRouter& GetOrCreateGlobalLoggingInstance()
 	return GetOrInitFunctionStaticScopedSingleton<LoggingRouter>();
 }
 
+
+
+HandlerID RegisterHandler( HandlerDefinition const & handlerDefinition )
+{
+	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
+	return router.RegisterHandler( handlerDefinition );
+}
+
+
+
+bool UnregisterHandler( HandlerID handlerID )
+{
+	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
+	return router.UnregisterHandler( handlerID );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 

@@ -25,19 +25,19 @@ TEST( Logging, Details_ClearGlobalCounts )
 	ASSERT_EQ( details::gCountAll, 0 );
 }
 
-void Handler1( LoggingRouter const&, LoggingRouter::LogEvent const&, va_list )
+void Handler1( LoggingRouter const&, LogEvent const&, va_list )
 {
 	gCount1++;
 }
-void Handler2( LoggingRouter const&, LoggingRouter::LogEvent const&, va_list )
+void Handler2( LoggingRouter const&, LogEvent const&, va_list )
 {
 	gCount2++;
 }
-void Handler3( LoggingRouter const&, LoggingRouter::LogEvent const&, va_list )
+void Handler3( LoggingRouter const&, LogEvent const&, va_list )
 {
 	gCount3++;
 }
-void HandlerAll( LoggingRouter const&, LoggingRouter::LogEvent const&, va_list )
+void HandlerAll( LoggingRouter const&, LogEvent const&, va_list )
 {
 	gCountAll++;
 }
@@ -48,7 +48,7 @@ void SetupStandardRouter( LoggingRouter& router )
 	router.SetSeverityString( 0x2, "2" );
 	router.SetSeverityString( 0x4, "3" );
 
-	LoggingRouter::HandlerDefinition handlerDef;
+	HandlerDefinition handlerDef;
 	handlerDef.mSupportedSeverities = 0x1;
 	handlerDef.mHandlerFunc = Handler1;
 	router.RegisterHandler( handlerDef );
@@ -95,20 +95,20 @@ TEST( Logging, Registration )
 
 	struct Invalid
 	{
-		static void InvalidFunc( LoggingRouter const&, LoggingRouter::LogEvent const&, va_list )
+		static void InvalidFunc( LoggingRouter const&, LogEvent const&, va_list )
 		{
 			GTEST_FAIL();
 		}
 	};
 
-	LoggingRouter::HandlerDefinition handlerDef;
+	HandlerDefinition handlerDef;
 	handlerDef.mSupportedSeverities = 0x1;
 	handlerDef.mHandlerFunc = Invalid::InvalidFunc;
 
-	LoggingRouter::HandlerID const id1 = router.RegisterHandler( handlerDef );
-	ASSERT_NE( id1, LoggingRouter::kInvalidHandlerID );
-	LoggingRouter::HandlerID const id2 = router.RegisterHandler( handlerDef );
-	ASSERT_NE( id2, LoggingRouter::kInvalidHandlerID );
+	HandlerID const id1 = router.RegisterHandler( handlerDef );
+	ASSERT_NE( id1, kInvalidHandlerID );
+	HandlerID const id2 = router.RegisterHandler( handlerDef );
+	ASSERT_NE( id2, kInvalidHandlerID );
 	ASSERT_NE( id1, id2 );
 
 	router.UnregisterHandler( id1 );
@@ -153,7 +153,7 @@ TEST( Logging, GetStringFromCategoryKey )
 {
 	LoggingRouter router;
 
-	constexpr LoggingRouter::CategoryKey key = "literal";
+	constexpr CategoryKey key = "literal";
 	char const* string = router.GetStringFromCategoryKey( key );
 	ASSERT_EQ( string, key );
 }
