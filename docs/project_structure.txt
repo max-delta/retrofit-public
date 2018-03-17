@@ -1,0 +1,54 @@
+==Project Structure==
+
+^ Less-dependent
+| 
+|           Core
+|           /   \
+|  Foundation - Platform
+|        | \    / |
+|        |  Game  |
+|        \   |    /
+|        Application
+|            |
+|        Executable
+| 
+v More-dependent
+
+
+-Core-
+* Static libs only
+* No code that causes unavoidable CRT initialization
+* No dependencies outside of core
+* Minimal inter-dependencies
+* Clean utilitarian value to most applications
+
+-Foundation-
+* Always DLL-capable
+* CRT initialization permitted
+* No dependencies outside of core/foundation/platform
+* Avoid inter-dependencies
+* Conditional value to most applications
+
+-Platform-
+* Always DLL-capable
+* CRT initialization permitted
+* No dependencies outside of core/foundation/platform/OS-specific
+* Avoid inter-dependencies
+* Conditional value to most applications
+
+-Game-
+* Always DLL-capable
+* CRT initialization permitted
+* No dependencies on application modules
+* Avoid inter-dependencies
+* Conditional value to some games
+
+-Application-
+* Always DLL-capable
+* CRT initialization permitted
+* Dependencies as needed
+* Only valuable to specific application
+
+-Exectutable
+* Minimal code, bootstrap only
+* No dependencies outside of application/OS-specific
