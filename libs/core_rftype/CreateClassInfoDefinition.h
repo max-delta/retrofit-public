@@ -26,9 +26,9 @@
 	/* NOTE: Forwarded as 1-time-use template instead of macro-magic, since */ \
 	/*  macros can't transform namespaces in CLASSTYPE into variable names */ \
 	template<class CLASS> \
-	void ___rftype_macro_generated_initializer( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASS> const*__RFType_CRT_Trigger ); \
+	void ___rftype_macro_generated_initializer( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASS> const*__RFType_CRT_Trigger ); \
 	template<> \
-	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger ); \
+	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger ); \
 	\
 	namespace RF { namespace rftype { /* Opening rftype namespace */ \
 	/* Template specialization for lookup only within module */ \
@@ -43,7 +43,7 @@
 	/*  macro ends, so users don't have to close it themselves, which would be */ \
 	/*  syntactically disastrous on Intellisense, and human sanity (ex: 'MACRO{}}' ) */ \
 	template<> \
-	void CRTCompositionTrigger<CLASSTYPE>::Initialize( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target ) \
+	void CRTCompositionTrigger<CLASSTYPE>::Initialize( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target ) \
 	{ \
 		___rftype_macro_generated_initializer<CLASSTYPE>( ___RFType_Macro_Target, this ); \
 	} \
@@ -51,7 +51,7 @@
 	\
 	/* Header before user-supplied directives */ \
 	template<> \
-	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger )
+	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger )
 
 // Used to access the compositor during initialization
 // EXAMPLE:

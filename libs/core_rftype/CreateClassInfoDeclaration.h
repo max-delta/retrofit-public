@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_reflect/ClassInfo.h"
+#include "core_rftype/ClassInfoAccessor.h"
 
 // Creates static storage within a class, primarily intended to tie the storage
 //  to the class so it participates in module exports and imports that the
@@ -16,4 +17,12 @@
 //  	RFTYPE_STATIC_CLASSINFO();
 //  };
 //  RFTYPE_DEFINE_STATIC_CLASSINFO( CLASSTYPE );
-#define RFTYPE_STATIC_CLASSINFO() public: static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
+#define RFTYPE_STATIC_CLASSINFO() \
+	public: static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
+
+#define RFTYPE_ENABLE_VIRTUAL_LOOKUP() \
+	public: virtual ::RF::reflect::ClassInfo const* GetVirtualClassInfo() const override \
+	{ \
+		using ThisType = std::remove_const<std::remove_reference<decltype(*this)>::type>::type; \
+		return &( ::RF::rftype::GetClassInfo<ThisType>() ); \
+	}
