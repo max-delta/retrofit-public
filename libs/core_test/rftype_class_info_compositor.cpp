@@ -98,6 +98,32 @@ struct MissingVirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClas
 	char unused2[16];
 };
 
+namespace diamond{
+
+struct DiamondTop : virtual public VirtualClass
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	char unusedTop[16];
+};
+struct DiamondLeft : virtual public DiamondTop
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	char unusedLeft[16];
+};
+struct DiamondRight : virtual public DiamondTop
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	char unusedRight[16];
+};
+struct DiamondBottom : virtual public DiamondLeft, virtual public DiamondRight
+{
+	// If not present, the absence of the virtual loolup should make this class
+	//  ambigious and fail to compile
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	char unusedBottom[16];
+};
+
+}
 }
 
 //
@@ -174,6 +200,23 @@ RFTYPE_CREATE_META( RF::reflect::details::MissingVirtualDerivedClassWithoutStati
 	RFTYPE_META().BaseClass<VirtualBaseClassWithoutStaticClassInfo>();
 
 	static_assert( std::is_same<RFTYPE_METATYPE(), MissingVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
+}
+
+RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondTop )
+{
+}
+RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondLeft )
+{
+	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondTop>();
+}
+RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondRight )
+{
+	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondTop>();
+}
+RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondBottom )
+{
+	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondLeft>();
+	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondRight>();
 }
 
 //////////
@@ -257,6 +300,37 @@ TEST( RFType, VirtualChainInheritance )
 		ASSERT_TRUE( &classInfo != &virtualClassInfo );
 		ASSERT_TRUE( &baseClassInfo == &virtualClassInfo );
 	}
+}
+
+
+
+TEST( RFType, DiamondInheritance )
+{
+	using namespace RF::reflect::details::diamond;
+
+	DiamondTop topInstance;
+	DiamondLeft leftInstance;
+	DiamondRight rightInstance;
+	DiamondBottom bottomInstance;
+
+	VirtualClass const* topPtr = &topInstance;
+	VirtualClass const* leftPtr = &leftInstance;
+	VirtualClass const* rightPtr = &rightInstance;
+	VirtualClass const* bottomPtr = &bottomInstance;
+
+	ClassInfo const* topCI = topPtr->GetVirtualClassInfo();
+	ClassInfo const* leftCI = leftPtr->GetVirtualClassInfo();
+	ClassInfo const* rightCI = rightPtr->GetVirtualClassInfo();
+	ClassInfo const* bottomCI = bottomPtr->GetVirtualClassInfo();
+
+	// These PROBABLY won't be COMDAT-folded, the complexity to do so would be
+	//  quite high given the machinery at play
+	ASSERT_NE( topCI, leftCI );
+	ASSERT_NE( topCI, rightCI );
+	ASSERT_NE( topCI, bottomCI );
+	ASSERT_NE( leftCI, rightCI );
+	ASSERT_NE( leftCI, bottomCI );
+	ASSERT_NE( rightCI, bottomCI );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
