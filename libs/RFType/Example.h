@@ -3,6 +3,7 @@
 
 #include "RFType/CreateClassInfoDeclaration.h"
 
+
 namespace RF { namespace rftype_example {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -30,6 +31,25 @@ public:
 
 	bool mExampleNonStaticVariable;
 	static bool mExampleStaticVariable;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+class RFTYPE_API ExampleBaseClass : public reflect::VirtualClass
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
+public:
+	bool ExampleNonStaticFunction( int i, float f, char c );
+	static bool ExampleStaticFunction( int i, float f, char c );
+
+	bool mExampleNonStaticVariable;
+	static bool mExampleStaticVariable;
+};
+
+class RFTYPE_API ExampleDerivedClass : public ExampleBaseClass
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 };
 
 ///////////////////////////////////////////////////////////////////////////////

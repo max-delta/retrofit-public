@@ -16,10 +16,10 @@ struct BaseClassInfo
 	// Inheritance is implementation-specifc, so must use compiler-generated
 	//  functions to perform the hop, even though all major compilers are
 	//  reasonably predictable at time of writing
-	using FuncPtrGetBasePointerFromDerived = void* ( void* );
+	using FuncPtrGetBasePointerFromDerived = void* (*)( void* );
 	FuncPtrGetBasePointerFromDerived mGetBasePointerFromDerived;
 
-	ClassInfo* mBaseClassInfo;
+	ClassInfo const* mBaseClassInfo;
 };
 
 

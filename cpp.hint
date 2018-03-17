@@ -1,4 +1,5 @@
 #define RF_ASSERT(...)
 #define RF_NO_COPY(...)
 #define RF_NO_MOVE(...)
-RFTYPE_STATIC_CLASSINFO(...) static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
+#define RFTYPE_STATIC_CLASSINFO(...) static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
+#define RFTYPE_ENABLE_VIRTUAL_LOOKUP(...)
