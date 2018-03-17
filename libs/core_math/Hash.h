@@ -8,13 +8,16 @@ using HashVal64 = uint64_t;
 
 struct DirectHash
 {
-	HashVal64 operator() (HashVal64 const& key) const
-	{
-		return key;
-	}
+	HashVal64 operator() ( HashVal64 const& key ) const;
+};
+
+struct NullTerminatedStringHash
+{
+	HashVal64 operator() ( char const* const buffer ) const;
 };
 
 // This hash function will not change based on platform
+HashVal64 StableHashBytes( std::nullptr_t, size_t );
 HashVal64 StableHashBytes( void const* buffer, size_t length );
 
 ///////////////////////////////////////////////////////////////////////////////

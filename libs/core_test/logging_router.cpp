@@ -175,5 +175,77 @@ TEST( Logging, SeverityStrings )
 	}
 }
 
+
+
+TEST( Logging, Whitelists )
+{
+	LoggingRouter router;
+	details::SetupStandardRouter( router );
+
+	// No filter
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 1 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 1 );
+
+	// Global filter ACTIVE
+	router.SetOrModifyGlobalWhitelist( ~1 );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 0 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 0 );
+
+	// Global filter inactive
+	router.SetOrModifyGlobalWhitelist( ~2 );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 1 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 1 );
+
+	// Global filter inactive, category filer ACTIVE
+	router.SetOrModifyCategoryWhitelist( "TEST", ~1 );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 0 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 0 );
+
+	// Global filter inactive, category filer inactive
+	router.SetOrModifyCategoryWhitelist( "TEST", ~2 );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 1 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 1 );
+
+	// Global filter ACTIVE, category filer ACTIVE
+	router.SetOrModifyGlobalWhitelist( ~1 );
+	router.SetOrModifyCategoryWhitelist( "TEST", ~1 );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 0 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 0 );
+
+	// No filter
+	router.ClearGlobalWhitelist();
+	router.ClearCategoryWhitelist( "TEST" );
+	details::ClearGlobalCounts();
+	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
+	ASSERT_EQ( details::gCount1, 1 );
+	ASSERT_EQ( details::gCount2, 0 );
+	ASSERT_EQ( details::gCount3, 0 );
+	ASSERT_EQ( details::gCountAll, 1 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

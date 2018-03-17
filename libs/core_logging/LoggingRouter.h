@@ -1,5 +1,6 @@
 #pragma once
 #include "core_logging/LoggingHandler.h"
+#include "core_math/Hash.h"
 #include "core/macros.h"
 
 #include <vector>
@@ -20,11 +21,13 @@ public:
 	using SeverityStrings = std::array<char const*, 64>;
 private:
 	static constexpr HandlerID kInitialHandlerID = kInvalidHandlerID + 1;
+	static constexpr SeverityMask kDefaultGlobalWhitelist = ~SeverityMask( 0 );
 	using ReaderWriterMutex = std::shared_mutex;
 	using ReaderLock = std::shared_lock<std::shared_mutex>;
 	using WriterLock = std::unique_lock<std::shared_mutex>;
 	using HandlerDefinitionByID = std::pair<HandlerID, HandlerDefinition>;
 	using HandlerDefinitionsByPriority = std::vector<HandlerDefinitionByID>;
+	using SeverityMasksByCategoryKey = std::unordered_map<CategoryKey, SeverityMask, math::NullTerminatedStringHash>;
 
 
 	//
@@ -50,20 +53,32 @@ public:
 	void SetSeverityString( SeverityMask singleBit, char const* immutableString );
 	SeverityStrings GetSeverityStrings() const;
 
+	// Dynamic whitelists
+	void SetOrModifyGlobalWhitelist(SeverityMask whitelist);
+	void ClearGlobalWhitelist();
+	void SetOrModifyCategoryWhitelist( CategoryKey categoryKey, SeverityMask whitelist );
+	void ClearCategoryWhitelist( CategoryKey categoryKey);
+
 
 	//
 	// Private methods
 private:
 	void LogInternal( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const;
+	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;
 
 
 	//
 	// Private data
 private:
 	mutable ReaderWriterMutex mMultiReaderSingleWriterLock;
+
 	HandlerID mHandlerIDGenerator;
 	HandlerDefinitionsByPriority mHandlerDefinitionsByPriority;
+
 	SeverityStrings mSeverityStrings;
+
+	SeverityMask mDynamicGlobalWhitelist;
+	SeverityMasksByCategoryKey mDynamicCategoryWhitelists;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
