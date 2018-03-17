@@ -22,6 +22,8 @@ TEST( Reflect, ValueBasics )
 	Value vBool( static_cast<bool>( false ) );
 	Value vVoidPtr( static_cast<void*>( nullptr ) );
 	Value vVoidConstPtr( static_cast<void const*>( nullptr ) );
+	Value vVirtualClassPtr( static_cast<VirtualClass*>( nullptr ) );
+	Value vVirtualClassConstPtr( static_cast<VirtualClass const*>( nullptr ) );
 	Value vChar( static_cast<char>( '\0' ) );
 	Value vWChar( static_cast<wchar_t>( L'\0' ) );
 	Value vChar16( static_cast<char16_t>( u'\0' ) );
@@ -41,6 +43,8 @@ TEST( Reflect, ValueBasics )
 	static_assert( Value::DetermineType<bool>() == Value::Type::Bool );
 	static_assert( Value::DetermineType<void*>() == Value::Type::VoidPtr );
 	static_assert( Value::DetermineType<void const*>() == Value::Type::VoidConstPtr );
+	static_assert( Value::DetermineType<VirtualClass*>() == Value::Type::VirtualClassPtr );
+	static_assert( Value::DetermineType<VirtualClass const*>() == Value::Type::VirtualClassConstPtr );
 	static_assert( Value::DetermineType<char>() == Value::Type::Char );
 	static_assert( Value::DetermineType<wchar_t>() == Value::Type::WChar );
 	static_assert( Value::DetermineType<char16_t>() == Value::Type::Char16 );
@@ -60,6 +64,8 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vBool.GetStoredType() == Value::Type::Bool );
 	ASSERT_TRUE( vVoidPtr.GetStoredType() == Value::Type::VoidPtr );
 	ASSERT_TRUE( vVoidConstPtr.GetStoredType() == Value::Type::VoidConstPtr );
+	ASSERT_TRUE( vVirtualClassPtr.GetStoredType() == Value::Type::VirtualClassPtr );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetStoredType() == Value::Type::VirtualClassConstPtr );
 	ASSERT_TRUE( vChar.GetStoredType() == Value::Type::Char );
 	ASSERT_TRUE( vWChar.GetStoredType() == Value::Type::WChar );
 	ASSERT_TRUE( vChar16.GetStoredType() == Value::Type::Char16 );
@@ -79,6 +85,8 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vBool.GetAs<bool>() != nullptr );
 	ASSERT_TRUE( vVoidPtr.GetAs<void*>() != nullptr );
 	ASSERT_TRUE( vVoidConstPtr.GetAs<void const*>() != nullptr );
+	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass*>() != nullptr );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() != nullptr );
 	ASSERT_TRUE( vChar.GetAs<char>() != nullptr );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t>() != nullptr );
 	ASSERT_TRUE( vChar16.GetAs<char16_t>() != nullptr );
@@ -98,6 +106,8 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vBool.GetAs<bool const>() != nullptr );
 	ASSERT_TRUE( vVoidPtr.GetAs<void* const>() != nullptr );
 	ASSERT_TRUE( vVoidConstPtr.GetAs<void const* const>() != nullptr );
+	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass* const>() != nullptr );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const* const>() != nullptr );
 	ASSERT_TRUE( vChar.GetAs<char const>() != nullptr );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t const>() != nullptr );
 	ASSERT_TRUE( vChar16.GetAs<char16_t const>() != nullptr );
@@ -117,6 +127,8 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vBool.GetAs<bool>() == vBool.GetBytes() );
 	ASSERT_TRUE( vVoidPtr.GetAs<void*>() == vVoidPtr.GetBytes() );
 	ASSERT_TRUE( vVoidConstPtr.GetAs<void const*>() == vVoidConstPtr.GetBytes() );
+	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass*>() == vVirtualClassPtr.GetBytes() );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetBytes() );
 	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetBytes() );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetBytes() );
 	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetBytes() );
@@ -136,6 +148,8 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vBool.GetNumBytes() == sizeof( bool ) );
 	ASSERT_TRUE( vVoidPtr.GetNumBytes() == sizeof( void* ) );
 	ASSERT_TRUE( vVoidConstPtr.GetNumBytes() == sizeof( void const* ) );
+	ASSERT_TRUE( vVirtualClassPtr.GetNumBytes() == sizeof( VirtualClass* ) );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetNumBytes() == sizeof( VirtualClass const* ) );
 	ASSERT_TRUE( vChar.GetNumBytes() == sizeof( char ) );
 	ASSERT_TRUE( vWChar.GetNumBytes() == sizeof( wchar_t ) );
 	ASSERT_TRUE( vChar16.GetNumBytes() == sizeof( char16_t ) );

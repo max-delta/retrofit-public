@@ -151,8 +151,8 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="class_info_builder.cpp" />
-    <ClCompile Include="class_info_compositor.cpp" />
+    <ClCompile Include="reflect_class_info_builder.cpp" />
+    <ClCompile Include="rftype_class_info_compositor.cpp" />
     <ClCompile Include="compiler.cpp" />
     <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="logging_router.cpp" />

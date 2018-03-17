@@ -156,6 +156,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Value.h" />
     <ClInclude Include="VariableTraits.h" />
+    <ClInclude Include="VirtualClass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
