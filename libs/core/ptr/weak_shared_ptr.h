@@ -13,6 +13,7 @@ class WeakSharedPtr : public PtrBase<T>
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
+	typedef PtrRef<T> PtrRef;
 
 
 	//
@@ -39,7 +40,7 @@ public:
 	WeakSharedPtr( T * target, PtrRef * ref )
 		: PtrBase(target, ref)
 	{
-		IncreaseWeakCount();
+		PtrBase::IncreaseWeakCount();
 	}
 
 	WeakSharedPtr( WeakSharedPtr && rhs )
@@ -56,32 +57,32 @@ public:
 
 	~WeakSharedPtr()
 	{
-		DecreaseWeakCount();
+		PtrBase::DecreaseWeakCount();
 	}
 
 	WeakSharedPtr & operator =(WeakSharedPtr const & rhs)
 	{
 		WeakSharedPtr temp(rhs);
-		Swap( std::move(temp) );
+		PtrBase::Swap( std::move(temp) );
 		return *this;
 	}
 
 	WeakSharedPtr & operator =(WeakSharedPtr && rhs)
 	{
-		Swap( std::move(rhs) );
+		PtrBase::Swap( std::move(rhs) );
 		return *this;
 	}
 
 	WeakPtr<T> Weaken() const
 	{
-		return WeakPtr<T>(GetTarget(), GetRef());
+		return WeakPtr<T>( PtrBase::GetTarget(), PtrBase::GetRef() );
 	}
 
 	SharedPtr<T> Lock()
 	{
-		IncreaseStrongCount();
-		SanitizeTarget();
-		return CreateTransferPayload();
+		PtrBase::IncreaseStrongCount();
+		PtrBase::SanitizeTarget();
+		return PtrBase::CreateTransferPayload();
 	}
 };
 
