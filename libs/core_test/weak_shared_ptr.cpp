@@ -42,7 +42,7 @@ TEST(WeakSharedPtr, MeaninglessChurn)
 	// Implicit cast into a stronger pointer, which immediately drops out of
 	//  it's lifecylce, leaving the WeakSharedPtr holding onto a dead pointer
 	{
-		WeakSharedPtr<int> wsptr = EntwinedCreator<int>::Create(47);
+		WeakSharedPtr<int> wsptr = WeakSharedPtr<int>( EntwinedCreator<int>::Create( 47 ) );
 		ASSERT_TRUE(wsptr.Weaken() == nullptr);
 		ASSERT_TRUE(wsptr.Lock() == nullptr);
 	}

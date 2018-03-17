@@ -19,6 +19,7 @@ private:
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
+	typedef PtrRef<T> PtrRef;
 
 
 	//
@@ -52,7 +53,7 @@ public:
 	WeakPtr( T * target, PtrRef * ref )
 		: PtrBase(target, ref)
 	{
-		IncreaseWeakCount();
+		PtrBase::IncreaseWeakCount();
 	}
 
 	template<typename DERIVED, typename PTRREFDERIVED>
@@ -61,7 +62,7 @@ public:
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		static_assert( std::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
-		IncreaseWeakCount();
+		PtrBase::IncreaseWeakCount();
 	}
 
 	WeakPtr( WeakPtr && rhs )
@@ -72,19 +73,19 @@ public:
 
 	~WeakPtr()
 	{
-		DecreaseWeakCount();
+		PtrBase::DecreaseWeakCount();
 	}
 
 	WeakPtr & operator =(WeakPtr const & rhs)
 	{
 		WeakPtr temp(rhs);
-		Swap( std::move(temp) );
+		PtrBase::Swap( std::move(temp) );
 		return *this;
 	}
 
 	WeakPtr & operator =(WeakPtr && rhs)
 	{
-		Swap( std::move(rhs) );
+		PtrBase::Swap( std::move(rhs) );
 		return *this;
 	}
 
@@ -95,12 +96,12 @@ public:
 
 	operator T *() const
 	{
-		return GetTargetAsWeak();
+		return PtrBase::GetTargetAsWeak();
 	}
 
 	T* operator ->() const
 	{
-		return GetTargetAsWeak();
+		return PtrBase::GetTargetAsWeak();
 	}
 };
 

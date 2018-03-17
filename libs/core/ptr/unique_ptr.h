@@ -70,12 +70,12 @@ public:
 
 	~UniquePtr()
 	{
-		DecreaseStrongCount();
+		PtrBase::DecreaseStrongCount();
 	}
 
 	UniquePtr & operator =(UniquePtr && rhs)
 	{
-		Swap( std::move(rhs) );
+		PtrBase::Swap( std::move(rhs) );
 		return *this;
 	}
 
@@ -86,24 +86,24 @@ public:
 
 	operator T *() const
 	{
-		return GetTarget();
+		return PtrBase::GetTarget();
 	}
 
 	T* operator ->() const
 	{
-		return GetTarget();
+		return PtrBase::GetTarget();
 	}
 
 	operator WeakPtr<T>() const
 	{
-		return WeakPtr<T>(GetTarget(), GetRef());
+		return WeakPtr<T>( PtrBase::GetTarget(), PtrBase::GetRef() );
 	}
 
 	template<typename BASE>
 	operator WeakPtr<BASE>() const
 	{
 		RF_PTR_ASSERT_CASTABLE( BASE, T );
-		return WeakPtr<BASE>(GetTarget(), GetRef());
+		return WeakPtr<BASE>( PtrBase::GetTarget(), PtrBase::GetRef() );
 	}
 };
 
