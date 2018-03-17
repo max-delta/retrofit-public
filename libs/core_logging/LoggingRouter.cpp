@@ -11,6 +11,7 @@ namespace RF { namespace logging {
 
 LoggingRouter::LoggingRouter()
 	: mHandlerIDGenerator( kInitialHandlerID )
+	, mDynamicGlobalWhitelist( kDefaultGlobalWhitelist )
 {
 	mSeverityStrings.fill( nullptr );
 }
@@ -99,6 +100,38 @@ LoggingRouter::SeverityStrings LoggingRouter::GetSeverityStrings() const
 	return mSeverityStrings;
 }
 
+
+
+void LoggingRouter::SetOrModifyGlobalWhitelist( SeverityMask whitelist )
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+	mDynamicGlobalWhitelist = whitelist;
+}
+
+
+
+void LoggingRouter::ClearGlobalWhitelist()
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+	mDynamicGlobalWhitelist = kDefaultGlobalWhitelist;
+}
+
+
+
+void LoggingRouter::SetOrModifyCategoryWhitelist( CategoryKey categoryKey, SeverityMask whitelist )
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+	mDynamicCategoryWhitelists[categoryKey] = whitelist;
+}
+
+
+
+void LoggingRouter::ClearCategoryWhitelist( CategoryKey categoryKey )
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+	mDynamicCategoryWhitelists.erase( categoryKey );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void LoggingRouter::LogInternal( char const * context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const
@@ -118,6 +151,11 @@ void LoggingRouter::LogInternal( char const * context, CategoryKey categoryKey, 
 	RF_ASSERT_MSG( categoryKey != nullptr, "Invalid category key" );
 	RF_ASSERT_MSG( severityMask != 0, "Unset severity mask" );
 
+	if( IsDynamicallyFilteredOut( categoryKey, severityMask ) )
+	{
+		return;
+	}
+
 	LogEvent logEvent = {};
 	logEvent.mCategoryKey = categoryKey;
 	logEvent.mSeverityMask = severityMask;
@@ -132,6 +170,31 @@ void LoggingRouter::LogInternal( char const * context, CategoryKey categoryKey, 
 			handlerDef.mHandlerFunc( *this, logEvent, args );
 		}
 	}
+}
+
+
+
+bool LoggingRouter::IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const
+{
+	RF_ASSERT_MSG( categoryKey != nullptr, "Invalid category key" );
+
+	if( ( severityMask & mDynamicGlobalWhitelist ) == 0 )
+	{
+		return true;
+	}
+
+	SeverityMasksByCategoryKey::const_iterator const iter = mDynamicCategoryWhitelists.find( categoryKey );
+	if( iter == mDynamicCategoryWhitelists.end() )
+	{
+		return false;
+	}
+
+	if( ( severityMask & iter->second ) == 0 )
+	{
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
