@@ -35,9 +35,11 @@ void const * Value::GetBytes() const
 	// TODO: Template recursion instead on the typelist
 	switch( type )
 	{
-		case Type::Bool:         return reinterpret_cast<void const*>( GetAs<bool>() );
+		case Type::Bool:		 return reinterpret_cast<void const*>( GetAs<bool>() );
 		case Type::VoidPtr:		 return reinterpret_cast<void const*>( GetAs<void*>() );
 		case Type::VoidConstPtr: return reinterpret_cast<void const*>( GetAs<void const*>() );
+		case Type::VirtualClassPtr:		 return reinterpret_cast<VirtualClass const*>( GetAs<VirtualClass*>() );
+		case Type::VirtualClassConstPtr: return reinterpret_cast<VirtualClass const*>( GetAs<VirtualClass const*>() );
 		case Type::Char:		 return reinterpret_cast<void const*>( GetAs<char>() );
 		case Type::WChar:		 return reinterpret_cast<void const*>( GetAs<wchar_t>() );
 		case Type::Char16:		 return reinterpret_cast<void const*>( GetAs<char16_t>() );
@@ -53,7 +55,7 @@ void const * Value::GetBytes() const
 		case Type::Int32:		 return reinterpret_cast<void const*>( GetAs<int32_t>() );
 		case Type::UInt64:		 return reinterpret_cast<void const*>( GetAs<uint64_t>() );
 		case Type::Int64:		 return reinterpret_cast<void const*>( GetAs<int64_t>() );
-		case Type::Invalid:      return nullptr;
+		case Type::Invalid:		 return nullptr;
 		default:
 		{
 			RF_DBGFAIL();
@@ -70,9 +72,11 @@ size_t Value::GetNumBytes() const
 	// TODO: Template recursion instead on the typelist
 	switch( type )
 	{
-		case Type::Bool:         return sizeof( bool );
+		case Type::Bool:		 return sizeof( bool );
 		case Type::VoidPtr:		 return sizeof( void* );
 		case Type::VoidConstPtr: return sizeof( void const* );
+		case Type::VirtualClassPtr:		 return sizeof( VirtualClass* );
+		case Type::VirtualClassConstPtr: return sizeof( VirtualClass const* );
 		case Type::Char:		 return sizeof( char );
 		case Type::WChar:		 return sizeof( wchar_t );
 		case Type::Char16:		 return sizeof( char16_t );
@@ -88,7 +92,7 @@ size_t Value::GetNumBytes() const
 		case Type::Int32:		 return sizeof( int32_t );
 		case Type::UInt64:		 return sizeof( uint64_t );
 		case Type::Int64:		 return sizeof( int64_t );
-		case Type::Invalid:      return 0;
+		case Type::Invalid:		 return 0;
 		default:
 		{
 			RF_DBGFAIL();

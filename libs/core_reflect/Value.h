@@ -5,12 +5,18 @@
 #include <cstdint>
 
 
+// Forwards
+namespace RF { namespace reflect {
+	struct VirtualClass;
+}}
+
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 #define RF_REFLECT_VALUE_TYPELIST \
 		bool, \
 		void*, void const*, \
+		VirtualClass*, VirtualClass const*, \
 		char, wchar_t, char16_t, char32_t, \
 		float, double, long double, \
 		uint8_t, int8_t, \
@@ -21,6 +27,7 @@ namespace RF { namespace reflect {
 #define RF_REFLECT_VALUE_TYPELIST_NAMES \
 		Bool, \
 		VoidPtr, VoidConstPtr, \
+		VirtualClassPtr, VirtualClassConstPtr, \
 		Char, WChar, Char16, Char32, \
 		Float, Double, LongDouble, \
 		UInt8, Int8, \
@@ -31,6 +38,7 @@ namespace RF { namespace reflect {
 #define RF_REFLECT_VALUE_TYPELIST_STRINGS \
 		"Bool", \
 		"VoidPtr", "VoidConstPtr", \
+		"VirtualClassPtr", "VirtualClassConstPtr", \
 		"Char", "WChar", "Char16", "Char32", \
 		"Float", "Double", "LongDouble", \
 		"UInt8", "Int8", \

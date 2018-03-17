@@ -19,14 +19,14 @@
     <ClCompile Include="reflect_inspect_function.cpp" />
     <ClCompile Include="reflect_value.cpp" />
     <ClCompile Include="reflect_inspect_variable.cpp" />
-    <ClCompile Include="class_info_builder.cpp" />
-    <ClCompile Include="class_info_compositor.cpp" />
     <ClCompile Include="membertest.cpp" />
     <ClCompile Include="compiler.cpp" />
     <ClCompile Include="math_hash.cpp" />
     <ClCompile Include="rftype_identifier.cpp" />
     <ClCompile Include="math_bits.cpp" />
     <ClCompile Include="logging_router.cpp" />
+    <ClCompile Include="reflect_class_info_builder.cpp" />
+    <ClCompile Include="rftype_class_info_compositor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
