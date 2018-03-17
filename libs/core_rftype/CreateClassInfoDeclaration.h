@@ -20,6 +20,15 @@
 #define RFTYPE_STATIC_CLASSINFO() \
 	public: static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
 
+// When inheriting directly or indirectly from VirtualClass, this macro permits
+//  a class to participate in virtual pointer resolution
+// NOTE: If absent, virtual pointer resolution will use a decendent or ancestor
+//  that does have the macro
+// EXAMPLE:
+//  struct CLASSTYPE : public ::RF::reflect::VirtualClass
+//  {
+//  	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+//  };
 #define RFTYPE_ENABLE_VIRTUAL_LOOKUP() \
 	public: virtual ::RF::reflect::ClassInfo const* GetVirtualClassInfo() const override \
 	{ \
