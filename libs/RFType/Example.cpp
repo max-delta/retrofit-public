@@ -25,11 +25,29 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleWithoutStaticClassInfo )
 	RFTYPE_REGISTER_BY_NAME( "ExampleWithoutStaticClassInfo" );
 }
 
+RFTYPE_CREATE_META( RF::rftype_example::ExampleBaseClass )
+{
+	using RF::rftype_example::ExampleBaseClass;
+	RFTYPE_META().Method( "ExampleNonStaticFunction", &ExampleBaseClass::ExampleNonStaticFunction );
+	RFTYPE_META().Method( "ExampleStaticFunction", &ExampleBaseClass::ExampleStaticFunction );
+	RFTYPE_META().RawProperty( "mExampleNonStaticVariable", &ExampleBaseClass::mExampleNonStaticVariable );
+	RFTYPE_META().RawProperty( "mExampleStaticVariable", &ExampleBaseClass::mExampleStaticVariable );
+	RFTYPE_REGISTER_BY_NAME( "ExampleBaseClass" );
+}
+
+RFTYPE_CREATE_META( RF::rftype_example::ExampleDerivedClass )
+{
+	using RF::rftype_example::ExampleDerivedClass;
+	RFTYPE_META().BaseClass<RF::rftype_example::ExampleBaseClass>();
+	RFTYPE_REGISTER_BY_NAME( "ExampleDerivedClass" );
+}
+
 namespace RF { namespace rftype_example {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ExampleWithStaticClassInfo::mExampleStaticVariable;
 bool ExampleWithoutStaticClassInfo::mExampleStaticVariable;
+bool ExampleBaseClass::mExampleStaticVariable;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -55,6 +73,20 @@ bool ExampleWithoutStaticClassInfo::ExampleNonStaticFunction( int i, float f, ch
 
 
 bool ExampleWithoutStaticClassInfo::ExampleStaticFunction( int i, float f, char c )
+{
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+bool ExampleBaseClass::ExampleNonStaticFunction( int i, float f, char c )
+{
+	return false;
+}
+
+
+
+bool ExampleBaseClass::ExampleStaticFunction( int i, float f, char c )
 {
 	return false;
 }

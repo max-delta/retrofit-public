@@ -11,12 +11,25 @@ namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Compositor for use in user-provided initialization
+template<class CLASS>
 struct ClassInfoCompositor
 {
 	ClassInfoCompositor( reflect::ClassInfo& classInfo )
 		: mClassInfo( classInfo )
 	{
 		//
+	}
+
+	template<typename T>
+	ClassInfoCompositor& BaseClass()
+	{
+		static_assert( std::is_base_of<T, CLASS>::value, "Not a base class" );
+		static_assert( std::is_same<T, CLASS>::value == false, "Not a base class, is same class" );
+		reflect::BaseClassInfo classInfo = {};
+		classInfo.mBaseClassInfo = &GetClassInfo<T>();
+		classInfo.mGetBasePointerFromDerived = nullptr; // TODO
+		mClassInfo.mBaseTypes.emplace_back( std::move( classInfo ) );
+		return *this;
 	}
 
 	template<typename T, typename std::enable_if< reflect::FunctionTraits<T>::kCallType == reflect::CallType::FreeStanding,int>::type = 0>
@@ -80,11 +93,11 @@ struct CRTCompositionTrigger
 	{
 		return mFallbackClassInfo;
 	}
-	void Initialize( ::RF::rftype::ClassInfoCompositor& ___RFType_Macro_Target );
+	void Initialize( ::RF::rftype::ClassInfoCompositor<CLASS>& ___RFType_Macro_Target );
 
 	using BackingClassType = CLASS;
 	::RF::reflect::ClassInfo mFallbackClassInfo;
-	::RF::rftype::ClassInfoCompositor mCompositor;
+	::RF::rftype::ClassInfoCompositor<CLASS> mCompositor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

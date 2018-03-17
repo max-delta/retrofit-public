@@ -7,7 +7,7 @@
 
 // Forwards
 namespace RF { namespace reflect {
-	struct VirtualClass;
+	class VirtualClass;
 }}
 
 namespace RF { namespace reflect {
