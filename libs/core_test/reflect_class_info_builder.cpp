@@ -193,6 +193,7 @@ TEST( ReflectBuilder, MemberVariableInfos )
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::instance_f ) );
 		ASSERT_TRUE( varInfo.mValueType == Value::Type::Float );
+		ASSERT_TRUE( varInfo.mClassInfo == nullptr );
 	}
 	{
 		MemberVariableInfo varInfo;
@@ -201,6 +202,7 @@ TEST( ReflectBuilder, MemberVariableInfos )
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::instance_cf ) );
 		ASSERT_TRUE( varInfo.mValueType == Value::Type::Float );
+		ASSERT_TRUE( varInfo.mClassInfo == nullptr );
 	}
 }
 

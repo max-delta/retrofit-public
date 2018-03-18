@@ -124,6 +124,20 @@ struct DiamondBottom : virtual public DiamondLeft, virtual public DiamondRight
 };
 
 }
+namespace nested {
+
+struct Contents
+{
+	char unused[16];
+	float instance_f;
+};
+struct Containing
+{
+	char unused[16];
+	Contents contents;
+};
+
+}
 }
 
 //
@@ -217,6 +231,17 @@ RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondBottom )
 {
 	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondLeft>();
 	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondRight>();
+}
+
+RFTYPE_CREATE_META( RF::reflect::details::nested::Contents )
+{
+	using namespace ::RF::reflect::details::nested;
+	RFTYPE_META().RawProperty( "instance_f", &Contents::instance_f );
+}
+RFTYPE_CREATE_META( RF::reflect::details::nested::Containing )
+{
+	using namespace ::RF::reflect::details::nested;
+	RFTYPE_META().RawProperty( "contents", &Containing::contents );
 }
 
 //////////
@@ -331,6 +356,22 @@ TEST( RFType, DiamondInheritance )
 	ASSERT_NE( leftCI, rightCI );
 	ASSERT_NE( leftCI, bottomCI );
 	ASSERT_NE( rightCI, bottomCI );
+}
+
+
+
+TEST( RFType, Nested )
+{
+	{
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::nested::Containing>();
+		ASSERT_TRUE( classInfo.mNonStaticVariables.size() == 1 );
+		MemberVariableInfo const& varInfo = classInfo.mNonStaticVariables[0];
+		ASSERT_TRUE( varInfo.mMutable == true );
+		ASSERT_TRUE( varInfo.mOffset == offsetof( details::nested::Containing, contents ) );
+		ASSERT_TRUE( varInfo.mSize == sizeof( details::nested::Contents ) );
+		ASSERT_TRUE( varInfo.mValueType == Value::Type::Invalid );
+		ASSERT_TRUE( varInfo.mClassInfo == &( rftype::GetClassInfo<details::nested::Contents>() ) );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
