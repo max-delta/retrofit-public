@@ -59,11 +59,27 @@ struct ClassInfoCompositor
 		return *this;
 	}
 
-	template<typename T, typename std::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0>
+	template<typename T,
+		typename std::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
+		typename std::enable_if< reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() != reflect::Value::Type::Invalid, int>::type = 0>
 	ClassInfoCompositor& RawProperty( char const* identifier, T variable )
 	{
 		reflect::MemberVariableInfo varInfo = {};
 		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		mClassInfo.mNonStaticVariables.emplace_back( std::move( varInfo ) );
+		return *this;
+	}
+
+	template<typename T,
+		typename std::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
+		typename std::enable_if< reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() == reflect::Value::Type::Invalid, int>::type = 0>
+	ClassInfoCompositor& RawProperty( char const* identifier, T variable )
+	{
+		reflect::MemberVariableInfo varInfo = {};
+		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		using NestedType = typename reflect::VariableTraits<T>::VariableType;
+		static_assert( std::is_class<NestedType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
+		varInfo.mClassInfo = &( GetClassInfo<NestedType>() );
 		mClassInfo.mNonStaticVariables.emplace_back( std::move( varInfo ) );
 		return *this;
 	}

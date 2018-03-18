@@ -40,6 +40,9 @@ struct MemberVariableInfo
 	bool mMutable;
 	size_t mSize;
 	Value::Type mValueType;
+
+	// May be null if not known
+	ClassInfo const* mClassInfo;
 };
 
 

@@ -71,6 +71,7 @@ void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* var
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
 	variableInfo.mValueType = Value::DetermineType<T>();
+	variableInfo.mClassInfo = nullptr;
 }
 
 
