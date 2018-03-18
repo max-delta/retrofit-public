@@ -3,9 +3,12 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="Exporter.h" />
+    <ClInclude Include="DiagnosticExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="DiagnosticExporter.cpp" />
   </ItemGroup>
 </Project>
