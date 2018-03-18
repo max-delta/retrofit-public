@@ -152,6 +152,7 @@
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="rftype_typedatabase.cpp" />
+    <ClCompile Include="serialization_diagnosticexporter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -171,6 +172,9 @@
     </ProjectReference>
     <ProjectReference Include="..\RFType\RFType.vcxproj">
       <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Serialization\Serialization.vcxproj">
+      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -5,6 +5,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="logging.cpp" />
+    <ClCompile Include="serialization_diagnosticexporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
