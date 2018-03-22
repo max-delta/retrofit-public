@@ -33,7 +33,7 @@ SINGLETON & GetOrInitFunctionStaticScopedSingleton()
 			static SINGLETON singleton = {};
 
 			// This isn't obviously thread-safe since multiple threads could enter
-			//  the if, but only one would create the database, and then they would
+			//  the if, but only one would create the object, and then they would
 			//  all write the same value anyways since they're just writing the
 			//  address of a link-time-known variable to another link-time-known
 			//  variable
