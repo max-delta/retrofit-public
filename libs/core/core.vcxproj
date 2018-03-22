@@ -139,6 +139,7 @@
     <ClInclude Include="meta\MemberTest.h" />
     <ClInclude Include="meta\TypeList.h" />
     <ClInclude Include="compiler.h" />
+    <ClInclude Include="meta\ValueList.h" />
     <ClInclude Include="ptr\creation_payload.h" />
     <ClInclude Include="ptr\default_creator.h" />
     <ClInclude Include="ptr\entwined_creator.h" />
