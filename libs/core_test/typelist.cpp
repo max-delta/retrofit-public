@@ -67,6 +67,9 @@ TEST( TypeList, Multiple )
 	static_assert( std::is_same<tl_ifc::Split<2>::former::ByIndex<0>::type, int>::value, "Unexpected type" );
 	static_assert( std::is_same<tl_ifc::Split<2>::former::ByIndex<1>::type, float>::value, "Unexpected type" );
 	static_assert( std::is_same<tl_ifc::Split<2>::latter::ByIndex<0>::type, char>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<3>::former::ByIndex<0>::type, int>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<3>::former::ByIndex<1>::type, float>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<3>::former::ByIndex<2>::type, char>::value, "Unexpected type" );
 	static_assert( tl_ifc::Split<3>::latter::kNumTypes == 0, "Unexpected size" );
 }
 
