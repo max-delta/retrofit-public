@@ -9,6 +9,8 @@
     <ClInclude Include="Hash.h" />
     <ClInclude Include="math_bits.h" />
     <ClInclude Include="BitField.h" />
+    <ClInclude Include="ListOperations.h" />
+    <ClInclude Include="NumericTraits.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

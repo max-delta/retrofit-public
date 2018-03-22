@@ -136,10 +136,12 @@
   <ItemGroup>
     <ClInclude Include="BitField.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="ListOperations.h" />
     <ClInclude Include="math_bits.h" />
     <ClInclude Include="math_casts.h" />
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
+    <ClInclude Include="NumericTraits.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
