@@ -23,6 +23,10 @@ struct TypeList
 	template<typename Type>
 	struct FindIndex;
 
+	// Used to split a list into 2 segments
+	template<size_t LastIndexOfFirstSegment>
+	struct Split;
+
 
 private:
 	// For external access
@@ -34,6 +38,8 @@ private:
 	struct ExternalAccessContains;
 	template<typename Type, size_t CurrentIndex, typename TypeListType>
 	struct ExternalAccessFindIndex;
+	template<size_t LastIndexOfFirstSegment, typename RemainingTypeListType>
+	struct ExternalAccessSplitKeepLatter;
 
 	// Zero-th case
 	template<typename CurrentType, typename... RemainingTypes>
@@ -80,6 +86,28 @@ private:
 		static constexpr int64_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
 	};
 
+	// Zero-th case
+	template<>
+	struct ExternalAccessSplitKeepLatter<0, TypeList<> >
+	{
+		using latter = TypeList<>;
+	};
+
+	// Zero-th case
+	template<typename CurrentType, typename... RemainingTypes>
+	struct ExternalAccessSplitKeepLatter<0, TypeList<CurrentType, RemainingTypes...> >
+	{
+		using latter = TypeList<CurrentType, RemainingTypes...>;
+	};
+
+	// N-th case
+	template<size_t LastIndexOfFirstSegment, typename CurrentType, typename... RemainingTypes>
+	struct ExternalAccessSplitKeepLatter<LastIndexOfFirstSegment, TypeList<CurrentType, RemainingTypes...> >
+	{
+		static_assert( LastIndexOfFirstSegment - 1 <= sizeof...( RemainingTypes ), "Attempting to split past the end of type list" );
+		using latter = typename ExternalAccessSplitKeepLatter< LastIndexOfFirstSegment - 1, TypeList<RemainingTypes...> >::latter;
+	};
+
 
 public:
 	// Implemented as external
@@ -101,6 +129,13 @@ public:
 	struct FindIndex : ExternalAccessFindIndex< Type, 0, TypeList<Types...> >
 	{
 		//
+	};
+
+	// Implemented as external
+	template<size_t LastIndexOfFirstSegment>
+	struct Split
+	{
+		using latter = typename ExternalAccessSplitKeepLatter< LastIndexOfFirstSegment, TypeList<Types...> >::latter;
 	};
 };
 
