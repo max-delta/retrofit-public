@@ -8,6 +8,7 @@
     <ClInclude Include="math_compare.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="math_bits.h" />
+    <ClInclude Include="BitField.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

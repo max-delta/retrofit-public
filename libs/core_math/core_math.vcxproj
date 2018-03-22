@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BitField.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="math_bits.h" />
     <ClInclude Include="math_casts.h" />
