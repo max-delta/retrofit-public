@@ -24,6 +24,10 @@ struct ValueList
 	template<ValueType Value>
 	struct FindIndex;
 
+	//// Used to split a list into 2 segments
+	//template<size_t LastIndexOfFirstSegment>
+	//struct Split;
+
 
 private:
 	// For external access
@@ -35,6 +39,8 @@ private:
 	struct ExternalAccessContains;
 	template<ValueType Value, size_t CurrentIndex, typename ValueListType>
 	struct ExternalAccessFindIndex;
+	//template<size_t LastIndexOfFirstSegment, typename PrecedingValueListType, typename RemainingValueListType>
+	//struct ExternalAccessSplit;
 
 	// 0->N-th case
 	// NOTE: This COULD be recursive to explicitly prevent value array
@@ -98,6 +104,13 @@ public:
 	{
 		//
 	};
+
+	//// Implemented as external
+	//template<size_t LastIndexOfFirstSegment>
+	//struct Split : ExternalAccessSplit< LastIndexOfFirstSegment, 0, ValueList<ValueType>, ValueList<ValueType, Values...> >
+	//{
+	//	//
+	//};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
