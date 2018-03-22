@@ -34,7 +34,7 @@ struct TypeList
 	struct Reverse;
 
 	// Used to split a list into 2 segments
-	template<size_t LastIndexOfFirstSegment>
+	template<size_t FirstIndexOfSecondSegment>
 	struct Split;
 
 
@@ -54,7 +54,7 @@ private:
 	struct ExternalAccessAppend;
 	template<typename TypeListType>
 	struct ExternalAccessReverse;
-	template<size_t LastIndexOfFirstSegment, typename RemainingTypeListType>
+	template<size_t FirstIndexOfSecondSegment, typename RemainingTypeListType>
 	struct ExternalAccessSplitKeepLatter;
 
 	// Zero-th case
@@ -147,11 +147,11 @@ private:
 	};
 
 	// N-th case
-	template<size_t LastIndexOfFirstSegment, typename CurrentType, typename... RemainingTypes>
-	struct ExternalAccessSplitKeepLatter<LastIndexOfFirstSegment, TypeList<CurrentType, RemainingTypes...> >
+	template<size_t FirstIndexOfSecondSegment, typename CurrentType, typename... RemainingTypes>
+	struct ExternalAccessSplitKeepLatter<FirstIndexOfSecondSegment, TypeList<CurrentType, RemainingTypes...> >
 	{
-		static_assert( LastIndexOfFirstSegment - 1 <= sizeof...( RemainingTypes ), "Attempting to split past the end of type list" );
-		using latter = typename ExternalAccessSplitKeepLatter< LastIndexOfFirstSegment - 1, TypeList<RemainingTypes...> >::latter;
+		static_assert( FirstIndexOfSecondSegment - 1 <= sizeof...( RemainingTypes ), "Attempting to split past the end of type list" );
+		using latter = typename ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment - 1, TypeList<RemainingTypes...> >::latter;
 	};
 
 
@@ -199,14 +199,14 @@ public:
 	};
 
 	// Implemented as external
-	template<size_t LastIndexOfFirstSegment>
+	template<size_t FirstIndexOfSecondSegment>
 	struct Split
 	{
-		static constexpr size_t kReversedLastIndexOfFirstSegment = kNumTypes - LastIndexOfFirstSegment;
+		static constexpr size_t kReversedLastIndexOfFirstSegment = kNumTypes - FirstIndexOfSecondSegment;
 		using ReversedList = typename ExternalAccessReverse< TypeList<Types...> >::type;
 		using SplitReversedList = typename ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
 		using former = typename ExternalAccessReverse< SplitReversedList >::type;
-		using latter = typename ExternalAccessSplitKeepLatter< LastIndexOfFirstSegment, TypeList<Types...> >::latter;
+		using latter = typename ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment, TypeList<Types...> >::latter;
 	};
 };
 
