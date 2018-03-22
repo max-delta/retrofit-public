@@ -27,6 +27,8 @@ TEST( TypeList, Single )
 	static_assert( tl_f::Contains<float>::value == true, "Unexpected type presence" );
 	static_assert( tl_f::FindIndex<void*>::value == -1, "Unexpected type presence" );
 	static_assert( tl_f::FindIndex<float>::value == 0, "Unexpected type presence" );
+	static_assert( std::is_same<tl_f::Split<0>::latter::ByIndex<0>::type, float>::value, "Unexpected type" );
+	static_assert( tl_f::Split<1>::latter::kNumTypes == 0, "Unexpected size" );
 }
 
 
@@ -46,6 +48,13 @@ TEST( TypeList, Multiple )
 	static_assert( tl_ifc::FindIndex<int>::value == 0, "Unexpected type presence" );
 	static_assert( tl_ifc::FindIndex<float>::value == 1, "Unexpected type presence" );
 	static_assert( tl_ifc::FindIndex<char>::value == 2, "Unexpected type presence" );
+	static_assert( std::is_same<tl_ifc::Split<0>::latter::ByIndex<0>::type, int>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<0>::latter::ByIndex<1>::type, float>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<0>::latter::ByIndex<2>::type, char>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<1>::latter::ByIndex<0>::type, float>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<1>::latter::ByIndex<1>::type, char>::value, "Unexpected type" );
+	static_assert( std::is_same<tl_ifc::Split<2>::latter::ByIndex<0>::type, char>::value, "Unexpected type" );
+	static_assert( tl_ifc::Split<3>::latter::kNumTypes == 0, "Unexpected size" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
