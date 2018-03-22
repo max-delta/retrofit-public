@@ -23,6 +23,16 @@ struct TypeList
 	template<typename Type>
 	struct FindIndex;
 
+	// Used to add to a list
+	template<typename Type>
+	struct Prepend;
+	template<typename Type>
+	struct Append;
+
+	// Used to reverse a list
+	template<int Unused = 0>
+	struct Reverse;
+
 	// Used to split a list into 2 segments
 	template<size_t LastIndexOfFirstSegment>
 	struct Split;
@@ -38,6 +48,12 @@ private:
 	struct ExternalAccessContains;
 	template<typename Type, size_t CurrentIndex, typename TypeListType>
 	struct ExternalAccessFindIndex;
+	template<typename Type, typename TypeListType>
+	struct ExternalAccessPrepend;
+	template<typename Type, typename TypeListType>
+	struct ExternalAccessAppend;
+	template<typename TypeListType>
+	struct ExternalAccessReverse;
 	template<size_t LastIndexOfFirstSegment, typename RemainingTypeListType>
 	struct ExternalAccessSplitKeepLatter;
 
@@ -86,6 +102,36 @@ private:
 		static constexpr int64_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
 	};
 
+	// Single case
+	template<typename Type, typename... ExistingTypes>
+	struct ExternalAccessPrepend<Type, TypeList<ExistingTypes...> >
+	{
+		using type = TypeList<Type, ExistingTypes...>;
+	};
+
+	// Single case
+	template<typename Type, typename... ExistingTypes>
+	struct ExternalAccessAppend<Type, TypeList<ExistingTypes...> >
+	{
+		using type = TypeList<ExistingTypes..., Type>;
+	};
+
+	// Zero-th case
+	template<>
+	struct ExternalAccessReverse<TypeList<> >
+	{
+		using type = TypeList<>;
+	};
+
+	// N-th case
+	template<typename CurrentType, typename... RemainingTypes>
+	struct ExternalAccessReverse<TypeList<CurrentType, RemainingTypes...> >
+	{
+		using RemainingTypeList = TypeList<RemainingTypes...>;
+		using RemainingTypeListReversed = typename ExternalAccessReverse<RemainingTypeList>::type;
+		using type = typename ExternalAccessAppend<CurrentType, RemainingTypeListReversed>::type;
+	};
+
 	// Zero-th case
 	template<>
 	struct ExternalAccessSplitKeepLatter<0, TypeList<> >
@@ -127,6 +173,27 @@ public:
 	// Implemented as external
 	template<typename Type>
 	struct FindIndex : ExternalAccessFindIndex< Type, 0, TypeList<Types...> >
+	{
+		//
+	};
+
+	// Implemented as external
+	template<typename Type>
+	struct Prepend : ExternalAccessPrepend<Type, TypeList<Types...> >
+	{
+		//
+	};
+
+	// Implemented as external
+	template<typename Type>
+	struct Append : ExternalAccessAppend<Type, TypeList<Types...> >
+	{
+		//
+	};
+
+	// Implemented as external
+	template<int Unused>
+	struct Reverse : ExternalAccessReverse< TypeList<Types...> >
 	{
 		//
 	};
