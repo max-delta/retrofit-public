@@ -29,6 +29,8 @@
     <ClCompile Include="rftype_class_info_compositor.cpp" />
     <ClCompile Include="math_bitfield.cpp" />
     <ClCompile Include="valuelist.cpp" />
+    <ClCompile Include="math_listoperations.cpp" />
+    <ClCompile Include="math_numerictraits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
