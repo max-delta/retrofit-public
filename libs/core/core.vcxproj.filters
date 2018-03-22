@@ -44,6 +44,9 @@
     <ClInclude Include="meta\LazyInitSingleton.h">
       <Filter>meta</Filter>
     </ClInclude>
+    <ClInclude Include="meta\ValueList.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
