@@ -202,6 +202,10 @@ public:
 	template<size_t LastIndexOfFirstSegment>
 	struct Split
 	{
+		static constexpr size_t kReversedLastIndexOfFirstSegment = kNumTypes - LastIndexOfFirstSegment;
+		using ReversedList = typename ExternalAccessReverse< TypeList<Types...> >::type;
+		using SplitReversedList = typename ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
+		using former = typename ExternalAccessReverse< SplitReversedList >::type;
 		using latter = typename ExternalAccessSplitKeepLatter< LastIndexOfFirstSegment, TypeList<Types...> >::latter;
 	};
 };
