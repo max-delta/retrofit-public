@@ -138,6 +138,7 @@
     <ClInclude Include="Hash.h" />
     <ClInclude Include="ListOperations.h" />
     <ClInclude Include="math_bits.h" />
+    <ClInclude Include="math_bytes.h" />
     <ClInclude Include="math_casts.h" />
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
@@ -157,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="math_bits.inl" />
+    <None Include="math_bytes.inl" />
     <None Include="math_casts.inl" />
     <None Include="math_clamps.inl" />
     <None Include="math_compare.inl" />
