@@ -6,4 +6,7 @@
   <ItemGroup>
     <None Include="extension\static_array.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stub.cpp" />
+  </ItemGroup>
 </Project>
