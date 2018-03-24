@@ -149,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="math_bitfield.cpp" />
+    <ClCompile Include="math_bytes.cpp" />
     <ClCompile Include="math_listoperations.cpp" />
     <ClCompile Include="math_numerictraits.cpp" />
     <ClCompile Include="reflect_class_info_builder.cpp" />

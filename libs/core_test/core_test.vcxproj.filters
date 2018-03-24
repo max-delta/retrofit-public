@@ -31,6 +31,7 @@
     <ClCompile Include="valuelist.cpp" />
     <ClCompile Include="math_listoperations.cpp" />
     <ClCompile Include="math_numerictraits.cpp" />
+    <ClCompile Include="math_bytes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

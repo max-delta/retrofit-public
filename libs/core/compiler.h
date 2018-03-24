@@ -63,6 +63,7 @@ enum class Endianness
 	#elif defined(_M_ARM64)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
+		#define RF_PLATFORM_VARIABLE_ENDIAN
 		#define RF_PLATFORM_POINTER_BYTES 8u
 		constexpr Architecture kArchitecture = Architecture::Invalid;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
@@ -71,6 +72,7 @@ enum class Endianness
 	#elif defined(_M_ARM)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
+		#define RF_PLATFORM_VARIABLE_ENDIAN
 		#define RF_PLATFORM_POINTER_BYTES 4u
 		constexpr Architecture kArchitecture = Architecture::Invalid;
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
