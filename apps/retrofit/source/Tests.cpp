@@ -162,33 +162,26 @@ void SQTest()
 		L"n <- null;"
 		L"a <- [\"first\", \"second\"];"
 		L"\n";
-	bool sourceAdd = vm.AddSourceFromBuffer( source );
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	RF_ASSERT( sourceAdd );
 
 	SquirrelVM::Element xElem = vm.GetGlobalVariable( L"x" );
-	SquirrelVM::Integer* x = std::get_if<SquirrelVM::Integer>( &xElem );
-	RF_ASSERT( x != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::Integer>( &xElem ) != nullptr );
 	SquirrelVM::Element yElem = vm.GetGlobalVariable( L"y" );
-	SquirrelVM::FloatingPoint* y = std::get_if<SquirrelVM::FloatingPoint>( &yElem );
-	RF_ASSERT( y != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::FloatingPoint>( &yElem ) != nullptr );
 	SquirrelVM::Element zElem = vm.GetGlobalVariable( L"z" );
-	SquirrelVM::Boolean* z = std::get_if<SquirrelVM::Boolean>( &zElem );
-	RF_ASSERT( z != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::Boolean>( &zElem ) != nullptr );
 	SquirrelVM::Element sElem = vm.GetGlobalVariable( L"s" );
-	SquirrelVM::String* s = std::get_if<SquirrelVM::String>( &sElem );
-	RF_ASSERT( s != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::String>( &sElem ) != nullptr );
 	SquirrelVM::Element nElem = vm.GetGlobalVariable( L"n" );
-	SquirrelVM::Null* n = std::get_if<SquirrelVM::Null>( &nElem );
-	RF_ASSERT( n != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::Null>( &nElem ) != nullptr );
 	SquirrelVM::Element aElem = vm.GetGlobalVariable( L"a" );
-	SquirrelVM::ArrayTag* a = std::get_if<SquirrelVM::ArrayTag>( &aElem );
-	RF_ASSERT( a != nullptr );
+	RF_ASSERT( std::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
 	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( L"a" );
 	{
 		RF_ASSERT( aElemArr.size() == 2 );
-		SquirrelVM::String* s1 = std::get_if<SquirrelVM::String>( &aElemArr[0] );
-		RF_ASSERT( s != nullptr );
-		SquirrelVM::String* s2 = std::get_if<SquirrelVM::String>( &aElemArr[1] );
-		RF_ASSERT( s != nullptr );
+		RF_ASSERT( std::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
+		RF_ASSERT( std::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
 	}
 }
 

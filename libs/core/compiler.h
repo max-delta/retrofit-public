@@ -39,6 +39,7 @@ enum class Endianness
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
 	#define RF_NO_INLINE __declspec(noinline)
+	#define RF_ACK_ANY_PADDING __pragma(warning(suppress:4324))
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
@@ -50,6 +51,8 @@ enum class Endianness
 		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
 		constexpr Endianness kEndianness = Endianness::Little;
 		constexpr bool kAlignedModificationsAreAtomic = true;
+		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING
 	#elif defined(_M_IX86)
 		#define RF_PLATFORM_X86_32
 		#define RF_PLATFORM_STRONG_MEMORY_MODEL
@@ -60,6 +63,8 @@ enum class Endianness
 		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
 		constexpr Endianness kEndianness = Endianness::Little;
 		constexpr bool kAlignedModificationsAreAtomic = true;
+		#define RF_ACK_64BIT_PADDING
+		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
 	#elif defined(_M_ARM64)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
@@ -69,6 +74,8 @@ enum class Endianness
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
 		constexpr Endianness kEndianness = Endianness::Variable;
 		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING
 	#elif defined(_M_ARM)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
@@ -78,6 +85,8 @@ enum class Endianness
 		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
 		constexpr Endianness kEndianness = Endianness::Variable;
 		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+		#define RF_ACK_64BIT_PADDING
+		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
 	#else
 		#error Undefined architecture
 	#endif

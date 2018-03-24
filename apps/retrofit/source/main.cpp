@@ -14,6 +14,7 @@
 #include "Logging/ANSIConsoleLogger.h"
 #include "Timing/clocks.h"
 
+#include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
 
@@ -81,9 +82,8 @@ int main()
 	if( consoleInitialized )
 	{
 		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
-		logging::LoggingRouter& router = logging::GetOrCreateGlobalLoggingInstance();
 		logging::HandlerDefinition def;
-		def.mSupportedSeverities = -1;
+		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 		def.mHandlerFunc = logging::ANSIConsoleLogger;
 		logging::RegisterHandler( def );
 	}
@@ -111,7 +111,6 @@ int main()
 	if( vfsInitialized == false )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
-		return 1;
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
 

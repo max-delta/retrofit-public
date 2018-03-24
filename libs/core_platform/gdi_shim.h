@@ -104,9 +104,9 @@ enum
 enum Font_Families
 {
 	kFF_DONTCARE = ( 0 << 4 ),  /* Don't care or don't know. */
-	kFF_ROMAN = ( 1 << 4 ),  /* Variable stroke width, serifed. */
-	kFF_SWISS = ( 2 << 4 ),  /* Variable stroke width, sans-serifed. */
-	kFF_MODERN = ( 3 << 4 ),  /* Constant stroke width, serifed or sans-serifed. */
+	kFF_ROMAN = ( 1 << 4 ),  /* Variable stroke mWidth, serifed. */
+	kFF_SWISS = ( 2 << 4 ),  /* Variable stroke mWidth, sans-serifed. */
+	kFF_MODERN = ( 3 << 4 ),  /* Constant stroke mWidth, serifed or sans-serifed. */
 	kFF_SCRIPT = ( 4 << 4 ),  /* Cursive, etc. */
 	kFF_DECORATIVE = ( 5 << 4 ),  /* Old English, etc. */
 };

@@ -700,7 +700,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			// Tough luck, no easy way to tell what went wrong
 			if( mustExist )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was reported to exist" );
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
 			}
 			else
 			{

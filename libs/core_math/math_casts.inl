@@ -14,7 +14,7 @@ DST integer_cast( SRC const src )
 {
 	static_assert( std::is_integral<DST>::value, "integral_cast only valid on integeral types" );
 	DST retVal = integer_truncast<DST>( src );
-	RF_ASSERT( retVal == src );
+	RF_ASSERT( retVal == static_cast<DST>( src ) );
 	return retVal;
 }
 

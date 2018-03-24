@@ -514,8 +514,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
-	size_t const& numSlots = fpack->m_NumTimeSlots;
-	RF_ASSERT( m_EditingFrame <= numSlots );
+	RF_ASSERT( m_EditingFrame <= fpack->m_NumTimeSlots );
 
 	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[m_EditingFrame];
