@@ -166,7 +166,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	UniquePtr<Resource> const& resource = resourceIter->second;
 	RF_ASSERT( resource != nullptr );
 
-	bool success = PreDestroy( *resource );
+	bool const success = PreDestroy( *resource );
 	RF_ASSERT( success );
 
 	m_FileBackedResources.erase( resourceName );
@@ -288,7 +288,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	}
 	RF_ASSERT( retVal != nullptr );
 
-	bool success = PostLoadFromFile( *res, filename );
+	bool const success = PostLoadFromFile( *res, filename );
 	RF_ASSERT( success );
 	return retVal;
 }
@@ -314,7 +314,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	}
 	RF_ASSERT( retVal != nullptr );
 
-	bool success = PostLoadFromMemory( *res );
+	bool const success = PostLoadFromMemory( *res );
 	RF_ASSERT( success );
 	return retVal;
 }

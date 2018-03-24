@@ -50,14 +50,14 @@ private:
 	void BuildFont( int8_t height );
 
 private:
-	shim::HWND hWnd;
-	shim::HDC hDC;
-	shim::HGLRC hRC;
-	ProjectionMode projectionMode;
-	int width;
-	int height;
-	float xFudge; // HACK: Pixel fudge for anti-aliasing repair
-	float yFudge; // HACK: Pixel fudge for anti-aliasing repair
+	shim::HWND mHWnd;
+	shim::HDC mHDC;
+	shim::HGLRC mHRC;
+	ProjectionMode mProjectionMode;
+	int mWidth;
+	int mHeight;
+	float mXFudge; // HACK: Pixel fudge for anti-aliasing repair
+	float mYFudge; // HACK: Pixel fudge for anti-aliasing repair
 };
 
 ///////////////////////////////////////////////////////////////////////////////

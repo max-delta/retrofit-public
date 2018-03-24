@@ -1,4 +1,6 @@
 #pragma once
+#include "core/compiler.h"
+
 #include <initializer_list>
 #include <iterator>
 
@@ -137,6 +139,7 @@ private:
 	// Private data
 private:
 	size_type m_CurrentSize;
+	RF_ACK_32BIT_PADDING;
 	Storage m_Storage[ElementCapacity];
 };
 

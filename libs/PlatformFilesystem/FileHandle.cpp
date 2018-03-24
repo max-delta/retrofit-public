@@ -16,7 +16,7 @@ FileHandle::FileHandle( FILE* file )
 FileHandle::~FileHandle()
 {
 	RF_ASSERT( m_File != nullptr );
-	int closeResult = fclose( m_File );
+	int const closeResult = fclose( m_File );
 	RF_ASSERT( closeResult == 0 );
 	m_File = nullptr;
 }

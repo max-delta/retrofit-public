@@ -8,4 +8,4 @@
 #endif
 
 constexpr char const* RFCAT_PPU = "PPU";
-constexpr uint64_t RFCAT_PPU_SEV_WHITELIST = -1;
+constexpr uint64_t RFCAT_PPU_SEV_WHITELIST = static_cast<uint64_t>( -1 );
