@@ -24,6 +24,9 @@
   <ItemGroup>
     <None Include="extension\static_array.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stub.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{D27C937A-7856-4C13-BBE5-895766D01E1F}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
