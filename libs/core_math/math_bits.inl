@@ -10,6 +10,41 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<> constexpr uint8_t GetAllBitsSet()
+{
+	return static_cast<uint8_t>( 0xffu );
+}
+template<> constexpr int8_t GetAllBitsSet()
+{
+	return static_cast<int8_t>( 0xffu );
+}
+template<> constexpr uint16_t GetAllBitsSet()
+{
+	return static_cast<uint16_t>( 0xffffu );
+}
+template<> constexpr int16_t GetAllBitsSet()
+{
+	return static_cast<int16_t>( 0xffffu );
+}
+template<> constexpr uint32_t GetAllBitsSet()
+{
+	return static_cast<uint32_t>( 0xffffffffu );
+}
+template<> constexpr int32_t GetAllBitsSet()
+{
+	return static_cast<int32_t>( 0xffffffffu );
+}
+template<> constexpr uint64_t GetAllBitsSet()
+{
+	return static_cast<uint64_t>( 0xffffffffffffffffu );
+}
+template<> constexpr int64_t GetAllBitsSet()
+{
+	return static_cast<int64_t>( 0xffffffffffffffffu );
+}
+
+
+
 template<typename T>
 constexpr bool HasOnly1BitSet( T const value )
 {

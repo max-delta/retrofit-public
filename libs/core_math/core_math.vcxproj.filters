@@ -11,6 +11,7 @@
     <ClInclude Include="BitField.h" />
     <ClInclude Include="ListOperations.h" />
     <ClInclude Include="NumericTraits.h" />
+    <ClInclude Include="math_bytes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -23,5 +24,6 @@
     <None Include="math_clamps.inl" />
     <None Include="math_compare.inl" />
     <None Include="math_bits.inl" />
+    <None Include="math_bytes.inl" />
   </ItemGroup>
 </Project>

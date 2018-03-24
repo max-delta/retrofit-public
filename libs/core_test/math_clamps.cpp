@@ -221,15 +221,53 @@ TEST(MathClamps, ClampNegative)
 TEST( MathClamps, SnapNearest )
 {
 	// TODO: Floating point support and tests
-	static_assert( SnapNearest( -4, 2 ) == -4, "" );
-	static_assert( SnapNearest( -3, 2 ) == -2, "" );
-	static_assert( SnapNearest( -2, 2 ) == -2, "" );
-	static_assert( SnapNearest( -1, 2 ) ==  0, "" );
-	static_assert( SnapNearest(  0, 2 ) ==  0, "" );
-	static_assert( SnapNearest(  1, 2 ) ==  0, "" );
-	static_assert( SnapNearest(  2, 2 ) ==  2, "" );
-	static_assert( SnapNearest(  3, 2 ) ==  2, "" );
-	static_assert( SnapNearest(  4, 2 ) ==  4, "" );
+	static_assert( SnapNearest( -5, 4 ) == -4, "" );
+	static_assert( SnapNearest( -4, 4 ) == -4, "" );
+	static_assert( SnapNearest( -3, 4 ) == -4, "" );
+	static_assert( SnapNearest( -2, 4 ) ==  0, "" );
+	static_assert( SnapNearest( -1, 4 ) ==  0, "" );
+	static_assert( SnapNearest(  0, 4 ) ==  0, "" );
+	static_assert( SnapNearest(  1, 4 ) ==  0, "" );
+	static_assert( SnapNearest(  2, 4 ) ==  0, "" );
+	static_assert( SnapNearest(  3, 4 ) ==  4, "" );
+	static_assert( SnapNearest(  4, 4 ) ==  4, "" );
+	static_assert( SnapNearest(  5, 4 ) ==  4, "" );
+}
+
+
+
+TEST( MathClamps, SnapHighest )
+{
+	// TODO: Floating point support and tests
+	static_assert( SnapHighest( -5, 4 ) == -4, "" );
+	static_assert( SnapHighest( -4, 4 ) == -4, "" );
+	static_assert( SnapHighest( -3, 4 ) ==  0, "" );
+	static_assert( SnapHighest( -2, 4 ) ==  0, "" );
+	static_assert( SnapHighest( -1, 4 ) ==  0, "" );
+	static_assert( SnapHighest(  0, 4 ) ==  0, "" );
+	static_assert( SnapHighest(  1, 4 ) ==  4, "" );
+	static_assert( SnapHighest(  2, 4 ) ==  4, "" );
+	static_assert( SnapHighest(  3, 4 ) ==  4, "" );
+	static_assert( SnapHighest(  4, 4 ) ==  4, "" );
+	static_assert( SnapHighest(  5, 4 ) ==  8, "" );
+}
+
+
+
+TEST( MathClamps, SnapLowest )
+{
+	// TODO: Floating point support and tests
+	static_assert( SnapLowest( -5, 4 ) == -8, "" );
+	static_assert( SnapLowest( -4, 4 ) == -4, "" );
+	static_assert( SnapLowest( -3, 4 ) == -4, "" );
+	static_assert( SnapLowest( -2, 4 ) == -4, "" );
+	static_assert( SnapLowest( -1, 4 ) == -4, "" );
+	static_assert( SnapLowest(  0, 4 ) ==  0, "" );
+	static_assert( SnapLowest(  1, 4 ) ==  0, "" );
+	static_assert( SnapLowest(  2, 4 ) ==  0, "" );
+	static_assert( SnapLowest(  3, 4 ) ==  0, "" );
+	static_assert( SnapLowest(  4, 4 ) ==  4, "" );
+	static_assert( SnapLowest(  5, 4 ) ==  4, "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
