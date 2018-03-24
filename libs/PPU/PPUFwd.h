@@ -47,7 +47,7 @@ constexpr PPUDepthLayer k_NearestLayer = -100;
 //  12x7 = Almost WQVGA (16:9 widescreen)
 constexpr PPUCoordElem k_DesiredWidth = k_TileSize * 10;
 constexpr PPUCoordElem k_DesiredHeight = k_TileSize * 7;
-constexpr PPUTileElem k_DesiredDiagonalTiles = math::Min( k_DesiredWidth, k_DesiredHeight ) / k_TileSize;
+constexpr PPUTileElem k_DesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( k_DesiredWidth, k_DesiredHeight ) / k_TileSize );
 
 class Object;
 class Texture;

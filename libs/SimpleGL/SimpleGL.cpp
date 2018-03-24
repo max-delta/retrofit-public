@@ -19,9 +19,9 @@ namespace RF { namespace gfx {
 
 bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 {
-	this->hWnd = hWnd;
+	this->mHWnd = hWnd;
 
-	hDC = shim::GetDC( hWnd ); // Grab the window's device context. If anything else
+	mHDC = shim::GetDC( hWnd ); // Grab the window's device context. If anything else
 	                           // in the currently running proccess besides Graphics
 	                           // tries to modify the device context, Windows responds
 	                           // with "Step off, bitch! Can't touch dis!"
@@ -38,12 +38,12 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	pfd.cDepthBits = 16; // Number of depth layers per pixel.
 	pfd.iLayerType = shim::kPFD_MAIN_PLANE; // Supposedly ignored.
 
-	int iFormat = shim::ChoosePixelFormat( hDC, &pfd ); // Try to find an appropriate
+	int iFormat = shim::ChoosePixelFormat( mHDC, &pfd ); // Try to find an appropriate
 	                                                    // pixel format to meet our demands.
-	shim::SetPixelFormat( hDC, iFormat, &pfd ); // Set the chosen pixel format.
+	shim::SetPixelFormat( mHDC, iFormat, &pfd ); // Set the chosen pixel format.
 
-	hRC = shim::wglCreateContext( hDC ); // Create a render context for OpenGL.
-	shim::wglMakeCurrent( hDC, hRC ); // All calls to OpenGL will use this context.
+	mHRC = shim::wglCreateContext( mHDC ); // Create a render context for OpenGL.
+	shim::wglMakeCurrent( mHDC, mHRC ); // All calls to OpenGL will use this context.
 
 	SetFontScale( 1.f );
 
@@ -54,8 +54,8 @@ bool SimpleGL::DetachFromWindow()
 {
 	glDeleteLists( font_base, 96 ); // Delete the font list.
 	shim::wglMakeCurrent( nullptr, nullptr ); // All calls to OpenGL will be ignored.
-	shim::wglDeleteContext( hRC ); // Discard the old render context.
-	shim::ReleaseDC( hWnd, hDC ); // Release control of the device context.
+	shim::wglDeleteContext( mHRC ); // Discard the old render context.
+	shim::ReleaseDC( mHWnd, mHDC ); // Release control of the device context.
 	return true;
 }
 
@@ -67,46 +67,46 @@ bool SimpleGL::Initialize2DGraphics()
 
 bool SimpleGL::SetProjectionMode( ProjectionMode mode )
 {
-	projectionMode = mode;
+	mProjectionMode = mode;
 	return true;
 }
 
 bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
-	this->width = width;
-	this->height = height;
+	this->mWidth = width;
+	this->mHeight = height;
 
 	glViewport( 0, 0, width, height ); // Reset The Current Viewport
 
 	glMatrixMode( GL_PROJECTION ); // Select The Projection Matrix
 	glLoadIdentity(); // Reset The Projection Matrix
 
-	switch( projectionMode )
+	switch( mProjectionMode )
 	{
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
 			glOrtho(0.0f,width,height,0.0f,-1.0f,1.0f); // Create Ortho View (0,0 At Top Left)
-			xFudge = 0.5f;
-			yFudge = 0.5f;
+			mXFudge = 0.5f;
+			mYFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
 			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f ); // Create Ortho View (0,0 At Top Left)
-			xFudge = 1.f / width * 0.5f;
-			yFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / width * 0.5f;
+			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
 			glOrtho( 0.0f, 1, 0.0f, 1, -1.0f, 1.0f ); // Create Ortho View (0,0 At Bottom Left)
-			xFudge = 1.f / width * 0.5f;
-			yFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / width * 0.5f;
+			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
 			glOrtho( -1, 1, -1, 1, -1.0f, 1.0f ); // Create Ortho View (1,1 At Top Right)
-			xFudge = 2.f / width * 0.5f;
-			yFudge = 2.f / height * 0.5f;
+			mXFudge = 2.f / width * 0.5f;
+			mYFudge = 2.f / height * 0.5f;
 			break;
 		default:
 			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f );
-			xFudge = 1.f / width * 0.5f;
-			yFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / width * 0.5f;
+			mYFudge = 1.f / height * 0.5f;
 			break;
 	}
 
@@ -207,16 +207,16 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width 
 	{
 		glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
 		glBegin( GL_LINES );
-		glVertex2f( p0.x + xFudge, p0.y + yFudge );
-		glVertex2f( p1.x + xFudge, p1.y + yFudge );
+		glVertex2f( p0.x + mXFudge, p0.y + mYFudge );
+		glVertex2f( p1.x + mXFudge, p1.y + mYFudge );
 		glEnd();
 	}
 	else
 	{
 		glLineWidth( width );
 		glBegin( GL_LINES );
-		glVertex2f( p0.x - xFudge * width, p0.y - yFudge * width );
-		glVertex2f( p1.x - xFudge * width, p1.y - yFudge * width );
+		glVertex2f( p0.x - mXFudge * width, p0.y - mYFudge * width );
+		glVertex2f( p1.x - mXFudge * width, p1.y - mYFudge * width );
 		glEnd();
 	}
 	return true;
@@ -245,7 +245,7 @@ bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft,
 
 bool SimpleGL::BeginFrame()
 {
-	shim::wglMakeCurrent( hDC, hRC );
+	shim::wglMakeCurrent( mHDC, mHRC );
 	glClear( GL_COLOR_BUFFER_BIT ); //Clear the buffer
 	glPushMatrix();
 	return true;
@@ -281,7 +281,7 @@ bool SimpleGL::RenderFrame()
 bool SimpleGL::EndFrame()
 {
 	glPopMatrix();
-	shim::SwapBuffers( hDC );
+	shim::SwapBuffers( mHDC );
 	return true;
 }
 
@@ -307,10 +307,10 @@ void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 		shim::kANTIALIASED_QUALITY, // Output Quality
 		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family And Pitch
 		L"Arial" ); // Font Name
-	oldfont = (shim::HFONT)shim::SelectObject( hDC, font );		// Selects The Font We Want
-	shim::wglUseFontBitmapsW( hDC, 32, 96, font_base );			// Builds 96 Characters Starting At Character 32
-														//wglUseFontOutlines(hDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
-	shim::SelectObject( hDC, oldfont );				// Selects The Font We Want
+	oldfont = (shim::HFONT)shim::SelectObject( mHDC, font );		// Selects The Font We Want
+	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base );			// Builds 96 Characters Starting At Character 32
+														//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
+	shim::SelectObject( mHDC, oldfont );				// Selects The Font We Want
 	shim::DeleteObject( font );					// Delete The Font
 }
 

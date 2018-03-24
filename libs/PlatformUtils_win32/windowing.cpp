@@ -45,8 +45,8 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 		L"SimpleGl Window", // The name to appear on the window.
 		windowStyles, // Window styles.
 		CW_USEDEFAULT, CW_USEDEFAULT, // Initial window position.
-		windowWidth, // Default window width.
-		windowHeight, // Default window height.
+		windowWidth, // Default window mWidth.
+		windowHeight, // Default window mHeight.
 		nullptr, // The window has no parent.
 		nullptr, // The window has no menu.
 		nullptr,//hInstance, // The application that is managing the window.

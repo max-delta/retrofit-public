@@ -27,7 +27,7 @@ WndProcInputDevice::WndProcInputDevice()
 
 shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool & intercepted )
 {
-	shim::LRESULT retVal;
+	shim::LRESULT retVal = {};
 	shim::LRESULT componentResult;
 	bool componentIntercepted = false;
 
@@ -211,6 +211,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					break;
 				default:
 					RF_DBGFAIL();
+					state = PinState::Inactive;
 					break;
 			}
 			RecordLogical( virtualKey, state );
@@ -250,6 +251,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					break;
 				default:
 					RF_DBGFAIL();
+					state = PinState::Inactive;
 					break;
 			}
 
@@ -281,10 +283,12 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 					else
 					{
 						RF_DBGFAIL();
+						virtualKey = 0;
 					}
 					break;
 				default:
 					RF_DBGFAIL();
+					virtualKey = 0;
 					break;
 			}
 

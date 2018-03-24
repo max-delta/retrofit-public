@@ -191,7 +191,7 @@ TEST( Logging, Whitelists )
 	ASSERT_EQ( details::gCountAll, 1 );
 
 	// Global filter ACTIVE
-	router.SetOrModifyGlobalWhitelist( ~1 );
+	router.SetOrModifyGlobalWhitelist( ~1ull );
 	details::ClearGlobalCounts();
 	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
@@ -200,7 +200,7 @@ TEST( Logging, Whitelists )
 	ASSERT_EQ( details::gCountAll, 0 );
 
 	// Global filter inactive
-	router.SetOrModifyGlobalWhitelist( ~2 );
+	router.SetOrModifyGlobalWhitelist( ~2ull );
 	details::ClearGlobalCounts();
 	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
@@ -209,7 +209,7 @@ TEST( Logging, Whitelists )
 	ASSERT_EQ( details::gCountAll, 1 );
 
 	// Global filter inactive, category filer ACTIVE
-	router.SetOrModifyCategoryWhitelist( "TEST", ~1 );
+	router.SetOrModifyCategoryWhitelist( "TEST", ~1ull );
 	details::ClearGlobalCounts();
 	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
@@ -218,7 +218,7 @@ TEST( Logging, Whitelists )
 	ASSERT_EQ( details::gCountAll, 0 );
 
 	// Global filter inactive, category filer inactive
-	router.SetOrModifyCategoryWhitelist( "TEST", ~2 );
+	router.SetOrModifyCategoryWhitelist( "TEST", ~2ull );
 	details::ClearGlobalCounts();
 	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
@@ -227,8 +227,8 @@ TEST( Logging, Whitelists )
 	ASSERT_EQ( details::gCountAll, 1 );
 
 	// Global filter ACTIVE, category filer ACTIVE
-	router.SetOrModifyGlobalWhitelist( ~1 );
-	router.SetOrModifyCategoryWhitelist( "TEST", ~1 );
+	router.SetOrModifyGlobalWhitelist( ~1ull );
+	router.SetOrModifyCategoryWhitelist( "TEST", ~1ull );
 	details::ClearGlobalCounts();
 	router.Log( nullptr, "TEST", 1, "%s%s%s", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );

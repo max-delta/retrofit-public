@@ -324,7 +324,9 @@ void PPUController::Render() const
 		PPUCoordElem const x = object.m_XCoord - timeSlot.m_TextureOriginX;
 		PPUCoordElem const y = object.m_YCoord - timeSlot.m_TextureOriginY;
 		math::Vector2f const topLeft = CoordToDevice( x, y );
-		math::Vector2f const bottomRight = CoordToDevice( x + texture->m_WidthPostLoad, y + texture->m_HeightPostLoad );
+		math::Vector2f const bottomRight = CoordToDevice(
+			math::integer_cast<PPUCoordElem>( x + texture->m_WidthPostLoad ),
+			math::integer_cast<PPUCoordElem>( y + texture->m_HeightPostLoad ) );
 
 		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
 	}
@@ -384,7 +386,7 @@ uint8_t PPUController::GetZoomFactor() const
 {
 	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
 	uint16_t const approximateDiagonalTiles = smallestDimenssion / k_TileSize;
-	uint8_t const zoomFactor = math::Max( 1, approximateDiagonalTiles / k_DesiredDiagonalTiles );
+	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / k_DesiredDiagonalTiles ) );
 	return zoomFactor;
 }
 
@@ -415,13 +417,13 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const & coord ) const
 	x *= coordToTiles;
 	y *= coordToTiles;
 
-	// NDC, height only
+	// NDC, mHeight only
 	// [0-2/15.3f]
 	float const tilesToPartialNDC = 1.f / diagonalTiles;
 	x *= tilesToPartialNDC;
 	y *= tilesToPartialNDC;
 
-	// NDC, correcting width
+	// NDC, correcting mWidth
 	float const heightToWidthNDC = float( m_Height ) / m_Width;
 	x *= heightToWidthNDC;
 
@@ -440,12 +442,12 @@ math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile
 	float x = xTile;
 	float y = yTile;
 
-	// NDC, height only
+	// NDC, mHeight only
 	float const tilesToPartialNDC = 1.f / diagonalTiles;
 	x *= tilesToPartialNDC;
 	y *= tilesToPartialNDC;
 
-	// NDC, correcting width
+	// NDC, correcting mWidth
 	float const heightToWidthNDC = float( m_Height ) / m_Width;
 	x *= heightToWidthNDC;
 

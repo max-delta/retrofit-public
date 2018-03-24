@@ -53,13 +53,13 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 						 // The application is now cleaning up.
 			return 0;
 
-		case WM_SIZE: // wParam: Sizing type | lParam(LO): width | lParam(HI): height
+		case WM_SIZE: // wParam: Sizing type | lParam(LO): mWidth | lParam(HI): mHeight
 		{
 			// The size of the window has changed, let graphics know
 			if( g_Graphics != nullptr )
 			{
 				win32::RECT rect;
-				bool success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
+				bool const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
 				RF_ASSERT( success );
 				g_Graphics->ResizeSurface(
 					RF::math::integer_cast<uint16_t>( rect.right ),
