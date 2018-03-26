@@ -25,6 +25,13 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleWithoutStaticClassInfo )
 	RFTYPE_REGISTER_BY_NAME( "ExampleWithoutStaticClassInfo" );
 }
 
+RFTYPE_CREATE_META( RF::rftype_example::ExampleWithClassAsMember )
+{
+	using RF::rftype_example::ExampleWithClassAsMember;
+	RFTYPE_META().RawProperty( "mExampleClassAsMember", &ExampleWithClassAsMember::mExampleClassAsMember );
+	RFTYPE_REGISTER_BY_NAME( "ExampleWithClassAsMember" );
+}
+
 RFTYPE_CREATE_META( RF::rftype_example::ExampleBaseClass )
 {
 	using RF::rftype_example::ExampleBaseClass;
@@ -39,7 +46,23 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleDerivedClass )
 {
 	using RF::rftype_example::ExampleDerivedClass;
 	RFTYPE_META().BaseClass<RF::rftype_example::ExampleBaseClass>();
+	RFTYPE_META().RawProperty( "mExampleDerivedNonStaticVariable", &ExampleDerivedClass::mExampleDerivedNonStaticVariable );
 	RFTYPE_REGISTER_BY_NAME( "ExampleDerivedClass" );
+}
+
+RFTYPE_CREATE_META( RF::rftype_example::ExampleSecondaryBaseClass )
+{
+	using RF::rftype_example::ExampleSecondaryBaseClass;
+	RFTYPE_META().RawProperty( "mExampleSecondaryNonStaticVariable", &ExampleSecondaryBaseClass::mExampleSecondaryNonStaticVariable );
+	RFTYPE_REGISTER_BY_NAME( "ExampleSecondaryBaseClass" );
+}
+
+RFTYPE_CREATE_META( RF::rftype_example::ExamplePoorLifeDecision )
+{
+	using RF::rftype_example::ExamplePoorLifeDecision;
+	RFTYPE_META().BaseClass<RF::rftype_example::ExampleBaseClass>();
+	RFTYPE_META().BaseClass<RF::rftype_example::ExampleSecondaryBaseClass>();
+	RFTYPE_REGISTER_BY_NAME( "ExamplePoorLifeDecision" );
 }
 
 namespace RF { namespace rftype_example {
