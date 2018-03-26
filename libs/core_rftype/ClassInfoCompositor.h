@@ -27,7 +27,36 @@ struct ClassInfoCompositor
 		static_assert( std::is_same<T, CLASS>::value == false, "Not a base class, is same class" );
 		reflect::BaseClassInfo classInfo = {};
 		classInfo.mBaseClassInfo = &GetClassInfo<T>();
-		classInfo.mGetBasePointerFromDerived = nullptr; // TODO
+		CLASS const* const kInvalidClass = reinterpret_cast<CLASS const*>( compiler::kInvalidNonNullPointer );
+
+		// NOTE: Performing this transformation test requires the derived class
+		//  to be cast to the base class. This is normally required for
+		//  type-safe casts, and reflection COULD work around it, but that
+		//  creates dangerous assumptions, which this test is trying to detect.
+		// NOTE: In some inheritance implementations, the act of casting an
+		//  invalid pointer creates run-time code that will crash, so you will
+		//  need to use the more expensive ComplexBaseClass() instead
+		bool const nonTrivialTransformationNeeded = reinterpret_cast<T const*>( kInvalidClass ) != kInvalidClass;
+		if( nonTrivialTransformationNeeded )
+		{
+			classInfo.mGetBasePointerFromDerived = GetBasePointerFromDerived<T>;
+		}
+		else
+		{
+			classInfo.mGetBasePointerFromDerived = nullptr;
+		}
+		mClassInfo.mBaseTypes.emplace_back( std::move( classInfo ) );
+		return *this;
+	}
+
+	template<typename T>
+	ClassInfoCompositor& ComplexBaseClass()
+	{
+		static_assert( std::is_base_of<T, CLASS>::value, "Not a base class" );
+		static_assert( std::is_same<T, CLASS>::value == false, "Not a base class, is same class" );
+		reflect::BaseClassInfo classInfo = {};
+		classInfo.mBaseClassInfo = &GetClassInfo<T>();
+		classInfo.mGetBasePointerFromDerived = GetBasePointerFromDerived<T>;
 		mClassInfo.mBaseTypes.emplace_back( std::move( classInfo ) );
 		return *this;
 	}
@@ -84,6 +113,16 @@ struct ClassInfoCompositor
 		return *this;
 	}
 
+
+private:
+	template<typename T>
+	static void const* GetBasePointerFromDerived( void const* ptr )
+	{
+		return static_cast<T const*>( reinterpret_cast<CLASS const*>( ptr ) );
+	}
+
+
+private:
 	reflect::ClassInfo& mClassInfo;
 };
 

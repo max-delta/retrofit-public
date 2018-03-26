@@ -60,8 +60,8 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleSecondaryBaseClass )
 RFTYPE_CREATE_META( RF::rftype_example::ExamplePoorLifeDecision )
 {
 	using RF::rftype_example::ExamplePoorLifeDecision;
-	RFTYPE_META().BaseClass<RF::rftype_example::ExampleBaseClass>();
-	RFTYPE_META().BaseClass<RF::rftype_example::ExampleSecondaryBaseClass>();
+	RFTYPE_META().ComplexBaseClass<RF::rftype_example::ExampleBaseClass>();
+	RFTYPE_META().ComplexBaseClass<RF::rftype_example::ExampleSecondaryBaseClass>();
 	RFTYPE_REGISTER_BY_NAME( "ExamplePoorLifeDecision" );
 }
 

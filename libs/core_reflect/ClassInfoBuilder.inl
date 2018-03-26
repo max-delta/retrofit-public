@@ -2,6 +2,8 @@
 
 #include "ClassInfoBuilder.h"
 
+#include "core/compiler.h"
+
 
 namespace RF { namespace reflect { namespace builder {
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,9 +67,14 @@ template<typename T, typename Class>
 void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* variable )
 {
 	variableInfo = {};
-	constexpr Class* kZeroedClass = reinterpret_cast<Class*>( nullptr );
-	T* const offsetIn = &( (*kZeroedClass).*variable );
-	variableInfo.mOffset = reinterpret_cast<ptrdiff_t>( offsetIn );
+	Class const* const kInvalidClass = reinterpret_cast<Class const*>( compiler::kInvalidNonNullPointer );
+
+	// NOTE: In some inheritance implementations, the act of referencing an
+	//  invalid pointer creates run-time code that will crash, so you will not
+	//  be able to use this reflection helper on it, and will need to use more
+	//  expensive accessors instead, that can perform the needed run-time code
+	T const* const offsetIn = &( ( *kInvalidClass ).*variable );
+	variableInfo.mOffset = reinterpret_cast<ptrdiff_t>( offsetIn ) - reinterpret_cast<ptrdiff_t>( kInvalidClass );
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
 	variableInfo.mValueType = Value::DetermineType<T>();

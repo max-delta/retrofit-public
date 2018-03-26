@@ -59,8 +59,7 @@ struct NonVirtualBaseClassWithoutStaticClassInfo
 };
 double NonVirtualBaseClassWithoutStaticClassInfo::static_d;
 
-// NOTE: Private inheritance, cannot access base class via derived class
-struct NonVirtualDerivedClassWithoutStaticClassInfo : private NonVirtualBaseClassWithoutStaticClassInfo
+struct NonVirtualDerivedClassWithoutStaticClassInfo : public NonVirtualBaseClassWithoutStaticClassInfo
 {
 	char unused2[16];
 	float instance_f;
@@ -227,16 +226,16 @@ RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondTop )
 }
 RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondLeft )
 {
-	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondTop>();
+	RFTYPE_META().ComplexBaseClass<RF::reflect::details::diamond::DiamondTop>();
 }
 RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondRight )
 {
-	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondTop>();
+	RFTYPE_META().ComplexBaseClass<RF::reflect::details::diamond::DiamondTop>();
 }
 RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondBottom )
 {
-	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondLeft>();
-	RFTYPE_META().BaseClass<RF::reflect::details::diamond::DiamondRight>();
+	RFTYPE_META().ComplexBaseClass<RF::reflect::details::diamond::DiamondLeft>();
+	RFTYPE_META().ComplexBaseClass<RF::reflect::details::diamond::DiamondRight>();
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::nested::Contents )
