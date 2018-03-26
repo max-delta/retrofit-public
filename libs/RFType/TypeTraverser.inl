@@ -51,9 +51,20 @@ inline void TypeTraverser::TraverseVariablesWithInheritanceT(
 
 	for( BaseClassInfo const& baseClassInfo : classInfo.mBaseTypes )
 	{
+		void const* baseClassLocation;
+		if( baseClassInfo.mGetBasePointerFromDerived != nullptr )
+		{
+			// Special handler needed, probably due to multiple-inheritance
+			baseClassLocation = baseClassInfo.mGetBasePointerFromDerived( classLocation );
+		}
+		else
+		{
+			baseClassLocation = classLocation;
+		}
+
 		TraverseVariablesWithInheritanceT(
 			*baseClassInfo.mBaseClassInfo,
-			classLocation,
+			baseClassLocation,
 			onMemberVariableFunc,
 			onNestedTypeFoundFunc );
 	}

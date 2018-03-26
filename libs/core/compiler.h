@@ -31,6 +31,18 @@ enum class Endianness
 	Variable // :(
 };
 
+// The C++ standard defines special behavior for null pointers that sometimes
+//  acts fundamentally different than normal pointers, by design. There are
+//  cases where this is undesirable, but the situation is such that it is
+//  impossible or impractical to acquire a real pointer to an actual object.
+//  This value can act as a stand-in that is obviously invalid, so memory
+//  access should cause an obvious segmentation fault.
+// NOTE: Not garaunteed to be invalid, very compiler and platform specific, but
+//  conventionally invalid in modern memory management systems
+// NOTE: This is a fundamental standards violation and rife with undefined
+//  behavior, so be very cautious when using it
+static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>( 0x1 );
+
 #ifdef _MSC_VER
 	#define RF_PLATFORM_MSVC
 	constexpr Compiler kCompiler = Compiler::MSVC;
