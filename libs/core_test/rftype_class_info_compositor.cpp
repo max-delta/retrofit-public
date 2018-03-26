@@ -13,7 +13,7 @@ struct ClassWithStaticClassInfo
 {
 	RFTYPE_STATIC_CLASSINFO();
 
-	char unusedPadding[16];
+	char unused[16];
 	double instance_d;
 	static double static_d;
 	void instance_v_call_v( void )
@@ -63,6 +63,7 @@ double NonVirtualBaseClassWithoutStaticClassInfo::static_d;
 struct NonVirtualDerivedClassWithoutStaticClassInfo : private NonVirtualBaseClassWithoutStaticClassInfo
 {
 	char unused2[16];
+	float instance_f;
 };
 
 struct VirtualBaseClassWithoutStaticClassInfo : public VirtualClass
@@ -88,6 +89,7 @@ struct VirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClassWithou
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 
 	char unused2[16];
+	float instance_f;
 };
 
 struct MissingVirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClassWithoutStaticClassInfo
@@ -96,6 +98,7 @@ struct MissingVirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClas
 	//RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 
 	char unused2[16];
+	float instance_f;
 };
 
 namespace diamond{
@@ -185,6 +188,7 @@ RFTYPE_CREATE_META( RF::reflect::details::NonVirtualDerivedClassWithoutStaticCla
 {
 	using namespace ::RF::reflect::details;
 	RFTYPE_META().BaseClass<NonVirtualBaseClassWithoutStaticClassInfo>();
+	RFTYPE_META().RawProperty( "instance_f", &NonVirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
 	static_assert( std::is_same<RFTYPE_METATYPE(), NonVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
@@ -204,6 +208,7 @@ RFTYPE_CREATE_META( RF::reflect::details::VirtualDerivedClassWithoutStaticClassI
 {
 	using namespace ::RF::reflect::details;
 	RFTYPE_META().BaseClass<VirtualBaseClassWithoutStaticClassInfo>();
+	RFTYPE_META().RawProperty( "instance_f", &VirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
 	static_assert( std::is_same<RFTYPE_METATYPE(), VirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
@@ -212,6 +217,7 @@ RFTYPE_CREATE_META( RF::reflect::details::MissingVirtualDerivedClassWithoutStati
 {
 	using namespace ::RF::reflect::details;
 	RFTYPE_META().BaseClass<VirtualBaseClassWithoutStaticClassInfo>();
+	RFTYPE_META().RawProperty( "instance_f", &MissingVirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
 	static_assert( std::is_same<RFTYPE_METATYPE(), MissingVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
@@ -254,14 +260,24 @@ namespace RF { namespace reflect { // Re-open namespace
 TEST( RFType, Basics )
 {
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::ClassWithStaticClassInfo>();
+		using TargetClass = details::ClassWithStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &details::ClassWithStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
 	}
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::ClassWithoutStaticClassInfo>();
+		using TargetClass = details::ClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &details::ClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
 	}
 }
 
@@ -270,17 +286,30 @@ TEST( RFType, Basics )
 TEST( RFType, NonVirtualChainInheritance )
 {
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::NonVirtualBaseClassWithoutStaticClassInfo>();
+		using TargetClass = details::NonVirtualBaseClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &details::NonVirtualBaseClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
 	}
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::NonVirtualDerivedClassWithoutStaticClassInfo>();
+		using TargetClass = details::NonVirtualDerivedClassWithoutStaticClassInfo;
+		using BaseClass = details::NonVirtualBaseClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &details::NonVirtualBaseClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
 	}
 }
 
@@ -289,41 +318,62 @@ TEST( RFType, NonVirtualChainInheritance )
 TEST( RFType, VirtualChainInheritance )
 {
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::VirtualBaseClassWithoutStaticClassInfo>();
+		using TargetClass = details::VirtualBaseClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &details::VirtualBaseClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
 
-		details::VirtualBaseClassWithoutStaticClassInfo targetClass;
+		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
 		reflect::ClassInfo const& virtualClassInfo = *( virtualClass->GetVirtualClassInfo() );
 		ASSERT_TRUE( &classInfo == &virtualClassInfo );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
 	}
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::VirtualDerivedClassWithoutStaticClassInfo>();
+		using TargetClass = details::VirtualDerivedClassWithoutStaticClassInfo;
+		using BaseClass = details::VirtualBaseClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &details::VirtualBaseClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
 
-		details::VirtualDerivedClassWithoutStaticClassInfo targetClass;
+		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
 		reflect::ClassInfo const& virtualClassInfo = *( virtualClass->GetVirtualClassInfo() );
 		ASSERT_TRUE( &classInfo == &virtualClassInfo );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
 	}
 	{
-		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::MissingVirtualDerivedClassWithoutStaticClassInfo>();
+		using TargetClass = details::MissingVirtualDerivedClassWithoutStaticClassInfo;
+		using BaseClass = details::VirtualBaseClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &details::MissingVirtualDerivedClassWithoutStaticClassInfo::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
 
-		details::MissingVirtualDerivedClassWithoutStaticClassInfo targetClass;
+		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
 		reflect::ClassInfo const& virtualClassInfo = *( virtualClass->GetVirtualClassInfo() );
 		ASSERT_TRUE( &classInfo != &virtualClassInfo );
 		ASSERT_TRUE( &baseClassInfo == &virtualClassInfo );
+
+		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
+		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
 	}
 }
 
