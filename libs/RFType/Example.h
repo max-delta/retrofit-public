@@ -7,6 +7,8 @@
 namespace RF { namespace rftype_example {
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Static class info not needed, but is similar to the pattern required
+//  by other reflection systems
 class RFTYPE_API ExampleWithStaticClassInfo
 {
 	RFTYPE_STATIC_CLASSINFO();
@@ -35,6 +37,19 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Directly nested classes are supported without the need for indirection
+class RFTYPE_API ExampleWithClassAsMember
+{
+public:
+	ExampleWithoutStaticClassInfo mExampleClassAsMember;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// NOTE: Deriving from VirtualClass allows run-time inspection on an instance
+// NOTE: Enabling virtual lookup allows an instance to be properly identified,
+//  where the absence of the lookup causes the instance to be interpreted as a
+//  base class instead
 class RFTYPE_API ExampleBaseClass : public reflect::VirtualClass
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
@@ -48,6 +63,23 @@ public:
 };
 
 class RFTYPE_API ExampleDerivedClass : public ExampleBaseClass
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
+public:
+	bool mExampleDerivedNonStaticVariable;
+};
+
+class RFTYPE_API ExampleSecondaryBaseClass : public reflect::VirtualClass
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
+public:
+	bool mExampleSecondaryNonStaticVariable;
+};
+
+// NOTE: Please... don't...
+class RFTYPE_API ExamplePoorLifeDecision : virtual public ExampleBaseClass, virtual public ExampleSecondaryBaseClass
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 };

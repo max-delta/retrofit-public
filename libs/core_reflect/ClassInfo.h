@@ -81,6 +81,12 @@ struct MemberFunctionInfo
 
 struct ClassInfo
 {
+	using BaseTypes = std::vector<BaseClassInfo>;
+	using StaticVariables = std::vector<FreeStandingVariableInfo>;
+	using NonStaticVariables = std::vector<MemberVariableInfo>;
+	using StaticFunctions = std::vector<FreeStandingFunctionInfo>;
+	using NonStaticFunctions = std::vector<MemberFunctionInfo>;
+
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;
 
@@ -99,13 +105,13 @@ struct ClassInfo
 	// The minimum alignment required
 	size_t mMinimumAlignment;
 
-	std::vector<BaseClassInfo> mBaseTypes;
+	BaseTypes mBaseTypes;
 
-	std::vector<FreeStandingVariableInfo> mStaticVariables;
-	std::vector<MemberVariableInfo> mNonStaticVariables;
+	StaticVariables mStaticVariables;
+	NonStaticVariables mNonStaticVariables;
 
-	std::vector<FreeStandingFunctionInfo> mStaticFunctions;
-	std::vector<MemberFunctionInfo> mNonStaticFunctions;
+	StaticFunctions mStaticFunctions;
+	NonStaticFunctions mNonStaticFunctions;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
