@@ -144,6 +144,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="allocate_singleallocator.cpp" />
     <ClCompile Include="math_bitfield.cpp" />
     <ClCompile Include="math_bytes.cpp" />
     <ClCompile Include="math_listoperations.cpp" />

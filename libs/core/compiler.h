@@ -112,5 +112,70 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	// Intentionally undefined due to it being unsafe
 #endif
 
+// Atomic ordering quick-reference
+// ASSUME:
+//  std::atomic<uint64_t> val; <- used for the function case
+//  uint64_t val; <- used for the '=' case
+#if defined( RF_PLATFORM_X86_64 )
+// val;
+// val.load(relaxed)
+// val.load(acquire)
+// val.load(sequence)
+//   mov rax, [val]
+// val = 7
+// val.store(7, relaxed)
+// val.store(7, release)
+//   mov [val], 7
+// val.store(7, sequence)
+//   mov [val], 7
+//   mfence
+// val.exchange(7, relaxed)
+// val.exchange(7, release)
+// val.exchange(7, acquire)
+// val.exchange(7, sequence)
+//   mov rax, 7
+//   xchg rax, [val]
+#elif defined( RF_PLATFORM_ARM_64 )
+// val;
+//   ??? ldr r3, val
+//   ??? ldr r3, [r3]
+// val.load(relaxed)
+//   ??? ldr r3, val
+//   ??? ldr r3, [r3]
+// val.load(acquire)
+//   ??? ldr r3, val
+//   ??? ldr r3, [r3]
+//   ??? dmb ish
+// val.load(sequence)
+//   ??? ldr r3, val
+//   ??? dmb ish
+//   ??? ldr r3, [r3]
+//   ??? dmb ish
+// val = 7
+//   mov r2, 7
+//   ldr r3, val
+//   str r2, [r3]
+// val.store(7, relaxed)
+//   ??? mov r2, 7
+//   ??? ldr r3, val
+//   ??? str r2, [r3]
+// val.store(7, release)
+//   ??? dmb ish
+//   ??? mov r2, 7
+//   ??? ldr r3, val
+//   ??? str r2, [r3]
+// val.store(7, sequence)
+//   ??? dmb ish
+//   ??? mov r2, 7
+//   ??? ldr r3, val
+//   ??? str r2, [r3]
+//   ??? dmb ish
+// val.exchange(7, relaxed)
+// val.exchange(7, release)
+// val.exchange(7, acquire)
+// val.exchange(7, sequence)
+//   ???
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
