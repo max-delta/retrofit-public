@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_rftype/ClassInfoAccessor.h"
+#include "core_rftype/ExtensionAccessorLookup.h"
 #include "core_reflect/ClassInfoBuilder.h"
 #include "core_reflect/VariableTraits.h"
 #include "core/meta/MemberTest.h"
@@ -108,7 +109,40 @@ struct ClassInfoCompositor
 		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
 		using NestedType = typename reflect::VariableTraits<T>::VariableType;
 		static_assert( std::is_class<NestedType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
-		varInfo.mClassInfo = &( GetClassInfo<NestedType>() );
+		RF_ASSERT( varInfo.mVariableTypeInfo.mValueType == reflect::Value::Type::Invalid );
+		varInfo.mVariableTypeInfo.mClassInfo = &( GetClassInfo<NestedType>() );
+		RF_ASSERT( varInfo.mVariableTypeInfo.mAccessor == nullptr );
+		mClassInfo.mNonStaticVariables.emplace_back( std::move( varInfo ) );
+		return *this;
+	}
+
+	template<typename T,
+		typename std::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
+		ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
+	{
+		static_assert( false, "TODO" );
+		return *this;
+	}
+
+	template<typename T,
+		typename std::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0>
+	ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
+	{
+		// TODO: Templatize off this for RawProperty<...>(...) instead once the
+		//  kinks are worked out, and replace usage of this function
+		static_assert( extensions::Accessor<typename reflect::VariableTraits<T>::VariableType>::kExists, "Type doesn't have an extension accessor" );
+
+		reflect::MemberVariableInfo varInfo = {};
+		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		using ExtensionType = typename reflect::VariableTraits<T>::VariableType;
+		static_assert( std::is_class<ExtensionType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
+		using Extension = extensions::Accessor<ExtensionType>;
+		static_assert( std::is_same<ExtensionType, Extension::AccessedType>::value, "Accessor's type differs from lookup's type" );
+		RF_ASSERT( varInfo.mVariableTypeInfo.mValueType == reflect::Value::Type::Invalid );
+		RF_ASSERT( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		reflect::ExtensionAccessor const extensionAccessor = extensions::Accessor<ExtensionType>::Get();
+		reflect::ExtensionAccessor const& emplacedAccessor = mClassInfo.mExtensionStorage.emplace_back( extensionAccessor );
+		varInfo.mVariableTypeInfo.mAccessor = &emplacedAccessor;
 		mClassInfo.mNonStaticVariables.emplace_back( std::move( varInfo ) );
 		return *this;
 	}

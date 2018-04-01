@@ -58,7 +58,9 @@ void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T 
 	variableInfo.mAddress = reinterpret_cast<void const*>( static_cast<T*>( variable ) );
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
-	variableInfo.mValueType = Value::DetermineType<T>();
+	variableInfo.mVariableTypeInfo.mValueType = Value::DetermineType<T>();
+	variableInfo.mVariableTypeInfo.mClassInfo = nullptr;
+	variableInfo.mVariableTypeInfo.mAccessor = nullptr;
 }
 
 
@@ -77,8 +79,9 @@ void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* var
 	variableInfo.mOffset = reinterpret_cast<ptrdiff_t>( offsetIn ) - reinterpret_cast<ptrdiff_t>( kInvalidClass );
 	variableInfo.mMutable = std::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
-	variableInfo.mValueType = Value::DetermineType<T>();
-	variableInfo.mClassInfo = nullptr;
+	variableInfo.mVariableTypeInfo.mValueType = Value::DetermineType<T>();
+	variableInfo.mVariableTypeInfo.mClassInfo = nullptr;
+	variableInfo.mVariableTypeInfo.mAccessor = nullptr;
 }
 
 
