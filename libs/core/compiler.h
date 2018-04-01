@@ -137,44 +137,75 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 //   xchg rax, [val]
 #elif defined( RF_PLATFORM_ARM_64 )
 // val;
-//   ??? ldr r3, val
-//   ??? ldr r3, [r3]
+//   mov r0, val
+//   ldr r0, [r0]
 // val.load(relaxed)
-//   ??? ldr r3, val
-//   ??? ldr r3, [r3]
+//   mov r0, val
+//   ldr r0, [r0]
 // val.load(acquire)
-//   ??? ldr r3, val
-//   ??? ldr r3, [r3]
-//   ??? dmb ish
+//   mov r0, val
+//   ldr r0, [r0]
+//   dmb ish
 // val.load(sequence)
-//   ??? ldr r3, val
-//   ??? dmb ish
-//   ??? ldr r3, [r3]
-//   ??? dmb ish
+//   mov r0, val
+//   dmb ish
+//   ldr r0, [r0]
+//   dmb ish
 // val = 7
 //   mov r2, 7
 //   ldr r3, val
 //   str r2, [r3]
 // val.store(7, relaxed)
-//   ??? mov r2, 7
-//   ??? ldr r3, val
-//   ??? str r2, [r3]
+//   mov r1, 7
+//   mov r0, val
+//   str r1, [r0]
 // val.store(7, release)
-//   ??? dmb ish
-//   ??? mov r2, 7
-//   ??? ldr r3, val
-//   ??? str r2, [r3]
+//   mov r1, 7
+//   mov r0, val
+//   dmb ish
+//   str r1, [r0]
 // val.store(7, sequence)
-//   ??? dmb ish
-//   ??? mov r2, 7
-//   ??? ldr r3, val
-//   ??? str r2, [r3]
-//   ??? dmb ish
+//   mov r1, 7
+//   mov r0, val
+//   dmb ish
+//   str r1, [r0]
+//   dmb ish
 // val.exchange(7, relaxed)
+//   mov r1, 7
+//   mov r0, val
+//   <jmp target>
+//   ldrex r2, [r0]
+//   strex r2, r1, [r0]
+//   cmp r2, 0
+//   bne <jmp target>
 // val.exchange(7, release)
+//   mov r1, 7
+//   mov r0, val
+//   <jmp target>
+//   ldrex r2, [r0]
+//   strex r2, r1, [r0]
+//   cmp r2, 0
+//   bne <jmp target>
+//   dmb ish
 // val.exchange(7, acquire)
+//   mov r1, 7
+//   mov r0, val
+//   dmb ish
+//   <jmp target>
+//   ldrex r2, [r0]
+//   strex r2, r1, [r0]
+//   cmp r2, 0
+//   bne <jmp target>
 // val.exchange(7, sequence)
-//   ???
+//   mov r1, 7
+//   mov r0, val
+//   dmb ish
+//   <jmp target>
+//   ldrex r2, [r0]
+//   strex r2, r1, [r0]
+//   cmp r2, 0
+//   bne <jmp target>
+//   dmb ish
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
