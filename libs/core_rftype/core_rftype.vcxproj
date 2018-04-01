@@ -154,8 +154,10 @@
     <ClInclude Include="ClassInfoCompositor.h" />
     <ClInclude Include="CreateClassInfoDeclaration.h" />
     <ClInclude Include="CreateClassInfoDefinition.h" />
+    <ClInclude Include="ExtensionAccessorLookup.h" />
     <ClInclude Include="Identifier.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stl_extensions\vector.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Identifier.cpp" />

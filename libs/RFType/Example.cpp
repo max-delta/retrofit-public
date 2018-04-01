@@ -3,6 +3,11 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+// NOTE: Since reflection was requested on some variables that are not
+//  supported as first-class types in RFType, extensions must be provided so
+//  RFType can properly register the type
+#include "core_rftype/stl_extensions/vector.h"
+
 
 RFTYPE_CREATE_META( RF::rftype_example::ExampleWithStaticClassInfo )
 {
@@ -30,6 +35,13 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleWithClassAsMember )
 	using RF::rftype_example::ExampleWithClassAsMember;
 	RFTYPE_META().RawProperty( "mExampleClassAsMember", &ExampleWithClassAsMember::mExampleClassAsMember );
 	RFTYPE_REGISTER_BY_NAME( "ExampleWithClassAsMember" );
+}
+
+RFTYPE_CREATE_META( RF::rftype_example::ExampleWithExtensionAsMember )
+{
+	using RF::rftype_example::ExampleWithExtensionAsMember;
+	RFTYPE_META().ExtensionProperty( "mExampleExtensionAsMember", &ExampleWithExtensionAsMember::mExampleExtensionAsMember );
+	RFTYPE_REGISTER_BY_NAME( "ExampleWithExtensionAsMember" );
 }
 
 RFTYPE_CREATE_META( RF::rftype_example::ExampleBaseClass )

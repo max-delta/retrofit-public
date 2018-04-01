@@ -7,9 +7,18 @@
     <ClInclude Include="CreateClassInfoDeclaration.h" />
     <ClInclude Include="CreateClassInfoDefinition.h" />
     <ClInclude Include="ClassInfoAccessor.h" />
+    <ClInclude Include="ExtensionAccessorLookup.h" />
+    <ClInclude Include="stl_extensions\vector.h">
+      <Filter>stl_extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Identifier.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="stl_extensions">
+      <UniqueIdentifier>{9b08a52c-dca6-442a-a22b-01ee2e803539}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

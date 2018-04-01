@@ -418,8 +418,9 @@ TEST( RFType, Nested )
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mOffset == offsetof( details::nested::Containing, contents ) );
 		ASSERT_TRUE( varInfo.mSize == sizeof( details::nested::Contents ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Invalid );
-		ASSERT_TRUE( varInfo.mClassInfo == &( rftype::GetClassInfo<details::nested::Contents>() ) );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Invalid );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == &( rftype::GetClassInfo<details::nested::Contents>() ) );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 }
 
