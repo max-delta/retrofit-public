@@ -92,10 +92,11 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 		void const* const varLoc =
 			reinterpret_cast<uint8_t const*>( classLocation ) +
 			varInfo.mOffset;
-		bool const nested =
-			varInfo.mValueType == Value::Type::Invalid &&
-			varInfo.mClassInfo != nullptr;
 
+		bool const nested =
+			varInfo.mVariableTypeInfo.mValueType == Value::Type::Invalid &&
+			varInfo.mVariableTypeInfo.mClassInfo != nullptr &&
+			varInfo.mVariableTypeInfo.mAccessor == nullptr;
 		if( nested )
 		{
 			bool shouldTraverse = false;
@@ -103,7 +104,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 			if( shouldTraverse )
 			{
 				TraverseVariablesWithoutInheritanceT(
-					*varInfo.mClassInfo,
+					*varInfo.mVariableTypeInfo.mClassInfo,
 					varLoc,
 					onMemberVariableFunc,
 					onNestedTypeFoundFunc );
@@ -111,7 +112,27 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 			continue;
 		}
 
-		onMemberVariableFunc( { varInfo, varLoc } );
+		bool const extension =
+			varInfo.mVariableTypeInfo.mValueType == Value::Type::Invalid &&
+			varInfo.mVariableTypeInfo.mClassInfo == nullptr &&
+			varInfo.mVariableTypeInfo.mAccessor != nullptr;
+		if( extension )
+		{
+			RF_DBGFAIL_MSG( "TODO" );
+			continue;
+		}
+
+		bool const value =
+			varInfo.mVariableTypeInfo.mValueType != Value::Type::Invalid &&
+			varInfo.mVariableTypeInfo.mClassInfo == nullptr &&
+			varInfo.mVariableTypeInfo.mAccessor == nullptr;
+		if( value )
+		{
+			onMemberVariableFunc( { varInfo, varLoc } );
+			continue;
+		}
+
+		RF_DBGFAIL_MSG( "Unknown variable type encountered during traversal" );
 	}
 }
 

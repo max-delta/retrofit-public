@@ -46,6 +46,18 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Some members are not supported as first-class in RFType, and instead
+//  require extensions for RFType to work with them
+// NOTE: Many common extensions such as STL and RF come included with RFType,
+//  and users can augment RFType with their own extensions for other types
+class RFTYPE_API ExampleWithExtensionAsMember
+{
+public:
+	std::vector<uint16_t> mExampleExtensionAsMember;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 // NOTE: Deriving from VirtualClass allows run-time inspection on an instance
 // NOTE: Enabling virtual lookup allows an instance to be properly identified,
 //  where the absence of the lookup causes the instance to be interpreted as a

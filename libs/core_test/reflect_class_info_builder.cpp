@@ -139,7 +139,9 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 		ASSERT_TRUE( varInfo.mAddress == &Test::static_d );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::static_d ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Double );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Double );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 	{
 		FreeStandingVariableInfo varInfo;
@@ -147,7 +149,9 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 		ASSERT_TRUE( varInfo.mAddress == &Test::static_cd );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::static_cd ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Double );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Double );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 	{
 		FreeStandingVariableInfo varInfo;
@@ -155,7 +159,9 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 		ASSERT_TRUE( varInfo.mAddress == &Test::thread_i );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::thread_i ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Int16 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Int16 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 	{
 		FreeStandingVariableInfo varInfo;
@@ -163,7 +169,9 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 		ASSERT_TRUE( varInfo.mAddress == &Test::thread_ci );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::thread_ci ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Int16 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Int16 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 	{
 		FreeStandingVariableInfo varInfo;
@@ -171,7 +179,9 @@ TEST( ReflectBuilder, FreeStandingVariableInfos )
 		ASSERT_TRUE( varInfo.mAddress == &Test::constexpr_u );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::constexpr_u ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::UInt8 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::UInt8 );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 }
 
@@ -192,8 +202,9 @@ TEST( ReflectBuilder, MemberVariableInfos )
 		ASSERT_TRUE( varInfo.mOffset == offsetof( Test, instance_f ) );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::instance_f ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Float );
-		ASSERT_TRUE( varInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Float );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 	{
 		MemberVariableInfo varInfo;
@@ -201,8 +212,9 @@ TEST( ReflectBuilder, MemberVariableInfos )
 		ASSERT_TRUE( varInfo.mOffset == offsetof( Test, instance_cf ) );
 		ASSERT_TRUE( varInfo.mMutable == false );
 		ASSERT_TRUE( varInfo.mSize == sizeof( Test::instance_cf ) );
-		ASSERT_TRUE( varInfo.mValueType == Value::Type::Float );
-		ASSERT_TRUE( varInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mValueType == Value::Type::Float );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
+		ASSERT_TRUE( varInfo.mVariableTypeInfo.mAccessor == nullptr );
 	}
 }
 
