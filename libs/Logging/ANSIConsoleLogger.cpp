@@ -51,10 +51,14 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_l
 	}
 
 	std::array<char, kBufSize> outputBuffer;
-	snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
+	int bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );
+	if( bytesParsed >= kBufSize )
+	{
+		puts( "<TRUNCATED MESSAGE!>" );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
