@@ -17,10 +17,14 @@ void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list
 	*messageBuffer.rbegin() = '\0';
 
 	std::array<char, kBufSize> outputBuffer;
-	snprintf( &outputBuffer[0], kBufSize, "[%s]%s\n", event.mCategoryKey, &messageBuffer[0] );
+	int bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s]%s\n", event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 
 	platform::debugging::OutputToDebugger( &outputBuffer[0] );
+	if( bytesParsed >= kBufSize )
+	{
+		platform::debugging::OutputToDebugger( "<TRUNCATED MESSAGE!>" );
+	}
 }
 
 
