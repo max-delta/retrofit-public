@@ -154,7 +154,12 @@ bool PPUController::BeginFrame()
 		m_WriteState = i;
 		break;
 	}
+	if( m_WriteState == k_InvalidStateBufferID )
+	{
+		RFLOG_FATAL( nullptr, RFCAT_PPU, "Failed to find an open write state to begin render frame" );
+	}
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
+	RF_ASSERT( m_WriteState < k_NumStateBuffers );
 	m_PPUState[m_WriteState].Clear();
 	m_PPUDebugState[m_WriteState].Clear();
 
