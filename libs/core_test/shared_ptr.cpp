@@ -151,6 +151,11 @@ TEST( SharedPtr, MoveIntoTrash )
 	SharedPtr<int> sptr1 = EntwinedCreator<int>::Create( 5 );
 	{
 		void* alloc = malloc( sizeof( SharedPtr<int> ) );
+		ASSERT_NE( alloc, nullptr );
+		if( alloc == nullptr )
+		{
+			std::abort();
+		}
 		memset( alloc, 0xcc, sizeof( SharedPtr<int> ) );
 		SharedPtr<int>* newAlloc = new (alloc) SharedPtr<int>( std::move( sptr1 ) );
 		newAlloc->~SharedPtr();

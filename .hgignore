@@ -18,6 +18,10 @@
 .pdb$
 .obj$
 .exp$
+.pchast$
+.nativecodeanalysis.xml$
+.nativecodeanalysis.all.xml$
+.lastcodeanalysissucceeded$
 
 .gta.testdurations$
 
