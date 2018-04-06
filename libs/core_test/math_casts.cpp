@@ -56,6 +56,24 @@ TEST(MathCasts, IntegerTruncast_CrossSigned)
 
 
 
+TEST( MathCasts, IntegerTruncast_CrossUnsigned )
+{
+	static_assert( std::numeric_limits<int64_t>::lowest() < 0, "" );
+	static_assert( std::numeric_limits<uint64_t>::lowest() == 0, "" );
+
+	uint64_t zeroed = std::numeric_limits<uint64_t>::lowest();
+	int64_t s64 = integer_truncast<int64_t>( zeroed );
+	int64_t s32 = integer_truncast<int32_t>( zeroed );
+	int64_t s16 = integer_truncast<int16_t>( zeroed );
+	int64_t s8 = integer_truncast<int8_t>( zeroed );
+	ASSERT_EQ( s64, zeroed );
+	ASSERT_EQ( s32, zeroed );
+	ASSERT_EQ( s16, zeroed );
+	ASSERT_EQ( s8, zeroed );
+}
+
+
+
 TEST(MathCasts, IntegerTruncast_Float)
 {
 	{
