@@ -32,8 +32,8 @@ public:
 	// Protected methods
 protected:
 	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const & filename ) override;
-	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
-	virtual bool PostLoadFromMemory( ResourceType& resource );
+	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename ) override;
+	virtual bool PostLoadFromMemory( ResourceType& resource ) override;
 	virtual bool PreDestroy( ResourceType& resource ) override;
 
 

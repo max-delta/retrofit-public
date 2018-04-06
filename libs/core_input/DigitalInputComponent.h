@@ -12,6 +12,7 @@ namespace RF { namespace input {
 template<typename EventType>
 struct EventParser
 {
+	virtual ~EventParser() = default;
 	virtual void OnEvent( EventType const& event ) = 0;
 };
 
@@ -24,7 +25,7 @@ struct BufferCopyEventParser : public EventParser<EventType>
 		//
 	}
 
-	virtual void OnEvent( EventType const& event )
+	virtual void OnEvent( EventType const& event ) override
 	{
 		m_Inserter = event;
 	}

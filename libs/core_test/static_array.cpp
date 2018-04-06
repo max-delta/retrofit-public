@@ -420,7 +420,7 @@ TEST( StaticArray, RangeForCompatibility )
 	sa.push_back( 7 );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( csa.size() == 2 );
-	for( Proxy& elem : sa )
+	for( Proxy const& elem : sa )
 	{
 		ASSERT_TRUE( elem == 2 || elem == 7 );
 	}

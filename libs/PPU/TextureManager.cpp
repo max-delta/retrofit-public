@@ -121,7 +121,7 @@ bool TextureManager::UnloadFromDevice( Texture & texture )
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation != k_InvalidDeviceTextureID );
-	bool retVal = m_DeviceInterface->UnloadTexture( texture.m_DeviceRepresentation );
+	bool const retVal = m_DeviceInterface->UnloadTexture( texture.m_DeviceRepresentation );
 	texture.m_DeviceRepresentation = k_InvalidDeviceTextureID;
 	return retVal;
 }

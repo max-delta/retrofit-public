@@ -101,7 +101,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 		}
 		retVal->GetMutableTimeSlots()[i].m_TextureReference =
 			texMan->LoadNewResourceGetID(
-				file::VFS::CreateStringFromPath( filename ).append( { (char)( i + 1 ),'\0' } ),
+				file::VFS::CreateStringFromPath( filename ).append( { static_cast<char>( i + 1 ),'\0' } ),
 				file::VFS::k_Root.GetChild( file::VFS::CreatePathFromString( string ) ) );
 	}
 

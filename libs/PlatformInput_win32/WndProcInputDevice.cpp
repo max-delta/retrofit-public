@@ -425,7 +425,7 @@ shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND 
 		case WM_MOUSEMOVE:
 		{
 			// NOTE: Signed, may go negative
-			MouseCoord mouseCoord( lParam );
+			MouseCoord const mouseCoord( lParam );
 			int16_t const xcoord = mouseCoord.m_Fields.m_XCoord;
 			int16_t const ycoord = mouseCoord.m_Fields.m_YCoord;
 			m_CurrentSignalValues[k_CursorAbsoluteX] = xcoord;

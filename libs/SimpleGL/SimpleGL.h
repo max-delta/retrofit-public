@@ -41,9 +41,9 @@ public:
 	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 
-	bool BeginFrame();
-	bool RenderFrame();
-	bool EndFrame();
+	bool BeginFrame() override;
+	bool RenderFrame() override;
+	bool EndFrame() override;
 
 private:
 	unsigned int font_base;

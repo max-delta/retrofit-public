@@ -8,7 +8,7 @@ namespace RF { namespace reflect {
 
 TEST( Reflect, ValueInvalid )
 {
-	Value vInvalid;
+	Value const vInvalid;
 	ASSERT_TRUE( vInvalid.GetStoredType() == Value::Type::Invalid );
 	ASSERT_TRUE( vInvalid.GetAs<bool>() == nullptr );
 	ASSERT_TRUE( vInvalid.GetBytes() == nullptr );
@@ -19,26 +19,26 @@ TEST( Reflect, ValueInvalid )
 
 TEST( Reflect, ValueBasics )
 {
-	Value vBool( static_cast<bool>( false ) );
-	Value vVoidPtr( static_cast<void*>( nullptr ) );
-	Value vVoidConstPtr( static_cast<void const*>( nullptr ) );
-	Value vVirtualClassPtr( static_cast<VirtualClass*>( nullptr ) );
-	Value vVirtualClassConstPtr( static_cast<VirtualClass const*>( nullptr ) );
-	Value vChar( static_cast<char>( '\0' ) );
-	Value vWChar( static_cast<wchar_t>( L'\0' ) );
-	Value vChar16( static_cast<char16_t>( u'\0' ) );
-	Value vChar32( static_cast<char32_t>( U'\0' ) );
-	Value vFloat( static_cast<float>( 0.f ) );
-	Value vDouble( static_cast<double>( 0.0 ) );
-	Value vLongDouble( static_cast<long double>( 0.0l ) );
-	Value vUInt8( static_cast<uint8_t>( 0u ) );
-	Value vInt8( static_cast<int8_t>( 0 ) );
-	Value vUInt16( static_cast<uint16_t>( 0u ) );
-	Value vInt16( static_cast<int16_t>( 0 ) );
-	Value vUInt32( static_cast<uint32_t>( 0ul ) );
-	Value vInt32( static_cast<int32_t>( 0l ) );
-	Value vUInt64( static_cast<uint64_t>( 0ull ) );
-	Value vInt64( static_cast<int64_t>( 0ll ) );
+	Value const vBool( static_cast<bool>( false ) );
+	Value const vVoidPtr( static_cast<void*>( nullptr ) );
+	Value const vVoidConstPtr( static_cast<void const*>( nullptr ) );
+	Value const vVirtualClassPtr( static_cast<VirtualClass*>( nullptr ) );
+	Value const vVirtualClassConstPtr( static_cast<VirtualClass const*>( nullptr ) );
+	Value const vChar( static_cast<char>( '\0' ) );
+	Value const vWChar( static_cast<wchar_t>( L'\0' ) );
+	Value const vChar16( static_cast<char16_t>( u'\0' ) );
+	Value const vChar32( static_cast<char32_t>( U'\0' ) );
+	Value const vFloat( static_cast<float>( 0.f ) );
+	Value const vDouble( static_cast<double>( 0.0 ) );
+	Value const vLongDouble( static_cast<long double>( 0.0l ) );
+	Value const vUInt8( static_cast<uint8_t>( 0u ) );
+	Value const vInt8( static_cast<int8_t>( 0 ) );
+	Value const vUInt16( static_cast<uint16_t>( 0u ) );
+	Value const vInt16( static_cast<int16_t>( 0 ) );
+	Value const vUInt32( static_cast<uint32_t>( 0ul ) );
+	Value const vInt32( static_cast<int32_t>( 0l ) );
+	Value const vUInt64( static_cast<uint64_t>( 0ull ) );
+	Value const vInt64( static_cast<int64_t>( 0ll ) );
 
 	static_assert( Value::DetermineType<bool>() == Value::Type::Bool );
 	static_assert( Value::DetermineType<void*>() == Value::Type::VoidPtr );
@@ -171,8 +171,8 @@ TEST( Reflect, ValueBasics )
 
 TEST( Reflect, ValueMismatch )
 {
-	Value vUInt8( static_cast<uint8_t>( 0u ) );
-	Value vInt8( static_cast<int8_t>( 0 ) );
+	Value const vUInt8( static_cast<uint8_t>( 0u ) );
+	Value const vInt8( static_cast<int8_t>( 0 ) );
 
 	ASSERT_TRUE( vUInt8.GetAs<int8_t>() == nullptr );
 	ASSERT_TRUE( vInt8.GetAs<uint8_t>() == nullptr );
@@ -186,8 +186,8 @@ TEST( Reflect, ValueMismatch )
 TEST( Reflect, ValueCopy )
 {
 	Value vInvalid;
-	Value vUInt8( static_cast<uint8_t>( 1u ) );
-	Value vInt8( static_cast<int8_t>( 2 ) );
+	Value const vUInt8( static_cast<uint8_t>( 1u ) );
+	Value const vInt8( static_cast<int8_t>( 2 ) );
 
 	ASSERT_TRUE( vInvalid.GetAs<uint8_t>() == nullptr );
 	ASSERT_TRUE( vInvalid.GetAs<int8_t>() == nullptr );

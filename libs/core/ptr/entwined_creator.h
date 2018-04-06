@@ -40,7 +40,7 @@ public:
 		static_assert( sizeof( T ) + sizeof( PtrRef ) <= 128, "Should not use entwined creator" );
 		void * mem = malloc( sizeof(PtrRef) + sizeof(T) );
 		PtrRef * newRef = new (mem) PtrRef(&Delete, nullptr);
-		T * newT = new ((char*)mem+sizeof(PtrRef)) T(std::forward<U>(args)...);
+		T * newT = new ( reinterpret_cast<char*>( mem ) + sizeof( PtrRef ) ) T( std::forward<U>( args )... );
 
 		CreationPayload<T> retVal( newT, newRef );
 		return retVal;

@@ -369,16 +369,16 @@ void PPUController::Render() const
 	for( size_t i = 0; i < targetDebugState.m_NumLines; i++ )
 	{
 		PPUDebugState::DebugLine const& line = targetDebugState.m_Lines[i];
-		math::Vector2f p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
-		math::Vector2f p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-		m_DeviceInterface->DebugDrawLine( p0, p1, float( line.m_Width * GetZoomFactor() ) );
+		math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
+		math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
+		m_DeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.m_Width * GetZoomFactor() ) );
 	}
 
 	// Draw text
 	for( size_t i = 0; i < targetDebugState.m_NumStrings; i++ )
 	{
 		PPUDebugState::DebugString const& string = targetDebugState.m_Strings[i];
-		math::Vector2f pos = CoordToDevice( string.m_XCoord, string.m_YCoord );
+		math::Vector2f const pos = CoordToDevice( string.m_XCoord, string.m_YCoord );
 		m_DeviceInterface->DebugRenderText( pos, "%s", string.m_Text );
 	}
 
@@ -409,7 +409,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const & coord ) const
 	// TODO: Windowing
 	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
 	uint8_t const zoomFactor = GetZoomFactor();
-	float const diagonalTiles = ( (float)smallestDimenssion ) / ( k_TileSize*zoomFactor );
+	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( k_TileSize*zoomFactor );
 
 	// Baseline
 	// [0-64]

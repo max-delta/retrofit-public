@@ -8,7 +8,7 @@ namespace RF { namespace math {
 
 TEST( Hash, DirectHasher )
 {
-	struct DirectHash hasher;
+	DirectHash hasher{};
 	ASSERT_EQ( hasher( 0 ), 0 );
 	ASSERT_EQ( hasher( 1 ), 1 );
 	ASSERT_EQ( hasher( 2 ), 2 );
@@ -22,7 +22,7 @@ TEST( Hash, NullTerminatedStringHasher )
 {
 	// This hashing function better not change! Strings hashes need to be able
 	//  to be relied on across platforms and over time
-	struct NullTerminatedStringHash hasher;
+	NullTerminatedStringHash hasher{};
 	ASSERT_EQ( hasher( nullptr ), 14695981039346656037ull );
 	ASSERT_EQ( hasher( "" ), 14695981039346656037ull ); // NOTE: Same as null
 	ASSERT_EQ( hasher( "\0" ), 14695981039346656037ull ); // NOTE: Same as empty
