@@ -151,6 +151,11 @@ TEST( UniquePtr, MoveIntoTrash )
 	UniquePtr<int> uptr1 = EntwinedCreator<int>::Create( 5 );
 	{
 		void* alloc = malloc( sizeof( UniquePtr<int> ) );
+		ASSERT_NE( alloc, nullptr );
+		if( alloc == nullptr )
+		{
+			std::abort();
+		}
 		memset( alloc, 0xcc, sizeof( UniquePtr<int> ) );
 		UniquePtr<int>* newAlloc = new (alloc) UniquePtr<int>( std::move( uptr1 ) );
 		newAlloc->~UniquePtr();

@@ -107,7 +107,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 	FILE* file;
 	std::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
 	errno_t openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
-	if( openErr != 0 )
+	if( openErr != 0 || file == nullptr )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
@@ -308,8 +308,7 @@ VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permis
 				physRoot = &m_UserDirectory;
 				break;
 			default:
-				RFLOG_ERROR( nullptr, RFCAT_VFS, "Unhandled mount type" );
-				physRoot = nullptr;
+				RFLOG_FATAL( nullptr, RFCAT_VFS, "Unhandled mount type" );
 		}
 		VFSPath const realMount = CollapsePath( physRoot->GetChild( mount.m_RealMount ) );
 		bool const isDescendent = physicalAsVFS.IsDescendantOf( realMount );
