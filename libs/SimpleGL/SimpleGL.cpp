@@ -38,7 +38,7 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	pfd.cDepthBits = 16; // Number of depth layers per pixel.
 	pfd.iLayerType = shim::kPFD_MAIN_PLANE; // Supposedly ignored.
 
-	int iFormat = shim::ChoosePixelFormat( mHDC, &pfd ); // Try to find an appropriate
+	int const iFormat = shim::ChoosePixelFormat( mHDC, &pfd ); // Try to find an appropriate
 	                                                    // pixel format to meet our demands.
 	shim::SetPixelFormat( mHDC, iFormat, &pfd ); // Set the chosen pixel format.
 
@@ -194,7 +194,7 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
 	glRasterPos2f( pos.x, pos.y );
 	va_list args;
 	va_start( args, fmt );
-	bool retVal = glPrint( fmt, args );
+	bool const retVal = glPrint( fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -287,8 +287,8 @@ bool SimpleGL::EndFrame()
 
 void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 {
-	shim::HFONT font;						// Windows Font ID
-	shim::HFONT oldfont;					// Used For Good House Keeping
+	shim::HFONT font{};						// Windows Font ID
+	shim::HFONT oldfont{};					// Used For Good House Keeping
 
 	glDeleteLists( font_base, 96 );
 	font_base = glGenLists( 96 );					// Storage For 96 Characters ( NEW )
@@ -307,7 +307,7 @@ void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 		shim::kANTIALIASED_QUALITY, // Output Quality
 		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family And Pitch
 		L"Arial" ); // Font Name
-	oldfont = (shim::HFONT)shim::SelectObject( mHDC, font );		// Selects The Font We Want
+	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) );		// Selects The Font We Want
 	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base );			// Builds 96 Characters Starting At Character 32
 														//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
 	shim::SelectObject( mHDC, oldfont );				// Selects The Font We Want
@@ -318,7 +318,7 @@ bool SimpleGL::glPrint( char const* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
-	bool retVal = glPrint( fmt, args );
+	bool const retVal = glPrint( fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -332,7 +332,7 @@ bool SimpleGL::glPrint( char const* fmt, va_list args )
 	text[255] = '\0';
 	glPushAttrib( GL_LIST_BIT ); // Pushes The Display List Bits
 	glListBase( font_base - 32 ); // Sets The Base Character to 32
-	glCallLists( (GLsizei)strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text
+	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text
 	glPopAttrib(); // Pops The Display List Bits
 	return true;
 }

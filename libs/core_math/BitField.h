@@ -204,10 +204,10 @@ struct Compressor
 				RF_ASSERT( bitsLeft <= storageSizeBits );
 				constexpr size_t bitsInByteMod = ( storageSizeBits + storageOffsetBits ) % 8;
 				constexpr size_t bitsInByte = bitsInByteMod == 0 ? 8 : bitsInByteMod;
-				size_t const leftShiftToMatchSize = 8 - bitsInByte;
+				constexpr size_t leftShiftToMatchSize = 8 - bitsInByte;
 				constexpr size_t rightShiftToMatchOffset = 0;
 				uint8_t const incomingBits = ( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
-				uint8_t const incomingMask = ( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
+				constexpr uint8_t incomingMask = ( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
 				uint8_t sharedBits = storageByte; // Load
 				sharedBits &= ~incomingMask; // Clear
 				sharedBits |= incomingBits; // Set

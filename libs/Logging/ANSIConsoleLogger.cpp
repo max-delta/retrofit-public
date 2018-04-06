@@ -51,7 +51,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_l
 	}
 
 	std::array<char, kBufSize> outputBuffer;
-	int bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
+	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );
