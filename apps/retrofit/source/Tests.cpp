@@ -104,7 +104,7 @@ void DrawInputDebug()
 	{
 		logicStream <<
 			" " <<
-			(int)event.m_Code <<
+			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
 	g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
@@ -117,7 +117,7 @@ void DrawInputDebug()
 	{
 		physStream <<
 			" " <<
-			(int)event.m_Code <<
+			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
 	g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
@@ -154,7 +154,7 @@ void SQTest()
 	using RF::script::SquirrelVM;
 
 	RF::script::SquirrelVM vm;
-	wchar_t source[] =
+	constexpr wchar_t source[] =
 		L"x <- 5;"
 		L"y <- 7.0;"
 		L"z <- true;"

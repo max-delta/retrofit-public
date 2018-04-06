@@ -54,11 +54,11 @@ DST integer_truncast( SRC const src )
 
 	if( std::is_floating_point<SRC>::value )
 	{
-		return (DST)roundf( (float)src );
+		return static_cast<DST>( roundf( static_cast<float>( src ) ) );
 	}
 	else
 	{
-		return (DST)src;
+		return static_cast<DST>( src );
 	}
 }
 

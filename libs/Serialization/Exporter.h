@@ -8,7 +8,7 @@
 namespace RF { namespace serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
-class Exporter
+class SERIALIZATION_API Exporter
 {
 public:
 	using InstanceID = uint64_t;
@@ -18,6 +18,8 @@ public:
 
 
 public:
+	virtual ~Exporter() = default;
+
 	// Completes the current export, preventing any further actions from being
 	//  performed on it
 	virtual bool Root_FinalizeExport() = 0;

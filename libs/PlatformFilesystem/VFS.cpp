@@ -106,7 +106,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 
 	FILE* file;
 	std::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
-	errno_t openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
+	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 || file == nullptr )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_VFS, "Failed to open mount table file" );
@@ -693,7 +693,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 		// Locked to this mount layer, let's see what happens!
 		RFLOG_TRACE( nullptr, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
 		FILE* file = nullptr;
-		errno_t openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
+		errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
 		if( file == nullptr )
 		{
 			// Tough luck, no easy way to tell what went wrong

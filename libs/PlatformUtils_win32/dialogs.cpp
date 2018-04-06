@@ -21,7 +21,7 @@ PLATFORMUTILS_API std::string OpenFileDialog()
 	a.lpstrFilter = "All\0*.*\0";
 	a.nFilterIndex = 1;
 
-	win32::BOOL result = win32::GetOpenFileNameA( &a );
+	win32::BOOL const result = win32::GetOpenFileNameA( &a );
 	if( result == false )
 	{
 		return std::string();

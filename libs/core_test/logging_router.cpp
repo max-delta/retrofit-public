@@ -165,7 +165,7 @@ TEST( Logging, SeverityStrings )
 	LoggingRouter router;
 	details::SetupStandardRouter( router );
 
-	LoggingRouter::SeverityStrings severityStrings = router.GetSeverityStrings();
+	LoggingRouter::SeverityStrings const severityStrings = router.GetSeverityStrings();
 	ASSERT_TRUE( severityStrings.at( 0 ) != nullptr );
 	ASSERT_TRUE( severityStrings.at( 1 ) != nullptr );
 	ASSERT_TRUE( severityStrings.at( 2 ) != nullptr );
