@@ -329,6 +329,7 @@ bool SimpleGL::glPrint( char const* fmt, va_list args )
 	if( fmt == nullptr )
 		return false;
 	vsprintf_s( text, fmt, args );
+	text[255] = '\0';
 	glPushAttrib( GL_LIST_BIT ); // Pushes The Display List Bits
 	glListBase( font_base - 32 ); // Sets The Base Character to 32
 	glCallLists( (GLsizei)strlen( text ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text
