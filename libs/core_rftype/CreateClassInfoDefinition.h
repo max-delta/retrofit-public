@@ -19,7 +19,7 @@
 	/*  multiple-y defined symbols during link, since we're not encoding very */ \
 	/*  much information into the variable name, and instead relying on access */ \
 	/*  via a template method with a stronger type signature */ \
-	static RF::rftype::CRTCompositionTrigger<CLASSTYPE> RF_CONCAT(___rftype_macro_generated_instance_, __LINE__) = RF::rftype::CRTCompositionTrigger<CLASSTYPE>(); \
+	static RF::rftype::CRTCompositionTrigger<CLASSTYPE> RF_CONCAT(___rftype_macro_generated_instance_, __LINE__) {}; \
 	\
 	/* Forward for user-provided initialization */ \
 	/* NOTE: Forwarded to allow macro to end with the body of this function */ \

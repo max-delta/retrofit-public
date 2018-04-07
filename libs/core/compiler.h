@@ -52,6 +52,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#define RF_NO_INLINE __declspec(noinline)
 	#define RF_ACK_ANY_PADDING __pragma(warning(suppress:4324))
+	#define RF_ACK_UNSAFE_INHERITANCE __pragma(warning(suppress:4435))
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64

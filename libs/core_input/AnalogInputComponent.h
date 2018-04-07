@@ -9,6 +9,8 @@ namespace RF { namespace input {
 
 class AnalogInputComponent : public InputComponent
 {
+	RF_NO_COPY( AnalogInputComponent );
+
 public:
 	typedef uint8_t SignalIndex;
 	typedef float SignalValue;
@@ -16,6 +18,7 @@ public:
 	static constexpr SignalValue k_MaxSignalValue = 1.0f;
 	static constexpr SignalValue k_MinSignalValue = 0.0f;
 
+	AnalogInputComponent() = default;
 	virtual void OnTick() override = 0;
 	virtual ComponentType GetType() override final
 	{

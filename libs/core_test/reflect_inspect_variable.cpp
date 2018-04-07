@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "core_reflect/VariableTraits.h"
+#include "core/macros.h"
 
 
 namespace RF { namespace reflect {
@@ -21,7 +22,9 @@ constexpr uint8_t namespace_constexpr_u = 0;
 // Class-level members
 class MyClass
 {
+	RF_NO_COPY( MyClass );
 public:
+	MyClass() = delete;
 	float instance_f;
 	float const instance_cf;
 	static double static_d;

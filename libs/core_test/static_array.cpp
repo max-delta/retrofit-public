@@ -39,6 +39,8 @@ struct Proxy
 		val = k_Destroyed;
 	}
 
+	Proxy& operator=( Proxy const& ) = delete;
+
 	operator int() const
 	{
 		return val;
