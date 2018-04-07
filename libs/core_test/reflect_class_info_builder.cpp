@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "core_reflect/ClassInfoBuilder.h"
+#include "core/macros.h"
 
 
 namespace RF { namespace reflect {
@@ -113,6 +114,8 @@ TEST( ReflectBuilder, ClassInfos )
 			Test( Test const& ) = delete;
 			Test( Test && ) = delete;
 			~Test() = delete;
+			Test& operator=( Test const& ) = delete;
+			Test& operator=( Test const&& ) = delete;
 		};
 		ClassInfo classInfo;
 		builder::CreateClassInfo<Test>( classInfo );
@@ -191,6 +194,8 @@ TEST( ReflectBuilder, MemberVariableInfos )
 {
 	struct Test
 	{
+		RF_NO_COPY( Test );
+		Test() = delete;
 		char unusedPadding[16];
 		float instance_f;
 		float const instance_cf;

@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "core/macros.h"
+
 
 // Forwards
 namespace RF { namespace reflect {
@@ -19,6 +21,9 @@ class RFTYPE_API TypeTraverser
 public:
 	struct MemberVariableInstance
 	{
+		MemberVariableInstance() = delete;
+		MemberVariableInstance& operator=( MemberVariableInstance const& ) = delete;
+
 		reflect::MemberVariableInfo const& mMemberVariableInfo;
 		void const* const mMemberVariableLocation;
 	};

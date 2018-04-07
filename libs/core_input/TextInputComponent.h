@@ -9,7 +9,10 @@ namespace RF { namespace input {
 
 class TextInputComponent : public InputComponent
 {
+	RF_NO_COPY( TextInputComponent );
+
 public:
+	TextInputComponent() = default;
 	virtual void OnTick() override = 0;
 	virtual ComponentType GetType() override final
 	{

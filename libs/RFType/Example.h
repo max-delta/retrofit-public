@@ -91,6 +91,7 @@ public:
 };
 
 // NOTE: Please... don't...
+RF_ACK_UNSAFE_INHERITANCE
 class RFTYPE_API ExamplePoorLifeDecision : virtual public ExampleBaseClass, virtual public ExampleSecondaryBaseClass
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

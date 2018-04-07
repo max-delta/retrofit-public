@@ -307,6 +307,7 @@ VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permis
 			case VFSMount::Type::UserRelative:
 				physRoot = &m_UserDirectory;
 				break;
+			case VFSMount::Type::Invalid:
 			default:
 				RFLOG_FATAL( nullptr, RFCAT_VFS, "Unhandled mount type" );
 		}
@@ -354,6 +355,7 @@ void VFS::DebugDumpMountTable() const
 			case VFSMount::Type::UserRelative:
 				type = "UserRelative  ";
 				break;
+			case VFSMount::Type::Invalid:
 			default:
 				type = "INVALID";
 				break;
@@ -370,6 +372,7 @@ void VFS::DebugDumpMountTable() const
 			case VFSMount::Permissions::ReadExecute:
 				permissions = "Execute";
 				break;
+			case VFSMount::Permissions::Invalid:
 			default:
 				permissions = "INVALID";
 				break;
@@ -663,6 +666,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 				case VFSMount::Type::UserRelative:
 					physRoot = &m_UserDirectory;
 					break;
+				case VFSMount::Type::Invalid:
 				default:
 					RFLOG_ERROR( nullptr, RFCAT_VFS, "Unhandled mount type" );
 					return nullptr;

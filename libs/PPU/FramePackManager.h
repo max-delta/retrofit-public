@@ -11,6 +11,8 @@ namespace RF { namespace gfx {
 
 class PPU_API FramePackManager final : public ResourceManager<FramePackBase, ManagedFramePackID, k_InvalidManagedFramePackID>
 {
+	RF_NO_COPY( FramePackManager );
+
 	//
 	// Public methods
 public:

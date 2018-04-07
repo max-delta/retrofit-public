@@ -31,6 +31,8 @@ class WndProcTextInputComponent;
 //  also have a community that demands sub-pixel DPI motion)
 class PLATFORMINPUT_API WndProcInputDevice : public InputDevice
 {
+	RF_NO_COPY( WndProcInputDevice );
+
 public:
 	WndProcInputDevice();
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
@@ -46,6 +48,8 @@ public:
 
 class PLATFORMINPUT_API WndProcDigitalInputComponent final : public DigitalInputComponent
 {
+	RF_NO_COPY( WndProcDigitalInputComponent );
+
 public:
 	friend class WndProcInputDevice;
 private:
@@ -58,6 +62,7 @@ private:
 	typedef std::deque<LogicalEvent> LogicalEventBuffer;
 	typedef std::deque<PhysicalEvent> PhysicalEventBuffer;
 public:
+	WndProcDigitalInputComponent() = default;
 	virtual void OnTick() override;
 	virtual PhysicalCode GetMaxPhysicalCode() const override;
 	virtual LogicalCode GetMaxLogicalCode() const override;
@@ -88,6 +93,8 @@ private:
 
 class PLATFORMINPUT_API WndProcAnalogInputComponent final : public AnalogInputComponent
 {
+	RF_NO_COPY( WndProcAnalogInputComponent );
+
 public:
 	friend class WndProcInputDevice;
 public:
@@ -101,6 +108,7 @@ public:
 private:
 	typedef SignalValue SignalValues[k_NumSignals];
 public:
+	WndProcAnalogInputComponent() = default;
 	virtual void OnTick() override;
 	virtual SignalIndex GetMaxSignalIndex() const override;
 	virtual std::u16string GetSignalName( SignalIndex signalIndex ) const override;
@@ -117,6 +125,8 @@ private:
 
 class PLATFORMINPUT_API WndProcTextInputComponent final : public TextInputComponent
 {
+	RF_NO_COPY( WndProcTextInputComponent );
+
 public:
 	friend class WndProcInputDevice;
 private:
@@ -126,6 +136,7 @@ private:
 private:
 	typedef std::deque<char16_t> TextBuffer;
 public:
+	WndProcTextInputComponent() = default;
 	virtual void OnTick() override;
 	virtual void GetTextStream( std::u16string & text, size_t maxLen ) const override;
 	virtual void ClearTextStream() override;

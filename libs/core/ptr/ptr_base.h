@@ -22,6 +22,8 @@ namespace RF {
 template<typename T>
 class PtrBase
 {
+	RF_NO_COPY( PtrBase );
+
 	//
 	// Types
 public:
