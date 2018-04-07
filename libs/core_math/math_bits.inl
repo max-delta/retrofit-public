@@ -1,5 +1,6 @@
 #pragma once
 #include "math_bits.h"
+#include "math_casts.h"
 
 #include "core/macros.h"
 
@@ -51,8 +52,8 @@ constexpr bool HasOnly1BitSet( T const value )
 	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
 
 	T const assumeOnlyTargetBitSet = value;
-	T const assumeAllBitsLowerThanTargetBitAreSet = value - 1;
-	T const assumeAllBitsAreCleared = assumeOnlyTargetBitSet & assumeAllBitsLowerThanTargetBitAreSet;
+	T const assumeAllBitsLowerThanTargetBitAreSet = value - 1u;
+	T const assumeAllBitsAreCleared = static_cast<T>( assumeOnlyTargetBitSet & assumeAllBitsLowerThanTargetBitAreSet );
 
 	return value != 0 && assumeAllBitsAreCleared == 0;
 }
@@ -64,7 +65,7 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 {
 	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	uint64_t const extendedValue = value;
+	uint64_t const extendedValue = integer_unsigned_cast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
 	#define RF_GETINDEXOFHIGHESBIT_TEST(X) \
@@ -103,7 +104,7 @@ constexpr size_t GetZerosIndexOfHighestBit( T const value )
 {
 	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	uint64_t const extendedValue = value;
+	uint64_t const extendedValue = integer_unsigned_cast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
 	#define RF_GETINDEXOFHIGHESBIT_TEST(X) \

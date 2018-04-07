@@ -6,7 +6,8 @@
 #include <limits>
 
 
-namespace RF { namespace math {
+namespace RF {
+namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename DST, typename SRC>
@@ -31,6 +32,7 @@ DST integer_truncast( SRC const src )
 	constexpr DST lowestDest = numeric_limits<DST>::lowest();
 	constexpr SRC lowestSrc = numeric_limits<SRC>::lowest();
 	constexpr bool couldOverflow = numeric_limits<SRC>::max() > maxDest;
+	RF_ACK_CONSTEXPR_SIGN_MISMATCH; // TODO: Templatize
 	constexpr bool couldUnderflow = std::is_signed<SRC>::value ? lowestSrc < lowestDest : false;
 	constexpr bool couldDropSign = std::is_signed<SRC>::value == true && std::is_signed<DST>::value == false;
 
@@ -42,6 +44,7 @@ DST integer_truncast( SRC const src )
 
 	if( couldUnderflow )
 	{
+		RF_ACK_CONSTEXPR_SIGN_MISMATCH; // TODO: Templatize
 		if( src < lowestDest )
 			return lowestDest;
 	}
@@ -60,6 +63,41 @@ DST integer_truncast( SRC const src )
 	{
 		return static_cast<DST>( src );
 	}
+}
+
+
+
+constexpr uint8_t integer_unsigned_cast( int8_t const src )
+{
+	return static_cast<uint8_t>( src );
+}
+constexpr uint16_t integer_unsigned_cast( int16_t const src )
+{
+	return static_cast<uint16_t>( src );
+}
+constexpr uint32_t integer_unsigned_cast( int32_t const src )
+{
+	return static_cast<uint32_t>( src );
+}
+constexpr uint64_t integer_unsigned_cast( int64_t const src )
+{
+	return static_cast<uint64_t>( src );
+}
+constexpr uint8_t integer_unsigned_cast( uint8_t const src )
+{
+	return src;
+}
+constexpr uint16_t integer_unsigned_cast( uint16_t const src )
+{
+	return src;
+}
+constexpr uint32_t integer_unsigned_cast( uint32_t const src )
+{
+	return src;
+}
+constexpr uint64_t integer_unsigned_cast( uint64_t const src )
+{
+	return src;
 }
 
 

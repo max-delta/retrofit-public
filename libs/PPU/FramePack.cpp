@@ -77,7 +77,7 @@ uint8_t FramePackBase::CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const
 	// Couldn't accumulate enough before hitting end of frame-pack, this means
 	//  it's rolled over. We'll just calc the wrap, and re-run once to find
 	//  where it lies.
-	return CalculateTimeSlotFromTimeIndex( timeIndex % maxTimeIndex );
+	return CalculateTimeSlotFromTimeIndex( math::integer_cast<uint8_t>( timeIndex % maxTimeIndex ) );
 }
 
 
