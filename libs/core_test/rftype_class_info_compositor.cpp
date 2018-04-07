@@ -102,21 +102,25 @@ struct MissingVirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClas
 
 namespace diamond{
 
+RF_ACK_UNSAFE_INHERITANCE
 struct DiamondTop : virtual public VirtualClass
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 	char unusedTop[16];
 };
+RF_ACK_UNSAFE_INHERITANCE
 struct DiamondLeft : virtual public DiamondTop
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 	char unusedLeft[16];
 };
+RF_ACK_UNSAFE_INHERITANCE
 struct DiamondRight : virtual public DiamondTop
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 	char unusedRight[16];
 };
+RF_ACK_UNSAFE_INHERITANCE
 struct DiamondBottom : virtual public DiamondLeft, virtual public DiamondRight
 {
 	// If not present, the absence of the virtual loolup should make this class

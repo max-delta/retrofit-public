@@ -70,6 +70,8 @@ public:
 	static_array( rftl::initializer_list<value_type> init );
 	~static_array();
 
+	static_array& operator=( static_array const& other );
+	static_array& operator=( static_array const&& other );
 	template<size_t OtherCapacity> static_array& operator=( static_array<value_type, OtherCapacity> const& other );
 	template<size_t OtherCapacity> static_array& operator=( static_array<value_type, OtherCapacity> && other );
 	static_array& operator=( rftl::initializer_list<value_type> init );

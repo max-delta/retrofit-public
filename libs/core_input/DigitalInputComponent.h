@@ -37,6 +37,8 @@ struct BufferCopyEventParser : public EventParser<EventType>
 
 class DigitalInputComponent : public InputComponent
 {
+	RF_NO_COPY( DigitalInputComponent );
+
 public:
 	typedef uint8_t PhysicalCode;
 	typedef uint8_t LogicalCode;
@@ -46,6 +48,7 @@ public:
 		Active = true,
 		Inactive = false
 	};
+	DigitalInputComponent() = default;
 	virtual void OnTick() override = 0;
 	virtual ComponentType GetType() override final
 	{

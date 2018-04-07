@@ -11,6 +11,8 @@ namespace RF { namespace input {
 
 class InputDevice
 {
+	RF_NO_COPY( InputDevice );
+
 public:
 	void OnTick();
 	virtual ~InputDevice() = default;

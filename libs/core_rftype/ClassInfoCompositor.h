@@ -15,6 +15,8 @@ namespace RF { namespace rftype {
 template<class CLASS>
 struct ClassInfoCompositor
 {
+	RF_NO_COPY( ClassInfoCompositor );
+
 	ClassInfoCompositor( reflect::ClassInfo& classInfo )
 		: mClassInfo( classInfo )
 	{
@@ -166,6 +168,8 @@ private:
 template<class CLASS>
 struct CRTCompositionTrigger
 {
+	RF_NO_COPY( CRTCompositionTrigger );
+
 	CRTCompositionTrigger()
 		: mFallbackClassInfo()
 		, mCompositor( GetClassInfoStorage<CLASS>() )
