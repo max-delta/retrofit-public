@@ -390,7 +390,7 @@ void PPUController::Render() const
 uint8_t PPUController::GetZoomFactor() const
 {
 	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
-	uint16_t const approximateDiagonalTiles = smallestDimenssion / k_TileSize;
+	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimenssion / k_TileSize );
 	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / k_DesiredDiagonalTiles ) );
 	return zoomFactor;
 }

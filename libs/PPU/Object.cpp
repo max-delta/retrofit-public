@@ -34,7 +34,7 @@ void Object::Animate()
 	// NOTE: There's potential for tiny short-term timing bugs when slowdown
 	//  rate is changed, which can be addressed on user-side by adjusting the
 	//  sub-time after change for whatever effect they want to acheive
-	m_SubTimeIndex = ( m_SubTimeIndex + 1 ) % timeSlowdown;
+	m_SubTimeIndex = math::integer_cast<uint8_t>( ( m_SubTimeIndex + 1 ) % timeSlowdown );
 	if( m_SubTimeIndex == 0 )
 	{
 		m_TimeIndex++;

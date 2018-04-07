@@ -43,7 +43,7 @@ static void NotifyLastError( HSQUIRRELVM vm )
 
 
 template <typename ...Args>
-static void AssertStackTypes( HSQUIRRELVM vm, size_t startDepth )
+static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth )
 {
 	// Termination case
 }
@@ -166,7 +166,7 @@ bool SquirrelVM::AddSourceFromBuffer( std::wstring const& buffer )
 
 	SQRESULT result;
 
-	result = sq_compilebuffer( m_Vm, buffer.c_str(), buffer.length(), L"SOURCE", true );
+	result = sq_compilebuffer( m_Vm, buffer.c_str(), math::integer_cast<SQInteger>( buffer.length() ), L"SOURCE", true );
 	if( SQ_FAILED( result ) )
 	{
 		NotifyLastError( m_Vm );
@@ -199,7 +199,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementName const & name )
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE);
 
-	sq_pushstring( m_Vm, name.c_str(), name.length() );
+	sq_pushstring( m_Vm, name.c_str(), math::integer_cast<SQInteger>( name.length() ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
 
 	result = sq_get( m_Vm, -2 );
@@ -225,7 +225,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementName const
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
-	sq_pushstring( m_Vm, name.c_str(), name.length() );
+	sq_pushstring( m_Vm, name.c_str(), math::integer_cast<SQInteger>( name.length() ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
 
 	result = sq_get( m_Vm, -2 );

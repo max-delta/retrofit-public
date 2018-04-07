@@ -210,7 +210,7 @@ void FramePackEditor::Render()
 	gfx::PPUCoord const previewHeaderStart = gfx::PPUCoord( 0, 0 ) + headerOffset;
 
 	constexpr size_t k_NumFooterLines = 6;
-	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - textOffset.y * k_NumFooterLines );
+	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4u, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::PPUCoordElem>( k_NumFooterLines ) );
 
 	gfx::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::k_TileSize ) - gfx::k_TileSize;
 	gfx::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::PPUCoordElem>( ppu->GetWidth() / 2, gfx::k_TileSize );
@@ -251,7 +251,7 @@ void FramePackEditor::Render()
 		}
 		else if( m_EditingFrame > numTimeSlots )
 		{
-			m_EditingFrame = numTimeSlots - 1;
+			m_EditingFrame = numTimeSlots - 1u;
 		}
 
 		animationLength = fpack->CalculateTimeIndexBoundary();
@@ -283,11 +283,11 @@ void FramePackEditor::Render()
 	// Preview header
 	{
 		ppu->DebugDrawText( previewHeaderStart, "Preview" );
-		gfx::TimeSlowdownRate const previewFPS = 60 / m_PreviewSlowdownRate;
+		gfx::TimeSlowdownRate const previewFPS = 60u / m_PreviewSlowdownRate;
 		ppu->DebugDrawText( previewHeaderStart + textOffset, "Preview FPS: %i <-/+> to change", previewFPS );
-		gfx::TimeSlowdownRate const dataFPS = 60 / preferredSlowdownRate;
+		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
 		ppu->DebugDrawText( previewHeaderStart + textOffset * 2, "Data FPS: %i", dataFPS );
-		uint16_t const effectiveFrames = animationLength * m_PreviewSlowdownRate;
+		uint16_t const effectiveFrames = math::integer_cast<uint16_t>( animationLength * m_PreviewSlowdownRate );
 		ppu->DebugDrawText( previewHeaderStart + textOffset * 3, "Preview frames: %i", effectiveFrames );
 	}
 
@@ -497,8 +497,8 @@ void FramePackEditor::Command_Texture_InsertAfter()
 		return;
 	}
 
-	InsertTimeSlotBefore( m_EditingFrame + 1 );
-	m_EditingFrame = m_EditingFrame + 1;
+	InsertTimeSlotBefore( m_EditingFrame + 1u );
+	m_EditingFrame = m_EditingFrame + 1u;
 	ChangeTexture( m_EditingFrame );
 }
 
