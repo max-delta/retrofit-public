@@ -127,5 +127,19 @@ TEST(MathCasts, IntegerTruncast_Float)
 	}
 }
 
+
+
+TEST( MathCasts, IntegerUnsignedCast )
+{
+	static_assert( integer_unsigned_cast( static_cast<int8_t>( -1ll ) ) == std::numeric_limits<uint8_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<int16_t>( -1ll ) ) == std::numeric_limits<uint16_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<int32_t>( -1ll ) ) == std::numeric_limits<uint32_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<int64_t>( -1ll ) ) == std::numeric_limits<uint64_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<uint8_t>( -1ll ) ) == std::numeric_limits<uint8_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<uint16_t>( -1ll ) ) == std::numeric_limits<uint16_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<uint32_t>( -1ll ) ) == std::numeric_limits<uint32_t>::max(), "" );
+	static_assert( integer_unsigned_cast( static_cast<uint64_t>( -1ll ) ) == std::numeric_limits<uint64_t>::max(), "" );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

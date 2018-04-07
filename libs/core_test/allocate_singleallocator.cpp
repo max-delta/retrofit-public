@@ -17,7 +17,7 @@ namespace RF {
 TEST( SingleAllocator, Standalone )
 {
 	SingleAllocator<uint64_t, 8> alloc{ ExplicitDefaultConstruct() };
-	for( int i = 0; i < 4; i++ )
+	for( uint64_t i = 0; i < 4; i++ )
 	{
 		uint64_t* const allocation = alloc.allocate( 1 );
 		ASSERT_NE( allocation, nullptr );

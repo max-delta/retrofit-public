@@ -319,7 +319,7 @@ VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permis
 			continue;
 		}
 
-		uint8_t const applicablePermissions = static_cast<uint8_t>( mount.m_Permissions ) & static_cast<uint8_t>( desiredPermissions );
+		uint8_t const applicablePermissions = math::integer_cast<uint8_t>( static_cast<uint8_t>( mount.m_Permissions ) & static_cast<uint8_t>( desiredPermissions ) );
 		if( applicablePermissions != static_cast<uint8_t>( desiredPermissions ) )
 		{
 			// Not all permissions fulfilled

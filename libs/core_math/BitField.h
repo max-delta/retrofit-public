@@ -188,8 +188,8 @@ struct Compressor
 				size_t const bitsInByte = bitsLeft;
 				size_t const leftShiftToMatchSize = 8 - bitsInByte;
 				constexpr size_t rightShiftToMatchOffset = storageOffsetBits;
-				uint8_t const incomingBits = ( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
-				uint8_t const incomingMask = ( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
+				uint8_t const incomingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset );
+				uint8_t const incomingMask = static_cast<uint8_t>( static_cast<uint8_t>( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset );
 				uint8_t sharedBits = storageByte; // Load
 				sharedBits &= ~incomingMask; // Clear
 				sharedBits |= incomingBits; // Set
@@ -206,8 +206,8 @@ struct Compressor
 				constexpr size_t bitsInByte = bitsInByteMod == 0 ? 8 : bitsInByteMod;
 				constexpr size_t leftShiftToMatchSize = 8 - bitsInByte;
 				constexpr size_t rightShiftToMatchOffset = 0;
-				uint8_t const incomingBits = ( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
-				constexpr uint8_t incomingMask = ( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
+				uint8_t const incomingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset );
+				constexpr uint8_t incomingMask = static_cast<uint8_t>( static_cast<uint8_t>( GetAllBitsSet<uint8_t>() << leftShiftToMatchSize ) >> rightShiftToMatchOffset );
 				uint8_t sharedBits = storageByte; // Load
 				sharedBits &= ~incomingMask; // Clear
 				sharedBits |= incomingBits; // Set
@@ -224,7 +224,7 @@ struct Compressor
 				constexpr size_t bitsInByte = 8;
 				size_t const leftShiftToMatchSize = 8 - bitsInByte;
 				constexpr size_t rightShiftToMatchOffset = 0;
-				uint8_t const incomingBits = ( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
+				uint8_t const incomingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( incomingBitsFromRight ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset );
 				uint8_t const incomingMask = ( static_cast<uint8_t>( 0xffu ) << leftShiftToMatchSize ) >> rightShiftToMatchOffset;
 				uint8_t sharedBits = storageByte; // Load
 				sharedBits &= ~incomingMask; // Clear

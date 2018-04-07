@@ -44,7 +44,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 				filesize = ftell( digitFPackFile );
 				rewind( digitFPackFile );
 			}
-			fileBuf.reserve( filesize );
+			fileBuf.reserve( math::integer_cast<size_t>( filesize ) );
 
 			int fch = 0;
 			while( ( fch = fgetc( digitFPackFile ) ) != EOF )
@@ -60,7 +60,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	elem = vm.GetGlobalVariable( L"NumTimeSlots" );
 	integer = std::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
-	size_t const minFramesToCreate = math::Max<size_t>( minFrames, *integer );
+	size_t const minFramesToCreate = math::Max<size_t>( minFrames, math::integer_cast<size_t>( *integer ) );
 	if( minFramesToCreate <= gfx::FramePack_256::k_MaxTimeSlots )
 	{
 		retVal = DefaultCreator<gfx::FramePack_256>::Create();

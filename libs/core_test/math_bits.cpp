@@ -44,6 +44,11 @@ TEST( MathBits, GetOnesIndexOfHighestBit )
 	static_assert( GetOnesIndexOfHighestBit( 0xffff ) == 16, "" );
 	static_assert( GetOnesIndexOfHighestBit( 0xffffffff ) == 32, "" );
 	static_assert( GetOnesIndexOfHighestBit( 0xffffffffffffffff ) == 64, "" );
+
+	static_assert( GetOnesIndexOfHighestBit( static_cast<int8_t>( -1ll ) ) == 8, "" );
+	static_assert( GetOnesIndexOfHighestBit( static_cast<int16_t>( -1ll ) ) == 16, "" );
+	static_assert( GetOnesIndexOfHighestBit( static_cast<int32_t>( -1ll ) ) == 32, "" );
+	static_assert( GetOnesIndexOfHighestBit( static_cast<int64_t>( -1ll ) ) == 64, "" );
 }
 
 
@@ -59,6 +64,11 @@ TEST( MathBits, GetZerosIndexOfHighestBit )
 	static_assert( GetZerosIndexOfHighestBit( 0xffff ) == 15, "" );
 	static_assert( GetZerosIndexOfHighestBit( 0xffffffff ) == 31, "" );
 	static_assert( GetZerosIndexOfHighestBit( 0xffffffffffffffff ) == 63, "" );
+
+	static_assert( GetZerosIndexOfHighestBit( static_cast<int8_t>( -1ll ) ) == 7, "" );
+	static_assert( GetZerosIndexOfHighestBit( static_cast<int16_t>( -1ll ) ) == 15, "" );
+	static_assert( GetZerosIndexOfHighestBit( static_cast<int32_t>( -1ll ) ) == 31, "" );
+	static_assert( GetZerosIndexOfHighestBit( static_cast<int64_t>( -1ll ) ) == 63, "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
