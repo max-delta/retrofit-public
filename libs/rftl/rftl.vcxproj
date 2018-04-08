@@ -50,6 +50,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl" />
+    <None Include="patch\normallocations.inl" />
+    <None Include="patch\postinclude.inl" />
+    <None Include="patch\preinclude.inl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stub.cpp" />

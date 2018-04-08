@@ -7,6 +7,9 @@
     <Filter Include="extension">
       <UniqueIdentifier>{a107c326-95f9-4b7b-945c-75200ef03e44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="patch">
+      <UniqueIdentifier>{dedf7524-064a-45ea-8434-8750b1b333c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extension\static_array.h">
@@ -43,6 +46,15 @@
   <ItemGroup>
     <None Include="extension\static_array.inl">
       <Filter>extension</Filter>
+    </None>
+    <None Include="patch\preinclude.inl">
+      <Filter>patch</Filter>
+    </None>
+    <None Include="patch\postinclude.inl">
+      <Filter>patch</Filter>
+    </None>
+    <None Include="patch\normallocations.inl">
+      <Filter>patch</Filter>
     </None>
   </ItemGroup>
 </Project>

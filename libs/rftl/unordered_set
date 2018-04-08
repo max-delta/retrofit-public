@@ -1,7 +1,10 @@
 #pragma once
 #include "rftl/utility"
 #include "rftl/initializer_list"
-#include <unordered_set>
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_UNORDERED_SET
+#include "rftl/patch/postinclude.inl"
 
 // Namespace wrapping
 namespace rftl {

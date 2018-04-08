@@ -1,6 +1,9 @@
 #pragma once
 #include "rftl/utility"
-#include <atomic>
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_ATOMIC
+#include "rftl/patch/postinclude.inl"
 
 // Namespace wrapping
 namespace rftl {
