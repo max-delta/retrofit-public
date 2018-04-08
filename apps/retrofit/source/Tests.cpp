@@ -13,7 +13,7 @@
 
 #include "rftl/extension/static_array.h"
 
-#include <sstream>
+#include "rftl/sstream"
 
 
 // TODO: Singleton manager
@@ -36,7 +36,7 @@ void InitDrawTest()
 
 	UniquePtr<gfx::FramePackBase> digitFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "testdigit_loop.fpack.sq" ) );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
-	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", std::move( digitFPack ) );
+	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", rftl::move( digitFPack ) );
 	testObj.m_MaxTimeIndex = digitAnimationLength;
 	testObj.m_TimeSlowdown = 3;
 	testObj.m_Looping = true;
@@ -46,7 +46,7 @@ void InitDrawTest()
 
 	UniquePtr<gfx::FramePackBase> wiggleFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "test64_wiggle.fpack.sq" ) );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
-	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", std::move( wiggleFPack ) );
+	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", rftl::move( wiggleFPack ) );
 	testObj2.m_MaxTimeIndex = 4;
 	testObj2.m_TimeSlowdown = 33 / 4;
 	testObj2.m_Looping = true;;
@@ -75,7 +75,7 @@ void DrawInputDebug()
 {
 	using namespace RF;
 
-	std::string buf;
+	rftl::string buf;
 	gfx::PPUCoord coord( 32, 64 );
 	gfx::PPUCoord::ElementType const offset = 16;
 	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
@@ -88,11 +88,11 @@ void DrawInputDebug()
 	PhysicEvents physicEvents;
 	LogicEventParser logicEventParser( logicEvents );
 	PhysicEventParser physicEventParser( physicEvents );
-	std::stringstream logicStream;
-	std::stringstream physStream;
+	rftl::stringstream logicStream;
+	rftl::stringstream physStream;
 	float signalValue;
-	std::u16string textStream;
-	std::string halfAsciid;
+	rftl::u16string textStream;
+	rftl::string halfAsciid;
 
 	g_Graphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;
@@ -166,22 +166,22 @@ void SQTest()
 	RF_ASSERT( sourceAdd );
 
 	SquirrelVM::Element xElem = vm.GetGlobalVariable( L"x" );
-	RF_ASSERT( std::get_if<SquirrelVM::Integer>( &xElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::Integer>( &xElem ) != nullptr );
 	SquirrelVM::Element yElem = vm.GetGlobalVariable( L"y" );
-	RF_ASSERT( std::get_if<SquirrelVM::FloatingPoint>( &yElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::FloatingPoint>( &yElem ) != nullptr );
 	SquirrelVM::Element zElem = vm.GetGlobalVariable( L"z" );
-	RF_ASSERT( std::get_if<SquirrelVM::Boolean>( &zElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::Boolean>( &zElem ) != nullptr );
 	SquirrelVM::Element sElem = vm.GetGlobalVariable( L"s" );
-	RF_ASSERT( std::get_if<SquirrelVM::String>( &sElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::String>( &sElem ) != nullptr );
 	SquirrelVM::Element nElem = vm.GetGlobalVariable( L"n" );
-	RF_ASSERT( std::get_if<SquirrelVM::Null>( &nElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::Null>( &nElem ) != nullptr );
 	SquirrelVM::Element aElem = vm.GetGlobalVariable( L"a" );
-	RF_ASSERT( std::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
+	RF_ASSERT( rftl::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
 	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( L"a" );
 	{
 		RF_ASSERT( aElemArr.size() == 2 );
-		RF_ASSERT( std::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
-		RF_ASSERT( std::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
+		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
+		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
 	}
 }
 

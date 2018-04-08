@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include <rftl/extension/static_array.h>
+#include "rftl/extension/static_array.h"
 
 
 namespace RF {
@@ -95,7 +95,7 @@ TEST( StaticArray, BasicLifetime )
 	Proxy const copyVal = 2;
 	Proxy moveVal = 7;
 	sa.push_back( copyVal );
-	sa.push_back( std::move( moveVal ) );
+	sa.push_back( rftl::move( moveVal ) );
 	ASSERT_TRUE( copyVal == 2 );
 	ASSERT_TRUE( moveVal == Proxy::k_Destroyed );
 	ASSERT_TRUE( sa.size() == 2 );
@@ -320,7 +320,7 @@ TEST( StaticArray, MoveConstruct )
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
 
-	rftl::static_array<Proxy, 5> sa( std::move( source ) );
+	rftl::static_array<Proxy, 5> sa( rftl::move( source ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -340,7 +340,7 @@ TEST( StaticArray, MoveConstructCrossCapacity )
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
 
-	rftl::static_array<Proxy, 5> sa( std::move( source ) );
+	rftl::static_array<Proxy, 5> sa( rftl::move( source ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -400,7 +400,7 @@ TEST( StaticArray, BackInsertCompat )
 {
 	rftl::static_array<Proxy, 5> sa;
 	ASSERT_TRUE( sa.size() == 0 );
-	std::back_insert_iterator<rftl::static_array<Proxy, 5>> inserter( sa );
+	rftl::back_insert_iterator<rftl::static_array<Proxy, 5>> inserter( sa );
 	*inserter = 2;
 	*inserter = 7;
 	ASSERT_TRUE( sa.size() == 2 );

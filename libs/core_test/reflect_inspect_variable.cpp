@@ -45,7 +45,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_external_f )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_external_f )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_external_f )>::value, "Unexpected type" );
 	};
 
 	struct test_external_cf
@@ -53,7 +53,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_external_cf )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_external_cf )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_external_cf )>::value, "Unexpected type" );
 	};
 
 	struct test_internal_d
@@ -61,7 +61,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_internal_d )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_internal_d )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_internal_d )>::value, "Unexpected type" );
 	};
 
 	struct test_internal_cd
@@ -69,7 +69,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_internal_cd )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_internal_cd )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_internal_cd )>::value, "Unexpected type" );
 	};
 
 	struct test_thread_i
@@ -77,7 +77,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_thread_i )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_thread_i )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_thread_i )>::value, "Unexpected type" );
 	};
 
 	struct test_thread_ci
@@ -85,7 +85,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_thread_ci )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_thread_ci )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_thread_ci )>::value, "Unexpected type" );
 	};
 
 	struct test_constexpr_u
@@ -93,7 +93,7 @@ TEST( Reflect, NamespaceVariables )
 		using VT = VariableTraits<decltype( &details::namespace_constexpr_u )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::namespace_constexpr_u )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::namespace_constexpr_u )>::value, "Unexpected type" );
 	};
 }
 
@@ -106,7 +106,7 @@ TEST( Reflect, StaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::static_d )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::static_d )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::static_d )>::value, "Unexpected type" );
 	};
 
 	struct test_static_cd
@@ -114,7 +114,7 @@ TEST( Reflect, StaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::static_cd )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::static_cd )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::static_cd )>::value, "Unexpected type" );
 	};
 
 	struct test_thread_i
@@ -122,7 +122,7 @@ TEST( Reflect, StaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::thread_i )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::thread_i )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::thread_i )>::value, "Unexpected type" );
 	};
 
 	struct test_thread_ci
@@ -130,7 +130,7 @@ TEST( Reflect, StaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::thread_ci )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::thread_ci )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::thread_ci )>::value, "Unexpected type" );
 	};
 
 	struct test_constexpr_u
@@ -138,7 +138,7 @@ TEST( Reflect, StaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::constexpr_u )>;
 		static_assert( VT::kVariableType == VariableType::FreeStanding, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::constexpr_u )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::constexpr_u )>::value, "Unexpected type" );
 	};
 }
 
@@ -151,7 +151,7 @@ TEST( Reflect, NonStaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::instance_f )>;
 		static_assert( VT::kVariableType == VariableType::Member, "Unexpected value" );
 		static_assert( VT::kIsConst == false, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::instance_f )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::instance_f )>::value, "Unexpected type" );
 	};
 
 	struct test_instance_cf
@@ -159,7 +159,7 @@ TEST( Reflect, NonStaticMemberVariables )
 		using VT = VariableTraits<decltype( &details::MyClass::instance_cf )>;
 		static_assert( VT::kVariableType == VariableType::Member, "Unexpected value" );
 		static_assert( VT::kIsConst == true, "Unexpected value" );
-		static_assert( std::is_same< VT::VariableType, decltype( details::MyClass::instance_cf )>::value, "Unexpected type" );
+		static_assert( rftl::is_same< VT::VariableType, decltype( details::MyClass::instance_cf )>::value, "Unexpected type" );
 	};
 }
 

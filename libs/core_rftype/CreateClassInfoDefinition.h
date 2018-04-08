@@ -68,9 +68,9 @@
 //  RFTYPE_CREATE_META( NS1::NS2::CLASS )
 //  {
 //  	using namespace NS1::NS2;
-//		static_assert( std::is_same<RFTYPE_METATYPE(), CLASS>::value, "Unexpected type" );
+//		static_assert( rftl::is_same<RFTYPE_METATYPE(), CLASS>::value, "Unexpected type" );
 //  }
-#define RFTYPE_METATYPE() typename std::remove_reference<decltype(*__RFType_CRT_Trigger)>::type::BackingClassType
+#define RFTYPE_METATYPE() typename rftl::remove_reference<decltype(*__RFType_CRT_Trigger)>::type::BackingClassType
 
 // Creates static storage within a class, primarily intended to tie the storage
 //  to the class so it participates in module exports and imports that the

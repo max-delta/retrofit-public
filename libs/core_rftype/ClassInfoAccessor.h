@@ -21,7 +21,7 @@ template<class CLASS>
 
 // Template specialization for lookup, relies on static member of class, which
 //  is expected to inherit the module-export behavior of its containing class
-template<typename CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
+template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
 ::RF::reflect::ClassInfo const& GetClassInfo()
 {
 	return CLASS::___RFType_Static_ClassInfo;
@@ -31,7 +31,7 @@ template<typename CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLAS
 
 // Template specialization for lookup, assumed to be only within the module
 //  that instantiated the class info
-template<typename CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ) == false, int>::type = 0>
+template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ) == false, int>::type = 0>
 ::RF::reflect::ClassInfo const& GetClassInfo()
 {
 	return GetClassInfoWithinModule<CLASS>();

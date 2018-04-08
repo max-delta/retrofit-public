@@ -55,7 +55,7 @@ void FramePackEditor::Process()
 			RF_ASSERT( mostRecentEvent.m_Time > time::FrameClock::time_point() );
 			RF_ASSERT( time::FrameClock::now() >= mostRecentEvent.m_Time );
 			time::FrameClock::duration const timePassed = time::FrameClock::now() - mostRecentEvent.m_Time;
-			if( timePassed > std::chrono::milliseconds( 200 ) )
+			if( timePassed > rftl::chrono::milliseconds( 200 ) )
 			{
 				mostRecentHold = mostRecentEvent.m_Code;
 			}
@@ -528,7 +528,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
 	UniquePtr<gfx::FramePackBase> fpack = LoadFramePackFromSquirrel( path );
-	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", std::move( fpack ) );
+	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", rftl::move( fpack ) );
 }
 
 
@@ -583,7 +583,7 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].m_TextureReference;
 
 	// User needs to select texture
-	std::string const filepath = platform::dialogs::OpenFileDialog();
+	rftl::string const filepath = platform::dialogs::OpenFileDialog();
 	if( filepath.empty() )
 	{
 		// User probably cancelled

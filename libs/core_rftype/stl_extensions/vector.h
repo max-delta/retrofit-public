@@ -8,11 +8,11 @@ namespace RF { namespace rftype { namespace extensions {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ValueType, typename Allocator>
-struct Accessor<std::vector<ValueType, Allocator>> final : private AccessorTemplate
+struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemplate
 {
 	static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
 
-	using AccessedType = std::vector<ValueType, Allocator>;
+	using AccessedType = rftl::vector<ValueType, Allocator>;
 	static constexpr bool kExists = true;
 
 	// NOTE: Size_t may vary between platforms, so a 32-bit save could appear
@@ -61,7 +61,7 @@ struct Accessor<std::vector<ValueType, Allocator>> final : private AccessorTempl
 
 		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
 		KeyType const index = *key.GetAs<KeyType>();
-		static_assert( std::is_unsigned<KeyType>::value, "Assuming unsigned" );
+		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
 		if( index >= pThis->size() )
 		{
 			RF_DBGFAIL_MSG( "Index out of bounds" );

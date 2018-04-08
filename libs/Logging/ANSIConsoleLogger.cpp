@@ -12,7 +12,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_l
 {
 	constexpr size_t kBufSize = 512;
 
-	std::array<char, kBufSize> messageBuffer;
+	rftl::array<char, kBufSize> messageBuffer;
 	vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
@@ -50,7 +50,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_l
 		severity = "\x1b[0mUNKNOWN";
 	}
 
-	std::array<char, kBufSize> outputBuffer;
+	rftl::array<char, kBufSize> outputBuffer;
 	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 

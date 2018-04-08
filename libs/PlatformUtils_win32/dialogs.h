@@ -3,13 +3,13 @@
 
 #include "core_platform/win_shim.h"
 
-#include <string>
+#include "rftl/string"
 
 
 namespace RF { namespace platform { namespace dialogs {
 ///////////////////////////////////////////////////////////////////////////////
 
-PLATFORMUTILS_API std::string OpenFileDialog();
+PLATFORMUTILS_API rftl::string OpenFileDialog();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

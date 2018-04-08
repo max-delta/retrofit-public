@@ -3,6 +3,8 @@
 
 #include "Logging/Logging.h"
 
+#include "rftl/string"
+
 
 #define RF_DIAG_EXP_TR( ... ) \
 	if( mSilent == false ) \
@@ -152,7 +154,7 @@ bool DiagnosticExporter::Instance_BeginNewProperty()
 		return false;
 	}
 
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %sL", indents.c_str() );
 
 	mHasOpenProperty = true;
@@ -175,7 +177,7 @@ bool DiagnosticExporter::Property_AddNameAttribute( char const * name )
 		return false;
 	}
 
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s name := %s", indents.c_str(), name );
 
 	return true;
@@ -197,7 +199,7 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const & valu
 		return false;
 	}
 
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s value := VAL", indents.c_str() );
 
 	return true;
@@ -219,7 +221,7 @@ bool DiagnosticExporter::Property_AddIndirectionAttribute( IndirectionID const &
 		return false;
 	}
 
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s indirection := %llu", indents.c_str(), indirectionID );
 
 	return true;
@@ -241,7 +243,7 @@ bool DiagnosticExporter::Property_IndentFromCurrentProperty()
 		return false;
 	}
 
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s {", indents.c_str() );
 	mPropertyDepth++;
 
@@ -260,7 +262,7 @@ bool DiagnosticExporter::Property_OutdentFromLastIndent()
 	}
 
 	mPropertyDepth--;
-	std::string indents( mPropertyDepth * 2, ' ' );
+	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s }", indents.c_str() );
 
 	mHasOpenProperty = false;

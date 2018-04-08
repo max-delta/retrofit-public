@@ -3,8 +3,8 @@
 
 #include "core_math/Hash.h"
 
-#include <unordered_map>
-#include <string>
+#include "rftl/unordered_map"
+#include "rftl/string"
 
 
 // Forwards
@@ -22,7 +22,7 @@ class RFTYPE_API TypeDatabase
 public:
 	struct StoredClassInfo
 	{
-		std::string mName;
+		rftl::string mName;
 		reflect::ClassInfo const* mClassInfo;
 	};
 
@@ -30,7 +30,7 @@ public:
 	//
 	// Types
 private:
-	using ClassInfoByHash = std::unordered_map<math::HashVal64, StoredClassInfo, math::DirectHash>;
+	using ClassInfoByHash = rftl::unordered_map<math::HashVal64, StoredClassInfo, math::DirectHash>;
 
 
 	//

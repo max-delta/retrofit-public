@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <deque>
+
+// Namespace wrapping
+namespace rftl {
+using std::deque;
+
+using std::swap;
+}

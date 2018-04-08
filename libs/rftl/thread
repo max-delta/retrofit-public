@@ -1,0 +1,17 @@
+#pragma once
+#include "rftl/utility"
+#include <thread>
+
+// Namespace wrapping
+namespace rftl {
+using std::thread;
+using std::hash;
+using std::swap;
+
+namespace this_thread {
+using std::this_thread::yield;
+using std::this_thread::get_id;
+using std::this_thread::sleep_for;
+using std::this_thread::sleep_until;
+}
+}

@@ -98,12 +98,12 @@ TEST( ValueList, Add )
 	using vl_empty = ValueList<int>;
 
 	// Append/prepend on empty should be identical
-	static_assert( std::is_same<vl_empty::Append<7>::type, vl_empty::Prepend<7>::type>::value, "Unexpected type" );
+	static_assert( rftl::is_same<vl_empty::Append<7>::type, vl_empty::Prepend<7>::type>::value, "Unexpected type" );
 
 	using vl_added_7 = vl_empty::Append<7>::type;
 	using vl_added_57 = vl_added_7::Prepend<5>::type;
 	using vl_added_578 = vl_added_57::Append<8>::type;
-	static_assert( std::is_same<vl_578, vl_added_578>::value, "Unexpected type" );
+	static_assert( rftl::is_same<vl_578, vl_added_578>::value, "Unexpected type" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

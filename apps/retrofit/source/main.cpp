@@ -18,7 +18,7 @@
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
 
-#include <thread>
+#include "rftl/thread"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ struct FrameLimiter
 		if( naturalFrameTime < k_DesiredFrameTime )
 		{
 			time::PerfClock::duration const timeRemaining = k_DesiredFrameTime - naturalFrameTime;
-			std::this_thread::sleep_for( timeRemaining );
+			rftl::this_thread::sleep_for( timeRemaining );
 		}
 		m_FrameEnd = time::PerfClock::now();
 		time::PerfClock::duration const frameTime = m_FrameEnd - m_FrameStart;
@@ -67,7 +67,7 @@ struct FrameLimiter
 	RF::time::PerfClock::time_point m_FrameStart;
 	RF::time::PerfClock::time_point m_FrameEnd;
 };
-RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = std::chrono::nanoseconds( 16666666 );
+RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = rftl::chrono::nanoseconds( 16666666 );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -128,7 +128,7 @@ int main()
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	g_Graphics = DefaultCreator<gfx::PPUController>::Create( std::move( renderDevice ) );
+	g_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ) );
 	g_Graphics->Initialize( k_Width, k_Height );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );

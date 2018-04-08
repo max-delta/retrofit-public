@@ -3,16 +3,16 @@
 #include "core/ptr/creation_payload.h"
 #include "core/ptr/ptr_traits.h"
 
-#include <utility>
+#include "rftl/utility"
 
 
 #define RF_PTR_ASSERT_CASTABLE(BASETYPE, DERIVEDTYPE) \
 	static_assert( \
-		std::is_base_of<BASETYPE, DERIVEDTYPE>::value, \
+		rftl::is_base_of<BASETYPE, DERIVEDTYPE>::value, \
 		"Failed to cast PTR<"#DERIVEDTYPE"> to PTR<"#BASETYPE">" ); \
 	static_assert( \
-		std::has_virtual_destructor<BASETYPE>::value || \
-		std::is_base_of<::RF::PtrTrait::NoVirtualDestructor, BASETYPE>::value, \
+		rftl::has_virtual_destructor<BASETYPE>::value || \
+		rftl::is_base_of<::RF::PtrTrait::NoVirtualDestructor, BASETYPE>::value, \
 		"Potentially unsafe deletions due to non-virtual destructor on base class. Please use 'virtual ~Base() = default;' at a minimum." );
 
 
@@ -66,13 +66,13 @@ protected:
 		, m_Ref(reinterpret_cast<PtrRef*>(ref))
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
-		static_assert( std::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
+		static_assert( rftl::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 	}
 
 	explicit PtrBase( PtrBase && rhs )
 		: PtrBase( nullptr, nullptr )
 	{
-		Swap( std::move( rhs ) );
+		Swap( rftl::move( rhs ) );
 	}
 
 	void IncreaseStrongCount()
@@ -109,8 +109,8 @@ protected:
 
 	void Swap( PtrBase && rhs )
 	{
-		std::swap( m_Ref, rhs.m_Ref );
-		std::swap( m_Target, rhs.m_Target );
+		rftl::swap( m_Ref, rhs.m_Ref );
+		rftl::swap( m_Target, rhs.m_Target );
 	}
 
 	CreationPayload<T> CreateTransferPayload() const

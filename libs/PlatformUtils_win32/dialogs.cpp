@@ -7,7 +7,7 @@
 namespace RF { namespace platform { namespace dialogs {
 ///////////////////////////////////////////////////////////////////////////////
 
-PLATFORMUTILS_API std::string OpenFileDialog()
+PLATFORMUTILS_API rftl::string OpenFileDialog()
 {
 	char filePath[1024];
 	filePath[0] = '\0';
@@ -24,7 +24,7 @@ PLATFORMUTILS_API std::string OpenFileDialog()
 	win32::BOOL const result = win32::GetOpenFileNameA( &a );
 	if( result == false )
 	{
-		return std::string();
+		return rftl::string();
 	}
 
 	// Unix-ify the delimiters
@@ -41,7 +41,7 @@ PLATFORMUTILS_API std::string OpenFileDialog()
 		}
 	}
 
-	return std::string( filePath );
+	return rftl::string( filePath );
 }
 
 

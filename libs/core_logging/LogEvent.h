@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF { namespace logging {

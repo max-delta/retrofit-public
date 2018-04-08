@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <limits>
+
+// Namespace wrapping
+namespace rftl {
+using std::numeric_limits;
+using std::float_round_style;
+using std::float_denorm_style;
+}

@@ -1,8 +1,9 @@
 #pragma once
 #include "core/ConstructorOverload.h"
 
-#include <atomic>
-#include <memory>
+#include "rftl/atomic"
+#include "rftl/memory"
+#include "rftl/type_traits"
 
 
 namespace RF {
@@ -32,11 +33,11 @@ public:
 	using size_type = size_t;
 	using difference_type = ptrdiff_t;
 
-	using propagate_on_container_copy_assignment = std::false_type;
-	using propagate_on_container_move_assignment = std::false_type;
-	using propagate_on_container_swap_assignment = std::false_type;
+	using propagate_on_container_copy_assignment = rftl::false_type;
+	using propagate_on_container_move_assignment = rftl::false_type;
+	using propagate_on_container_swap_assignment = rftl::false_type;
 
-	using is_always_equal = std::false_type;
+	using is_always_equal = rftl::false_type;
 
 	template<typename U>
 	struct rebind
@@ -77,13 +78,13 @@ public:
 	//
 	// Private data
 private:
-	volatile std::atomic_bool mHasAllocation;
+	volatile rftl::atomic_bool mHasAllocation;
 	uint8_t mStorageBytes[kMaxTotalSize];
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 }
-namespace std {
+namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 template<typename T, size_t MaxTotalSize>
 struct allocator_traits< RF::SingleAllocator<T, MaxTotalSize> >

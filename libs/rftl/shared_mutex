@@ -1,0 +1,13 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/mutex"
+#include <shared_mutex>
+
+// Namespace wrapping
+namespace rftl {
+using std::shared_mutex;
+using std::shared_timed_mutex;
+using std::shared_lock;
+
+using std::swap;
+}

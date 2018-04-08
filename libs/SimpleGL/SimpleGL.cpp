@@ -10,9 +10,9 @@
 
 #include "stb_image/stb_image.h"
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
+#include "rftl/cstdio"
+#include "rftl/cstdarg"
+#include "rftl/string"
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////

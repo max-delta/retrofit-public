@@ -43,8 +43,8 @@ class PLATFORMFILESYSTEM_API VFS
 	//
 	// Types
 private:
-	typedef std::vector<VFSMount> MountRules;
-	typedef std::string MountToken;
+	typedef rftl::vector<VFSMount> MountRules;
+	typedef rftl::string MountToken;
 
 
 	//
@@ -79,25 +79,25 @@ public:
 	// NOTE: Relative entries are relative to the location of the mount file
 	// NOTE: User entries are relative to the provided user directory
 	// NOTE: Absolute entries are unbounded
-	bool AttemptInitialMount( std::string const& mountTableFile, std::string const& userDirectory );
+	bool AttemptInitialMount( rftl::string const& mountTableFile, rftl::string const& userDirectory );
 
 	// File paths may come from outside VFS, such as from OS dialogs, and they
 	//  need to be mapped onto VFS layers
 	// NOTE: Paths from outside any VFS layers will cause mapping to fail with
 	//  an empty VFS path
-	VFSPath AttemptMapToVFS( std::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const;
+	VFSPath AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const;
 
 	void DebugDumpMountTable() const;
 
-	static VFSPath CreatePathFromString( std::string const& path );
-	static std::string CreateStringFromPath( VFSPath const& path );
+	static VFSPath CreatePathFromString( rftl::string const& path );
+	static rftl::string CreateStringFromPath( VFSPath const& path );
 
 
 	//
 	// Private methods
 private:
 	static VFSPath CollapsePath( VFSPath const& path );
-	VFSMount ProcessMountRule( std::string const& type, std::string const& permissions, std::string const& virtualPoint, std::string const& realPoint );
+	VFSMount ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint );
 	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
 
 

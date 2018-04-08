@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "core_math/hash.h"
+#include "rftl/limits"
 
 
 namespace RF { namespace math {
@@ -13,7 +14,7 @@ TEST( Hash, DirectHasher )
 	ASSERT_EQ( hasher( 1 ), 1 );
 	ASSERT_EQ( hasher( 2 ), 2 );
 	ASSERT_EQ( hasher( 3 ), 3 );
-	ASSERT_EQ( hasher( std::numeric_limits<HashVal64>::max() ), std::numeric_limits<HashVal64>::max() );
+	ASSERT_EQ( hasher( rftl::numeric_limits<HashVal64>::max() ), rftl::numeric_limits<HashVal64>::max() );
 }
 
 

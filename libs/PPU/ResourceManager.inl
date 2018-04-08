@@ -104,7 +104,7 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource> && resource )
 {
 	ManagedResourceID retVal;
-	LoadNewResourceInternal( resourceName, std::move( resource ), retVal );
+	LoadNewResourceInternal( resourceName, rftl::move( resource ), retVal );
 	return retVal;
 }
 
@@ -123,7 +123,7 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource> && resource )
 {
 	ManagedResourceID unused;
-	return LoadNewResourceInternal( resourceName, std::move( resource ), unused );
+	return LoadNewResourceInternal( resourceName, rftl::move( resource ), unused );
 }
 
 
@@ -178,10 +178,10 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-std::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const & filename ) const
+rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const & filename ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
-	return std::vector<ResourceName>();
+	return rftl::vector<ResourceName>();
 }
 
 
@@ -282,7 +282,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 		UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
 		retVal = newResource;
 		res = newResource;
-		m_Resources.emplace( managedResourceID, std::move( newResource ) );
+		m_Resources.emplace( managedResourceID, rftl::move( newResource ) );
 		m_ResourceIDs.emplace( resourceName, managedResourceID );
 		m_FileBackedResources.emplace( resourceName, filename );
 	}
@@ -309,7 +309,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	{
 		retVal = resource;
 		res = resource;
-		m_Resources.emplace( managedResourceID, std::move( resource ) );
+		m_Resources.emplace( managedResourceID, rftl::move( resource ) );
 		m_ResourceIDs.emplace( resourceName, managedResourceID );
 	}
 	RF_ASSERT( retVal != nullptr );

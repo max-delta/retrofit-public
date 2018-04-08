@@ -25,7 +25,7 @@ public:
 		//
 	}
 
-	WeakSharedPtr(std::nullptr_t)
+	WeakSharedPtr( rftl::nullptr_t)
 		: WeakSharedPtr()
 	{
 		//
@@ -44,7 +44,7 @@ public:
 	}
 
 	WeakSharedPtr( WeakSharedPtr && rhs )
-		: PtrBase(std::move(rhs))
+		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
@@ -60,16 +60,16 @@ public:
 		PtrBase::DecreaseWeakCount();
 	}
 
-	WeakSharedPtr & operator =(WeakSharedPtr const & rhs)
+	WeakSharedPtr & operator =( WeakSharedPtr const & rhs )
 	{
-		WeakSharedPtr temp(rhs);
-		PtrBase::Swap( std::move(temp) );
+		WeakSharedPtr temp( rhs );
+		PtrBase::Swap( rftl::move( temp ) );
 		return *this;
 	}
 
-	WeakSharedPtr & operator =(WeakSharedPtr && rhs)
+	WeakSharedPtr & operator =( WeakSharedPtr && rhs )
 	{
-		PtrBase::Swap( std::move(rhs) );
+		PtrBase::Swap( rftl::move( rhs ) );
 		return *this;
 	}
 

@@ -116,7 +116,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 // Atomic ordering quick-reference
 // ASSUME:
-//  std::atomic<uint64_t> val; <- used for the function case
+//  rftl::atomic<uint64_t> val; <- used for the function case
 //  uint64_t val; <- used for the '=' case
 #if defined( RF_PLATFORM_X86_64 )
 // val;

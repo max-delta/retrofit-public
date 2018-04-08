@@ -1,5 +1,6 @@
 #pragma once
-#include <stdint.h>
+#include "rftl/cstdint"
+#include "rftl/cstddef"
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +18,7 @@ struct NullTerminatedStringHash
 };
 
 // This hash function will not change based on platform
-HashVal64 StableHashBytes( std::nullptr_t, size_t );
+HashVal64 StableHashBytes( rftl::nullptr_t, size_t );
 HashVal64 StableHashBytes( void const* buffer, size_t length );
 
 ///////////////////////////////////////////////////////////////////////////////

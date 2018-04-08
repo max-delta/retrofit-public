@@ -1,8 +1,9 @@
 #pragma once
 #include "project.h"
 
-#include <variant>
-#include <vector>
+#include "rftl/variant"
+#include "rftl/vector"
+#include "rftl/string"
 
 //
 // Forwards
@@ -31,11 +32,11 @@ public:
 	#endif
 	typedef float FloatingPoint;
 	typedef bool Boolean;
-	typedef std::wstring String;
+	typedef rftl::wstring String;
 	typedef void* Pointer;
 	typedef nullptr_t Null;
-	typedef std::wstring ElementName;
-	typedef std::variant<
+	typedef rftl::wstring ElementName;
+	typedef rftl::variant<
 		Integer,
 		FloatingPoint,
 		Boolean,
@@ -43,7 +44,7 @@ public:
 		Pointer,
 		ArrayTag,
 		Null> Element;
-	typedef std::vector<Element> ElementArray;
+	typedef rftl::vector<Element> ElementArray;
 private:
 	typedef SQVM* HSQUIRRELVM;
 
@@ -63,7 +64,7 @@ public:
 	SquirrelVM();
 	~SquirrelVM();
 
-	bool AddSourceFromBuffer( std::wstring const& buffer );
+	bool AddSourceFromBuffer( rftl::wstring const& buffer );
 
 	Element GetGlobalVariable( ElementName const& name );
 	ElementArray GetGlobalVariableAsArray( ElementName const& name );

@@ -3,9 +3,10 @@
 #include "core_math/Hash.h"
 #include "core/macros.h"
 
-#include <vector>
-#include <shared_mutex>
-#include <array>
+#include "rftl/vector"
+#include "rftl/unordered_map"
+#include "rftl/shared_mutex"
+#include "rftl/array"
 
 
 namespace RF { namespace logging {
@@ -18,16 +19,16 @@ class LoggingRouter
 	//
 	// Types and constants
 public:
-	using SeverityStrings = std::array<char const*, 64>;
+	using SeverityStrings = rftl::array<char const*, 64>;
 private:
 	static constexpr HandlerID kInitialHandlerID = kInvalidHandlerID + 1;
 	static constexpr SeverityMask kDefaultGlobalWhitelist = ~SeverityMask( 0 );
-	using ReaderWriterMutex = std::shared_mutex;
-	using ReaderLock = std::shared_lock<std::shared_mutex>;
-	using WriterLock = std::unique_lock<std::shared_mutex>;
-	using HandlerDefinitionByID = std::pair<HandlerID, HandlerDefinition>;
-	using HandlerDefinitionsByPriority = std::vector<HandlerDefinitionByID>;
-	using SeverityMasksByCategoryKey = std::unordered_map<CategoryKey, SeverityMask, math::NullTerminatedStringHash>;
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
+	using HandlerDefinitionByID = rftl::pair<HandlerID, HandlerDefinition>;
+	using HandlerDefinitionsByPriority = rftl::vector<HandlerDefinitionByID>;
+	using SeverityMasksByCategoryKey = rftl::unordered_map<CategoryKey, SeverityMask, math::NullTerminatedStringHash>;
 
 
 	//

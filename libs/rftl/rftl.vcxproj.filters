@@ -1,12 +1,48 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="extension\static_array.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="extension\static_array.inl" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="stub.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="extension">
+      <UniqueIdentifier>{a107c326-95f9-4b7b-945c-75200ef03e44}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="extension\static_array.h">
+      <Filter>extension</Filter>
+    </ClInclude>
+    <ClInclude Include="chrono" />
+    <ClInclude Include="utility" />
+    <ClInclude Include="initializer_list" />
+    <ClInclude Include="iterator" />
+    <ClInclude Include="vector" />
+    <ClInclude Include="string" />
+    <ClInclude Include="thread" />
+    <ClInclude Include="sstream" />
+    <ClInclude Include="limits" />
+    <ClInclude Include="type_traits" />
+    <ClInclude Include="cstddef" />
+    <ClInclude Include="variant" />
+    <ClInclude Include="ratio" />
+    <ClInclude Include="array" />
+    <ClInclude Include="shared_mutex" />
+    <ClInclude Include="mutex" />
+    <ClInclude Include="unordered_map" />
+    <ClInclude Include="deque" />
+    <ClInclude Include="bitset" />
+    <ClInclude Include="cstdlib" />
+    <ClInclude Include="unordered_set" />
+    <ClInclude Include="atomic" />
+    <ClInclude Include="filesystem" />
+    <ClInclude Include="memory" />
+    <ClInclude Include="cstdint" />
+    <ClInclude Include="cstdarg" />
+    <ClInclude Include="cstdio" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="extension\static_array.inl">
+      <Filter>extension</Filter>
+    </None>
   </ItemGroup>
 </Project>

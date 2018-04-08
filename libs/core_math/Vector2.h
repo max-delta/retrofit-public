@@ -1,6 +1,6 @@
 #pragma once
-#include <stdint.h>
-#include <type_traits>
+#include "rftl/cstdint"
+#include "rftl/type_traits"
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -8,8 +8,8 @@ namespace RF { namespace math {
 template <typename T>
 class Vector2 final
 {
-	static_assert( std::is_signed<T>::value, "Vector2 must be signed" );
-	static_assert( std::is_arithmetic<T>::value, "Vector2 must support arithmetic operations" );
+	static_assert( rftl::is_signed<T>::value, "Vector2 must be signed" );
+	static_assert( rftl::is_arithmetic<T>::value, "Vector2 must support arithmetic operations" );
 public:
 	typedef T ElementType;
 public:

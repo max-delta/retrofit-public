@@ -15,7 +15,7 @@ struct ParamUnpacker;
 template<>
 struct ParamUnpacker<TypeList<> >
 {
-	static void Unpack( std::vector<Value::Type>& paramTypes )
+	static void Unpack( rftl::vector<Value::Type>& paramTypes )
 	{
 	}
 };
@@ -23,7 +23,7 @@ struct ParamUnpacker<TypeList<> >
 template<typename CurrentType, typename... RemainingTypes>
 struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...> >
 {
-	static void Unpack( std::vector<Value::Type>& paramTypes )
+	static void Unpack( rftl::vector<Value::Type>& paramTypes )
 	{
 		constexpr Value::Type kType = Value::DetermineType<CurrentType>();
 		paramTypes.push_back( kType );
@@ -37,16 +37,16 @@ struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...> >
 template <class T>
 void CreateClassInfo( ClassInfo& classInfo )
 {
-	static_assert( std::is_class<T>::value, "CreateClassInfo requires a class" );
+	static_assert( rftl::is_class<T>::value, "CreateClassInfo requires a class" );
 	classInfo = {};
-	classInfo.mIsPolymorphic = std::is_polymorphic<T>::value;
-	classInfo.mIsAbstract = std::is_abstract<T>::value;
-	classInfo.mIsDefaultConstructible = std::is_default_constructible<T>::value;
-	classInfo.mIsCopyConstructible = std::is_copy_constructible<T>::value;
-	classInfo.mIsMoveConstructible = std::is_move_constructible<T>::value;
-	classInfo.mIsDestructible = std::is_default_constructible<T>::value;
-	classInfo.mHasVirtualDestructor = std::has_virtual_destructor<T>::value;
-	classInfo.mMinimumAlignment = std::alignment_of<T>::value;
+	classInfo.mIsPolymorphic = rftl::is_polymorphic<T>::value;
+	classInfo.mIsAbstract = rftl::is_abstract<T>::value;
+	classInfo.mIsDefaultConstructible = rftl::is_default_constructible<T>::value;
+	classInfo.mIsCopyConstructible = rftl::is_copy_constructible<T>::value;
+	classInfo.mIsMoveConstructible = rftl::is_move_constructible<T>::value;
+	classInfo.mIsDestructible = rftl::is_default_constructible<T>::value;
+	classInfo.mHasVirtualDestructor = rftl::has_virtual_destructor<T>::value;
+	classInfo.mMinimumAlignment = rftl::alignment_of<T>::value;
 }
 
 
@@ -56,7 +56,7 @@ void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T 
 {
 	variableInfo = {};
 	variableInfo.mAddress = reinterpret_cast<void const*>( static_cast<T*>( variable ) );
-	variableInfo.mMutable = std::is_const<T>::value == false;
+	variableInfo.mMutable = rftl::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
 	variableInfo.mVariableTypeInfo.mValueType = Value::DetermineType<T>();
 	variableInfo.mVariableTypeInfo.mClassInfo = nullptr;
@@ -77,7 +77,7 @@ void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* var
 	//  expensive accessors instead, that can perform the needed run-time code
 	T const* const offsetIn = &( ( *kInvalidClass ).*variable );
 	variableInfo.mOffset = reinterpret_cast<ptrdiff_t>( offsetIn ) - reinterpret_cast<ptrdiff_t>( kInvalidClass );
-	variableInfo.mMutable = std::is_const<T>::value == false;
+	variableInfo.mMutable = rftl::is_const<T>::value == false;
 	variableInfo.mSize = sizeof( T );
 	variableInfo.mVariableTypeInfo.mValueType = Value::DetermineType<T>();
 	variableInfo.mVariableTypeInfo.mClassInfo = nullptr;
@@ -94,7 +94,7 @@ void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo & functionInfo, T 
 	using FT = FunctionTraits<T>;
 	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
 	{
-		std::vector<Value::Type> paramTypes;
+		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );
 		details::ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
 		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );
@@ -117,7 +117,7 @@ void CreateMemberFunctionInfo( MemberFunctionInfo & functionInfo, T function )
 	functionInfo.mRequiresConst = FT::kRequiresConst;
 	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
 	{
-		std::vector<Value::Type> paramTypes;
+		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );
 		details::ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
 		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );

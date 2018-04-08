@@ -53,7 +53,7 @@ public:
 class RFTYPE_API ExampleWithExtensionAsMember
 {
 public:
-	std::vector<uint16_t> mExampleExtensionAsMember;
+	rftl::vector<uint16_t> mExampleExtensionAsMember;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
