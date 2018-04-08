@@ -1,0 +1,29 @@
+#pragma once
+
+#define RFTL_ARRAY <array>
+#define RFTL_ATOMIC <atomic>
+#define RFTL_BITSET <bitset>
+#define RFTL_CHRONO <chrono>
+#define RFTL_CSTDARG <cstdarg>
+#define RFTL_CSTDDEF <cstddef>
+#define RFTL_CSTDINT <cstdint>
+#define RFTL_CSTDIO <cstdio>
+#define RFTL_CSTDLIB <cstdlib>
+#define RFTL_DEQUE <deque>
+#define RFTL_FILESYSTEM <filesystem>
+#define RFTL_INITIALIZER_LIST <initializer_list>
+#define RFTL_ITERATOR <iterator>
+#define RFTL_LIMITS <limits>
+#define RFTL_MEMORY <memory>
+#define RFTL_MUTEX <mutex>
+#define RFTL_RATIO <ratio>
+#define RFTL_SHARED_MUTEX <shared_mutex>
+#define RFTL_SSTREAM <sstream>
+#define RFTL_STRING <string>
+#define RFTL_THREAD <thread>
+#define RFTL_TYPE_TRAITS <type_traits>
+#define RFTL_UNORDERED_MAP <unordered_map>
+#define RFTL_UNORDERED_SET <unordered_set>
+#define RFTL_UTILITY <utility>
+#define RFTL_VARIANT <variant>
+#define RFTL_VECTOR <vector>

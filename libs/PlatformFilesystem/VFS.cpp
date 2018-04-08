@@ -86,21 +86,21 @@ bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
 
-	rftl::string absoluteSearchDirectory = rftl::experimental::filesystem::v1::absolute( "." ).generic_string();
+	rftl::string absoluteSearchDirectory = rftl::filesystem::absolute( "." ).generic_string();
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file search directory: %s", absoluteSearchDirectory.c_str() );
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file param: %s", mountTableFile.c_str() );
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
 
-	rftl::string absoluteMountTableFilename = rftl::experimental::filesystem::v1::absolute( mountTableFile ).generic_string();
-	RF_ASSERT( rftl::experimental::filesystem::v1::exists( absoluteMountTableFilename ) );
+	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
+	RF_ASSERT( rftl::filesystem::exists( absoluteMountTableFilename ) );
 	m_MountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( m_MountTableFile ).c_str() );
 
 	m_ConfigDirectory = m_MountTableFile.GetParent();
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( m_ConfigDirectory ).c_str() );
 
-	rftl::string absoluteUserDirectory = rftl::experimental::filesystem::v1::absolute( userDirectory ).generic_string();
-	RF_ASSERT( rftl::experimental::filesystem::v1::exists( absoluteUserDirectory ) );
+	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
+	RF_ASSERT( rftl::filesystem::exists( absoluteUserDirectory ) );
 	m_UserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( m_UserDirectory ).c_str() );
 
@@ -686,7 +686,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 
 		if( mustExist )
 		{
-			bool const exists = rftl::experimental::filesystem::v1::exists( finalFilename );
+			bool const exists = rftl::filesystem::exists( finalFilename );
 			if( exists == false )
 			{
 				// Not here, maybe it's in an overlapping mount point
@@ -708,7 +708,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			else
 			{
 				bool const parentExists
-					= rftl::experimental::filesystem::v1::exists(
+					= rftl::filesystem::exists(
 						CreateStringFromPath(
 							CreatePathFromString( finalFilename ).GetParent() ) );
 				if( parentExists == false )

@@ -1,2 +1,5 @@
 #pragma once
-#include <cstdarg>
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_CSTDARG
+#include "rftl/patch/postinclude.inl"
