@@ -6,8 +6,8 @@
 
 #include "core/ptr/unique_ptr.h"
 
-#include <string>
-#include <unordered_map>
+#include "rftl/string"
+#include "rftl/unordered_map"
 
 
 namespace RF { namespace gfx {
@@ -24,14 +24,14 @@ public:
 	typedef Resource ResourceType;
 	typedef ManagedResourceID ManagedResourceIDType;
 	typedef file::VFSPath Filename;
-	typedef std::string ResourceName;
+	typedef rftl::string ResourceName;
 	typedef ResourceManager<Resource, ManagedResourceID, InvalidResourceID> ResourceManagerType;
 
-	typedef std::unordered_map<ManagedResourceID, UniquePtr<Resource>> ResourcesByManagedID;
-	typedef std::unordered_map<ResourceName, ManagedResourceID> ResourceIDsByName;
-	typedef std::unordered_map<ResourceName, Filename> ResourcesByFilename;
+	typedef rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>> ResourcesByManagedID;
+	typedef rftl::unordered_map<ResourceName, ManagedResourceID> ResourceIDsByName;
+	typedef rftl::unordered_map<ResourceName, Filename> ResourcesByFilename;
 private:
-	typedef std::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
+	typedef rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
 
 
 	//
@@ -62,7 +62,7 @@ public:
 	bool ReloadExistingResource( ResourceName const& resourceName );
 	bool DestroyResource( ResourceName const& resourceName );
 
-	std::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
+	rftl::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
 	WeakPtr<Resource> DebugLockResourceForDirectModification( ManagedResourceID managedResourceID );
 
 

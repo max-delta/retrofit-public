@@ -3,7 +3,7 @@
 
 #include "core_platform/win_shim.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF { namespace platform { namespace windowing {

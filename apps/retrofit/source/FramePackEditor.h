@@ -3,7 +3,7 @@
 #include "PPU/Object.h"
 #include "PlatformFilesystem/VFSFwd.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF {

@@ -3,6 +3,8 @@
 #include "core/ptr/creation_payload.h"
 #include "core/ptr/weak_ptr.h"
 
+#include "rftl/type_traits"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,35 +37,35 @@ public:
 		//
 	}
 
-	UniquePtr(std::nullptr_t)
+	UniquePtr( rftl::nullptr_t)
 		: UniquePtr()
 	{
 		//
 	}
 
 	UniquePtr( UniquePtr && rhs )
-		: PtrBase(std::move(rhs))
+		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
 	UniquePtr( UniquePtr<DERIVED> && rhs )
-		: PtrBase(std::move(rhs.CreateTransferPayloadAndWipeSelf()))
+		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		RF_ASSERT( rhs == nullptr );
 	}
 
 	UniquePtr( CreationPayload<T> && payload )
-		: PtrBase(std::move(payload))
+		: PtrBase( rftl::move( payload ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
 	UniquePtr( CreationPayload<DERIVED> && payload )
-		: PtrBase(std::move(payload))
+		: PtrBase( rftl::move( payload ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
@@ -75,7 +77,7 @@ public:
 
 	UniquePtr & operator =(UniquePtr && rhs)
 	{
-		PtrBase::Swap( std::move(rhs) );
+		PtrBase::Swap( rftl::move(rhs) );
 		return *this;
 	}
 

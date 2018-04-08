@@ -5,7 +5,7 @@
 #include "core/meta/LazyInitSingleton.h"
 #include "core_rftype/Identifier.h"
 
-#include <memory>
+#include "rftl/memory"
 
 
 namespace RF { namespace rftype {

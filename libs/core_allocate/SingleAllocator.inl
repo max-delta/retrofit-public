@@ -2,6 +2,7 @@
 #include "SingleAllocator.h"
 
 #include "core/macros.h"
+#include "rftl/atomic"
 
 
 namespace RF {
@@ -19,14 +20,14 @@ inline SingleAllocator<T, MaxTotalSize>::SingleAllocator( ExplicitDefaultConstru
 template<typename T, size_t MaxTotalSize>
 inline typename SingleAllocator<T, MaxTotalSize>::pointer SingleAllocator<T, MaxTotalSize>::allocate( size_type count ) noexcept
 {
-	bool const hadAllocation = mHasAllocation.exchange( true, std::memory_order_acq_rel );
+	bool const hadAllocation = mHasAllocation.exchange( true, rftl::memory_order::memory_order_acq_rel );
 	if( hadAllocation )
 	{
 		return nullptr;
 	}
 	if( count != 1 )
 	{
-		mHasAllocation.store( false, std::memory_order_release );
+		mHasAllocation.store( false, rftl::memory_order::memory_order_release );
 		return nullptr;
 	}
 	return reinterpret_cast<pointer>( &mStorageBytes[0] );
@@ -49,7 +50,7 @@ inline void SingleAllocator<T, MaxTotalSize>::deallocate( pointer ptr, size_type
 	RF_ASSERT( ptr == reinterpret_cast<pointer>( &mStorageBytes[0] ) );
 	RF_ASSERT( count == 1 );
 
-	bool const hadAllocation = mHasAllocation.exchange( false, std::memory_order_acq_rel );
+	bool const hadAllocation = mHasAllocation.exchange( false, rftl::memory_order::memory_order_acq_rel );
 	if( hadAllocation == false )
 	{
 		RF_DBGFAIL();
@@ -97,8 +98,8 @@ namespace std {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T, size_t MaxTotalSize>
-inline typename std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
-std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type & alloc, size_type count )
+inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
+rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type & alloc, size_type count )
 {
 	return alloc.allocate( count );
 }
@@ -106,7 +107,7 @@ std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator
 
 
 template<typename T, size_t MaxTotalSize>
-inline typename std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
+inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
 allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type & alloc, size_type count, const_void_pointer hint )
 {
 	return alloc.allocate( count, hint );
@@ -141,7 +142,7 @@ inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::destroy( all
 
 
 template<typename T, size_t MaxTotalSize>
-inline typename std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::size_type
+inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::size_type
 allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::max_size( allocator_type const & alloc )
 {
 	return alloc.max_size();
@@ -150,7 +151,7 @@ allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::max_size( allocator_type
 
 
 template<typename T, size_t MaxTotalSize>
-inline typename std::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocator_type
+inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocator_type
 allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::select_on_container_copy_construction( allocator_type const & alloc )
 {
 	return alloc.select_on_container_copy_construction();

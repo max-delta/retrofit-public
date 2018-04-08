@@ -162,7 +162,7 @@ struct Compressor
 
 	// Store bits as big-endian, writing from right-to-left
 	template<typename AccessType,
-		typename std::enable_if<std::is_integral<AccessType>::value, int>::type = 0>
+		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static void CompressImpl( AccessType const& source, void* destination )
 	{
 		#if defined(RF_PLATFORM_LITTLE_ENDIAN)
@@ -238,7 +238,7 @@ struct Compressor
 		}
 	}
 	template<typename AccessType,
-		typename std::enable_if<std::is_integral<AccessType>::value, int>::type = 0>
+		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static AccessType DecompressImpl( void const* source )
 	{
 		static_assert( false, "TODO" );

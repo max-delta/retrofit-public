@@ -1,0 +1,12 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/initializer_list"
+#include <unordered_map>
+
+// Namespace wrapping
+namespace rftl {
+using std::unordered_map;
+using std::unordered_multimap;
+
+using std::swap;
+}

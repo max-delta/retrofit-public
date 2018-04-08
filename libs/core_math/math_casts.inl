@@ -3,7 +3,7 @@
 
 #include "core/macros.h"
 
-#include <limits>
+#include "rftl/limits"
 
 
 namespace RF {
@@ -13,7 +13,7 @@ namespace math {
 template<typename DST, typename SRC>
 DST integer_cast( SRC const src )
 {
-	static_assert( std::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
 	DST retVal = integer_truncast<DST>( src );
 	RF_ASSERT( retVal == static_cast<DST>( src ) );
 	return retVal;
@@ -24,17 +24,17 @@ DST integer_cast( SRC const src )
 template<typename DST, typename SRC>
 DST integer_truncast( SRC const src )
 {
-	using std::numeric_limits;
+	using rftl::numeric_limits;
 
-	static_assert( std::is_integral<DST>::value, "integral_truncast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_truncast only valid on integeral types" );
 
 	constexpr DST maxDest = numeric_limits<DST>::max();
 	constexpr DST lowestDest = numeric_limits<DST>::lowest();
 	constexpr SRC lowestSrc = numeric_limits<SRC>::lowest();
 	constexpr bool couldOverflow = numeric_limits<SRC>::max() > maxDest;
 	RF_ACK_CONSTEXPR_SIGN_MISMATCH; // TODO: Templatize
-	constexpr bool couldUnderflow = std::is_signed<SRC>::value ? lowestSrc < lowestDest : false;
-	constexpr bool couldDropSign = std::is_signed<SRC>::value == true && std::is_signed<DST>::value == false;
+	constexpr bool couldUnderflow = rftl::is_signed<SRC>::value ? lowestSrc < lowestDest : false;
+	constexpr bool couldDropSign = rftl::is_signed<SRC>::value == true && rftl::is_signed<DST>::value == false;
 
 	if( couldOverflow )
 	{
@@ -55,7 +55,7 @@ DST integer_truncast( SRC const src )
 			return lowestDest;
 	}
 
-	if( std::is_floating_point<SRC>::value )
+	if( rftl::is_floating_point<SRC>::value )
 	{
 		return static_cast<DST>( roundf( static_cast<float>( src ) ) );
 	}
@@ -103,7 +103,7 @@ constexpr uint64_t integer_unsigned_cast( uint64_t const src )
 
 
 template<typename DST, typename SRC,
-	typename std::enable_if<std::is_integral<DST>::value, int>::type>
+	typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
 	return integer_cast<DST>( src );
@@ -112,7 +112,7 @@ DST real_cast( SRC const src )
 
 
 template<typename DST, typename SRC,
-	typename std::enable_if<std::is_floating_point<DST>::value, int>::type>
+	typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
 	return static_cast<DST>( src );

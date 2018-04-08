@@ -31,7 +31,7 @@ HashVal64 NullTerminatedStringHash::operator()( char const * const buffer ) cons
 
 ///////////////////////////////////////////////////////////////////////////////
 
-HashVal64 StableHashBytes( std::nullptr_t, size_t )
+HashVal64 StableHashBytes( rftl::nullptr_t, size_t )
 {
 	// Reduced from non-null case
 	constexpr HashVal64 kFNV_offset_basis = 14695981039346656037ull;

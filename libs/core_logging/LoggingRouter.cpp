@@ -3,7 +3,7 @@
 #include "LoggingRouter.h"
 
 #include "core_math/math_bits.h"
-#include <cstdarg>
+#include "rftl/cstdarg"
 
 
 namespace RF { namespace logging {

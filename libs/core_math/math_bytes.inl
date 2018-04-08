@@ -1,7 +1,7 @@
 #pragma once
 #include "math_bytes.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF { namespace math {

@@ -35,8 +35,8 @@ public:
 	}
 
 	CreationPayload( CreationPayload && rhs )
-		: m_Target(std::move(rhs.m_Target))
-		, m_Ref(std::move(rhs.m_Ref))
+		: m_Target( rftl::move( rhs.m_Target ) )
+		, m_Ref( rftl::move( rhs.m_Ref ) )
 	{
 		rhs.Clean();
 	}

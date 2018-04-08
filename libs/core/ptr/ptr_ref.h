@@ -1,7 +1,7 @@
 #pragma once
 #include "core/macros.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF {

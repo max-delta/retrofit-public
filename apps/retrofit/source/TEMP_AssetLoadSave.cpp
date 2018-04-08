@@ -31,7 +31,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	UniquePtr<gfx::FramePackBase> retVal;
 
 	{
-		std::wstring fileBuf;
+		rftl::wstring fileBuf;
 		{
 			file::FileHandlePtr const digitFPackFilePtr = g_Vfs->GetFileForRead( filename );
 			RF_ASSERT( digitFPackFilePtr != nullptr );
@@ -58,7 +58,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	}
 
 	elem = vm.GetGlobalVariable( L"NumTimeSlots" );
-	integer = std::get_if<script::SquirrelVM::Integer>( &elem );
+	integer = rftl::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
 	size_t const minFramesToCreate = math::Max<size_t>( minFrames, math::integer_cast<size_t>( *integer ) );
 	if( minFramesToCreate <= gfx::FramePack_256::k_MaxTimeSlots )
@@ -84,7 +84,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	retVal->m_NumTimeSlots = math::integer_cast<uint8_t>( *integer );
 
 	elem = vm.GetGlobalVariable( L"PreferredSlowdownRate" );
-	integer = std::get_if<script::SquirrelVM::Integer>( &elem );
+	integer = rftl::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
 	retVal->m_PreferredSlowdownRate = math::integer_cast<uint8_t>( *integer );
 
@@ -92,9 +92,9 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
-		std::wstring const* wstring = std::get_if<script::SquirrelVM::String>( &elemRef );
+		rftl::wstring const* wstring = rftl::get_if<script::SquirrelVM::String>( &elemRef );
 		RF_ASSERT( wstring != nullptr );
-		std::string string;
+		rftl::string string;
 		for( wchar_t const& wch : *wstring )
 		{
 			string.push_back( math::integer_cast<char>( wch ) );
@@ -109,7 +109,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
-		integer = std::get_if<script::SquirrelVM::Integer>( &elemRef );
+		integer = rftl::get_if<script::SquirrelVM::Integer>( &elemRef );
 		RF_ASSERT( integer != nullptr );
 		retVal->GetMutableTimeSlots()[i].m_TextureOriginX = math::integer_cast<uint8_t>( *integer );
 	}
@@ -118,7 +118,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
-		integer = std::get_if<script::SquirrelVM::Integer>( &elemRef );
+		integer = rftl::get_if<script::SquirrelVM::Integer>( &elemRef );
 		RF_ASSERT( integer != nullptr );
 		retVal->GetMutableTimeSlots()[i].m_TextureOriginY = math::integer_cast<uint8_t>( *integer );
 	}
@@ -127,7 +127,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
-		integer = std::get_if<script::SquirrelVM::Integer>( &elemRef );
+		integer = rftl::get_if<script::SquirrelVM::Integer>( &elemRef );
 		RF_ASSERT( integer != nullptr );
 		retVal->GetMutableTimeSlotSustains()[i] = math::integer_cast<uint8_t>( *integer );
 	}

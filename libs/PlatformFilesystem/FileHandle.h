@@ -3,7 +3,7 @@
 
 #include "core/macros.h"
 
-#include <stdio.h>
+#include "rftl/cstdio"
 
 
 namespace RF { namespace file {

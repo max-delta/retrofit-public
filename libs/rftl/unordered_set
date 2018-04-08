@@ -1,0 +1,12 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/initializer_list"
+#include <unordered_set>
+
+// Namespace wrapping
+namespace rftl {
+using std::unordered_set;
+using std::unordered_multiset;
+
+using std::swap;
+}

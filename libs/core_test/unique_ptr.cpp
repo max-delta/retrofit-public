@@ -3,6 +3,8 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/entwined_creator.h"
 
+#include "rftl/cstdlib"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +54,7 @@ TEST(UniquePtr, SoloLifecycle)
 	{
 		auto creation = EntwinedCreator<int>::Create(47);
 		{
-			UniquePtr<int> uptr = std::move(creation);
+			UniquePtr<int> uptr = rftl::move(creation);
 			ASSERT_TRUE(uptr != nullptr);
 			ASSERT_TRUE(*uptr == 47);
 			*uptr = 53;
@@ -110,7 +112,7 @@ TEST(UniquePtr, Move)
 			UniquePtr<int> uptr1 = EntwinedCreator<int>::Create(47);
 			ASSERT_TRUE(uptr1 != nullptr);
 			ASSERT_TRUE(*uptr1 == 47);
-			uptr2 = std::move(uptr1);
+			uptr2 = rftl::move(uptr1);
 			ASSERT_TRUE(uptr1 == nullptr);
 			ASSERT_TRUE(uptr2 != nullptr);
 			ASSERT_TRUE(*uptr2 == 47);
@@ -138,7 +140,7 @@ TEST( UniquePtr, MoveDerived )
 	{
 		UniquePtr<Derived> uptr1 = EntwinedCreator<Derived>::Create();
 		ASSERT_TRUE(uptr1 != nullptr);
-		UniquePtr<Base> uptr2( std::move( uptr1 ) );
+		UniquePtr<Base> uptr2( rftl::move( uptr1 ) );
 		ASSERT_TRUE(uptr1 == nullptr);
 		ASSERT_TRUE(uptr2 != nullptr);
 	}
@@ -154,10 +156,10 @@ TEST( UniquePtr, MoveIntoTrash )
 		ASSERT_NE( alloc, nullptr );
 		if( alloc == nullptr )
 		{
-			std::abort();
+			rftl::abort();
 		}
 		memset( alloc, 0xcc, sizeof( UniquePtr<int> ) );
-		UniquePtr<int>* newAlloc = new (alloc) UniquePtr<int>( std::move( uptr1 ) );
+		UniquePtr<int>* newAlloc = new (alloc) UniquePtr<int>( rftl::move( uptr1 ) );
 		newAlloc->~UniquePtr();
 		free( alloc );
 	}
@@ -215,15 +217,15 @@ TEST(UniquePtr, CastToBase)
 	//xptr_u = xptr_u;
 
 	// Unique->Shared
-	uptr_b = std::move(uptr_b);
-	uptr_b = std::move(uptr_d);
-	//uptr_b = std::move(uptr_u); // SHOULD FAIL
-	//uptr_d = std::move(uptr_b); // SHOULD FAIL
-	uptr_d = std::move(uptr_d);
-	//uptr_d = std::move(uptr_u); // SHOULD FAIL
-	//uptr_u = std::move(uptr_b); // SHOULD FAIL
-	//uptr_u = std::move(uptr_d); // SHOULD FAIL
-	uptr_u = std::move(uptr_u);
+	uptr_b = rftl::move(uptr_b);
+	uptr_b = rftl::move(uptr_d);
+	//uptr_b = rftl::move(uptr_u); // SHOULD FAIL
+	//uptr_d = rftl::move(uptr_b); // SHOULD FAIL
+	uptr_d = rftl::move(uptr_d);
+	//uptr_d = rftl::move(uptr_u); // SHOULD FAIL
+	//uptr_u = rftl::move(uptr_b); // SHOULD FAIL
+	//uptr_u = rftl::move(uptr_d); // SHOULD FAIL
+	uptr_u = rftl::move(uptr_u);
 
 	// Unique->Weak:
 	wptr_b = uptr_b;

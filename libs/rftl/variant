@@ -1,0 +1,24 @@
+#pragma once
+#include "rftl/utility"
+#include <variant>
+
+// Namespace wrapping
+namespace rftl {
+using std::variant;
+using std::monostate;
+using std::bad_variant_access;
+using std::variant_size;
+using std::variant_size_v;
+using std::variant_alternative;
+using std::variant_alternative_t;
+
+using std::variant_npos;
+
+using std::visit;
+using std::holds_alternative;
+using std::get;
+using std::get_if;
+
+using std::swap;
+using std::hash;
+}

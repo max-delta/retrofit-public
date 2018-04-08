@@ -1,7 +1,7 @@
 #pragma once
 #include "core_input/InputComponent.h"
 
-#include <string>
+#include "rftl/string"
 
 
 namespace RF { namespace input {
@@ -27,7 +27,7 @@ public:
 
 	virtual SignalIndex GetMaxSignalIndex() const = 0;
 
-	virtual std::u16string GetSignalName( SignalIndex signalIndex ) const = 0;
+	virtual rftl::u16string GetSignalName( SignalIndex signalIndex ) const = 0;
 
 	virtual SignalValue GetCurrentSignalValue( SignalIndex signalIndex ) const = 0;
 	virtual SignalValue GetPreviousSignalValue( SignalIndex signalIndex ) const = 0;

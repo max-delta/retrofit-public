@@ -3,7 +3,8 @@
 
 #include "Timing/clocks.h"
 
-#include <iterator>
+#include "rftl/iterator"
+#include "rftl/string"
 
 
 namespace RF { namespace input {
@@ -30,7 +31,7 @@ struct BufferCopyEventParser : public EventParser<EventType>
 		m_Inserter = event;
 	}
 
-	std::back_insert_iterator<Container> m_Inserter;
+	rftl::back_insert_iterator<Container> m_Inserter;
 };
 
 
@@ -58,7 +59,7 @@ public:
 	virtual PhysicalCode GetMaxPhysicalCode() const = 0;
 	virtual LogicalCode GetMaxLogicalCode() const = 0;
 
-	virtual std::u16string GetLogicalName( LogicalCode code ) const = 0;
+	virtual rftl::u16string GetLogicalName( LogicalCode code ) const = 0;
 
 	virtual PinState GetCurrentPhysicalState( PhysicalCode code ) const = 0;
 	virtual PinState GetPreviousPhysicalState( PhysicalCode code ) const = 0;

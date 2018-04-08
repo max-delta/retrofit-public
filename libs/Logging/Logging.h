@@ -6,9 +6,10 @@
 
 #include "core_logging/LoggingHandler.h"
 
-#include <cstdarg>
-#include <stddef.h>
-#include <array>
+#include "rftl/cstdarg"
+#include "rftl/cstddef"
+#include "rftl/array"
+#include "rftl/cstdlib"
 
 
 // Forwards
@@ -39,7 +40,7 @@ namespace details {
 	do \
 	{ \
 		___RFLOG_IMPL( CONTEXT, CATEGORY, SEVERITY, __VA_ARGS__ ); \
-		std::abort(); \
+		rftl::abort(); \
 	} while( false )
 
 #define ___RFLOG_TEST_IMPL(TEST, ACTION) \
@@ -118,7 +119,7 @@ namespace details {
 // When specializing contexts, there is a limit to how large you can make the
 //  string representation
 static constexpr size_t kMaxContextLen = 512;
-using LogContextBuffer = std::array<char, kMaxContextLen>;
+using LogContextBuffer = rftl::array<char, kMaxContextLen>;
 
 // Specialize this to add support for your context
 // EXAMPLE:

@@ -8,9 +8,9 @@
 #include "core/ptr/entwined_creator.h"
 #include "core_math/math_casts.h"
 
-#include <stdio.h>
-#include <sstream>
-#include <experimental/filesystem>
+#include "rftl/cstdio"
+#include "rftl/sstream"
+#include "rftl/filesystem"
 
 
 namespace RF { namespace file {
@@ -36,7 +36,7 @@ VFS* VFS::HACK_GetInstance()
 }
 void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
 {
-	HACK_Instance = std::move( instance );
+	HACK_Instance = rftl::move( instance );
 }
 
 
@@ -81,31 +81,31 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
 
 
 
-bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string const & userDirectory )
+bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string const & userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
 
-	std::string absoluteSearchDirectory = std::experimental::filesystem::v1::absolute( "." ).generic_string();
+	rftl::string absoluteSearchDirectory = rftl::experimental::filesystem::v1::absolute( "." ).generic_string();
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file search directory: %s", absoluteSearchDirectory.c_str() );
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file param: %s", mountTableFile.c_str() );
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
 
-	std::string absoluteMountTableFilename = std::experimental::filesystem::v1::absolute( mountTableFile ).generic_string();
-	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteMountTableFilename ) );
+	rftl::string absoluteMountTableFilename = rftl::experimental::filesystem::v1::absolute( mountTableFile ).generic_string();
+	RF_ASSERT( rftl::experimental::filesystem::v1::exists( absoluteMountTableFilename ) );
 	m_MountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( m_MountTableFile ).c_str() );
 
 	m_ConfigDirectory = m_MountTableFile.GetParent();
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( m_ConfigDirectory ).c_str() );
 
-	std::string absoluteUserDirectory = std::experimental::filesystem::v1::absolute( userDirectory ).generic_string();
-	RF_ASSERT( std::experimental::filesystem::v1::exists( absoluteUserDirectory ) );
+	rftl::string absoluteUserDirectory = rftl::experimental::filesystem::v1::absolute( userDirectory ).generic_string();
+	RF_ASSERT( rftl::experimental::filesystem::v1::exists( absoluteUserDirectory ) );
 	m_UserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( m_UserDirectory ).c_str() );
 
 	FILE* file;
-	std::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
+	rftl::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
 	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 || file == nullptr )
 	{
@@ -113,8 +113,8 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 		return false;
 	}
 
-	std::string tokenBuilder;
-	std::vector<std::string> tokenStream;
+	rftl::string tokenBuilder;
+	rftl::vector<rftl::string> tokenStream;
 	enum class ReadMode : uint8_t
 	{
 		k_HuntingForToken,
@@ -221,7 +221,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 				if( previousToken == VFSMountTableTokens::k_MountTokenAffix[0] )
 				{
 					// Termination! Save off the token
-					tokenStream.emplace_back( std::move( tokenBuilder ) );
+					tokenStream.emplace_back( rftl::move( tokenBuilder ) );
 					RF_ASSERT( tokenBuilder.empty() );
 
 					RF_ASSERT( tokenBuilder.size() <= VFSMountTableTokens::k_NumColumns );
@@ -243,7 +243,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 						}
 						tokenStream.clear();
 
-						m_MountTable.emplace_back( std::move( mountRule ) );
+						m_MountTable.emplace_back( rftl::move( mountRule ) );
 					}
 
 					// Keep collectiong tokens
@@ -284,7 +284,7 @@ bool VFS::AttemptInitialMount( std::string const & mountTableFile, std::string c
 
 
 
-VFSPath VFS::AttemptMapToVFS( std::string const & physicalPath, VFSMount::Permissions desiredPermissions ) const
+VFSPath VFS::AttemptMapToVFS( rftl::string const & physicalPath, VFSMount::Permissions desiredPermissions ) const
 {
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
 
@@ -390,7 +390,7 @@ void VFS::DebugDumpMountTable() const
 
 
 
-VFSPath VFS::CreatePathFromString( std::string const & path )
+VFSPath VFS::CreatePathFromString( rftl::string const & path )
 {
 	VFSPath retVal;
 
@@ -418,9 +418,9 @@ VFSPath VFS::CreatePathFromString( std::string const & path )
 
 
 
-std::string VFS::CreateStringFromPath( VFSPath const & path )
+rftl::string VFS::CreateStringFromPath( VFSPath const & path )
 {
-	std::stringstream ss;
+	rftl::stringstream ss;
 
 	size_t const numElements = path.NumElements();
 	for( size_t i = 0; i < numElements; i++ )
@@ -473,7 +473,7 @@ VFSPath VFS::CollapsePath( VFSPath const & path )
 
 
 
-VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & permissions, std::string const & virtualPoint, std::string const & realPoint )
+VFSMount VFS::ProcessMountRule( rftl::string const & type, rftl::string const & permissions, rftl::string const & virtualPoint, rftl::string const & realPoint )
 {
 	constexpr size_t prefixLen = sizeof( VFSMountTableTokens::k_MountTokenAffix );
 	constexpr size_t affixesLen = sizeof( VFSMountTableTokens::k_MountTokenAffix ) * 2;
@@ -486,7 +486,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	retVal.m_Permissions = VFSMount::Permissions::Invalid;
 
 	// Type
-	std::string typeVal = type.substr( prefixLen, type.size() - affixesLen );
+	rftl::string typeVal = type.substr( prefixLen, type.size() - affixesLen );
 	if( typeVal == VFSMountTableTokens::k_MountTokenAbsolute )
 	{
 		retVal.m_Type = VFSMount::Type::Absolute;
@@ -507,7 +507,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 
 	// Permissions
-	std::string permissionsVal = permissions.substr( prefixLen, permissions.size() - affixesLen );
+	rftl::string permissionsVal = permissions.substr( prefixLen, permissions.size() - affixesLen );
 	if( permissionsVal == VFSMountTableTokens::k_MountTokenReadOnly )
 	{
 		retVal.m_Permissions = VFSMount::Permissions::ReadOnly;
@@ -529,7 +529,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 
 	// Virtual
-	std::string virtualVal = virtualPoint.substr( prefixLen, virtualPoint.size() - affixesLen );
+	rftl::string virtualVal = virtualPoint.substr( prefixLen, virtualPoint.size() - affixesLen );
 	retVal.m_VirtualPath = k_Root.GetChild( CreatePathFromString( virtualVal ) );
 	size_t const numVirtualElements = retVal.m_VirtualPath.NumElements();
 	for( size_t i = 0; i < numVirtualElements; i++ )
@@ -563,7 +563,7 @@ VFSMount VFS::ProcessMountRule( std::string const & type, std::string const & pe
 	}
 
 	// Real
-	std::string realVal = realPoint.substr( prefixLen, realPoint.size() - affixesLen );
+	rftl::string realVal = realPoint.substr( prefixLen, realPoint.size() - affixesLen );
 	retVal.m_RealMount = CreatePathFromString( realVal );
 	bool hasEncounteredDescendToken = false;
 	size_t const numRealElements = retVal.m_RealMount.NumElements();
@@ -649,7 +649,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 		}
 
 		// Where is this actually going to end up?
-		std::string finalFilename;
+		rftl::string finalFilename;
 		{
 			VFSPath physTarget = k_Invalid;
 
@@ -686,7 +686,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 
 		if( mustExist )
 		{
-			bool const exists = std::experimental::filesystem::v1::exists( finalFilename );
+			bool const exists = rftl::experimental::filesystem::v1::exists( finalFilename );
 			if( exists == false )
 			{
 				// Not here, maybe it's in an overlapping mount point
@@ -708,7 +708,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			else
 			{
 				bool const parentExists
-					= std::experimental::filesystem::v1::exists(
+					= rftl::experimental::filesystem::v1::exists(
 						CreateStringFromPath(
 							CreatePathFromString( finalFilename ).GetParent() ) );
 				if( parentExists == false )

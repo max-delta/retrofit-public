@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <vector>
+
+// Namespace wrapping
+namespace rftl {
+using std::vector;
+using std::hash;
+using std::swap;
+}

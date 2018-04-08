@@ -87,10 +87,10 @@ WndProcDigitalInputComponent::LogicalCode WndProcDigitalInputComponent::GetMaxLo
 
 
 
-std::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code ) const
+rftl::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
-	return std::u16string();
+	return rftl::u16string();
 }
 
 
@@ -346,7 +346,7 @@ void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, PinState state 
 
 void WndProcAnalogInputComponent::OnTick()
 {
-	static_assert( std::is_array<SignalValues>::value, "Type changed, re-evalute memcpy safety" );
+	static_assert( rftl::is_array<SignalValues>::value, "Type changed, re-evalute memcpy safety" );
 	memcpy( m_PreviousSignalValues, m_CurrentSignalValues, sizeof(SignalValues) );
 }
 
@@ -359,10 +359,10 @@ WndProcAnalogInputComponent::SignalIndex WndProcAnalogInputComponent::GetMaxSign
 
 
 
-std::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIndex ) const
+rftl::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIndex ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
-	return std::u16string();
+	return rftl::u16string();
 }
 
 
@@ -452,7 +452,7 @@ void WndProcTextInputComponent::OnTick()
 
 
 
-void WndProcTextInputComponent::GetTextStream( std::u16string & text, size_t maxLen ) const
+void WndProcTextInputComponent::GetTextStream( rftl::u16string & text, size_t maxLen ) const
 {
 	text.clear();
 	text.reserve( maxLen );

@@ -3,6 +3,8 @@
 #include "core/ptr/shared_ptr.h"
 #include "core/ptr/entwined_creator.h"
 
+#include "rftl/cstdlib"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,11 +54,11 @@ TEST(SharedPtr, SoloLifecycle)
 	{
 		auto creation = EntwinedCreator<int>::Create(47);
 		{
-			SharedPtr<int> sptr = std::move(creation);
-			ASSERT_TRUE(sptr != nullptr);
-			ASSERT_TRUE(*sptr == 47);
+			SharedPtr<int> sptr = rftl::move( creation );
+			ASSERT_TRUE( sptr != nullptr );
+			ASSERT_TRUE( *sptr == 47 );
 			*sptr = 53;
-			ASSERT_TRUE(*sptr == 53);
+			ASSERT_TRUE( *sptr == 53 );
 		}
 	}
 
@@ -107,13 +109,13 @@ TEST(SharedPtr, Move)
 		SharedPtr<int> sptr2;
 		ASSERT_TRUE(sptr2 == nullptr);
 		{
-			SharedPtr<int> sptr1 = EntwinedCreator<int>::Create(47);
-			ASSERT_TRUE(sptr1 != nullptr);
-			ASSERT_TRUE(*sptr1 == 47);
-			sptr2 = std::move(sptr1);
-			ASSERT_TRUE(sptr1 == nullptr);
-			ASSERT_TRUE(sptr2 != nullptr);
-			ASSERT_TRUE(*sptr2 == 47);
+			SharedPtr<int> sptr1 = EntwinedCreator<int>::Create( 47 );
+			ASSERT_TRUE( sptr1 != nullptr );
+			ASSERT_TRUE( *sptr1 == 47 );
+			sptr2 = rftl::move( sptr1 );
+			ASSERT_TRUE( sptr1 == nullptr );
+			ASSERT_TRUE( sptr2 != nullptr );
+			ASSERT_TRUE( *sptr2 == 47 );
 		}
 		ASSERT_TRUE(sptr2 != nullptr);
 		ASSERT_TRUE(*sptr2 == 47);
@@ -138,7 +140,7 @@ TEST( SharedPtr, MoveDerived )
 	{
 		SharedPtr<Derived> sptr1 = EntwinedCreator<Derived>::Create();
 		ASSERT_TRUE(sptr1 != nullptr);
-		SharedPtr<Base> sptr2( std::move( sptr1 ) );
+		SharedPtr<Base> sptr2( rftl::move( sptr1 ) );
 		ASSERT_TRUE(sptr1 == nullptr);
 		ASSERT_TRUE(sptr2 != nullptr);
 	}
@@ -154,10 +156,10 @@ TEST( SharedPtr, MoveIntoTrash )
 		ASSERT_NE( alloc, nullptr );
 		if( alloc == nullptr )
 		{
-			std::abort();
+			rftl::abort();
 		}
 		memset( alloc, 0xcc, sizeof( SharedPtr<int> ) );
-		SharedPtr<int>* newAlloc = new (alloc) SharedPtr<int>( std::move( sptr1 ) );
+		SharedPtr<int>* newAlloc = new (alloc) SharedPtr<int>( rftl::move( sptr1 ) );
 		newAlloc->~SharedPtr();
 		free( alloc );
 	}

@@ -1,8 +1,9 @@
 #pragma once
 #include "project.h"
 
-#include <string>
-#include <vector>
+#include "rftl/string"
+#include "rftl/vector"
+#include "rftl/type_traits"
 
 
 namespace RF { namespace file {
@@ -19,11 +20,11 @@ private:
 	//
 	// Types
 public:
-	typedef std::string Element;
-	typedef std::vector<Element>::const_iterator const_iterator;
+	typedef rftl::string Element;
+	typedef rftl::vector<Element>::const_iterator const_iterator;
 private:
-	typedef std::vector<Element> ElementList;
-	static_assert( std::is_same<ElementList::const_iterator, const_iterator>::value, "Public type differs" );
+	typedef rftl::vector<Element> ElementList;
+	static_assert( rftl::is_same<ElementList::const_iterator, const_iterator>::value, "Public type differs" );
 
 
 	//

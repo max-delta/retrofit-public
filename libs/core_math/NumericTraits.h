@@ -26,25 +26,25 @@ struct NumericTraits
 
 
 private:
-	template<typename TYPE, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericEmpty ) == false, int>::type = 0>
+	template<typename TYPE, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericEmpty ) == false, int>::type = 0>
 	static constexpr T EmptyImpl()
 	{
 		return T{};
 	}
 
-	template<typename TYPE, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericEmpty ), int>::type = 0>
+	template<typename TYPE, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericEmpty ), int>::type = 0>
 	static constexpr T EmptyImpl()
 	{
 		return T::NumericEmpty();
 	}
 
-	template<typename TYPE, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericIdentity ) == false, int>::type = 0>
+	template<typename TYPE, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericIdentity ) == false, int>::type = 0>
 	static constexpr T IdentityImpl()
 	{
 		return static_cast<T>( 1 );
 	}
 
-	template<typename TYPE, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericIdentity ), int>::type = 0>
+	template<typename TYPE, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TYPE, NumericIdentity ), int>::type = 0>
 	static constexpr T IdentityImpl()
 	{
 		return T::NumericIdentity();
