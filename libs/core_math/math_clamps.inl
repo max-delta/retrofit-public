@@ -3,6 +3,8 @@
 
 #include "core/macros.h"
 
+#include "rftl/type_traits"
+
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,7 +38,7 @@ template<typename TYPE>
 constexpr TYPE SnapNearest( TYPE const& value, TYPE const& step )
 {
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
-	static_assert( std::is_integral<TYPE>::value, "TODO: Floating-point support" );
+	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
 	RF_ASSERT( step > 0 );
 	TYPE const mod = value % step;
@@ -75,7 +77,7 @@ template<typename TYPE>
 constexpr TYPE SnapHighest( TYPE const & value, TYPE const & step )
 {
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
-	static_assert( std::is_integral<TYPE>::value, "TODO: Floating-point support" );
+	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
 	RF_ASSERT( step > 0 );
 	TYPE const mod = value % step;
@@ -94,7 +96,7 @@ template<typename TYPE>
 constexpr TYPE SnapLowest( TYPE const & value, TYPE const & step )
 {
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
-	static_assert( std::is_integral<TYPE>::value, "TODO: Floating-point support" );
+	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
 	RF_ASSERT( step > 0 );
 	TYPE const mod = value % step;

@@ -29,9 +29,9 @@ InputDevice::InputDevice(
 	UniquePtr<DigitalInputComponent>&& digital,
 	UniquePtr<AnalogInputComponent>&& analog,
 	UniquePtr<TextInputComponent>&& text )
-	: m_DigitalComponent( std::move( digital ) )
-	, m_AnalogComponent( std::move( analog ) )
-	, m_TextComponent( std::move( text ) )
+	: m_DigitalComponent( rftl::move( digital ) )
+	, m_AnalogComponent( rftl::move( analog ) )
+	, m_TextComponent( rftl::move( text ) )
 {
 	//
 }

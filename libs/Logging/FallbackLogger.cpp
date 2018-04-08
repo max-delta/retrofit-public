@@ -12,11 +12,11 @@ void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list
 {
 	constexpr size_t kBufSize = 512;
 
-	std::array<char, kBufSize> messageBuffer;
+	rftl::array<char, kBufSize> messageBuffer;
 	vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
-	std::array<char, kBufSize> outputBuffer;
+	rftl::array<char, kBufSize> outputBuffer;
 	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s]%s\n", event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 

@@ -162,7 +162,7 @@ RFTYPE_CREATE_META( RF::reflect::details::ClassWithStaticClassInfo )
 	RFTYPE_META().RawProperty( "static_d", &ClassWithStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &ClassWithStaticClassInfo::instance_d );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), ClassWithStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), ClassWithStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::ClassWithoutStaticClassInfo )
@@ -173,7 +173,7 @@ RFTYPE_CREATE_META( RF::reflect::details::ClassWithoutStaticClassInfo )
 	RFTYPE_META().RawProperty( "static_d", &ClassWithoutStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &ClassWithoutStaticClassInfo::instance_d );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), ClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), ClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::NonVirtualBaseClassWithoutStaticClassInfo )
@@ -184,7 +184,7 @@ RFTYPE_CREATE_META( RF::reflect::details::NonVirtualBaseClassWithoutStaticClassI
 	RFTYPE_META().RawProperty( "static_d", &NonVirtualBaseClassWithoutStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &NonVirtualBaseClassWithoutStaticClassInfo::instance_d );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), NonVirtualBaseClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), NonVirtualBaseClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::NonVirtualDerivedClassWithoutStaticClassInfo )
@@ -193,7 +193,7 @@ RFTYPE_CREATE_META( RF::reflect::details::NonVirtualDerivedClassWithoutStaticCla
 	RFTYPE_META().BaseClass<NonVirtualBaseClassWithoutStaticClassInfo>();
 	RFTYPE_META().RawProperty( "instance_f", &NonVirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), NonVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), NonVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::VirtualBaseClassWithoutStaticClassInfo )
@@ -204,7 +204,7 @@ RFTYPE_CREATE_META( RF::reflect::details::VirtualBaseClassWithoutStaticClassInfo
 	RFTYPE_META().RawProperty( "static_d", &VirtualBaseClassWithoutStaticClassInfo::static_d );
 	RFTYPE_META().RawProperty( "instance_d", &VirtualBaseClassWithoutStaticClassInfo::instance_d );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), VirtualBaseClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), VirtualBaseClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::VirtualDerivedClassWithoutStaticClassInfo )
@@ -213,7 +213,7 @@ RFTYPE_CREATE_META( RF::reflect::details::VirtualDerivedClassWithoutStaticClassI
 	RFTYPE_META().BaseClass<VirtualBaseClassWithoutStaticClassInfo>();
 	RFTYPE_META().RawProperty( "instance_f", &VirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), VirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), VirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::MissingVirtualDerivedClassWithoutStaticClassInfo )
@@ -222,7 +222,7 @@ RFTYPE_CREATE_META( RF::reflect::details::MissingVirtualDerivedClassWithoutStati
 	RFTYPE_META().BaseClass<VirtualBaseClassWithoutStaticClassInfo>();
 	RFTYPE_META().RawProperty( "instance_f", &MissingVirtualDerivedClassWithoutStaticClassInfo::instance_f );
 
-	static_assert( std::is_same<RFTYPE_METATYPE(), MissingVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
+	static_assert( rftl::is_same<RFTYPE_METATYPE(), MissingVirtualDerivedClassWithoutStaticClassInfo>::value, "Unexpected type" );
 }
 
 RFTYPE_CREATE_META( RF::reflect::details::diamond::DiamondTop )

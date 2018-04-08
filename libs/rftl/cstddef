@@ -1,0 +1,12 @@
+#pragma once
+#include "rftl/utility"
+#include <cstddef>
+
+// Namespace wrapping
+namespace rftl {
+using std::size_t;
+using std::ptrdiff_t;
+using std::nullptr_t;
+using std::max_align_t;
+using std::byte;
+}

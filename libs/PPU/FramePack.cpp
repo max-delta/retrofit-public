@@ -125,7 +125,7 @@ uint8_t FramePackBase::CalculateTimeIndexBoundary() const
 		accumulator += timeSlotSustain;
 	}
 
-	RF_ASSERT_MSG( accumulator < std::numeric_limits<uint8_t>::max(), "Animation length exceeds max time value" );
+	RF_ASSERT_MSG( accumulator < rftl::numeric_limits<uint8_t>::max(), "Animation length exceeds max time value" );
 	return math::integer_cast<uint8_t>( accumulator );
 }
 

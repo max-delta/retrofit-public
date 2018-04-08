@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core_reflect/Value.h"
-#include <vector>
-#include <deque>
+#include "rftl/vector"
+#include "rftl/deque"
 
 
 namespace RF { namespace reflect {
@@ -77,7 +77,7 @@ struct FreeStandingFunctionInfo
 {
 	void* mAddress;
 	ReturnInfo mReturn;
-	std::vector<ParameterInfo> Parameters;
+	rftl::vector<ParameterInfo> Parameters;
 };
 
 
@@ -86,7 +86,7 @@ struct MemberFunctionInfo
 {
 	bool mRequiresConst;
 	ReturnInfo mReturn;
-	std::vector<ParameterInfo> Parameters;
+	rftl::vector<ParameterInfo> Parameters;
 };
 
 
@@ -168,17 +168,17 @@ struct ExtensionAccessor
 
 struct ClassInfo
 {
-	using BaseTypes = std::vector<BaseClassInfo>;
-	using StaticVariables = std::vector<FreeStandingVariableInfo>;
-	using NonStaticVariables = std::vector<MemberVariableInfo>;
-	using StaticFunctions = std::vector<FreeStandingFunctionInfo>;
-	using NonStaticFunctions = std::vector<MemberFunctionInfo>;
+	using BaseTypes = rftl::vector<BaseClassInfo>;
+	using StaticVariables = rftl::vector<FreeStandingVariableInfo>;
+	using NonStaticVariables = rftl::vector<MemberVariableInfo>;
+	using StaticFunctions = rftl::vector<FreeStandingFunctionInfo>;
+	using NonStaticFunctions = rftl::vector<MemberFunctionInfo>;
 
 	// IMPORTANT: Growing this storage cannot be permitted to invalidate
 	//  references to data within the storage. Check your local C++ standard
 	//  before considering changes to this type!
 	// NOTE: See VariableTypeInfo for an example reference
-	using ExtensionStorage = std::deque<ExtensionAccessor>;
+	using ExtensionStorage = rftl::deque<ExtensionAccessor>;
 
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;

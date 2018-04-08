@@ -4,8 +4,8 @@
 
 #include "core/macros.h"
 
-#include <stdint.h>
-#include <type_traits>
+#include "rftl/cstdint"
+#include "rftl/type_traits"
 
 
 namespace RF { namespace math {
@@ -49,7 +49,7 @@ template<> constexpr int64_t GetAllBitsSet()
 template<typename T>
 constexpr bool HasOnly1BitSet( T const value )
 {
-	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
+	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
 	T const assumeOnlyTargetBitSet = value;
 	T const assumeAllBitsLowerThanTargetBitAreSet = value - 1u;
@@ -63,7 +63,7 @@ constexpr bool HasOnly1BitSet( T const value )
 template<typename T>
 constexpr size_t GetOnesIndexOfHighestBit( T const value )
 {
-	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
+	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
 	uint64_t const extendedValue = integer_unsigned_cast( value );
 
@@ -102,7 +102,7 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 template<typename T>
 constexpr size_t GetZerosIndexOfHighestBit( T const value )
 {
-	static_assert( std::is_integral<T>::value, "bit operations only valid on integral types" );
+	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
 	uint64_t const extendedValue = integer_unsigned_cast( value );
 

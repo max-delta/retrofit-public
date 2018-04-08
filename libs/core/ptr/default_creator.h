@@ -36,7 +36,7 @@ public:
 	{
 		static_assert( sizeof( T ) + sizeof( PtrRef ) >= 64, "Should use entwined creator instead" );
 		CreationPayload<T> retVal(
-			new T(std::forward<U>(args)...),
+			new T( rftl::forward<U>(args)...),
 			new PtrRef(&Delete, nullptr) );
 		return retVal;
 	}

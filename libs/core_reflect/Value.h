@@ -1,8 +1,8 @@
 #pragma once
 
 #include "core/meta/TypeList.h"
-#include <variant>
-#include <cstdint>
+#include "rftl/variant"
+#include "rftl/cstdint"
 
 
 // Forwards
@@ -68,7 +68,7 @@ public:
 	// Types
 public:
 	using ValueTypes = TypeList<RF_REFLECT_VALUE_TYPELIST>;
-	using InternalStorage = std::variant<RF_REFLECT_VALUE_TYPELIST, InvalidType>;
+	using InternalStorage = rftl::variant<RF_REFLECT_VALUE_TYPELIST, InvalidType>;
 
 
 	//
@@ -99,7 +99,7 @@ public:
 	Value& operator =( Value const& ) = default;
 	Type GetStoredType() const;
 	template<typename T>
-	typename std::remove_const<T>::type const* GetAs() const;
+	typename rftl::remove_const<T>::type const* GetAs() const;
 	void const* GetBytes() const;
 	size_t GetNumBytes() const;
 	template<typename T>

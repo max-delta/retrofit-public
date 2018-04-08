@@ -18,8 +18,8 @@ Value::Value()
 Value::Type Value::GetStoredType() const
 {
 	size_t const index = m_InternalStorage.index();
-	static_assert( static_cast<size_t>( Type::Invalid ) == std::variant_npos, "Standards violation?" );
-	constexpr size_t kInvalidTypeHackIndex = std::variant_size<InternalStorage>::value - 1;
+	static_assert( static_cast<size_t>( Type::Invalid ) == rftl::variant_npos, "Standards violation?" );
+	constexpr size_t kInvalidTypeHackIndex = rftl::variant_size<InternalStorage>::value - 1;
 	if( index == kInvalidTypeHackIndex )
 	{
 		return Type::Invalid;

@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF { namespace logging {

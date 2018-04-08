@@ -3,7 +3,7 @@
 
 #include "core_math/math_clamps.h"
 
-#include <limits>
+#include "rftl/limits"
 
 
 namespace RF { namespace gfx {

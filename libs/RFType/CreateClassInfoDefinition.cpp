@@ -3,6 +3,8 @@
 
 #include "RFType/TypeDatabase.h"
 
+#include "rftl/cstdlib"
+
 
 namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
@@ -13,7 +15,7 @@ void GlobalRegisterNewClassByName( char const* name, reflect::ClassInfo const& c
 	RF_ASSERT( success );
 	if( success == false )
 	{
-		std::terminate();
+		rftl::abort();
 	}
 }
 

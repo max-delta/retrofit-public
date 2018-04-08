@@ -132,7 +132,7 @@ TEST(WeakSharedPtr, Move)
 				WeakSharedPtr<int> wsptr1 = source;
 				ASSERT_TRUE(wsptr1.Weaken() != nullptr);
 				ASSERT_TRUE(*wsptr1.Weaken() == 47);
-				wsptr2 = std::move(wsptr1);
+				wsptr2 = rftl::move(wsptr1);
 				ASSERT_TRUE(wsptr1.Weaken() == nullptr);
 				ASSERT_TRUE(wsptr2.Weaken() != nullptr);
 				ASSERT_TRUE(*wsptr2.Weaken() == 47);
@@ -162,7 +162,7 @@ TEST(WeakSharedPtr, Move)
 //	{
 //		WeakSharedPtr<Derived> wsptr1 = EntwinedCreator<Derived>::Create();
 //		ASSERT_TRUE(wsptr1 != nullptr);
-//		WeakSharedPtr<Base> uptr2( std::move( wsptr1 ) );
+//		WeakSharedPtr<Base> uptr2( rftl::move( wsptr1 ) );
 //		ASSERT_TRUE(wsptr1 == nullptr);
 //		ASSERT_TRUE(wsptr2 != nullptr);
 //	}

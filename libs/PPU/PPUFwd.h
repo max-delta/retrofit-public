@@ -2,7 +2,7 @@
 #include "core_math/Vector2.h"
 #include "core_math/math_clamps.h"
 
-#include <stdint.h>
+#include "rftl/cstdint"
 
 
 namespace RF { namespace gfx {

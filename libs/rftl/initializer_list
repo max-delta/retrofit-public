@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <initializer_list>
+
+// Namespace wrapping
+namespace rftl {
+using std::initializer_list;
+using std::begin;
+using std::end;
+}

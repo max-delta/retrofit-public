@@ -1,5 +1,6 @@
 #pragma once
-#include <stdint.h>
+#include "rftl/cstdint"
+#include "rftl/type_traits"
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,7 +33,7 @@ template<typename ValueTypeT, ValueTypeT... Values>
 struct ValueList
 {
 	using ValueType = ValueTypeT;
-	static_assert( std::is_class<ValueType>::value == false,
+	static_assert( rftl::is_class<ValueType>::value == false,
 		"Not a simple type, expect compiler to explode with errors" );
 	static constexpr size_t kNumValues = sizeof...( Values );
 

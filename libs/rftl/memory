@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <memory>
+
+// Namespace wrapping
+namespace rftl {
+// NOTE: Very few wrappings, this is a dangerous file in general, and uses more
+//  common programming patterns that aren't a good fit for game development
+using std::allocator_traits;
+}

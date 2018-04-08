@@ -19,7 +19,34 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="array" />
+    <ClInclude Include="atomic" />
+    <ClInclude Include="bitset" />
+    <ClInclude Include="chrono" />
+    <ClInclude Include="cstdarg" />
+    <ClInclude Include="cstddef" />
+    <ClInclude Include="cstdint" />
+    <ClInclude Include="cstdlib" />
+    <ClInclude Include="deque" />
     <ClInclude Include="extension\static_array.h" />
+    <ClInclude Include="filesystem" />
+    <ClInclude Include="initializer_list" />
+    <ClInclude Include="iterator" />
+    <ClInclude Include="limits" />
+    <ClInclude Include="memory" />
+    <ClInclude Include="mutex" />
+    <ClInclude Include="ratio" />
+    <ClInclude Include="shared_mutex" />
+    <ClInclude Include="sstream" />
+    <ClInclude Include="cstdio" />
+    <ClInclude Include="string" />
+    <ClInclude Include="thread" />
+    <ClInclude Include="type_traits" />
+    <ClInclude Include="unordered_map" />
+    <ClInclude Include="unordered_set" />
+    <ClInclude Include="utility" />
+    <ClInclude Include="variant" />
+    <ClInclude Include="vector" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl" />

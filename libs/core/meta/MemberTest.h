@@ -1,6 +1,6 @@
 #pragma once
 
-#include <type_traits>
+#include "rftl/type_traits"
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,10 +11,10 @@ namespace RF {
 	struct ___HasMemberWithName_##NAME \
 	{ \
 		/* A templatized signature that requires ::NAME to be valid during substitution */ \
-		template<typename ___TYPETEST> static std::true_type ___ReturnValueSelector( decltype( ___TYPE::NAME )* ); \
+		template<typename ___TYPETEST> static rftl::true_type ___ReturnValueSelector( decltype( ___TYPE::NAME )* ); \
 		\
 		/* A templatized signature that is extremely undesirable to the substitutor */ \
-		template<typename ___TYPETEST> static std::false_type ___ReturnValueSelector( ... ); \
+		template<typename ___TYPETEST> static rftl::false_type ___ReturnValueSelector( ... ); \
 		\
 		/* Extract the return value */ \
 		using ___booltype = decltype( ___ReturnValueSelector<___TYPE>(nullptr) ); \
@@ -22,16 +22,16 @@ namespace RF {
 		/* Extract the value */ \
 		/* NOTE: Don't need the is_same<>, compiles correctly without it, but VS2017 */ \
 		/*  Intellisense complains without it */ \
-		static constexpr bool value = std::is_same<std::true_type, ___booltype>::value; \
+		static constexpr bool value = rftl::is_same<rftl::true_type, ___booltype>::value; \
 	};
 
 // The test is used in the form RF_HAS_PUBLIC_MEMBER_NAME( Class, DesiredMemberName )
 #define RF_HAS_PUBLIC_MEMBER_NAME(CLASS, NAME) (___HasMemberWithName_##NAME<CLASS>::value)
 
 // Assumes code similar to as follows:
-//  template<class CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ), int>::type = 0>
+//  template<class CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ), int>::type = 0>
 //  void foo();
-//  template<class CLASS, typename std::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ) == false, int>::type = 0>
+//  template<class CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, NAME ) == false, int>::type = 0>
 //  void foo();
 
 ///////////////////////////////////////////////////////////////////////////////

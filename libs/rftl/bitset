@@ -1,0 +1,10 @@
+#pragma once
+#include "rftl/utility"
+#include <bitset>
+
+// Namespace wrapping
+namespace rftl {
+using std::bitset;
+
+using std::hash;
+}

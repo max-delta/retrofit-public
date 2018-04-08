@@ -13,7 +13,7 @@ namespace RF { namespace script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace{
 
-static std::string GetLastError( HSQUIRRELVM vm )
+static rftl::string GetLastError( HSQUIRRELVM vm )
 {
 	SQInteger const top = sq_gettop( vm );
 
@@ -21,8 +21,8 @@ static std::string GetLastError( HSQUIRRELVM vm )
 	SQChar const* rawString;
 	SQRESULT const result = sq_getstring( vm, -1, &rawString );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
-	std::wstring const wString( rawString );
-	std::string retVal;
+	rftl::wstring const wString( rawString );
+	rftl::string retVal;
 	for( wchar_t const& wch : wString )
 	{
 		retVal.push_back( math::integer_truncast<char>( wch ) );
@@ -36,7 +36,7 @@ static std::string GetLastError( HSQUIRRELVM vm )
 
 static void NotifyLastError( HSQUIRRELVM vm )
 {
-	std::string const error = GetLastError( vm );
+	rftl::string const error = GetLastError( vm );
 	RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "%s", error.c_str() );
 }
 
@@ -103,7 +103,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQChar const* string;
 			result = sq_getstring( vm, -1, &string );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = std::wstring( string );
+			retVal = rftl::wstring( string );
 			break;
 		}
 		case OT_USERPOINTER:
@@ -159,7 +159,7 @@ SquirrelVM::~SquirrelVM()
 
 
 
-bool SquirrelVM::AddSourceFromBuffer( std::wstring const& buffer )
+bool SquirrelVM::AddSourceFromBuffer( rftl::wstring const& buffer )
 {
 	SQInteger const top = sq_gettop( m_Vm );
 	RF_ASSERT( top == 0 );
@@ -247,7 +247,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementName const
 		Element const key = GetElementFromStack( m_Vm, -2 );
 		Element const value = GetElementFromStack( m_Vm, -1 );
 
-		retVal.emplace_back( std::move( value ) );
+		retVal.emplace_back( rftl::move( value ) );
 
 		sq_pop( m_Vm, 2 );
 	}

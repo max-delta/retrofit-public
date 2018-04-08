@@ -1,7 +1,7 @@
 #pragma once
 
-#include <type_traits>
-#include <stdint.h>
+#include "rftl/type_traits"
+#include "rftl/cstdint"
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,8 +83,8 @@ private:
 	template<typename Type, typename CurrentType, typename... RemainingTypes>
 	struct ExternalAccessContains<Type, TypeList<CurrentType, RemainingTypes...> >
 	{
-		using IsCurrent = std::is_same< Type, CurrentType >;
-		static constexpr bool value = std::disjunction< IsCurrent, ExternalAccessContains<Type, TypeList<RemainingTypes...> > >::value;
+		using IsCurrent = rftl::is_same< Type, CurrentType >;
+		static constexpr bool value = rftl::disjunction< IsCurrent, ExternalAccessContains<Type, TypeList<RemainingTypes...> > >::value;
 	};
 
 	// 0 case
@@ -98,7 +98,7 @@ private:
 	template<typename Type, int64_t CurrentIndex, typename CurrentType, typename... RemainingTypes>
 	struct ExternalAccessFindIndex<Type, CurrentIndex, TypeList<CurrentType, RemainingTypes...> >
 	{
-		using IsCurrent = std::is_same< Type, CurrentType >;
+		using IsCurrent = rftl::is_same< Type, CurrentType >;
 		static constexpr int64_t value = IsCurrent::value ? CurrentIndex : ExternalAccessFindIndex<Type, CurrentIndex + 1, TypeList<RemainingTypes...> >::value;
 	};
 

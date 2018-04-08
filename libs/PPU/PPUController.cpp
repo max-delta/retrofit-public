@@ -12,14 +12,14 @@
 
 #include "core/ptr/default_creator.h"
 
-#include <stdarg.h>
+#include "rftl/cstdarg"
 
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface )
-	: m_DeviceInterface( std::move(deviceInterface) )
+	: m_DeviceInterface( rftl::move(deviceInterface) )
 	, m_TextureManager( nullptr )
 {
 	//

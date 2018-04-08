@@ -1,0 +1,36 @@
+#pragma once
+#include "rftl/initializer_list"
+#include <utility>
+
+// Namespace wrapping
+namespace rftl {
+using std::swap;
+using std::exchange;
+using std::forward;
+using std::move;
+using std::move_if_noexcept;
+using std::as_const;
+using std::declval;
+using std::make_pair;
+//using std::to_chars; // Too new in C++17
+//using std::from_chars; // Too new in C++17
+
+using std::pair;
+using std::integer_sequence;
+//using std::chars_format; // Too new in C++17
+
+using std::piecewise_construct_t;
+using std::piecewise_construct;
+using std::in_place;
+using std::in_place_type;
+using std::in_place_index;
+using std::in_place_t;
+using std::in_place_type_t;
+using std::in_place_index_t;
+
+using std::tuple;
+
+namespace rel_ops {
+using namespace std::rel_ops;
+}
+}

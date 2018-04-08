@@ -6,7 +6,7 @@
 #include "core_math/vector2.h"
 #include "core_platform/win_shim.h"
 
-#include <stdio.h>
+#include "rftl/cstdio"
 
 
 namespace RF { namespace gfx {

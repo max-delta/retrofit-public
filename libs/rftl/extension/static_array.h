@@ -1,15 +1,9 @@
 #pragma once
 #include "core/compiler.h"
 
-#include <initializer_list>
-#include <iterator>
+#include "rftl/initializer_list"
+#include "rftl/iterator"
 
-
-// Namespace wrapping
-namespace rftl {
-using std::initializer_list;
-using std::reverse_iterator;
-}
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////

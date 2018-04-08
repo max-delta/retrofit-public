@@ -3,6 +3,8 @@
 #include "core/ptr/creation_payload.h"
 #include "core/ptr/weak_ptr.h"
 
+#include "rftl/type_traits"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,7 +35,7 @@ public:
 		//
 	}
 
-	SharedPtr(std::nullptr_t)
+	SharedPtr(rftl::nullptr_t)
 		: SharedPtr()
 	{
 		//
@@ -54,28 +56,28 @@ public:
 	}
 
 	SharedPtr( SharedPtr && rhs )
-		: PtrBase(std::move(rhs))
+		: PtrBase( rftl::move(rhs))
 	{
 		//
 	}
 
 	template<typename DERIVED>
 	SharedPtr( SharedPtr<DERIVED> && rhs )
-		: PtrBase(std::move(rhs.CreateTransferPayloadAndWipeSelf()))
+		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		RF_ASSERT( rhs == nullptr );
 	}
 
 	SharedPtr( CreationPayload<T> && payload )
-		: PtrBase(std::move(payload))
+		: PtrBase( rftl::move( payload ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
 	SharedPtr( CreationPayload<DERIVED> && payload )
-		: PtrBase(std::move(payload))
+		: PtrBase( rftl::move( payload ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
@@ -88,13 +90,13 @@ public:
 	SharedPtr & operator =(SharedPtr const & rhs)
 	{
 		SharedPtr temp(rhs);
-		PtrBase::Swap( std::move(temp) );
+		PtrBase::Swap( rftl::move(temp) );
 		return *this;
 	}
 
 	SharedPtr & operator =(SharedPtr && rhs)
 	{
-		PtrBase::Swap( std::move(rhs) );
+		PtrBase::Swap( rftl::move(rhs) );
 		return *this;
 	}
 

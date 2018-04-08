@@ -409,7 +409,7 @@ inline void static_array<Element, ElementCapacity>::push_back( value_type const 
 template<typename Element, size_t ElementCapacity>
 inline void static_array<Element, ElementCapacity>::push_back( value_type && value )
 {
-	emplace_back( std::move( value ) );
+	emplace_back( rftl::move( value ) );
 }
 
 
@@ -418,7 +418,7 @@ template<typename Element, size_t ElementCapacity>
 inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::emplace_back(value_type && value)
 {
 	RF_ASSERT_MSG( size() < capacity(), "Attempting grow on full container" );
-	new ( m_Storage[m_CurrentSize].WriteableTarget() ) Element( std::move(value) );
+	new ( m_Storage[m_CurrentSize].WriteableTarget() ) Element( rftl::move(value) );
 	m_CurrentSize++;
 	return back();
 }
@@ -456,7 +456,7 @@ inline void static_array<Element, ElementCapacity>::append( InputIterator first,
 	InputIterator iter = first;
 	while( iter < term )
 	{
-		emplace_back( std::move( *iter ) );
+		emplace_back( rftl::move( *iter ) );
 		iter++;
 	}
 }
@@ -479,7 +479,7 @@ inline void static_array<Element, ElementCapacity>::extract(InputIterator first,
 	InputIterator iter = first;
 	while( iter < term )
 	{
-		emplace_back( std::move( *iter ) );
+		emplace_back( rftl::move( *iter ) );
 		iter++;
 	}
 }

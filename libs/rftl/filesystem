@@ -1,0 +1,9 @@
+#pragma once
+#include "rftl/utility"
+#include <experimental/filesystem>
+
+// Namespace wrapping
+namespace rftl { namespace experimental { namespace filesystem { namespace v1 {
+// TODO: Collapse out experimental stuff
+using namespace std::experimental::filesystem::v1;
+}}}}

@@ -1,5 +1,5 @@
 #pragma once
-#include <stdint.h>
+#include "rftl/cstdint"
 
 #include "core/macros.h"
 

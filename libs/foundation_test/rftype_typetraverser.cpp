@@ -6,7 +6,7 @@
 
 #include "RFType/Example.h"
 
-#include <unordered_set>
+#include "rftl/unordered_set"
 
 
 namespace RF { namespace rftype {
@@ -14,7 +14,7 @@ namespace RF { namespace rftype {
 
 TEST( RFType, TraverseSingleInheritance )
 {
-	std::vector<TypeTraverser::MemberVariableInstance> members;
+	rftl::vector<TypeTraverser::MemberVariableInstance> members;
 	auto onMemberVariableFunc = [&members](
 		TypeTraverser::MemberVariableInstance const& varInst ) ->
 		void
@@ -22,7 +22,7 @@ TEST( RFType, TraverseSingleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	std::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
 	auto onNestedTypeFoundFunc = [&nested](
 		TypeTraverser::MemberVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
@@ -41,7 +41,7 @@ TEST( RFType, TraverseSingleInheritance )
 	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 0 );
 
-	std::unordered_set<void const*> expectedLocations;
+	rftl::unordered_set<void const*> expectedLocations;
 	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
 	expectedLocations.emplace( &classInstance.mExampleDerivedNonStaticVariable );
 	ASSERT_EQ( expectedLocations.size(), 2 );
@@ -58,7 +58,7 @@ TEST( RFType, TraverseSingleInheritance )
 
 TEST( RFType, TraverseMultipleInheritance )
 {
-	std::vector<TypeTraverser::MemberVariableInstance> members;
+	rftl::vector<TypeTraverser::MemberVariableInstance> members;
 	auto onMemberVariableFunc = [&members](
 		TypeTraverser::MemberVariableInstance const& varInst ) ->
 		void
@@ -66,7 +66,7 @@ TEST( RFType, TraverseMultipleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	std::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
 	auto onNestedTypeFoundFunc = [&nested](
 		TypeTraverser::MemberVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
@@ -85,7 +85,7 @@ TEST( RFType, TraverseMultipleInheritance )
 	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 0 );
 
-	std::unordered_set<void const*> expectedLocations;
+	rftl::unordered_set<void const*> expectedLocations;
 	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
 	expectedLocations.emplace( &classInstance.mExampleSecondaryNonStaticVariable );
 	ASSERT_EQ( expectedLocations.size(), 2 );
@@ -102,7 +102,7 @@ TEST( RFType, TraverseMultipleInheritance )
 
 TEST( RFType, TraverseNesting )
 {
-	std::vector<TypeTraverser::MemberVariableInstance> members;
+	rftl::vector<TypeTraverser::MemberVariableInstance> members;
 	auto onMemberVariableFunc = [&members](
 		TypeTraverser::MemberVariableInstance const& varInst ) ->
 		void
@@ -110,7 +110,7 @@ TEST( RFType, TraverseNesting )
 		members.emplace_back( varInst );
 	};
 
-	std::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
 	auto onNestedTypeFoundFunc = [&nested](
 		TypeTraverser::MemberVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
@@ -129,7 +129,7 @@ TEST( RFType, TraverseNesting )
 	ASSERT_EQ( members.size(), 1 );
 	ASSERT_EQ( nested.size(), 1 );
 
-	std::unordered_set<void const*> expectedLocations;
+	rftl::unordered_set<void const*> expectedLocations;
 	expectedLocations.emplace( &classInstance.mExampleClassAsMember.mExampleNonStaticVariable );
 	ASSERT_EQ( expectedLocations.size(), 1 );
 	for( TypeTraverser::MemberVariableInstance const& varInst : members )

@@ -1,5 +1,6 @@
 #pragma once
 #include "core/ptr/ptr_base.h"
+#include "rftl/cstddef"
 
 
 namespace RF {
@@ -31,7 +32,7 @@ public:
 		//
 	}
 
-	WeakPtr(std::nullptr_t)
+	WeakPtr( rftl::nullptr_t)
 		: WeakPtr()
 	{
 		//
@@ -61,12 +62,12 @@ public:
 		: PtrBase(target, ref)
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
-		static_assert( std::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
+		static_assert( rftl::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 		PtrBase::IncreaseWeakCount();
 	}
 
 	WeakPtr( WeakPtr && rhs )
-		: PtrBase(std::move(rhs))
+		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
@@ -76,16 +77,16 @@ public:
 		PtrBase::DecreaseWeakCount();
 	}
 
-	WeakPtr & operator =(WeakPtr const & rhs)
+	WeakPtr & operator =( WeakPtr const & rhs )
 	{
-		WeakPtr temp(rhs);
-		PtrBase::Swap( std::move(temp) );
+		WeakPtr temp( rhs );
+		PtrBase::Swap( rftl::move( temp ) );
 		return *this;
 	}
 
-	WeakPtr & operator =(WeakPtr && rhs)
+	WeakPtr & operator =( WeakPtr && rhs )
 	{
-		PtrBase::Swap( std::move(rhs) );
+		PtrBase::Swap( rftl::move( rhs ) );
 		return *this;
 	}
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "core_input/InputComponent.h"
 
-#include <string>
+#include "rftl/string"
 
 
 namespace RF { namespace input {
@@ -19,7 +19,7 @@ public:
 		return ComponentType::Text;
 	}
 
-	virtual void GetTextStream( std::u16string& text, size_t maxLen ) const = 0;
+	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;
 	virtual void ClearTextStream() = 0;
 };
 
