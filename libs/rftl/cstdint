@@ -1,2 +1,5 @@
 #pragma once
-#include <cstdint>
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_CSTDINT
+#include "rftl/patch/postinclude.inl"
