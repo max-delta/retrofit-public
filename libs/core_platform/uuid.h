@@ -47,10 +47,13 @@ public:
 	bool operator>=( Uuid const& rhs ) const;
 
 	bool IsValid() const;
+	bool HasClearlyDefinedCollisionAvoidance() const;
 	bool ExposesComputerInformation() const;
 
+	// NOTE: 'Version' here deoesn't meen 'revision', it means 'choice'
 	uint8_t GetVersion() const;
 	uint8_t GetVariant() const;
+
 	OctetSequence const& GetSequence() const;
 	rftl::string GetDebugString() const;
 
