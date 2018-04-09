@@ -4,6 +4,7 @@
 #include "core_platform/rpc_inc.h"
 #include "core_math/math_bytes.h"
 #include "core/compiler.h"
+#include "core/macros.h"
 
 #include "rftl/cstring"
 
@@ -15,17 +16,36 @@ Uuid Uuid::GenerateNewUuid()
 {
 	win32::UUID winUuid{};
 	win32::RPC_STATUS result;
-	constexpr bool kDebugVersion = false;
-	if( kDebugVersion )
+
+	// NOTE: You can change this at will, safely, since the version and variant
+	//  information encoded in the UUIDs means the two implementations can't
+	//  ever collide
+	enum class GenerationMode : uint8_t
 	{
-		// Less secure, but debuggable if you're trying to make sure you're
-		//  handling standards compliance correctly
-		result = win32::UuidCreateSequential( &winUuid );
-	}
-	else
+		// Exposes computer information, but collisions require same time and
+		//  hardware identifiers
+		Reliable,
+
+		// RNG and pray
+		Secure
+	};
+	constexpr GenerationMode kGenerationMode = GenerationMode::Secure;
+
+	switch( kGenerationMode )
 	{
-		result = win32::UuidCreate( &winUuid );
+		case GenerationMode::Reliable:
+		{
+			result = win32::UuidCreateSequential( &winUuid );
+			break;
+		}
+		case GenerationMode::Secure:
+		default:
+		{
+			result = win32::UuidCreate( &winUuid );
+			break;
+		}
 	}
+
 	switch( result )
 	{
 		case RPC_S_OK:
@@ -69,6 +89,15 @@ Uuid Uuid::GenerateNewUuid()
 	*seqData3 = math::ReverseByteOrder( static_cast<uint16_t>( winUuid.Data3 ) );
 	rftl::memcpy( seqData4, winUuid.Data4, sizeof( Data4 ) );
 	Uuid const retVal{ seq };
+	if( kGenerationMode == GenerationMode::Secure )
+	{
+		// This shouldn't fail if UuidCreateSequential(...) is present during
+		//  compilation, since that function means this was compiled with a
+		//  Windows SDK that switched UuidCreate(...) to be secure by default
+		RF_ASSERT_MSG(
+			retVal.ExposesComputerInformation() == false,
+			"Windows seems to have produced an unsecure UUID" );
+	}
 	return retVal;
 }
 
