@@ -82,6 +82,19 @@ bool Uuid::IsValid() const
 
 
 
+bool Uuid::HasClearlyDefinedCollisionAvoidance() const
+{
+	uint8_t const version = GetVersion();
+	// Hey man, you either get reliablility or security, you can't have it both
+	//  ways, sorry...
+	// NOTE: Version 2 may be well-defined too, but I don't have anything lying
+	//  around that emits version 2 to dig through the internals of, and I
+	//  think it may be uncommon
+	return version == 1;
+}
+
+
+
 bool Uuid::ExposesComputerInformation() const
 {
 	uint8_t const version = GetVersion();
@@ -91,7 +104,8 @@ bool Uuid::ExposesComputerInformation() const
 	return
 		version == 1 ||
 		version == 2 ||
-		( kParanoid && version == 3 );
+		( kParanoid && version == 3 ) ||
+		( kParanoid && version == 5 );
 }
 
 
@@ -134,7 +148,7 @@ Uuid::OctetSequence const & Uuid::GetSequence() const
 rftl::string Uuid::GetDebugString() const
 {
 	char octetBuf[3] = { '0','0','\0' };
-	constexpr char kExample[] = "{11223344-1122-1122-1122-112233445566}(v1!,1)";
+	constexpr char kExample[] = "{11223344-1122-1122-1122-112233445566}(v1!$,1)";
 	rftl::string retVal;
 	retVal.reserve( sizeof( kExample ) );
 
@@ -164,6 +178,10 @@ rftl::string Uuid::GetDebugString() const
 		if( ExposesComputerInformation() )
 		{
 			retVal.push_back( '!' );
+		}
+		if( HasClearlyDefinedCollisionAvoidance() )
+		{
+			retVal.push_back( '#' );
 		}
 	}
 	retVal.push_back( ',' );
