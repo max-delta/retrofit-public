@@ -149,6 +149,7 @@
     <ClCompile Include="math_bytes.cpp" />
     <ClCompile Include="math_listoperations.cpp" />
     <ClCompile Include="math_numerictraits.cpp" />
+    <ClCompile Include="platform_uuid.cpp" />
     <ClCompile Include="reflect_class_info_builder.cpp" />
     <ClCompile Include="rftype_class_info_compositor.cpp" />
     <ClCompile Include="compiler.cpp" />
@@ -194,6 +195,9 @@
     </ProjectReference>
     <ProjectReference Include="..\core_math\core_math.vcxproj">
       <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_platform\core_platform.vcxproj">
+      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
     <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
       <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>

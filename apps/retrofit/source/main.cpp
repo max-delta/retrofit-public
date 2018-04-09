@@ -36,6 +36,7 @@ constexpr bool k_ConsoleTest = false;
 constexpr bool k_DrawTest = false;
 constexpr bool k_DrawInputDebug = false;
 constexpr bool k_SquirrelTest = false;
+constexpr bool k_PlatformTest = true;
 constexpr bool k_FramePackEditor = true;
 RF::UniquePtr<RF::FramePackEditor> g_FramePackEditor;
 
@@ -117,6 +118,11 @@ int main()
 	if( k_SquirrelTest )
 	{
 		test::SQTest();
+	}
+
+	if( k_PlatformTest )
+	{
+		test::PlatformTest();
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
