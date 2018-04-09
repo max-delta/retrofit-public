@@ -47,6 +47,10 @@ public:
 	bool operator>=( Uuid const& rhs ) const;
 
 	bool IsValid() const;
+	bool ExposesComputerInformation() const;
+
+	uint8_t GetVersion() const;
+	uint8_t GetVariant() const;
 	OctetSequence const& GetSequence() const;
 	rftl::string GetDebugString() const;
 
