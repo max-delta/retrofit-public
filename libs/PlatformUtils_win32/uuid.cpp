@@ -39,7 +39,7 @@ Uuid Uuid::GenerateNewUuid()
 	// Standard seems to gloss over byte-order, and assumes everyone has their
 	//  shit together. This kinda assumes that people will make their pipes
 	//  UUID-aware all the way through, which is a dangerous assumption.
-	//  RetroFit treats UUIDS as bricks of indivisible data, and keeps them in
+	//  RetroFit treats UUIDs as bricks of indivisible data, and keeps them in
 	//  network-byte-order all the way through so they can be mem-copied around
 	//  without too much worry.
 	// SEE:
