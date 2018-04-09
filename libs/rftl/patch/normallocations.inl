@@ -9,6 +9,7 @@
 #define RFTL_CSTDINT <cstdint>
 #define RFTL_CSTDIO <cstdio>
 #define RFTL_CSTDLIB <cstdlib>
+#define RFTL_CSTRING <cstring>
 #define RFTL_DEQUE <deque>
 #define RFTL_FILESYSTEM <filesystem>
 #define RFTL_INITIALIZER_LIST <initializer_list>

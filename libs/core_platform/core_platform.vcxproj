@@ -132,7 +132,9 @@
   <ItemGroup>
     <ClInclude Include="gdi_shim.h" />
     <ClInclude Include="gl_inc.h" />
+    <ClInclude Include="rpc_inc.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="uuid.h" />
     <ClInclude Include="windows_inc.h" />
     <ClInclude Include="winuser_shim.h" />
     <ClInclude Include="win_shim.h" />
@@ -145,6 +147,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="uuid.cpp" />
     <ClCompile Include="win_shim.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -15,5 +15,9 @@
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="Debugging.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="uuid.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="project.def" />
   </ItemGroup>
 </Project>

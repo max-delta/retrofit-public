@@ -7,10 +7,13 @@
     <ClInclude Include="win_shim.h" />
     <ClInclude Include="gdi_shim.h" />
     <ClInclude Include="winuser_shim.h" />
+    <ClInclude Include="uuid.h" />
+    <ClInclude Include="rpc_inc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="win_shim.cpp" />
     <ClCompile Include="gdi_shim.cpp" />
+    <ClCompile Include="uuid.cpp" />
   </ItemGroup>
 </Project>
