@@ -1,0 +1,10 @@
+LIBRARY PLATFORMUTILS_WIN32
+EXPORTS
+; Normally the project export/import API should be used instead, but there are
+;  some cases where the implementation of another library are provided here, in
+;  which case the export/import API doesn't apply. In those cases, the relevant
+;  implementations will be specified here, so they can be linked to
+; EXAMPLE: core_platform may declare that a function exists, but doesn't
+;  provide an implementation since it is platform-specific, and each platform
+;  is expected to implement it in their modules
+	?GenerateNewUuid@Uuid@platform@RF@@SA?AV123@XZ

@@ -11,8 +11,9 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scripting_squirrel/squirrel.h"
 
-#include "rftl/extension/static_array.h"
+#include "core_platform/uuid.h"
 
+#include "rftl/extension/static_array.h"
 #include "rftl/sstream"
 
 
@@ -183,6 +184,22 @@ void SQTest()
 		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
 		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
 	}
+}
+
+
+
+void PlatformTest()
+{
+	using namespace ::RF::platform;
+
+	rftl::static_array<Uuid, 10> uuids;
+	for(size_t i = 0; i < uuids.max_size(); i++)
+	{
+		Uuid const newUuid = Uuid::GenerateNewUuid();
+		RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Generated new UUID: %s", newUuid.GetDebugString().c_str() );
+		uuids.emplace_back( newUuid );
+	}
+	uuids.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

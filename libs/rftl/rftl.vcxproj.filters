@@ -42,6 +42,7 @@
     <ClInclude Include="cstdint" />
     <ClInclude Include="cstdarg" />
     <ClInclude Include="cstdio" />
+    <ClInclude Include="cstring" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">

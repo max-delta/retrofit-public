@@ -33,6 +33,7 @@
     <ClCompile Include="math_numerictraits.cpp" />
     <ClCompile Include="math_bytes.cpp" />
     <ClCompile Include="allocate_singleallocator.cpp" />
+    <ClCompile Include="platform_uuid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
