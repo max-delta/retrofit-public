@@ -13,7 +13,9 @@ enum class Architecture
 {
 	Invalid = 0,
 	x86_32,
-	x86_64
+	x86_64//,
+	//ARM_32, // Verify
+	//ARM_64 // Verify
 };
 
 enum class MemoryModel
@@ -31,6 +33,8 @@ enum class Endianness
 	Variable // :(
 };
 
+
+
 // The C++ standard defines special behavior for null pointers that sometimes
 //  acts fundamentally different than normal pointers, by design. There are
 //  cases where this is undesirable, but the situation is such that it is
@@ -42,6 +46,8 @@ enum class Endianness
 // NOTE: This is a fundamental standards violation and rife with undefined
 //  behavior, so be very cautious when using it
 static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>( 0x1 );
+
+
 
 #ifdef _MSC_VER
 	#define RF_PLATFORM_MSVC
@@ -57,48 +63,20 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
-		#define RF_PLATFORM_STRONG_MEMORY_MODEL
-		#define RF_PLATFORM_LITTLE_ENDIAN
-		#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
-		#define RF_PLATFORM_POINTER_BYTES 8u
-		constexpr Architecture kArchitecture = Architecture::x86_64;
-		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
-		constexpr Endianness kEndianness = Endianness::Little;
-		constexpr bool kAlignedModificationsAreAtomic = true;
 		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
 		#define RF_ACK_32BIT_PADDING
 	#elif defined(_M_IX86)
 		#define RF_PLATFORM_X86_32
-		#define RF_PLATFORM_STRONG_MEMORY_MODEL
-		#define RF_PLATFORM_LITTLE_ENDIAN
-		#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
-		#define RF_PLATFORM_POINTER_BYTES 4u
-		constexpr Architecture kArchitecture = Architecture::x86_32;
-		constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
-		constexpr Endianness kEndianness = Endianness::Little;
-		constexpr bool kAlignedModificationsAreAtomic = true;
 		#define RF_ACK_64BIT_PADDING
 		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
 	#elif defined(_M_ARM64)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
-		#define RF_PLATFORM_VARIABLE_ENDIAN
-		#define RF_PLATFORM_POINTER_BYTES 8u
-		constexpr Architecture kArchitecture = Architecture::Invalid;
-		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
-		constexpr Endianness kEndianness = Endianness::Variable;
-		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
 		#define RF_ACK_32BIT_PADDING
 	#elif defined(_M_ARM)
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
-		#define RF_PLATFORM_VARIABLE_ENDIAN
-		#define RF_PLATFORM_POINTER_BYTES 4u
-		constexpr Architecture kArchitecture = Architecture::Invalid;
-		constexpr MemoryModel kMemoryModel = MemoryModel::Invalid;
-		constexpr Endianness kEndianness = Endianness::Variable;
-		constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 		#define RF_ACK_64BIT_PADDING
 		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
 	#else
@@ -108,11 +86,63 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#error Undefined platform
 #endif
 
+
+
+#if defined(RF_PLATFORM_X86_64)
+	constexpr Architecture kArchitecture = Architecture::x86_64;
+	#define RF_PLATFORM_STRONG_MEMORY_MODEL
+	constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+	#define RF_PLATFORM_LITTLE_ENDIAN
+	constexpr Endianness kEndianness = Endianness::Little;
+	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
+	constexpr bool kAlignedModificationsAreAtomic = true;
+	#define RF_PLATFORM_POINTER_BYTES 8u
+	#define RF_MIN_PAGE_SIZE 4096u
+	constexpr unsigned long kMinPageSize = 4096u;
+#elif defined(RF_PLATFORM_X86_32)
+	constexpr Architecture kArchitecture = Architecture::x86_32;
+	#define RF_PLATFORM_STRONG_MEMORY_MODEL
+	constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+	#define RF_PLATFORM_LITTLE_ENDIAN
+	constexpr Endianness kEndianness = Endianness::Little;
+	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
+	constexpr bool kAlignedModificationsAreAtomic = true;
+	#define RF_PLATFORM_POINTER_BYTES 4u
+	#define RF_MIN_PAGE_SIZE 4096u
+	constexpr unsigned long kMinPageSize = 4096u;
+#elif defined(RF_PLATFORM_ARM_64)
+	#error Verify and add support
+	constexpr Architecture kArchitecture = Architecture::ARM_64;
+	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
+	#define RF_PLATFORM_VARIABLE_ENDIAN
+	constexpr Endianness kEndianness = Endianness::Variable;
+	constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+	#define RF_PLATFORM_POINTER_BYTES 8u
+	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
+	constexpr unsigned long kMinPageSize = 4096u; // Verify?
+#elif defined(RF_PLATFORM_ARM_32)
+	#error Verify and add support
+	constexpr Architecture kArchitecture = Architecture::ARM_32;
+	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
+	#define RF_PLATFORM_VARIABLE_ENDIAN
+	constexpr Endianness kEndianness = Endianness::Variable;
+	constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+	#define RF_PLATFORM_POINTER_BYTES 4u
+	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
+	constexpr unsigned long kMinPageSize = 4096u; // Verify?
+#else
+	#error Undefined platform
+#endif
+
+
+
 #ifdef RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
 	#define RF_ALIGN_ATOMIC_POINTER alignas(RF_PLATFORM_POINTER_BYTES)
 #else
 	// Intentionally undefined due to it being unsafe
 #endif
+
+
 
 // Atomic ordering quick-reference
 // ASSUME:
