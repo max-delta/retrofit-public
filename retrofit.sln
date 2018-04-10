@@ -67,6 +67,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Serialization", "libs\Seria
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_allocate", "libs\core_allocate\core_allocate.vcxproj", "{C5171146-7ACE-4819-B4CA-6A36BEB91E85}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pugixml", "third_party\pugixml\pugixml.vcxproj", "{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -283,6 +285,14 @@ Global
 		{C5171146-7ACE-4819-B4CA-6A36BEB91E85}.Release|x64.Build.0 = Release|x64
 		{C5171146-7ACE-4819-B4CA-6A36BEB91E85}.Release|x86.ActiveCfg = Release|Win32
 		{C5171146-7ACE-4819-B4CA-6A36BEB91E85}.Release|x86.Build.0 = Release|Win32
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Debug|x64.ActiveCfg = Debug|x64
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Debug|x64.Build.0 = Debug|x64
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Debug|x86.ActiveCfg = Debug|Win32
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Debug|x86.Build.0 = Debug|Win32
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Release|x64.ActiveCfg = Release|x64
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Release|x64.Build.0 = Release|x64
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Release|x86.ActiveCfg = Release|Win32
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -317,6 +327,7 @@ Global
 		{4A264B07-ADE9-4B0C-BEEA-7E159E011BEA} = {08FA27AA-1FC9-4100-B186-035269101155}
 		{54F120D7-D0CA-4E72-8487-1D3AA63D8135} = {08FA27AA-1FC9-4100-B186-035269101155}
 		{C5171146-7ACE-4819-B4CA-6A36BEB91E85} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
+		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C} = {386096D8-50A9-4232-B37F-F7EA18EB3742}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F154CB3-9527-436A-9487-F586122585E3}

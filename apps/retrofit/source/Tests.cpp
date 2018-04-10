@@ -8,10 +8,13 @@
 #include "PPU/FramePack.h"
 
 #include "PlatformFilesystem/VFS.h"
+#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scripting_squirrel/squirrel.h"
 
 #include "core_platform/uuid.h"
+
+#include <pugixml/pugixml.h>
 
 #include "rftl/extension/static_array.h"
 #include "rftl/sstream"
@@ -184,6 +187,50 @@ void SQTest()
 		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
 		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
 	}
+}
+
+
+
+void XMLTest()
+{
+	file::VFS* vfs = file::VFS::HACK_GetInstance();
+	file::VFSPath const testFilePath = file::VFS::k_Root.GetChild( "scratch", "xmltest.xml" );
+
+	// Write
+	{
+		file::FileHandlePtr const testFile = vfs->GetFileForWrite( testFilePath );
+		pugi::xml_writer_file writer{ testFile->GetFile() };
+
+		pugi::xml_document doc;
+		doc.append_child( "Header" ).append_attribute("Version") = 0;
+		doc.append_child( "Data" );
+		doc.save( writer );
+		RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "May have written an XML file successfully?" );
+	}
+
+	// Read
+	{
+		file::FileHandlePtr const testFile = vfs->GetFileForRead( testFilePath );
+		rftl::vector<uint8_t> initialFileContents;
+		initialFileContents.resize( compiler::kMinPageSize, '\0' );
+		size_t const elementsRead = fread( initialFileContents.data(), sizeof( uint8_t ), initialFileContents.size(), testFile->GetFile() );
+		if( elementsRead > initialFileContents.size() )
+		{
+			RFLOG_FATAL( nullptr, RFCAT_STARTUPTEST, "File read overwrote buffer somehow" );
+		}
+
+		pugi::xml_document doc;
+		pugi::xml_parse_result const parseResult = doc.load_buffer_inplace( initialFileContents.data(), elementsRead );
+		if( parseResult )
+		{
+			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Read an XML file successfully" );
+		}
+		else
+		{
+			RFLOG_ERROR( nullptr, RFCAT_STARTUPTEST, "Failed to parse file that XML writer just wrote. Error: \"%s\"", parseResult.description() );
+		}
+	}
+
 }
 
 
