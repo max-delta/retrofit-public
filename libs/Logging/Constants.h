@@ -30,10 +30,12 @@ enum Severity : uint64_t
 	RF_SEV_UNRECOVERABLE = 1ull << 63
 };
 
+constexpr Severity kDefaultSeverityMask = static_cast<Severity>( -1 );
+
 // This macro can be defined to globally restrict what types of severities can
 //  be whitelisted for categories
 #ifndef ___RFLOG_GLOBAL_SEV_WHITELIST_MASK
-	#define ___RFLOG_GLOBAL_SEV_WHITELIST_MASK -1
+	#define ___RFLOG_GLOBAL_SEV_WHITELIST_MASK static_cast<::RF::logging::Severity>( -1 )
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
