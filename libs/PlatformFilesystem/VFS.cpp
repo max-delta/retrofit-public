@@ -7,6 +7,7 @@
 #include "core/macros.h"
 #include "core/ptr/entwined_creator.h"
 #include "core_math/math_casts.h"
+#include "core_math/math_clamps.h"
 
 #include "rftl/cstdio"
 #include "rftl/sstream"
@@ -43,7 +44,7 @@ void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
 
 FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 {
-	RFLOG_TRACE( nullptr, RFCAT_VFS, "File read request: %s", CreateStringFromPath( path ).c_str() );
+	RFLOG_TRACE( path, RFCAT_VFS, "File read request" );
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
 }
 
@@ -51,7 +52,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 {
-	RFLOG_TRACE( nullptr, RFCAT_VFS, "File write request: %s", CreateStringFromPath( path ).c_str() );
+	RFLOG_TRACE( path, RFCAT_VFS, "File write request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
 }
 
@@ -59,7 +60,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 {
-	RFLOG_TRACE( nullptr, RFCAT_VFS, "File modify request: %s", CreateStringFromPath( path ).c_str() );
+	RFLOG_TRACE( path, RFCAT_VFS, "File modify request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
 }
 
@@ -67,7 +68,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 {
-	RFLOG_TRACE( nullptr, RFCAT_VFS, "File append request: %s", CreateStringFromPath( path ).c_str() );
+	RFLOG_TRACE( path, RFCAT_VFS, "File append request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
 }
 
@@ -75,7 +76,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
 {
-	RFLOG_TRACE( nullptr, RFCAT_VFS, "File execute request: %s", CreateStringFromPath( path ).c_str() );
+	RFLOG_TRACE( path, RFCAT_VFS, "File execute request" );
 	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
 }
 
@@ -156,7 +157,7 @@ bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string
 					return false;
 				}
 			}
-			else if( ch ==VFSMountTableTokens::k_MountCommentPrefix )
+			else if( ch == VFSMountTableTokens::k_MountCommentPrefix )
 			{
 				// Comment, start tossing
 				curReadMode = ReadMode::k_DiscardingComment;
@@ -449,7 +450,7 @@ VFSPath VFS::CollapsePath( VFSPath const & path )
 		{
 			if( retVal.NumElements() == 0 )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_VFS, "Excessive ascencions found during collapse" );
+				RFLOG_ERROR( path, RFCAT_VFS, "Excessive ascencions found during collapse" );
 				return k_Invalid.GetChild( path );
 			}
 
@@ -626,10 +627,10 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 	// Collapse path first, make sure they aren't trying to trivially jump out
 	//  of mount point, also clean it up so we can find the virtual mount point
 	// NOTE: Not actually secure, don't assume this is even remotely a chroot
-	VFSPath path = CollapsePath( uncollapsedPath );
+	VFSPath const path = CollapsePath( uncollapsedPath );
 	if( path.IsDescendantOf( k_Root ) == false )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Virtual path doesn't descend from root" );
+		RFLOG_ERROR( path, RFCAT_VFS, "Virtual path doesn't descend from root" );
 		return nullptr;
 	}
 
@@ -668,7 +669,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 					break;
 				case VFSMount::Type::Invalid:
 				default:
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Unhandled mount type" );
+					RFLOG_ERROR( path, RFCAT_VFS, "Unhandled mount type" );
 					return nullptr;
 			}
 			VFSPath branchRoot = physRoot->GetChild( mount.m_RealMount );
@@ -695,7 +696,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 		}
 
 		// Locked to this mount layer, let's see what happens!
-		RFLOG_TRACE( nullptr, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
+		RFLOG_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
 		FILE* file = nullptr;
 		errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
 		if( file == nullptr )
@@ -703,7 +704,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			// Tough luck, no easy way to tell what went wrong
 			if( mustExist )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
+				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
 			}
 			else
 			{
@@ -713,11 +714,11 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 							CreatePathFromString( finalFilename ).GetParent() ) );
 				if( parentExists == false )
 				{
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
+					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
 				}
 				else
 				{
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
+					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
 				}
 			}
 			return nullptr;
@@ -733,3 +734,35 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
+
+template<>
+void RF::logging::WriteContextString( file::VFSPath const & context, LogContextBuffer& buffer )
+{
+	size_t bufferOffset = 0;
+	size_t const maxBufferOffset = buffer.size();
+
+	size_t const numElements = context.NumElements();
+	for( size_t i = 0; i < numElements; i++ )
+	{
+		file::VFSPath::Element const& element = context.GetElement( i );
+
+		if( bufferOffset >= maxBufferOffset )
+		{
+			break;
+		}
+		if( i != 0 )
+		{
+			buffer[bufferOffset] = file::VFS::k_PathDelimiter;
+			bufferOffset++;
+		}
+		if( bufferOffset >= maxBufferOffset )
+		{
+			break;
+		}
+
+		size_t const bytesRemaining = maxBufferOffset - bufferOffset;
+		size_t const bytesToWrite = math::Min( bytesRemaining, element.size() );
+		memcpy( &buffer[bufferOffset], element.data(), bytesToWrite );
+		bufferOffset += bytesToWrite;
+	}
+}
