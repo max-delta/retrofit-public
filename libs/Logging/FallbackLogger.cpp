@@ -1,11 +1,18 @@
 #include "stdafx.h"
 #include "FallbackLogger.h"
 
-#include "PlatformUtils_win32/Debugging.h"
 #include "Logging/Logging.h"
+
+#include "core_logging/LoggingRouter.h"
+
+#include "rftl/atomic"
 
 
 namespace RF { namespace logging {
+///////////////////////////////////////////////////////////////////////////////
+
+static rftl::atomic<HandlerID> sFallbackHandlerID = kInvalidHandlerID;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list args )
@@ -17,13 +24,13 @@ void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list
 	*messageBuffer.rbegin() = '\0';
 
 	rftl::array<char, kBufSize> outputBuffer;
-	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s]%s\n", event.mCategoryKey, &messageBuffer[0] );
+	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "FALLBACK_LOGGER>>[%s] %s", event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 
-	platform::debugging::OutputToDebugger( &outputBuffer[0] );
+	puts( &outputBuffer[0] );
 	if( bytesParsed >= kBufSize )
 	{
-		platform::debugging::OutputToDebugger( "<TRUNCATED MESSAGE!>" );
+		puts( "FALLBACK_LOGGER>>TRUNCATED MESSAGE!" );
 	}
 }
 
@@ -39,7 +46,22 @@ void InsertFallbackLogger()
 		RF_SEV_USER_ATTENTION_REQUESTED |
 		RF_SEV_UNRECOVERABLE;
 	fallbackDef.mHandlerFunc = FallbackLogger;
-	RegisterHandler( fallbackDef );
+
+	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
+	RF_ASSERT( sFallbackHandlerID == kInvalidHandlerID );
+	sFallbackHandlerID = router.RegisterHandler( fallbackDef );
+	RF_ASSERT( sFallbackHandlerID != kInvalidHandlerID );
+}
+
+
+
+void RemoveFallbackLoggerIfPresent()
+{
+	HandlerID const previousFallbackHandlerID = sFallbackHandlerID.exchange( kInvalidHandlerID, rftl::memory_order::memory_order_acq_rel );
+	if( previousFallbackHandlerID != kInvalidHandlerID )
+	{
+		UnregisterHandler( previousFallbackHandlerID );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
