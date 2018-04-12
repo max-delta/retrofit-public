@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "project.h"
+
+#include "Logging/Logging.h"
+
 #include "core_platform/uuid.h"
 #include "core_platform/rpc_inc.h"
 #include "core_math/math_bytes.h"
@@ -94,9 +97,11 @@ Uuid Uuid::GenerateNewUuid()
 		// This shouldn't fail if UuidCreateSequential(...) is present during
 		//  compilation, since that function means this was compiled with a
 		//  Windows SDK that switched UuidCreate(...) to be secure by default
-		RF_ASSERT_MSG(
-			retVal.ExposesComputerInformation() == false,
-			"Windows seems to have produced an unsecure UUID" );
+		if( retVal.ExposesComputerInformation() )
+		{
+			RFLOG_CRITICAL( nullptr, RFCAT_PLATFORMUTILS, "Windows seems to have produced an unsecure UUID" );
+			return Uuid();
+		}
 	}
 	return retVal;
 }
