@@ -10,6 +10,7 @@ namespace RF { namespace logging {
 void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list args );
 
 void InsertFallbackLogger();
+void RemoveFallbackLoggerIfPresent();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

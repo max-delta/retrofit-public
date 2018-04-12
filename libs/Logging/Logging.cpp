@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Logging.h"
 
+#include "Logging/FallbackLogger.h"
+
 #include "core/meta/LazyInitSingleton.h"
 #include "core_logging/LoggingRouter.h"
 
@@ -17,6 +19,8 @@ LoggingRouter& GetOrCreateGlobalLoggingInstance()
 
 HandlerID RegisterHandler( HandlerDefinition const & handlerDefinition )
 {
+	RemoveFallbackLoggerIfPresent();
+
 	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
 	return router.RegisterHandler( handlerDefinition );
 }
