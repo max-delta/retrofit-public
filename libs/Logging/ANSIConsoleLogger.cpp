@@ -58,7 +58,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_l
 	}
 	else
 	{
-		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  {%s} %s", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
+		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
 	}
 	*outputBuffer.rbegin() = '\0';
 
