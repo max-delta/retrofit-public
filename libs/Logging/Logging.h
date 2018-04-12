@@ -125,10 +125,10 @@ using LogContextBuffer = rftl::array<char, kMaxContextLen>;
 // EXAMPLE:
 //  template<> void WriteContextString(
 //   MyClass const& context,
-//   LogContextBuffer buffer );
+//   LogContextBuffer& buffer );
 // NOTE: Will be called from multiple threads
 template<typename Context>
-void WriteContextString( Context const& context, LogContextBuffer buffer );
+void WriteContextString( Context const& context, LogContextBuffer& buffer );
 
 //////////////////////////////////////////////////////////////////////////////
 

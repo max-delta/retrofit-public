@@ -4,6 +4,8 @@
 #include "PlatformFilesystem/VFSFwd.h"
 #include "PlatformFilesystem/VFSMount.h"
 
+#include "Logging/Logging.h"
+
 
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
@@ -111,4 +113,9 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+}}
+
+namespace RF { namespace logging {
+template<>
+void WriteContextString( file::VFSPath const& context, LogContextBuffer& buffer );
 }}
