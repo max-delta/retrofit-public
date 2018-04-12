@@ -44,7 +44,7 @@ void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
 
 FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 {
-	RFLOG_TRACE( path, RFCAT_VFS, "File read request" );
+	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
 }
 
@@ -52,7 +52,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 {
-	RFLOG_TRACE( path, RFCAT_VFS, "File write request" );
+	RFLOG_DEBUG( path, RFCAT_VFS, "File write request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
 }
 
@@ -60,7 +60,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 {
-	RFLOG_TRACE( path, RFCAT_VFS, "File modify request" );
+	RFLOG_DEBUG( path, RFCAT_VFS, "File modify request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
 }
 
@@ -68,7 +68,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 {
-	RFLOG_TRACE( path, RFCAT_VFS, "File append request" );
+	RFLOG_DEBUG( path, RFCAT_VFS, "File append request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
 }
 
@@ -76,7 +76,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 
 FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
 {
-	RFLOG_TRACE( path, RFCAT_VFS, "File execute request" );
+	RFLOG_DEBUG( path, RFCAT_VFS, "File execute request" );
 	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
 }
 

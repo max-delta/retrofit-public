@@ -8,4 +8,4 @@
 #endif
 
 constexpr char const* RFCAT_SERIALIZATION = "Serialization";
-constexpr uint64_t RFCAT_SERIALIZATION_SEV_WHITELIST = static_cast<uint64_t>( -1 );
+constexpr uint64_t RFCAT_SERIALIZATION_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
