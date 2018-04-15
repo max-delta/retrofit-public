@@ -150,6 +150,7 @@
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
     <ClCompile Include="serialization_diagnosticexporter.cpp" />
+    <ClCompile Include="serialization_xmlexporter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
