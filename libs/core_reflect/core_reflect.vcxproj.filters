@@ -12,6 +12,7 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Value.cpp" />
+    <ClCompile Include="ClassInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Value.inl" />
