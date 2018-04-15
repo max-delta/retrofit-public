@@ -9,43 +9,48 @@
 namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT>
+template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT, typename OnReturnFromNestedTypeFuncT>
 inline void TypeTraverser::TraverseVariablesT(
 	reflect::VirtualClass const & traversalRoot,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
-	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc )
+	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc,
+	OnReturnFromNestedTypeFuncT const& onReturnFromNestedTypeFunc )
 {
 	TraverseVariablesWithInheritanceT(
 		*traversalRoot.GetVirtualClassInfo(),
 		&traversalRoot,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 }
 
 
 
-template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT>
+template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT, typename OnReturnFromNestedTypeFuncT>
 inline void TypeTraverser::TraverseVariablesT(
 	reflect::ClassInfo const & classInfo,
 	void const * classLocation,
 	OnMemberVariableFuncT const & onMemberVariableFunc,
-	OnNestedTypeFoundFuncT const & onNestedTypeFoundFunc )
+	OnNestedTypeFoundFuncT const & onNestedTypeFoundFunc,
+	OnReturnFromNestedTypeFuncT const& onReturnFromNestedTypeFunc )
 {
 	TraverseVariablesWithInheritanceT(
 		classInfo,
 		classLocation,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT>
+template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT, typename OnReturnFromNestedTypeFuncT>
 inline void TypeTraverser::TraverseVariablesWithInheritanceT(
 	reflect::ClassInfo const & classInfo,
 	void const * classLocation,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
-	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc )
+	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc,
+	OnReturnFromNestedTypeFuncT const& onReturnFromNestedTypeFunc )
 {
 	using namespace RF::reflect;
 
@@ -66,24 +71,27 @@ inline void TypeTraverser::TraverseVariablesWithInheritanceT(
 			*baseClassInfo.mBaseClassInfo,
 			baseClassLocation,
 			onMemberVariableFunc,
-			onNestedTypeFoundFunc );
+			onNestedTypeFoundFunc,
+			onReturnFromNestedTypeFunc );
 	}
 
 	TraverseVariablesWithoutInheritanceT(
 		classInfo,
 		classLocation,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 }
 
 
 
-template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT>
+template<typename OnMemberVariableFuncT, typename OnNestedTypeFoundFuncT, typename OnReturnFromNestedTypeFuncT>
 inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 	reflect::ClassInfo const & classInfo,
 	void const * classLocation,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
-	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc )
+	OnNestedTypeFoundFuncT const& onNestedTypeFoundFunc,
+	OnReturnFromNestedTypeFuncT const& onReturnFromNestedTypeFunc )
 {
 	using namespace RF::reflect;
 
@@ -107,7 +115,8 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 					*varInfo.mVariableTypeInfo.mClassInfo,
 					varLoc,
 					onMemberVariableFunc,
-					onNestedTypeFoundFunc );
+					onNestedTypeFoundFunc,
+					onReturnFromNestedTypeFunc );
 			}
 			continue;
 		}

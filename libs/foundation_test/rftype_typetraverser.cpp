@@ -32,12 +32,20 @@ TEST( RFType, TraverseSingleInheritance )
 		shouldRecurse = true;
 	};
 
+	auto onReturnFromNestedTypeFunc = [](
+		void ) ->
+		void
+	{
+		//
+	};
+
 	rftype_example::ExampleDerivedClass classInstance;
 	TypeTraverser::TraverseVariablesT(
 		*classInstance.GetVirtualClassInfo(),
 		&classInstance,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 0 );
 
@@ -76,12 +84,20 @@ TEST( RFType, TraverseMultipleInheritance )
 		shouldRecurse = true;
 	};
 
+	auto onReturnFromNestedTypeFunc = [](
+		void ) ->
+		void
+	{
+		//
+	};
+
 	rftype_example::ExamplePoorLifeDecision classInstance;
 	TypeTraverser::TraverseVariablesT(
 		*classInstance.GetVirtualClassInfo(),
 		&classInstance,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 0 );
 
@@ -120,12 +136,20 @@ TEST( RFType, TraverseNesting )
 		shouldRecurse = true;
 	};
 
+	auto onReturnFromNestedTypeFunc = [](
+		void ) ->
+		void
+	{
+		//
+	};
+
 	rftype_example::ExampleWithClassAsMember classInstance;
 	TypeTraverser::TraverseVariablesT(
 		GetClassInfo<rftype_example::ExampleWithClassAsMember>(),
 		&classInstance,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc );
+		onNestedTypeFoundFunc,
+		onReturnFromNestedTypeFunc );
 	ASSERT_EQ( members.size(), 1 );
 	ASSERT_EQ( nested.size(), 1 );
 
