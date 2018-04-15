@@ -177,7 +177,7 @@ struct CRTCompositionTrigger
 	RF_NO_COPY( CRTCompositionTrigger );
 
 	CRTCompositionTrigger()
-		: mFallbackClassInfo()
+		: mFallbackClassInfo( ExplicitDefaultConstruct() )
 		, mCompositor( GetClassInfoStorage<CLASS>() )
 	{
 		Initialize( mCompositor );
@@ -185,7 +185,7 @@ struct CRTCompositionTrigger
 	template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
 	::RF::reflect::ClassInfo& GetClassInfoStorage()
 	{
-		return CLASS::___RFType_Static_ClassInfo;
+		return CLASS::___RFType_Static_ClassInfo();
 	}
 	template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ) == false, int>::type = 0>
 	::RF::reflect::ClassInfo& GetClassInfoStorage()
