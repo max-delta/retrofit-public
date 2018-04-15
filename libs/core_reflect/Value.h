@@ -95,15 +95,19 @@ public:
 	Value();
 	template<typename T>
 	explicit Value( T const& value );
+	explicit Value( Type type, void const* bytes );
 	Value( Value const& ) = default;
 	Value& operator =( Value const& ) = default;
+
 	Type GetStoredType() const;
 	char const* GetStoredTypeName() const;
 	static char const* GetTypeName( Type type );
+
 	template<typename T>
 	typename rftl::remove_const<T>::type const* GetAs() const;
 	void const* GetBytes() const;
 	size_t GetNumBytes() const;
+
 	template<typename T>
 	static constexpr Type DetermineType();
 
@@ -111,7 +115,7 @@ public:
 	//
 	// Private data
 private:
-	InternalStorage m_InternalStorage;
+	InternalStorage mInternalStorage;
 };
 
 #undef RF_REFLECT_VALUE_TYPELIST

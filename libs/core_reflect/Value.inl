@@ -8,7 +8,7 @@ namespace RF { namespace reflect {
 
 template<typename T>
 Value::Value( T const& value )
-	: m_InternalStorage( value )
+	: mInternalStorage( value )
 {
 	//
 }
@@ -19,7 +19,7 @@ template<typename T>
 typename rftl::remove_const<T>::type const* Value::GetAs() const
 {
 	using NonConstT = rftl::remove_const<T>::type;
-	NonConstT const* retVal = rftl::get_if<NonConstT>( &m_InternalStorage );
+	NonConstT const* retVal = rftl::get_if<NonConstT>( &mInternalStorage );
 	return retVal;
 }
 

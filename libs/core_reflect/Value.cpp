@@ -8,16 +8,53 @@ namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 Value::Value()
-	: m_InternalStorage( InvalidType() )
+	: mInternalStorage( InvalidType() )
 {
 	//
 }
 
 
 
+Value::Value( Type type, void const * bytes )
+{
+	// TODO: Template recursion instead on the typelist
+	switch( type )
+	{
+		case Type::Bool:				mInternalStorage = *reinterpret_cast<bool const*>( bytes ); break;
+		case Type::VoidPtr:				mInternalStorage = *reinterpret_cast<void* const*>( bytes ); break;
+		case Type::VoidConstPtr:		mInternalStorage = *reinterpret_cast<void const* const*>( bytes ); break;
+		case Type::VirtualClassPtr:		mInternalStorage = *reinterpret_cast<VirtualClass* const*>( bytes ); break;
+		case Type::VirtualClassConstPtr:mInternalStorage = *reinterpret_cast<VirtualClass const* const*>( bytes ); break;
+		case Type::Char:				mInternalStorage = *reinterpret_cast<char const*>( bytes ); break;
+		case Type::WChar:				mInternalStorage = *reinterpret_cast<wchar_t const*>( bytes ); break;
+		case Type::Char16:				mInternalStorage = *reinterpret_cast<char16_t const*>( bytes ); break;
+		case Type::Char32:				mInternalStorage = *reinterpret_cast<char32_t const*>( bytes ); break;
+		case Type::Float:				mInternalStorage = *reinterpret_cast<float const*>( bytes ); break;
+		case Type::Double:				mInternalStorage = *reinterpret_cast<double const*>( bytes ); break;
+		case Type::LongDouble:			mInternalStorage = *reinterpret_cast<long double const*>( bytes ); break;
+		case Type::UInt8:				mInternalStorage = *reinterpret_cast<uint8_t const*>( bytes ); break;
+		case Type::UInt16:				mInternalStorage = *reinterpret_cast<uint16_t const*>( bytes ); break;
+		case Type::UInt32:				mInternalStorage = *reinterpret_cast<uint32_t const*>( bytes ); break;
+		case Type::UInt64:				mInternalStorage = *reinterpret_cast<uint64_t const*>( bytes ); break;
+		case Type::Int8:				mInternalStorage = *reinterpret_cast<int8_t const*>( bytes ); break;
+		case Type::Int16:				mInternalStorage = *reinterpret_cast<int16_t const*>( bytes ); break;
+		case Type::Int32:				mInternalStorage = *reinterpret_cast<int32_t const*>( bytes ); break;
+		case Type::Int64:				mInternalStorage = *reinterpret_cast<int64_t const*>( bytes ); break;
+		case Type::Invalid:				mInternalStorage = InvalidType(); break;
+		default:
+		{
+			RF_DBGFAIL();
+			mInternalStorage = InvalidType();
+			break;
+		}
+	}
+}
+
+
+
 Value::Type Value::GetStoredType() const
 {
-	size_t const index = m_InternalStorage.index();
+	size_t const index = mInternalStorage.index();
 	static_assert( static_cast<size_t>( Type::Invalid ) == rftl::variant_npos, "Standards violation?" );
 	constexpr size_t kInvalidTypeHackIndex = rftl::variant_size<InternalStorage>::value - 1;
 	if( index == kInvalidTypeHackIndex )
