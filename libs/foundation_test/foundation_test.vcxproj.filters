@@ -7,6 +7,7 @@
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="serialization_diagnosticexporter.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
+    <ClCompile Include="serialization_xmlexporter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
