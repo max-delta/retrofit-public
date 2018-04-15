@@ -29,6 +29,7 @@
     <ClInclude Include="cstdlib" />
     <ClInclude Include="cstring" />
     <ClInclude Include="deque" />
+    <ClInclude Include="extension\immutable_string.h" />
     <ClInclude Include="extension\static_array.h" />
     <ClInclude Include="filesystem" />
     <ClInclude Include="initializer_list" />

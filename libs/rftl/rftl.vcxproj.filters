@@ -43,6 +43,9 @@
     <ClInclude Include="cstdarg" />
     <ClInclude Include="cstdio" />
     <ClInclude Include="cstring" />
+    <ClInclude Include="extension\immutable_string.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">
