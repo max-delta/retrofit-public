@@ -29,6 +29,22 @@ Value::Type Value::GetStoredType() const
 
 
 
+char const* Value::GetStoredTypeName() const
+{
+	Type const type = GetStoredType();
+	size_t const typeAsIndex = static_cast<size_t>( type );
+	return kTypeNameStrings[typeAsIndex];
+}
+
+
+
+char const* Value::GetTypeName( Type type )
+{
+	size_t const typeAsIndex = static_cast<size_t>( type );
+	return kTypeNameStrings[typeAsIndex];
+}
+
+
 void const * Value::GetBytes() const
 {
 	Type const type = GetStoredType();
