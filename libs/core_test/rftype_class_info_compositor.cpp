@@ -268,9 +268,11 @@ TEST( RFType, Basics )
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 	{
 		using TargetClass = details::ClassWithoutStaticClassInfo;
@@ -278,9 +280,11 @@ TEST( RFType, Basics )
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 }
 
@@ -294,9 +298,11 @@ TEST( RFType, NonVirtualChainInheritance )
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 	{
 		using TargetClass = details::NonVirtualDerivedClassWithoutStaticClassInfo;
@@ -308,11 +314,14 @@ TEST( RFType, NonVirtualChainInheritance )
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
+		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_f" );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
+		ASSERT_STREQ( baseClassInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 }
 
@@ -326,6 +335,7 @@ TEST( RFType, VirtualChainInheritance )
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
@@ -334,6 +344,7 @@ TEST( RFType, VirtualChainInheritance )
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_d ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 	{
 		using TargetClass = details::VirtualDerivedClassWithoutStaticClassInfo;
@@ -345,6 +356,7 @@ TEST( RFType, VirtualChainInheritance )
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
+		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
@@ -353,8 +365,10 @@ TEST( RFType, VirtualChainInheritance )
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_f" );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
+		ASSERT_STREQ( baseClassInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 	{
 		using TargetClass = details::MissingVirtualDerivedClassWithoutStaticClassInfo;
@@ -366,6 +380,7 @@ TEST( RFType, VirtualChainInheritance )
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;
 		reflect::VirtualClass const* virtualClass = &targetClass;
@@ -375,8 +390,10 @@ TEST( RFType, VirtualChainInheritance )
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( classInfo.mNonStaticVariables[0].mOffset, offsetof( TargetClass, instance_f ) );
+		ASSERT_STREQ( classInfo.mNonStaticVariables[0].mIdentifier, "instance_f" );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables.size(), 1 );
 		ASSERT_EQ( baseClassInfo.mNonStaticVariables[0].mOffset, offsetof( BaseClass, instance_d ) );
+		ASSERT_STREQ( baseClassInfo.mNonStaticVariables[0].mIdentifier, "instance_d" );
 	}
 }
 
@@ -419,6 +436,7 @@ TEST( RFType, Nested )
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<details::nested::Containing>();
 		ASSERT_TRUE( classInfo.mNonStaticVariables.size() == 1 );
 		MemberVariableInfo const& varInfo = classInfo.mNonStaticVariables[0];
+		ASSERT_STREQ( varInfo.mIdentifier, "contents" );
 		ASSERT_TRUE( varInfo.mMutable == true );
 		ASSERT_TRUE( varInfo.mOffset == offsetof( details::nested::Containing, contents ) );
 		ASSERT_TRUE( varInfo.mSize == sizeof( details::nested::Contents ) );

@@ -3,6 +3,7 @@
 #include "core_reflect/Value.h"
 #include "rftl/vector"
 #include "rftl/deque"
+#include "rftl/extension/immutable_string.h"
 
 
 namespace RF { namespace reflect {
@@ -15,13 +16,13 @@ struct ExtensionAccessor;
 
 struct VariableTypeInfo
 {
-	Value::Type mValueType;
+	Value::Type mValueType = Value::Type::Invalid;
 
 	// May be null if not known
-	ClassInfo const* mClassInfo;
+	ClassInfo const* mClassInfo = nullptr;
 
 	// May be null if not known
-	ExtensionAccessor const* mAccessor;
+	ExtensionAccessor const* mAccessor = nullptr;
 };
 
 
@@ -32,61 +33,65 @@ struct BaseClassInfo
 	//  functions to perform the hop, even though all major compilers are
 	//  reasonably predictable at time of writing
 	using FuncPtrGetBasePointerFromDerived = void const* (*)( void const* );
-	FuncPtrGetBasePointerFromDerived mGetBasePointerFromDerived;
+	FuncPtrGetBasePointerFromDerived mGetBasePointerFromDerived = nullptr;
 
-	ClassInfo const* mBaseClassInfo;
+	ClassInfo const* mBaseClassInfo = nullptr;
 };
 
 
 
 struct FreeStandingVariableInfo
 {
-	void const* mAddress;
-	bool mMutable;
-	size_t mSize;
-	VariableTypeInfo mVariableTypeInfo;
+	char const* mIdentifier = nullptr;
+	void const* mAddress = nullptr;
+	bool mMutable = false;
+	size_t mSize = 0;
+	VariableTypeInfo mVariableTypeInfo = {};
 };
 
 
 
 struct MemberVariableInfo
 {
-	ptrdiff_t mOffset;
-	bool mMutable;
-	size_t mSize;
-	VariableTypeInfo mVariableTypeInfo;
+	char const* mIdentifier = nullptr;
+	ptrdiff_t mOffset = 0;
+	bool mMutable = false;
+	size_t mSize = 0;
+	VariableTypeInfo mVariableTypeInfo = {};
 };
 
 
 
 struct ReturnInfo
 {
-	Value::Type mValueType;
+	Value::Type mValueType = Value::Type::Invalid;
 };
 
 
 
 struct ParameterInfo
 {
-	Value::Type mValueType;
+	Value::Type mValueType = Value::Type::Invalid;
 };
 
 
 
 struct FreeStandingFunctionInfo
 {
-	void* mAddress;
-	ReturnInfo mReturn;
-	rftl::vector<ParameterInfo> Parameters;
+	char const* mIdentifier = nullptr;
+	void* mAddress = nullptr;
+	ReturnInfo mReturn = {};
+	rftl::vector<ParameterInfo> Parameters = {};
 };
 
 
 
 struct MemberFunctionInfo
 {
-	bool mRequiresConst;
-	ReturnInfo mReturn;
-	rftl::vector<ParameterInfo> Parameters;
+	char const* mIdentifier = nullptr;
+	bool mRequiresConst = false;
+	ReturnInfo mReturn = {};
+	rftl::vector<ParameterInfo> Parameters = {};
 };
 
 
@@ -179,6 +184,7 @@ struct ClassInfo
 	//  before considering changes to this type!
 	// NOTE: See VariableTypeInfo for an example reference
 	using ExtensionStorage = rftl::deque<ExtensionAccessor>;
+	using IdentifierStorage = rftl::deque<rftl::immutable_string>;
 
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;
@@ -209,6 +215,11 @@ struct ClassInfo
 	// Extension information not stored in the variable information structures,
 	//  since it is a rare case, but requires a large amount of data if present
 	ExtensionStorage mExtensionStorage;
+
+	// Identifier not stored in the variable information structures, since it
+	//  is re-used in several locations
+	char const* StoreString( char const* string );
+	IdentifierStorage mIdentifierStorage;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
