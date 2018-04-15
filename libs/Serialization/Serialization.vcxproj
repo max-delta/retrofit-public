@@ -148,13 +148,16 @@
   <ItemGroup>
     <ClInclude Include="DiagnosticExporter.h" />
     <ClInclude Include="Exporter.h" />
+    <ClInclude Include="ObjectSerializer.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="SerializationFwd.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="XmlExporter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DiagnosticExporter.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="ObjectSerializer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
