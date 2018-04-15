@@ -98,6 +98,8 @@ public:
 	Value( Value const& ) = default;
 	Value& operator =( Value const& ) = default;
 	Type GetStoredType() const;
+	char const* GetStoredTypeName() const;
+	static char const* GetTypeName( Type type );
 	template<typename T>
 	typename rftl::remove_const<T>::type const* GetAs() const;
 	void const* GetBytes() const;
