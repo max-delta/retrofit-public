@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_reflect/Value.h"
+#include "core/ConstructorOverload.h"
 #include "rftl/vector"
 #include "rftl/deque"
 #include "rftl/extension/immutable_string.h"
@@ -185,6 +186,16 @@ struct ClassInfo
 	// NOTE: See VariableTypeInfo for an example reference
 	using ExtensionStorage = rftl::deque<ExtensionAccessor>;
 	using IdentifierStorage = rftl::deque<rftl::immutable_string>;
+
+	// IMPORTANT: Be careful where ClassInfo's are allowed to construct! Subtle
+	//  CRT-initialization bugs are rampant when crossing module boundaries.
+	// NOTE: As a general rule, never construct a ClassInfo at namespace-scope,
+	//  only at block-level. This means if you want static storage duration,
+	//  you will need to use static local variables in block scope to be safe.
+	ClassInfo() = delete;
+	explicit ClassInfo( ExplicitDefaultConstruct )
+	{
+	}
 
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;
