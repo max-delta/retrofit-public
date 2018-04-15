@@ -6,11 +6,14 @@
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="DiagnosticExporter.h" />
     <ClInclude Include="XmlExporter.h" />
+    <ClInclude Include="ObjectSerializer.h" />
+    <ClInclude Include="SerializationFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="DiagnosticExporter.cpp" />
     <ClCompile Include="XmlExporter.cpp" />
+    <ClCompile Include="ObjectSerializer.cpp" />
   </ItemGroup>
 </Project>
