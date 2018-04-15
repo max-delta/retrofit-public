@@ -213,5 +213,73 @@ TEST( Reflect, ValueCopy )
 	ASSERT_TRUE( *vInvalid.GetAs<int8_t>() == 2 );
 }
 
+
+
+TEST( Reflect, ValueConstructFromBytes )
+{
+	bool const Bool{ false };
+	void* const VoidPtr{ nullptr };
+	void const* const VoidConstPtr{ nullptr };
+	VirtualClass* const VirtualClassPtr{ nullptr };
+	VirtualClass const* const VirtualClassConstPtr{ nullptr };
+	char const Char{ '\0' };
+	wchar_t const WChar{ L'\0' };
+	char16_t const Char16{ u'\0' };
+	char32_t const Char32{ U'\0' };
+	float const Float{ 0.f };
+	double const Double{ 0.0 };
+	long double const LongDouble{ 0.0l };
+	uint8_t const UInt8{ 0u };
+	int8_t const Int8{ 0 };
+	uint16_t const UInt16{ 0u };
+	int16_t const Int16{ 0 };
+	uint32_t const UInt32{ 0ul };
+	int32_t const Int32{ 0l };
+	uint64_t const UInt64{ 0ull };
+	int64_t const Int64{ 0ll };
+
+	Value const vBool( Value::Type::Bool, &Bool );
+	Value const vVoidPtr( Value::Type::VoidPtr, &VoidPtr );
+	Value const vVoidConstPtr( Value::Type::VoidConstPtr, &VoidConstPtr );
+	Value const vVirtualClassPtr( Value::Type::VirtualClassPtr, &VirtualClassPtr );
+	Value const vVirtualClassConstPtr( Value::Type::VirtualClassConstPtr, &VirtualClassConstPtr );
+	Value const vChar( Value::Type::Char, &Char );
+	Value const vWChar( Value::Type::WChar, &WChar );
+	Value const vChar16( Value::Type::Char16, &Char16 );
+	Value const vChar32( Value::Type::Char32, &Char32 );
+	Value const vFloat( Value::Type::Float, &Float );
+	Value const vDouble( Value::Type::Double, &Double );
+	Value const vLongDouble( Value::Type::LongDouble, &LongDouble );
+	Value const vUInt8( Value::Type::UInt8, &UInt8 );
+	Value const vInt8( Value::Type::Int8, &Int8 );
+	Value const vUInt16( Value::Type::UInt16, &UInt16 );
+	Value const vInt16( Value::Type::Int16, &Int16 );
+	Value const vUInt32( Value::Type::UInt32, &UInt32 );
+	Value const vInt32( Value::Type::Int32, &Int32 );
+	Value const vUInt64( Value::Type::UInt64, &UInt64 );
+	Value const vInt64( Value::Type::Int64, &Int64 );
+
+	ASSERT_TRUE( *vBool.GetAs<bool>() == Bool );
+	ASSERT_TRUE( *vVoidPtr.GetAs<void*>() == VoidPtr );
+	ASSERT_TRUE( *vVoidConstPtr.GetAs<void const*>() == VoidConstPtr );
+	ASSERT_TRUE( *vVirtualClassPtr.GetAs<VirtualClass*>() == VirtualClassPtr );
+	ASSERT_TRUE( *vVirtualClassConstPtr.GetAs<VirtualClass const*>() == VirtualClassConstPtr );
+	ASSERT_TRUE( *vChar.GetAs<char>() == Char );
+	ASSERT_TRUE( *vWChar.GetAs<wchar_t>() == WChar );
+	ASSERT_TRUE( *vChar16.GetAs<char16_t>() == Char16 );
+	ASSERT_TRUE( *vChar32.GetAs<char32_t>() == Char32 );
+	ASSERT_TRUE( *vFloat.GetAs<float>() == Float );
+	ASSERT_TRUE( *vDouble.GetAs<double>() == Double );
+	ASSERT_TRUE( *vLongDouble.GetAs<long double>() == LongDouble );
+	ASSERT_TRUE( *vUInt8.GetAs<uint8_t>() == UInt8 );
+	ASSERT_TRUE( *vInt8.GetAs<int8_t>() == Int8 );
+	ASSERT_TRUE( *vUInt16.GetAs<uint16_t>() == UInt16 );
+	ASSERT_TRUE( *vInt16.GetAs<int16_t>() == Int16 );
+	ASSERT_TRUE( *vUInt32.GetAs<uint32_t>() == UInt32 );
+	ASSERT_TRUE( *vInt32.GetAs<int32_t>() == Int32 );
+	ASSERT_TRUE( *vUInt64.GetAs<uint64_t>() == UInt64 );
+	ASSERT_TRUE( *vInt64.GetAs<int64_t>() == Int64 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
