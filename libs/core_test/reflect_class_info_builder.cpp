@@ -39,7 +39,7 @@ TEST( ReflectBuilder, ClassInfos )
 		{
 			//
 		};
-		ClassInfo classInfo;
+		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
 		ASSERT_TRUE( classInfo.mIsPolymorphic == false );
 		ASSERT_TRUE( classInfo.mIsAbstract == false );
@@ -58,7 +58,7 @@ TEST( ReflectBuilder, ClassInfos )
 			{
 			}
 		};
-		ClassInfo classInfo;
+		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
 		ASSERT_TRUE( classInfo.mIsPolymorphic == true );
 		ASSERT_TRUE( classInfo.mIsAbstract == false );
@@ -75,7 +75,7 @@ TEST( ReflectBuilder, ClassInfos )
 		{
 			virtual void Virt() = 0;
 		};
-		ClassInfo classInfo;
+		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
 		ASSERT_TRUE( classInfo.mIsPolymorphic == true );
 		ASSERT_TRUE( classInfo.mIsAbstract == true );
@@ -95,7 +95,7 @@ TEST( ReflectBuilder, ClassInfos )
 			}
 			virtual ~Test() = default;
 		};
-		ClassInfo classInfo;
+		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
 		ASSERT_TRUE( classInfo.mIsPolymorphic == true );
 		ASSERT_TRUE( classInfo.mIsAbstract == false );
@@ -117,7 +117,7 @@ TEST( ReflectBuilder, ClassInfos )
 			Test& operator=( Test const& ) = delete;
 			Test& operator=( Test const&& ) = delete;
 		};
-		ClassInfo classInfo;
+		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
 		ASSERT_TRUE( classInfo.mIsPolymorphic == false );
 		ASSERT_TRUE( classInfo.mIsAbstract == false );

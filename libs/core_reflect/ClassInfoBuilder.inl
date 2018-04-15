@@ -38,7 +38,6 @@ template <class T>
 void CreateClassInfo( ClassInfo& classInfo )
 {
 	static_assert( rftl::is_class<T>::value, "CreateClassInfo requires a class" );
-	classInfo = {};
 	classInfo.mIsPolymorphic = rftl::is_polymorphic<T>::value;
 	classInfo.mIsAbstract = rftl::is_abstract<T>::value;
 	classInfo.mIsDefaultConstructible = rftl::is_default_constructible<T>::value;

@@ -84,4 +84,9 @@
 //  	RFTYPE_STATIC_CLASSINFO();
 //  };
 //  RFTYPE_DEFINE_STATIC_CLASSINFO( CLASSTYPE );
-#define RFTYPE_DEFINE_STATIC_CLASSINFO( CLASSTYPE ) ::RF::reflect::ClassInfo CLASSTYPE::___RFType_Static_ClassInfo
+#define RFTYPE_DEFINE_STATIC_CLASSINFO( CLASSTYPE ) \
+	::RF::reflect::ClassInfo& CLASSTYPE::___RFType_Static_ClassInfo() \
+	{ \
+		static ::RF::reflect::ClassInfo sClassInfo{ ::RF::ExplicitDefaultConstruct() }; \
+		return sClassInfo; \
+	}

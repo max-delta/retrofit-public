@@ -24,7 +24,7 @@ template<class CLASS>
 template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
 ::RF::reflect::ClassInfo const& GetClassInfo()
 {
-	return CLASS::___RFType_Static_ClassInfo;
+	return CLASS::___RFType_Static_ClassInfo();
 }
 
 
