@@ -69,6 +69,7 @@ struct ClassInfoCompositor
 	{
 		reflect::FreeStandingFunctionInfo funcInfo = {};
 		reflect::builder::CreateFreeStandingFunctionInfo( funcInfo, method );
+		funcInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		mClassInfo.mStaticFunctions.emplace_back( rftl::move( funcInfo ) );
 		return *this;
 	}
@@ -78,6 +79,7 @@ struct ClassInfoCompositor
 	{
 		reflect::MemberFunctionInfo funcInfo = {};
 		reflect::builder::CreateMemberFunctionInfo( funcInfo, method );
+		funcInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		mClassInfo.mNonStaticFunctions.emplace_back( rftl::move( funcInfo ) );
 		return *this;
 	}
@@ -87,6 +89,7 @@ struct ClassInfoCompositor
 	{
 		reflect::FreeStandingVariableInfo varInfo = {};
 		reflect::builder::CreateFreeStandingVariableInfo( varInfo, variable );
+		varInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		mClassInfo.mStaticVariables.emplace_back( rftl::move( varInfo ) );
 		return *this;
 	}
@@ -98,6 +101,7 @@ struct ClassInfoCompositor
 	{
 		reflect::MemberVariableInfo varInfo = {};
 		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		varInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		mClassInfo.mNonStaticVariables.emplace_back( rftl::move( varInfo ) );
 		return *this;
 	}
@@ -109,6 +113,7 @@ struct ClassInfoCompositor
 	{
 		reflect::MemberVariableInfo varInfo = {};
 		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		varInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		using NestedType = typename reflect::VariableTraits<T>::VariableType;
 		static_assert( rftl::is_class<NestedType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
 		RF_ASSERT( varInfo.mVariableTypeInfo.mValueType == reflect::Value::Type::Invalid );
@@ -136,6 +141,7 @@ struct ClassInfoCompositor
 
 		reflect::MemberVariableInfo varInfo = {};
 		reflect::builder::CreateMemberVariableInfo( varInfo, variable );
+		varInfo.mIdentifier = mClassInfo.StoreString( identifier );
 		using ExtensionType = typename reflect::VariableTraits<T>::VariableType;
 		static_assert( rftl::is_class<ExtensionType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
 		using Extension = extensions::Accessor<ExtensionType>;
