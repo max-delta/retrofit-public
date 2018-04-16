@@ -31,6 +31,44 @@ constexpr size_t SizeOfData_Slots( FramePackBase const & framePack )
 	return sizeof( FramePackBase::TimeSlot ) * framePack.m_NumTimeSlots;
 }
 
+struct Header_v0_1
+{
+	uint16_t mOffsetToMagic;
+	uint16_t mOffsetToHeader;
+	uint16_t mOffsetToBase;
+	uint16_t mOffsetToSustains;
+	uint16_t mOffsetToSlots;
+	uint16_t mOffsetToTexturePaths;
+	uint16_t mOffsetToEof;
+
+	bool IsValid()
+	{
+		nullptr_t const context = nullptr;
+		if( mOffsetToMagic != 0 )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, magic offset is wrong" );
+			return false;
+		}
+		if( mOffsetToHeader != mOffsetToMagic + kSizeOfMagic )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, header offset is wrong" );
+			return false;
+		}
+		if( mOffsetToBase != mOffsetToHeader + sizeof(*this) )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, base offset is wrong" );
+			return false;
+		}
+		if( mOffsetToSustains != mOffsetToBase + kSizeOfBase )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, sustains offset is wrong" );
+			return false;
+		}
+		return true;
+	}
+};
+static_assert( sizeof( Header_v0_1 ) == 14, "Unexpected size" );
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -40,53 +78,15 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const & texMan, rft
 
 	static_assert( compiler::kEndianness == compiler::Endianness::Little, "This code is lazy, and doesn't support endianness changes" );
 
+	using CurrentHeaderVersion = Header_v0_1;
 	using difference_type = rftl::remove_reference<decltype( buffer )>::type::difference_type;
 	nullptr_t const context = nullptr;
 	buffer.clear();
 
-	size_t const sizeOfData_sustains = SizeOfData_Sustains( framePack );
-	size_t const sizeOfData_slots = SizeOfData_Slots( framePack );
-	size_t const sizeOfData = sizeOfData_sustains + sizeOfData_slots;
-	size_t const guessSizeOfPaths = ( sizeof( char ) * 128 ) * framePack.m_NumTimeSlots;
-
-	size_t const guessSizeOfPayload = kSizeOfMagic + kSizeOfBase + sizeOfData + guessSizeOfPaths;
-	buffer.reserve( guessSizeOfPayload );
-
-	// Magic
-	{
-		buffer.resize( buffer.size() + kSizeOfMagic );
-		uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( kSizeOfMagic ) - 1 );
-		rftl::memcpy( writeHead, kMagic, kSizeOfMagic );
-	}
-
-	// Base
-	{
-		buffer.resize( buffer.size() + kSizeOfBase );
-		uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( kSizeOfBase ) - 1 );
-		static_assert( rftl::is_polymorphic<FramePackBase>::value == false, "Virtual table on framepack, unsafe serialization assumptions" );
-		rftl::memcpy( writeHead, &framePack, kSizeOfBase );
-	}
-
-	// Data
-	{
-		// Sustains
-		{
-			buffer.resize( buffer.size() + sizeOfData_sustains );
-			uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( sizeOfData_sustains ) - 1 );
-			uint8_t const* const readHead = framePack.GetTimeSlotSustains();
-			rftl::memcpy( writeHead, readHead, sizeOfData_sustains );
-		}
-
-		// Slots
-		{
-			buffer.resize( buffer.size() + sizeOfData_slots );
-			uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( sizeOfData_slots ) - 1 );
-			uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( framePack.GetTimeSlots() );
-			rftl::memcpy( writeHead, readHead, sizeOfData_slots );
-		}
-	}
-
-	// Paths
+	// Collect texture path data
+	rftl::vector<rftl::string> texturePaths;
+	size_t sizeOfTexturePaths = 0;
+	texturePaths.reserve( framePack.m_NumTimeSlots );
 	{
 		FramePackBase::TimeSlot const* const timeSlots = framePack.GetTimeSlots();
 		for( size_t i = 0; i < framePack.m_NumTimeSlots; i++ )
@@ -96,20 +96,98 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const & texMan, rft
 			if( resName.empty() )
 			{
 				RFLOG_ERROR( context, RFCAT_PPU, "Failed to find a resource name for resourced ID %llu", texID );
-				buffer.clear();
 				return false;
 			}
 			TextureManager::Filename const resFile = texMan.SearchForFilenameByResourceName( resName );
 			if( resFile.Empty() )
 			{
 				RFLOG_ERROR( context, RFCAT_PPU, "Failed to determine filename for resourced names \"%llu\"", resName.c_str() );
-				buffer.clear();
 				return false;
 			}
 
+			std::string fileStr = file::VFS::CreateStringFromPath( resFile );
+
+			// NOTE: Pascal strings
+			sizeOfTexturePaths += sizeof( StrLenType );
+			sizeOfTexturePaths += fileStr.size();
+
+			texturePaths.emplace_back( std::move( fileStr ) );
+		}
+	}
+
+	// Prepare header
+	CurrentHeaderVersion header{};
+	header.mOffsetToMagic = 0;
+	header.mOffsetToHeader = math::integer_cast<uint16_t>( header.mOffsetToMagic + kSizeOfMagic );
+	size_t const sizeOfHeader = sizeof( CurrentHeaderVersion );
+	header.mOffsetToBase = math::integer_cast<uint16_t>( header.mOffsetToHeader + sizeOfHeader );
+	header.mOffsetToSustains = math::integer_cast<uint16_t>( header.mOffsetToBase + kSizeOfBase );
+	size_t const sizeOfData_sustains = SizeOfData_Sustains( framePack );
+	header.mOffsetToSlots = math::integer_cast<uint16_t>( header.mOffsetToSustains + sizeOfData_sustains );
+	size_t const sizeOfData_slots = SizeOfData_Slots( framePack );
+	size_t const sizeOfData = sizeOfData_sustains + sizeOfData_slots;
+	header.mOffsetToTexturePaths = math::integer_cast<uint16_t>( header.mOffsetToSlots + sizeOfData_slots );
+	header.mOffsetToEof = math::integer_cast<uint16_t>( header.mOffsetToTexturePaths + sizeOfTexturePaths );
+
+	buffer.reserve( header.mOffsetToEof );
+
+	// Magic
+	{
+		buffer.resize( buffer.size() + kSizeOfMagic );
+		uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( kSizeOfMagic ) - 1 );
+		RF_ASSERT( writeHead == buffer.data() + header.mOffsetToMagic );
+		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( kMagic );
+		rftl::memcpy( writeHead, readHead, kSizeOfMagic );
+	}
+
+	// Header
+	{
+		buffer.resize( buffer.size() + sizeOfHeader );
+		uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( sizeOfHeader ) - 1 );
+		RF_ASSERT( writeHead == buffer.data() + header.mOffsetToHeader );
+		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( &header );
+		rftl::memcpy( writeHead, readHead, sizeOfHeader );
+	}
+
+	// Base
+	{
+		buffer.resize( buffer.size() + kSizeOfBase );
+		uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( kSizeOfBase ) - 1 );
+		RF_ASSERT( writeHead == buffer.data() + header.mOffsetToBase );
+		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( &framePack );
+		static_assert( rftl::is_polymorphic<FramePackBase>::value == false, "Virtual table on framepack, unsafe serialization assumptions" );
+		rftl::memcpy( writeHead, readHead, kSizeOfBase );
+	}
+
+	// Data
+	{
+		// Sustains
+		{
+			buffer.resize( buffer.size() + sizeOfData_sustains );
+			uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( sizeOfData_sustains ) - 1 );
+			RF_ASSERT( writeHead == buffer.data() + header.mOffsetToSustains );
+			uint8_t const* const readHead = framePack.GetTimeSlotSustains();
+			rftl::memcpy( writeHead, readHead, sizeOfData_sustains );
+		}
+
+		// Slots
+		{
+			buffer.resize( buffer.size() + sizeOfData_slots );
+			uint8_t* const writeHead = &*( buffer.rbegin() + math::integer_cast<difference_type>( sizeOfData_slots ) - 1 );
+			RF_ASSERT( writeHead == buffer.data() + header.mOffsetToSlots );
+			uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( framePack.GetTimeSlots() );
+			rftl::memcpy( writeHead, readHead, sizeOfData_slots );
+		}
+	}
+
+	// Paths
+	{
+		RF_ASSERT( buffer.size() == header.mOffsetToTexturePaths );
+		for( size_t i = 0; i < framePack.m_NumTimeSlots; i++ )
+		{
 			// NOTE: Pascal-style strings, since file paths can theoretically
 			//  store some really wierd shit on some platforms, such as nulls
-			std::string const fileStr = file::VFS::CreateStringFromPath( resFile );
+			std::string const& fileStr = texturePaths.at( i );
 			StrLenType const fileStrLen = math::integer_cast<StrLenType>( fileStr.size() );
 
 			// String length
@@ -130,6 +208,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const & texMan, rft
 		}
 	}
 
+	RF_ASSERT( buffer.size() == header.mOffsetToEof );
 	return true;
 }
 
@@ -141,7 +220,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 
 	static_assert( compiler::kEndianness == compiler::Endianness::Little, "This code is lazy, and doesn't support endianness changes" );
 
-	using difference_type = rftl::remove_reference<decltype( buffer )>::type::difference_type;
+	using CurrentHeaderVersion = Header_v0_1;
 	nullptr_t const context = nullptr;
 	uint8_t const* readHead = buffer.data();
 	uint8_t const* const maxReadHead = readHead + buffer.size();
@@ -168,12 +247,33 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 		}
 	}
 
+	// Header
+	CurrentHeaderVersion header;
+	size_t const sizeOfHeader = sizeof( CurrentHeaderVersion );
+	{
+		if( readHead + kSizeOfMagic > maxReadHead )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read header, probably corrupt" );
+			return false;
+		}
+
+		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &header );
+		rftl::memcpy( writeHead, readHead, sizeOfHeader );
+		readHead += sizeOfHeader;
+
+		if( header.IsValid() == false )
+		{
+			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, probably corrupt" );
+			return false;
+		}
+	}
+
 	// Num slots
 	size_t numSlots;
 	{
 		if( readHead + kSizeOfBase > maxReadHead )
 		{
-			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read framepack base" );
+			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read framepack base, probably corrupt" );
 			return false;
 		}
 
