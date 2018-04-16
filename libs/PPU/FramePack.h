@@ -54,6 +54,11 @@ public:
 	// NOTE: Also serves as a calculation of the animation length
 	uint8_t CalculateTimeIndexBoundary() const;
 
+	// This will copy over values from another frame pack's base, but keep the
+	//  immutable values as they are (like max time slots)
+	// NOTE: Does NOT copy over non-base data like slots or sustains
+	void CopyBaseValuesFrom( FramePackBase const& rhs );
+
 
 	//
 	// Protected methods

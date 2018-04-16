@@ -4,6 +4,8 @@
 #include "core_math/math_clamps.h"
 #include "core_math/math_casts.h"
 
+#include "rftl/cstring"
+
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -127,6 +129,22 @@ uint8_t FramePackBase::CalculateTimeIndexBoundary() const
 
 	RF_ASSERT_MSG( accumulator < rftl::numeric_limits<uint8_t>::max(), "Animation length exceeds max time value" );
 	return math::integer_cast<uint8_t>( accumulator );
+}
+
+
+
+void FramePackBase::CopyBaseValuesFrom( FramePackBase const & rhs )
+{
+	// NOTE: The memcpy will blow over const variables, so we need to make
+	//  sure to save and restore them appropriately
+	using MaxSlotsType = rftl::remove_const<decltype( rhs.m_MaxTimeSlots )>::type;
+	MaxSlotsType const savedMaxSlots = rhs.m_MaxTimeSlots;
+	{
+		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( &rhs );
+		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( this );
+		rftl::memcpy( writeHead, readHead, sizeof(FramePackBase) );
+	}
+	*const_cast<MaxSlotsType*>( &this->m_MaxTimeSlots ) = savedMaxSlots;
 }
 
 
