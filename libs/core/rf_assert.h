@@ -23,15 +23,18 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 		static bool ___rf_assert_skip_all_instances = false; \
 		if( \
 			___rf_assert_skip_all_instances == false && \
-			!!!(TEST) && \
-			::RF::assert::AssertNotification(__FILE__, static_cast<size_t>(__LINE__), #TEST, MESSAGEEXPRESSION) \
-				== ::RF::assert::AssertResponse::Interrupt ) \
+			!!!(TEST) ) \
 		{ \
-			RF_SOFTWARE_INTERRUPT(); \
-		} \
-		else \
-		{ \
-			___rf_assert_skip_all_instances = true; \
+			if( \
+				::RF::assert::AssertNotification(__FILE__, static_cast<size_t>(__LINE__), #TEST, MESSAGEEXPRESSION) \
+					== ::RF::assert::AssertResponse::Interrupt ) \
+			{ \
+				RF_SOFTWARE_INTERRUPT(); \
+			} \
+			else \
+			{ \
+				___rf_assert_skip_all_instances = true; \
+			} \
 		} \
 	} while (false)
 #define RF_ASSERT(TEST) ___RF_ASSERT_IMPL___(TEST, "FAIL")
