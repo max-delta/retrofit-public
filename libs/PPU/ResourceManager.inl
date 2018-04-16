@@ -64,15 +64,6 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetFilenameFromResourceName( ResourceName const & resourceName ) const
-{
-	RF_DBGFAIL_MSG( "TODO" );
-	return Filename();
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const& resourceName, Filename const& filename )
 {
 	WeakPtr<Resource> handle = LoadNewResourceGetHandle( resourceName, filename );
@@ -173,6 +164,42 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	m_ResourceIDs.erase( IDIter );
 	m_Resources.erase( resourceIter );
 	return true;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const
+{
+	for( ResourceIDsByName::value_type const& resourcePair : m_ResourceIDs )
+	{
+		ManagedResourceID const& id = resourcePair.second;
+		if( id == managedResourceID )
+		{
+			ResourceName const& name = resourcePair.first;
+			return name;
+		}
+	}
+
+	return ResourceName();
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const & resourceName ) const
+{
+	for( ResourcesByFilename::value_type const& resourcePair : m_FileBackedResources )
+	{
+		ResourceName const& name = resourcePair.first;
+		if( name == resourceName )
+		{
+			Filename const& file = resourcePair.second;
+			return file;
+		}
+	}
+
+	return Filename();
 }
 
 

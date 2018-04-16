@@ -6,6 +6,8 @@
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
+#include "PPU/FramePackSerDes.h"
+#include "PPU/TextureManager.h"
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
@@ -231,6 +233,46 @@ void XMLTest()
 		}
 	}
 
+}
+
+
+
+void FPackSerializationTest()
+{
+	WeakPtr<gfx::TextureManager> const texMan = g_Graphics->DebugGetTextureManager();
+
+	// Load from squirrel
+	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
+	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack.sq" );
+	UniquePtr<gfx::FramePackBase> const digitFPack = LoadFramePackFromSquirrel( digitFPackPath );
+
+	// Serialize
+	std::vector<uint8_t> buffer;
+	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( *texMan, buffer, *digitFPack );
+
+	// Cleanup
+	{
+		size_t const numSlots = digitFPack->m_NumTimeSlots;
+		gfx::FramePackBase::TimeSlot const* const timeSlots = digitFPack->GetTimeSlots();
+		for( size_t i = 0; i < numSlots; i++ )
+		{
+			gfx::FramePackBase::TimeSlot const& timeSlot = timeSlots[i];
+			if( timeSlot.m_TextureReference != gfx::k_InvalidManagedTextureID )
+			{
+				rftl::string const squirrelHack = file::VFS::CreateStringFromPath( digitFPackPath ).append( { static_cast<char>( i + 1 ), '\0' } );
+				bool const cleanupSuccess = texMan->DestroyResource( squirrelHack );
+				if( cleanupSuccess == false )
+				{
+					RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to cleanup squirrel hack from hack loading code" );
+				}
+			}
+		}
+	}
+
+	if( writeSuccess == false )
+	{
+		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to serialize FPack" );
+	}
 }
 
 

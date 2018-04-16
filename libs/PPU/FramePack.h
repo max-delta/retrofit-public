@@ -20,19 +20,19 @@ class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor
 public:
 	struct GameColliderLayerMapping
 	{
-		GameLayerID m_GameLayer;
-		uint8_t m_ColliderLayer;
+		GameLayerID m_GameLayer = 0xffu;
+		uint8_t m_ColliderLayer = 0xffu;
 	};
 	static_assert( sizeof(GameColliderLayerMapping) == 2, "Re-evaluate GameColliderLayerMapping packing" );
 
 	struct TimeSlot
 	{
-		ManagedTextureID m_TextureReference;
-		uint64_t m_ColliderReference;
-		uint8_t m_TextureOriginX;
-		uint8_t m_TextureOriginY;
-		uint8_t m_ColliderOriginX;
-		uint8_t m_ColliderOriginY;
+		ManagedTextureID m_TextureReference = k_InvalidManagedTextureID;
+		ManagedColliderID m_ColliderReference = k_InvalidManagedTextureID;
+		uint8_t m_TextureOriginX = 0xffu;
+		uint8_t m_TextureOriginY = 0xffu;
+		uint8_t m_ColliderOriginX = 0xffu;
+		uint8_t m_ColliderOriginY = 0xffu;
 		uint32_t reserved : 32;
 	};
 	static_assert( sizeof(TimeSlot) == 24, "Re-evaluate TimeSlot packing" );
@@ -66,10 +66,10 @@ protected:
 	//
 	// Public data
 public:
-	GFXModifierHandlerID m_GFXModifierHandlers[k_NumGFXModifiers];
-	GameColliderLayerMapping m_GameColliderLayerMappings[k_NumGameLayers];
-	uint8_t m_PreferredSlowdownRate; // 1=60, 2=30, 3=20, 4=15...
-	uint8_t m_NumTimeSlots;
+	GFXModifierHandlerID m_GFXModifierHandlers[k_NumGFXModifiers] = {};
+	GameColliderLayerMapping m_GameColliderLayerMappings[k_NumGameLayers] = {};
+	uint8_t m_PreferredSlowdownRate = 1; // 1=60, 2=30, 3=20, 4=15...
+	uint8_t m_NumTimeSlots = 0;
 	uint8_t reserved3;
 	uint8_t reserved4;
 	uint8_t reserved5;
