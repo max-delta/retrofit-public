@@ -144,6 +144,7 @@
     <ClInclude Include="DeviceInterface.h" />
     <ClInclude Include="FramePack.h" />
     <ClInclude Include="FramePackManager.h" />
+    <ClInclude Include="FramePackSerDes.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PPUController.h" />
     <ClInclude Include="PPUDebugState.h" />
@@ -172,6 +173,7 @@
     </ClCompile>
     <ClCompile Include="FramePack.cpp" />
     <ClCompile Include="FramePackManager.cpp" />
+    <ClCompile Include="FramePackSerDes.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PPUController.cpp" />
     <ClCompile Include="PPUDebugState.cpp" />

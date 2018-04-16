@@ -49,8 +49,6 @@ public:
 	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
 
-	Filename GetFilenameFromResourceName( ResourceName const& resourceName ) const;
-
 	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource> && resource );
 	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, Filename const& filename );
@@ -62,6 +60,8 @@ public:
 	bool ReloadExistingResource( ResourceName const& resourceName );
 	bool DestroyResource( ResourceName const& resourceName );
 
+	ResourceName SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const;
+	Filename SearchForFilenameByResourceName( ResourceName const& resourceName ) const;
 	rftl::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
 	WeakPtr<Resource> DebugLockResourceForDirectModification( ManagedResourceID managedResourceID );
 

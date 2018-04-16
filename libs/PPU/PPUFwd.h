@@ -20,6 +20,9 @@ static constexpr TimeSlowdownRate k_TimeSlowdownRate_Quarter = 4;
 typedef uint8_t GameLayerID;
 static constexpr size_t k_NumGameLayers = 8;
 
+typedef uint64_t ManagedColliderID;
+constexpr ManagedColliderID k_InvalidManagedColliderID = 0;
+
 typedef uint64_t ManagedTextureID;
 constexpr ManagedTextureID k_InvalidManagedTextureID = 0;
 

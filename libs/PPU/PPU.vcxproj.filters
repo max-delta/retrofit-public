@@ -14,6 +14,7 @@
     <ClInclude Include="FramePack.h" />
     <ClInclude Include="FramePackManager.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="FramePackSerDes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -26,6 +27,7 @@
     <ClCompile Include="PPUDebugState.cpp" />
     <ClCompile Include="FramePack.cpp" />
     <ClCompile Include="FramePackManager.cpp" />
+    <ClCompile Include="FramePackSerDes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />
