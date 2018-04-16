@@ -273,6 +273,16 @@ void FPackSerializationTest()
 	{
 		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to serialize FPack" );
 	}
+
+	// Deserialize
+	rftl::vector<file::VFSPath> textures;
+	UniquePtr<gfx::FramePackBase> framePack;
+	bool const readSuccess = gfx::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
+
+	if( readSuccess == false )
+	{
+		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to deserialize FPack" );
+	}
 }
 
 
