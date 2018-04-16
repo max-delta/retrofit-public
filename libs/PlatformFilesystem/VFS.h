@@ -117,5 +117,5 @@ private:
 
 namespace RF { namespace logging {
 template<>
-void WriteContextString( file::VFSPath const& context, LogContextBuffer& buffer );
+void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, LogContextBuffer& buffer );
 }}
