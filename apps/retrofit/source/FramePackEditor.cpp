@@ -472,7 +472,7 @@ void FramePackEditor::Command_Meta_OpenFramePack()
 	// HACK
 	// TODO: File selector
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
-	OpenFramePack( commonFramepacks.GetChild( "testdigit_loop.fpack.sq" ) );
+	OpenFramePack( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 }
 
 
@@ -527,8 +527,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
-	UniquePtr<gfx::FramePackBase> fpack = LoadFramePackFromSquirrel( path );
-	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", rftl::move( fpack ) );
+	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", path );
 }
 
 
