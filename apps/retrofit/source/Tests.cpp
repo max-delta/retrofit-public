@@ -243,7 +243,8 @@ void FPackSerializationTest()
 
 	// Load from squirrel
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
-	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack.sq" );
+	rftl::string const rootFilename = "testdigit_loop";
+	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( rootFilename + ".fpack.sq" );
 	UniquePtr<gfx::FramePackBase> const digitFPack = LoadFramePackFromSquirrel( digitFPackPath );
 
 	// Serialize
@@ -272,17 +273,49 @@ void FPackSerializationTest()
 	if( writeSuccess == false )
 	{
 		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to serialize FPack" );
+		return;
 	}
 
 	// Deserialize
 	rftl::vector<file::VFSPath> textures;
 	UniquePtr<gfx::FramePackBase> framePack;
 	bool const readSuccess = gfx::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
-
 	if( readSuccess == false )
 	{
 		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to deserialize FPack" );
+		return;
 	}
+
+	// Create file
+	file::VFS const& vfs = *file::VFS::HACK_GetInstance();
+	file::VFSPath const newFilePath = commonFramepacks.GetChild( rootFilename + ".fpack" );
+	{
+		file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );
+		if( fileHandle == nullptr )
+		{
+			RFLOG_ERROR( newFilePath, RFCAT_STARTUPTEST, "Failed to create FPack file" );
+			return;
+		}
+
+		// Write file
+		FILE* const file = fileHandle->GetFile();
+		RF_ASSERT( file != nullptr );
+		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		RF_ASSERT( bytesWritten == buffer.size() );
+	}
+
+	// Load file
+	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	rftl::string const newFilename = file::VFS::CreateStringFromPath( newFilePath );
+	bool const fpackLoadSuccess = fpackMan.LoadNewResource( newFilename, newFilePath );
+	if( fpackLoadSuccess == false )
+	{
+		RFLOG_ERROR( newFilePath, RFCAT_STARTUPTEST, "Failed to load FPack file" );
+		return;
+	}
+
+	// Cleanup
+	fpackMan.DestroyResource( newFilename );
 }
 
 
