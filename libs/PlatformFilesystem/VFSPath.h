@@ -34,6 +34,8 @@ public:
 	template<typename...Nodes>
 	explicit VFSPath( Element element, Nodes...elements );
 
+	bool operator==( VFSPath const& rhs ) const;
+
 	// Create new path relative to this path
 	VFSPath GetParent() const;
 	VFSPath GetChild( VFSPath const& path ) const;
