@@ -16,7 +16,8 @@ class PPU_API FramePackManager final : public ResourceManager<FramePackBase, Man
 	//
 	// Public methods
 public:
-	FramePackManager();
+	FramePackManager() = delete;
+	explicit FramePackManager( WeakPtr<gfx::TextureManager> const& texMan );
 	~FramePackManager();
 
 
@@ -24,6 +25,11 @@ public:
 	// Protected methods
 protected:
 	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const & filename ) override;
+
+
+	// Private data
+private:
+	WeakPtr<gfx::TextureManager> const mTextureManager;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

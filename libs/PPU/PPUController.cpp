@@ -19,8 +19,9 @@ namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface )
-	: m_DeviceInterface( rftl::move(deviceInterface) )
+	: m_DeviceInterface( rftl::move( deviceInterface ) )
 	, m_TextureManager( nullptr )
+	, m_FramePackManager( nullptr )
 {
 	//
 }
@@ -31,6 +32,7 @@ PPUController::~PPUController()
 {
 	// TODO: Proper, safe cleanup
 
+	m_FramePackManager = nullptr;
 	m_TextureManager = nullptr;
 
 	m_DeviceInterface->DetachFromWindow();
@@ -58,7 +60,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create frame pack manager
 	RF_ASSERT( m_FramePackManager == nullptr );
-	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create();
+	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create( m_TextureManager );
 
 	// Prepare device
 	success = m_DeviceInterface->Initialize2DGraphics();

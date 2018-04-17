@@ -298,6 +298,32 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 {
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
+
+	// Check if it is already loaded
+	{
+		ResourcesByFilename::const_iterator const fileIter = m_FileBackedResources.find( resourceName );
+		if( fileIter != m_FileBackedResources.end() )
+		{
+			Filename const& existingFilename = fileIter->second;
+			if( filename == existingFilename )
+			{
+				// Already loaded
+				RFLOG_TRACE( filename, RFCAT_PPU, "Resource already loaded, reusing" );
+				RF_ASSERT( m_ResourceIDs.count( resourceName ) == 1 );
+				ManagedResourceID const id = m_ResourceIDs.at( resourceName );
+				RF_ASSERT( m_Resources.count( id ) == 1 );
+				managedResourceID = id;
+				return m_Resources.at( id );
+			}
+			else
+			{
+				RF_DBGFAIL_MSG( "Resource already loaded with different file" );
+				managedResourceID = k_InvalidResourceID;
+				return nullptr;
+			}
+		}
+	}
+
 	managedResourceID = GenerateNewManagedID();
 
 	RF_ASSERT( m_ResourceIDs.count( resourceName ) == 0 );
@@ -307,6 +333,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	WeakPtr<Resource> retVal;
 	{
 		UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
+		RF_ASSERT( newResource != nullptr );
 		retVal = newResource;
 		res = newResource;
 		m_Resources.emplace( managedResourceID, rftl::move( newResource ) );
@@ -317,6 +344,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 	bool const success = PostLoadFromFile( *res, filename );
 	RF_ASSERT( success );
+	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
 	return retVal;
 }
 

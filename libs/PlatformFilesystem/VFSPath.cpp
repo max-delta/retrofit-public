@@ -16,6 +16,27 @@ VFSPath::VFSPath()
 
 
 
+bool VFSPath::operator==( VFSPath const& rhs ) const
+{
+	size_t const numElements = this->NumElements();
+	if( numElements != rhs.NumElements() )
+	{
+		return false;
+	}
+
+	for( size_t i = 0; i < numElements; i++ )
+	{
+		if( this->GetElement( i ) != rhs.GetElement( i ) )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
 VFSPath VFSPath::GetParent() const
 {
 	VFSPath retVal = *this;

@@ -708,10 +708,9 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 			}
 			else
 			{
-				bool const parentExists
-					= rftl::filesystem::exists(
-						CreateStringFromPath(
-							CreatePathFromString( finalFilename ).GetParent() ) );
+				VFSPath const parentPath = CreatePathFromString( finalFilename ).GetParent();
+				rftl::string parentPathStr = CreateStringFromPath( parentPath );
+				bool const parentExists = rftl::filesystem::exists( parentPathStr );
 				if( parentExists == false )
 				{
 					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
