@@ -24,6 +24,13 @@ private:
 
 
 	//
+	// Types and constants
+private:
+	static constexpr char kFramePackName[] = "EDITFPACK";
+	static constexpr char kInitialTextureName[] = "EDITFPACK_DEFAULTTEXTURE";
+
+
+	//
 	// Public methods
 public:
 	void Init();
@@ -33,10 +40,12 @@ public:
 	void Command_ChangePreviewSpeed( bool faster );
 	void Command_ChangeSustainCount( bool increase );
 	void Command_ChangeEditingFrame( bool increase );
+	void Command_ReloadFramePack();
 
 	void Command_Meta_ChangeDataSpeed( bool faster );
 	void Command_Meta_CreateFramePack();
 	void Command_Meta_OpenFramePack();
+	void Command_Meta_DeleteFrame();
 
 	void Command_Texture_InsertBefore();
 	void Command_Texture_InsertAfter();
@@ -49,6 +58,7 @@ private:
 	void OpenFramePack( rftl::string const& rawPath );
 	void OpenFramePack( file::VFSPath const& path );
 	void InsertTimeSlotBefore( size_t slotIndex );
+	void RemoveTimeSlotAt( size_t slotIndex );
 	void ChangeTexture( size_t slotIndex );
 
 
