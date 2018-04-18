@@ -205,6 +205,14 @@ typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filena
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceID( ManagedResourceID managedResourceID ) const
+{
+	return SearchForFilenameByResourceName( SearchForResourceNameByResourceID( managedResourceID ) );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const & filename ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
@@ -298,6 +306,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 {
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
+	managedResourceID = InvalidResourceID;
 
 	// Check if it is already loaded
 	{
@@ -324,7 +333,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 		}
 	}
 
-	managedResourceID = GenerateNewManagedID();
+	ManagedResourceID tempID = GenerateNewManagedID();
 
 	RF_ASSERT( m_ResourceIDs.count( resourceName ) == 0 );
 	RF_ASSERT( m_Resources.count( managedResourceID ) == 0 );
@@ -333,9 +342,14 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	WeakPtr<Resource> retVal;
 	{
 		UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
-		RF_ASSERT( newResource != nullptr );
+		if( newResource == nullptr )
+		{
+			RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
+			return nullptr;
+		}
 		retVal = newResource;
 		res = newResource;
+		managedResourceID = tempID;
 		m_Resources.emplace( managedResourceID, rftl::move( newResource ) );
 		m_ResourceIDs.emplace( resourceName, managedResourceID );
 		m_FileBackedResources.emplace( resourceName, filename );
@@ -371,6 +385,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 	bool const success = PostLoadFromMemory( *res );
 	RF_ASSERT( success );
+	RFLOG_INFO( nullptr, RFCAT_PPU, "Resource loaded from memory" );
 	return retVal;
 }
 
