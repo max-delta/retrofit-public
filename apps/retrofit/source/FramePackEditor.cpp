@@ -95,7 +95,7 @@ void FramePackEditor::Process()
 
 	if( digital.WasActivatedLogical( 'R' ) )
 	{
-		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Reload FPack" );
+		Command_ReloadFramePack();
 	}
 	if( digital.WasActivatedLogical( 'A' ) )
 	{
@@ -132,7 +132,7 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
-				RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Delete frame" );
+				Command_Meta_DeleteFrame();
 			}
 			break;
 		}
@@ -164,7 +164,7 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
-				RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Delete frame" );
+				Command_Meta_DeleteFrame();
 			}
 			break;
 		}
@@ -458,6 +458,20 @@ void FramePackEditor::Command_ChangeEditingFrame( bool increase )
 
 
 
+void FramePackEditor::Command_ReloadFramePack()
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackManager const& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	file::VFSPath const filename = fpackMan.SearchForFilenameByResourceName( kFramePackName );
+	OpenFramePack( filename );
+}
+
+
+
 void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 {
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
@@ -488,13 +502,13 @@ void FramePackEditor::Command_Meta_CreateFramePack()
 	gfx::TextureManager& texMan = *g_Graphics->DebugGetTextureManager();
 	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
-		fpackMan.DestroyResource( "EDITPACK" );
+		fpackMan.DestroyResource( kFramePackName );
 	}
 	UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
 	file::VFSPath const defaultFrame = file::VFS::k_Root.GetChild( "assets", "textures", "common", "max_delta_32.png" );
 	newFPack->m_NumTimeSlots = 1;
-	newFPack->GetMutableTimeSlots()[0].m_TextureReference = texMan.LoadNewResourceGetID( "EDITFPACK_DEFAULTFRAME", defaultFrame );
-	m_FramePackID = fpackMan.LoadNewResourceGetID( "EDITPACK", rftl::move( newFPack ) );
+	newFPack->GetMutableTimeSlots()[0].m_TextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
+	m_FramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, rftl::move( newFPack ) );
 }
 
 
@@ -508,6 +522,26 @@ void FramePackEditor::Command_Meta_OpenFramePack()
 		return;
 	}
 	OpenFramePack( rawPath );
+}
+
+
+
+void FramePackEditor::Command_Meta_DeleteFrame()
+{
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->GetResourceFromManagedResourceID( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+	size_t const& numSlots = fpack->m_NumTimeSlots;
+	if( numSlots <= 1 )
+	{
+		return;
+	}
+
+	RemoveTimeSlotAt( m_EditingFrame );
 }
 
 
@@ -572,12 +606,17 @@ void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
 	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
-
 	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
-		fpackMan.DestroyResource( "EDITPACK" );
+		fpackMan.DestroyResource( kFramePackName );
 	}
-	m_FramePackID = fpackMan.LoadNewResourceGetID( "EDITPACK", path );
+	if( path.Empty() )
+	{
+		RFLOG_ERROR( path, RFCAT_FRAMEPACKEDITOR, "Invalid frame pack filename" );
+		m_FramePackID = gfx::k_InvalidManagedFramePackID;
+		return;
+	}
+	m_FramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, path );
 }
 
 
@@ -617,6 +656,34 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 	}
 
 	fpack->m_NumTimeSlots++;
+}
+
+
+
+void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
+{
+
+	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	size_t const& numSlots = fpack->m_NumTimeSlots;
+	RF_ASSERT( numSlots - 1 > 0 );
+
+	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
+
+	// Push everything over
+	RF_ASSERT( slotIndex <= numSlots );
+	for( size_t i = slotIndex; i < numSlots - 1; i++ )
+	{
+		timeSlots[i] = timeSlots[i + 1];
+		timeSlotSustains[i] = timeSlotSustains[i + 1];
+	}
+
+	timeSlots[numSlots - 1] = {};
+	timeSlotSustains[numSlots - 1] = 1;
+
+	fpack->m_NumTimeSlots--;
 }
 
 
