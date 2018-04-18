@@ -4,6 +4,7 @@
 #include "PlatformFilesystem/VFSFwd.h"
 
 #include "rftl/cstdint"
+#include "rftl/string"
 
 
 namespace RF {
@@ -34,6 +35,7 @@ public:
 	void Command_ChangeEditingFrame( bool increase );
 
 	void Command_Meta_ChangeDataSpeed( bool faster );
+	void Command_Meta_CreateFramePack();
 	void Command_Meta_OpenFramePack();
 
 	void Command_Texture_InsertBefore();
@@ -44,6 +46,7 @@ public:
 	//
 	// Private methods
 private:
+	void OpenFramePack( rftl::string const& rawPath );
 	void OpenFramePack( file::VFSPath const& path );
 	void InsertTimeSlotBefore( size_t slotIndex );
 	void ChangeTexture( size_t slotIndex );

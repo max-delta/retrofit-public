@@ -62,6 +62,7 @@ public:
 
 	ResourceName SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const;
 	Filename SearchForFilenameByResourceName( ResourceName const& resourceName ) const;
+	Filename SearchForFilenameByResourceID( ManagedResourceID managedResourceID ) const;
 	rftl::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
 	WeakPtr<Resource> DebugLockResourceForDirectModification( ManagedResourceID managedResourceID );
 

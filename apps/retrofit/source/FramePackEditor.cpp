@@ -13,6 +13,7 @@
 #include "Logging/Logging.h"
 
 #include "core_platform/winuser_shim.h"
+#include "core/ptr/default_creator.h"
 
 #include "rftl/extension/static_array.h"
 
@@ -94,7 +95,7 @@ void FramePackEditor::Process()
 
 	if( digital.WasActivatedLogical( 'R' ) )
 	{
-		// Reload FPack
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Reload FPack" );
 	}
 	if( digital.WasActivatedLogical( 'A' ) )
 	{
@@ -106,7 +107,7 @@ void FramePackEditor::Process()
 	}
 	if( digital.WasActivatedLogical( shim::VK_SPACE ) )
 	{
-		// Snap to preview
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Snap to preview" );
 	}
 
 	switch( m_MasterMode )
@@ -115,7 +116,7 @@ void FramePackEditor::Process()
 		{
 			if( digital.WasActivatedLogical( 'U' ) )
 			{
-				// New FPack
+				Command_Meta_CreateFramePack();
 			}
 			if( digital.WasActivatedLogical( 'O' ) )
 			{
@@ -131,7 +132,7 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
-				// Delete frame
+				RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Delete frame" );
 			}
 			break;
 		}
@@ -163,12 +164,13 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
-				// Delete frame
+				RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Delete frame" );
 			}
 			break;
 		}
 		case MasterMode::Colliders:
 		{
+			RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Colliders" );
 			// TODO
 			//constexpr char k_Footer1Colliders[] =
 			//	"[BOX]  "
@@ -203,6 +205,8 @@ void FramePackEditor::Process()
 void FramePackEditor::Render()
 {
 	gfx::PPUController* const ppu = g_Graphics;
+	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
+	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
 
 	gfx::PPUCoord const textOffset( 0, gfx::k_TileSize / 3 );
 
@@ -239,9 +243,10 @@ void FramePackEditor::Render()
 
 	//
 	// FramePacks
+	gfx::ManagedTextureID editingTextureID = gfx::k_InvalidDeviceTextureID;
 	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
-		gfx::FramePackBase const* const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( m_FramePackID );
+		gfx::FramePackBase const* const fpack = fpackMan.GetResourceFromManagedResourceID( m_FramePackID );
 		RF_ASSERT( fpack != nullptr );
 
 		numTimeSlots = fpack->m_NumTimeSlots;
@@ -277,6 +282,8 @@ void FramePackEditor::Render()
 		editingObject.m_ZLayer = 0;
 
 		ppu->DrawObject( editingObject );
+
+		editingTextureID = fpack->GetTimeSlots()[m_EditingFrame].m_TextureReference;
 	}
 
 	//
@@ -296,10 +303,18 @@ void FramePackEditor::Render()
 	{
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DebugDrawText( editingHeaderStart, "Editing" );
-		ppu->DebugDrawText( editingHeaderStart + textOffset, "Frame: %i / %i", m_EditingFrame, numTimeSlots - 1 );
+		ppu->DebugDrawText( editingHeaderStart + textOffset, "Frame: %i / [0-%i]", m_EditingFrame, numTimeSlots - 1 );
 		ppu->DebugDrawText( editingHeaderStart + textOffset * 2, "Sustain: %i </,*> to change", slotSustain );
-		char const TODOTexture[] = "TODO/TODO.png";
-		ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: %s", TODOTexture );
+		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
+		if( texPath.Empty() )
+		{
+			ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: INVALID" );
+		}
+		else
+		{
+			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
+			ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: %s", lastElement.c_str() );
+		}
 	}
 
 	//
@@ -467,12 +482,32 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 
 
 
+void FramePackEditor::Command_Meta_CreateFramePack()
+{
+	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	gfx::TextureManager& texMan = *g_Graphics->DebugGetTextureManager();
+	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
+	{
+		fpackMan.DestroyResource( "EDITPACK" );
+	}
+	UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
+	file::VFSPath const defaultFrame = file::VFS::k_Root.GetChild( "assets", "textures", "common", "max_delta_32.png" );
+	newFPack->m_NumTimeSlots = 1;
+	newFPack->GetMutableTimeSlots()[0].m_TextureReference = texMan.LoadNewResourceGetID( "EDITFPACK_DEFAULTFRAME", defaultFrame );
+	m_FramePackID = fpackMan.LoadNewResourceGetID( "EDITPACK", rftl::move( newFPack ) );
+}
+
+
+
 void FramePackEditor::Command_Meta_OpenFramePack()
 {
-	// HACK
-	// TODO: File selector
-	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
-	OpenFramePack( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	rftl::string const rawPath = platform::dialogs::OpenFileDialog();
+	if( rawPath.empty() )
+	{
+		// User cancelled?
+		return;
+	}
+	OpenFramePack( rawPath );
 }
 
 
@@ -525,9 +560,24 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
+{
+	file::VFS const& vfs = *file::VFS::HACK_GetInstance();
+	file::VFSPath const filePath = vfs.AttemptMapToVFS( rawPath, file::VFSMount::Permissions::ReadOnly );
+	OpenFramePack( filePath );
+}
+
+
+
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
-	m_FramePackID = g_Graphics->DebugGetFramePackManager()->LoadNewResourceGetID( "EDITPACK", path );
+	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
+
+	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
+	{
+		fpackMan.DestroyResource( "EDITPACK" );
+	}
+	m_FramePackID = fpackMan.LoadNewResourceGetID( "EDITPACK", path );
 }
 
 
@@ -565,6 +615,8 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 		timeSlots[slotIndex] = {};
 		timeSlotSustains[slotIndex] = 1;
 	}
+
+	fpack->m_NumTimeSlots++;
 }
 
 

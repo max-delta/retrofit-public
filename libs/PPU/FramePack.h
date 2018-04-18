@@ -29,10 +29,10 @@ public:
 	{
 		ManagedTextureID m_TextureReference = k_InvalidManagedTextureID;
 		ManagedColliderID m_ColliderReference = k_InvalidManagedTextureID;
-		uint8_t m_TextureOriginX = 0xffu;
-		uint8_t m_TextureOriginY = 0xffu;
-		uint8_t m_ColliderOriginX = 0xffu;
-		uint8_t m_ColliderOriginY = 0xffu;
+		uint8_t m_TextureOriginX = 0x0u;
+		uint8_t m_TextureOriginY = 0x0u;
+		uint8_t m_ColliderOriginX = 0x0u;
+		uint8_t m_ColliderOriginY = 0x0u;
 		uint32_t reserved : 32;
 	};
 	static_assert( sizeof(TimeSlot) == 24, "Re-evaluate TimeSlot packing" );
