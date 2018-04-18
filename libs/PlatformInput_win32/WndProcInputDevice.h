@@ -57,6 +57,7 @@ private:
 	static constexpr size_t k_NumVKeys = rftl::numeric_limits<unsigned char>::max();
 	static constexpr size_t k_NumScanCodes = 1 << 8; // ScanCodes are 8 bits
 	static constexpr size_t k_MaxEventStorage = 32;
+	static constexpr bool k_KillKeysOnFocusLost = true; // TODO: Option?
 private:
 	typedef rftl::bitset<k_NumVKeys> LogicalCodeStates;
 	typedef rftl::bitset<k_NumScanCodes> PhysicalCodeStates;
@@ -80,6 +81,7 @@ private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
 	void RecordLogical( uint8_t code, PinState state );
 	void RecordPhysical( uint8_t code, PinState state );
+	void RecordFocusLoss();
 private:
 	LogicalCodeStates m_CurrentLogicalState;
 	LogicalCodeStates m_PreviousLogicalState;

@@ -298,6 +298,41 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 		}
 
 
+		case WM_KILLFOCUS:
+		{
+			if( k_KillKeysOnFocusLost == false )
+			{
+				intercepted = false;
+				return 0;
+			}
+
+			size_t const numLogical = m_CurrentLogicalState.size();
+			for( size_t i = 0; i < numLogical; i++ )
+			{
+				bool const active = m_CurrentLogicalState[i];
+				if( active )
+				{
+					uint8_t const code = math::integer_cast<uint8_t>( i );
+					RecordLogical( code, PinState::Inactive );
+				}
+			}
+
+			size_t const numPhysical = m_CurrentPhysicalState.size();
+			for( size_t i = 0; i < numPhysical; i++ )
+			{
+				bool const active = m_CurrentPhysicalState[i];
+				if( active )
+				{
+					uint8_t const code = math::integer_cast<uint8_t>( i );
+					RecordPhysical( code, PinState::Inactive );
+				}
+			}
+
+			intercepted = true;
+			return 0;
+		}
+
+
 		default:
 		{
 			intercepted = false;
