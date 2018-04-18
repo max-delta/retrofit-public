@@ -170,7 +170,6 @@ void FramePackEditor::Process()
 		}
 		case MasterMode::Colliders:
 		{
-			RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Colliders" );
 			// TODO
 			//constexpr char k_Footer1Colliders[] =
 			//	"[BOX]  "
@@ -617,6 +616,13 @@ void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 		return;
 	}
 	m_FramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, path );
+
+	if(m_FramePackID != gfx::k_InvalidManagedFramePackID)
+	{
+		gfx::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( m_FramePackID );
+		RF_ASSERT( fpack != nullptr );
+		m_PreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, fpack->m_PreferredSlowdownRate, 10 );
+	}
 }
 
 
