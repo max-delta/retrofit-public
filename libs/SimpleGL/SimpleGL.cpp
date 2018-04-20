@@ -13,6 +13,8 @@
 #include "rftl/cstdio"
 #include "rftl/cstdarg"
 #include "rftl/string"
+#include "rftl/vector"
+#include "rftl/array"
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -188,6 +190,142 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 	return true;
 }
 
+
+
+bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & characterWidth, uint32_t & characterHeight )
+{
+	int x, y, n;
+	size_t const kRGBAElements = 3;
+	unsigned char* data = stbi_load_from_file( file, &x, &y, &n, kRGBAElements );
+	RF_ASSERT( data != nullptr );
+	if( data == nullptr )
+	{
+		return false;
+	}
+	RF_ASSERT( x != 0 );
+	RF_ASSERT( y != 0 );
+	RF_ASSERT( n == kRGBAElements );
+
+	enum class FontType
+	{
+		Invalid = -1,
+		Square,
+		Narrow
+	};
+	FontType fontType = FontType::Invalid;
+	if( x == y )
+	{
+		// 2x2
+		fontType = FontType::Square;
+	}
+	else if( x * 2 == y )
+	{
+		// 2x1
+		fontType = FontType::Narrow;
+	}
+	else
+	{
+		// Unsupported ratio
+		stbi_image_free( data );
+		return false;
+	}
+
+	// Expect 16x16 characters
+	constexpr size_t kCharactersPerRow = 16;
+	constexpr size_t kCharactersPerColumn = 16;
+	bool const divisibleAlongWidth = ( x % kCharactersPerRow ) == 0;
+	bool const divisibleAlongHeight = ( y % kCharactersPerColumn ) == 0;
+	if( divisibleAlongWidth == false || divisibleAlongHeight == false )
+	{
+		// Not divisible
+		stbi_image_free( data );
+		return false;
+	}
+
+	uint32_t const charWidth = x / kCharactersPerRow;
+	characterWidth = charWidth;
+	uint32_t const charHeight = y / kCharactersPerColumn;
+	characterHeight = charHeight;
+
+	using CharacterStorage = rftl::vector<uint8_t>;
+	using CharacterListStorage = rftl::vector<CharacterStorage>;
+	CharacterListStorage listStorage;
+	listStorage.clear();
+	listStorage.resize( 256, CharacterStorage{} );
+	uint8_t const* readHead = data;
+	uint8_t const* const maxReadHead = &data[x*y*n];
+	for( size_t row = 0; row < kCharactersPerColumn; row++ )
+	{
+		for( size_t scanline = 0; scanline < charHeight; scanline++ )
+		{
+			for( size_t column = 0; column < kCharactersPerRow; column++ )
+			{
+				CharacterStorage& characterStorage = listStorage.at( row * kCharactersPerRow + column );
+				for( size_t pixel = 0; pixel < charWidth; pixel++ )
+				{
+					static_assert( kRGBAElements == 3, "Unexpected pixel size" );
+					RF_ASSERT( readHead < maxReadHead );
+					uint8_t const redElement = readHead[0];
+					uint8_t const greenElement = readHead[1];
+					uint8_t const blueElement = readHead[2];
+					uint8_t rgba2Element;
+					if( greenElement > 128 )
+					{
+						rgba2Element = 255;
+					}
+					else
+					{
+						rgba2Element = 0;
+					}
+					characterStorage.emplace_back( greenElement );
+					readHead += n;
+				}
+			}
+		}
+	}
+	stbi_image_free( data );
+
+	RF_ASSERT( mBitmapFonts.count( fontID ) == 0 );
+	BitmapCharacterListStorage& fontStorage = mBitmapFonts[fontID];
+	{
+		rftl::array<GLuint, 256> tempStore;
+		glGenTextures( math::integer_cast<GLsizei>( fontStorage.size() ), tempStore.data() );
+		for( size_t i = 0; i < tempStore.size(); i++ )
+		{
+			fontStorage[i] = tempStore[i];
+		}
+	}
+	RF_ASSERT( fontStorage.size() == listStorage.size() );
+	for( size_t i = 0; i < fontStorage.size(); i++ )
+	{
+		uint8_t const* const buffer = listStorage[i].data();
+		GLuint const texID = math::integer_cast<GLuint>( fontStorage[i] );
+		glBindTexture( GL_TEXTURE_2D, texID );
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_ALPHA,
+			math::integer_cast<GLsizei>( charWidth ),
+			math::integer_cast<GLsizei>( charHeight ), 0, GL_ALPHA, GL_UNSIGNED_BYTE, buffer );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	}
+
+	return true;
+}
+
+
+
+bool SimpleGL::DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+{
+	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
+	// TODO: Color parameter
+	glColor3f( 0, 0, 0 );
+	return DrawBillboardInternal( texID, topLeft, bottomRight, z );
+}
+
+
+
 bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
 {
 	glColor3f( 0, 0, 0 );
@@ -224,22 +362,8 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width 
 
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
 {
-	GLuint const texID = static_cast<GLuint>( textureID );
-	glBindTexture( GL_TEXTURE_2D, texID );
 	glColor3f( 1, 1, 1 );
-	float const left = topLeft.x;
-	float const top = topLeft.y;
-	float const right = bottomRight.x;
-	float const bottom = bottomRight.y;
-	glBegin(GL_QUADS);
-	{
-		glTexCoord2f( 0.0f, 0.0f ); glVertex3f( left, top, z );
-		glTexCoord2f( 1.0f, 0.0f ); glVertex3f( right, top, z );
-		glTexCoord2f( 1.0f, 1.0f ); glVertex3f( right, bottom, z );
-		glTexCoord2f( 0.0f, 1.0f ); glVertex3f( left, bottom, z );
-	}
-	glEnd();
-	glBindTexture(GL_TEXTURE_2D, 0);
+	DrawBillboardInternal( textureID, topLeft, bottomRight, z );
 	return true;
 }
 
@@ -313,6 +437,30 @@ void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 	shim::SelectObject( mHDC, oldfont );				// Selects The Font We Want
 	shim::DeleteObject( font );					// Delete The Font
 }
+
+
+
+bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+{
+	GLuint const texID = static_cast<GLuint>( textureID );
+	glBindTexture( GL_TEXTURE_2D, texID );
+	float const left = topLeft.x;
+	float const top = topLeft.y;
+	float const right = bottomRight.x;
+	float const bottom = bottomRight.y;
+	glBegin( GL_QUADS );
+	{
+		glTexCoord2f( 0.0f, 0.0f ); glVertex3f( left, top, z );
+		glTexCoord2f( 1.0f, 0.0f ); glVertex3f( right, top, z );
+		glTexCoord2f( 1.0f, 1.0f ); glVertex3f( right, bottom, z );
+		glTexCoord2f( 0.0f, 1.0f ); glVertex3f( left, bottom, z );
+	}
+	glEnd();
+	glBindTexture( GL_TEXTURE_2D, 0 );
+	return true;
+}
+
+
 
 bool SimpleGL::glPrint( char const* fmt, ... )
 {
