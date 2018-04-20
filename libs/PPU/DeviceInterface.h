@@ -28,6 +28,9 @@ public:
 	virtual DeviceTextureID LoadTexture( FILE* file, uint32_t& width, uint32_t& height ) = 0;
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
+	virtual bool CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
+	virtual bool DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
+
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
 
 	virtual bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) = 0;

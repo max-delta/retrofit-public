@@ -120,6 +120,15 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 
 
+bool PPUController::LoadFont( FILE * file )
+{
+	// TODO: Revise the font API
+	uint32_t unused;
+	return m_DeviceInterface->CreateBitmapFont( file, 7, unused, unused );
+}
+
+
+
 PPUCoordElem PPUController::GetWidth() const
 {
 	return m_Width / GetZoomFactor();
@@ -223,6 +232,37 @@ bool PPUController::DrawObject( Object const& object )
 
 
 
+bool PPUController::DrawText( PPUCoord pos, PPUCoordElem charWidth, PPUCoordElem charHeight, const char * fmt, ... )
+{
+	RF_ASSERT_MSG( charWidth == 4, "TODO: Support other sizes" );
+	RF_ASSERT_MSG( charHeight == 8, "TODO: Support other sizes" );
+
+	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
+	PPUState& targetState = m_PPUState[m_WriteState];
+
+	// TODO: Thread-safe
+	RF_ASSERT( targetState.m_NumStrings < PPUState::k_MaxStrings );
+	PPUState::String& targetString = targetState.m_Strings[targetState.m_NumStrings];
+	targetState.m_NumStrings++;
+
+	targetString.m_XCoord = math::integer_cast<PPUCoordElem>( pos.x );
+	targetString.m_YCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.m_Width = charWidth;
+	targetString.m_Height = charHeight;
+	targetString.m_Text[0] = '\0';
+	{
+		va_list args;
+		va_start( args, fmt );
+		vsnprintf( &targetString.m_Text[0], PPUState::String::k_MaxLen, fmt, args );
+		va_end( args );
+	}
+	targetString.m_Text[PPUState::String::k_MaxLen] = '\0';
+
+	return true;
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char * fmt, ... )
 {
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
@@ -266,6 +306,13 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width 
 	targetLine.m_Width = width;
 
 	return true;
+}
+
+
+
+WeakPtr<gfx::DeviceInterface> PPUController::DebugGetDeviceInterface() const
+{
+	return m_DeviceInterface;
 }
 
 
@@ -336,6 +383,29 @@ void PPUController::Render() const
 			math::integer_cast<PPUCoordElem>( y + texture->m_HeightPostLoad ) );
 
 		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
+	}
+
+	// Draw text
+	for( size_t i = 0; i < targetState.m_NumStrings; i++ )
+	{
+		PPUState::String const& string = targetState.m_Strings[i];
+		char const* text = string.m_Text;
+		for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
+		{
+			char const character = text[i_char];
+			if( character == '\0' )
+			{
+				break;
+			}
+			PPUCoordElem const x1 = string.m_XCoord + math::integer_cast<PPUCoordElem>( i_char * string.m_Width );
+			PPUCoordElem const y1 = string.m_YCoord;
+			PPUCoordElem const x2 = x1 + string.m_Width;
+			PPUCoordElem const y2 = y1 + string.m_Height;
+
+			math::Vector2f const topLeft = CoordToDevice( x1, y1 );
+			math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
+			m_DeviceInterface->DrawBitmapFont( 7, character, topLeft, bottomRight, 0 );
+		}
 	}
 
 	// HACK: Draw grid

@@ -8,6 +8,7 @@ namespace RF { namespace gfx {
 void PPUState::Clear()
 {
 	m_NumObjects = 0;
+	m_NumStrings = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

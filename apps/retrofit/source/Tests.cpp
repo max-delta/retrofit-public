@@ -37,6 +37,7 @@ void InitDrawTest()
 
 	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
 	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
+	file::VFS& vfs = *file::VFS::HACK_GetInstance();
 
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
 
@@ -59,6 +60,10 @@ void InitDrawTest()
 	testObj2.m_XCoord = gfx::k_TileSize * 4;
 	testObj2.m_YCoord = gfx::k_TileSize * 4;
 	testObj2.m_ZLayer = 0;
+
+	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
+	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
+	g_Graphics->LoadFont( fontHandle->GetFile() );
 }
 
 
@@ -73,6 +78,10 @@ void DrawTest()
 	testObj2.Animate();
 	g_Graphics->DrawObject( testObj2 );
 	g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 0 ), 4, 8, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 1 ), 4, 8, "abcdefghijklmnopqrstuvwxyz" );
+	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 2 ), 4, 8, "0123456789 !@#$%^&*()" );
+	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 3 ), 4, 8, "`'\"~-=[]{}\\|,.<>/?" );
 }
 
 
