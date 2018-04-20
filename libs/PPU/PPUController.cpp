@@ -232,10 +232,10 @@ bool PPUController::DrawObject( Object const& object )
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUCoordElem charWidth, PPUCoordElem charHeight, const char * fmt, ... )
+bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char * fmt, ... )
 {
-	RF_ASSERT_MSG( charWidth == 4, "TODO: Support other sizes" );
-	RF_ASSERT_MSG( charHeight == 8, "TODO: Support other sizes" );
+	RF_ASSERT_MSG( charSize.x == 4, "TODO: Support other sizes" );
+	RF_ASSERT_MSG( charSize.y == 8, "TODO: Support other sizes" );
 
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
 	PPUState& targetState = m_PPUState[m_WriteState];
@@ -247,8 +247,8 @@ bool PPUController::DrawText( PPUCoord pos, PPUCoordElem charWidth, PPUCoordElem
 
 	targetString.m_XCoord = math::integer_cast<PPUCoordElem>( pos.x );
 	targetString.m_YCoord = math::integer_cast<PPUCoordElem>( pos.y );
-	targetString.m_Width = charWidth;
-	targetString.m_Height = charHeight;
+	targetString.m_Width = charSize.x;
+	targetString.m_Height = charSize.y;
 	targetString.m_Text[0] = '\0';
 	{
 		va_list args;
