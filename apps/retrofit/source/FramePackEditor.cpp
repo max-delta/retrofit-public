@@ -10,6 +10,7 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
+#include "PlatformFilesystem/FileHandle.h"
 #include "Logging/Logging.h"
 
 #include "core_platform/winuser_shim.h"
@@ -32,6 +33,11 @@ void FramePackEditor::Init()
 	m_EditingFrame = 0;
 	m_PreviewSlowdownRate = gfx::k_TimeSlowdownRate_Normal;
 	m_PreviewObject = {};
+
+	file::VFS& vfs = *file::VFS::HACK_GetInstance();
+	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
+	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
+	g_Graphics->LoadFont( fontHandle->GetFile() );
 }
 
 
@@ -207,13 +213,14 @@ void FramePackEditor::Render()
 	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
 
-	gfx::PPUCoord const textOffset( 0, gfx::k_TileSize / 3 );
+	gfx::PPUCoord const fontSize( 4, 8 );
+	gfx::PPUCoord const textOffset( 0, fontSize.y );
 
-	gfx::PPUCoord const headerOffset( gfx::k_TileSize / 6, gfx::k_TileSize / 3 );
+	gfx::PPUCoord const headerOffset( gfx::k_TileSize / 16, gfx::k_TileSize / 16 );
 	gfx::PPUCoord const previewHeaderStart = gfx::PPUCoord( 0, 0 ) + headerOffset;
 
 	constexpr size_t k_NumFooterLines = 6;
-	gfx::PPUCoord const footerStart( gfx::k_TileSize / 4u, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::PPUCoordElem>( k_NumFooterLines ) );
+	gfx::PPUCoord const footerStart( gfx::k_TileSize / 16, gfx::k_TileSize * gfx::k_DesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::PPUCoordElem>( k_NumFooterLines ) );
 
 	gfx::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::k_TileSize ) - gfx::k_TileSize;
 	gfx::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::PPUCoordElem>( ppu->GetWidth() / 2, gfx::k_TileSize );
@@ -288,31 +295,31 @@ void FramePackEditor::Render()
 	//
 	// Preview header
 	{
-		ppu->DebugDrawText( previewHeaderStart, "Preview" );
+		ppu->DrawText( previewHeaderStart, fontSize, "Preview" );
 		gfx::TimeSlowdownRate const previewFPS = 60u / m_PreviewSlowdownRate;
-		ppu->DebugDrawText( previewHeaderStart + textOffset, "Preview FPS: %i <-/+> to change", previewFPS );
+		ppu->DrawText( previewHeaderStart + textOffset, fontSize, "Preview FPS: %i <-/+> to change", previewFPS );
 		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
-		ppu->DebugDrawText( previewHeaderStart + textOffset * 2, "Data FPS: %i", dataFPS );
+		ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i", dataFPS );
 		uint16_t const effectiveFrames = math::integer_cast<uint16_t>( animationLength * m_PreviewSlowdownRate );
-		ppu->DebugDrawText( previewHeaderStart + textOffset * 3, "Preview frames: %i", effectiveFrames );
+		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, "Preview frames: %i", effectiveFrames );
 	}
 
 	//
 	// Editing header
 	{
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
-		ppu->DebugDrawText( editingHeaderStart, "Editing" );
-		ppu->DebugDrawText( editingHeaderStart + textOffset, "Frame: %i / [0-%i]", m_EditingFrame, numTimeSlots - 1 );
-		ppu->DebugDrawText( editingHeaderStart + textOffset * 2, "Sustain: %i </,*> to change", slotSustain );
+		ppu->DrawText( editingHeaderStart, fontSize, "Editing" );
+		ppu->DrawText( editingHeaderStart + textOffset, fontSize, "Frame: %i / [0-%i]", m_EditingFrame, numTimeSlots - 1 );
+		ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i </,*> to change", slotSustain );
 		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
 		if( texPath.Empty() )
 		{
-			ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: INVALID" );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, "Texture: INVALID" );
 		}
 		else
 		{
 			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
-			ppu->DebugDrawText( editingHeaderStart + textOffset * 3, "Texture: %s", lastElement.c_str() );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, "Texture: %s", lastElement.c_str() );
 		}
 	}
 
@@ -337,8 +344,8 @@ void FramePackEditor::Render()
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
 					"<DEL>:Delete frame";
-				ppu->DebugDrawText( footerLine3Start, k_Footer3Meta );
-				ppu->DebugDrawText( footerLine4Start, k_Footer4Meta );
+				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Meta );
+				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Meta );
 				break;
 			}
 			case MasterMode::Texture:
@@ -351,8 +358,8 @@ void FramePackEditor::Render()
 					"[TEXTURE]  "
 					"<Arrows>:Change offset  "
 					"<DEL>:Delete frame  ";
-				ppu->DebugDrawText( footerLine3Start, k_Footer3Texture );
-				ppu->DebugDrawText( footerLine4Start, k_Footer4Texture );
+				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Texture );
+				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Texture );
 				break;
 			}
 			case MasterMode::Colliders:
@@ -377,10 +384,10 @@ void FramePackEditor::Render()
 					"<N>:New box  "
 					"<BACK>:Delete box  "
 					"<DEL>:Delete frame";
-				ppu->DebugDrawText( footerLine1Start, k_Footer1Colliders );
-				ppu->DebugDrawText( footerLine2Start, k_Footer2Colliders );
-				ppu->DebugDrawText( footerLine3Start, k_Footer3Colliders );
-				ppu->DebugDrawText( footerLine4Start, k_Footer4Colliders );
+				ppu->DrawText( footerLine1Start, fontSize, k_Footer1Colliders );
+				ppu->DrawText( footerLine2Start, fontSize, k_Footer2Colliders );
+				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Colliders );
+				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Colliders );
 				break;
 			}
 			default:
@@ -395,8 +402,8 @@ void FramePackEditor::Render()
 			"<Z>:Meta mode  "
 			"<X>:Texture mode  "
 			"<C>:Collider mode";
-		ppu->DebugDrawText( footerLine5Start, k_Footer5 );
-		ppu->DebugDrawText( footerLine6Start, k_Footer6 );
+		ppu->DrawText( footerLine5Start, fontSize, k_Footer5 );
+		ppu->DrawText( footerLine6Start, fontSize, k_Footer6 );
 	}
 }
 
