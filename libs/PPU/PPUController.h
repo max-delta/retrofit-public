@@ -37,6 +37,7 @@ public:
 
 	bool Initialize( uint16_t width, uint16_t height );
 	bool ResizeSurface( uint16_t width, uint16_t height );
+	bool LoadFont( FILE* file );
 
 	PPUCoordElem GetWidth() const;
 	PPUCoordElem GetHeight() const;
@@ -47,9 +48,11 @@ public:
 	bool EndFrame();
 
 	bool DrawObject( Object const& object );
+	bool DrawText( PPUCoord pos, PPUCoordElem charWidth, PPUCoordElem charHeight, const char *fmt, ... );
 
 	bool DebugDrawText( PPUCoord pos, const char *fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
+	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
 	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;
 

@@ -137,7 +137,7 @@ int main()
 	constexpr uint16_t k_Width = gfx::k_DesiredWidth * k_WindowScaleFactor;
 	constexpr uint16_t k_Height = gfx::k_DesiredHeight * k_WindowScaleFactor;
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
-	UniquePtr<gfx::DeviceInterface> renderDevice = EntwinedCreator<gfx::SimpleGL>::Create();
+	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
