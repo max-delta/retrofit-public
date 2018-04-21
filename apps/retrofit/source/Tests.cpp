@@ -78,10 +78,10 @@ void DrawTest()
 	testObj2.Animate();
 	g_Graphics->DrawObject( testObj2 );
 	g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
-	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
-	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
-	g_Graphics->DrawText( gfx::PPUCoord( 64, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
+	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
+	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
+	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
 }
 
 

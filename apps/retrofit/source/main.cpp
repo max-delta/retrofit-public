@@ -12,6 +12,7 @@
 #include "Logging/Logging.h"
 #include "Logging/ANSIConsoleLogger.h"
 #include "Timing/clocks.h"
+#include "Timing/Limiter.h"
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
@@ -31,43 +32,13 @@ extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
 
-constexpr bool k_ConsoleTest = false;
-constexpr bool k_DrawTest = false;
-constexpr bool k_DrawInputDebug = false;
-constexpr bool k_SquirrelTest = false;
+constexpr bool k_ConsoleTest = true;
+constexpr bool k_DrawTest = true;
+constexpr bool k_DrawInputDebug = true;
+constexpr bool k_SquirrelTest = true;
 constexpr bool k_XMLTest = true;
 constexpr bool k_FPackSerializationTest = false;
 constexpr bool k_PlatformTest = true;
-
-///////////////////////////////////////////////////////////////////////////////
-
-struct FrameLimiter
-{
-	static RF::time::PerfClock::duration const k_DesiredFrameTime;
-	void Reset()
-	{
-		m_FrameStart = RF::time::PerfClock::now();
-		m_FrameEnd = RF::time::PerfClock::now();
-	}
-	void Stall()
-	{
-		using namespace RF;
-		time::PerfClock::time_point const naturalFrameEnd = time::PerfClock::now();
-		time::PerfClock::duration const naturalFrameTime = naturalFrameEnd - m_FrameStart;
-		if( naturalFrameTime < k_DesiredFrameTime )
-		{
-			time::PerfClock::duration const timeRemaining = k_DesiredFrameTime - naturalFrameTime;
-			rftl::this_thread::sleep_for( timeRemaining );
-		}
-		m_FrameEnd = time::PerfClock::now();
-		time::PerfClock::duration const frameTime = m_FrameEnd - m_FrameStart;
-		time::FrameClock::add_time( frameTime );
-		m_FrameStart = time::PerfClock::now();
-	}
-	RF::time::PerfClock::time_point m_FrameStart;
-	RF::time::PerfClock::time_point m_FrameEnd;
-};
-RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = rftl::chrono::nanoseconds( 16666666 );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -154,7 +125,7 @@ int main()
 		test::InitDrawTest();
 	}
 
-	FrameLimiter frameLimiter;
+	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );

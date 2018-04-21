@@ -12,6 +12,7 @@
 #include "Logging/Logging.h"
 #include "Logging/ANSIConsoleLogger.h"
 #include "Timing/clocks.h"
+#include "Timing/Limiter.h"
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
@@ -30,39 +31,7 @@ extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 // TODO: Singleton manager
 RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
-
-constexpr bool k_FramePackEditor = true;
 RF::UniquePtr<RF::FramePackEditor> g_FramePackEditor;
-
-///////////////////////////////////////////////////////////////////////////////
-
-struct FrameLimiter
-{
-	static RF::time::PerfClock::duration const k_DesiredFrameTime;
-	void Reset()
-	{
-		m_FrameStart = RF::time::PerfClock::now();
-		m_FrameEnd = RF::time::PerfClock::now();
-	}
-	void Stall()
-	{
-		using namespace RF;
-		time::PerfClock::time_point const naturalFrameEnd = time::PerfClock::now();
-		time::PerfClock::duration const naturalFrameTime = naturalFrameEnd - m_FrameStart;
-		if( naturalFrameTime < k_DesiredFrameTime )
-		{
-			time::PerfClock::duration const timeRemaining = k_DesiredFrameTime - naturalFrameTime;
-			rftl::this_thread::sleep_for( timeRemaining );
-		}
-		m_FrameEnd = time::PerfClock::now();
-		time::PerfClock::duration const frameTime = m_FrameEnd - m_FrameStart;
-		time::FrameClock::add_time( frameTime );
-		m_FrameStart = time::PerfClock::now();
-	}
-	RF::time::PerfClock::time_point m_FrameStart;
-	RF::time::PerfClock::time_point m_FrameEnd;
-};
-RF::time::PerfClock::duration const FrameLimiter::k_DesiredFrameTime = rftl::chrono::nanoseconds( 16666666 );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -112,14 +81,11 @@ int main()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
-	if( k_FramePackEditor )
-	{
-		RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
-		g_FramePackEditor = EntwinedCreator<FramePackEditor>::Create();
-		g_FramePackEditor->Init();
-	}
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
+	g_FramePackEditor = EntwinedCreator<FramePackEditor>::Create();
+	g_FramePackEditor->Init();
 
-	FrameLimiter frameLimiter;
+	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
@@ -137,12 +103,9 @@ int main()
 
 		g_Graphics->BeginFrame();
 		{
-			if( k_FramePackEditor )
-			{
-				FramePackEditor* const framePackEditor = g_FramePackEditor;
-				framePackEditor->Process();
-				framePackEditor->Render();
-			}
+			FramePackEditor* const framePackEditor = g_FramePackEditor;
+			framePackEditor->Process();
+			framePackEditor->Render();
 
 			g_Graphics->SubmitToRender();
 			g_Graphics->WaitForRender();
