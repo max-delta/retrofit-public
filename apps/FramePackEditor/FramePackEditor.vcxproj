@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -18,69 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\main.cpp" />
-    <ClCompile Include="source\stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="source\TEMP_AssetLoadSave.cpp" />
-    <ClCompile Include="source\Tests.cpp" />
-    <ClCompile Include="source\wndproc.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="source\project.h" />
-    <ClInclude Include="source\stdafx.h" />
-    <ClInclude Include="source\TEMP_AssetLoadSave.h" />
-    <ClInclude Include="source\Tests.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\libs\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
-      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
-      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
-      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
-      <Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
-      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
-      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Scripting_squirrel\Scripting_squirrel.vcxproj">
-      <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
-      <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
-      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\third_party\pugixml\pugixml.vcxproj">
-      <Project>{d6aed87f-c6ea-4c98-881f-8bfc6cf1fd2c}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}</ProjectGuid>
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{08B8981A-E605-4C94-BD88-98DC142FC169}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>retrofit</RootNamespace>
+    <RootNamespace>FramePackEditor</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -135,10 +77,10 @@
     <Import Project="..\..\config\RetroFit.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,23 +89,23 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -175,8 +117,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -190,8 +132,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -199,6 +141,57 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="FramePackEditor.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FramePackEditor.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="wndproc.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
+      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
+      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
+      <Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
+      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
+      <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
