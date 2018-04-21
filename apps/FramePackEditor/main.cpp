@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "Tests.h"
+#include "FramePackEditor.h"
 
 #include "PPU/PPUController.h"
 
@@ -31,13 +31,8 @@ extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 RF::UniquePtr<RF::file::VFS> g_Vfs;
 
-constexpr bool k_ConsoleTest = false;
-constexpr bool k_DrawTest = false;
-constexpr bool k_DrawInputDebug = false;
-constexpr bool k_SquirrelTest = false;
-constexpr bool k_XMLTest = true;
-constexpr bool k_FPackSerializationTest = false;
-constexpr bool k_PlatformTest = true;
+constexpr bool k_FramePackEditor = true;
+RF::UniquePtr<RF::FramePackEditor> g_FramePackEditor;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -93,18 +88,6 @@ int main()
 		RF_DBGFAIL_MSG( "TODO: Non-ANSI console logger" );
 	}
 
-	if( k_ConsoleTest )
-	{
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_TRACE, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_DEBUG, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_INFO, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_WARNING, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_ERROR, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_CRITICAL, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_MILESTONE, "Console test" );
-		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, 1ull << 32, "Console test" );
-	}
-
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
 	g_Vfs = DefaultCreator<file::VFS>::Create();
 	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
@@ -113,21 +96,6 @@ int main()
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
 	}
 	file::VFS::HACK_SetInstance( g_Vfs );
-
-	if( k_SquirrelTest )
-	{
-		test::SQTest();
-	}
-
-	if( k_XMLTest )
-	{
-		test::XMLTest();
-	}
-
-	if( k_PlatformTest )
-	{
-		test::PlatformTest();
-	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	constexpr uint8_t k_WindowScaleFactor = 4;
@@ -144,14 +112,11 @@ int main()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 
-	if( k_FPackSerializationTest )
+	if( k_FramePackEditor )
 	{
-		test::FPackSerializationTest();
-	}
-
-	if( k_DrawTest )
-	{
-		test::InitDrawTest();
+		RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
+		g_FramePackEditor = EntwinedCreator<FramePackEditor>::Create();
+		g_FramePackEditor->Init();
 	}
 
 	FrameLimiter frameLimiter;
@@ -172,14 +137,11 @@ int main()
 
 		g_Graphics->BeginFrame();
 		{
-			if( k_DrawInputDebug )
+			if( k_FramePackEditor )
 			{
-				test::DrawInputDebug();
-			}
-
-			if( k_DrawTest )
-			{
-				test::DrawTest();
+				FramePackEditor* const framePackEditor = g_FramePackEditor;
+				framePackEditor->Process();
+				framePackEditor->Render();
 			}
 
 			g_Graphics->SubmitToRender();

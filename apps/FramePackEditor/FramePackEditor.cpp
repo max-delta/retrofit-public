@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "FramePackEditor.h"
 
-#include "TEMP_AssetLoadSave.h"
-
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
