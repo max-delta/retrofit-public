@@ -4,6 +4,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="clocks.h" />
+    <ClInclude Include="Limiter.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
