@@ -1,31 +1,36 @@
-.orig$
+\.orig$
+\.bak$
 
-.suo$
-.user$
-.tss$
+\.suo$
+\.user$
+\.tss$
+\.dsp$
 
-.ipch$
-.sdf$
-.idb$
-.opendb$
-.VC.db$
-.vcxprojResolveAssemblyReference.cache$
-.db-shm$
-.db-wal$
+\.ipch$
+\.sdf$
+\.idb$
+\.opendb$
+\.VC.db$
+\.vcxprojResolveAssemblyReference.cache$
+\.db-shm$
+\.db-wal$
 
-.log$
-.pch$
-.pdb$
-.obj$
-.exp$
-.pchast$
-.nativecodeanalysis.xml$
-.nativecodeanalysis.all.xml$
-.lastcodeanalysissucceeded$
+\.log$
+\.tlog$
+\.pch$
+\.ipdb$
+\.pdb$
+\.iobj$
+\.obj$
+\.exp$
+\.pchast$
+\.nativecodeanalysis.xml$
+\.nativecodeanalysis.all.xml$
+\.lastcodeanalysissucceeded$
 
-.gta.testdurations$
+\.gta.testdurations$
 
-.lib$
-.ilk$
-.dll$
-.exe$
+\.lib$
+\.ilk$
+\.dll$
+\.exe$
