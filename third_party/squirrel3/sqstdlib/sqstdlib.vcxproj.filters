@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="sqstdaux.cpp" />
+    <ClCompile Include="sqstdblob.cpp" />
+    <ClCompile Include="sqstdio.cpp" />
+    <ClCompile Include="sqstdmath.cpp" />
+    <ClCompile Include="sqstdrex.cpp" />
+    <ClCompile Include="sqstdstream.cpp" />
+    <ClCompile Include="sqstdstring.cpp" />
+    <ClCompile Include="sqstdsystem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sqstdblobimpl.h" />
+    <ClInclude Include="sqstdstream.h" />
+  </ItemGroup>
+</Project>
