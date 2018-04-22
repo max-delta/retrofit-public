@@ -50,6 +50,9 @@
     <ClInclude Include="ConstructorOverload.h">
       <Filter>meta</Filter>
     </ClInclude>
+    <ClInclude Include="ptr\ptr_fwd.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
