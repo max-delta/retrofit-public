@@ -89,15 +89,15 @@ void FramePackEditor::Process()
 		m_MasterMode = MasterMode::Colliders;
 	}
 
-	if( digital.WasActivatedLogical( shim::VK_ADD ) )
+	if( digital.WasActivatedLogical( shim::VK_ADD ) || mostRecentHold == shim::VK_ADD )
 	{
 		Command_ChangePreviewSpeed( true );
 	}
-	if( digital.WasActivatedLogical( shim::VK_SUBTRACT ) )
+	if( digital.WasActivatedLogical( shim::VK_SUBTRACT ) || mostRecentHold == shim::VK_SUBTRACT )
 	{
 		Command_ChangePreviewSpeed( false );
 	}
-	if( digital.WasActivatedLogical( shim::VK_MULTIPLY ) )
+	if( digital.WasActivatedLogical( shim::VK_MULTIPLY ) || mostRecentHold == shim::VK_MULTIPLY )
 	{
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
@@ -108,7 +108,7 @@ void FramePackEditor::Process()
 			Command_ChangeSustainCount( true );
 		}
 	}
-	if( digital.WasActivatedLogical( shim::VK_DIVIDE ) )
+	if( digital.WasActivatedLogical( shim::VK_DIVIDE ) || mostRecentHold == shim::VK_DIVIDE )
 	{
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
@@ -124,15 +124,15 @@ void FramePackEditor::Process()
 	{
 		Command_ReloadFramePack();
 	}
-	if( digital.WasActivatedLogical( 'A' ) )
+	if( digital.WasActivatedLogical( 'A' ) || mostRecentHold == 'A' )
 	{
 		Command_ChangeEditingFrame( false );
 	}
-	if( digital.WasActivatedLogical( 'D' ) )
+	if( digital.WasActivatedLogical( 'D' ) || mostRecentHold == 'D' )
 	{
 		Command_ChangeEditingFrame( true );
 	}
-	if( digital.WasActivatedLogical( shim::VK_SPACE ) )
+	if( digital.WasActivatedLogical( shim::VK_SPACE ) || mostRecentHold == shim::VK_SPACE )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "TODO: Snap to preview" );
 	}
@@ -149,11 +149,11 @@ void FramePackEditor::Process()
 			{
 				Command_Meta_OpenFramePack();
 			}
-			if( digital.WasActivatedLogical( shim::VK_UP ) )
+			if( digital.WasActivatedLogical( shim::VK_UP ) || mostRecentHold == shim::VK_UP )
 			{
 				Command_Meta_ChangeDataSpeed( true );
 			}
-			if( digital.WasActivatedLogical( shim::VK_DOWN ) )
+			if( digital.WasActivatedLogical( shim::VK_DOWN ) || mostRecentHold == shim::VK_DOWN )
 			{
 				Command_Meta_ChangeDataSpeed( false );
 			}
