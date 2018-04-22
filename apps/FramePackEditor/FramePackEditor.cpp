@@ -18,14 +18,18 @@
 
 
 // TODO: Singleton manager
-extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+namespace RF { namespace app {
+__declspec( dllimport ) extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
+__declspec( dllimport ) extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+}}
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
 void FramePackEditor::Init()
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	m_MasterMode = MasterMode::Meta;
 	m_FramePackID = gfx::k_InvalidManagedFramePackID;
 	m_EditingFrame = 0;
@@ -35,14 +39,14 @@ void FramePackEditor::Init()
 	file::VFS& vfs = *file::VFS::HACK_GetInstance();
 	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	g_Graphics->LoadFont( fontHandle->GetFile() );
+	ppu->LoadFont( fontHandle->GetFile() );
 }
 
 
 
 void FramePackEditor::Process()
 {
-	input::WndProcDigitalInputComponent const& digital = g_WndProcInput->m_Digital;
+	input::WndProcDigitalInputComponent const& digital = app::g_WndProcInput->m_Digital;
 
 	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
 	typedef rftl::static_array<LogicalEvent, 1> LogicEvents;
@@ -207,7 +211,7 @@ void FramePackEditor::Process()
 
 void FramePackEditor::Render()
 {
-	gfx::PPUController* const ppu = g_Graphics;
+	gfx::PPUController* const ppu = app::g_Graphics;
 	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
 
@@ -424,12 +428,14 @@ void FramePackEditor::Command_ChangePreviewSpeed( bool faster )
 
 void FramePackEditor::Command_ChangeSustainCount( bool increase )
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
@@ -464,12 +470,14 @@ void FramePackEditor::Command_ChangeEditingFrame( bool increase )
 
 void FramePackEditor::Command_ReloadFramePack()
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackManager const& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
 	file::VFSPath const filename = fpackMan.SearchForFilenameByResourceName( kFramePackName );
 	OpenFramePack( filename );
 }
@@ -478,12 +486,14 @@ void FramePackEditor::Command_ReloadFramePack()
 
 void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	uint8_t& slowdownRate = fpack->m_PreferredSlowdownRate;
@@ -502,8 +512,10 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 
 void FramePackEditor::Command_Meta_CreateFramePack()
 {
-	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
-	gfx::TextureManager& texMan = *g_Graphics->DebugGetTextureManager();
+	gfx::PPUController* const ppu = app::g_Graphics;
+
+	gfx::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
+	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
 	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
 		fpackMan.DestroyResource( kFramePackName );
@@ -532,12 +544,14 @@ void FramePackEditor::Command_Meta_OpenFramePack()
 
 void FramePackEditor::Command_Meta_DeleteFrame()
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->GetResourceFromManagedResourceID( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 	size_t const& numSlots = fpack->m_NumTimeSlots;
 	if( numSlots <= 1 )
@@ -579,12 +593,14 @@ void FramePackEditor::Command_Texture_InsertAfter()
 
 void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y )
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	RF_ASSERT( m_EditingFrame <= fpack->m_NumTimeSlots );
@@ -609,7 +625,9 @@ void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
 
 void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 {
-	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	gfx::PPUController* const ppu = app::g_Graphics;
+
+	gfx::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
 	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
 		fpackMan.DestroyResource( kFramePackName );
@@ -634,8 +652,10 @@ void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 
 void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
+
 	RF_ASSERT( m_FramePackID != gfx::k_InvalidManagedFramePackID );
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	size_t const& numSlots = fpack->m_NumTimeSlots;
@@ -673,8 +693,9 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 
 void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
 {
+	gfx::PPUController* const ppu = app::g_Graphics;
 
-	gfx::FramePackBase* const fpack = g_Graphics->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	size_t const& numSlots = fpack->m_NumTimeSlots;
@@ -701,7 +722,7 @@ void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
 
 void FramePackEditor::ChangeTexture( size_t slotIndex )
 {
-	gfx::PPUController* const ppu = g_Graphics;
+	gfx::PPUController* const ppu = app::g_Graphics;
 
 	RF_ASSERT( m_FramePackID != gfx::k_InvalidManagedFramePackID );
 	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );

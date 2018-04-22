@@ -3,11 +3,12 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
-    <ClInclude Include="FramePackEditor.h" />
+    <ClInclude Include="Common.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="FramePackEditor.cpp" />
+    <ClCompile Include="Common.cpp" />
+    <ClCompile Include="wndproc.cpp" />
   </ItemGroup>
 </Project>

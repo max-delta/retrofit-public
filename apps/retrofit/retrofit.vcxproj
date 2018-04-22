@@ -28,7 +28,6 @@
     </ClCompile>
     <ClCompile Include="TEMP_AssetLoadSave.cpp" />
     <ClCompile Include="Tests.cpp" />
-    <ClCompile Include="wndproc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -76,6 +75,9 @@
     <ProjectReference Include="..\..\third_party\pugixml\pugixml.vcxproj">
       <Project>{d6aed87f-c6ea-4c98-881f-8bfc6cf1fd2c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
+      <Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{2AFB1F47-0BF1-4C51-BF15-79892E5725A6}</ProjectGuid>
@@ -118,21 +120,25 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\AppCommon.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\AppCommon.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\AppCommon.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\AppCommon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

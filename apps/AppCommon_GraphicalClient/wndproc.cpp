@@ -11,10 +11,13 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/macros.h"
 
-RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+namespace RF { namespace app {
+///////////////////////////////////////////////////////////////////////////////
+
+extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
 extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
 
-
+///////////////////////////////////////////////////////////////////////////////
 
 // Window Procedure
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam )
@@ -95,3 +98,6 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 			return shim::DefWindowProcW( hWnd, message, wParam, lParam );
 	}
 }
+
+///////////////////////////////////////////////////////////////////////////////
+}}
