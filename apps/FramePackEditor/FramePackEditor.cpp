@@ -7,6 +7,7 @@
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
+#include "PPU/Texture.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
@@ -282,6 +283,7 @@ void FramePackEditor::Render()
 	uint8_t numTimeSlots = 0;
 	uint8_t slotSustain = 0;
 	gfx::PPUCoord texOrigin{ 0, 0 };
+	math::Vector2<int64_t> texSize{ 0, 0 };
 
 	//
 	// Plane lines
@@ -345,6 +347,12 @@ void FramePackEditor::Render()
 		ppu->DrawObject( editingObject );
 
 		editingTextureID = timeSlot.m_TextureReference;
+		gfx::Texture const* const tex = texMan.GetResourceFromManagedResourceID( editingTextureID );
+		if( tex != nullptr )
+		{
+			texSize.x = tex->DebugGetWidth();
+			texSize.y = tex->DebugGetHeight();
+		}
 	}
 
 	//
@@ -407,6 +415,7 @@ void FramePackEditor::Render()
 				{
 					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i <Arrows> to change", texOrigin.x, texOrigin.y );
 				}
+				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, "Size: %lli, %lli", texSize.x, texSize.y );
 				break;
 			}
 			case MasterMode::Colliders:

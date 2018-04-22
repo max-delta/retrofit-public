@@ -29,6 +29,20 @@ DeviceTextureID Texture::GetDeviceRepresentation() const
 
 
 
+uint32_t Texture::DebugGetWidth() const
+{
+	return m_WidthPostLoad;
+}
+
+
+
+uint32_t Texture::DebugGetHeight() const
+{
+	return m_HeightPostLoad;
+}
+
+
+
 void Texture::UpdateFrameUsage() const
 {
 	m_LastUsedInFrame = time::FrameClock::now();
