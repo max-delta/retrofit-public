@@ -354,7 +354,14 @@ void FramePackEditor::Render()
 		gfx::TimeSlowdownRate const previewFPS = 60u / m_PreviewSlowdownRate;
 		ppu->DrawText( previewHeaderStart + textOffset, fontSize, "Preview FPS: %i <-/+> to change", previewFPS );
 		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
-		ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i", dataFPS );
+		if( m_MasterMode == MasterMode::Meta )
+		{
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i <Up/Dn> to change", dataFPS );
+		}
+		else
+		{
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i", dataFPS );
+		}
 		uint16_t const effectiveFrames = math::integer_cast<uint16_t>( animationLength * m_PreviewSlowdownRate );
 		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, "Preview frames: %i", effectiveFrames );
 	}
@@ -364,10 +371,10 @@ void FramePackEditor::Render()
 	{
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DrawText( editingHeaderStart, fontSize, "Editing" );
-		ppu->DrawText( editingHeaderStart + textOffset, fontSize, "Frame: %i / [0-%i]", m_EditingFrame, numTimeSlots - 1 );
+		ppu->DrawText( editingHeaderStart + textOffset, fontSize, "Frame: %i / [0-%i] <A/D> to change", m_EditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i <Ctrl+/,*> to batch change", slotSustain );
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i <Ctrl+/,*> to batch", slotSustain );
 		}
 		else
 		{
@@ -392,7 +399,14 @@ void FramePackEditor::Render()
 			}
 			case MasterMode::Texture:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i", texOrigin.x, texOrigin.y );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
+				}
+				else
+				{
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i <Arrows> to change", texOrigin.x, texOrigin.y );
+				}
 				break;
 			}
 			case MasterMode::Colliders:
@@ -443,7 +457,7 @@ void FramePackEditor::Render()
 					"<DEL>:Delete frame  ";
 				constexpr char k_FooterAlt4Texture[] =
 					"[TEXTURE]  "
-					"<Ctrl+Arrows>:Batch change offset  "
+					"<Ctrl+Arrows>:Batch offset  "
 					"<DEL>:Delete frame  ";
 				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Texture );
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
