@@ -43,6 +43,7 @@ public:
 
 	void Command_ChangePreviewSpeed( bool faster );
 	void Command_ChangeSustainCount( bool increase );
+	void Command_BatchChangeSustainCount( bool increase );
 	void Command_ChangeEditingFrame( bool increase );
 	void Command_ReloadFramePack();
 
