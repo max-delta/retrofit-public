@@ -161,19 +161,47 @@ void FramePackEditor::Process()
 			}
 			if( digital.WasActivatedLogical( shim::VK_UP ) || mostRecentHold == shim::VK_UP )
 			{
-				Command_Texture_ChangeOffset( 0, -1 );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					Command_Texture_BatchChangeOffset( 0, -1 );
+				}
+				else
+				{
+					Command_Texture_ChangeOffset( 0, -1 );
+				}
 			}
 			if( digital.WasActivatedLogical( shim::VK_DOWN ) || mostRecentHold == shim::VK_DOWN )
 			{
-				Command_Texture_ChangeOffset( 0, 1 );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					Command_Texture_BatchChangeOffset( 0, 1 );
+				}
+				else
+				{
+					Command_Texture_ChangeOffset( 0, 1 );
+				}
 			}
 			if( digital.WasActivatedLogical( shim::VK_LEFT ) || mostRecentHold == shim::VK_LEFT )
 			{
-				Command_Texture_ChangeOffset( -1, 0 );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					Command_Texture_BatchChangeOffset( -1, 0 );
+				}
+				else
+				{
+					Command_Texture_ChangeOffset( -1, 0 );
+				}
 			}
 			if( digital.WasActivatedLogical( shim::VK_RIGHT ) || mostRecentHold == shim::VK_RIGHT )
 			{
-				Command_Texture_ChangeOffset( 1, 0 );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					Command_Texture_BatchChangeOffset( 1, 0 );
+				}
+				else
+				{
+					Command_Texture_ChangeOffset( 1, 0 );
+				}
 			}
 			if( digital.WasActivatedLogical( shim::VK_DELETE ) )
 			{
@@ -219,6 +247,7 @@ void FramePackEditor::Render()
 	gfx::PPUController* const ppu = app::g_Graphics;
 	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
+	input::WndProcDigitalInputComponent const& digital = app::g_WndProcInput->m_Digital;
 
 	gfx::PPUCoord const fontSize( 4, 8 );
 	gfx::PPUCoord const textOffset( 0, fontSize.y );
@@ -238,6 +267,7 @@ void FramePackEditor::Render()
 	gfx::TimeSlowdownRate preferredSlowdownRate = gfx::k_TimeSlowdownRate_Normal;
 	uint8_t numTimeSlots = 0;
 	uint8_t slotSustain = 0;
+	gfx::PPUCoord texOrigin{ 0, 0 };
 
 	//
 	// Plane lines
@@ -272,9 +302,13 @@ void FramePackEditor::Render()
 			m_EditingFrame = numTimeSlots - 1u;
 		}
 
+		gfx::FramePackBase::TimeSlot const& timeSlot = fpack->GetTimeSlots()[m_EditingFrame];
+
 		animationLength = fpack->CalculateTimeIndexBoundary();
 		preferredSlowdownRate = fpack->m_PreferredSlowdownRate;
 		slotSustain = fpack->GetTimeSlotSustains()[m_EditingFrame];
+		texOrigin.x = timeSlot.m_TextureOriginX;
+		texOrigin.y = timeSlot.m_TextureOriginY;
 
 		m_PreviewObject.m_FramePackID = m_FramePackID;
 		m_PreviewObject.m_MaxTimeIndex = animationLength;
@@ -296,7 +330,7 @@ void FramePackEditor::Render()
 
 		ppu->DrawObject( editingObject );
 
-		editingTextureID = fpack->GetTimeSlots()[m_EditingFrame].m_TextureReference;
+		editingTextureID = timeSlot.m_TextureReference;
 	}
 
 	//
@@ -327,6 +361,27 @@ void FramePackEditor::Render()
 		{
 			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
 			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, "Texture: %s", lastElement.c_str() );
+		}
+		switch( m_MasterMode )
+		{
+			case MasterMode::Meta:
+			{
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i", texOrigin.x, texOrigin.y );
+				break;
+			}
+			case MasterMode::Texture:
+			{
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i", texOrigin.x, texOrigin.y );
+				break;
+			}
+			case MasterMode::Colliders:
+			{
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "TODO" );
+				break;
+			}
+			default:
+				RF_DBGFAIL();
+				break;
 		}
 	}
 
@@ -365,8 +420,19 @@ void FramePackEditor::Render()
 					"[TEXTURE]  "
 					"<Arrows>:Change offset  "
 					"<DEL>:Delete frame  ";
+				constexpr char k_FooterAlt4Texture[] =
+					"[TEXTURE]  "
+					"<Ctrl+Arrows>:Batch change offset  "
+					"<DEL>:Delete frame  ";
 				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Texture );
-				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Texture );
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					ppu->DrawText( footerLine4Start, fontSize, k_FooterAlt4Texture );
+				}
+				else
+				{
+					ppu->DrawText( footerLine4Start, fontSize, k_Footer4Texture );
+				}
 				break;
 			}
 			case MasterMode::Colliders:
@@ -615,6 +681,30 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 
 	timeSlot.m_TextureOriginX = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginX - x );
 	timeSlot.m_TextureOriginY = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginY - y );
+}
+
+
+
+void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y )
+{
+	gfx::PPUController* const ppu = app::g_Graphics;
+
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	for( size_t i = 0; i < fpack->m_NumTimeSlots; i++ )
+	{
+		gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[i];
+
+		timeSlot.m_TextureOriginX = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginX - x );
+		timeSlot.m_TextureOriginY = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginY - y );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
