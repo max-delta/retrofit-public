@@ -58,7 +58,6 @@ void Startup()
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
 	}
-	file::VFS::HACK_SetInstance( g_Vfs );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	constexpr uint8_t k_WindowScaleFactor = 4;
@@ -69,7 +68,7 @@ void Startup()
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	s_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ) );
+	s_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ), g_Vfs );
 	g_Graphics = s_Graphics;
 	g_Graphics->Initialize( k_Width, k_Height );
 

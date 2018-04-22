@@ -31,7 +31,7 @@ int main()
 	app::Startup();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
-	UniquePtr<FramePackEditor> framePackEditorPtr = EntwinedCreator<FramePackEditor>::Create();
+	UniquePtr<FramePackEditor> framePackEditorPtr = EntwinedCreator<FramePackEditor>::Create( app::g_Vfs );
 	FramePackEditor* const framePackEditor = framePackEditorPtr;
 	framePackEditor->Init();
 

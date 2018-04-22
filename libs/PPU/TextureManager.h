@@ -22,7 +22,7 @@ class PPU_API TextureManager final : public ResourceManager<Texture, ManagedText
 	//
 	// Public methods
 public:
-	TextureManager();
+	TextureManager( WeakPtr<file::VFS> const& vfs );
 	~TextureManager();
 
 	bool AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterface );
@@ -47,6 +47,7 @@ private:
 	//
 	// Private data
 private:
+	WeakPtr<file::VFS> const mVfs;
 	WeakPtr<DeviceInterface> m_DeviceInterface;
 };
 

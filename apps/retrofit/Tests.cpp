@@ -35,7 +35,7 @@ void InitDrawTest()
 
 	WeakPtr<gfx::TextureManager> texMan = app::g_Graphics->DebugGetTextureManager();
 	WeakPtr<gfx::FramePackManager> framePackMan = app::g_Graphics->DebugGetFramePackManager();
-	file::VFS& vfs = *file::VFS::HACK_GetInstance();
+	file::VFS& vfs = *app::g_Vfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
 
@@ -202,7 +202,7 @@ void SQTest()
 
 void XMLTest()
 {
-	file::VFS* vfs = file::VFS::HACK_GetInstance();
+	file::VFS* vfs = app::g_Vfs;
 	file::VFSPath const testFilePath = file::VFS::k_Root.GetChild( "scratch", "xmltest.xml" );
 
 	// Write
@@ -294,7 +294,7 @@ void FPackSerializationTest()
 	}
 
 	// Create file
-	file::VFS const& vfs = *file::VFS::HACK_GetInstance();
+	file::VFS const& vfs = *app::g_Vfs;
 	file::VFSPath const newFilePath = commonFramepacks.GetChild( rootFilename + ".fpack" );
 	{
 		file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );

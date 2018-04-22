@@ -17,7 +17,7 @@ class PPU_API FramePackManager final : public ResourceManager<FramePackBase, Man
 	// Public methods
 public:
 	FramePackManager() = delete;
-	explicit FramePackManager( WeakPtr<gfx::TextureManager> const& texMan );
+	explicit FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs );
 	~FramePackManager();
 
 
@@ -30,6 +30,7 @@ protected:
 	// Private data
 private:
 	WeakPtr<gfx::TextureManager> const mTextureManager;
+	WeakPtr<file::VFS> const mVfs;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,8 @@ namespace RF {
 
 class FramePackEditor
 {
+	RF_NO_COPY( FramePackEditor );
+
 	//
 	// Enums
 private:
@@ -33,6 +35,8 @@ private:
 	//
 	// Public methods
 public:
+	FramePackEditor( WeakPtr<file::VFS> const& vfs );
+
 	void Init();
 	void Process();
 	void Render();
@@ -65,6 +69,7 @@ private:
 	//
 	// Private data
 private:
+	WeakPtr<file::VFS> const m_Vfs;
 	MasterMode m_MasterMode;
 	gfx::ManagedFramePackID m_FramePackID;
 	uint8_t m_EditingFrame;

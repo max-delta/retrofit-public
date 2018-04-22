@@ -15,8 +15,9 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-TextureManager::TextureManager()
+TextureManager::TextureManager( WeakPtr<file::VFS> const& vfs )
 	: ResourceManagerType()
+	, mVfs( vfs )
 {
 	//
 }
@@ -101,7 +102,7 @@ bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename 
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation == k_InvalidDeviceTextureID );
-	file::VFS* vfs = file::VFS::HACK_GetInstance();
+	file::VFS* const vfs = mVfs;
 	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{

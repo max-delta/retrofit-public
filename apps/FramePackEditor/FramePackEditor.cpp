@@ -23,6 +23,14 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+FramePackEditor::FramePackEditor( WeakPtr<file::VFS> const & vfs )
+	: m_Vfs( vfs )
+{
+	//
+}
+
+
+
 void FramePackEditor::Init()
 {
 	gfx::PPUController* const ppu = app::g_Graphics;
@@ -33,7 +41,7 @@ void FramePackEditor::Init()
 	m_PreviewSlowdownRate = gfx::k_TimeSlowdownRate_Normal;
 	m_PreviewObject = {};
 
-	file::VFS& vfs = *file::VFS::HACK_GetInstance();
+	file::VFS& vfs = *m_Vfs;
 	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
 	ppu->LoadFont( fontHandle->GetFile() );
@@ -613,7 +621,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 
 void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
 {
-	file::VFS const& vfs = *file::VFS::HACK_GetInstance();
+	file::VFS const& vfs = *m_Vfs;
 	file::VFSPath const filePath = vfs.AttemptMapToVFS( rawPath, file::VFSMount::Permissions::ReadOnly );
 	OpenFramePack( filePath );
 }
@@ -738,7 +746,7 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	}
 
 	// Need to map user choice into VFS
-	file::VFS* const vfs = file::VFS::HACK_GetInstance();
+	file::VFS* const vfs = m_Vfs;
 	file::VFSPath mappedPath = vfs->AttemptMapToVFS( filepath, file::VFSMount::Permissions::ReadOnly );
 	if( mappedPath.Empty() )
 	{
