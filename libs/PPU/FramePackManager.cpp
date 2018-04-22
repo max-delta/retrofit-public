@@ -11,9 +11,10 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const & texMan )
+FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const & texMan, WeakPtr<file::VFS> const& vfs )
 	: ResourceManagerType()
 	, mTextureManager( texMan )
+	, mVfs( vfs )
 {
 	//
 }
@@ -32,7 +33,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	RF_ASSERT( mTextureManager != nullptr );
 
 	// Open
-	file::VFS const& vfs = *file::VFS::HACK_GetInstance();
+	file::VFS const& vfs = *mVfs;
 	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{

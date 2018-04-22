@@ -66,11 +66,6 @@ public:
 public:
 	VFS();
 
-	// HACK: Singleton
-	// TODO: Reflection system, system registry
-	static VFS* HACK_GetInstance();
-	static void HACK_SetInstance( WeakPtr<VFS> instance );
-
 	FileHandlePtr GetFileForRead( VFSPath const& path ) const; // Must exist, seek start
 	FileHandlePtr GetFileForWrite( VFSPath const& path ) const; // Will create, seek start
 	FileHandlePtr GetFileForModify( VFSPath const& path ) const; // Must exist, seek start
