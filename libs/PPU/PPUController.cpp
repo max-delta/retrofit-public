@@ -18,10 +18,11 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface )
+PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs )
 	: m_DeviceInterface( rftl::move( deviceInterface ) )
 	, m_TextureManager( nullptr )
 	, m_FramePackManager( nullptr )
+	, m_Vfs( vfs )
 {
 	//
 }
@@ -50,7 +51,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create texture manager
 	RF_ASSERT( m_TextureManager == nullptr );
-	m_TextureManager = DefaultCreator<gfx::TextureManager>::Create();
+	m_TextureManager = DefaultCreator<gfx::TextureManager>::Create( m_Vfs );
 	success = m_TextureManager->AttachToDevice( m_DeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )
@@ -60,7 +61,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create frame pack manager
 	RF_ASSERT( m_FramePackManager == nullptr );
-	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create( m_TextureManager );
+	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create( m_TextureManager, m_Vfs );
 
 	// Prepare device
 	success = m_DeviceInterface->Initialize2DGraphics();

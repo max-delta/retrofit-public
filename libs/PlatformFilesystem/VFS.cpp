@@ -30,18 +30,6 @@ VFS::VFS()
 
 
 
-static WeakPtr<VFS> HACK_Instance = nullptr;
-VFS* VFS::HACK_GetInstance()
-{
-	return HACK_Instance;
-}
-void VFS::HACK_SetInstance( WeakPtr<VFS> instance )
-{
-	HACK_Instance = rftl::move( instance );
-}
-
-
-
 FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );

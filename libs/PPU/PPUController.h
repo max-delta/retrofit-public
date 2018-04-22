@@ -5,6 +5,8 @@
 #include "PPU/PPUState.h"
 #include "PPU/PPUDebugState.h"
 
+#include "PlatformFilesystem/VFSFwd.h"
+
 #include "core/ptr/unique_ptr.h"
 
 
@@ -32,7 +34,7 @@ private:
 	// Public methods
 public:
 	PPUController() = delete;
-	explicit PPUController( UniquePtr<gfx::DeviceInterface> && deviceInterface );
+	explicit PPUController( UniquePtr<gfx::DeviceInterface> && deviceInterface, WeakPtr<file::VFS> const& vfs );
 	~PPUController();
 
 	bool Initialize( uint16_t width, uint16_t height );
@@ -76,6 +78,7 @@ private:
 	UniquePtr<gfx::DeviceInterface> m_DeviceInterface;
 	UniquePtr<gfx::TextureManager> m_TextureManager;
 	UniquePtr<gfx::FramePackManager> m_FramePackManager;
+	WeakPtr<file::VFS> const m_Vfs;
 	uint16_t m_Width;
 	uint16_t m_Height;
 
