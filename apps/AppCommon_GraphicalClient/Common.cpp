@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "Common.h"
 
+#include "PPU/PPUController.h"
+#include "SimpleGL/SimpleGL.h"
+
 #include "PlatformUtils_win32/Console.h"
 #include "PlatformUtils_win32/windowing.h"
+#include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
 #include "Logging/ANSIConsoleLogger.h"
-
-#include "SimpleGL/SimpleGL.h"
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
@@ -19,10 +21,12 @@ namespace RF { namespace app {
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
 
 // Global systems
-// TODO: Singleton manager
-APPCOMMONGRAPHICALCLIENT_API UniquePtr<input::WndProcInputDevice> g_WndProcInput;
-APPCOMMONGRAPHICALCLIENT_API UniquePtr<gfx::PPUController> g_Graphics;
-APPCOMMONGRAPHICALCLIENT_API UniquePtr<file::VFS> g_Vfs;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> g_WndProcInput;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> g_Graphics;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> g_Vfs;
+static UniquePtr<input::WndProcInputDevice> s_WndProcInput;
+static UniquePtr<gfx::PPUController> s_Graphics;
+static UniquePtr<file::VFS> s_Vfs;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -47,7 +51,8 @@ void Startup()
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
-	g_Vfs = DefaultCreator<file::VFS>::Create();
+	s_Vfs = DefaultCreator<file::VFS>::Create();
+	g_Vfs = s_Vfs;
 	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
 	{
@@ -64,11 +69,13 @@ void Startup()
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	g_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ) );
+	s_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ) );
+	g_Graphics = s_Graphics;
 	g_Graphics->Initialize( k_Width, k_Height );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
-	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
+	s_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
+	g_WndProcInput = s_WndProcInput;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 }

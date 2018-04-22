@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "TEMP_AssetLoadSave.h"
 
+#include "AppCommon_GraphicalClient/Common.h"
+
 #include "PPU/PPUController.h"
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
+
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "Scripting_squirrel/squirrel.h"
@@ -11,12 +14,6 @@
 #include "core/ptr/default_creator.h"
 #include "core_math/math_casts.h"
 
-
-// TODO: Singleton manager
-namespace RF { namespace app {
-__declspec( dllimport ) extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-__declspec( dllimport ) extern RF::UniquePtr<RF::file::VFS> g_Vfs;
-}}
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////

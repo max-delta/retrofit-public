@@ -1,10 +1,13 @@
 #include "stdafx.h"
 #include "FramePackEditor.h"
 
+#include "AppCommon_GraphicalClient/Common.h"
+
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
+
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
@@ -16,12 +19,6 @@
 
 #include "rftl/extension/static_array.h"
 
-
-// TODO: Singleton manager
-namespace RF { namespace app {
-__declspec( dllimport ) extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-__declspec( dllimport ) extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
-}}
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////

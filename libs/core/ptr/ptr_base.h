@@ -1,4 +1,5 @@
 #pragma once
+#include "core/ptr/ptr_fwd.h"
 #include "core/ptr/ptr_ref.h"
 #include "core/ptr/creation_payload.h"
 #include "core/ptr/ptr_traits.h"

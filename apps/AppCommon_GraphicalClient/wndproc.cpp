@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "AppCommon_GraphicalClient/Common.h"
 
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
@@ -12,11 +13,6 @@
 #include "core/macros.h"
 
 namespace RF { namespace app {
-///////////////////////////////////////////////////////////////////////////////
-
-extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
-extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-
 ///////////////////////////////////////////////////////////////////////////////
 
 // Window Procedure
