@@ -13,8 +13,10 @@
 
 
 // TODO: Singleton manager
-extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-extern RF::UniquePtr<RF::file::VFS> g_Vfs;
+namespace RF { namespace app {
+__declspec( dllimport ) extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
+__declspec( dllimport ) extern RF::UniquePtr<RF::file::VFS> g_Vfs;
+}}
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,7 +25,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 {
 	using namespace RF;
 
-	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
+	WeakPtr<gfx::TextureManager> texMan = app::g_Graphics->DebugGetTextureManager();
 	script::SquirrelVM vm;
 	script::SquirrelVM::Element elem;
 	script::SquirrelVM::ElementArray elemArr;
@@ -33,7 +35,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	{
 		rftl::wstring fileBuf;
 		{
-			file::FileHandlePtr const digitFPackFilePtr = g_Vfs->GetFileForRead( filename );
+			file::FileHandlePtr const digitFPackFilePtr = app::g_Vfs->GetFileForRead( filename );
 			RF_ASSERT( digitFPackFilePtr != nullptr );
 			FILE* const digitFPackFile = digitFPackFilePtr->GetFile();
 			RF_ASSERT( digitFPackFile != nullptr );

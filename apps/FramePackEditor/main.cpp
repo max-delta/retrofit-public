@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "AppCommon_GraphicalClient/Common.h"
 #include "FramePackEditor.h"
 
 #include "PPU/PPUController.h"
@@ -23,96 +24,45 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-// Window Procedure in different file
-shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
-extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
-
-// Global systems
-// TODO: Singleton manager
-RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-RF::UniquePtr<RF::file::VFS> g_Vfs;
-RF::UniquePtr<RF::FramePackEditor> g_FramePackEditor;
-
-///////////////////////////////////////////////////////////////////////////////
-
 int main()
 {
 	using namespace RF;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main start" );
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing console logging..." );
-	bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
-	if( consoleInitialized )
-	{
-		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
-		logging::HandlerDefinition def;
-		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
-		def.mHandlerFunc = logging::ANSIConsoleLogger;
-		logging::RegisterHandler( def );
-	}
-	else
-	{
-		puts( " == NO ANSI CONSOLE SUPPORT ==" );
-		RF_DBGFAIL_MSG( "TODO: Non-ANSI console logger" );
-	}
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
-	g_Vfs = DefaultCreator<file::VFS>::Create();
-	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
-	if( vfsInitialized == false )
-	{
-		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
-	}
-	file::VFS::HACK_SetInstance( g_Vfs );
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
-	constexpr uint8_t k_WindowScaleFactor = 4;
-	constexpr uint16_t k_Width = gfx::k_DesiredWidth * k_WindowScaleFactor;
-	constexpr uint16_t k_Height = gfx::k_DesiredHeight * k_WindowScaleFactor;
-	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
-	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
-	renderDevice->AttachToWindow( hwnd );
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	g_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ) );
-	g_Graphics->Initialize( k_Width, k_Height );
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
-	g_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
+	app::Startup();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
-	g_FramePackEditor = EntwinedCreator<FramePackEditor>::Create();
-	g_FramePackEditor->Init();
+	UniquePtr<FramePackEditor> framePackEditorPtr = EntwinedCreator<FramePackEditor>::Create();
+	FramePackEditor* const framePackEditor = framePackEditorPtr;
+	framePackEditor->Init();
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
-
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 
 	while( true )
 	{
 		frameLimiter.Stall();
 
-		g_WndProcInput->OnTick();
+		app::g_WndProcInput->OnTick();
 
 		if( platform::windowing::ProcessAllMessages() < 0 )
 		{
 			break;
 		}
 
-		g_Graphics->BeginFrame();
+		app::g_Graphics->BeginFrame();
 		{
-			FramePackEditor* const framePackEditor = g_FramePackEditor;
 			framePackEditor->Process();
 			framePackEditor->Render();
 
-			g_Graphics->SubmitToRender();
-			g_Graphics->WaitForRender();
+			app::g_Graphics->SubmitToRender();
+			app::g_Graphics->WaitForRender();
 		}
-		g_Graphics->EndFrame();
+		app::g_Graphics->EndFrame();
 	}
-	g_Graphics = nullptr;
+	framePackEditorPtr = nullptr;
+	app::Shutdown();
 	return 0;
 }
 
