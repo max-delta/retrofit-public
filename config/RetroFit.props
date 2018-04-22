@@ -17,7 +17,7 @@
       <WarningLevel>EnableAllWarnings</WarningLevel>
       <EnablePREfast>true</EnablePREfast>
       <AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(RFRootDir)libs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>
