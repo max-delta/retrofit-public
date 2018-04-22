@@ -54,6 +54,7 @@ public:
 	void Command_Texture_InsertBefore();
 	void Command_Texture_InsertAfter();
 	void Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y );
+	void Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y );
 
 
 	//
