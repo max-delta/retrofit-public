@@ -99,11 +99,25 @@ void FramePackEditor::Process()
 	}
 	if( digital.WasActivatedLogical( shim::VK_MULTIPLY ) )
 	{
-		Command_ChangeSustainCount( true );
+		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+		{
+			Command_BatchChangeSustainCount( true );
+		}
+		else
+		{
+			Command_ChangeSustainCount( true );
+		}
 	}
 	if( digital.WasActivatedLogical( shim::VK_DIVIDE ) )
 	{
-		Command_ChangeSustainCount( false );
+		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+		{
+			Command_BatchChangeSustainCount( false );
+		}
+		else
+		{
+			Command_ChangeSustainCount( false );
+		}
 	}
 
 	if( digital.WasActivatedLogical( 'R' ) )
@@ -351,7 +365,14 @@ void FramePackEditor::Render()
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DrawText( editingHeaderStart, fontSize, "Editing" );
 		ppu->DrawText( editingHeaderStart + textOffset, fontSize, "Frame: %i / [0-%i]", m_EditingFrame, numTimeSlots - 1 );
-		ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i </,*> to change", slotSustain );
+		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+		{
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i <Ctrl+/,*> to batch change", slotSustain );
+		}
+		else
+		{
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i </,*> to change", slotSustain );
+		}
 		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
 		if( texPath.Empty() )
 		{
@@ -521,6 +542,36 @@ void FramePackEditor::Command_ChangeSustainCount( bool increase )
 		sustain--;
 	}
 	sustain = math::Clamp<uint8_t>( 1, sustain, 240 );
+}
+
+
+
+void FramePackEditor::Command_BatchChangeSustainCount( bool increase )
+{
+	gfx::PPUController* const ppu = app::g_Graphics;
+
+	if( m_FramePackID == gfx::k_InvalidManagedFramePackID )
+	{
+		return;
+	}
+
+	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( m_FramePackID );
+	RF_ASSERT( fpack != nullptr );
+
+	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
+	for( size_t i = 0; i < fpack->m_NumTimeSlots; i++ )
+	{
+		uint8_t& sustain = timeSlotSustains[i];
+		if( increase )
+		{
+			sustain++;
+		}
+		else
+		{
+			sustain--;
+		}
+		sustain = math::Clamp<uint8_t>( 1, sustain, 240 );
+	}
 }
 
 
