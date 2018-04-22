@@ -25,6 +25,10 @@ public:
 	Texture& operator =( Texture && ) = default;
 	DeviceTextureID GetDeviceRepresentation() const;
 
+	uint32_t DebugGetWidth() const;
+	uint32_t DebugGetHeight() const;
+
+
 private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
