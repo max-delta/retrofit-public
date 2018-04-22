@@ -23,8 +23,10 @@
 
 
 // TODO: Singleton manager
-extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
-extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+namespace RF { namespace app {
+__declspec( dllimport ) extern RF::UniquePtr<RF::gfx::PPUController> g_Graphics;
+__declspec( dllimport ) extern RF::UniquePtr<RF::input::WndProcInputDevice> g_WndProcInput;
+}}
 
 namespace RF { namespace test {
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,8 +37,8 @@ void InitDrawTest()
 {
 	using namespace RF;
 
-	WeakPtr<gfx::TextureManager> texMan = g_Graphics->DebugGetTextureManager();
-	WeakPtr<gfx::FramePackManager> framePackMan = g_Graphics->DebugGetFramePackManager();
+	WeakPtr<gfx::TextureManager> texMan = app::g_Graphics->DebugGetTextureManager();
+	WeakPtr<gfx::FramePackManager> framePackMan = app::g_Graphics->DebugGetFramePackManager();
 	file::VFS& vfs = *file::VFS::HACK_GetInstance();
 
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
@@ -63,7 +65,7 @@ void InitDrawTest()
 
 	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	g_Graphics->LoadFont( fontHandle->GetFile() );
+	app::g_Graphics->LoadFont( fontHandle->GetFile() );
 }
 
 
@@ -72,16 +74,16 @@ void DrawTest()
 {
 	using namespace RF;
 
-	g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+	app::g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
 	testObj.Animate();
-	g_Graphics->DrawObject( testObj );
+	app::g_Graphics->DrawObject( testObj );
 	testObj2.Animate();
-	g_Graphics->DrawObject( testObj2 );
-	g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
-	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
-	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
-	g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
+	app::g_Graphics->DrawObject( testObj2 );
+	app::g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
+	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
+	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
 }
 
 
@@ -109,11 +111,11 @@ void DrawInputDebug()
 	rftl::u16string textStream;
 	rftl::string halfAsciid;
 
-	g_Graphics->DebugDrawText( coord, "Input" );
+	app::g_Graphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;
 
 	logicEvents.clear();
-	g_WndProcInput->m_Digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+	app::g_WndProcInput->m_Digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
 	logicStream.clear();
 	for( LogicEvents::value_type const& event : logicEvents )
 	{
@@ -122,11 +124,11 @@ void DrawInputDebug()
 			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
-	g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+	app::g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
 	coord.y += offset;
 
 	physicEvents.clear();
-	g_WndProcInput->m_Digital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
+	app::g_WndProcInput->m_Digital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
 	physStream.clear();
 	for( PhysicEvents::value_type const& event : physicEvents )
 	{
@@ -135,17 +137,17 @@ void DrawInputDebug()
 			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
-	g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+	app::g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
 	coord.y += offset;
 
-	signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-	g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
+	signalValue = app::g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
+	app::g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
 	coord.y += offset;
-	signalValue = g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-	g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
+	signalValue = app::g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
+	app::g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
 	coord.y += offset;
 
-	g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
+	app::g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
 	halfAsciid.clear();
 	for( char16_t const& chr : textStream )
 	{
@@ -158,7 +160,7 @@ void DrawInputDebug()
 			halfAsciid.push_back( '#' );
 		}
 	}
-	g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+	app::g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
 	coord.y += offset;
 }
 
@@ -248,7 +250,7 @@ void XMLTest()
 
 void FPackSerializationTest()
 {
-	WeakPtr<gfx::TextureManager> const texMan = g_Graphics->DebugGetTextureManager();
+	WeakPtr<gfx::TextureManager> const texMan = app::g_Graphics->DebugGetTextureManager();
 
 	// Load from squirrel
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
@@ -314,7 +316,7 @@ void FPackSerializationTest()
 	}
 
 	// Load file
-	gfx::FramePackManager& fpackMan = *g_Graphics->DebugGetFramePackManager();
+	gfx::FramePackManager& fpackMan = *app::g_Graphics->DebugGetFramePackManager();
 	rftl::string const newFilename = file::VFS::CreateStringFromPath( newFilePath );
 	bool const fpackLoadSuccess = fpackMan.LoadNewResource( newFilename, newFilePath );
 	if( fpackLoadSuccess == false )
