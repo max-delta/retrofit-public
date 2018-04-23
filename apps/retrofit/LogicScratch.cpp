@@ -81,14 +81,22 @@ struct Planner
 
 	using PlannedActionInstanceID = uint64_t;
 	static constexpr PlannedActionInstanceID kInvalidPlannedActionInstanceID = 0;
+	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
+	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
+	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
 	using PlannedActionInstances = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
 	PlannedActionInstances plannedActionInstances;
-	PlannedActionInstanceID plannedActionInstanceIDGenerator = kInvalidPlannedActionInstanceID;
+	PlannedActionInstanceID plannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
 	PlannedActionInstanceID PlanActionInstance( ActionID actionID )
 	{
-		PlannedActionInstanceID const newPlannedActionInstanceID = ++plannedActionInstanceIDGenerator;
+		PlannedActionInstanceID const newPlannedActionInstanceID = plannedActionInstanceIDGenerator++;
 		plannedActionInstances[newPlannedActionInstanceID] = actionID;
 		return newPlannedActionInstanceID;
+	}
+	void PlanReservedActionInstance( ActionID actionID, PlannedActionInstanceID reservedInstanceID )
+	{
+		RF_ASSERT( reservedInstanceID == kReservedInitialPlannedActionInstanceID || reservedInstanceID == kReservedFinalPlannedActionInstanceID );
+		plannedActionInstances[reservedInstanceID] = actionID;
 	}
 	PlannedActionInstances const& GetPlannedActionInstances()
 	{
@@ -159,11 +167,100 @@ struct Planner
 	}
 
 	using OrderingConstraint = rftl::pair<PlannedActionInstanceID, PlannedActionInstanceID>;
-	rftl::unordered_set<OrderingConstraint, math::RawBytesHash<OrderingConstraint> > orderingConstraints;
+	using OrderingConstraints = rftl::unordered_set<OrderingConstraint, math::RawBytesHash<OrderingConstraint> >;
+	OrderingConstraints orderingConstraints;
 	bool AddOrderingConstraint( PlannedActionInstanceID former, PlannedActionInstanceID latter )
 	{
-		orderingConstraints.emplace( former, latter );
-		return true;
+		if( latter == kReservedInitialPlannedActionInstanceID )
+		{
+			// Can't be before start
+			return false;
+		}
+		if( former == kReservedFinalPlannedActionInstanceID )
+		{
+			// Can't be after end
+			return false;
+		}
+
+		OrderingConstraint const newConstraint{ former, latter };
+		orderingConstraints.emplace( newConstraint );
+		if( IsOrderingViable() )
+		{
+			return true;
+		}
+		else
+		{
+			// Revert
+			orderingConstraints.erase( newConstraint );
+			return false;
+		}
+	}
+	bool IsOrderingViable()
+	{
+		using Edge = OrderingConstraint;
+		using EdgeSet = OrderingConstraints;
+		using Node = PlannedActionInstanceID;
+		using NodeSet = rftl::unordered_set<Node>;
+		// Topological sort of graph where edges are from former->latter
+		// See: Kahn's algorithm
+		EdgeSet edges = orderingConstraints;
+		NodeSet allRootIDs;
+		for( Edge const& edge : edges )
+		{
+			allRootIDs.emplace( edge.first );
+		}
+		for( Edge const& edge : edges )
+		{
+			allRootIDs.erase( edge.second );
+		}
+		if( edges.empty() == false && allRootIDs.empty() )
+		{
+			// Trivial fail, edges without roots
+			return false;
+		}
+		while( allRootIDs.empty() == false )
+		{
+			Node const n = *allRootIDs.begin();
+			allRootIDs.erase( n );
+			// If this was an actual sort, we'd write 'n' to tail of output now
+			NodeSet affectedNodes;
+			EdgeSet::const_iterator iter = edges.begin();
+			while( iter != edges.end() )
+			{
+				if( iter->first != n )
+				{
+					iter++;
+					continue;
+				}
+				Node const m = iter->second;
+				iter = edges.erase( iter );
+				affectedNodes.emplace( m );
+			}
+			for( Node const& m : affectedNodes )
+			{
+				bool isNowRoot = true;
+				for( Edge const& edge : edges )
+				{
+					if( edge.second == m )
+					{
+						isNowRoot = false;
+					}
+				}
+				if( isNowRoot )
+				{
+					allRootIDs.emplace( m );
+				}
+			}
+		}
+
+		if( edges.empty() )
+		{
+			// Was able to recursively remove all edges from all suspected
+			//  roots with no edges remaining, so there was no backwards
+			//  root we missed
+			return true;
+		}
+		return false;
 	}
 	void AddConstraintToProtectNeedLoss( CausalLink const& causalLink, PlannedActionInstanceID potentialStompingActionInstanceID )
 	{
@@ -213,16 +310,16 @@ struct Planner
 		initialAction.mDebugName = "Initial";
 		initialAction.mPostconditions = initialConditions;
 		AddReservedActionToDatabase( initialAction, kReservedInitialActionID );
-		PlannedActionInstanceID const initialPlannedActionInstanceID = PlanActionInstance( kReservedInitialActionID );
+		PlanReservedActionInstance( kReservedInitialActionID, kReservedInitialPlannedActionInstanceID );
 
 		Action finalAction;
 		finalAction.mDebugName = "Final";
 		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
 		AddReservedActionToDatabase( finalAction, kReservedFinalActionID );
-		PlannedActionInstanceID const finalPlannedActionInstanceID = PlanActionInstance( kReservedFinalActionID );
+		PlanReservedActionInstance( kReservedFinalActionID, kReservedFinalPlannedActionInstanceID );
 		for( State const& condition : desiredFinalConditions )
 		{
-			AddNeedForUnmetPlannedAction( finalPlannedActionInstanceID, condition );
+			AddNeedForUnmetPlannedAction( kReservedFinalPlannedActionInstanceID, condition );
 		}
 
 		while( HasUnmetNeeds() )
@@ -247,7 +344,7 @@ struct Planner
 
 				// This has to happen after start
 				{
-					bool const orderingViable = AddOrderingConstraint( initialPlannedActionInstanceID, fullfillingPlannedActionInstanceID );
+					bool const orderingViable = AddOrderingConstraint( kReservedInitialPlannedActionInstanceID, fullfillingPlannedActionInstanceID );
 					if( orderingViable == false )
 					{
 						// Ordering not achievable
@@ -296,6 +393,7 @@ struct Planner
 
 void LogicScratch()
 {
+	constexpr bool kIncludeFailureCases = false;
 	Planner planner;
 
 	// NOP
@@ -391,6 +489,7 @@ void LogicScratch()
 
 	// Mutually dependent pair
 	planner = {};
+	if( kIncludeFailureCases )
 	{
 		{
 			Planner::Action action;
