@@ -347,6 +347,9 @@ struct Planner
 			if( fullfillingPlannedActionInstanceIDs.empty() == false )
 			{
 				// HACK: Choose just one, but it might not work
+				RF_ASSERT_MSG(
+					fullfillingPlannedActionInstanceIDs.size() == 1,
+					"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
 				fullfillingPlannedActionInstanceID = fullfillingPlannedActionInstanceIDs.front();
 			}
 			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
@@ -357,6 +360,9 @@ struct Planner
 				if( fullfillingActionIDList.empty() == false )
 				{
 					// HACK: Choose just one, but it might not work
+					RF_ASSERT_MSG(
+						fullfillingActionIDList.size() == 1,
+						"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
 					fullfillingActionID = fullfillingActionIDList.front();
 				}
 				if( fullfillingActionID == kInvalidActionID )
