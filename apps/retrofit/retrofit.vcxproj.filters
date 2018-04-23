@@ -5,6 +5,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Tests.cpp" />
     <ClCompile Include="TEMP_AssetLoadSave.cpp" />
+    <ClCompile Include="LogicScratch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
