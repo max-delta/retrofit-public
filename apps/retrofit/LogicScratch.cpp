@@ -28,6 +28,7 @@ struct Planner
 	using Postconditions = rftl::unordered_set<State, math::RawBytesHash<State> >;
 
 	using ActionID = uint64_t;
+	using ActionIDList = rftl::deque<ActionID>;
 	static constexpr ActionID kInvalidActionID = 0;
 	static constexpr ActionID kReservedInitialActionID = 1;
 	static constexpr ActionID kReservedFinalActionID = 2;
@@ -60,8 +61,9 @@ struct Planner
 	{
 		return actionDatabase.mActionsByID.at( actionID );
 	}
-	ActionID FindActionWithPostConditionInDatabase( State const& desiredPostCondition )
+	ActionIDList FindActionsWithPostConditionInDatabase( State const& desiredPostCondition )
 	{
+		ActionIDList retVal;
 		for( ActionDatabase::ActionsByID::value_type const& actionPair : actionDatabase.mActionsByID )
 		{
 			ActionID const actionID = actionPair.first;
@@ -71,12 +73,13 @@ struct Planner
 			{
 				if( condition == desiredPostCondition )
 				{
-					return actionID;
+					retVal.emplace_back( actionID );
+					break;
 				}
 			}
 		}
 
-		return kInvalidActionID;
+		return retVal;
 	}
 
 	using PlannedActionInstanceID = uint64_t;
@@ -84,8 +87,9 @@ struct Planner
 	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
 	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
 	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
-	using PlannedActionInstances = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
-	PlannedActionInstances plannedActionInstances;
+	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
+	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID>;
+	PlannedActionInstanceMap plannedActionInstances;
 	PlannedActionInstanceID plannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
 	PlannedActionInstanceID PlanActionInstance( ActionID actionID )
 	{
@@ -98,7 +102,7 @@ struct Planner
 		RF_ASSERT( reservedInstanceID == kReservedInitialPlannedActionInstanceID || reservedInstanceID == kReservedFinalPlannedActionInstanceID );
 		plannedActionInstances[reservedInstanceID] = actionID;
 	}
-	PlannedActionInstances const& GetPlannedActionInstances()
+	PlannedActionInstanceMap const& GetPlannedActionInstances()
 	{
 		return plannedActionInstances;
 	}
@@ -106,9 +110,10 @@ struct Planner
 	{
 		return plannedActionInstances.at( instanceID );
 	}
-	PlannedActionInstanceID FindPlannedActionInstanceWithPostCondition( State const& desiredPostCondition )
+	PlannedActionInstanceList FindPlannedActionInstancesWithPostCondition( State const& desiredPostCondition )
 	{
-		for( PlannedActionInstances::value_type const& actionPair : plannedActionInstances )
+		PlannedActionInstanceList retVal;
+		for( PlannedActionInstanceMap::value_type const& actionPair : plannedActionInstances )
 		{
 			PlannedActionInstanceID const instanceID = actionPair.first;
 			ActionID const actionID = actionPair.second;
@@ -118,12 +123,13 @@ struct Planner
 			{
 				if( condition == desiredPostCondition )
 				{
-					return instanceID;
+					retVal.emplace_back( instanceID );
+					break;
 				}
 			}
 		}
 
-		return kInvalidPlannedActionInstanceID;
+		return retVal;
 	}
 
 	using UnmetPlannedActionNeed = rftl::pair<PlannedActionInstanceID, State>;
@@ -171,6 +177,13 @@ struct Planner
 	OrderingConstraints orderingConstraints;
 	bool AddOrderingConstraint( PlannedActionInstanceID former, PlannedActionInstanceID latter )
 	{
+		OrderingConstraint const newConstraint{ former, latter };
+		if( orderingConstraints.count( newConstraint ) != 0 )
+		{
+			// Redundant constraint
+			return true;
+		}
+
 		if( latter == kReservedInitialPlannedActionInstanceID )
 		{
 			// Can't be before start
@@ -182,7 +195,6 @@ struct Planner
 			return false;
 		}
 
-		OrderingConstraint const newConstraint{ former, latter };
 		orderingConstraints.emplace( newConstraint );
 		if( IsOrderingViable() )
 		{
@@ -330,11 +342,23 @@ struct Planner
 			State const& need = unmetActionNeed.second;
 
 			// Do we have something planned that already solves that?
-			PlannedActionInstanceID fullfillingPlannedActionInstanceID = FindPlannedActionInstanceWithPostCondition( need );
+			PlannedActionInstanceList const fullfillingPlannedActionInstanceIDs = FindPlannedActionInstancesWithPostCondition( need );
+			PlannedActionInstanceID fullfillingPlannedActionInstanceID = kInvalidPlannedActionInstanceID;
+			if( fullfillingPlannedActionInstanceIDs.empty() == false )
+			{
+				// HACK: Choose just one, but it might not work
+				fullfillingPlannedActionInstanceID = fullfillingPlannedActionInstanceIDs.front();
+			}
 			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
 			{
-				// Do we something not yet planned that could solve that?
-				ActionID const fullfillingActionID = FindActionWithPostConditionInDatabase( need );
+				// Do we have something not yet planned that could solve that?
+				ActionIDList const fullfillingActionIDList = FindActionsWithPostConditionInDatabase( need );
+				ActionID fullfillingActionID = kInvalidActionID;
+				if( fullfillingActionIDList.empty() == false )
+				{
+					// HACK: Choose just one, but it might not work
+					fullfillingActionID = fullfillingActionIDList.front();
+				}
 				if( fullfillingActionID == kInvalidActionID )
 				{
 					// Can't possibly meet that need!
@@ -382,7 +406,7 @@ struct Planner
 
 			// Make sure any ordering constraints are added to prevent existing
 			//  actions from stomping over this need being met
-			for( PlannedActionInstances::value_type const& instancePair : GetPlannedActionInstances() )
+			for( PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
 			{
 				PlannedActionInstanceID const& plannedActionInstanceID = instancePair.first;
 				AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
@@ -394,6 +418,7 @@ struct Planner
 void LogicScratch()
 {
 	constexpr bool kIncludeFailureCases = false;
+	constexpr bool kIncludeUnimplementedCases = false;
 	Planner planner;
 
 	// NOP
@@ -417,6 +442,7 @@ void LogicScratch()
 		}
 
 		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		planner.Run( initialConditions, desiredFinalConditions );
@@ -434,6 +460,8 @@ void LogicScratch()
 		}
 
 		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
+		initialConditions.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
@@ -457,6 +485,8 @@ void LogicScratch()
 		}
 
 		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
+		initialConditions.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
@@ -481,6 +511,8 @@ void LogicScratch()
 		}
 
 		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
+		initialConditions.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
@@ -507,6 +539,44 @@ void LogicScratch()
 		}
 
 		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
+		initialConditions.emplace( 'B', false );
+		Planner::Postconditions desiredFinalConditions;
+		desiredFinalConditions.emplace( 'A', true );
+		desiredFinalConditions.emplace( 'B', true );
+		planner.Run( initialConditions, desiredFinalConditions );
+	}
+
+	// Bad option
+	planner = {};
+	if( kIncludeUnimplementedCases )
+	{
+		{
+			Planner::Action action;
+			action.mDebugName = "+A";
+			action.mPostconditions.emplace( 'A', true );
+			planner.AddActionToDatabase( action );
+		}
+		{
+			// If the planner tries this one it will fail
+			Planner::Action action;
+			action.mDebugName = "+B-A";
+			action.mPreconditions.emplace( 'A', true );
+			action.mPostconditions.emplace( 'A', false );
+			action.mPostconditions.emplace( 'B', true );
+			planner.AddActionToDatabase( action );
+		}
+		{
+			// If the planner tries this one it will succeed
+			Planner::Action action;
+			action.mDebugName = "+B";
+			action.mPostconditions.emplace( 'B', true );
+			planner.AddActionToDatabase( action );
+		}
+
+		Planner::Preconditions initialConditions;
+		initialConditions.emplace( 'A', false );
+		initialConditions.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
