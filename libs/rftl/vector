@@ -8,6 +8,9 @@
 // Namespace wrapping
 namespace rftl {
 using std::vector;
-using std::hash;
+
 using std::swap;
+using std::hash;
+using std::allocator;
+using std::allocator_traits;
 }
