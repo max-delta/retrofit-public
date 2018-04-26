@@ -22,6 +22,7 @@
 #define RFTL_SSTREAM <sstream>
 #define RFTL_STRING <string>
 #define RFTL_THREAD <thread>
+#define RFTL_TUPLE <tuple>
 #define RFTL_TYPE_TRAITS <type_traits>
 #define RFTL_UNORDERED_MAP <unordered_map>
 #define RFTL_UNORDERED_SET <unordered_set>

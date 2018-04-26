@@ -43,6 +43,7 @@
     <ClInclude Include="cstdio" />
     <ClInclude Include="string" />
     <ClInclude Include="thread" />
+    <ClInclude Include="tuple" />
     <ClInclude Include="type_traits" />
     <ClInclude Include="unordered_map" />
     <ClInclude Include="unordered_set" />
