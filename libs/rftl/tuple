@@ -1,0 +1,24 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_TUPLE
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::tuple;
+using std::tuple_size;
+using std::tuple_element;
+using std::ignore;
+using std::make_tuple;
+using std::tie;
+using std::forward_as_tuple;
+using std::tuple_cat;
+using std::apply;
+using std::make_from_tuple;
+
+using std::get;
+using std::swap;
+using std::uses_allocator;
+}
