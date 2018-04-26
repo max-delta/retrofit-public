@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "core_logic/DirectedEdgeGraph.h"
 #include "core_math/Hash.h"
 #include "core/macros.h"
 
@@ -15,11 +16,6 @@ namespace RF {
 
 struct Planner
 {
-	void FAIL()
-	{
-		abort();
-	}
-
 	using StateID = char;
 	using StateValue = bool;
 	using State = rftl::pair<StateID, StateValue>;
@@ -172,13 +168,11 @@ struct Planner
 		return causalLinks;
 	}
 
-	using OrderingConstraint = rftl::pair<PlannedActionInstanceID, PlannedActionInstanceID>;
-	using OrderingConstraints = rftl::unordered_set<OrderingConstraint, math::RawBytesHash<OrderingConstraint> >;
+	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID>;
 	OrderingConstraints orderingConstraints;
 	bool AddOrderingConstraint( PlannedActionInstanceID former, PlannedActionInstanceID latter )
 	{
-		OrderingConstraint const newConstraint{ former, latter };
-		if( orderingConstraints.count( newConstraint ) != 0 )
+		if( orderingConstraints.GetEdgeIfExists( former, latter ) != nullptr )
 		{
 			// Redundant constraint
 			return true;
@@ -195,7 +189,7 @@ struct Planner
 			return false;
 		}
 
-		orderingConstraints.emplace( newConstraint );
+		orderingConstraints.InsertEdge( former, latter );
 		if( IsOrderingViable() )
 		{
 			return true;
@@ -203,19 +197,28 @@ struct Planner
 		else
 		{
 			// Revert
-			orderingConstraints.erase( newConstraint );
+			orderingConstraints.EraseEdge( former, latter );
 			return false;
 		}
 	}
 	bool IsOrderingViable()
 	{
-		using Edge = OrderingConstraint;
-		using EdgeSet = OrderingConstraints;
 		using Node = PlannedActionInstanceID;
 		using NodeSet = rftl::unordered_set<Node>;
+		using Edge = rftl::pair<Node, Node>;
+		using EdgeSet = rftl::unordered_set<Edge, math::RawBytesHash<Edge>>;
 		// Topological sort of graph where edges are from former->latter
 		// See: Kahn's algorithm
-		EdgeSet edges = orderingConstraints;
+		EdgeSet edges = {};
+		auto acquireAllEdges = [&](
+			OrderingConstraints::ConstIterator const& iter )->
+			bool
+		{
+			edges.emplace( iter.from, iter.to );
+			return true;
+		};
+		orderingConstraints.IterateEdges( acquireAllEdges );
+
 		NodeSet allRootIDs;
 		for( Edge const& edge : edges )
 		{
@@ -274,15 +277,15 @@ struct Planner
 		}
 		return false;
 	}
-	void AddConstraintToProtectNeedLoss( CausalLink const& causalLink, PlannedActionInstanceID potentialStompingActionInstanceID )
+	bool AddConstraintToProtectNeedLoss( CausalLink const& causalLink, PlannedActionInstanceID potentialStompingActionInstanceID )
 	{
 		if( causalLink.mFullfillingInstanceID == potentialStompingActionInstanceID )
 		{
-			return;
+			return true;
 		}
 		if( causalLink.mNeedyInstanceID == potentialStompingActionInstanceID )
 		{
-			return;
+			return true;
 		}
 
 		ActionID const potentialStompingActionID = LookupPlannedActionByInstanceID( potentialStompingActionInstanceID );
@@ -308,15 +311,18 @@ struct Planner
 						bool const success2 = AddOrderingConstraint( causalLink.mNeedyInstanceID, potentialStompingActionInstanceID );
 						if( success2 == false )
 						{
-							FAIL();
+							RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+							return false;
 						}
 					}
 				}
 			}
 		}
+
+		return true;
 	}
 
-	void Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
+	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
 	{
 		Action initialAction;
 		initialAction.mDebugName = "Initial";
@@ -368,7 +374,8 @@ struct Planner
 				if( fullfillingActionID == kInvalidActionID )
 				{
 					// Can't possibly meet that need!
-					FAIL();
+					RF_DBGFAIL_MSG( "Planner can't find action in database to fulfill post-condition" );
+					return false;
 				}
 				fullfillingPlannedActionInstanceID = PlanActionInstance( fullfillingActionID );
 
@@ -378,7 +385,8 @@ struct Planner
 					if( orderingViable == false )
 					{
 						// Ordering not achievable
-						FAIL();
+						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						return false;
 					}
 				}
 
@@ -386,7 +394,12 @@ struct Planner
 				//  action from stomping over other needs being met
 				for( CausalLink const& causalLink : GetCasualLinks() )
 				{
-					AddConstraintToProtectNeedLoss( causalLink, fullfillingPlannedActionInstanceID );
+					bool const constraintSuccess = AddConstraintToProtectNeedLoss( causalLink, fullfillingPlannedActionInstanceID );
+					if( constraintSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						return false;
+					}
 				}
 
 				// Add our newly unmet needs from this new action
@@ -403,7 +416,8 @@ struct Planner
 				if( orderingViable == false )
 				{
 					// Ordering not achievable
-					FAIL();
+					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					return false;
 				}
 			}
 
@@ -415,9 +429,16 @@ struct Planner
 			for( PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
 			{
 				PlannedActionInstanceID const& plannedActionInstanceID = instancePair.first;
-				AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
+				bool const constraintSuccess = AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
+				if( constraintSuccess == false )
+				{
+					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					return false;
+				}
 			}
 		}
+
+		return true;
 	}
 };
 
@@ -434,7 +455,8 @@ void LogicScratch()
 		initialConditions.emplace( 'A', true );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 
 	// Trivial single
@@ -451,7 +473,8 @@ void LogicScratch()
 		initialConditions.emplace( 'A', false );
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 
 	// Trivial double
@@ -471,7 +494,8 @@ void LogicScratch()
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 
 	// Independent pair
@@ -496,7 +520,8 @@ void LogicScratch()
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 
 	// Dependent pair
@@ -504,7 +529,7 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A";
+			action.mDebugName = "+A-B";
 			action.mPostconditions.emplace( 'A', true );
 			action.mPostconditions.emplace( 'B', false );
 			planner.AddActionToDatabase( action );
@@ -522,7 +547,8 @@ void LogicScratch()
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 
 	// Mutually dependent pair
@@ -531,14 +557,14 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A";
+			action.mDebugName = "+A-B";
 			action.mPostconditions.emplace( 'A', true );
 			action.mPostconditions.emplace( 'B', false );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			Planner::Action action;
-			action.mDebugName = "+B";
+			action.mDebugName = "+B-A";
 			action.mPostconditions.emplace( 'A', false );
 			action.mPostconditions.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
@@ -550,7 +576,8 @@ void LogicScratch()
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess == false );
 	}
 
 	// Bad option
@@ -586,7 +613,8 @@ void LogicScratch()
 		Planner::Postconditions desiredFinalConditions;
 		desiredFinalConditions.emplace( 'A', true );
 		desiredFinalConditions.emplace( 'B', true );
-		planner.Run( initialConditions, desiredFinalConditions );
+		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+		RF_ASSERT( planSuccess );
 	}
 }
 
