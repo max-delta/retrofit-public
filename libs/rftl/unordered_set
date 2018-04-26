@@ -12,4 +12,8 @@ using std::unordered_set;
 using std::unordered_multiset;
 
 using std::swap;
+using std::hash;
+using std::equal_to;
+using std::allocator;
+using std::allocator_traits;
 }
