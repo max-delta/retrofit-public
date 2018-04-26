@@ -169,5 +169,165 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 	ASSERT_EQ( iterTo2M, iterTo2C );
 }
 
+
+
+TEST( LogicDirectedEdgeGraph, EraseEdge )
+{
+	using Graph = DirectedEdgeGraph;
+	Graph graph = details::CreateStandardTestGraph();
+
+	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
+	using ImmediateResults = rftl::vector<ResultPair>;
+	ImmediateResults iterationResults;
+	auto citer = [&iterationResults](
+		Graph::ConstIterator const& iter )->
+		bool
+	{
+		iterationResults.emplace_back( iter.from, iter.to );
+		return true;
+	};
+
+	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	StoreResults iterTemp = {};
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterInitial{ rftl::move( iterTemp ) };
+	StoreResults const expectInitial{ { 0,1 },{ 0,2 },{ 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterInitial, expectInitial );
+
+	graph.EraseEdge( 0, 2 );
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterFinal{ rftl::move( iterTemp ) };
+	StoreResults const expectFinal{ { 0,1 },{ 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterFinal, expectFinal );
+}
+
+
+
+TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
+{
+	using Graph = DirectedEdgeGraph;
+	Graph graph = details::CreateStandardTestGraph();
+
+	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
+	using ImmediateResults = rftl::vector<ResultPair>;
+	ImmediateResults iterationResults;
+	auto citer = [&iterationResults](
+		Graph::ConstIterator const& iter )->
+		bool
+	{
+		iterationResults.emplace_back( iter.from, iter.to );
+		return true;
+	};
+
+	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	StoreResults iterTemp = {};
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterInitial{ rftl::move( iterTemp ) };
+	StoreResults const expectInitial{ { 0,1 },{ 0,2 },{ 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterInitial, expectInitial );
+
+	graph.EraseAllEdgesFrom( 0 );
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterFinal{ rftl::move( iterTemp ) };
+	StoreResults const expectFinal{ { 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterFinal, expectFinal );
+}
+
+
+
+TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
+{
+	using Graph = DirectedEdgeGraph;
+	Graph graph = details::CreateStandardTestGraph();
+
+	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
+	using ImmediateResults = rftl::vector<ResultPair>;
+	ImmediateResults iterationResults;
+	auto citer = [&iterationResults](
+		Graph::ConstIterator const& iter )->
+		bool
+	{
+		iterationResults.emplace_back( iter.from, iter.to );
+		return true;
+	};
+
+	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	StoreResults iterTemp = {};
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterInitial{ rftl::move( iterTemp ) };
+	StoreResults const expectInitial{ { 0,1 },{ 0,2 },{ 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterInitial, expectInitial );
+
+	graph.EraseAllEdgesTo( 2 );
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterFinal{ rftl::move( iterTemp ) };
+	StoreResults const expectFinal{ { 0,1 },{ 2,0 } };
+	ASSERT_EQ( iterFinal, expectFinal );
+}
+
+
+
+TEST( LogicDirectedEdgeGraph, EraseNode )
+{
+	using Graph = DirectedEdgeGraph;
+	Graph graph = details::CreateStandardTestGraph();
+
+	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
+	using ImmediateResults = rftl::vector<ResultPair>;
+	ImmediateResults iterationResults;
+	auto citer = [&iterationResults](
+		Graph::ConstIterator const& iter )->
+		bool
+	{
+		iterationResults.emplace_back( iter.from, iter.to );
+		return true;
+	};
+
+	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	StoreResults iterTemp = {};
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterInitial{ rftl::move( iterTemp ) };
+	StoreResults const expectInitial{ { 0,1 },{ 0,2 },{ 1,2 },{ 2,0 } };
+	ASSERT_EQ( iterInitial, expectInitial );
+
+	graph.EraseNode( 1 );
+
+	graph.IterateEdges( citer );
+	iterTemp = StoreResults( iterationResults.begin(), iterationResults.end() );
+	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
+	iterationResults.clear();
+	StoreResults const iterFinal{ rftl::move( iterTemp ) };
+	StoreResults const expectFinal{ { 0,2 },{ 2,0 } };
+	ASSERT_EQ( iterFinal, expectFinal );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
