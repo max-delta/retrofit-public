@@ -22,8 +22,12 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 	{ \
 		static bool ___rf_assert_skip_all_instances = false; \
 		if( \
-			___rf_assert_skip_all_instances == false && \
-			!!!(TEST) ) \
+			___rf_assert_skip_all_instances == true || \
+			!!(TEST) ) \
+		{ \
+			/* NOTE: Can't use '&&', or MSVC asks you if you meant '&' */ \
+		} \
+		else \
 		{ \
 			if( \
 				::RF::assert::AssertNotification(__FILE__, static_cast<size_t>(__LINE__), #TEST, MESSAGEEXPRESSION) \
