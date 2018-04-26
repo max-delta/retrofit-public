@@ -46,6 +46,7 @@
     <ClInclude Include="extension\immutable_string.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="tuple" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">
