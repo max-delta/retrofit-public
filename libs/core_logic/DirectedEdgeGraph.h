@@ -9,6 +9,12 @@
 namespace RF { namespace logic {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<
+	typename TNodeID,
+	typename TEdgeMetaData = EmptyStruct,
+	typename THash = rftl::hash<typename TNodeID>,
+	typename TEquals = rftl::equal_to<typename TNodeID>,
+	typename TAlloc = rftl::allocator<typename TNodeID> >
 class DirectedEdgeGraph
 {
 	RF_NO_COPY( DirectedEdgeGraph );
@@ -16,15 +22,18 @@ class DirectedEdgeGraph
 	//
 	// Types and constants
 public:
-	using EdgeMetaData = EmptyStruct; // TODO: Templatize
-	using NodeID = int; // TODO: Templatize
-	using Hash = rftl::hash<NodeID>; // TODO: Templatize
-	using Equals = rftl::equal_to<NodeID>; // TODO: Templatize
-	using Allocator = rftl::allocator<NodeID>; // TODO: Templatize
+	using NodeID = TNodeID;
+	using EdgeMetaData = TEdgeMetaData;
+	using Hash = THash;
+	using Equals = TEquals;
+	using Allocator = TAlloc;
+	using AllocatorTraits = rftl::allocator_traits<Allocator>;
 private:
-	using ReboundAllocator1 = rftl::allocator_traits<Allocator>::rebind_alloc< rftl::pair<NodeID const, EdgeMetaData> >;
+	using ReboundPair1 = rftl::pair<NodeID const, EdgeMetaData>;
+	using ReboundAllocator1 = typename AllocatorTraits::template rebind_alloc< ReboundPair1 >;
 	using EdgeTargetMap = rftl::unordered_map<NodeID, EdgeMetaData, Hash, Equals, ReboundAllocator1>;
-	using ReboundAllocator2 = rftl::allocator_traits<Allocator>::rebind_alloc< rftl::pair<NodeID const, EdgeTargetMap> >;
+	using ReboundPair2 = rftl::pair<NodeID const, EdgeTargetMap>;
+	using ReboundAllocator2 = typename AllocatorTraits::template rebind_alloc< ReboundPair2 >;
 	using EdgeMap = rftl::unordered_map<NodeID, EdgeTargetMap, Hash, Equals, ReboundAllocator2>;
 
 
@@ -58,13 +67,13 @@ public:
 	// WARNING: Invalidated on Insert/Erase
 	EdgeMetaData const* GetEdgeIfExists( NodeID const& from, NodeID const& to ) const
 	{
-		EdgeMap::const_iterator const srcIter = mEdgeMap.find( from );
+		typename EdgeMap::const_iterator const srcIter = mEdgeMap.find( from );
 		if( srcIter == mEdgeMap.end() )
 		{
 			return nullptr;
 		}
 		EdgeTargetMap const& targetMap = srcIter->second;
-		EdgeTargetMap::const_iterator const targetIter = targetMap.find( to );
+		typename EdgeTargetMap::const_iterator const targetIter = targetMap.find( to );
 		if( targetIter == targetMap.end() )
 		{
 			return nullptr;
@@ -89,7 +98,7 @@ public:
 
 	void EraseEdge( NodeID const& from, NodeID const& to )
 	{
-		EdgeMap::iterator const srcIter = mEdgeMap.find( from );
+		typename EdgeMap::iterator const srcIter = mEdgeMap.find( from );
 		if( srcIter == mEdgeMap.end() )
 		{
 			return;
@@ -107,7 +116,7 @@ public:
 	}
 	void EraseAllEdgesTo( NodeID const& to )
 	{
-		EdgeMap::iterator srcIter = mEdgeMap.begin();
+		typename EdgeMap::iterator srcIter = mEdgeMap.begin();
 		while( srcIter != mEdgeMap.end() )
 		{
 			EdgeTargetMap& targetMap = srcIter->second;
@@ -131,11 +140,11 @@ public:
 	template<typename Functor>
 	void IterateEdges( Functor& functor ) const
 	{
-		for( EdgeMap::value_type const& srcPair : mEdgeMap )
+		for( typename EdgeMap::value_type const& srcPair : mEdgeMap )
 		{
 			NodeID const& src = srcPair.first;
 			EdgeTargetMap const& targetMap = srcPair.second;
-			for( EdgeTargetMap::value_type const& targetPair : targetMap )
+			for( typename EdgeTargetMap::value_type const& targetPair : targetMap )
 			{
 				NodeID const& target = targetPair.first;
 				EdgeMetaData const& meta = targetPair.second;
@@ -151,11 +160,11 @@ public:
 	template<typename Functor>
 	void IterateMutableEdges( Functor& functor )
 	{
-		for( EdgeMap::value_type& srcPair : mEdgeMap )
+		for( typename EdgeMap::value_type& srcPair : mEdgeMap )
 		{
 			NodeID const& src = srcPair.first;
 			EdgeTargetMap& targetMap = srcPair.second;
-			for( EdgeTargetMap::value_type& targetPair : targetMap )
+			for( typename EdgeTargetMap::value_type& targetPair : targetMap )
 			{
 				NodeID const& target = targetPair.first;
 				EdgeMetaData& meta = targetPair.second;
@@ -171,14 +180,14 @@ public:
 	template<typename Functor>
 	void IterateEdgesFrom( NodeID const& from, Functor& functor ) const
 	{
-		EdgeMap::const_iterator const srcIter = mEdgeMap.find( from );
+		typename EdgeMap::const_iterator const srcIter = mEdgeMap.find( from );
 		if( srcIter == mEdgeMap.end() )
 		{
 			return;
 		}
 		NodeID const& src = srcIter->first;
 		EdgeTargetMap const& targetMap = srcIter->second;
-		for( EdgeTargetMap::value_type const& targetPair : targetMap )
+		for( typename EdgeTargetMap::value_type const& targetPair : targetMap )
 		{
 			NodeID const& target = targetPair.first;
 			EdgeMetaData const& meta = targetPair.second;
@@ -193,14 +202,14 @@ public:
 	template<typename Functor>
 	void IterateMutableEdgesFrom( NodeID const& from, Functor& functor )
 	{
-		EdgeMap::iterator const srcIter = mEdgeMap.find( from );
+		typename EdgeMap::iterator const srcIter = mEdgeMap.find( from );
 		if( srcIter == mEdgeMap.end() )
 		{
 			return;
 		}
 		NodeID const& src = srcIter->first;
 		EdgeTargetMap& targetMap = srcIter->second;
-		for( EdgeTargetMap::value_type& targetPair : targetMap )
+		for( typename EdgeTargetMap::value_type& targetPair : targetMap )
 		{
 			NodeID const& target = targetPair.first;
 			EdgeMetaData& meta = targetPair.second;
@@ -215,11 +224,11 @@ public:
 	template<typename Functor>
 	void IterateEdgesTo( NodeID const& to, Functor& functor ) const
 	{
-		for( EdgeMap::value_type const& srcPair : mEdgeMap )
+		for( typename EdgeMap::value_type const& srcPair : mEdgeMap )
 		{
 			NodeID const& src = srcPair.first;
 			EdgeTargetMap const& targetMap = srcPair.second;
-			EdgeTargetMap::const_iterator const targetIter = targetMap.find( to );
+			typename EdgeTargetMap::const_iterator const targetIter = targetMap.find( to );
 			if( targetIter == targetMap.end() )
 			{
 				continue;
@@ -237,11 +246,11 @@ public:
 	template<typename Functor>
 	void IterateMutableEdgesTo( NodeID const& to, Functor& functor )
 	{
-		for( EdgeMap::value_type& srcPair : mEdgeMap )
+		for( typename EdgeMap::value_type& srcPair : mEdgeMap )
 		{
 			NodeID const& src = srcPair.first;
 			EdgeTargetMap& targetMap = srcPair.second;
-			EdgeTargetMap::iterator const targetIter = targetMap.find( to );
+			typename EdgeTargetMap::iterator const targetIter = targetMap.find( to );
 			if( targetIter == targetMap.end() )
 			{
 				continue;

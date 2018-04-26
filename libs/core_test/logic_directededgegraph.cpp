@@ -11,16 +11,17 @@ namespace RF { namespace logic {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details
 {
-DirectedEdgeGraph CreateStandardTestGraph()
+using StandardTestGraph = DirectedEdgeGraph<int, char>;
+StandardTestGraph CreateStandardTestGraph()
 {
 	// 0 -> 1
 	// ^   /
 	// |  /
 	// V V
 	//  2
-	DirectedEdgeGraph retVal = {};
-	retVal.InsertEdge( 0, 1 );
-	retVal.InsertEdge( 0, 2 );
+	StandardTestGraph retVal = {};
+	retVal.InsertEdge( 0, 1, 'A' );
+	retVal.InsertEdge( 0, 2, 'B' );
 	retVal.InsertEdge( 1, 2 );
 	retVal.InsertEdge( 2, 0 );
 	return retVal;
@@ -31,7 +32,7 @@ DirectedEdgeGraph CreateStandardTestGraph()
 
 TEST( LogicDirectedEdgeGraph, Empty )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = DirectedEdgeGraph<int>;
 	Graph graph = {};
 
 	Graph::EdgeMetaData const* const e01c = graph.GetEdgeIfExists( 0, 1 );
@@ -73,7 +74,7 @@ TEST( LogicDirectedEdgeGraph, Empty )
 
 TEST( LogicDirectedEdgeGraph, CreateStandard )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
 
 	Graph::EdgeMetaData const* const e01c = graph.GetEdgeIfExists( 0, 1 );
@@ -100,6 +101,8 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 	ASSERT_NE( e12c, nullptr );
 	ASSERT_NE( e20c, nullptr );
 	ASSERT_EQ( e21c, nullptr );
+	ASSERT_EQ( *e01c, 'A' );
+	ASSERT_EQ( *e02c, 'B' );
 
 	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
 	using ImmediateResults = rftl::vector<ResultPair>;
@@ -173,7 +176,7 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 
 TEST( LogicDirectedEdgeGraph, EraseEdge )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
 
 	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
@@ -213,7 +216,7 @@ TEST( LogicDirectedEdgeGraph, EraseEdge )
 
 TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
 
 	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
@@ -253,7 +256,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
 
 TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
 
 	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
@@ -293,7 +296,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
 
 TEST( LogicDirectedEdgeGraph, EraseNode )
 {
-	using Graph = DirectedEdgeGraph;
+	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
 
 	using ResultPair = rftl::pair<Graph::NodeID, Graph::NodeID>;
