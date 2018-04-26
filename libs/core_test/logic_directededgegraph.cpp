@@ -36,6 +36,8 @@ TEST( LogicDirectedEdgeGraph, Empty )
 	using Graph = DirectedEdgeGraph<int>;
 	Graph graph = {};
 
+	ASSERT_TRUE( graph.Empty() );
+
 	Graph::EdgeMetaData const* const e01c = graph.GetEdgeIfExists( 0, 1 );
 	Graph::EdgeMetaData* const e01m = graph.GetMutableEdgeIfExists( 0, 1 );
 	ASSERT_EQ( e01c, nullptr );
@@ -77,6 +79,8 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 {
 	using Graph = details::StandardTestGraph;
 	Graph graph = details::CreateStandardTestGraph();
+
+	ASSERT_FALSE( graph.Empty() );
 
 	Graph::EdgeMetaData const* const e01c = graph.GetEdgeIfExists( 0, 1 );
 	Graph::EdgeMetaData* const e01m = graph.GetMutableEdgeIfExists( 0, 1 );

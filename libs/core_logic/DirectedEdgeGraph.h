@@ -17,8 +17,6 @@ template<
 	typename TAlloc = rftl::allocator<typename TNodeID> >
 class DirectedEdgeGraph
 {
-	RF_NO_COPY( DirectedEdgeGraph );
-
 	//
 	// Types and constants
 public:
@@ -60,8 +58,6 @@ public:
 	// Public methods
 public:
 	DirectedEdgeGraph() = default;
-	DirectedEdgeGraph( DirectedEdgeGraph&& ) = default;
-	DirectedEdgeGraph& operator=( DirectedEdgeGraph&& ) = default;
 
 	// NOTE: Null if edge not present
 	// WARNING: Invalidated on Insert/Erase
@@ -85,6 +81,11 @@ public:
 	{
 		EdgeMetaData const* const retVal = GetEdgeIfExists( from, to );
 		return const_cast<EdgeMetaData*>( retVal );
+	}
+
+	bool Empty() const
+	{
+		return mEdgeMap.empty();
 	}
 
 	void InsertEdge( NodeID const& from, NodeID const& to )
