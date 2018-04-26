@@ -82,6 +82,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		config\RetroFit.props = config\RetroFit.props
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_logic", "libs\core_logic\core_logic.vcxproj", "{2948C034-415B-44ED-96F5-802EE3525F30}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -322,6 +324,14 @@ Global
 		{981A2BFF-AE14-498B-857C-EFC0DBCB2AF7}.Release|x64.Build.0 = Release|x64
 		{981A2BFF-AE14-498B-857C-EFC0DBCB2AF7}.Release|x86.ActiveCfg = Release|Win32
 		{981A2BFF-AE14-498B-857C-EFC0DBCB2AF7}.Release|x86.Build.0 = Release|Win32
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Debug|x64.ActiveCfg = Debug|x64
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Debug|x64.Build.0 = Debug|x64
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Debug|x86.ActiveCfg = Debug|Win32
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Debug|x86.Build.0 = Debug|Win32
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Release|x64.ActiveCfg = Release|x64
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Release|x64.Build.0 = Release|x64
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Release|x86.ActiveCfg = Release|Win32
+		{2948C034-415B-44ED-96F5-802EE3525F30}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -360,6 +370,7 @@ Global
 		{D6AED87F-C6EA-4C98-881F-8BFC6CF1FD2C} = {386096D8-50A9-4232-B37F-F7EA18EB3742}
 		{08B8981A-E605-4C94-BD88-98DC142FC169} = {9FD8E78B-E043-4B9E-9AE5-31C4BC16D6CB}
 		{981A2BFF-AE14-498B-857C-EFC0DBCB2AF7} = {9FD8E78B-E043-4B9E-9AE5-31C4BC16D6CB}
+		{2948C034-415B-44ED-96F5-802EE3525F30} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F154CB3-9527-436A-9487-F586122585E3}

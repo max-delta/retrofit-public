@@ -53,6 +53,9 @@
     <ClInclude Include="ptr\ptr_fwd.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="meta\Empty.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
