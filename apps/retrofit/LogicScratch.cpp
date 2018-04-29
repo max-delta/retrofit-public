@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "core_logic/DirectedEdgeGraph.h"
+#include "core_logic/ActionDatabase.h"
 #include "core_math/Hash.h"
 #include "core/macros.h"
 
@@ -16,66 +17,18 @@ namespace RF {
 
 struct Planner
 {
-	using StateID = char;
-	using StateValue = bool;
-	using State = rftl::pair<StateID, StateValue>;
+	using ActionDatabase = logic::ActionDatabase<char, bool, rftl::string>;
+	using ActionID = ActionDatabase::ActionID;
+	using ActionIDCollection = ActionDatabase::ActionIDCollection;
+	using Action = ActionDatabase::Action;
+	using Preconditions = Action::Preconditions;
+	using Postconditions = Action::Postconditions;
+	using State = Preconditions::State;
 
-	using Preconditions = rftl::unordered_set<State, math::RawBytesHash<State>>;
-	using Postconditions = rftl::unordered_set<State, math::RawBytesHash<State> >;
-
-	using ActionID = uint64_t;
-	using ActionIDList = rftl::deque<ActionID>;
-	static constexpr ActionID kInvalidActionID = 0;
-	static constexpr ActionID kReservedInitialActionID = 1;
-	static constexpr ActionID kReservedFinalActionID = 2;
-	static constexpr ActionID kFirstGenerateableActionID = 3;
-	struct Action
-	{
-		rftl::string mDebugName;
-		Preconditions mPreconditions;
-		Postconditions mPostconditions;
-	};
-	struct ActionDatabase
-	{
-		using ActionsByID = rftl::unordered_map<ActionID, Action>;
-		ActionsByID mActionsByID;
-	};
 	ActionDatabase actionDatabase;
-	ActionID actionIDGenerator = kFirstGenerateableActionID;
-	ActionID AddActionToDatabase( Action action )
+	ActionID AddActionToDatabase( Action const& action )
 	{
-		ActionID const newActionID = actionIDGenerator++;
-		actionDatabase.mActionsByID[newActionID] = action;
-		return newActionID;
-	}
-	void AddReservedActionToDatabase( Action action, ActionID reservedActionID )
-	{
-		RF_ASSERT( reservedActionID == kReservedInitialActionID || reservedActionID == kReservedFinalActionID );
-		actionDatabase.mActionsByID[reservedActionID] = action;
-	}
-	Action const& LookupActionInDatabase( ActionID actionID )
-	{
-		return actionDatabase.mActionsByID.at( actionID );
-	}
-	ActionIDList FindActionsWithPostConditionInDatabase( State const& desiredPostCondition )
-	{
-		ActionIDList retVal;
-		for( ActionDatabase::ActionsByID::value_type const& actionPair : actionDatabase.mActionsByID )
-		{
-			ActionID const actionID = actionPair.first;
-			Action const& action = actionPair.second;
-			Postconditions const& postConditions = action.mPostconditions;
-			for( State const& condition : postConditions )
-			{
-				if( condition == desiredPostCondition )
-				{
-					retVal.emplace_back( actionID );
-					break;
-				}
-			}
-		}
-
-		return retVal;
+		return actionDatabase.AddAction( action );
 	}
 
 	using PlannedActionInstanceID = uint64_t;
@@ -113,9 +66,10 @@ struct Planner
 		{
 			PlannedActionInstanceID const instanceID = actionPair.first;
 			ActionID const actionID = actionPair.second;
-			Action const& action = LookupActionInDatabase( actionID );
-			Postconditions const& postConditions = action.mPostconditions;
-			for( State const& condition : postConditions )
+			Action const* action = actionDatabase.LookupAction( actionID );
+			RF_ASSERT( action != nullptr );
+			Postconditions const& postConditions = action->mPostconditions;
+			for( State const& condition : postConditions.mStates )
 			{
 				if( condition == desiredPostCondition )
 				{
@@ -289,15 +243,16 @@ struct Planner
 		}
 
 		ActionID const potentialStompingActionID = LookupPlannedActionByInstanceID( potentialStompingActionInstanceID );
-		Action const& potentialStompingAction = LookupActionInDatabase( potentialStompingActionID );
-		Postconditions const& potentialStompingPostconditions = potentialStompingAction.mPostconditions;
-		for( State const& potentialStompingPostcondition : potentialStompingPostconditions )
+		Action const* potentialStompingAction = actionDatabase.LookupAction( potentialStompingActionID );
+		RF_ASSERT( potentialStompingAction != nullptr );
+		Postconditions const& potentialStompingPostconditions = potentialStompingAction->mPostconditions;
+		for( State const& potentialStompingPostcondition : potentialStompingPostconditions.mStates )
 		{
-			StateID const& potentialIDMatch = potentialStompingPostcondition.first;
-			StateValue const& potentialStomp = potentialStompingPostcondition.second;
-			if( potentialIDMatch == causalLink.mNeedMet.first )
+			State::StateID const& potentialIDMatch = potentialStompingPostcondition.mStateID;
+			State::StateValue const& potentialStomp = potentialStompingPostcondition.mStateValue;
+			if( potentialIDMatch == causalLink.mNeedMet.mStateID )
 			{
-				if( potentialStomp != causalLink.mNeedMet.second )
+				if( potentialStomp != causalLink.mNeedMet.mStateValue )
 				{
 					// Stomp!
 
@@ -325,17 +280,17 @@ struct Planner
 	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
 	{
 		Action initialAction;
-		initialAction.mDebugName = "Initial";
+		initialAction.mMeta = "Initial";
 		initialAction.mPostconditions = initialConditions;
-		AddReservedActionToDatabase( initialAction, kReservedInitialActionID );
-		PlanReservedActionInstance( kReservedInitialActionID, kReservedInitialPlannedActionInstanceID );
+		ActionID const initialActionID = actionDatabase.AddAction( initialAction );
+		PlanReservedActionInstance( initialActionID, kReservedInitialPlannedActionInstanceID );
 
 		Action finalAction;
-		finalAction.mDebugName = "Final";
+		finalAction.mMeta = "Final";
 		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
-		AddReservedActionToDatabase( finalAction, kReservedFinalActionID );
-		PlanReservedActionInstance( kReservedFinalActionID, kReservedFinalPlannedActionInstanceID );
-		for( State const& condition : desiredFinalConditions )
+		ActionID const finalActionID = actionDatabase.AddAction( finalAction );
+		PlanReservedActionInstance( finalActionID, kReservedFinalPlannedActionInstanceID );
+		for( State const& condition : desiredFinalConditions.mStates )
 		{
 			AddNeedForUnmetPlannedAction( kReservedFinalPlannedActionInstanceID, condition );
 		}
@@ -361,17 +316,17 @@ struct Planner
 			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
 			{
 				// Do we have something not yet planned that could solve that?
-				ActionIDList const fullfillingActionIDList = FindActionsWithPostConditionInDatabase( need );
-				ActionID fullfillingActionID = kInvalidActionID;
+				ActionIDCollection const fullfillingActionIDList = actionDatabase.FindActionsWithPostCondition( need );
+				ActionID fullfillingActionID = ActionDatabase::kInvalidActionID;
 				if( fullfillingActionIDList.empty() == false )
 				{
 					// HACK: Choose just one, but it might not work
 					RF_ASSERT_MSG(
 						fullfillingActionIDList.size() == 1,
 						"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
-					fullfillingActionID = fullfillingActionIDList.front();
+					fullfillingActionID = *fullfillingActionIDList.begin();
 				}
-				if( fullfillingActionID == kInvalidActionID )
+				if( fullfillingActionID == ActionDatabase::kInvalidActionID )
 				{
 					// Can't possibly meet that need!
 					RF_DBGFAIL_MSG( "Planner can't find action in database to fulfill post-condition" );
@@ -403,8 +358,9 @@ struct Planner
 				}
 
 				// Add our newly unmet needs from this new action
-				Action const& newAction = LookupActionInDatabase( fullfillingActionID );
-				for( State const& condition : newAction.mPreconditions )
+				Action const* newAction = actionDatabase.LookupAction( fullfillingActionID );
+				RF_ASSERT( newAction != nullptr );
+				for( State const& condition : newAction->mPreconditions.mStates )
 				{
 					AddNeedForUnmetPlannedAction( fullfillingPlannedActionInstanceID, condition );
 				}
@@ -452,9 +408,9 @@ void LogicScratch()
 	planner = {};
 	{
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', true );
+		initialConditions.mStates.emplace( 'A', true );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
@@ -464,15 +420,15 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A";
-			action.mPostconditions.emplace( 'A', true );
+			action.mMeta = "+A";
+			action.mPostconditions.mStates.emplace( 'A', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'A', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
@@ -482,18 +438,18 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+AB";
-			action.mPostconditions.emplace( 'A', true );
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+AB";
+			action.mPostconditions.mStates.emplace( 'A', true );
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
-		initialConditions.emplace( 'B', false );
+		initialConditions.mStates.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
-		desiredFinalConditions.emplace( 'B', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
@@ -503,23 +459,23 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A";
-			action.mPostconditions.emplace( 'A', true );
+			action.mMeta = "+A";
+			action.mPostconditions.mStates.emplace( 'A', true );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			Planner::Action action;
-			action.mDebugName = "+B";
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+B";
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
-		initialConditions.emplace( 'B', false );
+		initialConditions.mStates.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
-		desiredFinalConditions.emplace( 'B', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
@@ -529,24 +485,24 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A-B";
-			action.mPostconditions.emplace( 'A', true );
-			action.mPostconditions.emplace( 'B', false );
+			action.mMeta = "+A-B";
+			action.mPostconditions.mStates.emplace( 'A', true );
+			action.mPostconditions.mStates.emplace( 'B', false );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			Planner::Action action;
-			action.mDebugName = "+B";
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+B";
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
-		initialConditions.emplace( 'B', false );
+		initialConditions.mStates.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
-		desiredFinalConditions.emplace( 'B', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
@@ -557,25 +513,25 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A-B";
-			action.mPostconditions.emplace( 'A', true );
-			action.mPostconditions.emplace( 'B', false );
+			action.mMeta = "+A-B";
+			action.mPostconditions.mStates.emplace( 'A', true );
+			action.mPostconditions.mStates.emplace( 'B', false );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			Planner::Action action;
-			action.mDebugName = "+B-A";
-			action.mPostconditions.emplace( 'A', false );
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+B-A";
+			action.mPostconditions.mStates.emplace( 'A', false );
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
-		initialConditions.emplace( 'B', false );
+		initialConditions.mStates.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
-		desiredFinalConditions.emplace( 'B', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess == false );
 	}
@@ -586,33 +542,33 @@ void LogicScratch()
 	{
 		{
 			Planner::Action action;
-			action.mDebugName = "+A";
-			action.mPostconditions.emplace( 'A', true );
+			action.mMeta = "+A";
+			action.mPostconditions.mStates.emplace( 'A', true );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			// If the planner tries this one it will fail
 			Planner::Action action;
-			action.mDebugName = "+B-A";
-			action.mPreconditions.emplace( 'A', true );
-			action.mPostconditions.emplace( 'A', false );
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+B-A";
+			action.mPreconditions.mStates.emplace( 'A', true );
+			action.mPostconditions.mStates.emplace( 'A', false );
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 		{
 			// If the planner tries this one it will succeed
 			Planner::Action action;
-			action.mDebugName = "+B";
-			action.mPostconditions.emplace( 'B', true );
+			action.mMeta = "+B";
+			action.mPostconditions.mStates.emplace( 'B', true );
 			planner.AddActionToDatabase( action );
 		}
 
 		Planner::Preconditions initialConditions;
-		initialConditions.emplace( 'A', false );
-		initialConditions.emplace( 'B', false );
+		initialConditions.mStates.emplace( 'A', false );
+		initialConditions.mStates.emplace( 'B', false );
 		Planner::Postconditions desiredFinalConditions;
-		desiredFinalConditions.emplace( 'A', true );
-		desiredFinalConditions.emplace( 'B', true );
+		desiredFinalConditions.mStates.emplace( 'A', true );
+		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
 	}
