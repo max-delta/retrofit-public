@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ActionDatabase.h" />
     <ClInclude Include="DirectedEdgeGraph.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

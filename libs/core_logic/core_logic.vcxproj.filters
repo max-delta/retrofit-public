@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="DirectedEdgeGraph.h" />
+    <ClInclude Include="ActionDatabase.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
