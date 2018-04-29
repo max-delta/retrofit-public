@@ -15,31 +15,181 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct Planner
+class Planner
 {
+	//
+	// Forwards
+private:
+	struct CausalLink;
+
+
+	//
+	// Types and constants
+public:
 	using ActionDatabase = logic::ActionDatabase<char, bool, rftl::string>;
 	using ActionID = ActionDatabase::ActionID;
-	using ActionIDCollection = ActionDatabase::ActionIDCollection;
 	using Action = ActionDatabase::Action;
 	using Preconditions = Action::Preconditions;
 	using Postconditions = Action::Postconditions;
 	using State = Preconditions::State;
+private:
+	using ActionIDCollection = ActionDatabase::ActionIDCollection;
+	using PlannedActionInstanceID = uint64_t;
+	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
+	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID>;
+	static constexpr PlannedActionInstanceID kInvalidPlannedActionInstanceID = 0;
+	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
+	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
+	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
+	using UnmetPlannedActionNeed = rftl::pair<PlannedActionInstanceID, State>;
+	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed> >;
+	using CausalLinks = rftl::deque<CausalLink>;
+	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID>;
 
-	ActionDatabase actionDatabase;
+
+	//
+	// Structs
+private:
+	struct CausalLink
+	{
+		PlannedActionInstanceID mFullfillingInstanceID;
+		State mNeedMet;
+		PlannedActionInstanceID mNeedyInstanceID;
+	};
+
+
+	//
+	// Public methods
+public:
 	ActionID AddActionToDatabase( Action const& action )
 	{
 		return actionDatabase.AddAction( action );
 	}
 
-	using PlannedActionInstanceID = uint64_t;
-	static constexpr PlannedActionInstanceID kInvalidPlannedActionInstanceID = 0;
-	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
-	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
-	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
-	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
-	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID>;
-	PlannedActionInstanceMap plannedActionInstances;
-	PlannedActionInstanceID plannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
+	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
+	{
+		Action initialAction;
+		initialAction.mMeta = "Initial";
+		initialAction.mPostconditions = initialConditions;
+		ActionID const initialActionID = actionDatabase.AddAction( initialAction );
+		PlanReservedActionInstance( initialActionID, kReservedInitialPlannedActionInstanceID );
+
+		Action finalAction;
+		finalAction.mMeta = "Final";
+		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
+		ActionID const finalActionID = actionDatabase.AddAction( finalAction );
+		PlanReservedActionInstance( finalActionID, kReservedFinalPlannedActionInstanceID );
+		for( State const& condition : desiredFinalConditions.mStates )
+		{
+			AddNeedForUnmetPlannedAction( kReservedFinalPlannedActionInstanceID, condition );
+		}
+
+		while( HasUnmetNeeds() )
+		{
+			// What preconditions still need to be resolved?
+			UnmetPlannedActionNeed const unmetActionNeed = PopUnmetNeed();
+			PlannedActionInstanceID const& needyPlannedActionInstanceID = unmetActionNeed.first;
+			State const& need = unmetActionNeed.second;
+
+			// Do we have something planned that already solves that?
+			PlannedActionInstanceList const fullfillingPlannedActionInstanceIDs = FindPlannedActionInstancesWithPostCondition( need );
+			PlannedActionInstanceID fullfillingPlannedActionInstanceID = kInvalidPlannedActionInstanceID;
+			if( fullfillingPlannedActionInstanceIDs.empty() == false )
+			{
+				// HACK: Choose just one, but it might not work
+				RF_ASSERT_MSG(
+					fullfillingPlannedActionInstanceIDs.size() == 1,
+					"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
+				fullfillingPlannedActionInstanceID = fullfillingPlannedActionInstanceIDs.front();
+			}
+			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
+			{
+				// Do we have something not yet planned that could solve that?
+				ActionIDCollection const fullfillingActionIDList = actionDatabase.FindActionsWithPostCondition( need );
+				ActionID fullfillingActionID = ActionDatabase::kInvalidActionID;
+				if( fullfillingActionIDList.empty() == false )
+				{
+					// HACK: Choose just one, but it might not work
+					RF_ASSERT_MSG(
+						fullfillingActionIDList.size() == 1,
+						"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
+					fullfillingActionID = *fullfillingActionIDList.begin();
+				}
+				if( fullfillingActionID == ActionDatabase::kInvalidActionID )
+				{
+					// Can't possibly meet that need!
+					RF_DBGFAIL_MSG( "Planner can't find action in database to fulfill post-condition" );
+					return false;
+				}
+				fullfillingPlannedActionInstanceID = PlanActionInstance( fullfillingActionID );
+
+				// This has to happen after start
+				{
+					bool const orderingViable = AddOrderingConstraint( kReservedInitialPlannedActionInstanceID, fullfillingPlannedActionInstanceID );
+					if( orderingViable == false )
+					{
+						// Ordering not achievable
+						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						return false;
+					}
+				}
+
+				// Make sure any ordering constraints are added to prevent this new
+				//  action from stomping over other needs being met
+				for( CausalLink const& causalLink : GetCasualLinks() )
+				{
+					bool const constraintSuccess = AddConstraintToProtectNeedLoss( causalLink, fullfillingPlannedActionInstanceID );
+					if( constraintSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						return false;
+					}
+				}
+
+				// Add our newly unmet needs from this new action
+				Action const* newAction = actionDatabase.LookupAction( fullfillingActionID );
+				RF_ASSERT( newAction != nullptr );
+				for( State const& condition : newAction->mPreconditions.mStates )
+				{
+					AddNeedForUnmetPlannedAction( fullfillingPlannedActionInstanceID, condition );
+				}
+			}
+
+			// The fulfiller must happen before the needer
+			{
+				bool const orderingViable = AddOrderingConstraint( fullfillingPlannedActionInstanceID, needyPlannedActionInstanceID );
+				if( orderingViable == false )
+				{
+					// Ordering not achievable
+					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					return false;
+				}
+			}
+
+			// Add a link to indicate the need that is being met
+			CausalLink const& newCausalLink = AddCausalLink( fullfillingPlannedActionInstanceID, need, needyPlannedActionInstanceID );
+
+			// Make sure any ordering constraints are added to prevent existing
+			//  actions from stomping over this need being met
+			for( PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
+			{
+				PlannedActionInstanceID const& plannedActionInstanceID = instancePair.first;
+				bool const constraintSuccess = AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
+				if( constraintSuccess == false )
+				{
+					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+
+	//
+	// Private methods
+private:
 	PlannedActionInstanceID PlanActionInstance( ActionID actionID )
 	{
 		PlannedActionInstanceID const newPlannedActionInstanceID = plannedActionInstanceIDGenerator++;
@@ -82,9 +232,6 @@ struct Planner
 		return retVal;
 	}
 
-	using UnmetPlannedActionNeed = rftl::pair<PlannedActionInstanceID, State>;
-	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed> >;
-	UnmetPlannedActionNeeds unmetPlannedActionNeeds;
 	void AddNeedForUnmetPlannedAction( PlannedActionInstanceID actionID, State reason )
 	{
 		unmetPlannedActionNeeds.emplace( actionID, reason );
@@ -101,14 +248,6 @@ struct Planner
 		return retVal;
 	}
 
-	struct CausalLink
-	{
-		PlannedActionInstanceID mFullfillingInstanceID;
-		State mNeedMet;
-		PlannedActionInstanceID mNeedyInstanceID;
-	};
-	using CausalLinks = rftl::deque<CausalLink>;
-	CausalLinks causalLinks;
 	CausalLink const& AddCausalLink( PlannedActionInstanceID fullfillingInstanceID, State const& needMet, PlannedActionInstanceID needyInstanceID )
 	{
 		CausalLink newLink;
@@ -122,8 +261,6 @@ struct Planner
 		return causalLinks;
 	}
 
-	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID>;
-	OrderingConstraints orderingConstraints;
 	bool AddOrderingConstraint( PlannedActionInstanceID former, PlannedActionInstanceID latter )
 	{
 		if( orderingConstraints.GetEdgeIfExists( former, latter ) != nullptr )
@@ -273,130 +410,25 @@ struct Planner
 				}
 			}
 		}
-
 		return true;
 	}
 
-	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
-	{
-		Action initialAction;
-		initialAction.mMeta = "Initial";
-		initialAction.mPostconditions = initialConditions;
-		ActionID const initialActionID = actionDatabase.AddAction( initialAction );
-		PlanReservedActionInstance( initialActionID, kReservedInitialPlannedActionInstanceID );
 
-		Action finalAction;
-		finalAction.mMeta = "Final";
-		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
-		ActionID const finalActionID = actionDatabase.AddAction( finalAction );
-		PlanReservedActionInstance( finalActionID, kReservedFinalPlannedActionInstanceID );
-		for( State const& condition : desiredFinalConditions.mStates )
-		{
-			AddNeedForUnmetPlannedAction( kReservedFinalPlannedActionInstanceID, condition );
-		}
+	//
+	// Private data
+private:
+	ActionDatabase actionDatabase;
 
-		while( HasUnmetNeeds() )
-		{
-			// What preconditions still need to be resolved?
-			UnmetPlannedActionNeed const unmetActionNeed = PopUnmetNeed();
-			PlannedActionInstanceID const& needyPlannedActionInstanceID = unmetActionNeed.first;
-			State const& need = unmetActionNeed.second;
+	PlannedActionInstanceMap plannedActionInstances;
+	PlannedActionInstanceID plannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
 
-			// Do we have something planned that already solves that?
-			PlannedActionInstanceList const fullfillingPlannedActionInstanceIDs = FindPlannedActionInstancesWithPostCondition( need );
-			PlannedActionInstanceID fullfillingPlannedActionInstanceID = kInvalidPlannedActionInstanceID;
-			if( fullfillingPlannedActionInstanceIDs.empty() == false )
-			{
-				// HACK: Choose just one, but it might not work
-				RF_ASSERT_MSG(
-					fullfillingPlannedActionInstanceIDs.size() == 1,
-					"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
-				fullfillingPlannedActionInstanceID = fullfillingPlannedActionInstanceIDs.front();
-			}
-			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
-			{
-				// Do we have something not yet planned that could solve that?
-				ActionIDCollection const fullfillingActionIDList = actionDatabase.FindActionsWithPostCondition( need );
-				ActionID fullfillingActionID = ActionDatabase::kInvalidActionID;
-				if( fullfillingActionIDList.empty() == false )
-				{
-					// HACK: Choose just one, but it might not work
-					RF_ASSERT_MSG(
-						fullfillingActionIDList.size() == 1,
-						"Planner found multiple ways to solve precondition. Choice resolution not yet implemented." );
-					fullfillingActionID = *fullfillingActionIDList.begin();
-				}
-				if( fullfillingActionID == ActionDatabase::kInvalidActionID )
-				{
-					// Can't possibly meet that need!
-					RF_DBGFAIL_MSG( "Planner can't find action in database to fulfill post-condition" );
-					return false;
-				}
-				fullfillingPlannedActionInstanceID = PlanActionInstance( fullfillingActionID );
+	UnmetPlannedActionNeeds unmetPlannedActionNeeds;
 
-				// This has to happen after start
-				{
-					bool const orderingViable = AddOrderingConstraint( kReservedInitialPlannedActionInstanceID, fullfillingPlannedActionInstanceID );
-					if( orderingViable == false )
-					{
-						// Ordering not achievable
-						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
-						return false;
-					}
-				}
-
-				// Make sure any ordering constraints are added to prevent this new
-				//  action from stomping over other needs being met
-				for( CausalLink const& causalLink : GetCasualLinks() )
-				{
-					bool const constraintSuccess = AddConstraintToProtectNeedLoss( causalLink, fullfillingPlannedActionInstanceID );
-					if( constraintSuccess == false )
-					{
-						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
-						return false;
-					}
-				}
-
-				// Add our newly unmet needs from this new action
-				Action const* newAction = actionDatabase.LookupAction( fullfillingActionID );
-				RF_ASSERT( newAction != nullptr );
-				for( State const& condition : newAction->mPreconditions.mStates )
-				{
-					AddNeedForUnmetPlannedAction( fullfillingPlannedActionInstanceID, condition );
-				}
-			}
-
-			// The fulfiller must happen before the needer
-			{
-				bool const orderingViable = AddOrderingConstraint( fullfillingPlannedActionInstanceID, needyPlannedActionInstanceID );
-				if( orderingViable == false )
-				{
-					// Ordering not achievable
-					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
-					return false;
-				}
-			}
-
-			// Add a link to indicate the need that is being met
-			CausalLink const& newCausalLink = AddCausalLink( fullfillingPlannedActionInstanceID, need, needyPlannedActionInstanceID );
-
-			// Make sure any ordering constraints are added to prevent existing
-			//  actions from stomping over this need being met
-			for( PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
-			{
-				PlannedActionInstanceID const& plannedActionInstanceID = instancePair.first;
-				bool const constraintSuccess = AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
-				if( constraintSuccess == false )
-				{
-					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
-					return false;
-				}
-			}
-		}
-
-		return true;
-	}
+	CausalLinks causalLinks;
+	OrderingConstraints orderingConstraints;
 };
+
+
 
 void LogicScratch()
 {
