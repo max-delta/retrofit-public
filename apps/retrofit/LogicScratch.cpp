@@ -15,6 +15,20 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+struct Plan
+{
+	using MetaValue = rftl::string; // TODO: Templatize
+	using PlannedActionID = uint64_t;
+	using PlannedActionIDMap = rftl::unordered_map<PlannedActionID, MetaValue>;
+	using PlannedActionDependencyList = rftl::unordered_set<PlannedActionID>;
+	using PlannedActionDependencyMap = rftl::unordered_map<PlannedActionID, PlannedActionDependencyList>;
+
+	PlannedActionIDMap mPlannedActions;
+	PlannedActionDependencyMap mDependencies;
+};
+
+
+
 class Planner
 {
 	//
@@ -32,6 +46,7 @@ public:
 	using Preconditions = Action::Preconditions;
 	using Postconditions = Action::Postconditions;
 	using State = Preconditions::State;
+	using Plan = Plan;
 private:
 	using ActionIDCollection = ActionDatabase::ActionIDCollection;
 	using PlannedActionInstanceID = uint64_t;
@@ -63,7 +78,7 @@ private:
 public:
 	ActionID AddActionToDatabase( Action const& action )
 	{
-		return actionDatabase.AddAction( action );
+		return mActionDatabase.AddAction( action );
 	}
 
 	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
@@ -71,13 +86,13 @@ public:
 		Action initialAction;
 		initialAction.mMeta = "Initial";
 		initialAction.mPostconditions = initialConditions;
-		ActionID const initialActionID = actionDatabase.AddAction( initialAction );
+		ActionID const initialActionID = mActionDatabase.AddAction( initialAction );
 		PlanReservedActionInstance( initialActionID, kReservedInitialPlannedActionInstanceID );
 
 		Action finalAction;
 		finalAction.mMeta = "Final";
 		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
-		ActionID const finalActionID = actionDatabase.AddAction( finalAction );
+		ActionID const finalActionID = mActionDatabase.AddAction( finalAction );
 		PlanReservedActionInstance( finalActionID, kReservedFinalPlannedActionInstanceID );
 		for( State const& condition : desiredFinalConditions.mStates )
 		{
@@ -105,7 +120,7 @@ public:
 			if( fullfillingPlannedActionInstanceID == kInvalidPlannedActionInstanceID )
 			{
 				// Do we have something not yet planned that could solve that?
-				ActionIDCollection const fullfillingActionIDList = actionDatabase.FindActionsWithPostCondition( need );
+				ActionIDCollection const fullfillingActionIDList = mActionDatabase.FindActionsWithPostCondition( need );
 				ActionID fullfillingActionID = ActionDatabase::kInvalidActionID;
 				if( fullfillingActionIDList.empty() == false )
 				{
@@ -147,7 +162,7 @@ public:
 				}
 
 				// Add our newly unmet needs from this new action
-				Action const* newAction = actionDatabase.LookupAction( fullfillingActionID );
+				Action const* newAction = mActionDatabase.LookupAction( fullfillingActionID );
 				RF_ASSERT( newAction != nullptr );
 				for( State const& condition : newAction->mPreconditions.mStates )
 				{
@@ -186,37 +201,71 @@ public:
 		return true;
 	}
 
+	Plan FetchPlan() const
+	{
+		Plan retVal;
+
+		// Store planned actions
+		for( PlannedActionInstanceMap::value_type const& planPair : mPlannedActionInstances )
+		{
+			PlannedActionInstanceID const& planID = planPair.first;
+			ActionID const& actionID = planPair.second;
+			Action const* action = mActionDatabase.LookupAction( actionID );
+			RF_ASSERT( action != nullptr );
+			Action::MetaValue const& meta = action->mMeta;
+
+			retVal.mPlannedActions.emplace( planID, meta );
+		}
+
+		// Store dependencies
+		Plan::PlannedActionDependencyMap& dependencyMap = retVal.mDependencies;
+		auto incomingLinkIter = [&dependencyMap](
+			OrderingConstraints::ConstIterator const& iter ) -> bool
+		{
+			dependencyMap[iter.to].emplace( iter.from );
+			return true;
+		};
+		for( Plan::PlannedActionIDMap::value_type const& planPair : retVal.mPlannedActions )
+		{
+			Plan::PlannedActionID const& planID = planPair.first;
+			dependencyMap[planID];
+			mOrderingConstraints.IterateEdgesTo( planID, incomingLinkIter );
+		}
+
+		return retVal;
+	}
+
 
 	//
 	// Private methods
 private:
 	PlannedActionInstanceID PlanActionInstance( ActionID actionID )
 	{
-		PlannedActionInstanceID const newPlannedActionInstanceID = plannedActionInstanceIDGenerator++;
-		plannedActionInstances[newPlannedActionInstanceID] = actionID;
+		PlannedActionInstanceID const newPlannedActionInstanceID = mPlannedActionInstanceIDGenerator++;
+		mPlannedActionInstances[newPlannedActionInstanceID] = actionID;
 		return newPlannedActionInstanceID;
 	}
 	void PlanReservedActionInstance( ActionID actionID, PlannedActionInstanceID reservedInstanceID )
 	{
 		RF_ASSERT( reservedInstanceID == kReservedInitialPlannedActionInstanceID || reservedInstanceID == kReservedFinalPlannedActionInstanceID );
-		plannedActionInstances[reservedInstanceID] = actionID;
+		mPlannedActionInstances[reservedInstanceID] = actionID;
 	}
 	PlannedActionInstanceMap const& GetPlannedActionInstances()
 	{
-		return plannedActionInstances;
+		return mPlannedActionInstances;
 	}
 	ActionID const& LookupPlannedActionByInstanceID( PlannedActionInstanceID instanceID )
 	{
-		return plannedActionInstances.at( instanceID );
+		return mPlannedActionInstances.at( instanceID );
 	}
 	PlannedActionInstanceList FindPlannedActionInstancesWithPostCondition( State const& desiredPostCondition )
 	{
 		PlannedActionInstanceList retVal;
-		for( PlannedActionInstanceMap::value_type const& actionPair : plannedActionInstances )
+		for( PlannedActionInstanceMap::value_type const& actionPair : mPlannedActionInstances )
 		{
 			PlannedActionInstanceID const instanceID = actionPair.first;
 			ActionID const actionID = actionPair.second;
-			Action const* action = actionDatabase.LookupAction( actionID );
+			Action const* action = mActionDatabase.LookupAction( actionID );
 			RF_ASSERT( action != nullptr );
 			Postconditions const& postConditions = action->mPostconditions;
 			for( State const& condition : postConditions.mStates )
@@ -234,17 +283,17 @@ private:
 
 	void AddNeedForUnmetPlannedAction( PlannedActionInstanceID actionID, State reason )
 	{
-		unmetPlannedActionNeeds.emplace( actionID, reason );
+		mUnmetPlannedActionNeeds.emplace( actionID, reason );
 	}
 	bool HasUnmetNeeds()
 	{
-		return unmetPlannedActionNeeds.empty() == false;
+		return mUnmetPlannedActionNeeds.empty() == false;
 	}
 	UnmetPlannedActionNeed PopUnmetNeed()
 	{
-		UnmetPlannedActionNeeds::const_iterator iter = unmetPlannedActionNeeds.begin();
+		UnmetPlannedActionNeeds::const_iterator iter = mUnmetPlannedActionNeeds.begin();
 		UnmetPlannedActionNeed const retVal = *iter;
-		unmetPlannedActionNeeds.erase( iter );
+		mUnmetPlannedActionNeeds.erase( iter );
 		return retVal;
 	}
 
@@ -254,16 +303,16 @@ private:
 		newLink.mFullfillingInstanceID = fullfillingInstanceID;
 		newLink.mNeedMet = needMet;
 		newLink.mNeedyInstanceID = needyInstanceID;
-		return causalLinks.emplace_back( newLink );
+		return mCausalLinks.emplace_back( newLink );
 	}
 	CausalLinks const& GetCasualLinks()
 	{
-		return causalLinks;
+		return mCausalLinks;
 	}
 
 	bool AddOrderingConstraint( PlannedActionInstanceID former, PlannedActionInstanceID latter )
 	{
-		if( orderingConstraints.GetEdgeIfExists( former, latter ) != nullptr )
+		if( mOrderingConstraints.GetEdgeIfExists( former, latter ) != nullptr )
 		{
 			// Redundant constraint
 			return true;
@@ -280,7 +329,7 @@ private:
 			return false;
 		}
 
-		orderingConstraints.InsertEdge( former, latter );
+		mOrderingConstraints.InsertEdge( former, latter );
 		if( IsOrderingViable() )
 		{
 			return true;
@@ -288,7 +337,7 @@ private:
 		else
 		{
 			// Revert
-			orderingConstraints.EraseEdge( former, latter );
+			mOrderingConstraints.EraseEdge( former, latter );
 			return false;
 		}
 	}
@@ -308,7 +357,7 @@ private:
 			edges.emplace( iter.from, iter.to );
 			return true;
 		};
-		orderingConstraints.IterateEdges( acquireAllEdges );
+		mOrderingConstraints.IterateEdges( acquireAllEdges );
 
 		NodeSet allRootIDs;
 		for( Edge const& edge : edges )
@@ -380,7 +429,7 @@ private:
 		}
 
 		ActionID const potentialStompingActionID = LookupPlannedActionByInstanceID( potentialStompingActionInstanceID );
-		Action const* potentialStompingAction = actionDatabase.LookupAction( potentialStompingActionID );
+		Action const* potentialStompingAction = mActionDatabase.LookupAction( potentialStompingActionID );
 		RF_ASSERT( potentialStompingAction != nullptr );
 		Postconditions const& potentialStompingPostconditions = potentialStompingAction->mPostconditions;
 		for( State const& potentialStompingPostcondition : potentialStompingPostconditions.mStates )
@@ -417,15 +466,15 @@ private:
 	//
 	// Private data
 private:
-	ActionDatabase actionDatabase;
+	ActionDatabase mActionDatabase;
 
-	PlannedActionInstanceMap plannedActionInstances;
-	PlannedActionInstanceID plannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
+	PlannedActionInstanceMap mPlannedActionInstances;
+	PlannedActionInstanceID mPlannedActionInstanceIDGenerator = kFirstGenerateablePlannedActionInstanceID;
 
-	UnmetPlannedActionNeeds unmetPlannedActionNeeds;
+	UnmetPlannedActionNeeds mUnmetPlannedActionNeeds;
 
-	CausalLinks causalLinks;
-	OrderingConstraints orderingConstraints;
+	CausalLinks mCausalLinks;
+	OrderingConstraints mOrderingConstraints;
 };
 
 
@@ -445,6 +494,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'A', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 2 );
 	}
 
 	// Trivial single
@@ -463,6 +514,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'A', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 3 );
 	}
 
 	// Trivial double
@@ -484,6 +537,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 3 );
 	}
 
 	// Independent pair
@@ -510,6 +565,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 4 );
 	}
 
 	// Dependent pair
@@ -537,6 +594,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 4 );
 	}
 
 	// Mutually dependent pair
@@ -603,6 +662,8 @@ void LogicScratch()
 		desiredFinalConditions.mStates.emplace( 'B', true );
 		bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
 		RF_ASSERT( planSuccess );
+		Planner::Plan const plan = planner.FetchPlan();
+		RF_ASSERT( plan.mPlannedActions.size() == 4 );
 	}
 }
 
