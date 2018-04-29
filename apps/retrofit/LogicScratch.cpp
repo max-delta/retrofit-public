@@ -15,13 +15,26 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<
+	typename TMetaValue,
+	typename TAlloc = rftl::allocator<typename uint64_t> >
 struct Plan
 {
-	using MetaValue = rftl::string; // TODO: Templatize
+	using MetaValue = TMetaValue;
 	using PlannedActionID = uint64_t;
-	using PlannedActionIDMap = rftl::unordered_map<PlannedActionID, MetaValue>;
-	using PlannedActionDependencyList = rftl::unordered_set<PlannedActionID>;
-	using PlannedActionDependencyMap = rftl::unordered_map<PlannedActionID, PlannedActionDependencyList>;
+	using Allocator = TAlloc;
+	using AllocatorTraits = rftl::allocator_traits<Allocator>;
+private:
+	using ReboundPair1 = rftl::pair<PlannedActionID const, MetaValue>;
+	using ReboundPair1Allocator = typename AllocatorTraits::template rebind_alloc< ReboundPair1 >;
+public:
+	using PlannedActionIDMap = rftl::unordered_map<PlannedActionID, MetaValue, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, ReboundPair1Allocator>;
+	using PlannedActionDependencyList = rftl::unordered_set<PlannedActionID, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, Allocator>;
+private:
+	using ReboundPair2 = rftl::pair<PlannedActionID const, PlannedActionDependencyList>;
+	using ReboundPair2Allocator = typename AllocatorTraits::template rebind_alloc< ReboundPair2 >;
+public:
+	using PlannedActionDependencyMap = rftl::unordered_map<PlannedActionID, PlannedActionDependencyList, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, ReboundPair2Allocator>;
 
 	PlannedActionIDMap mPlannedActions;
 	PlannedActionDependencyMap mDependencies;
@@ -29,6 +42,13 @@ struct Plan
 
 
 
+template<
+	typename TStateID,
+	typename TStateValue,
+	typename TMetaValue = EmptyStruct,
+	typename THash = rftl::hash<typename TStateID>,
+	typename TEquals = rftl::equal_to<typename TStateID>,
+	typename TAlloc = rftl::allocator<typename TStateID> >
 class Planner
 {
 	//
@@ -40,26 +60,37 @@ private:
 	//
 	// Types and constants
 public:
-	using ActionDatabase = logic::ActionDatabase<char, bool, rftl::string>;
-	using ActionID = ActionDatabase::ActionID;
-	using Action = ActionDatabase::Action;
-	using Preconditions = Action::Preconditions;
-	using Postconditions = Action::Postconditions;
-	using State = Preconditions::State;
-	using Plan = Plan;
+	using Hash = THash;
+	using Equals = TEquals;
+	using Allocator = TAlloc;
+	using AllocatorTraits = rftl::allocator_traits<Allocator>;
+	using ActionDatabase = logic::ActionDatabase<TStateID, TStateValue, TMetaValue, Hash, Equals, Allocator>;
+	using ActionID = typename ActionDatabase::ActionID;
+	using Action = typename ActionDatabase::Action;
+	using Preconditions = typename Action::Preconditions;
+	using Postconditions = typename Action::Postconditions;
+	using State = typename Preconditions::State;
 private:
-	using ActionIDCollection = ActionDatabase::ActionIDCollection;
+	using ActionIDCollection = typename ActionDatabase::ActionIDCollection;
 	using PlannedActionInstanceID = uint64_t;
-	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID>;
-	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID>;
+	using PlannedActionInstanceMapAllocator = typename AllocatorTraits::template rebind_alloc< rftl::pair<PlannedActionInstanceID const, ActionID> >;
+	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID, rftl::hash<PlannedActionInstanceID>, rftl::equal_to<PlannedActionInstanceID>, PlannedActionInstanceMapAllocator>;
+	using PlannedActionInstanceListAllocator = typename AllocatorTraits::template rebind_alloc< PlannedActionInstanceID >;
+	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID, PlannedActionInstanceListAllocator>;
 	static constexpr PlannedActionInstanceID kInvalidPlannedActionInstanceID = 0;
 	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
 	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
 	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
 	using UnmetPlannedActionNeed = rftl::pair<PlannedActionInstanceID, State>;
-	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed> >;
-	using CausalLinks = rftl::deque<CausalLink>;
-	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID>;
+	using UnmetPlannedActionNeedsAllocator = typename AllocatorTraits::template rebind_alloc< UnmetPlannedActionNeed >;
+	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed>, rftl::equal_to<UnmetPlannedActionNeed>, UnmetPlannedActionNeedsAllocator >;
+	using CausalLinksAllocator = typename AllocatorTraits::template rebind_alloc< CausalLink >;
+	using CausalLinks = rftl::deque<CausalLink, CausalLinksAllocator>;
+	using OrderingConstraintsAllocator = typename AllocatorTraits::template rebind_alloc< PlannedActionInstanceID >;
+	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID, EmptyStruct, rftl::hash<PlannedActionInstanceID>, rftl::equal_to<PlannedActionInstanceID>, OrderingConstraintsAllocator>;
+	using PlanAllocator = typename AllocatorTraits::template rebind_alloc< uint64_t >;
+public:
+	using Plan = Plan<typename Action::MetaValue, PlanAllocator>;
 
 
 	//
@@ -186,7 +217,7 @@ public:
 
 			// Make sure any ordering constraints are added to prevent existing
 			//  actions from stomping over this need being met
-			for( PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
+			for( typename PlannedActionInstanceMap::value_type const& instancePair : GetPlannedActionInstances() )
 			{
 				PlannedActionInstanceID const& plannedActionInstanceID = instancePair.first;
 				bool const constraintSuccess = AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
@@ -206,28 +237,28 @@ public:
 		Plan retVal;
 
 		// Store planned actions
-		for( PlannedActionInstanceMap::value_type const& planPair : mPlannedActionInstances )
+		for( typename PlannedActionInstanceMap::value_type const& planPair : mPlannedActionInstances )
 		{
 			PlannedActionInstanceID const& planID = planPair.first;
 			ActionID const& actionID = planPair.second;
 			Action const* action = mActionDatabase.LookupAction( actionID );
 			RF_ASSERT( action != nullptr );
-			Action::MetaValue const& meta = action->mMeta;
+			typename Action::MetaValue const& meta = action->mMeta;
 
 			retVal.mPlannedActions.emplace( planID, meta );
 		}
 
 		// Store dependencies
-		Plan::PlannedActionDependencyMap& dependencyMap = retVal.mDependencies;
+		typename Plan::PlannedActionDependencyMap& dependencyMap = retVal.mDependencies;
 		auto incomingLinkIter = [&dependencyMap](
-			OrderingConstraints::ConstIterator const& iter ) -> bool
+			typename OrderingConstraints::ConstIterator const& iter ) -> bool
 		{
-			dependencyMap[iter.to].emplace( iter.from );
+			dependencyMap.at(iter.to).emplace( iter.from );
 			return true;
 		};
-		for( Plan::PlannedActionIDMap::value_type const& planPair : retVal.mPlannedActions )
+		for( typename Plan::PlannedActionIDMap::value_type const& planPair : retVal.mPlannedActions )
 		{
-			Plan::PlannedActionID const& planID = planPair.first;
+			typename Plan::PlannedActionID const& planID = planPair.first;
 			dependencyMap[planID];
 			mOrderingConstraints.IterateEdgesTo( planID, incomingLinkIter );
 		}
@@ -261,7 +292,7 @@ private:
 	PlannedActionInstanceList FindPlannedActionInstancesWithPostCondition( State const& desiredPostCondition )
 	{
 		PlannedActionInstanceList retVal;
-		for( PlannedActionInstanceMap::value_type const& actionPair : mPlannedActionInstances )
+		for( typename PlannedActionInstanceMap::value_type const& actionPair : mPlannedActionInstances )
 		{
 			PlannedActionInstanceID const instanceID = actionPair.first;
 			ActionID const actionID = actionPair.second;
@@ -291,7 +322,7 @@ private:
 	}
 	UnmetPlannedActionNeed PopUnmetNeed()
 	{
-		UnmetPlannedActionNeeds::const_iterator iter = mUnmetPlannedActionNeeds.begin();
+		typename UnmetPlannedActionNeeds::const_iterator iter = mUnmetPlannedActionNeeds.begin();
 		UnmetPlannedActionNeed const retVal = *iter;
 		mUnmetPlannedActionNeeds.erase( iter );
 		return retVal;
@@ -351,7 +382,7 @@ private:
 		// See: Kahn's algorithm
 		EdgeSet edges = {};
 		auto acquireAllEdges = [&](
-			OrderingConstraints::ConstIterator const& iter )->
+			typename OrderingConstraints::ConstIterator const& iter )->
 			bool
 		{
 			edges.emplace( iter.from, iter.to );
@@ -379,7 +410,7 @@ private:
 			allRootIDs.erase( n );
 			// If this was an actual sort, we'd write 'n' to tail of output now
 			NodeSet affectedNodes;
-			EdgeSet::const_iterator iter = edges.begin();
+			typename EdgeSet::const_iterator iter = edges.begin();
 			while( iter != edges.end() )
 			{
 				if( iter->first != n )
@@ -434,8 +465,8 @@ private:
 		Postconditions const& potentialStompingPostconditions = potentialStompingAction->mPostconditions;
 		for( State const& potentialStompingPostcondition : potentialStompingPostconditions.mStates )
 		{
-			State::StateID const& potentialIDMatch = potentialStompingPostcondition.mStateID;
-			State::StateValue const& potentialStomp = potentialStompingPostcondition.mStateValue;
+			typename State::StateID const& potentialIDMatch = potentialStompingPostcondition.mStateID;
+			typename State::StateValue const& potentialStomp = potentialStompingPostcondition.mStateValue;
 			if( potentialIDMatch == causalLink.mNeedMet.mStateID )
 			{
 				if( potentialStomp != causalLink.mNeedMet.mStateValue )
@@ -483,6 +514,7 @@ void LogicScratch()
 {
 	constexpr bool kIncludeFailureCases = false;
 	constexpr bool kIncludeUnimplementedCases = false;
+	using Planner = Planner<char, bool, rftl::string>;
 	Planner planner;
 
 	// NOP
