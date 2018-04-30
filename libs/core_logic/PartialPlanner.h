@@ -4,8 +4,6 @@
 #include "core_logic/DirectedEdgeGraph.h"
 
 #include "rftl/deque"
-//#include "rftl/unordered_set"
-//#include "rftl/unordered_map"
 
 
 namespace RF { namespace logic {
