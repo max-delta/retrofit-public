@@ -15,6 +15,20 @@
     <ClInclude Include="Tasks\FunctorTask.h">
       <Filter>tasks</Filter>
     </ClInclude>
+    <ClInclude Include="taskpools\project.h">
+      <Filter>taskpools</Filter>
+    </ClInclude>
+    <ClInclude Include="taskpools\TaskPool.h">
+      <Filter>taskpools</Filter>
+    </ClInclude>
+    <ClInclude Include="SchedulingFwd.h" />
+    <ClInclude Include="TaskScheduler.h" />
+    <ClInclude Include="taskworkers\project.h">
+      <Filter>taskworkers</Filter>
+    </ClInclude>
+    <ClInclude Include="taskworkers\TaskWorker.h">
+      <Filter>taskworkers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -23,6 +37,12 @@
   <ItemGroup>
     <Filter Include="tasks">
       <UniqueIdentifier>{dc97ced3-7cbd-4d89-8bac-bd47cb6ac28e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="taskpools">
+      <UniqueIdentifier>{1358b1c5-c549-476e-b295-e7bc0550c401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="taskworkers">
+      <UniqueIdentifier>{11efa303-be6a-4283-89f8-e3a853e11950}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
