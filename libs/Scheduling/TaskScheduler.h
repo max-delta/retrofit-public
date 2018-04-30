@@ -27,7 +27,10 @@ public:
 	void UnregisterWorker( WeakPtr<TaskWorker> const& worker );
 
 	// Add/abort tasks
-	// NOTE: See notes on TaskPool::AttemptAbortTask(...) about unreliability
+	// NOTE: Already running or terminated tasks can not be aborted, and there
+	//  is intentionally no method of stopping them once flighted, so if you
+	//  need this functionality you will have to build it into your tasks
+	//  themselves and establish a signalling mechanism where appopriate
 	TaskID AddTask( TaskPtr&& task );
 	void AttemptAbortTask( TaskID taskID );
 	void AttemptAbortAllTasks();
@@ -54,7 +57,7 @@ public:
 	//
 	// Private methods
 private:
-	void OnTaskComplete( Task* task );
+	void OnWorkComplete( Task* task, TaskState newState );
 };
 
 ///////////////////////////////////////////////////////////////////////////////
