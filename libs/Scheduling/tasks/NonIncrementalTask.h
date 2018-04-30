@@ -15,10 +15,16 @@ public:
 	NonIncrementalTask() = default;
 
 	// Non-incremental tasks always terminate on step
-	virtual State Step() override final
+	virtual TaskState Step() override final
 	{
 		Run();
-		return State::Terminate;
+		return TaskState::Terminate;
+	}
+
+	// Non-incremental tasks will never have this called on them
+	virtual void Abort() override final
+	{
+		//
 	}
 
 	// Runs a task that must terminate before returning
