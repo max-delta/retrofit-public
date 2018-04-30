@@ -19,16 +19,18 @@ public:
 	TaskPool() = default;
 	virtual ~TaskPool() = default;
 
-	// Add a new task to the task pool, receiving a unique identifer for it
-	virtual TaskID AddTask( TaskWeakPtr const& task ) = 0;
+	// Add/remove task to/from the task pool, using unique identifers
+	virtual TaskID AddTask( TaskPtr&& task ) = 0;
+	virtual TaskPtr RemoveTask( TaskID taskID ) = 0;
 
-	// Attempt to abort a task, that either may not have run yet, or is
-	//  incremental and is not currently running
-	// NOTE: Already running or terminated tasks can not be aborted, and there
-	//  is intentionally no method of stopping them once flighted, so if you
-	//  need this functionality you will have to build it into your tasks
-	//  themselves and establish a signalling mechanism where appopriate
-	virtual void AttemptAbortTask( TaskID taskID ) = 0;
+	// Fetch new tasks, blocking them to prevent a subsequent fetch from seeing
+	//  the same task
+	// NOTE: Null task and invalid id if there is no unblocked task available
+	virtual void FetchAndBlockNextUnblockedTask( Task*& task, TaskID& taskID ) = 0;
+
+	// Unblock a previously blocked task
+	// NOTE: Invalid to unblock an already unblocked task
+	virtual void UnblockTask( TaskID taskID ) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
