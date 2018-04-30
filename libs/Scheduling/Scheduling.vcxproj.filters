@@ -3,9 +3,26 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="tasks\NonIncrementalTask.h">
+      <Filter>tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="tasks\Task.h">
+      <Filter>tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\project.h">
+      <Filter>tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks\FunctorTask.h">
+      <Filter>tasks</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="tasks">
+      <UniqueIdentifier>{dc97ced3-7cbd-4d89-8bac-bd47cb6ac28e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
