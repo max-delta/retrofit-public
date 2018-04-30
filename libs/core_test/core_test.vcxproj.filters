@@ -35,6 +35,7 @@
     <ClCompile Include="allocate_singleallocator.cpp" />
     <ClCompile Include="platform_uuid.cpp" />
     <ClCompile Include="logic_directededgegraph.cpp" />
+    <ClCompile Include="logic_partialplanner.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
