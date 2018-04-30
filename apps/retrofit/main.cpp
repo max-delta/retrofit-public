@@ -24,10 +24,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace RF {
-	void LogicScratch();
-}
-constexpr bool k_LogicScratch = true;
 constexpr bool k_ConsoleTest = true;
 constexpr bool k_DrawTest = true;
 constexpr bool k_DrawInputDebug = true;
@@ -41,11 +37,6 @@ constexpr bool k_PlatformTest = true;
 int main()
 {
 	using namespace RF;
-
-	if( k_LogicScratch )
-	{
-		LogicScratch();
-	}
 
 	app::Startup();
 
