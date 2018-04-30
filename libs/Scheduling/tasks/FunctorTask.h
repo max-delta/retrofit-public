@@ -7,9 +7,6 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Functor>
-class FunctorTask;
-
 // Template helper to determine functor type, for use in cases such as lambdas,
 //  where the type can't be expressed, and must rely on 'auto'
 // EXAMPLE:
