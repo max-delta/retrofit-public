@@ -22,17 +22,24 @@
       <Filter>taskpools</Filter>
     </ClInclude>
     <ClInclude Include="SchedulingFwd.h" />
-    <ClInclude Include="TaskScheduler.h" />
     <ClInclude Include="taskworkers\project.h">
       <Filter>taskworkers</Filter>
     </ClInclude>
     <ClInclude Include="taskworkers\TaskWorker.h">
       <Filter>taskworkers</Filter>
     </ClInclude>
+    <ClInclude Include="TaskScheduler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="taskworkers\TaskWorker.cpp">
+      <Filter>taskworkers</Filter>
+    </ClCompile>
+    <ClCompile Include="taskpools\TaskPool.cpp">
+      <Filter>taskpools</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskScheduler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tasks">

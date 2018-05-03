@@ -37,6 +37,7 @@ static constexpr uint8_t kTaskStateMask = static_cast<uint8_t>( TaskState::MaxVa
 static constexpr uint8_t kTaskPriorityMask = static_cast<uint8_t>( TaskPriority::MaxVal );
 
 using TaskID = uint64_t;
+constexpr TaskID kInvalidTaskID = 0;
 
 class Task;
 class NonIncrementalTask;
@@ -44,8 +45,8 @@ template<typename Functor>
 class FunctorTask;
 
 class TaskPool;
-
 class TaskWorker;
+class TaskScheduler;
 
 using TaskPtr = UniquePtr<Task>;
 using TaskWeakPtr = WeakPtr<Task>;
