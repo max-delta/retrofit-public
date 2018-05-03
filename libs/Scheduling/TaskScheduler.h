@@ -4,6 +4,9 @@
 #include "Scheduling/SchedulingFwd.h"
 
 #include "core/ptr/weak_ptr.h"
+#include "core/ptr/unique_ptr.h"
+
+#include "rftl/vector"
 
 
 namespace RF { namespace scheduling {
@@ -12,6 +15,45 @@ namespace RF { namespace scheduling {
 class SCHEDULING_API TaskScheduler
 {
 	RF_NO_COPY( TaskScheduler );
+
+	//
+	// Friends and forwards
+protected:
+	friend class TaskWorker;
+	friend class TaskPool;
+private:
+	struct PriorityBlock;
+	struct RegisteredWorker;
+
+
+	//
+	// Types and constants
+private:
+	using PoolList = rftl::vector<UniquePtr<TaskPool>>;
+	using PriorityBlockList = rftl::vector<PriorityBlock>;
+	using WorkerList = rftl::vector<RegisteredWorker>;
+
+
+	//
+	// Structs
+private:
+	struct PriorityBlock
+	{
+		TaskPriority mPriority = TaskPriority::Invalid;
+		PoolList mPools;
+		size_t mLastDispatchIndex = 0;
+	};
+
+	struct RegisteredWorker
+	{
+		RF_NO_COPY( RegisteredWorker );
+
+		UniquePtr<TaskWorker> mWorker = nullptr;
+		TaskID mActiveTaskID = kInvalidTaskID;
+		Task* mActiveTask = nullptr;
+		bool mFlaggedForUnregistration = false;
+	};
+
 
 	//
 	// Public methods
@@ -23,17 +65,17 @@ public:
 	// Register/unregister workers
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
 	//  processed by workers as though these calls were not made
-	void RegisterWorker( WeakPtr<TaskWorker> const& worker );
-	void UnregisterWorker( WeakPtr<TaskWorker> const& worker );
+	WeakPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker> && worker );
+	UniquePtr<TaskWorker> UnregisterWorker( WeakPtr<TaskWorker> const& worker );
 
-	// Add/abort tasks
-	// NOTE: Already running or terminated tasks can not be aborted, and there
-	//  is intentionally no method of stopping them once flighted, so if you
-	//  need this functionality you will have to build it into your tasks
-	//  themselves and establish a signalling mechanism where appopriate
-	TaskID AddTask( TaskPtr&& task );
-	void AttemptAbortTask( TaskID taskID );
-	void AttemptAbortAllTasks();
+	// Add/remove task pools
+	// NOTE: Pools with higher priority will have their tasks dispatched first,
+	//  at the expense of lower priority pools, possibly to an extreme of
+	//  preventing the lower priority from running until all higher priority
+	//  pools have completed all their tasks or yielded
+	// NOTE: Pools with the same priority will have more balanced dispatching
+	WeakPtr<TaskPool> RegisterPool( UniquePtr<TaskPool> && pool, TaskPriority priority );
+	UniquePtr<TaskPool> UnregisterPool( WeakPtr<TaskPool> const& pool );
 
 	// Start/stop dispatching
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
@@ -55,9 +97,20 @@ public:
 
 
 	//
-	// Private methods
+	// Protected methods
+protected:
+	// Called by workers
+	void OnWorkComplete( TaskWorker* worker, Task* task, TaskState newState );
+
+	// Called by pools
+	void OnTasksNewlyAvailable( TaskPool* pool );
+
+
+	//
+	// Private data
 private:
-	void OnWorkComplete( Task* task, TaskState newState );
+	PriorityBlockList mPrioritizedPools;
+	WorkerList mWorkers;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
