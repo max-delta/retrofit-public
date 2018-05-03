@@ -22,21 +22,38 @@ protected:
 	friend class TaskWorker;
 	friend class TaskPool;
 private:
-	struct PriorityBlock;
 	struct RegisteredWorker;
+	struct RegisteredPool;
+	struct PriorityBlock;
 
 
 	//
 	// Types and constants
 private:
-	using PoolList = rftl::vector<UniquePtr<TaskPool>>;
-	using PriorityBlockList = rftl::vector<PriorityBlock>;
 	using WorkerList = rftl::vector<RegisteredWorker>;
+	using PoolList = rftl::vector<RegisteredPool>;
+	using PriorityBlockList = rftl::vector<PriorityBlock>;
 
 
 	//
 	// Structs
 private:
+	struct RegisteredWorker
+	{
+		RF_NO_COPY( RegisteredWorker );
+		UniquePtr<TaskWorker> mWorker = nullptr;
+		TaskID mActiveTaskID = kInvalidTaskID;
+		Task* mActiveTask = nullptr;
+		WeakPtr<TaskPool> mActivePool = nullptr;
+		bool mFlaggedForUnregistration = false;
+	};
+
+	struct RegisteredPool
+	{
+		RF_NO_COPY( RegisteredPool );
+		UniquePtr<TaskPool> mPool = nullptr;
+	};
+
 	struct PriorityBlock
 	{
 		TaskPriority mPriority = TaskPriority::Invalid;
@@ -44,15 +61,6 @@ private:
 		size_t mLastDispatchIndex = 0;
 	};
 
-	struct RegisteredWorker
-	{
-		RF_NO_COPY( RegisteredWorker );
-
-		UniquePtr<TaskWorker> mWorker = nullptr;
-		TaskID mActiveTaskID = kInvalidTaskID;
-		Task* mActiveTask = nullptr;
-		bool mFlaggedForUnregistration = false;
-	};
 
 
 	//
@@ -66,7 +74,7 @@ public:
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
 	//  processed by workers as though these calls were not made
 	WeakPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker> && worker );
-	UniquePtr<TaskWorker> UnregisterWorker( WeakPtr<TaskWorker> const& worker );
+	void UnregisterWorker( WeakPtr<TaskWorker> const& worker );
 
 	// Add/remove task pools
 	// NOTE: Pools with higher priority will have their tasks dispatched first,
@@ -75,7 +83,7 @@ public:
 	//  pools have completed all their tasks or yielded
 	// NOTE: Pools with the same priority will have more balanced dispatching
 	WeakPtr<TaskPool> RegisterPool( UniquePtr<TaskPool> && pool, TaskPriority priority );
-	UniquePtr<TaskPool> UnregisterPool( WeakPtr<TaskPool> const& pool );
+	void UnregisterPool( WeakPtr<TaskPool> const& pool );
 
 	// Start/stop dispatching
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
@@ -107,10 +115,18 @@ protected:
 
 
 	//
+	// Private methods
+private:
+	void AttemptDispatch();
+	void AttemptDispatch( TaskWorker* worker );
+
+
+	//
 	// Private data
 private:
 	PriorityBlockList mPrioritizedPools;
 	WorkerList mWorkers;
+	bool mDispatchingPermitted;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
