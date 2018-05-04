@@ -26,6 +26,13 @@ class PtrBase
 	RF_NO_COPY( PtrBase );
 
 	//
+	// Friends
+private:
+	template<typename T>
+	friend struct PtrTransformer;
+
+
+	//
 	// Types
 public:
 	typedef PtrRef<T> PtrRef;
@@ -74,6 +81,15 @@ protected:
 		: PtrBase( nullptr, nullptr )
 	{
 		Swap( rftl::move( rhs ) );
+	}
+
+	bool IsUniqueStrongOwner() const
+	{
+		if( m_Ref == nullptr )
+		{
+			return true;
+		}
+		return m_Ref->GetStrongCount() == 1;
 	}
 
 	void IncreaseStrongCount()

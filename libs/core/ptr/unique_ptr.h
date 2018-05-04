@@ -4,6 +4,7 @@
 #include "core/ptr/weak_ptr.h"
 
 #include "rftl/type_traits"
+#include "rftl/cstdlib"
 
 
 namespace RF {
@@ -60,7 +61,11 @@ public:
 	UniquePtr( CreationPayload<T> && payload )
 		: PtrBase( rftl::move( payload ) )
 	{
-		//
+		if( PtrBase::IsUniqueStrongOwner() == false )
+		{
+			RF_DBGFAIL_MSG( "UniquePtr is not unique after creation" );
+			rftl::abort();
+		}
 	}
 
 	template<typename DERIVED>
@@ -68,10 +73,22 @@ public:
 		: PtrBase( rftl::move( payload ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
+
+		if( PtrBase::IsUniqueStrongOwner() == false )
+		{
+			RF_DBGFAIL_MSG( "UniquePtr is not unique after creation" );
+			rftl::abort();
+		}
 	}
 
 	~UniquePtr()
 	{
+		if( PtrBase::IsUniqueStrongOwner() == false )
+		{
+			RF_DBGFAIL_MSG( "UniquePtr is not unique while destructing" );
+			rftl::abort();
+		}
+
 		PtrBase::DecreaseStrongCount();
 	}
 
