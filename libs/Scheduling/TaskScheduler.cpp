@@ -5,11 +5,11 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-WeakPtr<TaskWorker> TaskScheduler::RegisterWorker( UniquePtr<TaskWorker>&& worker )
+WeakSharedPtr<TaskWorker> TaskScheduler::RegisterWorker( UniquePtr<TaskWorker>&& worker )
 {
 	// TODO: Store worker
 	// TODO: Attempt dispatching
-	return WeakPtr<TaskWorker>();
+	return WeakSharedPtr<TaskWorker>();
 }
 
 
