@@ -3,7 +3,7 @@
 
 #include "Scheduling/SchedulingFwd.h"
 
-#include "core/ptr/weak_ptr.h"
+#include "core/ptr/weak_shared_ptr.h"
 #include "core/ptr/unique_ptr.h"
 
 #include "rftl/vector"
@@ -41,7 +41,7 @@ private:
 	struct RegisteredWorker
 	{
 		RF_NO_COPY( RegisteredWorker );
-		UniquePtr<TaskWorker> mWorker = nullptr;
+		SharedPtr<TaskWorker> mWorker = nullptr;
 		TaskID mActiveTaskID = kInvalidTaskID;
 		Task* mActiveTask = nullptr;
 		WeakPtr<TaskPool> mActivePool = nullptr;
@@ -73,7 +73,7 @@ public:
 	// Register/unregister workers
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
 	//  processed by workers as though these calls were not made
-	WeakPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker> && worker );
+	WeakSharedPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker> && worker );
 	void UnregisterWorker( WeakPtr<TaskWorker> const& worker );
 
 	// Add/remove task pools
