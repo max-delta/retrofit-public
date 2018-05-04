@@ -5,10 +5,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="minclude_unique_destroy.cpp" />
     <ClCompile Include="minclude_shared_destroy.cpp" />
-    <ClCompile Include="unique_ptr.cpp" />
-    <ClCompile Include="shared_ptr.cpp" />
-    <ClCompile Include="weak_shared_ptr.cpp" />
-    <ClCompile Include="entwined_creator.cpp" />
     <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="math_casts.cpp" />
@@ -36,6 +32,10 @@
     <ClCompile Include="platform_uuid.cpp" />
     <ClCompile Include="logic_directededgegraph.cpp" />
     <ClCompile Include="logic_partialplanner.cpp" />
+    <ClCompile Include="ptr_sharedptr.cpp" />
+    <ClCompile Include="ptr_uniqueptr.cpp" />
+    <ClCompile Include="ptr_weaksharedptr.cpp" />
+    <ClCompile Include="ptr_entwinedcreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
