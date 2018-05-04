@@ -18,20 +18,6 @@ public:
 	//
 	// Public methods
 public:
-	static void Delete( T * target, PtrRef * ref, void * userData )
-	{
-		(void)userData;
-		if( target != nullptr )
-		{
-			target->~T();
-		}
-		if( ref != nullptr )
-		{
-			ref->~PtrRef();
-			free(ref);
-		}
-	}
-
 	template<typename... U>
 	static CreationPayload<T> Create(U&&... args)
 	{
@@ -44,6 +30,24 @@ public:
 
 		CreationPayload<T> retVal( newT, newRef );
 		return retVal;
+	}
+
+
+	//
+	// Private methods
+private:
+	static void Delete( T * target, PtrRef * ref, void * userData )
+	{
+		(void)userData;
+		if( target != nullptr )
+		{
+			target->~T();
+		}
+		if( ref != nullptr )
+		{
+			ref->~PtrRef();
+			free( ref );
+		}
 	}
 };
 

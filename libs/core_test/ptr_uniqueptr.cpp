@@ -16,7 +16,7 @@ namespace{
 	};
 }
 static_assert(
-	sizeof(UniquePtr<int>) < sizeof(HugeStruct),
+	sizeof(UniquePtr<HugeStruct>) < sizeof(HugeStruct),
 	"UniquePtr is embedding storage" );
 
 
