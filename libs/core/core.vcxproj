@@ -140,6 +140,7 @@
     <ClInclude Include="ptr\ptr_base.h" />
     <ClInclude Include="ptr\ptr_fwd.h" />
     <ClInclude Include="ptr\ptr_ref.h" />
+    <ClInclude Include="ptr\ptr_transform.h" />
     <ClInclude Include="ptr\shared_ptr.h" />
     <ClInclude Include="ptr\ptr_traits.h" />
     <ClInclude Include="ptr\unique_ptr.h" />

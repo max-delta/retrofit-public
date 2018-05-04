@@ -109,6 +109,11 @@ public:
 		CountType const previousValue = m_StrongCount.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );
 		if( previousValue == 1 )
 		{
+			// NOTE: At this time, the strong count is 0, so any attempt to
+			//  resolve a weak reference should result in a null reference
+			//  while deletion is being performed, BUT... any previously
+			//  resolved weak references that are now raw pointers will still
+			//  be able to try and improperly access the memory
 			T * deletionTarget = target;
 			target = nullptr;
 			Delete(deletionTarget);

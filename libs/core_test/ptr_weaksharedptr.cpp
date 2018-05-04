@@ -14,7 +14,7 @@ namespace{
 	};
 }
 static_assert(
-	sizeof(WeakSharedPtr<int>) < sizeof(HugeStruct),
+	sizeof(WeakSharedPtr<HugeStruct>) < sizeof(HugeStruct),
 	"WeakSharedPtr is embedding storage" );
 
 
