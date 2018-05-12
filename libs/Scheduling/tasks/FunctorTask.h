@@ -12,6 +12,7 @@ namespace RF { namespace scheduling {
 // EXAMPLE:
 //  auto myLambda = [](){};
 //  auto myFunctor = RF::scheduling::CreateFunctorTask( rftl::move( myLambda ) );
+//  using FunctorType = decltype( myFunctor );
 template<typename Functor>
 FunctorTask<Functor> CreateFunctorTask( Functor && functor )
 {

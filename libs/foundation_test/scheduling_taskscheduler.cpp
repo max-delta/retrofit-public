@@ -1,0 +1,144 @@
+#include "stdafx.h"
+
+#include "Scheduling/taskworkers/ThreadableTaskWorker.h"
+#include "Scheduling/taskpools/FIFOTaskPool.h"
+#include "Scheduling/tasks/FunctorTask.h"
+#include "Scheduling/TaskScheduler.h"
+
+#include "core/ptr/default_creator.h"
+#include "core/ptr/entwined_creator.h"
+
+#include "rftl/atomic"
+
+
+namespace RF { namespace scheduling {
+///////////////////////////////////////////////////////////////////////////////
+
+namespace details {
+
+static rftl::atomic_uint8_t sU8Val = 0;
+
+void IncU8Val()
+{
+	sU8Val.fetch_add( 1, rftl::memory_order::memory_order_release );
+}
+
+}
+
+
+
+TEST( Scheduling, SingleThreadedSchedulerLifetime )
+{
+	TaskScheduler scheduler;
+	details::sU8Val.store( 0, rftl::memory_order::memory_order_release );
+
+	// Register worker
+	WeakSharedPtr<TaskWorker> worker;
+	WeakPtr<ThreadableTaskWorker> executingWorker;
+	{
+		UniquePtr<ThreadableTaskWorker> newWorker = DefaultCreator<ThreadableTaskWorker>::Create();
+		executingWorker = newWorker;
+
+		worker = scheduler.RegisterWorker( rftl::move( newWorker ) );
+		ASSERT_EQ( newWorker, nullptr );
+		ASSERT_NE( worker.Weaken(), nullptr );
+		ASSERT_EQ( worker.Weaken(), executingWorker );
+	}
+
+	// Keep worker alive while potentially executing
+	SharedPtr<TaskWorker> strongWorker = worker.Lock();
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+
+	// Register pool
+	WeakPtr<TaskPool> pool;
+	WeakPtr<FIFOTaskPool> derivedPool;
+	{
+		UniquePtr<FIFOTaskPool> newPool = EntwinedCreator<FIFOTaskPool>::Create();
+		derivedPool = newPool;
+
+		pool = scheduler.RegisterPool( rftl::move( newPool ), TaskPriority::Normal );
+		ASSERT_EQ( newPool, nullptr );
+		ASSERT_NE( pool, nullptr );
+		ASSERT_EQ( pool, derivedPool );
+	}
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+
+	// Add task
+	WeakPtr<Task> task;
+	TaskID taskID;
+	{
+		auto myFunctor = CreateFunctorTask( details::IncU8Val );
+		using TaskType = decltype( myFunctor );
+		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		task = newTask;
+
+		taskID = pool->AddTask( rftl::move( newTask ) );
+		ASSERT_EQ( newTask, nullptr );
+		ASSERT_NE( task, nullptr );
+		ASSERT_NE( taskID, kInvalidTaskID );
+	}
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+
+	// Start dispatching
+	scheduler.StartDispatching();
+
+	// Worker will find and execute work
+	ASSERT_FALSE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+
+	// Stop dispatching
+	scheduler.StopDispatching( true );
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+
+	// Unregister pool
+	scheduler.UnregisterPool( pool );
+
+	// Worker will fail to find work
+	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	executingWorker->ExecuteUntilStarved();
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+
+	// Unregister worker
+	{
+		// Unregister
+		scheduler.UnregisterWorker( worker.Weaken() );
+		ASSERT_NE( strongWorker, nullptr );
+		ASSERT_NE( worker.Weaken(), nullptr );
+		ASSERT_NE( executingWorker, nullptr );
+
+		// Worker will fail to find work
+		ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+		executingWorker->ExecuteUntilStarved();
+		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+
+		// Stop executing worker
+		strongWorker = nullptr;
+		ASSERT_EQ( worker.Weaken(), nullptr );
+		ASSERT_EQ( executingWorker, nullptr );
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+}}
