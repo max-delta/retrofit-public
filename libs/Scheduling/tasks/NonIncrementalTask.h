@@ -5,24 +5,25 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-class SCHEDULING_API NonIncrementalTask : public Task
+class NonIncrementalTask : public Task
 {
 	RF_NO_COPY( NonIncrementalTask );
 
 	//
 	// Public methods
 public:
-	NonIncrementalTask() = default;
+	inline NonIncrementalTask() = default;
+	virtual inline ~NonIncrementalTask() override = default;
 
 	// Non-incremental tasks always terminate on step
-	virtual TaskState Step() override final
+	virtual inline TaskState Step() override final
 	{
 		Run();
 		return TaskState::Terminate;
 	}
 
 	// Non-incremental tasks will never have this called on them
-	virtual void Abort() override final
+	virtual inline void Abort() override final
 	{
 		//
 	}

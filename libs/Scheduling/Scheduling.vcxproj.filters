@@ -32,6 +32,9 @@
     <ClInclude Include="taskworkers\ThreadableTaskWorker.h">
       <Filter>taskworkers</Filter>
     </ClInclude>
+    <ClInclude Include="taskpools\FIFOTaskPool.h">
+      <Filter>taskpools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -44,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="TaskScheduler.cpp" />
     <ClCompile Include="taskworkers\ThreadableTaskWorker.cpp" />
+    <ClCompile Include="taskpools\FIFOTaskPool.cpp">
+      <Filter>taskpools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="tasks">
