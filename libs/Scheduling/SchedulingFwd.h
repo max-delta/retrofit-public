@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "core/ptr/ptr_fwd.h"
+#include "core/idgen.h"
 
 #include "rftl/cstdint"
 #include "rftl/utility"
@@ -37,7 +38,8 @@ static constexpr uint8_t kTaskStateMask = static_cast<uint8_t>( TaskState::MaxVa
 static constexpr uint8_t kTaskPriorityMask = static_cast<uint8_t>( TaskPriority::MaxVal );
 
 using TaskID = uint64_t;
-constexpr TaskID kInvalidTaskID = 0;
+using TaskIDGenerator = NonloopingIDGenerator<TaskID>;
+constexpr TaskID kInvalidTaskID = TaskIDGenerator::kInvalid;
 
 class Task;
 class NonIncrementalTask;

@@ -141,6 +141,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="SchedulingFwd.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="taskpools\FIFOTaskPool.h" />
     <ClInclude Include="taskpools\project.h" />
     <ClInclude Include="taskpools\TaskPool.h" />
     <ClInclude Include="TaskScheduler.h" />
@@ -160,6 +161,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="taskpools\FIFOTaskPool.cpp" />
     <ClCompile Include="taskpools\TaskPool.cpp" />
     <ClCompile Include="TaskScheduler.cpp" />
     <ClCompile Include="taskworkers\TaskWorker.cpp" />
