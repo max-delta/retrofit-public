@@ -59,6 +59,7 @@
     <ClInclude Include="ptr\ptr_transform.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="idgen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

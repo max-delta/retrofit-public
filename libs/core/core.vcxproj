@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConstructorOverload.h" />
+    <ClInclude Include="idgen.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="meta\Empty.h" />
     <ClInclude Include="meta\LazyInitSingleton.h" />

@@ -37,6 +37,7 @@
     <ClCompile Include="ptr_weaksharedptr.cpp" />
     <ClCompile Include="ptr_entwinedcreator.cpp" />
     <ClCompile Include="ptr_transform.cpp" />
+    <ClCompile Include="idgen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

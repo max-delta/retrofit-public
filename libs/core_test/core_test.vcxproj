@@ -141,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="allocate_singleallocator.cpp" />
+    <ClCompile Include="idgen.cpp" />
     <ClCompile Include="logic_directededgegraph.cpp" />
     <ClCompile Include="logic_partialplanner.cpp" />
     <ClCompile Include="math_bitfield.cpp" />
