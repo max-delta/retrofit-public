@@ -7,6 +7,8 @@
 #include "core/ptr/unique_ptr.h"
 
 #include "rftl/vector"
+#include "rftl/atomic"
+#include "rftl/shared_mutex"
 
 
 namespace RF { namespace scheduling {
@@ -31,8 +33,12 @@ private:
 	// Types and constants
 private:
 	using WorkerList = rftl::vector<RegisteredWorker>;
+	static constexpr size_t kNumPriorities = 4; // SEE: TaskPriority enum
 	using PoolList = rftl::vector<RegisteredPool>;
-	using PriorityBlockList = rftl::vector<PriorityBlock>;
+	using PriorityBlockList = PriorityBlock[kNumPriorities];
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 
 	//
@@ -41,24 +47,40 @@ private:
 	struct RegisteredWorker
 	{
 		RF_NO_COPY( RegisteredWorker );
+
+		explicit RegisteredWorker( SharedPtr<TaskWorker> const& worker );
+		RegisteredWorker( RegisteredWorker&& rhs );
+		RegisteredWorker& operator=( RegisteredWorker && rhs );
+
 		SharedPtr<TaskWorker> mWorker = nullptr;
 		TaskID mActiveTaskID = kInvalidTaskID;
 		Task* mActiveTask = nullptr;
 		WeakPtr<TaskPool> mActivePool = nullptr;
-		bool mFlaggedForUnregistration = false;
+
+		rftl::atomic_bool mFlaggedAsActive = false;
+		rftl::atomic_bool mFlaggedForUnregistration = false;
 	};
 
 	struct RegisteredPool
 	{
 		RF_NO_COPY( RegisteredPool );
+
+		explicit RegisteredPool( UniquePtr<TaskPool> && pool );
+		RegisteredPool( RegisteredPool&& rhs );
+		RegisteredPool& operator=( RegisteredPool && rhs );
+
 		UniquePtr<TaskPool> mPool = nullptr;
 	};
 
 	struct PriorityBlock
 	{
+		RF_NO_COPY( PriorityBlock );
+
+		PriorityBlock() = default;
+
 		TaskPriority mPriority = TaskPriority::Invalid;
 		PoolList mPools;
-		size_t mLastDispatchIndex = 0;
+		rftl::atomic<size_t> mLastDispatchIndex = 0;
 	};
 
 
@@ -68,7 +90,7 @@ private:
 public:
 	// NOTE: Scheduler begins with dispatching disabled, and waits for it to
 	//  become enabled by caller
-	TaskScheduler() = default;
+	TaskScheduler();
 
 	// Register/unregister workers
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
@@ -118,15 +140,23 @@ protected:
 	// Private methods
 private:
 	void AttemptDispatch();
-	void AttemptDispatch( TaskWorker* worker );
+	bool AttemptDispatch( RegisteredWorker& worker );
+
+	bool AreAllWorkersIdle() const;
+
+	PriorityBlock& GetPriorityBlock( TaskPriority priority );
 
 
 	//
 	// Private data
 private:
 	PriorityBlockList mPrioritizedPools;
+	mutable ReaderWriterMutex mPoolLock;
+
 	WorkerList mWorkers;
-	bool mDispatchingPermitted;
+	mutable ReaderWriterMutex mWorkerLock;
+
+	rftl::atomic_bool mDispatchingPermitted = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

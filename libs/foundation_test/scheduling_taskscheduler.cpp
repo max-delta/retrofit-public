@@ -87,7 +87,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	}
 
 	// Worker will fail to find work
-	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
+	ASSERT_FALSE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
 	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
 
@@ -95,12 +95,10 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	scheduler.StartDispatching();
 
 	// Worker will find and execute work
-	ASSERT_FALSE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
 	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
 
 	// Worker will fail to find work
-	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
 	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
 
