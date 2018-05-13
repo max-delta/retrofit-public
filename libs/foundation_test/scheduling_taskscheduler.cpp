@@ -32,7 +32,9 @@ void IncU8Val()
 TEST( Scheduling, SingleThreadedSchedulerLifetime )
 {
 	TaskScheduler scheduler;
-	details::sU8Val.store( 0, rftl::memory_order::memory_order_release );
+	constexpr uint8_t kInitialValue = 0;
+	constexpr uint8_t kDesiredValue = 10;
+	details::sU8Val.store( kInitialValue, rftl::memory_order::memory_order_release );
 
 	// Register worker
 	WeakSharedPtr<TaskWorker> worker;
@@ -53,12 +55,12 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
 	// Register pool
 	WeakPtr<TaskPool> pool;
-	WeakPtr<FIFOTaskPool> derivedPool;
 	{
+		WeakPtr<FIFOTaskPool> derivedPool;
 		UniquePtr<FIFOTaskPool> newPool = EntwinedCreator<FIFOTaskPool>::Create();
 		derivedPool = newPool;
 
@@ -71,12 +73,13 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
-	// Add task
-	WeakPtr<Task> task;
-	TaskID taskID;
+	// Add tasks
+	for( uint8_t i = kInitialValue; i < kDesiredValue; i++ )
 	{
+		WeakPtr<Task> task;
+		TaskID taskID;
 		auto myFunctor = CreateFunctorTask( details::IncU8Val );
 		using TaskType = decltype( myFunctor );
 		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
@@ -91,18 +94,18 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	// Worker will fail to find work
 	ASSERT_FALSE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
 	// Start dispatching
 	scheduler.StartDispatching();
 
 	// Worker will find and execute work
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 	// Worker will fail to find work
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 	// Stop dispatching
 	scheduler.StopDispatching( true );
@@ -110,7 +113,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 	// Unregister pool
 	scheduler.UnregisterPool( pool );
@@ -118,7 +121,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 	executingWorker->ExecuteUntilStarved();
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 	// Unregister worker
 	{
@@ -131,7 +134,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 		// Worker will fail to find work
 		ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 		executingWorker->ExecuteUntilStarved();
-		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 		// Stop executing worker
 		strongWorker = nullptr;
@@ -142,10 +145,12 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 
 
 
-TEST( Scheduling, MultiThreadedSchedulerLifetime )
+TEST( Scheduling, AsyncThreadedSchedulerLifetime )
 {
 	TaskScheduler scheduler;
-	details::sU8Val.store( 0, rftl::memory_order::memory_order_release );
+	constexpr uint8_t kInitialValue = 0;
+	constexpr uint8_t kDesiredValue = 10;
+	details::sU8Val.store( kInitialValue, rftl::memory_order::memory_order_release );
 
 	// Register worker
 	WeakSharedPtr<TaskWorker> worker;
@@ -180,12 +185,12 @@ TEST( Scheduling, MultiThreadedSchedulerLifetime )
 
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
 	// Register pool
 	WeakPtr<TaskPool> pool;
-	WeakPtr<FIFOTaskPool> derivedPool;
 	{
+		WeakPtr<FIFOTaskPool> derivedPool;
 		UniquePtr<FIFOTaskPool> newPool = EntwinedCreator<FIFOTaskPool>::Create();
 		derivedPool = newPool;
 
@@ -197,12 +202,13 @@ TEST( Scheduling, MultiThreadedSchedulerLifetime )
 
 	// Worker will fail to find work
 	ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
-	// Add task
-	WeakPtr<Task> task;
-	TaskID taskID;
+	// Add tasks
+	for( uint8_t i = kInitialValue; i < kDesiredValue; i++ )
 	{
+		WeakPtr<Task> task;
+		TaskID taskID;
 		auto myFunctor = CreateFunctorTask( details::IncU8Val );
 		using TaskType = decltype( myFunctor );
 		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
@@ -216,17 +222,17 @@ TEST( Scheduling, MultiThreadedSchedulerLifetime )
 
 	// Worker will fail to find work
 	ASSERT_FALSE( scheduler.AllTasksAreCurrentlyCompleted() );
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 0 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kInitialValue );
 
 	// Start dispatching
 	scheduler.StartDispatching();
 
 	// Worker will find and execute work
-	while( details::sU8Val.load( rftl::memory_order::memory_order_acquire ) == 0 )
+	while( details::sU8Val.load( rftl::memory_order::memory_order_acquire ) < kDesiredValue )
 	{
 		rftl::this_thread::yield();
 	}
-	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+	ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 
 	// Stop dispatching
 	scheduler.StopDispatching( true );
@@ -246,7 +252,7 @@ TEST( Scheduling, MultiThreadedSchedulerLifetime )
 		// Worker will fail to find work
 		ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
 		executingWorker->ExecuteUntilStarved();
-		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), 1 );
+		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 	}
 
 	// Stop executing worker
