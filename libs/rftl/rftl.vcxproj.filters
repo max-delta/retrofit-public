@@ -47,6 +47,7 @@
       <Filter>extension</Filter>
     </ClInclude>
     <ClInclude Include="tuple" />
+    <ClInclude Include="future" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">
