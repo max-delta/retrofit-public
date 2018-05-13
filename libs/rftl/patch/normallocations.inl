@@ -12,6 +12,7 @@
 #define RFTL_CSTRING <cstring>
 #define RFTL_DEQUE <deque>
 #define RFTL_FILESYSTEM <filesystem>
+#define RFTL_FUTURE <future>
 #define RFTL_INITIALIZER_LIST <initializer_list>
 #define RFTL_ITERATOR <iterator>
 #define RFTL_LIMITS <limits>

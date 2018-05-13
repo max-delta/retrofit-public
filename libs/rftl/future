@@ -1,0 +1,24 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_FUTURE
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::promise;
+using std::packaged_task;
+using std::future;
+using std::shared_future;
+using std::launch;
+using std::future_status;
+using std::future_error;
+using std::future_errc;
+
+using std::async;
+using std::future_category;
+
+using std::uses_allocator;
+using std::swap;
+}
