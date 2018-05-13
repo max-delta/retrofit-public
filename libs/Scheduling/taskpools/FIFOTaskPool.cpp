@@ -152,7 +152,7 @@ void FIFOTaskPool::ReturnAndUnblockTask( TaskID taskID, TaskState newState )
 			if( record.mID == taskID )
 			{
 				bool const wasBlocked = record.mBlocked.exchange( false, rftl::memory_order::memory_order_acq_rel );
-				RF_ASSERT_MSG( wasBlocked == false, "Double-unblock of task" );
+				RF_ASSERT_MSG( wasBlocked, "Double-unblock of task" );
 			}
 		}
 	}
