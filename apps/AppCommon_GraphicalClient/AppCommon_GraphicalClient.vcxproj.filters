@@ -4,11 +4,13 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="Common.h" />
+    <ClInclude Include="StandardTaskScheduler.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="wndproc.cpp" />
+    <ClCompile Include="StandardTaskScheduler.cpp" />
   </ItemGroup>
 </Project>

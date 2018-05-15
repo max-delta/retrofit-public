@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Common.h"
 
+#include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
+
 #include "PPU/PPUController.h"
 #include "SimpleGL/SimpleGL.h"
 
@@ -14,6 +16,9 @@
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
 
+#include "rftl/thread"
+
+
 namespace RF { namespace app {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -24,9 +29,11 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> g_WndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> g_Graphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> g_Vfs;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> g_TaskScheduler;
 static UniquePtr<input::WndProcInputDevice> s_WndProcInput;
 static UniquePtr<gfx::PPUController> s_Graphics;
 static UniquePtr<file::VFS> s_Vfs;
+static UniquePtr<app::StandardTaskScheduler> s_TaskScheduler;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -76,6 +83,10 @@ void Startup()
 	s_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
 	g_WndProcInput = s_WndProcInput;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
+	s_TaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
+	g_TaskScheduler = s_TaskScheduler;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 }
 
@@ -83,9 +94,10 @@ void Startup()
 
 void Shutdown()
 {
-	g_Graphics = nullptr;
-	g_Vfs = nullptr;
-	g_WndProcInput = nullptr;
+	s_Graphics = nullptr;
+	s_Vfs = nullptr;
+	s_WndProcInput = nullptr;
+	s_TaskScheduler = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
