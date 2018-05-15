@@ -251,7 +251,6 @@ TEST( Scheduling, AsyncThreadedSchedulerLifetime )
 
 		// Worker will fail to find work
 		ASSERT_TRUE( scheduler.AllTasksAreCurrentlyCompleted() );
-		executingWorker->ExecuteUntilStarved();
 		ASSERT_EQ( details::sU8Val.load( rftl::memory_order::memory_order_acquire ), kDesiredValue );
 	}
 

@@ -144,11 +144,13 @@
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="StandardTaskScheduler.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="StandardTaskScheduler.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -178,6 +180,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Scheduling\Scheduling.vcxproj">
+      <Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
       <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>

@@ -32,7 +32,7 @@ public:
 
 	virtual void AddTask( Task* task, TaskScheduler* scheduler ) override;
 
-	void ExecuteUntilStarved();
+	size_t ExecuteUntilStarved();
 
 
 	//
