@@ -4,6 +4,7 @@
 #include "Scheduling/taskworkers/ThreadableTaskWorker.h"
 #include "Scheduling/taskpools/FIFOTaskPool.h"
 #include "Scheduling/TaskScheduler.h"
+#include "Timing/clocks.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/ptr/entwined_creator.h"
@@ -40,21 +41,34 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 			rftl::atomic_bool const* shouldTerminate )->
 			void
 		{
-			size_t sleepAccumulator = 0;
-			constexpr size_t kSleepTrigger = 1000;
+			time::PerfClock::time_point sleepAccumulator = time::PerfClock::now();
+			constexpr rftl::chrono::milliseconds kSleepTrigger = rftl::chrono::milliseconds( 1 );
+			bool sleepMode = false;
+
+			// Run until terminated
 			while( shouldTerminate->load( rftl::memory_order::memory_order_acquire ) == false )
 			{
 				size_t const numExecutions = worker->ExecuteUntilStarved();
+
+				// Figure out if we should be in low-power mode or not
 				if( numExecutions == 0 )
 				{
-					sleepAccumulator++;
+					if( sleepMode == false )
+					{
+						time::PerfClock::time_point const now = time::PerfClock::now();
+						if( now - sleepAccumulator >= kSleepTrigger )
+						{
+							sleepMode = true;
+						}
+					}
 				}
 				else
 				{
-					sleepAccumulator = 0;
+					sleepAccumulator = time::PerfClock::now();
+					sleepMode = false;
 				}
 
-				if( sleepAccumulator >= kSleepTrigger )
+				if( sleepMode )
 				{
 					// Nothing much happening, put the thread into low-power
 					rftl::this_thread::sleep_for( rftl::chrono::milliseconds( 1 ) );
