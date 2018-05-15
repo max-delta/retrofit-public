@@ -35,10 +35,11 @@ void ThreadableTaskWorker::AddTask( Task * task, TaskScheduler * scheduler )
 
 
 
-void ThreadableTaskWorker::ExecuteUntilStarved()
+size_t ThreadableTaskWorker::ExecuteUntilStarved()
 {
 	rftl::unique_lock<rftl::mutex> execLock( mExecutionMutex );
 
+	size_t numExecutions = 0;
 	while( true )
 	{
 		// Pull work
@@ -47,7 +48,7 @@ void ThreadableTaskWorker::ExecuteUntilStarved()
 			rftl::unique_lock<rftl::mutex> workLock( mPendingWorkMutex );
 			if( mPendingWork.empty() )
 			{
-				return;
+				return numExecutions;
 			}
 			workItem = mPendingWork.back();
 			mPendingWork.pop_back();
@@ -57,6 +58,7 @@ void ThreadableTaskWorker::ExecuteUntilStarved()
 		{
 			TaskState const newTaskState = workItem.mTask->Step();
 			OnWorkComplete( workItem.mTask, newTaskState, workItem.mScheduler );
+			numExecutions++;
 		}
 	}
 }
