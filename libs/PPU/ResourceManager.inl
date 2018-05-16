@@ -30,7 +30,7 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManage
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
 {
-	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( managedResourceID );
+	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( managedResourceID );
 	if( resourceIter == m_Resources.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
@@ -45,13 +45,13 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
 {
-	ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
+	typename ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
 	if( IDIter == m_ResourceIDs.end() )
 	{
 		return nullptr;
 	}
 
-	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
+	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
 	if( resourceIter == m_Resources.end() )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_PPU, "Lookups desynced?" );
@@ -140,14 +140,14 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Rel
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyResource( ResourceName const& resourceName )
 {
-	ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
+	typename ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
 	if( IDIter == m_ResourceIDs.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
-	ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
+	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
 	if( resourceIter == m_Resources.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
@@ -171,7 +171,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const
 {
-	for( ResourceIDsByName::value_type const& resourcePair : m_ResourceIDs )
+	for( typename ResourceIDsByName::value_type const& resourcePair : m_ResourceIDs )
 	{
 		ManagedResourceID const& id = resourcePair.second;
 		if( id == managedResourceID )
