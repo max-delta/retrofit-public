@@ -9,3 +9,6 @@
 
 constexpr char const* RFCAT_STARTUP = "Startup";
 constexpr uint64_t RFCAT_STARTUP_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+
+constexpr char const* RFCAT_APPCOMMON = "AppCommon";
+constexpr uint64_t RFCAT_APPCOMMON_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
