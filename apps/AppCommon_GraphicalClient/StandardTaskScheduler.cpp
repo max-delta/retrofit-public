@@ -24,7 +24,7 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	for( size_t i = 0; i < workerThreadCount; i++ )
 	{
 		// Allocate
-		UniquePtr<ThreadedWorker> newThreadedWorker = DefaultCreator<ThreadedWorker>::Create();
+		UniquePtr<ThreadedWorker> newThreadedWorker = EntwinedCreator<ThreadedWorker>::Create();
 
 		// Create worker
 		UniquePtr<scheduling::ThreadableTaskWorker> newWorker = DefaultCreator<scheduling::ThreadableTaskWorker>::Create();
@@ -89,7 +89,7 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	// For the main thread...
 	{
 		// Allocate
-		mMainThreadWorker = DefaultCreator<ThreadedWorker>::Create();
+		mMainThreadWorker = EntwinedCreator<ThreadedWorker>::Create();
 
 		// Create worker
 		UniquePtr<scheduling::ThreadableTaskWorker> newWorker = DefaultCreator<scheduling::ThreadableTaskWorker>::Create();
