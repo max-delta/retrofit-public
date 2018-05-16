@@ -21,7 +21,7 @@ TEST( LogicPartialPlanner, Nop )
 	initialConditions.mStates.emplace( 'A', true );
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 2 );
@@ -45,7 +45,7 @@ TEST( LogicPartialPlanner, TrivialSingle )
 	initialConditions.mStates.emplace( 'A', false );
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 3 );
@@ -72,7 +72,7 @@ TEST( LogicPartialPlanner, TrivialDouble )
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
 	desiredFinalConditions.mStates.emplace( 'B', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 3 );
@@ -104,7 +104,7 @@ TEST( LogicPartialPlanner, IndependentPair )
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
 	desiredFinalConditions.mStates.emplace( 'B', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 4 );
@@ -137,7 +137,7 @@ TEST( LogicPartialPlanner, DependentPair )
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
 	desiredFinalConditions.mStates.emplace( 'B', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 4 );
@@ -184,7 +184,7 @@ TEST( LogicPartialPlanner, BadOption )
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
 	desiredFinalConditions.mStates.emplace( 'B', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_TRUE( planSuccess );
 	PartialPlanner::PartialPlan const plan = planner.FetchPlan();
 	ASSERT_EQ( plan.mPlannedActions.size(), 4 );
@@ -223,7 +223,7 @@ TEST( LogicPartialPlanner, MutuallyDependentPair )
 	PartialPlanner::Postconditions desiredFinalConditions;
 	desiredFinalConditions.mStates.emplace( 'A', true );
 	desiredFinalConditions.mStates.emplace( 'B', true );
-	bool const planSuccess = planner.Run( initialConditions, desiredFinalConditions );
+	bool const planSuccess = planner.Run( "Initial", initialConditions, "Final", desiredFinalConditions );
 	ASSERT_FALSE( planSuccess );
 }
 

@@ -11,8 +11,8 @@ namespace RF { namespace logic {
 
 template<
 	typename TMetaValue,
-	typename TAlloc = rftl::allocator<typename uint64_t> >
-	struct PartialPlan
+	typename TAlloc = rftl::allocator<typename uint64_t>>
+struct PartialPlan
 {
 	using MetaValue = TMetaValue;
 	using PlannedActionID = uint64_t;
@@ -43,7 +43,7 @@ template<
 	typename THash = rftl::hash<typename TStateID>,
 	typename TEquals = rftl::equal_to<typename TStateID>,
 	typename TAlloc = rftl::allocator<typename TStateID> >
-	class PartialPlanner
+class PartialPlanner
 {
 	//
 	// Forwards
@@ -64,6 +64,7 @@ public:
 	using Preconditions = typename Action::Preconditions;
 	using Postconditions = typename Action::Postconditions;
 	using State = typename Preconditions::State;
+	using MetaValue = typename Action::MetaValue;
 private:
 	using ActionIDCollection = typename ActionDatabase::ActionIDCollection;
 	using PlannedActionInstanceID = uint64_t;
@@ -106,16 +107,16 @@ public:
 		return mActionDatabase.AddAction( action );
 	}
 
-	bool Run( Preconditions const& initialConditions, Postconditions const& desiredFinalConditions )
+	bool Run( MetaValue const& initial, Preconditions const& initialConditions, MetaValue const& final, Postconditions const& desiredFinalConditions )
 	{
 		Action initialAction;
-		initialAction.mMeta = "Initial";
+		initialAction.mMeta = initial;
 		initialAction.mPostconditions = initialConditions;
 		ActionID const initialActionID = mActionDatabase.AddAction( initialAction );
 		PlanReservedActionInstance( initialActionID, kReservedInitialPlannedActionInstanceID );
 
 		Action finalAction;
-		finalAction.mMeta = "Final";
+		finalAction.mMeta = final;
 		finalAction.mPreconditions = desiredFinalConditions; // Not required except for data completeness?
 		ActionID const finalActionID = mActionDatabase.AddAction( finalAction );
 		PlanReservedActionInstance( finalActionID, kReservedFinalPlannedActionInstanceID );
