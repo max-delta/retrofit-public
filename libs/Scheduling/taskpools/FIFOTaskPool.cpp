@@ -184,6 +184,7 @@ void FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
 
 				TaskPtr task = rftl::move( record.mTask );
 				mTaskRecords.erase( iter );
+				lock.unlock();
 				OnTaskRemoved( rftl::move( task ), taskID, newState );
 				return;
 			}

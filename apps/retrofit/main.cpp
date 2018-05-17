@@ -31,6 +31,7 @@ constexpr bool k_SquirrelTest = true;
 constexpr bool k_XMLTest = true;
 constexpr bool k_FPackSerializationTest = false;
 constexpr bool k_PlatformTest = true;
+constexpr bool k_FrameBuilderTest = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -77,6 +78,11 @@ int main()
 		test::InitDrawTest();
 	}
 
+	if( k_FrameBuilderTest )
+	{
+		test::InitFrameBuilderTest();
+	}
+
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
 
@@ -103,10 +109,19 @@ int main()
 				test::DrawTest();
 			}
 
+			if( k_FrameBuilderTest )
+			{
+				test::FrameBuilderTest();
+			}
+
 			app::g_Graphics->SubmitToRender();
 			app::g_Graphics->WaitForRender();
 		}
 		app::g_Graphics->EndFrame();
+	}
+	if( k_FrameBuilderTest )
+	{
+		test::TerminateFrameBuilderTest();
 	}
 	app::Shutdown();
 	return 0;

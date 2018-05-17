@@ -109,6 +109,11 @@ public:
 
 	bool Run( MetaValue const& initial, Preconditions const& initialConditions, MetaValue const& final, Postconditions const& desiredFinalConditions )
 	{
+		mPlannedActionInstances = {};
+		mUnmetPlannedActionNeeds = {};
+		mCausalLinks = {};
+		mOrderingConstraints = {};
+
 		Action initialAction;
 		initialAction.mMeta = initial;
 		initialAction.mPostconditions = initialConditions;

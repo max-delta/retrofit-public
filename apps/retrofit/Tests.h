@@ -17,5 +17,9 @@ void FPackSerializationTest();
 
 void PlatformTest();
 
+void InitFrameBuilderTest();
+void FrameBuilderTest();
+void TerminateFrameBuilderTest();
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
