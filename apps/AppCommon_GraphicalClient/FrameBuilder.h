@@ -30,12 +30,13 @@ public:
 private:
 	using TaskHandles = rftl::vector<UniquePtr<scheduling::Task>>;
 	using TasksInFlight = rftl::unordered_map<scheduling::TaskID, PartialPlanner::PartialPlan::PlannedActionID>;
+	using PlannedActionsInFlight = rftl::unordered_set<PartialPlanner::PartialPlan::PlannedActionID>;
 
 
 	//
 	// Public methods
 public:
-	FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler );
+	explicit FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler );
 	~FrameBuilder();
 
 	// Add tasks to the plan
@@ -78,6 +79,10 @@ private:
 	void OnTaskComplete( TaskRef const& task, scheduling::TaskID taskID );
 	void ScheduleNextTasks();
 
+	void LogFlight( PartialPlanner::PartialPlan::PlannedActionID id );
+	void LogReturn( PartialPlanner::PartialPlan::PlannedActionID id );
+	void LogTrivial( PartialPlanner::PartialPlan::PlannedActionID id );
+
 
 	//
 	// Private data
@@ -93,14 +98,15 @@ private:
 	WeakPtr<scheduling::TaskPool> mTaskPool;
 
 	PartialPlanner::Preconditions mPreconditions;
-	PartialPlanner::Postconditions mPostcontidions;
+	PartialPlanner::Postconditions mPostconditions;
 
 	PartialPlanner::PartialPlan mLastValidPlan;
 
-	// NOTE: Task flighting lock applies to current plan and flighted tasks
+	// NOTE: Task flighting lock applies to current plan and flight lists
 	rftl::mutex mTaskFlightingLock;
 	PartialPlanner::PartialPlan mCurrentPlan;
 	TasksInFlight mTasksInFlight;
+	PlannedActionsInFlight mPlannedActionsInFlight;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

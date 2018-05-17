@@ -52,6 +52,8 @@ public:
 	StandardTaskScheduler( size_t workerThreadCount );
 	~StandardTaskScheduler();
 
+	WeakPtr<scheduling::TaskScheduler> GetTaskScheduler() const;
+
 
 	//
 	// Private data
