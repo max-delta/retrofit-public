@@ -162,6 +162,7 @@ WeakPtr<TaskPool> TaskScheduler::RegisterPool( UniquePtr<TaskPool>&& pool, TaskP
 	// Store pool
 	{
 		WriterLock lock{ mPoolLock };
+		pool->SetScheduler( this );
 		priorityBlock.mPools.emplace_back( rftl::move( pool ) );
 	}
 
@@ -186,6 +187,7 @@ void TaskScheduler::UnregisterPool( WeakPtr<TaskPool> const & pool )
 		{
 			if( iter->mPool == poolKey )
 			{
+				iter->mPool->SetScheduler( nullptr );
 				priorityBlock.mPools.erase( iter );
 				return;
 			}

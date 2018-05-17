@@ -22,6 +22,10 @@ public:
 	//  destroyed without having ever been stepped
 	virtual ~Task() = default;
 
+	// Attempts to clone a task
+	// NOTE: Returns null if the task is not cloneable
+	virtual TaskPtr Clone() const = 0;
+
 	// Attempts to run a task incrementally, which may or may not result in
 	//  the task terminating itself in the course of the step
 	// NOTE: Valid return values are:

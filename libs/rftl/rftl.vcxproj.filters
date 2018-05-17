@@ -48,6 +48,7 @@
     </ClInclude>
     <ClInclude Include="tuple" />
     <ClInclude Include="future" />
+    <ClInclude Include="functional" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">

@@ -45,10 +45,14 @@ class Task;
 class NonIncrementalTask;
 template<typename Functor>
 class FunctorTask;
+template<typename Functor>
+class CloneableFunctorTask;
 
 class TaskPool;
 class TaskWorker;
 class TaskScheduler;
+
+struct TaskPoolListener;
 
 using TaskPtr = UniquePtr<Task>;
 using TaskWeakPtr = WeakPtr<Task>;
