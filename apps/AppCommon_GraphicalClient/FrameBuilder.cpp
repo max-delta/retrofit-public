@@ -39,6 +39,7 @@ FrameBuilder::FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler 
 
 	// Create and register pool with listener
 	UniquePtr<scheduling::FIFOTaskPool> newPool = DefaultCreator<scheduling::FIFOTaskPool>::Create();
+	newPool->SetListener( rftl::move( listener ) );
 	mTaskPool = scheduler->RegisterPool( rftl::move( newPool ), scheduling::TaskPriority::Normal );
 	RF_ASSERT( mTaskPool != nullptr );
 }
@@ -62,19 +63,19 @@ bool FrameBuilder::AddTask( TaskRepresentation && taskRepresentation, UniquePtr<
 {
 	if( mFinalized )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Cannot add task after finalization" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Cannot add task after finalization" );
 		return false;
 	}
 
 	if( taskRepresentation.mMeta != cloneableTask )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Task representation differs from task handle" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Task representation differs from task handle" );
 		return false;
 	}
 
 	if( taskRepresentation.mMeta == nullptr )
 	{
-		RFLOG_WARNING( nullptr, RFCAT_APPCOMMON, "Null task will be planned, but have no outward effect when executed" );
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEBUILDER, "Null task will be planned, but have no outward effect when executed" );
 	}
 
 	mPartialPlanner.AddActionToDatabase( taskRepresentation );
@@ -88,7 +89,7 @@ bool FrameBuilder::FinalizePlan()
 {
 	if( mFinalized )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Double finalization" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Double finalization" );
 		return false;
 	}
 
@@ -106,6 +107,7 @@ bool FrameBuilder::SetStartingCondition( ConditionID const & conditionID, Condit
 	}
 
 	mPreconditions.mStates.emplace( conditionID, conditionValue );
+	OnConditionsChanged();
 	return true;
 }
 
@@ -119,6 +121,7 @@ bool FrameBuilder::RemoveStartingCondition( ConditionID const & conditionID )
 	}
 
 	mPreconditions.mStates.erase( PartialPlanner::State( conditionID, ConditionValue() ) );
+	OnConditionsChanged();
 	return true;
 }
 
@@ -131,7 +134,8 @@ bool FrameBuilder::SetDesiredCondition( ConditionID const & conditionID, Conditi
 		return false;
 	}
 
-	mPostcontidions.mStates.emplace( conditionID, conditionValue );
+	mPostconditions.mStates.emplace( conditionID, conditionValue );
+	OnConditionsChanged();
 	return true;
 }
 
@@ -144,7 +148,8 @@ bool FrameBuilder::RemoveDesiredCondition( ConditionID const & conditionID )
 		return false;
 	}
 
-	mPostcontidions.mStates.erase( PartialPlanner::State( conditionID, ConditionValue() ) );
+	mPostconditions.mStates.erase( PartialPlanner::State( conditionID, ConditionValue() ) );
+	OnConditionsChanged();
 	return true;
 }
 
@@ -154,23 +159,23 @@ bool FrameBuilder::StartPlan()
 {
 	if( mFinalized == false )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Cannot start plan before finalization" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Cannot start plan before finalization" );
 		return false;
 	}
 
 	if( IsPlanComplete() == false )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Cannot start plan while plan is in progress" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Cannot start plan while plan is in progress" );
 		return false;
 	}
 
 	if( HasLastValidPlan() == false )
 	{
 		// Need to plan/re-plan
-		bool const planSuccess = mPartialPlanner.Run( nullptr, mPreconditions, nullptr, mPostcontidions );
+		bool const planSuccess = mPartialPlanner.Run( nullptr, mPreconditions, nullptr, mPostconditions );
 		if( planSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Plan failed" );
+			RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Plan failed" );
 			return false;
 		}
 		mLastValidPlan = mPartialPlanner.FetchPlan();
@@ -203,13 +208,13 @@ bool FrameBuilder::TestCanChangeConditions() const
 {
 	if( mFinalized == false )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Cannot change conditions before finalization" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Cannot change conditions before finalization" );
 		return false;
 	}
 
 	if( IsPlanComplete() == false )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_APPCOMMON, "Cannot change conditions while plan is in progress" );
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEBUILDER, "Cannot change conditions while plan is in progress" );
 		return false;
 	}
 
@@ -223,7 +228,7 @@ void FrameBuilder::OnConditionsChanged()
 	if( HasLastValidPlan() )
 	{
 		mLastValidPlan = PartialPlanner::PartialPlan();
-		RFLOG_WARNING( nullptr, RFCAT_APPCOMMON, "Condition change caused a replan" );
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEBUILDER, "Condition change caused a replan" );
 	}
 }
 
@@ -255,8 +260,10 @@ void FrameBuilder::OnTaskComplete( TaskRef const& task, scheduling::TaskID taskI
 		mTasksInFlight.erase( taskIter );
 		PartialPlanner::PartialPlan::PlannedActionIDMap::const_iterator const planIter = mCurrentPlan.mPlannedActions.find( plannedID );
 		RF_ASSERT( planIter != mCurrentPlan.mPlannedActions.end() );
-		RF_ASSERT( planIter->second == task );
 		mCurrentPlan.mPlannedActions.erase( planIter );
+		RF_ASSERT( mPlannedActionsInFlight.count( plannedID ) == 1 );
+		mPlannedActionsInFlight.erase( plannedID );
+		LogReturn( plannedID );
 	}
 
 	ScheduleNextTasks();
@@ -280,6 +287,13 @@ void FrameBuilder::ScheduleNextTasks()
 		{
 			PartialPlanner::PartialPlan::PlannedActionID const& plannedActionID = planIter->first;
 			TaskRef const& task = planIter->second;
+
+			// Check for already flighted actions
+			if( mPlannedActionsInFlight.count( plannedActionID ) != 0 )
+			{
+				planIter++;
+				continue;
+			}
 
 			// Check for unmet dependencies
 			bool dependenciesMet = true;
@@ -305,6 +319,7 @@ void FrameBuilder::ScheduleNextTasks()
 			{
 				// Empty, remove
 				hasExecutedEmptyTasks = true;
+				LogTrivial( plannedActionID );
 				planIter = mCurrentPlan.mPlannedActions.erase( planIter );
 				continue;
 			}
@@ -313,15 +328,41 @@ void FrameBuilder::ScheduleNextTasks()
 			scheduling::TaskPtr newTask = task->Clone();
 			if( newTask == nullptr )
 			{
-				RFLOG_FATAL( nullptr, RFCAT_APPCOMMON, "Failed to clone task" );
+				RFLOG_FATAL( nullptr, RFCAT_FRAMEBUILDER, "Failed to clone task" );
 			}
 
 			// Flight
+			LogFlight( plannedActionID );
 			RF_ASSERT( mTaskPool != nullptr );
 			scheduling::TaskID const newTaskID = mTaskPool->AddTask( rftl::move( newTask ) );
 			mTasksInFlight[newTaskID] = plannedActionID;
+			mPlannedActionsInFlight.emplace( plannedActionID );
+
+			planIter++;
+			continue;
 		}
 	}
+}
+
+
+
+void FrameBuilder::LogFlight( PartialPlanner::PartialPlan::PlannedActionID id )
+{
+	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame flight: %llu", id );
+}
+
+
+
+void FrameBuilder::LogReturn( PartialPlanner::PartialPlan::PlannedActionID id )
+{
+	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame return: %llu", id );
+}
+
+
+
+void FrameBuilder::LogTrivial( PartialPlanner::PartialPlan::PlannedActionID id )
+{
+	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame trivial: %llu", id );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

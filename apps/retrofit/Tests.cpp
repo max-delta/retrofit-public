@@ -4,6 +4,8 @@
 #include "TEMP_AssetLoadSave.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
+#include "AppCommon_GraphicalClient/FrameBuilder.h"
+#include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
@@ -15,13 +17,16 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scripting_squirrel/squirrel.h"
+#include "Scheduling/tasks/FunctorTask.h"
 
 #include "core_platform/uuid.h"
+#include "core/ptr/default_creator.h"
 
 #include <pugixml/pugixml.h>
 
 #include "rftl/extension/static_array.h"
 #include "rftl/sstream"
+#include "rftl/thread"
 
 
 namespace RF { namespace test {
@@ -339,6 +344,91 @@ void PlatformTest()
 		uuids.emplace_back( newUuid );
 	}
 	uuids.clear();
+}
+
+
+
+static UniquePtr<app::FrameBuilder> gTestFrameBuilder;
+static uint64_t gTestFrameBuilderFrameCount;
+void InitFrameBuilderTest()
+{
+	gTestFrameBuilder = DefaultCreator<app::FrameBuilder>::Create( app::g_TaskScheduler->GetTaskScheduler() );
+
+	{
+		auto func = []() -> void
+		{
+			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "START running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+		};
+		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
+		using TaskType = decltype( myFunctor );
+		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		app::FrameBuilder::TaskRepresentation taskDef;
+		taskDef.mMeta = newTask;
+		taskDef.mPostconditions.mStates.emplace( "Test", "Started" );
+		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
+	}
+	{
+		auto func = []() -> void
+		{
+			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR1 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+		};
+		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
+		using TaskType = decltype( myFunctor );
+		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		app::FrameBuilder::TaskRepresentation taskDef;
+		taskDef.mMeta = newTask;
+		taskDef.mPreconditions.mStates.emplace( "Test", "Started" );
+		taskDef.mPostconditions.mStates.emplace( "Pair1", "Run" );
+		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
+	}
+	{
+		auto func = []() -> void
+		{
+			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR2 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+		};
+		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
+		using TaskType = decltype( myFunctor );
+		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		app::FrameBuilder::TaskRepresentation taskDef;
+		taskDef.mMeta = newTask;
+		taskDef.mPreconditions.mStates.emplace( "Test", "Started" );
+		taskDef.mPostconditions.mStates.emplace( "Pair2", "Run" );
+		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
+	}
+
+	gTestFrameBuilder->FinalizePlan();
+
+	gTestFrameBuilder->SetDesiredCondition( "Pair1", "Run" );
+	gTestFrameBuilder->SetDesiredCondition( "Pair2", "Run" );
+
+	gTestFrameBuilderFrameCount = 0;
+}
+
+
+
+void FrameBuilderTest()
+{
+	gTestFrameBuilder->StartPlan();
+	while( gTestFrameBuilder->IsPlanComplete() == false )
+	{
+		// Spin
+	}
+	gTestFrameBuilderFrameCount++;
+	if( gTestFrameBuilderFrameCount == 2 )
+	{
+		gTestFrameBuilder->RemoveDesiredCondition( "Pair1" );
+	}
+	else if( gTestFrameBuilderFrameCount == 4 )
+	{
+		gTestFrameBuilder->RemoveDesiredCondition( "Pair2" );
+	}
+}
+
+
+
+void TerminateFrameBuilderTest()
+{
+	gTestFrameBuilder = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -157,5 +157,12 @@ StandardTaskScheduler::~StandardTaskScheduler()
 	}
 }
 
+
+
+WeakPtr<scheduling::TaskScheduler> StandardTaskScheduler::GetTaskScheduler() const
+{
+	return mTaskScheduler;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

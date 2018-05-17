@@ -57,6 +57,26 @@ void Startup()
 		RF_DBGFAIL_MSG( "TODO: Non-ANSI console logger" );
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing hack assert logging..." );
+	{
+		// TODO: Actual notification logger, not this jank assert pass-through
+		struct AssertLogger
+		{
+			static void Log( logging::LoggingRouter const& router, logging::LogEvent const& event, va_list args )
+			{
+				constexpr size_t kBufSize = 512;
+				rftl::array<char, kBufSize> messageBuffer;
+				vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
+				*messageBuffer.rbegin() = '\0';
+				RF_DBGFAIL_MSG( messageBuffer.data() );
+			};
+		};
+		logging::HandlerDefinition def;
+		def.mSupportedSeverities = logging::Severity::RF_SEV_USER_ATTENTION_REQUESTED;
+		def.mHandlerFunc = AssertLogger::Log;
+		logging::RegisterHandler( def );
+	}
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
 	s_Vfs = DefaultCreator<file::VFS>::Create();
 	g_Vfs = s_Vfs;
