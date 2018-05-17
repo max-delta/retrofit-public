@@ -144,6 +144,7 @@
     <ClInclude Include="taskpools\FIFOTaskPool.h" />
     <ClInclude Include="taskpools\project.h" />
     <ClInclude Include="taskpools\TaskPool.h" />
+    <ClInclude Include="taskpools\TaskPoolListener.h" />
     <ClInclude Include="TaskScheduler.h" />
     <ClInclude Include="Tasks\FunctorTask.h" />
     <ClInclude Include="tasks\NonIncrementalTask.h" />

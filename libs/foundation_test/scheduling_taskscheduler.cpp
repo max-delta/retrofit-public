@@ -61,7 +61,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 	WeakPtr<TaskPool> pool;
 	{
 		WeakPtr<FIFOTaskPool> derivedPool;
-		UniquePtr<FIFOTaskPool> newPool = EntwinedCreator<FIFOTaskPool>::Create();
+		UniquePtr<FIFOTaskPool> newPool = DefaultCreator<FIFOTaskPool>::Create();
 		derivedPool = newPool;
 
 		pool = scheduler.RegisterPool( rftl::move( newPool ), TaskPriority::Normal );
@@ -191,7 +191,7 @@ TEST( Scheduling, AsyncThreadedSchedulerLifetime )
 	WeakPtr<TaskPool> pool;
 	{
 		WeakPtr<FIFOTaskPool> derivedPool;
-		UniquePtr<FIFOTaskPool> newPool = EntwinedCreator<FIFOTaskPool>::Create();
+		UniquePtr<FIFOTaskPool> newPool = DefaultCreator<FIFOTaskPool>::Create();
 		derivedPool = newPool;
 
 		pool = scheduler.RegisterPool( rftl::move( newPool ), TaskPriority::Normal );

@@ -2,8 +2,11 @@
 #include "project.h"
 
 #include "Scheduling/SchedulingFwd.h"
+#include "Scheduling/taskpools/TaskPoolListener.h"
 
 #include "core/macros.h"
+
+#include "rftl/mutex"
 
 
 namespace RF { namespace scheduling {
@@ -14,10 +17,21 @@ class SCHEDULING_API TaskPool
 	RF_NO_COPY( TaskPool );
 
 	//
+	// Friends
+protected:
+	friend class TaskScheduler;
+
+
+	//
 	// Public methods
 public:
 	TaskPool() = default;
 	virtual ~TaskPool() = default;
+
+	// Sets the listener for task pool events
+	// NOTE: There is only one, intended to be set by the 'owner' of the pool,
+	//  if such a concept applies to the instance
+	void SetListener( TaskPoolListener && listener );
 
 	// Add/abort tasks
 	// NOTE: Already running or terminated tasks can not be aborted, and there
@@ -44,17 +58,31 @@ public:
 
 	// Remove a previously blocked task that was fetched
 	// NOTE: The state is purely informative, the implementor can ignore it
-	virtual TaskPtr RemoveBlockedTask( TaskID taskID, TaskState newState ) = 0;
+	virtual void RemoveBlockedTask( TaskID taskID, TaskState newState ) = 0;
 
 
 	//
 	// Protected methods
 protected:
+	// Called by the scheduler when taking or releasing ownership
+	void SetScheduler( TaskScheduler* scheduler );
+
 	// Called when the last fetch found no unblocked work, but new activity
 	//  unrelated to the scheduler has made tasks available, and the scheduler
 	//  should be made aware in case it was idle
 	// NOTE: Very likely to cause re-entrancy via fetch calls
-	void OnTasksNewlyAvailable( TaskScheduler* scheduler );
+	void OnTasksNewlyAvailable();
+
+	// Called when a task is being removed
+	void OnTaskRemoved( TaskPtr && task, TaskID taskID, TaskState newState );
+
+
+	//
+	// Private data
+private:
+	rftl::atomic<TaskScheduler*> mScheduler = nullptr;
+	TaskPoolListener mListener;
+	rftl::mutex mListenerLock;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

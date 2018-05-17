@@ -1,0 +1,51 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_FUNCTIONAL
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::function;
+using std::mem_fn;
+using std::bad_function_call;
+using std::is_bind_expression;
+using std::is_placeholder;
+using std::reference_wrapper;
+
+using std::bind;
+using std::ref;
+using std::cref;
+using std::invoke;
+using std::plus;
+using std::minus;
+using std::multiplies;
+using std::divides;
+using std::modulus;
+using std::negate;
+
+using std::equal_to;
+using std::not_equal_to;
+using std::greater;
+using std::less;
+using std::greater_equal;
+using std::less_equal;
+
+using std::logical_and;
+using std::logical_or;
+using std::logical_not;
+
+using std::bit_and;
+using std::bit_or;
+using std::bit_xor;
+using std::bit_not;
+
+using std::not_fn;
+
+using std::default_searcher;
+using std::boyer_moore_searcher;
+using std::boyer_moore_horspool_searcher;
+
+using std::hash;
+}
