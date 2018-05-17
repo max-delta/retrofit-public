@@ -104,19 +104,19 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	{
 		mGenericPools[scheduling::TaskPriority::RealTime] =
 			mTaskScheduler->RegisterPool(
-				EntwinedCreator<scheduling::FIFOTaskPool>::Create(),
+				DefaultCreator<scheduling::FIFOTaskPool>::Create(),
 				scheduling::TaskPriority::RealTime );
 		mGenericPools[scheduling::TaskPriority::High] =
 			mTaskScheduler->RegisterPool(
-				EntwinedCreator<scheduling::FIFOTaskPool>::Create(),
+				DefaultCreator<scheduling::FIFOTaskPool>::Create(),
 				scheduling::TaskPriority::High );
 		mGenericPools[scheduling::TaskPriority::Normal] =
 			mTaskScheduler->RegisterPool(
-				EntwinedCreator<scheduling::FIFOTaskPool>::Create(),
+				DefaultCreator<scheduling::FIFOTaskPool>::Create(),
 				scheduling::TaskPriority::Normal );
 		mGenericPools[scheduling::TaskPriority::Idle] =
 			mTaskScheduler->RegisterPool(
-				EntwinedCreator<scheduling::FIFOTaskPool>::Create(),
+				DefaultCreator<scheduling::FIFOTaskPool>::Create(),
 				scheduling::TaskPriority::Idle );
 	}
 

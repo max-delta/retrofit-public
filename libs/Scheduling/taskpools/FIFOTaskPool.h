@@ -62,7 +62,7 @@ public:
 
 	virtual void ReturnAndUnblockTask( TaskID taskID, TaskState newState ) override;
 
-	virtual TaskPtr RemoveBlockedTask( TaskID taskID, TaskState newState ) override;
+	virtual void RemoveBlockedTask( TaskID taskID, TaskState newState ) override;
 
 
 	//

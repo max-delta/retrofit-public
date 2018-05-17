@@ -45,9 +45,16 @@ TaskID FIFOTaskPool::AddTask( TaskPtr && task )
 	TaskID const newID = mIDGen.Generate();
 
 	// Add
+	bool wasEmpty;
 	{
 		WriterLock lock{ mTaskRecordLock };
+		wasEmpty = mTaskRecords.empty();
 		mTaskRecords.emplace_back( newID, rftl::move( task ) );
+	}
+
+	if( wasEmpty )
+	{
+		OnTasksNewlyAvailable();
 	}
 
 	return newID;
@@ -160,7 +167,7 @@ void FIFOTaskPool::ReturnAndUnblockTask( TaskID taskID, TaskState newState )
 
 
 
-TaskPtr FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
+void FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
 {
 	RF_ASSERT( taskID != kInvalidTaskID );
 	RF_ASSERT( newState == TaskState::Terminate );
@@ -175,15 +182,16 @@ TaskPtr FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
 			{
 				RF_ASSERT_MSG( record.mBlocked.load( rftl::memory_order::memory_order_acquire ), "Attempting to remove a non-blocked task" );
 
-				TaskPtr retVal = rftl::move( record.mTask );
+				TaskPtr task = rftl::move( record.mTask );
 				mTaskRecords.erase( iter );
-				return retVal;
+				OnTaskRemoved( rftl::move( task ), taskID, newState );
+				return;
 			}
 		}
 	}
 	
 	RF_DBGFAIL_MSG( "Failed to locate task" );
-	return nullptr;
+	return;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

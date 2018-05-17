@@ -5,9 +5,11 @@
 
 #include "core_logic/PartialPlanner.h"
 #include "core/ptr/weak_ptr.h"
+#include "core/ptr/unique_ptr.h"
 
 #include "rftl/string"
 #include "rftl/vector"
+#include "rftl/mutex"
 
 
 namespace RF { namespace app {
@@ -27,13 +29,14 @@ public:
 	using TaskRef = TaskRepresentation::MetaValue;
 private:
 	using TaskHandles = rftl::vector<UniquePtr<scheduling::Task>>;
+	using TasksInFlight = rftl::unordered_map<scheduling::TaskID, PartialPlanner::PartialPlan::PlannedActionID>;
 
 
 	//
 	// Public methods
 public:
-	FrameBuilder() = default;
-	~FrameBuilder() = default;
+	FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler );
+	~FrameBuilder();
 
 	// Add tasks to the plan
 	// NOTE: Cannot be called after finalization
@@ -56,7 +59,7 @@ public:
 	// NOTE: Cannot be called while a plan is in progress
 	// NOTE: If called when the last plan is complete, will start a new
 	//  instance of the plan
-	bool StartPlan( WeakPtr<scheduling::TaskPool> taskPool );
+	bool StartPlan();
 
 	// Check if the current plan is complete
 	// NOTE: Cannot be called before finalization
@@ -72,7 +75,8 @@ private:
 	bool HasLastValidPlan() const;
 
 	void OnPlanStart();
-	void OnTaskComplete( TaskRef const& task );
+	void OnTaskComplete( TaskRef const& task, scheduling::TaskID taskID );
+	void ScheduleNextTasks();
 
 
 	//
@@ -80,15 +84,23 @@ private:
 private:
 	bool mFinalized = false;
 
+	UniquePtr<FrameBuilder*> mSelf;
+
 	PartialPlanner mPartialPlanner;
 	TaskHandles mTaskHandles;
+
+	WeakPtr<scheduling::TaskScheduler> mScheduler;
+	WeakPtr<scheduling::TaskPool> mTaskPool;
 
 	PartialPlanner::Preconditions mPreconditions;
 	PartialPlanner::Postconditions mPostcontidions;
 
 	PartialPlanner::PartialPlan mLastValidPlan;
+
+	// NOTE: Task flighting lock applies to current plan and flighted tasks
+	rftl::mutex mTaskFlightingLock;
 	PartialPlanner::PartialPlan mCurrentPlan;
-	WeakPtr<scheduling::TaskPool> mCurrentTaskPool;
+	TasksInFlight mTasksInFlight;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
