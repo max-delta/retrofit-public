@@ -9,18 +9,22 @@
 namespace RF { namespace fsm {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<
+	typename TStateMachine = FiniteStateMachine<>,
+	typename TAlloc = rftl::allocator<typename TStateMachine>>
 class HierarchicalStateMachine
 {
 public:
-	// TODO: Templatize
-	using StateMachine = FiniteStateMachine;
-	using State = FiniteStateMachine::State;
-	using StateID = FiniteStateMachine::StateID;
-	using StateCollection = FiniteStateMachine::StateCollection;
-	using StateChangeContext = FiniteStateMachine::StateChangeContext;
-	using Allocator = rftl::allocator<typename StateMachine>;
+	using StateMachine = TStateMachine;
+	using State = typename StateMachine::State;
+	using StateID = typename StateMachine::StateID;
+	using StateCollection = typename StateMachine::StateCollection;
+	using StateChangeContext = typename StateMachine::StateChangeContext;
+	using Allocator = TAlloc;
 private:
-	using StateMachineStack = rftl::vector<StateMachine, Allocator>;
+	// TODO: Rebind support
+	using StateMachineAlloc = Allocator;
+	using StateMachineStack = rftl::vector<StateMachine, StateMachineAlloc>;
 
 
 public:
