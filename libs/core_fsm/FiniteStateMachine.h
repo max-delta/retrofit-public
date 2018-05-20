@@ -10,14 +10,18 @@
 namespace RF { namespace fsm {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<
+	typename TState = VoidState,
+	typename TStateID = nullptr_t,
+	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>,
+	typename TStateChangeContext = nullptr_t>
 class FiniteStateMachine
 {
 public:
-	// TODO: Templatize
-	using State = VoidState;
-	using StateID = nullptr_t;
-	using StateCollection = GenericStateCollection<StateID, State>;
-	using StateChangeContext = nullptr_t;
+	using State = TState;
+	using StateID = TStateID;
+	using StateCollection = TStateCollection;
+	using StateChangeContext = TStateChangeContext;
 
 
 public:

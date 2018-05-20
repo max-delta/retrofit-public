@@ -6,7 +6,7 @@
 namespace RF { namespace fsm {
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO: Delete this, and this file, after templatizing state machines
+// Default state to show usage patterns, not intended for actual use
 class VoidState
 {
 public:
