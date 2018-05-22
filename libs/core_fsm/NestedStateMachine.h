@@ -12,7 +12,7 @@ namespace RF { namespace fsm {
 template<
 	typename TStateMachine = FiniteStateMachine<>,
 	typename TAlloc = rftl::allocator<typename TStateMachine>>
-class HierarchicalStateMachine
+class NestedStateMachine
 {
 public:
 	using StateMachine = TStateMachine;
@@ -28,7 +28,7 @@ private:
 
 
 public:
-	explicit HierarchicalStateMachine( WeakPtr<StateCollection> const& stateCollection )
+	explicit NestedStateMachine( WeakPtr<StateCollection> const& stateCollection )
 		: mStateCollection( stateCollection )
 	{
 		RF_ASSERT( mStateCollection != nullptr );

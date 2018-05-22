@@ -5,7 +5,7 @@
     <ClInclude Include="VoidState.h" />
     <ClInclude Include="FiniteStateMachine.h" />
     <ClInclude Include="GenericStateCollection.h" />
-    <ClInclude Include="HierarchicalStateMachine.h" />
+    <ClInclude Include="NestedStateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
