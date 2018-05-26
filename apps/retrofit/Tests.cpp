@@ -361,7 +361,7 @@ void InitFrameBuilderTest()
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );
-		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		UniquePtr<TaskType> newTask = DefaultCreator<TaskType>::Create( rftl::move( myFunctor ) );
 		app::FrameBuilder::TaskRepresentation taskDef;
 		taskDef.mMeta = newTask;
 		taskDef.mPostconditions.mStates.emplace( "Test", "Started" );
@@ -374,7 +374,7 @@ void InitFrameBuilderTest()
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );
-		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		UniquePtr<TaskType> newTask = DefaultCreator<TaskType>::Create( rftl::move( myFunctor ) );
 		app::FrameBuilder::TaskRepresentation taskDef;
 		taskDef.mMeta = newTask;
 		taskDef.mPreconditions.mStates.emplace( "Test", "Started" );
@@ -388,7 +388,7 @@ void InitFrameBuilderTest()
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );
-		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		UniquePtr<TaskType> newTask = DefaultCreator<TaskType>::Create( rftl::move( myFunctor ) );
 		app::FrameBuilder::TaskRepresentation taskDef;
 		taskDef.mMeta = newTask;
 		taskDef.mPreconditions.mStates.emplace( "Test", "Started" );

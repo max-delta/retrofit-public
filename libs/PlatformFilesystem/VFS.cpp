@@ -5,7 +5,7 @@
 #include "Logging/Logging.h"
 
 #include "core/macros.h"
-#include "core/ptr/entwined_creator.h"
+#include "core/ptr/default_creator.h"
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
@@ -712,7 +712,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 		}
 
 		// Sweet! Got it
-		return EntwinedCreator<FileHandle>::Create( file );
+		return DefaultCreator<FileHandle>::Create( file );
 	}
 
 	// Couldn't find

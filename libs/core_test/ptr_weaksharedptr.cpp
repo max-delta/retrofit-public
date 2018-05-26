@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "core/ptr/weak_shared_ptr.h"
-#include "core/ptr/entwined_creator.h"
+#include "core/ptr/default_creator.h"
 
 
 namespace RF {
@@ -42,7 +42,7 @@ TEST(WeakSharedPtr, MeaninglessChurn)
 	// Implicit cast into a stronger pointer, which immediately drops out of
 	//  it's lifecylce, leaving the WeakSharedPtr holding onto a dead pointer
 	{
-		WeakSharedPtr<int> wsptr = WeakSharedPtr<int>( EntwinedCreator<int>::Create( 47 ) );
+		WeakSharedPtr<int> wsptr = WeakSharedPtr<int>( DefaultCreator<int>::Create( 47 ) );
 		ASSERT_TRUE(wsptr.Weaken() == nullptr);
 		ASSERT_TRUE(wsptr.Lock() == nullptr);
 	}
@@ -54,7 +54,7 @@ TEST(WeakSharedPtr, SoloLifecycle)
 {
 	// Weak
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr = source;
 			ASSERT_TRUE(wsptr.Weaken() != nullptr);
@@ -66,7 +66,7 @@ TEST(WeakSharedPtr, SoloLifecycle)
 
 	// Strong
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr = source;
 			ASSERT_TRUE(wsptr.Weaken() != nullptr);
@@ -78,7 +78,7 @@ TEST(WeakSharedPtr, SoloLifecycle)
 
 	// Pre-mature termination
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr = source;
 			ASSERT_TRUE(wsptr.Weaken() != nullptr);
@@ -95,7 +95,7 @@ TEST(WeakSharedPtr, Cyclic)
 {
 	// Initialize ourselves with a strengthened pointer we made
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr = source;
 			ASSERT_TRUE(wsptr.Weaken() != nullptr);
@@ -124,7 +124,7 @@ TEST(WeakSharedPtr, Move)
 {
 	// Move to longer-lived pointer
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr2;
 			ASSERT_TRUE(wsptr2.Weaken() == nullptr);
@@ -160,7 +160,7 @@ TEST(WeakSharedPtr, Move)
 //
 //	// Construct into move
 //	{
-//		WeakSharedPtr<Derived> wsptr1 = EntwinedCreator<Derived>::Create();
+//		WeakSharedPtr<Derived> wsptr1 = DefaultCreator<Derived>::Create();
 //		ASSERT_TRUE(wsptr1 != nullptr);
 //		WeakSharedPtr<Base> uptr2( rftl::move( wsptr1 ) );
 //		ASSERT_TRUE(wsptr1 == nullptr);
@@ -174,7 +174,7 @@ TEST(WeakSharedPtr, Copy)
 {
 	// Copy to longer-lived pointer
 	{
-		SharedPtr<int> source = EntwinedCreator<int>::Create(47);
+		SharedPtr<int> source = DefaultCreator<int>::Create(47);
 		{
 			WeakSharedPtr<int> wsptr2;
 			ASSERT_TRUE(wsptr2.Weaken() == nullptr);

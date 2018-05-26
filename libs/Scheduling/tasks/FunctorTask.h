@@ -2,7 +2,7 @@
 #include "NonIncrementalTask.h"
 
 #include "core/ptr/unique_ptr.h"
-#include "core/ptr/entwined_creator.h"
+#include "core/ptr/default_creator.h"
 
 #include "rftl/type_traits"
 
@@ -102,7 +102,7 @@ public:
 	{
 		Functor cloneFunc = mFunctor;
 		CloneableFunctorTask clone = CreateCloneableFunctorTask( rftl::move( cloneFunc ) );
-		return EntwinedCreator<CloneableFunctorTask>::Create( rftl::move( clone ) );
+		return DefaultCreator<CloneableFunctorTask>::Create( rftl::move( clone ) );
 	}
 
 	virtual void Run() override final

@@ -17,7 +17,6 @@
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 
 #include "rftl/thread"
 
@@ -31,7 +30,7 @@ int main()
 	app::Startup();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
-	UniquePtr<FramePackEditor> framePackEditorPtr = EntwinedCreator<FramePackEditor>::Create( app::g_Vfs );
+	UniquePtr<FramePackEditor> framePackEditorPtr = DefaultCreator<FramePackEditor>::Create( app::g_Vfs );
 	FramePackEditor* const framePackEditor = framePackEditorPtr;
 	framePackEditor->Init();
 
