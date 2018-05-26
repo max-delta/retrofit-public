@@ -17,7 +17,6 @@
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 
 #include "rftl/thread"
 

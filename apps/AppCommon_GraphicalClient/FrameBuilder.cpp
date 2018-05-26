@@ -8,7 +8,6 @@
 #include "Scheduling/taskpools/TaskPoolListener.h"
 
 #include "core/ptr/unique_ptr.h"
-#include "core/ptr/entwined_creator.h"
 #include "core/ptr/default_creator.h"
 
 
@@ -21,7 +20,7 @@ FrameBuilder::FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler 
 	RF_ASSERT( mScheduler != nullptr );
 
 	// Create weakly-attached listener
-	mSelf = EntwinedCreator<FrameBuilder*>::Create( this );
+	mSelf = DefaultCreator<FrameBuilder*>::Create( this );
 	WeakPtr<FrameBuilder*> weakSelf = mSelf;
 	scheduling::TaskPoolListener listener;
 	auto onTaskRemoved = [weakSelf](

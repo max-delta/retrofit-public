@@ -8,7 +8,6 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "Logging/Logging.h"
 
-#include "core/ptr/entwined_creator.h"
 #include "core/ptr/default_creator.h"
 
 
@@ -48,7 +47,7 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const & deviceInte
 
 UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const & filename )
 {
-	UniquePtr<Texture> newTexture = EntwinedCreator<Texture>::Create();
+	UniquePtr<Texture> newTexture = DefaultCreator<Texture>::Create();
 
 	// Loading deferred to post-load step
 	return newTexture;

@@ -3,7 +3,6 @@
 
 #include "core_platform/windows_inc.h"
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
@@ -14,8 +13,8 @@ namespace RF { namespace input {
 WndProcInputDevice::WndProcInputDevice()
 	: InputDevice(
 		DefaultCreator<WndProcDigitalInputComponent>::Create(),
-		EntwinedCreator<WndProcAnalogInputComponent>::Create(),
-		EntwinedCreator<WndProcTextInputComponent>::Create() )
+		DefaultCreator<WndProcAnalogInputComponent>::Create(),
+		DefaultCreator<WndProcTextInputComponent>::Create() )
 	, m_Digital( *(WndProcDigitalInputComponent*)m_DigitalComponent.Get() )
 	, m_Analog( *(WndProcAnalogInputComponent*)m_AnalogComponent.Get() )
 	, m_Text( *(WndProcTextInputComponent*)m_TextComponent.Get() )
