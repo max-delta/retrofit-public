@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "core/compiler.h"
+
 #include "rftl/variant"
 #include "rftl/vector"
 #include "rftl/string"
@@ -24,8 +26,7 @@ public:
 	//
 	// Types
 public:
-	// TODO: Move check to core_platform
-	#if (defined(_WIN64) || defined(_LP64))
+	#if (RF_PLATFORM_POINTER_BYTES >= 8)
 		typedef int64_t Integer;
 	#else
 		typedef int32_t Integer;
