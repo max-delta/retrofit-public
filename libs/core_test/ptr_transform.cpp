@@ -2,7 +2,7 @@
 
 #include "core/ptr/ptr_transform.h"
 #include "core/ptr/weak_shared_ptr.h"
-#include "core/ptr/entwined_creator.h"
+#include "core/ptr/default_creator.h"
 
 #include "rftl/cstdlib"
 
@@ -18,7 +18,7 @@ TEST(UniquePtr, TransformToShared)
 		SharedPtr<int> sptr;
 		ASSERT_TRUE( sptr == nullptr );
 		{
-			UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
+			UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
 			ASSERT_TRUE( uptr != nullptr );
 			wptr = uptr;
 			ASSERT_TRUE(wptr != nullptr);
@@ -52,7 +52,7 @@ TEST( SharedPtr, TransformToUnique )
 		UniquePtr<int> uptr;
 		ASSERT_TRUE( uptr == nullptr );
 		{
-			SharedPtr<int> sptr = EntwinedCreator<int>::Create( 47 );
+			SharedPtr<int> sptr = DefaultCreator<int>::Create( 47 );
 			ASSERT_TRUE( sptr != nullptr );
 			wptr = sptr;
 			ASSERT_TRUE( wptr != nullptr );

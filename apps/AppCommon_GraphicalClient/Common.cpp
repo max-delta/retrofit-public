@@ -14,7 +14,6 @@
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 
 #include "rftl/thread"
 
@@ -100,7 +99,7 @@ void Startup()
 	g_Graphics->Initialize( k_Width, k_Height );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
-	s_WndProcInput = EntwinedCreator<input::WndProcInputDevice>::Create();
+	s_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 	g_WndProcInput = s_WndProcInput;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );

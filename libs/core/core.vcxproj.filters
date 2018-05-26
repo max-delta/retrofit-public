@@ -60,6 +60,9 @@
       <Filter>ptr</Filter>
     </ClInclude>
     <ClInclude Include="idgen.h" />
+    <ClInclude Include="ptr\split_creator.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

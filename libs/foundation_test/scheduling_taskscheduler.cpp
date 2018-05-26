@@ -6,7 +6,6 @@
 #include "Scheduling/TaskScheduler.h"
 
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 
 #include "rftl/atomic"
 #include "rftl/future"
@@ -82,7 +81,7 @@ TEST( Scheduling, SingleThreadedSchedulerLifetime )
 		TaskID taskID;
 		auto myFunctor = CreateFunctorTask( details::IncU8Val );
 		using TaskType = decltype( myFunctor );
-		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		UniquePtr<TaskType> newTask = DefaultCreator<TaskType>::Create( rftl::move( myFunctor ) );
 		task = newTask;
 
 		taskID = pool->AddTask( rftl::move( newTask ) );
@@ -211,7 +210,7 @@ TEST( Scheduling, AsyncThreadedSchedulerLifetime )
 		TaskID taskID;
 		auto myFunctor = CreateFunctorTask( details::IncU8Val );
 		using TaskType = decltype( myFunctor );
-		UniquePtr<TaskType> newTask = EntwinedCreator<TaskType>::Create( rftl::move( myFunctor ) );
+		UniquePtr<TaskType> newTask = DefaultCreator<TaskType>::Create( rftl::move( myFunctor ) );
 		task = newTask;
 
 		taskID = pool->AddTask( rftl::move( newTask ) );

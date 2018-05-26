@@ -7,7 +7,6 @@
 #include "Timing/clocks.h"
 
 #include "core/ptr/default_creator.h"
-#include "core/ptr/entwined_creator.h"
 
 #include "rftl/thread"
 #include "rftl/chrono"
@@ -24,7 +23,7 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	for( size_t i = 0; i < workerThreadCount; i++ )
 	{
 		// Allocate
-		UniquePtr<ThreadedWorker> newThreadedWorker = EntwinedCreator<ThreadedWorker>::Create();
+		UniquePtr<ThreadedWorker> newThreadedWorker = DefaultCreator<ThreadedWorker>::Create();
 
 		// Create worker
 		UniquePtr<scheduling::ThreadableTaskWorker> newWorker = DefaultCreator<scheduling::ThreadableTaskWorker>::Create();
@@ -89,7 +88,7 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	// For the main thread...
 	{
 		// Allocate
-		mMainThreadWorker = EntwinedCreator<ThreadedWorker>::Create();
+		mMainThreadWorker = DefaultCreator<ThreadedWorker>::Create();
 
 		// Create worker
 		UniquePtr<scheduling::ThreadableTaskWorker> newWorker = DefaultCreator<scheduling::ThreadableTaskWorker>::Create();
