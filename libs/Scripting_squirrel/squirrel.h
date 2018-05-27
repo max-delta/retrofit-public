@@ -28,8 +28,6 @@ public:
 	//
 	// Types
 public:
-	typedef rftl::string ElementName;
-
 	#if (RF_PLATFORM_POINTER_BYTES >= 8)
 		typedef int64_t Integer;
 	#else
@@ -48,6 +46,7 @@ public:
 	typedef rftl::vector<Element> ElementArray;
 private:
 	typedef SQVM* HSQUIRRELVM;
+	typedef char ElementNameCharType;
 
 
 	//
@@ -67,13 +66,17 @@ public:
 
 	bool AddSourceFromBuffer( rftl::string const& buffer );
 
-	Element GetGlobalVariable( ElementName const& name );
-	ElementArray GetGlobalVariableAsArray( ElementName const& name );
+	Element GetGlobalVariable( rftl::string const& name );
+	Element GetGlobalVariable( char const* name );
+	ElementArray GetGlobalVariableAsArray( rftl::string const& name );
+	ElementArray GetGlobalVariableAsArray( char const* name );
 
 
 	//
 	// Private methods
 private:
+	Element GetGlobalVariable( ElementNameCharType const* name, size_t nameLen );
+	ElementArray GetGlobalVariableAsArray( ElementNameCharType const* name, size_t nameLen );
 
 
 	//
