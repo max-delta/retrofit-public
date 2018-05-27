@@ -21,13 +21,7 @@ static rftl::string GetLastError( HSQUIRRELVM vm )
 	SQChar const* rawString;
 	SQRESULT const result = sq_getstring( vm, -1, &rawString );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
-	rftl::wstring const wString( rawString );
-	rftl::string retVal;
-	for( wchar_t const& wch : wString )
-	{
-		retVal.push_back( math::integer_truncast<char>( wch ) );
-	}
-
+	rftl::string retVal( rawString );
 	sq_settop( vm, top );
 	return retVal;
 }
@@ -103,7 +97,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQChar const* string;
 			result = sq_getstring( vm, -1, &string );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = rftl::wstring( string );
+			retVal = rftl::string( string );
 			break;
 		}
 		case OT_USERPOINTER:
@@ -159,14 +153,14 @@ SquirrelVM::~SquirrelVM()
 
 
 
-bool SquirrelVM::AddSourceFromBuffer( rftl::wstring const& buffer )
+bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 {
 	SQInteger const top = sq_gettop( m_Vm );
 	RF_ASSERT( top == 0 );
 
 	SQRESULT result;
 
-	result = sq_compilebuffer( m_Vm, buffer.c_str(), math::integer_cast<SQInteger>( buffer.length() ), L"SOURCE", true );
+	result = sq_compilebuffer( m_Vm, buffer.c_str(), math::integer_cast<SQInteger>( buffer.length() ), "SOURCE", true );
 	if( SQ_FAILED( result ) )
 	{
 		NotifyLastError( m_Vm );

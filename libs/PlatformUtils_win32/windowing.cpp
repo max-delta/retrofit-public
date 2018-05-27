@@ -16,7 +16,7 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 	// IDC_ARROW
 	auto idc_arrow = ((win32::LPWSTR)((win32::ULONG_PTR)((win32::WORD)(32512))));
 
-	win32::WNDCLASS wc = {};
+	win32::WNDCLASSW wc = {};
 	wc.style = CS_OWNDC; // Individual instances of this window will not share device contexts.
 	wc.lpfnWndProc = (win32::WNDPROC)WndProc; // The function that will be called for events.
 	wc.cbClsExtra = 0; // The class has no extra memory.
