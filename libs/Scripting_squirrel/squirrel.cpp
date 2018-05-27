@@ -219,7 +219,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const * n
 	SQRESULT result;
 
 	sq_pushroottable( m_Vm );
-	AssertStackTypes( m_Vm, -1, OT_TABLE);
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
 	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
