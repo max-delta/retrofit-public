@@ -146,6 +146,7 @@
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
     <ClCompile Include="scheduling_taskscheduler.cpp" />
+    <ClCompile Include="scripting_squirrel.cpp" />
     <ClCompile Include="serialization_diagnosticexporter.cpp" />
     <ClCompile Include="serialization_objectserializer.cpp" />
     <ClCompile Include="serialization_xmlexporter.cpp" />
@@ -174,6 +175,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Scheduling\Scheduling.vcxproj">
       <Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Scripting_squirrel\Scripting_squirrel.vcxproj">
+      <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Serialization\Serialization.vcxproj">
       <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
