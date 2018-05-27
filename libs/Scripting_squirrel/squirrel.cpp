@@ -182,7 +182,35 @@ bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementName const & name )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string const & name )
+{
+	return GetGlobalVariable( name.c_str(), name.length() );
+}
+
+
+
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( char const * name )
+{
+	return GetGlobalVariable( name, strlen( name ) );
+}
+
+
+
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string const & name )
+{
+	return GetGlobalVariableAsArray( name.c_str(), name.length() );
+}
+
+
+
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( char const * name )
+{
+	return GetGlobalVariableAsArray( name, strlen( name ) );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const * name, size_t nameLen )
 {
 	SQInteger const top = sq_gettop( m_Vm );
 	RF_ASSERT( top == 0 );
@@ -193,7 +221,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementName const & name )
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE);
 
-	sq_pushstring( m_Vm, name.c_str(), math::integer_cast<SQInteger>( name.length() ) );
+	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
 
 	result = sq_get( m_Vm, -2 );
@@ -207,7 +235,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementName const & name )
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementName const & name )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharType const * name, size_t nameLen )
 {
 	SQInteger const top = sq_gettop( m_Vm );
 	RF_ASSERT( top == 0 );
@@ -219,7 +247,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementName const
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
-	sq_pushstring( m_Vm, name.c_str(), math::integer_cast<SQInteger>( name.length() ) );
+	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
 
 	result = sq_get( m_Vm, -2 );
