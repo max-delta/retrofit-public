@@ -60,7 +60,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 	SQRESULT result;
 	SQObjectType type;
 
-	type = sq_gettype( vm, -1 );
+	type = sq_gettype( vm, depth );
 	switch( type )
 	{
 		case OT_NULL:
@@ -71,7 +71,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_INTEGER:
 		{
 			SQInteger integer;
-			result = sq_getinteger( vm, -1, &integer );
+			result = sq_getinteger( vm, depth, &integer );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
 			retVal = reflect::Value( static_cast<SquirrelVM::Integer>( integer ) );
 			break;
@@ -79,7 +79,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_FLOAT:
 		{
 			SQFloat floating;
-			result = sq_getfloat( vm, -1, &floating );
+			result = sq_getfloat( vm, depth, &floating );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
 			retVal = reflect::Value( static_cast<SquirrelVM::FloatingPoint>( floating ) );
 			break;
@@ -87,7 +87,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_BOOL:
 		{
 			SQBool boolean;
-			result = sq_getbool( vm, -1, &boolean );
+			result = sq_getbool( vm, depth, &boolean );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
 			retVal = reflect::Value( static_cast<SquirrelVM::Boolean>( boolean ) );
 			break;
@@ -95,7 +95,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_STRING:
 		{
 			SQChar const* string;
-			result = sq_getstring( vm, -1, &string );
+			result = sq_getstring( vm, depth, &string );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
 			retVal = rftl::string( string );
 			break;
@@ -103,7 +103,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_USERPOINTER:
 		{
 			SQUserPointer ptr;
-			result = sq_getuserpointer( vm, -1, &ptr );
+			result = sq_getuserpointer( vm, depth, &ptr );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
 			retVal = reflect::Value( static_cast<SquirrelVM::Pointer>( ptr ) );
 			break;
