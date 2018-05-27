@@ -33,10 +33,10 @@ public:
 	#endif
 	typedef float FloatingPoint;
 	typedef bool Boolean;
-	typedef rftl::wstring String;
+	typedef rftl::string String;
 	typedef void* Pointer;
 	typedef nullptr_t Null;
-	typedef rftl::wstring ElementName;
+	typedef rftl::string ElementName;
 	typedef rftl::variant<
 		Integer,
 		FloatingPoint,
@@ -65,7 +65,7 @@ public:
 	SquirrelVM();
 	~SquirrelVM();
 
-	bool AddSourceFromBuffer( rftl::wstring const& buffer );
+	bool AddSourceFromBuffer( rftl::string const& buffer );
 
 	Element GetGlobalVariable( ElementName const& name );
 	ElementArray GetGlobalVariableAsArray( ElementName const& name );

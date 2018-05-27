@@ -30,7 +30,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	UniquePtr<gfx::FramePackBase> retVal;
 
 	{
-		rftl::wstring fileBuf;
+		rftl::string fileBuf;
 		{
 			file::FileHandlePtr const digitFPackFilePtr = app::g_Vfs->GetFileForRead( filename );
 			RF_ASSERT( digitFPackFilePtr != nullptr );
@@ -48,7 +48,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 			int fch = 0;
 			while( ( fch = fgetc( digitFPackFile ) ) != EOF )
 			{
-				fileBuf.push_back( math::integer_cast<wchar_t>( fch ) );
+				fileBuf.push_back( math::integer_cast<char>( fch ) );
 			}
 		}
 
@@ -56,7 +56,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 		RF_ASSERT( sourceSuccess );
 	}
 
-	elem = vm.GetGlobalVariable( L"NumTimeSlots" );
+	elem = vm.GetGlobalVariable( "NumTimeSlots" );
 	integer = rftl::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
 	size_t const minFramesToCreate = math::Max<size_t>( minFrames, math::integer_cast<size_t>( *integer ) );
@@ -82,29 +82,24 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 	}
 	retVal->m_NumTimeSlots = math::integer_cast<uint8_t>( *integer );
 
-	elem = vm.GetGlobalVariable( L"PreferredSlowdownRate" );
+	elem = vm.GetGlobalVariable( "PreferredSlowdownRate" );
 	integer = rftl::get_if<script::SquirrelVM::Integer>( &elem );
 	RF_ASSERT( integer != nullptr );
 	retVal->m_PreferredSlowdownRate = math::integer_cast<uint8_t>( *integer );
 
-	elemArr = vm.GetGlobalVariableAsArray( L"Texture" );
+	elemArr = vm.GetGlobalVariableAsArray( "Texture" );
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
-		rftl::wstring const* wstring = rftl::get_if<script::SquirrelVM::String>( &elemRef );
-		RF_ASSERT( wstring != nullptr );
-		rftl::string string;
-		for( wchar_t const& wch : *wstring )
-		{
-			string.push_back( math::integer_cast<char>( wch ) );
-		}
+		rftl::string const* string = rftl::get_if<script::SquirrelVM::String>( &elemRef );
+		RF_ASSERT( string != nullptr );
 		retVal->GetMutableTimeSlots()[i].m_TextureReference =
 			texMan->LoadNewResourceGetID(
 				file::VFS::CreateStringFromPath( filename ).append( { static_cast<char>( i + 1 ),'\0' } ),
-				file::VFS::k_Root.GetChild( file::VFS::CreatePathFromString( string ) ) );
+				file::VFS::k_Root.GetChild( file::VFS::CreatePathFromString( *string ) ) );
 	}
 
-	elemArr = vm.GetGlobalVariableAsArray( L"TextureOriginX" );
+	elemArr = vm.GetGlobalVariableAsArray( "TextureOriginX" );
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
@@ -113,7 +108,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 		retVal->GetMutableTimeSlots()[i].m_TextureOriginX = math::integer_cast<uint8_t>( *integer );
 	}
 
-	elemArr = vm.GetGlobalVariableAsArray( L"TextureOriginY" );
+	elemArr = vm.GetGlobalVariableAsArray( "TextureOriginY" );
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
@@ -122,7 +117,7 @@ RF::UniquePtr<RF::gfx::FramePackBase> LoadFramePackFromSquirrel( RF::file::VFSPa
 		retVal->GetMutableTimeSlots()[i].m_TextureOriginY = math::integer_cast<uint8_t>( *integer );
 	}
 
-	elemArr = vm.GetGlobalVariableAsArray( L"Sustain" );
+	elemArr = vm.GetGlobalVariableAsArray( "Sustain" );
 	for( size_t i = 0; i < elemArr.size(); i++ )
 	{
 		script::SquirrelVM::Element const& elemRef = elemArr[i];
