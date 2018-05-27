@@ -38,6 +38,12 @@ public:
 	typedef void* Pointer;
 	typedef rftl::string String;
 
+	// WARNING: STL variant is flawed, and the first index has special meaning,
+	//  so it's important that the first entry be the RF reflection value type,
+	//  since it has internal logic that compensates for the issues with the
+	//  standard C++ variant
+	// NOTE: Observed effect to users is that a default-constructed element
+	//  will contain an explicitly invalid RF reflection value
 	typedef rftl::variant<
 		reflect::Value,
 		String,

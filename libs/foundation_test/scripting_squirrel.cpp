@@ -13,48 +13,114 @@ TEST( Squirrel, EmptyVM )
 
 
 
-TEST( Squirrel, LegacyTest )
+TEST( Squirrel, GlobalInteger )
 {
 	SquirrelVM vm;
 	constexpr char source[] =
 		"x <- 5;"
-		"y <- 7.0;"
-		"z <- true;"
-		"s <- \"STRING\";"
-		"n <- null;"
-		"a <- [\"first\", \"second\"];"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
+	ASSERT_NE( ref, nullptr );
+	SquirrelVM::Integer const* const val = ref->GetAs<SquirrelVM::Integer>();
+	ASSERT_NE( val, nullptr );
+	ASSERT_EQ( *val, 5 );
+}
 
-	SquirrelVM::Element xElem = vm.GetGlobalVariable( "x" );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &xElem ) != nullptr );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &xElem )->GetAs<SquirrelVM::Integer>() != nullptr );
-	ASSERT_TRUE( *rftl::get_if<reflect::Value>( &xElem )->GetAs<SquirrelVM::Integer>() == 5 );
-	SquirrelVM::Element yElem = vm.GetGlobalVariable( "y" );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &yElem ) != nullptr );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &yElem )->GetAs<SquirrelVM::FloatingPoint>() != nullptr );
-	ASSERT_TRUE( *rftl::get_if<reflect::Value>( &yElem )->GetAs<SquirrelVM::FloatingPoint>() == 7.f );
-	SquirrelVM::Element zElem = vm.GetGlobalVariable( "z" );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &zElem ) != nullptr );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &zElem )->GetAs<SquirrelVM::Boolean>() != nullptr );
-	ASSERT_TRUE( *rftl::get_if<reflect::Value>( &zElem )->GetAs<SquirrelVM::Boolean>() == true );
-	SquirrelVM::Element sElem = vm.GetGlobalVariable( "s" );
-	ASSERT_TRUE( rftl::get_if<SquirrelVM::String>( &sElem ) != nullptr );
-	ASSERT_TRUE( *rftl::get_if<SquirrelVM::String>( &sElem ) == "STRING" );
-	SquirrelVM::Element nElem = vm.GetGlobalVariable( "n" );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &nElem ) != nullptr );
-	ASSERT_TRUE( rftl::get_if<reflect::Value>( &nElem )->GetAs<SquirrelVM::Pointer>() != nullptr );
-	ASSERT_TRUE( *rftl::get_if<reflect::Value>( &nElem )->GetAs<SquirrelVM::Pointer>() == nullptr );
-	SquirrelVM::Element aElem = vm.GetGlobalVariable( "a" );
-	ASSERT_TRUE( rftl::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
-	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( "a" );
+
+
+TEST( Squirrel, GlobalFloat )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"x <- 7.0;"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
+	ASSERT_NE( ref, nullptr );
+	SquirrelVM::FloatingPoint const* const val = ref->GetAs<SquirrelVM::FloatingPoint>();
+	ASSERT_NE( val, nullptr );
+	ASSERT_EQ( *val, 7.f );
+}
+
+
+
+TEST( Squirrel, GlobalBoolean )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"x <- true;"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
+	ASSERT_NE( ref, nullptr );
+	SquirrelVM::Boolean const* const val = ref->GetAs<SquirrelVM::Boolean>();
+	ASSERT_NE( val, nullptr );
+	ASSERT_EQ( *val, true );
+}
+
+
+
+TEST( Squirrel, GlobalNull )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"x <- null;"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
+	ASSERT_NE( ref, nullptr );
+	SquirrelVM::Pointer const* const val = ref->GetAs<SquirrelVM::Pointer>();
+	ASSERT_NE( val, nullptr );
+	ASSERT_EQ( *val, nullptr );
+}
+
+
+
+TEST( Squirrel, GlobalString )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"x <- \"STRING\";"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	SquirrelVM::String const* const val = rftl::get_if<SquirrelVM::String>( &elem );
+	ASSERT_NE( val, nullptr );
+	ASSERT_EQ( *val, "STRING" );
+}
+
+
+
+TEST( Squirrel, GlobalArray )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"x <- [\"first\", \"second\"];"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	SquirrelVM::ArrayTag const* const val = rftl::get_if<SquirrelVM::ArrayTag>( &elem );
+	ASSERT_NE( val, nullptr );
+	SquirrelVM::ElementArray elemArr = vm.GetGlobalVariableAsArray( "x" );
 	{
-		ASSERT_TRUE( aElemArr.size() == 2 );
-		ASSERT_TRUE( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
-		ASSERT_TRUE( *rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) == "first" );
-		ASSERT_TRUE( rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
-		ASSERT_TRUE( *rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) == "second" );
+		ASSERT_EQ( elemArr.size(), 2 );
+		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr[0] );
+		ASSERT_NE( firstVal, nullptr );
+		ASSERT_EQ( *firstVal, "first" );
+		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemArr[1] );
+		ASSERT_NE( secondVal, nullptr );
+		ASSERT_EQ( *secondVal, "second" );
 	}
 }
 
