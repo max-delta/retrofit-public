@@ -8,7 +8,6 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename T>
 class PtrRef
 {
 	RF_NO_COPY(PtrRef);
@@ -19,7 +18,7 @@ class PtrRef
 public:
 	typedef uint32_t CountType;
 	typedef rftl::atomic<CountType> CountStorageType;
-	typedef void (*DeletionFunc)(T *, PtrRef *, void *);
+	typedef void (*DeletionFunc)(void *, PtrRef *, void *);
 
 	// NOTE: "Lock free" in this context applies to truly massive locks like
 	//  mutexes and critical sections. CPU cache behavior and bus nuances are
@@ -47,7 +46,7 @@ public:
 		RF_ASSERT(m_DeletionFunc != nullptr);
 	}
 
-	void Delete( T * p ) const
+	void Delete( void * p ) const
 	{
 		RF_ASSERT(p != nullptr);
 		RF_ASSERT(m_DeletionFunc != nullptr);
@@ -102,6 +101,7 @@ public:
 		}
 	}
 
+	template<typename T>
 	void DecreaseStrongCount(T * & target)
 	{
 		// x86 32/64:

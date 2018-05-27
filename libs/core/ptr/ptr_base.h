@@ -33,12 +33,6 @@ private:
 
 
 	//
-	// Types
-public:
-	typedef PtrRef<T> PtrRef;
-
-
-	//
 	// Public methods
 public:
 	PtrBase( CreationPayload<T> && payload )
@@ -68,13 +62,12 @@ protected:
 		//
 	}
 
-	template<typename DERIVED, typename PTRREFDERIVED>
-	explicit PtrBase( DERIVED * target, PTRREFDERIVED * ref )
+	template<typename DERIVED>
+	explicit PtrBase( DERIVED * target, PtrRef * ref )
 		: m_Target(static_cast<T*>(target))
-		, m_Ref(reinterpret_cast<PtrRef*>(ref))
+		, m_Ref(ref)
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
-		static_assert( rftl::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 	}
 
 	explicit PtrBase( PtrBase && rhs )

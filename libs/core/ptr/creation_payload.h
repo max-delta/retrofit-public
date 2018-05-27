@@ -20,12 +20,6 @@ private:
 
 
 	//
-	// Types
-public:
-	typedef PtrRef<T> PtrRef;
-
-
-	//
 	// Public methods
 public:
 	CreationPayload( T * target, PtrRef * ref )
