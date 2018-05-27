@@ -10,6 +10,7 @@
     <ClCompile Include="serialization_xmlexporter.cpp" />
     <ClCompile Include="serialization_objectserializer.cpp" />
     <ClCompile Include="scheduling_taskscheduler.cpp" />
+    <ClCompile Include="scripting_squirrel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
