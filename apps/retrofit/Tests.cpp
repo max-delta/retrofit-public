@@ -16,7 +16,6 @@
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
-#include "Scripting_squirrel/squirrel.h"
 #include "Scheduling/tasks/FunctorTask.h"
 
 #include "core_platform/uuid.h"
@@ -163,44 +162,6 @@ void DrawInputDebug()
 	}
 	app::g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
 	coord.y += offset;
-}
-
-
-
-void SQTest()
-{
-	using RF::script::SquirrelVM;
-
-	RF::script::SquirrelVM vm;
-	constexpr char source[] =
-		"x <- 5;"
-		"y <- 7.0;"
-		"z <- true;"
-		"s <- \"STRING\";"
-		"n <- null;"
-		"a <- [\"first\", \"second\"];"
-		"\n";
-	bool const sourceAdd = vm.AddSourceFromBuffer( source );
-	RF_ASSERT( sourceAdd );
-
-	SquirrelVM::Element xElem = vm.GetGlobalVariable( "x" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::Integer>( &xElem ) != nullptr );
-	SquirrelVM::Element yElem = vm.GetGlobalVariable( "y" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::FloatingPoint>( &yElem ) != nullptr );
-	SquirrelVM::Element zElem = vm.GetGlobalVariable( "z" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::Boolean>( &zElem ) != nullptr );
-	SquirrelVM::Element sElem = vm.GetGlobalVariable( "s" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::String>( &sElem ) != nullptr );
-	SquirrelVM::Element nElem = vm.GetGlobalVariable( "n" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::Null>( &nElem ) != nullptr );
-	SquirrelVM::Element aElem = vm.GetGlobalVariable( "a" );
-	RF_ASSERT( rftl::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
-	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( "a" );
-	{
-		RF_ASSERT( aElemArr.size() == 2 );
-		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
-		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[1] ) != nullptr );
-	}
 }
 
 
