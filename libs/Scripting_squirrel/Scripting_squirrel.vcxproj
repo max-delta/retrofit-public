@@ -155,6 +155,9 @@
     <ProjectReference Include="..\core\core.vcxproj">
       <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
+      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
     </ProjectReference>

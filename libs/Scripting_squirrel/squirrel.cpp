@@ -65,7 +65,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 	{
 		case OT_NULL:
 		{
-			retVal = nullptr;
+			retVal = reflect::Value( static_cast<SquirrelVM::Pointer>( nullptr ) );
 			break;
 		}
 		case OT_INTEGER:
@@ -73,7 +73,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQInteger integer;
 			result = sq_getinteger( vm, -1, &integer );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = integer;
+			retVal = reflect::Value( static_cast<SquirrelVM::Integer>( integer ) );
 			break;
 		}
 		case OT_FLOAT:
@@ -81,7 +81,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQFloat floating;
 			result = sq_getfloat( vm, -1, &floating );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = floating;
+			retVal = reflect::Value( static_cast<SquirrelVM::FloatingPoint>( floating ) );
 			break;
 		}
 		case OT_BOOL:
@@ -89,7 +89,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQBool boolean;
 			result = sq_getbool( vm, -1, &boolean );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = (bool)boolean;
+			retVal = reflect::Value( static_cast<SquirrelVM::Boolean>( boolean ) );
 			break;
 		}
 		case OT_STRING:
@@ -105,7 +105,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			SQUserPointer ptr;
 			result = sq_getuserpointer( vm, -1, &ptr );
 			RF_ASSERT( SQ_SUCCEEDED( result ) );
-			retVal = ptr;
+			retVal = reflect::Value( static_cast<SquirrelVM::Pointer>( ptr ) );
 			break;
 		}
 		case OT_ARRAY:
@@ -127,7 +127,7 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		default:
 		{
 			RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Type not currently supported" );
-			retVal = nullptr;
+			retVal = reflect::Value{};
 			break;
 		}
 	}
