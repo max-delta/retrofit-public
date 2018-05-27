@@ -10,12 +10,6 @@ template<typename T>
 class SplitCreator
 {
 	//
-	// Types
-public:
-	typedef PtrRef<T> PtrRef;
-
-
-	//
 	// Public methods
 public:
 	template<typename... U>
@@ -32,12 +26,13 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( T * target, PtrRef * ref, void * userData )
+	static void Delete( void * target, PtrRef * ref, void * userData )
 	{
 		(void)userData;
 		if( target != nullptr )
 		{
-			delete target;
+			// NOTE: Subtle... making sure we delete the actual pointer type
+			delete ( reinterpret_cast<T*>( target ) );
 		}
 		if( ref != nullptr )
 		{

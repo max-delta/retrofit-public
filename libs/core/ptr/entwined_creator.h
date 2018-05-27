@@ -10,12 +10,6 @@ template<typename T>
 class EntwinedCreator
 {
 	//
-	// Types
-public:
-	typedef PtrRef<T> PtrRef;
-
-
-	//
 	// Public methods
 public:
 	template<typename... U>
@@ -36,12 +30,12 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( T * target, PtrRef * ref, void * userData )
+	static void Delete( void * target, PtrRef * ref, void * userData )
 	{
 		(void)userData;
 		if( target != nullptr )
 		{
-			target->~T();
+			reinterpret_cast<T*>( target )->~T();
 		}
 		if( ref != nullptr )
 		{

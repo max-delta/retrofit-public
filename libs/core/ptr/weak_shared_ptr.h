@@ -13,7 +13,6 @@ class WeakSharedPtr : public PtrBase<T>
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
-	typedef PtrRef<T> PtrRef;
 
 
 	//

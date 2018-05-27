@@ -20,7 +20,6 @@ private:
 	// Types
 public:
 	typedef PtrBase<T> PtrBase;
-	typedef PtrRef<T> PtrRef;
 
 
 	//
@@ -57,12 +56,11 @@ public:
 		PtrBase::IncreaseWeakCount();
 	}
 
-	template<typename DERIVED, typename PTRREFDERIVED>
-	WeakPtr( DERIVED * target, PTRREFDERIVED * ref )
+	template<typename DERIVED>
+	WeakPtr( DERIVED * target, PtrRef * ref )
 		: PtrBase(target, ref)
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
-		static_assert( rftl::is_same<PTRREFDERIVED, RF::PtrRef<DERIVED> >::value, "Expected to receive DERIVED* and PtrRef<DERIVED>*" );
 		PtrBase::IncreaseWeakCount();
 	}
 
