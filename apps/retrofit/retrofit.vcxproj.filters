@@ -4,12 +4,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Tests.cpp" />
-    <ClCompile Include="TEMP_AssetLoadSave.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tests.h" />
-    <ClInclude Include="TEMP_AssetLoadSave.h" />
     <ClInclude Include="project.h" />
   </ItemGroup>
 </Project>

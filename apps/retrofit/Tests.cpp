@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Tests.h"
 
-#include "TEMP_AssetLoadSave.h"
-
 #include "AppCommon_GraphicalClient/Common.h"
 #include "AppCommon_GraphicalClient/FrameBuilder.h"
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
