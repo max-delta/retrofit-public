@@ -87,5 +87,22 @@ TEST( SharedPtr, TransformToUnique )
 	ASSERT_TRUE( wptr == nullptr );
 }
 
+
+
+TEST( UniquePtr, TransformToVoid )
+{
+	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
+	ASSERT_TRUE( uptr1 != nullptr );
+
+	UniquePtr<void> uptr2;
+	PtrTransformer<int>::PerformVoidTransformation( rftl::move( uptr1 ), uptr2 );
+	ASSERT_TRUE( uptr1 == nullptr );
+	ASSERT_TRUE( uptr2 != nullptr );
+
+	int const* const val = reinterpret_cast<int const*>( static_cast<void const*>( uptr2 ) );
+	ASSERT_TRUE( val != nullptr );
+	ASSERT_EQ( *val, 47 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
