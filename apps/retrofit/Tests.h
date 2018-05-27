@@ -9,8 +9,6 @@ void DrawTest();
 
 void DrawInputDebug();
 
-void SQTest();
-
 void XMLTest();
 
 void FPackSerializationTest();

@@ -26,7 +26,6 @@
 constexpr bool k_ConsoleTest = true;
 constexpr bool k_DrawTest = true;
 constexpr bool k_DrawInputDebug = true;
-constexpr bool k_SquirrelTest = true;
 constexpr bool k_XMLTest = true;
 constexpr bool k_FPackSerializationTest = false;
 constexpr bool k_PlatformTest = true;
@@ -50,11 +49,6 @@ int main()
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_CRITICAL, "Console test" );
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_MILESTONE, "Console test" );
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, 1ull << 32, "Console test" );
-	}
-
-	if( k_SquirrelTest )
-	{
-		test::SQTest();
 	}
 
 	if( k_XMLTest )
