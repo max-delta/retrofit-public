@@ -172,30 +172,30 @@ void SQTest()
 	using RF::script::SquirrelVM;
 
 	RF::script::SquirrelVM vm;
-	constexpr wchar_t source[] =
-		L"x <- 5;"
-		L"y <- 7.0;"
-		L"z <- true;"
-		L"s <- \"STRING\";"
-		L"n <- null;"
-		L"a <- [\"first\", \"second\"];"
-		L"\n";
+	constexpr char source[] =
+		"x <- 5;"
+		"y <- 7.0;"
+		"z <- true;"
+		"s <- \"STRING\";"
+		"n <- null;"
+		"a <- [\"first\", \"second\"];"
+		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	RF_ASSERT( sourceAdd );
 
-	SquirrelVM::Element xElem = vm.GetGlobalVariable( L"x" );
+	SquirrelVM::Element xElem = vm.GetGlobalVariable( "x" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::Integer>( &xElem ) != nullptr );
-	SquirrelVM::Element yElem = vm.GetGlobalVariable( L"y" );
+	SquirrelVM::Element yElem = vm.GetGlobalVariable( "y" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::FloatingPoint>( &yElem ) != nullptr );
-	SquirrelVM::Element zElem = vm.GetGlobalVariable( L"z" );
+	SquirrelVM::Element zElem = vm.GetGlobalVariable( "z" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::Boolean>( &zElem ) != nullptr );
-	SquirrelVM::Element sElem = vm.GetGlobalVariable( L"s" );
+	SquirrelVM::Element sElem = vm.GetGlobalVariable( "s" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::String>( &sElem ) != nullptr );
-	SquirrelVM::Element nElem = vm.GetGlobalVariable( L"n" );
+	SquirrelVM::Element nElem = vm.GetGlobalVariable( "n" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::Null>( &nElem ) != nullptr );
-	SquirrelVM::Element aElem = vm.GetGlobalVariable( L"a" );
+	SquirrelVM::Element aElem = vm.GetGlobalVariable( "a" );
 	RF_ASSERT( rftl::get_if<SquirrelVM::ArrayTag>( &aElem ) != nullptr );
-	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( L"a" );
+	SquirrelVM::ElementArray aElemArr = vm.GetGlobalVariableAsArray( "a" );
 	{
 		RF_ASSERT( aElemArr.size() == 2 );
 		RF_ASSERT( rftl::get_if<SquirrelVM::String>( &aElemArr[0] ) != nullptr );
