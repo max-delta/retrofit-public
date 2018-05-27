@@ -16,6 +16,7 @@ class CreationPayload
 	// Friends
 private:
 	template<typename T> friend class PtrBase;
+	template<typename T> friend struct PtrTransformer;
 
 
 	//
