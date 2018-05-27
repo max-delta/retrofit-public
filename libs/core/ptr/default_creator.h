@@ -16,13 +16,13 @@ class DefaultCreator
 };
 
 template<typename T>
-class DefaultCreator< T, typename rftl::enable_if<(sizeof(T) < 128), void>::type > : public EntwinedCreator<T>
+class DefaultCreator< T, typename rftl::enable_if<(sizeof(T) + sizeof( PtrRef ) < 128), void>::type > : public EntwinedCreator<T>
 {
 	// Small types shouldn't split storage since it's wasteful on alloc count
 };
 
 template<typename T>
-class DefaultCreator< T, typename rftl::enable_if<(sizeof( T ) >= 128), void>::type > : public SplitCreator<T>
+class DefaultCreator< T, typename rftl::enable_if<(sizeof( T ) + sizeof( PtrRef ) >= 128), void>::type > : public SplitCreator<T>
 {
 	// Large types shouldn't combine storage since it's wasteful on memory size
 };
