@@ -33,6 +33,21 @@ struct PtrTransformer
 	{
 		out = UniquePtr<T>{ in.CreateTransferPayloadAndWipeSelf() };
 	}
+
+	// NOTE: Very limited use in safe cases, as it effectively just locks you
+	//  out of being able to meaningfully interact with the allocation, unless
+	//  you extract the pointer and cast it to what you think it is, at which
+	//  point you're in the same problem-cases that wanton reintepret_cast
+	//  normally puts you in
+	static void PerformVoidTransformation( UniquePtr<T> && in, UniquePtr<void>& out )
+	{
+		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<void> voidPayload(
+			static_cast<decltype( CreationPayload<void>::m_Target )>( normalPayload.m_Target ),
+			reinterpret_cast<decltype( CreationPayload<void>::m_Ref )> ( normalPayload.m_Ref ) );
+		normalPayload.Clean();
+		out = UniquePtr<void>{ rftl::move( voidPayload ) };
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
