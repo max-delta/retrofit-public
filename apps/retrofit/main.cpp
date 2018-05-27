@@ -27,7 +27,7 @@ constexpr bool k_ConsoleTest = true;
 constexpr bool k_DrawTest = true;
 constexpr bool k_DrawInputDebug = true;
 constexpr bool k_XMLTest = true;
-constexpr bool k_FPackSerializationTest = false;
+constexpr bool k_FPackSerializationTest = true;
 constexpr bool k_PlatformTest = true;
 constexpr bool k_FrameBuilderTest = true;
 

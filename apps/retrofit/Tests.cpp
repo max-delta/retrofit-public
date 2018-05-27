@@ -37,15 +37,16 @@ void InitDrawTest()
 {
 	using namespace RF;
 
-	WeakPtr<gfx::TextureManager> texMan = app::g_Graphics->DebugGetTextureManager();
-	WeakPtr<gfx::FramePackManager> framePackMan = app::g_Graphics->DebugGetFramePackManager();
+	gfx::PPUController& ppu = *app::g_Graphics;
+	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
 	file::VFS& vfs = *app::g_Vfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
 
-	UniquePtr<gfx::FramePackBase> digitFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "testdigit_loop.fpack.sq" ) );
+	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
-	testObj.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack", rftl::move( digitFPack ) );
+	testObj.m_FramePackID = digitFPackID;
 	testObj.m_MaxTimeIndex = digitAnimationLength;
 	testObj.m_TimeSlowdown = 3;
 	testObj.m_Looping = true;
@@ -53,9 +54,10 @@ void InitDrawTest()
 	testObj.m_YCoord = gfx::k_TileSize * 1;
 	testObj.m_ZLayer = 0;
 
-	UniquePtr<gfx::FramePackBase> wiggleFPack = LoadFramePackFromSquirrel( commonFramepacks.GetChild( "test64_wiggle.fpack.sq" ) );
+	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( "testpack2", commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
-	testObj2.m_FramePackID = framePackMan->LoadNewResourceGetID( "testpack2", rftl::move( wiggleFPack ) );
+	testObj2.m_FramePackID = wiggleFPackID;
 	testObj2.m_MaxTimeIndex = 4;
 	testObj2.m_TimeSlowdown = 33 / 4;
 	testObj2.m_Looping = true;;
@@ -212,36 +214,22 @@ void XMLTest()
 
 void FPackSerializationTest()
 {
-	WeakPtr<gfx::TextureManager> const texMan = app::g_Graphics->DebugGetTextureManager();
+	gfx::PPUController& ppu = *app::g_Graphics;
+	gfx::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
+	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
-	// Load from squirrel
+	// Load a common test asset
 	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
-	rftl::string const rootFilename = "testdigit_loop";
-	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( rootFilename + ".fpack.sq" );
-	UniquePtr<gfx::FramePackBase> const digitFPack = LoadFramePackFromSquirrel( digitFPackPath );
+	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack" );
+	gfx::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
+	WeakPtr<gfx::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Serialize
 	std::vector<uint8_t> buffer;
-	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( *texMan, buffer, *digitFPack );
+	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );
 
 	// Cleanup
-	{
-		size_t const numSlots = digitFPack->m_NumTimeSlots;
-		gfx::FramePackBase::TimeSlot const* const timeSlots = digitFPack->GetTimeSlots();
-		for( size_t i = 0; i < numSlots; i++ )
-		{
-			gfx::FramePackBase::TimeSlot const& timeSlot = timeSlots[i];
-			if( timeSlot.m_TextureReference != gfx::k_InvalidManagedTextureID )
-			{
-				rftl::string const squirrelHack = file::VFS::CreateStringFromPath( digitFPackPath ).append( { static_cast<char>( i + 1 ), '\0' } );
-				bool const cleanupSuccess = texMan->DestroyResource( squirrelHack );
-				if( cleanupSuccess == false )
-				{
-					RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to cleanup squirrel hack from hack loading code" );
-				}
-			}
-		}
-	}
+	fpackMan.DestroyResource( "sertestpack" );
 
 	if( writeSuccess == false )
 	{
@@ -261,7 +249,7 @@ void FPackSerializationTest()
 
 	// Create file
 	file::VFS const& vfs = *app::g_Vfs;
-	file::VFSPath const newFilePath = commonFramepacks.GetChild( rootFilename + ".fpack" );
+	file::VFSPath const newFilePath = file::VFS::k_Root.GetChild( "scratch", "sertest.fpack" );
 	{
 		file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );
 		if( fileHandle == nullptr )
@@ -278,7 +266,6 @@ void FPackSerializationTest()
 	}
 
 	// Load file
-	gfx::FramePackManager& fpackMan = *app::g_Graphics->DebugGetFramePackManager();
 	rftl::string const newFilename = file::VFS::CreateStringFromPath( newFilePath );
 	bool const fpackLoadSuccess = fpackMan.LoadNewResource( newFilename, newFilePath );
 	if( fpackLoadSuccess == false )
