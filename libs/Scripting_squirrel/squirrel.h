@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "core_reflect/Value.h"
+
 #include "core/compiler.h"
 
 #include "rftl/variant"
@@ -26,6 +28,8 @@ public:
 	//
 	// Types
 public:
+	typedef rftl::string ElementName;
+
 	#if (RF_PLATFORM_POINTER_BYTES >= 8)
 		typedef int64_t Integer;
 	#else
@@ -33,18 +37,14 @@ public:
 	#endif
 	typedef float FloatingPoint;
 	typedef bool Boolean;
-	typedef rftl::string String;
 	typedef void* Pointer;
-	typedef nullptr_t Null;
-	typedef rftl::string ElementName;
+	typedef rftl::string String;
+
 	typedef rftl::variant<
-		Integer,
-		FloatingPoint,
-		Boolean,
+		reflect::Value,
 		String,
-		Pointer,
-		ArrayTag,
-		Null> Element;
+		ArrayTag> Element;
+
 	typedef rftl::vector<Element> ElementArray;
 private:
 	typedef SQVM* HSQUIRRELVM;
