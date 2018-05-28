@@ -16,7 +16,7 @@ namespace RF { namespace reflect {
 #define RF_REFLECT_VALUE_TYPELIST \
 		bool, \
 		void*, void const*, \
-		VirtualClass*, VirtualClass const*, \
+		::RF::reflect::VirtualClass*, ::RF::reflect::VirtualClass const*, \
 		char, wchar_t, char16_t, char32_t, \
 		float, double, long double, \
 		uint8_t, int8_t, \
@@ -51,7 +51,7 @@ class Value
 	//
 	// Forwards
 private:
-	struct InvalidType;
+	struct InvalidTagType;
 
 
 	//
@@ -68,25 +68,18 @@ public:
 	// Types
 public:
 	using ValueTypes = TypeList<RF_REFLECT_VALUE_TYPELIST>;
-	using InternalStorage = rftl::variant<RF_REFLECT_VALUE_TYPELIST, InvalidType>;
+
+	// Someone on the C++ standards committee fucked up! You can't make an
+	//  empty variant unless you throw exceptions! What the fuck? So, we'll
+	//  use a broken type as a hack
+	using InvalidTag = InvalidTagType const*;
+	using InternalStorage = rftl::variant<RF_REFLECT_VALUE_TYPELIST, InvalidTag>;
 
 
 	//
 	// Constants
 public:
 	static constexpr char const* kTypeNameStrings[] = { RF_REFLECT_VALUE_TYPELIST_STRINGS };
-
-
-	//
-	// Structs
-private:
-	struct InvalidType
-	{
-		// Someone on the C++ standards committee fucked up! You can't make an
-		//  empty variant unless you throw exceptions! What the fuck? So, we'll
-		//  use a broken type as a hack
-		InvalidType() = default;
-	};
 
 
 	//
@@ -124,5 +117,31 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
+
+namespace std {
+template <> struct hash<RF::reflect::Value>
+{
+	size_t operator()( RF::reflect::Value const& val ) const
+	{
+		hash<RF::reflect::Value::InternalStorage> hasher = hash<RF::reflect::Value::InternalStorage>();
+		// TODO: Friend
+		return hasher( *reinterpret_cast<RF::reflect::Value::InternalStorage const*>( &val ) );
+	}
+};
+}
+
+namespace std {
+template <> struct equal_to<RF::reflect::Value>
+{
+	bool operator()( RF::reflect::Value const& lhs, RF::reflect::Value const& rhs ) const
+	{
+		equal_to<RF::reflect::Value::InternalStorage> equalizer = equal_to<RF::reflect::Value::InternalStorage>();
+		// TODO: Friend
+		return equalizer(
+			*reinterpret_cast<RF::reflect::Value::InternalStorage const*>( &lhs ),
+			*reinterpret_cast<RF::reflect::Value::InternalStorage const*>( &rhs ) );
+	}
+};
+}
 
 #include "Value.inl"
