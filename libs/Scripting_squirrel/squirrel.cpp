@@ -194,6 +194,62 @@ bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 
 
 
+bool SquirrelVM::InjectSimpleStruct( ElementNameCharType const* name, ElementNameCharType const* const* memberNames, size_t numMembers )
+{
+	SQInteger const top = sq_gettop( m_Vm );
+	RF_ASSERT( top == 0 );
+
+	SQRESULT result;
+
+	sq_pushroottable( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+
+	// WARNING: Documentation is incorrect for sq_newslot(...), the stack is
+	//  not read in the documented order
+	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( strlen( name ) ) );
+	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
+
+	// Create class
+	result = sq_newclass( m_Vm, false );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+	AssertStackTypes( m_Vm, -1, OT_CLASS, OT_STRING, OT_TABLE );
+
+	// Add members
+	if( numMembers > 0 )
+	{
+		RF_ASSERT( memberNames != nullptr );
+		for( size_t i = 0; i < numMembers; i++ )
+		{
+			ElementNameCharType const* const memberName = memberNames[i];
+
+			// Add member with null as the default value, and no attribute
+			// NOTE: Using sq_rawnemmember(...) to prevent callbacks firing
+			// WARNING: Documentation is incorrect for sq_rawnemmember(...),
+			//  the stack behavior is not popped, and not read in the
+			//  documented order
+			sq_pushstring( m_Vm, memberName, math::integer_cast<SQInteger>( strlen( memberName ) ) );
+			sq_pushnull( m_Vm );
+			sq_pushnull( m_Vm );
+			AssertStackTypes( m_Vm, -1, OT_NULL, OT_NULL, OT_STRING, OT_CLASS );
+			result = sq_rawnewmember( m_Vm, -4, false );
+			RF_ASSERT( SQ_SUCCEEDED( result ) );
+			AssertStackTypes( m_Vm, -1, OT_NULL, OT_NULL, OT_STRING, OT_CLASS );
+			sq_pop( m_Vm, 3 );
+		}
+	}
+
+	// Store in root table
+	AssertStackTypes( m_Vm, -1, OT_CLASS, OT_STRING, OT_TABLE );
+	result = sq_newslot( m_Vm, -3, true );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+
+	sq_settop( m_Vm, top );
+	return true;
+}
+
+
+
 SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string const & name )
 {
 	return GetGlobalVariable( name.c_str(), name.length() );

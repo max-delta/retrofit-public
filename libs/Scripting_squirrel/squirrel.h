@@ -31,16 +31,16 @@ public:
 	// Types
 public:
 	#if (RF_PLATFORM_POINTER_BYTES >= 8)
-		typedef int64_t Integer;
+		using Integer = int64_t;
 	#else
-		typedef int32_t Integer;
+		using Integer = int32_t;
 	#endif
-	typedef float FloatingPoint;
-	typedef bool Boolean;
-	typedef void* Pointer;
-	typedef rftl::string String;
-	typedef ArrayTagType const* ArrayTag;
-	typedef InstanceTagType const* InstanceTag;
+	using FloatingPoint = float;
+	using Boolean = bool;
+	using Pointer = void*;
+	using String = rftl::string;
+	using ArrayTag = ArrayTagType const*;
+	using InstanceTag = InstanceTagType const*;
 
 	// WARNING: STL variant is flawed, and the first index has special meaning,
 	//  so it's important that the first entry be the RF reflection value type,
@@ -48,17 +48,17 @@ public:
 	//  standard C++ variant
 	// NOTE: Observed effect to users is that a default-constructed element
 	//  will contain an explicitly invalid RF reflection value
-	typedef rftl::variant<
+	using Element = rftl::variant<
 		reflect::Value,
 		String,
 		ArrayTag,
-		InstanceTag> Element;
+		InstanceTag>;
 
-	typedef rftl::vector<Element> ElementArray;
-	typedef rftl::unordered_map<Element, Element> ElementMap;
+	using ElementArray = rftl::vector<Element>;
+	using ElementMap = rftl::unordered_map<Element, Element>;
 private:
-	typedef SQVM* HSQUIRRELVM;
-	typedef char ElementNameCharType;
+	using HSQUIRRELVM = SQVM * ;
+	using ElementNameCharType = char;
 
 
 	//
@@ -68,6 +68,8 @@ public:
 	~SquirrelVM();
 
 	bool AddSourceFromBuffer( rftl::string const& buffer );
+
+	bool InjectSimpleStruct( ElementNameCharType const* name, ElementNameCharType const* const* memberNames, size_t numMembers );
 
 	Element GetGlobalVariable( rftl::string const& name );
 	Element GetGlobalVariable( char const* name );
