@@ -105,16 +105,50 @@ struct ExtensionAccessor
 	using ClassInst = void*;
 	using ExtenInst = void*;
 
+	// Contents must remain stable during access, it is the responsibility of
+	//  the accessor to negotiate with the accessed structure if need be
+	// NOTE: Null is permitted, indicates the accessor doesn't care
 	using FuncPtrBeginAccess = void( *)( RootInst root );
 	using FuncPtrEndAccess = void( *)( RootInst root );
+	FuncPtrBeginAccess mBeginAccess = nullptr;
+	FuncPtrEndAccess mEndAccess = nullptr;
+
+	// The number of variables, which will be treated as an indexed list of
+	//  keys, and each key queried before accessing the target variables
+	// NOTE: Null is forbidden
 	using FuncPtrGetNumVariables = size_t( *)( RootInst root );
+	FuncPtrGetNumVariables mGetNumVariables = nullptr;
+
+	// Different variables may have different key types, so the accessor will
+	//  need to be queried for each individual variable
+	// NOTE: Null is forbidden
 	using FuncPtrGetVariableInfoByIndex = VariableTypeInfo( *)( RootInst root, size_t index );
-	using FuncPtrGetVariableInfoByValue = VariableTypeInfo( *)( RootInst root, Value key );
-	using FuncPtrGetVariableInfoByClass = VariableTypeInfo( *)( RootInst root, ClassInst key, ClassInfo const* info );
-	using FuncPtrGetVariableInfoByExten = VariableTypeInfo( *)( RootInst root, ExtensionAccessor const* info );
+	FuncPtrGetVariableInfoByIndex mGetVariableKeyInfoByIndex = nullptr;
+
+	// Access key using the type provided by the key info
+	// NOTE: Calling an incorrect function will result in a null/invalid return
+	// NOTE: Null is permitted, if the given key type can never exist
 	using FuncPtrGetValueByIndex = Value( *)( RootInst root, size_t index );
 	using FuncPtrGetClassByIndex = ClassInst( *)( RootInst root, size_t index );
 	using FuncPtrGetExtenByIndex = ExtenInst( *)( RootInst root, size_t index );
+	FuncPtrGetValueByIndex mGetVariableKeyAsValueByIndex = nullptr;
+	FuncPtrGetClassByIndex mGetVariableKeyAsClassByIndex = nullptr;
+	FuncPtrGetExtenByIndex mGetVariableKeyAsExtenByIndex = nullptr;
+
+	// Different variables may have different target types, so the accessor
+	//  will need to be queried for each individual variable
+	// NOTE: Calling an incorrect function will result in a null/invalid return
+	// NOTE: Null is permitted, if the given key type can never exist
+	using FuncPtrGetVariableInfoByValue = VariableTypeInfo( *)( RootInst root, Value key );
+	using FuncPtrGetVariableInfoByClass = VariableTypeInfo( *)( RootInst root, ClassInst key, ClassInfo const* info );
+	using FuncPtrGetVariableInfoByExten = VariableTypeInfo( *)( RootInst root, ExtensionAccessor const* info );
+	FuncPtrGetVariableInfoByValue mGetVariableTargetInfoByValue = nullptr;
+	FuncPtrGetVariableInfoByClass mGetVariableTargetInfoByClass = nullptr;
+	FuncPtrGetVariableInfoByExten mGetVariableTargetInfoByExten = nullptr;
+
+	// Access target using the type provided by the target info
+	// NOTE: Calling an incorrect function will result in a null/invalid return
+	// NOTE: Null is permitted, if the given key type can never exist
 	using FuncPtrGetValueByValue = Value( *)( RootInst root, Value key );
 	using FuncPtrGetValueByClass = Value( *)( RootInst root, ClassInst key, ClassInfo const* info );
 	using FuncPtrGetValueByExten = Value( *)( RootInst root, ExtenInst key, ExtensionAccessor const* info );
@@ -124,41 +158,6 @@ struct ExtensionAccessor
 	using FuncPtrGetExtenByValue = ExtenInst( *)( RootInst root, Value key );
 	using FuncPtrGetExtenByClass = ExtenInst( *)( RootInst root, ClassInst key, ClassInfo const* info );
 	using FuncPtrGetExtenByExten = ExtenInst( *)( RootInst root, ExtenInst key, ExtensionAccessor const* info );
-
-	// Contents must remain stable during access, it is the responsibility of
-	//  the accessor to negotiate with the accessed structure if need be
-	// NOTE: Null is permitted, indicates the accessor doesn't care
-	FuncPtrBeginAccess mBeginAccess = nullptr;
-	FuncPtrEndAccess mEndAccess = nullptr;
-
-	// The number of variables, which will be treated as an indexed list of
-	//  keys, and each key queried before accessing the target variables
-	// NOTE: Null is forbidden
-	FuncPtrGetNumVariables mGetNumVariables = nullptr;
-
-	// Different variables may have different key types, so the accessor will
-	//  need to be queried for each individual variable
-	// NOTE: Null is forbidden
-	FuncPtrGetVariableInfoByIndex mGetVariableKeyInfoByIndex = nullptr;
-
-	// Access key using the type provided by the key info
-	// NOTE: Calling an incorrect function will result in a null/invalid return
-	// NOTE: Null is permitted, if the given key type can never exist
-	FuncPtrGetValueByIndex mGetVariableKeyAsValueByIndex = nullptr;
-	FuncPtrGetClassByIndex mGetVariableKeyAsClassByIndex = nullptr;
-	FuncPtrGetExtenByIndex mGetVariableKeyAsExtenByIndex = nullptr;
-
-	// Different variables may have different target types, so the accessor
-	//  will need to be queried for each individual variable
-	// NOTE: Calling an incorrect function will result in a null/invalid return
-	// NOTE: Null is permitted, if the given key type can never exist
-	FuncPtrGetVariableInfoByValue mGetVariableTargetInfoByValue = nullptr;
-	FuncPtrGetVariableInfoByClass mGetVariableTargetInfoByClass = nullptr;
-	FuncPtrGetVariableInfoByExten mGetVariableTargetInfoByExten = nullptr;
-
-	// Access target using the type provided by the target info
-	// NOTE: Calling an incorrect function will result in a null/invalid return
-	// NOTE: Null is permitted, if the given key type can never exist
 	FuncPtrGetValueByValue mGetVariableTargetAsValueByKeyAsValue = nullptr;
 	FuncPtrGetValueByClass mGetVariableTargetAsValueByKeyAsClass = nullptr;
 	FuncPtrGetValueByExten mGetVariableTargetAsValueByKeyAsExten = nullptr;
