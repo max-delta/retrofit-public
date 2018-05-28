@@ -8,7 +8,7 @@ namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 Value::Value()
-	: mInternalStorage( InvalidType() )
+	: mInternalStorage( InvalidTag() )
 {
 	//
 }
@@ -40,11 +40,11 @@ Value::Value( Type type, void const * bytes )
 		case Type::Int16:				mInternalStorage = *reinterpret_cast<int16_t const*>( bytes ); break;
 		case Type::Int32:				mInternalStorage = *reinterpret_cast<int32_t const*>( bytes ); break;
 		case Type::Int64:				mInternalStorage = *reinterpret_cast<int64_t const*>( bytes ); break;
-		case Type::Invalid:				mInternalStorage = InvalidType(); break;
+		case Type::Invalid:				mInternalStorage = InvalidTag(); break;
 		default:
 		{
 			RF_DBGFAIL();
-			mInternalStorage = InvalidType();
+			mInternalStorage = InvalidTag();
 			break;
 		}
 	}

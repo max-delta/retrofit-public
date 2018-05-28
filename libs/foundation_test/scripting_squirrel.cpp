@@ -124,5 +124,47 @@ TEST( Squirrel, GlobalArray )
 	}
 }
 
+
+
+TEST( Squirrel, GlobalClass )
+{
+	SquirrelVM vm;
+	constexpr char source[] =
+		"class C\n"
+		"{\n"
+		"  a = null;\n"
+		"  b = null;\n"
+		"  c = \"default\";\n"
+		"}\n"
+		"x <- C();\n"
+		"x.a = \"first\";\n"
+		"x.b = \"second\";\n"
+		"\n";
+	bool const sourceAdd = vm.AddSourceFromBuffer( source );
+	ASSERT_TRUE( sourceAdd );
+	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
+	SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
+	ASSERT_NE( val, nullptr );
+	SquirrelVM::ElementMap elemArr = vm.GetGlobalVariableAsInstance( "x" );
+	{
+		ASSERT_EQ( elemArr.size(), 3 );
+		SquirrelVM::String const firstIndex = "a";
+		ASSERT_EQ( elemArr.count( firstIndex ), 1 );
+		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( firstIndex ) );
+		ASSERT_NE( firstVal, nullptr );
+		ASSERT_EQ( *firstVal, "first" );
+		SquirrelVM::String const secondIndex = "b";
+		ASSERT_EQ( elemArr.count( secondIndex ), 1 );
+		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( secondIndex ) );
+		ASSERT_NE( secondVal, nullptr );
+		ASSERT_EQ( *secondVal, "second" );
+		SquirrelVM::String const defaultIndex = "c";
+		ASSERT_EQ( elemArr.count( defaultIndex ), 1 );
+		SquirrelVM::String const* const defaultVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( defaultIndex ) );
+		ASSERT_NE( defaultVal, nullptr );
+		ASSERT_EQ( *defaultVal, "default" );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
