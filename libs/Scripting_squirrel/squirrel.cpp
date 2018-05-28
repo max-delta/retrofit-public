@@ -36,6 +36,13 @@ static void NotifyLastError( HSQUIRRELVM vm )
 
 
 
+static void LogCompileError( HSQUIRRELVM vm, SQChar const* desc, SQChar const* source, SQInteger line, SQInteger column )
+{
+	RFLOG_ERROR( nullptr, RFCAT_SQUIRREL, "Compile error: \"%s\" at \"%s\", %lli, %lli", desc, source, line, column );
+}
+
+
+
 template <typename ...Args>
 static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth )
 {
@@ -113,6 +120,11 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			retVal = SquirrelVM::ArrayTag();
 			break;
 		}
+		case OT_INSTANCE:
+		{
+			retVal = SquirrelVM::InstanceTag();
+			break;
+		}
 		case OT_TABLE:
 		case OT_USERDATA:
 		case OT_CLOSURE:
@@ -121,7 +133,6 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 		case OT_THREAD:
 		case OT_FUNCPROTO:
 		case OT_CLASS:
-		case OT_INSTANCE:
 		case OT_WEAKREF:
 		case OT_OUTER:
 		default:
@@ -160,6 +171,7 @@ bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 
 	SQRESULT result;
 
+	sq_setcompilererrorhandler( m_Vm, LogCompileError );
 	result = sq_compilebuffer( m_Vm, buffer.c_str(), math::integer_cast<SQInteger>( buffer.length() ), "SOURCE", true );
 	if( SQ_FAILED( result ) )
 	{
@@ -206,6 +218,20 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string cons
 SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( char const * name )
 {
 	return GetGlobalVariableAsArray( name, strlen( name ) );
+}
+
+
+
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string const & name )
+{
+	return GetGlobalVariableAsInstance( name.c_str(), name.length() );
+}
+
+
+
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( char const * name )
+{
+	return GetGlobalVariableAsInstance( name, strlen( name ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -272,6 +298,68 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharTy
 		retVal.emplace_back( rftl::move( value ) );
 
 		sq_pop( m_Vm, 2 );
+	}
+
+	sq_settop( m_Vm, top );
+	return retVal;
+}
+
+
+
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharType const * name, size_t nameLen )
+{
+	SQInteger const top = sq_gettop( m_Vm );
+	RF_ASSERT( top == 0 );
+
+	rftl::hash<Element>();
+
+	ElementMap retVal;
+	SQRESULT result;
+	SQObjectType type;
+
+	sq_pushroottable( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+
+	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
+	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
+
+	result = sq_get( m_Vm, -2 );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+
+	type = sq_gettype( m_Vm, -1 );
+	if( type != OT_INSTANCE )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an instance" );
+		sq_settop( m_Vm, top );
+		return retVal;
+	}
+
+	// Determine the class
+	result = sq_getclass( m_Vm, -1 );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+	AssertStackTypes( m_Vm, -1, OT_CLASS, OT_INSTANCE );
+
+	// Iterate members
+	sq_pushnull( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_NULL, OT_CLASS, OT_INSTANCE );
+	while( SQ_SUCCEEDED( sq_next( m_Vm, -2 ) ) )
+	{
+		// Pop 'value', which is just the default value for new instances since
+		//  we're iterating the class definition, not the actual instance
+		sq_pop( m_Vm, 1 );
+
+		Element const key = GetElementFromStack( m_Vm, -1 );
+
+		// Pop key in a get operation against the instance
+		// Stack: KEY, ITER, CLASS, INSTANCE
+		result = sq_get( m_Vm, -4 );
+		RF_ASSERT( SQ_SUCCEEDED( result ) );
+		// Stack: VALUE, ITER, CLASS, INSTANCE
+		Element const value = GetElementFromStack( m_Vm, -1 );
+
+		retVal[key] = value;
+
+		sq_pop( m_Vm, 1 );
 	}
 
 	sq_settop( m_Vm, top );

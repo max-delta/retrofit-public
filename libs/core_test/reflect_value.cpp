@@ -281,5 +281,14 @@ TEST( Reflect, ValueConstructFromBytes )
 	ASSERT_TRUE( *vInt64.GetAs<int64_t>() == Int64 );
 }
 
+
+
+TEST( Reflect, ValueHash )
+{
+	// Really, this just needs to compile
+	// TODO: More exhaustive testing?
+	rftl::hash<Value>()( Value{} );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
