@@ -22,6 +22,24 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 	//  later as a 64-bit load, which deserializers should detect and handle
 	using KeyType = size_t;
 
+	static VariableTypeInfo GetDirectKeyInfo( RootInst root )
+	{
+		// Always key by same type
+		VariableTypeInfo retVal{};
+		retVal.mValueType = Value::DetermineType<KeyType>();
+		return retVal;
+	}
+
+	static VariableTypeInfo GetSharedTargetInfo( RootInst root )
+	{
+		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
+
+		// All targets are always the same type in STL containers
+		VariableTypeInfo retVal{};
+		retVal.mValueType = Value::DetermineType<ValueType>();
+		return retVal;
+	}
+
 	static size_t GetNumVariables( RootInst root )
 	{
 		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
@@ -30,10 +48,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 	static VariableTypeInfo GetVariableKeyInfoByIndex( RootInst root, size_t index )
 	{
-		// Always key by same type
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<KeyType>();
-		return retVal;
+		return GetDirectKeyInfo( root );
 	}
 
 	static bool GetVariableKeyByIndex( RootInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
@@ -46,12 +61,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 	static VariableTypeInfo GetVariableTargetInfoByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
-		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-
-		// All targets are always the same type in STL containers
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<ValueType>();
-		return retVal;
+		return GetSharedTargetInfo( root );
 	}
 
 	static bool GetVariableTargetByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
@@ -130,6 +140,9 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 	static ExtensionAccessor Get()
 	{
 		ExtensionAccessor retVal{};
+
+		retVal.mGetDirectKeyInfo = &GetDirectKeyInfo;
+		retVal.mGetSharedTargetInfo = &GetSharedTargetInfo;
 
 		retVal.mGetNumVariables = &GetNumVariables;
 		retVal.mGetVariableKeyInfoByIndex = &GetVariableKeyInfoByIndex;
