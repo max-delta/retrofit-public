@@ -15,6 +15,9 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Identifier.cpp" />
+    <ClCompile Include="stl_extensions\vector.cpp">
+      <Filter>stl_extensions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="stl_extensions">
