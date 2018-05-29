@@ -85,6 +85,48 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return true;
 	}
 
+	static bool mInsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
+	{
+		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
+
+		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
+		{
+			RF_DBGFAIL_MSG( "Key type differs from expected" );
+			return false;
+		}
+
+		if( valueInfo.mValueType != Value::DetermineType<ValueType>() )
+		{
+			RF_DBGFAIL_MSG( "Value type differs from expected" );
+			return false;
+		}
+
+		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
+		}
+
+		ValueType const* castedValue = reinterpret_cast<ValueType const*>( value );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
+		}
+
+		AccessedType* const pThis = reinterpret_cast<AccessedType*>( root );
+		KeyType const index = *castedKey;
+		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
+		if( index >= pThis->size() )
+		{
+			pThis->resize( index + 1 );
+		}
+
+		pThis->at( index ) = *castedValue;
+		return true;
+	}
+
 	static ExtensionAccessor Get()
 	{
 		ExtensionAccessor retVal{};
@@ -94,8 +136,10 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		retVal.mGetVariableKeyByIndex = &GetVariableKeyByIndex;
 		retVal.mGetVariableTargetInfoByKey = &GetVariableTargetInfoByKey;
 
-		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
 		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
+
+		// TODO: Move support
+		retVal.mInsertVariableViaCopy = &mInsertVariableViaCopy;
 
 		return retVal;
 	}

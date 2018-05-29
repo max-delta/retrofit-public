@@ -153,6 +153,14 @@ struct ExtensionAccessor
 	// NOTE: Null is forbidden
 	using FuncPtrGetTargetByKey = bool( *)( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo );
 	FuncPtrGetTargetByKey mGetVariableTargetByKey = nullptr;
+
+	// Insert target by key
+	// NOTE: Returns false on caller failure
+	// NOTE: Null indicates lack of support for that operation
+	using FunctPtrInsertVariableViaMove = bool( *)( RootInst root, UntypedInst key, VariableTypeInfo const& keyInfo, UntypedInst value, VariableTypeInfo const& valueInfo );
+	using FunctPtrInsertVariableViaCopy = bool( *)( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo );
+	FunctPtrInsertVariableViaMove mInsertVariableViaMove = nullptr;
+	FunctPtrInsertVariableViaCopy mInsertVariableViaCopy = nullptr;
 };
 
 
