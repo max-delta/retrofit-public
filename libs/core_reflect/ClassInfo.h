@@ -125,6 +125,24 @@ struct ExtensionAccessor
 	FuncPtrBeginMutation mBeginMutation = nullptr;
 	FuncPtrEndMutation mEndMutation = nullptr;
 
+	// Some extensions have a simplified key system such that the index is
+	//  itself the key (ex: array, vector, deque, list)
+	// NOTE: Normal index->key->value pattern is still always supported, but
+	//  this direct index characteristic has value to serializers since thay
+	//  may have a keyless storage option that is more efficient or practical
+	// NOTE: Null indicates a lack of this characteristic
+	using FuncPtrGetDirectKeyInfo = VariableTypeInfo( *)( RootInst root );
+	FuncPtrGetDirectKeyInfo mGetDirectKeyInfo = nullptr;
+
+	// Some extensions have a simplified value system such that all values
+	//  share the same type information (ex: all non-variant STL containers)
+	// NOTE: Normal index->key->value pattern is still always supported, but
+	//  this shared type characteristic has value to serializers since thay
+	//  may have a simpler storage option that is more efficient or practical
+	// NOTE: Null indicates a lack of this characteristic
+	using FuncPtrGetSharedTargetInfo = VariableTypeInfo( *)( RootInst root );
+	FuncPtrGetSharedTargetInfo mGetSharedTargetInfo = nullptr;
+
 	// The number of variables, which will be treated as an indexed list of
 	//  keys, and each key queried before accessing the target variables
 	// NOTE: Null is forbidden
