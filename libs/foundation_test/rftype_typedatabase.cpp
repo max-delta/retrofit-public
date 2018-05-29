@@ -62,13 +62,13 @@ TEST( RFType, CrossDllExtension )
 
 	size_t const i0k = 0;
 	size_t const i1k = 1;
-	VariableTypeInfo keyInfo = {};
-	keyInfo.mValueType = Value::DetermineType<size_t>();
+	VariableTypeInfo readKeyInfo = {};
+	readKeyInfo.mValueType = Value::DetermineType<size_t>();
 
 	ASSERT_NE( accessor->mGetVariableTargetInfoByKey, nullptr );
-	VariableTypeInfo const i0t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i0k, keyInfo );
+	VariableTypeInfo const i0t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i0k, readKeyInfo );
 	ASSERT_EQ( i0t_info.mValueType, Value::Type::UInt16 );
-	VariableTypeInfo const i1t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i1k, keyInfo );
+	VariableTypeInfo const i1t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i1k, readKeyInfo );
 	ASSERT_EQ( i1t_info.mValueType, Value::Type::UInt16 );
 
 	void const* i0v = nullptr;
@@ -76,10 +76,10 @@ TEST( RFType, CrossDllExtension )
 	VariableTypeInfo i0vInfo = {};
 	VariableTypeInfo i1vInfo = {};
 	ASSERT_NE( accessor->mGetVariableTargetByKey, nullptr );
-	bool const i0Read = accessor->mGetVariableTargetByKey( varLoc, &i0k, keyInfo, i0v, i0vInfo );
+	bool const i0Read = accessor->mGetVariableTargetByKey( varLoc, &i0k, readKeyInfo, i0v, i0vInfo );
 	ASSERT_TRUE( i0Read );
 	ASSERT_EQ( i0t_info.mValueType, i0t_info.mValueType );
-	bool const i1Read = accessor->mGetVariableTargetByKey( varLoc, &i1k, keyInfo, i1v, i1vInfo );
+	bool const i1Read = accessor->mGetVariableTargetByKey( varLoc, &i1k, readKeyInfo, i1v, i1vInfo );
 	ASSERT_TRUE( i1Read );
 	ASSERT_EQ( i1t_info.mValueType, i1t_info.mValueType );
 
@@ -94,6 +94,32 @@ TEST( RFType, CrossDllExtension )
 	{
 		accessor->mEndAccess( varLoc );
 	}
+
+	if( accessor->mBeginMutation != nullptr )
+	{
+		accessor->mBeginMutation( varLoc );
+	}
+
+	size_t const i5k = 5;
+	VariableTypeInfo writeKeyInfo = {};
+	writeKeyInfo.mValueType = Value::DetermineType<size_t>();
+	uint16_t const i5v = 43;
+	VariableTypeInfo writeValueInfo = {};
+	writeValueInfo.mValueType = Value::DetermineType<uint16_t>();
+
+	ASSERT_NE( accessor->mInsertVariableViaCopy, nullptr );
+	bool const i5Write = accessor->mInsertVariableViaCopy( varLoc, &i5k, writeKeyInfo, &i5v, writeValueInfo );
+	ASSERT_TRUE( i5Write );
+
+	if( accessor->mEndMutation != nullptr )
+	{
+		accessor->mEndMutation( varLoc );
+	}
+
+	ASSERT_EQ( object.mExampleExtensionAsMember.size(), 6 );
+	ASSERT_EQ( object.mExampleExtensionAsMember.at( 0 ), 5 );
+	ASSERT_EQ( object.mExampleExtensionAsMember.at( 1 ), 7 );
+	ASSERT_EQ( object.mExampleExtensionAsMember.at( 5 ), 43 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
