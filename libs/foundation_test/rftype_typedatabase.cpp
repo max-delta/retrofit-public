@@ -60,25 +60,33 @@ TEST( RFType, CrossDllExtension )
 	VariableTypeInfo const i1k_info = accessor->mGetVariableKeyInfoByIndex( varLoc, 1 );
 	ASSERT_EQ( i1k_info.mValueType, Value::DetermineType<size_t>() );
 
-	Value const i0k = Value( static_cast<size_t>( 0 ) );
-	Value const i1k = Value( static_cast<size_t>( 1 ) );
+	size_t const i0k = 0;
+	size_t const i1k = 1;
+	VariableTypeInfo keyInfo = {};
+	keyInfo.mValueType = Value::DetermineType<size_t>();
 
-	ASSERT_NE( accessor->mGetVariableTargetInfoByValue, nullptr );
-	VariableTypeInfo const i0t_info = accessor->mGetVariableTargetInfoByValue( varLoc, i0k );
+	ASSERT_NE( accessor->mGetVariableTargetInfoByKey, nullptr );
+	VariableTypeInfo const i0t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i0k, keyInfo );
 	ASSERT_EQ( i0t_info.mValueType, Value::Type::UInt16 );
-	VariableTypeInfo const i1t_info = accessor->mGetVariableTargetInfoByValue( varLoc, i1k );
+	VariableTypeInfo const i1t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i1k, keyInfo );
 	ASSERT_EQ( i1t_info.mValueType, Value::Type::UInt16 );
 
-	ASSERT_NE( accessor->mGetVariableTargetAsValueByKeyAsValue, nullptr );
-	Value const i0v = accessor->mGetVariableTargetAsValueByKeyAsValue( varLoc, i0k );
-	ASSERT_EQ( i0v.GetStoredType(), i0t_info.mValueType );
-	Value const i1v = accessor->mGetVariableTargetAsValueByKeyAsValue( varLoc, i1k );
-	ASSERT_EQ( i1v.GetStoredType(), i1t_info.mValueType );
+	void const* i0v = nullptr;
+	void const* i1v = nullptr;
+	VariableTypeInfo i0vInfo = {};
+	VariableTypeInfo i1vInfo = {};
+	ASSERT_NE( accessor->mGetVariableTargetByKey, nullptr );
+	bool const i0Read = accessor->mGetVariableTargetByKey( varLoc, &i0k, keyInfo, i0v, i0vInfo );
+	ASSERT_TRUE( i0Read );
+	ASSERT_EQ( i0t_info.mValueType, i0t_info.mValueType );
+	bool const i1Read = accessor->mGetVariableTargetByKey( varLoc, &i1k, keyInfo, i1v, i1vInfo );
+	ASSERT_TRUE( i1Read );
+	ASSERT_EQ( i1t_info.mValueType, i1t_info.mValueType );
 
-	uint16_t const* const i0p = i0v.GetAs<uint16_t>();
+	uint16_t const* const i0p = reinterpret_cast<uint16_t const*>( i0v );
 	ASSERT_NE( i0p, nullptr );
 	ASSERT_EQ( *i0p, 5 );
-	uint16_t const* const i1p = i1v.GetAs<uint16_t>();
+	uint16_t const* const i1p = reinterpret_cast<uint16_t const*>( i1v );
 	ASSERT_NE( i1p, nullptr );
 	ASSERT_EQ( *i1p, 7 );
 
