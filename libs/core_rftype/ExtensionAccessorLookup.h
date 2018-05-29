@@ -14,6 +14,8 @@ struct AccessorTemplate
 	using RootInst = ExtensionAccessor::RootInst;
 	using ClassInst = ExtensionAccessor::ClassInst;
 	using ExtenInst = ExtensionAccessor::ExtenInst;
+	using UntypedInst = ExtensionAccessor::UntypedInst;
+	using UntypedConstInst = ExtensionAccessor::UntypedConstInst;
 
 	using VariableTypeInfo = ::RF::reflect::VariableTypeInfo;
 	using Value = ::RF::reflect::Value;

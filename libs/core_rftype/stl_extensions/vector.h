@@ -6,6 +6,9 @@
 
 namespace RF { namespace rftype { namespace extensions {
 ///////////////////////////////////////////////////////////////////////////////
+namespace vector_accessor_details {
+size_t const* GetStableKey( size_t key );
+}
 
 template<typename ValueType, typename Allocator>
 struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemplate
@@ -33,13 +36,15 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return retVal;
 	}
 
-	static Value GetVariableKeyAsValueByIndex( RootInst root, size_t index )
+	static bool GetVariableKeyByIndex( RootInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
 	{
 		// Keyed directly by index
-		return Value( math::integer_cast<KeyType>( index ) );
+		key = vector_accessor_details::GetStableKey( index );
+		keyInfo = GetVariableKeyInfoByIndex( root, index );
+		return true;
 	}
 
-	static VariableTypeInfo GetVariableTargetInfoByValue( RootInst root, Value key )
+	static VariableTypeInfo GetVariableTargetInfoByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
 
@@ -49,26 +54,35 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return retVal;
 	}
 
-	static Value GetVariableTargetAsValueByKeyAsValue( RootInst root, Value key )
+	static bool GetVariableTargetByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
 
-		if( key.GetStoredType() != Value::DetermineType<KeyType>() )
+		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
 			RF_DBGFAIL_MSG( "Key type differs from expected" );
-			return Value{};
+			return false;
+		}
+
+		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
 		}
 
 		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
-		KeyType const index = *key.GetAs<KeyType>();
+		KeyType const index = *castedKey;
 		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
 		if( index >= pThis->size() )
 		{
 			RF_DBGFAIL_MSG( "Index out of bounds" );
-			return Value{};
+			return false;
 		}
 
-		return Value( pThis->at( index ) );
+		value = &( pThis->at( index ) );
+		valueInfo = GetVariableTargetInfoByKey( root, key, keyInfo );
+		return true;
 	}
 
 	static ExtensionAccessor Get()
@@ -77,11 +91,11 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 		retVal.mGetNumVariables = &GetNumVariables;
 		retVal.mGetVariableKeyInfoByIndex = &GetVariableKeyInfoByIndex;
-		retVal.mGetVariableKeyAsValueByIndex = &GetVariableKeyAsValueByIndex;
-		retVal.mGetVariableTargetInfoByValue = &GetVariableTargetInfoByValue;
+		retVal.mGetVariableKeyByIndex = &GetVariableKeyByIndex;
+		retVal.mGetVariableTargetInfoByKey = &GetVariableTargetInfoByKey;
 
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-		retVal.mGetVariableTargetAsValueByKeyAsValue = &GetVariableTargetAsValueByKeyAsValue;
+		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
 
 		return retVal;
 	}
