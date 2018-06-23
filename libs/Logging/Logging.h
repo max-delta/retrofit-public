@@ -32,7 +32,11 @@ namespace details {
 		___RFLOG_WHITELIST_IMPL(CATEGORY, SEVERITY); \
 		if( ___kSeverity != 0 ) \
 		{ \
-			::RF::logging::details::Log( CONTEXT, CATEGORY, SEVERITY, __VA_ARGS__ ); \
+			constexpr uint64_t ___kBannedBits = ___kSeverity & ___RFLOG_GLOBAL_SEV_BLACKLIST; \
+			if( ___kBannedBits == 0 ) \
+			{ \
+				::RF::logging::details::Log( CONTEXT, CATEGORY, SEVERITY, __VA_ARGS__ ); \
+			} \
 		} \
 	} while( false )
 
