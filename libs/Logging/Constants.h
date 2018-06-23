@@ -38,5 +38,11 @@ constexpr Severity kDefaultSeverityMask = static_cast<Severity>( -1 );
 	#define ___RFLOG_GLOBAL_SEV_WHITELIST_MASK static_cast<::RF::logging::Severity>( -1 )
 #endif
 
+// This macro can be defined to globally ban any messages that contain the
+//  specified types of severities
+#ifndef ___RFLOG_GLOBAL_SEV_BLACKLIST
+#define ___RFLOG_GLOBAL_SEV_BLACKLIST static_cast<::RF::logging::Severity>( 0 )
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
