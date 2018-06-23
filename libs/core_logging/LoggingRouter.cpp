@@ -167,6 +167,7 @@ void LoggingRouter::LogInternal( char const * context, CategoryKey categoryKey, 
 		HandlerDefinition const& handlerDef = handlerDefPair.second;
 		if( ( handlerDef.mSupportedSeverities & severityMask ) != 0 )
 		{
+			RF_ASSERT( handlerDef.mHandlerFunc != nullptr );
 			handlerDef.mHandlerFunc( *this, logEvent, args );
 		}
 	}
