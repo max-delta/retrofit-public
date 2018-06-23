@@ -1,5 +1,6 @@
 #pragma once
 #include "core/compiler.h"
+#include "core/macros.h"
 
 
 namespace RF { namespace assert {
@@ -46,8 +47,8 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 #define RF_DBGFAIL() ___RF_ASSERT_IMPL___(false, "FAIL")
 #define RF_DBGFAIL_MSG(MSG) ___RF_ASSERT_IMPL___(false, MSG)
 #else
-#define RF_ASSERT(TEST)
-#define RF_ASSERT_MSG(TEST, MSG)
-#define RF_DBGFAIL()
-#define RF_DBGFAIL_MSG(MSG)
+#define RF_ASSERT(TEST) RF_EMPTY_FUNCLET()
+#define RF_ASSERT_MSG(TEST, MSG) RF_EMPTY_FUNCLET()
+#define RF_DBGFAIL() RF_EMPTY_FUNCLET()
+#define RF_DBGFAIL_MSG(MSG) RF_EMPTY_FUNCLET()
 #endif
