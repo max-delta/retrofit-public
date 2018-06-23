@@ -6,7 +6,13 @@ namespace RF { namespace logging { namespace details {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Context>
-void Log( Context const& context, char const* categoryKey, uint64_t severityMask, char const* format, ... )
+void Log(
+	Context const& context,
+	char const* categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format, ... )
 {
 	LogContextBuffer contextBuffer = LogContextBuffer();
 	WriteContextString( context, contextBuffer );
@@ -14,7 +20,7 @@ void Log( Context const& context, char const* categoryKey, uint64_t severityMask
 
 	va_list args;
 	va_start( args, format );
-	details::LogVA( &contextBuffer[0], categoryKey, severityMask, format, args );
+	details::LogVA( &contextBuffer[0], categoryKey, severityMask, filename, lineNumber, format, args );
 	va_end( args );
 }
 

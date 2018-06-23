@@ -16,7 +16,11 @@ struct LogEvent
 	// May have multiple severities set
 	SeverityMask mSeverityMask;
 
+	// Line number may be 0 if not applicable
+	size_t mLineNumber;
+
 	// Must be consumed immediately, pointers are not permanent
+	char const* mTransientFileString;
 	char const* mTransientContextString;
 	char const* mTransientMessageFormatString;
 };
