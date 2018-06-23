@@ -35,7 +35,7 @@ namespace details {
 			constexpr uint64_t ___kBannedBits = ___kSeverity & ___RFLOG_GLOBAL_SEV_BLACKLIST; \
 			if( ___kBannedBits == 0 ) \
 			{ \
-				::RF::logging::details::Log( CONTEXT, CATEGORY, SEVERITY, __VA_ARGS__ ); \
+				::RF::logging::details::Log( CONTEXT, CATEGORY, SEVERITY, __FILE__, static_cast<size_t>(__LINE__), __VA_ARGS__ ); \
 			} \
 		} \
 	} while( false )
@@ -144,9 +144,28 @@ LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 namespace details {
 
 template<typename Context>
-void Log( Context const& context, char const* categoryKey, uint64_t severityMask, char const* format, ... );
-LOGGING_API void Log( nullptr_t /*context*/, char const* categoryKey, uint64_t severityMask, char const* format, ... );
-LOGGING_API void LogVA( char const* context, char const* categoryKey, uint64_t severityMask, char const* format, va_list args );
+void Log(
+	Context const& context,
+	char const* categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format, ... );
+LOGGING_API void Log(
+	nullptr_t /*context*/,
+	char const* categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format, ... );
+LOGGING_API void LogVA(
+	char const* context,
+	char const* categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format,
+	va_list args );
 
 }
 ///////////////////////////////////////////////////////////////////////////////
