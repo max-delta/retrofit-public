@@ -140,7 +140,7 @@ LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 namespace details {
 
 template<typename Context>
-void Log( Context context, char const* categoryKey, uint64_t severityMask, char const* format, ... );
+void Log( Context const& context, char const* categoryKey, uint64_t severityMask, char const* format, ... );
 LOGGING_API void Log( nullptr_t /*context*/, char const* categoryKey, uint64_t severityMask, char const* format, ... );
 LOGGING_API void LogVA( char const* context, char const* categoryKey, uint64_t severityMask, char const* format, va_list args );
 

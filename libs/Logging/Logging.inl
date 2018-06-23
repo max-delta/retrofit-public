@@ -6,7 +6,7 @@ namespace RF { namespace logging { namespace details {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Context>
-void Log( Context context, char const* categoryKey, uint64_t severityMask, char const* format, ... )
+void Log( Context const& context, char const* categoryKey, uint64_t severityMask, char const* format, ... )
 {
 	LogContextBuffer contextBuffer = LogContextBuffer();
 	WriteContextString( context, contextBuffer );
