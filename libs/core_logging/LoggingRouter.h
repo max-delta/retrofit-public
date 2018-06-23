@@ -38,8 +38,21 @@ public:
 	LoggingRouter( LoggingRouter && ) = default;
 	LoggingRouter& operator=( LoggingRouter && ) = default;
 
-	void Log( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, ... ) const;
-	void LogVA( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const;
+	void Log(
+		char const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char const* format, ... ) const;
+	void LogVA(
+		char const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char const* format,
+		va_list args ) const;
 
 	// Control which handlers are able to handle log events
 	// NOTE: Handlers are run in the order they are registered
@@ -64,7 +77,14 @@ public:
 	//
 	// Private methods
 private:
-	void LogInternal( char const* context, CategoryKey categoryKey, SeverityMask severityMask, char const* format, va_list args ) const;
+	void LogInternal(
+		char const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char const* format,
+		va_list args ) const;
 	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;
 
 

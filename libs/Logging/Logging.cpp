@@ -36,19 +36,32 @@ bool UnregisterHandler( HandlerID handlerID )
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-void Log( nullptr_t, char const * categoryKey, uint64_t severityMask, char const * format, ... )
+void Log(
+	nullptr_t /*context*/,
+	char const * categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const * format, ... )
 {
 	va_list args;
 	va_start( args, format );
-	details::LogVA( nullptr, categoryKey, severityMask, format, args );
+	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
 	va_end( args );
 }
 
 
 
-void LogVA( char const* context, char const* categoryKey, uint64_t severityMask, char const* format, va_list args )
+void LogVA(
+	char const* context,
+	char const* categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format,
+	va_list args )
 {
-	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, format, args );
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
 }
 
 }
