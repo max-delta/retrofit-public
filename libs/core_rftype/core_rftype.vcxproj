@@ -150,6 +150,7 @@
     <ClInclude Include="Identifier.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_extensions\vector.h" />
+    <ClInclude Include="TypeTraverser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Identifier.cpp" />
@@ -160,6 +161,10 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="stl_extensions\vector.cpp" />
+    <ClCompile Include="TypeTraverser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TypeTraverser.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
