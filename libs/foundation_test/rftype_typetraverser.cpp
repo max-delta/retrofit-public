@@ -1,10 +1,9 @@
 #include "stdafx.h"
 
-#include "RFType/TypeDatabase.h"
-#include "RFType/TypeTraverser.h"
-#include "core_rftype/ClassInfoAccessor.h"
-
+// TODO: Remove dependency on Example.h, and move these tests to core tests
 #include "RFType/Example.h"
+
+#include "core_rftype/TypeTraverser.h"
 
 #include "rftl/unordered_set"
 

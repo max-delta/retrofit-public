@@ -1,6 +1,4 @@
 #pragma once
-#include "project.h"
-
 #include "core/macros.h"
 
 
@@ -14,7 +12,7 @@ namespace RF { namespace reflect {
 namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
-class RFTYPE_API TypeTraverser
+class TypeTraverser
 {
 	//
 	// Structs
