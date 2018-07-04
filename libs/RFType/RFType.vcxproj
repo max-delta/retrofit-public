@@ -140,7 +140,6 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TypeDatabase.h" />
-    <ClInclude Include="TypeTraverser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CreateClassInfoDefinition.cpp" />
@@ -153,7 +152,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TypeDatabase.cpp" />
-    <ClCompile Include="TypeTraverser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\core\core.vcxproj">
@@ -168,9 +166,6 @@
     <ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
       <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TypeTraverser.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

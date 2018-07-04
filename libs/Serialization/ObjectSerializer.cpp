@@ -2,7 +2,8 @@
 #include "ObjectSerializer.h"
 
 #include "Serialization/Exporter.h"
-#include "RFType/TypeTraverser.h"
+
+#include "core_rftype/TypeTraverser.h"
 
 
 namespace RF { namespace serialization {
