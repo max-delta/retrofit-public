@@ -4,7 +4,7 @@
 #include "core_math/Hash.h"
 
 #include "rftl/vector"
-#include "rftl/unordered_set"
+#include "rftl/set"
 #include "rftl/tuple"
 
 
@@ -127,7 +127,7 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 		return true;
 	};
 
-	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	using StoreResults = rftl::set<ResultPair>;
 	StoreResults iterTemp = {};
 
 	graph.IterateEdges( citer );
@@ -195,7 +195,7 @@ TEST( LogicDirectedEdgeGraph, EraseEdge )
 		return true;
 	};
 
-	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	using StoreResults = rftl::set<ResultPair>;
 	StoreResults iterTemp = {};
 
 	graph.IterateEdges( citer );
@@ -235,7 +235,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
 		return true;
 	};
 
-	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	using StoreResults = rftl::set<ResultPair>;
 	StoreResults iterTemp = {};
 
 	graph.IterateEdges( citer );
@@ -275,7 +275,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
 		return true;
 	};
 
-	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	using StoreResults = rftl::set<ResultPair>;
 	StoreResults iterTemp = {};
 
 	graph.IterateEdges( citer );
@@ -315,7 +315,7 @@ TEST( LogicDirectedEdgeGraph, EraseNode )
 		return true;
 	};
 
-	using StoreResults = rftl::unordered_set<ResultPair, math::RawBytesHash<ResultPair>>;
+	using StoreResults = rftl::set<ResultPair>;
 	StoreResults iterTemp = {};
 
 	graph.IterateEdges( citer );

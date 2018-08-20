@@ -17,9 +17,11 @@
 #define RFTL_INITIALIZER_LIST <initializer_list>
 #define RFTL_ITERATOR <iterator>
 #define RFTL_LIMITS <limits>
+#define RFTL_MAP <map>
 #define RFTL_MEMORY <memory>
 #define RFTL_MUTEX <mutex>
 #define RFTL_RATIO <ratio>
+#define RFTL_SET <set>
 #define RFTL_SHARED_MUTEX <shared_mutex>
 #define RFTL_SSTREAM <sstream>
 #define RFTL_STRING <string>
