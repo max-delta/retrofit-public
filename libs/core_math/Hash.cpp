@@ -6,31 +6,6 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-HashVal64 DirectHash::operator() ( HashVal64 const& key ) const
-{
-	return key;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-HashVal64 NullTerminatedStringHash::operator()( char const * const buffer ) const
-{
-	if( buffer == nullptr )
-	{
-		return StableHashBytes( nullptr, 0 );
-	}
-
-	size_t length = 0;
-	while( buffer[length] != '\0' )
-	{
-		length++;
-	}
-
-	return StableHashBytes( buffer, length );
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t )
 {
 	// Reduced from non-null case
@@ -54,6 +29,31 @@ HashVal64 StableHashBytes( void const* buffer, size_t length )
 		retVal *= kFNV_prime;
 	}
 	return retVal;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+HashVal64 DirectHash::operator() ( HashVal64 const& key ) const
+{
+	return key;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+HashVal64 NullTerminatedStringHash::operator()( char const * const buffer ) const
+{
+	if( buffer == nullptr )
+	{
+		return StableHashBytes( nullptr, 0 );
+	}
+
+	size_t length = 0;
+	while( buffer[length] != '\0' )
+	{
+		length++;
+	}
+
+	return StableHashBytes( buffer, length );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
