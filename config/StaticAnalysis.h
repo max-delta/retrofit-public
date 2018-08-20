@@ -6,3 +6,8 @@
 //  feature in MSVC
 // TODO: Review once these features are less experimental
 #pragma warning(disable:ALL_CPPCORECHECK_WARNINGS)
+
+// This version of MSVC doesn't include this warning in <CppCoreCheck/warnings.h>
+#if _MSC_FULL_VER == 191526726
+	#pragma warning(disable:26455)
+#endif

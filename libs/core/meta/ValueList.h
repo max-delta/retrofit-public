@@ -26,6 +26,8 @@ template<typename ValueListType>
 struct ExternalAccessReverse;
 template<size_t FirstIndexOfSecondSegment, typename RemainingValueListType>
 struct ExternalAccessSplitKeepLatter;
+template<size_t FirstIndexOfSecondSegment, typename ValueListType>
+struct ExternalAccessSplit;
 }
 
 
@@ -81,13 +83,8 @@ struct ValueList
 	template<size_t FirstIndexOfSecondSegment>
 	struct Split
 	{
-	private:
-		static constexpr size_t kReversedLastIndexOfFirstSegment = kNumValues - FirstIndexOfSecondSegment;
-		using ReversedList = typename typelist_details::ExternalAccessReverse< ValueList<ValueType, Values...> >::type;
-		using SplitReversedList = typename typelist_details::ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
-	public:
-		using former = typename typelist_details::ExternalAccessReverse< SplitReversedList >::type;
-		using latter = typename typelist_details::ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::latter;
+		using former = typename typelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::former;
+		using latter = typename typelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::latter;
 	};
 };
 
@@ -184,6 +181,19 @@ struct ExternalAccessSplitKeepLatter<FirstIndexOfSecondSegment, ValueList<ValueT
 {
 	static_assert( FirstIndexOfSecondSegment - 1 <= sizeof...( RemainingValues ), "Attempting to split past the end of type list" );
 	using latter = typename ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment - 1, ValueList<ValueType, RemainingValues...> >::latter;
+};
+
+// Single case
+template<size_t FirstIndexOfSecondSegment, typename ValueListType>
+struct ExternalAccessSplit
+{
+private:
+	static constexpr size_t kReversedLastIndexOfFirstSegment = ValueListType::kNumValues - FirstIndexOfSecondSegment;
+	using ReversedList = typename typelist_details::ExternalAccessReverse< ValueListType >::type;
+	using SplitReversedList = typename typelist_details::ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
+public:
+	using former = typename typelist_details::ExternalAccessReverse< SplitReversedList >::type;
+	using latter = typename typelist_details::ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment, ValueListType >::latter;
 };
 }
 
