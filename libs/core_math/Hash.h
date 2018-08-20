@@ -7,6 +7,10 @@ namespace RF { namespace math {
 
 using HashVal64 = uint64_t;
 
+// This hash function will not change based on platform
+HashVal64 StableHashBytes( rftl::nullptr_t, size_t );
+HashVal64 StableHashBytes( void const* buffer, size_t length );
+
 struct DirectHash
 {
 	HashVal64 operator() ( HashVal64 const& key ) const;
@@ -36,10 +40,6 @@ struct PairHash
 		return hash1 ^ hash2;
 	}
 };
-
-// This hash function will not change based on platform
-HashVal64 StableHashBytes( rftl::nullptr_t, size_t );
-HashVal64 StableHashBytes( void const* buffer, size_t length );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

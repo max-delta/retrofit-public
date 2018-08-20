@@ -21,6 +21,19 @@ class BitField
 public:
 	using AccessType = AccessTypeT;
 	using FieldSizes = ValueList<size_t, fieldSizes...>;
+	#if defined(_MSC_VER) && _MSC_VER == 1915
+		// HACK: MSVC's 15.8 update broke here
+		// TODO: Remove this hack if later updates fix it back
+		template<size_t index>
+		using FieldsBeforeIndex = typename typelist_details::ExternalAccessSplit<index, FieldSizes>::former;
+		template<size_t index>
+		using FieldsAtOrAfterIndex = typename typelist_details::ExternalAccessSplit<index, FieldSizes>::latter;
+	#else
+		template<size_t index>
+		using FieldsBeforeIndex = typename FieldSizes::Split<index>::former;
+		template<size_t index>
+		using FieldsAtOrAfterIndex = typename FieldSizes::Split<index>::latter;
+	#endif
 	static constexpr size_t kNumFields = FieldSizes::kNumValues;
 	static constexpr size_t kMinimumBitsStorage = 1;
 	static constexpr size_t kRequiredBitsStorage = ListSum<size_t, FieldSizes>::value;
@@ -94,8 +107,7 @@ template<typename AccessTypeT, size_t ...fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBytesBeforeIndex()
 {
-	using FieldsBeforeIndex = typename FieldSizes::Split<index>::former;
-	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex>::value;
+	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex<index>>::value;
 	constexpr size_t kBytesBeforeIndex = kBitsBeforeIndex / 8;
 	return kBytesBeforeIndex;
 }
@@ -106,8 +118,7 @@ template<typename AccessTypeT, size_t ...fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsOffsetIntoIndex()
 {
-	using FieldsBeforeIndex = typename FieldSizes::Split<index>::former;
-	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex>::value;
+	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex<index>>::value;
 	constexpr size_t kBytesBeforeIndex = kBitsBeforeIndex / 8;
 	constexpr size_t kBitsOffsetIntoIndex = kBitsBeforeIndex - ( kBytesBeforeIndex * 8 );
 	return kBitsOffsetIntoIndex;
@@ -119,9 +130,8 @@ template<typename AccessTypeT, size_t ...fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsAtIndex()
 {
-	using FieldsAtOrAfterIndex = typename FieldSizes::Split<index>::latter;
-	static_assert( FieldsAtOrAfterIndex::kNumValues > 0, "Index past number of fields" );
-	constexpr size_t kBitsAtIndex = FieldsAtOrAfterIndex::ByIndex<0>::value;
+	static_assert( FieldsAtOrAfterIndex<index>::kNumValues > 0, "Index past number of fields" );
+	constexpr size_t kBitsAtIndex = FieldsAtOrAfterIndex<index>::ByIndex<0>::value;
 	return kBitsAtIndex;
 }
 
