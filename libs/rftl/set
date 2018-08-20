@@ -1,0 +1,15 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/initializer_list"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_SET
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::set;
+using std::multiset;
+
+using std::swap;
+}

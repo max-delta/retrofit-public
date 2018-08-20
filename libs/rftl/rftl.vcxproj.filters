@@ -63,5 +63,7 @@
     <None Include="patch\normallocations.inl">
       <Filter>patch</Filter>
     </None>
+    <None Include="set" />
+    <None Include="map" />
   </ItemGroup>
 </Project>
