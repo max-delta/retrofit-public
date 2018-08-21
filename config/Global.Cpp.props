@@ -9,9 +9,16 @@
       <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <ClCompile Condition="'$(Platform)'!='LLVM_x64'">
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
+      <SupportJustMyCode>false</SupportJustMyCode>
+      <AdditionalOptions>-Wno-clang-cl-pch -Wno-unused-command-line-argument -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-unused-macros -Wno-reserved-id-macro %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-error %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>

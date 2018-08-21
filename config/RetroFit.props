@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <RFRootDir>$(SolutionDir)</RFRootDir>
   </PropertyGroup>
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'!='LLVM_x64'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <RunCodeAnalysis>true</RunCodeAnalysis>
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
@@ -15,9 +15,11 @@
       <DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <TreatWarningAsError>true</TreatWarningAsError>
       <WarningLevel>EnableAllWarnings</WarningLevel>
+      <AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Condition="'$(Platform)'!='LLVM_x64'">
       <EnablePREfast>true</EnablePREfast>
       <AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link />
