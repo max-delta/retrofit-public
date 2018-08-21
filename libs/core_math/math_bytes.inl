@@ -7,12 +7,10 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Intentionally unimplemented
 template<typename T>
-constexpr T ReverseByteOrder( T const value )
-{
-	static_assert( false, "No matching primitive found" );
-	return T();
-}
+constexpr T ReverseByteOrder( T const value );
+
 template<> constexpr uint8_t ReverseByteOrder( uint8_t const value )
 {
 	return value;

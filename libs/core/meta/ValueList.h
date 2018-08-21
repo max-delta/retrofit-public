@@ -91,14 +91,19 @@ struct ValueList
 
 namespace typelist_details
 {
-// 0->N-th case
-// NOTE: This COULD be recursive to explicitly prevent value array
-//  creation, but that crashes the MSVC2017 compiler
-template<typename ValueType, size_t Index, ValueType... ValuesT>
-struct ExternalAccessByIndex<Index, ValueList<ValueType, ValuesT...> >
+// 0 case
+template<typename ValueType, ValueType CurrentValue, ValueType... RemainingValues>
+struct ExternalAccessByIndex<0, ValueList<ValueType, CurrentValue, RemainingValues...> >
 {
-	static constexpr ValueType values[] = { ValuesT... };
-	static constexpr ValueType value = values[Index];
+	static constexpr ValueType value = CurrentValue;
+};
+
+// N case
+template<typename ValueType, size_t Index, ValueType CurrentValue, ValueType... RemainingValues>
+struct ExternalAccessByIndex<Index, ValueList<ValueType, CurrentValue, RemainingValues...> >
+{
+	static_assert( Index - 1 < sizeof...( RemainingValues ), "Attempting to index past the end of value list" );
+	static constexpr ValueType value = ExternalAccessByIndex<Index - 1, ValueList<ValueType, RemainingValues...>>::value;
 };
 
 // 0 case

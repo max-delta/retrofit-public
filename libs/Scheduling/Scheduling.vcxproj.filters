@@ -38,6 +38,15 @@
     <ClInclude Include="taskpools\TaskPoolListener.h">
       <Filter>taskpools</Filter>
     </ClInclude>
+    <ClInclude Include="taskpools\stdafx.h">
+      <Filter>taskpools</Filter>
+    </ClInclude>
+    <ClInclude Include="tasks\stdafx.h">
+      <Filter>tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="taskworkers\stdafx.h">
+      <Filter>taskworkers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
