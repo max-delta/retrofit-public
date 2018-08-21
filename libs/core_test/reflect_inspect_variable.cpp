@@ -14,7 +14,7 @@ namespace details{
 float namespace_external_f;
 float const namespace_external_cf = 0.f;
 static double namespace_internal_d;
-static double const namespace_internal_cd;
+static double const namespace_internal_cd = 0.0;
 thread_local int16_t namespace_thread_i;
 thread_local int16_t const namespace_thread_ci = 0;
 constexpr uint8_t namespace_constexpr_u = 0;

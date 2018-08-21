@@ -2,6 +2,8 @@
 
 #include "core/meta/ValueList.h"
 
+#include "core/compiler.h"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,16 +24,43 @@ TEST( ValueList, Empty )
 
 TEST( ValueList, UnorthodoxValueTypes )
 {
-	// While ill-advised, should not cause compilation errors
-	struct Unused;
-	using vl_empty = ValueList<Unused*>;
-	static_assert( vl_empty::kNumValues == 0, "Unexpected size" );
-	#ifndef __INTELLISENSE__ // Intellisense falls over in MSVC2017
-		static_assert( vl_empty::Contains<reinterpret_cast<Unused*>( 5 )>::value == false, "Unexpected value presence" );
-		static_assert( vl_empty::FindIndex<reinterpret_cast<Unused*>( 5 )>::value == -1, "Unexpected value presence" );
-		static_assert( vl_empty::Reverse<>::type::kNumValues == 0, "Unexpected size" );
-		static_assert( vl_empty::Split<0>::former::kNumValues == 0, "Unexpected size" );
-		static_assert( vl_empty::Split<0>::latter::kNumValues == 0, "Unexpected size" );
+	// MSVC has internal compiler errors for non-empty lists with odd types
+	#ifdef RF_PLATFORM_MSVC
+	{
+		// While ill-advised, should not cause compilation errors
+		struct Unused;
+		using vl_empty = ValueList<Unused const *>;
+		static_assert( vl_empty::kNumValues == 0, "Unexpected size" );
+		#ifndef __INTELLISENSE__ // Intellisense falls over in MSVC2017
+			static_assert( vl_empty::Contains<reinterpret_cast<Unused const*>( 5 )>::value == false, "Unexpected value presence" );
+			static_assert( vl_empty::FindIndex<reinterpret_cast<Unused const*>( 5 )>::value == -1, "Unexpected value presence" );
+			static_assert( vl_empty::Reverse<>::type::kNumValues == 0, "Unexpected size" );
+			static_assert( vl_empty::Split<0>::former::kNumValues == 0, "Unexpected size" );
+			static_assert( vl_empty::Split<0>::latter::kNumValues == 0, "Unexpected size" );
+		#endif
+	}
+	#else
+	{
+		// While ill-advised, should not cause compilation errors
+		struct Stub
+		{
+			//
+		};
+		static constexpr Stub unused1;
+		static constexpr Stub unused2;
+		using vl_stub = ValueList<Stub const *, &unused2>;
+		static_assert( vl_stub::kNumValues == 1, "Unexpected size" );
+		static_assert( vl_stub::ByIndex<0>::value == &unused2, "Unexpected value" );
+		static_assert( vl_stub::Contains<&unused1>::value == false, "Unexpected value presence" );
+		static_assert( vl_stub::Contains<&unused2>::value == true, "Unexpected value presence" );
+		static_assert( vl_stub::FindIndex<&unused1>::value == -1, "Unexpected value presence" );
+		static_assert( vl_stub::FindIndex<&unused2>::value == 0, "Unexpected value presence" );
+		static_assert( vl_stub::Reverse<>::type::kNumValues == 1, "Unexpected size" );
+		static_assert( vl_stub::Reverse<>::type::ByIndex<0>::value == &unused2, "Unexpected type" );
+		static_assert( vl_stub::Split<0>::former::kNumValues == 0, "Unexpected size" );
+		static_assert( vl_stub::Split<0>::latter::kNumValues == 1, "Unexpected size" );
+		static_assert( vl_stub::Split<0>::latter::ByIndex<0>::value == &unused2, "Unexpected size" );
+	}
 	#endif
 }
 

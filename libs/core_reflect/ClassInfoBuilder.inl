@@ -91,7 +91,7 @@ void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo & functionInfo, T 
 	functionInfo = {};
 	functionInfo.mAddress = function;
 	using FT = FunctionTraits<T>;
-	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
+	functionInfo.mReturn.mValueType = Value::DetermineType<typename FT::ReturnType>();
 	{
 		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );
@@ -114,7 +114,7 @@ void CreateMemberFunctionInfo( MemberFunctionInfo & functionInfo, T function )
 	functionInfo = {};
 	using FT = FunctionTraits<T>;
 	functionInfo.mRequiresConst = FT::kRequiresConst;
-	functionInfo.mReturn.mValueType = Value::DetermineType<FT::ReturnType>();
+	functionInfo.mReturn.mValueType = Value::DetermineType<typename FT::ReturnType>();
 	{
 		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );

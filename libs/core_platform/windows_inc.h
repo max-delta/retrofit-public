@@ -7,6 +7,7 @@
 #endif
 
 // Need to guard STL before windows destroys it
+#include "rftl/cstddef"
 #include "rftl/cstring"
 
 namespace win32 {

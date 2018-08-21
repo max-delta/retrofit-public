@@ -28,7 +28,12 @@ constexpr TYPE const& Max( TYPE const& lhs, TYPE const& rhs )
 template<typename TYPE>
 constexpr TYPE const& Clamp( TYPE const& min, TYPE const& value, TYPE const& max )
 {
-	RF_ASSERT( min <= max );
+	if( min > max )
+	{
+		// Error case
+		return value;
+	}
+
 	return Min( Max( min, value ), max );
 }
 
@@ -40,7 +45,13 @@ constexpr TYPE SnapNearest( TYPE const& value, TYPE const& step )
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
 	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
-	RF_ASSERT( step > 0 );
+	if( step <= 0 )
+	{
+		// Error case
+		// As step approaches zero, return value approaches value
+		return value;
+	}
+
 	TYPE const mod = value % step;
 	static_assert( ( -3 % 4 ) == -3, "" );
 	if( mod == 0 )
@@ -79,7 +90,13 @@ constexpr TYPE SnapHighest( TYPE const & value, TYPE const & step )
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
 	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
-	RF_ASSERT( step > 0 );
+	if( step <= 0 )
+	{
+		// Error case
+		// As step approaches zero, return value approaches value
+		return value;
+	}
+
 	TYPE const mod = value % step;
 	if( mod == 0 )
 		return value;
@@ -98,7 +115,13 @@ constexpr TYPE SnapLowest( TYPE const & value, TYPE const & step )
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
 	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
 
-	RF_ASSERT( step > 0 );
+	if( step <= 0 )
+	{
+		// Error case
+		// As step approaches zero, return value approaches value
+		return value;
+	}
+
 	TYPE const mod = value % step;
 	if( mod == 0 )
 		return value;

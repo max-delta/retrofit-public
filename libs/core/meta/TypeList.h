@@ -30,7 +30,7 @@ struct TypeList
 	struct Append;
 
 	// Used to reverse a list
-	template<int Unused = 0>
+	template<int Unused>
 	struct Reverse;
 
 	// Used to split a list into 2 segments
@@ -192,7 +192,7 @@ public:
 	};
 
 	// Implemented as external
-	template<int Unused>
+	template<int Unused = 0>
 	struct Reverse : ExternalAccessReverse< TypeList<Types...> >
 	{
 		//

@@ -9,10 +9,13 @@
 #include "rftl/deque"
 #include "rftl/bitset"
 
-class PLATFORMINPUT_API RF::input::InputDevice;
-class PLATFORMINPUT_API RF::input::DigitalInputComponent;
-class PLATFORMINPUT_API RF::input::AnalogInputComponent;
-class PLATFORMINPUT_API RF::input::TextInputComponent;
+// Forwards
+namespace RF { namespace input {
+	class PLATFORMINPUT_API InputDevice;
+	class PLATFORMINPUT_API DigitalInputComponent;
+	class PLATFORMINPUT_API AnalogInputComponent;
+	class PLATFORMINPUT_API TextInputComponent;
+}}
 
 
 namespace RF { namespace input {

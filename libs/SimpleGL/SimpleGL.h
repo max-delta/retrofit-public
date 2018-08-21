@@ -6,9 +6,10 @@
 #include "rftl/unordered_map"
 #include "rftl/array"
 
-//#ifdef SIMPLEGL_EXPORTS
-	class SIMPLEGL_API RF::gfx::DeviceInterface;
-//#endif
+// Forwards
+namespace RF { namespace gfx {
+	class SIMPLEGL_API DeviceInterface;
+}}
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
