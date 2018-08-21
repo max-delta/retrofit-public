@@ -21,19 +21,10 @@ class BitField
 public:
 	using AccessType = AccessTypeT;
 	using FieldSizes = ValueList<size_t, fieldSizes...>;
-	#if defined(_MSC_VER) && _MSC_VER == 1915
-		// HACK: MSVC's 15.8 update broke here
-		// TODO: Remove this hack if later updates fix it back
-		template<size_t index>
-		using FieldsBeforeIndex = typename typelist_details::ExternalAccessSplit<index, FieldSizes>::former;
-		template<size_t index>
-		using FieldsAtOrAfterIndex = typename typelist_details::ExternalAccessSplit<index, FieldSizes>::latter;
-	#else
-		template<size_t index>
-		using FieldsBeforeIndex = typename FieldSizes::Split<index>::former;
-		template<size_t index>
-		using FieldsAtOrAfterIndex = typename FieldSizes::Split<index>::latter;
-	#endif
+	template<size_t index>
+	using FieldsBeforeIndex = typename FieldSizes::template Split<index>::former;
+	template<size_t index>
+	using FieldsAtOrAfterIndex = typename FieldSizes::template Split<index>::latter;
 	static constexpr size_t kNumFields = FieldSizes::kNumValues;
 	static constexpr size_t kMinimumBitsStorage = 1;
 	static constexpr size_t kRequiredBitsStorage = ListSum<size_t, FieldSizes>::value;
@@ -131,7 +122,8 @@ template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsAtIndex()
 {
 	static_assert( FieldsAtOrAfterIndex<index>::kNumValues > 0, "Index past number of fields" );
-	constexpr size_t kBitsAtIndex = FieldsAtOrAfterIndex<index>::ByIndex<0>::value;
+	using FirstFieldAfterIndex = typename FieldsAtOrAfterIndex<index>::template ByIndex<0>;
+	constexpr size_t kBitsAtIndex = FirstFieldAfterIndex::value;
 	return kBitsAtIndex;
 }
 

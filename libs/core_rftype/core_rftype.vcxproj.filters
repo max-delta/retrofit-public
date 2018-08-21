@@ -12,6 +12,9 @@
       <Filter>stl_extensions</Filter>
     </ClInclude>
     <ClInclude Include="TypeTraverser.h" />
+    <ClInclude Include="stl_extensions\stdafx.h">
+      <Filter>stl_extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

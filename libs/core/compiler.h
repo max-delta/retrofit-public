@@ -6,7 +6,8 @@ namespace RF { namespace compiler {
 enum class Compiler
 {
 	Invalid = 0,
-	MSVC
+	MSVC,
+	Clang
 };
 
 enum class Architecture
@@ -49,9 +50,46 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__) // NOTE: clang-cl pretends to be MSVC
 	#define RF_PLATFORM_MSVC
 	constexpr Compiler kCompiler = Compiler::MSVC;
+
+	#pragma intrinsic(__debugbreak)
+	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
+
+	#define RF_NO_INLINE __declspec(noinline)
+	#define RF_ACK_ANY_PADDING __pragma(warning(suppress:4324))
+	#define RF_ACK_UNSAFE_INHERITANCE __pragma(warning(suppress:4435))
+	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma(warning(suppress:4287))
+
+	#ifdef _M_AMD64
+		#define RF_PLATFORM_X86_64
+		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING
+	#elif defined(_M_IX86)
+		#define RF_PLATFORM_X86_32
+		#define RF_ACK_64BIT_PADDING
+		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
+	#elif defined(_M_ARM64)
+		#error Verify and add support
+		#define RF_PLATFORM_ARM_64
+		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING
+	#elif defined(_M_ARM)
+		#error Verify and add support
+		#define RF_PLATFORM_ARM_32
+		#define RF_ACK_64BIT_PADDING
+		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
+	#else
+		#error Undefined architecture
+	#endif
+#elif defined(__clang__)
+	#define RF_PLATFORM_CLANG
+	constexpr Compiler kCompiler = Compiler::Clang;
+
+	#ifndef _MSC_VER
+		#error Normal clang not supported yet
+	#endif
 
 	#pragma intrinsic(__debugbreak)
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
