@@ -17,8 +17,16 @@
     </ClCompile>
     <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
       <SupportJustMyCode>false</SupportJustMyCode>
-      <AdditionalOptions>-Wno-clang-cl-pch -Wno-unused-command-line-argument -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-unused-macros -Wno-reserved-id-macro %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions>-Wno-error %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-clang-cl-pch %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-unused-command-line-argument %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-c++98-compat %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-c++98-compat-pedantic %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-unused-macros %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-reserved-id-macro %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-extra-semi %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-missing-prototypes %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-Wno-covered-switch-default %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>

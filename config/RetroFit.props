@@ -22,6 +22,9 @@
       <AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
       <ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
+      <AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>

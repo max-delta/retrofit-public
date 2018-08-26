@@ -86,27 +86,27 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 	switch( mProjectionMode )
 	{
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
-			glOrtho(0.0f,width,height,0.0f,-1.0f,1.0f); // Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, width, height, 0, -1, 1 ); // Create Ortho View (0,0 At Top Left)
 			mXFudge = 0.5f;
 			mYFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
-			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f ); // Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, 1, 1, 0, -1, 1 ); // Create Ortho View (0,0 At Top Left)
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
-			glOrtho( 0.0f, 1, 0.0f, 1, -1.0f, 1.0f ); // Create Ortho View (0,0 At Bottom Left)
+			glOrtho( 0, 1, 0, 1, -1, 1 ); // Create Ortho View (0,0 At Bottom Left)
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
-			glOrtho( -1, 1, -1, 1, -1.0f, 1.0f ); // Create Ortho View (1,1 At Top Right)
+			glOrtho( -1, 1, -1, 1, -1, 1 ); // Create Ortho View (1,1 At Top Right)
 			mXFudge = 2.f / width * 0.5f;
 			mYFudge = 2.f / height * 0.5f;
 			break;
 		default:
-			glOrtho( 0.0f, 1, 1, 0.0f, -1.0f, 1.0f );
+			glOrtho( 0, 1, 1, 0, -1, 1 );
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
@@ -194,17 +194,20 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & characterWidth, uint32_t & characterHeight )
 {
-	int x, y, n;
+	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
-	unsigned char* data = stbi_load_from_file( file, &x, &y, &n, kRGBAElements );
+	unsigned char* data = stbi_load_from_file( file, &tx, &ty, &tn, kRGBAElements );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
 		return false;
 	}
-	RF_ASSERT( x != 0 );
-	RF_ASSERT( y != 0 );
-	RF_ASSERT( n == kRGBAElements );
+	RF_ASSERT( tx > 0 );
+	RF_ASSERT( ty > 0 );
+	RF_ASSERT( tn == kRGBAElements );
+	size_t x = static_cast<size_t>( tx );
+	size_t y = static_cast<size_t>( ty );
+	size_t n = static_cast<size_t>( tn );
 
 	enum class FontType
 	{
@@ -242,9 +245,9 @@ bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & charact
 		return false;
 	}
 
-	uint32_t const charWidth = x / kCharactersPerRow;
+	uint32_t const charWidth = math::integer_cast<uint32_t>( x / kCharactersPerRow );
 	characterWidth = charWidth;
-	uint32_t const charHeight = y / kCharactersPerColumn;
+	uint32_t const charHeight = math::integer_cast<uint32_t>( y / kCharactersPerColumn );
 	characterHeight = charHeight;
 
 	using CharacterStorage = rftl::vector<uint8_t>;
