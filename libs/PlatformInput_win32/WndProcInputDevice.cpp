@@ -15,9 +15,9 @@ WndProcInputDevice::WndProcInputDevice()
 		DefaultCreator<WndProcDigitalInputComponent>::Create(),
 		DefaultCreator<WndProcAnalogInputComponent>::Create(),
 		DefaultCreator<WndProcTextInputComponent>::Create() )
-	, m_Digital( *(WndProcDigitalInputComponent*)m_DigitalComponent.Get() )
-	, m_Analog( *(WndProcAnalogInputComponent*)m_AnalogComponent.Get() )
-	, m_Text( *(WndProcTextInputComponent*)m_TextComponent.Get() )
+	, m_Digital( *reinterpret_cast<WndProcDigitalInputComponent*>( m_DigitalComponent.Get() ) )
+	, m_Analog( *reinterpret_cast<WndProcAnalogInputComponent*>( m_AnalogComponent.Get() ) )
+	, m_Text( *reinterpret_cast<WndProcTextInputComponent*>( m_TextComponent.Get() ) )
 {
 	//
 }
@@ -518,9 +518,9 @@ shim::LRESULT WndProcTextInputComponent::ExamineTranslatedMessage( shim::HWND hW
 		case WM_CHAR:
 		{
 			RF_ASSERT_MSG(
-				win32::IsWindowUnicode( ( win32::HWND )hWnd ),
+				win32::IsWindowUnicode( static_cast<win32::HWND>( hWnd ) ),
 				"Non-unicode window, may not be able to receive unicode text properly" );
-			char16_t const utf16 = (char16_t)wParam;
+			char16_t const utf16 = static_cast<char16_t>( wParam );
 			if( m_TextBuffer.size() == k_MaxStorage )
 			{
 				m_TextBuffer.pop_front();

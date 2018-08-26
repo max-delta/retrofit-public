@@ -28,7 +28,8 @@ void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );
-	if( bytesParsed >= kBufSize )
+	static_assert( kBufSize <= std::numeric_limits<int>::max(), "Unexpected truncation" );
+	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
 		puts( "FALLBACK_LOGGER>>TRUNCATED MESSAGE!" );
 	}

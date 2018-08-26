@@ -173,7 +173,7 @@ rftl::string Uuid::GetDebugString() const
 	retVal.push_back( '(' );
 	retVal.push_back( 'v' );
 	{
-		char const versionChar = '0' + GetVersion();
+		char const versionChar = '0' + static_cast<char>( GetVersion() );
 		retVal.push_back( versionChar );
 		if( ExposesComputerInformation() )
 		{
@@ -186,7 +186,7 @@ rftl::string Uuid::GetDebugString() const
 	}
 	retVal.push_back( ',' );
 	{
-		char const variantChar = '0' + GetVariant();
+		char const variantChar = '0' + static_cast<char>( GetVariant() );
 		retVal.push_back( variantChar );
 	}
 	retVal.push_back( ')' );

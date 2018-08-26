@@ -31,7 +31,6 @@ template<>
 constexpr bool Equals<float>( float const& lhs, float const& rhs )
 {
 	return
-		lhs == rhs ||
 		internal::fabs( lhs - rhs ) < rftl::numeric_limits<float>::epsilon() * 10 ||
 		( lhs > rhs && lhs / rhs < 1.000001f ) ||
 		( rhs > lhs && rhs / lhs < 1.000001f );
@@ -43,7 +42,6 @@ template<>
 constexpr bool Equals<double>( double const& lhs, double const& rhs )
 {
 	return
-		lhs == rhs ||
 		internal::abs( lhs - rhs ) < rftl::numeric_limits<double>::epsilon() * 10 ||
 		( lhs > rhs && lhs / rhs < 1.00000000001 ) ||
 		( rhs > lhs && rhs / lhs < 1.00000000001 );

@@ -11,7 +11,7 @@ class SERIALIZATION_API DiagnosticExporter final : public Exporter
 {
 public:
 	DiagnosticExporter( bool silent );
-	~DiagnosticExporter();
+	~DiagnosticExporter() override;
 
 	virtual bool Root_FinalizeExport() override;
 

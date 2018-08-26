@@ -3,7 +3,7 @@
 
 #include "PPUFwd.h"
 
-#include "core_math/vector2.h"
+#include "core_math/Vector2.h"
 #include "core_platform/win_shim.h"
 
 #include "rftl/cstdio"
