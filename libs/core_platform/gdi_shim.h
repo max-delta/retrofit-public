@@ -136,7 +136,7 @@ enum PIXELFORMATDESCRIPTOR_flags
 	kPFD_DIRECT3D_ACCELERATED = 0x00004000,
 	kPFD_SUPPORT_COMPOSITION = 0x00008000,
 };
-int ChoosePixelFormat( HDC hdc, PIXELFORMATDESCRIPTOR* ppfd );
+int ChoosePixelFormat( HDC hdc, PIXELFORMATDESCRIPTOR const* ppfd );
 bool SetPixelFormat( HDC hdc, int format, PIXELFORMATDESCRIPTOR const* ppfd );
 HGLRC wglCreateContext( HDC );
 bool wglDeleteContext( HGLRC );

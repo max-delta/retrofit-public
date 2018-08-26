@@ -4,15 +4,21 @@
 
 shim::HDC shim::GetDC( HWND hWnd )
 {
-	return win32::GetDC( ( win32::HWND )hWnd );
+	return win32::GetDC( static_cast<win32::HWND>( hWnd ) );
 }
 
 int shim::ReleaseDC( HWND hWnd, HDC hDC )
 {
-	return win32::ReleaseDC( ( win32::HWND ) hWnd, ( win32::HDC ) hDC );
+	return win32::ReleaseDC(
+		static_cast<win32::HWND>( hWnd ),
+		static_cast<win32::HDC>( hDC ) );
 }
 
 shim::LRESULT WIN32_CALLBACK shim::DefWindowProcW( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
-	return win32::DefWindowProcW( ( win32::HWND ) hWnd, ( win32::UINT ) Msg, ( win32::WPARAM ) wParam, ( win32::LPARAM ) lParam );
+	return win32::DefWindowProcW(
+		static_cast<win32::HWND>( hWnd ),
+		static_cast<win32::UINT>( Msg ),
+		static_cast<win32::WPARAM>( wParam ),
+		static_cast<win32::LPARAM>( lParam ) );
 }

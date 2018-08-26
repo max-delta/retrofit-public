@@ -2,6 +2,6 @@
 
 #define WINGDIAPI __declspec(dllimport)
 #define APIENTRY __stdcall
-#include <gl/gl.h>
+#include <gl/GL.h>
 #undef WINGDIAPI
 #undef APIENTRY
