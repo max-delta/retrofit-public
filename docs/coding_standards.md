@@ -116,7 +116,7 @@ Rationale: You weren't raised in a barn, and even if you were, try not to make i
 
 ### No gotos
 
-Rationale: Pleaseâ€¦
+Rationale: Please…
 
 # The Preferences
 
@@ -174,6 +174,7 @@ While no one should ever be running bulk auto-formats on code they are not the o
 
 If you are not particularly passionate about minor whitespace nuances, but want to be consistent, you may wish to use the following auto-format vs2017.vssettings import to better match the general engine style:
 
+```
 <UserSettings>
 	<ApplicationIdentity version="15.0"/>
 	<ToolsOptions>
@@ -260,3 +261,4 @@ If you are not particularly passionate about minor whitespace nuances, but want 
 		</ToolsOptionsCategory>
 	</ToolsOptions>
 </UserSettings>
+```
