@@ -116,7 +116,7 @@ Rationale: You weren't raised in a barn, and even if you were, try not to make i
 
 ### No gotos
 
-Rationale: Please…
+Rationale: Please...
 
 # The Preferences
 
