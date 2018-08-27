@@ -137,7 +137,6 @@ TEST( Reflect, FreeFunctionPointers )
 
 	struct test_f_call_f
 	{
-		using TestFunctionType = decltype( f_call_f );
 		using FT = FunctionTraits<decltype( ptr_f_call_f )>;
 		static_assert( FT::kCallType == CallType::FreeStanding, "Unexpected value" );
 		static_assert( rftl::is_same< FT::FunctionType, decltype( f_call_f )>::value, "Unexpected type" );

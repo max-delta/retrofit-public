@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "core_math/hash.h"
+#include "core_math/Hash.h"
 #include "rftl/limits"
 
 

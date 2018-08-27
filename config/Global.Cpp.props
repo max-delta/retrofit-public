@@ -21,6 +21,7 @@
         -Wno-error
         -Wno-clang-cl-pch
         -Wno-unused-command-line-argument
+        -Wno-pedantic
         -Wno-c++98-compat
         -Wno-c++98-compat-pedantic
         -Wno-unused-macros

@@ -80,7 +80,7 @@ struct ParameterInfo
 struct FreeStandingFunctionInfo
 {
 	char const* mIdentifier = nullptr;
-	void* mAddress = nullptr;
+	void const* mAddress = nullptr;
 	ReturnInfo mReturn = {};
 	rftl::vector<ParameterInfo> Parameters = {};
 };

@@ -89,13 +89,14 @@ template<typename T>
 void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo & functionInfo, T & function )
 {
 	functionInfo = {};
-	functionInfo.mAddress = function;
 	using FT = FunctionTraits<T>;
+	typename FT::FunctionPointerType const functionAddress = function;
+	functionInfo.mAddress = reinterpret_cast<void const*>( functionAddress );
 	functionInfo.mReturn.mValueType = Value::DetermineType<typename FT::ReturnType>();
 	{
 		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );
-		details::ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
+		details::ParamUnpacker<typename FT::ParamTypes>::Unpack( paramTypes );
 		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );
 		for( size_t i = 0; i < paramTypes.size(); i++ )
 		{
@@ -118,7 +119,7 @@ void CreateMemberFunctionInfo( MemberFunctionInfo & functionInfo, T function )
 	{
 		rftl::vector<Value::Type> paramTypes;
 		paramTypes.reserve( FT::ParamTypes::kNumTypes );
-		details::ParamUnpacker<FT::ParamTypes>::Unpack( paramTypes );
+		details::ParamUnpacker<typename FT::ParamTypes>::Unpack( paramTypes );
 		functionInfo.Parameters.reserve( FT::ParamTypes::kNumTypes );
 		for( size_t i = 0; i < paramTypes.size(); i++ )
 		{
