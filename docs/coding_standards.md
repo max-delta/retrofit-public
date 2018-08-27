@@ -96,11 +96,11 @@ Defines/macros: UPPER\_SNAKE\_CASE
 
 Rationale: Clarity over compactness, consistency
 
-### No unscoped &#39;using&#39; directives
+### No unscoped 'using' directives
 
 Rationale: Structural isolation with no side-effects
 
-### No #define that isn&#39;t #undef&#39;d before file end
+### No #define that isn't #undef'd before file end
 
 Note there will be several careful exceptions to this rule in core libraries
 
@@ -166,7 +166,7 @@ Note that 'ownership' is a vague concept, so you will need to exercise a balance
 
 You may wish to peruse the following:
 
-Stroustrup & Sutter: [https://github.com/isocpp/CppCoreGuidelines](https://github.com/isocpp/CppCoreGuidelines)
+Stroustrup & Sutter: [https://github.com/isocpp/CppCoreGuidelines]
 
 # Autoformat
 
