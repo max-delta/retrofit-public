@@ -43,7 +43,7 @@ TEST( MathBitField, SizeTruncatedInFirstByte )
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	bf.WriteAt<0>( 0x0d );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0xa0 );
-//	ASSERT_EQ( bf.ReadAt<0>(), 0x05 );
+	ASSERT_EQ( bf.ReadAt<0>(), 0x05 );
 }
 
 
@@ -58,7 +58,7 @@ TEST( MathBitField, SizeTruncatedInSecondByte )
 	bf.WriteAt<0>( 0x0ffd );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0xff );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0xa0 );
-//	ASSERT_EQ( bf.ReadAt<0>(), 0x07fd );
+	ASSERT_EQ( bf.ReadAt<0>(), 0x07fd );
 }
 
 
@@ -71,7 +71,7 @@ TEST( MathBitField, OffsetTruncationInFirstByte )
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	bf.WriteAt<1>( 0x0d );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x14 );
-//	ASSERT_EQ( bf.ReadAt<0>(), 0x05 );
+	ASSERT_EQ( bf.ReadAt<1>(), 0x05 );
 }
 
 
@@ -86,7 +86,7 @@ TEST( MathBitField, OffsetTruncationAcrossTwoBytes )
 	bf.WriteAt<1>( 0x0ffd );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x1f );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0xf4 );
-//	ASSERT_EQ( bf.ReadAt<0>(), 0x07fd );
+	ASSERT_EQ( bf.ReadAt<1>(), 0x07fd );
 }
 
 
@@ -103,7 +103,7 @@ TEST( MathBitField, OffsetTruncationAcrossThreeBytes )
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x1f );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0xff );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[2], 0xf4 );
-//	ASSERT_EQ( bf.ReadAt<0>(), 0x07fffd );
+	ASSERT_EQ( bf.ReadAt<1>(), 0x07fffd );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
