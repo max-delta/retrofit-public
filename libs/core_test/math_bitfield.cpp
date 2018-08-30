@@ -106,5 +106,88 @@ TEST( MathBitField, OffsetTruncationAcrossThreeBytes )
 	ASSERT_EQ( bf.ReadAt<1>(), 0x07fffd );
 }
 
+
+
+TEST( MathBitField, IEEE754Binary32Nonsense )
+{
+	using bf_u32_1_7_24 = BitField<uint32_t, 1, 8, 23>;
+	static_assert( sizeof( bf_u32_1_7_24 ) == 4, "Unexpected size" );
+	static_assert( sizeof( float ) == 4, "Unexpected size" );
+	static_assert( sizeof( uint32_t ) == 4, "Unexpected size" );
+	auto convertToSoft = [](
+		float hardFloat ) -> bf_u32_1_7_24
+	{
+		// HACK: This is probably wildly unsafe and hardware-dependent
+		uint32_t const softUnswapped = *reinterpret_cast<uint32_t const*>( &hardFloat );
+		#if defined(RF_PLATFORM_LITTLE_ENDIAN)
+		uint32_t const softSwapped = math::ReverseByteOrder( softUnswapped );
+		#elif defined(RF_PLATFORM_BIG_ENDIAN)
+		uint32_t const softSwapped = softUnswapped;
+		#endif
+		return *reinterpret_cast<bf_u32_1_7_24 const*>( &softSwapped );
+	};
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( 0.f );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 0 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 0 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( -0.f );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 1 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 0 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( -2.f );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 1 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 128 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( -3.f );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 1 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 128 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( std::numeric_limits<float>::denorm_min() );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 0 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 0 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000001 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( std::numeric_limits<float>::infinity() );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 0 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 255 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( std::numeric_limits<float>::quiet_NaN() );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 0 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 255 ); // ... * 2^(<EXP>-127) * ...
+		ASSERT_EQ( softFloat.ReadAt<2>(), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
+	}
+	{
+		bf_u32_1_7_24 const softFloat = convertToSoft( std::numeric_limits<float>::signaling_NaN() );
+		ASSERT_EQ( softFloat.ReadAt<0>(), 0 ); // ... * -1^<SIGN> * ...
+		ASSERT_EQ( softFloat.ReadAt<1>(), 255 ); // ... * 2^(<EXP>-127) * ...
+		switch( compiler::kCompiler )
+		{
+			case compiler::Compiler::MSVC:
+				ASSERT_EQ( softFloat.ReadAt<2>(), 0b10000000000000000000001 ); // ... * (1+FRAC) * ...
+				break;
+			case compiler::Compiler::Clang:
+				ASSERT_EQ( softFloat.ReadAt<2>(), 0b00000000000000000000001 ); // ... * (1+FRAC) * ...
+				break;
+			case compiler::Compiler::Invalid:
+			default:
+				// Unimplemented
+				ASSERT_TRUE( false );
+				break;
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

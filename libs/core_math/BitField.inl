@@ -201,7 +201,7 @@ struct Compressor
 		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static AccessType DecompressImpl( void const* source )
 	{
-		constexpr size_t kBytesNeededingReads = SnapHighest<size_t>( storageSizeBits, 8 ) / 8;
+		constexpr size_t kBytesNeededingReads = SnapHighest<size_t>( storageSizeBits + storageOffsetBits, 8 ) / 8;
 		constexpr int64_t kLeftMostByte = 0;
 		constexpr int64_t kRightmostByte = kBytesNeededingReads - 1;
 
