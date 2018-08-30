@@ -25,5 +25,6 @@
     <None Include="math_compare.inl" />
     <None Include="math_bits.inl" />
     <None Include="math_bytes.inl" />
+    <None Include="BitField.inl" />
   </ItemGroup>
 </Project>
