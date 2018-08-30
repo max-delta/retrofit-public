@@ -239,11 +239,71 @@ struct Compressor
 			}
 		}
 	}
+
+	// Load bits as big-endian, reading from right-to-left
 	template<typename AccessType,
 		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static AccessType DecompressImpl( void const* source )
 	{
-		static_assert( false, "TODO" );
+		constexpr size_t kBytesNeededingReads = SnapHighest<size_t>( storageSizeBits, 8 ) / 8;
+		constexpr int64_t kLeftMostByte = 0;
+		constexpr int64_t kRightmostByte = kBytesNeededingReads - 1;
+
+		AccessType destination = 0;
+
+		size_t bitsLeft = storageSizeBits;
+		for( int64_t byteOffset = kLeftMostByte; byteOffset <= kRightmostByte; byteOffset++ )
+		{
+			uint8_t const& storageByte = *( reinterpret_cast<uint8_t const*>( source ) + byteOffset );
+			if( byteOffset == kLeftMostByte )
+			{
+				RF_ASSERT( bitsLeft > 0 );
+				RF_ASSERT( bitsLeft <= storageSizeBits );
+				constexpr size_t bitsInByte = math::Min<size_t>( storageSizeBits, 8 - storageOffsetBits );
+				constexpr size_t rightShiftToMatchOffset = (8 - bitsInByte) - storageOffsetBits;
+				constexpr size_t leftShiftToMatchSize = bitsInByte;
+				constexpr AccessType outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
+				destination <<= leftShiftToMatchSize; // Shift
+				destination &= ~outgoingMask; // Clear
+				destination |= outgoingBits; // Set
+				bitsLeft -= bitsInByte;
+				RF_ASSERT( bitsLeft >= 0 );
+				RF_ASSERT( bitsLeft <= storageSizeBits );
+			}
+			else if( byteOffset == kRightmostByte )
+			{
+				RF_ASSERT( bitsLeft <= 8 );
+				size_t const bitsInByte = bitsLeft;
+				size_t const rightShiftToMatchOffset = 8 - bitsInByte;
+				size_t const leftShiftToMatchSize = bitsInByte;
+				AccessType const outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
+				destination <<= leftShiftToMatchSize; // Shift
+				destination &= ~outgoingMask; // Clear
+				destination |= outgoingBits; // Set
+				bitsLeft -= bitsInByte;
+				RF_ASSERT( bitsLeft == 0 );
+			}
+			else
+			{
+				RF_ASSERT( bitsLeft > 0 );
+				RF_ASSERT( bitsLeft <= storageSizeBits );
+				constexpr size_t bitsInByte = 8;
+				constexpr size_t rightShiftToMatchOffset = 0;
+				constexpr size_t leftShiftToMatchSize = bitsInByte;
+				constexpr AccessType outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
+				destination <<= leftShiftToMatchSize; // Shift
+				destination &= ~outgoingMask; // Clear
+				destination |= outgoingBits; // Set
+				bitsLeft -= bitsInByte;
+				RF_ASSERT( bitsLeft > 0 );
+				RF_ASSERT( bitsLeft <= storageSizeBits );
+			}
+		}
+
+		return destination;
 	}
 };
 
