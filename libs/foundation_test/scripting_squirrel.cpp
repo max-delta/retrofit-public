@@ -112,7 +112,7 @@ TEST( Squirrel, GlobalArray )
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::ArrayTag const* const val = rftl::get_if<SquirrelVM::ArrayTag>( &elem );
 	ASSERT_NE( val, nullptr );
-	SquirrelVM::ElementArray elemArr = vm.GetGlobalVariableAsArray( "x" );
+	SquirrelVM::ElementArray const elemArr = vm.GetGlobalVariableAsArray( "x" );
 	{
 		ASSERT_EQ( elemArr.size(), 2 );
 		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr[0] );
@@ -145,22 +145,22 @@ TEST( Squirrel, GlobalClass )
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 	ASSERT_NE( val, nullptr );
-	SquirrelVM::ElementMap elemArr = vm.GetGlobalVariableAsInstance( "x" );
+	SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
 	{
-		ASSERT_EQ( elemArr.size(), 3 );
+		ASSERT_EQ( elemMap.size(), 3 );
 		SquirrelVM::String const firstIndex = "a";
-		ASSERT_EQ( elemArr.count( firstIndex ), 1 );
-		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( firstIndex ) );
+		ASSERT_EQ( elemMap.count( firstIndex ), 1 );
+		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 		ASSERT_NE( firstVal, nullptr );
 		ASSERT_EQ( *firstVal, "first" );
 		SquirrelVM::String const secondIndex = "b";
-		ASSERT_EQ( elemArr.count( secondIndex ), 1 );
-		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( secondIndex ) );
+		ASSERT_EQ( elemMap.count( secondIndex ), 1 );
+		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( secondIndex ) );
 		ASSERT_NE( secondVal, nullptr );
 		ASSERT_EQ( *secondVal, "second" );
 		SquirrelVM::String const defaultIndex = "c";
-		ASSERT_EQ( elemArr.count( defaultIndex ), 1 );
-		SquirrelVM::String const* const defaultVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( defaultIndex ) );
+		ASSERT_EQ( elemMap.count( defaultIndex ), 1 );
+		SquirrelVM::String const* const defaultVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( defaultIndex ) );
 		ASSERT_NE( defaultVal, nullptr );
 		ASSERT_EQ( *defaultVal, "default" );
 	}
@@ -184,17 +184,17 @@ TEST( Squirrel, InjectSimpleStruct )
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 	ASSERT_NE( val, nullptr );
-	SquirrelVM::ElementMap elemArr = vm.GetGlobalVariableAsInstance( "x" );
+	SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
 	{
-		ASSERT_EQ( elemArr.size(), 2 );
+		ASSERT_EQ( elemMap.size(), 2 );
 		SquirrelVM::String const firstIndex = "a";
-		ASSERT_EQ( elemArr.count( firstIndex ), 1 );
-		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( firstIndex ) );
+		ASSERT_EQ( elemMap.count( firstIndex ), 1 );
+		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 		ASSERT_NE( firstVal, nullptr );
 		ASSERT_EQ( *firstVal, "first" );
 		SquirrelVM::String const secondIndex = "b";
-		ASSERT_EQ( elemArr.count( secondIndex ), 1 );
-		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemArr.at( secondIndex ) );
+		ASSERT_EQ( elemMap.count( secondIndex ), 1 );
+		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( secondIndex ) );
 		ASSERT_NE( secondVal, nullptr );
 		ASSERT_EQ( *secondVal, "second" );
 	}
