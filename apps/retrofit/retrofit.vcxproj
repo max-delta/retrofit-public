@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sqreflect_scratch.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -56,6 +57,12 @@
     <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
       <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
+      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
     </ProjectReference>
@@ -70,6 +77,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
+      <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Scheduling\Scheduling.vcxproj">
       <Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
