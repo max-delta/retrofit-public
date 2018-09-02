@@ -68,6 +68,8 @@ public:
 	// Types
 public:
 	using ValueTypes = TypeList<RF_REFLECT_VALUE_TYPELIST>;
+	using CharacterTypes = TypeList<char, wchar_t, char16_t, char32_t>;
+	using IntegralTypes = TypeList<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t>;
 
 	// Someone on the C++ standards committee fucked up! You can't make an
 	//  empty variant unless you throw exceptions! What the fuck? So, we'll
@@ -88,6 +90,7 @@ public:
 	Value();
 	template<typename T>
 	explicit Value( T const& value );
+	explicit Value( Type type );
 	explicit Value( Type type, void const* bytes );
 	Value( Value const& ) = default;
 	Value& operator =( Value const& ) = default;
@@ -103,6 +106,10 @@ public:
 
 	template<typename T>
 	static constexpr Type DetermineType();
+
+	template<typename T>
+	Value ConvertTo() const;
+	Value ConvertTo( Type target ) const;
 
 
 	//

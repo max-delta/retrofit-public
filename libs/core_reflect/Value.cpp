@@ -1,16 +1,173 @@
 #include "stdafx.h"
 
 #include "Value.h"
+
+#include "core_math/math_casts.h"
 #include "core/macros.h"
+
+#include "rftl/sstream"
 
 
 namespace RF { namespace reflect {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+template<typename InT>
+rftl::stringstream ConvertTempToSS( InT const& source )
+{
+	rftl::stringstream ss;
+	ss << source;
+	return ss;
+}
+
+
+
+template<typename OutT>
+OutT ConvertSSToTemp( rftl::stringstream && ss )
+{
+	OutT temp = OutT();
+	ss >> temp;
+	return temp;
+}
+
+
+
+template<> void* ConvertSSToTemp<void*>( rftl::stringstream && ss )
+{
+	return reinterpret_cast<void*>( ConvertSSToTemp<uint64_t>( rftl::move( ss ) ) );
+}
+template<> void const* ConvertSSToTemp<void const*>( rftl::stringstream && ss )
+{
+	return ConvertSSToTemp<void*>( rftl::move( ss ) );
+}
+template<> VirtualClass* ConvertSSToTemp<VirtualClass*>( rftl::stringstream && ss )
+{
+	return reinterpret_cast<VirtualClass*>( ConvertSSToTemp<uint64_t>( rftl::move( ss ) ) );
+}
+template<> VirtualClass const* ConvertSSToTemp<VirtualClass const*>( rftl::stringstream && ss )
+{
+	return ConvertSSToTemp<VirtualClass*>( rftl::move( ss ) );
+}
+template<> char ConvertSSToTemp<char>( rftl::stringstream && ss )
+{
+	if( ss.str().size() == 1 )
+	{
+		char temp = char();
+		ss >> temp;
+		return temp;
+	}
+	else
+	{
+		// If you're trying to convert odd types to characters, you're going to
+		//  get quirky effects, so avoid doing it and remove the disambiguation
+		//  before trying to convert
+		return math::integer_cast<char>( ConvertSSToTemp<uint64_t>( rftl::move( ss ) ) );
+	}
+}
+template<> wchar_t ConvertSSToTemp<wchar_t>( rftl::stringstream && ss )
+{
+	return static_cast<wchar_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
+}
+template<> char16_t ConvertSSToTemp<char16_t>( rftl::stringstream && ss )
+{
+	return static_cast<char16_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
+}
+template<> char32_t ConvertSSToTemp<char32_t>( rftl::stringstream && ss )
+{
+	return static_cast<char32_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
+}
+
+
+
+template<typename InT, typename OutT,
+	typename rftl::enable_if<
+		rftl::conjunction<
+			Value::IntegralTypes::Contains<InT>,
+			Value::IntegralTypes::Contains<OutT>>::value == false,
+		int>::type = 0>
+OutT ConvertTemps( InT const& source )
+{
+	rftl::stringstream ss = ConvertTempToSS<InT>( source );
+	OutT const outVal = ConvertSSToTemp<OutT>( rftl::move( ss ) );
+	return outVal;
+}
+
+
+
+template<typename InT, typename OutT,
+	typename rftl::enable_if<
+		rftl::conjunction<
+			Value::IntegralTypes::Contains<InT>,
+			Value::IntegralTypes::Contains<OutT>>::value,
+		int>::type = 0>
+OutT ConvertTemps( InT const& source )
+{
+	return math::integer_cast<OutT, InT>( source );
+}
+
+
+
+template<Value::Type inID, Value::Type outID>
+Value ConvertValue( Value const& source )
+{
+	using InT = typename Value::ValueTypes::ByIndex<static_cast<size_t>( inID )>::type;
+	using OutT = typename Value::ValueTypes::ByIndex<static_cast<size_t>( outID )>::type;
+
+	InT const* temp = source.GetAs<InT>();
+	if( temp == nullptr )
+	{
+		RF_DBGFAIL();
+		return Value();
+	}
+
+	OutT const outVal = ConvertTemps<InT, OutT>( *temp );
+	return Value( outVal );
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 Value::Value()
 	: mInternalStorage( InvalidTag() )
 {
 	//
+}
+
+
+
+Value::Value( Type type )
+{
+	// TODO: Template recursion instead on the typelist
+	switch( type )
+	{
+		case Type::Bool:				mInternalStorage = static_cast<bool>( false ); break;
+		case Type::VoidPtr:				mInternalStorage = static_cast<void*>( nullptr ); break;
+		case Type::VoidConstPtr:		mInternalStorage = static_cast<void const*>( nullptr ); break;
+		case Type::VirtualClassPtr:		mInternalStorage = static_cast<VirtualClass*>( nullptr ); break;
+		case Type::VirtualClassConstPtr:mInternalStorage = static_cast<VirtualClass const*>( nullptr ); break;
+		case Type::Char:				mInternalStorage = static_cast<char>( 0 ); break;
+		case Type::WChar:				mInternalStorage = static_cast<wchar_t>( 0 ); break;
+		case Type::Char16:				mInternalStorage = static_cast<char16_t>( 0 ); break;
+		case Type::Char32:				mInternalStorage = static_cast<char32_t>( 0 ); break;
+		case Type::Float:				mInternalStorage = static_cast<float>( 0 ); break;
+		case Type::Double:				mInternalStorage = static_cast<double>( 0 ); break;
+		case Type::LongDouble:			mInternalStorage = static_cast<long double>( 0 ); break;
+		case Type::UInt8:				mInternalStorage = static_cast<uint8_t>( 0 ); break;
+		case Type::UInt16:				mInternalStorage = static_cast<int8_t>( 0 ); break;
+		case Type::UInt32:				mInternalStorage = static_cast<uint16_t>( 0 ); break;
+		case Type::UInt64:				mInternalStorage = static_cast<int16_t>( 0 ); break;
+		case Type::Int8:				mInternalStorage = static_cast<uint32_t>( 0 ); break;
+		case Type::Int16:				mInternalStorage = static_cast<int32_t>( 0 ); break;
+		case Type::Int32:				mInternalStorage = static_cast<uint64_t>( 0 ); break;
+		case Type::Int64:				mInternalStorage = static_cast<int64_t>( 0 ); break;
+		case Type::Invalid:				mInternalStorage = InvalidTag(); break;
+		default:
+		{
+			RF_DBGFAIL();
+			mInternalStorage = InvalidTag();
+			break;
+		}
+	}
 }
 
 
@@ -152,6 +309,63 @@ size_t Value::GetNumBytes() const
 			return 0;
 		}
 	}
+}
+
+
+
+Value Value::ConvertTo( Type target ) const
+{
+	Type const source = GetStoredType();
+
+	using convertFunc = Value(*)( Value const&);
+	#define Q(I,O) details::ConvertValue<static_cast<Value::Type>(I),static_cast<Value::Type>(O)>
+	#define QL(I) \
+		Q(I, 0), \
+		Q(I, 1), \
+		Q(I, 2), \
+		Q(I, 3), \
+		Q(I, 4), \
+		Q(I, 5), \
+		Q(I, 6), \
+		Q(I, 7), \
+		Q(I, 8), \
+		Q(I, 9), \
+		Q(I,10), \
+		Q(I,11), \
+		Q(I,12), \
+		Q(I,13), \
+		Q(I,14), \
+		Q(I,15), \
+		Q(I,16), \
+		Q(I,17), \
+		Q(I,18), \
+		Q(I,19)
+	static constexpr convertFunc convertTable[ValueTypes::kNumTypes][ValueTypes::kNumTypes] =
+	{
+		{ QL(  0 ) },
+		{ QL(  1 ) },
+		{ QL(  2 ) },
+		{ QL(  3 ) },
+		{ QL(  4 ) },
+		{ QL(  5 ) },
+		{ QL(  6 ) },
+		{ QL(  7 ) },
+		{ QL(  8 ) },
+		{ QL(  9 ) },
+		{ QL( 10 ) },
+		{ QL( 11 ) },
+		{ QL( 12 ) },
+		{ QL( 13 ) },
+		{ QL( 14 ) },
+		{ QL( 15 ) },
+		{ QL( 16 ) },
+		{ QL( 17 ) },
+		{ QL( 18 ) },
+		{ QL( 19 ) } };
+	#undef QL
+	#undef Q
+
+	return convertTable[static_cast<int>( source )][static_cast<int>( target )]( *this );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -35,5 +35,13 @@ constexpr Value::Type Value::DetermineType()
 	return static_cast<Type>( kIndexOfType );
 }
 
+
+
+template<typename T>
+Value Value::ConvertTo() const
+{
+	return ConvertTo( DetermineType<T>() );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
