@@ -3,7 +3,7 @@
 
 #include "core_reflect/Value.h"
 
-#include "core/compiler.h"
+#include "core/macros.h"
 
 #include "rftl/variant"
 #include "rftl/vector"
@@ -20,6 +20,8 @@ namespace RF { namespace script {
 
 class SCRIPTINGSQUIRREL_API SquirrelVM
 {
+	RF_NO_COPY( SquirrelVM );
+
 	//
 	// Forwards
 public:

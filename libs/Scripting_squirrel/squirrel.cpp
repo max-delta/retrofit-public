@@ -367,8 +367,6 @@ SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharT
 	SQInteger const top = sq_gettop( m_Vm );
 	RF_ASSERT( top == 0 );
 
-	rftl::hash<Element>();
-
 	ElementMap retVal;
 	SQRESULT result;
 	SQObjectType type;
