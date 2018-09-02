@@ -22,6 +22,10 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
+namespace RF { namespace scratch {
+void sqreflect_scratch();
+}}
+///////////////////////////////////////////////////////////////////////////////
 
 constexpr bool k_ConsoleTest = true;
 constexpr bool k_DrawTest = true;
@@ -30,6 +34,7 @@ constexpr bool k_XMLTest = true;
 constexpr bool k_FPackSerializationTest = true;
 constexpr bool k_PlatformTest = true;
 constexpr bool k_FrameBuilderTest = true;
+constexpr bool k_SQReflectTest = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -74,6 +79,11 @@ int main()
 	if( k_FrameBuilderTest )
 	{
 		test::InitFrameBuilderTest();
+	}
+
+	if( k_SQReflectTest )
+	{
+		scratch::sqreflect_scratch();
 	}
 
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
