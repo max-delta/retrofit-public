@@ -126,8 +126,11 @@ using std::invoke_result;
 using std::void_t;
 
 using std::conjunction;
+using std::conjunction_v;
 using std::disjunction;
+using std::disjunction_v;
 using std::negation;
+using std::negation_v;
 
 //using std::endian; // Too new in C++20
 }
