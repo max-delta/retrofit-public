@@ -46,9 +46,9 @@ struct State
 template<
 	typename TStateID,
 	typename TStateValue,
-	typename THash = rftl::hash<typename TStateID>,
-	typename TEquals = rftl::equal_to<typename TStateID>,
-	typename TAlloc = rftl::allocator<typename TStateID> >
+	typename THash = rftl::hash<TStateID>,
+	typename TEquals = rftl::equal_to<TStateID>,
+	typename TAlloc = rftl::allocator<TStateID> >
 struct StateCollection
 {
 public:
@@ -92,9 +92,9 @@ template<
 	typename TStateID,
 	typename TStateValue,
 	typename TMetaValue = EmptyStruct,
-	typename THash = rftl::hash<typename TStateID>,
-	typename TEquals = rftl::equal_to<typename TStateID>,
-	typename TAlloc = rftl::allocator<typename TStateID> >
+	typename THash = rftl::hash<TStateID>,
+	typename TEquals = rftl::equal_to<TStateID>,
+	typename TAlloc = rftl::allocator<TStateID> >
 struct Action
 {
 	using Preconditions = StateCollection<TStateID, TStateValue, THash, TEquals, TAlloc>;
@@ -111,9 +111,9 @@ template<
 	typename TStateID,
 	typename TStateValue,
 	typename TMetaValue = EmptyStruct,
-	typename THash = rftl::hash<typename TStateID>,
-	typename TEquals = rftl::equal_to<typename TStateID>,
-	typename TAlloc = rftl::allocator<typename TStateID> >
+	typename THash = rftl::hash<TStateID>,
+	typename TEquals = rftl::equal_to<TStateID>,
+	typename TAlloc = rftl::allocator<TStateID> >
 class ActionDatabase
 {
 	//

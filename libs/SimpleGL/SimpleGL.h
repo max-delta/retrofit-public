@@ -16,6 +16,7 @@ namespace RF { namespace gfx {
 
 class SIMPLEGL_API SimpleGL final : public DeviceInterface
 {
+	RF_NO_COPY( SimpleGL );
 public:
 	enum class ProjectionMode
 	{
@@ -28,6 +29,8 @@ public:
 	using BitmapFontStorage = rftl::unordered_map<uint8_t, BitmapCharacterListStorage>;
 
 public:
+	SimpleGL() = default;
+
 	bool AttachToWindow( shim::HWND hWnd ) override;
 	bool DetachFromWindow() override;
 	bool Initialize2DGraphics() override;

@@ -269,9 +269,9 @@ bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & charact
 					static_assert( kRGBAElements == 3, "Unexpected pixel size" );
 					RF_ASSERT( readHead < maxReadHead );
 					(void)maxReadHead;
-					uint8_t const redElement = readHead[0];
+					//uint8_t const redElement = readHead[0]; // Unused
 					uint8_t const greenElement = readHead[1];
-					uint8_t const blueElement = readHead[2];
+					//uint8_t const blueElement = readHead[2]; // Unused
 					uint8_t rgba2Element;
 					if( greenElement > 128 )
 					{

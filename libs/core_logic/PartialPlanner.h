@@ -11,7 +11,7 @@ namespace RF { namespace logic {
 
 template<
 	typename TMetaValue,
-	typename TAlloc = rftl::allocator<typename uint64_t>>
+	typename TAlloc = rftl::allocator<uint64_t>>
 struct PartialPlan
 {
 	using MetaValue = TMetaValue;
@@ -40,9 +40,9 @@ template<
 	typename TStateID,
 	typename TStateValue,
 	typename TMetaValue = EmptyStruct,
-	typename THash = rftl::hash<typename TStateID>,
-	typename TEquals = rftl::equal_to<typename TStateID>,
-	typename TAlloc = rftl::allocator<typename TStateID> >
+	typename THash = rftl::hash<TStateID>,
+	typename TEquals = rftl::equal_to<TStateID>,
+	typename TAlloc = rftl::allocator<TStateID> >
 class PartialPlanner
 {
 	//

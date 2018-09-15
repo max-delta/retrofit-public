@@ -18,7 +18,7 @@ class PPU_API FramePackManager final : public ResourceManager<FramePackBase, Man
 public:
 	FramePackManager() = delete;
 	explicit FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs );
-	~FramePackManager();
+	virtual ~FramePackManager() override;
 
 
 	//
