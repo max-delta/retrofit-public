@@ -19,7 +19,7 @@ class SERIALIZATION_API XmlExporter final : public Exporter
 
 public:
 	XmlExporter();
-	~XmlExporter();
+	~XmlExporter() override;
 
 	bool WriteToFile( FILE* file ) const;
 	bool WriteToString( rftl::string& string ) const;

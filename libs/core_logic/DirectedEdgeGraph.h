@@ -12,9 +12,9 @@ namespace RF { namespace logic {
 template<
 	typename TNodeID,
 	typename TEdgeMetaData = EmptyStruct,
-	typename THash = rftl::hash<typename TNodeID>,
-	typename TEquals = rftl::equal_to<typename TNodeID>,
-	typename TAlloc = rftl::allocator<typename TNodeID> >
+	typename THash = rftl::hash<TNodeID>,
+	typename TEquals = rftl::equal_to<TNodeID>,
+	typename TAlloc = rftl::allocator<TNodeID> >
 class DirectedEdgeGraph
 {
 	//

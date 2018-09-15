@@ -14,8 +14,11 @@ namespace RF { namespace gfx {
 
 class DeviceInterface
 {
+	RF_NO_COPY( DeviceInterface );
+
 public:
-	virtual ~DeviceInterface();
+	DeviceInterface() = default;
+	virtual ~DeviceInterface() = default;
 
 	virtual bool AttachToWindow( shim::HWND hWnd ) = 0;
 	virtual bool DetachFromWindow() = 0;
@@ -41,10 +44,5 @@ public:
 	virtual bool EndFrame() = 0;
 };
 
-///////////////////////////////////////////////////////////////////////////////
-inline DeviceInterface::~DeviceInterface()
-{
-	//
-}
 ///////////////////////////////////////////////////////////////////////////////
 }}
