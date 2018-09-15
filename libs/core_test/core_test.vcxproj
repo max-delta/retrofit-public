@@ -206,6 +206,7 @@
     <ClCompile Include="platform_uuid.cpp" />
     <ClCompile Include="ptr_transform.cpp" />
     <ClCompile Include="reflect_class_info_builder.cpp" />
+    <ClCompile Include="rftl_string_traits.cpp" />
     <ClCompile Include="rftype_class_info_compositor.cpp" />
     <ClCompile Include="compiler.cpp" />
     <ClCompile Include="ptr_entwinedcreator.cpp" />
