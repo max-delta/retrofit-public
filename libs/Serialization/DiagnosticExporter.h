@@ -9,6 +9,8 @@ namespace RF { namespace serialization {
 
 class SERIALIZATION_API DiagnosticExporter final : public Exporter
 {
+	RF_NO_COPY( DiagnosticExporter );
+
 public:
 	DiagnosticExporter( bool silent );
 	~DiagnosticExporter() override;

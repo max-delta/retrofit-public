@@ -12,6 +12,7 @@ win32::BOOL APIENTRY DllMain( win32::HMODULE hModule,
 		case DLL_THREAD_ATTACH:
 		case DLL_THREAD_DETACH:
 		case DLL_PROCESS_DETACH:
+		default:
 			break;
 	}
 	return win32::TRUE;

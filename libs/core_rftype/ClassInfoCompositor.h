@@ -145,7 +145,7 @@ struct ClassInfoCompositor
 		using ExtensionType = typename reflect::VariableTraits<T>::VariableType;
 		static_assert( rftl::is_class<ExtensionType>::value, "A member variable doesn't appear to be a known value type, or a class/struct" );
 		using Extension = extensions::Accessor<ExtensionType>;
-		static_assert( rftl::is_same<ExtensionType, Extension::AccessedType>::value, "Accessor's type differs from lookup's type" );
+		static_assert( rftl::is_same<ExtensionType, typename Extension::AccessedType>::value, "Accessor's type differs from lookup's type" );
 		RF_ASSERT( varInfo.mVariableTypeInfo.mValueType == reflect::Value::Type::Invalid );
 		RF_ASSERT( varInfo.mVariableTypeInfo.mClassInfo == nullptr );
 		reflect::ExtensionAccessor const extensionAccessor = extensions::Accessor<ExtensionType>::Get();

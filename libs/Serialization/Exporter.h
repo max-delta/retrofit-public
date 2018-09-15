@@ -4,12 +4,16 @@
 #include "core_math/Hash.h"
 #include "core_reflect/Value.h"
 
+#include "core/macros.h"
+
 
 namespace RF { namespace serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SERIALIZATION_API Exporter
 {
+	RF_NO_COPY( Exporter );
+
 public:
 	using InstanceID = uint64_t;
 	using TypeID = math::HashVal64;
@@ -18,6 +22,7 @@ public:
 
 
 public:
+	Exporter() = default;
 	virtual ~Exporter() = default;
 
 	// Completes the current export, preventing any further actions from being

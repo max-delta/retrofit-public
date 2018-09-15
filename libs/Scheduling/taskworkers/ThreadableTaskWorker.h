@@ -28,7 +28,7 @@ private:
 	// Public methods
 public:
 	ThreadableTaskWorker() = default;
-	virtual ~ThreadableTaskWorker();
+	virtual ~ThreadableTaskWorker() override;
 
 	virtual void AddTask( Task* task, TaskScheduler* scheduler ) override;
 

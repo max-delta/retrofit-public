@@ -90,7 +90,7 @@ public:
 
 	T * Get() const
 	{
-		return (T*)( *this );
+		return static_cast<T*>( *this );
 	}
 
 	operator T *() const
