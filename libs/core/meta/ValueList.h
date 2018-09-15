@@ -10,7 +10,7 @@ struct ValueList;
 
 // These MUST be fully outside of the class, or MSVC2017 compiler crashes
 //  with an internal compilation error
-namespace typelist_details
+namespace valuelist_details
 {
 template<size_t Index, typename ValueListType>
 struct ExternalAccessByIndex;
@@ -43,53 +43,53 @@ struct ValueList
 	template<size_t Index>
 	struct ByIndex
 	{
-		static constexpr ValueType value = typelist_details::ExternalAccessByIndex< Index, ValueList<ValueType, Values...> >::value;
+		static constexpr ValueType value = valuelist_details::ExternalAccessByIndex< Index, ValueList<ValueType, Values...> >::value;
 	};
 
 	// Used to test for presence of a value
 	template<ValueType Value>
 	struct Contains
 	{
-		static constexpr bool value = typelist_details::ExternalAccessContains<ValueType, Value, ValueList<ValueType, Values...> >::value;
+		static constexpr bool value = valuelist_details::ExternalAccessContains<ValueType, Value, ValueList<ValueType, Values...> >::value;
 	};
 
 	// Used to search for the index of a value
 	template<ValueType Value>
 	struct FindIndex
 	{
-		static constexpr int64_t value = typelist_details::ExternalAccessFindIndex<ValueType, Value, 0, ValueList<ValueType, Values...> >::value;
+		static constexpr int64_t value = valuelist_details::ExternalAccessFindIndex<ValueType, Value, 0, ValueList<ValueType, Values...> >::value;
 	};
 
 	// Used to add to a list
 	template<ValueType Value>
 	struct Prepend
 	{
-		using type = typename typelist_details::ExternalAccessPrepend<ValueType, Value, ValueList<ValueType, Values...> >::type;
+		using type = typename valuelist_details::ExternalAccessPrepend<ValueType, Value, ValueList<ValueType, Values...> >::type;
 	};
 	template<ValueType Value>
 	struct Append
 	{
-		using type = typename typelist_details::ExternalAccessAppend<ValueType, Value, ValueList<ValueType, Values...> >::type;
+		using type = typename valuelist_details::ExternalAccessAppend<ValueType, Value, ValueList<ValueType, Values...> >::type;
 	};
 
 	// Used to reverse a list
 	template<int Unused = 0>
 	struct Reverse
 	{
-		using type = typename typelist_details::ExternalAccessReverse< ValueList<ValueType, Values...> >::type;
+		using type = typename valuelist_details::ExternalAccessReverse< ValueList<ValueType, Values...> >::type;
 	};
 
 	// Used to split a list into 2 segments
 	template<size_t FirstIndexOfSecondSegment>
 	struct Split
 	{
-		using former = typename typelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::former;
-		using latter = typename typelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::latter;
+		using former = typename valuelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::former;
+		using latter = typename valuelist_details::ExternalAccessSplit< FirstIndexOfSecondSegment, ValueList<ValueType, Values...> >::latter;
 	};
 };
 
 
-namespace typelist_details
+namespace valuelist_details
 {
 // 0 case
 template<typename ValueType, ValueType CurrentValue, ValueType... RemainingValues>
@@ -194,11 +194,11 @@ struct ExternalAccessSplit
 {
 private:
 	static constexpr size_t kReversedLastIndexOfFirstSegment = ValueListType::kNumValues - FirstIndexOfSecondSegment;
-	using ReversedList = typename typelist_details::ExternalAccessReverse< ValueListType >::type;
-	using SplitReversedList = typename typelist_details::ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
+	using ReversedList = typename valuelist_details::ExternalAccessReverse< ValueListType >::type;
+	using SplitReversedList = typename valuelist_details::ExternalAccessSplitKeepLatter< kReversedLastIndexOfFirstSegment, ReversedList >::latter;
 public:
-	using former = typename typelist_details::ExternalAccessReverse< SplitReversedList >::type;
-	using latter = typename typelist_details::ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment, ValueListType >::latter;
+	using former = typename valuelist_details::ExternalAccessReverse< SplitReversedList >::type;
+	using latter = typename valuelist_details::ExternalAccessSplitKeepLatter< FirstIndexOfSecondSegment, ValueListType >::latter;
 };
 }
 
