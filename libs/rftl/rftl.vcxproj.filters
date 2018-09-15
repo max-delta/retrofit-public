@@ -49,6 +49,9 @@
     <ClInclude Include="tuple" />
     <ClInclude Include="future" />
     <ClInclude Include="functional" />
+    <ClInclude Include="extension\string_traits.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">

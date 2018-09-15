@@ -38,6 +38,7 @@
     <ClCompile Include="ptr_entwinedcreator.cpp" />
     <ClCompile Include="ptr_transform.cpp" />
     <ClCompile Include="idgen.cpp" />
+    <ClCompile Include="rftl_string_traits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
