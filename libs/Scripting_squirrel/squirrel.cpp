@@ -15,14 +15,13 @@ namespace{
 
 static rftl::string GetLastError( HSQUIRRELVM vm )
 {
-	SQInteger const top = sq_gettop( vm );
+	SquirrelVM::VMStackGuard const stackGuard( vm );
 
 	sq_getlasterror( vm );
 	SQChar const* rawString;
 	SQRESULT const result = sq_getstring( vm, -1, &rawString );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 	rftl::string retVal( rawString );
-	sq_settop( vm, top );
 	return retVal;
 }
 
@@ -115,6 +114,11 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			retVal = reflect::Value( static_cast<SquirrelVM::Pointer>( ptr ) );
 			break;
 		}
+		case OT_TABLE:
+		{
+			retVal = SquirrelVM::TableTag();
+			break;
+		}
 		case OT_ARRAY:
 		{
 			retVal = SquirrelVM::ArrayTag();
@@ -125,7 +129,6 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 			retVal = SquirrelVM::InstanceTag();
 			break;
 		}
-		case OT_TABLE:
 		case OT_USERDATA:
 		case OT_CLOSURE:
 		case OT_NATIVECLOSURE:
@@ -146,7 +149,123 @@ SquirrelVM::Element GetElementFromStack( HSQUIRRELVM vm, SQInteger depth )
 	return retVal;
 }
 
+
+
+SquirrelVM::ElementArray GetElementArrayFromStack( HSQUIRRELVM vm )
+{
+	SquirrelVM::VMStackGuard const stackGuard( vm );
+
+	SquirrelVM::ElementArray retVal;
+
+	SQObjectType const arrayType = sq_gettype( vm, -1 );
+	if( arrayType != OT_ARRAY )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an array" );
+		return retVal;
+	}
+
+	// Null stack slot for start iterator
+	sq_pushnull( vm );
+	AssertStackTypes( vm, -1, OT_NULL, OT_ARRAY );
+	while( SQ_SUCCEEDED( sq_next( vm, -2 ) ) )
+	{
+		SquirrelVM::Element const key = GetElementFromStack( vm, -2 );
+		SquirrelVM::Element const value = GetElementFromStack( vm, -1 );
+
+		retVal.emplace_back( rftl::move( value ) );
+
+		sq_pop( vm, 2 );
+	}
+
+	return retVal;
 }
+
+
+
+SquirrelVM::ElementMap GetElementMapFromStack( HSQUIRRELVM vm )
+{
+	SquirrelVM::VMStackGuard const stackGuard( vm );
+
+	SquirrelVM::ElementMap retVal;
+
+	SQObjectType const instanceType = sq_gettype( vm, -1 );
+	if( instanceType != OT_INSTANCE )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an instance" );
+		return retVal;
+	}
+
+	// Determine the class
+	SQRESULT const classResult = sq_getclass( vm, -1 );
+	RF_ASSERT( SQ_SUCCEEDED( classResult ) );
+	AssertStackTypes( vm, -1, OT_CLASS, OT_INSTANCE );
+
+	// Iterate members
+	sq_pushnull( vm );
+	AssertStackTypes( vm, -1, OT_NULL, OT_CLASS, OT_INSTANCE );
+	while( SQ_SUCCEEDED( sq_next( vm, -2 ) ) )
+	{
+		// Pop 'value', which is just the default value for new instances since
+		//  we're iterating the class definition, not the actual instance
+		sq_pop( vm, 1 );
+
+		SquirrelVM::Element const key = GetElementFromStack( vm, -1 );
+
+		// Pop key in a get operation against the instance
+		// Stack: KEY, ITER, CLASS, INSTANCE
+		SQRESULT const foundResult = sq_get( vm, -4 );
+		RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+		// Stack: VALUE, ITER, CLASS, INSTANCE
+		SquirrelVM::Element const value = GetElementFromStack( vm, -1 );
+
+		retVal[key] = value;
+
+		sq_pop( vm, 1 );
+	}
+
+	return retVal;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const & identifier )
+	: mIdentifier( identifier )
+{
+	//
+}
+
+
+
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( char const * identifier )
+	: mIdentifier( identifier )
+{
+	//
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+SquirrelVM::VMStackGuard::VMStackGuard( HSQUIRRELVM vm )
+	: mVm( vm )
+{
+	mOriginalStackLocation = sq_gettop( vm );
+}
+
+
+
+SquirrelVM::VMStackGuard::~VMStackGuard()
+{
+	sq_settop( mVm, mOriginalStackLocation );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+SquirrelVM::VMRootStackGuard::VMRootStackGuard( HSQUIRRELVM vm )
+	: VMStackGuard( vm )
+{
+	RF_ASSERT( mOriginalStackLocation == 0 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 SquirrelVM::SquirrelVM()
@@ -166,8 +285,7 @@ SquirrelVM::~SquirrelVM()
 
 bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 {
-	SQInteger const top = sq_gettop( m_Vm );
-	RF_ASSERT( top == 0 );
+	VMRootStackGuard const stackGuard( m_Vm );
 
 	SQRESULT result;
 
@@ -188,16 +306,14 @@ bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 		return false;
 	}
 
-	sq_settop( m_Vm, top );
 	return true;
 }
 
 
 
-bool SquirrelVM::InjectSimpleStruct( ElementNameCharType const* name, ElementNameCharType const* const* memberNames, size_t numMembers )
+bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers )
 {
-	SQInteger const top = sq_gettop( m_Vm );
-	RF_ASSERT( top == 0 );
+	VMRootStackGuard const stackGuard( m_Vm );
 
 	SQRESULT result;
 
@@ -244,7 +360,6 @@ bool SquirrelVM::InjectSimpleStruct( ElementNameCharType const* name, ElementNam
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
-	sq_settop( m_Vm, top );
 	return true;
 }
 
@@ -290,134 +405,159 @@ SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( char const * nam
 	return GetGlobalVariableAsInstance( name, strlen( name ) );
 }
 
+
+
+SquirrelVM::Element SquirrelVM::GetNestedVariable( NestedTraversalPath const& path )
+{
+	VMRootStackGuard const stackGuard( m_Vm );
+
+	// Start from root
+	sq_pushroottable( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+	Element currentElement = GetElementFromStack( m_Vm, -1 );
+
+	// Lookup and preserve stack
+	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
+	RF_ASSERT( foundSuccess );
+
+	return currentElement;
+}
+
+
+
+SquirrelVM::ElementArray SquirrelVM::GetNestedVariableAsArray( NestedTraversalPath const & path )
+{
+	VMRootStackGuard const stackGuard( m_Vm );
+
+	// Start from root
+	sq_pushroottable( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+	Element currentElement = GetElementFromStack( m_Vm, -1 );
+
+	// Lookup and preserve stack
+	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
+	RF_ASSERT( foundSuccess );
+
+	return GetElementArrayFromStack( m_Vm );
+}
+
+
+
+SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalPath const & path )
+{
+	VMRootStackGuard const stackGuard( m_Vm );
+
+	// Start from root
+	sq_pushroottable( m_Vm );
+	AssertStackTypes( m_Vm, -1, OT_TABLE );
+	Element currentElement = GetElementFromStack( m_Vm, -1 );
+
+	// Lookup and preserve stack
+	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
+	RF_ASSERT( foundSuccess );
+
+	return GetElementMapFromStack( m_Vm );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const * name, size_t nameLen )
 {
-	SQInteger const top = sq_gettop( m_Vm );
-	RF_ASSERT( top == 0 );
+	VMRootStackGuard const stackGuard( m_Vm );
 
-	Element retVal;
-	SQRESULT result;
-
+	// Start from root
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
+	// Lookup
 	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
-
-	result = sq_get( m_Vm, -2 );
+	SQRESULT const result = sq_get( m_Vm, -2 );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 
-	retVal = GetElementFromStack( m_Vm, -1 );
-
-	sq_settop( m_Vm, top );
-	return retVal;
+	return GetElementFromStack( m_Vm, -1 );
 }
 
 
 
 SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharType const * name, size_t nameLen )
 {
-	SQInteger const top = sq_gettop( m_Vm );
-	RF_ASSERT( top == 0 );
+	VMRootStackGuard const stackGuard( m_Vm );
 
-	ElementArray retVal;
-	SQRESULT result;
-	SQObjectType type;
-
+	// Start from root
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
+	// Lookup
 	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
-
-	result = sq_get( m_Vm, -2 );
+	SQRESULT const result = sq_get( m_Vm, -2 );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 
-	type = sq_gettype( m_Vm, -1 );
-	if( type != OT_ARRAY )
-	{
-		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an array" );
-		sq_settop( m_Vm, top );
-		return retVal;
-	}
-
-	// Null stack slot for start iterator
-	sq_pushnull( m_Vm );
-	AssertStackTypes( m_Vm, -1, OT_NULL, OT_ARRAY );
-	while( SQ_SUCCEEDED( sq_next( m_Vm, -2 ) ) )
-	{
-		Element const key = GetElementFromStack( m_Vm, -2 );
-		Element const value = GetElementFromStack( m_Vm, -1 );
-
-		retVal.emplace_back( rftl::move( value ) );
-
-		sq_pop( m_Vm, 2 );
-	}
-
-	sq_settop( m_Vm, top );
-	return retVal;
+	return GetElementArrayFromStack( m_Vm );
 }
 
 
 
 SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharType const * name, size_t nameLen )
 {
-	SQInteger const top = sq_gettop( m_Vm );
-	RF_ASSERT( top == 0 );
+	VMRootStackGuard const stackGuard( m_Vm );
 
-	ElementMap retVal;
-	SQRESULT result;
-	SQObjectType type;
-
+	// Start from root
 	sq_pushroottable( m_Vm );
 	AssertStackTypes( m_Vm, -1, OT_TABLE );
 
+	// Lookup
 	sq_pushstring( m_Vm, name, math::integer_cast<SQInteger>( nameLen ) );
 	AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
-
-	result = sq_get( m_Vm, -2 );
+	SQRESULT const result = sq_get( m_Vm, -2 );
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 
-	type = sq_gettype( m_Vm, -1 );
-	if( type != OT_INSTANCE )
+	return GetElementMapFromStack( m_Vm );
+}
+
+
+
+bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTraversalPath const& path, Element& currentElement )
+{
+	// Walk path
+	for( NestedTraversalNode const& node : path )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Not an instance" );
-		sq_settop( m_Vm, top );
-		return retVal;
+		rftl::string const& identifier = node.mIdentifier;
+
+		// Step in
+		if( rftl::get_if<SquirrelVM::TableTag>( &currentElement ) != nullptr )
+		{
+			// Table
+			sq_pushstring( m_Vm, identifier.c_str(), math::integer_cast<SQInteger>( identifier.length() ) );
+			AssertStackTypes( m_Vm, -1, OT_STRING, OT_TABLE );
+			SQRESULT const foundResult = sq_get( m_Vm, -2 );
+			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+		}
+		else if( rftl::get_if<SquirrelVM::InstanceTag>( &currentElement ) != nullptr )
+		{
+			// Instance
+			sq_pushstring( m_Vm, identifier.c_str(), math::integer_cast<SQInteger>( identifier.length() ) );
+			AssertStackTypes( m_Vm, -1, OT_STRING, OT_INSTANCE );
+			SQRESULT const foundResult = sq_get( m_Vm, -2 );
+			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+		}
+		else if( rftl::get_if<SquirrelVM::ArrayTag>( &currentElement ) != nullptr )
+		{
+			// Array
+			RF_DBGFAIL_MSG( "TODO" );
+		}
+		else
+		{
+			// Unsupported type, or user error?
+			RF_DBGFAIL_MSG( "TODO" );
+		}
+
+		// Fetch element
+		currentElement = GetElementFromStack( m_Vm, -1 );
 	}
-
-	// Determine the class
-	result = sq_getclass( m_Vm, -1 );
-	RF_ASSERT( SQ_SUCCEEDED( result ) );
-	AssertStackTypes( m_Vm, -1, OT_CLASS, OT_INSTANCE );
-
-	// Iterate members
-	sq_pushnull( m_Vm );
-	AssertStackTypes( m_Vm, -1, OT_NULL, OT_CLASS, OT_INSTANCE );
-	while( SQ_SUCCEEDED( sq_next( m_Vm, -2 ) ) )
-	{
-		// Pop 'value', which is just the default value for new instances since
-		//  we're iterating the class definition, not the actual instance
-		sq_pop( m_Vm, 1 );
-
-		Element const key = GetElementFromStack( m_Vm, -1 );
-
-		// Pop key in a get operation against the instance
-		// Stack: KEY, ITER, CLASS, INSTANCE
-		result = sq_get( m_Vm, -4 );
-		RF_ASSERT( SQ_SUCCEEDED( result ) );
-		// Stack: VALUE, ITER, CLASS, INSTANCE
-		Element const value = GetElementFromStack( m_Vm, -1 );
-
-		retVal[key] = value;
-
-		sq_pop( m_Vm, 1 );
-	}
-
-	sq_settop( m_Vm, top );
-	return retVal;
+	
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

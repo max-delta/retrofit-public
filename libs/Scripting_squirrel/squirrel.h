@@ -25,6 +25,8 @@ class SCRIPTINGSQUIRREL_API SquirrelVM
 	//
 	// Forwards
 public:
+	struct NestedTraversalNode;
+	struct TableTagType;
 	struct ArrayTagType;
 	struct InstanceTagType;
 
@@ -41,6 +43,7 @@ public:
 	using Boolean = bool;
 	using Pointer = void*;
 	using String = rftl::string;
+	using TableTag = TableTagType const*;
 	using ArrayTag = ArrayTagType const*;
 	using InstanceTag = InstanceTagType const*;
 
@@ -53,14 +56,47 @@ public:
 	using Element = rftl::variant<
 		reflect::Value,
 		String,
+		TableTag,
 		ArrayTag,
 		InstanceTag>;
 
 	using ElementArray = rftl::vector<Element>;
 	using ElementMap = rftl::unordered_map<Element, Element>;
+	using NestedTraversalPath = rftl::vector<NestedTraversalNode>;
 private:
 	using HSQUIRRELVM = SQVM * ;
 	using ElementNameCharType = char;
+
+
+	//
+	// Structs
+public:
+	struct SCRIPTINGSQUIRREL_API NestedTraversalNode
+	{
+		NestedTraversalNode() = default;
+		NestedTraversalNode( rftl::string const& identifier );
+		NestedTraversalNode( char const* identifier );
+
+		rftl::string mIdentifier;
+	};
+
+	struct VMStackGuard
+	{
+		RF_NO_COPY( VMStackGuard );
+		VMStackGuard( HSQUIRRELVM vm );
+		~VMStackGuard();
+
+	protected:
+		HSQUIRRELVM const mVm;
+		Integer mOriginalStackLocation;
+	};
+
+private:
+	struct VMRootStackGuard : public VMStackGuard
+	{
+		RF_NO_COPY( VMRootStackGuard );
+		VMRootStackGuard( HSQUIRRELVM vm );
+	};
 
 
 	//
@@ -71,7 +107,7 @@ public:
 
 	bool AddSourceFromBuffer( rftl::string const& buffer );
 
-	bool InjectSimpleStruct( ElementNameCharType const* name, ElementNameCharType const* const* memberNames, size_t numMembers );
+	bool InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers );
 
 	Element GetGlobalVariable( rftl::string const& name );
 	Element GetGlobalVariable( char const* name );
@@ -80,6 +116,10 @@ public:
 	ElementMap GetGlobalVariableAsInstance( rftl::string const& name );
 	ElementMap GetGlobalVariableAsInstance( char const* name );
 
+	Element GetNestedVariable( NestedTraversalPath const& path );
+	ElementArray GetNestedVariableAsArray( NestedTraversalPath const& path );
+	ElementMap GetNestedVariableAsInstance( NestedTraversalPath const& path );
+
 
 	//
 	// Private methods
@@ -87,6 +127,8 @@ private:
 	Element GetGlobalVariable( ElementNameCharType const* name, size_t nameLen );
 	ElementArray GetGlobalVariableAsArray( ElementNameCharType const* name, size_t nameLen );
 	ElementMap GetGlobalVariableAsInstance( ElementNameCharType const* name, size_t nameLen );
+
+	bool NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTraversalPath const& path, Element& currentElement );
 
 
 	//
