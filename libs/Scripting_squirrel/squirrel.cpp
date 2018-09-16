@@ -545,7 +545,14 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 		else if( rftl::get_if<SquirrelVM::ArrayTag>( &currentElement ) != nullptr )
 		{
 			// Array
-			RF_DBGFAIL_MSG( "TODO" );
+			// NOTE: atoi(...) means non-numeric identifiers will be treated
+			//  as 0, which may be surprising
+			// TODO: Detect and alert on this case
+			SQInteger const index = math::integer_cast<SQInteger>( atoi( identifier.c_str() ) );
+			sq_pushinteger( m_Vm, index );
+			AssertStackTypes( m_Vm, -1, OT_INTEGER, OT_ARRAY );
+			SQRESULT const foundResult = sq_get( m_Vm, -2 );
+			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
 		}
 		else
 		{
