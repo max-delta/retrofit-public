@@ -66,14 +66,17 @@ template<> char ConvertSSToTemp<char>( rftl::stringstream && ss )
 }
 template<> wchar_t ConvertSSToTemp<wchar_t>( rftl::stringstream && ss )
 {
+	// HACK: Treat as char
 	return static_cast<wchar_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
 }
 template<> char16_t ConvertSSToTemp<char16_t>( rftl::stringstream && ss )
 {
+	// HACK: Treat as char
 	return static_cast<char16_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
 }
 template<> char32_t ConvertSSToTemp<char32_t>( rftl::stringstream && ss )
 {
+	// HACK: Treat as char
 	return static_cast<char32_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
 }
 
