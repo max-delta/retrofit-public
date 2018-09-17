@@ -75,8 +75,7 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 namespace RF { namespace scratch {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename ReflectedClass>
-rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( ReflectedClass const* classInstance )
+rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( reflect::ClassInfo const & classInfo, void const* classInstance )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> members;
 
@@ -104,13 +103,21 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( Refle
 	};
 
 	rftype::TypeTraverser::TraverseVariablesT(
-		rftype::GetClassInfo<ReflectedClass>(),
+		classInfo,
 		classInstance,
 		onMemberVariableFunc,
 		onNestedTypeFoundFunc,
 		onReturnFromNestedTypeFunc );
 
 	return members;
+}
+
+
+
+template<typename ReflectedClass>
+rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( ReflectedClass const* classInstance )
+{
+	return GetAllMembers( rftype::GetClassInfo<ReflectedClass>(), classInstance );
 }
 
 
@@ -142,6 +149,75 @@ bool InjectReflectedClassByCompileType( script::SquirrelVM& vm, char const* name
 	rftl::vector<char const*> const memberNames = GetAllMemberNames( members );
 	return vm.InjectSimpleStruct( name, memberNames.data(), memberNames.size() );
 }
+
+
+
+bool WriteScriptValueToMemberVariable( script::SquirrelVM::Element const& elemValue, rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	RF_ASSERT( rftl::holds_alternative<reflect::Value>( elemValue ) );
+
+	// Load the script value
+	reflect::Value const& source = rftl::get<reflect::Value>( elemValue );
+	void* const destination = const_cast<void*>( member.mMemberVariableLocation );
+
+	// Ensure it's compatible
+	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
+	reflect::Value const intermediate = source.ConvertTo( destinationType );
+	if( intermediate.GetStoredType() != destinationType )
+	{
+		RF_DBGFAIL_MSG( "Failed to convert script element to member variable type" );
+		return false;
+	}
+
+	// Write to reflection
+	void const* intermediateData = intermediate.GetBytes();
+	size_t const intermediateSize = intermediate.GetNumBytes();
+	memcpy( destination, intermediateData, intermediateSize );
+	return true;
+}
+
+
+
+bool WriteScriptStringToMemberVariable( script::SquirrelVM::Element const& elemValue, rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	RF_ASSERT( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) );
+
+	// Load the script value
+	// Ensure it's compatible
+	// Write to reflection
+	RF_DBGFAIL_MSG( "TODO" );
+	return false;
+}
+
+
+
+bool ProcessScriptArrayPopulationWork( void const* currentWorkItem, void* workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	// Load the script values
+	// For each value...
+	//   If it's a value
+	//     Run value-handler code
+	//   If it's another array
+	//     ???Recurse???
+	//   If it's an instance
+	//     Run instance-handler code
+	RF_DBGFAIL_MSG( "TODO" );
+	return false;
+}
+
+
+
+bool QueueScriptInstancePopulationWork( void const* currentWorkItem, void* workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	// If it's a direct nesting in reflection
+	//   Queue population as later work
+	// If it's an accessor in reflection
+	//   Instantiate
+	//   Queue population as later work
+	RF_DBGFAIL_MSG( "TODO" );
+	return false;
+}
+
 
 
 void sqreflect_scratch()
@@ -190,72 +266,114 @@ void sqreflect_scratch()
 		RF_ASSERT( sourceAdd );
 	}
 
-	// Extract
-	script::SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
-	RF_ASSERT( elemMap.size() == 18 );
-
 	// Instantiate
 	SQReflectTestClass testClass = {};
+	reflect::ClassInfo const& testClassInfo = rftype::GetClassInfo<SQReflectTestClass>();
 
 	// Populate
 	{
-		for( script::SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
+		struct WorkItem
 		{
-			script::SquirrelVM::String const* elemString = rftl::get_if<script::SquirrelVM::String>( &( elemPair.first ) );
-			char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
-			if( elemName == nullptr )
-			{
-				RF_DBGFAIL_MSG( "Unable to determine identifier for variable" );
-				continue;
-			}
+			script::SquirrelVM::NestedTraversalPath mPath;
+			reflect::ClassInfo const* mClassInfo;
+			void const* mClassInstance;
+		};
+		rftl::vector<WorkItem> mWorkItems;
 
-			rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers<SQReflectTestClass>( &testClass );
-			rftype::TypeTraverser::MemberVariableInstance const* foundMember = nullptr;
-			for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
+		mWorkItems.push_back(
+			WorkItem{
+				{ "x" },
+				&testClassInfo,
+				&testClass } );
+
+		// While there is still work...
+		while(mWorkItems.empty() == false)
+		{
+			// Grab a work item
+			WorkItem const workItem = mWorkItems.back();
+			mWorkItems.pop_back();
+
+			script::SquirrelVM::NestedTraversalPath const& path = workItem.mPath;
+			reflect::ClassInfo const& classInfo = *workItem.mClassInfo;
+			void const* classInstance = workItem.mClassInstance;
+
+			// Extract the instance from script
+			script::SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
+			RF_ASSERT( elemMap.size() > 0 ); // HACK: For testing purposes only
+
+			// For each element...
+			for( script::SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
 			{
-				char const* const memberName = member.mMemberVariableInfo.mIdentifier;
-				if( strcmp( elemName, memberName ) == 0 )
+				// Get the name
+				script::SquirrelVM::String const* elemString = rftl::get_if<script::SquirrelVM::String>( &( elemPair.first ) );
+				char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
+				if( elemName == nullptr )
 				{
-					RF_ASSERT(foundMember == nullptr);
-					foundMember = &member;
-				}
-			}
-			if( foundMember == nullptr )
-			{
-				RF_DBGFAIL_MSG( "Unable to find matching variable with identifier" );
-				continue;
-			}
-			rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
-
-			script::SquirrelVM::Element const& elemValue = elemPair.second;
-			if( rftl::holds_alternative<reflect::Value>( elemValue ) )
-			{
-				reflect::Value const& source = rftl::get<reflect::Value>( elemValue );
-				void* const destination = const_cast<void*>( member.mMemberVariableLocation );
-
-				reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
-				reflect::Value const intermediate = source.ConvertTo( destinationType );
-				if( intermediate.GetStoredType() != destinationType )
-				{
-					RF_DBGFAIL_MSG("Failed to convert script element to member variable type");
+					RF_DBGFAIL_MSG( "Unable to determine identifier for variable" );
 					continue;
 				}
 
-				void const* intermediateData = intermediate.GetBytes();
-				size_t const intermediateSize = intermediate.GetNumBytes();
-				memcpy( destination, intermediateData, intermediateSize );
-			}
-			else if( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) )
-			{
-				RF_DBGFAIL_MSG( "TODO" );
-			}
-			else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
-			{
-				RF_DBGFAIL_MSG( "TODO" );
-			}
-			else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
-			{
-				RF_DBGFAIL_MSG( "TODO" );
+				// Find the reflected member with that name
+				rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
+				rftype::TypeTraverser::MemberVariableInstance const* foundMember = nullptr;
+				for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
+				{
+					char const* const memberName = member.mMemberVariableInfo.mIdentifier;
+					if( strcmp( elemName, memberName ) == 0 )
+					{
+						RF_ASSERT( foundMember == nullptr );
+						foundMember = &member;
+					}
+				}
+				if( foundMember == nullptr )
+				{
+					RF_DBGFAIL_MSG( "Unable to find matching variable with identifier" );
+					continue;
+				}
+				rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
+
+				// Handle the transfer from script->reflect
+				script::SquirrelVM::Element const& elemValue = elemPair.second;
+				if( rftl::holds_alternative<reflect::Value>( elemValue ) )
+				{
+					// Value
+					bool const writeSuccess = WriteScriptValueToMemberVariable( elemValue, member );
+					if( writeSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "Failed to write script value to member variable" );
+						continue;
+					}
+				}
+				else if( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) )
+				{
+					// String
+					bool const writeSuccess = WriteScriptStringToMemberVariable( elemValue, member );
+					if( writeSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "Failed to write script string to member variable" );
+						continue;
+					}
+				}
+				else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
+				{
+					// Array
+					bool const processSuccess = ProcessScriptArrayPopulationWork( nullptr, nullptr, elemName, member );
+					if( processSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "Failed to process script array to member variable" );
+						continue;
+					}
+				}
+				else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
+				{
+					// Instance
+					bool const queueSuccess = QueueScriptInstancePopulationWork( nullptr, nullptr, elemName, member );
+					if( queueSuccess == false )
+					{
+						RF_DBGFAIL_MSG( "Failed to prepare processing for script instance to be written into member variable" );
+						continue;
+					}
+				}
 			}
 		}
 	}
