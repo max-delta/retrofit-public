@@ -13,6 +13,13 @@ namespace RF { namespace reflect {
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
+// WARNING: It's a pretty bad idea to be trying to store Unicode information
+//  into reflected values. Since reflected values don't support storing strings
+//  or other variable-length data, they can't contain data encodied in UTF-8,
+//  UTF-16, UTF-32, and so on. The support for characters here is thus intended
+//  for data transfer purposes only.
+// NOTE: Conversion of types to characters is ESPECIALLY shady and error-prone
+
 #define RF_REFLECT_VALUE_TYPELIST \
 		bool, \
 		void*, void const*, \
