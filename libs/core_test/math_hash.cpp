@@ -43,5 +43,25 @@ TEST(Hash, StableHashBytes)
 	ASSERT_EQ( StableHashBytes( "abc", 3 ), 16654208175385433931ull );
 }
 
+
+
+TEST( Hash, HashCollisions )
+{
+	// Like all hashing algorthms, collisions exist, so make sure your code has
+	//  a story for how to handle these collisions
+	// NOTE: STL containers that use hashing will perform an equality check on
+	//  the underlying data if hashes match, which is a common solution to both
+	//  check for, and handle a collision
+
+	// These are the shortest printable ascii strings that collide at zero
+	{
+		NullTerminatedStringHash hasher{};
+		ASSERT_EQ( hasher( "!0IC=VloaY" ), 0 );
+		ASSERT_EQ( hasher( "QvXtM>@Fp%" ), 0 );
+		ASSERT_EQ( hasher( "=. hx\"iX<;" ), 0 );
+		ASSERT_EQ( hasher( "_\"kWk=-v$c" ), 0 );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
