@@ -97,7 +97,9 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 
 	for( MemberVariableInfo const& varInfo : classInfo.mNonStaticVariables )
 	{
-		void const* const varLoc =
+		// NOTE: Null class locations get null variable locations so they are
+		//  clearly inaccessible
+		void const* const varLoc = classLocation == nullptr ? nullptr :
 			reinterpret_cast<uint8_t const*>( classLocation ) +
 			varInfo.mOffset;
 
@@ -117,6 +119,8 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 					onMemberVariableFunc,
 					onNestedTypeFoundFunc,
 					onReturnFromNestedTypeFunc );
+
+				onReturnFromNestedTypeFunc();
 			}
 			continue;
 		}
@@ -127,7 +131,50 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 			varInfo.mVariableTypeInfo.mAccessor != nullptr;
 		if( extension )
 		{
-			RF_DBGFAIL_MSG( "TODO" );
+			bool shouldTraverseAccessor = false;
+			// TODO: Callback
+			//onAccessorFoundFunc( { varInfo, varLoc }, shouldTraverseAccessor );
+			if( shouldTraverseAccessor )
+			{
+				// NOTE: Can't perform traversal on null accessors, so they
+				//  will behave like null pointers are empty containers
+				if( varLoc != nullptr )
+				{
+					ExtensionAccessor const& accessor = *varInfo.mVariableTypeInfo.mAccessor;
+					accessor.mBeginAccess( varLoc );
+					size_t const numVars = accessor.mGetNumVariables( varLoc );
+					for( size_t i = 0; i < numVars; i++ )
+					{
+						VariableTypeInfo keyInfo = {};
+						void const* keyLoc = nullptr;
+						bool const foundKey = accessor.mGetVariableKeyByIndex( varLoc, i, keyLoc, keyInfo );
+						RF_ASSERT( foundKey );
+						bool shouldTraverseKey = false;
+						// TODO: Callback
+						//onAccessorKeyFoundFunc( { keyInfo, keyLoc }, shouldTraverseKey );
+						if( shouldTraverseKey )
+						{
+							RF_DBGFAIL_MSG( "TODO" );
+						}
+
+						VariableTypeInfo targetInfo = {};
+						void const* targetLoc = nullptr;
+						bool const foundTarget = accessor.mGetVariableTargetByKey( varLoc, keyLoc, keyInfo, targetLoc, targetInfo );
+						RF_ASSERT( foundTarget );
+						bool shouldTraverseTarget = false;
+						// TODO: Callback
+						//onAccessorTargetFoundFunc( { targetInfo, targetLoc }, shouldTraverseTarget );
+						if( shouldTraverseTarget )
+						{
+							RF_DBGFAIL_MSG( "TODO" );
+						}
+					}
+					accessor.mEndAccess( varLoc );
+				}
+
+				// TODO: Callback
+				//onReturnFromAccessorFunc();
+			}
 			continue;
 		}
 
