@@ -430,7 +430,10 @@ void sqreflect_scratch()
 	RF_ASSERT( testClass.mS64 == 7);
 	//RF_ASSERT( testClass.mString == "test" );
 	//RF_ASSERT( testClass.mWString == L"test" );
-	//RF_ASSERT( testClass.mIntArray == {3, 5, 7} );
+	//RF_ASSERT( testClass.mIntArray.size() == 3 );
+	//RF_ASSERT( testClass.mIntArray[0] == 3 );
+	//RF_ASSERT( testClass.mIntArray[1] == 5 );
+	//RF_ASSERT( testClass.mIntArray[2] == 7 );
 	RF_ASSERT( testClass.mNested.mBool == true );
 }
 
