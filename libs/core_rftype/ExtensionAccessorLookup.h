@@ -12,6 +12,7 @@ struct AccessorTemplate
 {
 	using ExtensionAccessor = ::RF::reflect::ExtensionAccessor;
 	using RootInst = ExtensionAccessor::RootInst;
+	using RootConstInst = ExtensionAccessor::RootConstInst;
 	using ClassInst = ExtensionAccessor::ClassInst;
 	using ExtenInst = ExtensionAccessor::ExtenInst;
 	using UntypedInst = ExtensionAccessor::UntypedInst;
