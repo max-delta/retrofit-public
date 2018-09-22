@@ -67,13 +67,23 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	//RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
 	//RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
 	//RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
-	//RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
+	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
 
 
 namespace RF { namespace scratch {
 ///////////////////////////////////////////////////////////////////////////////
+
+struct WorkItem
+{
+	script::SquirrelVM::NestedTraversalPath mPath;
+	reflect::ClassInfo const* mClassInfo;
+	void const* mClassInstance;
+};
+using WorkItems = rftl::vector<WorkItem>;
+
+
 
 rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( reflect::ClassInfo const & classInfo, void const* classInstance )
 {
@@ -191,7 +201,7 @@ bool WriteScriptStringToMemberVariable( script::SquirrelVM::Element const& elemV
 
 
 
-bool ProcessScriptArrayPopulationWork( void const* currentWorkItem, void* workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
+bool ProcessScriptArrayPopulationWork( WorkItem const& currentWorkItem, WorkItems& workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
 {
 	// Load the script values
 	// For each value...
@@ -207,15 +217,40 @@ bool ProcessScriptArrayPopulationWork( void const* currentWorkItem, void* workIt
 
 
 
-bool QueueScriptInstancePopulationWork( void const* currentWorkItem, void* workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
+bool QueueScriptInstancePopulationWork( WorkItem const& currentWorkItem, WorkItems& workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
 {
-	// If it's a direct nesting in reflection
-	//   Queue population as later work
-	// If it's an accessor in reflection
-	//   Instantiate
-	//   Queue population as later work
-	RF_DBGFAIL_MSG( "TODO" );
-	return false;
+	reflect::VariableTypeInfo const& typeInfo = member.mMemberVariableInfo.mVariableTypeInfo;
+	if( typeInfo.mAccessor != nullptr )
+	{
+		// Accessor
+
+		// Instantiate
+		RF_DBGFAIL_MSG( "TODO" );
+
+		// Queue population as later work
+		RF_DBGFAIL_MSG( "TODO" );
+		return true;
+	}
+	else if( typeInfo.mClassInfo != nullptr )
+	{
+		// Direct nesting
+
+		// Queue population as later work
+		WorkItem newWorkItem;
+		newWorkItem.mClassInfo = typeInfo.mClassInfo;
+		newWorkItem.mClassInstance = member.mMemberVariableLocation;
+		newWorkItem.mPath = currentWorkItem.mPath;
+		newWorkItem.mPath.emplace_back( elemName );
+		workItems.emplace_back( rftl::move( newWorkItem ) );
+		return true;
+	}
+	else
+	{
+		// Unknown
+
+		RF_DBGFAIL_MSG( "Failed to determine handling for script element instance into member variable type" );
+		return false;
+	}
 }
 
 
@@ -259,8 +294,8 @@ void sqreflect_scratch()
 			"//x.mString = \"test\";\n"
 			"//x.mWString = \"test\";\n"
 			"//x.mIntArray = [3,5,7];\n"
-			"//x.mNested = SQReflectTestNestedClass();\n"
-			"//x.mNested.mBool = true;\n"
+			"x.mNested = SQReflectTestNestedClass();\n"
+			"x.mNested.mBool = true;\n"
 			"\n";
 		bool const sourceAdd = vm.AddSourceFromBuffer( source );
 		RF_ASSERT( sourceAdd );
@@ -272,30 +307,27 @@ void sqreflect_scratch()
 
 	// Populate
 	{
-		struct WorkItem
-		{
-			script::SquirrelVM::NestedTraversalPath mPath;
-			reflect::ClassInfo const* mClassInfo;
-			void const* mClassInstance;
-		};
-		rftl::vector<WorkItem> mWorkItems;
+		rftl::vector<WorkItem> workItems;
 
-		mWorkItems.push_back(
+		workItems.push_back(
 			WorkItem{
 				{ "x" },
 				&testClassInfo,
 				&testClass } );
 
 		// While there is still work...
-		while(mWorkItems.empty() == false)
+		while(workItems.empty() == false)
 		{
 			// Grab a work item
-			WorkItem const workItem = mWorkItems.back();
-			mWorkItems.pop_back();
+			WorkItem const workItem = workItems.back();
+			workItems.pop_back();
 
 			script::SquirrelVM::NestedTraversalPath const& path = workItem.mPath;
 			reflect::ClassInfo const& classInfo = *workItem.mClassInfo;
 			void const* classInstance = workItem.mClassInstance;
+
+			// Locally cache the class info from reflection
+			rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
 
 			// Extract the instance from script
 			script::SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
@@ -314,7 +346,6 @@ void sqreflect_scratch()
 				}
 
 				// Find the reflected member with that name
-				rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
 				rftype::TypeTraverser::MemberVariableInstance const* foundMember = nullptr;
 				for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
 				{
@@ -357,7 +388,7 @@ void sqreflect_scratch()
 				else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
 				{
 					// Array
-					bool const processSuccess = ProcessScriptArrayPopulationWork( nullptr, nullptr, elemName, member );
+					bool const processSuccess = ProcessScriptArrayPopulationWork( workItem, workItems, elemName, member );
 					if( processSuccess == false )
 					{
 						RF_DBGFAIL_MSG( "Failed to process script array to member variable" );
@@ -367,7 +398,7 @@ void sqreflect_scratch()
 				else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
 				{
 					// Instance
-					bool const queueSuccess = QueueScriptInstancePopulationWork( nullptr, nullptr, elemName, member );
+					bool const queueSuccess = QueueScriptInstancePopulationWork( workItem, workItems, elemName, member );
 					if( queueSuccess == false )
 					{
 						RF_DBGFAIL_MSG( "Failed to prepare processing for script instance to be written into member variable" );
@@ -377,6 +408,30 @@ void sqreflect_scratch()
 			}
 		}
 	}
+
+	// Verify
+	RF_ASSERT( testClass.mBool == true );
+	RF_ASSERT( testClass.mVoidPtr == nullptr );
+	RF_ASSERT( testClass.mClassPtr == nullptr );
+	RF_ASSERT( testClass.mChar == 'a');
+	RF_ASSERT( testClass.mWChar == L'a');
+	RF_ASSERT( testClass.mChar16 == u'a');
+	RF_ASSERT( testClass.mChar32 == U'a');
+	RF_ASSERT( testClass.mFloat == 0.5f );
+	RF_ASSERT( testClass.mDouble == 0.5 );
+	RF_ASSERT( testClass.mLongDouble == 0.5l );
+	RF_ASSERT( testClass.mU8 == 7);
+	RF_ASSERT( testClass.mS8 == 7 );
+	RF_ASSERT( testClass.mU16 == 7);
+	RF_ASSERT( testClass.mS16 == 7);
+	RF_ASSERT( testClass.mU32 == 7);
+	RF_ASSERT( testClass.mS32 == 7);
+	RF_ASSERT( testClass.mU64 == 7);
+	RF_ASSERT( testClass.mS64 == 7);
+	//RF_ASSERT( testClass.mString == "test" );
+	//RF_ASSERT( testClass.mWString == L"test" );
+	//RF_ASSERT( testClass.mIntArray == {3, 5, 7} );
+	RF_ASSERT( testClass.mNested.mBool == true );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
