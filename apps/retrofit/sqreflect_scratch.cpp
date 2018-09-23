@@ -96,17 +96,18 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( refle
 		members.emplace_back( varInst );
 	};
 
-	auto onNestedTypeFoundFunc = [&members](
-		rftype::TypeTraverser::MemberVariableInstance const& varInst,
+	auto onTraversalTypeFoundFunc = [&members](
+		rftype::TypeTraverser::TraversalType traversalType,
+		rftype::TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
-		members.emplace_back( varInst );
 		shouldRecurse = false;
 	};
 
-	auto onReturnFromNestedTypeFunc = [](
-		void ) ->
+	auto onReturnFromTraversalTypeFunc = [](
+		rftype::TypeTraverser::TraversalType traversalType,
+		rftype::TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		RF_DBGFAIL_MSG( "Unexpected recursion" );
@@ -116,8 +117,8 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( refle
 		classInfo,
 		classInstance,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc,
-		onReturnFromNestedTypeFunc );
+		onTraversalTypeFoundFunc,
+		onReturnFromTraversalTypeFunc );
 
 	return members;
 }

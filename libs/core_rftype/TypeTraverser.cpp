@@ -8,14 +8,14 @@ namespace RF { namespace rftype {
 void TypeTraverser::TraverseVariables(
 	reflect::VirtualClass const & traversalRoot,
 	OnMemberVariableFunc const & onMemberVariableFunc,
-	OnNestedTypeFoundFunc const & onNestedTypeFoundFunc,
-	OnReturnFromNestedTypeFunc const& onReturnFromNestedTypeFunc )
+	OnTraversalFunc const & onTraversalFunc,
+	OnReturnFromTraversalFunc const& onReturnFromTraversalFunc )
 {
 	TraverseVariablesT(
 		traversalRoot,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc,
-		onReturnFromNestedTypeFunc );
+		onTraversalFunc,
+		onReturnFromTraversalFunc );
 }
 
 
@@ -24,15 +24,15 @@ void TypeTraverser::TraverseVariables(
 	reflect::ClassInfo const & classInfo,
 	void const * classLocation,
 	OnMemberVariableFunc const & onMemberVariableFunc,
-	OnNestedTypeFoundFunc const & onNestedTypeFoundFunc,
-	OnReturnFromNestedTypeFunc const& onReturnFromNestedTypeFunc )
+	OnTraversalFunc const & onTraversalFunc,
+	OnReturnFromTraversalFunc const& onReturnFromTraversalFunc )
 {
 	TraverseVariablesT(
 		classInfo,
 		classLocation,
 		onMemberVariableFunc,
-		onNestedTypeFoundFunc,
-		onReturnFromNestedTypeFunc );
+		onTraversalFunc,
+		onReturnFromTraversalFunc );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
