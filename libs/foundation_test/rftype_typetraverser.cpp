@@ -11,6 +11,43 @@
 namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
+void EnsureAllFunctionsFound( rftl::unordered_set<void const*> expectedLocations, rftl::vector<TypeTraverser::MemberVariableInstance> const& members )
+{
+	ASSERT_EQ( expectedLocations.size(), members.size() );
+	for( TypeTraverser::MemberVariableInstance const& varInst : members )
+	{
+		void const* const varLoc = varInst.mMemberVariableLocation;
+		ASSERT_TRUE( expectedLocations.count( varLoc ) == 1 );
+		expectedLocations.erase( varLoc );
+	}
+	ASSERT_EQ( expectedLocations.size(), 0 );
+}
+
+
+
+void EnsureAllFunctionsFound( rftl::vector<void const*> expectedLocations, rftl::vector<TypeTraverser::MemberVariableInstance> const& members )
+{
+	ASSERT_EQ( expectedLocations.size(), members.size() );
+	for( TypeTraverser::MemberVariableInstance const& varInst : members )
+	{
+		void const* const varLoc = varInst.mMemberVariableLocation;
+		bool found = false;
+		for( rftl::vector<void const*>::const_iterator iter = expectedLocations.begin(); iter != expectedLocations.end(); iter++ )
+		{
+			if( *iter == varLoc )
+			{
+				found = true;
+				expectedLocations.erase( iter );
+				break;
+			}
+		}
+		ASSERT_TRUE( found );
+	}
+	ASSERT_EQ( expectedLocations.size(), 0 );
+}
+
+
+
 TEST( RFType, TraverseSingleInheritance )
 {
 	rftl::vector<TypeTraverser::MemberVariableInstance> members;
@@ -21,10 +58,11 @@ TEST( RFType, TraverseSingleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -34,7 +72,8 @@ TEST( RFType, TraverseSingleInheritance )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -54,14 +93,7 @@ TEST( RFType, TraverseSingleInheritance )
 	rftl::unordered_set<void const*> expectedLocations;
 	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
 	expectedLocations.emplace( &classInstance.mExampleDerivedNonStaticVariable );
-	ASSERT_EQ( expectedLocations.size(), 2 );
-	for( TypeTraverser::MemberVariableInstance const& varInst : members )
-	{
-		void const* const varLoc = varInst.mMemberVariableLocation;
-		ASSERT_TRUE( expectedLocations.count( varLoc ) == 1 );
-		expectedLocations.erase( varLoc );
-	}
-	ASSERT_EQ( expectedLocations.size(), 0 );
+	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
 
@@ -76,10 +108,11 @@ TEST( RFType, TraverseNullSingleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -89,7 +122,8 @@ TEST( RFType, TraverseNullSingleInheritance )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -118,10 +152,11 @@ TEST( RFType, TraverseMultipleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -131,7 +166,8 @@ TEST( RFType, TraverseMultipleInheritance )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -151,14 +187,7 @@ TEST( RFType, TraverseMultipleInheritance )
 	rftl::unordered_set<void const*> expectedLocations;
 	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
 	expectedLocations.emplace( &classInstance.mExampleSecondaryNonStaticVariable );
-	ASSERT_EQ( expectedLocations.size(), 2 );
-	for( TypeTraverser::MemberVariableInstance const& varInst : members )
-	{
-		void const* const varLoc = varInst.mMemberVariableLocation;
-		ASSERT_TRUE( expectedLocations.count( varLoc ) == 1 );
-		expectedLocations.erase( varLoc );
-	}
-	ASSERT_EQ( expectedLocations.size(), 0 );
+	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
 
@@ -173,10 +202,11 @@ TEST( RFType, TraverseNullMultipleInheritance )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -186,7 +216,8 @@ TEST( RFType, TraverseNullMultipleInheritance )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -215,10 +246,11 @@ TEST( RFType, TraverseNesting )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -228,7 +260,8 @@ TEST( RFType, TraverseNesting )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -241,20 +274,14 @@ TEST( RFType, TraverseNesting )
 		onMemberVariableFunc,
 		onNestedTypeFoundFunc,
 		onReturnFromNestedTypeFunc );
-	ASSERT_EQ( members.size(), 1 );
+	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 1 );
 	ASSERT_EQ( depth, 0 );
 
-	rftl::unordered_set<void const*> expectedLocations;
-	expectedLocations.emplace( &classInstance.mExampleClassAsMember.mExampleNonStaticVariable );
-	ASSERT_EQ( expectedLocations.size(), 1 );
-	for( TypeTraverser::MemberVariableInstance const& varInst : members )
-	{
-		void const* const varLoc = varInst.mMemberVariableLocation;
-		ASSERT_TRUE( expectedLocations.count( varLoc ) == 1 );
-		expectedLocations.erase( varLoc );
-	}
-	ASSERT_EQ( expectedLocations.size(), 0 );
+	rftl::vector<void const*> expectedLocations;
+	expectedLocations.emplace_back( &classInstance.mExampleClassAsMember );
+	expectedLocations.emplace_back( &classInstance.mExampleClassAsMember.mExampleNonStaticVariable );
+	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
 
@@ -269,10 +296,11 @@ TEST( RFType, TraverseNullNesting )
 		members.emplace_back( varInst );
 	};
 
-	rftl::vector<TypeTraverser::MemberVariableInstance> nested;
+	rftl::vector<TypeTraverser::TraversalVariableInstance> nested;
 	size_t depth = 0;
 	auto onNestedTypeFoundFunc = [&nested, &depth](
-		TypeTraverser::MemberVariableInstance const& varInst,
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) ->
 		void
 	{
@@ -282,7 +310,8 @@ TEST( RFType, TraverseNullNesting )
 	};
 
 	auto onReturnFromNestedTypeFunc = [&depth](
-		void ) ->
+		TypeTraverser::TraversalType traversalType,
+		TypeTraverser::TraversalVariableInstance const& varInst ) ->
 		void
 	{
 		depth--;
@@ -294,7 +323,7 @@ TEST( RFType, TraverseNullNesting )
 		onMemberVariableFunc,
 		onNestedTypeFoundFunc,
 		onReturnFromNestedTypeFunc );
-	ASSERT_EQ( members.size(), 1 );
+	ASSERT_EQ( members.size(), 2 );
 	ASSERT_EQ( nested.size(), 1 );
 	ASSERT_EQ( depth, 0 );
 }
