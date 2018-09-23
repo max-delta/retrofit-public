@@ -90,9 +90,9 @@ TEST( RFType, TraverseSingleInheritance )
 	ASSERT_EQ( nested.size(), 0 );
 	ASSERT_EQ( depth, 0 );
 
-	rftl::unordered_set<void const*> expectedLocations;
-	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
-	expectedLocations.emplace( &classInstance.mExampleDerivedNonStaticVariable );
+	rftl::unordered_set<void const*> expectedLocations = {
+		&classInstance.mExampleNonStaticVariable,
+		&classInstance.mExampleDerivedNonStaticVariable };
 	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
@@ -184,9 +184,9 @@ TEST( RFType, TraverseMultipleInheritance )
 	ASSERT_EQ( nested.size(), 0 );
 	ASSERT_EQ( depth, 0 );
 
-	rftl::unordered_set<void const*> expectedLocations;
-	expectedLocations.emplace( &classInstance.mExampleNonStaticVariable );
-	expectedLocations.emplace( &classInstance.mExampleSecondaryNonStaticVariable );
+	rftl::unordered_set<void const*> expectedLocations = {
+		&classInstance.mExampleNonStaticVariable,
+		&classInstance.mExampleSecondaryNonStaticVariable };
 	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
@@ -278,9 +278,9 @@ TEST( RFType, TraverseNesting )
 	ASSERT_EQ( nested.size(), 1 );
 	ASSERT_EQ( depth, 0 );
 
-	rftl::vector<void const*> expectedLocations;
-	expectedLocations.emplace_back( &classInstance.mExampleClassAsMember );
-	expectedLocations.emplace_back( &classInstance.mExampleClassAsMember.mExampleNonStaticVariable );
+	rftl::vector<void const*> expectedLocations = {
+		&classInstance.mExampleClassAsMember,
+		&classInstance.mExampleClassAsMember.mExampleNonStaticVariable };
 	EnsureAllFunctionsFound( expectedLocations, members );
 }
 
