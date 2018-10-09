@@ -297,6 +297,57 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 		}
 
 
+		// wParam [bit 0-15] : WHEEL_DELTA * num clicks (negative is down)
+		// wParam [bit 16-31] : Modifiers
+		// lParam [bit 0-15] : Absolute x-coord in client area
+		// lParam [bit 16-31] : Absolute y-coord in client area
+		case WM_MOUSEHWHEEL:
+		{
+			// TODO: This doesn't seem to actually work, or ever even get
+			//  fired, which seems like perhaps the window has to steal input
+			//  focus in order to receive the message
+
+			int16_t const distance = static_cast<int32_t>( wParam ) >> 16;
+			if( distance == 0 )
+			{
+				// Uh... Why did we even get a message?
+				intercepted = false;
+				return 0;
+			}
+
+			bool const positive = distance > 0;
+
+			int16_t numClicks = distance / WHEEL_DELTA;
+			if( numClicks < 0 )
+			{
+				// Num clicks will always be used as positive
+				numClicks = -numClicks;
+			}
+			if( numClicks == 0 )
+			{
+				// API failure, try to correct
+				numClicks = 1;
+			}
+
+			static constexpr int16_t kMaxReasonableClicks = 5;
+			if( numClicks > kMaxReasonableClicks )
+			{
+				// Something seems to have gone wrong, try and clamp it down
+				numClicks = kMaxReasonableClicks;
+			}
+
+			uint8_t const virtualKey = positive ? k_VkScrollWheelUp : k_VkScrollWheelDown;
+			for( int16_t i = 0; i < numClicks; i++ )
+			{
+				// Pulse the key for each click
+				RecordLogical( virtualKey, PinState::Active );
+				RecordLogical( virtualKey, PinState::Inactive );
+			}
+			intercepted = true;
+			return 0;
+		}
+
+
 		case WM_KILLFOCUS:
 		{
 			if( k_KillKeysOnFocusLost == false )

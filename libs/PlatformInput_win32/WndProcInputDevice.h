@@ -61,6 +61,12 @@ private:
 	static constexpr size_t k_NumScanCodes = 1 << 8; // ScanCodes are 8 bits
 	static constexpr size_t k_MaxEventStorage = 32;
 	static constexpr bool k_KillKeysOnFocusLost = true; // TODO: Option?
+public:
+	// Some inputs do not have VK values, so we have to make them up from
+	//  unassigned VK values so they won't conflict
+	// See: WinUser.h
+	static constexpr uint8_t k_VkScrollWheelUp = 0x88;
+	static constexpr uint8_t k_VkScrollWheelDown = 0x89;
 private:
 	typedef rftl::bitset<k_NumVKeys> LogicalCodeStates;
 	typedef rftl::bitset<k_NumScanCodes> PhysicalCodeStates;
