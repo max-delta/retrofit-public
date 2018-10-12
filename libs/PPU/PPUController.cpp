@@ -378,10 +378,22 @@ void PPUController::Render() const
 		// TODO: Transforms
 		PPUCoordElem const x = object.m_XCoord - timeSlot.m_TextureOriginX;
 		PPUCoordElem const y = object.m_YCoord - timeSlot.m_TextureOriginY;
-		math::Vector2f const topLeft = CoordToDevice( x, y );
-		math::Vector2f const bottomRight = CoordToDevice(
+		math::Vector2f topLeft = CoordToDevice( x, y );
+		math::Vector2f bottomRight = CoordToDevice(
 			math::integer_cast<PPUCoordElem>( x + texture->m_WidthPostLoad ),
 			math::integer_cast<PPUCoordElem>( y + texture->m_HeightPostLoad ) );
+
+		// Perform flips
+		// NOTE: Assuming the device billboards are implemented similarly to a
+		//  double-sided quad in a 3D pipeline
+		if( object.m_HorizontalFlip )
+		{
+			rftl::swap( topLeft.x, bottomRight.x );
+		}
+		if( object.m_VerticalFlip )
+		{
+			rftl::swap( topLeft.y, bottomRight.y );
+		}
 
 		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
 	}
