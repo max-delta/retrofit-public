@@ -29,8 +29,9 @@
 namespace RF { namespace test {
 ///////////////////////////////////////////////////////////////////////////////
 
-RF::gfx::Object testObj = {};
-RF::gfx::Object testObj2 = {};
+RF::gfx::Object testObjDigit = {};
+RF::gfx::Object testObjDigitFlips[3] = {};
+RF::gfx::Object testObjWiggle = {};
 void InitDrawTest()
 {
 	using namespace RF;
@@ -44,24 +45,36 @@ void InitDrawTest()
 	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
-	testObj.m_FramePackID = digitFPackID;
-	testObj.m_MaxTimeIndex = digitAnimationLength;
-	testObj.m_TimeSlowdown = 3;
-	testObj.m_Looping = true;
-	testObj.m_XCoord = gfx::k_TileSize * 2;
-	testObj.m_YCoord = gfx::k_TileSize * 1;
-	testObj.m_ZLayer = 0;
+	testObjDigit.m_FramePackID = digitFPackID;
+	testObjDigit.m_MaxTimeIndex = digitAnimationLength;
+	testObjDigit.m_TimeSlowdown = 3;
+	testObjDigit.m_Looping = true;
+	testObjDigit.m_XCoord = gfx::k_TileSize * 2;
+	testObjDigit.m_YCoord = gfx::k_TileSize * 1;
+	testObjDigit.m_ZLayer = 0;
+
+	testObjDigitFlips[0] = testObjDigit;
+	testObjDigitFlips[0].m_XCoord += gfx::k_TileSize * 1;
+	testObjDigitFlips[0].m_HorizontalFlip = true;
+	testObjDigitFlips[1] = testObjDigit;
+	testObjDigitFlips[1].m_XCoord += gfx::k_TileSize * 2;
+	testObjDigitFlips[1].m_VerticalFlip = true;
+	testObjDigitFlips[2] = testObjDigit;
+	testObjDigitFlips[2].m_XCoord += gfx::k_TileSize * 3;
+	testObjDigitFlips[2].m_HorizontalFlip = true;
+	testObjDigitFlips[2].m_VerticalFlip = true;
+
 
 	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( "testpack2", commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
-	testObj2.m_FramePackID = wiggleFPackID;
-	testObj2.m_MaxTimeIndex = 4;
-	testObj2.m_TimeSlowdown = 33 / 4;
-	testObj2.m_Looping = true;;
-	testObj2.m_XCoord = gfx::k_TileSize * 4;
-	testObj2.m_YCoord = gfx::k_TileSize * 4;
-	testObj2.m_ZLayer = 0;
+	testObjWiggle.m_FramePackID = wiggleFPackID;
+	testObjWiggle.m_MaxTimeIndex = 4;
+	testObjWiggle.m_TimeSlowdown = 33 / 4;
+	testObjWiggle.m_Looping = true;;
+	testObjWiggle.m_XCoord = gfx::k_TileSize * 4;
+	testObjWiggle.m_YCoord = gfx::k_TileSize * 4;
+	testObjWiggle.m_ZLayer = 0;
 
 	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
@@ -75,10 +88,15 @@ void DrawTest()
 	using namespace RF;
 
 	app::g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
-	testObj.Animate();
-	app::g_Graphics->DrawObject( testObj );
-	testObj2.Animate();
-	app::g_Graphics->DrawObject( testObj2 );
+	testObjDigit.Animate();
+	app::g_Graphics->DrawObject( testObjDigit );
+	for( size_t i = 0; i < rftl::extent<decltype( testObjDigitFlips )>::value; i++ )
+	{
+		testObjDigitFlips[i].Animate();
+		app::g_Graphics->DrawObject( testObjDigitFlips[i] );
+	}
+	testObjWiggle.Animate();
+	app::g_Graphics->DrawObject( testObjWiggle );
 	app::g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
 	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
