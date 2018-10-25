@@ -17,6 +17,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Hash.cpp" />
+    <ClCompile Include="math_bits.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />

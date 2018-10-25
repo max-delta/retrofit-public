@@ -14,6 +14,10 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value );
 template<typename T>
 constexpr size_t GetZerosIndexOfHighestBit( T const value );
 
+bool IsBitSet( void const* root, size_t offsetInBits );
+void SetBit( void* root, size_t offsetInBits );
+void ClearBit( void* root, size_t offsetInBits );
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
