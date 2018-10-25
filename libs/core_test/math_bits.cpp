@@ -71,5 +71,67 @@ TEST( MathBits, GetZerosIndexOfHighestBit )
 	static_assert( GetZerosIndexOfHighestBit( static_cast<int64_t>( -1ll ) ) == 63, "" );
 }
 
+
+
+TEST( MathBits, IsBitSet )
+{
+	// Every 7th bit is set
+	uint8_t const array[] = { 1,2,4,8,16 };
+	constexpr size_t numBits = sizeof( array ) * 8;
+
+	for( size_t i = 0; i < numBits; i++ )
+	{
+		bool const isSet = IsBitSet( array, i );
+		if( i != 0 && ( i % 7 == 0 ) )
+		{
+			ASSERT_TRUE( isSet );
+		}
+		else
+		{
+			ASSERT_FALSE( isSet );
+		}
+	}
+}
+
+
+
+TEST( MathBits, SetBit )
+{
+	uint8_t array[] = { 0,0,0,0,0 };
+	constexpr size_t numBits = sizeof( array ) * 8;
+
+	// Every 7th bit is set
+	for( size_t i = 7; i < numBits; i += 7 )
+	{
+		SetBit( array, i );
+	}
+
+	ASSERT_EQ( array[0], 1 );
+	ASSERT_EQ( array[1], 2 );
+	ASSERT_EQ( array[2], 4 );
+	ASSERT_EQ( array[3], 8 );
+	ASSERT_EQ( array[4], 16 );
+}
+
+
+
+TEST( MathBits, ClearBit )
+{
+	uint8_t array[] = { 0xff,0xff,0xff,0xff,0xff };
+	constexpr size_t numBits = sizeof( array ) * 8;
+
+	// Every 7th bit is cleared
+	for( size_t i = 7; i < numBits; i += 7 )
+	{
+		ClearBit( array, i );
+	}
+
+	ASSERT_EQ( array[0], static_cast<uint8_t>( ~1 ) );
+	ASSERT_EQ( array[1], static_cast<uint8_t>( ~2 ) );
+	ASSERT_EQ( array[2], static_cast<uint8_t>( ~4 ) );
+	ASSERT_EQ( array[3], static_cast<uint8_t>( ~8 ) );
+	ASSERT_EQ( array[4], static_cast<uint8_t>( ~16 ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
