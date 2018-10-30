@@ -7,7 +7,7 @@
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-LOGGING_API void AssertLogger( LoggingRouter const& router, LogEvent const& event, va_list args );
+LOGGING_API void AssertLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

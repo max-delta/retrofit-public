@@ -123,16 +123,22 @@ namespace details {
 // When specializing contexts, there is a limit to how large you can make the
 //  string representation
 static constexpr size_t kMaxContextLen = 512;
-using LogContextBuffer = rftl::array<char, kMaxContextLen>;
+using Utf8LogContextBuffer = rftl::array<char, kMaxContextLen / sizeof( char )>;
+using Utf16LogContextBuffer = rftl::array<char16_t, kMaxContextLen / sizeof( char16_t )>;
+using Utf32LogContextBuffer = rftl::array<char32_t, kMaxContextLen / sizeof( char32_t )>;
 
-// Specialize this to add support for your context
+// Specialize these to add support for your context
 // EXAMPLE:
 //  template<> void WriteContextString(
 //   MyClass const& context,
-//   LogContextBuffer& buffer );
+//   Utf8LogContextBuffer& buffer );
 // NOTE: Will be called from multiple threads
 template<typename Context>
-void WriteContextString( Context const& context, LogContextBuffer& buffer );
+void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer );
+template<typename Context>
+void WriteContextString( Context const& context, Utf16LogContextBuffer& buffer );
+template<typename Context>
+void WriteContextString( Context const& context, Utf32LogContextBuffer& buffer );
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -146,25 +152,71 @@ namespace details {
 template<typename Context>
 void Log(
 	Context const& context,
-	char const* categoryKey,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char const* format, ... );
+template<typename Context>
+void Log(
+	Context const& context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const* format, ... );
+template<typename Context>
+void Log(
+	Context const& context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const* format, ... );
+LOGGING_API void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
 	char const* format, ... );
 LOGGING_API void Log(
 	nullptr_t /*context*/,
-	char const* categoryKey,
+	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format, ... );
+	char16_t const* format, ... );
+LOGGING_API void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const* format, ... );
 LOGGING_API void LogVA(
 	char const* context,
-	char const* categoryKey,
+	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
 	char const* format,
+	va_list args );
+LOGGING_API void LogVA(
+	char16_t const* context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const* format,
+	va_list args );
+LOGGING_API void LogVA(
+	char32_t const* context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const* format,
 	va_list args );
 
 }

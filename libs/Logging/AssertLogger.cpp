@@ -13,7 +13,7 @@
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void AssertLogger( LoggingRouter const& router, LogEvent const& event, va_list args )
+void AssertLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
 {
 	// Multiple threads could assert simultaneously, but we don't really care
 	//  about the performance impact in that case, so we'll just lock the
