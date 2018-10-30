@@ -5,21 +5,34 @@
 namespace RF { namespace unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
-std::string ConvertToASCII( std::string const& source );
-std::string ConvertToASCII( std::u16string const& source );
-std::string ConvertToASCII( std::u32string const& source );
+rftl::string ConvertToASCII( rftl::string const& source );
+rftl::string ConvertToASCII( rftl::u16string const& source );
+rftl::string ConvertToASCII( rftl::u32string const& source );
 
-std::string ConvertToUtf8( std::string const& source );
-std::string ConvertToUtf8( std::u16string const& source );
-std::string ConvertToUtf8( std::u32string const& source );
+rftl::string ConvertToUtf8( rftl::string const& source );
+rftl::string ConvertToUtf8( rftl::u16string const& source );
+rftl::string ConvertToUtf8( rftl::u32string const& source );
 
-std::u16string ConvertToUtf16( std::string const& source );
-std::u16string ConvertToUtf16( std::u16string const& source );
-std::u16string ConvertToUtf16( std::u32string const& source );
+rftl::u16string ConvertToUtf16( rftl::string const& source );
+rftl::u16string ConvertToUtf16( rftl::u16string const& source );
+rftl::u16string ConvertToUtf16( rftl::u32string const& source );
 
-std::u32string ConvertToUtf32( std::string const& source );
-std::u32string ConvertToUtf32( std::u16string const& source );
-std::u32string ConvertToUtf32( std::u32string const& source );
+rftl::u32string ConvertToUtf32( rftl::string const& source );
+rftl::u32string ConvertToUtf32( rftl::u16string const& source );
+rftl::u32string ConvertToUtf32( rftl::u32string const& source );
+
+template<typename TargetT> rftl::basic_string<TargetT> ConvertToUtf( rftl::string const& source );
+template<> inline rftl::string ConvertToUtf<char>( rftl::string const& source ){return ConvertToUtf8( source );}
+template<> inline rftl::u16string ConvertToUtf<char16_t>( rftl::string const& source ){return ConvertToUtf16( source );}
+template<> inline rftl::u32string ConvertToUtf<char32_t>( rftl::string const& source ){return ConvertToUtf32( source );}
+template<typename TargetT> rftl::basic_string<TargetT> ConvertToUtf( rftl::u16string const& source );
+template<> inline rftl::string ConvertToUtf<char>( rftl::u16string const& source ){return ConvertToUtf8( source );}
+template<> inline rftl::u16string ConvertToUtf<char16_t>( rftl::u16string const& source ){return ConvertToUtf16( source );}
+template<> inline rftl::u32string ConvertToUtf<char32_t>( rftl::u16string const& source ){return ConvertToUtf32( source );}
+template<typename TargetT> rftl::basic_string<TargetT> ConvertToUtf( rftl::u32string const& source );
+template<> inline rftl::string ConvertToUtf<char>( rftl::u32string const& source ){return ConvertToUtf8( source );}
+template<> inline rftl::u16string ConvertToUtf<char16_t>( rftl::u32string const& source ){return ConvertToUtf16( source );}
+template<> inline rftl::u32string ConvertToUtf<char32_t>( rftl::u32string const& source ){return ConvertToUtf32( source );}
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

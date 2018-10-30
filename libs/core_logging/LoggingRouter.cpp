@@ -3,10 +3,52 @@
 #include "LoggingRouter.h"
 
 #include "core_math/math_bits.h"
+#include "core_unicode/StringConvert.h"
 #include "rftl/cstdarg"
 
 
 namespace RF { namespace logging {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+template<typename FromT, typename ToT>
+class LogEventConverter
+{
+	RF_NO_COPY( LogEventConverter );
+public:
+	LogEventConverter( LogEvent<FromT> const& logEvent );
+
+public:
+	LogEvent<ToT> mConverted;
+
+private:
+	rftl::basic_string<ToT> mContext;
+	rftl::basic_string<ToT> mFormat;
+};
+
+
+
+template<typename FromT, typename ToT>
+LogEventConverter<FromT, ToT>::LogEventConverter( LogEvent<FromT> const & logEvent )
+{
+	mConverted = {};
+	mConverted.mCategoryKey = logEvent.mCategoryKey;
+	mConverted.mSeverityMask = logEvent.mSeverityMask;
+	mConverted.mLineNumber = logEvent.mLineNumber;
+	mConverted.mTransientFileString = logEvent.mTransientFileString;
+	if( logEvent.mTransientContextString != nullptr )
+	{
+		mContext = unicode::ConvertToUtf<ToT>( logEvent.mTransientContextString );
+		mConverted.mTransientContextString = mContext.c_str();
+	}
+	if( logEvent.mTransientMessageFormatString != nullptr )
+	{
+		mFormat = unicode::ConvertToUtf<ToT>( logEvent.mTransientMessageFormatString );
+		mConverted.mTransientMessageFormatString = mFormat.c_str();
+	}
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 LoggingRouter::LoggingRouter()
@@ -268,11 +310,13 @@ void LoggingRouter::LogInternal( LogEvent<char> const & logEvent, HandlerDefinit
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG( "TODO" );
+		details::LogEventConverter<char, char16_t> converter{ logEvent };
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG( "TODO" );
+		details::LogEventConverter<char, char32_t> converter{ logEvent };
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
 	}
 	else
 	{
@@ -286,7 +330,8 @@ void LoggingRouter::LogInternal( LogEvent<char16_t> const & logEvent, HandlerDef
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG("TODO");
+		details::LogEventConverter<char16_t, char> converter{ logEvent };
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
@@ -294,7 +339,8 @@ void LoggingRouter::LogInternal( LogEvent<char16_t> const & logEvent, HandlerDef
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG( "TODO" );
+		details::LogEventConverter<char16_t, char32_t> converter{ logEvent };
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
 	}
 	else
 	{
@@ -308,11 +354,13 @@ void LoggingRouter::LogInternal( LogEvent<char32_t> const & logEvent, HandlerDef
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG( "TODO" );
+		details::LogEventConverter<char32_t, char> converter{ logEvent };
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
-		RF_DBGFAIL_MSG( "TODO" );
+		details::LogEventConverter<char32_t, char16_t> converter{ logEvent };
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{

@@ -9,9 +9,9 @@ namespace RF { namespace unicode {
 namespace details {
 
 template<typename CharT>
-std::string CollapseToAscii( std::basic_string<CharT> const& source )
+rftl::string CollapseToAscii( rftl::basic_string<CharT> const& source )
 {
-	std::string retVal;
+	rftl::string retVal;
 	retVal.reserve( source.size() );
 	for( CharT const in : source )
 	{
@@ -30,28 +30,28 @@ std::string CollapseToAscii( std::basic_string<CharT> const& source )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-std::string ConvertToASCII( std::string const & source )
+rftl::string ConvertToASCII( rftl::string const & source )
 {
 	return details::CollapseToAscii( source );
 }
 
 
 
-std::string ConvertToASCII( std::u16string const & source )
+rftl::string ConvertToASCII( rftl::u16string const & source )
 {
 	return details::CollapseToAscii( source );
 }
 
 
 
-std::string ConvertToASCII( std::u32string const & source )
+rftl::string ConvertToASCII( rftl::u32string const & source )
 {
 	return details::CollapseToAscii( source );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-std::string ConvertToUtf8( std::string const & source )
+rftl::string ConvertToUtf8( rftl::string const & source )
 {
 	// Same
 	return source;
@@ -59,7 +59,7 @@ std::string ConvertToUtf8( std::string const & source )
 
 
 
-std::string ConvertToUtf8( std::u16string const & source )
+rftl::string ConvertToUtf8( rftl::u16string const & source )
 {
 	// Shrink
 	// HACK: Transition through UTF-32
@@ -68,10 +68,10 @@ std::string ConvertToUtf8( std::u16string const & source )
 
 
 
-std::string ConvertToUtf8( std::u32string const & source )
+rftl::string ConvertToUtf8( rftl::u32string const & source )
 {
 	// Shrink
-	std::string retVal;
+	rftl::string retVal;
 	retVal.reserve( source.size() * 4 );
 	for( char32_t const codePoint : source )
 	{
@@ -112,7 +112,7 @@ std::string ConvertToUtf8( std::u32string const & source )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-std::u16string ConvertToUtf16( std::string const & source )
+rftl::u16string ConvertToUtf16( rftl::string const & source )
 {
 	// Expand
 	// HACK: Transition through UTF-32
@@ -121,7 +121,7 @@ std::u16string ConvertToUtf16( std::string const & source )
 
 
 
-std::u16string ConvertToUtf16( std::u16string const & source )
+rftl::u16string ConvertToUtf16( rftl::u16string const & source )
 {
 	// Same
 	return source;
@@ -129,10 +129,10 @@ std::u16string ConvertToUtf16( std::u16string const & source )
 
 
 
-std::u16string ConvertToUtf16( std::u32string const & source )
+rftl::u16string ConvertToUtf16( rftl::u32string const & source )
 {
 	// Shrink
-	std::u16string retVal;
+	rftl::u16string retVal;
 	retVal.reserve( source.size() * 2 );
 	for( char32_t const codePoint : source )
 	{
@@ -180,25 +180,25 @@ std::u16string ConvertToUtf16( std::u32string const & source )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-std::u32string ConvertToUtf32( std::string const & source )
+rftl::u32string ConvertToUtf32( rftl::string const & source )
 {
 	// Expand
 	RF_DBGFAIL_MSG( "TODO" );
-	return std::u32string();
+	return rftl::u32string();
 }
 
 
 
-std::u32string ConvertToUtf32( std::u16string const & source )
+rftl::u32string ConvertToUtf32( rftl::u16string const & source )
 {
 	// Expand
 	RF_DBGFAIL_MSG( "TODO" );
-	return std::u32string();
+	return rftl::u32string();
 }
 
 
 
-std::u32string ConvertToUtf32( std::u32string const & source )
+rftl::u32string ConvertToUtf32( rftl::u32string const & source )
 {
 	return source;
 }
