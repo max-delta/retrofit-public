@@ -8,6 +8,7 @@ namespace RF { namespace logging {
 using CategoryKey = char const*;
 using SeverityMask = uint64_t;
 
+template<typename CharT>
 struct LogEvent
 {
 	// Values not gauranteed to be consistent across builds
@@ -21,8 +22,8 @@ struct LogEvent
 
 	// Must be consumed immediately, pointers are not permanent
 	char const* mTransientFileString;
-	char const* mTransientContextString;
-	char const* mTransientMessageFormatString;
+	CharT const* mTransientContextString;
+	CharT const* mTransientMessageFormatString;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

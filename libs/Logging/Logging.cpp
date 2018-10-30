@@ -38,7 +38,7 @@ namespace details {
 
 void Log(
 	nullptr_t /*context*/,
-	char const * categoryKey,
+	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
@@ -52,13 +52,73 @@ void Log(
 
 
 
+void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const * format, ... )
+{
+	va_list args;
+	va_start( args, format );
+	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
+	va_end( args );
+}
+
+
+
+void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const * format, ... )
+{
+	va_list args;
+	va_start( args, format );
+	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
+	va_end( args );
+}
+
+
+
 void LogVA(
 	char const* context,
-	char const* categoryKey,
+	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
 	char const* format,
+	va_list args )
+{
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
+}
+
+
+
+void LogVA(
+	char16_t const* context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const* format,
+	va_list args )
+{
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
+}
+
+
+
+void LogVA(
+	char32_t const* context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const* format,
 	va_list args )
 {
 	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );

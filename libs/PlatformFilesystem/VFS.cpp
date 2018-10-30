@@ -723,7 +723,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 }}
 
 template<>
-void RF::logging::WriteContextString( file::VFSPath const & context, LogContextBuffer& buffer )
+void RF::logging::WriteContextString( file::VFSPath const & context, Utf8LogContextBuffer& buffer )
 {
 	size_t bufferOffset = 0;
 	size_t const maxBufferOffset = buffer.size();

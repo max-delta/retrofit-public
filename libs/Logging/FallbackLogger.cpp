@@ -15,7 +15,7 @@ static rftl::atomic<HandlerID> sFallbackHandlerID = kInvalidHandlerID;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void FallbackLogger( LoggingRouter const& router, LogEvent const& event, va_list args )
+void FallbackLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
 {
 	constexpr size_t kBufSize = 512;
 
@@ -46,7 +46,7 @@ void InsertFallbackLogger()
 		RF_SEV_MILESTONE |
 		RF_SEV_USER_ATTENTION_REQUESTED |
 		RF_SEV_UNRECOVERABLE;
-	fallbackDef.mHandlerFunc = FallbackLogger;
+	fallbackDef.mUtf8HandlerFunc = FallbackLogger;
 
 	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
 	RF_ASSERT( sFallbackHandlerID == kInvalidHandlerID );

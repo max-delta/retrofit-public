@@ -54,6 +54,10 @@ int main()
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_CRITICAL, "Console test" );
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_MILESTONE, "Console test" );
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, 1ull << 32, "Console test" );
+
+		// TODO
+		//RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_INFO, u"Utf16 test" );
+		//RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_INFO, U"Utf32 test" );
 	}
 
 	if( k_XMLTest )
