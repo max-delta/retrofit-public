@@ -8,7 +8,7 @@
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void ANSIConsoleLogger( LoggingRouter const& router, LogEvent const& event, va_list args )
+void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
 {
 	constexpr size_t kBufSize = 512;
 

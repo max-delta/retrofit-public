@@ -12,15 +12,21 @@ namespace RF { namespace logging {
 
 using HandlerID = uint64_t;
 static constexpr HandlerID kInvalidHandlerID = 0;
-using HandlerFunc = void(*)( LoggingRouter const&, LogEvent const&, va_list args );
+using UTF8HandlerFunc = void(*)( LoggingRouter const&, LogEvent<char> const&, va_list args );
+using UTF16HandlerFunc = void( *)( LoggingRouter const&, LogEvent<char16_t> const&, va_list args );
+using UTF32HandlerFunc = void( *)( LoggingRouter const&, LogEvent<char32_t> const&, va_list args );
 
 struct HandlerDefinition
 {
 	// May recieve additional severities on multi-severity events
-	SeverityMask mSupportedSeverities;
+	SeverityMask mSupportedSeverities = 0;
 
 	// Must support multi-threading
-	HandlerFunc mHandlerFunc;
+	// NOTE: Atleast one handler must be specified, up/down conversion will be
+	//  done as needed when some handlers are null
+	UTF8HandlerFunc mUtf8HandlerFunc = nullptr;
+	UTF16HandlerFunc mUtf16HandlerFunc = nullptr;
+	UTF32HandlerFunc mUtf32HandlerFunc = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

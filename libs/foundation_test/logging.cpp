@@ -11,7 +11,7 @@ namespace details {
 	};
 }
 
-template<> void WriteContextString( details::TestLoggingContext const& context, LogContextBuffer& buffer )
+template<> void WriteContextString( details::TestLoggingContext const& context, Utf8LogContextBuffer& buffer )
 {
 	(void)context;
 	buffer[0] = '\0';

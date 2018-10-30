@@ -34,6 +34,38 @@ void LoggingRouter::Log(
 
 
 
+void LoggingRouter::Log(
+	char16_t const* context,
+	CategoryKey categoryKey,
+	SeverityMask severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const * format, ... ) const
+{
+	va_list args;
+	va_start( args, format );
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	va_end( args );
+}
+
+
+
+void LoggingRouter::Log(
+	char32_t const* context,
+	CategoryKey categoryKey,
+	SeverityMask severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const * format, ... ) const
+{
+	va_list args;
+	va_start( args, format );
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	va_end( args );
+}
+
+
+
 void LoggingRouter::LogVA(
 	char const* context,
 	CategoryKey categoryKey,
@@ -48,12 +80,43 @@ void LoggingRouter::LogVA(
 
 
 
+void LoggingRouter::LogVA(
+	char16_t const* context,
+	CategoryKey categoryKey,
+	SeverityMask severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char16_t const* format,
+	va_list args ) const
+{
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+}
+
+
+
+void LoggingRouter::LogVA(
+	char32_t const* context,
+	CategoryKey categoryKey,
+	SeverityMask severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char32_t const* format,
+	va_list args ) const
+{
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+}
+
+
+
 HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const & handlerDefinition )
 {
 	WriterLock lock( mMultiReaderSingleWriterLock );
 
 	RF_ASSERT_MSG( handlerDefinition.mSupportedSeverities != 0, "Bad param" );
-	RF_ASSERT_MSG( handlerDefinition.mHandlerFunc != nullptr, "Bad param" );
+	RF_ASSERT_MSG(
+		handlerDefinition.mUtf8HandlerFunc != nullptr ||
+		handlerDefinition.mUtf16HandlerFunc != nullptr ||
+		handlerDefinition.mUtf32HandlerFunc != nullptr, "Bad param" );
 
 	HandlerID const newID = mHandlerIDGenerator;
 	mHandlerIDGenerator++;
@@ -147,13 +210,14 @@ void LoggingRouter::ClearCategoryWhitelist( CategoryKey categoryKey )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+template<typename CharT>
 void LoggingRouter::LogInternal(
-	char const* context,
+	CharT const* context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format,
+	CharT const* format,
 	va_list args ) const
 {
 	// NOTE: Keeping the lock the whole time, since we also want to not only
@@ -176,7 +240,7 @@ void LoggingRouter::LogInternal(
 		return;
 	}
 
-	LogEvent logEvent = {};
+	LogEvent<CharT> logEvent = {};
 	logEvent.mCategoryKey = categoryKey;
 	logEvent.mSeverityMask = severityMask;
 	logEvent.mLineNumber = lineNumber;
@@ -189,9 +253,74 @@ void LoggingRouter::LogInternal(
 		HandlerDefinition const& handlerDef = handlerDefPair.second;
 		if( ( handlerDef.mSupportedSeverities & severityMask ) != 0 )
 		{
-			RF_ASSERT( handlerDef.mHandlerFunc != nullptr );
-			handlerDef.mHandlerFunc( *this, logEvent, args );
+			LogInternal( logEvent, handlerDef, args );
 		}
+	}
+}
+
+
+
+void LoggingRouter::LogInternal( LogEvent<char> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+{
+	if( handlerDef.mUtf8HandlerFunc != nullptr )
+	{
+		handlerDef.mUtf8HandlerFunc( *this, logEvent, args );
+	}
+	else if( handlerDef.mUtf16HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG( "TODO" );
+	}
+	else if( handlerDef.mUtf32HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG( "TODO" );
+	}
+	else
+	{
+		RF_DBGFAIL_MSG( "Invalid handler" );
+	}
+}
+
+
+
+void LoggingRouter::LogInternal( LogEvent<char16_t> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+{
+	if( handlerDef.mUtf8HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG("TODO");
+	}
+	else if( handlerDef.mUtf16HandlerFunc != nullptr )
+	{
+		handlerDef.mUtf16HandlerFunc( *this, logEvent, args );
+	}
+	else if( handlerDef.mUtf32HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG( "TODO" );
+	}
+	else
+	{
+		RF_DBGFAIL_MSG( "Invalid handler" );
+	}
+}
+
+
+
+void LoggingRouter::LogInternal( LogEvent<char32_t> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+{
+	if( handlerDef.mUtf8HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG( "TODO" );
+	}
+	else if( handlerDef.mUtf16HandlerFunc != nullptr )
+	{
+		RF_DBGFAIL_MSG( "TODO" );
+	}
+	else if( handlerDef.mUtf32HandlerFunc != nullptr )
+	{
+		handlerDef.mUtf32HandlerFunc( *this, logEvent, args );
+	}
+	else
+	{
+		RF_DBGFAIL_MSG( "Invalid handler" );
 	}
 }
 

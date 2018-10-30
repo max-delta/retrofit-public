@@ -45,6 +45,20 @@ public:
 		char const* filename,
 		size_t lineNumber,
 		char const* format, ... ) const;
+	void Log(
+		char16_t const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char16_t const* format, ... ) const;
+	void Log(
+		char32_t const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char32_t const* format, ... ) const;
 	void LogVA(
 		char const* context,
 		CategoryKey categoryKey,
@@ -52,6 +66,22 @@ public:
 		char const* filename,
 		size_t lineNumber,
 		char const* format,
+		va_list args ) const;
+	void LogVA(
+		char16_t const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char16_t const* format,
+		va_list args ) const;
+	void LogVA(
+		char32_t const* context,
+		CategoryKey categoryKey,
+		SeverityMask severityMask,
+		char const* filename,
+		size_t lineNumber,
+		char32_t const* format,
 		va_list args ) const;
 
 	// Control which handlers are able to handle log events
@@ -77,14 +107,18 @@ public:
 	//
 	// Private methods
 private:
+	template<typename CharT>
 	void LogInternal(
-		char const* context,
+		CharT const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char const* format,
+		CharT const* format,
 		va_list args ) const;
+	void LogInternal( LogEvent<char> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
+	void LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
+	void LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
 	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;
 
 

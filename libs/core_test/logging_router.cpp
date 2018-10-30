@@ -25,19 +25,19 @@ TEST( Logging, Details_ClearGlobalCounts )
 	ASSERT_EQ( details::gCountAll, 0 );
 }
 
-void Handler1( LoggingRouter const&, LogEvent const&, va_list )
+void Handler1( LoggingRouter const&, LogEvent<char> const&, va_list )
 {
 	gCount1++;
 }
-void Handler2( LoggingRouter const&, LogEvent const&, va_list )
+void Handler2( LoggingRouter const&, LogEvent<char> const&, va_list )
 {
 	gCount2++;
 }
-void Handler3( LoggingRouter const&, LogEvent const&, va_list )
+void Handler3( LoggingRouter const&, LogEvent<char> const&, va_list )
 {
 	gCount3++;
 }
-void HandlerAll( LoggingRouter const&, LogEvent const&, va_list )
+void HandlerAll( LoggingRouter const&, LogEvent<char> const&, va_list )
 {
 	gCountAll++;
 }
@@ -50,16 +50,16 @@ void SetupStandardRouter( LoggingRouter& router )
 
 	HandlerDefinition handlerDef;
 	handlerDef.mSupportedSeverities = 0x1;
-	handlerDef.mHandlerFunc = Handler1;
+	handlerDef.mUtf8HandlerFunc = Handler1;
 	router.RegisterHandler( handlerDef );
 	handlerDef.mSupportedSeverities = 0x2;
-	handlerDef.mHandlerFunc = Handler2;
+	handlerDef.mUtf8HandlerFunc = Handler2;
 	router.RegisterHandler( handlerDef );
 	handlerDef.mSupportedSeverities = 0x4;
-	handlerDef.mHandlerFunc = Handler3;
+	handlerDef.mUtf8HandlerFunc = Handler3;
 	router.RegisterHandler( handlerDef );
 	handlerDef.mSupportedSeverities = 0x7;
-	handlerDef.mHandlerFunc = HandlerAll;
+	handlerDef.mUtf8HandlerFunc = HandlerAll;
 	router.RegisterHandler( handlerDef );
 }
 
@@ -95,7 +95,7 @@ TEST( Logging, Registration )
 
 	struct Invalid
 	{
-		static void InvalidFunc( LoggingRouter const&, LogEvent const&, va_list )
+		static void InvalidFunc( LoggingRouter const&, LogEvent<char> const&, va_list )
 		{
 			GTEST_FAIL();
 		}
@@ -103,7 +103,7 @@ TEST( Logging, Registration )
 
 	HandlerDefinition handlerDef;
 	handlerDef.mSupportedSeverities = 0x1;
-	handlerDef.mHandlerFunc = Invalid::InvalidFunc;
+	handlerDef.mUtf8HandlerFunc = Invalid::InvalidFunc;
 
 	HandlerID const id1 = router.RegisterHandler( handlerDef );
 	ASSERT_NE( id1, kInvalidHandlerID );

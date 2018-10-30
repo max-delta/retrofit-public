@@ -48,7 +48,7 @@ void Startup()
 		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
-		def.mHandlerFunc = logging::ANSIConsoleLogger;
+		def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
 		logging::RegisterHandler( def );
 	}
 	else
@@ -61,7 +61,7 @@ void Startup()
 	{
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = logging::Severity::RF_SEV_USER_ATTENTION_REQUESTED;
-		def.mHandlerFunc = logging::AssertLogger;
+		def.mUtf8HandlerFunc = logging::AssertLogger;
 		logging::RegisterHandler( def );
 	}
 
