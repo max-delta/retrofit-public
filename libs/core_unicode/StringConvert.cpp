@@ -17,13 +17,13 @@ rftl::string CollapseToAscii( rftl::basic_string<CharT> const& source )
 	retVal.reserve( source.size() );
 	for( CharT const in : source )
 	{
-		if( in <= 127 )
+		if( in >= 0 && in <= 127 )
 		{
 			retVal.push_back( static_cast<char>( in ) );
 		}
 		else
 		{
-			retVal.push_back( static_cast<char>( in ) );
+			retVal.push_back( '?' );
 		}
 	}
 	return retVal;
@@ -151,7 +151,7 @@ char32_t ConvertSingleUtf16ToUtf32( char16_t const* buffer, size_t numPairs )
 			RF_ASSERT( low10bit <= 0x3ff );
 			char32_t const transformedTo20bit = static_cast<char32_t>( ( high10bit << 10 ) | low10bit );
 			RF_ASSERT( transformedTo20bit <= 0xfffff );
-			char32_t const codePoint = transformedTo20bit + 0x100000;
+			char32_t const codePoint = transformedTo20bit + 0x10000;
 			return codePoint;
 		}
 		default:
@@ -284,7 +284,7 @@ rftl::u16string ConvertToUtf16( rftl::u32string const & source )
 		else if( codePoint >= 0x010000 && codePoint <= 0x10ffff )
 		{
 			// Supplementary plane
-			char32_t const transformedTo20bit = codePoint - 0x100000;
+			char32_t const transformedTo20bit = codePoint - 0x10000;
 			RF_ASSERT( transformedTo20bit <= 0xfffff );
 			char16_t const high10bit = static_cast<char16_t>( transformedTo20bit >> 10 );
 			RF_ASSERT( high10bit <= 0x3ff );
