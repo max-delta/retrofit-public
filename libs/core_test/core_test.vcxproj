@@ -237,6 +237,7 @@
     </ClCompile>
     <ClCompile Include="typelist.cpp" />
     <ClCompile Include="ptr_uniqueptr.cpp" />
+    <ClCompile Include="unicode_stringconvert.cpp" />
     <ClCompile Include="valuelist.cpp" />
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="ptr_weaksharedptr.cpp" />
