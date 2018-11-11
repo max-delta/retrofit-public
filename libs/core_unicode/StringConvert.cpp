@@ -12,12 +12,14 @@ namespace RF { namespace unicode {
 namespace details {
 
 template<typename CharT>
-rftl::string CollapseToAscii( rftl::basic_string<CharT> const& source )
+rftl::string CollapseToAscii( CharT const* source, size_t numElements )
 {
 	rftl::string retVal;
-	retVal.reserve( source.size() );
-	for( CharT const in : source )
+	retVal.reserve( numElements );
+	for( size_t i = 0; i < numElements; i++ )
 	{
+		CharT const& in = source[i];
+
 		if( in >= 0 && in <= 127 )
 		{
 			retVal.push_back( static_cast<char>( in ) );
@@ -30,54 +32,54 @@ rftl::string CollapseToAscii( rftl::basic_string<CharT> const& source )
 	return retVal;
 }
 
+
+
+template<typename CharT>
+rftl::string CollapseToAscii( rftl::basic_string<CharT> const& source )
+{
+	return CollapseToAscii( source.data(), source.size() );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-rftl::string ConvertToASCII( rftl::string const & source )
+rftl::string unicode::ConvertToASCII( char const * source, size_t numBytes )
 {
-	return details::CollapseToAscii( source );
+	return details::CollapseToAscii( source, numBytes );
 }
 
-
-
-rftl::string ConvertToASCII( rftl::u16string const & source )
+rftl::string ConvertToASCII( char16_t const * source, size_t numPairs )
 {
-	return details::CollapseToAscii( source );
+	return details::CollapseToAscii( source, numPairs );
 }
 
-
-
-rftl::string ConvertToASCII( rftl::u32string const & source )
+rftl::string ConvertToASCII( char32_t const * source, size_t numCodePoints )
 {
-	return details::CollapseToAscii( source );
+	return details::CollapseToAscii( source, numCodePoints );
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-rftl::string ConvertToUtf8( rftl::string const & source )
+rftl::string ConvertToUtf8( char const * source, size_t numBytes )
 {
 	// Same
-	return source;
+	return rftl::string( source, numBytes );
 }
 
-
-
-rftl::string ConvertToUtf8( rftl::u16string const & source )
+rftl::string ConvertToUtf8( char16_t const * source, size_t numPairs )
 {
 	// Shrink
 	// HACK: Transition through UTF-32
-	return ConvertToUtf8( ConvertToUtf32( source ) );
+	return ConvertToUtf8( ConvertToUtf32( source, numPairs ) );
 }
 
-
-
-rftl::string ConvertToUtf8( rftl::u32string const & source )
+rftl::string ConvertToUtf8( char32_t const * source, size_t numCodePoints )
 {
 	// Shrink
 	rftl::string retVal;
-	retVal.reserve( source.size() * 4 );
-	for( char32_t const codePoint : source )
+	retVal.reserve( numCodePoints * 4 );
+	for( size_t i = 0; i < numCodePoints; i++ )
 	{
+		char32_t const& codePoint = source[i];
+
 		char temp[4] = {};
 		size_t const numBytes = ConvertSingleUtf32ToUtf8( codePoint, temp );
 		switch( numBytes )
@@ -108,32 +110,28 @@ rftl::string ConvertToUtf8( rftl::u32string const & source )
 	return retVal;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-rftl::u16string ConvertToUtf16( rftl::string const & source )
+rftl::u16string ConvertToUtf16( char const * source, size_t numBytes )
 {
 	// Expand
 	// HACK: Transition through UTF-32
-	return ConvertToUtf16( ConvertToUtf32( source ) );
+	return ConvertToUtf16( ConvertToUtf32( source, numBytes ) );
 }
 
-
-
-rftl::u16string ConvertToUtf16( rftl::u16string const & source )
+rftl::u16string ConvertToUtf16( char16_t const * source, size_t numPairs )
 {
 	// Same
-	return source;
+	return rftl::u16string( source, numPairs );
 }
 
-
-
-rftl::u16string ConvertToUtf16( rftl::u32string const & source )
+rftl::u16string ConvertToUtf16( char32_t const * source, size_t numCodePoints )
 {
 	// Shrink
 	rftl::u16string retVal;
-	retVal.reserve( source.size() * 2 );
-	for( char32_t const codePoint : source )
+	retVal.reserve( numCodePoints * 2 );
+	for( size_t i = 0; i < numCodePoints; i++ )
 	{
+		char32_t const& codePoint = source[i];
+
 		char16_t temp[2] = {};
 		size_t const numPairs = ConvertSingleUtf32ToUtf16( codePoint, temp );
 		switch( numPairs )
@@ -153,18 +151,16 @@ rftl::u16string ConvertToUtf16( rftl::u32string const & source )
 	return retVal;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-rftl::u32string ConvertToUtf32( rftl::string const & source )
+rftl::u32string ConvertToUtf32( char const * source, size_t numBytes )
 {
 	// Expand
 	rftl::u32string retVal;
-	retVal.reserve( source.size() );
-	rftl::string::const_iterator iter = source.begin();
-	while( iter != source.end() )
+	retVal.reserve( numBytes );
+	size_t i = 0;
+	while( i < numBytes )
 	{
-		char const* const buffer = &( *iter );
-		size_t const remainingBytes = static_cast<size_t>( rftl::distance( iter, source.end() ) );
+		char const* const buffer = &( source[i] );
+		size_t const remainingBytes = numBytes - i;
 		size_t const neededBytes = NumBytesExpectedInUtf8( *buffer );
 
 		if( remainingBytes < neededBytes )
@@ -184,24 +180,22 @@ rftl::u32string ConvertToUtf32( rftl::string const & source )
 		char32_t const codePoint = ConvertSingleUtf8ToUtf32( buffer, neededBytes );
 		retVal.push_back( codePoint );
 
-		iter += static_cast<std::string::difference_type>( neededBytes );
+		i += neededBytes;
 	}
 
 	return retVal;
 }
 
-
-
-rftl::u32string ConvertToUtf32( rftl::u16string const & source )
+rftl::u32string ConvertToUtf32( char16_t const * source, size_t numPairs )
 {
 	// Expand
 	rftl::u32string retVal;
-	retVal.reserve( source.size() );
-	rftl::u16string::const_iterator iter = source.begin();
-	while( iter != source.end() )
+	retVal.reserve( numPairs );
+	size_t i = 0;
+	while( i < numPairs )
 	{
-		char16_t const* const buffer = &( *iter );
-		size_t const remainingPairs = static_cast<size_t>( rftl::distance( iter, source.end() ) );
+		char16_t const* const buffer = &( source[i] );
+		size_t const remainingPairs = numPairs - i;
 		size_t const neededPairs = NumPairsExpectedInUtf8( *buffer );
 
 		if( remainingPairs < neededPairs )
@@ -221,17 +215,100 @@ rftl::u32string ConvertToUtf32( rftl::u16string const & source )
 		char32_t const codePoint = ConvertSingleUtf16ToUtf32( buffer, neededPairs );
 		retVal.push_back( codePoint );
 
-		iter += static_cast<std::string::difference_type>( neededPairs );
+		i += neededPairs;
 	}
 
 	return retVal;
+}
+
+rftl::u32string ConvertToUtf32( char32_t const * source, size_t numCodePoints )
+{
+	// Same
+	return rftl::u32string( source, numCodePoints );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+rftl::string ConvertToASCII( rftl::string const & source )
+{
+	return ConvertToASCII( source.data(), source.size() );
+}
+
+
+
+rftl::string ConvertToASCII( rftl::u16string const & source )
+{
+	return ConvertToASCII( source.data(), source.size() );
+}
+
+
+
+rftl::string ConvertToASCII( rftl::u32string const & source )
+{
+	return ConvertToASCII( source.data(), source.size() );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+rftl::string ConvertToUtf8( rftl::string const & source )
+{
+	return ConvertToUtf8( source.data(), source.size() );
+}
+
+
+
+rftl::string ConvertToUtf8( rftl::u16string const & source )
+{
+	return ConvertToUtf8( source.data(), source.size() );
+}
+
+
+
+rftl::string ConvertToUtf8( rftl::u32string const & source )
+{
+	return ConvertToUtf8( source.data(), source.size() );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+rftl::u16string ConvertToUtf16( rftl::string const & source )
+{
+	return ConvertToUtf16( source.data(), source.size() );
+}
+
+
+
+rftl::u16string ConvertToUtf16( rftl::u16string const & source )
+{
+	return ConvertToUtf16( source.data(), source.size() );
+}
+
+
+
+rftl::u16string ConvertToUtf16( rftl::u32string const & source )
+{
+	return ConvertToUtf16( source.data(), source.size() );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+rftl::u32string ConvertToUtf32( rftl::string const & source )
+{
+	return ConvertToUtf32( source.data(), source.size() );
+}
+
+
+
+rftl::u32string ConvertToUtf32( rftl::u16string const & source )
+{
+	return ConvertToUtf32( source.data(), source.size() );
 }
 
 
 
 rftl::u32string ConvertToUtf32( rftl::u32string const & source )
 {
-	return source;
+	return ConvertToUtf32( source.data(), source.size() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
