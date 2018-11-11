@@ -8,7 +8,7 @@ namespace RF { namespace unicode {
 namespace details {
 
 template<typename CharT, typename InserterT>
-void CollapseToAscii( CharT const* source, size_t numElements, InserterT insertIterator )
+void CollapseToAscii( CharT const* source, size_t numElements, InserterT& insertIterator )
 {
 	for( size_t i = 0; i < numElements; i++ )
 	{
@@ -28,7 +28,7 @@ void CollapseToAscii( CharT const* source, size_t numElements, InserterT insertI
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT insertIterator )
+template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT& insertIterator )
 {
 	char temp[4] = {};
 	size_t const numBytes = ConvertSingleUtf32ToUtf8( codePoint, temp );
@@ -60,7 +60,7 @@ template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, 
 
 
 
-template<typename InserterT> void ConvertSingleUtf32ToUtf16( char32_t codePoint, InserterT insertIterator )
+template<typename InserterT> void ConvertSingleUtf32ToUtf16( char32_t codePoint, InserterT& insertIterator )
 {
 	char16_t temp[2] = {};
 	size_t const numPairs = ConvertSingleUtf32ToUtf16( codePoint, temp );
@@ -81,28 +81,28 @@ template<typename InserterT> void ConvertSingleUtf32ToUtf16( char32_t codePoint,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename InserterT> void ConvertToASCII( char const* source, size_t numBytes, InserterT insertIterator )
+template<typename InserterT> void ConvertToASCII( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	details::CollapseToAscii( source, numBytes, insertIterator );
 }
 
 
 
-template<typename InserterT> void ConvertToASCII( char16_t const* source, size_t numPairs, InserterT insertIterator )
+template<typename InserterT> void ConvertToASCII( char16_t const* source, size_t numPairs, InserterT& insertIterator )
 {
 	details::CollapseToAscii( source, numPairs, insertIterator );
 }
 
 
 
-template<typename InserterT> void ConvertToASCII( char32_t const* source, size_t numCodePoints, InserterT insertIterator )
+template<typename InserterT> void ConvertToASCII( char32_t const* source, size_t numCodePoints, InserterT& insertIterator )
 {
 	details::CollapseToAscii( source, numCodePoints, insertIterator );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename InserterT> void ConvertToUtf8( char const* source, size_t numBytes, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf8( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Same
 	for( size_t i = 0; i < numBytes; i++ )
@@ -113,7 +113,7 @@ template<typename InserterT> void ConvertToUtf8( char const* source, size_t numB
 
 
 
-template<typename InserterT> void ConvertToUtf8( char16_t const* source, size_t numPairs, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf8( char16_t const* source, size_t numPairs, InserterT& insertIterator )
 {
 	// Transition through UTF-32
 	size_t i = 0;
@@ -149,7 +149,7 @@ template<typename InserterT> void ConvertToUtf8( char16_t const* source, size_t 
 
 
 
-template<typename InserterT> void ConvertToUtf8( char32_t const* source, size_t numCodePoints, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf8( char32_t const* source, size_t numCodePoints, InserterT& insertIterator )
 {
 	// Shrink
 	for( size_t i = 0; i < numCodePoints; i++ )
@@ -161,7 +161,7 @@ template<typename InserterT> void ConvertToUtf8( char32_t const* source, size_t 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename InserterT> void ConvertToUtf16( char const* source, size_t numBytes, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf16( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Transition through UTF-32
 	size_t i = 0;
@@ -197,7 +197,7 @@ template<typename InserterT> void ConvertToUtf16( char const* source, size_t num
 
 
 
-template<typename InserterT> void ConvertToUtf16( char16_t const* source, size_t numPairs, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf16( char16_t const* source, size_t numPairs, InserterT& insertIterator )
 {
 	// Same
 	for( size_t i = 0; i < numPairs; i++ )
@@ -208,7 +208,7 @@ template<typename InserterT> void ConvertToUtf16( char16_t const* source, size_t
 
 
 
-template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t numCodePoints, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t numCodePoints, InserterT& insertIterator )
 {
 	// Shrink
 	for( size_t i = 0; i < numCodePoints; i++ )
@@ -220,7 +220,7 @@ template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename InserterT> void ConvertToUtf32( char const* source, size_t numBytes, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf32( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Expand
 	size_t i = 0;
@@ -253,7 +253,7 @@ template<typename InserterT> void ConvertToUtf32( char const* source, size_t num
 
 
 
-template<typename InserterT> void ConvertToUtf32( char16_t const* source, size_t numPairs, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf32( char16_t const* source, size_t numPairs, InserterT& insertIterator )
 {
 	// Expand
 	size_t i = 0;
@@ -286,13 +286,125 @@ template<typename InserterT> void ConvertToUtf32( char16_t const* source, size_t
 
 
 
-template<typename InserterT> void ConvertToUtf32( char32_t const* source, size_t numCodePoints, InserterT insertIterator )
+template<typename InserterT> void ConvertToUtf32( char32_t const* source, size_t numCodePoints, InserterT& insertIterator )
 {
 	// Same
 	for( size_t i = 0; i < numCodePoints; i++ )
 	{
 		insertIterator = source[i];
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertSingleUtf32ToUtf8( codePoint, discard );
+}
+
+
+
+template<typename InserterT> void ConvertSingleUtf32ToUtf16( char32_t codePoint, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertSingleUtf32ToUtf16( codePoint, discard );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename InserterT> void ConvertToASCII( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToASCII( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToASCII( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToASCII( source, numPairs, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToASCII( char32_t const* source, size_t numCodePoints, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToASCII( source, numCodePoints, discard );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename InserterT> void ConvertToUtf8( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf8( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf8( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf8( source, numPairs, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf8( char32_t const* source, size_t numCodePoints, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf8( source, numCodePoints, discard );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename InserterT> void ConvertToUtf16( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf16( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf16( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf16( source, numPairs, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t numCodePoints, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf16( source, numCodePoints, discard );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename InserterT> void ConvertToUtf32( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf32( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf32( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf32( source, numPairs, discard );
+}
+
+
+
+template<typename InserterT> void ConvertToUtf32( char32_t const* source, size_t numCodePoints, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf32( source, numCodePoints, discard );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
