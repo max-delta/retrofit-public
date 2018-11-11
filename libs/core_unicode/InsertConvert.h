@@ -1,5 +1,4 @@
 #pragma once
-#include "rftl/string"
 
 
 namespace RF { namespace unicode {
