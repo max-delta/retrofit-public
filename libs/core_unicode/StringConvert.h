@@ -5,6 +5,22 @@
 namespace RF { namespace unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
+rftl::string ConvertToASCII( char const* source, size_t numBytes );
+rftl::string ConvertToASCII( char16_t const* source, size_t numPairs );
+rftl::string ConvertToASCII( char32_t const* source, size_t numCodePoints );
+
+rftl::string ConvertToUtf8( char const* source, size_t numBytes );
+rftl::string ConvertToUtf8( char16_t const* source, size_t numPairs );
+rftl::string ConvertToUtf8( char32_t const* source, size_t numCodePoints );
+
+rftl::u16string ConvertToUtf16( char const* source, size_t numBytes );
+rftl::u16string ConvertToUtf16( char16_t const* source, size_t numPairs );
+rftl::u16string ConvertToUtf16( char32_t const* source, size_t numCodePoints );
+
+rftl::u32string ConvertToUtf32( char const* source, size_t numBytes );
+rftl::u32string ConvertToUtf32( char16_t const* source, size_t numPairs );
+rftl::u32string ConvertToUtf32( char32_t const* source, size_t numCodePoints );
+
 rftl::string ConvertToASCII( rftl::string const& source );
 rftl::string ConvertToASCII( rftl::u16string const& source );
 rftl::string ConvertToASCII( rftl::u32string const& source );
