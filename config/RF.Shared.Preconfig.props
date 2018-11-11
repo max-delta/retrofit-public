@@ -33,7 +33,6 @@
   <ItemGroup />
 
   <PropertyGroup>
-    <OutDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Output\</OutDir>
     <IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
   </PropertyGroup>
 </Project>
