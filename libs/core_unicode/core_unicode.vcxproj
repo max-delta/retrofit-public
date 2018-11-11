@@ -29,6 +29,7 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClInclude Include="CharConvert.h" />
+    <ClInclude Include="InsertConvert.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringConvert.h" />
   </ItemGroup>
@@ -38,6 +39,9 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="StringConvert.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="InsertConvert.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
