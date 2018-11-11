@@ -5,10 +5,30 @@
 
 #include "core/meta/LazyInitSingleton.h"
 #include "core_logging/LoggingRouter.h"
+#include "core_unicode/StringConvert.h"
+#include "core_math/math_clamps.h"
 
 
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
+
+void FallbackConversion( Utf16LogContextBuffer & dest, Utf8LogContextBuffer const & source )
+{
+	// TODO: Stack-only conversion
+	rftl::u16string const temp = unicode::ConvertToUtf16( source.data() );
+	memcpy( dest.data(), temp.data(), math::Min( dest.size(), temp.size() ) * sizeof( decltype( temp )::value_type ) );
+}
+
+
+
+void FallbackConversion( Utf32LogContextBuffer & dest, Utf8LogContextBuffer const & source )
+{
+	// TODO: Stack-only conversion
+	rftl::u32string const temp = unicode::ConvertToUtf32( source.data() );
+	memcpy( dest.data(), temp.data(), math::Min( dest.size(), temp.size() ) * sizeof( decltype( temp )::value_type ) );
+}
+
+
 
 LoggingRouter& GetOrCreateGlobalLoggingInstance()
 {
