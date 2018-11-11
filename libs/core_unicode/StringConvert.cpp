@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "StringConvert.h"
-#include "CharConvert.h"
 #include "InsertConvert.h"
-
-#include "core/macros.h"
 
 #include "rftl/iterator"
 

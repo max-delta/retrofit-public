@@ -5,11 +5,13 @@
     <ClInclude Include="StringConvert.h" />
     <ClInclude Include="CharConvert.h" />
     <ClInclude Include="InsertConvert.h" />
+    <ClInclude Include="BufferConvert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="StringConvert.cpp" />
     <ClCompile Include="CharConvert.cpp" />
+    <ClCompile Include="BufferConvert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="InsertConvert.inl" />
