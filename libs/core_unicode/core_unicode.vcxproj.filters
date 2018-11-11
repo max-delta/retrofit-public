@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringConvert.h" />
+    <ClInclude Include="CharConvert.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="StringConvert.cpp" />
+    <ClCompile Include="CharConvert.cpp" />
   </ItemGroup>
 </Project>
