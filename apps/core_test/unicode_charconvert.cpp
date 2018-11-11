@@ -22,6 +22,50 @@ TEST( CharConvert, Null )
 
 
 
+TEST( CharConvert, ToUtf8 )
+{
+	char temp[4] = {};
+	size_t numBytes = 0;
+	{
+		numBytes = ConvertSingleUtf32ToUtf8( U'\x10000', temp );
+		ASSERT_EQ( numBytes, 4 );
+		ASSERT_EQ( temp[0], '\xf0' );
+		ASSERT_EQ( temp[1], '\x90' );
+		ASSERT_EQ( temp[2], '\x80' );
+		ASSERT_EQ( temp[3], '\x80' );
+	}
+	{
+		numBytes = ConvertSingleUtf32ToUtf8( U'\x10ffff', temp );
+		ASSERT_EQ( numBytes, 4 );
+		ASSERT_EQ( temp[0], '\xf4' );
+		ASSERT_EQ( temp[1], '\x8f' );
+		ASSERT_EQ( temp[2], '\xbf' );
+		ASSERT_EQ( temp[3], '\xbf' );
+	}
+}
+
+
+
+TEST( CharConvert, ToUtf16 )
+{
+	char16_t temp[2] = {};
+	size_t numPairs = 0;
+	{
+		numPairs = ConvertSingleUtf32ToUtf16( U'\x10000', temp );
+		ASSERT_EQ( numPairs, 2 );
+		ASSERT_EQ( temp[0], u'\xd800' );
+		ASSERT_EQ( temp[1], u'\xdc00' );
+	}
+	{
+		numPairs = ConvertSingleUtf32ToUtf16( U'\x10ffff', temp );
+		ASSERT_EQ( numPairs, 2 );
+		ASSERT_EQ( temp[0], u'\xdbff' );
+		ASSERT_EQ( temp[1], u'\xdfff' );
+	}
+}
+
+
+
 TEST( CharConvert, ToUtf32 )
 {
 	ASSERT_EQ( NumBytesExpectedInUtf8( 'a' ), 1 );
