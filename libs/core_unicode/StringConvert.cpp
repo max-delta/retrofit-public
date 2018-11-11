@@ -78,36 +78,31 @@ rftl::string ConvertToUtf8( rftl::u32string const & source )
 	retVal.reserve( source.size() * 4 );
 	for( char32_t const codePoint : source )
 	{
-		if( codePoint <= 0x7f )
+		char temp[4] = {};
+		size_t const numBytes = ConvertSingleUtf32ToUtf8( codePoint, temp );
+		switch( numBytes )
 		{
-			// 0xxxxxxx
-			retVal.push_back( static_cast<char>( codePoint ) );
-		}
-		else if( codePoint <= 0x07ff )
-		{
-			// 110xxxxx 10xxxxxx
-			retVal.push_back( static_cast<char>( 0xc0 | ( codePoint >> 6 ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) ) );
-		}
-		else if( codePoint <= 0xffff )
-		{
-			// 1110xxxx 10xxxxxx 10xxxxxx
-			retVal.push_back( static_cast<char>( 0xe0 | ( codePoint >> 12 ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) ) );
-		}
-		else if( codePoint <= 0x10ffff )
-		{
-			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-			retVal.push_back( static_cast<char>( 0xf0 | ( codePoint >> 18 ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 12 ) & 0x3f ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) ) );
-			retVal.push_back( static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) ) );
-		}
-		else
-		{
-			// Invalid
-			retVal.push_back( '?' );
+			case 1:
+				retVal.push_back( temp[0] );
+				break;
+			case 2:
+				retVal.push_back( temp[0] );
+				retVal.push_back( temp[1] );
+				break;
+			case 3:
+				retVal.push_back( temp[0] );
+				retVal.push_back( temp[1] );
+				retVal.push_back( temp[2] );
+				break;
+			case 4:
+				retVal.push_back( temp[0] );
+				retVal.push_back( temp[1] );
+				retVal.push_back( temp[2] );
+				retVal.push_back( temp[3] );
+				break;
+			default:
+				retVal.push_back( '?' );
+				break;
 		}
 	}
 	return retVal;
@@ -139,43 +134,20 @@ rftl::u16string ConvertToUtf16( rftl::u32string const & source )
 	retVal.reserve( source.size() * 2 );
 	for( char32_t const codePoint : source )
 	{
-		if( codePoint <= 0xd7ff )
+		char16_t temp[2] = {};
+		size_t const numPairs = ConvertSingleUtf32ToUtf16( codePoint, temp );
+		switch( numPairs )
 		{
-			// Basic multilingual plane
-			retVal.push_back( static_cast<char16_t>( codePoint ) );
-		}
-		else if( codePoint >= 0xe000 && codePoint <= 0xffff )
-		{
-			// Basic multilingual plane
-			retVal.push_back( static_cast<char16_t>( codePoint ) );
-		}
-		else if( codePoint >= 0x010000 && codePoint <= 0x10ffff )
-		{
-			// Supplementary plane
-			char32_t const transformedTo20bit = codePoint - 0x10000;
-			RF_ASSERT( transformedTo20bit <= 0xfffff );
-			char16_t const high10bit = static_cast<char16_t>( transformedTo20bit >> 10 );
-			RF_ASSERT( high10bit <= 0x3ff );
-			char16_t const low10bit = transformedTo20bit & 0x3ff;
-			RF_ASSERT( low10bit <= 0x3ff );
-			char16_t const highSurrogate = high10bit + 0xd800u;
-			RF_ASSERT( highSurrogate >= 0xd800 );
-			RF_ASSERT( highSurrogate <= 0xdbff );
-			char16_t const lowSurrogate = low10bit + 0xdc00u;
-			RF_ASSERT( lowSurrogate >= 0xdc00 );
-			RF_ASSERT( lowSurrogate <= 0xdfff );
-			retVal.push_back( highSurrogate );
-			retVal.push_back( lowSurrogate );
-		}
-		else if( codePoint >= 0xd800 && codePoint <= 0xdfff )
-		{
-			// Explicitly invalid
-			retVal.push_back( u'?' );
-		}
-		else
-		{
-			// Invalid
-			retVal.push_back( u'?' );
+			case 1:
+				retVal.push_back( temp[0] );
+				break;
+			case 2:
+				retVal.push_back( temp[0] );
+				retVal.push_back( temp[1] );
+				break;
+			default:
+				retVal.push_back( u'?' );
+				break;
 		}
 	}
 	return retVal;
