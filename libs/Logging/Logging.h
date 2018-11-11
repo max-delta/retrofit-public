@@ -127,6 +127,10 @@ using Utf8LogContextBuffer = rftl::array<char, kMaxContextLen / sizeof( char )>;
 using Utf16LogContextBuffer = rftl::array<char16_t, kMaxContextLen / sizeof( char16_t )>;
 using Utf32LogContextBuffer = rftl::array<char32_t, kMaxContextLen / sizeof( char32_t )>;
 
+// Some fallbacks are provided for context specialization
+LOGGING_API void FallbackConversion( Utf16LogContextBuffer& dest, Utf8LogContextBuffer const& source );
+LOGGING_API void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const& source );
+
 // Specialize these to add support for your context
 // EXAMPLE:
 //  template<> void WriteContextString(
@@ -136,9 +140,21 @@ using Utf32LogContextBuffer = rftl::array<char32_t, kMaxContextLen / sizeof( cha
 template<typename Context>
 void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer );
 template<typename Context>
-void WriteContextString( Context const& context, Utf16LogContextBuffer& buffer );
+void WriteContextString( Context const& context, Utf16LogContextBuffer& buffer )
+{
+	// In the absence of a UTF-16 specialization, UTF-8 will be used
+	Utf8LogContextBuffer temp = {};
+	WriteContextString( context, temp );
+	FallbackConversion( buffer, temp );
+}
 template<typename Context>
-void WriteContextString( Context const& context, Utf32LogContextBuffer& buffer );
+void WriteContextString( Context const& context, Utf32LogContextBuffer& buffer )
+{
+	// In the absence of a UTF-32 specialization, UTF-8 will be used
+	Utf8LogContextBuffer temp = {};
+	WriteContextString( context, temp );
+	FallbackConversion( buffer, temp );
+}
 
 //////////////////////////////////////////////////////////////////////////////
 
