@@ -41,6 +41,7 @@
     <ClCompile Include="rftl_string_traits.cpp" />
     <ClCompile Include="unicode_stringconvert.cpp" />
     <ClCompile Include="unicode_charconvert.cpp" />
+    <ClCompile Include="unicode_bufferconvert.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
