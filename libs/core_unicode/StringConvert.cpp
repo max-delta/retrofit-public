@@ -48,15 +48,21 @@ rftl::string unicode::ConvertToASCII( char const * source, size_t numBytes )
 	return details::CollapseToAscii( source, numBytes );
 }
 
+
+
 rftl::string ConvertToASCII( char16_t const * source, size_t numPairs )
 {
 	return details::CollapseToAscii( source, numPairs );
 }
 
+
+
 rftl::string ConvertToASCII( char32_t const * source, size_t numCodePoints )
 {
 	return details::CollapseToAscii( source, numCodePoints );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 rftl::string ConvertToUtf8( char const * source, size_t numBytes )
 {
@@ -64,12 +70,16 @@ rftl::string ConvertToUtf8( char const * source, size_t numBytes )
 	return rftl::string( source, numBytes );
 }
 
+
+
 rftl::string ConvertToUtf8( char16_t const * source, size_t numPairs )
 {
 	// Shrink
 	// HACK: Transition through UTF-32
 	return ConvertToUtf8( ConvertToUtf32( source, numPairs ) );
 }
+
+
 
 rftl::string ConvertToUtf8( char32_t const * source, size_t numCodePoints )
 {
@@ -110,6 +120,8 @@ rftl::string ConvertToUtf8( char32_t const * source, size_t numCodePoints )
 	return retVal;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 rftl::u16string ConvertToUtf16( char const * source, size_t numBytes )
 {
 	// Expand
@@ -117,11 +129,15 @@ rftl::u16string ConvertToUtf16( char const * source, size_t numBytes )
 	return ConvertToUtf16( ConvertToUtf32( source, numBytes ) );
 }
 
+
+
 rftl::u16string ConvertToUtf16( char16_t const * source, size_t numPairs )
 {
 	// Same
 	return rftl::u16string( source, numPairs );
 }
+
+
 
 rftl::u16string ConvertToUtf16( char32_t const * source, size_t numCodePoints )
 {
@@ -150,6 +166,8 @@ rftl::u16string ConvertToUtf16( char32_t const * source, size_t numCodePoints )
 	}
 	return retVal;
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 rftl::u32string ConvertToUtf32( char const * source, size_t numBytes )
 {
@@ -186,6 +204,8 @@ rftl::u32string ConvertToUtf32( char const * source, size_t numBytes )
 	return retVal;
 }
 
+
+
 rftl::u32string ConvertToUtf32( char16_t const * source, size_t numPairs )
 {
 	// Expand
@@ -220,6 +240,8 @@ rftl::u32string ConvertToUtf32( char16_t const * source, size_t numPairs )
 
 	return retVal;
 }
+
+
 
 rftl::u32string ConvertToUtf32( char32_t const * source, size_t numCodePoints )
 {
