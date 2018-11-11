@@ -30,4 +30,9 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup />
   <ItemGroup />
+  
+  <!-- Handle quirks of some build targets -->
+  <PropertyGroup>
+    <PlatformArchitecture Condition="'$(Platform)'=='LLVM_x64'" >64</PlatformArchitecture>
+  </PropertyGroup>
 </Project>
