@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -68,6 +68,7 @@
     </ClCompile>
     <ClCompile Include="typelist.cpp" />
     <ClCompile Include="ptr_uniqueptr.cpp" />
+    <ClCompile Include="unicode_charconvert.cpp" />
     <ClCompile Include="unicode_stringconvert.cpp" />
     <ClCompile Include="valuelist.cpp" />
     <ClCompile Include="vector2.cpp" />
