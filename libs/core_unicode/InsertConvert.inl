@@ -2,10 +2,6 @@
 #include "InsertConvert.h"
 #include "CharConvert.h"
 
-#include "core/macros.h"
-
-#include "rftl/iterator"
-
 
 namespace RF { namespace unicode {
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,8 +10,6 @@ namespace details {
 template<typename CharT, typename InserterT>
 void CollapseToAscii( CharT const* source, size_t numElements, InserterT insertIterator )
 {
-	rftl::string retVal;
-	retVal.reserve( numElements );
 	for( size_t i = 0; i < numElements; i++ )
 	{
 		CharT const& in = source[i];

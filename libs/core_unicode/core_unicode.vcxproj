@@ -28,12 +28,14 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="BufferConvert.h" />
     <ClInclude Include="CharConvert.h" />
     <ClInclude Include="InsertConvert.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringConvert.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BufferConvert.cpp" />
     <ClCompile Include="CharConvert.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
