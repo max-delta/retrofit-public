@@ -30,9 +30,15 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup />
   <ItemGroup />
-  
+
   <!-- Handle quirks of some build targets -->
   <PropertyGroup>
-    <PlatformArchitecture Condition="'$(Platform)'=='LLVM_x64'" >64</PlatformArchitecture>
+    <PlatformArchitecture Condition="'$(Platform)'=='LLVM_x64'">64</PlatformArchitecture>
   </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalOptions Condition="'$(Platform)'=='LLVM_x64'">--target=x86_64-pc-windows-msvc %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
 </Project>
