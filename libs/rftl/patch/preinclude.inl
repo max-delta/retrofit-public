@@ -14,7 +14,7 @@
 
 #if \
 	defined(_MSC_VER) && \
-	(_MSC_VER >= 1913 && _MSC_VER <= 1915) && \
+	(_MSC_VER >= 1913 && _MSC_VER <= 1916) && \
 	!defined(RFTL_DISBALE_BAD_MSVC_WARNINGS)
 #define RFTL_DISBALE_BAD_MSVC_WARNINGS
 	#pragma warning(push)
