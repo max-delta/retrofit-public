@@ -222,7 +222,13 @@ bool PPUController::DrawObject( Object const& object )
 	PPUState& targetState = m_PPUState[m_WriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.m_NumObjects < PPUState::k_MaxObjects );
+
+	if( targetState.m_NumObjects >= PPUState::k_MaxObjects )
+	{
+		RF_DBGFAIL_MSG( "Too many objects drawn this frame" );
+		return false;
+	}
+
 	Object& targetObject = targetState.m_Objects[targetState.m_NumObjects];
 	targetState.m_NumObjects++;
 
