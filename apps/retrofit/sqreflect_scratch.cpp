@@ -4,7 +4,9 @@
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core_rftype/TypeTraverser.h"
-//#include "core_rftype/stl_extensions/vector.h"
+#include "core_rftype/stl_extensions/vector.h"
+
+#include "core/meta/ScopedCleanup.h"
 
 
 struct SQReflectTestNestedClass
@@ -66,7 +68,7 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mS64", &SQReflectTestClass::mS64 );
 	//RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
 	//RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
-	//RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
+	RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
@@ -202,18 +204,125 @@ bool WriteScriptStringToMemberVariable( script::SquirrelVM::Element const& elemV
 
 
 
-bool ProcessScriptArrayPopulationWork( WorkItem const& currentWorkItem, WorkItems& workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
+bool ProcessElementArrayPopulationWork(
+	WorkItem const& currentWorkItem,
+	WorkItems& workItems,
+	script::SquirrelVM::ElementArray const& elemArr,
+	reflect::ExtensionAccessor const* accessor,
+	void* location )
 {
-	// Load the script values
+	// Scoped mutation
+	if( accessor->mBeginMutation != nullptr )
+	{
+		accessor->mBeginMutation( location );
+	}
+	auto endMutation = OnScopeEnd( [accessor, location]()
+	{
+		if( accessor->mEndMutation != nullptr )
+		{
+			accessor->mEndMutation( location );
+		}
+	} );
+
 	// For each value...
-	//   If it's a value
-	//     Run value-handler code
-	//   If it's another array
-	//     ???Recurse???
-	//   If it's an instance
-	//     Run instance-handler code
-	RF_DBGFAIL_MSG( "TODO" );
-	return false;
+	size_t indexCounter = 0;
+	reflect::VariableTypeInfo keyInfo = {};
+	keyInfo.mValueType = reflect::Value::DetermineType<size_t>();
+	for( script::SquirrelVM::Element const& elemValue : elemArr )
+	{
+		size_t const key = indexCounter;
+		indexCounter++;
+
+		// We'll need to know how to prepare/convert into the target
+		reflect::VariableTypeInfo const targetInfo = accessor->mGetVariableTargetInfoByKey( location, &key, keyInfo );
+
+		if( rftl::holds_alternative<reflect::Value>( elemValue ) )
+		{
+			// Value
+
+			// Make sure it can hold a value
+			reflect::Value::Type const targetValueType = targetInfo.mValueType;
+			if( targetInfo.mValueType == reflect::Value::Type::Invalid )
+			{
+				RF_DBGFAIL_MSG( "Failed to convert script value to accessor target variable type" );
+				return false;
+			}
+
+			reflect::Value const& source = rftl::get<reflect::Value>( elemValue );
+			reflect::Value const intermediate = source.ConvertTo( targetValueType );
+			if( intermediate.GetStoredType() != targetValueType )
+			{
+				RF_DBGFAIL_MSG( "Failed to convert script value to accessor target value type" );
+				return false;
+			}
+
+			void const* const writeableValue = intermediate.GetBytes();
+			bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue, targetInfo );
+			if( writeSuccess == false )
+			{
+				RF_DBGFAIL_MSG( "Failed to write script value to accessor target" );
+				return false;
+			}
+		}
+		else if( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) )
+		{
+			// String
+
+			// ???Recurse???
+			RF_DBGFAIL_MSG( "TODO" );
+			return false;
+		}
+		else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
+		{
+			// Array
+
+			// ???Recurse???
+			RF_DBGFAIL_MSG( "TODO" );
+			return false;
+		}
+		else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
+		{
+			// Instance
+
+			// Run instance - handler code
+			// ???Queue???
+			RF_DBGFAIL_MSG( "TODO" );
+			return false;
+		}
+		else
+		{
+			RF_DBGFAIL_MSG( "TODO" );
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
+bool ProcessScriptArrayPopulationWork(
+	script::SquirrelVM& vm,
+	WorkItem const& currentWorkItem,
+	WorkItems& workItems,
+	char const* const elemName,
+	rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	// Ensure it's even remotely compatible
+	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
+	if( accessor == nullptr )
+	{
+		RF_DBGFAIL_MSG( "Failed to convert script array to member variable type" );
+		return false;
+	}
+	void* const location = const_cast<void*>( member.mMemberVariableLocation );
+
+	// Load the script values
+	script::SquirrelVM::NestedTraversalPath path = currentWorkItem.mPath;
+	path.emplace_back( elemName );
+	script::SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( path );
+
+	return ProcessElementArrayPopulationWork( currentWorkItem, workItems, elemArr, accessor, location );
 }
 
 
@@ -256,6 +365,65 @@ bool QueueScriptInstancePopulationWork( WorkItem const& currentWorkItem, WorkIte
 
 
 
+bool ProcessScriptVariable(
+	script::SquirrelVM& vm,
+	WorkItem const& currentWorkItem,
+	WorkItems& workItems,
+	char const* const elemName,
+	script::SquirrelVM::Element const& elemValue,
+	rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	if( rftl::holds_alternative<reflect::Value>( elemValue ) )
+	{
+		// Value
+		bool const writeSuccess = WriteScriptValueToMemberVariable( elemValue, member );
+		if( writeSuccess == false )
+		{
+			RF_DBGFAIL_MSG( "Failed to write script value to member variable" );
+			return false;
+		}
+	}
+	else if( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) )
+	{
+		// String
+		bool const writeSuccess = WriteScriptStringToMemberVariable( elemValue, member );
+		if( writeSuccess == false )
+		{
+			RF_DBGFAIL_MSG( "Failed to write script string to member variable" );
+			return false;
+		}
+	}
+	else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
+	{
+		// Array
+		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, currentWorkItem, workItems, elemName, member );
+		if( processSuccess == false )
+		{
+			RF_DBGFAIL_MSG( "Failed to process script array to member variable" );
+			return false;
+		}
+	}
+	else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
+	{
+		// Instance
+		bool const queueSuccess = QueueScriptInstancePopulationWork( currentWorkItem, workItems, elemName, member );
+		if( queueSuccess == false )
+		{
+			RF_DBGFAIL_MSG( "Failed to prepare processing for script instance to be written into member variable" );
+			return false;
+		}
+	}
+	else
+	{
+		RF_DBGFAIL_MSG( "Unknown element type, probably an error in script-handling code" );
+		return false;
+	}
+
+	return true;
+}
+
+
+
 void sqreflect_scratch()
 {
 	script::SquirrelVM vm;
@@ -294,7 +462,7 @@ void sqreflect_scratch()
 			"x.mS64 = 7;\n"
 			"//x.mString = \"test\";\n"
 			"//x.mWString = \"test\";\n"
-			"//x.mIntArray = [3,5,7];\n"
+			"x.mIntArray = [3,5,7];\n"
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
 			"\n";
@@ -366,45 +534,12 @@ void sqreflect_scratch()
 
 				// Handle the transfer from script->reflect
 				script::SquirrelVM::Element const& elemValue = elemPair.second;
-				if( rftl::holds_alternative<reflect::Value>( elemValue ) )
+				bool const processSuccess = ProcessScriptVariable( vm, workItem, workItems, elemName, elemValue, member );
+				if( processSuccess == false )
 				{
-					// Value
-					bool const writeSuccess = WriteScriptValueToMemberVariable( elemValue, member );
-					if( writeSuccess == false )
-					{
-						RF_DBGFAIL_MSG( "Failed to write script value to member variable" );
-						continue;
-					}
-				}
-				else if( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) )
-				{
-					// String
-					bool const writeSuccess = WriteScriptStringToMemberVariable( elemValue, member );
-					if( writeSuccess == false )
-					{
-						RF_DBGFAIL_MSG( "Failed to write script string to member variable" );
-						continue;
-					}
-				}
-				else if( rftl::holds_alternative<script::SquirrelVM::ArrayTag>( elemValue ) )
-				{
-					// Array
-					bool const processSuccess = ProcessScriptArrayPopulationWork( workItem, workItems, elemName, member );
-					if( processSuccess == false )
-					{
-						RF_DBGFAIL_MSG( "Failed to process script array to member variable" );
-						continue;
-					}
-				}
-				else if( rftl::holds_alternative<script::SquirrelVM::InstanceTag>( elemValue ) )
-				{
-					// Instance
-					bool const queueSuccess = QueueScriptInstancePopulationWork( workItem, workItems, elemName, member );
-					if( queueSuccess == false )
-					{
-						RF_DBGFAIL_MSG( "Failed to prepare processing for script instance to be written into member variable" );
-						continue;
-					}
+					// TODO: This should probably be conditional whether it
+					//  ignores, or aborts the whole process
+					continue;
 				}
 			}
 		}
@@ -431,10 +566,10 @@ void sqreflect_scratch()
 	RF_ASSERT( testClass.mS64 == 7);
 	//RF_ASSERT( testClass.mString == "test" );
 	//RF_ASSERT( testClass.mWString == L"test" );
-	//RF_ASSERT( testClass.mIntArray.size() == 3 );
-	//RF_ASSERT( testClass.mIntArray[0] == 3 );
-	//RF_ASSERT( testClass.mIntArray[1] == 5 );
-	//RF_ASSERT( testClass.mIntArray[2] == 7 );
+	RF_ASSERT( testClass.mIntArray.size() == 3 );
+	RF_ASSERT( testClass.mIntArray[0] == 3 );
+	RF_ASSERT( testClass.mIntArray[1] == 5 );
+	RF_ASSERT( testClass.mIntArray[2] == 7 );
 	RF_ASSERT( testClass.mNested.mBool == true );
 }
 

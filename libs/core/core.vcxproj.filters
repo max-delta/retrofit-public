@@ -63,6 +63,9 @@
     <ClInclude Include="ptr\split_creator.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="meta\ScopedCleanup.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
