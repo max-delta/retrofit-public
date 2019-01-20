@@ -4,6 +4,7 @@
 #include "core/ConstructorOverload.h"
 #include "rftl/vector"
 #include "rftl/deque"
+#include "rftl/tuple"
 #include "rftl/extension/immutable_string.h"
 
 
@@ -176,8 +177,10 @@ struct ExtensionAccessor
 	// Insert target by key
 	// NOTE: Returns false on caller failure
 	// NOTE: Null indicates lack of support for that operation
+	using FunctPtrInsertVariableDefault = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
 	using FunctPtrInsertVariableViaMove = bool ( * )( RootInst root, UntypedInst key, VariableTypeInfo const& keyInfo, UntypedInst value, VariableTypeInfo const& valueInfo );
 	using FunctPtrInsertVariableViaCopy = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo );
+	FunctPtrInsertVariableDefault mInsertVariableDefault = nullptr;
 	FunctPtrInsertVariableViaMove mInsertVariableViaMove = nullptr;
 	FunctPtrInsertVariableViaCopy mInsertVariableViaCopy = nullptr;
 };
@@ -244,6 +247,17 @@ struct ClassInfo
 	char const* StoreString( char const* string );
 	IdentifierStorage mIdentifierStorage;
 };
+
+///////////////////////////////////////////////////////////////////////////////
+
+inline bool operator==( VariableTypeInfo const& lhs, VariableTypeInfo const& rhs )
+{
+	return rftl::tie( lhs.mValueType, lhs.mClassInfo, lhs.mAccessor ) == rftl::tie( rhs.mValueType, rhs.mClassInfo, rhs.mAccessor );
+}
+inline bool operator!=( VariableTypeInfo const& lhs, VariableTypeInfo const& rhs )
+{
+	return ( lhs == rhs ) == false;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
