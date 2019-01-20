@@ -18,6 +18,7 @@
     <ClInclude Include="stl_extensions\string.h">
       <Filter>stl_extensions</Filter>
     </ClInclude>
+    <ClInclude Include="TypeInference.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

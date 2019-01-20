@@ -38,6 +38,7 @@
     <ClInclude Include="stl_extensions\stdafx.h" />
     <ClInclude Include="stl_extensions\string.h" />
     <ClInclude Include="stl_extensions\vector.h" />
+    <ClInclude Include="TypeInference.h" />
     <ClInclude Include="TypeTraverser.h" />
   </ItemGroup>
   <ItemGroup>
