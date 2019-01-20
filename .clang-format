@@ -59,7 +59,7 @@ IncludeBlocks : Preserve
 #IncludeCategories
 #IncludeIsMainRegex
 IndentCaseLabels : true
-IndentPPDirectives : None # But prefer indenting directive
+IndentPPDirectives : AfterHash # But want BeforeHash (bug 36019)
 #IndentWidth
 IndentWrappedFunctionNames : false
 #JavaImportGroups
