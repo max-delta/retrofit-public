@@ -76,7 +76,7 @@ TEST( MathBits, GetZerosIndexOfHighestBit )
 TEST( MathBits, IsBitSet )
 {
 	// Every 7th bit is set
-	uint8_t const array[] = { 1,2,4,8,16 };
+	uint8_t const array[] = { 1, 2, 4, 8, 16 };
 	constexpr size_t numBits = sizeof( array ) * 8;
 
 	for( size_t i = 0; i < numBits; i++ )
@@ -97,7 +97,7 @@ TEST( MathBits, IsBitSet )
 
 TEST( MathBits, SetBit )
 {
-	uint8_t array[] = { 0,0,0,0,0 };
+	uint8_t array[] = { 0, 0, 0, 0, 0 };
 	constexpr size_t numBits = sizeof( array ) * 8;
 
 	// Every 7th bit is set
@@ -117,7 +117,7 @@ TEST( MathBits, SetBit )
 
 TEST( MathBits, ClearBit )
 {
-	uint8_t array[] = { 0xff,0xff,0xff,0xff,0xff };
+	uint8_t array[] = { 0xff, 0xff, 0xff, 0xff, 0xff };
 	constexpr size_t numBits = sizeof( array ) * 8;
 
 	// Every 7th bit is cleared

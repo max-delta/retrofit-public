@@ -14,7 +14,7 @@ namespace RF {
 template<typename T>
 class UniquePtr : public PtrBase<T>
 {
-	RF_NO_COPY(UniquePtr);
+	RF_NO_COPY( UniquePtr );
 
 
 	//
@@ -33,32 +33,32 @@ public:
 	// Public methods
 public:
 	UniquePtr()
-		: PtrBase(nullptr, nullptr)
+		: PtrBase( nullptr, nullptr )
 	{
 		//
 	}
 
-	UniquePtr( rftl::nullptr_t)
+	UniquePtr( rftl::nullptr_t )
 		: UniquePtr()
 	{
 		//
 	}
 
-	UniquePtr( UniquePtr && rhs )
+	UniquePtr( UniquePtr&& rhs )
 		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
-	UniquePtr( UniquePtr<DERIVED> && rhs )
+	UniquePtr( UniquePtr<DERIVED>&& rhs )
 		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		RF_ASSERT( rhs == nullptr );
 	}
 
-	UniquePtr( CreationPayload<T> && payload )
+	UniquePtr( CreationPayload<T>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{
 		if( PtrBase::IsUniqueStrongOwner() == false )
@@ -69,7 +69,7 @@ public:
 	}
 
 	template<typename DERIVED>
-	UniquePtr( CreationPayload<DERIVED> && payload )
+	UniquePtr( CreationPayload<DERIVED>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
@@ -92,23 +92,23 @@ public:
 		PtrBase::DecreaseStrongCount();
 	}
 
-	UniquePtr & operator =(UniquePtr && rhs)
+	UniquePtr& operator=( UniquePtr&& rhs )
 	{
-		PtrBase::Swap( rftl::move(rhs) );
+		PtrBase::Swap( rftl::move( rhs ) );
 		return *this;
 	}
 
-	T * Get() const
+	T* Get() const
 	{
 		return static_cast<T*>( *this );
 	}
 
-	operator T *() const
+	operator T*() const
 	{
 		return PtrBase::GetTarget();
 	}
 
-	T* operator ->() const
+	T* operator->() const
 	{
 		return PtrBase::GetTarget();
 	}

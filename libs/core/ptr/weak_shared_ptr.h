@@ -19,37 +19,37 @@ public:
 	// Public methods
 public:
 	WeakSharedPtr()
-		: PtrBase(nullptr, nullptr)
+		: PtrBase( nullptr, nullptr )
 	{
 		//
 	}
 
-	WeakSharedPtr( rftl::nullptr_t)
+	WeakSharedPtr( rftl::nullptr_t )
 		: WeakSharedPtr()
 	{
 		//
 	}
 
-	WeakSharedPtr( WeakSharedPtr const & rhs )
-		: WeakSharedPtr(rhs.GetTarget(), rhs.GetRef())
+	WeakSharedPtr( WeakSharedPtr const& rhs )
+		: WeakSharedPtr( rhs.GetTarget(), rhs.GetRef() )
 	{
 		//
 	}
 
-	WeakSharedPtr( T * target, PtrRef * ref )
-		: PtrBase(target, ref)
+	WeakSharedPtr( T* target, PtrRef* ref )
+		: PtrBase( target, ref )
 	{
 		PtrBase::IncreaseWeakCount();
 	}
 
-	WeakSharedPtr( WeakSharedPtr && rhs )
+	WeakSharedPtr( WeakSharedPtr&& rhs )
 		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
-	WeakSharedPtr( SharedPtr<T> const & rhs )
-		: WeakSharedPtr(rhs.GetTarget(), rhs.GetRef())
+	WeakSharedPtr( SharedPtr<T> const& rhs )
+		: WeakSharedPtr( rhs.GetTarget(), rhs.GetRef() )
 	{
 		//
 	}
@@ -59,14 +59,14 @@ public:
 		PtrBase::DecreaseWeakCount();
 	}
 
-	WeakSharedPtr & operator =( WeakSharedPtr const & rhs )
+	WeakSharedPtr& operator=( WeakSharedPtr const& rhs )
 	{
 		WeakSharedPtr temp( rhs );
 		PtrBase::Swap( rftl::move( temp ) );
 		return *this;
 	}
 
-	WeakSharedPtr & operator =( WeakSharedPtr && rhs )
+	WeakSharedPtr& operator=( WeakSharedPtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
 		return *this;

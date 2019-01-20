@@ -34,7 +34,7 @@ private:
 	// Public methods
 public:
 	PPUController() = delete;
-	explicit PPUController( UniquePtr<gfx::DeviceInterface> && deviceInterface, WeakPtr<file::VFS> const& vfs );
+	explicit PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs );
 	~PPUController();
 
 	bool Initialize( uint16_t width, uint16_t height );
@@ -50,9 +50,9 @@ public:
 	bool EndFrame();
 
 	bool DrawObject( Object const& object );
-	bool DrawText( PPUCoord pos, PPUCoord charSize, const char *fmt, ... );
+	bool DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... );
 
-	bool DebugDrawText( PPUCoord pos, const char *fmt, ... );
+	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
 	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;

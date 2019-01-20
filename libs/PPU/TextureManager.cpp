@@ -30,7 +30,7 @@ TextureManager::~TextureManager()
 
 
 
-bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const & deviceInterface )
+bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterface )
 {
 	RF_ASSERT_MSG( m_DeviceInterface == nullptr, "TODO: Cleanup" );
 
@@ -45,7 +45,7 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const & deviceInte
 
 ///////////////////////////////////////////////////////////////////////////////
 
-UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const & filename )
+UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const& filename )
 {
 	UniquePtr<Texture> newTexture = DefaultCreator<Texture>::Create();
 
@@ -72,7 +72,7 @@ bool TextureManager::PostLoadFromFile( ResourceType& resource, Filename filename
 
 
 
-bool TextureManager::PostLoadFromMemory( ResourceType & resource )
+bool TextureManager::PostLoadFromMemory( ResourceType& resource )
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return false;
@@ -97,7 +97,7 @@ bool TextureManager::PreDestroy( ResourceType& resource )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename )
+bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation == k_InvalidDeviceTextureID );
@@ -117,7 +117,7 @@ bool TextureManager::LoadToDevice( Texture & texture, Filename const & filename 
 
 
 
-bool TextureManager::UnloadFromDevice( Texture & texture )
+bool TextureManager::UnloadFromDevice( Texture& texture )
 {
 	RF_ASSERT( m_DeviceInterface != nullptr );
 	RF_ASSERT( texture.m_DeviceRepresentation != k_InvalidDeviceTextureID );

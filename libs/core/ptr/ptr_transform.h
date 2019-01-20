@@ -17,7 +17,7 @@ struct PtrTransformer
 	PtrTransformer() = delete;
 
 	// NOTE: Should be safe in all cases
-	static void PerformTransformation( UniquePtr<T> && in, SharedPtr<T>& out )
+	static void PerformTransformation( UniquePtr<T>&& in, SharedPtr<T>& out )
 	{
 		out = SharedPtr<T>{ in.CreateTransferPayloadAndWipeSelf() };
 	}
@@ -29,7 +29,7 @@ struct PtrTransformer
 	//  destruction to make sure they're the only strong owners, and will hard
 	//  fatal the entire application if they detect otherwise. This won't catch
 	//  all mis-uses, but hopefully should prevent the most brazen stupidity.
-	static void PerformUncheckedTransformation( SharedPtr<T> && in, UniquePtr<T>& out )
+	static void PerformUncheckedTransformation( SharedPtr<T>&& in, UniquePtr<T>& out )
 	{
 		out = UniquePtr<T>{ in.CreateTransferPayloadAndWipeSelf() };
 	}
@@ -39,12 +39,12 @@ struct PtrTransformer
 	//  you extract the pointer and cast it to what you think it is, at which
 	//  point you're in the same problem-cases that wanton reintepret_cast
 	//  normally puts you in
-	static void PerformVoidTransformation( UniquePtr<T> && in, UniquePtr<void>& out )
+	static void PerformVoidTransformation( UniquePtr<T>&& in, UniquePtr<void>& out )
 	{
 		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<void> voidPayload(
 			static_cast<decltype( CreationPayload<void>::m_Target )>( normalPayload.m_Target ),
-			reinterpret_cast<decltype( CreationPayload<void>::m_Ref )> ( normalPayload.m_Ref ) );
+			reinterpret_cast<decltype( CreationPayload<void>::m_Ref )>( normalPayload.m_Ref ) );
 		normalPayload.Clean();
 		out = UniquePtr<void>{ rftl::move( voidPayload ) };
 	}

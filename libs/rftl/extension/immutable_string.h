@@ -6,7 +6,7 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT> >
+template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT>>
 class immutable_basic_string
 {
 	//
@@ -35,7 +35,7 @@ public:
 	}
 	immutable_basic_string& operator=( immutable_basic_string const& ) = delete;
 
-	operator backing_type const&( ) const
+	operator backing_type const&() const
 	{
 		return mStorage;
 	}

@@ -11,7 +11,7 @@
 
 namespace RF { namespace script {
 ///////////////////////////////////////////////////////////////////////////////
-namespace{
+namespace {
 
 static rftl::string GetLastError( HSQUIRRELVM vm )
 {
@@ -42,7 +42,7 @@ static void LogCompileError( HSQUIRRELVM vm, SQChar const* desc, SQChar const* s
 
 
 
-template <typename ...Args>
+template<typename... Args>
 static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth )
 {
 	// Termination case
@@ -50,8 +50,8 @@ static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth )
 
 
 
-template <typename ...Args>
-static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth, SQObjectType type, Args ...deeperTypes )
+template<typename... Args>
+static void AssertStackTypes( HSQUIRRELVM vm, SQInteger startDepth, SQObjectType type, Args... deeperTypes )
 {
 	SQObjectType const stackType = sq_gettype( vm, startDepth );
 	RF_ASSERT( stackType == type );
@@ -229,7 +229,7 @@ SquirrelVM::ElementMap GetElementMapFromStack( HSQUIRRELVM vm )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const & identifier )
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const& identifier )
 	: mIdentifier( identifier )
 {
 	//
@@ -237,7 +237,7 @@ SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const & ident
 
 
 
-SquirrelVM::NestedTraversalNode::NestedTraversalNode( char const * identifier )
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( char const* identifier )
 	: mIdentifier( identifier )
 {
 	//
@@ -365,42 +365,42 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string const & name )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string const& name )
 {
 	return GetGlobalVariable( name.c_str(), name.length() );
 }
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( char const * name )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( char const* name )
 {
 	return GetGlobalVariable( name, strlen( name ) );
 }
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string const & name )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string const& name )
 {
 	return GetGlobalVariableAsArray( name.c_str(), name.length() );
 }
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( char const * name )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( char const* name )
 {
 	return GetGlobalVariableAsArray( name, strlen( name ) );
 }
 
 
 
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string const & name )
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string const& name )
 {
 	return GetGlobalVariableAsInstance( name.c_str(), name.length() );
 }
 
 
 
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( char const * name )
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( char const* name )
 {
 	return GetGlobalVariableAsInstance( name, strlen( name ) );
 }
@@ -425,7 +425,7 @@ SquirrelVM::Element SquirrelVM::GetNestedVariable( NestedTraversalPath const& pa
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetNestedVariableAsArray( NestedTraversalPath const & path )
+SquirrelVM::ElementArray SquirrelVM::GetNestedVariableAsArray( NestedTraversalPath const& path )
 {
 	VMRootStackGuard const stackGuard( m_Vm );
 
@@ -443,7 +443,7 @@ SquirrelVM::ElementArray SquirrelVM::GetNestedVariableAsArray( NestedTraversalPa
 
 
 
-SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalPath const & path )
+SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalPath const& path )
 {
 	VMRootStackGuard const stackGuard( m_Vm );
 
@@ -461,7 +461,7 @@ SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalP
 
 ///////////////////////////////////////////////////////////////////////////////
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const * name, size_t nameLen )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const* name, size_t nameLen )
 {
 	VMRootStackGuard const stackGuard( m_Vm );
 
@@ -480,7 +480,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const * n
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharType const * name, size_t nameLen )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharType const* name, size_t nameLen )
 {
 	VMRootStackGuard const stackGuard( m_Vm );
 
@@ -499,7 +499,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharTy
 
 
 
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharType const * name, size_t nameLen )
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharType const* name, size_t nameLen )
 {
 	VMRootStackGuard const stackGuard( m_Vm );
 
@@ -563,7 +563,7 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 		// Fetch element
 		currentElement = GetElementFromStack( m_Vm, -1 );
 	}
-	
+
 	return true;
 }
 

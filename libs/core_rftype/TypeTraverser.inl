@@ -11,7 +11,7 @@ namespace RF { namespace rftype {
 
 template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
 inline void TypeTraverser::TraverseVariablesT(
-	reflect::VirtualClass const & traversalRoot,
+	reflect::VirtualClass const& traversalRoot,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
 	OnTraversalFuncT const& onTraversalFunc,
 	OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc )
@@ -28,10 +28,10 @@ inline void TypeTraverser::TraverseVariablesT(
 
 template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
 inline void TypeTraverser::TraverseVariablesT(
-	reflect::ClassInfo const & classInfo,
-	void const * classLocation,
-	OnMemberVariableFuncT const & onMemberVariableFunc,
-	OnTraversalFuncT const & onTraversalFunc,
+	reflect::ClassInfo const& classInfo,
+	void const* classLocation,
+	OnMemberVariableFuncT const& onMemberVariableFunc,
+	OnTraversalFuncT const& onTraversalFunc,
 	OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc )
 {
 	TraverseVariablesWithInheritanceT(
@@ -46,8 +46,8 @@ inline void TypeTraverser::TraverseVariablesT(
 
 template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
 inline void TypeTraverser::TraverseVariablesWithInheritanceT(
-	reflect::ClassInfo const & classInfo,
-	void const * classLocation,
+	reflect::ClassInfo const& classInfo,
+	void const* classLocation,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
 	OnTraversalFuncT const& onTraversalFunc,
 	OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc )
@@ -87,8 +87,8 @@ inline void TypeTraverser::TraverseVariablesWithInheritanceT(
 
 template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromNestedTypeFuncT>
 inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
-	reflect::ClassInfo const & classInfo,
-	void const * classLocation,
+	reflect::ClassInfo const& classInfo,
+	void const* classLocation,
 	OnMemberVariableFuncT const& onMemberVariableFunc,
 	OnTraversalFuncT const& onTraversalFunc,
 	OnReturnFromNestedTypeFuncT const& onReturnFromNestedTypeFunc )

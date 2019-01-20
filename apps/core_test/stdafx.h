@@ -3,13 +3,13 @@
 #include "core/compiler.h"
 
 #ifdef RF_PLATFORM_MSVC
-	#pragma warning(push)
-	#pragma warning(disable:4826)
-	#pragma warning(disable:4619)
+	#pragma warning( push )
+	#pragma warning( disable : 4826 )
+	#pragma warning( disable : 4619 )
 #endif
 #include <gtest/gtest.h>
 #ifdef RF_PLATFORM_MSVC
-	#pragma warning(pop)
+	#pragma warning( pop )
 #endif
 
 // For warnings caused by usage of GTest macros

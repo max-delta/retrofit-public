@@ -21,11 +21,11 @@ constexpr uint32_t integer_unsigned_cast( uint32_t const src );
 constexpr uint64_t integer_unsigned_cast( uint64_t const src );
 
 template<typename DST, typename SRC,
-	typename rftl::enable_if<rftl::is_integral<DST>::value,int>::type = 0>
+	typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type = 0>
 DST real_cast( SRC const src );
 
 template<typename DST, typename SRC,
-	typename rftl::enable_if<rftl::is_floating_point<DST>::value,int>::type = 0>
+	typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type = 0>
 DST real_cast( SRC const src );
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -41,7 +41,7 @@ public:
 
 	// Add tasks to the plan
 	// NOTE: Cannot be called after finalization
-	bool AddTask( TaskRepresentation && taskRepresentation, UniquePtr<scheduling::Task> cloneableTask );
+	bool AddTask( TaskRepresentation&& taskRepresentation, UniquePtr<scheduling::Task> cloneableTask );
 
 	// Finalize the plan before starting, after which the plan can no longer be
 	//  modified

@@ -34,7 +34,7 @@ XmlExporter::~XmlExporter()
 
 
 
-bool XmlExporter::WriteToFile( FILE * file ) const
+bool XmlExporter::WriteToFile( FILE* file ) const
 {
 	pugi::xml_writer_file writer = pugi::xml_writer_file( file );
 	mDoc.save( writer );
@@ -43,13 +43,14 @@ bool XmlExporter::WriteToFile( FILE * file ) const
 
 
 
-bool XmlExporter::WriteToString( rftl::string & string ) const
+bool XmlExporter::WriteToString( rftl::string& string ) const
 {
 	class xml_writer_string : public pugi::xml_writer
 	{
 		RF_NO_COPY( xml_writer_string );
+
 	public:
-		xml_writer_string( rftl::string & string )
+		xml_writer_string( rftl::string& string )
 			: mString( string )
 		{
 			//
@@ -96,7 +97,7 @@ bool XmlExporter::Root_BeginNewInstance()
 
 
 
-bool XmlExporter::Root_RegisterLocalIndirection( IndirectionID const & indirectionID, InstanceID const & instanceID )
+bool XmlExporter::Root_RegisterLocalIndirection( IndirectionID const& indirectionID, InstanceID const& instanceID )
 {
 	pugi::xml_node dependency = mInternalDependencies.append_child( "Dependency" );
 	dependency.append_attribute( "IndirectionID" ) = indirectionID;
@@ -106,7 +107,7 @@ bool XmlExporter::Root_RegisterLocalIndirection( IndirectionID const & indirecti
 
 
 
-bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const & indirectionID, ExternalReferenceID const & referenceID )
+bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID )
 {
 	pugi::xml_node dependency = mExternalDependencies.append_child( "Dependency" );
 	dependency.append_attribute( "IndirectionID" ) = indirectionID;
@@ -116,7 +117,7 @@ bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const & indire
 
 
 
-bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const & instanceID )
+bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID )
 {
 	mCurrentInstance.append_attribute( "ID" ) = instanceID;
 	mTableOfContents.append_child( "Instance" ).append_attribute( "ID" ) = instanceID;
@@ -125,7 +126,7 @@ bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const & instanceID
 
 
 
-bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const & typeID, char const * debugName )
+bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName )
 {
 	mCurrentInstance.append_attribute( "TypeID" ) = typeID;
 
@@ -146,7 +147,7 @@ bool XmlExporter::Instance_BeginNewProperty()
 		mPropertyStack.emplace_back();
 	}
 
-	if( mNewIndent)
+	if( mNewIndent )
 	{
 		// Will use the property from the last indent
 		mNewIndent = false;
@@ -161,7 +162,7 @@ bool XmlExporter::Instance_BeginNewProperty()
 
 
 
-bool XmlExporter::Property_AddNameAttribute( char const * name )
+bool XmlExporter::Property_AddNameAttribute( char const* name )
 {
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	currentProperty.append_attribute( "Name" ) = name;
@@ -170,7 +171,7 @@ bool XmlExporter::Property_AddNameAttribute( char const * name )
 
 
 
-bool XmlExporter::Property_AddValueAttribute( reflect::Value const & value )
+bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 {
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	pugi::xml_attribute typeAttr = currentProperty.append_attribute( "Type" );
@@ -210,7 +211,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const & value )
 
 
 
-bool XmlExporter::Property_AddIndirectionAttribute( IndirectionID const & indirectionID )
+bool XmlExporter::Property_AddIndirectionAttribute( IndirectionID const& indirectionID )
 {
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	currentProperty.append_attribute( "IndirectionID" ) = indirectionID;

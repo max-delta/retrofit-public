@@ -2,9 +2,9 @@
 #include "Logging/Constants.h"
 
 #ifdef PLATFORMUTILS_EXPORTS
-	#define PLATFORMUTILS_API __declspec(dllexport)
+#define PLATFORMUTILS_API __declspec( dllexport )
 #else
-	#define PLATFORMUTILS_API __declspec(dllimport)
+#define PLATFORMUTILS_API __declspec( dllimport )
 #endif
 
 constexpr char const* RFCAT_PLATFORMUTILS = "PlatformUtils";

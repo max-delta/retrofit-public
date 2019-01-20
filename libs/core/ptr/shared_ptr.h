@@ -30,53 +30,53 @@ public:
 	// Public methods
 public:
 	SharedPtr()
-		: PtrBase(nullptr, nullptr)
+		: PtrBase( nullptr, nullptr )
 	{
 		//
 	}
 
-	SharedPtr(rftl::nullptr_t)
+	SharedPtr( rftl::nullptr_t )
 		: SharedPtr()
 	{
 		//
 	}
 
-	SharedPtr( SharedPtr const & rhs )
-		: PtrBase(rhs.GetTarget(), rhs.GetRef())
+	SharedPtr( SharedPtr const& rhs )
+		: PtrBase( rhs.GetTarget(), rhs.GetRef() )
 	{
 		PtrBase::IncreaseStrongCount();
 	}
 
 	template<typename DERIVED>
-	SharedPtr( SharedPtr<DERIVED> const & rhs )
-		: PtrBase(rhs.GetTarget(), rhs.GetRef())
+	SharedPtr( SharedPtr<DERIVED> const& rhs )
+		: PtrBase( rhs.GetTarget(), rhs.GetRef() )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		PtrBase::IncreaseStrongCount();
 	}
 
-	SharedPtr( SharedPtr && rhs )
-		: PtrBase( rftl::move(rhs))
+	SharedPtr( SharedPtr&& rhs )
+		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
-	SharedPtr( SharedPtr<DERIVED> && rhs )
+	SharedPtr( SharedPtr<DERIVED>&& rhs )
 		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		RF_ASSERT( rhs == nullptr );
 	}
 
-	SharedPtr( CreationPayload<T> && payload )
+	SharedPtr( CreationPayload<T>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{
 		//
 	}
 
 	template<typename DERIVED>
-	SharedPtr( CreationPayload<DERIVED> && payload )
+	SharedPtr( CreationPayload<DERIVED>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
@@ -87,30 +87,30 @@ public:
 		PtrBase::DecreaseStrongCount();
 	}
 
-	SharedPtr & operator =(SharedPtr const & rhs)
+	SharedPtr& operator=( SharedPtr const& rhs )
 	{
-		SharedPtr temp(rhs);
-		PtrBase::Swap( rftl::move(temp) );
+		SharedPtr temp( rhs );
+		PtrBase::Swap( rftl::move( temp ) );
 		return *this;
 	}
 
-	SharedPtr & operator =(SharedPtr && rhs)
+	SharedPtr& operator=( SharedPtr&& rhs )
 	{
-		PtrBase::Swap( rftl::move(rhs) );
+		PtrBase::Swap( rftl::move( rhs ) );
 		return *this;
 	}
 
-	T * Get() const
+	T* Get() const
 	{
 		return (T*)( *this );
 	}
 
-	operator T *() const
+	operator T*() const
 	{
 		return PtrBase::GetTarget();
 	}
 
-	T* operator ->() const
+	T* operator->() const
 	{
 		return PtrBase::GetTarget();
 	}

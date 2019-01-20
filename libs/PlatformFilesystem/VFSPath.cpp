@@ -61,7 +61,7 @@ VFSPath VFSPath::GetChild( Element const& element ) const
 
 
 
-VFSPath VFSPath::GetAsBranchOf( VFSPath const & parent, bool & isBranch ) const
+VFSPath VFSPath::GetAsBranchOf( VFSPath const& parent, bool& isBranch ) const
 {
 	if( IsDescendantOf( parent ) == false )
 	{
@@ -154,7 +154,7 @@ bool VFSPath::IsDescendantOf( VFSPath const& closerToRoot ) const
 
 
 
-bool VFSPath::IsImmediateDescendantOf( VFSPath const & immediateParent ) const
+bool VFSPath::IsImmediateDescendantOf( VFSPath const& immediateParent ) const
 {
 	if( IsDescendantOf( immediateParent ) == false )
 	{

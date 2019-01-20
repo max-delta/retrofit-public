@@ -133,7 +133,7 @@ uint8_t FramePackBase::CalculateTimeIndexBoundary() const
 
 
 
-void FramePackBase::CopyBaseValuesFrom( FramePackBase const & rhs )
+void FramePackBase::CopyBaseValuesFrom( FramePackBase const& rhs )
 {
 	// NOTE: The memcpy will blow over const variables, so we need to make
 	//  sure to save and restore them appropriately
@@ -142,7 +142,7 @@ void FramePackBase::CopyBaseValuesFrom( FramePackBase const & rhs )
 	{
 		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( &rhs );
 		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( this );
-		rftl::memcpy( writeHead, readHead, sizeof(FramePackBase) );
+		rftl::memcpy( writeHead, readHead, sizeof( FramePackBase ) );
 	}
 	*const_cast<MaxSlotsType*>( &this->m_MaxTimeSlots ) = savedMaxSlots;
 }

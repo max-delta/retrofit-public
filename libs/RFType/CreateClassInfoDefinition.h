@@ -23,4 +23,4 @@ RFTYPE_API void GlobalRegisterNewClassByName( char const* name, reflect::ClassIn
 //		RFTYPE_REGISTER_BY_NAME( "CLASS" );
 //  }
 #define RFTYPE_REGISTER_BY_NAME( CLASSNAME ) \
-	::RF::rftype::GlobalRegisterNewClassByName( CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() ) \
+	::RF::rftype::GlobalRegisterNewClassByName( CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )

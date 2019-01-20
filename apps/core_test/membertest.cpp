@@ -9,18 +9,19 @@ RF_DECLARE_HAS_PUBLIC_MEMBER_NAME_TEST( DesiredNonStaticMemberName );
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace details
-{
-	struct Has
-	{
-		static int DesiredStaticMemberName;
-		int DesiredNonStaticMemberName;
-	};
+namespace details {
 
-	struct HasNot
-	{
-		//
-	};
+struct Has
+{
+	static int DesiredStaticMemberName;
+	int DesiredNonStaticMemberName;
+};
+
+struct HasNot
+{
+	//
+};
+
 }
 
 

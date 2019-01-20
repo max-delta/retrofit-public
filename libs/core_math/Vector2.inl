@@ -40,7 +40,7 @@ inline Vector2<T>::operator Vector2<OtherT>() const
 
 
 template<typename T>
-inline bool Vector2<T>::operator==( Vector2 const & rhs ) const
+inline bool Vector2<T>::operator==( Vector2 const& rhs ) const
 {
 	return Equals( x, rhs.x ) && Equals( y, rhs.y );
 }
@@ -48,7 +48,7 @@ inline bool Vector2<T>::operator==( Vector2 const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator+( Vector2 const & rhs ) const
+inline Vector2<T> Vector2<T>::operator+( Vector2 const& rhs ) const
 {
 	return Vector2( x + rhs.x, y + rhs.y );
 }
@@ -56,7 +56,7 @@ inline Vector2<T> Vector2<T>::operator+( Vector2 const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator-( Vector2 const & rhs ) const
+inline Vector2<T> Vector2<T>::operator-( Vector2 const& rhs ) const
 {
 	return Vector2( x - rhs.x, y - rhs.y );
 }
@@ -64,7 +64,7 @@ inline Vector2<T> Vector2<T>::operator-( Vector2 const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator+=( Vector2 const & rhs )
+inline Vector2<T>& Vector2<T>::operator+=( Vector2 const& rhs )
 {
 	x += rhs.x;
 	y += rhs.y;
@@ -74,7 +74,7 @@ inline Vector2<T>& Vector2<T>::operator+=( Vector2 const & rhs )
 
 
 template<typename T>
-inline Vector2<T> & Vector2<T>::operator-=( Vector2 const & rhs )
+inline Vector2<T>& Vector2<T>::operator-=( Vector2 const& rhs )
 {
 	x -= rhs.x;
 	y -= rhs.y;
@@ -84,7 +84,7 @@ inline Vector2<T> & Vector2<T>::operator-=( Vector2 const & rhs )
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator+( ElementType const & rhs ) const
+inline Vector2<T> Vector2<T>::operator+( ElementType const& rhs ) const
 {
 	return Vector2( x + rhs, y + rhs );
 }
@@ -92,7 +92,7 @@ inline Vector2<T> Vector2<T>::operator+( ElementType const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator-( ElementType const & rhs ) const
+inline Vector2<T> Vector2<T>::operator-( ElementType const& rhs ) const
 {
 	return Vector2( x - rhs, y - rhs );
 }
@@ -100,7 +100,7 @@ inline Vector2<T> Vector2<T>::operator-( ElementType const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator*( ElementType const & rhs ) const
+inline Vector2<T> Vector2<T>::operator*( ElementType const& rhs ) const
 {
 	return Vector2( x * rhs, y * rhs );
 }
@@ -108,7 +108,7 @@ inline Vector2<T> Vector2<T>::operator*( ElementType const & rhs ) const
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator+=( ElementType const & rhs )
+inline Vector2<T>& Vector2<T>::operator+=( ElementType const& rhs )
 {
 	x += rhs;
 	y += rhs;
@@ -118,7 +118,7 @@ inline Vector2<T>& Vector2<T>::operator+=( ElementType const & rhs )
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator-=( ElementType const & rhs )
+inline Vector2<T>& Vector2<T>::operator-=( ElementType const& rhs )
 {
 	x -= rhs;
 	y -= rhs;
@@ -128,7 +128,7 @@ inline Vector2<T>& Vector2<T>::operator-=( ElementType const & rhs )
 
 
 template<typename T>
-inline Vector2<T> & Vector2<T>::operator*=( ElementType const & rhs )
+inline Vector2<T>& Vector2<T>::operator*=( ElementType const& rhs )
 {
 	x *= rhs;
 	y *= rhs;

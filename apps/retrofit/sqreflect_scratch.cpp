@@ -87,7 +87,7 @@ using WorkItems = rftl::vector<WorkItem>;
 
 
 
-rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( reflect::ClassInfo const & classInfo, void const* classInstance )
+rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers( reflect::ClassInfo const& classInfo, void const* classInstance )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> members;
 
@@ -156,7 +156,7 @@ rftl::vector<char const*> GetAllMemberNames( rftl::vector<rftype::TypeTraverser:
 
 
 template<typename ReflectedClass>
-bool InjectReflectedClassByCompileType( script::SquirrelVM& vm, char const* name)
+bool InjectReflectedClassByCompileType( script::SquirrelVM& vm, char const* name )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers<ReflectedClass>();
 	rftl::vector<char const*> const memberNames = GetAllMemberNames( members );
@@ -485,7 +485,7 @@ void sqreflect_scratch()
 				&testClass } );
 
 		// While there is still work...
-		while(workItems.empty() == false)
+		while( workItems.empty() == false )
 		{
 			// Grab a work item
 			WorkItem const workItem = workItems.back();
@@ -549,21 +549,21 @@ void sqreflect_scratch()
 	RF_ASSERT( testClass.mBool == true );
 	RF_ASSERT( testClass.mVoidPtr == nullptr );
 	RF_ASSERT( testClass.mClassPtr == nullptr );
-	RF_ASSERT( testClass.mChar == 'a');
-	RF_ASSERT( testClass.mWChar == L'a');
-	RF_ASSERT( testClass.mChar16 == u'a');
-	RF_ASSERT( testClass.mChar32 == U'a');
+	RF_ASSERT( testClass.mChar == 'a' );
+	RF_ASSERT( testClass.mWChar == L'a' );
+	RF_ASSERT( testClass.mChar16 == u'a' );
+	RF_ASSERT( testClass.mChar32 == U'a' );
 	RF_ASSERT( testClass.mFloat == 0.5f );
 	RF_ASSERT( testClass.mDouble == 0.5 );
 	RF_ASSERT( testClass.mLongDouble == 0.5l );
-	RF_ASSERT( testClass.mU8 == 7);
+	RF_ASSERT( testClass.mU8 == 7 );
 	RF_ASSERT( testClass.mS8 == 7 );
-	RF_ASSERT( testClass.mU16 == 7);
-	RF_ASSERT( testClass.mS16 == 7);
-	RF_ASSERT( testClass.mU32 == 7);
-	RF_ASSERT( testClass.mS32 == 7);
-	RF_ASSERT( testClass.mU64 == 7);
-	RF_ASSERT( testClass.mS64 == 7);
+	RF_ASSERT( testClass.mU16 == 7 );
+	RF_ASSERT( testClass.mS16 == 7 );
+	RF_ASSERT( testClass.mU32 == 7 );
+	RF_ASSERT( testClass.mS32 == 7 );
+	RF_ASSERT( testClass.mU64 == 7 );
+	RF_ASSERT( testClass.mS64 == 7 );
 	//RF_ASSERT( testClass.mString == "test" );
 	//RF_ASSERT( testClass.mWString == L"test" );
 	RF_ASSERT( testClass.mIntArray.size() == 3 );

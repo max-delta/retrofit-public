@@ -30,7 +30,7 @@ VFS::VFS()
 
 
 
-FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
+FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
@@ -38,7 +38,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const & path ) const
 
 
 
-FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
+FileHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File write request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
@@ -46,7 +46,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const & path ) const
 
 
 
-FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
+FileHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File modify request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
@@ -54,7 +54,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const & path ) const
 
 
 
-FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
+FileHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File append request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
@@ -62,7 +62,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const & path ) const
 
 
 
-FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
+FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File execute request" );
 	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
@@ -70,7 +70,7 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const & path ) const
 
 
 
-bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string const & userDirectory )
+bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string const& userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
@@ -177,7 +177,7 @@ bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string
 		if( curReadMode == ReadMode::k_ReadingToken )
 		{
 			// Reading token
-			
+
 			tokenBuilder.push_back( ch );
 			RF_ASSERT( tokenBuilder[0] == VFSMountTableTokens::k_MountTokenAffix[0] );
 
@@ -273,7 +273,7 @@ bool VFS::AttemptInitialMount( rftl::string const & mountTableFile, rftl::string
 
 
 
-VFSPath VFS::AttemptMapToVFS( rftl::string const & physicalPath, VFSMount::Permissions desiredPermissions ) const
+VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const
 {
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
 
@@ -379,7 +379,7 @@ void VFS::DebugDumpMountTable() const
 
 
 
-VFSPath VFS::CreatePathFromString( rftl::string const & path )
+VFSPath VFS::CreatePathFromString( rftl::string const& path )
 {
 	VFSPath retVal;
 
@@ -407,7 +407,7 @@ VFSPath VFS::CreatePathFromString( rftl::string const & path )
 
 
 
-rftl::string VFS::CreateStringFromPath( VFSPath const & path )
+rftl::string VFS::CreateStringFromPath( VFSPath const& path )
 {
 	rftl::stringstream ss;
 
@@ -415,7 +415,7 @@ rftl::string VFS::CreateStringFromPath( VFSPath const & path )
 	for( size_t i = 0; i < numElements; i++ )
 	{
 		VFSPath::Element const& element = path.GetElement( i );
-		
+
 		if( i != 0 )
 		{
 			ss << k_PathDelimiter;
@@ -428,7 +428,7 @@ rftl::string VFS::CreateStringFromPath( VFSPath const & path )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-VFSPath VFS::CollapsePath( VFSPath const & path )
+VFSPath VFS::CollapsePath( VFSPath const& path )
 {
 	VFSPath retVal;
 	for( VFSPath::Element const& element : path )
@@ -462,7 +462,7 @@ VFSPath VFS::CollapsePath( VFSPath const & path )
 
 
 
-VFSMount VFS::ProcessMountRule( rftl::string const & type, rftl::string const & permissions, rftl::string const & virtualPoint, rftl::string const & realPoint )
+VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint )
 {
 	constexpr size_t prefixLen = sizeof( VFSMountTableTokens::k_MountTokenAffix );
 	constexpr size_t affixesLen = sizeof( VFSMountTableTokens::k_MountTokenAffix ) * 2;
@@ -610,7 +610,7 @@ VFSMount VFS::ProcessMountRule( rftl::string const & type, rftl::string const & 
 
 
 
-FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissions const & permissions, char const * openFlags, bool mustExist ) const
+FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const
 {
 	// Collapse path first, make sure they aren't trying to trivially jump out
 	//  of mount point, also clean it up so we can find the virtual mount point
@@ -723,7 +723,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const & uncollapsedPath, VFSMount::Permissi
 }}
 
 template<>
-void RF::logging::WriteContextString( file::VFSPath const & context, Utf8LogContextBuffer& buffer )
+void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer )
 {
 	size_t bufferOffset = 0;
 	size_t const maxBufferOffset = buffer.size();

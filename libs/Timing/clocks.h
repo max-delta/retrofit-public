@@ -13,8 +13,9 @@ namespace RF { namespace time {
 // NOTE: Implemented via QueryPerformanceCounter in MSVC 2017
 typedef rftl::chrono::high_resolution_clock PerfClock;
 static_assert(
-	float( PerfClock::period::num) / PerfClock::period::den <=
-	float(rftl::micro::num) / rftl::micro::den, "PerfClock has terrible precision" );
+	float( PerfClock::period::num ) / PerfClock::period::den <=
+	float( rftl::micro::num ) / rftl::micro::den,
+	"PerfClock has terrible precision" );
 static_assert(
 	PerfClock::is_steady, "PerfClock isn't steady" );
 

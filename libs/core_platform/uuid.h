@@ -30,7 +30,7 @@ public:
 	static constexpr size_t kNumOctets = 16;
 	// NOTE: Avoiding endian-swapping behavior by using array
 	using OctetSequence = Octet[kNumOctets];
-	static constexpr OctetSequence kInvalid = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	static constexpr OctetSequence kInvalid = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 	//
 	// Public methods

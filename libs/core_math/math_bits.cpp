@@ -28,7 +28,7 @@ void GetMutableByte( void* root, size_t offsetInBits, uint8_t*& byte, uint8_t& m
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-bool IsBitSet( void const * root, size_t offsetInBits )
+bool IsBitSet( void const* root, size_t offsetInBits )
 {
 	uint8_t const* bytePtr = nullptr;
 	uint8_t mask = 0;
@@ -45,7 +45,7 @@ bool IsBitSet( void const * root, size_t offsetInBits )
 
 
 
-void SetBit( void * root, size_t offsetInBits )
+void SetBit( void* root, size_t offsetInBits )
 {
 	uint8_t* bytePtr = nullptr;
 	uint8_t mask = 0;
@@ -57,7 +57,7 @@ void SetBit( void * root, size_t offsetInBits )
 
 
 
-void ClearBit( void * root, size_t offsetInBits )
+void ClearBit( void* root, size_t offsetInBits )
 {
 	uint8_t* bytePtr = nullptr;
 	uint8_t mask = 0;

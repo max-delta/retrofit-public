@@ -5,30 +5,30 @@
 
 
 // Keeping Windows.h quaratined
-#if defined(_DEBUG) && defined(RF_PLATFORM_MSVC)
-__pragma( pack( push, _CRT_PACKING ) )
-extern "C" {
+#if defined( _DEBUG ) && defined( RF_PLATFORM_MSVC )
+__pragma( pack( push, _CRT_PACKING ) ) extern "C"
+{
 	__declspec( dllimport ) int __cdecl _CrtDbgReport(
-		int         _ReportType,
+		int _ReportType,
 		char const* _FileName,
-		int         _Linenumber,
+		int _Linenumber,
 		char const* _ModuleName,
 		char const* _Format,
 		... );
 }
 __pragma( pack( pop, _CRT_PACKING ) )
-#define _CRT_WARN           0
-#define _CRT_ERROR          1
-#define _CRT_ASSERT         2
-#define _CRT_ERRCNT         3
+#define _CRT_WARN 0
+#define _CRT_ERROR 1
+#define _CRT_ASSERT 2
+#define _CRT_ERRCNT 3
 #endif
 
 namespace RF { namespace assert {
 ///////////////////////////////////////////////////////////////////////////////
 
-AssertResponse AssertNotification( char const * file, size_t line, char const* failure, char const* message )
+AssertResponse AssertNotification( char const* file, size_t line, char const* failure, char const* message )
 {
-	#if defined(_DEBUG) && defined(RF_PLATFORM_MSVC)
+	#if defined( _DEBUG ) && defined( RF_PLATFORM_MSVC )
 	{
 		if(
 			_CrtDbgReport(

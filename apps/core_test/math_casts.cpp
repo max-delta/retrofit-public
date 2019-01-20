@@ -6,7 +6,7 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-TEST(MathCasts, IntegerTruncast_Unsigned)
+TEST( MathCasts, IntegerTruncast_Unsigned )
 {
 	constexpr uint64_t huge = rftl::numeric_limits<uint64_t>::max();
 	uint64_t const u64 = integer_truncast<uint64_t>( huge );
@@ -21,7 +21,7 @@ TEST(MathCasts, IntegerTruncast_Unsigned)
 
 
 
-TEST(MathCasts, IntegerTruncast_Signed)
+TEST( MathCasts, IntegerTruncast_Signed )
 {
 	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0, "" );
 
@@ -38,7 +38,7 @@ TEST(MathCasts, IntegerTruncast_Signed)
 
 
 
-TEST(MathCasts, IntegerTruncast_CrossSigned)
+TEST( MathCasts, IntegerTruncast_CrossSigned )
 {
 	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0, "" );
 	static_assert( rftl::numeric_limits<uint64_t>::lowest() == 0, "" );
@@ -74,55 +74,55 @@ TEST( MathCasts, IntegerTruncast_CrossUnsigned )
 
 
 
-TEST(MathCasts, IntegerTruncast_Float)
+TEST( MathCasts, IntegerTruncast_Float )
 {
 	{
 		constexpr float source = -1.f;
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, 0 );
 	}
 	{
 		constexpr float source = 0.f;
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, 0 );
 	}
 	{
 		constexpr float source = 0.1f;
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, 0 );
 	}
 	{
 		constexpr float source = 0.9f;
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, 1 );
 	}
 	{
 		constexpr float source = 1.1f;
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, 1 );
 	}
 	{
 		constexpr float source = rftl::numeric_limits<float>::max();
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::max() );
 	}
 	{
 		constexpr float source = rftl::numeric_limits<float>::infinity();
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::max() );
 	}
 	{
 		// Hmm...
 		static_assert( rftl::numeric_limits<uint8_t>::quiet_NaN() == 0, "" );
 		constexpr float source = rftl::numeric_limits<float>::quiet_NaN();
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::quiet_NaN() );
 	}
 	{
 		// Uh... sure, I guess?
 		static_assert( rftl::numeric_limits<uint8_t>::signaling_NaN() == 0, "" );
 		constexpr float source = rftl::numeric_limits<float>::signaling_NaN();
-		uint8_t const val = integer_truncast<uint8_t>(source);
+		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::signaling_NaN() );
 	}
 }

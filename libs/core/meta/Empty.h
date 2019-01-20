@@ -32,7 +32,7 @@ struct DerivedClass : public EmptyStruct
 // Although C++11 requires standard layouts to perform empty base optimization,
 //  so you can be clever in some cases and keep the empty struct TRULY empty
 static_assert( rftl::is_standard_layout<DerivedClass>::value, "Unexpected type" );
-static_assert( sizeof( DerivedClass ) == sizeof(DerivedClass::unused), "Unexpected size" );
+static_assert( sizeof( DerivedClass ) == sizeof( DerivedClass::unused ), "Unexpected size" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

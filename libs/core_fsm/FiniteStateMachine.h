@@ -46,7 +46,7 @@ public:
 	}
 
 
-	State * Start( StateID const& initialState )
+	State* Start( StateID const& initialState )
 	{
 		RF_ASSERT( mStateCollection != nullptr );
 		RF_ASSERT( mCurrentState == nullptr );

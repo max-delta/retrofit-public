@@ -34,7 +34,7 @@ public:
 	//
 	// Types
 public:
-	#if (RF_PLATFORM_POINTER_BYTES >= 8)
+	#if( RF_PLATFORM_POINTER_BYTES >= 8 )
 		using Integer = int64_t;
 	#else
 		using Integer = int32_t;
@@ -64,7 +64,7 @@ public:
 	using ElementMap = rftl::unordered_map<Element, Element>;
 	using NestedTraversalPath = rftl::vector<NestedTraversalNode>;
 private:
-	using HSQUIRRELVM = SQVM * ;
+	using HSQUIRRELVM = SQVM*;
 	using ElementNameCharType = char;
 
 

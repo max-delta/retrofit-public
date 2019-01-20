@@ -31,8 +31,8 @@ private:
 	// Public methods
 public:
 	VFSPath();
-	template<typename...Nodes>
-	explicit VFSPath( Element element, Nodes...elements );
+	template<typename... Nodes>
+	explicit VFSPath( Element element, Nodes... elements );
 
 	bool operator==( VFSPath const& rhs ) const;
 
@@ -40,8 +40,8 @@ public:
 	VFSPath GetParent() const;
 	VFSPath GetChild( VFSPath const& path ) const;
 	VFSPath GetChild( Element const& element ) const;
-	template<typename ...PathsOrElements>
-	VFSPath GetChild( PathsOrElements ...pathsOrElements ) const;
+	template<typename... PathsOrElements>
+	VFSPath GetChild( PathsOrElements... pathsOrElements ) const;
 	VFSPath GetAsBranchOf( VFSPath const& parent, bool& isBranch ) const;
 
 	// Modify this path
@@ -49,8 +49,8 @@ public:
 	VFSPath& GoUp( size_t count );
 	VFSPath& Append( VFSPath const& path );
 	VFSPath& Append( Element const& element );
-	template<typename ...PathsOrElements>
-	VFSPath& Append( PathsOrElements ...pathsOrElements );
+	template<typename... PathsOrElements>
+	VFSPath& Append( PathsOrElements... pathsOrElements );
 
 	// Compare and access
 	bool IsDescendantOf( VFSPath const& closerToRoot ) const;
@@ -70,8 +70,8 @@ private:
 	VFSPath& AppendUnroll();
 	VFSPath& AppendUnroll( VFSPath const& path );
 	VFSPath& AppendUnroll( Element const& element );
-	template<typename PathOrElement1, typename PathOrElement2, typename...PathsOrElements>
-	VFSPath& AppendUnroll( PathOrElement1 pathOrElement1, PathOrElement2 pathOrElement2, PathsOrElements...pathsOrElements );
+	template<typename PathOrElement1, typename PathOrElement2, typename... PathsOrElements>
+	VFSPath& AppendUnroll( PathOrElement1 pathOrElement1, PathOrElement2 pathOrElement2, PathsOrElements... pathsOrElements );
 
 
 	//

@@ -51,14 +51,14 @@ reflect::ClassInfo const* TypeDatabase::GetClassInfoByHash( math::HashVal64 cons
 
 
 
-TypeDatabase & TypeDatabase::GetGlobalMutableInstance()
+TypeDatabase& TypeDatabase::GetGlobalMutableInstance()
 {
 	return GetOrCreateGlobalInstance();
 }
 
 
 
-TypeDatabase const & TypeDatabase::GetGlobalInstance()
+TypeDatabase const& TypeDatabase::GetGlobalInstance()
 {
 	return GetOrCreateGlobalInstance();
 }
@@ -87,7 +87,7 @@ bool TypeDatabase::IsValidClassName( char const* name )
 
 
 
-TypeDatabase & TypeDatabase::GetOrCreateGlobalInstance()
+TypeDatabase& TypeDatabase::GetOrCreateGlobalInstance()
 {
 	return GetOrInitFunctionStaticScopedSingleton<TypeDatabase>();
 }

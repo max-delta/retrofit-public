@@ -12,9 +12,9 @@ namespace RF { namespace logging {
 
 using HandlerID = uint64_t;
 static constexpr HandlerID kInvalidHandlerID = 0;
-using UTF8HandlerFunc = void(*)( LoggingRouter const&, LogEvent<char> const&, va_list args );
-using UTF16HandlerFunc = void( *)( LoggingRouter const&, LogEvent<char16_t> const&, va_list args );
-using UTF32HandlerFunc = void( *)( LoggingRouter const&, LogEvent<char32_t> const&, va_list args );
+using UTF8HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char> const&, va_list args );
+using UTF16HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char16_t> const&, va_list args );
+using UTF32HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char32_t> const&, va_list args );
 
 struct HandlerDefinition
 {

@@ -32,6 +32,6 @@
 #define RFTYPE_ENABLE_VIRTUAL_LOOKUP() \
 	public: virtual ::RF::reflect::ClassInfo const* GetVirtualClassInfo() const override \
 	{ \
-		using ThisType = rftl::remove_const<rftl::remove_reference<decltype(*this)>::type>::type; \
-		return &( ::RF::rftype::GetClassInfo<ThisType>() ); \
+		using ThisType = rftl::remove_const<rftl::remove_reference<decltype( *this )>::type>::type; \
+		return &(::RF::rftype::GetClassInfo<ThisType>() ); \
 	}

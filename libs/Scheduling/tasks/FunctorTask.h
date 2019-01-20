@@ -17,13 +17,13 @@ namespace RF { namespace scheduling {
 //  auto myFunctor = RF::scheduling::CreateFunctorTask( rftl::move( myLambda ) );
 //  using FunctorType = decltype( myFunctor );
 template<typename Functor>
-FunctorTask<typename rftl::decay<Functor>::type> CreateFunctorTask( Functor && functor )
+FunctorTask<typename rftl::decay<Functor>::type> CreateFunctorTask( Functor&& functor )
 {
 	return FunctorTask<typename rftl::decay<Functor>::type>( rftl::move( functor ) );
 }
 
 template<typename Functor>
-CloneableFunctorTask<typename rftl::decay<Functor>::type> CreateCloneableFunctorTask( Functor && functor )
+CloneableFunctorTask<typename rftl::decay<Functor>::type> CreateCloneableFunctorTask( Functor&& functor )
 {
 	return CloneableFunctorTask<typename rftl::decay<Functor>::type>( rftl::move( functor ) );
 }
@@ -42,7 +42,7 @@ class FunctorTask final : public NonIncrementalTask
 	//
 	// Public methods
 public:
-	FunctorTask( Functor && functor )
+	FunctorTask( Functor&& functor )
 		: mFunctor( rftl::move( functor ) )
 	{
 		//
@@ -86,7 +86,7 @@ public:
 	//
 	// Public methods
 public:
-	CloneableFunctorTask( Functor && functor )
+	CloneableFunctorTask( Functor&& functor )
 		: mFunctor( rftl::move( functor ) )
 	{
 		//

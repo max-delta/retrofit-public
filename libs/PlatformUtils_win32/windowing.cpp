@@ -14,15 +14,15 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 	win32::SetProcessDPIAware();
 
 	// IDC_ARROW
-	auto idc_arrow = ((win32::LPWSTR)((win32::ULONG_PTR)((win32::WORD)(32512))));
+	auto idc_arrow = ( ( win32::LPWSTR )( ( win32::ULONG_PTR )( ( win32::WORD )( 32512 ) ) ) );
 
 	win32::WNDCLASSW wc = {};
 	wc.style = CS_OWNDC; // Individual instances of this window will not share device contexts.
 	wc.lpfnWndProc = (win32::WNDPROC)WndProc; // The function that will be called for events.
 	wc.cbClsExtra = 0; // The class has no extra memory.
 	wc.cbWndExtra = 0; // The window has no extra memory.
-//	wc.hInstance = hInstance; // The application that is managing the window.
-//	wc.hIcon = LoadIcon( hInstance, 0 ); // We want to use resource 0 in this executable for our icon.
+	//wc.hInstance = hInstance; // The application that is managing the window.
+	//wc.hIcon = LoadIcon( hInstance, 0 ); // We want to use resource 0 in this executable for our icon.
 	wc.hCursor = win32::LoadCursorW( nullptr, idc_arrow ); // We want to use the standard arrow cursor.
 	wc.hbrBackground = (win32::HBRUSH)win32::GetStockObject( BLACK_BRUSH ); // The default background color.
 	wc.lpszMenuName = nullptr; // The class has no menu.
@@ -44,12 +44,13 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 		L"SimpleGL", // The window class to use.
 		L"SimpleGl Window", // The name to appear on the window.
 		windowStyles, // Window styles.
-		CW_USEDEFAULT, CW_USEDEFAULT, // Initial window position.
+		CW_USEDEFAULT,
+		CW_USEDEFAULT, // Initial window position.
 		windowWidth, // Default window mWidth.
 		windowHeight, // Default window mHeight.
 		nullptr, // The window has no parent.
 		nullptr, // The window has no menu.
-		nullptr,//hInstance, // The application that is managing the window.
+		nullptr, //hInstance, // The application that is managing the window.
 		nullptr ); // Pointer to a value passed through WM_CREATE.
 
 	return hWnd;

@@ -140,7 +140,7 @@ char32_t ConvertSingleUtf16ToUtf32( char16_t const* buffer, size_t numPairs )
 
 
 
-size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char( &destination )[4] )
+size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char ( &destination )[4] )
 {
 	if( codePoint <= 0x7f )
 	{
@@ -191,7 +191,7 @@ size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char( &destination )[4] )
 
 
 
-size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t( &destination )[2] )
+size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[2] )
 {
 	if( codePoint <= 0xd7ff )
 	{

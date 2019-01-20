@@ -13,8 +13,8 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 namespace fpackserdes_details {
-static constexpr char kMagicType[4] = { 'F','P','A','K' };
-static constexpr char kMagicVers[4] = { 'v','0','.','1' };
+static constexpr char kMagicType[4] = { 'F', 'P', 'A', 'K' };
+static constexpr char kMagicVers[4] = { 'v', '0', '.', '1' };
 static constexpr char kMagic[8] = {
 	kMagicType[0], kMagicType[1], kMagicType[2], kMagicType[3],
 	kMagicVers[0], kMagicVers[1], kMagicVers[2], kMagicVers[3] };
@@ -22,11 +22,11 @@ static constexpr char kMagic[8] = {
 using StrLenType = uint16_t;
 constexpr size_t const kSizeOfMagic = sizeof( kMagic );
 constexpr size_t kSizeOfBase = sizeof( FramePackBase );
-constexpr size_t SizeOfData_Sustains( FramePackBase const & framePack )
+constexpr size_t SizeOfData_Sustains( FramePackBase const& framePack )
 {
 	return sizeof( uint8_t ) * framePack.m_NumTimeSlots;
 }
-constexpr size_t SizeOfData_Slots( FramePackBase const & framePack )
+constexpr size_t SizeOfData_Slots( FramePackBase const& framePack )
 {
 	return sizeof( FramePackBase::TimeSlot ) * framePack.m_NumTimeSlots;
 }
@@ -54,7 +54,7 @@ struct Header_v0_1
 			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, header offset is wrong" );
 			return false;
 		}
-		if( mOffsetToBase != mOffsetToHeader + sizeof(*this) )
+		if( mOffsetToBase != mOffsetToHeader + sizeof( *this ) )
 		{
 			RFLOG_ERROR( context, RFCAT_PPU, "Invalid header, base offset is wrong" );
 			return false;
@@ -72,7 +72,7 @@ static_assert( sizeof( Header_v0_1 ) == 14, "Unexpected size" );
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const & texMan, rftl::vector<uint8_t>& buffer, FramePackBase const & framePack )
+bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl::vector<uint8_t>& buffer, FramePackBase const& framePack )
 {
 	using namespace fpackserdes_details;
 
@@ -214,7 +214,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const & texMan, rft
 
 
 
-bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textures, rftl::vector<uint8_t> const & buffer, UniquePtr<FramePackBase>& framePack )
+bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textures, rftl::vector<uint8_t> const& buffer, UniquePtr<FramePackBase>& framePack )
 {
 	using namespace fpackserdes_details;
 
@@ -391,7 +391,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	{
 		for( size_t i = 0; i < retBase.m_NumTimeSlots; i++ )
 		{
-			if( readHead + sizeof(StrLenType) > maxReadHead )
+			if( readHead + sizeof( StrLenType ) > maxReadHead )
 			{
 				RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read length of file string, probably corrupt" );
 				return false;

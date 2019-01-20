@@ -6,7 +6,7 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-TEST(MathCompare, Basic)
+TEST( MathCompare, Basic )
 {
 	static_assert( Equals<float>( 0.f, 0.f ), "Zero equality failure" );
 	static_assert( Equals<float>( 0.f, -0.f ), "Signed zero failure" );

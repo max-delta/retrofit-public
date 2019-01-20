@@ -2,9 +2,9 @@
 #include "Logging/Constants.h"
 
 #ifdef SCHEDULING_EXPORTS
-#define SCHEDULING_API __declspec(dllexport)
+#define SCHEDULING_API __declspec( dllexport )
 #else
-#define SCHEDULING_API __declspec(dllimport)
+#define SCHEDULING_API __declspec( dllimport )
 #endif
 
 constexpr char const* RFCAT_SCHEDULING = "Scheduling";

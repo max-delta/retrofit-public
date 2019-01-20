@@ -25,10 +25,10 @@ public:
 public:
 	using value_type = T;
 
-	using pointer = value_type *;
-	using const_pointer = value_type const *;
-	using void_pointer = void *;
-	using const_void_pointer = void const *;
+	using pointer = value_type*;
+	using const_pointer = value_type const*;
+	using void_pointer = void*;
+	using const_void_pointer = void const*;
 
 	using size_type = size_t;
 	using difference_type = ptrdiff_t;
@@ -62,7 +62,7 @@ public:
 	template<typename U, size_t OtherMaxTotalSize>
 	SingleAllocator( SingleAllocator<U, OtherMaxTotalSize> const& rhs ) = delete;
 	template<typename U, size_t OtherMaxTotalSize>
-	SingleAllocator( SingleAllocator<U, OtherMaxTotalSize> && rhs ) = delete;
+	SingleAllocator( SingleAllocator<U, OtherMaxTotalSize>&& rhs ) = delete;
 
 	pointer allocate( size_type count ) noexcept;
 	pointer allocate( size_type count, const_void_pointer hint ) noexcept;
@@ -87,7 +87,7 @@ private:
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 template<typename T, size_t MaxTotalSize>
-struct allocator_traits< RF::SingleAllocator<T, MaxTotalSize> >
+struct allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>
 {
 	using allocator_type = RF::SingleAllocator<T, MaxTotalSize>;
 	using value_type = typename allocator_type::value_type;

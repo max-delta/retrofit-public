@@ -100,7 +100,7 @@ public:
 	explicit Value( Type type );
 	explicit Value( Type type, void const* bytes );
 	Value( Value const& ) = default;
-	Value& operator =( Value const& ) = default;
+	Value& operator=( Value const& ) = default;
 
 	Type GetStoredType() const;
 	char const* GetStoredTypeName() const;
@@ -133,7 +133,7 @@ private:
 }}
 
 namespace std {
-template <> struct hash<RF::reflect::Value>
+template<> struct hash<RF::reflect::Value>
 {
 	size_t operator()( RF::reflect::Value const& val ) const
 	{
@@ -145,7 +145,7 @@ template <> struct hash<RF::reflect::Value>
 }
 
 namespace std {
-template <> struct equal_to<RF::reflect::Value>
+template<> struct equal_to<RF::reflect::Value>
 {
 	bool operator()( RF::reflect::Value const& lhs, RF::reflect::Value const& rhs ) const
 	{

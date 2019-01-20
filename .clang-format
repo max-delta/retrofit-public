@@ -2,7 +2,7 @@
 
 BasedOnStyle : WebKit
 
-AccessModifierOffset : 0
+AccessModifierOffset : -4
 AlignAfterOpenBracket  : DontAlign
 AlignConsecutiveAssignments : false
 AlignConsecutiveDeclarations : false
@@ -17,7 +17,7 @@ AllowShortIfStatementsOnASingleLine : false
 AllowShortLoopsOnASingleLine : false
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
-AlwaysBreakTemplateDeclarations : false
+AlwaysBreakTemplateDeclarations : false # Broken? Should be 'No'?
 BinPackArguments : false # But prefer true
 BinPackParameters : true
 BraceWrapping :

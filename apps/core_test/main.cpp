@@ -5,22 +5,22 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-TEST(Bootstrap, Pass)
+TEST( Bootstrap, Pass )
 {
-	RF_ASSERT(true);
-	ASSERT_TRUE(true);
+	RF_ASSERT( true );
+	ASSERT_TRUE( true );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 }
 
-int main(int argc, char ** argv)
+int main( int argc, char** argv )
 {
-	::testing::InitGoogleTest(&argc, argv);
+	::testing::InitGoogleTest( &argc, argv );
 	int const retVal = RUN_ALL_TESTS();
-	if( retVal != 0)
+	if( retVal != 0 )
 	{
-		system("pause");
+		system( "pause" );
 	}
 	return retVal;
 }
