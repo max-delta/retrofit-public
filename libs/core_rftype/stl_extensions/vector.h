@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_rftype/ExtensionAccessorLookup.h"
+#include "core_rftype/TypeInference.h"
 #include "core_math/math_casts.h"
 
 
@@ -13,8 +14,6 @@ size_t const* GetStableKey( size_t key );
 template<typename ValueType, typename Allocator>
 struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemplate
 {
-	static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-
 	using AccessedType = rftl::vector<ValueType, Allocator>;
 	static constexpr bool kExists = true;
 
@@ -32,12 +31,8 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 	static VariableTypeInfo GetSharedTargetInfo( RootConstInst root )
 	{
-		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-
 		// All targets are always the same type in STL containers
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<ValueType>();
-		return retVal;
+		return TypeInference<ValueType>::GetTypeInfo();
 	}
 
 	static size_t GetNumVariables( RootConstInst root )
@@ -66,8 +61,6 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 	static bool GetVariableTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
 	{
-		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
 			RF_DBGFAIL_MSG( "Key type differs from expected" );
@@ -95,17 +88,44 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return true;
 	}
 
-	static bool mInsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
+	static bool mInsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
-		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "TODO: Support for non-value types" );
-
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
 			RF_DBGFAIL_MSG( "Key type differs from expected" );
 			return false;
 		}
 
-		if( valueInfo.mValueType != Value::DetermineType<ValueType>() )
+		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
+		}
+
+		AccessedType* const pThis = reinterpret_cast<AccessedType*>( root );
+		KeyType const index = *castedKey;
+		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
+		if( index >= pThis->size() )
+		{
+			pThis->resize( index + 1 );
+		}
+
+		pThis->at( index ) = std::move( ValueType{} );
+		return true;
+	}
+
+	static bool mInsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
+	{
+		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
+		{
+			RF_DBGFAIL_MSG( "Key type differs from expected" );
+			return false;
+		}
+
+		// Make sure the value coming in matches what we store
+		VariableTypeInfo const storedTypeInfo = GetSharedTargetInfo( root );
+		if(storedTypeInfo != valueInfo)
 		{
 			RF_DBGFAIL_MSG( "Value type differs from expected" );
 			return false;
@@ -151,6 +171,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
 
+		retVal.mInsertVariableDefault = &mInsertVariableDefault;
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &mInsertVariableViaCopy;
 

@@ -9,6 +9,13 @@
 
 #include "core/meta/ScopedCleanup.h"
 
+#include "rftl/sstream"
+
+
+struct SQReflectTestContainedClass
+{
+	bool mBool;
+};
 
 struct SQReflectTestNestedClass
 {
@@ -39,7 +46,14 @@ struct SQReflectTestClass
 	std::wstring mWString;
 	std::vector<int32_t> mIntArray;
 	SQReflectTestNestedClass mNested;
+	std::vector<SQReflectTestContainedClass> mObjArray;
 };
+
+RFTYPE_CREATE_META( SQReflectTestContainedClass )
+{
+	RFTYPE_META().RawProperty( "mBool", &SQReflectTestContainedClass::mBool );
+	RFTYPE_REGISTER_BY_NAME( "SQReflectTestContainedClass" );
+}
 
 RFTYPE_CREATE_META( SQReflectTestNestedClass )
 {
@@ -70,6 +84,7 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
 	RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
 	RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
+	RFTYPE_META().ExtensionProperty( "mObjArray", &SQReflectTestClass::mObjArray );
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
@@ -236,6 +251,7 @@ bool StoreSingleValueInAccessor(
 bool ProcessElementArrayPopulationWork(
 	WorkItem const& currentWorkItem,
 	WorkItems& workItems,
+	script::SquirrelVM::NestedTraversalPath currentPath,
 	script::SquirrelVM::ElementArray const& elemArr,
 	reflect::ExtensionAccessor const* accessor,
 	void* location )
@@ -253,10 +269,26 @@ bool ProcessElementArrayPopulationWork(
 		}
 	} );
 
-	// For each value...
-	size_t indexCounter = 0;
 	reflect::VariableTypeInfo keyInfo = {};
 	keyInfo.mValueType = reflect::Value::DetermineType<size_t>();
+
+	// Pre-create all of our values, just in case we need to queue some work,
+	//  and want a stable memory location to write to
+	if( accessor->mInsertVariableDefault != nullptr)
+	{
+		for( size_t i = 0; i < elemArr.size(); i++ )
+		{
+			bool const writeSuccess = accessor->mInsertVariableDefault( location, &i, keyInfo );
+			if( writeSuccess == false )
+			{
+				RF_DBGFAIL_MSG( "Failed to write reserve value to accessor target" );
+				return false;
+			}
+		}
+	}
+
+	// For each value...
+	size_t indexCounter = 0;
 	for( script::SquirrelVM::Element const& elemValue : elemArr )
 	{
 		size_t const key = indexCounter;
@@ -298,10 +330,37 @@ bool ProcessElementArrayPopulationWork(
 		{
 			// Instance
 
-			// Run instance - handler code
-			// ???Queue???
-			RF_DBGFAIL_MSG( "TODO" );
-			return false;
+			if( accessor->mInsertVariableDefault == nullptr )
+			{
+				RF_DBGFAIL_MSG( "Failed to write any placeholder values to accessor target" );
+				return false;
+			}
+
+			// Insert a placeholder
+			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
+			if( writeSuccess == false )
+			{
+				RF_DBGFAIL_MSG( "Failed to write placeholder value to accessor target" );
+				return false;
+			}
+
+			void const* arrayItemLoc = nullptr;
+			reflect::VariableTypeInfo arrayItemInfo = {};
+			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			if( readSuccess == false )
+			{
+				RF_DBGFAIL_MSG( "Failed to read placeholder value from accessor target" );
+				return false;
+			}
+
+			// Queue population as later work
+			WorkItem newWorkItem;
+			newWorkItem.mClassInfo = arrayItemInfo.mClassInfo;
+			newWorkItem.mClassInstance = arrayItemLoc;
+			newWorkItem.mPath = currentPath;
+			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			workItems.emplace_back( rftl::move( newWorkItem ) );
+			return true;
 		}
 		else
 		{
@@ -388,7 +447,7 @@ bool ProcessScriptArrayPopulationWork(
 	path.emplace_back( elemName );
 	script::SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( path );
 
-	return ProcessElementArrayPopulationWork( currentWorkItem, workItems, elemArr, accessor, location );
+	return ProcessElementArrayPopulationWork( currentWorkItem, workItems, path, elemArr, accessor, location );
 }
 
 
@@ -603,6 +662,10 @@ void sqreflect_scratch()
 		bool const inject = InjectReflectedClassByCompileType<SQReflectTestNestedClass>( vm, "SQReflectTestNestedClass" );
 		RF_ASSERT( inject );
 	}
+	{
+		bool const inject = InjectReflectedClassByCompileType<SQReflectTestContainedClass>( vm, "SQReflectTestContainedClass" );
+		RF_ASSERT( inject );
+	}
 
 	// Use
 	{
@@ -629,6 +692,8 @@ void sqreflect_scratch()
 			"x.mString = \"test\";\n"
 			"x.mWString = \"test\";\n"
 			"x.mIntArray = [3,5,7];\n"
+			"x.mObjArray = [ SQReflectTestContainedClass() ];\n"
+			"x.mObjArray[0].mBool = true;\n"
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
 			"\n";
@@ -669,6 +734,8 @@ void sqreflect_scratch()
 	RF_ASSERT( testClass.mIntArray[0] == 3 );
 	RF_ASSERT( testClass.mIntArray[1] == 5 );
 	RF_ASSERT( testClass.mIntArray[2] == 7 );
+	RF_ASSERT( testClass.mObjArray.size() == 1 );
+	RF_ASSERT( testClass.mObjArray[0].mBool == true );
 	RF_ASSERT( testClass.mNested.mBool == true );
 }
 
