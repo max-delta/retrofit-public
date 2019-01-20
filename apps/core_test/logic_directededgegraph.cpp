@@ -10,8 +10,8 @@
 
 namespace RF { namespace logic {
 ///////////////////////////////////////////////////////////////////////////////
-namespace details
-{
+namespace details {
+
 using StandardTestGraph = DirectedEdgeGraph<int, char>;
 StandardTestGraph CreateStandardTestGraph()
 {
@@ -27,6 +27,7 @@ StandardTestGraph CreateStandardTestGraph()
 	retVal.InsertEdge( 2, 0 );
 	return retVal;
 }
+
 }
 
 
@@ -135,7 +136,7 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterAllC{ rftl::move( iterTemp ) };
-	StoreResults const expectAllC{ {0,1,'A'}, {0,2,'B'}, {1,2,'\0'}, {2,0,'\0'} };
+	StoreResults const expectAllC{ { 0, 1, 'A' }, { 0, 2, 'B' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterAllC, expectAllC );
 
 
@@ -151,7 +152,7 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterFrom0C{ rftl::move( iterTemp ) };
-	StoreResults const expectFrom0C{ { 0,1,'A'},{ 0,2,'B'} };
+	StoreResults const expectFrom0C{ { 0, 1, 'A' }, { 0, 2, 'B' } };
 	ASSERT_EQ( iterFrom0C, expectFrom0C );
 
 	graph.IterateMutableEdgesFrom( 0, iter );
@@ -166,7 +167,7 @@ TEST( LogicDirectedEdgeGraph, CreateStandard )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterTo2C{ rftl::move( iterTemp ) };
-	StoreResults const expectTo2C{ { 0,2,'B' },{ 1,2,'\0' } };
+	StoreResults const expectTo2C{ { 0, 2, 'B' }, { 1, 2, '\0' } };
 	ASSERT_EQ( iterTo2C, expectTo2C );
 
 	graph.IterateMutableEdgesTo( 2, iter );
@@ -203,7 +204,7 @@ TEST( LogicDirectedEdgeGraph, EraseEdge )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterInitial{ rftl::move( iterTemp ) };
-	StoreResults const expectInitial{ { 0,1,'A' },{ 0,2,'B' },{ 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectInitial{ { 0, 1, 'A' }, { 0, 2, 'B' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterInitial, expectInitial );
 
 	graph.EraseEdge( 0, 2 );
@@ -213,7 +214,7 @@ TEST( LogicDirectedEdgeGraph, EraseEdge )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterFinal{ rftl::move( iterTemp ) };
-	StoreResults const expectFinal{ { 0,1,'A' },{ 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectFinal{ { 0, 1, 'A' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterFinal, expectFinal );
 }
 
@@ -243,7 +244,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterInitial{ rftl::move( iterTemp ) };
-	StoreResults const expectInitial{ { 0,1,'A' },{ 0,2,'B' },{ 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectInitial{ { 0, 1, 'A' }, { 0, 2, 'B' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterInitial, expectInitial );
 
 	graph.EraseAllEdgesFrom( 0 );
@@ -253,7 +254,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesFrom )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterFinal{ rftl::move( iterTemp ) };
-	StoreResults const expectFinal{ { 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectFinal{ { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterFinal, expectFinal );
 }
 
@@ -283,7 +284,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterInitial{ rftl::move( iterTemp ) };
-	StoreResults const expectInitial{ { 0,1,'A' },{ 0,2,'B' },{ 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectInitial{ { 0, 1, 'A' }, { 0, 2, 'B' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterInitial, expectInitial );
 
 	graph.EraseAllEdgesTo( 2 );
@@ -293,7 +294,7 @@ TEST( LogicDirectedEdgeGraph, EraseAllEdgesTo )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterFinal{ rftl::move( iterTemp ) };
-	StoreResults const expectFinal{ { 0,1,'A' },{ 2,0,'\0' } };
+	StoreResults const expectFinal{ { 0, 1, 'A' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterFinal, expectFinal );
 }
 
@@ -323,7 +324,7 @@ TEST( LogicDirectedEdgeGraph, EraseNode )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterInitial{ rftl::move( iterTemp ) };
-	StoreResults const expectInitial{ { 0,1,'A' },{ 0,2,'B' },{ 1,2,'\0' },{ 2,0,'\0' } };
+	StoreResults const expectInitial{ { 0, 1, 'A' }, { 0, 2, 'B' }, { 1, 2, '\0' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterInitial, expectInitial );
 
 	graph.EraseNode( 1 );
@@ -333,7 +334,7 @@ TEST( LogicDirectedEdgeGraph, EraseNode )
 	ASSERT_EQ( iterTemp.size(), iterationResults.size() );
 	iterationResults.clear();
 	StoreResults const iterFinal{ rftl::move( iterTemp ) };
-	StoreResults const expectFinal{ { 0,2,'B' },{ 2,0,'\0' } };
+	StoreResults const expectFinal{ { 0, 2, 'B' }, { 2, 0, '\0' } };
 	ASSERT_EQ( iterFinal, expectFinal );
 }
 

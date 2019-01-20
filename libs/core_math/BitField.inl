@@ -9,15 +9,15 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename AccessTypeT, size_t ...fieldSizes>
-inline void const * BitField<AccessTypeT, fieldSizes...>::Data() const
+template<typename AccessTypeT, size_t... fieldSizes>
+inline void const* BitField<AccessTypeT, fieldSizes...>::Data() const
 {
 	return &mStorage[0];
 }
 
 
 
-template<typename AccessTypeT, size_t ...fieldSizes>
+template<typename AccessTypeT, size_t... fieldSizes>
 template<size_t index>
 inline typename BitField<AccessTypeT, fieldSizes...>::AccessType BitField<AccessTypeT, fieldSizes...>::ReadAt() const
 {
@@ -32,9 +32,9 @@ inline typename BitField<AccessTypeT, fieldSizes...>::AccessType BitField<Access
 
 
 
-template<typename AccessTypeT, size_t ...fieldSizes>
+template<typename AccessTypeT, size_t... fieldSizes>
 template<size_t index>
-inline void BitField<AccessTypeT, fieldSizes...>::WriteAt( AccessType const & value )
+inline void BitField<AccessTypeT, fieldSizes...>::WriteAt( AccessType const& value )
 {
 	constexpr size_t kBytesBeforeIndex = GetBytesBeforeIndex<index>();
 	constexpr size_t kBitsOffsetIntoIndex = GetBitsOffsetIntoIndex<index>();
@@ -47,7 +47,7 @@ inline void BitField<AccessTypeT, fieldSizes...>::WriteAt( AccessType const & va
 
 
 
-template<typename AccessTypeT, size_t ...fieldSizes>
+template<typename AccessTypeT, size_t... fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBytesBeforeIndex()
 {
@@ -58,7 +58,7 @@ inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBytesBeforeInde
 
 
 
-template<typename AccessTypeT, size_t ...fieldSizes>
+template<typename AccessTypeT, size_t... fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsOffsetIntoIndex()
 {
@@ -70,7 +70,7 @@ inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsOffsetIntoI
 
 
 
-template<typename AccessTypeT, size_t ...fieldSizes>
+template<typename AccessTypeT, size_t... fieldSizes>
 template<size_t index>
 inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsAtIndex()
 {
@@ -123,9 +123,9 @@ struct Compressor
 		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static void CompressImpl( AccessType const& source, void* destination )
 	{
-		#if defined(RF_PLATFORM_LITTLE_ENDIAN)
+		#if defined( RF_PLATFORM_LITTLE_ENDIAN )
 		AccessType const& sourceValue = source;
-		#elif defined(RF_PLATFORM_BIG_ENDIAN)
+		#elif defined( RF_PLATFORM_BIG_ENDIAN )
 		AccessType const sourceValue = ReverseByteOrder( source );
 		#endif
 
@@ -216,7 +216,7 @@ struct Compressor
 				RF_ASSERT( bitsLeft > 0 );
 				RF_ASSERT( bitsLeft <= storageSizeBits );
 				constexpr size_t bitsInByte = math::Min<size_t>( storageSizeBits, 8 - storageOffsetBits );
-				constexpr size_t rightShiftToMatchOffset = (8 - bitsInByte) - storageOffsetBits;
+				constexpr size_t rightShiftToMatchOffset = ( 8 - bitsInByte ) - storageOffsetBits;
 				constexpr size_t leftShiftToMatchSize = bitsInByte;
 				constexpr AccessType outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );

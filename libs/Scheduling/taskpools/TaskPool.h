@@ -31,7 +31,7 @@ public:
 	// Sets the listener for task pool events
 	// NOTE: There is only one, intended to be set by the 'owner' of the pool,
 	//  if such a concept applies to the instance
-	void SetListener( TaskPoolListener && listener );
+	void SetListener( TaskPoolListener&& listener );
 
 	// Add/abort tasks
 	// NOTE: Already running or terminated tasks can not be aborted, and there
@@ -74,7 +74,7 @@ protected:
 	void OnTasksNewlyAvailable();
 
 	// Called when a task is being removed
-	void OnTaskRemoved( TaskPtr && task, TaskID taskID, TaskState newState );
+	void OnTaskRemoved( TaskPtr&& task, TaskID taskID, TaskState newState );
 
 
 	//

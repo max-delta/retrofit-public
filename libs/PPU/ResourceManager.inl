@@ -73,7 +73,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const & resourceName, UniquePtr<Resource>&& resource )
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource )
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return false;
@@ -92,7 +92,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource> && resource )
+ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource>&& resource )
 {
 	ManagedResourceID retVal;
 	LoadNewResourceInternal( resourceName, rftl::move( resource ), retVal );
@@ -111,7 +111,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource> && resource )
+WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource>&& resource )
 {
 	ManagedResourceID unused;
 	return LoadNewResourceInternal( resourceName, rftl::move( resource ), unused );
@@ -120,7 +120,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( ResourceName const & resourceName, Filename const & filename )
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( ResourceName const& resourceName, Filename const& filename )
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return false;
@@ -129,7 +129,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Upd
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( ResourceName const & resourceName )
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( ResourceName const& resourceName )
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return false;
@@ -187,7 +187,7 @@ inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>:
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const & resourceName ) const
+typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const& resourceName ) const
 {
 	for( ResourcesByFilename::value_type const& resourcePair : m_FileBackedResources )
 	{
@@ -213,7 +213,7 @@ inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>:
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const & filename ) const
+rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const& filename ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return rftl::vector<ResourceName>();
@@ -250,7 +250,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFr
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceType & resource )
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceType& resource )
 {
 	(void)resource;
 	return true;
@@ -280,7 +280,7 @@ inline size_t ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::G
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBackedResourceRange ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourcesByFilenameInternal( Filename const & filename ) const
+typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBackedResourceRange ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourcesByFilenameInternal( Filename const& filename ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return FileBackedResourceRange();
@@ -302,7 +302,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const & resourceName, Filename const & filename, ManagedResourceID& managedResourceID )
+WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID )
 {
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
@@ -365,7 +365,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const & resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID )
+WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID )
 {
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( resource != nullptr );

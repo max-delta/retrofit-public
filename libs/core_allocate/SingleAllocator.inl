@@ -61,17 +61,17 @@ inline void SingleAllocator<T, MaxTotalSize>::deallocate( pointer ptr, size_type
 
 
 template<typename T, size_t MaxTotalSize>
-template<class U, class ...Args>
-inline void SingleAllocator<T, MaxTotalSize>::construct( U * ptr, Args && ...args )
+template<class U, class... Args>
+inline void SingleAllocator<T, MaxTotalSize>::construct( U* ptr, Args&&... args )
 {
-	new ( ptr )U( args... );
+	new( ptr ) U( args... );
 }
 
 
 
 template<typename T, size_t MaxTotalSize>
 template<class U>
-inline void SingleAllocator<T, MaxTotalSize>::destroy( U * ptr )
+inline void SingleAllocator<T, MaxTotalSize>::destroy( U* ptr )
 {
 	ptr->~U();
 }
@@ -99,7 +99,7 @@ namespace std {
 
 template<typename T, size_t MaxTotalSize>
 inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
-rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type & alloc, size_type count )
+rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type& alloc, size_type count )
 {
 	return alloc.allocate( count );
 }
@@ -108,7 +108,7 @@ rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocato
 
 template<typename T, size_t MaxTotalSize>
 inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::pointer
-allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type & alloc, size_type count, const_void_pointer hint )
+allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type& alloc, size_type count, const_void_pointer hint )
 {
 	return alloc.allocate( count, hint );
 }
@@ -116,7 +116,7 @@ allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocate( allocator_type
 
 
 template<typename T, size_t MaxTotalSize>
-inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::deallocate( allocator_type & alloc, pointer ptr, size_type count )
+inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::deallocate( allocator_type& alloc, pointer ptr, size_type count )
 {
 	return alloc.deallocate( alloc, ptr, count );
 }
@@ -124,8 +124,8 @@ inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::deallocate( 
 
 
 template<typename T, size_t MaxTotalSize>
-template<class U, class ...Args>
-inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::construct( allocator_type & alloc, U * ptr, Args && ...args )
+template<class U, class... Args>
+inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::construct( allocator_type& alloc, U* ptr, Args&&... args )
 {
 	alloc.construct( ptr, args );
 }
@@ -134,7 +134,7 @@ inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::construct( a
 
 template<typename T, size_t MaxTotalSize>
 template<class U>
-inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::destroy( allocator_type & alloc, U * ptr )
+inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::destroy( allocator_type& alloc, U* ptr )
 {
 	alloc.destroy( ptr );
 }
@@ -143,7 +143,7 @@ inline void allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::destroy( all
 
 template<typename T, size_t MaxTotalSize>
 inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::size_type
-allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::max_size( allocator_type const & alloc )
+allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::max_size( allocator_type const& alloc )
 {
 	return alloc.max_size();
 }
@@ -152,7 +152,7 @@ allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::max_size( allocator_type
 
 template<typename T, size_t MaxTotalSize>
 inline typename rftl::allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::allocator_type
-allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::select_on_container_copy_construction( allocator_type const & alloc )
+allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>::select_on_container_copy_construction( allocator_type const& alloc )
 {
 	return alloc.select_on_container_copy_construction();
 }

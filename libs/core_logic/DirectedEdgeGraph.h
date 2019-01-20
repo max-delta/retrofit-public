@@ -14,7 +14,7 @@ template<
 	typename TEdgeMetaData = EmptyStruct,
 	typename THash = rftl::hash<TNodeID>,
 	typename TEquals = rftl::equal_to<TNodeID>,
-	typename TAlloc = rftl::allocator<TNodeID> >
+	typename TAlloc = rftl::allocator<TNodeID>>
 class DirectedEdgeGraph
 {
 	//
@@ -28,10 +28,10 @@ public:
 	using AllocatorTraits = rftl::allocator_traits<Allocator>;
 private:
 	using ReboundPair1 = rftl::pair<NodeID const, EdgeMetaData>;
-	using ReboundAllocator1 = typename AllocatorTraits::template rebind_alloc< ReboundPair1 >;
+	using ReboundAllocator1 = typename AllocatorTraits::template rebind_alloc<ReboundPair1>;
 	using EdgeTargetMap = rftl::unordered_map<NodeID, EdgeMetaData, Hash, Equals, ReboundAllocator1>;
 	using ReboundPair2 = rftl::pair<NodeID const, EdgeTargetMap>;
-	using ReboundAllocator2 = typename AllocatorTraits::template rebind_alloc< ReboundPair2 >;
+	using ReboundAllocator2 = typename AllocatorTraits::template rebind_alloc<ReboundPair2>;
 	using EdgeMap = rftl::unordered_map<NodeID, EdgeTargetMap, Hash, Equals, ReboundAllocator2>;
 
 

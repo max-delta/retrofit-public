@@ -39,7 +39,7 @@ private:
 		RF_NO_COPY( TaskRecord );
 
 		TaskRecord( TaskID id, TaskPtr&& task );
-		TaskRecord& operator=( TaskRecord && rhs );
+		TaskRecord& operator=( TaskRecord&& rhs );
 
 		TaskID mID;
 		TaskPtr mTask;

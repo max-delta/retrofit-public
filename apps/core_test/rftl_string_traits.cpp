@@ -55,15 +55,15 @@ TEST( StringTraits, IsCharArray )
 	static_assert( rftl::is_char_array<char16_t const[]>::value, "Unexpected value" );
 	static_assert( rftl::is_char_array<char32_t const[]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_char_array<char(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<wchar_t(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char16_t(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char32_t(&)[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<wchar_t( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char16_t( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char32_t( & )[]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_char_array<char const(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<wchar_t const(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char16_t const(&)[]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char32_t const(&)[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char const( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<wchar_t const( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char16_t const( & )[]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char32_t const( & )[]>::value, "Unexpected value" );
 
 	static_assert( rftl::is_char_array<char[1]>::value, "Unexpected value" );
 	static_assert( rftl::is_char_array<wchar_t[1]>::value, "Unexpected value" );
@@ -75,15 +75,15 @@ TEST( StringTraits, IsCharArray )
 	static_assert( rftl::is_char_array<char16_t const[1]>::value, "Unexpected value" );
 	static_assert( rftl::is_char_array<char32_t const[1]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_char_array<char(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<wchar_t(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char16_t(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char32_t(&)[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<wchar_t( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char16_t( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char32_t( & )[1]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_char_array<char const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<wchar_t const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char16_t const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_char_array<char32_t const(&)[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<wchar_t const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char16_t const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_char_array<char32_t const( & )[1]>::value, "Unexpected value" );
 
 	static_assert( rftl::is_char_array<decltype( "" )>::value, "Unexpected value" );
 	static_assert( rftl::is_char_array<decltype( L"" )>::value, "Unexpected value" );
@@ -125,15 +125,15 @@ TEST( StringTraits, IsSizedCharArray )
 	static_assert( rftl::is_sized_char_array<char16_t const[]>::value == false, "Unexpected value" );
 	static_assert( rftl::is_sized_char_array<char32_t const[]>::value == false, "Unexpected value" );
 
-	static_assert( rftl::is_sized_char_array<char(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<wchar_t(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char16_t(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char32_t(&)[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<wchar_t( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char16_t( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char32_t( & )[]>::value == false, "Unexpected value" );
 
-	static_assert( rftl::is_sized_char_array<char const(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<wchar_t const(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char16_t const(&)[]>::value == false, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char32_t const(&)[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char const( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<wchar_t const( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char16_t const( & )[]>::value == false, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char32_t const( & )[]>::value == false, "Unexpected value" );
 
 	static_assert( rftl::is_sized_char_array<char[1]>::value, "Unexpected value" );
 	static_assert( rftl::is_sized_char_array<wchar_t[1]>::value, "Unexpected value" );
@@ -145,15 +145,15 @@ TEST( StringTraits, IsSizedCharArray )
 	static_assert( rftl::is_sized_char_array<char16_t const[1]>::value, "Unexpected value" );
 	static_assert( rftl::is_sized_char_array<char32_t const[1]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_sized_char_array<char(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<wchar_t(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char16_t(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char32_t(&)[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<wchar_t( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char16_t( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char32_t( & )[1]>::value, "Unexpected value" );
 
-	static_assert( rftl::is_sized_char_array<char const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<wchar_t const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char16_t const(&)[1]>::value, "Unexpected value" );
-	static_assert( rftl::is_sized_char_array<char32_t const(&)[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<wchar_t const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char16_t const( & )[1]>::value, "Unexpected value" );
+	static_assert( rftl::is_sized_char_array<char32_t const( & )[1]>::value, "Unexpected value" );
 
 	static_assert( rftl::is_sized_char_array<decltype( "" )>::value, "Unexpected value" );
 	static_assert( rftl::is_sized_char_array<decltype( L"" )>::value, "Unexpected value" );

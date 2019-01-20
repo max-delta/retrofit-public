@@ -12,17 +12,17 @@ template<typename T, typename Unused = void>
 class DefaultCreator
 {
 	// HACK: Template arg prevents evaluation without substitution
-	static_assert( sizeof(T) == 0 && sizeof(T) == 1, "Failed to find determine correct creator to use");
+	static_assert( sizeof( T ) == 0 && sizeof( T ) == 1, "Failed to find determine correct creator to use" );
 };
 
 template<typename T>
-class DefaultCreator< T, typename rftl::enable_if<(sizeof(T) + sizeof( PtrRef ) < 128), void>::type > : public EntwinedCreator<T>
+class DefaultCreator<T, typename rftl::enable_if<( sizeof( T ) + sizeof( PtrRef ) < 128 ), void>::type> : public EntwinedCreator<T>
 {
 	// Small types shouldn't split storage since it's wasteful on alloc count
 };
 
 template<typename T>
-class DefaultCreator< T, typename rftl::enable_if<(sizeof( T ) + sizeof( PtrRef ) >= 128), void>::type > : public SplitCreator<T>
+class DefaultCreator<T, typename rftl::enable_if<( sizeof( T ) + sizeof( PtrRef ) >= 128 ), void>::type> : public SplitCreator<T>
 {
 	// Large types shouldn't combine storage since it's wasteful on memory size
 };

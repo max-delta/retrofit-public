@@ -7,19 +7,19 @@
 namespace RF { namespace reflect { namespace builder {
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T>
+template<class T>
 void CreateClassInfo( ClassInfo& classInfo );
 
-template <typename T>
+template<typename T>
 void CreateFreeStandingVariableInfo( FreeStandingVariableInfo& variableInfo, T* variable );
 
-template <typename T, typename Class>
-void CreateMemberVariableInfo( MemberVariableInfo& variableInfo, T Class::* variable );
+template<typename T, typename Class>
+void CreateMemberVariableInfo( MemberVariableInfo& variableInfo, T Class::*variable );
 
-template <typename T>
+template<typename T>
 void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo& functionInfo, T& function );
 
-template <typename T>
+template<typename T>
 void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function );
 
 ///////////////////////////////////////////////////////////////////////////////

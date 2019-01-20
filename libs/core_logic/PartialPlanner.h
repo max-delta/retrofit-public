@@ -20,13 +20,13 @@ struct PartialPlan
 	using AllocatorTraits = rftl::allocator_traits<Allocator>;
 private:
 	using ReboundPair1 = rftl::pair<PlannedActionID const, MetaValue>;
-	using ReboundPair1Allocator = typename AllocatorTraits::template rebind_alloc< ReboundPair1 >;
+	using ReboundPair1Allocator = typename AllocatorTraits::template rebind_alloc<ReboundPair1>;
 public:
 	using PlannedActionIDMap = rftl::unordered_map<PlannedActionID, MetaValue, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, ReboundPair1Allocator>;
 	using PlannedActionDependencyList = rftl::unordered_set<PlannedActionID, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, Allocator>;
 private:
 	using ReboundPair2 = rftl::pair<PlannedActionID const, PlannedActionDependencyList>;
-	using ReboundPair2Allocator = typename AllocatorTraits::template rebind_alloc< ReboundPair2 >;
+	using ReboundPair2Allocator = typename AllocatorTraits::template rebind_alloc<ReboundPair2>;
 public:
 	using PlannedActionDependencyMap = rftl::unordered_map<PlannedActionID, PlannedActionDependencyList, rftl::hash<PlannedActionID>, rftl::equal_to<PlannedActionID>, ReboundPair2Allocator>;
 
@@ -42,7 +42,7 @@ template<
 	typename TMetaValue = EmptyStruct,
 	typename THash = rftl::hash<TStateID>,
 	typename TEquals = rftl::equal_to<TStateID>,
-	typename TAlloc = rftl::allocator<TStateID> >
+	typename TAlloc = rftl::allocator<TStateID>>
 class PartialPlanner
 {
 	//
@@ -68,22 +68,22 @@ public:
 private:
 	using ActionIDCollection = typename ActionDatabase::ActionIDCollection;
 	using PlannedActionInstanceID = uint64_t;
-	using PlannedActionInstanceMapAllocator = typename AllocatorTraits::template rebind_alloc< rftl::pair<PlannedActionInstanceID const, ActionID> >;
+	using PlannedActionInstanceMapAllocator = typename AllocatorTraits::template rebind_alloc<rftl::pair<PlannedActionInstanceID const, ActionID>>;
 	using PlannedActionInstanceMap = rftl::unordered_map<PlannedActionInstanceID, ActionID, rftl::hash<PlannedActionInstanceID>, rftl::equal_to<PlannedActionInstanceID>, PlannedActionInstanceMapAllocator>;
-	using PlannedActionInstanceListAllocator = typename AllocatorTraits::template rebind_alloc< PlannedActionInstanceID >;
+	using PlannedActionInstanceListAllocator = typename AllocatorTraits::template rebind_alloc<PlannedActionInstanceID>;
 	using PlannedActionInstanceList = rftl::deque<PlannedActionInstanceID, PlannedActionInstanceListAllocator>;
 	static constexpr PlannedActionInstanceID kInvalidPlannedActionInstanceID = 0;
 	static constexpr PlannedActionInstanceID kReservedInitialPlannedActionInstanceID = 1;
 	static constexpr PlannedActionInstanceID kReservedFinalPlannedActionInstanceID = 2;
 	static constexpr PlannedActionInstanceID kFirstGenerateablePlannedActionInstanceID = 3;
 	using UnmetPlannedActionNeed = rftl::pair<PlannedActionInstanceID, State>;
-	using UnmetPlannedActionNeedsAllocator = typename AllocatorTraits::template rebind_alloc< UnmetPlannedActionNeed >;
-	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed>, rftl::equal_to<UnmetPlannedActionNeed>, UnmetPlannedActionNeedsAllocator >;
-	using CausalLinksAllocator = typename AllocatorTraits::template rebind_alloc< CausalLink >;
+	using UnmetPlannedActionNeedsAllocator = typename AllocatorTraits::template rebind_alloc<UnmetPlannedActionNeed>;
+	using UnmetPlannedActionNeeds = rftl::unordered_set<UnmetPlannedActionNeed, math::RawBytesHash<UnmetPlannedActionNeed>, rftl::equal_to<UnmetPlannedActionNeed>, UnmetPlannedActionNeedsAllocator>;
+	using CausalLinksAllocator = typename AllocatorTraits::template rebind_alloc<CausalLink>;
 	using CausalLinks = rftl::deque<CausalLink, CausalLinksAllocator>;
-	using OrderingConstraintsAllocator = typename AllocatorTraits::template rebind_alloc< PlannedActionInstanceID >;
+	using OrderingConstraintsAllocator = typename AllocatorTraits::template rebind_alloc<PlannedActionInstanceID>;
 	using OrderingConstraints = logic::DirectedEdgeGraph<PlannedActionInstanceID, EmptyStruct, rftl::hash<PlannedActionInstanceID>, rftl::equal_to<PlannedActionInstanceID>, OrderingConstraintsAllocator>;
-	using PlanAllocator = typename AllocatorTraits::template rebind_alloc< uint64_t >;
+	using PlanAllocator = typename AllocatorTraits::template rebind_alloc<uint64_t>;
 public:
 	using PartialPlan = PartialPlan<typename Action::MetaValue, PlanAllocator>;
 

@@ -8,7 +8,7 @@ namespace RF { namespace serialization {
 
 TEST( Serialization, DiagnosticExporterSanityCheck )
 {
-	DiagnosticExporter e = DiagnosticExporter(true);
+	DiagnosticExporter e = DiagnosticExporter( true );
 	ASSERT_TRUE( e.Root_BeginNewInstance() );
 	{
 		ASSERT_TRUE( e.Instance_AddInstanceIDAttribute( 3 ) );

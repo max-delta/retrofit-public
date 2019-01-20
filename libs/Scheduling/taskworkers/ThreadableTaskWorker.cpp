@@ -27,7 +27,7 @@ ThreadableTaskWorker::~ThreadableTaskWorker()
 
 
 
-void ThreadableTaskWorker::AddTask( Task * task, TaskScheduler * scheduler )
+void ThreadableTaskWorker::AddTask( Task* task, TaskScheduler* scheduler )
 {
 	rftl::unique_lock<rftl::mutex> workLock( mPendingWorkMutex );
 	mPendingWork.emplace_back( WorkItem{ task, scheduler } );

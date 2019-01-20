@@ -19,8 +19,8 @@ TEST( Uuid, Invalid )
 
 TEST( Uuid, CompareEarliestOctet )
 {
-	constexpr Uuid::OctetSequence kOne = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-	constexpr Uuid::OctetSequence kTwo = { 2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	constexpr Uuid::OctetSequence kOne = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	constexpr Uuid::OctetSequence kTwo = { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	Uuid const one{ kOne };
 	Uuid const two{ kTwo };
 	ASSERT_TRUE( one.IsValid() );
@@ -47,8 +47,8 @@ TEST( Uuid, CompareEarliestOctet )
 
 TEST( Uuid, CompareLatestOctet )
 {
-	constexpr Uuid::OctetSequence kLow = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1 };
-	constexpr Uuid::OctetSequence kHigh = { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+	constexpr Uuid::OctetSequence kLow = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
+	constexpr Uuid::OctetSequence kHigh = { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	Uuid const low{ kLow };
 	Uuid const high{ kHigh };
 	ASSERT_TRUE( low.IsValid() );
@@ -75,7 +75,7 @@ TEST( Uuid, CompareLatestOctet )
 
 TEST( Uuid, Clone )
 {
-	constexpr Uuid::OctetSequence kSeq = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
+	constexpr Uuid::OctetSequence kSeq = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 	Uuid const seq1{ kSeq };
 	ASSERT_TRUE( seq1.IsValid() );
 	ASSERT_TRUE( seq1 == seq1 );

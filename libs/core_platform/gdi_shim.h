@@ -1,35 +1,34 @@
 #pragma once
 #include "win_shim.h"
 
-namespace shim
-{
+namespace shim {
 //WinGDI
 typedef void* HGDIOBJ;
 typedef struct tagPIXELFORMATDESCRIPTOR
 {
-	WORD  nSize;
-	WORD  nVersion;
+	WORD nSize;
+	WORD nVersion;
 	DWORD dwFlags;
-	BYTE  iPixelType;
-	BYTE  cColorBits;
-	BYTE  cRedBits;
-	BYTE  cRedShift;
-	BYTE  cGreenBits;
-	BYTE  cGreenShift;
-	BYTE  cBlueBits;
-	BYTE  cBlueShift;
-	BYTE  cAlphaBits;
-	BYTE  cAlphaShift;
-	BYTE  cAccumBits;
-	BYTE  cAccumRedBits;
-	BYTE  cAccumGreenBits;
-	BYTE  cAccumBlueBits;
-	BYTE  cAccumAlphaBits;
-	BYTE  cDepthBits;
-	BYTE  cStencilBits;
-	BYTE  cAuxBuffers;
-	BYTE  iLayerType;
-	BYTE  bReserved;
+	BYTE iPixelType;
+	BYTE cColorBits;
+	BYTE cRedBits;
+	BYTE cRedShift;
+	BYTE cGreenBits;
+	BYTE cGreenShift;
+	BYTE cBlueBits;
+	BYTE cBlueShift;
+	BYTE cAlphaBits;
+	BYTE cAlphaShift;
+	BYTE cAccumBits;
+	BYTE cAccumRedBits;
+	BYTE cAccumGreenBits;
+	BYTE cAccumBlueBits;
+	BYTE cAccumAlphaBits;
+	BYTE cDepthBits;
+	BYTE cStencilBits;
+	BYTE cAuxBuffers;
+	BYTE iLayerType;
+	BYTE bReserved;
 	DWORD dwLayerMask;
 	DWORD dwVisibleMask;
 	DWORD dwDamageMask;
@@ -103,12 +102,12 @@ enum
 };
 enum Font_Families
 {
-	kFF_DONTCARE = ( 0 << 4 ),  /* Don't care or don't know. */
-	kFF_ROMAN = ( 1 << 4 ),  /* Variable stroke mWidth, serifed. */
-	kFF_SWISS = ( 2 << 4 ),  /* Variable stroke mWidth, sans-serifed. */
-	kFF_MODERN = ( 3 << 4 ),  /* Constant stroke mWidth, serifed or sans-serifed. */
-	kFF_SCRIPT = ( 4 << 4 ),  /* Cursive, etc. */
-	kFF_DECORATIVE = ( 5 << 4 ),  /* Old English, etc. */
+	kFF_DONTCARE = ( 0 << 4 ), /* Don't care or don't know. */
+	kFF_ROMAN = ( 1 << 4 ), /* Variable stroke mWidth, serifed. */
+	kFF_SWISS = ( 2 << 4 ), /* Variable stroke mWidth, sans-serifed. */
+	kFF_MODERN = ( 3 << 4 ), /* Constant stroke mWidth, serifed or sans-serifed. */
+	kFF_SCRIPT = ( 4 << 4 ), /* Cursive, etc. */
+	kFF_DECORATIVE = ( 5 << 4 ), /* Old English, etc. */
 };
 enum
 {
@@ -148,5 +147,4 @@ bool wglUseFontBitmapsW( HDC, DWORD, DWORD, DWORD );
 HFONT CreateFontW( int cHeight, int cWidth, int cEscapement, int cOrientation, int cWeight, DWORD bItalic,
 	DWORD bUnderline, DWORD bStrikeOut, DWORD iCharSet, DWORD iOutPrecision, DWORD iClipPrecision,
 	DWORD iQuality, DWORD iPitchAndFamily, LPCWSTR pszFaceName );
-
 }

@@ -26,7 +26,7 @@ struct BufferInsertIterator
 	{
 		if( mWriteAttempts != nullptr )
 		{
-			(*mWriteAttempts)++;
+			( *mWriteAttempts )++;
 		}
 		if( mNextInsert < mBufLen )
 		{
@@ -36,11 +36,11 @@ struct BufferInsertIterator
 		return *this;
 	}
 
-	BufferInsertIterator& operator=( CharT && rhs )
+	BufferInsertIterator& operator=( CharT&& rhs )
 	{
 		if( mWriteAttempts != nullptr )
 		{
-			(*mWriteAttempts)++;
+			( *mWriteAttempts )++;
 		}
 		if( mNextInsert < mBufLen )
 		{
@@ -68,7 +68,7 @@ size_t ConvertToASCII( char* dest, size_t destLen, char const* source, size_t nu
 
 
 
-size_t ConvertToASCII( char * dest, size_t destLen, char16_t const * source, size_t numPairs )
+size_t ConvertToASCII( char* dest, size_t destLen, char16_t const* source, size_t numPairs )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -78,7 +78,7 @@ size_t ConvertToASCII( char * dest, size_t destLen, char16_t const * source, siz
 
 
 
-size_t ConvertToASCII( char * dest, size_t destLen, char32_t const * source, size_t numCodePoints )
+size_t ConvertToASCII( char* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -88,7 +88,7 @@ size_t ConvertToASCII( char * dest, size_t destLen, char32_t const * source, siz
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf8( char * dest, size_t destLen, char const * source, size_t numBytes )
+size_t ConvertToUtf8( char* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -98,7 +98,7 @@ size_t ConvertToUtf8( char * dest, size_t destLen, char const * source, size_t n
 
 
 
-size_t ConvertToUtf8( char * dest, size_t destLen, char16_t const * source, size_t numPairs )
+size_t ConvertToUtf8( char* dest, size_t destLen, char16_t const* source, size_t numPairs )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -108,7 +108,7 @@ size_t ConvertToUtf8( char * dest, size_t destLen, char16_t const * source, size
 
 
 
-size_t ConvertToUtf8( char * dest, size_t destLen, char32_t const * source, size_t numCodePoints )
+size_t ConvertToUtf8( char* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -118,7 +118,7 @@ size_t ConvertToUtf8( char * dest, size_t destLen, char32_t const * source, size
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf16( char16_t * dest, size_t destLen, char const * source, size_t numBytes )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -128,7 +128,7 @@ size_t ConvertToUtf16( char16_t * dest, size_t destLen, char const * source, siz
 
 
 
-size_t ConvertToUtf16( char16_t * dest, size_t destLen, char16_t const * source, size_t numPairs )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -138,7 +138,7 @@ size_t ConvertToUtf16( char16_t * dest, size_t destLen, char16_t const * source,
 
 
 
-size_t ConvertToUtf16( char16_t * dest, size_t destLen, char32_t const * source, size_t numCodePoints )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -148,7 +148,7 @@ size_t ConvertToUtf16( char16_t * dest, size_t destLen, char32_t const * source,
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf32( char32_t * dest, size_t destLen, char const * source, size_t numBytes )
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -158,7 +158,7 @@ size_t ConvertToUtf32( char32_t * dest, size_t destLen, char const * source, siz
 
 
 
-size_t ConvertToUtf32( char32_t * dest, size_t destLen, char16_t const * source, size_t numPairs )
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );
@@ -168,7 +168,7 @@ size_t ConvertToUtf32( char32_t * dest, size_t destLen, char16_t const * source,
 
 
 
-size_t ConvertToUtf32( char32_t * dest, size_t destLen, char32_t const * source, size_t numCodePoints )
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator iter( dest, destLen, &writeAttempts );

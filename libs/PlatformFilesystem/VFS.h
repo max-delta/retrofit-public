@@ -9,14 +9,13 @@
 
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
+namespace VFSMountTableTokens {
 
-namespace VFSMountTableTokens
-{
 constexpr size_t k_NumColumns = 4;
 
 // Serves as prefix and suffix, everything else could be a valid unix
 //  identifier, since they're super-permissive
-constexpr char k_MountTokenAffix[] = { '/','/' };
+constexpr char k_MountTokenAffix[] = { '/', '/' };
 
 // May have \r\n at the end, but we're throwing away the \r anyways
 constexpr char k_MountCommentPrefix = '#';
@@ -24,7 +23,7 @@ constexpr char k_MountCommentSuffix = '\n';
 
 // Only whitespace can be between tokens and comments, everything else is
 //  probably an indication of parser failure
-constexpr char k_MountFillerIgnores[] = { ' ','\t','\r','\n' };
+constexpr char k_MountFillerIgnores[] = { ' ', '\t', '\r', '\n' };
 
 constexpr char k_MountTokenAbsolute[] = "mount_abs";
 constexpr char k_MountTokenConfigRelative[] = "mount_rel";
@@ -36,8 +35,8 @@ constexpr char k_MountTokenUserRelative[] = "mount_usr";
 constexpr char k_MountTokenReadOnly[] = "ro";
 constexpr char k_MountTokenReadWrite[] = "rw";
 constexpr char k_MountTokenReadExecute[] = "rx";
-}
 
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 class PLATFORMFILESYSTEM_API VFS

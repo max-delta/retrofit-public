@@ -2,9 +2,9 @@
 #include "Logging/Constants.h"
 
 #ifdef PPU_EXPORTS
-#define PPU_API __declspec(dllexport)
+#define PPU_API __declspec( dllexport )
 #else
-#define PPU_API __declspec(dllimport)
+#define PPU_API __declspec( dllimport )
 #endif
 
 constexpr char const* RFCAT_PPU = "PPU";

@@ -15,7 +15,7 @@ Uuid::Uuid()
 
 
 
-Uuid::Uuid( OctetSequence const & sequence )
+Uuid::Uuid( OctetSequence const& sequence )
 	: mOctetSequence{
 		sequence[0], sequence[1], sequence[2], sequence[3],
 		sequence[4], sequence[5], sequence[6], sequence[7],
@@ -27,7 +27,7 @@ Uuid::Uuid( OctetSequence const & sequence )
 
 
 
-bool Uuid::operator==( Uuid const & rhs ) const
+bool Uuid::operator==( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult == 0;
@@ -35,7 +35,7 @@ bool Uuid::operator==( Uuid const & rhs ) const
 
 
 
-bool Uuid::operator!=( Uuid const & rhs ) const
+bool Uuid::operator!=( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult != 0;
@@ -43,7 +43,7 @@ bool Uuid::operator!=( Uuid const & rhs ) const
 
 
 
-bool Uuid::operator<( Uuid const & rhs ) const
+bool Uuid::operator<( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult < 0;
@@ -51,7 +51,7 @@ bool Uuid::operator<( Uuid const & rhs ) const
 
 
 
-bool Uuid::operator>( Uuid const & rhs ) const
+bool Uuid::operator>( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult > 0;
@@ -59,7 +59,7 @@ bool Uuid::operator>( Uuid const & rhs ) const
 
 
 
-bool Uuid::operator<=( Uuid const & rhs ) const
+bool Uuid::operator<=( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult < 0 || compareResult == 0;
@@ -67,7 +67,7 @@ bool Uuid::operator<=( Uuid const & rhs ) const
 
 
 
-bool Uuid::operator>=( Uuid const & rhs ) const
+bool Uuid::operator>=( Uuid const& rhs ) const
 {
 	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult > 0 || compareResult == 0;
@@ -138,7 +138,7 @@ uint8_t Uuid::GetVariant() const
 
 
 
-Uuid::OctetSequence const & Uuid::GetSequence() const
+Uuid::OctetSequence const& Uuid::GetSequence() const
 {
 	return mOctetSequence;
 }
@@ -147,7 +147,7 @@ Uuid::OctetSequence const & Uuid::GetSequence() const
 
 rftl::string Uuid::GetDebugString() const
 {
-	char octetBuf[3] = { '0','0','\0' };
+	char octetBuf[3] = { '0', '0', '\0' };
 	constexpr char kExample[] = "{11223344-1122-1122-1122-112233445566}(v1!$,1)";
 	rftl::string retVal;
 	retVal.reserve( sizeof( kExample ) );

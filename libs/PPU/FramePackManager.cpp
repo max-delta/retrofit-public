@@ -11,7 +11,7 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const & texMan, WeakPtr<file::VFS> const& vfs )
+FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs )
 	: ResourceManagerType()
 	, mTextureManager( texMan )
 	, mVfs( vfs )
@@ -28,7 +28,7 @@ FramePackManager::~FramePackManager()
 
 
 
-UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const & filename )
+UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const& filename )
 {
 	RF_ASSERT( mTextureManager != nullptr );
 

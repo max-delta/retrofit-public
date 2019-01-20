@@ -61,7 +61,7 @@ bool DiagnosticExporter::Root_BeginNewInstance()
 
 
 
-bool DiagnosticExporter::Root_RegisterLocalIndirection( IndirectionID const & indirectionID, InstanceID const & instanceID )
+bool DiagnosticExporter::Root_RegisterLocalIndirection( IndirectionID const& indirectionID, InstanceID const& instanceID )
 {
 	if( mFinalized )
 	{
@@ -76,7 +76,7 @@ bool DiagnosticExporter::Root_RegisterLocalIndirection( IndirectionID const & in
 
 
 
-bool DiagnosticExporter::Root_RegisterExternalIndirection( IndirectionID const & indirectionID, ExternalReferenceID const & referenceID )
+bool DiagnosticExporter::Root_RegisterExternalIndirection( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID )
 {
 	if( mFinalized )
 	{
@@ -91,7 +91,7 @@ bool DiagnosticExporter::Root_RegisterExternalIndirection( IndirectionID const &
 
 
 
-bool DiagnosticExporter::Instance_AddInstanceIDAttribute( InstanceID const & instanceID )
+bool DiagnosticExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID )
 {
 	if( mFinalized )
 	{
@@ -112,7 +112,7 @@ bool DiagnosticExporter::Instance_AddInstanceIDAttribute( InstanceID const & ins
 
 
 
-bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const & typeID, char const * debugName )
+bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName )
 {
 	if( mFinalized )
 	{
@@ -163,7 +163,7 @@ bool DiagnosticExporter::Instance_BeginNewProperty()
 
 
 
-bool DiagnosticExporter::Property_AddNameAttribute( char const * name )
+bool DiagnosticExporter::Property_AddNameAttribute( char const* name )
 {
 	if( mFinalized )
 	{
@@ -185,7 +185,7 @@ bool DiagnosticExporter::Property_AddNameAttribute( char const * name )
 
 
 
-bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const & value )
+bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value )
 {
 	if( mFinalized )
 	{
@@ -207,7 +207,7 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const & valu
 
 
 
-bool DiagnosticExporter::Property_AddIndirectionAttribute( IndirectionID const & indirectionID )
+bool DiagnosticExporter::Property_AddIndirectionAttribute( IndirectionID const& indirectionID )
 {
 	if( mFinalized )
 	{

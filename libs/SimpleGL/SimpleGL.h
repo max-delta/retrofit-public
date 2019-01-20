@@ -8,7 +8,7 @@
 
 // Forwards
 namespace RF { namespace gfx {
-	class SIMPLEGL_API DeviceInterface;
+class SIMPLEGL_API DeviceInterface;
 }}
 
 namespace RF { namespace gfx {
@@ -17,6 +17,7 @@ namespace RF { namespace gfx {
 class SIMPLEGL_API SimpleGL final : public DeviceInterface
 {
 	RF_NO_COPY( SimpleGL );
+
 public:
 	enum class ProjectionMode
 	{
@@ -49,7 +50,7 @@ public:
 	bool glPrint( char const* fmt, ... );
 	bool glPrint( char const* fmt, va_list args );
 
-	bool DebugRenderText( math::Vector2f pos, const char *fmt, ... ) override;
+	bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) override;
 	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 

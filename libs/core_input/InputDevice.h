@@ -24,9 +24,9 @@ public:
 protected:
 	InputDevice() = delete;
 	InputDevice(
-		UniquePtr<DigitalInputComponent> && digital,
-		UniquePtr<AnalogInputComponent> && analog,
-		UniquePtr<TextInputComponent> && text );
+		UniquePtr<DigitalInputComponent>&& digital,
+		UniquePtr<AnalogInputComponent>&& analog,
+		UniquePtr<TextInputComponent>&& text );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -58,7 +58,7 @@ FrameBuilder::~FrameBuilder()
 
 
 
-bool FrameBuilder::AddTask( TaskRepresentation && taskRepresentation, UniquePtr<scheduling::Task> cloneableTask )
+bool FrameBuilder::AddTask( TaskRepresentation&& taskRepresentation, UniquePtr<scheduling::Task> cloneableTask )
 {
 	if( mFinalized )
 	{
@@ -98,7 +98,7 @@ bool FrameBuilder::FinalizePlan()
 
 
 
-bool FrameBuilder::SetStartingCondition( ConditionID const & conditionID, ConditionValue const & conditionValue )
+bool FrameBuilder::SetStartingCondition( ConditionID const& conditionID, ConditionValue const& conditionValue )
 {
 	if( TestCanChangeConditions() == false )
 	{
@@ -112,7 +112,7 @@ bool FrameBuilder::SetStartingCondition( ConditionID const & conditionID, Condit
 
 
 
-bool FrameBuilder::RemoveStartingCondition( ConditionID const & conditionID )
+bool FrameBuilder::RemoveStartingCondition( ConditionID const& conditionID )
 {
 	if( TestCanChangeConditions() == false )
 	{
@@ -126,7 +126,7 @@ bool FrameBuilder::RemoveStartingCondition( ConditionID const & conditionID )
 
 
 
-bool FrameBuilder::SetDesiredCondition( ConditionID const & conditionID, ConditionValue const & conditionValue )
+bool FrameBuilder::SetDesiredCondition( ConditionID const& conditionID, ConditionValue const& conditionValue )
 {
 	if( TestCanChangeConditions() == false )
 	{
@@ -140,7 +140,7 @@ bool FrameBuilder::SetDesiredCondition( ConditionID const & conditionID, Conditi
 
 
 
-bool FrameBuilder::RemoveDesiredCondition( ConditionID const & conditionID )
+bool FrameBuilder::RemoveDesiredCondition( ConditionID const& conditionID )
 {
 	if( TestCanChangeConditions() == false )
 	{

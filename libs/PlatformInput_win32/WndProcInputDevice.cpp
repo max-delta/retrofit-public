@@ -24,7 +24,7 @@ WndProcInputDevice::WndProcInputDevice()
 
 
 
-shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool & intercepted )
+shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted )
 {
 	shim::LRESULT retVal = {};
 	shim::LRESULT componentResult;
@@ -65,7 +65,7 @@ shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shi
 void WndProcDigitalInputComponent::OnTick()
 {
 	m_PreviousLogicalState = m_CurrentLogicalState;
-	m_PreviousPhysicalState= m_CurrentPhysicalState;
+	m_PreviousPhysicalState = m_CurrentPhysicalState;
 }
 
 
@@ -158,7 +158,7 @@ void WndProcDigitalInputComponent::ClearLogicalEventStream()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool & intercepted )
+shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted )
 {
 	// TODO: Alt keys
 
@@ -432,7 +432,7 @@ void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, PinState state 
 void WndProcAnalogInputComponent::OnTick()
 {
 	static_assert( rftl::is_array<SignalValues>::value, "Type changed, re-evalute memcpy safety" );
-	memcpy( m_PreviousSignalValues, m_CurrentSignalValues, sizeof(SignalValues) );
+	memcpy( m_PreviousSignalValues, m_CurrentSignalValues, sizeof( SignalValues ) );
 }
 
 
@@ -468,7 +468,7 @@ WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetPreviou
 
 ///////////////////////////////////////////////////////////////////////////////
 
-shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool & intercepted )
+shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted )
 {
 	// TODO: Relative velocity from wheel
 	// TODO: Relative velocity from raw mouse
@@ -537,7 +537,7 @@ void WndProcTextInputComponent::OnTick()
 
 
 
-void WndProcTextInputComponent::GetTextStream( rftl::u16string & text, size_t maxLen ) const
+void WndProcTextInputComponent::GetTextStream( rftl::u16string& text, size_t maxLen ) const
 {
 	text.clear();
 	text.reserve( maxLen );
@@ -560,7 +560,7 @@ void WndProcTextInputComponent::ClearTextStream()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-shim::LRESULT WndProcTextInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool & intercepted )
+shim::LRESULT WndProcTextInputComponent::ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted )
 {
 	switch( message )
 	{

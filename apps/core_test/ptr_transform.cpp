@@ -10,7 +10,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-TEST(UniquePtr, TransformToShared)
+TEST( UniquePtr, TransformToShared )
 {
 	WeakPtr<int> wptr;
 	ASSERT_TRUE( wptr == nullptr );
@@ -18,10 +18,10 @@ TEST(UniquePtr, TransformToShared)
 		SharedPtr<int> sptr;
 		ASSERT_TRUE( sptr == nullptr );
 		{
-			UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+			UniquePtr<int> uptr = DefaultCreator<int>::Create( 47 );
 			ASSERT_TRUE( uptr != nullptr );
 			wptr = uptr;
-			ASSERT_TRUE(wptr != nullptr);
+			ASSERT_TRUE( wptr != nullptr );
 			{
 				PtrTransformer<int>::PerformTransformation( rftl::move( uptr ), sptr );
 				ASSERT_TRUE( uptr == nullptr );

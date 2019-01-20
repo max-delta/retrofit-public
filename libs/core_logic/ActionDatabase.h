@@ -25,7 +25,7 @@ struct State
 		//
 	}
 
-	State( StateID && stateID, StateValue && stateValue )
+	State( StateID&& stateID, StateValue&& stateValue )
 		: mStateID( rftl::move( stateID ) )
 		, mStateValue( rftl::move( stateValue ) )
 	{
@@ -48,7 +48,7 @@ template<
 	typename TStateValue,
 	typename THash = rftl::hash<TStateID>,
 	typename TEquals = rftl::equal_to<TStateID>,
-	typename TAlloc = rftl::allocator<TStateID> >
+	typename TAlloc = rftl::allocator<TStateID>>
 struct StateCollection
 {
 public:
@@ -62,21 +62,21 @@ public:
 	using AllocatorTraits = rftl::allocator_traits<Allocator>;
 	using State = State<TStateID, TStateValue>;
 private:
-	using ReboundEntryAllocator = typename AllocatorTraits::template rebind_alloc< State >;
+	using ReboundEntryAllocator = typename AllocatorTraits::template rebind_alloc<State>;
 public:
 	using States = rftl::unordered_set<State, StateHash, StateEquals, ReboundEntryAllocator>;
 
 public:
 	struct StateHash
 	{
-		size_t operator() ( State const& value ) const
+		size_t operator()( State const& value ) const
 		{
 			return Hash()( value.mStateID );
 		}
 	};
 	struct StateEquals
 	{
-		bool operator() ( State const& lhs, State const& rhs ) const
+		bool operator()( State const& lhs, State const& rhs ) const
 		{
 			return Equals()( lhs.mStateID, rhs.mStateID );
 		}
@@ -94,7 +94,7 @@ template<
 	typename TMetaValue = EmptyStruct,
 	typename THash = rftl::hash<TStateID>,
 	typename TEquals = rftl::equal_to<TStateID>,
-	typename TAlloc = rftl::allocator<TStateID> >
+	typename TAlloc = rftl::allocator<TStateID>>
 struct Action
 {
 	using Preconditions = StateCollection<TStateID, TStateValue, THash, TEquals, TAlloc>;
@@ -113,7 +113,7 @@ template<
 	typename TMetaValue = EmptyStruct,
 	typename THash = rftl::hash<TStateID>,
 	typename TEquals = rftl::equal_to<TStateID>,
-	typename TAlloc = rftl::allocator<TStateID> >
+	typename TAlloc = rftl::allocator<TStateID>>
 class ActionDatabase
 {
 	//
@@ -128,8 +128,8 @@ public:
 	static constexpr ActionID kInvalidActionID = 0;
 private:
 	using ReboundPair = rftl::pair<ActionID const, Action>;
-	using ReboundPairAllocator = typename AllocatorTraits::template rebind_alloc< ReboundPair >;
-	using ReboundEntryAllocator = typename AllocatorTraits::template rebind_alloc< ActionID >;
+	using ReboundPairAllocator = typename AllocatorTraits::template rebind_alloc<ReboundPair>;
+	using ReboundEntryAllocator = typename AllocatorTraits::template rebind_alloc<ActionID>;
 	using ActionsByID = rftl::unordered_map<ActionID, Action, rftl::hash<ActionID>, rftl::equal_to<ActionID>, ReboundPairAllocator>;
 public:
 	using ActionIDCollection = rftl::unordered_set<ActionID, rftl::hash<ActionID>, rftl::equal_to<ActionID>, ReboundEntryAllocator>;

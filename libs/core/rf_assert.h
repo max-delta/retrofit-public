@@ -18,13 +18,13 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 }}
 
 #ifdef _DEBUG
-#define ___RF_ASSERT_IMPL___(TEST, MESSAGEEXPRESSION) \
+#define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
 	do \
 	{ \
 		static bool ___rf_assert_skip_all_instances = false; \
 		if( \
 			___rf_assert_skip_all_instances == true || \
-			!!(TEST) ) \
+			!!( TEST ) ) \
 		{ \
 			/* NOTE: Can't use '&&', or MSVC asks you if you meant '&' */ \
 		} \
@@ -41,14 +41,14 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 				___rf_assert_skip_all_instances = true; \
 			} \
 		} \
-	} while (false)
-#define RF_ASSERT(TEST) ___RF_ASSERT_IMPL___(TEST, "FAIL")
-#define RF_ASSERT_MSG(TEST, MSG) ___RF_ASSERT_IMPL___(TEST, MSG)
-#define RF_DBGFAIL() ___RF_ASSERT_IMPL___(false, "FAIL")
-#define RF_DBGFAIL_MSG(MSG) ___RF_ASSERT_IMPL___(false, MSG)
+	} while( false )
+#define RF_ASSERT( TEST ) ___RF_ASSERT_IMPL___( TEST, "FAIL" )
+#define RF_ASSERT_MSG( TEST, MSG ) ___RF_ASSERT_IMPL___( TEST, MSG )
+#define RF_DBGFAIL() ___RF_ASSERT_IMPL___( false, "FAIL" )
+#define RF_DBGFAIL_MSG( MSG ) ___RF_ASSERT_IMPL___( false, MSG )
 #else
-#define RF_ASSERT(TEST) RF_EMPTY_FUNCLET()
-#define RF_ASSERT_MSG(TEST, MSG) RF_EMPTY_FUNCLET()
+#define RF_ASSERT( TEST ) RF_EMPTY_FUNCLET()
+#define RF_ASSERT_MSG( TEST, MSG ) RF_EMPTY_FUNCLET()
 #define RF_DBGFAIL() RF_EMPTY_FUNCLET()
-#define RF_DBGFAIL_MSG(MSG) RF_EMPTY_FUNCLET()
+#define RF_DBGFAIL_MSG( MSG ) RF_EMPTY_FUNCLET()
 #endif

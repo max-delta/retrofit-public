@@ -15,6 +15,7 @@ template<typename FromT, typename ToT>
 class LogEventConverter
 {
 	RF_NO_COPY( LogEventConverter );
+
 public:
 	LogEventConverter( LogEvent<FromT> const& logEvent );
 
@@ -29,7 +30,7 @@ private:
 
 
 template<typename FromT, typename ToT>
-LogEventConverter<FromT, ToT>::LogEventConverter( LogEvent<FromT> const & logEvent )
+LogEventConverter<FromT, ToT>::LogEventConverter( LogEvent<FromT> const& logEvent )
 {
 	mConverted = {};
 	mConverted.mCategoryKey = logEvent.mCategoryKey;
@@ -66,7 +67,7 @@ void LoggingRouter::Log(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const * format, ... ) const
+	char const* format, ... ) const
 {
 	va_list args;
 	va_start( args, format );
@@ -82,7 +83,7 @@ void LoggingRouter::Log(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const * format, ... ) const
+	char16_t const* format, ... ) const
 {
 	va_list args;
 	va_start( args, format );
@@ -98,7 +99,7 @@ void LoggingRouter::Log(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const * format, ... ) const
+	char32_t const* format, ... ) const
 {
 	va_list args;
 	va_start( args, format );
@@ -150,7 +151,7 @@ void LoggingRouter::LogVA(
 
 
 
-HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const & handlerDefinition )
+HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const& handlerDefinition )
 {
 	WriterLock lock( mMultiReaderSingleWriterLock );
 
@@ -158,7 +159,8 @@ HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const & handlerDefin
 	RF_ASSERT_MSG(
 		handlerDefinition.mUtf8HandlerFunc != nullptr ||
 		handlerDefinition.mUtf16HandlerFunc != nullptr ||
-		handlerDefinition.mUtf32HandlerFunc != nullptr, "Bad param" );
+		handlerDefinition.mUtf32HandlerFunc != nullptr,
+		"Bad param" );
 
 	HandlerID const newID = mHandlerIDGenerator;
 	mHandlerIDGenerator++;
@@ -193,14 +195,14 @@ bool LoggingRouter::UnregisterHandler( HandlerID handlerID )
 
 
 
-char const * LoggingRouter::GetStringFromCategoryKey( CategoryKey categoryKey ) const
+char const* LoggingRouter::GetStringFromCategoryKey( CategoryKey categoryKey ) const
 {
 	return categoryKey;
 }
 
 
 
-void LoggingRouter::SetSeverityString( SeverityMask singleBit, char const * immutableString )
+void LoggingRouter::SetSeverityString( SeverityMask singleBit, char const* immutableString )
 {
 	RF_ASSERT_MSG( math::HasOnly1BitSet( singleBit ), "Bad param" );
 
@@ -302,7 +304,7 @@ void LoggingRouter::LogInternal(
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
@@ -326,7 +328,7 @@ void LoggingRouter::LogInternal( LogEvent<char> const & logEvent, HandlerDefinit
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char16_t> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
@@ -350,7 +352,7 @@ void LoggingRouter::LogInternal( LogEvent<char16_t> const & logEvent, HandlerDef
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char32_t> const & logEvent, HandlerDefinition const & handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{

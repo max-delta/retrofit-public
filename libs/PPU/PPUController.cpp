@@ -121,7 +121,7 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 
 
-bool PPUController::LoadFont( FILE * file )
+bool PPUController::LoadFont( FILE* file )
 {
 	// TODO: Revise the font API
 	uint32_t unused;
@@ -239,7 +239,7 @@ bool PPUController::DrawObject( Object const& object )
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char * fmt, ... )
+bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... )
 {
 	RF_ASSERT_MSG( charSize.x == 4, "TODO: Support other sizes" );
 	RF_ASSERT_MSG( charSize.y == 8, "TODO: Support other sizes" );
@@ -270,7 +270,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char * fmt,
 
 
 
-bool PPUController::DebugDrawText( PPUCoord pos, const char * fmt, ... )
+bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
 	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
 	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
@@ -369,7 +369,7 @@ void PPUController::Render() const
 		FramePackBase const* const framePack = m_FramePackManager->GetResourceFromManagedResourceID( object.m_FramePackID );
 		RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
 		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.m_TimeIndex );
-		FramePackBase::TimeSlot const & timeSlot = framePack->GetTimeSlots()[slotIndex];
+		FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
 
 		if( timeSlot.m_TextureReference == k_InvalidManagedTextureID )
 		{
@@ -435,24 +435,28 @@ void PPUController::Render() const
 		for( PPUCoordElem horizontal = 0; horizontal <= m_Width; horizontal += k_TileSize )
 		{
 			math::Vector2f const posA = CoordToDevice( horizontal, 0 );
-			math::Vector2f const posB = CoordToDevice( horizontal-1, 0 );
+			math::Vector2f const posB = CoordToDevice( horizontal - 1, 0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( posA.x, 0 ),
-				math::Vector2f( posA.x, 1 ), 0 );
+				math::Vector2f( posA.x, 1 ),
+				0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( posB.x, 0 ),
-				math::Vector2f( posB.x, 1 ), 0 );
+				math::Vector2f( posB.x, 1 ),
+				0 );
 		}
 		for( PPUCoordElem vertical = 0; vertical <= m_Height; vertical += k_TileSize )
 		{
 			math::Vector2f const posA = CoordToDevice( 0, vertical );
-			math::Vector2f const posB = CoordToDevice( 0, vertical-1 );
+			math::Vector2f const posB = CoordToDevice( 0, vertical - 1 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posA.y ),
-				math::Vector2f( 1, posA.y ), 0 );
+				math::Vector2f( 1, posA.y ),
+				0 );
 			m_DeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posB.y ),
-				math::Vector2f( 1, posB.y ), 0 );
+				math::Vector2f( 1, posB.y ),
+				0 );
 		}
 	}
 
@@ -495,12 +499,12 @@ math::Vector2f PPUController::CoordToDevice( PPUCoordElem xCoord, PPUCoordElem y
 
 
 
-math::Vector2f PPUController::CoordToDevice( PPUCoord const & coord ) const
+math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 {
 	// TODO: Windowing
 	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
 	uint8_t const zoomFactor = GetZoomFactor();
-	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( k_TileSize*zoomFactor );
+	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( k_TileSize * zoomFactor );
 
 	// Baseline
 	// [0-64]

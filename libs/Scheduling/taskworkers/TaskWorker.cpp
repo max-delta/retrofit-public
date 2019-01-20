@@ -7,7 +7,7 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-void TaskWorker::OnWorkComplete( Task * task, TaskState newState, TaskScheduler * scheduler )
+void TaskWorker::OnWorkComplete( Task* task, TaskState newState, TaskScheduler* scheduler )
 {
 	scheduler->OnWorkComplete( this, task, newState );
 }

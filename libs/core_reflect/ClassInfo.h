@@ -111,8 +111,8 @@ struct ExtensionAccessor
 	// Contents must remain stable during access, it is the responsibility of
 	//  the accessor to negotiate with the accessed structure if need be
 	// NOTE: Null is permitted, indicates the accessor doesn't care
-	using FuncPtrBeginAccess = void( *)( RootConstInst root );
-	using FuncPtrEndAccess = void( *)( RootConstInst root );
+	using FuncPtrBeginAccess = void ( * )( RootConstInst root );
+	using FuncPtrEndAccess = void ( * )( RootConstInst root );
 	FuncPtrBeginAccess mBeginAccess = nullptr;
 	FuncPtrEndAccess mEndAccess = nullptr;
 
@@ -121,8 +121,8 @@ struct ExtensionAccessor
 	//  if this could lead to errors, or violated the stability gaurantees from
 	//  the begin/end access calls
 	// NOTE: Null is permitted, indicates the accessor doesn't care
-	using FuncPtrBeginMutation = void( *)( RootInst root );
-	using FuncPtrEndMutation = void( *)( RootInst root );
+	using FuncPtrBeginMutation = void ( * )( RootInst root );
+	using FuncPtrEndMutation = void ( * )( RootInst root );
 	FuncPtrBeginMutation mBeginMutation = nullptr;
 	FuncPtrEndMutation mEndMutation = nullptr;
 
@@ -132,7 +132,7 @@ struct ExtensionAccessor
 	//  this direct index characteristic has value to serializers since thay
 	//  may have a keyless storage option that is more efficient or practical
 	// NOTE: Null indicates a lack of this characteristic
-	using FuncPtrGetDirectKeyInfo = VariableTypeInfo( *)( RootConstInst root );
+	using FuncPtrGetDirectKeyInfo = VariableTypeInfo ( * )( RootConstInst root );
 	FuncPtrGetDirectKeyInfo mGetDirectKeyInfo = nullptr;
 
 	// Some extensions have a simplified value system such that all values
@@ -141,43 +141,43 @@ struct ExtensionAccessor
 	//  this shared type characteristic has value to serializers since thay
 	//  may have a simpler storage option that is more efficient or practical
 	// NOTE: Null indicates a lack of this characteristic
-	using FuncPtrGetSharedTargetInfo = VariableTypeInfo( *)( RootConstInst root );
+	using FuncPtrGetSharedTargetInfo = VariableTypeInfo ( * )( RootConstInst root );
 	FuncPtrGetSharedTargetInfo mGetSharedTargetInfo = nullptr;
 
 	// The number of variables, which will be treated as an indexed list of
 	//  keys, and each key queried before accessing the target variables
 	// NOTE: Null is forbidden
-	using FuncPtrGetNumVariables = size_t( *)( RootConstInst root );
+	using FuncPtrGetNumVariables = size_t ( * )( RootConstInst root );
 	FuncPtrGetNumVariables mGetNumVariables = nullptr;
 
 	// Different variables may have different key types, so the accessor will
 	//  need to be queried for info on a per-key basis
 	// NOTE: Null is forbidden
-	using FuncPtrGetVariableInfoByIndex = VariableTypeInfo( *)( RootConstInst root, size_t index );
+	using FuncPtrGetVariableInfoByIndex = VariableTypeInfo ( * )( RootConstInst root, size_t index );
 	FuncPtrGetVariableInfoByIndex mGetVariableKeyInfoByIndex = nullptr;
 
 	// Access key using the type provided by the key info
 	// NOTE: Returns false on caller failure
 	// NOTE: Null is forbidden
-	using FuncPtrGetKeyByIndex = bool( *)( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo );
+	using FuncPtrGetKeyByIndex = bool ( * )( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo );
 	FuncPtrGetKeyByIndex mGetVariableKeyByIndex = nullptr;
 
 	// Different variables may have different target types, so the accessor
 	//  will need to be queried for info on a per-variable basis
 	// NOTE: Null is forbidden
-	using FuncPtrGetVariableInfoByKey = VariableTypeInfo( *)( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
+	using FuncPtrGetVariableInfoByKey = VariableTypeInfo ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
 	FuncPtrGetVariableInfoByKey mGetVariableTargetInfoByKey = nullptr;
 
 	// Access target by key
 	// NOTE: Null is forbidden
-	using FuncPtrGetTargetByKey = bool( *)( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo );
+	using FuncPtrGetTargetByKey = bool ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo );
 	FuncPtrGetTargetByKey mGetVariableTargetByKey = nullptr;
 
 	// Insert target by key
 	// NOTE: Returns false on caller failure
 	// NOTE: Null indicates lack of support for that operation
-	using FunctPtrInsertVariableViaMove = bool( *)( RootInst root, UntypedInst key, VariableTypeInfo const& keyInfo, UntypedInst value, VariableTypeInfo const& valueInfo );
-	using FunctPtrInsertVariableViaCopy = bool( *)( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo );
+	using FunctPtrInsertVariableViaMove = bool ( * )( RootInst root, UntypedInst key, VariableTypeInfo const& keyInfo, UntypedInst value, VariableTypeInfo const& valueInfo );
+	using FunctPtrInsertVariableViaCopy = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo );
 	FunctPtrInsertVariableViaMove mInsertVariableViaMove = nullptr;
 	FunctPtrInsertVariableViaCopy mInsertVariableViaCopy = nullptr;
 };

@@ -7,7 +7,7 @@
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace details{
+namespace details {
 
 // NOTE: Static member variables not allowed in function-scope classes
 struct ClassWithStaticMemberVariables
@@ -112,7 +112,7 @@ TEST( ReflectBuilder, ClassInfos )
 		{
 			Test() = delete;
 			Test( Test const& ) = delete;
-			Test( Test && ) = delete;
+			Test( Test&& ) = delete;
 			~Test() = delete;
 			Test& operator=( Test const& ) = delete;
 			Test& operator=( Test const&& ) = delete;

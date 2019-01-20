@@ -23,8 +23,10 @@ void AssertLogger( LoggingRouter const& router, LogEvent<char> const& event, va_
 
 	using AssertLocation = rftl::pair<rftl::string, size_t>;
 	using AssertLocationHash = math::PairHash<
-		AssertLocation::first_type, AssertLocation::second_type,
-		rftl::hash<AssertLocation::first_type>, rftl::hash<AssertLocation::second_type> >;
+		AssertLocation::first_type,
+		AssertLocation::second_type,
+		rftl::hash<AssertLocation::first_type>,
+		rftl::hash<AssertLocation::second_type>>;
 	using AssertLocations = rftl::unordered_set<AssertLocation, AssertLocationHash>;
 	static AssertLocations skippedAssertLocations;
 

@@ -24,7 +24,7 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackEditor::FramePackEditor( WeakPtr<file::VFS> const & vfs )
+FramePackEditor::FramePackEditor( WeakPtr<file::VFS> const& vfs )
 	: m_Vfs( vfs )
 {
 	//
@@ -783,7 +783,7 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gf
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
+void FramePackEditor::OpenFramePack( rftl::string const& rawPath )
 {
 	file::VFS const& vfs = *m_Vfs;
 	file::VFSPath const filePath = vfs.AttemptMapToVFS( rawPath, file::VFSMount::Permissions::ReadOnly );
@@ -792,7 +792,7 @@ void FramePackEditor::OpenFramePack( rftl::string const & rawPath )
 
 
 
-void FramePackEditor::OpenFramePack( file::VFSPath const & path )
+void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 {
 	gfx::PPUController* const ppu = app::g_Graphics;
 
@@ -809,7 +809,7 @@ void FramePackEditor::OpenFramePack( file::VFSPath const & path )
 	}
 	m_FramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, path );
 
-	if(m_FramePackID != gfx::k_InvalidManagedFramePackID)
+	if( m_FramePackID != gfx::k_InvalidManagedFramePackID )
 	{
 		gfx::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( m_FramePackID );
 		RF_ASSERT( fpack != nullptr );
@@ -840,13 +840,13 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 		timeSlots[i] = timeSlots[i - 1];
 		timeSlotSustains[i] = timeSlotSustains[i - 1];
 	}
-	
+
 	if( slotIndex != 0 )
 	{
 		timeSlots[slotIndex] = timeSlots[slotIndex - 1];
 		timeSlots[slotIndex].m_TextureReference = gfx::k_InvalidManagedTextureID;
 		// TODO: Typedef
-		timeSlots[slotIndex].m_ColliderReference = static_cast<uint64_t>(0);
+		timeSlots[slotIndex].m_ColliderReference = static_cast<uint64_t>( 0 );
 		timeSlotSustains[slotIndex] = timeSlotSustains[slotIndex - 1];
 	}
 	else

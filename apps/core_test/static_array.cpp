@@ -28,7 +28,7 @@ struct Proxy
 	{
 		//
 	}
-	Proxy( Proxy && other )
+	Proxy( Proxy&& other )
 		: Proxy( other.val )
 	{
 		other.val = k_Destroyed;
@@ -371,7 +371,7 @@ TEST( StaticArray, ValueConstruct )
 	//  not worth the effort at this time, since users can clarify their
 	//  implicit call with minimal effort.
 	//rftl::static_array<Proxy, 5> sa( 2, 2 ); // Similar case on wipe test
-	rftl::static_array<Proxy, 5> sa( 2, Proxy(2) );
+	rftl::static_array<Proxy, 5> sa( 2, Proxy( 2 ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 2 );
@@ -386,7 +386,7 @@ TEST( StaticArray, ValueWipe )
 	rftl::static_array<Proxy, 5> sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	//sa.assign( 2, 2 ); // See notes on construct test
-	sa.assign( 2, Proxy(2) );
+	sa.assign( 2, Proxy( 2 ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 2 );

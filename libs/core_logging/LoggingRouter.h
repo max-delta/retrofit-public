@@ -35,8 +35,8 @@ private:
 	// Public methods
 public:
 	LoggingRouter();
-	LoggingRouter( LoggingRouter && ) = default;
-	LoggingRouter& operator=( LoggingRouter && ) = default;
+	LoggingRouter( LoggingRouter&& ) = default;
+	LoggingRouter& operator=( LoggingRouter&& ) = default;
 
 	void Log(
 		char const* context,
@@ -98,10 +98,10 @@ public:
 	SeverityStrings GetSeverityStrings() const;
 
 	// Dynamic whitelists
-	void SetOrModifyGlobalWhitelist(SeverityMask whitelist);
+	void SetOrModifyGlobalWhitelist( SeverityMask whitelist );
 	void ClearGlobalWhitelist();
 	void SetOrModifyCategoryWhitelist( CategoryKey categoryKey, SeverityMask whitelist );
-	void ClearCategoryWhitelist( CategoryKey categoryKey);
+	void ClearCategoryWhitelist( CategoryKey categoryKey );
 
 
 	//

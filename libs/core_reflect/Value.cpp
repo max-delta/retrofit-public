@@ -23,7 +23,7 @@ rftl::stringstream ConvertTempToSS( InT const& source )
 
 
 template<typename OutT>
-OutT ConvertSSToTemp( rftl::stringstream && ss )
+OutT ConvertSSToTemp( rftl::stringstream&& ss )
 {
 	OutT temp = OutT();
 	ss >> temp;
@@ -175,7 +175,7 @@ Value::Value( Type type )
 
 
 
-Value::Value( Type type, void const * bytes )
+Value::Value( Type type, void const* bytes )
 {
 	// TODO: Template recursion instead on the typelist
 	switch( type )
@@ -242,7 +242,7 @@ char const* Value::GetTypeName( Type type )
 }
 
 
-void const * Value::GetBytes() const
+void const* Value::GetBytes() const
 {
 	Type const type = GetStoredType();
 	// TODO: Template recursion instead on the typelist

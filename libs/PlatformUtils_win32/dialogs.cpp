@@ -30,7 +30,7 @@ PLATFORMUTILS_API rftl::string OpenFileDialog()
 	// Unix-ify the delimiters
 	for( char& ch : filePath )
 	{
-		if(ch == '\0')
+		if( ch == '\0' )
 		{
 			break;
 		}

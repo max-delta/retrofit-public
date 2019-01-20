@@ -50,11 +50,11 @@ public:
 	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
 
 	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );
-	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource> && resource );
+	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
 	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, Filename const& filename );
-	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource> && resource );
+	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
 	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, Filename const& filename );
-	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource> && resource );
+	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
 
 	bool UpdateExistingResource( ResourceName const& resourceName, Filename const& filename );
 	bool ReloadExistingResource( ResourceName const& resourceName );
@@ -70,7 +70,7 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<Resource> AllocateResourceFromFile( Filename const & filename ) = 0;
+	virtual UniquePtr<Resource> AllocateResourceFromFile( Filename const& filename ) = 0;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
 	virtual bool PostLoadFromMemory( ResourceType& resource );
 	virtual bool PreDestroy( ResourceType& resource );
@@ -88,7 +88,7 @@ private:
 	ManagedResourceID GenerateNewManagedID();
 
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
-	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource> && resource, ManagedResourceID& managedResourceID );
+	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
 
 
 	//

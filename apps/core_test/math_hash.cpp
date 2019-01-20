@@ -33,7 +33,7 @@ TEST( Hash, NullTerminatedStringHasher )
 
 
 
-TEST(Hash, StableHashBytes)
+TEST( Hash, StableHashBytes )
 {
 	// This hashing function better not change! The stable hash should be able
 	//  to be relied on across platforms and over time
