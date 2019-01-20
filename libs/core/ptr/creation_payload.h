@@ -9,7 +9,7 @@ namespace RF {
 template<typename T>
 class CreationPayload
 {
-	RF_NO_COPY(CreationPayload);
+	RF_NO_COPY( CreationPayload );
 
 
 	//
@@ -22,14 +22,14 @@ private:
 	//
 	// Public methods
 public:
-	CreationPayload( T * target, PtrRef * ref )
-		: m_Target(target)
-		, m_Ref(ref)
+	CreationPayload( T* target, PtrRef* ref )
+		: m_Target( target )
+		, m_Ref( ref )
 	{
 		//
 	}
 
-	CreationPayload( CreationPayload && rhs )
+	CreationPayload( CreationPayload&& rhs )
 		: m_Target( rftl::move( rhs.m_Target ) )
 		, m_Ref( rftl::move( rhs.m_Ref ) )
 	{
@@ -38,12 +38,12 @@ public:
 
 	~CreationPayload()
 	{
-		RF_ASSERT(m_Target == nullptr);
-		RF_ASSERT(m_Ref == nullptr);
+		RF_ASSERT( m_Target == nullptr );
+		RF_ASSERT( m_Ref == nullptr );
 		if( m_Ref != nullptr )
 		{
 			// Someone dropped the ball during transfer!
-			m_Ref->Delete(m_Target);
+			m_Ref->Delete( m_Target );
 			delete m_Ref;
 		}
 	}
@@ -62,8 +62,8 @@ private:
 	//
 	// Private data
 private:
-	T * m_Target;
-	PtrRef * m_Ref;
+	T* m_Target;
+	PtrRef* m_Ref;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

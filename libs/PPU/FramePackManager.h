@@ -24,7 +24,7 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const & filename ) override;
+	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const& filename ) override;
 
 
 	// Private data

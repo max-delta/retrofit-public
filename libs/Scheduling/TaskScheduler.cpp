@@ -12,7 +12,7 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-TaskScheduler::RegisteredWorker::RegisteredWorker( SharedPtr<TaskWorker> const & worker )
+TaskScheduler::RegisteredWorker::RegisteredWorker( SharedPtr<TaskWorker> const& worker )
 	: mWorker( worker )
 {
 	//
@@ -20,7 +20,7 @@ TaskScheduler::RegisteredWorker::RegisteredWorker( SharedPtr<TaskWorker> const &
 
 
 
-TaskScheduler::RegisteredWorker::RegisteredWorker( RegisteredWorker && rhs )
+TaskScheduler::RegisteredWorker::RegisteredWorker( RegisteredWorker&& rhs )
 	: mWorker( rftl::move( rhs.mWorker ) )
 	, mActiveTaskID( rftl::move( rhs.mActiveTaskID ) )
 	, mActiveTask( rftl::move( rhs.mActiveTask ) )
@@ -33,7 +33,7 @@ TaskScheduler::RegisteredWorker::RegisteredWorker( RegisteredWorker && rhs )
 
 
 
-TaskScheduler::RegisteredWorker & TaskScheduler::RegisteredWorker::operator=( RegisteredWorker && rhs )
+TaskScheduler::RegisteredWorker& TaskScheduler::RegisteredWorker::operator=( RegisteredWorker&& rhs )
 {
 	if( this != &rhs )
 	{
@@ -57,7 +57,7 @@ TaskScheduler::RegisteredPool::RegisteredPool( UniquePtr<TaskPool>&& pool )
 
 
 
-TaskScheduler::RegisteredPool::RegisteredPool( RegisteredPool && rhs )
+TaskScheduler::RegisteredPool::RegisteredPool( RegisteredPool&& rhs )
 	: mPool( rftl::move( rhs.mPool ) )
 {
 	//
@@ -65,7 +65,7 @@ TaskScheduler::RegisteredPool::RegisteredPool( RegisteredPool && rhs )
 
 
 
-TaskScheduler::RegisteredPool & TaskScheduler::RegisteredPool::operator=( RegisteredPool && rhs )
+TaskScheduler::RegisteredPool& TaskScheduler::RegisteredPool::operator=( RegisteredPool&& rhs )
 {
 	if( this != &rhs )
 	{
@@ -109,7 +109,7 @@ WeakSharedPtr<TaskWorker> TaskScheduler::RegisterWorker( UniquePtr<TaskWorker>&&
 
 
 
-void TaskScheduler::UnregisterWorker( WeakPtr<TaskWorker> const & worker )
+void TaskScheduler::UnregisterWorker( WeakPtr<TaskWorker> const& worker )
 {
 	RF_ASSERT( worker != nullptr );
 	TaskWorker const* workerKey = worker;
@@ -174,7 +174,7 @@ WeakPtr<TaskPool> TaskScheduler::RegisterPool( UniquePtr<TaskPool>&& pool, TaskP
 
 
 
-void TaskScheduler::UnregisterPool( WeakPtr<TaskPool> const & pool )
+void TaskScheduler::UnregisterPool( WeakPtr<TaskPool> const& pool )
 {
 	RF_ASSERT( pool != nullptr );
 	TaskPool const* poolKey = pool;
@@ -286,7 +286,7 @@ bool TaskScheduler::AllTasksAreCurrentlyCompleted() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void TaskScheduler::OnWorkComplete( TaskWorker * worker, Task * task, TaskState newState )
+void TaskScheduler::OnWorkComplete( TaskWorker* worker, Task* task, TaskState newState )
 {
 	RF_ASSERT( worker != nullptr );
 	RF_ASSERT( task != nullptr );
@@ -368,7 +368,7 @@ void TaskScheduler::OnWorkComplete( TaskWorker * worker, Task * task, TaskState 
 
 
 
-void TaskScheduler::OnTasksNewlyAvailable( TaskPool * pool )
+void TaskScheduler::OnTasksNewlyAvailable( TaskPool* pool )
 {
 	AttemptDispatch();
 }
@@ -488,7 +488,7 @@ bool TaskScheduler::AreAllWorkersIdle() const
 
 
 
-TaskScheduler::PriorityBlock & TaskScheduler::GetPriorityBlock( TaskPriority priority )
+TaskScheduler::PriorityBlock& TaskScheduler::GetPriorityBlock( TaskPriority priority )
 {
 	static_assert( kNumPriorities == 4, "Unexpected value" );
 	switch( priority )

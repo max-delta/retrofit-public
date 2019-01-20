@@ -7,7 +7,7 @@ int shim::ChoosePixelFormat( HDC hdc, PIXELFORMATDESCRIPTOR const* ppfd )
 	return win32::ChoosePixelFormat( static_cast<win32::HDC>( hdc ), reinterpret_cast<win32::PIXELFORMATDESCRIPTOR const*>( ppfd ) );
 }
 
-bool shim::SetPixelFormat( HDC hdc, int format, PIXELFORMATDESCRIPTOR const * ppfd )
+bool shim::SetPixelFormat( HDC hdc, int format, PIXELFORMATDESCRIPTOR const* ppfd )
 {
 	return win32::SetPixelFormat( static_cast<win32::HDC>( hdc ), format, reinterpret_cast<win32::PIXELFORMATDESCRIPTOR const*>( ppfd ) ) != 0;
 }

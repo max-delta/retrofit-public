@@ -1,7 +1,6 @@
 #pragma once
 
-namespace shim
-{
+namespace shim {
 enum VK
 {
 	VK_LBUTTON = 0x01,

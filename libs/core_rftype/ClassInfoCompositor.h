@@ -64,7 +64,7 @@ struct ClassInfoCompositor
 		return *this;
 	}
 
-	template<typename T, typename rftl::enable_if< reflect::FunctionTraits<T>::kCallType == reflect::CallType::FreeStanding,int>::type = 0>
+	template<typename T, typename rftl::enable_if<reflect::FunctionTraits<T>::kCallType == reflect::CallType::FreeStanding, int>::type = 0>
 	ClassInfoCompositor& Method( char const* identifier, T method )
 	{
 		reflect::FreeStandingFunctionInfo funcInfo = {};
@@ -74,7 +74,7 @@ struct ClassInfoCompositor
 		return *this;
 	}
 
-	template<typename T, typename rftl::enable_if< reflect::FunctionTraits<T>::kCallType == reflect::CallType::Member, int>::type = 0>
+	template<typename T, typename rftl::enable_if<reflect::FunctionTraits<T>::kCallType == reflect::CallType::Member, int>::type = 0>
 	ClassInfoCompositor& Method( char const* identifier, T method )
 	{
 		reflect::MemberFunctionInfo funcInfo = {};
@@ -84,7 +84,7 @@ struct ClassInfoCompositor
 		return *this;
 	}
 
-	template<typename T, typename rftl::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
+	template<typename T, typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
 	ClassInfoCompositor& RawProperty( char const* identifier, T variable )
 	{
 		reflect::FreeStandingVariableInfo varInfo = {};
@@ -95,8 +95,8 @@ struct ClassInfoCompositor
 	}
 
 	template<typename T,
-		typename rftl::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
-		typename rftl::enable_if< reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() != reflect::Value::Type::Invalid, int>::type = 0>
+		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
+		typename rftl::enable_if<reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() != reflect::Value::Type::Invalid, int>::type = 0>
 	ClassInfoCompositor& RawProperty( char const* identifier, T variable )
 	{
 		reflect::MemberVariableInfo varInfo = {};
@@ -107,8 +107,8 @@ struct ClassInfoCompositor
 	}
 
 	template<typename T,
-		typename rftl::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
-		typename rftl::enable_if< reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() == reflect::Value::Type::Invalid, int>::type = 0>
+		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0,
+		typename rftl::enable_if<reflect::Value::DetermineType<typename reflect::VariableTraits<T>::VariableType>() == reflect::Value::Type::Invalid, int>::type = 0>
 	ClassInfoCompositor& RawProperty( char const* identifier, T variable )
 	{
 		reflect::MemberVariableInfo varInfo = {};
@@ -124,7 +124,7 @@ struct ClassInfoCompositor
 	}
 
 	template<typename T,
-		typename rftl::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
+		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
 		ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
 	{
 		static_assert( false, "TODO" );
@@ -132,7 +132,7 @@ struct ClassInfoCompositor
 	}
 
 	template<typename T,
-		typename rftl::enable_if< reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0>
+		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::Member, int>::type = 0>
 	ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
 	{
 		// TODO: Templatize off this for RawProperty<...>(...) instead once the
@@ -192,7 +192,7 @@ struct CRTCompositionTrigger
 	{
 		return mFallbackClassInfo;
 	}
-	void Initialize( ::RF::rftype::ClassInfoCompositor<CLASS>& ___RFType_Macro_Target );
+	void Initialize(::RF::rftype::ClassInfoCompositor<CLASS>& ___RFType_Macro_Target );
 
 	using BackingClassType = CLASS;
 	::RF::reflect::ClassInfo mFallbackClassInfo;

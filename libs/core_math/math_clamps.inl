@@ -10,7 +10,7 @@ namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TYPE>
-constexpr TYPE const& Min(TYPE const& lhs, TYPE const& rhs)
+constexpr TYPE const& Min( TYPE const& lhs, TYPE const& rhs )
 {
 	return lhs < rhs ? lhs : rhs;
 }
@@ -85,7 +85,7 @@ constexpr TYPE SnapNearest( TYPE const& value, TYPE const& step )
 
 
 template<typename TYPE>
-constexpr TYPE SnapHighest( TYPE const & value, TYPE const & step )
+constexpr TYPE SnapHighest( TYPE const& value, TYPE const& step )
 {
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
 	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );
@@ -110,7 +110,7 @@ constexpr TYPE SnapHighest( TYPE const & value, TYPE const & step )
 
 
 template<typename TYPE>
-constexpr TYPE SnapLowest( TYPE const & value, TYPE const & step )
+constexpr TYPE SnapLowest( TYPE const& value, TYPE const& step )
 {
 	// NOTE: Need to create a constexpr-capable modf for floats/doubles
 	static_assert( rftl::is_integral<TYPE>::value, "TODO: Floating-point support" );

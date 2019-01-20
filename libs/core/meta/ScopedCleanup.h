@@ -24,7 +24,7 @@ struct OnScopeEnd
 		//
 	}
 
-	OnScopeEnd( CALLABLE && callable )
+	OnScopeEnd( CALLABLE&& callable )
 		: mCallable( std::move( callable ) )
 	{
 		//

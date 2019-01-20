@@ -53,9 +53,9 @@ public:
 	//
 	// Types
 public:
-	using OnMemberVariableFunc = void( *)( MemberVariableInstance const& );
-	using OnTraversalFunc = void( *)( TraversalType, TraversalVariableInstance const&, bool& shouldRecurse );
-	using OnReturnFromTraversalFunc = void( *)( TraversalType, TraversalVariableInstance const& );
+	using OnMemberVariableFunc = void ( * )( MemberVariableInstance const& );
+	using OnTraversalFunc = void ( * )( TraversalType, TraversalVariableInstance const&, bool& shouldRecurse );
+	using OnReturnFromTraversalFunc = void ( * )( TraversalType, TraversalVariableInstance const& );
 
 
 	//
@@ -93,7 +93,7 @@ public:
 	//
 	// Private methods
 private:
-	template< typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
+	template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
 	static void TraverseVariablesWithInheritanceT(
 		reflect::ClassInfo const& classInfo,
 		void const* classLocation,
@@ -101,7 +101,7 @@ private:
 		OnTraversalFuncT const& onTraversalFunc,
 		OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc );
 
-	template< typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
+	template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
 	static void TraverseVariablesWithoutInheritanceT(
 		reflect::ClassInfo const& classInfo,
 		void const* classLocation,

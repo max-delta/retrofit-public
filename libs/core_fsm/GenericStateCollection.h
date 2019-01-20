@@ -19,7 +19,7 @@ public:
 public:
 	State const* LookupState( StateID const& identifier ) const
 	{
-		return &(mStates.at( identifier ));
+		return &( mStates.at( identifier ) );
 	}
 
 

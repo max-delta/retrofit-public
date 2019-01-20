@@ -7,10 +7,10 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-TEST(EntwinedCreator, Basic)
+TEST( EntwinedCreator, Basic )
 {
 	{
-		UniquePtr<int> uptr = EntwinedCreator<int>::Create(47);
+		UniquePtr<int> uptr = EntwinedCreator<int>::Create( 47 );
 	}
 }
 

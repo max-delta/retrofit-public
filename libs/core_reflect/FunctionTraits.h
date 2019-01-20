@@ -29,27 +29,27 @@ struct FunctionTraits<RetType( Params... )>
 	using ReturnType = RetType;
 	using ParamTypes = TypeList<Params...>;
 	using FunctionType = RetType( Params... );
-	using FunctionPointerType = RetType( *)( Params... );
+	using FunctionPointerType = RetType ( * )( Params... );
 };
 
 
 
 // Free-standing function pointer (rvalue?)
 template<typename RetType, typename... Params>
-struct FunctionTraits<RetType( *)( Params... )>
+struct FunctionTraits<RetType ( * )( Params... )>
 {
 	static constexpr CallType kCallType = CallType::FreeStanding;
 	using ReturnType = RetType;
 	using ParamTypes = TypeList<Params...>;
 	using FunctionType = RetType( Params... );
-	using FunctionPointerType = RetType( *)( Params... );
+	using FunctionPointerType = RetType ( * )( Params... );
 };
 
 
 
 // Member function, non-const
 template<typename RetType, typename This, typename... Params>
-struct FunctionTraits<RetType( This::* )( Params... )>
+struct FunctionTraits<RetType ( This::* )( Params... )>
 {
 	static constexpr CallType kCallType = CallType::Member;
 	static constexpr bool kRequiresConst = false;
@@ -57,14 +57,14 @@ struct FunctionTraits<RetType( This::* )( Params... )>
 	using ReturnType = RetType;
 	using ParamTypes = TypeList<Params...>;
 	// NOTE: No non-pointer function type attribute, not permitted by standard
-	using FunctionPointerType = RetType( This::* )( Params... );
+	using FunctionPointerType = RetType ( This::* )( Params... );
 };
 
 
 
 // Member function, const
 template<typename RetType, typename This, typename... Params>
-struct FunctionTraits<RetType( This::* )( Params... ) const>
+struct FunctionTraits<RetType ( This::* )( Params... ) const>
 {
 	static constexpr CallType kCallType = CallType::Member;
 	static constexpr bool kRequiresConst = true;
@@ -72,7 +72,7 @@ struct FunctionTraits<RetType( This::* )( Params... ) const>
 	using ReturnType = RetType;
 	using ParamTypes = TypeList<Params...>;
 	// NOTE: No non-pointer function type attribute, not permitted by standard
-	using FunctionPointerType = RetType( This::* )( Params... ) const;
+	using FunctionPointerType = RetType ( This::* )( Params... ) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

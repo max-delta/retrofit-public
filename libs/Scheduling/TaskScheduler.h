@@ -50,7 +50,7 @@ private:
 
 		explicit RegisteredWorker( SharedPtr<TaskWorker> const& worker );
 		RegisteredWorker( RegisteredWorker&& rhs );
-		RegisteredWorker& operator=( RegisteredWorker && rhs );
+		RegisteredWorker& operator=( RegisteredWorker&& rhs );
 
 		SharedPtr<TaskWorker> mWorker = nullptr;
 		TaskID mActiveTaskID = kInvalidTaskID;
@@ -65,9 +65,9 @@ private:
 	{
 		RF_NO_COPY( RegisteredPool );
 
-		explicit RegisteredPool( UniquePtr<TaskPool> && pool );
+		explicit RegisteredPool( UniquePtr<TaskPool>&& pool );
 		RegisteredPool( RegisteredPool&& rhs );
-		RegisteredPool& operator=( RegisteredPool && rhs );
+		RegisteredPool& operator=( RegisteredPool&& rhs );
 
 		UniquePtr<TaskPool> mPool = nullptr;
 	};
@@ -95,7 +95,7 @@ public:
 	// Register/unregister workers
 	// NOTE: Effects not immediate, tasks may continue to be dispatched and
 	//  processed by workers as though these calls were not made
-	WeakSharedPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker> && worker );
+	WeakSharedPtr<TaskWorker> RegisterWorker( UniquePtr<TaskWorker>&& worker );
 	void UnregisterWorker( WeakPtr<TaskWorker> const& worker );
 
 	// Add/remove task pools
@@ -104,7 +104,7 @@ public:
 	//  preventing the lower priority from running until all higher priority
 	//  pools have completed all their tasks or yielded
 	// NOTE: Pools with the same priority will have more balanced dispatching
-	WeakPtr<TaskPool> RegisterPool( UniquePtr<TaskPool> && pool, TaskPriority priority );
+	WeakPtr<TaskPool> RegisterPool( UniquePtr<TaskPool>&& pool, TaskPriority priority );
 	void UnregisterPool( WeakPtr<TaskPool> const& pool );
 
 	// Start/stop dispatching

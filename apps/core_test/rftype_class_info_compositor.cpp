@@ -7,7 +7,7 @@
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace details{
+namespace details {
 
 struct ClassWithStaticClassInfo
 {
@@ -100,7 +100,7 @@ struct MissingVirtualDerivedClassWithoutStaticClassInfo : public VirtualBaseClas
 	float instance_f;
 };
 
-namespace diamond{
+namespace diamond {
 
 RF_ACK_UNSAFE_INHERITANCE
 struct DiamondTop : virtual public VirtualClass

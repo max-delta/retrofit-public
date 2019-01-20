@@ -8,7 +8,7 @@
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
-FIFOTaskPool::TaskRecord::TaskRecord( TaskID id, TaskPtr && task )
+FIFOTaskPool::TaskRecord::TaskRecord( TaskID id, TaskPtr&& task )
 	: mID( id )
 	, mTask( rftl::move( task ) )
 {
@@ -17,7 +17,7 @@ FIFOTaskPool::TaskRecord::TaskRecord( TaskID id, TaskPtr && task )
 
 
 
-FIFOTaskPool::TaskRecord & FIFOTaskPool::TaskRecord::operator=( TaskRecord && rhs )
+FIFOTaskPool::TaskRecord& FIFOTaskPool::TaskRecord::operator=( TaskRecord&& rhs )
 {
 	if( this != &rhs )
 	{
@@ -38,7 +38,7 @@ FIFOTaskPool::~FIFOTaskPool()
 
 
 
-TaskID FIFOTaskPool::AddTask( TaskPtr && task )
+TaskID FIFOTaskPool::AddTask( TaskPtr&& task )
 {
 	RF_ASSERT( task != nullptr );
 
@@ -112,7 +112,7 @@ void FIFOTaskPool::AttemptAbortAllTasks()
 
 
 
-void FIFOTaskPool::FetchAndBlockNextUnblockedTask( Task *& task, TaskID & taskID )
+void FIFOTaskPool::FetchAndBlockNextUnblockedTask( Task*& task, TaskID& taskID )
 {
 	// Return first unblocked
 	{
@@ -190,7 +190,7 @@ void FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
 			}
 		}
 	}
-	
+
 	RF_DBGFAIL_MSG( "Failed to locate task" );
 	return;
 }

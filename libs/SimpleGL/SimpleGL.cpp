@@ -6,7 +6,7 @@
 
 #include "core_platform/gdi_shim.h"
 #include "core_platform/gl_inc.h"
-#pragma comment(lib, "opengl32.lib")
+#pragma comment( lib, "opengl32.lib" )
 
 #include "stb_image/stb_image.h"
 
@@ -24,9 +24,9 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	this->mHWnd = hWnd;
 
 	mHDC = shim::GetDC( hWnd ); // Grab the window's device context. If anything else
-	                           // in the currently running proccess besides Graphics
-	                           // tries to modify the device context, Windows responds
-	                           // with "Step off, bitch! Can't touch dis!"
+		// in the currently running proccess besides Graphics
+		// tries to modify the device context, Windows responds
+		// with "Step off, bitch! Can't touch dis!"
 
 	shim::PIXELFORMATDESCRIPTOR pfd = {};
 	memset( &pfd, 0, sizeof( pfd ) ); // Clear all the crap in the structure.
@@ -41,7 +41,7 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	pfd.iLayerType = shim::kPFD_MAIN_PLANE; // Supposedly ignored.
 
 	int const iFormat = shim::ChoosePixelFormat( mHDC, &pfd ); // Try to find an appropriate
-	                                                    // pixel format to meet our demands.
+		// pixel format to meet our demands.
 	shim::SetPixelFormat( mHDC, iFormat, &pfd ); // Set the chosen pixel format.
 
 	mHRC = shim::wglCreateContext( mHDC ); // Create a render context for OpenGL.
@@ -118,33 +118,33 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 
 	glPolygonMode( GL_FRONT, GL_FILL ); //The front faces of polygons will be
-									  //drawn filled.
+		//drawn filled.
 	glPolygonMode( GL_BACK, GL_FILL ); //The back faces of polygons will be
-									 //drawn filled.
+		//drawn filled.
 	glShadeModel( GL_SMOOTH ); //Individual vertexes in a polygon can have
-							 //individual color values. These values are
-							 //then smoothed across the polygon in relation
-							 //to a point's proximity to a vertex.
+		//individual color values. These values are
+		//then smoothed across the polygon in relation
+		//to a point's proximity to a vertex.
 
 	glEnable( GL_TEXTURE_2D ); // Enable Texture Mapping
 
 	glEnable( GL_POINT_SMOOTH ); //Enable antialiasing for points.
 	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
-											 //antialiasing for points, we
-											 //prefer the nicest possible
-											 //algorithms.
+		//antialiasing for points, we
+		//prefer the nicest possible
+		//algorithms.
 
 	glEnable( GL_LINE_SMOOTH ); //Enable antialiasing for lines.
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
-											//antialiasing for lines, we
-											//prefer the nicest possible
-											//algorithms.
+		//antialiasing for lines, we
+		//prefer the nicest possible
+		//algorithms.
 
 	glEnable( GL_BLEND ); //Enable alpha-blending. Note that this is also required
-						//for antialiasing.
+		//for antialiasing.
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); //When we blend two
-													   //colors together, alpha calculations will be done
-													   //based on the overlapping color's alpha value.
+		//colors together, alpha calculations will be done
+		//based on the overlapping color's alpha value.
 	return true;
 }
 
@@ -177,8 +177,8 @@ DeviceTextureID SimpleGL::LoadTexture( FILE* file, uint32_t& width, uint32_t& he
 	glGenTextures( 1, &retVal );
 	glBindTexture( GL_TEXTURE_2D, retVal );
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	stbi_image_free( data );
 	return retVal;
 }
@@ -192,7 +192,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & characterWidth, uint32_t & characterHeight )
+bool SimpleGL::CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
@@ -256,7 +256,7 @@ bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & charact
 	listStorage.clear();
 	listStorage.resize( 256, CharacterStorage{} );
 	uint8_t const* readHead = data;
-	uint8_t const* const maxReadHead = &data[x*y*n];
+	uint8_t const* const maxReadHead = &data[x * y * n];
 	for( size_t row = 0; row < kCharactersPerColumn; row++ )
 	{
 		for( size_t scanline = 0; scanline < charHeight; scanline++ )
@@ -310,7 +310,11 @@ bool SimpleGL::CreateBitmapFont( FILE * file, uint8_t fontID, uint32_t & charact
 			0,
 			GL_ALPHA,
 			math::integer_cast<GLsizei>( charWidth ),
-			math::integer_cast<GLsizei>( charHeight ), 0, GL_ALPHA, GL_UNSIGNED_BYTE, buffer );
+			math::integer_cast<GLsizei>( charHeight ),
+			0,
+			GL_ALPHA,
+			GL_UNSIGNED_BYTE,
+			buffer );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	}
@@ -330,7 +334,7 @@ bool SimpleGL::DrawBitmapFont( uint8_t fontID, char character, math::Vector2f to
 
 
 
-bool SimpleGL::DebugRenderText( math::Vector2f pos, const char * fmt, ... )
+bool SimpleGL::DebugRenderText( math::Vector2f pos, const char* fmt, ... )
 {
 	glColor3f( 0, 0, 0 );
 	glRasterPos2f( pos.x, pos.y );
@@ -401,8 +405,8 @@ bool SimpleGL::RenderFrame()
 	}
 	#endif
 	glFlush(); //Makes sure that all buffered commands are sent to the
-				//graphics card. Note that this does NOT insure that the
-				//commands were executed, only that they have been sent.
+		//graphics card. Note that this does NOT insure that the
+		//commands were executed, only that they have been sent.
 	return true;
 }
 
@@ -413,15 +417,15 @@ bool SimpleGL::EndFrame()
 	return true;
 }
 
-void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
+void SimpleGL::BuildFont( int8_t height ) // Build Our Bitmap Font
 {
-	shim::HFONT font{};						// Windows Font ID
-	shim::HFONT oldfont{};					// Used For Good House Keeping
+	shim::HFONT font{}; // Windows Font ID
+	shim::HFONT oldfont{}; // Used For Good House Keeping
 
 	glDeleteLists( font_base, 96 );
-	font_base = glGenLists( 96 );					// Storage For 96 Characters ( NEW )
+	font_base = glGenLists( 96 ); // Storage For 96 Characters ( NEW )
 	font = shim::CreateFontW(
-		-height/*-12*/, // Height Of Font
+		-height /*-12*/, // Height Of Font
 		0, // Width Of Font
 		0, // Angle Of Escapement
 		0, // Orientation Angle
@@ -435,11 +439,11 @@ void SimpleGL::BuildFont( int8_t height )					// Build Our Bitmap Font
 		shim::kANTIALIASED_QUALITY, // Output Quality
 		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family And Pitch
 		L"Arial" ); // Font Name
-	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) );		// Selects The Font We Want
-	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base );			// Builds 96 Characters Starting At Character 32
-														//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
-	shim::SelectObject( mHDC, oldfont );				// Selects The Font We Want
-	shim::DeleteObject( font );					// Delete The Font
+	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) ); // Selects The Font We Want
+	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base ); // Builds 96 Characters Starting At Character 32
+		//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
+	shim::SelectObject( mHDC, oldfont ); // Selects The Font We Want
+	shim::DeleteObject( font ); // Delete The Font
 }
 
 
@@ -454,10 +458,14 @@ bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::Vector2f 
 	float const bottom = bottomRight.y;
 	glBegin( GL_QUADS );
 	{
-		glTexCoord2f( 0.0f, 0.0f ); glVertex3f( left, top, z );
-		glTexCoord2f( 1.0f, 0.0f ); glVertex3f( right, top, z );
-		glTexCoord2f( 1.0f, 1.0f ); glVertex3f( right, bottom, z );
-		glTexCoord2f( 0.0f, 1.0f ); glVertex3f( left, bottom, z );
+		glTexCoord2f( 0.0f, 0.0f );
+		glVertex3f( left, top, z );
+		glTexCoord2f( 1.0f, 0.0f );
+		glVertex3f( right, top, z );
+		glTexCoord2f( 1.0f, 1.0f );
+		glVertex3f( right, bottom, z );
+		glTexCoord2f( 0.0f, 1.0f );
+		glVertex3f( left, bottom, z );
 	}
 	glEnd();
 	glBindTexture( GL_TEXTURE_2D, 0 );
@@ -484,7 +492,7 @@ bool SimpleGL::glPrint( char const* fmt, va_list args )
 	text[255] = '\0';
 	glPushAttrib( GL_LIST_BIT ); // Pushes The Display List Bits
 	glListBase( font_base - 32 ); // Sets The Base Character to 32
-	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text );	// Draws The Display List Text
+	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text ); // Draws The Display List Text
 	glPopAttrib(); // Pops The Display List Bits
 	return true;
 }

@@ -13,7 +13,7 @@ template<typename TypeListType>
 struct ParamUnpacker;
 // 0 case
 template<>
-struct ParamUnpacker<TypeList<> >
+struct ParamUnpacker<TypeList<>>
 {
 	static void Unpack( rftl::vector<Value::Type>& paramTypes )
 	{
@@ -21,20 +21,20 @@ struct ParamUnpacker<TypeList<> >
 };
 // N case
 template<typename CurrentType, typename... RemainingTypes>
-struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...> >
+struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...>>
 {
 	static void Unpack( rftl::vector<Value::Type>& paramTypes )
 	{
 		constexpr Value::Type kType = Value::DetermineType<CurrentType>();
 		paramTypes.push_back( kType );
-		ParamUnpacker<TypeList<RemainingTypes...> >::Unpack( paramTypes );
+		ParamUnpacker<TypeList<RemainingTypes...>>::Unpack( paramTypes );
 	}
 };
 
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-template <class T>
+template<class T>
 void CreateClassInfo( ClassInfo& classInfo )
 {
 	static_assert( rftl::is_class<T>::value, "CreateClassInfo requires a class" );
@@ -51,7 +51,7 @@ void CreateClassInfo( ClassInfo& classInfo )
 
 
 template<typename T>
-void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T * variable )
+void CreateFreeStandingVariableInfo( FreeStandingVariableInfo& variableInfo, T* variable )
 {
 	variableInfo = {};
 	variableInfo.mAddress = reinterpret_cast<void const*>( static_cast<T*>( variable ) );
@@ -65,7 +65,7 @@ void CreateFreeStandingVariableInfo( FreeStandingVariableInfo & variableInfo, T 
 
 
 template<typename T, typename Class>
-void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* variable )
+void CreateMemberVariableInfo( MemberVariableInfo& variableInfo, T Class::*variable )
 {
 	variableInfo = {};
 	Class const* const kInvalidClass = reinterpret_cast<Class const*>( compiler::kInvalidNonNullPointer );
@@ -86,7 +86,7 @@ void CreateMemberVariableInfo( MemberVariableInfo & variableInfo, T Class::* var
 
 
 template<typename T>
-void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo & functionInfo, T & function )
+void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo& functionInfo, T& function )
 {
 	functionInfo = {};
 	using FT = FunctionTraits<T>;
@@ -110,7 +110,7 @@ void CreateFreeStandingFunctionInfo( FreeStandingFunctionInfo & functionInfo, T 
 
 
 template<typename T>
-void CreateMemberFunctionInfo( MemberFunctionInfo & functionInfo, T function )
+void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function )
 {
 	functionInfo = {};
 	using FT = FunctionTraits<T>;

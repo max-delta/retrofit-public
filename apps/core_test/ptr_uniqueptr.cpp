@@ -9,116 +9,117 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-namespace{
-	struct HugeStruct
-	{
-		uint64_t member[100];
-	};
+namespace {
+
+struct HugeStruct
+{
+	uint64_t member[100];
+};
+
 }
 static_assert(
-	sizeof(UniquePtr<HugeStruct>) < sizeof(HugeStruct),
+	sizeof( UniquePtr<HugeStruct> ) < sizeof( HugeStruct ),
 	"UniquePtr is embedding storage" );
 
 
 
-TEST(UniquePtr, Defaults)
+TEST( UniquePtr, Defaults )
 {
 	{
 		UniquePtr<int> uptr;
-		ASSERT_TRUE(uptr == nullptr);
+		ASSERT_TRUE( uptr == nullptr );
 	}
 	{
 		UniquePtr<int> uptr = UniquePtr<int>();
-		ASSERT_TRUE(uptr == nullptr);
+		ASSERT_TRUE( uptr == nullptr );
 	}
 	{
 		UniquePtr<int> uptr = nullptr;
-		ASSERT_TRUE(uptr == nullptr);
+		ASSERT_TRUE( uptr == nullptr );
 	}
 }
 
 
 
-TEST(UniquePtr, SoloLifecycle)
+TEST( UniquePtr, SoloLifecycle )
 {
 	// Normal
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
-		ASSERT_TRUE(uptr != nullptr);
-		ASSERT_TRUE(*uptr == 47);
+		UniquePtr<int> uptr = DefaultCreator<int>::Create( 47 );
+		ASSERT_TRUE( uptr != nullptr );
+		ASSERT_TRUE( *uptr == 47 );
 		*uptr = 53;
-		ASSERT_TRUE(*uptr == 53);
+		ASSERT_TRUE( *uptr == 53 );
 	}
 
 	// Deferred create
 	{
-		auto creation = DefaultCreator<int>::Create(47);
+		auto creation = DefaultCreator<int>::Create( 47 );
 		{
-			UniquePtr<int> uptr = rftl::move(creation);
-			ASSERT_TRUE(uptr != nullptr);
-			ASSERT_TRUE(*uptr == 47);
+			UniquePtr<int> uptr = rftl::move( creation );
+			ASSERT_TRUE( uptr != nullptr );
+			ASSERT_TRUE( *uptr == 47 );
 			*uptr = 53;
-			ASSERT_TRUE(*uptr == 53);
+			ASSERT_TRUE( *uptr == 53 );
 		}
 	}
 
 	// Pre-mature termination
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
-		ASSERT_TRUE(uptr != nullptr);
+		UniquePtr<int> uptr = DefaultCreator<int>::Create( 47 );
+		ASSERT_TRUE( uptr != nullptr );
 		uptr = nullptr;
-		ASSERT_TRUE(uptr == nullptr);
+		ASSERT_TRUE( uptr == nullptr );
 	}
-
 }
 
 
 
-TEST(UniquePtr, WeakLifecycle)
+TEST( UniquePtr, WeakLifecycle )
 {
 	// Weak outlives
 	{
 		WeakPtr<int> wptr;
-		ASSERT_TRUE(wptr == nullptr);
+		ASSERT_TRUE( wptr == nullptr );
 		{
-			UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
+			UniquePtr<int> uptr = DefaultCreator<int>::Create( 47 );
 			wptr = uptr;
-			ASSERT_TRUE(wptr != nullptr);
+			ASSERT_TRUE( wptr != nullptr );
 		}
-		ASSERT_TRUE(wptr == nullptr);
+		ASSERT_TRUE( wptr == nullptr );
 	}
 
 	// Unique outlives
 	{
-		UniquePtr<int> uptr = DefaultCreator<int>::Create(47);
-		ASSERT_TRUE(uptr != nullptr);
+		UniquePtr<int> uptr = DefaultCreator<int>::Create( 47 );
+		ASSERT_TRUE( uptr != nullptr );
 		{
 			WeakPtr<int> wptr = uptr;
-			ASSERT_TRUE(wptr != nullptr);
+			ASSERT_TRUE( wptr != nullptr );
 		}
-		ASSERT_TRUE(uptr != nullptr);
+		ASSERT_TRUE( uptr != nullptr );
 	}
 }
 
 
 
-TEST(UniquePtr, Move)
+TEST( UniquePtr, Move )
 {
 	// Move to longer-lived unique
 	{
 		UniquePtr<int> uptr2;
-		ASSERT_TRUE(uptr2 == nullptr);
+		ASSERT_TRUE( uptr2 == nullptr );
 		{
-			UniquePtr<int> uptr1 = DefaultCreator<int>::Create(47);
-			ASSERT_TRUE(uptr1 != nullptr);
-			ASSERT_TRUE(*uptr1 == 47);
-			uptr2 = rftl::move(uptr1);
-			ASSERT_TRUE(uptr1 == nullptr);
-			ASSERT_TRUE(uptr2 != nullptr);
-			ASSERT_TRUE(*uptr2 == 47);
+			UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
+			ASSERT_TRUE( uptr1 != nullptr );
+			ASSERT_TRUE( *uptr1 == 47 );
+			uptr2 = rftl::move( uptr1 );
+			ASSERT_TRUE( uptr1 == nullptr );
+			ASSERT_TRUE( uptr2 != nullptr );
+			ASSERT_TRUE( *uptr2 == 47 );
 		}
-		ASSERT_TRUE(uptr2 != nullptr);
-		ASSERT_TRUE(*uptr2 == 47);
+		ASSERT_TRUE( uptr2 != nullptr );
+		ASSERT_TRUE( *uptr2 == 47 );
 	}
 }
 
@@ -139,10 +140,10 @@ TEST( UniquePtr, MoveDerived )
 	// Construct into move
 	{
 		UniquePtr<Derived> uptr1 = DefaultCreator<Derived>::Create();
-		ASSERT_TRUE(uptr1 != nullptr);
+		ASSERT_TRUE( uptr1 != nullptr );
 		UniquePtr<Base> uptr2( rftl::move( uptr1 ) );
-		ASSERT_TRUE(uptr1 == nullptr);
-		ASSERT_TRUE(uptr2 != nullptr);
+		ASSERT_TRUE( uptr1 == nullptr );
+		ASSERT_TRUE( uptr2 != nullptr );
 	}
 }
 
@@ -159,7 +160,7 @@ TEST( UniquePtr, MoveIntoTrash )
 			rftl::abort();
 		}
 		memset( alloc, 0xcc, sizeof( UniquePtr<int> ) );
-		UniquePtr<int>* newAlloc = new (alloc) UniquePtr<int>( rftl::move( uptr1 ) );
+		UniquePtr<int>* newAlloc = new( alloc ) UniquePtr<int>( rftl::move( uptr1 ) );
 		newAlloc->~UniquePtr();
 		free( alloc );
 	}
@@ -167,7 +168,7 @@ TEST( UniquePtr, MoveIntoTrash )
 
 
 
-TEST(UniquePtr, Arrow)
+TEST( UniquePtr, Arrow )
 {
 	struct Test
 	{
@@ -182,7 +183,7 @@ TEST(UniquePtr, Arrow)
 
 
 
-TEST(UniquePtr, CastToBase)
+TEST( UniquePtr, CastToBase )
 {
 	struct Base
 	{
@@ -217,15 +218,15 @@ TEST(UniquePtr, CastToBase)
 	//xptr_u = xptr_u;
 
 	// Unique->Shared
-	uptr_b = rftl::move(uptr_b);
-	uptr_b = rftl::move(uptr_d);
+	uptr_b = rftl::move( uptr_b );
+	uptr_b = rftl::move( uptr_d );
 	//uptr_b = rftl::move(uptr_u); // SHOULD FAIL
 	//uptr_d = rftl::move(uptr_b); // SHOULD FAIL
-	uptr_d = rftl::move(uptr_d);
+	uptr_d = rftl::move( uptr_d );
 	//uptr_d = rftl::move(uptr_u); // SHOULD FAIL
 	//uptr_u = rftl::move(uptr_b); // SHOULD FAIL
 	//uptr_u = rftl::move(uptr_d); // SHOULD FAIL
-	uptr_u = rftl::move(uptr_u);
+	uptr_u = rftl::move( uptr_u );
 
 	// Unique->Weak:
 	wptr_b = uptr_b;

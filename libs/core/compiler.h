@@ -50,40 +50,40 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 
 
-#if defined(_MSC_VER) && !defined(__clang__) // NOTE: clang-cl pretends to be MSVC
+#if defined( _MSC_VER ) && !defined( __clang__ ) // NOTE: clang-cl pretends to be MSVC
 	#define RF_PLATFORM_MSVC
 	constexpr Compiler kCompiler = Compiler::MSVC;
 
-	#pragma intrinsic(__debugbreak)
+	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
-	#define RF_NO_INLINE __declspec(noinline)
-	#define RF_ACK_ANY_PADDING __pragma(warning(suppress:4324))
-	#define RF_ACK_UNSAFE_INHERITANCE __pragma(warning(suppress:4435))
-	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma(warning(suppress:4287))
+	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_ACK_ANY_PADDING __pragma( warning( suppress : 4324 ) )
+	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
+	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
-		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
 		#define RF_ACK_32BIT_PADDING
-	#elif defined(_M_IX86)
+	#elif defined( _M_IX86 )
 		#define RF_PLATFORM_X86_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
-	#elif defined(_M_ARM64)
+		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+	#elif defined( _M_ARM64 )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
-		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
 		#define RF_ACK_32BIT_PADDING
-	#elif defined(_M_ARM)
+	#elif defined( _M_ARM )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
 	#else
 		#error Undefined architecture
 	#endif
-#elif defined(__clang__)
+#elif defined( __clang__ )
 	#define RF_PLATFORM_CLANG
 	constexpr Compiler kCompiler = Compiler::Clang;
 
@@ -91,32 +91,32 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 		#error Normal clang not supported yet
 	#endif
 
-	#pragma intrinsic(__debugbreak)
+	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
-	#define RF_NO_INLINE __declspec(noinline)
-	#define RF_ACK_ANY_PADDING __pragma(warning(suppress:4324))
-	#define RF_ACK_UNSAFE_INHERITANCE __pragma(warning(suppress:4435))
-	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma(warning(suppress:4287))
+	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_ACK_ANY_PADDING __pragma( warning( suppress : 4324 ) )
+	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
+	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
-		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
 		#define RF_ACK_32BIT_PADDING
-	#elif defined(_M_IX86)
+	#elif defined( _M_IX86 )
 		#define RF_PLATFORM_X86_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
-	#elif defined(_M_ARM64)
+		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+	#elif defined( _M_ARM64 )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
-		#define RF_ACK_64BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
 		#define RF_ACK_32BIT_PADDING
-	#elif defined(_M_ARM)
+	#elif defined( _M_ARM )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma(warning(suppress:4324))
+		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
 	#else
 		#error Undefined architecture
 	#endif
@@ -126,7 +126,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 
 
-#if defined(RF_PLATFORM_X86_64)
+#if defined( RF_PLATFORM_X86_64 )
 	constexpr Architecture kArchitecture = Architecture::x86_64;
 	#define RF_PLATFORM_STRONG_MEMORY_MODEL
 	constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
@@ -137,7 +137,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_POINTER_BYTES 8u
 	#define RF_MIN_PAGE_SIZE 4096u
 	constexpr unsigned long kMinPageSize = 4096u;
-#elif defined(RF_PLATFORM_X86_32)
+#elif defined( RF_PLATFORM_X86_32 )
 	constexpr Architecture kArchitecture = Architecture::x86_32;
 	#define RF_PLATFORM_STRONG_MEMORY_MODEL
 	constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
@@ -148,7 +148,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_POINTER_BYTES 4u
 	#define RF_MIN_PAGE_SIZE 4096u
 	constexpr unsigned long kMinPageSize = 4096u;
-#elif defined(RF_PLATFORM_ARM_64)
+#elif defined( RF_PLATFORM_ARM_64 )
 	#error Verify and add support
 	constexpr Architecture kArchitecture = Architecture::ARM_64;
 	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
@@ -158,7 +158,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_POINTER_BYTES 8u
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
 	constexpr unsigned long kMinPageSize = 4096u; // Verify?
-#elif defined(RF_PLATFORM_ARM_32)
+#elif defined( RF_PLATFORM_ARM_32 )
 	#error Verify and add support
 	constexpr Architecture kArchitecture = Architecture::ARM_32;
 	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
@@ -175,7 +175,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 
 #ifdef RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
-	#define RF_ALIGN_ATOMIC_POINTER alignas(RF_PLATFORM_POINTER_BYTES)
+	#define RF_ALIGN_ATOMIC_POINTER alignas( RF_PLATFORM_POINTER_BYTES )
 #else
 	// Intentionally undefined due to it being unsafe
 #endif

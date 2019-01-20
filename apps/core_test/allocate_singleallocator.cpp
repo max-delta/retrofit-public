@@ -29,10 +29,10 @@ TEST( SingleAllocator, Standalone )
 	}
 }
 
-TEST(SingleAllocator, STLContainers)
+TEST( SingleAllocator, STLContainers )
 {
 	using IntAllocator = SingleAllocator<int, 1024>;
-	using KVAllocator = SingleAllocator< rftl::pair<int const, int>, 1024>;
+	using KVAllocator = SingleAllocator<rftl::pair<int const, int>, 1024>;
 	IntAllocator alloc_i{ ExplicitDefaultConstruct() };
 	KVAllocator alloc_kv{ ExplicitDefaultConstruct() };
 

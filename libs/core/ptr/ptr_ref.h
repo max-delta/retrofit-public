@@ -10,7 +10,7 @@ namespace RF {
 
 class PtrRef
 {
-	RF_NO_COPY(PtrRef);
+	RF_NO_COPY( PtrRef );
 
 
 	//
@@ -18,7 +18,7 @@ class PtrRef
 public:
 	typedef uint32_t CountType;
 	typedef rftl::atomic<CountType> CountStorageType;
-	typedef void (*DeletionFunc)(void *, PtrRef *, void *);
+	typedef void ( *DeletionFunc )( void*, PtrRef*, void* );
 
 	// NOTE: "Lock free" in this context applies to truly massive locks like
 	//  mutexes and critical sections. CPU cache behavior and bus nuances are
@@ -37,27 +37,27 @@ public:
 	//
 	// Public methods
 public:
-	PtrRef(DeletionFunc deletionFunc, void * funcUserData)
-		: m_DeletionFunc(deletionFunc)
-		, m_FuncUserData(funcUserData)
-		, m_StrongCount(1)
-		, m_WeakCount(1)
+	PtrRef( DeletionFunc deletionFunc, void* funcUserData )
+		: m_DeletionFunc( deletionFunc )
+		, m_FuncUserData( funcUserData )
+		, m_StrongCount( 1 )
+		, m_WeakCount( 1 )
 	{
-		RF_ASSERT(m_DeletionFunc != nullptr);
+		RF_ASSERT( m_DeletionFunc != nullptr );
 	}
 
-	void Delete( void * p ) const
+	void Delete( void* p ) const
 	{
-		RF_ASSERT(p != nullptr);
-		RF_ASSERT(m_DeletionFunc != nullptr);
-		m_DeletionFunc(p, nullptr, m_FuncUserData);
+		RF_ASSERT( p != nullptr );
+		RF_ASSERT( m_DeletionFunc != nullptr );
+		m_DeletionFunc( p, nullptr, m_FuncUserData );
 	}
 
 	void DeleteSelf()
 	{
-		RF_ASSERT(this != nullptr);
-		RF_ASSERT(m_DeletionFunc != nullptr);
-		m_DeletionFunc(nullptr, this, m_FuncUserData);
+		RF_ASSERT( this != nullptr );
+		RF_ASSERT( m_DeletionFunc != nullptr );
+		m_DeletionFunc( nullptr, this, m_FuncUserData );
 	}
 
 	CountType GetStrongCount() const
@@ -102,7 +102,7 @@ public:
 	}
 
 	template<typename T>
-	void DecreaseStrongCount(T * & target)
+	void DecreaseStrongCount( T*& target )
 	{
 		// x86 32/64:
 		//  lock xadd [var], reg(-1)
@@ -114,9 +114,9 @@ public:
 			//  while deletion is being performed, BUT... any previously
 			//  resolved weak references that are now raw pointers will still
 			//  be able to try and improperly access the memory
-			T * deletionTarget = target;
+			T* deletionTarget = target;
 			target = nullptr;
-			Delete(deletionTarget);
+			Delete( deletionTarget );
 			DecreaseWeakCount();
 		}
 	}
@@ -144,7 +144,7 @@ public:
 	// Private data
 private:
 	DeletionFunc m_DeletionFunc;
-	void * m_FuncUserData;
+	void* m_FuncUserData;
 	CountStorageType m_StrongCount;
 	CountStorageType m_WeakCount;
 };

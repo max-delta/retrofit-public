@@ -150,7 +150,7 @@ private:
 public:
 	WndProcTextInputComponent() = default;
 	virtual void OnTick() override;
-	virtual void GetTextStream( rftl::u16string & text, size_t maxLen ) const override;
+	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const override;
 	virtual void ClearTextStream() override;
 private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );

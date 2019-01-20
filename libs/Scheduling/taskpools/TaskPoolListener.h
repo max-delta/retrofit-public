@@ -11,7 +11,7 @@ namespace RF { namespace scheduling {
 
 struct SCHEDULING_API TaskPoolListener
 {
-	using OnTaskRemoved = rftl::function<void( TaskPtr && task, TaskID id, TaskState newState )>;
+	using OnTaskRemoved = rftl::function<void( TaskPtr&& task, TaskID id, TaskState newState )>;
 	OnTaskRemoved mOnTaskRemoved = nullptr;
 };
 

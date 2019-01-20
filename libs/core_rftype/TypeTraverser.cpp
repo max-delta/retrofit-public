@@ -6,9 +6,9 @@ namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TypeTraverser::TraverseVariables(
-	reflect::VirtualClass const & traversalRoot,
-	OnMemberVariableFunc const & onMemberVariableFunc,
-	OnTraversalFunc const & onTraversalFunc,
+	reflect::VirtualClass const& traversalRoot,
+	OnMemberVariableFunc const& onMemberVariableFunc,
+	OnTraversalFunc const& onTraversalFunc,
 	OnReturnFromTraversalFunc const& onReturnFromTraversalFunc )
 {
 	TraverseVariablesT(
@@ -21,10 +21,10 @@ void TypeTraverser::TraverseVariables(
 
 
 void TypeTraverser::TraverseVariables(
-	reflect::ClassInfo const & classInfo,
-	void const * classLocation,
-	OnMemberVariableFunc const & onMemberVariableFunc,
-	OnTraversalFunc const & onTraversalFunc,
+	reflect::ClassInfo const& classInfo,
+	void const* classLocation,
+	OnMemberVariableFunc const& onMemberVariableFunc,
+	OnTraversalFunc const& onTraversalFunc,
 	OnReturnFromTraversalFunc const& onReturnFromTraversalFunc )
 {
 	TraverseVariablesT(

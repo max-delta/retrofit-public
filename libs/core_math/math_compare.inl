@@ -7,15 +7,17 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 namespace internal {
-	constexpr float fabs( float val )
-	{
-		return val < 0 ? val * -1 : val;
-	}
 
-	constexpr double abs( double val )
-	{
-		return val < 0 ? val * -1 : val;
-	}
+constexpr float fabs( float val )
+{
+	return val < 0 ? val * -1 : val;
+}
+
+constexpr double abs( double val )
+{
+	return val < 0 ? val * -1 : val;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 

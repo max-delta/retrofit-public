@@ -2,9 +2,9 @@
 #include "Logging/Constants.h"
 
 #ifdef APPCOMMONGRAPHICALCLIENT_EXPORTS
-#define APPCOMMONGRAPHICALCLIENT_API __declspec(dllexport)
+#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllexport )
 #else
-#define APPCOMMONGRAPHICALCLIENT_API __declspec(dllimport)
+#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllimport )
 #endif
 
 constexpr char const* RFCAT_STARTUP = "Startup";

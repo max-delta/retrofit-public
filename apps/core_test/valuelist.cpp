@@ -22,14 +22,13 @@ TEST( ValueList, Empty )
 
 
 
-TEST( ValueList, UnorthodoxValueTypes )
-{
+TEST( ValueList, UnorthodoxValueTypes ){
 	// MSVC has internal compiler errors for non-empty lists with odd types
 	#ifdef RF_PLATFORM_MSVC
 	{
 		// While ill-advised, should not cause compilation errors
 		struct Unused;
-		using vl_empty = ValueList<Unused const *>;
+		using vl_empty = ValueList<Unused const*>;
 		static_assert( vl_empty::kNumValues == 0, "Unexpected size" );
 		#ifndef __INTELLISENSE__ // Intellisense falls over in MSVC2017
 			static_assert( vl_empty::Contains<reinterpret_cast<Unused const*>( 5 )>::value == false, "Unexpected value presence" );
@@ -48,7 +47,7 @@ TEST( ValueList, UnorthodoxValueTypes )
 		};
 		static constexpr Stub unused1;
 		static constexpr Stub unused2;
-		using vl_stub = ValueList<Stub const *, &unused2>;
+		using vl_stub = ValueList<Stub const*, &unused2>;
 		static_assert( vl_stub::kNumValues == 1, "Unexpected size" );
 		static_assert( vl_stub::ByIndex<0>::value == &unused2, "Unexpected value" );
 		static_assert( vl_stub::Contains<&unused1>::value == false, "Unexpected value presence" );

@@ -9,7 +9,7 @@ namespace RF { namespace logging {
 }}
 
 win32::BOOL APIENTRY DllMain( win32::HMODULE hModule,
-	win32::DWORD  ul_reason_for_call,
+	win32::DWORD ul_reason_for_call,
 	win32::LPVOID lpReserved )
 {
 	switch( ul_reason_for_call )

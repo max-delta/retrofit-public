@@ -9,9 +9,9 @@ namespace RF {
 // NOTE: This is dangerous to use directly, and should be wrapped in a helper
 //  function where it can appropriately control cross-DLL behavior as needed
 template<typename SINGLETON>
-SINGLETON & GetOrInitFunctionStaticScopedSingleton()
+SINGLETON& GetOrInitFunctionStaticScopedSingleton()
 {
-	#if defined(RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC) && defined(RF_PLATFORM_STRONG_MEMORY_MODEL)
+	#if defined( RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC ) && defined( RF_PLATFORM_STRONG_MEMORY_MODEL )
 	{
 		// What is all this weird shit? Why not just return a reference to the
 		//  static variable directly? Well... you need to look at the assembly, but
@@ -39,7 +39,7 @@ SINGLETON & GetOrInitFunctionStaticScopedSingleton()
 			//  variable
 			singletonPointer = &singleton;
 		}
-		return const_cast<SINGLETON &>( *singletonPointer );
+		return const_cast<SINGLETON&>( *singletonPointer );
 	}
 	#else
 	{

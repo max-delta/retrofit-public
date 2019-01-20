@@ -35,14 +35,14 @@ HashVal64 StableHashBytes( void const* buffer, size_t length )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-HashVal64 DirectHash::operator() ( HashVal64 const& key ) const
+HashVal64 DirectHash::operator()( HashVal64 const& key ) const
 {
 	return key;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-HashVal64 NullTerminatedStringHash::operator()( char const * const buffer ) const
+HashVal64 NullTerminatedStringHash::operator()( char const* const buffer ) const
 {
 	if( buffer == nullptr )
 	{

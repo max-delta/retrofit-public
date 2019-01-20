@@ -29,27 +29,27 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 	switch( message )
 	{
 		case WM_CREATE: // lParam: CREATESTRUCT*
-						// Lets us provide data on how to build the window. Kinda pointless
-						// since we already gave it all the data that CREATESTRUCT would
-						// provide.
+			// Lets us provide data on how to build the window. Kinda pointless
+			// since we already gave it all the data that CREATESTRUCT would
+			// provide.
 			return 0;
 
 		case WM_GETMINMAXINFO: // lParam: MINMAXINFO*
-							   // Lets us tell the window the limits that it can be resized to.
-			( *( ( win32::MINMAXINFO* )lParam ) ).ptMinTrackSize.x = RF::gfx::k_DesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
-			( *( ( win32::MINMAXINFO* )lParam ) ).ptMinTrackSize.y = RF::gfx::k_DesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
-			( *( ( win32::MINMAXINFO* )lParam ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
-			( *( ( win32::MINMAXINFO* )lParam ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
+			// Lets us tell the window the limits that it can be resized to.
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.x = RF::gfx::k_DesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.y = RF::gfx::k_DesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
 			return 0;
 
 		case WM_CLOSE: // No parameters
-					   // The application is now closing.
+			// The application is now closing.
 			win32::PostQuitMessage( 0 ); // This value is passed as the wParam to the
-										 // WM_QUIT message.
+				// WM_QUIT message.
 			return 0;
 
 		case WM_DESTROY: // No parameters
-						 // The application is now cleaning up.
+			// The application is now cleaning up.
 			return 0;
 
 		case WM_SIZE: // wParam: Sizing type | lParam(LO): mWidth | lParam(HI): mHeight
@@ -65,12 +65,12 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 					RF::math::integer_cast<uint16_t>( rect.bottom ) );
 			}
 		}
-		return 0;
+			return 0;
 
 
 		case WM_KEYDOWN: // wParam: Virtual Key Code | lParam: Miscellaneous extra information
-						 // A key that must be handled immediately has been pressed. Note
-						 // that all other keys are checked when needed.
+			// A key that must be handled immediately has been pressed. Note
+			// that all other keys are checked when needed.
 			switch( wParam )
 			{
 				case VK_F1:

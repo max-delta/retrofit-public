@@ -13,16 +13,17 @@ namespace RF { namespace gfx {
 
 class PPU_API Texture
 {
-	RF_NO_COPY(Texture);
+	RF_NO_COPY( Texture );
+
 private:
 	friend class PPUController;
 	friend class TextureManager;
 
 public:
 	Texture();
-	Texture( Texture && ) = default;
+	Texture( Texture&& ) = default;
 	~Texture();
-	Texture& operator =( Texture && ) = default;
+	Texture& operator=( Texture&& ) = default;
 	DeviceTextureID GetDeviceRepresentation() const;
 
 	uint32_t DebugGetWidth() const;

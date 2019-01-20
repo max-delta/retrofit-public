@@ -71,7 +71,7 @@ void InitDrawTest()
 	testObjWiggle.m_FramePackID = wiggleFPackID;
 	testObjWiggle.m_MaxTimeIndex = 4;
 	testObjWiggle.m_TimeSlowdown = 33 / 4;
-	testObjWiggle.m_Looping = true;;
+	testObjWiggle.m_Looping = true;
 	testObjWiggle.m_XCoord = gfx::k_TileSize * 4;
 	testObjWiggle.m_YCoord = gfx::k_TileSize * 4;
 	testObjWiggle.m_ZLayer = 0;
@@ -195,7 +195,7 @@ void XMLTest()
 		pugi::xml_writer_file writer{ testFile->GetFile() };
 
 		pugi::xml_document doc;
-		doc.append_child( "Header" ).append_attribute("Version") = 0;
+		doc.append_child( "Header" ).append_attribute( "Version" ) = 0;
 		doc.append_child( "Data" );
 		doc.save( writer );
 		RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "May have written an XML file successfully?" );
@@ -223,7 +223,6 @@ void XMLTest()
 			RFLOG_ERROR( nullptr, RFCAT_STARTUPTEST, "Failed to parse file that XML writer just wrote. Error: \"%s\"", parseResult.description() );
 		}
 	}
-
 }
 
 
@@ -301,7 +300,7 @@ void PlatformTest()
 	using namespace ::RF::platform;
 
 	rftl::static_array<Uuid, 10> uuids;
-	for(size_t i = 0; i < uuids.max_size(); i++)
+	for( size_t i = 0; i < uuids.max_size(); i++ )
 	{
 		Uuid const newUuid = Uuid::GenerateNewUuid();
 		RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Generated new UUID: %s", newUuid.GetDebugString().c_str() );

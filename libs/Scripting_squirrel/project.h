@@ -2,9 +2,9 @@
 #include "Logging/Constants.h"
 
 #ifdef SCRIPTINGSQUIRREL_EXPORTS
-#define SCRIPTINGSQUIRREL_API __declspec(dllexport)
+#define SCRIPTINGSQUIRREL_API __declspec( dllexport )
 #else
-#define SCRIPTINGSQUIRREL_API __declspec(dllimport)
+#define SCRIPTINGSQUIRREL_API __declspec( dllimport )
 #endif
 
 constexpr char const* RFCAT_SQUIRREL = "Squirrel";

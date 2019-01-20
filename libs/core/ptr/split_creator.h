@@ -13,12 +13,12 @@ class SplitCreator
 	// Public methods
 public:
 	template<typename... U>
-	static CreationPayload<T> Create(U&&... args)
+	static CreationPayload<T> Create( U&&... args )
 	{
 		static_assert( sizeof( T ) + sizeof( PtrRef ) >= 64, "Should use entwined creator instead" );
 		CreationPayload<T> retVal(
-			new T( rftl::forward<U>(args)...),
-			new PtrRef(&Delete, nullptr) );
+			new T( rftl::forward<U>( args )... ),
+			new PtrRef( &Delete, nullptr ) );
 		return retVal;
 	}
 
@@ -26,13 +26,13 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( void * target, PtrRef * ref, void * userData )
+	static void Delete( void* target, PtrRef* ref, void* userData )
 	{
 		(void)userData;
 		if( target != nullptr )
 		{
 			// NOTE: Subtle... making sure we delete the actual pointer type
-			delete ( reinterpret_cast<T*>( target ) );
+			delete( reinterpret_cast<T*>( target ) );
 		}
 		if( ref != nullptr )
 		{
