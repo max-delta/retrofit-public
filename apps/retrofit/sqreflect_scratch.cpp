@@ -395,8 +395,10 @@ bool ProcessScriptArrayPopulationWork(
 
 bool QueueScriptInstancePopulationWork( WorkItem const& currentWorkItem, WorkItems& workItems, char const* const elemName, rftype::TypeTraverser::MemberVariableInstance const& member )
 {
-	reflect::VariableTypeInfo const& typeInfo = member.mMemberVariableInfo.mVariableTypeInfo;
-	if( typeInfo.mAccessor != nullptr )
+	reflect::VariableTypeInfo const& targetTypeInfo = member.mMemberVariableInfo.mVariableTypeInfo;
+	void const* targetLocation = member.mMemberVariableLocation;
+
+	if( targetTypeInfo.mAccessor != nullptr )
 	{
 		// Accessor
 
@@ -407,14 +409,14 @@ bool QueueScriptInstancePopulationWork( WorkItem const& currentWorkItem, WorkIte
 		RF_DBGFAIL_MSG( "TODO" );
 		return true;
 	}
-	else if( typeInfo.mClassInfo != nullptr )
+	else if( targetTypeInfo.mClassInfo != nullptr )
 	{
 		// Direct nesting
 
 		// Queue population as later work
 		WorkItem newWorkItem;
-		newWorkItem.mClassInfo = typeInfo.mClassInfo;
-		newWorkItem.mClassInstance = member.mMemberVariableLocation;
+		newWorkItem.mClassInfo = targetTypeInfo.mClassInfo;
+		newWorkItem.mClassInstance = targetLocation;
 		newWorkItem.mPath = currentWorkItem.mPath;
 		newWorkItem.mPath.emplace_back( elemName );
 		workItems.emplace_back( rftl::move( newWorkItem ) );
@@ -490,6 +492,104 @@ bool ProcessScriptVariable(
 
 
 
+bool ProcessWorkItem(
+	script::SquirrelVM& vm,
+	WorkItem const& currentWorkItem,
+	WorkItems& workItems)
+{
+	script::SquirrelVM::NestedTraversalPath const& path = currentWorkItem.mPath;
+	reflect::ClassInfo const& classInfo = *currentWorkItem.mClassInfo;
+	void const* classInstance = currentWorkItem.mClassInstance;
+
+	// Locally cache the class info from reflection
+	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
+
+	// Extract the instance from script
+	script::SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
+	RF_ASSERT( elemMap.size() > 0 ); // HACK: For testing purposes only
+
+	// For each element...
+	for( script::SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
+	{
+		// Get the name
+		script::SquirrelVM::String const* elemString = rftl::get_if<script::SquirrelVM::String>( &( elemPair.first ) );
+		char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
+		if( elemName == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Unable to determine identifier for variable" );
+			continue;
+		}
+
+		// Find the reflected member with that name
+		rftype::TypeTraverser::MemberVariableInstance const* foundMember = nullptr;
+		for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
+		{
+			char const* const memberName = member.mMemberVariableInfo.mIdentifier;
+			if( strcmp( elemName, memberName ) == 0 )
+			{
+				RF_ASSERT( foundMember == nullptr );
+				foundMember = &member;
+			}
+		}
+		if( foundMember == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Unable to find matching variable with identifier" );
+			continue;
+		}
+		rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
+
+		// Handle the transfer from script->reflect
+		script::SquirrelVM::Element const& elemValue = elemPair.second;
+		bool const processSuccess = ProcessScriptVariable( vm, currentWorkItem, workItems, elemName, elemValue, member );
+		if( processSuccess == false )
+		{
+			// TODO: This should probably be conditional whether it
+			//  ignores, or aborts the whole process
+			continue;
+		}
+	}
+
+	return true;
+}
+
+
+
+bool PopulateClassFromScript(
+	script::SquirrelVM& vm,
+	script::SquirrelVM::NestedTraversalPath scriptPath,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance)
+{
+	rftl::vector<WorkItem> workItems;
+
+	workItems.emplace_back(
+		WorkItem{
+			scriptPath,
+			&classInfo,
+			classInstance } );
+
+	// While there is still work...
+	while( workItems.empty() == false )
+	{
+		// Grab a work item
+		WorkItem const workItem = workItems.back();
+		workItems.pop_back();
+
+		bool const processSuccess = ProcessWorkItem( vm, workItem, workItems );
+		if( processSuccess == false )
+		{
+			// TODO: This should probably be conditional whether it
+			//  ignores, or aborts the whole process
+			RF_DBGFAIL_MSG( "Unable to convert part of a script" );
+			continue;
+		}
+	}
+
+	return true;
+}
+
+
+
 void sqreflect_scratch()
 {
 	script::SquirrelVM vm;
@@ -541,75 +641,8 @@ void sqreflect_scratch()
 	reflect::ClassInfo const& testClassInfo = rftype::GetClassInfo<SQReflectTestClass>();
 
 	// Populate
-	{
-		rftl::vector<WorkItem> workItems;
-
-		workItems.push_back(
-			WorkItem{
-				{ "x" },
-				&testClassInfo,
-				&testClass } );
-
-		// While there is still work...
-		while( workItems.empty() == false )
-		{
-			// Grab a work item
-			WorkItem const workItem = workItems.back();
-			workItems.pop_back();
-
-			script::SquirrelVM::NestedTraversalPath const& path = workItem.mPath;
-			reflect::ClassInfo const& classInfo = *workItem.mClassInfo;
-			void const* classInstance = workItem.mClassInstance;
-
-			// Locally cache the class info from reflection
-			rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
-
-			// Extract the instance from script
-			script::SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
-			RF_ASSERT( elemMap.size() > 0 ); // HACK: For testing purposes only
-
-			// For each element...
-			for( script::SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
-			{
-				// Get the name
-				script::SquirrelVM::String const* elemString = rftl::get_if<script::SquirrelVM::String>( &( elemPair.first ) );
-				char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
-				if( elemName == nullptr )
-				{
-					RF_DBGFAIL_MSG( "Unable to determine identifier for variable" );
-					continue;
-				}
-
-				// Find the reflected member with that name
-				rftype::TypeTraverser::MemberVariableInstance const* foundMember = nullptr;
-				for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
-				{
-					char const* const memberName = member.mMemberVariableInfo.mIdentifier;
-					if( strcmp( elemName, memberName ) == 0 )
-					{
-						RF_ASSERT( foundMember == nullptr );
-						foundMember = &member;
-					}
-				}
-				if( foundMember == nullptr )
-				{
-					RF_DBGFAIL_MSG( "Unable to find matching variable with identifier" );
-					continue;
-				}
-				rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
-
-				// Handle the transfer from script->reflect
-				script::SquirrelVM::Element const& elemValue = elemPair.second;
-				bool const processSuccess = ProcessScriptVariable( vm, workItem, workItems, elemName, elemValue, member );
-				if( processSuccess == false )
-				{
-					// TODO: This should probably be conditional whether it
-					//  ignores, or aborts the whole process
-					continue;
-				}
-			}
-		}
-	}
+	bool const populateSuccess = PopulateClassFromScript( vm, { "x" }, testClassInfo, &testClass );
+	RF_ASSERT( populateSuccess );
 
 	// Verify
 	RF_ASSERT( testClass.mBool == true );
