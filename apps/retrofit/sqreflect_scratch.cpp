@@ -5,6 +5,7 @@
 
 #include "core_rftype/TypeTraverser.h"
 #include "core_rftype/stl_extensions/vector.h"
+#include "core_rftype/stl_extensions/string.h"
 
 #include "core/meta/ScopedCleanup.h"
 
@@ -66,8 +67,8 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mS32", &SQReflectTestClass::mS32 );
 	RFTYPE_META().RawProperty( "mU64", &SQReflectTestClass::mU64 );
 	RFTYPE_META().RawProperty( "mS64", &SQReflectTestClass::mS64 );
-	//RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
-	//RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
+	RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
+	RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
 	RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
@@ -191,15 +192,43 @@ bool WriteScriptValueToMemberVariable( script::SquirrelVM::Element const& elemVa
 
 
 
-bool WriteScriptStringToMemberVariable( script::SquirrelVM::Element const& elemValue, rftype::TypeTraverser::MemberVariableInstance const& member )
+bool StoreSingleValueInAccessor(
+	size_t key,
+	reflect::VariableTypeInfo const& keyInfo,
+	reflect::Value const& source,
+	reflect::VariableTypeInfo const& targetInfo,
+	reflect::ExtensionAccessor const* accessor,
+	void* location )
 {
-	RF_ASSERT( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) );
+	// IMPORTANT! The accessor must already be open for mutation
+	// TODO: Check somehow?
 
-	// Load the script value
-	// Ensure it's compatible
-	// Write to reflection
-	RF_DBGFAIL_MSG( "TODO" );
-	return false;
+	// Make sure it can hold a value
+	reflect::Value::Type const targetValueType = targetInfo.mValueType;
+	if( targetInfo.mValueType == reflect::Value::Type::Invalid )
+	{
+		// TODO: Maybe it's a nested class or a void accessor that can somehow
+		//  accept it? (Ex: a matching or convertible constructor)
+		RF_DBGFAIL_MSG( "Failed to convert script value to accessor target variable type" );
+		return false;
+	}
+
+	reflect::Value const intermediate = source.ConvertTo( targetValueType );
+	if( intermediate.GetStoredType() != targetValueType )
+	{
+		RF_DBGFAIL_MSG( "Failed to convert script value to accessor target value type" );
+		return false;
+	}
+
+	void const* const writeableValue = intermediate.GetBytes();
+	bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue, targetInfo );
+	if( writeSuccess == false )
+	{
+		RF_DBGFAIL_MSG( "Failed to write script value to accessor target" );
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -240,27 +269,12 @@ bool ProcessElementArrayPopulationWork(
 		{
 			// Value
 
-			// Make sure it can hold a value
-			reflect::Value::Type const targetValueType = targetInfo.mValueType;
-			if( targetInfo.mValueType == reflect::Value::Type::Invalid )
-			{
-				RF_DBGFAIL_MSG( "Failed to convert script value to accessor target variable type" );
-				return false;
-			}
-
 			reflect::Value const& source = rftl::get<reflect::Value>( elemValue );
-			reflect::Value const intermediate = source.ConvertTo( targetValueType );
-			if( intermediate.GetStoredType() != targetValueType )
-			{
-				RF_DBGFAIL_MSG( "Failed to convert script value to accessor target value type" );
-				return false;
-			}
 
-			void const* const writeableValue = intermediate.GetBytes();
-			bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue, targetInfo );
-			if( writeSuccess == false )
+			bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
+			if( storeSuccess == false )
 			{
-				RF_DBGFAIL_MSG( "Failed to write script value to accessor target" );
+				RF_DBGFAIL_MSG( "Failed to store script value in accessor" );
 				return false;
 			}
 		}
@@ -292,6 +306,58 @@ bool ProcessElementArrayPopulationWork(
 		else
 		{
 			RF_DBGFAIL_MSG( "TODO" );
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
+bool WriteScriptStringToMemberVariable( script::SquirrelVM::Element const& elemValue, rftype::TypeTraverser::MemberVariableInstance const& member )
+{
+	RF_ASSERT( rftl::holds_alternative<script::SquirrelVM::String>( elemValue ) );
+	script::SquirrelVM::String const& string = rftl::get<script::SquirrelVM::String>( elemValue );
+
+	// Ensure it's even remotely compatible
+	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
+	if( accessor == nullptr )
+	{
+		RF_DBGFAIL_MSG( "Failed to convert script array to member variable type" );
+		return false;
+	}
+	void* const location = const_cast<void*>( member.mMemberVariableLocation );
+
+	// Scoped mutation
+	if( accessor->mBeginMutation != nullptr )
+	{
+		accessor->mBeginMutation( location );
+	}
+	auto endMutation = OnScopeEnd( [accessor, location]() {
+		if( accessor->mEndMutation != nullptr )
+		{
+			accessor->mEndMutation( location );
+		}
+	} );
+
+	// For each character...
+	size_t indexCounter = 0;
+	reflect::VariableTypeInfo keyInfo = {};
+	keyInfo.mValueType = reflect::Value::DetermineType<size_t>();
+	for( char const& ch : string )
+	{
+		size_t const key = indexCounter;
+		indexCounter++;
+
+		// We'll need to know how to prepare/convert into the target
+		reflect::VariableTypeInfo const targetInfo = accessor->mGetVariableTargetInfoByKey( location, &key, keyInfo );
+
+		reflect::Value source{ ch };
+		bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
+		if( storeSuccess == false )
+		{
+			RF_DBGFAIL_MSG( "Failed to store script character in accessor" );
 			return false;
 		}
 	}
@@ -460,8 +526,8 @@ void sqreflect_scratch()
 			"x.mS32 = 7;\n"
 			"x.mU64 = 7;\n"
 			"x.mS64 = 7;\n"
-			"//x.mString = \"test\";\n"
-			"//x.mWString = \"test\";\n"
+			"x.mString = \"test\";\n"
+			"x.mWString = \"test\";\n"
 			"x.mIntArray = [3,5,7];\n"
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
@@ -564,8 +630,8 @@ void sqreflect_scratch()
 	RF_ASSERT( testClass.mS32 == 7 );
 	RF_ASSERT( testClass.mU64 == 7 );
 	RF_ASSERT( testClass.mS64 == 7 );
-	//RF_ASSERT( testClass.mString == "test" );
-	//RF_ASSERT( testClass.mWString == L"test" );
+	RF_ASSERT( testClass.mString == "test" );
+	RF_ASSERT( testClass.mWString == L"test" );
 	RF_ASSERT( testClass.mIntArray.size() == 3 );
 	RF_ASSERT( testClass.mIntArray[0] == 3 );
 	RF_ASSERT( testClass.mIntArray[1] == 5 );

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Core.Lib.Platform.props" />
+    <Import Project="..\..\config\RF.Core.Lib.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Core.Lib.Preconfig.props" />
+    <Import Project="..\..\config\RF.Core.Lib.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -36,6 +36,7 @@
     <ClInclude Include="Identifier.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stl_extensions\stdafx.h" />
+    <ClInclude Include="stl_extensions\string.h" />
     <ClInclude Include="stl_extensions\vector.h" />
     <ClInclude Include="TypeTraverser.h" />
   </ItemGroup>
@@ -44,6 +45,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="stl_extensions\string.cpp" />
     <ClCompile Include="stl_extensions\vector.cpp" />
     <ClCompile Include="TypeTraverser.cpp" />
   </ItemGroup>
