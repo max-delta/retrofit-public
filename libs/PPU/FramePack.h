@@ -27,8 +27,8 @@ public:
 
 	struct TimeSlot
 	{
-		ManagedTextureID m_TextureReference = k_InvalidManagedTextureID;
-		ManagedColliderID m_ColliderReference = k_InvalidManagedTextureID;
+		ManagedTextureID m_TextureReference = kInvalidManagedTextureID;
+		ManagedColliderID m_ColliderReference = kInvalidManagedTextureID;
 		uint8_t m_TextureOriginX = 0x0u;
 		uint8_t m_TextureOriginY = 0x0u;
 		uint8_t m_ColliderOriginX = 0x0u;
@@ -71,10 +71,10 @@ protected:
 	//
 	// Public data
 public:
-	GFXModifierHandlerID m_GFXModifierHandlers[k_NumGFXModifiers] = {};
-	GameColliderLayerMapping m_GameColliderLayerMappings[k_NumGameLayers] = {};
-	uint8_t m_PreferredSlowdownRate = 1; // 1=60, 2=30, 3=20, 4=15...
-	uint8_t m_NumTimeSlots = 0;
+	GFXModifierHandlerID mGFXModifierHandlers[kNumGFXModifiers] = {};
+	GameColliderLayerMapping mGameColliderLayerMappings[kNumGameLayers] = {};
+	uint8_t mPreferredSlowdownRate = 1; // 1=60, 2=30, 3=20, 4=15...
+	uint8_t mNumTimeSlots = 0;
 	uint8_t reserved3;
 	uint8_t reserved4;
 	uint8_t reserved5;
@@ -84,7 +84,7 @@ public:
 	// NOTE: This member acts as both the anchor for indexing into the derived
 	//  storage class, as well as this base class's runtime knowledge of the
 	//  derived class's compile-time knowledge
-	uint8_t const m_MaxTimeSlots;
+	uint8_t const mMaxTimeSlots;
 };
 
 template<size_t TIMESLOTS>
@@ -98,8 +98,8 @@ public:
 	// VS2015 bug: Intellisense can't read static array members sized with
 	//  constexpr from a template argument. Workaround: Use the template
 	//  argument directly instead.
-	static constexpr size_t k_MaxTimeSlots = TIMESLOTS;
-	static_assert( k_MaxTimeSlots <= 256, "Need to be able to index tme slots using uint8_t" );
+	static constexpr size_t kMaxTimeSlots = TIMESLOTS;
+	static_assert( kMaxTimeSlots <= 256, "Need to be able to index tme slots using uint8_t" );
 
 
 	//
@@ -113,8 +113,8 @@ public:
 	// Public data
 public:
 	// TODO: Make private, use safe accessors from base
-	uint8_t m_TimeSlotSustains[TIMESLOTS];
-	TimeSlot m_TimeSlots[TIMESLOTS];
+	uint8_t mTimeSlotSustains[TIMESLOTS];
+	TimeSlot mTimeSlots[TIMESLOTS];
 };
 
 static_assert( alignof( FramePackBase ) == 8, "Double-check FramePack alignment" );
@@ -136,50 +136,50 @@ static_assert( sizeof( FramePack_256 ) >= 240, "Double-check FramePack storage" 
 //  offset from the base class
 // NOTE: See code in offset getters on base class for clearer explanation of
 //  offset math, aided by variable names (which can't be used in these asserts)
-static_assert( offsetof( FramePackBase, m_MaxTimeSlots ) == 87, "Double-check FramePack storage" );
-static_assert( offsetof( FramePack_4096, m_TimeSlotSustains ) == 88, "Double-check FramePack storage" );
-static_assert( offsetof( FramePack_1024, m_TimeSlotSustains ) == 88, "Double-check FramePack storage" );
-static_assert( offsetof( FramePack_512, m_TimeSlotSustains ) == 88, "Double-check FramePack storage" );
-static_assert( offsetof( FramePack_256, m_TimeSlotSustains ) == 88, "Double-check FramePack storage" );
+static_assert( offsetof( FramePackBase, mMaxTimeSlots ) == 87, "Double-check FramePack storage" );
+static_assert( offsetof( FramePack_4096, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
+static_assert( offsetof( FramePack_1024, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
+static_assert( offsetof( FramePack_512, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
+static_assert( offsetof( FramePack_256, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
 static_assert(
-	offsetof( FramePack_4096, m_TimeSlotSustains ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1,
+	offsetof( FramePack_4096, mTimeSlotSustains ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_1024, m_TimeSlotSustains ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1,
+	offsetof( FramePack_1024, mTimeSlotSustains ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_512, m_TimeSlotSustains ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1,
+	offsetof( FramePack_512, mTimeSlotSustains ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_256, m_TimeSlotSustains ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1,
+	offsetof( FramePack_256, mTimeSlotSustains ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_4096, m_TimeSlots ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_4096::k_MaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_4096::k_MaxTimeSlots] ) % 8 ) % 8 ),
+	offsetof( FramePack_4096, mTimeSlots ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+	sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) +
+	( ( 8 - sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_1024, m_TimeSlots ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_1024::k_MaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_1024::k_MaxTimeSlots] ) % 8 ) % 8 ),
+	offsetof( FramePack_1024, mTimeSlots ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+	sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) +
+	( ( 8 - sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_512, m_TimeSlots ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_512::k_MaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_512::k_MaxTimeSlots] ) % 8 ) % 8 ),
+	offsetof( FramePack_512, mTimeSlots ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+	sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) +
+	( ( 8 - sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
-	offsetof( FramePack_256, m_TimeSlots ) ==
-	offsetof( FramePackBase, m_MaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_256::k_MaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_256::k_MaxTimeSlots] ) % 8 ) % 8 ),
+	offsetof( FramePack_256, mTimeSlots ) ==
+	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+	sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) +
+	( ( 8 - sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 
 ///////////////////////////////////////////////////////////////////////////////

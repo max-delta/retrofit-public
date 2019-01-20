@@ -9,10 +9,10 @@ namespace RF {
 // For testing that moves are destructive when available
 struct Proxy
 {
-	static constexpr int k_Default = 83;
-	static constexpr int k_Destroyed = 46;
+	static constexpr int kDefault = 83;
+	static constexpr int kDestroyed = 46;
 	Proxy()
-		: val( k_Default )
+		: val( kDefault )
 	{
 		//
 	}
@@ -31,12 +31,12 @@ struct Proxy
 	Proxy( Proxy&& other )
 		: Proxy( other.val )
 	{
-		other.val = k_Destroyed;
+		other.val = kDestroyed;
 	}
 
 	~Proxy()
 	{
-		val = k_Destroyed;
+		val = kDestroyed;
 	}
 
 	Proxy& operator=( Proxy const& ) = delete;
@@ -97,7 +97,7 @@ TEST( StaticArray, BasicLifetime )
 	sa.push_back( copyVal );
 	sa.push_back( rftl::move( moveVal ) );
 	ASSERT_TRUE( copyVal == 2 );
-	ASSERT_TRUE( moveVal == Proxy::k_Destroyed );
+	ASSERT_TRUE( moveVal == Proxy::kDestroyed );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( csa.size() == 2 );
 	ASSERT_TRUE( sa.empty() == false );
@@ -233,7 +233,7 @@ TEST( StaticArray, BlindEmplaceGrow )
 	ASSERT_TRUE( sa.size() == 0 );
 	sa.emplace_back();
 	ASSERT_TRUE( sa.size() == 1 );
-	ASSERT_TRUE( sa.data()[0] == Proxy::k_Default );
+	ASSERT_TRUE( sa.data()[0] == Proxy::kDefault );
 	sa.clear();
 	ASSERT_TRUE( sa.size() == 0 );
 }
@@ -355,8 +355,8 @@ TEST( StaticArray, SizeConstruct )
 {
 	rftl::static_array<Proxy, 5> sa( 2 );
 	ASSERT_TRUE( sa.size() == 2 );
-	ASSERT_TRUE( sa.data()[0] == Proxy::k_Default );
-	ASSERT_TRUE( sa.data()[1] == Proxy::k_Default );
+	ASSERT_TRUE( sa.data()[0] == Proxy::kDefault );
+	ASSERT_TRUE( sa.data()[1] == Proxy::kDefault );
 	sa.clear();
 	ASSERT_TRUE( sa.size() == 0 );
 }

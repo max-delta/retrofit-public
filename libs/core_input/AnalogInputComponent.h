@@ -15,8 +15,8 @@ public:
 	typedef uint8_t SignalIndex;
 	typedef float SignalValue;
 
-	static constexpr SignalValue k_MaxSignalValue = 1.0f;
-	static constexpr SignalValue k_MinSignalValue = 0.0f;
+	static constexpr SignalValue kMaxSignalValue = 1.0f;
+	static constexpr SignalValue kMinSignalValue = 0.0f;
 
 	AnalogInputComponent() = default;
 	virtual void OnTick() override = 0;

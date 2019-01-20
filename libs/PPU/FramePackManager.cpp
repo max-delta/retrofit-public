@@ -81,7 +81,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 
 	TextureManager& texMan = *mTextureManager.Get();
 	FramePackBase::TimeSlot* const timeSlots = framePack->GetMutableTimeSlots();
-	size_t const numSlots = framePack->m_NumTimeSlots;
+	size_t const numSlots = framePack->mNumTimeSlots;
 	RF_ASSERT( textures.size() == numSlots );
 	for( size_t i = 0; i < numSlots; i++ )
 	{
@@ -89,10 +89,10 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 		file::VFSPath const& texPath = textures[i];
 		rftl::string const texName = file::VFS::CreateStringFromPath( texPath );
 		ManagedTextureID const texID = texMan.LoadNewResourceGetID( texName, texPath );
-		if( texID == k_InvalidManagedTextureID )
+		if( texID == kInvalidManagedTextureID )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );
-			timeSlot.m_TextureReference = k_InvalidManagedTextureID;
+			timeSlot.m_TextureReference = kInvalidManagedTextureID;
 			continue;
 		}
 		timeSlot.m_TextureReference = texID;

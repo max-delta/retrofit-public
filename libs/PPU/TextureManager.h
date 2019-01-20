@@ -15,7 +15,7 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-class PPU_API TextureManager final : public ResourceManager<Texture, ManagedTextureID, k_InvalidManagedTextureID>
+class PPU_API TextureManager final : public ResourceManager<Texture, ManagedTextureID, kInvalidManagedTextureID>
 {
 	RF_NO_COPY( TextureManager );
 
@@ -48,7 +48,7 @@ private:
 	// Private data
 private:
 	WeakPtr<file::VFS> const mVfs;
-	WeakPtr<DeviceInterface> m_DeviceInterface;
+	WeakPtr<DeviceInterface> mDeviceInterface;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

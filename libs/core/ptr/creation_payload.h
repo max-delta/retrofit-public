@@ -23,28 +23,28 @@ private:
 	// Public methods
 public:
 	CreationPayload( T* target, PtrRef* ref )
-		: m_Target( target )
-		, m_Ref( ref )
+		: mTarget( target )
+		, mRef( ref )
 	{
 		//
 	}
 
 	CreationPayload( CreationPayload&& rhs )
-		: m_Target( rftl::move( rhs.m_Target ) )
-		, m_Ref( rftl::move( rhs.m_Ref ) )
+		: mTarget( rftl::move( rhs.mTarget ) )
+		, mRef( rftl::move( rhs.mRef ) )
 	{
 		rhs.Clean();
 	}
 
 	~CreationPayload()
 	{
-		RF_ASSERT( m_Target == nullptr );
-		RF_ASSERT( m_Ref == nullptr );
-		if( m_Ref != nullptr )
+		RF_ASSERT( mTarget == nullptr );
+		RF_ASSERT( mRef == nullptr );
+		if( mRef != nullptr )
 		{
 			// Someone dropped the ball during transfer!
-			m_Ref->Delete( m_Target );
-			delete m_Ref;
+			mRef->Delete( mTarget );
+			delete mRef;
 		}
 	}
 
@@ -54,16 +54,16 @@ public:
 private:
 	void Clean()
 	{
-		m_Target = nullptr;
-		m_Ref = nullptr;
+		mTarget = nullptr;
+		mRef = nullptr;
 	}
 
 
 	//
 	// Private data
 private:
-	T* m_Target;
-	PtrRef* m_Ref;
+	T* mTarget;
+	PtrRef* mRef;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

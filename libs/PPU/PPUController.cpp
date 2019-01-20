@@ -19,10 +19,10 @@ namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs )
-	: m_DeviceInterface( rftl::move( deviceInterface ) )
-	, m_TextureManager( nullptr )
-	, m_FramePackManager( nullptr )
-	, m_Vfs( vfs )
+	: mDeviceInterface( rftl::move( deviceInterface ) )
+	, mTextureManager( nullptr )
+	, mFramePackManager( nullptr )
+	, mVfs( vfs )
 {
 	//
 }
@@ -33,11 +33,11 @@ PPUController::~PPUController()
 {
 	// TODO: Proper, safe cleanup
 
-	m_FramePackManager = nullptr;
-	m_TextureManager = nullptr;
+	mFramePackManager = nullptr;
+	mTextureManager = nullptr;
 
-	m_DeviceInterface->DetachFromWindow();
-	m_DeviceInterface = nullptr;
+	mDeviceInterface->DetachFromWindow();
+	mDeviceInterface = nullptr;
 }
 
 
@@ -46,13 +46,13 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 {
 	bool success = true;
 
-	m_Width = width;
-	m_Height = height;
+	mWidth = width;
+	mHeight = height;
 
 	// Create texture manager
-	RF_ASSERT( m_TextureManager == nullptr );
-	m_TextureManager = DefaultCreator<gfx::TextureManager>::Create( m_Vfs );
-	success = m_TextureManager->AttachToDevice( m_DeviceInterface );
+	RF_ASSERT( mTextureManager == nullptr );
+	mTextureManager = DefaultCreator<gfx::TextureManager>::Create( mVfs );
+	success = mTextureManager->AttachToDevice( mDeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )
 	{
@@ -60,17 +60,17 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	}
 
 	// Create frame pack manager
-	RF_ASSERT( m_FramePackManager == nullptr );
-	m_FramePackManager = DefaultCreator<gfx::FramePackManager>::Create( m_TextureManager, m_Vfs );
+	RF_ASSERT( mFramePackManager == nullptr );
+	mFramePackManager = DefaultCreator<gfx::FramePackManager>::Create( mTextureManager, mVfs );
 
 	// Prepare device
-	success = m_DeviceInterface->Initialize2DGraphics();
+	success = mDeviceInterface->Initialize2DGraphics();
 	RF_ASSERT( success );
 	if( success == false )
 	{
 		return false;
 	}
-	success = m_DeviceInterface->SetBackgroundColor( 1, 0, 1, 1 );
+	success = mDeviceInterface->SetBackgroundColor( 1, 0, 1, 1 );
 	RF_ASSERT( success );
 	if( success == false )
 	{
@@ -86,14 +86,14 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	}
 
 	// Setup buffers
-	for( size_t i = 0; i < k_NumStateBuffers; i++ )
+	for( size_t i = 0; i < kNumStateBuffers; i++ )
 	{
-		m_PPUState[i].Clear();
-		m_PPUDebugState[i].Clear();
+		mPPUState[i].Clear();
+		mPPUDebugState[i].Clear();
 	}
-	m_WriteState = k_InvalidStateBufferID;
-	m_QueueToRenderState = k_InvalidStateBufferID;
-	m_RenderState = k_InvalidStateBufferID;
+	mWriteState = kInvalidStateBufferID;
+	mQueueToRenderState = kInvalidStateBufferID;
+	mRenderState = kInvalidStateBufferID;
 
 	return true;
 }
@@ -102,15 +102,15 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 {
-	m_Width = width;
-	m_Height = height;
-	bool const surfaceSuccess = m_DeviceInterface->SetSurfaceSize( width, height );
+	mWidth = width;
+	mHeight = height;
+	bool const surfaceSuccess = mDeviceInterface->SetSurfaceSize( width, height );
 	RF_ASSERT( surfaceSuccess );
 	if( surfaceSuccess == false )
 	{
 		return false;
 	}
-	bool const fontSuccess = m_DeviceInterface->SetFontScale( GetZoomFactor() );
+	bool const fontSuccess = mDeviceInterface->SetFontScale( GetZoomFactor() );
 	RF_ASSERT( fontSuccess );
 	if( fontSuccess == false )
 	{
@@ -125,59 +125,59 @@ bool PPUController::LoadFont( FILE* file )
 {
 	// TODO: Revise the font API
 	uint32_t unused;
-	return m_DeviceInterface->CreateBitmapFont( file, 7, unused, unused );
+	return mDeviceInterface->CreateBitmapFont( file, 7, unused, unused );
 }
 
 
 
 PPUCoordElem PPUController::GetWidth() const
 {
-	return m_Width / GetZoomFactor();
+	return mWidth / GetZoomFactor();
 }
 
 
 
 PPUCoordElem PPUController::GetHeight() const
 {
-	return m_Height / GetZoomFactor();
+	return mHeight / GetZoomFactor();
 }
 
 
 
 bool PPUController::BeginFrame()
 {
-	RF_ASSERT_MSG( m_WriteState == k_InvalidStateBufferID, "Write buffer wasn't closed" );
+	RF_ASSERT_MSG( mWriteState == kInvalidStateBufferID, "Write buffer wasn't closed" );
 
 	// Find an open buffer for writing
-	for( StateBufferID i = 0; i < k_NumStateBuffers; i++ )
+	for( StateBufferID i = 0; i < kNumStateBuffers; i++ )
 	{
-		if( i == m_RenderState )
+		if( i == mRenderState )
 		{
 			// Can't use render state
 			continue;
 		}
-		if( i == m_QueueToRenderState )
+		if( i == mQueueToRenderState )
 		{
 			// Can't use queued state
 			continue;
 		}
 
 		// Found an open state, claiming it for write
-		m_WriteState = i;
+		mWriteState = i;
 		break;
 	}
-	if( m_WriteState == k_InvalidStateBufferID )
+	if( mWriteState == kInvalidStateBufferID )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_PPU, "Failed to find an open write state to begin render frame" );
 	}
-	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
-	RF_ASSERT( m_WriteState < k_NumStateBuffers );
-	m_PPUState[m_WriteState].Clear();
-	m_PPUDebugState[m_WriteState].Clear();
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	RF_ASSERT( mWriteState < kNumStateBuffers );
+	mPPUState[mWriteState].Clear();
+	mPPUDebugState[mWriteState].Clear();
 
 	// TODO: Update timers
 
-	m_DeviceInterface->BeginFrame();
+	mDeviceInterface->BeginFrame();
 	return true;
 }
 
@@ -185,11 +185,11 @@ bool PPUController::BeginFrame()
 
 bool PPUController::SubmitToRender()
 {
-	RF_ASSERT_MSG( m_WriteState != k_InvalidStateBufferID, "Write buffer wasn't opened" );
+	RF_ASSERT_MSG( mWriteState != kInvalidStateBufferID, "Write buffer wasn't opened" );
 
 	// Close write buffer, and queue it
-	StateBufferID const bufferToQueue = m_WriteState;
-	m_WriteState = k_InvalidStateBufferID;
+	StateBufferID const bufferToQueue = mWriteState;
+	mWriteState = kInvalidStateBufferID;
 	SignalRender( bufferToQueue );
 
 	return true;
@@ -210,7 +210,7 @@ bool PPUController::EndFrame()
 	// TODO: Set frame as closed
 	// TODO: Update timers
 
-	m_DeviceInterface->EndFrame();
+	mDeviceInterface->EndFrame();
 	return true;
 }
 
@@ -218,19 +218,19 @@ bool PPUController::EndFrame()
 
 bool PPUController::DrawObject( Object const& object )
 {
-	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
-	PPUState& targetState = m_PPUState[m_WriteState];
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUState& targetState = mPPUState[mWriteState];
 
 	// TODO: Thread-safe
 
-	if( targetState.m_NumObjects >= PPUState::k_MaxObjects )
+	if( targetState.mNumObjects >= PPUState::kMaxObjects )
 	{
 		RF_DBGFAIL_MSG( "Too many objects drawn this frame" );
 		return false;
 	}
 
-	Object& targetObject = targetState.m_Objects[targetState.m_NumObjects];
-	targetState.m_NumObjects++;
+	Object& targetObject = targetState.mObjects[targetState.mNumObjects];
+	targetState.mNumObjects++;
 
 	targetObject = object;
 
@@ -244,26 +244,26 @@ bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, 
 	RF_ASSERT_MSG( charSize.x == 4, "TODO: Support other sizes" );
 	RF_ASSERT_MSG( charSize.y == 8, "TODO: Support other sizes" );
 
-	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
-	PPUState& targetState = m_PPUState[m_WriteState];
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUState& targetState = mPPUState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.m_NumStrings < PPUState::k_MaxStrings );
-	PPUState::String& targetString = targetState.m_Strings[targetState.m_NumStrings];
-	targetState.m_NumStrings++;
+	RF_ASSERT( targetState.mNumStrings < PPUState::kMaxStrings );
+	PPUState::String& targetString = targetState.mStrings[targetState.mNumStrings];
+	targetState.mNumStrings++;
 
-	targetString.m_XCoord = math::integer_cast<PPUCoordElem>( pos.x );
-	targetString.m_YCoord = math::integer_cast<PPUCoordElem>( pos.y );
-	targetString.m_Width = charSize.x;
-	targetString.m_Height = charSize.y;
-	targetString.m_Text[0] = '\0';
+	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
+	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mWidth = charSize.x;
+	targetString.mHeight = charSize.y;
+	targetString.mText[0] = '\0';
 	{
 		va_list args;
 		va_start( args, fmt );
-		vsnprintf( &targetString.m_Text[0], PPUState::String::k_MaxLen, fmt, args );
+		vsnprintf( &targetString.mText[0], PPUState::String::k_MaxLen, fmt, args );
 		va_end( args );
 	}
-	targetString.m_Text[PPUState::String::k_MaxLen] = '\0';
+	targetString.mText[PPUState::String::k_MaxLen] = '\0';
 
 	return true;
 }
@@ -272,24 +272,24 @@ bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, 
 
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
-	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
-	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.m_NumStrings < PPUDebugState::k_MaxStrings );
-	PPUDebugState::DebugString& targetString = targetState.m_Strings[targetState.m_NumStrings];
-	targetState.m_NumStrings++;
+	RF_ASSERT( targetState.mNumStrings < PPUDebugState::kMaxStrings );
+	PPUDebugState::DebugString& targetString = targetState.mStrings[targetState.mNumStrings];
+	targetState.mNumStrings++;
 
-	targetString.m_XCoord = math::integer_cast<PPUCoordElem>( pos.x );
-	targetString.m_YCoord = math::integer_cast<PPUCoordElem>( pos.y );
-	targetString.m_Text[0] = '\0';
+	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
+	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mText[0] = '\0';
 	{
 		va_list args;
 		va_start( args, fmt );
-		vsnprintf( &targetString.m_Text[0], PPUDebugState::DebugString::k_MaxLen, fmt, args );
+		vsnprintf( &targetString.mText[0], PPUDebugState::DebugString::k_MaxLen, fmt, args );
 		va_end( args );
 	}
-	targetString.m_Text[PPUDebugState::DebugString::k_MaxLen] = '\0';
+	targetString.mText[PPUDebugState::DebugString::k_MaxLen] = '\0';
 
 	return true;
 }
@@ -298,19 +298,19 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
 {
-	RF_ASSERT( m_WriteState != k_InvalidStateBufferID );
-	PPUDebugState& targetState = m_PPUDebugState[m_WriteState];
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.m_NumLines < PPUDebugState::k_MaxLines );
-	PPUDebugState::DebugLine& targetLine = targetState.m_Lines[targetState.m_NumLines];
-	targetState.m_NumLines++;
+	RF_ASSERT( targetState.mNumLines < PPUDebugState::kMaxLines );
+	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
+	targetState.mNumLines++;
 
 	targetLine.m_XCoord0 = math::integer_cast<PPUCoordElem>( p0.x );
 	targetLine.m_YCoord0 = math::integer_cast<PPUCoordElem>( p0.y );
 	targetLine.m_XCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
 	targetLine.m_YCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
-	targetLine.m_Width = width;
+	targetLine.mWidth = width;
 
 	return true;
 }
@@ -319,21 +319,21 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width 
 
 WeakPtr<gfx::DeviceInterface> PPUController::DebugGetDeviceInterface() const
 {
-	return m_DeviceInterface;
+	return mDeviceInterface;
 }
 
 
 
 WeakPtr<gfx::TextureManager> PPUController::DebugGetTextureManager() const
 {
-	return m_TextureManager;
+	return mTextureManager;
 }
 
 
 
 WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
 {
-	return m_FramePackManager;
+	return mFramePackManager;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -341,15 +341,15 @@ WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
 void PPUController::SignalRender( StateBufferID readyBuffer )
 {
 	// TODO: If renderer open - push work, if closed - queue work
-	RF_ASSERT_MSG( m_RenderState == k_InvalidStateBufferID, "TODO: Asynchronous rendering" );
-	RF_ASSERT_MSG( m_QueueToRenderState == k_InvalidStateBufferID, "TODO: Asynchronous rendering" );
+	RF_ASSERT_MSG( mRenderState == kInvalidStateBufferID, "TODO: Asynchronous rendering" );
+	RF_ASSERT_MSG( mQueueToRenderState == kInvalidStateBufferID, "TODO: Asynchronous rendering" );
 
 	// Set buffer as rendering
-	m_RenderState = readyBuffer;
+	mRenderState = readyBuffer;
 
 	// HACK: Render now
 	Render();
-	m_RenderState = k_InvalidStateBufferID;
+	mRenderState = kInvalidStateBufferID;
 
 	return;
 }
@@ -358,57 +358,57 @@ void PPUController::SignalRender( StateBufferID readyBuffer )
 
 void PPUController::Render() const
 {
-	RF_ASSERT( m_RenderState != k_InvalidStateBufferID );
-	PPUDebugState const& targetDebugState = m_PPUDebugState[m_RenderState];
-	PPUState const& targetState = m_PPUState[m_RenderState];
+	RF_ASSERT( mRenderState != kInvalidStateBufferID );
+	PPUDebugState const& targetDebugState = mPPUDebugState[mRenderState];
+	PPUState const& targetState = mPPUState[mRenderState];
 
 	// Draw objects
-	for( size_t i = 0; i < targetState.m_NumObjects; i++ )
+	for( size_t i = 0; i < targetState.mNumObjects; i++ )
 	{
-		Object const& object = targetState.m_Objects[i];
-		FramePackBase const* const framePack = m_FramePackManager->GetResourceFromManagedResourceID( object.m_FramePackID );
+		Object const& object = targetState.mObjects[i];
+		FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
 		RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
-		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.m_TimeIndex );
+		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimeIndex );
 		FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
 
-		if( timeSlot.m_TextureReference == k_InvalidManagedTextureID )
+		if( timeSlot.m_TextureReference == kInvalidManagedTextureID )
 		{
 			// Invisible frame
 			continue;
 		}
 
-		Texture const* texture = m_TextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
+		Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
 		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
 		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
 
 		// TODO: Transforms
-		PPUCoordElem const x = object.m_XCoord - timeSlot.m_TextureOriginX;
-		PPUCoordElem const y = object.m_YCoord - timeSlot.m_TextureOriginY;
+		PPUCoordElem const x = object.mXCoord - timeSlot.m_TextureOriginX;
+		PPUCoordElem const y = object.mYCoord - timeSlot.m_TextureOriginY;
 		math::Vector2f topLeft = CoordToDevice( x, y );
 		math::Vector2f bottomRight = CoordToDevice(
-			math::integer_cast<PPUCoordElem>( x + texture->m_WidthPostLoad ),
-			math::integer_cast<PPUCoordElem>( y + texture->m_HeightPostLoad ) );
+			math::integer_cast<PPUCoordElem>( x + texture->mWidthPostLoad ),
+			math::integer_cast<PPUCoordElem>( y + texture->mHeightPostLoad ) );
 
 		// Perform flips
 		// NOTE: Assuming the device billboards are implemented similarly to a
 		//  double-sided quad in a 3D pipeline
-		if( object.m_HorizontalFlip )
+		if( object.mHorizontalFlip )
 		{
 			rftl::swap( topLeft.x, bottomRight.x );
 		}
-		if( object.m_VerticalFlip )
+		if( object.mVerticalFlip )
 		{
 			rftl::swap( topLeft.y, bottomRight.y );
 		}
 
-		m_DeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.m_ZLayer );
+		mDeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.mZLayer );
 	}
 
 	// Draw text
-	for( size_t i = 0; i < targetState.m_NumStrings; i++ )
+	for( size_t i = 0; i < targetState.mNumStrings; i++ )
 	{
-		PPUState::String const& string = targetState.m_Strings[i];
-		char const* text = string.m_Text;
+		PPUState::String const& string = targetState.mStrings[i];
+		char const* text = string.mText;
 		for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
 		{
 			char const character = text[i_char];
@@ -416,14 +416,14 @@ void PPUController::Render() const
 			{
 				break;
 			}
-			PPUCoordElem const x1 = string.m_XCoord + math::integer_cast<PPUCoordElem>( i_char * string.m_Width );
-			PPUCoordElem const y1 = string.m_YCoord;
-			PPUCoordElem const x2 = x1 + string.m_Width;
-			PPUCoordElem const y2 = y1 + string.m_Height;
+			PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * string.mWidth );
+			PPUCoordElem const y1 = string.mYCoord;
+			PPUCoordElem const x2 = x1 + string.mWidth;
+			PPUCoordElem const y2 = y1 + string.mHeight;
 
 			math::Vector2f const topLeft = CoordToDevice( x1, y1 );
 			math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
-			m_DeviceInterface->DrawBitmapFont( 7, character, topLeft, bottomRight, 0 );
+			mDeviceInterface->DrawBitmapFont( 7, character, topLeft, bottomRight, 0 );
 		}
 	}
 
@@ -432,28 +432,28 @@ void PPUController::Render() const
 	constexpr bool drawGrid = true;
 	if( drawGrid )
 	{
-		for( PPUCoordElem horizontal = 0; horizontal <= m_Width; horizontal += k_TileSize )
+		for( PPUCoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
 		{
 			math::Vector2f const posA = CoordToDevice( horizontal, 0 );
 			math::Vector2f const posB = CoordToDevice( horizontal - 1, 0 );
-			m_DeviceInterface->DebugDrawLine(
+			mDeviceInterface->DebugDrawLine(
 				math::Vector2f( posA.x, 0 ),
 				math::Vector2f( posA.x, 1 ),
 				0 );
-			m_DeviceInterface->DebugDrawLine(
+			mDeviceInterface->DebugDrawLine(
 				math::Vector2f( posB.x, 0 ),
 				math::Vector2f( posB.x, 1 ),
 				0 );
 		}
-		for( PPUCoordElem vertical = 0; vertical <= m_Height; vertical += k_TileSize )
+		for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
 		{
 			math::Vector2f const posA = CoordToDevice( 0, vertical );
 			math::Vector2f const posB = CoordToDevice( 0, vertical - 1 );
-			m_DeviceInterface->DebugDrawLine(
+			mDeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posA.y ),
 				math::Vector2f( 1, posA.y ),
 				0 );
-			m_DeviceInterface->DebugDrawLine(
+			mDeviceInterface->DebugDrawLine(
 				math::Vector2f( 0, posB.y ),
 				math::Vector2f( 1, posB.y ),
 				0 );
@@ -461,32 +461,32 @@ void PPUController::Render() const
 	}
 
 	// Draw lines
-	for( size_t i = 0; i < targetDebugState.m_NumLines; i++ )
+	for( size_t i = 0; i < targetDebugState.mNumLines; i++ )
 	{
-		PPUDebugState::DebugLine const& line = targetDebugState.m_Lines[i];
+		PPUDebugState::DebugLine const& line = targetDebugState.mLines[i];
 		math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
 		math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-		m_DeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.m_Width * GetZoomFactor() ) );
+		mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ) );
 	}
 
 	// Draw text
-	for( size_t i = 0; i < targetDebugState.m_NumStrings; i++ )
+	for( size_t i = 0; i < targetDebugState.mNumStrings; i++ )
 	{
-		PPUDebugState::DebugString const& string = targetDebugState.m_Strings[i];
-		math::Vector2f const pos = CoordToDevice( string.m_XCoord, string.m_YCoord );
-		m_DeviceInterface->DebugRenderText( pos, "%s", string.m_Text );
+		PPUDebugState::DebugString const& string = targetDebugState.mStrings[i];
+		math::Vector2f const pos = CoordToDevice( string.mXCoord, string.mYCoord );
+		mDeviceInterface->DebugRenderText( pos, "%s", string.mText );
 	}
 
-	m_DeviceInterface->RenderFrame();
+	mDeviceInterface->RenderFrame();
 }
 
 
 
 uint8_t PPUController::GetZoomFactor() const
 {
-	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
-	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimenssion / k_TileSize );
-	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / k_DesiredDiagonalTiles ) );
+	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
+	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimenssion / kTileSize );
+	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
 	return zoomFactor;
 }
 
@@ -502,9 +502,9 @@ math::Vector2f PPUController::CoordToDevice( PPUCoordElem xCoord, PPUCoordElem y
 math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 {
 	// TODO: Windowing
-	uint16_t const smallestDimenssion = math::Min( m_Width, m_Height );
+	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
 	uint8_t const zoomFactor = GetZoomFactor();
-	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( k_TileSize * zoomFactor );
+	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( kTileSize * zoomFactor );
 
 	// Baseline
 	// [0-64]
@@ -513,7 +513,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 
 	// Tiles
 	// [0-2]
-	float const coordToTiles = 1.f / k_TileSize;
+	float const coordToTiles = 1.f / kTileSize;
 	x *= coordToTiles;
 	y *= coordToTiles;
 
@@ -524,7 +524,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 	y *= tilesToPartialNDC;
 
 	// NDC, correcting mWidth
-	float const heightToWidthNDC = float( m_Height ) / m_Width;
+	float const heightToWidthNDC = float( mHeight ) / mWidth;
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );
@@ -548,7 +548,7 @@ math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile
 	y *= tilesToPartialNDC;
 
 	// NDC, correcting mWidth
-	float const heightToWidthNDC = float( m_Height ) / m_Width;
+	float const heightToWidthNDC = float( mHeight ) / mWidth;
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );

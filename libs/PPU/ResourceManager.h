@@ -37,7 +37,7 @@ private:
 	//
 	// Constants
 public:
-	static constexpr ManagedResourceID k_InvalidResourceID = InvalidResourceID;
+	static constexpr ManagedResourceID kInvalidResourceID = InvalidResourceID;
 
 
 	//
@@ -94,10 +94,10 @@ private:
 	//
 	// Private data
 private:
-	ManagedResourceID m_NextResourceID;
-	ResourcesByManagedID m_Resources;
-	ResourceIDsByName m_ResourceIDs;
-	ResourcesByFilename m_FileBackedResources;
+	ManagedResourceID mNextResourceID;
+	ResourcesByManagedID mResources;
+	ResourceIDsByName mResourceIDs;
+	ResourcesByFilename mFileBackedResources;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -43,8 +43,8 @@ struct PtrTransformer
 	{
 		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<void> voidPayload(
-			static_cast<decltype( CreationPayload<void>::m_Target )>( normalPayload.m_Target ),
-			reinterpret_cast<decltype( CreationPayload<void>::m_Ref )>( normalPayload.m_Ref ) );
+			static_cast<decltype( CreationPayload<void>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<void>::mRef )>( normalPayload.mRef ) );
 		normalPayload.Clean();
 		out = UniquePtr<void>{ rftl::move( voidPayload ) };
 	}

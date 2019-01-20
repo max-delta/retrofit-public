@@ -71,12 +71,12 @@ private:
 	//
 	// Private data
 private:
-	WeakPtr<file::VFS> const m_Vfs;
-	MasterMode m_MasterMode;
-	gfx::ManagedFramePackID m_FramePackID;
-	uint8_t m_EditingFrame;
-	gfx::TimeSlowdownRate m_PreviewSlowdownRate;
-	gfx::Object m_PreviewObject;
+	WeakPtr<file::VFS> const mVfs;
+	MasterMode mMasterMode;
+	gfx::ManagedFramePackID mFramePackID;
+	uint8_t mEditingFrame;
+	gfx::TimeSlowdownRate mPreviewSlowdownRate;
+	gfx::Object mPreviewObject;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

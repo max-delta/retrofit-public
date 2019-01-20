@@ -36,49 +36,49 @@ void InitDrawTest()
 {
 	using namespace RF;
 
-	gfx::PPUController& ppu = *app::g_Graphics;
+	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
-	file::VFS& vfs = *app::g_Vfs;
+	file::VFS& vfs = *app::gVfs;
 
-	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
+	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
 
 	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
-	testObjDigit.m_FramePackID = digitFPackID;
-	testObjDigit.m_MaxTimeIndex = digitAnimationLength;
-	testObjDigit.m_TimeSlowdown = 3;
-	testObjDigit.m_Looping = true;
-	testObjDigit.m_XCoord = gfx::k_TileSize * 2;
-	testObjDigit.m_YCoord = gfx::k_TileSize * 1;
-	testObjDigit.m_ZLayer = 0;
+	testObjDigit.mFramePackID = digitFPackID;
+	testObjDigit.mMaxTimeIndex = digitAnimationLength;
+	testObjDigit.mTimeSlowdown = 3;
+	testObjDigit.mLooping = true;
+	testObjDigit.mXCoord = gfx::kTileSize * 2;
+	testObjDigit.mYCoord = gfx::kTileSize * 1;
+	testObjDigit.mZLayer = 0;
 
 	testObjDigitFlips[0] = testObjDigit;
-	testObjDigitFlips[0].m_XCoord += gfx::k_TileSize * 1;
-	testObjDigitFlips[0].m_HorizontalFlip = true;
+	testObjDigitFlips[0].mXCoord += gfx::kTileSize * 1;
+	testObjDigitFlips[0].mHorizontalFlip = true;
 	testObjDigitFlips[1] = testObjDigit;
-	testObjDigitFlips[1].m_XCoord += gfx::k_TileSize * 2;
-	testObjDigitFlips[1].m_VerticalFlip = true;
+	testObjDigitFlips[1].mXCoord += gfx::kTileSize * 2;
+	testObjDigitFlips[1].mVerticalFlip = true;
 	testObjDigitFlips[2] = testObjDigit;
-	testObjDigitFlips[2].m_XCoord += gfx::k_TileSize * 3;
-	testObjDigitFlips[2].m_HorizontalFlip = true;
-	testObjDigitFlips[2].m_VerticalFlip = true;
+	testObjDigitFlips[2].mXCoord += gfx::kTileSize * 3;
+	testObjDigitFlips[2].mHorizontalFlip = true;
+	testObjDigitFlips[2].mVerticalFlip = true;
 
 
 	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( "testpack2", commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
-	testObjWiggle.m_FramePackID = wiggleFPackID;
-	testObjWiggle.m_MaxTimeIndex = 4;
-	testObjWiggle.m_TimeSlowdown = 33 / 4;
-	testObjWiggle.m_Looping = true;
-	testObjWiggle.m_XCoord = gfx::k_TileSize * 4;
-	testObjWiggle.m_YCoord = gfx::k_TileSize * 4;
-	testObjWiggle.m_ZLayer = 0;
+	testObjWiggle.mFramePackID = wiggleFPackID;
+	testObjWiggle.mMaxTimeIndex = 4;
+	testObjWiggle.mTimeSlowdown = 33 / 4;
+	testObjWiggle.mLooping = true;
+	testObjWiggle.mXCoord = gfx::kTileSize * 4;
+	testObjWiggle.mYCoord = gfx::kTileSize * 4;
+	testObjWiggle.mZLayer = 0;
 
-	file::VFSPath const fonts = file::VFS::k_Root.GetChild( "assets", "textures", "fonts" );
+	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	app::g_Graphics->LoadFont( fontHandle->GetFile() );
+	app::gGraphics->LoadFont( fontHandle->GetFile() );
 }
 
 
@@ -87,21 +87,21 @@ void DrawTest()
 {
 	using namespace RF;
 
-	app::g_Graphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+	app::gGraphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
 	testObjDigit.Animate();
-	app::g_Graphics->DrawObject( testObjDigit );
+	app::gGraphics->DrawObject( testObjDigit );
 	for( size_t i = 0; i < rftl::extent<decltype( testObjDigitFlips )>::value; i++ )
 	{
 		testObjDigitFlips[i].Animate();
-		app::g_Graphics->DrawObject( testObjDigitFlips[i] );
+		app::gGraphics->DrawObject( testObjDigitFlips[i] );
 	}
 	testObjWiggle.Animate();
-	app::g_Graphics->DrawObject( testObjWiggle );
-	app::g_Graphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
-	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
-	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
-	app::g_Graphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawObject( testObjWiggle );
+	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
 }
 
 
@@ -129,11 +129,11 @@ void DrawInputDebug()
 	rftl::u16string textStream;
 	rftl::string halfAsciid;
 
-	app::g_Graphics->DebugDrawText( coord, "Input" );
+	app::gGraphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;
 
 	logicEvents.clear();
-	app::g_WndProcInput->m_Digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+	app::gWndProcInput->mDigital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
 	logicStream.clear();
 	for( LogicEvents::value_type const& event : logicEvents )
 	{
@@ -142,11 +142,11 @@ void DrawInputDebug()
 			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
-	app::g_Graphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+	app::gGraphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
 	coord.y += offset;
 
 	physicEvents.clear();
-	app::g_WndProcInput->m_Digital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
+	app::gWndProcInput->mDigital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
 	physStream.clear();
 	for( PhysicEvents::value_type const& event : physicEvents )
 	{
@@ -155,17 +155,17 @@ void DrawInputDebug()
 			static_cast<int>( event.m_Code ) <<
 			( event.m_NewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
 	}
-	app::g_Graphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+	app::gGraphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
 	coord.y += offset;
 
-	signalValue = app::g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-	app::g_Graphics->DebugDrawText( coord, "  cax: %f", signalValue );
+	signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
+	app::gGraphics->DebugDrawText( coord, "  cax: %f", signalValue );
 	coord.y += offset;
-	signalValue = app::g_WndProcInput->m_Analog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-	app::g_Graphics->DebugDrawText( coord, "  cay: %f", signalValue );
+	signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
+	app::gGraphics->DebugDrawText( coord, "  cay: %f", signalValue );
 	coord.y += offset;
 
-	app::g_WndProcInput->m_Text.GetTextStream( textStream, 100 );
+	app::gWndProcInput->mText.GetTextStream( textStream, 100 );
 	halfAsciid.clear();
 	for( char16_t const& chr : textStream )
 	{
@@ -178,7 +178,7 @@ void DrawInputDebug()
 			halfAsciid.push_back( '#' );
 		}
 	}
-	app::g_Graphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+	app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
 	coord.y += offset;
 }
 
@@ -186,8 +186,8 @@ void DrawInputDebug()
 
 void XMLTest()
 {
-	file::VFS* vfs = app::g_Vfs;
-	file::VFSPath const testFilePath = file::VFS::k_Root.GetChild( "scratch", "xmltest.xml" );
+	file::VFS* vfs = app::gVfs;
+	file::VFSPath const testFilePath = file::VFS::kRoot.GetChild( "scratch", "xmltest.xml" );
 
 	// Write
 	{
@@ -229,12 +229,12 @@ void XMLTest()
 
 void FPackSerializationTest()
 {
-	gfx::PPUController& ppu = *app::g_Graphics;
+	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
 	// Load a common test asset
-	file::VFSPath const commonFramepacks = file::VFS::k_Root.GetChild( "assets", "framepacks", "common" );
+	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
 	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack" );
 	gfx::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
 	WeakPtr<gfx::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
@@ -263,8 +263,8 @@ void FPackSerializationTest()
 	}
 
 	// Create file
-	file::VFS const& vfs = *app::g_Vfs;
-	file::VFSPath const newFilePath = file::VFS::k_Root.GetChild( "scratch", "sertest.fpack" );
+	file::VFS const& vfs = *app::gVfs;
+	file::VFSPath const newFilePath = file::VFS::kRoot.GetChild( "scratch", "sertest.fpack" );
 	{
 		file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );
 		if( fileHandle == nullptr )
@@ -315,7 +315,7 @@ static UniquePtr<app::FrameBuilder> gTestFrameBuilder;
 static uint64_t gTestFrameBuilderFrameCount;
 void InitFrameBuilderTest()
 {
-	gTestFrameBuilder = DefaultCreator<app::FrameBuilder>::Create( app::g_TaskScheduler->GetTaskScheduler() );
+	gTestFrameBuilder = DefaultCreator<app::FrameBuilder>::Create( app::gTaskScheduler->GetTaskScheduler() );
 
 	{
 		auto func = []() -> void

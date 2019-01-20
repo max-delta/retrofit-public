@@ -36,16 +36,16 @@ private:
 	// Public methods
 public:
 	PtrBase( CreationPayload<T>&& payload )
-		: m_Target( payload.m_Target )
-		, m_Ref( payload.m_Ref )
+		: mTarget( payload.mTarget )
+		, mRef( payload.mRef )
 	{
 		payload.Clean();
 	}
 
 	template<typename DERIVED>
 	PtrBase( CreationPayload<DERIVED>&& payload )
-		: m_Target( static_cast<T*>( payload.m_Target ) )
-		, m_Ref( reinterpret_cast<PtrRef*>( payload.m_Ref ) )
+		: mTarget( static_cast<T*>( payload.mTarget ) )
+		, mRef( reinterpret_cast<PtrRef*>( payload.mRef ) )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 		payload.Clean();
@@ -56,16 +56,16 @@ public:
 	// Protected methods
 protected:
 	explicit PtrBase( T* target, PtrRef* ref )
-		: m_Target( target )
-		, m_Ref( ref )
+		: mTarget( target )
+		, mRef( ref )
 	{
 		//
 	}
 
 	template<typename DERIVED>
 	explicit PtrBase( DERIVED* target, PtrRef* ref )
-		: m_Target( static_cast<T*>( target ) )
-		, m_Ref( ref )
+		: mTarget( static_cast<T*>( target ) )
+		, mRef( ref )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
@@ -78,107 +78,107 @@ protected:
 
 	bool IsUniqueStrongOwner() const
 	{
-		if( m_Ref == nullptr )
+		if( mRef == nullptr )
 		{
 			return true;
 		}
-		return m_Ref->GetStrongCount() == 1;
+		return mRef->GetStrongCount() == 1;
 	}
 
 	void IncreaseStrongCount()
 	{
-		if( m_Ref != nullptr )
+		if( mRef != nullptr )
 		{
-			m_Ref->IncreaseStrongCount();
+			mRef->IncreaseStrongCount();
 		}
 	}
 
 	void DecreaseStrongCount()
 	{
-		if( m_Ref != nullptr )
+		if( mRef != nullptr )
 		{
-			m_Ref->DecreaseStrongCount( m_Target );
+			mRef->DecreaseStrongCount( mTarget );
 		}
 	}
 
 	void IncreaseWeakCount()
 	{
-		if( m_Ref != nullptr )
+		if( mRef != nullptr )
 		{
-			m_Ref->IncreaseWeakCount();
+			mRef->IncreaseWeakCount();
 		}
 	}
 
 	void DecreaseWeakCount()
 	{
-		if( m_Ref != nullptr )
+		if( mRef != nullptr )
 		{
-			m_Ref->DecreaseWeakCount();
+			mRef->DecreaseWeakCount();
 		}
 	}
 
 	void Swap( PtrBase&& rhs )
 	{
-		rftl::swap( m_Ref, rhs.m_Ref );
-		rftl::swap( m_Target, rhs.m_Target );
+		rftl::swap( mRef, rhs.mRef );
+		rftl::swap( mTarget, rhs.mTarget );
 	}
 
 	CreationPayload<T> CreateTransferPayload() const
 	{
-		return CreationPayload<T>( m_Target, m_Ref );
+		return CreationPayload<T>( mTarget, mRef );
 	}
 
 	CreationPayload<T> CreateTransferPayloadAndWipeSelf()
 	{
-		T* const target = m_Target;
-		PtrRef* const ref = m_Ref;
-		m_Target = nullptr;
-		m_Ref = nullptr;
+		T* const target = mTarget;
+		PtrRef* const ref = mRef;
+		mTarget = nullptr;
+		mRef = nullptr;
 		return CreationPayload<T>( target, ref );
 	}
 
 	void SanitizeTarget()
 	{
-		if( m_Target == nullptr )
+		if( mTarget == nullptr )
 		{
 			return;
 		}
-		if( m_Ref->GetStrongCount() == 0 )
+		if( mRef->GetStrongCount() == 0 )
 		{
-			m_Target = nullptr;
+			mTarget = nullptr;
 		}
 	}
 
 	T* GetTarget() const
 	{
-		return m_Target;
+		return mTarget;
 	}
 
 	T* GetTargetAsWeak() const
 	{
-		if( m_Target == nullptr )
+		if( mTarget == nullptr )
 		{
 			return nullptr;
 		}
-		RF_ASSERT( m_Ref != nullptr );
-		if( m_Ref->GetStrongCount() == 0 )
+		RF_ASSERT( mRef != nullptr );
+		if( mRef->GetStrongCount() == 0 )
 		{
 			return nullptr;
 		}
-		return m_Target;
+		return mTarget;
 	}
 
 	PtrRef* GetRef() const
 	{
-		return m_Ref;
+		return mRef;
 	}
 
 
 	//
 	// Private data
 private:
-	T* m_Target;
-	PtrRef* m_Ref;
+	T* mTarget;
+	PtrRef* mRef;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

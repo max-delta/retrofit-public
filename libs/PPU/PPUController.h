@@ -25,9 +25,9 @@ private:
 
 	// Constants
 private:
-	static constexpr StateBufferID k_InvalidStateBufferID = -1;
-	static constexpr size_t k_NumStateBuffers = 3;
-	static_assert( k_NumStateBuffers == 3, "Need 3 buffers for triple buffering" );
+	static constexpr StateBufferID kInvalidStateBufferID = -1;
+	static constexpr size_t kNumStateBuffers = 3;
+	static_assert( kNumStateBuffers == 3, "Need 3 buffers for triple buffering" );
 
 
 	//
@@ -75,18 +75,18 @@ private:
 	//
 	// Private data
 private:
-	UniquePtr<gfx::DeviceInterface> m_DeviceInterface;
-	UniquePtr<gfx::TextureManager> m_TextureManager;
-	UniquePtr<gfx::FramePackManager> m_FramePackManager;
-	WeakPtr<file::VFS> const m_Vfs;
-	uint16_t m_Width;
-	uint16_t m_Height;
+	UniquePtr<gfx::DeviceInterface> mDeviceInterface;
+	UniquePtr<gfx::TextureManager> mTextureManager;
+	UniquePtr<gfx::FramePackManager> mFramePackManager;
+	WeakPtr<file::VFS> const mVfs;
+	uint16_t mWidth;
+	uint16_t mHeight;
 
-	StateBufferID m_WriteState;
-	StateBufferID m_QueueToRenderState;
-	StateBufferID m_RenderState;
-	PPUState m_PPUState[k_NumStateBuffers];
-	PPUDebugState m_PPUDebugState[k_NumStateBuffers];
+	StateBufferID mWriteState;
+	StateBufferID mQueueToRenderState;
+	StateBufferID mRenderState;
+	PPUState mPPUState[kNumStateBuffers];
+	PPUDebugState mPPUDebugState[kNumStateBuffers];
 };
 
 ///////////////////////////////////////////////////////////////////////////////

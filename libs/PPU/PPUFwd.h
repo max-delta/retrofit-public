@@ -9,48 +9,48 @@ namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef uint64_t DeviceTextureID;
-constexpr DeviceTextureID k_InvalidDeviceTextureID = 0;
+constexpr DeviceTextureID kInvalidDeviceTextureID = 0;
 
 typedef uint8_t TimeSlowdownRate;
-static constexpr TimeSlowdownRate k_TimeSlowdownRate_Normal = 1;
-static constexpr TimeSlowdownRate k_TimeSlowdownRate_Half = 2;
-static constexpr TimeSlowdownRate k_TimeSlowdownRate_Third = 3;
-static constexpr TimeSlowdownRate k_TimeSlowdownRate_Quarter = 4;
+static constexpr TimeSlowdownRate kTimeSlowdownRate_Normal = 1;
+static constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
+static constexpr TimeSlowdownRate kTimeSlowdownRate_Third = 3;
+static constexpr TimeSlowdownRate kTimeSlowdownRate_Quarter = 4;
 
 typedef uint8_t GameLayerID;
-static constexpr size_t k_NumGameLayers = 8;
+static constexpr size_t kNumGameLayers = 8;
 
 typedef uint64_t ManagedColliderID;
-constexpr ManagedColliderID k_InvalidManagedColliderID = 0;
+constexpr ManagedColliderID kInvalidManagedColliderID = 0;
 
 typedef uint64_t ManagedTextureID;
-constexpr ManagedTextureID k_InvalidManagedTextureID = 0;
+constexpr ManagedTextureID kInvalidManagedTextureID = 0;
 
 typedef uint16_t ManagedFramePackID;
-constexpr ManagedFramePackID k_InvalidManagedFramePackID = 0;
+constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
 
 typedef uint64_t FrameID;
-constexpr FrameID k_InvalidFrameID = 0;
-constexpr FrameID k_FirstFrameID = 0;
+constexpr FrameID kInvalidFrameID = 0;
+constexpr FrameID kFirstFrameID = 0;
 
 typedef uint64_t GFXModifierHandlerID;
-constexpr size_t k_NumGFXModifiers = 8;
+constexpr size_t kNumGFXModifiers = 8;
 
 typedef int16_t PPUCoordElem;
 typedef math::Vector2<PPUCoordElem> PPUCoord;
 typedef int8_t PPUTileElem;
 typedef int8_t PPUDepthLayer;
-constexpr PPUCoordElem k_TileSize = 32;
-constexpr PPUDepthLayer k_FarthestLayer = 100;
-constexpr PPUDepthLayer k_NearestLayer = -100;
+constexpr PPUCoordElem kTileSize = 32;
+constexpr PPUDepthLayer kFarthestLayer = 100;
+constexpr PPUDepthLayer kNearestLayer = -100;
 // At 32 tile size, here are some interesting tile ratios:
 //  8x7 = SNES (Internal resolution)
 //  8x7.5 = SNES output (Stretched pixels)
 //  10x7 = Almost QVGA (4:3)
 //  12x7 = Almost WQVGA (16:9 widescreen)
-constexpr PPUCoordElem k_DesiredWidth = k_TileSize * 10;
-constexpr PPUCoordElem k_DesiredHeight = k_TileSize * 7;
-constexpr PPUTileElem k_DesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( k_DesiredWidth, k_DesiredHeight ) / k_TileSize );
+constexpr PPUCoordElem kDesiredWidth = kTileSize * 10;
+constexpr PPUCoordElem kDesiredHeight = kTileSize * 7;
+constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
 class Object;
 class Texture;

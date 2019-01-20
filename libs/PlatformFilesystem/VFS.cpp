@@ -17,9 +17,9 @@
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
 
-VFSPath const VFS::k_Root = VFSPath( "RF:" );
-VFSPath const VFS::k_Invalid = VFSPath( "INVALID:" );
-VFSPath const VFS::k_Empty = VFSPath();
+VFSPath const VFS::kRoot = VFSPath( "RF:" );
+VFSPath const VFS::kInvalid = VFSPath( "INVALID:" );
+VFSPath const VFS::kEmpty = VFSPath();
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -82,19 +82,19 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 
 	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
 	RF_ASSERT( rftl::filesystem::exists( absoluteMountTableFilename ) );
-	m_MountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( m_MountTableFile ).c_str() );
+	mMountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( mMountTableFile ).c_str() );
 
-	m_ConfigDirectory = m_MountTableFile.GetParent();
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( m_ConfigDirectory ).c_str() );
+	mConfigDirectory = mMountTableFile.GetParent();
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( mConfigDirectory ).c_str() );
 
 	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
 	RF_ASSERT( rftl::filesystem::exists( absoluteUserDirectory ) );
-	m_UserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( m_UserDirectory ).c_str() );
+	mUserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( mUserDirectory ).c_str() );
 
 	FILE* file;
-	rftl::string collapsedMountFilename = CreateStringFromPath( m_MountTableFile );
+	rftl::string collapsedMountFilename = CreateStringFromPath( mMountTableFile );
 	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 || file == nullptr )
 	{
@@ -122,7 +122,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 
 			// Is it just filler?
 			bool isIgnorable = false;
-			for( char const& ignoreCh : VFSMountTableTokens::k_MountFillerIgnores )
+			for( char const& ignoreCh : VFSMountTableTokens::kMountFillerIgnores )
 			{
 				if( ch == ignoreCh )
 				{
@@ -135,7 +135,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 				continue;
 			}
 
-			if( ch == VFSMountTableTokens::k_MountTokenAffix[0] )
+			if( ch == VFSMountTableTokens::kMountTokenAffix[0] )
 			{
 				// Token, start reading
 				curReadMode = ReadMode::k_ReadingToken;
@@ -145,7 +145,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 					return false;
 				}
 			}
-			else if( ch == VFSMountTableTokens::k_MountCommentPrefix )
+			else if( ch == VFSMountTableTokens::kMountCommentPrefix )
 			{
 				// Comment, start tossing
 				curReadMode = ReadMode::k_DiscardingComment;
@@ -161,7 +161,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 		{
 			// Discarding comment
 
-			if( ch == VFSMountTableTokens::k_MountCommentSuffix )
+			if( ch == VFSMountTableTokens::kMountCommentSuffix )
 			{
 				// Done with comment, back to token searching
 				curReadMode = ReadMode::k_HuntingForToken;
@@ -179,13 +179,13 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 			// Reading token
 
 			tokenBuilder.push_back( ch );
-			RF_ASSERT( tokenBuilder[0] == VFSMountTableTokens::k_MountTokenAffix[0] );
+			RF_ASSERT( tokenBuilder[0] == VFSMountTableTokens::kMountTokenAffix[0] );
 
 			// Check integrity of initial tokens
-			static_assert( sizeof( VFSMountTableTokens::k_MountTokenAffix ) == 2, "Token len changed" );
+			static_assert( sizeof( VFSMountTableTokens::kMountTokenAffix ) == 2, "Token len changed" );
 			if( tokenBuilder.size() == 1 )
 			{
-				if( tokenBuilder[0] != VFSMountTableTokens::k_MountTokenAffix[0] )
+				if( tokenBuilder[0] != VFSMountTableTokens::kMountTokenAffix[0] )
 				{
 					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
 					return false;
@@ -194,7 +194,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 			}
 			else if( tokenBuilder.size() == 2 )
 			{
-				if( tokenBuilder[1] != VFSMountTableTokens::k_MountTokenAffix[1] )
+				if( tokenBuilder[1] != VFSMountTableTokens::kMountTokenAffix[1] )
 				{
 					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
 					return false;
@@ -203,18 +203,18 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 			}
 
 			// Check for possible termination
-			if( tokenBuilder.size() >= 4 && ch == VFSMountTableTokens::k_MountTokenAffix[1] )
+			if( tokenBuilder.size() >= 4 && ch == VFSMountTableTokens::kMountTokenAffix[1] )
 			{
-				RF_ASSERT( tokenBuilder.size() > sizeof( VFSMountTableTokens::k_MountTokenAffix ) );
+				RF_ASSERT( tokenBuilder.size() > sizeof( VFSMountTableTokens::kMountTokenAffix ) );
 				char const& previousToken = *( tokenBuilder.rbegin() + 1 );
-				if( previousToken == VFSMountTableTokens::k_MountTokenAffix[0] )
+				if( previousToken == VFSMountTableTokens::kMountTokenAffix[0] )
 				{
 					// Termination! Save off the token
 					tokenStream.emplace_back( rftl::move( tokenBuilder ) );
 					RF_ASSERT( tokenBuilder.empty() );
 
-					RF_ASSERT( tokenBuilder.size() <= VFSMountTableTokens::k_NumColumns );
-					if( tokenStream.size() == VFSMountTableTokens::k_NumColumns )
+					RF_ASSERT( tokenBuilder.size() <= VFSMountTableTokens::kNumColumns );
+					if( tokenStream.size() == VFSMountTableTokens::kNumColumns )
 					{
 						// Form mount rule from tokens
 						VFSMount mountRule = ProcessMountRule(
@@ -223,16 +223,16 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 							tokenStream[2],
 							tokenStream[3] );
 						if(
-							mountRule.m_Type == VFSMount::Type::Invalid ||
-							mountRule.m_Permissions == VFSMount::Permissions::Invalid ||
-							mountRule.m_VirtualPath.NumElements() == 0 )
+							mountRule.mType == VFSMount::Type::Invalid ||
+							mountRule.mPermissions == VFSMount::Permissions::Invalid ||
+							mountRule.mVirtualPath.NumElements() == 0 )
 						{
 							RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to parse mount rule" );
 							return false;
 						}
 						tokenStream.clear();
 
-						m_MountTable.emplace_back( rftl::move( mountRule ) );
+						mMountTable.emplace_back( rftl::move( mountRule ) );
 					}
 
 					// Keep collectiong tokens
@@ -251,19 +251,19 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	if( curReadMode != ReadMode::k_HuntingForToken )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unterminated token at file end" );
-		m_MountTable.clear();
+		mMountTable.clear();
 		return false;
 	}
 	else if( tokenBuilder.empty() == false )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token buffer at file end" );
-		m_MountTable.clear();
+		mMountTable.clear();
 		return false;
 	}
 	else if( tokenStream.empty() == false )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token stream at file end" );
-		m_MountTable.clear();
+		mMountTable.clear();
 		return false;
 	}
 
@@ -279,28 +279,28 @@ VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permis
 
 	VFSPath const physicalAsVFS = CreatePathFromString( physicalPath );
 
-	for( VFSMount const& mount : m_MountTable )
+	for( VFSMount const& mount : mMountTable )
 	{
 		// NOTE: Technically faster to check permissions before path, but
 		//  less easy to debug, and not performance-critical at time of writing
 
 		VFSPath const* physRoot;
-		switch( mount.m_Type )
+		switch( mount.mType )
 		{
 			case VFSMount::Type::Absolute:
-				physRoot = &k_Empty;
+				physRoot = &kEmpty;
 				break;
 			case VFSMount::Type::ConfigRelative:
-				physRoot = &m_ConfigDirectory;
+				physRoot = &mConfigDirectory;
 				break;
 			case VFSMount::Type::UserRelative:
-				physRoot = &m_UserDirectory;
+				physRoot = &mUserDirectory;
 				break;
 			case VFSMount::Type::Invalid:
 			default:
 				RFLOG_FATAL( nullptr, RFCAT_VFS, "Unhandled mount type" );
 		}
-		VFSPath const realMount = CollapsePath( physRoot->GetChild( mount.m_RealMount ) );
+		VFSPath const realMount = CollapsePath( physRoot->GetChild( mount.mRealMount ) );
 		bool const isDescendent = physicalAsVFS.IsDescendantOf( realMount );
 		if( isDescendent == false )
 		{
@@ -308,7 +308,7 @@ VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permis
 			continue;
 		}
 
-		uint8_t const applicablePermissions = math::integer_cast<uint8_t>( static_cast<uint8_t>( mount.m_Permissions ) & static_cast<uint8_t>( desiredPermissions ) );
+		uint8_t const applicablePermissions = math::integer_cast<uint8_t>( static_cast<uint8_t>( mount.mPermissions ) & static_cast<uint8_t>( desiredPermissions ) );
 		if( applicablePermissions != static_cast<uint8_t>( desiredPermissions ) )
 		{
 			// Not all permissions fulfilled
@@ -319,7 +319,7 @@ VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permis
 		bool isBranch;
 		VFSPath const branchFromMount = physicalAsVFS.GetAsBranchOf( realMount, isBranch );
 		RF_ASSERT( isBranch );
-		return mount.m_VirtualPath.GetChild( branchFromMount );
+		return mount.mVirtualPath.GetChild( branchFromMount );
 	}
 
 	return VFSPath();
@@ -330,10 +330,10 @@ VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permis
 void VFS::DebugDumpMountTable() const
 {
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table:" );
-	for( VFSMount const& mountRule : m_MountTable )
+	for( VFSMount const& mountRule : mMountTable )
 	{
 		char const* type = nullptr;
-		switch( mountRule.m_Type )
+		switch( mountRule.mType )
 		{
 			case VFSMount::Type::Absolute:
 				type = "Absolute      ";
@@ -350,7 +350,7 @@ void VFS::DebugDumpMountTable() const
 				break;
 		}
 		char const* permissions = nullptr;
-		switch( mountRule.m_Permissions )
+		switch( mountRule.mPermissions )
 		{
 			case VFSMount::Permissions::ReadOnly:
 				permissions = "Read   ";
@@ -372,8 +372,8 @@ void VFS::DebugDumpMountTable() const
 			"  %s %s \"%s\" \"%s\"",
 			type,
 			permissions,
-			CreateStringFromPath( mountRule.m_VirtualPath ).c_str(),
-			CreateStringFromPath( mountRule.m_RealMount ).c_str() );
+			CreateStringFromPath( mountRule.mVirtualPath ).c_str(),
+			CreateStringFromPath( mountRule.mRealMount ).c_str() );
 	}
 }
 
@@ -388,7 +388,7 @@ VFSPath VFS::CreatePathFromString( rftl::string const& path )
 
 	for( char const& ch : path )
 	{
-		if( ch == k_PathDelimiter )
+		if( ch == kPathDelimiter )
 		{
 			retVal.Append( elementBuilder );
 			elementBuilder.clear();
@@ -418,7 +418,7 @@ rftl::string VFS::CreateStringFromPath( VFSPath const& path )
 
 		if( i != 0 )
 		{
-			ss << k_PathDelimiter;
+			ss << kPathDelimiter;
 		}
 		ss << element;
 	}
@@ -434,12 +434,12 @@ VFSPath VFS::CollapsePath( VFSPath const& path )
 	for( VFSPath::Element const& element : path )
 	{
 		// Ascencion
-		if( element == k_PathAscensionElement )
+		if( element == kPathAscensionElement )
 		{
 			if( retVal.NumElements() == 0 )
 			{
 				RFLOG_ERROR( path, RFCAT_VFS, "Excessive ascencions found during collapse" );
-				return k_Invalid.GetChild( path );
+				return kInvalid.GetChild( path );
 			}
 
 			retVal.GoUp();
@@ -447,7 +447,7 @@ VFSPath VFS::CollapsePath( VFSPath const& path )
 		}
 
 		// Current
-		if( element == k_PathCurrentElement )
+		if( element == kPathCurrentElement )
 		{
 			// Do nothing
 			continue;
@@ -464,66 +464,66 @@ VFSPath VFS::CollapsePath( VFSPath const& path )
 
 VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint )
 {
-	constexpr size_t prefixLen = sizeof( VFSMountTableTokens::k_MountTokenAffix );
-	constexpr size_t affixesLen = sizeof( VFSMountTableTokens::k_MountTokenAffix ) * 2;
+	constexpr size_t prefixLen = sizeof( VFSMountTableTokens::kMountTokenAffix );
+	constexpr size_t affixesLen = sizeof( VFSMountTableTokens::kMountTokenAffix ) * 2;
 	RF_ASSERT( type.size() >= affixesLen );
 	RF_ASSERT( permissions.size() >= affixesLen );
 	RF_ASSERT( virtualPoint.size() >= affixesLen );
 	RF_ASSERT( realPoint.size() >= affixesLen );
 	VFSMount retVal;
-	retVal.m_Type = VFSMount::Type::Invalid;
-	retVal.m_Permissions = VFSMount::Permissions::Invalid;
+	retVal.mType = VFSMount::Type::Invalid;
+	retVal.mPermissions = VFSMount::Permissions::Invalid;
 
 	// Type
 	rftl::string typeVal = type.substr( prefixLen, type.size() - affixesLen );
-	if( typeVal == VFSMountTableTokens::k_MountTokenAbsolute )
+	if( typeVal == VFSMountTableTokens::kMountTokenAbsolute )
 	{
-		retVal.m_Type = VFSMount::Type::Absolute;
+		retVal.mType = VFSMount::Type::Absolute;
 	}
-	else if( typeVal == VFSMountTableTokens::k_MountTokenConfigRelative )
+	else if( typeVal == VFSMountTableTokens::kMountTokenConfigRelative )
 	{
-		retVal.m_Type = VFSMount::Type::ConfigRelative;
+		retVal.mType = VFSMount::Type::ConfigRelative;
 	}
-	else if( typeVal == VFSMountTableTokens::k_MountTokenUserRelative )
+	else if( typeVal == VFSMountTableTokens::kMountTokenUserRelative )
 	{
-		retVal.m_Type = VFSMount::Type::UserRelative;
+		retVal.mType = VFSMount::Type::UserRelative;
 	}
 	else
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Invalid mount type" );
-		retVal.m_Type = VFSMount::Type::Invalid;
+		retVal.mType = VFSMount::Type::Invalid;
 		return retVal;
 	}
 
 	// Permissions
 	rftl::string permissionsVal = permissions.substr( prefixLen, permissions.size() - affixesLen );
-	if( permissionsVal == VFSMountTableTokens::k_MountTokenReadOnly )
+	if( permissionsVal == VFSMountTableTokens::kMountTokenReadOnly )
 	{
-		retVal.m_Permissions = VFSMount::Permissions::ReadOnly;
+		retVal.mPermissions = VFSMount::Permissions::ReadOnly;
 	}
-	else if( permissionsVal == VFSMountTableTokens::k_MountTokenReadWrite )
+	else if( permissionsVal == VFSMountTableTokens::kMountTokenReadWrite )
 	{
-		retVal.m_Permissions = VFSMount::Permissions::ReadWrite;
+		retVal.mPermissions = VFSMount::Permissions::ReadWrite;
 	}
-	else if( permissionsVal == VFSMountTableTokens::k_MountTokenReadExecute )
+	else if( permissionsVal == VFSMountTableTokens::kMountTokenReadExecute )
 	{
-		retVal.m_Permissions = VFSMount::Permissions::ReadExecute;
+		retVal.mPermissions = VFSMount::Permissions::ReadExecute;
 	}
 	else
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Invalid permissions" );
-		retVal.m_Type = VFSMount::Type::Invalid;
-		retVal.m_Permissions = VFSMount::Permissions::Invalid;
+		retVal.mType = VFSMount::Type::Invalid;
+		retVal.mPermissions = VFSMount::Permissions::Invalid;
 		return retVal;
 	}
 
 	// Virtual
 	rftl::string virtualVal = virtualPoint.substr( prefixLen, virtualPoint.size() - affixesLen );
-	retVal.m_VirtualPath = k_Root.GetChild( CreatePathFromString( virtualVal ) );
-	size_t const numVirtualElements = retVal.m_VirtualPath.NumElements();
+	retVal.mVirtualPath = kRoot.GetChild( CreatePathFromString( virtualVal ) );
+	size_t const numVirtualElements = retVal.mVirtualPath.NumElements();
 	for( size_t i = 0; i < numVirtualElements; i++ )
 	{
-		VFSPath::Element const& element = retVal.m_VirtualPath.GetElement( i );
+		VFSPath::Element const& element = retVal.mVirtualPath.GetElement( i );
 
 		bool badPathElement = false;
 		if( element.empty() )
@@ -531,12 +531,12 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Empty path element in virtual path, parser failure?" );
 			badPathElement = true;
 		}
-		else if( element == k_PathAscensionElement )
+		else if( element == kPathAscensionElement )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in virtual path" );
 			badPathElement = true;
 		}
-		else if( element == k_PathCurrentElement )
+		else if( element == kPathCurrentElement )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path current element in virtual path" );
 			badPathElement = true;
@@ -544,21 +544,21 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 		if( badPathElement )
 		{
-			retVal.m_VirtualPath.m_ElementList.clear();
-			retVal.m_Type = VFSMount::Type::Invalid;
-			retVal.m_Permissions = VFSMount::Permissions::Invalid;
+			retVal.mVirtualPath.m_ElementList.clear();
+			retVal.mType = VFSMount::Type::Invalid;
+			retVal.mPermissions = VFSMount::Permissions::Invalid;
 			return retVal;
 		}
 	}
 
 	// Real
 	rftl::string realVal = realPoint.substr( prefixLen, realPoint.size() - affixesLen );
-	retVal.m_RealMount = CreatePathFromString( realVal );
+	retVal.mRealMount = CreatePathFromString( realVal );
 	bool hasEncounteredDescendToken = false;
-	size_t const numRealElements = retVal.m_RealMount.NumElements();
+	size_t const numRealElements = retVal.mRealMount.NumElements();
 	for( size_t i = 0; i < numRealElements; i++ )
 	{
-		VFSPath::Element const& element = retVal.m_RealMount.GetElement( i );
+		VFSPath::Element const& element = retVal.mRealMount.GetElement( i );
 
 		bool badPathElement = false;
 		if( element.empty() )
@@ -567,23 +567,23 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 			badPathElement = true;
 		}
 		else if(
-			element == k_PathAscensionElement && (
-				retVal.m_Type != VFSMount::Type::ConfigRelative &&
-				retVal.m_Type != VFSMount::Type::UserRelative ) )
+			element == kPathAscensionElement && (
+				retVal.mType != VFSMount::Type::ConfigRelative &&
+				retVal.mType != VFSMount::Type::UserRelative ) )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in non-relative real path" );
 			badPathElement = true;
 		}
 		else if(
-			element == k_PathAscensionElement && (
-				retVal.m_Type == VFSMount::Type::ConfigRelative ||
-				retVal.m_Type == VFSMount::Type::UserRelative ) &&
+			element == kPathAscensionElement && (
+				retVal.mType == VFSMount::Type::ConfigRelative ||
+				retVal.mType == VFSMount::Type::UserRelative ) &&
 			hasEncounteredDescendToken )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in relative real path after descending" );
 			badPathElement = true;
 		}
-		else if( element == k_PathCurrentElement )
+		else if( element == kPathCurrentElement )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path current element in real path" );
 			badPathElement = true;
@@ -591,15 +591,15 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 		if( badPathElement )
 		{
-			retVal.m_VirtualPath.m_ElementList.clear();
-			retVal.m_RealMount.m_ElementList.clear();
-			retVal.m_Type = VFSMount::Type::Invalid;
-			retVal.m_Permissions = VFSMount::Permissions::Invalid;
+			retVal.mVirtualPath.m_ElementList.clear();
+			retVal.mRealMount.m_ElementList.clear();
+			retVal.mType = VFSMount::Type::Invalid;
+			retVal.mPermissions = VFSMount::Permissions::Invalid;
 			return retVal;
 		}
 
 		// Normal elements are descensions
-		if( element != k_PathAscensionElement )
+		if( element != kPathAscensionElement )
 		{
 			hasEncounteredDescendToken = true;
 		}
@@ -616,22 +616,22 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 	//  of mount point, also clean it up so we can find the virtual mount point
 	// NOTE: Not actually secure, don't assume this is even remotely a chroot
 	VFSPath const path = CollapsePath( uncollapsedPath );
-	if( path.IsDescendantOf( k_Root ) == false )
+	if( path.IsDescendantOf( kRoot ) == false )
 	{
 		RFLOG_ERROR( path, RFCAT_VFS, "Virtual path doesn't descend from root" );
 		return nullptr;
 	}
 
 	// Evaluate each mount point in order
-	for( VFSMount const& mount : m_MountTable )
+	for( VFSMount const& mount : mMountTable )
 	{
-		if( ( (int)mount.m_Permissions & (int)permissions ) != (int)permissions )
+		if( ( (int)mount.mPermissions & (int)permissions ) != (int)permissions )
 		{
 			// Missing some permissions
 			continue;
 		}
 
-		if( path.IsDescendantOf( mount.m_VirtualPath ) == false )
+		if( path.IsDescendantOf( mount.mVirtualPath ) == false )
 		{
 			// Not under this mount point
 			continue;
@@ -640,36 +640,36 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 		// Where is this actually going to end up?
 		rftl::string finalFilename;
 		{
-			VFSPath physTarget = k_Invalid;
+			VFSPath physTarget = kInvalid;
 
 			// The root is the base
 			VFSPath const* physRoot;
-			switch( mount.m_Type )
+			switch( mount.mType )
 			{
 				case VFSMount::Type::Absolute:
-					physRoot = &k_Empty;
+					physRoot = &kEmpty;
 					break;
 				case VFSMount::Type::ConfigRelative:
-					physRoot = &m_ConfigDirectory;
+					physRoot = &mConfigDirectory;
 					break;
 				case VFSMount::Type::UserRelative:
-					physRoot = &m_UserDirectory;
+					physRoot = &mUserDirectory;
 					break;
 				case VFSMount::Type::Invalid:
 				default:
 					RFLOG_ERROR( path, RFCAT_VFS, "Unhandled mount type" );
 					return nullptr;
 			}
-			VFSPath branchRoot = physRoot->GetChild( mount.m_RealMount );
+			VFSPath branchRoot = physRoot->GetChild( mount.mRealMount );
 
 			// The branch from the virtual point is the append
 			bool isBranch = false;
-			VFSPath pathAsBranch = path.GetAsBranchOf( mount.m_VirtualPath, isBranch );
+			VFSPath pathAsBranch = path.GetAsBranchOf( mount.mVirtualPath, isBranch );
 			RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
 
 			// Final collapse and serialize
 			physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
-			RF_ASSERT_MSG( physTarget.IsDescendantOf( k_Invalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
+			RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
 			finalFilename = CreateStringFromPath( physTarget );
 		}
 
@@ -739,7 +739,7 @@ void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogConte
 		}
 		if( i != 0 )
 		{
-			buffer[bufferOffset] = file::VFS::k_PathDelimiter;
+			buffer[bufferOffset] = file::VFS::kPathDelimiter;
 			bufferOffset++;
 		}
 		if( bufferOffset >= maxBufferOffset )

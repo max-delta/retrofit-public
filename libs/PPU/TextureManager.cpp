@@ -32,10 +32,10 @@ TextureManager::~TextureManager()
 
 bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterface )
 {
-	RF_ASSERT_MSG( m_DeviceInterface == nullptr, "TODO: Cleanup" );
+	RF_ASSERT_MSG( mDeviceInterface == nullptr, "TODO: Cleanup" );
 
-	m_DeviceInterface = deviceInterface;
-	if( m_DeviceInterface != nullptr )
+	mDeviceInterface = deviceInterface;
+	if( mDeviceInterface != nullptr )
 	{
 		RF_ASSERT_MSG( GetNumResources() == 0, "TODO: Reload textures" );
 	}
@@ -57,7 +57,7 @@ UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile
 
 bool TextureManager::PostLoadFromFile( ResourceType& resource, Filename filename )
 {
-	if( m_DeviceInterface != nullptr )
+	if( mDeviceInterface != nullptr )
 	{
 		bool const successfulLoad = LoadToDevice( resource, filename );
 		RF_ASSERT( successfulLoad );
@@ -82,7 +82,7 @@ bool TextureManager::PostLoadFromMemory( ResourceType& resource )
 
 bool TextureManager::PreDestroy( ResourceType& resource )
 {
-	if( resource.m_DeviceRepresentation == k_InvalidDeviceTextureID )
+	if( resource.mDeviceRepresentation == kInvalidDeviceTextureID )
 	{
 		// Not currently in device, just toss it
 		return true;
@@ -99,8 +99,8 @@ bool TextureManager::PreDestroy( ResourceType& resource )
 
 bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 {
-	RF_ASSERT( m_DeviceInterface != nullptr );
-	RF_ASSERT( texture.m_DeviceRepresentation == k_InvalidDeviceTextureID );
+	RF_ASSERT( mDeviceInterface != nullptr );
+	RF_ASSERT( texture.mDeviceRepresentation == kInvalidDeviceTextureID );
 	file::VFS* const vfs = mVfs;
 	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
@@ -110,7 +110,7 @@ bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 	}
 	FILE* fileVal = fileHandle->GetFile();
 	RF_ASSERT( fileVal != nullptr );
-	texture.m_DeviceRepresentation = m_DeviceInterface->LoadTexture( fileVal, texture.m_WidthPostLoad, texture.m_HeightPostLoad );
+	texture.mDeviceRepresentation = mDeviceInterface->LoadTexture( fileVal, texture.mWidthPostLoad, texture.mHeightPostLoad );
 	texture.UpdateFrameUsage();
 	return true;
 }
@@ -119,10 +119,10 @@ bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 
 bool TextureManager::UnloadFromDevice( Texture& texture )
 {
-	RF_ASSERT( m_DeviceInterface != nullptr );
-	RF_ASSERT( texture.m_DeviceRepresentation != k_InvalidDeviceTextureID );
-	bool const retVal = m_DeviceInterface->UnloadTexture( texture.m_DeviceRepresentation );
-	texture.m_DeviceRepresentation = k_InvalidDeviceTextureID;
+	RF_ASSERT( mDeviceInterface != nullptr );
+	RF_ASSERT( texture.mDeviceRepresentation != kInvalidDeviceTextureID );
+	bool const retVal = mDeviceInterface->UnloadTexture( texture.mDeviceRepresentation );
+	texture.mDeviceRepresentation = kInvalidDeviceTextureID;
 	return retVal;
 }
 

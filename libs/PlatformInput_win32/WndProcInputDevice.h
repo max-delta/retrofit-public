@@ -43,9 +43,9 @@ public:
 
 
 public:
-	WndProcDigitalInputComponent& m_Digital;
-	WndProcAnalogInputComponent& m_Analog;
-	WndProcTextInputComponent& m_Text;
+	WndProcDigitalInputComponent& mDigital;
+	WndProcAnalogInputComponent& mAnalog;
+	WndProcTextInputComponent& mText;
 };
 
 
@@ -57,19 +57,19 @@ class PLATFORMINPUT_API WndProcDigitalInputComponent final : public DigitalInput
 public:
 	friend class WndProcInputDevice;
 private:
-	static constexpr size_t k_NumVKeys = rftl::numeric_limits<unsigned char>::max();
-	static constexpr size_t k_NumScanCodes = 1 << 8; // ScanCodes are 8 bits
-	static constexpr size_t k_MaxEventStorage = 32;
-	static constexpr bool k_KillKeysOnFocusLost = true; // TODO: Option?
+	static constexpr size_t kNumVKeys = rftl::numeric_limits<unsigned char>::max();
+	static constexpr size_t kNumScanCodes = 1 << 8; // ScanCodes are 8 bits
+	static constexpr size_t kMaxEventStorage = 32;
+	static constexpr bool kKillKeysOnFocusLost = true; // TODO: Option?
 public:
 	// Some inputs do not have VK values, so we have to make them up from
 	//  unassigned VK values so they won't conflict
 	// See: WinUser.h
-	static constexpr uint8_t k_VkScrollWheelUp = 0x88;
-	static constexpr uint8_t k_VkScrollWheelDown = 0x89;
+	static constexpr uint8_t kVkScrollWheelUp = 0x88;
+	static constexpr uint8_t kVkScrollWheelDown = 0x89;
 private:
-	typedef rftl::bitset<k_NumVKeys> LogicalCodeStates;
-	typedef rftl::bitset<k_NumScanCodes> PhysicalCodeStates;
+	typedef rftl::bitset<kNumVKeys> LogicalCodeStates;
+	typedef rftl::bitset<kNumScanCodes> PhysicalCodeStates;
 	typedef rftl::deque<LogicalEvent> LogicalEventBuffer;
 	typedef rftl::deque<PhysicalEvent> PhysicalEventBuffer;
 public:
@@ -92,13 +92,13 @@ private:
 	void RecordPhysical( uint8_t code, PinState state );
 	void RecordFocusLoss();
 private:
-	LogicalCodeStates m_CurrentLogicalState;
-	LogicalCodeStates m_PreviousLogicalState;
-	LogicalEventBuffer m_LogicalEventBuffer;
+	LogicalCodeStates mCurrentLogicalState;
+	LogicalCodeStates mPreviousLogicalState;
+	LogicalEventBuffer mLogicalEventBuffer;
 
-	PhysicalCodeStates m_CurrentPhysicalState;
-	PhysicalCodeStates m_PreviousPhysicalState;
-	PhysicalEventBuffer m_PhysicalEventBuffer;
+	PhysicalCodeStates mCurrentPhysicalState;
+	PhysicalCodeStates mPreviousPhysicalState;
+	PhysicalEventBuffer mPhysicalEventBuffer;
 };
 
 
@@ -129,8 +129,8 @@ public:
 private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
 private:
-	SignalValues m_CurrentSignalValues;
-	SignalValues m_PreviousSignalValues;
+	SignalValues mCurrentSignalValues;
+	SignalValues mPreviousSignalValues;
 };
 
 
@@ -144,7 +144,7 @@ public:
 private:
 	// Assumption is that when caller cares, they will pull from buffer
 	//  every frame, and otherwise just let it spin
-	static constexpr size_t k_MaxStorage = 16;
+	static constexpr size_t kMaxStorage = 16;
 private:
 	typedef rftl::deque<char16_t> TextBuffer;
 public:
@@ -155,7 +155,7 @@ public:
 private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
 private:
-	TextBuffer m_TextBuffer;
+	TextBuffer mTextBuffer;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
