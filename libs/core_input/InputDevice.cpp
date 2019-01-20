@@ -6,9 +6,9 @@ namespace RF { namespace input {
 
 void InputDevice::OnTick()
 {
-	DigitalInputComponent* const digComp = m_DigitalComponent;
-	AnalogInputComponent* const anaComp = m_AnalogComponent;
-	TextInputComponent* const texComp = m_TextComponent;
+	DigitalInputComponent* const digComp = mDigitalComponent;
+	AnalogInputComponent* const anaComp = mAnalogComponent;
+	TextInputComponent* const texComp = mTextComponent;
 	if( digComp != nullptr )
 	{
 		digComp->OnTick();
@@ -29,9 +29,9 @@ InputDevice::InputDevice(
 	UniquePtr<DigitalInputComponent>&& digital,
 	UniquePtr<AnalogInputComponent>&& analog,
 	UniquePtr<TextInputComponent>&& text )
-	: m_DigitalComponent( rftl::move( digital ) )
-	, m_AnalogComponent( rftl::move( analog ) )
-	, m_TextComponent( rftl::move( text ) )
+	: mDigitalComponent( rftl::move( digital ) )
+	, mAnalogComponent( rftl::move( analog ) )
+	, mTextComponent( rftl::move( text ) )
 {
 	//
 }

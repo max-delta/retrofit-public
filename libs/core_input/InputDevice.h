@@ -17,9 +17,9 @@ public:
 	void OnTick();
 	virtual ~InputDevice() = default;
 
-	UniquePtr<DigitalInputComponent> const m_DigitalComponent;
-	UniquePtr<AnalogInputComponent> const m_AnalogComponent;
-	UniquePtr<TextInputComponent> const m_TextComponent;
+	UniquePtr<DigitalInputComponent> const mDigitalComponent;
+	UniquePtr<AnalogInputComponent> const mAnalogComponent;
+	UniquePtr<TextInputComponent> const mTextComponent;
 
 protected:
 	InputDevice() = delete;

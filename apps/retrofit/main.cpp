@@ -27,14 +27,14 @@ void sqreflect_scratch();
 }}
 ///////////////////////////////////////////////////////////////////////////////
 
-constexpr bool k_ConsoleTest = true;
-constexpr bool k_DrawTest = true;
-constexpr bool k_DrawInputDebug = true;
-constexpr bool k_XMLTest = true;
-constexpr bool k_FPackSerializationTest = true;
-constexpr bool k_PlatformTest = true;
-constexpr bool k_FrameBuilderTest = true;
-constexpr bool k_SQReflectTest = true;
+constexpr bool kConsoleTest = true;
+constexpr bool kDrawTest = true;
+constexpr bool kDrawInputDebug = true;
+constexpr bool kXMLTest = true;
+constexpr bool kFPackSerializationTest = true;
+constexpr bool kPlatformTest = true;
+constexpr bool kFrameBuilderTest = true;
+constexpr bool kSQReflectTest = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -44,7 +44,7 @@ int main()
 
 	app::Startup();
 
-	if( k_ConsoleTest )
+	if( kConsoleTest )
 	{
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_TRACE, "Console test" );
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_DEBUG, "Console test" );
@@ -60,32 +60,32 @@ int main()
 		RFLOG_CUSTOM( nullptr, RFCAT_STARTUP, logging::RF_SEV_INFO, U"Utf32 test" );
 	}
 
-	if( k_XMLTest )
+	if( kXMLTest )
 	{
 		test::XMLTest();
 	}
 
-	if( k_PlatformTest )
+	if( kPlatformTest )
 	{
 		test::PlatformTest();
 	}
 
-	if( k_FPackSerializationTest )
+	if( kFPackSerializationTest )
 	{
 		test::FPackSerializationTest();
 	}
 
-	if( k_DrawTest )
+	if( kDrawTest )
 	{
 		test::InitDrawTest();
 	}
 
-	if( k_FrameBuilderTest )
+	if( kFrameBuilderTest )
 	{
 		test::InitFrameBuilderTest();
 	}
 
-	if( k_SQReflectTest )
+	if( kSQReflectTest )
 	{
 		scratch::sqreflect_scratch();
 	}
@@ -97,36 +97,36 @@ int main()
 	{
 		frameLimiter.Stall();
 
-		app::g_WndProcInput->OnTick();
+		app::gWndProcInput->OnTick();
 
 		if( platform::windowing::ProcessAllMessages() < 0 )
 		{
 			break;
 		}
 
-		app::g_Graphics->BeginFrame();
+		app::gGraphics->BeginFrame();
 		{
-			if( k_DrawInputDebug )
+			if( kDrawInputDebug )
 			{
 				test::DrawInputDebug();
 			}
 
-			if( k_DrawTest )
+			if( kDrawTest )
 			{
 				test::DrawTest();
 			}
 
-			if( k_FrameBuilderTest )
+			if( kFrameBuilderTest )
 			{
 				test::FrameBuilderTest();
 			}
 
-			app::g_Graphics->SubmitToRender();
-			app::g_Graphics->WaitForRender();
+			app::gGraphics->SubmitToRender();
+			app::gGraphics->WaitForRender();
 		}
-		app::g_Graphics->EndFrame();
+		app::gGraphics->EndFrame();
 	}
-	if( k_FrameBuilderTest )
+	if( kFrameBuilderTest )
 	{
 		test::TerminateFrameBuilderTest();
 	}

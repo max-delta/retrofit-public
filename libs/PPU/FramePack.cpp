@@ -13,12 +13,12 @@ namespace RF { namespace gfx {
 uint8_t const* FramePackBase::GetTimeSlotSustains() const
 {
 	uint8_t const* const thisPtr = reinterpret_cast<uint8_t const*>( this );
-	size_t const offsetOfDerived = offsetof( FramePackBase, m_MaxTimeSlots ) + 1;
+	size_t const offsetOfDerived = offsetof( FramePackBase, mMaxTimeSlots ) + 1;
 	size_t const offsetOfTimeSlotSustains = offsetOfDerived + 0;
-	RF_ASSERT( m_MaxTimeSlots == FramePack_4096::k_MaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_4096, m_TimeSlotSustains ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_1024::k_MaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_1024, m_TimeSlotSustains ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_512::k_MaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_512, m_TimeSlotSustains ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_256::k_MaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_256, m_TimeSlotSustains ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_4096::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_4096, mTimeSlotSustains ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_1024::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_1024, mTimeSlotSustains ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_512::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_512, mTimeSlotSustains ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_256::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_256, mTimeSlotSustains ) : true );
 	return reinterpret_cast<uint8_t const*>( thisPtr + offsetOfTimeSlotSustains );
 }
 
@@ -34,15 +34,15 @@ uint8_t* FramePackBase::GetMutableTimeSlotSustains()
 FramePackBase::TimeSlot const* FramePackBase::GetTimeSlots() const
 {
 	uint8_t const* const thisPtr = reinterpret_cast<uint8_t const*>( this );
-	size_t const offsetOfDerived = offsetof( FramePackBase, m_MaxTimeSlots ) + 1;
+	size_t const offsetOfDerived = offsetof( FramePackBase, mMaxTimeSlots ) + 1;
 	size_t const offsetOfTimeSlotSustains = offsetOfDerived + 0;
-	size_t const sizeOfTimeSlotSustains = sizeof( uint8_t ) * m_MaxTimeSlots;
+	size_t const sizeOfTimeSlotSustains = sizeof( uint8_t ) * mMaxTimeSlots;
 	size_t const sizeOfTimeSlotSustainsPadding = ( 8 - ( sizeOfTimeSlotSustains % 8 ) ) % 8;
 	size_t const offsetOfTimeSlots = offsetOfTimeSlotSustains + sizeOfTimeSlotSustains + sizeOfTimeSlotSustainsPadding;
-	RF_ASSERT( m_MaxTimeSlots == FramePack_4096::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_4096, m_TimeSlots ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_1024::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_1024, m_TimeSlots ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_512::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_512, m_TimeSlots ) : true );
-	RF_ASSERT( m_MaxTimeSlots == FramePack_256::k_MaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_256, m_TimeSlots ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_4096::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_4096, mTimeSlots ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_1024::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_1024, mTimeSlots ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_512::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_512, mTimeSlots ) : true );
+	RF_ASSERT( mMaxTimeSlots == FramePack_256::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_256, mTimeSlots ) : true );
 	return reinterpret_cast<TimeSlot const*>( thisPtr + offsetOfTimeSlots );
 }
 
@@ -57,12 +57,12 @@ FramePackBase::TimeSlot* FramePackBase::GetMutableTimeSlots()
 
 uint8_t FramePackBase::CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const
 {
-	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );
+	RF_ASSERT( mNumTimeSlots <= mMaxTimeSlots );
 
 	uint8_t const* const timeSlotSustains = GetTimeSlotSustains();
 
 	uint8_t rollingTimeIndex = 0;
-	for( uint8_t i = 0; i < m_NumTimeSlots; i++ )
+	for( uint8_t i = 0; i < mNumTimeSlots; i++ )
 	{
 		// User may have put a 0 in, we will count that as a 1
 		uint8_t const timeSlotSustain = math::Max<uint8_t>( timeSlotSustains[i], 1 );
@@ -86,13 +86,13 @@ uint8_t FramePackBase::CalculateTimeSlotFromTimeIndex( uint8_t timeIndex ) const
 
 uint8_t FramePackBase::CalculateFirstTimeIndexOfTimeSlot( uint8_t timeSlot ) const
 {
-	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );
-	RF_ASSERT( timeSlot < m_NumTimeSlots );
+	RF_ASSERT( mNumTimeSlots <= mMaxTimeSlots );
+	RF_ASSERT( timeSlot < mNumTimeSlots );
 
 	uint8_t const* const timeSlotSustains = GetTimeSlotSustains();
 
 	uint8_t rollingTimeIndex = 0;
-	for( uint8_t i = 0; i < m_NumTimeSlots; i++ )
+	for( uint8_t i = 0; i < mNumTimeSlots; i++ )
 	{
 		if( i == timeSlot )
 		{
@@ -114,12 +114,12 @@ uint8_t FramePackBase::CalculateFirstTimeIndexOfTimeSlot( uint8_t timeSlot ) con
 
 uint8_t FramePackBase::CalculateTimeIndexBoundary() const
 {
-	RF_ASSERT( m_NumTimeSlots <= m_MaxTimeSlots );
+	RF_ASSERT( mNumTimeSlots <= mMaxTimeSlots );
 
 	uint8_t const* const timeSlotSustains = GetTimeSlotSustains();
 
 	uint64_t accumulator = 0;
-	for( uint8_t i = 0; i < m_NumTimeSlots; i++ )
+	for( uint8_t i = 0; i < mNumTimeSlots; i++ )
 	{
 		// User may have put a 0 in, we will count that as a 1
 		uint8_t const timeSlotSustain = math::Max<uint8_t>( timeSlotSustains[i], 1 );
@@ -137,20 +137,20 @@ void FramePackBase::CopyBaseValuesFrom( FramePackBase const& rhs )
 {
 	// NOTE: The memcpy will blow over const variables, so we need to make
 	//  sure to save and restore them appropriately
-	using MaxSlotsType = rftl::remove_const<decltype( rhs.m_MaxTimeSlots )>::type;
-	MaxSlotsType const savedMaxSlots = rhs.m_MaxTimeSlots;
+	using MaxSlotsType = rftl::remove_const<decltype( rhs.mMaxTimeSlots )>::type;
+	MaxSlotsType const savedMaxSlots = rhs.mMaxTimeSlots;
 	{
 		uint8_t const* const readHead = reinterpret_cast<uint8_t const*>( &rhs );
 		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( this );
 		rftl::memcpy( writeHead, readHead, sizeof( FramePackBase ) );
 	}
-	*const_cast<MaxSlotsType*>( &this->m_MaxTimeSlots ) = savedMaxSlots;
+	*const_cast<MaxSlotsType*>( &this->mMaxTimeSlots ) = savedMaxSlots;
 }
 
 
 
 FramePackBase::FramePackBase( uint8_t maxTimeSlots )
-	: m_MaxTimeSlots( maxTimeSlots )
+	: mMaxTimeSlots( maxTimeSlots )
 {
 	//
 }

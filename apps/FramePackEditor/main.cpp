@@ -30,7 +30,7 @@ int main()
 	app::Startup();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing framepack editor..." );
-	UniquePtr<FramePackEditor> framePackEditorPtr = DefaultCreator<FramePackEditor>::Create( app::g_Vfs );
+	UniquePtr<FramePackEditor> framePackEditorPtr = DefaultCreator<FramePackEditor>::Create( app::gVfs );
 	FramePackEditor* const framePackEditor = framePackEditorPtr;
 	framePackEditor->Init();
 
@@ -43,22 +43,22 @@ int main()
 	{
 		frameLimiter.Stall();
 
-		app::g_WndProcInput->OnTick();
+		app::gWndProcInput->OnTick();
 
 		if( platform::windowing::ProcessAllMessages() < 0 )
 		{
 			break;
 		}
 
-		app::g_Graphics->BeginFrame();
+		app::gGraphics->BeginFrame();
 		{
 			framePackEditor->Process();
 			framePackEditor->Render();
 
-			app::g_Graphics->SubmitToRender();
-			app::g_Graphics->WaitForRender();
+			app::gGraphics->SubmitToRender();
+			app::gGraphics->WaitForRender();
 		}
-		app::g_Graphics->EndFrame();
+		app::gGraphics->EndFrame();
 	}
 	framePackEditorPtr = nullptr;
 	app::Shutdown();

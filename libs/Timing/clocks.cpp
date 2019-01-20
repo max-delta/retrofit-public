@@ -5,29 +5,29 @@
 namespace RF { namespace time {
 ///////////////////////////////////////////////////////////////////////////////
 
-FrameClock::time_point FrameClock::s_AccumulatedTime( FrameClock::duration::zero() );
-FrameClock::time_point FrameClock::s_PreviousAccumulatedTime( FrameClock::duration::zero() );
+FrameClock::time_point FrameClock::sAccumulatedTime( FrameClock::duration::zero() );
+FrameClock::time_point FrameClock::sPreviousAccumulatedTime( FrameClock::duration::zero() );
 
 ///////////////////////////////////////////////////////////////////////////////
 
 FrameClock::time_point FrameClock::now()
 {
-	return s_AccumulatedTime;
+	return sAccumulatedTime;
 }
 
 
 
 FrameClock::time_point FrameClock::previous()
 {
-	return s_PreviousAccumulatedTime;
+	return sPreviousAccumulatedTime;
 }
 
 
 
 void FrameClock::add_time( duration const& time )
 {
-	s_PreviousAccumulatedTime = s_AccumulatedTime;
-	s_AccumulatedTime += time;
+	sPreviousAccumulatedTime = sAccumulatedTime;
+	sAccumulatedTime += time;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -6,8 +6,8 @@ namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 Texture::Texture()
-	: m_LastUsedInFrame( time::FrameClock::time_point() )
-	, m_DeviceRepresentation( k_InvalidDeviceTextureID )
+	: mLastUsedInFrame( time::FrameClock::time_point() )
+	, mDeviceRepresentation( kInvalidDeviceTextureID )
 {
 	//
 }
@@ -16,7 +16,7 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	RF_ASSERT( m_DeviceRepresentation == k_InvalidDeviceTextureID );
+	RF_ASSERT( mDeviceRepresentation == kInvalidDeviceTextureID );
 }
 
 
@@ -24,28 +24,28 @@ Texture::~Texture()
 DeviceTextureID Texture::GetDeviceRepresentation() const
 {
 	UpdateFrameUsage();
-	return m_DeviceRepresentation;
+	return mDeviceRepresentation;
 }
 
 
 
 uint32_t Texture::DebugGetWidth() const
 {
-	return m_WidthPostLoad;
+	return mWidthPostLoad;
 }
 
 
 
 uint32_t Texture::DebugGetHeight() const
 {
-	return m_HeightPostLoad;
+	return mHeightPostLoad;
 }
 
 
 
 void Texture::UpdateFrameUsage() const
 {
-	m_LastUsedInFrame = time::FrameClock::now();
+	mLastUsedInFrame = time::FrameClock::now();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -18,8 +18,8 @@ class PPU_API PPUDebugState
 
 	// Constants
 public:
-	static constexpr size_t k_MaxStrings = 32;
-	static constexpr size_t k_MaxLines = 32;
+	static constexpr size_t kMaxStrings = 32;
+	static constexpr size_t kMaxLines = 32;
 
 
 	//
@@ -29,9 +29,9 @@ public:
 	{
 		static constexpr size_t k_MaxLen = 127;
 
-		PPUCoordElem m_XCoord;
-		PPUCoordElem m_YCoord;
-		char m_Text[k_MaxLen + sizeof( '\0' )];
+		PPUCoordElem mXCoord;
+		PPUCoordElem mYCoord;
+		char mText[k_MaxLen + sizeof( '\0' )];
 	};
 	struct DebugLine
 	{
@@ -39,7 +39,7 @@ public:
 		PPUCoordElem m_YCoord0;
 		PPUCoordElem m_XCoord1;
 		PPUCoordElem m_YCoord1;
-		PPUCoordElem m_Width;
+		PPUCoordElem mWidth;
 	};
 
 
@@ -55,10 +55,10 @@ public:
 	//
 	// Public data
 public:
-	uint8_t m_NumStrings;
-	uint8_t m_NumLines;
-	DebugString m_Strings[k_MaxStrings];
-	DebugLine m_Lines[k_MaxLines];
+	uint8_t mNumStrings;
+	uint8_t mNumLines;
+	DebugString mStrings[kMaxStrings];
+	DebugLine mLines[kMaxLines];
 };
 
 ///////////////////////////////////////////////////////////////////////////////

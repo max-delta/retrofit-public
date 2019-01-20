@@ -23,10 +23,10 @@ namespace RF { namespace app {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> g_WndProcInput;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> g_Graphics;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> g_Vfs;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> g_TaskScheduler;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
 APPCOMMONGRAPHICALCLIENT_API void Startup();
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();

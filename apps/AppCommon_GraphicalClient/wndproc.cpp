@@ -20,7 +20,7 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 {
 	bool inputIntercepted = false;
 	shim::LRESULT inputResult = 0;
-	RF::input::WndProcInputDevice* const inputDevice = g_WndProcInput;
+	RF::input::WndProcInputDevice* const inputDevice = gWndProcInput;
 	if( inputDevice != nullptr )
 	{
 		inputResult = inputDevice->ExamineTranslatedMessage( hWnd, message, wParam, lParam, inputIntercepted );
@@ -36,8 +36,8 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 
 		case WM_GETMINMAXINFO: // lParam: MINMAXINFO*
 			// Lets us tell the window the limits that it can be resized to.
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.x = RF::gfx::k_DesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.y = RF::gfx::k_DesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
+			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
 			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
 			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
 			return 0;
@@ -55,12 +55,12 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 		case WM_SIZE: // wParam: Sizing type | lParam(LO): mWidth | lParam(HI): mHeight
 		{
 			// The size of the window has changed, let graphics know
-			if( g_Graphics != nullptr )
+			if( gGraphics != nullptr )
 			{
 				win32::RECT rect;
 				bool const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
 				RF_ASSERT( success );
-				g_Graphics->ResizeSurface(
+				gGraphics->ResizeSurface(
 					RF::math::integer_cast<uint16_t>( rect.right ),
 					RF::math::integer_cast<uint16_t>( rect.bottom ) );
 			}

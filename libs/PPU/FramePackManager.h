@@ -9,7 +9,7 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-class PPU_API FramePackManager final : public ResourceManager<FramePackBase, ManagedFramePackID, k_InvalidManagedFramePackID>
+class PPU_API FramePackManager final : public ResourceManager<FramePackBase, ManagedFramePackID, kInvalidManagedFramePackID>
 {
 	RF_NO_COPY( FramePackManager );
 

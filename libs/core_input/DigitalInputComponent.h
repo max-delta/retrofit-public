@@ -21,17 +21,17 @@ template<typename EventType, typename Container>
 struct BufferCopyEventParser : public EventParser<EventType>
 {
 	BufferCopyEventParser( Container& containerRef )
-		: m_Inserter( containerRef )
+		: mInserter( containerRef )
 	{
 		//
 	}
 
 	virtual void OnEvent( EventType const& event ) override
 	{
-		m_Inserter = event;
+		mInserter = event;
 	}
 
-	rftl::back_insert_iterator<Container> m_Inserter;
+	rftl::back_insert_iterator<Container> mInserter;
 };
 
 

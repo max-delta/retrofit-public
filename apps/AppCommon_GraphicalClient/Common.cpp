@@ -26,14 +26,14 @@ namespace RF { namespace app {
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
 
 // Global systems
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> g_WndProcInput;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> g_Graphics;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> g_Vfs;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> g_TaskScheduler;
-static UniquePtr<input::WndProcInputDevice> s_WndProcInput;
-static UniquePtr<gfx::PPUController> s_Graphics;
-static UniquePtr<file::VFS> s_Vfs;
-static UniquePtr<app::StandardTaskScheduler> s_TaskScheduler;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
+static UniquePtr<input::WndProcInputDevice> sWndProcInput;
+static UniquePtr<gfx::PPUController> sGraphics;
+static UniquePtr<file::VFS> sVfs;
+static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -66,9 +66,9 @@ void Startup()
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
-	s_Vfs = DefaultCreator<file::VFS>::Create();
-	g_Vfs = s_Vfs;
-	bool const vfsInitialized = g_Vfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
+	sVfs = DefaultCreator<file::VFS>::Create();
+	gVfs = sVfs;
+	bool const vfsInitialized = gVfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../../rftest_user" );
 	if( vfsInitialized == false )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
@@ -76,24 +76,24 @@ void Startup()
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	constexpr uint8_t k_WindowScaleFactor = 4;
-	constexpr uint16_t k_Width = gfx::k_DesiredWidth * k_WindowScaleFactor;
-	constexpr uint16_t k_Height = gfx::k_DesiredHeight * k_WindowScaleFactor;
+	constexpr uint16_t k_Width = gfx::kDesiredWidth * k_WindowScaleFactor;
+	constexpr uint16_t k_Height = gfx::kDesiredHeight * k_WindowScaleFactor;
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	s_Graphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ), g_Vfs );
-	g_Graphics = s_Graphics;
-	g_Graphics->Initialize( k_Width, k_Height );
+	sGraphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ), gVfs );
+	gGraphics = sGraphics;
+	gGraphics->Initialize( k_Width, k_Height );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
-	s_WndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
-	g_WndProcInput = s_WndProcInput;
+	sWndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
+	gWndProcInput = sWndProcInput;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
-	s_TaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
-	g_TaskScheduler = s_TaskScheduler;
+	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
+	gTaskScheduler = sTaskScheduler;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 }
@@ -102,10 +102,10 @@ void Startup()
 
 void Shutdown()
 {
-	s_Graphics = nullptr;
-	s_Vfs = nullptr;
-	s_WndProcInput = nullptr;
-	s_TaskScheduler = nullptr;
+	sGraphics = nullptr;
+	sVfs = nullptr;
+	sWndProcInput = nullptr;
+	sTaskScheduler = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

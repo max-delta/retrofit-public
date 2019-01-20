@@ -38,40 +38,40 @@ public:
 	// Public methods
 public:
 	PtrRef( DeletionFunc deletionFunc, void* funcUserData )
-		: m_DeletionFunc( deletionFunc )
-		, m_FuncUserData( funcUserData )
-		, m_StrongCount( 1 )
-		, m_WeakCount( 1 )
+		: mDeletionFunc( deletionFunc )
+		, mFuncUserData( funcUserData )
+		, mStrongCount( 1 )
+		, mWeakCount( 1 )
 	{
-		RF_ASSERT( m_DeletionFunc != nullptr );
+		RF_ASSERT( mDeletionFunc != nullptr );
 	}
 
 	void Delete( void* p ) const
 	{
 		RF_ASSERT( p != nullptr );
-		RF_ASSERT( m_DeletionFunc != nullptr );
-		m_DeletionFunc( p, nullptr, m_FuncUserData );
+		RF_ASSERT( mDeletionFunc != nullptr );
+		mDeletionFunc( p, nullptr, mFuncUserData );
 	}
 
 	void DeleteSelf()
 	{
 		RF_ASSERT( this != nullptr );
-		RF_ASSERT( m_DeletionFunc != nullptr );
-		m_DeletionFunc( nullptr, this, m_FuncUserData );
+		RF_ASSERT( mDeletionFunc != nullptr );
+		mDeletionFunc( nullptr, this, mFuncUserData );
 	}
 
 	CountType GetStrongCount() const
 	{
 		// x86 32/64:
 		//  mov reg, [var]
-		return m_StrongCount.load( rftl::memory_order::memory_order_acquire );
+		return mStrongCount.load( rftl::memory_order::memory_order_acquire );
 	}
 
 	CountType GetWeakCount() const
 	{
 		// x86 32/64:
 		//  mov reg, [var]
-		return m_WeakCount.load( rftl::memory_order::memory_order_acquire );
+		return mWeakCount.load( rftl::memory_order::memory_order_acquire );
 	}
 
 	void IncreaseStrongCount()
@@ -84,7 +84,7 @@ public:
 		{
 			// x86 32/64:
 			//  mov reg, [var]
-			CountType const currentCount = m_StrongCount.load( rftl::memory_order::memory_order_acquire );
+			CountType const currentCount = mStrongCount.load( rftl::memory_order::memory_order_acquire );
 			if( currentCount == 0 )
 			{
 				return;
@@ -93,7 +93,7 @@ public:
 			// x86 32/64:
 			//  lock cmpxchg [var], reg
 			CountType expected = currentCount;
-			bool const written = m_StrongCount.compare_exchange_weak( expected, currentCount + 1, rftl::memory_order::memory_order_acq_rel );
+			bool const written = mStrongCount.compare_exchange_weak( expected, currentCount + 1, rftl::memory_order::memory_order_acq_rel );
 			if( written )
 			{
 				return;
@@ -106,7 +106,7 @@ public:
 	{
 		// x86 32/64:
 		//  lock xadd [var], reg(-1)
-		CountType const previousValue = m_StrongCount.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );
+		CountType const previousValue = mStrongCount.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );
 		if( previousValue == 1 )
 		{
 			// NOTE: At this time, the strong count is 0, so any attempt to
@@ -125,14 +125,14 @@ public:
 	{
 		// x86 32/64:
 		//  lock xadd [var], reg(1)
-		m_WeakCount.fetch_add( 1, rftl::memory_order::memory_order_release );
+		mWeakCount.fetch_add( 1, rftl::memory_order::memory_order_release );
 	}
 
 	void DecreaseWeakCount()
 	{
 		// x86 32/64:
 		//  lock xadd [var], reg(-1)
-		CountType const previousValue = m_WeakCount.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );
+		CountType const previousValue = mWeakCount.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );
 		if( previousValue == 1 )
 		{
 			DeleteSelf();
@@ -143,10 +143,10 @@ public:
 	//
 	// Private data
 private:
-	DeletionFunc m_DeletionFunc;
-	void* m_FuncUserData;
-	CountStorageType m_StrongCount;
-	CountStorageType m_WeakCount;
+	DeletionFunc mDeletionFunc;
+	void* mFuncUserData;
+	CountStorageType mStrongCount;
+	CountStorageType mWeakCount;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

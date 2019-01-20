@@ -9,7 +9,7 @@ namespace RF { namespace gfx {
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceManager()
-	: m_NextResourceID( k_InvalidResourceID + 1 )
+	: mNextResourceID( kInvalidResourceID + 1 )
 {
 	//
 }
@@ -20,9 +20,9 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManager()
 {
 	// NOTE: Shutdown should've been called before this
-	RF_ASSERT( m_ResourceIDs.empty() );
-	RF_ASSERT( m_Resources.empty() );
-	RF_ASSERT( m_FileBackedResources.empty() );
+	RF_ASSERT( mResourceIDs.empty() );
+	RF_ASSERT( mResources.empty() );
+	RF_ASSERT( mFileBackedResources.empty() );
 }
 
 
@@ -30,8 +30,8 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManage
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
 {
-	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( managedResourceID );
-	if( resourceIter == m_Resources.end() )
+	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
+	if( resourceIter == mResources.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
 		return nullptr;
@@ -45,14 +45,14 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
 {
-	typename ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
-	if( IDIter == m_ResourceIDs.end() )
+	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
+	if( IDIter == mResourceIDs.end() )
 	{
 		return nullptr;
 	}
 
-	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
-	if( resourceIter == m_Resources.end() )
+	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
+	if( resourceIter == mResources.end() )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_PPU, "Lookups desynced?" );
 		return nullptr;
@@ -140,15 +140,15 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Rel
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyResource( ResourceName const& resourceName )
 {
-	typename ResourceIDsByName::const_iterator IDIter = m_ResourceIDs.find( resourceName );
-	if( IDIter == m_ResourceIDs.end() )
+	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
+	if( IDIter == mResourceIDs.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
-	typename ResourcesByManagedID::const_iterator resourceIter = m_Resources.find( IDIter->second );
-	if( resourceIter == m_Resources.end() )
+	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
+	if( resourceIter == mResources.end() )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
 		return false;
@@ -160,9 +160,9 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	bool const success = PreDestroy( *resource );
 	RF_ASSERT( success );
 
-	m_FileBackedResources.erase( resourceName );
-	m_ResourceIDs.erase( IDIter );
-	m_Resources.erase( resourceIter );
+	mFileBackedResources.erase( resourceName );
+	mResourceIDs.erase( IDIter );
+	mResources.erase( resourceIter );
 	return true;
 }
 
@@ -171,7 +171,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const
 {
-	for( typename ResourceIDsByName::value_type const& resourcePair : m_ResourceIDs )
+	for( typename ResourceIDsByName::value_type const& resourcePair : mResourceIDs )
 	{
 		ManagedResourceID const& id = resourcePair.second;
 		if( id == managedResourceID )
@@ -189,7 +189,7 @@ inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>:
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const& resourceName ) const
 {
-	for( ResourcesByFilename::value_type const& resourcePair : m_FileBackedResources )
+	for( ResourcesByFilename::value_type const& resourcePair : mFileBackedResources )
 	{
 		ResourceName const& name = resourcePair.first;
 		if( name == resourceName )
@@ -261,12 +261,12 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::InternalShutdown()
 {
-	while( m_ResourceIDs.empty() == false )
+	while( mResourceIDs.empty() == false )
 	{
-		DestroyResource( m_ResourceIDs.begin()->first );
+		DestroyResource( mResourceIDs.begin()->first );
 	}
-	RF_ASSERT( m_Resources.empty() );
-	RF_ASSERT( m_FileBackedResources.empty() );
+	RF_ASSERT( mResources.empty() );
+	RF_ASSERT( mFileBackedResources.empty() );
 }
 
 
@@ -274,7 +274,7 @@ inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Int
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline size_t ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetNumResources() const
 {
-	return m_Resources.size();
+	return mResources.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -291,8 +291,8 @@ typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GenerateNewManagedID()
 {
-	ManagedResourceID retVal = m_NextResourceID++;
-	if( m_NextResourceID == k_InvalidResourceID )
+	ManagedResourceID retVal = mNextResourceID++;
+	if( mNextResourceID == kInvalidResourceID )
 	{
 		RF_DBGFAIL_MSG( "TODO: Safe generation" );
 	}
@@ -310,24 +310,24 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 	// Check if it is already loaded
 	{
-		ResourcesByFilename::const_iterator const fileIter = m_FileBackedResources.find( resourceName );
-		if( fileIter != m_FileBackedResources.end() )
+		ResourcesByFilename::const_iterator const fileIter = mFileBackedResources.find( resourceName );
+		if( fileIter != mFileBackedResources.end() )
 		{
 			Filename const& existingFilename = fileIter->second;
 			if( filename == existingFilename )
 			{
 				// Already loaded
 				RFLOG_TRACE( filename, RFCAT_PPU, "Resource already loaded, reusing" );
-				RF_ASSERT( m_ResourceIDs.count( resourceName ) == 1 );
-				ManagedResourceID const id = m_ResourceIDs.at( resourceName );
-				RF_ASSERT( m_Resources.count( id ) == 1 );
+				RF_ASSERT( mResourceIDs.count( resourceName ) == 1 );
+				ManagedResourceID const id = mResourceIDs.at( resourceName );
+				RF_ASSERT( mResources.count( id ) == 1 );
 				managedResourceID = id;
-				return m_Resources.at( id );
+				return mResources.at( id );
 			}
 			else
 			{
 				RF_DBGFAIL_MSG( "Resource already loaded with different file" );
-				managedResourceID = k_InvalidResourceID;
+				managedResourceID = kInvalidResourceID;
 				return nullptr;
 			}
 		}
@@ -335,9 +335,9 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 	ManagedResourceID tempID = GenerateNewManagedID();
 
-	RF_ASSERT( m_ResourceIDs.count( resourceName ) == 0 );
-	RF_ASSERT( m_Resources.count( managedResourceID ) == 0 );
-	RF_ASSERT( m_FileBackedResources.count( resourceName ) == 0 );
+	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
+	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
+	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
 	Resource* res;
 	WeakPtr<Resource> retVal;
 	{
@@ -350,9 +350,9 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 		retVal = newResource;
 		res = newResource;
 		managedResourceID = tempID;
-		m_Resources.emplace( managedResourceID, rftl::move( newResource ) );
-		m_ResourceIDs.emplace( resourceName, managedResourceID );
-		m_FileBackedResources.emplace( resourceName, filename );
+		mResources.emplace( managedResourceID, rftl::move( newResource ) );
+		mResourceIDs.emplace( resourceName, managedResourceID );
+		mFileBackedResources.emplace( resourceName, filename );
 	}
 	RF_ASSERT( retVal != nullptr );
 
@@ -371,15 +371,15 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	RF_ASSERT( resource != nullptr );
 	managedResourceID = GenerateNewManagedID();
 
-	RF_ASSERT( m_ResourceIDs.count( resourceName ) == 0 );
-	RF_ASSERT( m_Resources.count( managedResourceID ) == 0 );
+	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
+	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
 	Resource* res;
 	WeakPtr<Resource> retVal;
 	{
 		retVal = resource;
 		res = resource;
-		m_Resources.emplace( managedResourceID, rftl::move( resource ) );
-		m_ResourceIDs.emplace( resourceName, managedResourceID );
+		mResources.emplace( managedResourceID, rftl::move( resource ) );
+		mResourceIDs.emplace( resourceName, managedResourceID );
 	}
 	RF_ASSERT( retVal != nullptr );
 

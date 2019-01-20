@@ -33,10 +33,10 @@ public:
 private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
-	mutable time::FrameClock::time_point m_LastUsedInFrame;
-	DeviceTextureID m_DeviceRepresentation;
-	uint32_t m_WidthPostLoad;
-	uint32_t m_HeightPostLoad;
+	mutable time::FrameClock::time_point mLastUsedInFrame;
+	DeviceTextureID mDeviceRepresentation;
+	uint32_t mWidthPostLoad;
+	uint32_t mHeightPostLoad;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

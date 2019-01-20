@@ -24,11 +24,11 @@ constexpr size_t const kSizeOfMagic = sizeof( kMagic );
 constexpr size_t kSizeOfBase = sizeof( FramePackBase );
 constexpr size_t SizeOfData_Sustains( FramePackBase const& framePack )
 {
-	return sizeof( uint8_t ) * framePack.m_NumTimeSlots;
+	return sizeof( uint8_t ) * framePack.mNumTimeSlots;
 }
 constexpr size_t SizeOfData_Slots( FramePackBase const& framePack )
 {
-	return sizeof( FramePackBase::TimeSlot ) * framePack.m_NumTimeSlots;
+	return sizeof( FramePackBase::TimeSlot ) * framePack.mNumTimeSlots;
 }
 
 struct Header_v0_1
@@ -86,10 +86,10 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 	// Collect texture path data
 	rftl::vector<rftl::string> texturePaths;
 	size_t sizeOfTexturePaths = 0;
-	texturePaths.reserve( framePack.m_NumTimeSlots );
+	texturePaths.reserve( framePack.mNumTimeSlots );
 	{
 		FramePackBase::TimeSlot const* const timeSlots = framePack.GetTimeSlots();
-		for( size_t i = 0; i < framePack.m_NumTimeSlots; i++ )
+		for( size_t i = 0; i < framePack.mNumTimeSlots; i++ )
 		{
 			ManagedTextureID const texID = timeSlots[i].m_TextureReference;
 			TextureManager::ResourceName const resName = texMan.SearchForResourceNameByResourceID( texID );
@@ -183,7 +183,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 	// Paths
 	{
 		RF_ASSERT( buffer.size() == header.mOffsetToTexturePaths );
-		for( size_t i = 0; i < framePack.m_NumTimeSlots; i++ )
+		for( size_t i = 0; i < framePack.mNumTimeSlots; i++ )
 		{
 			// NOTE: Pascal-style strings, since file paths can theoretically
 			//  store some really wierd shit on some platforms, such as nulls
@@ -281,8 +281,8 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 		size_t const theoreticalSizeOfData_sustains = SizeOfData_Sustains( theoreticalBase );
 		size_t const theoreticalSizeOfData_slots = SizeOfData_Slots( theoreticalBase );
 		size_t const theoreticalSizeOfData = theoreticalSizeOfData_sustains + theoreticalSizeOfData_slots;
-		size_t const maxSlots = theoreticalBase.m_MaxTimeSlots;
-		numSlots = theoreticalBase.m_NumTimeSlots;
+		size_t const maxSlots = theoreticalBase.mMaxTimeSlots;
+		numSlots = theoreticalBase.mNumTimeSlots;
 
 		if( maxSlots == 0 )
 		{
@@ -316,19 +316,19 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	// Allocate
 	UniquePtr<FramePackBase> retValFPack;
 	{
-		if( numSlots <= gfx::FramePack_256::k_MaxTimeSlots )
+		if( numSlots <= gfx::FramePack_256::kMaxTimeSlots )
 		{
 			retValFPack = DefaultCreator<gfx::FramePack_256>::Create();
 		}
-		else if( numSlots <= gfx::FramePack_512::k_MaxTimeSlots )
+		else if( numSlots <= gfx::FramePack_512::kMaxTimeSlots )
 		{
 			retValFPack = DefaultCreator<gfx::FramePack_512>::Create();
 		}
-		else if( numSlots <= gfx::FramePack_1024::k_MaxTimeSlots )
+		else if( numSlots <= gfx::FramePack_1024::kMaxTimeSlots )
 		{
 			retValFPack = DefaultCreator<gfx::FramePack_1024>::Create();
 		}
-		else if( numSlots <= gfx::FramePack_4096::k_MaxTimeSlots )
+		else if( numSlots <= gfx::FramePack_4096::kMaxTimeSlots )
 		{
 			retValFPack = DefaultCreator<gfx::FramePack_4096>::Create();
 		}
@@ -378,18 +378,18 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	// Invalidation
 	{
 		FramePackBase::TimeSlot* const timeSlots = retBase.GetMutableTimeSlots();
-		for( size_t i = 0; i < retBase.m_MaxTimeSlots; i++ )
+		for( size_t i = 0; i < retBase.mMaxTimeSlots; i++ )
 		{
 			FramePackBase::TimeSlot& timeSlot = timeSlots[i];
-			timeSlot.m_TextureReference = k_InvalidManagedTextureID;
-			timeSlot.m_ColliderReference = k_InvalidManagedColliderID;
+			timeSlot.m_TextureReference = kInvalidManagedTextureID;
+			timeSlot.m_ColliderReference = kInvalidManagedColliderID;
 		}
 	}
 
 	// Paths
 	rftl::vector<file::VFSPath> retValTextures;
 	{
-		for( size_t i = 0; i < retBase.m_NumTimeSlots; i++ )
+		for( size_t i = 0; i < retBase.mNumTimeSlots; i++ )
 		{
 			if( readHead + sizeof( StrLenType ) > maxReadHead )
 			{
