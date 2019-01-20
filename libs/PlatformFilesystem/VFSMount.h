@@ -18,9 +18,9 @@ private:
 	//
 	// Constants
 public:
-	static constexpr uint8_t k_ReadBit = 1 << 2;
-	static constexpr uint8_t k_WriteBit = 1 << 1;
-	static constexpr uint8_t k_ExecuteBit = 1 << 0;
+	static constexpr uint8_t kReadBit = 1 << 2;
+	static constexpr uint8_t kWriteBit = 1 << 1;
+	static constexpr uint8_t kExecuteBit = 1 << 0;
 
 
 	//
@@ -36,19 +36,19 @@ public:
 	enum class Permissions : uint8_t
 	{
 		Invalid = 0,
-		ReadOnly = k_ReadBit,
-		ReadWrite = k_ReadBit | k_WriteBit,
-		ReadExecute = k_ReadBit | k_ExecuteBit
+		ReadOnly = kReadBit,
+		ReadWrite = kReadBit | kWriteBit,
+		ReadExecute = kReadBit | kExecuteBit
 	};
 
 
 	//
 	// Private data
 private:
-	Type m_Type;
-	Permissions m_Permissions;
-	VFSPath m_VirtualPath;
-	VFSPath m_RealMount;
+	Type mType;
+	Permissions mPermissions;
+	VFSPath mVirtualPath;
+	VFSPath mRealMount;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

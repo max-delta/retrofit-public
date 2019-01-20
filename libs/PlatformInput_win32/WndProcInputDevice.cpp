@@ -15,9 +15,9 @@ WndProcInputDevice::WndProcInputDevice()
 		DefaultCreator<WndProcDigitalInputComponent>::Create(),
 		DefaultCreator<WndProcAnalogInputComponent>::Create(),
 		DefaultCreator<WndProcTextInputComponent>::Create() )
-	, m_Digital( *reinterpret_cast<WndProcDigitalInputComponent*>( m_DigitalComponent.Get() ) )
-	, m_Analog( *reinterpret_cast<WndProcAnalogInputComponent*>( m_AnalogComponent.Get() ) )
-	, m_Text( *reinterpret_cast<WndProcTextInputComponent*>( m_TextComponent.Get() ) )
+	, mDigital( *reinterpret_cast<WndProcDigitalInputComponent*>( mDigitalComponent.Get() ) )
+	, mAnalog( *reinterpret_cast<WndProcAnalogInputComponent*>( mAnalogComponent.Get() ) )
+	, mText( *reinterpret_cast<WndProcTextInputComponent*>( mTextComponent.Get() ) )
 {
 	//
 }
@@ -30,21 +30,21 @@ shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shi
 	shim::LRESULT componentResult;
 	bool componentIntercepted = false;
 
-	componentResult = m_Digital.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
+	componentResult = mDigital.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
 	if( componentIntercepted )
 	{
 		retVal = componentResult;
 		intercepted = true;
 	}
 
-	componentResult = m_Analog.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
+	componentResult = mAnalog.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
 	if( componentIntercepted )
 	{
 		retVal = componentResult;
 		intercepted = true;
 	}
 
-	componentResult = m_Text.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
+	componentResult = mText.ExamineTranslatedMessage( hWnd, message, wParam, lParam, componentIntercepted );
 	if( componentIntercepted )
 	{
 		retVal = componentResult;
@@ -64,8 +64,8 @@ shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shi
 
 void WndProcDigitalInputComponent::OnTick()
 {
-	m_PreviousLogicalState = m_CurrentLogicalState;
-	m_PreviousPhysicalState = m_CurrentPhysicalState;
+	mPreviousLogicalState = mCurrentLogicalState;
+	mPreviousPhysicalState = mCurrentPhysicalState;
 }
 
 
@@ -96,38 +96,38 @@ rftl::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code )
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentPhysicalState( PhysicalCode code ) const
 {
-	return m_CurrentPhysicalState[code] ? PinState::Active : PinState::Inactive;
+	return mCurrentPhysicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousPhysicalState( PhysicalCode code ) const
 {
-	return m_PreviousPhysicalState[code] ? PinState::Active : PinState::Inactive;
+	return mPreviousPhysicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentLogicalState( LogicalCode code ) const
 {
-	return m_CurrentLogicalState[code] ? PinState::Active : PinState::Inactive;
+	return mCurrentLogicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousLogicalState( LogicalCode code ) const
 {
-	return m_PreviousLogicalState[code] ? PinState::Active : PinState::Inactive;
+	return mPreviousLogicalState[code] ? PinState::Active : PinState::Inactive;
 }
 
 
 
 void WndProcDigitalInputComponent::GetPhysicalEventStream( EventParser<PhysicalEvent>& parser, size_t maxEvents ) const
 {
-	size_t const numToRead = math::Min( m_PhysicalEventBuffer.size(), maxEvents );
-	for( size_t i = m_PhysicalEventBuffer.size() - numToRead; i < m_PhysicalEventBuffer.size(); i++ )
+	size_t const numToRead = math::Min( mPhysicalEventBuffer.size(), maxEvents );
+	for( size_t i = mPhysicalEventBuffer.size() - numToRead; i < mPhysicalEventBuffer.size(); i++ )
 	{
-		parser.OnEvent( m_PhysicalEventBuffer[i] );
+		parser.OnEvent( mPhysicalEventBuffer[i] );
 	}
 }
 
@@ -135,10 +135,10 @@ void WndProcDigitalInputComponent::GetPhysicalEventStream( EventParser<PhysicalE
 
 void WndProcDigitalInputComponent::GetLogicalEventStream( EventParser<LogicalEvent>& parser, size_t maxEvents ) const
 {
-	size_t const numToRead = math::Min( m_LogicalEventBuffer.size(), maxEvents );
-	for( size_t i = m_LogicalEventBuffer.size() - numToRead; i < m_LogicalEventBuffer.size(); i++ )
+	size_t const numToRead = math::Min( mLogicalEventBuffer.size(), maxEvents );
+	for( size_t i = mLogicalEventBuffer.size() - numToRead; i < mLogicalEventBuffer.size(); i++ )
 	{
-		parser.OnEvent( m_LogicalEventBuffer[i] );
+		parser.OnEvent( mLogicalEventBuffer[i] );
 	}
 }
 
@@ -336,7 +336,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 				numClicks = kMaxReasonableClicks;
 			}
 
-			uint8_t const virtualKey = positive ? k_VkScrollWheelUp : k_VkScrollWheelDown;
+			uint8_t const virtualKey = positive ? kVkScrollWheelUp : kVkScrollWheelDown;
 			for( int16_t i = 0; i < numClicks; i++ )
 			{
 				// Pulse the key for each click
@@ -350,16 +350,16 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 
 		case WM_KILLFOCUS:
 		{
-			if( k_KillKeysOnFocusLost == false )
+			if( kKillKeysOnFocusLost == false )
 			{
 				intercepted = false;
 				return 0;
 			}
 
-			size_t const numLogical = m_CurrentLogicalState.size();
+			size_t const numLogical = mCurrentLogicalState.size();
 			for( size_t i = 0; i < numLogical; i++ )
 			{
-				bool const active = m_CurrentLogicalState[i];
+				bool const active = mCurrentLogicalState[i];
 				if( active )
 				{
 					uint8_t const code = math::integer_cast<uint8_t>( i );
@@ -367,10 +367,10 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 				}
 			}
 
-			size_t const numPhysical = m_CurrentPhysicalState.size();
+			size_t const numPhysical = mCurrentPhysicalState.size();
 			for( size_t i = 0; i < numPhysical; i++ )
 			{
-				bool const active = m_CurrentPhysicalState[i];
+				bool const active = mCurrentPhysicalState[i];
 				if( active )
 				{
 					uint8_t const code = math::integer_cast<uint8_t>( i );
@@ -395,17 +395,17 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 
 void WndProcDigitalInputComponent::RecordLogical( uint8_t code, PinState state )
 {
-	if( m_CurrentLogicalState[code] == ( state == PinState::Active ) )
+	if( mCurrentLogicalState[code] == ( state == PinState::Active ) )
 	{
 		// Repeat, ignore
 		return;
 	}
 
-	m_CurrentLogicalState[code] = state == PinState::Active;
-	m_LogicalEventBuffer.emplace_back( code, state );
-	while( m_LogicalEventBuffer.size() > k_MaxEventStorage )
+	mCurrentLogicalState[code] = state == PinState::Active;
+	mLogicalEventBuffer.emplace_back( code, state );
+	while( mLogicalEventBuffer.size() > kMaxEventStorage )
 	{
-		m_LogicalEventBuffer.pop_front();
+		mLogicalEventBuffer.pop_front();
 	}
 }
 
@@ -413,17 +413,17 @@ void WndProcDigitalInputComponent::RecordLogical( uint8_t code, PinState state )
 
 void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, PinState state )
 {
-	if( m_CurrentPhysicalState[code] == ( state == PinState::Active ) )
+	if( mCurrentPhysicalState[code] == ( state == PinState::Active ) )
 	{
 		// Repeat, ignore
 		return;
 	}
 
-	m_CurrentPhysicalState[code] = state == PinState::Active;
-	m_PhysicalEventBuffer.emplace_back( code, state );
-	while( m_PhysicalEventBuffer.size() > k_MaxEventStorage )
+	mCurrentPhysicalState[code] = state == PinState::Active;
+	mPhysicalEventBuffer.emplace_back( code, state );
+	while( mPhysicalEventBuffer.size() > kMaxEventStorage )
 	{
-		m_PhysicalEventBuffer.pop_front();
+		mPhysicalEventBuffer.pop_front();
 	}
 }
 
@@ -432,7 +432,7 @@ void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, PinState state 
 void WndProcAnalogInputComponent::OnTick()
 {
 	static_assert( rftl::is_array<SignalValues>::value, "Type changed, re-evalute memcpy safety" );
-	memcpy( m_PreviousSignalValues, m_CurrentSignalValues, sizeof( SignalValues ) );
+	memcpy( mPreviousSignalValues, mCurrentSignalValues, sizeof( SignalValues ) );
 }
 
 
@@ -455,7 +455,7 @@ rftl::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIn
 WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetCurrentSignalValue( SignalIndex signalIndex ) const
 {
 	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
-	return m_CurrentSignalValues[signalIndex];
+	return mCurrentSignalValues[signalIndex];
 }
 
 
@@ -463,7 +463,7 @@ WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetCurrent
 WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetPreviousSignalValue( SignalIndex signalIndex ) const
 {
 	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
-	return m_PreviousSignalValues[signalIndex];
+	return mPreviousSignalValues[signalIndex];
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -482,8 +482,8 @@ shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND 
 		shim::LPARAM m_Value;
 		struct Fields
 		{
-			shim::LPARAM m_XCoord : 16;
-			shim::LPARAM m_YCoord : 16;
+			shim::LPARAM mXCoord : 16;
+			shim::LPARAM mYCoord : 16;
 			//shim::LPARAM Padding : 32; // Only on 64-bit
 		} m_Fields;
 	};
@@ -511,10 +511,10 @@ shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND 
 		{
 			// NOTE: Signed, may go negative
 			MouseCoord const mouseCoord( lParam );
-			int16_t const xcoord = mouseCoord.m_Fields.m_XCoord;
-			int16_t const ycoord = mouseCoord.m_Fields.m_YCoord;
-			m_CurrentSignalValues[k_CursorAbsoluteX] = xcoord;
-			m_CurrentSignalValues[k_CursorAbsoluteY] = ycoord;
+			int16_t const xcoord = mouseCoord.m_Fields.mXCoord;
+			int16_t const ycoord = mouseCoord.m_Fields.mYCoord;
+			mCurrentSignalValues[k_CursorAbsoluteX] = xcoord;
+			mCurrentSignalValues[k_CursorAbsoluteY] = ycoord;
 			intercepted = true;
 			return 0;
 		}
@@ -541,7 +541,7 @@ void WndProcTextInputComponent::GetTextStream( rftl::u16string& text, size_t max
 {
 	text.clear();
 	text.reserve( maxLen );
-	for( char16_t const& ch : m_TextBuffer )
+	for( char16_t const& ch : mTextBuffer )
 	{
 		text.push_back( ch );
 		if( text.size() == maxLen )
@@ -555,7 +555,7 @@ void WndProcTextInputComponent::GetTextStream( rftl::u16string& text, size_t max
 
 void WndProcTextInputComponent::ClearTextStream()
 {
-	m_TextBuffer.clear();
+	mTextBuffer.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -572,11 +572,11 @@ shim::LRESULT WndProcTextInputComponent::ExamineTranslatedMessage( shim::HWND hW
 				win32::IsWindowUnicode( static_cast<win32::HWND>( hWnd ) ),
 				"Non-unicode window, may not be able to receive unicode text properly" );
 			char16_t const utf16 = static_cast<char16_t>( wParam );
-			if( m_TextBuffer.size() == k_MaxStorage )
+			if( mTextBuffer.size() == kMaxStorage )
 			{
-				m_TextBuffer.pop_front();
+				mTextBuffer.pop_front();
 			}
-			m_TextBuffer.push_back( utf16 );
+			mTextBuffer.push_back( utf16 );
 			intercepted = true;
 			return 0;
 		}

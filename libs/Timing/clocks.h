@@ -36,8 +36,8 @@ public:
 	static void add_time( duration const& time );
 
 private:
-	static time_point s_AccumulatedTime;
-	static time_point s_PreviousAccumulatedTime;
+	static time_point sAccumulatedTime;
+	static time_point sPreviousAccumulatedTime;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
