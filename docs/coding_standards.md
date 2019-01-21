@@ -30,6 +30,8 @@ Namespaces are excepted from this, due to their almost exclusively boiler-plate 
 
 Single-line brace pairs for zero initialization are exempt from this.
 
+Initializer lists are exempt from this, but use good judgement for readability.
+
 Rationale: Clarity over compactness
 
 ### Tabs for indentation, not spaces
@@ -93,6 +95,8 @@ Function parameter: lowerCamelCase
 Local variables: lowerCamelCase
 
 Defines/macros: UPPER\_SNAKE\_CASE
+
+Template parameters: TBD
 
 Rationale: Clarity over compactness, consistency
 
@@ -172,7 +176,9 @@ Stroustrup & Sutter: [https://github.com/isocpp/CppCoreGuidelines]
 
 While no one should ever be running bulk auto-formats on code they are not the owner of for style elements not covered in the coding standards, minor code changes and additions may cause stylistic divergences with a modern IDE. These should be expected to creep in from time-to-time when collaborating with others.
 
-If you are not particularly passionate about minor whitespace nuances, but want to be consistent, you may wish to use the following auto-format vs2017.vssettings import to better match the general engine style:
+If you are not particularly passionate about minor whitespace nuances, but want to be consistent, you may wish to use an auto-format configuration. Currently, there is a clang-format file included with the solution that should cover most of the basics. Be advised that it does NOT supersede this document and is NOT without its faults.
+
+The following is a vs2017.vssettings import that generally matches the general engine style, in the event clang-format is not working:
 
 ```
 <UserSettings>
