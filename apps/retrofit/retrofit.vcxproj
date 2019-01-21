@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -59,6 +59,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
       <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
+      <Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
