@@ -65,11 +65,11 @@ struct SQReflectTestClass
 	int32_t mS32;
 	uint64_t mU64;
 	int64_t mS64;
-	std::string mString;
-	std::wstring mWString;
-	std::vector<int32_t> mIntArray;
+	rftl::string mString;
+	rftl::wstring mWString;
+	rftl::vector<int32_t> mIntArray;
 	SQReflectTestNestedClass mNested;
-	std::vector<SQReflectTestContainedClass> mObjArray;
+	rftl::vector<SQReflectTestContainedClass> mObjArray;
 };
 
 RFTYPE_CREATE_META( SQReflectTestContainedClass )
