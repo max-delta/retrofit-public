@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="10" height="10" tilewidth="1" tileheight="1" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../../tilesets/common/pallete16_4.tsx"/>
+ <layer id="1" name="Background" width="10" height="10">
+  <data encoding="csv">
+11,10,11,11,11,11,11,11,11,11,
+10,10,10,11,13,13,11,11,11,11,
+11,10,11,11,11,11,11,1,11,13,
+11,11,11,11,11,11,1,1,1,11,
+11,11,11,11,11,1,1,1,1,1,
+11,11,7,11,11,11,2,2,2,11,
+11,7,7,7,11,11,2,2,2,11,
+14,14,14,14,14,14,14,14,14,14,
+14,14,14,14,14,14,14,14,14,14,
+14,14,14,14,14,14,14,14,14,14
+</data>
+ </layer>
+</map>
