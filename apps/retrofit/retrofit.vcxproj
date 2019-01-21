@@ -30,7 +30,6 @@
   <ItemDefinitionGroup />
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="sqreflect_scratch.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
