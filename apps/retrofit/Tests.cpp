@@ -532,7 +532,7 @@ void SQReflectTest()
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
 			"\n";
-		bool const sourceAdd = loader.AddSourceFromBuffer( source );
+		bool const sourceAdd = loader.AddSourceFromBuffer( source, sizeof( source ) );
 		RF_ASSERT( sourceAdd );
 	}
 
