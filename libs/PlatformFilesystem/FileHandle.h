@@ -18,10 +18,11 @@ class PLATFORMFILESYSTEM_API FileHandle
 	// Public methods
 public:
 	FileHandle() = delete;
-	FileHandle( FILE* file );
+	explicit FileHandle( FILE*&& file );
 	~FileHandle();
 
 	FILE* GetFile() const;
+	size_t GetFileSize() const;
 
 
 	//

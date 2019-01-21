@@ -6,6 +6,7 @@
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
+#include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 
 #include "core/ptr/default_creator.h"
@@ -108,9 +109,9 @@ bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 		RFLOG_ERROR( nullptr, RFCAT_PPU, "Failed to load file" );
 		return false;
 	}
-	FILE* fileVal = fileHandle->GetFile();
-	RF_ASSERT( fileVal != nullptr );
-	texture.mDeviceRepresentation = mDeviceInterface->LoadTexture( fileVal, texture.mWidthPostLoad, texture.mHeightPostLoad );
+	file::FileBuffer const buffer{ *fileHandle.Get(), false };
+	RF_ASSERT( buffer.GetData() != nullptr );
+	texture.mDeviceRepresentation = mDeviceInterface->LoadTexture( buffer.GetData(), buffer.GetSize(), texture.mWidthPostLoad, texture.mHeightPostLoad );
 	texture.UpdateFrameUsage();
 	return true;
 }

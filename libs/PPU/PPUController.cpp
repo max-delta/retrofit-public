@@ -121,11 +121,11 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 
 
-bool PPUController::LoadFont( FILE* file )
+bool PPUController::LoadFont( void const* buffer, size_t len )
 {
 	// TODO: Revise the font API
 	uint32_t unused;
-	return mDeviceInterface->CreateBitmapFont( file, 7, unused, unused );
+	return mDeviceInterface->CreateBitmapFont( buffer, len, 7, unused, unused );
 }
 
 

@@ -6,8 +6,6 @@
 #include "core_math/Vector2.h"
 #include "core_platform/win_shim.h"
 
-#include "rftl/cstdio"
-
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,10 +26,10 @@ public:
 	virtual bool SetBackgroundColor( float r, float g, float b, float a ) = 0;
 	virtual bool SetFontScale( float scale ) = 0;
 
-	virtual DeviceTextureID LoadTexture( FILE* file, uint32_t& width, uint32_t& height ) = 0;
+	virtual DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) = 0;
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
-	virtual bool CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
+	virtual bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
 	virtual bool DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
 
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;

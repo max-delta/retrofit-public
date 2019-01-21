@@ -712,7 +712,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 		}
 
 		// Sweet! Got it
-		return DefaultCreator<FileHandle>::Create( file );
+		return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
 	}
 
 	// Couldn't find
