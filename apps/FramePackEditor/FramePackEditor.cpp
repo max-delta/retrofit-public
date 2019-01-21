@@ -13,6 +13,7 @@
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
+#include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 
 #include "core_platform/winuser_shim.h"
@@ -45,7 +46,9 @@ void FramePackEditor::Init()
 	file::VFS& vfs = *mVfs;
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	ppu->LoadFont( fontHandle->GetFile() );
+	file::FileBuffer const buffer{ *fontHandle.Get(), false };
+	RF_ASSERT( buffer.GetData() != nullptr );
+	ppu->LoadFont( buffer.GetData(), buffer.GetSize() );
 }
 
 

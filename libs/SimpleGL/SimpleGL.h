@@ -41,10 +41,10 @@ public:
 	bool SetBackgroundColor( float r, float g, float b, float a ) override;
 	bool SetFontScale( float scale ) override;
 
-	DeviceTextureID LoadTexture( FILE* file, uint32_t& width, uint32_t& height ) override;
+	DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
-	bool CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) override;
+	bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) override;
 	bool DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
 
 	bool glPrint( char const* fmt, ... );
