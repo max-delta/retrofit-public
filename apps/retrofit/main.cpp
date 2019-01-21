@@ -22,10 +22,8 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////
-namespace RF { namespace scratch {
-void sqreflect_scratch();
-}}
-///////////////////////////////////////////////////////////////////////////////
+
+constexpr bool kAllowTests = true;
 
 constexpr bool kConsoleTest = true;
 constexpr bool kDrawTest = true;
@@ -38,11 +36,9 @@ constexpr bool kSQReflectTest = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int main()
+void TestStart()
 {
 	using namespace RF;
-
-	app::Startup();
 
 	if( kConsoleTest )
 	{
@@ -87,7 +83,55 @@ int main()
 
 	if( kSQReflectTest )
 	{
-		scratch::sqreflect_scratch();
+		test::SQReflectTest();
+	}
+}
+
+
+
+void TestRun()
+{
+	using namespace RF;
+
+	if( kDrawInputDebug )
+	{
+		test::DrawInputDebug();
+	}
+
+	if( kDrawTest )
+	{
+		test::DrawTest();
+	}
+
+	if( kFrameBuilderTest )
+	{
+		test::FrameBuilderTest();
+	}
+}
+
+
+
+void TestEnd()
+{
+	using namespace RF;
+
+	if( kFrameBuilderTest )
+	{
+		test::TerminateFrameBuilderTest();
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+int main()
+{
+	using namespace RF;
+
+	app::Startup();
+
+	if( kAllowTests )
+	{
+		TestStart();
 	}
 
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
@@ -106,19 +150,9 @@ int main()
 
 		app::gGraphics->BeginFrame();
 		{
-			if( kDrawInputDebug )
+			if( kAllowTests )
 			{
-				test::DrawInputDebug();
-			}
-
-			if( kDrawTest )
-			{
-				test::DrawTest();
-			}
-
-			if( kFrameBuilderTest )
-			{
-				test::FrameBuilderTest();
+				TestRun();
 			}
 
 			app::gGraphics->SubmitToRender();
@@ -126,10 +160,12 @@ int main()
 		}
 		app::gGraphics->EndFrame();
 	}
-	if( kFrameBuilderTest )
+
+	if( kAllowTests )
 	{
-		test::TerminateFrameBuilderTest();
+		TestEnd();
 	}
+
 	app::Shutdown();
 	return 0;
 }

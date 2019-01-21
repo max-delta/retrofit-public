@@ -19,5 +19,7 @@ void InitFrameBuilderTest();
 void FrameBuilderTest();
 void TerminateFrameBuilderTest();
 
+void SQReflectTest();
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
