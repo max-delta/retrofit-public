@@ -25,7 +25,7 @@ struct OnScopeEnd
 	}
 
 	OnScopeEnd( CALLABLE&& callable )
-		: mCallable( std::move( callable ) )
+		: mCallable( rftl::move( callable ) )
 	{
 		//
 	}

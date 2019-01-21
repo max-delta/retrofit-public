@@ -111,7 +111,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 			pThis->resize( index + 1 );
 		}
 
-		pThis->at( index ) = std::move( ValueType{} );
+		pThis->at( index ) = rftl::move( ValueType{} );
 		return true;
 	}
 

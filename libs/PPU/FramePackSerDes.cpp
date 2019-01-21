@@ -105,13 +105,13 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 				return false;
 			}
 
-			std::string fileStr = file::VFS::CreateStringFromPath( resFile );
+			rftl::string fileStr = file::VFS::CreateStringFromPath( resFile );
 
 			// NOTE: Pascal strings
 			sizeOfTexturePaths += sizeof( StrLenType );
 			sizeOfTexturePaths += fileStr.size();
 
-			texturePaths.emplace_back( std::move( fileStr ) );
+			texturePaths.emplace_back( rftl::move( fileStr ) );
 		}
 	}
 
@@ -187,7 +187,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 		{
 			// NOTE: Pascal-style strings, since file paths can theoretically
 			//  store some really wierd shit on some platforms, such as nulls
-			std::string const& fileStr = texturePaths.at( i );
+			rftl::string const& fileStr = texturePaths.at( i );
 			StrLenType const fileStrLen = math::integer_cast<StrLenType>( fileStr.size() );
 
 			// String length
