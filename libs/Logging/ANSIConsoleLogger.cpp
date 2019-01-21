@@ -4,6 +4,8 @@
 #include "PlatformUtils_win32/Console.h"
 #include "Logging/Logging.h"
 
+#include "rftl/limits"
+
 
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +65,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );
-	static_assert( kBufSize <= std::numeric_limits<int>::max(), "Unexpected truncation" );
+	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
 		puts( "<TRUNCATED MESSAGE!>" );

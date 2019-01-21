@@ -29,7 +29,7 @@ Uuid::Uuid( OctetSequence const& sequence )
 
 bool Uuid::operator==( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult == 0;
 }
 
@@ -37,7 +37,7 @@ bool Uuid::operator==( Uuid const& rhs ) const
 
 bool Uuid::operator!=( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult != 0;
 }
 
@@ -45,7 +45,7 @@ bool Uuid::operator!=( Uuid const& rhs ) const
 
 bool Uuid::operator<( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult < 0;
 }
 
@@ -53,7 +53,7 @@ bool Uuid::operator<( Uuid const& rhs ) const
 
 bool Uuid::operator>( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult > 0;
 }
 
@@ -61,7 +61,7 @@ bool Uuid::operator>( Uuid const& rhs ) const
 
 bool Uuid::operator<=( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult < 0 || compareResult == 0;
 }
 
@@ -69,7 +69,7 @@ bool Uuid::operator<=( Uuid const& rhs ) const
 
 bool Uuid::operator>=( Uuid const& rhs ) const
 {
-	int const compareResult = std::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
+	int const compareResult = rftl::memcmp( &this->mOctetSequence[0], &rhs.mOctetSequence[0], kNumOctets );
 	return compareResult > 0 || compareResult == 0;
 }
 

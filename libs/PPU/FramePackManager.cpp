@@ -42,7 +42,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	}
 
 	// Read into buffer
-	std::vector<uint8_t> buffer;
+	rftl::vector<uint8_t> buffer;
 	{
 		FILE* const file = fileHandle->GetFile();
 		RF_ASSERT( file != nullptr );

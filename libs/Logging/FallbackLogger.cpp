@@ -6,6 +6,7 @@
 #include "core_logging/LoggingRouter.h"
 
 #include "rftl/atomic"
+#include "rftl/limits"
 
 
 namespace RF { namespace logging {
@@ -28,7 +29,7 @@ void FallbackLogger( LoggingRouter const& router, LogEvent<char> const& event, v
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );
-	static_assert( kBufSize <= std::numeric_limits<int>::max(), "Unexpected truncation" );
+	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
 		puts( "FALLBACK_LOGGER>>TRUNCATED MESSAGE!" );
