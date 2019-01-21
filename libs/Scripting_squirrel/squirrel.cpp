@@ -285,12 +285,19 @@ SquirrelVM::~SquirrelVM()
 
 bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
 {
+	return AddSourceFromBuffer( buffer.c_str(), buffer.length() );
+}
+
+
+
+bool SquirrelVM::AddSourceFromBuffer( char const* buffer, size_t len )
+{
 	VMRootStackGuard const stackGuard( mVm );
 
 	SQRESULT result;
 
 	sq_setcompilererrorhandler( mVm, LogCompileError );
-	result = sq_compilebuffer( mVm, buffer.c_str(), math::integer_cast<SQInteger>( buffer.length() ), "SOURCE", true );
+	result = sq_compilebuffer( mVm, buffer, math::integer_cast<SQInteger>( len ), "SOURCE", true );
 	if( SQ_FAILED( result ) )
 	{
 		NotifyLastError( mVm );
