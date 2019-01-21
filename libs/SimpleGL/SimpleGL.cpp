@@ -160,10 +160,10 @@ bool SimpleGL::SetFontScale( float scale )
 	return true;
 }
 
-DeviceTextureID SimpleGL::LoadTexture( FILE* file, uint32_t& width, uint32_t& height )
+DeviceTextureID SimpleGL::LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height )
 {
 	int x, y, n;
-	unsigned char* data = stbi_load_from_file( file, &x, &y, &n, 4 );
+	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer ), math::integer_cast<int>( len ), &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
@@ -192,11 +192,11 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-bool SimpleGL::CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight )
+bool SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
-	unsigned char* data = stbi_load_from_file( file, &tx, &ty, &tn, kRGBAElements );
+	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer ), math::integer_cast<int>( len ), &tx, &ty, &tn, kRGBAElements );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
@@ -302,7 +302,7 @@ bool SimpleGL::CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& character
 	RF_ASSERT( fontStorage.size() == listStorage.size() );
 	for( size_t i = 0; i < fontStorage.size(); i++ )
 	{
-		uint8_t const* const buffer = listStorage[i].data();
+		uint8_t const* const listBuffer = listStorage[i].data();
 		GLuint const texID = math::integer_cast<GLuint>( fontStorage[i] );
 		glBindTexture( GL_TEXTURE_2D, texID );
 		glTexImage2D(
@@ -314,7 +314,7 @@ bool SimpleGL::CreateBitmapFont( FILE* file, uint8_t fontID, uint32_t& character
 			0,
 			GL_ALPHA,
 			GL_UNSIGNED_BYTE,
-			buffer );
+			listBuffer );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	}

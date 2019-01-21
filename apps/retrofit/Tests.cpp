@@ -15,6 +15,7 @@
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
+#include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scheduling/tasks/FunctorTask.h"
 #include "RFType/CreateClassInfoDefinition.h"
@@ -164,7 +165,9 @@ void InitDrawTest()
 
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	app::gGraphics->LoadFont( fontHandle->GetFile() );
+	file::FileBuffer const buffer{ *fontHandle.Get(), false };
+	RF_ASSERT( buffer.GetData() != nullptr );
+	app::gGraphics->LoadFont( buffer.GetData(), buffer.GetSize() );
 }
 
 

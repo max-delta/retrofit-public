@@ -39,7 +39,7 @@ public:
 
 	bool Initialize( uint16_t width, uint16_t height );
 	bool ResizeSurface( uint16_t width, uint16_t height );
-	bool LoadFont( FILE* file );
+	bool LoadFont( void const* buffer, size_t len );
 
 	PPUCoordElem GetWidth() const;
 	PPUCoordElem GetHeight() const;
