@@ -3,9 +3,14 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="OOLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="OOLoader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OOLoader.inl" />
   </ItemGroup>
 </Project>

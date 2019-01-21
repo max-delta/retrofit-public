@@ -32,14 +32,30 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="OOLoader.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="OOLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OOLoader.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
+      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Scripting_squirrel\Scripting_squirrel.vcxproj">
+      <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
