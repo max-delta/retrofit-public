@@ -484,6 +484,7 @@ void TerminateFrameBuilderTest()
 }
 
 
+
 void SQReflectTest()
 {
 	script::OOLoader loader;
