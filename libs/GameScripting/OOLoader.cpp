@@ -567,6 +567,13 @@ bool OOLoader::AddSourceFromBuffer( rftl::string const& buffer )
 
 
 
+bool OOLoader::AddSourceFromBuffer( char const* buffer, size_t len )
+{
+	return mVm.AddSourceFromBuffer( buffer, len );
+}
+
+
+
 bool OOLoader::PopulateClass( char const* rootVariableName, reflect::ClassInfo const& classInfo, void* classInstance )
 {
 	return PopulateClass( SquirrelVM::NestedTraversalPath{ rootVariableName }, classInfo, classInstance );

@@ -106,6 +106,7 @@ public:
 	~SquirrelVM();
 
 	bool AddSourceFromBuffer( rftl::string const& buffer );
+	bool AddSourceFromBuffer( char const* buffer, size_t len );
 
 	bool InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers );
 
