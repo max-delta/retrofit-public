@@ -32,6 +32,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="TileLayer.h" />
     <ClInclude Include="DeviceInterface.h" />
     <ClInclude Include="FramePack.h" />
     <ClInclude Include="FramePackManager.h" />
@@ -41,6 +42,7 @@
     <ClInclude Include="PPUDebugState.h" />
     <ClInclude Include="PPUFwd.h" />
     <ClInclude Include="PPUState.h" />
+    <ClInclude Include="PPUTimer.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -48,6 +50,7 @@
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="TileLayer.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FramePack.cpp" />
     <ClCompile Include="FramePackManager.cpp" />
@@ -56,6 +59,7 @@
     <ClCompile Include="PPUController.cpp" />
     <ClCompile Include="PPUDebugState.cpp" />
     <ClCompile Include="PPUState.cpp" />
+    <ClCompile Include="PPUTimer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

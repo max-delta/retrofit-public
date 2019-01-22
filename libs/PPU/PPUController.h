@@ -50,6 +50,7 @@ public:
 	bool EndFrame();
 
 	bool DrawObject( Object const& object );
+	bool DrawTileLayer( TileLayer const& tileLayer );
 	bool DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... );
 
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );

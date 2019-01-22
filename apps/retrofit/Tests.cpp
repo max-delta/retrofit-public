@@ -119,22 +119,27 @@ namespace RF { namespace test {
 RF::gfx::Object testObjDigit = {};
 RF::gfx::Object testObjDigitFlips[3] = {};
 RF::gfx::Object testObjWiggle = {};
+RF::gfx::TileLayer testTileLayer = {};
 void InitDrawTest()
 {
 	using namespace RF;
 
 	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
+	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 	file::VFS& vfs = *app::gVfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
+	file::VFSPath const commonTextures = file::VFS::kRoot.GetChild( "assets", "textures", "common" );
+	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
+	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
 
 	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
-	testObjDigit.mMaxTimeIndex = digitAnimationLength;
-	testObjDigit.mTimeSlowdown = 3;
+	testObjDigit.mTimer.mMaxTimeIndex = digitAnimationLength;
+	testObjDigit.mTimer.mTimeSlowdown = 3;
 	testObjDigit.mLooping = true;
 	testObjDigit.mXCoord = gfx::kTileSize * 2;
 	testObjDigit.mYCoord = gfx::kTileSize * 1;
@@ -156,18 +161,101 @@ void InitDrawTest()
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
 	testObjWiggle.mFramePackID = wiggleFPackID;
-	testObjWiggle.mMaxTimeIndex = 4;
-	testObjWiggle.mTimeSlowdown = 33 / 4;
+	testObjWiggle.mTimer.mMaxTimeIndex = 4;
+	testObjWiggle.mTimer.mTimeSlowdown = 33 / 4;
 	testObjWiggle.mLooping = true;
 	testObjWiggle.mXCoord = gfx::kTileSize * 4;
 	testObjWiggle.mYCoord = gfx::kTileSize * 4;
 	testObjWiggle.mZLayer = 0;
 
-	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
+
+	gfx::ManagedTextureID const texID = texMan.LoadNewResourceGetID( "testtileset1", commonTextures.GetChild( "pallete16_4.png" ) );
+	// TODO: TilesetMananger
+	testTileLayer.mTileset.mTexture = texID;
+	testTileLayer.mTileset.mTileWidth = 1;
+	testTileLayer.mTileset.mTileHeight = 1;
+	// TODO: CSV loader
+	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( commonTilemaps.GetChild( "testhouse_10.csv" ) );
+	file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
+	RF_ASSERT( tilemapBuffer.GetData() != nullptr );
+	{
+		rftl::deque<rftl::deque<rftl::string>> csv;
+		{
+			char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
+			size_t const size = tilemapBuffer.GetSize();
+
+			csv.emplace_back();
+			rftl::string curField;
+			for(size_t i = 0; i < size; i++)
+			{
+				char const ch = data[i];
+
+				if( ch == '\r' )
+				{
+					// Ignore \r\n's \r
+					continue;
+				}
+				else if( ch == ',' )
+				{
+					csv.back().emplace_back( std::move( curField ) );
+					curField.clear();
+				}
+				else if( ch == '\n' )
+				{
+					if( curField.empty() && csv.back().empty() )
+					{
+						// Ignore empty lines
+					}
+					else
+					{
+						csv.back().emplace_back( std::move( curField ) );
+						curField.clear();
+						csv.emplace_back();
+					}
+				}
+				else
+				{
+					curField.push_back( ch );
+				}
+			}
+
+			if( csv.back().empty() )
+			{
+				// Ignore trailing empty lines
+				// NOTE: Also implicitly covers empty file case
+				csv.pop_back();
+			}
+		}
+
+		size_t const numRows = csv.size();
+		size_t longestRow = 0;
+		for( rftl::deque<rftl::string> const& row : csv )
+		{
+			longestRow = math::Max( longestRow, row.size() );
+		}
+
+		testTileLayer.ClearAndResize( numRows, longestRow );
+
+		for( size_t i_row = 0; i_row < numRows; i_row++ )
+		{
+			rftl::deque<rftl::string> const& row = csv.at( i_row );
+			size_t const numCols = row.size();
+
+			for( size_t i_col = 0; i_col < numCols; i_col++ )
+			{
+				rftl::string const& field = row.at( i_col );
+				gfx::TileLayer::TileIndex val = gfx::TileLayer::kEmptyTileIndex;
+				( rftl::stringstream() << field ) >> val;
+				testTileLayer.GetMutableTile( i_col, i_row ).mIndex = val;
+			}
+		}
+	}
+
+
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	file::FileBuffer const buffer{ *fontHandle.Get(), false };
-	RF_ASSERT( buffer.GetData() != nullptr );
-	app::gGraphics->LoadFont( buffer.GetData(), buffer.GetSize() );
+	file::FileBuffer const fontBuffer{ *fontHandle.Get(), false };
+	RF_ASSERT( fontBuffer.GetData() != nullptr );
+	app::gGraphics->LoadFont( fontBuffer.GetData(), fontBuffer.GetSize() );
 }
 
 
@@ -186,6 +274,8 @@ void DrawTest()
 	}
 	testObjWiggle.Animate();
 	app::gGraphics->DrawObject( testObjWiggle );
+	testTileLayer.Animate();
+	app::gGraphics->DrawTileLayer( testTileLayer );
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
 	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
