@@ -45,14 +45,15 @@ public:
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
 	bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) override;
-	bool DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
+	bool DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z ) override;
 
 	bool glPrint( char const* fmt, ... );
 	bool glPrint( char const* fmt, va_list args );
 
 	bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) override;
 	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) override;
-	bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) override;
+	bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) override;
+	bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) override;
 
 	bool BeginFrame() override;
 	bool RenderFrame() override;
@@ -61,7 +62,7 @@ public:
 private:
 	unsigned int font_base;
 	void BuildFont( int8_t height );
-	bool DrawBillboardInternal( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z );
+	bool DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV );
 
 private:
 	shim::HWND mHWnd;

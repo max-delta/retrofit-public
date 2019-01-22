@@ -61,6 +61,35 @@ TileLayer::Tile& TileLayer::GetMutableTile( size_t index )
 
 
 
+void TileLayer::GetTileZoomFactor( uint8_t& numer, uint8_t& denom ) const
+{
+	// User may have put a 0 in, we will count that as normal
+	TileZoomFactor const zoomFactor = mTileZoomFactor != 0 ? mTileZoomFactor : kTileZoomFactor_Normal;
+
+	// Exp=Factor-Normal
+	// 2^(Exp)=Scale
+	int16_t const exponent = zoomFactor - kTileZoomFactor_Normal;
+
+	if( exponent == 0 )
+	{
+		numer = 1;
+		denom = 1;
+	}
+	else if( exponent > 0 )
+	{
+		numer = math::integer_cast<uint8_t>( 1 << exponent );
+		denom = 1;
+	}
+	else
+	{
+		RF_ASSERT( exponent < 0 );
+		numer = 1;
+		denom = math::integer_cast<uint8_t>( 1 << exponent );
+	}
+}
+
+
+
 TileLayer::Tile const* TileLayer::Data() const
 {
 	return mTiles.data();

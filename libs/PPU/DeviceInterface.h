@@ -3,7 +3,7 @@
 
 #include "PPUFwd.h"
 
-#include "core_math/Vector2.h"
+#include "core_math/AABB4.h"
 #include "core_platform/win_shim.h"
 
 
@@ -30,9 +30,10 @@ public:
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
 	virtual bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
-	virtual bool DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
+	virtual bool DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z ) = 0;
 
-	virtual bool DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z ) = 0;
+	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) = 0;
+	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;
 
 	virtual bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) = 0;
 	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) = 0;

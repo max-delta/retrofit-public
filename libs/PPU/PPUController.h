@@ -52,6 +52,8 @@ public:
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
 	bool DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, ... );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, va_list args );
 
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
@@ -70,6 +72,7 @@ private:
 
 	math::Vector2f CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const;
 	math::Vector2f CoordToDevice( PPUCoord const& coord ) const;
+	float LayerToDevice( PPUDepthLayer zDepth ) const;
 
 	math::Vector2f TileToDevice( PPUTileElem xTile, PPUTileElem yTile ) const;
 
