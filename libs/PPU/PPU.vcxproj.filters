@@ -15,6 +15,8 @@
     <ClInclude Include="FramePackManager.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="FramePackSerDes.h" />
+    <ClInclude Include="PPUTimer.h" />
+    <ClInclude Include="TileLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -28,6 +30,8 @@
     <ClCompile Include="FramePack.cpp" />
     <ClCompile Include="FramePackManager.cpp" />
     <ClCompile Include="FramePackSerDes.cpp" />
+    <ClCompile Include="PPUTimer.cpp" />
+    <ClCompile Include="TileLayer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />

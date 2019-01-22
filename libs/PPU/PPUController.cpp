@@ -239,6 +239,29 @@ bool PPUController::DrawObject( Object const& object )
 
 
 
+bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
+{
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUState& targetState = mPPUState[mWriteState];
+
+	// TODO: Thread-safe
+
+	if( targetState.mNumTileLayers >= PPUState::kMaxTileLayers )
+	{
+		RF_DBGFAIL_MSG( "Too many tile layers drawn this frame" );
+		return false;
+	}
+
+	TileLayer& targetTileLayer = targetState.mTileLayers[targetState.mNumTileLayers];
+	targetState.mNumTileLayers++;
+
+	targetTileLayer = tileLayer;
+
+	return true;
+}
+
+
+
 bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... )
 {
 	RF_ASSERT_MSG( charSize.x == 4, "TODO: Support other sizes" );
@@ -368,7 +391,7 @@ void PPUController::Render() const
 		Object const& object = targetState.mObjects[i];
 		FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
 		RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
-		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimeIndex );
+		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
 		FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
 
 		if( timeSlot.m_TextureReference == kInvalidManagedTextureID )
@@ -402,6 +425,14 @@ void PPUController::Render() const
 		}
 
 		mDeviceInterface->DrawBillboard( deviceTextureID, topLeft, bottomRight, object.mZLayer );
+	}
+
+	// Draw tile layers
+	for( size_t i = 0; i < targetState.mNumTileLayers; i++ )
+	{
+		TileLayer const& tileLayer = targetState.mTileLayers[i];
+		// TODO
+		(void)tileLayer;
 	}
 
 	// Draw text
