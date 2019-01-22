@@ -1,5 +1,19 @@
 #https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
+#############################
+# Known issues as of v5.0
+#############################
+#
+# Lambdas are a disaster
+## https://bugs.llvm.org/show_bug.cgi?id=27640
+#
+# Pre-processor directives suck
+## https://bugs.llvm.org/show_bug.cgi?id=36019
+#
+# Namespaces eat newlines
+## https://reviews.llvm.org/rL330324
+#
+
 BasedOnStyle : WebKit
 
 AccessModifierOffset : -4
