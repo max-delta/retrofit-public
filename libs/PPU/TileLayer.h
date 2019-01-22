@@ -20,6 +20,12 @@ public:
 	static constexpr TileSize kDefaultTileSize = 32;
 	using TileIndex = int16_t;
 	static constexpr TileIndex kEmptyTileIndex = -1;
+	using TileZoomFactor = uint8_t;
+	static constexpr TileZoomFactor kTileZoomFactor_Quarter = 1; // 2^(N-3)=1/4
+	static constexpr TileZoomFactor kTileZoomFactor_Half = 2; // 2^(N-3)=1/2
+	static constexpr TileZoomFactor kTileZoomFactor_Normal = 3; // 2^(N-3)=1
+	static constexpr TileZoomFactor kTileZoomFactor_Double = 4; // 2^(N-3)=2
+	static constexpr TileZoomFactor kTileZoomFactor_Quadruple = 5; // 2^(N-3)=4
 
 
 	//
@@ -55,6 +61,8 @@ public:
 	Tile& GetMutableTile( size_t column, size_t row );
 	Tile& GetMutableTile( size_t index );
 
+	void GetTileZoomFactor( uint8_t& numer, uint8_t& denom ) const;
+
 	Tile const* Data() const;
 	Tile* MutableData();
 
@@ -83,7 +91,8 @@ public:
 	uint8_t reserved1 : 2;
 	uint8_t reserved2 : 8;
 	uint8_t reserved3 : 8;
-	uint8_t reserved4 : 8;
+
+	TileZoomFactor mTileZoomFactor;
 
 	float mTransform[2][2];
 

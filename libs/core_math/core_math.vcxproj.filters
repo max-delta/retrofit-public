@@ -12,12 +12,14 @@
     <ClInclude Include="ListOperations.h" />
     <ClInclude Include="NumericTraits.h" />
     <ClInclude Include="math_bytes.h" />
+    <ClInclude Include="AABB4.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="math_bits.cpp" />
+    <ClCompile Include="AABB4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
@@ -27,5 +29,6 @@
     <None Include="math_bits.inl" />
     <None Include="math_bytes.inl" />
     <None Include="BitField.inl" />
+    <None Include="AABB4.inl" />
   </ItemGroup>
 </Project>

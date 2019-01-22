@@ -80,33 +80,47 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 	glViewport( 0, 0, width, height ); // Reset The Current Viewport
 
+	glMatrixMode( GL_TEXTURE ); // Select The texture Matrix
+	glLoadIdentity(); // Reset The texture Matrix
+
 	glMatrixMode( GL_PROJECTION ); // Select The Projection Matrix
 	glLoadIdentity(); // Reset The Projection Matrix
 
+	// WARNING: glOrtho has TERRIBLE parameters
+	// SEE: https://www.opengl.org/discussion_boards/showthread.php/176234-glortho-zNear-and-zFar
+	//  "Remember that the near and far values used by glOrtho are only
+	//   distances and (assuming that the eye is located at the origin) sets up
+	//   a projection where -nearVal is on the front clipping plane and -farVal
+	//   is the location of the far clipping plane."
+	// "So given an statement like:
+	//  glOrtho( 0, sizeX, sizeY, 0, 0, 1 );
+	//  you render close to the far clipping plane with a z-value of -0.9999999
+	//  and render close to the near clipping plane with a z-value of
+	//  -0.000001, respectively."
 	switch( mProjectionMode )
 	{
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
-			glOrtho( 0, width, height, 0, -1, 1 ); // Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, width, height, 0, 1, -1 ); // Create Ortho View (0,0 At Top Left)
 			mXFudge = 0.5f;
 			mYFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
-			glOrtho( 0, 1, 1, 0, -1, 1 ); // Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, 1, 1, 0, 1, -1 ); // Create Ortho View (0,0 At Top Left)
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
-			glOrtho( 0, 1, 0, 1, -1, 1 ); // Create Ortho View (0,0 At Bottom Left)
+			glOrtho( 0, 1, 0, 1, 1, -1 ); // Create Ortho View (0,0 At Bottom Left)
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
-			glOrtho( -1, 1, -1, 1, -1, 1 ); // Create Ortho View (1,1 At Top Right)
+			glOrtho( -1, 1, -1, 1, 1, -1 ); // Create Ortho View (1,1 At Top Right)
 			mXFudge = 2.f / width * 0.5f;
 			mYFudge = 2.f / height * 0.5f;
 			break;
 		default:
-			glOrtho( 0, 1, 1, 0, -1, 1 );
+			glOrtho( 0, 1, 1, 0, 1, -1 );
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
@@ -114,8 +128,6 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 	glMatrixMode( GL_MODELVIEW ); // Select The Modelview Matrix
 	glLoadIdentity(); // Reset The Modelview Matrix
-
-
 
 	glPolygonMode( GL_FRONT, GL_FILL ); //The front faces of polygons will be
 		//drawn filled.
@@ -127,6 +139,10 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 		//to a point's proximity to a vertex.
 
 	glEnable( GL_TEXTURE_2D ); // Enable Texture Mapping
+
+	glDepthMask( GL_TRUE ); // Enable depth-buffer
+	glEnable( GL_DEPTH_TEST ); // Enable depth-testing
+	glDepthFunc( GL_LESS ); // Passes if the incoming depth value is GL_LESS than the stored depth value
 
 	glEnable( GL_POINT_SMOOTH ); //Enable antialiasing for points.
 	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
@@ -324,12 +340,12 @@ bool SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID,
 
 
 
-bool SimpleGL::DrawBitmapFont( uint8_t fontID, char character, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+bool SimpleGL::DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z )
 {
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
 	// TODO: Color parameter
 	glColor3f( 0, 0, 0 );
-	return DrawBillboardInternal( texID, topLeft, bottomRight, z );
+	return DrawBillboardInternal( texID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
 }
 
 
@@ -368,17 +384,24 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width 
 	return true;
 }
 
-bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z )
 {
 	glColor3f( 1, 1, 1 );
-	DrawBillboardInternal( textureID, topLeft, bottomRight, z );
+	DrawBillboardInternal( textureID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
+	return true;
+}
+
+bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
+{
+	glColor3f( 1, 1, 1 );
+	DrawBillboardInternal( textureID, pos, z, texUV );
 	return true;
 }
 
 bool SimpleGL::BeginFrame()
 {
 	shim::wglMakeCurrent( mHDC, mHRC );
-	glClear( GL_COLOR_BUFFER_BIT ); //Clear the buffer
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); //Clear the buffer
 	glPushMatrix();
 	return true;
 }
@@ -448,23 +471,27 @@ void SimpleGL::BuildFont( int8_t height ) // Build Our Bitmap Font
 
 
 
-bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::Vector2f topLeft, math::Vector2f bottomRight, float z )
+bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glBindTexture( GL_TEXTURE_2D, texID );
-	float const left = topLeft.x;
-	float const top = topLeft.y;
-	float const right = bottomRight.x;
-	float const bottom = bottomRight.y;
+	float const left = pos.mTopLeft.x;
+	float const top = pos.mTopLeft.y;
+	float const right = pos.mBottomRight.x;
+	float const bottom = pos.mBottomRight.y;
+	float const u0 = texUV.mTopLeft.x;
+	float const v0 = texUV.mTopLeft.y;
+	float const u1 = texUV.mBottomRight.x;
+	float const v1 = texUV.mBottomRight.y;
 	glBegin( GL_QUADS );
 	{
-		glTexCoord2f( 0.0f, 0.0f );
+		glTexCoord2f( u0, v0 );
 		glVertex3f( left, top, z );
-		glTexCoord2f( 1.0f, 0.0f );
+		glTexCoord2f( u1, v0 );
 		glVertex3f( right, top, z );
-		glTexCoord2f( 1.0f, 1.0f );
+		glTexCoord2f( u1, v1 );
 		glVertex3f( right, bottom, z );
-		glTexCoord2f( 0.0f, 1.0f );
+		glTexCoord2f( u0, v1 );
 		glVertex3f( left, bottom, z );
 	}
 	glEnd();
