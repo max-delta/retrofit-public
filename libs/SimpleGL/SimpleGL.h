@@ -18,6 +18,8 @@ class SIMPLEGL_API SimpleGL final : public DeviceInterface
 {
 	RF_NO_COPY( SimpleGL );
 
+	//
+	// Types and constants
 public:
 	enum class ProjectionMode
 	{
@@ -29,6 +31,9 @@ public:
 	using BitmapCharacterListStorage = rftl::array<DeviceTextureID, 256>;
 	using BitmapFontStorage = rftl::unordered_map<uint8_t, BitmapCharacterListStorage>;
 
+
+	//
+	// Public methods
 public:
 	SimpleGL() = default;
 
@@ -59,11 +64,16 @@ public:
 	bool RenderFrame() override;
 	bool EndFrame() override;
 
+
+	//
+	// Private methods
 private:
-	unsigned int font_base;
 	void BuildFont( int8_t height );
 	bool DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV );
 
+
+	//
+	// Private data
 private:
 	shim::HWND mHWnd;
 	shim::HDC mHDC;
@@ -74,6 +84,7 @@ private:
 	float mXFudge; // HACK: Pixel fudge for anti-aliasing repair
 	float mYFudge; // HACK: Pixel fudge for anti-aliasing repair
 	BitmapFontStorage mBitmapFonts;
+	unsigned int font_base;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
