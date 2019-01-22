@@ -18,7 +18,7 @@ class PPU_API PPUState
 public:
 	static constexpr size_t kMaxObjects = 32;
 	static constexpr size_t kMaxTileLayers = 16;
-	static constexpr size_t kMaxStrings = 30;
+	static constexpr size_t kMaxStrings = 29;
 
 
 	//
@@ -30,11 +30,12 @@ public:
 
 		PPUCoordElem mXCoord;
 		PPUCoordElem mYCoord;
+		PPUDepthLayer mZLayer;
 		PPUCoordElem mWidth;
 		PPUCoordElem mHeight;
 		char mText[k_MaxLen + sizeof( '\0' )];
 	};
-	static_assert( sizeof( String ) <= 136, "Double-check String storage" );
+	static_assert( sizeof( String ) <= 138, "Double-check String storage" );
 	static_assert( alignof( String ) == 2, "Double-check String alignment" );
 
 
