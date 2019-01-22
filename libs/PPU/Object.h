@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUTimer.h"
 
 #include "core/macros.h"
 
@@ -33,10 +33,7 @@ public:
 	PPUDepthLayer mZLayer;
 
 	uint8_t mGFXModifier;
-	uint8_t mTimeIndex;
-	uint8_t mMaxTimeIndex;
-	TimeSlowdownRate mTimeSlowdown; // 1=60, 2=30, 3=20, 4=15... MAX=pause
-	uint8_t mSubTimeIndex;
+	PPUTimer mTimer;
 
 	bool mLooping : 1;
 	bool mPaused : 1;

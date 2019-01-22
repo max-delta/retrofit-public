@@ -330,8 +330,8 @@ void FramePackEditor::Render()
 		texOrigin.y = timeSlot.m_TextureOriginY;
 
 		mPreviewObject.mFramePackID = mFramePackID;
-		mPreviewObject.mMaxTimeIndex = animationLength;
-		mPreviewObject.mTimeSlowdown = mPreviewSlowdownRate;
+		mPreviewObject.mTimer.mMaxTimeIndex = animationLength;
+		mPreviewObject.mTimer.mTimeSlowdown = mPreviewSlowdownRate;
 		mPreviewObject.mLooping = true;
 		mPreviewObject.mXCoord = previewOriginX;
 		mPreviewObject.mYCoord = horizontalPlaneY;
@@ -342,7 +342,7 @@ void FramePackEditor::Render()
 
 		gfx::Object editingObject = mPreviewObject;
 		editingObject.mPaused = true;
-		editingObject.mTimeIndex = fpack->CalculateFirstTimeIndexOfTimeSlot( mEditingFrame );
+		editingObject.mTimer.mTimeIndex = fpack->CalculateFirstTimeIndexOfTimeSlot( mEditingFrame );
 		editingObject.mXCoord = editingOriginX;
 		editingObject.mYCoord = horizontalPlaneY;
 		editingObject.mZLayer = 0;

@@ -8,6 +8,7 @@ namespace RF { namespace gfx {
 void PPUState::Clear()
 {
 	mNumObjects = 0;
+	mNumTileLayers = 0;
 	mNumStrings = 0;
 }
 

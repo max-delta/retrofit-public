@@ -53,6 +53,7 @@ constexpr PPUCoordElem kDesiredHeight = kTileSize * 7;
 constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
 class Object;
+class TileLayer;
 class Texture;
 class TextureManager;
 class FramePackManager;
