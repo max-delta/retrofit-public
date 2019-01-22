@@ -16,6 +16,7 @@
 #include "rftl/vector"
 #include "rftl/array"
 
+
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -23,43 +24,60 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 {
 	this->mHWnd = hWnd;
 
-	mHDC = shim::GetDC( hWnd ); // Grab the window's device context. If anything else
-		// in the currently running proccess besides Graphics
-		// tries to modify the device context, Windows responds
-		// with "Step off, bitch! Can't touch dis!"
+	// Grab the windows's device context
+	// NOTE: May cause errors if something else in the process also calls this
+	mHDC = shim::GetDC( hWnd );
 
 	shim::PIXELFORMATDESCRIPTOR pfd = {};
-	memset( &pfd, 0, sizeof( pfd ) ); // Clear all the crap in the structure.
-	pfd.nSize = sizeof( pfd ); // The size of the structure.
-	pfd.nVersion = 1; // The version of this structure format.
-	pfd.dwFlags = shim::kPFD_DRAW_TO_WINDOW | // This buffer can map directly to a window.
-		shim::kPFD_SUPPORT_OPENGL | // This buffer can be used by OpenGL. (Kinda important)
-		shim::kPFD_DOUBLEBUFFER; // This buffer is double-buffered.
-	pfd.iPixelType = shim::kPFD_TYPE_RGBA; // Pixels will use RGBA-style data.
+	memset( &pfd, 0, sizeof( pfd ) );
+	pfd.nSize = sizeof( pfd );
+	pfd.nVersion = 1;
+	pfd.dwFlags =
+		shim::kPFD_DRAW_TO_WINDOW | // This buffer can map directly to a window
+		shim::kPFD_SUPPORT_OPENGL | // This buffer can be used by OpenGL
+		shim::kPFD_DOUBLEBUFFER; // This buffer is double-buffered
+	pfd.iPixelType = shim::kPFD_TYPE_RGBA;
 	pfd.cColorBits = 24; // 24-bit colors
-	pfd.cDepthBits = 16; // Number of depth layers per pixel.
-	pfd.iLayerType = shim::kPFD_MAIN_PLANE; // Supposedly ignored.
+	pfd.cDepthBits = 16; // Number of depth layers per pixel
+	pfd.iLayerType = shim::kPFD_MAIN_PLANE; // Supposedly ignored
 
-	int const iFormat = shim::ChoosePixelFormat( mHDC, &pfd ); // Try to find an appropriate
-		// pixel format to meet our demands.
-	shim::SetPixelFormat( mHDC, iFormat, &pfd ); // Set the chosen pixel format.
+	// Try to find an appropriate pixel format to meet our demands
+	int const iFormat = shim::ChoosePixelFormat( mHDC, &pfd );
 
-	mHRC = shim::wglCreateContext( mHDC ); // Create a render context for OpenGL.
-	shim::wglMakeCurrent( mHDC, mHRC ); // All calls to OpenGL will use this context.
+	// Set the chosen pixel format
+	shim::SetPixelFormat( mHDC, iFormat, &pfd );
+
+	// Create a render context for OpenGL
+	mHRC = shim::wglCreateContext( mHDC );
+
+	// All calls to OpenGL will use this context
+	shim::wglMakeCurrent( mHDC, mHRC );
 
 	SetFontScale( 1.f );
 
 	return true;
 }
 
+
+
 bool SimpleGL::DetachFromWindow()
 {
-	glDeleteLists( font_base, 96 ); // Delete the font list.
-	shim::wglMakeCurrent( nullptr, nullptr ); // All calls to OpenGL will be ignored.
-	shim::wglDeleteContext( mHRC ); // Discard the old render context.
-	shim::ReleaseDC( mHWnd, mHDC ); // Release control of the device context.
+	// Delete the font list
+	glDeleteLists( font_base, 96 );
+
+	// All calls to OpenGL will be ignored
+	shim::wglMakeCurrent( nullptr, nullptr );
+
+	// Discard the old render context
+	shim::wglDeleteContext( mHRC );
+
+	// Release control of the device context
+	shim::ReleaseDC( mHWnd, mHDC );
+
 	return true;
 }
+
+
 
 bool SimpleGL::Initialize2DGraphics()
 {
@@ -67,24 +85,31 @@ bool SimpleGL::Initialize2DGraphics()
 	return true;
 }
 
+
+
 bool SimpleGL::SetProjectionMode( ProjectionMode mode )
 {
 	mProjectionMode = mode;
 	return true;
 }
 
+
+
 bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
 	this->mWidth = width;
 	this->mHeight = height;
 
-	glViewport( 0, 0, width, height ); // Reset The Current Viewport
+	// Reset The current viewport
+	glViewport( 0, 0, width, height );
 
-	glMatrixMode( GL_TEXTURE ); // Select The texture Matrix
-	glLoadIdentity(); // Reset The texture Matrix
+	// Select and reset the texture matrix
+	glMatrixMode( GL_TEXTURE );
+	glLoadIdentity();
 
-	glMatrixMode( GL_PROJECTION ); // Select The Projection Matrix
-	glLoadIdentity(); // Reset The Projection Matrix
+	// Select and reset the projection matrix
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
 
 	// WARNING: glOrtho has TERRIBLE parameters
 	// SEE: https://www.opengl.org/discussion_boards/showthread.php/176234-glortho-zNear-and-zFar
@@ -100,22 +125,26 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 	switch( mProjectionMode )
 	{
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
-			glOrtho( 0, width, height, 0, 1, -1 ); // Create Ortho View (0,0 At Top Left)
+			// Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, width, height, 0, 1, -1 );
 			mXFudge = 0.5f;
 			mYFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
-			glOrtho( 0, 1, 1, 0, 1, -1 ); // Create Ortho View (0,0 At Top Left)
+			// Create Ortho View (0,0 At Top Left)
+			glOrtho( 0, 1, 1, 0, 1, -1 );
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
-			glOrtho( 0, 1, 0, 1, 1, -1 ); // Create Ortho View (0,0 At Bottom Left)
+			// Create Ortho View (0,0 At Bottom Left)
+			glOrtho( 0, 1, 0, 1, 1, -1 );
 			mXFudge = 1.f / width * 0.5f;
 			mYFudge = 1.f / height * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
-			glOrtho( -1, 1, -1, 1, 1, -1 ); // Create Ortho View (1,1 At Top Right)
+			// Create Ortho View (1,1 At Top Right)
+			glOrtho( -1, 1, -1, 1, 1, -1 );
 			mXFudge = 2.f / width * 0.5f;
 			mYFudge = 2.f / height * 0.5f;
 			break;
@@ -126,55 +155,76 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 			break;
 	}
 
-	glMatrixMode( GL_MODELVIEW ); // Select The Modelview Matrix
-	glLoadIdentity(); // Reset The Modelview Matrix
+	// Select and reset the modelview matrix
+	glMatrixMode( GL_MODELVIEW );
+	glLoadIdentity();
 
-	glPolygonMode( GL_FRONT, GL_FILL ); //The front faces of polygons will be
-		//drawn filled.
-	glPolygonMode( GL_BACK, GL_FILL ); //The back faces of polygons will be
-		//drawn filled.
-	glShadeModel( GL_SMOOTH ); //Individual vertexes in a polygon can have
-		//individual color values. These values are
-		//then smoothed across the polygon in relation
-		//to a point's proximity to a vertex.
+	// The front faces of polygons will be drawn filled
+	glPolygonMode( GL_FRONT, GL_FILL );
 
-	glEnable( GL_TEXTURE_2D ); // Enable Texture Mapping
+	//The back faces of polygons will be drawn filled
+	glPolygonMode( GL_BACK, GL_FILL );
 
-	glDepthMask( GL_TRUE ); // Enable depth-buffer
-	glEnable( GL_DEPTH_TEST ); // Enable depth-testing
-	glDepthFunc( GL_LESS ); // Passes if the incoming depth value is GL_LESS than the stored depth value
+	// Individual vertexes in a polygon can have individual color values. These
+	//  values are then smoothed across the polygon in relation to a point's
+	//  proximity to a vertex.
+	glShadeModel( GL_SMOOTH );
 
-	glEnable( GL_POINT_SMOOTH ); //Enable antialiasing for points.
-	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
-		//antialiasing for points, we
-		//prefer the nicest possible
-		//algorithms.
+	// Enable texture mapping
+	glEnable( GL_TEXTURE_2D );
 
-	glEnable( GL_LINE_SMOOTH ); //Enable antialiasing for lines.
-	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST ); //For deciding how to calculate
-		//antialiasing for lines, we
-		//prefer the nicest possible
-		//algorithms.
+	// Enable depth-buffer
+	glDepthMask( GL_TRUE );
 
-	glEnable( GL_BLEND ); //Enable alpha-blending. Note that this is also required
-		//for antialiasing.
-	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA ); //When we blend two
-		//colors together, alpha calculations will be done
-		//based on the overlapping color's alpha value.
+	// Enable depth-testing
+	glEnable( GL_DEPTH_TEST );
+
+	// Passes if the incoming depth value is GL_LESS than the stored depth
+	//  value
+	glDepthFunc( GL_LESS );
+
+	// Enable antialiasing for points
+	glEnable( GL_POINT_SMOOTH );
+
+	// For deciding how to calculate antialiasing for points, we prefer the
+	//  nicest possible algorithms
+	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST );
+
+	// Enable antialiasing for lines
+	glEnable( GL_LINE_SMOOTH );
+
+	// For deciding how to calculate antialiasing for lines, we prefer the
+	//  nicest possible algorithms
+	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+
+	// Enable alpha-blending. Note that this is also required for antialiasing.
+	glEnable( GL_BLEND );
+
+	// When we blend two colors together, alpha calculations will be done based
+	//  on the overlapping color's alpha value
+	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
 	return true;
 }
+
+
 
 bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
 {
-	glClearColor( r, g, b, a ); //When we call Clear, it will clear to this color
+	// When we call Clear, it will clear to this color
+	glClearColor( r, g, b, a );
 	return true;
 }
+
+
 
 bool SimpleGL::SetFontScale( float scale )
 {
 	BuildFont( math::integer_cast<int8_t>( 8 * scale ) );
 	return true;
 }
+
+
 
 DeviceTextureID SimpleGL::LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height )
 {
@@ -198,6 +248,8 @@ DeviceTextureID SimpleGL::LoadTexture( void const* buffer, size_t len, uint32_t&
 	stbi_image_free( data );
 	return retVal;
 }
+
+
 
 bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 {
@@ -361,6 +413,8 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char* fmt, ... )
 	return retVal;
 }
 
+
+
 bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width )
 {
 	glBindTexture( GL_TEXTURE_2D, 0 );
@@ -384,12 +438,16 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width 
 	return true;
 }
 
+
+
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z )
 {
 	glColor3f( 1, 1, 1 );
 	DrawBillboardInternal( textureID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
 	return true;
 }
+
+
 
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
@@ -398,13 +456,18 @@ bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float
 	return true;
 }
 
+
+
 bool SimpleGL::BeginFrame()
 {
 	shim::wglMakeCurrent( mHDC, mHRC );
-	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT ); //Clear the buffer
+	// Clear the buffer
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	glPushMatrix();
 	return true;
 }
+
+
 
 bool SimpleGL::RenderFrame()
 {
@@ -427,11 +490,14 @@ bool SimpleGL::RenderFrame()
 		}
 	}
 	#endif
-	glFlush(); //Makes sure that all buffered commands are sent to the
-		//graphics card. Note that this does NOT insure that the
-		//commands were executed, only that they have been sent.
+	// Makes sure that all buffered commands are sent to the graphics card.
+	//  Note that this does NOT insure that the commands were executed, only
+	//  that they have been sent.
+	glFlush();
 	return true;
 }
+
+
 
 bool SimpleGL::EndFrame()
 {
@@ -440,33 +506,44 @@ bool SimpleGL::EndFrame()
 	return true;
 }
 
-void SimpleGL::BuildFont( int8_t height ) // Build Our Bitmap Font
+
+
+void SimpleGL::BuildFont( int8_t height )
 {
-	shim::HFONT font{}; // Windows Font ID
-	shim::HFONT oldfont{}; // Used For Good House Keeping
+	// Windows font ID
+	shim::HFONT font{};
+
+	// Used for good house keeping
+	shim::HFONT oldfont{};
 
 	glDeleteLists( font_base, 96 );
-	font_base = glGenLists( 96 ); // Storage For 96 Characters ( NEW )
+	// Storage For 96 Characters
+	font_base = glGenLists( 96 );
 	font = shim::CreateFontW(
-		-height /*-12*/, // Height Of Font
-		0, // Width Of Font
-		0, // Angle Of Escapement
-		0, // Orientation Angle
-		shim::kFW_BOLD, // Font Weight
+		-height /*-12*/, // Height of font
+		0, // Width of font
+		0, // Angle of escapement
+		0, // Orientation angle
+		shim::kFW_BOLD, // Font weight
 		false, // Italic
 		false, // Underline
 		false, // Strikeout
-		shim::kANSI_CHARSET, // Character Set Identifier
-		shim::kOUT_TT_PRECIS, // Output Precision
-		shim::kCLIP_DEFAULT_PRECIS, // Clipping Precision
-		shim::kANTIALIASED_QUALITY, // Output Quality
-		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family And Pitch
-		L"Arial" ); // Font Name
-	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) ); // Selects The Font We Want
-	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base ); // Builds 96 Characters Starting At Character 32
-		//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);			// Builds 96 Characters Starting At Character 32
-	shim::SelectObject( mHDC, oldfont ); // Selects The Font We Want
-	shim::DeleteObject( font ); // Delete The Font
+		shim::kANSI_CHARSET, // Character set identifier
+		shim::kOUT_TT_PRECIS, // Output precision
+		shim::kCLIP_DEFAULT_PRECIS, // Clipping precision
+		shim::kANTIALIASED_QUALITY, // Output quality
+		shim::kFF_DONTCARE | shim::kDEFAULT_PITCH, // Family and pitch
+		L"Arial" ); // Font name
+	// Selects the font we want
+	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) );
+	// Builds 96 characters starting at character 32
+	shim::wglUseFontBitmapsW( mHDC, 32, 96, font_base );
+	// Builds 96 characters starting at character 32
+	//wglUseFontOutlines(mHDC, 32, 96, base, 0, 1,WGL_FONT_LINES, 0);
+	// Selects the font we want
+	shim::SelectObject( mHDC, oldfont );
+	// Delete the font
+	shim::DeleteObject( font );
 }
 
 
@@ -510,6 +587,8 @@ bool SimpleGL::glPrint( char const* fmt, ... )
 	return retVal;
 }
 
+
+
 bool SimpleGL::glPrint( char const* fmt, va_list args )
 {
 	char text[256];
@@ -517,10 +596,14 @@ bool SimpleGL::glPrint( char const* fmt, va_list args )
 		return false;
 	vsprintf_s( text, fmt, args );
 	text[255] = '\0';
-	glPushAttrib( GL_LIST_BIT ); // Pushes The Display List Bits
-	glListBase( font_base - 32 ); // Sets The Base Character to 32
-	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text ); // Draws The Display List Text
-	glPopAttrib(); // Pops The Display List Bits
+	// Pushes the display list bits
+	glPushAttrib( GL_LIST_BIT );
+	// Sets the base character to 32
+	glListBase( font_base - 32 );
+	// Draws the display list text
+	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text );
+	// Pops the display list bits
+	glPopAttrib();
 	return true;
 }
 
