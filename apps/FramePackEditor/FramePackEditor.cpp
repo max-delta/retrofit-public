@@ -326,8 +326,8 @@ void FramePackEditor::Render()
 		animationLength = fpack->CalculateTimeIndexBoundary();
 		preferredSlowdownRate = fpack->mPreferredSlowdownRate;
 		slotSustain = fpack->GetTimeSlotSustains()[mEditingFrame];
-		texOrigin.x = timeSlot.m_TextureOriginX;
-		texOrigin.y = timeSlot.m_TextureOriginY;
+		texOrigin.x = timeSlot.mTextureOriginX;
+		texOrigin.y = timeSlot.mTextureOriginY;
 
 		mPreviewObject.mFramePackID = mFramePackID;
 		mPreviewObject.mTimer.mMaxTimeIndex = animationLength;
@@ -349,7 +349,7 @@ void FramePackEditor::Render()
 
 		ppu->DrawObject( editingObject );
 
-		editingTextureID = timeSlot.m_TextureReference;
+		editingTextureID = timeSlot.mTextureReference;
 		gfx::Texture const* const tex = texMan.GetResourceFromManagedResourceID( editingTextureID );
 		if( tex != nullptr )
 		{
@@ -671,7 +671,7 @@ void FramePackEditor::Command_Meta_CreateFramePack()
 	UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
 	file::VFSPath const defaultFrame = file::VFS::kRoot.GetChild( "assets", "textures", "common", "max_delta_32.png" );
 	newFPack->mNumTimeSlots = 1;
-	newFPack->GetMutableTimeSlots()[0].m_TextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
+	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
 	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, rftl::move( newFPack ) );
 }
 
@@ -756,8 +756,8 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[mEditingFrame];
 
-	timeSlot.m_TextureOriginX = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginX - x );
-	timeSlot.m_TextureOriginY = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginY - y );
+	timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
+	timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
 }
 
 
@@ -779,8 +779,8 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gf
 	{
 		gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[i];
 
-		timeSlot.m_TextureOriginX = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginX - x );
-		timeSlot.m_TextureOriginY = math::integer_truncast<uint8_t>( timeSlot.m_TextureOriginY - y );
+		timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
+		timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
 	}
 }
 
@@ -847,9 +847,9 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 	if( slotIndex != 0 )
 	{
 		timeSlots[slotIndex] = timeSlots[slotIndex - 1];
-		timeSlots[slotIndex].m_TextureReference = gfx::kInvalidManagedTextureID;
+		timeSlots[slotIndex].mTextureReference = gfx::kInvalidManagedTextureID;
 		// TODO: Typedef
-		timeSlots[slotIndex].m_ColliderReference = static_cast<uint64_t>( 0 );
+		timeSlots[slotIndex].mColliderReference = static_cast<uint64_t>( 0 );
 		timeSlotSustains[slotIndex] = timeSlotSustains[slotIndex - 1];
 	}
 	else
@@ -902,7 +902,7 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 
 	RF_ASSERT( slotIndex < fpack->mNumTimeSlots );
 	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
-	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].m_TextureReference;
+	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].mTextureReference;
 
 	// User needs to select texture
 	rftl::string const filepath = platform::dialogs::OpenFileDialog();
