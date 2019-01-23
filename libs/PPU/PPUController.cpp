@@ -619,19 +619,19 @@ void PPUController::RenderObject( Object const& object ) const
 	uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
 	FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
 
-	if( timeSlot.m_TextureReference == kInvalidManagedTextureID )
+	if( timeSlot.mTextureReference == kInvalidManagedTextureID )
 	{
 		// Invisible frame
 		return;
 	}
 
-	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
+	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( timeSlot.mTextureReference );
 	RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
 	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
 
 	// TODO: Transforms
-	PPUCoordElem const x = object.mXCoord - timeSlot.m_TextureOriginX;
-	PPUCoordElem const y = object.mYCoord - timeSlot.m_TextureOriginY;
+	PPUCoordElem const x = object.mXCoord - timeSlot.mTextureOriginX;
+	PPUCoordElem const y = object.mYCoord - timeSlot.mTextureOriginY;
 	math::Vector2f topLeft = CoordToDevice( x, y );
 	math::Vector2f bottomRight = CoordToDevice(
 		math::integer_cast<PPUCoordElem>( x + texture->mWidthPostLoad ),

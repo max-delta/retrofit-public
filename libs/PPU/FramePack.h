@@ -20,19 +20,19 @@ class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor
 public:
 	struct GameColliderLayerMapping
 	{
-		GameLayerID m_GameLayer = 0xffu;
-		uint8_t m_ColliderLayer = 0xffu;
+		GameLayerID mGameLayer = 0xffu;
+		uint8_t mColliderLayer = 0xffu;
 	};
 	static_assert( sizeof( GameColliderLayerMapping ) == 2, "Re-evaluate GameColliderLayerMapping packing" );
 
 	struct TimeSlot
 	{
-		ManagedTextureID m_TextureReference = kInvalidManagedTextureID;
-		ManagedColliderID m_ColliderReference = kInvalidManagedTextureID;
-		uint8_t m_TextureOriginX = 0x0u;
-		uint8_t m_TextureOriginY = 0x0u;
-		uint8_t m_ColliderOriginX = 0x0u;
-		uint8_t m_ColliderOriginY = 0x0u;
+		ManagedTextureID mTextureReference = kInvalidManagedTextureID;
+		ManagedColliderID mColliderReference = kInvalidManagedTextureID;
+		uint8_t mTextureOriginX = 0x0u;
+		uint8_t mTextureOriginY = 0x0u;
+		uint8_t mColliderOriginX = 0x0u;
+		uint8_t mColliderOriginY = 0x0u;
 		uint32_t reserved : 32;
 	};
 	static_assert( sizeof( TimeSlot ) == 24, "Re-evaluate TimeSlot packing" );

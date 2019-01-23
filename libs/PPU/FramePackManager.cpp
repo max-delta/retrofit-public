@@ -92,10 +92,10 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 		if( texID == kInvalidManagedTextureID )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );
-			timeSlot.m_TextureReference = kInvalidManagedTextureID;
+			timeSlot.mTextureReference = kInvalidManagedTextureID;
 			continue;
 		}
-		timeSlot.m_TextureReference = texID;
+		timeSlot.mTextureReference = texID;
 	}
 
 	return framePack;

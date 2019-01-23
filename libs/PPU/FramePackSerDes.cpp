@@ -91,7 +91,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 		FramePackBase::TimeSlot const* const timeSlots = framePack.GetTimeSlots();
 		for( size_t i = 0; i < framePack.mNumTimeSlots; i++ )
 		{
-			ManagedTextureID const texID = timeSlots[i].m_TextureReference;
+			ManagedTextureID const texID = timeSlots[i].mTextureReference;
 			TextureManager::ResourceName const resName = texMan.SearchForResourceNameByResourceID( texID );
 			if( resName.empty() )
 			{
@@ -381,8 +381,8 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 		for( size_t i = 0; i < retBase.mMaxTimeSlots; i++ )
 		{
 			FramePackBase::TimeSlot& timeSlot = timeSlots[i];
-			timeSlot.m_TextureReference = kInvalidManagedTextureID;
-			timeSlot.m_ColliderReference = kInvalidManagedColliderID;
+			timeSlot.mTextureReference = kInvalidManagedTextureID;
+			timeSlot.mColliderReference = kInvalidManagedColliderID;
 		}
 	}
 
