@@ -11,6 +11,8 @@
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 #include "PPU/FramePackSerDes.h"
+#include "PPU/TilesetManager.h"
+#include "PPU/Tileset.h"
 #include "PPU/TextureManager.h"
 
 #include "PlatformFilesystem/VFS.h"
@@ -127,11 +129,11 @@ void InitDrawTest()
 
 	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
-	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
+	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
-	file::VFSPath const commonTextures = file::VFS::kRoot.GetChild( "assets", "textures", "common" );
+	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
 	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
 
@@ -169,12 +171,8 @@ void InitDrawTest()
 	testObjWiggle.mYCoord = gfx::kTileSize * 4;
 	testObjWiggle.mZLayer = 0;
 
-
-	gfx::ManagedTextureID const texID = texMan.LoadNewResourceGetID( "testtileset1", commonTextures.GetChild( "pallete16_4.png" ) );
-	// TODO: TilesetMananger
-	testTileLayer.mTileset.mTexture = texID;
-	testTileLayer.mTileset.mTileWidth = 1;
-	testTileLayer.mTileset.mTileHeight = 1;
+	gfx::ManagedTilesetID const tilesetID = tsetMan.LoadNewResourceGetID( "testtileset1", commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+	testTileLayer.mTilesetReference = tilesetID;
 	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;

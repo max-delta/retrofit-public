@@ -89,6 +89,7 @@ public:
 	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
 	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;
+	WeakPtr<gfx::TilesetManager> DebugGetTilesetManager() const;
 
 
 	//
@@ -120,6 +121,7 @@ private:
 	UniquePtr<gfx::DeviceInterface> mDeviceInterface;
 	UniquePtr<gfx::TextureManager> mTextureManager;
 	UniquePtr<gfx::FramePackManager> mFramePackManager;
+	UniquePtr<gfx::TilesetManager> mTilesetManager;
 	WeakPtr<file::VFS> const mVfs;
 	uint16_t mWidth;
 	uint16_t mHeight;

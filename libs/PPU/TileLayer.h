@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "PPU/PPUTimer.h"
+#include "PPU/Tileset.h"
 
 #include "core/macros.h"
 
@@ -31,13 +32,6 @@ public:
 	//
 	// Structs
 public:
-	struct Tileset
-	{
-		ManagedTextureID mTexture = kInvalidManagedTextureID;
-		TileSize mTileWidth = kDefaultTileSize;
-		TileSize mTileHeight = kDefaultTileSize;
-	};
-
 	struct Tile
 	{
 		TileIndex mIndex = kEmptyTileIndex;
@@ -73,6 +67,7 @@ public:
 	//
 	// Public data
 public:
+	ManagedTilesetID mTilesetReference;
 	uint16_t mNumColumns;
 
 	PPUCoordElem mXCoord;
@@ -96,16 +91,13 @@ public:
 
 	float mTransform[2][2];
 
-	Tileset mTileset;
-
 
 	//
 	// Private data
 private:
 	rftl::vector<Tile> mTiles;
 };
-static_assert( offsetof( TileLayer, mTileset ) == 32, "Double-check TileLayer storage" );
-static_assert( sizeof( TileLayer ) <= 128, "Double-check TileLayer storage" );
+static_assert( sizeof( TileLayer ) <= 96, "Double-check TileLayer storage" );
 static_assert( alignof( TileLayer ) == 8, "Double-check TileLayer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////

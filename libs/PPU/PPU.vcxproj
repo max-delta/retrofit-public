@@ -48,6 +48,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Tileset.h" />
+    <ClInclude Include="TilesetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TileLayer.cpp" />
@@ -65,6 +67,8 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Tileset.cpp" />
+    <ClCompile Include="TilesetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\core\core.vcxproj">
