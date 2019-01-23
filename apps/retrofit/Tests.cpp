@@ -18,6 +18,7 @@
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scheduling/tasks/FunctorTask.h"
+#include "Serialization/CsvReader.h"
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core_platform/uuid.h"
@@ -178,58 +179,13 @@ void InitDrawTest()
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
-	// TODO: CSV loader
 	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( commonTilemaps.GetChild( "testhouse_10.csv" ) );
 	file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
 	RF_ASSERT( tilemapBuffer.GetData() != nullptr );
 	{
-		rftl::deque<rftl::deque<rftl::string>> csv;
-		{
-			char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
-			size_t const size = tilemapBuffer.GetSize();
-
-			csv.emplace_back();
-			rftl::string curField;
-			for(size_t i = 0; i < size; i++)
-			{
-				char const ch = data[i];
-
-				if( ch == '\r' )
-				{
-					// Ignore \r\n's \r
-					continue;
-				}
-				else if( ch == ',' )
-				{
-					csv.back().emplace_back( std::move( curField ) );
-					curField.clear();
-				}
-				else if( ch == '\n' )
-				{
-					if( curField.empty() && csv.back().empty() )
-					{
-						// Ignore empty lines
-					}
-					else
-					{
-						csv.back().emplace_back( std::move( curField ) );
-						curField.clear();
-						csv.emplace_back();
-					}
-				}
-				else
-				{
-					curField.push_back( ch );
-				}
-			}
-
-			if( csv.back().empty() )
-			{
-				// Ignore trailing empty lines
-				// NOTE: Also implicitly covers empty file case
-				csv.pop_back();
-			}
-		}
+		char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
+		size_t const size = tilemapBuffer.GetSize();
+		rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
 
 		size_t const numRows = csv.size();
 		size_t longestRow = 0;
