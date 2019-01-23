@@ -6,6 +6,8 @@
 #include "PPU/Texture.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
+#include "PPU/TilesetManager.h"
+#include "PPU/Tileset.h"
 
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
@@ -22,6 +24,7 @@ PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface,
 	: mDeviceInterface( rftl::move( deviceInterface ) )
 	, mTextureManager( nullptr )
 	, mFramePackManager( nullptr )
+	, mTilesetManager( nullptr )
 	, mVfs( vfs )
 {
 	//
@@ -35,6 +38,7 @@ PPUController::~PPUController()
 
 	mFramePackManager = nullptr;
 	mTextureManager = nullptr;
+	mTilesetManager = nullptr;
 
 	mDeviceInterface->DetachFromWindow();
 	mDeviceInterface = nullptr;
@@ -62,6 +66,10 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	// Create frame pack manager
 	RF_ASSERT( mFramePackManager == nullptr );
 	mFramePackManager = DefaultCreator<gfx::FramePackManager>::Create( mTextureManager, mVfs );
+
+	// Create tileset manager
+	RF_ASSERT( mTilesetManager == nullptr );
+	mTilesetManager = DefaultCreator<gfx::TilesetManager>::Create( mTextureManager, mVfs );
 
 	// Prepare device
 	success = mDeviceInterface->Initialize2DGraphics();
@@ -377,6 +385,13 @@ WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
 	return mFramePackManager;
 }
 
+
+
+WeakPtr<gfx::TilesetManager> PPUController::DebugGetTilesetManager() const
+{
+	return mTilesetManager;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void PPUController::SignalRender( StateBufferID readyBuffer )
@@ -641,13 +656,15 @@ void PPUController::RenderObject( Object const& object ) const
 
 void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 {
-	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( tileLayer.mTileset.mTexture );
+	Tileset const* tileset = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
+	RF_ASSERT_MSG( tileset != nullptr, "Failed to fetch tileset" );
+	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( tileset->mTextureReference );
 	RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
 	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
 
-	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileLayer.mTileset.mTileWidth );
-	float const texXStep = static_cast<float>( tileLayer.mTileset.mTileWidth ) / texture->mWidthPostLoad;
-	float const texYStep = static_cast<float>( tileLayer.mTileset.mTileHeight ) / texture->mHeightPostLoad;
+	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileset->mTileWidth );
+	float const texXStep = static_cast<float>( tileset->mTileWidth ) / texture->mWidthPostLoad;
+	float const texYStep = static_cast<float>( tileset->mTileHeight ) / texture->mHeightPostLoad;
 
 	// TODO: Animations? Probably done via shaders and passing in the timer
 
@@ -662,8 +679,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	tileLayer.GetTileZoomFactor( scaleUp, scaleDown );
 	PPUCoordElem const rootX = tileLayer.mXCoord;
 	PPUCoordElem const rootY = tileLayer.mYCoord;
-	PPUCoordElem const xStep = ( tileLayer.mTileset.mTileWidth * scaleUp ) / scaleDown;
-	PPUCoordElem const yStep = ( tileLayer.mTileset.mTileHeight * scaleUp ) / scaleDown;
+	PPUCoordElem const xStep = ( tileset->mTileWidth * scaleUp ) / scaleDown;
+	PPUCoordElem const yStep = ( tileset->mTileHeight * scaleUp ) / scaleDown;
 	for( size_t i_col = 0; i_col < tileLayer.NumColumns(); i_col++ )
 	{
 		for( size_t i_row = 0; i_row < tileLayer.NumRows(); i_row++ )

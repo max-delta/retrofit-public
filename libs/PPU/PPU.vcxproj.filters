@@ -17,6 +17,8 @@
     <ClInclude Include="FramePackSerDes.h" />
     <ClInclude Include="PPUTimer.h" />
     <ClInclude Include="TileLayer.h" />
+    <ClInclude Include="Tileset.h" />
+    <ClInclude Include="TilesetManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -32,6 +34,8 @@
     <ClCompile Include="FramePackSerDes.cpp" />
     <ClCompile Include="PPUTimer.cpp" />
     <ClCompile Include="TileLayer.cpp" />
+    <ClCompile Include="Tileset.cpp" />
+    <ClCompile Include="TilesetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />

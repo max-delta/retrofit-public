@@ -29,6 +29,9 @@ constexpr ManagedTextureID kInvalidManagedTextureID = 0;
 typedef uint16_t ManagedFramePackID;
 constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
 
+typedef uint16_t ManagedTilesetID;
+constexpr ManagedTilesetID kInvalidManagedTilesetID = 0;
+
 typedef uint64_t FrameID;
 constexpr FrameID kInvalidFrameID = 0;
 constexpr FrameID kFirstFrameID = 0;
@@ -55,8 +58,10 @@ constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Mi
 class Object;
 class TileLayer;
 class Texture;
+class Tileset;
 class TextureManager;
 class FramePackManager;
+class TilesetManager;
 class DeviceInterface;
 
 class FramePackBase;
