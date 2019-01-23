@@ -8,6 +8,7 @@
     <ClInclude Include="XmlExporter.h" />
     <ClInclude Include="ObjectSerializer.h" />
     <ClInclude Include="SerializationFwd.h" />
+    <ClInclude Include="CsvReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -15,5 +16,6 @@
     <ClCompile Include="DiagnosticExporter.cpp" />
     <ClCompile Include="XmlExporter.cpp" />
     <ClCompile Include="ObjectSerializer.cpp" />
+    <ClCompile Include="CsvReader.cpp" />
   </ItemGroup>
 </Project>
