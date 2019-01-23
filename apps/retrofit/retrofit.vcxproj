@@ -86,6 +86,9 @@
     <ProjectReference Include="..\..\libs\Scripting_squirrel\Scripting_squirrel.vcxproj">
       <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
+      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
       <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
     </ProjectReference>
