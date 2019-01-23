@@ -18,16 +18,45 @@ class PPU_API PPUController
 	RF_NO_COPY( PPUController );
 	RF_NO_MOVE( PPUController );
 
-	// Types
+	//
+	// Forwards
 private:
-	typedef int8_t StateBufferID;
+	struct DepthElement;
 
 
-	// Constants
+	//
+	// Types and constants
 private:
+	using StateBufferID = int8_t;
 	static constexpr StateBufferID kInvalidStateBufferID = -1;
 	static constexpr size_t kNumStateBuffers = 3;
 	static_assert( kNumStateBuffers == 3, "Need 3 buffers for triple buffering" );
+	static constexpr size_t kMaxTotalElements =
+		PPUState::kMaxTotalElements +
+		PPUDebugState::kMaxTotalElements;
+	using DepthOrder = DepthElement[kMaxTotalElements];
+	enum class ElementType : uint8_t
+	{
+		Invalid = 0,
+		Object,
+		TileLayer,
+		String,
+		DebugLine,
+		DebugString
+	};
+
+
+	//
+	// Structs
+private:
+	struct DepthElement
+	{
+		// NOTE: Zero-initialize for optimizer to make cheap clears of array
+		PPUDepthLayer mDepth = {};
+		ElementType mType = {};
+		static_assert( ElementType{} == ElementType::Invalid, "Non-zero invalid" );
+		uint8_t mId = {};
+	};
 
 
 	//
@@ -67,6 +96,15 @@ public:
 private:
 	void SignalRender( StateBufferID readyBuffer );
 	void Render() const;
+
+	void CalculateDepthOrder( DepthOrder& depthOrder ) const;
+
+	void RenderObject( Object const& object ) const;
+	void RenderTileLayer( TileLayer const& tileLayer ) const;
+	void RenderString( PPUState::String const& string ) const;
+	void RenderDebugLine( PPUDebugState::DebugLine const& line ) const;
+	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
+	void RenderDebugGrid() const;
 
 	uint8_t GetZoomFactor() const;
 

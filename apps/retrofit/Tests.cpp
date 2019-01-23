@@ -175,8 +175,8 @@ void InitDrawTest()
 	testTileLayer.mTileset.mTileWidth = 1;
 	testTileLayer.mTileset.mTileHeight = 1;
 	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
-	testTileLayer.mXCoord = 3;
-	testTileLayer.mYCoord = 2;
+	testTileLayer.mXCoord = 170;
+	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
 	// TODO: CSV loader
 	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( commonTilemaps.GetChild( "testhouse_10.csv" ) );
