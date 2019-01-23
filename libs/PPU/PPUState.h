@@ -19,6 +19,10 @@ public:
 	static constexpr size_t kMaxObjects = 32;
 	static constexpr size_t kMaxTileLayers = 16;
 	static constexpr size_t kMaxStrings = 29;
+	static constexpr size_t kMaxTotalElements =
+		kMaxObjects +
+		kMaxTileLayers +
+		kMaxStrings;
 
 
 	//

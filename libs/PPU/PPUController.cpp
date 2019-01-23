@@ -403,123 +403,38 @@ void PPUController::Render() const
 	PPUDebugState const& targetDebugState = mPPUDebugState[mRenderState];
 	PPUState const& targetState = mPPUState[mRenderState];
 
-	// Draw objects
-	for( size_t i = 0; i < targetState.mNumObjects; i++ )
+	// Transparency and whatnot
+	DepthOrder depthOrder = {};
+	CalculateDepthOrder( depthOrder );
+
+	// Render in depth order
+	for( DepthElement const& element : depthOrder )
 	{
-		Object const& object = targetState.mObjects[i];
-		FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
-		RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
-		uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
-		FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
+		size_t const i = element.mId;
 
-		if( timeSlot.m_TextureReference == kInvalidManagedTextureID )
+		bool terminate = false;
+		switch( element.mType )
 		{
-			// Invisible frame
-			continue;
-		}
-
-		Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
-		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
-		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
-
-		// TODO: Transforms
-		PPUCoordElem const x = object.mXCoord - timeSlot.m_TextureOriginX;
-		PPUCoordElem const y = object.mYCoord - timeSlot.m_TextureOriginY;
-		math::Vector2f topLeft = CoordToDevice( x, y );
-		math::Vector2f bottomRight = CoordToDevice(
-			math::integer_cast<PPUCoordElem>( x + texture->mWidthPostLoad ),
-			math::integer_cast<PPUCoordElem>( y + texture->mHeightPostLoad ) );
-
-		// Perform flips
-		// NOTE: Assuming the device billboards are implemented similarly to a
-		//  double-sided quad in a 3D pipeline
-		if( object.mHorizontalFlip )
-		{
-			rftl::swap( topLeft.x, bottomRight.x );
-		}
-		if( object.mVerticalFlip )
-		{
-			rftl::swap( topLeft.y, bottomRight.y );
-		}
-
-		mDeviceInterface->DrawBillboard( deviceTextureID, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( object.mZLayer ) );
-	}
-
-	// Draw tile layers
-	for( size_t i = 0; i < targetState.mNumTileLayers; i++ )
-	{
-		TileLayer const& tileLayer = targetState.mTileLayers[i];
-		Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( tileLayer.mTileset.mTexture );
-		RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
-		DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
-
-		uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileLayer.mTileset.mTileWidth );
-		float const texXStep = static_cast<float>( tileLayer.mTileset.mTileWidth ) / texture->mWidthPostLoad;
-		float const texYStep = static_cast<float>( tileLayer.mTileset.mTileHeight ) / texture->mHeightPostLoad;
-
-		// TODO: Animations? Probably done via shaders and passing in the timer
-
-		// TODO: Wrapping
-
-		// TODO: Transforms
-
-		// TODO: Flips
-
-		uint8_t scaleUp;
-		uint8_t scaleDown;
-		tileLayer.GetTileZoomFactor( scaleUp, scaleDown );
-		PPUCoordElem const rootX = tileLayer.mXCoord;
-		PPUCoordElem const rootY = tileLayer.mYCoord;
-		PPUCoordElem const xStep = ( tileLayer.mTileset.mTileWidth * scaleUp ) / scaleDown;
-		PPUCoordElem const yStep = ( tileLayer.mTileset.mTileHeight * scaleUp ) / scaleDown;
-		for( size_t i_col = 0; i_col < tileLayer.NumColumns(); i_col++ )
-		{
-			for( size_t i_row = 0; i_row < tileLayer.NumRows(); i_row++ )
-			{
-				TileLayer::Tile const& tile = tileLayer.GetTile( i_col, i_row );
-				if( tile.mIndex == TileLayer::kEmptyTileIndex )
-				{
-					// Empty
-					continue;
-				}
-
-				math::Vector2i16 const texTile = math::Vector2i16{ tile.mIndex % texTilesPerRow, tile.mIndex / texTilesPerRow };
-				math::Vector2f const texTopLeft = math::Vector2f(
-					texTile.x * texXStep,
-					texTile.y * texYStep );
-				math::Vector2f const texBottomRight = texTopLeft + math::Vector2f( texXStep, texYStep );
-
-				PPUCoordElem const x = rootX + xStep * math::integer_cast<PPUCoordElem>( i_col );
-				PPUCoordElem const y = rootY + yStep * math::integer_cast<PPUCoordElem>( i_row );
-				math::Vector2f const topLeft = CoordToDevice( x, y );
-				math::Vector2f const bottomRight = CoordToDevice(
-					math::integer_cast<PPUCoordElem>( x + xStep ),
-					math::integer_cast<PPUCoordElem>( y + yStep ) );
-				mDeviceInterface->DrawBillboard( deviceTextureID, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( tileLayer.mZLayer ), math::AABB4f{ texTopLeft, texBottomRight } );
-			}
-		}
-	}
-
-	// Draw text
-	for( size_t i = 0; i < targetState.mNumStrings; i++ )
-	{
-		PPUState::String const& string = targetState.mStrings[i];
-		char const* text = string.mText;
-		for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
-		{
-			char const character = text[i_char];
-			if( character == '\0' )
-			{
+			case RF::gfx::PPUController::ElementType::Invalid:
+				// End of list
+				terminate = true;
 				break;
-			}
-			PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * string.mWidth );
-			PPUCoordElem const y1 = string.mYCoord;
-			PPUCoordElem const x2 = x1 + string.mWidth;
-			PPUCoordElem const y2 = y1 + string.mHeight;
 
-			math::Vector2f const topLeft = CoordToDevice( x1, y1 );
-			math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
-			mDeviceInterface->DrawBitmapFont( 7, character, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( string.mZLayer ) );
+			case RF::gfx::PPUController::ElementType::Object:
+				RenderObject( targetState.mObjects[i] );
+				break;
+			case RF::gfx::PPUController::ElementType::TileLayer:
+				RenderTileLayer( targetState.mTileLayers[i] );
+				break;
+			case RF::gfx::PPUController::ElementType::String:
+				RenderString( targetState.mStrings[i] );
+				break;
+			case RF::gfx::PPUController::ElementType::DebugLine:
+				RenderDebugLine( targetDebugState.mLines[i] );
+				break;
+			case RF::gfx::PPUController::ElementType::DebugString:
+				RenderDebugString( targetDebugState.mStrings[i] );
+				break;
 		}
 	}
 
@@ -528,52 +443,325 @@ void PPUController::Render() const
 	constexpr bool drawGrid = true;
 	if( drawGrid )
 	{
-		for( PPUCoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
-		{
-			math::Vector2f const posA = CoordToDevice( horizontal, 0 );
-			math::Vector2f const posB = CoordToDevice( horizontal - 1, 0 );
-			mDeviceInterface->DebugDrawLine(
-				math::Vector2f( posA.x, 0 ),
-				math::Vector2f( posA.x, 1 ),
-				LayerToDevice( 0 ) );
-			mDeviceInterface->DebugDrawLine(
-				math::Vector2f( posB.x, 0 ),
-				math::Vector2f( posB.x, 1 ),
-				LayerToDevice( 0 ) );
-		}
-		for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
-		{
-			math::Vector2f const posA = CoordToDevice( 0, vertical );
-			math::Vector2f const posB = CoordToDevice( 0, vertical - 1 );
-			mDeviceInterface->DebugDrawLine(
-				math::Vector2f( 0, posA.y ),
-				math::Vector2f( 1, posA.y ),
-				LayerToDevice( 0 ) );
-			mDeviceInterface->DebugDrawLine(
-				math::Vector2f( 0, posB.y ),
-				math::Vector2f( 1, posB.y ),
-				LayerToDevice( 0 ) );
-		}
-	}
-
-	// Draw lines
-	for( size_t i = 0; i < targetDebugState.mNumLines; i++ )
-	{
-		PPUDebugState::DebugLine const& line = targetDebugState.mLines[i];
-		math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
-		math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-		mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ) );
-	}
-
-	// Draw text
-	for( size_t i = 0; i < targetDebugState.mNumStrings; i++ )
-	{
-		PPUDebugState::DebugString const& string = targetDebugState.mStrings[i];
-		math::Vector2f const pos = CoordToDevice( string.mXCoord, string.mYCoord );
-		mDeviceInterface->DebugRenderText( pos, "%s", string.mText );
+		RenderDebugGrid();
 	}
 
 	mDeviceInterface->RenderFrame();
+}
+
+
+
+void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
+{
+	RF_ASSERT( mRenderState != kInvalidStateBufferID );
+	PPUDebugState const& targetDebugState = mPPUDebugState[mRenderState];
+	PPUState const& targetState = mPPUState[mRenderState];
+
+	size_t i_depthOrder = 0;
+
+	// Objects
+	for( size_t i = 0; i < targetState.mNumObjects; i++ )
+	{
+		Object const& object = targetState.mObjects[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::Object;
+		element.mDepth = object.mZLayer;
+	}
+
+	// Tile layers
+	for( size_t i = 0; i < targetState.mNumTileLayers; i++ )
+	{
+		TileLayer const& tileLayer = targetState.mTileLayers[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::TileLayer;
+		element.mDepth = tileLayer.mZLayer;
+	}
+
+	// Text
+	for( size_t i = 0; i < targetState.mNumStrings; i++ )
+	{
+		PPUState::String const& string = targetState.mStrings[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::String;
+		element.mDepth = string.mZLayer;
+	}
+
+	// Debug lines
+	for( size_t i = 0; i < targetDebugState.mNumLines; i++ )
+	{
+		//PPUDebugState::DebugLine const& line = targetDebugState.mLines[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::DebugLine;
+		element.mDepth = kNearestLayer;
+	}
+
+	// Debug text
+	for( size_t i = 0; i < targetDebugState.mNumStrings; i++ )
+	{
+		//PPUDebugState::DebugString const& string = targetDebugState.mStrings[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::DebugString;
+		element.mDepth = kNearestLayer;
+	}
+
+	// Sort
+	struct Sorter
+	{
+		static int Sort( void const* lhs, void const* rhs )
+		{
+			DepthElement const& lhse = *reinterpret_cast<DepthElement const*>( lhs );
+			DepthElement const& rhse = *reinterpret_cast<DepthElement const*>( rhs );
+
+			// Invalid elements go last
+			if( lhse.mType == ElementType::Invalid && rhse.mType != ElementType::Invalid )
+			{
+				return 1;
+			}
+			else if( lhse.mType != ElementType::Invalid && rhse.mType == ElementType::Invalid )
+			{
+				return -1;
+			}
+			else if( lhse.mType == ElementType::Invalid && rhse.mType == ElementType::Invalid )
+			{
+				return 0;
+			}
+
+			// Higher depth values are farther from camera, want to draw them
+			//  first for transparency purposes
+			if( lhse.mDepth < rhse.mDepth )
+			{
+				return 1;
+			}
+			else if( lhse.mDepth > rhse.mDepth )
+			{
+				return -1;
+			}
+
+			// Prefer to clump together like types
+			if( static_cast<uint8_t>( lhse.mType ) < static_cast<uint8_t>( rhse.mDepth ) )
+			{
+				return -1;
+			}
+			else if( static_cast<uint8_t>( lhse.mType ) > static_cast<uint8_t>( rhse.mDepth ) )
+			{
+				return 1;
+			}
+
+			// Prefer to iterate in order
+			if( lhse.mId < rhse.mId )
+			{
+				return -1;
+			}
+			else if( lhse.mId > rhse.mId )
+			{
+				return 1;
+			}
+
+			// Equal? Unclear if this should happen
+			RF_DBGFAIL_MSG( "Unclear if this is valid" );
+			return 0;
+		}
+	};
+	constexpr size_t kMaxCount = rftl::extent<rftl::remove_reference<decltype( depthOrder )>::type>::value;
+	constexpr size_t kSize = sizeof( depthOrder[0] );
+	if( i_depthOrder == 0 )
+	{
+		// No sort needed
+		RF_ASSERT( depthOrder[0].mType == ElementType::Invalid );
+	}
+	else if( i_depthOrder == kMaxCount )
+	{
+		// Sort everything
+		RF_ASSERT( depthOrder[kMaxCount - 1].mType != ElementType::Invalid );
+		rftl::qsort( &depthOrder, kMaxCount, kSize, Sorter::Sort );
+	}
+	else
+	{
+		// Sort only filled entries
+		size_t const count = i_depthOrder;
+		RF_ASSERT( depthOrder[count - 1].mType != ElementType::Invalid );
+		RF_ASSERT( depthOrder[count].mType == ElementType::Invalid );
+		rftl::qsort( &depthOrder, count, kSize, Sorter::Sort );
+	}
+}
+
+
+
+void PPUController::RenderObject( Object const& object ) const
+{
+	FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
+	RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
+	uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
+	FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
+
+	if( timeSlot.m_TextureReference == kInvalidManagedTextureID )
+	{
+		// Invisible frame
+		return;
+	}
+
+	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( timeSlot.m_TextureReference );
+	RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
+	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
+
+	// TODO: Transforms
+	PPUCoordElem const x = object.mXCoord - timeSlot.m_TextureOriginX;
+	PPUCoordElem const y = object.mYCoord - timeSlot.m_TextureOriginY;
+	math::Vector2f topLeft = CoordToDevice( x, y );
+	math::Vector2f bottomRight = CoordToDevice(
+		math::integer_cast<PPUCoordElem>( x + texture->mWidthPostLoad ),
+		math::integer_cast<PPUCoordElem>( y + texture->mHeightPostLoad ) );
+
+	// Perform flips
+	// NOTE: Assuming the device billboards are implemented similarly to a
+	//  double-sided quad in a 3D pipeline
+	if( object.mHorizontalFlip )
+	{
+		rftl::swap( topLeft.x, bottomRight.x );
+	}
+	if( object.mVerticalFlip )
+	{
+		rftl::swap( topLeft.y, bottomRight.y );
+	}
+
+	mDeviceInterface->DrawBillboard( deviceTextureID, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( object.mZLayer ) );
+}
+
+
+
+void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
+{
+	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( tileLayer.mTileset.mTexture );
+	RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
+	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
+
+	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileLayer.mTileset.mTileWidth );
+	float const texXStep = static_cast<float>( tileLayer.mTileset.mTileWidth ) / texture->mWidthPostLoad;
+	float const texYStep = static_cast<float>( tileLayer.mTileset.mTileHeight ) / texture->mHeightPostLoad;
+
+	// TODO: Animations? Probably done via shaders and passing in the timer
+
+	// TODO: Wrapping
+
+	// TODO: Transforms
+
+	// TODO: Flips
+
+	uint8_t scaleUp;
+	uint8_t scaleDown;
+	tileLayer.GetTileZoomFactor( scaleUp, scaleDown );
+	PPUCoordElem const rootX = tileLayer.mXCoord;
+	PPUCoordElem const rootY = tileLayer.mYCoord;
+	PPUCoordElem const xStep = ( tileLayer.mTileset.mTileWidth * scaleUp ) / scaleDown;
+	PPUCoordElem const yStep = ( tileLayer.mTileset.mTileHeight * scaleUp ) / scaleDown;
+	for( size_t i_col = 0; i_col < tileLayer.NumColumns(); i_col++ )
+	{
+		for( size_t i_row = 0; i_row < tileLayer.NumRows(); i_row++ )
+		{
+			TileLayer::Tile const& tile = tileLayer.GetTile( i_col, i_row );
+			if( tile.mIndex == TileLayer::kEmptyTileIndex )
+			{
+				// Empty
+				continue;
+			}
+
+			math::Vector2i16 const texTile = math::Vector2i16{ tile.mIndex % texTilesPerRow, tile.mIndex / texTilesPerRow };
+			math::Vector2f const texTopLeft = math::Vector2f(
+				texTile.x * texXStep,
+				texTile.y * texYStep );
+			math::Vector2f const texBottomRight = texTopLeft + math::Vector2f( texXStep, texYStep );
+
+			PPUCoordElem const x = rootX + xStep * math::integer_cast<PPUCoordElem>( i_col );
+			PPUCoordElem const y = rootY + yStep * math::integer_cast<PPUCoordElem>( i_row );
+			math::Vector2f const topLeft = CoordToDevice( x, y );
+			math::Vector2f const bottomRight = CoordToDevice(
+				math::integer_cast<PPUCoordElem>( x + xStep ),
+				math::integer_cast<PPUCoordElem>( y + yStep ) );
+			mDeviceInterface->DrawBillboard( deviceTextureID, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( tileLayer.mZLayer ), math::AABB4f{ texTopLeft, texBottomRight } );
+		}
+	}
+}
+
+
+
+void PPUController::RenderString( PPUState::String const& string ) const
+{
+	char const* text = string.mText;
+	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
+	{
+		char const character = text[i_char];
+		if( character == '\0' )
+		{
+			break;
+		}
+		PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * string.mWidth );
+		PPUCoordElem const y1 = string.mYCoord;
+		PPUCoordElem const x2 = x1 + string.mWidth;
+		PPUCoordElem const y2 = y1 + string.mHeight;
+
+		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
+		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
+		mDeviceInterface->DrawBitmapFont( 7, character, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( string.mZLayer ) );
+	}
+}
+
+
+
+void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) const
+{
+	math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
+	math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
+	mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ) );
+}
+
+
+
+void PPUController::RenderDebugString( PPUDebugState::DebugString const& string ) const
+{
+	math::Vector2f const pos = CoordToDevice( string.mXCoord, string.mYCoord );
+	mDeviceInterface->DebugRenderText( pos, "%s", string.mText );
+}
+
+
+
+void PPUController::RenderDebugGrid() const
+{
+	for( PPUCoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
+	{
+		math::Vector2f const posA = CoordToDevice( horizontal, 0 );
+		math::Vector2f const posB = CoordToDevice( horizontal - 1, 0 );
+		mDeviceInterface->DebugDrawLine(
+			math::Vector2f( posA.x, 0 ),
+			math::Vector2f( posA.x, 1 ),
+			LayerToDevice( 0 ) );
+		mDeviceInterface->DebugDrawLine(
+			math::Vector2f( posB.x, 0 ),
+			math::Vector2f( posB.x, 1 ),
+			LayerToDevice( 0 ) );
+	}
+	for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
+	{
+		math::Vector2f const posA = CoordToDevice( 0, vertical );
+		math::Vector2f const posB = CoordToDevice( 0, vertical - 1 );
+		mDeviceInterface->DebugDrawLine(
+			math::Vector2f( 0, posA.y ),
+			math::Vector2f( 1, posA.y ),
+			LayerToDevice( 0 ) );
+		mDeviceInterface->DebugDrawLine(
+			math::Vector2f( 0, posB.y ),
+			math::Vector2f( 1, posB.y ),
+			LayerToDevice( 0 ) );
+	}
 }
 
 

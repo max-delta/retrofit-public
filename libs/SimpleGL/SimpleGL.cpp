@@ -174,13 +174,16 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 	glEnable( GL_TEXTURE_2D );
 
 	// Enable depth-buffer
+	// NOTE: May not be needed if depth-sorting is performed before raster
 	glDepthMask( GL_TRUE );
 
 	// Enable depth-testing
+	// NOTE: May not be needed if depth-sorting is performed before raster
 	glEnable( GL_DEPTH_TEST );
 
 	// Passes if the incoming depth value is GL_LESS than the stored depth
 	//  value
+	// NOTE: May not be needed if depth-sorting is performed before raster
 	glDepthFunc( GL_LESS );
 
 	// Enable antialiasing for points
