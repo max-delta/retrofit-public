@@ -25,6 +25,7 @@
         -Wno-c++98-compat
         -Wno-c++98-compat-pedantic
         -Wno-unused-macros
+        -Wno-unused-parameter
         -Wno-reserved-id-macro
         -Wno-extra-semi
         -Wno-missing-prototypes
@@ -35,6 +36,11 @@
         -Wno-exit-time-destructors
         -Wno-format-nonliteral
         -Wno-ignored-attributes
+        %(AdditionalOptions)
+      </AdditionalOptions>
+      <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
+      <AdditionalOptions>
+        -Werror=nonportable-include-path
         %(AdditionalOptions)
       </AdditionalOptions>
     </ClCompile>
