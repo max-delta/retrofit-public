@@ -20,6 +20,9 @@
       <IntrinsicFunctions Condition="'$(Configuration)'=='Release'">true</IntrinsicFunctions>
       <IntrinsicFunctions Condition="'$(Configuration)'=='Retail'">true</IntrinsicFunctions>
 
+      <!--Specifically, don't require the redistributable for retail-->
+      <RuntimeLibrary Condition="'$(Configuration)'=='Retail'">MultiThreaded</RuntimeLibrary>
+
       <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)'=='Retail'">NDEBUG;RF_NO_SHARED_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
