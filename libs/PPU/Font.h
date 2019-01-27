@@ -49,7 +49,7 @@ private:
 	friend class FontManager;
 	file::FileBuffer mFileBuffer;
 	SpacingMode mSpacingMode = SpacingMode::Invalid;
-	DeviceFontID mDeviceRepresentation = kInvalidDeviceTextureID;
+	DeviceFontID mDeviceRepresentation = kInvalidDeviceFontID;
 	TileSize mTileWidth = kInvalidTileSize;
 	TileSize mTileHeight = kInvalidTileSize;
 };
