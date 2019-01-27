@@ -1,3 +1,6 @@
+^_artifacts/.*$
+^_binaries/.*$
+
 \.orig$
 \.bak$
 
