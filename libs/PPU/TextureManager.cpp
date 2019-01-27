@@ -98,10 +98,10 @@ bool TextureManager::PreDestroy( ResourceType& resource )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
+bool TextureManager::LoadToDevice( ResourceType& resource, Filename const& filename )
 {
 	RF_ASSERT( mDeviceInterface != nullptr );
-	RF_ASSERT( texture.mDeviceRepresentation == kInvalidDeviceTextureID );
+	RF_ASSERT( resource.mDeviceRepresentation == kInvalidDeviceTextureID );
 	file::VFS* const vfs = mVfs;
 	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
@@ -111,19 +111,20 @@ bool TextureManager::LoadToDevice( Texture& texture, Filename const& filename )
 	}
 	file::FileBuffer const buffer{ *fileHandle.Get(), false };
 	RF_ASSERT( buffer.GetData() != nullptr );
-	texture.mDeviceRepresentation = mDeviceInterface->LoadTexture( buffer.GetData(), buffer.GetSize(), texture.mWidthPostLoad, texture.mHeightPostLoad );
-	texture.UpdateFrameUsage();
+	resource.mDeviceRepresentation = mDeviceInterface->LoadTexture( buffer.GetData(), buffer.GetSize(), resource.mWidthPostLoad, resource.mHeightPostLoad );
+	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
+	resource.UpdateFrameUsage();
 	return true;
 }
 
 
 
-bool TextureManager::UnloadFromDevice( Texture& texture )
+bool TextureManager::UnloadFromDevice( ResourceType& resource )
 {
 	RF_ASSERT( mDeviceInterface != nullptr );
-	RF_ASSERT( texture.mDeviceRepresentation != kInvalidDeviceTextureID );
-	bool const retVal = mDeviceInterface->UnloadTexture( texture.mDeviceRepresentation );
-	texture.mDeviceRepresentation = kInvalidDeviceTextureID;
+	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
+	bool const retVal = mDeviceInterface->UnloadTexture( resource.mDeviceRepresentation );
+	resource.mDeviceRepresentation = kInvalidDeviceTextureID;
 	return retVal;
 }
 

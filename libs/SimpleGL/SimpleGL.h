@@ -29,7 +29,7 @@ public:
 		NDC11_11UPRIGHT, // NDC -1<>1
 	};
 	using BitmapCharacterListStorage = rftl::array<DeviceTextureID, 256>;
-	using BitmapFontStorage = rftl::unordered_map<uint8_t, BitmapCharacterListStorage>;
+	using BitmapFontStorage = rftl::unordered_map<DeviceFontID, BitmapCharacterListStorage>;
 
 
 	//
@@ -49,8 +49,8 @@ public:
 	DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
-	bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) override;
-	bool DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z ) override;
+	DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight ) override;
+	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z ) override;
 
 	bool glPrint( char const* fmt, ... );
 	bool glPrint( char const* fmt, va_list args );
@@ -84,6 +84,7 @@ private:
 	float mXFudge; // HACK: Pixel fudge for anti-aliasing repair
 	float mYFudge; // HACK: Pixel fudge for anti-aliasing repair
 	BitmapFontStorage mBitmapFonts;
+	DeviceFontID mLastCreatedFontId = kInvalidDeviceFontID;
 	unsigned int font_base;
 };
 

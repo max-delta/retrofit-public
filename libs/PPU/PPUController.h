@@ -68,7 +68,6 @@ public:
 
 	bool Initialize( uint16_t width, uint16_t height );
 	bool ResizeSurface( uint16_t width, uint16_t height );
-	bool LoadFont( void const* buffer, size_t len );
 
 	PPUCoordElem GetWidth() const;
 	PPUCoordElem GetHeight() const;
@@ -80,9 +79,9 @@ public:
 
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
-	bool DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, va_list args );
+	bool DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, va_list args );
 
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
@@ -90,6 +89,7 @@ public:
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
 	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;
 	WeakPtr<gfx::TilesetManager> DebugGetTilesetManager() const;
+	WeakPtr<gfx::FontManager> DebugGetFontManager() const;
 
 
 	//
@@ -122,6 +122,7 @@ private:
 	UniquePtr<gfx::TextureManager> mTextureManager;
 	UniquePtr<gfx::FramePackManager> mFramePackManager;
 	UniquePtr<gfx::TilesetManager> mTilesetManager;
+	UniquePtr<gfx::FontManager> mFontManager;
 	WeakPtr<file::VFS> const mVfs;
 	uint16_t mWidth;
 	uint16_t mHeight;

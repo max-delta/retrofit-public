@@ -74,6 +74,7 @@ private:
 	WeakPtr<file::VFS> const mVfs;
 	MasterMode mMasterMode;
 	gfx::ManagedFramePackID mFramePackID;
+	gfx::ManagedFontID mDefaultFontID = gfx::kInvalidDeviceFontID;
 	uint8_t mEditingFrame;
 	gfx::TimeSlowdownRate mPreviewSlowdownRate;
 	gfx::Object mPreviewObject;

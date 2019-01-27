@@ -263,7 +263,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-bool SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight )
+DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
@@ -360,8 +360,10 @@ bool SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID,
 	}
 	stbi_image_free( data );
 
-	RF_ASSERT( mBitmapFonts.count( fontID ) == 0 );
-	BitmapCharacterListStorage& fontStorage = mBitmapFonts[fontID];
+	mLastCreatedFontId++;
+	DeviceFontID const retVal = mLastCreatedFontId;
+	RF_ASSERT( mBitmapFonts.count( mLastCreatedFontId ) == 0 );
+	BitmapCharacterListStorage& fontStorage = mBitmapFonts[mLastCreatedFontId];
 	{
 		rftl::array<GLuint, 256> tempStore;
 		glGenTextures( math::integer_cast<GLsizei>( fontStorage.size() ), tempStore.data() );
@@ -390,12 +392,12 @@ bool SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID,
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	}
 
-	return true;
+	return retVal;
 }
 
 
 
-bool SimpleGL::DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z )
+bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z )
 {
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
 	// TODO: Color parameter
