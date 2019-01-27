@@ -31,7 +31,7 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 		else \
 		{ \
 			if( \
-				::RF::assert::AssertNotification(__FILE__, static_cast<size_t>(__LINE__), #TEST, MESSAGEEXPRESSION) \
+				::RF::assert::AssertNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), #TEST, MESSAGEEXPRESSION ) \
 					== ::RF::assert::AssertResponse::Interrupt ) \
 			{ \
 				RF_SOFTWARE_INTERRUPT(); \
