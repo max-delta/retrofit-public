@@ -13,6 +13,7 @@
 #include "PPU/FramePackSerDes.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/Tileset.h"
+#include "PPU/FontManager.h"
 #include "PPU/TextureManager.h"
 
 #include "PlatformFilesystem/VFS.h"
@@ -123,6 +124,8 @@ RF::gfx::Object testObjDigit = {};
 RF::gfx::Object testObjDigitFlips[3] = {};
 RF::gfx::Object testObjWiggle = {};
 RF::gfx::TileLayer testTileLayer = {};
+RF::gfx::ManagedFontID testFont1 = RF::gfx::kInvalidManagedFontID;
+RF::gfx::ManagedFontID testFont2 = RF::gfx::kInvalidManagedFontID;
 void InitDrawTest()
 {
 	using namespace RF;
@@ -130,12 +133,13 @@ void InitDrawTest()
 	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
 	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
+	gfx::FontManager& fontMan = *ppu.DebugGetFontManager();
 	file::VFS& vfs = *app::gVfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
 	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
 	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
-	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
+	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
 	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
@@ -210,10 +214,8 @@ void InitDrawTest()
 	}
 
 
-	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	file::FileBuffer const fontBuffer{ *fontHandle.Get(), false };
-	RF_ASSERT( fontBuffer.GetData() != nullptr );
-	app::gGraphics->LoadFont( fontBuffer.GetData(), fontBuffer.GetSize() );
+	testFont1 = fontMan.LoadNewResourceGetID( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	testFont2 = fontMan.LoadNewResourceGetID( "font_narrow_2x", fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 }
 
 
@@ -235,10 +237,14 @@ void DrawTest()
 	testTileLayer.Animate();
 	app::gGraphics->DrawTileLayer( testTileLayer );
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), gfx::PPUCoord( 4, 8 ), "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), gfx::PPUCoord( 4, 8 ), "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), gfx::PPUCoord( 4, 8 ), "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), gfx::PPUCoord( 4, 8 ), "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), 8, testFont1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), 8, testFont1, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), 8, testFont1, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), 8, testFont1, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 4 ), 8, testFont2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 5 ), 8, testFont2, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 6 ), 8, testFont2, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 7 ), 8, testFont2, "`'\"~-=[]{}\\|,.<>/?" );
 }
 
 

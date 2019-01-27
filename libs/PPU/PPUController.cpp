@@ -8,9 +8,12 @@
 #include "PPU/FramePack.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/Tileset.h"
+#include "PPU/Font.h"
+#include "PPU/FontManager.h"
 
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
+#include "core_math/math_bits.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -25,6 +28,7 @@ PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface,
 	, mTextureManager( nullptr )
 	, mFramePackManager( nullptr )
 	, mTilesetManager( nullptr )
+	, mFontManager( nullptr )
 	, mVfs( vfs )
 {
 	//
@@ -39,6 +43,7 @@ PPUController::~PPUController()
 	mFramePackManager = nullptr;
 	mTextureManager = nullptr;
 	mTilesetManager = nullptr;
+	mFontManager = nullptr;
 
 	mDeviceInterface->DetachFromWindow();
 	mDeviceInterface = nullptr;
@@ -70,6 +75,16 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	// Create tileset manager
 	RF_ASSERT( mTilesetManager == nullptr );
 	mTilesetManager = DefaultCreator<gfx::TilesetManager>::Create( mTextureManager, mVfs );
+
+	// Create font manager
+	RF_ASSERT( mFontManager == nullptr );
+	mFontManager = DefaultCreator<gfx::FontManager>::Create( mVfs );
+	success = mFontManager->AttachToDevice( mDeviceInterface );
+	RF_ASSERT( success );
+	if( success == false )
+	{
+		return false;
+	}
 
 	// Prepare device
 	success = mDeviceInterface->Initialize2DGraphics();
@@ -125,15 +140,6 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 		return false;
 	}
 	return true;
-}
-
-
-
-bool PPUController::LoadFont( void const* buffer, size_t len )
-{
-	// TODO: Revise the font API
-	uint32_t unused;
-	return mDeviceInterface->CreateBitmapFont( buffer, len, 7, unused, unused );
 }
 
 
@@ -270,33 +276,30 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUCoord charSize, const char* fmt, ... )
+bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, 0, charSize, fmt, args );
+	bool const retVal = DrawText( pos, 0, desiredHeight, font, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, ... )
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, charSize, fmt, args );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charSize, const char* fmt, va_list args )
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, va_list args )
 {
-	RF_ASSERT_MSG( charSize.x == 4, "TODO: Support other sizes" );
-	RF_ASSERT_MSG( charSize.y == 8, "TODO: Support other sizes" );
-
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
@@ -308,8 +311,8 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, PPUCoord charS
 	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
 	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
 	targetString.mZLayer = zLayer;
-	targetString.mWidth = charSize.x;
-	targetString.mHeight = charSize.y;
+	targetString.mDesiredHeight = desiredHeight;
+	targetString.mFontReference = font;
 	targetString.mText[0] = '\0';
 	vsnprintf( &targetString.mText[0], PPUState::String::k_MaxLen, fmt, args );
 	targetString.mText[PPUState::String::k_MaxLen] = '\0';
@@ -390,6 +393,13 @@ WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
 WeakPtr<gfx::TilesetManager> PPUController::DebugGetTilesetManager() const
 {
 	return mTilesetManager;
+}
+
+
+
+WeakPtr<gfx::FontManager> PPUController::DebugGetFontManager() const
+{
+	return mFontManager;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -713,6 +723,51 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 void PPUController::RenderString( PPUState::String const& string ) const
 {
+	Font const* font = mFontManager->GetResourceFromManagedResourceID( string.mFontReference );
+	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
+	DeviceFontID const deviceFontID = font->GetDeviceRepresentation();
+
+	uint8_t charWidth = font->mTileWidth;
+	uint8_t charHeight = font->mTileHeight;
+	uint8_t zoomDesired = math::integer_cast<uint8_t>( string.mDesiredHeight / charHeight );
+	if( zoomDesired > 1 )
+	{
+		// Grow
+		charWidth *= zoomDesired;
+		charHeight *= zoomDesired;
+	}
+	else if( zoomDesired < 1 )
+	{
+		// Shrink
+		uint8_t shrinkDesired = 1;
+		shrinkDesired = math::integer_cast<uint8_t>( charHeight / string.mDesiredHeight );
+		uint8_t const zoomFactor = GetZoomFactor();
+		if( (zoomFactor - shrinkDesired) < 0 )
+		{
+			// Font bigger than desired height, can't downscale enough, will
+			//  look wonky when rendered even at reduced zoom
+			// TODO: Warning?
+			shrinkDesired = zoomFactor;
+			RF_ASSERT_MSG( shrinkDesired == 1, "Check this assumption?" );
+		}
+
+		bool const effectiveZoomIsMisalignedScale = (zoomFactor % shrinkDesired) != 0;
+		if( effectiveZoomIsMisalignedScale )
+		{
+			// Won't result in an aligned scale, will look wonky
+			// TODO: Warning?
+		}
+
+		RF_ASSERT( shrinkDesired >= 1 );
+		if( shrinkDesired > 1 )
+		{
+			charWidth /= shrinkDesired;
+			charHeight /= shrinkDesired;
+		}
+	}
+	RF_ASSERT( charWidth > 0 );
+	RF_ASSERT( charHeight > 0 );
+
 	char const* text = string.mText;
 	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
 	{
@@ -721,14 +776,14 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		{
 			break;
 		}
-		PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * string.mWidth );
+		PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * charWidth );
 		PPUCoordElem const y1 = string.mYCoord;
-		PPUCoordElem const x2 = x1 + string.mWidth;
-		PPUCoordElem const y2 = y1 + string.mHeight;
+		PPUCoordElem const x2 = x1 + charWidth;
+		PPUCoordElem const y2 = y1 + charHeight;
 
 		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
-		mDeviceInterface->DrawBitmapFont( 7, character, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( string.mZLayer ) );
+		mDeviceInterface->DrawBitmapFont( deviceFontID, character, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( string.mZLayer ) );
 	}
 }
 

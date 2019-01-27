@@ -28,9 +28,9 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
-    <ClInclude Include="ConstructorOverload.h" />
     <ClInclude Include="idgen.h" />
     <ClInclude Include="macros.h" />
+    <ClInclude Include="meta\ConstructorOverload.h" />
     <ClInclude Include="meta\Empty.h" />
     <ClInclude Include="meta\LazyInitSingleton.h" />
     <ClInclude Include="meta\MemberTest.h" />

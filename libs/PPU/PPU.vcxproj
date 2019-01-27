@@ -32,6 +32,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontManager.h" />
     <ClInclude Include="TileLayer.h" />
     <ClInclude Include="DeviceInterface.h" />
     <ClInclude Include="FramePack.h" />
@@ -52,6 +54,8 @@
     <ClInclude Include="TilesetManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="TileLayer.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FramePack.cpp" />

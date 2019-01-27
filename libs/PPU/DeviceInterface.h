@@ -29,8 +29,8 @@ public:
 	virtual DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) = 0;
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
-	virtual bool CreateBitmapFont( void const* buffer, size_t len, uint8_t fontID, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
-	virtual bool DrawBitmapFont( uint8_t fontID, char character, math::AABB4f pos, float z ) = 0;
+	virtual DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight ) = 0;
+	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z ) = 0;
 
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) = 0;
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;

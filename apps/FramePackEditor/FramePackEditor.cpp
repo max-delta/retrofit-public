@@ -8,6 +8,7 @@
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
 #include "PPU/Texture.h"
+#include "PPU/FontManager.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
@@ -43,12 +44,9 @@ void FramePackEditor::Init()
 	mPreviewSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	mPreviewObject = {};
 
-	file::VFS& vfs = *mVfs;
-	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "textures", "fonts" );
-	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( fonts.GetChild( "font_narrow_1x.bmp" ) );
-	file::FileBuffer const buffer{ *fontHandle.Get(), false };
-	RF_ASSERT( buffer.GetData() != nullptr );
-	ppu->LoadFont( buffer.GetData(), buffer.GetSize() );
+	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
+	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
+	mDefaultFontID = fontMan.LoadNewResource( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
 }
 
 
@@ -267,8 +265,8 @@ void FramePackEditor::Render()
 	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
-	gfx::PPUCoord const fontSize( 4, 8 );
-	gfx::PPUCoord const textOffset( 0, fontSize.y );
+	constexpr uint8_t fontSize = 8;
+	gfx::PPUCoord const textOffset( 0, fontSize );
 
 	gfx::PPUCoord const headerOffset( gfx::kTileSize / 16, gfx::kTileSize / 16 );
 	gfx::PPUCoord const previewHeaderStart = gfx::PPUCoord( 0, 0 ) + headerOffset;
@@ -361,69 +359,69 @@ void FramePackEditor::Render()
 	//
 	// Preview header
 	{
-		ppu->DrawText( previewHeaderStart, fontSize, "Preview" );
+		ppu->DrawText( previewHeaderStart, fontSize, mDefaultFontID, "Preview" );
 		gfx::TimeSlowdownRate const previewFPS = 60u / mPreviewSlowdownRate;
-		ppu->DrawText( previewHeaderStart + textOffset, fontSize, "Preview FPS: %i <-/+> to change", previewFPS );
+		ppu->DrawText( previewHeaderStart + textOffset, fontSize, mDefaultFontID, "Preview FPS: %i <-/+> to change", previewFPS );
 		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
 		if( mMasterMode == MasterMode::Meta )
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i <Up/Dn> to change", dataFPS );
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: %i <Up/Dn> to change", dataFPS );
 		}
 		else
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, "Data FPS: %i", dataFPS );
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: %i", dataFPS );
 		}
 		uint16_t const effectiveFrames = math::integer_cast<uint16_t>( animationLength * mPreviewSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, "Preview frames: %i", effectiveFrames );
+		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: %i", effectiveFrames );
 	}
 
 	//
 	// Editing header
 	{
 		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
-		ppu->DrawText( editingHeaderStart, fontSize, "Editing" );
-		ppu->DrawText( editingHeaderStart + textOffset, fontSize, "Frame: %i / [0-%i] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
+		ppu->DrawText( editingHeaderStart, fontSize, mDefaultFontID, "Editing" );
+		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: %i / [0-%i] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i <Ctrl+/,*> to batch", slotSustain );
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: %i <Ctrl+/,*> to batch", slotSustain );
 		}
 		else
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, "Sustain: %i </,*> to change", slotSustain );
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: %i </,*> to change", slotSustain );
 		}
 		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
 		if( texPath.Empty() )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, "Texture: INVALID" );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: INVALID" );
 		}
 		else
 		{
 			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, "Texture: %s", lastElement.c_str() );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: %s", lastElement.c_str() );
 		}
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i", texOrigin.x, texOrigin.y );
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i", texOrigin.x, texOrigin.y );
 				break;
 			}
 			case MasterMode::Texture:
 			{
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
 				}
 				else
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "Origin: %i, %i <Arrows> to change", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i <Arrows> to change", texOrigin.x, texOrigin.y );
 				}
-				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, "Size: %lli, %lli", texSize.x, texSize.y );
+				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, mDefaultFontID, "Size: %lli, %lli", texSize.x, texSize.y );
 				break;
 			}
 			case MasterMode::Colliders:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, "TODO" );
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "TODO" );
 				break;
 			}
 			default:
@@ -453,8 +451,8 @@ void FramePackEditor::Render()
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
 					"<DEL>:Delete frame";
-				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Meta );
-				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Meta );
+				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Meta );
+				ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Meta );
 				break;
 			}
 			case MasterMode::Texture:
@@ -471,14 +469,14 @@ void FramePackEditor::Render()
 					"[TEXTURE]  "
 					"<Ctrl+Arrows>:Batch offset  "
 					"<DEL>:Delete frame  ";
-				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Texture );
+				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Texture );
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 				{
-					ppu->DrawText( footerLine4Start, fontSize, k_FooterAlt4Texture );
+					ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_FooterAlt4Texture );
 				}
 				else
 				{
-					ppu->DrawText( footerLine4Start, fontSize, k_Footer4Texture );
+					ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Texture );
 				}
 				break;
 			}
@@ -504,10 +502,10 @@ void FramePackEditor::Render()
 					"<N>:New box  "
 					"<BACK>:Delete box  "
 					"<DEL>:Delete frame";
-				ppu->DrawText( footerLine1Start, fontSize, k_Footer1Colliders );
-				ppu->DrawText( footerLine2Start, fontSize, k_Footer2Colliders );
-				ppu->DrawText( footerLine3Start, fontSize, k_Footer3Colliders );
-				ppu->DrawText( footerLine4Start, fontSize, k_Footer4Colliders );
+				ppu->DrawText( footerLine1Start, fontSize, mDefaultFontID, k_Footer1Colliders );
+				ppu->DrawText( footerLine2Start, fontSize, mDefaultFontID, k_Footer2Colliders );
+				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Colliders );
+				ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Colliders );
 				break;
 			}
 			default:
@@ -522,8 +520,8 @@ void FramePackEditor::Render()
 			"<Z>:Meta mode  "
 			"<X>:Texture mode  "
 			"<C>:Collider mode";
-		ppu->DrawText( footerLine5Start, fontSize, k_Footer5 );
-		ppu->DrawText( footerLine6Start, fontSize, k_Footer6 );
+		ppu->DrawText( footerLine5Start, fontSize, mDefaultFontID, k_Footer5 );
+		ppu->DrawText( footerLine6Start, fontSize, mDefaultFontID, k_Footer6 );
 	}
 }
 

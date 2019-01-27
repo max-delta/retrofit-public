@@ -11,6 +11,9 @@ namespace RF { namespace gfx {
 typedef uint64_t DeviceTextureID;
 constexpr DeviceTextureID kInvalidDeviceTextureID = 0;
 
+typedef uint64_t DeviceFontID;
+constexpr DeviceFontID kInvalidDeviceFontID = 0;
+
 typedef uint8_t TimeSlowdownRate;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Normal = 1;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
@@ -31,6 +34,9 @@ constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
 
 typedef uint16_t ManagedTilesetID;
 constexpr ManagedTilesetID kInvalidManagedTilesetID = 0;
+
+typedef uint16_t ManagedFontID;
+constexpr ManagedFontID kInvalidManagedFontID = 0;
 
 typedef uint64_t FrameID;
 constexpr FrameID kInvalidFrameID = 0;
@@ -59,9 +65,11 @@ class Object;
 class TileLayer;
 class Texture;
 class Tileset;
+class Font;
 class TextureManager;
 class FramePackManager;
 class TilesetManager;
+class FontManager;
 class DeviceInterface;
 
 class FramePackBase;

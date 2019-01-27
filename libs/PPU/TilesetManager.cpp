@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "TilesetManager.h"
 
-#include "PPU/FramePackSerDes.h"
 #include "PPU/Tileset.h"
 #include "PPU/TextureManager.h"
 #include "PlatformFilesystem/VFS.h"
