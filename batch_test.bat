@@ -1,4 +1,6 @@
 @cls
+@cd /D "%~dp0"
+
 _artifacts\x64\Debug\Out\core_test.exe
 _artifacts\x64\Release\Out\core_test.exe
 _artifacts\x64\Retail\Out\core_test.exe
