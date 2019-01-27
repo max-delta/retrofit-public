@@ -76,6 +76,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{85C25EA0-1E41-4615-BDCB-AF262A401BB2}"
 	ProjectSection(SolutionItems) = preProject
 		.clang-format = .clang-format
+		.hgignore = .hgignore
 		config\AppCommon.props = config\AppCommon.props
 		config\Global.Cpp.props = config\Global.Cpp.props
 		config\RetroFit.props = config\RetroFit.props
