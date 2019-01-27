@@ -518,6 +518,7 @@ void FrameBuilderTest()
 	while( gTestFrameBuilder->IsPlanComplete() == false )
 	{
 		// Spin
+		rftl::this_thread::yield();
 	}
 	gTestFrameBuilderFrameCount++;
 	if( gTestFrameBuilderFrameCount == 2 )

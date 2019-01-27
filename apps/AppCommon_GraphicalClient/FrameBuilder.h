@@ -103,7 +103,7 @@ private:
 	PartialPlanner::PartialPlan mLastValidPlan;
 
 	// NOTE: Task flighting lock applies to current plan and flight lists
-	rftl::mutex mTaskFlightingLock;
+	mutable rftl::mutex mTaskFlightingLock;
 	PartialPlanner::PartialPlan mCurrentPlan;
 	TasksInFlight mTasksInFlight;
 	PlannedActionsInFlight mPlannedActionsInFlight;

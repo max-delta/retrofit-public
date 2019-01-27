@@ -193,6 +193,8 @@ bool FrameBuilder::StartPlan()
 
 bool FrameBuilder::IsPlanComplete() const
 {
+	rftl::lock_guard<rftl::mutex> lock{ mTaskFlightingLock };
+
 	if( mCurrentPlan.mPlannedActions.empty() )
 	{
 		RF_ASSERT( mTasksInFlight.empty() );
