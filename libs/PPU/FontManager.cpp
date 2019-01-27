@@ -145,19 +145,21 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 	RF_ASSERT( mDeviceInterface != nullptr );
 	RF_ASSERT( resource.mDeviceRepresentation == kInvalidDeviceTextureID );
 
-	// TODO: Revise the font API
 	uint32_t tileWidth = 0;
 	uint32_t tileHeight = 0;
+	rftl::array<uint32_t, 256> variableWidth;
 	resource.mDeviceRepresentation = mDeviceInterface->CreateBitmapFont(
 		resource.mFileBuffer.GetData(),
 		resource.mFileBuffer.GetSize(),
 		tileWidth,
-		tileHeight );
+		tileHeight,
+		&variableWidth );
 	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 	resource.mTileWidth = math::integer_cast<uint8_t>( tileWidth );
 	resource.mTileHeight = math::integer_cast<uint8_t>( tileHeight );
+	resource.mVariableWidth = rftl::move( variableWidth );
 	return true;
 }
 
