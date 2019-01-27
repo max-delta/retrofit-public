@@ -263,7 +263,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight )
+DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
@@ -320,6 +320,13 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 	characterWidth = charWidth;
 	uint32_t const charHeight = math::integer_cast<uint32_t>( y / kCharactersPerColumn );
 	characterHeight = charHeight;
+	if( variableWidth != nullptr )
+	{
+		for(uint32_t& width : *variableWidth)
+		{
+			width = 0;
+		}
+	}
 
 	using CharacterStorage = rftl::vector<uint8_t>;
 	using CharacterListStorage = rftl::vector<CharacterStorage>;
@@ -334,8 +341,16 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 		{
 			for( size_t column = 0; column < kCharactersPerRow; column++ )
 			{
-				CharacterStorage& characterStorage = listStorage.at( row * kCharactersPerRow + column );
-				for( size_t pixel = 0; pixel < charWidth; pixel++ )
+				size_t const characterIndex = row * kCharactersPerRow + column;
+				CharacterStorage& characterStorage = listStorage.at( characterIndex );
+				uint32_t unusedVariableCharWidth = 0;
+				uint32_t* variableCharWidthPtr = &unusedVariableCharWidth;
+				if( variableWidth != nullptr )
+				{
+					variableCharWidthPtr = &variableWidth->at( characterIndex );
+				}
+				uint32_t& variableCharWidth = *variableCharWidthPtr;
+				for( uint32_t pixel = 0; pixel < charWidth; pixel++ )
 				{
 					static_assert( kRGBAElements == 3, "Unexpected pixel size" );
 					RF_ASSERT( readHead < maxReadHead );
@@ -347,6 +362,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 					if( greenElement > 128 )
 					{
 						rgba2Element = 255;
+						variableCharWidth = math::Max( variableCharWidth, pixel + 1 );
 					}
 					else
 					{
@@ -399,10 +415,17 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 
 bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z )
 {
+	return DrawBitmapFont( fontID, character, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
+}
+
+
+
+bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::AABB4f texUV )
+{
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
 	// TODO: Color parameter
 	glColor3f( 0, 0, 0 );
-	return DrawBillboardInternal( texID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
+	return DrawBillboardInternal( texID, pos, z, texUV );
 }
 
 

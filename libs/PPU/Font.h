@@ -6,6 +6,8 @@
 
 #include "core/macros.h"
 
+#include "rftl/array"
+
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,6 +54,7 @@ private:
 	DeviceFontID mDeviceRepresentation = kInvalidDeviceFontID;
 	TileSize mTileWidth = kInvalidTileSize;
 	TileSize mTileHeight = kInvalidTileSize;
+	rftl::array<uint32_t, 256> mVariableWidth;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -727,20 +727,15 @@ void PPUController::RenderString( PPUState::String const& string ) const
 	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
 	DeviceFontID const deviceFontID = font->GetDeviceRepresentation();
 
-	uint8_t charWidth = font->mTileWidth;
-	uint8_t charHeight = font->mTileHeight;
-	uint8_t zoomDesired = math::integer_cast<uint8_t>( string.mDesiredHeight / charHeight );
-	if( zoomDesired > 1 )
-	{
-		// Grow
-		charWidth *= zoomDesired;
-		charHeight *= zoomDesired;
-	}
-	else if( zoomDesired < 1 )
+	uint8_t tileWidth = font->mTileWidth;
+	uint8_t tileHeight = font->mTileHeight;
+	uint8_t zoomDesired = math::integer_cast<uint8_t>( string.mDesiredHeight / tileHeight );
+	uint8_t shrinkDesired = 1;
+	if( zoomDesired < 1 )
 	{
 		// Shrink
-		uint8_t shrinkDesired = 1;
-		shrinkDesired = math::integer_cast<uint8_t>( charHeight / string.mDesiredHeight );
+		zoomDesired = 1;
+		shrinkDesired = math::integer_cast<uint8_t>( tileHeight / string.mDesiredHeight );
 		uint8_t const zoomFactor = GetZoomFactor();
 		if( (zoomFactor - shrinkDesired) < 0 )
 		{
@@ -757,18 +752,18 @@ void PPUController::RenderString( PPUState::String const& string ) const
 			// Won't result in an aligned scale, will look wonky
 			// TODO: Warning?
 		}
-
-		RF_ASSERT( shrinkDesired >= 1 );
-		if( shrinkDesired > 1 )
-		{
-			charWidth /= shrinkDesired;
-			charHeight /= shrinkDesired;
-		}
 	}
-	RF_ASSERT( charWidth > 0 );
-	RF_ASSERT( charHeight > 0 );
+	RF_ASSERT( zoomDesired >= 1 );
+	RF_ASSERT( shrinkDesired >= 1 );
+	tileWidth *= zoomDesired;
+	tileHeight *= zoomDesired;
+	tileWidth /= shrinkDesired;
+	tileHeight /= shrinkDesired;
+	RF_ASSERT( tileWidth > 0 );
+	RF_ASSERT( tileHeight > 0 );
 
 	char const* text = string.mText;
+	PPUCoordElem lastCharX = string.mXCoord;
 	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
 	{
 		char const character = text[i_char];
@@ -776,14 +771,55 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		{
 			break;
 		}
-		PPUCoordElem const x1 = string.mXCoord + math::integer_cast<PPUCoordElem>( i_char * charWidth );
+
+		uint8_t charWidth = tileWidth;
+		uint8_t const& charHeight = tileHeight;
+		uint8_t charMargin = 0;
+
+		if( font->mSpacingMode == Font::SpacingMode::Variable )
+		{
+			// NOTE: 'True width' is just for debugging ease
+			uint8_t const trueVarCharWidth = math::integer_cast<uint8_t>( font->mVariableWidth.at( static_cast<unsigned char>( character ) ) );
+			uint8_t varCharWidth = trueVarCharWidth;
+			if( varCharWidth == 0 )
+			{
+				// Whitespace?
+				varCharWidth = tileWidth;
+			}
+			RF_ASSERT( varCharWidth > 0 );
+			varCharWidth *= zoomDesired;
+			RF_ASSERT( varCharWidth > 0 );
+			uint8_t const shrinkLoss = math::integer_cast<uint8_t>( varCharWidth % shrinkDesired );
+			varCharWidth /= shrinkDesired;
+			varCharWidth += shrinkLoss;
+			if( varCharWidth < 1 )
+			{
+				// Cannot be shrunk as much as desired
+				varCharWidth = 1;
+			}
+			charWidth = varCharWidth;
+			charMargin = 1;
+		}
+
+		RF_ASSERT( charWidth > 0 );
+		RF_ASSERT( charHeight > 0 );
+
+		PPUCoordElem const x1 = lastCharX;
 		PPUCoordElem const y1 = string.mYCoord;
 		PPUCoordElem const x2 = x1 + charWidth;
 		PPUCoordElem const y2 = y1 + charHeight;
+		lastCharX = x2 + charMargin;
 
 		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
-		mDeviceInterface->DrawBitmapFont( deviceFontID, character, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( string.mZLayer ) );
+		float const deviceWidth = bottomRight.x - topLeft.x;
+		float const uvWidth = deviceWidth / ( ( deviceWidth * tileWidth ) / charWidth );
+		mDeviceInterface->DrawBitmapFont(
+			deviceFontID,
+			character,
+			math::AABB4f{ topLeft, bottomRight },
+			LayerToDevice( string.mZLayer ),
+			math::AABB4f{ 0.f, 0.f, uvWidth, 1.f } );
 	}
 }
 
