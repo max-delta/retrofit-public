@@ -3,3 +3,8 @@
 #define RF_NO_MOVE(...)
 #define RFTYPE_STATIC_CLASSINFO(...) static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
 #define RFTYPE_ENABLE_VIRTUAL_LOOKUP(...)
+
+#define RF_IS_ALLOWED(...) true
+#define RF_IS_FORBIDDEN(...) false
+
+#define RF_NO_SHARED_EXPORTS
