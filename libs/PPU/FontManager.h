@@ -1,29 +1,25 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
-#include "PPU/ResourceManager.h"
-
 #include "PlatformFilesystem/VFSFwd.h"
 
-#include "core/ptr/unique_ptr.h"
-
-#include "rftl/string"
-#include "rftl/unordered_map"
+#include "PPUFwd.h"
+#include "PPU/ResourceManager.h"
 
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-class PPU_API TextureManager final : public ResourceManager<Texture, ManagedTextureID, kInvalidManagedTextureID>
+class PPU_API FontManager final : public ResourceManager<Font, ManagedFontID, kInvalidManagedFontID>
 {
-	RF_NO_COPY( TextureManager );
+	RF_NO_COPY( FontManager );
 
 	//
 	// Public methods
 public:
-	TextureManager( WeakPtr<file::VFS> const& vfs );
-	virtual ~TextureManager() override;
+	FontManager() = delete;
+	explicit FontManager( WeakPtr<file::VFS> const& vfs );
+	virtual ~FontManager() override;
 
 	bool AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterface );
 
@@ -34,17 +30,14 @@ protected:
 	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const& filename ) override;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename ) override;
 	virtual bool PostLoadFromMemory( ResourceType& resource ) override;
-	virtual bool PreDestroy( ResourceType& resource ) override;
 
 
 	//
 	// Private methods
 private:
 	bool LoadToDevice( ResourceType& resource, Filename const& filename );
-	bool UnloadFromDevice( ResourceType& resource );
 
 
-	//
 	// Private data
 private:
 	WeakPtr<file::VFS> const mVfs;

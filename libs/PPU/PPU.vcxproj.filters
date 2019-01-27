@@ -19,6 +19,8 @@
     <ClInclude Include="TileLayer.h" />
     <ClInclude Include="Tileset.h" />
     <ClInclude Include="TilesetManager.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -36,6 +38,8 @@
     <ClCompile Include="TileLayer.cpp" />
     <ClCompile Include="Tileset.cpp" />
     <ClCompile Include="TilesetManager.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />

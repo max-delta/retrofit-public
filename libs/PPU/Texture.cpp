@@ -7,7 +7,6 @@ namespace RF { namespace gfx {
 
 Texture::Texture()
 	: mLastUsedInFrame( time::FrameClock::time_point() )
-	, mDeviceRepresentation( kInvalidDeviceTextureID )
 {
 	//
 }

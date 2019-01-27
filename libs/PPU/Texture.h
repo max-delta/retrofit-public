@@ -18,6 +18,7 @@ class PPU_API Texture
 private:
 	friend class PPUController;
 	friend class TextureManager;
+	friend class FontManager;
 
 public:
 	Texture();
@@ -34,7 +35,7 @@ private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
 	mutable time::FrameClock::time_point mLastUsedInFrame;
-	DeviceTextureID mDeviceRepresentation;
+	DeviceTextureID mDeviceRepresentation = kInvalidDeviceTextureID;
 	uint32_t mWidthPostLoad;
 	uint32_t mHeightPostLoad;
 };

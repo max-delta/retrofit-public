@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "core/macros.h"
+#include "core/meta/ConstructorOverload.h"
 
 #include "rftl/vector"
 
@@ -17,14 +18,16 @@ namespace RF { namespace file {
 class PLATFORMFILESYSTEM_API FileBuffer
 {
 	RF_NO_COPY( FileBuffer );
-	RF_NO_MOVE( FileBuffer );
 
 	//
 	// Public methods
 public:
 	FileBuffer() = delete;
+	explicit FileBuffer( ExplicitDefaultConstruct );
 	explicit FileBuffer( FileHandle const& file, bool addTerminatingNull );
+	FileBuffer( FileBuffer&& rhs );
 	~FileBuffer() = default;
+	FileBuffer& operator=( FileBuffer&& rhs );
 
 	void const* GetData() const;
 	size_t GetSize() const;

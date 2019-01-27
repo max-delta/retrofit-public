@@ -7,6 +7,13 @@
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
 
+FileBuffer::FileBuffer( ExplicitDefaultConstruct )
+{
+	//
+}
+
+
+
 FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
 {
 	rewind( file.GetFile() );
@@ -38,6 +45,25 @@ FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
 		RF_DBGFAIL_MSG( "Buffer for file will be shrunk, expected to perform extra allocations" );
 	}
 	mBuffer.shrink_to_fit();
+}
+
+
+
+FileBuffer::FileBuffer( FileBuffer&& rhs )
+	: mBuffer( rftl::move( rhs.mBuffer ) )
+{
+	//
+}
+
+
+
+FileBuffer& FileBuffer::operator=( FileBuffer&& rhs )
+{
+	if( this != &rhs )
+	{
+		this->mBuffer = rftl::move( rhs.mBuffer );
+	}
+	return *this;
 }
 
 
