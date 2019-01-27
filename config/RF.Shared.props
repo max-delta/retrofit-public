@@ -38,7 +38,7 @@
       <OptimizeReferences Condition="'$(Configuration)'=='Release'">true</OptimizeReferences>
       <OptimizeReferences Condition="'$(Configuration)'=='Retail'">true</OptimizeReferences>
 
-      <AdditionalOptions Condition="'$(Configuration)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(Configuration)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
 
       <LinkTimeCodeGeneration Condition="'$(Platform)'=='LLVM_x64'">Default</LinkTimeCodeGeneration>
     </Link>
