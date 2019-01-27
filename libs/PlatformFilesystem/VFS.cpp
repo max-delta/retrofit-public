@@ -98,7 +98,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 || file == nullptr )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_VFS, "Failed to open mount table file" );
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
 
