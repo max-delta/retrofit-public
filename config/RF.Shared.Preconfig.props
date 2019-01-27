@@ -3,14 +3,21 @@
   <PropertyGroup Label="Configuration">
     <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
     <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Retail'">false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization Condition="'$(Configuration)'=='Release'">true</WholeProgramOptimization>
+    <WholeProgramOptimization Condition="'$(Configuration)'=='Retail'">true</WholeProgramOptimization>
     <WholeProgramOptimization Condition="'$(Platform)'=='LLVM_x64'">false</WholeProgramOptimization>
   </PropertyGroup>
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup />
   <ItemGroup />
+
+  <PropertyGroup>
+    <SharedLibConfigType Condition="'$(Configuration)'!='Retail'">DynamicLibrary</SharedLibConfigType>
+    <SharedLibConfigType Condition="'$(Configuration)'=='Retail'">StaticLibrary</SharedLibConfigType>
+  </PropertyGroup>
 
   <PropertyGroup>
     <IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>

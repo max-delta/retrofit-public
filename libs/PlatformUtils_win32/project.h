@@ -1,10 +1,14 @@
 #pragma once
 #include "Logging/Constants.h"
 
+#ifndef RF_NO_SHARED_EXPORTS
 #ifdef PLATFORMUTILS_EXPORTS
 #define PLATFORMUTILS_API __declspec( dllexport )
 #else
 #define PLATFORMUTILS_API __declspec( dllimport )
+#endif
+#else
+#define PLATFORMUTILS_API
 #endif
 
 constexpr char const* RFCAT_PLATFORMUTILS = "PlatformUtils";
