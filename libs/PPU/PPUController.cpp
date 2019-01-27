@@ -702,7 +702,9 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 				continue;
 			}
 
-			math::Vector2i16 const texTile = math::Vector2i16{ tile.mIndex % texTilesPerRow, tile.mIndex / texTilesPerRow };
+			math::Vector2i16 const texTile = math::Vector2i16(
+				math::integer_cast<int16_t>( tile.mIndex % texTilesPerRow ),
+				math::integer_cast<int16_t>( tile.mIndex / texTilesPerRow ) );
 			math::Vector2f const texTopLeft = math::Vector2f(
 				texTile.x * texXStep,
 				texTile.y * texYStep );

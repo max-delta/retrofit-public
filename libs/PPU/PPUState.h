@@ -71,7 +71,7 @@ static_assert( sizeof( PPUState::mTileLayers ) <= 2048, "Double-check PPUState s
 static_assert( offsetof( PPUState, mStrings ) <= 4096, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mStrings ) <= 4096, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState ) <= 8192, "Double-check PPUState storage" );
-static_assert( alignof( PPUState ) == 8, "Double-check PPUState alignment" );
+static_assert( alignof( PPUState ) == RF::compiler::kPointerBytes, "Double-check PPUState alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

@@ -98,7 +98,7 @@ private:
 	rftl::vector<Tile> mTiles;
 };
 static_assert( sizeof( TileLayer ) <= 96, "Double-check TileLayer storage" );
-static_assert( alignof( TileLayer ) == 8, "Double-check TileLayer alignment" );
+static_assert( alignof( TileLayer ) == RF::compiler::kPointerBytes, "Double-check TileLayer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
