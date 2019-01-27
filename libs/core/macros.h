@@ -25,8 +25,14 @@
 //  undesired conditional around the non-macro code
 #define RF_EMPTY_FUNCLET() do{}while(false)
 
+#if RF_IS_ALLOWED( RF_FILENAME_MACRO )
+#define RF_FILENAME() __FILE__
+#else
+#define RF_FILENAME() "__FILE__"
+#endif
+
 // Creates a formatted message for a build log that points to the source
 // NOTE: The formatting specifically matches the format that Visual Studio can
 //  match against to provide double-click and F8 functionality for
 #define RF_CREATE_SOURCED_BUILD_MESSAGE( MESSAGE ) \
-	"" __FILE__ "(" RF_STRINGIFY( __LINE__ ) "): " MESSAGE ""
+	"" RF_FILENAME() "(" RF_STRINGIFY( __LINE__ ) "): " MESSAGE ""
