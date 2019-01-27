@@ -49,8 +49,9 @@ public:
 	DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
-	DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight ) override;
+	DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth ) override;
 	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z ) override;
+	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::AABB4f texUV ) override;
 
 	bool glPrint( char const* fmt, ... );
 	bool glPrint( char const* fmt, va_list args );
