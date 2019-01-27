@@ -1,10 +1,14 @@
 #pragma once
 #include "Logging/Constants.h"
 
+#ifndef RF_NO_SHARED_EXPORTS
 #ifdef APPCOMMONGRAPHICALCLIENT_EXPORTS
 #define APPCOMMONGRAPHICALCLIENT_API __declspec( dllexport )
 #else
 #define APPCOMMONGRAPHICALCLIENT_API __declspec( dllimport )
+#endif
+#else
+#define APPCOMMONGRAPHICALCLIENT_API
 #endif
 
 constexpr char const* RFCAT_STARTUP = "Startup";
