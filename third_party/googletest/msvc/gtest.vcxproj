@@ -30,6 +30,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeader />
+      <SupportJustMyCode>false</SupportJustMyCode>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <BasicRuntimeChecks Condition="'$(Configuration)'=='Debug'">EnableFastChecks</BasicRuntimeChecks>
     </ClCompile>

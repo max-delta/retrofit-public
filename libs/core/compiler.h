@@ -135,6 +135,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
 	constexpr bool kAlignedModificationsAreAtomic = true;
 	#define RF_PLATFORM_POINTER_BYTES 8u
+	constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u
 	constexpr unsigned long kMinPageSize = 4096u;
 #elif defined( RF_PLATFORM_X86_32 )
@@ -146,7 +147,8 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
 	constexpr bool kAlignedModificationsAreAtomic = true;
 	#define RF_PLATFORM_POINTER_BYTES 4u
-	#define RF_MIN_PAGE_SIZE 4096u
+	constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
+#	define RF_MIN_PAGE_SIZE 4096u
 	constexpr unsigned long kMinPageSize = 4096u;
 #elif defined( RF_PLATFORM_ARM_64 )
 	#error Verify and add support
@@ -156,6 +158,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	constexpr Endianness kEndianness = Endianness::Variable;
 	constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#define RF_PLATFORM_POINTER_BYTES 8u
+	constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
 	constexpr unsigned long kMinPageSize = 4096u; // Verify?
 #elif defined( RF_PLATFORM_ARM_32 )
@@ -166,6 +169,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	constexpr Endianness kEndianness = Endianness::Variable;
 	constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#define RF_PLATFORM_POINTER_BYTES 4u
+	constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
 	constexpr unsigned long kMinPageSize = 4096u; // Verify?
 #else
