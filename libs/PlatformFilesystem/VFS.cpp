@@ -635,7 +635,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 	// Evaluate each mount point in order
 	for( VFSMount const& mount : mMountTable )
 	{
-		if( ( (int)mount.mPermissions & (int)permissions ) != (int)permissions )
+		if( ( static_cast<int>( mount.mPermissions ) & static_cast<int>( permissions ) ) != static_cast<int>( permissions ) )
 		{
 			// Missing some permissions
 			continue;

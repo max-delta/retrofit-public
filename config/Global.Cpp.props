@@ -36,11 +36,20 @@
         -Wno-exit-time-destructors
         -Wno-format-nonliteral
         -Wno-ignored-attributes
+        -Wno-undefined-func-template
         %(AdditionalOptions)
       </AdditionalOptions>
       <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
       <AdditionalOptions>
         -Werror=nonportable-include-path
+        -Werror=newline-eof
+        -Werror=extra-qualification
+        -Werror=unused-lambda-capture
+        %(AdditionalOptions)
+      </AdditionalOptions>
+      <!--Goal is to use targeted suppression machinery instead of these-->
+      <AdditionalOptions>
+        -Wno-non-virtual-dtor
         %(AdditionalOptions)
       </AdditionalOptions>
     </ClCompile>

@@ -323,7 +323,7 @@ void DrawInputDebug()
 	{
 		if( chr <= 127 )
 		{
-			halfAsciid.push_back( (char)chr );
+			halfAsciid.push_back( static_cast<char>( chr ) );
 		}
 		else
 		{

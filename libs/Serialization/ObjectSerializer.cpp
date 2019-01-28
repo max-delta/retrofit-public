@@ -31,7 +31,7 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 	//  what type was serialized, such as filename extension or packet headers
 	//exporter.Instance_AddTypeIDAttribute( ... );
 
-	auto onMemberVariable = [&exporter, &success](
+	auto onMemberVariable = [&exporter](
 		rftype::TypeTraverser::MemberVariableInstance const& memberVariableInstance ) ->
 		void
 	{
