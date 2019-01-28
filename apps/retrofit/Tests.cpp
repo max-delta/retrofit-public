@@ -245,6 +245,15 @@ void DrawTest()
 	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 5 ), 8, testFont2, "abcdefghijklmnopqrstuvwxyz" );
 	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 6 ), 8, testFont2, "0123456789 !@#$%^&*()" );
 	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 7 ), 8, testFont2, "`'\"~-=[]{}\\|,.<>/?" );
+
+	gfx::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont1, "|||" );
+	gfx::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont1, "WWW" );
+	gfx::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont2, "|||" );
+	gfx::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont2, "WWW" );
+	RF_ASSERT( monoPipeLen != 0 );
+	RF_ASSERT( monoPipeLen == monoWLen );
+	RF_ASSERT( varPipeLen != 0 );
+	RF_ASSERT( varPipeLen != varWLen );
 }
 
 
