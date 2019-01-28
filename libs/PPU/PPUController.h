@@ -83,6 +83,9 @@ public:
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, va_list args );
 
+	PPUCoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
+	PPUCoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
+
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
 	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
@@ -99,6 +102,10 @@ private:
 	void Render() const;
 
 	void CalculateDepthOrder( DepthOrder& depthOrder ) const;
+
+	void CalculateDesiredFontZoomShrink( Font const& font, uint8_t desiredHeight, uint8_t& zoomDesired, uint8_t& shrinkDesired ) const;
+	void CalculateFontVariableWhitespaceWidth( Font const& font, uint8_t& whitespaceWidth ) const;
+	void CalculateFontVariableCharWidth( Font const& font, char character, uint8_t whitespaceWidth, uint8_t zoomDesired, uint8_t shrinkDesired, uint8_t& varCharWidth ) const;
 
 	void RenderObject( Object const& object ) const;
 	void RenderTileLayer( TileLayer const& tileLayer ) const;

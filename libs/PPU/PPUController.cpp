@@ -322,6 +322,79 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
+PPUCoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
+{
+	decltype( PPUState::String::mText ) string = {};
+	static_assert( std::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
+	{
+		string[0] = '\0';
+		va_list args;
+		va_start( args, fmt );
+		vsnprintf( &string[0], PPUState::String::k_MaxLen, fmt, args );
+		va_end( args );
+		string[PPUState::String::k_MaxLen] = '\0';
+	}
+
+	char const* text = string;
+
+	return CalculateStringLength( desiredHeight, fontID, text );
+}
+
+
+
+PPUCoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text )
+{
+	// !!!WARNING!!! This must be kept logically equivalent to RenderString(...)
+
+	PPUCoordElem retVal = 0;
+
+	Font const* font = mFontManager->GetResourceFromManagedResourceID( fontID );
+	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
+
+	uint8_t tileWidth = font->mTileWidth;
+	uint8_t tileHeight = font->mTileHeight;
+	uint8_t zoomDesired = 0;
+	uint8_t shrinkDesired = 0;
+	CalculateDesiredFontZoomShrink( *font, desiredHeight, zoomDesired, shrinkDesired );
+	RF_ASSERT( zoomDesired >= 1 );
+	RF_ASSERT( shrinkDesired >= 1 );
+	tileWidth *= zoomDesired;
+	tileHeight *= zoomDesired;
+	tileWidth /= shrinkDesired;
+	tileHeight /= shrinkDesired;
+	RF_ASSERT( tileWidth > 0 );
+	RF_ASSERT( tileHeight > 0 );
+
+	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
+	{
+		char const character = text[i_char];
+		if( character == '\0' )
+		{
+			break;
+		}
+
+		uint8_t charWidth = tileWidth;
+		uint8_t charMargin = 0;
+
+		if( font->mSpacingMode == Font::SpacingMode::Variable )
+		{
+			uint8_t whitespaceWidth = 0;
+			CalculateFontVariableWhitespaceWidth( *font, whitespaceWidth );
+			CalculateFontVariableCharWidth( *font, character, whitespaceWidth, zoomDesired, shrinkDesired, charWidth );
+			charMargin = 1;
+		}
+
+		RF_ASSERT( charWidth > 0 );
+
+		retVal += charWidth;
+		retVal += charMargin;
+	}
+
+	return retVal;
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
@@ -622,6 +695,71 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 
 
 
+void PPUController::CalculateDesiredFontZoomShrink( Font const& font, uint8_t desiredHeight, uint8_t& zoomDesired, uint8_t& shrinkDesired ) const
+{
+	uint8_t const& tileHeight = font.mTileHeight;
+	zoomDesired = math::integer_cast<uint8_t>( desiredHeight / tileHeight );
+	shrinkDesired = 1;
+	if( zoomDesired < 1 )
+	{
+		// Shrink
+		zoomDesired = 1;
+		shrinkDesired = math::integer_cast<uint8_t>( tileHeight / desiredHeight );
+		uint8_t const zoomFactor = GetZoomFactor();
+		if( ( zoomFactor - shrinkDesired ) < 0 )
+		{
+			// Font bigger than desired height, can't downscale enough, will
+			//  look wonky when rendered even at reduced zoom
+			// TODO: Warning?
+			shrinkDesired = zoomFactor;
+			RF_ASSERT_MSG( shrinkDesired == 1, "Check this assumption?" );
+		}
+
+		bool const effectiveZoomIsMisalignedScale = ( zoomFactor % shrinkDesired ) != 0;
+		if( effectiveZoomIsMisalignedScale )
+		{
+			// Won't result in an aligned scale, will look wonky
+			// TODO: Warning?
+		}
+	}
+	RF_ASSERT( zoomDesired >= 1 );
+	RF_ASSERT( shrinkDesired >= 1 );
+}
+
+
+
+void PPUController::CalculateFontVariableWhitespaceWidth( Font const& font, uint8_t& whitespaceWidth ) const
+{
+	whitespaceWidth = font.mTileWidth;
+}
+
+
+
+void PPUController::CalculateFontVariableCharWidth( Font const& font, char character, uint8_t whitespaceWidth, uint8_t zoomDesired, uint8_t shrinkDesired, uint8_t& varCharWidth ) const
+{
+	// NOTE: 'True width' is just for debugging ease
+	uint8_t const trueVarCharWidth = math::integer_cast<uint8_t>( font.mVariableWidth.at( static_cast<unsigned char>( character ) ) );
+	varCharWidth = trueVarCharWidth;
+	if( varCharWidth == 0 )
+	{
+		// Whitespace?
+		varCharWidth = whitespaceWidth;
+	}
+	RF_ASSERT( varCharWidth > 0 );
+	varCharWidth *= zoomDesired;
+	RF_ASSERT( varCharWidth > 0 );
+	uint8_t const shrinkLoss = math::integer_cast<uint8_t>( varCharWidth % shrinkDesired );
+	varCharWidth /= shrinkDesired;
+	varCharWidth += shrinkLoss;
+	if( varCharWidth < 1 )
+	{
+		// Cannot be shrunk as much as desired
+		varCharWidth = 1;
+	}
+}
+
+
+
 void PPUController::RenderObject( Object const& object ) const
 {
 	FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
@@ -725,36 +863,17 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 void PPUController::RenderString( PPUState::String const& string ) const
 {
+	// !!!WARNING!!! This must be kept logically equivalent to CalculateStringLength(...)
+
 	Font const* font = mFontManager->GetResourceFromManagedResourceID( string.mFontReference );
 	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
 	DeviceFontID const deviceFontID = font->GetDeviceRepresentation();
 
 	uint8_t tileWidth = font->mTileWidth;
 	uint8_t tileHeight = font->mTileHeight;
-	uint8_t zoomDesired = math::integer_cast<uint8_t>( string.mDesiredHeight / tileHeight );
-	uint8_t shrinkDesired = 1;
-	if( zoomDesired < 1 )
-	{
-		// Shrink
-		zoomDesired = 1;
-		shrinkDesired = math::integer_cast<uint8_t>( tileHeight / string.mDesiredHeight );
-		uint8_t const zoomFactor = GetZoomFactor();
-		if( (zoomFactor - shrinkDesired) < 0 )
-		{
-			// Font bigger than desired height, can't downscale enough, will
-			//  look wonky when rendered even at reduced zoom
-			// TODO: Warning?
-			shrinkDesired = zoomFactor;
-			RF_ASSERT_MSG( shrinkDesired == 1, "Check this assumption?" );
-		}
-
-		bool const effectiveZoomIsMisalignedScale = (zoomFactor % shrinkDesired) != 0;
-		if( effectiveZoomIsMisalignedScale )
-		{
-			// Won't result in an aligned scale, will look wonky
-			// TODO: Warning?
-		}
-	}
+	uint8_t zoomDesired = 0;
+	uint8_t shrinkDesired = 0;
+	CalculateDesiredFontZoomShrink( *font, string.mDesiredHeight, zoomDesired, shrinkDesired );
 	RF_ASSERT( zoomDesired >= 1 );
 	RF_ASSERT( shrinkDesired >= 1 );
 	tileWidth *= zoomDesired;
@@ -780,26 +899,9 @@ void PPUController::RenderString( PPUState::String const& string ) const
 
 		if( font->mSpacingMode == Font::SpacingMode::Variable )
 		{
-			// NOTE: 'True width' is just for debugging ease
-			uint8_t const trueVarCharWidth = math::integer_cast<uint8_t>( font->mVariableWidth.at( static_cast<unsigned char>( character ) ) );
-			uint8_t varCharWidth = trueVarCharWidth;
-			if( varCharWidth == 0 )
-			{
-				// Whitespace?
-				varCharWidth = tileWidth;
-			}
-			RF_ASSERT( varCharWidth > 0 );
-			varCharWidth *= zoomDesired;
-			RF_ASSERT( varCharWidth > 0 );
-			uint8_t const shrinkLoss = math::integer_cast<uint8_t>( varCharWidth % shrinkDesired );
-			varCharWidth /= shrinkDesired;
-			varCharWidth += shrinkLoss;
-			if( varCharWidth < 1 )
-			{
-				// Cannot be shrunk as much as desired
-				varCharWidth = 1;
-			}
-			charWidth = varCharWidth;
+			uint8_t whitespaceWidth = 0;
+			CalculateFontVariableWhitespaceWidth( *font, whitespaceWidth );
+			CalculateFontVariableCharWidth( *font, character, whitespaceWidth, zoomDesired, shrinkDesired, charWidth );
 			charMargin = 1;
 		}
 
