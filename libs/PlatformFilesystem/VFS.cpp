@@ -81,7 +81,6 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
 
 	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
-	RF_ASSERT( rftl::filesystem::exists( absoluteMountTableFilename ) );
 	mMountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( mMountTableFile ).c_str() );
 
@@ -89,9 +88,20 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( mConfigDirectory ).c_str() );
 
 	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
-	RF_ASSERT( rftl::filesystem::exists( absoluteUserDirectory ) );
 	mUserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
 	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( mUserDirectory ).c_str() );
+
+	if( rftl::filesystem::exists( absoluteMountTableFilename ) == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to find mount table file" );
+		return false;
+	}
+
+	if( rftl::filesystem::exists( absoluteUserDirectory ) == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to find user directory" );
+		return false;
+	}
 
 	FILE* file;
 	rftl::string collapsedMountFilename = CreateStringFromPath( mMountTableFile );

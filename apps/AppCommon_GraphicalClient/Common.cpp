@@ -81,6 +81,11 @@ void Startup()
 	}
 	if( vfsInitialized == false )
 	{
+		RFLOG_WARNING( nullptr, RFCAT_STARTUP, "Failed to startup VFS, trying again assuming _artifacts launch" );
+		vfsInitialized = gVfs->AttemptInitialMount( "../../../../config/vfs_game.ini", "../../../../../rftest_user" );
+	}
+	if( vfsInitialized == false )
+	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
 	}
 
