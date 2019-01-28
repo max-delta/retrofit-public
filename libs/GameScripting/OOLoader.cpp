@@ -33,7 +33,7 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 		members.emplace_back( varInst );
 	};
 
-	auto onTraversalTypeFoundFunc = [&members](
+	auto onTraversalTypeFoundFunc = [](
 		rftype::TypeTraverser::TraversalType traversalType,
 		rftype::TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) -> void
