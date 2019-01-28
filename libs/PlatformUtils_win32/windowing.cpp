@@ -14,17 +14,17 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 	win32::SetProcessDPIAware();
 
 	// IDC_ARROW
-	auto idc_arrow = ( ( win32::LPWSTR )( ( win32::ULONG_PTR )( ( win32::WORD )( 32512 ) ) ) );
+	win32::LPWSTR const idc_arrow = reinterpret_cast<win32::LPWSTR>( static_cast<win32::ULONG_PTR>( static_cast<win32::WORD>( 32512 ) ) );
 
 	win32::WNDCLASSW wc = {};
 	wc.style = CS_OWNDC; // Individual instances of this window will not share device contexts.
-	wc.lpfnWndProc = (win32::WNDPROC)WndProc; // The function that will be called for events.
+	wc.lpfnWndProc = reinterpret_cast<win32::WNDPROC>( WndProc ); // The function that will be called for events.
 	wc.cbClsExtra = 0; // The class has no extra memory.
 	wc.cbWndExtra = 0; // The window has no extra memory.
 	//wc.hInstance = hInstance; // The application that is managing the window.
 	//wc.hIcon = LoadIcon( hInstance, 0 ); // We want to use resource 0 in this executable for our icon.
 	wc.hCursor = win32::LoadCursorW( nullptr, idc_arrow ); // We want to use the standard arrow cursor.
-	wc.hbrBackground = (win32::HBRUSH)win32::GetStockObject( BLACK_BRUSH ); // The default background color.
+	wc.hbrBackground = static_cast<win32::HBRUSH>( win32::GetStockObject( BLACK_BRUSH ) ); // The default background color.
 	wc.lpszMenuName = nullptr; // The class has no menu.
 	wc.lpszClassName = L"SimpleGL"; // The name of this class.
 	RegisterClassW( &wc ); // Register the attributes for the next call to CreateWindow.

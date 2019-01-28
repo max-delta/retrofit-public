@@ -15,7 +15,6 @@ class PPU_API Object
 	// Public methods
 public:
 	Object() = default;
-	~Object() = default;
 
 	void Animate();
 

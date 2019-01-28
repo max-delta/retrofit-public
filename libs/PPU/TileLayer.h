@@ -42,7 +42,6 @@ public:
 	// Public methods
 public:
 	TileLayer() = default;
-	~TileLayer() = default;
 
 	void Animate();
 

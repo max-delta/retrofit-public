@@ -36,10 +36,10 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 
 		case WM_GETMINMAXINFO: // lParam: MINMAXINFO*
 			// Lets us tell the window the limits that it can be resized to.
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
-			( *( (win32::MINMAXINFO*)lParam ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
+			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
+			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
+			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
+			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
 			return 0;
 
 		case WM_CLOSE: // No parameters

@@ -8,7 +8,7 @@
 namespace RF { namespace unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
-rftl::string unicode::ConvertToASCII( char const* source, size_t numBytes )
+rftl::string ConvertToASCII( char const* source, size_t numBytes )
 {
 	rftl::string retVal;
 	retVal.reserve( numBytes );
