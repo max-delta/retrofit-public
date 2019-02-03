@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="allocate_singleallocator.cpp" />
+    <ClCompile Include="event_eventdispatcher.cpp" />
     <ClCompile Include="event_eventqueue.cpp" />
     <ClCompile Include="idgen.cpp" />
     <ClCompile Include="logic_directededgegraph.cpp" />

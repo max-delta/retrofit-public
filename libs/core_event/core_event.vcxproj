@@ -28,6 +28,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="EventDispatcher.h" />
     <ClInclude Include="MultithreadEventQueue.h" />
     <ClInclude Include="SinglethreadEventQueue.h" />
     <ClInclude Include="stdafx.h" />
@@ -38,6 +39,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="EventDispatcher.inl" />
     <None Include="MultithreadEventQueue.inl" />
     <None Include="SinglethreadEventQueue.inl" />
   </ItemGroup>
