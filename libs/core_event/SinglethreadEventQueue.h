@@ -24,6 +24,8 @@ public:
 	// Public methods
 public:
 	SinglethreadEventQueue();
+	SinglethreadEventQueue( SinglethreadEventQueue&& rhs );
+	SinglethreadEventQueue& operator = ( SinglethreadEventQueue && rhs );
 
 	bool AddEvent( Event&& event );
 	size_t StageNewEvents();

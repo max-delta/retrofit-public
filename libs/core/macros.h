@@ -21,9 +21,18 @@
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
 
+// Construct(&&) and Operator=(&&) decorators to automate common move patterns
+#define RF_MOVE_CONSTRUCT( MEMBER ) \
+	MEMBER( rhs.MEMBER )
+#define RF_MOVE_ASSIGN( MEMBER ) \
+	this->MEMBER = rftl::move( rhs.MEMBER );
+
 // For macro expansion where 'if(...) MACRO(); Code();' would result in an
 //  undesired conditional around the non-macro code
-#define RF_EMPTY_FUNCLET() do{}while(false)
+#define RF_EMPTY_FUNCLET() \
+	do \
+	{ \
+	} while( false )
 
 #if RF_IS_ALLOWED( RF_FILENAME_MACRO )
 #define RF_FILENAME() __FILE__

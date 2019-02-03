@@ -14,6 +14,29 @@ inline SinglethreadEventQueue<EventT>::SinglethreadEventQueue()
 
 
 template<typename EventT>
+inline SinglethreadEventQueue<EventT>::SinglethreadEventQueue( SinglethreadEventQueue&& rhs )
+	: mQueue( rftl::move( rhs.mQueue ) )
+	, mNumStaged( rftl::move( rhs.mNumStaged ) )
+{
+	//
+}
+
+
+
+template<typename EventT>
+inline SinglethreadEventQueue<EventT>& SinglethreadEventQueue<EventT>::operator=( SinglethreadEventQueue&& rhs )
+{
+	if( this != &rhs )
+	{
+		mQueue = rftl::move( rhs.mQueue );
+		mNumStaged = rftl::move( rhs.mNumStaged );
+	}
+	return *this;
+}
+
+
+
+template<typename EventT>
 inline bool SinglethreadEventQueue<EventT>::AddEvent( Event&& event )
 {
 	mQueue.emplace_back( rftl::move( event ) );
