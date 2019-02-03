@@ -43,6 +43,7 @@
     <ClCompile Include="unicode_charconvert.cpp" />
     <ClCompile Include="unicode_bufferconvert.cpp" />
     <ClCompile Include="event_eventqueue.cpp" />
+    <ClCompile Include="event_eventdispatcher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

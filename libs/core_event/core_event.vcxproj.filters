@@ -7,9 +7,11 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="MultithreadEventQueue.h" />
     <ClInclude Include="SinglethreadEventQueue.h" />
+    <ClInclude Include="EventDispatcher.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MultithreadEventQueue.inl" />
     <None Include="SinglethreadEventQueue.inl" />
+    <None Include="EventDispatcher.inl" />
   </ItemGroup>
 </Project>
