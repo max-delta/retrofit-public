@@ -24,8 +24,13 @@
 // Construct(&&) and Operator=(&&) decorators to automate common move patterns
 #define RF_MOVE_CONSTRUCT( MEMBER ) \
 	MEMBER( rhs.MEMBER )
+#define RF_MOVE_CLEAR( MEMBER ) \
+	rhs.MEMBER = {};
 #define RF_MOVE_ASSIGN( MEMBER ) \
 	this->MEMBER = rftl::move( rhs.MEMBER );
+#define RF_MOVE_ASSIGN_CLEAR( MEMBER ) \
+	this->MEMBER = rftl::move( rhs.MEMBER ); \
+	RF_MOVE_CLEAR( MEMBER );
 
 // For macro expansion where 'if(...) MACRO(); Code();' would result in an
 //  undesired conditional around the non-macro code

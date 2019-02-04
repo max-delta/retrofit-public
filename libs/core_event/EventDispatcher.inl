@@ -22,7 +22,8 @@ inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::
 	: RF_MOVE_CONSTRUCT( mID )
 	, RF_MOVE_CONSTRUCT( mHandler )
 {
-	//
+	RF_MOVE_CLEAR( mID );
+	RF_MOVE_CLEAR( mHandler );
 }
 
 
@@ -32,8 +33,8 @@ inline typename EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::Keyed
 {
 	if( this != &rhs )
 	{
-		RF_MOVE_ASSIGN( mID );
-		RF_MOVE_ASSIGN( mHandler );
+		RF_MOVE_ASSIGN_CLEAR( mID );
+		RF_MOVE_ASSIGN_CLEAR( mHandler );
 	}
 	return *this;
 }
@@ -46,19 +47,8 @@ inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::HandlerRef::~H
 	HandlerStorage* const storage = mHandlerStorage.Get();
 	if( storage != nullptr )
 	{
-		HandlerList& handlerList = storage->mHandlerList;
-		typename HandlerList::const_iterator toErase = handlerList.end();
-		for( typename HandlerList::const_iterator iter = handlerList.begin(); iter != handlerList.end(); iter++ )
-		{
-			KeyedHandler const& handler = *iter;
-			if( handler.mID == mID )
-			{
-				toErase = iter;
-				break;
-			}
-		}
-		RF_ASSERT_MSG( toErase != handlerList.end(), "Handler not found during unregistration" );
-		PoliciesT::HandlerOrderPolicy::Remove( handlerList, toErase );
+		WriterLock lock( storage->mPendingRemoveMultiReaderSingleWriterLock );
+		storage->mPendingRemoves.emplace_back( mID );
 		mHandlerStorage = nullptr;
 	}
 }
@@ -78,14 +68,20 @@ inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::EventDispatche
 template<typename EventT, typename HandlerT, typename EventQueueT, typename PoliciesT>
 inline typename EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::HandlerRef EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::RegisterHandler( Handler&& handler )
 {
-	mPreviousHandlerID++;
-	HandlerID const handlerID = mPreviousHandlerID;
+	HandlerStorage* const storage = mHandlerStorage.Get();
 
-	Policies::HandlerOrderPolicy::Add(
-		mHandlerStorage->mHandlerList,
-		rftl::move( KeyedHandler{
-			handlerID,
-			rftl::move( handler ) } ) );
+	HandlerID handlerID = kInvalidHandlerID;
+	{
+		WriterLock lock( storage->mPendingAddMultiReaderSingleWriterLock );
+
+		mPreviousHandlerID++;
+		handlerID = mPreviousHandlerID;
+
+		storage->mPendingAdds.emplace_back(
+			rftl::move( KeyedHandler{
+				handlerID,
+				rftl::move( handler ) } ) );
+	}
 
 	return HandlerRef{ handlerID, mHandlerStorage };
 }
@@ -103,6 +99,11 @@ inline bool EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::AddEvent(
 template<typename EventT, typename HandlerT, typename EventQueueT, typename PoliciesT>
 inline size_t EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::DispatchEvents()
 {
+	// Only one dispatch can run at a time, and it's a bad idea anyways to try
+	//  and have multiple threads sharing event-processing work, since at that
+	//  point a task system is probably a better choice
+	ExclusiveLock const dispatchLock( mDispatchExclusiveLock );
+
 	// Collect any new events
 	mEventQueue.StageNewEvents();
 	EventList events = mEventQueue.ExtractStagedEvents();
@@ -130,7 +131,46 @@ inline size_t EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::Dispatc
 		Policies::EventSortPolicy::Sort( events.begin(), events.end() );
 	}
 
-	HandlerList& handlers = mHandlerStorage->mHandlerList;
+	// Update handlers
+	HandlerStorage* const storage = mHandlerStorage.Get();
+	HandlerList& handlers = storage->mHandlerList;
+	{
+		// Get adds and removes
+		HandlerList pendingAdds;
+		HandlerIDList pendingRemoves;
+		{
+			// NOTE: Keeping the 'Add' lock while reading 'Remove's, to prevent
+			//  getting a remove without the corresponding add
+			WriterLock addLock( storage->mPendingAddMultiReaderSingleWriterLock );
+			WriterLock removeLock( storage->mPendingRemoveMultiReaderSingleWriterLock );
+			pendingAdds = rftl::move( storage->mPendingAdds );
+			pendingRemoves = rftl::move( storage->mPendingRemoves );
+		}
+
+		// Process adds
+		handlers.reserve( handlers.size() + pendingAdds.size() );
+		for( KeyedHandler& handler : pendingAdds )
+		{
+			PoliciesT::HandlerOrderPolicy::Add( handlers, rftl::move( handler ) );
+		}
+
+		// Process removes
+		for( HandlerID const& handlerID : pendingRemoves )
+		{
+			typename HandlerList::const_iterator toErase = handlers.end();
+			for( typename HandlerList::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++ )
+			{
+				KeyedHandler const& handler = *iter;
+				if( handler.mID == handlerID )
+				{
+					toErase = iter;
+					break;
+				}
+			}
+			RF_ASSERT_MSG( toErase != handlers.end(), "Handler not found during unregistration" );
+			PoliciesT::HandlerOrderPolicy::Remove( handlers, toErase );
+		}
+	}
 
 	// For each event...
 	size_t const eventsConsidered = events.size();
