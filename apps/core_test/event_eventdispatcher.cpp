@@ -304,7 +304,6 @@ TEST( EventDispatcher, SkippedHandlers )
 	{
 		struct Skip
 		{
-			using Iter = rftl::vector<KeyedHandler<Handler>>::iterator;
 			bool operator()( Handler const& handler, Event const& event )
 			{
 				return handler.mVal == 1;
