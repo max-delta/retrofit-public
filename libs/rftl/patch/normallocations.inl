@@ -1,5 +1,6 @@
 #pragma once
 
+#define RFTL_ALGORITHM <algorithm>
 #define RFTL_ARRAY <array>
 #define RFTL_ATOMIC <atomic>
 #define RFTL_BITSET <bitset>
