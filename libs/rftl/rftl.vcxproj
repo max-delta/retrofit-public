@@ -64,6 +64,7 @@
     <ClInclude Include="vector" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="algorithm" />
     <None Include="extension\static_array.inl" />
     <None Include="map" />
     <None Include="patch\normallocations.inl" />
