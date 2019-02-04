@@ -35,14 +35,14 @@ struct HandlersAreRunInSortOrder
 	static void Add( ContainerT& container, HandlerT&& handler )
 	{
 		container.emplace_back( rftl::move( handler ) );
-		SortT( container.begin(), container.end() );
+		SortT()( container.begin(), container.end() );
 	}
 	template<typename ContainerT, typename IterT>
-	static void Remove( ContainerT& container, IterT const& toErase )
+	static void Remove( ContainerT& container, IterT& toErase )
 	{
-		rftl::swap( *toErase, container.back() );
+		*toErase = rftl::move( container.back() );
 		container.pop_back();
-		SortT( container.begin(), container.end() );
+		SortT()( container.begin(), container.end() );
 	}
 };
 struct HandlersAreRunInRegistrationOrder
@@ -53,7 +53,7 @@ struct HandlersAreRunInRegistrationOrder
 		container.emplace_back( rftl::move( handler ) );
 	}
 	template<typename ContainerT, typename IterT>
-	static void Remove( ContainerT& container, IterT const& toErase )
+	static void Remove( ContainerT& container, IterT& toErase )
 	{
 		container.erase( toErase );
 	}
@@ -66,7 +66,7 @@ struct HandlersAreRunInArbitraryOrder
 		container.emplace_back( rftl::move( handler ) );
 	}
 	template<typename ContainerT, typename IterT>
-	static void Remove( ContainerT& container, IterT const& toErase )
+	static void Remove( ContainerT& container, IterT& toErase )
 	{
 		rftl::swap( *toErase, container.back() );
 		container.pop_back();
@@ -83,7 +83,7 @@ struct HandlersAreConditional
 	template<typename HandlerT, typename EventT>
 	static bool ShouldSkip( HandlerT& handler, EventT& event )
 	{
-		return SkipT( handler, event );
+		return SkipT()( handler, event );
 	}
 };
 struct HandlersAreUnconditional
@@ -105,7 +105,7 @@ struct HandlerCustomDispatch
 	template<typename HandlerT, typename EventT>
 	static void Dispatch( HandlerT& handler, EventT& event )
 	{
-		return DispatchT( handler, event );
+		return DispatchT()( handler, event );
 	}
 };
 struct HandlerCallDispatch
@@ -127,7 +127,7 @@ struct EventsAreSorted
 	template<typename IterT>
 	static void Sort( IterT first, IterT last )
 	{
-		SortT( first, last );
+		SortT()( first, last );
 	}
 };
 struct EventsAreUnsorted
@@ -150,7 +150,7 @@ struct EventsAreDiscardable
 	template<typename EventT>
 	static bool ShouldDiscard( EventT& event )
 	{
-		return DiscardT( event );
+		return DiscardT()( event );
 	}
 };
 struct EventsAreNotDiscardable
@@ -173,7 +173,7 @@ struct EventsAreDeferrable
 	template<typename EventT>
 	static bool ShouldDefer( EventT& event )
 	{
-		return DeferT( event );
+		return DeferT()( event );
 	}
 };
 struct EventsAreNotDeferrable
@@ -199,6 +199,7 @@ struct HandlingIsPredeterministic
 	static constexpr bool kCheckDiscardBeforeEachHandler = false;
 	static constexpr bool kCheckDeferBeforeEachHandler = false;
 };
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -212,6 +213,25 @@ struct EventDispatcherDefaultPolicies
 	using EventDiscardPolicy = traits::EventsAreNotDiscardable;
 	using EventDeferPolicy = traits::EventsAreNotDeferrable;
 	using HandlerPredeterminismPolicy = traits::HandlingIsPredeterministic;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename HandlerT>
+struct KeyedHandler
+{
+	RF_NO_COPY( KeyedHandler );
+
+	using Handler = HandlerT;
+	using HandlerID = uint64_t;
+	static constexpr HandlerID kInvalidHandlerID = 0;
+
+	KeyedHandler( HandlerID id, Handler&& handler );
+	KeyedHandler( KeyedHandler&& rhs );
+	KeyedHandler& operator=( KeyedHandler&& rhs );
+
+	HandlerID mID = kInvalidHandlerID;
+	Handler mHandler;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -230,7 +250,6 @@ class EventDispatcher
 	// Forwards
 private:
 	struct HandlerStorage;
-	struct KeyedHandler;
 public:
 	struct HandlerRef;
 
@@ -241,11 +260,11 @@ public:
 	using Handler = HandlerT;
 	using EventQueue = EventQueueT;
 	using Policies = PoliciesT;
-
+	using KeyedHandler = KeyedHandler<Handler>;
+	using HandlerList = rftl::vector<KeyedHandler>;
 private:
 	using HandlerID = uint64_t;
 	static constexpr HandlerID kInvalidHandlerID = 0;
-	using HandlerList = rftl::vector<KeyedHandler>;
 	using HandlerIDList = rftl::vector<HandlerID>;
 	using EventList = typename EventQueue::EventQueue;
 	using ReaderWriterMutex = rftl::shared_mutex;
@@ -270,18 +289,6 @@ private:
 		HandlerIDList mPendingRemoves;
 		mutable ReaderWriterMutex mPendingRemoveMultiReaderSingleWriterLock;
 	};
-	struct KeyedHandler
-	{
-		RF_NO_COPY( KeyedHandler );
-
-		KeyedHandler( HandlerID id, Handler&& handler );
-		KeyedHandler( KeyedHandler&& rhs );
-		KeyedHandler& operator=( KeyedHandler&& rhs );
-
-		HandlerID mID = kInvalidHandlerID;
-		Handler mHandler;
-	};
-
 public:
 	struct HandlerRef
 	{

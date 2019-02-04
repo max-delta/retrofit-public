@@ -7,8 +7,8 @@
 namespace RF { namespace event {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename EventT, typename HandlerT, typename EventQueueT, typename PoliciesT>
-inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::KeyedHandler( HandlerID id, Handler&& handler )
+template<typename HandlerT>
+inline KeyedHandler<HandlerT>::KeyedHandler( HandlerID id, Handler&& handler )
 	: mID( rftl::move( id ) )
 	, mHandler( rftl::move( handler ) )
 {
@@ -17,8 +17,8 @@ inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::
 
 
 
-template<typename EventT, typename HandlerT, typename EventQueueT, typename PoliciesT>
-inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::KeyedHandler( KeyedHandler&& rhs )
+template<typename HandlerT>
+inline KeyedHandler<HandlerT>::KeyedHandler( KeyedHandler&& rhs )
 	: RF_MOVE_CONSTRUCT( mID )
 	, RF_MOVE_CONSTRUCT( mHandler )
 {
@@ -28,8 +28,8 @@ inline EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::
 
 
 
-template<typename EventT, typename HandlerT, typename EventQueueT, typename PoliciesT>
-inline typename EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler& EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::KeyedHandler::operator=( KeyedHandler&& rhs )
+template<typename HandlerT>
+inline KeyedHandler<HandlerT>& KeyedHandler<HandlerT>::operator=( KeyedHandler&& rhs )
 {
 	if( this != &rhs )
 	{
@@ -157,8 +157,8 @@ inline size_t EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::Dispatc
 		// Process removes
 		for( HandlerID const& handlerID : pendingRemoves )
 		{
-			typename HandlerList::const_iterator toErase = handlers.end();
-			for( typename HandlerList::const_iterator iter = handlers.begin(); iter != handlers.end(); iter++ )
+			typename HandlerList::iterator toErase = handlers.end();
+			for( typename HandlerList::iterator iter = handlers.begin(); iter != handlers.end(); iter++ )
 			{
 				KeyedHandler const& handler = *iter;
 				if( handler.mID == handlerID )
