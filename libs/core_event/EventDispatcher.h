@@ -4,6 +4,8 @@
 #include "core/ptr/weak_ptr.h"
 
 #include "rftl/vector"
+#include "rftl/mutex"
+#include "rftl/shared_mutex"
 
 
 namespace RF { namespace event {
@@ -244,7 +246,13 @@ private:
 	using HandlerID = uint64_t;
 	static constexpr HandlerID kInvalidHandlerID = 0;
 	using HandlerList = rftl::vector<KeyedHandler>;
+	using HandlerIDList = rftl::vector<HandlerID>;
 	using EventList = typename EventQueue::EventQueue;
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
+	using ExclusiveMutex = rftl::mutex;
+	using ExclusiveLock = rftl::unique_lock<rftl::mutex>;
 
 
 	//
@@ -257,6 +265,10 @@ private:
 		HandlerStorage() = default;
 
 		HandlerList mHandlerList;
+		HandlerList mPendingAdds;
+		mutable ReaderWriterMutex mPendingAddMultiReaderSingleWriterLock;
+		HandlerIDList mPendingRemoves;
+		mutable ReaderWriterMutex mPendingRemoveMultiReaderSingleWriterLock;
 	};
 	struct KeyedHandler
 	{
@@ -301,6 +313,7 @@ private:
 	EventList mDeferredEvents;
 	UniquePtr<HandlerStorage> mHandlerStorage;
 	HandlerID mPreviousHandlerID = kInvalidHandlerID;
+	ExclusiveMutex mDispatchExclusiveLock;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
