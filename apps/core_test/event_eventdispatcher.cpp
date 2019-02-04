@@ -285,5 +285,60 @@ TEST( EventDispatcher, SortedHandlers )
 	}
 }
 
+
+
+TEST( EventDispatcher, SkippedHandlers )
+{
+	using Event = int;
+	using Queue = SinglethreadEventQueue<Event>;
+	struct Handler
+	{
+		void operator()( Event const& event )
+		{
+			mVec->emplace_back( mVal );
+		}
+		int mVal = 0;
+		rftl::vector<int>* mVec = nullptr;
+	};
+	struct Policies : EventDispatcherDefaultPolicies
+	{
+		struct Skip
+		{
+			using Iter = rftl::vector<KeyedHandler<Handler>>::iterator;
+			bool operator()( Handler const& handler, Event const& event )
+			{
+				return handler.mVal == 1;
+			}
+		};
+		using HandlerSkipPolicy = traits::HandlersAreConditional<Skip>;
+	};
+	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
+
+	rftl::vector<int> runHandlers;
+
+	Dispatcher dispatcher{ Queue() };
+	ASSERT_EQ( runHandlers.size(), 0 );
+
+	Dispatcher::HandlerRef const handler1 = dispatcher.RegisterHandler( { 1, &runHandlers } );
+	Dispatcher::HandlerRef const handler2 = dispatcher.RegisterHandler( { 2, &runHandlers } );
+	ASSERT_EQ( runHandlers.size(), 0 );
+
+	dispatcher.AddEvent( 1 );
+	ASSERT_EQ( runHandlers.size(), 0 );
+
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 1 );
+		ASSERT_EQ( runHandlers.size(), 1 );
+		ASSERT_EQ( runHandlers[0], 2 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 0 );
+		ASSERT_EQ( runHandlers.size(), 1 );
+		ASSERT_EQ( runHandlers[0], 2 );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
