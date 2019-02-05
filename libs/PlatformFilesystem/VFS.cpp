@@ -112,173 +112,27 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 		return false;
 	}
 
-	rftl::string tokenBuilder;
-	rftl::vector<rftl::string> tokenStream;
-	enum class ReadMode : uint8_t
+	return ProcessMountFile( file );
+}
+
+
+
+bool VFS::AttemptSubsequentMount( VFSPath const& mountTableFile )
+{
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", CreateStringFromPath( mountTableFile ).c_str() );
+	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
+	if( filePtr == nullptr )
 	{
-		k_HuntingForToken,
-		k_DiscardingComment,
-		k_ReadingToken,
-	} curReadMode = ReadMode::k_HuntingForToken;
-	int readCode = 0;
-	while( ( readCode = fgetc( file ) ) != EOF )
-	{
-		// Reading chars
-		char const ch = math::integer_cast<char>( readCode );
-
-		if( curReadMode == ReadMode::k_HuntingForToken )
-		{
-			// Hunting for a token
-
-			// Is it just filler?
-			bool isIgnorable = false;
-			for( char const& ignoreCh : VFSMountTableTokens::kMountFillerIgnores )
-			{
-				if( ch == ignoreCh )
-				{
-					isIgnorable = true;
-				}
-			}
-			if( isIgnorable )
-			{
-				// Filler, ignore
-				continue;
-			}
-
-			if( ch == VFSMountTableTokens::kMountTokenAffix[0] )
-			{
-				// Token, start reading
-				curReadMode = ReadMode::k_ReadingToken;
-				if( tokenBuilder.empty() == false )
-				{
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parser failure" );
-					return false;
-				}
-			}
-			else if( ch == VFSMountTableTokens::kMountCommentPrefix )
-			{
-				// Comment, start tossing
-				curReadMode = ReadMode::k_DiscardingComment;
-			}
-			else
-			{
-				RFLOG_ERROR( nullptr, RFCAT_VFS, "Unknown character encountered when searching for token" );
-				return false;
-			}
-		}
-
-		if( curReadMode == ReadMode::k_DiscardingComment )
-		{
-			// Discarding comment
-
-			if( ch == VFSMountTableTokens::kMountCommentSuffix )
-			{
-				// Done with comment, back to token searching
-				curReadMode = ReadMode::k_HuntingForToken;
-				continue;
-			}
-			else
-			{
-				// Still in comment, keep discarding
-				continue;
-			}
-		}
-
-		if( curReadMode == ReadMode::k_ReadingToken )
-		{
-			// Reading token
-
-			tokenBuilder.push_back( ch );
-			RF_ASSERT( tokenBuilder[0] == VFSMountTableTokens::kMountTokenAffix[0] );
-
-			// Check integrity of initial tokens
-			static_assert( sizeof( VFSMountTableTokens::kMountTokenAffix ) == 2, "Token len changed" );
-			if( tokenBuilder.size() == 1 )
-			{
-				if( tokenBuilder[0] != VFSMountTableTokens::kMountTokenAffix[0] )
-				{
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
-					return false;
-				}
-				continue;
-			}
-			else if( tokenBuilder.size() == 2 )
-			{
-				if( tokenBuilder[1] != VFSMountTableTokens::kMountTokenAffix[1] )
-				{
-					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
-					return false;
-				}
-				continue;
-			}
-
-			// Check for possible termination
-			if( tokenBuilder.size() >= 4 && ch == VFSMountTableTokens::kMountTokenAffix[1] )
-			{
-				RF_ASSERT( tokenBuilder.size() > sizeof( VFSMountTableTokens::kMountTokenAffix ) );
-				char const& previousToken = *( tokenBuilder.rbegin() + 1 );
-				if( previousToken == VFSMountTableTokens::kMountTokenAffix[0] )
-				{
-					// Termination! Save off the token
-					tokenStream.emplace_back( rftl::move( tokenBuilder ) );
-					RF_ASSERT( tokenBuilder.empty() );
-
-					RF_ASSERT( tokenBuilder.size() <= VFSMountTableTokens::kNumColumns );
-					if( tokenStream.size() == VFSMountTableTokens::kNumColumns )
-					{
-						// Form mount rule from tokens
-						VFSMount mountRule = ProcessMountRule(
-							tokenStream[0],
-							tokenStream[1],
-							tokenStream[2],
-							tokenStream[3] );
-						if(
-							mountRule.mType == VFSMount::Type::Invalid ||
-							mountRule.mPermissions == VFSMount::Permissions::Invalid ||
-							mountRule.mVirtualPath.NumElements() == 0 )
-						{
-							RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to parse mount rule" );
-							return false;
-						}
-						tokenStream.clear();
-
-						mMountTable.emplace_back( rftl::move( mountRule ) );
-					}
-
-					// Keep collectiong tokens
-					curReadMode = ReadMode::k_HuntingForToken;
-				}
-			}
-
-			// Part of the token, keep processing
-			continue;
-		}
-
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parse logic failure" );
+		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
-
-	if( curReadMode != ReadMode::k_HuntingForToken )
+	FILE* const file = filePtr->GetFile();
+	if( file == nullptr )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unterminated token at file end" );
-		mMountTable.clear();
+		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
-	else if( tokenBuilder.empty() == false )
-	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token buffer at file end" );
-		mMountTable.clear();
-		return false;
-	}
-	else if( tokenStream.empty() == false )
-	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token stream at file end" );
-		mMountTable.clear();
-		return false;
-	}
-
-	DebugDumpMountTable();
-	return true;
+	return ProcessMountFile( file );
 }
 
 
@@ -468,6 +322,179 @@ VFSPath VFS::CollapsePath( VFSPath const& path )
 	}
 
 	return retVal;
+}
+
+
+
+bool VFS::ProcessMountFile( FILE* file )
+{
+	rftl::string tokenBuilder;
+	rftl::vector<rftl::string> tokenStream;
+	enum class ReadMode : uint8_t
+	{
+		k_HuntingForToken,
+		k_DiscardingComment,
+		k_ReadingToken,
+	} curReadMode = ReadMode::k_HuntingForToken;
+	int readCode = 0;
+	while( ( readCode = fgetc( file ) ) != EOF )
+	{
+		// Reading chars
+		char const ch = math::integer_cast<char>( readCode );
+
+		if( curReadMode == ReadMode::k_HuntingForToken )
+		{
+			// Hunting for a token
+
+			// Is it just filler?
+			bool isIgnorable = false;
+			for( char const& ignoreCh : VFSMountTableTokens::kMountFillerIgnores )
+			{
+				if( ch == ignoreCh )
+				{
+					isIgnorable = true;
+				}
+			}
+			if( isIgnorable )
+			{
+				// Filler, ignore
+				continue;
+			}
+
+			if( ch == VFSMountTableTokens::kMountTokenAffix[0] )
+			{
+				// Token, start reading
+				curReadMode = ReadMode::k_ReadingToken;
+				if( tokenBuilder.empty() == false )
+				{
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parser failure" );
+					return false;
+				}
+			}
+			else if( ch == VFSMountTableTokens::kMountCommentPrefix )
+			{
+				// Comment, start tossing
+				curReadMode = ReadMode::k_DiscardingComment;
+			}
+			else
+			{
+				RFLOG_ERROR( nullptr, RFCAT_VFS, "Unknown character encountered when searching for token" );
+				return false;
+			}
+		}
+
+		if( curReadMode == ReadMode::k_DiscardingComment )
+		{
+			// Discarding comment
+
+			if( ch == VFSMountTableTokens::kMountCommentSuffix )
+			{
+				// Done with comment, back to token searching
+				curReadMode = ReadMode::k_HuntingForToken;
+				continue;
+			}
+			else
+			{
+				// Still in comment, keep discarding
+				continue;
+			}
+		}
+
+		if( curReadMode == ReadMode::k_ReadingToken )
+		{
+			// Reading token
+
+			tokenBuilder.push_back( ch );
+			RF_ASSERT( tokenBuilder[0] == VFSMountTableTokens::kMountTokenAffix[0] );
+
+			// Check integrity of initial tokens
+			static_assert( sizeof( VFSMountTableTokens::kMountTokenAffix ) == 2, "Token len changed" );
+			if( tokenBuilder.size() == 1 )
+			{
+				if( tokenBuilder[0] != VFSMountTableTokens::kMountTokenAffix[0] )
+				{
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
+					return false;
+				}
+				continue;
+			}
+			else if( tokenBuilder.size() == 2 )
+			{
+				if( tokenBuilder[1] != VFSMountTableTokens::kMountTokenAffix[1] )
+				{
+					RFLOG_ERROR( nullptr, RFCAT_VFS, "Malformed token prefix at start" );
+					return false;
+				}
+				continue;
+			}
+
+			// Check for possible termination
+			if( tokenBuilder.size() >= 4 && ch == VFSMountTableTokens::kMountTokenAffix[1] )
+			{
+				RF_ASSERT( tokenBuilder.size() > sizeof( VFSMountTableTokens::kMountTokenAffix ) );
+				char const& previousToken = *( tokenBuilder.rbegin() + 1 );
+				if( previousToken == VFSMountTableTokens::kMountTokenAffix[0] )
+				{
+					// Termination! Save off the token
+					tokenStream.emplace_back( rftl::move( tokenBuilder ) );
+					RF_ASSERT( tokenBuilder.empty() );
+
+					RF_ASSERT( tokenBuilder.size() <= VFSMountTableTokens::kNumColumns );
+					if( tokenStream.size() == VFSMountTableTokens::kNumColumns )
+					{
+						// Form mount rule from tokens
+						VFSMount mountRule = ProcessMountRule(
+							tokenStream[0],
+							tokenStream[1],
+							tokenStream[2],
+							tokenStream[3] );
+						if(
+							mountRule.mType == VFSMount::Type::Invalid ||
+							mountRule.mPermissions == VFSMount::Permissions::Invalid ||
+							mountRule.mVirtualPath.NumElements() == 0 )
+						{
+							RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to parse mount rule" );
+							return false;
+						}
+						tokenStream.clear();
+
+						mMountTable.emplace_back( rftl::move( mountRule ) );
+					}
+
+					// Keep collectiong tokens
+					curReadMode = ReadMode::k_HuntingForToken;
+				}
+			}
+
+			// Part of the token, keep processing
+			continue;
+		}
+
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Internal parse logic failure" );
+		return false;
+	}
+
+	if( curReadMode != ReadMode::k_HuntingForToken )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unterminated token at file end" );
+		mMountTable.clear();
+		return false;
+	}
+	else if( tokenBuilder.empty() == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token buffer at file end" );
+		mMountTable.clear();
+		return false;
+	}
+	else if( tokenStream.empty() == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_VFS, "Unclean token stream at file end" );
+		mMountTable.clear();
+		return false;
+	}
+
+	DebugDumpMountTable();
+	return true;
 }
 
 
