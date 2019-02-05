@@ -1,6 +1,8 @@
 #pragma once
 #include "Timing/clocks.h"
 
+#include "rftl/thread"
+
 namespace RF { namespace time {
 ///////////////////////////////////////////////////////////////////////////////
 
