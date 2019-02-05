@@ -2,6 +2,7 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 #include "Tests.h"
+#include "Scratch.h"
 
 #include "PPU/PPUController.h"
 #include "PlatformFilesystem/VFS.h"
@@ -22,6 +23,8 @@ constexpr bool kFPackSerializationTest = true;
 constexpr bool kPlatformTest = true;
 constexpr bool kFrameBuilderTest = true;
 constexpr bool kSQReflectTest = true;
+
+constexpr bool kAllowScratch = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -130,6 +133,11 @@ int main()
 		TestStart();
 	}
 
+	if( kAllowScratch )
+	{
+		scratch::Start();
+	}
+
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
 
@@ -151,6 +159,11 @@ int main()
 				TestRun();
 			}
 
+			if( kAllowScratch )
+			{
+				scratch::Run();
+			}
+
 			app::gGraphics->SubmitToRender();
 			app::gGraphics->WaitForRender();
 		}
@@ -160,6 +173,11 @@ int main()
 	if( kAllowTests )
 	{
 		TestEnd();
+	}
+
+	if( kAllowScratch )
+	{
+		scratch::End();
 	}
 
 	app::Shutdown();
