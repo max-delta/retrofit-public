@@ -4,22 +4,10 @@
 #include "Tests.h"
 
 #include "PPU/PPUController.h"
-
 #include "PlatformUtils_win32/windowing.h"
-#include "PlatformUtils_win32/Console.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
-#include "PlatformFilesystem/VFS.h"
-#include "SimpleGL/SimpleGL.h"
 #include "Logging/Logging.h"
-#include "Logging/ANSIConsoleLogger.h"
-#include "Timing/clocks.h"
 #include "Timing/Limiter.h"
-
-#include "core_math/math_bits.h"
-#include "core/ptr/default_creator.h"
-
-#include "rftl/thread"
-
 
 ///////////////////////////////////////////////////////////////////////////////
 

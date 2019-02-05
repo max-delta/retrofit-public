@@ -34,3 +34,11 @@ copy _artifacts\LLVM_x64\Retail\Out\FramePackEditor.exe _binaries\FramePackEdito
 copy _artifacts\x64\Retail\Out\FramePackEditor.pdb _binaries\FramePackEditor_x64.pdb
 copy _artifacts\Win32\Retail\Out\FramePackEditor.pdb _binaries\FramePackEditor_x86.pdb
 copy _artifacts\LLVM_x64\Retail\Out\FramePackEditor.pdb _binaries\FramePackEditor_LLVM.pdb
+
+copy _artifacts\x64\Retail\Out\cc3o3.exe _binaries\cc3o3_x64.exe
+copy _artifacts\Win32\Retail\Out\cc3o3.exe _binaries\cc3o3_x86.exe
+copy _artifacts\LLVM_x64\Retail\Out\cc3o3.exe _binaries\cc3o3_LLVM.exe
+
+copy _artifacts\x64\Retail\Out\cc3o3.pdb _binaries\cc3o3_x64.pdb
+copy _artifacts\Win32\Retail\Out\cc3o3.pdb _binaries\cc3o3_x86.pdb
+copy _artifacts\LLVM_x64\Retail\Out\cc3o3.pdb _binaries\cc3o3_LLVM.pdb
