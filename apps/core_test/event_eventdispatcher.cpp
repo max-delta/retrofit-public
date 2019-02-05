@@ -246,8 +246,7 @@ TEST( EventDispatcher, SortedHandlers )
 			using Iter = rftl::vector<KeyedHandler<Handler>>::iterator;
 			void operator()( Iter const& lhs, Iter const& rhs )
 			{
-				rftl::sort( lhs, rhs, []( KeyedHandler<Handler> const& lhs, KeyedHandler<Handler> const& rhs )
-				{
+				rftl::sort( lhs, rhs, []( KeyedHandler<Handler> const& lhs, KeyedHandler<Handler> const& rhs ) {
 					// Reverse order
 					return rftl::greater()( lhs.mHandler.mVal, rhs.mHandler.mVal );
 				} );
@@ -337,6 +336,235 @@ TEST( EventDispatcher, SkippedHandlers )
 		ASSERT_EQ( runHandlers.size(), 1 );
 		ASSERT_EQ( runHandlers[0], 2 );
 	}
+}
+
+
+
+TEST( EventDispatcher, CustomDispatch )
+{
+	using Event = int;
+	using Queue = SinglethreadEventQueue<Event>;
+	using Handler = rftl::function<void( int const& )>;
+	struct Policies : EventDispatcherDefaultPolicies
+	{
+		struct Dispatch
+		{
+			void operator()( Handler& handler, Event const& event )
+			{
+				handler( event + 1 );
+			}
+		};
+		using HandlerDispatchPolicy = traits::HandlerCustomDispatch<Dispatch>;
+	};
+	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
+
+	rftl::vector<Event> seenEvents;
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+		seenEvents.emplace_back( event );
+	};
+
+	Dispatcher dispatcher{ Queue() };
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	Dispatcher::HandlerRef const handler = dispatcher.RegisterHandler( onEvent );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	dispatcher.AddEvent( 1 );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 1 );
+		ASSERT_EQ( seenEvents.size(), 1 );
+		ASSERT_EQ( seenEvents[0], 2 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 0 );
+		ASSERT_EQ( seenEvents.size(), 1 );
+		ASSERT_EQ( seenEvents[0], 2 );
+	}
+}
+
+
+
+TEST( EventDispatcher, SortedEvents )
+{
+	using Event = int;
+	using Queue = SinglethreadEventQueue<Event>;
+	using Handler = rftl::function<void( int const& )>;
+	struct Policies : EventDispatcherDefaultPolicies
+	{
+		struct Sort
+		{
+			using Iter = rftl::vector<Event>::iterator;
+			void operator()( Iter const& lhs, Iter const& rhs )
+			{
+				rftl::sort( lhs, rhs, []( Event const& lhs, Event const& rhs ) {
+					// Reverse order
+					return rftl::greater()( lhs, rhs );
+				} );
+			}
+		};
+		using EventSortPolicy = traits::EventsAreSorted<Sort>;
+	};
+	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
+
+	rftl::vector<Event> seenEvents;
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+		seenEvents.emplace_back( event );
+	};
+
+	Dispatcher dispatcher{ Queue() };
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	Dispatcher::HandlerRef const handler = dispatcher.RegisterHandler( onEvent );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	dispatcher.AddEvent( 1 );
+	dispatcher.AddEvent( 2 );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 2 );
+		ASSERT_EQ( seenEvents.size(), 2 );
+		ASSERT_EQ( seenEvents[0], 2 );
+		ASSERT_EQ( seenEvents[1], 1 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 0 );
+		ASSERT_EQ( seenEvents.size(), 2 );
+		ASSERT_EQ( seenEvents[0], 2 );
+		ASSERT_EQ( seenEvents[1], 1 );
+	}
+}
+
+
+
+TEST( EventDispatcher, DiscardEvents )
+{
+	using Event = int;
+	using Queue = SinglethreadEventQueue<Event>;
+	using Handler = rftl::function<void( int const& )>;
+	struct Policies : EventDispatcherDefaultPolicies
+	{
+		struct Discard
+		{
+			bool operator()( Event const& event )
+			{
+				return event == 1;
+			}
+		};
+		using EventDiscardPolicy = traits::EventsAreDiscardable<Discard>;
+	};
+	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
+
+	rftl::vector<Event> seenEvents;
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+		seenEvents.emplace_back( event );
+	};
+
+	Dispatcher dispatcher{ Queue() };
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	Dispatcher::HandlerRef const handler = dispatcher.RegisterHandler( onEvent );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	dispatcher.AddEvent( 1 );
+	dispatcher.AddEvent( 2 );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 2 );
+		ASSERT_EQ( seenEvents.size(), 1 );
+		ASSERT_EQ( seenEvents[0], 2 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 0 );
+		ASSERT_EQ( seenEvents.size(), 1 );
+		ASSERT_EQ( seenEvents[0], 2 );
+	}
+}
+
+
+
+TEST( EventDispatcher, DeferEvents )
+{
+	using Event = int;
+	using Queue = SinglethreadEventQueue<Event>;
+	using Handler = rftl::function<void( int const& )>;
+	struct Policies : EventDispatcherDefaultPolicies
+	{
+		struct Defer
+		{
+			bool operator()( Event const& event )
+			{
+				static bool hasDeferred = false;
+				if( event == 1 && hasDeferred == false )
+				{
+					hasDeferred = true;
+					return true;
+				}
+				return false;
+			}
+		};
+		using EventDeferPolicy = traits::EventsAreDeferrable<Defer>;
+	};
+	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
+
+	rftl::vector<Event> seenEvents;
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+		seenEvents.emplace_back( event );
+	};
+
+	Dispatcher dispatcher{ Queue() };
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	Dispatcher::HandlerRef const handler = dispatcher.RegisterHandler( onEvent );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	dispatcher.AddEvent( 1 );
+	dispatcher.AddEvent( 2 );
+	ASSERT_EQ( seenEvents.size(), 0 );
+
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 1 );
+		ASSERT_EQ( seenEvents.size(), 1 );
+		ASSERT_EQ( seenEvents[0], 2 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 1 );
+		ASSERT_EQ( seenEvents.size(), 2 );
+		ASSERT_EQ( seenEvents[0], 2 );
+		ASSERT_EQ( seenEvents[1], 1 );
+	}
+	{
+		size_t const numDispatched = dispatcher.DispatchEvents();
+		ASSERT_EQ( numDispatched, 0 );
+		ASSERT_EQ( seenEvents.size(), 2 );
+		ASSERT_EQ( seenEvents[0], 2 );
+		ASSERT_EQ( seenEvents[1], 1 );
+	}
+}
+
+
+
+TEST( EventDispatcher, HandlerReevaluateDiscard )
+{
+	// TODO: Enable re-evalutation and test discard
+}
+
+
+
+TEST( EventDispatcher, HandlerReevaluateDefer )
+{
+	// TODO: Enable re-evalutation and test defer
 }
 
 ///////////////////////////////////////////////////////////////////////////////
