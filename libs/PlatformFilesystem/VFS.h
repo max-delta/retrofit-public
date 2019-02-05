@@ -76,6 +76,7 @@ public:
 	// NOTE: User entries are relative to the provided user directory
 	// NOTE: Absolute entries are unbounded
 	bool AttemptInitialMount( rftl::string const& mountTableFile, rftl::string const& userDirectory );
+	bool AttemptSubsequentMount( VFSPath const& mountTableFile );
 
 	// File paths may come from outside VFS, such as from OS dialogs, and they
 	//  need to be mapped onto VFS layers
@@ -93,6 +94,7 @@ public:
 	// Private methods
 private:
 	static VFSPath CollapsePath( VFSPath const& path );
+	bool ProcessMountFile( FILE* file );
 	VFSMount ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint );
 	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
 

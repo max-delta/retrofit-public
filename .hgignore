@@ -1,5 +1,7 @@
 ^_artifacts/.*$
 ^_binaries/.*$
+^_scratch/.*$
+^_user/.*$
 
 \.orig$
 \.bak$

@@ -4,8 +4,9 @@
 #include "Tests.h"
 
 #include "PPU/PPUController.h"
-#include "PlatformUtils_win32/windowing.h"
+#include "PlatformFilesystem/VFS.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
+#include "PlatformUtils_win32/windowing.h"
 #include "Logging/Logging.h"
 #include "Timing/Limiter.h"
 
@@ -116,6 +117,13 @@ int main()
 	using namespace RF;
 
 	app::Startup();
+
+	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
+	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( testDataMountFile );
+	if( vfsTestDataLoad == false )
+	{
+		RFLOG_FATAL( testDataMountFile, RFCAT_STARTUP, "Can't load test data mount file" );
+	}
 
 	if( kAllowTests )
 	{
