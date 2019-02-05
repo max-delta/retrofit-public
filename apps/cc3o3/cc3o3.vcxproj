@@ -47,6 +47,12 @@
     <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
       <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
+      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
       <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
     </ProjectReference>
