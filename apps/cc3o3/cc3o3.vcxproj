@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+  </ImportGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{252E935A-D4CF-4D6E-8D92-B6A7B7C9534C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>cc3o3</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\Global.Cpp.props" />
+    <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.props" />
+    <Import Project="..\..\config\AppCommon.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cc3o3.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\libs\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
+      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
+      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
+      <Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
