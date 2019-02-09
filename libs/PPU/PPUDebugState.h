@@ -4,6 +4,7 @@
 #include "PPUFwd.h"
 
 #include "core_math/Vector2.h"
+#include "core_math/Color3f.h"
 
 #include "core/macros.h"
 
@@ -43,6 +44,7 @@ public:
 		PPUCoordElem m_XCoord1;
 		PPUCoordElem m_YCoord1;
 		PPUCoordElem mWidth;
+		math::Color3f mColor;
 	};
 
 
