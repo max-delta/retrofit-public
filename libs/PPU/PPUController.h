@@ -8,6 +8,8 @@
 #include "PlatformFilesystem/VFSFwd.h"
 
 #include "core/ptr/unique_ptr.h"
+#include "core_math/AABB4.h"
+#include "core_math/Color3f.h"
 
 
 namespace RF { namespace gfx {
@@ -87,7 +89,8 @@ public:
 	PPUCoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
 
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0 );
+	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width = 0, math::Color3f color = math::Color3f::kBlack );
+	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width = 0, math::Color3f color = math::Color3f::kBlack );
 	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
 	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;

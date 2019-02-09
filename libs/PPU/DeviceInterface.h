@@ -4,6 +4,7 @@
 #include "PPUFwd.h"
 
 #include "core_math/AABB4.h"
+#include "core_math/Color3f.h"
 #include "core_platform/win_shim.h"
 
 #include "rftl/array"
@@ -25,7 +26,7 @@ public:
 	virtual bool Initialize2DGraphics() = 0;
 
 	virtual bool SetSurfaceSize( uint16_t width, uint16_t height ) = 0;
-	virtual bool SetBackgroundColor( float r, float g, float b, float a ) = 0;
+	virtual bool SetBackgroundColor( math::Color3f color ) = 0;
 	virtual bool SetFontScale( float scale ) = 0;
 
 	virtual DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) = 0;
@@ -39,7 +40,7 @@ public:
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;
 
 	virtual bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) = 0;
-	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) = 0;
+	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width, math::Color3f color ) = 0;
 
 	virtual bool BeginFrame() = 0;
 	virtual bool RenderFrame() = 0;
