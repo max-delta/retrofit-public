@@ -57,7 +57,6 @@
   <ItemGroup>
     <None Include="AABB4.inl" />
     <None Include="BitField.inl" />
-    <None Include="Color3f.inl" />
     <None Include="math_bits.inl" />
     <None Include="math_bytes.inl" />
     <None Include="math_casts.inl" />
