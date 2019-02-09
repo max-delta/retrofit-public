@@ -3,17 +3,23 @@
 
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
+#include "core_math/Rand.h"
 
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
 Color3f const Color3f::kBlack{ 0.f, 0.f, 0.f };
+Color3f const Color3f::kGray25{ 0.25f, 0.25f, 0.25f };
+Color3f const Color3f::kGray50{ 0.50f, 0.50f, 0.50f };
+Color3f const Color3f::kGray75{ 0.75f, 0.75f, 0.75f };
 Color3f const Color3f::kWhite{ 1.f, 1.f, 1.f };
+
 Color3f const Color3f::kRed{ 1.f, 0.f, 0.f };
 Color3f const Color3f::kGreen{ 0.f, 1.f, 0.f };
 Color3f const Color3f::kBlue{ 0.f, 0.f, 1.f };
 Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
+
 Color3f const Color3f::kMagenta{ 1.f, 0.f, 1.f };
 Color3f const Color3f::kYellow{ 1.f, 1.f, 0.f };
 
@@ -39,11 +45,41 @@ Color3f::Color3f( ElementType r, ElementType g, ElementType b )
 
 
 
-void Color3f::Clamp()
+Color3f Color3f::RandomFromHash( uint64_t hashVal )
 {
-	r = math::Clamp( 0.f, r, 1.f );
-	g = math::Clamp( 0.f, g, 1.f );
-	b = math::Clamp( 0.f, b, 1.f );
+	uint32_t seed = GetSeedFromHash( hashVal );
+	return Color3f(
+		StableRandLCGPercent( seed ) / 100.f,
+		StableRandLCGPercent( seed ) / 100.f,
+		StableRandLCGPercent( seed ) / 100.f );
+}
+
+
+
+Color3f& Color3f::Clamp()
+{
+	Clamp( 0.f, 1.f );
+	return *this;
+}
+
+
+
+Color3f& Color3f::Clamp( ElementType min, ElementType max )
+{
+	r = math::Clamp( min, r, max );
+	g = math::Clamp( min, g, max );
+	b = math::Clamp( min, b, max );
+	return *this;
+}
+
+
+
+Color3f& Color3f::Clamp( Color3f const& min, Color3f const& max )
+{
+	r = math::Clamp( min.r, r, max.r );
+	g = math::Clamp( min.g, g, max.g );
+	b = math::Clamp( min.b, b, max.b );
+	return *this;
 }
 
 
