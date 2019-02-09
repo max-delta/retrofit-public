@@ -3,15 +3,16 @@
 
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
+#include "core_math/NumericTraits.h"
 
 
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline RF::math::Vector2<T>::Vector2()
-	: x()
-	, y()
+inline Vector2<T>::Vector2()
+	: x( NumericTraits<T>::Empty() )
+	, y( NumericTraits<T>::Empty() )
 {
 	//
 }

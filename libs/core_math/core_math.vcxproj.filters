@@ -13,6 +13,8 @@
     <ClInclude Include="NumericTraits.h" />
     <ClInclude Include="math_bytes.h" />
     <ClInclude Include="AABB4.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Color3f.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -20,6 +22,8 @@
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="math_bits.cpp" />
     <ClCompile Include="AABB4.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Color3f.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
@@ -30,5 +34,7 @@
     <None Include="math_bytes.inl" />
     <None Include="BitField.inl" />
     <None Include="AABB4.inl" />
+    <None Include="Vector3.inl" />
+    <None Include="Color3f.inl" />
   </ItemGroup>
 </Project>

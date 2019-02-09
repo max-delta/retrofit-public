@@ -10,13 +10,18 @@ class Vector2 final
 {
 	static_assert( rftl::is_signed<T>::value, "Vector2 must be signed" );
 	static_assert( rftl::is_arithmetic<T>::value, "Vector2 must support arithmetic operations" );
+
+	//
+	// Types
 public:
-	typedef T ElementType;
+	using ElementType = T;
+
+
+	//
+	// Public methods
 public:
 	Vector2();
 	Vector2( T x, T y );
-	T x;
-	T y;
 
 	template<typename OtherT>
 	operator Vector2<OtherT>() const;
@@ -34,6 +39,13 @@ public:
 	Vector2& operator+=( ElementType const& rhs );
 	Vector2& operator-=( ElementType const& rhs );
 	Vector2& operator*=( ElementType const& rhs );
+
+
+	//
+	// Public data
+public:
+	T x;
+	T y;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
