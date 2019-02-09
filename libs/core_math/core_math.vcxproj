@@ -39,6 +39,7 @@
     <ClInclude Include="math_clamps.h" />
     <ClInclude Include="math_compare.h" />
     <ClInclude Include="NumericTraits.h" />
+    <ClInclude Include="Rand.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -48,6 +49,7 @@
     <ClCompile Include="Color3f.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="math_bits.cpp" />
+    <ClCompile Include="Rand.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

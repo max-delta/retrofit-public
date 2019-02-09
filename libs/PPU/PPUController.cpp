@@ -421,6 +421,27 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 
 
 
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
+{
+	return DebugDrawLine( p0, p1, math::Color3f::kBlack );
+}
+
+
+
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
+{
+	return DebugDrawLine( p0, p1, width, math::Color3f::kBlack );
+}
+
+
+
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color )
+{
+	return DebugDrawLine( p0, p1, 0, color );
+}
+
+
+
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, math::Color3f color )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
@@ -439,6 +460,27 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	targetLine.mColor = color;
 
 	return true;
+}
+
+
+
+bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb )
+{
+	return DebugDrawAABB( aabb, math::Color3f::kBlack );
+}
+
+
+
+bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width )
+{
+	return DebugDrawAABB( aabb, width, math::Color3f::kBlack );
+}
+
+
+
+bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, math::Color3f color )
+{
+	return DebugDrawAABB( aabb, 0, color );
 }
 
 
