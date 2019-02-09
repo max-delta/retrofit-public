@@ -93,7 +93,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	{
 		return false;
 	}
-	success = mDeviceInterface->SetBackgroundColor( 1, 0, 1, 1 );
+	success = mDeviceInterface->SetBackgroundColor( math::Color3f::kMagenta );
 	RF_ASSERT( success );
 	if( success == false )
 	{
@@ -421,7 +421,7 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, math::Color3f color )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
@@ -436,6 +436,19 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width 
 	targetLine.m_XCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
 	targetLine.m_YCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
 	targetLine.mWidth = width;
+	targetLine.mColor = color;
+
+	return true;
+}
+
+
+
+bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, math::Color3f color )
+{
+	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, color );
+	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, color );
+	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, color );
+	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, color );
 
 	return true;
 }
@@ -933,7 +946,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 {
 	math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-	mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ) );
+	mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
 }
 
 
@@ -948,6 +961,7 @@ void PPUController::RenderDebugString( PPUDebugState::DebugString const& string 
 
 void PPUController::RenderDebugGrid() const
 {
+	math::Color3f const& color = math::Color3f::kBlack;
 	for( PPUCoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
 	{
 		math::Vector2f const posA = CoordToDevice( horizontal, 0 );
@@ -955,11 +969,13 @@ void PPUController::RenderDebugGrid() const
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( posA.x, 0 ),
 			math::Vector2f( posA.x, 1 ),
-			LayerToDevice( 0 ) );
+			LayerToDevice( 0 ),
+			color );
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( posB.x, 0 ),
 			math::Vector2f( posB.x, 1 ),
-			LayerToDevice( 0 ) );
+			LayerToDevice( 0 ),
+			color );
 	}
 	for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
 	{
@@ -968,11 +984,13 @@ void PPUController::RenderDebugGrid() const
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( 0, posA.y ),
 			math::Vector2f( 1, posA.y ),
-			LayerToDevice( 0 ) );
+			LayerToDevice( 0 ),
+			color );
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( 0, posB.y ),
 			math::Vector2f( 1, posB.y ),
-			LayerToDevice( 0 ) );
+			LayerToDevice( 0 ),
+			color );
 	}
 }
 

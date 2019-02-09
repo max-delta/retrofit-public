@@ -212,10 +212,10 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 
 
-bool SimpleGL::SetBackgroundColor( float r, float g, float b, float a )
+bool SimpleGL::SetBackgroundColor( math::Color3f color )
 {
 	// When we call Clear, it will clear to this color
-	glClearColor( r, g, b, a );
+	glClearColor( color.r, color.g, color.b, 1.f );
 	return true;
 }
 
@@ -443,10 +443,10 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char* fmt, ... )
 
 
 
-bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width )
+bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width, math::Color3f color )
 {
 	glBindTexture( GL_TEXTURE_2D, 0 );
-	glColor3f( 0, 0, 0 );
+	glColor3f( color.r, color.g, color.b );
 	if( width < 1 )
 	{
 		glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical

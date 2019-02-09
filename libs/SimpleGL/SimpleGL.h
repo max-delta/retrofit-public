@@ -43,7 +43,7 @@ public:
 
 	bool SetProjectionMode( ProjectionMode mode );
 	bool SetSurfaceSize( uint16_t width, uint16_t height ) override;
-	bool SetBackgroundColor( float r, float g, float b, float a ) override;
+	bool SetBackgroundColor( math::Color3f color ) override;
 	bool SetFontScale( float scale ) override;
 
 	DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) override;
@@ -57,7 +57,7 @@ public:
 	bool glPrint( char const* fmt, va_list args );
 
 	bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) override;
-	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width ) override;
+	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width, math::Color3f color ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) override;
 
