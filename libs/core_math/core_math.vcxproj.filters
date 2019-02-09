@@ -35,6 +35,5 @@
     <None Include="BitField.inl" />
     <None Include="AABB4.inl" />
     <None Include="Vector3.inl" />
-    <None Include="Color3f.inl" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,18 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-inline Color3f::Color3f()
+Color3f const Color3f::kBlack{ 0.f, 0.f, 0.f };
+Color3f const Color3f::kWhite{ 1.f, 1.f, 1.f };
+Color3f const Color3f::kRed{ 1.f, 0.f, 0.f };
+Color3f const Color3f::kGreen{ 0.f, 1.f, 0.f };
+Color3f const Color3f::kBlue{ 0.f, 0.f, 1.f };
+Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
+Color3f const Color3f::kMagenta{ 1.f, 0.f, 1.f };
+Color3f const Color3f::kYellow{ 1.f, 1.f, 0.f };
+
+///////////////////////////////////////////////////////////////////////////////
+
+Color3f::Color3f()
 	: r( 0.f )
 	, g( 0.f )
 	, b( 0.f )
@@ -18,7 +29,7 @@ inline Color3f::Color3f()
 
 
 
-inline Color3f::Color3f( ElementType r, ElementType g, ElementType b )
+Color3f::Color3f( ElementType r, ElementType g, ElementType b )
 	: r( r )
 	, g( g )
 	, b( b )
@@ -37,28 +48,28 @@ void Color3f::Clamp()
 
 
 
-inline bool Color3f::operator==( Color3f const& rhs ) const
+bool Color3f::operator==( Color3f const& rhs ) const
 {
 	return Equals( r, rhs.r ) && Equals( g, rhs.g ) && Equals( b, rhs.b );
 }
 
 
 
-inline Color3f Color3f::operator+( Color3f const& rhs ) const
+Color3f Color3f::operator+( Color3f const& rhs ) const
 {
 	return Color3f( r + rhs.r, g + rhs.g, b + rhs.b );
 }
 
 
 
-inline Color3f Color3f::operator-( Color3f const& rhs ) const
+Color3f Color3f::operator-( Color3f const& rhs ) const
 {
 	return Color3f( r - rhs.r, g - rhs.g, b - rhs.b );
 }
 
 
 
-inline Color3f& Color3f::operator+=( Color3f const& rhs )
+Color3f& Color3f::operator+=( Color3f const& rhs )
 {
 	r += rhs.r;
 	g += rhs.g;
@@ -68,7 +79,7 @@ inline Color3f& Color3f::operator+=( Color3f const& rhs )
 
 
 
-inline Color3f& Color3f::operator-=( Color3f const& rhs )
+Color3f& Color3f::operator-=( Color3f const& rhs )
 {
 	r -= rhs.r;
 	g -= rhs.g;
@@ -78,28 +89,28 @@ inline Color3f& Color3f::operator-=( Color3f const& rhs )
 
 
 
-inline Color3f Color3f::operator+( ElementType const& rhs ) const
+Color3f Color3f::operator+( ElementType const& rhs ) const
 {
 	return Color3f( r + rhs, g + rhs, b + rhs );
 }
 
 
 
-inline Color3f Color3f::operator-( ElementType const& rhs ) const
+Color3f Color3f::operator-( ElementType const& rhs ) const
 {
 	return Color3f( r - rhs, g - rhs, b - rhs );
 }
 
 
 
-inline Color3f Color3f::operator*( ElementType const& rhs ) const
+Color3f Color3f::operator*( ElementType const& rhs ) const
 {
 	return Color3f( r * rhs, g * rhs, b * rhs );
 }
 
 
 
-inline Color3f& Color3f::operator+=( ElementType const& rhs )
+Color3f& Color3f::operator+=( ElementType const& rhs )
 {
 	r += rhs;
 	g += rhs;
@@ -109,7 +120,7 @@ inline Color3f& Color3f::operator+=( ElementType const& rhs )
 
 
 
-inline Color3f& Color3f::operator-=( ElementType const& rhs )
+Color3f& Color3f::operator-=( ElementType const& rhs )
 {
 	r -= rhs;
 	g -= rhs;
@@ -119,7 +130,7 @@ inline Color3f& Color3f::operator-=( ElementType const& rhs )
 
 
 
-inline Color3f& Color3f::operator*=( ElementType const& rhs )
+Color3f& Color3f::operator*=( ElementType const& rhs )
 {
 	r *= rhs;
 	g *= rhs;

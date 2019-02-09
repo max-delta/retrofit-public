@@ -14,6 +14,19 @@ public:
 
 
 	//
+	// Static colors
+public:
+	static Color3f const kBlack;
+	static Color3f const kWhite;
+	static Color3f const kRed;
+	static Color3f const kGreen;
+	static Color3f const kBlue;
+	static Color3f const kCyan;
+	static Color3f const kMagenta;
+	static Color3f const kYellow;
+
+
+	//
 	// Public methods
 public:
 	Color3f();
