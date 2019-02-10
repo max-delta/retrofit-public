@@ -197,7 +197,7 @@ public:
 
 	Container& GetMutableRootContainer()
 	{
-		return mContainers.at( kRootContainerID );
+		return GetMutableContainer( kRootContainerID );
 	}
 
 
@@ -249,6 +249,20 @@ public:
 
 
 
+	Container const& GetContainer( ContainerID containerID ) const
+	{
+		return mContainers.at( containerID );
+	}
+
+
+
+	Container& GetMutableContainer( ContainerID containerID )
+	{
+		return mContainers.at( containerID );
+	}
+
+
+
 	void RecalcContainer( Container& container )
 	{
 		// HACK: Slightly smaller, for testing
@@ -295,7 +309,29 @@ public:
 
 
 
-	WeakPtr<UIController> AssignStrongController( Container& container, UniquePtr<UIController>&& controller )
+	template<typename T>
+	WeakPtr<T> AssignStrongController( Container& container, CreationPayload<T>&& controller )
+	{
+		UniquePtr<T> temp = rftl::move( controller );
+		WeakPtr<T> const retVal = AssignStrongController<T>( container, rftl::move( temp ) );
+		return retVal;
+	}
+
+
+
+	template<typename T>
+	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller )
+	{
+		WeakPtr<T> const retVal = controller;
+		UniquePtr<UIController> temp = rftl::move( controller );
+		WeakPtr<UIController> const result = AssignStrongControllerInternal( container, rftl::move( temp ) );
+		RF_ASSERT( retVal == result );
+		return retVal;
+	}
+
+
+
+	WeakPtr<UIController> AssignStrongControllerInternal( Container& container, UniquePtr<UIController>&& controller )
 	{
 		RF_ASSERT( controller != nullptr );
 		RF_ASSERT( container.mStrongUIController == nullptr );
@@ -415,6 +451,11 @@ public:
 		}
 	}
 
+	ContainerID GetChildContainerID( size_t sliceIndex )
+	{
+		return mContainers.at( sliceIndex );
+	}
+
 	virtual void OnAssign( ContainerManager& manager, Container& container ) override
 	{
 		m0 = manager.CreateAnchor( container );
@@ -489,38 +530,66 @@ public:
 		manager.MoveAnchor( m100, { x100, y100 } );
 	}
 
-	// TODO: Private, with getters for containers
-public:
+private:
 	AnchorID m0 = kInvalidAnchorID;
 	AnchorID m33 = kInvalidAnchorID;
 	AnchorID m66 = kInvalidAnchorID;
 	AnchorID m100 = kInvalidAnchorID;
-	ContainerID mContainers[9] = {};
+	rftl::array<ContainerID, 9> mContainers = {};
 	bool mSliceEnabled[9] = {};
 };
+
+
+
+class Passthrough final : public UIController
+{
+public:
+	ContainerID GetChildContainerID()
+	{
+		return mContainerID;
+	}
+
+	virtual void OnAssign( ContainerManager& manager, Container& container ) override
+	{
+		mContainerID = manager.CreateChildContainer(
+			container,
+			container.mLeftConstraint,
+			container.mRightConstraint,
+			container.mTopConstraint,
+			container.mBottomConstraint );
+	}
+
+private:
+	ContainerID mContainerID = kInvalidContainerID;
+};
+
 }
 
-ContainerManager temp;
+ContainerManager tempUI;
 
 void SetupStructures()
 {
-	temp.Construct( app::gGraphics );
-	temp.CreateRootContainer();
-	temp.RecalcRootContainer();
+	tempUI.Construct( app::gGraphics );
+	tempUI.CreateRootContainer();
+	tempUI.RecalcRootContainer();
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
-	WeakPtr<UIController> const nineSlicer =
-		temp.AssignStrongController(
-			temp.GetMutableRootContainer(),
+	WeakPtr<controller::NineSlicer> const nineSlicer =
+		tempUI.AssignStrongController(
+			tempUI.GetMutableRootContainer(),
 			DefaultCreator<controller::NineSlicer>::Create(
-				kSlicesEnabled
-			) );
-	temp.ProcessRecalcs();
+				kSlicesEnabled ) );
+	WeakPtr<controller::Passthrough> const passthrough8 =
+		tempUI.AssignStrongController(
+			tempUI.GetMutableContainer( nineSlicer->GetChildContainerID( 8 ) ),
+			DefaultCreator<controller::Passthrough>::Create() );
+	tempUI.ProcessRecalcs();
 }
 
 void Render()
 {
-	temp.DebugRender();
+	tempUI.DebugRender();
 }
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
