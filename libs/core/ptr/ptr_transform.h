@@ -14,7 +14,7 @@ namespace RF {
 template<typename T>
 struct PtrTransformer
 {
-	PtrTransformer() = delete;
+	RF_NO_INSTANCE( PtrTransformer );
 
 	// NOTE: Should be safe in all cases
 	static void PerformTransformation( UniquePtr<T>&& in, SharedPtr<T>& out )

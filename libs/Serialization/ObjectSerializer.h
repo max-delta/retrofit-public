@@ -3,6 +3,8 @@
 
 #include "SerializationFwd.h"
 
+#include "core/macros.h"
+
 
 // Forwards
 namespace RF { namespace reflect {
@@ -14,7 +16,7 @@ namespace RF { namespace serialization {
 class SERIALIZATION_API ObjectSerializer
 {
 public:
-	ObjectSerializer() = delete;
+	RF_NO_INSTANCE( ObjectSerializer );
 
 	static bool SerializeSingleObject( Exporter& exporter, reflect::ClassInfo const& classInfo, void const* classInstance );
 };
