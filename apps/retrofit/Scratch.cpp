@@ -41,6 +41,7 @@ static constexpr AnchorID kInvalidAnchorID = 0;
 
 class UIController;
 struct Container;
+struct Anchor;
 class ContainerManager;
 
 class UIController
@@ -60,18 +61,28 @@ struct Container
 
 	Container() = default;
 
+	// Containers exist in a hierarchy
 	ContainerID mContainerID = kInvalidContainerID;
 	ContainerID mParentContainerID = kInvalidContainerID;
 	ContainerIDList mChildContainerIDs = {};
 
+	// Containers are constrained by anchor points
+	// NOTE: Not necessarily to those of their immediate parent, which further
+	//  means that a child AABB may be larger than the AABB of its immediate
+	//  parent
 	AnchorID mLeftConstraint = kInvalidAnchorID;
 	AnchorID mRightConstraint = kInvalidAnchorID;
 	AnchorID mTopConstraint = kInvalidAnchorID;
 	AnchorID mBottomConstraint = kInvalidAnchorID;
 	AABB4 mAABB;
 
+	// Containers may own anchor points, which descendants may constrain
+	//  themselves to
 	AnchorIDList mAnchorIDs;
 
+	// Containers may have a controller that runs their logic
+	// NOTE: Possible to only have a weak reference, such as when sharing
+	//  controllers that are designed to manage multiple containers
 	UniquePtr<UIController> mStrongUIController;
 	WeakPtr<UIController> mWeakUIController;
 
@@ -108,22 +119,33 @@ struct Container
 
 struct Anchor
 {
+	RF_NO_COPY( Anchor );
+
+	Anchor() = default;
+
+	// Anchors have no direct relationship to each other
 	AnchorID mAnchorID = kInvalidAnchorID;
+
+	// Anchors are owned by containers
 	ContainerID mParentContainerID = kInvalidContainerID;
+
+	// Anchors are dimensionless points
 	gfx::PPUCoord mPos;
 };
 
-// Start with a special root container
-//  Root container has invalid parent anchor points
-//  Root container gets AABB from canvas
-// Assign a UI controller of some kind to the root container
-//  Expect it to be some kind of non-rendering controller
-//  Expect it to create anchor points on the controller
-//  It may create child containers, but probably not
+// + := done
 
-// On anchor point creation
-//  Generate new ID
-//  Add ID to large table which indicates which container ID it is owned by
+//+Start with a special root container
+//+ Root container has invalid parent anchor points
+//+ Root container gets AABB from canvas
+//+Assign a UI controller of some kind to the root container
+//+ Expect it to be some kind of non-rendering controller
+//+ Expect it to create anchor points on the controller
+//+ It may create child containers, but probably not
+
+//+On anchor point creation
+//+ Generate new ID
+//+ Add ID to large table which indicates which container ID it is owned by
 // On anchor point destruction
 //  Remove anchor point ID from large table
 //  Add anchor point ID to invalid list
@@ -133,22 +155,22 @@ struct Anchor
 //  Move invalid anchor list into local copy
 //  Walk entire tree, and remove any child container that was parented to any invalid anchor
 //  Check flag, repeat if it was set again
-// On container creation
-//  Calculate AABB
+//+On container creation
+//+ Calculate AABB
 //  Update max depth of tree ever seen
 // On container destruction
 //  Destroy all anchor points
 //  Recurse down, destroy all child containers and anchor points
-// On anchor point move
-//  Add anchor point to recalc list
-//  Flag that an anchor recalc pass needs to happen
-// On anchor recalc pass
-//  Clear flag
-//  Move recalc anchor list into local copy
-//  Walk entire tree
-//   Recalc any AABBs that are parented to a moved anchor
-//   Notify any controllers of a container that had an AABB recalc (they may move their anchors in response)
-//  Check flag, repeat if it was set again, assert and bail if repeats more than max depth ever seen (loop found)
+//+On anchor point move
+//+ Add anchor point to recalc list
+//+ Flag that an anchor recalc pass needs to happen
+//+On anchor recalc pass
+//+ Clear flag
+//+ Move recalc anchor list into local copy
+//+ Walk entire tree
+//+  Recalc any AABBs that are parented to a moved anchor
+//+  Notify any controllers of a container that had an AABB recalc (they may move their anchors in response)
+//+ Check flag, repeat if it was set again, assert and bail if repeats more than max depth ever seen (loop found)
 // On message (render, input, etc)
 //  Dispatch breadth-first to controllers
 //   Allow controller to block children from receiving (filter out controllers that are reachable from blocker)
@@ -582,6 +604,11 @@ void SetupStructures()
 		tempUI.AssignStrongController(
 			tempUI.GetMutableContainer( nineSlicer->GetChildContainerID( 8 ) ),
 			DefaultCreator<controller::Passthrough>::Create() );
+	// TODO: Create a chain of containers, and then blow up a parent to watch
+	//  them all recursively destroy themselves, and confirm they cleaned up
+	//  properly without any dangling artifacts
+	// TODO: Make a bunch of manager stuff private with friending, so only
+	//  the UI controller base class can initiate structural changes
 	tempUI.ProcessRecalcs();
 }
 
