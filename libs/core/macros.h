@@ -20,6 +20,14 @@
 #define RF_NO_MOVE( CLASS ) \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
+#define RF_NO_INSTANCE( CLASS ) \
+	CLASS() = delete; \
+	template<typename __RF_ANYTHING__> \
+	CLASS( __RF_ANYTHING__ const& ) = delete; \
+	template<typename __RF_ANYTHING__> \
+	CLASS( __RF_ANYTHING__ && ) = delete; \
+	template<typename __RF_ANYTHING__> \
+	operator __RF_ANYTHING__() const = delete;
 
 // Construct(&&) and Operator=(&&) decorators to automate common move patterns
 #define RF_MOVE_CONSTRUCT( MEMBER ) \
