@@ -34,6 +34,14 @@ inline AABB4<T>::AABB4( T left, T top, T right, T bottom )
 
 
 template<typename T>
+inline bool AABB4<T>::operator==( AABB4 const& rhs ) const
+{
+	return mTopLeft == rhs.mTopLeft && mBottomRight == rhs.mBottomRight;
+}
+
+
+
+template<typename T>
 template<typename OtherT>
 inline AABB4<T>::operator AABB4<OtherT>() const
 {
@@ -45,9 +53,33 @@ inline AABB4<T>::operator AABB4<OtherT>() const
 
 
 template<typename T>
-inline bool AABB4<T>::operator==( AABB4 const& rhs ) const
+inline T const& AABB4<T>::Left() const
 {
-	return mTopLeft == rhs.mTopLeft && mBottomRight == rhs.mBottomRight;
+	return mTopLeft.x;
+}
+
+
+
+template<typename T>
+inline T const& AABB4<T>::Right() const
+{
+	return mBottomRight.x;
+}
+
+
+
+template<typename T>
+inline T const& AABB4<T>::Top() const
+{
+	return mTopLeft.y;
+}
+
+
+
+template<typename T>
+inline T const& AABB4<T>::Bottom() const
+{
+	return mBottomRight.y;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
