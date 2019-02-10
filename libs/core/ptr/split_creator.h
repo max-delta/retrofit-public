@@ -9,6 +9,8 @@ namespace RF {
 template<typename T>
 class SplitCreator
 {
+	RF_NO_INSTANCE( SplitCreator );
+
 	//
 	// Public methods
 public:

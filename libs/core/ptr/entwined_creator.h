@@ -9,6 +9,8 @@ namespace RF {
 template<typename T>
 class EntwinedCreator
 {
+	RF_NO_INSTANCE( EntwinedCreator );
+
 	//
 	// Public methods
 public:
