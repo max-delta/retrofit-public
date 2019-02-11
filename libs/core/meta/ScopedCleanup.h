@@ -8,7 +8,7 @@ namespace RF {
 // Sometimes you want to do something when a scope ends, regardless of which
 //  branches it may have taken, but you only want to write the code once
 // EXAMPLE:
-//  auto onScopeEnd = RF::OnScopeEnd( [handle]()
+//  auto const onScopeEnd = RF::OnScopeEnd( [handle]()
 //  {
 //    handle->Cleanup();
 //  } );
