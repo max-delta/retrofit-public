@@ -8,6 +8,7 @@
 #include "core_math/AABB4.h"
 #include "core_math/Lerp.h"
 #include "core/ptr/default_creator.h"
+#include "core/meta/ScopedCleanup.h"
 
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
@@ -34,6 +35,7 @@ using ContainerID = uint64_t;
 static constexpr ContainerID kInvalidContainerID = 0;
 static constexpr ContainerID kRootContainerID = 1;
 using ContainerIDList = rftl::vector<ContainerID>;
+using ContainerIDSet = rftl::unordered_set<ContainerID>;
 using AnchorID = uint64_t;
 using AnchorIDList = rftl::vector<AnchorID>;
 using AnchorIDSet = rftl::unordered_set<AnchorID>;
@@ -51,6 +53,12 @@ public:
 
 	virtual void OnAssign( ContainerManager& manager, Container& container ) {}
 	virtual void OnAABBRecalc( ContainerManager& manager, Container& container ) {}
+
+	// NOTE: Do NOT destroy child containers or anchors, this will happen
+	//  automatically, and attempting to do so here may cause re-entrancy
+	//  violations and undefined behavior
+	// NOTE: Container is const to help enforce this
+	virtual void OnImminentDestruction( ContainerManager& manager, Container const& container ) {}
 };
 
 struct Container
@@ -86,7 +94,7 @@ struct Container
 	UniquePtr<UIController> mStrongUIController;
 	WeakPtr<UIController> mWeakUIController;
 
-	bool IsConstrainedBy( AnchorID anchorID )
+	bool IsConstrainedBy( AnchorID anchorID ) const
 	{
 		if(
 			mLeftConstraint == anchorID ||
@@ -113,6 +121,15 @@ struct Container
 		if( controller != nullptr )
 		{
 			controller->OnAABBRecalc( manager, *this );
+		}
+	}
+
+	void OnImminentDestruction( ContainerManager& manager ) const
+	{
+		UIController* const controller = mWeakUIController;
+		if( controller != nullptr )
+		{
+			controller->OnImminentDestruction( manager, *this );
 		}
 	}
 };
@@ -146,21 +163,21 @@ struct Anchor
 //+On anchor point creation
 //+ Generate new ID
 //+ Add ID to large table which indicates which container ID it is owned by
-// On anchor point destruction
-//  Remove anchor point ID from large table
-//  Add anchor point ID to invalid list
-//  Flag that an anchor invalidation pass needs to happen
-// On anchor invalidation pass
-//  Clear flag
-//  Move invalid anchor list into local copy
-//  Walk entire tree, and remove any child container that was parented to any invalid anchor
-//  Check flag, repeat if it was set again
+//+On anchor point destruction
+//+ Remove anchor point ID from large table
+//+ Add anchor point ID to invalid list
+//+ Flag that an anchor invalidation pass needs to happen
+//+On anchor invalidation pass
+//+ Clear flag
+//+ Move invalid anchor list into local copy
+//+ Walk entire tree, and remove any child container that was parented to any invalid anchor
+//+ Check flag, repeat if it was set again
 //+On container creation
 //+ Calculate AABB
 //  Update max depth of tree ever seen
-// On container destruction
-//  Destroy all anchor points
-//  Recurse down, destroy all child containers and anchor points
+//+On container destruction
+//+ Destroy all anchor points
+//+ Recurse down, destroy all child containers and anchor points
 //+On anchor point move
 //+ Add anchor point to recalc list
 //+ Flag that an anchor recalc pass needs to happen
@@ -193,6 +210,8 @@ public:
 
 	// TODO: Use actual value
 	size_t mMaxDepthSeen = 30;
+
+	bool mIsDestroyingContainers = false;
 
 
 	void Construct( WeakPtr<gfx::PPUController> const& ppuController )
@@ -300,6 +319,13 @@ public:
 
 
 
+	void DestroyContainer( ContainerID containerID )
+	{
+		ProcessDestruction( { containerID }, {} );
+	}
+
+
+
 	AnchorID CreateAnchor( Container& container )
 	{
 		ContainerID const containerID = container.mContainerID;
@@ -328,6 +354,13 @@ public:
 
 		MarkForRecalc( anchorID );
 	};
+
+
+
+	void DestroyAnchor( AnchorID anchorID )
+	{
+		ProcessDestruction( {}, { anchorID } );
+	}
 
 
 
@@ -446,6 +479,143 @@ public:
 		// TODO: Log instead
 		RF_DBGFAIL_MSG( "INFINITE LOOP" );
 	}
+
+
+
+	void ProcessDestruction(ContainerIDSet && seedContainers, AnchorIDSet && seedAnchors)
+	{
+		// Re-entrant destruction not allowed
+		RF_ASSERT_MSG( mIsDestroyingContainers == false, "Re-entrant destruction" );
+		mIsDestroyingContainers = true;
+		auto const onScopeEnd = RF::OnScopeEnd( [this]()
+		{
+			mIsDestroyingContainers = false;
+		} );
+
+		ContainerIDSet containersToDestroy = rftl::move( seedContainers );
+		AnchorIDSet anchorsToDestroy = rftl::move( seedAnchors );
+
+		while( true )
+		{
+			size_t const initialSize = containersToDestroy.size() + anchorsToDestroy.size();
+
+			// Visit all child containers, starting with seed containers
+			ContainerIDSet containersToVisit = containersToDestroy;
+			while( containersToVisit.empty() == false )
+			{
+				// Pop from unvisited list
+				ContainerID const currentID = *containersToVisit.begin();
+				containersToVisit.erase( containersToVisit.begin() );
+				Container const& container = mContainers.at( currentID );
+
+				// Mark container for deletion
+				containersToDestroy.emplace( currentID );
+
+				// Mark all anchors for deletion
+				for( AnchorID const& anchorID : container.mAnchorIDs )
+				{
+					anchorsToDestroy.emplace( anchorID );
+				}
+
+				// Add all child containers to unvisited list
+				for( ContainerID const& childID : container.mChildContainerIDs )
+				{
+					containersToVisit.emplace( childID );
+				}
+			}
+
+			// For each anchor that needs updating...
+			AnchorIDSet anchorsToVisit = anchorsToDestroy;
+			for( AnchorID const& anchorID : anchorsToVisit )
+			{
+				RF_ASSERT( anchorID != kInvalidAnchorID );
+
+				// For each container that could be affected...
+				for( ContainerStorage::value_type& containerEntry : mContainers )
+				{
+					ContainerID const& containerID = containerEntry.first;
+					Container const& container = containerEntry.second;
+					RF_ASSERT( container.mContainerID == containerID );
+
+					// If it's been affected...
+					if( container.IsConstrainedBy( anchorID ) )
+					{
+						// Destroy it
+						containersToDestroy.emplace( containerID );
+					}
+				}
+			}
+
+			// Did the pass find more to destroy?
+			size_t const resultingSize = containersToDestroy.size() + anchorsToDestroy.size();
+			if( resultingSize != initialSize )
+			{
+				// Yes? Run another pass
+				RF_ASSERT( resultingSize > initialSize );
+				continue;
+			}
+			else
+			{
+				// No? Then no more passes needed
+				break;
+			}
+		}
+
+		// Erase containers
+		for( ContainerID const& currentID : containersToDestroy )
+		{
+			// Notify container
+			// NOTE: Const operation, containers are not allowed to interfere
+			//  with the destruction process
+			{
+				Container const& container = mContainers.at( currentID );
+				static_assert( rftl::is_const<rftl::remove_reference<decltype( container )>::type>::value, "Not const" );
+				container.OnImminentDestruction( *this );
+			}
+
+			// Erase
+			RF_ASSERT( mContainers.count( currentID ) == 1 );
+			mContainers.erase( currentID );
+		}
+
+		// Erase anchors
+		for( AnchorID currentID : anchorsToDestroy )
+		{
+			RF_ASSERT( mAnchors.count( currentID ) == 1 );
+
+			// Find the parent container if it hasn't been destroyed already
+			ContainerID parentContainerID;
+			{
+				Anchor const& anchor = mAnchors.at( currentID );
+				parentContainerID = anchor.mParentContainerID;
+				RF_ASSERT( parentContainerID != kInvalidContainerID );
+			}
+			ContainerStorage::iterator const containerIter = mContainers.find( parentContainerID );
+			if( containerIter == mContainers.end() )
+			{
+				// Already destroyed
+			}
+			else
+			{
+				// Remove anchor from container
+				Container& container = containerIter->second;
+				bool destroyedAnchor = false;
+				for( AnchorIDList::iterator iter = container.mAnchorIDs.begin(); iter != container.mAnchorIDs.end(); iter++ )
+				{
+					if( *iter == currentID )
+					{
+						container.mAnchorIDs.erase( iter );
+						destroyedAnchor = true;
+						break;
+					}
+				}
+				RF_ASSERT( destroyedAnchor );
+			}
+
+			// Erase
+			mAnchors.erase( currentID );
+		}
+	}
 };
 
 
@@ -473,9 +643,24 @@ public:
 		}
 	}
 
-	ContainerID GetChildContainerID( size_t sliceIndex )
+	ContainerID GetChildContainerID( size_t sliceIndex ) const
 	{
 		return mContainers.at( sliceIndex );
+	}
+
+	void DestroyChildContainer( ContainerManager& manager, size_t sliceIndex )
+	{
+		ContainerID& id = mContainers.at( sliceIndex );
+		if( id != kInvalidContainerID )
+		{
+			manager.DestroyContainer( id );
+			id = kInvalidContainerID;
+			mSliceEnabled[sliceIndex] = false;
+		}
+		else
+		{
+			RF_ASSERT( mSliceEnabled[sliceIndex] == false );
+		}
 	}
 
 	virtual void OnAssign( ContainerManager& manager, Container& container ) override
@@ -600,9 +785,14 @@ void SetupStructures()
 			tempUI.GetMutableRootContainer(),
 			DefaultCreator<controller::NineSlicer>::Create(
 				kSlicesEnabled ) );
+
 	WeakPtr<controller::Passthrough> const passthrough8 =
 		tempUI.AssignStrongController(
 			tempUI.GetMutableContainer( nineSlicer->GetChildContainerID( 8 ) ),
+			DefaultCreator<controller::Passthrough>::Create() );
+	WeakPtr<controller::Passthrough> const passthrough8_1 =
+		tempUI.AssignStrongController(
+			tempUI.GetMutableContainer( passthrough8->GetChildContainerID() ),
 			DefaultCreator<controller::Passthrough>::Create() );
 	// TODO: Create a chain of containers, and then blow up a parent to watch
 	//  them all recursively destroy themselves, and confirm they cleaned up
@@ -610,6 +800,7 @@ void SetupStructures()
 	// TODO: Make a bunch of manager stuff private with friending, so only
 	//  the UI controller base class can initiate structural changes
 	tempUI.ProcessRecalcs();
+	nineSlicer->DestroyChildContainer( tempUI, 8 );
 }
 
 void Render()
