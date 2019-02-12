@@ -246,12 +246,20 @@ public:
 	void RecalcRootContainer()
 	{
 		Container& root = GetMutableRootContainer();
+
 		// HACK: Slightly smaller than canvas, for testing
 		constexpr gfx::PPUCoordElem kDelta = gfx::kTileSize / 4;
-		root.mAABB.mTopLeft = { kDelta, kDelta };
-		root.mAABB.mBottomRight.x = mGraphics->GetWidth() - kDelta;
-		root.mAABB.mBottomRight.y = mGraphics->GetHeight() - kDelta;
-		root.OnAABBRecalc( *this );
+
+		Container::AABB4 newAABB;
+		newAABB.mTopLeft = { kDelta, kDelta };
+		newAABB.mBottomRight.x = mGraphics->GetWidth() - kDelta;
+		newAABB.mBottomRight.y = mGraphics->GetHeight() - kDelta;
+
+		if( newAABB != root.mAABB )
+		{
+			root.mAABB = newAABB;
+			root.OnAABBRecalc( *this );
+		}
 	}
 
 
@@ -309,12 +317,17 @@ public:
 		// HACK: Slightly smaller, for testing
 		constexpr gfx::PPUCoordElem kDelta = gfx::kTileSize / 4;
 
-		container.mAABB.mTopLeft.x = mAnchors.at( container.mLeftConstraint ).mPos.x + kDelta;
-		container.mAABB.mTopLeft.y = mAnchors.at( container.mTopConstraint ).mPos.y + kDelta;
-		container.mAABB.mBottomRight.x = mAnchors.at( container.mRightConstraint ).mPos.x - kDelta;
-		container.mAABB.mBottomRight.y = mAnchors.at( container.mBottomConstraint ).mPos.y - kDelta;
+		Container::AABB4 newAABB;
+		newAABB.mTopLeft.x = mAnchors.at( container.mLeftConstraint ).mPos.x + kDelta;
+		newAABB.mTopLeft.y = mAnchors.at( container.mTopConstraint ).mPos.y + kDelta;
+		newAABB.mBottomRight.x = mAnchors.at( container.mRightConstraint ).mPos.x - kDelta;
+		newAABB.mBottomRight.y = mAnchors.at( container.mBottomConstraint ).mPos.y - kDelta;
 
-		container.OnAABBRecalc( *this );
+		if( newAABB != container.mAABB )
+		{
+			container.mAABB = newAABB;
+			container.OnAABBRecalc( *this );
+		}
 	}
 
 
@@ -404,15 +417,15 @@ public:
 
 	void DebugRender() const
 	{
-		math::Color3f const& min = math::Color3f::kGray25;
-		math::Color3f const& max = math::Color3f::kGray50;
+		float const minLum = math::Color3f::kGray25.r;
+		float const maxLum = math::Color3f::kGray50.r;
 		constexpr gfx::PPUCoordElem kAnchorRadius = 3;
 
 		for( ContainerStorage::value_type const& containerEntry : mContainers )
 		{
 			ContainerID const id = containerEntry.first;
 			Container const& container = containerEntry.second;
-			math::Color3f const color = math::Color3f::RandomFromHash( id ).Clamp( min, max );
+			math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
 			mGraphics->DebugDrawAABB( container.mAABB, 3, color );
 		}
 
@@ -421,7 +434,7 @@ public:
 			Anchor const& anchor = anchorEntry.second;
 			ContainerID const parentID = anchor.mParentContainerID;
 			gfx::PPUCoord const& pos = anchor.mPos;
-			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).Clamp( min, max );
+			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
 			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, color );
 			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, color );
 		}
@@ -648,6 +661,11 @@ public:
 		return mContainers.at( sliceIndex );
 	}
 
+	void CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
+	{
+		CreateChildContainerInternal( manager, manager.GetMutableContainer( mParentContainerID ), sliceIndex );
+	}
+
 	void DestroyChildContainer( ContainerManager& manager, size_t sliceIndex )
 	{
 		ContainerID& id = mContainers.at( sliceIndex );
@@ -665,6 +683,7 @@ public:
 
 	virtual void OnAssign( ContainerManager& manager, Container& container ) override
 	{
+		mParentContainerID = container.mContainerID;
 		m0 = manager.CreateAnchor( container );
 		m33 = manager.CreateAnchor( container );
 		m66 = manager.CreateAnchor( container );
@@ -678,44 +697,7 @@ public:
 				continue;
 			}
 
-			AnchorID top;
-			AnchorID bottom;
-			if( i < 3 )
-			{
-				top = m0;
-				bottom = m33;
-			}
-			else if( i < 6 )
-			{
-				top = m33;
-				bottom = m66;
-			}
-			else
-			{
-				top = m66;
-				bottom = m100;
-			}
-
-			AnchorID left;
-			AnchorID right;
-			size_t const column = i % 3;
-			if( column == 0 )
-			{
-				left = m0;
-				right = m33;
-			}
-			else if( column == 1 )
-			{
-				left = m33;
-				right = m66;
-			}
-			else
-			{
-				left = m66;
-				right = m100;
-			}
-
-			mContainers[i] = manager.CreateChildContainer( container, left, right, top, bottom );
+			CreateChildContainerInternal( manager, container, i );
 		}
 	}
 
@@ -737,7 +719,60 @@ public:
 		manager.MoveAnchor( m100, { x100, y100 } );
 	}
 
+
 private:
+	void CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
+	{
+		ContainerID& id = mContainers.at( sliceIndex );
+		if( id != kInvalidContainerID )
+		{
+			RF_DBGFAIL_MSG( "Container already exists" );
+			return;
+		}
+
+		AnchorID top;
+		AnchorID bottom;
+		if( sliceIndex < 3 )
+		{
+			top = m0;
+			bottom = m33;
+		}
+		else if( sliceIndex < 6 )
+		{
+			top = m33;
+			bottom = m66;
+		}
+		else
+		{
+			top = m66;
+			bottom = m100;
+		}
+
+		AnchorID left;
+		AnchorID right;
+		size_t const column = sliceIndex % 3;
+		if( column == 0 )
+		{
+			left = m0;
+			right = m33;
+		}
+		else if( column == 1 )
+		{
+			left = m33;
+			right = m66;
+		}
+		else
+		{
+			left = m66;
+			right = m100;
+		}
+
+		id = manager.CreateChildContainer( container, left, right, top, bottom );
+	}
+
+
+private:
+	ContainerID mParentContainerID = kInvalidContainerID;
 	AnchorID m0 = kInvalidAnchorID;
 	AnchorID m33 = kInvalidAnchorID;
 	AnchorID m66 = kInvalidAnchorID;
@@ -778,7 +813,8 @@ void SetupStructures()
 {
 	tempUI.Construct( app::gGraphics );
 	tempUI.CreateRootContainer();
-	tempUI.RecalcRootContainer();
+
+	// Slice the root canvas
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
 	WeakPtr<controller::NineSlicer> const nineSlicer =
 		tempUI.AssignStrongController(
@@ -786,6 +822,7 @@ void SetupStructures()
 			DefaultCreator<controller::NineSlicer>::Create(
 				kSlicesEnabled ) );
 
+	// Create some passthoughs, and then blow them up from the head
 	WeakPtr<controller::Passthrough> const passthrough8 =
 		tempUI.AssignStrongController(
 			tempUI.GetMutableContainer( nineSlicer->GetChildContainerID( 8 ) ),
@@ -794,17 +831,23 @@ void SetupStructures()
 		tempUI.AssignStrongController(
 			tempUI.GetMutableContainer( passthrough8->GetChildContainerID() ),
 			DefaultCreator<controller::Passthrough>::Create() );
-	// TODO: Create a chain of containers, and then blow up a parent to watch
-	//  them all recursively destroy themselves, and confirm they cleaned up
-	//  properly without any dangling artifacts
+	RF_ASSERT( passthrough8 != nullptr );
+	RF_ASSERT( passthrough8_1 != nullptr );
+	nineSlicer->DestroyChildContainer( tempUI, 8 );
+	RF_ASSERT( passthrough8 == nullptr );
+	RF_ASSERT( passthrough8_1 == nullptr );
+
+	// Restore the container we blew up
+	nineSlicer->CreateChildContainer( tempUI, 8 );
+
 	// TODO: Make a bunch of manager stuff private with friending, so only
 	//  the UI controller base class can initiate structural changes
-	tempUI.ProcessRecalcs();
-	nineSlicer->DestroyChildContainer( tempUI, 8 );
 }
 
 void Render()
 {
+	tempUI.RecalcRootContainer();
+	tempUI.ProcessRecalcs();
 	tempUI.DebugRender();
 }
 

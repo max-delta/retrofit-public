@@ -20,6 +20,7 @@ public:
 	AABB4( T left, T top, T right, T bottom );
 
 	bool operator==( AABB4 const& rhs ) const;
+	bool operator!=( AABB4 const& rhs ) const;
 
 	template<typename OtherT>
 	operator AABB4<OtherT>() const;
