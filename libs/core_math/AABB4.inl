@@ -42,6 +42,14 @@ inline bool AABB4<T>::operator==( AABB4 const& rhs ) const
 
 
 template<typename T>
+inline bool AABB4<T>::operator!=( AABB4 const& rhs ) const
+{
+	return this->operator==( rhs ) == false;
+}
+
+
+
+template<typename T>
 template<typename OtherT>
 inline AABB4<T>::operator AABB4<OtherT>() const
 {
