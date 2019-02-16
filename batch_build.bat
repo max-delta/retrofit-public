@@ -14,3 +14,6 @@ msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Plat
 msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Debug
 msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Release
 msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Retail
