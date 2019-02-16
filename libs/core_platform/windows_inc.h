@@ -6,6 +6,12 @@
 #error "Windows included outside of guard"
 #endif
 
+#include "core/compiler.h"
+
+#if defined( RF_PLATFORM_ARM_32 ) || defined( RF_PLATFORM_ARM_64 )
+#error "Windows.h doesn't compile on ARM as of writing"
+#endif
+
 // Need to guard STL before windows destroys it
 #include "rftl/cstddef"
 #include "rftl/cstring"
