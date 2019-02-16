@@ -9,3 +9,6 @@
 #define RF_IS_FORBIDDEN(...) false
 
 #define RF_NO_SHARED_EXPORTS
+
+#define RF_DLLMAIN(...)
+#define RF_EMPTY_DLLMAIN(...)

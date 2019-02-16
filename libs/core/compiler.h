@@ -10,6 +10,12 @@ enum class Compiler
 	Clang
 };
 
+enum class OperatingSystem
+{
+	Invalid = 0,
+	Windows
+};
+
 enum class Architecture
 {
 	Invalid = 0,
@@ -48,6 +54,14 @@ enum class Endianness
 //  behavior, so be very cautious when using it
 static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>( 0x1 );
 
+
+
+#if defined(_WIN32)
+	#define RF_PLATFORM_WINDOWS
+	constexpr OperatingSystem kOperatingSystem = OperatingSystem::Windows;
+#else
+	#error Undefined platform
+#endif
 
 
 #if defined( _MSC_VER ) && !defined( __clang__ ) // NOTE: clang-cl pretends to be MSVC
@@ -154,7 +168,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	// NOTE: May be toolchain-specific depending on target OS
 	constexpr Architecture kArchitecture = Architecture::ARM_64;
 	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
-	#if defined( _WIN32 )
+	#if defined( RF_PLATFORM_WINDOWS )
 		// Microsoft formally declares Windows on ARM64 to use little-endian
 		//  mode only
 		// SEE: Microsoft ARM64 ABI Conventions

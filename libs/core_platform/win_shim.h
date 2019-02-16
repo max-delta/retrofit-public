@@ -20,6 +20,7 @@ typedef unsigned int UINT;
 typedef unsigned int* PUINT;
 typedef wchar_t WCHAR;
 typedef const WCHAR* LPCWSTR;
+typedef void* LPVOID;
 #ifdef RF_PLATFORM_MSVC
 	#if defined( _WIN64 )
 		typedef __int64 INT_PTR, *PINT_PTR;
@@ -50,6 +51,9 @@ typedef const WCHAR* LPCWSTR;
 typedef UINT_PTR WPARAM;
 typedef LONG_PTR LPARAM;
 typedef LONG_PTR LRESULT;
+struct HINSTANCE__;
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE HMODULE;
 
 //WinUser
 #define WIN32_CALLBACK __stdcall
