@@ -9,6 +9,7 @@
     <ClInclude Include="winuser_shim.h" />
     <ClInclude Include="uuid.h" />
     <ClInclude Include="rpc_inc.h" />
+    <ClInclude Include="dllmain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
