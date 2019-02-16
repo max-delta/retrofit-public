@@ -21,7 +21,7 @@ enum class Architecture
 	Invalid = 0,
 	x86_32,
 	x86_64,
-	//ARM_32, // Verify
+	ARM_32,
 	ARM_64
 };
 
@@ -89,7 +89,6 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
 		#define RF_ACK_32BIT_PADDING
 	#elif defined( _M_ARM )
-		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
 		#define RF_ACK_64BIT_PADDING
 		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
@@ -184,11 +183,20 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
 	constexpr unsigned long kMinPageSize = 4096u; // Verify?
 #elif defined( RF_PLATFORM_ARM_32 )
-	#error Verify and add support
+	// TODO: Verify all of this
+	// NOTE: May be toolchain-specific depending on target OS
 	constexpr Architecture kArchitecture = Architecture::ARM_32;
 	constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
-	#define RF_PLATFORM_VARIABLE_ENDIAN
-	constexpr Endianness kEndianness = Endianness::Variable;
+	#if defined( RF_PLATFORM_WINDOWS )
+		// Microsoft formally declares Windows on ARM32 to use little-endian
+		//  mode only
+		// SEE: Microsoft ARM32 ABI Conventions
+		#define RF_PLATFORM_LITTLE_ENDIAN
+		constexpr Endianness kEndianness = Endianness::Little;
+	#else
+		#define RF_PLATFORM_VARIABLE_ENDIAN
+		constexpr Endianness kEndianness = Endianness::Variable;
+	#endif
 	constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#define RF_PLATFORM_POINTER_BYTES 4u
 	constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
