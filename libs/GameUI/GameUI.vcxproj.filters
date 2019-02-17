@@ -11,14 +11,13 @@
       <Filter>controllers</Filter>
     </ClCompile>
     <ClCompile Include="ContainerManager.cpp" />
-    <ClCompile Include="UIController.cpp" />
     <ClCompile Include="Container.cpp" />
+    <ClCompile Include="Controller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="UIFwd.h" />
-    <ClInclude Include="UIController.h" />
     <ClInclude Include="Anchor.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="ContainerManager.h" />
@@ -34,6 +33,7 @@
     <ClInclude Include="controllers\stdafx.h">
       <Filter>controllers</Filter>
     </ClInclude>
+    <ClInclude Include="Controller.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">
