@@ -25,10 +25,17 @@ void TextLabel::SetText( char const* text )
 
 
 
+void TextLabel::SetColor( math::Color3f color )
+{
+	mColor = color;
+}
+
+
+
 void TextLabel::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
 {
 	gfx::PPUController& renderer = GetRenderer( manager );
-	renderer.DrawText( container.mAABB.mTopLeft, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, "%s", mText.c_str() );
+	renderer.DrawText( container.mAABB.mTopLeft, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mColor, "%s", mText.c_str() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

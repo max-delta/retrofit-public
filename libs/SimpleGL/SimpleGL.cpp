@@ -413,18 +413,17 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 
 
 
-bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z )
+bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color )
 {
-	return DrawBitmapFont( fontID, character, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
+	return DrawBitmapFont( fontID, character, pos, z, color, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
 }
 
 
 
-bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::AABB4f texUV )
+bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV )
 {
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
-	// TODO: Color parameter
-	glColor3f( 0, 0, 0 );
+	glColor3f( color.r, color.g, color.b );
 	return DrawBillboardInternal( texID, pos, z, texUV );
 }
 

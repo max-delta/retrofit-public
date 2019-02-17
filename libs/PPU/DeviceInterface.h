@@ -33,8 +33,8 @@ public:
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
 	virtual DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth ) = 0;
-	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z ) = 0;
-	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;
+	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color ) = 0;
+	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV ) = 0;
 
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) = 0;
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;
