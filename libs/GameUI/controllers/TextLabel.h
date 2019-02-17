@@ -3,6 +3,8 @@
 
 #include "GameUI/Controller.h"
 
+#include "core_math/Color3f.h"
+
 #include "rftl/string"
 
 
@@ -16,6 +18,7 @@ class GAMEUI_API TextLabel final : public Controller
 public:
 	void SetFont( gfx::ManagedFontID fontID, uint8_t desiredHeight );
 	void SetText( char const* text );
+	void SetColor( math::Color3f color );
 
 	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering ) override;
 
@@ -25,8 +28,8 @@ public:
 private:
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
 	uint8_t mDesiredHeight = 0;
-
 	rftl::string mText;
+	math::Color3f mColor = math::Color3f::kBlack;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
