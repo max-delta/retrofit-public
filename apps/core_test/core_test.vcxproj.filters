@@ -44,6 +44,7 @@
     <ClCompile Include="unicode_bufferconvert.cpp" />
     <ClCompile Include="event_eventqueue.cpp" />
     <ClCompile Include="event_eventdispatcher.cpp" />
+    <ClCompile Include="rftype_virtual_cast.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
