@@ -19,6 +19,7 @@
       <Filter>stl_extensions</Filter>
     </ClInclude>
     <ClInclude Include="TypeInference.h" />
+    <ClInclude Include="VirtualCast.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -38,5 +39,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TypeTraverser.inl" />
+    <None Include="VirtualCast.inl" />
   </ItemGroup>
 </Project>

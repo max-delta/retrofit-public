@@ -34,6 +34,7 @@ struct BaseClassInfo
 	// Inheritance is implementation-specifc, so must use compiler-generated
 	//  functions to perform the hop, even though all major compilers are
 	//  reasonably predictable at time of writing
+	// NOTE: If null, then it should be assumed that no adjustment is needed
 	using FuncPtrGetBasePointerFromDerived = void const* (*)( void const* );
 	FuncPtrGetBasePointerFromDerived mGetBasePointerFromDerived = nullptr;
 
@@ -211,6 +212,10 @@ struct ClassInfo
 	explicit ClassInfo( ExplicitDefaultConstruct )
 	{
 	}
+
+	// Walk inheritance chain, optionally resolving a pointer along the way
+	bool IsSameOrDerivedFrom( ClassInfo const& ancestor ) const;
+	void const* AttemptInheritanceWalk( ClassInfo const& ancestor, void const* source ) const;
 
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;
