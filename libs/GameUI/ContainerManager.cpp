@@ -69,6 +69,32 @@ Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 
 
 
+void ContainerManager::SetRootRenderDepth( gfx::PPUDepthLayer depth )
+{
+	mRootRenderDepth = depth;
+}
+
+
+
+gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
+{
+	static_assert( gfx::kNearestLayer < gfx::kFarthestLayer, "Expected negative to be closer" );
+
+	// Walk back up tree to root
+	gfx::PPUDepthLayer retVal = mRootRenderDepth;
+	ContainerID id = container.mParentContainerID;
+	while( id != kInvalidContainerID )
+	{
+		Container const& currentContainer = mContainers.at( id );
+		id = currentContainer.mParentContainerID;
+		RF_ASSERT_MSG( retVal > gfx::kNearestLayer, "UI stack too deep" );
+		retVal--;
+	}
+	return retVal;
+}
+
+
+
 void ContainerManager::ProcessRecalcs()
 {
 	// Controllers might be defective, and result in an infinite chain, so
@@ -171,6 +197,15 @@ void ContainerManager::DebugRender() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+gfx::PPUController& ContainerManager::GetRenderer() const
+{
+	gfx::PPUController* const graphics = mGraphics;
+	RF_ASSERT( graphics != nullptr );
+	return *graphics;
+}
+
+
 
 Container& ContainerManager::GetMutableRootContainer()
 {
