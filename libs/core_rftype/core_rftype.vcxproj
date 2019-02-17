@@ -40,6 +40,7 @@
     <ClInclude Include="stl_extensions\vector.h" />
     <ClInclude Include="TypeInference.h" />
     <ClInclude Include="TypeTraverser.h" />
+    <ClInclude Include="VirtualCast.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Identifier.cpp" />
@@ -52,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TypeTraverser.inl" />
+    <None Include="VirtualCast.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
