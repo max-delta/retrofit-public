@@ -65,6 +65,11 @@ void SetupStructures()
 	textLabel8->SetFont( 2, 8 );
 	textLabel8->SetText( "TextLabel8 test" );
 	textLabel8->SetColor( math::Color3f::kWhite );
+
+	// Assign a label to confirm it's accessible
+	tempUI.AssignLabel( nineSlicer->GetChildContainerID( 8 ), "TextLabel8" );
+	WeakPtr<ui::Controller> const textLabel8Untyped = tempUI.GetMutableController( "TextLabel8" );
+	RF_ASSERT( textLabel8 == textLabel8Untyped );
 }
 
 void Render()
