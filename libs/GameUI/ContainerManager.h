@@ -37,14 +37,29 @@ public:
 	~ContainerManager();
 
 	void CreateRootContainer();
+	void RecalcRootContainer();
 
+	Container const& GetContainer( ContainerID containerID ) const;
+
+	template<typename T>
+	WeakPtr<T> AssignStrongController( ContainerID containerID, CreationPayload<T>&& controller );
+	template<typename T>
+	WeakPtr<T> AssignStrongController( ContainerID containerID, UniquePtr<T>&& controller );
+	template<typename T>
+	WeakPtr<T> AssignStrongController( Container& container, CreationPayload<T>&& controller );
+	template<typename T>
+	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller );
+
+	void ProcessRecalcs();
+
+	void DebugRender() const;
+
+
+	//
+	// Private methods
 private:
 	Container& GetMutableRootContainer();
 
-public:
-	void RecalcRootContainer();
-
-private:
 	ContainerID CreateChildContainer(
 		Container& parentContainer,
 		AnchorID leftConstraint,
@@ -52,10 +67,6 @@ private:
 		AnchorID topConstraint,
 		AnchorID bottomConstraint );
 
-public:
-	Container const& GetContainer( ContainerID containerID ) const;
-
-private:
 	Container& GetMutableContainer( ContainerID containerID );
 
 	void RecalcContainer( Container& container );
@@ -65,50 +76,10 @@ private:
 	void MoveAnchor( AnchorID anchorID, gfx::PPUCoord pos );
 	void DestroyAnchor( AnchorID anchorID );
 
-public:
-	template<typename T>
-	WeakPtr<T> AssignStrongController( ContainerID containerID, CreationPayload<T>&& controller )
-	{
-		return AssignStrongController( GetMutableContainer( containerID ), rftl::move( controller ) );
-	}
-
-	template<typename T>
-	WeakPtr<T> AssignStrongController( ContainerID containerID, UniquePtr<T>&& controller )
-	{
-		return AssignStrongController( GetMutableContainer( containerID ), rftl::move( controller ) );
-	}
-
-	template<typename T>
-	WeakPtr<T> AssignStrongController( Container& container, CreationPayload<T>&& controller )
-	{
-		UniquePtr<T> temp = rftl::move( controller );
-		WeakPtr<T> const retVal = AssignStrongController<T>( container, rftl::move( temp ) );
-		return retVal;
-	}
-
-	template<typename T>
-	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller )
-	{
-		WeakPtr<T> const retVal = controller;
-		UniquePtr<Controller> temp = rftl::move( controller );
-		WeakPtr<Controller> const result = AssignStrongControllerInternal( container, rftl::move( temp ) );
-		RF_ASSERT( retVal == result );
-		return retVal;
-	}
-
-private:
 	WeakPtr<Controller> AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller );
 
-public:
-	void DebugRender() const;
-
-private:
 	void MarkForRecalc( AnchorID anchorID );
 
-public:
-	void ProcessRecalcs();
-
-private:
 	void ProcessDestruction( ContainerIDSet&& seedContainers, AnchorIDSet&& seedAnchors );
 
 
@@ -133,3 +104,5 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
+
+#include "ContainerManager.inl"
