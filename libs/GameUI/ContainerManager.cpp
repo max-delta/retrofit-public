@@ -41,13 +41,6 @@ void ContainerManager::CreateRootContainer()
 
 
 
-Container& ContainerManager::GetMutableRootContainer()
-{
-	return GetMutableContainer( kRootContainerID );
-}
-
-
-
 void ContainerManager::RecalcRootContainer()
 {
 	Container& root = GetMutableRootContainer();
@@ -65,6 +58,93 @@ void ContainerManager::RecalcRootContainer()
 		root.mAABB = newAABB;
 		root.OnAABBRecalc( *this );
 	}
+}
+
+
+
+Container const& ContainerManager::GetContainer( ContainerID containerID ) const
+{
+	return mContainers.at( containerID );
+}
+
+
+
+void ContainerManager::ProcessRecalcs()
+{
+	// Controllers might be defective, and result in an infinite chain, so
+	//  gaurd against infinite loops by assuming that a reasonable chain
+	//  can't go beyond the maximum depth we've ever seen
+	// NOTE: Caching the max depth before starting, since controllers could
+	//  create children, which would trivially defeat detection of an
+	//  infinite loop here
+	size_t const maxPasses = mMaxDepthSeen;
+	for( size_t pass = 0; pass < maxPasses; pass++ )
+	{
+		if( mRecalcsNeeded.empty() )
+		{
+			// No further work
+			return;
+		}
+
+		AnchorIDSet const recalcsInProgress = rftl::move( mRecalcsNeeded );
+		RF_ASSERT( mRecalcsNeeded.empty() );
+
+		// For each anchor that needs updating...
+		for( AnchorID const& anchorID : recalcsInProgress )
+		{
+			RF_ASSERT( anchorID != kInvalidAnchorID );
+
+			// For each container that could be affected...
+			for( ContainerStorage::value_type& containerEntry : mContainers )
+			{
+				Container& container = containerEntry.second;
+
+				// If it's been affected...
+				if( container.IsConstrainedBy( anchorID ) )
+				{
+					// Recalculate it
+					RecalcContainer( container );
+				}
+			}
+		}
+	}
+
+	// TODO: Log instead
+	RF_DBGFAIL_MSG( "INFINITE LOOP" );
+}
+
+
+
+void ContainerManager::DebugRender() const
+{
+	float const minLum = math::Color3f::kGray25.r;
+	float const maxLum = math::Color3f::kGray50.r;
+	constexpr gfx::PPUCoordElem kAnchorRadius = 3;
+
+	for( ContainerStorage::value_type const& containerEntry : mContainers )
+	{
+		ContainerID const id = containerEntry.first;
+		Container const& container = containerEntry.second;
+		math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
+		mGraphics->DebugDrawAABB( container.mAABB, 3, color );
+	}
+
+	for( AnchorStorage::value_type const& anchorEntry : mAnchors )
+	{
+		Anchor const& anchor = anchorEntry.second;
+		ContainerID const parentID = anchor.mParentContainerID;
+		gfx::PPUCoord const& pos = anchor.mPos;
+		math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
+		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, color );
+		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, color );
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+Container& ContainerManager::GetMutableRootContainer()
+{
+	return GetMutableContainer( kRootContainerID );
 }
 
 
@@ -94,13 +174,6 @@ ContainerID ContainerManager::CreateChildContainer( Container& parentContainer, 
 	RecalcContainer( childContainer );
 
 	return childContainerID;
-}
-
-
-
-Container const& ContainerManager::GetContainer( ContainerID containerID ) const
-{
-	return mContainers.at( containerID );
 }
 
 
@@ -193,82 +266,9 @@ WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container&
 
 
 
-void ContainerManager::DebugRender() const
-{
-	float const minLum = math::Color3f::kGray25.r;
-	float const maxLum = math::Color3f::kGray50.r;
-	constexpr gfx::PPUCoordElem kAnchorRadius = 3;
-
-	for( ContainerStorage::value_type const& containerEntry : mContainers )
-	{
-		ContainerID const id = containerEntry.first;
-		Container const& container = containerEntry.second;
-		math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
-		mGraphics->DebugDrawAABB( container.mAABB, 3, color );
-	}
-
-	for( AnchorStorage::value_type const& anchorEntry : mAnchors )
-	{
-		Anchor const& anchor = anchorEntry.second;
-		ContainerID const parentID = anchor.mParentContainerID;
-		gfx::PPUCoord const& pos = anchor.mPos;
-		math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, color );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, color );
-	}
-}
-
-
-
 void ContainerManager::MarkForRecalc( AnchorID anchorID )
 {
 	mRecalcsNeeded.emplace( anchorID );
-}
-
-
-
-void ContainerManager::ProcessRecalcs()
-{
-	// Controllers might be defective, and result in an infinite chain, so
-	//  gaurd against infinite loops by assuming that a reasonable chain
-	//  can't go beyond the maximum depth we've ever seen
-	// NOTE: Caching the max depth before starting, since controllers could
-	//  create children, which would trivially defeat detection of an
-	//  infinite loop here
-	size_t const maxPasses = mMaxDepthSeen;
-	for( size_t pass = 0; pass < maxPasses; pass++ )
-	{
-		if( mRecalcsNeeded.empty() )
-		{
-			// No further work
-			return;
-		}
-
-		AnchorIDSet const recalcsInProgress = rftl::move( mRecalcsNeeded );
-		RF_ASSERT( mRecalcsNeeded.empty() );
-
-		// For each anchor that needs updating...
-		for( AnchorID const& anchorID : recalcsInProgress )
-		{
-			RF_ASSERT( anchorID != kInvalidAnchorID );
-
-			// For each container that could be affected...
-			for( ContainerStorage::value_type& containerEntry : mContainers )
-			{
-				Container& container = containerEntry.second;
-
-				// If it's been affected...
-				if( container.IsConstrainedBy( anchorID ) )
-				{
-					// Recalculate it
-					RecalcContainer( container );
-				}
-			}
-		}
-	}
-
-	// TODO: Log instead
-	RF_DBGFAIL_MSG( "INFINITE LOOP" );
 }
 
 

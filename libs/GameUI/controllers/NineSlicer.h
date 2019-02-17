@@ -14,6 +14,8 @@ namespace RF { namespace ui { namespace controller {
 // 6 7 8
 class GAMEUI_API NineSlicer final : public Controller
 {
+	//
+	// Public methods
 public:
 	NineSlicer();
 	NineSlicer( bool const ( &sliceEnabled )[9] );
@@ -26,10 +28,14 @@ public:
 	virtual void OnAABBRecalc( ContainerManager& manager, Container& container ) override;
 
 
+	//
+	// Private methods
 private:
 	void CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex );
 
 
+	//
+	// Private data
 private:
 	ContainerID mParentContainerID = kInvalidContainerID;
 	AnchorID m0 = kInvalidAnchorID;

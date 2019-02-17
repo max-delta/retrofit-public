@@ -13,8 +13,15 @@ struct GAMEUI_API Anchor
 {
 	RF_NO_COPY( Anchor );
 
+	//
+	// Public methods
+public:
 	Anchor() = default;
 
+
+	//
+	// Public data
+public:
 	// Anchors have no direct relationship to each other
 	AnchorID mAnchorID = kInvalidAnchorID;
 
