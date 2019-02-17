@@ -7,10 +7,10 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API UIController
+class GAMEUI_API Controller
 {
 public:
-	virtual ~UIController() = default;
+	virtual ~Controller() = default;
 
 	virtual void OnAssign( ContainerManager& manager, Container& container );
 	virtual void OnAABBRecalc( ContainerManager& manager, Container& container );

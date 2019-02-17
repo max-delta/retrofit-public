@@ -74,13 +74,13 @@ public:
 	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller )
 	{
 		WeakPtr<T> const retVal = controller;
-		UniquePtr<UIController> temp = rftl::move( controller );
-		WeakPtr<UIController> const result = AssignStrongControllerInternal( container, rftl::move( temp ) );
+		UniquePtr<Controller> temp = rftl::move( controller );
+		WeakPtr<Controller> const result = AssignStrongControllerInternal( container, rftl::move( temp ) );
 		RF_ASSERT( retVal == result );
 		return retVal;
 	}
 
-	WeakPtr<UIController> AssignStrongControllerInternal( Container& container, UniquePtr<UIController>&& controller );
+	WeakPtr<Controller> AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller );
 
 	void DebugRender() const;
 

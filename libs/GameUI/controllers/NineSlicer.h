@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/UIController.h"
+#include "GameUI/Controller.h"
 
 #include "rftl/array"
 
@@ -12,7 +12,7 @@ namespace RF { namespace ui { namespace controller {
 // 0 1 2
 // 3 4 5
 // 6 7 8
-class GAMEUI_API NineSlicer final : public UIController
+class GAMEUI_API NineSlicer final : public Controller
 {
 public:
 	NineSlicer();

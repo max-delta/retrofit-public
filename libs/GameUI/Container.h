@@ -43,8 +43,8 @@ struct GAMEUI_API Container
 	// Containers may have a controller that runs their logic
 	// NOTE: Possible to only have a weak reference, such as when sharing
 	//  controllers that are designed to manage multiple containers
-	UniquePtr<UIController> mStrongUIController;
-	WeakPtr<UIController> mWeakUIController;
+	UniquePtr<Controller> mStrongUIController;
+	WeakPtr<Controller> mWeakUIController;
 
 	bool IsConstrainedBy( AnchorID anchorID ) const;
 

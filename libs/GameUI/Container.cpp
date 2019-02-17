@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Container.h"
 
-#include "GameUI/UIController.h"
+#include "GameUI/Controller.h"
 
 
 namespace RF { namespace ui {
@@ -24,7 +24,7 @@ bool Container::IsConstrainedBy( AnchorID anchorID ) const
 
 void Container::OnAssign( ContainerManager& manager )
 {
-	UIController* const controller = mWeakUIController;
+	Controller* const controller = mWeakUIController;
 	RF_ASSERT( controller != nullptr );
 	controller->OnAssign( manager, *this );
 	controller->OnAABBRecalc( manager, *this );
@@ -34,7 +34,7 @@ void Container::OnAssign( ContainerManager& manager )
 
 void Container::OnAABBRecalc( ContainerManager& manager )
 {
-	UIController* const controller = mWeakUIController;
+	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
 		controller->OnAABBRecalc( manager, *this );
@@ -45,7 +45,7 @@ void Container::OnAABBRecalc( ContainerManager& manager )
 
 void Container::OnImminentDestruction( ContainerManager& manager ) const
 {
-	UIController* const controller = mWeakUIController;
+	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
 		controller->OnImminentDestruction( manager, *this );

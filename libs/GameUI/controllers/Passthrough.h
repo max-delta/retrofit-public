@@ -1,13 +1,13 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/UIController.h"
+#include "GameUI/Controller.h"
 
 
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API Passthrough final : public UIController
+class GAMEUI_API Passthrough final : public Controller
 {
 public:
 	ContainerID GetChildContainerID();
