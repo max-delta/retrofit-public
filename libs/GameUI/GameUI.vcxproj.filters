@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="Anchor.cpp" />
+    <ClCompile Include="controllers\NineSlicer.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="controllers\Passthrough.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="ContainerManager.cpp" />
+    <ClCompile Include="UIController.cpp" />
+    <ClCompile Include="Container.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="project.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="UIFwd.h" />
+    <ClInclude Include="UIController.h" />
+    <ClInclude Include="Anchor.h" />
+    <ClInclude Include="Container.h" />
+    <ClInclude Include="ContainerManager.h" />
+    <ClInclude Include="controllers\NineSlicer.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\Passthrough.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\project.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\stdafx.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="controllers">
+      <UniqueIdentifier>{ba8e8d01-1148-4956-81fb-60509b9176a3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
