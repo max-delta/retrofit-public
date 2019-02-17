@@ -69,6 +69,49 @@ Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 
 
 
+Container const& ContainerManager::GetContainer( char const* label ) const
+{
+	return GetContainer( mLabelsToContainerIDs.at( label ) );
+}
+
+
+
+Container const& ContainerManager::GetContainer( rftl::string const& label ) const
+{
+	return GetContainer( mLabelsToContainerIDs.at( label ) );
+}
+
+
+
+WeakPtr<Controller> ContainerManager::GetMutableController( ContainerID containerID )
+{
+	return GetContainer( containerID ).mWeakUIController;
+}
+
+
+
+WeakPtr<Controller> ContainerManager::GetMutableController( char const* label )
+{
+	return GetContainer( label ).mWeakUIController;
+}
+
+
+
+WeakPtr<Controller> ContainerManager::GetMutableController( rftl::string const& label )
+{
+	return GetContainer( label ).mWeakUIController;
+}
+
+
+
+void ContainerManager::AssignLabel( ContainerID containerID, char const* label )
+{
+	RF_ASSERT( mLabelsToContainerIDs.count( label ) == 0 );
+	mLabelsToContainerIDs[label] = containerID;
+}
+
+
+
 void ContainerManager::SetRootRenderDepth( gfx::PPUDepthLayer depth )
 {
 	mRootRenderDepth = depth;
@@ -456,6 +499,15 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 				}
 				RF_ASSERT( toErase != children.end() );
 				children.erase( toErase );
+			}
+		}
+
+		// Remove any labels
+		for( LabelToContainerID::iterator iter = mLabelsToContainerIDs.begin(); iter != mLabelsToContainerIDs.end(); iter++ )
+		{
+			if( iter->second == currentID )
+			{
+				iter = mLabelsToContainerIDs.erase( iter );
 			}
 		}
 	}

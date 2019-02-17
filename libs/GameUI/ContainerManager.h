@@ -8,6 +8,7 @@
 #include "core/ptr/weak_ptr.h"
 
 #include "rftl/unordered_map"
+#include "rftl/string"
 
 
 namespace RF { namespace ui {
@@ -28,6 +29,7 @@ private:
 private:
 	using ContainerStorage = rftl::unordered_map<ContainerID, Container>;
 	using AnchorStorage = rftl::unordered_map<AnchorID, Anchor>;
+	using LabelToContainerID = rftl::unordered_map<rftl::string, ContainerID>;
 
 
 	//
@@ -40,6 +42,14 @@ public:
 	void RecalcRootContainer();
 
 	Container const& GetContainer( ContainerID containerID ) const;
+	Container const& GetContainer( char const* label ) const;
+	Container const& GetContainer( rftl::string const& label ) const;
+
+	WeakPtr<Controller> GetMutableController( ContainerID containerID );
+	WeakPtr<Controller> GetMutableController( char const* label );
+	WeakPtr<Controller> GetMutableController( rftl::string const& label );
+
+	void AssignLabel( ContainerID containerID, char const* label );
 
 	template<typename T>
 	WeakPtr<T> AssignStrongController( ContainerID containerID, CreationPayload<T>&& controller );
@@ -100,6 +110,8 @@ private:
 
 	ContainerID mLastContainerID = kInvalidContainerID;
 	AnchorID mLastAnchorID = kInvalidAnchorID;
+
+	LabelToContainerID mLabelsToContainerIDs;
 
 	AnchorIDSet mRecalcsNeeded;
 
