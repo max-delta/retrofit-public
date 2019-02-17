@@ -40,6 +40,9 @@ inline RF::reflect::VirtualClass::~VirtualClass()
 	// But the presence of a function on a base class that is not exported, and
 	//  then inherited onto a derived class that IS exported, will cause MSVC
 	//  to reasonably warn.
+	// We can't export/import the VirtualClass, since we don't know how an
+	//  engine may want to integrate it, and that would create a major
+	//  restriction on how it could be used.
 	// We then want to have an inline, non-exported destructor for derived
 	//  exported classes to find during linking and chain to. But, MSVC doesn't
 	//  detect the inline when evaluating the warning, which seems to be a bug.
