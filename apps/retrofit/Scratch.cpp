@@ -15,62 +15,12 @@ namespace RF { namespace scratch {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-// Container
-// |- Container ID
-// |- Parent container ID
-// |- 4x Parent anchor points (Left/right/top/bottom constraint)
-// |   L- Parent anchor point ID
-// |- Last calc AABB from parent anchor points
-// |- Nx Child containers
-// |   L- Container ID
-// |- Nx Child anchor points
-// |   L- Anchor point ID
-// L- UI controller
-//     L- UniquePtr
+// TODO: UI
+//  On message (render, input, etc)
+//   Dispatch breadth-first to controllers
+//    Allow controller to block children from receiving (filter out controllers that are reachable from blocker)
 
-// + := done
-
-//+Start with a special root container
-//+ Root container has invalid parent anchor points
-//+ Root container gets AABB from canvas
-//+Assign a UI controller of some kind to the root container
-//+ Expect it to be some kind of non-rendering controller
-//+ Expect it to create anchor points on the controller
-//+ It may create child containers, but probably not
-
-//+On anchor point creation
-//+ Generate new ID
-//+ Add ID to large table which indicates which container ID it is owned by
-//+On anchor point destruction
-//+ Remove anchor point ID from large table
-//+ Add anchor point ID to invalid list
-//+ Flag that an anchor invalidation pass needs to happen
-//+On anchor invalidation pass
-//+ Clear flag
-//+ Move invalid anchor list into local copy
-//+ Walk entire tree, and remove any child container that was parented to any invalid anchor
-//+ Check flag, repeat if it was set again
-//+On container creation
-//+ Calculate AABB
-//  Update max depth of tree ever seen
-//+On container destruction
-//+ Destroy all anchor points
-//+ Recurse down, destroy all child containers and anchor points
-//+On anchor point move
-//+ Add anchor point to recalc list
-//+ Flag that an anchor recalc pass needs to happen
-//+On anchor recalc pass
-//+ Clear flag
-//+ Move recalc anchor list into local copy
-//+ Walk entire tree
-//+  Recalc any AABBs that are parented to a moved anchor
-//+  Notify any controllers of a container that had an AABB recalc (they may move their anchors in response)
-//+ Check flag, repeat if it was set again, assert and bail if repeats more than max depth ever seen (loop found)
-// On message (render, input, etc)
-//  Dispatch breadth-first to controllers
-//   Allow controller to block children from receiving (filter out controllers that are reachable from blocker)
-
-UniquePtr<ui::ContainerManager> tempContainerManager;
+static UniquePtr<ui::ContainerManager> tempContainerManager;
 
 void SetupStructures()
 {
