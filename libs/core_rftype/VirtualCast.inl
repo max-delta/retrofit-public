@@ -23,10 +23,16 @@ TargetT virtual_cast( SourceT* source )
 {
 	static_assert( rftl::is_pointer<TargetT>::value, "Expected a pointer as template argument" );
 	using TargetType = typename rftl::remove_pointer<TargetT>::type;
+	using UnconstTargetType = typename rftl::remove_cv<TargetType>::type;
 	static_assert( rftl::is_base_of<reflect::VirtualClassWithoutDestructor, TargetType>::value, "This function only works with virtual lookups" );
 	static_assert( rftl::is_base_of<reflect::VirtualClassWithoutDestructor, SourceT>::value, "This function only works with virtual lookups" );
 
-	reflect::ClassInfo const& target = GetClassInfo<TargetType>();
+	if( source == nullptr )
+	{
+		return nullptr;
+	}
+
+	reflect::ClassInfo const& target = GetClassInfo<UnconstTargetType>();
 	void const* result = source->GetVirtualClassInfo()->AttemptInheritanceWalk( target, source );
 
 	using ConstType = typename rftl::add_const<TargetType>::type;
