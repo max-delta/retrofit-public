@@ -64,6 +64,9 @@
     <ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
       <Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
+      <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
     </ProjectReference>

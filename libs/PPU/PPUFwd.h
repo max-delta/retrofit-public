@@ -71,6 +71,7 @@ class FramePackManager;
 class TilesetManager;
 class FontManager;
 class DeviceInterface;
+class PPUController;
 
 class FramePackBase;
 template<size_t>
