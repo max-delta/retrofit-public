@@ -22,7 +22,7 @@ using AnchorIDList = rftl::vector<AnchorID>;
 using AnchorIDSet = rftl::unordered_set<AnchorID>;
 
 class ContainerManager;
-class UIController;
+class Controller;
 
 struct Container;
 struct Anchor;

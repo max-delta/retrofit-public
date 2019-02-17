@@ -177,7 +177,7 @@ void ContainerManager::DestroyAnchor( AnchorID anchorID )
 
 
 
-WeakPtr<UIController> ContainerManager::AssignStrongControllerInternal( Container& container, UniquePtr<UIController>&& controller )
+WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller )
 {
 	RF_ASSERT( controller != nullptr );
 	RF_ASSERT( container.mStrongUIController == nullptr );
