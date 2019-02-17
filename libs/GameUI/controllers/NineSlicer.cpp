@@ -39,7 +39,7 @@ ContainerID NineSlicer::GetChildContainerID( size_t sliceIndex ) const
 
 void NineSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
 {
-	CreateChildContainerInternal( manager, manager.GetMutableContainer( mParentContainerID ), sliceIndex );
+	CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
 }
 
 
@@ -49,7 +49,7 @@ void NineSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceI
 	ContainerID& id = mContainers.at( sliceIndex );
 	if( id != kInvalidContainerID )
 	{
-		manager.DestroyContainer( id );
+		DestroyContainer( manager, id );
 		id = kInvalidContainerID;
 		mSliceEnabled[sliceIndex] = false;
 	}
@@ -64,10 +64,10 @@ void NineSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceI
 void NineSlicer::OnAssign( ContainerManager& manager, Container& container )
 {
 	mParentContainerID = container.mContainerID;
-	m0 = manager.CreateAnchor( container );
-	m33 = manager.CreateAnchor( container );
-	m66 = manager.CreateAnchor( container );
-	m100 = manager.CreateAnchor( container );
+	m0 = CreateAnchor( manager, container );
+	m33 = CreateAnchor( manager, container );
+	m66 = CreateAnchor( manager, container );
+	m100 = CreateAnchor( manager, container );
 
 	for( size_t i = 0; i < 9; i++ )
 	{
@@ -95,10 +95,10 @@ void NineSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
 	gfx::PPUCoordElem const y33 = math::Lerp( y0, y100, 1.f / 3.f );
 	gfx::PPUCoordElem const y66 = math::Lerp( y0, y100, 2.f / 3.f );
 
-	manager.MoveAnchor( m0, { x0, y0 } );
-	manager.MoveAnchor( m33, { x33, y33 } );
-	manager.MoveAnchor( m66, { x66, y66 } );
-	manager.MoveAnchor( m100, { x100, y100 } );
+	MoveAnchor( manager, m0, { x0, y0 } );
+	MoveAnchor( manager, m33, { x33, y33 } );
+	MoveAnchor( manager, m66, { x66, y66 } );
+	MoveAnchor( manager, m100, { x100, y100 } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ void NineSlicer::CreateChildContainerInternal( ContainerManager& manager, Contai
 		right = m100;
 	}
 
-	id = manager.CreateChildContainer( container, left, right, top, bottom );
+	id = Controller::CreateChildContainer( manager, container, left, right, top, bottom );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

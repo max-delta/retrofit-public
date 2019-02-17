@@ -17,7 +17,8 @@ ContainerID Passthrough::GetChildContainerID()
 
 void Passthrough::OnAssign( ContainerManager& manager, Container& container )
 {
-	mContainerID = manager.CreateChildContainer(
+	mContainerID = CreateChildContainer(
+		manager,
 		container,
 		container.mLeftConstraint,
 		container.mRightConstraint,

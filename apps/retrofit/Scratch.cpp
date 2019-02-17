@@ -83,18 +83,18 @@ void SetupStructures()
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
 	WeakPtr<ui::controller::NineSlicer> const nineSlicer =
 		tempUI.AssignStrongController(
-			tempUI.GetMutableRootContainer(),
+			ui::kRootContainerID,
 			DefaultCreator<ui::controller::NineSlicer>::Create(
 				kSlicesEnabled ) );
 
 	// Create some passthoughs, and then blow them up from the head
 	WeakPtr<ui::controller::Passthrough> const passthrough8 =
 		tempUI.AssignStrongController(
-			tempUI.GetMutableContainer( nineSlicer->GetChildContainerID( 8 ) ),
+			nineSlicer->GetChildContainerID( 8 ),
 			DefaultCreator<ui::controller::Passthrough>::Create() );
 	WeakPtr<ui::controller::Passthrough> const passthrough8_1 =
 		tempUI.AssignStrongController(
-			tempUI.GetMutableContainer( passthrough8->GetChildContainerID() ),
+			passthrough8->GetChildContainerID(),
 			DefaultCreator<ui::controller::Passthrough>::Create() );
 	RF_ASSERT( passthrough8 != nullptr );
 	RF_ASSERT( passthrough8_1 != nullptr );
