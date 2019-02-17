@@ -6,6 +6,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/Passthrough.h"
+#include "GameUI/controllers/TextLabel.h"
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
@@ -28,6 +29,7 @@ void SetupStructures()
 	ui::ContainerManager& tempUI = *tempContainerManager;
 
 	tempUI.CreateRootContainer();
+	tempUI.SetRootRenderDepth( gfx::kNearestLayer + 50 );
 
 	// Slice the root canvas
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
@@ -55,8 +57,13 @@ void SetupStructures()
 	// Restore the container we blew up
 	nineSlicer->CreateChildContainer( tempUI, 8 );
 
-	// TODO: Make a bunch of manager stuff private with friending, so only
-	//  the UI controller base class can initiate structural changes
+	// Add a text label
+	WeakPtr<ui::controller::TextLabel> const textLabel8 =
+		tempUI.AssignStrongController(
+			nineSlicer->GetChildContainerID( 8 ),
+			DefaultCreator<ui::controller::TextLabel>::Create() );
+	textLabel8->SetFont( 2, 8 );
+	textLabel8->SetText( "TextLabel8 test" );
 }
 
 void Render()
