@@ -115,6 +115,36 @@ void ContainerManager::ProcessRecalcs()
 
 
 
+void ContainerManager::Render() const
+{
+	// Visit all child containers, starting with root
+	ContainerIDSet containersToVisit;
+	containersToVisit.emplace( kRootContainerID );
+	while( containersToVisit.empty() == false )
+	{
+		// Pop from unvisited list
+		ContainerID const currentID = *containersToVisit.begin();
+		containersToVisit.erase( containersToVisit.begin() );
+		Container const& container = mContainers.at( currentID );
+
+		// Render
+		bool shouldRenderChildren = true;
+		container.OnRender( *this, shouldRenderChildren );
+
+		if( shouldRenderChildren )
+		{
+			// Add all child containers to unvisited list
+			for( ContainerID const& childID : container.mChildContainerIDs )
+			{
+				RF_ASSERT( containersToVisit.count( childID ) == 0 );
+				containersToVisit.emplace( childID );
+			}
+		}
+	}
+}
+
+
+
 void ContainerManager::DebugRender() const
 {
 	float const minLum = math::Color3f::kGray25.r;
@@ -354,11 +384,15 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 	// Erase containers
 	for( ContainerID const& currentID : containersToDestroy )
 	{
-		// Notify container
-		// NOTE: Const operation, containers are not allowed to interfere
-		//  with the destruction process
+		// Final access before erase
+		ContainerID parentContainerID = kInvalidContainerID;
 		{
 			Container const& container = mContainers.at( currentID );
+			parentContainerID = container.mParentContainerID;
+
+			// Notify container
+			// NOTE: Const operation, containers are not allowed to interfere
+			//  with the destruction process
 			static_assert( rftl::is_const<rftl::remove_reference<decltype( container )>::type>::value, "Not const" );
 			container.OnImminentDestruction( *this );
 		}
@@ -366,6 +400,29 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 		// Erase
 		RF_ASSERT( mContainers.count( currentID ) == 1 );
 		mContainers.erase( currentID );
+
+		// Remove from parent
+		// NOTE: Parent may have just recently been destroyed
+		if( parentContainerID != kInvalidContainerID )
+		{
+			ContainerStorage::iterator findIter = mContainers.find( parentContainerID );
+			if( findIter != mContainers.end() )
+			{
+				Container& parentContainer = findIter->second;
+				ContainerIDList& children = parentContainer.mChildContainerIDs;
+				ContainerIDList::iterator toErase = children.end();
+				for( ContainerIDList::iterator iter = children.begin(); iter != children.end(); iter++ )
+				{
+					if( *iter == currentID )
+					{
+						RF_ASSERT( toErase == children.end() );
+						toErase = iter;
+					}
+				}
+				RF_ASSERT( toErase != children.end() );
+				children.erase( toErase );
+			}
+		}
 	}
 
 	// Erase anchors

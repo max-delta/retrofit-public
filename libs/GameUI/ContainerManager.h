@@ -52,6 +52,8 @@ public:
 
 	void ProcessRecalcs();
 
+	void Render() const;
+
 	void DebugRender() const;
 
 
