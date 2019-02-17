@@ -52,5 +52,16 @@ void Container::OnImminentDestruction( ContainerManager& manager ) const
 	}
 }
 
+
+
+void Container::OnRender( ContainerManager const& manager, bool& blockChildRendering ) const
+{
+	Controller* const controller = mWeakUIController;
+	if( controller != nullptr )
+	{
+		controller->OnRender( manager, *this, blockChildRendering );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

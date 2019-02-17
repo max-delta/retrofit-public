@@ -25,6 +25,11 @@ public:
 	// NOTE: Container is const to help enforce this
 	virtual void OnImminentDestruction( ContainerManager& manager, Container const& container );
 
+	// NOTE: Do not attempt to mutate the hierachy while a render pass is in
+	//  progress, as optimizations may be in place to assume it is immutable
+	// NOTE: Manager is const to help enforce this
+	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering );
+
 
 	//
 	// Protected methods

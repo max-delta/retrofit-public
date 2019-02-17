@@ -65,6 +65,7 @@ void Render()
 	tempUI.RecalcRootContainer();
 	tempUI.ProcessRecalcs();
 	tempUI.DebugRender();
+	tempUI.Render();
 }
 
 }

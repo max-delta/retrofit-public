@@ -28,6 +28,13 @@ void Controller::OnImminentDestruction( ContainerManager& manager, Container con
 
 
 
+void Controller::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
+{
+	//
+}
+
+
+
 Container& Controller::GetMutableContainer( ContainerManager& manager, ContainerID containerID )
 {
 	return manager.GetMutableContainer( containerID );
