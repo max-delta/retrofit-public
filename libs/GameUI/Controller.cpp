@@ -35,6 +35,13 @@ void Controller::OnRender( ContainerManager const& manager, Container const& con
 
 
 
+gfx::PPUController& Controller::GetRenderer( ContainerManager const& manager ) const
+{
+	return manager.GetRenderer();
+}
+
+
+
 Container& Controller::GetMutableContainer( ContainerManager& manager, ContainerID containerID )
 {
 	return manager.GetMutableContainer( containerID );

@@ -34,6 +34,8 @@ public:
 	//
 	// Protected methods
 protected:
+	gfx::PPUController& GetRenderer( ContainerManager const& manager ) const;
+
 	Container& GetMutableContainer( ContainerManager& manager, ContainerID containerID );
 	ContainerID CreateChildContainer(
 		ContainerManager& manager,

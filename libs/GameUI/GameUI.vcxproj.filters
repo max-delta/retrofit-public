@@ -13,6 +13,9 @@
     <ClCompile Include="ContainerManager.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="controllers\TextLabel.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -34,6 +37,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="controllers\TextLabel.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">

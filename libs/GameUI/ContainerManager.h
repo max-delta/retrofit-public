@@ -50,6 +50,9 @@ public:
 	template<typename T>
 	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller );
 
+	void SetRootRenderDepth( gfx::PPUDepthLayer depth );
+	gfx::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
+
 	void ProcessRecalcs();
 
 	void Render() const;
@@ -60,6 +63,8 @@ public:
 	//
 	// Private methods
 private:
+	gfx::PPUController& GetRenderer() const;
+
 	Container& GetMutableRootContainer();
 
 	ContainerID CreateChildContainer(
@@ -100,6 +105,8 @@ private:
 
 	// TODO: Use actual value
 	size_t mMaxDepthSeen = 30;
+
+	gfx::PPUDepthLayer mRootRenderDepth = 0;
 
 	bool mIsDestroyingContainers = false;
 };
