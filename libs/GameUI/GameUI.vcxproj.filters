@@ -40,4 +40,7 @@
       <UniqueIdentifier>{ba8e8d01-1148-4956-81fb-60509b9176a3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ContainerManager.inl" />
+  </ItemGroup>
 </Project>

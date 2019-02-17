@@ -17,10 +17,27 @@ struct GAMEUI_API Container
 {
 	RF_NO_COPY( Container );
 
+	//
+	// Types
+public:
 	using AABB4 = math::AABB4<gfx::PPUCoordElem>;
 
+
+	//
+	// Public methods
+public:
 	Container() = default;
 
+	bool IsConstrainedBy( AnchorID anchorID ) const;
+
+	void OnAssign( ContainerManager& manager );
+	void OnAABBRecalc( ContainerManager& manager );
+	void OnImminentDestruction( ContainerManager& manager ) const;
+
+
+	//
+	// Public data
+public:
 	// Containers exist in a hierarchy
 	ContainerID mContainerID = kInvalidContainerID;
 	ContainerID mParentContainerID = kInvalidContainerID;
@@ -45,12 +62,6 @@ struct GAMEUI_API Container
 	//  controllers that are designed to manage multiple containers
 	UniquePtr<Controller> mStrongUIController;
 	WeakPtr<Controller> mWeakUIController;
-
-	bool IsConstrainedBy( AnchorID anchorID ) const;
-
-	void OnAssign( ContainerManager& manager );
-	void OnAABBRecalc( ContainerManager& manager );
-	void OnImminentDestruction( ContainerManager& manager ) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
