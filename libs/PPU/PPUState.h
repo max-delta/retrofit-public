@@ -5,6 +5,8 @@
 #include "PPU/Object.h"
 #include "PPU/TileLayer.h"
 
+#include "core_math/Color3f.h"
+
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,11 +32,12 @@ public:
 public:
 	struct String
 	{
-		static constexpr size_t k_MaxLen = 127;
+		static constexpr size_t k_MaxLen = 123;
 
 		PPUCoordElem mXCoord;
 		PPUCoordElem mYCoord;
 		PPUDepthLayer mZLayer;
+		uint8_t mColor[3];
 		uint8_t mDesiredHeight;
 		ManagedFontID mFontReference;
 		char mText[k_MaxLen + sizeof( '\0' )];

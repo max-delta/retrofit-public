@@ -291,14 +291,25 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, fmt, args );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, math::Color3f::kBlack, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, va_list args )
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, color, fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+
+
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, va_list args )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
@@ -311,6 +322,9 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
 	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
 	targetString.mZLayer = zLayer;
+	targetString.mColor[0] = static_cast<uint8_t>( color.r * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[1] = static_cast<uint8_t>( color.g * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[2] = static_cast<uint8_t>( color.b * rftl::numeric_limits<uint8_t>::max() );
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mFontReference = font;
 	targetString.mText[0] = '\0';
@@ -972,12 +986,18 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
 		float const deviceWidth = bottomRight.x - topLeft.x;
+		math::Color3f const color = math::Color3f{
+			static_cast<math::Color3f::ElementType>( string.mColor[0] ),
+			static_cast<math::Color3f::ElementType>( string.mColor[1] ),
+			static_cast<math::Color3f::ElementType>( string.mColor[2] )
+		} * ( 1.f / rftl::numeric_limits<uint8_t>::max() );
 		float const uvWidth = deviceWidth / ( ( deviceWidth * tileWidth ) / charWidth );
 		mDeviceInterface->DrawBitmapFont(
 			deviceFontID,
 			character,
 			math::AABB4f{ topLeft, bottomRight },
 			LayerToDevice( string.mZLayer ),
+			color,
 			math::AABB4f{ 0.f, 0.f, uvWidth, 1.f } );
 	}
 }

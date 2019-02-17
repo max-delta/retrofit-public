@@ -64,6 +64,7 @@ void SetupStructures()
 			DefaultCreator<ui::controller::TextLabel>::Create() );
 	textLabel8->SetFont( 2, 8 );
 	textLabel8->SetText( "TextLabel8 test" );
+	textLabel8->SetColor( math::Color3f::kWhite );
 }
 
 void Render()
