@@ -33,6 +33,7 @@ public:
 	void OnAssign( ContainerManager& manager );
 	void OnAABBRecalc( ContainerManager& manager );
 	void OnImminentDestruction( ContainerManager& manager ) const;
+	void OnRender( ContainerManager const& manager, bool& blockChildRendering ) const;
 
 
 	//
