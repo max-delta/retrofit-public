@@ -4,8 +4,16 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 
+#include "RFType/CreateClassInfoDefinition.h"
+
 #include "core_math/Lerp.h"
 
+
+RFTYPE_CREATE_META( RF::ui::controller::NineSlicer )
+{
+	RFTYPE_META().BaseClass<RF::ui::Controller>();
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::NineSlicer );
+}
 
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
