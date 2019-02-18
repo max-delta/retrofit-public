@@ -11,7 +11,7 @@ class GAMEUI_API Passthrough final : public Controller
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 
-//
+	//
 	// Public methods
 public:
 	ContainerID GetChildContainerID();
