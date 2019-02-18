@@ -15,7 +15,7 @@ class GAMEUI_API TextLabel final : public Controller
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 
-//
+	//
 	// Public methods
 public:
 	void SetFont( gfx::ManagedFontID fontID, uint8_t desiredHeight );
