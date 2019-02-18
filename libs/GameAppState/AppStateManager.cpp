@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "AppStateManager.h"
 
-#include "AppStateTickContext.h"
+#include "GameAppState/AppStateRef.h"
+#include "GameAppState/AppStateTickContext.h"
+#include "GameAppState/AppStateChangeContext.h"
 
 #include "core/ptr/default_creator.h"
 

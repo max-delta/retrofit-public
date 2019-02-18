@@ -10,8 +10,8 @@ class AppState;
 class AppStateRef;
 class AppStateManager;
 
-struct AppStateChangeContext;
 struct AppStateTickContext;
+struct AppStateChangeContext;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
