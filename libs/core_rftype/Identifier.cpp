@@ -57,5 +57,26 @@ size_t GetInvalidIdentifierCharacterIndex( char const* name )
 	return previousIndex - 1;
 }
 
+
+
+void SanitizeIdentifier( char const* in, char* out )
+{
+	size_t offset = 0;
+	while( in[offset] != '\0' )
+	{
+		char const& inC = in[offset];
+		char& outC = out[offset];
+		if( inC == ':' )
+		{
+			outC = '_';
+		}
+		else
+		{
+			outC = inC;
+		}
+		offset++;
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
