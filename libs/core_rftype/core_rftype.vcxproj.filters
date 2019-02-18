@@ -20,6 +20,7 @@
     </ClInclude>
     <ClInclude Include="TypeInference.h" />
     <ClInclude Include="VirtualCast.h" />
+    <ClInclude Include="VirtualPtrCast.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -40,5 +41,6 @@
   <ItemGroup>
     <None Include="TypeTraverser.inl" />
     <None Include="VirtualCast.inl" />
+    <None Include="VirtualPtrCast.inl" />
   </ItemGroup>
 </Project>
