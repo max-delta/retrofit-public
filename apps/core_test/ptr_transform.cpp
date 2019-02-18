@@ -89,7 +89,7 @@ TEST( SharedPtr, TransformToUnique )
 
 
 
-TEST( UniquePtr, TransformToVoid )
+TEST( UniquePtr, TransformToFromVoid )
 {
 	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
 	ASSERT_TRUE( uptr1 != nullptr );
@@ -102,6 +102,37 @@ TEST( UniquePtr, TransformToVoid )
 	int const* const val = reinterpret_cast<int const*>( static_cast<void const*>( uptr2 ) );
 	ASSERT_TRUE( val != nullptr );
 	ASSERT_EQ( *val, 47 );
+
+	UniquePtr<int> uptr3;
+	PtrTransformer<int>::PerformNonTypesafeTransformation( rftl::move( uptr2 ), uptr3 );
+	ASSERT_TRUE( uptr2 == nullptr );
+	ASSERT_TRUE( uptr3 != nullptr );
+	ASSERT_EQ( *uptr3, 47 );
+}
+
+
+
+TEST( WeakPtr, TransformToFromVoid )
+{
+	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
+	ASSERT_TRUE( uptr1 != nullptr );
+	WeakPtr<int> wptr1 = uptr1;
+	ASSERT_TRUE( wptr1 != nullptr );
+
+	WeakPtr<void> wptr2;
+	PtrTransformer<int>::PerformVoidTransformation( rftl::move( wptr1 ), wptr2 );
+	ASSERT_TRUE( wptr1 == nullptr );
+	ASSERT_TRUE( wptr2 != nullptr );
+
+	int const* const val = reinterpret_cast<int const*>( static_cast<void const*>( wptr2 ) );
+	ASSERT_TRUE( val != nullptr );
+	ASSERT_EQ( *val, 47 );
+
+	WeakPtr<int> wptr3;
+	PtrTransformer<int>::PerformNonTypesafeTransformation( rftl::move( wptr2 ), wptr3 );
+	ASSERT_TRUE( wptr2 == nullptr );
+	ASSERT_TRUE( wptr3 != nullptr );
+	ASSERT_EQ( *wptr3, 47 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

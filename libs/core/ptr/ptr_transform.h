@@ -1,6 +1,7 @@
 #pragma once
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/shared_ptr.h"
+#include "core/ptr/weak_ptr.h"
 
 
 namespace RF {
@@ -47,6 +48,38 @@ struct PtrTransformer
 			reinterpret_cast<decltype( CreationPayload<void>::mRef )>( normalPayload.mRef ) );
 		normalPayload.Clean();
 		out = UniquePtr<void>{ rftl::move( voidPayload ) };
+	}
+	static void PerformVoidTransformation( WeakPtr<T>&& in, WeakPtr<void>& out )
+	{
+		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<void> voidPayload(
+			static_cast<decltype( CreationPayload<void>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<void>::mRef )>( normalPayload.mRef ) );
+		normalPayload.Clean();
+		out = WeakPtr<void>{ voidPayload.mTarget, voidPayload.mRef };
+		voidPayload.Clean();
+	}
+
+	// NOTE: This is basically a reinterpret_cast, which means you're
+	//  completely on your own for type-safety
+	static void PerformNonTypesafeTransformation( UniquePtr<void>&& in, UniquePtr<T>& out )
+	{
+		CreationPayload<void> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<T> voidPayload(
+			static_cast<decltype( CreationPayload<T>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<T>::mRef )>( normalPayload.mRef ) );
+		normalPayload.Clean();
+		out = UniquePtr<T>{ rftl::move( voidPayload ) };
+	}
+	static void PerformNonTypesafeTransformation( WeakPtr<void>&& in, WeakPtr<T>& out )
+	{
+		CreationPayload<void> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<T> voidPayload(
+			static_cast<decltype( CreationPayload<T>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<T>::mRef )>( normalPayload.mRef ) );
+		normalPayload.Clean();
+		out = WeakPtr<T>{ voidPayload.mTarget, voidPayload.mRef };
+		voidPayload.Clean();
 	}
 };
 
