@@ -14,6 +14,7 @@ class GenericStateCollection
 public:
 	using State = TState;
 	using StateID = TStateID;
+	using Storage = rftl::unordered_map<StateID, State>;
 
 
 public:
@@ -29,8 +30,8 @@ public:
 	}
 
 
-private:
-	rftl::unordered_map<StateID, State> mStates;
+public:
+	Storage mStates;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
