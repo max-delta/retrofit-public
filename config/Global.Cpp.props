@@ -52,6 +52,16 @@
         -Wno-non-virtual-dtor
         %(AdditionalOptions)
       </AdditionalOptions>
+      <!--Don't care about variables just used for asserts-->
+      <AdditionalOptions Condition="'$(Platform)'!='Debug'">
+        -Wno-unused-variable
+        %(AdditionalOptions)
+      </AdditionalOptions>
+      <!--Truly unused variables should be an error-->
+      <AdditionalOptions Condition="'$(Platform)'=='Debug'">
+        -Werror=unused-variable
+        %(AdditionalOptions)
+      </AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
