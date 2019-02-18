@@ -1,8 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameAppState/AppState.h"
-#include "GameAppState/AppStateChangeContext.h"
+#include "GameAppState/AppStateFwd.h"
 
 #include "Timing/clocks.h"
 

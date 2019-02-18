@@ -4,9 +4,9 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="AppStateManager.cpp" />
-    <ClCompile Include="AppState.cpp" />
     <ClCompile Include="AppStateChangeContext.cpp" />
     <ClCompile Include="AppStateTickContext.cpp" />
+    <ClCompile Include="AppStateRef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -16,5 +16,6 @@
     <ClInclude Include="AppStateFwd.h" />
     <ClInclude Include="AppStateChangeContext.h" />
     <ClInclude Include="AppStateTickContext.h" />
+    <ClInclude Include="AppStateRef.h" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,8 @@
 #include "stdafx.h"
-#include "AppState.h"
+#include "AppStateRef.h"
+
+#include "GameAppState/AppState.h"
+
 
 namespace RF { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
