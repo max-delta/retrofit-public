@@ -31,6 +31,10 @@ void SetupStructures()
 	tempUI.CreateRootContainer();
 	tempUI.SetRootRenderDepth( gfx::kNearestLayer + 50 );
 
+	// HACK: Slightly smaller, for testing
+	tempUI.SetRootAABBReduction( gfx::kTileSize / 16 );
+	tempUI.SetDebugAABBReduction( gfx::kTileSize / 16 );
+
 	// Slice the root canvas
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
 	WeakPtr<ui::controller::NineSlicer> const nineSlicer =

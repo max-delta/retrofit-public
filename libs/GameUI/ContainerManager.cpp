@@ -45,13 +45,10 @@ void ContainerManager::RecalcRootContainer()
 {
 	Container& root = GetMutableRootContainer();
 
-	// HACK: Slightly smaller than canvas, for testing
-	constexpr gfx::PPUCoordElem kDelta = gfx::kTileSize / 4;
-
 	Container::AABB4 newAABB;
-	newAABB.mTopLeft = { kDelta, kDelta };
-	newAABB.mBottomRight.x = mGraphics->GetWidth() - kDelta;
-	newAABB.mBottomRight.y = mGraphics->GetHeight() - kDelta;
+	newAABB.mTopLeft = { mRootAABBReduction, mRootAABBReduction };
+	newAABB.mBottomRight.x = mGraphics->GetWidth() - mRootAABBReduction;
+	newAABB.mBottomRight.y = mGraphics->GetHeight() - mRootAABBReduction;
 
 	if( newAABB != root.mAABB )
 	{
@@ -134,6 +131,20 @@ gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const&
 		retVal--;
 	}
 	return retVal;
+}
+
+
+
+void ContainerManager::SetRootAABBReduction( gfx::PPUCoordElem delta )
+{
+	mRootAABBReduction = delta;
+}
+
+
+
+void ContainerManager::SetDebugAABBReduction( gfx::PPUCoordElem delta )
+{
+	mDebugAABBReduction = delta;
 }
 
 
@@ -295,14 +306,11 @@ Container& ContainerManager::GetMutableContainer( ContainerID containerID )
 
 void ContainerManager::RecalcContainer( Container& container )
 {
-	// HACK: Slightly smaller, for testing
-	constexpr gfx::PPUCoordElem kDelta = gfx::kTileSize / 4;
-
 	Container::AABB4 newAABB;
-	newAABB.mTopLeft.x = mAnchors.at( container.mLeftConstraint ).mPos.x + kDelta;
-	newAABB.mTopLeft.y = mAnchors.at( container.mTopConstraint ).mPos.y + kDelta;
-	newAABB.mBottomRight.x = mAnchors.at( container.mRightConstraint ).mPos.x - kDelta;
-	newAABB.mBottomRight.y = mAnchors.at( container.mBottomConstraint ).mPos.y - kDelta;
+	newAABB.mTopLeft.x = mAnchors.at( container.mLeftConstraint ).mPos.x + mDebugAABBReduction;
+	newAABB.mTopLeft.y = mAnchors.at( container.mTopConstraint ).mPos.y + mDebugAABBReduction;
+	newAABB.mBottomRight.x = mAnchors.at( container.mRightConstraint ).mPos.x - mDebugAABBReduction;
+	newAABB.mBottomRight.y = mAnchors.at( container.mBottomConstraint ).mPos.y - mDebugAABBReduction;
 
 	if( newAABB != container.mAABB )
 	{
