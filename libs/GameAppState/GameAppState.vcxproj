@@ -36,12 +36,13 @@
     <ClInclude Include="AppStateChangeContext.h" />
     <ClInclude Include="AppStateFwd.h" />
     <ClInclude Include="AppStateManager.h" />
+    <ClInclude Include="AppStateRef.h" />
     <ClInclude Include="AppStateTickContext.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AppState.cpp" />
+    <ClCompile Include="AppStateRef.cpp" />
     <ClCompile Include="AppStateChangeContext.cpp" />
     <ClCompile Include="AppStateManager.cpp" />
     <ClCompile Include="AppStateTickContext.cpp" />
