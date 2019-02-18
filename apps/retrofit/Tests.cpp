@@ -7,6 +7,11 @@
 
 #include "GameScripting/OOLoader.h"
 
+#include "GameUI/ContainerManager.h"
+#include "GameUI/controllers/NineSlicer.h"
+#include "GameUI/controllers/Passthrough.h"
+#include "GameUI/controllers/TextLabel.h"
+
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
@@ -332,6 +337,60 @@ void DrawInputDebug()
 	}
 	app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
 	coord.y += offset;
+}
+
+
+
+void InitUITest()
+{
+	ui::ContainerManager& uiManager = *app::gUiManager;
+	uiManager.SetRootRenderDepth( gfx::kNearestLayer + 50 );
+
+	// HACK: Slightly smaller, for testing
+	uiManager.SetRootAABBReduction( gfx::kTileSize / 16 );
+	uiManager.SetDebugAABBReduction( gfx::kTileSize / 16 );
+
+	// Slice the root canvas
+	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
+	WeakPtr<ui::controller::NineSlicer> const nineSlicer =
+		uiManager.AssignStrongController(
+			ui::kRootContainerID,
+			DefaultCreator<ui::controller::NineSlicer>::Create(
+				kSlicesEnabled ) );
+
+	// Create some passthoughs, and then blow them up from the head
+	WeakPtr<ui::controller::Passthrough> const passthrough8 =
+		uiManager.AssignStrongController(
+			nineSlicer->GetChildContainerID( 8 ),
+			DefaultCreator<ui::controller::Passthrough>::Create() );
+	WeakPtr<ui::controller::Passthrough> const passthrough8_1 =
+		uiManager.AssignStrongController(
+			passthrough8->GetChildContainerID(),
+			DefaultCreator<ui::controller::Passthrough>::Create() );
+	RF_ASSERT( passthrough8 != nullptr );
+	RF_ASSERT( passthrough8_1 != nullptr );
+	nineSlicer->DestroyChildContainer( uiManager, 8 );
+	RF_ASSERT( passthrough8 == nullptr );
+	RF_ASSERT( passthrough8_1 == nullptr );
+
+	// Restore the container we blew up
+	nineSlicer->CreateChildContainer( uiManager, 8 );
+
+	// Add a text label
+	WeakPtr<ui::controller::TextLabel> const textLabel8 =
+		uiManager.AssignStrongController(
+			nineSlicer->GetChildContainerID( 8 ),
+			DefaultCreator<ui::controller::TextLabel>::Create() );
+	textLabel8->SetFont( 2, 8 );
+	textLabel8->SetText( "TextLabel8 test" );
+	textLabel8->SetColor( math::Color3f::kWhite );
+
+	// Assign a label to confirm it's accessible
+	uiManager.AssignLabel( nineSlicer->GetChildContainerID( 8 ), "TextLabel8" );
+	WeakPtr<ui::Controller> const textLabel8Untyped = uiManager.GetMutableController( "TextLabel8" );
+	RF_ASSERT( textLabel8 == textLabel8Untyped );
+	WeakPtr<ui::controller::TextLabel> const textLabel8Casted = uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "TextLabel8" );
+	RF_ASSERT( textLabel8Casted == textLabel8Untyped );
 }
 
 

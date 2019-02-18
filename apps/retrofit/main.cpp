@@ -4,6 +4,8 @@
 #include "Tests.h"
 #include "Scratch.h"
 
+#include "GameUI/ContainerManager.h"
+
 #include "PPU/PPUController.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
@@ -18,6 +20,7 @@ constexpr bool kAllowTests = true;
 constexpr bool kConsoleTest = true;
 constexpr bool kDrawTest = true;
 constexpr bool kDrawInputDebug = true;
+constexpr bool kUITest = true;
 constexpr bool kXMLTest = true;
 constexpr bool kFPackSerializationTest = true;
 constexpr bool kPlatformTest = true;
@@ -25,6 +28,8 @@ constexpr bool kFrameBuilderTest = true;
 constexpr bool kSQReflectTest = true;
 
 constexpr bool kAllowScratch = true;
+
+constexpr bool kDebugUI = true;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +71,11 @@ void TestStart()
 	if( kDrawTest )
 	{
 		test::InitDrawTest();
+	}
+
+	if( kUITest )
+	{
+		test::InitUITest();
 	}
 
 	if( kFrameBuilderTest )
@@ -163,6 +173,14 @@ int main()
 			{
 				scratch::Run();
 			}
+
+			app::gUiManager->RecalcRootContainer();
+			app::gUiManager->ProcessRecalcs();
+			if( kDebugUI )
+			{
+				app::gUiManager->DebugRender();
+			}
+			app::gUiManager->Render();
 
 			app::gGraphics->SubmitToRender();
 			app::gGraphics->WaitForRender();
