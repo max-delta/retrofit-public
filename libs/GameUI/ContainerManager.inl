@@ -1,9 +1,41 @@
 #pragma once
 #include "ContainerManager.h"
 
+#include "core_rftype/VirtualPtrCast.h"
+
 
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+inline WeakPtr<T> ContainerManager::GetMutableControllerAs( ContainerID containerID )
+{
+	WeakPtr<Controller> controller = GetMutableController( containerID );
+	WeakPtr<T> const retVal = rftype::virtual_ptr_cast<T>( rftl::move( controller ) );
+	return retVal;
+}
+
+
+
+template<typename T>
+inline WeakPtr<T> ContainerManager::GetMutableControllerAs( char const* label )
+{
+	WeakPtr<Controller> controller = GetMutableController( label );
+	WeakPtr<T> const retVal = rftype::virtual_ptr_cast<T>( rftl::move( controller ) );
+	return retVal;
+}
+
+
+
+template<typename T>
+inline WeakPtr<T> ContainerManager::GetMutableControllerAs( rftl::string const& label )
+{
+	WeakPtr<Controller> controller = GetMutableController( label );
+	WeakPtr<T> const retVal = rftype::virtual_ptr_cast<T>( rftl::move( controller ) );
+	return retVal;
+}
+
+
 
 template<typename T>
 inline WeakPtr<T> ContainerManager::AssignStrongController( ContainerID containerID, CreationPayload<T>&& controller )

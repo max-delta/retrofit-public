@@ -5,12 +5,16 @@
 
 #include "PPU/PPUFwd.h"
 
+#include "RFType/CreateClassInfoDeclaration.h"
+
 
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API Controller
+class GAMEUI_API Controller : public reflect::VirtualClass
 {
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
 	//
 	// Public methods
 public:

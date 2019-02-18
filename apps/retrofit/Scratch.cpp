@@ -70,6 +70,8 @@ void SetupStructures()
 	tempUI.AssignLabel( nineSlicer->GetChildContainerID( 8 ), "TextLabel8" );
 	WeakPtr<ui::Controller> const textLabel8Untyped = tempUI.GetMutableController( "TextLabel8" );
 	RF_ASSERT( textLabel8 == textLabel8Untyped );
+	WeakPtr<ui::controller::TextLabel> const textLabel8Casted = tempUI.GetMutableControllerAs<ui::controller::TextLabel>( "TextLabel8" );
+	RF_ASSERT( textLabel8Casted == textLabel8Untyped );
 }
 
 void Render()

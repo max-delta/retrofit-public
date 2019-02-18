@@ -3,6 +3,13 @@
 
 #include "GameUI/ContainerManager.h"
 
+#include "RFType/CreateClassInfoDefinition.h"
+
+
+RFTYPE_CREATE_META( RF::ui::Controller )
+{
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::Controller );
+}
 
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
