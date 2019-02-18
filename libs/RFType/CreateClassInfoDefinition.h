@@ -7,6 +7,7 @@ namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 RFTYPE_API void GlobalRegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
+RFTYPE_API void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo const& classInfo );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
@@ -21,6 +22,10 @@ RFTYPE_API void GlobalRegisterNewClassByName( char const* name, reflect::ClassIn
 //  	RFTYPE_META().Method( "method", &CL::method );
 //  	RFTYPE_META().RawProperty( "variable", &CL::variable );
 //		RFTYPE_REGISTER_BY_NAME( "CLASS" );
+//		RFTYPE_REGISTER_BY_QUALIFIED_NAME( NS1::NS2::CLASS );
 //  }
 #define RFTYPE_REGISTER_BY_NAME( CLASSNAME ) \
 	::RF::rftype::GlobalRegisterNewClassByName( CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )
+#define RFTYPE_REGISTER_BY_QUALIFIED_NAME( CLASSNAME ) \
+	static_assert( alignof(::CLASSNAME) != 123456, "Unused test for compilation check of type name" );\
+	::RF::rftype::GlobalRegisterNewClassByQualifiedName( #CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )
