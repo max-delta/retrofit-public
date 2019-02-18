@@ -1,0 +1,20 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_OPTIONAL
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::optional;
+using std::bad_optional_access;
+using std::make_optional;
+
+using std::nullopt_t;
+using std::nullopt;
+
+using std::swap;
+using std::hash;
+using std::equal_to;
+}
