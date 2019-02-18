@@ -5,6 +5,10 @@
 #include "core_fsm/VoidState.h"
 
 #include "core/ptr/weak_ptr.h"
+#include "core/meta/DefaultConstruct.h"
+#include "core/meta/ConstructorOverload.h"
+
+#include "rftl/type_traits"
 
 
 namespace RF { namespace fsm {
@@ -13,8 +17,8 @@ namespace RF { namespace fsm {
 template<
 	typename TState = VoidState,
 	typename TStateID = nullptr_t,
-	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>,
-	typename TStateChangeContext = nullptr_t>
+	typename TStateChangeContext = nullptr_t,
+	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>>
 class FiniteStateMachine
 {
 public:
@@ -31,6 +35,7 @@ public:
 		RF_ASSERT( mStateCollection != nullptr );
 	}
 
+	virtual ~FiniteStateMachine() = default;
 
 	State const* LookupState( StateID const& identifier ) const
 	{
@@ -82,15 +87,57 @@ public:
 
 
 protected:
-	StateChangeContext CreateStateChangeContext() const
+	// Derived classes may choose to defer creating the state collection
+	explicit FiniteStateMachine( RF::ExplicitDefaultConstruct )
+		: mStateCollection( nullptr )
 	{
-		return StateChangeContext{};
+		//
+	}
+	void SetStateCollection( WeakPtr<StateCollection> const& stateCollection )
+	{
+		RF_ASSERT( mStateCollection == nullptr );
+		mStateCollection = stateCollection;
+		RF_ASSERT( mStateCollection != nullptr );
 	}
 
+	State const* GetCurrentState() const
+	{
+		return mCurrentState;
+	}
 
-protected:
+	State* GetCurrentMutableState()
+	{
+		return mCurrentState;
+	}
+
+	virtual StateChangeContext CreateStateChangeContext() = 0;
+
+
+private:
 	WeakPtr<StateCollection> mStateCollection;
 	State* mCurrentState = nullptr;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<
+	typename TState = VoidState,
+	typename TStateID = nullptr_t,
+	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>>
+class BasicFiniteStateMachine : public FiniteStateMachine<TState, TStateID, nullptr_t, TStateCollection>
+{
+public:
+	explicit BasicFiniteStateMachine( WeakPtr<typename BasicFiniteStateMachine::StateCollection> const& stateCollection )
+		: BasicFiniteStateMachine( stateCollection )
+	{
+		//
+	}
+
+private:
+	virtual nullptr_t CreateStateChangeContext() override final
+	{
+		return nullptr;
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
