@@ -41,6 +41,7 @@
     <ClInclude Include="TypeInference.h" />
     <ClInclude Include="TypeTraverser.h" />
     <ClInclude Include="VirtualCast.h" />
+    <ClInclude Include="VirtualPtrCast.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Identifier.cpp" />
@@ -54,6 +55,7 @@
   <ItemGroup>
     <None Include="TypeTraverser.inl" />
     <None Include="VirtualCast.inl" />
+    <None Include="VirtualPtrCast.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
