@@ -18,7 +18,7 @@ template<
 	typename TState = VoidState,
 	typename TStateID = nullptr_t,
 	typename TStateChangeContext = nullptr_t,
-	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>>
+	typename TStateCollection = GenericStateCollection<TStateID, TState>>
 class FiniteStateMachine
 {
 public:
@@ -123,7 +123,7 @@ private:
 template<
 	typename TState = VoidState,
 	typename TStateID = nullptr_t,
-	typename TStateCollection = GenericStateCollection<typename TStateID, typename TState>>
+	typename TStateCollection = GenericStateCollection<TStateID, TState>>
 class BasicFiniteStateMachine : public FiniteStateMachine<TState, TStateID, nullptr_t, TStateCollection>
 {
 public:
