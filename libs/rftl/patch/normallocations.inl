@@ -21,6 +21,7 @@
 #define RFTL_MAP <map>
 #define RFTL_MEMORY <memory>
 #define RFTL_MUTEX <mutex>
+#define RFTL_OPTIONAL <optional>
 #define RFTL_RATIO <ratio>
 #define RFTL_SET <set>
 #define RFTL_SHARED_MUTEX <shared_mutex>

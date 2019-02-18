@@ -69,5 +69,6 @@
     <None Include="set" />
     <None Include="map" />
     <None Include="algorithm" />
+    <None Include="optional" />
   </ItemGroup>
 </Project>
