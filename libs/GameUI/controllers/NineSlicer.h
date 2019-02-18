@@ -16,7 +16,7 @@ class GAMEUI_API NineSlicer final : public Controller
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 
-//
+	//
 	// Public methods
 public:
 	NineSlicer();
