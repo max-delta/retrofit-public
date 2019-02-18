@@ -18,8 +18,6 @@ class GAMEUI_API Controller : public reflect::VirtualClass
 	//
 	// Public methods
 public:
-	virtual ~Controller() = default;
-
 	virtual void OnAssign( ContainerManager& manager, Container& container );
 	virtual void OnAABBRecalc( ContainerManager& manager, Container& container );
 
