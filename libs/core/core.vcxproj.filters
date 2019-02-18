@@ -66,6 +66,9 @@
     <ClInclude Include="meta\ConstructorOverload.h">
       <Filter>meta</Filter>
     </ClInclude>
+    <ClInclude Include="meta\DefaultConstruct.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
