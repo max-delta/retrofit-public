@@ -11,6 +11,9 @@ namespace input {
 namespace gfx {
 	class PPUController;
 }
+namespace ui {
+	class ContainerManager;
+}
 namespace file {
 	class VFS;
 }
@@ -25,6 +28,7 @@ namespace RF { namespace app {
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
