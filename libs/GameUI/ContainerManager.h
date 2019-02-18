@@ -70,6 +70,9 @@ public:
 	void SetRootRenderDepth( gfx::PPUDepthLayer depth );
 	gfx::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
 
+	void SetRootAABBReduction( gfx::PPUCoordElem delta );
+	void SetDebugAABBReduction( gfx::PPUCoordElem delta );
+
 	void ProcessRecalcs();
 
 	void Render() const;
@@ -128,6 +131,9 @@ private:
 	gfx::PPUDepthLayer mRootRenderDepth = 0;
 
 	bool mIsDestroyingContainers = false;
+
+	gfx::PPUCoordElem mRootAABBReduction = 0;
+	gfx::PPUCoordElem mDebugAABBReduction = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
