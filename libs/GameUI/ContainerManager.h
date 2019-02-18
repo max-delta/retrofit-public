@@ -49,6 +49,13 @@ public:
 	WeakPtr<Controller> GetMutableController( char const* label );
 	WeakPtr<Controller> GetMutableController( rftl::string const& label );
 
+	template<typename T>
+	WeakPtr<T> GetMutableControllerAs( ContainerID containerID );
+	template<typename T>
+	WeakPtr<T> GetMutableControllerAs( char const* label );
+	template<typename T>
+	WeakPtr<T> GetMutableControllerAs( rftl::string const& label );
+
 	void AssignLabel( ContainerID containerID, char const* label );
 
 	template<typename T>
