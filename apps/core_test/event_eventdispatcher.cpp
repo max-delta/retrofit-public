@@ -7,6 +7,8 @@
 #include "rftl/algorithm"
 
 
+RF_CLANG_IGNORE( "-Wshadow-uncaptured-local" );
+
 namespace RF { namespace event {
 ///////////////////////////////////////////////////////////////////////////////
 

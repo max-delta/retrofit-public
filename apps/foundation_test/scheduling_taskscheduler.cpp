@@ -12,6 +12,8 @@
 #include "rftl/thread"
 
 
+RF_CLANG_IGNORE( "-Wshadow-uncaptured-local" );
+
 namespace RF { namespace scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 

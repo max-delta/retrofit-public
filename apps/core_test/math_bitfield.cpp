@@ -3,6 +3,8 @@
 #include "core_math/BitField.h"
 
 
+RF_CLANG_IGNORE( "-Wundefined-reinterpret-cast" );
+
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
