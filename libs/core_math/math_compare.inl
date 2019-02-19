@@ -1,6 +1,8 @@
 #pragma once
 #include "math_compare.h"
 
+#include "core/compiler.h"
+
 #include "rftl/limits"
 
 
@@ -53,6 +55,36 @@ constexpr bool Equals<double>( double const& lhs, double const& rhs )
 		( lhsIsZero && rhsIsZero ) ||
 		( rhsIsZero == false && lhs > rhs && lhs / rhs < 1.00000000001 ) ||
 		( lhsIsZero == false && rhs > lhs && rhs / lhs < 1.00000000001 );
+}
+
+
+
+constexpr bool UncheckedEquals( float const& lhs, float const& rhs )
+{
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wfloat-equal" );
+	return lhs == rhs;
+	RF_CLANG_POP();
+}
+
+
+
+constexpr bool UncheckedEquals( double const& lhs, double const& rhs )
+{
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wfloat-equal" );
+	return lhs == rhs;
+	RF_CLANG_POP();
+}
+
+
+
+constexpr bool UncheckedEquals( long double const& lhs, long double const& rhs )
+{
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wfloat-equal" );
+	return lhs == rhs;
+	RF_CLANG_POP();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

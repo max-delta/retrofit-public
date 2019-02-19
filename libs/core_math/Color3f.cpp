@@ -304,7 +304,7 @@ void Color3f::GetHSL( float& hueDegrees, float& saturationRatio, ElementType& lu
 	}
 	RF_ASSERT( hueDegrees >= -360.f );
 	RF_ASSERT( hueDegrees <= 360.f );
-	if( hueDegrees == -0.f )
+	if( UncheckedEquals( hueDegrees, -0.f ) )
 	{
 		hueDegrees = 0.f;
 	}

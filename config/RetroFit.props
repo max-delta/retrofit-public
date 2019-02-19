@@ -24,6 +24,11 @@
     </ClCompile>
     <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
       <AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+      <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
+      <AdditionalOptions>
+        -Werror=float-equal
+        %(AdditionalOptions)
+      </AdditionalOptions>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>

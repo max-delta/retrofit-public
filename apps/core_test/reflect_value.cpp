@@ -2,6 +2,8 @@
 
 #include "core_reflect/Value.h"
 
+#include "core_math/math_compare.h"
+
 
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
@@ -268,9 +270,9 @@ TEST( Reflect, ValueConstructFromBytes )
 	ASSERT_TRUE( *vWChar.GetAs<wchar_t>() == WChar );
 	ASSERT_TRUE( *vChar16.GetAs<char16_t>() == Char16 );
 	ASSERT_TRUE( *vChar32.GetAs<char32_t>() == Char32 );
-	ASSERT_TRUE( *vFloat.GetAs<float>() == Float );
-	ASSERT_TRUE( *vDouble.GetAs<double>() == Double );
-	ASSERT_TRUE( *vLongDouble.GetAs<long double>() == LongDouble );
+	ASSERT_TRUE( math::UncheckedEquals( *vFloat.GetAs<float>(), Float ) );
+	ASSERT_TRUE( math::UncheckedEquals( *vDouble.GetAs<double>(), Double ) );
+	ASSERT_TRUE( math::UncheckedEquals( *vLongDouble.GetAs<long double>(), LongDouble ) );
 	ASSERT_TRUE( *vUInt8.GetAs<uint8_t>() == UInt8 );
 	ASSERT_TRUE( *vInt8.GetAs<int8_t>() == Int8 );
 	ASSERT_TRUE( *vUInt16.GetAs<uint16_t>() == UInt16 );

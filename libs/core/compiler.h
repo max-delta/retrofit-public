@@ -1,5 +1,8 @@
 #pragma once
 
+#include "core/macros.h"
+
+
 namespace RF { namespace compiler {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -76,6 +79,11 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
 	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
 
+	#define RF_CLANG_PRAGMA( x )
+	#define RF_CLANG_PUSH()
+	#define RF_CLANG_POP()
+	#define RF_CLANG_IGNORE( WARNING )
+
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
 		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
@@ -110,6 +118,11 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_ACK_ANY_PADDING __pragma( warning( suppress : 4324 ) )
 	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
 	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
+
+	#define RF_CLANG_PRAGMA( x ) _Pragma( RF_STRINGIFY( x ) )
+	#define RF_CLANG_PUSH() RF_CLANG_PRAGMA( clang diagnostic push )
+	#define RF_CLANG_POP() RF_CLANG_PRAGMA( clang diagnostic pop )
+	#define RF_CLANG_IGNORE( WARNING ) RF_CLANG_PRAGMA( clang diagnostic ignored WARNING )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64

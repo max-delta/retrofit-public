@@ -13,7 +13,7 @@ uint32_t StableRandLCG( uint32_t previousValue )
 
 	// Linear congruential generator
 	// Numbers from Park, Miller, and Stockmeyer MINSTD
-	constexpr uint32_t kModulus = static_cast<uint32_t>( 1 << 31 );
+	constexpr uint32_t kModulus = static_cast<uint32_t>( 1ull << 31 );
 	constexpr uint32_t kMultiplier = 48271;
 	constexpr uint32_t kIncrement = 12345;
 	constexpr uint32_t kMask = ~kModulus;
