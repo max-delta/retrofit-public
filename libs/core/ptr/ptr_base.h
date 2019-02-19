@@ -7,16 +7,6 @@
 #include "rftl/utility"
 
 
-#define RF_PTR_ASSERT_CASTABLE( BASETYPE, DERIVEDTYPE ) \
-	static_assert( \
-		rftl::is_base_of<BASETYPE, DERIVEDTYPE>::value, \
-		"Failed to cast PTR<" #DERIVEDTYPE "> to PTR<" #BASETYPE ">" ); \
-	static_assert( \
-		rftl::has_virtual_destructor<BASETYPE>::value || \
-		rftl::is_base_of<::RF::PtrTrait::NoVirtualDestructor, BASETYPE>::value, \
-		"Potentially unsafe deletions due to non-virtual destructor on base class. Please use 'virtual ~Base() = default;' at a minimum." );
-
-
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "core/macros.h"
+#include "core/ptr/ptr_traits.h"
 #include "core/ptr/creation_payload.h"
 
 
@@ -30,6 +31,8 @@ public:
 private:
 	static void Delete( void* target, PtrRef* ref, void* userData )
 	{
+		RF_PTR_ASSERT_DELETABLE( T );
+
 		(void)userData;
 		if( target != nullptr )
 		{
