@@ -18,16 +18,18 @@ class GAMEUI_API TextLabel final : public Controller
 	//
 	// Public methods
 public:
-	void SetFont( gfx::ManagedFontID fontID, uint8_t desiredHeight );
+	void SetFont( FontPurposeID purpose );
 	void SetText( char const* text );
 	void SetColor( math::Color3f color );
 
 	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering ) override;
+	virtual void OnAABBRecalc( ContainerManager& manager, Container& container ) override;
 
 
 	//
 	// Private data
 private:
+	FontPurposeID mFontPurposeID = kInvalidFontPurposeID;
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
 	uint8_t mDesiredHeight = 0;
 	rftl::string mText;

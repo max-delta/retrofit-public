@@ -49,6 +49,13 @@ gfx::PPUController& Controller::GetRenderer( ContainerManager const& manager ) c
 
 
 
+FontRegistry const& Controller::GetFontRegistry( ContainerManager const& manager ) const
+{
+	return manager.GetFontRegistry();
+}
+
+
+
 Container& Controller::GetMutableContainer( ContainerManager& manager, ContainerID containerID )
 {
 	return manager.GetMutableContainer( containerID );
