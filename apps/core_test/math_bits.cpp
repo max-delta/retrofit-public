@@ -55,7 +55,7 @@ TEST( MathBits, GetOnesIndexOfHighestBit )
 
 TEST( MathBits, GetZerosIndexOfHighestBit )
 {
-	static_assert( GetZerosIndexOfHighestBit( 0x0 ) == -1, "" );
+	static_assert( GetZerosIndexOfHighestBit( 0x0 ) == static_cast<size_t>( -1 ), "" );
 	static_assert( GetZerosIndexOfHighestBit( 0x1 ) == 0, "" );
 	static_assert( GetZerosIndexOfHighestBit( 0x2 ) == 1, "" );
 	static_assert( GetZerosIndexOfHighestBit( 0x3 ) == 1, "" );

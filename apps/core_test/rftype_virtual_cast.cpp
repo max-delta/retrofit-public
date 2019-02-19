@@ -138,8 +138,8 @@ RFTYPE_CREATE_META( RF::rftype::details::RightParent )
 RFTYPE_CREATE_META( RF::rftype::details::MultiChild )
 {
 	using namespace ::RF::rftype::details;
-	RFTYPE_META().BaseClass<LeftParent>();
-	RFTYPE_META().BaseClass<RightParent>();
+	RFTYPE_META().ComplexBaseClass<LeftParent>();
+	RFTYPE_META().ComplexBaseClass<RightParent>();
 }
 
 RFTYPE_CREATE_META( RF::rftype::details::VirtualTop )

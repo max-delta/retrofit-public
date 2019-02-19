@@ -3,6 +3,8 @@
 #include "Logging/Logging.h"
 
 
+RF_CLANG_IGNORE( "-Wunreachable-code" );
+
 namespace RF { namespace logging {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
