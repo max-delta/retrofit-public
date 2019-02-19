@@ -45,7 +45,7 @@ public: \
 	{ \
 	} while( false )
 
-#if RF_IS_ALLOWED( RF_FILENAME_MACRO )
+#if RF_IS_ALLOWED( RF_CONFIG_FILENAME_MACRO )
 #define RF_FILENAME() __FILE__
 #else
 #define RF_FILENAME() "__FILE__"

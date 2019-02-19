@@ -17,7 +17,7 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
-#ifdef _DEBUG
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 #define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
 	do \
 	{ \
