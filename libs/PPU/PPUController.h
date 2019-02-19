@@ -29,8 +29,8 @@ private:
 	//
 	// Types and constants
 private:
-	using StateBufferID = int8_t;
-	static constexpr StateBufferID kInvalidStateBufferID = -1;
+	using StateBufferID = uint8_t;
+	static constexpr StateBufferID kInvalidStateBufferID = rftl::numeric_limits<StateBufferID>::max();
 	static constexpr size_t kNumStateBuffers = 3;
 	static_assert( kNumStateBuffers == 3, "Need 3 buffers for triple buffering" );
 	static constexpr size_t kMaxTotalElements =

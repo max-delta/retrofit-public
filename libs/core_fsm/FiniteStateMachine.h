@@ -21,6 +21,8 @@ template<
 	typename TStateCollection = GenericStateCollection<TStateID, TState>>
 class FiniteStateMachine
 {
+	RF_DEFAULT_COPY( FiniteStateMachine );
+
 public:
 	using State = TState;
 	using StateID = TStateID;

@@ -5,9 +5,13 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
-      <AdditionalOptions>-Wno-unused-function %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions>-Wno-format %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions>-Wno-deprecated-declarations %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>
+        -Wno-unused-function
+        -Wno-format
+        -Wno-deprecated-declarations
+        -Wno-return-std-move
+        %(AdditionalOptions)
+      </AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />
