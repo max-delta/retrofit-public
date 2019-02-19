@@ -31,14 +31,14 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<gfx::PPUController> sGraphics;
-static UniquePtr<ui::ContainerManager> sUiManager;
 static UniquePtr<ui::FontRegistry> sFontRegistry;
+static UniquePtr<ui::ContainerManager> sUiManager;
 static UniquePtr<file::VFS> sVfs;
 static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
@@ -113,14 +113,14 @@ void Startup()
 	sWndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 	gWndProcInput = sWndProcInput;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing ui..." );
-	sUiManager = DefaultCreator<ui::ContainerManager>::Create( gGraphics );
-	gUiManager = sUiManager;
-	gUiManager->CreateRootContainer();
-
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing font registry..." );
 	sFontRegistry = DefaultCreator<ui::FontRegistry>::Create();
 	gFontRegistry = sFontRegistry;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing ui..." );
+	sUiManager = DefaultCreator<ui::ContainerManager>::Create( gGraphics, gFontRegistry );
+	gUiManager = sUiManager;
+	gUiManager->CreateRootContainer();
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
 	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
@@ -133,8 +133,8 @@ void Startup()
 
 void Shutdown()
 {
-	sFontRegistry = nullptr;
 	sUiManager = nullptr;
+	sFontRegistry = nullptr;
 	sGraphics = nullptr;
 	sVfs = nullptr;
 	sWndProcInput = nullptr;

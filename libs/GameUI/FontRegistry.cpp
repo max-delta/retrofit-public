@@ -15,8 +15,13 @@ void FontRegistry::RegisterFallbackFont( Font const& font )
 
 
 
-void FontRegistry::RegisterFont( PurposeID purpose, Font const& font )
+void FontRegistry::RegisterFont( FontPurposeID purpose, Font const& font )
 {
+	RF_ASSERT( purpose != kInvalidFontPurposeID );
+	RF_ASSERT( font.mManagedFontID != gfx::kInvalidManagedFontID );
+	RF_ASSERT( font.mFontHeight > 0 );
+	RF_ASSERT( font.mMinimumZoomFactor > 0 );
+
 	FontsByZoomFactor& fontsByZoomFactor = mFontsByPurpose[purpose];
 
 	fontsByZoomFactor.emplace_back( font );
@@ -30,7 +35,7 @@ void FontRegistry::RegisterFont( PurposeID purpose, Font const& font )
 
 
 
-Font FontRegistry::SelectBestFont( PurposeID purpose, uint8_t zoomFactor ) const
+Font FontRegistry::SelectBestFont( FontPurposeID purpose, uint8_t zoomFactor ) const
 {
 	FontsByPurpose::const_iterator const purposeIter = mFontsByPurpose.find( purpose );
 	if( purposeIter == mFontsByPurpose.end() )

@@ -12,9 +12,13 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-ContainerManager::ContainerManager( WeakPtr<gfx::PPUController> const& ppuController )
+ContainerManager::ContainerManager(
+	WeakPtr<gfx::PPUController> const& ppuController,
+	WeakPtr<FontRegistry> const& fontRegistry )
+	: mGraphics( ppuController )
+	, mFontRegistry( fontRegistry )
 {
-	mGraphics = ppuController;
+	//
 }
 
 
@@ -257,6 +261,15 @@ gfx::PPUController& ContainerManager::GetRenderer() const
 	gfx::PPUController* const graphics = mGraphics;
 	RF_ASSERT( graphics != nullptr );
 	return *graphics;
+}
+
+
+
+FontRegistry const& ContainerManager::GetFontRegistry() const
+{
+	FontRegistry* const fontRegistry = mFontRegistry;
+	RF_ASSERT( fontRegistry != nullptr );
+	return *fontRegistry;
 }
 
 
