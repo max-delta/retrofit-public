@@ -108,8 +108,8 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 	font->mFileBuffer = rftl::move( fontBuffer );
 	font->mSpacingMode = spacingMode;
 	// NOTE: Not initialized yet, will be determined on device load
-	font->mTileWidth;
-	font->mTileHeight;
+	//font->mTileWidth;
+	//font->mTileHeight;
 	return font;
 }
 

@@ -21,7 +21,10 @@ public:
 //  between derived types
 class VirtualClass : public VirtualClassWithoutDestructor
 {
+	RF_DEFAULT_COPY( VirtualClass );
+
 public:
+	VirtualClass() = default;
 	virtual ~VirtualClass() = 0;
 };
 

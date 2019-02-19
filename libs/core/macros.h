@@ -1,11 +1,5 @@
 #pragma once
 
-// For compiler and platform macros
-#include "core/compiler.h"
-
-// For assert macros
-#include "core/rf_assert.h"
-
 // Performs macro expansions that would not normally be performed when using
 //  just the normal preprocessor syntax
 #define RF_CONCAT_INNER( LHS, RHS ) LHS##RHS
@@ -17,6 +11,10 @@
 #define RF_NO_COPY( CLASS ) \
 	CLASS( CLASS const& ) = delete; \
 	CLASS& operator=( CLASS const& ) = delete;
+#define RF_DEFAULT_COPY( CLASS ) \
+public: \
+	CLASS( CLASS const& ) = default; \
+	CLASS& operator=( CLASS const& ) = default;
 #define RF_NO_MOVE( CLASS ) \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
@@ -58,3 +56,9 @@
 //  match against to provide double-click and F8 functionality for
 #define RF_CREATE_SOURCED_BUILD_MESSAGE( MESSAGE ) \
 	"" RF_FILENAME() "(" RF_STRINGIFY( __LINE__ ) "): " MESSAGE ""
+
+// For compiler and platform macros
+#include "core/compiler.h"
+
+// For assert macros
+#include "core/rf_assert.h"

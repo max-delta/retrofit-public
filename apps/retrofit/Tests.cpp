@@ -125,12 +125,12 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 namespace RF { namespace test {
 ///////////////////////////////////////////////////////////////////////////////
 
-RF::gfx::Object testObjDigit = {};
-RF::gfx::Object testObjDigitFlips[3] = {};
-RF::gfx::Object testObjWiggle = {};
-RF::gfx::TileLayer testTileLayer = {};
-RF::gfx::ManagedFontID testFont1 = RF::gfx::kInvalidManagedFontID;
-RF::gfx::ManagedFontID testFont2 = RF::gfx::kInvalidManagedFontID;
+static RF::gfx::Object testObjDigit = {};
+static RF::gfx::Object testObjDigitFlips[3] = {};
+static RF::gfx::Object testObjWiggle = {};
+static RF::gfx::TileLayer testTileLayer = {};
+static RF::gfx::ManagedFontID testFont1 = RF::gfx::kInvalidManagedFontID;
+static RF::gfx::ManagedFontID testFont2 = RF::gfx::kInvalidManagedFontID;
 void InitDrawTest()
 {
 	using namespace RF;
