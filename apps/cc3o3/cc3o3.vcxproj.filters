@@ -36,10 +36,22 @@
     <ClInclude Include="appstates\TitleScreen.h">
       <Filter>appstates</Filter>
     </ClInclude>
+    <ClInclude Include="ui\stdafx.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\project.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\UIFwd.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
       <UniqueIdentifier>{f51a17ff-828c-4298-9c76-d5542435e0bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{dd3e30f1-d240-4ee5-b979-9a5fcc628698}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -48,6 +48,9 @@
     <ClInclude Include="cc3o3.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ui\project.h" />
+    <ClInclude Include="ui\stdafx.h" />
+    <ClInclude Include="ui\UIFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\libs\core\core.vcxproj">
@@ -61,6 +64,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
       <Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
+      <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
