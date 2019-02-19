@@ -63,6 +63,28 @@ void ContainerManager::RecalcRootContainer()
 
 
 
+void ContainerManager::RecreateRootContainer()
+{
+	ProcessDestruction( { kRootContainerID }, {} );
+
+	Container& root = mContainers[kRootContainerID];
+	root.mContainerID = kRootContainerID;
+	RecalcRootContainer();
+
+	RF_ASSERT( mContainers.size() == 1 );
+	RF_ASSERT( mAnchors.empty() );
+	#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	{
+		for( LabelToContainerID::value_type const& label : mLabelsToContainerIDs )
+		{
+			RF_ASSERT( label.second == kRootContainerID );
+		}
+	}
+	#endif
+}
+
+
+
 Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 {
 	return mContainers.at( containerID );
@@ -529,6 +551,12 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 			if( iter->second == currentID )
 			{
 				iter = mLabelsToContainerIDs.erase( iter );
+				if( iter == mLabelsToContainerIDs.end() )
+				{
+					// Must exit here, otherwise iter++ will happen before !=
+					//  check runs
+					break;
+				}
 			}
 		}
 	}
