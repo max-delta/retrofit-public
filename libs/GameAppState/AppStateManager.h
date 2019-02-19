@@ -33,7 +33,7 @@ public:
 	void Tick( time::FrameClock::time_point currentTime, time::FrameClock::duration elapsedTimeSinceLastTick );
 	void Stop();
 
-	void RequestDeferredStateChange( AppStateID stateID );
+	void RequestDeferredStateChange( AppStateID stateID ) const;
 	void ApplyDeferredStateChange();
 
 
@@ -47,7 +47,7 @@ private:
 	// Private data
 private:
 	UniquePtr<FiniteStateMachine::StateCollection> mBackingStateCollection;
-	rftl::optional<StateID> mDeferredStateChange;
+	mutable rftl::optional<StateID> mDeferredStateChange;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

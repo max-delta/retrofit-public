@@ -5,7 +5,7 @@
 namespace RF { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
-AppStateTickContext::AppStateTickContext( AppStateManager& manager )
+AppStateTickContext::AppStateTickContext( AppStateManager const& manager )
 	: mManager( manager )
 {
 	//

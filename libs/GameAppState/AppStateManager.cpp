@@ -55,7 +55,7 @@ void AppStateManager::Stop()
 
 
 
-void AppStateManager::RequestDeferredStateChange( AppStateID stateID )
+void AppStateManager::RequestDeferredStateChange( AppStateID stateID ) const
 {
 	RF_ASSERT( mDeferredStateChange.has_value() == false );
 	mDeferredStateChange = stateID;
