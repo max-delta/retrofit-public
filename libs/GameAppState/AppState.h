@@ -3,13 +3,18 @@
 
 #include "GameAppState/AppStateFwd.h"
 
+#include "core/macros.h"
+
 
 namespace RF { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEAPPSTATE_API AppState
 {
+	RF_DEFAULT_COPY( AppState );
+
 public:
+	AppState() = default;
 	virtual ~AppState() = default;
 
 	virtual void OnEnter( AppStateChangeContext& context ) = 0;
