@@ -16,8 +16,7 @@ int main()
 	using namespace RF;
 
 	app::Startup();
-
-	Startup();
+	cc::Startup();
 
 	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
 	frameLimiter.Reset();
@@ -35,7 +34,7 @@ int main()
 
 		app::gGraphics->BeginFrame();
 		{
-			ProcessFrame();
+			cc::ProcessFrame();
 
 			app::gGraphics->SubmitToRender();
 			app::gGraphics->WaitForRender();
@@ -43,6 +42,7 @@ int main()
 		app::gGraphics->EndFrame();
 	}
 
+	cc::Shutdown();
 	app::Shutdown();
 	return 0;
 }

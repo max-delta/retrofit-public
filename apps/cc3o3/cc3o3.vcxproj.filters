@@ -4,10 +4,42 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="appstates\TitleScreen.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\InitialLoading.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\Boot.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="cc3o3.h" />
+    <ClInclude Include="appstates\InitialLoading.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\stdafx.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\project.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\AppStatesFwd.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Boot.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\TitleScreen.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="appstates">
+      <UniqueIdentifier>{f51a17ff-828c-4298-9c76-d5542435e0bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
