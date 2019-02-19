@@ -18,13 +18,13 @@ struct GAMEAPPSTATE_API AppStateChangeContext
 	// Stack only, created by manager
 private:
 	friend class AppStateManager;
-	AppStateChangeContext( AppStateManager& manager );
+	AppStateChangeContext( AppStateManager const& manager );
 
 
 	//
 	// Public data
 public:
-	AppStateManager& mManager;
+	AppStateManager const& mManager;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

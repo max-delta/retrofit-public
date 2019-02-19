@@ -20,13 +20,13 @@ struct GAMEAPPSTATE_API AppStateTickContext
 	// Stack only, created by manager
 private:
 	friend class AppStateManager;
-	AppStateTickContext( AppStateManager& manager );
+	AppStateTickContext( AppStateManager const& manager );
 
 
 	//
 	// Public data
 public:
-	AppStateManager& mManager;
+	AppStateManager const& mManager;
 	time::FrameClock::duration mElapsedTimeSinceLastTick = {};
 	time::FrameClock::time_point mCurrentTime = {};
 };
