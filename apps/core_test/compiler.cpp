@@ -10,6 +10,7 @@ TEST( Compiler, Constants )
 {
 	// Mostly just making sure the variables were defined
 	static_assert( kCompiler != Compiler::Invalid, "Unsupported" );
+	static_assert( kOperatingSystem != OperatingSystem::Invalid, "Unsupported" );
 	static_assert( kArchitecture != Architecture::Invalid, "Unsupported" );
 	static_assert( kMemoryModel != MemoryModel::Invalid, "Unsupported" );
 	static_assert( kEndianness != Endianness::Invalid, "Unsupported" );
