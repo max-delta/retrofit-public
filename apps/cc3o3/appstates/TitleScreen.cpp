@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "TitleScreen.h"
 
+#include "cc3o3/ui/UIFwd.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
+
+#include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 
@@ -38,7 +42,9 @@ void TitleScreen::OnExit( AppStateChangeContext& context )
 
 void TitleScreen::OnTick( AppStateTickContext& context )
 {
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Title screen" );
+	// HACK: Draw something for now to show we're in this state
+	ui::Font const tempFont = app::gFontRegistry->SelectBestFont( ui::font::HalfTileSize, app::gGraphics->GetCurrentZoomFactor() );
+	app::gGraphics->DrawText( gfx::PPUCoord( gfx::kTileSize * 2, gfx::kTileSize * 1 ), tempFont.mFontHeight, tempFont.mManagedFontID, "Title screen" );
 
 	// TODO: Draw background
 

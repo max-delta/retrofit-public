@@ -5,13 +5,19 @@
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
 
+#include "AppCommon_GraphicalClient/Common.h"
+
 #include "GameAppState/AppStateManager.h"
+
+#include "GameUI/ContainerManager.h"
 
 #include "core/ptr/default_creator.h"
 
 
 namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
+
+constexpr bool kDebugUI = true;
 
 static appstate::AppStateManager sAppStateManager;
 
@@ -35,6 +41,14 @@ void ProcessFrame()
 	sAppStateManager.Tick( now, now - previous );
 
 	sAppStateManager.ApplyDeferredStateChange();
+
+	ui::ContainerManager& uiMan = *app::gUiManager;
+	uiMan.RecalcRootContainer();
+	uiMan.ProcessRecalcs();
+	if( kDebugUI )
+	{
+		uiMan.DebugRender();
+	}
 }
 
 
