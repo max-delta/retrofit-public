@@ -13,6 +13,7 @@ namespace gfx {
 }
 namespace ui {
 	class ContainerManager;
+	class FontRegistry;
 }
 namespace file {
 	class VFS;
@@ -29,6 +30,7 @@ namespace RF { namespace app {
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 

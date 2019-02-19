@@ -336,6 +336,14 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
+uint8_t PPUController::GetCurrentZoomFactor() const
+{
+	// TODO: Thread-safe?
+	return GetZoomFactor();
+}
+
+
+
 PPUCoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
 {
 	decltype( PPUState::String::mText ) string = {};
@@ -1060,8 +1068,8 @@ void PPUController::RenderDebugGrid() const
 
 uint8_t PPUController::GetZoomFactor() const
 {
-	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
-	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimenssion / kTileSize );
+	uint16_t const smallestDimension = math::Min( mWidth, mHeight );
+	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimension / kTileSize );
 	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
 	return zoomFactor;
 }

@@ -11,6 +11,7 @@
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/Passthrough.h"
 #include "GameUI/controllers/TextLabel.h"
+#include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
@@ -125,12 +126,12 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 namespace RF { namespace test {
 ///////////////////////////////////////////////////////////////////////////////
 
-static RF::gfx::Object testObjDigit = {};
-static RF::gfx::Object testObjDigitFlips[3] = {};
-static RF::gfx::Object testObjWiggle = {};
-static RF::gfx::TileLayer testTileLayer = {};
-static RF::gfx::ManagedFontID testFont1 = RF::gfx::kInvalidManagedFontID;
-static RF::gfx::ManagedFontID testFont2 = RF::gfx::kInvalidManagedFontID;
+static gfx::Object testObjDigit = {};
+static gfx::Object testObjDigitFlips[3] = {};
+static gfx::Object testObjWiggle = {};
+static gfx::TileLayer testTileLayer = {};
+static constexpr ui::FontRegistry::PurposeID k1xFont = 1;
+static constexpr ui::FontRegistry::PurposeID k2xFont = 2;
 void InitDrawTest()
 {
 	using namespace RF;
@@ -219,8 +220,13 @@ void InitDrawTest()
 	}
 
 
-	testFont1 = fontMan.LoadNewResourceGetID( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	testFont2 = fontMan.LoadNewResourceGetID( "font_narrow_2x", fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont1 = fontMan.LoadNewResourceGetID( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont2 = fontMan.LoadNewResourceGetID( "font_narrow_2x", fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+
+	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 1 } );
+	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 2 } );
+	app::gFontRegistry->RegisterFont( k2xFont, { testFont1, 8, 1 } );
+	app::gFontRegistry->RegisterFallbackFont( { testFont1, 8, 1 } );
 }
 
 
@@ -242,19 +248,23 @@ void DrawTest()
 	testTileLayer.Animate();
 	app::gGraphics->DrawTileLayer( testTileLayer );
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), 8, testFont1, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), 8, testFont1, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), 8, testFont1, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), 8, testFont1, "`'\"~-=[]{}\\|,.<>/?" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 4 ), 8, testFont2, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 5 ), 8, testFont2, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 6 ), 8, testFont2, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 7 ), 8, testFont2, "`'\"~-=[]{}\\|,.<>/?" );
+	ui::Font const testFont1 = app::gFontRegistry->SelectBestFont( k1xFont, app::gGraphics->GetCurrentZoomFactor() );
+	ui::Font const testFont2 = app::gFontRegistry->SelectBestFont( k2xFont, app::gGraphics->GetCurrentZoomFactor() );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
 
-	gfx::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont1, "|||" );
-	gfx::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont1, "WWW" );
-	gfx::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont2, "|||" );
-	gfx::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( 8, testFont2, "WWW" );
+	ui::Font const uncheckedTestFont1 = app::gFontRegistry->SelectBestFont( k1xFont, 50 );
+	ui::Font const uncheckedTestFont2 = app::gFontRegistry->SelectBestFont( k2xFont, 50 );
+	gfx::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "|||" );
+	gfx::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "WWW" );
+	gfx::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "|||" );
+	gfx::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "WWW" );
 	RF_ASSERT( monoPipeLen != 0 );
 	RF_ASSERT( monoPipeLen == monoWLen );
 	RF_ASSERT( varPipeLen != 0 );

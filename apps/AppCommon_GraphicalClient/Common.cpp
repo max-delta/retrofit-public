@@ -4,6 +4,7 @@
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
 #include "GameUI/ContainerManager.h"
+#include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 #include "SimpleGL/SimpleGL.h"
@@ -31,11 +32,13 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<gfx::PPUController> sGraphics;
 static UniquePtr<ui::ContainerManager> sUiManager;
+static UniquePtr<ui::FontRegistry> sFontRegistry;
 static UniquePtr<file::VFS> sVfs;
 static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
@@ -115,6 +118,10 @@ void Startup()
 	gUiManager = sUiManager;
 	gUiManager->CreateRootContainer();
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing font registry..." );
+	sFontRegistry = DefaultCreator<ui::FontRegistry>::Create();
+	gFontRegistry = sFontRegistry;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
 	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
 	gTaskScheduler = sTaskScheduler;
@@ -126,6 +133,7 @@ void Startup()
 
 void Shutdown()
 {
+	sFontRegistry = nullptr;
 	sUiManager = nullptr;
 	sGraphics = nullptr;
 	sVfs = nullptr;
