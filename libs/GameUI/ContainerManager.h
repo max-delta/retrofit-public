@@ -43,6 +43,9 @@ public:
 	void CreateRootContainer();
 	void RecalcRootContainer();
 
+	// Destroys the entire UI, use with caution
+	void RecreateRootContainer();
+
 	Container const& GetContainer( ContainerID containerID ) const;
 	Container const& GetContainer( char const* label ) const;
 	Container const& GetContainer( rftl::string const& label ) const;
