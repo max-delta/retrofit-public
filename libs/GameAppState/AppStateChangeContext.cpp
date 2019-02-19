@@ -4,7 +4,7 @@
 namespace RF { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
-AppStateChangeContext::AppStateChangeContext( AppStateManager& manager )
+AppStateChangeContext::AppStateChangeContext( AppStateManager const& manager )
 	: mManager( manager )
 {
 	//
