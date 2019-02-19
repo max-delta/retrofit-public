@@ -37,7 +37,7 @@ private:
 public:
 	ContainerManager(
 		WeakPtr<gfx::PPUController> const& ppuController,
-		WeakPtr<FontRegistry> const& fontRegistry );
+		WeakPtr<FontRegistry const> const& fontRegistry );
 	~ContainerManager();
 
 	void CreateRootContainer();
@@ -117,7 +117,7 @@ private:
 	// Private data
 private:
 	WeakPtr<gfx::PPUController> mGraphics;
-	WeakPtr<FontRegistry> mFontRegistry;
+	WeakPtr<FontRegistry const> mFontRegistry;
 
 	ContainerStorage mContainers;
 	AnchorStorage mAnchors;
