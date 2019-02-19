@@ -1,32 +1,48 @@
 #include "stdafx.h"
 #include "cc3o3.h"
 
-#include "AppCommon_GraphicalClient/Common.h"
+#include "cc3o3/appstates/Boot.h"
+#include "cc3o3/appstates/InitialLoading.h"
+#include "cc3o3/appstates/TitleScreen.h"
 
-#include "PlatformFilesystem/VFS.h"
+#include "GameAppState/AppStateManager.h"
 
-namespace RF {
+#include "core/ptr/default_creator.h"
+
+
+namespace RF { namespace cc {
+///////////////////////////////////////////////////////////////////////////////
+
+static appstate::AppStateManager sAppStateManager;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void Startup()
 {
-	// VFS setup for game data
-	file::VFSPath const mountFile = file::VFS::kRoot.GetChild( "config", "vfs_cc3o3.ini" );
-	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( mountFile );
-	if( vfsTestDataLoad == false )
-	{
-		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
-	}
+	sAppStateManager.AddState( appstate::kBoot, DefaultCreator<appstate::Boot>::Create() );
+	sAppStateManager.AddState( appstate::kInitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
+	sAppStateManager.AddState( appstate::kTitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
 
-	// TODO
+	sAppStateManager.Start( appstate::kBoot );
 }
 
 
 
 void ProcessFrame()
 {
-	// TODO
+	time::FrameClock::time_point const previous = time::FrameClock::previous();
+	time::FrameClock::time_point const now = time::FrameClock::now();
+	sAppStateManager.Tick( now, now - previous );
+
+	sAppStateManager.ApplyDeferredStateChange();
+}
+
+
+
+void Shutdown()
+{
+	sAppStateManager.Stop();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}
+}}
