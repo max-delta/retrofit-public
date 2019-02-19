@@ -40,6 +40,7 @@
     <ClInclude Include="controllers\project.h" />
     <ClInclude Include="controllers\stdafx.h" />
     <ClInclude Include="controllers\TextLabel.h" />
+    <ClInclude Include="FontRegistry.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Controller.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="controllers\Passthrough.cpp" />
     <ClCompile Include="controllers\TextLabel.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FontRegistry.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
