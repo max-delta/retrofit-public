@@ -8,6 +8,8 @@
 #include "rftl/tuple"
 
 
+RF_CLANG_IGNORE( "-Wshadow-uncaptured-local" );
+
 namespace RF { namespace logic {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {

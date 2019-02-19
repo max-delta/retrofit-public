@@ -4,6 +4,9 @@
 #include "core/macros.h"
 
 
+RF_CLANG_IGNORE( "-Wmissing-variable-declarations" );
+RF_CLANG_IGNORE( "-Wunneeded-internal-declaration" );
+
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -4,6 +4,8 @@
 #include "core/ptr/unique_ptr.h"
 namespace {
 
+RF_CLANG_IGNORE( "-Wunused-function" );
+
 class ForwardedClass;
 void test( RF::UniquePtr<ForwardedClass>&& uptr )
 {

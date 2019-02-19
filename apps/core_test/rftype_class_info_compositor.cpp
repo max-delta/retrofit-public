@@ -4,6 +4,8 @@
 #include "core_reflect/VirtualClass.h"
 
 
+RF_CLANG_IGNORE( "-Winvalid-offsetof" );
+
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
