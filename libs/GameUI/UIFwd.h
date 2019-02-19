@@ -21,8 +21,12 @@ static constexpr AnchorID kInvalidAnchorID = 0;
 using AnchorIDList = rftl::vector<AnchorID>;
 using AnchorIDSet = rftl::unordered_set<AnchorID>;
 
+using FontPurposeID = uint16_t;
+static constexpr FontPurposeID kInvalidFontPurposeID = 0;
+
 class ContainerManager;
 class Controller;
+class FontRegistry;
 
 struct Container;
 struct Anchor;

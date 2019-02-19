@@ -25,18 +25,17 @@ class GAMEUI_API FontRegistry
 	//
 	// Types and constants
 public:
-	using PurposeID = uint16_t;
 	using FontsByZoomFactor = rftl::vector<Font>;
-	using FontsByPurpose = rftl::unordered_map<PurposeID, FontsByZoomFactor>;
+	using FontsByPurpose = rftl::unordered_map<FontPurposeID, FontsByZoomFactor>;
 
 
 	//
 	// Public methods
 public:
 	void RegisterFallbackFont( Font const& font );
-	void RegisterFont( PurposeID purpose, Font const& font );
+	void RegisterFont( FontPurposeID purpose, Font const& font );
 
-	Font SelectBestFont( PurposeID purpose, uint8_t zoomFactor ) const;
+	Font SelectBestFont( FontPurposeID purpose, uint8_t zoomFactor ) const;
 
 
 	//

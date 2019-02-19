@@ -130,8 +130,8 @@ static gfx::Object testObjDigit = {};
 static gfx::Object testObjDigitFlips[3] = {};
 static gfx::Object testObjWiggle = {};
 static gfx::TileLayer testTileLayer = {};
-static constexpr ui::FontRegistry::PurposeID k1xFont = 1;
-static constexpr ui::FontRegistry::PurposeID k2xFont = 2;
+static constexpr ui::FontPurposeID k1xFont = 1;
+static constexpr ui::FontPurposeID k2xFont = 2;
 void InitDrawTest()
 {
 	using namespace RF;
@@ -391,7 +391,7 @@ void InitUITest()
 		uiManager.AssignStrongController(
 			nineSlicer->GetChildContainerID( 8 ),
 			DefaultCreator<ui::controller::TextLabel>::Create() );
-	textLabel8->SetFont( 2, 8 );
+	textLabel8->SetFont( k2xFont );
 	textLabel8->SetText( "TextLabel8 test" );
 	textLabel8->SetColor( math::Color3f::kWhite );
 
