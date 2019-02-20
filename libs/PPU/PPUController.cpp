@@ -280,7 +280,7 @@ bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, 0, desiredHeight, font, fmt, args );
+	bool const retVal = DrawText( pos, 0, desiredHeight, font, math::Color3f::kBlack, fmt, args );
 	va_end( args );
 	return retVal;
 }
