@@ -46,7 +46,7 @@ void FramePackEditor::Init()
 
 	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-	mDefaultFontID = fontMan.LoadNewResource( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
 }
 
 
@@ -920,7 +920,7 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	}
 
 	gfx::TextureManager* const texMan = ppu->DebugGetTextureManager();
-	textureID = texMan->LoadNewResourceGetID( filepath, mappedPath );
+	textureID = texMan->LoadNewResourceGetID( mappedPath );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

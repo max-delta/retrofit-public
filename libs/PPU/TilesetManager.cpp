@@ -81,7 +81,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize path string" );
 		return nullptr;
 	}
-	file::VFSPath const texPath = file::VFS::CreatePathFromString( pathString );
+	file::VFSPath const texPath = file::VFSPath::CreatePathFromString( pathString );
 	if( texPath.Empty() )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize texture path" );
@@ -89,8 +89,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	}
 
 	TextureManager& texMan = *mTextureManager.Get();
-	rftl::string const texName = file::VFS::CreateStringFromPath( texPath );
-	ManagedTextureID const texID = texMan.LoadNewResourceGetID( texName, texPath );
+	ManagedTextureID const texID = texMan.LoadNewResourceGetID( texPath );
 	if( texID == kInvalidManagedTextureID )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for tileset" );

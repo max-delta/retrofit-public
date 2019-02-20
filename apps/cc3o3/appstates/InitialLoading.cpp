@@ -72,8 +72,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// TODO: Issue load request instead of using debug access to font
 		//  manager directly
 		gfx::FontManager& fontMan = *ppu.DebugGetFontManager();
-		gfx::ManagedFontID const narrowFont1xMono = fontMan.LoadNewResourceGetID( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-		gfx::ManagedFontID const narrowFont2xVari = fontMan.LoadNewResourceGetID( "font_narrow_2x", fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont1xMono = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont2xVari = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 1 } );
