@@ -30,6 +30,8 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManage
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
 {
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
 	if( resourceIter == mResources.end() )
 	{
@@ -45,6 +47,8 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
 {
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
@@ -164,6 +168,8 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Rel
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyResource( ResourceName const& resourceName )
 {
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
@@ -195,6 +201,8 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const
 {
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
 	for( typename ResourceIDsByName::value_type const& resourcePair : mResourceIDs )
 	{
 		ManagedResourceID const& id = resourcePair.second;
@@ -213,6 +221,8 @@ inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>:
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const& resourceName ) const
 {
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
 	for( ResourcesByFilename::value_type const& resourcePair : mFileBackedResources )
 	{
 		ResourceName const& name = resourcePair.first;
@@ -285,6 +295,9 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::InternalShutdown()
 {
+	// NOTE: No lock taken, expect this to be a terminal action taken on only
+	//  one thread, deep into complete app shutdown
+
 	while( mResourceIDs.empty() == false )
 	{
 		DestroyResource( mResourceIDs.begin()->first );
@@ -298,6 +311,8 @@ inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Int
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline size_t ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetNumResources() const
 {
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
 	return mResources.size();
 }
 
@@ -315,6 +330,9 @@ typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GenerateNewManagedID()
 {
+	// A write lock should have already been taken
+	RF_ASSERT( mMultiReaderSingleWriterLock.try_lock() == false );
+
 	ManagedResourceID retVal = mNextResourceID++;
 	if( mNextResourceID == kInvalidResourceID )
 	{
@@ -328,6 +346,8 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID )
 {
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
 	managedResourceID = InvalidResourceID;
@@ -391,6 +411,8 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID )
 {
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( resource != nullptr );
 	managedResourceID = GenerateNewManagedID();
