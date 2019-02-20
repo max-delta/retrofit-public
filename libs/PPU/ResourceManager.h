@@ -8,6 +8,7 @@
 
 #include "rftl/string"
 #include "rftl/unordered_map"
+#include "rftl/shared_mutex"
 
 
 namespace RF { namespace gfx {
@@ -32,6 +33,9 @@ public:
 	typedef rftl::unordered_map<ResourceName, Filename> ResourcesByFilename;
 private:
 	typedef rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 
 	//
@@ -97,6 +101,8 @@ private:
 	//
 	// Private data
 private:
+	mutable ReaderWriterMutex mMultiReaderSingleWriterLock;
+
 	ManagedResourceID mNextResourceID;
 	ResourcesByManagedID mResources;
 	ResourceIDsByName mResourceIDs;
