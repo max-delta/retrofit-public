@@ -14,8 +14,33 @@
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
+class ResourceManagerBase
+{
+	RF_NO_COPY( ResourceManagerBase );
+
+	//
+	// Types
+public:
+	typedef file::VFSPath Filename;
+	typedef rftl::string ResourceName;
+	typedef rftl::unordered_map<ResourceName, Filename> ResourcesByFilename;
+protected:
+	typedef rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
+
+
+	//
+	// Protected methods
+protected:
+	ResourceManagerBase() = default;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-class ResourceManager
+class ResourceManager : public ResourceManagerBase
 {
 	RF_NO_COPY( ResourceManager );
 
@@ -24,18 +49,9 @@ class ResourceManager
 public:
 	typedef Resource ResourceType;
 	typedef ManagedResourceID ManagedResourceIDType;
-	typedef file::VFSPath Filename;
-	typedef rftl::string ResourceName;
 	typedef ResourceManager<Resource, ManagedResourceID, InvalidResourceID> ResourceManagerType;
-
 	typedef rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>> ResourcesByManagedID;
 	typedef rftl::unordered_map<ResourceName, ManagedResourceID> ResourceIDsByName;
-	typedef rftl::unordered_map<ResourceName, Filename> ResourcesByFilename;
-private:
-	typedef rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
-	using ReaderWriterMutex = rftl::shared_mutex;
-	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
-	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 
 	//
@@ -52,6 +68,8 @@ public:
 
 	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
+	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
+	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const;
 
 	bool LoadNewResource( Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );

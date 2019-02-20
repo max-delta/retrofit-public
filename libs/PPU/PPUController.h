@@ -5,11 +5,13 @@
 #include "PPU/PPUState.h"
 #include "PPU/PPUDebugState.h"
 
-#include "PlatformFilesystem/VFSFwd.h"
+#include "PlatformFilesystem/VFSPath.h"
 
 #include "core/ptr/unique_ptr.h"
 #include "core_math/AABB4.h"
 #include "core_math/Color3f.h"
+
+#include "rftl/string"
 
 
 namespace RF { namespace gfx {
@@ -24,10 +26,20 @@ class PPU_API PPUController
 	// Forwards
 private:
 	struct DepthElement;
+	struct LoadRequest;
 
 
 	//
 	// Types and constants
+public:
+	enum class AssetType : uint8_t
+	{
+		Invalid = 0,
+		Texture,
+		FramePack,
+		Tileset,
+		Font
+	};
 private:
 	using StateBufferID = uint8_t;
 	static constexpr StateBufferID kInvalidStateBufferID = rftl::numeric_limits<StateBufferID>::max();
@@ -37,6 +49,9 @@ private:
 		PPUState::kMaxTotalElements +
 		PPUDebugState::kMaxTotalElements;
 	using DepthOrder = DepthElement[kMaxTotalElements];
+	using LoadRequests = rftl::vector<LoadRequest>;
+	using ResourceName = rftl::string;
+	using Filename = file::VFSPath;
 	enum class ElementType : uint8_t
 	{
 		Invalid = 0,
@@ -58,6 +73,12 @@ private:
 		ElementType mType = {};
 		static_assert( ElementType{} == ElementType::Invalid, "Non-zero invalid" );
 		uint8_t mId = {};
+	};
+	struct LoadRequest
+	{
+		AssetType mType = {};
+		ResourceName mResourceName = {};
+		Filename mFilename = {};
 	};
 
 
@@ -89,6 +110,16 @@ public:
 	uint8_t GetCurrentZoomFactor() const;
 	PPUCoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
 	PPUCoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
+
+	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
+	bool QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
+	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
+	bool ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
+
+	WeakPtr<gfx::TextureManager const> GetTextureManager() const;
+	WeakPtr<gfx::FramePackManager const> GetFramePackManager() const;
+	WeakPtr<gfx::TilesetManager const> GetTilesetManager() const;
+	WeakPtr<gfx::FontManager const> GetFontManager() const;
 
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
@@ -133,6 +164,10 @@ private:
 
 	math::Vector2f TileToDevice( PPUTileElem xTile, PPUTileElem yTile ) const;
 
+	void FullfillAllDeferredLoadRequests();
+	bool FullfillLoadRequest( LoadRequest const& request );
+
+
 	//
 	// Private data
 private:
@@ -142,6 +177,9 @@ private:
 	UniquePtr<gfx::TilesetManager> mTilesetManager;
 	UniquePtr<gfx::FontManager> mFontManager;
 	WeakPtr<file::VFS> const mVfs;
+
+	LoadRequests mDeferredLoadRequests;
+
 	uint16_t mWidth;
 	uint16_t mHeight;
 

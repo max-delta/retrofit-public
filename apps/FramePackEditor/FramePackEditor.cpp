@@ -261,8 +261,8 @@ void FramePackEditor::Process()
 void FramePackEditor::Render()
 {
 	gfx::PPUController* const ppu = app::gGraphics;
-	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
-	gfx::TextureManager const& texMan = *ppu->DebugGetTextureManager();
+	gfx::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
+	gfx::TextureManager const& texMan = *ppu->GetTextureManager();
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
 	constexpr uint8_t fontSize = 8;
@@ -623,7 +623,7 @@ void FramePackEditor::Command_ReloadFramePack()
 		return;
 	}
 
-	gfx::FramePackManager const& fpackMan = *ppu->DebugGetFramePackManager();
+	gfx::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
 	file::VFSPath const filename = fpackMan.SearchForFilenameByResourceName( kFramePackName );
 	OpenFramePack( filename );
 }
