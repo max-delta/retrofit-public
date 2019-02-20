@@ -68,6 +68,30 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetManagedResourceIDFromResourceName( Filename const& filename ) const
+{
+	return GetManagedResourceIDFromResourceName( filename.CreateString() );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
+	if( IDIter == mResourceIDs.end() )
+	{
+		return kInvalidResourceID;
+	}
+
+	return IDIter->second;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( Filename const& filename )
 {
 	return LoadNewResource( filename.CreateString(), filename );

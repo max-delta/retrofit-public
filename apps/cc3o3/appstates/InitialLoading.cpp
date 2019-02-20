@@ -69,11 +69,12 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	{
 		file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-		// TODO: Issue load request instead of using debug access to font
-		//  manager directly
-		gfx::FontManager& fontMan = *ppu.DebugGetFontManager();
-		gfx::ManagedFontID const narrowFont1xMono = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-		gfx::ManagedFontID const narrowFont2xVari = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+		// TODO: Defer load requests instead of forcing immediate load
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+		gfx::FontManager const& fontMan = *ppu.DebugGetFontManager();
+		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 1 } );
