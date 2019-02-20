@@ -422,7 +422,7 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 
 bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV )
 {
-	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<size_t>( character ) );
+	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<unsigned char>( character ) );
 	glColor3f( color.r, color.g, color.b );
 	return DrawBillboardInternal( texID, pos, z, texUV );
 }
