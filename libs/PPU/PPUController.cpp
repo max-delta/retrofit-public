@@ -417,6 +417,64 @@ PPUCoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, Manage
 
 
 
+bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& filename )
+{
+	return QueueDeferredLoadRequest( type, ResourceName{}, filename );
+}
+
+
+
+bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename )
+{
+	mDeferredLoadRequests.emplace_back( LoadRequest{ type, resourceName, filename } );
+	return true;
+}
+
+
+
+bool PPUController::ForceImmediateLoadRequest( AssetType type, Filename const& filename )
+{
+	return ForceImmediateLoadRequest( type, ResourceName{}, filename );
+}
+
+
+
+bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename )
+{
+	return FullfillLoadRequest( LoadRequest{ type, resourceName, filename } );
+}
+
+
+
+
+WeakPtr<gfx::TextureManager const> PPUController::GetTextureManager() const
+{
+	return mTextureManager;
+}
+
+
+
+WeakPtr<gfx::FramePackManager const> PPUController::GetFramePackManager() const
+{
+	return mFramePackManager;
+}
+
+
+
+WeakPtr<gfx::TilesetManager const> PPUController::GetTilesetManager() const
+{
+	return mTilesetManager;
+}
+
+
+
+WeakPtr<gfx::FontManager const> PPUController::GetFontManager() const
+{
+	return mFontManager;
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
@@ -562,6 +620,9 @@ void PPUController::SignalRender( StateBufferID readyBuffer )
 
 	// Set buffer as rendering
 	mRenderState = readyBuffer;
+
+	// HACK: Block on all deferred loads
+	FullfillAllDeferredLoadRequests();
 
 	// HACK: Render now
 	Render();
@@ -1146,6 +1207,62 @@ math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );
+}
+
+
+
+void PPUController::FullfillAllDeferredLoadRequests()
+{
+	LoadRequests const inFlight = rftl::move( mDeferredLoadRequests );
+	for( LoadRequest const& loadRequest : inFlight )
+	{
+		FullfillLoadRequest( loadRequest );
+	}
+}
+
+
+
+bool PPUController::FullfillLoadRequest( LoadRequest const& request )
+{
+	ResourceName const& resourceName = request.mResourceName;
+	Filename const& filename = request.mFilename;
+	if( resourceName.empty() )
+	{
+		switch( request.mType )
+		{
+			case AssetType::Texture:
+				return mTextureManager->LoadNewResource( filename );
+			case AssetType::FramePack:
+				return mFramePackManager->LoadNewResource( filename );
+			case AssetType::Tileset:
+				return mTilesetManager->LoadNewResource( filename );
+			case AssetType::Font:
+				return mFontManager->LoadNewResource( filename );
+			case AssetType::Invalid:
+				RF_DBGFAIL();
+				return false;
+		}
+	}
+	else
+	{
+		switch( request.mType )
+		{
+			case AssetType::Texture:
+				return mTextureManager->LoadNewResource( resourceName, filename );
+			case AssetType::FramePack:
+				return mFramePackManager->LoadNewResource( resourceName, filename );
+			case AssetType::Tileset:
+				return mTilesetManager->LoadNewResource( resourceName, filename );
+			case AssetType::Font:
+				return mFontManager->LoadNewResource( resourceName, filename );
+			case AssetType::Invalid:
+				RF_DBGFAIL();
+				return false;
+		}
+	}
+
+	RF_DBGFAIL();
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

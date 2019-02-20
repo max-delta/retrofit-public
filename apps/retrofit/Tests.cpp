@@ -137,9 +137,9 @@ void InitDrawTest()
 	using namespace RF;
 
 	gfx::PPUController& ppu = *app::gGraphics;
-	gfx::FramePackManager& framePackMan = *ppu.DebugGetFramePackManager();
-	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
-	gfx::FontManager& fontMan = *ppu.DebugGetFontManager();
+	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+	gfx::FontManager const& fontMan = *ppu.GetFontManager();
 	file::VFS& vfs = *app::gVfs;
 
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
@@ -147,7 +147,8 @@ void InitDrawTest()
 	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
@@ -170,7 +171,8 @@ void InitDrawTest()
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
 	testObjWiggle.mFramePackID = wiggleFPackID;
@@ -181,7 +183,9 @@ void InitDrawTest()
 	testObjWiggle.mYCoord = gfx::kTileSize * 4;
 	testObjWiggle.mZLayer = 0;
 
-	gfx::ManagedTilesetID const tilesetID = tsetMan.LoadNewResourceGetID( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+	gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
 	testTileLayer.mTilesetReference = tilesetID;
 	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
@@ -219,9 +223,10 @@ void InitDrawTest()
 		}
 	}
 
-
-	gfx::ManagedFontID const testFont1 = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	gfx::ManagedFontID const testFont2 = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 1 } );
 	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 2 } );
