@@ -55,10 +55,6 @@ public:
 	static VFSPath const kInvalid;
 	static VFSPath const kEmpty;
 
-	static constexpr char kPathDelimiter = '/';
-	static constexpr char kPathAscensionElement[] = "..";
-	static constexpr char kPathCurrentElement[] = ".";
-
 
 	//
 	// Public methods
@@ -85,9 +81,6 @@ public:
 	VFSPath AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const;
 
 	void DebugDumpMountTable() const;
-
-	static VFSPath CreatePathFromString( rftl::string const& path );
-	static rftl::string CreateStringFromPath( VFSPath const& path );
 
 
 	//

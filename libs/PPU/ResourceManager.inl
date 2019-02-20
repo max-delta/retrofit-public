@@ -64,6 +64,14 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( Filename const& filename )
+{
+	return LoadNewResource( filename.CreateString(), filename );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const& resourceName, Filename const& filename )
 {
 	WeakPtr<Resource> handle = LoadNewResourceGetHandle( resourceName, filename );
@@ -77,6 +85,14 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Loa
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return false;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( Filename const& filename )
+{
+	return LoadNewResourceGetID( filename.CreateString(), filename );
 }
 
 
@@ -97,6 +113,14 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	ManagedResourceID retVal;
 	LoadNewResourceInternal( resourceName, rftl::move( resource ), retVal );
 	return retVal;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( Filename const& filename )
+{
+	return LoadNewResourceGetHandle( filename.CreateString(), filename );
 }
 
 

@@ -87,8 +87,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	{
 		FramePackBase::TimeSlot& timeSlot = timeSlots[i];
 		file::VFSPath const& texPath = textures[i];
-		rftl::string const texName = file::VFS::CreateStringFromPath( texPath );
-		ManagedTextureID const texID = texMan.LoadNewResourceGetID( texName, texPath );
+		ManagedTextureID const texID = texMan.LoadNewResourceGetID( texPath );
 		if( texID == kInvalidManagedTextureID )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );

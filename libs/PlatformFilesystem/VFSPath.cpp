@@ -5,6 +5,8 @@
 
 #include "core/macros.h"
 
+#include "rftl/sstream"
+
 
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,6 +186,55 @@ size_t VFSPath::NumElements() const
 VFSPath::Element const& VFSPath::GetElement( size_t index ) const
 {
 	return m_ElementList[index];
+}
+
+
+
+VFSPath VFSPath::CreatePathFromString( rftl::string const& path )
+{
+	VFSPath retVal;
+
+	VFSPath::Element elementBuilder;
+	elementBuilder.reserve( path.size() );
+
+	for( char const& ch : path )
+	{
+		if( ch == kPathDelimiter )
+		{
+			retVal.Append( elementBuilder );
+			elementBuilder.clear();
+			continue;
+		}
+
+		elementBuilder.push_back( ch );
+	}
+	if( elementBuilder.empty() == false )
+	{
+		retVal.Append( elementBuilder );
+	}
+
+	return retVal;
+}
+
+
+
+rftl::string VFSPath::CreateString() const
+{
+	rftl::stringstream ss;
+
+	size_t const numElements = NumElements();
+	for( size_t i = 0; i < numElements; i++ )
+	{
+		VFSPath::Element const& element = GetElement( i );
+
+		if( i != 0 )
+		{
+			ss << kPathDelimiter;
+		}
+		ss << element;
+	}
+
+	return ss.str();
 }
 
 

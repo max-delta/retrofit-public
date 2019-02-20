@@ -49,10 +49,13 @@ public:
 	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
 
+	bool LoadNewResource( Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
+	ManagedResourceID LoadNewResourceGetID( Filename const& filename );
 	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, Filename const& filename );
 	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
+	WeakPtr<Resource> LoadNewResourceGetHandle( Filename const& filename );
 	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, Filename const& filename );
 	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
 

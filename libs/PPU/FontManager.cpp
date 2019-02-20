@@ -88,7 +88,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize path string" );
 		return nullptr;
 	}
-	file::VFSPath const texPath = file::VFS::CreatePathFromString( pathString );
+	file::VFSPath const texPath = file::VFSPath::CreatePathFromString( pathString );
 	if( texPath.Empty() )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize texture path" );
