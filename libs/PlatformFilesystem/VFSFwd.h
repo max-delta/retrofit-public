@@ -12,5 +12,9 @@ class FileHandle;
 
 typedef UniquePtr<FileHandle> FileHandlePtr;
 
+constexpr char kPathDelimiter = '/';
+constexpr char kPathAscensionElement[] = "..";
+constexpr char kPathCurrentElement[] = ".";
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

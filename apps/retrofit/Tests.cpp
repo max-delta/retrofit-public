@@ -147,7 +147,7 @@ void InitDrawTest()
 	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( "testpack", commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ManagedFramePackID const digitFPackID = framePackMan.LoadNewResourceGetID( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
@@ -170,7 +170,7 @@ void InitDrawTest()
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( "testpack2", commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.LoadNewResourceGetID( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
 	testObjWiggle.mFramePackID = wiggleFPackID;
@@ -181,7 +181,7 @@ void InitDrawTest()
 	testObjWiggle.mYCoord = gfx::kTileSize * 4;
 	testObjWiggle.mZLayer = 0;
 
-	gfx::ManagedTilesetID const tilesetID = tsetMan.LoadNewResourceGetID( "testtileset1", commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+	gfx::ManagedTilesetID const tilesetID = tsetMan.LoadNewResourceGetID( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
 	testTileLayer.mTilesetReference = tilesetID;
 	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
@@ -220,8 +220,8 @@ void InitDrawTest()
 	}
 
 
-	gfx::ManagedFontID const testFont1 = fontMan.LoadNewResourceGetID( "font_narrow_1x", fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	gfx::ManagedFontID const testFont2 = fontMan.LoadNewResourceGetID( "font_narrow_2x", fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont1 = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	gfx::ManagedFontID const testFont2 = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 1 } );
 	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 2 } );
@@ -502,7 +502,7 @@ void FPackSerializationTest()
 	}
 
 	// Load file
-	rftl::string const newFilename = file::VFS::CreateStringFromPath( newFilePath );
+	rftl::string const newFilename = newFilePath.CreateString();
 	bool const fpackLoadSuccess = fpackMan.LoadNewResource( newFilename, newFilePath );
 	if( fpackLoadSuccess == false )
 	{

@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "VFSFwd.h"
+
 #include "rftl/string"
 #include "rftl/vector"
 #include "rftl/type_traits"
@@ -58,6 +60,10 @@ public:
 	bool Empty() const;
 	size_t NumElements() const;
 	Element const& GetElement( size_t index ) const;
+
+	// To/from string
+	static VFSPath CreatePathFromString( rftl::string const& path );
+	rftl::string CreateString() const;
 
 	// Range support
 	const_iterator begin() const;

@@ -105,7 +105,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 				return false;
 			}
 
-			rftl::string fileStr = file::VFS::CreateStringFromPath( resFile );
+			rftl::string fileStr = resFile.CreateString();
 
 			// NOTE: Pascal strings
 			sizeOfTexturePaths += sizeof( StrLenType );
@@ -426,7 +426,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 				readHead += fileStrLen;
 			}
 
-			file::VFSPath const path = file::VFS::CreatePathFromString( fileStr );
+			file::VFSPath const path = file::VFSPath::CreatePathFromString( fileStr );
 			retValTextures.emplace_back( path );
 		}
 	}

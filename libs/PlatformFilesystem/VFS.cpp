@@ -10,7 +10,6 @@
 #include "core_math/math_clamps.h"
 
 #include "rftl/cstdio"
-#include "rftl/sstream"
 #include "rftl/filesystem"
 
 
@@ -81,15 +80,15 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
 
 	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
-	mMountTableFile = CollapsePath( CreatePathFromString( absoluteMountTableFilename ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", CreateStringFromPath( mMountTableFile ).c_str() );
+	mMountTableFile = CollapsePath( VFSPath::CreatePathFromString( absoluteMountTableFilename ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", mMountTableFile.CreateString().c_str() );
 
 	mConfigDirectory = mMountTableFile.GetParent();
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", CreateStringFromPath( mConfigDirectory ).c_str() );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", mConfigDirectory.CreateString().c_str() );
 
 	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
-	mUserDirectory = CollapsePath( CreatePathFromString( absoluteUserDirectory ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", CreateStringFromPath( mUserDirectory ).c_str() );
+	mUserDirectory = CollapsePath( VFSPath::CreatePathFromString( absoluteUserDirectory ) );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", mUserDirectory.CreateString().c_str() );
 
 	if( rftl::filesystem::exists( absoluteMountTableFilename ) == false )
 	{
@@ -104,7 +103,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 	}
 
 	FILE* file;
-	rftl::string collapsedMountFilename = CreateStringFromPath( mMountTableFile );
+	rftl::string collapsedMountFilename = mMountTableFile.CreateString();
 	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
 	if( openErr != 0 || file == nullptr )
 	{
@@ -119,7 +118,7 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 
 bool VFS::AttemptSubsequentMount( VFSPath const& mountTableFile )
 {
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", CreateStringFromPath( mountTableFile ).c_str() );
+	RFLOG_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", mountTableFile.CreateString().c_str() );
 	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
 	if( filePtr == nullptr )
 	{
@@ -141,7 +140,7 @@ VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permis
 {
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
 
-	VFSPath const physicalAsVFS = CreatePathFromString( physicalPath );
+	VFSPath const physicalAsVFS = VFSPath::CreatePathFromString( physicalPath );
 
 	for( VFSMount const& mount : mMountTable )
 	{
@@ -236,58 +235,9 @@ void VFS::DebugDumpMountTable() const
 			"  %s %s \"%s\" \"%s\"",
 			type,
 			permissions,
-			CreateStringFromPath( mountRule.mVirtualPath ).c_str(),
-			CreateStringFromPath( mountRule.mRealMount ).c_str() );
+			mountRule.mVirtualPath.CreateString().c_str(),
+			mountRule.mRealMount.CreateString().c_str() );
 	}
-}
-
-
-
-VFSPath VFS::CreatePathFromString( rftl::string const& path )
-{
-	VFSPath retVal;
-
-	VFSPath::Element elementBuilder;
-	elementBuilder.reserve( path.size() );
-
-	for( char const& ch : path )
-	{
-		if( ch == kPathDelimiter )
-		{
-			retVal.Append( elementBuilder );
-			elementBuilder.clear();
-			continue;
-		}
-
-		elementBuilder.push_back( ch );
-	}
-	if( elementBuilder.empty() == false )
-	{
-		retVal.Append( elementBuilder );
-	}
-
-	return retVal;
-}
-
-
-
-rftl::string VFS::CreateStringFromPath( VFSPath const& path )
-{
-	rftl::stringstream ss;
-
-	size_t const numElements = path.NumElements();
-	for( size_t i = 0; i < numElements; i++ )
-	{
-		VFSPath::Element const& element = path.GetElement( i );
-
-		if( i != 0 )
-		{
-			ss << kPathDelimiter;
-		}
-		ss << element;
-	}
-
-	return ss.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -556,7 +506,7 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 	// Virtual
 	rftl::string virtualVal = virtualPoint.substr( prefixLen, virtualPoint.size() - affixesLen );
-	retVal.mVirtualPath = kRoot.GetChild( CreatePathFromString( virtualVal ) );
+	retVal.mVirtualPath = kRoot.GetChild( VFSPath::CreatePathFromString( virtualVal ) );
 	size_t const numVirtualElements = retVal.mVirtualPath.NumElements();
 	for( size_t i = 0; i < numVirtualElements; i++ )
 	{
@@ -590,7 +540,7 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 	// Real
 	rftl::string realVal = realPoint.substr( prefixLen, realPoint.size() - affixesLen );
-	retVal.mRealMount = CreatePathFromString( realVal );
+	retVal.mRealMount = VFSPath::CreatePathFromString( realVal );
 	bool hasEncounteredDescendToken = false;
 	size_t const numRealElements = retVal.mRealMount.NumElements();
 	for( size_t i = 0; i < numRealElements; i++ )
@@ -707,7 +657,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 			// Final collapse and serialize
 			physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
 			RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
-			finalFilename = CreateStringFromPath( physTarget );
+			finalFilename = physTarget.CreateString();
 		}
 
 		if( mustExist )
@@ -733,8 +683,8 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 			}
 			else
 			{
-				VFSPath const parentPath = CreatePathFromString( finalFilename ).GetParent();
-				rftl::string parentPathStr = CreateStringFromPath( parentPath );
+				VFSPath const parentPath = VFSPath::CreatePathFromString( finalFilename ).GetParent();
+				rftl::string parentPathStr = parentPath.CreateString();
 				bool const parentExists = rftl::filesystem::exists( parentPathStr );
 				if( parentExists == false )
 				{
@@ -776,7 +726,7 @@ void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogConte
 		}
 		if( i != 0 )
 		{
-			buffer[bufferOffset] = file::VFS::kPathDelimiter;
+			buffer[bufferOffset] = file::kPathDelimiter;
 			bufferOffset++;
 		}
 		if( bufferOffset >= maxBufferOffset )
