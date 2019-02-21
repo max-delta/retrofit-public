@@ -206,7 +206,7 @@ void InitDrawTest()
 			longestRow = math::Max( longestRow, row.size() );
 		}
 
-		testTileLayer.ClearAndResize( numRows, longestRow );
+		testTileLayer.ClearAndResize( longestRow, numRows );
 
 		for( size_t i_row = 0; i_row < numRows; i_row++ )
 		{
