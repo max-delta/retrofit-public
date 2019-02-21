@@ -9,16 +9,11 @@
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
+#include "PPU/TileLayerCSVLoader.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
-
-#include "Serialization/CsvReader.h"
 
 #include "core/ptr/default_creator.h"
-
-#include "rftl/deque"
-#include "rftl/sstream"
 
 
 namespace RF { namespace cc { namespace appstate {
@@ -43,85 +38,28 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 
 	file::VFSPath const tilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps" );
 
-	// TODO: Functionalize this, and cleanup the test in Retrofit.exe as well
+	// Setup background
 	{
-		gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
-		internalState.mBackgroundBack.mTilesetReference = tilesetID;
+		internalState.mBackgroundBack = {};
+		internalState.mBackgroundBack.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
 		internalState.mBackgroundBack.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
 		internalState.mBackgroundBack.mXCoord = 0;
 		internalState.mBackgroundBack.mYCoord = 0;
 		internalState.mBackgroundBack.mZLayer = 100;
-
-		file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
-		file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
-		RF_ASSERT( tilemapBuffer.GetData() != nullptr );
 		{
-			char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
-			size_t const size = tilemapBuffer.GetSize();
-			rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
-
-			size_t const numRows = csv.size();
-			size_t longestRow = 0;
-			for( rftl::deque<rftl::string> const& row : csv )
-			{
-				longestRow = math::Max( longestRow, row.size() );
-			}
-
-			internalState.mBackgroundBack.ClearAndResize( longestRow, numRows );
-
-			for( size_t i_row = 0; i_row < numRows; i_row++ )
-			{
-				rftl::deque<rftl::string> const& row = csv.at( i_row );
-				size_t const numCols = row.size();
-
-				for( size_t i_col = 0; i_col < numCols; i_col++ )
-				{
-					rftl::string const& field = row.at( i_col );
-					gfx::TileLayer::TileIndex val = gfx::TileLayer::kEmptyTileIndex;
-					( rftl::stringstream() << field ) >> val;
-					internalState.mBackgroundBack.GetMutableTile( i_col, i_row ).mIndex = val;
-				}
-			}
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundBack, vfs, tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
+			RF_ASSERT( loadSuccess );
 		}
-	}
-	{
-		gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
-		internalState.mBackgroundMid.mTilesetReference = tilesetID;
+
+		internalState.mBackgroundMid = {};
+		internalState.mBackgroundMid.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
 		internalState.mBackgroundMid.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
 		internalState.mBackgroundMid.mXCoord = 0;
 		internalState.mBackgroundMid.mYCoord = 0;
 		internalState.mBackgroundMid.mZLayer = 99;
-
-		file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
-		file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
-		RF_ASSERT( tilemapBuffer.GetData() != nullptr );
 		{
-			char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
-			size_t const size = tilemapBuffer.GetSize();
-			rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
-
-			size_t const numRows = csv.size();
-			size_t longestRow = 0;
-			for( rftl::deque<rftl::string> const& row : csv )
-			{
-				longestRow = math::Max( longestRow, row.size() );
-			}
-
-			internalState.mBackgroundMid.ClearAndResize( longestRow, numRows );
-
-			for( size_t i_row = 0; i_row < numRows; i_row++ )
-			{
-				rftl::deque<rftl::string> const& row = csv.at( i_row );
-				size_t const numCols = row.size();
-
-				for( size_t i_col = 0; i_col < numCols; i_col++ )
-				{
-					rftl::string const& field = row.at( i_col );
-					gfx::TileLayer::TileIndex val = gfx::TileLayer::kEmptyTileIndex;
-					( rftl::stringstream() << field ) >> val;
-					internalState.mBackgroundMid.GetMutableTile( i_col, i_row ).mIndex = val;
-				}
-			}
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundMid, vfs, tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
+			RF_ASSERT( loadSuccess );
 		}
 	}
 

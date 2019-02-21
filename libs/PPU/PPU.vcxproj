@@ -50,6 +50,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="TileLayerCSVLoader.h" />
     <ClInclude Include="Tileset.h" />
     <ClInclude Include="TilesetManager.h" />
   </ItemGroup>
@@ -71,6 +72,7 @@
     </ClCompile>
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TileLayerCSVLoader.cpp" />
     <ClCompile Include="Tileset.cpp" />
     <ClCompile Include="TilesetManager.cpp" />
   </ItemGroup>
@@ -86,6 +88,9 @@
     </ProjectReference>
     <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
       <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Serialization\Serialization.vcxproj">
+      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Timing\Timing.vcxproj">
       <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
