@@ -19,7 +19,10 @@ public: \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
 #define RF_NO_INSTANCE( CLASS ) \
+	RF_NO_COPY( CLASS ); \
+	RF_NO_MOVE( CLASS ); \
 	CLASS() = delete; \
+	~CLASS() = delete; \
 	template<typename __RF_ANYTHING__> \
 	CLASS( __RF_ANYTHING__ const& ) = delete; \
 	template<typename __RF_ANYTHING__> \
