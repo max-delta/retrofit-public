@@ -80,6 +80,9 @@
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
+      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
       <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
