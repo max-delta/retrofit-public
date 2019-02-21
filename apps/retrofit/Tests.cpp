@@ -17,6 +17,7 @@
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 #include "PPU/FramePackSerDes.h"
+#include "PPU/TileLayerCSVLoader.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/Tileset.h"
 #include "PPU/FontManager.h"
@@ -24,10 +25,8 @@
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
-#include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "Scheduling/tasks/FunctorTask.h"
-#include "Serialization/CsvReader.h"
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core_platform/uuid.h"
@@ -185,43 +184,12 @@ void InitDrawTest()
 
 
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
-	gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
-	testTileLayer.mTilesetReference = tilesetID;
+	testTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
 	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
-	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( commonTilemaps.GetChild( "testhouse_10.csv" ) );
-	file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
-	RF_ASSERT( tilemapBuffer.GetData() != nullptr );
-	{
-		char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
-		size_t const size = tilemapBuffer.GetSize();
-		rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
-
-		size_t const numRows = csv.size();
-		size_t longestRow = 0;
-		for( rftl::deque<rftl::string> const& row : csv )
-		{
-			longestRow = math::Max( longestRow, row.size() );
-		}
-
-		testTileLayer.ClearAndResize( longestRow, numRows );
-
-		for( size_t i_row = 0; i_row < numRows; i_row++ )
-		{
-			rftl::deque<rftl::string> const& row = csv.at( i_row );
-			size_t const numCols = row.size();
-
-			for( size_t i_col = 0; i_col < numCols; i_col++ )
-			{
-				rftl::string const& field = row.at( i_col );
-				gfx::TileLayer::TileIndex val = gfx::TileLayer::kEmptyTileIndex;
-				( rftl::stringstream() << field ) >> val;
-				testTileLayer.GetMutableTile( i_col, i_row ).mIndex = val;
-			}
-		}
-	}
+	gfx::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
 
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
