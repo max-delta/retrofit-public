@@ -83,6 +83,16 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 1 } );
 	}
 
+	// Load tilesets
+	// NOTE: Will cause associated textures to load
+	{
+		file::VFSPath const tilesets = file::VFS::kRoot.GetChild( "assets", "tilesets" );
+
+		// TODO: Defer load requests instead of forcing immediate load
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", tilesets.GetChild( "backgrounds", "country_hills_back_96.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", tilesets.GetChild( "backgrounds", "country_hills_mid_32.tset.txt" ) );
+	}
+
 	context.mManager.RequestDeferredStateChange( kTitleScreen );
 }
 
