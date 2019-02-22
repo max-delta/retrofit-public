@@ -954,11 +954,11 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 	// TODO: Animations? Probably done via shaders and passing in the timer
 
-	// TODO: Wrapping
-
 	// TODO: Transforms
 
 	// TODO: Flips
+
+	float const z = LayerToDevice( tileLayer.mZLayer );
 
 	uint8_t scaleUp;
 	uint8_t scaleDown;
@@ -967,32 +967,130 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	PPUCoordElem const rootY = tileLayer.mYCoord;
 	PPUCoordElem const xStep = ( tileset->mTileWidth * scaleUp ) / scaleDown;
 	PPUCoordElem const yStep = ( tileset->mTileHeight * scaleUp ) / scaleDown;
-	for( size_t i_col = 0; i_col < tileLayer.NumColumns(); i_col++ )
+	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
+	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
+
+	int16_t posColStart = 0;
+	int16_t posColEnd = math::integer_cast<int16_t>( tileLayer.NumColumns() );
+	int16_t posRowStart = 0;
+	int16_t posRowEnd = math::integer_cast<int16_t>( tileLayer.NumRows() );
+	PPUCoordElem drawRootX = rootX;
+	PPUCoordElem drawRootY = rootY;
+	int16_t tileColOffset = 0;
+	int16_t tileRowOffset = 0;
+
+	// Wrapping
+	if( tileLayer.mWrapping )
 	{
-		for( size_t i_row = 0; i_row < tileLayer.NumRows(); i_row++ )
+		// How far off screen do we need to start rendering?
+		PPUCoordElem wrapRootX;
+		PPUCoordElem wrapRootY;
 		{
-			TileLayer::Tile const& tile = tileLayer.GetTile( i_col, i_row );
+			RF_ASSERT_MSG( rootX >= 0, "Untested math!" );
+			RF_ASSERT_MSG( rootY >= 0, "Untested math!" );
+			PPUCoordElem const xStepDifferenceFromZero = rootX % xLayerStep;
+			PPUCoordElem const yStepDifferenceFromZero = rootY % yLayerStep;
+			wrapRootX = xStepDifferenceFromZero;
+			wrapRootY = yStepDifferenceFromZero;
+			if( wrapRootX > 0 )
+			{
+				wrapRootX -= xLayerStep;
+			}
+			if( wrapRootY > 0 )
+			{
+				wrapRootY -= yLayerStep;
+			}
+		}
+		RF_ASSERT( wrapRootX <= 0 );
+		RF_ASSERT( wrapRootY <= 0 );
+
+		// How many cycles of wrapping before we reach the root of the layer?
+		int16_t xCyclesBeforeRoot;
+		int16_t yCyclesBeforeRoot;
+		{
+			PPUCoordElem const xWrapDifferenceFromRoot = rootX - wrapRootX;
+			PPUCoordElem const yWrapDifferenceFromRoot = rootY - wrapRootY;
+			RF_ASSERT( xWrapDifferenceFromRoot % xStep == 0 );
+			RF_ASSERT( yWrapDifferenceFromRoot % yStep == 0 );
+			xCyclesBeforeRoot = xWrapDifferenceFromRoot / xStep;
+			yCyclesBeforeRoot = yWrapDifferenceFromRoot / yStep;
+		}
+		RF_ASSERT( xCyclesBeforeRoot >= 0 );
+		RF_ASSERT( yCyclesBeforeRoot >= 0 );
+
+		// How many cycles of wrapping before we reach the end of the screen?
+		int16_t xCyclesBeforeScreenEscape;
+		int16_t yCyclesBeforeScreenEscape;
+		{
+			PPUCoordElem const xWrapDifferenceFromEscape = GetWidth() - wrapRootX;
+			PPUCoordElem const yWrapDifferenceFromEscape = GetHeight() - wrapRootY;
+			xCyclesBeforeScreenEscape = xWrapDifferenceFromEscape / xStep;
+			yCyclesBeforeScreenEscape = yWrapDifferenceFromEscape / yStep;
+		}
+		RF_ASSERT( xCyclesBeforeScreenEscape >= 0 );
+		RF_ASSERT( yCyclesBeforeScreenEscape >= 0 );
+
+		drawRootX = wrapRootX;
+		drawRootY = wrapRootY;
+		tileColOffset = xCyclesBeforeRoot;
+		tileRowOffset = yCyclesBeforeRoot;
+		posColEnd = xCyclesBeforeScreenEscape + 1;
+		posRowEnd = yCyclesBeforeScreenEscape + 1;
+		if( drawRootX < 0 )
+		{
+			posColStart = -1;
+		}
+		if( drawRootY < 0 )
+		{
+			posColStart = -1;
+		}
+	}
+
+	constexpr auto renderTile = [](
+		DeviceInterface* deviceInterface,
+		TileLayer::Tile const& tile,
+		DeviceTextureID deviceTextureID,
+		uint16_t texTilesPerRow,
+		float texXStep,
+		float texYStep,
+		math::AABB4f pos,
+		float z) -> void
+	{
+		RF_ASSERT( tile.mIndex != TileLayer::kEmptyTileIndex );
+
+		math::Vector2i16 const texTile = math::Vector2i16(
+			math::integer_cast<int16_t>( tile.mIndex % texTilesPerRow ),
+			math::integer_cast<int16_t>( tile.mIndex / texTilesPerRow ) );
+		math::Vector2f const texTopLeft = math::Vector2f(
+			texTile.x * texXStep,
+			texTile.y * texYStep );
+		math::Vector2f const texBottomRight = texTopLeft + math::Vector2f( texXStep, texYStep );
+
+		deviceInterface->DrawBillboard( deviceTextureID, pos, z, math::AABB4f{ texTopLeft, texBottomRight } );
+	};
+
+	for( int16_t i_col = posColStart; i_col < posColEnd; i_col++ )
+	{
+		for( int16_t i_row = posRowStart; i_row < posRowEnd; i_row++ )
+		{
+			size_t const tileCol = ( i_col + tileColOffset ) % tileLayer.NumColumns();
+			size_t const tileRow = ( i_row + tileRowOffset ) % tileLayer.NumRows();
+			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
 			if( tile.mIndex == TileLayer::kEmptyTileIndex )
 			{
 				// Empty
 				continue;
 			}
 
-			math::Vector2i16 const texTile = math::Vector2i16(
-				math::integer_cast<int16_t>( tile.mIndex % texTilesPerRow ),
-				math::integer_cast<int16_t>( tile.mIndex / texTilesPerRow ) );
-			math::Vector2f const texTopLeft = math::Vector2f(
-				texTile.x * texXStep,
-				texTile.y * texYStep );
-			math::Vector2f const texBottomRight = texTopLeft + math::Vector2f( texXStep, texYStep );
-
-			PPUCoordElem const x = rootX + xStep * math::integer_cast<PPUCoordElem>( i_col );
-			PPUCoordElem const y = rootY + yStep * math::integer_cast<PPUCoordElem>( i_row );
+			PPUCoordElem const x = drawRootX + xStep * math::integer_cast<PPUCoordElem>( i_col );
+			PPUCoordElem const y = drawRootY + yStep * math::integer_cast<PPUCoordElem>( i_row );
 			math::Vector2f const topLeft = CoordToDevice( x, y );
 			math::Vector2f const bottomRight = CoordToDevice(
 				math::integer_cast<PPUCoordElem>( x + xStep ),
 				math::integer_cast<PPUCoordElem>( y + yStep ) );
-			mDeviceInterface->DrawBillboard( deviceTextureID, math::AABB4f{ topLeft, bottomRight }, LayerToDevice( tileLayer.mZLayer ), math::AABB4f{ texTopLeft, texBottomRight } );
+			math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
+
+			renderTile( mDeviceInterface, tile, deviceTextureID, texTilesPerRow, texXStep, texYStep, pos, z );
 		}
 	}
 }
