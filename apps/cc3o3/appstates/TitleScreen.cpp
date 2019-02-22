@@ -46,6 +46,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		internalState.mBackgroundBack.mXCoord = 0;
 		internalState.mBackgroundBack.mYCoord = 0;
 		internalState.mBackgroundBack.mZLayer = 100;
+		internalState.mBackgroundBack.mWrapping = true;
 		{
 			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundBack, vfs, tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
 			RF_ASSERT( loadSuccess );
@@ -57,6 +58,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		internalState.mBackgroundMid.mXCoord = 0;
 		internalState.mBackgroundMid.mYCoord = 0;
 		internalState.mBackgroundMid.mZLayer = 99;
+		internalState.mBackgroundMid.mWrapping = true;
 		{
 			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundMid, vfs, tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
 			RF_ASSERT( loadSuccess );
