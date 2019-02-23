@@ -25,6 +25,20 @@ TEST( MathCompare, Basic )
 	static_assert( Equals<double>( 1.0, 1.000000000100 ) == false, "Too little precision required" );
 	static_assert( Equals<double>( 1000000000000.0, 1000000000001.0 ), "Too much precision required" );
 	static_assert( Equals<double>( 1000000000000.0, 1000000000100.0 ) == false, "Too little precision required" );
+
+	static_assert( UncheckedEquals( 0.f, 0.f ), "Zero equality failure" );
+	static_assert( UncheckedEquals( 0.f, -0.f ), "Signed zero failure" );
+	static_assert( UncheckedEquals( 1.f, 1.f ), "Basic equality failure" );
+	static_assert( UncheckedEquals( 1.f, 1.f + rftl::numeric_limits<float>::epsilon() ) == false, "Precision ignored" );
+
+	static_assert( UncheckedEquals( 0., 0. ), "Zero equality failure" );
+	static_assert( UncheckedEquals( 0., -0. ), "Signed zero failure" );
+	static_assert( UncheckedEquals( 1.0, 1.0 ), "Basic equality failure" );
+	static_assert( UncheckedEquals( 1.0, 1.0 + rftl::numeric_limits<double>::epsilon() ) == false, "Precision ignored" );
+
+	static_assert( IsWithin<int>( 8, 1, 10 ) == false, "Distance check failed" );
+	static_assert( IsWithin<int>( 8, 2, 10 ), "Distance check failed" );
+	static_assert( IsWithin<int>( 8, 3, 10 ), "Distance check failed" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
