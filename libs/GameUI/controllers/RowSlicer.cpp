@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ColumnSlicer.h"
+#include "RowSlicer.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -7,16 +7,16 @@
 #include "RFType/CreateClassInfoDefinition.h"
 
 
-RFTYPE_CREATE_META( RF::ui::controller::ColumnSlicer )
+RFTYPE_CREATE_META( RF::ui::controller::RowSlicer )
 {
 	RFTYPE_META().BaseClass<RF::ui::Controller>();
-	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::ColumnSlicer );
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::RowSlicer );
 }
 
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ColumnSlicer::ColumnSlicer( Ratios const& ratios )
+RowSlicer::RowSlicer( Ratios const& ratios )
 	: mAnchors( ratios.size() + 1, kInvalidAnchorID )
 	, mContainers( ratios.size(), kInvalidContainerID )
 	, mRatios( ratios )
@@ -36,21 +36,21 @@ ColumnSlicer::ColumnSlicer( Ratios const& ratios )
 
 
 
-ContainerID ColumnSlicer::GetChildContainerID( size_t sliceIndex ) const
+ContainerID RowSlicer::GetChildContainerID( size_t sliceIndex ) const
 {
 	return mContainers.at( sliceIndex );
 }
 
 
 
-void ColumnSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
+void RowSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
 {
 	CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
 }
 
 
 
-void ColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceIndex )
+void RowSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceIndex )
 {
 	ContainerID& id = mContainers.at( sliceIndex );
 	if( id != kInvalidContainerID )
@@ -67,7 +67,7 @@ void ColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_t slic
 
 
 
-void ColumnSlicer::OnAssign( ContainerManager& manager, Container& container )
+void RowSlicer::OnAssign( ContainerManager& manager, Container& container )
 {
 	mParentContainerID = container.mContainerID;
 
@@ -93,32 +93,32 @@ void ColumnSlicer::OnAssign( ContainerManager& manager, Container& container )
 
 
 
-void ColumnSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
+void RowSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
 {
 	Container::AABB4 const& aabb = container.mAABB;
 	gfx::PPUCoordElem const x0 = aabb.Left();
 	gfx::PPUCoordElem const x100 = aabb.Right();
-	gfx::PPUCoordElem const xDelta = x100 - x0;
 	gfx::PPUCoordElem const y0 = aabb.Top();
 	gfx::PPUCoordElem const y100 = aabb.Bottom();
+	gfx::PPUCoordElem const yDelta = y100 - y0;
 
-	// NOTE: Every anchor except the last one is at y0
-	// NOTE: Last anchor is at y100
-	float rollingX = x0;
+	// NOTE: Every anchor except the last one is at x0
+	// NOTE: Last anchor is at x100
+	float rollingY = y0;
 	RF_ASSERT( mAnchors.size() == mRatios.size() + 1 );
 	for( size_t i = 0; i < mRatios.size(); i++ )
 	{
-		gfx::PPUCoordElem x = math::integer_truncast<gfx::PPUCoordElem>( rollingX );
-		MoveAnchor( manager, mAnchors.at( i ), { x, y0 } );
-		rollingX += xDelta * mRatios.at( i ).first;
+		gfx::PPUCoordElem y = math::integer_truncast<gfx::PPUCoordElem>( rollingY );
+		MoveAnchor( manager, mAnchors.at( i ), { x0, y } );
+		rollingY += yDelta * mRatios.at( i ).first;
 	}
-	RF_ASSERT( math::IsWithin<float>( rollingX, 1.f, x100 ) );
+	RF_ASSERT( math::IsWithin<float>( rollingY, 1.f, y100 ) );
 	MoveAnchor( manager, mAnchors.back(), { x100, y100 } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
+void RowSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
 {
 	ContainerID& id = mContainers.at( sliceIndex );
 	if( id != kInvalidContainerID )
@@ -127,11 +127,11 @@ void ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Cont
 		return;
 	}
 
-	AnchorID top = mAnchors.front();
-	AnchorID bottom = mAnchors.back();
+	AnchorID top = mAnchors.at( sliceIndex );
+	AnchorID bottom = mAnchors.at( sliceIndex + 1 );
 
-	AnchorID left = mAnchors.at( sliceIndex );
-	AnchorID right = mAnchors.at( sliceIndex + 1 );
+	AnchorID left = mAnchors.front();
+	AnchorID right = mAnchors.back();
 
 	id = Controller::CreateChildContainer( manager, container, left, right, top, bottom );
 }
