@@ -2,8 +2,12 @@
 #include "TitleScreen.h"
 
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/appstates/TitleScreen_MainMenu.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
+
+#include "GameAppState/AppStateManager.h"
+#include "GameAppState/AppStateTickContext.h"
 
 #include "GameUI/FontRegistry.h"
 
@@ -21,8 +25,13 @@ namespace RF { namespace cc { namespace appstate {
 
 struct TitleScreen::InternalState
 {
+	RF_NO_COPY( InternalState );
+	InternalState() = default;
+
 	gfx::TileLayer mBackgroundBack = {};
 	gfx::TileLayer mBackgroundMid = {};
+
+	AppStateManager mAppStateManager;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,14 +81,21 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		}
 	}
 
-	// TODO: Start sub-states
+
+	// Start sub-states
+	AppStateManager& appStateMan = internalState.mAppStateManager;
+	appStateMan.AddState( appstate::id::TitleScreen_MainMenu, DefaultCreator<appstate::TitleScreen_MainMenu>::Create() );
+	appStateMan.Start( appstate::id::TitleScreen_MainMenu );
 }
 
 
 
 void TitleScreen::OnExit( AppStateChangeContext& context )
 {
-	// TODO: Stop sub-states
+	// Stop sub-states
+	InternalState& internalState = *mInternalState;
+	AppStateManager& appStateMan = internalState.mAppStateManager;
+	appStateMan.Stop();
 
 	mInternalState = nullptr;
 }
@@ -90,10 +106,6 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	gfx::PPUController& ppu = *app::gGraphics;
-
-	// HACK: Draw something for now to show we're in this state
-	ui::Font const tempFont = app::gFontRegistry->SelectBestFont( ui::font::HalfTileSize, app::gGraphics->GetCurrentZoomFactor() );
-	ppu.DrawText( gfx::PPUCoord( gfx::kTileSize * 2, gfx::kTileSize * 1 ), tempFont.mFontHeight, tempFont.mManagedFontID, "Title screen" );
 
 	// Draw background
 	{
@@ -121,7 +133,9 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( mid );
 	}
 
-	// TODO: Tick sub-states
+	// Tick sub-states
+	AppStateManager& appStateMan = internalState.mAppStateManager;
+	appStateMan.Tick( context.mCurrentTime, context.mElapsedTimeSinceLastTick );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

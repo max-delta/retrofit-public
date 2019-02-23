@@ -13,6 +13,9 @@
     <ClCompile Include="appstates\Boot.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\TitleScreen_MainMenu.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -44,6 +47,9 @@
     </ClInclude>
     <ClInclude Include="ui\UIFwd.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\TitleScreen_MainMenu.h">
+      <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

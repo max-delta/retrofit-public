@@ -24,6 +24,9 @@ namespace RF { namespace cc { namespace appstate {
 
 struct InitialLoading::InternalState
 {
+	RF_NO_COPY( InternalState );
+	InternalState() = default;
+
 	bool mFirstFrame = true;
 };
 
