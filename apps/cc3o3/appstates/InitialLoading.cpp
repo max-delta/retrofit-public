@@ -93,7 +93,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", tilesets.GetChild( "backgrounds", "country_hills_mid_32.tset.txt" ) );
 	}
 
-	context.mManager.RequestDeferredStateChange( kTitleScreen );
+	context.mManager.RequestDeferredStateChange( id::TitleScreen );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
