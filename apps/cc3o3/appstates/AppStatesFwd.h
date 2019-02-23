@@ -8,13 +8,17 @@ namespace RF { namespace cc { namespace appstate {
 
 using namespace RF::appstate;
 
-constexpr AppStateID kBoot = 0;
+namespace id {
+enum : AppStateID
+{
+	Boot = 0,
+	InitialLoading,
+	TitleScreen
+};
+}
+
 class Boot;
-
-constexpr AppStateID kInitialLoading = 1;
 class InitialLoading;
-
-constexpr AppStateID kTitleScreen = 2;
 class TitleScreen;
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -50,7 +50,7 @@ void Boot::OnTick( AppStateTickContext& context )
 	}
 
 	// Hop to loading ASAP
-	context.mManager.RequestDeferredStateChange( kInitialLoading );
+	context.mManager.RequestDeferredStateChange( id::InitialLoading );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

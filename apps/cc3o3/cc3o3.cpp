@@ -25,11 +25,11 @@ static appstate::AppStateManager sAppStateManager;
 
 void Startup()
 {
-	sAppStateManager.AddState( appstate::kBoot, DefaultCreator<appstate::Boot>::Create() );
-	sAppStateManager.AddState( appstate::kInitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
-	sAppStateManager.AddState( appstate::kTitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
+	sAppStateManager.AddState( appstate::id::Boot, DefaultCreator<appstate::Boot>::Create() );
+	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
+	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
 
-	sAppStateManager.Start( appstate::kBoot );
+	sAppStateManager.Start( appstate::id::Boot );
 }
 
 
