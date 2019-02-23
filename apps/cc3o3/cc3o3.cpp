@@ -18,6 +18,7 @@ namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 constexpr bool kDebugUI = true;
+constexpr bool kDebugUIScaler = true;
 
 static appstate::AppStateManager sAppStateManager;
 
@@ -30,6 +31,12 @@ void Startup()
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
 
 	sAppStateManager.Start( appstate::id::Boot );
+
+	if( kDebugUIScaler )
+	{
+		app::gUiManager->SetRootAABBReduction( 1 );
+		app::gUiManager->SetDebugAABBReduction( 2 );
+	}
 }
 
 
@@ -49,6 +56,7 @@ void ProcessFrame()
 	{
 		uiMan.DebugRender();
 	}
+	uiMan.Render();
 }
 
 
