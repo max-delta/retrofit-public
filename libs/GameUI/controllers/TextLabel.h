@@ -20,6 +20,7 @@ class GAMEUI_API TextLabel final : public Controller
 public:
 	void SetFont( FontPurposeID purpose );
 	void SetText( char const* text );
+	void SetJustification( Justification justification );
 	void SetColor( math::Color3f color );
 
 	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering ) override;
@@ -32,6 +33,7 @@ private:
 	FontPurposeID mFontPurposeID = kInvalidFontPurposeID;
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
 	uint8_t mDesiredHeight = 0;
+	Justification mJustification = Justification::TopLeft;
 	rftl::string mText;
 	math::Color3f mColor = math::Color3f::kBlack;
 };
