@@ -40,27 +40,34 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 
 	// Setup background
 	{
-		internalState.mBackgroundBack = {};
-		internalState.mBackgroundBack.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
-		internalState.mBackgroundBack.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
-		internalState.mBackgroundBack.mXCoord = 0;
-		internalState.mBackgroundBack.mYCoord = 0;
-		internalState.mBackgroundBack.mZLayer = 100;
-		internalState.mBackgroundBack.mWrapping = true;
+		gfx::TileLayer& back = internalState.mBackgroundBack;
+		gfx::TileLayer& mid = internalState.mBackgroundMid;
+
+		back = {};
+		back.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
+		back.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
+		back.mXCoord = 0;
+		back.mYCoord = 0;
+		back.mZLayer = 100;
+		back.mWrapping = true;
+		back.mLooping = true;
+		back.mTimer.mMaxTimeIndex = 50;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundBack, vfs, tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( back, vfs, tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
 
-		internalState.mBackgroundMid = {};
-		internalState.mBackgroundMid.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
-		internalState.mBackgroundMid.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
-		internalState.mBackgroundMid.mXCoord = 0;
-		internalState.mBackgroundMid.mYCoord = 0;
-		internalState.mBackgroundMid.mZLayer = 99;
-		internalState.mBackgroundMid.mWrapping = true;
+		mid = {};
+		mid.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
+		mid.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
+		mid.mXCoord = 0;
+		mid.mYCoord = 0;
+		mid.mZLayer = 99;
+		mid.mWrapping = true;
+		mid.mLooping = true;
+		mid.mTimer.mMaxTimeIndex = 10;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( internalState.mBackgroundMid, vfs, tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( mid, vfs, tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
 	}
@@ -89,11 +96,30 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 	ppu.DrawText( gfx::PPUCoord( gfx::kTileSize * 2, gfx::kTileSize * 1 ), tempFont.mFontHeight, tempFont.mManagedFontID, "Title screen" );
 
 	// Draw background
-	// TODO: Parallax
-	internalState.mBackgroundBack.Animate();
-	internalState.mBackgroundMid.Animate();
-	ppu.DrawTileLayer( internalState.mBackgroundBack );
-	ppu.DrawTileLayer( internalState.mBackgroundMid );
+	{
+		gfx::TileLayer& back = internalState.mBackgroundBack;
+		gfx::TileLayer& mid = internalState.mBackgroundMid;
+
+		constexpr auto parralax = [](
+			gfx::PPUController const& ppu,
+			gfx::TileLayer& tileLayer ) -> void
+		{
+			tileLayer.Animate();
+			if( tileLayer.mTimer.IsFullZero() )
+			{
+				tileLayer.mXCoord--;
+				if( tileLayer.mXCoord <= 0 )
+				{
+					tileLayer.mXCoord = ppu.CalculateTileLayerSize( tileLayer ).x;
+				}
+			}
+		};
+		parralax( ppu, back );
+		parralax( ppu, mid );
+
+		ppu.DrawTileLayer( back );
+		ppu.DrawTileLayer( mid );
+	}
 
 	// TODO: Tick sub-states
 }
