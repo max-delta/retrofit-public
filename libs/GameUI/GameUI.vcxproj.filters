@@ -17,6 +17,9 @@
       <Filter>controllers</Filter>
     </ClCompile>
     <ClCompile Include="FontRegistry.cpp" />
+    <ClCompile Include="controllers\ColumnSlicer.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -42,6 +45,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="FontRegistry.h" />
+    <ClInclude Include="controllers\ColumnSlicer.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">
