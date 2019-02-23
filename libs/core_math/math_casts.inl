@@ -245,5 +245,14 @@ DST real_cast( SRC const src )
 	return static_cast<DST>( src );
 }
 
+
+
+template<typename SRC,
+	typename rftl::enable_if<rftl::is_enum<SRC>::value, int>::type>
+constexpr uint64_t enum_bitcast( SRC const src )
+{
+	return static_cast<uint64_t>(src);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

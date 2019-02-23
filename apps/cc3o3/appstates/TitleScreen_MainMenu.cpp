@@ -92,15 +92,17 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		TODOLogo->SetJustification( ui::Justification::MiddleCenter );
 		TODOLogo->SetFont( ui::font::MinSize );
 		TODOLogo->SetText( "LOGO GOES HERE" );
-		TODOLogo->SetColor( math::Color3f::kBlack);
+		TODOLogo->SetColor( math::Color3f::kBlack );
 
 		// TODO: Menu in center bottom
 		WeakPtr<ui::controller::TextLabel> const TODOMenu =
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		TODOMenu->SetJustification( ui::Justification::MiddleCenter );
 		TODOMenu->SetFont( ui::font::MinSize );
 		TODOMenu->SetText( "MENU GOES HERE" );
 		TODOMenu->SetColor( math::Color3f::kBlack );
@@ -110,6 +112,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				leftRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		TODODebug->SetJustification( ui::Justification::TopLeft );
 		TODODebug->SetFont( ui::font::MinSize );
 		TODODebug->SetText( "DEBUG GOES HERE" );
 		TODODebug->SetColor( math::Color3f::kBlack );
@@ -119,6 +122,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rightRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		TODOBuild->SetJustification( ui::Justification::TopRight );
 		TODOBuild->SetFont( ui::font::MinSize );
 		TODOBuild->SetText( "BUILD GOES HERE" );
 		TODOBuild->SetColor( math::Color3f::kBlack );
@@ -129,6 +133,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				leftRowSlicer->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		copyright->SetJustification( ui::Justification::BottomLeft );
 		copyright->SetFont( ui::font::MinSize );
 		copyright->SetText( "(C) Max Delta" );
 		copyright->SetColor( math::Color3f::kBlack );
@@ -139,6 +144,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rightRowSlicer->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
+		url->SetJustification( ui::Justification::BottomRight );
 		url->SetFont( ui::font::MinSize );
 		#if RF_IS_ALLOWED( RF_CONFIG_INTERNAL_BUILD_NOTICE )
 		url->SetText( "INTERNAL USE ONLY" );
