@@ -32,6 +32,7 @@
     <ClCompile Include="appstates\Boot.cpp" />
     <ClCompile Include="appstates\InitialLoading.cpp" />
     <ClCompile Include="appstates\TitleScreen.cpp" />
+    <ClCompile Include="appstates\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="cc3o3.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -45,6 +46,7 @@
     <ClInclude Include="appstates\project.h" />
     <ClInclude Include="appstates\stdafx.h" />
     <ClInclude Include="appstates\TitleScreen.h" />
+    <ClInclude Include="appstates\TitleScreen_MainMenu.h" />
     <ClInclude Include="cc3o3.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
