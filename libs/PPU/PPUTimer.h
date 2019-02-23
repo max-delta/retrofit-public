@@ -13,6 +13,7 @@ struct PPU_API PPUTimer
 	// Public methods
 public:
 	void Animate( bool looping, bool paused );
+	bool IsFullZero() const;
 
 
 	//

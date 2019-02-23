@@ -43,5 +43,12 @@ void PPUTimer::Animate( bool looping, bool paused )
 	}
 }
 
+
+
+bool PPUTimer::IsFullZero() const
+{
+	return mTimeIndex == 0 && mSubTimeIndex == 0;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

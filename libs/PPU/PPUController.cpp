@@ -417,6 +417,21 @@ PPUCoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, Manage
 
 
 
+PPUCoord PPUController::CalculateTileLayerSize( TileLayer const& tileLayer ) const
+{
+	Tileset const* tileset = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
+	RF_ASSERT_MSG( tileset != nullptr, "Failed to fetch tileset" );
+
+	PPUCoordElem xStep;
+	PPUCoordElem yStep;
+	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
+	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
+	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
+	return PPUCoord{ xLayerStep, yLayerStep };
+}
+
+
+
 bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& filename )
 {
 	return QueueDeferredLoadRequest( type, ResourceName{}, filename );
@@ -896,6 +911,15 @@ void PPUController::CalculateFontVariableCharWidth( Font const& font, char chara
 	}
 }
 
+void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, PPUCoordElem& tileWidth, PPUCoordElem& tileHeight ) const
+{
+	uint8_t scaleUp;
+	uint8_t scaleDown;
+	tileLayer.GetTileZoomFactor( scaleUp, scaleDown );
+	tileWidth = ( tileset.mTileWidth * scaleUp ) / scaleDown;
+	tileHeight = ( tileset.mTileHeight * scaleUp ) / scaleDown;
+}
+
 
 
 void PPUController::RenderObject( Object const& object ) const
@@ -952,23 +976,22 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	float const texXStep = static_cast<float>( tileset->mTileWidth ) / texture->mWidthPostLoad;
 	float const texYStep = static_cast<float>( tileset->mTileHeight ) / texture->mHeightPostLoad;
 
+	PPUCoordElem xStep;
+	PPUCoordElem yStep;
+	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
+	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
+	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
+
+	float const z = LayerToDevice( tileLayer.mZLayer );
+
+	PPUCoordElem const rootX = tileLayer.mXCoord;
+	PPUCoordElem const rootY = tileLayer.mYCoord;
+
 	// TODO: Animations? Probably done via shaders and passing in the timer
 
 	// TODO: Transforms
 
 	// TODO: Flips
-
-	float const z = LayerToDevice( tileLayer.mZLayer );
-
-	uint8_t scaleUp;
-	uint8_t scaleDown;
-	tileLayer.GetTileZoomFactor( scaleUp, scaleDown );
-	PPUCoordElem const rootX = tileLayer.mXCoord;
-	PPUCoordElem const rootY = tileLayer.mYCoord;
-	PPUCoordElem const xStep = ( tileset->mTileWidth * scaleUp ) / scaleDown;
-	PPUCoordElem const yStep = ( tileset->mTileHeight * scaleUp ) / scaleDown;
-	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
-	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
 
 	int16_t posColStart = 0;
 	int16_t posColEnd = math::integer_cast<int16_t>( tileLayer.NumColumns() );
