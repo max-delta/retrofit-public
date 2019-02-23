@@ -12,14 +12,21 @@ namespace id {
 enum : AppStateID
 {
 	Boot = 0,
+
 	InitialLoading,
-	TitleScreen
+
+	TitleScreen,
+	TitleScreen_MainMenu
 };
 }
 
+
 class Boot;
+
 class InitialLoading;
+
 class TitleScreen;
+class TitleScreen_MainMenu;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
