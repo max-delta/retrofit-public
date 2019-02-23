@@ -87,5 +87,23 @@ constexpr bool UncheckedEquals( long double const& lhs, long double const& rhs )
 	RF_CLANG_POP();
 }
 
+
+
+template<typename TYPE>
+constexpr bool IsWithin( TYPE const& lhs, TYPE const& delta, TYPE const& rhs )
+{
+	if( lhs <= rhs && lhs + delta >= rhs )
+	{
+		return true;
+	}
+
+	if( lhs >= rhs && lhs + delta >= rhs )
+	{
+		return true;
+	}
+
+	return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
