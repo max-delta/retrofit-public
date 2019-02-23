@@ -9,6 +9,8 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core_math/Lerp.h"
+
 
 RFTYPE_CREATE_META( RF::ui::controller::TextLabel )
 {
@@ -37,6 +39,13 @@ void TextLabel::SetText( char const* text )
 
 
 
+void TextLabel::SetJustification( Justification justification )
+{
+	mJustification = justification;
+}
+
+
+
 void TextLabel::SetColor( math::Color3f color )
 {
 	mColor = color;
@@ -55,7 +64,48 @@ void TextLabel::OnRender( ContainerManager const& manager, Container const& cont
 		mDesiredHeight = font.mFontHeight;
 	}
 
-	renderer.DrawText( container.mAABB.mTopLeft, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mColor, "%s", mText.c_str() );
+	gfx::PPUCoord pos = container.mAABB.mTopLeft;
+	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
+	{
+		pos.y = container.mAABB.Top();
+	}
+	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Bottom ) )
+	{
+		pos.y = container.mAABB.Bottom() - mDesiredHeight;
+	}
+	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Middle ) )
+	{
+		gfx::PPUCoordElem const top = container.mAABB.Top();
+		gfx::PPUCoordElem const bottom = container.mAABB.Bottom() - mDesiredHeight;
+		pos.y = math::Lerp( top, bottom, 0.5f );
+	}
+	else
+	{
+		RF_DBGFAIL();
+	}
+
+	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Left ) )
+	{
+		pos.x = container.mAABB.Left();
+	}
+	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Right ) )
+	{
+		gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
+		pos.x = container.mAABB.Right() - stringWidth;
+	}
+	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Center ) )
+	{
+		gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
+		gfx::PPUCoordElem const left = container.mAABB.Left();
+		gfx::PPUCoordElem const right = container.mAABB.Right() - stringWidth;
+		pos.x = math::Lerp( left, right, 0.5f );
+	}
+	else
+	{
+		RF_DBGFAIL();
+	}
+
+	renderer.DrawText( pos, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mColor, "%s", mText.c_str() );
 }
 
 
