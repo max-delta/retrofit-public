@@ -69,6 +69,22 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 
 
 
+FileHandlePtr VFS::GetRawFileForWrite( char const* rawPath ) const
+{
+	RFLOG_INFO( rawPath, RFCAT_VFS, "File write request" );
+	FILE* file = nullptr;
+	errno_t const openResult = fopen_s( &file, rawPath, "wb+" );
+	if( file == nullptr )
+	{
+		RFLOG_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, error code %i", openResult );
+		return nullptr;
+	}
+
+	return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+}
+
+
+
 bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string const& userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );
@@ -708,35 +724,3 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
-
-template<>
-void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer )
-{
-	size_t bufferOffset = 0;
-	size_t const maxBufferOffset = buffer.size();
-
-	size_t const numElements = context.NumElements();
-	for( size_t i = 0; i < numElements; i++ )
-	{
-		file::VFSPath::Element const& element = context.GetElement( i );
-
-		if( bufferOffset >= maxBufferOffset )
-		{
-			break;
-		}
-		if( i != 0 )
-		{
-			buffer[bufferOffset] = file::kPathDelimiter;
-			bufferOffset++;
-		}
-		if( bufferOffset >= maxBufferOffset )
-		{
-			break;
-		}
-
-		size_t const bytesRemaining = maxBufferOffset - bufferOffset;
-		size_t const bytesToWrite = math::Min( bytesRemaining, element.size() );
-		memcpy( &buffer[bufferOffset], element.data(), bytesToWrite );
-		bufferOffset += bytesToWrite;
-	}
-}

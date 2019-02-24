@@ -12,6 +12,12 @@
 #include "rftl/cstdlib"
 
 
+// This is not required, as the linker can resolve them without a declaration,
+//  but if there's no definition, and the context attempt is in error, this
+//  will raise it to a compiler error, which may be helpful when the log site
+//  is incorrect but difficult to find
+#define RF_STATIC_ASSERT_ON_UNDECLARED_CONTEXT_SPECIALIZATIONS
+
 // Forwards
 namespace RF { namespace logging {
 	class LoggingRouter;
@@ -155,6 +161,27 @@ void WriteContextString( Context const& context, Utf32LogContextBuffer& buffer )
 	WriteContextString( context, temp );
 	FallbackConversion( buffer, temp );
 }
+
+#ifdef RF_STATIC_ASSERT_ON_UNDECLARED_CONTEXT_SPECIALIZATIONS
+template<typename Context>
+void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer )
+{
+	static_assert( false,
+		"No declaration was found for this context. The linker may still be"
+		" able to locate and resolve it, but this is currently flagged to"
+		" cause a compilation error instead." );
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////////
+
+// Some stock generic contexts
+template<>
+void LOGGING_API WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer );
 
 //////////////////////////////////////////////////////////////////////////////
 
