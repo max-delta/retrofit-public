@@ -3,6 +3,8 @@
 
 #include "VFSFwd.h"
 
+#include "Logging/Logging.h"
+
 #include "rftl/string"
 #include "rftl/vector"
 #include "rftl/type_traits"
@@ -87,6 +89,11 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+}}
+
+namespace RF { namespace logging {
+template<>
+void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer );
 }}
 
 #include "VFSPath.inl"

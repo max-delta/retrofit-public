@@ -4,8 +4,6 @@
 #include "PlatformFilesystem/VFSFwd.h"
 #include "PlatformFilesystem/VFSMount.h"
 
-#include "Logging/Logging.h"
-
 
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,6 +65,8 @@ public:
 	FileHandlePtr GetFileForAppend( VFSPath const& path ) const; // Will create, seek end
 	FileHandlePtr GetFileForExecute( VFSPath const& path ) const; // Must exist, seek start
 
+	FileHandlePtr GetRawFileForWrite( char const* rawPath ) const; // Will create, seek start
+
 	// The mount table file contains the base rules for all VFS operations
 	// NOTE: Relative entries are relative to the location of the mount file
 	// NOTE: User entries are relative to the provided user directory
@@ -102,9 +102,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
-
-namespace RF { namespace logging {
-template<>
-void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer );
 }}
