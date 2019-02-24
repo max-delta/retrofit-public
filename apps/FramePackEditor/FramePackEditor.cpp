@@ -6,6 +6,7 @@
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
+#include "PPU/FramePackSerDes.h"
 #include "PPU/TextureManager.h"
 #include "PPU/Texture.h"
 #include "PPU/FontManager.h"
@@ -21,6 +22,7 @@
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/static_array.h"
+#include "rftl/extension/string_compare.h"
 
 
 namespace RF {
@@ -150,6 +152,13 @@ void FramePackEditor::Process()
 			if( digital.WasActivatedLogical( 'O' ) )
 			{
 				Command_Meta_OpenFramePack();
+			}
+			if( digital.WasActivatedLogical( 'S' ) )
+			{
+				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
+				{
+					Command_Meta_SaveFramePack();
+				}
 			}
 			if( digital.WasActivatedLogical( shim::VK_UP ) || mostRecentHold == shim::VK_UP )
 			{
@@ -333,7 +342,7 @@ void FramePackEditor::Render()
 		mPreviewObject.mLooping = true;
 		mPreviewObject.mXCoord = previewOriginX;
 		mPreviewObject.mYCoord = horizontalPlaneY;
-		mPreviewObject.mZLayer = 0;
+		mPreviewObject.mZLayer = gfx::kFarthestLayer;
 
 		ppu->DrawObject( mPreviewObject );
 		mPreviewObject.Animate();
@@ -343,7 +352,7 @@ void FramePackEditor::Render()
 		editingObject.mTimer.mTimeIndex = fpack->CalculateFirstTimeIndexOfTimeSlot( mEditingFrame );
 		editingObject.mXCoord = editingOriginX;
 		editingObject.mYCoord = horizontalPlaneY;
-		editingObject.mZLayer = 0;
+		editingObject.mZLayer = gfx::kFarthestLayer - 1;
 
 		ppu->DrawObject( editingObject );
 
@@ -446,7 +455,8 @@ void FramePackEditor::Render()
 				constexpr char k_Footer3Meta[] =
 					"[META]  "
 					"<U>:New FPack  "
-					"<O>:Open FPack";
+					"<O>:Open FPack "
+					"<Ctrl+S>:Save FPack ";
 				constexpr char k_Footer4Meta[] =
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
@@ -688,6 +698,25 @@ void FramePackEditor::Command_Meta_OpenFramePack()
 
 
 
+void FramePackEditor::Command_Meta_SaveFramePack()
+{
+	rftl::string rawPath = platform::dialogs::SaveFileDialog( { { "FramePack (*.fpack)", "*.fpack" } } );
+	if( rawPath.empty() )
+	{
+		// User cancelled?
+		return;
+	}
+
+	if( rftl::ends_with( rawPath, ".fpack" ) == false )
+	{
+		rawPath.append( ".fpack" );
+	}
+
+	SaveFramePack( rawPath );
+}
+
+
+
 void FramePackEditor::Command_Meta_DeleteFrame()
 {
 	gfx::PPUController* const ppu = app::gGraphics;
@@ -815,6 +844,50 @@ void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 		gfx::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 		RF_ASSERT( fpack != nullptr );
 		mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, fpack->mPreferredSlowdownRate, 10 );
+	}
+}
+
+
+
+void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
+{
+	file::VFS const& vfs = *mVfs;
+	file::VFSPath const filePath = vfs.AttemptMapToVFS( rawPath, file::VFSMount::Permissions::ReadWrite );
+	if( filePath.Empty() )
+	{
+		// NOTE: Won't error out, but not the expected use case
+		RFLOG_NOTIFY( filePath, RFCAT_FRAMEPACKEDITOR, "Unable to map to VFS" );
+	}
+
+	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::FramePackManager const& fpackMan = *ppu.DebugGetFramePackManager();
+	gfx::TextureManager const& texMan = *ppu.DebugGetTextureManager();
+
+	WeakPtr<gfx::FramePackBase> const currentFPack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
+	if( currentFPack == nullptr )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEPACKEDITOR, "Unable to fetch current framepack" );
+		return;
+	}
+
+	// Serialize
+	std::vector<uint8_t> buffer;
+	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *currentFPack );
+
+	// Create file
+	{
+		file::FileHandlePtr const fileHandle = vfs.GetRawFileForWrite( rawPath.c_str() );
+		if( fileHandle == nullptr )
+		{
+			RFLOG_NOTIFY( rawPath.c_str(), RFCAT_FRAMEPACKEDITOR, "Failed to create FPack file" );
+			return;
+		}
+
+		// Write file
+		FILE* const file = fileHandle->GetFile();
+		RF_ASSERT( file != nullptr );
+		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		RF_ASSERT( bytesWritten == buffer.size() );
 	}
 }
 
