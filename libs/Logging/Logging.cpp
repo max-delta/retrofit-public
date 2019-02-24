@@ -24,7 +24,52 @@ void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const
 	unicode::ConvertToUtf32( dest.data(), dest.size(), source.data(), source.size() );
 }
 
+///////////////////////////////////////////////////////////////////////////////
 
+template<>
+void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer )
+{
+	for( size_t i = 0; i < buffer.size(); i++ )
+	{
+		buffer.at( i ) = context[i];
+		if( context[i] == '\0' )
+		{
+			break;
+		}
+	}
+}
+
+
+
+template<>
+void WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer )
+{
+	for( size_t i = 0; i < buffer.size(); i++ )
+	{
+		buffer.at( i ) = context[i];
+		if( context[i] == u'\0' )
+		{
+			break;
+		}
+	}
+}
+
+
+
+template<>
+void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer )
+{
+	for( size_t i = 0; i < buffer.size(); i++ )
+	{
+		buffer.at( i ) = context[i];
+		if( context[i] == U'\0' )
+		{
+			break;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
 
 LoggingRouter& GetOrCreateGlobalLoggingInstance()
 {
