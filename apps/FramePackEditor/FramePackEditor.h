@@ -50,6 +50,7 @@ public:
 	void Command_Meta_ChangeDataSpeed( bool faster );
 	void Command_Meta_CreateFramePack();
 	void Command_Meta_OpenFramePack();
+	void Command_Meta_SaveFramePack();
 	void Command_Meta_DeleteFrame();
 
 	void Command_Texture_InsertBefore();
@@ -63,6 +64,7 @@ public:
 private:
 	void OpenFramePack( rftl::string const& rawPath );
 	void OpenFramePack( file::VFSPath const& path );
+	void SaveFramePack( rftl::string const& rawPath );
 	void InsertTimeSlotBefore( size_t slotIndex );
 	void RemoveTimeSlotAt( size_t slotIndex );
 	void ChangeTexture( size_t slotIndex );
