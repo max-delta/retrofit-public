@@ -52,6 +52,9 @@
     <ClInclude Include="extension\string_traits.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\string_compare.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">

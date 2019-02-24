@@ -40,6 +40,7 @@
     <ClInclude Include="deque" />
     <ClInclude Include="extension\immutable_string.h" />
     <ClInclude Include="extension\static_array.h" />
+    <ClInclude Include="extension\string_compare.h" />
     <ClInclude Include="extension\string_traits.h" />
     <ClInclude Include="filesystem" />
     <ClInclude Include="functional" />
