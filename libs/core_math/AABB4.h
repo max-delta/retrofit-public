@@ -22,6 +22,11 @@ public:
 	bool operator==( AABB4 const& rhs ) const;
 	bool operator!=( AABB4 const& rhs ) const;
 
+	AABB4 operator+( Vector2<T> const& rhs ) const;
+	AABB4 operator-( Vector2<T> const& rhs ) const;
+	AABB4& operator+=( Vector2<T> const& rhs );
+	AABB4& operator-=( Vector2<T> const& rhs );
+
 	template<typename OtherT>
 	operator AABB4<OtherT>() const;
 
