@@ -36,6 +36,7 @@
     <ClInclude Include="Container.h" />
     <ClInclude Include="ContainerManager.h" />
     <ClInclude Include="controllers\ColumnSlicer.h" />
+    <ClInclude Include="controllers\FramePackDisplay.h" />
     <ClInclude Include="controllers\NineSlicer.h" />
     <ClInclude Include="controllers\Passthrough.h" />
     <ClInclude Include="controllers\project.h" />
@@ -53,6 +54,7 @@
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="ContainerManager.cpp" />
     <ClCompile Include="controllers\ColumnSlicer.cpp" />
+    <ClCompile Include="controllers\FramePackDisplay.cpp" />
     <ClCompile Include="controllers\NineSlicer.cpp" />
     <ClCompile Include="controllers\Passthrough.cpp" />
     <ClCompile Include="controllers\RowSlicer.cpp" />
