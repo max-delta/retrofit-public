@@ -9,6 +9,7 @@
 #include "GameUI/FontRegistry.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
+#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/controllers/FramePackDisplay.h"
 
@@ -38,6 +39,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 
 	gfx::PPUController const& ppu = *app::gGraphics;
 	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	ui::FontRegistry const& fontReg = *app::gFontRegistry;
 
 	// TODO: Setup logic
 	(void)internalState;
@@ -103,15 +105,49 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			192,
 			96 );
 
-		// TODO: Menu in center bottom
-		WeakPtr<ui::controller::TextLabel> const TODOMenu =
+		// Menu floater in center bottom
+		// TODO: Cleanup this placeholder logic
+		uint8_t const menuFontHeight = fontReg.SelectBestFont( ui::font::LargeMenuSelection, 1 ).mFontHeight;
+		constexpr gfx::PPUCoordElem kMenuEntryPadding = 6;
+		rftl::array<char const*, 5> TODOMenuText;
+		TODOMenuText.at( 0 ) = "Single player";
+		TODOMenuText.at( 1 ) = "Multiplayer";
+		TODOMenuText.at( 2 ) = "Character creator";
+		TODOMenuText.at( 3 ) = "Options";
+		TODOMenuText.at( 4 ) = "Exit to desktop";
+		gfx::PPUCoord const menuDimensions = {
+			160,
+			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * TODOMenuText.size() ) };
+		WeakPtr<ui::controller::Floater> const menuPane =
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 1 ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
-		TODOMenu->SetJustification( ui::Justification::MiddleCenter );
-		TODOMenu->SetFont( ui::font::MinSize );
-		TODOMenu->SetText( "MENU GOES HERE" );
-		TODOMenu->SetColor( math::Color3f::kBlack );
+				DefaultCreator<ui::controller::Floater>::Create(
+					menuDimensions.x,
+					menuDimensions.y,
+					ui::Justification::MiddleCenter ) );
+		ui::controller::ColumnSlicer::Ratios const menuRowRatios = {
+			{ 1.f / 5.f, true },
+			{ 1.f / 5.f, true },
+			{ 1.f / 5.f, true },
+			{ 1.f / 5.f, true },
+			{ 1.f / 5.f, true },
+		};
+		WeakPtr<ui::controller::RowSlicer> const menuEntries =
+			uiManager.AssignStrongController(
+				menuPane->GetChildContainerID(),
+				DefaultCreator<ui::controller::RowSlicer>::Create(
+					menuRowRatios ) );
+		for( size_t i = 0; i < TODOMenuText.size(); i++ )
+		{
+			WeakPtr<ui::controller::TextLabel> const menuEntry =
+				uiManager.AssignStrongController(
+					menuEntries->GetChildContainerID( i ),
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			menuEntry->SetJustification( ui::Justification::MiddleCenter );
+			menuEntry->SetFont( ui::font::LargeMenuSelection );
+			menuEntry->SetText( TODOMenuText.at( i ) );
+			menuEntry->SetColor( math::Color3f::kWhite );
+		}
 
 		// TODO: Basic debug in top left
 		WeakPtr<ui::controller::TextLabel> const TODODebug =
