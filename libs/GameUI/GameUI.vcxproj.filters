@@ -26,6 +26,9 @@
     <ClCompile Include="controllers\FramePackDisplay.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\Floater.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -58,6 +61,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="controllers\FramePackDisplay.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\Floater.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>
