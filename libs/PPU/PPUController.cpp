@@ -14,6 +14,7 @@
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_bits.h"
+#include "core_math/Lerp.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -280,7 +281,7 @@ bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, 0, desiredHeight, font, math::Color3f::kBlack, fmt, args );
+	bool const retVal = DrawText( pos, 0, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -291,7 +292,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, math::Color3f::kBlack, fmt, args );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -302,14 +303,25 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, color, fmt, args );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, false, color, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, va_list args )
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, border, color, fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+
+
+bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
@@ -326,6 +338,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 	targetString.mColor[1] = static_cast<uint8_t>( color.g * rftl::numeric_limits<uint8_t>::max() );
 	targetString.mColor[2] = static_cast<uint8_t>( color.b * rftl::numeric_limits<uint8_t>::max() );
 	targetString.mDesiredHeight = desiredHeight;
+	targetString.mBorder = border;
 	targetString.mFontReference = font;
 	targetString.mText[0] = '\0';
 	vsnprintf( &targetString.mText[0], PPUState::String::k_MaxLen, fmt, args );
@@ -927,6 +940,29 @@ void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const
 
 
 
+math::Color3f PPUController::CalculateBorderColor( math::Color3f contentsColor )
+{
+	// TODO: This is all sketchy, re-evaluate with better test cases
+	contentsColor.ClampValues();
+	math::Color3f::ElementType const total = contentsColor.r + contentsColor.g + contentsColor.b;
+	if( total > .5f * 3 )
+	{
+		return math::Color3f::kBlack;
+	}
+	else if( total < .2f * 3 )
+	{
+		contentsColor.ClampValues( .7f, 1.f );
+		return contentsColor;
+	}
+	else
+	{
+		contentsColor.ClampLuminance( .2f, .25f );
+		return contentsColor;
+	}
+}
+
+
+
 void PPUController::RenderObject( Object const& object ) const
 {
 	FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
@@ -1187,13 +1223,31 @@ void PPUController::RenderString( PPUState::String const& string ) const
 			static_cast<math::Color3f::ElementType>( string.mColor[2] )
 		} * ( 1.f / rftl::numeric_limits<uint8_t>::max() );
 		float const uvWidth = deviceWidth / ( ( deviceWidth * tileWidth ) / charWidth );
+		math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
+		float const z = LayerToDevice( string.mZLayer );
+		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, 1.f };
+		if( string.mBorder )
+		{
+			float const subZStep = math::Lerp( z, LayerToDevice( string.mZLayer + 1 ), 0.1f ) - z;
+			math::Color3f const borderColor = CalculateBorderColor( color );
+			math::Vector2f const pixelStep = GetDevicePixelStep();
+			// HACK: Lots of draw calls here, lazy Scaleform-style
+			mDeviceInterface->DrawBitmapFont(
+				deviceFontID, character, pos + math::Vector2f{ pixelStep.x, 0 }, z + ( subZStep * 4 ), borderColor, uv );
+			mDeviceInterface->DrawBitmapFont(
+				deviceFontID, character, pos + math::Vector2f{ -pixelStep.x, 0 }, z + ( subZStep * 3 ), borderColor, uv );
+			mDeviceInterface->DrawBitmapFont(
+				deviceFontID, character, pos + math::Vector2f{ 0, pixelStep.y }, z + ( subZStep * 2 ), borderColor, uv );
+			mDeviceInterface->DrawBitmapFont(
+				deviceFontID, character, pos + math::Vector2f{ 0, -pixelStep.y }, z + ( subZStep * 1 ), borderColor, uv );
+		}
 		mDeviceInterface->DrawBitmapFont(
 			deviceFontID,
 			character,
-			math::AABB4f{ topLeft, bottomRight },
-			LayerToDevice( string.mZLayer ),
+			pos,
+			z,
 			color,
-			math::AABB4f{ 0.f, 0.f, uvWidth, 1.f } );
+			uv );
 	}
 }
 
@@ -1259,6 +1313,17 @@ uint8_t PPUController::GetZoomFactor() const
 	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimension / kTileSize );
 	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
 	return zoomFactor;
+}
+
+
+
+math::Vector2f PPUController::GetDevicePixelStep() const
+{
+	math::Vector2f const zero = CoordToDevice( 0, 0 );
+	math::Vector2f const one = CoordToDevice( 1, 1 );
+	math::Vector2f const delta = one - zero;
+	math::Vector2f const atScale = delta * ( 1.f / GetCurrentZoomFactor() );
+	return atScale;
 }
 
 

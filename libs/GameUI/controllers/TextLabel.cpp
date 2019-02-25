@@ -53,6 +53,13 @@ void TextLabel::SetColor( math::Color3f color )
 
 
 
+void TextLabel::SetBorder( bool border )
+{
+	mBorder = border;
+}
+
+
+
 void TextLabel::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
 {
 	gfx::PPUController& renderer = GetRenderer( manager );
@@ -105,7 +112,7 @@ void TextLabel::OnRender( ContainerManager const& manager, Container const& cont
 		RF_DBGFAIL();
 	}
 
-	renderer.DrawText( pos, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mColor, "%s", mText.c_str() );
+	renderer.DrawText( pos, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
 }
 
 

@@ -39,6 +39,8 @@ public:
 		PPUDepthLayer mZLayer;
 		uint8_t mColor[3];
 		uint8_t mDesiredHeight;
+		bool mBorder : 1;
+		bool mReserved10 : 7;
 		ManagedFontID mFontReference;
 		char mText[k_MaxLen + sizeof( '\0' )];
 	};
