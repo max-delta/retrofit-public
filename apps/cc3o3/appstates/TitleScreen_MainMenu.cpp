@@ -147,6 +147,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			menuEntry->SetFont( ui::font::LargeMenuSelection );
 			menuEntry->SetText( TODOMenuText.at( i ) );
 			menuEntry->SetColor( math::Color3f::kWhite );
+			menuEntry->SetBorder( true );
 		}
 
 		// TODO: Basic debug in top left
@@ -189,6 +190,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		#if RF_IS_ALLOWED( RF_CONFIG_INTERNAL_BUILD_NOTICE )
 		url->SetText( "INTERNAL USE ONLY" );
 		url->SetColor( math::Color3f::kRed );
+		url->SetBorder( true );
 		#else
 		url->SetText( "http://TODO" );
 		url->SetColor( math::Color3f::kBlack );
