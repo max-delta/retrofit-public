@@ -105,7 +105,8 @@ public:
 	bool DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, va_list args );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
+	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
 
 	uint8_t GetCurrentZoomFactor() const;
 	PPUCoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
@@ -154,6 +155,8 @@ private:
 
 	void CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, PPUCoordElem& tileWidth, PPUCoordElem& tileHeight ) const;
 
+	static math::Color3f CalculateBorderColor( math::Color3f contentsColor );
+
 	void RenderObject( Object const& object ) const;
 	void RenderTileLayer( TileLayer const& tileLayer ) const;
 	void RenderString( PPUState::String const& string ) const;
@@ -162,6 +165,7 @@ private:
 	void RenderDebugGrid() const;
 
 	uint8_t GetZoomFactor() const;
+	math::Vector2f GetDevicePixelStep() const;
 
 	math::Vector2f CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const;
 	math::Vector2f CoordToDevice( PPUCoord const& coord ) const;
