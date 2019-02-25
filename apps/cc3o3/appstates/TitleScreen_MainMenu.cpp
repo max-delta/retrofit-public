@@ -134,7 +134,6 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		TODOBuild->SetColor( math::Color3f::kBlack );
 
 		// Copyright in bottom left
-		// TODO: Justify
 		WeakPtr<ui::controller::TextLabel> const copyright =
 			uiManager.AssignStrongController(
 				leftRowSlicer->GetChildContainerID( 1 ),
@@ -145,7 +144,6 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		copyright->SetColor( math::Color3f::kBlack );
 
 		// Url in bottom right
-		// TODO: Justify
 		WeakPtr<ui::controller::TextLabel> const url =
 			uiManager.AssignStrongController(
 				rightRowSlicer->GetChildContainerID( 1 ),
