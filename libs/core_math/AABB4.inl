@@ -50,6 +50,42 @@ inline bool AABB4<T>::operator!=( AABB4 const& rhs ) const
 
 
 template<typename T>
+inline AABB4<T> AABB4<T>::operator+( Vector2<T> const& rhs ) const
+{
+	return AABB4( mTopLeft + rhs, mBottomRight + rhs );
+}
+
+
+
+template<typename T>
+inline AABB4<T> AABB4<T>::operator-( Vector2<T> const& rhs ) const
+{
+	return AABB4( mTopLeft - rhs, mBottomRight - rhs );
+}
+
+
+
+template<typename T>
+inline AABB4<T>& AABB4<T>::operator+=( Vector2<T> const& rhs )
+{
+	mTopLeft += rhs;
+	mBottomRight += rhs;
+	return *this;
+}
+
+
+
+template<typename T>
+inline AABB4<T>& AABB4<T>::operator-=( Vector2<T> const& rhs )
+{
+	mTopLeft -= rhs;
+	mBottomRight -= rhs;
+	return *this;
+}
+
+
+
+template<typename T>
 template<typename OtherT>
 inline AABB4<T>::operator AABB4<OtherT>() const
 {
