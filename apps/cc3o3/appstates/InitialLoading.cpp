@@ -82,7 +82,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 2 } );
-		fontReg.RegisterFont( ui::font::HalfTileSize, { narrowFont1xMono, gfx::kTileSize, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 1 } );
+		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 1 } );
 		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 1 } );
 	}
 
