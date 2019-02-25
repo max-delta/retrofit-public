@@ -11,12 +11,15 @@
 
 #include "GameUI/ContainerManager.h"
 
+#include "PPU/PPUController.h"
+
 #include "core/ptr/default_creator.h"
 
 
 namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
 
+constexpr bool kDebugGrid = true;
 constexpr bool kDebugUI = true;
 constexpr bool kDebugUIScaler = true;
 
@@ -31,6 +34,8 @@ void Startup()
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
 
 	sAppStateManager.Start( appstate::id::Boot );
+
+	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
 
 	if( kDebugUIScaler )
 	{
