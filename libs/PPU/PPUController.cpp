@@ -490,6 +490,13 @@ WeakPtr<gfx::FontManager const> PPUController::GetFontManager() const
 
 
 
+void PPUController::DebugSetGridEnabled( bool enabled )
+{
+	mDebugDrawGrid = enabled;
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
@@ -689,10 +696,8 @@ void PPUController::Render() const
 		}
 	}
 
-	// HACK: Draw grid
-	// TODO: Configurable
-	constexpr bool drawGrid = true;
-	if( drawGrid )
+	// Draw grid
+	if( mDebugDrawGrid )
 	{
 		RenderDebugGrid();
 	}

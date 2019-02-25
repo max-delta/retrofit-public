@@ -123,6 +123,7 @@ public:
 	WeakPtr<gfx::TilesetManager const> GetTilesetManager() const;
 	WeakPtr<gfx::FontManager const> GetFontManager() const;
 
+	void DebugSetGridEnabled( bool enabled );
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width );
@@ -186,6 +187,8 @@ private:
 
 	uint16_t mWidth;
 	uint16_t mHeight;
+
+	bool mDebugDrawGrid = true;
 
 	StateBufferID mWriteState;
 	StateBufferID mQueueToRenderState;
