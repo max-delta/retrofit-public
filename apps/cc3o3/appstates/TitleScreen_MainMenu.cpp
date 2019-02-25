@@ -10,8 +10,10 @@
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
+#include "GameUI/controllers/FramePackDisplay.h"
 
 #include "PPU/PPUController.h"
+#include "PPU/FramePackManager.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -33,6 +35,9 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
+
+	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 
 	// TODO: Setup logic
 	(void)internalState;
@@ -87,15 +92,16 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::RowSlicer>::Create(
 					rightRowRatios ) );
 
-		// TODO: Logo in center top
-		WeakPtr<ui::controller::TextLabel> const TODOLogo =
+		// Logo in center top
+		WeakPtr<ui::controller::FramePackDisplay> const logo =
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 0 ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
-		TODOLogo->SetJustification( ui::Justification::MiddleCenter );
-		TODOLogo->SetFont( ui::font::MinSize );
-		TODOLogo->SetText( "LOGO GOES HERE" );
-		TODOLogo->SetColor( math::Color3f::kBlack );
+				DefaultCreator<ui::controller::FramePackDisplay>::Create() );
+		logo->SetJustification( ui::Justification::MiddleCenter );
+		logo->SetFramePack(
+			framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" ),
+			192,
+			96 );
 
 		// TODO: Menu in center bottom
 		WeakPtr<ui::controller::TextLabel> const TODOMenu =

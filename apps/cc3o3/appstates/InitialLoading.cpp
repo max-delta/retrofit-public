@@ -96,6 +96,15 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", tilesets.GetChild( "backgrounds", "country_hills_mid_32.tset.txt" ) );
 	}
 
+	// Load framepacks
+	// NOTE: Will cause associated textures to load
+	{
+		file::VFSPath const framepacks = file::VFS::kRoot.GetChild( "assets", "framepacks" );
+
+		// TODO: Defer load requests instead of forcing immediate load
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", framepacks.GetChild( "logos", "cc303_composite_192.fpack" ) );
+	}
+
 	context.mManager.RequestDeferredStateChange( id::TitleScreen );
 }
 
