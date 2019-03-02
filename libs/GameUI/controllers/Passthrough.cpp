@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -23,10 +24,10 @@ ContainerID Passthrough::GetChildContainerID()
 
 
 
-void Passthrough::OnAssign( ContainerManager& manager, Container& container )
+void Passthrough::OnAssign( UIContext& context, Container& container )
 {
 	mContainerID = CreateChildContainer(
-		manager,
+		context.GetMutableContainerManager(),
 		container,
 		container.mLeftConstraint,
 		container.mRightConstraint,

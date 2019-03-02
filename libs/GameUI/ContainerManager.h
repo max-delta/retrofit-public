@@ -6,6 +6,7 @@
 #include "PPU/PPUFwd.h"
 
 #include "core/ptr/weak_ptr.h"
+#include "core/ptr/unique_ptr.h"
 
 #include "rftl/unordered_map"
 #include "rftl/string"
@@ -119,6 +120,7 @@ private:
 	//
 	// Private data
 private:
+	UniquePtr<FocusManager> mFocusManager;
 	WeakPtr<gfx::PPUController> mGraphics;
 	WeakPtr<FontRegistry const> mFontRegistry;
 

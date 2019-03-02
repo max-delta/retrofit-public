@@ -30,10 +30,10 @@ public:
 
 	bool IsConstrainedBy( AnchorID anchorID ) const;
 
-	void OnAssign( ContainerManager& manager );
-	void OnAABBRecalc( ContainerManager& manager );
-	void OnImminentDestruction( ContainerManager& manager ) const;
-	void OnRender( ContainerManager const& manager, bool& blockChildRendering ) const;
+	void OnAssign( UIContext& context );
+	void OnAABBRecalc( UIContext& context );
+	void OnImminentDestruction( UIContext& context ) const;
+	void OnRender( UIConstContext const& context, bool& blockChildRendering ) const;
 
 
 	//

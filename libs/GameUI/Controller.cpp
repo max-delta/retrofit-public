@@ -14,28 +14,28 @@ RFTYPE_CREATE_META( RF::ui::Controller )
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-void Controller::OnAssign( ContainerManager& manager, Container& container )
+void Controller::OnAssign( UIContext& context, Container& container )
 {
 	//
 }
 
 
 
-void Controller::OnAABBRecalc( ContainerManager& manager, Container& container )
+void Controller::OnAABBRecalc( UIContext& context, Container& container )
 {
 	//
 }
 
 
 
-void Controller::OnImminentDestruction( ContainerManager& manager, Container const& container )
+void Controller::OnImminentDestruction( UIContext& context, Container const& container )
 {
 	//
 }
 
 
 
-void Controller::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
+void Controller::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	//
 }

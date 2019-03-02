@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
@@ -60,13 +61,13 @@ void TextLabel::SetBorder( bool border )
 
 
 
-void TextLabel::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
+void TextLabel::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	gfx::PPUController& renderer = GetRenderer( manager );
+	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	if( mDesiredHeight == 0 || mFontID == gfx::kInvalidManagedFontID )
 	{
-		Font const font = GetFontRegistry( manager ).SelectBestFont( mFontPurposeID, renderer.GetCurrentZoomFactor() );
+		Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurposeID, renderer.GetCurrentZoomFactor() );
 		mFontID = font.mManagedFontID;
 		mDesiredHeight = font.mFontHeight;
 	}
@@ -112,12 +113,12 @@ void TextLabel::OnRender( ContainerManager const& manager, Container const& cont
 		RF_DBGFAIL();
 	}
 
-	renderer.DrawText( pos, manager.GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
+	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
 }
 
 
 
-void TextLabel::OnAABBRecalc( ContainerManager& manager, Container& container )
+void TextLabel::OnAABBRecalc( UIContext& context, Container& container )
 {
 	// Clear these in case there's a better font now
 	mFontID = gfx::kInvalidManagedFontID;

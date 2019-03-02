@@ -3,10 +3,13 @@
 
 #include "GameUI/Container.h"
 #include "GameUI/Anchor.h"
+#include "GameUI/UIContext.h"
+#include "GameUI/FocusManager.h"
 
 #include "PPU/PPUController.h"
 
 #include "core/meta/ScopedCleanup.h"
+#include "core/ptr/default_creator.h"
 
 
 namespace RF { namespace ui {
@@ -15,7 +18,8 @@ namespace RF { namespace ui {
 ContainerManager::ContainerManager(
 	WeakPtr<gfx::PPUController> const& ppuController,
 	WeakPtr<FontRegistry const> const& fontRegistry )
-	: mGraphics( ppuController )
+	: mFocusManager( DefaultCreator<FocusManager>::Create() )
+	, mGraphics( ppuController )
 	, mFontRegistry( fontRegistry )
 {
 	//
@@ -57,7 +61,8 @@ void ContainerManager::RecalcRootContainer()
 	if( newAABB != root.mAABB )
 	{
 		root.mAABB = newAABB;
-		root.OnAABBRecalc( *this );
+		UIContext context( *this, *mFocusManager );
+		root.OnAABBRecalc( context );
 	}
 }
 
@@ -235,7 +240,8 @@ void ContainerManager::Render() const
 
 		// Render
 		bool shouldRenderChildren = true;
-		container.OnRender( *this, shouldRenderChildren );
+		UIConstContext const context( *this, *mFocusManager );
+		container.OnRender( context, shouldRenderChildren );
 
 		if( shouldRenderChildren )
 		{
@@ -350,7 +356,8 @@ void ContainerManager::RecalcContainer( Container& container )
 	if( newAABB != container.mAABB )
 	{
 		container.mAABB = newAABB;
-		container.OnAABBRecalc( *this );
+		UIContext context( *this, *mFocusManager );
+		container.OnAABBRecalc( context );
 	}
 }
 
@@ -409,7 +416,8 @@ WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container&
 	container.mStrongUIController = rftl::move( controller );
 	container.mWeakUIController = container.mStrongUIController;
 
-	container.OnAssign( *this );
+	UIContext context( *this, *mFocusManager );
+	container.OnAssign( context );
 
 	RF_ASSERT( container.mWeakUIController != nullptr );
 	return container.mWeakUIController;
@@ -515,7 +523,8 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 			// NOTE: Const operation, containers are not allowed to interfere
 			//  with the destruction process
 			static_assert( rftl::is_const<rftl::remove_reference<decltype( container )>::type>::value, "Not const" );
-			container.OnImminentDestruction( *this );
+			UIContext context( *this, *mFocusManager );
+			container.OnImminentDestruction( context );
 		}
 
 		// Erase
