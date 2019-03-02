@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 
 #include "PPU/PPUController.h"
 
@@ -35,9 +36,9 @@ void FramePackDisplay::SetJustification( Justification justification )
 
 
 
-void FramePackDisplay::OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering )
+void FramePackDisplay::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	gfx::PPUController& renderer = GetRenderer( manager );
+	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	gfx::PPUCoord pos = container.mAABB.mTopLeft;
 	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
@@ -80,7 +81,7 @@ void FramePackDisplay::OnRender( ContainerManager const& manager, Container cons
 
 	mObject.mXCoord = pos.x;
 	mObject.mYCoord = pos.y;
-	mObject.mZLayer = manager.GetRecommendedRenderDepth( container );
+	mObject.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
 	mObject.mLooping = true;
 	mObject.Animate();
 

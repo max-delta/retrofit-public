@@ -44,10 +44,14 @@
     <ClInclude Include="controllers\RowSlicer.h" />
     <ClInclude Include="controllers\stdafx.h" />
     <ClInclude Include="controllers\TextLabel.h" />
+    <ClInclude Include="FocusManager.h" />
+    <ClInclude Include="FocusTarget.h" />
+    <ClInclude Include="FocusTree.h" />
     <ClInclude Include="FontRegistry.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Controller.h" />
+    <ClInclude Include="UIContext.h" />
     <ClInclude Include="UIFwd.h" />
   </ItemGroup>
   <ItemGroup>
@@ -62,11 +66,15 @@
     <ClCompile Include="controllers\RowSlicer.cpp" />
     <ClCompile Include="controllers\TextLabel.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FocusManager.cpp" />
+    <ClCompile Include="FocusTarget.cpp" />
+    <ClCompile Include="FocusTree.cpp" />
     <ClCompile Include="FontRegistry.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="UIContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\core\core.vcxproj">

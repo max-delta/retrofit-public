@@ -48,9 +48,15 @@ static constexpr FontPurposeID kInvalidFontPurposeID = 0;
 class ContainerManager;
 class Controller;
 class FontRegistry;
+class FocusTree;
+class FocusManager;
 
 struct Container;
 struct Anchor;
+struct FocusEvent;
+struct FocusTarget;
+struct UIContext;
+struct UIConstContext;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

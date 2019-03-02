@@ -19,8 +19,8 @@ public:
 
 	ContainerID GetChildContainerID() const;
 
-	virtual void OnAssign( ContainerManager& manager, Container& container ) override;
-	virtual void OnAABBRecalc( ContainerManager& manager, Container& container ) override;
+	virtual void OnAssign( UIContext& context, Container& container ) override;
+	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
 
 	//
