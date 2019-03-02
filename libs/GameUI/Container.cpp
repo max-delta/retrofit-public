@@ -2,6 +2,7 @@
 #include "Container.h"
 
 #include "GameUI/Controller.h"
+#include "GameUI/UIContext.h"
 
 
 namespace RF { namespace ui {
@@ -22,44 +23,44 @@ bool Container::IsConstrainedBy( AnchorID anchorID ) const
 
 
 
-void Container::OnAssign( ContainerManager& manager )
+void Container::OnAssign( UIContext& context )
 {
 	Controller* const controller = mWeakUIController;
 	RF_ASSERT( controller != nullptr );
-	controller->OnAssign( manager, *this );
-	controller->OnAABBRecalc( manager, *this );
+	controller->OnAssign( context, *this );
+	controller->OnAABBRecalc( context, *this );
 }
 
 
 
-void Container::OnAABBRecalc( ContainerManager& manager )
+void Container::OnAABBRecalc( UIContext& context )
 {
 	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
-		controller->OnAABBRecalc( manager, *this );
+		controller->OnAABBRecalc( context, *this );
 	}
 }
 
 
 
-void Container::OnImminentDestruction( ContainerManager& manager ) const
+void Container::OnImminentDestruction( UIContext& context ) const
 {
 	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
-		controller->OnImminentDestruction( manager, *this );
+		controller->OnImminentDestruction( context, *this );
 	}
 }
 
 
 
-void Container::OnRender( ContainerManager const& manager, bool& blockChildRendering ) const
+void Container::OnRender( UIConstContext const& context, bool& blockChildRendering ) const
 {
 	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
-		controller->OnRender( manager, *this, blockChildRendering );
+		controller->OnRender( context, *this, blockChildRendering );
 	}
 }
 

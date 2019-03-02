@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -69,13 +70,13 @@ void NineSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceI
 
 
 
-void NineSlicer::OnAssign( ContainerManager& manager, Container& container )
+void NineSlicer::OnAssign( UIContext& context, Container& container )
 {
 	mParentContainerID = container.mContainerID;
-	m0 = CreateAnchor( manager, container );
-	m33 = CreateAnchor( manager, container );
-	m66 = CreateAnchor( manager, container );
-	m100 = CreateAnchor( manager, container );
+	m0 = CreateAnchor( context.GetMutableContainerManager(), container );
+	m33 = CreateAnchor( context.GetMutableContainerManager(), container );
+	m66 = CreateAnchor( context.GetMutableContainerManager(), container );
+	m100 = CreateAnchor( context.GetMutableContainerManager(), container );
 
 	for( size_t i = 0; i < 9; i++ )
 	{
@@ -85,13 +86,13 @@ void NineSlicer::OnAssign( ContainerManager& manager, Container& container )
 			continue;
 		}
 
-		CreateChildContainerInternal( manager, container, i );
+		CreateChildContainerInternal( context.GetMutableContainerManager(), container, i );
 	}
 }
 
 
 
-void NineSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
+void NineSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
 	Container::AABB4 const& aabb = container.mAABB;
 	gfx::PPUCoordElem const x0 = aabb.Left();
@@ -103,10 +104,10 @@ void NineSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
 	gfx::PPUCoordElem const y33 = math::Lerp( y0, y100, 1.f / 3.f );
 	gfx::PPUCoordElem const y66 = math::Lerp( y0, y100, 2.f / 3.f );
 
-	MoveAnchor( manager, m0, { x0, y0 } );
-	MoveAnchor( manager, m33, { x33, y33 } );
-	MoveAnchor( manager, m66, { x66, y66 } );
-	MoveAnchor( manager, m100, { x100, y100 } );
+	MoveAnchor( context.GetMutableContainerManager(), m0, { x0, y0 } );
+	MoveAnchor( context.GetMutableContainerManager(), m33, { x33, y33 } );
+	MoveAnchor( context.GetMutableContainerManager(), m66, { x66, y66 } );
+	MoveAnchor( context.GetMutableContainerManager(), m100, { x100, y100 } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

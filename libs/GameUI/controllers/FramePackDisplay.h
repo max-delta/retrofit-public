@@ -19,7 +19,7 @@ public:
 	void SetFramePack( gfx::ManagedFramePackID framePack, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight );
 	void SetJustification( Justification justification );
 
-	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering ) override;
+	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
 
 	//

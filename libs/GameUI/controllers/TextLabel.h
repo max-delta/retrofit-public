@@ -24,8 +24,8 @@ public:
 	void SetColor( math::Color3f color );
 	void SetBorder( bool border );
 
-	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering ) override;
-	virtual void OnAABBRecalc( ContainerManager& manager, Container& container ) override;
+	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
+	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
 
 	//

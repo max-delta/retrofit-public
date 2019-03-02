@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -67,14 +68,14 @@ void ColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_t slic
 
 
 
-void ColumnSlicer::OnAssign( ContainerManager& manager, Container& container )
+void ColumnSlicer::OnAssign( UIContext& context, Container& container )
 {
 	mParentContainerID = container.mContainerID;
 
 	RF_ASSERT( mAnchors.size() == mRatios.size() + 1 );
 	for( AnchorID& anchor : mAnchors )
 	{
-		anchor = CreateAnchor( manager, container );
+		anchor = CreateAnchor( context.GetMutableContainerManager(), container );
 	}
 
 	RF_ASSERT( mContainers.size() == mRatios.size() );
@@ -87,13 +88,13 @@ void ColumnSlicer::OnAssign( ContainerManager& manager, Container& container )
 			continue;
 		}
 
-		CreateChildContainerInternal( manager, container, i );
+		CreateChildContainerInternal( context.GetMutableContainerManager(), container, i );
 	}
 }
 
 
 
-void ColumnSlicer::OnAABBRecalc( ContainerManager& manager, Container& container )
+void ColumnSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
 	Container::AABB4 const& aabb = container.mAABB;
 	gfx::PPUCoordElem const x0 = aabb.Left();
@@ -109,11 +110,11 @@ void ColumnSlicer::OnAABBRecalc( ContainerManager& manager, Container& container
 	for( size_t i = 0; i < mRatios.size(); i++ )
 	{
 		gfx::PPUCoordElem x = math::integer_truncast<gfx::PPUCoordElem>( rollingX );
-		MoveAnchor( manager, mAnchors.at( i ), { x, y0 } );
+		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( i ), { x, y0 } );
 		rollingX += xDelta * mRatios.at( i ).first;
 	}
 	RF_ASSERT( math::IsWithin<float>( rollingX, 1.f, x100 ) );
-	MoveAnchor( manager, mAnchors.back(), { x100, y100 } );
+	MoveAnchor( context.GetMutableContainerManager(), mAnchors.back(), { x100, y100 } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

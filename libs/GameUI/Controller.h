@@ -18,19 +18,19 @@ class GAMEUI_API Controller : public reflect::VirtualClass
 	//
 	// Public methods
 public:
-	virtual void OnAssign( ContainerManager& manager, Container& container );
-	virtual void OnAABBRecalc( ContainerManager& manager, Container& container );
+	virtual void OnAssign( UIContext& context, Container& container );
+	virtual void OnAABBRecalc( UIContext& context, Container& container );
 
 	// NOTE: Do NOT destroy child containers or anchors, this will happen
 	//  automatically, and attempting to do so here may cause re-entrancy
 	//  violations and undefined behavior
 	// NOTE: Container is const to help enforce this
-	virtual void OnImminentDestruction( ContainerManager& manager, Container const& container );
+	virtual void OnImminentDestruction( UIContext& context, Container const& container );
 
 	// NOTE: Do not attempt to mutate the hierachy while a render pass is in
 	//  progress, as optimizations may be in place to assume it is immutable
 	// NOTE: Manager is const to help enforce this
-	virtual void OnRender( ContainerManager const& manager, Container const& container, bool& blockChildRendering );
+	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering );
 
 
 	//

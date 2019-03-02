@@ -29,6 +29,10 @@
     <ClCompile Include="controllers\Floater.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="FocusTarget.cpp" />
+    <ClCompile Include="FocusTree.cpp" />
+    <ClCompile Include="FocusManager.cpp" />
+    <ClCompile Include="UIContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -66,6 +70,10 @@
     <ClInclude Include="controllers\Floater.h">
       <Filter>controllers</Filter>
     </ClInclude>
+    <ClInclude Include="FocusTarget.h" />
+    <ClInclude Include="FocusTree.h" />
+    <ClInclude Include="FocusManager.h" />
+    <ClInclude Include="UIContext.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">

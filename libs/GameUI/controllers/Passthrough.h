@@ -16,7 +16,7 @@ class GAMEUI_API Passthrough final : public Controller
 public:
 	ContainerID GetChildContainerID();
 
-	virtual void OnAssign( ContainerManager& manager, Container& container ) override;
+	virtual void OnAssign( UIContext& context, Container& container ) override;
 
 
 	//

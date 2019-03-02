@@ -3,6 +3,7 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -34,23 +35,23 @@ ContainerID Floater::GetChildContainerID() const
 
 
 
-void Floater::OnAssign( ContainerManager& manager, Container& container )
+void Floater::OnAssign( UIContext& context, Container& container )
 {
 	ContainerID const parentContainerID = container.mContainerID;
 
-	mTopLeftAnchor = CreateAnchor( manager, container );
-	mBottomRightAnchor = CreateAnchor( manager, container );
+	mTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
+	mBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
 
 	AnchorID const top = mTopLeftAnchor;
 	AnchorID const bottom = mBottomRightAnchor;
 	AnchorID const left = mTopLeftAnchor;
 	AnchorID const right = mBottomRightAnchor;
-	mContainer = Controller::CreateChildContainer( manager, container, left, right, top, bottom );
+	mContainer = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
 }
 
 
 
-void Floater::OnAABBRecalc( ContainerManager& manager, Container& container )
+void Floater::OnAABBRecalc( UIContext& context, Container& container )
 {
 	gfx::PPUCoord pos = container.mAABB.mTopLeft;
 	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
@@ -91,8 +92,8 @@ void Floater::OnAABBRecalc( ContainerManager& manager, Container& container )
 		RF_DBGFAIL();
 	}
 
-	MoveAnchor( manager, mTopLeftAnchor, pos );
-	MoveAnchor( manager, mBottomRightAnchor, pos + mDimensions );
+	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, pos );
+	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, pos + mDimensions );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
