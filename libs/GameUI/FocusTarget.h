@@ -3,6 +3,8 @@
 
 #include "GameUI/UIFwd.h"
 
+#include "core/ptr/unique_ptr.h"
+
 
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,6 +25,8 @@ public:
 	FocusTarget() = default;
 	bool HandleEvent( FocusEvent const& focusEvent ) const;
 
+	bool HasHardFocus() const;
+
 
 	//
 	// Public data
@@ -42,6 +46,9 @@ public:
 	// The container, for hit tests
 	// NOTE: Container cannot be invalid, and must outlive focus target
 	ContainerID mContainerID = kInvalidContainerID;
+
+	// If set, this target has the hard focus
+	UniquePtr<FocusKey> mHardFocusKey;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
