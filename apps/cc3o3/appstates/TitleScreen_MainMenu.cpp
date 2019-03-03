@@ -8,6 +8,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/FontRegistry.h"
+#include "GameUI/FocusEvent.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
@@ -207,7 +208,22 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 	(void)internalState;
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
-	focusMan.UpdateHardFocus();
+	ui::UIContext uiContext( uiManager );
+	focusMan.UpdateHardFocus( uiContext );
+	static uint8_t HACK_roller1 = 0;
+	if( HACK_roller1++ % 64 == 0 )
+	{
+		static uint8_t HACK_roller2 = 0;
+		if( HACK_roller2++ % 10 < 5 )
+		{
+			focusMan.HandleEvent( uiContext, ui::focusevent::Command_NavigateDown );
+		}
+		else
+		{
+			focusMan.HandleEvent( uiContext, ui::focusevent::Command_NavigateUp );
+		}
+		focusMan.UpdateHardFocus( uiContext );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

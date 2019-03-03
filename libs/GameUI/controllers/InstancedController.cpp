@@ -47,6 +47,13 @@ bool InstancedController::IsCurrentFocus( UIConstContext const& context ) const
 
 
 
+WeakPtr<FocusTreeNode> InstancedController::GetMutableFocusTreeNode( UIContext& context )
+{
+	return mFocusTarget->mFocusTreeNode;
+}
+
+
+
 WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode )
 {
 	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
@@ -97,7 +104,7 @@ void InstancedController::OnAddedToFocusTree( UIContext& context, FocusTreeNode 
 
 
 
-bool InstancedController::OnFocusEvent( FocusEvent const& focusEvent )
+bool InstancedController::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
 	return false;
 }
@@ -126,10 +133,10 @@ FocusTarget& InstancedController::GetFocusTarget()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool InstancedController::HandleFocusEvent( void* userData, FocusEvent const& focusEvent )
+bool InstancedController::HandleFocusEvent( UIContext& context, void* userData, FocusEvent const& focusEvent )
 {
 	RF_ASSERT( userData != nullptr );
-	return reinterpret_cast<InstancedController*>( userData )->OnFocusEvent( focusEvent );
+	return reinterpret_cast<InstancedController*>( userData )->OnFocusEvent( context, focusEvent );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
