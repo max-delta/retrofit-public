@@ -75,7 +75,7 @@ void ContainerManager::RecalcRootContainer()
 	if( newAABB != root.mAABB )
 	{
 		root.mAABB = newAABB;
-		UIContext context( *this, *mFocusManager );
+		UIContext context( *this );
 		root.OnAABBRecalc( context );
 	}
 }
@@ -254,7 +254,7 @@ void ContainerManager::Render() const
 
 		// Render
 		bool shouldRenderChildren = true;
-		UIConstContext const context( *this, *mFocusManager );
+		UIConstContext const context( *this );
 		container.OnRender( context, shouldRenderChildren );
 
 		if( shouldRenderChildren )
@@ -370,7 +370,7 @@ void ContainerManager::RecalcContainer( Container& container )
 	if( newAABB != container.mAABB )
 	{
 		container.mAABB = newAABB;
-		UIContext context( *this, *mFocusManager );
+		UIContext context( *this );
 		container.OnAABBRecalc( context );
 	}
 }
@@ -430,7 +430,7 @@ WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container&
 	container.mStrongUIController = rftl::move( controller );
 	container.mWeakUIController = container.mStrongUIController;
 
-	UIContext context( *this, *mFocusManager );
+	UIContext context( *this );
 	container.OnAssign( context );
 
 	RF_ASSERT( container.mWeakUIController != nullptr );
@@ -537,7 +537,7 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 			// NOTE: Const operation, containers are not allowed to interfere
 			//  with the destruction process
 			static_assert( rftl::is_const<rftl::remove_reference<decltype( container )>::type>::value, "Not const" );
-			UIContext context( *this, *mFocusManager );
+			UIContext context( *this );
 			container.OnImminentDestruction( context );
 		}
 

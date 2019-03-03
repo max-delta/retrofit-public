@@ -82,7 +82,7 @@ void ColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_t slic
 
 
 
-void ColumnSlicer::OnAssign( UIContext& context, Container& container )
+void ColumnSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mParentContainerID = container.mContainerID;
 

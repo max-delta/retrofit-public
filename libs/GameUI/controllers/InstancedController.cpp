@@ -2,6 +2,7 @@
 #include "InstancedController.h"
 
 #include "GameUI/Container.h"
+#include "GameUI/UIContext.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/FocusManager.h"
 
@@ -32,19 +33,57 @@ InstancedController::InstancedController()
 
 
 
-WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( FocusManager& focusManager, FocusTreeNode const& parentNode )
+ContainerID InstancedController::GetContainerID() const
 {
-	WeakPtr<FocusTreeNode> const retVal = focusManager.GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
+	return mContainerID;
+}
+
+
+
+WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode )
+{
+	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
 	if( retVal != nullptr )
 	{
-		OnAddedToFocusTree( focusManager, *retVal );
+		OnAddedToFocusTree( context, *retVal );
 	}
 	return retVal;
 }
 
 
 
-void InstancedController::OnAddedToFocusTree( FocusManager& focusManager, FocusTreeNode const& newNode )
+WeakPtr<FocusTreeNode> InstancedController::AddAsSiblingAfterFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> previousNode )
+{
+	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewSiblingAfter( previousNode, mFocusTarget );
+	if( retVal != nullptr )
+	{
+		OnAddedToFocusTree( context, *retVal );
+	}
+	return retVal;
+}
+
+
+
+WeakPtr<FocusTreeNode> InstancedController::AddAsSiblingBeforeFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> nextNode )
+{
+	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewSiblingBefore( nextNode, mFocusTarget );
+	if( retVal != nullptr )
+	{
+		OnAddedToFocusTree( context, *retVal );
+	}
+	return retVal;
+}
+
+
+
+void InstancedController::OnInstanceAssign( UIContext& context, Container& container )
+{
+	//
+}
+
+
+
+void InstancedController::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode )
 {
 	//
 }
@@ -56,18 +95,22 @@ bool InstancedController::OnFocusEvent( FocusEvent const& focusEvent )
 	return false;
 }
 
-///////////////////////////////////////////////////////////////////////////////
 
-void InstancedController::InitializeFocus( Container& container )
+
+void InstancedController::OnAssign( UIContext& context, Container& container )
 {
+	mContainerID = container.mContainerID;
+
 	FocusTarget& focusTarget = *mFocusTarget;
-	focusTarget.mContainerID = container.mContainerID;
+	focusTarget.mContainerID = mContainerID;
 
 	// Enable on initialization by default
-	focusTarget.mIsFocusable = false;
+	focusTarget.mIsFocusable = true;
+
+	OnInstanceAssign( context, container );
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
 
 FocusTarget& InstancedController::GetFocusTarget()
 {

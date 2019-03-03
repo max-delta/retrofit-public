@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "UIContext.h"
 
+#include "GameUI/ContainerManager.h"
+
 
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-UIContext::UIContext( ContainerManager& containerManager, FocusManager& focusManager )
+UIContext::UIContext( ContainerManager& containerManager )
 	: mContainerManager( containerManager )
-	, mFocusManager( focusManager )
+	, mFocusManager( containerManager.GetMutableFocusManager() )
 {
 	//
 }
@@ -42,9 +44,9 @@ FocusManager& UIContext::GetMutableFocusManager()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-UIConstContext::UIConstContext( ContainerManager const& containerManager, FocusManager const& focusManager )
+UIConstContext::UIConstContext( ContainerManager const& containerManager )
 	: mContainerManager( containerManager )
-	, mFocusManager( focusManager )
+	, mFocusManager( containerManager.GetFocusManager() )
 {
 	//
 }

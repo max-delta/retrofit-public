@@ -35,7 +35,7 @@ ContainerID Floater::GetChildContainerID() const
 
 
 
-void Floater::OnAssign( UIContext& context, Container& container )
+void Floater::OnInstanceAssign( UIContext& context, Container& container )
 {
 	ContainerID const parentContainerID = container.mContainerID;
 

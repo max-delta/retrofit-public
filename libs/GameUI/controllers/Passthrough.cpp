@@ -24,7 +24,7 @@ ContainerID Passthrough::GetChildContainerID()
 
 
 
-void Passthrough::OnAssign( UIContext& context, Container& container )
+void Passthrough::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mContainerID = CreateChildContainer(
 		context.GetMutableContainerManager(),

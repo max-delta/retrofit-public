@@ -20,7 +20,7 @@ public:
 
 	ContainerID GetChildContainerID() const;
 
-	virtual void OnAssign( UIContext& context, Container& container ) override;
+	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
 

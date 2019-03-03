@@ -82,7 +82,7 @@ void RowSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceIn
 
 
 
-void RowSlicer::OnAssign( UIContext& context, Container& container )
+void RowSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mParentContainerID = container.mContainerID;
 
