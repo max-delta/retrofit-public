@@ -138,5 +138,42 @@ bool ListBox::OnFocusEvent( FocusEvent const& focusEvent )
 	return false;
 }
 
+
+
+void ListBox::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
+{
+	// Do any of our slots have direct focus?
+	TextLabel const* slotWithFocus = nullptr;
+	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
+	{
+		if( slotController->IsCurrentFocus( context ) )
+		{
+			slotWithFocus = slotController;
+			break;
+		}
+	}
+	bool const listBoxHasImplicitFocus = slotWithFocus != nullptr;
+
+	// Update colors
+	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
+	{
+		if( listBoxHasImplicitFocus )
+		{
+			if( slotController == slotWithFocus )
+			{
+				slotController->SetColor( mSelectedColor );
+			}
+			else
+			{
+				slotController->SetColor( mUnselectedColor );
+			}
+		}
+		else
+		{
+			slotController->SetColor( mUnfocusedColor );
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}}
