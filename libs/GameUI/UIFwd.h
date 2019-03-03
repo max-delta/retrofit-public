@@ -40,6 +40,11 @@ enum : FocusEventType
 	Notification_FocusLost,
 	Notification_FocusGained,
 
+	Command_NavigateUp,
+	Command_NavigateDown,
+	Command_NavigateLeft,
+	Command_NavigateRight,
+
 	// Custom types should start at this value
 	BEGIN_CUSTOM_TYPES
 };

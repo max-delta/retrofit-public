@@ -23,13 +23,14 @@ public:
 
 	bool IsCurrentFocus( UIConstContext const& context ) const;
 
+	WeakPtr<FocusTreeNode> GetMutableFocusTreeNode( UIContext& context );
 	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode );
 	WeakPtr<FocusTreeNode> AddAsSiblingAfterFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> previousNode );
 	WeakPtr<FocusTreeNode> AddAsSiblingBeforeFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> nextNode );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container );
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode );
-	virtual bool OnFocusEvent( FocusEvent const& focusEvent );
+	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent );
 
 	virtual void OnAssign( UIContext& context, Container& container ) override final;
 
@@ -43,7 +44,7 @@ protected:
 	//
 	// Private methods
 private:
-	static bool HandleFocusEvent( void* userData, FocusEvent const& focusEvent );
+	static bool HandleFocusEvent( UIContext& context, void* userData, FocusEvent const& focusEvent );
 
 
 	//

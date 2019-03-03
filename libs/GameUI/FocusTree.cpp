@@ -169,6 +169,7 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewChild( FocusTreeNode const& parentNod
 	FocusTreeNode& node = const_cast<FocusTreeNode&>( parentNode );
 	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
+	newNode->mFocusTarget->mFocusTreeNode = newNode;
 
 	node.mFavoredChild = newNode;
 
@@ -190,6 +191,7 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingAfter( WeakPtr<FocusTreeNode> 
 	FocusTreeNode& node = *previousNode;
 	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
+	newNode->mFocusTarget->mFocusTreeNode = newNode;
 
 	// A' - B'' - C
 	WeakPtr<FocusTreeNode> next = node.mNextSibling; // C
@@ -219,6 +221,7 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode>
 	FocusTreeNode& node = *nextNode;
 	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
+	newNode->mFocusTarget->mFocusTreeNode = newNode;
 
 	// A - B'' - C'
 	WeakPtr<FocusTreeNode> previous = node.mPreviousSibling; // A
@@ -244,7 +247,7 @@ void FocusTree::TrimDeadLinks()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool FocusTree::OnRootFocusEvent( void* userData, FocusEvent const& focusEvent )
+bool FocusTree::OnRootFocusEvent( UIContext& context, void* userData, FocusEvent const& focusEvent )
 {
 	return false;
 }

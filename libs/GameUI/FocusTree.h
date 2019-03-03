@@ -64,7 +64,7 @@ public:
 	//
 	// Private methods
 private:
-	static bool OnRootFocusEvent( void* userData, FocusEvent const& focusEvent );
+	static bool OnRootFocusEvent( UIContext& context, void* userData, FocusEvent const& focusEvent );
 
 
 	//
