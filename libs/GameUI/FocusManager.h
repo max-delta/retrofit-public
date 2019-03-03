@@ -20,11 +20,14 @@ public:
 	FocusTree const& GetFocusTree() const;
 	FocusTree& GetMutableFocusTree();
 
+	void UpdateHardFocus();
+
 
 	//
 	// Private data
 private:
 	FocusTree mFocusTree;
+	WeakPtr<FocusKey> mHardFocusKey;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

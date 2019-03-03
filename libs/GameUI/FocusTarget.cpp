@@ -11,5 +11,12 @@ bool FocusTarget::HandleEvent( FocusEvent const& focusEvent ) const
 	return mEventHandler( mUserData, focusEvent );
 }
 
+
+
+bool FocusTarget::HasHardFocus() const
+{
+	return mHardFocusKey != nullptr;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
