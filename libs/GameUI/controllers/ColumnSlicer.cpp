@@ -37,6 +37,20 @@ ColumnSlicer::ColumnSlicer( Ratios const& ratios )
 
 
 
+ColumnSlicer::ColumnSlicer( size_t numSlices )
+	: mAnchors( numSlices + 1, kInvalidAnchorID )
+	, mContainers( numSlices, kInvalidContainerID )
+{
+	RF_ASSERT( numSlices >= 2 );
+	float const ratio = 1.f / numSlices;
+	for( size_t i = 0; i < numSlices; i++ )
+	{
+		mRatios.emplace_back( ratio, true );
+	}
+}
+
+
+
 ContainerID ColumnSlicer::GetChildContainerID( size_t sliceIndex ) const
 {
 	return mContainers.at( sliceIndex );
