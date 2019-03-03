@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/Controller.h"
+#include "GameUI/controllers/InstancedController.h"
 
 #include "core_math/Color3f.h"
 
@@ -11,13 +11,16 @@
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API TextLabel final : public Controller
+class GAMEUI_API TextLabel final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	RF_NO_COPY( TextLabel );
 
 	//
 	// Public methods
 public:
+	TextLabel() = default;
+
 	void SetFont( FontPurposeID purpose );
 	void SetText( char const* text );
 	void SetJustification( Justification justification );

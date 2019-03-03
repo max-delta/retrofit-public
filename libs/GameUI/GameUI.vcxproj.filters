@@ -36,6 +36,9 @@
     <ClCompile Include="controllers\ListBox.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\InstancedController.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -78,6 +81,9 @@
     <ClInclude Include="FocusManager.h" />
     <ClInclude Include="UIContext.h" />
     <ClInclude Include="controllers\ListBox.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\InstancedController.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>

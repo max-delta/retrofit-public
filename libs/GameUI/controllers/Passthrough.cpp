@@ -10,7 +10,7 @@
 
 RFTYPE_CREATE_META( RF::ui::controller::Passthrough )
 {
-	RFTYPE_META().BaseClass<RF::ui::Controller>();
+	RFTYPE_META().BaseClass<RF::ui::controller::InstancedController>();
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::Passthrough );
 }
 

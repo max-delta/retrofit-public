@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/Controller.h"
+#include "GameUI/controllers/InstancedController.h"
 
 #include "rftl/array"
 
@@ -12,9 +12,10 @@ namespace RF { namespace ui { namespace controller {
 // 0 1 2
 // 3 4 5
 // 6 7 8
-class GAMEUI_API NineSlicer final : public Controller
+class GAMEUI_API NineSlicer final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	RF_NO_COPY( NineSlicer );
 
 	//
 	// Public methods
