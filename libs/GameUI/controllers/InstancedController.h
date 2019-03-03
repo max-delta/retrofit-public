@@ -19,16 +19,22 @@ class GAMEUI_API InstancedController : public Controller
 public:
 	InstancedController();
 
-	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( FocusManager& focusManager, FocusTreeNode const& parentNode );
+	ContainerID GetContainerID() const;
 
-	virtual void OnAddedToFocusTree( FocusManager& focusManager, FocusTreeNode const& newNode );
+	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode );
+	WeakPtr<FocusTreeNode> AddAsSiblingAfterFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> previousNode );
+	WeakPtr<FocusTreeNode> AddAsSiblingBeforeFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> nextNode );
+
+	virtual void OnInstanceAssign( UIContext& context, Container& container );
+	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode );
 	virtual bool OnFocusEvent( FocusEvent const& focusEvent );
+
+	virtual void OnAssign( UIContext& context, Container& container ) override final;
 
 
 	//
 	// Protected methods
 protected:
-	void InitializeFocus( Container& container );
 	FocusTarget& GetFocusTarget();
 
 
@@ -41,6 +47,7 @@ private:
 	//
 	// Private data
 private:
+	ContainerID mContainerID = kInvalidContainerID;
 	UniquePtr<FocusTarget> mFocusTarget;
 };
 

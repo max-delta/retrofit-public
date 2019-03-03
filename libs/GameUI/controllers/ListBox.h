@@ -36,7 +36,9 @@ public:
 	WeakPtr<TextLabel> GetSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
 
-	virtual void OnAssign( UIContext& context, Container& container ) override;
+	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
+	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override;
+	virtual bool OnFocusEvent( FocusEvent const& focusEvent ) override;
 
 
 	//

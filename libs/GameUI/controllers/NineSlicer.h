@@ -27,7 +27,7 @@ public:
 	void CreateChildContainer( ContainerManager& manager, size_t sliceIndex );
 	void DestroyChildContainer( ContainerManager& manager, size_t sliceIndex );
 
-	virtual void OnAssign( UIContext& context, Container& container ) override;
+	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
 

@@ -14,7 +14,7 @@ struct GAMEUI_API UIContext
 	//
 	// Public methods
 public:
-	UIContext( ContainerManager& containerManager, FocusManager& focusManager );
+	UIContext( ContainerManager& containerManager );
 
 	ContainerManager const& GetContainerManager() const;
 	ContainerManager& GetMutableContainerManager();
@@ -39,7 +39,7 @@ struct GAMEUI_API UIConstContext
 	//
 	// Public methods
 public:
-	UIConstContext( ContainerManager const& containerManager, FocusManager const& focusManager );
+	explicit UIConstContext( ContainerManager const& containerManager );
 
 	ContainerManager const& GetContainerManager() const;
 
