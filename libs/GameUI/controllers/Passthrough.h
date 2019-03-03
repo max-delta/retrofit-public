@@ -1,19 +1,22 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/Controller.h"
+#include "GameUI/controllers/InstancedController.h"
 
 
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API Passthrough final : public Controller
+class GAMEUI_API Passthrough final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	RF_NO_COPY( Passthrough );
 
 	//
 	// Public methods
 public:
+	Passthrough() = default;
+
 	ContainerID GetChildContainerID();
 
 	virtual void OnAssign( UIContext& context, Container& container ) override;

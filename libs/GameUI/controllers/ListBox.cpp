@@ -4,7 +4,6 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
-#include "GameUI/FocusTarget.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
@@ -15,7 +14,7 @@
 
 RFTYPE_CREATE_META( RF::ui::controller::ListBox )
 {
-	RFTYPE_META().BaseClass<RF::ui::Controller>();
+	RFTYPE_META().BaseClass<RF::ui::controller::InstancedController>();
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::ListBox );
 }
 
@@ -49,7 +48,6 @@ ListBox::ListBox(
 	, mUnfocusedColor( unfocusedColor )
 	, mUnselectedColor( unselectedColor )
 	, mSelectedColor( selectedColor )
-	, mFocusTarget( DefaultCreator<FocusTarget>::Create() )
 {
 	RF_ASSERT( mNumSlots >= 2 );
 }
@@ -83,11 +81,6 @@ void ListBox::SetText( rftl::vector<rftl::string> const& text )
 
 void ListBox::OnAssign( UIContext& context, Container& container )
 {
-	FocusTarget& focusTarget = *mFocusTarget;
-	focusTarget.mUserData = this;
-	focusTarget.mEventHandler = HandleFocusEvent;
-	focusTarget.mContainerID = container.mContainerID;
-
 	mChildContainerID = CreateChildContainer(
 		context.GetMutableContainerManager(),
 		container,
@@ -115,22 +108,6 @@ void ListBox::OnAssign( UIContext& context, Container& container )
 		slotController->SetBorder( true );
 		mSlotControllers.emplace_back( slotController );
 	}
-}
-
-
-
-bool ListBox::OnFocusEvent( FocusEvent const& focusEvent )
-{
-	// TODO
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-bool ListBox::HandleFocusEvent( void* userData, FocusEvent const& focusEvent )
-{
-	RF_ASSERT( userData != nullptr );
-	return reinterpret_cast<ListBox*>( userData )->OnFocusEvent( focusEvent );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
