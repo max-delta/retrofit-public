@@ -10,67 +10,68 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+struct GAMEUI_API FocusTreeNode
+{
+	WeakPtr<FocusTarget> mFocusTarget;
+
+	WeakPtr<FocusTreeNode> mPreviousSibling;
+	WeakPtr<FocusTreeNode> mNextSibling;
+
+	WeakPtr<FocusTreeNode> mFavoredChild;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
 class GAMEUI_API FocusTree
 {
 	RF_NO_COPY( FocusTree );
 
 	//
-	// Forwards
-public:
-	struct Node;
-
-
-	//
 	// Types
 public:
-	using NodeStack = rftl::vector<WeakPtr<Node>>;
-	using ConstNodeStack = rftl::vector<WeakPtr<Node const>>;
+	using NodeStack = rftl::vector<WeakPtr<FocusTreeNode>>;
+	using ConstNodeStack = rftl::vector<WeakPtr<FocusTreeNode const>>;
 private:
-	using BackingNodeStorage = rftl::vector<UniquePtr<Node>>;
-
-
-	//
-	// Structs
-public:
-	struct Node
-	{
-		WeakPtr<FocusTarget> mFocusTarget;
-
-		WeakPtr<Node> mPreviousSibling;
-		WeakPtr<Node> mNextSibling;
-
-		WeakPtr<Node> mFavoredChild;
-	};
+	using BackingNodeStorage = rftl::vector<UniquePtr<FocusTreeNode>>;
 
 
 	//
 	// Public methods
 public:
-	FocusTree() = default;
+	FocusTree();
+
+	FocusTreeNode const& GetRootNode() const;
 
 	ConstNodeStack GetCurrentFocusStack() const;
 
-	WeakPtr<Node const> GetCurrentFocus() const;
+	WeakPtr<FocusTreeNode const> GetCurrentFocus() const;
 
-	bool IsCurrentFocus( Node const& node ) const;
+	bool IsCurrentFocus( FocusTreeNode const& node ) const;
 	bool IsCurrentFocus( FocusTarget const& target ) const;
 
-	static bool IsValidForFocus( Node const& node );
-	static bool ShouldTraverseForFocus( Node const& node );
+	static bool IsValidForFocus( FocusTreeNode const& node );
+	static bool ShouldTraverseForFocus( FocusTreeNode const& node );
 
-	WeakPtr<Node const> FindNode( FocusTarget const& target ) const;
+	WeakPtr<FocusTreeNode const> FindNode( FocusTarget const& target ) const;
 
-	bool CreateNewChild( Node const& parentNode, UniquePtr<FocusTarget> const& newTarget );
-	bool CreateNewSiblingAfter( WeakPtr<Node> previousNode, UniquePtr<FocusTarget> const& newTarget );
-	bool CreateNewSiblingBefore( WeakPtr<Node> nextNode, UniquePtr<FocusTarget> const& newTarget );
+	WeakPtr<FocusTreeNode> CreateNewChild( FocusTreeNode const& parentNode, UniquePtr<FocusTarget> const& newTarget );
+	WeakPtr<FocusTreeNode> CreateNewSiblingAfter( WeakPtr<FocusTreeNode> previousNode, UniquePtr<FocusTarget> const& newTarget );
+	WeakPtr<FocusTreeNode> CreateNewSiblingBefore( WeakPtr<FocusTreeNode> nextNode, UniquePtr<FocusTarget> const& newTarget );
 
 	void TrimDeadLinks();
 
 
 	//
+	// Private methods
+private:
+	static bool OnRootFocusEvent( void* userData, FocusEvent const& focusEvent );
+
+
+	//
 	// Private data
 private:
-	WeakPtr<Node> mRootNode;
+	UniquePtr<FocusTreeNode> mRootNode;
+	UniquePtr<FocusTarget> mRootFocus;
 
 	BackingNodeStorage mBackingNodeStorage;
 };

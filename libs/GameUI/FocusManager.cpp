@@ -17,9 +17,9 @@ bool FocusManager::HandleEvent( FocusEvent const& focusEvent ) const
 		iter != currentFocusStack.rend();
 		iter++ )
 	{
-		FocusTree::Node const* const nodeRef = *iter;
+		FocusTreeNode const* const nodeRef = *iter;
 		RF_ASSERT( nodeRef != nullptr );
-		FocusTree::Node const& node = *nodeRef;
+		FocusTreeNode const& node = *nodeRef;
 		FocusTarget const* const targetRef = node.mFocusTarget;
 		RF_ASSERT( targetRef != nullptr );
 
