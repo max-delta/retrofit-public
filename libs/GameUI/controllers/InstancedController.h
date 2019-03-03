@@ -19,6 +19,9 @@ class GAMEUI_API InstancedController : public Controller
 public:
 	InstancedController();
 
+	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( FocusManager& focusManager, FocusTreeNode const& parentNode );
+
+	virtual void OnAddedToFocusTree( FocusManager& focusManager, FocusTreeNode const& newNode );
 	virtual bool OnFocusEvent( FocusEvent const& focusEvent );
 
 

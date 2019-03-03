@@ -34,6 +34,20 @@ ContainerManager::~ContainerManager()
 
 
 
+FocusManager const& ContainerManager::GetFocusManager() const
+{
+	return *mFocusManager;
+}
+
+
+
+FocusManager& ContainerManager::GetMutableFocusManager()
+{
+	return *mFocusManager;
+}
+
+
+
 void ContainerManager::CreateRootContainer()
 {
 	RF_ASSERT( mContainers.count( kRootContainerID ) == 0 );

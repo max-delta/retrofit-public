@@ -55,6 +55,7 @@ struct Container;
 struct Anchor;
 struct FocusEvent;
 struct FocusTarget;
+struct FocusTreeNode;
 struct UIContext;
 struct UIConstContext;
 

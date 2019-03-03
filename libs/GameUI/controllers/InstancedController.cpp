@@ -3,6 +3,7 @@
 
 #include "GameUI/Container.h"
 #include "GameUI/FocusTarget.h"
+#include "GameUI/FocusManager.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -27,6 +28,25 @@ InstancedController::InstancedController()
 
 	// Disable until initialized
 	focusTarget.mIsFocusable = false;
+}
+
+
+
+WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( FocusManager& focusManager, FocusTreeNode const& parentNode )
+{
+	WeakPtr<FocusTreeNode> const retVal = focusManager.GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
+	if( retVal != nullptr )
+	{
+		OnAddedToFocusTree( focusManager, *retVal );
+	}
+	return retVal;
+}
+
+
+
+void InstancedController::OnAddedToFocusTree( FocusManager& focusManager, FocusTreeNode const& newNode )
+{
+	//
 }
 
 
