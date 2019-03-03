@@ -31,6 +31,20 @@ enum class Justification : uint8_t
 	BottomRight = Bottom | Right
 };
 
+using FocusEventType = uint64_t;
+namespace focusevent {
+enum : FocusEventType
+{
+	Invalid = 0,
+
+	Notification_FocusLost,
+	Notification_FocusGained,
+
+	// Custom types should start at this value
+	BEGIN_CUSTOM_TYPES
+};
+}
+
 using ContainerID = uint64_t;
 static constexpr ContainerID kInvalidContainerID = 0;
 static constexpr ContainerID kRootContainerID = 1;
@@ -53,6 +67,7 @@ class FocusManager;
 
 struct Container;
 struct Anchor;
+struct FocusKey;
 struct FocusEvent;
 struct FocusTarget;
 struct FocusTreeNode;

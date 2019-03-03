@@ -205,6 +205,9 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 
 	// TODO: Run logic
 	(void)internalState;
+	ui::ContainerManager& uiManager = *app::gUiManager;
+	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+	focusMan.UpdateHardFocus();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

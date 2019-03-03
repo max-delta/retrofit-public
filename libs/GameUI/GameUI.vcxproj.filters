@@ -39,6 +39,8 @@
     <ClCompile Include="controllers\InstancedController.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="FocusEvent.cpp" />
+    <ClCompile Include="FocusKey.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -86,6 +88,8 @@
     <ClInclude Include="controllers\InstancedController.h">
       <Filter>controllers</Filter>
     </ClInclude>
+    <ClInclude Include="FocusEvent.h" />
+    <ClInclude Include="FocusKey.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">
