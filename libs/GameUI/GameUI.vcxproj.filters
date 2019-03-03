@@ -33,6 +33,9 @@
     <ClCompile Include="FocusTree.cpp" />
     <ClCompile Include="FocusManager.cpp" />
     <ClCompile Include="UIContext.cpp" />
+    <ClCompile Include="controllers\ListBox.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -74,6 +77,9 @@
     <ClInclude Include="FocusTree.h" />
     <ClInclude Include="FocusManager.h" />
     <ClInclude Include="UIContext.h" />
+    <ClInclude Include="controllers\ListBox.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">

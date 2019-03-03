@@ -12,6 +12,7 @@
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/controllers/FramePackDisplay.h"
+#include "GameUI/controllers/ListBox.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
@@ -106,18 +107,19 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			96 );
 
 		// Menu floater in center bottom
-		// TODO: Cleanup this placeholder logic
+		// TODO: Setup focus management
+		rftl::vector<rftl::string> menuText;
+		menuText.emplace_back( "Single player" );
+		menuText.emplace_back( "Multiplayer" );
+		menuText.emplace_back( "Character creator" );
+		menuText.emplace_back( "Options" );
+		menuText.emplace_back( "Exit to desktop" );
 		uint8_t const menuFontHeight = fontReg.SelectBestFont( ui::font::LargeMenuSelection, 1 ).mFontHeight;
+		constexpr gfx::PPUCoordElem kMenuEntryHitboxWidth = 160;
 		constexpr gfx::PPUCoordElem kMenuEntryPadding = 6;
-		rftl::array<char const*, 5> TODOMenuText;
-		TODOMenuText.at( 0 ) = "Single player";
-		TODOMenuText.at( 1 ) = "Multiplayer";
-		TODOMenuText.at( 2 ) = "Character creator";
-		TODOMenuText.at( 3 ) = "Options";
-		TODOMenuText.at( 4 ) = "Exit to desktop";
 		gfx::PPUCoord const menuDimensions = {
-			160,
-			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * TODOMenuText.size() ) };
+			kMenuEntryHitboxWidth,
+			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() ) };
 		WeakPtr<ui::controller::Floater> const menuPane =
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 1 ),
@@ -125,30 +127,13 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					menuDimensions.x,
 					menuDimensions.y,
 					ui::Justification::MiddleCenter ) );
-		ui::controller::ColumnSlicer::Ratios const menuRowRatios = {
-			{ 1.f / 5.f, true },
-			{ 1.f / 5.f, true },
-			{ 1.f / 5.f, true },
-			{ 1.f / 5.f, true },
-			{ 1.f / 5.f, true },
-		};
-		WeakPtr<ui::controller::RowSlicer> const menuEntries =
+		WeakPtr<ui::controller::ListBox> const menuEntries =
 			uiManager.AssignStrongController(
 				menuPane->GetChildContainerID(),
-				DefaultCreator<ui::controller::RowSlicer>::Create(
-					menuRowRatios ) );
-		for( size_t i = 0; i < TODOMenuText.size(); i++ )
-		{
-			WeakPtr<ui::controller::TextLabel> const menuEntry =
-				uiManager.AssignStrongController(
-					menuEntries->GetChildContainerID( i ),
-					DefaultCreator<ui::controller::TextLabel>::Create() );
-			menuEntry->SetJustification( ui::Justification::MiddleCenter );
-			menuEntry->SetFont( ui::font::LargeMenuSelection );
-			menuEntry->SetText( TODOMenuText.at( i ) );
-			menuEntry->SetColor( math::Color3f::kWhite );
-			menuEntry->SetBorder( true );
-		}
+				DefaultCreator<ui::controller::ListBox>::Create(
+					menuText.size(),
+					ui::font::LargeMenuSelection ) );
+		menuEntries->SetText( menuText );
 
 		// TODO: Basic debug in top left
 		WeakPtr<ui::controller::TextLabel> const TODODebug =
