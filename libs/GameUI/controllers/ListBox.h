@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/Controller.h"
+#include "GameUI/controllers/InstancedController.h"
 
 #include "core_math/Color3f.h"
 #include "core/ptr/unique_ptr.h"
@@ -14,7 +14,7 @@ namespace RF { namespace ui { namespace controller {
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API ListBox final : public Controller
+class GAMEUI_API ListBox final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 	RF_NO_COPY( ListBox );
@@ -37,13 +37,6 @@ public:
 	void SetText( rftl::vector<rftl::string> const& text );
 
 	virtual void OnAssign( UIContext& context, Container& container ) override;
-	bool OnFocusEvent( FocusEvent const& focusEvent );
-
-
-	//
-	// Private methods
-private:
-	static bool HandleFocusEvent( void* userData, FocusEvent const& focusEvent );
 
 
 	//
@@ -56,7 +49,6 @@ private:
 	math::Color3f const mUnselectedColor;
 	math::Color3f const mSelectedColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
-	UniquePtr<FocusTarget> mFocusTarget;
 	rftl::vector<WeakPtr<TextLabel>> mSlotControllers;
 };
 
