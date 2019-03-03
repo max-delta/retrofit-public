@@ -12,6 +12,12 @@ struct GAMEUI_API UIContext
 	RF_NO_COPY( UIContext );
 
 	//
+	// Friends
+private:
+	friend struct UIConstContext;
+
+
+	//
 	// Public methods
 public:
 	UIContext( ContainerManager& containerManager );
@@ -40,6 +46,7 @@ struct GAMEUI_API UIConstContext
 	// Public methods
 public:
 	explicit UIConstContext( ContainerManager const& containerManager );
+	UIConstContext( UIContext const& context );
 
 	ContainerManager const& GetContainerManager() const;
 

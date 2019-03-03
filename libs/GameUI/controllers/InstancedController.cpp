@@ -40,6 +40,13 @@ ContainerID InstancedController::GetContainerID() const
 
 
 
+bool InstancedController::IsCurrentFocus( UIConstContext const& context ) const
+{
+	return context.GetFocusManager().GetFocusTree().IsCurrentFocus( *mFocusTarget );
+}
+
+
+
 WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode )
 {
 	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
