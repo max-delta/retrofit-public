@@ -19,7 +19,7 @@ public:
 
 	ContainerID GetChildContainerID();
 
-	virtual void OnAssign( UIContext& context, Container& container ) override;
+	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 
 
 	//

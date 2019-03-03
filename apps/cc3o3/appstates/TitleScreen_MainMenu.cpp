@@ -8,6 +8,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/FontRegistry.h"
+#include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/Floater.h"
@@ -50,6 +51,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 	{
 		ui::ContainerManager& uiManager = *app::gUiManager;
 		ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
 		// Cut the whole screen into columns
@@ -136,7 +138,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					menuText.size(),
 					ui::font::LargeMenuSelection ) );
 		menuEntries->SetText( menuText );
-		menuEntries->AddAsChildToFocusTreeNode( focusMan, focusMan.GetFocusTree().GetRootNode() );
+		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
 
 		// TODO: Basic debug in top left
 		WeakPtr<ui::controller::TextLabel> const TODODebug =

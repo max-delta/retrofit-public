@@ -4,6 +4,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/FocusManager.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
@@ -79,7 +80,7 @@ void ListBox::SetText( rftl::vector<rftl::string> const& text )
 
 
 
-void ListBox::OnAssign( UIContext& context, Container& container )
+void ListBox::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mChildContainerID = CreateChildContainer(
 		context.GetMutableContainerManager(),
@@ -108,6 +109,33 @@ void ListBox::OnAssign( UIContext& context, Container& container )
 		slotController->SetBorder( true );
 		mSlotControllers.emplace_back( slotController );
 	}
+}
+
+
+
+void ListBox::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode )
+{
+	// Add all the slots to focus tree
+	WeakPtr<FocusTreeNode> mostRecentNode = newNode.mFavoredChild;
+	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
+	{
+		if( mostRecentNode == nullptr )
+		{
+			mostRecentNode = slotController->AddAsChildToFocusTreeNode( context, newNode );
+		}
+		else
+		{
+			mostRecentNode = slotController->AddAsSiblingAfterFocusTreeNode( context, mostRecentNode );
+		}
+	}
+}
+
+
+
+bool ListBox::OnFocusEvent( FocusEvent const& focusEvent )
+{
+	// TODO
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

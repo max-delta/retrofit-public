@@ -70,7 +70,7 @@ void NineSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceI
 
 
 
-void NineSlicer::OnAssign( UIContext& context, Container& container )
+void NineSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mParentContainerID = container.mContainerID;
 	m0 = CreateAnchor( context.GetMutableContainerManager(), container );
