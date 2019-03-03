@@ -15,12 +15,13 @@ class GAMEUI_API FocusManager
 	// Public methods
 public:
 	FocusManager() = default;
-	bool HandleEvent( FocusEvent const& focusEvent ) const;
+	bool HandleEvent( UIContext& context, FocusEvent const& focusEvent ) const;
 
 	FocusTree const& GetFocusTree() const;
 	FocusTree& GetMutableFocusTree();
 
-	void UpdateHardFocus();
+	void UpdateHardFocus( UIContext& context );
+	void UpdateHardFocusSinglePass( UIContext& context, bool& causedChange );
 
 
 	//

@@ -11,7 +11,7 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool FocusManager::HandleEvent( FocusEvent const& focusEvent ) const
+bool FocusManager::HandleEvent( UIContext& context, FocusEvent const& focusEvent ) const
 {
 	// Walk backwards up the focus stack, looking for someone to handle the
 	//  focus event successfully
@@ -27,7 +27,7 @@ bool FocusManager::HandleEvent( FocusEvent const& focusEvent ) const
 		FocusTarget const* const targetRef = node.mFocusTarget;
 		RF_ASSERT( targetRef != nullptr );
 
-		bool const handled = targetRef->HandleEvent( focusEvent );
+		bool const handled = targetRef->HandleEvent( context, focusEvent );
 		if( handled )
 		{
 			return true;
@@ -53,8 +53,21 @@ FocusTree& FocusManager::GetMutableFocusTree()
 
 
 
-void FocusManager::UpdateHardFocus()
+void FocusManager::UpdateHardFocus( UIContext& context )
 {
+	bool causedChange = true;
+	while( causedChange )
+	{
+		UpdateHardFocusSinglePass( context, causedChange );
+	}
+}
+
+
+
+void FocusManager::UpdateHardFocusSinglePass( UIContext& context, bool& causedChange )
+{
+	causedChange = false;
+
 	WeakPtr<FocusTreeNode const> const currentFocusNode = mFocusTree.GetCurrentFocus();
 	WeakPtr<FocusTarget> currentFocusTargetRef = nullptr;
 	if( currentFocusNode != nullptr )
@@ -84,17 +97,25 @@ void FocusManager::UpdateHardFocus()
 		// NOTE: Handler shouldn't try to reference key
 		backingFocusKey = rftl::move( oldHardFocusHolder );
 		backingFocusKey->mFocusTarget = nullptr;
-		oldHardFocusTarget->HandleEvent( focusevent::Notification_FocusLost );
+		oldHardFocusTarget->HandleEvent( context, focusevent::Notification_FocusLost );
+		causedChange = true;
 	}
 	else
 	{
-		// Focus was destroyed
+		// Focus is currently destroyed
 
 		if( currentFocusNode != nullptr )
 		{
 			// Will need new focus
 			backingFocusKey = DefaultCreator<FocusKey>::Create();
 			mHardFocusKey = backingFocusKey;
+		}
+		else
+		{
+			// Focus will remain destroyed
+			RF_ASSERT( backingFocusKey == nullptr );
+			RF_ASSERT( mHardFocusKey == nullptr );
+			return;
 		}
 	}
 	RF_ASSERT( backingFocusKey != nullptr );
@@ -112,9 +133,10 @@ void FocusManager::UpdateHardFocus()
 
 	// Notify, then add
 	// NOTE: Handler shouldn't try to reference key
-	currentFocusTarget.HandleEvent( focusevent::Notification_FocusGained );
+	currentFocusTarget.HandleEvent( context, focusevent::Notification_FocusGained );
 	backingFocusKey->mFocusTarget = currentFocusTargetRef;
 	currentFocusTarget.mHardFocusKey = rftl::move( backingFocusKey );
+	causedChange = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

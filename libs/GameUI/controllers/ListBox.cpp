@@ -4,6 +4,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/FocusEvent.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
@@ -132,9 +133,41 @@ void ListBox::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNo
 
 
 
-bool ListBox::OnFocusEvent( FocusEvent const& focusEvent )
+bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
-	// TODO
+	bool const isPrevious = focusEvent.mEventType == focusevent::Command_NavigateUp;
+	bool const isNext = focusEvent.mEventType == focusevent::Command_NavigateDown;
+	bool const isCycle = isPrevious || isNext;
+
+	if( isCycle )
+	{
+		// Do any of our slots have direct focus?
+		TextLabel const* const slotWithFocus = GetSlotWithFocus( context );
+		bool const listBoxHasImplicitFocus = slotWithFocus != nullptr;
+
+		if( listBoxHasImplicitFocus == false )
+		{
+			return false;
+		}
+
+		WeakPtr<FocusTreeNode> const nodeRef = GetMutableFocusTreeNode( context );
+		RF_ASSERT_MSG( nodeRef != nullptr, "Handling focus event without being in tree?" );
+		FocusTreeNode& node = *nodeRef;
+
+		RF_ASSERT( node.mFavoredChild != nullptr );
+		FocusTreeNode& current = *node.mFavoredChild;
+		WeakPtr<FocusTreeNode> const previous = current.mPreviousSibling;
+		WeakPtr<FocusTreeNode> const next = current.mNextSibling;
+		if( isPrevious && previous != nullptr )
+		{
+			node.mFavoredChild = previous;
+		}
+		else if( isNext && next != nullptr )
+		{
+			node.mFavoredChild = next;
+		}
+	}
+
 	return false;
 }
 
@@ -143,15 +176,7 @@ bool ListBox::OnFocusEvent( FocusEvent const& focusEvent )
 void ListBox::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	// Do any of our slots have direct focus?
-	TextLabel const* slotWithFocus = nullptr;
-	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
-	{
-		if( slotController->IsCurrentFocus( context ) )
-		{
-			slotWithFocus = slotController;
-			break;
-		}
-	}
+	TextLabel const* const slotWithFocus = GetSlotWithFocus( context );
 	bool const listBoxHasImplicitFocus = slotWithFocus != nullptr;
 
 	// Update colors
@@ -173,6 +198,20 @@ void ListBox::OnRender( UIConstContext const& context, Container const& containe
 			slotController->SetColor( mUnfocusedColor );
 		}
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+TextLabel const* ListBox::GetSlotWithFocus( UIConstContext const& context ) const
+{
+	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
+	{
+		if( slotController->IsCurrentFocus( context ) )
+		{
+			return slotController;
+		}
+	}
+	return nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

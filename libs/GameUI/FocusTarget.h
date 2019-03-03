@@ -16,14 +16,14 @@ struct GAMEUI_API FocusTarget
 	//
 	// Types
 public:
-	using EventHandlerFunc = bool(*)( void* userData, FocusEvent const& focusEvent );
+	using EventHandlerFunc = bool ( * )( UIContext& context, void* userData, FocusEvent const& focusEvent );
 
 
 	//
 	// Public methods
 public:
 	FocusTarget() = default;
-	bool HandleEvent( FocusEvent const& focusEvent ) const;
+	bool HandleEvent( UIContext& context, FocusEvent const& focusEvent ) const;
 
 	bool HasHardFocus() const;
 
@@ -48,7 +48,10 @@ public:
 	ContainerID mContainerID = kInvalidContainerID;
 
 	// If set, this target has the hard focus
-	UniquePtr<FocusKey> mHardFocusKey;
+	UniquePtr<FocusKey> mHardFocusKey = nullptr;
+
+	// If set, this in a focus tree
+	WeakPtr<FocusTreeNode> mFocusTreeNode = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
