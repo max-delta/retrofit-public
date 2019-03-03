@@ -53,6 +53,15 @@ UIConstContext::UIConstContext( ContainerManager const& containerManager )
 
 
 
+UIConstContext::UIConstContext( UIContext const& context )
+	: mContainerManager( context.mContainerManager )
+	, mFocusManager( context.mContainerManager.GetFocusManager() )
+{
+	//
+}
+
+
+
 ContainerManager const& UIConstContext::GetContainerManager() const
 {
 	return mContainerManager;

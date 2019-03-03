@@ -39,6 +39,7 @@ public:
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override;
 	virtual bool OnFocusEvent( FocusEvent const& focusEvent ) override;
+	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
 
 	//
