@@ -22,6 +22,7 @@ public:
 public:
 	RowSlicer() = delete;
 	RowSlicer( Ratios const& ratios );
+	RowSlicer( size_t numSlices );
 
 	ContainerID GetChildContainerID( size_t sliceIndex ) const;
 	void CreateChildContainer( ContainerManager& manager, size_t sliceIndex );
