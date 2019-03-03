@@ -41,6 +41,9 @@ public:
 		WeakPtr<FontRegistry const> const& fontRegistry );
 	~ContainerManager();
 
+	FocusManager const& GetFocusManager() const;
+	FocusManager& GetMutableFocusManager();
+
 	void CreateRootContainer();
 	void RecalcRootContainer();
 

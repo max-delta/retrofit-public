@@ -9,13 +9,34 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+FocusTree::FocusTree()
+	: mRootNode( DefaultCreator<FocusTreeNode>::Create() )
+	, mRootFocus( DefaultCreator<FocusTarget>::Create() )
+{
+	FocusTreeNode& rootNode = *mRootNode;
+	rootNode.mFocusTarget = mRootFocus;
+
+	FocusTarget& rootFocus = *mRootFocus;
+	rootFocus.mEventHandler = OnRootFocusEvent;
+	rootFocus.mContainerID = kRootContainerID;
+}
+
+
+
+FocusTreeNode const& FocusTree::GetRootNode() const
+{
+	return *mRootNode;
+}
+
+
+
 FocusTree::ConstNodeStack FocusTree::GetCurrentFocusStack() const
 {
 	ConstNodeStack retVal;
-	WeakPtr<Node const> traverse = mRootNode;
+	WeakPtr<FocusTreeNode const> traverse = mRootNode;
 	while( traverse != nullptr )
 	{
-		Node const& node = *traverse;
+		FocusTreeNode const& node = *traverse;
 
 		if( IsValidForFocus( node ) )
 		{
@@ -33,13 +54,13 @@ FocusTree::ConstNodeStack FocusTree::GetCurrentFocusStack() const
 
 
 
-WeakPtr<FocusTree::Node const> FocusTree::GetCurrentFocus() const
+WeakPtr<FocusTreeNode const> FocusTree::GetCurrentFocus() const
 {
-	WeakPtr<Node const> retVal;
-	WeakPtr<Node const> traverse = mRootNode;
+	WeakPtr<FocusTreeNode const> retVal;
+	WeakPtr<FocusTreeNode const> traverse = mRootNode;
 	while( traverse != nullptr )
 	{
-		Node const& node = *traverse;
+		FocusTreeNode const& node = *traverse;
 
 		if( IsValidForFocus( node ) )
 		{
@@ -57,9 +78,9 @@ WeakPtr<FocusTree::Node const> FocusTree::GetCurrentFocus() const
 
 
 
-bool FocusTree::IsCurrentFocus( Node const& node ) const
+bool FocusTree::IsCurrentFocus( FocusTreeNode const& node ) const
 {
-	Node const* currentFocus = GetCurrentFocus();
+	FocusTreeNode const* currentFocus = GetCurrentFocus();
 	return &node == currentFocus;
 }
 
@@ -67,7 +88,7 @@ bool FocusTree::IsCurrentFocus( Node const& node ) const
 
 bool FocusTree::IsCurrentFocus( FocusTarget const& target ) const
 {
-	Node const* currentFocus = GetCurrentFocus();
+	FocusTreeNode const* currentFocus = GetCurrentFocus();
 	if( currentFocus == nullptr )
 	{
 		return false;
@@ -79,7 +100,7 @@ bool FocusTree::IsCurrentFocus( FocusTarget const& target ) const
 
 
 
-bool FocusTree::IsValidForFocus( Node const& node )
+bool FocusTree::IsValidForFocus( FocusTreeNode const& node )
 {
 	FocusTarget const* const target = node.mFocusTarget;
 	if( target == nullptr )
@@ -97,7 +118,7 @@ bool FocusTree::IsValidForFocus( Node const& node )
 
 
 
-bool FocusTree::ShouldTraverseForFocus( Node const& node )
+bool FocusTree::ShouldTraverseForFocus( FocusTreeNode const& node )
 {
 	FocusTarget const* const target = node.mFocusTarget;
 	if( target == nullptr )
@@ -120,12 +141,12 @@ bool FocusTree::ShouldTraverseForFocus( Node const& node )
 
 
 
-WeakPtr<FocusTree::Node const> FocusTree::FindNode( FocusTarget const& target ) const
+WeakPtr<FocusTreeNode const> FocusTree::FindNode( FocusTarget const& target ) const
 {
 	for( BackingNodeStorage::value_type const& nodeRef : mBackingNodeStorage )
 	{
-		WeakPtr<Node const> possibleReturn = nodeRef;
-		Node const* const node = possibleReturn;
+		WeakPtr<FocusTreeNode const> possibleReturn = nodeRef;
+		FocusTreeNode const* const node = possibleReturn;
 		RF_ASSERT( node != nullptr );
 		if( node->mFocusTarget == &target )
 		{
@@ -137,40 +158,41 @@ WeakPtr<FocusTree::Node const> FocusTree::FindNode( FocusTarget const& target ) 
 
 
 
-bool FocusTree::CreateNewChild( Node const& parentNode, UniquePtr<FocusTarget> const& newTarget )
+WeakPtr<FocusTreeNode> FocusTree::CreateNewChild( FocusTreeNode const& parentNode, UniquePtr<FocusTarget> const& newTarget )
 {
 	if( parentNode.mFavoredChild != nullptr )
 	{
 		RF_DBGFAIL();
-		return false;
+		return nullptr;
 	}
 
-	Node& node = const_cast<Node&>( parentNode );
-	UniquePtr<Node> newNode = DefaultCreator<Node>::Create();
+	FocusTreeNode& node = const_cast<FocusTreeNode&>( parentNode );
+	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
 
 	node.mFavoredChild = newNode;
 
+	WeakPtr<FocusTreeNode> const retVal = newNode;
 	mBackingNodeStorage.emplace_back( rftl::move( newNode ) );
-	return true;
+	return retVal;
 }
 
 
 
-bool FocusTree::CreateNewSiblingAfter( WeakPtr<Node> previousNode, UniquePtr<FocusTarget> const& newTarget )
+WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingAfter( WeakPtr<FocusTreeNode> previousNode, UniquePtr<FocusTarget> const& newTarget )
 {
 	if( previousNode == nullptr )
 	{
 		RF_DBGFAIL();
-		return false;
+		return nullptr;
 	}
 
-	Node& node = *previousNode;
-	UniquePtr<Node> newNode = DefaultCreator<Node>::Create();
+	FocusTreeNode& node = *previousNode;
+	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
 
 	// A' - B'' - C
-	WeakPtr<Node> next = node.mNextSibling; // C
+	WeakPtr<FocusTreeNode> next = node.mNextSibling; // C
 	node.mNextSibling = newNode; // A -> B
 	newNode->mPreviousSibling = previousNode; // A <- B
 	if( next != nullptr )
@@ -179,26 +201,27 @@ bool FocusTree::CreateNewSiblingAfter( WeakPtr<Node> previousNode, UniquePtr<Foc
 		next->mPreviousSibling = newNode; // B <- C
 	}
 
+	WeakPtr<FocusTreeNode> const retVal = newNode;
 	mBackingNodeStorage.emplace_back( rftl::move( newNode ) );
-	return true;
+	return retVal;
 }
 
 
 
-bool FocusTree::CreateNewSiblingBefore( WeakPtr<Node> nextNode, UniquePtr<FocusTarget> const& newTarget )
+WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode> nextNode, UniquePtr<FocusTarget> const& newTarget )
 {
 	if( nextNode == nullptr )
 	{
 		RF_DBGFAIL();
-		return false;
+		return nullptr;
 	}
 
-	Node& node = *nextNode;
-	UniquePtr<Node> newNode = DefaultCreator<Node>::Create();
+	FocusTreeNode& node = *nextNode;
+	UniquePtr<FocusTreeNode> newNode = DefaultCreator<FocusTreeNode>::Create();
 	newNode->mFocusTarget = newTarget;
 
 	// A - B'' - C'
-	WeakPtr<Node> previous = node.mPreviousSibling; // A
+	WeakPtr<FocusTreeNode> previous = node.mPreviousSibling; // A
 	node.mNextSibling = newNode; // B <- C
 	newNode->mPreviousSibling = nextNode; // B -> C
 	if( previous != nullptr )
@@ -207,8 +230,9 @@ bool FocusTree::CreateNewSiblingBefore( WeakPtr<Node> nextNode, UniquePtr<FocusT
 		previous->mNextSibling = newNode; // A -> B
 	}
 
+	WeakPtr<FocusTreeNode> const retVal = newNode;
 	mBackingNodeStorage.emplace_back( rftl::move( newNode ) );
-	return true;
+	return retVal;
 }
 
 
@@ -216,6 +240,13 @@ bool FocusTree::CreateNewSiblingBefore( WeakPtr<Node> nextNode, UniquePtr<FocusT
 void FocusTree::TrimDeadLinks()
 {
 	// TODO
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+bool FocusTree::OnRootFocusEvent( void* userData, FocusEvent const& focusEvent )
+{
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
