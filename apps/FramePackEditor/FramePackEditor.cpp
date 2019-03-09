@@ -68,14 +68,14 @@ void FramePackEditor::Process()
 	{
 		LogicalEvent mostRecentEvent( 0, input::DigitalInputComponent::PinState::Inactive );
 		mostRecentEvent = *logicEvents.rbegin();
-		if( mostRecentEvent.m_NewState == input::DigitalInputComponent::PinState::Active )
+		if( mostRecentEvent.mNewState == input::DigitalInputComponent::PinState::Active )
 		{
-			RF_ASSERT( mostRecentEvent.m_Time > time::FrameClock::time_point() );
-			RF_ASSERT( time::FrameClock::now() >= mostRecentEvent.m_Time );
-			time::FrameClock::duration const timePassed = time::FrameClock::now() - mostRecentEvent.m_Time;
+			RF_ASSERT( mostRecentEvent.mTime > time::FrameClock::time_point() );
+			RF_ASSERT( time::FrameClock::now() >= mostRecentEvent.mTime );
+			time::FrameClock::duration const timePassed = time::FrameClock::now() - mostRecentEvent.mTime;
 			if( timePassed > rftl::chrono::milliseconds( 200 ) )
 			{
-				mostRecentHold = mostRecentEvent.m_Code;
+				mostRecentHold = mostRecentEvent.mCode;
 			}
 		}
 	}
