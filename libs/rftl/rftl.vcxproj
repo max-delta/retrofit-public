@@ -42,6 +42,7 @@
     <ClInclude Include="extension\static_array.h" />
     <ClInclude Include="extension\string_compare.h" />
     <ClInclude Include="extension\string_traits.h" />
+    <ClInclude Include="extension\virtual_iterator.h" />
     <ClInclude Include="filesystem" />
     <ClInclude Include="functional" />
     <ClInclude Include="future" />

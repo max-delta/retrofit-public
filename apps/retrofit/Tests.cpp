@@ -257,8 +257,8 @@ void DrawInputDebug()
 	typedef input::DigitalInputComponent::PhysicalEvent PhysicalEvent;
 	typedef rftl::static_array<LogicalEvent, 8> LogicEvents;
 	typedef rftl::static_array<PhysicalEvent, 8> PhysicEvents;
-	typedef input::BufferCopyEventParser<LogicalEvent, LogicEvents> LogicEventParser;
-	typedef input::BufferCopyEventParser<PhysicalEvent, PhysicEvents> PhysicEventParser;
+	typedef rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents> LogicEventParser;
+	typedef rftl::virtual_back_inserter_iterator<PhysicalEvent, PhysicEvents> PhysicEventParser;
 	LogicEvents logicEvents;
 	PhysicEvents physicEvents;
 	LogicEventParser logicEventParser( logicEvents );
