@@ -122,23 +122,23 @@ WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPrevious
 
 
 
-void WndProcDigitalInputComponent::GetPhysicalEventStream( EventParser<PhysicalEvent>& parser, size_t maxEvents ) const
+void WndProcDigitalInputComponent::GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const
 {
 	size_t const numToRead = math::Min( mPhysicalEventBuffer.size(), maxEvents );
 	for( size_t i = mPhysicalEventBuffer.size() - numToRead; i < mPhysicalEventBuffer.size(); i++ )
 	{
-		parser.OnEvent( mPhysicalEventBuffer[i] );
+		parser( mPhysicalEventBuffer[i] );
 	}
 }
 
 
 
-void WndProcDigitalInputComponent::GetLogicalEventStream( EventParser<LogicalEvent>& parser, size_t maxEvents ) const
+void WndProcDigitalInputComponent::GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser, size_t maxEvents ) const
 {
 	size_t const numToRead = math::Min( mLogicalEventBuffer.size(), maxEvents );
 	for( size_t i = mLogicalEventBuffer.size() - numToRead; i < mLogicalEventBuffer.size(); i++ )
 	{
-		parser.OnEvent( mLogicalEventBuffer[i] );
+		parser( mLogicalEventBuffer[i] );
 	}
 }
 

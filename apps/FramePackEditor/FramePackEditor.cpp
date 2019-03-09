@@ -59,7 +59,7 @@ void FramePackEditor::Process()
 
 	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
 	typedef rftl::static_array<LogicalEvent, 1> LogicEvents;
-	typedef input::BufferCopyEventParser<LogicalEvent, LogicEvents> LogicEventParser;
+	typedef rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents> LogicEventParser;
 	LogicEvents logicEvents;
 	LogicEventParser logicEventParser( logicEvents );
 	digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
