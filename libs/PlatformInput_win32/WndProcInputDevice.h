@@ -82,8 +82,8 @@ public:
 	virtual PinState GetPreviousPhysicalState( PhysicalCode code ) const override;
 	virtual PinState GetCurrentLogicalState( LogicalCode code ) const override;
 	virtual PinState GetPreviousLogicalState( LogicalCode code ) const override;
-	virtual void GetPhysicalEventStream( EventParser<PhysicalEvent>& parser, size_t maxEvents ) const override;
-	virtual void GetLogicalEventStream( EventParser<LogicalEvent>& parser, size_t maxEvents ) const override;
+	virtual void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const override;
+	virtual void GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser, size_t maxEvents ) const override;
 	virtual void ClearPhysicalEventStream() override;
 	virtual void ClearLogicalEventStream() override;
 private:

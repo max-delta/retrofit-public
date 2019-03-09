@@ -3,38 +3,12 @@
 
 #include "Timing/clocks.h"
 
-#include "rftl/iterator"
+#include "rftl/extension/virtual_iterator.h"
 #include "rftl/string"
 
 
 namespace RF { namespace input {
 ///////////////////////////////////////////////////////////////////////////////
-
-template<typename EventType>
-struct EventParser
-{
-	virtual ~EventParser() = default;
-	virtual void OnEvent( EventType const& event ) = 0;
-};
-
-template<typename EventType, typename Container>
-struct BufferCopyEventParser : public EventParser<EventType>
-{
-	BufferCopyEventParser( Container& containerRef )
-		: mInserter( containerRef )
-	{
-		//
-	}
-
-	virtual void OnEvent( EventType const& event ) override
-	{
-		mInserter = event;
-	}
-
-	rftl::back_insert_iterator<Container> mInserter;
-};
-
-
 
 class DigitalInputComponent : public InputComponent
 {
@@ -95,8 +69,8 @@ public:
 		time::FrameClock::time_point m_Time;
 	};
 
-	virtual void GetPhysicalEventStream( EventParser<PhysicalEvent>& parser, size_t maxEvents ) const = 0;
-	virtual void GetLogicalEventStream( EventParser<LogicalEvent>& parser, size_t maxEvents ) const = 0;
+	virtual void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const = 0;
+	virtual void GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser, size_t maxEvents ) const = 0;
 
 	virtual void ClearPhysicalEventStream() = 0;
 	virtual void ClearLogicalEventStream() = 0;
