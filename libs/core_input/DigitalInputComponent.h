@@ -47,26 +47,26 @@ public:
 	struct PhysicalEvent
 	{
 		PhysicalEvent( PhysicalCode code, PinState state )
-			: m_Code( code )
-			, m_NewState( state )
-			, m_Time( time::FrameClock::now() )
+			: mCode( code )
+			, mNewState( state )
+			, mTime( time::FrameClock::now() )
 		{
 		}
-		PhysicalCode m_Code;
-		PinState m_NewState;
-		time::FrameClock::time_point m_Time;
+		PhysicalCode mCode;
+		PinState mNewState;
+		time::FrameClock::time_point mTime;
 	};
 	struct LogicalEvent
 	{
 		LogicalEvent( LogicalCode code, PinState state )
-			: m_Code( code )
-			, m_NewState( state )
-			, m_Time( time::FrameClock::now() )
+			: mCode( code )
+			, mNewState( state )
+			, mTime( time::FrameClock::now() )
 		{
 		}
-		LogicalCode m_Code;
-		PinState m_NewState;
-		time::FrameClock::time_point m_Time;
+		LogicalCode mCode;
+		PinState mNewState;
+		time::FrameClock::time_point mTime;
 	};
 
 	virtual void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const = 0;
