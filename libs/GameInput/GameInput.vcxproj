@@ -36,10 +36,12 @@
     <ClInclude Include="InputFwd.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="RawController.h" />
+    <ClInclude Include="RawInputController.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="RawInputController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

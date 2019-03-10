@@ -19,6 +19,7 @@ using GameSignalValue = float;
 
 class RawController;
 class GameController;
+class RawInputController;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
