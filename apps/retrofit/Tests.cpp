@@ -280,7 +280,7 @@ void DrawInputDebug()
 		logicStream <<
 			" " <<
 			static_cast<int>( event.mCode ) <<
-			( event.mNewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
+			( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 	}
 	app::gGraphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
 	coord.y += offset;
@@ -293,7 +293,7 @@ void DrawInputDebug()
 		physStream <<
 			" " <<
 			static_cast<int>( event.mCode ) <<
-			( event.mNewState == input::DigitalInputComponent::PinState::Active ? '#' : '-' );
+			( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 	}
 	app::gGraphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
 	coord.y += offset;
