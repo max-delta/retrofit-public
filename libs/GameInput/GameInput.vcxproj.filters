@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="RawInputController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -10,5 +11,6 @@
     <ClInclude Include="RawController.h" />
     <ClInclude Include="InputFwd.h" />
     <ClInclude Include="GameController.h" />
+    <ClInclude Include="RawInputController.h" />
   </ItemGroup>
 </Project>
