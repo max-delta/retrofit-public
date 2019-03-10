@@ -6,32 +6,32 @@ namespace RF { namespace input {
 
 bool DigitalInputComponent::WasActivatedPhysical( PhysicalCode code ) const
 {
-	return GetPreviousPhysicalState( code ) == PinState::Inactive &&
-		GetCurrentPhysicalState( code ) == PinState::Active;
+	return GetPreviousPhysicalState( code ) == DigitalPinState::Inactive &&
+		GetCurrentPhysicalState( code ) == DigitalPinState::Active;
 }
 
 
 
 bool DigitalInputComponent::WasDeactivatedPhysical( PhysicalCode code ) const
 {
-	return GetPreviousPhysicalState( code ) == PinState::Active &&
-		GetCurrentPhysicalState( code ) == PinState::Inactive;
+	return GetPreviousPhysicalState( code ) == DigitalPinState::Active &&
+		GetCurrentPhysicalState( code ) == DigitalPinState::Inactive;
 }
 
 
 
 bool DigitalInputComponent::WasActivatedLogical( LogicalCode code ) const
 {
-	return GetPreviousLogicalState( code ) == PinState::Inactive &&
-		GetCurrentLogicalState( code ) == PinState::Active;
+	return GetPreviousLogicalState( code ) == DigitalPinState::Inactive &&
+		GetCurrentLogicalState( code ) == DigitalPinState::Active;
 }
 
 
 
 bool DigitalInputComponent::WasDeactivatedLogical( LogicalCode code ) const
 {
-	return GetPreviousLogicalState( code ) == PinState::Active &&
-		GetCurrentLogicalState( code ) == PinState::Inactive;
+	return GetPreviousLogicalState( code ) == DigitalPinState::Active &&
+		GetCurrentLogicalState( code ) == DigitalPinState::Inactive;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

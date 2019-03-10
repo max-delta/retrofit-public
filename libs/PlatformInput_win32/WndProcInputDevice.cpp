@@ -70,7 +70,7 @@ void WndProcDigitalInputComponent::OnTick()
 
 
 
-WndProcDigitalInputComponent::PhysicalCode WndProcDigitalInputComponent::GetMaxPhysicalCode() const
+PhysicalCode WndProcDigitalInputComponent::GetMaxPhysicalCode() const
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return PhysicalCode();
@@ -78,7 +78,7 @@ WndProcDigitalInputComponent::PhysicalCode WndProcDigitalInputComponent::GetMaxP
 
 
 
-WndProcDigitalInputComponent::LogicalCode WndProcDigitalInputComponent::GetMaxLogicalCode() const
+LogicalCode WndProcDigitalInputComponent::GetMaxLogicalCode() const
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return LogicalCode();
@@ -94,30 +94,30 @@ rftl::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code )
 
 
 
-WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentPhysicalState( PhysicalCode code ) const
+DigitalPinState WndProcDigitalInputComponent::GetCurrentPhysicalState( PhysicalCode code ) const
 {
-	return mCurrentPhysicalState[code] ? PinState::Active : PinState::Inactive;
+	return mCurrentPhysicalState[code] ? DigitalPinState::Active : DigitalPinState::Inactive;
 }
 
 
 
-WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousPhysicalState( PhysicalCode code ) const
+DigitalPinState WndProcDigitalInputComponent::GetPreviousPhysicalState( PhysicalCode code ) const
 {
-	return mPreviousPhysicalState[code] ? PinState::Active : PinState::Inactive;
+	return mPreviousPhysicalState[code] ? DigitalPinState::Active : DigitalPinState::Inactive;
 }
 
 
 
-WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetCurrentLogicalState( LogicalCode code ) const
+DigitalPinState WndProcDigitalInputComponent::GetCurrentLogicalState( LogicalCode code ) const
 {
-	return mCurrentLogicalState[code] ? PinState::Active : PinState::Inactive;
+	return mCurrentLogicalState[code] ? DigitalPinState::Active : DigitalPinState::Inactive;
 }
 
 
 
-WndProcDigitalInputComponent::PinState WndProcDigitalInputComponent::GetPreviousLogicalState( LogicalCode code ) const
+DigitalPinState WndProcDigitalInputComponent::GetPreviousLogicalState( LogicalCode code ) const
 {
-	return mPreviousLogicalState[code] ? PinState::Active : PinState::Inactive;
+	return mPreviousLogicalState[code] ? DigitalPinState::Active : DigitalPinState::Inactive;
 }
 
 
@@ -199,18 +199,18 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 		{
 			uint8_t const virtualKey = math::integer_cast<uint8_t>( wParam );
 			uint8_t const scanCode = math::integer_cast<uint8_t>( KeyUpDown( lParam ).m_Fields.m_ScanCode );
-			PinState state;
+			DigitalPinState state;
 			switch( message )
 			{
 				case WM_KEYDOWN:
-					state = PinState::Active;
+					state = DigitalPinState::Active;
 					break;
 				case WM_KEYUP:
-					state = PinState::Inactive;
+					state = DigitalPinState::Inactive;
 					break;
 				default:
 					RF_DBGFAIL();
-					state = PinState::Inactive;
+					state = DigitalPinState::Inactive;
 					break;
 			}
 			RecordLogical( virtualKey, state );
@@ -232,25 +232,25 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 		case WM_XBUTTONDOWN:
 		case WM_XBUTTONUP:
 		{
-			PinState state;
+			DigitalPinState state;
 			switch( message )
 			{
 				case WM_LBUTTONDOWN:
 				case WM_RBUTTONDOWN:
 				case WM_MBUTTONDOWN:
 				case WM_XBUTTONDOWN:
-					state = PinState::Active;
+					state = DigitalPinState::Active;
 					break;
 				case WM_LBUTTONUP:
 				case WM_RBUTTONUP:
 				case WM_MBUTTONUP:
 				case WM_XBUTTONUP:
 					// NOTE: User can drag-escape window to hide this event
-					state = PinState::Inactive;
+					state = DigitalPinState::Inactive;
 					break;
 				default:
 					RF_DBGFAIL();
-					state = PinState::Inactive;
+					state = DigitalPinState::Inactive;
 					break;
 			}
 
@@ -340,8 +340,8 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 			for( int16_t i = 0; i < numClicks; i++ )
 			{
 				// Pulse the key for each click
-				RecordLogical( virtualKey, PinState::Active );
-				RecordLogical( virtualKey, PinState::Inactive );
+				RecordLogical( virtualKey, DigitalPinState::Active );
+				RecordLogical( virtualKey, DigitalPinState::Inactive );
 			}
 			intercepted = true;
 			return 0;
@@ -363,7 +363,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 				if( active )
 				{
 					uint8_t const code = math::integer_cast<uint8_t>( i );
-					RecordLogical( code, PinState::Inactive );
+					RecordLogical( code, DigitalPinState::Inactive );
 				}
 			}
 
@@ -374,7 +374,7 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 				if( active )
 				{
 					uint8_t const code = math::integer_cast<uint8_t>( i );
-					RecordPhysical( code, PinState::Inactive );
+					RecordPhysical( code, DigitalPinState::Inactive );
 				}
 			}
 
@@ -393,15 +393,15 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 
 
 
-void WndProcDigitalInputComponent::RecordLogical( uint8_t code, PinState state )
+void WndProcDigitalInputComponent::RecordLogical( uint8_t code, DigitalPinState state )
 {
-	if( mCurrentLogicalState[code] == ( state == PinState::Active ) )
+	if( mCurrentLogicalState[code] == ( state == DigitalPinState::Active ) )
 	{
 		// Repeat, ignore
 		return;
 	}
 
-	mCurrentLogicalState[code] = state == PinState::Active;
+	mCurrentLogicalState[code] = state == DigitalPinState::Active;
 	mLogicalEventBuffer.emplace_back( code, state );
 	while( mLogicalEventBuffer.size() > kMaxEventStorage )
 	{
@@ -411,15 +411,15 @@ void WndProcDigitalInputComponent::RecordLogical( uint8_t code, PinState state )
 
 
 
-void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, PinState state )
+void WndProcDigitalInputComponent::RecordPhysical( uint8_t code, DigitalPinState state )
 {
-	if( mCurrentPhysicalState[code] == ( state == PinState::Active ) )
+	if( mCurrentPhysicalState[code] == ( state == DigitalPinState::Active ) )
 	{
 		// Repeat, ignore
 		return;
 	}
 
-	mCurrentPhysicalState[code] = state == PinState::Active;
+	mCurrentPhysicalState[code] = state == DigitalPinState::Active;
 	mPhysicalEventBuffer.emplace_back( code, state );
 	while( mPhysicalEventBuffer.size() > kMaxEventStorage )
 	{
@@ -437,14 +437,14 @@ void WndProcAnalogInputComponent::OnTick()
 
 
 
-WndProcAnalogInputComponent::SignalIndex WndProcAnalogInputComponent::GetMaxSignalIndex() const
+AnalogSignalIndex WndProcAnalogInputComponent::GetMaxSignalIndex() const
 {
 	return k_NumSignals;
 }
 
 
 
-rftl::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIndex ) const
+rftl::u16string WndProcAnalogInputComponent::GetSignalName( AnalogSignalIndex signalIndex ) const
 {
 	RF_DBGFAIL_MSG( "TODO" );
 	return rftl::u16string();
@@ -452,7 +452,7 @@ rftl::u16string WndProcAnalogInputComponent::GetSignalName( SignalIndex signalIn
 
 
 
-WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetCurrentSignalValue( SignalIndex signalIndex ) const
+AnalogSignalValue WndProcAnalogInputComponent::GetCurrentSignalValue( AnalogSignalIndex signalIndex ) const
 {
 	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
 	return mCurrentSignalValues[signalIndex];
@@ -460,7 +460,7 @@ WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetCurrent
 
 
 
-WndProcAnalogInputComponent::SignalValue WndProcAnalogInputComponent::GetPreviousSignalValue( SignalIndex signalIndex ) const
+AnalogSignalValue WndProcAnalogInputComponent::GetPreviousSignalValue( AnalogSignalIndex signalIndex ) const
 {
 	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
 	return mPreviousSignalValues[signalIndex];

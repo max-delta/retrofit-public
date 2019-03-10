@@ -78,18 +78,18 @@ public:
 	virtual PhysicalCode GetMaxPhysicalCode() const override;
 	virtual LogicalCode GetMaxLogicalCode() const override;
 	virtual rftl::u16string GetLogicalName( LogicalCode code ) const override;
-	virtual PinState GetCurrentPhysicalState( PhysicalCode code ) const override;
-	virtual PinState GetPreviousPhysicalState( PhysicalCode code ) const override;
-	virtual PinState GetCurrentLogicalState( LogicalCode code ) const override;
-	virtual PinState GetPreviousLogicalState( LogicalCode code ) const override;
+	virtual DigitalPinState GetCurrentPhysicalState( PhysicalCode code ) const override;
+	virtual DigitalPinState GetPreviousPhysicalState( PhysicalCode code ) const override;
+	virtual DigitalPinState GetCurrentLogicalState( LogicalCode code ) const override;
+	virtual DigitalPinState GetPreviousLogicalState( LogicalCode code ) const override;
 	virtual void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const override;
 	virtual void GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser, size_t maxEvents ) const override;
 	virtual void ClearPhysicalEventStream() override;
 	virtual void ClearLogicalEventStream() override;
 private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
-	void RecordLogical( uint8_t code, PinState state );
-	void RecordPhysical( uint8_t code, PinState state );
+	void RecordLogical( uint8_t code, DigitalPinState state );
+	void RecordPhysical( uint8_t code, DigitalPinState state );
 	void RecordFocusLoss();
 private:
 	LogicalCodeStates mCurrentLogicalState;
@@ -110,7 +110,7 @@ class PLATFORMINPUT_API WndProcAnalogInputComponent final : public AnalogInputCo
 public:
 	friend class WndProcInputDevice;
 public:
-	enum : SignalIndex
+	enum : AnalogSignalIndex
 	{
 		k_CursorAbsoluteX = 0,
 		k_CursorAbsoluteY,
@@ -118,14 +118,14 @@ public:
 		k_NumSignals
 	};
 private:
-	typedef SignalValue SignalValues[k_NumSignals];
+	typedef AnalogSignalValue SignalValues[k_NumSignals];
 public:
 	WndProcAnalogInputComponent() = default;
 	virtual void OnTick() override;
-	virtual SignalIndex GetMaxSignalIndex() const override;
-	virtual rftl::u16string GetSignalName( SignalIndex signalIndex ) const override;
-	virtual SignalValue GetCurrentSignalValue( SignalIndex signalIndex ) const override;
-	virtual SignalValue GetPreviousSignalValue( SignalIndex signalIndex ) const override;
+	virtual AnalogSignalIndex GetMaxSignalIndex() const override;
+	virtual rftl::u16string GetSignalName( AnalogSignalIndex signalIndex ) const override;
+	virtual AnalogSignalValue GetCurrentSignalValue( AnalogSignalIndex signalIndex ) const override;
+	virtual AnalogSignalValue GetPreviousSignalValue( AnalogSignalIndex signalIndex ) const override;
 private:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
 private:
