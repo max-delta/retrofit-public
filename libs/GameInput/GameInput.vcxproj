@@ -32,7 +32,10 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="GameController.h" />
+    <ClInclude Include="InputFwd.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="RawController.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
