@@ -540,7 +540,7 @@ void WndProcTextInputComponent::OnTick()
 void WndProcTextInputComponent::GetTextStream( rftl::u16string& text, size_t maxLen ) const
 {
 	text.clear();
-	text.reserve( maxLen );
+	text.reserve( math::Min( maxLen, mTextBuffer.size() ) );
 	for( char16_t const& ch : mTextBuffer )
 	{
 		text.push_back( ch );
