@@ -12,25 +12,19 @@ class AnalogInputComponent : public InputComponent
 	RF_NO_COPY( AnalogInputComponent );
 
 public:
-	typedef uint8_t SignalIndex;
-	typedef float SignalValue;
-
-	static constexpr SignalValue kMaxSignalValue = 1.0f;
-	static constexpr SignalValue kMinSignalValue = 0.0f;
-
 	AnalogInputComponent() = default;
 	virtual void OnTick() override = 0;
-	virtual ComponentType GetType() override final
+	virtual InputComponentType GetType() override final
 	{
-		return ComponentType::Analog;
+		return InputComponentType::Analog;
 	}
 
-	virtual SignalIndex GetMaxSignalIndex() const = 0;
+	virtual AnalogSignalIndex GetMaxSignalIndex() const = 0;
 
-	virtual rftl::u16string GetSignalName( SignalIndex signalIndex ) const = 0;
+	virtual rftl::u16string GetSignalName( AnalogSignalIndex signalIndex ) const = 0;
 
-	virtual SignalValue GetCurrentSignalValue( SignalIndex signalIndex ) const = 0;
-	virtual SignalValue GetPreviousSignalValue( SignalIndex signalIndex ) const = 0;
+	virtual AnalogSignalValue GetCurrentSignalValue( AnalogSignalIndex signalIndex ) const = 0;
+	virtual AnalogSignalValue GetPreviousSignalValue( AnalogSignalIndex signalIndex ) const = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

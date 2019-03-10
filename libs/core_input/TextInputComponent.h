@@ -14,9 +14,9 @@ class TextInputComponent : public InputComponent
 public:
 	TextInputComponent() = default;
 	virtual void OnTick() override = 0;
-	virtual ComponentType GetType() override final
+	virtual InputComponentType GetType() override final
 	{
-		return ComponentType::Text;
+		return InputComponentType::Text;
 	}
 
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;

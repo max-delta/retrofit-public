@@ -66,9 +66,9 @@ void FramePackEditor::Process()
 	uint8_t mostRecentHold = 0;
 	if( logicEvents.empty() == false )
 	{
-		LogicalEvent mostRecentEvent( 0, input::DigitalInputComponent::PinState::Inactive );
+		LogicalEvent mostRecentEvent( 0, input::DigitalPinState::Inactive );
 		mostRecentEvent = *logicEvents.rbegin();
-		if( mostRecentEvent.mNewState == input::DigitalInputComponent::PinState::Active )
+		if( mostRecentEvent.mNewState == input::DigitalPinState::Active )
 		{
 			RF_ASSERT( mostRecentEvent.mTime > time::FrameClock::time_point() );
 			RF_ASSERT( time::FrameClock::now() >= mostRecentEvent.mTime );
