@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "DigitalInputComponent.h"
 
+#include "rftl/limits"
+
+
 namespace RF { namespace input {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -32,6 +35,20 @@ bool DigitalInputComponent::WasDeactivatedLogical( LogicalCode code ) const
 {
 	return GetPreviousLogicalState( code ) == DigitalPinState::Active &&
 		GetCurrentLogicalState( code ) == DigitalPinState::Inactive;
+}
+
+
+
+void DigitalInputComponent::GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser ) const
+{
+	return GetPhysicalEventStream( parser, rftl::numeric_limits<size_t>::max() );
+}
+
+
+
+void DigitalInputComponent::GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser ) const
+{
+	return GetLogicalEventStream( parser, rftl::numeric_limits<size_t>::max() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
