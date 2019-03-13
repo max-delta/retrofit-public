@@ -32,4 +32,29 @@ struct virtual_back_inserter_iterator : public virtual_iterator<ElementT>
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+
+template<typename ElementT, typename CallableT>
+struct virtual_callable_iterator : public virtual_iterator<ElementT>
+{
+	virtual_callable_iterator() = delete;
+
+	virtual_callable_iterator( CallableT& callableRef )
+		: mCallableRef( callableRef )
+	{
+		//
+	}
+
+	virtual_callable_iterator( virtual_callable_iterator const&) = delete;
+
+	virtual_callable_iterator& operator=( virtual_callable_iterator const& ) = delete;
+
+	virtual void operator()( ElementT const& element ) override
+	{
+		mCallableRef( element );
+	}
+
+	CallableT& mCallableRef;
+};
+
+///////////////////////////////////////////////////////////////////////////////
 }
