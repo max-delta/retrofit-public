@@ -16,14 +16,16 @@ class GAMEINPUT_API RawInputController final : public RawController
 {
 	RF_NO_COPY( RawInputController );
 
-
 	//
-	// Types
+	// Types and constants
 public:
-	using PhysicalMapping = rftl::unordered_multimap<PhysicalCode, rftl::pair<DigitalPinState, RawCommandType>> ;
-	using LogicalMapping = rftl::unordered_multimap<LogicalCode, rftl::pair<DigitalPinState, RawCommandType>>;
+	using PhysicalMapping = rftl::unordered_map<PhysicalCode, rftl::unordered_map<DigitalPinState, RawCommandType>>;
+	using LogicalMapping = rftl::unordered_map<LogicalCode, rftl::unordered_map<DigitalPinState, RawCommandType>>;
 	using SignalMapping = rftl::unordered_map<AnalogSignalIndex, RawSignalType>;
 private:
+	static constexpr size_t kMaxCommandBufferLength = 64;
+	static constexpr size_t kMaxSignalBufferLength = 64;
+	static constexpr size_t kMaxTextBufferLength = 64;
 	using CommandBuffer = rftl::deque<Command>;
 	using SignalBuffer = rftl::deque<Signal>;
 	using SignalBufferMap = rftl::unordered_map<RawSignalType, SignalBuffer>;
@@ -34,7 +36,7 @@ private:
 	// Public methods
 public:
 	RawInputController() = default;
-	virtual ~RawInputController() = default;
+	virtual ~RawInputController() override = default;
 
 	void SetPhysicalMapping( PhysicalMapping const& mapping );
 	void SetLogicalMapping( LogicalMapping const& mapping );

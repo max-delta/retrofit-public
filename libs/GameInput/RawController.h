@@ -3,6 +3,8 @@
 
 #include "Timing/clocks.h"
 
+#include "core/macros.h"
+
 #include "rftl/extension/virtual_iterator.h"
 #include "rftl/string"
 
@@ -12,6 +14,8 @@ namespace RF { namespace input {
 
 class GAMEINPUT_API RawController
 {
+	RF_NO_COPY( RawController );
+
 	//
 	// Structs
 public:
@@ -31,6 +35,7 @@ public:
 	//
 	// Public methods
 public:
+	RawController() = default;
 	virtual ~RawController() = default;
 	virtual void GetRawCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const = 0;
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const = 0;
