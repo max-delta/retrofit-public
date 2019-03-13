@@ -19,6 +19,7 @@ public:
 		return InputComponentType::Text;
 	}
 
+	void GetTextStream( rftl::u16string& text ) const;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;
 	virtual void ClearTextStream() = 0;
 };

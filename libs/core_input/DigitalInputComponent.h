@@ -61,7 +61,9 @@ public:
 		time::FrameClock::time_point mTime;
 	};
 
+	void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser ) const;
 	virtual void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser, size_t maxEvents ) const = 0;
+	void GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser ) const;
 	virtual void GetLogicalEventStream( rftl::virtual_iterator<LogicalEvent>& parser, size_t maxEvents ) const = 0;
 
 	virtual void ClearPhysicalEventStream() = 0;

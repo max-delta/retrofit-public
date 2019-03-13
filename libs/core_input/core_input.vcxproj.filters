@@ -13,5 +13,6 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="InputDevice.cpp" />
     <ClCompile Include="DigitalInputComponent.cpp" />
+    <ClCompile Include="TextInputComponent.cpp" />
   </ItemGroup>
 </Project>
