@@ -19,7 +19,7 @@ constexpr bool kAllowTests = true;
 
 constexpr bool kConsoleTest = true;
 constexpr bool kDrawTest = true;
-constexpr bool kDrawInputDebug = true;
+constexpr bool kInputDebug = true;
 constexpr bool kUITest = true;
 constexpr bool kXMLTest = true;
 constexpr bool kFPackSerializationTest = true;
@@ -68,6 +68,11 @@ void TestStart()
 		test::FPackSerializationTest();
 	}
 
+	if( kInputDebug )
+	{
+		test::InitInputDebug();
+	}
+
 	if( kDrawTest )
 	{
 		test::InitDrawTest();
@@ -95,7 +100,7 @@ void TestRun()
 {
 	using namespace RF;
 
-	if( kDrawInputDebug )
+	if( kInputDebug )
 	{
 		test::DrawInputDebug();
 	}

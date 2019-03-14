@@ -13,6 +13,8 @@
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/FontRegistry.h"
 
+#include "GameInput/RawInputController.h"
+
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
@@ -30,6 +32,7 @@
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core_platform/uuid.h"
+#include "core_platform/winuser_shim.h"
 #include "core_rftype/stl_extensions/vector.h"
 #include "core_rftype/stl_extensions/string.h"
 #include "core/ptr/default_creator.h"
@@ -246,80 +249,175 @@ void DrawTest()
 
 
 
+static bool sUseRawController = false;
+static input::RawInputController sRawController;
+void InitInputDebug()
+{
+	input::RawInputController::LogicalMapping logicalMapping;
+	logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = 0;
+	logicalMapping['W'][input::DigitalPinState::Active] = 1;
+	logicalMapping['A'][input::DigitalPinState::Active] = 2;
+	logicalMapping['S'][input::DigitalPinState::Active] = 3;
+	logicalMapping['D'][input::DigitalPinState::Active] = 4;
+	logicalMapping[shim::VK_UP][input::DigitalPinState::Active] = 1;
+	logicalMapping[shim::VK_LEFT][input::DigitalPinState::Active] = 2;
+	logicalMapping[shim::VK_DOWN][input::DigitalPinState::Active] = 3;
+	logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = 4;
+	sRawController.SetLogicalMapping( logicalMapping );
+
+	input::RawInputController::SignalMapping signalMapping;
+	signalMapping[input::WndProcAnalogInputComponent::k_CursorAbsoluteX] = 0;
+	signalMapping[input::WndProcAnalogInputComponent::k_CursorAbsoluteY] = 1;
+	sRawController.SetSignalMapping( signalMapping );
+}
+
+
+
 void DrawInputDebug()
 {
-	using namespace RF;
-
-	rftl::string buf;
 	gfx::PPUCoord coord( 32, 64 );
 	gfx::PPUCoord::ElementType const offset = 16;
-	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
-	typedef input::DigitalInputComponent::PhysicalEvent PhysicalEvent;
-	typedef rftl::static_array<LogicalEvent, 8> LogicEvents;
-	typedef rftl::static_array<PhysicalEvent, 8> PhysicEvents;
-	typedef rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents> LogicEventParser;
-	typedef rftl::virtual_back_inserter_iterator<PhysicalEvent, PhysicEvents> PhysicEventParser;
-	LogicEvents logicEvents;
-	PhysicEvents physicEvents;
-	LogicEventParser logicEventParser( logicEvents );
-	PhysicEventParser physicEventParser( physicEvents );
-	rftl::stringstream logicStream;
-	rftl::stringstream physStream;
-	float signalValue;
-	rftl::u16string textStream;
-	rftl::string halfAsciid;
 
 	app::gGraphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;
 
-	logicEvents.clear();
-	app::gWndProcInput->mDigital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
-	logicStream.clear();
-	for( LogicEvents::value_type const& event : logicEvents )
+	if( sUseRawController == false )
 	{
-		logicStream <<
-			" " <<
-			static_cast<int>( event.mCode ) <<
-			( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
-	}
-	app::gGraphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
-	coord.y += offset;
+		rftl::string buf;
+		using LogicalEvent = input::DigitalInputComponent::LogicalEvent;
+		using PhysicalEvent = input::DigitalInputComponent::PhysicalEvent;
+		using LogicEvents = rftl::static_array<LogicalEvent, 8>;
+		using PhysicEvents = rftl::static_array<PhysicalEvent, 8>;
+		using LogicEventParser = rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents>;
+		using PhysicEventParser = rftl::virtual_back_inserter_iterator<PhysicalEvent, PhysicEvents>;
+		LogicEvents logicEvents;
+		PhysicEvents physicEvents;
+		LogicEventParser logicEventParser( logicEvents );
+		PhysicEventParser physicEventParser( physicEvents );
+		rftl::stringstream logicStream;
+		rftl::stringstream physStream;
+		float signalValue;
+		rftl::u16string textStream;
+		rftl::string halfAsciid;
 
-	physicEvents.clear();
-	app::gWndProcInput->mDigital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
-	physStream.clear();
-	for( PhysicEvents::value_type const& event : physicEvents )
-	{
-		physStream <<
-			" " <<
-			static_cast<int>( event.mCode ) <<
-			( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
-	}
-	app::gGraphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
-	coord.y += offset;
-
-	signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-	app::gGraphics->DebugDrawText( coord, "  cax: %f", signalValue );
-	coord.y += offset;
-	signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-	app::gGraphics->DebugDrawText( coord, "  cay: %f", signalValue );
-	coord.y += offset;
-
-	app::gWndProcInput->mText.GetTextStream( textStream, 100 );
-	halfAsciid.clear();
-	for( char16_t const& chr : textStream )
-	{
-		if( chr <= 127 )
+		logicEvents.clear();
+		app::gWndProcInput->mDigital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+		logicStream.str( "" );
+		for( LogicEvents::value_type const& event : logicEvents )
 		{
-			halfAsciid.push_back( static_cast<char>( chr ) );
+			logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 		}
-		else
+		app::gGraphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+		coord.y += offset;
+
+		physicEvents.clear();
+		app::gWndProcInput->mDigital.GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
+		physStream.str( "" );
+		for( PhysicEvents::value_type const& event : physicEvents )
 		{
-			halfAsciid.push_back( '#' );
+			physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+		}
+		app::gGraphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+		coord.y += offset;
+
+		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
+		app::gGraphics->DebugDrawText( coord, "  cax: %f", signalValue );
+		coord.y += offset;
+		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
+		app::gGraphics->DebugDrawText( coord, "  cay: %f", signalValue );
+		coord.y += offset;
+
+		app::gWndProcInput->mText.GetTextStream( textStream, 100 );
+		halfAsciid.clear();
+		for( char16_t const& chr : textStream )
+		{
+			if( chr <= 127 )
+			{
+				halfAsciid.push_back( static_cast<char>( chr ) );
+			}
+			else
+			{
+				halfAsciid.push_back( '#' );
+			}
+		}
+		app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+		coord.y += offset;
+
+		if( app::gWndProcInput->mDigital.WasActivatedLogical( shim::VK_F1 ) )
+		{
+			sUseRawController = true;
 		}
 	}
-	app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
-	coord.y += offset;
+	else
+	{
+		using Command = input::RawInputController::Command;
+		using Commands = rftl::static_array<Command, 8>;
+		using CommandParser = rftl::virtual_back_inserter_iterator<Command, Commands>;
+		using Signal = input::RawInputController::Signal;
+		using Signals = rftl::static_array<Signal, 8>;
+		using SignalSampler = rftl::virtual_back_inserter_iterator<Signal, Signals>;
+		Commands commands;
+		CommandParser commandParser( commands );
+		rftl::stringstream commandStream;
+		Signals signals;
+		SignalSampler signalSampler( signals );
+		rftl::stringstream signalStream;
+		rftl::u16string textStream;
+		rftl::string halfAsciid;
+
+		sRawController.ConsumeInput( *app::gWndProcInput );
+
+		commands.clear();
+		sRawController.GetRawCommandStream( commandParser, commands.max_size() );
+		commandStream.str( "" );
+		for( Commands::value_type const& command : commands )
+		{
+			commandStream << " " << static_cast<int>( command.mType );
+		}
+		app::gGraphics->DebugDrawText( coord, "  cmd: %s", commandStream.str().c_str() );
+		coord.y += offset;
+
+		signals.clear();
+		sRawController.GetRawSignalStream( signalSampler, signals.max_size(), 0 );
+		signalStream.str( "" );
+		for( Signals::value_type const& signal : signals )
+		{
+			signalStream << " " << static_cast<int>( signal.mValue );
+		}
+		app::gGraphics->DebugDrawText( coord, "  x: %s", signalStream.str().c_str() );
+		coord.y += offset;
+
+		signals.clear();
+		sRawController.GetRawSignalStream( signalSampler, signals.max_size(), 1 );
+		signalStream.str( "" );
+		for( Signals::value_type const& signal : signals )
+		{
+			signalStream << " " << static_cast<int>( signal.mValue );
+		}
+		app::gGraphics->DebugDrawText( coord, "  y: %s", signalStream.str().c_str() );
+		coord.y += offset;
+
+		sRawController.GetTextStream( textStream, 40 );
+		halfAsciid.clear();
+		for( char16_t const& chr : textStream )
+		{
+			if( chr <= 127 )
+			{
+				halfAsciid.push_back( static_cast<char>( chr ) );
+			}
+			else
+			{
+				halfAsciid.push_back( '#' );
+			}
+		}
+		app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+		coord.y += offset;
+
+		if( app::gWndProcInput->mDigital.WasActivatedLogical( shim::VK_F1 ) )
+		{
+			sUseRawController = false;
+		}
+	}
 }
 
 
@@ -512,8 +610,7 @@ void InitFrameBuilderTest()
 	gTestFrameBuilder = DefaultCreator<app::FrameBuilder>::Create( app::gTaskScheduler->GetTaskScheduler() );
 
 	{
-		auto func = []() -> void
-		{
+		auto func = []() -> void {
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "START running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
@@ -525,8 +622,7 @@ void InitFrameBuilderTest()
 		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
 	}
 	{
-		auto func = []() -> void
-		{
+		auto func = []() -> void {
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR1 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
@@ -539,8 +635,7 @@ void InitFrameBuilderTest()
 		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
 	}
 	{
-		auto func = []() -> void
-		{
+		auto func = []() -> void {
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR2 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
