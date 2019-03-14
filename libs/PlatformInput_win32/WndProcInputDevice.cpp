@@ -146,14 +146,14 @@ void WndProcDigitalInputComponent::GetLogicalEventStream( rftl::virtual_iterator
 
 void WndProcDigitalInputComponent::ClearPhysicalEventStream()
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	mPhysicalEventBuffer.clear();
 }
 
 
 
 void WndProcDigitalInputComponent::ClearLogicalEventStream()
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	mLogicalEventBuffer.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

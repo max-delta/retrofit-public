@@ -7,6 +7,7 @@ namespace RF { namespace test {
 void InitDrawTest();
 void DrawTest();
 
+void InitInputDebug();
 void DrawInputDebug();
 
 void InitUITest();
