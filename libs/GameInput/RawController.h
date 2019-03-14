@@ -41,7 +41,6 @@ public:
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const = 0;
 	virtual void GetRawSignalStream( rftl::virtual_iterator<Signal>& sampler, size_t maxSamples, RawSignalType type ) const = 0;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;
-	virtual void ClearTextStream() = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -131,15 +131,10 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 
 void RawInputController::GetRawCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const
 {
-	size_t numEmitted = 0;
-	for( Command const& command : mCommandBuffer )
+	size_t const numToRead = math::Min( mCommandBuffer.size(), maxCommands );
+	for( size_t i = mCommandBuffer.size() - numToRead; i < mCommandBuffer.size(); i++ )
 	{
-		if( numEmitted >= maxCommands )
-		{
-			break;
-		}
-		parser( command );
-		numEmitted++;
+		parser( mCommandBuffer[i] );
 	}
 }
 
@@ -164,15 +159,10 @@ void RawInputController::GetRawSignalStream( rftl::virtual_iterator<Signal>& sam
 	}
 
 	SignalBuffer const& signalBuffer = iter->second;
-	size_t numEmitted = 0;
-	for( Signal const& signal : signalBuffer )
+	size_t const numToRead = math::Min( signalBuffer.size(), maxSamples );
+	for( size_t i = signalBuffer.size() - numToRead; i < signalBuffer.size(); i++ )
 	{
-		if( numEmitted >= maxSamples )
-		{
-			break;
-		}
-		sampler( signal );
-		numEmitted++;
+		sampler( signalBuffer[i] );
 	}
 }
 
@@ -190,13 +180,6 @@ void RawInputController::GetTextStream( rftl::u16string& text, size_t maxLen ) c
 			break;
 		}
 	}
-}
-
-
-
-void RawInputController::ClearTextStream()
-{
-	mTextBuffer.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
