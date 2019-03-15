@@ -3,8 +3,6 @@
 
 #include "core_input/InputFwd.h"
 
-#include "core/ptr/weak_ptr.h"
-
 #include "rftl/unordered_map"
 #include "rftl/deque"
 
