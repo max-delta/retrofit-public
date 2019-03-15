@@ -12,5 +12,6 @@
     <ClInclude Include="InputFwd.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="RawInputController.h" />
+    <ClInclude Include="HotkeyController.h" />
   </ItemGroup>
 </Project>
