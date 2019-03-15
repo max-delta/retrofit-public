@@ -84,6 +84,8 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_CLANG_POP()
 	#define RF_CLANG_IGNORE( WARNING )
 
+	#define RF_BUILD_MESSAGE( MESSAGE ) __pragma( message( "" MESSAGE "" ) )
+
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
 		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
@@ -123,6 +125,8 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_CLANG_PUSH() RF_CLANG_PRAGMA( clang diagnostic push )
 	#define RF_CLANG_POP() RF_CLANG_PRAGMA( clang diagnostic pop )
 	#define RF_CLANG_IGNORE( WARNING ) RF_CLANG_PRAGMA( clang diagnostic ignored WARNING )
+
+	#define RF_BUILD_MESSAGE( MESSAGE )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
