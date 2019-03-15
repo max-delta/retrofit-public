@@ -169,7 +169,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 						onTraversalFunc( TraversalType::AccessorKey, { keyInfo, keyLoc }, shouldTraverseKey );
 						if( shouldTraverseKey )
 						{
-							RF_DBGFAIL_MSG( "TODO" );
+							RF_TODO_BREAK();
 							onReturnFromNestedTypeFunc( TraversalType::AccessorKey, { keyInfo, keyLoc } );
 						}
 
@@ -181,7 +181,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 						onTraversalFunc( TraversalType::AccessorTarget, { targetInfo, targetLoc }, shouldTraverseTarget );
 						if( shouldTraverseTarget )
 						{
-							RF_DBGFAIL_MSG( "TODO" );
+							RF_TODO_BREAK();
 							onReturnFromNestedTypeFunc( TraversalType::AccessorTarget, { targetInfo, targetLoc } );
 						}
 					}

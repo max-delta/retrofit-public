@@ -264,7 +264,7 @@ bool ProcessElementArrayPopulationWork(
 			// String
 
 			// ???Recurse???
-			RF_DBGFAIL_MSG( "TODO" );
+			RF_TODO_BREAK();
 			return false;
 		}
 		else if( rftl::holds_alternative<SquirrelVM::ArrayTag>( elemValue ) )
@@ -272,7 +272,7 @@ bool ProcessElementArrayPopulationWork(
 			// Array
 
 			// ???Recurse???
-			RF_DBGFAIL_MSG( "TODO" );
+			RF_TODO_BREAK();
 			return false;
 		}
 		else if( rftl::holds_alternative<SquirrelVM::InstanceTag>( elemValue ) )
@@ -313,7 +313,7 @@ bool ProcessElementArrayPopulationWork(
 		}
 		else
 		{
-			RF_DBGFAIL_MSG( "TODO" );
+			RF_TODO_BREAK();
 			return false;
 		}
 	}
@@ -363,10 +363,10 @@ bool QueueScriptInstancePopulationWork(
 		// Accessor
 
 		// Instantiate
-		RF_DBGFAIL_MSG( "TODO" );
+		RF_TODO_BREAK();
 
 		// Queue population as later work
-		RF_DBGFAIL_MSG( "TODO" );
+		RF_TODO_BREAK();
 		return true;
 	}
 	else if( targetTypeInfo.mClassInfo != nullptr )

@@ -360,7 +360,7 @@ void TaskScheduler::OnWorkComplete( TaskWorker* worker, Task* task, TaskState ne
 	if( shouldRemove )
 	{
 		// TODO: Remove
-		RF_DBGFAIL_MSG( "TODO" );
+		RF_TODO_BREAK();
 	}
 
 	AttemptDispatch();

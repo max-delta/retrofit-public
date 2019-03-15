@@ -61,7 +61,7 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 			case RF::rftype::TypeTraverser::TraversalType::Accessor:
 			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
 			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
-				RF_DBGFAIL_MSG( "TODO: UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
+				RF_TODO_BREAK_MSG( "UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
 				shouldRecurse = false;
 				success = false;
 				break;
@@ -89,7 +89,7 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 			case RF::rftype::TypeTraverser::TraversalType::Accessor:
 			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
 			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
-				RF_DBGFAIL_MSG( "TODO: UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
+				RF_TODO_BREAK_MSG( "UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
 				success = false;
 				break;
 			case RF::rftype::TypeTraverser::TraversalType::Invalid:
