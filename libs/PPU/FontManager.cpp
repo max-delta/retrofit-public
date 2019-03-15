@@ -134,7 +134,7 @@ bool FontManager::PostLoadFromFile( ResourceType& resource, Filename filename )
 
 bool FontManager::PostLoadFromMemory( ResourceType& resource )
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return false;
 }
 

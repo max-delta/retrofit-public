@@ -175,7 +175,7 @@ public:
 					if( orderingViable == false )
 					{
 						// Ordering not achievable
-						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						RF_TODO_BREAK_MSG( "Planner unwind and try again" );
 						return false;
 					}
 				}
@@ -187,7 +187,7 @@ public:
 					bool const constraintSuccess = AddConstraintToProtectNeedLoss( causalLink, fullfillingPlannedActionInstanceID );
 					if( constraintSuccess == false )
 					{
-						RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+						RF_TODO_BREAK_MSG( "Planner unwind and try again" );
 						return false;
 					}
 				}
@@ -207,7 +207,7 @@ public:
 				if( orderingViable == false )
 				{
 					// Ordering not achievable
-					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					RF_TODO_BREAK_MSG( "Planner unwind and try again" );
 					return false;
 				}
 			}
@@ -223,7 +223,7 @@ public:
 				bool const constraintSuccess = AddConstraintToProtectNeedLoss( newCausalLink, plannedActionInstanceID );
 				if( constraintSuccess == false )
 				{
-					RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+					RF_TODO_BREAK_MSG( "Planner unwind and try again" );
 					return false;
 				}
 			}
@@ -483,7 +483,7 @@ private:
 						bool const success2 = AddOrderingConstraint( causalLink.mNeedyInstanceID, potentialStompingActionInstanceID );
 						if( success2 == false )
 						{
-							RF_DBGFAIL_MSG( "TODO: Planner unwind and try again" );
+							RF_TODO_BREAK_MSG( "Planner unwind and try again" );
 							return false;
 						}
 					}

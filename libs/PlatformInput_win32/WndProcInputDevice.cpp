@@ -72,7 +72,7 @@ void WndProcDigitalInputComponent::OnTick()
 
 PhysicalCode WndProcDigitalInputComponent::GetMaxPhysicalCode() const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return PhysicalCode();
 }
 
@@ -80,7 +80,7 @@ PhysicalCode WndProcDigitalInputComponent::GetMaxPhysicalCode() const
 
 LogicalCode WndProcDigitalInputComponent::GetMaxLogicalCode() const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return LogicalCode();
 }
 
@@ -88,7 +88,7 @@ LogicalCode WndProcDigitalInputComponent::GetMaxLogicalCode() const
 
 rftl::u16string WndProcDigitalInputComponent::GetLogicalName( LogicalCode code ) const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return rftl::u16string();
 }
 
@@ -446,7 +446,7 @@ AnalogSignalIndex WndProcAnalogInputComponent::GetMaxSignalIndex() const
 
 rftl::u16string WndProcAnalogInputComponent::GetSignalName( AnalogSignalIndex signalIndex ) const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return rftl::u16string();
 }
 
