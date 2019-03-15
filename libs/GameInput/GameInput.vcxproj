@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
     <Import Project="..\..\config\RF.Game.Dll.Platform.props" />
@@ -33,6 +33,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="GameController.h" />
+    <ClInclude Include="HotkeyController.h" />
     <ClInclude Include="InputFwd.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="RawController.h" />
@@ -41,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="HotkeyController.cpp" />
     <ClCompile Include="RawInputController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
