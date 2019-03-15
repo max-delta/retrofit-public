@@ -113,7 +113,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource )
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return false;
 }
 
@@ -176,7 +176,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( ResourceName const& resourceName, Filename const& filename )
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return false;
 }
 
@@ -185,7 +185,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Upd
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( ResourceName const& resourceName )
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return false;
 }
 
@@ -275,7 +275,7 @@ inline typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>:
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceName> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugSearchForResourcesByFilename( Filename const& filename ) const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return rftl::vector<ResourceName>();
 }
 
@@ -347,7 +347,7 @@ inline size_t ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::G
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBackedResourceRange ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForResourcesByFilenameInternal( Filename const& filename ) const
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return FileBackedResourceRange();
 }
 
@@ -362,7 +362,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	ManagedResourceID retVal = mNextResourceID++;
 	if( mNextResourceID == kInvalidResourceID )
 	{
-		RF_DBGFAIL_MSG( "TODO: Safe generation" );
+		RF_TODO_BREAK_MSG( "Safe generation" );
 	}
 	return retVal;
 }

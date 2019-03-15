@@ -61,7 +61,7 @@ void Startup()
 	else
 	{
 		puts( " == NO ANSI CONSOLE SUPPORT ==" );
-		RF_DBGFAIL_MSG( "TODO: Non-ANSI console logger" );
+		RF_TODO_BREAK_MSG( "Non-ANSI console logger" );
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing assert logging..." );

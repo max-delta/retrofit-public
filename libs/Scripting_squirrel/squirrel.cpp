@@ -564,7 +564,7 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 		else
 		{
 			// Unsupported type, or user error?
-			RF_DBGFAIL_MSG( "TODO" );
+			RF_TODO_BREAK();
 		}
 
 		// Fetch element

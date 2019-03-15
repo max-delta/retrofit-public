@@ -75,7 +75,7 @@ bool TextureManager::PostLoadFromFile( ResourceType& resource, Filename filename
 
 bool TextureManager::PostLoadFromMemory( ResourceType& resource )
 {
-	RF_DBGFAIL_MSG( "TODO" );
+	RF_TODO_BREAK();
 	return false;
 }
 
