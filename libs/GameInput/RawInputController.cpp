@@ -171,14 +171,11 @@ void RawInputController::GetRawSignalStream( rftl::virtual_iterator<Signal>& sam
 void RawInputController::GetTextStream( rftl::u16string& text, size_t maxLen ) const
 {
 	text.clear();
-	text.reserve( math::Min( maxLen, mTextBuffer.size() ) );
-	for( char16_t const& ch : mTextBuffer )
+	size_t const numToRead = math::Min( mTextBuffer.size(), maxLen );
+	text.reserve( numToRead );
+	for( size_t i = mTextBuffer.size() - numToRead; i < mTextBuffer.size(); i++ )
 	{
-		text.push_back( ch );
-		if( text.size() == maxLen )
-		{
-			break;
-		}
+		text.push_back( mTextBuffer[i] );
 	}
 }
 
