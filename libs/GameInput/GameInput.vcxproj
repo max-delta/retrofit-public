@@ -42,7 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="GameController.cpp" />
     <ClCompile Include="HotkeyController.cpp" />
+    <ClCompile Include="RawController.cpp" />
     <ClCompile Include="RawInputController.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

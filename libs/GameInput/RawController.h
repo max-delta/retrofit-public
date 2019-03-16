@@ -37,9 +37,14 @@ public:
 public:
 	RawController() = default;
 	virtual ~RawController() = default;
+
+	void GetRawCommandStream( rftl::virtual_iterator<Command>& parser ) const;
 	virtual void GetRawCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const = 0;
+	void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter ) const;
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const = 0;
+	void GetRawSignalStream( rftl::virtual_iterator<Signal>& sampler, RawSignalType type ) const;
 	virtual void GetRawSignalStream( rftl::virtual_iterator<Signal>& sampler, size_t maxSamples, RawSignalType type ) const = 0;
+	void GetTextStream( rftl::u16string& text ) const;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;
 };
 

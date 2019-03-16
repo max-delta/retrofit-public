@@ -14,6 +14,7 @@
 #include "GameUI/FontRegistry.h"
 
 #include "GameInput/RawInputController.h"
+#include "GameInput/HotkeyController.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
@@ -250,9 +251,12 @@ void DrawTest()
 
 
 static bool sUseRawController = false;
-static input::RawInputController sRawController;
+static UniquePtr<input::RawInputController> sRawController;
+static UniquePtr<input::HotkeyController> sHotkeyController;
 void InitInputDebug()
 {
+	sRawController = DefaultCreator<input::RawInputController>::Create();
+
 	input::RawInputController::LogicalMapping logicalMapping;
 	logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = 0;
 	logicalMapping['W'][input::DigitalPinState::Active] = 1;
@@ -263,12 +267,21 @@ void InitInputDebug()
 	logicalMapping[shim::VK_LEFT][input::DigitalPinState::Active] = 2;
 	logicalMapping[shim::VK_DOWN][input::DigitalPinState::Active] = 3;
 	logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = 4;
-	sRawController.SetLogicalMapping( logicalMapping );
+	sRawController->SetLogicalMapping( logicalMapping );
 
 	input::RawInputController::SignalMapping signalMapping;
 	signalMapping[input::WndProcAnalogInputComponent::k_CursorAbsoluteX] = 0;
 	signalMapping[input::WndProcAnalogInputComponent::k_CursorAbsoluteY] = 1;
-	sRawController.SetSignalMapping( signalMapping );
+	sRawController->SetSignalMapping( signalMapping );
+
+	sHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	sHotkeyController->SetSource( sRawController );
+
+	input::HotkeyController::CommandMapping commandMapping;
+	commandMapping[0] = 100;
+	commandMapping[1] = 101;
+	commandMapping[3] = 103;
+	sHotkeyController->SetCommandMapping( commandMapping );
 }
 
 
@@ -350,67 +363,83 @@ void DrawInputDebug()
 	}
 	else
 	{
-		using Command = input::RawInputController::Command;
-		using Commands = rftl::static_array<Command, 8>;
-		using CommandParser = rftl::virtual_back_inserter_iterator<Command, Commands>;
-		using Signal = input::RawInputController::Signal;
-		using Signals = rftl::static_array<Signal, 8>;
-		using SignalSampler = rftl::virtual_back_inserter_iterator<Signal, Signals>;
-		Commands commands;
-		CommandParser commandParser( commands );
-		rftl::stringstream commandStream;
-		Signals signals;
-		SignalSampler signalSampler( signals );
-		rftl::stringstream signalStream;
-		rftl::u16string textStream;
-		rftl::string halfAsciid;
+		using RawCommand = input::RawController::Command;
+		using RawCommands = rftl::static_array<RawCommand, 8>;
+		using RawCommandParser = rftl::virtual_back_inserter_iterator<RawCommand, RawCommands>;
+		using GameCommand = input::GameController::Command;
+		using GameCommands = rftl::static_array<GameCommand, 8>;
+		using GameCommandParser = rftl::virtual_back_inserter_iterator<GameCommand, GameCommands>;
+		using RawSignal = input::RawController::Signal;
+		using RawSignals = rftl::static_array<RawSignal, 8>;
+		using RawSignalSampler = rftl::virtual_back_inserter_iterator<RawSignal, RawSignals>;
+		RawCommands rawCommands;
+		RawCommandParser rawCommandParser( rawCommands );
+		rftl::stringstream rawCommandStream;
+		GameCommands gameCommands;
+		GameCommandParser gameCommandParser( gameCommands );
+		rftl::stringstream gameCommandStream;
+		RawSignals rawSignals;
+		RawSignalSampler rawSignalSampler( rawSignals );
+		rftl::stringstream rawSignalStream;
+		rftl::u16string rawTextStream;
+		rftl::string rawHalfAsciid;
 
-		sRawController.ConsumeInput( *app::gWndProcInput );
+		sRawController->ConsumeInput( *app::gWndProcInput );
 
-		commands.clear();
-		sRawController.GetRawCommandStream( commandParser, commands.max_size() );
-		commandStream.str( "" );
-		for( Commands::value_type const& command : commands )
+		rawCommands.clear();
+		sRawController->GetRawCommandStream( rawCommandParser, rawCommands.max_size() );
+		rawCommandStream.str( "" );
+		for( RawCommands::value_type const& command : rawCommands )
 		{
-			commandStream << " " << static_cast<int>( command.mType );
+			rawCommandStream << " " << static_cast<int>( command.mType );
 		}
-		app::gGraphics->DebugDrawText( coord, "  cmd: %s", commandStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  rcmd: %s", rawCommandStream.str().c_str() );
 		coord.y += offset;
 
-		signals.clear();
-		sRawController.GetRawSignalStream( signalSampler, signals.max_size(), 0 );
-		signalStream.str( "" );
-		for( Signals::value_type const& signal : signals )
+		rawSignals.clear();
+		sRawController->GetRawSignalStream( rawSignalSampler, rawSignals.max_size(), 0 );
+		rawSignalStream.str( "" );
+		for( RawSignals::value_type const& signal : rawSignals )
 		{
-			signalStream << " " << static_cast<int>( signal.mValue );
+			rawSignalStream << " " << static_cast<int>( signal.mValue );
 		}
-		app::gGraphics->DebugDrawText( coord, "  x: %s", signalStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  x: %s", rawSignalStream.str().c_str() );
 		coord.y += offset;
 
-		signals.clear();
-		sRawController.GetRawSignalStream( signalSampler, signals.max_size(), 1 );
-		signalStream.str( "" );
-		for( Signals::value_type const& signal : signals )
+		rawSignals.clear();
+		sRawController->GetRawSignalStream( rawSignalSampler, rawSignals.max_size(), 1 );
+		rawSignalStream.str( "" );
+		for( RawSignals::value_type const& signal : rawSignals )
 		{
-			signalStream << " " << static_cast<int>( signal.mValue );
+			rawSignalStream << " " << static_cast<int>( signal.mValue );
 		}
-		app::gGraphics->DebugDrawText( coord, "  y: %s", signalStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  y: %s", rawSignalStream.str().c_str() );
 		coord.y += offset;
 
-		sRawController.GetTextStream( textStream, 40 );
-		halfAsciid.clear();
-		for( char16_t const& chr : textStream )
+		sRawController->GetTextStream( rawTextStream, 40 );
+		rawHalfAsciid.clear();
+		for( char16_t const& chr : rawTextStream )
 		{
 			if( chr <= 127 )
 			{
-				halfAsciid.push_back( static_cast<char>( chr ) );
+				rawHalfAsciid.push_back( static_cast<char>( chr ) );
 			}
 			else
 			{
-				halfAsciid.push_back( '#' );
+				rawHalfAsciid.push_back( '#' );
 			}
 		}
-		app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+		app::gGraphics->DebugDrawText( coord, "  txt: %s", rawHalfAsciid.c_str() );
+		coord.y += offset;
+
+		gameCommands.clear();
+		sHotkeyController->GetGameCommandStream( gameCommandParser, gameCommands.max_size() );
+		gameCommandStream.str( "" );
+		for( GameCommands::value_type const& command : gameCommands )
+		{
+			gameCommandStream << " " << static_cast<int>( command.mType );
+		}
+		app::gGraphics->DebugDrawText( coord, "  gcmd: %s", gameCommandStream.str().c_str() );
 		coord.y += offset;
 
 		if( app::gWndProcInput->mDigital.WasActivatedLogical( shim::VK_F1 ) )

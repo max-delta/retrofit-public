@@ -4,6 +4,9 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="RawInputController.cpp" />
+    <ClCompile Include="HotkeyController.cpp" />
+    <ClCompile Include="GameController.cpp" />
+    <ClCompile Include="RawController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
