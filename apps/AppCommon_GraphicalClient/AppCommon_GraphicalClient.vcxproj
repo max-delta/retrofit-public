@@ -59,6 +59,9 @@
     <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
       <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
+      <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
       <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
     </ProjectReference>

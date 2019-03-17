@@ -17,9 +17,16 @@ using GameSignalType = uint64_t;
 constexpr GameSignalType kInvalidGameSignal = 0;
 using GameSignalValue = float;
 
+using PlayerID = uint8_t;
+constexpr PlayerID kInvalidPlayerID = 0;
+using LayerID = uint8_t;
+constexpr LayerID kInvalidLayerID = 0;
+
 class RawController;
 class GameController;
 class RawInputController;
+class HotkeyController;
+class ControllerManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
