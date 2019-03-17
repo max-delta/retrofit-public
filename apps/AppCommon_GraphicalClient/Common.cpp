@@ -3,6 +3,8 @@
 
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
+#include "GameInput/ControllerManager.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FontRegistry.h"
 
@@ -30,12 +32,14 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
+static UniquePtr<input::ControllerManager> sInputControllerManager;
 static UniquePtr<gfx::PPUController> sGraphics;
 static UniquePtr<ui::FontRegistry> sFontRegistry;
 static UniquePtr<ui::ContainerManager> sUiManager;
@@ -112,6 +116,8 @@ void Startup()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	sWndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
 	gWndProcInput = sWndProcInput;
+	sInputControllerManager = DefaultCreator<input::ControllerManager>::Create();
+	gInputControllerManager = sInputControllerManager;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing font registry..." );
 	sFontRegistry = DefaultCreator<ui::FontRegistry>::Create();

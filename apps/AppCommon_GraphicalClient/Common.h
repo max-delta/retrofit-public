@@ -7,6 +7,7 @@
 namespace RF {
 namespace input {
 	class WndProcInputDevice;
+	class ControllerManager;
 }
 namespace gfx {
 	class PPUController;
@@ -28,6 +29,7 @@ namespace RF { namespace app {
 
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;
