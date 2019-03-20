@@ -16,6 +16,9 @@
     <ClCompile Include="appstates\TitleScreen_MainMenu.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="input\HardcodedSetup.cpp">
+      <Filter>input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -51,6 +54,18 @@
     <ClInclude Include="appstates\TitleScreen_MainMenu.h">
       <Filter>appstates</Filter>
     </ClInclude>
+    <ClInclude Include="input\stdafx.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\InputFwd.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\project.h">
+      <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="input\HardcodedSetup.h">
+      <Filter>input</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -58,6 +73,9 @@
     </Filter>
     <Filter Include="ui">
       <UniqueIdentifier>{dd3e30f1-d240-4ee5-b979-9a5fcc628698}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="input">
+      <UniqueIdentifier>{5ba1e6a8-c973-4afe-8a56-76545c60e754}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

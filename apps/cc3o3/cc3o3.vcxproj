@@ -34,6 +34,7 @@
     <ClCompile Include="appstates\TitleScreen.cpp" />
     <ClCompile Include="appstates\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -48,6 +49,10 @@
     <ClInclude Include="appstates\TitleScreen.h" />
     <ClInclude Include="appstates\TitleScreen_MainMenu.h" />
     <ClInclude Include="cc3o3.h" />
+    <ClInclude Include="input\HardcodedSetup.h" />
+    <ClInclude Include="input\InputFwd.h" />
+    <ClInclude Include="input\project.h" />
+    <ClInclude Include="input\stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="ui\project.h" />
@@ -66,6 +71,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
       <Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
+      <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
       <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
