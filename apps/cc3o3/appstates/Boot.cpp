@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Boot.h"
 
+#include "cc3o3/input/HardcodedSetup.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateTickContext.h"
@@ -48,6 +50,10 @@ void Boot::OnTick( AppStateTickContext& context )
 	{
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
 	}
+
+	// HACK: Spin up hard-coded input
+	// TODO: Get this from a file
+	input::HardcodedSetup();
 
 	// Hop to loading ASAP
 	context.mManager.RequestDeferredStateChange( id::InitialLoading );
