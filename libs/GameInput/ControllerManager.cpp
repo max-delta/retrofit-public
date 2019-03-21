@@ -34,7 +34,20 @@ ControllerManager::LayerIDs ControllerManager::GetRegisteredLayers() const
 
 WeakPtr<GameController> ControllerManager::GetGameController( PlayerID player, LayerID layer ) const
 {
-	return WeakPtr<GameController>();
+	PlayerMapping::const_iterator const playerIter = mRegisteredGameControllers.find( player );
+	if( playerIter == mRegisteredGameControllers.end() )
+	{
+		return nullptr;
+	}
+
+	LayerMapping const& layerMapping = playerIter->second;
+	LayerMapping::const_iterator const layerIter = layerMapping.find( layer );
+	if( layerIter == layerMapping.end() )
+	{
+		return nullptr;
+	}
+
+	return layerIter->second;
 }
 
 
