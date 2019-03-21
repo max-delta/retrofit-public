@@ -30,11 +30,11 @@ void HotkeyController::SetCommandMapping( CommandMapping const& mapping )
 
 
 
-void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const
+void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const
 {
-	rftl::deque<Command> tempBuffer;
+	rftl::deque<GameCommand> tempBuffer;
 
-	auto const onElement = [this, &tempBuffer, maxCommands]( RawController::Command const& element ) -> void
+	auto const onElement = [this, &tempBuffer, maxCommands]( RawCommand const& element ) -> void
 	{
 		CommandMapping::const_iterator const mapping = mCommandMapping.find( element.mType );
 		if( mapping != mCommandMapping.end() )
@@ -46,14 +46,14 @@ void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<Command>& pa
 					tempBuffer.pop_front();
 				}
 				RF_ASSERT( tempBuffer.size() < maxCommands );
-				tempBuffer.emplace_back( Command{ mapping->second, element.mTime } );
+				tempBuffer.emplace_back( GameCommand{ mapping->second, element.mTime } );
 			}
 		}
 	};
-	rftl::virtual_callable_iterator<RawController::Command, decltype( onElement )> converter( onElement );
+	rftl::virtual_callable_iterator<RawCommand, decltype( onElement )> converter( onElement );
 	mSource->GetRawCommandStream( converter );
 
-	for( Command const& command : tempBuffer )
+	for( GameCommand const& command : tempBuffer )
 	{
 		parser( command );
 	}

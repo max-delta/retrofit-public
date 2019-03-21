@@ -25,7 +25,7 @@ public:
 
 	void SetCommandMapping( CommandMapping const& mapping );
 
-	virtual void GetGameCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const override;
+	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const override;
 
 	//
 	// Private data

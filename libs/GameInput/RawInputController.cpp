@@ -55,7 +55,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 							mCommandBuffer.pop_front();
 						}
 						RF_ASSERT( mCommandBuffer.size() < kMaxCommandBufferLength );
-						mCommandBuffer.emplace_back( Command{ state->second, element.mTime } );
+						mCommandBuffer.emplace_back( RawCommand{ state->second, element.mTime } );
 					}
 				}
 			};
@@ -80,7 +80,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 							mCommandBuffer.pop_front();
 						}
 						RF_ASSERT( mCommandBuffer.size() < kMaxCommandBufferLength );
-						mCommandBuffer.emplace_back( Command{ state->second, element.mTime } );
+						mCommandBuffer.emplace_back( RawCommand{ state->second, element.mTime } );
 					}
 				}
 			};
@@ -102,7 +102,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 				buffer.pop_front();
 			}
 			RF_ASSERT( buffer.size() < kMaxSignalBufferLength );
-			buffer.emplace_back( Signal{ value, now } );
+			buffer.emplace_back( RawSignal{ value, now } );
 		}
 	}
 
@@ -129,7 +129,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 
 
 
-void RawInputController::GetRawCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const
+void RawInputController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, size_t maxCommands ) const
 {
 	size_t const numToRead = math::Min( mCommandBuffer.size(), maxCommands );
 	for( size_t i = mCommandBuffer.size() - numToRead; i < mCommandBuffer.size(); i++ )
@@ -150,7 +150,7 @@ void RawInputController::GetKnownSignals( rftl::virtual_iterator<RawSignalType>&
 
 
 
-void RawInputController::GetRawSignalStream( rftl::virtual_iterator<Signal>& sampler, size_t maxSamples, RawSignalType type ) const
+void RawInputController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, size_t maxSamples, RawSignalType type ) const
 {
 	SignalBufferMap::const_iterator const iter = mSignalBufferMap.find( type );
 	if( iter == mSignalBufferMap.end() )
