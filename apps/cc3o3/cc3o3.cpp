@@ -4,6 +4,7 @@
 #include "cc3o3/appstates/Boot.h"
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -48,6 +49,11 @@ void Startup()
 
 void ProcessFrame()
 {
+	// HACK: Tick hard-coded input
+	// TODO: Have an input processing tree that handles dependency-based update
+	//  logic for all the controllers
+	input::HardcodedTick();
+
 	time::FrameClock::time_point const previous = time::FrameClock::previous();
 	time::FrameClock::time_point const now = time::FrameClock::now();
 	sAppStateManager.Tick( now, now - previous );

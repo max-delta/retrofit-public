@@ -2,10 +2,13 @@
 #include "project.h"
 
 #include "cc3o3/appstates/AppStatesFwd.h"
+#include "cc3o3/ui/UIFwd.h"
 
 #include "GameAppState/AppState.h"
 
 #include "core/ptr/unique_ptr.h"
+
+#include "rftl/vector"
 
 
 namespace RF { namespace cc { namespace appstate {
@@ -21,6 +24,8 @@ public:
 	virtual void OnEnter( AppStateChangeContext& context ) override;
 	virtual void OnExit( AppStateChangeContext& context ) override;
 	virtual void OnTick( AppStateTickContext& context ) override;
+
+	static rftl::vector<ui::FocusEventType> GetInputToProcess();
 
 
 private:

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TitleScreen_MainMenu.h"
 
+#include "cc3o3/appstates/TitleScreen.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -204,23 +205,19 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 
-	// TODO: Run logic
-	(void)internalState;
+	rftl::vector<ui::FocusEventType> const focusEvents = TitleScreen::GetInputToProcess();
+
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 	ui::UIContext uiContext( uiManager );
 	focusMan.UpdateHardFocus( uiContext );
-	static uint8_t HACK_roller1 = 0;
-	if( HACK_roller1++ % 64 == 0 )
+	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
-		static uint8_t HACK_roller2 = 0;
-		if( HACK_roller2++ % 10 < 5 )
+		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
+		if( handled == false )
 		{
-			focusMan.HandleEvent( uiContext, ui::focusevent::Command_NavigateDown );
-		}
-		else
-		{
-			focusMan.HandleEvent( uiContext, ui::focusevent::Command_NavigateUp );
+			// TODO: Run logic
+			(void)internalState;
 		}
 		focusMan.UpdateHardFocus( uiContext );
 	}
