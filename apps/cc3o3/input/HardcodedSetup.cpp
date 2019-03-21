@@ -9,11 +9,19 @@
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
 
+#include "PlatformInput_win32/WndProcInputDevice.h"
+
 #include "core_platform/winuser_shim.h"
 #include "core/ptr/default_creator.h"
 
 
 namespace RF { namespace cc { namespace input {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static WeakPtr<input::RawInputController> sRawInputController;
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 void HardcodedSetup()
@@ -64,8 +72,19 @@ void HardcodedSetup()
 	manager.RegisterGameController( hotkeyController, player::P1, layer::MainMenu );
 	manager.RegisterGameController( hotkeyController, player::P1, layer::GameMenu );
 
-	manager.StoreRawController( rftl::move(rawController) );
+	details::sRawInputController = rawController;
+	manager.StoreRawController( rftl::move( rawController ) );
 	manager.StoreGameController( rftl::move( hotkeyController ) );
+}
+
+
+
+void HardcodedTick()
+{
+	if( details::sRawInputController != nullptr )
+	{
+		details::sRawInputController->ConsumeInput( *app::gWndProcInput );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
