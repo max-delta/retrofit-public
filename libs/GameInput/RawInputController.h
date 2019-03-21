@@ -24,8 +24,8 @@ private:
 	static constexpr size_t kMaxCommandBufferLength = 64;
 	static constexpr size_t kMaxSignalBufferLength = 64;
 	static constexpr size_t kMaxTextBufferLength = 64;
-	using CommandBuffer = rftl::deque<Command>;
-	using SignalBuffer = rftl::deque<Signal>;
+	using CommandBuffer = rftl::deque<RawCommand>;
+	using SignalBuffer = rftl::deque<RawSignal>;
 	using SignalBufferMap = rftl::unordered_map<RawSignalType, SignalBuffer>;
 	using TextBuffer = rftl::deque<char16_t>;
 
@@ -42,9 +42,9 @@ public:
 
 	void ConsumeInput( InputDevice& inputDevice );
 
-	virtual void GetRawCommandStream( rftl::virtual_iterator<Command>& parser, size_t maxCommands ) const override;
+	virtual void GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, size_t maxCommands ) const override;
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const override;
-	virtual void GetRawSignalStream( rftl::virtual_iterator<Signal>& sampler, size_t maxSamples, RawSignalType type ) const override;
+	virtual void GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, size_t maxSamples, RawSignalType type ) const override;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const override;
 
 

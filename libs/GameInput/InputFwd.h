@@ -22,6 +22,11 @@ constexpr PlayerID kInvalidPlayerID = 0;
 using LayerID = uint8_t;
 constexpr LayerID kInvalidLayerID = 0;
 
+struct RawCommand;
+struct GameCommand;
+struct RawSignal;
+struct GameSignal;
+
 class RawController;
 class GameController;
 class RawInputController;
