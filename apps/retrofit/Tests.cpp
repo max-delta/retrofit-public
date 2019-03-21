@@ -363,13 +363,13 @@ void DrawInputDebug()
 	}
 	else
 	{
-		using RawCommand = input::RawController::Command;
+		using RawCommand = input::RawCommand;
 		using RawCommands = rftl::static_array<RawCommand, 8>;
 		using RawCommandParser = rftl::virtual_back_inserter_iterator<RawCommand, RawCommands>;
-		using GameCommand = input::GameController::Command;
+		using GameCommand = input::GameCommand;
 		using GameCommands = rftl::static_array<GameCommand, 8>;
 		using GameCommandParser = rftl::virtual_back_inserter_iterator<GameCommand, GameCommands>;
-		using RawSignal = input::RawController::Signal;
+		using RawSignal = input::RawSignal;
 		using RawSignals = rftl::static_array<RawSignal, 8>;
 		using RawSignalSampler = rftl::virtual_back_inserter_iterator<RawSignal, RawSignals>;
 		RawCommands rawCommands;
