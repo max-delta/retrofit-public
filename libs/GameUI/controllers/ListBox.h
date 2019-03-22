@@ -43,7 +43,7 @@ public:
 
 
 	//
-	// Private data
+	// Private methods
 private:
 	TextLabel const* GetSlotWithFocus( UIConstContext const& context ) const;
 
