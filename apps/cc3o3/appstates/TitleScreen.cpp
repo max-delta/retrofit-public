@@ -173,10 +173,10 @@ rftl::vector<ui::FocusEventType> TitleScreen::GetInputToProcess()
 				retVal.emplace_back( ui::focusevent::Command_NavigateRight );
 				break;
 			case input::command::game::UIActivateSelection:
-				// TODO
+				retVal.emplace_back( ui::focusevent::Command_ActivateCurrentFocus );
 				break;
 			case input::command::game::UICancelSelection:
-				// TODO
+				retVal.emplace_back( ui::focusevent::Command_CancelCurrentFocus );
 				break;
 			default:
 				RF_DBGFAIL_MSG(
