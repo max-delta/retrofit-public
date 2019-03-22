@@ -35,11 +35,34 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 			return 0;
 
 		case WM_GETMINMAXINFO: // lParam: MINMAXINFO*
+		{
 			// Lets us tell the window the limits that it can be resized to.
-			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + win32::GetSystemMetrics( SM_CXFRAME ) * 2;
-			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
-			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
-			( *( reinterpret_cast<win32::MINMAXINFO*>(lParam) ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
+			int xPadding = win32::GetSystemMetrics( SM_CXFRAME ) * 2;
+			int yPadding = win32::GetSystemMetrics( SM_CYFRAME ) * 2 + win32::GetSystemMetrics( SM_CYCAPTION );
+			#if( _WIN32_WINNT >= 0x0600 )
+			{
+				// *grumble* This came in with VS2013 apparently
+				xPadding += win32::GetSystemMetrics( SM_CXPADDEDBORDER );
+			}
+			#endif
+			constexpr bool kAddMissingPixels = true;
+			if( kAddMissingPixels )
+			{
+				// HACK: Somewhere, in the last 15 years, MS fucked this up.
+				//  Everyone on the internet seems to just add random numbers
+				//  to fix it, and nobody seems to know when it broke or how to
+				//  actually handle it. General anecdotes seem to narrow this
+				//  down to the XP->Vista timeframe.
+				// TODO: I don't know... hope that someone eventually stumbles
+				//  on the correct magic system metric combo?
+				xPadding += 5;
+				yPadding += 10;
+			}
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + xPadding;
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + yPadding;
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
+		}
 			return 0;
 
 		case WM_CLOSE: // No parameters
