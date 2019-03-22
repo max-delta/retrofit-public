@@ -16,6 +16,7 @@
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/TextLabel.h"
+#include "GameUI/controllers/TextRows.h"
 #include "GameUI/controllers/FramePackDisplay.h"
 #include "GameUI/controllers/ListBox.h"
 
@@ -115,7 +116,6 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 			96 );
 
 		// Menu floater in center bottom
-		// TODO: Setup focus management
 		rftl::vector<rftl::string> menuText;
 		menuText.emplace_back( "Single player" );
 		menuText.emplace_back( "Multiplayer" );
@@ -159,15 +159,35 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		TODODebug->SetText( "DEBUG GOES HERE" );
 		TODODebug->SetColor( math::Color3f::kBlack );
 
-		// TODO: Build stamp in top right
-		WeakPtr<ui::controller::TextLabel> const TODOBuild =
+		// Build stamp floater in top right
+		rftl::vector<rftl::string> buildText;
+		buildText.emplace_back( RF_BUILDSTAMP_TIME );
+		buildText.emplace_back( RF_BUILDSTAMP_TYPE );
+		buildText.emplace_back( RF_BUILDSTAMP_VERSION );
+		buildText.emplace_back( RF_BUILDSTAMP_SOURCE );
+		uint8_t const buildFontHeight = fontReg.SelectBestFont( ui::font::MinSize, 1 ).mFontHeight;
+		constexpr gfx::PPUCoordElem kBuildEntryHitboxWidth = 80;
+		constexpr gfx::PPUCoordElem kBuildEntryPadding = 1;
+		gfx::PPUCoord const buildDimensions = {
+			kBuildEntryHitboxWidth,
+			math::integer_cast<gfx::PPUCoordElem>( ( buildFontHeight + kBuildEntryPadding ) * buildText.size() )
+		};
+		WeakPtr<ui::controller::Floater> const buildPane =
 			uiManager.AssignStrongController(
 				rightRowSlicer->GetChildContainerID( 0 ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
-		TODOBuild->SetJustification( ui::Justification::TopRight );
-		TODOBuild->SetFont( ui::font::MinSize );
-		TODOBuild->SetText( "BUILD GOES HERE" );
-		TODOBuild->SetColor( math::Color3f::kBlack );
+				DefaultCreator<ui::controller::Floater>::Create(
+					buildDimensions.x,
+					buildDimensions.y,
+					ui::Justification::TopRight ) );
+		WeakPtr<ui::controller::TextRows> const buildLabels =
+			uiManager.AssignStrongController(
+				buildPane->GetChildContainerID(),
+				DefaultCreator<ui::controller::TextRows>::Create(
+					buildText.size(),
+					ui::font::MinSize,
+					ui::Justification::MiddleRight,
+					math::Color3f::kBlack ) );
+		buildLabels->SetText( buildText );
 
 		// Copyright in bottom left
 		WeakPtr<ui::controller::TextLabel> const copyright =

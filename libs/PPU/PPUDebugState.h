@@ -20,7 +20,7 @@ class PPU_API PPUDebugState
 	// Constants
 public:
 	static constexpr size_t kMaxStrings = 32;
-	static constexpr size_t kMaxLines = 128;
+	static constexpr size_t kMaxLines = 256;
 	static constexpr size_t kMaxTotalElements =
 		kMaxStrings +
 		kMaxLines;
