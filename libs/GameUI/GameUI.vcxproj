@@ -46,6 +46,7 @@
     <ClInclude Include="controllers\RowSlicer.h" />
     <ClInclude Include="controllers\stdafx.h" />
     <ClInclude Include="controllers\TextLabel.h" />
+    <ClInclude Include="controllers\TextRows.h" />
     <ClInclude Include="FocusEvent.h" />
     <ClInclude Include="FocusKey.h" />
     <ClInclude Include="FocusManager.h" />
@@ -71,6 +72,7 @@
     <ClCompile Include="controllers\Passthrough.cpp" />
     <ClCompile Include="controllers\RowSlicer.cpp" />
     <ClCompile Include="controllers\TextLabel.cpp" />
+    <ClCompile Include="controllers\TextRows.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FocusEvent.cpp" />
     <ClCompile Include="FocusKey.cpp" />
