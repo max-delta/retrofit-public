@@ -27,6 +27,8 @@ namespace app {
 namespace RF { namespace app {
 ///////////////////////////////////////////////////////////////////////////////
 
+APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
+
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;

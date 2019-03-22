@@ -57,6 +57,11 @@ int main()
 			break;
 		}
 
+		if( app::gShouldExit )
+		{
+			break;
+		}
+
 		app::gGraphics->BeginFrame();
 		{
 			framePackEditor->Process();
