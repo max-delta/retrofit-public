@@ -30,6 +30,8 @@ namespace RF { namespace app {
 // Window Procedure in different file
 shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam );
 
+APPCOMMONGRAPHICALCLIENT_API bool gShouldExit = false;
+
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
