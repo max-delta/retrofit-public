@@ -32,6 +32,11 @@ int main()
 			break;
 		}
 
+		if( app::gShouldExit )
+		{
+			break;
+		}
+
 		app::gGraphics->BeginFrame();
 		{
 			cc::ProcessFrame();
