@@ -166,6 +166,8 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 		{
 			node.mFavoredChild = next;
 		}
+
+		return true;
 	}
 
 	return false;
