@@ -10,6 +10,7 @@
 #include "GameUI/FocusManager.h"
 #include "GameUI/FontRegistry.h"
 #include "GameUI/FocusEvent.h"
+#include "GameUI/FocusTarget.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
@@ -32,7 +33,11 @@ struct TitleScreen_MainMenu::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
-	// TODO: ???
+	ui::ContainerID mSinglePlayer = ui::kInvalidContainerID;
+	ui::ContainerID mMultiplayer = ui::kInvalidContainerID;
+	ui::ContainerID mCharacterCreator = ui::kInvalidContainerID;
+	ui::ContainerID mOptions = ui::kInvalidContainerID;
+	ui::ContainerID mExitToDesktop = ui::kInvalidContainerID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,9 +50,6 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 	gfx::PPUController const& ppu = *app::gGraphics;
 	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	ui::FontRegistry const& fontReg = *app::gFontRegistry;
-
-	// TODO: Setup logic
-	(void)internalState;
 
 	// Setup UI
 	{
@@ -141,6 +143,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					ui::font::LargeMenuSelection ) );
 		menuEntries->SetText( menuText );
 		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+		internalState.mSinglePlayer = menuEntries->GetSlotController( 0 )->GetContainerID();
+		internalState.mMultiplayer = menuEntries->GetSlotController( 1 )->GetContainerID();
+		internalState.mCharacterCreator = menuEntries->GetSlotController( 2 )->GetContainerID();
+		internalState.mOptions = menuEntries->GetSlotController( 3 )->GetContainerID();
+		internalState.mExitToDesktop = menuEntries->GetSlotController( 4 )->GetContainerID();
 
 		// TODO: Basic debug in top left
 		WeakPtr<ui::controller::TextLabel> const TODODebug =
@@ -216,8 +223,51 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
 		if( handled == false )
 		{
-			// TODO: Run logic
-			(void)internalState;
+			// Wasn't handled by general UI
+
+			// Figure out the useful focus information
+			WeakPtr<ui::FocusTreeNode const> currentFocus;
+			WeakPtr<ui::FocusTarget const> currentFocusTarget;
+			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
+			{
+				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
+				if( currentFocus != nullptr )
+				{
+					currentFocusTarget = currentFocus->mFocusTarget;
+				}
+				if(currentFocusTarget != nullptr)
+				{
+					RF_ASSERT( currentFocusTarget->HasHardFocus() );
+					currentFocusContainerID = currentFocusTarget->mContainerID;
+				}
+			}
+
+			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus)
+			{
+				if( currentFocusContainerID != ui::kInvalidContainerID )
+				{
+					if( currentFocusContainerID == internalState.mSinglePlayer )
+					{
+						RF_TODO_BREAK_MSG( "Single player" );
+					}
+					else if( currentFocusContainerID == internalState.mMultiplayer )
+					{
+						RF_TODO_BREAK_MSG( "Multiplayer" );
+					}
+					else if( currentFocusContainerID == internalState.mCharacterCreator )
+					{
+						RF_TODO_BREAK_MSG( "Character creator" );
+					}
+					else if( currentFocusContainerID == internalState.mOptions )
+					{
+						RF_TODO_BREAK_MSG( "Options" );
+					}
+					else if( currentFocusContainerID == internalState.mExitToDesktop )
+					{
+						app::gShouldExit = true;
+					}
+				}
+			}
 		}
 		focusMan.UpdateHardFocus( uiContext );
 	}
