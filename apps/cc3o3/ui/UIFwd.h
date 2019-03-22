@@ -18,5 +18,16 @@ enum : FontPurposeID
 };
 }
 
+namespace focusevent {
+using namespace RF::ui::focusevent;
+enum : FocusEventType
+{
+	UNUSED = BEGIN_CUSTOM_TYPES,
+
+	Command_ActivateCurrentFocus,
+	Command_CancelCurrentFocus
+};
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}}
