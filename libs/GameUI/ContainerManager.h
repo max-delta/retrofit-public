@@ -50,6 +50,9 @@ public:
 	// Destroys the entire UI, use with caution
 	void RecreateRootContainer();
 
+	ContainerID GetContainerID( char const* label ) const;
+	ContainerID GetContainerID( rftl::string const& label ) const;
+
 	Container const& GetContainer( ContainerID containerID ) const;
 	Container const& GetContainer( char const* label ) const;
 	Container const& GetContainer( rftl::string const& label ) const;
