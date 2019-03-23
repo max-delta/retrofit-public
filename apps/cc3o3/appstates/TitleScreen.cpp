@@ -5,6 +5,7 @@
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/appstates/TitleScreen_MainMenu.h"
 #include "cc3o3/appstates/TitleScreen_Options.h"
+#include "cc3o3/appstates/AppStateRoute.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -91,7 +92,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 	AppStateManager& appStateMan = internalState.mAppStateManager;
 	appStateMan.AddState( appstate::id::TitleScreen_MainMenu, DefaultCreator<appstate::TitleScreen_MainMenu>::Create() );
 	appStateMan.AddState( appstate::id::TitleScreen_Options, DefaultCreator<appstate::TitleScreen_Options>::Create() );
-	appStateMan.Start( appstate::id::TitleScreen_MainMenu );
+	appStateMan.Start( appstate::GetFirstTitleScreenState() );
 }
 
 
