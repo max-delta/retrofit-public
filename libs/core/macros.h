@@ -67,8 +67,12 @@ public: \
 #include "core/rf_assert.h"
 
 // To-do macros, as annotations and as run-time failures
-#define RF_TODO_ANNOTATION( MESSAGE ) \
-	RF_BUILD_MESSAGE( RF_CREATE_SOURCED_BUILD_MESSAGE( "TODO: " MESSAGE "" ) )
+#if RF_IS_ALLOWED( RF_CONFIG_TODO_MESSAGES )
+	#define RF_TODO_ANNOTATION( MESSAGE ) \
+		RF_BUILD_MESSAGE( RF_CREATE_SOURCED_BUILD_MESSAGE( "TODO: " MESSAGE "" ) )
+#else
+	#define RF_TODO_ANNOTATION( MESSAGE )
+#endif
 #define RF_TODO_BREAK_MSG( MESSAGE ) \
 	do \
 	{ \
