@@ -28,13 +28,15 @@ void Container::OnAssign( UIContext& context )
 	Controller* const controller = mWeakUIController;
 	RF_ASSERT( controller != nullptr );
 	controller->OnAssign( context, *this );
-	controller->OnAABBRecalc( context, *this );
 }
 
 
 
 void Container::OnAABBRecalc( UIContext& context )
 {
+	RF_ASSERT( mAABB.Width() > 0 );
+	RF_ASSERT( mAABB.Height() > 0 );
+
 	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{

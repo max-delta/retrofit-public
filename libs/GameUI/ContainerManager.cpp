@@ -58,26 +58,14 @@ void ContainerManager::CreateRootContainer()
 
 	Container& root = mContainers[kRootContainerID];
 	root.mContainerID = kRootContainerID;
-	RecalcRootContainer();
+	RecalcRootContainer( true );
 }
 
 
 
 void ContainerManager::RecalcRootContainer()
 {
-	Container& root = GetMutableRootContainer();
-
-	Container::AABB4 newAABB;
-	newAABB.mTopLeft = { mRootAABBReduction, mRootAABBReduction };
-	newAABB.mBottomRight.x = mGraphics->GetWidth() - mRootAABBReduction;
-	newAABB.mBottomRight.y = mGraphics->GetHeight() - mRootAABBReduction;
-
-	if( newAABB != root.mAABB )
-	{
-		root.mAABB = newAABB;
-		UIContext context( *this );
-		root.OnAABBRecalc( context );
-	}
+	RecalcRootContainer( false );
 }
 
 
@@ -88,7 +76,7 @@ void ContainerManager::RecreateRootContainer()
 
 	Container& root = mContainers[kRootContainerID];
 	root.mContainerID = kRootContainerID;
-	RecalcRootContainer();
+	RecalcRootContainer( true );
 
 	RF_ASSERT( mContainers.size() == 1 );
 	RF_ASSERT( mAnchors.empty() );
@@ -242,7 +230,7 @@ void ContainerManager::ProcessRecalcs()
 				if( container.IsConstrainedBy( anchorID ) )
 				{
 					// Recalculate it
-					RecalcContainer( container );
+					RecalcContainer( container, false );
 				}
 			}
 		}
@@ -265,6 +253,9 @@ void ContainerManager::Render() const
 		ContainerID const currentID = *containersToVisit.begin();
 		containersToVisit.erase( containersToVisit.begin() );
 		Container const& container = mContainers.at( currentID );
+
+		// All constraints should've been figure out by the time we render
+		RF_ASSERT( HasValidConstraints( container ) );
 
 		// Render
 		bool shouldRenderChildren = true;
@@ -359,7 +350,7 @@ ContainerID ContainerManager::CreateChildContainer( Container& parentContainer, 
 	// TODO: Update max depth ever seen
 	// TODO: Warn if getting crazy
 
-	RecalcContainer( childContainer );
+	RecalcContainer( childContainer, true );
 
 	return childContainerID;
 }
@@ -373,15 +364,91 @@ Container& ContainerManager::GetMutableContainer( ContainerID containerID )
 
 
 
-void ContainerManager::RecalcContainer( Container& container )
+bool ContainerManager::HasValidConstraints( Container const& container ) const
 {
-	Container::AABB4 newAABB;
-	newAABB.mTopLeft.x = mAnchors.at( container.mLeftConstraint ).mPos.x + mDebugAABBReduction;
-	newAABB.mTopLeft.y = mAnchors.at( container.mTopConstraint ).mPos.y + mDebugAABBReduction;
-	newAABB.mBottomRight.x = mAnchors.at( container.mRightConstraint ).mPos.x - mDebugAABBReduction;
-	newAABB.mBottomRight.y = mAnchors.at( container.mBottomConstraint ).mPos.y - mDebugAABBReduction;
+	if( container.mContainerID == kRootContainerID )
+	{
+		// Root is always properly constrained, by definition
+		return true;
+	}
 
-	if( newAABB != container.mAABB )
+	Anchor const& leftConstraint = mAnchors.at( container.mLeftConstraint );
+	Anchor const& topConstraint = mAnchors.at( container.mTopConstraint );
+	Anchor const& rightConstraint = mAnchors.at( container.mRightConstraint );
+	Anchor const& bottomConstraint = mAnchors.at( container.mBottomConstraint );
+
+	bool const allConstraintsValid =
+		leftConstraint.HasValidPosition() &&
+		topConstraint.HasValidPosition() &&
+		rightConstraint.HasValidPosition() &&
+		bottomConstraint.HasValidPosition();
+
+	if( allConstraintsValid == false )
+	{
+		return false;
+	}
+
+	// It's 'valid', but is it correct?
+	RF_ASSERT( leftConstraint.mPos.x < rightConstraint.mPos.x );
+	RF_ASSERT( topConstraint.mPos.y < bottomConstraint.mPos.y );
+
+	return true;
+}
+
+
+
+void ContainerManager::RecalcRootContainer( bool force )
+{
+	Container& root = GetMutableRootContainer();
+
+	Container::AABB4 newAABB;
+	newAABB.mTopLeft = { mRootAABBReduction, mRootAABBReduction };
+	newAABB.mBottomRight.x = mGraphics->GetWidth() - mRootAABBReduction;
+	newAABB.mBottomRight.y = mGraphics->GetHeight() - mRootAABBReduction;
+
+	if( ( newAABB != root.mAABB ) || force )
+	{
+		root.mAABB = newAABB;
+		UIContext context( *this );
+		root.OnAABBRecalc( context );
+	}
+}
+
+
+
+void ContainerManager::RecalcContainer( Container& container, bool force )
+{
+	if( container.mContainerID == kRootContainerID )
+	{
+		// Root container has special handling logic since it doesn't have
+		//  normal constraints
+		RecalcRootContainer( force );
+		return;
+	}
+
+	if( HasValidConstraints( container ) == false )
+	{
+		// Not able to recalc yet. This may be due to a chain of containers
+		//  being created still on the stack, which will need to wait for a
+		//  recalc pass to calculate the constraints in order
+		return;
+	}
+
+	Anchor const& leftConstraint = mAnchors.at( container.mLeftConstraint );
+	Anchor const& topConstraint = mAnchors.at( container.mTopConstraint );
+	Anchor const& rightConstraint = mAnchors.at( container.mRightConstraint );
+	Anchor const& bottomConstraint = mAnchors.at( container.mBottomConstraint );
+
+	Container::AABB4 newAABB;
+	newAABB.mTopLeft.x = leftConstraint.mPos.x + mDebugAABBReduction;
+	newAABB.mTopLeft.y = topConstraint.mPos.y + mDebugAABBReduction;
+	newAABB.mBottomRight.x = rightConstraint.mPos.x - mDebugAABBReduction;
+	newAABB.mBottomRight.y = bottomConstraint.mPos.y - mDebugAABBReduction;
+
+	RF_ASSERT( newAABB.Width() > 0 );
+	RF_ASSERT( newAABB.Height() > 0 );
+
+	if( ( newAABB != container.mAABB ) || force )
 	{
 		container.mAABB = newAABB;
 		UIContext context( *this );
@@ -412,6 +479,7 @@ AnchorID ContainerManager::CreateAnchor( Container& container )
 	Anchor& anchor = mAnchors[anchorID];
 	anchor.mAnchorID = anchorID;
 	anchor.mParentContainerID = containerID;
+	anchor.InvalidatePosition();
 
 	return anchorID;
 }
@@ -423,6 +491,11 @@ void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::PPUCoord pos )
 	RF_ASSERT( anchorID != kInvalidAnchorID );
 	Anchor& anchor = mAnchors.at( anchorID );
 	anchor.mPos = pos;
+
+	RF_ASSERT( anchor.mPos.x >= 0 );
+	RF_ASSERT( anchor.mPos.y >= 0 );
+	RF_ASSERT( anchor.mPos.x <= mContainers.at( kRootContainerID ).mAABB.Right() );
+	RF_ASSERT( anchor.mPos.y <= mContainers.at( kRootContainerID ).mAABB.Bottom() );
 
 	MarkForRecalc( anchorID );
 }
@@ -446,6 +519,7 @@ WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container&
 
 	UIContext context( *this );
 	container.OnAssign( context );
+	RecalcContainer( container, true );
 
 	RF_ASSERT( container.mWeakUIController != nullptr );
 	return container.mWeakUIController;

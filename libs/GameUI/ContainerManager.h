@@ -109,7 +109,11 @@ private:
 
 	Container& GetMutableContainer( ContainerID containerID );
 
-	void RecalcContainer( Container& container );
+	bool HasValidConstraints( Container const& container ) const;
+
+	void RecalcRootContainer( bool force );
+
+	void RecalcContainer( Container& container, bool force );
 	void DestroyContainer( ContainerID containerID );
 
 	AnchorID CreateAnchor( Container& container );
