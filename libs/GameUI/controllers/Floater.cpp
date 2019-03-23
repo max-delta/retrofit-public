@@ -37,8 +37,6 @@ ContainerID Floater::GetChildContainerID() const
 
 void Floater::OnInstanceAssign( UIContext& context, Container& container )
 {
-	ContainerID const parentContainerID = container.mContainerID;
-
 	mTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
 	mBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
 
