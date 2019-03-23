@@ -37,6 +37,8 @@ private:
 	//
 	// Private data
 private:
+	AnchorID mTopLeftAnchor = kInvalidAnchorID;
+	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mContainerID = kInvalidContainerID;
 	Justification mJustification = Justification::MiddleCenter;
 	gfx::PPUCoord mExpectedTileDimensions = {};
