@@ -126,5 +126,21 @@ inline T const& AABB4<T>::Bottom() const
 	return mBottomRight.y;
 }
 
+
+
+template<typename T>
+inline T AABB4<T>::Width() const
+{
+	return Right() - Left();
+}
+
+
+
+template<typename T>
+inline T AABB4<T>::Height() const
+{
+	return Bottom() - Top();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

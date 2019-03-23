@@ -35,6 +35,9 @@ public:
 	T const& Top() const;
 	T const& Bottom() const;
 
+	T Width() const;
+	T Height() const;
+
 
 public:
 	Vector2<T> mTopLeft;
