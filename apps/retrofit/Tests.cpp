@@ -11,6 +11,7 @@
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/Passthrough.h"
 #include "GameUI/controllers/TextLabel.h"
+#include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/FontRegistry.h"
 
 #include "GameInput/RawInputController.h"
@@ -453,8 +454,12 @@ void DrawInputDebug()
 
 void InitUITest()
 {
+	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	uiManager.SetRootRenderDepth( gfx::kNearestLayer + 50 );
+
+	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
 
 	// HACK: Slightly smaller, for testing
 	uiManager.SetRootAABBReduction( gfx::kTileSize / 16 );
@@ -494,6 +499,7 @@ void InitUITest()
 	textLabel8->SetFont( k2xFont );
 	textLabel8->SetText( "TextLabel8 test" );
 	textLabel8->SetColor( math::Color3f::kWhite );
+	textLabel8->SetBorder( true );
 
 	// Assign a label to confirm it's accessible
 	uiManager.AssignLabel( nineSlicer->GetChildContainerID( 8 ), "TextLabel8" );
@@ -501,6 +507,15 @@ void InitUITest()
 	RF_ASSERT( textLabel8 == textLabel8Untyped );
 	WeakPtr<ui::controller::TextLabel> const textLabel8Casted = uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "TextLabel8" );
 	RF_ASSERT( textLabel8Casted == textLabel8Untyped );
+
+	// Add a frame
+	WeakPtr<ui::controller::BorderFrame> const frame6 =
+		uiManager.AssignStrongController(
+			nineSlicer->GetChildContainerID( 6 ),
+			DefaultCreator<ui ::controller::BorderFrame>::Create() );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	frame6->SetTileset( frameTileset, 4, 4 );
 }
 
 

@@ -35,6 +35,7 @@
     <ClInclude Include="Anchor.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="ContainerManager.h" />
+    <ClInclude Include="controllers\BorderFrame.h" />
     <ClInclude Include="controllers\ColumnSlicer.h" />
     <ClInclude Include="controllers\Floater.h" />
     <ClInclude Include="controllers\FramePackDisplay.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="Anchor.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="ContainerManager.cpp" />
+    <ClCompile Include="controllers\BorderFrame.cpp" />
     <ClCompile Include="controllers\ColumnSlicer.cpp" />
     <ClCompile Include="controllers\Floater.cpp" />
     <ClCompile Include="controllers\FramePackDisplay.cpp" />
