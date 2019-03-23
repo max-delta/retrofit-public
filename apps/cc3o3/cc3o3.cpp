@@ -57,7 +57,6 @@ void ProcessFrame()
 	time::FrameClock::time_point const previous = time::FrameClock::previous();
 	time::FrameClock::time_point const now = time::FrameClock::now();
 	sAppStateManager.Tick( now, now - previous );
-
 	sAppStateManager.ApplyDeferredStateChange();
 
 	ui::ContainerManager& uiMan = *app::gUiManager;
