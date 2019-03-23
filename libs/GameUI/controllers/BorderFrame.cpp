@@ -48,15 +48,14 @@ ContainerID BorderFrame::GetChildContainerID() const
 
 void BorderFrame::OnInstanceAssign( UIContext& context, Container& container )
 {
-	// Passthrough
-	// TODO: New anchors that are adjusted for the border and offsets
-	mContainerID = CreateChildContainer(
-		context.GetMutableContainerManager(),
-		container,
-		container.mLeftConstraint,
-		container.mRightConstraint,
-		container.mTopConstraint,
-		container.mBottomConstraint );
+	mTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
+	mBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
+
+	AnchorID const top = mTopLeftAnchor;
+	AnchorID const bottom = mBottomRightAnchor;
+	AnchorID const left = mTopLeftAnchor;
+	AnchorID const right = mBottomRightAnchor;
+	mContainerID = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
 }
 
 
@@ -129,6 +128,11 @@ void BorderFrame::OnRender( UIConstContext const& context, Container const& cont
 void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 {
 	RecalcTilemap( container );
+
+	gfx::PPUCoord const topLeft = container.mAABB.mTopLeft + mExpectedTileDimensions;
+	gfx::PPUCoord const bottomRight = container.mAABB.mBottomRight - mExpectedTileDimensions;
+	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
+	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
