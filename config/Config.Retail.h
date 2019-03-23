@@ -12,4 +12,7 @@
 #define RF_CONFIG_ASSERTS RF_FORBID
 #define RF_CONFIG_FILENAME_MACRO RF_FORBID
 
+// Forbid: If it's not done by the retail build, it's probably not getting done
+#define RF_CONFIG_TODO_MESSAGES RF_FORBID
+
 #define RF_CONFIG_INTERNAL_BUILD_NOTICE RF_FORBID
