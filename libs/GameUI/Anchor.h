@@ -14,9 +14,18 @@ struct GAMEUI_API Anchor
 	RF_NO_COPY( Anchor );
 
 	//
+	// Constants
+public:
+	static constexpr gfx::PPUCoordElem kInvalidPosElem = rftl::numeric_limits<gfx::PPUCoordElem>::min();
+
+
+	//
 	// Public methods
 public:
 	Anchor() = default;
+
+	void InvalidatePosition();
+	bool HasValidPosition() const;
 
 
 	//
@@ -29,7 +38,7 @@ public:
 	ContainerID mParentContainerID = kInvalidContainerID;
 
 	// Anchors are dimensionless points
-	gfx::PPUCoord mPos;
+	gfx::PPUCoord mPos = { kInvalidPosElem, kInvalidPosElem };
 };
 
 ///////////////////////////////////////////////////////////////////////////////
