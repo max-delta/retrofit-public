@@ -39,8 +39,8 @@ public:
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) = 0;
 	virtual bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV ) = 0;
 
-	virtual bool DebugRenderText( math::Vector2f pos, const char* fmt, ... ) = 0;
-	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width, math::Color3f color ) = 0;
+	virtual bool DebugRenderText( math::Vector2f pos, float z, const char* fmt, ... ) = 0;
+	virtual bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, float width, math::Color3f color ) = 0;
 
 	virtual bool BeginFrame() = 0;
 	virtual bool RenderFrame() = 0;

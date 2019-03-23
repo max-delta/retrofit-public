@@ -23,6 +23,16 @@
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static constexpr PPUDepthLayer kDebugLineLayer = 0;
+static constexpr PPUDepthLayer kDebugStringLayer = kNearestLayer;
+static constexpr PPUDepthLayer kDebugGridLayer = 0;
+
+static constexpr PPUDepthLayer kDefaultTextLayer = 0;
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs )
 	: mDeviceInterface( rftl::move( deviceInterface ) )
@@ -281,7 +291,7 @@ bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID
 {
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = DrawText( pos, 0, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
+	bool const retVal = DrawText( pos, details::kDefaultTextLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -678,9 +688,25 @@ void PPUController::Render() const
 	DepthOrder depthOrder = {};
 	CalculateDepthOrder( depthOrder );
 
+	bool hasDrawnGrid = false;
+
 	// Render in depth order
 	for( DepthElement const& element : depthOrder )
 	{
+		// Have we reached or crossed over the grid?
+		if( mDebugDrawGrid && hasDrawnGrid == false && element.mDepth < details::kDebugGridLayer )
+		{
+			// Draw grid
+			// NOTE: Will be drawn below things that share the same layer, due
+			//  to this being immediately after all elements on that layer that
+			//  have already written to the depth buffer
+			// NOTE: Transparent objects on the same layer will get to write to
+			//  the depth buffer first, and so may block the grid from
+			//  rendering in those pixels
+			RenderDebugGrid();
+			hasDrawnGrid = true;
+		}
+
 		size_t const i = element.mId;
 
 		bool terminate = false;
@@ -709,10 +735,12 @@ void PPUController::Render() const
 		}
 	}
 
-	// Draw grid
-	if( mDebugDrawGrid )
+	// Have we drawn the grid yet?
+	if( mDebugDrawGrid && hasDrawnGrid == false )
 	{
+		// Draw grid
 		RenderDebugGrid();
+		hasDrawnGrid = true;
 	}
 
 	mDeviceInterface->RenderFrame();
@@ -769,7 +797,7 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 		i_depthOrder++;
 		element.mId = math::integer_cast<uint8_t>( i );
 		element.mType = ElementType::DebugLine;
-		element.mDepth = kNearestLayer;
+		element.mDepth = details::kDebugLineLayer;
 	}
 
 	// Debug text
@@ -780,7 +808,7 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 		i_depthOrder++;
 		element.mId = math::integer_cast<uint8_t>( i );
 		element.mType = ElementType::DebugString;
-		element.mDepth = kNearestLayer;
+		element.mDepth = details::kDebugStringLayer;
 	}
 
 	// Sort
@@ -1257,7 +1285,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 {
 	math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
-	mDeviceInterface->DebugDrawLine( p0, p1, static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
+	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( details::kDebugLineLayer ), static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
 }
 
 
@@ -1265,7 +1293,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 void PPUController::RenderDebugString( PPUDebugState::DebugString const& string ) const
 {
 	math::Vector2f const pos = CoordToDevice( string.mXCoord, string.mYCoord );
-	mDeviceInterface->DebugRenderText( pos, "%s", string.mText );
+	mDeviceInterface->DebugRenderText( pos, LayerToDevice( details::kDebugStringLayer ), "%s", string.mText );
 }
 
 
@@ -1280,12 +1308,14 @@ void PPUController::RenderDebugGrid() const
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( posA.x, 0 ),
 			math::Vector2f( posA.x, 1 ),
-			LayerToDevice( 0 ),
+			LayerToDevice( details::kDebugGridLayer ),
+			1.f,
 			color );
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( posB.x, 0 ),
 			math::Vector2f( posB.x, 1 ),
-			LayerToDevice( 0 ),
+			LayerToDevice( details::kDebugGridLayer ),
+			1.f,
 			color );
 	}
 	for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
@@ -1295,12 +1325,14 @@ void PPUController::RenderDebugGrid() const
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( 0, posA.y ),
 			math::Vector2f( 1, posA.y ),
-			LayerToDevice( 0 ),
+			LayerToDevice( details::kDebugGridLayer ),
+			1.f,
 			color );
 		mDeviceInterface->DebugDrawLine(
 			math::Vector2f( 0, posB.y ),
 			math::Vector2f( 1, posB.y ),
-			LayerToDevice( 0 ),
+			LayerToDevice( details::kDebugGridLayer ),
+			1.f,
 			color );
 	}
 }
