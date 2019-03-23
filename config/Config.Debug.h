@@ -1,5 +1,8 @@
 #include "Config.h"
 
+// Debug builds are for local iteration only. Not for internal or public
+//  release. Likely have bad performance and contain secrets.
+
 #if __has_include( "__BuildStamp.h" )
 	#include "__BuildStamp.h"
 #else

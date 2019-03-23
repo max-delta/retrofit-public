@@ -1,5 +1,8 @@
 #include "Config.h"
 
+// Release builds are for internal development. Not for public release. Should
+//  have decent performance, but may contain secrets.
+
 #if __has_include( "__BuildStamp.h" )
 	#include "__BuildStamp.h"
 #else

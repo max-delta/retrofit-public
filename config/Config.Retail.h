@@ -1,5 +1,8 @@
 #include "Config.h"
 
+// Retail builds are for public release. Should have optimal performance and
+//  contain no secrets. Should be string-scanned before release to verify.
+
 #if __has_include( "__BuildStamp.h" )
 	#include "__BuildStamp.h"
 #else
