@@ -22,6 +22,9 @@
     <ClCompile Include="appstates\TitleScreen_Options.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\AppStateRoute.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -70,6 +73,9 @@
       <Filter>input</Filter>
     </ClInclude>
     <ClInclude Include="appstates\TitleScreen_Options.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\AppStateRoute.h">
       <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>

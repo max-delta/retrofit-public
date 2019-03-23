@@ -2,6 +2,7 @@
 #include "InitialLoading.h"
 
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/appstates/AppStateRoute.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -106,7 +107,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", framepacks.GetChild( "logos", "cc303_composite_192.fpack" ) );
 	}
 
-	context.mManager.RequestDeferredStateChange( id::TitleScreen );
+	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,6 +4,7 @@
 #include "cc3o3/appstates/Boot.h"
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -34,7 +35,7 @@ void Startup()
 	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
 
-	sAppStateManager.Start( appstate::id::Boot );
+	sAppStateManager.Start( appstate::GetBootState() );
 
 	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
 
