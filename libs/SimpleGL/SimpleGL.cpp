@@ -429,10 +429,10 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 
 
 
-bool SimpleGL::DebugRenderText( math::Vector2f pos, const char* fmt, ... )
+bool SimpleGL::DebugRenderText( math::Vector2f pos, float z, const char* fmt, ... )
 {
 	glColor3f( 0, 0, 0 );
-	glRasterPos2f( pos.x, pos.y );
+	glRasterPos3f( pos.x, pos.y, z );
 	va_list args;
 	va_start( args, fmt );
 	bool const retVal = glPrint( fmt, args );
@@ -442,7 +442,7 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, const char* fmt, ... )
 
 
 
-bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width, math::Color3f color )
+bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, float width, math::Color3f color )
 {
 	glBindTexture( GL_TEXTURE_2D, 0 );
 	glColor3f( color.r, color.g, color.b );
@@ -450,16 +450,16 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float width,
 	{
 		glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
 		glBegin( GL_LINES );
-		glVertex2f( p0.x + mXFudge, p0.y + mYFudge );
-		glVertex2f( p1.x + mXFudge, p1.y + mYFudge );
+		glVertex3f( p0.x + mXFudge, p0.y + mYFudge, z );
+		glVertex3f( p1.x + mXFudge, p1.y + mYFudge, z );
 		glEnd();
 	}
 	else
 	{
 		glLineWidth( width );
 		glBegin( GL_LINES );
-		glVertex2f( p0.x - mXFudge * width, p0.y - mYFudge * width );
-		glVertex2f( p1.x - mXFudge * width, p1.y - mYFudge * width );
+		glVertex3f( p0.x - mXFudge * width, p0.y - mYFudge * width, z );
+		glVertex3f( p1.x - mXFudge * width, p1.y - mYFudge * width, z );
 		glEnd();
 	}
 	return true;
