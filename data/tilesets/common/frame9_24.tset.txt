@@ -1,0 +1,3 @@
+4
+4
+RF:/assets/textures/common/frame9_24.png

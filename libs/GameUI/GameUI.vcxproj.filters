@@ -44,6 +44,9 @@
     <ClCompile Include="controllers\TextRows.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\BorderFrame.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -94,6 +97,9 @@
     <ClInclude Include="FocusEvent.h" />
     <ClInclude Include="FocusKey.h" />
     <ClInclude Include="controllers\TextRows.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\BorderFrame.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>
