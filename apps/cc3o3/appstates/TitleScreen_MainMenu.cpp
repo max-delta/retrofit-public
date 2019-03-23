@@ -31,17 +31,21 @@
 
 namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static constexpr char kSinglePlayerTag[] = "SPLAY";
+static constexpr char kMultiplayerTag[] = "MPLAY";
+static constexpr char kCharacterCreatorTag[] = "CHAR";
+static constexpr char kOptionsTag[] = "OPT";
+static constexpr char kExitToDesktopTag[] = "EXIT";
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 struct TitleScreen_MainMenu::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
-
-	ui::ContainerID mSinglePlayer = ui::kInvalidContainerID;
-	ui::ContainerID mMultiplayer = ui::kInvalidContainerID;
-	ui::ContainerID mCharacterCreator = ui::kInvalidContainerID;
-	ui::ContainerID mOptions = ui::kInvalidContainerID;
-	ui::ContainerID mExitToDesktop = ui::kInvalidContainerID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +53,6 @@ struct TitleScreen_MainMenu::InternalState
 void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
-	InternalState& internalState = *mInternalState;
 
 	gfx::PPUController const& ppu = *app::gGraphics;
 	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
@@ -146,11 +149,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					ui::font::LargeMenuSelection ) );
 		menuEntries->SetText( menuText );
 		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
-		internalState.mSinglePlayer = menuEntries->GetSlotController( 0 )->GetContainerID();
-		internalState.mMultiplayer = menuEntries->GetSlotController( 1 )->GetContainerID();
-		internalState.mCharacterCreator = menuEntries->GetSlotController( 2 )->GetContainerID();
-		internalState.mOptions = menuEntries->GetSlotController( 3 )->GetContainerID();
-		internalState.mExitToDesktop = menuEntries->GetSlotController( 4 )->GetContainerID();
+		uiManager.AssignLabel( menuEntries->GetSlotController( 0 )->GetContainerID(), details::kSinglePlayerTag );
+		uiManager.AssignLabel( menuEntries->GetSlotController( 1 )->GetContainerID(), details::kMultiplayerTag );
+		uiManager.AssignLabel( menuEntries->GetSlotController( 2 )->GetContainerID(), details::kCharacterCreatorTag );
+		uiManager.AssignLabel( menuEntries->GetSlotController( 3 )->GetContainerID(), details::kOptionsTag );
+		uiManager.AssignLabel( menuEntries->GetSlotController( 4 )->GetContainerID(), details::kExitToDesktopTag );
 
 		// TODO: Basic debug in top left
 		WeakPtr<ui::controller::TextLabel> const TODODebug =
@@ -233,8 +236,6 @@ void TitleScreen_MainMenu::OnExit( AppStateChangeContext& context )
 
 void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 {
-	InternalState& internalState = *mInternalState;
-
 	rftl::vector<ui::FocusEventType> const focusEvents = TitleScreen::GetInputToProcess();
 
 	ui::ContainerManager& uiManager = *app::gUiManager;
@@ -269,23 +270,23 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
-					if( currentFocusContainerID == internalState.mSinglePlayer )
+					if( currentFocusContainerID == uiManager.GetContainerID( details::kSinglePlayerTag ) )
 					{
 						RF_TODO_BREAK_MSG( "Single player" );
 					}
-					else if( currentFocusContainerID == internalState.mMultiplayer )
+					else if( currentFocusContainerID == uiManager.GetContainerID( details::kMultiplayerTag ) )
 					{
 						RF_TODO_BREAK_MSG( "Multiplayer" );
 					}
-					else if( currentFocusContainerID == internalState.mCharacterCreator )
+					else if( currentFocusContainerID == uiManager.GetContainerID( details::kCharacterCreatorTag ) )
 					{
 						RF_TODO_BREAK_MSG( "Character creator" );
 					}
-					else if( currentFocusContainerID == internalState.mOptions )
+					else if( currentFocusContainerID == uiManager.GetContainerID( details::kOptionsTag ) )
 					{
 						context.mManager.RequestDeferredStateChange( id::TitleScreen_Options );
 					}
-					else if( currentFocusContainerID == internalState.mExitToDesktop )
+					else if( currentFocusContainerID == uiManager.GetContainerID( details::kExitToDesktopTag ) )
 					{
 						app::gShouldExit = true;
 					}
