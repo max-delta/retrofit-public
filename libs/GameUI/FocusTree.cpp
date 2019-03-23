@@ -43,10 +43,12 @@ FocusTree::ConstNodeStack FocusTree::GetCurrentFocusStack() const
 			retVal.emplace_back( traverse );
 		}
 
-		if( ShouldTraverseForFocus( node ) )
+		if( ShouldTraverseForFocus( node ) == false )
 		{
-			traverse = node.mFavoredChild;
+			break;
 		}
+
+		traverse = node.mFavoredChild;
 	}
 
 	return retVal;
@@ -67,10 +69,12 @@ WeakPtr<FocusTreeNode const> FocusTree::GetCurrentFocus() const
 			retVal = traverse;
 		}
 
-		if( ShouldTraverseForFocus( node ) )
+		if( ShouldTraverseForFocus( node ) == false )
 		{
-			traverse = node.mFavoredChild;
+			break;
 		}
+
+		traverse = node.mFavoredChild;
 	}
 
 	return retVal;
