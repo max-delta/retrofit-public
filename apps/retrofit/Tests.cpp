@@ -11,6 +11,7 @@
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/Passthrough.h"
 #include "GameUI/controllers/TextLabel.h"
+#include "GameUI/controllers/TextRows.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/FontRegistry.h"
 
@@ -516,6 +517,23 @@ void InitUITest()
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	frame6->SetTileset( frameTileset, 4, 4 );
+
+	// Put some text in the frame to make sure it's readable
+	rftl::vector<rftl::string> frame6Text;
+	frame6Text.emplace_back( "Line1" );
+	frame6Text.emplace_back( "Line2" );
+	frame6Text.emplace_back( "Line3" );
+	frame6Text.emplace_back( "Line4" );
+	frame6Text.emplace_back( "Line5" );
+	WeakPtr<ui::controller::TextRows> const frame6TextRows =
+		uiManager.AssignStrongController(
+			frame6->GetChildContainerID(),
+			DefaultCreator<ui::controller::TextRows>::Create(
+				frame6Text.size(),
+				k2xFont,
+				ui::Justification::MiddleLeft,
+				math::Color3f::kWhite ) );
+	frame6TextRows->SetText( frame6Text );
 }
 
 
