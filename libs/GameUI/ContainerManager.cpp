@@ -104,6 +104,20 @@ void ContainerManager::RecreateRootContainer()
 
 
 
+ContainerID ContainerManager::GetContainerID( char const* label ) const
+{
+	return mLabelsToContainerIDs.at( label );
+}
+
+
+
+ContainerID ContainerManager::GetContainerID( rftl::string const& label ) const
+{
+	return mLabelsToContainerIDs.at( label );
+}
+
+
+
 Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 {
 	return mContainers.at( containerID );
@@ -113,14 +127,14 @@ Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 
 Container const& ContainerManager::GetContainer( char const* label ) const
 {
-	return GetContainer( mLabelsToContainerIDs.at( label ) );
+	return GetContainer( GetContainerID( label ) );
 }
 
 
 
 Container const& ContainerManager::GetContainer( rftl::string const& label ) const
 {
-	return GetContainer( mLabelsToContainerIDs.at( label ) );
+	return GetContainer( GetContainerID( label ) );
 }
 
 
