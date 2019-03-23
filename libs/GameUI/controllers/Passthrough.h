@@ -17,7 +17,7 @@ class GAMEUI_API Passthrough final : public InstancedController
 public:
 	Passthrough() = default;
 
-	ContainerID GetChildContainerID();
+	ContainerID GetChildContainerID() const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 
