@@ -22,6 +22,9 @@ public:
 	void SetTileset( gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight );
 	void SetJustification( Justification justification );
 
+	ContainerID GetChildContainerID() const;
+
+	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
@@ -34,6 +37,7 @@ private:
 	//
 	// Private data
 private:
+	ContainerID mContainerID = kInvalidContainerID;
 	Justification mJustification = Justification::MiddleCenter;
 	gfx::PPUCoord mExpectedTileDimensions = {};
 	gfx::PPUCoord mExpectedDimensions = {};

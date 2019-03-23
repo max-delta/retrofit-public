@@ -39,6 +39,28 @@ void BorderFrame::SetJustification( Justification justification )
 
 
 
+ContainerID BorderFrame::GetChildContainerID() const
+{
+	return mContainerID;
+}
+
+
+
+void BorderFrame::OnInstanceAssign( UIContext& context, Container& container )
+{
+	// Passthrough
+	// TODO: New anchors that are adjusted for the border and offsets
+	mContainerID = CreateChildContainer(
+		context.GetMutableContainerManager(),
+		container,
+		container.mLeftConstraint,
+		container.mRightConstraint,
+		container.mTopConstraint,
+		container.mBottomConstraint );
+}
+
+
+
 void BorderFrame::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	if( mTileLayer.NumTiles() == 0 )
