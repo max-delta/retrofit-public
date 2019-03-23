@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Boot.h"
 
+#include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -55,8 +56,8 @@ void Boot::OnTick( AppStateTickContext& context )
 	// TODO: Get this from a file
 	input::HardcodedSetup();
 
-	// Hop to loading ASAP
-	context.mManager.RequestDeferredStateChange( id::InitialLoading );
+	// Hop out of boot ASAP
+	context.mManager.RequestDeferredStateChange( GetStateAfterBoot() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
