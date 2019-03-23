@@ -16,7 +16,8 @@ enum : AppStateID
 	InitialLoading,
 
 	TitleScreen,
-	TitleScreen_MainMenu
+	TitleScreen_MainMenu,
+	TitleScreen_Options
 };
 }
 

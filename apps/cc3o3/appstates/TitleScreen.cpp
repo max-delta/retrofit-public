@@ -4,6 +4,7 @@
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/appstates/TitleScreen_MainMenu.h"
+#include "cc3o3/appstates/TitleScreen_Options.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -89,6 +90,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 	// Start sub-states
 	AppStateManager& appStateMan = internalState.mAppStateManager;
 	appStateMan.AddState( appstate::id::TitleScreen_MainMenu, DefaultCreator<appstate::TitleScreen_MainMenu>::Create() );
+	appStateMan.AddState( appstate::id::TitleScreen_Options, DefaultCreator<appstate::TitleScreen_Options>::Create() );
 	appStateMan.Start( appstate::id::TitleScreen_MainMenu );
 }
 
@@ -140,6 +142,7 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 	// Tick sub-states
 	AppStateManager& appStateMan = internalState.mAppStateManager;
 	appStateMan.Tick( context.mCurrentTime, context.mElapsedTimeSinceLastTick );
+	appStateMan.ApplyDeferredStateChange();
 }
 
 

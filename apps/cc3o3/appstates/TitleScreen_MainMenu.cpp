@@ -6,6 +6,9 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameAppState/AppStateTickContext.h"
+#include "GameAppState/AppStateManager.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/FontRegistry.h"
@@ -280,7 +283,7 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 					}
 					else if( currentFocusContainerID == internalState.mOptions )
 					{
-						RF_TODO_BREAK_MSG( "Options" );
+						context.mManager.RequestDeferredStateChange( id::TitleScreen_Options );
 					}
 					else if( currentFocusContainerID == internalState.mExitToDesktop )
 					{

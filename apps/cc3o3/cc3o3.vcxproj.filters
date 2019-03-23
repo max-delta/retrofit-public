@@ -19,6 +19,9 @@
     <ClCompile Include="input\HardcodedSetup.cpp">
       <Filter>input</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\TitleScreen_Options.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -65,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="input\HardcodedSetup.h">
       <Filter>input</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\TitleScreen_Options.h">
+      <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
