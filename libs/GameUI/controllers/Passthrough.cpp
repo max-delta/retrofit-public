@@ -17,7 +17,7 @@ RFTYPE_CREATE_META( RF::ui::controller::Passthrough )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ContainerID Passthrough::GetChildContainerID()
+ContainerID Passthrough::GetChildContainerID() const
 {
 	return mContainerID;
 }
