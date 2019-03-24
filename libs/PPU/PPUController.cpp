@@ -370,7 +370,7 @@ uint8_t PPUController::GetCurrentZoomFactor() const
 PPUCoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
 {
 	decltype( PPUState::String::mText ) string = {};
-	static_assert( std::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
+	static_assert( rftl::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
 	{
 		string[0] = '\0';
 		va_list args;

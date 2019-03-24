@@ -594,7 +594,7 @@ void FPackSerializationTest()
 	WeakPtr<gfx::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Serialize
-	std::vector<uint8_t> buffer;
+	rftl::vector<uint8_t> buffer;
 	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );
 
 	// Cleanup
