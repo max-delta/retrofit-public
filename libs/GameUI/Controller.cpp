@@ -28,6 +28,13 @@ void Controller::OnAABBRecalc( UIContext& context, Container& container )
 
 
 
+void Controller::OnZoomFactorChange( UIContext& context, Container& container )
+{
+	//
+}
+
+
+
 void Controller::OnImminentDestruction( UIContext& context, Container const& container )
 {
 	//

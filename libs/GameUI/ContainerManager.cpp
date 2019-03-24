@@ -282,7 +282,7 @@ void ContainerManager::Render() const
 		containersToVisit.erase( containersToVisit.begin() );
 		Container const& container = mContainers.at( currentID );
 
-		// All constraints should've been figure out by the time we render
+		// All constraints should've been figured out by the time we render
 		RF_ASSERT( HasValidConstraints( container ) );
 
 		// Render
@@ -392,6 +392,33 @@ Container& ContainerManager::GetMutableContainer( ContainerID containerID )
 
 
 
+void ContainerManager::NotifyZoomFactorChange()
+{
+	// Visit all child containers, starting with root
+	ContainerIDSet containersToVisit;
+	containersToVisit.emplace( kRootContainerID );
+	while( containersToVisit.empty() == false )
+	{
+		// Pop from unvisited list
+		ContainerID const currentID = *containersToVisit.begin();
+		containersToVisit.erase( containersToVisit.begin() );
+		Container& container = mContainers.at( currentID );
+
+		// Notify
+		UIContext context( *this );
+		container.OnZoomFactorChange( context );
+
+		// Add all child containers to unvisited list
+		for( ContainerID const& childID : container.mChildContainerIDs )
+		{
+			RF_ASSERT( containersToVisit.count( childID ) == 0 );
+			containersToVisit.emplace( childID );
+		}
+	}
+}
+
+
+
 bool ContainerManager::HasValidConstraints( Container const& container ) const
 {
 	if( container.mContainerID == kRootContainerID )
@@ -427,6 +454,13 @@ bool ContainerManager::HasValidConstraints( Container const& container ) const
 
 void ContainerManager::RecalcRootContainer( bool force )
 {
+	gfx::PPUZoomFactor const zoomFactor = mGraphics->GetCurrentZoomFactor();
+	if( mMostRecentZoomFactor != zoomFactor )
+	{
+		mMostRecentZoomFactor = zoomFactor;
+		NotifyZoomFactorChange();
+	}
+
 	Container& root = GetMutableRootContainer();
 
 	Container::AABB4 newAABB;
