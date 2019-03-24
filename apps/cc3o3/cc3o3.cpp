@@ -21,10 +21,12 @@
 namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
 
-constexpr bool kDebugGrid = true;
-constexpr bool kDebugUI = true;
-constexpr bool kDebugUIScaler = true;
-constexpr bool kDebugSuppressRender = false;
+constexpr bool kAllowDebug = true;
+
+constexpr bool kDebugGrid = kAllowDebug && true;
+constexpr bool kDebugUI = kAllowDebug && true;
+constexpr bool kDebugUIScaler = kAllowDebug && true;
+constexpr bool kDebugSuppressRender = kAllowDebug && false;
 
 static appstate::AppStateManager sAppStateManager;
 
