@@ -246,13 +246,13 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode>
 
 void FocusTree::TrimDeadLinks()
 {
-	std::unordered_set<FocusTreeNode const*> liveNodes;
+	rftl::unordered_set<FocusTreeNode const*> liveNodes;
 
 	// Root ALWAYS has focus
 	RF_ASSERT( GetRootNode().mFocusTarget != nullptr );
 
 	// Visit all nodes, starting with root
-	std::unordered_set<FocusTreeNode*> nodesToVisit;
+	rftl::unordered_set<FocusTreeNode*> nodesToVisit;
 	nodesToVisit.emplace( mRootNode );
 	while( nodesToVisit.empty() == false )
 	{
@@ -266,7 +266,7 @@ void FocusTree::TrimDeadLinks()
 		RF_ASSERT( liveNodes.count( currentNodeRef ) == 0 );
 		liveNodes.emplace( currentNodeRef );
 
-		static constexpr auto onChainNode = []( WeakPtr<FocusTreeNode>& chainNode, std::unordered_set<FocusTreeNode*>& nodesToVisit ) -> void
+		static constexpr auto onChainNode = []( WeakPtr<FocusTreeNode>& chainNode, rftl::unordered_set<FocusTreeNode*>& nodesToVisit ) -> void
 		{
 			FocusTreeNode const* ptr = chainNode;
 			if( ptr != nullptr )
