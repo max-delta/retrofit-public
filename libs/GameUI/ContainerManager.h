@@ -85,6 +85,8 @@ public:
 	void SetRootAABBReduction( gfx::PPUCoordElem delta );
 	void SetDebugAABBReduction( gfx::PPUCoordElem delta );
 
+	void RequestHardRecalc( ContainerID containerID );
+
 	void ProcessRecalcs();
 
 	void Render() const;
@@ -122,7 +124,8 @@ private:
 
 	WeakPtr<Controller> AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller );
 
-	void MarkForRecalc( AnchorID anchorID );
+	void MarkForSoftRecalc( AnchorID anchorID );
+	void MarkForHardRecalc( AnchorID anchorID );
 
 	void ProcessDestruction( ContainerIDSet&& seedContainers, AnchorIDSet&& seedAnchors );
 
@@ -142,7 +145,8 @@ private:
 
 	LabelToContainerID mLabelsToContainerIDs;
 
-	AnchorIDSet mRecalcsNeeded;
+	AnchorIDSet mSoftRecalcsNeeded;
+	AnchorIDSet mHardRecalcsNeeded;
 
 	// TODO: Use actual value
 	size_t mMaxDepthSeen = 30;

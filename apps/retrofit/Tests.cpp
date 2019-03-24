@@ -8,6 +8,7 @@
 #include "GameScripting/OOLoader.h"
 
 #include "GameUI/ContainerManager.h"
+#include "GameUI/UIContext.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/Passthrough.h"
 #include "GameUI/controllers/TextLabel.h"
@@ -458,6 +459,7 @@ void InitUITest()
 	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	ui::ContainerManager& uiManager = *app::gUiManager;
+	ui::UIContext uiContext( uiManager );
 	uiManager.SetRootRenderDepth( gfx::kNearestLayer + 50 );
 
 	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
@@ -516,7 +518,7 @@ void InitUITest()
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
-	frame6->SetTileset( frameTileset, 4, 4 );
+	frame6->SetTileset( uiContext, frameTileset, 4, 4 );
 
 	// Put some text in the frame to make sure it's readable
 	rftl::vector<rftl::string> frame6Text;
