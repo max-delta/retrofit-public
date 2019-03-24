@@ -577,10 +577,10 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
 	targetState.mNumLines++;
 
-	targetLine.m_XCoord0 = math::integer_cast<PPUCoordElem>( p0.x );
-	targetLine.m_YCoord0 = math::integer_cast<PPUCoordElem>( p0.y );
-	targetLine.m_XCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
-	targetLine.m_YCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
+	targetLine.mXCoord0 = math::integer_cast<PPUCoordElem>( p0.x );
+	targetLine.mYCoord0 = math::integer_cast<PPUCoordElem>( p0.y );
+	targetLine.mXCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
+	targetLine.mYCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
 	targetLine.mWidth = width;
 	targetLine.mColor = color;
 
@@ -1283,8 +1283,8 @@ void PPUController::RenderString( PPUState::String const& string ) const
 
 void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) const
 {
-	math::Vector2f const p0 = CoordToDevice( line.m_XCoord0, line.m_YCoord0 );
-	math::Vector2f const p1 = CoordToDevice( line.m_XCoord1, line.m_YCoord1 );
+	math::Vector2f const p0 = CoordToDevice( line.mXCoord0, line.mYCoord0 );
+	math::Vector2f const p1 = CoordToDevice( line.mXCoord1, line.mYCoord1 );
 	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( details::kDebugLineLayer ), static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
 }
 
