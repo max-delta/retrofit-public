@@ -129,11 +129,11 @@ public:
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, math::Color3f color );
+	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color );
 	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb );
 	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width );
 	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, math::Color3f color );
-	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, math::Color3f color );
+	bool DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color );
 	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
 	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;

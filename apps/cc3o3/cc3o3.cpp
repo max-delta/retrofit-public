@@ -66,7 +66,7 @@ void ProcessFrame()
 	uiMan.ProcessRecalcs();
 	if( kDebugUI )
 	{
-		uiMan.DebugRender();
+		uiMan.DebugRender( kDebugSuppressRender );
 	}
 	if( kDebugSuppressRender == false )
 	{

@@ -25,11 +25,11 @@ namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr PPUDepthLayer kDebugLineLayer = 0;
 static constexpr PPUDepthLayer kDebugStringLayer = kNearestLayer;
 static constexpr PPUDepthLayer kDebugGridLayer = 0;
 
 static constexpr PPUDepthLayer kDefaultTextLayer = 0;
+static constexpr PPUDepthLayer kDefaultDebugLineLayer = 0;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -555,19 +555,19 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
 
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
 {
-	return DebugDrawLine( p0, p1, width, math::Color3f::kBlack );
+	return DebugDrawLine( p0, p1, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color )
 {
-	return DebugDrawLine( p0, p1, 0, color );
+	return DebugDrawLine( p0, p1, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, math::Color3f color )
+bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
@@ -582,6 +582,7 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	targetLine.mXCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
 	targetLine.mYCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
 	targetLine.mWidth = width;
+	targetLine.mZLayer = zLayer;
 	targetLine.mColor = color;
 
 	return true;
@@ -591,31 +592,31 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 
 bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb )
 {
-	return DebugDrawAABB( aabb, math::Color3f::kBlack );
+	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
 bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width )
 {
-	return DebugDrawAABB( aabb, width, math::Color3f::kBlack );
+	return DebugDrawAABB( aabb, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
 bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, math::Color3f color )
 {
-	return DebugDrawAABB( aabb, 0, color );
+	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, math::Color3f color )
+bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
 {
-	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, color );
-	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, color );
-	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, color );
-	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, color );
+	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
 
 	return true;
 }
@@ -792,12 +793,12 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 	// Debug lines
 	for( size_t i = 0; i < targetDebugState.mNumLines; i++ )
 	{
-		//PPUDebugState::DebugLine const& line = targetDebugState.mLines[i];
+		PPUDebugState::DebugLine const& line = targetDebugState.mLines[i];
 		DepthElement& element = depthOrder[i_depthOrder];
 		i_depthOrder++;
 		element.mId = math::integer_cast<uint8_t>( i );
 		element.mType = ElementType::DebugLine;
-		element.mDepth = details::kDebugLineLayer;
+		element.mDepth = line.mZLayer;
 	}
 
 	// Debug text
@@ -1285,7 +1286,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 {
 	math::Vector2f const p0 = CoordToDevice( line.mXCoord0, line.mYCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.mXCoord1, line.mYCoord1 );
-	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( details::kDebugLineLayer ), static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
+	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
 }
 
 

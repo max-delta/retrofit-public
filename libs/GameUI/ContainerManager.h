@@ -80,6 +80,7 @@ public:
 	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller );
 
 	void SetRootRenderDepth( gfx::PPUDepthLayer depth );
+	gfx::PPUDepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
 	gfx::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
 
 	void SetRootAABBReduction( gfx::PPUCoordElem delta );
@@ -91,7 +92,7 @@ public:
 
 	void Render() const;
 
-	void DebugRender() const;
+	void DebugRender( bool uzeZlayers ) const;
 
 
 	//
