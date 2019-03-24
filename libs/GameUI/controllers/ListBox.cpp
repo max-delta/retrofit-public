@@ -5,6 +5,7 @@
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/FocusEvent.h"
+#include "GameUI/FocusTarget.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
@@ -156,15 +157,32 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 
 		RF_ASSERT( node.mFavoredChild != nullptr );
 		FocusTreeNode& current = *node.mFavoredChild;
-		WeakPtr<FocusTreeNode> const previous = current.mPreviousSibling;
-		WeakPtr<FocusTreeNode> const next = current.mNextSibling;
-		if( isPrevious && previous != nullptr )
+
+		if( isPrevious )
 		{
-			node.mFavoredChild = previous;
+			WeakPtr<FocusTreeNode> previous = current.mPreviousSibling;
+			while( previous != nullptr && ShouldSkipFocus( context, *previous ) )
+			{
+				previous = previous->mPreviousSibling;
+			}
+
+			if( previous != nullptr )
+			{
+				node.mFavoredChild = previous;
+			}
 		}
-		else if( isNext && next != nullptr )
+		else if( isNext )
 		{
-			node.mFavoredChild = next;
+			WeakPtr<FocusTreeNode> next = current.mNextSibling;
+			while( next != nullptr && ShouldSkipFocus( context, *next ) )
+			{
+				next = next->mNextSibling;
+			}
+
+			if( next != nullptr )
+			{
+				node.mFavoredChild = next;
+			}
 		}
 
 		return true;
@@ -214,6 +232,34 @@ TextLabel const* ListBox::GetSlotWithFocus( UIConstContext const& context ) cons
 		}
 	}
 	return nullptr;
+}
+
+
+
+bool ListBox::ShouldSkipFocus( UIConstContext const& context, FocusTreeNode const& potentialFocus ) const
+{
+	RF_ASSERT( potentialFocus.mFocusTarget != nullptr );
+	ContainerID const containerID = potentialFocus.mFocusTarget->mContainerID;
+	RF_ASSERT( containerID != kInvalidContainerID );
+
+	WeakPtr<TextLabel const> attemptedFocus;
+	for( WeakPtr<TextLabel const> const& slotController : mSlotControllers )
+	{
+		if( slotController->GetContainerID() == containerID )
+		{
+			attemptedFocus = slotController;
+			break;
+		}
+	}
+	RF_ASSERT( attemptedFocus != nullptr );
+
+	if( attemptedFocus->HasText() == false )
+	{
+		// No text, skip
+		return true;
+	}
+
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
