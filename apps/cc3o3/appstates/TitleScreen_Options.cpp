@@ -56,8 +56,9 @@ struct OptionSet
 	struct Option
 	{
 		rftl::string mStaticText;
-		rftl::function<rftl::string()> mDynamicText;
 		rftl::function<void()> mFunction;
+
+		rftl::function<rftl::string()> mDynamicText;
 	};
 
 	void Update( ui::controller::ListBox& listBox ) const;
@@ -110,8 +111,8 @@ void ToggleTestAction()
 }
 
 OptionSet sDevOptions = { {
-	{ "", UpdateTestString, UpdateTestAction },
-	{ "", ToggleTestString, ToggleTestAction },
+	{ "", UpdateTestAction, UpdateTestString },
+	{ "", ToggleTestAction, ToggleTestString },
 	{ "Menu option text for slot 3" },
 	{ "Menu option text for slot 4" },
 	{ "Menu option text for slot 5" },
@@ -191,7 +192,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		frame->SetTileset( tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), 4, 4 );
+		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), 4, 4 );
 
 		// Cut the frame into columns
 		ui::controller::ColumnSlicer::Ratios const frameColumnRatios = {
