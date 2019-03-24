@@ -359,7 +359,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
-uint8_t PPUController::GetCurrentZoomFactor() const
+PPUZoomFactor PPUController::GetCurrentZoomFactor() const
 {
 	// TODO: Thread-safe?
 	return GetZoomFactor();
@@ -904,7 +904,7 @@ void PPUController::CalculateDesiredFontZoomShrink( Font const& font, uint8_t de
 		// Shrink
 		zoomDesired = 1;
 		shrinkDesired = math::integer_cast<uint8_t>( tileHeight / desiredHeight );
-		uint8_t const zoomFactor = GetZoomFactor();
+		PPUZoomFactor const zoomFactor = GetZoomFactor();
 		if( ( zoomFactor - shrinkDesired ) < 0 )
 		{
 			// Font bigger than desired height, can't downscale enough, will
@@ -1339,11 +1339,11 @@ void PPUController::RenderDebugGrid() const
 
 
 
-uint8_t PPUController::GetZoomFactor() const
+PPUZoomFactor PPUController::GetZoomFactor() const
 {
 	uint16_t const smallestDimension = math::Min( mWidth, mHeight );
 	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimension / kTileSize );
-	uint8_t const zoomFactor = math::integer_cast<uint8_t>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
+	PPUZoomFactor const zoomFactor = math::integer_cast<PPUZoomFactor>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
 	return zoomFactor;
 }
 
@@ -1371,7 +1371,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 {
 	// TODO: Windowing
 	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
-	uint8_t const zoomFactor = GetZoomFactor();
+	PPUZoomFactor const zoomFactor = GetZoomFactor();
 	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( kTileSize * zoomFactor );
 
 	// Baseline
