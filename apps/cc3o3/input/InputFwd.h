@@ -37,6 +37,9 @@ enum : RawCommandType
 	Left,
 	Right,
 
+	Home,
+	End,
+
 	Affirmative,
 	Negative,
 	Auxiliary
@@ -51,6 +54,8 @@ enum : GameCommandType
 	UINavigateDown,
 	UINavigateLeft,
 	UINavigateRight,
+	UINavigateToFirst,
+	UINavigateToLast,
 	UIActivateSelection,
 	UICancelSelection
 };
