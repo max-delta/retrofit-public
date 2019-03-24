@@ -25,25 +25,103 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/functional"
+
 
 namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr char kOpt1Tag[] = "OPT1";
-static constexpr char kOpt2Tag[] = "OPT2";
-static constexpr char kOpt3Tag[] = "OPT3";
-static constexpr char kOpt4Tag[] = "OPT4";
-static constexpr char kOpt5Tag[] = "OPT5";
-static constexpr char kOpt6Tag[] = "OPT6";
-static constexpr char kOpt7Tag[] = "OPT7";
-static constexpr char kOpt8Tag[] = "OPT8";
-static constexpr char kOpt9Tag[] = "OPT9";
-static constexpr char kOpt10Tag[] = "OPT10";
-static constexpr char kOpt11Tag[] = "OPT11";
-static constexpr char kOpt12Tag[] = "OPT12";
+static constexpr size_t kNumOptionsPerSet = 12;
+static constexpr size_t kNumOptionsFields = kNumOptionsPerSet + 2;
+static constexpr char const* kOptTag[kNumOptionsPerSet] = {
+	"OPT0",
+	"OPT1",
+	"OPT2",
+	"OPT3",
+	"OPT4",
+	"OPT5",
+	"OPT6",
+	"OPT7",
+	"OPT8",
+	"OPT9",
+	"OPT10",
+	"OPT11"
+};
 static constexpr char kUnusedTag[] = "UNUSED";
 static constexpr char kReturnTag[] = "RETURN";
+
+struct OptionSet
+{
+	struct Option
+	{
+		rftl::string mStaticText;
+		rftl::function<rftl::string()> mDynamicText;
+		rftl::function<void()> mFunction;
+	};
+
+	void Update( ui::controller::ListBox& listBox ) const;
+
+	Option mOptions[kNumOptionsPerSet] = {};
+};
+
+void OptionSet::Update( ui::controller::ListBox& listBox ) const
+{
+	rftl::vector<rftl::string> optionsText;
+	for( size_t i = 0; i < kNumOptionsPerSet; i++ )
+	{
+		Option const& opt = mOptions[i];
+		if( opt.mDynamicText != nullptr )
+		{
+			optionsText.emplace_back( opt.mDynamicText() );
+		}
+		else
+		{
+			optionsText.emplace_back( opt.mStaticText );
+		}
+	}
+	optionsText.emplace_back(); // Unused
+	optionsText.emplace_back( "Return to main menu" );
+	listBox.SetText( optionsText );
+}
+
+static char sUpdateTestVal = '0';
+rftl::string UpdateTestString()
+{
+	return rftl::string( "Option update test: " ) + sUpdateTestVal;
+}
+void UpdateTestAction()
+{
+	sUpdateTestVal++;
+	if( sUpdateTestVal > '9' )
+	{
+		sUpdateTestVal = '0';
+	}
+}
+
+static bool sToggleTestVal = false;
+rftl::string ToggleTestString()
+{
+	return rftl::string( "Option toggle test: " ) + ( sToggleTestVal ? "True" : "False" );
+}
+void ToggleTestAction()
+{
+	sToggleTestVal = !sToggleTestVal;
+}
+
+OptionSet sDevOptions = { {
+	{ "", UpdateTestString, UpdateTestAction },
+	{ "", ToggleTestString, ToggleTestAction },
+	{ "Menu option text for slot 3" },
+	{ "Menu option text for slot 4" },
+	{ "Menu option text for slot 5" },
+	{ "Menu option text for slot 6" },
+	{ "Menu option text for slot 7" },
+	{ "Menu option text for slot 8" },
+	{ "Menu option text for slot 9" },
+	{ "Menu option text for slot 10" },
+	{ "Menu option text for slot 11" },
+	{ "Menu option text for slot 12" } } };
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,11 +131,7 @@ struct TitleScreen_Options::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
-	ui::ContainerID mSinglePlayer = ui::kInvalidContainerID;
-	ui::ContainerID mMultiplayer = ui::kInvalidContainerID;
-	ui::ContainerID mCharacterCreator = ui::kInvalidContainerID;
-	ui::ContainerID mOptions = ui::kInvalidContainerID;
-	ui::ContainerID mExitToDesktop = ui::kInvalidContainerID;
+	WeakPtr<ui::controller::ListBox> mOptionsListBox;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -131,47 +205,25 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 					frameColumnRatios ) );
 
 		// Create menu selections in the left columns
-		rftl::vector<rftl::string> leftOptionsText;
-		leftOptionsText.emplace_back( "Menu option text for slot 1" );
-		leftOptionsText.emplace_back( "Menu option text for slot 2" );
-		leftOptionsText.emplace_back( "Menu option text for slot 3" );
-		leftOptionsText.emplace_back( "Menu option text for slot 4" );
-		leftOptionsText.emplace_back( "Menu option text for slot 5" );
-		leftOptionsText.emplace_back( "Menu option text for slot 6" );
-		leftOptionsText.emplace_back( "Menu option text for slot 7" );
-		leftOptionsText.emplace_back( "Menu option text for slot 8" );
-		leftOptionsText.emplace_back( "Menu option text for slot 9" );
-		leftOptionsText.emplace_back( "Menu option text for slot 10" );
-		leftOptionsText.emplace_back( "Menu option text for slot 11" );
-		leftOptionsText.emplace_back( "Menu option text for slot 12" );
-		leftOptionsText.emplace_back(); // Unused
-		leftOptionsText.emplace_back( "Return to main menu" );
 		WeakPtr<ui::controller::ListBox> const leftOptions =
 			uiManager.AssignStrongController(
-				frameColumnSlicer->GetChildContainerID(0),
+				frameColumnSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::ListBox>::Create(
-					leftOptionsText.size(),
+					details::kNumOptionsFields,
 					ui::font::SmallMenuSelection,
 					ui::Justification::MiddleLeft,
 					math::Color3f::kGray50,
 					math::Color3f::kWhite,
 					math::Color3f::kYellow ) );
-		leftOptions->SetText( leftOptionsText );
+		details::sDevOptions.Update( *leftOptions );
 		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 0 )->GetContainerID(), details::kOpt1Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 1 )->GetContainerID(), details::kOpt2Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 2 )->GetContainerID(), details::kOpt3Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 3 )->GetContainerID(), details::kOpt4Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 4 )->GetContainerID(), details::kOpt5Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 5 )->GetContainerID(), details::kOpt6Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 6 )->GetContainerID(), details::kOpt7Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 7 )->GetContainerID(), details::kOpt8Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 8 )->GetContainerID(), details::kOpt9Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 9 )->GetContainerID(), details::kOpt10Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 10 )->GetContainerID(), details::kOpt11Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 11 )->GetContainerID(), details::kOpt12Tag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 12 )->GetContainerID(), details::kUnusedTag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( 13 )->GetContainerID(), details::kReturnTag );
+		for( size_t i = 0; i < details::kNumOptionsPerSet; i++ )
+		{
+			uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), details::kOptTag[i] );
+		}
+		uiManager.AssignLabel( leftOptions->GetSlotController( details::kNumOptionsPerSet )->GetContainerID(), details::kUnusedTag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( details::kNumOptionsPerSet + 1 )->GetContainerID(), details::kReturnTag );
+		mInternalState->mOptionsListBox = leftOptions;
 	}
 }
 
@@ -211,20 +263,43 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 				{
 					currentFocusTarget = currentFocus->mFocusTarget;
 				}
-				if(currentFocusTarget != nullptr)
+				if( currentFocusTarget != nullptr )
 				{
 					RF_ASSERT( currentFocusTarget->HasHardFocus() );
 					currentFocusContainerID = currentFocusTarget->mContainerID;
 				}
 			}
 
-			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus)
+			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
 					if( currentFocusContainerID == uiManager.GetContainerID( details::kReturnTag ) )
 					{
+						// Return
 						context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
+					}
+					else
+					{
+						for( size_t i = 0; i < details::kNumOptionsPerSet; i++ )
+						{
+							char const* const tag = details::kOptTag[i];
+							if( currentFocusContainerID == uiManager.GetContainerID( tag ) )
+							{
+								// Option
+								details::OptionSet::Option const& opt = details::sDevOptions.mOptions[i];
+								if( opt.mFunction != nullptr )
+								{
+									opt.mFunction();
+								}
+								if( opt.mDynamicText != nullptr )
+								{
+									rftl::string const newText = opt.mDynamicText();
+									mInternalState->mOptionsListBox->GetSlotController( i )->SetText( newText.c_str() );
+								}
+								break;
+							}
+						}
 					}
 				}
 			}
