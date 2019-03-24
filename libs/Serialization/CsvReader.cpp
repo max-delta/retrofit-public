@@ -23,7 +23,7 @@ rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( CharT cons
 		}
 		else if( ch == ',' )
 		{
-			retVal.back().emplace_back( std::move( curField ) );
+			retVal.back().emplace_back( rftl::move( curField ) );
 			curField.clear();
 		}
 		else if( ch == '\n' )
@@ -34,7 +34,7 @@ rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( CharT cons
 			}
 			else
 			{
-				retVal.back().emplace_back( std::move( curField ) );
+				retVal.back().emplace_back( rftl::move( curField ) );
 				curField.clear();
 				retVal.emplace_back();
 			}
