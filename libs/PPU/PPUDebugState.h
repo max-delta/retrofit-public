@@ -44,6 +44,7 @@ public:
 		PPUCoordElem mXCoord1;
 		PPUCoordElem mYCoord1;
 		PPUCoordElem mWidth;
+		PPUDepthLayer mZLayer;
 		math::Color3f mColor;
 	};
 
