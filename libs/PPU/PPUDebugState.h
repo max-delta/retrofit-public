@@ -39,10 +39,10 @@ public:
 	};
 	struct DebugLine
 	{
-		PPUCoordElem m_XCoord0;
-		PPUCoordElem m_YCoord0;
-		PPUCoordElem m_XCoord1;
-		PPUCoordElem m_YCoord1;
+		PPUCoordElem mXCoord0;
+		PPUCoordElem mYCoord0;
+		PPUCoordElem mXCoord1;
+		PPUCoordElem mYCoord1;
 		PPUCoordElem mWidth;
 		math::Color3f mColor;
 	};
