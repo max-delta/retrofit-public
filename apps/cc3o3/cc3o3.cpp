@@ -24,6 +24,7 @@ namespace RF { namespace cc {
 constexpr bool kDebugGrid = true;
 constexpr bool kDebugUI = true;
 constexpr bool kDebugUIScaler = true;
+constexpr bool kDebugSuppressRender = false;
 
 static appstate::AppStateManager sAppStateManager;
 
@@ -67,7 +68,10 @@ void ProcessFrame()
 	{
 		uiMan.DebugRender();
 	}
-	uiMan.Render();
+	if( kDebugSuppressRender == false )
+	{
+		uiMan.Render();
+	}
 }
 
 
