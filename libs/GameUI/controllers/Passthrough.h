@@ -25,7 +25,7 @@ public:
 	//
 	// Private data
 private:
-	ContainerID mContainerID = kInvalidContainerID;
+	ContainerID mChildContainerID = kInvalidContainerID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
