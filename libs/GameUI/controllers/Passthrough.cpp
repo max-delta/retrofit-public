@@ -19,14 +19,14 @@ namespace RF { namespace ui { namespace controller {
 
 ContainerID Passthrough::GetChildContainerID() const
 {
-	return mContainerID;
+	return mChildContainerID;
 }
 
 
 
 void Passthrough::OnInstanceAssign( UIContext& context, Container& container )
 {
-	mContainerID = CreateChildContainer(
+	mChildContainerID = CreateChildContainer(
 		context.GetMutableContainerManager(),
 		container,
 		container.mLeftConstraint,
