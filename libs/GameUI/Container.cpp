@@ -46,6 +46,17 @@ void Container::OnAABBRecalc( UIContext& context )
 
 
 
+void Container::OnZoomFactorChange( UIContext& context )
+{
+	Controller* const controller = mWeakUIController;
+	if( controller != nullptr )
+	{
+		controller->OnZoomFactorChange( context, *this );
+	}
+}
+
+
+
 void Container::OnImminentDestruction( UIContext& context ) const
 {
 	Controller* const controller = mWeakUIController;

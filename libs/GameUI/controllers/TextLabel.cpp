@@ -26,9 +26,8 @@ void TextLabel::SetFont( FontPurposeID purpose )
 {
 	mFontPurposeID = purpose;
 
-	// Clear these to cause them to load later
-	mFontID = gfx::kInvalidManagedFontID;
-	mDesiredHeight = 0;
+	// Clear to cause font to re-load later
+	InvalidateFont();
 }
 
 
@@ -131,6 +130,22 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 
 
 void TextLabel::OnAABBRecalc( UIContext& context, Container& container )
+{
+	// Clear in case there's a better font now
+	InvalidateFont();
+}
+
+
+
+void TextLabel::OnZoomFactorChange( UIContext& context, Container& container )
+{
+	// Clear in case there's a better font now
+	InvalidateFont();
+}
+
+
+
+void TextLabel::InvalidateFont()
 {
 	// Clear these in case there's a better font now
 	mFontID = gfx::kInvalidManagedFontID;

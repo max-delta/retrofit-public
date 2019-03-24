@@ -32,6 +32,7 @@ public:
 
 	void OnAssign( UIContext& context );
 	void OnAABBRecalc( UIContext& context );
+	void OnZoomFactorChange( UIContext& context );
 	void OnImminentDestruction( UIContext& context ) const;
 	void OnRender( UIConstContext const& context, bool& blockChildRendering ) const;
 

@@ -20,6 +20,7 @@ class GAMEUI_API Controller : public reflect::VirtualClass
 public:
 	virtual void OnAssign( UIContext& context, Container& container );
 	virtual void OnAABBRecalc( UIContext& context, Container& container );
+	virtual void OnZoomFactorChange( UIContext& context, Container& container );
 
 	// NOTE: Do NOT destroy child containers or anchors, this will happen
 	//  automatically, and attempting to do so here may cause re-entrancy
