@@ -21,13 +21,14 @@ RFTYPE_CREATE_META( RF::ui::controller::BorderFrame )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void BorderFrame::SetTileset( gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight )
+void BorderFrame::SetTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight )
 {
 	mTileLayer.mTilesetReference = tileset;
 	mExpectedTileDimensions = { expectedTileWidth, expectedTileHeight };
 
-	// Invalidate tilemap to force a recalc
+	// Invalidate tilemap and wait for recalc
 	mTileLayer.Clear();
+	context.GetMutableContainerManager().RequestHardRecalc( GetContainerID() );
 }
 
 
@@ -41,7 +42,7 @@ void BorderFrame::SetJustification( Justification justification )
 
 ContainerID BorderFrame::GetChildContainerID() const
 {
-	return mContainerID;
+	return mChildContainerID;
 }
 
 
@@ -55,23 +56,14 @@ void BorderFrame::OnInstanceAssign( UIContext& context, Container& container )
 	AnchorID const bottom = mBottomRightAnchor;
 	AnchorID const left = mTopLeftAnchor;
 	AnchorID const right = mBottomRightAnchor;
-	mContainerID = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
+	mChildContainerID = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
 }
 
 
 
 void BorderFrame::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	if( mTileLayer.NumTiles() == 0 )
-	{
-		// Tileset may have changed
-		RecalcTilemap( container );
-		if( mTileLayer.NumTiles() == 0 )
-		{
-			// Can't recalc yet, so can't render
-			return;
-		}
-	}
+	RF_ASSERT( mTileLayer.NumTiles() > 0 );
 
 	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
