@@ -84,7 +84,10 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 2 } );
 		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 1 } );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont1xMono, 8, 1 } );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 2 } );
 		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 1 } );
+		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 1 } );
 		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 1 } );
 	}
 
@@ -96,6 +99,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// TODO: Defer load requests instead of forcing immediate load
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", tilesets.GetChild( "backgrounds", "country_hills_back_96.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", tilesets.GetChild( "backgrounds", "country_hills_mid_32.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "frame9_24", tilesets.GetChild( "common", "frame9_24.tset.txt" ) );
 	}
 
 	// Load framepacks
