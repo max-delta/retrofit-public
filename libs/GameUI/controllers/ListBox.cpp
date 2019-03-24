@@ -138,7 +138,9 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
 	bool const isPrevious = focusEvent.mEventType == focusevent::Command_NavigateUp;
 	bool const isNext = focusEvent.mEventType == focusevent::Command_NavigateDown;
-	bool const isCycle = isPrevious || isNext;
+	bool const isFirst = focusEvent.mEventType == focusevent::Command_NavigateToFirst;
+	bool const isLast = focusEvent.mEventType == focusevent::Command_NavigateToLast;
+	bool const isCycle = isPrevious || isNext || isFirst || isLast;
 
 	if( isCycle )
 	{
@@ -182,6 +184,40 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 			if( next != nullptr )
 			{
 				node.mFavoredChild = next;
+			}
+		}
+		else if( isFirst )
+		{
+			WeakPtr<FocusTreeNode> previous = current.mPreviousSibling;
+			while( previous != nullptr )
+			{
+				while( previous != nullptr && ShouldSkipFocus( context, *previous ) )
+				{
+					previous = previous->mPreviousSibling;
+				}
+
+				if( previous != nullptr )
+				{
+					node.mFavoredChild = previous;
+					previous = previous->mPreviousSibling;
+				}
+			}
+		}
+		else if( isLast )
+		{
+			WeakPtr<FocusTreeNode> next = current.mNextSibling;
+			while( next != nullptr )
+			{
+				while( next != nullptr && ShouldSkipFocus( context, *next ) )
+				{
+					next = next->mNextSibling;
+				}
+
+				if( next != nullptr )
+				{
+					node.mFavoredChild = next;
+					next = next->mNextSibling;
+				}
 			}
 		}
 

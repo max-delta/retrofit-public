@@ -176,6 +176,12 @@ rftl::vector<ui::FocusEventType> TitleScreen::GetInputToProcess()
 			case input::command::game::UINavigateRight:
 				retVal.emplace_back( ui::focusevent::Command_NavigateRight );
 				break;
+			case input::command::game::UINavigateToFirst:
+				retVal.emplace_back( ui::focusevent::Command_NavigateToFirst );
+				break;
+			case input::command::game::UINavigateToLast:
+				retVal.emplace_back( ui::focusevent::Command_NavigateToLast );
+				break;
 			case input::command::game::UIActivateSelection:
 				retVal.emplace_back( ui::focusevent::Command_ActivateCurrentFocus );
 				break;

@@ -45,6 +45,9 @@ enum : FocusEventType
 	Command_NavigateLeft,
 	Command_NavigateRight,
 
+	Command_NavigateToFirst,
+	Command_NavigateToLast,
+
 	// Custom types should start at this value
 	BEGIN_CUSTOM_TYPES
 };
