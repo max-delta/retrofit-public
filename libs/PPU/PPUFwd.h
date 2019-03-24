@@ -61,6 +61,9 @@ constexpr PPUCoordElem kDesiredWidth = kTileSize * 10;
 constexpr PPUCoordElem kDesiredHeight = kTileSize * 7;
 constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
+using PPUZoomFactor = uint8_t;
+constexpr PPUZoomFactor kInvalidZoomFactor = 0;
+
 class Object;
 class TileLayer;
 class Texture;
