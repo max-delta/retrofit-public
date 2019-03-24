@@ -359,10 +359,17 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
+void PPUController::HideZoomFactor( bool hide )
+{
+	mHideZoomFactor = hide;
+}
+
+
+
 PPUZoomFactor PPUController::GetCurrentZoomFactor() const
 {
 	// TODO: Thread-safe?
-	return GetZoomFactor();
+	return mHideZoomFactor ? 1u : GetZoomFactor();
 }
 
 
@@ -1259,7 +1266,7 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		{
 			float const subZStep = math::Lerp( z, LayerToDevice( string.mZLayer + 1 ), 0.1f ) - z;
 			math::Color3f const borderColor = CalculateBorderColor( color );
-			math::Vector2f const pixelStep = GetDevicePixelStep();
+			math::Vector2f const pixelStep = GetDevicePixelStep( true );
 			// HACK: Lots of draw calls here, lazy Scaleform-style
 			mDeviceInterface->DrawBitmapFont(
 				deviceFontID, character, pos + math::Vector2f{ pixelStep.x, 0 }, z + ( subZStep * 4 ), borderColor, uv );
@@ -1350,12 +1357,12 @@ PPUZoomFactor PPUController::GetZoomFactor() const
 
 
 
-math::Vector2f PPUController::GetDevicePixelStep() const
+math::Vector2f PPUController::GetDevicePixelStep( bool allowZoomHiding ) const
 {
 	math::Vector2f const zero = CoordToDevice( 0, 0 );
 	math::Vector2f const one = CoordToDevice( 1, 1 );
 	math::Vector2f const delta = one - zero;
-	math::Vector2f const atScale = delta * ( 1.f / GetCurrentZoomFactor() );
+	math::Vector2f const atScale = delta * ( 1.f / ( allowZoomHiding && mHideZoomFactor ? 1.f : GetZoomFactor() ) );
 	return atScale;
 }
 

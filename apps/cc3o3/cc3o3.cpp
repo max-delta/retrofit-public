@@ -26,6 +26,7 @@ constexpr bool kAllowDebug = true;
 constexpr bool kDebugGrid = kAllowDebug && true;
 constexpr bool kDebugUI = kAllowDebug && true;
 constexpr bool kDebugUIScaler = kAllowDebug && true;
+constexpr bool kDebugHideZoomFactor = kAllowDebug && false;
 constexpr bool kDebugSuppressRender = kAllowDebug && false;
 
 static appstate::AppStateManager sAppStateManager;
@@ -41,6 +42,7 @@ void Startup()
 	sAppStateManager.Start( appstate::GetBootState() );
 
 	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
+	app::gGraphics->HideZoomFactor( kDebugHideZoomFactor );
 
 	if( kDebugUIScaler )
 	{
