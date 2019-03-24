@@ -164,6 +164,13 @@ void ContainerManager::SetRootRenderDepth( gfx::PPUDepthLayer depth )
 
 
 
+gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( ContainerID containerID ) const
+{
+	return GetRecommendedRenderDepth( GetContainer( containerID ) );
+}
+
+
+
 gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
 {
 	static_assert( gfx::kNearestLayer < gfx::kFarthestLayer, "Expected negative to be closer" );
@@ -305,7 +312,7 @@ void ContainerManager::Render() const
 
 
 
-void ContainerManager::DebugRender() const
+void ContainerManager::DebugRender( bool uzeZlayers ) const
 {
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
@@ -322,14 +329,15 @@ void ContainerManager::DebugRender() const
 	{
 		ContainerID const id = containerEntry.first;
 		Container const& container = containerEntry.second;
+		gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
 		if( focusedContainers.count( id ) > 0 )
 		{
-			mGraphics->DebugDrawAABB( container.mAABB, 3, math::Color3f::kYellow );
+			mGraphics->DebugDrawAABB( container.mAABB, 3, zLayer, math::Color3f::kYellow );
 		}
 		else
 		{
 			math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
-			mGraphics->DebugDrawAABB( container.mAABB, 2, color );
+			mGraphics->DebugDrawAABB( container.mAABB, 2, zLayer, color );
 		}
 	}
 
@@ -338,9 +346,10 @@ void ContainerManager::DebugRender() const
 		Anchor const& anchor = anchorEntry.second;
 		ContainerID const parentID = anchor.mParentContainerID;
 		gfx::PPUCoord const& pos = anchor.mPos;
+		gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
 		math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, color );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, color );
+		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, zLayer, color );
+		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, zLayer, color );
 	}
 }
 

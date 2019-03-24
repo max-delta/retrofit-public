@@ -188,7 +188,7 @@ int main()
 			app::gUiManager->ProcessRecalcs();
 			if( kDebugUI )
 			{
-				app::gUiManager->DebugRender();
+				app::gUiManager->DebugRender( false );
 			}
 			app::gUiManager->Render();
 
