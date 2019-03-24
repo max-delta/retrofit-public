@@ -111,6 +111,8 @@ private:
 
 	Container& GetMutableContainer( ContainerID containerID );
 
+	void NotifyZoomFactorChange();
+
 	bool HasValidConstraints( Container const& container ) const;
 
 	void RecalcRootContainer( bool force );
@@ -157,6 +159,8 @@ private:
 
 	gfx::PPUCoordElem mRootAABBReduction = 0;
 	gfx::PPUCoordElem mDebugAABBReduction = 0;
+
+	gfx::PPUZoomFactor mMostRecentZoomFactor = gfx::kInvalidZoomFactor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
