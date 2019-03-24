@@ -246,7 +246,66 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode>
 
 void FocusTree::TrimDeadLinks()
 {
-	// TODO
+	std::unordered_set<FocusTreeNode const*> liveNodes;
+
+	// Root ALWAYS has focus
+	RF_ASSERT( GetRootNode().mFocusTarget != nullptr );
+
+	// Visit all nodes, starting with root
+	std::unordered_set<FocusTreeNode*> nodesToVisit;
+	nodesToVisit.emplace( mRootNode );
+	while( nodesToVisit.empty() == false )
+	{
+		// Pop from unvisited list
+		FocusTreeNode* const currentNodeRef = *nodesToVisit.begin();
+		nodesToVisit.erase( nodesToVisit.begin() );
+		RF_ASSERT( currentNodeRef != nullptr );
+
+		// Add node to live list
+		RF_ASSERT( currentNodeRef->mFocusTarget != nullptr );
+		RF_ASSERT( liveNodes.count( currentNodeRef ) == 0 );
+		liveNodes.emplace( currentNodeRef );
+
+		static constexpr auto onChainNode = []( WeakPtr<FocusTreeNode>& chainNode, std::unordered_set<FocusTreeNode*>& nodesToVisit ) -> void
+		{
+			FocusTreeNode const* ptr = chainNode;
+			if( ptr != nullptr )
+			{
+				FocusTreeNode const& val = *ptr;
+				if( val.mFocusTarget == nullptr )
+				{
+					// Dead, trim
+					chainNode = nullptr;
+				}
+				else
+				{
+					// Alive, add
+					nodesToVisit.emplace( chainNode );
+				}
+			}
+		};
+
+		FocusTreeNode& currentNode = *currentNodeRef;
+		onChainNode( currentNode.mPreviousSibling, nodesToVisit );
+		onChainNode( currentNode.mNextSibling, nodesToVisit );
+		onChainNode( currentNode.mFavoredChild, nodesToVisit );
+	}
+
+	// Wipe out all orphaned nodes
+	BackingNodeStorage::const_iterator iter = mBackingNodeStorage.begin();
+	while( iter != mBackingNodeStorage.end() )
+	{
+		if( liveNodes.count( *iter ) > 0 )
+		{
+			// Still in use
+			iter++;
+		}
+		else
+		{
+			// Orphaned
+			iter = mBackingNodeStorage.erase( iter );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
