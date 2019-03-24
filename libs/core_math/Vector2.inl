@@ -49,6 +49,14 @@ inline bool Vector2<T>::operator==( Vector2 const& rhs ) const
 
 
 template<typename T>
+inline bool Vector2<T>::operator!=( Vector2 const& rhs ) const
+{
+	return this->operator==( rhs ) == false;
+}
+
+
+
+template<typename T>
 inline Vector2<T> Vector2<T>::operator+( Vector2 const& rhs ) const
 {
 	return Vector2( x + rhs.x, y + rhs.y );
