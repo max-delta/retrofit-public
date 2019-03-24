@@ -6,27 +6,46 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameAppState/AppStateTickContext.h"
+#include "GameAppState/AppStateManager.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
-#include "GameUI/FontRegistry.h"
 #include "GameUI/FocusEvent.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
-#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/TextLabel.h"
-#include "GameUI/controllers/TextRows.h"
-#include "GameUI/controllers/FramePackDisplay.h"
+#include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/ListBox.h"
 
 #include "PPU/PPUController.h"
-#include "PPU/FramePackManager.h"
+#include "PPU/TilesetManager.h"
 
 #include "core/ptr/default_creator.h"
 
 
 namespace RF { namespace cc { namespace appstate {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static constexpr char kOpt1Tag[] = "OPT1";
+static constexpr char kOpt2Tag[] = "OPT2";
+static constexpr char kOpt3Tag[] = "OPT3";
+static constexpr char kOpt4Tag[] = "OPT4";
+static constexpr char kOpt5Tag[] = "OPT5";
+static constexpr char kOpt6Tag[] = "OPT6";
+static constexpr char kOpt7Tag[] = "OPT7";
+static constexpr char kOpt8Tag[] = "OPT8";
+static constexpr char kOpt9Tag[] = "OPT9";
+static constexpr char kOpt10Tag[] = "OPT10";
+static constexpr char kOpt11Tag[] = "OPT11";
+static constexpr char kOpt12Tag[] = "OPT12";
+static constexpr char kUnusedTag[] = "UNUSED";
+static constexpr char kReturnTag[] = "RETURN";
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 struct TitleScreen_Options::InternalState
@@ -46,11 +65,9 @@ struct TitleScreen_Options::InternalState
 void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
-	InternalState& internalState = *mInternalState;
 
 	gfx::PPUController const& ppu = *app::gGraphics;
-	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
-	ui::FontRegistry const& fontReg = *app::gFontRegistry;
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Setup UI
 	{
@@ -61,9 +78,9 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 
 		// Cut the whole screen into columns
 		ui::controller::ColumnSlicer::Ratios const rootColumnRatios = {
-			{ 1.f / 3.f, true },
-			{ 1.f / 3.f, true },
-			{ 1.f / 3.f, true },
+			{ 1.f / 20.f, false },
+			{ 18.f / 20.f, true },
+			{ 1.f / 20.f, false },
 		};
 		WeakPtr<ui::controller::ColumnSlicer> const rootColumnSlicer =
 			uiManager.AssignStrongController(
@@ -71,11 +88,12 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::ColumnSlicer>::Create(
 					rootColumnRatios ) );
 
-		// Cut the center in 3
+		// Cut the center in 4
 		ui::controller::ColumnSlicer::Ratios const centerRowRatios = {
-			{ 1.f / 3.f, true },
-			{ 1.f / 3.f, true },
-			{ 1.f / 3.f, true },
+			{ 1.f / 14.f, false },
+			{ 1.f / 14.f, true },
+			{ 11.f / 14.f, true },
+			{ 1.f / 14.f, false },
 		};
 		WeakPtr<ui::controller::RowSlicer> const centerRowSlicer =
 			uiManager.AssignStrongController(
@@ -83,12 +101,77 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::RowSlicer>::Create(
 					centerRowRatios ) );
 
-		// TODO
-		(void)internalState;
-		(void)fontReg;
-		(void)ppu;
-		(void)focusMan;
-		(void)framePackMan;
+		// Header in top center
+		WeakPtr<ui::controller::TextLabel> const header =
+			uiManager.AssignStrongController(
+				centerRowSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		header->SetJustification( ui::Justification::BottomCenter );
+		header->SetFont( ui::font::LargeMenuHeader );
+		header->SetText( "Options" );
+		header->SetColor( math::Color3f::kWhite );
+		header->SetBorder( true );
+
+		// Frame in middle center
+		WeakPtr<ui::controller::BorderFrame> const frame =
+			uiManager.AssignStrongController(
+				centerRowSlicer->GetChildContainerID( 2 ),
+				DefaultCreator<ui::controller::BorderFrame>::Create() );
+		frame->SetTileset( tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), 4, 4 );
+
+		// Cut the frame into columns
+		ui::controller::ColumnSlicer::Ratios const frameColumnRatios = {
+			{ 1.f / 2.f, true },
+			{ 1.f / 2.f, true },
+		};
+		WeakPtr<ui::controller::ColumnSlicer> const frameColumnSlicer =
+			uiManager.AssignStrongController(
+				frame->GetChildContainerID(),
+				DefaultCreator<ui::controller::ColumnSlicer>::Create(
+					frameColumnRatios ) );
+
+		// Create menu selections in the left columns
+		rftl::vector<rftl::string> leftOptionsText;
+		leftOptionsText.emplace_back( "Menu option text for slot 1" );
+		leftOptionsText.emplace_back( "Menu option text for slot 2" );
+		leftOptionsText.emplace_back( "Menu option text for slot 3" );
+		leftOptionsText.emplace_back( "Menu option text for slot 4" );
+		leftOptionsText.emplace_back( "Menu option text for slot 5" );
+		leftOptionsText.emplace_back( "Menu option text for slot 6" );
+		leftOptionsText.emplace_back( "Menu option text for slot 7" );
+		leftOptionsText.emplace_back( "Menu option text for slot 8" );
+		leftOptionsText.emplace_back( "Menu option text for slot 9" );
+		leftOptionsText.emplace_back( "Menu option text for slot 10" );
+		leftOptionsText.emplace_back( "Menu option text for slot 11" );
+		leftOptionsText.emplace_back( "Menu option text for slot 12" );
+		leftOptionsText.emplace_back(); // Unused
+		leftOptionsText.emplace_back( "Return to main menu" );
+		WeakPtr<ui::controller::ListBox> const leftOptions =
+			uiManager.AssignStrongController(
+				frameColumnSlicer->GetChildContainerID(0),
+				DefaultCreator<ui::controller::ListBox>::Create(
+					leftOptionsText.size(),
+					ui::font::SmallMenuSelection,
+					ui::Justification::MiddleLeft,
+					math::Color3f::kGray50,
+					math::Color3f::kWhite,
+					math::Color3f::kYellow ) );
+		leftOptions->SetText( leftOptionsText );
+		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 0 )->GetContainerID(), details::kOpt1Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 1 )->GetContainerID(), details::kOpt2Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 2 )->GetContainerID(), details::kOpt3Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 3 )->GetContainerID(), details::kOpt4Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 4 )->GetContainerID(), details::kOpt5Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 5 )->GetContainerID(), details::kOpt6Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 6 )->GetContainerID(), details::kOpt7Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 7 )->GetContainerID(), details::kOpt8Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 8 )->GetContainerID(), details::kOpt9Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 9 )->GetContainerID(), details::kOpt10Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 10 )->GetContainerID(), details::kOpt11Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 11 )->GetContainerID(), details::kOpt12Tag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 12 )->GetContainerID(), details::kUnusedTag );
+		uiManager.AssignLabel( leftOptions->GetSlotController( 13 )->GetContainerID(), details::kReturnTag );
 	}
 }
 
@@ -105,8 +188,6 @@ void TitleScreen_Options::OnExit( AppStateChangeContext& context )
 
 void TitleScreen_Options::OnTick( AppStateTickContext& context )
 {
-	InternalState& internalState = *mInternalState;
-
 	rftl::vector<ui::FocusEventType> const focusEvents = TitleScreen::GetInputToProcess();
 
 	ui::ContainerManager& uiManager = *app::gUiManager;
@@ -141,8 +222,10 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
-					// TODO
-					(void)internalState;
+					if( currentFocusContainerID == uiManager.GetContainerID( details::kReturnTag ) )
+					{
+						context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
+					}
 				}
 			}
 		}
