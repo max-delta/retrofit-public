@@ -46,6 +46,7 @@ public:
 	// Private methods
 private:
 	TextLabel const* GetSlotWithFocus( UIConstContext const& context ) const;
+	bool ShouldSkipFocus( UIConstContext const& context, FocusTreeNode const& potentialFocus ) const;
 
 
 	//
