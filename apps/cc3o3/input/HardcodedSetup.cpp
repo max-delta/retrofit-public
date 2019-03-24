@@ -36,11 +36,15 @@ void HardcodedSetup()
 		logicalMapping['A'][input::DigitalPinState::Active] = command::raw::Left;
 		logicalMapping['S'][input::DigitalPinState::Active] = command::raw::Down;
 		logicalMapping['D'][input::DigitalPinState::Active] = command::raw::Right;
+
+		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with arrows
+		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with arrows
+
 		logicalMapping[shim::VK_RETURN][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping['E'][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping[shim::VK_BACK][input::DigitalPinState::Active] = command::raw::Negative;
 		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::Negative; // '|' or '\'
-		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
 		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
 		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary; // NOTE: Shared with arrows
 	}
@@ -50,6 +54,10 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_LEFT][input::DigitalPinState::Active] = command::raw::Left;
 		logicalMapping[shim::VK_DOWN][input::DigitalPinState::Active] = command::raw::Down;
 		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = command::raw::Right;
+
+		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with WASD
+
 		logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
 		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
@@ -65,6 +73,8 @@ void HardcodedSetup()
 	commandMapping[command::raw::Down] = command::game::UINavigateDown;
 	commandMapping[command::raw::Left] = command::game::UINavigateLeft;
 	commandMapping[command::raw::Right] = command::game::UINavigateRight;
+	commandMapping[command::raw::Home] = command::game::UINavigateToFirst;
+	commandMapping[command::raw::End] = command::game::UINavigateToLast;
 	commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;
 	commandMapping[command::raw::Negative] = command::game::UICancelSelection;
 	hotkeyController->SetCommandMapping( commandMapping );
