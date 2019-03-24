@@ -27,6 +27,8 @@ public:
 	void SetColor( math::Color3f color );
 	void SetBorder( bool border );
 
+	bool HasText() const;
+
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
