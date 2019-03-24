@@ -709,6 +709,9 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 		// Erase
 		mAnchors.erase( currentID );
 	}
+
+	// Clear out orphaned focus data
+	mFocusManager->GetMutableFocusTree().TrimDeadLinks();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
