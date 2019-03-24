@@ -61,8 +61,20 @@ void TextLabel::SetBorder( bool border )
 
 
 
+bool TextLabel::HasText() const
+{
+	return mText.empty() == false;
+}
+
+
+
 void TextLabel::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
+	if( HasText() == false )
+	{
+		return;
+	}
+
 	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	if( mDesiredHeight == 0 || mFontID == gfx::kInvalidManagedFontID )
