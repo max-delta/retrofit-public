@@ -5,6 +5,7 @@
 #include "GameUI/Anchor.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/FocusManager.h"
+#include "GameUI/FocusTarget.h"
 
 #include "PPU/PPUController.h"
 
@@ -310,12 +311,26 @@ void ContainerManager::DebugRender() const
 	float const maxLum = math::Color3f::kGray50.r;
 	constexpr gfx::PPUCoordElem kAnchorRadius = 3;
 
+	FocusTree::ConstNodeStack const focusStack = mFocusManager->GetFocusTree().GetCurrentFocusStack();
+	rftl::unordered_set<ContainerID> focusedContainers;
+	for( WeakPtr<FocusTreeNode const> const& node : focusStack )
+	{
+		focusedContainers.emplace( node->mFocusTarget->mContainerID );
+	}
+
 	for( ContainerStorage::value_type const& containerEntry : mContainers )
 	{
 		ContainerID const id = containerEntry.first;
 		Container const& container = containerEntry.second;
-		math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
-		mGraphics->DebugDrawAABB( container.mAABB, 3, color );
+		if( focusedContainers.count( id ) > 0 )
+		{
+			mGraphics->DebugDrawAABB( container.mAABB, 3, math::Color3f::kYellow );
+		}
+		else
+		{
+			math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
+			mGraphics->DebugDrawAABB( container.mAABB, 2, color );
+		}
 	}
 
 	for( AnchorStorage::value_type const& anchorEntry : mAnchors )
