@@ -108,7 +108,7 @@ public:
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
 	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
 
-	uint8_t GetCurrentZoomFactor() const;
+	PPUZoomFactor GetCurrentZoomFactor() const;
 	PPUCoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
 	PPUCoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
 
@@ -164,7 +164,7 @@ private:
 	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
 	void RenderDebugGrid() const;
 
-	uint8_t GetZoomFactor() const;
+	PPUZoomFactor GetZoomFactor() const;
 	math::Vector2f GetDevicePixelStep() const;
 
 	math::Vector2f CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const;
