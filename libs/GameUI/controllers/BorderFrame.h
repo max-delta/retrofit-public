@@ -19,7 +19,7 @@ class GAMEUI_API BorderFrame final : public InstancedController
 public:
 	BorderFrame() = default;
 
-	void SetTileset( gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight );
+	void SetTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight );
 	void SetJustification( Justification justification );
 
 	ContainerID GetChildContainerID() const;
@@ -39,7 +39,7 @@ private:
 private:
 	AnchorID mTopLeftAnchor = kInvalidAnchorID;
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
-	ContainerID mContainerID = kInvalidContainerID;
+	ContainerID mChildContainerID = kInvalidContainerID;
 	Justification mJustification = Justification::MiddleCenter;
 	gfx::PPUCoord mExpectedTileDimensions = {};
 	gfx::PPUCoord mExpectedDimensions = {};

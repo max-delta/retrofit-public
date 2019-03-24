@@ -196,6 +196,23 @@ void ContainerManager::SetDebugAABBReduction( gfx::PPUCoordElem delta )
 
 
 
+void ContainerManager::RequestHardRecalc( ContainerID containerID )
+{
+	RF_ASSERT( containerID != kRootContainerID );
+	Container const& container = GetContainer( containerID );
+
+	RF_ASSERT( container.mLeftConstraint != kInvalidAnchorID );
+	RF_ASSERT( container.mRightConstraint != kInvalidAnchorID );
+	RF_ASSERT( container.mTopConstraint != kInvalidAnchorID );
+	RF_ASSERT( container.mBottomConstraint != kInvalidAnchorID );
+	MarkForHardRecalc( container.mLeftConstraint );
+	MarkForHardRecalc( container.mRightConstraint );
+	MarkForHardRecalc( container.mTopConstraint );
+	MarkForHardRecalc( container.mBottomConstraint );
+}
+
+
+
 void ContainerManager::ProcessRecalcs()
 {
 	// Controllers might be defective, and result in an infinite chain, so
@@ -207,19 +224,30 @@ void ContainerManager::ProcessRecalcs()
 	size_t const maxPasses = mMaxDepthSeen;
 	for( size_t pass = 0; pass < maxPasses; pass++ )
 	{
-		if( mRecalcsNeeded.empty() )
+		if(
+			mSoftRecalcsNeeded.empty() &&
+			mHardRecalcsNeeded.empty() )
 		{
 			// No further work
 			return;
 		}
 
-		AnchorIDSet const recalcsInProgress = rftl::move( mRecalcsNeeded );
-		RF_ASSERT( mRecalcsNeeded.empty() );
+		AnchorIDSet const softRecalcsInProgress = rftl::move( mSoftRecalcsNeeded );
+		AnchorIDSet const hardRecalcsInProgress = rftl::move( mHardRecalcsNeeded );
+		RF_ASSERT( mSoftRecalcsNeeded.empty() );
+		RF_ASSERT( mHardRecalcsNeeded.empty() );
+
+		AnchorIDSet recalcsInProgress;
+		recalcsInProgress.reserve( softRecalcsInProgress.size() + hardRecalcsInProgress.size() );
+		recalcsInProgress.insert( softRecalcsInProgress.begin(), softRecalcsInProgress.end() );
+		recalcsInProgress.insert( hardRecalcsInProgress.begin(), hardRecalcsInProgress.end() );
 
 		// For each anchor that needs updating...
 		for( AnchorID const& anchorID : recalcsInProgress )
 		{
 			RF_ASSERT( anchorID != kInvalidAnchorID );
+
+			bool const hardRecalc = hardRecalcsInProgress.count( anchorID ) > 0;
 
 			// For each container that could be affected...
 			for( ContainerStorage::value_type& containerEntry : mContainers )
@@ -230,7 +258,7 @@ void ContainerManager::ProcessRecalcs()
 				if( container.IsConstrainedBy( anchorID ) )
 				{
 					// Recalculate it
-					RecalcContainer( container, false );
+					RecalcContainer( container, hardRecalc );
 				}
 			}
 		}
@@ -490,14 +518,17 @@ void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::PPUCoord pos )
 {
 	RF_ASSERT( anchorID != kInvalidAnchorID );
 	Anchor& anchor = mAnchors.at( anchorID );
-	anchor.mPos = pos;
 
-	RF_ASSERT( anchor.mPos.x >= 0 );
-	RF_ASSERT( anchor.mPos.y >= 0 );
-	RF_ASSERT( anchor.mPos.x <= mContainers.at( kRootContainerID ).mAABB.Right() );
-	RF_ASSERT( anchor.mPos.y <= mContainers.at( kRootContainerID ).mAABB.Bottom() );
+	RF_ASSERT( pos.x >= 0 );
+	RF_ASSERT( pos.y >= 0 );
+	RF_ASSERT( pos.x <= mContainers.at( kRootContainerID ).mAABB.Right() );
+	RF_ASSERT( pos.y <= mContainers.at( kRootContainerID ).mAABB.Bottom() );
 
-	MarkForRecalc( anchorID );
+	if( pos != anchor.mPos )
+	{
+		anchor.mPos = pos;
+		MarkForSoftRecalc( anchorID );
+	}
 }
 
 
@@ -527,9 +558,16 @@ WeakPtr<Controller> ContainerManager::AssignStrongControllerInternal( Container&
 
 
 
-void ContainerManager::MarkForRecalc( AnchorID anchorID )
+void ContainerManager::MarkForSoftRecalc( AnchorID anchorID )
 {
-	mRecalcsNeeded.emplace( anchorID );
+	mSoftRecalcsNeeded.emplace( anchorID );
+}
+
+
+
+void ContainerManager::MarkForHardRecalc( AnchorID anchorID )
+{
+	mHardRecalcsNeeded.emplace( anchorID );
 }
 
 
