@@ -236,6 +236,12 @@ Elements:
 * ?:?, reveal trap (item?)
 * ?:?, tutor for known element, replaces self, doesn't cast it (item? reveals?)
 * ?:?, tutor for unequipped accessory and re-equip (item?)
+* ?:?, steal an element of the same level from opponent, consuming theirs and replacing the steal element (reveals)
+* ?:?, auto-raise on self
+* ?:?, drain hp on a single target
+* ?:?, restore some stamina to party
+* ?:?, various combos of multiple buffs, single target and AOE
+* ?:?, various combos of multiple debuffs, single target and AOE
 * 6:6, rez chain
 	* Heal AOE
 	* Resurrect AOE
@@ -264,3 +270,5 @@ Gimmick gear (accessories, 2 per char):
 * Increase duration of positive stat changes
 * Reduce duration of negative status effects
 * Reduce duration of negative stat changes
+* Stat changes and status effects applied to self extend existing durations (negative and positive)
+* Stat changes and status effects applied to others extend existing durations (negative and positive)
