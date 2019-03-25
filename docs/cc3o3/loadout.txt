@@ -1,0 +1,266 @@
+# Loadout
+
+Grid:
+* 8 levels
+* 8 elements maximum per level
+* Elements are put in a slot that matches their level
+* Some elements can be put in lower slots for a harsh reduction in effect
+* Some elements can be put in higher slots for a slight amplification in effect
+
+Notation:
+3:3  Level 3, only slotable at level 3
+3:*  Level 3, but slotable anywhere
+3:4-5  Level 3, but slotable in 3,4, or 5
+3:2+  Level 3, but slotable in 2 or above
+3:4-  Level 3, but slotable in 4 or below
+
+Unless explicitly stated otherwise, all non-damage non-heal effects are temporary
+
+Expected average build:
+* 1 Damage in, damage out
+	* Single-target damage
+	* Single-target heals
+	* Single-target color weakness
+* 2 Defensive problem solving
+	* Single-target damage
+	* Single-target cleanse
+* 3 Offensive problem solving
+	* Single-target damage
+	* AOE damage
+	* Single-target color lock
+	* Basic character skills
+* 4 General utility
+	* Single-target buffs
+	* Single-target debuffs
+* 5 Specialized utility
+	* Big AOE damage, innate-restricted
+	* Interesting color-specific elements
+	* Interesting character skills
+	* Weak general-purpose traps
+* 6 Big threats
+	* Big single-target damage, innate-restricted
+	* Big AOE damage, innate-restricted
+	* Powerful chains, innate-restricted
+	* AOE buffs
+	* AOE debuffs
+	* Traps
+* 7 Kill moves
+	* Crazy single-target damage, innate-restricted
+	* Crazy AOE damage, innate-restricted
+	* Crazy character skills
+	* Traps
+* 8 Kill moves
+	* Crazy single-target damage, innate-restricted
+	* Crazy AOE damage, innate-restricted
+
+
+### Innate skills
+
+* 3 character-specific skills
+	* 3:3
+	* 5:5
+	* 7:7
+* Always slotted when gained
+* Cannot move/remove
+
+
+### Single-target damage
+
+* 1:*
+* 2:*
+* 3:*
+* None at 4
+* None at 5, unless from a character skill
+* 6:4+, innate-restricted
+* 7:6+, innate-restricted
+* 8:8, innate-restricted
+
+
+### AOE damage
+
+* None at 1
+* None at 2
+* 3:*
+* None at 4
+* 5:2+, innate-restricted
+* 6:4+, innate-restricted
+* 7:6+, innate-restricted
+* 8:8, innate-restricted
+
+
+### Buffs
+
+* None at 1
+* None at 2
+* None at 3, unless from a character skill
+* 4:*, stat change single target
+* None at 5, unless from a character skill
+* 6:4+, stat change party
+* None at 7, unless from a character skill
+* None at 8
+
+
+### Debuffs
+
+* 1:*, apply color weakness
+* 1:*, apply color resistance
+* 1:*, apply color proficiency
+* 1:*, apply color deficiency
+* None at 2
+* None at 3, unless from a character skill
+* 4:*, stat change single target
+* None at 5, unless from a character skill
+* 6:4+, stat change opponent
+* None at 7, unless from a character skill
+* None at 8
+
+
+### Locks
+
+* None at 1
+* None at 2
+* 3:*, color lock single target, innate-restricted
+* None at 4
+* 5:4+, color lock single target
+* 6:4+, color lock global
+* None at 7, unless from a character skill
+* None at 8
+
+
+### Chains
+
+* None at 1
+* None at 2
+* None at 3, unless from a character skill
+* None at 4
+* None at 5, unless from a character skill
+* 6:6, innate-restricted
+* None at 7, unless from a character skill
+* None at 8
+
+
+### Items
+
+Items are colorless
+
+* 1:1, heal single target
+* 2:2, remove color-specific status effect or stat change single target (cleanse)
+* 3:3, heal single target
+* None at 4
+* None at 5
+* None at 6
+* None at 7
+* None at 8
+
+
+### Traps
+
+Traps are colorless
+Note: All traps must be slotted in the same levels, to hide what they are
+
+* None at 1
+* None at 2
+* None at 3, unless from a character skill
+* None at 4
+* 5:5-7, trap any element
+* 6:5-7, general anti-color traps
+* 7:5-7, specialized anti-color traps
+* None at 8
+
+
+### Color-specific
+
+White:
+* Can alter elemental defense
+* Status effect = Stamina costs increased
+* Status effect =
+* 1:*, ressurect
+* 3:*, heal AOE
+* 5:2+, status effect AOE, innate-restricted
+* 6:4+, heal and cleanse AOE, innate-restricted
+
+Black:
+* Can alter elemental damage
+* Status effect = Stamina drains when damaged
+* Status effect =
+* 2:2, status effect single target
+* 4:4, status effect single target
+* 5:2+, transfer negative status effects to an enemy, innate-restricted
+* 6:4+, element lock global, innate-restricted
+
+Blue:
+* Can alter balance
+* Status effect = Reduced stamina recovery rate
+* Status effect =
+* 1:*, heal single target
+* 3:*, heal single target
+* 4:*, status effect single target
+* 5:*, heal AOE, innate-restricted
+
+Red:
+* Can alter physical damage
+* Status effect = Reduced physical defense
+* Status effect =
+* 2:*, damage AOE
+* 3:*, status effect single target
+* 4:*, status effect single target
+* 5:2+, status effect AOE, innate-restricted
+
+Green:
+* Can alter accuracy
+* Status effect = Damage over time
+* Status effect =
+* 1:*, heal single target
+* 3:*, status effect single target
+* 4:*, heal AOE
+* 4:*, status effect single target
+* 5:2+, status effect AOE, innate-restricted
+* 6:4+, full heal single target, innate-restricted
+* 6:6, consumed state of elements ignored on a single target, innate-restricted
+	* Starting a chain with this effectively clears the consumed state of the chain
+
+Yellow:
+* Can alter physical defense
+* Status effect = Reduced physical damage
+* Status effect =
+* 4:*, status effect single target
+* 5:2+, status effect AOE, innate-restricted
+* 6:4+, physical invulnerability on a single target, innate-restricted
+* 6:6, stamina costs removed on a single target, innate-restricted
+
+
+### Brainstorm
+
+Elements:
+* ?:?, transfer current element guage level to single target
+* ?:?, reveal trap (item?)
+* ?:?, tutor for known element, replaces self, doesn't cast it (item? reveals?)
+* ?:?, tutor for unequipped accessory and re-equip (item?)
+* 6:6, rez chain
+	* Heal AOE
+	* Resurrect AOE
+	* Full heal AOE
+* 6:6, meter drain chain
+	* Reduce opponent time counter meter
+	* Steal some opponent time counter meter (can overcharge)
+	* Steal all opponent time counter meter (can overcharge)
+* 6:6, meter charge chain
+	* Increase time counter meter by 1/3 (cannot overcharge)
+	* Increase time counter meter by 1/3 (cannot overcharge)
+	* Increase time counter meter by 1/3 (cannot overcharge)
+
+Stat gear (armor, 2 per char):
+* Add 2 points to a stat
+
+Gimmick gear (accessories, 2 per char):
+* Apply proficiency with a specific color
+* Remove innate-restrictions for a specific color
+* Prevent weakness for a specific color
+* Prevent status effects for a specific color
+* Start battle with a full element guage
+* ??%/+?? HP increase
+* Replace weapon attack color with a specific color
+* Replace weapon attack color with colorless (no weakness/resist)
+* Increase duration of positive stat changes
+* Reduce duration of negative status effects
+* Reduce duration of negative stat changes
