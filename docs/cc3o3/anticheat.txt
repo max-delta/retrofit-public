@@ -1,0 +1,94 @@
+# Anticheat
+
+Game is peer-to-peer, so there is no third-party verification to prevent cheating.
+Invasive client-side detection doesn't actually work, and just pisses people off.
+Source code is public, "the client is in the hands of the enemy", etc.
+
+
+### Public info
+
+Most information is public, and therefore immune to cheating.
+Known information isn't hidden, and therefore immune to memory tools.
+Derivable information isn't obscured, and therefore immune to analysis tools.
+These anticheat measures perform double-duty, by also avoiding bad game design anti-patterns.
+
+Known info:
+* Character
+	* Stats
+		* Except grid breadth vs depth choice
+	* Equipment
+	* Hit points
+	* Stamina
+	* Element gauge
+	* Status effects
+* Team
+	* Time counter meter
+* Actions
+	* Attacks
+	* Combo accuracy bonus
+	* Element uses
+	* Trap deployments
+
+Derived info:
+* Character
+	* Duration of status effects
+* Team
+	* Remaining time before time counter usage allowed
+* Actions
+	* Previously used elements in grid
+	* Current element chain in progress
+	* Current number of deployed traps and their levels
+
+
+### Secret info
+
+Some information is kept secret for gameplay purposes, and therefore possible to spoof.
+Secrets are not trivially transmitted, and therefore difficult to reverse.
+All secrets are revealed after gameplay, and therefore verifiable.
+
+Secret info:
+* Character
+	* Grid breadth vs depth choice
+	* Elements in grid
+* Actions
+	* Trap type
+
+Mitigations:
+* Players given option to randomize all trap positions before each battle
+	* Will change the balance of their grid subtly, in exchange for remaining unpredictable
+* Grid sent after battle
+	* Validity of grid verifiable
+* Element usage by slot sent during battle
+	* Consistency with sent grid after battle verifiable
+* Hash of element grid sent before battle
+	* Hash of sent grid after battle verifiable
+
+Counter-mitigations:
+* Spoofer can create hash, then brute-force generate all permutations of the hash and change grid as needed
+* Reverser can brute-force generate all permutations of grid, and search for hash
+
+Counter-counter-mitigations:
+* Hash of grid must include huge salt freshly generated before battle
+	* Salt must be sent along with grid after battle, to allow hash verification
+
+Counter-counter-counter-mitigations:
+* Spoofer can create hash, then brute-force all permutations of salt along with grid
+	* Computationally infeasible?
+* Reverser can bure-force generate all permutations of salt along with grid
+	* Computationally infeasible?
+
+
+### Botting
+
+Look man, if you can make a bot that actually plays the game well, let us know and we'll put it in the game.
+You'll be in the credits and everything.
+If someone creates a bot that provides a compelling and exciting challenge, it's not a problem.
+
+
+### Remote-client takeover via memory corruption
+
+Yeah, welcome to having a computer connected to the internet.
+This is just one of those ever-present dangers in life you learn to not fret about, like getting hit by lightning.
+If this doesn't bother you, then you probably live a happy life.
+If it does, then you probably have an anxiety problem you're already aware of.
+If you're a security guru, and you find a bug, let us know.
