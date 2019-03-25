@@ -16,18 +16,25 @@ Overview:
 ### Basic
 Loose concept tree:
 * Stats
+	* Physical damage
 	* Physical defense
+	* Elemental damage
+	* Elemental defense
+	* Accuracy
+	* Balance
 * Attack
 	* Does damage
-		* Higher level = more damage
+		* Stronger attack = more damage
 	* Can miss
-		* Higher level = less accurate
-		* More attacks = more accurate
+		* Stronger attack = less accurate
+		* More attacks in sequence = gain combo accuracy, easier to hit
+		* Not random
 	* Takes stamina
-		* Higher level = more stamina
+		* Stronger attack = more stamina
 		* Can't go negative
 	* Builds guage
-		* Higher level = more gauge
+		* Has to connect in order to build guage
+		* Stronger attack = more gauge
 		* Can't go above max
 * Defend
 	* Raises physical defense
@@ -64,17 +71,25 @@ Loose concept tree:
 	* Can buff/debuff physical defense
 	* Can buff/debuff elemental damage
 	* Can buff/debuff elemental defense
-	* Can buff/debuff minimum accuracy
+	* Can buff/debuff balance
+	* Can buff/debuff accuracy
 	* Buffs/debuffs are STRONG
 * Attack
-	* Bigger risks = bigger payoffs
+	* Lighter attacks
+		* Builds more accuracy per stamina
+	* Stronger attacks
+		* More damage per stamina if attack connects
+		* More damage per unit of time
+		* Even a miss will raise combo accuracy
+	* Missing is always a damage loss
+	* Buff accuracy or debuff balance to make strong attacks always hit
 * Element
 	* Multiple colors
 		* Pairs of opposites
 		* Resistances/weaknesses based on innate color
 		* Proficiencies/deficiencies based on innate color
 	* Some elements have multiple uses (stack)
-		* Are normally/always curative items
+		* Are normally/always items
 * Defend
 	* Stamina restores faster when defending during opponent's turn
 * Turn
@@ -85,12 +100,13 @@ Loose concept tree:
 Loose concept tree:
 * Attack
 	* Requires buff/debuffs to compete with element damage
+	* Attack is influenced by resistances/weaknesses based on innate color
 * Element
 	* Some elements do physical damage
 * Field
 	* Changes color with elements used
 		* First in, first out
-		* Some elements (curative items) don't affect field
+		* Some elements (colorless) don't affect field
 	* Influences proficiencies/deficiencies of all characters
 		* Makes a big difference when heavily skewed
 * Time counter
@@ -98,8 +114,6 @@ Loose concept tree:
 	* Can activate to end opponent's turn
 * Turn
 	* Turn ends when opponent time counters
-		* Cannot counter time counter immediately after
-			* Delay influenced by stamina of party vs opponent
 
 
 ### Expert
@@ -108,7 +122,7 @@ Loose concept tree:
 		* Prevent a type of element from being used
 		* Expire after an moderate amount of time
 		* Targeted locks affect a single enemy character
-			* Can be removed by some curative items
+			* Can be removed by some items
 		* Global locks affect all characters, enemy or otherwise
 			* Cannot be removed
 	* Traps
@@ -119,7 +133,6 @@ Loose concept tree:
 		* Partially fills time counter meter when triggered
 			* Can exceed natural maximum (Overcharge)
 			* Cannot exceed Overcharge maximum
-			* If already at Overcharge maximum, performs a free time counter
 	* Chains
 		* Changes to a different element after use
 		* Is fully consumed at end of chain
@@ -130,14 +143,33 @@ Loose concept tree:
 		* Non-standard rule-changing abilities
 * Gear
 	* Stat adjust
-		* Affects multiple stats
-		* Always trades equal losses for equal gains
 	* Gimmicks
 		* Non-standard rule-changing abilities
 
 
 ### Master
 Loose concept tree:
+* Time economy
+	* Time is a resource
+	* When more time passes, opponent gets more time counter meter
+		* Corollary: Stall to build time counter meter
+	* When more time passes, opponent regains more stamina
+		* Corollary: Avoid being capped on stamina
+		* Corollary: Avoid being too low on stamina to react to opponent
+	* Immediately after a turn start (natural or time counter), neither player can time counter
+		* Creates window to secure a kill
+		* Creates window to bunker down
+		* Delay influenced by total stamina of party vs opponent
+	* Time counter protection is always minimum of 3 actions, allowing known-safe options
+		* Defensive
+			* Defend, defend, defend
+			* Resurrect, full heal
+			* Element lock global
+		* Offensive
+			* Level 8, level 8, level 8
+			* Apply weakness, buff damage, level 8
+			* Apply weakness, debuff defense, level 8
+			* Buff damage, debuff defense, level 8
 * Element count distribution
 	* Single-target damage: Plentiful
 	* AOE damage: Plentiful
