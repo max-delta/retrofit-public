@@ -32,11 +32,22 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="LocEngine.h" />
+    <ClInclude Include="LocFwd.h" />
+    <ClInclude Include="LocKey.h" />
+    <ClInclude Include="LocQuery.h" />
+    <ClInclude Include="LocResult.h" />
+    <ClInclude Include="PageMapper.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="LocEngine.cpp" />
+    <ClCompile Include="LocKey.cpp" />
+    <ClCompile Include="LocQuery.cpp" />
+    <ClCompile Include="LocResult.cpp" />
+    <ClCompile Include="PageMapper.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
