@@ -231,6 +231,11 @@ Yellow:
 
 ### Brainstorm
 
+Status effects:
+* colorless debuff status effect that does nothing, if dispelled: does something bad to dispeller???
+* debuff that does damage to team every time an element is used???
+* buff that does damage to enemy team on death???
+
 Elements:
 * ?:?, transfer current element guage level to single target
 * ?:?, reveal trap (item?)
@@ -242,6 +247,18 @@ Elements:
 * ?:?, restore some stamina to party
 * ?:?, various combos of multiple buffs, single target and AOE
 * ?:?, various combos of multiple debuffs, single target and AOE
+* ?:?, discard multiple at random???
+* ?:?, discard with color hate (discard highest blue?)???
+* ?:?, spell copy???
+* ?:?, grant prof???
+* ?:?, global color shift???
+* ?:?, trap that changes color of enemy spell??? Lower level???
+* ?:?, buff that lower health means more damage??? (higher health does less???)
+* ?:?, target's next spell is all colors, benefits from all proficiencies, ignores all deficiencies, hits all weaknesses, ignores all resistances???
+* ?:?, target gains double-strike for the next X attacks???
+* ?:?, delayed action elements??? trap type???
+* ?:?, detonate status effects for some new effects (+1 potency)???
+* ?:?, huge buff to stats, auto-suicide after time, can only be rezzed once after death???
 * 6:6, rez chain
 	* Heal AOE
 	* Resurrect AOE
@@ -254,6 +271,17 @@ Elements:
 	* Increase time counter meter by 1/3 (cannot overcharge)
 	* Increase time counter meter by 1/3 (cannot overcharge)
 	* Increase time counter meter by 1/3 (cannot overcharge)
+* 6:6, storm chain
+	* Embarrasing damage
+	* Embarrasing damage
+	* Respectable damage
+	* Dangerous damage
+	* Instant kill
+	* Mark for death
+	* Perma-death to all dead characters
+	* Nothing
+	* Nothing
+	* Win the game
 
 Stat gear (armor, 2 per char):
 * Add 2 points to a stat
