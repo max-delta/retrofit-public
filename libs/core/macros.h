@@ -32,7 +32,7 @@ public: \
 
 // Construct(&&) and Operator=(&&) decorators to automate common move patterns
 #define RF_MOVE_CONSTRUCT( MEMBER ) \
-	MEMBER( rhs.MEMBER )
+	MEMBER( rftl::move( rhs.MEMBER ) )
 #define RF_MOVE_CLEAR( MEMBER ) \
 	rhs.MEMBER = {};
 #define RF_MOVE_ASSIGN( MEMBER ) \
