@@ -11,6 +11,9 @@
 #include "PPU/PPUController.h"
 #include "SimpleGL/SimpleGL.h"
 
+#include "Localization/LocEngine.h"
+#include "Localization/PageMapper.h"
+
 #include "PlatformUtils_win32/Console.h"
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
@@ -38,6 +41,8 @@ APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerM
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::LocEngine> gLocEngine;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
@@ -45,6 +50,8 @@ static UniquePtr<input::ControllerManager> sInputControllerManager;
 static UniquePtr<gfx::PPUController> sGraphics;
 static UniquePtr<ui::FontRegistry> sFontRegistry;
 static UniquePtr<ui::ContainerManager> sUiManager;
+static UniquePtr<loc::LocEngine> sLocEngine;
+static UniquePtr<loc::PageMapper> sPageMapper;
 static UniquePtr<file::VFS> sVfs;
 static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
@@ -129,6 +136,12 @@ void Startup()
 	sUiManager = DefaultCreator<ui::ContainerManager>::Create( gGraphics, gFontRegistry );
 	gUiManager = sUiManager;
 	gUiManager->CreateRootContainer();
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing localization..." );
+	sLocEngine = DefaultCreator<loc::LocEngine>::Create();
+	gLocEngine = sLocEngine;
+	sPageMapper = DefaultCreator<loc::PageMapper>::Create();
+	gPageMapper = sPageMapper;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
 	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );

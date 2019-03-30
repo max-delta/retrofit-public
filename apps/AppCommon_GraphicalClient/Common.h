@@ -16,6 +16,10 @@ namespace ui {
 	class ContainerManager;
 	class FontRegistry;
 }
+namespace loc {
+	class LocEngine;
+	class PageMapper;
+}
 namespace file {
 	class VFS;
 }
@@ -35,6 +39,8 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputCont
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::LocEngine> gLocEngine;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
