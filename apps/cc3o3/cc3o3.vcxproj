@@ -41,6 +41,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ui\LocalizationHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appstates\AppStateRoute.h" />
@@ -59,6 +60,7 @@
     <ClInclude Include="input\stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ui\LocalizationHelpers.h" />
     <ClInclude Include="ui\project.h" />
     <ClInclude Include="ui\stdafx.h" />
     <ClInclude Include="ui\UIFwd.h" />
@@ -81,6 +83,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
       <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Localization\Localization.vcxproj">
+      <Project>{0bac9079-d421-4e6b-86c3-a9244644b29a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>

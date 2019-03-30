@@ -2,6 +2,7 @@
 #include "TitleScreen_Options.h"
 
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -82,7 +83,7 @@ void OptionSet::Update( ui::controller::ListBox& listBox ) const
 		}
 	}
 	optionsText.emplace_back(); // Unused
-	optionsText.emplace_back( "Return to main menu" );
+	optionsText.emplace_back( ui::LocalizeKey( "$titleopt_mainmenu" ) );
 	listBox.SetText( optionsText );
 }
 

@@ -15,6 +15,9 @@
 #include "PPU/PPUController.h"
 #include "PPU/FontManager.h"
 
+#include "Localization/LocEngine.h"
+#include "Localization/PageMapper.h"
+
 #include "PlatformFilesystem/VFS.h"
 
 #include "core/ptr/default_creator.h"
@@ -68,6 +71,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// TODO: Load stuff
 
 	gfx::PPUController& ppu = *app::gGraphics;
+	file::VFS const& vfs = *app::gVfs;
 
 	// Load fonts
 	{
@@ -109,6 +113,15 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 		// TODO: Defer load requests instead of forcing immediate load
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", framepacks.GetChild( "logos", "cc303_composite_192.fpack" ) );
+	}
+
+	// Load localization
+	{
+		file::VFSPath const localizations = file::VFS::kRoot.GetChild( "assets", "localizations" );
+
+		// TODO: Configurable language
+		app::gLocEngine->InitializeFromKeymapFile( vfs, localizations.GetChild( "en_us.keymap.csv" ), loc::TextDirection::LeftToRight );
+		app::gPageMapper->InitializeFromCharmapFile( vfs, localizations.GetChild( "en_us.charmap.csv" ) );
 	}
 
 	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );
