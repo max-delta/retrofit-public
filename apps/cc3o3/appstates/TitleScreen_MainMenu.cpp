@@ -2,6 +2,7 @@
 #include "TitleScreen_MainMenu.h"
 
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -123,11 +124,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 
 		// Menu floater in center bottom
 		rftl::vector<rftl::string> menuText;
-		menuText.emplace_back( "Single player" );
-		menuText.emplace_back( "Multiplayer" );
-		menuText.emplace_back( "Character creator" );
-		menuText.emplace_back( "Options" );
-		menuText.emplace_back( "Exit to desktop" );
+		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_splay" ) );
+		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_mplay" ) );
+		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_char" ) );
+		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_opt" ) );
+		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_exit" ) );
 		uint8_t const menuFontHeight = fontReg.SelectBestFont( ui::font::LargeMenuSelection, 1 ).mFontHeight;
 		constexpr gfx::PPUCoordElem kMenuEntryHitboxWidth = 160;
 		constexpr gfx::PPUCoordElem kMenuEntryPadding = 6;

@@ -25,6 +25,9 @@
     <ClCompile Include="appstates\AppStateRoute.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="ui\LocalizationHelpers.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -77,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="appstates\AppStateRoute.h">
       <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\LocalizationHelpers.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
