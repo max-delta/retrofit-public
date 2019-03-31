@@ -21,6 +21,14 @@ loc::TextDirection GetTextDirection()
 
 
 
+rftl::unordered_set<char> GetBreakableChars()
+{
+	// TODO: Get from LocEngine
+	return { ' ', '-' };
+}
+
+
+
 rftl::string LocalizeKey( rftl::string const& key )
 {
 	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( key ) ) ).GetCodePoints() );
