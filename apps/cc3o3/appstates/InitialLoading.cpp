@@ -85,15 +85,15 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
-		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 1 } );
-		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 2 } );
-		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont1xMono, 8, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 2 } );
-		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 1 } );
-		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 1 } );
-		fontReg.RegisterFont( ui::font::MessageBox, { narrowFont2xVari, 16, 1 } );
-		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 1 } );
+		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
+		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 0, 2 } );
+		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 0, 1 } );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont1xMono, 8, 1, 1 } );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 1, 2 } );
+		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 3, 1 } );
+		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 3, 1 } );
+		fontReg.RegisterFont( ui::font::MessageBox, { narrowFont2xVari, 16, 3, 1 } );
+		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 0, 1 } );
 	}
 
 	// Load tilesets

@@ -59,8 +59,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 
 		// Cut the whole screen into rows
 		ui::controller::RowSlicer::Ratios const rootRowRatios = {
-			{ 3.f / 4.f, true },
-			{ 1.f / 4.f, true },
+			{ 5.f / 7.f, true },
+			{ 2.f / 7.f, true },
 		};
 		WeakPtr<ui::controller::RowSlicer> const rootRowSlicer =
 			uiManager.AssignStrongController(
@@ -91,11 +91,13 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3f::kWhite,
 					ui::GetBreakableChars() ) );
-		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), 4, 4 );
+		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 2, 0 } );
 		messageBox->SetText(
 			"This is some text. It may take up a fair amount of space, so it"
 			" will likely get broken up by the text box. It may even get"
-			" truncated due to its large size... Like right about here...",
+			" truncated due to its large size... Like right about here... Or"
+			" maybe here? If you're using widescreen, you can fit a lot more"
+			" in, but sooner or later you're going to run out, I hope...",
 			false );
 	}
 }

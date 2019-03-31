@@ -203,10 +203,10 @@ void InitDrawTest()
 	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
 	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
-	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 1 } );
-	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 2 } );
-	app::gFontRegistry->RegisterFont( k2xFont, { testFont1, 8, 1 } );
-	app::gFontRegistry->RegisterFallbackFont( { testFont1, 8, 1 } );
+	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 0, 1 } );
+	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 0, 2 } );
+	app::gFontRegistry->RegisterFont( k2xFont, { testFont1, 8, 0, 1 } );
+	app::gFontRegistry->RegisterFallbackFont( { testFont1, 8, 0, 1 } );
 }
 
 
@@ -518,7 +518,7 @@ void InitUITest()
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
-	frame6->SetTileset( uiContext, frameTileset, 4, 4 );
+	frame6->SetTileset( uiContext, frameTileset, { 4, 4 }, { 0, 0 } );
 
 	// Put some text in the frame to make sure it's readable
 	rftl::vector<rftl::string> frame6Text;

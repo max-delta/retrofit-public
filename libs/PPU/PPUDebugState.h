@@ -19,11 +19,11 @@ class PPU_API PPUDebugState
 
 	// Constants
 public:
-	static constexpr size_t kMaxStrings = 32;
-	static constexpr size_t kMaxLines = 256;
+	static constexpr size_t kMaxDebugStrings = gfx::kMaxDebugStrings;
+	static constexpr size_t kMaxDebugLines = gfx::kMaxDebugLines;
 	static constexpr size_t kMaxTotalElements =
-		kMaxStrings +
-		kMaxLines;
+		kMaxDebugStrings +
+		kMaxDebugLines;
 
 
 	//
@@ -31,7 +31,7 @@ public:
 public:
 	struct DebugString
 	{
-		static constexpr size_t k_MaxLen = 127;
+		static constexpr size_t k_MaxLen = kMaxDebugStringLen;
 
 		PPUCoordElem mXCoord;
 		PPUCoordElem mYCoord;
@@ -63,8 +63,8 @@ public:
 public:
 	uint8_t mNumStrings;
 	uint8_t mNumLines;
-	DebugString mStrings[kMaxStrings];
-	DebugLine mLines[kMaxLines];
+	DebugString mStrings[kMaxDebugStrings];
+	DebugLine mLines[kMaxDebugLines];
 };
 
 ///////////////////////////////////////////////////////////////////////////////

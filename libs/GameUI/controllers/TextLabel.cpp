@@ -82,12 +82,15 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurposeID, renderer.GetCurrentZoomFactor() );
 		mFontID = font.mManagedFontID;
 		mDesiredHeight = font.mFontHeight;
+		mBaselineOffset = font.mBaselineOffset;
 	}
+	RF_ASSERT( mFontID != gfx::kInvalidManagedFontID );
+	RF_ASSERT( mDesiredHeight > mBaselineOffset );
 
 	gfx::PPUCoord pos = container.mAABB.mTopLeft;
 	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
 	{
-		pos.y = container.mAABB.Top();
+		pos.y = container.mAABB.Top() - mBaselineOffset;
 	}
 	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Bottom ) )
 	{
@@ -95,7 +98,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	}
 	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Middle ) )
 	{
-		gfx::PPUCoordElem const top = container.mAABB.Top();
+		gfx::PPUCoordElem const top = container.mAABB.Top() - mBaselineOffset;
 		gfx::PPUCoordElem const bottom = container.mAABB.Bottom() - mDesiredHeight;
 		pos.y = math::Lerp( top, bottom, 0.5f );
 	}
@@ -137,6 +140,9 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		}
 	}
 	#endif
+
+	// Push the descenders down below the baseline (tails like g, j, p, q, y )
+	pos.y += mBaselineOffset;
 
 	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
 }
