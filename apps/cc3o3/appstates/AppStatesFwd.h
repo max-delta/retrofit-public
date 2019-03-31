@@ -17,6 +17,7 @@ enum : AppStateID
 
 	TitleScreen,
 	TitleScreen_MainMenu,
+	TitleScreen_CharCreate,
 	TitleScreen_Options
 };
 }
