@@ -281,7 +281,7 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 					}
 					else if( currentFocusContainerID == uiManager.GetContainerID( details::kCharacterCreatorTag ) )
 					{
-						RF_TODO_BREAK_MSG( "Character creator" );
+						context.mManager.RequestDeferredStateChange( id::TitleScreen_CharCreate );
 					}
 					else if( currentFocusContainerID == uiManager.GetContainerID( details::kOptionsTag ) )
 					{
