@@ -92,6 +92,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 2 } );
 		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 1 } );
 		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 1 } );
+		fontReg.RegisterFont( ui::font::MessageBox, { narrowFont2xVari, 16, 1 } );
 		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 1 } );
 	}
 
