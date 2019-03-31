@@ -28,6 +28,9 @@
     <ClCompile Include="ui\LocalizationHelpers.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\TitleScreen_CharCreate.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -83,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="ui\LocalizationHelpers.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\TitleScreen_CharCreate.h">
+      <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
