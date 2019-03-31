@@ -11,7 +11,7 @@
 	#define ___RF_ONCEPER_IMPL___( RATE, ACTION ) \
 		do \
 		{ \
-			::rftl::chrono::system_clock::duration const ___rf_rate = {}; \
+			::rftl::chrono::system_clock::duration const ___rf_rate = RATE; \
 			static ::rftl::chrono::system_clock::time_point ___rf_lastTime{ ::rftl::chrono::system_clock::duration( 0 ) }; \
 			::rftl::chrono::system_clock::time_point const ___rf_now = ::rftl::chrono::system_clock::now(); \
 			::rftl::chrono::system_clock::duration const ___rf_timePassed = ___rf_now - ___rf_lastTime; \
