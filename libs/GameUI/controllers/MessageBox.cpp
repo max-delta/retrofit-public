@@ -66,6 +66,13 @@ void MessageBox::SetFrameTileset( ui::UIContext& context, gfx::ManagedTilesetID 
 
 
 
+void MessageBox::SetAnimationSpeed( uint8_t charsPerFrame )
+{
+	mAnimSpeed = charsPerFrame;
+}
+
+
+
 ContainerID MessageBox::GetChildContainerID() const
 {
 	return mChildContainerID;
@@ -83,16 +90,14 @@ void MessageBox::SetText( rftl::string const& text, bool rightToLeft )
 
 size_t MessageBox::GetNumCharactersDispatchedLastRender() const
 {
-	RF_TODO_BREAK();
-	return 0;
+	return mNumCharsDispatched;
 }
 
 
 
-size_t MessageBox::GetNumCharactersTruncatedLastRender() const
+size_t MessageBox::GetNumCharactersRenderedLastRender() const
 {
-	RF_TODO_BREAK();
-	return 0;
+	return mNumCharsRendered;
 }
 
 
@@ -136,8 +141,74 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		return;
 	}
 
-	// TODO: Animation logic
-	mTextController->SetText( mText, mRightToLeft );
+	// TODO: This needs to better handle the truncation case, since the TextBox
+	//  doesn't know that an animating word is GOING to be truncated once it
+	//  finishes. Perhaps the TextBox should also take a string of characters
+	//  that are non-rendering, which it uses during truncation logic, but not
+	//  during render logic.
+
+	size_t const previousNumDispatched = mNumCharsDispatched;
+	size_t const previousNumUnrendered = mTextController->GetNumCharactersUnwrittenLastRender();
+	RF_ASSERT( previousNumDispatched >= previousNumUnrendered );
+	size_t const previousNumRendered = previousNumDispatched - previousNumUnrendered;
+
+	mNumCharsRendered = previousNumRendered;
+
+	if( mBlockAnimUntilAABBChange && mAABBChanged == false )
+	{
+		// Don't try to animate
+		return;
+	}
+	else if( mAABBChanged )
+	{
+		// Lift block and try to animate
+		mAABBChanged = false;
+		mBlockAnimUntilAABBChange = false;
+	}
+	else if( previousNumUnrendered > 0 )
+	{
+		// Stop animating
+		mBlockAnimUntilAABBChange = true;
+		return;
+	}
+	else
+	{
+		// Try to animate
+	}
+
+	size_t const animateLength = mAnimSpeed > 0u ? mAnimSpeed : 255u;
+
+	size_t const numToDispatch = math::Min( mText.length(), previousNumRendered + animateLength );
+	if( numToDispatch == mNumCharsDispatched )
+	{
+		// No change
+	}
+	else
+	{
+		if( numToDispatch == mText.length() )
+		{
+			mTextController->SetText( mText, mRightToLeft );
+		}
+		else
+		{
+			mTextController->SetText( mText.substr( 0, numToDispatch ), mRightToLeft );
+		}
+		mNumCharsDispatched = numToDispatch;
+	}
+}
+
+
+
+void MessageBox::OnAABBRecalc( UIContext& context, Container& container )
+{
+	mAABBChanged = true;
+}
+
+
+
+void MessageBox::OnZoomFactorChange( UIContext& context, Container& container )
+{
+	mAABBChanged = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
