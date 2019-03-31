@@ -13,6 +13,7 @@
 #endif
 
 #define RF_CONFIG_ASSERTS RF_FORBID
+#define RF_CONFIG_ONCEPER RF_ALLOW
 #define RF_CONFIG_FILENAME_MACRO RF_ALLOW
 
 // Allow: Testing and internal releases are a good time to evaluate TODOs
