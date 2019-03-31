@@ -53,6 +53,7 @@
     <ClInclude Include="ptr\weak_ptr.h" />
     <ClInclude Include="ptr\weak_shared_ptr.h" />
     <ClInclude Include="rf_assert.h" />
+    <ClInclude Include="rf_onceper.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
