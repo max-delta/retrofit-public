@@ -13,6 +13,7 @@
 #endif
 
 #define RF_CONFIG_ASSERTS RF_FORBID
+#define RF_CONFIG_ONCEPER RF_FORBID
 #define RF_CONFIG_FILENAME_MACRO RF_FORBID
 
 // Forbid: If it's not done by the retail build, it's probably not getting done

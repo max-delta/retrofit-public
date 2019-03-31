@@ -13,6 +13,7 @@
 #endif
 
 #define RF_CONFIG_ASSERTS RF_ALLOW
+#define RF_CONFIG_ONCEPER RF_ALLOW
 #define RF_CONFIG_FILENAME_MACRO RF_ALLOW
 
 // Forbid: Don't need to see this while iterating, just clogs up output
