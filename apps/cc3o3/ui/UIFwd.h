@@ -35,5 +35,9 @@ enum : FocusEventType
 };
 }
 
+
+// TODO: Configurable
+static constexpr uint8_t kTextSpeed = 4;
+
 ///////////////////////////////////////////////////////////////////////////////
 }}}

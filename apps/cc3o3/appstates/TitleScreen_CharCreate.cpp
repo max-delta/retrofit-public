@@ -92,6 +92,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					math::Color3f::kWhite,
 					ui::GetBreakableChars() ) );
 		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 2, 0 } );
+		messageBox->SetAnimationSpeed( ui::kTextSpeed );
 		messageBox->SetText(
 			"This is some text. It may take up a fair amount of space, so it"
 			" will likely get broken up by the text box. It may even get"
