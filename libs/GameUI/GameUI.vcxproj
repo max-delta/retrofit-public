@@ -41,11 +41,13 @@
     <ClInclude Include="controllers\FramePackDisplay.h" />
     <ClInclude Include="controllers\InstancedController.h" />
     <ClInclude Include="controllers\ListBox.h" />
+    <ClInclude Include="controllers\MessageBox.h" />
     <ClInclude Include="controllers\NineSlicer.h" />
     <ClInclude Include="controllers\Passthrough.h" />
     <ClInclude Include="controllers\project.h" />
     <ClInclude Include="controllers\RowSlicer.h" />
     <ClInclude Include="controllers\stdafx.h" />
+    <ClInclude Include="controllers\TextBox.h" />
     <ClInclude Include="controllers\TextLabel.h" />
     <ClInclude Include="controllers\TextRows.h" />
     <ClInclude Include="FocusEvent.h" />
@@ -70,9 +72,11 @@
     <ClCompile Include="controllers\FramePackDisplay.cpp" />
     <ClCompile Include="controllers\InstancedController.cpp" />
     <ClCompile Include="controllers\ListBox.cpp" />
+    <ClCompile Include="controllers\MessageBox.cpp" />
     <ClCompile Include="controllers\NineSlicer.cpp" />
     <ClCompile Include="controllers\Passthrough.cpp" />
     <ClCompile Include="controllers\RowSlicer.cpp" />
+    <ClCompile Include="controllers\TextBox.cpp" />
     <ClCompile Include="controllers\TextLabel.cpp" />
     <ClCompile Include="controllers\TextRows.cpp" />
     <ClCompile Include="dllmain.cpp" />
