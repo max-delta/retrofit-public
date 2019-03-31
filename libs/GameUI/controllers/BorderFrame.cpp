@@ -21,10 +21,11 @@ RFTYPE_CREATE_META( RF::ui::controller::BorderFrame )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void BorderFrame::SetTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight )
+void BorderFrame::SetTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoord expectedTileDimensions, gfx::PPUCoord paddingDimensions )
 {
 	mTileLayer.mTilesetReference = tileset;
-	mExpectedTileDimensions = { expectedTileWidth, expectedTileHeight };
+	mExpectedTileDimensions = expectedTileDimensions;
+	mPaddingDimensions = paddingDimensions;
 
 	// Invalidate tilemap and wait for recalc
 	mTileLayer.Clear();
@@ -121,8 +122,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 {
 	RecalcTilemap( container );
 
-	gfx::PPUCoord const topLeft = container.mAABB.mTopLeft + mExpectedTileDimensions;
-	gfx::PPUCoord const bottomRight = container.mAABB.mBottomRight - mExpectedTileDimensions;
+	gfx::PPUCoord const topLeft = container.mAABB.mTopLeft + (mExpectedTileDimensions + mPaddingDimensions);
+	gfx::PPUCoord const bottomRight = container.mAABB.mBottomRight - (mExpectedTileDimensions + mPaddingDimensions );
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }

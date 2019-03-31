@@ -34,7 +34,7 @@ public:
 		math::Color3f color,
 		rftl::unordered_set<char> const& breakableChars );
 
-	void SetFrameTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoordElem expectedTileWidth, gfx::PPUCoordElem expectedTileHeight );
+	void SetFrameTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoord expectedTileDimensions, gfx::PPUCoord paddingDimensions );
 
 	ContainerID GetChildContainerID() const;
 
