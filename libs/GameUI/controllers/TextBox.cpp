@@ -12,6 +12,7 @@
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core/ptr/default_creator.h"
+#include "core/rf_onceper.h"
 
 #include "rftl/algorithm"
 
@@ -135,8 +136,19 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 			line += unwrittenText.front();
 		}
 
-		gfx::PPUCoordElem const lineLen = renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line.c_str() );
-		if( lineLen > maxLineLen )
+		bool fits = true;
+		if( fits && line.length() > gfx::PPUState::String::k_MaxLen )
+		{
+			// Hard limit on render draw request
+			RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '%s'", line.c_str() ) );
+			fits = false;
+		}
+		if( fits && renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line.c_str() ) > maxLineLen )
+		{
+			fits = false;
+		}
+
+		if( fits == false )
 		{
 			// Not enough room, undo and move to next line
 			line.pop_back();

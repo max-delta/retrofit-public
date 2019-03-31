@@ -533,7 +533,7 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumStrings < PPUDebugState::kMaxStrings );
+	RF_ASSERT( targetState.mNumStrings < PPUDebugState::kMaxDebugStrings );
 	PPUDebugState::DebugString& targetString = targetState.mStrings[targetState.mNumStrings];
 	targetState.mNumStrings++;
 
@@ -580,7 +580,7 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumLines < PPUDebugState::kMaxLines );
+	RF_ASSERT( targetState.mNumLines < PPUDebugState::kMaxDebugLines );
 	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
 	targetState.mNumLines++;
 
@@ -937,7 +937,7 @@ void PPUController::CalculateDesiredFontZoomShrink( Font const& font, uint8_t de
 
 void PPUController::CalculateFontVariableWhitespaceWidth( Font const& font, uint8_t& whitespaceWidth ) const
 {
-	whitespaceWidth = font.mTileWidth;
+	whitespaceWidth = font.mTileWidth / 2u;
 }
 
 

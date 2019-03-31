@@ -18,9 +18,9 @@ class PPU_API PPUState
 
 	// Constants
 public:
-	static constexpr size_t kMaxObjects = 32;
-	static constexpr size_t kMaxTileLayers = 16;
-	static constexpr size_t kMaxStrings = 30;
+	static constexpr size_t kMaxObjects = gfx::kMaxObjects;
+	static constexpr size_t kMaxTileLayers = gfx::kMaxTileLayers;
+	static constexpr size_t kMaxStrings = gfx::kMaxStrings;
 	static constexpr size_t kMaxTotalElements =
 		kMaxObjects +
 		kMaxTileLayers +
@@ -32,7 +32,7 @@ public:
 public:
 	struct String
 	{
-		static constexpr size_t k_MaxLen = 123;
+		static constexpr size_t k_MaxLen = kMaxStringLen;
 
 		PPUCoordElem mXCoord;
 		PPUCoordElem mYCoord;

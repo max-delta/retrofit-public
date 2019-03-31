@@ -25,7 +25,7 @@ constexpr bool kAllowDebug = true;
 
 constexpr bool kDebugGrid = kAllowDebug && true;
 constexpr bool kDebugUI = kAllowDebug && true;
-constexpr bool kDebugUIScaler = kAllowDebug && true;
+constexpr bool kDebugUIScaler = kAllowDebug && false;
 constexpr bool kDebugHideZoomFactor = kAllowDebug && false;
 constexpr bool kDebugSuppressRender = kAllowDebug && false;
 
@@ -44,9 +44,11 @@ void Startup()
 	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
 	app::gGraphics->HideZoomFactor( kDebugHideZoomFactor );
 
+	// Leave atleast a pixel around all edges of the screen
+	app::gUiManager->SetRootAABBReduction( 1 );
+
 	if( kDebugUIScaler )
 	{
-		app::gUiManager->SetRootAABBReduction( 1 );
 		app::gUiManager->SetDebugAABBReduction( 2 );
 	}
 }

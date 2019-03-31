@@ -20,6 +20,15 @@ static constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Third = 3;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Quarter = 4;
 
+static constexpr size_t kMaxObjects = 32;
+static constexpr size_t kMaxTileLayers = 16;
+static constexpr size_t kMaxStrings = 30;
+static constexpr size_t kMaxStringLen = 123;
+
+static constexpr size_t kMaxDebugStrings = 32;
+static constexpr size_t kMaxDebugLines = 256;
+static constexpr size_t kMaxDebugStringLen = 127;
+
 typedef uint8_t GameLayerID;
 static constexpr size_t kNumGameLayers = 8;
 

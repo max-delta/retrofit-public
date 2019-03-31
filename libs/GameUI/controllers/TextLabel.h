@@ -46,6 +46,7 @@ private:
 	FontPurposeID mFontPurposeID = kInvalidFontPurposeID;
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
 	uint8_t mDesiredHeight = 0;
+	uint8_t mBaselineOffset = 0;
 	Justification mJustification = Justification::TopLeft;
 	rftl::string mText;
 	math::Color3f mColor = math::Color3f::kBlack;
