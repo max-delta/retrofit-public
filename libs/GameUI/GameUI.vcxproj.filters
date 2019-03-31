@@ -47,6 +47,12 @@
     <ClCompile Include="controllers\BorderFrame.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\TextBox.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="controllers\MessageBox.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -100,6 +106,12 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="controllers\BorderFrame.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\TextBox.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\MessageBox.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>
