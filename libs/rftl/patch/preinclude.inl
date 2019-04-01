@@ -21,3 +21,17 @@
 	#pragma warning(disable : 4355) // <future> has invalid use of 'this' ptr
 	#pragma warning(disable : 4548) // <future> has some broken macro invocation
 #endif
+
+#if \
+	defined(_MSC_VER) && \
+	(_MSC_VER == 1916) && \
+	_HAS_EXCEPTIONS == 0 && \
+	!defined(RFTL_ADD_MISSING_NEW_EXCEPTIONS)
+#define RFTL_ADD_MISSING_NEW_EXCEPTIONS
+namespace stdext {
+	class bad_array_new_length;
+}
+namespace std {
+	using stdext::bad_array_new_length;
+}
+#endif

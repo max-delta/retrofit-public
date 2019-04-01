@@ -76,5 +76,6 @@
     <None Include="map" />
     <None Include="algorithm" />
     <None Include="optional" />
+    <None Include="new" />
   </ItemGroup>
 </Project>
