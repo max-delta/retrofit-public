@@ -1,4 +1,5 @@
 #pragma once
+#include "rftl/cstdint"
 
 
 namespace RF { namespace math {
