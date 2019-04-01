@@ -84,45 +84,5 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }
-namespace rftl {
-///////////////////////////////////////////////////////////////////////////////
-template<typename T, size_t MaxTotalSize>
-struct allocator_traits<RF::SingleAllocator<T, MaxTotalSize>>
-{
-	using allocator_type = RF::SingleAllocator<T, MaxTotalSize>;
-	using value_type = typename allocator_type::value_type;
-
-	using pointer = typename allocator_type::pointer;
-	using const_pointer = typename allocator_type::const_pointer;
-	using void_pointer = typename allocator_type::void_pointer;
-	using const_void_pointer = typename allocator_type::const_void_pointer;
-
-	using difference_type = typename allocator_type::difference_type;
-	using size_type = typename allocator_type::size_type;
-
-	using propagate_on_container_copy_assignment = typename allocator_type::propagate_on_container_copy_assignment;
-	using propagate_on_container_move_assignment = typename allocator_type::propagate_on_container_move_assignment;
-	using propagate_on_container_swap_assignment = typename allocator_type::propagate_on_container_swap_assignment;
-
-	using is_always_equal = typename allocator_type::is_always_equal;
-
-	template<class U>
-	using rebind_alloc = RF::SingleAllocator<U, MaxTotalSize>;
-
-	template<class U>
-	using rebind_traits = allocator_traits<RF::SingleAllocator<U, MaxTotalSize>>;
-
-	static pointer allocate( allocator_type& alloc, size_type count );
-	static pointer allocate( allocator_type& alloc, size_type count, const_void_pointer hint );
-	static void deallocate( allocator_type& alloc, pointer ptr, size_type count );
-	template<class U, class... Args>
-	static void construct( allocator_type& alloc, U* ptr, Args&&... args );
-	template<class U>
-	static void destroy( allocator_type& alloc, U* ptr );
-	static size_type max_size( allocator_type const& alloc );
-	static allocator_type select_on_container_copy_construction( allocator_type const& alloc );
-};
-///////////////////////////////////////////////////////////////////////////////
-}
 
 #include "SingleAllocator.inl"
