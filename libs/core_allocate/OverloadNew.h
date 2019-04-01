@@ -1,0 +1,11 @@
+#pragma once
+
+namespace RF { namespace alloc {
+///////////////////////////////////////////////////////////////////////////////
+
+// If new is hooked, these must be present during the link step
+void* GlobalObjectAllocate( size_t size ) noexcept;
+void GlobalObjectDeallocate( void* ptr ) noexcept;
+
+///////////////////////////////////////////////////////////////////////////////
+}}
