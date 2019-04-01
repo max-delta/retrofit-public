@@ -73,5 +73,10 @@
       <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
-  <ItemGroup />
+  <ItemGroup Condition="'$(ProjectName)'!='core_allocate'">
+    <!-- Link allocation lib with everything, to allow for hooks -->
+    <ProjectReference Include="$(SolutionDir)libs\core_allocate\core_allocate.vcxproj">
+      <Project>{c5171146-7ace-4819-b4ca-6a36beb91e85}</Project>
+    </ProjectReference>
+  </ItemGroup>
 </Project>
