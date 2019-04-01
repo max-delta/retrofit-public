@@ -69,6 +69,7 @@
     <None Include="algorithm" />
     <None Include="extension\static_array.inl" />
     <None Include="map" />
+    <None Include="new" />
     <None Include="optional" />
     <None Include="patch\normallocations.inl" />
     <None Include="patch\postinclude.inl" />

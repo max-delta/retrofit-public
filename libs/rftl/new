@@ -1,0 +1,26 @@
+#pragma once
+#include "rftl/patch/preinclude.inl"
+#include RFTL_NEW
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+
+using std::get_new_handler;
+using std::set_new_handler;
+
+using std::launder;
+
+using std::bad_alloc;
+using std::bad_array_new_length;
+using std::nothrow_t;
+using std::align_val_t;
+
+using std::new_handler;
+
+using std::nothrow;
+
+using std::hardware_destructive_interference_size;
+using std::hardware_constructive_interference_size;
+
+}
