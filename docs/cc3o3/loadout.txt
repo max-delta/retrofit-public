@@ -242,6 +242,7 @@ Elements:
 * ?:?, tutor for known element, replaces self, doesn't cast it (item? reveals?)
 * ?:?, tutor for unequipped accessory and re-equip (item?)
 * ?:?, steal an element of the same level from opponent, consuming theirs and replacing the steal element (reveals)
+* ?:?, steal an unknown element from opponent, they keep theirs but you unlock it for later use (reveals)
 * ?:?, auto-raise on self
 * ?:?, drain hp on a single target
 * ?:?, restore some stamina to party
