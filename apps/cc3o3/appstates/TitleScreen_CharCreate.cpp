@@ -80,8 +80,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::ColumnSlicer>::Create(
 					topColumnRatios ) );
 
-		// HACK: Put a text box at the bottom
-		// TODO: Use a message box instead
+		// Put a message box at the bottom
 		WeakPtr<ui::controller::MessageBox> const messageBox =
 			uiManager.AssignStrongController(
 				rootRowSlicer->GetChildContainerID( 1 ),
