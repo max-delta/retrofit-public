@@ -17,6 +17,7 @@
     <ClInclude Include="Color3f.h" />
     <ClInclude Include="Rand.h" />
     <ClInclude Include="Lerp.h" />
+    <ClInclude Include="Color4u8.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -27,6 +28,7 @@
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Color3f.cpp" />
     <ClCompile Include="Rand.cpp" />
+    <ClCompile Include="Color4u8.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
