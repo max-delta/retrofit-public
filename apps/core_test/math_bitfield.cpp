@@ -122,11 +122,7 @@ TEST( MathBitField, IEEE754Binary32Nonsense )
 	{
 		// HACK: This is probably wildly unsafe and hardware-dependent
 		uint32_t const softUnswapped = *reinterpret_cast<uint32_t const*>( &hardFloat );
-		#if defined(RF_PLATFORM_LITTLE_ENDIAN)
-		uint32_t const softSwapped = math::ReverseByteOrder( softUnswapped );
-		#elif defined(RF_PLATFORM_BIG_ENDIAN)
-		uint32_t const softSwapped = softUnswapped;
-		#endif
+		uint32_t const softSwapped = math::FromPlatformToBigEndian( softUnswapped );
 		return *reinterpret_cast<bf_u32_1_7_24 const*>( &softSwapped );
 	};
 	{

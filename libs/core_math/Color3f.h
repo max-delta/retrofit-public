@@ -35,7 +35,7 @@ public:
 	// Public methods
 public:
 	Color3f();
-	Color3f( ElementType x, ElementType y, ElementType z );
+	Color3f( ElementType r, ElementType g, ElementType b );
 
 	static Color3f RandomFromHash( uint64_t hashVal );
 	static Color3f FromHSL( float hueDegrees, float saturationRatio, ElementType luminanceValue );
