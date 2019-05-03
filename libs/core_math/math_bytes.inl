@@ -112,5 +112,29 @@ template<> constexpr int64_t ReverseByteOrder( int64_t const value )
 	return ret;
 }
 
+
+
+template<typename T>
+constexpr T FromPlatformToBigEndian( T const value )
+{
+	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+		return math::ReverseByteOrder( value );
+	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+		return value;
+	#endif
+}
+
+
+
+template<typename T>
+constexpr T FromBigEndianToPlatform( T const value )
+{
+	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+		return math::ReverseByteOrder( value );
+	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+		return value;
+	#endif
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
