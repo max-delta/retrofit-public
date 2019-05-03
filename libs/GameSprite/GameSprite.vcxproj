@@ -32,18 +32,31 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="BitmapReader.h" />
+    <ClInclude Include="BitmapWriter.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="SpriteFwd.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="BitmapReader.cpp" />
+    <ClCompile Include="BitmapWriter.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\third_party\stb_image\stb_image.vcxproj">
+      <Project>{c2adeee6-0ab0-4b7c-833f-7b96832f1a01}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\core\core.vcxproj">
       <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
