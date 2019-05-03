@@ -31,6 +31,7 @@
     <ClInclude Include="AABB4.h" />
     <ClInclude Include="BitField.h" />
     <ClInclude Include="Color3f.h" />
+    <ClInclude Include="Color4u8.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="ListOperations.h" />
     <ClInclude Include="math_bits.h" />
@@ -48,6 +49,7 @@
   <ItemGroup>
     <ClCompile Include="AABB4.cpp" />
     <ClCompile Include="Color3f.cpp" />
+    <ClCompile Include="Color4u8.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="math_bits.cpp" />
     <ClCompile Include="Rand.cpp" />
