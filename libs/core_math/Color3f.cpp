@@ -19,8 +19,8 @@ Color3f const Color3f::kWhite{ 1.f, 1.f, 1.f };
 Color3f const Color3f::kRed{ 1.f, 0.f, 0.f };
 Color3f const Color3f::kGreen{ 0.f, 1.f, 0.f };
 Color3f const Color3f::kBlue{ 0.f, 0.f, 1.f };
-Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
 
+Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
 Color3f const Color3f::kMagenta{ 1.f, 0.f, 1.f };
 Color3f const Color3f::kYellow{ 1.f, 1.f, 0.f };
 
