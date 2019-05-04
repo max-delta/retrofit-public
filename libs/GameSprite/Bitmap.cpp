@@ -117,6 +117,22 @@ size_t Bitmap::ReplaceEach( ElementType const& from, ElementType const& to )
 
 
 
+size_t Bitmap::ReplaceEachByAlpha( ElementType::ElementType const& alpha, ElementType const& to )
+{
+	size_t numReplaced = 0;
+	for( ElementType& pixel : mData )
+	{
+		if( pixel.a == alpha )
+		{
+			pixel = to;
+			numReplaced++;
+		}
+	}
+	return numReplaced;
+}
+
+
+
 size_t Bitmap::ApplyStencilOverwrite( Bitmap const& source, ElementType::ElementType minAlpha )
 {
 	RF_ASSERT( GetWidth() == source.GetWidth() );

@@ -25,8 +25,8 @@ public:
 	static Color4u8 const kRed;
 	static Color4u8 const kGreen;
 	static Color4u8 const kBlue;
-	static Color4u8 const kCyan;
 
+	static Color4u8 const kCyan;
 	static Color4u8 const kMagenta;
 	static Color4u8 const kYellow;
 

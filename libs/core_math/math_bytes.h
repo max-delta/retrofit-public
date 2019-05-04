@@ -12,6 +12,11 @@ constexpr T FromPlatformToBigEndian( T const value );
 template<typename T>
 constexpr T FromBigEndianToPlatform( T const value );
 
+template<typename T>
+constexpr T FromPlatformToLittleEndian( T const value );
+template<typename T>
+constexpr T FromLittleEndianToPlatform( T const value );
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
