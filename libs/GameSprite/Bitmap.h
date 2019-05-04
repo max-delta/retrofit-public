@@ -49,6 +49,9 @@ public:
 	// All pixels that match 'from' become 'to'
 	size_t ReplaceEach( ElementType const& from, ElementType const& to );
 
+	// All pixels with an alpha that match 'alpha' become 'to'
+	size_t ReplaceEachByAlpha( ElementType::ElementType const& alpha, ElementType const& to );
+
 	// All pixels in 'source' that have atleast 'min' alpha perform overwrite
 	size_t ApplyStencilOverwrite( Bitmap const& source, ElementType::ElementType minAlpha );
 
