@@ -136,5 +136,29 @@ constexpr T FromBigEndianToPlatform( T const value )
 	#endif
 }
 
+
+
+template<typename T>
+constexpr T FromPlatformToLittleEndian( T const value )
+{
+	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+		return value;
+	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+		return math::ReverseByteOrder( value );
+	#endif
+}
+
+
+
+template<typename T>
+constexpr T FromLittleEndianToPlatform( T const value )
+{
+	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+		return value;
+	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+		return math::ReverseByteOrder( value );
+	#endif
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
