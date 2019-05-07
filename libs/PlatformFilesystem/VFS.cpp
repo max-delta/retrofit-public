@@ -292,6 +292,23 @@ VFSPath VFS::CollapsePath( VFSPath const& path )
 
 
 
+VFSPath VFS::ChrootCollapse( VFSPath const& path )
+{
+	// Collapse path first, make sure they aren't trying to trivially jump out
+	//  of mount points
+	// NOTE: Not actually secure
+	VFSPath const collapsedPath = CollapsePath( path );
+	if( collapsedPath.IsDescendantOf( kRoot ) == false )
+	{
+		RFLOG_ERROR( collapsedPath, RFCAT_VFS, "Virtual path doesn't descend from root" );
+		return VFSPath();
+	}
+
+	return collapsedPath;
+}
+
+
+
 bool VFS::ProcessMountFile( FILE* file )
 {
 	rftl::string tokenBuilder;
@@ -613,67 +630,80 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 
 
+rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& collapsedPath, VFSMount::Permissions const& permissions ) const
+{
+	if( ( static_cast<int>( mount.mPermissions ) & static_cast<int>( permissions ) ) != static_cast<int>( permissions ) )
+	{
+		// Missing some permissions
+		return rftl::string();
+	}
+
+	if( collapsedPath.IsDescendantOf( mount.mVirtualPath ) == false )
+	{
+		// Not under this mount point
+		return rftl::string();
+	}
+
+	// Where is this actually going to end up?
+	rftl::string filename;
+	{
+		VFSPath physTarget = kInvalid;
+
+		// The root is the base
+		VFSPath const* physRoot;
+		switch( mount.mType )
+		{
+			case VFSMount::Type::Absolute:
+				physRoot = &kEmpty;
+				break;
+			case VFSMount::Type::ConfigRelative:
+				physRoot = &mConfigDirectory;
+				break;
+			case VFSMount::Type::UserRelative:
+				physRoot = &mUserDirectory;
+				break;
+			case VFSMount::Type::Invalid:
+			default:
+				RFLOG_ERROR( collapsedPath, RFCAT_VFS, "Unhandled mount type" );
+				return nullptr;
+		}
+		VFSPath branchRoot = physRoot->GetChild( mount.mRealMount );
+
+		// The branch from the virtual point is the append
+		bool isBranch = false;
+		VFSPath pathAsBranch = collapsedPath.GetAsBranchOf( mount.mVirtualPath, isBranch );
+		RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
+
+		// Final collapse and serialize
+		physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
+		RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
+		filename = physTarget.CreateString();
+	}
+
+	return filename;
+}
+
+
+
 FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const
 {
-	// Collapse path first, make sure they aren't trying to trivially jump out
-	//  of mount point, also clean it up so we can find the virtual mount point
-	// NOTE: Not actually secure, don't assume this is even remotely a chroot
-	VFSPath const path = CollapsePath( uncollapsedPath );
-	if( path.IsDescendantOf( kRoot ) == false )
+	// Chroot for basic safety and sanitization
+	VFSPath const path = ChrootCollapse( uncollapsedPath );
+	if( path.Empty() )
 	{
-		RFLOG_ERROR( path, RFCAT_VFS, "Virtual path doesn't descend from root" );
+		RFLOG_ERROR( uncollapsedPath, RFCAT_VFS, "Failed to chroot path" );
 		return nullptr;
 	}
 
 	// Evaluate each mount point in order
 	for( VFSMount const& mount : mMountTable )
 	{
-		if( ( static_cast<int>( mount.mPermissions ) & static_cast<int>( permissions ) ) != static_cast<int>( permissions ) )
+		// Attempt mount
+		rftl::string const finalFilename = AttemptMountMapping( mount, path, permissions );
+		if( finalFilename.empty() )
 		{
-			// Missing some permissions
+			// Cannot mount here
 			continue;
-		}
-
-		if( path.IsDescendantOf( mount.mVirtualPath ) == false )
-		{
-			// Not under this mount point
-			continue;
-		}
-
-		// Where is this actually going to end up?
-		rftl::string finalFilename;
-		{
-			VFSPath physTarget = kInvalid;
-
-			// The root is the base
-			VFSPath const* physRoot;
-			switch( mount.mType )
-			{
-				case VFSMount::Type::Absolute:
-					physRoot = &kEmpty;
-					break;
-				case VFSMount::Type::ConfigRelative:
-					physRoot = &mConfigDirectory;
-					break;
-				case VFSMount::Type::UserRelative:
-					physRoot = &mUserDirectory;
-					break;
-				case VFSMount::Type::Invalid:
-				default:
-					RFLOG_ERROR( path, RFCAT_VFS, "Unhandled mount type" );
-					return nullptr;
-			}
-			VFSPath branchRoot = physRoot->GetChild( mount.mRealMount );
-
-			// The branch from the virtual point is the append
-			bool isBranch = false;
-			VFSPath pathAsBranch = path.GetAsBranchOf( mount.mVirtualPath, isBranch );
-			RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
-
-			// Final collapse and serialize
-			physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
-			RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
-			finalFilename = physTarget.CreateString();
 		}
 
 		if( mustExist )
