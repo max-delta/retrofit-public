@@ -108,6 +108,7 @@ namespace details {
 // Examples: Memory corruption detected, critical system failed to initialize
 // Expected user action: Investigate and fix
 #define RFLOG_FATAL( CONTEXT, CATEGORY, ... ) ___RFLOG_ABORT_IMPL( CONTEXT, CATEGORY, ::RF::logging::RF_SEV_ERROR | ::RF::logging::RF_SEV_CALLSTACK_VALUABLE | ::RF::logging::RF_SEV_UNRECOVERABLE, __VA_ARGS__ )
+#define RFLOG_TEST_AND_FATAL( TEST, CONTEXT, CATEGORY, ... ) ___RFLOG_TEST_IMPL( TEST, ___RFLOG_ABORT_IMPL( CONTEXT, CATEGORY, ::RF::logging::RF_SEV_ERROR | ::RF::logging::RF_SEV_CALLSTACK_VALUABLE | ::RF::logging::RF_SEV_UNRECOVERABLE, __VA_ARGS__ ) )
 
 // For a major event that signifies a meaningful landmark in the application
 // Examples: Player dies, level transition, cutscene, quit to main menu
