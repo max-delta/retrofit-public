@@ -87,8 +87,10 @@ public:
 	// Private methods
 private:
 	static VFSPath CollapsePath( VFSPath const& path );
+	static VFSPath ChrootCollapse( VFSPath const& path );
 	bool ProcessMountFile( FILE* file );
 	VFSMount ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint );
+	rftl::string AttemptMountMapping( VFSMount const& mount, VFSPath const& collapsedPath, VFSMount::Permissions const& permissions ) const;
 	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
 
 
