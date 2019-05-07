@@ -9,19 +9,19 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Color4u8 const Color4u8::kBlack{ 0, 0, 0 };
-Color4u8 const Color4u8::kGray25{ 64, 64, 64 };
-Color4u8 const Color4u8::kGray50{ 127, 127, 127 };
-Color4u8 const Color4u8::kGray75{ 192, 192, 192 };
-Color4u8 const Color4u8::kWhite{ 255, 255, 255 };
+Color4u8 const Color4u8::kBlack{ 0, 0, 0, 255 };
+Color4u8 const Color4u8::kGray25{ 64, 64, 64, 255 };
+Color4u8 const Color4u8::kGray50{ 127, 127, 127, 255 };
+Color4u8 const Color4u8::kGray75{ 192, 192, 192, 255 };
+Color4u8 const Color4u8::kWhite{ 255, 255, 255, 255 };
 
-Color4u8 const Color4u8::kRed{ 255, 0, 0 };
-Color4u8 const Color4u8::kGreen{ 0, 255, 0 };
-Color4u8 const Color4u8::kBlue{ 0, 0, 255 };
+Color4u8 const Color4u8::kRed{ 255, 0, 0, 255 };
+Color4u8 const Color4u8::kGreen{ 0, 255, 0, 255 };
+Color4u8 const Color4u8::kBlue{ 0, 0, 255, 255 };
 
-Color4u8 const Color4u8::kCyan{ 0, 255, 255 };
-Color4u8 const Color4u8::kMagenta{ 255, 0, 255 };
-Color4u8 const Color4u8::kYellow{ 255, 255, 0 };
+Color4u8 const Color4u8::kCyan{ 0, 255, 255, 255 };
+Color4u8 const Color4u8::kMagenta{ 255, 0, 255, 255 };
+Color4u8 const Color4u8::kYellow{ 255, 255, 0, 255 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +64,7 @@ Color4u8::Color4u8( ElementType const ( &rgba )[4] )
 	// NOTE: Native endianness used on read+write, so should cancel out
 	static_assert( sizeof( Color4u8 ) == sizeof( uint32_t ), "Unexpected size" );
 	static_assert( sizeof( ElementType const[4] ) == sizeof( uint32_t ), "Unexpected size" );
-	*reinterpret_cast<uint32_t*>( this ) = reinterpret_cast<uint32_t const&>( rgba );
+	*reinterpret_cast<uint32_t*>( this ) = *reinterpret_cast<uint32_t const*>( &(rgba[0]) );
 }
 
 
