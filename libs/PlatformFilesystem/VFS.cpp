@@ -630,6 +630,31 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 
 
 
+VFSPath VFS::GetRealMountPoint( VFSMount const& mount ) const
+{
+	// The root is the base
+	VFSPath const* physRoot;
+	switch( mount.mType )
+	{
+		case VFSMount::Type::Absolute:
+			physRoot = &kEmpty;
+			break;
+		case VFSMount::Type::ConfigRelative:
+			physRoot = &mConfigDirectory;
+			break;
+		case VFSMount::Type::UserRelative:
+			physRoot = &mUserDirectory;
+			break;
+		case VFSMount::Type::Invalid:
+		default:
+			RFLOG_FATAL( mount.mVirtualPath, RFCAT_VFS, "Unhandled mount type" );
+	}
+	VFSPath const realMountPoint = physRoot->GetChild( mount.mRealMount );
+	return CollapsePath( realMountPoint );
+}
+
+
+
 rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& collapsedPath, VFSMount::Permissions const& permissions ) const
 {
 	if( ( static_cast<int>( mount.mPermissions ) & static_cast<int>( permissions ) ) != static_cast<int>( permissions ) )
@@ -644,41 +669,16 @@ rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& col
 		return rftl::string();
 	}
 
-	// Where is this actually going to end up?
-	rftl::string filename;
-	{
-		VFSPath physTarget = kInvalid;
+	// The branch from the virtual point is the append
+	bool isBranch = false;
+	VFSPath const pathAsBranch = collapsedPath.GetAsBranchOf( mount.mVirtualPath, isBranch );
+	RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
 
-		// The root is the base
-		VFSPath const* physRoot;
-		switch( mount.mType )
-		{
-			case VFSMount::Type::Absolute:
-				physRoot = &kEmpty;
-				break;
-			case VFSMount::Type::ConfigRelative:
-				physRoot = &mConfigDirectory;
-				break;
-			case VFSMount::Type::UserRelative:
-				physRoot = &mUserDirectory;
-				break;
-			case VFSMount::Type::Invalid:
-			default:
-				RFLOG_ERROR( collapsedPath, RFCAT_VFS, "Unhandled mount type" );
-				return nullptr;
-		}
-		VFSPath branchRoot = physRoot->GetChild( mount.mRealMount );
-
-		// The branch from the virtual point is the append
-		bool isBranch = false;
-		VFSPath pathAsBranch = collapsedPath.GetAsBranchOf( mount.mVirtualPath, isBranch );
-		RF_ASSERT_MSG( isBranch, "Descendant, but not branch? Logic error?" );
-
-		// Final collapse and serialize
-		physTarget = CollapsePath( branchRoot.GetChild( pathAsBranch ) );
-		RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
-		filename = physTarget.CreateString();
-	}
+	// Final collapse and serialize
+	VFSPath const realMountPoint = GetRealMountPoint( mount );
+	VFSPath const physTarget = CollapsePath( realMountPoint.GetChild( pathAsBranch ) );
+	RF_ASSERT_MSG( physTarget.IsDescendantOf( kInvalid ) == false, "How? Shouldn't have ascencions in anything pre-collapse" );
+	rftl::string const filename = physTarget.CreateString();
 
 	return filename;
 }
@@ -718,34 +718,82 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 		// Locked to this mount layer, let's see what happens!
 		RFLOG_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
-		FILE* file = nullptr;
-		errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
-		if( file == nullptr )
+		bool parentsCreated = false;
+		while( true )
 		{
-			// Tough luck, no easy way to tell what went wrong
-			if( mustExist )
+			FILE* file = nullptr;
+			errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
+			if( file == nullptr )
 			{
-				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
-			}
-			else
-			{
-				VFSPath const parentPath = VFSPath::CreatePathFromString( finalFilename ).GetParent();
-				rftl::string parentPathStr = parentPath.CreateString();
-				bool const parentExists = rftl::filesystem::exists( parentPathStr );
-				if( parentExists == false )
+				// Tough luck, no easy way to tell what went wrong
+				if( mustExist )
 				{
-					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
+					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
+					return nullptr;
 				}
 				else
 				{
-					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
+					VFSPath const immediateParentPath = VFSPath::CreatePathFromString( finalFilename ).GetParent();
+					if( rftl::filesystem::exists( immediateParentPath.CreateString() ) == false )
+					{
+						RFLOG_WARNING( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
+						if( parentsCreated == false )
+						{
+							// Try to create parents
+							{
+								// Must be a writeable mount point
+								if( ( static_cast<uint8_t>( mount.mPermissions ) & VFSMount::kWriteBit ) == 0 )
+								{
+									RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount rule not writable" );
+								}
+								else
+								{
+									// Mount point must already exist
+									VFSPath const realMountPoint = GetRealMountPoint( mount );
+									if( rftl::filesystem::exists( realMountPoint.CreateString() ) == false )
+									{
+										RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount point doesn't exist" );
+									}
+									else
+									{
+										VFSPath const& deepestParent = realMountPoint;
+										VFSPath const& shallowestParent = immediateParentPath;
+										bool parentSanityCheck = false;
+										VFSPath const route = shallowestParent.GetAsBranchOf( deepestParent, parentSanityCheck );
+										RFLOG_TEST_AND_FATAL( parentSanityCheck, path, RFCAT_VFS, "Parent calculation for mount point failed internal sanity check. Likely a code bug." );
+										RFLOG_TEST_AND_FATAL( route.Empty() == false, path, RFCAT_VFS, "Parent calculation for mount point failed internal route check. Likely a code bug." );
+										VFSPath traverse = deepestParent;
+										for( VFSPath::Element const& element : route )
+										{
+											traverse.Append( element );
+											RFLOG_INFO( traverse, RFCAT_VFS, "Creating directory" );
+											// TODO: Error handling
+											rftl::filesystem::create_directory( traverse.CreateString() );
+										}
+									}
+								}
+							}
+							parentsCreated = true;
+							continue;
+						}
+						else
+						{
+							RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, parent seems to be missing" );
+							return nullptr;
+						}
+					}
+					else
+					{
+						RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
+						return nullptr;
+					}
 				}
 			}
-			return nullptr;
-		}
 
-		// Sweet! Got it
-		return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+			// Sweet! Got it
+			RF_ASSERT( file != nullptr );
+			return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+		}
 	}
 
 	// Couldn't find
