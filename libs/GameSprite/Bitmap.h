@@ -68,7 +68,7 @@ public:
 	//
 	// Private data
 private:
-	size_t const mScanlinelength;
+	size_t mScanlinelength = 0;
 	rftl::vector<ElementType> mData;
 };
 

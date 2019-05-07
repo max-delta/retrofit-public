@@ -38,7 +38,7 @@ Bitmap& Bitmap::operator=( Bitmap&& rhs )
 {
 	if( this != &rhs )
 	{
-		RF_ASSERT( mScanlinelength == rhs.mScanlinelength );
+		RF_MOVE_ASSIGN( mScanlinelength );
 		RF_MOVE_ASSIGN( mData );
 	}
 	return *this;
