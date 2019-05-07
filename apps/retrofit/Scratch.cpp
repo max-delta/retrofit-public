@@ -136,7 +136,9 @@ void Start()
 	file::VFSPath const hairPieces = charPieces.GetChild( "hair_16_18.png" );
 	file::VFSPath const speciesPieces = charPieces.GetChild( "species_16_18.png" );
 
-	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch" );
+	char const* const id = "ID_TODO";
+
+	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
 	// Load base texture
 	sprite::Bitmap baseTex( ExplicitDefaultConstruct{} );
@@ -179,42 +181,26 @@ void Start()
 	params.mSpeciesNearRow = 3;
 	params.mSpeciesFarRow = 4;
 	params.mSpeciesTailRow = 5;
+	size_t const startColumn = 12;
 
-	params.mColumn = 12;
+	static constexpr size_t kFramesPerDirection = 3;
+	static constexpr size_t kTotalFrames = 4 * kFramesPerDirection;
+	static constexpr char const* kFrameNames[kTotalFrames] = {
+		"n0.bmp", "n1.bmp", "n2.bmp",
+		"e0.bmp", "e1.bmp", "e2.bmp",
+		"s0.bmp", "s1.bmp", "s2.bmp",
+		"w0.bmp", "w1.bmp", "w2.bmp" };
+	static constexpr size_t kColumnOffsets[kTotalFrames] = {
+		0, 1, 2,
+		4, 5, 6,
+		8, 9, 10,
+		12, 13, 14 };
 
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_north0.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_north1.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_north2.bmp" ) );
-	params.mColumn++;
-
-	params.mColumn++;
-
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_east0.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_east1.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_east2.bmp" ) );
-	params.mColumn++;
-
-	params.mColumn++;
-
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_south0.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_south1.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_south2.bmp" ) );
-	params.mColumn++;
-
-	params.mColumn++;
-
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_west0.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_west1.bmp" ) );
-	params.mColumn++;
-	WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( "test_west2.bmp" ) );
-	params.mColumn++;
+	for( size_t i = 0; i < kTotalFrames; i++ )
+	{
+		params.mColumn = startColumn + kColumnOffsets[i];
+		WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( kFrameNames[i] ) );
+	}
 }
 
 
