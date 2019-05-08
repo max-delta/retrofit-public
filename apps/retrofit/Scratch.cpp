@@ -28,20 +28,9 @@ struct CompositeSequenceParams
 	size_t mTileWidth = 0;
 	size_t mTileHeight = 0;
 
-	file::VFSPath mBasePieces = {};
-	sprite::Bitmap const* mBaseTex = nullptr;
 	size_t mBaseRow = 0;
-
-	file::VFSPath mClothingPieces = {};
-	sprite::Bitmap const* mClothingTex = nullptr;
 	size_t mClothingRow = 0;
-
-	file::VFSPath mHairPieces = {};
-	sprite::Bitmap const* mHairTex = nullptr;
 	size_t mHairRow = 0;
-
-	file::VFSPath mSpeciesPieces = {};
-	sprite::Bitmap const* mSpeciesTex = nullptr;
 	size_t mSpeciesNearRow = 0;
 	size_t mSpeciesFarRow = 0;
 	size_t mSpeciesTailRow = 0;
@@ -51,44 +40,72 @@ struct CompositeFrameParams
 {
 	CompositeSequenceParams mSequence = {};
 
+	sprite::Bitmap const* mBaseTex = nullptr;
+	sprite::Bitmap const* mClothingTex = nullptr;
+	sprite::Bitmap const* mHairTex = nullptr;
+	sprite::Bitmap const* mSpeciesTex = nullptr;
+
 	size_t mColumn = 0;
+};
+
+struct CompositeAnimParams
+{
+	enum class AnimKey : uint8_t
+	{
+		Invalid = 0,
+		NWalk,
+		EWalk,
+		SWalk,
+		WWalk
+	};
+
+	CompositeSequenceParams mSequence = {};
+
+	file::VFSPath mBasePieces = {};
+	file::VFSPath mClothingPieces = {};
+	file::VFSPath mHairPieces = {};
+	file::VFSPath mSpeciesPieces = {};
+
+	file::VFSPath mTextureOutputDirectory = {};
+
+	rftl::unordered_map<AnimKey, file::VFSPath> mOutputPaths = {};
 };
 
 
 
 sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
 {
-	sprite::Bitmap baseFrame = params.mSequence.mBaseTex->ExtractRegion(
+	sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mBaseRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap clothingFrame = params.mSequence.mClothingTex->ExtractRegion(
+	sprite::Bitmap clothingFrame = params.mClothingTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mClothingRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap hairFrame = params.mSequence.mHairTex->ExtractRegion(
+	sprite::Bitmap hairFrame = params.mHairTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mHairRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap speciesNearFrame = params.mSequence.mSpeciesTex->ExtractRegion(
+	sprite::Bitmap speciesNearFrame = params.mSpeciesTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mSpeciesNearRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap speciesFarFrame = params.mSequence.mSpeciesTex->ExtractRegion(
+	sprite::Bitmap speciesFarFrame = params.mSpeciesTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mSpeciesFarRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap speciesTailFrame = params.mSequence.mSpeciesTex->ExtractRegion(
+	sprite::Bitmap speciesTailFrame = params.mSpeciesTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
 		params.mSequence.mTileHeight * params.mSequence.mSpeciesTailRow,
 		params.mSequence.mTileWidth,
@@ -187,45 +204,22 @@ WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
 	return retVal;
 }
 
-}
-///////////////////////////////////////////////////////////////////////////////
 
-void Start()
+
+void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitmapCache, file::VFS const& vfs, gfx::TextureManager& texMan )
 {
-	using namespace details;
-
-	file::VFSPath const charPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
-
-	file::VFSPath const basePieces = charPieces.GetChild( "base_16_18.png" );
-	file::VFSPath const clothingPieces = charPieces.GetChild( "clothing_16_18.png" );
-	file::VFSPath const hairPieces = charPieces.GetChild( "hair_16_18.png" );
-	file::VFSPath const speciesPieces = charPieces.GetChild( "species_16_18.png" );
-
-	char const* const id = "ID_TODO";
-
-	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
-
-	details::BitmapCache bitmapCache( app::gVfs );
-
 	// Load textures
-	WeakPtr<sprite::Bitmap const> baseTex = bitmapCache.Fetch( basePieces );
-	WeakPtr<sprite::Bitmap const> clothingTex = bitmapCache.Fetch( clothingPieces );
-	WeakPtr<sprite::Bitmap const> hairTex = bitmapCache.Fetch( hairPieces );
-	WeakPtr<sprite::Bitmap const> speciesTex = bitmapCache.Fetch( speciesPieces );
+	WeakPtr<sprite::Bitmap const> baseTex = bitmapCache.Fetch( params.mBasePieces );
+	WeakPtr<sprite::Bitmap const> clothingTex = bitmapCache.Fetch( params.mClothingPieces );
+	WeakPtr<sprite::Bitmap const> hairTex = bitmapCache.Fetch( params.mHairPieces );
+	WeakPtr<sprite::Bitmap const> speciesTex = bitmapCache.Fetch( params.mSpeciesPieces );
 
-	details::CompositeFrameParams params = {};
-	params.mSequence.mTileWidth = 16;
-	params.mSequence.mTileHeight = 18;
-	params.mSequence.mBaseTex = baseTex;
-	params.mSequence.mBaseRow = 1;
-	params.mSequence.mClothingTex = clothingTex;
-	params.mSequence.mClothingRow = 13;
-	params.mSequence.mHairTex = hairTex;
-	params.mSequence.mHairRow = 3;
-	params.mSequence.mSpeciesTex = speciesTex;
-	params.mSequence.mSpeciesNearRow = 3;
-	params.mSequence.mSpeciesFarRow = 4;
-	params.mSequence.mSpeciesTailRow = 5;
+	CompositeFrameParams frameParams = {};
+	frameParams.mSequence = params.mSequence;
+	frameParams.mBaseTex = baseTex;
+	frameParams.mClothingTex = clothingTex;
+	frameParams.mHairTex = hairTex;
+	frameParams.mSpeciesTex = speciesTex;
 	size_t const startColumn = 12;
 
 	static constexpr size_t kBitmapFramesPerDirection = 3;
@@ -246,14 +240,17 @@ void Start()
 	// Write frames to disk
 	for( size_t i = 0; i < kTotalFrames; i++ )
 	{
-		params.mColumn = startColumn + kColumnOffsets[i];
-		WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( kFrameNames[i] ) );
+		frameParams.mColumn = startColumn + kColumnOffsets[i];
+		WriteFrameToDisk( CreateCompositeFrame( frameParams ), params.mTextureOutputDirectory.GetChild( kFrameNames[i] ) );
 	}
 
 	static constexpr size_t kAnimFramesPerDirection = 4;
 	static constexpr size_t kTotalFramepacks = 4;
-	static constexpr char const* kFramepackNames[kTotalFramepacks] = {
-		"n.fpack", "e.fpack", "s.fpack", "w.fpack"
+	static constexpr CompositeAnimParams::AnimKey kFramepackKeys[kTotalFramepacks] = {
+		CompositeAnimParams::AnimKey::NWalk,
+		CompositeAnimParams::AnimKey::EWalk,
+		CompositeAnimParams::AnimKey::SWalk,
+		CompositeAnimParams::AnimKey::WWalk
 	};
 	static constexpr size_t kFramepackSourceFrames[kTotalFramepacks][kAnimFramesPerDirection] = {
 		{ 0, 1, 2, 1 },
@@ -263,35 +260,82 @@ void Start()
 	};
 
 	// Create framepacks
-	file::VFS* const vfs = app::gVfs;
-	gfx::PPUController* const ppu = app::gGraphics;
-	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
 	for( size_t i_framepack = 0; i_framepack < kTotalFramepacks; i_framepack++ )
 	{
 		size_t const( &sourceFrames )[kAnimFramesPerDirection] = kFramepackSourceFrames[i_framepack];
-		char const* const framepackName = kFramepackNames[i_framepack];
+		CompositeAnimParams::AnimKey const& framepackKey = kFramepackKeys[i_framepack];
+		file::VFSPath const& framepackPath = params.mOutputPaths.at( framepackKey );
 
 		// Create framepack
-		UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
-		newFPack->mNumTimeSlots = kAnimFramesPerDirection;
-		newFPack->mPreferredSlowdownRate = 20;
+		gfx::FramePack_256 newFPack = {};
+		newFPack.mNumTimeSlots = kAnimFramesPerDirection;
+		newFPack.mPreferredSlowdownRate = 20;
 		for( size_t i = 0; i < kAnimFramesPerDirection; i++ )
 		{
-			file::VFSPath const frameTexture = outDir.GetChild( kFrameNames[sourceFrames[i]] );
-			newFPack->GetMutableTimeSlots()[i].mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
-			newFPack->GetMutableTimeSlotSustains()[i] = 1;
+			file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( kFrameNames[sourceFrames[i]] );
+			newFPack.GetMutableTimeSlots()[i].mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
+			newFPack.GetMutableTimeSlotSustains()[i] = 1;
 		}
 
 		// Write
 		{
 			rftl::vector<uint8_t> toWrite;
-			bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, toWrite, *newFPack );
+			bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
 			RF_ASSERT( writeSuccess );
-			file::FileHandlePtr fileHandle = vfs->GetFileForWrite( outDir.GetChild( framepackName ) );
+			file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( framepackPath );
 			FILE* const file = fileHandle->GetFile();
 			fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
 		}
+
+		// Release textures
+		for( size_t i = 0; i < kAnimFramesPerDirection; i++ )
+		{
+			file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( kFrameNames[sourceFrames[i]] );
+			texMan.DestroyResource( frameTexture.CreateString() );
+		}
 	}
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+void Start()
+{
+	using namespace details;
+
+	file::VFSPath const charPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
+
+	file::VFSPath const basePieces = charPieces.GetChild( "base_16_18.png" );
+	file::VFSPath const clothingPieces = charPieces.GetChild( "clothing_16_18.png" );
+	file::VFSPath const hairPieces = charPieces.GetChild( "hair_16_18.png" );
+	file::VFSPath const speciesPieces = charPieces.GetChild( "species_16_18.png" );
+
+	BitmapCache bitmapCache( app::gVfs );
+
+	char const* const id = "ID_TODO";
+
+	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
+
+	CompositeAnimParams animParams = {};
+	animParams.mSequence.mTileWidth = 16;
+	animParams.mSequence.mTileHeight = 18;
+	animParams.mSequence.mBaseRow = 1;
+	animParams.mSequence.mClothingRow = 13;
+	animParams.mSequence.mHairRow = 3;
+	animParams.mSequence.mSpeciesNearRow = 3;
+	animParams.mSequence.mSpeciesFarRow = 4;
+	animParams.mSequence.mSpeciesTailRow = 5;
+	animParams.mBasePieces = charPieces.GetChild( "base_16_18.png" );
+	animParams.mClothingPieces = charPieces.GetChild( "clothing_16_18.png" );
+	animParams.mHairPieces = charPieces.GetChild( "hair_16_18.png" );
+	animParams.mSpeciesPieces = charPieces.GetChild( "species_16_18.png" );
+	animParams.mTextureOutputDirectory = outDir;
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::NWalk] = outDir.GetChild( "n.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::EWalk] = outDir.GetChild( "e.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::SWalk] = outDir.GetChild( "s.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::WWalk] = outDir.GetChild( "w.fpack" );
+
+	CreateCompositeAnims( animParams, bitmapCache, *app::gVfs, *app::gGraphics->DebugGetTextureManager() );
 }
 
 
