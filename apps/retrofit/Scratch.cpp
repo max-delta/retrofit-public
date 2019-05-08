@@ -25,12 +25,31 @@ namespace details {
 
 struct CompositeSequenceParams
 {
+	enum class SequenceType : uint8_t
+	{
+		Invalid = 0,
+
+		// Top-down
+		// Cardinal directions [N; E; S; W]
+		// Walk cycles only
+		// 4 frames, 3 unique [Step 1; Mid-step; Step 2]
+		// Empty tile between contiguous sequences
+		N3_E3_S3_W3
+	};
+
+	SequenceType mSequenceType = SequenceType::Invalid;
+
 	size_t mTileWidth = 0;
 	size_t mTileHeight = 0;
 
 	size_t mBaseRow = 0;
-	size_t mClothingRow = 0;
-	size_t mHairRow = 0;
+
+	size_t mClothingNearRow = 0;
+	size_t mClothingFarRow = 0;
+
+	size_t mHairNearRow = 0;
+	size_t mHairFarRow = 0;
+
 	size_t mSpeciesNearRow = 0;
 	size_t mSpeciesFarRow = 0;
 	size_t mSpeciesTailRow = 0;
@@ -81,15 +100,27 @@ sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap clothingFrame = params.mClothingTex->ExtractRegion(
+	sprite::Bitmap clothingNearFrame = params.mClothingTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
-		params.mSequence.mTileHeight * params.mSequence.mClothingRow,
+		params.mSequence.mTileHeight * params.mSequence.mClothingNearRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
-	sprite::Bitmap hairFrame = params.mHairTex->ExtractRegion(
+	sprite::Bitmap clothingFarFrame = params.mClothingTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
-		params.mSequence.mTileHeight * params.mSequence.mHairRow,
+		params.mSequence.mTileHeight * params.mSequence.mClothingFarRow,
+		params.mSequence.mTileWidth,
+		params.mSequence.mTileHeight );
+
+	sprite::Bitmap hairNearFrame = params.mHairTex->ExtractRegion(
+		params.mSequence.mTileWidth * params.mColumn,
+		params.mSequence.mTileHeight * params.mSequence.mHairNearRow,
+		params.mSequence.mTileWidth,
+		params.mSequence.mTileHeight );
+
+	sprite::Bitmap hairFarFrame = params.mHairTex->ExtractRegion(
+		params.mSequence.mTileWidth * params.mColumn,
+		params.mSequence.mTileHeight * params.mSequence.mHairFarRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
 
@@ -116,9 +147,11 @@ sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
 	{
 		static constexpr sprite::Bitmap::ElementType::ElementType kMinAlpha = 1;
 		composite.ApplyStencilOverwrite( speciesFarFrame, kMinAlpha );
+		composite.ApplyStencilOverwrite( hairFarFrame, kMinAlpha );
+		composite.ApplyStencilOverwrite( clothingFarFrame, kMinAlpha );
 		composite.ApplyStencilOverwrite( baseFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( clothingFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( hairFrame, kMinAlpha );
+		composite.ApplyStencilOverwrite( clothingNearFrame, kMinAlpha );
+		composite.ApplyStencilOverwrite( hairNearFrame, kMinAlpha );
 		composite.ApplyStencilOverwrite( speciesTailFrame, kMinAlpha );
 		composite.ApplyStencilOverwrite( speciesNearFrame, kMinAlpha );
 	}
@@ -133,24 +166,12 @@ sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
 
 
 
-void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path )
+void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path, file::VFS const& vfs )
 {
-	file::VFS* vfs = app::gVfs;
-
-	// Write
-	{
-		rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( frame.GetData(), frame.GetWidth(), frame.GetHeight() );
-		file::FileHandlePtr fileHandle = vfs->GetFileForWrite( path );
-		FILE* const file = fileHandle->GetFile();
-		fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
-	}
-
-	// HACK: Verify it loads
-	// TODO: Remove this
-	{
-		file::FileBuffer const verifyBuffer( *vfs->GetFileForRead( path ), false );
-		sprite::Bitmap const verifyBitmap = sprite::BitmapReader::ReadRGBABitmap( verifyBuffer.GetData(), verifyBuffer.GetSize() );
-	}
+	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( frame.GetData(), frame.GetWidth(), frame.GetHeight() );
+	file::FileHandlePtr fileHandle = vfs.GetFileForWrite( path );
+	FILE* const file = fileHandle->GetFile();
+	fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
 }
 
 
@@ -220,6 +241,9 @@ void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitma
 	frameParams.mClothingTex = clothingTex;
 	frameParams.mHairTex = hairTex;
 	frameParams.mSpeciesTex = speciesTex;
+
+	RF_ASSERT_MSG( params.mSequence.mSequenceType == CompositeSequenceParams::SequenceType::N3_E3_S3_W3, "Only 'N3_E3_S3_W3' is currently supported" );
+
 	size_t const startColumn = 12;
 
 	static constexpr size_t kBitmapFramesPerDirection = 3;
@@ -241,7 +265,7 @@ void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitma
 	for( size_t i = 0; i < kTotalFrames; i++ )
 	{
 		frameParams.mColumn = startColumn + kColumnOffsets[i];
-		WriteFrameToDisk( CreateCompositeFrame( frameParams ), params.mTextureOutputDirectory.GetChild( kFrameNames[i] ) );
+		WriteFrameToDisk( CreateCompositeFrame( frameParams ), params.mTextureOutputDirectory.GetChild( kFrameNames[i] ), vfs );
 	}
 
 	static constexpr size_t kAnimFramesPerDirection = 4;
@@ -317,11 +341,14 @@ void Start()
 	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
 	CompositeAnimParams animParams = {};
+	animParams.mSequence.mSequenceType = CompositeSequenceParams::SequenceType::N3_E3_S3_W3;
 	animParams.mSequence.mTileWidth = 16;
 	animParams.mSequence.mTileHeight = 18;
 	animParams.mSequence.mBaseRow = 1;
-	animParams.mSequence.mClothingRow = 13;
-	animParams.mSequence.mHairRow = 3;
+	animParams.mSequence.mClothingNearRow = 13;
+	animParams.mSequence.mClothingFarRow = 0;
+	animParams.mSequence.mHairNearRow = 3;
+	animParams.mSequence.mHairFarRow = 0;
 	animParams.mSequence.mSpeciesNearRow = 3;
 	animParams.mSequence.mSpeciesFarRow = 4;
 	animParams.mSequence.mSpeciesTailRow = 5;
