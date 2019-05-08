@@ -4,6 +4,7 @@
 #include "Logging/Logging.h"
 
 #include "core_math/math_clamps.h"
+#include "core_math/hash.h"
 #include "core/macros.h"
 
 #include "rftl/sstream"
@@ -312,4 +313,13 @@ void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogConte
 		memcpy( &buffer[bufferOffset], element.data(), bytesToWrite );
 		bufferOffset += bytesToWrite;
 	}
+}
+
+
+
+size_t rftl::hash<RF::file::VFSPath>::operator()( RF::file::VFSPath const& path ) const
+{
+	return RF::math::SequenceHash<
+		RF::file::VFSPath,
+		rftl::hash<RF::file::VFSPath::Element>>()( path );
 }
