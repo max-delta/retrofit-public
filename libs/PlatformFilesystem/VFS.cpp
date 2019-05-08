@@ -11,6 +11,7 @@
 
 #include "rftl/cstdio"
 #include "rftl/filesystem"
+#include "rftl/system_error"
 
 
 namespace RF { namespace file {
@@ -767,8 +768,12 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 										{
 											traverse.Append( element );
 											RFLOG_INFO( traverse, RFCAT_VFS, "Creating directory" );
-											// TODO: Error handling
-											rftl::filesystem::create_directory( traverse.CreateString() );
+											rftl::error_code err = {};
+											rftl::filesystem::create_directory( traverse.CreateString(), err );
+											if( err )
+											{
+												RFLOG_ERROR( traverse, RFCAT_VFS, "Filesystem reported an error of '%i' when creating directory", err.value() );
+											}
 										}
 									}
 								}

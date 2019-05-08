@@ -77,5 +77,6 @@
     <None Include="algorithm" />
     <None Include="optional" />
     <None Include="new" />
+    <None Include="system_error" />
   </ItemGroup>
 </Project>
