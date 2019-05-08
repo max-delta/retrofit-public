@@ -96,4 +96,10 @@ template<>
 void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer );
 }}
 
+template<>
+struct PLATFORMFILESYSTEM_API rftl::hash<RF::file::VFSPath>
+{
+	size_t operator()( RF::file::VFSPath const& path ) const;
+};
+
 #include "VFSPath.inl"
