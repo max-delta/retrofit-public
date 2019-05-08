@@ -11,6 +11,13 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
+#include "PPU/FramePack.h"
+#include "PPU/FramePackSerDes.h"
+#include "PPU/PPUController.h"
+#include "PPU/TextureManager.h"
+
+#include "core/ptr/default_creator.h"
+
 
 namespace RF { namespace scratch {
 ///////////////////////////////////////////////////////////////////////////////
@@ -183,8 +190,8 @@ void Start()
 	params.mSpeciesTailRow = 5;
 	size_t const startColumn = 12;
 
-	static constexpr size_t kFramesPerDirection = 3;
-	static constexpr size_t kTotalFrames = 4 * kFramesPerDirection;
+	static constexpr size_t kBitmapFramesPerDirection = 3;
+	static constexpr size_t kTotalFrames = 4 * kBitmapFramesPerDirection;
 	static constexpr char const* kFrameNames[kTotalFrames] = {
 		"n0.bmp", "n1.bmp", "n2.bmp",
 		"e0.bmp", "e1.bmp", "e2.bmp",
@@ -196,10 +203,51 @@ void Start()
 		8, 9, 10,
 		12, 13, 14 };
 
+	// Write frames to disk
 	for( size_t i = 0; i < kTotalFrames; i++ )
 	{
 		params.mColumn = startColumn + kColumnOffsets[i];
 		WriteFrameToDisk( details::CreateCompositeFrame( params ), outDir.GetChild( kFrameNames[i] ) );
+	}
+
+	static constexpr size_t kAnimFramesPerDirection = 4;
+	static constexpr size_t kTotalFramepacks = 4;
+	static constexpr char const* kFramepackNames[kTotalFramepacks] = {
+		"n.fpack", "e.fpack", "s.fpack", "w.fpack" };
+	static constexpr size_t kFramepackSourceFrames[kTotalFramepacks][kAnimFramesPerDirection] = {
+		{ 0, 1, 2, 1 },
+		{ 3, 4, 5, 4 },
+		{ 6, 7, 8, 7 },
+		{ 9, 10, 11, 10 } };
+
+	// Create framepacks
+	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
+	for( size_t i_framepack = 0; i_framepack < kTotalFramepacks; i_framepack++ )
+	{
+		size_t const( &sourceFrames )[kAnimFramesPerDirection] = kFramepackSourceFrames[i_framepack];
+		char const* const framepackName = kFramepackNames[i_framepack];
+
+		// Create framepack
+		UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
+		newFPack->mNumTimeSlots = kAnimFramesPerDirection;
+		newFPack->mPreferredSlowdownRate = 20;
+		for( size_t i = 0; i < kAnimFramesPerDirection; i++ )
+		{
+			file::VFSPath const frameTexture = outDir.GetChild( kFrameNames[sourceFrames[i]] );
+			newFPack->GetMutableTimeSlots()[i].mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
+			newFPack->GetMutableTimeSlotSustains()[i] = 1;
+		}
+
+		// Write
+		{
+			rftl::vector<uint8_t> toWrite;
+			bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, toWrite, *newFPack );
+			RF_ASSERT( writeSuccess );
+			file::FileHandlePtr fileHandle = vfs->GetFileForWrite( outDir.GetChild( framepackName ) );
+			FILE* const file = fileHandle->GetFile();
+			fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
+		}
 	}
 }
 
