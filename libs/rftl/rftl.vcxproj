@@ -75,6 +75,7 @@
     <None Include="patch\postinclude.inl" />
     <None Include="patch\preinclude.inl" />
     <None Include="set" />
+    <None Include="system_error" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stub.cpp">
