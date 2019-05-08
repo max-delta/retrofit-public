@@ -92,7 +92,119 @@ struct CompositeAnimParams
 
 
 
-sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
+class BitmapCache
+{
+	RF_NO_COPY( BitmapCache );
+
+private:
+	using CachedBitmaps = rftl::unordered_map<file::VFSPath, UniquePtr<sprite::Bitmap>>;
+
+public:
+	explicit BitmapCache( WeakPtr<file::VFS const> vfs );
+
+	WeakPtr<sprite::Bitmap const> Fetch( file::VFSPath const& path );
+
+private:
+	WeakPtr<file::VFS const> const mVfs;
+	CachedBitmaps mCachedBitmaps;
+};
+
+
+
+BitmapCache::BitmapCache( WeakPtr<file::VFS const> vfs )
+	: mVfs( vfs )
+{
+	//
+}
+
+
+WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
+{
+	CachedBitmaps::const_iterator const iter = mCachedBitmaps.find( path );
+	if( iter != mCachedBitmaps.end() )
+	{
+		// Return cached
+		RF_ASSERT( iter->second != nullptr );
+		return iter->second;
+	}
+
+	// Load to cache
+	UniquePtr<sprite::Bitmap> bitmap = DefaultCreator<sprite::Bitmap>::Create( ExplicitDefaultConstruct{} );
+	WeakPtr<sprite::Bitmap const> retVal = bitmap;
+	{
+		file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+		RF_ASSERT( handle != nullptr );
+		file::FileBuffer const buffer( *handle, false );
+		*bitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetData(), buffer.GetSize() );
+	}
+	mCachedBitmaps[path] = rftl::move( bitmap );
+	return retVal;
+}
+
+
+
+class CharacterCompositor
+{
+	RF_NO_COPY( CharacterCompositor );
+
+public:
+	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
+
+	void Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir );
+
+
+private:
+	static sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params );
+	void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path );
+	void CreateCompositeAnims( CompositeAnimParams const& params );
+
+private:
+	WeakPtr<file::VFS const> mVfs;
+	WeakPtr<gfx::PPUController> mPpu;
+	BitmapCache mBitmapCache;
+};
+
+
+CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu )
+	: mVfs( vfs )
+	, mPpu( ppu )
+	, mBitmapCache( vfs )
+{
+	//
+}
+
+
+
+void CharacterCompositor::Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir )
+{
+	CompositeAnimParams animParams = {};
+	animParams.mSequence.mSequenceType = CompositeSequenceParams::SequenceType::N3_E3_S3_W3;
+	animParams.mSequence.mTileWidth = 16;
+	animParams.mSequence.mTileHeight = 18;
+	animParams.mSequence.mBaseRow = 1;
+	animParams.mSequence.mClothingNearRow = 13;
+	animParams.mSequence.mClothingFarRow = 0;
+	animParams.mSequence.mHairNearRow = 3;
+	animParams.mSequence.mHairFarRow = 0;
+	animParams.mSequence.mSpeciesNearRow = 3;
+	animParams.mSequence.mSpeciesFarRow = 4;
+	animParams.mSequence.mSpeciesTailRow = 5;
+	animParams.mBasePieces = charPieces.GetChild( "base_16_18.png" );
+	animParams.mClothingPieces = charPieces.GetChild( "clothing_16_18.png" );
+	animParams.mHairPieces = charPieces.GetChild( "hair_16_18.png" );
+	animParams.mSpeciesPieces = charPieces.GetChild( "species_16_18.png" );
+	animParams.mTextureOutputDirectory = outDir;
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::NWalk] = outDir.GetChild( "n.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::EWalk] = outDir.GetChild( "e.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::SWalk] = outDir.GetChild( "s.fpack" );
+	animParams.mOutputPaths[CompositeAnimParams::AnimKey::WWalk] = outDir.GetChild( "w.fpack" );
+
+	CreateCompositeAnims( animParams );
+}
+
+
+
+sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams const& params )
 {
 	sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
 		params.mSequence.mTileWidth * params.mColumn,
@@ -166,74 +278,27 @@ sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params )
 
 
 
-void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path, file::VFS const& vfs )
+void CharacterCompositor::WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path )
 {
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( frame.GetData(), frame.GetWidth(), frame.GetHeight() );
-	file::FileHandlePtr fileHandle = vfs.GetFileForWrite( path );
+	file::FileHandlePtr fileHandle = mVfs->GetFileForWrite( path );
 	FILE* const file = fileHandle->GetFile();
 	fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
 }
 
 
 
-class BitmapCache
+void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& params )
 {
-	RF_NO_COPY( BitmapCache );
+	// HACK: Direct access to texture manager
+	// TODO: Re-visit API surface
+	gfx::TextureManager& texMan = *mPpu->DebugGetTextureManager();
 
-private:
-	using CachedBitmaps = rftl::unordered_map<file::VFSPath, UniquePtr<sprite::Bitmap>>;
-
-public:
-	explicit BitmapCache( WeakPtr<file::VFS const> vfs );
-
-	WeakPtr<sprite::Bitmap const> Fetch( file::VFSPath const& path );
-
-private:
-	WeakPtr<file::VFS const> const mVfs;
-	CachedBitmaps mCachedBitmaps;
-};
-
-
-
-BitmapCache::BitmapCache( WeakPtr<file::VFS const> vfs )
-	: mVfs( vfs )
-{
-	//
-}
-
-
-WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
-{
-	CachedBitmaps::const_iterator const iter = mCachedBitmaps.find( path );
-	if( iter != mCachedBitmaps.end() )
-	{
-		// Return cached
-		RF_ASSERT( iter->second != nullptr );
-		return iter->second;
-	}
-
-	// Load to cache
-	UniquePtr<sprite::Bitmap> bitmap = DefaultCreator<sprite::Bitmap>::Create( ExplicitDefaultConstruct{} );
-	WeakPtr<sprite::Bitmap const> retVal = bitmap;
-	{
-		file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
-		RF_ASSERT( handle != nullptr );
-		file::FileBuffer const buffer( *handle, false );
-		*bitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetData(), buffer.GetSize() );
-	}
-	mCachedBitmaps[path] = rftl::move( bitmap );
-	return retVal;
-}
-
-
-
-void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitmapCache, file::VFS const& vfs, gfx::TextureManager& texMan )
-{
 	// Load textures
-	WeakPtr<sprite::Bitmap const> baseTex = bitmapCache.Fetch( params.mBasePieces );
-	WeakPtr<sprite::Bitmap const> clothingTex = bitmapCache.Fetch( params.mClothingPieces );
-	WeakPtr<sprite::Bitmap const> hairTex = bitmapCache.Fetch( params.mHairPieces );
-	WeakPtr<sprite::Bitmap const> speciesTex = bitmapCache.Fetch( params.mSpeciesPieces );
+	WeakPtr<sprite::Bitmap const> baseTex = mBitmapCache.Fetch( params.mBasePieces );
+	WeakPtr<sprite::Bitmap const> clothingTex = mBitmapCache.Fetch( params.mClothingPieces );
+	WeakPtr<sprite::Bitmap const> hairTex = mBitmapCache.Fetch( params.mHairPieces );
+	WeakPtr<sprite::Bitmap const> speciesTex = mBitmapCache.Fetch( params.mSpeciesPieces );
 
 	CompositeFrameParams frameParams = {};
 	frameParams.mSequence = params.mSequence;
@@ -265,7 +330,7 @@ void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitma
 	for( size_t i = 0; i < kTotalFrames; i++ )
 	{
 		frameParams.mColumn = startColumn + kColumnOffsets[i];
-		WriteFrameToDisk( CreateCompositeFrame( frameParams ), params.mTextureOutputDirectory.GetChild( kFrameNames[i] ), vfs );
+		WriteFrameToDisk( CreateCompositeFrame( frameParams ), params.mTextureOutputDirectory.GetChild( kFrameNames[i] ) );
 	}
 
 	static constexpr size_t kAnimFramesPerDirection = 4;
@@ -306,7 +371,7 @@ void CreateCompositeAnims( CompositeAnimParams const& params, BitmapCache& bitma
 			rftl::vector<uint8_t> toWrite;
 			bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
 			RF_ASSERT( writeSuccess );
-			file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( framepackPath );
+			file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( framepackPath );
 			FILE* const file = fileHandle->GetFile();
 			fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
 		}
@@ -329,40 +394,11 @@ void Start()
 
 	file::VFSPath const charPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
 
-	file::VFSPath const basePieces = charPieces.GetChild( "base_16_18.png" );
-	file::VFSPath const clothingPieces = charPieces.GetChild( "clothing_16_18.png" );
-	file::VFSPath const hairPieces = charPieces.GetChild( "hair_16_18.png" );
-	file::VFSPath const speciesPieces = charPieces.GetChild( "species_16_18.png" );
-
-	BitmapCache bitmapCache( app::gVfs );
-
 	char const* const id = "ID_TODO";
-
 	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
-	CompositeAnimParams animParams = {};
-	animParams.mSequence.mSequenceType = CompositeSequenceParams::SequenceType::N3_E3_S3_W3;
-	animParams.mSequence.mTileWidth = 16;
-	animParams.mSequence.mTileHeight = 18;
-	animParams.mSequence.mBaseRow = 1;
-	animParams.mSequence.mClothingNearRow = 13;
-	animParams.mSequence.mClothingFarRow = 0;
-	animParams.mSequence.mHairNearRow = 3;
-	animParams.mSequence.mHairFarRow = 0;
-	animParams.mSequence.mSpeciesNearRow = 3;
-	animParams.mSequence.mSpeciesFarRow = 4;
-	animParams.mSequence.mSpeciesTailRow = 5;
-	animParams.mBasePieces = charPieces.GetChild( "base_16_18.png" );
-	animParams.mClothingPieces = charPieces.GetChild( "clothing_16_18.png" );
-	animParams.mHairPieces = charPieces.GetChild( "hair_16_18.png" );
-	animParams.mSpeciesPieces = charPieces.GetChild( "species_16_18.png" );
-	animParams.mTextureOutputDirectory = outDir;
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::NWalk] = outDir.GetChild( "n.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::EWalk] = outDir.GetChild( "e.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::SWalk] = outDir.GetChild( "s.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::WWalk] = outDir.GetChild( "w.fpack" );
-
-	CreateCompositeAnims( animParams, bitmapCache, *app::gVfs, *app::gGraphics->DebugGetTextureManager() );
+	CharacterCompositor compositor( app::gVfs, app::gGraphics );
+	compositor.Wip( charPieces, outDir );
 }
 
 
