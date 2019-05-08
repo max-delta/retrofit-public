@@ -380,8 +380,10 @@ void FramePackEditor::Render()
 		{
 			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: %i", dataFPS );
 		}
-		uint16_t const effectiveFrames = math::integer_cast<uint16_t>( animationLength * mPreviewSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: %i", effectiveFrames );
+		uint16_t const effectivePreviewFrames = math::integer_cast<uint16_t>( animationLength * mPreviewSlowdownRate );
+		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: %i", effectivePreviewFrames );
+		uint16_t const effectiveDataFrames = math::integer_cast<uint16_t>( animationLength * preferredSlowdownRate );
+		ppu->DrawText( previewHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Data frames: %i", effectiveDataFrames );
 	}
 
 	//
@@ -547,7 +549,7 @@ void FramePackEditor::Command_ChangePreviewSpeed( bool faster )
 	{
 		mPreviewSlowdownRate++;
 	}
-	mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, mPreviewSlowdownRate, 10 );
+	mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, mPreviewSlowdownRate, 60 );
 }
 
 
@@ -661,7 +663,7 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 	{
 		slowdownRate++;
 	}
-	slowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, slowdownRate, 10 );
+	slowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, slowdownRate, 60 );
 }
 
 
@@ -843,7 +845,7 @@ void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 	{
 		gfx::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 		RF_ASSERT( fpack != nullptr );
-		mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, fpack->mPreferredSlowdownRate, 10 );
+		mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, fpack->mPreferredSlowdownRate, 60 );
 	}
 }
 
