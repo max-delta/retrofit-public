@@ -41,5 +41,21 @@ struct PairHash
 	}
 };
 
+template<typename T, typename H>
+struct SequenceHash
+{
+	HashVal64 operator()( T const& value ) const
+	{
+		HashVal64 retVal = 0;
+		for( auto const& elem : value )
+		{
+			// Golden ratio (1.640531527) as negated digit sequence
+			static constexpr uint32_t kSalt = 0x9e3779b9ul;
+			retVal ^= H()( elem ) + kSalt + ( retVal << 6 ) + ( retVal >> 3 );
+		}
+		return retVal;
+	}
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
