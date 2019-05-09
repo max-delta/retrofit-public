@@ -7,6 +7,8 @@
 #include "GameSprite/BitmapReader.h"
 #include "GameSprite/BitmapWriter.h"
 
+#include "Serialization/CsvReader.h"
+
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
@@ -18,26 +20,42 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/sstream"
+
 
 namespace RF { namespace scratch {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+enum class CharacterSequenceType : uint8_t
+{
+	Invalid = 0,
+
+	// Top-down
+	// Cardinal directions [N; E; S; W]
+	// Walk cycles only
+	// 4 frames, 3 unique [Step 1; Mid-step; Step 2]
+	// Empty tile between contiguous sequences
+	N3_E3_S3_W3,
+
+	// As N3_E3_S3_W3, but in 3 rows for layering
+	Near_far_tail_N3_E3_S3_W3
+};
+
+
+
+enum class CharacterPieceType : uint8_t
+{
+	Invalid = 0,
+	Base,
+	Clothing,
+	Hair,
+	Species
+};
+
 struct CompositeSequenceParams
 {
-	enum class SequenceType : uint8_t
-	{
-		Invalid = 0,
-
-		// Top-down
-		// Cardinal directions [N; E; S; W]
-		// Walk cycles only
-		// 4 frames, 3 unique [Step 1; Mid-step; Step 2]
-		// Empty tile between contiguous sequences
-		N3_E3_S3_W3
-	};
-
-	SequenceType mSequenceType = SequenceType::Invalid;
+	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
 
 	size_t mTileWidth = 0;
 	size_t mTileHeight = 0;
@@ -143,6 +161,35 @@ WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
 
 
 
+struct CharacterPiece
+{
+	rftl::string mFilename = {};
+	size_t mTileWidth = 0;
+	size_t mTileHeight = 0;
+	size_t mStartColumn = 0;
+	size_t mStartRow = 0;
+	int64_t mOffsetX = 0;
+	int64_t mOffsetY = 0;
+	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
+};
+
+
+
+struct CharacterPieceCollection
+{
+	using PiecesById = rftl::unordered_map<rftl::string, CharacterPiece>;
+	PiecesById mPiecesById = {};
+};
+
+
+
+struct CharacterPieceCategories
+{
+	using CollectionsByType = rftl::unordered_map<CharacterPieceType, CharacterPieceCollection>;
+	CollectionsByType mCollectionsByType = {};
+};
+
+
 class CharacterCompositor
 {
 	RF_NO_COPY( CharacterCompositor );
@@ -150,6 +197,7 @@ class CharacterCompositor
 public:
 	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
+	bool LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir );
 	void Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir );
 
 
@@ -158,10 +206,14 @@ private:
 	void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path );
 	void CreateCompositeAnims( CompositeAnimParams const& params );
 
+	rftl::deque<rftl::deque<rftl::string>> LoadCSV( file::VFSPath const& path );
+	bool LoadPieceTable( CharacterPieceType pieceType, file::VFSPath const& pieceTablePath );
+
 private:
 	WeakPtr<file::VFS const> mVfs;
 	WeakPtr<gfx::PPUController> mPpu;
 	BitmapCache mBitmapCache;
+	CharacterPieceCategories mCharacterPieceCategories;
 };
 
 
@@ -175,10 +227,82 @@ CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<
 
 
 
+bool CharacterCompositor::LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir )
+{
+	rftl::deque<rftl::deque<rftl::string>> masterTable = LoadCSV( masterTablePath );
+	if( masterTable.empty() )
+	{
+		RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Failed to load master piece table file" );
+		return false;
+	}
+
+	size_t line = 0;
+
+	rftl::deque<rftl::string> const header = masterTable.front();
+	masterTable.pop_front();
+	if( header.size() != 2 || header.at( 0 ) != "type" || header.at( 1 ) != "vfs suffix" )
+	{
+		RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece header, expected 'type, vfs suffix'" );
+		return false;
+	}
+	line++;
+
+	while( masterTable.empty() == false )
+	{
+		rftl::deque<rftl::string> const entry = masterTable.front();
+		if( entry.size() != 2 )
+		{
+			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line %i, expected 2 columns", math::integer_cast<int>( line ) );
+			return false;
+		}
+		rftl::string const& typeString = entry.at( 0 );
+		rftl::string const& vfsSuffix = entry.at( 1 );
+
+		CharacterPieceType type = CharacterPieceType::Invalid;
+		if( typeString == "base" )
+		{
+			type = CharacterPieceType::Base;
+		}
+		else if( typeString == "clothing" )
+		{
+			type = CharacterPieceType::Clothing;
+		}
+		else if( typeString == "hair" )
+		{
+			type = CharacterPieceType::Hair;
+		}
+		else if( typeString == "species" )
+		{
+			type = CharacterPieceType::Species;
+		}
+		else
+		{
+			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line %i, not a valid piece type", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		file::VFSPath const pieceTablePath = pieceTablesDir.GetChild( vfsSuffix );
+
+		bool loadResult = LoadPieceTable( type, pieceTablePath );
+		if( loadResult == false )
+		{
+			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Couldn't load piece table at line %i of master file", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		masterTable.pop_front();
+		line++;
+	}
+
+	return true;
+}
+
+
+
 void CharacterCompositor::Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir )
 {
 	CompositeAnimParams animParams = {};
-	animParams.mSequence.mSequenceType = CompositeSequenceParams::SequenceType::N3_E3_S3_W3;
+	animParams.mSequence.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
 	animParams.mSequence.mTileWidth = 16;
 	animParams.mSequence.mTileHeight = 18;
 	animParams.mSequence.mBaseRow = 1;
@@ -307,7 +431,7 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	frameParams.mHairTex = hairTex;
 	frameParams.mSpeciesTex = speciesTex;
 
-	RF_ASSERT_MSG( params.mSequence.mSequenceType == CompositeSequenceParams::SequenceType::N3_E3_S3_W3, "Only 'N3_E3_S3_W3' is currently supported" );
+	RF_ASSERT_MSG( params.mSequence.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3, "Only 'N3_E3_S3_W3' is currently supported" );
 
 	size_t const startColumn = 12;
 
@@ -385,6 +509,145 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	}
 }
 
+
+
+rftl::deque<rftl::deque<rftl::string>> CharacterCompositor::LoadCSV( file::VFSPath const& path )
+{
+	file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+	if( handle == nullptr )
+	{
+		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get file for read" );
+		return {};
+	}
+
+	file::FileBuffer const buffer{ *handle.Get(), false };
+	if( buffer.GetData() == nullptr )
+	{
+		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get data from file buffer" );
+		return {};
+	}
+
+	char const* const data = reinterpret_cast<char const*>( buffer.GetData() );
+	size_t const size = buffer.GetSize();
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
+	if( csv.empty() )
+	{
+		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to read file as csv" );
+		return {};
+	}
+
+	return csv;
+}
+
+
+
+bool CharacterCompositor::LoadPieceTable( CharacterPieceType pieceType, file::VFSPath const& pieceTablePath )
+{
+	rftl::deque<rftl::deque<rftl::string>> pieceTable = LoadCSV( pieceTablePath );
+	if( pieceTable.empty() )
+	{
+		RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Failed to load piece table file" );
+		return false;
+	}
+
+	CharacterPieceCollection& collection = mCharacterPieceCategories.mCollectionsByType[pieceType];
+
+	size_t line = 0;
+
+	rftl::deque<rftl::string> const header = pieceTable.front();
+	pieceTable.pop_front();
+	if(
+		header.size() != 9 ||
+		header.at( 0 ) != "id" ||
+		header.at( 1 ) != "vfs suffix" ||
+		header.at( 2 ) != "width" ||
+		header.at( 3 ) != "height" ||
+		header.at( 4 ) != "col" ||
+		header.at( 5 ) != "row" ||
+		header.at( 6 ) != "offset x" ||
+		header.at( 7 ) != "offset y" ||
+		header.at( 8 ) != "sequence" )
+	{
+		RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece table header" );
+		return false;
+	}
+	line++;
+
+	while( pieceTable.empty() == false )
+	{
+		rftl::deque<rftl::string> const entry = pieceTable.front();
+		if( entry.size() != 9 )
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line %i, expected 9 columns", math::integer_cast<int>( line ) );
+			return false;
+		}
+		rftl::string const& id = entry.at( 0 );
+		rftl::string const& vfsSuffix = entry.at( 1 );
+		rftl::string const& widthString = entry.at( 2 );
+		rftl::string const& heightString = entry.at( 3 );
+		rftl::string const& colString = entry.at( 4 );
+		rftl::string const& rowString = entry.at( 5 );
+		rftl::string const& offsetXString = entry.at( 6 );
+		rftl::string const& offsetYString = entry.at( 7 );
+		rftl::string const& sequenceString = entry.at( 8 );
+
+		if( id.empty() )
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line %i, bad id", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		CharacterPiece piece = {};
+
+		piece.mFilename = vfsSuffix;
+		if( piece.mFilename.empty() )
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line %i, bad filename", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		( rftl::stringstream() << widthString ) >> piece.mTileWidth;
+		if( piece.mTileWidth == 0 )
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line %i, bad tile width", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		( rftl::stringstream() << heightString ) >> piece.mTileHeight;
+		if( piece.mTileHeight == 0 )
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line %i, bad tile height", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		( rftl::stringstream() << colString ) >> piece.mStartColumn;
+		( rftl::stringstream() << rowString ) >> piece.mStartRow;
+		( rftl::stringstream() << offsetXString ) >> piece.mOffsetX;
+		( rftl::stringstream() << offsetYString ) >> piece.mOffsetY;
+
+		if( sequenceString == "n3_e3_s3_w3" )
+		{
+			piece.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
+		}
+		else if( sequenceString == "near_far_tail_n3_e3_s3_w3" )
+		{
+			piece.mCharacterSequenceType = CharacterSequenceType::Near_far_tail_N3_E3_S3_W3;
+		}
+		else
+		{
+			RFLOG_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line %i, not a valid sequence type", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		collection.mPiecesById[id] = rftl::move( piece );
+
+		pieceTable.pop_front();
+		line++;
+	}
+
+	return true;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -398,6 +661,10 @@ void Start()
 	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
 	CharacterCompositor compositor( app::gVfs, app::gGraphics );
+	bool const loadSuccess = compositor.LoadPieceTables(
+		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces.csv" ),
+		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces" ) );
+	RF_ASSERT( loadSuccess );
 	compositor.Wip( charPieces, outDir );
 }
 
