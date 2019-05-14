@@ -1,0 +1,83 @@
+### Outgoing PII
+
+The following data can theoretically expose information about developers.
+
+# __FILE__ macros
+Mitigation: Don't use these, use RF_FILENAME() instead, which currently strips
+the information in retail builds.
+
+# RF_BUILDSTAMP_* macros
+Mitigation: Don't stamp these using sensitive information. This should only be
+relevant when a build system is producing the '__BuildStamp.h' file.
+
+# Windows PE PDB path
+Mitigation: This is partially stripped by using the '/PDBALTPATH:' link option
+and choosing not to expose the directory.
+Note: The target name still needs to be present in order for the debugger to
+not fall over.
+
+# General filesystem exposure
+Mitigation: Run 'strings' across the binaries before ship, looking for any
+references to drive letters.
+
+# Mac addresses
+Mitigation: Don't use the reliable UUID, instead use the secure UUID and have
+plans for how to handle UUID collisions.
+
+
+### Incoming PII
+
+The following data can theoretically expose information about users. This is
+only relevant when the user provides logs, or communicates using the software.
+
+# VFS logs
+Mitigation: TODO - Non-virtual paths should be strippable via config.
+
+# Network logs
+Mitigation: TODO - IP addresses should be strippable via config.
+
+# IP Address
+Mitigation: Not possible. Required for communication over the internet. This
+shouldn't be stored except for managing active connections, diagnostic logging,
+or user-side bookmarks.
+
+# Mac addresses
+Mitigation: Don't use the reliable UUID, instead use the secure UUID and have
+plans for how to handle UUID collisions.
+
+# User-entered information
+Mitigation: Not possible. Required for basic gameplay. Avoid getting into a
+situation where accounts exist and servers have to store this, since that
+exposes the software to GDPR considerations.
+
+# Crash dumps
+Mitigation: These give TONS of information about the user, and should be
+avoided. Favor logs and crash callstacks instead.
+
+# User-mode/kernel-mode traces
+Mitigation: NEVER take these from a user. They can tell you EVERYTHING. Users
+won't be able to fully understand how much they're exposing. Even developers
+don't understand how much is in these. Only accept limited post-processed data
+that was already processed on the user's computer and plain-text readable to
+the user before they transmit it.
+
+
+### General warning on log transfer
+
+Users should be warned before transferring logs that they may contain:
+* Usernames  (via VFS user dir)
+* Account names  (via VFS user dir)
+* Directories/filenames  (via VFS)
+* IP addresses  (via Network)
+* Mac addresses  (via UUID)
+* Timestamps  (via log times)
+* Country/timezone  (via Mac/IP/Time)
+* Internet service provider  (via IP)
+* Basic operating system information
+	* Product  (via diagnostics)
+	* Version  (via diagnostics)
+* Limited hardware information
+	* Total/available memory  (via diagnostics)
+	* Total/available disk space  (via diagnostics)
+	* CPU brand/model  (via diagnostics)
+	* Device vendor names  (via Mac/CPUID)
