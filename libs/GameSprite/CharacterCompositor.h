@@ -151,6 +151,8 @@ class GAMESPRITE_API CharacterCompositor
 {
 	RF_NO_COPY( CharacterCompositor );
 
+	//
+	// Public methods
 public:
 	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
@@ -158,6 +160,8 @@ public:
 	void CreateCompositeCharacter( CompositeCharacterParams const& params );
 
 
+	//
+	// Private methods
 private:
 	static sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params );
 	void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path );
@@ -166,6 +170,9 @@ private:
 	rftl::deque<rftl::deque<rftl::string>> LoadCSV( file::VFSPath const& path );
 	bool LoadPieceTable( CharacterPieceType pieceType, file::VFSPath const& pieceTablePath );
 
+
+	//
+	// Private data
 private:
 	WeakPtr<file::VFS const> mVfs;
 	WeakPtr<gfx::PPUController> mPpu;
