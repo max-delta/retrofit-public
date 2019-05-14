@@ -33,16 +33,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="BitmapCache.h" />
     <ClInclude Include="BitmapReader.h" />
     <ClInclude Include="BitmapWriter.h" />
+    <ClInclude Include="CharacterCompositor.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="SpriteFwd.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="BitmapCache.cpp" />
     <ClCompile Include="BitmapReader.cpp" />
     <ClCompile Include="BitmapWriter.cpp" />
+    <ClCompile Include="CharacterCompositor.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -57,6 +61,18 @@
     </ProjectReference>
     <ProjectReference Include="..\core_math\core_math.vcxproj">
       <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
+      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PPU\PPU.vcxproj">
+      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Serialization\Serialization.vcxproj">
+      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

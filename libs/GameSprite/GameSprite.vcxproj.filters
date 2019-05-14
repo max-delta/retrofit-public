@@ -6,6 +6,8 @@
     <ClCompile Include="BitmapWriter.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="BitmapReader.cpp" />
+    <ClCompile Include="BitmapCache.cpp" />
+    <ClCompile Include="CharacterCompositor.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -14,5 +16,7 @@
     <ClInclude Include="SpriteFwd.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="BitmapReader.h" />
+    <ClInclude Include="BitmapCache.h" />
+    <ClInclude Include="CharacterCompositor.h" />
   </ItemGroup>
 </Project>
