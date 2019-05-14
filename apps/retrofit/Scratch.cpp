@@ -53,6 +53,8 @@ enum class CharacterPieceType : uint8_t
 	Species
 };
 
+
+
 struct CompositeSequenceParams
 {
 	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
@@ -110,6 +112,17 @@ struct CompositeAnimParams
 	file::VFSPath mTextureOutputDirectory = {};
 
 	rftl::unordered_map<AnimKey, file::VFSPath> mOutputPaths = {};
+};
+
+struct CompositeCharacterParams
+{
+	rftl::string mBaseId = {};
+	rftl::string mBlothingId = {};
+	rftl::string mHairId = {};
+	rftl::string mSpeciesId = {};
+
+	file::VFSPath mCharPiecesDir = {};
+	file::VFSPath mOutputDir = {};
 };
 
 
@@ -202,7 +215,7 @@ public:
 	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
 	bool LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir );
-	void Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir );
+	void CreateCompositeCharacter( CompositeCharacterParams const& params );
 
 
 private:
@@ -303,19 +316,14 @@ bool CharacterCompositor::LoadPieceTables( file::VFSPath const& masterTablePath,
 
 
 
-void CharacterCompositor::Wip( file::VFSPath const& charPieces, file::VFSPath const& outDir )
+void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams const& params )
 {
-	rftl::string const baseId = "awokenc_f";
-	rftl::string const clothingId = "healer_f";
-	rftl::string const hairId = "clothing1_f";
-	rftl::string const speciesId = "awokenc_f";
-
 	// TODO: Better error-reporting
 
-	CharacterPiece const basePiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( baseId );
-	CharacterPiece const clothingPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( clothingId );
-	CharacterPiece const hairPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( hairId );
-	CharacterPiece const speciesPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( speciesId );
+	CharacterPiece const basePiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( params.mBaseId );
+	CharacterPiece const clothingPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mBlothingId );
+	CharacterPiece const hairPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
+	CharacterPiece const speciesPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
 
 	size_t const commonWidth =
 		basePiece.mTileWidth &
@@ -334,6 +342,9 @@ void CharacterCompositor::Wip( file::VFSPath const& charPieces, file::VFSPath co
 	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
 	RF_ASSERT( hairPiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
 	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Near_far_tail_N3_E3_S3_W3 );
+
+	file::VFSPath const& charPieces = params.mCharPiecesDir;
+	file::VFSPath const& outDir = params.mOutputDir;
 
 	CompositeAnimParams animParams = {};
 	animParams.mSequence.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
@@ -369,7 +380,7 @@ void CharacterCompositor::Wip( file::VFSPath const& charPieces, file::VFSPath co
 sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams const& params )
 {
 	sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
-		params.mSequence.mTileWidth * (params.mSequence.mBaseCol + params.mColumnOffset),
+		params.mSequence.mTileWidth * ( params.mSequence.mBaseCol + params.mColumnOffset ),
 		params.mSequence.mTileHeight * params.mSequence.mBaseRow,
 		params.mSequence.mTileWidth,
 		params.mSequence.mTileHeight );
@@ -701,7 +712,15 @@ void Start()
 		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces.csv" ),
 		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces" ) );
 	RF_ASSERT( loadSuccess );
-	compositor.Wip( charPieces, outDir );
+
+	CompositeCharacterParams params = {};
+	params.mBaseId = "awokenc_f";
+	params.mBlothingId = "healer_f";
+	params.mHairId = "clothing1_f";
+	params.mSpeciesId = "awokenc_f";
+	params.mCharPiecesDir = charPieces;
+	params.mOutputDir = outDir;
+	compositor.CreateCompositeCharacter( params );
 }
 
 
