@@ -46,7 +46,6 @@ public:
 	bool LoadCompositionTable( file::VFSPath const& compositionTablePath );
 
 	TagBits GetTagsAsFlags( Tags const& tags ) const;
-	PieceId IteratePreviousValidPiece( PieceId const& iterator, CharacterPieceType type, TagBits flags ) const;
 	PieceId IterateNextValidPiece( PieceId const& iterator, CharacterPieceType type, TagBits flags ) const;
 
 	void CreateCompositeCharacter( CompositeCharacterParams const& params );
@@ -228,33 +227,6 @@ CharacterCreator::TagBits CharacterCreator::GetTagsAsFlags( Tags const& tags ) c
 
 
 
-CharacterCreator::PieceId CharacterCreator::IteratePreviousValidPiece( PieceId const& iterator, CharacterPieceType type, TagBits flags ) const
-{
-	PiecesById const& piecesByID = mCollectionsByType.at( type );
-
-	PiecesById::const_iterator trueIter;
-	if( iterator.empty() )
-	{
-		return PieceId();
-	}
-
-	trueIter = piecesByID.find( iterator );
-	if( trueIter == piecesByID.end() )
-	{
-		return PieceId();
-	}
-
-	if( trueIter == piecesByID.begin() )
-	{
-		return PieceId();
-	}
-
-	trueIter--;
-	return trueIter->first;
-}
-
-
-
 CharacterCreator::PieceId CharacterCreator::IterateNextValidPiece( PieceId const& iterator, CharacterPieceType type, TagBits flags ) const
 {
 	PiecesById const& piecesByID = mCollectionsByType.at( type );
@@ -262,18 +234,28 @@ CharacterCreator::PieceId CharacterCreator::IterateNextValidPiece( PieceId const
 	PiecesById::const_iterator trueIter;
 	if( iterator.empty() )
 	{
+		// Start at beginning
 		trueIter = piecesByID.begin();
 	}
 	else
 	{
+		// Start at last iterator
 		trueIter = piecesByID.find( iterator );
+
+		// Increment
+		if( trueIter != piecesByID.end() )
+		{
+			trueIter++;
+		}
 	}
 
-	if( trueIter != piecesByID.end() )
+	// Fall forward if missing flags
+	while( trueIter != piecesByID.end() && (trueIter->second & flags) != flags )
 	{
 		trueIter++;
 	}
 
+	// Return
 	if( trueIter != piecesByID.end() )
 	{
 		return trueIter->first;
@@ -337,13 +319,17 @@ void Start()
 		file::VFS::kRoot.GetChild( "assets", "tables", "char", "composite.csv" ) );
 	RF_ASSERT( loadCompositionSuccess );
 
-	details::CharacterCreator::TagBits const characterTagBits = creator.GetTagsAsFlags( { "female", "awokenc" } );
+	details::CharacterCreator::TagBits const characterTagBits = creator.GetTagsAsFlags( { "female", "portal" } );
 
 	// Choose first valid
 	details::CharacterCreator::PieceId const base = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Base, characterTagBits );
 	details::CharacterCreator::PieceId const clothing = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Clothing, characterTagBits );
 	details::CharacterCreator::PieceId const hair = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Hair, characterTagBits );
 	details::CharacterCreator::PieceId const species = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Species, characterTagBits );
+	RF_ASSERT( base.empty() == false );
+	RF_ASSERT( clothing.empty() == false );
+	RF_ASSERT( hair.empty() == false );
+	RF_ASSERT( species.empty() == false );
 
 	file::VFSPath const charPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
 
