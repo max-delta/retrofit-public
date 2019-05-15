@@ -25,7 +25,7 @@ public:
 
 
 	//
-	// Public methods
+	// Public methods (conversion)
 public:
 	immutable_basic_string() = default;
 	immutable_basic_string( backing_type const& value )
@@ -40,6 +40,20 @@ public:
 		return mStorage;
 	}
 
+	backing_type const& str() const
+	{
+		return mStorage;
+	}
+
+
+	//
+	// Public methods (passthrough)
+public:
+	bool empty() const
+	{
+		return mStorage.empty();
+	}
+
 
 	//
 	// Private data
@@ -51,6 +65,53 @@ using immutable_string = immutable_basic_string<char>;
 using immutable_wstring = immutable_basic_string<wchar_t>;
 using immutable_u16string = immutable_basic_string<char16_t>;
 using immutable_u32string = immutable_basic_string<char32_t>;
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename CharT, typename Traits, typename Allocator>
+struct hash<immutable_basic_string<CharT, Traits, Allocator>>
+{
+	// HACK: MSVC requires 'rftl::' in the param here, for unknown reasons
+	size_t operator()( rftl::immutable_basic_string<CharT, Traits, Allocator> const& string ) const
+	{
+		return hash<basic_string<CharT, Traits, Allocator>>()( string );
+	}
+};
+
+template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT>>
+bool operator==(
+	immutable_basic_string<CharT, Traits, Allocator> const& lhs,
+	immutable_basic_string<CharT, Traits, Allocator> const& rhs )
+{
+	return
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
+}
+
+
+
+template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT>>
+bool operator==(
+	immutable_basic_string<CharT, Traits, Allocator> const& lhs,
+	basic_string<CharT, Traits, Allocator> const& rhs )
+{
+	return
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
+}
+
+
+
+// TODO: This duplicate shouldn't be needed when C++20 is available
+template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT>>
+bool operator==(
+	basic_string<CharT, Traits, Allocator> const& lhs,
+	immutable_basic_string<CharT, Traits, Allocator> const& rhs )
+{
+	return
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }
