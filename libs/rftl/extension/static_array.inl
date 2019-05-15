@@ -9,7 +9,7 @@ namespace rftl {
 template<typename Element, size_t ElementCapacity>
 inline Element& static_array<Element, ElementCapacity>::Storage::Value()
 {
-	return *( reinterpret_cast<Element*>( m_Data ) );
+	return *( reinterpret_cast<Element*>( mData ) );
 }
 
 
@@ -17,7 +17,7 @@ inline Element& static_array<Element, ElementCapacity>::Storage::Value()
 template<typename Element, size_t ElementCapacity>
 inline Element const& static_array<Element, ElementCapacity>::Storage::Value() const
 {
-	return *( reinterpret_cast<Element const*>( m_Data ) );
+	return *( reinterpret_cast<Element const*>( mData ) );
 }
 
 
@@ -25,7 +25,7 @@ inline Element const& static_array<Element, ElementCapacity>::Storage::Value() c
 template<typename Element, size_t ElementCapacity>
 inline Element* static_array<Element, ElementCapacity>::Storage::WriteableTarget()
 {
-	return reinterpret_cast<Element*>( m_Data );
+	return reinterpret_cast<Element*>( mData );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -110,6 +110,16 @@ inline static_array<Element, ElementCapacity>::static_array( static_array<value_
 
 template<typename Element, size_t ElementCapacity>
 inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_list<value_type> init )
+	: static_array()
+{
+	append( init );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename Convertible>
+inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_list<Convertible> init )
 	: static_array()
 {
 	append( init );
@@ -465,6 +475,15 @@ inline void static_array<Element, ElementCapacity>::append( InputIterator first,
 
 template<typename Element, size_t ElementCapacity>
 inline void static_array<Element, ElementCapacity>::append( rftl::initializer_list<value_type> init )
+{
+	append( init.begin(), init.end() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename Convertible>
+inline void static_array<Element, ElementCapacity>::append( rftl::initializer_list<Convertible> init )
 {
 	append( init.begin(), init.end() );
 }
