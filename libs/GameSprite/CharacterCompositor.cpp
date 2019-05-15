@@ -108,7 +108,7 @@ void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams con
 	// TODO: Better error-reporting
 
 	CharacterPiece const basePiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( params.mBaseId );
-	CharacterPiece const clothingPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mBlothingId );
+	CharacterPiece const clothingPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mClothingId );
 	CharacterPiece const hairPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
 	CharacterPiece const speciesPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
 

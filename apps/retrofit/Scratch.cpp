@@ -352,7 +352,7 @@ void Start()
 
 	sprite::CompositeCharacterParams params = {};
 	params.mBaseId = base;
-	params.mBlothingId = clothing;
+	params.mClothingId = clothing;
 	params.mHairId = hair;
 	params.mSpeciesId = species;
 	params.mCharPiecesDir = charPieces;
