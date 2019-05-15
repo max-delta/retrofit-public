@@ -14,7 +14,7 @@ namespace RF { namespace sprite {
 struct GAMESPRITE_API CompositeCharacterParams
 {
 	rftl::string mBaseId = {};
-	rftl::string mBlothingId = {};
+	rftl::string mClothingId = {};
 	rftl::string mHairId = {};
 	rftl::string mSpeciesId = {};
 
