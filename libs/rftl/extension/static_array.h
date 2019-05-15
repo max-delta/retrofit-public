@@ -42,9 +42,10 @@ private:
 		Element& Value();
 		Element const& Value() const;
 		Element* WriteableTarget();
+
 	private:
 		static_assert( sizeof( Element ) > 0, "Container of empty elements is meaningless" );
-		uint8_t m_Data[sizeof( Element )];
+		uint8_t mData[sizeof( Element )];
 	};
 	static_assert( alignof( Storage ) == alignof( Element ), "Unxepected alignment change" );
 	static_assert( sizeof( Storage ) == sizeof( Element ), "Unxepected size change" );
@@ -56,22 +57,30 @@ public:
 	static_array();
 	explicit static_array( size_type count );
 	static_array( size_type count, value_type const& value );
-	template<class InputIterator> static_array( InputIterator first, InputIterator term );
+	template<class InputIterator>
+	static_array( InputIterator first, InputIterator term );
 	static_array( static_array const& other );
-	template<size_t OtherCapacity> static_array( static_array<value_type, OtherCapacity> const& other );
-	static_array( static_array && other );
-	template<size_t OtherCapacity> static_array( static_array<value_type, OtherCapacity> && other );
+	template<size_t OtherCapacity>
+	static_array( static_array<value_type, OtherCapacity> const& other );
+	static_array( static_array&& other );
+	template<size_t OtherCapacity>
+	static_array( static_array<value_type, OtherCapacity>&& other );
 	static_array( rftl::initializer_list<value_type> init );
+	template<typename Convertible>
+	static_array( rftl::initializer_list<Convertible> init );
 	~static_array();
 
 	static_array& operator=( static_array const& other );
 	static_array& operator=( static_array const&& other );
-	template<size_t OtherCapacity> static_array& operator=( static_array<value_type, OtherCapacity> const& other );
-	template<size_t OtherCapacity> static_array& operator=( static_array<value_type, OtherCapacity> && other );
+	template<size_t OtherCapacity>
+	static_array& operator=( static_array<value_type, OtherCapacity> const& other );
+	template<size_t OtherCapacity>
+	static_array& operator=( static_array<value_type, OtherCapacity>&& other );
 	static_array& operator=( rftl::initializer_list<value_type> init );
 
 	void assign( size_type count, value_type const& value );
-	template<class InputIterator> void assign( InputIterator first, InputIterator term );
+	template<class InputIterator>
+	void assign( InputIterator first, InputIterator term );
 	void assign( rftl::initializer_list<value_type> init );
 
 	reference at( size_type pos );
@@ -116,7 +125,8 @@ public:
 	void push_back( value_type const& value );
 	void push_back( value_type&& value );
 	reference emplace_back( value_type&& value ); // Disambiguate args
-	template<class... Args> reference emplace_back( Args&&... args );
+	template<class... Args>
+	reference emplace_back( Args&&... args );
 	void pop_back();
 	void resize( size_type count );
 	void resize( size_type count, value_type const& value );
@@ -125,9 +135,13 @@ public:
 	//
 	// Private methods
 private:
-	template<class InputIterator> void append( InputIterator first, InputIterator term );
+	template<class InputIterator>
+	void append( InputIterator first, InputIterator term );
 	void append( rftl::initializer_list<value_type> init );
-	template<class InputIterator> void extract( InputIterator first, InputIterator term );
+	template<typename Convertible>
+	void append( rftl::initializer_list<Convertible> init );
+	template<class InputIterator>
+	void extract( InputIterator first, InputIterator term );
 	void grow( size_type growthAmount );
 	void grow( size_type growthAmount, value_type const& value );
 
