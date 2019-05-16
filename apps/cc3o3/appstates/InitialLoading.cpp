@@ -3,6 +3,7 @@
 
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -75,14 +76,12 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 	// Load fonts
 	{
-		file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-
 		// TODO: Defer load requests instead of forcing immediate load
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, paths::gCommonFonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, paths::gCommonFonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 		gfx::FontManager const& fontMan = *ppu.DebugGetFontManager();
-		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( paths::gCommonFonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::gCommonFonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
@@ -99,30 +98,24 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load tilesets
 	// NOTE: Will cause associated textures to load
 	{
-		file::VFSPath const tilesets = file::VFS::kRoot.GetChild( "assets", "tilesets" );
-
 		// TODO: Defer load requests instead of forcing immediate load
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", tilesets.GetChild( "backgrounds", "country_hills_back_96.tset.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", tilesets.GetChild( "backgrounds", "country_hills_mid_32.tset.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "frame9_24", tilesets.GetChild( "common", "frame9_24.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", paths::gBackgroundTilesets.GetChild( "country_hills_back_96.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", paths::gBackgroundTilesets.GetChild( "country_hills_mid_32.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "frame9_24", paths::gCommonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	}
 
 	// Load framepacks
 	// NOTE: Will cause associated textures to load
 	{
-		file::VFSPath const framepacks = file::VFS::kRoot.GetChild( "assets", "framepacks" );
-
 		// TODO: Defer load requests instead of forcing immediate load
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", framepacks.GetChild( "logos", "cc303_composite_192.fpack" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", paths::gLogoFramepacks.GetChild( "cc303_composite_192.fpack" ) );
 	}
 
 	// Load localization
 	{
-		file::VFSPath const localizations = file::VFS::kRoot.GetChild( "assets", "localizations" );
-
 		// TODO: Configurable language
-		app::gLocEngine->InitializeFromKeymapFile( vfs, localizations.GetChild( "en_us.keymap.csv" ), loc::TextDirection::LeftToRight );
-		app::gPageMapper->InitializeFromCharmapFile( vfs, localizations.GetChild( "en_us.charmap.csv" ) );
+		app::gLocEngine->InitializeFromKeymapFile( vfs, paths::gLocalizations.GetChild( "en_us.keymap.csv" ), loc::TextDirection::LeftToRight );
+		app::gPageMapper->InitializeFromCharmapFile( vfs, paths::gLocalizations.GetChild( "en_us.charmap.csv" ) );
 	}
 
 	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );
