@@ -37,6 +37,8 @@
     <ClCompile Include="appstates\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="appstates\TitleScreen_Options.cpp" />
     <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="char\CharacterDatabase.cpp" />
+    <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
@@ -57,6 +59,18 @@
     <ClInclude Include="appstates\TitleScreen_MainMenu.h" />
     <ClInclude Include="appstates\TitleScreen_Options.h" />
     <ClInclude Include="cc3o3.h" />
+    <ClInclude Include="char\Character.h" />
+    <ClInclude Include="char\CharacterDatabase.h" />
+    <ClInclude Include="char\CharFwd.h" />
+    <ClInclude Include="char\Description.h" />
+    <ClInclude Include="char\ElementSlots.h" />
+    <ClInclude Include="char\Equipment.h" />
+    <ClInclude Include="char\Genetics.h" />
+    <ClInclude Include="char\project.h" />
+    <ClInclude Include="char\Stats.h" />
+    <ClInclude Include="char\stdafx.h" />
+    <ClInclude Include="char\Visuals.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPaths.h" />
     <ClInclude Include="input\HardcodedSetup.h" />
     <ClInclude Include="input\InputFwd.h" />
