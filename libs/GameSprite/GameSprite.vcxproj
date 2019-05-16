@@ -37,6 +37,7 @@
     <ClInclude Include="BitmapReader.h" />
     <ClInclude Include="BitmapWriter.h" />
     <ClInclude Include="CharacterCompositor.h" />
+    <ClInclude Include="CharacterCreator.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="SpriteFwd.h" />
     <ClInclude Include="stdafx.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="BitmapReader.cpp" />
     <ClCompile Include="BitmapWriter.cpp" />
     <ClCompile Include="CharacterCompositor.cpp" />
+    <ClCompile Include="CharacterCreator.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
