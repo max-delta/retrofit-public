@@ -3,6 +3,7 @@
 
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -45,7 +46,7 @@ void Boot::OnTick( AppStateTickContext& context )
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Booting..." );
 
 	// VFS setup for game data
-	file::VFSPath const mountFile = file::VFS::kRoot.GetChild( "config", "vfs_cc3o3.ini" );
+	file::VFSPath const mountFile = paths::gVfsConfig;
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( mountFile );
 	if( vfsTestDataLoad == false )
 	{

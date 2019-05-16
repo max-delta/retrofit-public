@@ -7,6 +7,7 @@
 #include "cc3o3/appstates/TitleScreen_CharCreate.h"
 #include "cc3o3/appstates/TitleScreen_Options.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -52,8 +53,6 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
 
-	file::VFSPath const tilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps" );
-
 	// Setup background
 	{
 		gfx::TileLayer& back = internalState.mBackgroundBack;
@@ -69,7 +68,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		back.mLooping = true;
 		back.mTimer.mMaxTimeIndex = 50;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( back, vfs, tilemaps.GetChild( "backgrounds", "country_hills_back.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( back, vfs, paths::gBackgroundTilemaps.GetChild( "country_hills_back.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
 
@@ -83,7 +82,7 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		mid.mLooping = true;
 		mid.mTimer.mMaxTimeIndex = 10;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( mid, vfs, tilemaps.GetChild( "backgrounds", "country_hills_mid.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( mid, vfs, paths::gBackgroundTilemaps.GetChild( "country_hills_mid.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
 	}
