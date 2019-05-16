@@ -31,6 +31,7 @@
     <ClCompile Include="appstates\TitleScreen_CharCreate.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="CommonPaths.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -90,6 +91,7 @@
     <ClInclude Include="appstates\TitleScreen_CharCreate.h">
       <Filter>appstates</Filter>
     </ClInclude>
+    <ClInclude Include="CommonPaths.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">

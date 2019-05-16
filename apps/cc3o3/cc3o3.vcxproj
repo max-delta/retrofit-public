@@ -37,6 +37,7 @@
     <ClCompile Include="appstates\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="appstates\TitleScreen_Options.cpp" />
     <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -56,6 +57,7 @@
     <ClInclude Include="appstates\TitleScreen_MainMenu.h" />
     <ClInclude Include="appstates\TitleScreen_Options.h" />
     <ClInclude Include="cc3o3.h" />
+    <ClInclude Include="CommonPaths.h" />
     <ClInclude Include="input\HardcodedSetup.h" />
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />
