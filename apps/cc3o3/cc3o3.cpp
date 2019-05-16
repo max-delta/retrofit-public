@@ -6,6 +6,7 @@
 #include "cc3o3/appstates/TitleScreen.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -35,6 +36,8 @@ static appstate::AppStateManager sAppStateManager;
 
 void Startup()
 {
+	SystemStartup();
+
 	sAppStateManager.AddState( appstate::id::Boot, DefaultCreator<appstate::Boot>::Create() );
 	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
@@ -85,6 +88,8 @@ void ProcessFrame()
 void Shutdown()
 {
 	sAppStateManager.Stop();
+
+	SystemShutdown();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
