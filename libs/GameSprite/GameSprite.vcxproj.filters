@@ -8,6 +8,7 @@
     <ClCompile Include="BitmapReader.cpp" />
     <ClCompile Include="BitmapCache.cpp" />
     <ClCompile Include="CharacterCompositor.cpp" />
+    <ClCompile Include="CharacterCreator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -18,5 +19,6 @@
     <ClInclude Include="BitmapReader.h" />
     <ClInclude Include="BitmapCache.h" />
     <ClInclude Include="CharacterCompositor.h" />
+    <ClInclude Include="CharacterCreator.h" />
   </ItemGroup>
 </Project>
