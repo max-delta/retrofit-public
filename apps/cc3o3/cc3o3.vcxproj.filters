@@ -32,6 +32,8 @@
       <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="CommonPaths.cpp" />
+    <ClCompile Include="char\CharacterDatabase.cpp" />
+    <ClCompile Include="Common.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -92,6 +94,40 @@
       <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="CommonPaths.h" />
+    <ClInclude Include="char\project.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\stdafx.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Character.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Visuals.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\CharFwd.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Genetics.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Stats.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Equipment.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\ElementSlots.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\CharacterDatabase.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="char\Description.h">
+      <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="Common.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -102,6 +138,9 @@
     </Filter>
     <Filter Include="input">
       <UniqueIdentifier>{5ba1e6a8-c973-4afe-8a56-76545c60e754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="char">
+      <UniqueIdentifier>{7419a65b-047c-463a-b22c-61c48e852a6c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,0 +1,17 @@
+#pragma once
+#include "project.h"
+
+#include "rftl/string"
+
+
+namespace RF { namespace cc { namespace character {
+///////////////////////////////////////////////////////////////////////////////
+
+struct Genetics
+{
+	rftl::string mSpecies = {};
+	rftl::string mGender = {};
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}}}
