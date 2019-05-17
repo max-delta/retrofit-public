@@ -11,7 +11,10 @@ enum class Mode : uint8_t
 	Invalid = 0, // If invalid, FastTrack is not in use
 
 	// Directly to options menu on the title screen
-	TitleScreenOptions
+	TitleScreenOptions,
+
+	// Directly to character creation on the title screen
+	TitleScreenCharCreate
 };
 
 static Mode sMode = Mode::Invalid;
@@ -45,6 +48,10 @@ AppStateID GetFirstTitleScreenState()
 	if( fasttrack::sMode == fasttrack::Mode::TitleScreenOptions )
 	{
 		return id::TitleScreen_Options;
+	}
+	else if( fasttrack::sMode == fasttrack::Mode::TitleScreenCharCreate )
+	{
+		return id::TitleScreen_CharCreate;
 	}
 
 	return id::TitleScreen_MainMenu;
