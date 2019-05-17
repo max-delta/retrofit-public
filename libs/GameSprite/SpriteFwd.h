@@ -11,8 +11,11 @@ class Bitmap;
 class BitmapWriter;
 class BitmapReader;
 class BitmapCache;
+
 class CharacterCompositor;
 class CharacterCreator;
+
+class MelaninColorGenerator;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
