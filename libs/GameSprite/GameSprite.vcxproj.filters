@@ -9,6 +9,7 @@
     <ClCompile Include="BitmapCache.cpp" />
     <ClCompile Include="CharacterCompositor.cpp" />
     <ClCompile Include="CharacterCreator.cpp" />
+    <ClCompile Include="MelaninColorGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -20,5 +21,6 @@
     <ClInclude Include="BitmapCache.h" />
     <ClInclude Include="CharacterCompositor.h" />
     <ClInclude Include="CharacterCreator.h" />
+    <ClInclude Include="MelaninColorGenerator.h" />
   </ItemGroup>
 </Project>
