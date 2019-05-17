@@ -36,22 +36,22 @@ private:
 public:
 	math::Color4u8 mBaseColor = math::Color4u8( 246, 213, 164 );
 
-	float mPheomelaninStartHDeg = 30.f;
-	float mPheomelaninStartSVal = .60f;
-	float mPheomelaninStartLVal = .51f;
+	float mPheomelaninStartHDeg = 37.f;
+	float mPheomelaninStartSVal = .57f;
+	float mPheomelaninStartLVal = .54f;
 	float mPheomelaninStartOpac = .66f;
 
-	float mPheomelaninEndHDeg = 0.f;
-	float mPheomelaninEndSVal = .91f;
-	float mPheomelaninEndLVal = .24f;
+	float mPheomelaninEndHDeg = 13.f;
+	float mPheomelaninEndSVal = .60f;
+	float mPheomelaninEndLVal = .41f;
 	float mPheomelaninEndOpac = .98f;
 
-	float mEumelaninStartHDeg = 35.f;
-	float mEumelaninStartSVal = .43f;
-	float mEumelaninStartLVal = .37f;
+	float mEumelaninStartHDeg = 22.f;
+	float mEumelaninStartSVal = .60f;
+	float mEumelaninStartLVal = .26f;
 	float mEumelaninStartOpac = .66f;
 
-	float mEumelaninEndHDeg = 30.f;
+	float mEumelaninEndHDeg = 22.f;
 	float mEumelaninEndSVal = 1.00f;
 	float mEumelaninEndLVal = .00f;
 	float mEumelaninEndOpac = .98f;
