@@ -149,7 +149,15 @@ DST integer_cast( SRC const src )
 {
 	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
 	DST retVal = integer_truncast<DST>( src );
-	RF_ASSERT( retVal == static_cast<DST>( src ) );
+	if( rftl::is_floating_point<SRC>::value )
+	{
+		RF_ASSERT( static_cast<SRC>( retVal ) >= src - 1 );
+		RF_ASSERT( static_cast<SRC>( retVal ) <= src + 1 );
+	}
+	else
+	{
+		RF_ASSERT( retVal == static_cast<DST>( src ) );
+	}
 	return retVal;
 }
 
