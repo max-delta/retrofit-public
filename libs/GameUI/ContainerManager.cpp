@@ -95,6 +95,7 @@ void ContainerManager::RecreateRootContainer()
 
 ContainerID ContainerManager::GetContainerID( char const* label ) const
 {
+	RF_ASSERT_MSG( mLabelsToContainerIDs.count( label ) != 0, "Cannot find container by label" );
 	return mLabelsToContainerIDs.at( label );
 }
 
