@@ -44,7 +44,7 @@ public:
 		ManagedFontID mFontReference;
 		char mText[k_MaxLen + sizeof( '\0' )];
 	};
-	static_assert( sizeof( String ) == 136, "Double-check String storage" );
+	static_assert( sizeof( String ) == 84, "Double-check String storage" );
 	static_assert( alignof( String ) == 2, "Double-check String alignment" );
 
 
