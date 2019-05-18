@@ -166,7 +166,7 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewChild( FocusTreeNode const& parentNod
 {
 	if( parentNode.mFavoredChild != nullptr )
 	{
-		RF_DBGFAIL();
+		RF_DBGFAIL_MSG( "Cannot create new focus node as child, a child already exists here" );
 		return nullptr;
 	}
 
@@ -240,6 +240,98 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode>
 	WeakPtr<FocusTreeNode> const retVal = newNode;
 	mBackingNodeStorage.emplace_back( rftl::move( newNode ) );
 	return retVal;
+}
+
+
+
+bool FocusTree::CycleRootFocusToNextChild( bool wrapIfLastChild )
+{
+	return CycleFocusToNextChild( *mRootNode, wrapIfLastChild );
+}
+
+
+
+bool FocusTree::CycleRootFocusToPreviousChild( bool wrapIfLastChild )
+{
+	return CycleFocusToPreviousChild( *mRootNode, wrapIfLastChild );
+}
+
+
+
+bool FocusTree::CycleFocusToNextChild( FocusTreeNode& parentNode, bool wrapIfLastChild )
+{
+	if( parentNode.mFavoredChild == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Try next
+	WeakPtr<FocusTreeNode> const& next = parentNode.mFavoredChild->mNextSibling;
+	if( next != nullptr )
+	{
+		parentNode.mFavoredChild = next;
+		return true;
+	}
+
+	if( wrapIfLastChild == false )
+	{
+		return false;
+	}
+
+	WeakPtr<FocusTreeNode> reverse = parentNode.mFavoredChild->mPreviousSibling;
+	if( reverse == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Walk to first
+	while( reverse != nullptr )
+	{
+		parentNode.mFavoredChild = reverse;
+		reverse = reverse->mPreviousSibling;
+	}
+	return true;
+}
+
+
+
+bool FocusTree::CycleFocusToPreviousChild( FocusTreeNode& parentNode, bool wrapIfLastChild )
+{
+	if( parentNode.mFavoredChild == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Try previous
+	WeakPtr<FocusTreeNode> const& previous = parentNode.mFavoredChild->mPreviousSibling;
+	if( previous != nullptr )
+	{
+		parentNode.mFavoredChild = previous;
+		return true;
+	}
+
+	if( wrapIfLastChild == false )
+	{
+		return false;
+	}
+
+	WeakPtr<FocusTreeNode> reverse = parentNode.mFavoredChild->mNextSibling;
+	if( reverse == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Walk to last
+	while( reverse != nullptr )
+	{
+		parentNode.mFavoredChild = reverse;
+		reverse = reverse->mNextSibling;
+	}
+	return true;
 }
 
 
