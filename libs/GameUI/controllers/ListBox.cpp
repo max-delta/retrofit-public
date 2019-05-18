@@ -172,6 +172,11 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 			{
 				node.mFavoredChild = previous;
 			}
+			else
+			{
+				// Already at start of list, allow something else to handle
+				return false;
+			}
 		}
 		else if( isNext )
 		{
@@ -184,6 +189,11 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 			if( next != nullptr )
 			{
 				node.mFavoredChild = next;
+			}
+			else
+			{
+				// Already at end of list, allow something else to handle
+				return false;
 			}
 		}
 		else if( isFirst )
