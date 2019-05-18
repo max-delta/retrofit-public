@@ -87,6 +87,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 0, 2 } );
 		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont1xMono, gfx::kTileSize / 2, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowQuarterTileMono, { narrowFont1xMono, gfx::kTileSize / 4, 0, 1 } );
 		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont1xMono, 8, 1, 1 } );
 		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 1, 2 } );
 		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 3, 1 } );
