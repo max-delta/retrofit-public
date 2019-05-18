@@ -14,6 +14,8 @@ enum : FontPurposeID
 	Invalid = kInvalidFontPurposeID,
 	MinSize,
 	NarrowTileMono,
+	NarrowHalfTileMono,
+	NarrowQuarterTileMono,
 
 	SmallMenuSelection,
 	LargeMenuSelection,
