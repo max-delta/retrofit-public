@@ -26,6 +26,7 @@ public:
 	void SetJustification( Justification justification );
 	void SetColor( math::Color3f color );
 	void SetBorder( bool border );
+	void SetIgnoreOverflow( bool ignoreOverflow );
 
 	bool HasText() const;
 
@@ -51,6 +52,7 @@ private:
 	rftl::string mText;
 	math::Color3f mColor = math::Color3f::kBlack;
 	bool mBorder = false;
+	bool mIgnoreOverflow = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

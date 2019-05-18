@@ -61,6 +61,13 @@ void TextLabel::SetBorder( bool border )
 
 
 
+void TextLabel::SetIgnoreOverflow( bool ignoreOverflow )
+{
+	mIgnoreOverflow = ignoreOverflow;
+}
+
+
+
 bool TextLabel::HasText() const
 {
 	return mText.empty() == false;
@@ -129,6 +136,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	}
 
 	#if RF_IS_ALLOWED( RF_CONFIG_ONCEPER )
+	if( mIgnoreOverflow == false )
 	{
 		if( container.mAABB.Height() < mDesiredHeight )
 		{
