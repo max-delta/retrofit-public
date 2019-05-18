@@ -22,8 +22,8 @@ static constexpr TimeSlowdownRate kTimeSlowdownRate_Quarter = 4;
 
 static constexpr size_t kMaxObjects = 32;
 static constexpr size_t kMaxTileLayers = 16;
-static constexpr size_t kMaxStrings = 30;
-static constexpr size_t kMaxStringLen = 123;
+static constexpr size_t kMaxStrings = 48;
+static constexpr size_t kMaxStringLen = 71;
 
 static constexpr size_t kMaxDebugStrings = 32;
 static constexpr size_t kMaxDebugLines = 256;
