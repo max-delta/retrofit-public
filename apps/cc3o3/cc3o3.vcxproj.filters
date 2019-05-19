@@ -32,8 +32,10 @@
       <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="CommonPaths.cpp" />
-    <ClCompile Include="char\CharacterDatabase.cpp" />
     <ClCompile Include="Common.cpp" />
+    <ClCompile Include="char\CharacterDatabase.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
