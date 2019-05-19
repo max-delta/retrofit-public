@@ -36,7 +36,99 @@ namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr char kReturnTag[] = "RETURN";
+static constexpr char kSaveTag[] = "SAVE";
+
+static constexpr char const* kLongTextTags[] = {
+	"O_Charname",
+	kSaveTag,
+};
+
+static constexpr char const* kLeftText[] = {
+	"CHARACTERNAME [E]", // THis will be dymanically controlled
+	"Innate",
+	"Genetics",
+	"Phys Atk",
+	"Phys Def",
+	"Elem Atk",
+	"Elem Def",
+	"Balance",
+	"Techniq",
+	"Elem Pwr",
+	"Breadth",
+	"",
+	"",
+};
+
+static constexpr char const* kLeftTextTags[rftl::extent<decltype( kLeftText )>::value] = {
+	"O_Charname",
+	"O_Innate",
+	"O_Genetics",
+	"O_PhysAtk",
+	"O_PhysDef",
+	"O_ElemAtk",
+	"O_ElemDef",
+	"O_Balance",
+	"O_Techniq",
+	"O_ElemPwr",
+	"O_Breadth",
+	"O_UNUSED_L1",
+	"O_UNUSED_L2",
+};
+
+static constexpr char const* kLeftStatusTags[rftl::extent<decltype( kLeftText )>::value] = {
+	"S_UNUSED_L1",
+	"S_Innate",
+	"S_Genetics",
+	"S_PhysAtk",
+	"S_PhysDef",
+	"S_ElemAtk",
+	"S_ElemDef",
+	"S_Balance",
+	"S_Techniq",
+	"S_ElemPwr",
+	"S_Breadth",
+	"S_UNUSED_L2",
+	"S_UNUSED_L3",
+};
+
+static constexpr char const* kRightText[] = {
+	"S.Opaci", // Or F.Satur
+	"S.PheoM", // Or F.PheoM
+	"S.EuMel", // Or F.EuMel
+	"H.Satur",
+	"H.PheoM",
+	"H.EuMel",
+	"H.Dye",
+	"Cloth",
+	"C.Dye",
+	"SAVE AND QUIT",
+};
+
+static constexpr char const* kRightTextTags[rftl::extent<decltype( kRightText )>::value] = {
+	"O_Body1",
+	"O_Body2",
+	"O_Body3",
+	"O_Hair1",
+	"O_Hair2",
+	"O_Hair3",
+	"O_Hair4",
+	"O_Cloth1",
+	"O_Cloth2",
+	kSaveTag,
+};
+
+static constexpr char const* kRightStatusTags[rftl::extent<decltype( kRightText )>::value] = {
+	"S_Body1",
+	"S_Body2",
+	"S_Body3",
+	"S_Hair1",
+	"S_Hair2",
+	"S_Hair3",
+	"S_Hair4",
+	"S_Cloth1",
+	"S_Cloth2",
+	"S_UNUSED_R1",
+};
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,7 +137,53 @@ struct TitleScreen_CharCreate::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
+
+	void UpdateDisplay( ui::ContainerManager& uiManager );
+	void HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase );
+	void Save();
 };
+
+
+
+void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager& uiManager )
+{
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( "CHARACTERNAME [E]" );
+
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Innate" )->SetText( "<  =======  >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Genetics" )->SetText( "< F.AwokenC >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysDef" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemAtk" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemDef" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Balance" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Techniq" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( "- # # # # # +" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Breadth" )->SetText( "|---[]------|" );
+
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body1" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body2" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body3" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair1" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair2" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair3" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair4" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth1" )->SetText( "< ## >" );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth2" )->SetText( "< ## >" );
+}
+
+
+
+void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase )
+{
+	// TODO
+}
+
+
+
+void TitleScreen_CharCreate::InternalState::Save()
+{
+	// TODO
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -108,7 +246,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					topColumnRatios ) );
 
 		// Floating frame in middle left
-		gfx::PPUCoord const leftFrameDimensions = { 128 - (16 + 8), 128 + 16 };
+		gfx::PPUCoord const leftFrameDimensions = { 128 - ( 16 + 8 ), 128 + 16 };
 		WeakPtr<ui::controller::Floater> const leftFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 1 ),
@@ -150,85 +288,23 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::ColumnSlicer>::Create(
 						leftColumnRatios ) );
 
-			static constexpr char const* kLeftText[] = {
-				"CHARACTERNAME [E]",
-				"Innate",
-				"Genetics",
-				"Phys Atk",
-				"Phys Def",
-				"Elem Atk",
-				"Elem Def",
-				"Balance",
-				"Techniq",
-				"Elem Pwr",
-				"Breadth",
-				"",
-				"",
-			};
-			static constexpr char const* kLeftStatus[rftl::extent<decltype( kLeftText )>::value] = {
-				"",
-				"<  =======  >",
-				"< F.AwokenC >",
-				"- # # # # # +",
-				"- # # # # # +",
-				"- # # # # # +",
-				"- # # # # # +",
-				"- # # # # # +",
-				"- # # # # # +",
-				"- # # # # # +",
-				"|---[]------|",
-				"",
-				"",
-			};
-			static constexpr char const* kLeftTextTags[rftl::extent<decltype( kLeftText )>::value] = {
-				"O_Charname",
-				"O_Innate",
-				"O_Genetics",
-				"O_PhysAtk",
-				"O_PhysDef",
-				"O_ElemAtk",
-				"O_ElemDef",
-				"O_Balance",
-				"O_Techniq",
-				"O_ElemPwr",
-				"O_Breadth",
-				"O_UNUSED_L1",
-				"O_UNUSED_L2",
-			};
-			static constexpr char const* kLeftStatusTags[rftl::extent<decltype( kLeftText )>::value] = {
-				"S_Charname",
-				"S_Innate",
-				"S_Genetics",
-				"S_PhysAtk",
-				"S_PhysDef",
-				"S_ElemAtk",
-				"S_ElemDef",
-				"S_Balance",
-				"S_Techniq",
-				"S_ElemPwr",
-				"S_Breadth",
-				"S_UNUSED_L1",
-				"S_UNUSED_L2",
-			};
-
 			// Create selections in the left frame
 			WeakPtr<ui::controller::ListBox> const leftOptions =
 				uiManager.AssignStrongController(
 					leftColumnSlicer->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::ListBox>::Create(
-						rftl::extent<decltype( kLeftText )>::value,
+						rftl::extent<decltype( details::kLeftText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kGray50,
 						math::Color3f::kWhite,
 						math::Color3f::kYellow ) );
 			leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
-			for( size_t i = 0; i < rftl::extent<decltype( kLeftText )>::value; i++ )
+			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
-				leftOptions->GetSlotController( i )->SetText( kLeftText[i] );
-				uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), kLeftTextTags[i] );
+				leftOptions->GetSlotController( i )->SetText( details::kLeftText[i] );
+				uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), details::kLeftTextTags[i] );
 			}
-			uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetIgnoreOverflow( true );
 
 			// Create status in the left frame
 			// HACK: Text as a mock-up for controls
@@ -237,14 +313,15 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					leftColumnSlicer->GetChildContainerID( 1 ),
 					DefaultCreator<ui::controller::TextRows>::Create(
-						rftl::extent<decltype( kLeftStatus )>::value,
+						rftl::extent<decltype( details::kLeftText )>::value,
 						ui::font::NarrowQuarterTileMono,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kWhite ) );
-			for( size_t i = 0; i < rftl::extent<decltype( kLeftStatus )>::value; i++ )
+			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
-				leftStatus->GetSlotController( i )->SetText( kLeftStatus[i] );
-				uiManager.AssignLabel( leftStatus->GetSlotController( i )->GetContainerID(), kLeftStatusTags[i] );
+				// This will be controlled dynamically by update logic
+				leftStatus->GetSlotController( i )->SetText( "" );
+				uiManager.AssignLabel( leftStatus->GetSlotController( i )->GetContainerID(), details::kLeftStatusTags[i] );
 			}
 		}
 
@@ -273,73 +350,23 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::ColumnSlicer>::Create(
 						rightColumnRatios ) );
 
-			static constexpr char const* kRightText[] = {
-				"S.Opaci", // Or F.Satur
-				"S.PheoM", // Or F.PheoM
-				"S.EuMel", // Or F.EuMel
-				"H.Satur",
-				"H.PheoM",
-				"H.EuMel",
-				"H.Dye",
-				"Cloth",
-				"C.Dye",
-				"SAVE AND QUIT",
-			};
-			static constexpr char const* kRightStatus[rftl::extent<decltype( kRightText )>::value] = {
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"< ## >",
-				"",
-			};
-			static constexpr char const* kRightTextTags[rftl::extent<decltype( kRightText )>::value] = {
-				"O_Body1",
-				"O_Body2",
-				"O_Body3",
-				"O_Hair1",
-				"O_Hair2",
-				"O_Hair3",
-				"O_Hair4",
-				"O_Cloth1",
-				"O_Cloth2",
-				"O_SAVE",
-			};
-			static constexpr char const* kRightStatusTags[rftl::extent<decltype( kRightText )>::value] = {
-				"S_Body1",
-				"S_Body2",
-				"S_Body3",
-				"S_Hair1",
-				"S_Hair2",
-				"S_Hair3",
-				"S_Hair4",
-				"S_Cloth1",
-				"S_Cloth2",
-				"S_UNUSED_R1",
-			};
-
 			// Create selections in the right frame
 			WeakPtr<ui::controller::ListBox> const rightOptions =
 				uiManager.AssignStrongController(
 					rightColumnSlicer->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::ListBox>::Create(
-						rftl::extent<decltype( kRightText )>::value,
+						rftl::extent<decltype( details::kRightText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kGray50,
 						math::Color3f::kWhite,
 						math::Color3f::kYellow ) );
 			rightOptions->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode().mFavoredChild );
-			for( size_t i = 0; i < rftl::extent<decltype( kRightText )>::value; i++ )
+			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
-				rightOptions->GetSlotController( i )->SetText( kRightText[i] );
-				uiManager.AssignLabel( rightOptions->GetSlotController( i )->GetContainerID(), kRightTextTags[i] );
+				rightOptions->GetSlotController( i )->SetText( details::kRightText[i] );
+				uiManager.AssignLabel( rightOptions->GetSlotController( i )->GetContainerID(), details::kRightTextTags[i] );
 			}
-			uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_SAVE" )->SetIgnoreOverflow( true );
 
 			// Create status in the right frame
 			// HACK: Text as a mock-up for controls
@@ -348,16 +375,27 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					rightColumnSlicer->GetChildContainerID( 1 ),
 					DefaultCreator<ui::controller::TextRows>::Create(
-						rftl::extent<decltype( kRightStatus )>::value,
+						rftl::extent<decltype( details::kRightText )>::value,
 						ui::font::NarrowQuarterTileMono,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kWhite ) );
-			for( size_t i = 0; i < rftl::extent<decltype( kRightStatus )>::value; i++ )
+			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
-				rightStatus->GetSlotController( i )->SetText( kRightStatus[i] );
-				uiManager.AssignLabel( rightStatus->GetSlotController( i )->GetContainerID(), kRightStatusTags[i] );
+				// This will be controlled dynamically by update logic
+				rightStatus->GetSlotController( i )->SetText( "" );
+				uiManager.AssignLabel( rightStatus->GetSlotController( i )->GetContainerID(), details::kRightStatusTags[i] );
 			}
 		}
+
+		// Disable overflow warnings on some long labels that are intended to
+		//  spill over into the empty label next to them
+		for( char const* const& tag : details::kLongTextTags )
+		{
+			uiManager.GetMutableControllerAs<ui::controller::TextLabel>( tag )->SetIgnoreOverflow( true );
+		}
+
+		// Perform an initial update
+		mInternalState->UpdateDisplay( uiManager );
 	}
 }
 
@@ -397,27 +435,22 @@ void TitleScreen_CharCreate::OnTick( AppStateTickContext& context )
 				{
 					currentFocusTarget = currentFocus->mFocusTarget;
 				}
-				if(currentFocusTarget != nullptr)
+				if( currentFocusTarget != nullptr )
 				{
 					RF_ASSERT( currentFocusTarget->HasHardFocus() );
 					currentFocusContainerID = currentFocusTarget->mContainerID;
 				}
 			}
 
-			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus)
+			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
-					// HACK: Disabled
-					// TODO: Add a button
-					//if( currentFocusContainerID == uiManager.GetContainerID( details::kReturnTag ) )
-					//{
-					//	context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
-					//}
-
-					// HACK: Always back out to main menu if it's unhandled
-					// TODO: Remove this once there's a proper button
-					context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
+					if( currentFocusContainerID == uiManager.GetContainerID( details::kSaveTag ) )
+					{
+						mInternalState->Save();
+						context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
+					}
 				}
 			}
 			else if( focusEvent == ui::focusevent::Command_NavigateUp )
@@ -433,6 +466,16 @@ void TitleScreen_CharCreate::OnTick( AppStateTickContext& context )
 				//  the other pane
 				focusMan.GetMutableFocusTree().CycleRootFocusToNextChild( true );
 				focusMan.HandleEvent( uiContext, ui::focusevent::Command_NavigateToFirst );
+			}
+			else if( focusEvent == ui::focusevent::Command_NavigateLeft )
+			{
+				mInternalState->HandleModification( uiManager, currentFocusContainerID, false );
+				mInternalState->UpdateDisplay( uiManager );
+			}
+			else if( focusEvent == ui::focusevent::Command_NavigateRight )
+			{
+				mInternalState->HandleModification( uiManager, currentFocusContainerID, true );
+				mInternalState->UpdateDisplay( uiManager );
 			}
 		}
 		focusMan.UpdateHardFocus( uiContext );
