@@ -248,6 +248,7 @@ Stats const& CharacterValidator::GetStatBonuses( SpeciesID const& id ) const
 void CharacterValidator::SanitizeForCharacterCreation( Character& character ) const
 {
 	Description& description = character.mDescription;
+	rftl::string& innate = character.mInnate;
 	Genetics& genetics = character.mGenetics;
 	Visuals& visuals = character.mVisuals;
 	Stats& stats = character.mStats;
@@ -264,6 +265,13 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 	{
 		RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid title" );
 		description.mTitle = "";
+	}
+
+	// TODO: Check for valid innates from a list
+	if( innate != "yellow" )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid innate" );
+		innate = "yellow";
 	}
 
 	// Species

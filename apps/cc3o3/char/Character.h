@@ -15,6 +15,7 @@ namespace RF { namespace cc { namespace character {
 struct Character
 {
 	Description mDescription = {};
+	rftl::string mInnate = {};
 	Genetics mGenetics = {};
 	Visuals mVisuals = {};
 	Stats mStats = {};
