@@ -104,6 +104,9 @@
     <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
       <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameSprite\GameSprite.vcxproj">
+      <Project>{6d71c9f7-3605-4d12-8826-e4c095534887}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
       <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
     </ProjectReference>
