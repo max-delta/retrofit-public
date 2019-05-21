@@ -37,26 +37,41 @@ public:
 		//
 	}
 
+	// T -> T
 	WeakPtr( WeakPtr const& rhs )
 		: WeakPtr( rhs.GetTarget(), rhs.GetRef() )
 	{
 		//
 	}
 
-	template<typename DERIVED>
+	// T -> T const
+	// Enable only if T is a const version of NONCONST
+	template<typename NONCONST, typename rftl::enable_if<rftl::is_same<typename rftl::add_const<NONCONST>::type, T>::value, int>::type = 0>
+	WeakPtr( WeakPtr<NONCONST> const& rhs )
+		: WeakPtr( rhs.GetTarget(), rhs.GetRef() )
+	{
+		//
+	}
+
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	WeakPtr( WeakPtr<DERIVED> const& rhs )
 		: WeakPtr( rhs.GetTarget(), rhs.GetRef() )
 	{
 		RF_PTR_ASSERT_CASTABLE( T, DERIVED );
 	}
 
+	// T -> T
 	WeakPtr( T* target, PtrRef* ref )
 		: PtrBase( target, ref )
 	{
 		PtrBase::IncreaseWeakCount();
 	}
 
-	template<typename DERIVED>
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	WeakPtr( DERIVED* target, PtrRef* ref )
 		: PtrBase( target, ref )
 	{
