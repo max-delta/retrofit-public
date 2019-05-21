@@ -13,6 +13,11 @@ class DefaultCreator
 {
 	// HACK: Template arg prevents evaluation without substitution
 	static_assert( sizeof( T ) == 0 && sizeof( T ) == 1, "Failed to find determine correct creator to use" );
+
+public:
+	// NOTE: This is mostly just for Intellisense, this class isn't valid
+	template<typename... U>
+	static CreationPayload<T> Create( U&&... args );
 };
 
 template<typename T>
