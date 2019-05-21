@@ -33,6 +33,20 @@ void TextLabel::SetFont( FontPurposeID purpose )
 
 
 
+void TextLabel::SetText( rftl::string const& text )
+{
+	mText = text;
+}
+
+
+
+void TextLabel::SetText( rftl::string&& text )
+{
+	mText = rftl::move( text );
+}
+
+
+
 void TextLabel::SetText( char const* text )
 {
 	mText = text;

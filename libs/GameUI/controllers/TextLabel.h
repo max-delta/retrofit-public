@@ -22,6 +22,8 @@ public:
 	TextLabel() = default;
 
 	void SetFont( FontPurposeID purpose );
+	void SetText( rftl::string const& text );
+	void SetText( rftl::string&& text );
 	void SetText( char const* text );
 	void SetJustification( Justification justification );
 	void SetColor( math::Color3f color );
