@@ -20,7 +20,7 @@ class GAMESPRITE_API CharacterCreator
 public:
 	static constexpr size_t kMaxTags = 16;
 	using Tags = rftl::static_array<rftl::immutable_string, kMaxTags>;
-	using PieceId = rftl::immutable_string;
+	using PieceId = rftl::string;
 	using TagBits = rftl::bitset<kMaxTags>;
 
 private:
