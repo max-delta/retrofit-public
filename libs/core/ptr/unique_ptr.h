@@ -44,13 +44,25 @@ public:
 		//
 	}
 
+	// T -> T
 	UniquePtr( UniquePtr&& rhs )
 		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
-	template<typename DERIVED>
+	// T -> T const
+	// Enable only if T is a const version of NONCONST
+	template<typename NONCONST, typename rftl::enable_if<rftl::is_same<typename rftl::add_const<NONCONST>::type, T>::value, int>::type = 0>
+	UniquePtr( UniquePtr<NONCONST>&& rhs )
+		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
+	{
+		RF_ASSERT( rhs == nullptr );
+	}
+
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	UniquePtr( UniquePtr<DERIVED>&& rhs )
 		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
@@ -92,6 +104,7 @@ public:
 		PtrBase::DecreaseStrongCount();
 	}
 
+	// T -> T
 	UniquePtr& operator=( UniquePtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
