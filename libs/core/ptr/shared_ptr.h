@@ -41,13 +41,25 @@ public:
 		//
 	}
 
+	// T -> T
 	SharedPtr( SharedPtr const& rhs )
 		: PtrBase( rhs.GetTarget(), rhs.GetRef() )
 	{
 		PtrBase::IncreaseStrongCount();
 	}
 
-	template<typename DERIVED>
+	// T -> T const
+	// Enable only if T is a const version of NONCONST
+	template<typename NONCONST, typename rftl::enable_if<rftl::is_same<typename rftl::add_const<NONCONST>::type, T>::value, int>::type = 0>
+	SharedPtr( SharedPtr<NONCONST> const& rhs )
+		: PtrBase( rhs.GetTarget(), rhs.GetRef() )
+	{
+		PtrBase::IncreaseStrongCount();
+	}
+
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	SharedPtr( SharedPtr<DERIVED> const& rhs )
 		: PtrBase( rhs.GetTarget(), rhs.GetRef() )
 	{
@@ -55,13 +67,25 @@ public:
 		PtrBase::IncreaseStrongCount();
 	}
 
+	// T -> T
 	SharedPtr( SharedPtr&& rhs )
 		: PtrBase( rftl::move( rhs ) )
 	{
 		//
 	}
 
-	template<typename DERIVED>
+	// T -> T const
+	// Enable only if T is a const version of NONCONST
+	template<typename NONCONST, typename rftl::enable_if<rftl::is_same<typename rftl::add_const<NONCONST>::type, T>::value, int>::type = 0>
+	SharedPtr( SharedPtr<NONCONST>&& rhs )
+		: PtrBase( rftl::move( rhs ) )
+	{
+		//
+	}
+
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	SharedPtr( SharedPtr<DERIVED>&& rhs )
 		: PtrBase( rftl::move( rhs.CreateTransferPayloadAndWipeSelf() ) )
 	{
@@ -69,13 +93,25 @@ public:
 		RF_ASSERT( rhs == nullptr );
 	}
 
+	// T -> T
 	SharedPtr( CreationPayload<T>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{
 		//
 	}
 
-	template<typename DERIVED>
+	// T -> T const
+	// Enable only if T is a const version of NONCONST
+	template<typename NONCONST, typename rftl::enable_if<rftl::is_same<typename rftl::add_const<NONCONST>::type, T>::value, int>::type = 0>
+	SharedPtr( CreationPayload<NONCONST>&& payload )
+		: PtrBase( rftl::move( payload ) )
+	{
+		//
+	}
+
+	// T -> DERIVED
+	// Enable only if DERIVED is not a CV variation of T
+	template<typename DERIVED, typename rftl::enable_if<rftl::is_same<typename rftl::remove_cv<DERIVED>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	SharedPtr( CreationPayload<DERIVED>&& payload )
 		: PtrBase( rftl::move( payload ) )
 	{

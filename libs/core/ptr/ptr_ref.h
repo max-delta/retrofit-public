@@ -114,7 +114,10 @@ public:
 			//  while deletion is being performed, BUT... any previously
 			//  resolved weak references that are now raw pointers will still
 			//  be able to try and improperly access the memory
-			T* deletionTarget = target;
+			// NOTE: Since T may have been const storage, we const_cast it away
+			//  here, signifying that the constness guarantee is broken now
+			using NonConstT = typename rftl::remove_const<T>::type;
+			NonConstT* deletionTarget = const_cast<NonConstT*>( target );
 			target = nullptr;
 			Delete( deletionTarget );
 			DecreaseWeakCount();
