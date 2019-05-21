@@ -16,6 +16,7 @@ class CharacterDatabase
 {
 	RF_NO_COPY( CharacterDatabase );
 
+	//
 	// Types
 public:
 	using CharacterID = rftl::immutable_string;
