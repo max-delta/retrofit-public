@@ -38,6 +38,7 @@
     <ClCompile Include="appstates\TitleScreen_Options.cpp" />
     <ClCompile Include="cc3o3.cpp" />
     <ClCompile Include="char\CharacterDatabase.cpp" />
+    <ClCompile Include="char\CharacterValidator.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
@@ -61,6 +62,7 @@
     <ClInclude Include="cc3o3.h" />
     <ClInclude Include="char\Character.h" />
     <ClInclude Include="char\CharacterDatabase.h" />
+    <ClInclude Include="char\CharacterValidator.h" />
     <ClInclude Include="char\CharFwd.h" />
     <ClInclude Include="char\Description.h" />
     <ClInclude Include="char\ElementSlots.h" />
