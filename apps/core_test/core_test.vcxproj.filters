@@ -3,9 +3,6 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="minclude_unique_destroy.cpp" />
-    <ClCompile Include="minclude_shared_destroy.cpp" />
-    <ClCompile Include="minclude_weak_destroy.cpp" />
     <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="math_casts.cpp" />
     <ClCompile Include="static_array.cpp" />
@@ -45,6 +42,9 @@
     <ClCompile Include="event_eventqueue.cpp" />
     <ClCompile Include="event_eventdispatcher.cpp" />
     <ClCompile Include="rftype_virtual_cast.cpp" />
+    <ClCompile Include="minclude_weak.cpp" />
+    <ClCompile Include="minclude_unique.cpp" />
+    <ClCompile Include="minclude_shared.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
