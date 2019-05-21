@@ -14,6 +14,7 @@ struct Equipment;
 struct ElementSlots;
 
 class CharacterDatabase;
+class CharacterValidator;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
