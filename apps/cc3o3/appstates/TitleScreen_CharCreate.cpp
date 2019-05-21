@@ -4,11 +4,16 @@
 #include "cc3o3/appstates/TitleScreen.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/char/Character.h"
+#include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
+
+#include "GameSprite/CharacterCreator.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
@@ -30,6 +35,8 @@
 #include "PPU/FramePackManager.h"
 
 #include "core/ptr/default_creator.h"
+
+#include "rftl/algorithm"
 
 
 namespace RF { namespace cc { namespace appstate {
@@ -129,46 +136,187 @@ static constexpr char const* kRightStatusTags[rftl::extent<decltype( kRightText 
 	"S_Cloth2",
 	"S_UNUSED_R1",
 };
-
 }
 ///////////////////////////////////////////////////////////////////////////////
 
 struct TitleScreen_CharCreate::InternalState
 {
 	RF_NO_COPY( InternalState );
-	InternalState() = default;
+	InternalState();
 
 	void UpdateDisplay( ui::ContainerManager& uiManager );
 	void HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase );
+	void Load();
 	void Save();
+
+	UniquePtr<sprite::CharacterCreator> mCharacterCreator;
+	character::CharacterValidator mCharacterValidator;
+
+	rftl::vector<character::GeneticsEntry> mPlayableGenetics;
+
+	character::Character mChar = {};
 };
+
+
+
+TitleScreen_CharCreate::InternalState::InternalState()
+	: mCharacterCreator( DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics ) )
+	, mCharacterValidator( app::gVfs, mCharacterCreator )
+{
+	// Init creator
+	sprite::CharacterCreator& charCreate = *mCharacterCreator;
+	charCreate.LoadPieceTables(
+		paths::gCharacterTables.GetChild( "pieces.csv" ),
+		paths::gCharacterTables.GetChild( "pieces" ) );
+	charCreate.LoadCompositionTable(
+		paths::gCharacterTables.GetChild( "composite.csv" ) );
+
+	// Init validator
+	character::CharacterValidator& charValidate = mCharacterValidator;
+	charValidate.LoadGeneticsTable(
+		paths::gCharacterTables.GetChild( "genetics.csv" ) );
+	charValidate.LoadStatBonusesTable(
+		paths::gCharacterTables.GetChild( "statbonuses.csv" ) );
+
+	// Figure out genetics options
+	rftl::vector<character::CharacterValidator::GeneticsID> sortedGenetics;
+	{
+		rftl::unordered_set<character::CharacterValidator::GeneticsID> const allGenetics = charValidate.GetGeneticsIDs();
+		sortedGenetics.reserve( allGenetics.size() );
+		sortedGenetics.assign( allGenetics.begin(), allGenetics.end() );
+		rftl::sort( sortedGenetics.begin(), sortedGenetics.end() );
+
+		// HACK: Reverse
+		// TODO: Data-driven control of ordering
+		// NOTE: Reverse causes 'portal' to be before 'awoken...', so humans
+		//  are first in the list
+		rftl::reverse( sortedGenetics.begin(), sortedGenetics.end() );
+	}
+	for( character::CharacterValidator::GeneticsID const& genetics : sortedGenetics )
+	{
+		character::GeneticsEntry const& entry = charValidate.GetGeneticEntry( genetics );
+		if( entry.mPlayable )
+		{
+			mPlayableGenetics.emplace_back( entry );
+		}
+	}
+}
 
 
 
 void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager& uiManager )
 {
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( "CHARACTERNAME [E]" );
+	rftl::string const& name = mChar.mDescription.mName;
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( name + " [E]" );
 
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Innate" )->SetText( "<  =======  >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Genetics" )->SetText( "< F.AwokenC >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysDef" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemAtk" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemDef" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Balance" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Techniq" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( "- # # # # # +" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Breadth" )->SetText( "|---[]------|" );
+	static constexpr auto format9 = []( rftl::string const& str ) -> rftl::string
+	{
+		rftl::string retVal;
+		retVal += "< ";
+		retVal += str;
+		retVal += " >";
+		return retVal;
+	};
 
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body1" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body2" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body3" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair1" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair2" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair3" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair4" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth1" )->SetText( "< ## >" );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth2" )->SetText( "< ## >" );
+	static constexpr auto format2 = []( uint8_t val ) -> rftl::string
+	{
+		RF_ASSERT( val <= 99 );
+		rftl::string retVal;
+		retVal += "< ";
+		retVal += '0' + ( val / 10 );
+		retVal += '0' + ( val % 10 );
+		retVal += " >";
+		return retVal;
+	};
+
+	static constexpr auto format5Pips = []( uint8_t min, uint8_t cur, uint8_t avail ) -> rftl::string
+	{
+		RF_ASSERT( min <= 5 );
+		RF_ASSERT( min <= cur );
+		RF_ASSERT( cur <= 5 );
+		uint8_t const max = math::integer_cast<uint8_t>( cur + avail );
+		RF_ASSERT( cur <= max );
+		rftl::string retVal;
+		retVal += "- ";
+		for( size_t i = 0; i < 5; i++ )
+		{
+			if( i < min )
+			{
+				retVal += "# ";
+			}
+			else if( i < cur )
+			{
+				retVal += "@ ";
+			}
+			else if( i < max )
+			{
+				retVal += "O ";
+			}
+			else
+			{
+				retVal += "  ";
+			}
+		}
+		retVal += "+";
+		return retVal;
+	};
+
+	static constexpr auto format10Slider = []( uint8_t val ) -> rftl::string
+	{
+		RF_ASSERT( val <= 10 );
+		rftl::string retVal;
+		retVal += "|";
+		for( size_t i = 0; i < 11; i++ )
+		{
+			if( i == val )
+			{
+				retVal += "[";
+			}
+			else if( i == val + 1u )
+			{
+				retVal += "]";
+			}
+			else
+			{
+				retVal += "-";
+			}
+		}
+		retVal += "|";
+		return retVal;
+	};
+
+	// TODO
+	rftl::string innate = "YYYYYYY";
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Innate" )->SetText( format9( innate ) );
+
+	// TODO
+	rftl::string const& genetics = "F.AwokenC";
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Genetics" )->SetText( format9( genetics ) );
+
+	// TODO
+	int8_t const avail = 2;
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( format5Pips( 0, 1, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysDef" )->SetText( format5Pips( 0, 1, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemAtk" )->SetText( format5Pips( 0, 1, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemDef" )->SetText( format5Pips( 0, 1, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Balance" )->SetText( format5Pips( 0, 1, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Techniq" )->SetText( format5Pips( 2, 4, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( format5Pips( 1, 2, avail ) );
+
+	// TODO
+	uint8_t const breadth = 4;
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Breadth" )->SetText( format10Slider( breadth ) );
+
+	// TODO
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body1" )->SetText( format2( 5 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body2" )->SetText( format2( 6 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body3" )->SetText( format2( 7 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair1" )->SetText( format2( 8 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair2" )->SetText( format2( 9 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair3" )->SetText( format2( 10 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Hair4" )->SetText( format2( 11 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth1" )->SetText( format2( 12 ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Cloth2" )->SetText( format2( 13 ) );
 }
 
 
@@ -176,6 +324,18 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase )
 {
 	// TODO
+}
+
+
+
+void TitleScreen_CharCreate::InternalState::Load()
+{
+	// TODO: Actual load
+
+	mChar = {};
+
+	character::CharacterValidator& charValidate = mCharacterValidator;
+	charValidate.SanitizeForCharacterCreation( mChar );
 }
 
 
@@ -190,6 +350,9 @@ void TitleScreen_CharCreate::InternalState::Save()
 void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
+
+	// Load
+	mInternalState->Load();
 
 	gfx::PPUController const& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
