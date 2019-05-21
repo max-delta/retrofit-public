@@ -36,6 +36,9 @@
     <ClCompile Include="char\CharacterDatabase.cpp">
       <Filter>char</Filter>
     </ClCompile>
+    <ClCompile Include="char\CharacterValidator.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -130,6 +133,9 @@
       <Filter>char</Filter>
     </ClInclude>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="char\CharacterValidator.h">
+      <Filter>char</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
