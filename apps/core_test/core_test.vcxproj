@@ -56,9 +56,9 @@
     <ClCompile Include="math_clamps.cpp" />
     <ClCompile Include="math_compare.cpp" />
     <ClCompile Include="membertest.cpp" />
-    <ClCompile Include="minclude_shared_destroy.cpp" />
-    <ClCompile Include="minclude_unique_destroy.cpp" />
-    <ClCompile Include="minclude_weak_destroy.cpp" />
+    <ClCompile Include="minclude_shared.cpp" />
+    <ClCompile Include="minclude_unique.cpp" />
+    <ClCompile Include="minclude_weak.cpp" />
     <ClCompile Include="reflect_inspect_function.cpp" />
     <ClCompile Include="reflect_inspect_variable.cpp" />
     <ClCompile Include="reflect_value.cpp" />
