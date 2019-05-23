@@ -35,6 +35,7 @@ public:
 	ContainerID GetChildContainerID() const;
 	WeakPtr<TextLabel> GetSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
+	void SetWrapping( bool wrapping );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override;
@@ -58,6 +59,7 @@ private:
 	math::Color3f const mUnfocusedColor;
 	math::Color3f const mUnselectedColor;
 	math::Color3f const mSelectedColor;
+	bool mWrapping = false;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::vector<WeakPtr<TextLabel>> mSlotControllers;
 };

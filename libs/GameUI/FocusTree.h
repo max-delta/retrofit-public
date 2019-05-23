@@ -63,6 +63,8 @@ public:
 
 	bool CycleFocusToNextChild( FocusTreeNode& parentNode, bool wrapIfLastChild );
 	bool CycleFocusToPreviousChild( FocusTreeNode& parentNode, bool wrapIfLastChild );
+	bool CycleFocusToFirstChild( FocusTreeNode& parentNode );
+	bool CycleFocusToLastChild( FocusTreeNode& parentNode );
 
 	void TrimDeadLinks();
 

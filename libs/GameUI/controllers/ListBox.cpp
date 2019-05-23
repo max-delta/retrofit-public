@@ -82,6 +82,13 @@ void ListBox::SetText( rftl::vector<rftl::string> const& text )
 
 
 
+void ListBox::SetWrapping( bool wrapping )
+{
+	mWrapping = wrapping;
+}
+
+
+
 void ListBox::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mChildContainerID = CreateChildContainer(
@@ -158,80 +165,170 @@ bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 		FocusTreeNode& node = *nodeRef;
 
 		RF_ASSERT( node.mFavoredChild != nullptr );
-		FocusTreeNode& current = *node.mFavoredChild;
+		WeakPtr<FocusTreeNode>& current = node.mFavoredChild;
+		FocusTreeNode const* const initial = node.mFavoredChild;
+
+		FocusTree& focusTree = context.GetMutableFocusManager().GetMutableFocusTree();
+		static constexpr size_t kMaxIter = 500;
 
 		if( isPrevious )
 		{
-			WeakPtr<FocusTreeNode> previous = current.mPreviousSibling;
-			while( previous != nullptr && ShouldSkipFocus( context, *previous ) )
+			// Pass 1, probe forward
+			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 			{
-				previous = previous->mPreviousSibling;
+				bool const modified = focusTree.CycleFocusToPreviousChild( node, mWrapping );
+				if( modified == false )
+				{
+					// At end, or error
+					break;
+				}
+
+				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				if( shouldSkip == false )
+				{
+					// Found a valid item
+					break;
+				}
 			}
 
-			if( previous != nullptr )
+			// Pass 2, back up if we reached end and it was bad
+			if( mWrapping == false )
 			{
-				node.mFavoredChild = previous;
-			}
-			else
-			{
-				// Already at start of list, allow something else to handle
-				return false;
+				for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
+				{
+					bool const shouldSkip = ShouldSkipFocus( context, *current );
+					if( shouldSkip )
+					{
+						bool const modified = focusTree.CycleFocusToNextChild( node, mWrapping );
+						if( modified == false )
+						{
+							// Error
+							break;
+						}
+						else
+						{
+							// Iterate
+							continue;
+						}
+					}
+					else
+					{
+						// Valid
+						break;
+					}
+				}
 			}
 		}
 		else if( isNext )
 		{
-			WeakPtr<FocusTreeNode> next = current.mNextSibling;
-			while( next != nullptr && ShouldSkipFocus( context, *next ) )
+			// Pass 1, probe forward
+			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 			{
-				next = next->mNextSibling;
+				bool const modified = focusTree.CycleFocusToNextChild( node, mWrapping );
+				if( modified == false )
+				{
+					// At end, or error
+					break;
+				}
+
+				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				if( shouldSkip == false )
+				{
+					// Found a valid item
+					break;
+				}
 			}
 
-			if( next != nullptr )
+			// Pass 2, back up if we reached end and it was bad
+			if( mWrapping == false )
 			{
-				node.mFavoredChild = next;
-			}
-			else
-			{
-				// Already at end of list, allow something else to handle
-				return false;
+				for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
+				{
+					bool const shouldSkip = ShouldSkipFocus( context, *current );
+					if( shouldSkip )
+					{
+						bool const modified = focusTree.CycleFocusToPreviousChild( node, mWrapping );
+						if( modified == false )
+						{
+							// Error
+							break;
+						}
+						else
+						{
+							// Iterate
+							continue;
+						}
+					}
+					else
+					{
+						// Valid
+						break;
+					}
+				}
 			}
 		}
 		else if( isFirst )
 		{
-			WeakPtr<FocusTreeNode> previous = current.mPreviousSibling;
-			while( previous != nullptr )
-			{
-				while( previous != nullptr && ShouldSkipFocus( context, *previous ) )
-				{
-					previous = previous->mPreviousSibling;
-				}
+			// Pass 1, snap forward
+			focusTree.CycleFocusToFirstChild( node );
 
-				if( previous != nullptr )
+			// Pass 2, back up if we reached end and it was bad
+			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
+			{
+				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				if( shouldSkip )
 				{
-					node.mFavoredChild = previous;
-					previous = previous->mPreviousSibling;
+					bool const modified = focusTree.CycleFocusToNextChild( node, mWrapping );
+					if( modified == false )
+					{
+						// Error
+						break;
+					}
+					else
+					{
+						// Iterate
+						continue;
+					}
+				}
+				else
+				{
+					// Valid
+					break;
 				}
 			}
 		}
 		else if( isLast )
 		{
-			WeakPtr<FocusTreeNode> next = current.mNextSibling;
-			while( next != nullptr )
-			{
-				while( next != nullptr && ShouldSkipFocus( context, *next ) )
-				{
-					next = next->mNextSibling;
-				}
+			// Pass 1, snap forward
+			focusTree.CycleFocusToLastChild( node );
 
-				if( next != nullptr )
+			// Pass 2, back up if we reached end and it was bad
+			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
+			{
+				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				if( shouldSkip )
 				{
-					node.mFavoredChild = next;
-					next = next->mNextSibling;
+					bool const modified = focusTree.CycleFocusToPreviousChild( node, mWrapping );
+					if( modified == false )
+					{
+						// Error
+						break;
+					}
+					else
+					{
+						// Iterate
+						continue;
+					}
+				}
+				else
+				{
+					// Valid
+					break;
 				}
 			}
 		}
 
-		return true;
+		return node.mFavoredChild != initial;
 	}
 
 	return false;

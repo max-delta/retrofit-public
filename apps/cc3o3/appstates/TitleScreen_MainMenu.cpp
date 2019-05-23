@@ -149,6 +149,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					menuText.size(),
 					ui::font::LargeMenuSelection ) );
 		menuEntries->SetText( menuText );
+		menuEntries->SetWrapping( true );
 		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 0 )->GetContainerID(), details::kSinglePlayerTag );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 1 )->GetContainerID(), details::kMultiplayerTag );
