@@ -22,7 +22,9 @@ file::VFSPath const gBackgroundTilesets = file::VFS::kRoot.GetChild( "assets", "
 file::VFSPath const gBackgroundTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "backgrounds" );
 file::VFSPath const gLogoFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "logos" );
 file::VFSPath const gCharacterTables = file::VFS::kRoot.GetChild( "assets", "tables", "char" );
+file::VFSPath const gCharacterPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
 file::VFSPath const gLocalizations = file::VFS::kRoot.GetChild( "assets", "localizations" );
+file::VFSPath const gCompositeCharacters = file::VFS::kRoot.GetChild( "scratch", "composite_char" );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
