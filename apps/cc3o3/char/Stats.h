@@ -12,10 +12,10 @@ struct Stats
 	static constexpr StatModifier kDefaultModifier = 0;
 	static constexpr StatModifier kMaxModifier = 10;
 
-	using GridShape = uint8_t;
+	using GridShape = int8_t;
 	static constexpr GridShape kMaxBreadth = 0;
-	static constexpr GridShape kDefaultShape = 0;
-	static constexpr GridShape kMaxDepth = 10;
+	static constexpr GridShape kDefaultShape = 4;
+	static constexpr GridShape kMaxDepth = 9;
 
 	StatModifier mMHealth = kDefaultModifier; // More max hit points
 

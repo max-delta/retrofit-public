@@ -152,7 +152,8 @@ struct TitleScreen_CharCreate::InternalState
 	UniquePtr<sprite::CharacterCreator> mCharacterCreator;
 	character::CharacterValidator mCharacterValidator;
 
-	rftl::vector<character::GeneticsEntry> mPlayableGenetics;
+	using PlayableGeneticsList = rftl::vector<character::CharacterValidator::GeneticsID>;
+	PlayableGeneticsList mPlayableGenetics;
 
 	character::Character mChar = {};
 };
@@ -179,6 +180,7 @@ TitleScreen_CharCreate::InternalState::InternalState()
 		paths::gCharacterTables.GetChild( "statbonuses.csv" ) );
 
 	// Figure out genetics options
+	mPlayableGenetics.clear();
 	rftl::vector<character::CharacterValidator::GeneticsID> sortedGenetics;
 	{
 		rftl::unordered_set<character::CharacterValidator::GeneticsID> const allGenetics = charValidate.GetGeneticsIDs();
@@ -192,12 +194,12 @@ TitleScreen_CharCreate::InternalState::InternalState()
 		//  are first in the list
 		rftl::reverse( sortedGenetics.begin(), sortedGenetics.end() );
 	}
-	for( character::CharacterValidator::GeneticsID const& genetics : sortedGenetics )
+	for( character::CharacterValidator::GeneticsID const& id : sortedGenetics )
 	{
-		character::GeneticsEntry const& entry = charValidate.GetGeneticEntry( genetics );
+		character::GeneticsEntry const& entry = charValidate.GetGeneticEntry( id );
 		if( entry.mPlayable )
 		{
-			mPlayableGenetics.emplace_back( entry );
+			mPlayableGenetics.emplace_back( id );
 		}
 	}
 }
@@ -206,6 +208,8 @@ TitleScreen_CharCreate::InternalState::InternalState()
 
 void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager& uiManager )
 {
+	character::CharacterValidator const& charValidate = mCharacterValidator;
+
 	rftl::string const& name = mChar.mDescription.mName;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( name + " [E]" );
 
@@ -229,28 +233,33 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format5Pips = []( uint8_t min, uint8_t cur, uint8_t avail ) -> rftl::string
+	static constexpr auto format5Pips = []( int8_t min, int8_t cur, int8_t avail ) -> rftl::string
 	{
+		RF_ASSERT( min >= 0 );
 		RF_ASSERT( min <= 5 );
 		RF_ASSERT( min <= cur );
 		RF_ASSERT( cur <= 5 );
-		uint8_t const max = math::integer_cast<uint8_t>( cur + avail );
+		int8_t const max = cur + avail;
 		RF_ASSERT( cur <= max );
 		rftl::string retVal;
 		retVal += "- ";
-		for( size_t i = 0; i < 5; i++ )
+		for( int8_t i = 0; i < 5; i++ )
 		{
-			if( i < min )
-			{
-				retVal += "# ";
-			}
-			else if( i < cur )
+			if( i + 1 < min )
 			{
 				retVal += "@ ";
 			}
-			else if( i < max )
+			else if( i < min )
+			{
+				retVal += "@ ";
+			}
+			else if( i < cur )
 			{
 				retVal += "O ";
+			}
+			else if( i < max )
+			{
+				retVal += ". ";
 			}
 			else
 			{
@@ -261,18 +270,19 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format10Slider = []( uint8_t val ) -> rftl::string
+	static constexpr auto format10Slider = []( int8_t val ) -> rftl::string
 	{
+		RF_ASSERT( val >= 0 );
 		RF_ASSERT( val <= 10 );
 		rftl::string retVal;
 		retVal += "|";
-		for( size_t i = 0; i < 11; i++ )
+		for( int8_t i = 0; i < 11; i++ )
 		{
 			if( i == val )
 			{
 				retVal += "[";
 			}
-			else if( i == val + 1u )
+			else if( i == val + 1 )
 			{
 				retVal += "]";
 			}
@@ -289,22 +299,25 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 	rftl::string innate = "YYYYYYY";
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Innate" )->SetText( format9( innate ) );
 
-	// TODO
-	rftl::string const& genetics = "F.AwokenC";
+	// Genetics
+	character::CharacterValidator::GeneticsID const geneticsID = charValidate.GetGeneticsID( mChar.mGenetics.mSpecies, mChar.mGenetics.mGender );
+	rftl::string const& genetics = charValidate.GetGeneticEntry( geneticsID ).m9Char;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Genetics" )->SetText( format9( genetics ) );
 
-	// TODO
-	int8_t const avail = 2;
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( format5Pips( 0, 1, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysDef" )->SetText( format5Pips( 0, 1, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemAtk" )->SetText( format5Pips( 0, 1, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemDef" )->SetText( format5Pips( 0, 1, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Balance" )->SetText( format5Pips( 0, 1, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Techniq" )->SetText( format5Pips( 2, 4, avail ) );
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( format5Pips( 1, 2, avail ) );
+	// Stats
+	int8_t const avail = character::CharacterValidator::kMaxTotalStatPoints - character::CharacterValidator::CalculateTotalPoints( mChar.mStats );
+	character::Stats const bonuses = charValidate.GetStatBonuses( mChar.mGenetics.mSpecies );
+	character::Stats const& stats = mChar.mStats;
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( format5Pips( bonuses.mPhysAtk, stats.mPhysAtk, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysDef" )->SetText( format5Pips( bonuses.mPhysDef, stats.mPhysDef, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemAtk" )->SetText( format5Pips( bonuses.mElemAtk, stats.mElemAtk, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemDef" )->SetText( format5Pips( bonuses.mElemDef, stats.mElemDef, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Balance" )->SetText( format5Pips( bonuses.mBalance, stats.mBalance, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Techniq" )->SetText( format5Pips( bonuses.mTechniq, stats.mTechniq, avail ) );
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( format5Pips( bonuses.mElemPwr, stats.mElemPwr, avail ) );
 
-	// TODO
-	uint8_t const breadth = 4;
+	// Breadth vs depth
+	int8_t const breadth = mChar.mStats.mGridDep;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Breadth" )->SetText( format10Slider( breadth ) );
 
 	// TODO
@@ -323,7 +336,82 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 
 void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase )
 {
-	// TODO
+	character::CharacterValidator const& charValidate = mCharacterValidator;
+
+	if( focusContainerID == uiManager.GetContainerID( "O_Charname" ) )
+	{
+		// TODO
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_Innate" ) )
+	{
+		// TODO
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_Genetics" ) )
+	{
+		character::CharacterValidator::GeneticsID const current = charValidate.GetGeneticsID( mChar.mGenetics.mSpecies, mChar.mGenetics.mGender );
+		character::CharacterValidator::GeneticsID modified;
+		PlayableGeneticsList::const_iterator const iter = rftl::find( mPlayableGenetics.begin(), mPlayableGenetics.end(), current );
+		RF_ASSERT( iter != mPlayableGenetics.end() );
+		if( increase )
+		{
+			if( iter + 1 == mPlayableGenetics.end() )
+			{
+				modified = mPlayableGenetics.front();
+			}
+			else
+			{
+				modified = *( iter + 1 );
+			}
+		}
+		else
+		{
+			if( iter == mPlayableGenetics.begin() )
+			{
+				modified = mPlayableGenetics.back();
+			}
+			else
+			{
+				modified = *( iter - 1 );
+			}
+		}
+		character::GeneticsEntry const& entry = charValidate.GetGeneticEntry( modified );
+		mChar.mGenetics.mSpecies = entry.mSpecies;
+		mChar.mGenetics.mGender = entry.mGender;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_PhysAtk" ) )
+	{
+		mChar.mStats.mPhysAtk += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_PhysDef" ) )
+	{
+		mChar.mStats.mPhysDef += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_ElemAtk" ) )
+	{
+		mChar.mStats.mElemAtk += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_ElemDef" ) )
+	{
+		mChar.mStats.mElemDef += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_Balance" ) )
+	{
+		mChar.mStats.mBalance += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_Techniq" ) )
+	{
+		mChar.mStats.mTechniq += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_ElemPwr" ) )
+	{
+		mChar.mStats.mElemPwr += increase ? 1 : -1;
+	}
+	else if( focusContainerID == uiManager.GetContainerID( "O_Breadth" ) )
+	{
+		mChar.mStats.mGridDep += increase ? 1 : -1;
+	}
+
+	charValidate.SanitizeForCharacterCreation( mChar );
 }
 
 
@@ -334,7 +422,7 @@ void TitleScreen_CharCreate::InternalState::Load()
 
 	mChar = {};
 
-	character::CharacterValidator& charValidate = mCharacterValidator;
+	character::CharacterValidator const& charValidate = mCharacterValidator;
 	charValidate.SanitizeForCharacterCreation( mChar );
 }
 
