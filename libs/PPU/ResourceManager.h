@@ -114,6 +114,7 @@ private:
 
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
+	bool UpdateExistingResourceWithoutLock( ResourceName const& resourceName, Filename const& filename );
 
 
 	//
