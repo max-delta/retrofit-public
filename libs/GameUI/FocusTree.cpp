@@ -336,6 +336,30 @@ bool FocusTree::CycleFocusToPreviousChild( FocusTreeNode& parentNode, bool wrapI
 
 
 
+bool FocusTree::CycleFocusToFirstChild( FocusTreeNode& parentNode )
+{
+	bool anyChange = false;
+	while( CycleFocusToPreviousChild( parentNode, false ) )
+	{
+		anyChange = true;
+	}
+	return anyChange;
+}
+
+
+
+bool FocusTree::CycleFocusToLastChild( FocusTreeNode& parentNode )
+{
+	bool anyChange = false;
+	while( CycleFocusToNextChild( parentNode, false ) )
+	{
+		anyChange = true;
+	}
+	return anyChange;
+}
+
+
+
 void FocusTree::TrimDeadLinks()
 {
 	rftl::unordered_set<FocusTreeNode const*> liveNodes;
