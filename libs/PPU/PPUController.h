@@ -41,6 +41,13 @@ public:
 		Font
 	};
 private:
+	enum class LoadType : uint8_t
+	{
+		Invalid = 0,
+		New,
+		Modify,
+		Reload
+	};
 	using StateBufferID = uint8_t;
 	static constexpr StateBufferID kInvalidStateBufferID = rftl::numeric_limits<StateBufferID>::max();
 	static constexpr size_t kNumStateBuffers = 3;
@@ -76,7 +83,8 @@ private:
 	};
 	struct LoadRequest
 	{
-		AssetType mType = {};
+		LoadType mLoadType = {};
+		AssetType mAssetType = {};
 		ResourceName mResourceName = {};
 		Filename mFilename = {};
 	};
@@ -117,6 +125,7 @@ public:
 
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
+	bool QueueDeferredReloadRequest( AssetType type, ResourceName const& resourceName );
 	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
 
