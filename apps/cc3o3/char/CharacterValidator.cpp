@@ -141,6 +141,21 @@ GeneticsEntry const& CharacterValidator::GetGeneticEntry( GeneticsID const& id )
 
 
 
+CharacterValidator::GeneticsID CharacterValidator::GetGeneticsID( rftl::string const& species, rftl::string const& gender ) const
+{
+	for( GeneticsStorage::value_type const& pair : mGeneticsStorage )
+	{
+		if( pair.second.mSpecies == species && pair.second.mGender == gender )
+		{
+			return pair.first;
+		}
+	}
+
+	return GeneticsID();
+}
+
+
+
 bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesTablePath )
 {
 	rftl::deque<rftl::deque<rftl::string>> statBonusesTable = LoadCSV( statBonusesTablePath );
@@ -241,6 +256,21 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 Stats const& CharacterValidator::GetStatBonuses( SpeciesID const& id ) const
 {
 	return mStatBonuesStorage.at( id );
+}
+
+
+
+int8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
+{
+	return 0 +
+		stats.mMHealth +
+		stats.mPhysAtk +
+		stats.mPhysDef +
+		stats.mElemAtk +
+		stats.mElemDef +
+		stats.mBalance +
+		stats.mTechniq +
+		stats.mElemPwr;
 }
 
 
@@ -390,16 +420,7 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 	// Stats
 	{
 		Stats sanitizedStats = GetStatBonuses( genetics.mSpecies );
-		int16_t availablePoints =
-			kMaxTotalStatPoints +
-			-sanitizedStats.mMHealth +
-			-sanitizedStats.mPhysAtk +
-			-sanitizedStats.mPhysDef +
-			-sanitizedStats.mElemAtk +
-			-sanitizedStats.mElemDef +
-			-sanitizedStats.mBalance +
-			-sanitizedStats.mTechniq +
-			-sanitizedStats.mElemPwr;
+		int16_t availablePoints = kMaxTotalStatPoints - CalculateTotalPoints( sanitizedStats );
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{
@@ -437,6 +458,7 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 			}
 		}
 
+		sanitizedStats.mGridDep = math::Clamp( Stats::kMaxBreadth, stats.mGridDep, Stats::kMaxDepth );
 		stats = sanitizedStats;
 	}
 }
@@ -454,16 +476,7 @@ void CharacterValidator::SanitizeForGameplay( Character& character ) const
 
 	// Stats
 	{
-		int16_t availablePoints =
-			kMaxTotalStatPoints +
-			-stats.mMHealth +
-			-stats.mPhysAtk +
-			-stats.mPhysDef +
-			-stats.mElemAtk +
-			-stats.mElemDef +
-			-stats.mBalance +
-			-stats.mTechniq +
-			-stats.mElemPwr;
+		int16_t availablePoints = kMaxTotalStatPoints - CalculateTotalPoints( stats );
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{

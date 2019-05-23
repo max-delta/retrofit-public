@@ -38,11 +38,11 @@ class CharacterValidator
 public:
 	using GeneticsID = rftl::string;
 	using SpeciesID = rftl::string;
+	static constexpr int8_t kMaxTotalStatPoints = 16;
+	static constexpr int8_t kMaxPointsPerStat = 5;
 private:
 	using GeneticsStorage = rftl::unordered_map<GeneticsID, GeneticsEntry>;
 	using StatBonuesStorage = rftl::unordered_map<SpeciesID, Stats>;
-	static constexpr int8_t kMaxTotalStatPoints = 13;
-	static constexpr int8_t kMaxPointsPerStat = 5;
 
 
 	//
@@ -53,9 +53,11 @@ public:
 	bool LoadGeneticsTable( file::VFSPath const& geneticsTablePath );
 	rftl::unordered_set<GeneticsID> GetGeneticsIDs() const;
 	GeneticsEntry const& GetGeneticEntry( GeneticsID const& id ) const;
+	GeneticsID GetGeneticsID( rftl::string const& species, rftl::string const& gender ) const;
 
 	bool LoadStatBonusesTable( file::VFSPath const& statBonusesTablePath );
 	Stats const& GetStatBonuses( SpeciesID const& id ) const;
+	static int8_t CalculateTotalPoints( Stats const& stats );
 
 	void SanitizeForCharacterCreation( Character& character ) const;
 	void SanitizeForGameplay( Character& character ) const;
