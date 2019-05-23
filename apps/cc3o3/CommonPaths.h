@@ -22,7 +22,9 @@ extern file::VFSPath const gBackgroundTilesets;
 extern file::VFSPath const gBackgroundTilemaps;
 extern file::VFSPath const gLogoFramepacks;
 extern file::VFSPath const gCharacterTables;
+extern file::VFSPath const gCharacterPieces;
 extern file::VFSPath const gLocalizations;
+extern file::VFSPath const gCompositeCharacters;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
