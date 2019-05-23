@@ -29,10 +29,12 @@
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/controllers/TextRows.h"
 #include "GameUI/controllers/ListBox.h"
+#include "GameUI/controllers/FramePackDisplay.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/FramePackManager.h"
+#include "PPU/FramePack.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -42,6 +44,8 @@
 namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
+
+static constexpr char kPreviewFpackName[] = "charcreate_preview";
 
 static constexpr char kSaveTag[] = "SAVE";
 
@@ -136,6 +140,7 @@ static constexpr char const* kRightStatusTags[rftl::extent<decltype( kRightText 
 	"S_Cloth2",
 	"S_UNUSED_R1",
 };
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +151,7 @@ struct TitleScreen_CharCreate::InternalState
 
 	void UpdateDisplay( ui::ContainerManager& uiManager );
 	void HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase );
+	void Recomposite();
 	void Load();
 	void Save();
 
@@ -416,6 +422,37 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 
 
 
+void TitleScreen_CharCreate::InternalState::Recomposite()
+{
+	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	sprite::CharacterCreator& charCreate = *mCharacterCreator;
+
+	char const* const id = "ID_TODO";
+	file::VFSPath const outDir = paths::gCompositeCharacters.GetChild( id );
+
+	sprite::CompositeCharacterParams params = {};
+	params.mBaseId = mChar.mVisuals.mBase;
+	params.mClothingId = mChar.mVisuals.mClothing;
+	params.mHairId = mChar.mVisuals.mHair;
+	params.mSpeciesId = mChar.mVisuals.mSpecies;
+	params.mCharPiecesDir = paths::gCharacterPieces;
+	params.mOutputDir = outDir;
+	charCreate.CreateCompositeCharacter( params );
+
+	gfx::ManagedFramePackID const previewID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
+	if( previewID == gfx::kInvalidManagedFramePackID )
+	{
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, details::kPreviewFpackName, outDir.GetChild( "s.fpack" ) );
+	}
+	else
+	{
+		// TODO: Trigger reload
+	}
+}
+
+
+
 void TitleScreen_CharCreate::InternalState::Load()
 {
 	// TODO: Actual load
@@ -424,6 +461,8 @@ void TitleScreen_CharCreate::InternalState::Load()
 
 	character::CharacterValidator const& charValidate = mCharacterValidator;
 	charValidate.SanitizeForCharacterCreation( mChar );
+
+	Recomposite();
 }
 
 
@@ -443,6 +482,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 	mInternalState->Load();
 
 	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Setup UI
@@ -589,6 +629,19 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					rightFrame->GetChildContainerID(),
 					DefaultCreator<ui::controller::RowSlicer>::Create(
 						rightRowRatios ) );
+
+			// Preview on top
+			WeakPtr<ui::controller::FramePackDisplay> const preview =
+				uiManager.AssignStrongController(
+					rightRowSlicer->GetChildContainerID( 0 ),
+					DefaultCreator<ui::controller::FramePackDisplay>::Create() );
+			preview->SetJustification( ui::Justification::MiddleCenter );
+			gfx::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
+			preview->SetFramePack(
+				previewFpackID,
+				24,
+				24 );
+			preview->SetSlowdown( framePackMan.GetResourceFromManagedResourceID( previewFpackID )->mPreferredSlowdownRate );
 
 			// Cut bottom in 2
 			ui::controller::ColumnSlicer::Ratios const rightColumnRatios = {
