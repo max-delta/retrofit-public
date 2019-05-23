@@ -176,8 +176,8 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( ResourceName const& resourceName, Filename const& filename )
 {
-	RF_TODO_BREAK();
-	return false;
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+	return UpdateExistingResourceWithoutLock( resourceName, filename );
 }
 
 
@@ -185,8 +185,16 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Upd
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( ResourceName const& resourceName )
 {
-	RF_TODO_BREAK();
-	return false;
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+
+	typename ResourcesByFilename::const_iterator fileIter = mFileBackedResources.find( resourceName );
+	if( fileIter == mFileBackedResources.end() )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found, or not file backed" );
+		return false;
+	}
+
+	return UpdateExistingResourceWithoutLock( resourceName, fileIter->second );
 }
 
 
@@ -459,6 +467,51 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	RF_ASSERT( success );
 	RFLOG_INFO( nullptr, RFCAT_PPU, "Resource loaded from memory" );
 	return retVal;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResourceWithoutLock( ResourceName const& resourceName, Filename const& filename )
+{
+	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
+	if( IDIter == mResourceIDs.end() )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
+		return false;
+	}
+
+	typename ResourcesByManagedID::iterator resourceIter = mResources.find( IDIter->second );
+	if( resourceIter == mResources.end() )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
+		return false;
+	}
+
+	UniquePtr<Resource>& resourceRef = resourceIter->second;
+	RF_ASSERT( resourceRef != nullptr );
+
+	// Attempt to load new
+	UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
+	if( newResource == nullptr )
+	{
+		RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
+		return false;
+	}
+
+	// Swap out old
+	bool const preDestroySuccess = PreDestroy( *resourceRef );
+	RF_ASSERT( preDestroySuccess );
+	resourceRef = nullptr;
+
+	// Swap in new
+	Resource* const res = newResource;
+	resourceRef = rftl::move( newResource );
+	bool const postLoadSuccess = PostLoadFromFile( *res, filename );
+	RF_ASSERT( postLoadSuccess );
+	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
+
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
