@@ -20,6 +20,7 @@ public:
 	FramePackDisplay() = default;
 
 	void SetFramePack( gfx::ManagedFramePackID framePack, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight );
+	void SetSlowdown( gfx::TimeSlowdownRate rate );
 	void SetJustification( Justification justification );
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
