@@ -29,6 +29,13 @@ void FramePackDisplay::SetFramePack( gfx::ManagedFramePackID framePack, gfx::PPU
 
 
 
+void FramePackDisplay::SetSlowdown( gfx::TimeSlowdownRate rate )
+{
+	mObject.mTimer.mTimeSlowdown = rate;
+}
+
+
+
 void FramePackDisplay::SetJustification( Justification justification )
 {
 	mJustification = justification;
