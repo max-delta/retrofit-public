@@ -418,6 +418,10 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 	}
 
 	charValidate.SanitizeForCharacterCreation( mChar );
+
+	// HACK: Always recomposite
+	// TODO: Only on changes that affect visuals
+	Recomposite();
 }
 
 
@@ -447,7 +451,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	}
 	else
 	{
-		// TODO: Trigger reload
+		ppu.QueueDeferredReloadRequest( gfx::PPUController::AssetType::FramePack, details::kPreviewFpackName );
 	}
 }
 
