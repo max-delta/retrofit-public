@@ -58,6 +58,9 @@
     <ClInclude Include="extension\virtual_iterator.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\integer_literals.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="extension\static_array.inl">
