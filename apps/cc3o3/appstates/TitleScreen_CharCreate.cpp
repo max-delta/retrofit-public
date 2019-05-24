@@ -2,6 +2,7 @@
 #include "TitleScreen_CharCreate.h"
 
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/char/Character.h"
@@ -720,7 +721,7 @@ void TitleScreen_CharCreate::OnExit( AppStateChangeContext& context )
 
 void TitleScreen_CharCreate::OnTick( AppStateTickContext& context )
 {
-	rftl::vector<ui::FocusEventType> const focusEvents = TitleScreen::GetInputToProcess();
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
 
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();

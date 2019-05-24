@@ -2,7 +2,6 @@
 #include "project.h"
 
 #include "cc3o3/appstates/AppStatesFwd.h"
-#include "cc3o3/ui/UIFwd.h"
 
 #include "GameAppState/AppState.h"
 
@@ -14,12 +13,12 @@
 namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
-class TitleScreen final : public AppState
+class DevTestCombatCharts final : public AppState
 {
-	RF_NO_COPY( TitleScreen );
+	RF_NO_COPY( DevTestCombatCharts );
 
 public:
-	TitleScreen() = default;
+	DevTestCombatCharts() = default;
 
 	virtual void OnEnter( AppStateChangeContext& context ) override;
 	virtual void OnExit( AppStateChangeContext& context ) override;

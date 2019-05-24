@@ -8,7 +8,11 @@ namespace fasttrack {
 
 enum class Mode : uint8_t
 {
-	Invalid = 0, // If invalid, FastTrack is not in use
+	// If invalid, FastTrack is not in use
+	Invalid = 0,
+
+	// Various developer tests
+	DevTestCombatCharts,
 
 	// Directly to options menu on the title screen
 	TitleScreenOptions,
@@ -38,6 +42,11 @@ AppStateID GetStateAfterBoot()
 
 AppStateID GetStateAfterInitialLoad()
 {
+	if( fasttrack::sMode == fasttrack::Mode::DevTestCombatCharts )
+	{
+		return id::DevTestCombatCharts;
+	}
+
 	return id::TitleScreen;
 }
 

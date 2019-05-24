@@ -31,7 +31,9 @@
   <ItemGroup>
     <ClCompile Include="appstates\AppStateRoute.cpp" />
     <ClCompile Include="appstates\Boot.cpp" />
+    <ClCompile Include="appstates\DevTestCombatCharts.cpp" />
     <ClCompile Include="appstates\InitialLoading.cpp" />
+    <ClCompile Include="appstates\InputHelpers.cpp" />
     <ClCompile Include="appstates\TitleScreen.cpp" />
     <ClCompile Include="appstates\TitleScreen_CharCreate.cpp" />
     <ClCompile Include="appstates\TitleScreen_MainMenu.cpp" />
@@ -53,7 +55,9 @@
     <ClInclude Include="appstates\AppStateRoute.h" />
     <ClInclude Include="appstates\AppStatesFwd.h" />
     <ClInclude Include="appstates\Boot.h" />
+    <ClInclude Include="appstates\DevTestCombatCharts.h" />
     <ClInclude Include="appstates\InitialLoading.h" />
+    <ClInclude Include="appstates\InputHelpers.h" />
     <ClInclude Include="appstates\project.h" />
     <ClInclude Include="appstates\stdafx.h" />
     <ClInclude Include="appstates\TitleScreen.h" />
