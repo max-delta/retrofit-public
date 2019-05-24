@@ -4,6 +4,7 @@
 #include "cc3o3/appstates/Boot.h"
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/appstates/DevTestCombatCharts.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/Common.h"
@@ -30,6 +31,8 @@ constexpr bool kDebugUIScaler = kAllowDebug && false;
 constexpr bool kDebugHideZoomFactor = kAllowDebug && false;
 constexpr bool kDebugSuppressRender = kAllowDebug && false;
 
+constexpr bool kAllowDevTests = true;
+
 static appstate::AppStateManager sAppStateManager;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,6 +44,10 @@ void Startup()
 	sAppStateManager.AddState( appstate::id::Boot, DefaultCreator<appstate::Boot>::Create() );
 	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
+	if( kAllowDevTests )
+	{
+		sAppStateManager.AddState( appstate::id::DevTestCombatCharts, DefaultCreator<appstate::DevTestCombatCharts>::Create() );
+	}
 
 	sAppStateManager.Start( appstate::GetBootState() );
 
