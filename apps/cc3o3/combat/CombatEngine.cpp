@@ -75,27 +75,28 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 	static constexpr SimVal kMaxWeaponBonus = 20;
 	SimVal attackerBonus = 0;
 	SimVal weaponBonus = 0;
-	if( attackerPhysAtkStat >= defenderPhysDefStat + 10u )
+	static constexpr SimVal kAttackMidPoint = 7u;
+	if( attackerPhysAtkStat >= defenderPhysDefStat + kAttackMidPoint )
 	{
-		// Crazy stronger
-		attackerBonus = 20u;
+		// Crazy stronger (>2xmid)
+		attackerBonus = kMaxAttackerBonus;
 		weaponBonus = 0u + attackStrength * 4;
 	}
 	else if( attackerPhysAtkStat >= defenderPhysDefStat )
 	{
-		// Equal or stronger
-		attackerBonus = 10u + ( attackerPhysAtkStat - defenderPhysDefStat );
-		weaponBonus = 0u + attackStrength * 2;
+		// Equal or stronger (>mid)
+		attackerBonus = 0u + kAttackMidPoint + ( attackerPhysAtkStat - defenderPhysDefStat );
+		weaponBonus = 0u + attackStrength * 3;
 	}
-	else if( attackerPhysAtkStat + 10u >= defenderPhysDefStat )
+	else if( attackerPhysAtkStat + kAttackMidPoint >= defenderPhysDefStat )
 	{
-		// Weaker, but not terribly so
-		attackerBonus = ( attackerPhysAtkStat + 10u ) - defenderPhysDefStat;
-		weaponBonus = 0u + attackStrength * 2;
+		// Weaker, but not terribly so (<mid)
+		attackerBonus = 0u + ( attackerPhysAtkStat + kAttackMidPoint ) - defenderPhysDefStat;
+		weaponBonus = 0u + attackStrength * 3;
 	}
 	else
 	{
-		// Heavily outclassed
+		// Heavily outclassed (<2xmid)
 		attackerBonus = 0;
 		weaponBonus = attackStrength;
 	}
