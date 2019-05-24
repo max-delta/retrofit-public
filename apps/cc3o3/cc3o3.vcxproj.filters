@@ -39,6 +39,9 @@
     <ClCompile Include="char\CharacterValidator.cpp">
       <Filter>char</Filter>
     </ClCompile>
+    <ClCompile Include="combat\CombatEngine.cpp">
+      <Filter>combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -136,6 +139,18 @@
     <ClInclude Include="char\CharacterValidator.h">
       <Filter>char</Filter>
     </ClInclude>
+    <ClInclude Include="combat\project.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\stdafx.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\CombatEngine.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\CombatFwd.h">
+      <Filter>combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -149,6 +164,9 @@
     </Filter>
     <Filter Include="char">
       <UniqueIdentifier>{7419a65b-047c-463a-b22c-61c48e852a6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="combat">
+      <UniqueIdentifier>{7aed0947-995d-4cbc-a641-435d43c37fd2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
