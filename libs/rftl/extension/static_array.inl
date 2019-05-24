@@ -456,6 +456,36 @@ inline void static_array<Element, ElementCapacity>::pop_back()
 	m_Storage[m_CurrentSize].Value().~Element();
 }
 
+
+
+template<typename Element, size_t ElementCapacity>
+inline void static_array<Element, ElementCapacity>::resize( size_type count )
+{
+	while( size() > count )
+	{
+		pop_back();
+	}
+	while( size() < count )
+	{
+		emplace_back();
+	}
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline void static_array<Element, ElementCapacity>::resize( size_type count, value_type const& value )
+{
+	while( size() > count )
+	{
+		pop_back();
+	}
+	while( size() < count )
+	{
+		emplace_back( value );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Element, size_t ElementCapacity>
