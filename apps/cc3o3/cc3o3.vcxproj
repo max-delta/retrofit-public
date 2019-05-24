@@ -39,6 +39,7 @@
     <ClCompile Include="cc3o3.cpp" />
     <ClCompile Include="char\CharacterDatabase.cpp" />
     <ClCompile Include="char\CharacterValidator.cpp" />
+    <ClCompile Include="combat\CombatEngine.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
@@ -72,6 +73,10 @@
     <ClInclude Include="char\Stats.h" />
     <ClInclude Include="char\stdafx.h" />
     <ClInclude Include="char\Visuals.h" />
+    <ClInclude Include="combat\CombatEngine.h" />
+    <ClInclude Include="combat\CombatFwd.h" />
+    <ClInclude Include="combat\project.h" />
+    <ClInclude Include="combat\stdafx.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPaths.h" />
     <ClInclude Include="input\HardcodedSetup.h" />
