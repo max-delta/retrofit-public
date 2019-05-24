@@ -535,6 +535,13 @@ void PPUController::DebugSetGridEnabled( bool enabled )
 
 
 
+void PPUController::DebugSetBackgroundColor( math::Color3f color )
+{
+	mDeviceInterface->SetBackgroundColor( color );
+}
+
+
+
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );

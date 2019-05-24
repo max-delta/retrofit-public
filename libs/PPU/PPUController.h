@@ -135,6 +135,7 @@ public:
 	WeakPtr<gfx::FontManager const> GetFontManager() const;
 
 	void DebugSetGridEnabled( bool enabled );
+	void DebugSetBackgroundColor( math::Color3f color );
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width );
