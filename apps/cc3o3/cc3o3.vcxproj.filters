@@ -42,6 +42,12 @@
     <ClCompile Include="combat\CombatEngine.cpp">
       <Filter>combat</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\DevTestCombatCharts.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\InputHelpers.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -150,6 +156,12 @@
     </ClInclude>
     <ClInclude Include="combat\CombatFwd.h">
       <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\DevTestCombatCharts.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\InputHelpers.h">
+      <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

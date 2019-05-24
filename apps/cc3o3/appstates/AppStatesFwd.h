@@ -15,6 +15,8 @@ enum : AppStateID
 
 	InitialLoading,
 
+	DevTestCombatCharts,
+
 	TitleScreen,
 	TitleScreen_MainMenu,
 	TitleScreen_CharCreate,
