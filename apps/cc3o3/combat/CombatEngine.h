@@ -58,7 +58,14 @@ public:
 	// Attacks are physical against defense, but color also affects them
 	SimVal LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor color, SimDelta attackerFieldModifier, SimDelta defenderFieldModifier ) const;
 
+	// Field bonuses combine to form a field modifier
 	SimDelta LoCalcFieldModifier( FieldBonuses const& fieldBonuses ) const;
+
+	// Swinging (hit or otherwise) increases the counter gauge
+	SimVal LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) const;
+
+	// Dealing attack damage increases the counter gauge
+	SimVal LoCalcCounterFromAttackDamage( SimVal attackDamage ) const;
 
 
 	//
