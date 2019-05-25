@@ -26,6 +26,7 @@ static constexpr size_t kMaxStrings = 48;
 static constexpr size_t kMaxStringLen = 71;
 
 static constexpr size_t kMaxDebugStrings = 32;
+static constexpr size_t kMaxDebugAuxStrings = 128;
 static constexpr size_t kMaxDebugLines = 256;
 static constexpr size_t kMaxDebugStringLen = 127;
 

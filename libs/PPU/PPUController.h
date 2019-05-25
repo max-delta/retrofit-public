@@ -66,7 +66,8 @@ private:
 		TileLayer,
 		String,
 		DebugLine,
-		DebugString
+		DebugString,
+		DebugAuxString
 	};
 
 
@@ -137,6 +138,8 @@ public:
 	void DebugSetGridEnabled( bool enabled );
 	void DebugSetBackgroundColor( math::Color3f color );
 	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
+	bool DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
+	bool DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width );
 	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color );

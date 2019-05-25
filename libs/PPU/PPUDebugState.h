@@ -1,12 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
-
-#include "core_math/Vector2.h"
-#include "core_math/Color3f.h"
-
-#include "core/macros.h"
+#include "PPUState.h"
 
 
 namespace RF { namespace gfx {
@@ -20,9 +15,11 @@ class PPU_API PPUDebugState
 	// Constants
 public:
 	static constexpr size_t kMaxDebugStrings = gfx::kMaxDebugStrings;
+	static constexpr size_t kMaxDebugAuxStrings = gfx::kMaxDebugAuxStrings;
 	static constexpr size_t kMaxDebugLines = gfx::kMaxDebugLines;
 	static constexpr size_t kMaxTotalElements =
 		kMaxDebugStrings +
+		kMaxDebugAuxStrings +
 		kMaxDebugLines;
 
 
@@ -36,6 +33,10 @@ public:
 		PPUCoordElem mXCoord;
 		PPUCoordElem mYCoord;
 		char mText[k_MaxLen + sizeof( '\0' )];
+	};
+	struct DebugAuxString : PPUState::String
+	{
+		//
 	};
 	struct DebugLine
 	{
@@ -62,8 +63,10 @@ public:
 	// Public data
 public:
 	uint8_t mNumStrings;
+	uint8_t mNumAuxStrings;
 	uint8_t mNumLines;
 	DebugString mStrings[kMaxDebugStrings];
+	DebugAuxString mAuxStrings[kMaxDebugAuxStrings];
 	DebugLine mLines[kMaxDebugLines];
 };
 
