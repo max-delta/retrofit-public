@@ -176,5 +176,19 @@ CombatEngine::SimDelta CombatEngine::LoCalcFieldModifier( FieldBonuses const& fi
 	return retVal;
 }
 
+
+
+CombatEngine::SimVal CombatEngine::LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) const
+{
+	return attackerComboMeter;
+}
+
+
+
+CombatEngine::SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
+{
+	return attackDamage / 2u;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}}
