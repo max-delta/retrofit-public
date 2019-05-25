@@ -49,10 +49,11 @@ public:
 	SimVal LoCalcAttackAccuracy( SimVal attackStrength ) const;
 
 	// Attacker builds combo based on attacking with techniq
-	SimVal LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat ) const;
-	SimVal LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat ) const;
+	SimVal LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const;
+	SimVal LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const;
 
 	// Attacker combo must overcome defender balance
+	SimVal LoCalcMinComboToHit( SimVal defenderBalanceStat ) const;
 	bool LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defenderBalanceStat ) const;
 
 	// Attacks are physical against defense, but color also affects them

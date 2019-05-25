@@ -43,23 +43,54 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength )
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat ) const
+CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
-	return 0u + attackAccuracy + attackerTechniqStat;
+	SimVal const minNeeded = LoCalcMinComboToHit( defenderBalanceStat );
+	SimVal const maxMeter = 0u + minNeeded + attackAccuracy;
+	SimVal const unchecked = 0u + attackAccuracy + attackerTechniqStat;
+
+	if( unchecked >= minNeeded )
+	{
+		RF_ASSERT( LoCalcWillAttackHit( unchecked, defenderBalanceStat ) );
+		return maxMeter;
+	}
+	else
+	{
+		return unchecked;
+	}
 }
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat ) const
+CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
-	return 0u + attackerComboMeter + attackAccuracy + attackerTechniqStat;
+	SimVal const minNeeded = LoCalcMinComboToHit( defenderBalanceStat );
+	SimVal const maxMeter = 0u + minNeeded + attackAccuracy;
+	SimVal const unchecked = 0u + attackerComboMeter + attackAccuracy + attackerTechniqStat;
+
+	if( unchecked >= minNeeded )
+	{
+		RF_ASSERT( LoCalcWillAttackHit( unchecked, defenderBalanceStat ) );
+		return maxMeter;
+	}
+	else
+	{
+		return unchecked;
+	}
+}
+
+
+
+CombatEngine::SimVal CombatEngine::LoCalcMinComboToHit( SimVal defenderBalanceStat ) const
+{
+	return defenderBalanceStat * 2u;
 }
 
 
 
 bool CombatEngine::LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defenderBalanceStat ) const
 {
-	return attackerComboMeter > defenderBalanceStat;
+	return attackerComboMeter >= LoCalcMinComboToHit( defenderBalanceStat );
 }
 
 
