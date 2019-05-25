@@ -46,7 +46,7 @@ void Boot::OnTick( AppStateTickContext& context )
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Booting..." );
 
 	// VFS setup for game data
-	file::VFSPath const mountFile = paths::gVfsConfig;
+	file::VFSPath const mountFile = paths::VfsConfig();
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( mountFile );
 	if( vfsTestDataLoad == false )
 	{
