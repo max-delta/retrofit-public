@@ -232,11 +232,11 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				SimVal const acc = combatEngine.LoCalcAttackAccuracy( swing );
 				if( i == 0 )
 				{
-					comboMeter = combatEngine.LoCalcNewComboMeter( acc, tech );
+					comboMeter = combatEngine.LoCalcNewComboMeter( acc, tech, balance );
 				}
 				else
 				{
-					comboMeter = combatEngine.LoCalcContinueComboMeter( comboMeter, acc, tech );
+					comboMeter = combatEngine.LoCalcContinueComboMeter( comboMeter, acc, tech, balance );
 				}
 				hit = combatEngine.LoCalcWillAttackHit( comboMeter, balance );
 				damage = combatEngine.LoCalcAttackDamage( atk, def, swing, color, atkField, defField );
