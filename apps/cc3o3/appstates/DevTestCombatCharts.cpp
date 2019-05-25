@@ -59,11 +59,12 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool {
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool
+	{
 		gfx::PPUCoord const pos = { x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) };
 		va_list args;
 		va_start( args, fmt );
-		bool const retVal = ppu.DrawText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
+		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
 		va_end( args );
 		return retVal;
 	};
@@ -72,9 +73,9 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	drawText( 1, 1, "DEV TEST - COMBAT CHARTS" );
 
 	// Baseline accuracy
-	uint8_t const xStart = 5;
+	uint8_t const xStart = 1;
 	uint8_t const yStart = 5;
-	uint8_t const xstep = 6;
+	uint8_t const xstep = 7;
 	uint8_t const ystep = 1;
 	uint8_t x = xStart;
 	uint8_t y = yStart;
@@ -84,13 +85,16 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		using Damages = rftl::static_array<SimVal, 7>;
 		using namespace rftl::literals;
 
-		rftl::static_array<Swings, 8> combos;
+		rftl::static_array<Swings, 11> combos;
+		combos.emplace_back( Swings{ 1_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 2_u8, 2_u8 } );
+		combos.emplace_back( Swings{ 1_u8, 1_u8, 2_u8, 3_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 2_u8, 2_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 2_u8, 3_u8, 1_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 3_u8, 3_u8 } );
+		combos.emplace_back( Swings{ 2_u8, 2_u8, 3_u8 } );
 		combos.emplace_back( Swings{ 2_u8, 3_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 3_u8, 3_u8, 1_u8 } );
 
@@ -102,12 +106,13 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 			SimVal const tech = 2;
 			SimVal const atk = 2;
-			SimVal meter = 0;
 			SimVal const atkField = 0;
+			SimVal comboMeter = 0;
 
-			SimVal const balance = 0;
+			SimVal const balance = 2;
 			SimVal const def = 2;
 			SimVal const defField = 0;
+			SimVal counterGuage = 0;
 
 			SimColor const color = SimColor::Unrelated;
 
@@ -124,32 +129,43 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				SimVal const acc = combatEngine.LoCalcAttackAccuracy( swing );
 				if( i == 0 )
 				{
-					meter = combatEngine.LoCalcNewComboMeter( acc, tech );
+					comboMeter = combatEngine.LoCalcNewComboMeter( acc, tech );
 				}
 				else
 				{
-					meter = combatEngine.LoCalcContinueComboMeter( meter, acc, tech );
+					comboMeter = combatEngine.LoCalcContinueComboMeter( comboMeter, acc, tech );
 				}
-				hit = combatEngine.LoCalcWillAttackHit( meter, balance );
+				hit = combatEngine.LoCalcWillAttackHit( comboMeter, balance );
 				damage = combatEngine.LoCalcAttackDamage( atk, def, swing, color, atkField, defField );
 
 				if( hit )
 				{
 					damageTotal += damage;
-					drawText( x, y, "%i:%i", swing, damage );
+					counterGuage += combatEngine.LoCalcCounterFromAttackSwing( comboMeter );
+					counterGuage += combatEngine.LoCalcCounterFromAttackDamage( damage );
+					drawText( x, y, " %i:%2i", swing, damage );
 					y += ystep;
 				}
 				else
 				{
 					damageTotal += 0;
-					drawText( x, y, "%i:--", swing );
+					counterGuage += combatEngine.LoCalcCounterFromAttackSwing( comboMeter );
+					counterGuage += 0;
+					drawText( x, y, " %i:--", swing );
 					y += ystep;
 				}
-
 			}
-			//drawText( x, y, "T:%i", damageTotal );
-			//y += ystep;
-			drawText( x, y, "D:%i", damageTotal / numSwings );
+			drawText( x, y, "======" );
+			y += ystep;
+			drawText( x, y, "ME:%3i", comboMeter );
+			y += ystep;
+			drawText( x, y, "======" );
+			y += ystep;
+			drawText( x, y, "CG:%3i", counterGuage );
+			y += ystep;
+			drawText( x, y, "TO:%3i", damageTotal );
+			y += ystep;
+			drawText( x, y, "DS:%3i", damageTotal / numSwings );
 			y += ystep;
 
 			x += xstep;
