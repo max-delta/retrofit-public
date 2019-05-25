@@ -8,6 +8,7 @@ namespace RF { namespace gfx {
 void PPUDebugState::Clear()
 {
 	mNumStrings = 0;
+	mNumAuxStrings = 0;
 	mNumLines = 0;
 }
 

@@ -568,6 +568,45 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 
 
 
+bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	bool const retVal = DebugDrawAuxText( pos, zLayer, desiredHeight, font, border, color, fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+
+
+bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
+{
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUDebugState& targetState = mPPUDebugState[mWriteState];
+
+	// TODO: Thread-safe
+	RF_ASSERT( targetState.mNumAuxStrings < PPUDebugState::kMaxDebugAuxStrings );
+	PPUDebugState::DebugAuxString& targetString = targetState.mAuxStrings[targetState.mNumAuxStrings];
+	targetState.mNumAuxStrings++;
+
+	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
+	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mZLayer = zLayer;
+	targetString.mColor[0] = static_cast<uint8_t>( color.r * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[1] = static_cast<uint8_t>( color.g * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[2] = static_cast<uint8_t>( color.b * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mDesiredHeight = desiredHeight;
+	targetString.mBorder = border;
+	targetString.mFontReference = font;
+	targetString.mText[0] = '\0';
+	vsnprintf( &targetString.mText[0], PPUDebugState::DebugAuxString::k_MaxLen, fmt, args );
+	targetString.mText[PPUDebugState::DebugAuxString::k_MaxLen] = '\0';
+
+	return true;
+}
+
+
+
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
 {
 	return DebugDrawLine( p0, p1, math::Color3f::kBlack );
@@ -755,6 +794,9 @@ void PPUController::Render() const
 			case RF::gfx::PPUController::ElementType::DebugString:
 				RenderDebugString( targetDebugState.mStrings[i] );
 				break;
+			case RF::gfx::PPUController::ElementType::DebugAuxString:
+				RenderString( targetDebugState.mAuxStrings[i] );
+				break;
 		}
 	}
 
@@ -832,6 +874,17 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 		element.mId = math::integer_cast<uint8_t>( i );
 		element.mType = ElementType::DebugString;
 		element.mDepth = details::kDebugStringLayer;
+	}
+
+	// Debug aux text
+	for( size_t i = 0; i < targetDebugState.mNumAuxStrings; i++ )
+	{
+		PPUDebugState::DebugAuxString const& string = targetDebugState.mAuxStrings[i];
+		DepthElement& element = depthOrder[i_depthOrder];
+		i_depthOrder++;
+		element.mId = math::integer_cast<uint8_t>( i );
+		element.mType = ElementType::DebugAuxString;
+		element.mDepth = string.mZLayer;
 	}
 
 	// Sort
