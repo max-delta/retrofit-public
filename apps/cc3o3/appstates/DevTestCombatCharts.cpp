@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DevTestCombatCharts.h"
 
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/combat/CombatEngine.h"
 
@@ -25,6 +26,16 @@ struct DevTestCombatCharts::InternalState
 	InternalState() = default;
 
 	combat::CombatEngine mCombatEngine = { app::gVfs };
+
+	size_t mCursor = 0;
+
+	combat::CombatEngine::SimVal mTech = 2;
+	combat::CombatEngine::SimVal mAtk = 2;
+	combat::CombatEngine::SimDelta mAtkField = 0;
+	combat::CombatEngine::SimVal mBalance = 2;
+	combat::CombatEngine::SimVal mDef = 2;
+	combat::CombatEngine::SimDelta mDefField = 0;
+	combat::CombatEngine::SimColor mColor = combat::CombatEngine::SimColor::Unrelated;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,13 +83,114 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 	drawText( 1, 1, "DEV TEST - COMBAT CHARTS" );
 
+	size_t& cursor = internalState.mCursor;
+	SimVal& tech = internalState.mTech;
+	SimVal& atk = internalState.mAtk;
+	SimDelta& atkField = internalState.mAtkField;
+	SimVal& balance = internalState.mBalance;
+	SimVal& def = internalState.mDef;
+	SimDelta& defField = internalState.mDefField;
+	SimColor& color = internalState.mColor;
+
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
+	for( ui::FocusEventType const& focusEvent : focusEvents )
+	{
+		static constexpr size_t kMaxCursorPos = 6;
+
+		if( focusEvent == ui::focusevent::Command_NavigateLeft )
+		{
+			cursor--;
+		}
+		else if( focusEvent == ui::focusevent::Command_NavigateRight )
+		{
+			cursor++;
+		}
+		cursor = math::Clamp<size_t>( 0, cursor, kMaxCursorPos );
+
+		bool increase = focusEvent == ui::focusevent::Command_NavigateUp;
+		bool decrease = focusEvent == ui::focusevent::Command_NavigateDown;
+		if( increase || decrease )
+		{
+			RF_ASSERT( increase != decrease );
+			switch( cursor )
+			{
+				case 0:
+					tech += increase ? 1 : -1;
+					break;
+				case 1:
+					atk += increase ? 1 : -1;
+					break;
+				case 2:
+					atkField += increase ? 1 : -1;
+					break;
+				case 3:
+					balance += increase ? 1 : -1;
+					break;
+				case 4:
+					def += increase ? 1 : -1;
+					break;
+				case 5:
+					defField += increase ? 1 : -1;
+					break;
+				case 6:
+					if( color == SimColor::Unrelated )
+					{
+						color = SimColor::Same;
+					}
+					else if( color == SimColor::Same )
+					{
+						color = SimColor::Clash;
+					}
+					else
+					{
+						RF_ASSERT( color == SimColor::Clash );
+						color = SimColor::Unrelated;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
+	uint8_t x = 2;
+	uint8_t y = 2;
+	switch( cursor )
+	{
+		case 0:
+			drawText( x, y, "*tech  atk  atkField  balance  def  defField  color" );
+			break;
+		case 1:
+			drawText( x, y, " tech *atk  atkField  balance  def  defField  color" );
+			break;
+		case 2:
+			drawText( x, y, " tech  atk *atkField  balance  def  defField  color" );
+			break;
+		case 3:
+			drawText( x, y, " tech  atk  atkField *balance  def  defField  color" );
+			break;
+		case 4:
+			drawText( x, y, " tech  atk  atkField  balance *def  defField  color" );
+			break;
+		case 5:
+			drawText( x, y, " tech  atk  atkField  balance  def *defField  color" );
+			break;
+		case 6:
+			drawText( x, y, " tech  atk  atkField  balance  def  defField *color" );
+			break;
+		default:
+			break;
+	}
+	y++;
+	drawText( x, y, " %4i  %3i  %8i  %7i  %3i  %8i  %5i", tech, atk, atkField, balance, def, defField, color );
+
 	// Baseline accuracy
 	uint8_t const xStart = 1;
 	uint8_t const yStart = 5;
 	uint8_t const xstep = 7;
 	uint8_t const ystep = 1;
-	uint8_t x = xStart;
-	uint8_t y = yStart;
+	x = xStart;
+	y = yStart;
 	{
 		using Swings = rftl::static_array<SimVal, 7>;
 		using Hits = rftl::static_array<bool, 7>;
@@ -104,17 +216,8 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			Hits hits;
 			Damages damages;
 
-			SimVal const tech = 2;
-			SimVal const atk = 2;
-			SimVal const atkField = 0;
 			SimVal comboMeter = 0;
-
-			SimVal const balance = 2;
-			SimVal const def = 2;
-			SimVal const defField = 0;
 			SimVal counterGuage = 0;
-
-			SimColor const color = SimColor::Unrelated;
 
 			size_t const numSwings = swings.size();
 			hits.resize( numSwings );
