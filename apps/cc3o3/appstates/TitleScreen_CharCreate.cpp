@@ -174,17 +174,17 @@ TitleScreen_CharCreate::InternalState::InternalState()
 	// Init creator
 	sprite::CharacterCreator& charCreate = *mCharacterCreator;
 	charCreate.LoadPieceTables(
-		paths::gCharacterTables.GetChild( "pieces.csv" ),
-		paths::gCharacterTables.GetChild( "pieces" ) );
+		paths::CharacterTables().GetChild( "pieces.csv" ),
+		paths::CharacterTables().GetChild( "pieces" ) );
 	charCreate.LoadCompositionTable(
-		paths::gCharacterTables.GetChild( "composite.csv" ) );
+		paths::CharacterTables().GetChild( "composite.csv" ) );
 
 	// Init validator
 	character::CharacterValidator& charValidate = mCharacterValidator;
 	charValidate.LoadGeneticsTable(
-		paths::gCharacterTables.GetChild( "genetics.csv" ) );
+		paths::CharacterTables().GetChild( "genetics.csv" ) );
 	charValidate.LoadStatBonusesTable(
-		paths::gCharacterTables.GetChild( "statbonuses.csv" ) );
+		paths::CharacterTables().GetChild( "statbonuses.csv" ) );
 
 	// Figure out genetics options
 	mPlayableGenetics.clear();
@@ -434,14 +434,14 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	sprite::CharacterCreator& charCreate = *mCharacterCreator;
 
 	char const* const id = "ID_TODO";
-	file::VFSPath const outDir = paths::gCompositeCharacters.GetChild( id );
+	file::VFSPath const outDir = paths::CompositeCharacters().GetChild( id );
 
 	sprite::CompositeCharacterParams params = {};
 	params.mBaseId = mChar.mVisuals.mBase;
 	params.mClothingId = mChar.mVisuals.mClothing;
 	params.mHairId = mChar.mVisuals.mHair;
 	params.mSpeciesId = mChar.mVisuals.mSpecies;
-	params.mCharPiecesDir = paths::gCharacterPieces;
+	params.mCharPiecesDir = paths::CharacterPieces();
 	params.mOutputDir = outDir;
 	charCreate.CreateCompositeCharacter( params );
 

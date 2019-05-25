@@ -7,24 +7,24 @@
 namespace RF { namespace cc { namespace paths {
 ///////////////////////////////////////////////////////////////////////////////
 
-extern file::VFSPath const gVfsConfig;
+file::VFSPath VfsConfig();
 
-extern file::VFSPath const gFontsRoot;
-extern file::VFSPath const gTilesetsRoot;
-extern file::VFSPath const gTilemapsRoot;
-extern file::VFSPath const gFramepacksRoot;
-extern file::VFSPath const gTablesRoot;
+file::VFSPath FontsRoot();
+file::VFSPath TilesetsRoot();
+file::VFSPath TilemapsRoot();
+file::VFSPath FramepacksRoot();
+file::VFSPath TablesRoot();
 
-extern file::VFSPath const gCommonFonts;
-extern file::VFSPath const gCommonTilesets;
+file::VFSPath CommonFonts();
+file::VFSPath CommonTilesets();
 
-extern file::VFSPath const gBackgroundTilesets;
-extern file::VFSPath const gBackgroundTilemaps;
-extern file::VFSPath const gLogoFramepacks;
-extern file::VFSPath const gCharacterTables;
-extern file::VFSPath const gCharacterPieces;
-extern file::VFSPath const gLocalizations;
-extern file::VFSPath const gCompositeCharacters;
+file::VFSPath BackgroundTilesets();
+file::VFSPath BackgroundTilemaps();
+file::VFSPath LogoFramepacks();
+file::VFSPath CharacterTables();
+file::VFSPath CharacterPieces();
+file::VFSPath Localizations();
+file::VFSPath CompositeCharacters();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
