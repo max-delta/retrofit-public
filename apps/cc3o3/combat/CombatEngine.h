@@ -30,10 +30,7 @@ public:
 	using SimVal = uint8_t;
 	using SimDelta = int8_t;
 	static constexpr size_t kFieldSize = 5;
-	using FieldBonuses = rftl::array<SimDelta, kFieldSize>;
-	static constexpr size_t kNumColors = 6;
-	static constexpr SimVal kMaxFieldBonusOffset = kNumColors / 2;
-	static constexpr SimVal kMaxFieldModiferOffset = kFieldSize * kMaxFieldBonusOffset;
+	using FieldColors = rftl::array<SimColor, kFieldSize>;
 
 
 	//
@@ -57,10 +54,7 @@ public:
 	bool LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defenderBalanceStat ) const;
 
 	// Attacks are physical against defense, but color also affects them
-	SimVal LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor color, SimDelta attackerFieldModifier, SimDelta defenderFieldModifier ) const;
-
-	// Field bonuses combine to form a field modifier
-	SimDelta LoCalcFieldModifier( FieldBonuses const& fieldBonuses ) const;
+	SimVal LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor attackVsTarget, FieldColors const& attackerField ) const;
 
 	// Swinging (hit or otherwise) increases the counter gauge
 	SimVal LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) const;

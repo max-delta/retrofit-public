@@ -65,6 +65,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	using SimVal = combat::CombatEngine::SimVal;
 	using SimDelta = combat::CombatEngine::SimDelta;
 	using SimColor = combat::CombatEngine::SimColor;
+	using FieldColors = combat::CombatEngine::FieldColors;
 
 	gfx::PPUController& ppu = *app::gGraphics;
 
@@ -182,7 +183,23 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			break;
 	}
 	y++;
-	drawText( x, y, " %4i  %3i  %8i  %7i  %3i  %8i  %5i", tech, atk, atkField, balance, def, defField, color );
+	char const* colorStr = "INVALID";
+	switch( color )
+	{
+		case SimColor::Unrelated:
+			colorStr = "UNREL";
+			break;
+		case SimColor::Same:
+			colorStr = "SAME";
+			break;
+		case SimColor::Clash:
+			colorStr = "CLASH";
+			break;
+		default:
+			RF_DBGFAIL();
+			break;
+	}
+	drawText( x, y, " %4i  %3i  %8i  %7i  %3i  %8i  %s", tech, atk, atkField, balance, def, defField, colorStr );
 
 	// Baseline accuracy
 	uint8_t const xStart = 1;
@@ -198,7 +215,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		using namespace rftl::literals;
 
 		rftl::static_array<Swings, 11> combos;
-		combos.emplace_back( Swings{ 1_u8 } );
+		combos.emplace_back( Swings{ 5_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 2_u8, 2_u8 } );
@@ -209,6 +226,29 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		combos.emplace_back( Swings{ 2_u8, 2_u8, 3_u8 } );
 		combos.emplace_back( Swings{ 2_u8, 3_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 3_u8, 3_u8, 1_u8 } );
+
+		// Setup field colors
+		FieldColors atkFieldColors;
+		{
+			SimDelta pool = atkField;
+			for( FieldColors::value_type& fieldColor : atkFieldColors )
+			{
+				if( pool > 0 )
+				{
+					pool--;
+					fieldColor = SimColor::Same;
+				}
+				else if( pool < 0 )
+				{
+					pool++;
+					fieldColor = SimColor::Clash;
+				}
+				else
+				{
+					fieldColor = SimColor::Unrelated;
+				}
+			}
+		}
 
 		for( Swings const& combo : combos )
 		{
@@ -239,7 +279,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 					comboMeter = combatEngine.LoCalcContinueComboMeter( comboMeter, acc, tech, balance );
 				}
 				hit = combatEngine.LoCalcWillAttackHit( comboMeter, balance );
-				damage = combatEngine.LoCalcAttackDamage( atk, def, swing, color, atkField, defField );
+				damage = combatEngine.LoCalcAttackDamage( atk, def, swing, color, atkFieldColors );
 
 				if( hit )
 				{
