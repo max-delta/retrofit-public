@@ -83,7 +83,18 @@ CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComb
 
 CombatEngine::SimVal CombatEngine::LoCalcMinComboToHit( SimVal defenderBalanceStat ) const
 {
-	return defenderBalanceStat * 2u;
+	if( defenderBalanceStat == 0 )
+	{
+		return 0;
+	}
+	else if( defenderBalanceStat <= 2 )
+	{
+		return defenderBalanceStat * 2u;
+	}
+	else
+	{
+		return defenderBalanceStat + 2u;
+	}
 }
 
 
@@ -95,116 +106,172 @@ bool CombatEngine::LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defend
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor color, SimDelta attackerFieldModifier, SimDelta defenderFieldModifier ) const
+CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor attackVsTarget, FieldColors const& attackerField ) const
 {
 	static constexpr SimVal kMaxAttackStrength = 5;
-	RF_ASSERT( attackStrength < kMaxAttackStrength );
+	RF_ASSERT( attackStrength <= kMaxAttackStrength );
 	attackStrength = math::Clamp<SimVal>( 0u, attackStrength, kMaxAttackStrength );
 
 	// Physical portion
-	static constexpr SimVal kMaxAttackerBonus = 20;
+	static constexpr SimVal kAttackMidPoint = 5;
+	static constexpr SimVal kMaxAttackerBonus = kAttackMidPoint * 3;
 	static constexpr SimVal kMaxWeaponBonus = 20;
+	static constexpr SimVal kCriticalWeaponModifier = 4;
+	static constexpr SimVal kNormalWeaponModifier = 3;
+	static constexpr SimVal kWeakWeaponModifier = 2;
 	SimVal attackerBonus = 0;
 	SimVal weaponBonus = 0;
-	static constexpr SimVal kAttackMidPoint = 7u;
-	if( attackerPhysAtkStat >= defenderPhysDefStat + kAttackMidPoint )
+	if( attackerPhysAtkStat > defenderPhysDefStat + kAttackMidPoint * 2 )
+	{
+		// Unreasonably stronger (>3xmid)
+		attackerBonus = kMaxAttackerBonus;
+		weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
+	}
+	else if( attackerPhysAtkStat > defenderPhysDefStat + kAttackMidPoint )
 	{
 		// Crazy stronger (>2xmid)
-		attackerBonus = kMaxAttackerBonus;
-		weaponBonus = 0u + attackStrength * 4;
+		attackerBonus = 0u + kAttackMidPoint + ( attackerPhysAtkStat - defenderPhysDefStat );
+		weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
 	}
 	else if( attackerPhysAtkStat >= defenderPhysDefStat )
 	{
 		// Equal or stronger (>mid)
 		attackerBonus = 0u + kAttackMidPoint + ( attackerPhysAtkStat - defenderPhysDefStat );
-		weaponBonus = 0u + attackStrength * 3;
+		weaponBonus = 0u + attackStrength * kNormalWeaponModifier;
 	}
 	else if( attackerPhysAtkStat + kAttackMidPoint >= defenderPhysDefStat )
 	{
 		// Weaker, but not terribly so (<mid)
 		attackerBonus = 0u + ( attackerPhysAtkStat + kAttackMidPoint ) - defenderPhysDefStat;
-		weaponBonus = 0u + attackStrength * 3;
+		weaponBonus = 0u + attackStrength * kNormalWeaponModifier;
 	}
 	else
 	{
 		// Heavily outclassed (<2xmid)
 		attackerBonus = 0;
-		weaponBonus = attackStrength;
+		weaponBonus = 0u + attackStrength * kWeakWeaponModifier;
 	}
 
-
-	RF_ASSERT( attackerFieldModifier >= -kMaxFieldModiferOffset && attackerFieldModifier <= kMaxFieldModiferOffset );
-	attackerFieldModifier = math::Clamp<SimDelta>( -kMaxFieldModiferOffset, attackerFieldModifier, kMaxFieldModiferOffset );
-	RF_ASSERT( defenderFieldModifier >= -kMaxFieldModiferOffset && defenderFieldModifier <= kMaxFieldModiferOffset );
-	defenderFieldModifier = math::Clamp<SimDelta>( -kMaxFieldModiferOffset, defenderFieldModifier, kMaxFieldModiferOffset );
 
 	// Elemental portion
-	static constexpr SimVal kMaxColorModifierOffset = kMaxFieldModiferOffset + 1;
-	SimDelta colorModifier = 0;
-	if( color == SimColor::Unrelated )
+	static constexpr SimVal kUnrelatedBonus = 1;
+	static constexpr SimVal kClashBonus = kFieldSize;
+	static constexpr SimVal kMaxFieldModifierOffset = kFieldSize + kClashBonus;
+	SimDelta fieldModifier = 0;
+	for( SimColor const& atk : attackerField )
 	{
-		// Defender has no protection
-		colorModifier = attackerFieldModifier;
+		switch( atk )
+		{
+			case SimColor::Unrelated:
+			{
+				// No effect
+				break;
+			}
+			case SimColor::Same:
+			{
+				// In favor
+				if( attackVsTarget == SimColor::Same )
+				{
+					// Negated by defender
+				}
+				else
+				{
+					// Bonus
+					fieldModifier++;
+				}
+				break;
+			}
+			case SimColor::Clash:
+			{
+				// Penalty
+				fieldModifier--;
+				break;
+			}
+			default:
+				RF_DBGFAIL();
+				break;
+		}
 	}
-	else if( color == SimColor::Same )
+	switch( attackVsTarget )
 	{
-		// Defender can resist
-		colorModifier = attackerFieldModifier - ( defenderFieldModifier + 1 );
-	}
-	else
-	{
-		RF_ASSERT( color == SimColor::Clash );
-		colorModifier = 0;
+		case SimColor::Unrelated:
+		{
+			// Favor attacker
+			fieldModifier += kUnrelatedBonus;
+			break;
+		}
+		case SimColor::Same:
+		{
+			// No effect
+			break;
+		}
+		case SimColor::Clash:
+		{
+			// Heavily favor attacker
+			fieldModifier += kClashBonus;
+			break;
+		}
+		default:
+			RF_DBGFAIL();
+			break;
 	}
 
 
-	RF_ASSERT( attackerBonus < kMaxAttackerBonus );
+	RF_ASSERT( attackerBonus <= kMaxAttackerBonus );
 	attackerBonus = math::Clamp<SimVal>( 0u, attackerBonus, kMaxAttackerBonus );
-	RF_ASSERT( weaponBonus < kMaxWeaponBonus );
+	RF_ASSERT( weaponBonus <= kMaxWeaponBonus );
 	weaponBonus = math::Clamp<SimVal>( 0u, weaponBonus, kMaxWeaponBonus );
-	RF_ASSERT( colorModifier >= -kMaxColorModifierOffset && colorModifier <= kMaxColorModifierOffset );
-	colorModifier = math::Clamp<SimDelta>( -kMaxColorModifierOffset, colorModifier, kMaxColorModifierOffset );
+	RF_ASSERT( fieldModifier >= -kMaxFieldModifierOffset && fieldModifier <= kMaxFieldModifierOffset );
+	fieldModifier = math::Clamp<SimDelta>( -kMaxFieldModifierOffset, fieldModifier, kMaxFieldModifierOffset );
 
 	// Formulization
-	static_assert( kMaxAttackerBonus == 20, "Check balance" );
-	static_assert( kMaxWeaponBonus == 20, "Check balance" );
-	static_assert( kMaxColorModifierOffset == 16, "Check balance" );
-	int64_t const rawAttack =
-		weaponBonus +
-		attackerBonus +
-		math::Clamp<SimDelta>( -4, colorModifier, 4 );
-
-	// No matter how bad your situation, the raw damage from the weapon itself
-	//  should be able to make it through
-	static constexpr int64_t kMaxUnscaledDamage = 50;
-	RF_ASSERT( rawAttack <= kMaxUnscaledDamage );
-	int64_t const applicableAttack = math::Clamp<int64_t>( weaponBonus, rawAttack, kMaxUnscaledDamage );
-
-	// Clashes scale up the final damage
-	int64_t clashBonus = 0;
-	if( color == SimColor::Clash )
 	{
-		clashBonus = applicableAttack / 2;
+		// Attacker attacks with weapon as baseline
+		static_assert( kMaxAttackerBonus == 15, "Check balance" );
+		static_assert( kMaxWeaponBonus == 20, "Check balance" );
+		SimVal const rawAttack =
+			0u +
+			weaponBonus +
+			attackerBonus;
+		static constexpr SimVal kMaxUnscaledDamage = kMaxAttackerBonus + kMaxWeaponBonus;
+		static_assert( kMaxUnscaledDamage == 35, "Check balance" );
+		RF_ASSERT( rawAttack <= kMaxUnscaledDamage );
+
+		static_assert( kMaxFieldModifierOffset == 10, "Check balance" );
+		SimDelta fieldBonus = 0;
+		if( fieldModifier > 0 )
+		{
+			// Upscale damage
+			fieldBonus = ( rawAttack * fieldModifier ) / 20;
+			RF_ASSERT( fieldBonus >= 0 );
+			RF_ASSERT( fieldBonus <= rawAttack );
+		}
+		else if( fieldModifier < 0 )
+		{
+			// Downscale damage
+			fieldBonus = -1 + ( rawAttack * fieldModifier ) / 20;
+			RF_ASSERT( fieldBonus <= 0 );
+			RF_ASSERT( fieldBonus >= -rawAttack );
+		}
+		else
+		{
+			// No bonus
+			RF_ASSERT( fieldModifier == 0 );
+			fieldBonus = 0;
+		}
+		SimVal const scaledAttack = 0u + rawAttack + fieldBonus;
+		RF_ASSERT( scaledAttack >= 0 );
+
+		// No matter how bad your situation, the raw damage from the weapon itself
+		//  should be able to make it through
+		static constexpr SimVal kMaxScaledDamage = kMaxUnscaledDamage * 2;
+		static_assert( kMaxScaledDamage == 70, "Check balance" );
+		RF_ASSERT( scaledAttack <= kMaxScaledDamage );
+		SimVal const applicableAttack = math::Clamp<SimVal>( weaponBonus, scaledAttack, kMaxScaledDamage );
+		RF_ASSERT( applicableAttack > 0 );
+
+		return applicableAttack;
 	}
-
-	static constexpr int64_t kMaxFinalDamage = 75;
-	int64_t const finalAttack = applicableAttack + clashBonus;
-	RF_ASSERT( finalAttack <= kMaxFinalDamage );
-	return math::integer_cast<SimVal>( math::Clamp<int64_t>( weaponBonus, finalAttack, kMaxFinalDamage ) );
-}
-
-
-
-CombatEngine::SimDelta CombatEngine::LoCalcFieldModifier( FieldBonuses const& fieldBonuses ) const
-{
-	SimDelta retVal = 0;
-	for( SimDelta const& fieldBonus : fieldBonuses )
-	{
-		RF_ASSERT( fieldBonus >= -kMaxFieldBonusOffset && fieldBonus <= kMaxFieldBonusOffset );
-		retVal += math::Clamp<SimDelta>( -kMaxFieldBonusOffset, fieldBonus, kMaxFieldBonusOffset );
-	}
-	RF_ASSERT( retVal >= -kMaxFieldModiferOffset && retVal <= kMaxFieldModiferOffset );
-	return retVal;
 }
 
 
