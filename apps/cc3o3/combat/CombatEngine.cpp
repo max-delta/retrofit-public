@@ -45,6 +45,9 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength )
 
 CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
+	static constexpr SimVal kMaxTechniq = 10u;
+	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
+
 	SimVal const minNeeded = LoCalcMinComboToHit( defenderBalanceStat );
 	SimVal const maxMeter = 0u + minNeeded + attackAccuracy;
 	SimVal const unchecked = 0u + attackAccuracy + attackerTechniqStat;
@@ -64,6 +67,9 @@ CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, S
 
 CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
+	static constexpr SimVal kMaxTechniq = 10u;
+	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
+
 	SimVal const minNeeded = LoCalcMinComboToHit( defenderBalanceStat );
 	SimVal const maxMeter = 0u + minNeeded + attackAccuracy;
 	SimVal const unchecked = 0u + attackerComboMeter + attackAccuracy + attackerTechniqStat;
@@ -83,16 +89,22 @@ CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComb
 
 CombatEngine::SimVal CombatEngine::LoCalcMinComboToHit( SimVal defenderBalanceStat ) const
 {
-	if( defenderBalanceStat == 0 )
+	static constexpr SimVal kMaxBalance = 10u;
+	defenderBalanceStat = math::Clamp<SimVal>( 0u, defenderBalanceStat, kMaxBalance );
+
+	if( defenderBalanceStat <= 0 )
 	{
+		// No balance, everything hits
 		return 0;
 	}
 	else if( defenderBalanceStat <= 2 )
 	{
+		// Low/normal balance
 		return defenderBalanceStat * 2u;
 	}
 	else
 	{
+		// Strong balance
 		return defenderBalanceStat + 2u;
 	}
 }
@@ -275,9 +287,8 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 		static constexpr SimVal kMaxFinalAttack = ( kMaxScaledDamage * 2u ) / 3u;
 		static_assert( kMaxFinalAttack == 73, "Check balance" );
 		SimVal const finalAttack = ( applicableAttack * 2u ) / 3u;
-		RF_ASSERT( finalAttack > 0 );
 		RF_ASSERT( finalAttack <= kMaxFinalAttack );
-		return math::Clamp<SimVal>( 0, finalAttack, kMaxFinalAttack );
+		return math::Clamp<SimVal>( 1, finalAttack, kMaxFinalAttack );
 	}
 }
 
