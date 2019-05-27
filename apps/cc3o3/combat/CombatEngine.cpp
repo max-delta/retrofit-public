@@ -119,6 +119,7 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 	static constexpr SimVal kCriticalWeaponModifier = 4;
 	static constexpr SimVal kNormalWeaponModifier = 3;
 	static constexpr SimVal kWeakWeaponModifier = 2;
+	static constexpr SimVal kIneffectiveWeaponModifier = 1;
 	SimVal attackerBonus = 0;
 	SimVal weaponBonus = 0;
 	if( attackerPhysAtkStat > defenderPhysDefStat + kAttackMidPoint * 2 )
@@ -143,13 +144,13 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 	{
 		// Weaker, but not terribly so (<mid)
 		attackerBonus = 0u + ( attackerPhysAtkStat + kAttackMidPoint ) - defenderPhysDefStat;
-		weaponBonus = 0u + attackStrength * kNormalWeaponModifier;
+		weaponBonus = 0u + attackStrength * kWeakWeaponModifier;
 	}
 	else
 	{
 		// Heavily outclassed (<2xmid)
 		attackerBonus = 0;
-		weaponBonus = 0u + attackStrength * kWeakWeaponModifier;
+		weaponBonus = 0u + attackStrength * kIneffectiveWeaponModifier;
 	}
 
 
@@ -231,10 +232,10 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 		static_assert( kMaxWeaponBonus == 20, "Check balance" );
 		SimVal const rawAttack =
 			0u +
-			weaponBonus +
-			attackerBonus;
-		static constexpr SimVal kMaxUnscaledDamage = kMaxAttackerBonus + kMaxWeaponBonus;
-		static_assert( kMaxUnscaledDamage == 35, "Check balance" );
+			attackerBonus +
+			weaponBonus * 2u;
+		static constexpr SimVal kMaxUnscaledDamage = kMaxAttackerBonus + kMaxWeaponBonus * 2;
+		static_assert( kMaxUnscaledDamage == 55, "Check balance" );
 		RF_ASSERT( rawAttack <= kMaxUnscaledDamage );
 
 		static_assert( kMaxFieldModifierOffset == 10, "Check balance" );
@@ -265,12 +266,18 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 		// No matter how bad your situation, the raw damage from the weapon itself
 		//  should be able to make it through
 		static constexpr SimVal kMaxScaledDamage = kMaxUnscaledDamage * 2;
-		static_assert( kMaxScaledDamage == 70, "Check balance" );
+		static_assert( kMaxScaledDamage == 110, "Check balance" );
 		RF_ASSERT( scaledAttack <= kMaxScaledDamage );
 		SimVal const applicableAttack = math::Clamp<SimVal>( weaponBonus, scaledAttack, kMaxScaledDamage );
 		RF_ASSERT( applicableAttack > 0 );
 
-		return applicableAttack;
+		// Final value transform
+		static constexpr SimVal kMaxFinalAttack = ( kMaxScaledDamage * 2u ) / 3u;
+		static_assert( kMaxFinalAttack == 73, "Check balance" );
+		SimVal const finalAttack = ( applicableAttack * 2u ) / 3u;
+		RF_ASSERT( finalAttack > 0 );
+		RF_ASSERT( finalAttack <= kMaxFinalAttack );
+		return math::Clamp<SimVal>( 0, finalAttack, kMaxFinalAttack );
 	}
 }
 
