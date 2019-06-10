@@ -238,6 +238,7 @@ Status effects:
 
 Elements:
 * ?:?, transfer current element guage level to single target
+* ?:?, colorless elements that use physical damage logic
 * ?:?, reveal trap (item?)
 * ?:?, tutor for known element, replaces self, doesn't cast it (item? reveals?)
 * ?:?, tutor for unequipped accessory and re-equip (item?)
@@ -253,6 +254,13 @@ Elements:
 * ?:?, spell copy???
 * ?:?, grant prof???
 * ?:?, global color shift???
+* ?:?, remove attack ally restrictions???
+* ?:?, remove heal enemy restrictions???
+* ?:?, global actions cost more stamina???
+* ?:?, global attacks cost more stamina???
+* ?:?, global casting costs more stamina???
+* ?:?, global casting causes debuffs???
+* ?:?, global casting causes damage???
 * ?:?, trap that changes color of enemy spell??? Lower level???
 * ?:?, buff that lower health means more damage??? (higher health does less???)
 * ?:?, target's next spell is all colors, benefits from all proficiencies, ignores all deficiencies, hits all weaknesses, ignores all resistances???
