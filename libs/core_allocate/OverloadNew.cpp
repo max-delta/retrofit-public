@@ -8,7 +8,7 @@
 
 
 // MSVC has malformed signatures for 'new' operators
-#if defined( RF_PLATFORM_MSVC ) && _MSC_VER == 1916
+#if defined( RF_PLATFORM_MSVC ) && ( _MSC_VER >= 1916 || _MSC_VER <= 1921 )
 #	define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES __pragma( warning( suppress : 28251 ) )
 #else
 #	define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES
