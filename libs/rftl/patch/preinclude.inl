@@ -24,7 +24,7 @@
 
 #if \
 	defined(_MSC_VER) && \
-	(_MSC_VER == 1916) && \
+	( _MSC_VER >= 1916 || _MSC_VER <= 1921 ) && \
 	_HAS_EXCEPTIONS == 0 && \
 	!defined(RFTL_ADD_MISSING_NEW_EXCEPTIONS)
 #define RFTL_ADD_MISSING_NEW_EXCEPTIONS
