@@ -1,38 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <ImportGroup Label="PropertySheets" />
+
   <PropertyGroup Label="UserMacros">
     <RFRootDir>$(SolutionDir)</RFRootDir>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(Platform)'!='LLVM_x64'">
+    <!--All on by default, then manipulated by StaticAnalysis.h-->
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+
     <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.2.0) -->
     <RunCodeAnalysis>false</RunCodeAnalysis>
+
+    <!--If we bothered to turn a rule on, yell about it-->
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
+      <!--It's us!-->
       <PreprocessorDefinitions>RETROFIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <!--TODO: Document all these-->
       <DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+
+      <!--If we bothered to turn a warning on, yell about it-->
       <TreatWarningAsError>true</TreatWarningAsError>
+
+      <!--All warnings on, unless explicitly disabled-->
       <WarningLevel>EnableAllWarnings</WarningLevel>
+
+      <!--Various top-level includes, kept to a minimum-->
       <AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+
     <ClCompile Condition="'$(Platform)'!='LLVM_x64'">
+      <!--PREfast is the undocumented (yet publicly known) internal name for
+        the C++ static code analysis logic-->
       <EnablePREfast>true</EnablePREfast>
+
+      <!--Reduce warning level in crappy MS headers, determnied via angle
+        bracket include directives-->
       <AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
+
+      <!--This configures static analysis rules-->
       <ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
+
     <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
+      <!--Treat these as system headers (not our code)-->
       <AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+
       <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
       <AdditionalOptions>
         -Werror=float-equal
         %(AdditionalOptions)
       </AdditionalOptions>
     </ClCompile>
+
     <Link />
   </ItemDefinitionGroup>
+
   <ItemGroup>
     <BuildMacro Include="RFRootDir">
       <Value>$(RFRootDir)</Value>
