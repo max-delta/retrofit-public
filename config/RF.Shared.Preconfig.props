@@ -4,7 +4,7 @@
     <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
     <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
     <UseDebugLibraries Condition="'$(Configuration)'=='Retail'">false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization Condition="'$(Configuration)'=='Release'">true</WholeProgramOptimization>
     <WholeProgramOptimization Condition="'$(Configuration)'=='Retail'">true</WholeProgramOptimization>
     <WholeProgramOptimization Condition="'$(Platform)'=='LLVM_x64'">false</WholeProgramOptimization>

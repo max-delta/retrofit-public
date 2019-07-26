@@ -6,7 +6,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Platform)'!='LLVM_x64'">
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.2.0) -->
+    <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
   </PropertyGroup>
   <ItemDefinitionGroup>

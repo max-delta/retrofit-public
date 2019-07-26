@@ -102,6 +102,9 @@ public:
 	Value( Value const& ) = default;
 	Value& operator=( Value const& ) = default;
 
+	// This is a very explicit equals, and will not do conversions
+	bool operator==( Value const& rhs ) const;
+
 	Type GetStoredType() const;
 	char const* GetStoredTypeName() const;
 	static char const* GetTypeName( Type type );
