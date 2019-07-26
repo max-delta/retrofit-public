@@ -81,8 +81,8 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 			if( gGraphics != nullptr )
 			{
 				win32::RECT rect;
-				bool const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
-				RF_ASSERT( success );
+				win32::BOOL const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
+				RF_ASSERT( success == win32::TRUE );
 				gGraphics->ResizeSurface(
 					RF::math::integer_cast<uint16_t>( rect.right ),
 					RF::math::integer_cast<uint16_t>( rect.bottom ) );
