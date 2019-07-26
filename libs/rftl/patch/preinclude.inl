@@ -20,11 +20,18 @@
 	#pragma warning(push)
 	#pragma warning(disable : 4355) // <future> has invalid use of 'this' ptr
 	#pragma warning(disable : 4548) // <future> has some broken macro invocation
+#elif \
+	defined(_MSC_VER) && \
+	(_MSC_VER == 1922) && \
+	!defined(RFTL_DISBALE_BAD_MSVC_WARNINGS)
+#define RFTL_DISBALE_BAD_MSVC_WARNINGS
+	#pragma warning(push)
+	#pragma warning(disable : 4355) // <thread> has invalid use of 'this' ptr
 #endif
 
 #if \
 	defined(_MSC_VER) && \
-	( _MSC_VER >= 1916 || _MSC_VER <= 1921 ) && \
+	( _MSC_VER >= 1916 && _MSC_VER <= 1922 ) && \
 	_HAS_EXCEPTIONS == 0 && \
 	!defined(RFTL_ADD_MISSING_NEW_EXCEPTIONS)
 #define RFTL_ADD_MISSING_NEW_EXCEPTIONS

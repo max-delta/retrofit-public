@@ -19,4 +19,11 @@
 #undef RFTL_DISBALE_BAD_MSVC_WARNINGS
 	#pragma warning(suppress : 5031) // 'push' came from different file
 	#pragma warning(pop)
+#elif \
+	defined(_MSC_VER) && \
+	(_MSC_VER == 1922) && \
+	defined(RFTL_DISBALE_BAD_MSVC_WARNINGS)
+#undef RFTL_DISBALE_BAD_MSVC_WARNINGS
+	#pragma warning(suppress : 5031) // 'push' came from different file
+	#pragma warning(pop)
 #endif

@@ -211,6 +211,36 @@ Value::Value( Type type, void const* bytes )
 }
 
 
+bool Value::operator==( Value const& rhs ) const
+{
+	if( GetStoredType() != rhs.GetStoredType() )
+	{
+		return false;
+	}
+
+	size_t const numBytes = GetNumBytes();
+	if( numBytes != rhs.GetNumBytes() )
+	{
+		return false;
+	}
+
+	uint8_t const* const leftBytes = static_cast<uint8_t const*>( GetBytes() );
+	uint8_t const* const rightBytes = static_cast<uint8_t const*>( rhs.GetBytes() );
+	RF_ASSERT( leftBytes != nullptr );
+	RF_ASSERT( rightBytes != nullptr );
+	for( size_t i = 0; i < numBytes; i++ )
+	{
+		uint8_t const& leftByte = leftBytes[i];
+		uint8_t const& rightByte = rightBytes[i];
+		if(leftByte != rightByte)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 
 Value::Type Value::GetStoredType() const
 {
