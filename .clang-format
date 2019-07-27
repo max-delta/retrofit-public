@@ -1,7 +1,7 @@
 #https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 #############################
-# Known issues as of v5.0
+# Known issues as of v8.0
 #############################
 #
 # Lambdas are a disaster
@@ -12,6 +12,15 @@
 #
 # Namespaces eat newlines
 ## https://reviews.llvm.org/rL330324
+## (Fixed between 5.0 and 8.0?)
+#
+# There's some new issue past 5.0 where indenting the parameters in the call
+#  to a constructor in an initializer list of another constructor starts
+#  putting in random spaces, because why the fuck not? If you set
+#  ContinuationIndentWidth to 2, it fixes it, but then everything else breaks.
+#
+# Clang-format is still generally a pile of shit that never seems to get
+#  updates, and patches just sit around forever without getting traction
 #
 
 BasedOnStyle : WebKit
@@ -55,15 +64,15 @@ BreakBeforeBinaryOperators : None
 BreakBeforeBraces : Custom # But basically Allman, exception for namespaces
 BreakBeforeTernaryOperators : false
 BreakConstructorInitializers : BeforeComma
-#BreakInheritanceList : BeforeComma
+BreakInheritanceList : BeforeComma
 BreakStringLiterals : false
 ColumnLimit : 0 # But prefer 80 for comments and 120 for code
 #CommentPragmas
 CompactNamespaces : true
 ConstructorInitializerAllOnOneLineOrOnePerLine : true
-#ConstructorInitializerIndentWidth
-#ContinuationIndentWidth
-#Cpp11BracedListStyle
+ConstructorInitializerIndentWidth : 4
+ContinuationIndentWidth : 4
+Cpp11BracedListStyle : false # This fucks up spacing if it's on
 DerivePointerAlignment : false
 DisableFormat : false
 #ExperimentalAutoDetectBinPacking
@@ -74,7 +83,7 @@ IncludeBlocks : Preserve
 #IncludeIsMainRegex
 IndentCaseLabels : true
 IndentPPDirectives : AfterHash # But want BeforeHash (bug 36019)
-#IndentWidth
+IndentWidth : 4
 IndentWrappedFunctionNames : false
 #JavaImportGroups
 #JavaScriptQuotes
@@ -105,11 +114,11 @@ SortUsingDeclarations : false
 SpaceAfterCStyleCast : false
 SpaceAfterTemplateKeyword : false
 SpaceBeforeAssignmentOperators : true
-#SpaceBeforeCpp11BracedList : false
-#SpaceBeforeCtorInitializerColon : true
-#SpaceBeforeInheritanceColon : true
+SpaceBeforeCpp11BracedList : false
+SpaceBeforeCtorInitializerColon : true
+SpaceBeforeInheritanceColon : true
 SpaceBeforeParens : false
-#SpaceBeforeRangeBasedForLoopColon : false
+SpaceBeforeRangeBasedForLoopColon : true
 SpaceInEmptyParentheses : false
 SpacesBeforeTrailingComments : 1
 SpacesInAngles : false
