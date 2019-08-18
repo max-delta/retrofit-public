@@ -12,7 +12,7 @@ namespace RF { namespace component {
 ObjectManager::ObjectManager( ManagerIdentifier identifier )
 	: mIdentifier( identifier )
 {
-	//
+	RF_ASSERT( identifier != kInvalidManagerIdentifier );
 }
 
 
@@ -24,8 +24,32 @@ ManagerIdentifier ObjectManager::GetManagerIdentifier() const
 
 
 
+ManagerIdentifier ObjectManager::GetManagerIdentifierFromObjectIdentifier( ObjectIdentifier identifier )
+{
+	static_assert( sizeof( ObjectIdentifier ) == 8, "Unexpected size" );
+	static_assert( sizeof( ManagerIdentifier ) == 2, "Unexpected size" );
+	static constexpr size_t kBytesToShift = sizeof( ObjectIdentifier ) - sizeof( ManagerIdentifier );
+	static_assert( kBytesToShift == 6, "Bad math" );
+	static constexpr size_t kBitsToShift = kBytesToShift * 8;
+	static_assert( kBitsToShift == 48, "Bad math" );
+	return static_cast<ManagerIdentifier>( identifier >> kBitsToShift );
+}
+
+
+
 bool ObjectManager::IsValidObject( ObjectIdentifier identifier ) const
 {
+	if( identifier == kInvalidObjectIdentifier )
+	{
+		return false;
+	}
+
+	if( GetManagerIdentifierFromObjectIdentifier( identifier ) != GetManagerIdentifier() )
+	{
+		// Owned by a different manager
+		return false;
+	}
+
 	RF_TODO_BREAK();
 	return false;
 }
@@ -58,6 +82,16 @@ bool ObjectManager::RemoveObject( ObjectIdentifier identifier )
 
 bool ObjectManager::IsValidComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const
 {
+	if( IsValidObject( identifier ) == false )
+	{
+		return false;
+	}
+
+	if( componentType == kInvalidResolvedComponentType )
+	{
+		return false;
+	}
+
 	RF_TODO_BREAK();
 	return false;
 }
