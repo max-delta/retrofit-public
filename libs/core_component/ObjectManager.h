@@ -27,6 +27,7 @@ public:
 	// Manager identifiers used to detect handles being improperly shared
 	//  between different managers
 	ManagerIdentifier GetManagerIdentifier() const;
+	static ManagerIdentifier GetManagerIdentifierFromObjectIdentifier( ObjectIdentifier identifier );
 
 	// Object management
 	bool IsValidObject( ObjectIdentifier identifier ) const;
