@@ -28,12 +28,26 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="ComponentFwd.h" />
+    <ClInclude Include="ComponentRef.h" />
+    <ClInclude Include="ObjectManager.h" />
+    <ClInclude Include="ObjectRef.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TypedObjectManager.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentRef.cpp" />
+    <ClCompile Include="ObjectManager.cpp" />
+    <ClCompile Include="ObjectRef.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TypedObjectManager.cpp" />
+    <ClCompile Include="View.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TypedObjectManager.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
