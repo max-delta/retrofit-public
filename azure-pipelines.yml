@@ -6,28 +6,51 @@
 trigger:
 - master
 
+strategy:
+  matrix:
+
+    x86-debug:
+      buildPlatform: 'x86'
+      buildConfiguration: 'Debug'
+    x86-release:
+      buildPlatform: 'x86'
+      buildConfiguration: 'Release'
+    x86-retail:
+      buildPlatform: 'x86'
+      buildConfiguration: 'Retail'
+
+    x64-debug:
+      buildPlatform: 'x64'
+      buildConfiguration: 'Debug'
+    x64-release:
+      buildPlatform: 'x64'
+      buildConfiguration: 'Release'
+    x64-retail:
+      buildPlatform: 'x64'
+      buildConfiguration: 'Retail'
+
+    arm-debug:
+      buildPlatform: 'ARM'
+      buildConfiguration: 'Debug'
+    arm-release:
+      buildPlatform: 'ARM'
+      buildConfiguration: 'Release'
+    arm-retail:
+      buildPlatform: 'ARM'
+      buildConfiguration: 'Retail'
+
+    arm64-debug:
+      buildPlatform: 'ARM64'
+      buildConfiguration: 'Debug'
+    arm64-release:
+      buildPlatform: 'ARM64'
+      buildConfiguration: 'Release'
+    arm64-retail:
+      buildPlatform: 'ARM64'
+      buildConfiguration: 'Retail'
+
 pool:
   vmImage: 'windows-latest'
-
-strategy:
-  matrix:
-    x86:
-      buildPlatform: 'x86'
-    x64:
-      buildPlatform: 'x64'
-    arm:
-      buildPlatform: 'ARM'
-    arm64:
-      buildPlatform: 'ARM64'
-
-strategy:
-  matrix:
-    debug:
-      buildConfiguration: 'Debug'
-    release:
-      buildConfiguration: 'Release'
-    retail:
-      buildConfiguration: 'Retail'
 
 variables:
   solution: 'retrofit.sln'
