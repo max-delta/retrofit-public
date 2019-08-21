@@ -9,10 +9,28 @@ trigger:
 pool:
   vmImage: 'windows-latest'
 
+strategy:
+  matrix:
+    x86:
+      buildPlatform: 'x86'
+    x64:
+      buildPlatform: 'x64'
+    arm:
+      buildPlatform: 'ARM'
+    arm64:
+      buildPlatform: 'ARM64'
+
+strategy:
+  matrix:
+    debug:
+      buildConfiguration: 'Debug'
+    release:
+      buildConfiguration: 'Release'
+    retail:
+      buildConfiguration: 'Retail'
+
 variables:
   solution: 'retrofit.sln'
-  buildPlatform: 'x64'
-  buildConfiguration: 'Release'
 
 steps:
 - task: NuGetToolInstaller@1
