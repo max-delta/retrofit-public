@@ -5,21 +5,32 @@
 #include "core_component/ComponentRef.h"
 #include "core_component/View.h"
 
+#include "core_math/math_bits.h"
+
 
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
 
-ObjectManager::ObjectManager( ManagerIdentifier identifier )
-	: mIdentifier( identifier )
+ObjectManager::ObjectManager( ManagerIdentifier identifier, ScopeIdentifier generationScope )
+	: mManagerIdentifier( identifier )
+	, mGenerationScope( generationScope )
 {
 	RF_ASSERT( identifier != kInvalidManagerIdentifier );
 }
 
 
 
+ObjectManager::ObjectManager( ManagerIdentifier identifier )
+	: ObjectManager( identifier, kDefaultScopeIdentifier )
+{
+	//
+}
+
+
+
 ManagerIdentifier ObjectManager::GetManagerIdentifier() const
 {
-	return mIdentifier;
+	return mManagerIdentifier;
 }
 
 
@@ -37,6 +48,30 @@ ManagerIdentifier ObjectManager::GetManagerIdentifierFromObjectIdentifier( Objec
 
 
 
+ScopeIdentifier ObjectManager::GetGenerationScope() const
+{
+	return mGenerationScope;
+}
+
+
+
+ScopeIdentifier ObjectManager::GetGenerationScopeFromObjectIdentifier( ObjectIdentifier identifier )
+{
+	static_assert( sizeof( ObjectIdentifier ) == 8, "Unexpected size" );
+	static_assert( sizeof( ScopeIdentifier ) == 2, "Unexpected size" );
+	static_assert( sizeof( ManagerIdentifier ) == 2, "Unexpected size" );
+
+	static constexpr size_t kBytesToShiftScope = sizeof( ObjectIdentifier ) - ( sizeof( ManagerIdentifier ) + sizeof( ScopeIdentifier ) );
+	static_assert( kBytesToShiftScope == 4, "Bad math" );
+	static constexpr size_t kBitsToShiftScope = kBytesToShiftScope * 8;
+	static_assert( kBitsToShiftScope == 32, "Bad math" );
+
+	ObjectIdentifier const mask = static_cast<ObjectIdentifier>( math::GetAllBitsSet<ScopeIdentifier>() ) << kBitsToShiftScope;
+	return static_cast<ScopeIdentifier>( ( identifier & mask ) >> kBitsToShiftScope );
+}
+
+
+
 bool ObjectManager::IsValidObject( ObjectIdentifier identifier ) const
 {
 	if( identifier == kInvalidObjectIdentifier )
@@ -50,32 +85,65 @@ bool ObjectManager::IsValidObject( ObjectIdentifier identifier ) const
 		return false;
 	}
 
-	RF_TODO_BREAK();
-	return false;
+	if( DoesObjectExistInternal( identifier ) == false )
+	{
+		// Doesn't currrently exist
+		return false;
+	}
+
+	return true;
 }
 
 
 
 ObjectRef ObjectManager::GetObject( ObjectIdentifier identifier ) const
 {
-	RF_TODO_BREAK();
-	return ObjectRef();
+	if( IsValidObject( identifier ) == false )
+	{
+		return ObjectRef();
+	}
+
+	ObjectRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = identifier;
+	return retVal;
 }
 
 
 
-ObjectRef ObjectManager::AddObject()
+MutableObjectRef ObjectManager::GetMutableObject( ObjectIdentifier identifier )
 {
-	RF_TODO_BREAK();
-	return ObjectRef();
+	if( IsValidObject( identifier ) == false )
+	{
+		return MutableObjectRef();
+	}
+
+	MutableObjectRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = identifier;
+	return retVal;
+}
+
+
+
+MutableObjectRef ObjectManager::AddObject()
+{
+	MutableObjectRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = GenerateNewObjectIdentifier();
+
+	// Newly created id, should never fail
+	bool const success = CreateNewObjectInternal( retVal.mIdentifier );
+	RF_ASSERT( success );
+
+	return retVal;
 }
 
 
 
 bool ObjectManager::RemoveObject( ObjectIdentifier identifier )
 {
-	RF_TODO_BREAK();
-	return false;
+	return RemoveExistingObjectInternal( identifier );
 }
 
 
@@ -106,10 +174,18 @@ ComponentRef ObjectManager::GetComponent( ObjectIdentifier identifier, ResolvedC
 
 
 
-ComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
+MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const
 {
 	RF_TODO_BREAK();
-	return ComponentRef();
+	return MutableComponentRef();
+}
+
+
+
+MutableComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
+{
+	RF_TODO_BREAK();
+	return MutableComponentRef();
 }
 
 
@@ -152,4 +228,151 @@ ObjectManager::InternalStateIteration ObjectManager::GetInternalStateIteration()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void ObjectManager::RevState()
+{
+	mInternalStateIteration.Generate();
+}
+
+
+
+ObjectIdentifier ObjectManager::CompositeObjectIdentifier(
+	ManagerIdentifier managerIdentifier,
+	ScopeIdentifier scopeIdentifier,
+	ScopedObjectIdentifier scopedIdentifier )
+{
+	static_assert( sizeof( ObjectIdentifier ) == 8, "Unexpected size" );
+	static_assert( sizeof( ScopedObjectIdentifier ) == 4, "Unexpected size" );
+	static_assert( sizeof( ScopeIdentifier ) == 2, "Unexpected size" );
+	static_assert( sizeof( ManagerIdentifier ) == 2, "Unexpected size" );
+
+	static constexpr size_t kBytesToShiftManager = sizeof( ObjectIdentifier ) - sizeof( ManagerIdentifier );
+	static_assert( kBytesToShiftManager == 6, "Bad math" );
+	static constexpr size_t kBitsToShiftManager = kBytesToShiftManager * 8;
+	static_assert( kBitsToShiftManager == 48, "Bad math" );
+	static_assert( sizeof( ScopedObjectIdentifier ) + sizeof( ScopeIdentifier ) <= kBytesToShiftManager, "Unexpected size" );
+
+	static constexpr size_t kBytesToShiftScope = sizeof( ObjectIdentifier ) - ( sizeof( ManagerIdentifier ) + sizeof( ScopeIdentifier ) );
+	static_assert( kBytesToShiftScope == 4, "Bad math" );
+	static constexpr size_t kBitsToShiftScope = kBytesToShiftScope * 8;
+	static_assert( kBitsToShiftScope == 32, "Bad math" );
+
+	return ( static_cast<ObjectIdentifier>( managerIdentifier ) << kBitsToShiftManager ) |
+		( static_cast<ObjectIdentifier>( scopeIdentifier ) << kBitsToShiftScope ) |
+		scopedIdentifier;
+}
+
+
+
+ObjectIdentifier ObjectManager::GenerateNewObjectIdentifier()
+{
+	// NOTE: Intentionally not rev'ing state here, since nothing dangerous
+	//  actually changes just from incrementing generation ID
+
+	return CompositeObjectIdentifier( GetManagerIdentifier(), mGenerationScope, mObjectIDGenerator.Generate() );
+}
+
+
+
+bool ObjectManager::DoesObjectExistInternal( ObjectIdentifier identifier ) const
+{
+	return mValidObjects.count( identifier ) != 0;
+}
+
+
+
+bool ObjectManager::CreateNewObjectInternal( ObjectIdentifier identifier )
+{
+	bool const newAdd = mValidObjects.emplace( identifier ).second;
+	RF_ASSERT( newAdd );
+
+	if( newAdd )
+	{
+		RevState();
+		return true;
+	}
+	return false;
+}
+
+
+
+bool ObjectManager::RemoveExistingObjectInternal( ObjectIdentifier identifier )
+{
+	size_t const numRemoved = mValidObjects.erase( identifier );
+	bool const wasRemoved = numRemoved != 0;
+	RF_ASSERT( wasRemoved );
+
+	if( wasRemoved )
+	{
+		RevState();
+		return true;
+	}
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+ObjectRef ObjectManager::ConversionHelpers::CreateObjectRef( MutableObjectRef const& object )
+{
+	ObjectRef retVal;
+	retVal.mManager = object.mManager;
+	retVal.mIdentifier = object.mIdentifier;
+	return retVal;
+}
+
+
+
+ObjectRef ObjectManager::ConversionHelpers::CreateObjectRef( ComponentRef const& component )
+{
+	ObjectRef retVal;
+	retVal.mManager = component.mManager;
+	retVal.mIdentifier = component.mIdentifier;
+	return retVal;
+}
+
+
+
+MutableObjectRef ObjectManager::ConversionHelpers::CreateMutableObjectRef( MutableComponentRef const& component )
+{
+	MutableObjectRef retVal;
+	retVal.mManager = component.mManager;
+	retVal.mIdentifier = component.mIdentifier;
+	return retVal;
+}
+
+
+
+ComponentRef ObjectManager::ConversionHelpers::CreateComponentRef( MutableComponentRef const& component )
+{
+	ComponentRef retVal;
+	retVal.mManager = component.mManager;
+	retVal.mIdentifier = component.mIdentifier;
+	retVal.mComponentType = component.mComponentType;
+	return retVal;
+}
+
+
+
+ComponentRef ObjectManager::ConversionHelpers::CreateComponentRef( ObjectRef const& object, ResolvedComponentType componentType )
+{
+	ComponentRef retVal;
+	retVal.mManager = object.mManager;
+	retVal.mIdentifier = object.mIdentifier;
+	retVal.mComponentType = componentType;
+	return retVal;
+}
+
+
+
+MutableComponentRef ObjectManager::ConversionHelpers::CreateMutableComponentRef( MutableObjectRef const& object, ResolvedComponentType componentType )
+{
+	MutableComponentRef retVal;
+	retVal.mManager = object.mManager;
+	retVal.mIdentifier = object.mIdentifier;
+	retVal.mComponentType = componentType;
+	return retVal;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 }}
