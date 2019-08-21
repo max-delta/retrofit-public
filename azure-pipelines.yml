@@ -72,3 +72,9 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '_artifacts'
+    ArtifactName: 'artifacts'
+    publishLocation: 'Container'
