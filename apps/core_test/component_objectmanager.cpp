@@ -2,6 +2,7 @@
 
 #include "core_component/ObjectManager.h"
 #include "core_component/ObjectRef.h"
+#include "core_component/ComponentRef.h"
 
 
 namespace RF { namespace component {
@@ -47,6 +48,37 @@ TEST( ObjectManager, BasicAddRemoveObject )
 	latestState = manager.GetInternalStateIteration();
 
 	bool const validPostRemove = manager.IsValidObject( newObj.GetIdentifier() );
+	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_FALSE( validPostRemove );
+}
+
+
+
+TEST( ObjectManager, BasicAddRemoveComponent )
+{
+	static constexpr ManagerIdentifier kMan = 1;
+	static constexpr ScopeIdentifier kScope = 3;
+	static constexpr ResolvedComponentType kCompType = 5;
+
+	ObjectManager manager( kMan, kScope );
+	ObjectRef const newObj = manager.AddObject();
+	ObjectIdentifier const objID = newObj.GetIdentifier();
+	ObjectManager::InternalStateIteration latestState = manager.GetInternalStateIteration();
+
+	ComponentRef const newComp = manager.AddUninitializedComponent( objID, kCompType );
+	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
+	latestState = manager.GetInternalStateIteration();
+	ASSERT_EQ( newComp.GetObject().GetIdentifier(), objID );
+
+	bool const validPostAdd = manager.IsValidComponent( objID, kCompType );
+	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_TRUE( validPostAdd );
+
+	bool const removeSuccess = manager.RemoveComponent( objID, kCompType );
+	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
+	latestState = manager.GetInternalStateIteration();
+
+	bool const validPostRemove = manager.IsValidComponent( objID, kCompType );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_FALSE( validPostRemove );
 }

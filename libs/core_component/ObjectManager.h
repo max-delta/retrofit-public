@@ -4,6 +4,7 @@
 #include "core/idgen.h"
 
 #include "rftl/unordered_set"
+#include "rftl/unordered_map"
 
 
 namespace RF { namespace component {
@@ -22,6 +23,9 @@ public:
 private:
 	using ScopedObjectIdentifier = uint32_t;
 	using ObjectSet = rftl::unordered_set<ObjectIdentifier>;
+	using ComponentInstance = void*;
+	using ComponentInstanceByObjectMap = rftl::unordered_map<ObjectIdentifier, void*>;
+	using ObjectsByComponentTypeMap = rftl::unordered_map<ResolvedComponentType, ComponentInstanceByObjectMap>;
 
 
 	//
@@ -104,6 +108,10 @@ private:
 	bool CreateNewObjectInternal( ObjectIdentifier identifier );
 	bool RemoveExistingObjectInternal( ObjectIdentifier identifier );
 
+	bool DoesComponentExistInternal( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
+	bool CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType );
+	bool RemoveExistingComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType );
+
 
 	//
 	// Private data
@@ -115,6 +123,11 @@ private:
 	NonloopingIDGenerator<ScopedObjectIdentifier> mObjectIDGenerator;
 
 	ObjectSet mValidObjects;
+
+	// Components stored as lookup by type->objectid->instance
+	// TODO: This can likely be made more performant at the expense of being
+	//  far more complicated
+	ObjectsByComponentTypeMap mComponentManifest;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -160,8 +160,7 @@ bool ObjectManager::IsValidComponent( ObjectIdentifier identifier, ResolvedCompo
 		return false;
 	}
 
-	RF_TODO_BREAK();
-	return false;
+	return DoesComponentExistInternal( identifier, componentType );
 }
 
 
@@ -184,16 +183,29 @@ MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identif
 
 MutableComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
 {
-	RF_TODO_BREAK();
-	return MutableComponentRef();
+	if( IsValidObject( identifier ) == false )
+	{
+		return MutableComponentRef();
+	}
+
+	bool const success = CreateNewComponentInternal( identifier, componentType );
+	if( success == false )
+	{
+		return MutableComponentRef();
+	}
+
+	MutableComponentRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = identifier;
+	retVal.mComponentType = componentType;
+	return retVal;
 }
 
 
 
 bool ObjectManager::RemoveComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
 {
-	RF_TODO_BREAK();
-	return false;
+	return RemoveExistingComponentInternal( identifier, componentType );
 }
 
 
@@ -308,6 +320,76 @@ bool ObjectManager::RemoveExistingObjectInternal( ObjectIdentifier identifier )
 		return true;
 	}
 	return false;
+}
+
+
+
+bool ObjectManager::DoesComponentExistInternal( ObjectIdentifier identifier, ResolvedComponentType componentType ) const
+{
+	// Lookup by type
+	ObjectsByComponentTypeMap::const_iterator typeIter = mComponentManifest.find( componentType );
+	if( typeIter == mComponentManifest.end() )
+	{
+		// Never-before-seen component type
+		return false;
+	}
+	ComponentInstanceByObjectMap const& instances = typeIter->second;
+
+	return instances.count( identifier ) != 0;
+}
+
+
+
+bool ObjectManager::CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType )
+{
+	// Lookup by type
+	ObjectsByComponentTypeMap::iterator typeIter = mComponentManifest.find( componentType );
+	if( typeIter == mComponentManifest.end() )
+	{
+		// Never-before-seen component type
+		typeIter = mComponentManifest.emplace( ObjectsByComponentTypeMap::value_type{ componentType, {} } ).first;
+		RF_ASSERT( typeIter != mComponentManifest.end() );
+		RevState();
+	}
+	ComponentInstanceByObjectMap& instances = typeIter->second;
+
+	// Attempt insert
+	// TODO: Create actual instance
+	bool const newAdd = instances.emplace( ComponentInstanceByObjectMap::value_type{ identifier, {} } ).second;
+	if( newAdd == false )
+	{
+		// Object already had this component
+		return false;
+	}
+	RevState();
+
+	return true;
+}
+
+
+
+bool ObjectManager::RemoveExistingComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType )
+{
+	// Lookup by type
+	ObjectsByComponentTypeMap::iterator typeIter = mComponentManifest.find( componentType );
+	if( typeIter == mComponentManifest.end() )
+	{
+		// Never-before-seen component type
+		return false;
+	}
+	ComponentInstanceByObjectMap& instances = typeIter->second;
+
+	// Attempt remove
+	size_t const numRemoved = instances.erase( identifier );
+	bool const wasRemoved = numRemoved != 0;
+	RF_ASSERT( wasRemoved );
+	if( wasRemoved == false )
+	{
+		return false;
+	}
+	RevState();
+
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
