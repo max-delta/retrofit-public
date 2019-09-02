@@ -57,7 +57,7 @@ public:
 	// Component management
 	bool IsValidComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	ComponentRef GetComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
-	MutableComponentRef GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
+	MutableComponentRef GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
 	MutableComponentRef AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
 	bool RemoveComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
 

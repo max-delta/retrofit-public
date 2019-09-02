@@ -167,16 +167,32 @@ bool ObjectManager::IsValidComponent( ObjectIdentifier identifier, ResolvedCompo
 
 ComponentRef ObjectManager::GetComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const
 {
-	RF_TODO_BREAK();
-	return ComponentRef();
+	if( IsValidComponent( identifier, componentType ) == false )
+	{
+		return ComponentRef();
+	}
+
+	ComponentRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = identifier;
+	retVal.mComponentType = componentType;
+	return retVal;
 }
 
 
 
-MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const
+MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
 {
-	RF_TODO_BREAK();
-	return MutableComponentRef();
+	if( IsValidComponent( identifier, componentType ) == false )
+	{
+		return MutableComponentRef();
+	}
+
+	MutableComponentRef retVal;
+	retVal.mManager = this;
+	retVal.mIdentifier = identifier;
+	retVal.mComponentType = componentType;
+	return retVal;
 }
 
 
@@ -347,7 +363,7 @@ bool ObjectManager::CreateNewComponentInternal( ObjectIdentifier identifier, Res
 	if( typeIter == mComponentManifest.end() )
 	{
 		// Never-before-seen component type
-		typeIter = mComponentManifest.emplace( ObjectsByComponentTypeMap::value_type{ componentType, {} } ).first;
+		typeIter = mComponentManifest.emplace( ObjectsByComponentTypeMap::value_type{ componentType, ComponentInstanceByObjectMap{} } ).first;
 		RF_ASSERT( typeIter != mComponentManifest.end() );
 		RevState();
 	}
