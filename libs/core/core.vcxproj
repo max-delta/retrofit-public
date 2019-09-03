@@ -50,6 +50,7 @@
     <ClInclude Include="ptr\ptr_traits.h" />
     <ClInclude Include="ptr\split_creator.h" />
     <ClInclude Include="ptr\unique_ptr.h" />
+    <ClInclude Include="ptr\void_creator.h" />
     <ClInclude Include="ptr\weak_ptr.h" />
     <ClInclude Include="ptr\weak_shared_ptr.h" />
     <ClInclude Include="rf_assert.h" />
@@ -57,6 +58,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ptr\void_creator.cpp" />
     <ClCompile Include="rf_assert.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

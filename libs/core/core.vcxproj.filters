@@ -70,10 +70,16 @@
       <Filter>meta</Filter>
     </ClInclude>
     <ClInclude Include="rf_onceper.h" />
+    <ClInclude Include="ptr\void_creator.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="rf_assert.cpp" />
+    <ClCompile Include="ptr\void_creator.cpp">
+      <Filter>ptr</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ptr">
