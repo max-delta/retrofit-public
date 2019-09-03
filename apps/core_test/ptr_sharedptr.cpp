@@ -289,5 +289,14 @@ TEST( SharedPtr, CastToBase )
 	sptr_u = DefaultCreator<Unrelated>::Create();
 }
 
+
+
+TEST( SharedPtr, CastToConst )
+{
+	SharedPtr<int> sptr = nullptr;
+	SharedPtr<int const> sptr_c = sptr;
+	WeakPtr<int const> wptr_c = sptr;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

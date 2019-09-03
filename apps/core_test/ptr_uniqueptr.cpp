@@ -252,5 +252,14 @@ TEST( UniquePtr, CastToBase )
 	uptr_u = DefaultCreator<Unrelated>::Create();
 }
 
+
+
+TEST( UniquePtr, CastToConst )
+{
+	UniquePtr<int> uptr = nullptr;
+	UniquePtr<int const> sptr_c = rftl::move(uptr);
+	WeakPtr<int const> wptr_c = uptr;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -131,7 +131,16 @@ public:
 		return WeakPtr<T>( PtrBase::GetTarget(), PtrBase::GetRef() );
 	}
 
-	template<typename BASE>
+	template<typename CONST, typename rftl::enable_if<
+		rftl::is_const<CONST>::value &&
+		rftl::is_same<typename rftl::remove_const<CONST>::type, T>::value, int>::type = 0>
+	operator WeakPtr<CONST>() const
+	{
+		return WeakPtr<CONST>( PtrBase::GetTarget(), PtrBase::GetRef() );
+	}
+
+	template<typename BASE, typename rftl::enable_if<
+		rftl::is_same<typename rftl::remove_cv<BASE>::type, typename rftl::remove_cv<T>::type>::value == false, int>::type = 0>
 	operator WeakPtr<BASE>() const
 	{
 		RF_PTR_ASSERT_CASTABLE( BASE, T );
