@@ -7,6 +7,8 @@
 
 #include "core_math/math_bits.h"
 
+#include "core/ptr/unique_ptr.h"
+
 
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
@@ -197,14 +199,14 @@ MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identif
 
 
 
-MutableComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType )
+MutableComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance )
 {
 	if( IsValidObject( identifier ) == false )
 	{
 		return MutableComponentRef();
 	}
 
-	bool const success = CreateNewComponentInternal( identifier, componentType );
+	bool const success = CreateNewComponentInternal( identifier, componentType, rftl::move( instance ) );
 	if( success == false )
 	{
 		return MutableComponentRef();
@@ -246,6 +248,20 @@ View ObjectManager::GetIntersectionView( rftl::unordered_set<ResolvedComponentTy
 {
 	RF_TODO_BREAK();
 	return View();
+}
+
+
+
+ObjectManager::ComponentInstanceRef ObjectManager::GetComponentInstance( ComponentRef const& component ) const
+{
+	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
+}
+
+
+
+ObjectManager::MutableComponentInstanceRef ObjectManager::GetMutableComponentInstance( MutableComponentRef const& component )
+{
+	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
 }
 
 
@@ -356,7 +372,7 @@ bool ObjectManager::DoesComponentExistInternal( ObjectIdentifier identifier, Res
 
 
 
-bool ObjectManager::CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType )
+bool ObjectManager::CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance )
 {
 	// Lookup by type
 	ObjectsByComponentTypeMap::iterator typeIter = mComponentManifest.find( componentType );
@@ -370,8 +386,7 @@ bool ObjectManager::CreateNewComponentInternal( ObjectIdentifier identifier, Res
 	ComponentInstanceByObjectMap& instances = typeIter->second;
 
 	// Attempt insert
-	// TODO: Create actual instance
-	bool const newAdd = instances.emplace( ComponentInstanceByObjectMap::value_type{ identifier, {} } ).second;
+	bool const newAdd = instances.emplace( ComponentInstanceByObjectMap::value_type{ identifier, rftl::move( instance ) } ).second;
 	if( newAdd == false )
 	{
 		// Object already had this component

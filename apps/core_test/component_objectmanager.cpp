@@ -4,6 +4,9 @@
 #include "core_component/ObjectRef.h"
 #include "core_component/ComponentRef.h"
 
+#include "core/ptr/unique_ptr.h"
+#include "core/ptr/void_creator.h"
+
 
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
@@ -65,14 +68,28 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ObjectIdentifier const objID = newObj.GetIdentifier();
 	ObjectManager::InternalStateIteration latestState = manager.GetInternalStateIteration();
 
-	ComponentRef const newComp = manager.AddUninitializedComponent( objID, kCompType );
+	ObjectManager::ComponentInstance newInstance = VoidCreator::Create( const_cast<void*>( compiler::kInvalidNonNullPointer ) );
+	ObjectManager::ComponentInstanceRef const newInstRef = newInstance;
+
+	MutableComponentRef const newComp = manager.AddUninitializedComponent( objID, kCompType, rftl::move( newInstance ) );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
 	latestState = manager.GetInternalStateIteration();
 	ASSERT_EQ( newComp.GetObject().GetIdentifier(), objID );
+	ASSERT_NE( newInstRef, nullptr );
 
 	bool const validPostAdd = manager.IsValidComponent( objID, kCompType );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_TRUE( validPostAdd );
+
+	ObjectManager::ComponentInstanceRef const instRef = manager.GetComponentInstance( newComp );
+	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_NE( instRef, nullptr );
+	ASSERT_EQ( instRef, newInstRef );
+
+	ObjectManager::MutableComponentInstanceRef const mutInstRef = manager.GetMutableComponentInstance( newComp );
+	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_NE( mutInstRef, nullptr );
+	ASSERT_EQ( mutInstRef, newInstRef );
 
 	bool const removeSuccess = manager.RemoveComponent( objID, kCompType );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
@@ -81,6 +98,10 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	bool const validPostRemove = manager.IsValidComponent( objID, kCompType );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_FALSE( validPostRemove );
+
+	ASSERT_EQ( newInstRef, nullptr );
+	ASSERT_EQ( instRef, nullptr );
+	ASSERT_EQ( mutInstRef, nullptr );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

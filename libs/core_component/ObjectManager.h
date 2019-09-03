@@ -2,6 +2,7 @@
 #include "core_component/ComponentFwd.h"
 
 #include "core/idgen.h"
+#include "core/ptr/ptr_fwd.h"
 
 #include "rftl/unordered_set"
 #include "rftl/unordered_map"
@@ -20,11 +21,16 @@ public:
 	using InternalStateIteration = uint64_t;
 	static constexpr ScopeIdentifier kDefaultScopeIdentifier = kInvalidScopeIdentifier + 1;
 
+	// Object manager isn't type-aware, so derived/wrapper classes are responsible
+	//  for allocation of the actual components themselves
+	using ComponentInstance = UniquePtr<void>;
+	using ComponentInstanceRef = WeakPtr<void const>;
+	using MutableComponentInstanceRef = WeakPtr<void>;
+
 private:
 	using ScopedObjectIdentifier = uint32_t;
 	using ObjectSet = rftl::unordered_set<ObjectIdentifier>;
-	using ComponentInstance = void*;
-	using ComponentInstanceByObjectMap = rftl::unordered_map<ObjectIdentifier, void*>;
+	using ComponentInstanceByObjectMap = rftl::unordered_map<ObjectIdentifier, ComponentInstance>;
 	using ObjectsByComponentTypeMap = rftl::unordered_map<ResolvedComponentType, ComponentInstanceByObjectMap>;
 
 
@@ -58,13 +64,17 @@ public:
 	bool IsValidComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	ComponentRef GetComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	MutableComponentRef GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
-	MutableComponentRef AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
+	MutableComponentRef AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance );
 	bool RemoveComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
 
 	// View management
 	View GetView( ResolvedComponentType componentType ) const;
 	View GetUnionView( rftl::unordered_set<ResolvedComponentType>&& componentTypes ) const;
 	View GetIntersectionView( rftl::unordered_set<ResolvedComponentType>&& componentTypes ) const;
+
+	// Instance access
+	ComponentInstanceRef GetComponentInstance( ComponentRef const& component ) const;
+	MutableComponentInstanceRef GetMutableComponentInstance( MutableComponentRef const& component );
 
 	// Adding/removing items will cause the state to iterate, which can be used
 	//  to detect unsafe multi-threaded operations, or modifying while
@@ -92,6 +102,16 @@ public:
 		static MutableComponentRef CreateMutableComponentRef( MutableObjectRef const& object, ResolvedComponentType componentType );
 	};
 
+	struct AccessHelpers
+	{
+	private:
+		friend class ObjectRef;
+		friend class MutableObjectRef;
+		friend class ComponentRef;
+		friend class MutableComponentRef;
+
+	};
+
 
 	//
 	// Private methods
@@ -109,7 +129,7 @@ private:
 	bool RemoveExistingObjectInternal( ObjectIdentifier identifier );
 
 	bool DoesComponentExistInternal( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
-	bool CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType );
+	bool CreateNewComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance );
 	bool RemoveExistingComponentInternal( ObjectIdentifier identifier, ResolvedComponentType componentType );
 
 
