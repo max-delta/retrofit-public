@@ -71,6 +71,15 @@ struct PtrTransformer
 		normalPayload.Clean();
 		out = UniquePtr<T>{ rftl::move( voidPayload ) };
 	}
+	static void PerformNonTypesafeTransformation( UniquePtr<void const>&& in, UniquePtr<T const>& out )
+	{
+		CreationPayload<void const> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<T const> voidPayload(
+			static_cast<decltype( CreationPayload<T const>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<T const>::mRef )>( normalPayload.mRef ) );
+		normalPayload.Clean();
+		out = UniquePtr<T const>{ rftl::move( voidPayload ) };
+	}
 	static void PerformNonTypesafeTransformation( WeakPtr<void>&& in, WeakPtr<T>& out )
 	{
 		CreationPayload<void> normalPayload = in.CreateTransferPayloadAndWipeSelf();
@@ -79,6 +88,16 @@ struct PtrTransformer
 			reinterpret_cast<decltype( CreationPayload<T>::mRef )>( normalPayload.mRef ) );
 		normalPayload.Clean();
 		out = WeakPtr<T>{ voidPayload.mTarget, voidPayload.mRef };
+		voidPayload.Clean();
+	}
+	static void PerformNonTypesafeTransformation( WeakPtr<void const>&& in, WeakPtr<T const>& out )
+	{
+		CreationPayload<void const> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<T const> voidPayload(
+			static_cast<decltype( CreationPayload<T const>::mTarget )>( normalPayload.mTarget ),
+			reinterpret_cast<decltype( CreationPayload<T const>::mRef )>( normalPayload.mRef ) );
+		normalPayload.Clean();
+		out = WeakPtr<T const>{ voidPayload.mTarget, voidPayload.mRef };
 		voidPayload.Clean();
 	}
 };
