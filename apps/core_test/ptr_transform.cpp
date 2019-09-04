@@ -94,8 +94,7 @@ TEST( UniquePtr, TransformToFromVoid )
 	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
 	ASSERT_TRUE( uptr1 != nullptr );
 
-	UniquePtr<void> uptr2;
-	PtrTransformer<int>::PerformVoidTransformation( rftl::move( uptr1 ), uptr2 );
+	UniquePtr<void> uptr2 = rftl::move( uptr1 );
 	ASSERT_TRUE( uptr1 == nullptr );
 	ASSERT_TRUE( uptr2 != nullptr );
 
@@ -119,10 +118,10 @@ TEST( WeakPtr, TransformToFromVoid )
 	WeakPtr<int> wptr1 = uptr1;
 	ASSERT_TRUE( wptr1 != nullptr );
 
-	WeakPtr<void> wptr2;
-	PtrTransformer<int>::PerformVoidTransformation( rftl::move( wptr1 ), wptr2 );
-	ASSERT_TRUE( wptr1 == nullptr );
+	WeakPtr<void> wptr2 = wptr1;
+	ASSERT_TRUE( wptr1 != nullptr );
 	ASSERT_TRUE( wptr2 != nullptr );
+	ASSERT_TRUE( wptr2 == wptr1 );
 
 	int const* const val = reinterpret_cast<int const*>( static_cast<void const*>( wptr2 ) );
 	ASSERT_TRUE( val != nullptr );

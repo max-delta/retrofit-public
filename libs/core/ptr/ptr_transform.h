@@ -40,6 +40,9 @@ struct PtrTransformer
 	//  you extract the pointer and cast it to what you think it is, at which
 	//  point you're in the same problem-cases that wanton reintepret_cast
 	//  normally puts you in
+	// NOTE: Here for historical reference, but is now available as an implicit
+	//  conversion on valid pointer types
+	[[deprecated]]
 	static void PerformVoidTransformation( UniquePtr<T>&& in, UniquePtr<void>& out )
 	{
 		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();
@@ -49,6 +52,7 @@ struct PtrTransformer
 		normalPayload.Clean();
 		out = UniquePtr<void>{ rftl::move( voidPayload ) };
 	}
+	[[deprecated]]
 	static void PerformVoidTransformation( WeakPtr<T>&& in, WeakPtr<void>& out )
 	{
 		CreationPayload<T> normalPayload = in.CreateTransferPayloadAndWipeSelf();

@@ -35,11 +35,8 @@ WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT>&& source )
 		return nullptr;
 	}
 
-	WeakPtr<void> temp;
-	PtrTransformer<SourceT>::PerformVoidTransformation( rftl::move( source ), temp );
-
 	WeakPtr<TargetT> retVal;
-	PtrTransformer<TargetT>::PerformNonTypesafeTransformation( rftl::move( temp ), retVal );
+	PtrTransformer<TargetT>::PerformNonTypesafeTransformation( rftl::move( source ), retVal );
 
 	return retVal;
 }
