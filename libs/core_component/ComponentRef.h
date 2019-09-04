@@ -21,6 +21,7 @@ public:
 	ComponentRef() = default;
 
 	ObjectRef GetObject() const;
+	ResolvedComponentType GetComponentType() const;
 
 
 	//
@@ -49,6 +50,7 @@ public:
 	MutableComponentRef() = default;
 
 	MutableObjectRef GetObject() const;
+	ResolvedComponentType GetComponentType() const;
 
 	// Implicit decay to const ref
 	operator ComponentRef() const;
