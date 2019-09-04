@@ -257,8 +257,30 @@ TEST( UniquePtr, CastToBase )
 TEST( UniquePtr, CastToConst )
 {
 	UniquePtr<int> uptr = nullptr;
-	UniquePtr<int const> sptr_c = rftl::move(uptr);
+	UniquePtr<int const> uptr_c = rftl::move(uptr);
 	WeakPtr<int const> wptr_c = uptr;
+}
+
+
+
+TEST( UniquePtr, CastToVoid )
+{
+	UniquePtr<int> uptr = nullptr;
+	UniquePtr<int const> uptr_c = nullptr;
+
+	UniquePtr<void> uptr_v;
+	UniquePtr<void const> uptr_vc;
+	WeakPtr<void> wptr_v;
+	WeakPtr<void const> wptr_vc;
+
+	uptr_v = rftl::move(uptr);
+	//uptr_v = rftl::move(uptr_c); // SHOULD FAIL
+	uptr_vc = rftl::move(uptr);
+	uptr_vc = rftl::move(uptr_c);
+	wptr_v = uptr;
+	//wptr_v = uptr_c; // SHOULD FAIL
+	wptr_vc = uptr;
+	wptr_vc = uptr_c;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

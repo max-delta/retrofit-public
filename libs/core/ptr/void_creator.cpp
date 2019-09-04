@@ -15,7 +15,7 @@ CreationPayload<void> VoidCreator::Create( void* ptr )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void VoidCreator::Delete( void* target, PtrRef* ref, void* userData )
+void VoidCreator::Delete( void const* target, PtrRef* ref, void* userData )
 {
 	(void)target;
 	(void)userData;

@@ -298,5 +298,27 @@ TEST( SharedPtr, CastToConst )
 	WeakPtr<int const> wptr_c = sptr;
 }
 
+
+
+TEST( SharedPtr, CastToVoid )
+{
+	SharedPtr<int> sptr = nullptr;
+	SharedPtr<int const> sptr_c = nullptr;
+
+	SharedPtr<void> sptr_v;
+	SharedPtr<void const> sptr_vc;
+	WeakPtr<void> wptr_v;
+	WeakPtr<void const> wptr_vc;
+
+	sptr_v = sptr;
+	//sptr_v = sptr_c; // SHOULD FAIL
+	sptr_vc = sptr;
+	sptr_vc = sptr_c;
+	wptr_v = sptr;
+	//wptr_v = sptr_c; // SHOULD FAIL
+	wptr_vc = sptr;
+	wptr_vc = sptr_c;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

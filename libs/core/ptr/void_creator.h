@@ -22,7 +22,7 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( void* target, PtrRef* ref, void* userData );
+	static void Delete( void const* target, PtrRef* ref, void* userData );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

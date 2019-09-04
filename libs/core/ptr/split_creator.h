@@ -29,7 +29,7 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( void* target, PtrRef* ref, void* userData )
+	static void Delete( void const* target, PtrRef* ref, void* userData )
 	{
 		RF_PTR_ASSERT_DELETABLE( T );
 
@@ -37,7 +37,7 @@ private:
 		if( target != nullptr )
 		{
 			// NOTE: Subtle... making sure we delete the actual pointer type
-			delete( reinterpret_cast<T*>( target ) );
+			delete( reinterpret_cast<T const*>( target ) );
 		}
 		if( ref != nullptr )
 		{

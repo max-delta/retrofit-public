@@ -33,14 +33,14 @@ public:
 	//
 	// Private methods
 private:
-	static void Delete( void* target, PtrRef* ref, void* userData )
+	static void Delete( void const* target, PtrRef* ref, void* userData )
 	{
 		RF_PTR_ASSERT_DELETABLE( T );
 
 		(void)userData;
 		if( target != nullptr )
 		{
-			reinterpret_cast<T*>( target )->~T();
+			reinterpret_cast<T const*>( target )->~T();
 		}
 		if( ref != nullptr )
 		{
