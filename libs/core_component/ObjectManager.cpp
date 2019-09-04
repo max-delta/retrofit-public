@@ -199,7 +199,7 @@ MutableComponentRef ObjectManager::GetMutableComponent( ObjectIdentifier identif
 
 
 
-MutableComponentRef ObjectManager::AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance )
+MutableComponentRef ObjectManager::AddComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance )
 {
 	if( IsValidObject( identifier ) == false )
 	{

@@ -13,6 +13,8 @@ class TypedObjectManager : public ObjectManager
 	//
 	// Public methods
 public:
+	TypedObjectManager() = delete;
+	TypedObjectManager( ManagerIdentifier identifier, ScopeIdentifier generationScope, TypeResolver&& typeResolver );
 	TypedObjectManager( ManagerIdentifier identifier, TypeResolver&& typeResolver );
 
 	// Type resolver provides options for talking about components besides just

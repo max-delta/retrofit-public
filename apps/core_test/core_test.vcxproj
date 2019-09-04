@@ -33,6 +33,7 @@
   <ItemGroup>
     <ClCompile Include="allocate_singleallocator.cpp" />
     <ClCompile Include="component_objectmanager.cpp" />
+    <ClCompile Include="component_typedobjectmanager.cpp" />
     <ClCompile Include="event_eventdispatcher.cpp" />
     <ClCompile Include="event_eventqueue.cpp" />
     <ClCompile Include="idgen.cpp" />

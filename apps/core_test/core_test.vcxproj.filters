@@ -46,6 +46,7 @@
     <ClCompile Include="minclude_unique.cpp" />
     <ClCompile Include="minclude_shared.cpp" />
     <ClCompile Include="component_objectmanager.cpp" />
+    <ClCompile Include="component_typedobjectmanager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

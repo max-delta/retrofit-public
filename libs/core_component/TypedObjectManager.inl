@@ -6,6 +6,16 @@ namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TypeResolver>
+inline TypedObjectManager<TypeResolver>::TypedObjectManager( ManagerIdentifier identifier, ScopeIdentifier generationScope, TypeResolver&& typeResolver )
+	: ObjectManager( identifier, generationScope )
+	, mTypeResolver( rftl::move( typeResolver ) )
+{
+	//
+}
+
+
+
+template<typename TypeResolver>
 inline TypedObjectManager<TypeResolver>::TypedObjectManager( ManagerIdentifier identifier, TypeResolver&& typeResolver )
 	: ObjectManager( identifier )
 	, mTypeResolver( rftl::move( typeResolver ) )

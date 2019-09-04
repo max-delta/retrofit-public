@@ -64,7 +64,7 @@ public:
 	bool IsValidComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	ComponentRef GetComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	MutableComponentRef GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
-	MutableComponentRef AddUninitializedComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance );
+	MutableComponentRef AddComponent( ObjectIdentifier identifier, ResolvedComponentType componentType, ComponentInstance&& instance );
 	bool RemoveComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );
 
 	// View management
