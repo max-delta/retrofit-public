@@ -6,44 +6,20 @@
 #include "rftl/type_traits"
 
 
-namespace RF {
+namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename T, size_t MaxTotalSize>
+template<size_t MaxTotalSize, size_t Align = 1>
 class SingleAllocator
 {
+	RF_NO_COPY( SingleAllocator );
+	RF_NO_MOVE( SingleAllocator );
+
 	//
 	// Types and constants
 public:
-	using ThisType = SingleAllocator<T, MaxTotalSize>;
+	using ThisType = SingleAllocator<MaxTotalSize>;
 	static constexpr size_t kMaxTotalSize = MaxTotalSize;
-	static_assert( sizeof( T ) <= MaxTotalSize, "Trying to store type that is too large for storage" );
-
-
-	//
-	// STL types
-public:
-	using value_type = T;
-
-	using pointer = value_type*;
-	using const_pointer = value_type const*;
-	using void_pointer = void*;
-	using const_void_pointer = void const*;
-
-	using size_type = size_t;
-	using difference_type = ptrdiff_t;
-
-	using propagate_on_container_copy_assignment = rftl::false_type;
-	using propagate_on_container_move_assignment = rftl::false_type;
-	using propagate_on_container_swap_assignment = rftl::false_type;
-
-	using is_always_equal = rftl::false_type;
-
-	template<typename U>
-	struct rebind
-	{
-		using other = RF::SingleAllocator<U, MaxTotalSize>;
-	};
 
 
 	//
@@ -53,36 +29,25 @@ public:
 	SingleAllocator() = delete;
 	explicit SingleAllocator( ExplicitDefaultConstruct );
 
+	//template<typename U, size_t OtherMaxTotalSize>
+	//SingleAllocator( SingleAllocator<U, OtherMaxTotalSize> const& rhs ) = delete;
+	//template<typename U, size_t OtherMaxTotalSize>
+	//SingleAllocator( SingleAllocator<U, OtherMaxTotalSize>&& rhs ) = delete;
 
-	//
-	// STL methods
-public:
-	// NOTE: Intentionally violating the STL allocator contract, preventing
-	//  this allocator from being copied or moved
-	template<typename U, size_t OtherMaxTotalSize>
-	SingleAllocator( SingleAllocator<U, OtherMaxTotalSize> const& rhs ) = delete;
-	template<typename U, size_t OtherMaxTotalSize>
-	SingleAllocator( SingleAllocator<U, OtherMaxTotalSize>&& rhs ) = delete;
-
-	pointer allocate( size_type count ) noexcept;
-	pointer allocate( size_type count, const_void_pointer hint ) noexcept;
-	void deallocate( pointer ptr, size_type count ) noexcept;
-	template<class U, class... Args>
-	void construct( U* ptr, Args&&... args );
-	template<class U>
-	void destroy( U* ptr );
-	size_type max_size();
-	ThisType select_on_container_copy_construction();
+	void* Allocate( size_t size );
+	void* Allocate( size_t size, size_t align );
+	void Delete( void* ptr );
+	size_t GetMaxSize() const;
 
 
 	//
 	// Private data
 private:
 	volatile rftl::atomic_bool mHasAllocation;
-	uint8_t mStorageBytes[kMaxTotalSize];
+	alignas( Align ) uint8_t mStorageBytes[kMaxTotalSize];
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}
+}}
 
 #include "SingleAllocator.inl"

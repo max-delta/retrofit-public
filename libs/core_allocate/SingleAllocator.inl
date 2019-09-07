@@ -5,11 +5,11 @@
 #include "rftl/atomic"
 
 
-namespace RF {
+namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename T, size_t MaxTotalSize>
-inline SingleAllocator<T, MaxTotalSize>::SingleAllocator( ExplicitDefaultConstruct )
+template<size_t MaxTotalSize, size_t Align>
+inline SingleAllocator<MaxTotalSize, Align>::SingleAllocator( ExplicitDefaultConstruct )
 	: mHasAllocation( false )
 {
 	//
@@ -17,38 +17,40 @@ inline SingleAllocator<T, MaxTotalSize>::SingleAllocator( ExplicitDefaultConstru
 
 
 
-template<typename T, size_t MaxTotalSize>
-inline typename SingleAllocator<T, MaxTotalSize>::pointer SingleAllocator<T, MaxTotalSize>::allocate( size_type count ) noexcept
+template<size_t MaxTotalSize, size_t Align>
+inline void* SingleAllocator<MaxTotalSize, Align>::Allocate( size_t size )
 {
 	bool const hadAllocation = mHasAllocation.exchange( true, rftl::memory_order::memory_order_acq_rel );
 	if( hadAllocation )
 	{
 		return nullptr;
 	}
-	if( count != 1 )
+	if( size > MaxTotalSize )
 	{
 		mHasAllocation.store( false, rftl::memory_order::memory_order_release );
 		return nullptr;
 	}
-	return reinterpret_cast<pointer>( &mStorageBytes[0] );
+	return &mStorageBytes[0];
 }
 
 
 
-template<typename T, size_t MaxTotalSize>
-inline typename SingleAllocator<T, MaxTotalSize>::pointer SingleAllocator<T, MaxTotalSize>::allocate( size_type count, const_void_pointer hint ) noexcept
+template<size_t MaxTotalSize, size_t Align>
+inline void* SingleAllocator<MaxTotalSize, Align>::Allocate( size_t size, size_t align )
 {
-	(void)hint;
-	return allocate( count );
+	if( align != Align )
+	{
+		return nullptr;
+	}
+	return Allocate( size );
 }
 
 
 
-template<typename T, size_t MaxTotalSize>
-inline void SingleAllocator<T, MaxTotalSize>::deallocate( pointer ptr, size_type count ) noexcept
+template<size_t MaxTotalSize, size_t Align>
+inline void SingleAllocator<MaxTotalSize, Align>::Delete( void* ptr )
 {
-	RF_ASSERT( ptr == reinterpret_cast<pointer>( &mStorageBytes[0] ) );
-	RF_ASSERT( count == 1 );
+	RF_ASSERT( ptr == &mStorageBytes[0] );
 
 	bool const hadAllocation = mHasAllocation.exchange( false, rftl::memory_order::memory_order_acq_rel );
 	if( hadAllocation == false )
@@ -60,37 +62,11 @@ inline void SingleAllocator<T, MaxTotalSize>::deallocate( pointer ptr, size_type
 
 
 
-template<typename T, size_t MaxTotalSize>
-template<class U, class... Args>
-inline void SingleAllocator<T, MaxTotalSize>::construct( U* ptr, Args&&... args )
-{
-	new( ptr ) U( args... );
-}
-
-
-
-template<typename T, size_t MaxTotalSize>
-template<class U>
-inline void SingleAllocator<T, MaxTotalSize>::destroy( U* ptr )
-{
-	ptr->~U();
-}
-
-
-
-template<typename T, size_t MaxTotalSize>
-inline typename SingleAllocator<T, MaxTotalSize>::size_type SingleAllocator<T, MaxTotalSize>::max_size()
+template<size_t MaxTotalSize, size_t Align>
+inline size_t SingleAllocator<MaxTotalSize, Align>::GetMaxSize() const
 {
 	return kMaxTotalSize;
 }
 
-
-
-template<typename T, size_t MaxTotalSize>
-inline typename SingleAllocator<T, MaxTotalSize>::ThisType SingleAllocator<T, MaxTotalSize>::select_on_container_copy_construction()
-{
-	return *this;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
-}
+}}

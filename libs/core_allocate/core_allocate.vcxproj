@@ -28,7 +28,9 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="Allocator.h" />
     <ClInclude Include="OverloadNew.h" />
+    <ClInclude Include="RftlAllocator.h" />
     <ClInclude Include="SingleAllocator.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -40,6 +42,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="RftlAllocator.inl" />
     <None Include="SingleAllocator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
