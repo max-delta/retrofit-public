@@ -1,6 +1,8 @@
 #pragma once
 #include "core_allocate/Allocator.h"
 
+#include "rftl/type_traits"
+
 
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
