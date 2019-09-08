@@ -6,7 +6,7 @@
 #include "rftl/cstdlib"
 
 
-namespace RF { namespace alloc {
+namespace RF { namespace hook {
 #ifdef RF_PLATFORM_WINDOWS
 ///////////////////////////////////////////////////////////////////////////////
 

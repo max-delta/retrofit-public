@@ -16,7 +16,7 @@
 
 #if RF_IS_ALLOWED( RF_CONFIG_HOOK_NEW )
 ///////////////////////////////////////////////////////////////////////////////
-namespace RF { namespace alloc { namespace details {
+namespace RF { namespace hook { namespace details {
 
 void* HookedObjectAllocate( size_t size ) noexcept
 {
@@ -36,7 +36,7 @@ void HookedObjectDeallocate( void* ptr ) noexcept
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 [[nodiscard]] void* operator new( size_t size )
 {
-	void* const retVal = RF::alloc::details::HookedObjectAllocate( size );
+	void* const retVal = RF::hook::details::HookedObjectAllocate( size );
 	if( retVal == nullptr )
 	{
 		rftl::abort();
@@ -49,7 +49,7 @@ RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 [[nodiscard]] void* operator new( size_t size, rftl::nothrow_t const& nothrow ) noexcept
 {
-	return RF::alloc::details::HookedObjectAllocate( size );
+	return RF::hook::details::HookedObjectAllocate( size );
 }
 
 
@@ -89,35 +89,35 @@ RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 
 void operator delete( void* ptr )
 {
-	RF::alloc::details::HookedObjectDeallocate( ptr );
+	RF::hook::details::HookedObjectDeallocate( ptr );
 }
 
 
 
 void operator delete( void* ptr, rftl::align_val_t align )
 {
-	RF::alloc::details::HookedObjectDeallocate( ptr );
+	RF::hook::details::HookedObjectDeallocate( ptr );
 }
 
 
 
 void operator delete( void* ptr, size_t size )
 {
-	RF::alloc::details::HookedObjectDeallocate( ptr );
+	RF::hook::details::HookedObjectDeallocate( ptr );
 }
 
 
 
 void operator delete( void* ptr, rftl::nothrow_t const& nothrow )
 {
-	RF::alloc::details::HookedObjectDeallocate( ptr );
+	RF::hook::details::HookedObjectDeallocate( ptr );
 }
 
 
 
 void operator delete( void* ptr, rftl::align_val_t align, rftl::nothrow_t const& nothrow )
 {
-	RF::alloc::details::HookedObjectDeallocate( ptr );
+	RF::hook::details::HookedObjectDeallocate( ptr );
 }
 
 

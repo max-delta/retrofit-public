@@ -105,10 +105,10 @@
     </Lib>
   </ItemDefinitionGroup>
 
-  <ItemGroup Condition="'$(ProjectName)'!='core_allocate'">
-    <!-- Link allocation lib with everything, to allow for hooks -->
-    <ProjectReference Include="$(SolutionDir)libs\core_allocate\core_allocate.vcxproj">
-      <Project>{c5171146-7ace-4819-b4ca-6a36beb91e85}</Project>
+  <ItemGroup Condition="'$(ProjectName)'!='hook_new'">
+    <!-- Link hook lib with everything, to allow for hooks during linking -->
+    <ProjectReference Include="$(SolutionDir)libs\hook_new\hook_new.vcxproj">
+      <Project>{A5B5EDE9-82A2-4B25-BB9D-D2B2FEFDF489}</Project>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -3,14 +3,11 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SingleAllocator.h" />
-    <ClInclude Include="OverloadNew.h" />
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="RftlAllocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OverloadNew.cpp" />
-    <ClCompile Include="OverloadNew_Windows.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SingleAllocator.inl" />

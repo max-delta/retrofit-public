@@ -1,6 +1,6 @@
 #pragma once
 
-namespace RF { namespace alloc {
+namespace RF { namespace hook {
 ///////////////////////////////////////////////////////////////////////////////
 
 // If new is hooked, these must be present during the link step
