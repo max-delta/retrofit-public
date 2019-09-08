@@ -155,7 +155,7 @@ TEST( UniquePtr, MoveIntoTrash )
 {
 	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 5 );
 	{
-		void* alloc = malloc( sizeof( UniquePtr<int> ) );
+		void* alloc = ::operator new( sizeof( UniquePtr<int> ) );
 		ASSERT_NE( alloc, nullptr );
 		if( alloc == nullptr )
 		{
@@ -164,7 +164,7 @@ TEST( UniquePtr, MoveIntoTrash )
 		memset( alloc, 0xcc, sizeof( UniquePtr<int> ) );
 		UniquePtr<int>* newAlloc = new( alloc ) UniquePtr<int>( rftl::move( uptr1 ) );
 		newAlloc->~UniquePtr();
-		free( alloc );
+		::operator delete( alloc );
 	}
 }
 

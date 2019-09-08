@@ -155,7 +155,7 @@ TEST( SharedPtr, MoveIntoTrash )
 {
 	SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 5 );
 	{
-		void* alloc = malloc( sizeof( SharedPtr<int> ) );
+		void* alloc = ::operator new( sizeof( SharedPtr<int> ) );
 		ASSERT_NE( alloc, nullptr );
 		if( alloc == nullptr )
 		{
@@ -164,7 +164,7 @@ TEST( SharedPtr, MoveIntoTrash )
 		memset( alloc, 0xcc, sizeof( SharedPtr<int> ) );
 		SharedPtr<int>* newAlloc = new( alloc ) SharedPtr<int>( rftl::move( sptr1 ) );
 		newAlloc->~SharedPtr();
-		free( alloc );
+		::operator delete( alloc );
 	}
 }
 
