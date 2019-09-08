@@ -1,4 +1,6 @@
 #pragma once
+#include "core_allocate/AlignmentHelpers.h"
+
 #include "core/meta/ConstructorOverload.h"
 
 #include "rftl/atomic"
@@ -9,7 +11,7 @@
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<size_t MaxTotalSize, size_t Align = 1>
+template<size_t MaxTotalSize, size_t Align = kMaxAlign>
 class SingleAllocator
 {
 	RF_NO_COPY( SingleAllocator );
@@ -20,6 +22,8 @@ class SingleAllocator
 public:
 	using ThisType = SingleAllocator<MaxTotalSize>;
 	static constexpr size_t kMaxTotalSize = MaxTotalSize;
+	static constexpr size_t kAlignment = Align;
+	static_assert( IsValidAlignment( kAlignment ), "Invalid alignment" );
 
 
 	//
@@ -44,7 +48,12 @@ public:
 	// Private data
 private:
 	volatile rftl::atomic_bool mHasAllocation;
-	alignas( Align ) uint8_t mStorageBytes[kMaxTotalSize];
+
+	// Storage will be aligned as requested, which will not change the size of
+	//  the storage, but may require some padding before-hand to fit properly
+	RF_ACK_ANY_PADDING;
+	alignas( kAlignment ) uint8_t mStorageBytes[kMaxTotalSize];
+	static_assert( sizeof( mStorageBytes ) == kMaxTotalSize, "Unexpected size" );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

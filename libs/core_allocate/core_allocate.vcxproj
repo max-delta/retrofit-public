@@ -28,6 +28,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="AlignmentHelpers.h" />
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="RftlAllocator.h" />
     <ClInclude Include="SingleAllocator.h" />

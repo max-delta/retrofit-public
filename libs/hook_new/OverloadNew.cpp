@@ -1,13 +1,12 @@
 #include "stdafx.h"
 #include "OverloadNew.h"
 
-#include "core_math/math_bits.h"
+#include "core_allocate/AlignmentHelpers.h"
 
 #include "core/compiler.h"
 
 #include "rftl/new"
 #include "rftl/cstdlib"
-#include "rftl/cstddef"
 
 
 // MSVC has malformed signatures for 'new' operators
@@ -23,22 +22,19 @@ namespace RF { namespace hook { namespace details {
 
 void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 {
-	// The C++ standard specifies that all alignments are powers of two, and
-	//  that there is a max alignment that is not overly large, so that all
-	//  allocators can practically ensure alignment is always met by always
-	//  aligning to the maximum value
-	static constexpr bool kCheckForProperAlignments = true;
-	if( kCheckForProperAlignments )
+	// Sometimes people try to do wierd non-standard things like aligning to
+	//  OS page boundaries and relying on platform-specific implementations for
+	//  sketchy performance characteristic, rather than just ask the platform
+	//  to perform the allocation they want directly. Here, we try to detect
+	//  such non-portable cases so they can be converted to a proper platform
+	//  allocation instead.
+	// Example: MS heap in some CRT versions will use VirtualAlloc for 'large'
+	//  allocations instead of normal heap logic as an internal implementation
+	//  detail, but you shouldn't rely on this if you really just wanted to
+	//  call VirtualAlloc in the first place...
+	if( alloc::IsValidAlignment( align ) == false )
 	{
-		if( align > alignof( rftl::max_align_t ) )
-		{
-			rftl::abort();
-		}
-
-		if( math::IsPowerOfTwo( align ) == false )
-		{
-			rftl::abort();
-		}
+		rftl::abort();
 	}
 
 	return GlobalObjectAllocate( size, align );

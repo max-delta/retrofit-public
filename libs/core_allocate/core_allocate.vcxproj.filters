@@ -5,6 +5,7 @@
     <ClInclude Include="SingleAllocator.h" />
     <ClInclude Include="Allocator.h" />
     <ClInclude Include="RftlAllocator.h" />
+    <ClInclude Include="AlignmentHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
