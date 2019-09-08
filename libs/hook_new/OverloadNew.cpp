@@ -5,6 +5,7 @@
 
 #include "rftl/new"
 #include "rftl/cstdlib"
+#include "rftl/cstddef"
 
 
 // MSVC has malformed signatures for 'new' operators
@@ -18,9 +19,28 @@
 ///////////////////////////////////////////////////////////////////////////////
 namespace RF { namespace hook { namespace details {
 
-void* HookedObjectAllocate( size_t size ) noexcept
+void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 {
-	return GlobalObjectAllocate( size );
+	// The C++ standard specifies that all alignments are powers of two, and
+	//  that there is a max alignment that is not overly large, so that all
+	//  allocators can practically ensure alignment is always met by always
+	//  aligning to the maximum value
+	static constexpr bool kCheckForProperAlignments = true;
+	if( kCheckForProperAlignments )
+	{
+		if( align > alignof( rftl::max_align_t ) )
+		{
+			rftl::abort();
+		}
+
+		static_assert( alignof( rftl::max_align_t ) <= 16, "If-check not inclusive enough" );
+		if( align != 1 && align != 2 && align != 4 && align != 8 && align != 16 )
+		{
+			rftl::abort();
+		}
+	}
+
+	return GlobalObjectAllocate( size, align );
 }
 
 
@@ -36,7 +56,7 @@ void HookedObjectDeallocate( void* ptr ) noexcept
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 [[nodiscard]] void* operator new( size_t size )
 {
-	void* const retVal = RF::hook::details::HookedObjectAllocate( size );
+	void* const retVal = RF::hook::details::HookedObjectAllocate( size, 1 );
 	if( retVal == nullptr )
 	{
 		rftl::abort();
@@ -49,7 +69,7 @@ RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 [[nodiscard]] void* operator new( size_t size, rftl::nothrow_t const& nothrow ) noexcept
 {
-	return RF::hook::details::HookedObjectAllocate( size );
+	return ::operator new( size, rftl::align_val_t( 1 ), rftl::nothrow );
 }
 
 
@@ -57,8 +77,7 @@ RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;
 [[nodiscard]] void* operator new( size_t size, rftl::align_val_t align, rftl::nothrow_t const& nothrow ) noexcept
 {
-	// TODO: Implement
-	return nullptr;
+	return RF::hook::details::HookedObjectAllocate( size, static_cast<size_t>( align ) );
 }
 
 

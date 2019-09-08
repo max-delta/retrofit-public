@@ -10,8 +10,11 @@ namespace RF { namespace hook {
 #ifdef RF_PLATFORM_WINDOWS
 ///////////////////////////////////////////////////////////////////////////////
 
-void* GlobalObjectAllocate( size_t size ) noexcept
+void* GlobalObjectAllocate( size_t size, size_t align ) noexcept
 {
+	// Malloc is defined to be aligned for all valid alignments
+	(void)align;
+
 	return malloc( size );
 }
 
