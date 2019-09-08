@@ -61,6 +61,14 @@ constexpr bool HasOnly1BitSet( T const value )
 
 
 template<typename T>
+constexpr bool IsPowerOfTwo( T const value )
+{
+	return HasOnly1BitSet( value );
+}
+
+
+
+template<typename T>
 constexpr size_t GetOnesIndexOfHighestBit( T const value )
 {
 	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );

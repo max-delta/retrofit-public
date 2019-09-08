@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "OverloadNew.h"
 
+#include "core_math/math_bits.h"
+
 #include "core/compiler.h"
 
 #include "rftl/new"
@@ -33,8 +35,7 @@ void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 			rftl::abort();
 		}
 
-		static_assert( alignof( rftl::max_align_t ) <= 16, "If-check not inclusive enough" );
-		if( align != 1 && align != 2 && align != 4 && align != 8 && align != 16 )
+		if( math::IsPowerOfTwo( align ) == false )
 		{
 			rftl::abort();
 		}
