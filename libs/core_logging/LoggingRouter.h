@@ -15,6 +15,7 @@ namespace RF { namespace logging {
 class LoggingRouter
 {
 	RF_NO_COPY( LoggingRouter );
+	RF_NO_MOVE( LoggingRouter );
 
 	//
 	// Types and constants
@@ -35,8 +36,6 @@ private:
 	// Public methods
 public:
 	LoggingRouter();
-	LoggingRouter( LoggingRouter&& ) = default;
-	LoggingRouter& operator=( LoggingRouter&& ) = default;
 
 	void Log(
 		char const* context,

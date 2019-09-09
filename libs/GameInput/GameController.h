@@ -3,6 +3,8 @@
 
 #include "Timing/clocks.h"
 
+#include "core/macros.h"
+
 #include "rftl/extension/virtual_iterator.h"
 #include "rftl/string"
 
@@ -28,10 +30,14 @@ struct GAMEINPUT_API GameSignal
 
 class GAMEINPUT_API GameController
 {
+	RF_NO_COPY( GameController );
+
 	//
 	// Public methods
 public:
+	GameController() = default;
 	virtual ~GameController() = default;
+
 	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser ) const;
 	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const;
 	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::FrameClock::time_point earliestTime ) const;

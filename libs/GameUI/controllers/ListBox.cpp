@@ -386,7 +386,7 @@ bool ListBox::ShouldSkipFocus( UIConstContext const& context, FocusTreeNode cons
 	RF_ASSERT( containerID != kInvalidContainerID );
 
 	WeakPtr<TextLabel const> attemptedFocus;
-	for( WeakPtr<TextLabel const> const& slotController : mSlotControllers )
+	for( WeakPtr<TextLabel const> const slotController : mSlotControllers )
 	{
 		if( slotController->GetContainerID() == containerID )
 		{

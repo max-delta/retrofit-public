@@ -53,6 +53,7 @@
         -Wno-unused-parameter
         -Wno-reserved-id-macro
         -Wno-extra-semi
+        -Wno-extra-semi-stmt
         -Wno-missing-prototypes
         -Wno-covered-switch-default
         -Wno-tautological-undefined-compare

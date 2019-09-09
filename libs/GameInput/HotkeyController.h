@@ -11,6 +11,8 @@ namespace RF { namespace input {
 
 class GAMEINPUT_API HotkeyController final : public GameController
 {
+	RF_NO_COPY( HotkeyController );
+
 	//
 	// Types and constants
 public:
@@ -20,6 +22,8 @@ public:
 	//
 	// Public methods
 public:
+	HotkeyController() = default;
+
 	WeakPtr<RawController> GetSource() const;
 	void SetSource( WeakPtr<RawController> const& source );
 
