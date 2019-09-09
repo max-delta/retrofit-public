@@ -39,7 +39,7 @@ template<typename TypeResolver>
 template<typename ComponentType>
 inline ResolvedComponentType TypedObjectManager<TypeResolver>::ResolveComponentType() const
 {
-	return GetTypeResolver().operator()<ComponentType>();
+	return GetTypeResolver().template operator()<ComponentType>();
 }
 
 
@@ -107,7 +107,7 @@ inline bool TypedObjectManager<TypeResolver>::RemoveComponentT( ObjectIdentifier
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline TypedObjectManager<TypeResolver>::ComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetComponentInstanceT( ComponentRef const& component ) const
+inline typename TypedObjectManager<TypeResolver>::template ComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetComponentInstanceT( ComponentRef const& component ) const
 {
 	// This is dangerous! Make sure your TypeResolver is consistent!
 	RF_ASSERT( IsSafeConversion( component, ResolveComponentType<ComponentType>() ) );
@@ -121,7 +121,7 @@ inline TypedObjectManager<TypeResolver>::ComponentInstanceRefT<ComponentType> Ty
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline TypedObjectManager<TypeResolver>::MutableComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetMutableComponentInstanceT( MutableComponentRef const& component )
+inline typename TypedObjectManager<TypeResolver>::template MutableComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetMutableComponentInstanceT( MutableComponentRef const& component )
 {
 	// This is dangerous! Make sure your TypeResolver is consistent!
 	RF_ASSERT( IsSafeConversion( component, ResolveComponentType<ComponentType>() ) );

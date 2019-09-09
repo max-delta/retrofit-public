@@ -32,7 +32,9 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>project.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile Condition="'$(Platform)'=='Win32'">project.32.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile Condition="'$(Platform)'=='x64'">project.64.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile Condition="'$(Platform)'=='LLVM_x64'">project.64.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -67,7 +69,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.def" />
+    <None Include="project.32.def" />
+    <None Include="project.64.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

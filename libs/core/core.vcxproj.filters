@@ -73,6 +73,9 @@
     <ClInclude Include="ptr\void_creator.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="ptr\stdafx.h">
+      <Filter>ptr</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

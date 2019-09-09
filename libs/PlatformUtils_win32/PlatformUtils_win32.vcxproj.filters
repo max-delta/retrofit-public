@@ -19,6 +19,7 @@
     <ClCompile Include="MemoryRegion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="project.def" />
+    <None Include="project.32.def" />
+    <None Include="project.64.def" />
   </ItemGroup>
 </Project>

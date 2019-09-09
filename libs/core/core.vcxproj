@@ -49,6 +49,7 @@
     <ClInclude Include="ptr\shared_ptr.h" />
     <ClInclude Include="ptr\ptr_traits.h" />
     <ClInclude Include="ptr\split_creator.h" />
+    <ClInclude Include="ptr\stdafx.h" />
     <ClInclude Include="ptr\unique_ptr.h" />
     <ClInclude Include="ptr\void_creator.h" />
     <ClInclude Include="ptr\weak_ptr.h" />
