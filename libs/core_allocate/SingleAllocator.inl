@@ -38,10 +38,16 @@ inline void* SingleAllocator<MaxTotalSize, Align>::Allocate( size_t size )
 template<size_t MaxTotalSize, size_t Align>
 inline void* SingleAllocator<MaxTotalSize, Align>::Allocate( size_t size, size_t align )
 {
-	if( align != Align )
+	if( IsValidAlignment( align ) == false )
 	{
 		return nullptr;
 	}
+
+	if( align > kAlignment )
+	{
+		return nullptr;
+	}
+
 	return Allocate( size );
 }
 
