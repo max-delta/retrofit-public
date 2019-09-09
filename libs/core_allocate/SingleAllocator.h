@@ -33,15 +33,12 @@ public:
 	SingleAllocator() = delete;
 	explicit SingleAllocator( ExplicitDefaultConstruct );
 
-	//template<typename U, size_t OtherMaxTotalSize>
-	//SingleAllocator( SingleAllocator<U, OtherMaxTotalSize> const& rhs ) = delete;
-	//template<typename U, size_t OtherMaxTotalSize>
-	//SingleAllocator( SingleAllocator<U, OtherMaxTotalSize>&& rhs ) = delete;
-
 	void* Allocate( size_t size );
 	void* Allocate( size_t size, size_t align );
 	void Delete( void* ptr );
 	size_t GetMaxSize() const;
+	size_t GetCurrentSize() const;
+	size_t GetCurrentCount() const;
 
 
 	//

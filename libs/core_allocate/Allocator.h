@@ -20,6 +20,8 @@ public:
 	virtual void Delete( void* ptr ) = 0;
 
 	virtual size_t GetMaxSize() const = 0;
+	virtual size_t GetCurrentSize() const = 0;
+	virtual size_t GetCurrentCount() const = 0;
 
 
 	//
@@ -64,6 +66,16 @@ public:
 	virtual size_t GetMaxSize() const override final
 	{
 		return mAllocator.GetMaxSize();
+	}
+
+	virtual size_t GetCurrentSize() const override final
+	{
+		return mAllocator.GetCurrentSize();
+	}
+
+	virtual size_t GetCurrentCount() const override final
+	{
+		return mAllocator.GetCurrentCount();
 	}
 
 

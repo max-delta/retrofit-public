@@ -74,5 +74,28 @@ inline size_t SingleAllocator<MaxTotalSize, Align>::GetMaxSize() const
 	return kMaxTotalSize;
 }
 
+
+
+template<size_t MaxTotalSize, size_t Align>
+inline size_t SingleAllocator<MaxTotalSize, Align>::GetCurrentSize() const
+{
+	return kMaxTotalSize * GetCurrentCount();
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
+inline size_t SingleAllocator<MaxTotalSize, Align>::GetCurrentCount() const
+{
+	if( mHasAllocation.load( rftl::memory_order::memory_order_acquire ) )
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
