@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -33,6 +33,7 @@
   <ItemGroup>
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="platform_memoryregion.cpp" />
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
     <ClCompile Include="scheduling_taskscheduler.cpp" />
@@ -45,6 +46,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
     </ProjectReference>

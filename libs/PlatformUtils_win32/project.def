@@ -8,3 +8,5 @@ EXPORTS
 ;  provide an implementation since it is platform-specific, and each platform
 ;  is expected to implement it in their modules
 	?GenerateNewUuid@Uuid@platform@RF@@SA?AV123@XZ
+	?AcquireLargeExclusiveDataRegion@platform@RF@@YAPEAX_KPEBD@Z
+	?ReleaseLargeExclusiveDataRegion@platform@RF@@YAXPEAX@Z
