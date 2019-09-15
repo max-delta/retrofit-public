@@ -48,6 +48,7 @@
     <ClCompile Include="component_objectmanager.cpp" />
     <ClCompile Include="component_typedobjectmanager.cpp" />
     <ClCompile Include="allocate_rftlallocator.cpp" />
+    <ClCompile Include="allocate_linearallocator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
