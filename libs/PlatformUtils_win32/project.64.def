@@ -7,6 +7,14 @@ EXPORTS
 ; EXAMPLE: core_platform may declare that a function exists, but doesn't
 ;  provide an implementation since it is platform-specific, and each platform
 ;  is expected to implement it in their modules
+
 	?GenerateNewUuid@Uuid@platform@RF@@SA?AV123@XZ
+
 	?AcquireLargeExclusiveDataRegion@platform@RF@@YAPEAX_KPEBD@Z
 	?ReleaseLargeExclusiveDataRegion@platform@RF@@YAXPEAX@Z
+
+	?AcquireLargeDynamicHeapHandle@platform@RF@@YAPEBX_KPEBD_N@Z
+	?ReleaseLargeDynamicHeapHandle@platform@RF@@YAXPEBX@Z
+	?AllocateInLargeDynamicHeap@platform@RF@@YAPEAXPEBX_K@Z
+	?DeleteInLargeDynamicHeap@platform@RF@@YAXPEBXPEAX@Z
+	?QueryLargeDynamicHeapSize@platform@RF@@YA_KPEBX@Z

@@ -30,11 +30,13 @@
   <ItemGroup>
     <ClInclude Include="AlignmentHelpers.h" />
     <ClInclude Include="Allocator.h" />
+    <ClInclude Include="HeapAllocator.h" />
     <ClInclude Include="RftlAllocator.h" />
     <ClInclude Include="SingleAllocator.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HeapAllocator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
