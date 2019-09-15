@@ -1,9 +1,6 @@
 #pragma once
 #include "SingleAllocator.h"
 
-#include "core/macros.h"
-#include "rftl/atomic"
-
 
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
