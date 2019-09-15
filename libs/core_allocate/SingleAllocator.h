@@ -4,8 +4,6 @@
 #include "core/meta/ConstructorOverload.h"
 
 #include "rftl/atomic"
-#include "rftl/memory"
-#include "rftl/type_traits"
 
 
 namespace RF { namespace alloc {

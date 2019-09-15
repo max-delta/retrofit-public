@@ -2,8 +2,6 @@
 
 #include "core_allocate/SingleAllocator.h"
 
-#include "rftl/utility"
-
 
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
