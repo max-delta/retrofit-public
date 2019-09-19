@@ -17,6 +17,8 @@
 
 #include "PPU/PPUController.h"
 
+#include "Timing/FrameClock.h"
+
 #include "core/ptr/default_creator.h"
 
 

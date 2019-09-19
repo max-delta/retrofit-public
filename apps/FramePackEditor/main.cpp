@@ -12,7 +12,6 @@
 #include "SimpleGL/SimpleGL.h"
 #include "Logging/Logging.h"
 #include "Logging/ANSIConsoleLogger.h"
-#include "Timing/clocks.h"
 #include "Timing/Limiter.h"
 
 #include "core_math/math_bits.h"

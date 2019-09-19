@@ -1,5 +1,7 @@
 #pragma once
-#include "Timing/clocks.h"
+#include "Timing/FrameClock.h"
+
+#include "core_time/PerfClock.h"
 
 #include "rftl/thread"
 

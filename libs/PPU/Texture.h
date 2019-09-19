@@ -3,7 +3,7 @@
 
 #include "PPUFwd.h"
 
-#include "Timing/clocks.h"
+#include "Timing/FrameClock.h"
 
 #include "core/macros.h"
 

@@ -37,7 +37,7 @@ void AppStateManager::Start( AppStateID initialStateID )
 
 
 
-void AppStateManager::Tick( time::FrameClock::time_point currentTime, time::FrameClock::duration elapsedTimeSinceLastTick )
+void AppStateManager::Tick( time::CommonClock::time_point currentTime, time::CommonClock::duration elapsedTimeSinceLastTick )
 {
 	AppStateTickContext context{ *this };
 	context.mCurrentTime = currentTime;

@@ -3,9 +3,8 @@
 
 #include "GameAppState/AppStateFwd.h"
 
-#include "Timing/clocks.h"
-
 #include "core_fsm/FiniteStateMachine.h"
+#include "core_time/CommonClock.h"
 
 #include "core/ptr/unique_ptr.h"
 
@@ -30,7 +29,7 @@ public:
 	void AddState( AppStateID stateID, UniquePtr<AppState>&& state );
 
 	void Start( AppStateID initialStateID );
-	void Tick( time::FrameClock::time_point currentTime, time::FrameClock::duration elapsedTimeSinceLastTick );
+	void Tick( time::CommonClock::time_point currentTime, time::CommonClock::duration elapsedTimeSinceLastTick );
 	void Stop();
 
 	void RequestDeferredStateChange( AppStateID stateID ) const;

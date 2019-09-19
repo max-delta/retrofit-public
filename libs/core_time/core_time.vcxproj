@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
+    <Import Project="..\..\config\RF.Core.Lib.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{C984E914-E9CA-47C7-B804-FD68C511F57A}</ProjectGuid>
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{BA26E0AB-0257-4EE7-9528-BCA3F135A91D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Timing</RootNamespace>
+    <RootNamespace>coretime</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
+    <Import Project="..\..\config\RF.Core.Lib.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -22,24 +22,17 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Foundation.Dll.props" />
+    <Import Project="..\..\config\RF.Core.Lib.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>TIMING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
+  <ItemDefinitionGroup />
   <ItemGroup>
-    <ClInclude Include="FrameClock.h" />
-    <ClInclude Include="Limiter.h" />
-    <ClInclude Include="project.h" />
+    <ClInclude Include="PerfClock.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="CommonClock.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FrameClock.cpp" />
-    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

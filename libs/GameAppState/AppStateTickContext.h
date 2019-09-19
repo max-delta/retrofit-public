@@ -3,7 +3,7 @@
 
 #include "GameAppState/AppStateFwd.h"
 
-#include "Timing/clocks.h"
+#include "core_time/CommonClock.h"
 
 #include "core/macros.h"
 
@@ -27,8 +27,8 @@ private:
 	// Public data
 public:
 	AppStateManager const& mManager;
-	time::FrameClock::duration mElapsedTimeSinceLastTick = {};
-	time::FrameClock::time_point mCurrentTime = {};
+	time::CommonClock::duration mElapsedTimeSinceLastTick = {};
+	time::CommonClock::time_point mCurrentTime = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
