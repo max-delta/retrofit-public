@@ -122,12 +122,17 @@ public:
 	void shrink_to_fit();
 
 	void clear();
+
 	void push_back( value_type const& value );
 	void push_back( value_type&& value );
 	reference emplace_back( value_type&& value ); // Disambiguate args
 	template<class... Args>
 	reference emplace_back( Args&&... args );
 	void pop_back();
+
+	iterator insert( const_iterator pos, const value_type& value );
+	iterator insert( const_iterator pos, value_type&& value );
+
 	void resize( size_type count );
 	void resize( size_type count, value_type const& value );
 

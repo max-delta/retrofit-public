@@ -396,6 +396,23 @@ TEST( StaticArray, ValueWipe )
 
 
 
+TEST( StaticArray, Insert )
+{
+	rftl::static_array<Proxy, 5> sa;
+	ASSERT_TRUE( sa.size() == 0 );
+	sa.insert( sa.end(), 2 );
+	ASSERT_TRUE( sa.size() == 1 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	sa.insert( sa.end(), 7 );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
 TEST( StaticArray, BackInsertCompat )
 {
 	rftl::static_array<Proxy, 5> sa;

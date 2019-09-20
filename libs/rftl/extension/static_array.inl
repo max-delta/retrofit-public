@@ -459,6 +459,38 @@ inline void static_array<Element, ElementCapacity>::pop_back()
 
 
 template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::insert( const_iterator pos, const value_type& value )
+{
+	value_type copy = value;
+	return insert( rftl::move( copy ) );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::insert( const_iterator pos, value_type&& value )
+{
+	RF_ASSERT( m_CurrentSize < fixed_capacity );
+	for( iterator iter = end(); iter > pos; iter-- )
+	{
+		iterator dest = iter;
+		iterator source = iter - 1;
+		if( dest != end() )
+		{
+			dest->~Element();
+		}
+		new( dest ) Element( rftl::move( *source ) );
+		source->~Element();
+	}
+	iterator const mutablePos = const_cast<iterator>( pos );
+	new( mutablePos ) Element( rftl::move( value ) );
+	m_CurrentSize++;
+	return mutablePos;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline void static_array<Element, ElementCapacity>::resize( size_type count )
 {
 	while( size() > count )
