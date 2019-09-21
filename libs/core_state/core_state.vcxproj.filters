@@ -6,5 +6,10 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StateFwd.h" />
+    <ClInclude Include="StateStream.h" />
+    <ClInclude Include="StateChange.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="StateStream.inl" />
   </ItemGroup>
 </Project>

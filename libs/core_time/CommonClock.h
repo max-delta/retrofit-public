@@ -13,6 +13,12 @@ public:
 	using rep = duration::rep;
 	using period = duration::period;
 	using time_point = rftl::chrono::time_point<CommonClock>;
+
+public:
+	static constexpr time_point TimePointFromNanos( rep nanos )
+	{
+		return time::CommonClock::time_point( rftl::chrono::nanoseconds( nanos ) );
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
