@@ -20,6 +20,7 @@ Code should be reasonably easy to re-factor, migrate, and generally shuffle arou
 
 Source files should be self-contained, and not spill tokenization/compilation artifacts into logically unrelated source files
 
+
 # The Law
 
 Laws are absolute, and never to be defied. Generally reserved for squashing religious battles over non-AST fluff.
@@ -54,7 +55,8 @@ The exception to this rule is build machinery which may procedurally collapse mu
 
 Rationale: Maintainability, consistency
 
-# The rules
+
+# The Rules
 
 Rules are strong, and exceptions will be scrutinized heavily. Though once you leave the engine layers, it starts to get a little wild-west.
 
@@ -122,6 +124,7 @@ Rationale: You weren't raised in a barn, and even if you were, try not to make i
 
 Rationale: Please...
 
+
 # The Preferences
 
 Preferences are weak, but should be considered the 'default style' that is expected of all 'clean' code. The closer to core, the stronger these are expected to be observed.
@@ -135,6 +138,13 @@ Rationale: Clarity over compactness
 Rationale: Clarity over compactness
 
 ### C++ style comments
+
+Rationale: Consistency
+
+### Consistent-style const placement
+
+Const on the right for the first term just like every other term.
+Follow the rule, don't use the exception.
 
 Rationale: Consistency
 
@@ -160,17 +170,32 @@ This includes if, else, do, while, and for
 
 Rationale: Clarity over compactness
 
-# Personal taste
+
+# Personal Taste
 
 Where not specified, style is left to the discretion of the owner of a body of code. When working in code that you do not own, it is expected that you will generally follow the style of the owner, within reason.
 
 Note that 'ownership' is a vague concept, so you will need to exercise a balance of responsibility and respectfulness.
+
 
 # General code safety
 
 You may wish to peruse the following:
 
 Stroustrup & Sutter: [https://github.com/isocpp/CppCoreGuidelines]
+
+### Avoid anonymous namespaces
+
+Anonymous namespaces suffer from symbol collisions that lead to difficult to track down memory corruption. They also don't provide any value when using build patterns that combine multiple compilation units. Similar problems can happen with named namespaces, but anonymous namespaces provide a false sense of security with no other meaningful value.
+
+Note that MSVC v19 seems to be atleast clever enough to mangle hashes into the symbols for anonymous namespaces, but they are still shared by the entire compilation unit. Clang v9 and GCC v9.2 don't even offer this minimal protection.
+
+### Avoid default parameters
+
+Default parameters relinquish control to the caller, for what is often conceptually intended to be a callee responsibility. This also creates all sorts of havoc and unexpected (but well-defined) behavior in virtual methods.
+
+(The underlying machinery behind this and all the problems they create make for a great interview question, as most programmers will have to figure it out on the spot. Those that already know will still have to be pretty technically competent to be able to explain the machinery)
+
 
 # Autoformat
 
