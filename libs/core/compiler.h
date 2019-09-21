@@ -74,34 +74,36 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
-	#define RF_NO_INLINE __declspec( noinline )
-	#define RF_ACK_ANY_PADDING __pragma( warning( suppress : 4324 ) )
-	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
-	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
+	#define RF_MSVC_INLINE_SUPPRESS( x ) __pragma( warning( suppress : x ) )
 
 	#define RF_CLANG_PRAGMA( x )
 	#define RF_CLANG_PUSH()
 	#define RF_CLANG_POP()
 	#define RF_CLANG_IGNORE( WARNING )
 
+	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_ACK_ANY_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
+	#define RF_ACK_UNSAFE_INHERITANCE RF_MSVC_INLINE_SUPPRESS( 4435 )
+	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH RF_MSVC_INLINE_SUPPRESS( 4287 )
+
 	#define RF_BUILD_MESSAGE( MESSAGE ) __pragma( message( "" MESSAGE "" ) )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
-		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_64BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 		#define RF_ACK_32BIT_PADDING
 	#elif defined( _M_IX86 )
 		#define RF_PLATFORM_X86_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_32BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#elif defined( _M_ARM64 )
 		#define RF_PLATFORM_ARM_64
-		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_64BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 		#define RF_ACK_32BIT_PADDING
 	#elif defined( _M_ARM )
 		#define RF_PLATFORM_ARM_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_32BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#else
 		#error Undefined architecture
 	#endif
@@ -116,36 +118,38 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
-	#define RF_NO_INLINE __declspec( noinline )
-	#define RF_ACK_ANY_PADDING __pragma( warning( suppress : 4324 ) )
-	#define RF_ACK_UNSAFE_INHERITANCE __pragma( warning( suppress : 4435 ) )
-	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH __pragma( warning( suppress : 4287 ) )
+	#define RF_MSVC_INLINE_SUPPRESS( x ) __pragma( warning( suppress : x ) )
 
 	#define RF_CLANG_PRAGMA( x ) _Pragma( RF_STRINGIFY( x ) )
 	#define RF_CLANG_PUSH() RF_CLANG_PRAGMA( clang diagnostic push )
 	#define RF_CLANG_POP() RF_CLANG_PRAGMA( clang diagnostic pop )
 	#define RF_CLANG_IGNORE( WARNING ) RF_CLANG_PRAGMA( clang diagnostic ignored WARNING )
 
+	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_ACK_ANY_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
+	#define RF_ACK_UNSAFE_INHERITANCE RF_MSVC_INLINE_SUPPRESS( 4435 )
+	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH RF_MSVC_INLINE_SUPPRESS( 4287 )
+
 	#define RF_BUILD_MESSAGE( MESSAGE )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
-		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_64BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 		#define RF_ACK_32BIT_PADDING
 	#elif defined( _M_IX86 )
 		#define RF_PLATFORM_X86_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_32BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#elif defined( _M_ARM64 )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_64
-		#define RF_ACK_64BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_64BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 		#define RF_ACK_32BIT_PADDING
 	#elif defined( _M_ARM )
 		#error Verify and add support
 		#define RF_PLATFORM_ARM_32
 		#define RF_ACK_64BIT_PADDING
-		#define RF_ACK_32BIT_PADDING __pragma( warning( suppress : 4324 ) )
+		#define RF_ACK_32BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#else
 		#error Undefined architecture
 	#endif
