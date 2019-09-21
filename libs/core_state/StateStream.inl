@@ -34,7 +34,7 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 	{
 		// Need to add to end
 
-		if (mChanges.size() == mChanges.max_size())
+		if( mChanges.size() == mChanges.max_size() )
 		{
 			// Full, pop front
 			mChanges.erase( mChanges.begin() );
@@ -70,6 +70,30 @@ inline ValueT StateStream<ValueT, MaxChangesT>::Read( time::CommonClock::time_po
 		return ValueType{};
 	}
 	return ( iterPastTime - 1 )->mNewValue;
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
+inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetEarliestTime() const
+{
+	if( mChanges.empty() )
+	{
+		return time::CommonClock::time_point();
+	}
+	return mChanges.front().mTime;
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
+inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetLatestTime() const
+{
+	if( mChanges.empty() )
+	{
+		return time::CommonClock::time_point();
+	}
+	return mChanges.back().mTime;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

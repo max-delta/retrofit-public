@@ -9,6 +9,9 @@
 namespace RF { namespace state {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A state stream represents a variable with limited historical knowledge of
+//  past values, primarily intended for rollback-based collision resolution
+//  where time may need to be rewinded within a very short window
 template<typename ValueT, size_t MaxChangesT>
 class StateStream
 {
@@ -20,6 +23,7 @@ public:
 	static constexpr size_t kMaxChanges = MaxChangesT;
 
 private:
+	// TODO: This would likely be better served by a circular buffer
 	using Changes = rftl::static_array<ChangeType, kMaxChanges>;
 
 
@@ -30,6 +34,9 @@ public:
 
 	void Write( time::CommonClock::time_point time, ValueT value );
 	ValueT Read( time::CommonClock::time_point time ) const;
+
+	time::CommonClock::time_point GetEarliestTime() const;
+	time::CommonClock::time_point GetLatestTime() const;
 
 
 	//
