@@ -470,6 +470,8 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 template<typename Element, size_t ElementCapacity>
 inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::insert( const_iterator pos, value_type&& value )
 {
+	RF_ASSERT( pos >= begin() );
+	RF_ASSERT( pos <= end() );
 	RF_ASSERT( m_CurrentSize < fixed_capacity );
 	for( iterator iter = end(); iter > pos; iter-- )
 	{
@@ -485,6 +487,30 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 	iterator const mutablePos = const_cast<iterator>( pos );
 	new( mutablePos ) Element( rftl::move( value ) );
 	m_CurrentSize++;
+	return mutablePos;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::erase( const_iterator pos )
+{
+	RF_ASSERT( pos >= begin() );
+	RF_ASSERT( pos <= end() );
+	RF_ASSERT( m_CurrentSize > 0 );
+	iterator const mutablePos = const_cast<iterator>( pos );
+	for( iterator iter = mutablePos; iter < end() - 1; iter++ )
+	{
+		iterator dest = iter;
+		iterator source = iter + 1;
+		if( dest != end() )
+		{
+			dest->~Element();
+		}
+		new( dest ) Element( rftl::move( *source ) );
+		source->~Element();
+	}
+	m_CurrentSize--;
 	return mutablePos;
 }
 

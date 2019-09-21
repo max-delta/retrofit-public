@@ -132,6 +132,7 @@ public:
 
 	iterator insert( const_iterator pos, const value_type& value );
 	iterator insert( const_iterator pos, value_type&& value );
+	iterator erase( const_iterator pos );
 
 	void resize( size_type count );
 	void resize( size_type count, value_type const& value );

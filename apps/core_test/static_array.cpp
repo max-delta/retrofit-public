@@ -398,7 +398,7 @@ TEST( StaticArray, ValueWipe )
 
 TEST( StaticArray, Insert )
 {
-	rftl::static_array<Proxy, 5> sa;
+	rftl::static_array<Proxy, 3> sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	sa.insert( sa.end(), 2 );
 	ASSERT_TRUE( sa.size() == 1 );
@@ -408,6 +408,46 @@ TEST( StaticArray, Insert )
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
 	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
+TEST( StaticArray, Erase )
+{
+	rftl::static_array<Proxy, 4> sa;
+	sa.push_back( 2 );
+	sa.push_back( 5 );
+	sa.push_back( 7 );
+	sa.push_back( 11 );
+	ASSERT_TRUE( sa.size() == 4 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 5 );
+	ASSERT_TRUE( sa.data()[2] == 7 );
+	ASSERT_TRUE( sa.data()[3] == 11 );
+
+	rftl::static_array<Proxy, 4>::iterator iter;
+
+	iter = sa.erase( sa.begin() + 2 );
+	ASSERT_TRUE( iter == sa.begin() + 2 );
+	ASSERT_TRUE( sa.size() == 3 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 5 );
+	ASSERT_TRUE( sa.data()[2] == 11 );
+
+	iter = sa.erase( sa.begin() + 2 );
+	ASSERT_TRUE( iter == sa.end() );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 5 );
+
+	iter = sa.erase( sa.begin() );
+	ASSERT_TRUE( iter == sa.begin() );
+	ASSERT_TRUE( sa.size() == 1 );
+	ASSERT_TRUE( sa.data()[0] == 5 );
+
+	iter = sa.erase( sa.begin() );
+	ASSERT_TRUE( iter == sa.end() );
 	ASSERT_TRUE( sa.size() == 0 );
 }
 
