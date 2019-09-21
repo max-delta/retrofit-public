@@ -63,5 +63,33 @@ TEST( Hash, HashCollisions )
 	}
 }
 
+
+
+TEST( Hash, ConstexprLiteralHash )
+{
+	NullTerminatedStringHash hasher{};
+
+	// Can be used in constexpr values
+	static constexpr HashVal64 k1 = RF_HASH_FROM_STRING_LITERAL( "" );
+	ASSERT_EQ( hasher( "" ), k1 );
+	static constexpr HashVal64 k2 = RF_HASH_FROM_STRING_LITERAL( "\0" );
+	ASSERT_EQ( hasher( "\0" ), k2 );
+	static constexpr HashVal64 k3 = RF_HASH_FROM_STRING_LITERAL( "\1" );
+	ASSERT_EQ( hasher( "\1" ), k3 );
+	static constexpr HashVal64 k4 = RF_HASH_FROM_STRING_LITERAL( "abc" );
+	ASSERT_EQ( hasher( "abc" ), k4 );
+
+	switch( hasher( "test" ) )
+	{
+		// Can be used in switch statements
+		case RF_HASH_FROM_STRING_LITERAL( "test" ):
+			ASSERT_TRUE( true );
+			break;
+		default:
+			ASSERT_FALSE( true );
+			break;
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

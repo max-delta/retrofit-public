@@ -11,6 +11,11 @@ using HashVal64 = uint64_t;
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t );
 HashVal64 StableHashBytes( void const* buffer, size_t length );
 
+// For constexpr string hashing, avoid using in non-constexpr scenarios
+#define RF_HASH_FROM_STRING_LITERAL( LITERAL ) \
+	RF_MSVC_INLINE_SUPPRESS( 4307 ) \
+	::RF::math::details::ConstStableHashString( "" LITERAL "" )
+
 struct DirectHash
 {
 	HashVal64 operator()( HashVal64 const& key ) const;
@@ -57,5 +62,19 @@ struct SequenceHash
 	}
 };
 
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+// SEE: StableHashBytes(...) internals
+inline constexpr HashVal64 ConstStableHashString( char const* nullTerminatedString, HashVal64 rollingValue = 0xcbf29ce484222325ull )
+{
+	return ( nullTerminatedString[0] == '\0' ) ?
+		rollingValue :
+		ConstStableHashString(
+			&nullTerminatedString[1],
+			( rollingValue ^ static_cast<HashVal64>( nullTerminatedString[0] ) ) * 0x100000001b3 );
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 }}
