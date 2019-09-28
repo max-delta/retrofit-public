@@ -16,6 +16,17 @@ inline LinearAllocator<MaxTotalSize, Align>::LinearAllocator( ExplicitDefaultCon
 
 
 template<size_t MaxTotalSize, size_t Align>
+inline LinearAllocator<MaxTotalSize, Align>::~LinearAllocator()
+{
+	if( GetCurrentCount() > 0 && mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) == false )
+	{
+		RF_RETAIL_FATAL_MSG( "~LinearAllocator()", "Non-zero allocation count" );
+	}
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
 inline void* LinearAllocator<MaxTotalSize, Align>::Allocate( size_t size )
 {
 	size_t const alignedSize = math::SnapHighest( size, kAlignment );
@@ -37,6 +48,11 @@ inline void* LinearAllocator<MaxTotalSize, Align>::Allocate( size_t size )
 		// NOTE: This may happen if two or more allocations both fail at the same time
 		mBytesAllocated.fetch_sub( alignedSize, rftl::memory_order::memory_order_acq_rel );
 		return nullptr;
+	}
+
+	if( mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) )
+	{
+		RF_RETAIL_FATAL_MSG( "LinearAllocator::Allocate(...)", "Allocations relinquished" );
 	}
 
 	mCurrentAllocations.fetch_add( 1, rftl::memory_order::memory_order_acq_rel );
@@ -95,6 +111,14 @@ template<size_t MaxTotalSize, size_t Align>
 inline size_t LinearAllocator<MaxTotalSize, Align>::GetCurrentCount() const
 {
 	return mCurrentAllocations.load( rftl::memory_order::memory_order_acquire );
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
+inline void LinearAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
+{
+	mHasRelinquishedAllAllocations.store( true, rftl::memory_order::memory_order_release );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

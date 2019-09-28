@@ -23,6 +23,8 @@ public:
 	virtual size_t GetCurrentSize() const = 0;
 	virtual size_t GetCurrentCount() const = 0;
 
+	virtual void RelinquishAllAllocations() = 0;
+
 
 	//
 	// Protected methods
@@ -76,6 +78,11 @@ public:
 	virtual size_t GetCurrentCount() const override final
 	{
 		return mAllocator.GetCurrentCount();
+	}
+
+	virtual void RelinquishAllAllocations() override final
+	{
+		mAllocator.RelinquishAllAllocations();
 	}
 
 

@@ -17,8 +17,25 @@ HeapAllocator::HeapAllocator( ExplicitDefaultConstruct )
 
 
 
+HeapAllocator::~HeapAllocator()
+{
+	if( GetCurrentCount() > 0 && mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) == false )
+	{
+		RF_RETAIL_FATAL_MSG( "~HeapAllocator()", "Non-zero allocation count" );
+	}
+
+	platform::ReleaseLargeDynamicHeapHandle( mHeapHandle );
+}
+
+
+
 void* HeapAllocator::Allocate( size_t size )
 {
+	if( mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) )
+	{
+		RF_RETAIL_FATAL_MSG( "HeapAllocator::Allocate(...)", "Allocations relinquished" );
+	}
+
 	mAllocCount.fetch_add( 1, rftl::memory_order::memory_order_acq_rel );
 	return platform::AllocateInLargeDynamicHeap( mHeapHandle, size );
 }
@@ -62,6 +79,13 @@ size_t HeapAllocator::GetCurrentSize() const
 size_t HeapAllocator::GetCurrentCount() const
 {
 	return mAllocCount.load( rftl::memory_order::memory_order_acquire );
+}
+
+
+
+void HeapAllocator::RelinquishAllAllocations()
+{
+	mHasRelinquishedAllAllocations.store( true, rftl::memory_order::memory_order_release );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

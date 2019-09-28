@@ -35,5 +35,27 @@ TEST( SingleAllocator, Standalone )
 	}
 }
 
+
+
+TEST( SingleAllocator, Leak )
+{
+	static constexpr size_t kSize = 8;
+	SingleAllocator<kSize> alloc{ ExplicitDefaultConstruct() };
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), 0 );
+	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
+
+	void* const allocation = alloc.Allocate( kSize );
+	ASSERT_NE( allocation, nullptr );
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+
+	alloc.RelinquishAllAllocations();
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

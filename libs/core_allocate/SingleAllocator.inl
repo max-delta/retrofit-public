@@ -15,8 +15,24 @@ inline SingleAllocator<MaxTotalSize, Align>::SingleAllocator( ExplicitDefaultCon
 
 
 template<size_t MaxTotalSize, size_t Align>
+inline SingleAllocator<MaxTotalSize, Align>::~SingleAllocator()
+{
+	if( GetCurrentCount() > 0 && mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) == false )
+	{
+		RF_RETAIL_FATAL_MSG( "~SingleAllocator()", "Non-zero allocation count" );
+	}
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
 inline void* SingleAllocator<MaxTotalSize, Align>::Allocate( size_t size )
 {
+	if( mHasRelinquishedAllAllocations.load( rftl::memory_order::memory_order_acquire ) )
+	{
+		RF_RETAIL_FATAL_MSG( "SingleAllocator::Allocate(...)", "Allocations relinquished" );
+	}
+
 	bool const hadAllocation = mHasAllocation.exchange( true, rftl::memory_order::memory_order_acq_rel );
 	if( hadAllocation )
 	{
@@ -92,6 +108,14 @@ inline size_t SingleAllocator<MaxTotalSize, Align>::GetCurrentCount() const
 	{
 		return 0;
 	}
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
+inline void SingleAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
+{
+	mHasRelinquishedAllAllocations.store( true, rftl::memory_order::memory_order_release );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -45,5 +45,28 @@ TEST( LinearAllocator, Standalone )
 	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
 }
 
+
+
+TEST( LinearAllocator, Leak )
+{
+	static constexpr size_t kSize = 8;
+	static constexpr size_t kAlign = 2;
+	LinearAllocator<kSize, kAlign> alloc{ ExplicitDefaultConstruct() };
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), 0 );
+	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
+
+	void* const byteAllocation = alloc.Allocate( 1 );
+	ASSERT_NE( byteAllocation, nullptr );
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), 2 );
+	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+
+	alloc.RelinquishAllAllocations();
+	ASSERT_EQ( alloc.GetMaxSize(), kSize );
+	ASSERT_EQ( alloc.GetCurrentSize(), 2 );
+	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

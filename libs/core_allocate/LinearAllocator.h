@@ -30,6 +30,7 @@ public:
 	// No implicit default construction, to prevent accidental creation
 	LinearAllocator() = delete;
 	explicit LinearAllocator( ExplicitDefaultConstruct );
+	~LinearAllocator();
 
 	void* Allocate( size_t size );
 	void* Allocate( size_t size, size_t align );
@@ -38,12 +39,15 @@ public:
 	size_t GetCurrentSize() const;
 	size_t GetCurrentCount() const;
 
+	void RelinquishAllAllocations();
+
 
 	//
 	// Private data
 private:
 	rftl::atomic<size_t> mBytesAllocated = 0;
 	rftl::atomic<size_t> mCurrentAllocations = 0;
+	rftl::atomic<bool> mHasRelinquishedAllAllocations = false;
 
 	// Storage will be aligned as requested, which will not change the size of
 	//  the storage, but may require some padding before-hand to fit properly

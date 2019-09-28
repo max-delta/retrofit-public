@@ -19,6 +19,7 @@ public:
 	// No implicit default construction, to prevent accidental creation
 	HeapAllocator() = delete;
 	explicit HeapAllocator( ExplicitDefaultConstruct );
+	~HeapAllocator();
 
 	void* Allocate( size_t size );
 	void* Allocate( size_t size, size_t align );
@@ -27,12 +28,15 @@ public:
 	size_t GetCurrentSize() const;
 	size_t GetCurrentCount() const;
 
+	void RelinquishAllAllocations();
+
 
 	//
 	// Private data
 private:
 	void const* const mHeapHandle = nullptr;
 	rftl::atomic<size_t> mAllocCount = 0;
+	rftl::atomic<bool> mHasRelinquishedAllAllocations = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
