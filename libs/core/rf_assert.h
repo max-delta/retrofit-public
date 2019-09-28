@@ -14,6 +14,8 @@ enum class AssertResponse
 
 AssertResponse AssertNotification( char const* file, size_t line, char const* failure, char const* message );
 
+[[noreturn]] void FatalNotification( char const* file, size_t line, char const* trigger, char const* message );
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
@@ -52,3 +54,6 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 #define RF_DBGFAIL() RF_EMPTY_FUNCLET()
 #define RF_DBGFAIL_MSG( MSG ) RF_EMPTY_FUNCLET()
 #endif
+
+#define RF_RETAIL_FATAL_MSG( TRIGGER, MSG ) \
+	::RF::assert::FatalNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), TRIGGER, MSG )

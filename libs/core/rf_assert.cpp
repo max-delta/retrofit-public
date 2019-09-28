@@ -3,6 +3,9 @@
 
 #include "core/compiler.h"
 
+#include "rftl/cstdlib"
+#include "rftl/cstdio"
+
 
 // Keeping Windows.h quaratined
 #if defined( _DEBUG ) && defined( RF_PLATFORM_MSVC )
@@ -21,6 +24,17 @@ __pragma( pack( pop, _CRT_PACKING ) )
 #define _CRT_ERROR 1
 #define _CRT_ASSERT 2
 #define _CRT_ERRCNT 3
+#endif
+
+#if defined( RF_PLATFORM_MSVC )
+extern "C"
+{
+	__declspec( dllimport ) int __stdcall MessageBoxA(
+		void* hWnd,
+		char const* lpText,
+		char const* lpCaption,
+		unsigned int uType );
+}
 #endif
 
 namespace RF { namespace assert {
@@ -60,6 +74,45 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 		return AssertResponse::Interrupt;
 	}
 	#endif
+}
+
+
+
+[[noreturn]] RF_NO_INLINE void FatalNotification( char const* file, size_t line, char const* trigger, char const* message )
+{
+	static constexpr size_t kBufSize = 512;
+	char buf[kBufSize] = {};
+	snprintf(
+		buf,
+		kBufSize,
+		"Fatal error!\n"
+		"\n"
+		"Message:\n"
+		"%s\n"
+		"\n"
+		"Trigger:\n"
+		"%s\n"
+		"\n"
+		"File: %s\n"
+		"Line: %u\n"
+		"\n"
+		"[Executable will interrupt and terminate]\n",
+		message,
+		trigger,
+		file,
+		static_cast<unsigned int>( line ) );
+	buf[kBufSize - 1] = '\0';
+
+	fputs( buf, stderr );
+
+	#if defined( RF_PLATFORM_MSVC )
+	{
+		MessageBoxA( nullptr, buf, "Fatal error", 0 /*MB_OK*/ );
+	}
+	#endif
+
+	RF_SOFTWARE_INTERRUPT();
+	std::abort();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
