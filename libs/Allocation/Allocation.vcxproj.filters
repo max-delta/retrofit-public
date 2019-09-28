@@ -3,9 +3,13 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="AllocatorRegistry.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="AccessorDefinition.h" />
+    <ClInclude Include="AccessorDeclaration.h" />
+    <ClInclude Include="AllocatorRegistry.h" />
   </ItemGroup>
 </Project>
