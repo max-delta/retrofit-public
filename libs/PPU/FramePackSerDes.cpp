@@ -4,6 +4,9 @@
 #include "PPU/FramePack.h"
 #include "PPU/TextureManager.h"
 #include "PlatformFilesystem/VFS.h"
+#include "Allocation/AccessorDeclaration.h"
+
+#include "core_allocate/DefaultAllocCreator.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -318,19 +321,19 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	{
 		if( numSlots <= gfx::FramePack_256::kMaxTimeSlots )
 		{
-			retValFPack = DefaultCreator<gfx::FramePack_256>::Create();
+			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_256>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
 		else if( numSlots <= gfx::FramePack_512::kMaxTimeSlots )
 		{
-			retValFPack = DefaultCreator<gfx::FramePack_512>::Create();
+			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_512>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
 		else if( numSlots <= gfx::FramePack_1024::kMaxTimeSlots )
 		{
-			retValFPack = DefaultCreator<gfx::FramePack_1024>::Create();
+			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_1024>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
 		else if( numSlots <= gfx::FramePack_4096::kMaxTimeSlots )
 		{
-			retValFPack = DefaultCreator<gfx::FramePack_4096>::Create();
+			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_4096>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
 		else
 		{

@@ -10,7 +10,9 @@
 #include "PPU/Tileset.h"
 #include "PPU/Font.h"
 #include "PPU/FontManager.h"
+#include "Allocation/AccessorDeclaration.h"
 
+#include "core_allocate/DefaultAllocCreator.h"
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_bits.h"
@@ -71,7 +73,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create texture manager
 	RF_ASSERT( mTextureManager == nullptr );
-	mTextureManager = DefaultCreator<gfx::TextureManager>::Create( mVfs );
+	mTextureManager = alloc::DefaultAllocCreator<gfx::TextureManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
 	success = mTextureManager->AttachToDevice( mDeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )
@@ -81,15 +83,15 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create frame pack manager
 	RF_ASSERT( mFramePackManager == nullptr );
-	mFramePackManager = DefaultCreator<gfx::FramePackManager>::Create( mTextureManager, mVfs );
+	mFramePackManager = alloc::DefaultAllocCreator<gfx::FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mTextureManager, mVfs );
 
 	// Create tileset manager
 	RF_ASSERT( mTilesetManager == nullptr );
-	mTilesetManager = DefaultCreator<gfx::TilesetManager>::Create( mTextureManager, mVfs );
+	mTilesetManager = alloc::DefaultAllocCreator<gfx::TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mTextureManager, mVfs );
 
 	// Create font manager
 	RF_ASSERT( mFontManager == nullptr );
-	mFontManager = DefaultCreator<gfx::FontManager>::Create( mVfs );
+	mFontManager = alloc::DefaultAllocCreator<gfx::FontManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
 	success = mFontManager->AttachToDevice( mDeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )

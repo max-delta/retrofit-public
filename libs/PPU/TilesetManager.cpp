@@ -6,6 +6,9 @@
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
+#include "Allocation/AccessorDeclaration.h"
+
+#include "core_allocate/DefaultAllocCreator.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -96,7 +99,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 		return nullptr;
 	}
 
-	UniquePtr<Tileset> tileset = DefaultCreator<Tileset>::Create();
+	UniquePtr<Tileset> tileset = alloc::DefaultAllocCreator<Tileset>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 	tileset->mTileWidth = math::integer_cast<uint8_t>( tileWidth );
 	tileset->mTileHeight = math::integer_cast<uint8_t>( tileHeight );
 	tileset->mTextureReference = texID;

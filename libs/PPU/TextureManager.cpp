@@ -8,6 +8,9 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
+#include "Allocation/AccessorDeclaration.h"
+
+#include "core_allocate/DefaultAllocCreator.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -48,7 +51,7 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInter
 
 UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const& filename )
 {
-	UniquePtr<Texture> newTexture = DefaultCreator<Texture>::Create();
+	UniquePtr<Texture> newTexture = alloc::DefaultAllocCreator<Texture>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 
 	// Loading deferred to post-load step
 	return newTexture;

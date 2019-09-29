@@ -8,8 +8,9 @@
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
+#include "Allocation/AccessorDeclaration.h"
 
-#include "core/ptr/default_creator.h"
+#include "core_allocate/DefaultAllocCreator.h"
 
 #include "rftl/sstream"
 
@@ -104,7 +105,8 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 		return nullptr;
 	}
 
-	UniquePtr<Font> font = DefaultCreator<Font>::Create();
+	UniquePtr<Font> font = alloc::DefaultAllocCreator<Font>::Create(
+		*alloc::GetAllocator<RFTAG_PPU>() );
 	font->mFileBuffer = rftl::move( fontBuffer );
 	font->mSpacingMode = spacingMode;
 	// NOTE: Not initialized yet, will be determined on device load
