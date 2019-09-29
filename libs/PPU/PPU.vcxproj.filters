@@ -42,6 +42,7 @@
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="TileLayerCSVLoader.cpp" />
+    <ClCompile Include="project.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />

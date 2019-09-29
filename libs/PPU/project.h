@@ -13,3 +13,8 @@
 
 constexpr char const* RFCAT_PPU = "PPU";
 constexpr uint64_t RFCAT_PPU_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+
+struct RFTAG_PPU
+{
+	static constexpr char const kIdentifier[] = "PPU";
+};
