@@ -8,6 +8,9 @@
     <ClInclude Include="AlignmentHelpers.h" />
     <ClInclude Include="HeapAllocator.h" />
     <ClInclude Include="LinearAllocator.h" />
+    <ClInclude Include="EntwinedAllocCreator.h" />
+    <ClInclude Include="DefaultAllocCreator.h" />
+    <ClInclude Include="SplitAllocCreator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

@@ -1,30 +1,31 @@
 #pragma once
-#include "core/macros.h"
+#include "core_allocate/Allocator.h"
 #include "core/ptr/ptr_traits.h"
 #include "core/ptr/creation_payload.h"
 
 
-namespace RF {
+namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-class EntwinedCreator
+class EntwinedAllocCreator
 {
-	RF_NO_INSTANCE( EntwinedCreator );
+	RF_NO_INSTANCE( EntwinedAllocCreator );
 
 	//
 	// Public methods
 public:
 	template<typename... U>
-	static CreationPayload<T> Create( U&&... args )
+	static CreationPayload<T> Create( Allocator& allocator, U&&... args )
 	{
 		// Only one allocation, with the ref serving as the root, since it will
 		//  be the longest lived
 		static_assert( sizeof( T ) + sizeof( PtrRef ) <= 128, "Should not use entwined creator" );
 
-		void* const mem = ::operator new( sizeof( PtrRef ) + sizeof( T ) );
+		void* const mem = allocator.Allocate( sizeof( PtrRef ) + sizeof( T ) );
+		RF_ASSERT_MSG( mem != nullptr, "Failed to allocate" );
 
-		PtrRef* const newRef = new( mem ) PtrRef( &Delete, nullptr );
+		PtrRef* const newRef = new( mem ) PtrRef( &Delete, &allocator );
 		T* const newT = new( reinterpret_cast<char*>( mem ) + sizeof( PtrRef ) ) T( rftl::forward<U>( args )... );
 
 		CreationPayload<T> retVal( newT, newRef );
@@ -39,7 +40,7 @@ private:
 	{
 		RF_PTR_ASSERT_DELETABLE( T );
 
-		(void)userData;
+		Allocator& allocator = *reinterpret_cast<Allocator*>( userData );
 		if( target != nullptr )
 		{
 			reinterpret_cast<T const*>( target )->~T();
@@ -47,10 +48,10 @@ private:
 		if( ref != nullptr )
 		{
 			ref->~PtrRef();
-			::operator delete( ref );
+			allocator.Delete( ref );
 		}
 	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}
+}}

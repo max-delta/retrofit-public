@@ -50,6 +50,7 @@
     <ClCompile Include="allocate_rftlallocator.cpp" />
     <ClCompile Include="allocate_linearallocator.cpp" />
     <ClCompile Include="state_stream.cpp" />
+    <ClCompile Include="allocate_creators.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
