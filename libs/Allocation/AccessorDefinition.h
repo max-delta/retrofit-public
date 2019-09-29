@@ -5,6 +5,16 @@
 
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+// Non-inlined, to keep the main cache function from pulling in a lot of weight
+RF_NO_INLINE Allocator* GetAllocator( char const* identifier )
+{
+	return GetOrCreateGlobalAllocatorRegistry().GetAllocator( identifier );
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 template<typename TagT>
 Allocator* GetAllocator()
@@ -20,7 +30,7 @@ Allocator* GetAllocator()
 	// NOTE: The function-local static here should prevent COMDAT folding for
 	//  everything but the most aggressive optimizations (Is there a condition
 	//  where any existing toolchain will still fold this?)
-	static Allocator* allocatorCache = GetOrCreateGlobalAllocatorRegistry().GetAllocator( kTagIdentifier );
+	static Allocator* allocatorCache = details::GetAllocator( kTagIdentifier );
 
 	return allocatorCache;
 }
