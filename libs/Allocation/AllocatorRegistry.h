@@ -1,16 +1,13 @@
 #pragma once
 #include "project.h"
 
+#include "core_allocate/Allocator.h"
+
 #include "core/meta/ConstructorOverload.h"
 #include "core/ptr/unique_ptr.h"
 
 #include "rftl/string"
 #include "rftl/unordered_map"
-
-// Forwards
-namespace RF { namespace alloc {
-class Allocator;
-}}
 
 
 namespace RF { namespace alloc {
@@ -30,7 +27,7 @@ private:
 	//
 	// Public methods
 public:
-	AllocatorRegistry() = default;
+	AllocatorRegistry();
 
 	WeakPtr<Allocator> GetAllocator( AllocatorIdentifier const& identifier ) const;
 
@@ -42,6 +39,7 @@ public:
 	// Private data
 private:
 	AllocatorLookup mAllocatorLookup;
+	UniquePtr<Allocator> mFallbackAllocator;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

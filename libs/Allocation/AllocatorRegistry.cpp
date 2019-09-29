@@ -1,16 +1,35 @@
 #include "stdafx.h"
 #include "AllocatorRegistry.h"
 
+#include "core_allocate/HeapAllocator.h"
+
+#include "core/ptr/default_creator.h"
 #include "core/meta/LazyInitSingleton.h"
 
 
 namespace RF { namespace alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
+AllocatorRegistry::AllocatorRegistry()
+	: mFallbackAllocator( DefaultCreator<AllocatorT<HeapAllocator>>::Create( ExplicitDefaultConstruct() ) )
+{
+	//
+}
+
+
+
 WeakPtr<Allocator> AllocatorRegistry::GetAllocator( AllocatorIdentifier const& identifier ) const
 {
 	AllocatorLookup::const_iterator const iter = mAllocatorLookup.find( identifier );
-	RF_ASSERT_MSG( iter != mAllocatorLookup.end(), "Failed to find allocator" );
+	if( iter == mAllocatorLookup.end() )
+	{
+		static constexpr bool kAlertOnFallback = false;
+		if( kAlertOnFallback )
+		{
+			RF_DBGFAIL_MSG( "Failed to find allocator" );
+		}
+		return mFallbackAllocator;
+	}
 	return iter->second;
 }
 
