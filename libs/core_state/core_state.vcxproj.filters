@@ -8,8 +8,10 @@
     <ClInclude Include="StateFwd.h" />
     <ClInclude Include="StateStream.h" />
     <ClInclude Include="StateChange.h" />
+    <ClInclude Include="StateTree.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StateStream.inl" />
+    <None Include="StateTree.inl" />
   </ItemGroup>
 </Project>

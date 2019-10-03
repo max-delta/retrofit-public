@@ -51,6 +51,7 @@
     <ClCompile Include="allocate_linearallocator.cpp" />
     <ClCompile Include="state_stream.cpp" />
     <ClCompile Include="allocate_creators.cpp" />
+    <ClCompile Include="state_tree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
