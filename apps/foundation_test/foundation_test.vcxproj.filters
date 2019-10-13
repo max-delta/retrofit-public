@@ -12,6 +12,7 @@
     <ClCompile Include="scheduling_taskscheduler.cpp" />
     <ClCompile Include="scripting_squirrel.cpp" />
     <ClCompile Include="platform_memoryregion.cpp" />
+    <ClCompile Include="rollback_domain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

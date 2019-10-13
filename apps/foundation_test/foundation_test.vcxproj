@@ -36,6 +36,7 @@
     <ClCompile Include="platform_memoryregion.cpp" />
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
+    <ClCompile Include="rollback_domain.cpp" />
     <ClCompile Include="scheduling_taskscheduler.cpp" />
     <ClCompile Include="scripting_squirrel.cpp" />
     <ClCompile Include="serialization_diagnosticexporter.cpp" />
@@ -51,6 +52,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
       <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
+      <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>

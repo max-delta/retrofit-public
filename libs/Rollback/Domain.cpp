@@ -36,6 +36,7 @@ void Domain::TakeAutoSnapshot( time::CommonClock::time_point time )
 {
 	Snapshot const& constSnapshot = GetOldestAutoSnapshot();
 	Snapshot& mutableSnapshot = const_cast<Snapshot&>( constSnapshot );
+	mutableSnapshot.first = time;
 	WriteToSnapshot( mutableSnapshot, mWindow, time, mSnapshotAllocator );
 }
 
@@ -77,6 +78,7 @@ WeakPtr<Snapshot const> Domain::TakeManualSnapshot( ManualSnapshotIdentifier con
 	{
 		snapshot = alloc::DefaultAllocCreator<Snapshot>::Create( mSnapshotAllocator );
 	}
+	snapshot->first = time;
 	WriteToSnapshot( *snapshot, mWindow, time, mSnapshotAllocator );
 	return snapshot;
 }
