@@ -9,6 +9,7 @@
 namespace RF { namespace rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
+class RollbackManager;
 class Domain;
 
 static constexpr size_t kMaxChangesInWindow = 10;

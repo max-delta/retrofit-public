@@ -4,11 +4,16 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="TransferHelpers.cpp" />
+    <ClCompile Include="RollbackManager.cpp" />
+    <ClCompile Include="project.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Domain.h" />
     <ClInclude Include="RollbackFwd.h" />
+    <ClInclude Include="TransferHelpers.h" />
+    <ClInclude Include="RollbackManager.h" />
   </ItemGroup>
 </Project>
