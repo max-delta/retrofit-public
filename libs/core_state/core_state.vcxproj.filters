@@ -9,9 +9,11 @@
     <ClInclude Include="StateStream.h" />
     <ClInclude Include="StateChange.h" />
     <ClInclude Include="StateTree.h" />
+    <ClInclude Include="StateBag.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StateStream.inl" />
     <None Include="StateTree.inl" />
+    <None Include="StateBag.inl" />
   </ItemGroup>
 </Project>

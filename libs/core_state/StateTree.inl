@@ -68,5 +68,21 @@ WeakPtr<typename StateTree<ValueT, MaxChangesT>::StreamType> StateTree<ValueT, M
 	return iter->second;
 }
 
+
+
+template<typename ValueT, size_t MaxChangesT>
+inline rftl::vector<VariableIdentifier> StateTree<ValueT, MaxChangesT>::GetIdentifiers() const
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	rftl::vector<VariableIdentifier> retVal;
+	retVal.reserve( mTree.size() );
+	for( typename Tree::value_type const& entry : mTree )
+	{
+		retVal.emplace_back( entry.first );
+	}
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

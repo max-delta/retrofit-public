@@ -6,6 +6,7 @@
 #include "core/ptr/unique_ptr.h"
 
 #include "rftl/unordered_map"
+#include "rftl/vector"
 #include "rftl/shared_mutex"
 #include "rftl/string"
 
@@ -26,9 +27,6 @@ public:
 	static constexpr size_t kMaxChanges = MaxChangesT;
 	using StreamType = StateStream<ValueType, kMaxChanges>;
 
-	// TODO: This should be a class instead that has scope knowledge
-	using VariableIdentifier = rftl::string;
-
 private:
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
@@ -46,6 +44,8 @@ public:
 
 	WeakPtr<StreamType const> GetStream( VariableIdentifier const& identifier ) const;
 	WeakPtr<StreamType> GetMutableStream( VariableIdentifier const& identifier );
+
+	rftl::vector<VariableIdentifier> GetIdentifiers() const;
 
 
 	//

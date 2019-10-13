@@ -30,6 +30,7 @@
   <ItemGroup>
     <ClInclude Include="StateChange.h" />
     <ClInclude Include="StateFwd.h" />
+    <ClInclude Include="StateBag.h" />
     <ClInclude Include="StateStream.h" />
     <ClInclude Include="StateTree.h" />
     <ClInclude Include="stdafx.h" />
@@ -40,6 +41,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="StateBag.inl" />
     <None Include="StateStream.inl" />
     <None Include="StateTree.inl" />
   </ItemGroup>
