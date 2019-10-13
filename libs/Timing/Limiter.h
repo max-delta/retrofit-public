@@ -1,19 +1,11 @@
 #pragma once
+#include "Timing/TimeFwd.h"
+
 #include "core_time/PerfClock.h"
 
 #include "rftl/thread"
 
 namespace RF { namespace time {
-///////////////////////////////////////////////////////////////////////////////
-
-template<typename ChronoDurationType, long long DesiredTimeSpan>
-struct Limiter;
-
-using Limiter60Fps = Limiter<rftl::chrono::nanoseconds, 16666666>; // Monitor
-using Limiter30Fps = Limiter<rftl::chrono::nanoseconds, 33333333>; // NTSC
-using Limiter24Fps = Limiter<rftl::chrono::nanoseconds, 41666666>; // Film
-using Limiter12Fps = Limiter<rftl::chrono::nanoseconds, 83333333>; // Animation
-
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ChronoDurationType, long long DesiredTimeSpan>

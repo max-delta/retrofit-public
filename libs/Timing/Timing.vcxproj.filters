@@ -5,6 +5,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Limiter.h" />
     <ClInclude Include="FrameClock.h" />
+    <ClInclude Include="TimeFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

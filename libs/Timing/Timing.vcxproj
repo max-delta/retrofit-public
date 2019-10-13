@@ -36,6 +36,7 @@
     <ClInclude Include="Limiter.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TimeFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FrameClock.cpp" />
