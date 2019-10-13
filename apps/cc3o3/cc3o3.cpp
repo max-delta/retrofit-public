@@ -74,8 +74,8 @@ void ProcessFrame()
 	//  logic for all the controllers
 	input::HardcodedTick();
 
-	time::FrameClock::time_point const previous = time::FrameClock::previous();
-	time::FrameClock::time_point const now = time::FrameClock::now();
+	time::CommonClock::time_point const previous = time::FrameClock::previous();
+	time::CommonClock::time_point const now = time::FrameClock::now();
 	sAppStateManager.Tick( now, now - previous );
 	sAppStateManager.ApplyDeferredStateChange();
 

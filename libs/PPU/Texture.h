@@ -3,7 +3,7 @@
 
 #include "PPUFwd.h"
 
-#include "Timing/FrameClock.h"
+#include "core_time/CommonClock.h"
 
 #include "core/macros.h"
 
@@ -34,7 +34,7 @@ public:
 private:
 	void UpdateFrameUsage() const;
 	friend class TextureManager;
-	mutable time::FrameClock::time_point mLastUsedInFrame;
+	mutable time::CommonClock::time_point mLastUsedInFrame;
 	DeviceTextureID mDeviceRepresentation = kInvalidDeviceTextureID;
 	uint32_t mWidthPostLoad;
 	uint32_t mHeightPostLoad;

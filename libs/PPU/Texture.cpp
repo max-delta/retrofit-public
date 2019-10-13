@@ -1,12 +1,14 @@
 #include "stdafx.h"
 #include "Texture.h"
 
+#include "Timing/FrameClock.h"
+
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 Texture::Texture()
-	: mLastUsedInFrame( time::FrameClock::time_point() )
+	: mLastUsedInFrame( time::CommonClock::time_point() )
 {
 	//
 }

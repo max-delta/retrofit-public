@@ -92,7 +92,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 
 	if( analog != nullptr )
 	{
-		time::FrameClock::time_point const now = time::FrameClock::now();
+		time::CommonClock::time_point const now = time::FrameClock::now();
 		for( SignalMapping::value_type const& mapping : mSignalMapping )
 		{
 			AnalogSignalValue const value = analog->GetCurrentSignalValue( mapping.first );

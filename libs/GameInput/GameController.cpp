@@ -21,7 +21,7 @@ void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& 
 
 
 
-void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::FrameClock::time_point earliestTime ) const
+void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::CommonClock::time_point earliestTime ) const
 {
 	auto const onElement = [&parser, &earliestTime]( GameCommand const& element ) -> void
 	{
@@ -64,7 +64,7 @@ void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sa
 
 
 
-void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::FrameClock::time_point earliestTime, GameSignalType type ) const
+void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, GameSignalType type ) const
 {
 	auto const onElement = [&sampler, &earliestTime]( GameSignal const& element ) -> void
 	{

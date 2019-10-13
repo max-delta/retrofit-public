@@ -46,7 +46,7 @@ public:
 		}
 		PhysicalCode mCode;
 		DigitalPinState mNewState;
-		time::FrameClock::time_point mTime;
+		time::CommonClock::time_point mTime;
 	};
 	struct LogicalEvent
 	{
@@ -58,7 +58,7 @@ public:
 		}
 		LogicalCode mCode;
 		DigitalPinState mNewState;
-		time::FrameClock::time_point mTime;
+		time::CommonClock::time_point mTime;
 	};
 
 	void GetPhysicalEventStream( rftl::virtual_iterator<PhysicalEvent>& parser ) const;

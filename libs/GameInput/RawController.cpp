@@ -14,7 +14,7 @@ void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& par
 
 
 
-void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, time::FrameClock::time_point earliestTime ) const
+void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, time::CommonClock::time_point earliestTime ) const
 {
 	auto const onElement = [&parser, &earliestTime]( RawCommand const& element ) -> void
 	{
@@ -43,7 +43,7 @@ void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampl
 
 
 
-void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::FrameClock::time_point earliestTime, RawSignalType type ) const
+void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::CommonClock::time_point earliestTime, RawSignalType type ) const
 {
 	auto const onElement = [&sampler, &earliestTime]( RawSignal const& element ) -> void
 	{

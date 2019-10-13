@@ -5,6 +5,8 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "Timing/FrameClock.h"
+
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
 
