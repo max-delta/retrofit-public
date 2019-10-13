@@ -9,6 +9,10 @@
 namespace rftl {
 using std::common_type;
 
+namespace literals { namespace chrono_literals {
+using namespace std::literals::chrono_literals;
+}}
+
 namespace chrono {
 using std::chrono::duration;
 using std::chrono::system_clock;
@@ -24,5 +28,13 @@ using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::chrono::minutes;
 using std::chrono::hours;
+
+using std::chrono::duration_cast;
+using std::chrono::time_point_cast;
+
+using std::chrono::floor;
+using std::chrono::ceil;
+using std::chrono::round;
+using std::chrono::abs;
 }
 }
