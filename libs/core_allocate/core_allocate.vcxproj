@@ -30,6 +30,7 @@
   <ItemGroup>
     <ClInclude Include="AlignmentHelpers.h" />
     <ClInclude Include="Allocator.h" />
+    <ClInclude Include="AllocatorFwd.h" />
     <ClInclude Include="DefaultAllocCreator.h" />
     <ClInclude Include="EntwinedAllocCreator.h" />
     <ClInclude Include="HeapAllocator.h" />

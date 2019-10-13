@@ -11,6 +11,7 @@
     <ClInclude Include="EntwinedAllocCreator.h" />
     <ClInclude Include="DefaultAllocCreator.h" />
     <ClInclude Include="SplitAllocCreator.h" />
+    <ClInclude Include="AllocatorFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
