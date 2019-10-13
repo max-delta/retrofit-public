@@ -7,8 +7,6 @@
 
 #include "core/ptr/unique_ptr.h"
 
-#include "rftl/vector"
-
 
 namespace RF { namespace cc { namespace appstate {
 ///////////////////////////////////////////////////////////////////////////////
