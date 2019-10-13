@@ -112,7 +112,7 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 	#endif
 
 	RF_SOFTWARE_INTERRUPT();
-	std::abort();
+	rftl::abort();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
