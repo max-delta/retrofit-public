@@ -53,6 +53,13 @@ public:
 	WeakPtr<Snapshot const> GetManualSnapshot( ManualSnapshotIdentifier const& identifier ) const;
 	UniquePtr<Snapshot> RemoveManualSnapshot( ManualSnapshotIdentifier const& identifier );
 
+	// Loading a snapshot writes to the window, which is usually a destructive
+	//  action that causes state to be lost and require re-simulation in order
+	//  to restore the lost state
+	// NOTE: The re-simulation is expected to normally be paired with a change
+	//  in inputs, so that the resulting state ends up being different
+	void LoadSnapshot( Snapshot const& snapshot );
+
 
 	//
 	// Private data

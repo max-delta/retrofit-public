@@ -109,5 +109,12 @@ UniquePtr<Snapshot> Domain::RemoveManualSnapshot( ManualSnapshotIdentifier const
 	return retVal;
 }
 
+
+
+void Domain::LoadSnapshot( Snapshot const& snapshot )
+{
+	ReadFromSnapshot( mWindow, snapshot, mWindowAllocator );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
