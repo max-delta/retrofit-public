@@ -18,12 +18,14 @@ int main()
 	app::Startup();
 	cc::Startup();
 
-	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
+	using Limiter = time::Limiter60Fps;
+	Limiter frameLimiter;
 	frameLimiter.Reset();
 
 	while( true )
 	{
 		frameLimiter.Stall();
+		time::FrameClock::add_time( Limiter::kSpanDuration );
 
 		app::gWndProcInput->OnTick();
 

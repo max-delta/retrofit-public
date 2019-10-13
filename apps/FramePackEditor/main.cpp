@@ -42,12 +42,14 @@ int main()
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 
-	time::Limiter<rftl::chrono::nanoseconds, 16666666> frameLimiter;
+	using Limiter = time::Limiter60Fps;
+	Limiter frameLimiter;
 	frameLimiter.Reset();
 
 	while( true )
 	{
 		frameLimiter.Stall();
+		time::FrameClock::add_time( Limiter::kSpanDuration );
 
 		app::gWndProcInput->OnTick();
 
