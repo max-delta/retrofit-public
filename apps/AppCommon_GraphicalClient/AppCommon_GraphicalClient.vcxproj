@@ -83,6 +83,9 @@
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
+      <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\Scheduling\Scheduling.vcxproj">
       <Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
     </ProjectReference>
