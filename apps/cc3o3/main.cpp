@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "cc3o3/cc3o3.h"
+#include "cc3o3/time/TimeFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -18,14 +19,14 @@ int main()
 	app::Startup();
 	cc::Startup();
 
-	using Limiter = time::Limiter60Fps;
+	using Limiter = cc::time::FrameLimiter;
 	Limiter frameLimiter;
 	frameLimiter.Reset();
 
 	while( true )
 	{
 		frameLimiter.Stall();
-		time::FrameClock::add_time( Limiter::kSpanDuration );
+		time::FrameClock::add_time( cc::time::kSimulationFrameDuration );
 
 		app::gWndProcInput->OnTick();
 

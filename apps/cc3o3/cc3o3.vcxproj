@@ -93,6 +93,9 @@
     <ClInclude Include="input\stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="time\project.h" />
+    <ClInclude Include="time\stdafx.h" />
+    <ClInclude Include="time\TimeFwd.h" />
     <ClInclude Include="ui\LocalizationHelpers.h" />
     <ClInclude Include="ui\project.h" />
     <ClInclude Include="ui\stdafx.h" />

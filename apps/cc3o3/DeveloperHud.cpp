@@ -2,6 +2,7 @@
 #include "DeveloperHud.h"
 
 #include "cc3o3/input/InputFwd.h"
+#include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -61,6 +62,8 @@ void ProcessInput()
 
 void RenderHud()
 {
+	using namespace rftl::chrono;
+
 	if( sDisplayHud == false )
 	{
 		return;
@@ -89,7 +92,9 @@ void RenderHud()
 	uint8_t x = kStartX;
 	uint8_t y = kStartY;
 
-	drawText( x, y, math::Color3f::kMagenta, "FRM: %llu", time::FrameClock::now().time_since_epoch().count() );
+
+	nanoseconds::rep const frameIndex = duration_cast<nanoseconds>( time::FrameClock::now().time_since_epoch() ) / duration_cast<nanoseconds>( time::kSimulationFrameDuration );
+	drawText( x, y, math::Color3f::kMagenta, "FRM: %lli", frameIndex );
 	x++;
 }
 

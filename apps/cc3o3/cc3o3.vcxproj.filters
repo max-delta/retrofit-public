@@ -171,6 +171,15 @@
       <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="DeveloperHud.h" />
+    <ClInclude Include="time\stdafx.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="time\TimeFwd.h">
+      <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="time\project.h">
+      <Filter>time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -187,6 +196,9 @@
     </Filter>
     <Filter Include="combat">
       <UniqueIdentifier>{7aed0947-995d-4cbc-a641-435d43c37fd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="time">
+      <UniqueIdentifier>{f1909fb8-7ba9-4a73-91a5-9e9a955574dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
