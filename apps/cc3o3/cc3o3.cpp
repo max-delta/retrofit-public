@@ -5,6 +5,7 @@
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
 #include "cc3o3/appstates/DevTestCombatCharts.h"
+#include "cc3o3/appstates/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/Common.h"
@@ -49,6 +50,7 @@ void Startup()
 	if( kAllowDevTests )
 	{
 		sAppStateManager.AddState( appstate::id::DevTestCombatCharts, DefaultCreator<appstate::DevTestCombatCharts>::Create() );
+		sAppStateManager.AddState( appstate::id::DevTestRollback, DefaultCreator<appstate::DevTestRollback>::Create() );
 	}
 
 	sAppStateManager.Start( appstate::GetBootState() );

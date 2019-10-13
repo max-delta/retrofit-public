@@ -32,6 +32,7 @@
     <ClCompile Include="appstates\AppStateRoute.cpp" />
     <ClCompile Include="appstates\Boot.cpp" />
     <ClCompile Include="appstates\DevTestCombatCharts.cpp" />
+    <ClCompile Include="appstates\DevTestRollback.cpp" />
     <ClCompile Include="appstates\InitialLoading.cpp" />
     <ClCompile Include="appstates\InputHelpers.cpp" />
     <ClCompile Include="appstates\TitleScreen.cpp" />
@@ -56,6 +57,7 @@
     <ClInclude Include="appstates\AppStatesFwd.h" />
     <ClInclude Include="appstates\Boot.h" />
     <ClInclude Include="appstates\DevTestCombatCharts.h" />
+    <ClInclude Include="appstates\DevTestRollback.h" />
     <ClInclude Include="appstates\InitialLoading.h" />
     <ClInclude Include="appstates\InputHelpers.h" />
     <ClInclude Include="appstates\project.h" />

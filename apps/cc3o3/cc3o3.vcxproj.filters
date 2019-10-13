@@ -48,6 +48,9 @@
     <ClCompile Include="appstates\InputHelpers.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\DevTestRollback.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -161,6 +164,9 @@
       <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="appstates\InputHelpers.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\DevTestRollback.h">
       <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>

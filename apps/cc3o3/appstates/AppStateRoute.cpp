@@ -13,6 +13,7 @@ enum class Mode : uint8_t
 
 	// Various developer tests
 	DevTestCombatCharts,
+	DevTestRollback,
 
 	// Directly to options menu on the title screen
 	TitleScreenOptions,
@@ -45,6 +46,10 @@ AppStateID GetStateAfterInitialLoad()
 	if( fasttrack::sMode == fasttrack::Mode::DevTestCombatCharts )
 	{
 		return id::DevTestCombatCharts;
+	}
+	else if( fasttrack::sMode == fasttrack::Mode::DevTestRollback )
+	{
+		return id::DevTestRollback;
 	}
 
 	return id::TitleScreen;
