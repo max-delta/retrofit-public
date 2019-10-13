@@ -51,6 +51,7 @@
     <ClCompile Include="appstates\DevTestRollback.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
+    <ClCompile Include="DeveloperHud.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="appstates\DevTestRollback.h">
       <Filter>appstates</Filter>
     </ClInclude>
+    <ClInclude Include="DeveloperHud.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">

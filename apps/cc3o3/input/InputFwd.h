@@ -22,7 +22,9 @@ enum : LayerID
 	Invalid = kInvalidLayerID,
 	MainMenu,
 	GameMenu,
-	CharacterControl
+	CharacterControl,
+
+	Developer,
 };
 }
 
@@ -42,7 +44,13 @@ enum : RawCommandType
 
 	Affirmative,
 	Negative,
-	Auxiliary
+	Auxiliary,
+
+	DeveloperToggle,
+	DeveloperCycle,
+	DeveloperAction1,
+	DeveloperAction2,
+	DeveloperAction3,
 };
 }
 namespace game {
@@ -57,7 +65,13 @@ enum : GameCommandType
 	UINavigateToFirst,
 	UINavigateToLast,
 	UIActivateSelection,
-	UICancelSelection
+	UICancelSelection,
+
+	DeveloperToggle,
+	DeveloperCycle,
+	DeveloperAction1,
+	DeveloperAction2,
+	DeveloperAction3,
 };
 }
 }

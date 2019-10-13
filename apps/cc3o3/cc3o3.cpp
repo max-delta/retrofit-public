@@ -7,13 +7,13 @@
 #include "cc3o3/appstates/DevTestCombatCharts.h"
 #include "cc3o3/appstates/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/DeveloperHud.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateManager.h"
-
 #include "GameUI/ContainerManager.h"
 
 #include "PPU/PPUController.h"
@@ -35,6 +35,7 @@ constexpr bool kDebugHideZoomFactor = kAllowDebug && false;
 constexpr bool kDebugSuppressRender = kAllowDebug && false;
 
 constexpr bool kAllowDevTests = true;
+constexpr bool kAllowDeveloperHud = true;
 
 static appstate::AppStateManager sAppStateManager;
 
@@ -65,6 +66,11 @@ void Startup()
 	{
 		app::gUiManager->SetDebugAABBReduction( 2 );
 	}
+
+	if( kAllowDeveloperHud )
+	{
+		developer::Startup();
+	}
 }
 
 
@@ -75,6 +81,12 @@ void ProcessFrame()
 	// TODO: Have an input processing tree that handles dependency-based update
 	//  logic for all the controllers
 	input::HardcodedTick();
+
+	if( kAllowDeveloperHud )
+	{
+		// Developer input is global, and processed seperately from app states
+		developer::ProcessInput();
+	}
 
 	time::CommonClock::time_point const previous = time::FrameClock::previous();
 	time::CommonClock::time_point const now = time::FrameClock::now();
@@ -92,12 +104,22 @@ void ProcessFrame()
 	{
 		uiMan.Render();
 	}
+
+	if( kAllowDeveloperHud )
+	{
+		developer::RenderHud();
+	}
 }
 
 
 
 void Shutdown()
 {
+	if( kAllowDeveloperHud )
+	{
+		developer::Shutdown();
+	}
+
 	sAppStateManager.Stop();
 
 	SystemShutdown();

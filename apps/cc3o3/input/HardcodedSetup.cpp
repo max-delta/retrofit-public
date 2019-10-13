@@ -63,28 +63,52 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
 		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary; // NOTE: Shared with WASD
 	}
+	{
+		// Developer
+		logicalMapping[shim::VK_OEM_3][input::DigitalPinState::Active] = command::raw::DeveloperToggle; // Tilde
+		logicalMapping[shim::VK_F1][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
+		logicalMapping[shim::VK_F2][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
+		logicalMapping[shim::VK_F3][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
+		logicalMapping[shim::VK_F4][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
+	}
 	rawController->SetLogicalMapping( logicalMapping );
 
-	UniquePtr<input::HotkeyController> hotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	hotkeyController->SetSource( rawController );
+	// Menus
+	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	menuHotkeyController->SetSource( rawController );
+	{
+		input::HotkeyController::CommandMapping commandMapping;
+		commandMapping[command::raw::Up] = command::game::UINavigateUp;
+		commandMapping[command::raw::Down] = command::game::UINavigateDown;
+		commandMapping[command::raw::Left] = command::game::UINavigateLeft;
+		commandMapping[command::raw::Right] = command::game::UINavigateRight;
+		commandMapping[command::raw::Home] = command::game::UINavigateToFirst;
+		commandMapping[command::raw::End] = command::game::UINavigateToLast;
+		commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;
+		commandMapping[command::raw::Negative] = command::game::UICancelSelection;
+		menuHotkeyController->SetCommandMapping( commandMapping );
+	}
+	manager.RegisterGameController( menuHotkeyController, player::P1, layer::MainMenu );
+	manager.RegisterGameController( menuHotkeyController, player::P1, layer::GameMenu );
 
-	input::HotkeyController::CommandMapping commandMapping;
-	commandMapping[command::raw::Up] = command::game::UINavigateUp;
-	commandMapping[command::raw::Down] = command::game::UINavigateDown;
-	commandMapping[command::raw::Left] = command::game::UINavigateLeft;
-	commandMapping[command::raw::Right] = command::game::UINavigateRight;
-	commandMapping[command::raw::Home] = command::game::UINavigateToFirst;
-	commandMapping[command::raw::End] = command::game::UINavigateToLast;
-	commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;
-	commandMapping[command::raw::Negative] = command::game::UICancelSelection;
-	hotkeyController->SetCommandMapping( commandMapping );
-
-	manager.RegisterGameController( hotkeyController, player::P1, layer::MainMenu );
-	manager.RegisterGameController( hotkeyController, player::P1, layer::GameMenu );
+	// Developer
+	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	developerHotkeyController->SetSource( rawController );
+	{
+		input::HotkeyController::CommandMapping commandMapping;
+		commandMapping[command::raw::DeveloperToggle] = command::game::DeveloperToggle;
+		commandMapping[command::raw::DeveloperCycle] = command::game::DeveloperCycle;
+		commandMapping[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
+		commandMapping[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
+		commandMapping[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
+		developerHotkeyController->SetCommandMapping( commandMapping );
+	}
+	manager.RegisterGameController( developerHotkeyController, player::P1, layer::Developer );
 
 	details::sRawInputController = rawController;
 	manager.StoreRawController( rftl::move( rawController ) );
-	manager.StoreGameController( rftl::move( hotkeyController ) );
+	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
 
