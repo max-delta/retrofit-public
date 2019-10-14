@@ -25,22 +25,15 @@ struct DevTestRollback::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
-	~InternalState()
-	{
-		// Need to release weak pointers before destroying allocator
-		mVars = {};
-	}
 
-	struct Vars
-	{
-		static constexpr char kP1x[] = "DevTest/Rollback/p1/x";
-		static constexpr char kP1y[] = "DevTest/Rollback/p1/y";
+	// NOTE: Must be before vars so it destructs last
+	alloc::AllocatorT<alloc::LinearAllocator<512>> mAlloc{ ExplicitDefaultConstruct() };
 
-		rollback::Var<uint8_t> mP1x;
-		rollback::Var<uint8_t> mP1y;
-	} mVars;
+	static constexpr char kP1x[] = "DevTest/Rollback/p1/x";
+	static constexpr char kP1y[] = "DevTest/Rollback/p1/y";
 
-	alloc::AllocatorT<alloc::LinearAllocator<4096>> mAlloc{ ExplicitDefaultConstruct() };
+	rollback::Var<uint8_t> mP1x;
+	rollback::Var<uint8_t> mP1y;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -55,8 +48,8 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
 
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
-	internalState.mVars.mP1x = window.GetOrCreateStream<uint8_t>( InternalState::Vars::kP1x, internalState.mAlloc );
-	internalState.mVars.mP1y = window.GetOrCreateStream<uint8_t>( InternalState::Vars::kP1y, internalState.mAlloc );
+	internalState.mP1x = window.GetOrCreateStream<uint8_t>( InternalState::kP1x, internalState.mAlloc );
+	internalState.mP1y = window.GetOrCreateStream<uint8_t>( InternalState::kP1y, internalState.mAlloc );
 }
 
 
@@ -65,8 +58,8 @@ void DevTestRollback::OnExit( AppStateChangeContext& context )
 {
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
-	window.RemoveStream<uint8_t>( InternalState::Vars::kP1x );
-	window.RemoveStream<uint8_t>( InternalState::Vars::kP1y );
+	window.RemoveStream<uint8_t>( InternalState::kP1x );
+	window.RemoveStream<uint8_t>( InternalState::kP1y );
 
 	mInternalState = nullptr;
 }
@@ -92,27 +85,27 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 
 	drawText( 1, 1, "DEV TEST - ROLLBACK" );
-	drawText( 2, 3, "P1x: %u", internalState.mVars.mP1x.As() );
-	drawText( 2, 4, "P1y: %u", internalState.mVars.mP1y.As() );
+	drawText( 2, 3, "P1x: %u", internalState.mP1x.As() );
+	drawText( 2, 4, "P1y: %u", internalState.mP1y.As() );
 
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		if( focusEvent == ui::focusevent::Command_NavigateLeft )
 		{
-			internalState.mVars.mP1x = internalState.mVars.mP1x - 1u;
+			internalState.mP1x = internalState.mP1x - 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateRight )
 		{
-			internalState.mVars.mP1x = internalState.mVars.mP1x + 1u;
+			internalState.mP1x = internalState.mP1x + 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateUp )
 		{
-			internalState.mVars.mP1y = internalState.mVars.mP1y - 1u;
+			internalState.mP1y = internalState.mP1y - 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateDown )
 		{
-			internalState.mVars.mP1y = internalState.mVars.mP1y + 1u;
+			internalState.mP1y = internalState.mP1y + 1u;
 		}
 	}
 }
