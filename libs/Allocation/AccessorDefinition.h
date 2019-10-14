@@ -8,7 +8,7 @@ namespace RF { namespace alloc {
 namespace details {
 
 // Non-inlined, to keep the main cache function from pulling in a lot of weight
-RF_NO_INLINE Allocator* GetAllocator( char const* identifier )
+inline RF_NO_INLINE Allocator* GetAllocator( char const* identifier )
 {
 	return GetOrCreateGlobalAllocatorRegistry().GetAllocator( identifier );
 }
