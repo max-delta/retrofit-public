@@ -4,6 +4,8 @@
 #include "Allocation/AccessorDeclaration.h"
 #include "Logging/Logging.h"
 
+#include "rftl/limits"
+
 
 namespace RF { namespace rollback {
 ///////////////////////////////////////////////////////////////////////////////
@@ -136,6 +138,109 @@ time::CommonClock::time_point RollbackManager::GetTailClock() const
 void RollbackManager::SetTailClock( time::CommonClock::time_point time )
 {
 	mTailClock = time;
+}
+
+
+
+RollbackManager::InputStreams const& RollbackManager::GetCommittedStreams() const
+{
+	return mCommittedStreams;
+}
+
+
+
+RollbackManager::InputStreams const& RollbackManager::GetUncommittedStreams() const
+{
+	return mUncommittedStreams;
+}
+
+
+
+RollbackManager::InputStreams& RollbackManager::GetMutableUncommittedStreams()
+{
+	return mUncommittedStreams;
+}
+
+
+
+InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
+{
+	time::CommonClock::time_point maxCommitHead = rftl::numeric_limits<time::CommonClock::time_point>::lowest();
+	if( mCommittedStreams.empty() == false )
+	{
+		// All committed streams should share the same commit head
+		maxCommitHead = mCommittedStreams.begin()->second.back().mTime;
+		for( InputStreams::value_type const& entry : mCommittedStreams )
+		{
+			time::CommonClock::time_point const head = entry.second.back().mTime;
+			RFLOG_TEST_AND_FATAL( head == maxCommitHead, nullptr, RFCAT_ROLLBACK, "Committed streams are out of sync" );
+		}
+	}
+
+	RF_ASSERT( mUncommittedStreams.empty() == false );
+	time::CommonClock::time_point minUncommitHead = rftl::numeric_limits<time::CommonClock::time_point>::max();
+	for( InputStreams::value_type const& entry : mUncommittedStreams )
+	{
+		time::CommonClock::time_point const head = entry.second.back().mTime;
+		RFLOG_TEST_AND_FATAL( head > maxCommitHead, nullptr, RFCAT_ROLLBACK, "Uncommitted stream has stale data" );
+		minUncommitHead = rftl::min( minUncommitHead, head );
+	}
+	RF_ASSERT( maxCommitHead < minUncommitHead );
+
+	return InclusiveTimeRange( maxCommitHead, minUncommitHead );
+}
+
+
+
+void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
+{
+	RF_ASSERT( range.first < range.second );
+
+	// Process each uncommitted stream
+	for( InputStreams::value_type& sourceEntry : mUncommittedStreams )
+	{
+		// Will transfer to committed stream (create if doesn't exist yet)
+		InputStream& source = sourceEntry.second;
+		InputStream& dest = mCommittedStreams[sourceEntry.first];
+
+		// Transfer
+		for( InputStream::const_iterator iter = source.begin(); iter != source.end(); iter++ )
+		{
+			RF_ASSERT( iter->mTime >= range.first );
+			if( iter->mTime > range.second )
+			{
+				break;
+			}
+			dest.push_back( *iter );
+		}
+
+		// Truncate source
+		RF_ASSERT( source.back().mTime >= range.second );
+		source.increase_read_head( range.second );
+	}
+
+	// Lock all transferred frames on the committed streams
+	// NOTE: This includes streams that didn't match an uncommitted stream,
+	//  which will cause a failure if an uncommitted stream shows up late and
+	//  tries to re-commit
+	for( InputStreams::value_type& destEntry : mCommittedStreams )
+	{
+		destEntry.second.increase_write_head( range.second );
+	}
+}
+
+
+
+void RollbackManager::RewindAllStreams( time::CommonClock::time_point time )
+{
+	for( InputStreams::value_type& entry : mCommittedStreams )
+	{
+		entry.second.rewind( time );
+	}
+	for( InputStreams::value_type& entry : mUncommittedStreams )
+	{
+		entry.second.rewind( time );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
