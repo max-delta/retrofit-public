@@ -14,6 +14,8 @@ class Domain;
 
 static constexpr size_t kMaxChangesInWindow = 10;
 using Window = state::StateBag<kMaxChangesInWindow>;
+template<typename T>
+using Var = state::StateStream<T, kMaxChangesInWindow>;
 
 using Snapshot = rftl::pair<time::CommonClock::time_point, state::StateBag<1>>;
 using ManualSnapshotIdentifier = rftl::string;

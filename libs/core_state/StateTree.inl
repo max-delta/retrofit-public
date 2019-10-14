@@ -41,6 +41,23 @@ WeakPtr<typename StateTree<ValueT, MaxChangesT>::StreamType> StateTree<ValueT, M
 
 
 template<typename ValueT, size_t MaxChangesT>
+inline UniquePtr<typename StateTree<ValueT, MaxChangesT>::StreamType> StateTree<ValueT, MaxChangesT>::RemoveStream( VariableIdentifier const& identifier )
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+
+	typename Tree::iterator const iter = mTree.find( identifier );
+	if( iter == mTree.end() )
+	{
+		return nullptr;
+	}
+	UniquePtr<StreamType> retVal = rftl::move( iter->second );
+	mTree.erase( iter );
+	return retVal;
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
 WeakPtr<typename StateTree<ValueT, MaxChangesT>::StreamType const> StateTree<ValueT, MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );

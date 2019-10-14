@@ -48,6 +48,9 @@ public:
 	WeakPtr<Stream<T>> GetOrCreateStream( VariableIdentifier const& identifier, alloc::Allocator& allocator );
 
 	template<typename T>
+	UniquePtr<Stream<T>> RemoveStream( VariableIdentifier const& identifier );
+
+	template<typename T>
 	WeakPtr<Stream<T> const> GetStream( VariableIdentifier const& identifier ) const;
 
 	template<typename T>

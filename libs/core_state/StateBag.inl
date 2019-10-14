@@ -16,6 +16,15 @@ inline WeakPtr<typename StateBag<MaxChangesT>::template Stream<T>> StateBag<MaxC
 
 template<size_t MaxChangesT>
 template<typename T>
+inline UniquePtr<typename StateBag<MaxChangesT>::template Stream<T>> StateBag<MaxChangesT>::RemoveStream( VariableIdentifier const& identifier )
+{
+	return GetMutableTree<T>().RemoveStream( identifier );
+}
+
+
+
+template<size_t MaxChangesT>
+template<typename T>
 inline WeakPtr<typename StateBag<MaxChangesT>::template Stream<T> const> StateBag<MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {
 	return GetTree<T>().GetStream( identifier );
