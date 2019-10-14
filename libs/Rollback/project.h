@@ -1,4 +1,5 @@
 #pragma once
+#include "Logging/Constants.h"
 
 #ifndef RF_NO_SHARED_EXPORTS
 #ifdef ROLLBACK_EXPORTS
@@ -9,6 +10,9 @@
 #else
 #define ROLLBACK_API
 #endif
+
+constexpr char const* RFCAT_ROLLBACK = "Rollback";
+constexpr uint64_t RFCAT_ROLLBACK_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
 
 struct RFTAG_ROLLBACK_SHARED_STATE
 {

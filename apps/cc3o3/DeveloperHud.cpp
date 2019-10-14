@@ -13,6 +13,7 @@
 
 #include "PPU/PPUController.h"
 
+#include "Rollback/RollbackManager.h"
 #include "Timing/FrameClock.h"
 
 
@@ -20,18 +21,22 @@ namespace RF { namespace cc { namespace developer {
 ///////////////////////////////////////////////////////////////////////////////
 
 static bool sDisplayHud = false;
+static constexpr char kSnapshotName[] = "DEV1";
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void Startup()
 {
-	//
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
 }
 
 
 
 void ProcessInput()
 {
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
 	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::P1, input::layer::Developer );
 	if( controller == nullptr )
@@ -50,8 +55,30 @@ void ProcessInput()
 		switch( command.mType )
 		{
 			case input::command::game::DeveloperToggle:
+			{
 				sDisplayHud = !sDisplayHud;
 				break;
+			}
+			case input::command::game::DeveloperCycle:
+			{
+				break;
+			}
+			case input::command::game::DeveloperAction1:
+			{
+
+				rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
+				break;
+			}
+			case input::command::game::DeveloperAction2:
+			{
+				break;
+			}
+			case input::command::game::DeveloperAction3:
+			{
+				time::CommonClock::time_point const time = rollMan.LoadManualSnapshot( kSnapshotName );
+				rollMan.SetHeadClock( time );
+				break;
+			}
 			default:
 				break;
 		}
@@ -70,6 +97,7 @@ void RenderHud()
 	}
 
 	gfx::PPUController& ppu = *app::gGraphics;
+	rollback::RollbackManager const& rollMan = *app::gRollbackManager;
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
@@ -92,10 +120,17 @@ void RenderHud()
 	uint8_t x = kStartX;
 	uint8_t y = kStartY;
 
+	static constexpr auto timeAsIndex = []( time::CommonClock::time_point const& time ) -> size_t {
+		return math::integer_cast<size_t>( duration_cast<nanoseconds>( time.time_since_epoch() ) / duration_cast<nanoseconds>( time::kSimulationFrameDuration ) );
+	};
 
-	nanoseconds::rep const frameIndex = duration_cast<nanoseconds>( time::FrameClock::now().time_since_epoch() ) / duration_cast<nanoseconds>( time::kSimulationFrameDuration );
-	drawText( x, y, math::Color3f::kMagenta, "FRM: %lli", frameIndex );
-	x++;
+	time::CommonClock::time_point const currentTime = time::FrameClock::now();
+	drawText( x, y, math::Color3f::kMagenta, "FRM: %llu", timeAsIndex( currentTime ) );
+	y++;
+
+	time::CommonClock::time_point const snapshotTime = rollMan.GetSharedDomain().GetManualSnapshot( kSnapshotName )->first;
+	drawText( x, y, math::Color3f::kMagenta, "SNP: %llu", timeAsIndex( snapshotTime ) );
+	y++;
 }
 
 

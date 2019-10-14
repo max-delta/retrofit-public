@@ -141,6 +141,9 @@
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
+      <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
       <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
     </ProjectReference>

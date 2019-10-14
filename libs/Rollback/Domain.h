@@ -23,7 +23,6 @@ class ROLLBACK_API Domain
 	// Types and constants
 public:
 	using AutoSnapshots = rftl::array<Snapshot, 2>;
-	using ManualSnapshotIdentifier = rftl::string;
 	using ManualSnapshots = rftl::unordered_map<ManualSnapshotIdentifier, UniquePtr<Snapshot>>;
 
 
@@ -58,7 +57,7 @@ public:
 	//  to restore the lost state
 	// NOTE: The re-simulation is expected to normally be paired with a change
 	//  in inputs, so that the resulting state ends up being different
-	void LoadSnapshot( Snapshot const& snapshot );
+	time::CommonClock::time_point LoadSnapshot( Snapshot const& snapshot );
 
 
 	//

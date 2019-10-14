@@ -111,9 +111,10 @@ UniquePtr<Snapshot> Domain::RemoveManualSnapshot( ManualSnapshotIdentifier const
 
 
 
-void Domain::LoadSnapshot( Snapshot const& snapshot )
+time::CommonClock::time_point Domain::LoadSnapshot( Snapshot const& snapshot )
 {
 	ReadFromSnapshot( mWindow, snapshot, mWindowAllocator );
+	return snapshot.first;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
