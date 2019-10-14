@@ -8,17 +8,21 @@
 #include "cc3o3/appstates/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/DeveloperHud.h"
+#include "cc3o3/input/InputFwd.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateManager.h"
+#include "GameInput/ControllerManager.h"
 #include "GameUI/ContainerManager.h"
 
 #include "PPU/PPUController.h"
 
 #include "Timing/FrameClock.h"
+#include "Rollback/RollbackManager.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -77,6 +81,22 @@ void Startup()
 
 void ProcessFrame()
 {
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	input::ControllerManager& controllerManager = *app::gInputControllerManager;
+
+	// The head of rollback should be at the end of the previous frame
+	RFLOG_TEST_AND_FATAL(
+		rollMan.GetHeadClock() < time::FrameClock::now(),
+		nullptr,
+		RFCAT_CC3O3,
+		"Rollback head is ahead of frame" );
+	RFLOG_TEST_AND_FATAL(
+		rollMan.GetHeadClock() == time::FrameClock::now() - time::kSimulationFrameDuration,
+		nullptr,
+		RFCAT_CC3O3,
+		"Rollback head not on the previous frame" );
+	rollMan.SetHeadClock( time::FrameClock::now() );
+
 	// HACK: Tick hard-coded input
 	// TODO: Have an input processing tree that handles dependency-based update
 	//  logic for all the controllers
@@ -88,9 +108,40 @@ void ProcessFrame()
 		developer::ProcessInput();
 	}
 
-	time::CommonClock::time_point const previous = time::FrameClock::previous();
-	time::CommonClock::time_point const now = time::FrameClock::now();
-	sAppStateManager.Tick( now, now - previous );
+	if( rollMan.GetHeadClock() < time::FrameClock::now() )
+	{
+		// The head has moved backwards in time since we started the frame
+		if constexpr( false )
+		{
+			// This was caused by a correction, so we need to re-sim the
+			//  the previous frames before we can simulate the current frame
+			// TODO: Re-sim logic
+		}
+		else if constexpr( false )
+		{
+			// This was caused by a replay, so we need to stop processing any
+			//  true input while we wait for the replay to catch up to the
+			//  current true time
+			// TODO: Replay logic
+		}
+		else
+		{
+			// This was caused by a destructive state load, so we need to
+			//  revise what we think 'now' means
+
+			// The head clock is presumed to be valid, so we should begin
+			//  processing the frame afterwards (which is now what we're
+			//  considering the current frame), and make sure we've truncated
+			//  any state that is rollback-sensitive, but not rollback-aware
+			RFLOG_INFO( nullptr, RFCAT_CC3O3, "Rollback detected for load state, truncating state" );
+			controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), rollMan.GetHeadClock() );
+			time::CommonClock::time_point const frameAfterHead = rollMan.GetHeadClock() + time::kSimulationFrameDuration;
+			time::FrameClock::set_time( frameAfterHead );
+			rollMan.SetHeadClock( frameAfterHead );
+		}
+	}
+
+	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
 
 	ui::ContainerManager& uiMan = *app::gUiManager;

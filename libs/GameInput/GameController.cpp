@@ -21,11 +21,10 @@ void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& 
 
 
 
-void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::CommonClock::time_point earliestTime ) const
+void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) const
 {
-	auto const onElement = [&parser, &earliestTime]( GameCommand const& element ) -> void
-	{
-		if( element.mTime >= earliestTime )
+	auto const onElement = [&parser, &earliestTime, &latestTime]( GameCommand const& element ) -> void {
+		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			parser( element );
 		}
@@ -64,11 +63,10 @@ void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sa
 
 
 
-void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, GameSignalType type ) const
+void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, GameSignalType type ) const
 {
-	auto const onElement = [&sampler, &earliestTime]( GameSignal const& element ) -> void
-	{
-		if( element.mTime >= earliestTime )
+	auto const onElement = [&sampler, &earliestTime, &latestTime]( GameSignal const& element ) -> void {
+		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			sampler( element );
 		}

@@ -22,7 +22,7 @@ rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 	// Fetch commands that were entered for this current frame
 	rftl::vector<input::GameCommand> commands;
 	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
-	controller.GetGameCommandStream( parser, time::FrameClock::now() );
+	controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
 
 	// Convert to UI
 	rftl::vector<ui::FocusEventType> retVal;

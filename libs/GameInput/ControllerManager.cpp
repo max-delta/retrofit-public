@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ControllerManager.h"
 
+#include "GameInput/GameController.h"
+
 
 namespace RF { namespace input {
 ///////////////////////////////////////////////////////////////////////////////
@@ -104,6 +106,20 @@ WeakPtr<GameController> ControllerManager::StoreGameController( UniquePtr<GameCo
 	WeakPtr<GameController> const retVal = controller;
 	mGameControllerStorage.emplace_back( rftl::move( controller ) );
 	return retVal;
+}
+
+
+
+void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
+{
+	for( PlayerMapping::value_type& player : mRegisteredGameControllers )
+	{
+		for( LayerMapping::value_type& layer : player.second )
+		{
+			RF_ASSERT( layer.second != nullptr );
+			layer.second->TruncateBuffers( earliestTime, latestTime );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

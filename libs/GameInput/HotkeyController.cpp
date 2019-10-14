@@ -34,8 +34,7 @@ void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>
 {
 	rftl::deque<GameCommand> tempBuffer;
 
-	auto const onElement = [this, &tempBuffer, maxCommands]( RawCommand const& element ) -> void
-	{
+	auto const onElement = [this, &tempBuffer, maxCommands]( RawCommand const& element ) -> void {
 		CommandMapping::const_iterator const mapping = mCommandMapping.find( element.mType );
 		if( mapping != mCommandMapping.end() )
 		{
@@ -57,6 +56,13 @@ void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>
 	{
 		parser( command );
 	}
+}
+
+
+
+void HotkeyController::TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
+{
+	mSource->TruncateBuffers( earliestTime, latestTime );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

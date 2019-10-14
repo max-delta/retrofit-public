@@ -6,7 +6,6 @@ namespace RF { namespace time {
 ///////////////////////////////////////////////////////////////////////////////
 
 FrameClock::time_point FrameClock::sAccumulatedTime( FrameClock::duration::zero() );
-FrameClock::time_point FrameClock::sPreviousAccumulatedTime( FrameClock::duration::zero() );
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,17 +16,16 @@ FrameClock::time_point FrameClock::now()
 
 
 
-FrameClock::time_point FrameClock::previous()
+void FrameClock::add_time( duration const& time )
 {
-	return sPreviousAccumulatedTime;
+	sAccumulatedTime += time;
 }
 
 
 
-void FrameClock::add_time( duration const& time )
+void FrameClock::set_time( time_point const& time )
 {
-	sPreviousAccumulatedTime = sAccumulatedTime;
-	sAccumulatedTime += time;
+	sAccumulatedTime = time;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

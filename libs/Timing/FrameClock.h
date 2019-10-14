@@ -14,15 +14,14 @@ namespace RF { namespace time {
 class TIMING_API FrameClock : public CommonClock
 {
 public:
-	static constexpr bool is_steady = true;
+	static constexpr bool is_steady = false;
 	static time_point now();
-	static time_point previous();
 
 	static void add_time( duration const& time );
+	static void set_time( time_point const& time );
 
 private:
 	static time_point sAccumulatedTime;
-	static time_point sPreviousAccumulatedTime;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -40,14 +40,16 @@ public:
 
 	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser ) const;
 	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const;
-	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::CommonClock::time_point earliestTime ) const;
+	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) const;
 	void GetKnownSignals( rftl::virtual_iterator<GameSignalType>& iter ) const;
 	virtual void GetKnownSignals( rftl::virtual_iterator<GameSignalType>& iter, size_t maxTypes ) const;
 	void GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, GameSignalType type ) const;
 	virtual void GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, size_t maxSamples, GameSignalType type ) const;
-	void GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, GameSignalType type ) const;
+	void GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, GameSignalType type ) const;
 	void GetTextStream( rftl::u16string& text ) const;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const;
+
+	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

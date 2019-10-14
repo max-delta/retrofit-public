@@ -14,11 +14,10 @@ void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& par
 
 
 
-void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, time::CommonClock::time_point earliestTime ) const
+void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) const
 {
-	auto const onElement = [&parser, &earliestTime]( RawCommand const& element ) -> void
-	{
-		if( element.mTime >= earliestTime )
+	auto const onElement = [&parser, &earliestTime, &latestTime]( RawCommand const& element ) -> void {
+		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			parser( element );
 		}
@@ -43,11 +42,10 @@ void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampl
 
 
 
-void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::CommonClock::time_point earliestTime, RawSignalType type ) const
+void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, RawSignalType type ) const
 {
-	auto const onElement = [&sampler, &earliestTime]( RawSignal const& element ) -> void
-	{
-		if( element.mTime >= earliestTime )
+	auto const onElement = [&sampler, &earliestTime, &latestTime]( RawSignal const& element ) -> void {
+		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			sampler( element );
 		}

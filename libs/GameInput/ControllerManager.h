@@ -1,6 +1,8 @@
 #pragma once
 #include "GameInput/InputFwd.h"
 
+#include "core_time/CommonClock.h"
+
 #include "core/ptr/unique_ptr.h"
 
 #include "rftl/vector"
@@ -20,6 +22,7 @@ class GAMEINPUT_API ControllerManager
 public:
 	using PlayerIDs = rftl::unordered_set<PlayerID>;
 	using LayerIDs = rftl::unordered_set<LayerID>;
+
 private:
 	using RawControllerStorage = rftl::vector<UniquePtr<RawController>>;
 	using GameControllerStorage = rftl::vector<UniquePtr<GameController>>;
@@ -41,6 +44,8 @@ public:
 
 	WeakPtr<RawController> StoreRawController( UniquePtr<RawController>&& controller );
 	WeakPtr<GameController> StoreGameController( UniquePtr<GameController>&& controller );
+
+	void TruncateAllRegisteredGameControllers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime );
 
 
 	//

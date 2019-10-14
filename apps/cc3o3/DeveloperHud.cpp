@@ -48,7 +48,7 @@ void ProcessInput()
 	// Fetch commands that were entered for this current frame
 	rftl::vector<input::GameCommand> commands;
 	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
-	controller->GetGameCommandStream( parser, time::FrameClock::now() );
+	controller->GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
 
 	for( RF::input::GameCommand const& command : commands )
 	{

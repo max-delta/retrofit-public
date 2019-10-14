@@ -41,8 +41,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 	{
 		// Physical
 		{
-			auto const onElement = [this]( DigitalInputComponent::PhysicalEvent const& element ) -> void
-			{
+			auto const onElement = [this]( DigitalInputComponent::PhysicalEvent const& element ) -> void {
 				PhysicalMapping::const_iterator const key = mPhysicalMapping.find( element.mCode );
 				if( key != mPhysicalMapping.end() )
 				{
@@ -66,8 +65,7 @@ void RawInputController::ConsumeInput( InputDevice& inputDevice )
 
 		// Logical
 		{
-			auto const onElement = [this]( DigitalInputComponent::LogicalEvent const& element ) -> void
-			{
+			auto const onElement = [this]( DigitalInputComponent::LogicalEvent const& element ) -> void {
 				LogicalMapping::const_iterator const key = mLogicalMapping.find( element.mCode );
 				if( key != mLogicalMapping.end() )
 				{
@@ -177,6 +175,35 @@ void RawInputController::GetTextStream( rftl::u16string& text, size_t maxLen ) c
 	{
 		text.push_back( mTextBuffer[i] );
 	}
+}
+
+
+
+void RawInputController::TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
+{
+	while( mCommandBuffer.empty() == false && mCommandBuffer.front().mTime < earliestTime )
+	{
+		mCommandBuffer.pop_front();
+	}
+	while( mCommandBuffer.empty() == false && mCommandBuffer.back().mTime > latestTime )
+	{
+		mCommandBuffer.pop_back();
+	}
+
+	for( SignalBufferMap::value_type& signal : mSignalBufferMap )
+	{
+		SignalBuffer& buffer = signal.second;
+		while( buffer.empty() == false && buffer.front().mTime < earliestTime )
+		{
+			buffer.pop_front();
+		}
+		while( buffer.empty() == false && buffer.back().mTime > latestTime )
+		{
+			buffer.pop_back();
+		}
+	}
+
+	// TODO: Text, when the interface supports time-per-char
 }
 
 ///////////////////////////////////////////////////////////////////////////////

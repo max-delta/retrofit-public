@@ -30,6 +30,7 @@ public:
 	void SetCommandMapping( CommandMapping const& mapping );
 
 	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const override;
+	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) override;
 
 	//
 	// Private data
