@@ -38,6 +38,7 @@
     <ClInclude Include="RollbackManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TransferHelpers.h" />
+    <ClInclude Include="Var.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -48,6 +49,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TransferHelpers.cpp" />
+    <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Allocation\Allocation.vcxproj">
@@ -58,6 +60,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

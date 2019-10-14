@@ -7,6 +7,7 @@
     <ClCompile Include="TransferHelpers.cpp" />
     <ClCompile Include="RollbackManager.cpp" />
     <ClCompile Include="project.cpp" />
+    <ClCompile Include="Var.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -15,5 +16,6 @@
     <ClInclude Include="RollbackFwd.h" />
     <ClInclude Include="TransferHelpers.h" />
     <ClInclude Include="RollbackManager.h" />
+    <ClInclude Include="Var.h" />
   </ItemGroup>
 </Project>

@@ -11,7 +11,7 @@
 #include "PPU/PPUController.h"
 
 #include "Rollback/RollbackManager.h"
-#include "Timing/FrameClock.h"
+#include "Rollback/Var.h"
 
 #include "core_allocate/LinearAllocator.h"
 
@@ -36,8 +36,8 @@ struct DevTestRollback::InternalState
 		static constexpr char kP1x[] = "DevTest/Rollback/p1/x";
 		static constexpr char kP1y[] = "DevTest/Rollback/p1/y";
 
-		WeakPtr<rollback::Var<uint8_t>> mP1x;
-		WeakPtr<rollback::Var<uint8_t>> mP1y;
+		rollback::Var<uint8_t> mP1x;
+		rollback::Var<uint8_t> mP1y;
 	} mVars;
 
 	alloc::AllocatorT<alloc::LinearAllocator<4096>> mAlloc{ ExplicitDefaultConstruct() };
@@ -92,27 +92,27 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 
 	drawText( 1, 1, "DEV TEST - ROLLBACK" );
-	drawText( 2, 3, "P1x: %u", internalState.mVars.mP1x->Read( time::FrameClock::now() ) );
-	drawText( 2, 4, "P1y: %u", internalState.mVars.mP1y->Read( time::FrameClock::now() ) );
+	drawText( 2, 3, "P1x: %u", internalState.mVars.mP1x.As() );
+	drawText( 2, 4, "P1y: %u", internalState.mVars.mP1y.As() );
 
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		if( focusEvent == ui::focusevent::Command_NavigateLeft )
 		{
-			internalState.mVars.mP1x->Write( time::FrameClock::now(), internalState.mVars.mP1x->Read( time::FrameClock::now() ) - 1u );
+			internalState.mVars.mP1x = internalState.mVars.mP1x - 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateRight )
 		{
-			internalState.mVars.mP1x->Write( time::FrameClock::now(), internalState.mVars.mP1x->Read( time::FrameClock::now() ) + 1u );
+			internalState.mVars.mP1x = internalState.mVars.mP1x + 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateUp )
 		{
-			internalState.mVars.mP1y->Write( time::FrameClock::now(), internalState.mVars.mP1y->Read( time::FrameClock::now() ) - 1u );
+			internalState.mVars.mP1y = internalState.mVars.mP1y - 1u;
 		}
 		else if( focusEvent == ui::focusevent::Command_NavigateDown )
 		{
-			internalState.mVars.mP1y->Write( time::FrameClock::now(), internalState.mVars.mP1y->Read( time::FrameClock::now() ) + 1u );
+			internalState.mVars.mP1y = internalState.mVars.mP1y + 1u;
 		}
 	}
 }
