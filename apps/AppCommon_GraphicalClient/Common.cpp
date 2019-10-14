@@ -168,6 +168,7 @@ void Shutdown()
 	sVfs = nullptr;
 	sWndProcInput = nullptr;
 	sTaskScheduler = nullptr;
+	sRollbackManager = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
