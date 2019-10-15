@@ -47,20 +47,13 @@ public:
 	void TakeManualSnapshot( ManualSnapshotIdentifier const& identifier, time::CommonClock::time_point time );
 	time::CommonClock::time_point LoadManualSnapshot( ManualSnapshotIdentifier const& identifier );
 
-	// Various clocks for coordinating rollback logic
-	//  * The head clock is the leading-edge of the window
-	//  * The window clock is the trailing-edge of the window
-	//  * The tail clock is the oldest valit time of input
+	// The head clock is the leading-edge of the window
 	// NOTE: This has no direct effect on domains, and is primarily intended
 	//  for external users
 	// NOTE: Times outside valid ranges may exist within the underlying
-	//  machinery, and are expected if the windows have moved
+	//  machinery, and are expected if the window has been moved
 	time::CommonClock::time_point GetHeadClock() const;
 	void SetHeadClock( time::CommonClock::time_point time );
-	time::CommonClock::time_point GetWindowClock() const;
-	void SetWindowClock( time::CommonClock::time_point time );
-	time::CommonClock::time_point GetTailClock() const;
-	void SetTailClock( time::CommonClock::time_point time );
 
 	// Committed streams are intended to store input for frames that have
 	//  representation from all interested parties. Specifically: the frames
@@ -68,7 +61,7 @@ public:
 	//  otherwise be ammended.
 	InputStreams const& GetCommittedStreams() const;
 
-	// Uncommitted streams are intended so store input for frames that do not
+	// Uncommitted streams are intended to store input for frames that do not
 	//  yet have representation from all interested parties. Specifically: the
 	//  frames present in the uncommitted streams can be corrected or otherwise
 	//  be ammended.
@@ -91,11 +84,23 @@ public:
 	//  peers that were involved in those frames
 	// NOTE: Intended to be used for save/load scenarios, since a total state
 	//  transfer is needed to overcome the de-syncs caused by this call
-	// NOTE: Example use-cases -
+	// NOTE: Example use-cases
 	//  * Single-player save-states
 	//  * Multi-player save-states with re-join machinery
 	//  * TAS single-step frame rewind with state fix-up
+	// NOTE: Remove is a more aggressive form of rewind, with similar concerns
 	void RewindAllStreams( time::CommonClock::time_point time );
+	void RemoveAllStreams();
+
+	// Left unbounded, committed inputs can grow to significant sizes that may
+	//  begin to impact performance, either from memory pressure or increased
+	//  binary search costs. These inputs should be trimmed once they are no
+	//  longer necessary for critical-path functionality.
+	// NOTE: Expectation is that old inputs are only useful for replay logic,
+	//  in which case they can be flushed to disk before trimming and later
+	//  re-inserted in batches as uncommitted inputs to go through the normal
+	//  logic again
+	void TrimOldCommittedInputs( time::CommonClock::time_point time );
 
 	// Snapshots may no longer be interesting or may be invalidated based on
 	//  the time they were taken
@@ -113,8 +118,6 @@ private:
 	InputStreams mUncommittedStreams;
 
 	time::CommonClock::time_point mHeadClock;
-	time::CommonClock::time_point mWindowClock;
-	time::CommonClock::time_point mTailClock;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

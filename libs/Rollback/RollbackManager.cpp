@@ -114,34 +114,6 @@ void RollbackManager::SetHeadClock( time::CommonClock::time_point time )
 
 
 
-time::CommonClock::time_point RollbackManager::GetWindowClock() const
-{
-	return mWindowClock;
-}
-
-
-
-void RollbackManager::SetWindowClock( time::CommonClock::time_point time )
-{
-	mWindowClock = time;
-}
-
-
-
-time::CommonClock::time_point RollbackManager::GetTailClock() const
-{
-	return mTailClock;
-}
-
-
-
-void RollbackManager::SetTailClock( time::CommonClock::time_point time )
-{
-	mTailClock = time;
-}
-
-
-
 RollbackManager::InputStreams const& RollbackManager::GetCommittedStreams() const
 {
 	return mCommittedStreams;
@@ -240,6 +212,32 @@ void RollbackManager::RewindAllStreams( time::CommonClock::time_point time )
 	for( InputStreams::value_type& entry : mUncommittedStreams )
 	{
 		entry.second.rewind( time );
+	}
+}
+
+
+
+void RollbackManager::RemoveAllStreams()
+{
+	mCommittedStreams.clear();
+	mUncommittedStreams.clear();
+}
+
+
+
+void RollbackManager::TrimOldCommittedInputs( time::CommonClock::time_point time )
+{
+	for( InputStreams::value_type& entry : mCommittedStreams )
+	{
+		entry.second.increase_read_head( time );
+	}
+	for( InputStreams::value_type& entry : mUncommittedStreams )
+	{
+		RFLOG_TEST_AND_FATAL(
+			entry.second.front().mTime > time,
+			nullptr,
+			RFCAT_ROLLBACK,
+			"Trimming committed streams conflicts with uncommitted events before trim point" );
 	}
 }
 

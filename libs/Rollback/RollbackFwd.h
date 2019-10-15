@@ -13,6 +13,9 @@ class RollbackManager;
 class Domain;
 
 // Expected to be used for 'Player 1...N'
+// NOTE: Zero is a valid identifier, and is expected (but not assumed) to be
+//  used for private input, such as local-only menu navigation or any other
+//  input that only affects private state
 using InputStreamIdentifier = uint8_t;
 
 using InputValue = uint64_t;
