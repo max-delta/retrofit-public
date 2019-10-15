@@ -13,6 +13,7 @@
     <ClCompile Include="scripting_squirrel.cpp" />
     <ClCompile Include="platform_memoryregion.cpp" />
     <ClCompile Include="rollback_domain.cpp" />
+    <ClCompile Include="rollback_inputstream.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

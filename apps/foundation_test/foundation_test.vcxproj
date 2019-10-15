@@ -37,6 +37,7 @@
     <ClCompile Include="rftype_typedatabase.cpp" />
     <ClCompile Include="rftype_typetraverser.cpp" />
     <ClCompile Include="rollback_domain.cpp" />
+    <ClCompile Include="rollback_inputstream.cpp" />
     <ClCompile Include="scheduling_taskscheduler.cpp" />
     <ClCompile Include="scripting_squirrel.cpp" />
     <ClCompile Include="serialization_diagnosticexporter.cpp" />
