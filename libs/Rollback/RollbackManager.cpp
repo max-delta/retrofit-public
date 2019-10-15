@@ -243,5 +243,25 @@ void RollbackManager::RewindAllStreams( time::CommonClock::time_point time )
 	}
 }
 
+
+
+size_t RollbackManager::ClearAllSnapshotsBefore( time::CommonClock::time_point time )
+{
+	size_t retVal = 0;
+	retVal += mSharedDomain.ClearAllSnapshotsBefore( time );
+	retVal += mPrivateDomain.ClearAllSnapshotsBefore( time );
+	return retVal;
+}
+
+
+
+size_t RollbackManager::ClearAllSnapshotsAfter( time::CommonClock::time_point time )
+{
+	size_t retVal = 0;
+	retVal += mSharedDomain.ClearAllSnapshotsAfter( time );
+	retVal += mPrivateDomain.ClearAllSnapshotsAfter( time );
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

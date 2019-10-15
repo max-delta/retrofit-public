@@ -58,6 +58,18 @@ inline UniquePtr<typename StateTree<ValueT, MaxChangesT>::StreamType> StateTree<
 
 
 template<typename ValueT, size_t MaxChangesT>
+inline size_t StateTree<ValueT, MaxChangesT>::RemoveAllStreams()
+{
+	WriterLock lock( mMultiReaderSingleWriterLock );
+
+	size_t const retVal = mTree.size();
+	mTree.clear();
+	return retVal;
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
 WeakPtr<typename StateTree<ValueT, MaxChangesT>::StreamType const> StateTree<ValueT, MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );

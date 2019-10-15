@@ -117,5 +117,69 @@ time::CommonClock::time_point Domain::LoadSnapshot( Snapshot const& snapshot )
 	return snapshot.first;
 }
 
+
+
+size_t Domain::ClearAllSnapshotsBefore( time::CommonClock::time_point time )
+{
+	size_t retVal = 0;
+
+	for( AutoSnapshots::value_type& snapshot : mAutoSnapshots )
+	{
+		if( snapshot.first < time )
+		{
+			snapshot.first = {};
+			snapshot.second.RemoveAllStreams();
+			retVal++;
+		}
+	}
+
+	ManualSnapshots::const_iterator iter = mManualSnapshots.begin();
+	while( iter != mManualSnapshots.end() )
+	{
+		if( iter->second->first < time )
+		{
+			iter = mManualSnapshots.erase( iter );
+		}
+		else
+		{
+			iter++;
+		}
+	}
+
+	return retVal;
+}
+
+
+
+size_t Domain::ClearAllSnapshotsAfter( time::CommonClock::time_point time )
+{
+	size_t retVal = 0;
+
+	for( AutoSnapshots::value_type& snapshot : mAutoSnapshots )
+	{
+		if( snapshot.first > time )
+		{
+			snapshot.first = {};
+			snapshot.second.RemoveAllStreams();
+			retVal++;
+		}
+	}
+
+	ManualSnapshots::const_iterator iter = mManualSnapshots.begin();
+	while( iter != mManualSnapshots.end() )
+	{
+		if( iter->second->first > time )
+		{
+			iter = mManualSnapshots.erase( iter );
+		}
+		else
+		{
+			iter++;
+		}
+	}
+
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

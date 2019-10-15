@@ -42,6 +42,7 @@ public:
 
 	WeakPtr<StreamType> GetOrCreateStream( VariableIdentifier const& identifier, alloc::Allocator& allocator );
 	UniquePtr<StreamType> RemoveStream( VariableIdentifier const& identifier );
+	size_t RemoveAllStreams();
 
 	WeakPtr<StreamType const> GetStream( VariableIdentifier const& identifier ) const;
 	WeakPtr<StreamType> GetMutableStream( VariableIdentifier const& identifier );

@@ -59,6 +59,11 @@ public:
 	//  in inputs, so that the resulting state ends up being different
 	time::CommonClock::time_point LoadSnapshot( Snapshot const& snapshot );
 
+	// Snapshots may no longer be interesting or may be invalidated based on
+	//  the time they were taken
+	size_t ClearAllSnapshotsBefore( time::CommonClock::time_point time );
+	size_t ClearAllSnapshotsAfter( time::CommonClock::time_point time );
+
 
 	//
 	// Private data

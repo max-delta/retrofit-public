@@ -50,6 +50,8 @@ public:
 	template<typename T>
 	UniquePtr<Stream<T>> RemoveStream( VariableIdentifier const& identifier );
 
+	size_t RemoveAllStreams();
+
 	template<typename T>
 	WeakPtr<Stream<T> const> GetStream( VariableIdentifier const& identifier ) const;
 

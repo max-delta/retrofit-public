@@ -97,6 +97,11 @@ public:
 	//  * TAS single-step frame rewind with state fix-up
 	void RewindAllStreams( time::CommonClock::time_point time );
 
+	// Snapshots may no longer be interesting or may be invalidated based on
+	//  the time they were taken
+	size_t ClearAllSnapshotsBefore( time::CommonClock::time_point time );
+	size_t ClearAllSnapshotsAfter( time::CommonClock::time_point time );
+
 
 	//
 	// Private data

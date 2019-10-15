@@ -24,6 +24,24 @@ inline UniquePtr<typename StateBag<MaxChangesT>::template Stream<T>> StateBag<Ma
 
 
 template<size_t MaxChangesT>
+inline size_t StateBag<MaxChangesT>::RemoveAllStreams()
+{
+	size_t retVal = 0;
+	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	retVal += mU8.RemoveAllStreams();
+	retVal += mS8.RemoveAllStreams();
+	retVal += mU16.RemoveAllStreams();
+	retVal += mS16.RemoveAllStreams();
+	retVal += mU32.RemoveAllStreams();
+	retVal += mS32.RemoveAllStreams();
+	retVal += mU64.RemoveAllStreams();
+	retVal += mS64.RemoveAllStreams();
+	return retVal;
+}
+
+
+
+template<size_t MaxChangesT>
 template<typename T>
 inline WeakPtr<typename StateBag<MaxChangesT>::template Stream<T> const> StateBag<MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {
