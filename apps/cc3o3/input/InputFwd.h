@@ -35,9 +35,13 @@ enum : RawCommandType
 	Invalid = kInvalidRawCommand,
 
 	Up,
+	UpStop,
 	Down,
+	DownStop,
 	Left,
+	LeftStop,
 	Right,
+	RightStop,
 
 	Home,
 	End,
@@ -66,6 +70,15 @@ enum : GameCommandType
 	UINavigateToLast,
 	UIActivateSelection,
 	UICancelSelection,
+
+	WalkNorth,
+	WalkNorthStop,
+	WalkEast,
+	WalkEastStop,
+	WalkSouth,
+	WalkSouthStop,
+	WalkWest,
+	WalkWestStop,
 
 	DeveloperToggle,
 	DeveloperCycle,

@@ -1,17 +1,21 @@
 #include "stdafx.h"
 #include "DevTestRollback.h"
 
-#include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/input/InputFwd.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameInput/ControllerManager.h"
+#include "GameInput/GameController.h"
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 
 #include "Rollback/RollbackManager.h"
 #include "Rollback/Var.h"
+
+#include "Timing/FrameClock.h"
 
 #include "core_allocate/LinearAllocator.h"
 
@@ -88,22 +92,29 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	drawText( 2, 3, "P1x: %u", internalState.mP1x.As() );
 	drawText( 2, 4, "P1y: %u", internalState.mP1y.As() );
 
-	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
-	for( ui::FocusEventType const& focusEvent : focusEvents )
+	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+	input::GameController const& controller = *controllerManager.GetGameController( input::player::P1, input::layer::CharacterControl );
+
+	// Fetch commands that were entered for this current frame
+	rftl::vector<input::GameCommand> commands;
+	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
+	controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
+
+	for( input::GameCommand const& command : commands )
 	{
-		if( focusEvent == ui::focusevent::Command_NavigateLeft )
+		if( command.mType == input::command::game::WalkWest )
 		{
 			internalState.mP1x = internalState.mP1x - 1u;
 		}
-		else if( focusEvent == ui::focusevent::Command_NavigateRight )
+		else if( command.mType == input::command::game::WalkEast )
 		{
 			internalState.mP1x = internalState.mP1x + 1u;
 		}
-		else if( focusEvent == ui::focusevent::Command_NavigateUp )
+		else if( command.mType == input::command::game::WalkNorth )
 		{
 			internalState.mP1y = internalState.mP1y - 1u;
 		}
-		else if( focusEvent == ui::focusevent::Command_NavigateDown )
+		else if( command.mType == input::command::game::WalkSouth )
 		{
 			internalState.mP1y = internalState.mP1y + 1u;
 		}

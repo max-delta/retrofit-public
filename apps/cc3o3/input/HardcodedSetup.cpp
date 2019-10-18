@@ -33,9 +33,13 @@ void HardcodedSetup()
 	{
 		// WASD
 		logicalMapping['W'][input::DigitalPinState::Active] = command::raw::Up;
+		logicalMapping['W'][input::DigitalPinState::Inactive] = command::raw::UpStop;
 		logicalMapping['A'][input::DigitalPinState::Active] = command::raw::Left;
+		logicalMapping['A'][input::DigitalPinState::Inactive] = command::raw::LeftStop;
 		logicalMapping['S'][input::DigitalPinState::Active] = command::raw::Down;
+		logicalMapping['S'][input::DigitalPinState::Inactive] = command::raw::DownStop;
 		logicalMapping['D'][input::DigitalPinState::Active] = command::raw::Right;
+		logicalMapping['D'][input::DigitalPinState::Inactive] = command::raw::RightStop;
 
 		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with arrows
 		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with arrows
@@ -51,9 +55,13 @@ void HardcodedSetup()
 	{
 		// Arrow keys
 		logicalMapping[shim::VK_UP][input::DigitalPinState::Active] = command::raw::Up;
+		logicalMapping[shim::VK_UP][input::DigitalPinState::Inactive] = command::raw::UpStop;
 		logicalMapping[shim::VK_LEFT][input::DigitalPinState::Active] = command::raw::Left;
+		logicalMapping[shim::VK_LEFT][input::DigitalPinState::Inactive] = command::raw::LeftStop;
 		logicalMapping[shim::VK_DOWN][input::DigitalPinState::Active] = command::raw::Down;
+		logicalMapping[shim::VK_DOWN][input::DigitalPinState::Inactive] = command::raw::DownStop;
 		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = command::raw::Right;
+		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Inactive] = command::raw::RightStop;
 
 		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with WASD
 		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with WASD
@@ -91,6 +99,23 @@ void HardcodedSetup()
 	manager.RegisterGameController( menuHotkeyController, player::P1, layer::MainMenu );
 	manager.RegisterGameController( menuHotkeyController, player::P1, layer::GameMenu );
 
+	// Gameplay
+	UniquePtr<input::HotkeyController> p1HotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	p1HotkeyController->SetSource( rawController );
+	{
+		input::HotkeyController::CommandMapping commandMapping;
+		commandMapping[command::raw::Up] = command::game::WalkNorth;
+		commandMapping[command::raw::UpStop] = command::game::WalkNorthStop;
+		commandMapping[command::raw::Down] = command::game::WalkSouth;
+		commandMapping[command::raw::DownStop] = command::game::WalkSouthStop;
+		commandMapping[command::raw::Left] = command::game::WalkWest;
+		commandMapping[command::raw::LeftStop] = command::game::WalkWestStop;
+		commandMapping[command::raw::Right] = command::game::WalkEast;
+		commandMapping[command::raw::RightStop] = command::game::WalkEastStop;
+		p1HotkeyController->SetCommandMapping( commandMapping );
+	}
+	manager.RegisterGameController( p1HotkeyController, player::P1, layer::CharacterControl );
+
 	// Developer
 	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	developerHotkeyController->SetSource( rawController );
@@ -108,6 +133,7 @@ void HardcodedSetup()
 	details::sRawInputController = rawController;
 	manager.StoreRawController( rftl::move( rawController ) );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+	manager.StoreGameController( rftl::move( p1HotkeyController ) );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
