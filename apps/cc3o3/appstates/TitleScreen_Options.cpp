@@ -88,33 +88,49 @@ void OptionSet::Update( ui::controller::ListBox& listBox ) const
 	listBox.SetText( optionsText );
 }
 
-static char sUpdateTestVal = '0';
-rftl::string UpdateTestString()
+struct UpdateTest
 {
-	return rftl::string( "Option update test: " ) + sUpdateTestVal;
-}
-void UpdateTestAction()
-{
-	sUpdateTestVal++;
-	if( sUpdateTestVal > '9' )
+	static inline char sVal = '0';
+	static rftl::string String()
 	{
-		sUpdateTestVal = '0';
+		return rftl::string( "Option update test: " ) + sVal;
 	}
-}
+	static void Action()
+	{
+		sVal++;
+		if( sVal > '9' )
+		{
+			sVal = '0';
+		}
+	}
+	static inline OptionSet::Option const sOption{
+		"",
+		Action,
+		String
+	};
+};
 
-static bool sToggleTestVal = false;
-rftl::string ToggleTestString()
+struct ToggleTest
 {
-	return rftl::string( "Option toggle test: " ) + ( sToggleTestVal ? "True" : "False" );
-}
-void ToggleTestAction()
-{
-	sToggleTestVal = !sToggleTestVal;
-}
+	static inline bool sVal = false;
+	static rftl::string String()
+	{
+		return rftl::string( "Option toggle test: " ) + ( sVal ? "True" : "False" );
+	}
+	static void Action()
+	{
+		sVal = !sVal;
+	}
+	static inline OptionSet::Option const sOption{
+		"",
+		Action,
+		String
+	};
+};
 
-OptionSet sDevOptions = { {
-	{ "", UpdateTestAction, UpdateTestString },
-	{ "", ToggleTestAction, ToggleTestString },
+OptionSet sDevOptions = { { //
+	UpdateTest::sOption,
+	ToggleTest::sOption,
 	{ "Menu option text for slot 3" },
 	{ "Menu option text for slot 4" },
 	{ "Menu option text for slot 5" },
