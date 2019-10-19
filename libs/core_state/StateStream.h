@@ -1,7 +1,7 @@
 #pragma once
 #include "StateFwd.h"
 
-#include "core_state/StateChange.h"
+#include "core_time/CommonClock.h"
 
 #include "rftl/extension/static_vector.h"
 
@@ -18,13 +18,14 @@ class StateStream
 	//
 	// Types and constants
 public:
+	using TimeType = time::CommonClock::time_point;
 	using ValueType = ValueT;
-	using ChangeType = StateChange<ValueType>;
 	static constexpr size_t kMaxChanges = MaxChangesT;
 
 private:
-	// TODO: This would likely be better served by a circular buffer
-	using Changes = rftl::static_vector<ChangeType, kMaxChanges>;
+	// TODO: These would likely be better served by circular buffers
+	using Times = rftl::static_vector<TimeType, kMaxChanges>;
+	using Values = rftl::static_vector<ValueType, kMaxChanges>;
 
 
 	//
@@ -42,7 +43,9 @@ public:
 	//
 	// Private data
 private:
-	Changes mChanges;
+	// NOTE: These are kept seperate to avoid excessive padding from alignment
+	Times mTimes;
+	Values mValues;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -28,7 +28,6 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
-    <ClInclude Include="StateChange.h" />
     <ClInclude Include="StateFwd.h" />
     <ClInclude Include="StateBag.h" />
     <ClInclude Include="StateStream.h" />

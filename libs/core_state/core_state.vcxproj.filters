@@ -7,7 +7,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StateFwd.h" />
     <ClInclude Include="StateStream.h" />
-    <ClInclude Include="StateChange.h" />
     <ClInclude Include="StateTree.h" />
     <ClInclude Include="StateBag.h" />
   </ItemGroup>

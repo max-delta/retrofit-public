@@ -18,38 +18,37 @@ inline StateStream<ValueT, MaxChangesT>::StateStream()
 template<typename ValueT, size_t MaxChangesT>
 inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_point time, ValueT value )
 {
-	ChangeType newChange;
-	newChange.mTime = time;
-	newChange.mNewValue = value;
+	RF_ASSERT( mTimes.size() == mValues.size() );
 
-	static constexpr auto compare = [](
-		time::CommonClock::time_point const& time,
-		ChangeType const& change ) -> bool
-	{
-		return time < change.mTime;
-	};
-
-	typename Changes::iterator iterPastTime = rftl::upper_bound( mChanges.begin(), mChanges.end(), time, compare );
-	if( iterPastTime == mChanges.end() )
+	typename Times::iterator iterPastTime = rftl::upper_bound( mTimes.begin(), mTimes.end(), time );
+	if( iterPastTime == mTimes.end() )
 	{
 		// Need to add to end
 
-		if( mChanges.size() == mChanges.max_size() )
+		if( mTimes.size() == mTimes.max_size() )
 		{
 			// Full, pop front
-			mChanges.erase( mChanges.begin() );
+			mTimes.erase( mTimes.begin() );
+			mTimes.erase( mTimes.begin() );
 		}
 
-		mChanges.emplace_back( newChange );
+		mTimes.emplace_back( time );
+		mValues.emplace_back( value );
 		return;
 	}
 
-	// Need to stomp and wipe everything aftewards
-	*iterPastTime = newChange;
+	typename Times::difference_type const distance = iterPastTime - mTimes.begin();
+	typename Values::iterator const iterPastValue = mValues.begin() + distance;
 
-	RF_ASSERT( mChanges.begin() <= iterPastTime );
-	size_t const newSize = static_cast<size_t>( rftl::distance( mChanges.begin(), iterPastTime + 1 ) );
-	mChanges.resize( newSize );
+	// Need to stomp and wipe everything aftewards
+	*iterPastTime = time;
+	*iterPastValue = value;
+
+	RF_ASSERT( mTimes.begin() <= iterPastTime );
+	RF_ASSERT( mValues.begin() <= iterPastValue );
+	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterPastTime + 1 ) );
+	mTimes.resize( newSize );
+	mValues.resize( newSize );
 }
 
 
@@ -57,19 +56,18 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 template<typename ValueT, size_t MaxChangesT>
 inline ValueT StateStream<ValueT, MaxChangesT>::Read( time::CommonClock::time_point time ) const
 {
-	static constexpr auto compare = [](
-		time::CommonClock::time_point const& time,
-		ChangeType const& change ) -> bool
-	{
-		return time < change.mTime;
-	};
+	RF_ASSERT( mTimes.size() == mValues.size() );
 
-	typename Changes::const_iterator iterPastTime = rftl::upper_bound( mChanges.begin(), mChanges.end(), time, compare );
-	if( iterPastTime == mChanges.begin() )
+	typename Times::const_iterator iterPastTime = rftl::upper_bound( mTimes.begin(), mTimes.end(), time );
+	if( iterPastTime == mTimes.begin() )
 	{
 		return ValueType{};
 	}
-	return ( iterPastTime - 1 )->mNewValue;
+
+	typename Times::difference_type const distance = iterPastTime - mTimes.begin();
+	typename Values::const_iterator const iterPastValue = mValues.begin() + distance;
+
+	return *( iterPastValue - 1 );
 }
 
 
@@ -77,11 +75,11 @@ inline ValueT StateStream<ValueT, MaxChangesT>::Read( time::CommonClock::time_po
 template<typename ValueT, size_t MaxChangesT>
 inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetEarliestTime() const
 {
-	if( mChanges.empty() )
+	if( mTimes.empty() )
 	{
 		return time::CommonClock::time_point();
 	}
-	return mChanges.front().mTime;
+	return mTimes.front();
 }
 
 
@@ -89,11 +87,11 @@ inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetEarlie
 template<typename ValueT, size_t MaxChangesT>
 inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetLatestTime() const
 {
-	if( mChanges.empty() )
+	if( mTimes.empty() )
 	{
 		return time::CommonClock::time_point();
 	}
-	return mChanges.back().mTime;
+	return mTimes.back();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
