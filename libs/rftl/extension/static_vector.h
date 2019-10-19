@@ -8,7 +8,7 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Element, size_t ElementCapacity>
+template<typename Element, size_t ElementCapacity, size_t Alignment = alignof( Element )>
 class static_vector
 {
 	//
@@ -32,12 +32,13 @@ public:
 	// Constants
 public:
 	static constexpr size_type fixed_capacity = ElementCapacity;
+	static constexpr size_type alignment = Alignment;
 
 
 	//
 	// Structs
 private:
-	struct alignas( alignof( Element ) ) Storage
+	struct alignas( alignment ) Storage
 	{
 		Element& Value();
 		Element const& Value() const;
@@ -46,9 +47,10 @@ private:
 	private:
 		static_assert( sizeof( Element ) > 0, "Container of empty elements is meaningless" );
 		uint8_t mData[sizeof( Element )];
+		RF_ACK_ANY_PADDING;
 	};
-	static_assert( alignof( Storage ) == alignof( Element ), "Unxepected alignment change" );
-	static_assert( sizeof( Storage ) == sizeof( Element ), "Unxepected size change" );
+	static_assert( alignof( Storage ) == alignment, "Unxepected alignment change" );
+	static_assert( sizeof( Storage ) >= sizeof( Element ), "Unxepected size change" );
 
 
 	//

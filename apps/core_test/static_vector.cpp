@@ -51,6 +51,21 @@ struct Proxy
 
 
 
+TEST( StaticVector, Alignment )
+{
+	// This adds padding
+	static_assert(
+		sizeof( rftl::static_vector<uint16_t, 5> ) < sizeof( rftl::static_vector<uint16_t, 5, alignof( uint32_t )> ),
+		"Stricter alignment doesn't appear to have had an effect" );
+
+	// This has no effect, since the backing array is already free of padding
+	static_assert(
+		sizeof( rftl::static_vector<uint16_t, 5> ) == sizeof( rftl::static_vector<uint16_t, 5, alignof( uint8_t )> ),
+		"Meaninglessly loose alignment somehow affected size" );
+}
+
+
+
 TEST( StaticVector, BasicEmpty )
 {
 	rftl::static_vector<Proxy, 5> empty;
