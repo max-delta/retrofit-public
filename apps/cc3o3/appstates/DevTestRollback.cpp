@@ -31,13 +31,20 @@ struct DevTestRollback::InternalState
 	InternalState() = default;
 
 	// NOTE: Must be before vars so it destructs last
-	alloc::AllocatorT<alloc::LinearAllocator<512>> mAlloc{ ExplicitDefaultConstruct() };
+	alloc::AllocatorT<alloc::LinearAllocator<1024>> mAlloc{ ExplicitDefaultConstruct() };
 
 	static constexpr char kP1x[] = "DevTest/Rollback/p1/x";
 	static constexpr char kP1y[] = "DevTest/Rollback/p1/y";
+	static constexpr char kP2x[] = "DevTest/Rollback/p2/x";
+	static constexpr char kP2y[] = "DevTest/Rollback/p2/y";
 
-	rollback::Var<uint8_t> mP1x;
-	rollback::Var<uint8_t> mP1y;
+	struct Pos
+	{
+		rollback::Var<uint8_t> mX;
+		rollback::Var<uint8_t> mY;
+	};
+	Pos mP1;
+	Pos mP2;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,8 +59,10 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
 
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
-	internalState.mP1x = window.GetOrCreateStream<uint8_t>( InternalState::kP1x, internalState.mAlloc );
-	internalState.mP1y = window.GetOrCreateStream<uint8_t>( InternalState::kP1y, internalState.mAlloc );
+	internalState.mP1.mX = window.GetOrCreateStream<uint8_t>( InternalState::kP1x, internalState.mAlloc );
+	internalState.mP1.mY = window.GetOrCreateStream<uint8_t>( InternalState::kP1y, internalState.mAlloc );
+	internalState.mP2.mX = window.GetOrCreateStream<uint8_t>( InternalState::kP2x, internalState.mAlloc );
+	internalState.mP2.mY = window.GetOrCreateStream<uint8_t>( InternalState::kP2y, internalState.mAlloc );
 }
 
 
@@ -64,6 +73,8 @@ void DevTestRollback::OnExit( AppStateChangeContext& context )
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
 	window.RemoveStream<uint8_t>( InternalState::kP1x );
 	window.RemoveStream<uint8_t>( InternalState::kP1y );
+	window.RemoveStream<uint8_t>( InternalState::kP2x );
+	window.RemoveStream<uint8_t>( InternalState::kP2y );
 
 	mInternalState = nullptr;
 }
@@ -89,34 +100,46 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 
 	drawText( 1, 1, "DEV TEST - ROLLBACK" );
-	drawText( 2, 3, "P1x: %u", internalState.mP1x.As() );
-	drawText( 2, 4, "P1y: %u", internalState.mP1y.As() );
+	drawText( 2, 3, "P1x: %u", internalState.mP1.mX.As() );
+	drawText( 2, 4, "P1y: %u", internalState.mP1.mY.As() );
+	drawText( 2, 5, "P2x: %u", internalState.mP2.mX.As() );
+	drawText( 2, 6, "P2y: %u", internalState.mP2.mY.As() );
 
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	input::GameController const& controller = *controllerManager.GetGameController( input::player::P1, input::layer::CharacterControl );
 
-	// Fetch commands that were entered for this current frame
-	rftl::vector<input::GameCommand> commands;
-	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
-	controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
+	static constexpr input::PlayerID kPlayerIDs[] = { input::player::P1, input::player::P2 };
+	InternalState::Pos* const positions[] = { &internalState.mP1, &internalState.mP2 };
 
-	for( input::GameCommand const& command : commands )
+	for( size_t i = 0; i < 2; i++ )
 	{
-		if( command.mType == input::command::game::WalkWest )
+		input::PlayerID const playerID = kPlayerIDs[i];
+		InternalState::Pos* const pos = positions[i];
+
+		input::GameController const& controller = *controllerManager.GetGameController( playerID, input::layer::CharacterControl );
+
+		// Fetch commands that were entered for this current frame
+		rftl::vector<input::GameCommand> commands;
+		rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
+		controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
+
+		for( input::GameCommand const& command : commands )
 		{
-			internalState.mP1x = internalState.mP1x - 1u;
-		}
-		else if( command.mType == input::command::game::WalkEast )
-		{
-			internalState.mP1x = internalState.mP1x + 1u;
-		}
-		else if( command.mType == input::command::game::WalkNorth )
-		{
-			internalState.mP1y = internalState.mP1y - 1u;
-		}
-		else if( command.mType == input::command::game::WalkSouth )
-		{
-			internalState.mP1y = internalState.mP1y + 1u;
+			if( command.mType == input::command::game::WalkWest )
+			{
+				pos->mX = pos->mX - 1u;
+			}
+			else if( command.mType == input::command::game::WalkEast )
+			{
+				pos->mX = pos->mX + 1u;
+			}
+			else if( command.mType == input::command::game::WalkNorth )
+			{
+				pos->mY = pos->mY - 1u;
+			}
+			else if( command.mType == input::command::game::WalkSouth )
+			{
+				pos->mY = pos->mY + 1u;
+			}
 		}
 	}
 }

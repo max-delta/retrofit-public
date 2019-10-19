@@ -12,7 +12,8 @@ namespace player {
 enum : PlayerID
 {
 	Invalid = kInvalidPlayerID,
-	P1
+	P1,
+	P2
 };
 }
 
@@ -42,6 +43,15 @@ enum : RawCommandType
 	LeftStop,
 	Right,
 	RightStop,
+
+	HatUp,
+	HatUpStop,
+	HatDown,
+	HatDownStop,
+	HatLeft,
+	HatLeftStop,
+	HatRight,
+	HatRightStop,
 
 	Home,
 	End,

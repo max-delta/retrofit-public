@@ -72,6 +72,17 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary; // NOTE: Shared with WASD
 	}
 	{
+		// Hat
+		logicalMapping['I'][input::DigitalPinState::Active] = command::raw::HatUp;
+		logicalMapping['I'][input::DigitalPinState::Inactive] = command::raw::HatUpStop;
+		logicalMapping['J'][input::DigitalPinState::Active] = command::raw::HatLeft;
+		logicalMapping['J'][input::DigitalPinState::Inactive] = command::raw::HatLeftStop;
+		logicalMapping['K'][input::DigitalPinState::Active] = command::raw::HatDown;
+		logicalMapping['K'][input::DigitalPinState::Inactive] = command::raw::HatDownStop;
+		logicalMapping['L'][input::DigitalPinState::Active] = command::raw::HatRight;
+		logicalMapping['L'][input::DigitalPinState::Inactive] = command::raw::HatRightStop;
+	}
+	{
 		// Developer
 		logicalMapping[shim::VK_OEM_3][input::DigitalPinState::Active] = command::raw::DeveloperToggle; // Tilde
 		logicalMapping[shim::VK_F1][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
@@ -116,6 +127,23 @@ void HardcodedSetup()
 	}
 	manager.RegisterGameController( p1HotkeyController, player::P1, layer::CharacterControl );
 
+	// Testing
+	UniquePtr<input::HotkeyController> p2HotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	p2HotkeyController->SetSource( rawController );
+	{
+		input::HotkeyController::CommandMapping commandMapping;
+		commandMapping[command::raw::HatUp] = command::game::WalkNorth;
+		commandMapping[command::raw::HatUpStop] = command::game::WalkNorthStop;
+		commandMapping[command::raw::HatDown] = command::game::WalkSouth;
+		commandMapping[command::raw::HatDownStop] = command::game::WalkSouthStop;
+		commandMapping[command::raw::HatLeft] = command::game::WalkWest;
+		commandMapping[command::raw::HatLeftStop] = command::game::WalkWestStop;
+		commandMapping[command::raw::HatRight] = command::game::WalkEast;
+		commandMapping[command::raw::HatRightStop] = command::game::WalkEastStop;
+		p2HotkeyController->SetCommandMapping( commandMapping );
+	}
+	manager.RegisterGameController( p2HotkeyController, player::P2, layer::CharacterControl );
+
 	// Developer
 	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	developerHotkeyController->SetSource( rawController );
@@ -134,6 +162,7 @@ void HardcodedSetup()
 	manager.StoreRawController( rftl::move( rawController ) );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( p1HotkeyController ) );
+	manager.StoreGameController( rftl::move( p2HotkeyController ) );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
