@@ -265,6 +265,7 @@ Elements:
 * ?:?, buff that lower health means more damage??? (higher health does less???)
 * ?:?, target's next spell is all colors, benefits from all proficiencies, ignores all deficiencies, hits all weaknesses, ignores all resistances???
 * ?:?, target gains double-strike for the next X attacks???
+* ?:?, self attacks/techs cost half stamina shortly??? (innate-restrict???) "Redline"
 * ?:?, delayed action elements??? trap type???
 * ?:?, detonate status effects for some new effects (+1 potency)???
 * ?:?, huge buff to stats, auto-suicide after time, can only be rezzed once after death???
