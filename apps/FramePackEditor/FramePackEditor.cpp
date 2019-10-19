@@ -21,7 +21,7 @@
 #include "core_platform/winuser_shim.h"
 #include "core/ptr/default_creator.h"
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 #include "rftl/extension/string_compare.h"
 
 
@@ -58,7 +58,7 @@ void FramePackEditor::Process()
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
 	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
-	typedef rftl::static_array<LogicalEvent, 1> LogicEvents;
+	typedef rftl::static_vector<LogicalEvent, 1> LogicEvents;
 	typedef rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents> LogicEventParser;
 	LogicEvents logicEvents;
 	LogicEventParser logicEventParser( logicEvents );

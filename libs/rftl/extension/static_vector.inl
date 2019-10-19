@@ -1,5 +1,5 @@
 #pragma once
-#include "static_array.h"
+#include "static_vector.h"
 
 #include "core/macros.h"
 
@@ -7,7 +7,7 @@ namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Element, size_t ElementCapacity>
-inline Element& static_array<Element, ElementCapacity>::Storage::Value()
+inline Element& static_vector<Element, ElementCapacity>::Storage::Value()
 {
 	return *( reinterpret_cast<Element*>( mData ) );
 }
@@ -15,7 +15,7 @@ inline Element& static_array<Element, ElementCapacity>::Storage::Value()
 
 
 template<typename Element, size_t ElementCapacity>
-inline Element const& static_array<Element, ElementCapacity>::Storage::Value() const
+inline Element const& static_vector<Element, ElementCapacity>::Storage::Value() const
 {
 	return *( reinterpret_cast<Element const*>( mData ) );
 }
@@ -23,7 +23,7 @@ inline Element const& static_array<Element, ElementCapacity>::Storage::Value() c
 
 
 template<typename Element, size_t ElementCapacity>
-inline Element* static_array<Element, ElementCapacity>::Storage::WriteableTarget()
+inline Element* static_vector<Element, ElementCapacity>::Storage::WriteableTarget()
 {
 	return reinterpret_cast<Element*>( mData );
 }
@@ -31,7 +31,7 @@ inline Element* static_array<Element, ElementCapacity>::Storage::WriteableTarget
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array()
+inline static_vector<Element, ElementCapacity>::static_vector()
 	: m_CurrentSize( 0 )
 {
 	//
@@ -40,8 +40,8 @@ inline static_array<Element, ElementCapacity>::static_array()
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array( size_type count )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( size_type count )
+	: static_vector()
 {
 	grow( count );
 }
@@ -49,8 +49,8 @@ inline static_array<Element, ElementCapacity>::static_array( size_type count )
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array( size_type count, value_type const& value )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( size_type count, value_type const& value )
+	: static_vector()
 {
 	grow( count, value );
 }
@@ -59,8 +59,8 @@ inline static_array<Element, ElementCapacity>::static_array( size_type count, va
 
 template<typename Element, size_t ElementCapacity>
 template<class InputIterator>
-inline static_array<Element, ElementCapacity>::static_array( InputIterator first, InputIterator term )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( InputIterator first, InputIterator term )
+	: static_vector()
 {
 	append( first, term );
 }
@@ -68,8 +68,8 @@ inline static_array<Element, ElementCapacity>::static_array( InputIterator first
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array( static_array const& other )
-	: static_array( other.begin(), other.end() )
+inline static_vector<Element, ElementCapacity>::static_vector( static_vector const& other )
+	: static_vector( other.begin(), other.end() )
 {
 	//
 }
@@ -78,8 +78,8 @@ inline static_array<Element, ElementCapacity>::static_array( static_array const&
 
 template<typename Element, size_t ElementCapacity>
 template<size_t OtherCapacity>
-inline static_array<Element, ElementCapacity>::static_array( static_array<value_type, OtherCapacity> const& other )
-	: static_array( other.begin(), other.end() )
+inline static_vector<Element, ElementCapacity>::static_vector( static_vector<value_type, OtherCapacity> const& other )
+	: static_vector( other.begin(), other.end() )
 {
 	//
 }
@@ -88,8 +88,8 @@ inline static_array<Element, ElementCapacity>::static_array( static_array<value_
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array( static_array&& other )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( static_vector&& other )
+	: static_vector()
 {
 	extract( other.begin(), other.end() );
 	other.clear();
@@ -99,8 +99,8 @@ inline static_array<Element, ElementCapacity>::static_array( static_array&& othe
 
 template<typename Element, size_t ElementCapacity>
 template<size_t OtherCapacity>
-inline static_array<Element, ElementCapacity>::static_array( static_array<value_type, OtherCapacity>&& other )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( static_vector<value_type, OtherCapacity>&& other )
+	: static_vector()
 {
 	extract( other.begin(), other.end() );
 	other.clear();
@@ -109,8 +109,8 @@ inline static_array<Element, ElementCapacity>::static_array( static_array<value_
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_list<value_type> init )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( rftl::initializer_list<value_type> init )
+	: static_vector()
 {
 	append( init );
 }
@@ -119,8 +119,8 @@ inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_l
 
 template<typename Element, size_t ElementCapacity>
 template<typename Convertible>
-inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_list<Convertible> init )
-	: static_array()
+inline static_vector<Element, ElementCapacity>::static_vector( rftl::initializer_list<Convertible> init )
+	: static_vector()
 {
 	append( init );
 }
@@ -128,7 +128,7 @@ inline static_array<Element, ElementCapacity>::static_array( rftl::initializer_l
 
 
 template<typename Element, size_t ElementCapacity>
-inline static_array<Element, ElementCapacity>::~static_array()
+inline static_vector<Element, ElementCapacity>::~static_vector()
 {
 	clear();
 }
@@ -136,7 +136,7 @@ inline static_array<Element, ElementCapacity>::~static_array()
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::assign( size_type count, value_type const& value )
+inline void static_vector<Element, ElementCapacity>::assign( size_type count, value_type const& value )
 {
 	clear();
 	grow( count, value );
@@ -146,7 +146,7 @@ inline void static_array<Element, ElementCapacity>::assign( size_type count, val
 
 template<typename Element, size_t ElementCapacity>
 template<class InputIterator>
-inline void static_array<Element, ElementCapacity>::assign( InputIterator first, InputIterator term )
+inline void static_vector<Element, ElementCapacity>::assign( InputIterator first, InputIterator term )
 {
 	clear();
 	append( first, term );
@@ -155,7 +155,7 @@ inline void static_array<Element, ElementCapacity>::assign( InputIterator first,
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::assign( rftl::initializer_list<value_type> init )
+inline void static_vector<Element, ElementCapacity>::assign( rftl::initializer_list<value_type> init )
 {
 	clear();
 	append( init );
@@ -164,7 +164,7 @@ inline void static_array<Element, ElementCapacity>::assign( rftl::initializer_li
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::at( size_type pos )
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::at( size_type pos )
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return ( *this )[pos];
@@ -173,7 +173,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reference static_array<Element, ElementCapacity>::at( size_type pos ) const
+inline typename static_vector<Element, ElementCapacity>::const_reference static_vector<Element, ElementCapacity>::at( size_type pos ) const
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return ( *this )[pos];
@@ -182,7 +182,7 @@ inline typename static_array<Element, ElementCapacity>::const_reference static_a
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::operator[]( size_type pos )
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::operator[]( size_type pos )
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return m_Storage[pos].Value();
@@ -191,7 +191,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reference static_array<Element, ElementCapacity>::operator[]( size_type pos ) const
+inline typename static_vector<Element, ElementCapacity>::const_reference static_vector<Element, ElementCapacity>::operator[]( size_type pos ) const
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return m_Storage[pos].Value();
@@ -200,7 +200,7 @@ inline typename static_array<Element, ElementCapacity>::const_reference static_a
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::front()
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::front()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[0];
@@ -209,7 +209,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reference static_array<Element, ElementCapacity>::front() const
+inline typename static_vector<Element, ElementCapacity>::const_reference static_vector<Element, ElementCapacity>::front() const
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[0];
@@ -218,7 +218,7 @@ inline typename static_array<Element, ElementCapacity>::const_reference static_a
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::back()
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::back()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[size() - 1];
@@ -227,7 +227,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reference static_array<Element, ElementCapacity>::back() const
+inline typename static_vector<Element, ElementCapacity>::const_reference static_vector<Element, ElementCapacity>::back() const
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[size() - 1];
@@ -236,7 +236,7 @@ inline typename static_array<Element, ElementCapacity>::const_reference static_a
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::value_type* static_array<Element, ElementCapacity>::data()
+inline typename static_vector<Element, ElementCapacity>::value_type* static_vector<Element, ElementCapacity>::data()
 {
 	return &( m_Storage[0].Value() );
 }
@@ -244,7 +244,7 @@ inline typename static_array<Element, ElementCapacity>::value_type* static_array
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::value_type const* static_array<Element, ElementCapacity>::data() const
+inline typename static_vector<Element, ElementCapacity>::value_type const* static_vector<Element, ElementCapacity>::data() const
 {
 	return &( m_Storage[0].Value() );
 }
@@ -252,7 +252,7 @@ inline typename static_array<Element, ElementCapacity>::value_type const* static
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::begin()
+inline typename static_vector<Element, ElementCapacity>::iterator static_vector<Element, ElementCapacity>::begin()
 {
 	return &( m_Storage[0].Value() );
 }
@@ -260,7 +260,7 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_iterator static_array<Element, ElementCapacity>::begin() const
+inline typename static_vector<Element, ElementCapacity>::const_iterator static_vector<Element, ElementCapacity>::begin() const
 {
 	return &( m_Storage[0].Value() );
 }
@@ -268,7 +268,7 @@ inline typename static_array<Element, ElementCapacity>::const_iterator static_ar
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_iterator static_array<Element, ElementCapacity>::cbegin() const
+inline typename static_vector<Element, ElementCapacity>::const_iterator static_vector<Element, ElementCapacity>::cbegin() const
 {
 	return begin();
 }
@@ -276,7 +276,7 @@ inline typename static_array<Element, ElementCapacity>::const_iterator static_ar
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::end()
+inline typename static_vector<Element, ElementCapacity>::iterator static_vector<Element, ElementCapacity>::end()
 {
 	return &( m_Storage[size()].Value() );
 }
@@ -284,7 +284,7 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_iterator static_array<Element, ElementCapacity>::end() const
+inline typename static_vector<Element, ElementCapacity>::const_iterator static_vector<Element, ElementCapacity>::end() const
 {
 	return &( m_Storage[size()].Value() );
 }
@@ -292,7 +292,7 @@ inline typename static_array<Element, ElementCapacity>::const_iterator static_ar
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_iterator static_array<Element, ElementCapacity>::cend() const
+inline typename static_vector<Element, ElementCapacity>::const_iterator static_vector<Element, ElementCapacity>::cend() const
 {
 	return end();
 }
@@ -300,7 +300,7 @@ inline typename static_array<Element, ElementCapacity>::const_iterator static_ar
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reverse_iterator static_array<Element, ElementCapacity>::rbegin()
+inline typename static_vector<Element, ElementCapacity>::reverse_iterator static_vector<Element, ElementCapacity>::rbegin()
 {
 	return reverse_iterator( end() );
 }
@@ -308,7 +308,7 @@ inline typename static_array<Element, ElementCapacity>::reverse_iterator static_
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::rbegin() const
+inline typename static_vector<Element, ElementCapacity>::const_reverse_iterator static_vector<Element, ElementCapacity>::rbegin() const
 {
 	return const_reverse_iterator( end() );
 }
@@ -316,7 +316,7 @@ inline typename static_array<Element, ElementCapacity>::const_reverse_iterator s
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::crbegin() const
+inline typename static_vector<Element, ElementCapacity>::const_reverse_iterator static_vector<Element, ElementCapacity>::crbegin() const
 {
 	return const_reverse_iterator( cend() );
 }
@@ -324,7 +324,7 @@ inline typename static_array<Element, ElementCapacity>::const_reverse_iterator s
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reverse_iterator static_array<Element, ElementCapacity>::rend()
+inline typename static_vector<Element, ElementCapacity>::reverse_iterator static_vector<Element, ElementCapacity>::rend()
 {
 	return reverse_iterator( begin() );
 }
@@ -332,7 +332,7 @@ inline typename static_array<Element, ElementCapacity>::reverse_iterator static_
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::rend() const
+inline typename static_vector<Element, ElementCapacity>::const_reverse_iterator static_vector<Element, ElementCapacity>::rend() const
 {
 	return const_reverse_iterator( begin() );
 }
@@ -340,7 +340,7 @@ inline typename static_array<Element, ElementCapacity>::const_reverse_iterator s
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::const_reverse_iterator static_array<Element, ElementCapacity>::crend() const
+inline typename static_vector<Element, ElementCapacity>::const_reverse_iterator static_vector<Element, ElementCapacity>::crend() const
 {
 	return const_reverse_iterator( cbegin() );
 }
@@ -348,7 +348,7 @@ inline typename static_array<Element, ElementCapacity>::const_reverse_iterator s
 
 
 template<typename Element, size_t ElementCapacity>
-inline bool static_array<Element, ElementCapacity>::empty() const
+inline bool static_vector<Element, ElementCapacity>::empty() const
 {
 	return size() == 0;
 }
@@ -356,7 +356,7 @@ inline bool static_array<Element, ElementCapacity>::empty() const
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::size_type static_array<Element, ElementCapacity>::size() const
+inline typename static_vector<Element, ElementCapacity>::size_type static_vector<Element, ElementCapacity>::size() const
 {
 	RF_ASSERT( m_CurrentSize <= capacity() );
 	return m_CurrentSize;
@@ -365,7 +365,7 @@ inline typename static_array<Element, ElementCapacity>::size_type static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::size_type static_array<Element, ElementCapacity>::max_size() const
+inline typename static_vector<Element, ElementCapacity>::size_type static_vector<Element, ElementCapacity>::max_size() const
 {
 	return fixed_capacity;
 }
@@ -373,7 +373,7 @@ inline typename static_array<Element, ElementCapacity>::size_type static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::reserve( size_type newCap ) const
+inline void static_vector<Element, ElementCapacity>::reserve( size_type newCap ) const
 {
 	RF_ASSERT_MSG( newCap <= max_size(), "Cannot grow beyond max size" );
 	return;
@@ -382,7 +382,7 @@ inline void static_array<Element, ElementCapacity>::reserve( size_type newCap ) 
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::size_type static_array<Element, ElementCapacity>::capacity() const
+inline typename static_vector<Element, ElementCapacity>::size_type static_vector<Element, ElementCapacity>::capacity() const
 {
 	return max_size();
 }
@@ -390,7 +390,7 @@ inline typename static_array<Element, ElementCapacity>::size_type static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::shrink_to_fit()
+inline void static_vector<Element, ElementCapacity>::shrink_to_fit()
 {
 	// No...
 }
@@ -398,7 +398,7 @@ inline void static_array<Element, ElementCapacity>::shrink_to_fit()
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::clear()
+inline void static_vector<Element, ElementCapacity>::clear()
 {
 	while( empty() == false )
 	{
@@ -409,7 +409,7 @@ inline void static_array<Element, ElementCapacity>::clear()
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::push_back( value_type const& value )
+inline void static_vector<Element, ElementCapacity>::push_back( value_type const& value )
 {
 	emplace_back( value );
 }
@@ -417,7 +417,7 @@ inline void static_array<Element, ElementCapacity>::push_back( value_type const&
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::push_back( value_type&& value )
+inline void static_vector<Element, ElementCapacity>::push_back( value_type&& value )
 {
 	emplace_back( rftl::move( value ) );
 }
@@ -425,7 +425,7 @@ inline void static_array<Element, ElementCapacity>::push_back( value_type&& valu
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::emplace_back( value_type&& value )
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::emplace_back( value_type&& value )
 {
 	RF_ASSERT_MSG( size() < capacity(), "Attempting grow on full container" );
 	new( m_Storage[m_CurrentSize].WriteableTarget() ) Element( rftl::move( value ) );
@@ -437,7 +437,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 template<typename Element, size_t ElementCapacity>
 template<class... Args>
-inline typename static_array<Element, ElementCapacity>::reference static_array<Element, ElementCapacity>::emplace_back( Args&&... args )
+inline typename static_vector<Element, ElementCapacity>::reference static_vector<Element, ElementCapacity>::emplace_back( Args&&... args )
 {
 	RF_ASSERT_MSG( size() < capacity(), "Attempting grow on full container" );
 	new( m_Storage[m_CurrentSize].WriteableTarget() ) Element( args... );
@@ -448,7 +448,7 @@ inline typename static_array<Element, ElementCapacity>::reference static_array<E
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::pop_back()
+inline void static_vector<Element, ElementCapacity>::pop_back()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting pop_back on empty container" );
 	RF_ASSERT( m_CurrentSize > 0 );
@@ -459,7 +459,7 @@ inline void static_array<Element, ElementCapacity>::pop_back()
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::insert( const_iterator pos, const value_type& value )
+inline typename static_vector<Element, ElementCapacity>::iterator static_vector<Element, ElementCapacity>::insert( const_iterator pos, const value_type& value )
 {
 	value_type copy = value;
 	return insert( rftl::move( copy ) );
@@ -468,7 +468,7 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::insert( const_iterator pos, value_type&& value )
+inline typename static_vector<Element, ElementCapacity>::iterator static_vector<Element, ElementCapacity>::insert( const_iterator pos, value_type&& value )
 {
 	RF_ASSERT( pos >= begin() );
 	RF_ASSERT( pos <= end() );
@@ -493,7 +493,7 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 
 
 template<typename Element, size_t ElementCapacity>
-inline typename static_array<Element, ElementCapacity>::iterator static_array<Element, ElementCapacity>::erase( const_iterator pos )
+inline typename static_vector<Element, ElementCapacity>::iterator static_vector<Element, ElementCapacity>::erase( const_iterator pos )
 {
 	RF_ASSERT( pos >= begin() );
 	RF_ASSERT( pos <= end() );
@@ -517,7 +517,7 @@ inline typename static_array<Element, ElementCapacity>::iterator static_array<El
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::resize( size_type count )
+inline void static_vector<Element, ElementCapacity>::resize( size_type count )
 {
 	while( size() > count )
 	{
@@ -532,7 +532,7 @@ inline void static_array<Element, ElementCapacity>::resize( size_type count )
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::resize( size_type count, value_type const& value )
+inline void static_vector<Element, ElementCapacity>::resize( size_type count, value_type const& value )
 {
 	while( size() > count )
 	{
@@ -548,7 +548,7 @@ inline void static_array<Element, ElementCapacity>::resize( size_type count, val
 
 template<typename Element, size_t ElementCapacity>
 template<class InputIterator>
-inline void static_array<Element, ElementCapacity>::append( InputIterator first, InputIterator term )
+inline void static_vector<Element, ElementCapacity>::append( InputIterator first, InputIterator term )
 {
 	RF_ASSERT( first <= term );
 	InputIterator iter = first;
@@ -562,7 +562,7 @@ inline void static_array<Element, ElementCapacity>::append( InputIterator first,
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::append( rftl::initializer_list<value_type> init )
+inline void static_vector<Element, ElementCapacity>::append( rftl::initializer_list<value_type> init )
 {
 	append( init.begin(), init.end() );
 }
@@ -571,7 +571,7 @@ inline void static_array<Element, ElementCapacity>::append( rftl::initializer_li
 
 template<typename Element, size_t ElementCapacity>
 template<typename Convertible>
-inline void static_array<Element, ElementCapacity>::append( rftl::initializer_list<Convertible> init )
+inline void static_vector<Element, ElementCapacity>::append( rftl::initializer_list<Convertible> init )
 {
 	append( init.begin(), init.end() );
 }
@@ -580,7 +580,7 @@ inline void static_array<Element, ElementCapacity>::append( rftl::initializer_li
 
 template<typename Element, size_t ElementCapacity>
 template<class InputIterator>
-inline void static_array<Element, ElementCapacity>::extract( InputIterator first, InputIterator term )
+inline void static_vector<Element, ElementCapacity>::extract( InputIterator first, InputIterator term )
 {
 	RF_ASSERT( first <= term );
 	InputIterator iter = first;
@@ -594,7 +594,7 @@ inline void static_array<Element, ElementCapacity>::extract( InputIterator first
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::grow( size_type growthAmount )
+inline void static_vector<Element, ElementCapacity>::grow( size_type growthAmount )
 {
 	RF_ASSERT( size() + growthAmount < max_size() );
 	for( size_type i = 0; i < growthAmount; i++ )
@@ -606,7 +606,7 @@ inline void static_array<Element, ElementCapacity>::grow( size_type growthAmount
 
 
 template<typename Element, size_t ElementCapacity>
-inline void static_array<Element, ElementCapacity>::grow( size_type growthAmount, value_type const& value )
+inline void static_vector<Element, ElementCapacity>::grow( size_type growthAmount, value_type const& value )
 {
 	RF_ASSERT( size() + growthAmount < max_size() );
 	for( size_type i = 0; i < growthAmount; i++ )

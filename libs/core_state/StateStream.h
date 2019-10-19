@@ -3,7 +3,7 @@
 
 #include "core_state/StateChange.h"
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 
 
 namespace RF { namespace state {
@@ -24,7 +24,7 @@ public:
 
 private:
 	// TODO: This would likely be better served by a circular buffer
-	using Changes = rftl::static_array<ChangeType, kMaxChanges>;
+	using Changes = rftl::static_vector<ChangeType, kMaxChanges>;
 
 
 	//

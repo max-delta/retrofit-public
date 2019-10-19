@@ -43,7 +43,7 @@
 
 #include <pugixml/pugixml.h>
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 #include "rftl/sstream"
 #include "rftl/thread"
 
@@ -302,8 +302,8 @@ void DrawInputDebug()
 		rftl::string buf;
 		using LogicalEvent = input::DigitalInputComponent::LogicalEvent;
 		using PhysicalEvent = input::DigitalInputComponent::PhysicalEvent;
-		using LogicEvents = rftl::static_array<LogicalEvent, 8>;
-		using PhysicEvents = rftl::static_array<PhysicalEvent, 8>;
+		using LogicEvents = rftl::static_vector<LogicalEvent, 8>;
+		using PhysicEvents = rftl::static_vector<PhysicalEvent, 8>;
 		using LogicEventParser = rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents>;
 		using PhysicEventParser = rftl::virtual_back_inserter_iterator<PhysicalEvent, PhysicEvents>;
 		LogicEvents logicEvents;
@@ -367,13 +367,13 @@ void DrawInputDebug()
 	else
 	{
 		using RawCommand = input::RawCommand;
-		using RawCommands = rftl::static_array<RawCommand, 8>;
+		using RawCommands = rftl::static_vector<RawCommand, 8>;
 		using RawCommandParser = rftl::virtual_back_inserter_iterator<RawCommand, RawCommands>;
 		using GameCommand = input::GameCommand;
-		using GameCommands = rftl::static_array<GameCommand, 8>;
+		using GameCommands = rftl::static_vector<GameCommand, 8>;
 		using GameCommandParser = rftl::virtual_back_inserter_iterator<GameCommand, GameCommands>;
 		using RawSignal = input::RawSignal;
-		using RawSignals = rftl::static_array<RawSignal, 8>;
+		using RawSignals = rftl::static_vector<RawSignal, 8>;
 		using RawSignalSampler = rftl::virtual_back_inserter_iterator<RawSignal, RawSignals>;
 		RawCommands rawCommands;
 		RawCommandParser rawCommandParser( rawCommands );
@@ -655,7 +655,7 @@ void PlatformTest()
 {
 	using namespace ::RF::platform;
 
-	rftl::static_array<Uuid, 10> uuids;
+	rftl::static_vector<Uuid, 10> uuids;
 	for( size_t i = 0; i < uuids.max_size(); i++ )
 	{
 		Uuid const newUuid = Uuid::GenerateNewUuid();

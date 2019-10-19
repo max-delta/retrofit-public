@@ -40,7 +40,7 @@
     <ClInclude Include="deque" />
     <ClInclude Include="extension\immutable_string.h" />
     <ClInclude Include="extension\integer_literals.h" />
-    <ClInclude Include="extension\static_array.h" />
+    <ClInclude Include="extension\static_vector.h" />
     <ClInclude Include="extension\string_compare.h" />
     <ClInclude Include="extension\string_traits.h" />
     <ClInclude Include="extension\virtual_iterator.h" />
@@ -68,7 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="algorithm" />
-    <None Include="extension\static_array.inl" />
+    <None Include="extension\static_vector.inl" />
     <None Include="map" />
     <None Include="new" />
     <None Include="optional" />

@@ -12,9 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="extension\static_array.h">
-      <Filter>extension</Filter>
-    </ClInclude>
     <ClInclude Include="chrono" />
     <ClInclude Include="utility" />
     <ClInclude Include="initializer_list" />
@@ -61,11 +58,11 @@
     <ClInclude Include="extension\integer_literals.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\static_vector.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="extension\static_array.inl">
-      <Filter>extension</Filter>
-    </None>
     <None Include="patch\preinclude.inl">
       <Filter>patch</Filter>
     </None>
@@ -81,5 +78,8 @@
     <None Include="optional" />
     <None Include="new" />
     <None Include="system_error" />
+    <None Include="extension\static_vector.inl">
+      <Filter>extension</Filter>
+    </None>
   </ItemGroup>
 </Project>

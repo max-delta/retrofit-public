@@ -13,7 +13,7 @@
 
 #include "core/ptr/default_creator.h"
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 #include "rftl/extension/integer_literals.h"
 
 
@@ -209,12 +209,12 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	x = xStart;
 	y = yStart;
 	{
-		using Swings = rftl::static_array<SimVal, 7>;
-		using Hits = rftl::static_array<bool, 7>;
-		using Damages = rftl::static_array<SimVal, 7>;
+		using Swings = rftl::static_vector<SimVal, 7>;
+		using Hits = rftl::static_vector<bool, 7>;
+		using Damages = rftl::static_vector<SimVal, 7>;
 		using namespace rftl::literals;
 
-		rftl::static_array<Swings, 11> combos;
+		rftl::static_vector<Swings, 11> combos;
 		combos.emplace_back( Swings{ 5_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 1_u8 } );
 		combos.emplace_back( Swings{ 1_u8, 1_u8, 1_u8, 1_u8, 1_u8, 2_u8 } );

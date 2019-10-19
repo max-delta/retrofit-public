@@ -3,7 +3,7 @@
 
 #include "GameSprite/CharacterCompositor.h"
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 #include "rftl/extension/immutable_string.h"
 #include "rftl/bitset"
 
@@ -19,7 +19,7 @@ class GAMESPRITE_API CharacterCreator
 	// Types and constants
 public:
 	static constexpr size_t kMaxTags = 16;
-	using Tags = rftl::static_array<rftl::immutable_string, kMaxTags>;
+	using Tags = rftl::static_vector<rftl::immutable_string, kMaxTags>;
 	using PieceId = rftl::string;
 	using TagBits = rftl::bitset<kMaxTags>;
 

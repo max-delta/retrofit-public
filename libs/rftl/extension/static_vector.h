@@ -9,7 +9,7 @@ namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Element, size_t ElementCapacity>
-class static_array
+class static_vector
 {
 	//
 	// Types
@@ -54,29 +54,29 @@ private:
 	//
 	// Public methods
 public:
-	static_array();
-	explicit static_array( size_type count );
-	static_array( size_type count, value_type const& value );
+	static_vector();
+	explicit static_vector( size_type count );
+	static_vector( size_type count, value_type const& value );
 	template<class InputIterator>
-	static_array( InputIterator first, InputIterator term );
-	static_array( static_array const& other );
+	static_vector( InputIterator first, InputIterator term );
+	static_vector( static_vector const& other );
 	template<size_t OtherCapacity>
-	static_array( static_array<value_type, OtherCapacity> const& other );
-	static_array( static_array&& other );
+	static_vector( static_vector<value_type, OtherCapacity> const& other );
+	static_vector( static_vector&& other );
 	template<size_t OtherCapacity>
-	static_array( static_array<value_type, OtherCapacity>&& other );
-	static_array( rftl::initializer_list<value_type> init );
+	static_vector( static_vector<value_type, OtherCapacity>&& other );
+	static_vector( rftl::initializer_list<value_type> init );
 	template<typename Convertible>
-	static_array( rftl::initializer_list<Convertible> init );
-	~static_array();
+	static_vector( rftl::initializer_list<Convertible> init );
+	~static_vector();
 
-	static_array& operator=( static_array const& other );
-	static_array& operator=( static_array const&& other );
+	static_vector& operator=( static_vector const& other );
+	static_vector& operator=( static_vector const&& other );
 	template<size_t OtherCapacity>
-	static_array& operator=( static_array<value_type, OtherCapacity> const& other );
+	static_vector& operator=( static_vector<value_type, OtherCapacity> const& other );
 	template<size_t OtherCapacity>
-	static_array& operator=( static_array<value_type, OtherCapacity>&& other );
-	static_array& operator=( rftl::initializer_list<value_type> init );
+	static_vector& operator=( static_vector<value_type, OtherCapacity>&& other );
+	static_vector& operator=( rftl::initializer_list<value_type> init );
 
 	void assign( size_type count, value_type const& value );
 	template<class InputIterator>
@@ -161,11 +161,11 @@ private:
 
 
 template<typename Element, size_t LHSCapacity, size_t RHSCapacity>
-bool operator==( static_array<Element, LHSCapacity> const& lhs, static_array<Element, LHSCapacity> const& rhs );
+bool operator==( static_vector<Element, LHSCapacity> const& lhs, static_vector<Element, LHSCapacity> const& rhs );
 template<typename Element, size_t LHSCapacity, size_t RHSCapacity>
-bool operator!=( static_array<Element, LHSCapacity> const& lhs, static_array<Element, LHSCapacity> const& rhs );
+bool operator!=( static_vector<Element, LHSCapacity> const& lhs, static_vector<Element, LHSCapacity> const& rhs );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
 
-#include "static_array.inl"
+#include "static_vector.inl"

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "rftl/extension/static_array.h"
+#include "rftl/extension/static_vector.h"
 
 
 namespace RF {
@@ -51,10 +51,10 @@ struct Proxy
 
 
 
-TEST( StaticArray, BasicEmpty )
+TEST( StaticVector, BasicEmpty )
 {
-	rftl::static_array<Proxy, 5> empty;
-	static_assert( rftl::static_array<Proxy, 5>::fixed_capacity == 5, "" );
+	rftl::static_vector<Proxy, 5> empty;
+	static_assert( rftl::static_vector<Proxy, 5>::fixed_capacity == 5, "" );
 	ASSERT_TRUE( empty.capacity() == 5 );
 	ASSERT_TRUE( empty.max_size() == 5 );
 	ASSERT_TRUE( empty.empty() );
@@ -63,9 +63,9 @@ TEST( StaticArray, BasicEmpty )
 
 
 
-TEST( StaticArray, NopSizeChanges )
+TEST( StaticVector, NopSizeChanges )
 {
-	rftl::static_array<Proxy, 5> empty;
+	rftl::static_vector<Proxy, 5> empty;
 	ASSERT_TRUE( empty.capacity() == 5 );
 	ASSERT_TRUE( empty.max_size() == 5 );
 	ASSERT_TRUE( empty.empty() );
@@ -84,10 +84,10 @@ TEST( StaticArray, NopSizeChanges )
 
 
 
-TEST( StaticArray, BasicLifetime )
+TEST( StaticVector, BasicLifetime )
 {
-	rftl::static_array<Proxy, 5> sa;
-	rftl::static_array<Proxy, 5> const& csa = sa;
+	rftl::static_vector<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> const& csa = sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
 	ASSERT_TRUE( sa.empty() );
@@ -120,10 +120,10 @@ TEST( StaticArray, BasicLifetime )
 
 
 
-TEST( StaticArray, BasicBookendAccess )
+TEST( StaticVector, BasicBookendAccess )
 {
-	rftl::static_array<Proxy, 5> sa;
-	rftl::static_array<Proxy, 5> const& csa = sa;
+	rftl::static_vector<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> const& csa = sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
 	sa.push_back( 2 );
@@ -141,10 +141,10 @@ TEST( StaticArray, BasicBookendAccess )
 
 
 
-TEST( StaticArray, BasicDataAccess )
+TEST( StaticVector, BasicDataAccess )
 {
-	rftl::static_array<Proxy, 5> sa;
-	rftl::static_array<Proxy, 5> const& csa = sa;
+	rftl::static_vector<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> const& csa = sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
 	sa.push_back( 2 );
@@ -162,10 +162,10 @@ TEST( StaticArray, BasicDataAccess )
 
 
 
-TEST( StaticArray, BasicIteratorAccess )
+TEST( StaticVector, BasicIteratorAccess )
 {
-	rftl::static_array<Proxy, 5> sa;
-	rftl::static_array<Proxy, 5> const& csa = sa;
+	rftl::static_vector<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> const& csa = sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
 	ASSERT_TRUE( sa.begin() == sa.end() );
@@ -227,9 +227,9 @@ TEST( StaticArray, BasicIteratorAccess )
 
 
 
-TEST( StaticArray, BlindEmplaceGrow )
+TEST( StaticVector, BlindEmplaceGrow )
 {
-	rftl::static_array<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	sa.emplace_back();
 	ASSERT_TRUE( sa.size() == 1 );
@@ -240,9 +240,9 @@ TEST( StaticArray, BlindEmplaceGrow )
 
 
 
-TEST( StaticArray, InitializerListConstruct )
+TEST( StaticVector, InitializerListConstruct )
 {
-	rftl::static_array<Proxy, 5> sa = { 2, 7 };
+	rftl::static_vector<Proxy, 5> sa = { 2, 7 };
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -252,10 +252,10 @@ TEST( StaticArray, InitializerListConstruct )
 
 
 
-TEST( StaticArray, IterConstruct )
+TEST( StaticVector, IterConstruct )
 {
 	Proxy const source[] = { 2, 7 };
-	rftl::static_array<Proxy, 5> sa( &source[0], &source[2] );
+	rftl::static_vector<Proxy, 5> sa( &source[0], &source[2] );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -265,40 +265,17 @@ TEST( StaticArray, IterConstruct )
 
 
 
-TEST( StaticArray, CopyConstruct )
+TEST( StaticVector, CopyConstruct )
 {
-	rftl::static_array<Proxy, 5> source;
+	rftl::static_vector<Proxy, 5> source;
 	source.push_back( 2 );
 	source.push_back( 7 );
 	ASSERT_TRUE( source.size() == 2 );
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
-	rftl::static_array<Proxy, 5> const& input = source;
+	rftl::static_vector<Proxy, 5> const& input = source;
 
-	rftl::static_array<Proxy, 5> sa( input );
-	ASSERT_TRUE( sa.size() == 2 );
-	ASSERT_TRUE( sa.data()[0] == 2 );
-	ASSERT_TRUE( sa.data()[1] == 7 );
-	ASSERT_TRUE( source.size() == 2 );
-	ASSERT_TRUE( source.data()[0] == 2 );
-	ASSERT_TRUE( source.data()[1] == 7 );
-	sa.clear();
-	ASSERT_TRUE( sa.size() == 0 );
-}
-
-
-
-TEST( StaticArray, CopyConstructCrossCapacity )
-{
-	rftl::static_array<Proxy, 2> source;
-	source.push_back( 2 );
-	source.push_back( 7 );
-	ASSERT_TRUE( source.size() == 2 );
-	ASSERT_TRUE( source.data()[0] == 2 );
-	ASSERT_TRUE( source.data()[1] == 7 );
-	rftl::static_array<Proxy, 5> const& input = source;
-
-	rftl::static_array<Proxy, 5> sa( input );
+	rftl::static_vector<Proxy, 5> sa( input );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -311,16 +288,39 @@ TEST( StaticArray, CopyConstructCrossCapacity )
 
 
 
-TEST( StaticArray, MoveConstruct )
+TEST( StaticVector, CopyConstructCrossCapacity )
 {
-	rftl::static_array<Proxy, 5> source;
+	rftl::static_vector<Proxy, 2> source;
+	source.push_back( 2 );
+	source.push_back( 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	rftl::static_vector<Proxy, 5> const& input = source;
+
+	rftl::static_vector<Proxy, 5> sa( input );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
+TEST( StaticVector, MoveConstruct )
+{
+	rftl::static_vector<Proxy, 5> source;
 	source.push_back( 2 );
 	source.push_back( 7 );
 	ASSERT_TRUE( source.size() == 2 );
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
 
-	rftl::static_array<Proxy, 5> sa( rftl::move( source ) );
+	rftl::static_vector<Proxy, 5> sa( rftl::move( source ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -331,16 +331,16 @@ TEST( StaticArray, MoveConstruct )
 
 
 
-TEST( StaticArray, MoveConstructCrossCapacity )
+TEST( StaticVector, MoveConstructCrossCapacity )
 {
-	rftl::static_array<Proxy, 2> source;
+	rftl::static_vector<Proxy, 2> source;
 	source.push_back( 2 );
 	source.push_back( 7 );
 	ASSERT_TRUE( source.size() == 2 );
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
 
-	rftl::static_array<Proxy, 5> sa( rftl::move( source ) );
+	rftl::static_vector<Proxy, 5> sa( rftl::move( source ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
@@ -351,9 +351,9 @@ TEST( StaticArray, MoveConstructCrossCapacity )
 
 
 
-TEST( StaticArray, SizeConstruct )
+TEST( StaticVector, SizeConstruct )
 {
-	rftl::static_array<Proxy, 5> sa( 2 );
+	rftl::static_vector<Proxy, 5> sa( 2 );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == Proxy::kDefault );
 	ASSERT_TRUE( sa.data()[1] == Proxy::kDefault );
@@ -363,15 +363,15 @@ TEST( StaticArray, SizeConstruct )
 
 
 
-TEST( StaticArray, ValueConstruct )
+TEST( StaticVector, ValueConstruct )
 {
 	// At time of writing 'sa(2,2)' is unclear, and templatization into
 	//  iterators takes precedence before the implicit constructor of the
 	//  proxy. This would be solved by a harder iterator type, but seems
 	//  not worth the effort at this time, since users can clarify their
 	//  implicit call with minimal effort.
-	//rftl::static_array<Proxy, 5> sa( 2, 2 ); // Similar case on wipe test
-	rftl::static_array<Proxy, 5> sa( 2, Proxy( 2 ) );
+	//rftl::static_vector<Proxy, 5> sa( 2, 2 ); // Similar case on wipe test
+	rftl::static_vector<Proxy, 5> sa( 2, Proxy( 2 ) );
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 2 );
@@ -381,9 +381,9 @@ TEST( StaticArray, ValueConstruct )
 
 
 
-TEST( StaticArray, ValueWipe )
+TEST( StaticVector, ValueWipe )
 {
-	rftl::static_array<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	//sa.assign( 2, 2 ); // See notes on construct test
 	sa.assign( 2, Proxy( 2 ) );
@@ -396,9 +396,9 @@ TEST( StaticArray, ValueWipe )
 
 
 
-TEST( StaticArray, Insert )
+TEST( StaticVector, Insert )
 {
-	rftl::static_array<Proxy, 3> sa;
+	rftl::static_vector<Proxy, 3> sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	sa.insert( sa.end(), 2 );
 	ASSERT_TRUE( sa.size() == 1 );
@@ -413,9 +413,9 @@ TEST( StaticArray, Insert )
 
 
 
-TEST( StaticArray, Erase )
+TEST( StaticVector, Erase )
 {
-	rftl::static_array<Proxy, 4> sa;
+	rftl::static_vector<Proxy, 4> sa;
 	sa.push_back( 2 );
 	sa.push_back( 5 );
 	sa.push_back( 7 );
@@ -426,7 +426,7 @@ TEST( StaticArray, Erase )
 	ASSERT_TRUE( sa.data()[2] == 7 );
 	ASSERT_TRUE( sa.data()[3] == 11 );
 
-	rftl::static_array<Proxy, 4>::iterator iter;
+	rftl::static_vector<Proxy, 4>::iterator iter;
 
 	iter = sa.erase( sa.begin() + 2 );
 	ASSERT_TRUE( iter == sa.begin() + 2 );
@@ -453,11 +453,11 @@ TEST( StaticArray, Erase )
 
 
 
-TEST( StaticArray, BackInsertCompat )
+TEST( StaticVector, BackInsertCompat )
 {
-	rftl::static_array<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> sa;
 	ASSERT_TRUE( sa.size() == 0 );
-	rftl::back_insert_iterator<rftl::static_array<Proxy, 5>> inserter( sa );
+	rftl::back_insert_iterator<rftl::static_vector<Proxy, 5>> inserter( sa );
 	*inserter = 2;
 	*inserter = 7;
 	ASSERT_TRUE( sa.size() == 2 );
@@ -469,10 +469,10 @@ TEST( StaticArray, BackInsertCompat )
 
 
 
-TEST( StaticArray, RangeForCompatibility )
+TEST( StaticVector, RangeForCompatibility )
 {
-	rftl::static_array<Proxy, 5> sa;
-	rftl::static_array<Proxy, 5> const& csa = sa;
+	rftl::static_vector<Proxy, 5> sa;
+	rftl::static_vector<Proxy, 5> const& csa = sa;
 	ASSERT_TRUE( sa.size() == 0 );
 	ASSERT_TRUE( csa.size() == 0 );
 	sa.push_back( 2 );
