@@ -32,6 +32,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AutoVar.h" />
     <ClInclude Include="Domain.h" />
     <ClInclude Include="InputStream.h" />
     <ClInclude Include="project.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="Var.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AutoVar.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="InputStream.cpp" />

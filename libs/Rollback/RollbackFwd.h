@@ -30,6 +30,8 @@ template<typename T>
 using Stream = state::StateStream<T, kMaxChangesInWindow>;
 template<typename T>
 class Var;
+template<typename T>
+class AutoVar;
 
 using Snapshot = rftl::pair<
 	time::CommonClock::time_point,

@@ -9,6 +9,7 @@
     <ClCompile Include="project.cpp" />
     <ClCompile Include="Var.cpp" />
     <ClCompile Include="InputStream.cpp" />
+    <ClCompile Include="AutoVar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -19,5 +20,6 @@
     <ClInclude Include="RollbackManager.h" />
     <ClInclude Include="Var.h" />
     <ClInclude Include="InputStream.h" />
+    <ClInclude Include="AutoVar.h" />
   </ItemGroup>
 </Project>
