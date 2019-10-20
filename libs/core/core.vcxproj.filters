@@ -76,6 +76,9 @@
     <ClInclude Include="ptr\stdafx.h">
       <Filter>ptr</Filter>
     </ClInclude>
+    <ClInclude Include="meta\Literal.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

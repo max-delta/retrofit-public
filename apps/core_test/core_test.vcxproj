@@ -40,6 +40,7 @@
     <ClCompile Include="event_eventdispatcher.cpp" />
     <ClCompile Include="event_eventqueue.cpp" />
     <ClCompile Include="idgen.cpp" />
+    <ClCompile Include="literal.cpp" />
     <ClCompile Include="logic_directededgegraph.cpp" />
     <ClCompile Include="logic_partialplanner.cpp" />
     <ClCompile Include="math_bitfield.cpp" />

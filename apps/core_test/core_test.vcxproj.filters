@@ -52,6 +52,7 @@
     <ClCompile Include="allocate_creators.cpp" />
     <ClCompile Include="state_tree.cpp" />
     <ClCompile Include="static_vector.cpp" />
+    <ClCompile Include="literal.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
