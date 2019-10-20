@@ -24,11 +24,7 @@ public:
 		//
 	}
 
-	constexpr CharType const& operator[]( size_t i ) const
-	{
-		return kRef[i];
-	}
-
+	// Decay to array
 	constexpr operator ArrayType&() const
 	{
 		return kRef;
@@ -69,6 +65,7 @@ public:
 	using CharType = T;
 	static constexpr size_t kLen = LenT;
 	using ArrayType = CharType const[kLen];
+	using LiteralType = LiteralRef<CharType, kLen>;
 
 
 public:
@@ -95,15 +92,23 @@ public:
 		kResultBuf[kLen - 1] = '\0';
 	}
 
+	// Decay to literal
+	constexpr operator LiteralType&() const
+	{
+		return kResult;
+	}
+
+	// Decay to array
 	constexpr operator ArrayType&() const
 	{
+		// Constexpr logic fails to chain casts, so cast is done here
 		return kResult;
 	}
 
 
 public:
 	CharType kResultBuf[kLen];
-	LiteralRef<CharType, kLen> kResult;
+	LiteralType kResult;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
