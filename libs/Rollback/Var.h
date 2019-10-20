@@ -5,9 +5,11 @@
 
 #include "core/ptr/weak_ptr.h"
 
+
 namespace RF { namespace rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Helper class for making state streams act more like normal variables
 template<typename T>
 class Var
 {
