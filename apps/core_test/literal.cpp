@@ -64,6 +64,9 @@ TEST( Literal, Basics )
 	static_assert( sizeof( Literal( "A" )[0] ) == 1, "" );
 	static_assert( sizeof( Literal( u"A" )[0] ) == 2, "" );
 	static_assert( sizeof( Literal( U"A" )[0] ) == 4, "" );
+	static_assert( sizeof( (Literal( "A" ) + "")[0] ) == 1, "" );
+	static_assert( sizeof( (Literal( u"A" ) + u"")[0] ) == 2, "" );
+	static_assert( sizeof( (Literal( U"A" ) + U"")[0] ) == 4, "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

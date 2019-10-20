@@ -11,10 +11,13 @@ struct LiteralRef
 {
 	RF_NO_COPY( LiteralRef );
 
+public:
 	using CharType = T;
 	static constexpr size_t kLen = LenT;
 	using ArrayType = CharType const[kLen];
 
+
+public:
 	constexpr LiteralRef( ArrayType& value )
 		: kRef( value )
 	{
@@ -31,6 +34,8 @@ struct LiteralRef
 		return kRef;
 	}
 
+
+public:
 	ArrayType& kRef;
 };
 
@@ -60,13 +65,13 @@ struct ConcatLiterals
 {
 	RF_NO_COPY( ConcatLiterals );
 
+public:
 	using CharType = T;
 	static constexpr size_t kLen = LenT;
 	using ArrayType = CharType const[kLen];
 
-	char kResultBuf[kLen];
-	LiteralRef<CharType, kLen> kResult;
 
+public:
 	template<size_t LenU>
 	constexpr ConcatLiterals( LiteralRef<CharType, LenU> const& lhs, LiteralRef<CharType, kLen - LenU + 1> const& rhs )
 		: kResultBuf{} // MSVC requires this to be initialized
@@ -94,6 +99,11 @@ struct ConcatLiterals
 	{
 		return kResult;
 	}
+
+
+public:
+	CharType kResultBuf[kLen];
+	LiteralRef<CharType, kLen> kResult;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
