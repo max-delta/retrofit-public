@@ -29,7 +29,7 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 		{
 			// Full, pop front
 			mTimes.erase( mTimes.begin() );
-			mTimes.erase( mTimes.begin() );
+			mValues.erase( mValues.begin() );
 		}
 
 		mTimes.emplace_back( time );
