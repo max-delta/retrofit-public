@@ -13,7 +13,7 @@
 #include "PPU/PPUController.h"
 
 #include "Rollback/RollbackManager.h"
-#include "Rollback/Var.h"
+#include "Rollback/AutoVar.h"
 
 #include "Timing/FrameClock.h"
 
@@ -30,18 +30,23 @@ struct DevTestRollback::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+	void Bind( rollback::Window& window )
+	{
+		mP1.mX.Bind( window, "DevTest/Rollback/p1/x", mAlloc );
+		mP1.mY.Bind( window, "DevTest/Rollback/p1/y", mAlloc );
+		mP2.mX.Bind( window, "DevTest/Rollback/p2/x", mAlloc );
+		mP2.mY.Bind( window, "DevTest/Rollback/p2/y", mAlloc );
+	}
+
 	// NOTE: Must be before vars so it destructs last
 	alloc::AllocatorT<alloc::LinearAllocator<1024>> mAlloc{ ExplicitDefaultConstruct() };
 
-	static constexpr char kP1x[] = "DevTest/Rollback/p1/x";
-	static constexpr char kP1y[] = "DevTest/Rollback/p1/y";
-	static constexpr char kP2x[] = "DevTest/Rollback/p2/x";
-	static constexpr char kP2y[] = "DevTest/Rollback/p2/y";
-
 	struct Pos
 	{
-		rollback::Var<uint8_t> mX;
-		rollback::Var<uint8_t> mY;
+		RF_NO_COPY( Pos );
+		Pos() = default;
+		rollback::AutoVar<uint8_t> mX;
+		rollback::AutoVar<uint8_t> mY;
 	};
 	Pos mP1;
 	Pos mP2;
@@ -59,23 +64,13 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
 
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
-	internalState.mP1.mX = window.GetOrCreateStream<uint8_t>( InternalState::kP1x, internalState.mAlloc );
-	internalState.mP1.mY = window.GetOrCreateStream<uint8_t>( InternalState::kP1y, internalState.mAlloc );
-	internalState.mP2.mX = window.GetOrCreateStream<uint8_t>( InternalState::kP2x, internalState.mAlloc );
-	internalState.mP2.mY = window.GetOrCreateStream<uint8_t>( InternalState::kP2y, internalState.mAlloc );
+	internalState.Bind( window );
 }
 
 
 
 void DevTestRollback::OnExit( AppStateChangeContext& context )
 {
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
-	window.RemoveStream<uint8_t>( InternalState::kP1x );
-	window.RemoveStream<uint8_t>( InternalState::kP1y );
-	window.RemoveStream<uint8_t>( InternalState::kP2x );
-	window.RemoveStream<uint8_t>( InternalState::kP2y );
-
 	mInternalState = nullptr;
 }
 
