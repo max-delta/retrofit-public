@@ -57,6 +57,13 @@ TEST( Literal, Basics )
 	static constexpr char kAdd2[8] = Literal( "Test" ) + "Aux";
 
 	static constexpr char const* kFarDecay = Literal<char>() + "Test" + "Aux";
+
+	static_assert( Literal( "A" )[0] == 'A', "" );
+	static_assert( Literal( u"A" )[0] == u'A', "" );
+	static_assert( Literal( U"A" )[0] == U'A', "" );
+	static_assert( sizeof( Literal( "A" )[0] ) == 1, "" );
+	static_assert( sizeof( Literal( u"A" )[0] ) == 2, "" );
+	static_assert( sizeof( Literal( U"A" )[0] ) == 4, "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
