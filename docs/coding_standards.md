@@ -55,6 +55,16 @@ The exception to this rule is build machinery which may procedurally collapse mu
 
 Rationale: Maintainability, consistency
 
+### No direct STL usage
+
+The RetroFit Template Library (RFTL) is a wrapping layer around the STL, and should be used in place of the STL.
+
+The RFTL layer contains various patches and work-arounds for different STL implementations and versions across different platforms.
+
+RFTL itself must, by necessity, be an exception to this rule.
+
+Rationale: Maintainability
+
 
 # The Rules
 
