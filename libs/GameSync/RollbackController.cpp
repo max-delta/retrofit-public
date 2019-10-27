@@ -54,7 +54,7 @@ void RollbackController::SetRollbackIdentifier( rollback::InputStreamIdentifier 
 
 
 
-void RollbackController::ProcessInput()
+void RollbackController::ProcessInput( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
 {
 	RF_ASSERT( mManager != nullptr );
 	rollback::InputStream& inputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
@@ -64,7 +64,7 @@ void RollbackController::ProcessInput()
 		inputStream.emplace_back( element.mTime, element.mType );
 	};
 	rftl::virtual_callable_iterator<GameCommand, decltype( onElement )> converter( onElement );
-	mSource->GetGameCommandStream( converter );
+	mSource->GetGameCommandStream( converter, earliestTime, latestTime );
 }
 
 
@@ -88,10 +88,10 @@ void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameComman
 	// Pull from committed stream
 	if( commandsToPullFromCommitted > 0 )
 	{
-		rollback::InputStream::const_iterator const last = committedInputStream.end() - 1;
 		rollback::InputStream::const_iterator const start =
-			last - math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromCommitted );
-		for( rollback::InputStream::const_iterator iter = start; start < committedInputStream.end(); iter++ )
+			committedInputStream.end() -
+			math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromCommitted );
+		for( rollback::InputStream::const_iterator iter = start; iter < committedInputStream.end(); iter++ )
 		{
 			parser( GameCommand{ iter->mValue, iter->mTime } );
 			numCommandsEmmitted++;
@@ -100,12 +100,12 @@ void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameComman
 	RF_ASSERT( numCommandsEmmitted == commandsToPullFromCommitted );
 
 	// Pull from uncommitted stream
-	if( commandsToPullFromCommitted > 0 )
+	if( commandsToPullFromUncommitted > 0 )
 	{
-		rollback::InputStream::const_iterator const last = uncommittedInputStream.end() - 1;
 		rollback::InputStream::const_iterator const start =
-			last - math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromUncommitted );
-		for( rollback::InputStream::const_iterator iter = start; start < uncommittedInputStream.end(); iter++ )
+			uncommittedInputStream.end() -
+			math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromUncommitted );
+		for( rollback::InputStream::const_iterator iter = start; iter < uncommittedInputStream.end(); iter++ )
 		{
 			parser( GameCommand{ iter->mValue, iter->mTime } );
 			numCommandsEmmitted++;

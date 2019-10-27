@@ -8,6 +8,9 @@
 #include "GameInput/ControllerManager.h"
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
+#include "GameSync/RollbackController.h"
+
+#include "Rollback/RollbackManager.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 
@@ -20,6 +23,7 @@ namespace RF { namespace cc { namespace input {
 namespace details {
 
 static WeakPtr<input::RawInputController> sRawInputController;
+static rftl::vector<WeakPtr<input::RollbackController>> sRollbackControllers;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -125,7 +129,14 @@ void HardcodedSetup()
 		commandMapping[command::raw::RightStop] = command::game::WalkEastStop;
 		p1HotkeyController->SetCommandMapping( commandMapping );
 	}
-	manager.RegisterGameController( p1HotkeyController, player::P1, layer::CharacterControl );
+	p1HotkeyController->SetSource( rawController );
+	UniquePtr<input::RollbackController> p1RollbackController = DefaultCreator<input::RollbackController>::Create();
+	p1RollbackController->SetSource( p1HotkeyController );
+	p1RollbackController->SetRollbackManager( app::gRollbackManager );
+	p1RollbackController->SetRollbackIdentifier( 1 );
+	app::gRollbackManager->EnsureStreamExists( 1 );
+	details::sRollbackControllers.emplace_back( p1RollbackController );
+	manager.RegisterGameController( p1RollbackController, player::P1, layer::CharacterControl );
 
 	// Testing
 	UniquePtr<input::HotkeyController> p2HotkeyController = DefaultCreator<input::HotkeyController>::Create();
@@ -162,6 +173,7 @@ void HardcodedSetup()
 	manager.StoreRawController( rftl::move( rawController ) );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( p1HotkeyController ) );
+	manager.StoreGameController( rftl::move( p1RollbackController ) );
 	manager.StoreGameController( rftl::move( p2HotkeyController ) );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
@@ -173,6 +185,11 @@ void HardcodedTick()
 	if( details::sRawInputController != nullptr )
 	{
 		details::sRawInputController->ConsumeInput( *app::gWndProcInput );
+	}
+
+	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
+	{
+		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
 	}
 }
 

@@ -123,6 +123,9 @@
     <ProjectReference Include="..\..\libs\GameSprite\GameSprite.vcxproj">
       <Project>{6d71c9f7-3605-4d12-8826-e4c095534887}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameSync\GameSync.vcxproj">
+      <Project>{ee5501a8-43c3-4ece-acf7-82df8a5d3ac8}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
       <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
     </ProjectReference>

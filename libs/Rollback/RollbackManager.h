@@ -71,6 +71,10 @@ public:
 	InputStreams const& GetUncommittedStreams() const;
 	InputStreams& GetMutableUncommittedStreams();
 
+	// Streams will passively be created as a result of rollback operations,
+	//  but it is sometimes valuable to ensure they exist early in setup
+	void EnsureStreamExists( InputStreamIdentifier const& identifier );
+
 	// Frames that are present in all uncommitted streams are 'ready to commit'
 	InclusiveTimeRange GetFramesReadyToCommit() const;
 

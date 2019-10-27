@@ -135,6 +135,14 @@ RollbackManager::InputStreams& RollbackManager::GetMutableUncommittedStreams()
 
 
 
+void RollbackManager::EnsureStreamExists( InputStreamIdentifier const& identifier )
+{
+	mCommittedStreams[identifier];
+	mUncommittedStreams[identifier];
+}
+
+
+
 InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 {
 	time::CommonClock::time_point maxCommitHead = rftl::numeric_limits<time::CommonClock::time_point>::lowest();

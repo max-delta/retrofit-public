@@ -29,7 +29,7 @@ public:
 	rollback::InputStreamIdentifier GetRollbackIdentifier() const;
 	void SetRollbackIdentifier( rollback::InputStreamIdentifier const& identifier );
 
-	void ProcessInput();
+	void ProcessInput( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime );
 
 	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const override;
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) override;
