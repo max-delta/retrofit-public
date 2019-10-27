@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="RollbackController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="RollbackController.h" />
   </ItemGroup>
 </Project>
