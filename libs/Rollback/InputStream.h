@@ -36,6 +36,9 @@ private:
 public:
 	using Parent::value_type;
 
+	using Parent::size_type;
+	using Parent::difference_type;
+
 	using Parent::iterator;
 	using Parent::const_iterator;
 	using Parent::reverse_iterator;
