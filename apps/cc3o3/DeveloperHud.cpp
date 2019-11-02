@@ -20,81 +20,52 @@
 namespace RF { namespace cc { namespace developer {
 ///////////////////////////////////////////////////////////////////////////////
 
+enum class Mode : uint8_t
+{
+	Rollback = 0,
+
+	NumModes
+};
+static constexpr size_t kNumModes = static_cast<size_t>( Mode::NumModes );
+
 static bool sDisplayHud = false;
+static Mode sCurrentMode = Mode::Rollback;
 static constexpr char kSnapshotName[] = "DEV1";
 
 ///////////////////////////////////////////////////////////////////////////////
+namespace mode {
 
-void Startup()
-{
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-	rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
-}
-
-
-
-void ProcessInput()
+void ProcessRollback( RF::input::GameCommand const& command )
 {
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
 
-	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::P1, input::layer::Developer );
-	if( controller == nullptr )
+	switch( command.mType )
 	{
-		// No controller, so we may still be booting
-		return;
-	}
-
-	// Fetch commands that were entered for this current frame
-	rftl::vector<input::GameCommand> commands;
-	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
-	controller->GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
-
-	for( RF::input::GameCommand const& command : commands )
-	{
-		switch( command.mType )
+		case input::command::game::DeveloperAction1:
 		{
-			case input::command::game::DeveloperToggle:
-			{
-				sDisplayHud = !sDisplayHud;
-				break;
-			}
-			case input::command::game::DeveloperCycle:
-			{
-				break;
-			}
-			case input::command::game::DeveloperAction1:
-			{
-
-				rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
-				break;
-			}
-			case input::command::game::DeveloperAction2:
-			{
-				break;
-			}
-			case input::command::game::DeveloperAction3:
-			{
-				time::CommonClock::time_point const time = rollMan.LoadManualSnapshot( kSnapshotName );
-				rollMan.SetHeadClock( time );
-				break;
-			}
-			default:
-				break;
+			rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
+			break;
 		}
+		case input::command::game::DeveloperAction2:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction3:
+		{
+			time::CommonClock::time_point const time = rollMan.LoadManualSnapshot( kSnapshotName );
+			rollMan.SetHeadClock( time );
+			break;
+		}
+		default:
+			break;
 	}
 }
 
 
 
-void RenderHud()
+void RenderRollback()
 {
 	using namespace rftl::chrono;
-
-	if( sDisplayHud == false )
-	{
-		return;
-	}
 
 	gfx::PPUController& ppu = *app::gGraphics;
 	rollback::RollbackManager const& rollMan = *app::gRollbackManager;
@@ -131,6 +102,89 @@ void RenderHud()
 	time::CommonClock::time_point const snapshotTime = rollMan.GetSharedDomain().GetManualSnapshot( kSnapshotName )->first;
 	drawText( x, y, math::Color3f::kMagenta, "SNP: %llu", timeAsIndex( snapshotTime ) );
 	y++;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+void Startup()
+{
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
+}
+
+
+
+void ProcessInput()
+{
+	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::P1, input::layer::Developer );
+	if( controller == nullptr )
+	{
+		// No controller, so we may still be booting
+		return;
+	}
+
+	// Fetch commands that were entered for this current frame
+	rftl::vector<input::GameCommand> commands;
+	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
+	controller->GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
+
+	for( RF::input::GameCommand const& command : commands )
+	{
+		switch( command.mType )
+		{
+			case input::command::game::DeveloperToggle:
+			{
+				sDisplayHud = !sDisplayHud;
+				break;
+			}
+			case input::command::game::DeveloperCycle:
+			{
+				sCurrentMode = static_cast<Mode>( ( static_cast<uint8_t>( sCurrentMode ) + 1 ) % kNumModes );
+				break;
+			}
+			case input::command::game::DeveloperAction1:
+			case input::command::game::DeveloperAction2:
+			case input::command::game::DeveloperAction3:
+			{
+				switch( sCurrentMode )
+				{
+					case Mode::Rollback:
+						mode::ProcessRollback( command );
+						break;
+					case Mode::NumModes:
+					default:
+						RF_DBGFAIL();
+						break;
+				}
+				break;
+			}
+			default:
+				break;
+		}
+	}
+}
+
+
+
+void RenderHud()
+{
+	if( sDisplayHud == false )
+	{
+		return;
+	}
+
+	switch( sCurrentMode )
+	{
+		case Mode::Rollback:
+			mode::RenderRollback();
+			return;
+		case Mode::NumModes:
+		default:
+			RF_DBGFAIL();
+			return;
+	}
 }
 
 
