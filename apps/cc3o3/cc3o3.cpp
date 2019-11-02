@@ -128,13 +128,21 @@ void ProcessFrame()
 		{
 			// This was caused by a destructive state load, so we need to
 			//  revise what we think 'now' means
+			RFLOG_INFO( nullptr, RFCAT_CC3O3, "Rollback detected for load state, truncating state" );
+
+			// Lock in any in-flight state before the head clock
+			rollMan.CommitFrames( { time::CommonClock::time_point(), rollMan.GetHeadClock() } );
+
+			// Rewind all rollback systems so that they can be written to again
+			rollMan.RewindAllStreams( rollMan.GetHeadClock() );
+
+			// Make sure we've truncated any state that is rollback-sensitive,
+			//  but not rollback-aware
+			controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), rollMan.GetHeadClock() );
 
 			// The head clock is presumed to be valid, so we should begin
 			//  processing the frame afterwards (which is now what we're
-			//  considering the current frame), and make sure we've truncated
-			//  any state that is rollback-sensitive, but not rollback-aware
-			RFLOG_INFO( nullptr, RFCAT_CC3O3, "Rollback detected for load state, truncating state" );
-			controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), rollMan.GetHeadClock() );
+			//  considering the current frame)
 			time::CommonClock::time_point const frameAfterHead = rollMan.GetHeadClock() + time::kSimulationFrameDuration;
 			time::FrameClock::set_time( frameAfterHead );
 			rollMan.SetHeadClock( frameAfterHead );

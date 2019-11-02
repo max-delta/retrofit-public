@@ -195,7 +195,10 @@ void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
 		}
 
 		// Truncate source
-		RF_ASSERT( source.back().mTime >= range.second );
+		if( source.back().mTime < range.second )
+		{
+			source.increase_write_head( range.second );
+		}
 		source.increase_read_head( range.second );
 	}
 
