@@ -16,6 +16,12 @@ constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, double const& t );
 template<typename TYPE>
 constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, long double const& t );
 
+template<typename RESULT, typename TYPE>
+constexpr RESULT Unlerp( TYPE const& vt0, TYPE const& vt1, TYPE const& v );
+
+template<typename OUTTYPE, typename INTYPE, typename RATIOTYPE = float>
+constexpr OUTTYPE Rescale( OUTTYPE const& outMin, OUTTYPE const& outMax, INTYPE const& inMin, INTYPE const& inMax, INTYPE const& inVal );
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
