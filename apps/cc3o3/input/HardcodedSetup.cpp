@@ -154,7 +154,13 @@ void HardcodedSetup()
 		commandMapping[command::raw::HatRightStop] = command::game::WalkEastStop;
 		p2HotkeyController->SetCommandMapping( commandMapping );
 	}
-	manager.RegisterGameController( p2HotkeyController, player::P2, layer::CharacterControl );
+	UniquePtr<input::RollbackController> p2RollbackController = DefaultCreator<input::RollbackController>::Create();
+	p2RollbackController->SetSource( p2HotkeyController );
+	p2RollbackController->SetRollbackManager( app::gRollbackManager );
+	p2RollbackController->SetRollbackIdentifier( 2 );
+	app::gRollbackManager->EnsureStreamExists( 2 );
+	details::sRollbackControllers.emplace_back( p2RollbackController );
+	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
 
 	// Developer
 	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
@@ -176,6 +182,7 @@ void HardcodedSetup()
 	manager.StoreGameController( rftl::move( p1HotkeyController ) );
 	manager.StoreGameController( rftl::move( p1RollbackController ) );
 	manager.StoreGameController( rftl::move( p2HotkeyController ) );
+	manager.StoreGameController( rftl::move( p2RollbackController ) );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
