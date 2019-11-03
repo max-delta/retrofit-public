@@ -16,6 +16,8 @@
 #include "Rollback/RollbackManager.h"
 #include "Timing/FrameClock.h"
 
+#include "core_math/Lerp.h"
+
 
 namespace RF { namespace cc { namespace developer {
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,9 +68,10 @@ void ProcessRollback( RF::input::GameCommand const& command )
 void RenderRollback()
 {
 	using namespace rftl::chrono;
+	using rollback::RollbackManager;
 
 	gfx::PPUController& ppu = *app::gGraphics;
-	rollback::RollbackManager const& rollMan = *app::gRollbackManager;
+	RollbackManager const& rollMan = *app::gRollbackManager;
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
@@ -102,6 +105,149 @@ void RenderRollback()
 	time::CommonClock::time_point const snapshotTime = rollMan.GetSharedDomain().GetManualSnapshot( kSnapshotName )->first;
 	drawText( x, y, math::Color3f::kMagenta, "SNP: %llu", timeAsIndex( snapshotTime ) );
 	y++;
+
+	// Timeline
+	RollbackManager::InputStreams const& committedStreams = rollMan.GetCommittedStreams();
+	if( committedStreams.empty() == false )
+	{
+		RollbackManager::InputStreams const& uncommittedStreams = rollMan.GetUncommittedStreams();
+		RF_ASSERT( committedStreams.size() == uncommittedStreams.size() );
+		size_t const numStreams = committedStreams.size();
+
+		// Timeline 'now' is defined by the head clock
+		time::CommonClock::time_point const timelineNow = rollMan.GetHeadClock();
+
+		// Timeline starts before now
+		time::CommonClock::time_point const timelineStart = timelineNow - seconds( 1 );
+
+		// Timeline commit starts at any committed streams commit time
+		// NOTE: All committed streams should share the same commit time
+		time::CommonClock::time_point const timelineCommit = math::Max( timelineStart, committedStreams.begin()->second.back().mTime );
+
+		// Timeline ends at one full window away from now
+		time::CommonClock::time_point const timelineEnd = timelineNow + time::kSimulationFrameDuration * rollback::kMaxChangesInWindow;
+
+		// Will need to lerp data into a graphical representation
+		gfx::PPUCoord::ElementType const gfxTimelineStart = gfx::kTileSize;
+		gfx::PPUCoord::ElementType const gfxTimelineEnd = gfx::kDesiredWidth - gfx::kTileSize;
+		size_t const gfxNumLanes = numStreams;
+		gfx::PPUCoord::ElementType const gfxLanesStart = gfx::kTileSize * 1;
+		gfx::PPUCoord::ElementType const gfxLanesHeight = 4;
+		gfx::PPUCoord::ElementType const gfxLanesEnd =
+			gfxLanesStart +
+			math::integer_cast<gfx::PPUCoord::ElementType>(
+				gfxLanesHeight * gfxNumLanes );
+
+		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::PPUCoord::ElementType {
+			return math::Rescale(
+				gfxTimelineStart,
+				gfxTimelineEnd,
+				timelineStart.time_since_epoch().count(),
+				timelineEnd.time_since_epoch().count(),
+				time.time_since_epoch().count() );
+		};
+
+		static constexpr gfx::PPUDepthLayer kBorderDepth = gfx::kNearestLayer + 5;
+		static constexpr gfx::PPUDepthLayer kNowDepth = gfx::kNearestLayer + 4;
+		static constexpr gfx::PPUDepthLayer kCommitDepth = gfx::kNearestLayer + 3;
+		static constexpr gfx::PPUDepthLayer kEventDepth = gfx::kNearestLayer + 2;
+
+		// Border
+		ppu.DebugDrawAABB(
+			{ gfxTimelineStart, gfxLanesStart, gfxTimelineEnd, gfxLanesEnd },
+			1,
+			kBorderDepth,
+			math::Color3f::kGray25 );
+
+		// Now line
+		gfx::PPUCoord::ElementType const gfxTimelineNow = rescaleToGfx( timelineNow );
+		ppu.DebugDrawLine(
+			{ gfxTimelineNow, gfxLanesStart },
+			{ gfxTimelineNow, gfxLanesEnd },
+			1,
+			kNowDepth,
+			math::Color3f::kGray50 );
+
+		// Commit line
+		gfx::PPUCoord::ElementType const gfxTimelineCommit = rescaleToGfx( timelineCommit );
+		ppu.DebugDrawLine(
+			{ gfxTimelineCommit, gfxLanesStart },
+			{ gfxTimelineCommit, gfxLanesEnd },
+			1,
+			kCommitDepth,
+			timelineCommit < timelineNow ?
+				math::Color3f::kYellow :
+				math::Color3f::kGreen );
+
+		size_t i_lane = 0;
+		for( RollbackManager::InputStreams::value_type const& streamPair : committedStreams )
+		{
+			rollback::InputStream const& committedStream = streamPair.second;
+			rollback::InputStream const& uncommittedStream = uncommittedStreams.at( streamPair.first );
+
+			bool hasDrawnAFarFutureEvent = false;
+			auto const onEvent = [&]( rollback::InputEvent const& event, math::Color3f const& color, bool renderInvalid ) -> void {
+				if( event.mValue == rollback::kInvalidInputValue && renderInvalid == false )
+				{
+					return;
+				}
+				time::CommonClock::time_point eventTime = event.mTime;
+				if( eventTime < timelineStart )
+				{
+					return;
+				}
+				if( eventTime > timelineEnd )
+				{
+					if( hasDrawnAFarFutureEvent )
+					{
+						return;
+					}
+					else
+					{
+						eventTime = timelineEnd;
+						hasDrawnAFarFutureEvent = true;
+					}
+				}
+				gfx::PPUCoord::ElementType const gfxTimelineEvent = rescaleToGfx( event.mTime );
+				ppu.DebugDrawLine(
+					{ gfxTimelineEvent, gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 0 ) ) },
+					{ gfxTimelineEvent, gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 1 ) ) },
+					1,
+					kEventDepth,
+					color );
+			};
+
+			for( rollback::InputEvent const& event : committedStream )
+			{
+				onEvent( event, math::Color3f::kWhite, false );
+			}
+			for( rollback::InputEvent const& event : uncommittedStream )
+			{
+				onEvent( event, math::Color3f::kGray75, false );
+			}
+			rollback::InputEvent const& mostFutureEvent = uncommittedStream.back();
+			if( mostFutureEvent.mValue == rollback::kInvalidInputValue )
+			{
+				if( mostFutureEvent.mTime != timelineCommit )
+				{
+					if( mostFutureEvent.mTime > timelineNow )
+					{
+						onEvent( uncommittedStream.back(), math::Color3f::kGreen, true );
+					}
+					else if( mostFutureEvent.mTime < timelineNow )
+					{
+						onEvent( uncommittedStream.back(), math::Color3f::kRed, true );
+					}
+					else
+					{
+						onEvent( uncommittedStream.back(), math::Color3f::kYellow, true );
+					}
+				}
+			}
+
+			i_lane++;
+		}
+	}
 }
 
 }
