@@ -2,6 +2,7 @@
 #include "HardcodedSetup.h"
 
 #include "cc3o3/input/InputFwd.h"
+#include "cc3o3/time/TimeFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -190,6 +191,16 @@ void HardcodedTick()
 	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
 	{
 		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
+	}
+}
+
+
+
+void HardcodedAdvance()
+{
+	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
+	{
+		controller->AdvanceInputStream( time::FrameClock::now(), time::FrameClock::now() + time::kSimulationFrameDuration );
 	}
 }
 

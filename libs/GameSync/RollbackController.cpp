@@ -69,6 +69,16 @@ void RollbackController::ProcessInput( time::CommonClock::time_point earliestTim
 
 
 
+void RollbackController::AdvanceInputStream( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead )
+{
+	RF_ASSERT( mManager != nullptr );
+	rollback::InputStream& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	uncommittedInputStream.increase_write_head( newWriteHead );
+	uncommittedInputStream.increase_read_head( lockedFrame );
+}
+
+
+
 void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const
 {
 	RF_ASSERT( mManager != nullptr );

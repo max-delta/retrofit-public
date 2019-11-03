@@ -130,9 +130,6 @@ void ProcessFrame()
 			//  revise what we think 'now' means
 			RFLOG_INFO( nullptr, RFCAT_CC3O3, "Rollback detected for load state, truncating state" );
 
-			// Lock in any in-flight state before the head clock
-			rollMan.CommitFrames( { time::CommonClock::time_point(), rollMan.GetHeadClock() } );
-
 			// Rewind all rollback systems so that they can be written to again
 			rollMan.RewindAllStreams( rollMan.GetHeadClock() );
 
@@ -151,6 +148,13 @@ void ProcessFrame()
 
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
+
+	// HACK: Advance hard-coded input for locally-owned input streams
+	// TODO: Have a manifest for what is locally-owned
+	input::HardcodedAdvance();
+
+	// Commit all frames that are ready
+	rollMan.CommitFrames( rollMan.GetFramesReadyToCommit() );
 
 	ui::ContainerManager& uiMan = *app::gUiManager;
 	uiMan.RecalcRootContainer();

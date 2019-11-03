@@ -140,6 +140,7 @@ void InputStream::increase_read_head( time::CommonClock::time_point time )
 	if( empty() )
 	{
 		// Trivial
+		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
 		return;
 	}
 
@@ -147,12 +148,17 @@ void InputStream::increase_read_head( time::CommonClock::time_point time )
 	{
 		// Trivial, full truncate
 		clear();
+		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
 		return;
 	}
 
 	// Truncate
 	const_iterator const iter = lower_bound( time );
 	erase( cbegin(), iter );
+	if( empty() )
+	{
+		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
+	}
 }
 
 
@@ -179,6 +185,7 @@ void InputStream::rewind( time::CommonClock::time_point time )
 		// Trivial, full truncate
 		clear();
 		mWriteHead = time;
+		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
 		return;
 	}
 
@@ -186,6 +193,10 @@ void InputStream::rewind( time::CommonClock::time_point time )
 	const_iterator const iter = lower_bound( time );
 	erase( iter, cend() );
 	mWriteHead = time;
+	if( empty() )
+	{
+		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
+	}
 }
 
 

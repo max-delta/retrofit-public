@@ -31,6 +31,8 @@ public:
 
 	void ProcessInput( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime );
 
+	void AdvanceInputStream( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
+
 	virtual void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const override;
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) override;
 

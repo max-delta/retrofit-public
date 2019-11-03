@@ -145,7 +145,7 @@ void RollbackManager::EnsureStreamExists( InputStreamIdentifier const& identifie
 
 InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 {
-	time::CommonClock::time_point maxCommitHead = rftl::numeric_limits<time::CommonClock::time_point>::lowest();
+	time::CommonClock::time_point maxCommitHead = time::CommonClock::kLowest;
 	if( mCommittedStreams.empty() == false )
 	{
 		// All committed streams should share the same commit head
@@ -158,14 +158,14 @@ InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 	}
 
 	RF_ASSERT( mUncommittedStreams.empty() == false );
-	time::CommonClock::time_point minUncommitHead = rftl::numeric_limits<time::CommonClock::time_point>::max();
+	time::CommonClock::time_point minUncommitHead = time::CommonClock::kMax;
 	for( InputStreams::value_type const& entry : mUncommittedStreams )
 	{
 		time::CommonClock::time_point const head = entry.second.back().mTime;
 		RFLOG_TEST_AND_FATAL( head > maxCommitHead, nullptr, RFCAT_ROLLBACK, "Uncommitted stream has stale data" );
 		minUncommitHead = rftl::min( minUncommitHead, head );
 	}
-	RF_ASSERT( maxCommitHead < minUncommitHead );
+	RF_ASSERT( maxCommitHead <= minUncommitHead );
 
 	return InclusiveTimeRange( maxCommitHead, minUncommitHead );
 }
@@ -174,7 +174,7 @@ InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 
 void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
 {
-	RF_ASSERT( range.first < range.second );
+	RF_ASSERT( range.first <= range.second );
 
 	// Process each uncommitted stream
 	for( InputStreams::value_type& sourceEntry : mUncommittedStreams )
@@ -190,6 +190,12 @@ void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
 			if( iter->mTime > range.second )
 			{
 				break;
+			}
+
+			if( iter->mValue == kInvalidInputValue )
+			{
+				// Blank frame, not interesting
+				continue;
 			}
 			dest.push_back( *iter );
 		}
