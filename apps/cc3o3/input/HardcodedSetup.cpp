@@ -158,6 +158,7 @@ void HardcodedSetup()
 	p2RollbackController->SetSource( p2HotkeyController );
 	p2RollbackController->SetRollbackManager( app::gRollbackManager );
 	p2RollbackController->SetRollbackIdentifier( 2 );
+	p2RollbackController->SetArtificialDelay( time::kSimulationFrameDuration * 7 );
 	app::gRollbackManager->EnsureStreamExists( 2 );
 	details::sRollbackControllers.emplace_back( p2RollbackController );
 	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
@@ -203,11 +204,11 @@ void HardcodedTick()
 
 
 
-void HardcodedAdvance()
+void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead )
 {
 	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
 	{
-		controller->AdvanceInputStream( time::FrameClock::now(), time::FrameClock::now() + time::kSimulationFrameDuration );
+		controller->AdvanceInputStream( lockedFrame, newWriteHead );
 	}
 }
 

@@ -29,6 +29,9 @@ public:
 	rollback::InputStreamIdentifier GetRollbackIdentifier() const;
 	void SetRollbackIdentifier( rollback::InputStreamIdentifier const& identifier );
 
+	time::CommonClock::duration GetArtificialDelay() const;
+	void SetArtificialDelay( time::CommonClock::duration const& delay );
+
 	void ProcessInput( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime );
 
 	void AdvanceInputStream( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
@@ -42,6 +45,7 @@ private:
 	WeakPtr<GameController> mSource;
 	WeakPtr<rollback::RollbackManager> mManager;
 	rollback::InputStreamIdentifier mIdentifier;
+	time::CommonClock::duration mArtificalDelay;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

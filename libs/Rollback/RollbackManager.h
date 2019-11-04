@@ -81,7 +81,7 @@ public:
 	// Committing frames destructively transfers input from the uncommitted
 	//  streams, and blocks further attempts to write new inputs to those
 	//  committed frames
-	void CommitFrames( InclusiveTimeRange const& range );
+	void CommitFrames( InclusiveTimeRange const& range, time::CommonClock::time_point const& nextFrame );
 
 	// Destructively rewind all streams to an older time point, effectively
 	//  invalidating committed frames and creating a de-sync against all other

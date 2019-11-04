@@ -144,14 +144,6 @@ void InputStream::increase_read_head( time::CommonClock::time_point time )
 		return;
 	}
 
-	if( time == mWriteHead )
-	{
-		// Trivial, full truncate
-		clear();
-		Parent::emplace_back( value_type( time, kInvalidInputValue ) );
-		return;
-	}
-
 	// Truncate
 	const_iterator const iter = lower_bound( time );
 	erase( cbegin(), iter );

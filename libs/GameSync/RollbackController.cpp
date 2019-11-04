@@ -54,14 +54,32 @@ void RollbackController::SetRollbackIdentifier( rollback::InputStreamIdentifier 
 
 
 
+time::CommonClock::duration RollbackController::GetArtificialDelay() const
+{
+	return mArtificalDelay;
+}
+
+
+
+void RollbackController::SetArtificialDelay( time::CommonClock::duration const& delay )
+{
+	mArtificalDelay = delay;
+}
+
+
+
 void RollbackController::ProcessInput( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
 {
 	RF_ASSERT( mManager != nullptr );
-	rollback::InputStream& inputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	time::CommonClock::duration const artificalDelay = mArtificalDelay;
 
-	auto const onElement = [&inputStream]( GameCommand const& element ) -> void {
-		RFLOG_TEST_AND_FATAL( inputStream.back().mTime <= element.mTime, nullptr, RFCAT_GAMESYNC, "Stale input from game controller" );
-		inputStream.emplace_back( element.mTime, element.mType );
+	rollback::InputStream& inputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	RFLOG_TEST_AND_FATAL( inputStream.back().mTime <= earliestTime + artificalDelay, nullptr, RFCAT_GAMESYNC, "Input processing request can result in stale data" );
+
+	auto const onElement = [&inputStream, &artificalDelay]( GameCommand const& element ) -> void {
+		time::CommonClock::time_point const artificialTime = element.mTime + artificalDelay;
+		RFLOG_TEST_AND_FATAL( inputStream.back().mTime <= artificialTime, nullptr, RFCAT_GAMESYNC, "Stale input from game controller" );
+		inputStream.emplace_back( artificialTime, element.mType );
 	};
 	rftl::virtual_callable_iterator<GameCommand, decltype( onElement )> converter( onElement );
 	mSource->GetGameCommandStream( converter, earliestTime, latestTime );
@@ -73,7 +91,7 @@ void RollbackController::AdvanceInputStream( time::CommonClock::time_point locke
 {
 	RF_ASSERT( mManager != nullptr );
 	rollback::InputStream& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
-	uncommittedInputStream.increase_write_head( newWriteHead );
+	uncommittedInputStream.increase_write_head( newWriteHead + mArtificalDelay );
 	uncommittedInputStream.increase_read_head( lockedFrame );
 }
 

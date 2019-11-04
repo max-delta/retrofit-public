@@ -172,9 +172,10 @@ InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 
 
 
-void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
+void RollbackManager::CommitFrames( InclusiveTimeRange const& range, time::CommonClock::time_point const& nextFrame )
 {
 	RF_ASSERT( range.first <= range.second );
+	RF_ASSERT( range.second <= nextFrame );
 
 	// Process each uncommitted stream
 	for( InputStreams::value_type& sourceEntry : mUncommittedStreams )
@@ -201,11 +202,11 @@ void RollbackManager::CommitFrames( InclusiveTimeRange const& range )
 		}
 
 		// Truncate source
-		if( source.back().mTime < range.second )
+		if( source.back().mTime < nextFrame )
 		{
-			source.increase_write_head( range.second );
+			source.increase_write_head( nextFrame );
 		}
-		source.increase_read_head( range.second );
+		source.increase_read_head( nextFrame );
 	}
 
 	// Lock all transferred frames on the committed streams
