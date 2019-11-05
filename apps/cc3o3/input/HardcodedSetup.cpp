@@ -135,7 +135,7 @@ void HardcodedSetup()
 	p1RollbackController->SetSource( p1HotkeyController );
 	p1RollbackController->SetRollbackManager( app::gRollbackManager );
 	p1RollbackController->SetRollbackIdentifier( 1 );
-	app::gRollbackManager->EnsureStreamExists( 1 );
+	app::gRollbackManager->CreateNewStream( 1, time::FrameClock::now() );
 	details::sRollbackControllers.emplace_back( p1RollbackController );
 	manager.RegisterGameController( p1RollbackController, player::P1, layer::CharacterControl );
 
@@ -159,7 +159,7 @@ void HardcodedSetup()
 	p2RollbackController->SetRollbackManager( app::gRollbackManager );
 	p2RollbackController->SetRollbackIdentifier( 2 );
 	p2RollbackController->SetArtificialDelay( time::kSimulationFrameDuration * 7 );
-	app::gRollbackManager->EnsureStreamExists( 2 );
+	app::gRollbackManager->CreateNewStream( 2, time::FrameClock::now() );
 	details::sRollbackControllers.emplace_back( p2RollbackController );
 	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
 

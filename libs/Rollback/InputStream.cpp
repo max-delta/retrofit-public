@@ -193,6 +193,21 @@ void InputStream::rewind( time::CommonClock::time_point time )
 
 
 
+void InputStream::discard_old_events( time::CommonClock::time_point inclusiveTime )
+{
+	if( empty() )
+	{
+		// Trivial
+		return;
+	}
+
+	// Truncate
+	const_iterator const iter = upper_bound( inclusiveTime );
+	erase( cbegin(), iter );
+}
+
+
+
 InputStream::const_iterator InputStream::lower_bound( time::CommonClock::time_point time ) const
 {
 	static constexpr auto comp = []( value_type const& lhs, time::CommonClock::time_point const& rhs ) -> bool {

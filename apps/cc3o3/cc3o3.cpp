@@ -149,24 +149,16 @@ void ProcessFrame()
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
 
-	// For locally-owned streams, ensure the read/write heads are atleast at
-	//  the current frame, in case some new streams were created as part of an
-	//  app-state tick
-	// HACK: Advance hard-coded input
-	// TODO: Have a manifest for what is locally-owned
-	input::HardcodedAdvance(
-		time::FrameClock::now(),
-		time::FrameClock::now() );
-
 	// Commit all frames that are ready
 	rollback::InclusiveTimeRange const commitRange = rollMan.GetFramesReadyToCommit();
 	rollMan.CommitFrames( commitRange, commitRange.second + time::kSimulationFrameDuration );
 
-	// For locally-owned streams, lock the read/write heads to the next frame
+	// For locally-owned streams, lock the read heads to after the last commit
+	//  and the write heads to the next frame
 	// HACK: Advance hard-coded input
 	// TODO: Have a manifest for what is locally-owned
 	input::HardcodedAdvance(
-		time::FrameClock::now() + time::kSimulationFrameDuration,
+		commitRange.second + time::kSimulationFrameDuration,
 		time::FrameClock::now() + time::kSimulationFrameDuration );
 
 	ui::ContainerManager& uiMan = *app::gUiManager;

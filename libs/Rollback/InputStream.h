@@ -92,6 +92,11 @@ public:
 	// Move backward the write head, likely truncating events
 	void rewind( time::CommonClock::time_point time );
 
+	// Truncate events, possibly affecting the trailing read head
+	// NOTE: Unlike increase_read_head(...), this allows truncating without
+	//  moving the read head to a newer time
+	void discard_old_events( time::CommonClock::time_point inclusiveTime );
+
 	// Points to the start of the frame
 	// NOTE: Frame may have 0 elements, and so this may point to the next frame
 	const_iterator lower_bound( time::CommonClock::time_point time ) const;

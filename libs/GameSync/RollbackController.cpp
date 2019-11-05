@@ -63,6 +63,7 @@ time::CommonClock::duration RollbackController::GetArtificialDelay() const
 
 void RollbackController::SetArtificialDelay( time::CommonClock::duration const& delay )
 {
+	RF_ASSERT( delay.count() > 0 );
 	mArtificalDelay = delay;
 }
 
@@ -121,7 +122,14 @@ void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameComman
 			math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromCommitted );
 		for( rollback::InputStream::const_iterator iter = start; iter < committedInputStream.end(); iter++ )
 		{
-			parser( GameCommand{ iter->mValue, iter->mTime } );
+			if( iter->mValue != rollback::kInvalidInputValue )
+			{
+				parser( GameCommand{ iter->mValue, iter->mTime } );
+			}
+			else
+			{
+				// Marker for an empty frame, ignore
+			}
 			numCommandsEmmitted++;
 		}
 	}
@@ -135,7 +143,14 @@ void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameComman
 			math::integer_cast<rollback::InputStream::difference_type>( commandsToPullFromUncommitted );
 		for( rollback::InputStream::const_iterator iter = start; iter < uncommittedInputStream.end(); iter++ )
 		{
-			parser( GameCommand{ iter->mValue, iter->mTime } );
+			if( iter->mValue != rollback::kInvalidInputValue )
+			{
+				parser( GameCommand{ iter->mValue, iter->mTime } );
+			}
+			else
+			{
+				// Marker for an empty frame, ignore
+			}
 			numCommandsEmmitted++;
 		}
 	}

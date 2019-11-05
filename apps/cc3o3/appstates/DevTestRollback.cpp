@@ -3,12 +3,14 @@
 
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/time/TimeFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
 #include "GameUI/FontRegistry.h"
+#include "GameAppState/AppStateTickContext.h"
 
 #include "PPU/PPUController.h"
 
@@ -65,6 +67,9 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
 	internalState.Bind( window );
+
+	rollMan.CreateNewStream( 3, rollMan.GetHeadClock() );
+	rollMan.CreateNewStream( 4, rollMan.GetHeadClock() );
 }
 
 
@@ -105,6 +110,21 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	static constexpr input::PlayerID kPlayerIDs[] = { input::player::P1, input::player::P2 };
 	InternalState::Pos* const positions[] = { &internalState.mP1, &internalState.mP2 };
 
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+
+	// P3 will be a clone of P2
+	rollback::InputStream& p3Stream = rollMan.GetMutableUncommittedStreams().at( 3 );
+	p3Stream.increase_write_head( context.mCurrentTime );
+
+	// P3 will be a clone of P2, but as rollback triggers
+	rollback::InputStream& p4Stream = rollMan.GetMutableUncommittedStreams().at( 4 );
+	static constexpr time::CommonClock::duration kLateDuration = time::kSimulationFrameDuration * 7;
+	static constexpr time::CommonClock::time_point kP4Start = time::CommonClock::time_point{} + kLateDuration + time::kSimulationFrameDuration;
+	if( context.mCurrentTime > kP4Start )
+	{
+		p4Stream.increase_write_head( context.mCurrentTime - kLateDuration );
+	}
+
 	for( size_t i = 0; i < 2; i++ )
 	{
 		input::PlayerID const playerID = kPlayerIDs[i];
@@ -119,6 +139,15 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 		for( input::GameCommand const& command : commands )
 		{
+			if( playerID == input::player::P2 )
+			{
+				// Clone player 2's commands onto player 3
+				p3Stream.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
+
+				// Clone player 2's commands onto player 4
+				p4Stream.emplace_back( rollback::InputEvent( command.mTime - kLateDuration, command.mType ) );
+			}
+
 			if( command.mType == input::command::game::WalkWest )
 			{
 				pos->mX = pos->mX - 1u;

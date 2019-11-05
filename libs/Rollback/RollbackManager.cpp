@@ -135,10 +135,28 @@ RollbackManager::InputStreams& RollbackManager::GetMutableUncommittedStreams()
 
 
 
-void RollbackManager::EnsureStreamExists( InputStreamIdentifier const& identifier )
+void RollbackManager::CreateNewStream( InputStreamIdentifier const& identifier, time::CommonClock::time_point const& headTime )
 {
-	mCommittedStreams[identifier];
-	mUncommittedStreams[identifier];
+	RFLOG_TEST_AND_FATAL( mCommittedStreams.count( identifier ) == 0, nullptr, RFCAT_ROLLBACK, "Trying to create a stream that already exists" );
+	RFLOG_TEST_AND_FATAL( mUncommittedStreams.count( identifier ) == 0, nullptr, RFCAT_ROLLBACK, "Trying to create a stream that already exists" );
+
+	// The current commit time is shared by all committed streams, so this new
+	//  stream will need to respect that as well
+	// NOTE: Getting the first stream, since any are valid, but making sure to
+	//  do this before adding the new stream
+	time::CommonClock::time_point currentCommitTime;
+	if( mCommittedStreams.empty() == false )
+	{
+		currentCommitTime = mCommittedStreams.begin()->second.back().mTime;
+	}
+	RFLOG_TEST_AND_FATAL( currentCommitTime < headTime, nullptr, RFCAT_ROLLBACK, "New stream's head time isn't after the current commit time" );
+
+	InputStream& newCommitted = mCommittedStreams[identifier];
+	newCommitted.increase_write_head( currentCommitTime );
+
+	InputStream& newUncommitted = mUncommittedStreams[identifier];
+	newUncommitted.increase_write_head( currentCommitTime );
+	newUncommitted.increase_read_head( currentCommitTime );
 }
 
 
@@ -162,7 +180,12 @@ InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 	for( InputStreams::value_type const& entry : mUncommittedStreams )
 	{
 		time::CommonClock::time_point const head = entry.second.back().mTime;
-		RFLOG_TEST_AND_FATAL( head > maxCommitHead, nullptr, RFCAT_ROLLBACK, "Uncommitted stream has stale data" );
+		if( head == maxCommitHead )
+		{
+			// Should only have an empty frame marker
+			RFLOG_TEST_AND_FATAL( entry.second.back().mValue == kInvalidInputValue, nullptr, RFCAT_ROLLBACK, "Uncommitted stream has data at commit head" );
+		}
+		RFLOG_TEST_AND_FATAL( head >= maxCommitHead, nullptr, RFCAT_ROLLBACK, "Uncommitted stream has stale data" );
 		minUncommitHead = rftl::min( minUncommitHead, head );
 	}
 	RF_ASSERT( maxCommitHead <= minUncommitHead );
@@ -187,9 +210,16 @@ void RollbackManager::CommitFrames( InclusiveTimeRange const& range, time::Commo
 		// Transfer
 		for( InputStream::const_iterator iter = source.begin(); iter != source.end(); iter++ )
 		{
-			RF_ASSERT( iter->mTime >= range.first );
+			if( iter->mTime < range.first )
+			{
+				// Likely a marker from a previous commit
+				RF_ASSERT( iter->mValue == kInvalidInputValue );
+				continue;
+			}
+
 			if( iter->mTime > range.second )
 			{
+				// Not part of this commit
 				break;
 			}
 
@@ -202,11 +232,7 @@ void RollbackManager::CommitFrames( InclusiveTimeRange const& range, time::Commo
 		}
 
 		// Truncate source
-		if( source.back().mTime < nextFrame )
-		{
-			source.increase_write_head( nextFrame );
-		}
-		source.increase_read_head( nextFrame );
+		source.discard_old_events( range.second );
 	}
 
 	// Lock all transferred frames on the committed streams
