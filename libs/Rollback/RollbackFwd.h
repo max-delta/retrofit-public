@@ -24,6 +24,9 @@ static constexpr InputValue kInvalidInputValue = 0;
 struct InputEvent;
 class InputStream;
 
+using InputStreamRef = rftl::pair<InputStreamIdentifier, InputStream&>;
+using InputStreamConstRef = rftl::pair<InputStreamIdentifier, InputStream const&>;
+
 static constexpr size_t kMaxChangesInWindow = 10;
 using Window = state::StateBag<kMaxChangesInWindow>;
 template<typename T>

@@ -4,10 +4,12 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="RollbackController.cpp" />
+    <ClCompile Include="RollbackFilters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="RollbackController.h" />
+    <ClInclude Include="RollbackFilters.h" />
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@
 #include "GameInput/GameController.h"
 #include "GameUI/FontRegistry.h"
 #include "GameAppState/AppStateTickContext.h"
+#include "GameSync/RollbackFilters.h"
 
 #include "PPU/PPUController.h"
 
@@ -113,17 +114,13 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
 
 	// P3 will be a clone of P2
-	rollback::InputStream& p3Stream = rollMan.GetMutableUncommittedStreams().at( 3 );
-	p3Stream.increase_write_head( context.mCurrentTime );
+	rollback::InputStreamRef const p3Stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, 3 );
+	sync::RollbackFilters::PrepareLocalFrame( rollMan, p3Stream, context.mCurrentTime );
 
 	// P3 will be a clone of P2, but as rollback triggers
-	rollback::InputStream& p4Stream = rollMan.GetMutableUncommittedStreams().at( 4 );
+	rollback::InputStreamRef const p4Stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, 4 );
 	static constexpr time::CommonClock::duration kLateDuration = time::kSimulationFrameDuration * 7;
-	static constexpr time::CommonClock::time_point kP4Start = time::CommonClock::time_point{} + kLateDuration + time::kSimulationFrameDuration;
-	if( context.mCurrentTime > kP4Start )
-	{
-		p4Stream.increase_write_head( context.mCurrentTime - kLateDuration );
-	}
+	bool const p4Valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, p4Stream, context.mCurrentTime - kLateDuration );
 
 	for( size_t i = 0; i < 2; i++ )
 	{
@@ -142,10 +139,13 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				p3Stream.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
+				p3Stream.second.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
 
 				// Clone player 2's commands onto player 4
-				p4Stream.emplace_back( rollback::InputEvent( command.mTime - kLateDuration, command.mType ) );
+				if( p4Valid )
+				{
+					p4Stream.second.emplace_back( rollback::InputEvent( command.mTime - kLateDuration, command.mType ) );
+				}
 			}
 
 			if( command.mType == input::command::game::WalkWest )
