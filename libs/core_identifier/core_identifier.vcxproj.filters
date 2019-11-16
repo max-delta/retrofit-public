@@ -5,5 +5,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SegmentedIdentifier.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SegmentedIdentifier.inl" />
   </ItemGroup>
 </Project>
