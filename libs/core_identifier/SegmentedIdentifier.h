@@ -5,6 +5,7 @@
 
 #include "rftl/vector"
 #include "rftl/string"
+#include "rftl/type_traits"
 
 
 namespace RF { namespace id {
@@ -93,5 +94,11 @@ struct rftl::hash<RF::id::SegmentedIdentifier<ElementT>>
 {
 	size_t operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const;
 };
+
+// Explicitly instantiate and alias common types
+namespace RF { namespace id {
+using SegmentedStringIdentifier = SegmentedIdentifier<rftl::string>;
+}}
+extern template class RF::id::SegmentedIdentifier<rftl::string>;
 
 #include "SegmentedIdentifier.inl"
