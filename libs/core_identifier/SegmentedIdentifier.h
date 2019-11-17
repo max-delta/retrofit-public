@@ -1,4 +1,6 @@
 #pragma once
+#include "SegmentedIdentifier.h"
+
 #include "core/macros.h"
 
 #include "rftl/vector"
@@ -85,5 +87,11 @@ rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<C
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
+
+template<typename ElementT>
+struct rftl::hash<RF::id::SegmentedIdentifier<ElementT>>
+{
+	size_t operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const;
+};
 
 #include "SegmentedIdentifier.inl"

@@ -72,12 +72,3 @@ void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogConte
 		bufferOffset += bytesToWrite;
 	}
 }
-
-
-
-size_t rftl::hash<RF::file::VFSPath>::operator()( RF::file::VFSPath const& path ) const
-{
-	return static_cast<size_t>( RF::math::SequenceHash<
-		RF::file::VFSPath,
-		rftl::hash<RF::file::VFSPath::Element>>()( path ) );
-}

@@ -6,6 +6,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SegmentedIdentifier.h" />
+    <ClInclude Include="IdentifierFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SegmentedIdentifier.inl" />

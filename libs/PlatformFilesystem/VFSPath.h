@@ -40,9 +40,9 @@ void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, Ut
 }}
 
 template<>
-struct PLATFORMFILESYSTEM_API rftl::hash<RF::file::VFSPath>
+struct PLATFORMFILESYSTEM_API rftl::hash<RF::file::VFSPath> : public rftl::hash<RF::id::SegmentedIdentifier<rftl::string>>
 {
-	size_t operator()( RF::file::VFSPath const& path ) const;
+	//
 };
 
 #include "VFSPath.inl"

@@ -28,6 +28,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="IdentifierFwd.h" />
     <ClInclude Include="SegmentedIdentifier.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>

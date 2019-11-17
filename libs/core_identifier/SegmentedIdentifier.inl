@@ -1,6 +1,8 @@
 #pragma once
 #include "SegmentedIdentifier.h"
 
+#include "core_math/Hash.h"
+
 #include "rftl/sstream"
 
 
@@ -341,3 +343,11 @@ rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<C
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
+
+template<typename ElementT>
+inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const
+{
+	return static_cast<size_t>( RF::math::SequenceHash<
+		RF::file::VFSPath,
+		rftl::hash<RF::file::VFSPath::Element>>()( identifier ) );
+}
