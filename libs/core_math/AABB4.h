@@ -47,6 +47,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
+// Explicitly instantiate and alias common types
 namespace RF { namespace math {
 typedef AABB4<float> AABB4f;
 typedef AABB4<double> AABB4d;
@@ -55,16 +56,11 @@ typedef AABB4<int16_t> AABB4i16;
 typedef AABB4<int32_t> AABB4i32;
 typedef AABB4<int64_t> AABB4i64;
 }}
-#ifndef __INTELLISENSE__
-// Intellisense in VS2015 has a check for blocking implicit instantiation
-//  ordering w.r.t. explicit instantiation, but appears to be completely
-//  broken
 extern template class RF::math::AABB4<float>;
 extern template class RF::math::AABB4<double>;
 extern template class RF::math::AABB4<int8_t>;
 extern template class RF::math::AABB4<int16_t>;
 extern template class RF::math::AABB4<int32_t>;
 extern template class RF::math::AABB4<int64_t>;
-#endif
 
 #include "AABB4.inl"

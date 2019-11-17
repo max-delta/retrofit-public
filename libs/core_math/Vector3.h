@@ -52,6 +52,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
+// Explicitly instantiate and alias common types
 namespace RF { namespace math {
 typedef Vector3<float> Vector3f;
 typedef Vector3<double> Vector3d;
@@ -60,16 +61,11 @@ typedef Vector3<int16_t> Vector3i16;
 typedef Vector3<int32_t> Vector3i32;
 typedef Vector3<int64_t> Vector3i64;
 }}
-#ifndef __INTELLISENSE__
-// Intellisense in VS2015 has a check for blocking implicit instantiation
-//  ordering w.r.t. explicit instantiation, but appears to be completely
-//  broken
 extern template class RF::math::Vector3<float>;
 extern template class RF::math::Vector3<double>;
 extern template class RF::math::Vector3<int8_t>;
 extern template class RF::math::Vector3<int16_t>;
 extern template class RF::math::Vector3<int32_t>;
 extern template class RF::math::Vector3<int64_t>;
-#endif
 
 #include "Vector3.inl"
