@@ -18,9 +18,6 @@ class StateBag
 public:
 	static constexpr size_t kMaxChanges = MaxChangesT;
 
-	// TODO: This should be a class instead that has scope knowledge
-	using VariableIdentifier = rftl::string;
-
 	using ContainedTypes = TypeList<
 		uint8_t, int8_t,
 		uint16_t, int16_t,

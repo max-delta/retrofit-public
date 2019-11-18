@@ -9,6 +9,7 @@
     <ClInclude Include="StateStream.h" />
     <ClInclude Include="StateTree.h" />
     <ClInclude Include="StateBag.h" />
+    <ClInclude Include="VariableIdentifier.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="StateStream.inl" />

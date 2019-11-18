@@ -35,10 +35,10 @@ struct DevTestRollback::InternalState
 
 	void Bind( rollback::Window& window )
 	{
-		mP1.mX.Bind( window, "DevTest/Rollback/p1/x", mAlloc );
-		mP1.mY.Bind( window, "DevTest/Rollback/p1/y", mAlloc );
-		mP2.mX.Bind( window, "DevTest/Rollback/p2/x", mAlloc );
-		mP2.mY.Bind( window, "DevTest/Rollback/p2/y", mAlloc );
+		mP1.mX.Bind( window, state::VariableIdentifier( "DevTest/Rollback/p1/x" ), mAlloc );
+		mP1.mY.Bind( window, state::VariableIdentifier( "DevTest/Rollback/p1/y" ), mAlloc );
+		mP2.mX.Bind( window, state::VariableIdentifier( "DevTest/Rollback/p2/x" ), mAlloc );
+		mP2.mY.Bind( window, state::VariableIdentifier( "DevTest/Rollback/p2/y" ), mAlloc );
 	}
 
 	// NOTE: Must be before vars so it destructs last

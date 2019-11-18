@@ -33,6 +33,7 @@
     <ClInclude Include="StateStream.h" />
     <ClInclude Include="StateTree.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="VariableIdentifier.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

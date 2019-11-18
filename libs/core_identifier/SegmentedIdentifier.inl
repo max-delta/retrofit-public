@@ -160,6 +160,14 @@ inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::Append( Ide
 
 
 template<typename ElementT>
+inline void SegmentedIdentifier<ElementT>::clear()
+{
+	m_ElementList.clear();
+}
+
+
+
+template<typename ElementT>
 inline bool SegmentedIdentifier<ElementT>::IsDescendantOf( SegmentedIdentifier const& closerToRoot ) const
 {
 	size_t const childNumNodes = NumElements();
@@ -348,6 +356,6 @@ template<typename ElementT>
 inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const
 {
 	return static_cast<size_t>( RF::math::SequenceHash<
-		RF::file::VFSPath,
-		rftl::hash<RF::file::VFSPath::Element>>()( identifier ) );
+		RF::id::SegmentedIdentifier<ElementT>,
+		rftl::hash<RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier ) );
 }

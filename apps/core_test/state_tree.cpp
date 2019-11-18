@@ -13,22 +13,23 @@ TEST( StateTree, Basic )
 	using Tree = StateTree<int, 4>;
 	using Stream = Tree::StreamType;
 	static constexpr char kIdentifier[] = "";
+	state::VariableIdentifier identifier;
 
 	alloc::AllocatorT<alloc::LinearAllocator<512>> allocator{ ExplicitDefaultConstruct() };
 
 	Tree tree;
-	ASSERT_EQ( tree.GetStream( kIdentifier ), nullptr );
-	ASSERT_EQ( tree.GetMutableStream( kIdentifier ), nullptr );
+	ASSERT_EQ( tree.GetStream( identifier ), nullptr );
+	ASSERT_EQ( tree.GetMutableStream( identifier ), nullptr );
 
-	WeakPtr<Stream> const stream = tree.GetOrCreateStream( kIdentifier, allocator );
+	WeakPtr<Stream> const stream = tree.GetOrCreateStream( identifier, allocator );
 	ASSERT_NE( stream, nullptr );
-	ASSERT_EQ( tree.GetStream( kIdentifier ), stream );
-	ASSERT_EQ( tree.GetMutableStream( kIdentifier ), stream );
+	ASSERT_EQ( tree.GetStream( identifier ), stream );
+	ASSERT_EQ( tree.GetMutableStream( identifier ), stream );
 
-	WeakPtr<Stream> const recreate = tree.GetOrCreateStream( kIdentifier, allocator );
+	WeakPtr<Stream> const recreate = tree.GetOrCreateStream( identifier, allocator );
 	ASSERT_EQ( recreate, stream );
-	ASSERT_EQ( tree.GetStream( kIdentifier ), stream );
-	ASSERT_EQ( tree.GetMutableStream( kIdentifier ), stream );
+	ASSERT_EQ( tree.GetStream( identifier ), stream );
+	ASSERT_EQ( tree.GetMutableStream( identifier ), stream );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

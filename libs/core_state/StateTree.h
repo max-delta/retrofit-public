@@ -1,5 +1,6 @@
 #pragma once
 #include "core_state/StateStream.h"
+#include "core_state/VariableIdentifier.h"
 
 #include "core_allocate/Allocator.h"
 

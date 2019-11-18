@@ -1,6 +1,8 @@
 #pragma once
 #include "Rollback/Var.h"
 
+#include "core_state/VariableIdentifier.h"
+
 #include "core_allocate/AllocatorFwd.h"
 
 

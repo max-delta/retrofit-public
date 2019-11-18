@@ -90,6 +90,9 @@
     <ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
       <Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
+      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
     </ProjectReference>

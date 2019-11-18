@@ -49,6 +49,7 @@ public:
 	SegmentedIdentifier& Append( Element const& element );
 	template<typename... IdentifiersOrElements>
 	SegmentedIdentifier& Append( IdentifiersOrElements... identifiersOrElements );
+	void clear();
 
 	// Compare and access
 	bool IsDescendantOf( SegmentedIdentifier const& closerToRoot ) const;
