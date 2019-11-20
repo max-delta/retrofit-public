@@ -12,6 +12,7 @@
 #include "GameUI/FontRegistry.h"
 #include "GameAppState/AppStateTickContext.h"
 #include "GameSync/RollbackFilters.h"
+#include "GameSync/RollbackController.h"
 
 #include "PPU/PPUController.h"
 
@@ -37,10 +38,12 @@ struct DevTestRollback::InternalState
 	{
 		mP1.Bind( window, parent.GetChild( "p1" ), mAlloc );
 		mP2.Bind( window, parent.GetChild( "p2" ), mAlloc );
+		mP3.Bind( window, parent.GetChild( "p3" ), mAlloc );
+		mP4.Bind( window, parent.GetChild( "p4" ), mAlloc );
 	}
 
 	// NOTE: Must be before vars so it destructs last
-	alloc::AllocatorT<alloc::LinearAllocator<1024>> mAlloc{ ExplicitDefaultConstruct() };
+	alloc::AllocatorT<alloc::LinearAllocator<2048>> mAlloc{ ExplicitDefaultConstruct() };
 
 	struct Pos
 	{
@@ -58,6 +61,11 @@ struct DevTestRollback::InternalState
 	};
 	Pos mP1;
 	Pos mP2;
+	Pos mP3;
+	Pos mP4;
+
+	UniquePtr<input::RollbackController> mP3RollbackController;
+	UniquePtr<input::RollbackController> mP4RollbackController;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -75,7 +83,14 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 	internalState.Bind( window, state::VariableIdentifier( "DevTest", "Rollback" ) );
 
 	rollMan.CreateNewStream( 3, rollMan.GetHeadClock() );
+	internalState.mP3RollbackController = DefaultCreator<input::RollbackController>::Create();
+	internalState.mP3RollbackController->SetRollbackManager( app::gRollbackManager );
+	internalState.mP3RollbackController->SetRollbackIdentifier( 3 );
+
 	rollMan.CreateNewStream( 4, rollMan.GetHeadClock() );
+	internalState.mP4RollbackController = DefaultCreator<input::RollbackController>::Create();
+	internalState.mP4RollbackController->SetRollbackManager( app::gRollbackManager );
+	internalState.mP4RollbackController->SetRollbackIdentifier( 4 );
 }
 
 
@@ -110,11 +125,32 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	drawText( 2, 4, "P1y: %u", internalState.mP1.mY.As() );
 	drawText( 2, 5, "P2x: %u", internalState.mP2.mX.As() );
 	drawText( 2, 6, "P2y: %u", internalState.mP2.mY.As() );
+	drawText( 2, 7, "P3x: %u", internalState.mP3.mX.As() );
+	drawText( 2, 8, "P3y: %u", internalState.mP3.mY.As() );
+	drawText( 2, 9, "P4x: %u", internalState.mP4.mX.As() );
+	drawText( 2, 10, "P4y: %u", internalState.mP4.mY.As() );
 
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
 
-	static constexpr input::PlayerID kPlayerIDs[] = { input::player::P1, input::player::P2 };
-	InternalState::Pos* const positions[] = { &internalState.mP1, &internalState.mP2 };
+	static constexpr input::PlayerID kPlayerIDs[] = {
+		input::player::P1,
+		input::player::P2,
+		3,
+		4
+	};
+	InternalState::Pos* const positions[] = {
+		&internalState.mP1,
+		&internalState.mP2,
+		&internalState.mP3,
+		&internalState.mP4
+	};
+
+	input::GameController const* const controllers[] = {
+		controllerManager.GetGameController( input::player::P1, input::layer::CharacterControl ),
+		controllerManager.GetGameController( input::player::P2, input::layer::CharacterControl ),
+		internalState.mP3RollbackController,
+		internalState.mP4RollbackController,
+	};
 
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
 
@@ -127,12 +163,11 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	static constexpr time::CommonClock::duration kLateDuration = time::kSimulationFrameDuration * 7;
 	bool const p4Valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, p4Stream, context.mCurrentTime - kLateDuration );
 
-	for( size_t i = 0; i < 2; i++ )
+	for( size_t i = 0; i < 4; i++ )
 	{
 		input::PlayerID const playerID = kPlayerIDs[i];
 		InternalState::Pos* const pos = positions[i];
-
-		input::GameController const& controller = *controllerManager.GetGameController( playerID, input::layer::CharacterControl );
+		input::GameController const& controller = *controllers[i];
 
 		// Fetch commands that were entered for this current frame
 		rftl::vector<input::GameCommand> commands;
