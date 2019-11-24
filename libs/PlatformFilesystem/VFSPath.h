@@ -11,7 +11,7 @@
 namespace RF { namespace file {
 ///////////////////////////////////////////////////////////////////////////////
 
-class PLATFORMFILESYSTEM_API VFSPath : public id::SegmentedIdentifier<rftl::string>
+class VFSPath : public id::SegmentedIdentifier<rftl::string>
 {
 	//
 	// Friends
@@ -21,14 +21,14 @@ private:
 	//
 	// Public methods
 public:
-	VFSPath();
-	VFSPath( SegmentedIdentifier<rftl::string> const& path );
+	PLATFORMFILESYSTEM_API VFSPath();
+	PLATFORMFILESYSTEM_API VFSPath( SegmentedIdentifier<rftl::string> const& path );
 	template<typename... Nodes>
 	explicit VFSPath( Element element, Nodes... elements );
 
 	// To/from string
-	static VFSPath CreatePathFromString( rftl::string const& path );
-	rftl::string CreateString() const;
+	PLATFORMFILESYSTEM_API static VFSPath CreatePathFromString( rftl::string const& path );
+	PLATFORMFILESYSTEM_API rftl::string CreateString() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
