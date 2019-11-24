@@ -10,6 +10,7 @@
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
 #include "GameSync/RollbackController.h"
+#include "GameSync/RollbackFilters.h"
 
 #include "Rollback/RollbackManager.h"
 
@@ -25,6 +26,7 @@ namespace details {
 
 static WeakPtr<input::RawInputController> sRawInputController;
 static rftl::vector<WeakPtr<input::RollbackController>> sRollbackControllers;
+static rftl::deque<std::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> sDebugQueuedTestInput;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -200,6 +202,18 @@ void HardcodedTick()
 	{
 		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
 	}
+
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	for( std::pair<rollback::InputStreamIdentifier, rollback::InputEvent> const& input : details::sDebugQueuedTestInput )
+	{
+		rollback::InputStreamRef const stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, input.first );
+		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
+		if( valid )
+		{
+			stream.second.emplace_back( input.second );
+		}
+	}
+	details::sDebugQueuedTestInput.clear();
 }
 
 
@@ -210,6 +224,13 @@ void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonCl
 	{
 		controller->AdvanceInputStream( lockedFrame, newWriteHead );
 	}
+}
+
+
+
+void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, input::GameCommandType command )
+{
+	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, command ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

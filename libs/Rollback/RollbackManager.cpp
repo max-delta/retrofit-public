@@ -121,6 +121,25 @@ RollbackManager::InputStreams const& RollbackManager::GetCommittedStreams() cons
 
 
 
+time::CommonClock::time_point RollbackManager::GetMaxCommitHead() const
+{
+	time::CommonClock::time_point maxCommitHead = time::CommonClock::kLowest;
+	if( mCommittedStreams.empty() == false )
+	{
+		// All committed streams should share the same commit head
+		maxCommitHead = mCommittedStreams.begin()->second.back().mTime;
+		for( InputStreams::value_type const& entry : mCommittedStreams )
+		{
+			time::CommonClock::time_point const head = entry.second.back().mTime;
+			RFLOG_TEST_AND_FATAL( head == maxCommitHead, nullptr, RFCAT_ROLLBACK, "Committed streams are out of sync" );
+		}
+	}
+
+	return maxCommitHead;
+}
+
+
+
 RollbackManager::InputStreams const& RollbackManager::GetUncommittedStreams() const
 {
 	return mUncommittedStreams;
@@ -163,17 +182,7 @@ void RollbackManager::CreateNewStream( InputStreamIdentifier const& identifier, 
 
 InclusiveTimeRange RollbackManager::GetFramesReadyToCommit() const
 {
-	time::CommonClock::time_point maxCommitHead = time::CommonClock::kLowest;
-	if( mCommittedStreams.empty() == false )
-	{
-		// All committed streams should share the same commit head
-		maxCommitHead = mCommittedStreams.begin()->second.back().mTime;
-		for( InputStreams::value_type const& entry : mCommittedStreams )
-		{
-			time::CommonClock::time_point const head = entry.second.back().mTime;
-			RFLOG_TEST_AND_FATAL( head == maxCommitHead, nullptr, RFCAT_ROLLBACK, "Committed streams are out of sync" );
-		}
-	}
+	time::CommonClock::time_point const maxCommitHead = GetMaxCommitHead();
 
 	RF_ASSERT( mUncommittedStreams.empty() == false );
 	time::CommonClock::time_point minUncommitHead = time::CommonClock::kMax;
@@ -251,10 +260,24 @@ void RollbackManager::RewindAllStreams( time::CommonClock::time_point time )
 {
 	for( InputStreams::value_type& entry : mCommittedStreams )
 	{
+		if( entry.second.back().mTime <= time )
+		{
+			// No need to rewind, this stream likely hasn't been committed to
+			//  for a while and has been waiting on uncommitted input
+			continue;
+		}
+
 		entry.second.rewind( time );
 	}
 	for( InputStreams::value_type& entry : mUncommittedStreams )
 	{
+		if( entry.second.back().mTime <= time )
+		{
+			// No need to rewind, this stream likely hasn't seem any activity
+			//  for a while and has been waiting on remote input to come in
+			continue;
+		}
+
 		entry.second.rewind( time );
 	}
 }

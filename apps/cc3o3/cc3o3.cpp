@@ -113,12 +113,6 @@ void ProcessFrame()
 		// The head has moved backwards in time since we started the frame
 		if constexpr( false )
 		{
-			// This was caused by a correction, so we need to re-sim the
-			//  the previous frames before we can simulate the current frame
-			// TODO: Re-sim logic
-		}
-		else if constexpr( false )
-		{
 			// This was caused by a replay, so we need to stop processing any
 			//  true input while we wait for the replay to catch up to the
 			//  current true time
@@ -146,20 +140,136 @@ void ProcessFrame()
 		}
 	}
 
+	// We're about to do some really weird stuff to time, so we need to make
+	//  sure we don't lose track of what frame we're ultimately trying to
+	//  put together
+	time::CommonClock::time_point const currentTrueFrame = time::FrameClock::now();
+	time::CommonClock::time_point const previousTrueFrame = currentTrueFrame - time::kSimulationFrameDuration;
+	RF_ASSERT( previousTrueFrame < currentTrueFrame );
+
+	// Figure out what type of simulation we need to perform
+	enum class SimulationMode : uint8_t
+	{
+		Invalid = 0,
+		OnRailsReplay,
+		SingleFrameSimulate,
+		RollbackAndSimulate
+	} simulationMode = SimulationMode::Invalid;
+	time::CommonClock::time_point const preFrameCommitHead = rollMan.GetMaxCommitHead();
+	rollback::InclusiveTimeRange preFrameCommitRange = { preFrameCommitHead, preFrameCommitHead };
+	if( preFrameCommitHead >= currentTrueFrame )
+	{
+		// Committed input is in the future, which means the input for this
+		//  frame is pre-determined and we just need to simulate it
+		// NOTE: The current true frame counts as the future, since we haven't
+		//  yet simulated it (to our knowledge)
+		simulationMode = SimulationMode::OnRailsReplay;
+	}
+	else
+	{
+		RF_ASSERT( preFrameCommitHead <= previousTrueFrame );
+
+		// Committed input is behind the current frame, maybe there's some
+		//  uncommitted input in the past that is ready to be committed, and so
+		//  we need to re-simulate those frames?
+		if( rollMan.GetUncommittedStreams().empty() )
+		{
+			// We don't even have uncommitted streams, so the rollback
+			//  machinery is currently inert
+			// NOTE: This often happens on application startup while the
+			//  relevant systems are still spinning up
+			simulationMode = SimulationMode::SingleFrameSimulate;
+			preFrameCommitRange = { preFrameCommitHead, previousTrueFrame };
+		}
+		else
+		{
+			// See if there's anything to commit between our commit head and
+			//  the current frame
+			preFrameCommitRange = rollMan.GetFramesReadyToCommit();
+			RF_ASSERT( preFrameCommitHead <= preFrameCommitRange.first );
+			RF_ASSERT( preFrameCommitRange.second < currentTrueFrame );
+			if( preFrameCommitRange.second <= preFrameCommitHead )
+			{
+				// Nothing new to commit
+				if( preFrameCommitHead == previousTrueFrame )
+				{
+					// We've committed the previous frame, so we're not yet
+					//  expecting any rollbacks
+					simulationMode = SimulationMode::SingleFrameSimulate;
+				}
+				else
+				{
+					// We're simulating multiple frames ahead of our committed
+					//  input, so we're likely going to get a rollback and have
+					//  to re-simulate those frames, but we'll keep predicting
+					//  inputs for now and hope for the best
+					simulationMode = SimulationMode::SingleFrameSimulate;
+				}
+			}
+			else
+			{
+				// There's new inputs that theoretically need to re-simulated,
+				//  but they might be no-op inputs, and thus safely ignorable
+				RF_TODO_ANNOTATION( "Check for no-ops" );
+				if constexpr( false )
+				{
+					// All the inputs are no-ops, so we've already effectively
+					//  simulated them by just assuming they were no-ops in
+					//  previous frames
+					simulationMode = SimulationMode::SingleFrameSimulate;
+				}
+				else
+				{
+					// Some inputs were discovered in frames that we've already
+					//  simulated, where we mis-predicted what the input was,
+					//  and so have to go back and re-simulate that frame, and
+					//  all other frames after it, before we can simulate the
+					//  current frame
+					simulationMode = SimulationMode::RollbackAndSimulate;
+				}
+			}
+		}
+	}
+	RF_ASSERT( simulationMode != SimulationMode::Invalid );
+
+	// For locally-owned streams, we'll want to manipulate read/write heads
+	// HACK: Advance hard-coded input
+	RF_TODO_ANNOTATION( "Have a manifest for what is locally-owned" );
+	(void)( &input::HardcodedAdvance );
+
+	// Commit all frames that are ready
+	rollMan.CommitFrames( preFrameCommitRange, preFrameCommitRange.second );
+
+	// Lock read heads to after the last commit, and write heads to the start
+	//  of the current frame
+	input::HardcodedAdvance(
+		preFrameCommitRange.second + time::kSimulationFrameDuration,
+		time::FrameClock::now() );
+
+	if( simulationMode == SimulationMode::RollbackAndSimulate )
+	{
+		// TODO: Rollback and simulate each frame up to the current true frame
+	}
+
+	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
 
-	// Commit all frames that are ready
-	rollback::InclusiveTimeRange const commitRange = rollMan.GetFramesReadyToCommit();
-	rollMan.CommitFrames( commitRange, commitRange.second + time::kSimulationFrameDuration );
-
-	// For locally-owned streams, lock the read heads to after the last commit
-	//  and the write heads to the next frame
-	// HACK: Advance hard-coded input
-	// TODO: Have a manifest for what is locally-owned
+	// Lock read heads to after the last commit, and write heads to the start
+	//  of the current frame
 	input::HardcodedAdvance(
-		commitRange.second + time::kSimulationFrameDuration,
-		time::FrameClock::now() + time::kSimulationFrameDuration );
+		preFrameCommitRange.second + time::kSimulationFrameDuration,
+		time::FrameClock::now() );
+
+	// Commit all frames that are ready
+	rollback::InclusiveTimeRange const postFrameCommitRange = rollMan.GetFramesReadyToCommit();
+	rollMan.CommitFrames( postFrameCommitRange, postFrameCommitRange.second + time::kSimulationFrameDuration );
+
+	// Lock read heads to after the last commit, and write heads to the end
+	//  of the current frame
+	input::HardcodedAdvance(
+		postFrameCommitRange.second /* + time::kSimulationFrameDuration*/,
+		time::FrameClock::now() );
 
 	ui::ContainerManager& uiMan = *app::gUiManager;
 	uiMan.RecalcRootContainer();

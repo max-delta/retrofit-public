@@ -1,6 +1,10 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/input/InputFwd.h"
+
+#include "Rollback/RollbackFwd.h"
+
 #include "core_time/CommonClock.h"
 
 namespace RF { namespace cc { namespace input {
@@ -10,6 +14,8 @@ namespace RF { namespace cc { namespace input {
 void HardcodedSetup();
 void HardcodedTick();
 void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
+
+void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, input::GameCommandType command );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

@@ -60,6 +60,7 @@ public:
 	//  present in the committed streams should never receive corrections or
 	//  otherwise be ammended.
 	InputStreams const& GetCommittedStreams() const;
+	time::CommonClock::time_point GetMaxCommitHead() const;
 
 	// Uncommitted streams are intended to store input for frames that do not
 	//  yet have representation from all interested parties. Specifically: the

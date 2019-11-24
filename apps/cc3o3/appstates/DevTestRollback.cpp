@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "DevTestRollback.h"
 
-#include "cc3o3/input/InputFwd.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/time/TimeFwd.h"
+#include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -158,10 +158,8 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 	rollback::InputStreamRef const p3Stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, 3 );
 	sync::RollbackFilters::PrepareLocalFrame( rollMan, p3Stream, context.mCurrentTime );
 
-	// P3 will be a clone of P2, but as rollback triggers
-	rollback::InputStreamRef const p4Stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, 4 );
+	// P4 will be a clone of P2, but as rollback triggers
 	static constexpr time::CommonClock::duration kLateDuration = time::kSimulationFrameDuration * 7;
-	bool const p4Valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, p4Stream, context.mCurrentTime - kLateDuration );
 
 	for( size_t i = 0; i < 4; i++ )
 	{
@@ -182,10 +180,7 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 				p3Stream.second.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
 
 				// Clone player 2's commands onto player 4
-				if( p4Valid )
-				{
-					p4Stream.second.emplace_back( rollback::InputEvent( command.mTime - kLateDuration, command.mType ) );
-				}
+				input::DebugQueueTestInput( command.mTime - kLateDuration, 4, command.mType );
 			}
 
 			if( command.mType == input::command::game::WalkWest )
