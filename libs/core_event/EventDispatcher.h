@@ -293,7 +293,14 @@ public:
 	struct HandlerRef
 	{
 		RF_NO_COPY( HandlerRef );
-
+		HandlerRef(
+			HandlerID id,
+			WeakPtr<HandlerStorage> handlerStorage )
+			: mID( id )
+			, mHandlerStorage( handlerStorage )
+		{
+			//
+		}
 		~HandlerRef();
 
 		HandlerID mID = kInvalidHandlerID;

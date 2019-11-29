@@ -83,7 +83,7 @@ inline typename EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::Handl
 				rftl::move( handler ) } ) );
 	}
 
-	return HandlerRef{ handlerID, mHandlerStorage };
+	return HandlerRef( handlerID, mHandlerStorage );
 }
 
 
