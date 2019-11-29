@@ -20,8 +20,8 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 {
 	RF_ASSERT( mTimes.size() == mValues.size() );
 
-	typename Times::iterator iterPastTime = rftl::upper_bound( mTimes.begin(), mTimes.end(), time );
-	if( iterPastTime == mTimes.end() )
+	typename Times::iterator iterAtTime = rftl::lower_bound( mTimes.begin(), mTimes.end(), time );
+	if( iterAtTime == mTimes.end() )
 	{
 		// Need to add to end
 
@@ -37,16 +37,16 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 		return;
 	}
 
-	typename Times::difference_type const distance = iterPastTime - mTimes.begin();
-	typename Values::iterator const iterPastValue = mValues.begin() + distance;
+	typename Times::difference_type const distance = iterAtTime - mTimes.begin();
+	typename Values::iterator const iterAtValue = mValues.begin() + distance;
 
 	// Need to stomp and wipe everything aftewards
-	*iterPastTime = time;
-	*iterPastValue = value;
+	*iterAtTime = time;
+	*iterAtValue = value;
 
-	RF_ASSERT( mTimes.begin() <= iterPastTime );
-	RF_ASSERT( mValues.begin() <= iterPastValue );
-	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterPastTime + 1 ) );
+	RF_ASSERT( mTimes.begin() <= iterAtTime );
+	RF_ASSERT( mValues.begin() <= iterAtValue );
+	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime + 1 ) );
 	mTimes.resize( newSize );
 	mValues.resize( newSize );
 }
