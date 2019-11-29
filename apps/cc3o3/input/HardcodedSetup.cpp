@@ -238,5 +238,12 @@ void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputSt
 	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, input ) );
 }
 
+
+
+void DebugClearTestInput()
+{
+	details::sDebugQueuedTestInput.clear();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}}

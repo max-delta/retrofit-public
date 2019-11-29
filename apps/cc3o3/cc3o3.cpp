@@ -130,6 +130,7 @@ void ProcessFrame()
 			// Make sure we've truncated any state that is rollback-sensitive,
 			//  but not rollback-aware
 			controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), rollMan.GetHeadClock() );
+			input::DebugClearTestInput();
 
 			// The head clock is presumed to be valid, so we should begin
 			//  processing the frame afterwards (which is now what we're
