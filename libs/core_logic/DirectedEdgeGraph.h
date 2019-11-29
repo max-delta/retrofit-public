@@ -41,6 +41,16 @@ public:
 	struct ConstIterator
 	{
 		RF_NO_COPY( ConstIterator );
+		ConstIterator(
+			NodeID const& from,
+			NodeID const& to,
+			EdgeMetaData const& meta )
+			: from( from )
+			, to( to )
+			, meta( meta )
+		{
+			//
+		}
 		NodeID const& from;
 		NodeID const& to;
 		EdgeMetaData const& meta;
@@ -48,6 +58,16 @@ public:
 	struct Iterator
 	{
 		RF_NO_COPY( Iterator );
+		Iterator(
+			NodeID const& from,
+			NodeID const& to,
+			EdgeMetaData& meta )
+			: from( from )
+			, to( to )
+			, meta( meta )
+		{
+			//
+		}
 		NodeID const& from;
 		NodeID const& to;
 		EdgeMetaData& meta;
@@ -149,7 +169,7 @@ public:
 			{
 				NodeID const& target = targetPair.first;
 				EdgeMetaData const& meta = targetPair.second;
-				ConstIterator const iter{ src, target, meta };
+				ConstIterator const iter( src, target, meta );
 				bool const continueIter = functor( iter );
 				if( continueIter == false )
 				{
@@ -169,7 +189,7 @@ public:
 			{
 				NodeID const& target = targetPair.first;
 				EdgeMetaData& meta = targetPair.second;
-				Iterator const iter{ src, target, meta };
+				Iterator const iter( src, target, meta );
 				bool const continueIter = functor( iter );
 				if( continueIter == false )
 				{
@@ -192,7 +212,7 @@ public:
 		{
 			NodeID const& target = targetPair.first;
 			EdgeMetaData const& meta = targetPair.second;
-			ConstIterator const iter{ src, target, meta };
+			ConstIterator const iter( src, target, meta );
 			bool const continueIter = functor( iter );
 			if( continueIter == false )
 			{
@@ -214,7 +234,7 @@ public:
 		{
 			NodeID const& target = targetPair.first;
 			EdgeMetaData& meta = targetPair.second;
-			Iterator const iter{ src, target, meta };
+			Iterator const iter( src, target, meta );
 			bool const continueIter = functor( iter );
 			if( continueIter == false )
 			{
@@ -236,7 +256,7 @@ public:
 			}
 			NodeID const& target = targetIter->first;
 			EdgeMetaData const& meta = targetIter->second;
-			ConstIterator const iter{ src, target, meta };
+			ConstIterator const iter( src, target, meta );
 			bool const continueIter = functor( iter );
 			if( continueIter == false )
 			{
@@ -258,7 +278,7 @@ public:
 			}
 			NodeID const& target = targetIter->first;
 			EdgeMetaData& meta = targetIter->second;
-			Iterator const iter{ src, target, meta };
+			Iterator const iter( src, target, meta );
 			bool const continueIter = functor( iter );
 			if( continueIter == false )
 			{
