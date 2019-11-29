@@ -201,6 +201,10 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			}
 		}
 	}
+
+	// Player 4's input stream should be updated even if we didn't send a
+	//  proper command, so we'll use an invalid command to mark the frame end
+	input::DebugQueueTestInput( time::FrameClock::now() - kLateDuration, 4, input::kInvalidGameCommand );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

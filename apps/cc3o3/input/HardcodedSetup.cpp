@@ -213,7 +213,7 @@ void HardcodedRollbackTick()
 	{
 		rollback::InputStreamRef const stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, input.first );
 		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
-		if( valid )
+		if( valid && input.second.mValue != rollback::kInvalidInputValue )
 		{
 			stream.second.emplace_back( input.second );
 		}
@@ -233,9 +233,9 @@ void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonCl
 
 
 
-void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, input::GameCommandType command )
+void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, rollback::InputValue input )
 {
-	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, command ) );
+	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, input ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
