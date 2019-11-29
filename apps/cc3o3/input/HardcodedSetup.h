@@ -12,7 +12,8 @@ namespace RF { namespace cc { namespace input {
 
 // TODO: This is obviously gross, replace it
 void HardcodedSetup();
-void HardcodedTick();
+void HardcodedRawTick();
+void HardcodedRollbackTick();
 void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
 
 void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, input::GameCommandType command );

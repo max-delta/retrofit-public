@@ -100,7 +100,7 @@ void ProcessFrame()
 	// HACK: Tick hard-coded input
 	// TODO: Have an input processing tree that handles dependency-based update
 	//  logic for all the controllers
-	input::HardcodedTick();
+	input::HardcodedRawTick();
 
 	if( kAllowDeveloperHud )
 	{
@@ -250,6 +250,11 @@ void ProcessFrame()
 	{
 		// TODO: Rollback and simulate each frame up to the current true frame
 	}
+
+	// HACK: Tick hard-coded input
+	// TODO: Have an input processing tree that handles dependency-based update
+	//  logic for all the controllers
+	input::HardcodedRollbackTick();
 
 	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );

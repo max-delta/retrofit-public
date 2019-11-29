@@ -191,13 +191,18 @@ void HardcodedSetup()
 
 
 
-void HardcodedTick()
+void HardcodedRawTick()
 {
 	if( details::sRawInputController != nullptr )
 	{
 		details::sRawInputController->ConsumeInput( *app::gWndProcInput );
 	}
+}
 
+
+
+void HardcodedRollbackTick()
+{
 	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
 	{
 		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
