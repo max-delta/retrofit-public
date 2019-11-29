@@ -153,7 +153,8 @@ void ProcessFrame()
 		Invalid = 0,
 		OnRailsReplay,
 		SingleFrameSimulate,
-		RollbackAndSimulate
+		RollbackAndSimulate,
+		StallSimulation
 	} simulationMode = SimulationMode::Invalid;
 	time::CommonClock::time_point const preFrameCommitHead = rollMan.GetMaxCommitHead();
 	rollback::InclusiveTimeRange preFrameCommitRange = { preFrameCommitHead, preFrameCommitHead };
@@ -201,9 +202,26 @@ void ProcessFrame()
 				{
 					// We're simulating multiple frames ahead of our committed
 					//  input, so we're likely going to get a rollback and have
-					//  to re-simulate those frames, but we'll keep predicting
-					//  inputs for now and hope for the best
-					simulationMode = SimulationMode::SingleFrameSimulate;
+					//  to re-simulate those frames
+					RF_ASSERT( preFrameCommitHead < previousTrueFrame );
+					time::CommonClock::duration const timeSinceLastCommit =
+						previousTrueFrame - preFrameCommitHead;
+					static constexpr time::CommonClock::duration kMaxRollbackDuration =
+						rollback::kMaxChangesInWindow * time::kSimulationFrameDuration;
+					if( timeSinceLastCommit < kMaxRollbackDuration )
+					{
+						// We're still not so far ahead that we can't rollback,
+						//  so it's safe to keep predicting inputs for now and
+						//  hope for the best
+						simulationMode = SimulationMode::SingleFrameSimulate;
+					}
+					else
+					{
+						// Uh-oh, if we keep simulating we likely won't be able
+						//  to recover, so we need to stall out until the input
+						//  streams can commit or are disconnected
+						simulationMode = SimulationMode::StallSimulation;
+					}
 				}
 			}
 			else
@@ -256,6 +274,13 @@ void ProcessFrame()
 	//  logic for all the controllers
 	input::HardcodedRollbackTick();
 
+	if( simulationMode == SimulationMode::StallSimulation )
+	{
+		// Take a snapshot of the state before tick, so we can restore it at
+		//  end of frame
+		rollMan.TakeManualSnapshot( "StallSimulation", currentTrueFrame );
+	}
+
 	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
@@ -291,6 +316,20 @@ void ProcessFrame()
 	if( kAllowDeveloperHud )
 	{
 		developer::RenderHud();
+	}
+
+	if( simulationMode == SimulationMode::StallSimulation )
+	{
+		// Clear out this frame so we don't re-process input from it, but can
+		//  still build up additional inputs while we're stalling
+		// NOTE: Non-rollback-aware code will just process the input as though
+		//  it was a new frame
+		controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), previousTrueFrame );
+
+		// Rewind time to the last frame
+		time::FrameClock::set_time( previousTrueFrame );
+		rollMan.SetHeadClock( previousTrueFrame );
+		rollMan.LoadManualSnapshot( "StallSimulation" );
 	}
 }
 
