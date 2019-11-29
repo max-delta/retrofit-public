@@ -11,7 +11,7 @@
     <!--All on by default, then manipulated by StaticAnalysis.h-->
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 
-    <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.2.0) -->
+    <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.3.10) -->
     <RunCodeAnalysis>false</RunCodeAnalysis>
 
     <!--If we bothered to turn a rule on, yell about it-->
