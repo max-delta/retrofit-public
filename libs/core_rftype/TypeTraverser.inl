@@ -103,7 +103,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 			reinterpret_cast<uint8_t const*>( classLocation ) +
 			varInfo.mOffset;
 
-		onMemberVariableFunc( MemberVariableInstance{ varInfo, varLoc } );
+		onMemberVariableFunc( MemberVariableInstance( varInfo, varLoc ) );
 
 		bool const value =
 			varInfo.mVariableTypeInfo.mValueType != Value::Type::Invalid &&
@@ -124,7 +124,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 			// Nested type
 
 			bool shouldTraverse = false;
-			onTraversalFunc( TraversalType::NestedType, TraversalVariableInstance{ varInfo.mVariableTypeInfo, varLoc }, shouldTraverse );
+			onTraversalFunc( TraversalType::NestedType, TraversalVariableInstance( varInfo.mVariableTypeInfo, varLoc ), shouldTraverse );
 			if( shouldTraverse )
 			{
 				TraverseVariablesWithoutInheritanceT(
@@ -134,7 +134,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 					onTraversalFunc,
 					onReturnFromNestedTypeFunc );
 
-				onReturnFromNestedTypeFunc( TraversalType::NestedType, TraversalVariableInstance{ varInfo.mVariableTypeInfo, varLoc } );
+				onReturnFromNestedTypeFunc( TraversalType::NestedType, TraversalVariableInstance( varInfo.mVariableTypeInfo, varLoc ) );
 			}
 			continue;
 		}
@@ -149,7 +149,7 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 
 			bool shouldTraverseAccessor = false;
 			// TODO: Callback
-			onTraversalFunc( TraversalType::Accessor, TraversalVariableInstance{ varInfo.mVariableTypeInfo, varLoc }, shouldTraverseAccessor );
+			onTraversalFunc( TraversalType::Accessor, TraversalVariableInstance( varInfo.mVariableTypeInfo, varLoc ), shouldTraverseAccessor );
 			if( shouldTraverseAccessor )
 			{
 				// NOTE: Can't perform traversal on null accessors, so they
@@ -166,11 +166,11 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 						bool const foundKey = accessor.mGetVariableKeyByIndex( varLoc, i, keyLoc, keyInfo );
 						RF_ASSERT( foundKey );
 						bool shouldTraverseKey = false;
-						onTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance{ keyInfo, keyLoc }, shouldTraverseKey );
+						onTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ), shouldTraverseKey );
 						if( shouldTraverseKey )
 						{
 							RF_TODO_BREAK();
-							onReturnFromNestedTypeFunc( TraversalType::AccessorKey, TraversalVariableInstance{ keyInfo, keyLoc } );
+							onReturnFromNestedTypeFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ) );
 						}
 
 						VariableTypeInfo targetInfo = {};
@@ -178,17 +178,17 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 						bool const foundTarget = accessor.mGetVariableTargetByKey( varLoc, keyLoc, keyInfo, targetLoc, targetInfo );
 						RF_ASSERT( foundTarget );
 						bool shouldTraverseTarget = false;
-						onTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance{ targetInfo, targetLoc }, shouldTraverseTarget );
+						onTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ), shouldTraverseTarget );
 						if( shouldTraverseTarget )
 						{
 							RF_TODO_BREAK();
-							onReturnFromNestedTypeFunc( TraversalType::AccessorTarget, TraversalVariableInstance{ targetInfo, targetLoc } );
+							onReturnFromNestedTypeFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ) );
 						}
 					}
 					accessor.mEndAccess( varLoc );
 				}
 
-				onReturnFromNestedTypeFunc( TraversalType::Accessor, TraversalVariableInstance{ varInfo.mVariableTypeInfo, varLoc } );
+				onReturnFromNestedTypeFunc( TraversalType::Accessor, TraversalVariableInstance( varInfo.mVariableTypeInfo, varLoc ) );
 			}
 			continue;
 		}

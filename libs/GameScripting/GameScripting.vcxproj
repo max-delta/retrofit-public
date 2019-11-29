@@ -53,6 +53,9 @@
     <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
       <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Scripting_squirrel\Scripting_squirrel.vcxproj">
       <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
     </ProjectReference>

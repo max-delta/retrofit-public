@@ -34,6 +34,9 @@ public:
 	struct MemberVariableInstance
 	{
 		MemberVariableInstance() = delete;
+		MemberVariableInstance(
+			reflect::MemberVariableInfo const& memberVariableInfo,
+			void const* memberVariableLocation );
 		MemberVariableInstance& operator=( MemberVariableInstance const& ) = delete;
 
 		reflect::MemberVariableInfo const& mMemberVariableInfo;
@@ -43,6 +46,9 @@ public:
 	struct TraversalVariableInstance
 	{
 		TraversalVariableInstance() = delete;
+		TraversalVariableInstance(
+			reflect::VariableTypeInfo const& variableTypeInfo,
+			void const* const variableLocation );
 		TraversalVariableInstance& operator=( TraversalVariableInstance const& ) = delete;
 
 		reflect::VariableTypeInfo const& mVariableTypeInfo;

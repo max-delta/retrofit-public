@@ -61,6 +61,9 @@
     <ProjectReference Include="..\core_reflect\core_reflect.vcxproj">
       <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.vcxproj">
       <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
     </ProjectReference>

@@ -5,6 +5,28 @@
 namespace RF { namespace rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
+TypeTraverser::MemberVariableInstance::MemberVariableInstance(
+	reflect::MemberVariableInfo const& memberVariableInfo,
+	void const* memberVariableLocation )
+	: mMemberVariableInfo( memberVariableInfo )
+	, mMemberVariableLocation( memberVariableLocation )
+{
+	//
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+TypeTraverser::TraversalVariableInstance::TraversalVariableInstance(
+	reflect::VariableTypeInfo const& variableTypeInfo,
+	void const* const variableLocation )
+	: mVariableTypeInfo( variableTypeInfo )
+	, mVariableLocation( variableLocation )
+{
+	//
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void TypeTraverser::TraverseVariables(
 	reflect::VirtualClass const& traversalRoot,
 	OnMemberVariableFunc const& onMemberVariableFunc,
