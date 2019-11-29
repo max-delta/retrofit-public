@@ -80,7 +80,7 @@ public:
 	template<typename... ArgsT>
 	void emplace_back( ArgsT&&... args )
 	{
-		push_back( rftl::move( value_type( args... ) ) );
+		push_back( value_type( args... ) );
 	}
 
 	// Move forward the leading write head, without actually writing any events

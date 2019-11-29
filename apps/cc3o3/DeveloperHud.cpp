@@ -210,8 +210,8 @@ void RenderRollback()
 				}
 				gfx::PPUCoord::ElementType const gfxTimelineEvent = rescaleToGfx( event.mTime );
 				ppu.DebugDrawLine(
-					{ gfxTimelineEvent, gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 0 ) ) },
-					{ gfxTimelineEvent, gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 1 ) ) },
+					{ gfxTimelineEvent, math::integer_cast<gfx::PPUCoord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 0 ) ) ) },
+					{ gfxTimelineEvent, math::integer_cast<gfx::PPUCoord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::PPUCoord::ElementType>( i_lane ) + 1 ) ) ) },
 					1,
 					kEventDepth,
 					color );

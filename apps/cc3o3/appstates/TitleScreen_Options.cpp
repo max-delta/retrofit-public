@@ -58,9 +58,9 @@ struct OptionSet
 	struct Option
 	{
 		rftl::string mStaticText;
-		rftl::function<void()> mFunction;
+		rftl::function<void()> mFunction = nullptr;
 
-		rftl::function<rftl::string()> mDynamicText;
+		rftl::function<rftl::string()> mDynamicText = nullptr;
 	};
 
 	void Update( ui::controller::ListBox& listBox ) const;
@@ -128,7 +128,7 @@ struct ToggleTest
 	};
 };
 
-OptionSet sDevOptions = { { //
+static OptionSet sDevOptions = { { //
 	UpdateTest::sOption,
 	ToggleTest::sOption,
 	{ "Menu option text for slot 3" },

@@ -15,10 +15,15 @@ uint8_t const* FramePackBase::GetTimeSlotSustains() const
 	uint8_t const* const thisPtr = reinterpret_cast<uint8_t const*>( this );
 	size_t const offsetOfDerived = offsetof( FramePackBase, mMaxTimeSlots ) + 1;
 	size_t const offsetOfTimeSlotSustains = offsetOfDerived + 0;
+
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Winvalid-offsetof" );
 	RF_ASSERT( mMaxTimeSlots == FramePack_4096::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_4096, mTimeSlotSustains ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_1024::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_1024, mTimeSlotSustains ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_512::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_512, mTimeSlotSustains ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_256::kMaxTimeSlots ? offsetOfTimeSlotSustains == offsetof( FramePack_256, mTimeSlotSustains ) : true );
+	RF_CLANG_POP();
+
 	return reinterpret_cast<uint8_t const*>( thisPtr + offsetOfTimeSlotSustains );
 }
 
@@ -39,10 +44,15 @@ FramePackBase::TimeSlot const* FramePackBase::GetTimeSlots() const
 	size_t const sizeOfTimeSlotSustains = sizeof( uint8_t ) * mMaxTimeSlots;
 	size_t const sizeOfTimeSlotSustainsPadding = ( 8 - ( sizeOfTimeSlotSustains % 8 ) ) % 8;
 	size_t const offsetOfTimeSlots = offsetOfTimeSlotSustains + sizeOfTimeSlotSustains + sizeOfTimeSlotSustainsPadding;
+
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Winvalid-offsetof" );
 	RF_ASSERT( mMaxTimeSlots == FramePack_4096::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_4096, mTimeSlots ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_1024::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_1024, mTimeSlots ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_512::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_512, mTimeSlots ) : true );
 	RF_ASSERT( mMaxTimeSlots == FramePack_256::kMaxTimeSlots ? offsetOfTimeSlots == offsetof( FramePack_256, mTimeSlots ) : true );
+	RF_CLANG_POP();
+
 	return reinterpret_cast<TimeSlot const*>( thisPtr + offsetOfTimeSlots );
 }
 

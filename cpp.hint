@@ -13,3 +13,8 @@
 
 #define RF_DLLMAIN(...)
 #define RF_EMPTY_DLLMAIN(...)
+
+#define RF_CLANG_PRAGMA( x )
+#define RF_CLANG_PUSH()
+#define RF_CLANG_POP()
+#define RF_CLANG_IGNORE( WARNING )

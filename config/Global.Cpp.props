@@ -58,6 +58,7 @@
         -Wno-covered-switch-default
         -Wno-tautological-undefined-compare
         -Wno-shadow-field-in-constructor
+        -Wno-shadow-uncaptured-local
         -Wno-global-constructors
         -Wno-exit-time-destructors
         -Wno-format-nonliteral

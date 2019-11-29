@@ -357,5 +357,5 @@ inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF:
 {
 	return static_cast<size_t>( RF::math::SequenceHash<
 		RF::id::SegmentedIdentifier<ElementT>,
-		rftl::hash<RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier ) );
+		rftl::hash<typename RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier ) );
 }

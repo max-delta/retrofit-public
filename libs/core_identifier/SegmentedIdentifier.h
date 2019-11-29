@@ -22,7 +22,7 @@ public:
 
 private:
 	using ElementList = rftl::vector<Element>;
-	static_assert( rftl::is_same<ElementList::const_iterator, const_iterator>::value, "Public type differs" );
+	static_assert( rftl::is_same<typename ElementList::const_iterator, const_iterator>::value, "Public type differs" );
 
 
 	//

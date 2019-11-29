@@ -108,7 +108,7 @@ void InputStream::reset()
 
 void InputStream::push_back( value_type const& value )
 {
-	push_back( rftl::move( value_type( value ) ) );
+	push_back( value_type( value ) );
 }
 
 

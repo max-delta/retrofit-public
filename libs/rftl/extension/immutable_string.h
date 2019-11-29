@@ -1,4 +1,6 @@
 #pragma once
+#include "core/compiler.h"
+
 #include "rftl/string"
 #include "rftl/memory"
 
@@ -68,6 +70,8 @@ using immutable_u32string = immutable_basic_string<char32_t>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
+RF_CLANG_PUSH();
+RF_CLANG_IGNORE( "-Wmicrosoft-template" );
 template<typename CharT, typename Traits, typename Allocator>
 struct hash<immutable_basic_string<CharT, Traits, Allocator>>
 {
@@ -77,14 +81,14 @@ struct hash<immutable_basic_string<CharT, Traits, Allocator>>
 		return hash<basic_string<CharT, Traits, Allocator>>()( string );
 	}
 };
+RF_CLANG_POP();
 
 template<typename CharT, typename Traits = rftl::char_traits<CharT>, typename Allocator = rftl::allocator<CharT>>
 bool operator==(
 	immutable_basic_string<CharT, Traits, Allocator> const& lhs,
 	immutable_basic_string<CharT, Traits, Allocator> const& rhs )
 {
-	return
-		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+	return static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
 		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
 }
 
@@ -95,8 +99,7 @@ bool operator==(
 	immutable_basic_string<CharT, Traits, Allocator> const& lhs,
 	basic_string<CharT, Traits, Allocator> const& rhs )
 {
-	return
-		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+	return static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
 		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
 }
 
@@ -108,8 +111,7 @@ bool operator==(
 	basic_string<CharT, Traits, Allocator> const& lhs,
 	immutable_basic_string<CharT, Traits, Allocator> const& rhs )
 {
-	return
-		static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
+	return static_cast<basic_string<CharT, Traits, Allocator> const&>( lhs ) ==
 		static_cast<basic_string<CharT, Traits, Allocator> const&>( rhs );
 }
 
