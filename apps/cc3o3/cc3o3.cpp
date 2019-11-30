@@ -45,6 +45,14 @@ static appstate::AppStateManager sAppStateManager;
 
 static SimulationMode sDebugPreviousFrameSimulationMode = SimulationMode::Invalid;
 
+// This is important enough that we want it to show up on the callstack, but
+//  want to keep all the complex rollback logic together
+template<typename FuncT>
+RF_NO_INLINE void RollbackTickWrapper( FuncT const& func )
+{
+	func();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void Startup()
@@ -265,14 +273,41 @@ void ProcessFrame()
 		preFrameCommitRange.second + time::kSimulationFrameDuration,
 		time::FrameClock::now() );
 
-	if( simulationMode == SimulationMode::RollbackAndSimulate )
+	// HACK: Disabled for now while fixing up controllers
+	static constexpr bool kHACKRollbackEnabled = false;
+	if constexpr( kHACKRollbackEnabled && simulationMode == SimulationMode::RollbackAndSimulate )
 	{
+		// Rollback and simulate each frame up to the current true frame
+
 		gfx::PPUController& ppu = *app::gGraphics;
 
 		// Suppress any draw requests while performing rollback re-simulation
 		ppu.SuppressDrawRequests( true );
 
-		// TODO: Rollback and simulate each frame up to the current true frame
+		// Rewind to right before the commit range, since logic differences
+		//  mean that some variables might not get overwritten naturally
+		rollMan.RewindAllDomains( preFrameCommitRange.first - time::CommonClock::duration( 1 ) );
+
+		// Tick every frame up to the current frame
+		// NOTE: We are possibly ticking frames past the commit range, in which
+		//  case we will need to do another rollback later when those frames
+		//  can be committed
+		time::CommonClock::time_point resimulationTime = preFrameCommitRange.first;
+		RF_ASSERT( resimulationTime < currentTrueFrame );
+		while( resimulationTime < currentTrueFrame )
+		{
+			// Adjust the time
+			time::FrameClock::set_time( resimulationTime );
+
+			// Tick the frame
+			RollbackTickWrapper( []() -> void {
+				sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
+				sAppStateManager.ApplyDeferredStateChange();
+			} );
+		}
+
+		// Restore the time
+		time::FrameClock::set_time( currentTrueFrame );
 
 		// Restore graphics before ticking true frame
 		ppu.SuppressDrawRequests( false );
