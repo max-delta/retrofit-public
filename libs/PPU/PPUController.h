@@ -40,6 +40,7 @@ public:
 		Tileset,
 		Font
 	};
+
 private:
 	enum class LoadType : uint8_t
 	{
@@ -108,6 +109,8 @@ public:
 	bool SubmitToRender();
 	bool WaitForRender();
 	bool EndFrame();
+
+	void SuppressDrawRequests( bool suppress );
 
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
@@ -206,6 +209,7 @@ private:
 	uint16_t mWidth;
 	uint16_t mHeight;
 
+	bool mDrawRequestsSuppressed = false;
 	bool mHideZoomFactor = false;
 	bool mDebugDrawGrid = true;
 

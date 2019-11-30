@@ -267,7 +267,15 @@ void ProcessFrame()
 
 	if( simulationMode == SimulationMode::RollbackAndSimulate )
 	{
+		gfx::PPUController& ppu = *app::gGraphics;
+
+		// Suppress any draw requests while performing rollback re-simulation
+		ppu.SuppressDrawRequests( true );
+
 		// TODO: Rollback and simulate each frame up to the current true frame
+
+		// Restore graphics before ticking true frame
+		ppu.SuppressDrawRequests( false );
 	}
 
 	// HACK: Tick hard-coded input

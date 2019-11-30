@@ -243,8 +243,20 @@ bool PPUController::EndFrame()
 
 
 
+void PPUController::SuppressDrawRequests( bool suppress )
+{
+	mDrawRequestsSuppressed = suppress;
+}
+
+
+
 bool PPUController::DrawObject( Object const& object )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
@@ -268,6 +280,11 @@ bool PPUController::DrawObject( Object const& object )
 
 bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
@@ -335,6 +352,11 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
@@ -546,6 +568,11 @@ void PPUController::DebugSetBackgroundColor( math::Color3f color )
 
 bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
@@ -583,6 +610,11 @@ bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_
 
 bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
@@ -632,6 +664,11 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color
 
 bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
 {
+	if( mDrawRequestsSuppressed )
+	{
+		return true;
+	}
+
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
@@ -1217,13 +1254,13 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	}
 
 	constexpr auto renderTile = [](
-		DeviceInterface* deviceInterface,
-		TileLayer::Tile const& tile,
-		DeviceTextureID deviceTextureID,
-		uint16_t texTilesPerRow,
-		float texXStep,
-		float texYStep,
-		math::AABB4f pos,
+									DeviceInterface* deviceInterface,
+									TileLayer::Tile const& tile,
+									DeviceTextureID deviceTextureID,
+									uint16_t texTilesPerRow,
+									float texXStep,
+									float texYStep,
+									math::AABB4f pos,
 		float z) -> void
 	{
 		RF_ASSERT( tile.mIndex != TileLayer::kEmptyTileIndex );
