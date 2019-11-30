@@ -18,7 +18,6 @@
 
 #include "Rollback/RollbackManager.h"
 #include "Rollback/AutoVar.h"
-#include "Rollback/InputStreamRef.h"
 
 #include "Timing/FrameClock.h"
 
@@ -153,11 +152,8 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 		internalState.mP4RollbackController,
 	};
 
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-
-	// P3 will be a clone of P2
-	rollback::InputStreamRef const p3Stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, 3 );
-	sync::RollbackFilters::PrepareLocalFrame( rollMan, p3Stream, context.mCurrentTime );
+	// P3 will be a clone of P2, but deferred
+	static constexpr time::CommonClock::duration kForwardDuration = time::kSimulationFrameDuration * 7;
 
 	// P4 will be a clone of P2, but as rollback triggers
 	static constexpr time::CommonClock::duration kLateDuration = time::kSimulationFrameDuration * 7;
@@ -178,7 +174,7 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				p3Stream.mUncommitted.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
+				input::DebugQueueTestInput( command.mTime + kForwardDuration, 3, command.mType );
 
 				// Clone player 2's commands onto player 4
 				input::DebugQueueTestInput( command.mTime - kLateDuration, 4, command.mType );
@@ -205,6 +201,7 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 	// Player 4's input stream should be updated even if we didn't send a
 	//  proper command, so we'll use an invalid command to mark the frame end
+	input::DebugQueueTestInput( time::FrameClock::now() + kForwardDuration, 3, input::kInvalidGameCommand );
 	input::DebugQueueTestInput( time::FrameClock::now() - kLateDuration, 4, input::kInvalidGameCommand );
 }
 
