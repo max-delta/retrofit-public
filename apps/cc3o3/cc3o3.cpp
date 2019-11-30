@@ -43,6 +43,8 @@ constexpr bool kAllowDeveloperHud = true;
 
 static appstate::AppStateManager sAppStateManager;
 
+static SimulationMode sDebugPreviousFrameSimulationMode = SimulationMode::Invalid;
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void Startup()
@@ -154,14 +156,7 @@ void ProcessFrame()
 	RF_ASSERT( previousTrueFrame < currentTrueFrame );
 
 	// Figure out what type of simulation we need to perform
-	enum class SimulationMode : uint8_t
-	{
-		Invalid = 0,
-		OnRailsReplay,
-		SingleFrameSimulate,
-		RollbackAndSimulate,
-		StallSimulation
-	} simulationMode = SimulationMode::Invalid;
+	SimulationMode simulationMode = SimulationMode::Invalid;
 	time::CommonClock::time_point const preFrameCommitHead = rollMan.GetMaxCommitHead();
 	rollback::InclusiveTimeRange preFrameCommitRange = { preFrameCommitHead, preFrameCommitHead };
 	if( preFrameCommitHead >= currentTrueFrame )
@@ -341,6 +336,9 @@ void ProcessFrame()
 		//  from the same time when we repeat this frame
 		rollMan.RewindAllDomains( previousTrueFrame );
 	}
+
+	// Note what we did this frame, for diagnostics
+	sDebugPreviousFrameSimulationMode = simulationMode;
 }
 
 
@@ -355,6 +353,13 @@ void Shutdown()
 	sAppStateManager.Stop();
 
 	SystemShutdown();
+}
+
+
+
+SimulationMode DebugGetPreviousFrameSimulationMode()
+{
+	return sDebugPreviousFrameSimulationMode;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

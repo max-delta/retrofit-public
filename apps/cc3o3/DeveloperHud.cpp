@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DeveloperHud.h"
 
+#include "cc3o3.h"
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/ui/UIFwd.h"
@@ -104,6 +105,28 @@ void RenderRollback()
 
 	time::CommonClock::time_point const snapshotTime = rollMan.GetSharedDomain().GetManualSnapshot( kSnapshotName )->first;
 	drawText( x, y, math::Color3f::kMagenta, "SNP: %llu", timeAsIndex( snapshotTime ) );
+	y++;
+
+	SimulationMode const simMode = DebugGetPreviousFrameSimulationMode();
+	switch( simMode )
+	{
+		case SimulationMode::OnRailsReplay:
+			drawText( x, y, math::Color3f::kBlue, "SIM: REPLAY" );
+			break;
+		case SimulationMode::SingleFrameSimulate:
+			drawText( x, y, math::Color3f::kGreen, "SIM: PREDICT" );
+			break;
+		case SimulationMode::RollbackAndSimulate:
+			drawText( x, y, math::Color3f::kYellow, "SIM: ROLLBACK" );
+			break;
+		case SimulationMode::StallSimulation:
+			drawText( x, y, math::Color3f::kRed, "SIM: STALL" );
+			break;
+		case SimulationMode::Invalid:
+		default:
+			drawText( x, y, math::Color3f::kRed, "SIM: UNKNOWN" );
+			break;
+	}
 	y++;
 
 	// Timeline
