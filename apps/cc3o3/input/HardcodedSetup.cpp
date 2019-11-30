@@ -237,7 +237,7 @@ void DebugSubmitTestInput()
 		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
 		if( valid && input.second.mValue != rollback::kInvalidInputValue )
 		{
-			stream.second.emplace_back( input.second );
+			rftl::get<1>( stream ).emplace_back( input.second );
 		}
 	}
 	details::sDebugQueuedTestInput.clear();

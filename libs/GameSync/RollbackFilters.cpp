@@ -13,8 +13,9 @@ rollback::InputStreamRef RollbackFilters::GetMutableStreamRef(
 	rollback::RollbackManager& rollMan,
 	rollback::InputStreamIdentifier const& identifier )
 {
-	rollback::InputStream& stream = rollMan.GetMutableUncommittedStreams().at( identifier );
-	return rollback::InputStreamRef( identifier, stream );
+	rollback::InputStream& uncommitted = rollMan.GetMutableUncommittedStreams().at( identifier );
+	rollback::InputStream const& committed = rollMan.GetCommittedStreams().at( identifier );
+	return rollback::InputStreamRef( identifier, uncommitted, committed );
 }
 
 
@@ -24,7 +25,7 @@ void RollbackFilters::PrepareLocalFrame(
 	rollback::InputStreamRef const& streamRef,
 	time::CommonClock::time_point frameTime )
 {
-	streamRef.second.increase_write_head( frameTime );
+	rftl::get<1>( streamRef ).increase_write_head( frameTime );
 }
 
 
@@ -34,18 +35,31 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 	rollback::InputStreamRef const& streamRef,
 	time::CommonClock::time_point frameTime )
 {
-	if( streamRef.second.back().mTime > frameTime )
+	using rollback::RollbackManager;
+
+	if( frameTime < rftl::get<1>( streamRef ).back().mTime )
 	{
 		RFLOG_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
 			"Failed to prepare a remote frame for input stream '%u' because it"
 			" was too far in the past",
-			streamRef.first );
+			rftl::get<0>( streamRef ) );
 		return false;
 	}
 
-	streamRef.second.increase_write_head( frameTime );
+	if( frameTime < rftl::get<2>( streamRef ).back().mTime )
+	{
+		RFLOG_WARNING(
+			nullptr,
+			RFCAT_GAMESYNC,
+			"Failed to prepare a remote frame for input stream '%u' because it"
+			" would conflict with already committed data",
+			rftl::get<0>( streamRef ) );
+		return false;
+	}
+
+	rftl::get<1>( streamRef ).increase_write_head( frameTime );
 	return true;
 }
 

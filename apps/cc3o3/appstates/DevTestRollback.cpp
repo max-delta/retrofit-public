@@ -177,7 +177,7 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				p3Stream.second.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
+				rftl::get<1>( p3Stream ).emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
 
 				// Clone player 2's commands onto player 4
 				input::DebugQueueTestInput( command.mTime - kLateDuration, 4, command.mType );
