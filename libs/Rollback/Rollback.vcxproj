@@ -35,6 +35,7 @@
     <ClInclude Include="AutoVar.h" />
     <ClInclude Include="Domain.h" />
     <ClInclude Include="InputStream.h" />
+    <ClInclude Include="InputStreamRef.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="RollbackFwd.h" />
     <ClInclude Include="RollbackManager.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Domain.cpp" />
     <ClCompile Include="InputStream.cpp" />
+    <ClCompile Include="InputStreamRef.cpp" />
     <ClCompile Include="project.cpp" />
     <ClCompile Include="RollbackManager.cpp" />
     <ClCompile Include="stdafx.cpp">

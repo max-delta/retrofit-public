@@ -2,6 +2,7 @@
 #include "RollbackFilters.h"
 
 #include "Rollback/RollbackManager.h"
+#include "Rollback/InputStreamRef.h"
 
 #include "Logging/Logging.h"
 
@@ -25,7 +26,7 @@ void RollbackFilters::PrepareLocalFrame(
 	rollback::InputStreamRef const& streamRef,
 	time::CommonClock::time_point frameTime )
 {
-	rftl::get<1>( streamRef ).increase_write_head( frameTime );
+	streamRef.mUncommitted.increase_write_head( frameTime );
 }
 
 
@@ -37,29 +38,29 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 {
 	using rollback::RollbackManager;
 
-	if( frameTime < rftl::get<1>( streamRef ).back().mTime )
+	if( frameTime < streamRef.mUncommitted.back().mTime )
 	{
 		RFLOG_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
 			"Failed to prepare a remote frame for input stream '%u' because it"
 			" was too far in the past",
-			rftl::get<0>( streamRef ) );
+			streamRef.mIdentifier );
 		return false;
 	}
 
-	if( frameTime < rftl::get<2>( streamRef ).back().mTime )
+	if( frameTime < streamRef.mCommitted.back().mTime )
 	{
 		RFLOG_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
 			"Failed to prepare a remote frame for input stream '%u' because it"
 			" would conflict with already committed data",
-			rftl::get<0>( streamRef ) );
+			streamRef.mIdentifier );
 		return false;
 	}
 
-	rftl::get<1>( streamRef ).increase_write_head( frameTime );
+	streamRef.mUncommitted.increase_write_head( frameTime );
 	return true;
 }
 

@@ -13,6 +13,7 @@
 #include "GameSync/RollbackFilters.h"
 
 #include "Rollback/RollbackManager.h"
+#include "Rollback/InputStreamRef.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 
@@ -237,7 +238,7 @@ void DebugSubmitTestInput()
 		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
 		if( valid && input.second.mValue != rollback::kInvalidInputValue )
 		{
-			rftl::get<1>( stream ).emplace_back( input.second );
+			stream.mUncommitted.emplace_back( input.second );
 		}
 	}
 	details::sDebugQueuedTestInput.clear();

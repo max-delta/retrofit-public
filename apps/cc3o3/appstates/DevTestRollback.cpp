@@ -18,6 +18,7 @@
 
 #include "Rollback/RollbackManager.h"
 #include "Rollback/AutoVar.h"
+#include "Rollback/InputStreamRef.h"
 
 #include "Timing/FrameClock.h"
 
@@ -177,7 +178,7 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				rftl::get<1>( p3Stream ).emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
+				p3Stream.mUncommitted.emplace_back( rollback::InputEvent( command.mTime, command.mType ) );
 
 				// Clone player 2's commands onto player 4
 				input::DebugQueueTestInput( command.mTime - kLateDuration, 4, command.mType );

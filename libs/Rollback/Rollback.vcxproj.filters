@@ -10,6 +10,7 @@
     <ClCompile Include="Var.cpp" />
     <ClCompile Include="InputStream.cpp" />
     <ClCompile Include="AutoVar.cpp" />
+    <ClCompile Include="InputStreamRef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -21,5 +22,6 @@
     <ClInclude Include="Var.h" />
     <ClInclude Include="InputStream.h" />
     <ClInclude Include="AutoVar.h" />
+    <ClInclude Include="InputStreamRef.h" />
   </ItemGroup>
 </Project>
