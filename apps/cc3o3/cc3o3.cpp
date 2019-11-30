@@ -290,8 +290,11 @@ void ProcessFrame()
 
 	if( simulationMode == SimulationMode::StallSimulation )
 	{
-		// Take a snapshot of the state before tick, so we can restore it at
-		//  end of frame
+		// HACK: Take a snapshot of the state before tick, so we can restore it
+		//  at end of frame
+		// TODO: Instead, we should just truncate any state from this frame at
+		//  the end of the frame, since that should theoretically be a much
+		//  cheaper option
 		rollMan.TakeManualSnapshot( "StallSimulation", currentTrueFrame );
 	}
 
@@ -312,7 +315,7 @@ void ProcessFrame()
 	// Lock read heads to after the last commit, and write heads to the end
 	//  of the current frame
 	input::HardcodedAdvance(
-		postFrameCommitRange.second /* + time::kSimulationFrameDuration*/,
+		postFrameCommitRange.second,
 		time::FrameClock::now() );
 
 	ui::ContainerManager& uiMan = *app::gUiManager;
@@ -343,6 +346,11 @@ void ProcessFrame()
 		// Rewind time to the last frame
 		time::FrameClock::set_time( previousTrueFrame );
 		rollMan.SetHeadClock( previousTrueFrame );
+
+		// HACK: Reload the state from before this frame, so that we'll repeat
+		//  it again from the same time
+		// TODO: Instead, we should just truncate any state from this frame
+		//  here, since that should theoretically be a much cheaper option
 		rollMan.LoadManualSnapshot( "StallSimulation" );
 	}
 }
