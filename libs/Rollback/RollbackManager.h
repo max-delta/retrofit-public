@@ -47,6 +47,13 @@ public:
 	void TakeManualSnapshot( ManualSnapshotIdentifier const& identifier, time::CommonClock::time_point time );
 	time::CommonClock::time_point LoadManualSnapshot( ManualSnapshotIdentifier const& identifier );
 
+	// Destructively rewind all domains to an older time point, effectively
+	//  undoing all state modifications 
+	// NOTE: Intended to be used for rollback scenarios, where a re-simulation
+	//  needs to be run, and may not touch all values that a previous
+	//  simulation may have written to
+	void RewindAllDomains( time::CommonClock::time_point time );
+
 	// The head clock is the leading-edge of the window
 	// NOTE: This has no direct effect on domains, and is primarily intended
 	//  for external users

@@ -36,6 +36,8 @@ public:
 	void Write( time::CommonClock::time_point time, ValueT value );
 	ValueT Read( time::CommonClock::time_point time ) const;
 
+	void Discard( time::CommonClock::time_point time );
+
 	time::CommonClock::time_point GetEarliestTime() const;
 	time::CommonClock::time_point GetLatestTime() const;
 

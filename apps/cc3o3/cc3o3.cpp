@@ -288,16 +288,6 @@ void ProcessFrame()
 	//  logic for all the controllers
 	input::HardcodedRollbackTick();
 
-	if( simulationMode == SimulationMode::StallSimulation )
-	{
-		// HACK: Take a snapshot of the state before tick, so we can restore it
-		//  at end of frame
-		// TODO: Instead, we should just truncate any state from this frame at
-		//  the end of the frame, since that should theoretically be a much
-		//  cheaper option
-		rollMan.TakeManualSnapshot( "StallSimulation", currentTrueFrame );
-	}
-
 	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 	sAppStateManager.ApplyDeferredStateChange();
@@ -347,11 +337,9 @@ void ProcessFrame()
 		time::FrameClock::set_time( previousTrueFrame );
 		rollMan.SetHeadClock( previousTrueFrame );
 
-		// HACK: Reload the state from before this frame, so that we'll repeat
-		//  it again from the same time
-		// TODO: Instead, we should just truncate any state from this frame
-		//  here, since that should theoretically be a much cheaper option
-		rollMan.LoadManualSnapshot( "StallSimulation" );
+		// Rewind the state to before this frame, so that we'll repeat it again
+		//  from the same time when we repeat this frame
+		rollMan.RewindAllDomains( previousTrueFrame );
 	}
 }
 

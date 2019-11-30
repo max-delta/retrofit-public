@@ -42,6 +42,24 @@ inline size_t StateBag<MaxChangesT>::RemoveAllStreams()
 
 
 template<size_t MaxChangesT>
+inline size_t StateBag<MaxChangesT>::RewindAllStreams( time::CommonClock::time_point time )
+{
+	size_t retVal = 0;
+	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	retVal += mU8.RewindAllStreams( time );
+	retVal += mS8.RewindAllStreams( time );
+	retVal += mU16.RewindAllStreams( time );
+	retVal += mS16.RewindAllStreams( time );
+	retVal += mU32.RewindAllStreams( time );
+	retVal += mS32.RewindAllStreams( time );
+	retVal += mU64.RewindAllStreams( time );
+	retVal += mS64.RewindAllStreams( time );
+	return retVal;
+}
+
+
+
+template<size_t MaxChangesT>
 template<typename T>
 inline WeakPtr<typename StateBag<MaxChangesT>::template Stream<T> const> StateBag<MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {

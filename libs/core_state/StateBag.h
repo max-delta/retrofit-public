@@ -55,6 +55,8 @@ public:
 	template<typename T>
 	WeakPtr<Stream<T>> GetMutableStream( VariableIdentifier const& identifier );
 
+	size_t RewindAllStreams( time::CommonClock::time_point time );
+
 	template<typename T>
 	Tree<T> const& GetTree() const;
 

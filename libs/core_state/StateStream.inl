@@ -73,6 +73,31 @@ inline ValueT StateStream<ValueT, MaxChangesT>::Read( time::CommonClock::time_po
 
 
 template<typename ValueT, size_t MaxChangesT>
+inline void StateStream<ValueT, MaxChangesT>::Discard( time::CommonClock::time_point time )
+{
+	RF_ASSERT( mTimes.size() == mValues.size() );
+
+	typename Times::iterator iterAtTime = rftl::lower_bound( mTimes.begin(), mTimes.end(), time );
+	if( iterAtTime == mTimes.end() )
+	{
+		// Nothing to discard
+		return;
+	}
+
+	typename Times::difference_type const distance = iterAtTime - mTimes.begin();
+	typename Values::iterator const iterAtValue = mValues.begin() + distance;
+
+	// Need to stomp and wipe everything at and aftewards
+	RF_ASSERT( mTimes.begin() <= iterAtTime );
+	RF_ASSERT( mValues.begin() <= iterAtValue );
+	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime ) );
+	mTimes.resize( newSize );
+	mValues.resize( newSize );
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
 inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetEarliestTime() const
 {
 	if( mTimes.empty() )

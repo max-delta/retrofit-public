@@ -48,6 +48,8 @@ public:
 	WeakPtr<StreamType const> GetStream( VariableIdentifier const& identifier ) const;
 	WeakPtr<StreamType> GetMutableStream( VariableIdentifier const& identifier );
 
+	size_t RewindAllStreams( time::CommonClock::time_point time );
+
 	rftl::vector<VariableIdentifier> GetIdentifiers() const;
 
 

@@ -100,6 +100,25 @@ WeakPtr<typename StateTree<ValueT, MaxChangesT>::StreamType> StateTree<ValueT, M
 
 
 template<typename ValueT, size_t MaxChangesT>
+inline size_t StateTree<ValueT, MaxChangesT>::RewindAllStreams( time::CommonClock::time_point time )
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	// Discarding everything after the given time will effectively be a rewind
+	//  to that time
+	time::CommonClock::time_point const startDiscardingAt = time + time::CommonClock::duration( 1 );
+
+	for( typename Tree::value_type const& entry : mTree )
+	{
+		entry.second->Discard( startDiscardingAt );
+	}
+
+	return mTree.size();
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
 inline rftl::vector<VariableIdentifier> StateTree<ValueT, MaxChangesT>::GetIdentifiers() const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );

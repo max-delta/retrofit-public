@@ -100,6 +100,17 @@ time::CommonClock::time_point RollbackManager::LoadManualSnapshot( ManualSnapsho
 
 
 
+void RollbackManager::RewindAllDomains( time::CommonClock::time_point time )
+{
+	Domain& share = GetMutableSharedDomain();
+	Domain& priv = GetMutablePrivateDomain();
+
+	share.GetMutableWindow().RewindAllStreams( time );
+	priv.GetMutableWindow().RewindAllStreams( time );
+}
+
+
+
 time::CommonClock::time_point RollbackManager::GetHeadClock() const
 {
 	return mHeadClock;
