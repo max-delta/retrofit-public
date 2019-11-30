@@ -18,6 +18,9 @@ public: \
 #define RF_NO_MOVE( CLASS ) \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
+#define RF_NO_ASSIGN( CLASS ) \
+	CLASS& operator=( CLASS const& ) = delete; \
+	CLASS& operator=( CLASS&& ) = delete;
 #define RF_NO_INSTANCE( CLASS ) \
 	RF_NO_COPY( CLASS ); \
 	RF_NO_MOVE( CLASS ); \
