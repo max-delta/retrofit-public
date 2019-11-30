@@ -18,6 +18,11 @@
       <!--Complains about subtle DLL logic. Would like to have on, but the warning is flawed-->
       <DisableSpecificWarnings>4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
+      <!--Don't care about variables just used for asserts-->
+      <DisableSpecificWarnings Condition="'$(Platform)'!='Debug'">
+        4189;%(DisableSpecificWarnings)
+      </DisableSpecificWarnings>
+
       <!--MS STL implementation gets pissy if this define isn't set-->
       <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
