@@ -17,6 +17,7 @@ void HardcodedRollbackTick();
 void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
 
 void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, rollback::InputValue input );
+void DebugSubmitTestInput();
 void DebugClearTestInput();
 
 ///////////////////////////////////////////////////////////////////////////////

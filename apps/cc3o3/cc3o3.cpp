@@ -141,6 +141,11 @@ void ProcessFrame()
 		}
 	}
 
+	// HACK: Tick test input
+	// TODO: Have some sync manager that can submit queued up input from debug
+	//  as well as more legitimate systems like networking
+	input::DebugSubmitTestInput();
+
 	// We're about to do some really weird stuff to time, so we need to make
 	//  sure we don't lose track of what frame we're ultimately trying to
 	//  put together
