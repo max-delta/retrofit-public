@@ -273,9 +273,7 @@ void ProcessFrame()
 		preFrameCommitRange.second + time::kSimulationFrameDuration,
 		time::FrameClock::now() );
 
-	// HACK: Disabled for now while fixing up controllers
-	static constexpr bool kHACKRollbackEnabled = false;
-	if constexpr( kHACKRollbackEnabled && simulationMode == SimulationMode::RollbackAndSimulate )
+	if( simulationMode == SimulationMode::RollbackAndSimulate )
 	{
 		// Rollback and simulate each frame up to the current true frame
 
@@ -304,10 +302,17 @@ void ProcessFrame()
 				sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 				sAppStateManager.ApplyDeferredStateChange();
 			} );
+
+			// Move to the next frame
+			resimulationTime += time::kSimulationFrameDuration;
 		}
+		RF_ASSERT( resimulationTime == currentTrueFrame );
 
 		// Restore the time
 		time::FrameClock::set_time( currentTrueFrame );
+
+		// Throw away any test input that debug code may have just produced
+		input::DebugClearTestInput();
 
 		// Restore graphics before ticking true frame
 		ppu.SuppressDrawRequests( false );
