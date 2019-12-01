@@ -23,6 +23,11 @@ TEST( MathClamps, MinInt )
 		static_assert( min == 2, "" );
 		ASSERT_EQ( min, 2 );
 	}
+	{
+		constexpr int min = Min( 2, 2, 1 );
+		static_assert( min == 1, "" );
+		ASSERT_EQ( min, 1 );
+	}
 }
 
 
@@ -43,6 +48,11 @@ TEST( MathClamps, MinFloat )
 		constexpr float min = Min( 2.f, 2.f );
 		static_assert( min == 2.f, "" );
 		ASSERT_EQ( min, 2.f );
+	}
+	{
+		constexpr float min = Min( 2.f, 2.f, 1.f );
+		static_assert( min == 1.f, "" );
+		ASSERT_EQ( min, 1.f );
 	}
 }
 
@@ -69,6 +79,11 @@ TEST( MathClamps, MinNegative )
 		static_assert( min == -7, "" );
 		ASSERT_EQ( min, -7 );
 	}
+	{
+		constexpr int min = Min( -7, -5, -9 );
+		static_assert( min == -9, "" );
+		ASSERT_EQ( min, -9 );
+	}
 }
 
 
@@ -90,6 +105,11 @@ TEST( MathClamps, MaxInt )
 		static_assert( max == 2, "" );
 		ASSERT_EQ( max, 2 );
 	}
+	{
+		constexpr int max = Max( 2, 2, 5 );
+		static_assert( max == 5, "" );
+		ASSERT_EQ( max, 5 );
+	}
 }
 
 
@@ -110,6 +130,11 @@ TEST( MathClamps, MaxFloat )
 		constexpr float max = Max( 2.f, 2.f );
 		static_assert( max == 2.f, "" );
 		ASSERT_EQ( max, 2.f );
+	}
+	{
+		constexpr float max = Max( 2.f, 5.f );
+		static_assert( max == 5.f, "" );
+		ASSERT_EQ( max, 5.f );
 	}
 }
 
@@ -135,6 +160,11 @@ TEST( MathClamps, MaxNegative )
 		constexpr int max = Max( -7, -5 );
 		static_assert( max == -5, "" );
 		ASSERT_EQ( max, -5 );
+	}
+	{
+		constexpr int max = Max( -7, -5, -3 );
+		static_assert( max == -3, "" );
+		ASSERT_EQ( max, -3 );
 	}
 }
 

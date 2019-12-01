@@ -18,9 +18,25 @@ constexpr TYPE const& Min( TYPE const& lhs, TYPE const& rhs )
 
 
 template<typename TYPE>
+constexpr TYPE const& Min( TYPE const& lhs, TYPE const& rhs, TYPE const& additional... )
+{
+	return Min( lhs, Min( rhs, additional ) );
+}
+
+
+
+template<typename TYPE>
 constexpr TYPE const& Max( TYPE const& lhs, TYPE const& rhs )
 {
 	return lhs > rhs ? lhs : rhs;
+}
+
+
+
+template<typename TYPE>
+constexpr TYPE const& Max( TYPE const& lhs, TYPE const& rhs, TYPE const& additional... )
+{
+	return Max( lhs, Max( rhs, additional ) );
 }
 
 
