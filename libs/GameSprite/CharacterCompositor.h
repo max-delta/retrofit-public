@@ -67,19 +67,27 @@ struct GAMESPRITE_API CompositeSequenceParams
 
 	size_t mBaseCol = 0;
 	size_t mBaseRow = 0;
+	size_t mBaseOffsetX = 0;
+	size_t mBaseOffsetY = 0;
 
 	size_t mClothingCol = 0;
 	size_t mClothingNearRow = 0;
 	size_t mClothingFarRow = 0;
+	size_t mClothingOffsetX = 0;
+	size_t mClothingOffsetY = 0;
 
 	size_t mHairCol = 0;
 	size_t mHairNearRow = 0;
 	size_t mHairFarRow = 0;
+	size_t mHairOffsetX = 0;
+	size_t mHairOffsetY = 0;
 
 	size_t mSpeciesCol = 0;
 	size_t mSpeciesNearRow = 0;
 	size_t mSpeciesFarRow = 0;
 	size_t mSpeciesTailRow = 0;
+	size_t mSpeciesOffsetX = 0;
+	size_t mSpeciesOffsetY = 0;
 };
 
 
@@ -130,8 +138,8 @@ struct GAMESPRITE_API CharacterPiece
 	size_t mTileHeight = 0;
 	size_t mStartColumn = 0;
 	size_t mStartRow = 0;
-	int64_t mOffsetX = 0;
-	int64_t mOffsetY = 0;
+	size_t mOffsetX = 0;
+	size_t mOffsetY = 0;
 	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
 };
 
