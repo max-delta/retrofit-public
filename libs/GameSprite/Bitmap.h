@@ -53,7 +53,9 @@ public:
 	size_t ReplaceEachByAlpha( ElementType::ElementType const& alpha, ElementType const& to );
 
 	// All pixels in 'source' that have atleast 'min' alpha perform overwrite
+	// NOTE: If source is smaller, then an offset must be provided
 	size_t ApplyStencilOverwrite( Bitmap const& source, ElementType::ElementType minAlpha );
+	size_t ApplyStencilOverwrite( Bitmap const& source, size_t x, size_t y, ElementType::ElementType minAlpha );
 
 	// All pixels are shifted with truncation, and backfilled with 'backfill'
 	void ShiftUp( size_t distance, ElementType const& backfill );

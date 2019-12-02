@@ -13,6 +13,9 @@ namespace RF { namespace sprite {
 
 struct GAMESPRITE_API CompositeCharacterParams
 {
+	size_t mCompositeWidth = 0;
+	size_t mCompositeHeight = 0;
+
 	rftl::string mBaseId = {};
 	rftl::string mClothingId = {};
 	rftl::string mHairId = {};
@@ -55,6 +58,9 @@ enum class CharacterPieceType : uint8_t
 struct GAMESPRITE_API CompositeSequenceParams
 {
 	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
+
+	size_t mCompositeWidth = 0;
+	size_t mCompositeHeight = 0;
 
 	size_t mTileWidth = 0;
 	size_t mTileHeight = 0;

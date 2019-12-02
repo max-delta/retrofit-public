@@ -437,6 +437,8 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	file::VFSPath const outDir = paths::CompositeCharacters().GetChild( id );
 
 	sprite::CompositeCharacterParams params = {};
+	params.mCompositeWidth = 32;
+	params.mCompositeHeight = 32;
 	params.mBaseId = mChar.mVisuals.mBase;
 	params.mClothingId = mChar.mVisuals.mClothing;
 	params.mHairId = mChar.mVisuals.mHair;
@@ -644,8 +646,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			gfx::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
 			preview->SetFramePack(
 				previewFpackID,
-				24,
-				24 );
+				32,
+				32 );
 			preview->SetSlowdown( framePackMan.GetResourceFromManagedResourceID( previewFpackID )->mPreferredSlowdownRate );
 
 			// Cut bottom in 2

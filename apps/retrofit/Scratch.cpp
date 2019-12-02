@@ -59,6 +59,8 @@ void Start()
 	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
 	sprite::CompositeCharacterParams params = {};
+	params.mCompositeWidth = 32;
+	params.mCompositeHeight = 32;
 	params.mBaseId = base;
 	params.mClothingId = clothing;
 	params.mHairId = hair;

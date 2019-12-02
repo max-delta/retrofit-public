@@ -157,6 +157,38 @@ size_t Bitmap::ApplyStencilOverwrite( Bitmap const& source, ElementType::Element
 
 
 
+size_t Bitmap::ApplyStencilOverwrite( Bitmap const& source, size_t x, size_t y, ElementType::ElementType minAlpha )
+{
+	size_t const targetXStart = x;
+	size_t const xLen = source.GetWidth();
+	size_t const targetYStart = y;
+	size_t const yLen = source.GetHeight();
+	RF_ASSERT( targetXStart < GetWidth() );
+	RF_ASSERT( targetXStart + xLen < GetWidth() );
+	RF_ASSERT( targetYStart < GetHeight() );
+	RF_ASSERT( targetYStart + yLen < GetHeight() );
+
+	size_t numOverwritten = 0;
+	for( size_t ix = 0; ix < xLen; ix++ )
+	{
+		for( size_t iy = 0; iy < yLen; iy++ )
+		{
+			ElementType const& srcPixel = source.GetPixel( ix, iy );
+			if( srcPixel.a >= minAlpha )
+			{
+				ElementType& destPixel = GetMutablePixel(
+					targetXStart + ix,
+					targetYStart + iy );
+				destPixel = srcPixel;
+				numOverwritten++;
+			}
+		}
+	}
+	return numOverwritten;
+}
+
+
+
 void Bitmap::ShiftUp( size_t distance, ElementType const& backfill )
 {
 	// HACK: Signed to make life easier

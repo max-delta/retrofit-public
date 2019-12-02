@@ -112,18 +112,22 @@ void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams con
 	CharacterPiece const hairPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
 	CharacterPiece const speciesPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
 
+	// Expect all tiles to be the same size
+	// TODO: More flexibility?
 	size_t const commonWidth =
 		basePiece.mTileWidth &
 		clothingPiece.mTileWidth &
 		hairPiece.mTileWidth &
 		speciesPiece.mTileWidth;
-	RF_ASSERT( basePiece.mTileWidth == commonWidth );
+	RF_ASSERT( commonWidth == basePiece.mTileWidth );
+	RF_ASSERT( commonWidth <= params.mCompositeWidth );
 	size_t const commonHeight =
 		basePiece.mTileHeight &
 		clothingPiece.mTileHeight &
 		hairPiece.mTileHeight &
 		speciesPiece.mTileHeight;
-	RF_ASSERT( basePiece.mTileHeight == commonHeight );
+	RF_ASSERT( commonHeight == basePiece.mTileHeight );
+	RF_ASSERT( commonHeight <= params.mCompositeHeight );
 
 	RF_ASSERT( basePiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
 	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
@@ -135,6 +139,8 @@ void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams con
 
 	CompositeAnimParams animParams = {};
 	animParams.mSequence.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
+	animParams.mSequence.mCompositeWidth = params.mCompositeWidth;
+	animParams.mSequence.mCompositeHeight = params.mCompositeHeight;
 	animParams.mSequence.mTileWidth = commonWidth;
 	animParams.mSequence.mTileHeight = commonHeight;
 	animParams.mSequence.mBaseCol = basePiece.mStartColumn;
@@ -166,6 +172,9 @@ void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams con
 
 sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams const& params )
 {
+	RF_ASSERT( params.mSequence.mTileWidth <= params.mSequence.mCompositeWidth );
+	RF_ASSERT( params.mSequence.mTileHeight <= params.mSequence.mCompositeHeight );
+
 	sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
 		params.mSequence.mTileWidth * ( params.mSequence.mBaseCol + params.mColumnOffset ),
 		params.mSequence.mTileHeight * params.mSequence.mBaseRow,
@@ -215,17 +224,18 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 		params.mSequence.mTileHeight );
 
 	// Composite
-	sprite::Bitmap composite( params.mSequence.mTileWidth, params.mSequence.mTileHeight );
+	// TODO: Apply offsets
+	sprite::Bitmap composite( params.mSequence.mCompositeWidth, params.mSequence.mCompositeHeight );
 	{
 		static constexpr sprite::Bitmap::ElementType::ElementType kMinAlpha = 1;
-		composite.ApplyStencilOverwrite( speciesFarFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( hairFarFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( clothingFarFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( baseFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( clothingNearFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( hairNearFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( speciesTailFrame, kMinAlpha );
-		composite.ApplyStencilOverwrite( speciesNearFrame, kMinAlpha );
+		composite.ApplyStencilOverwrite( speciesFarFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( hairFarFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( clothingFarFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( baseFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( clothingNearFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( hairNearFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( speciesTailFrame, 0, 0, kMinAlpha );
+		composite.ApplyStencilOverwrite( speciesNearFrame, 0, 0, kMinAlpha );
 	}
 
 	// Set transparency color for external editors (for debugging)
@@ -250,6 +260,9 @@ void CharacterCompositor::WriteFrameToDisk( sprite::Bitmap const& frame, file::V
 
 void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& params )
 {
+	RF_ASSERT( params.mSequence.mTileWidth <= params.mSequence.mCompositeWidth );
+	RF_ASSERT( params.mSequence.mTileHeight <= params.mSequence.mCompositeHeight );
+
 	// HACK: Direct access to texture manager
 	// TODO: Re-visit API surface
 	gfx::TextureManager& texMan = *mPpu->DebugGetTextureManager();
