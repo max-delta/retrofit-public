@@ -21,7 +21,13 @@ enum : AppStateID
 	TitleScreen,
 	TitleScreen_MainMenu,
 	TitleScreen_CharCreate,
-	TitleScreen_Options
+	TitleScreen_Options,
+
+	Gameplay,
+	Gameplay_Overworld,
+	Gameplay_Site,
+	Gameplay_Battle,
+	Gameplay_Menus
 };
 }
 

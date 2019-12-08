@@ -13,6 +13,7 @@ AppStateID GetStateAfterBoot();
 
 AppStateID GetStateAfterInitialLoad();
 AppStateID GetFirstTitleScreenState();
+AppStateID GetFirstGameplayState();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

@@ -4,6 +4,7 @@
 #include "cc3o3/appstates/Boot.h"
 #include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/appstates/Gameplay.h"
 #include "cc3o3/appstates/DevTestCombatCharts.h"
 #include "cc3o3/appstates/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
@@ -62,6 +63,7 @@ void Startup()
 	sAppStateManager.AddState( appstate::id::Boot, DefaultCreator<appstate::Boot>::Create() );
 	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );
 	sAppStateManager.AddState( appstate::id::TitleScreen, DefaultCreator<appstate::TitleScreen>::Create() );
+	sAppStateManager.AddState( appstate::id::Gameplay, DefaultCreator<appstate::Gameplay>::Create() );
 	if( kAllowDevTests )
 	{
 		sAppStateManager.AddState( appstate::id::DevTestCombatCharts, DefaultCreator<appstate::DevTestCombatCharts>::Create() );

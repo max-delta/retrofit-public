@@ -52,6 +52,21 @@
       <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="DeveloperHud.cpp" />
+    <ClCompile Include="appstates\Gameplay.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\Gameplay_Overworld.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\Gameplay_Site.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\Gameplay_Battle.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\Gameplay_Menus.cpp">
+      <Filter>appstates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -179,6 +194,21 @@
     </ClInclude>
     <ClInclude Include="time\project.h">
       <Filter>time</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Gameplay.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Gameplay_Overworld.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Gameplay_Site.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Gameplay_Battle.h">
+      <Filter>appstates</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\Gameplay_Menus.h">
+      <Filter>appstates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

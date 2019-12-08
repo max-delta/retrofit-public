@@ -33,6 +33,11 @@
     <ClCompile Include="appstates\Boot.cpp" />
     <ClCompile Include="appstates\DevTestCombatCharts.cpp" />
     <ClCompile Include="appstates\DevTestRollback.cpp" />
+    <ClCompile Include="appstates\Gameplay.cpp" />
+    <ClCompile Include="appstates\Gameplay_Battle.cpp" />
+    <ClCompile Include="appstates\Gameplay_Menus.cpp" />
+    <ClCompile Include="appstates\Gameplay_Overworld.cpp" />
+    <ClCompile Include="appstates\Gameplay_Site.cpp" />
     <ClCompile Include="appstates\InitialLoading.cpp" />
     <ClCompile Include="appstates\InputHelpers.cpp" />
     <ClCompile Include="appstates\TitleScreen.cpp" />
@@ -59,6 +64,11 @@
     <ClInclude Include="appstates\Boot.h" />
     <ClInclude Include="appstates\DevTestCombatCharts.h" />
     <ClInclude Include="appstates\DevTestRollback.h" />
+    <ClInclude Include="appstates\Gameplay.h" />
+    <ClInclude Include="appstates\Gameplay_Battle.h" />
+    <ClInclude Include="appstates\Gameplay_Menus.h" />
+    <ClInclude Include="appstates\Gameplay_Overworld.h" />
+    <ClInclude Include="appstates\Gameplay_Site.h" />
     <ClInclude Include="appstates\InitialLoading.h" />
     <ClInclude Include="appstates\InputHelpers.h" />
     <ClInclude Include="appstates\project.h" />

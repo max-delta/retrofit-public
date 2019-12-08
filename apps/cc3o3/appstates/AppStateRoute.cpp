@@ -19,7 +19,10 @@ enum class Mode : uint8_t
 	TitleScreenOptions,
 
 	// Directly to character creation on the title screen
-	TitleScreenCharCreate
+	TitleScreenCharCreate,
+
+	// Directly to gameplay
+	GameplayOverworld,
 };
 
 static Mode sMode = Mode::Invalid;
@@ -51,6 +54,11 @@ AppStateID GetStateAfterInitialLoad()
 	{
 		return id::DevTestRollback;
 	}
+	else if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
+	{
+		return id::Gameplay;
+	}
+
 
 	return id::TitleScreen;
 }
@@ -69,6 +77,19 @@ AppStateID GetFirstTitleScreenState()
 	}
 
 	return id::TitleScreen_MainMenu;
+}
+
+
+
+AppStateID GetFirstGameplayState()
+{
+	if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
+	{
+		return id::Gameplay_Overworld;
+	}
+
+	// TODO: This should be based on the save file
+	return id::Gameplay_Overworld;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
