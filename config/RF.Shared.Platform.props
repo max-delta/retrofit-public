@@ -128,12 +128,9 @@
   <ItemGroup />
 
   <!-- Handle quirks of some build targets -->
-  <PropertyGroup>
-    <PlatformArchitecture Condition="'$(RFCompiler)'=='LLVM'">64</PlatformArchitecture>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalOptions Condition="'$(RFCompiler)'=='LLVM'">--target=x86_64-pc-windows-msvc %(AdditionalOptions)</AdditionalOptions>
       <AdditionalOptions Condition="'$(RFArch)'=='ARM32'">/D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
