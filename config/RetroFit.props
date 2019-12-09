@@ -13,6 +13,18 @@
 
     <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.3.10) -->
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+
+    <!--If we bothered to turn a rule on, yell about it-->
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Platform)'=='LLVM_x64'">
+    <!-- Sadly, clang-tidy hangs (Last checked: v9.0.0) -->
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
 
     <!--If we bothered to turn a rule on, yell about it-->
     <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
