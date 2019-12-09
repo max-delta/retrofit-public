@@ -103,6 +103,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+    msbuildArgs: '/p:RFBuildMachine=Azure'
 
 - task: PublishBuildArtifacts@1
   inputs:

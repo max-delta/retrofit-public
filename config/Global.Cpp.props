@@ -82,12 +82,14 @@
       </AdditionalOptions>
 
       <!-- Azure build machines violate this when forced includes are used -->
-      <!-- TODO: Better workaround
-      <AdditionalOptions>
+      <AdditionalOptions Condition="'$(RFBuildMachine)'=='Azure'">
+        -Wno-nonportable-include-path
+        %(AdditionalOptions)
+      </AdditionalOptions>
+      <AdditionalOptions Condition="'$(RFBuildMachine)'!='Azure'">
         -Werror=nonportable-include-path
         %(AdditionalOptions)
       </AdditionalOptions>
-      -->
 
       <!--Goal is to use targeted suppression machinery instead of these-->
       <AdditionalOptions>
