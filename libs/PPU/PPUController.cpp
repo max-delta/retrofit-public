@@ -19,6 +19,7 @@
 #include "core_math/Lerp.h"
 
 #include "core/ptr/default_creator.h"
+#include "core/rf_onceper.h"
 
 #include "rftl/cstdarg"
 
@@ -673,7 +674,11 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
 	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumLines < PPUDebugState::kMaxDebugLines );
+	if( targetState.mNumLines >= PPUDebugState::kMaxDebugLines )
+	{
+		RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_PPU, "Too many debug lines, some will be ignored" ) );
+		return false;
+	}
 	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
 	targetState.mNumLines++;
 

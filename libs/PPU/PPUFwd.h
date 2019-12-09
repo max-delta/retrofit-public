@@ -27,7 +27,7 @@ static constexpr size_t kMaxStringLen = 71;
 
 static constexpr size_t kMaxDebugStrings = 32;
 static constexpr size_t kMaxDebugAuxStrings = 128;
-static constexpr size_t kMaxDebugLines = 256;
+static constexpr size_t kMaxDebugLines = 255;
 static constexpr size_t kMaxDebugStringLen = 127;
 
 typedef uint8_t GameLayerID;
