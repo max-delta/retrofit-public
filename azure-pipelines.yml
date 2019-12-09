@@ -5,45 +5,85 @@ trigger:
 strategy:
   matrix:
 
-    x86-debug:
+    msvc-x86-debug:
       buildPlatform: 'x86'
       buildConfiguration: 'MSVC_Debug'
-    x86-release:
+    msvc-x86-release:
       buildPlatform: 'x86'
       buildConfiguration: 'MSVC_Release'
-    x86-retail:
+    msvc-x86-retail:
       buildPlatform: 'x86'
       buildConfiguration: 'MSVC_Retail'
 
-    x64-debug:
+    msvc-x64-debug:
       buildPlatform: 'x64'
       buildConfiguration: 'MSVC_Debug'
-    x64-release:
+    msvc-x64-release:
       buildPlatform: 'x64'
       buildConfiguration: 'MSVC_Release'
-    x64-retail:
+    msvc-x64-retail:
       buildPlatform: 'x64'
       buildConfiguration: 'MSVC_Retail'
 
-    arm-debug:
+    msvc-arm-debug:
       buildPlatform: 'ARM'
       buildConfiguration: 'MSVC_Debug'
-    arm-release:
+    msvc-arm-release:
       buildPlatform: 'ARM'
       buildConfiguration: 'MSVC_Release'
-    arm-retail:
+    msvc-arm-retail:
       buildPlatform: 'ARM'
       buildConfiguration: 'MSVC_Retail'
 
-    arm64-debug:
+    msvc-arm64-debug:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Debug'
-    arm64-release:
+    msvc-arm64-release:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Release'
-    arm64-retail:
+    msvc-arm64-retail:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Retail'
+
+#    llvm-x86-debug:
+#      buildPlatform: 'x86'
+#      buildConfiguration: 'LLVM_Debug'
+#    llvm-x86-release:
+#      buildPlatform: 'x86'
+#      buildConfiguration: 'LLVM_Release'
+#    llvm-x86-retail:
+#      buildPlatform: 'x86'
+#      buildConfiguration: 'LLVM_Retail'
+
+    llvm-x64-debug:
+      buildPlatform: 'x64'
+      buildConfiguration: 'LLVM_Debug'
+    llvm-x64-release:
+      buildPlatform: 'x64'
+      buildConfiguration: 'LLVM_Release'
+    llvm-x64-retail:
+      buildPlatform: 'x64'
+      buildConfiguration: 'LLVM_Retail'
+
+#    llvm-arm-debug:
+#      buildPlatform: 'ARM'
+#      buildConfiguration: 'LLVM_Debug'
+#    llvm-arm-release:
+#      buildPlatform: 'ARM'
+#      buildConfiguration: 'LLVM_Release'
+#    llvm-arm-retail:
+#      buildPlatform: 'ARM'
+#      buildConfiguration: 'LLVM_Retail'
+
+#    llvm-arm64-debug:
+#      buildPlatform: 'ARM64'
+#      buildConfiguration: 'LLVM_Debug'
+#    llvm-arm64-release:
+#      buildPlatform: 'ARM64'
+#      buildConfiguration: 'LLVM_Release'
+#    llvm-arm64-retail:
+#      buildPlatform: 'ARM64'
+#      buildConfiguration: 'LLVM_Retail'
 
 pool:
   vmImage: 'windows-latest'
