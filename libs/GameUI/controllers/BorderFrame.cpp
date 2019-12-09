@@ -122,8 +122,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 {
 	RecalcTilemap( container );
 
-	gfx::PPUCoord const topLeft = container.mAABB.mTopLeft + (mExpectedTileDimensions + mPaddingDimensions);
-	gfx::PPUCoord const bottomRight = container.mAABB.mBottomRight - (mExpectedTileDimensions + mPaddingDimensions );
+	gfx::PPUCoord const topLeft = container.mAABB.mTopLeft + ( mExpectedTileDimensions + mPaddingDimensions );
+	gfx::PPUCoord const bottomRight = container.mAABB.mBottomRight - ( mExpectedTileDimensions + mPaddingDimensions );
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }
@@ -150,8 +150,8 @@ void BorderFrame::RecalcTilemap( Container const& container )
 	size_t const numColumns = math::Max<size_t>( numAvailableColumns, 2 );
 	size_t const numRows = math::Max<size_t>( numAvailableRows, 2 );
 
-	mExpectedDimensions.x = math::integer_cast<gfx::PPUCoordElem>( mExpectedTileDimensions.x * numColumns );
-	mExpectedDimensions.y = math::integer_cast<gfx::PPUCoordElem>( mExpectedTileDimensions.y * numRows );
+	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::PPUCoordElem>( numColumns );
+	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::PPUCoordElem>( numRows );
 
 	mTileLayer.ClearAndResize( numColumns, numRows );
 

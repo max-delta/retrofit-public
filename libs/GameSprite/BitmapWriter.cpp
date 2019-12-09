@@ -27,23 +27,26 @@ rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 
 	retVal.resize( totalFileSize );
 
 	void* writeHead = retVal.data();
-	static constexpr auto write8 = []( void*& writeHead, uint8_t const& data )
+	static constexpr auto write8 = []( void*& writeHead, uint8_t const& data ) //
 	{
-		uint8_t*& castHead = reinterpret_cast<uint8_t*&>( writeHead );
+		uint8_t* castHead = reinterpret_cast<uint8_t*>( writeHead );
 		*castHead = math::FromPlatformToLittleEndian( data );
 		castHead++;
+		writeHead = castHead;
 	};
-	static constexpr auto write16 = []( void*& writeHead, uint16_t const& data )
+	static constexpr auto write16 = []( void*& writeHead, uint16_t const& data ) //
 	{
-		uint16_t*& castHead = reinterpret_cast<uint16_t*&>( writeHead );
+		uint16_t* castHead = reinterpret_cast<uint16_t*>( writeHead );
 		*castHead = math::FromPlatformToLittleEndian( data );
 		castHead++;
+		writeHead = castHead;
 	};
-	static constexpr auto write32 = []( void*& writeHead, uint32_t const& data )
+	static constexpr auto write32 = []( void*& writeHead, uint32_t const& data ) //
 	{
-		uint32_t*& castHead = reinterpret_cast<uint32_t*&>( writeHead );
+		uint32_t* castHead = reinterpret_cast<uint32_t*>( writeHead );
 		*castHead = math::FromPlatformToLittleEndian( data );
 		castHead++;
+		writeHead = castHead;
 	};
 
 	// File header

@@ -272,7 +272,7 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 			RF_ASSERT( fieldModifier == 0 );
 			fieldBonus = 0;
 		}
-		SimVal const scaledAttack = 0u + rawAttack + fieldBonus;
+		SimVal const scaledAttack = math::integer_cast<SimVal>( math::integer_cast<int16_t>( rawAttack ) + fieldBonus );
 		RF_ASSERT( scaledAttack >= 0 );
 
 		// No matter how bad your situation, the raw damage from the weapon itself
