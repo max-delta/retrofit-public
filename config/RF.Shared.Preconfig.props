@@ -3,9 +3,9 @@
 
   <PropertyGroup Label="Configuration">
     <!--Only debug configurations get debug libraries-->
-    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
-    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
-    <UseDebugLibraries Condition="'$(Configuration)'=='Retail'">false</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(RFConfig)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(RFConfig)'=='Release'">false</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(RFConfig)'=='Retail'">false</UseDebugLibraries>
 
     <!--This controls the compiler versions and whatnot (v142 is early VS2019)-->
     <PlatformToolset>v142</PlatformToolset>
@@ -13,9 +13,9 @@
     <!--Whole-program-optimization/link-time-code-generation is amazing, but
       takes forever and a day, so don't do it for debug builds (Also, LLVM
       doesn't support it)-->
-    <WholeProgramOptimization Condition="'$(Configuration)'=='Release'">true</WholeProgramOptimization>
-    <WholeProgramOptimization Condition="'$(Configuration)'=='Retail'">true</WholeProgramOptimization>
-    <WholeProgramOptimization Condition="'$(Platform)'=='LLVM_x64'">false</WholeProgramOptimization>
+    <WholeProgramOptimization Condition="'$(RFConfig)'=='Release'">true</WholeProgramOptimization>
+    <WholeProgramOptimization Condition="'$(RFConfig)'=='Retail'">true</WholeProgramOptimization>
+    <WholeProgramOptimization Condition="'$(RFCompiler)'=='LLVM'">false</WholeProgramOptimization>
   </PropertyGroup>
 
   <ImportGroup Label="PropertySheets" />
@@ -29,8 +29,8 @@
   <!--Keep things as DLLs for iteration speed, but then slam everything
     together during retails builds for better optimization opportunities-->
   <PropertyGroup>
-    <SharedLibConfigType Condition="'$(Configuration)'!='Retail'">DynamicLibrary</SharedLibConfigType>
-    <SharedLibConfigType Condition="'$(Configuration)'=='Retail'">StaticLibrary</SharedLibConfigType>
+    <SharedLibConfigType Condition="'$(RFConfig)'!='Retail'">DynamicLibrary</SharedLibConfigType>
+    <SharedLibConfigType Condition="'$(RFConfig)'=='Retail'">StaticLibrary</SharedLibConfigType>
   </PropertyGroup>
 
   <!--Override where build artifacts are stored-->

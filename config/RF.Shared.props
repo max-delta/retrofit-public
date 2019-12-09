@@ -10,59 +10,59 @@
   <PropertyGroup>
     <!--Incremental linking is great for iteration speed, but leaves a bunch
       of crap in the binaries for padding and patching-->
-    <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)'=='Retail'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(RFConfig)'=='Debug'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(RFConfig)'=='Release'">false</LinkIncremental>
+    <LinkIncremental Condition="'$(RFConfig)'=='Retail'">false</LinkIncremental>
   </PropertyGroup>
 
   <ItemDefinitionGroup>
     <ClCompile>
       <!--We use precompiled headers, except in LLVM which doesn't support them-->
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Platform)'=='LLVM_x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(RFCompiler)'=='LLVM'">NotUsing</PrecompiledHeader>
 
       <!--Optimize for speed, except in debug builds-->
-      <Optimization Condition="'$(Configuration)'=='Debug'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)'=='Release'">MaxSpeed</Optimization>
-      <Optimization Condition="'$(Configuration)'=='Retail'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(RFConfig)'=='Debug'">Disabled</Optimization>
+      <Optimization Condition="'$(RFConfig)'=='Release'">MaxSpeed</Optimization>
+      <Optimization Condition="'$(RFConfig)'=='Retail'">MaxSpeed</Optimization>
 
       <!--Function-level linking gives each symbol it's own COMDAT, which is
         great for optimizations since everything is more granular, but it kills
         build times-->
-      <FunctionLevelLinking Condition="'$(Configuration)'=='Release'">true</FunctionLevelLinking>
-      <FunctionLevelLinking Condition="'$(Configuration)'=='Retail'">true</FunctionLevelLinking>
+      <FunctionLevelLinking Condition="'$(RFConfig)'=='Release'">true</FunctionLevelLinking>
+      <FunctionLevelLinking Condition="'$(RFConfig)'=='Retail'">true</FunctionLevelLinking>
 
       <!--Replace things like memcpy with intrinsic assembly logic inline-->
-      <IntrinsicFunctions Condition="'$(Configuration)'=='Release'">true</IntrinsicFunctions>
-      <IntrinsicFunctions Condition="'$(Configuration)'=='Retail'">true</IntrinsicFunctions>
+      <IntrinsicFunctions Condition="'$(RFConfig)'=='Release'">true</IntrinsicFunctions>
+      <IntrinsicFunctions Condition="'$(RFConfig)'=='Retail'">true</IntrinsicFunctions>
 
       <!--Specifically, don't require the redistributable for retail-->
-      <RuntimeLibrary Condition="'$(Configuration)'=='Retail'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(RFConfig)'=='Retail'">MultiThreaded</RuntimeLibrary>
 
       <!--Per-configuration config files set a bunch of giant switches-->
-      <ForcedIncludeFiles>$(RFRootDir)config\Config.$(Configuration).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>$(RFRootDir)config\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
 
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Configuration)'=='Retail'">NDEBUG;RF_NO_SHARED_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Retail'">NDEBUG;RF_NO_SHARED_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(RFArch)'=='x86_32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
     <Link>
       <!--COMDAT folding makes debugging confusing, so keep it off for debug-->
-      <EnableCOMDATFolding Condition="'$(Configuration)'=='Release'">true</EnableCOMDATFolding>
-      <EnableCOMDATFolding Condition="'$(Configuration)'=='Retail'">true</EnableCOMDATFolding>
+      <EnableCOMDATFolding Condition="'$(RFConfig)'=='Release'">true</EnableCOMDATFolding>
+      <EnableCOMDATFolding Condition="'$(RFConfig)'=='Retail'">true</EnableCOMDATFolding>
 
       <!--Orphaned code removal can be confusing, so keep all the code debug-->
-      <OptimizeReferences Condition="'$(Configuration)'=='Release'">true</OptimizeReferences>
-      <OptimizeReferences Condition="'$(Configuration)'=='Retail'">true</OptimizeReferences>
+      <OptimizeReferences Condition="'$(RFConfig)'=='Release'">true</OptimizeReferences>
+      <OptimizeReferences Condition="'$(RFConfig)'=='Retail'">true</OptimizeReferences>
 
       <!--Don't store personably-identifiable-information in the binaries for
         retail builds that will actually go out into the wild-->
-      <AdditionalOptions Condition="'$(Configuration)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(RFConfig)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
 
       <!--LLVM doesn't support link-time-code-generation-->
-      <LinkTimeCodeGeneration Condition="'$(Platform)'=='LLVM_x64'">Default</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration Condition="'$(RFCompiler)'=='LLVM'">Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
 

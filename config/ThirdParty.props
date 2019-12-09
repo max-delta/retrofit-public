@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup>
-    <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
+    <ClCompile Condition="'$(RFCompiler)'=='LLVM'">
       <AdditionalOptions>
         -Wno-unused-function
         -Wno-format

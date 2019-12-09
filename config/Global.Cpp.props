@@ -19,7 +19,7 @@
       <DisableSpecificWarnings>4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
       <!--Don't care about variables just used for asserts-->
-      <DisableSpecificWarnings Condition="'$(Platform)'!='Debug'">
+      <DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
         4189;%(DisableSpecificWarnings)
       </DisableSpecificWarnings>
 
@@ -41,12 +41,12 @@
       <SupportJustMyCode>false</SupportJustMyCode>
     </ClCompile>
 
-    <ClCompile Condition="'$(Platform)'!='LLVM_x64'">
+    <ClCompile Condition="'$(RFCompiler)'=='MSVC'">
       <!--Avoid MS-specific hacks since we're cross-platform-->
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
 
-    <ClCompile Condition="'$(Platform)'=='LLVM_x64'">
+    <ClCompile Condition="'$(RFCompiler)'=='LLVM'">
       <AdditionalOptions>
         -Wno-error
         -Wno-clang-cl-pch
@@ -89,16 +89,18 @@
       </AdditionalOptions>
 
       <!--Don't care about variables just used for asserts-->
-      <AdditionalOptions Condition="'$(Platform)'!='Debug'">
+      <AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
         -Wno-unused-variable
         %(AdditionalOptions)
       </AdditionalOptions>
 
       <!--Truly unused variables should be an error-->
-      <AdditionalOptions Condition="'$(Platform)'=='Debug'">
+      <!--TODO: Enforce
+      <AdditionalOptions Condition="'$(RFConfig)'=='Debug'">
         -Werror=unused-variable
         %(AdditionalOptions)
       </AdditionalOptions>
+      -->
     </ClCompile>
 
     <Link>

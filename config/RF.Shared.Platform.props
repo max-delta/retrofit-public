@@ -67,7 +67,18 @@
 
   <ImportGroup Label="PropertySheets" />
 
-  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Label="UserMacros">
+    <RFConfig Condition="'$(Configuration)'=='Debug'">Debug</RFConfig>
+    <RFConfig Condition="'$(Configuration)'=='Release'">Release</RFConfig>
+    <RFConfig Condition="'$(Configuration)'=='Retail'">Retail</RFConfig>
+    <RFArch Condition="'$(Platform)'=='x64'">x86_64</RFArch>
+    <RFArch Condition="'$(Platform)'=='Win32'">x86_32</RFArch>
+    <RFArch Condition="'$(Platform)'=='LLVM_x64'">x86_64</RFArch>
+    <RFArch Condition="'$(Platform)'=='ARM'">ARM32</RFArch>
+    <RFArch Condition="'$(Platform)'=='ARM64'">ARM64</RFArch>
+    <RFCompiler Condition="'$(Platform)'!='LLVM_x64'">MSVC</RFCompiler>
+    <RFCompiler Condition="'$(Platform)'=='LLVM_x64'">LLVM</RFCompiler>
+  </PropertyGroup>
 
   <ItemDefinitionGroup />
 
@@ -75,12 +86,12 @@
 
   <!-- Handle quirks of some build targets -->
   <PropertyGroup>
-    <PlatformArchitecture Condition="'$(Platform)'=='LLVM_x64'">64</PlatformArchitecture>
+    <PlatformArchitecture Condition="'$(RFCompiler)'=='LLVM'">64</PlatformArchitecture>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalOptions Condition="'$(Platform)'=='LLVM_x64'">--target=x86_64-pc-windows-msvc %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalOptions Condition="'$(Platform)'=='ARM'">/D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(RFCompiler)'=='LLVM'">--target=x86_64-pc-windows-msvc %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions Condition="'$(RFArch)'=='ARM32'">/D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
 
