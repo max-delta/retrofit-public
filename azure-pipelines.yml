@@ -7,43 +7,43 @@ strategy:
 
     x86-debug:
       buildPlatform: 'x86'
-      buildConfiguration: 'Debug'
+      buildConfiguration: 'MSVC_Debug'
     x86-release:
       buildPlatform: 'x86'
-      buildConfiguration: 'Release'
+      buildConfiguration: 'MSVC_Release'
     x86-retail:
       buildPlatform: 'x86'
-      buildConfiguration: 'Retail'
+      buildConfiguration: 'MSVC_Retail'
 
     x64-debug:
       buildPlatform: 'x64'
-      buildConfiguration: 'Debug'
+      buildConfiguration: 'MSVC_Debug'
     x64-release:
       buildPlatform: 'x64'
-      buildConfiguration: 'Release'
+      buildConfiguration: 'MSVC_Release'
     x64-retail:
       buildPlatform: 'x64'
-      buildConfiguration: 'Retail'
+      buildConfiguration: 'MSVC_Retail'
 
     arm-debug:
       buildPlatform: 'ARM'
-      buildConfiguration: 'Debug'
+      buildConfiguration: 'MSVC_Debug'
     arm-release:
       buildPlatform: 'ARM'
-      buildConfiguration: 'Release'
+      buildConfiguration: 'MSVC_Release'
     arm-retail:
       buildPlatform: 'ARM'
-      buildConfiguration: 'Retail'
+      buildConfiguration: 'MSVC_Retail'
 
     arm64-debug:
       buildPlatform: 'ARM64'
-      buildConfiguration: 'Debug'
+      buildConfiguration: 'MSVC_Debug'
     arm64-release:
       buildPlatform: 'ARM64'
-      buildConfiguration: 'Release'
+      buildConfiguration: 'MSVC_Release'
     arm64-retail:
       buildPlatform: 'ARM64'
-      buildConfiguration: 'Retail'
+      buildConfiguration: 'MSVC_Retail'
 
 pool:
   vmImage: 'windows-latest'

@@ -8,7 +8,8 @@
     <UseDebugLibraries Condition="'$(RFConfig)'=='Retail'">false</UseDebugLibraries>
 
     <!--This controls the compiler versions and whatnot (v142 is early VS2019)-->
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v142</PlatformToolset>
+    <PlatformToolset Condition="'$(RFCompiler)'=='LLVM'">ClangCL</PlatformToolset>
 
     <!--Whole-program-optimization/link-time-code-generation is amazing, but
       takes forever and a day, so don't do it for debug builds (Also, LLVM

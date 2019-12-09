@@ -5,18 +5,28 @@
 @cd /D "%~dp0"
 
 @echo Low verbosity! May sit for a while without messages!
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=Debug
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=Release
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=Retail
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=Debug
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=Release
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=Retail
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Debug
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Release
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=LLVM_x64 /p:Configuration=Retail
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=Debug
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=Release
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=Retail
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Debug
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Release
-msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=LLVM_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=LLVM_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=LLVM_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=LLVM_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=LLVM_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=LLVM_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=LLVM_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=LLVM_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=LLVM_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=LLVM_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=LLVM_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=LLVM_Retail
+
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=MSVC_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=MSVC_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x64 /p:Configuration=MSVC_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=MSVC_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=MSVC_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=x86 /p:Configuration=MSVC_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=MSVC_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=MSVC_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM /p:Configuration=MSVC_Retail
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=MSVC_Debug
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=MSVC_Release
+msbuild.exe retrofit.sln /nologo /verbosity:q /maxcpucount /target:Build /p:Platform=ARM64 /p:Configuration=MSVC_Retail
