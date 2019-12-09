@@ -44,6 +44,7 @@ AlwaysBreakTemplateDeclarations : false # Broken? Should be 'No'?
 BinPackArguments : false # But prefer true
 BinPackParameters : true
 BraceWrapping :
+ AfterCaseLabel : true
  AfterClass : true
  AfterControlStatement : true
  AfterEnum : true
@@ -82,7 +83,7 @@ IncludeBlocks : Preserve
 #IncludeCategories
 #IncludeIsMainRegex
 IndentCaseLabels : true
-IndentPPDirectives : AfterHash # But want BeforeHash (bug 36019)
+IndentPPDirectives : BeforeHash
 IndentWidth : 4
 IndentWrappedFunctionNames : false
 #JavaImportGroups
@@ -126,7 +127,7 @@ SpacesInCStyleCastParentheses : false
 SpacesInContainerLiterals : true
 SpacesInParentheses : true
 SpacesInSquareBrackets : false
-Standard : Cpp11
+Standard : Cpp11 # Broken? Should be 'Cpp17'?
 #StatementMacros
 TabWidth : 4 # ClangFormat seems to corrupt everything if this isn't 4???
 UseTab : Always

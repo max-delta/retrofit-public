@@ -1253,15 +1253,15 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		}
 	}
 
-	constexpr auto renderTile = [](
-									DeviceInterface* deviceInterface,
-									TileLayer::Tile const& tile,
-									DeviceTextureID deviceTextureID,
-									uint16_t texTilesPerRow,
-									float texXStep,
-									float texYStep,
-									math::AABB4f pos,
-		float z) -> void
+	constexpr auto renderTile =
+		[]( DeviceInterface* deviceInterface,
+			TileLayer::Tile const& tile,
+			DeviceTextureID deviceTextureID,
+			uint16_t texTilesPerRow,
+			float texXStep,
+			float texYStep,
+			math::AABB4f pos,
+			float z ) -> void //
 	{
 		RF_ASSERT( tile.mIndex != TileLayer::kEmptyTileIndex );
 

@@ -29,7 +29,7 @@ public: \
 	template<typename __RF_ANYTHING__> \
 	CLASS( __RF_ANYTHING__ const& ) = delete; \
 	template<typename __RF_ANYTHING__> \
-	CLASS( __RF_ANYTHING__ && ) = delete; \
+	CLASS( __RF_ANYTHING__&& ) = delete; \
 	template<typename __RF_ANYTHING__> \
 	operator __RF_ANYTHING__() const = delete;
 
@@ -52,9 +52,9 @@ public: \
 	} while( false )
 
 #if RF_IS_ALLOWED( RF_CONFIG_FILENAME_MACRO )
-#define RF_FILENAME() __FILE__
+	#define RF_FILENAME() __FILE__
 #else
-#define RF_FILENAME() "__FILE__"
+	#define RF_FILENAME() "__FILE__"
 #endif
 
 // Creates a formatted message for a build log that points to the source
