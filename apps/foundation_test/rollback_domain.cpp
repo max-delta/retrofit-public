@@ -54,8 +54,8 @@ TEST( Domain, AutoSnapshot )
 	}
 
 	// Change val
-	domain.GetMutableWindow().GetMutableStream<uint8_t>( identifier )->Write( kCurTime, kResetVal );
-	ASSERT_EQ( domain.GetWindow().GetStream<uint8_t>( identifier )->Read( kCurTime ), kResetVal );
+	domain.GetMutableWindow().GetMutableStream<uint8_t>( identifier )->Write( kResetTime, kResetVal );
+	ASSERT_EQ( domain.GetWindow().GetStream<uint8_t>( identifier )->Read( kResetTime ), kResetVal );
 
 	// Load snapshot
 	domain.LoadSnapshot( domain.GetLatestAutoSnapshot() );
@@ -72,7 +72,6 @@ TEST( Domain, ManualSnapshot )
 	static constexpr char kSnapshot[] = "Snap";
 	static constexpr uint8_t kVal = 30;
 	static constexpr uint8_t kResetVal = 20;
-	static constexpr time::CommonClock::time_point kInvalidTime = time::CommonClock::time_point();
 	static constexpr time::CommonClock::time_point kCurTime = time::CommonClock::TimePointFromNanos( 50 );
 	static constexpr time::CommonClock::time_point kResetTime = time::CommonClock::TimePointFromNanos( 49 );
 	state::VariableIdentifier const identifier = state::VariableIdentifier{ "Var" };
@@ -92,8 +91,8 @@ TEST( Domain, ManualSnapshot )
 	ASSERT_EQ( snapshot->second.GetStream<uint8_t>( identifier )->Read( kCurTime ), kVal );
 
 	// Change val
-	domain.GetMutableWindow().GetMutableStream<uint8_t>( identifier )->Write( kCurTime, kResetVal );
-	ASSERT_EQ( domain.GetWindow().GetStream<uint8_t>( identifier )->Read( kCurTime ), kResetVal );
+	domain.GetMutableWindow().GetMutableStream<uint8_t>( identifier )->Write( kResetTime, kResetVal );
+	ASSERT_EQ( domain.GetWindow().GetStream<uint8_t>( identifier )->Read( kResetTime ), kResetVal );
 
 	// Load snapshot
 	domain.LoadSnapshot( *snapshot );

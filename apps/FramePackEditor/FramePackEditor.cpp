@@ -875,6 +875,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 	// Serialize
 	rftl::vector<uint8_t> buffer;
 	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *currentFPack );
+	RF_ASSERT( writeSuccess );
 
 	// Create file
 	{

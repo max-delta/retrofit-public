@@ -41,7 +41,6 @@ TEST( InputStream, Single )
 {
 	static constexpr size_t kNumInputs = 1;
 	static constexpr InputValue kVal = 7;
-	static constexpr time::CommonClock::time_point kZeroTime = time::CommonClock::TimePointFromNanos( 0 );
 	static constexpr time::CommonClock::time_point kTime = time::CommonClock::TimePointFromNanos( 50 );
 
 	InputStream stream;

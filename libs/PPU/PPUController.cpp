@@ -1533,7 +1533,7 @@ float PPUController::LayerToDevice( PPUDepthLayer zDepth ) const
 math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile ) const
 {
 	// TODO: Windowing, scaling, etc
-	constexpr uint8_t zoomFactor = 1;
+	//constexpr uint8_t zoomFactor = 1;
 	constexpr uint8_t diagonalTiles = 15;
 
 	// Baseline

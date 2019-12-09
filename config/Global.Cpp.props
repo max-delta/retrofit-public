@@ -104,12 +104,10 @@
       </AdditionalOptions>
 
       <!--Truly unused variables should be an error-->
-      <!--TODO: Enforce
       <AdditionalOptions Condition="'$(RFConfig)'=='Debug'">
         -Werror=unused-variable
         %(AdditionalOptions)
       </AdditionalOptions>
-      -->
     </ClCompile>
 
     <Link>

@@ -75,6 +75,8 @@ TEST( Literal, Basics )
 
 	static constexpr ConcatLiterals<char, 8> kAdd1 = Literal<char>() + "Test" + "Aux";
 	static constexpr ConcatLiterals<char, 8> kAdd2 = Literal( "Test" ) + "Aux";
+	( (void)kAdd1 );
+	( (void)kAdd2 );
 
 	static_assert( Literal( "A" )[0] == 'A', "" );
 	static_assert( Literal( u"A" )[0] == u'A', "" );

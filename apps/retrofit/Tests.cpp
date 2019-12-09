@@ -180,7 +180,6 @@ void InitDrawTest()
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
-	uint8_t const wiggleAnimationLength = wiggleFPack->CalculateTimeIndexBoundary();
 	testObjWiggle.mFramePackID = wiggleFPackID;
 	testObjWiggle.mTimer.mMaxTimeIndex = 4;
 	testObjWiggle.mTimer.mTimeSlowdown = 33 / 4;

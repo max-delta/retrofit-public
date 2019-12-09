@@ -12,7 +12,6 @@ TEST( StateTree, Basic )
 {
 	using Tree = StateTree<int, 4>;
 	using Stream = Tree::StreamType;
-	static constexpr char kIdentifier[] = "";
 	state::VariableIdentifier identifier;
 
 	alloc::AllocatorT<alloc::LinearAllocator<512>> allocator{ ExplicitDefaultConstruct() };

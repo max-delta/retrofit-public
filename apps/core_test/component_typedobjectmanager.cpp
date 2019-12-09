@@ -71,6 +71,7 @@ TEST( TypedObjectManager, BasicAddRemoveComponent )
 
 	bool const removeSuccess = manager.RemoveComponentT<CompType>( objID );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
+	ASSERT_TRUE( removeSuccess );
 	latestState = manager.GetInternalStateIteration();
 
 	bool const validPostRemove = manager.IsValidComponentT<CompType>( objID );

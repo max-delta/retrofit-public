@@ -48,6 +48,7 @@ TEST( ObjectManager, BasicAddRemoveObject )
 
 	bool const removeSuccess = manager.RemoveObject( newObj.GetIdentifier() );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
+	ASSERT_TRUE( removeSuccess );
 	latestState = manager.GetInternalStateIteration();
 
 	bool const validPostRemove = manager.IsValidObject( newObj.GetIdentifier() );
@@ -93,6 +94,7 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 
 	bool const removeSuccess = manager.RemoveComponent( objID, kCompType );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
+	ASSERT_TRUE( removeSuccess );
 	latestState = manager.GetInternalStateIteration();
 
 	bool const validPostRemove = manager.IsValidComponent( objID, kCompType );

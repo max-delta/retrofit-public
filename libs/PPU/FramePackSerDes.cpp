@@ -128,7 +128,6 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 	size_t const sizeOfData_sustains = SizeOfData_Sustains( framePack );
 	header.mOffsetToSlots = math::integer_cast<uint16_t>( header.mOffsetToSustains + sizeOfData_sustains );
 	size_t const sizeOfData_slots = SizeOfData_Slots( framePack );
-	size_t const sizeOfData = sizeOfData_sustains + sizeOfData_slots;
 	header.mOffsetToTexturePaths = math::integer_cast<uint16_t>( header.mOffsetToSlots + sizeOfData_slots );
 	header.mOffsetToEof = math::integer_cast<uint16_t>( header.mOffsetToTexturePaths + sizeOfTexturePaths );
 
