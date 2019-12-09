@@ -75,12 +75,19 @@
 
       <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
       <AdditionalOptions>
-        -Werror=nonportable-include-path
         -Werror=newline-eof
         -Werror=extra-qualification
         -Werror=unused-lambda-capture
         %(AdditionalOptions)
       </AdditionalOptions>
+
+      <!-- Azure build machines violate this when forced includes are used -->
+      <!-- TODO: Better workaround
+      <AdditionalOptions>
+        -Werror=nonportable-include-path
+        %(AdditionalOptions)
+      </AdditionalOptions>
+      -->
 
       <!--Goal is to use targeted suppression machinery instead of these-->
       <AdditionalOptions>
