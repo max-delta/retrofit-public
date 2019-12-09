@@ -39,6 +39,7 @@
   <PropertyGroup>
     <LLVMInstallDir>$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\LLVM\LLVM)</LLVMInstallDir>
     <LLVMInstallDir Condition="'$(LLVMInstallDir)' == ''">$(Registry:HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\LLVM\LLVM)</LLVMInstallDir>
+    <LLVMInstallDir Condition="'$(LLVMInstallDir)' == ''">C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\Llvm</LLVMInstallDir>
     <LLVMInstallDir Condition="'$(LLVMInstallDir)' != ''">$(LLVMInstallDir)\</LLVMInstallDir>
     <ClangClExecutable>$(LLVMInstallDir)bin\clang-cl.exe</ClangClExecutable>
     <LldLinkExecutable>$(LLVMInstallDir)bin\lld-link.exe</LldLinkExecutable>
