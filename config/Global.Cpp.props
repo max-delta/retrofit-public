@@ -69,6 +69,7 @@
         -Wno-format-nonliteral
         -Wno-ignored-attributes
         -Wno-undefined-func-template
+        -Wno-ctad-maybe-unsupported
         %(AdditionalOptions)
       </AdditionalOptions>
 

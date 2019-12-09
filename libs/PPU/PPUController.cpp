@@ -159,14 +159,14 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 PPUCoordElem PPUController::GetWidth() const
 {
-	return mWidth / GetZoomFactor();
+	return math::integer_cast<PPUCoordElem>( mWidth / GetZoomFactor() );
 }
 
 
 
 PPUCoordElem PPUController::GetHeight() const
 {
-	return mHeight / GetZoomFactor();
+	return math::integer_cast<PPUCoordElem>( mHeight / GetZoomFactor() );
 }
 
 
@@ -479,8 +479,8 @@ PPUCoord PPUController::CalculateTileLayerSize( TileLayer const& tileLayer ) con
 	PPUCoordElem xStep;
 	PPUCoordElem yStep;
 	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
-	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
-	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
+	PPUCoordElem const xLayerStep = xStep * math::integer_cast<PPUCoordElem>( tileLayer.NumColumns() );
+	PPUCoordElem const yLayerStep = yStep * math::integer_cast<PPUCoordElem>( tileLayer.NumRows() );
 	return PPUCoord{ xLayerStep, yLayerStep };
 }
 
@@ -1128,8 +1128,8 @@ void PPUController::RenderObject( Object const& object ) const
 	PPUCoordElem const y = object.mYCoord - timeSlot.mTextureOriginY;
 	math::Vector2f topLeft = CoordToDevice( x, y );
 	math::Vector2f bottomRight = CoordToDevice(
-		math::integer_cast<PPUCoordElem>( x + texture->mWidthPostLoad ),
-		math::integer_cast<PPUCoordElem>( y + texture->mHeightPostLoad ) );
+		x + math::integer_cast<PPUCoordElem>( texture->mWidthPostLoad ),
+		y + math::integer_cast<PPUCoordElem>( texture->mHeightPostLoad ) );
 
 	// Perform flips
 	// NOTE: Assuming the device billboards are implemented similarly to a
@@ -1163,8 +1163,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	PPUCoordElem xStep;
 	PPUCoordElem yStep;
 	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
-	PPUCoordElem const xLayerStep = math::integer_cast<PPUCoordElem>( xStep * tileLayer.NumColumns() );
-	PPUCoordElem const yLayerStep = math::integer_cast<PPUCoordElem>( yStep * tileLayer.NumRows() );
+	PPUCoordElem const xLayerStep = xStep * math::integer_cast<PPUCoordElem>( tileLayer.NumColumns() );
+	PPUCoordElem const yLayerStep = yStep * math::integer_cast<PPUCoordElem>( tileLayer.NumRows() );
 
 	float const z = LayerToDevice( tileLayer.mZLayer );
 
@@ -1280,8 +1280,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	{
 		for( int16_t i_row = posRowStart; i_row < posRowEnd; i_row++ )
 		{
-			size_t const tileCol = ( i_col + tileColOffset ) % tileLayer.NumColumns();
-			size_t const tileRow = ( i_row + tileRowOffset ) % tileLayer.NumRows();
+			size_t const tileCol = math::integer_cast<size_t>( i_col + tileColOffset ) % tileLayer.NumColumns();
+			size_t const tileRow = math::integer_cast<size_t>( i_row + tileRowOffset ) % tileLayer.NumRows();
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
 			if( tile.mIndex == TileLayer::kEmptyTileIndex )
 			{
