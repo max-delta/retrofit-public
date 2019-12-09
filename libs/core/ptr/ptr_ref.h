@@ -3,6 +3,7 @@
 
 #include "rftl/cstdint"
 #include "rftl/atomic"
+#include "rftl/type_traits"
 
 
 namespace RF {

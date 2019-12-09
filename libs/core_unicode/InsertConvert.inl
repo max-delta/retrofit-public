@@ -2,6 +2,8 @@
 #include "InsertConvert.h"
 #include "CharConvert.h"
 
+#include "rftl/utility"
+
 
 namespace RF { namespace unicode {
 ///////////////////////////////////////////////////////////////////////////////

@@ -15,16 +15,16 @@
 #if \
 	defined(_MSC_VER) && \
 	(_MSC_VER >= 1913 && _MSC_VER <= 1916) && \
-	!defined(RFTL_DISBALE_BAD_MSVC_WARNINGS)
-#define RFTL_DISBALE_BAD_MSVC_WARNINGS
+	!defined(RFTL_DISABLE_BAD_MSVC_WARNINGS)
+#define RFTL_DISABLE_BAD_MSVC_WARNINGS
 	#pragma warning(push)
 	#pragma warning(disable : 4355) // <future> has invalid use of 'this' ptr
 	#pragma warning(disable : 4548) // <future> has some broken macro invocation
 #elif \
 	defined(_MSC_VER) && \
-	( _MSC_VER >= 1922 && _MSC_VER <= 1923 ) && \
-	!defined(RFTL_DISBALE_BAD_MSVC_WARNINGS)
-#define RFTL_DISBALE_BAD_MSVC_WARNINGS
+	( _MSC_VER >= 1922 && _MSC_VER <= 1924 ) && \
+	!defined(RFTL_DISABLE_BAD_MSVC_WARNINGS)
+#define RFTL_DISABLE_BAD_MSVC_WARNINGS
 	#pragma warning(push)
 	#pragma warning(disable : 4355) // <thread> has invalid use of 'this' ptr
 #endif
