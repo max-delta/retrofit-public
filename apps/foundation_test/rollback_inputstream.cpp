@@ -113,7 +113,7 @@ TEST( InputStream, TripleFrame )
 		ASSERT_EQ( stream.begin()->mValue, stream.front().mValue );
 
 		ASSERT_NE( stream.rbegin(), stream.rend() );
-		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<int64_t>( stream.size() - 1u ) ) );
+		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<ptrdiff_t>( stream.size() - 1u ) ) );
 
 		ASSERT_FALSE( stream.empty() );
 		ASSERT_EQ( stream.size(), kNumInputs );
@@ -154,7 +154,7 @@ TEST( InputStream, TripleFrame )
 		ASSERT_EQ( stream.begin()->mValue, stream.front().mValue );
 
 		ASSERT_NE( stream.rbegin(), stream.rend() );
-		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<int64_t>( stream.size() - 1u ) ) );
+		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<ptrdiff_t>( stream.size() - 1u ) ) );
 
 		ASSERT_FALSE( stream.empty() );
 		ASSERT_EQ( stream.size(), kNumInputs );
@@ -195,7 +195,7 @@ TEST( InputStream, TripleFrame )
 		ASSERT_EQ( stream.begin()->mValue, stream.front().mValue );
 
 		ASSERT_NE( stream.rbegin(), stream.rend() );
-		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<int64_t>( stream.size() - 1u ) ) );
+		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<ptrdiff_t>( stream.size() - 1u ) ) );
 
 		ASSERT_FALSE( stream.empty() );
 		ASSERT_EQ( stream.size(), kNumInputs - 2 ); // Changed
@@ -236,7 +236,7 @@ TEST( InputStream, TripleFrame )
 		ASSERT_EQ( stream.begin()->mValue, stream.front().mValue );
 
 		ASSERT_NE( stream.rbegin(), stream.rend() );
-		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<int64_t>( stream.size() - 1u ) ) );
+		ASSERT_EQ( &*stream.rbegin(), &*( stream.begin() + static_cast<ptrdiff_t>( stream.size() - 1u ) ) );
 
 		ASSERT_FALSE( stream.empty() );
 		ASSERT_EQ( stream.size(), kNumInputs - 4 ); // Changed
