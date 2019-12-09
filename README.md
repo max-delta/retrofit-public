@@ -80,6 +80,8 @@ Fixes for common engine deficiencies:
 
 * Doesn't require CMake, uses normal MSBuild and vcxproj files (Yes, this is actually possible, but community knowledge is still lacking, so YMMV if you try this in your own engine)
 * x86 (32 & 64 bit) support
+* Limited Arm (32 & 64 bit) support
+* Windows support
 * MSVC support
 * LLVM support
 
