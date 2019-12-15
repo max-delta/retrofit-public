@@ -21,9 +21,9 @@
 #include "GameUI/ContainerManager.h"
 
 #include "PPU/PPUController.h"
-
 #include "Timing/FrameClock.h"
 #include "Rollback/RollbackManager.h"
+#include "PlatformFilesystem/VFS.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -87,6 +87,12 @@ void Startup()
 	{
 		developer::Startup();
 	}
+
+	// Mark our boot in the user directory, mostly to make sure it can be
+	//  written to in VFS
+	file::VFSPath const bootStamp = file::VFS::kRoot.GetChild( "user", "boot.stamp" );
+	bool const stampSuccess = app::gVfs->GetFileForWrite( bootStamp ) != nullptr;
+	RFLOG_TEST_AND_FATAL( stampSuccess, bootStamp, RFCAT_CC3O3, "Failed to mark boot stamp" );
 }
 
 
