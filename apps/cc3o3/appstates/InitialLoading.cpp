@@ -104,6 +104,9 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", paths::BackgroundTilesets().GetChild( "country_hills_back_96.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", paths::BackgroundTilesets().GetChild( "country_hills_mid_32.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "frame9_24", paths::CommonTilesets().GetChild( "frame9_24.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "cloud_fog_a_512", paths::BackgroundTilesets().GetChild( "cloud_fog_a_512.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "cloud_fog_b_512", paths::BackgroundTilesets().GetChild( "cloud_fog_b_512.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "island_mock_64", paths::BackgroundTilesets().GetChild( "island_mock_64.tset.txt" ) );
 	}
 
 	// Load framepacks
