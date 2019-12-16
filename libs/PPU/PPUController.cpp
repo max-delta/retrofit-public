@@ -1215,6 +1215,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		}
 		RF_ASSERT( wrapRootX <= 0 );
 		RF_ASSERT( wrapRootY <= 0 );
+		drawRootX = wrapRootX;
+		drawRootY = wrapRootY;
 
 		// How many cycles of wrapping before we reach the root of the layer?
 		int16_t xCyclesBeforeRoot;
@@ -1229,6 +1231,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		}
 		RF_ASSERT( xCyclesBeforeRoot >= 0 );
 		RF_ASSERT( yCyclesBeforeRoot >= 0 );
+		tileColOffset = xCyclesBeforeRoot;
+		tileRowOffset = yCyclesBeforeRoot;
 
 		// How many cycles of wrapping before we reach the end of the screen?
 		int16_t xCyclesBeforeScreenEscape;
@@ -1241,21 +1245,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		}
 		RF_ASSERT( xCyclesBeforeScreenEscape >= 0 );
 		RF_ASSERT( yCyclesBeforeScreenEscape >= 0 );
-
-		drawRootX = wrapRootX;
-		drawRootY = wrapRootY;
-		tileColOffset = xCyclesBeforeRoot;
-		tileRowOffset = yCyclesBeforeRoot;
 		posColEnd = xCyclesBeforeScreenEscape + 1;
 		posRowEnd = yCyclesBeforeScreenEscape + 1;
-		if( drawRootX < 0 )
-		{
-			posColStart = -1;
-		}
-		if( drawRootY < 0 )
-		{
-			posColStart = -1;
-		}
 	}
 
 	constexpr auto renderTile =
