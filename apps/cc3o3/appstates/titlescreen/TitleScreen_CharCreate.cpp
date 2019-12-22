@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "TitleScreen_CharCreate.h"
 
-#include "cc3o3/appstates/TitleScreen.h"
+#include "cc3o3/appstates/titlescreen/TitleScreen.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"

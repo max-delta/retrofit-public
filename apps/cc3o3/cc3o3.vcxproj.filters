@@ -4,32 +4,20 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="cc3o3.cpp" />
-    <ClCompile Include="appstates\TitleScreen.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
     <ClCompile Include="appstates\InitialLoading.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="appstates\Boot.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\TitleScreen_MainMenu.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
     <ClCompile Include="input\HardcodedSetup.cpp">
       <Filter>input</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\TitleScreen_Options.cpp">
-      <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="appstates\AppStateRoute.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="ui\LocalizationHelpers.cpp">
       <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\TitleScreen_CharCreate.cpp">
-      <Filter>appstates</Filter>
     </ClCompile>
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="Common.cpp" />
@@ -42,30 +30,42 @@
     <ClCompile Include="combat\CombatEngine.cpp">
       <Filter>combat</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\DevTestCombatCharts.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
     <ClCompile Include="appstates\InputHelpers.cpp">
       <Filter>appstates</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\DevTestRollback.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
     <ClCompile Include="DeveloperHud.cpp" />
-    <ClCompile Include="appstates\Gameplay.cpp">
-      <Filter>appstates</Filter>
+    <ClCompile Include="appstates\devtest\DevTestRollback.cpp">
+      <Filter>appstates\devtest</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\Gameplay_Overworld.cpp">
-      <Filter>appstates</Filter>
+    <ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp">
+      <Filter>appstates\devtest</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\Gameplay_Site.cpp">
-      <Filter>appstates</Filter>
+    <ClCompile Include="appstates\gameplay\Gameplay_Site.cpp">
+      <Filter>appstates\gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\Gameplay_Battle.cpp">
-      <Filter>appstates</Filter>
+    <ClCompile Include="appstates\gameplay\Gameplay.cpp">
+      <Filter>appstates\gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="appstates\Gameplay_Menus.cpp">
-      <Filter>appstates</Filter>
+    <ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp">
+      <Filter>appstates\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp">
+      <Filter>appstates\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp">
+      <Filter>appstates\gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp">
+      <Filter>appstates\titlescreen</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp">
+      <Filter>appstates\titlescreen</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\titlescreen\TitleScreen.cpp">
+      <Filter>appstates\titlescreen</Filter>
+    </ClCompile>
+    <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp">
+      <Filter>appstates\titlescreen</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,9 +87,6 @@
     <ClInclude Include="appstates\Boot.h">
       <Filter>appstates</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\TitleScreen.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
     <ClInclude Include="ui\stdafx.h">
       <Filter>ui</Filter>
     </ClInclude>
@@ -98,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="ui\UIFwd.h">
       <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\TitleScreen_MainMenu.h">
-      <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="input\stdafx.h">
       <Filter>input</Filter>
@@ -114,17 +108,11 @@
     <ClInclude Include="input\HardcodedSetup.h">
       <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\TitleScreen_Options.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
     <ClInclude Include="appstates\AppStateRoute.h">
       <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="ui\LocalizationHelpers.h">
       <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\TitleScreen_CharCreate.h">
-      <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="CommonPaths.h" />
     <ClInclude Include="char\project.h">
@@ -176,13 +164,7 @@
     <ClInclude Include="combat\CombatFwd.h">
       <Filter>combat</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\DevTestCombatCharts.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
     <ClInclude Include="appstates\InputHelpers.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\DevTestRollback.h">
       <Filter>appstates</Filter>
     </ClInclude>
     <ClInclude Include="DeveloperHud.h" />
@@ -195,20 +177,56 @@
     <ClInclude Include="time\project.h">
       <Filter>time</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\Gameplay.h">
-      <Filter>appstates</Filter>
+    <ClInclude Include="appstates\devtest\DevTestRollback.h">
+      <Filter>appstates\devtest</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\Gameplay_Overworld.h">
-      <Filter>appstates</Filter>
+    <ClInclude Include="appstates\devtest\DevTestCombatCharts.h">
+      <Filter>appstates\devtest</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\Gameplay_Site.h">
-      <Filter>appstates</Filter>
+    <ClInclude Include="appstates\gameplay\Gameplay_Overworld.h">
+      <Filter>appstates\gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\Gameplay_Battle.h">
-      <Filter>appstates</Filter>
+    <ClInclude Include="appstates\gameplay\Gameplay_Site.h">
+      <Filter>appstates\gameplay</Filter>
     </ClInclude>
-    <ClInclude Include="appstates\Gameplay_Menus.h">
-      <Filter>appstates</Filter>
+    <ClInclude Include="appstates\gameplay\Gameplay.h">
+      <Filter>appstates\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\gameplay\Gameplay_Battle.h">
+      <Filter>appstates\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\gameplay\Gameplay_Menus.h">
+      <Filter>appstates\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h">
+      <Filter>appstates\titlescreen</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h">
+      <Filter>appstates\titlescreen</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\TitleScreen_Options.h">
+      <Filter>appstates\titlescreen</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\TitleScreen.h">
+      <Filter>appstates\titlescreen</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\devtest\project.h">
+      <Filter>appstates\devtest</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\gameplay\project.h">
+      <Filter>appstates\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\project.h">
+      <Filter>appstates\titlescreen</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\devtest\stdafx.h">
+      <Filter>appstates\devtest</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\gameplay\stdafx.h">
+      <Filter>appstates\gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\titlescreen\stdafx.h">
+      <Filter>appstates\titlescreen</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -229,6 +247,15 @@
     </Filter>
     <Filter Include="time">
       <UniqueIdentifier>{f1909fb8-7ba9-4a73-91a5-9e9a955574dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appstates\devtest">
+      <UniqueIdentifier>{469305ee-1728-41c5-9572-7cedd9b11fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appstates\gameplay">
+      <UniqueIdentifier>{38e47fb8-05f2-4619-9c3e-b14b04c14204}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appstates\titlescreen">
+      <UniqueIdentifier>{3f3236b5-7a84-40c0-aff6-4b544a4e0f7c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "Gameplay.h"
 
-#include "cc3o3/appstates/Gameplay_Overworld.h"
-#include "cc3o3/appstates/Gameplay_Site.h"
-#include "cc3o3/appstates/Gameplay_Battle.h"
-#include "cc3o3/appstates/Gameplay_Menus.h"
+#include "cc3o3/appstates/gameplay/Gameplay_Overworld.h"
+#include "cc3o3/appstates/gameplay/Gameplay_Site.h"
+#include "cc3o3/appstates/gameplay/Gameplay_Battle.h"
+#include "cc3o3/appstates/gameplay/Gameplay_Menus.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 
 #include "GameAppState/AppStateManager.h"

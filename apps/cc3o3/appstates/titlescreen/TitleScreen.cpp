@@ -3,9 +3,9 @@
 
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/input/InputFwd.h"
-#include "cc3o3/appstates/TitleScreen_MainMenu.h"
-#include "cc3o3/appstates/TitleScreen_CharCreate.h"
-#include "cc3o3/appstates/TitleScreen_Options.h"
+#include "cc3o3/appstates/titlescreen/TitleScreen_MainMenu.h"
+#include "cc3o3/appstates/titlescreen/TitleScreen_CharCreate.h"
+#include "cc3o3/appstates/titlescreen/TitleScreen_Options.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/CommonPaths.h"
 
