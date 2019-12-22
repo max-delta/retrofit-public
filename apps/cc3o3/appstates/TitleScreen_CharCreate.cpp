@@ -220,7 +220,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 	rftl::string const& name = mChar.mDescription.mName;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( name + " [E]" );
 
-	static constexpr auto format9 = []( rftl::string const& str ) -> rftl::string
+	static constexpr auto format9 = []( rftl::string const& str ) -> rftl::string //
 	{
 		rftl::string retVal;
 		retVal += "< ";
@@ -229,7 +229,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format2 = []( uint8_t val ) -> rftl::string
+	static constexpr auto format2 = []( uint8_t val ) -> rftl::string //
 	{
 		RF_ASSERT( val <= 99 );
 		rftl::string retVal;
@@ -240,7 +240,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format5Pips = []( int8_t min, int8_t cur, int8_t avail ) -> rftl::string
+	static constexpr auto format5Pips = []( int8_t min, int8_t cur, int8_t avail ) -> rftl::string //
 	{
 		RF_ASSERT( min >= 0 );
 		RF_ASSERT( min <= 5 );
@@ -277,7 +277,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format10Slider = []( int8_t val ) -> rftl::string
+	static constexpr auto format10Slider = []( int8_t val ) -> rftl::string //
 	{
 		RF_ASSERT( val >= 0 );
 		RF_ASSERT( val <= 10 );
@@ -433,8 +433,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	sprite::CharacterCreator& charCreate = *mCharacterCreator;
 
-	char const* const id = "ID_TODO";
-	file::VFSPath const outDir = paths::CompositeCharacters().GetChild( id );
+	static constexpr char const kId[] = "CHAR_CREATE_TEMP";
 
 	sprite::CompositeCharacterParams params = {};
 	params.mCompositeWidth = 32;
@@ -444,17 +443,22 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	params.mHairId = mChar.mVisuals.mHair;
 	params.mSpeciesId = mChar.mVisuals.mSpecies;
 	params.mCharPiecesDir = paths::CharacterPieces();
-	params.mOutputDir = outDir;
-	charCreate.CreateCompositeCharacter( params );
+	params.mOutputDir = paths::CompositeCharacters().GetChild( kId );
+	sprite::CompositeCharacter const character = charCreate.CreateCompositeCharacter( params );
 
 	gfx::ManagedFramePackID const previewID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
 	if( previewID == gfx::kInvalidManagedFramePackID )
 	{
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, details::kPreviewFpackName, outDir.GetChild( "s.fpack" ) );
+		ppu.ForceImmediateLoadRequest(
+			gfx::PPUController::AssetType::FramePack,
+			details::kPreviewFpackName,
+			character.mFramepacksByAnim.at( sprite::CharacterAnimKey::SWalk ) );
 	}
 	else
 	{
-		ppu.QueueDeferredReloadRequest( gfx::PPUController::AssetType::FramePack, details::kPreviewFpackName );
+		ppu.QueueDeferredReloadRequest(
+			gfx::PPUController::AssetType::FramePack,
+			details::kPreviewFpackName );
 	}
 }
 

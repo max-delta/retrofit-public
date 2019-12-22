@@ -209,9 +209,9 @@ CharacterCreator::PieceId CharacterCreator::IterateNextValidPiece( PieceId const
 
 
 
-void CharacterCreator::CreateCompositeCharacter( CompositeCharacterParams const& params )
+CompositeCharacter CharacterCreator::CreateCompositeCharacter( CompositeCharacterParams const& params )
 {
-	mCompositor.CreateCompositeCharacter( params );
+	return mCompositor.CreateCompositeCharacter( params );
 }
 
 

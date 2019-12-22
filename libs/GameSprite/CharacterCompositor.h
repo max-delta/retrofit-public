@@ -44,6 +44,17 @@ enum class CharacterSequenceType : uint8_t
 
 
 
+enum class CharacterAnimKey : uint8_t
+{
+	Invalid = 0,
+	NWalk,
+	EWalk,
+	SWalk,
+	WWalk
+};
+
+
+
 enum class CharacterPieceType : uint8_t
 {
 	Invalid = 0,
@@ -108,15 +119,6 @@ struct GAMESPRITE_API CompositeFrameParams
 
 struct GAMESPRITE_API CompositeAnimParams
 {
-	enum class AnimKey : uint8_t
-	{
-		Invalid = 0,
-		NWalk,
-		EWalk,
-		SWalk,
-		WWalk
-	};
-
 	CompositeSequenceParams mSequence = {};
 
 	file::VFSPath mBasePieces = {};
@@ -126,7 +128,7 @@ struct GAMESPRITE_API CompositeAnimParams
 
 	file::VFSPath mTextureOutputDirectory = {};
 
-	rftl::unordered_map<AnimKey, file::VFSPath> mOutputPaths = {};
+	rftl::unordered_map<CharacterAnimKey, file::VFSPath> mOutputPaths = {};
 };
 
 
@@ -159,6 +161,16 @@ struct GAMESPRITE_API CharacterPieceCategories
 	CollectionsByType mCollectionsByType = {};
 };
 
+
+
+struct GAMESPRITE_API CompositeCharacter
+{
+	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
+
+	using FramepacksByAnim = rftl::unordered_map<CharacterAnimKey, file::VFSPath>;
+	FramepacksByAnim mFramepacksByAnim = {};
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMESPRITE_API CharacterCompositor
@@ -171,7 +183,7 @@ public:
 	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
 	bool LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir );
-	void CreateCompositeCharacter( CompositeCharacterParams const& params );
+	CompositeCharacter CreateCompositeCharacter( CompositeCharacterParams const& params );
 
 
 	//

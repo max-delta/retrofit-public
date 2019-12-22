@@ -39,7 +39,7 @@ public:
 	TagBits GetTagsAsFlags( Tags const& tags ) const;
 	PieceId IterateNextValidPiece( PieceId const& iterator, CharacterPieceType type, TagBits flags ) const;
 
-	void CreateCompositeCharacter( CompositeCharacterParams const& params );
+	CompositeCharacter CreateCompositeCharacter( CompositeCharacterParams const& params );
 
 
 	//

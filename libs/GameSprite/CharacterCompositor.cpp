@@ -103,7 +103,7 @@ bool CharacterCompositor::LoadPieceTables( file::VFSPath const& masterTablePath,
 
 
 
-void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams const& params )
+CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams const& params )
 {
 	// TODO: Better error-reporting
 
@@ -168,12 +168,17 @@ void CharacterCompositor::CreateCompositeCharacter( CompositeCharacterParams con
 	animParams.mHairPieces = charPieces.GetChild( hairPiece.mFilename );
 	animParams.mSpeciesPieces = charPieces.GetChild( speciesPiece.mFilename );
 	animParams.mTextureOutputDirectory = outDir;
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::NWalk] = outDir.GetChild( "n.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::EWalk] = outDir.GetChild( "e.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::SWalk] = outDir.GetChild( "s.fpack" );
-	animParams.mOutputPaths[CompositeAnimParams::AnimKey::WWalk] = outDir.GetChild( "w.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::NWalk] = outDir.GetChild( "n.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::EWalk] = outDir.GetChild( "e.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::SWalk] = outDir.GetChild( "s.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::WWalk] = outDir.GetChild( "w.fpack" );
 
 	CreateCompositeAnims( animParams );
+
+	CompositeCharacter retVal = {};
+	retVal.mCharacterSequenceType = animParams.mSequence.mCharacterSequenceType;
+	retVal.mFramepacksByAnim = rftl::move( animParams.mOutputPaths );
+	return retVal;
 }
 
 
@@ -294,16 +299,20 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	static constexpr size_t kBitmapFramesPerDirection = 3;
 	static constexpr size_t kTotalFrames = 4 * kBitmapFramesPerDirection;
 	static constexpr char const* kFrameNames[kTotalFrames] = {
+		// clang-format off
 		"n0.bmp", "n1.bmp", "n2.bmp",
 		"e0.bmp", "e1.bmp", "e2.bmp",
 		"s0.bmp", "s1.bmp", "s2.bmp",
 		"w0.bmp", "w1.bmp", "w2.bmp"
+		// clang-format on
 	};
 	static constexpr size_t kColumnOffsets[kTotalFrames] = {
+		// clang-format off
 		0, 1, 2,
 		4, 5, 6,
 		8, 9, 10,
 		12, 13, 14
+		// clang-format on
 	};
 
 	// Write frames to disk
@@ -315,11 +324,11 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 
 	static constexpr size_t kAnimFramesPerDirection = 4;
 	static constexpr size_t kTotalFramepacks = 4;
-	static constexpr CompositeAnimParams::AnimKey kFramepackKeys[kTotalFramepacks] = {
-		CompositeAnimParams::AnimKey::NWalk,
-		CompositeAnimParams::AnimKey::EWalk,
-		CompositeAnimParams::AnimKey::SWalk,
-		CompositeAnimParams::AnimKey::WWalk
+	static constexpr CharacterAnimKey kFramepackKeys[kTotalFramepacks] = {
+		CharacterAnimKey::NWalk,
+		CharacterAnimKey::EWalk,
+		CharacterAnimKey::SWalk,
+		CharacterAnimKey::WWalk
 	};
 	static constexpr size_t kFramepackSourceFrames[kTotalFramepacks][kAnimFramesPerDirection] = {
 		{ 0, 1, 2, 1 },
@@ -332,7 +341,7 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	for( size_t i_framepack = 0; i_framepack < kTotalFramepacks; i_framepack++ )
 	{
 		size_t const( &sourceFrames )[kAnimFramesPerDirection] = kFramepackSourceFrames[i_framepack];
-		CompositeAnimParams::AnimKey const& framepackKey = kFramepackKeys[i_framepack];
+		CharacterAnimKey const& framepackKey = kFramepackKeys[i_framepack];
 		file::VFSPath const& framepackPath = params.mOutputPaths.at( framepackKey );
 
 		// Create framepack
