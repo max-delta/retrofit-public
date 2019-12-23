@@ -45,15 +45,15 @@ strategy:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Retail'
 
-#    llvm-x86-debug:
-#      buildPlatform: 'x86'
-#      buildConfiguration: 'LLVM_Debug'
-#    llvm-x86-release:
-#      buildPlatform: 'x86'
-#      buildConfiguration: 'LLVM_Release'
-#    llvm-x86-retail:
-#      buildPlatform: 'x86'
-#      buildConfiguration: 'LLVM_Retail'
+    llvm-x86-debug:
+      buildPlatform: 'x86'
+      buildConfiguration: 'LLVM_Debug'
+    llvm-x86-release:
+      buildPlatform: 'x86'
+      buildConfiguration: 'LLVM_Release'
+    llvm-x86-retail:
+      buildPlatform: 'x86'
+      buildConfiguration: 'LLVM_Retail'
 
     llvm-x64-debug:
       buildPlatform: 'x64'
