@@ -79,6 +79,18 @@ size_t CharacterDatabase::DeleteAllCharacters()
 
 
 
+CharacterDatabase::CharacterIDs CharacterDatabase::GetAllCharacterIDs() const
+{
+	CharacterIDs retVal;
+	for( CharacterStorage::value_type const& entry : mStorage )
+	{
+		retVal.emplace_back( entry.first );
+	}
+	return retVal;
+}
+
+
+
 bool CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& directory )
 {
 	file::VFS const& vfs = *app::gVfs;

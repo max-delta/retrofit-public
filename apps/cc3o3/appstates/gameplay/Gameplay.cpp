@@ -6,12 +6,16 @@
 #include "cc3o3/appstates/gameplay/Gameplay_Battle.h"
 #include "cc3o3/appstates/gameplay/Gameplay_Menus.h"
 #include "cc3o3/appstates/AppStateRoute.h"
-#include "cc3o3/Common.h"
-#include "cc3o3/CommonPaths.h"
 #include "cc3o3/char/CharacterDatabase.h"
+#include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/CommonPaths.h"
+#include "cc3o3/Common.h"
+
+#include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateManager.h"
 #include "GameAppState/AppStateTickContext.h"
+#include "GameSprite/CharacterCreator.h"
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFSPath.h"
@@ -56,7 +60,44 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		// NOTE: May override existing characters
 	}
 
-	// TODO: Composite characters
+	// Sanitize characters
+	character::CharacterDatabase::CharacterIDs const characterIDs = charDB.GetAllCharacterIDs();
+	{
+		character::CharacterValidator const& charValidate = *gCharacterValidator;
+
+		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
+		{
+			character::Character character = charDB.FetchExistingCharacter( characterID );
+			charValidate.SanitizeForCharacterCreation( character );
+			charDB.OverwriteExistingCharacter( characterID, std::move( character ) );
+		}
+	}
+
+	// Composite characters
+	{
+		sprite::CharacterCreator& charCreate = *gCharacterCreator;
+
+		sprite::CompositeCharacterParams params = {};
+		params.mCompositeWidth = 32;
+		params.mCompositeHeight = 32;
+		params.mCharPiecesDir = paths::CharacterPieces();
+
+		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
+		{
+			character::Character const input = charDB.FetchExistingCharacter( characterID );
+
+			params.mBaseId = input.mVisuals.mBase;
+			params.mClothingId = input.mVisuals.mClothing;
+			params.mHairId = input.mVisuals.mHair;
+			params.mSpeciesId = input.mVisuals.mSpecies;
+			params.mOutputDir = paths::CompositeCharacters().GetChild( characterID );
+
+			sprite::CompositeCharacter const output = charCreate.CreateCompositeCharacter( params );
+
+			// TODO: Do something with the output
+			( (void)output );
+		}
+	}
 
 	// Start sub-states
 	AppStateManager& appStateMan = internalState.mAppStateManager;

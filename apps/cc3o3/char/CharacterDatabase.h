@@ -9,6 +9,7 @@
 
 #include "rftl/extension/immutable_string.h"
 #include "rftl/unordered_map"
+#include "rftl/vector"
 
 
 namespace RF { namespace cc { namespace character {
@@ -22,6 +23,8 @@ class CharacterDatabase
 	// Types
 public:
 	using CharacterID = rftl::immutable_string;
+	using CharacterIDs = rftl::vector<CharacterID>;
+
 private:
 	using CharacterStorage = rftl::unordered_map<CharacterID, Character>;
 
@@ -37,6 +40,8 @@ public:
 	bool OverwriteExistingCharacter( CharacterID const& id, Character&& character );
 	bool DeleteExistingCharacter( CharacterID const& id );
 	size_t DeleteAllCharacters();
+
+	CharacterIDs GetAllCharacterIDs() const;
 
 	bool LoadFromPersistentStorage( file::VFSPath const& directory );
 	bool SaveToPersistentStorage( file::VFSPath const& directory );
