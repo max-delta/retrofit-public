@@ -19,7 +19,8 @@ class GAMESCRIPTING_API OOLoader
 	//
 	// Public methods
 public:
-	OOLoader() = default;
+	OOLoader();
+	~OOLoader();
 
 	// Only explicitly injected types can be loaded, other types will cause
 	//  load errors when referenced

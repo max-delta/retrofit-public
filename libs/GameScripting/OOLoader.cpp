@@ -563,6 +563,11 @@ bool PopulateClassFromScript(
 }
 ///////////////////////////////////////////////////////////////////////////////
 
+OOLoader::OOLoader() = default;
+OOLoader::~OOLoader() = default;
+
+
+
 bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, char const* name )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = details::GetAllMembers( classInfo, nullptr );
