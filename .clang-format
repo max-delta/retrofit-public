@@ -14,6 +14,9 @@
 ## https://reviews.llvm.org/rL330324
 ## (Fixed between 5.0 and 8.0?)
 #
+# Arbitrary empty lines are added unconditionally
+## https://stackoverflow.com/questions/55169938/clang-linebreak-after-access-modifier
+#
 # There's some new issue past 5.0 where indenting the parameters in the call
 #  to a constructor in an initializer list of another constructor starts
 #  putting in random spaces, because why the fuck not? If you set
