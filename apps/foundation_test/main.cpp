@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "core/macros.h"
 
+#include "rftl/string"
+
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,7 +22,14 @@ int main( int argc, char** argv )
 	int retVal = RUN_ALL_TESTS();
 	if( retVal != 0 )
 	{
-		system( "pause" );
+		if( argc >= 2 && rftl::string( argv[1] ) == "--nopause" )
+		{
+			fputs( "One or more tests failed", stderr );
+		}
+		else
+		{
+			system( "pause" );
+		}
 	}
 	return retVal;
 }
