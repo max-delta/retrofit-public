@@ -91,19 +91,33 @@ CharacterDatabase::CharacterIDs CharacterDatabase::GetAllCharacterIDs() const
 
 
 
-bool CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& directory )
+size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& directory )
 {
 	file::VFS const& vfs = *app::gVfs;
 
-	// TODO: Load user characters as well
+	rftl::vector<file::VFSPath> files;
+	rftl::vector<file::VFSPath> folders;
+	vfs.EnumerateDirectory( directory, file::VFSMount::Permissions::ReadOnly, files, folders );
 
-	// HACK: One hard-coded char
-	// HACK: Assume base char directory
-	// TODO: Enumerate all chars
-	rftl::string source;
+	if( folders.empty() == false )
 	{
-		CharacterID const id{ "claire" };
-		file::VFSPath const path = directory.GetChild( "claire.oo" );
+		RFLOG_WARNING( directory, RFCAT_CC3O3, "Found unexpected folders when enumerating character directory" );
+	}
+
+	// Enumerate all chars
+	rftl::string source;
+	size_t charsLoaded = 0;
+	for( file::VFSPath const& path : files )
+	{
+		// Build id from file name
+		size_t const numElements = path.NumElements();
+		RF_ASSERT( numElements > directory.NumElements() );
+		rftl::string id = path.GetElement( numElements - 1 );
+		RFLOG_TEST_AND_FATAL( id.size() > 3, path, RFCAT_CC3O3, "Expected file to end with '.oo'" );
+		RFLOG_TEST_AND_FATAL( id.at( id.size() - 1 ) == 'o', path, RFCAT_CC3O3, "Expected file to end with '.oo'" );
+		RFLOG_TEST_AND_FATAL( id.at( id.size() - 2 ) == 'o', path, RFCAT_CC3O3, "Expected file to end with '.oo'" );
+		RFLOG_TEST_AND_FATAL( id.at( id.size() - 3 ) == '.', path, RFCAT_CC3O3, "Expected file to end with '.oo'" );
+		id.resize( id.size() - 3 );
 
 		// Load file
 		source.clear();
@@ -156,17 +170,18 @@ bool CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& director
 
 		// Store character
 		SubmitOrOverwriteCharacter( id, rftl::move( character ) );
+		charsLoaded++;
 	}
 
-	return true;
+	return charsLoaded;
 }
 
 
 
-bool CharacterDatabase::SaveToPersistentStorage( file::VFSPath const& directory )
+size_t CharacterDatabase::SaveToPersistentStorage( file::VFSPath const& directory )
 {
 	// TODO
-	return true;
+	return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

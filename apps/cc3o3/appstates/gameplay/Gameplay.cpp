@@ -50,8 +50,10 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		charDB.DeleteAllCharacters();
 
 		// Load base characters
-		bool const charLoad = charDB.LoadFromPersistentStorage( paths::BaseCharacters() );
-		RFLOG_TEST_AND_FATAL( charLoad, nullptr, RFCAT_CC3O3, "Failed to load base characters" );
+		file::VFSPath const base = paths::BaseCharacters();
+		size_t const charsLoaded = charDB.LoadFromPersistentStorage( base );
+		RFLOG_INFO( base, RFCAT_CC3O3, "Loaded %llu chars", charsLoaded );
+		RFLOG_TEST_AND_FATAL( charsLoaded > 0, base, RFCAT_CC3O3, "Failed to load any base characters" );
 
 		// TODO: Load custom characters
 		// NOTE: May override existing characters

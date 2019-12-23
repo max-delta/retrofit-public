@@ -43,8 +43,8 @@ public:
 
 	CharacterIDs GetAllCharacterIDs() const;
 
-	bool LoadFromPersistentStorage( file::VFSPath const& directory );
-	bool SaveToPersistentStorage( file::VFSPath const& directory );
+	size_t LoadFromPersistentStorage( file::VFSPath const& directory );
+	size_t SaveToPersistentStorage( file::VFSPath const& directory );
 
 
 	//
