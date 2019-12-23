@@ -10,7 +10,7 @@ class VFSPath;
 class VFSMount;
 class FileHandle;
 
-typedef UniquePtr<FileHandle> FileHandlePtr;
+using FileHandlePtr = UniquePtr<FileHandle>;
 
 constexpr char kPathDelimiter = '/';
 constexpr char kPathAscensionElement[] = "..";

@@ -42,8 +42,8 @@ class PLATFORMFILESYSTEM_API VFS
 	//
 	// Types
 private:
-	typedef rftl::vector<VFSMount> MountRules;
-	typedef rftl::string MountToken;
+	using MountRules = rftl::vector<VFSMount>;
+	using MountToken = rftl::string;
 
 
 	//
@@ -58,6 +58,7 @@ public:
 	// Public methods
 public:
 	VFS();
+	~VFS();
 
 	FileHandlePtr GetFileForRead( VFSPath const& path ) const; // Must exist, seek start
 	FileHandlePtr GetFileForWrite( VFSPath const& path ) const; // Will create, seek start

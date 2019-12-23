@@ -30,6 +30,10 @@ VFS::VFS()
 
 
 
+VFS::~VFS() = default;
+
+
+
 FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );
@@ -588,16 +592,16 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 			badPathElement = true;
 		}
 		else if(
-			element == kPathAscensionElement && (
-				retVal.mType != VFSMount::Type::ConfigRelative &&
+			element == kPathAscensionElement &&
+			( retVal.mType != VFSMount::Type::ConfigRelative &&
 				retVal.mType != VFSMount::Type::UserRelative ) )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_VFS, "Unsupported path ascension element in non-relative real path" );
 			badPathElement = true;
 		}
 		else if(
-			element == kPathAscensionElement && (
-				retVal.mType == VFSMount::Type::ConfigRelative ||
+			element == kPathAscensionElement &&
+			( retVal.mType == VFSMount::Type::ConfigRelative ||
 				retVal.mType == VFSMount::Type::UserRelative ) &&
 			hasEncounteredDescendToken )
 		{
