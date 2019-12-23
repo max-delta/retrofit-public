@@ -45,8 +45,15 @@
     <ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp" />
     <ClCompile Include="cc3o3.cpp" />
+    <ClCompile Include="char\Character.cpp" />
     <ClCompile Include="char\CharacterDatabase.cpp" />
     <ClCompile Include="char\CharacterValidator.cpp" />
+    <ClCompile Include="char\Description.cpp" />
+    <ClCompile Include="char\ElementSlots.cpp" />
+    <ClCompile Include="char\Equipment.cpp" />
+    <ClCompile Include="char\Genetics.cpp" />
+    <ClCompile Include="char\Stats.cpp" />
+    <ClCompile Include="char\Visuals.cpp" />
     <ClCompile Include="combat\CombatEngine.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
@@ -133,11 +140,17 @@
     <ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
       <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
+      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
       <Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
       <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
+      <Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\GameSprite\GameSprite.vcxproj">
       <Project>{6d71c9f7-3605-4d12-8826-e4c095534887}</Project>
@@ -162,6 +175,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
       <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
+      <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
       <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>

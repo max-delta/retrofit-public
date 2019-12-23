@@ -70,6 +70,10 @@ file::VFSPath Localizations()
 {
 	return file::VFS::kRoot.GetChild( "assets", "localizations" );
 }
+file::VFSPath BaseCharacters()
+{
+	return file::VFS::kRoot.GetChild( "assets", "tables", "world", "chars" );
+}
 file::VFSPath CompositeCharacters()
 {
 	return file::VFS::kRoot.GetChild( "scratch", "composite_char" );

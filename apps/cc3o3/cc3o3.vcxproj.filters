@@ -67,6 +67,27 @@
     <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp">
       <Filter>appstates\titlescreen</Filter>
     </ClCompile>
+    <ClCompile Include="char\Character.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Description.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Genetics.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Visuals.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Stats.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\Equipment.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="char\ElementSlots.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
