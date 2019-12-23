@@ -7,12 +7,14 @@
 #include "cc3o3/appstates/gameplay/Gameplay_Menus.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/Common.h"
+#include "cc3o3/CommonPaths.h"
 #include "cc3o3/char/CharacterDatabase.h"
 
 #include "GameAppState/AppStateManager.h"
 #include "GameAppState/AppStateTickContext.h"
 
 #include "Logging/Logging.h"
+#include "PlatformFilesystem/VFSPath.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -37,9 +39,24 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 	// TODO: Load save
 
-	// Load characters
-	bool const charLoad = gCharacterDatabase->LoadFromPersistentStorage();
-	RFLOG_TEST_AND_FATAL( charLoad, nullptr, RFCAT_CC3O3, "Failed to load character database" );
+	// Prepare the character database
+	character::CharacterDatabase& charDB = *gCharacterDatabase;
+	{
+		// Reset
+		charDB.DeleteAllCharacters();
+
+		// Load base characters
+		bool const charLoad = charDB.LoadFromPersistentStorage( paths::BaseCharacters() );
+		RFLOG_TEST_AND_FATAL( charLoad, nullptr, RFCAT_CC3O3, "Failed to load base characters" );
+
+		// TODO: Load custom characters
+		// NOTE: May override existing characters
+
+		// TODO: Load characters from save
+		// NOTE: May override existing characters
+	}
+
+	// TODO: Composite characters
 
 	// Start sub-states
 	AppStateManager& appStateMan = internalState.mAppStateManager;

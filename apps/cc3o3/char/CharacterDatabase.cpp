@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "CharacterDatabase.h"
 
-#include "cc3o3/CommonPaths.h"
-
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameScripting/OOLoader.h"
@@ -39,6 +37,13 @@ Character CharacterDatabase::FetchExistingCharacter( CharacterID const& id ) con
 
 
 
+void CharacterDatabase::SubmitOrOverwriteCharacter( CharacterID const& id, Character&& character )
+{
+	mStorage[id] = rftl::move( character );
+}
+
+
+
 bool CharacterDatabase::OverwriteExistingCharacter( CharacterID const& id, Character&& character )
 {
 	CharacterStorage::iterator const iter = mStorage.find( id );
@@ -65,18 +70,28 @@ bool CharacterDatabase::DeleteExistingCharacter( CharacterID const& id )
 
 
 
-bool CharacterDatabase::LoadFromPersistentStorage()
+size_t CharacterDatabase::DeleteAllCharacters()
+{
+	size_t const retVal = mStorage.size();
+	mStorage.clear();
+	return retVal;
+}
+
+
+
+bool CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& directory )
 {
 	file::VFS const& vfs = *app::gVfs;
 
 	// TODO: Load user characters as well
 
 	// HACK: One hard-coded char
-	// TODO: Enumerate all base chars
+	// HACK: Assume base char directory
+	// TODO: Enumerate all chars
 	rftl::string source;
 	{
 		CharacterID const id{ "claire" };
-		file::VFSPath const path = paths::BaseCharacters().GetChild( "claire.oo" );
+		file::VFSPath const path = directory.GetChild( "claire.oo" );
 
 		// Load file
 		source.clear();
@@ -128,10 +143,7 @@ bool CharacterDatabase::LoadFromPersistentStorage()
 		}
 
 		// Store character
-		{
-			bool const success = SubmitNewCharacter( id, rftl::move( character ) );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to store" );
-		}
+		SubmitOrOverwriteCharacter( id, rftl::move( character ) );
 	}
 
 	return true;
@@ -139,7 +151,7 @@ bool CharacterDatabase::LoadFromPersistentStorage()
 
 
 
-bool CharacterDatabase::SaveToPersistentStorage()
+bool CharacterDatabase::SaveToPersistentStorage( file::VFSPath const& directory )
 {
 	// TODO
 	return true;
