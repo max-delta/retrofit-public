@@ -119,7 +119,7 @@ Value ConvertValue( Value const& source )
 	InT const* temp = source.GetAs<InT>();
 	if( temp == nullptr )
 	{
-		RF_DBGFAIL();
+		RF_DBGFAIL_MSG( "Failed to convert type" );
 		return Value();
 	}
 

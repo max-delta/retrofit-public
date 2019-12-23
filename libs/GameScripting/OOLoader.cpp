@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "OOLoader.h"
 
+#include "Logging/Logging.h"
+
 #include "core_rftype/TypeTraverser.h"
 #include "core/meta/ScopedCleanup.h"
 
@@ -45,7 +47,7 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 		rftype::TypeTraverser::TraversalType traversalType,
 		rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void
 	{
-		RF_DBGFAIL_MSG( "Unexpected recursion" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unexpected recursion" );
 	};
 
 	rftype::TypeTraverser::TraverseVariablesT(
@@ -90,14 +92,14 @@ bool StoreSingleValueInAccessor(
 	{
 		// TODO: Maybe it's a nested class or a void accessor that can somehow
 		//  accept it? (Ex: a matching or convertible constructor)
-		RF_DBGFAIL_MSG( "Failed to convert script value to accessor target variable type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script value to accessor target variable type" );
 		return false;
 	}
 
 	reflect::Value const intermediate = source.ConvertTo( targetValueType );
 	if( intermediate.GetStoredType() != targetValueType )
 	{
-		RF_DBGFAIL_MSG( "Failed to convert script value to accessor target value type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script value to accessor target value type" );
 		return false;
 	}
 
@@ -105,7 +107,7 @@ bool StoreSingleValueInAccessor(
 	bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue, targetInfo );
 	if( writeSuccess == false )
 	{
-		RF_DBGFAIL_MSG( "Failed to write script value to accessor target" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script value to accessor target" );
 		return false;
 	}
 
@@ -120,16 +122,23 @@ bool WriteScriptValueToMemberVariable(
 {
 	RF_ASSERT( rftl::holds_alternative<reflect::Value>( elemValue ) );
 
+	// Figure out where to write to
+	void* const destination = const_cast<void*>( member.mMemberVariableLocation );
+	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
+	if( destinationType == reflect::Value::Type::Invalid )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Cannot convert script element to an invalid member variable type" );
+		return false;
+	}
+
 	// Load the script value
 	reflect::Value const& source = rftl::get<reflect::Value>( elemValue );
-	void* const destination = const_cast<void*>( member.mMemberVariableLocation );
 
 	// Ensure it's compatible
-	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
 	reflect::Value const intermediate = source.ConvertTo( destinationType );
 	if( intermediate.GetStoredType() != destinationType )
 	{
-		RF_DBGFAIL_MSG( "Failed to convert script element to member variable type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script element to member variable type" );
 		return false;
 	}
 
@@ -153,7 +162,7 @@ bool WriteScriptStringToMemberVariable(
 	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
 	if( accessor == nullptr )
 	{
-		RF_DBGFAIL_MSG( "Failed to convert script array to member variable type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script array to member variable type" );
 		return false;
 	}
 	void* const location = const_cast<void*>( member.mMemberVariableLocation );
@@ -187,7 +196,7 @@ bool WriteScriptStringToMemberVariable(
 		bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
 		if( storeSuccess == false )
 		{
-			RF_DBGFAIL_MSG( "Failed to store script character in accessor" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to store script character in accessor" );
 			return false;
 		}
 	}
@@ -230,7 +239,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const writeSuccess = accessor->mInsertVariableDefault( location, &i, keyInfo );
 			if( writeSuccess == false )
 			{
-				RF_DBGFAIL_MSG( "Failed to write reserve value to accessor target" );
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write reserve value to accessor target" );
 				return false;
 			}
 		}
@@ -255,7 +264,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
 			if( storeSuccess == false )
 			{
-				RF_DBGFAIL_MSG( "Failed to store script value in accessor" );
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to store script value in accessor" );
 				return false;
 			}
 		}
@@ -281,7 +290,7 @@ bool ProcessElementArrayPopulationWork(
 
 			if( accessor->mInsertVariableDefault == nullptr )
 			{
-				RF_DBGFAIL_MSG( "Failed to write any placeholder values to accessor target" );
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
 				return false;
 			}
 
@@ -289,7 +298,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
 			if( writeSuccess == false )
 			{
-				RF_DBGFAIL_MSG( "Failed to write placeholder value to accessor target" );
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
 				return false;
 			}
 
@@ -298,7 +307,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
-				RF_DBGFAIL_MSG( "Failed to read placeholder value from accessor target" );
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
 				return false;
 			}
 
@@ -334,7 +343,7 @@ bool ProcessScriptArrayPopulationWork(
 	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
 	if( accessor == nullptr )
 	{
-		RF_DBGFAIL_MSG( "Failed to convert script array to member variable type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script array to member variable type" );
 		return false;
 	}
 	void* const location = const_cast<void*>( member.mMemberVariableLocation );
@@ -386,7 +395,7 @@ bool QueueScriptInstancePopulationWork(
 	{
 		// Unknown
 
-		RF_DBGFAIL_MSG( "Failed to determine handling for script element instance into member variable type" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to determine handling for script element instance into member variable type" );
 		return false;
 	}
 }
@@ -407,7 +416,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptValueToMemberVariable( elemValue, member );
 		if( writeSuccess == false )
 		{
-			RF_DBGFAIL_MSG( "Failed to write script value to member variable" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script value '%s' to member variable", elemName );
 			return false;
 		}
 	}
@@ -417,7 +426,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptStringToMemberVariable( elemValue, member );
 		if( writeSuccess == false )
 		{
-			RF_DBGFAIL_MSG( "Failed to write script string to member variable" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script string '%s' to member variable", elemName );
 			return false;
 		}
 	}
@@ -427,7 +436,7 @@ bool ProcessScriptVariable(
 		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, currentWorkItem, workItems, elemName, member );
 		if( processSuccess == false )
 		{
-			RF_DBGFAIL_MSG( "Failed to process script array to member variable" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to process script array '%s' to member variable", elemName );
 			return false;
 		}
 	}
@@ -437,13 +446,13 @@ bool ProcessScriptVariable(
 		bool const queueSuccess = QueueScriptInstancePopulationWork( currentWorkItem, workItems, elemName, member );
 		if( queueSuccess == false )
 		{
-			RF_DBGFAIL_MSG( "Failed to prepare processing for script instance to be written into member variable" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to prepare processing for script instance '%s' to be written into member variable", elemName );
 			return false;
 		}
 	}
 	else
 	{
-		RF_DBGFAIL_MSG( "Unknown element type, probably an error in script-handling code" );
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unknown element type on '%s', probably an error in script-handling code", elemName );
 		return false;
 	}
 
@@ -466,7 +475,10 @@ bool ProcessWorkItem(
 
 	// Extract the instance from script
 	SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
-	RF_ASSERT( elemMap.size() > 0 ); // HACK: For testing purposes only
+	if( elemMap.empty() )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element map is empty" );
+	}
 
 	// For each element...
 	for( SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
@@ -476,7 +488,7 @@ bool ProcessWorkItem(
 		char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
 		if( elemName == nullptr )
 		{
-			RF_DBGFAIL_MSG( "Unable to determine identifier for variable" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to determine identifier for variable" );
 			continue;
 		}
 
@@ -493,7 +505,7 @@ bool ProcessWorkItem(
 		}
 		if( foundMember == nullptr )
 		{
-			RF_DBGFAIL_MSG( "Unable to find matching variable with identifier" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to find matching variable with identifier" );
 			continue;
 		}
 		rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
@@ -540,7 +552,7 @@ bool PopulateClassFromScript(
 		{
 			// TODO: This should probably be conditional whether it
 			//  ignores, or aborts the whole process
-			RF_DBGFAIL_MSG( "Unable to convert part of a script" );
+			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to convert part of a script" );
 			continue;
 		}
 	}
