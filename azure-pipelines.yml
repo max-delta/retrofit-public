@@ -110,3 +110,19 @@ steps:
     PathtoPublish: '_artifacts'
     ArtifactName: 'artifacts'
     publishLocation: 'Container'
+
+- task: CmdLine@2
+  condition: eq(variables['buildPlatform'], 'x64')
+  timeoutInMinutes: 1
+  inputs:
+    script: 'core_test.exe --nopause'
+    workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+    failOnStderr: true
+
+- task: CmdLine@2
+  condition: eq(variables['buildPlatform'], 'x64')
+  timeoutInMinutes: 1
+  inputs:
+    script: 'foundation_test.exe --nopause'
+    workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+    failOnStderr: true
