@@ -12,6 +12,7 @@
 #include "rftl/cstdio"
 #include "rftl/filesystem"
 #include "rftl/system_error"
+#include "rftl/unordered_set"
 
 
 namespace RF { namespace file {
@@ -86,6 +87,88 @@ FileHandlePtr VFS::GetRawFileForWrite( char const* rawPath ) const
 	}
 
 	return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+}
+
+
+
+void VFS::EnumerateDirectory(
+	VFSPath const& directory,
+	VFSMount::Permissions permissions,
+	rftl::vector<VFSPath>& files,
+	rftl::vector<VFSPath>& folders ) const
+{
+	files.clear();
+	folders.clear();
+
+	// There may be some overlap across layers, but we only want to retun
+	//  unique results
+	rftl::unordered_set<VFSPath> tempFiles;
+	rftl::unordered_set<VFSPath> tempFolders;
+
+	// Chroot for basic safety and sanitization
+	VFSPath const path = ChrootCollapse( directory );
+	if( path.Empty() )
+	{
+		RFLOG_ERROR( directory, RFCAT_VFS, "Failed to chroot path" );
+		return;
+	}
+
+	// Evaluate each mount point in order
+	for( VFSMount const& mount : mMountTable )
+	{
+		// Attempt mount
+		rftl::string const finalFilename = AttemptMountMapping( mount, path, permissions );
+		if( finalFilename.empty() )
+		{
+			// Cannot mount here
+			continue;
+		}
+
+		bool const exists = rftl::filesystem::exists( finalFilename );
+		if( exists == false )
+		{
+			// Not here, maybe it's in an overlapping mount point
+			continue;
+		}
+
+		bool const isDir = rftl::filesystem::is_directory( finalFilename );
+		if( isDir == false )
+		{
+			// Not a directory in this mount point
+			RFLOG_WARNING( path, RFCAT_VFS, "Looking for directory, found file: %s", finalFilename.c_str() );
+			continue;
+		}
+
+		// Iterate the directory
+		rftl::filesystem::directory_iterator dir( finalFilename );
+		for( rftl::filesystem::directory_entry const& entry : dir )
+		{
+			rftl::string const entryPath = entry.path().generic_string();
+			VFSPath reverseMapping = AttemptMapToVFS( entryPath, permissions );
+			if( entry.is_directory() )
+			{
+				tempFolders.emplace( rftl::move( reverseMapping ) );
+			}
+			else if( entry.is_regular_file() )
+			{
+				tempFiles.emplace( rftl::move( reverseMapping ) );
+			}
+			else
+			{
+				RFLOG_WARNING( path, RFCAT_VFS, "Enumerating directory, found unknown object: %s", entryPath.c_str() );
+			}
+		}
+	}
+
+	// Return unique results
+	for( VFSPath const& file : tempFiles )
+	{
+		files.emplace_back( file );
+	}
+	for( VFSPath const& folder : tempFolders )
+	{
+		folders.emplace_back( folder );
+	}
 }
 
 

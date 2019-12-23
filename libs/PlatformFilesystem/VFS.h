@@ -68,6 +68,12 @@ public:
 
 	FileHandlePtr GetRawFileForWrite( char const* rawPath ) const; // Will create, seek start
 
+	void EnumerateDirectory(
+		VFSPath const& directory,
+		VFSMount::Permissions permissions,
+		rftl::vector<VFSPath>& files,
+		rftl::vector<VFSPath>& folders ) const;
+
 	// The mount table file contains the base rules for all VFS operations
 	// NOTE: Relative entries are relative to the location of the mount file
 	// NOTE: User entries are relative to the provided user directory
