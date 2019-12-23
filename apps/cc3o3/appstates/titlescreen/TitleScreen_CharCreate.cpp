@@ -8,6 +8,7 @@
 #include "cc3o3/char/Character.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -156,9 +157,6 @@ struct TitleScreen_CharCreate::InternalState
 	void Load();
 	void Save();
 
-	UniquePtr<sprite::CharacterCreator> mCharacterCreator;
-	character::CharacterValidator mCharacterValidator;
-
 	using PlayableGeneticsList = rftl::vector<character::CharacterValidator::GeneticsID>;
 	PlayableGeneticsList mPlayableGenetics;
 
@@ -168,23 +166,8 @@ struct TitleScreen_CharCreate::InternalState
 
 
 TitleScreen_CharCreate::InternalState::InternalState()
-	: mCharacterCreator( DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics ) )
-	, mCharacterValidator( app::gVfs, mCharacterCreator )
 {
-	// Init creator
-	sprite::CharacterCreator& charCreate = *mCharacterCreator;
-	charCreate.LoadPieceTables(
-		paths::CharacterTables().GetChild( "pieces.csv" ),
-		paths::CharacterTables().GetChild( "pieces" ) );
-	charCreate.LoadCompositionTable(
-		paths::CharacterTables().GetChild( "composite.csv" ) );
-
-	// Init validator
-	character::CharacterValidator& charValidate = mCharacterValidator;
-	charValidate.LoadGeneticsTable(
-		paths::CharacterTables().GetChild( "genetics.csv" ) );
-	charValidate.LoadStatBonusesTable(
-		paths::CharacterTables().GetChild( "statbonuses.csv" ) );
+	character::CharacterValidator const& charValidate = *gCharacterValidator;
 
 	// Figure out genetics options
 	mPlayableGenetics.clear();
@@ -215,7 +198,7 @@ TitleScreen_CharCreate::InternalState::InternalState()
 
 void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager& uiManager )
 {
-	character::CharacterValidator const& charValidate = mCharacterValidator;
+	character::CharacterValidator const& charValidate = *gCharacterValidator;
 
 	rftl::string const& name = mChar.mDescription.mName;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "O_Charname" )->SetText( name + " [E]" );
@@ -343,7 +326,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 
 void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase )
 {
-	character::CharacterValidator const& charValidate = mCharacterValidator;
+	character::CharacterValidator const& charValidate = *gCharacterValidator;
 
 	if( focusContainerID == uiManager.GetContainerID( "O_Charname" ) )
 	{
@@ -431,7 +414,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 {
 	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
-	sprite::CharacterCreator& charCreate = *mCharacterCreator;
+	sprite::CharacterCreator& charCreate = *gCharacterCreator;
 
 	static constexpr char const kId[] = "CHAR_CREATE_TEMP";
 
@@ -470,7 +453,7 @@ void TitleScreen_CharCreate::InternalState::Load()
 
 	mChar = {};
 
-	character::CharacterValidator const& charValidate = mCharacterValidator;
+	character::CharacterValidator const& charValidate = *gCharacterValidator;
 	charValidate.SanitizeForCharacterCreation( mChar );
 
 	Recomposite();

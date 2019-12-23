@@ -4,18 +4,20 @@
 #include "core/ptr/ptr_fwd.h"
 
 // Forwards
-namespace RF {
-namespace cc {
-namespace character {
-	class CharacterDatabase;
+namespace RF::sprite {
+class CharacterCreator;
 }
-}
+namespace RF::cc::character {
+class CharacterValidator;
+class CharacterDatabase;
 }
 
 namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
+extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
+extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 
 void SystemStartup();

@@ -3,12 +3,15 @@
 
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
+#include "GameSprite/CharacterCreator.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FontRegistry.h"
@@ -121,6 +124,23 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// TODO: Configurable language
 		app::gLocEngine->InitializeFromKeymapFile( vfs, paths::Localizations().GetChild( "en_us.keymap.csv" ), loc::TextDirection::LeftToRight );
 		app::gPageMapper->InitializeFromCharmapFile( vfs, paths::Localizations().GetChild( "en_us.charmap.csv" ) );
+	}
+
+	// Load character creator
+	{
+		gCharacterCreator->LoadPieceTables(
+			paths::CharacterTables().GetChild( "pieces.csv" ),
+			paths::CharacterTables().GetChild( "pieces" ) );
+		gCharacterCreator->LoadCompositionTable(
+			paths::CharacterTables().GetChild( "composite.csv" ) );
+	}
+
+	// Load character validator
+	{
+		gCharacterValidator->LoadGeneticsTable(
+			paths::CharacterTables().GetChild( "genetics.csv" ) );
+		gCharacterValidator->LoadStatBonusesTable(
+			paths::CharacterTables().GetChild( "statbonuses.csv" ) );
 	}
 
 	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );
