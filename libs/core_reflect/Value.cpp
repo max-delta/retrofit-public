@@ -50,11 +50,11 @@ template<> VirtualClass const* ConvertSSToTemp<VirtualClass const*>( rftl::strin
 }
 template<> char ConvertSSToTemp<char>( rftl::stringstream && ss )
 {
-	if( ss.str().size() == 1 )
+	std::string const asStr = ss.str();
+	if( asStr.size() == 1 )
 	{
-		char temp = char();
-		ss >> temp;
-		return temp;
+		// WARNING: (ss >> ch) causes (' ' -> '\0'), so don't use '>>' for char
+		return asStr.at( 0 );
 	}
 	else
 	{

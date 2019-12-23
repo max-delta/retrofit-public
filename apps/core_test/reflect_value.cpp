@@ -317,6 +317,34 @@ TEST( Reflect, StandardValueConvert )
 
 
 
+TEST( Reflect, WhitespaceConvert )
+{
+	// Whitespace often gets questionable special handling in the STL, so we
+	//  need to make sure nothing sketchy ends up in our machinery
+
+	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char>().GetAs<char>(), ' ' );
+	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L' ' );
+	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u' ' );
+	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U' ' );
+
+	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char>().GetAs<char>(), '\t' );
+	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\t' );
+	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\t' );
+	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\t' );
+
+	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char>().GetAs<char>(), '\r' );
+	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\r' );
+	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\r' );
+	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\r' );
+
+	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char>().GetAs<char>(), '\n' );
+	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\n' );
+	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\n' );
+	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\n' );
+}
+
+
+
 TEST( Reflect, SketchyValueConvert )
 {
 	// Converting ints to chars is dangerous business, but Squirrel does it, so
