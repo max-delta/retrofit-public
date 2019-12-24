@@ -60,6 +60,8 @@
     <ClCompile Include="DeveloperHud.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="state\Component.cpp" />
+    <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -115,6 +117,13 @@
     <ClInclude Include="input\project.h" />
     <ClInclude Include="input\stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="state\Component.h" />
+    <ClInclude Include="state\ComponentResolver.h" />
+    <ClInclude Include="state\components\project.h" />
+    <ClInclude Include="state\components\stdafx.h" />
+    <ClInclude Include="state\project.h" />
+    <ClInclude Include="state\StateFwd.h" />
+    <ClInclude Include="state\stdafx.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="time\project.h" />
     <ClInclude Include="time\stdafx.h" />
@@ -127,6 +136,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\libs\core\core.vcxproj">
       <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
+      <Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
       <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>

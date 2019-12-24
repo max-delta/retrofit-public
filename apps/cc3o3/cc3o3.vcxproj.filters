@@ -88,6 +88,12 @@
     <ClCompile Include="char\ElementSlots.cpp">
       <Filter>char</Filter>
     </ClCompile>
+    <ClCompile Include="state\Component.cpp">
+      <Filter>state</Filter>
+    </ClCompile>
+    <ClCompile Include="state\ComponentResolver.cpp">
+      <Filter>state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -249,6 +255,27 @@
     <ClInclude Include="appstates\titlescreen\stdafx.h">
       <Filter>appstates\titlescreen</Filter>
     </ClInclude>
+    <ClInclude Include="state\stdafx.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\project.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\project.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\stdafx.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\StateFwd.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\Component.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\ComponentResolver.h">
+      <Filter>state</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -277,6 +304,12 @@
     </Filter>
     <Filter Include="appstates\titlescreen">
       <UniqueIdentifier>{3f3236b5-7a84-40c0-aff6-4b544a4e0f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="state">
+      <UniqueIdentifier>{55e004f0-699c-4757-8ed6-499239c346e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="state\components">
+      <UniqueIdentifier>{f82d6ced-c55b-4776-87ad-17ca36c276b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
