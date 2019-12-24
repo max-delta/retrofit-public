@@ -70,7 +70,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 		{
 			character::Character character = charDB.FetchExistingCharacter( characterID );
-			charValidate.SanitizeForCharacterCreation( character );
+			charValidate.SanitizeForGameplay( character );
 			charDB.OverwriteExistingCharacter( characterID, std::move( character ) );
 		}
 	}
