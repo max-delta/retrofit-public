@@ -206,16 +206,19 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 		return false;
 	}
 
-	FILE* file;
+	FILE* rawFile;
 	rftl::string collapsedMountFilename = mMountTableFile.CreateString();
-	errno_t const openErr = fopen_s( &file, collapsedMountFilename.c_str(), "r" );
-	if( openErr != 0 || file == nullptr )
+	errno_t const openErr = fopen_s( &rawFile, collapsedMountFilename.c_str(), "r" );
+	FileHandle fileHandle( rftl::move( rawFile ) );
+	rawFile = nullptr;
+
+	if( openErr != 0 || fileHandle.GetFile() == nullptr )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
 
-	return ProcessMountFile( file );
+	return ProcessMountFile( fileHandle.GetFile() );
 }
 
 
