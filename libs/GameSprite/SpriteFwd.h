@@ -12,6 +12,7 @@ class BitmapWriter;
 class BitmapReader;
 class BitmapCache;
 
+struct CompositeCharacter;
 class CharacterCompositor;
 class CharacterCreator;
 

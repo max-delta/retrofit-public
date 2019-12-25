@@ -38,6 +38,7 @@
     <ClInclude Include="BitmapWriter.h" />
     <ClInclude Include="CharacterCompositor.h" />
     <ClInclude Include="CharacterCreator.h" />
+    <ClInclude Include="CompositeCharacter.h" />
     <ClInclude Include="MelaninColorGenerator.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="SpriteFwd.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="BitmapWriter.cpp" />
     <ClCompile Include="CharacterCompositor.cpp" />
     <ClCompile Include="CharacterCreator.cpp" />
+    <ClCompile Include="CompositeCharacter.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MelaninColorGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">

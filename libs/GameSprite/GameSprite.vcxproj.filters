@@ -10,6 +10,7 @@
     <ClCompile Include="CharacterCompositor.cpp" />
     <ClCompile Include="CharacterCreator.cpp" />
     <ClCompile Include="MelaninColorGenerator.cpp" />
+    <ClCompile Include="CompositeCharacter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -22,5 +23,6 @@
     <ClInclude Include="CharacterCompositor.h" />
     <ClInclude Include="CharacterCreator.h" />
     <ClInclude Include="MelaninColorGenerator.h" />
+    <ClInclude Include="CompositeCharacter.h" />
   </ItemGroup>
 </Project>
