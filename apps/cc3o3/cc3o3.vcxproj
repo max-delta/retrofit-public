@@ -63,6 +63,9 @@
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="state\components\Meta.cpp" />
+    <ClCompile Include="state\objects\BattleCharacter.cpp" />
+    <ClCompile Include="state\objects\OverworldCharacter.cpp" />
+    <ClCompile Include="state\objects\SiteCharacter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -123,6 +126,11 @@
     <ClInclude Include="state\components\Meta.h" />
     <ClInclude Include="state\components\project.h" />
     <ClInclude Include="state\components\stdafx.h" />
+    <ClInclude Include="state\objects\BattleCharacter.h" />
+    <ClInclude Include="state\objects\OverworldCharacter.h" />
+    <ClInclude Include="state\objects\project.h" />
+    <ClInclude Include="state\objects\SiteCharacter.h" />
+    <ClInclude Include="state\objects\stdafx.h" />
     <ClInclude Include="state\project.h" />
     <ClInclude Include="state\StateFwd.h" />
     <ClInclude Include="state\stdafx.h" />

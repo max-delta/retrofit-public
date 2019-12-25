@@ -97,6 +97,15 @@
     <ClCompile Include="state\components\Meta.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="state\objects\OverworldCharacter.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="state\objects\SiteCharacter.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="state\objects\BattleCharacter.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -282,6 +291,21 @@
     <ClInclude Include="state\components\Meta.h">
       <Filter>state\components</Filter>
     </ClInclude>
+    <ClInclude Include="state\objects\stdafx.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\project.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\OverworldCharacter.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\SiteCharacter.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\BattleCharacter.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -316,6 +340,9 @@
     </Filter>
     <Filter Include="state\components">
       <UniqueIdentifier>{f82d6ced-c55b-4776-87ad-17ca36c276b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="state\objects">
+      <UniqueIdentifier>{af48043f-db11-4e59-9e25-6340184c412d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
