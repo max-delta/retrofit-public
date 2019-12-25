@@ -94,6 +94,9 @@
     <ClCompile Include="state\ComponentResolver.cpp">
       <Filter>state</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\Meta.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -275,6 +278,9 @@
     </ClInclude>
     <ClInclude Include="state\ComponentResolver.h">
       <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Meta.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

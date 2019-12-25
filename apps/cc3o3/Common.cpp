@@ -3,6 +3,7 @@
 
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -11,6 +12,8 @@
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFS.h"
+
+#include "core_component/TypedObjectManager.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/ptr/unique_ptr.h"
@@ -24,9 +27,11 @@ namespace RF { namespace cc {
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+WeakPtr<state::ObjectManager> gObjectManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
+static UniquePtr<state::ObjectManager> sObjectManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +58,11 @@ void SystemStartup()
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character database..." );
 	sCharacterDatabase = DefaultCreator<character::CharacterDatabase>::Create();
 	gCharacterDatabase = sCharacterDatabase;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing object manager..." );
+	sObjectManager = DefaultCreator<state::ObjectManager>::Create(
+		component::ManagerIdentifier( 1u ), component::ScopeIdentifier( 1u ), state::ComponentResolver() );
+	gObjectManager = sObjectManager;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "System startup complete" );
 }

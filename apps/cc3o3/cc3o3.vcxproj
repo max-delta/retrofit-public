@@ -62,6 +62,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
+    <ClCompile Include="state\components\Meta.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -119,6 +120,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="state\Component.h" />
     <ClInclude Include="state\ComponentResolver.h" />
+    <ClInclude Include="state\components\Meta.h" />
     <ClInclude Include="state\components\project.h" />
     <ClInclude Include="state\components\stdafx.h" />
     <ClInclude Include="state\project.h" />
