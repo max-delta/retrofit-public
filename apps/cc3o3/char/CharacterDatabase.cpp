@@ -14,12 +14,12 @@ namespace RF { namespace cc { namespace character {
 
 bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, Character&& character )
 {
-	if( mStorage.count( id ) != 0 )
+	if( mCharacterStorage.count( id ) != 0 )
 	{
 		return false;
 	}
 
-	mStorage[id] = rftl::move( character );
+	mCharacterStorage[id] = rftl::move( character );
 	return true;
 }
 
@@ -27,8 +27,8 @@ bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, Ch
 
 Character CharacterDatabase::FetchExistingCharacter( CharacterID const& id ) const
 {
-	CharacterStorage::const_iterator const iter = mStorage.find( id );
-	if( iter == mStorage.end() )
+	CharacterStorage::const_iterator const iter = mCharacterStorage.find( id );
+	if( iter == mCharacterStorage.end() )
 	{
 		return Character();
 	}
@@ -39,15 +39,15 @@ Character CharacterDatabase::FetchExistingCharacter( CharacterID const& id ) con
 
 void CharacterDatabase::SubmitOrOverwriteCharacter( CharacterID const& id, Character&& character )
 {
-	mStorage[id] = rftl::move( character );
+	mCharacterStorage[id] = rftl::move( character );
 }
 
 
 
 bool CharacterDatabase::OverwriteExistingCharacter( CharacterID const& id, Character&& character )
 {
-	CharacterStorage::iterator const iter = mStorage.find( id );
-	if( iter == mStorage.end() )
+	CharacterStorage::iterator const iter = mCharacterStorage.find( id );
+	if( iter == mCharacterStorage.end() )
 	{
 		return false;
 	}
@@ -59,12 +59,12 @@ bool CharacterDatabase::OverwriteExistingCharacter( CharacterID const& id, Chara
 
 bool CharacterDatabase::DeleteExistingCharacter( CharacterID const& id )
 {
-	CharacterStorage::const_iterator const iter = mStorage.find( id );
-	if( iter == mStorage.end() )
+	CharacterStorage::const_iterator const iter = mCharacterStorage.find( id );
+	if( iter == mCharacterStorage.end() )
 	{
 		return false;
 	}
-	mStorage.erase( iter );
+	mCharacterStorage.erase( iter );
 	return true;
 }
 
@@ -72,9 +72,28 @@ bool CharacterDatabase::DeleteExistingCharacter( CharacterID const& id )
 
 size_t CharacterDatabase::DeleteAllCharacters()
 {
-	size_t const retVal = mStorage.size();
-	mStorage.clear();
+	size_t const retVal = mCharacterStorage.size();
+	mCharacterStorage.clear();
 	return retVal;
+}
+
+
+
+sprite::CompositeCharacter CharacterDatabase::FetchExistingComposite( CharacterID const& id ) const
+{
+	CompositeStorage::const_iterator const iter = mCompositeStorage.find( id );
+	if( iter == mCompositeStorage.end() )
+	{
+		return sprite::CompositeCharacter();
+	}
+	return iter->second;
+}
+
+
+
+void CharacterDatabase::SubmitOrOverwriteComposite( CharacterID const& id, sprite::CompositeCharacter&& composite )
+{
+	mCompositeStorage[id] = rftl::move( composite );
 }
 
 
@@ -82,7 +101,7 @@ size_t CharacterDatabase::DeleteAllCharacters()
 CharacterDatabase::CharacterIDs CharacterDatabase::GetAllCharacterIDs() const
 {
 	CharacterIDs retVal;
-	for( CharacterStorage::value_type const& entry : mStorage )
+	for( CharacterStorage::value_type const& entry : mCharacterStorage )
 	{
 		retVal.emplace_back( entry.first );
 	}

@@ -3,6 +3,8 @@
 
 #include "cc3o3/char/Character.h"
 
+#include "GameSprite/CompositeCharacter.h"
+
 #include "PlatformFilesystem/VFSFwd.h"
 
 #include "core/macros.h"
@@ -27,6 +29,7 @@ public:
 
 private:
 	using CharacterStorage = rftl::unordered_map<CharacterID, Character>;
+	using CompositeStorage = rftl::unordered_map<CharacterID, sprite::CompositeCharacter>;
 
 
 	//
@@ -41,6 +44,9 @@ public:
 	bool DeleteExistingCharacter( CharacterID const& id );
 	size_t DeleteAllCharacters();
 
+	sprite::CompositeCharacter FetchExistingComposite( CharacterID const& id ) const;
+	void SubmitOrOverwriteComposite( CharacterID const& id, sprite::CompositeCharacter&& composite );
+
 	CharacterIDs GetAllCharacterIDs() const;
 
 	size_t LoadFromPersistentStorage( file::VFSPath const& directory );
@@ -50,7 +56,8 @@ public:
 	//
 	// Private data
 private:
-	CharacterStorage mStorage;
+	CharacterStorage mCharacterStorage;
+	CompositeStorage mCompositeStorage;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

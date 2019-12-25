@@ -100,10 +100,8 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			params.mSpeciesId = input.mVisuals.mSpecies;
 			params.mOutputDir = paths::CompositeCharacters().GetChild( characterID );
 
-			sprite::CompositeCharacter const output = charCreate.CreateCompositeCharacter( params );
-
-			// TODO: Do something with the output
-			( (void)output );
+			sprite::CompositeCharacter output = charCreate.CreateCompositeCharacter( params );
+			charDB.SubmitOrOverwriteComposite( characterID, rftl::move( output ) );
 		}
 	}
 
