@@ -9,7 +9,9 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/state/ComponentResolver.h"
-#include "cc3o3/state/components/Meta.h"
+#include "cc3o3/state/objects/OverworldCharacter.h"
+#include "cc3o3/state/objects/SiteCharacter.h"
+#include "cc3o3/state/objects/BattleCharacter.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
@@ -25,6 +27,7 @@
 #include "core_component/TypedObjectManager.h"
 #include "core_component/ObjectRef.h"
 #include "core_component/ComponentRef.h"
+#include "core_state/VariableIdentifier.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -105,12 +108,23 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		}
 	}
 
-	// TODO: Set up objects
+	// Set up objects
 	{
-		using namespace state::comp;
+		using namespace state;
+		using namespace state::obj;
+		using namespace component;
 
-		component::MutableObjectRef TODO = gObjectManager->AddObject();
-		gObjectManager->AddComponentT<Meta>( TODO.GetIdentifier(), DefaultCreator<Meta>::Create() );
+		// Set up all party characters
+		// TODO: Data-driven list
+		VariableIdentifier const charRoot{ "party" };
+		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
+		{
+			MutableObjectRef const newChar = CreateOverworldCharacterFromDB( charRoot.GetChild( characterID ), characterID );
+			MakeSiteCharacterFromDB( newChar, characterID );
+			MakeBattleCharacterFromDB( newChar, characterID );
+		}
+
+		// TODO: Check party conditions, auto-fill if needed
 	}
 
 	// Start sub-states
