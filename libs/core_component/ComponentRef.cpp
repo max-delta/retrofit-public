@@ -8,6 +8,13 @@
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool ComponentRef::IsSet() const
+{
+	return mManager != nullptr;
+}
+
+
+
 ObjectRef ComponentRef::GetObject() const
 {
 	return ObjectManager::ConversionHelpers::CreateObjectRef( *this );
@@ -21,6 +28,13 @@ ResolvedComponentType ComponentRef::GetComponentType() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+bool MutableComponentRef::IsSet() const
+{
+	return mManager != nullptr;
+}
+
+
 
 MutableObjectRef MutableComponentRef::GetObject() const
 {

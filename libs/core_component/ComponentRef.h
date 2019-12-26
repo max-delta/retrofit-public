@@ -20,6 +20,7 @@ private:
 public:
 	ComponentRef() = default;
 
+	bool IsSet() const;
 	ObjectRef GetObject() const;
 	ResolvedComponentType GetComponentType() const;
 
@@ -49,6 +50,7 @@ private:
 public:
 	MutableComponentRef() = default;
 
+	bool IsSet() const;
 	MutableObjectRef GetObject() const;
 	ResolvedComponentType GetComponentType() const;
 
