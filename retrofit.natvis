@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns = "http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+
+	<!--
+		Generic containers
+	-->
+
 	<Type Name = "rftl::static_vector&lt;*&gt;::Storage">
 		<DisplayString>{ *(value_type*)mData }</DisplayString>
 		<Expand>
@@ -8,4 +13,21 @@
 			</Item>
 		</Expand>
 	</Type>
+
+
+	<!--
+		Generic pointers
+	-->
+
+	<Type Name = "RF::PtrBase&lt;*&gt;">
+		<DisplayString>
+			Strong: { mRef->mStrongCount._Storage._Value }, Weak: { mRef->mWeakCount._Storage._Value }
+		</DisplayString>
+		<Expand>
+			<ExpandedItem>
+				mTarget
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
 </AutoVisualizer>
