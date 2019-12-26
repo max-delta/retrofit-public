@@ -1,0 +1,114 @@
+# AI
+
+### Overview
+
+Chain of command:
+* GamePlanner <- ThreatPlanner
+* ThreatPlanner
+* GamePlanner <- TurnPlanner
+* TurnPlanner <- PawnPlanner
+* PawnPlanner
+
+Questions:
+* GamePlanner
+	* ThreatPlanner, what is my opponent trying to do?
+	* ThreatPlanner, how open is my opponent?
+	* ThreatPlanner, how open am I?
+	* TurnPlanner, what are the pros of an [X] turn?
+	* TurnPlanner, what are the cons of an [X] turn?
+* TurnPlanner
+	* PawnPlanner, what are the pros of an [X] sequence?
+	* PawnPlanner, what are the cons of an [X] sequence?
+	* PawnPlanner, what if your allies helped you?
+* PawnPlanner
+	* N/A
+* ThreatPlanner
+	* N/A
+
+Considerations:
+* GamePlanner
+	* How can I best thwart my opponent's goals?
+	* How can I best capitilize my opponent's opening?
+	* How can I best strengthen my position?
+	* How effective are my options?
+	* How risky are my options?
+	* (Opponent turn) Do I need to interrupt this?
+* TurnPlanner
+	* What are the basic building blocks of a turn?
+	* What kinds of configurations can be built?
+	* Who can execute which building blocks?
+	* What order can they be executed in?
+	* What benefits and detriments will a config cause?
+* PawnPlanner
+	* How much stamina do I have?
+	* How much stamina could I have if my allies stalled?
+	* How much guage do I have?
+	* How much guage can I build?
+	* What's the best attack chain I can do?
+	* What's the best spell I can cast?
+	* What effects will my actions cause on others?
+	* What state will I be left in after my actions?
+* ThreatPlanner
+	* What did our opponent do last turn?
+	* What has our opponent been doing?
+	* How much health do we / our enemies have?
+	* How much guage do we / our enemies have?
+	* How many elements do we / our enemies have?
+		* What tiers?
+	* How much meter do we / our opponent have?
+
+Example turns:
+* Build guage
+* Build meter
+* Heal
+* Buff
+* Debuff
+* Kill/pressure everyone
+	* Favor attacks
+	* Favor spells
+	* Favor both
+* Kill/pressure someone
+	* Favor attacks
+	* Favor spells
+	* Favor both
+* Dilute the field
+* Lock out a threat
+* Do something gimmicky
+
+Example turn modifiers:
+* No modifier
+* Try to end in a defensive stance
+
+Example building blocks:
+* Cast spell with whatever guage you already have
+* Build guage on anyone if needed, cast [X]-type spell
+* Attack specific target, cast [X]-type spell
+* Immediately defend
+* Attack specific target, defend
+* Continue a chain, defend
+
+Example spells types:
+* Buff [X]-type
+* Debuff [X]-type
+* Heal
+* Damage
+* Lock [X]-type
+
+Example spell modifiers:
+* No modifier
+* Use the color [X]
+
+
+### Config
+
+(TODO)
+Maybe:
+* List of turns
+	* Each turn has a list of rationales
+		* GamePlanner uses this
+	* Each turn has a list of building block sequences
+		* TurnPlanner uses this
+* Each encounter can set rationale weight modifiers
+	* Can modify globally
+	* Can modify for specific turns
+		* Example: Prioritize a specific mechanic
