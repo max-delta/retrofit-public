@@ -1,6 +1,9 @@
 #pragma once
 #include "project.h"
 
+#include "GameAppState/AppStateFwd.h"
+
+
 namespace RF { namespace cc {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -20,6 +23,9 @@ void ProcessFrame();
 void Shutdown();
 
 SimulationMode DebugGetPreviousFrameSimulationMode();
+
+// WARNING: Rollback behavior unreliable across global state changes
+void RequestGlobalDeferredStateChange( appstate::AppStateID stateID );
 
 ///////////////////////////////////////////////////////////////////////////////
 }}

@@ -308,7 +308,10 @@ void ProcessFrame()
 			// Tick the frame
 			RollbackTickWrapper( []() -> void {
 				sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
-				sAppStateManager.ApplyDeferredStateChange();
+
+				// WARNING: Intentionally not re-simulating global state change
+				// NOTE: Behaviour here will be erratic, but likely non-fatal
+				//sAppStateManager.ApplyDeferredStateChange();
 			} );
 
 			// Move to the next frame
@@ -333,6 +336,8 @@ void ProcessFrame()
 
 	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
+
+	// WARNING: Rollback behavior unreliable across global state changes
 	sAppStateManager.ApplyDeferredStateChange();
 
 	// Lock read heads to after the last commit, and write heads to the start
@@ -408,6 +413,13 @@ void Shutdown()
 SimulationMode DebugGetPreviousFrameSimulationMode()
 {
 	return sDebugPreviousFrameSimulationMode;
+}
+
+
+
+void RequestGlobalDeferredStateChange( appstate::AppStateID stateID )
+{
+	sAppStateManager.RequestDeferredStateChange( stateID );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

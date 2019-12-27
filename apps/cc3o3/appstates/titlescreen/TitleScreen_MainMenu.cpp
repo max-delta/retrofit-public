@@ -5,6 +5,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/cc3o3.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -280,7 +281,7 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 				{
 					if( currentFocusContainerID == uiManager.GetContainerID( details::kSinglePlayerTag ) )
 					{
-						RF_TODO_BREAK_MSG( "Single player" );
+						RequestGlobalDeferredStateChange( id::Gameplay );
 					}
 					else if( currentFocusContainerID == uiManager.GetContainerID( details::kMultiplayerTag ) )
 					{
