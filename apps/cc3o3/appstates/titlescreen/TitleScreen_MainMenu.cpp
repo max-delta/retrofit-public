@@ -139,7 +139,8 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		constexpr gfx::PPUCoordElem kMenuEntryPadding = 6;
 		gfx::PPUCoord const menuDimensions = {
 			kMenuEntryHitboxWidth,
-			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() ) };
+			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() )
+		};
 		WeakPtr<ui::controller::Floater> const menuPane =
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 1 ),
@@ -266,14 +267,14 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 				{
 					currentFocusTarget = currentFocus->mFocusTarget;
 				}
-				if(currentFocusTarget != nullptr)
+				if( currentFocusTarget != nullptr )
 				{
 					RF_ASSERT( currentFocusTarget->HasHardFocus() );
 					currentFocusContainerID = currentFocusTarget->mContainerID;
 				}
 			}
 
-			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus)
+			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
