@@ -23,16 +23,16 @@ public:
 	// Public data
 public:
 	static_assert( sizeof( ManagedFramePackID ) == sizeof( uint16_t ), "Re-evaluate packing" );
-	ManagedFramePackID mFramePackID;
+	ManagedFramePackID mFramePackID = kInvalidManagedFramePackID;
 
 	static_assert( sizeof( PPUCoordElem ) == sizeof( int16_t ), "Re-evaluate packing" );
-	PPUCoordElem mXCoord;
-	PPUCoordElem mYCoord;
+	PPUCoordElem mXCoord = 0;
+	PPUCoordElem mYCoord = 0;
 	static_assert( sizeof( PPUDepthLayer ) == sizeof( int8_t ), "Re-evaluate packing" );
-	PPUDepthLayer mZLayer;
+	PPUDepthLayer mZLayer = 0;
 
-	uint8_t mGFXModifier;
-	PPUTimer mTimer;
+	uint8_t mGFXModifier = 0;
+	PPUTimer mTimer = {};
 
 	bool mLooping : 1;
 	bool mPaused : 1;
@@ -44,7 +44,7 @@ public:
 	uint8_t reserved3 : 8;
 	uint8_t reserved4 : 8;
 
-	float mTransform[2][2];
+	float mTransform[2][2] = {};
 };
 static_assert( sizeof( Object ) == 32, "Double-check Object storage" );
 static_assert( alignof( Object ) == 4, "Double-check Object alignment" );

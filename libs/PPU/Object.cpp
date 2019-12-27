@@ -1,10 +1,6 @@
 #include "stdafx.h"
 #include "Object.h"
 
-#include "core_math/math_clamps.h"
-
-#include "rftl/limits"
-
 
 namespace RF { namespace gfx {
 ///////////////////////////////////////////////////////////////////////////////
