@@ -27,6 +27,7 @@
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
+#include "PPU/FramePack.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -118,8 +119,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				centerRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::FramePackDisplay>::Create() );
 		logo->SetJustification( ui::Justification::MiddleCenter );
+		gfx::ManagedFramePackID const logoFpackID = framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" );
+		gfx::FramePackBase const& logoFpack = *framePackMan.GetResourceFromManagedResourceID( logoFpackID );
 		logo->SetFramePack(
-			framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" ),
+			logoFpackID,
+			logoFpack.CalculateTimeIndexBoundary(),
 			192,
 			96 );
 

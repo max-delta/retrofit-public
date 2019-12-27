@@ -19,7 +19,7 @@ class GAMEUI_API FramePackDisplay final : public InstancedController
 public:
 	FramePackDisplay() = default;
 
-	void SetFramePack( gfx::ManagedFramePackID framePack, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight );
+	void SetFramePack( gfx::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight );
 	void SetSlowdown( gfx::TimeSlowdownRate rate );
 	void SetJustification( Justification justification );
 

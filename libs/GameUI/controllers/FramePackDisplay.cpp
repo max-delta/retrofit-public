@@ -21,9 +21,10 @@ RFTYPE_CREATE_META( RF::ui::controller::FramePackDisplay )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void FramePackDisplay::SetFramePack( gfx::ManagedFramePackID framePack, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight )
+void FramePackDisplay::SetFramePack( gfx::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight )
 {
 	mObject.mFramePackID = framePack;
+	mObject.mTimer.mMaxTimeIndex = maxTimeIndex;
 	mExpectedDimensions = { expectedWidth, expectedHeight };
 }
 

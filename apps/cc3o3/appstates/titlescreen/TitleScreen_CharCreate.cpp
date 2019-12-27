@@ -631,11 +631,13 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::FramePackDisplay>::Create() );
 			preview->SetJustification( ui::Justification::MiddleCenter );
 			gfx::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
+			gfx::FramePackBase const& fPack = *framePackMan.GetResourceFromManagedResourceID( previewFpackID );
 			preview->SetFramePack(
 				previewFpackID,
+				fPack.CalculateTimeIndexBoundary(),
 				32,
 				32 );
-			preview->SetSlowdown( framePackMan.GetResourceFromManagedResourceID( previewFpackID )->mPreferredSlowdownRate );
+			preview->SetSlowdown( fPack.mPreferredSlowdownRate );
 
 			// Cut bottom in 2
 			ui::controller::ColumnSlicer::Ratios const rightColumnRatios = {
