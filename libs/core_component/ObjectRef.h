@@ -54,6 +54,7 @@ public:
 	ObjectIdentifier GetIdentifier() const;
 
 	MutableComponentRef GetComponent( ResolvedComponentType componentType ) const;
+	MutableComponentRef AddComponent( ResolvedComponentType componentType, ComponentInstance&& instance ) const;
 
 	// Implicit decay to const ref
 	operator ObjectRef() const;

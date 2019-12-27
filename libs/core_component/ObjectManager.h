@@ -21,12 +21,6 @@ public:
 	using InternalStateIteration = uint64_t;
 	static constexpr ScopeIdentifier kDefaultScopeIdentifier = kInvalidScopeIdentifier + 1;
 
-	// Object manager isn't type-aware, so derived/wrapper classes are responsible
-	//  for allocation of the actual components themselves
-	using ComponentInstance = UniquePtr<void>;
-	using ComponentInstanceRef = WeakPtr<void const>;
-	using MutableComponentInstanceRef = WeakPtr<void>;
-
 private:
 	using ScopedObjectIdentifier = uint32_t;
 	using ObjectSet = rftl::unordered_set<ObjectIdentifier>;
@@ -61,6 +55,8 @@ public:
 	bool RemoveObject( ObjectIdentifier identifier );
 
 	// Component management
+	// NOTE: Object manager isn't type-aware, so derived/wrapper classes are
+	//  responsible for allocation of the actual components themselves
 	bool IsValidComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	ComponentRef GetComponent( ObjectIdentifier identifier, ResolvedComponentType componentType ) const;
 	MutableComponentRef GetMutableComponent( ObjectIdentifier identifier, ResolvedComponentType componentType );

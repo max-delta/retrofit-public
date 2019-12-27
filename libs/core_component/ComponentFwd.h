@@ -1,4 +1,6 @@
 #pragma once
+#include "core/ptr/ptr_fwd.h"
+
 #include "rftl/cstdint"
 
 
@@ -18,6 +20,9 @@ using ResolvedComponentType = uint64_t;
 static constexpr ResolvedComponentType kInvalidResolvedComponentType = 0;
 
 using ComponentLabel = char const*;
+using ComponentInstance = UniquePtr<void>;
+using ComponentInstanceRef = WeakPtr<void const>;
+using MutableComponentInstanceRef = WeakPtr<void>;
 
 class ObjectRef;
 class MutableObjectRef;

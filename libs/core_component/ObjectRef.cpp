@@ -36,6 +36,13 @@ MutableComponentRef MutableObjectRef::GetComponent( ResolvedComponentType compon
 
 
 
+MutableComponentRef MutableObjectRef::AddComponent( ResolvedComponentType componentType, ComponentInstance&& instance ) const
+{
+	return mManager->AddComponent( mIdentifier, componentType, rftl::move( instance ) );
+}
+
+
+
 MutableObjectRef::operator ObjectRef() const
 {
 	return ObjectManager::ConversionHelpers::CreateObjectRef( *this );

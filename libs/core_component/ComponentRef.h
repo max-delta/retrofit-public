@@ -23,6 +23,7 @@ public:
 	bool IsSet() const;
 	ObjectRef GetObject() const;
 	ResolvedComponentType GetComponentType() const;
+	ComponentInstanceRef GetComponentInstance() const;
 
 
 	//
@@ -53,6 +54,8 @@ public:
 	bool IsSet() const;
 	MutableObjectRef GetObject() const;
 	ResolvedComponentType GetComponentType() const;
+	ComponentInstanceRef GetComponentInstance() const;
+	MutableComponentInstanceRef GetMutableComponentInstance() const;
 
 	// Implicit decay to const ref
 	operator ComponentRef() const;

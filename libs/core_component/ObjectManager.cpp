@@ -252,14 +252,14 @@ View ObjectManager::GetIntersectionView( rftl::unordered_set<ResolvedComponentTy
 
 
 
-ObjectManager::ComponentInstanceRef ObjectManager::GetComponentInstance( ComponentRef const& component ) const
+ComponentInstanceRef ObjectManager::GetComponentInstance( ComponentRef const& component ) const
 {
 	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
 }
 
 
 
-ObjectManager::MutableComponentInstanceRef ObjectManager::GetMutableComponentInstance( MutableComponentRef const& component )
+MutableComponentInstanceRef ObjectManager::GetMutableComponentInstance( MutableComponentRef const& component )
 {
 	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
 }

@@ -69,8 +69,8 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ObjectIdentifier const objID = newObj.GetIdentifier();
 	ObjectManager::InternalStateIteration latestState = manager.GetInternalStateIteration();
 
-	ObjectManager::ComponentInstance newInstance = VoidCreator::Create( const_cast<void*>( compiler::kInvalidNonNullPointer ) );
-	ObjectManager::ComponentInstanceRef const newInstRef = newInstance;
+	ComponentInstance newInstance = VoidCreator::Create( const_cast<void*>( compiler::kInvalidNonNullPointer ) );
+	ComponentInstanceRef const newInstRef = newInstance;
 
 	MutableComponentRef const newComp = manager.AddComponent( objID, kCompType, rftl::move( newInstance ) );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
@@ -82,13 +82,15 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_TRUE( validPostAdd );
 
-	ObjectManager::ComponentInstanceRef const instRef = manager.GetComponentInstance( newComp );
+	ComponentInstanceRef const instRef = manager.GetComponentInstance( newComp );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_EQ( instRef, newComp.GetComponentInstance() );
 	ASSERT_NE( instRef, nullptr );
 	ASSERT_EQ( instRef, newInstRef );
 
-	ObjectManager::MutableComponentInstanceRef const mutInstRef = manager.GetMutableComponentInstance( newComp );
+	MutableComponentInstanceRef const mutInstRef = manager.GetMutableComponentInstance( newComp );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
+	ASSERT_EQ( mutInstRef, newComp.GetMutableComponentInstance() );
 	ASSERT_NE( mutInstRef, nullptr );
 	ASSERT_EQ( mutInstRef, newInstRef );
 
