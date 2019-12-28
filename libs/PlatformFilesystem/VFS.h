@@ -39,6 +39,8 @@ constexpr char kMountTokenReadExecute[] = "rx";
 
 class PLATFORMFILESYSTEM_API VFS
 {
+	RF_DEFAULT_COPY( VFS );
+
 	//
 	// Types
 private:

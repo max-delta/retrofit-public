@@ -39,6 +39,8 @@ enum class CharacterAnimKey : uint8_t
 
 struct GAMESPRITE_API CompositeCharacter
 {
+	RF_DEFAULT_COPY( CompositeCharacter );
+
 	CompositeCharacter();
 	~CompositeCharacter();
 
