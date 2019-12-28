@@ -20,6 +20,13 @@ ComponentRef ObjectRef::GetComponent( ResolvedComponentType componentType ) cons
 	return ObjectManager::ConversionHelpers::CreateComponentRef( *this, componentType );
 }
 
+
+
+bool ObjectRef::operator==( ObjectRef const& rhs ) const
+{
+	return mManager == rhs.mManager && mIdentifier == rhs.mIdentifier;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 ObjectIdentifier MutableObjectRef::GetIdentifier() const
@@ -46,6 +53,13 @@ MutableComponentRef MutableObjectRef::AddComponent( ResolvedComponentType compon
 MutableObjectRef::operator ObjectRef() const
 {
 	return ObjectManager::ConversionHelpers::CreateObjectRef( *this );
+}
+
+
+
+bool MutableObjectRef::operator==( ObjectRef const& rhs ) const
+{
+	return operator ObjectRef().operator==( rhs );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

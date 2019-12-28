@@ -36,6 +36,13 @@ ComponentInstanceRef ComponentRef::GetComponentInstance() const
 	return mManager->GetComponentInstance( *this );
 }
 
+
+
+bool ComponentRef::operator==( ComponentRef const& rhs ) const
+{
+	return mManager == rhs.mManager && mIdentifier == rhs.mIdentifier && mComponentType == rhs.mComponentType;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 bool MutableComponentRef::IsSet() const
@@ -76,6 +83,13 @@ MutableComponentInstanceRef MutableComponentRef::GetMutableComponentInstance() c
 MutableComponentRef::operator ComponentRef() const
 {
 	return ObjectManager::ConversionHelpers::CreateComponentRef( *this );
+}
+
+
+
+bool MutableComponentRef::operator==( ComponentRef const& rhs ) const
+{
+	return operator ComponentRef().operator==( rhs );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

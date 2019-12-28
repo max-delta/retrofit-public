@@ -46,6 +46,13 @@ TEST( ObjectManager, BasicAddRemoveObject )
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_TRUE( validPostAdd );
 
+	{
+		ObjectRef const viaGet = manager.GetObject( newObj.GetIdentifier() );
+		ASSERT_EQ( viaGet, newObj );
+		MutableObjectRef const viaMut = manager.GetMutableObject( newObj.GetIdentifier() );
+		ASSERT_EQ( viaMut, newObj );
+	}
+
 	bool const removeSuccess = manager.RemoveObject( newObj.GetIdentifier() );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );
 	ASSERT_TRUE( removeSuccess );
@@ -93,6 +100,26 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ASSERT_EQ( mutInstRef, newComp.GetMutableComponentInstance() );
 	ASSERT_NE( mutInstRef, nullptr );
 	ASSERT_EQ( mutInstRef, newInstRef );
+
+	{
+		MutableObjectRef const mutObj = manager.GetMutableObject( newObj.GetIdentifier() );
+
+		ComponentRef const viaGet = manager.GetComponent( newComp.GetObject().GetIdentifier(), newComp.GetComponentType() );
+		ASSERT_EQ( viaGet, newComp );
+		MutableComponentRef const viaMut = manager.GetMutableComponent( newComp.GetObject().GetIdentifier(), newComp.GetComponentType() );
+		ASSERT_EQ( viaMut, newComp );
+		ComponentRef const viaObjGet = newObj.GetComponent( newComp.GetComponentType() );
+		ASSERT_EQ( viaObjGet, newComp );
+		MutableComponentRef const viaObjMut = mutObj.GetComponent( newComp.GetComponentType() );
+		ASSERT_EQ( viaObjMut, newComp );
+
+		ComponentInstanceRef const viaGetCompGet = viaObjGet.GetComponentInstance();
+		ASSERT_EQ( viaGetCompGet, newInstRef );
+		ComponentInstanceRef const viaMutCompGet = viaObjMut.GetComponentInstance();
+		ASSERT_EQ( viaMutCompGet, newInstRef );
+		MutableComponentInstanceRef const viaMutCompMut = viaObjMut.GetMutableComponentInstance();
+		ASSERT_EQ( viaMutCompMut, newInstRef );
+	}
 
 	bool const removeSuccess = manager.RemoveComponent( objID, kCompType );
 	ASSERT_NE( manager.GetInternalStateIteration(), latestState );

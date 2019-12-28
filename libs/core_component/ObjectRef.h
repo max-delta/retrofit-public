@@ -25,10 +25,12 @@ public:
 
 	ComponentRef GetComponent( ResolvedComponentType componentType ) const;
 
+	bool operator==( ObjectRef const& rhs ) const;
+
 
 	//
-	// Private data
-private:
+	// Protected data
+protected:
 	ObjectManager const* mManager = nullptr;
 	ObjectIdentifier mIdentifier = kInvalidObjectIdentifier;
 };
@@ -58,11 +60,12 @@ public:
 
 	// Implicit decay to const ref
 	operator ObjectRef() const;
+	bool operator==( ObjectRef const& rhs ) const;
 
 
 	//
-	// Private data
-private:
+	// Protected data
+protected:
 	ObjectManager* mManager = nullptr;
 	ObjectIdentifier mIdentifier = kInvalidObjectIdentifier;
 };

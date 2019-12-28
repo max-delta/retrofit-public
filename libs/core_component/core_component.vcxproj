@@ -33,7 +33,9 @@
     <ClInclude Include="ObjectManager.h" />
     <ClInclude Include="ObjectRef.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TypedComponentRef.h" />
     <ClInclude Include="TypedObjectManager.h" />
+    <ClInclude Include="TypedObjectRef.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
@@ -43,11 +45,15 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TypedComponentRef.cpp" />
     <ClCompile Include="TypedObjectManager.cpp" />
+    <ClCompile Include="TypedObjectRef.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="TypedComponentRef.inl" />
     <None Include="TypedObjectManager.inl" />
+    <None Include="TypedObjectRef.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

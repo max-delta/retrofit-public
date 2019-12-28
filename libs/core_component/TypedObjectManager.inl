@@ -37,25 +37,52 @@ inline TypeResolver const& TypedObjectManager<TypeResolver>::GetTypeResolver() c
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline ResolvedComponentType TypedObjectManager<TypeResolver>::ResolveComponentType() const
+inline ResolvedComponentType TypedObjectManager<TypeResolver>::ResolveComponentType( TypeResolver const& resolver )
 {
-	return GetTypeResolver().template operator()<ComponentType>();
+	return resolver.template operator()<ComponentType>();
 }
 
 
 
 template<typename TypeResolver>
-inline ResolvedComponentType TypedObjectManager<TypeResolver>::ResolveComponentType( ComponentLabel const& label ) const
+inline ResolvedComponentType TypedObjectManager<TypeResolver>::ResolveComponentType( TypeResolver const& resolver, ComponentLabel const& label )
 {
-	return GetTypeResolver().operator()( label );
+	return resolver.operator()( label );
 }
 
 
 
 template<typename TypeResolver>
-inline bool TypedObjectManager<TypeResolver>::IsSafeConversion( ComponentRef const& from, ResolvedComponentType to ) const
+inline bool TypedObjectManager<TypeResolver>::IsSafeConversion( TypeResolver const& resolver, ComponentRef const& from, ResolvedComponentType to )
 {
-	return GetTypeResolver().operator()( from, to );
+	return resolver.operator()( from, to );
+}
+
+
+
+template<typename TypeResolver>
+inline TypedObjectRef<TypeResolver> TypedObjectManager<TypeResolver>::GetObject( ObjectIdentifier identifier ) const
+{
+	ObjectRef const temp = ObjectManager::GetObject( identifier );
+	return TypedObjectRef<TypeResolver>( temp, &mTypeResolver );
+}
+
+
+
+template<typename TypeResolver>
+inline TypedMutableObjectRef<TypeResolver> TypedObjectManager<TypeResolver>::GetMutableObject( ObjectIdentifier identifier )
+{
+	MutableObjectRef const temp = ObjectManager::GetMutableObject( identifier );
+	return TypedMutableObjectRef<TypeResolver>( temp, &mTypeResolver );
+}
+
+
+
+template<typename TypeResolver>
+inline TypedMutableObjectRef<TypeResolver> TypedObjectManager<TypeResolver>::AddObject()
+{
+	MutableObjectRef const temp = ObjectManager::AddObject();
+	return TypedMutableObjectRef<TypeResolver>( temp, &mTypeResolver );
 }
 
 
@@ -64,34 +91,34 @@ template<typename TypeResolver>
 template<typename ComponentType>
 inline bool TypedObjectManager<TypeResolver>::IsValidComponentT( ObjectIdentifier identifier ) const
 {
-	return IsValidComponent( identifier, ResolveComponentType<ComponentType>() );
+	return IsValidComponent( identifier, ResolveComponentType<ComponentType>( mTypeResolver ) );
 }
 
 
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline ComponentRef TypedObjectManager<TypeResolver>::GetComponentT( ObjectIdentifier identifier ) const
+inline TypedComponentRef<TypeResolver> TypedObjectManager<TypeResolver>::GetComponentT( ObjectIdentifier identifier ) const
 {
-	return GetComponent( identifier, ResolveComponentType<ComponentType>() );
+	return TypedComponentRef<TypeResolver>( GetComponent( identifier, ResolveComponentType<ComponentType>( mTypeResolver ) ), &mTypeResolver );
 }
 
 
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline MutableComponentRef TypedObjectManager<TypeResolver>::GetMutableComponentT( ObjectIdentifier identifier )
+inline TypedMutableComponentRef<TypeResolver> TypedObjectManager<TypeResolver>::GetMutableComponentT( ObjectIdentifier identifier )
 {
-	return GetMutableComponentT( identifier, ResolveComponentType<ComponentType>() );
+	return TypedMutableComponentRef<TypeResolver>( GetMutableComponent( identifier, ResolveComponentType<ComponentType>( mTypeResolver ) ), &mTypeResolver );
 }
 
 
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline MutableComponentRef TypedObjectManager<TypeResolver>::AddComponentT( ObjectIdentifier identifier, ComponentInstance&& instance )
+inline TypedMutableComponentRef<TypeResolver> TypedObjectManager<TypeResolver>::AddComponentT( ObjectIdentifier identifier, ComponentInstance&& instance )
 {
-	return AddComponent( identifier, ResolveComponentType<ComponentType>(), rftl::move( instance ) );
+	return TypedMutableComponentRef<TypeResolver>( AddComponent( identifier, ResolveComponentType<ComponentType>( mTypeResolver ), rftl::move( instance ) ), &mTypeResolver );
 }
 
 
@@ -100,17 +127,17 @@ template<typename TypeResolver>
 template<typename ComponentType>
 inline bool TypedObjectManager<TypeResolver>::RemoveComponentT( ObjectIdentifier identifier )
 {
-	return RemoveComponent( identifier, ResolveComponentType<ComponentType>() );
+	return RemoveComponent( identifier, ResolveComponentType<ComponentType>( mTypeResolver ) );
 }
 
 
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline typename TypedObjectManager<TypeResolver>::template ComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetComponentInstanceT( ComponentRef const& component ) const
+inline ComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetComponentInstanceT( ComponentRef const& component ) const
 {
 	// This is dangerous! Make sure your TypeResolver is consistent!
-	RF_ASSERT( IsSafeConversion( component, ResolveComponentType<ComponentType>() ) );
+	RF_ASSERT( IsSafeConversion( mTypeResolver, component, ResolveComponentType<ComponentType>( mTypeResolver ) ) );
 	ComponentInstanceRef untyped = GetComponentInstance( component );
 	ComponentInstanceRefT<ComponentType> typed;
 	PtrTransformer<ComponentType>::PerformNonTypesafeTransformation( rftl::move( untyped ), typed );
@@ -121,10 +148,10 @@ inline typename TypedObjectManager<TypeResolver>::template ComponentInstanceRefT
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline typename TypedObjectManager<TypeResolver>::template MutableComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetMutableComponentInstanceT( MutableComponentRef const& component )
+inline MutableComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolver>::GetMutableComponentInstanceT( MutableComponentRef const& component )
 {
 	// This is dangerous! Make sure your TypeResolver is consistent!
-	RF_ASSERT( IsSafeConversion( component, ResolveComponentType<ComponentType>() ) );
+	RF_ASSERT( IsSafeConversion( mTypeResolver, component, ResolveComponentType<ComponentType>( mTypeResolver ) ) );
 	MutableComponentInstanceRef untyped = GetMutableComponentInstance( component );
 	MutableComponentInstanceRefT<ComponentType> typed;
 	PtrTransformer<ComponentType>::PerformNonTypesafeTransformation( rftl::move( untyped ), typed );

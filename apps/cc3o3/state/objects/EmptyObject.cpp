@@ -7,8 +7,8 @@
 
 #include "Logging/Logging.h"
 
-#include "core_component/ObjectRef.h"
-#include "core_component/ComponentRef.h"
+#include "core_component/TypedObjectRef.h"
+#include "core_component/TypedComponentRef.h"
 #include "core_component/TypedObjectManager.h"
 #include "core_state/VariableIdentifier.h"
 

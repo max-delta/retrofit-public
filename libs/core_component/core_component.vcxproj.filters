@@ -7,6 +7,8 @@
     <ClCompile Include="ObjectRef.cpp" />
     <ClCompile Include="ComponentRef.cpp" />
     <ClCompile Include="TypedObjectManager.cpp" />
+    <ClCompile Include="TypedObjectRef.cpp" />
+    <ClCompile Include="TypedComponentRef.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -16,8 +18,12 @@
     <ClInclude Include="ObjectRef.h" />
     <ClInclude Include="ComponentRef.h" />
     <ClInclude Include="View.h" />
+    <ClInclude Include="TypedObjectRef.h" />
+    <ClInclude Include="TypedComponentRef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TypedObjectManager.inl" />
+    <None Include="TypedObjectRef.inl" />
+    <None Include="TypedComponentRef.inl" />
   </ItemGroup>
 </Project>
