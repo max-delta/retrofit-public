@@ -109,6 +109,12 @@
     <ClCompile Include="state\objects\EmptyObject.cpp">
       <Filter>state\objects</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\OverworldVisual.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
+    <ClCompile Include="state\components\OverworldMovement.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -311,6 +317,12 @@
     </ClInclude>
     <ClInclude Include="state\objects\EmptyObject.h">
       <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\OverworldVisual.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\OverworldMovement.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
