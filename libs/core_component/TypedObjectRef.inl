@@ -40,7 +40,7 @@ inline TypedMutableObjectRef<TypeResolver>::TypedMutableObjectRef( MutableObject
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline TypedMutableComponentRef<TypeResolver> RF::component::TypedMutableObjectRef<TypeResolver>::GetComponentT() const
+inline TypedMutableComponentRef<TypeResolver> TypedMutableObjectRef<TypeResolver>::GetComponentT() const
 {
 	ResolvedComponentType const type = mResolver->template operator()<ComponentType>();
 	return TypedMutableComponentRef<TypeResolver>( GetComponent( type ), mResolver );
@@ -50,10 +50,10 @@ inline TypedMutableComponentRef<TypeResolver> RF::component::TypedMutableObjectR
 
 template<typename TypeResolver>
 template<typename ComponentType>
-inline TypedMutableComponentRef<TypeResolver> RF::component::TypedMutableObjectRef<TypeResolver>::AddComponentT( ComponentInstance&& instance ) const
+inline TypedMutableComponentRef<TypeResolver> TypedMutableObjectRef<TypeResolver>::AddComponentT( ComponentInstance&& instance ) const
 {
 	ResolvedComponentType const type = mResolver->template operator()<ComponentType>();
-	return AddComponent( type, rftl::move( instance ) );
+	return TypedMutableComponentRef<TypeResolver>( AddComponent( type, rftl::move( instance ) ), mResolver );
 }
 
 

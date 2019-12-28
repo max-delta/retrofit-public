@@ -9,8 +9,8 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-component::MutableObjectRef CreateOverworldCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID );
-void MakeOverworldCharacterFromDB( component::MutableObjectRef const& ref, rftl::immutable_string const& charID );
+MutableObjectRef CreateOverworldCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID );
+void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_string const& charID );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

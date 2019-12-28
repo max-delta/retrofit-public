@@ -3,22 +3,22 @@
 
 #include "cc3o3/state/objects/EmptyObject.h"
 
-#include "core_component/ObjectRef.h"
+#include "core_component/TypedObjectRef.h"
 
 
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-component::MutableObjectRef CreateOverworldCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
+MutableObjectRef CreateOverworldCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
 {
-	component::MutableObjectRef const ref = CreateEmptyObject( objIdentifier );
+	MutableObjectRef const ref = CreateEmptyObject( objIdentifier );
 	MakeOverworldCharacterFromDB( ref, charID );
 	return ref;
 }
 
 
 
-void MakeOverworldCharacterFromDB( component::MutableObjectRef const& ref, rftl::immutable_string const& charID )
+void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_string const& charID )
 {
 	// TODO
 }

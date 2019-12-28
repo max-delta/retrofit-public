@@ -25,8 +25,8 @@
 #include "PlatformFilesystem/VFSPath.h"
 
 #include "core_component/TypedObjectManager.h"
-#include "core_component/ObjectRef.h"
-#include "core_component/ComponentRef.h"
+#include "core_component/TypedObjectRef.h"
+#include "core_component/TypedComponentRef.h"
 #include "core_state/VariableIdentifier.h"
 
 #include "core/ptr/default_creator.h"
@@ -112,7 +112,6 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	{
 		using namespace state;
 		using namespace state::obj;
-		using namespace component;
 
 		// Set up all party characters
 		// TODO: Data-driven list

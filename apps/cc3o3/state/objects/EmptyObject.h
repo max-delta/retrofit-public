@@ -7,8 +7,8 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-component::MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifier );
-void MakeEmptyObject( component::MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier );
+MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifier );
+void MakeEmptyObject( MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -19,20 +19,18 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-component::MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifier )
+MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifier )
 {
-	component::MutableObjectRef const newObj = gObjectManager->AddObject();
+	MutableObjectRef const newObj = gObjectManager->AddObject();
 	MakeEmptyObject( newObj, objIdentifier );
-
 	return newObj;
 }
 
 
 
-void MakeEmptyObject( component::MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier )
+void MakeEmptyObject( MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier )
 {
-	component::MutableComponentRef const comp =
-		gObjectManager->AddComponentT<comp::Meta>( ref.GetIdentifier(), DefaultCreator<comp::Meta>::Create( objIdentifier ) );
+	MutableComponentRef const comp = ref.AddComponentT<comp::Meta>( DefaultCreator<comp::Meta>::Create( objIdentifier ) );
 	RFLOG_TEST_AND_FATAL( comp.IsSet(), nullptr, RFCAT_CC3O3, "Failed to added meta component" );
 }
 

@@ -9,8 +9,8 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-component::MutableObjectRef CreateBattleCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID );
-void MakeBattleCharacterFromDB( component::MutableObjectRef const& ref, rftl::immutable_string const& charID );
+MutableObjectRef CreateBattleCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID );
+void MakeBattleCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_string const& charID );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
