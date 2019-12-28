@@ -43,7 +43,7 @@ AllowShortIfStatementsOnASingleLine : false
 AllowShortLoopsOnASingleLine : false
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
-AlwaysBreakTemplateDeclarations : false # Broken? Should be 'No'?
+AlwaysBreakTemplateDeclarations : No # In some versions this has to be false instead...
 BinPackArguments : false # But prefer true
 BinPackParameters : true
 BraceWrapping :
