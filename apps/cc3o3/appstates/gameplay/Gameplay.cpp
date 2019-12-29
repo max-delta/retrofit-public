@@ -23,6 +23,7 @@
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFSPath.h"
+#include "Rollback/RollbackManager.h"
 
 #include "core_component/TypedObjectManager.h"
 #include "core_component/TypedObjectRef.h"
@@ -113,14 +114,24 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		using namespace state;
 		using namespace state::obj;
 
+		rollback::RollbackManager& rollMan = *app::gRollbackManager;
+		rollback::Window& sharedWindow = rollMan.GetMutableSharedDomain().GetMutableWindow();
+		rollback::Window& privateWindow = rollMan.GetMutablePrivateDomain().GetMutableWindow();
+
 		// Set up all party characters
 		// TODO: Data-driven list
 		VariableIdentifier const charRoot{ "party" };
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 		{
-			MutableObjectRef const newChar = CreateOverworldCharacterFromDB( charRoot.GetChild( characterID ), characterID );
-			MakeSiteCharacterFromDB( newChar, characterID );
-			MakeBattleCharacterFromDB( newChar, characterID );
+			MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
+				sharedWindow, privateWindow,
+				charRoot.GetChild( characterID ), characterID );
+			MakeSiteCharacterFromDB(
+				sharedWindow, privateWindow,
+				newChar, characterID );
+			MakeBattleCharacterFromDB(
+				sharedWindow, privateWindow,
+				newChar, characterID );
 		}
 
 		// TODO: Check party conditions, auto-fill if needed

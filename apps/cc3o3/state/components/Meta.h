@@ -11,7 +11,8 @@
 namespace RF::cc::state::comp {
 ///////////////////////////////////////////////////////////////////////////////
 
-class Meta : public state::Component
+// NOTE: Non-binding, immutable
+class Meta final : public state::NonBindingComponent
 {
 	RF_NO_COPY( Meta );
 

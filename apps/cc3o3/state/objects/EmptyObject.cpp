@@ -18,21 +18,26 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifier )
+MutableObjectRef CreateEmptyObject(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier )
 {
 	MutableObjectRef const newObj = gObjectManager->AddObject();
-	MakeEmptyObject( newObj, objIdentifier );
+	MakeEmptyObject( sharedWindow, privateWindow, newObj, objIdentifier );
 	return newObj;
 }
 
 
 
-void MakeEmptyObject( MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier )
+void MakeEmptyObject(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier )
 {
 	MutableComponentInstanceRefT<comp::Meta> const meta =
 		ref.AddComponentInstanceT<comp::Meta>(
 			DefaultCreator<comp::Meta>::Create( objIdentifier ) );
 	RFLOG_TEST_AND_FATAL( meta != nullptr, ref, RFCAT_CC3O3, "Failed to add meta component" );
+	meta->Bind( sharedWindow, privateWindow, objIdentifier );
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as empty object" );
 }

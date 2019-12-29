@@ -11,7 +11,7 @@
 namespace RF::cc::state::comp {
 ///////////////////////////////////////////////////////////////////////////////
 
-class OverworldMovement : public state::Component
+class OverworldMovement final : public state::Component
 {
 	RF_NO_COPY( OverworldMovement );
 
@@ -36,6 +36,8 @@ public:
 	// Public methods
 public:
 	OverworldMovement() = default;
+
+	virtual void Bind( Window& sharedWindow, Window& privateWindow, VariableIdentifier const& parent ) override;
 
 
 	//

@@ -11,7 +11,8 @@
 namespace RF::cc::state::comp {
 ///////////////////////////////////////////////////////////////////////////////
 
-class OverworldVisual : public state::Component
+// NOTE: Non-binding, output-only
+class OverworldVisual final : public state::NonBindingComponent
 {
 	RF_NO_COPY( OverworldVisual );
 
@@ -29,7 +30,6 @@ public:
 	// Public methods
 public:
 	OverworldVisual() = default;
-
 
 	//
 	// Public data

@@ -10,16 +10,20 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateBattleCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
+MutableObjectRef CreateBattleCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
 {
-	MutableObjectRef const ref = CreateEmptyObject( objIdentifier );
-	MakeBattleCharacterFromDB( ref, charID );
+	MutableObjectRef const ref = CreateEmptyObject( sharedWindow, privateWindow, objIdentifier );
+	MakeBattleCharacterFromDB( sharedWindow, privateWindow, ref, charID );
 	return ref;
 }
 
 
 
-void MakeBattleCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_string const& charID )
+void MakeBattleCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	MutableObjectRef const& ref, rftl::immutable_string const& charID )
 {
 	// TODO
 

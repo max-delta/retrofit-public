@@ -23,16 +23,20 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateOverworldCharacterFromDB( state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
+MutableObjectRef CreateOverworldCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
 {
-	MutableObjectRef const ref = CreateEmptyObject( objIdentifier );
-	MakeOverworldCharacterFromDB( ref, charID );
+	MutableObjectRef const ref = CreateEmptyObject( sharedWindow, privateWindow, objIdentifier );
+	MakeOverworldCharacterFromDB( sharedWindow, privateWindow, ref, charID );
 	return ref;
 }
 
 
 
-void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_string const& charID )
+void MakeOverworldCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	MutableObjectRef const& ref, rftl::immutable_string const& charID )
 {
 	// Movement
 	{
@@ -40,9 +44,7 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 			ref.AddComponentInstanceT<comp::OverworldMovement>(
 				DefaultCreator<comp::OverworldMovement>::Create() );
 		RFLOG_TEST_AND_FATAL( move != nullptr, ref, RFCAT_CC3O3, "Failed to add overworld movement component" );
-
-		// TODO: Bind
-		( (void)move );
+		move->BindToMeta( sharedWindow, privateWindow, ref );
 	}
 
 	// Visual
@@ -51,6 +53,7 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 			ref.AddComponentInstanceT<comp::OverworldVisual>(
 				DefaultCreator<comp::OverworldVisual>::Create() );
 		RFLOG_TEST_AND_FATAL( visual != nullptr, ref, RFCAT_CC3O3, "Failed to add overworld visual component" );
+		visual->BindToMeta( sharedWindow, privateWindow, ref );
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
 		sprite::CompositeCharacter const composite = charDB.FetchExistingComposite( charID );
@@ -82,9 +85,6 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 		setAnim( visual->mIdleEast, eWalk );
 		setAnim( visual->mIdleSouth, sWalk );
 		setAnim( visual->mIdleWest, wWalk );
-
-		// TODO: Bind
-		( (void)visual );
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as overworld character" );
