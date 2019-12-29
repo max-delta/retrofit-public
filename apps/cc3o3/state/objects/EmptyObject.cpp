@@ -30,8 +30,10 @@ MutableObjectRef CreateEmptyObject( state::VariableIdentifier const& objIdentifi
 
 void MakeEmptyObject( MutableObjectRef const& ref, state::VariableIdentifier const& objIdentifier )
 {
-	MutableComponentInstanceRefT<comp::Meta> const meta = ref.AddComponentInstanceT<comp::Meta>( DefaultCreator<comp::Meta>::Create( objIdentifier ) );
-	RFLOG_TEST_AND_FATAL( meta != nullptr, nullptr, RFCAT_CC3O3, "Failed to added meta component" );
+	MutableComponentInstanceRefT<comp::Meta> const meta =
+		ref.AddComponentInstanceT<comp::Meta>(
+			DefaultCreator<comp::Meta>::Create( objIdentifier ) );
+	RFLOG_TEST_AND_FATAL( meta != nullptr, nullptr, RFCAT_CC3O3, "Failed to add meta component" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
