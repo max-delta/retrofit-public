@@ -254,14 +254,34 @@ View ObjectManager::GetIntersectionView( rftl::unordered_set<ResolvedComponentTy
 
 ComponentInstanceRef ObjectManager::GetComponentInstance( ComponentRef const& component ) const
 {
-	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
+	ObjectsByComponentTypeMap::const_iterator const compIter = mComponentManifest.find( component.mComponentType );
+	if(compIter != mComponentManifest.end())
+	{
+		ComponentInstanceByObjectMap const& objs = compIter->second;
+		ComponentInstanceByObjectMap::const_iterator const objIter = objs.find( component.mIdentifier );
+		if( objIter != objs.end() )
+		{
+			return objIter->second;
+		}
+	}
+	return nullptr;
 }
 
 
 
 MutableComponentInstanceRef ObjectManager::GetMutableComponentInstance( MutableComponentRef const& component )
 {
-	return mComponentManifest.at( component.mComponentType ).at( component.mIdentifier );
+	ObjectsByComponentTypeMap::const_iterator const compIter = mComponentManifest.find( component.mComponentType );
+	if( compIter != mComponentManifest.end() )
+	{
+		ComponentInstanceByObjectMap const& objs = compIter->second;
+		ComponentInstanceByObjectMap::const_iterator const objIter = objs.find( component.mIdentifier );
+		if( objIter != objs.end() )
+		{
+			return objIter->second;
+		}
+	}
+	return nullptr;
 }
 
 

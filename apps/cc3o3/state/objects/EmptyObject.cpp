@@ -4,8 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Meta.h"
-
-#include "Logging/Logging.h"
+#include "cc3o3/state/StateLogging.h"
 
 #include "core_component/TypedObjectRef.h"
 #include "core_component/TypedComponentRef.h"
@@ -33,7 +32,9 @@ void MakeEmptyObject( MutableObjectRef const& ref, state::VariableIdentifier con
 	MutableComponentInstanceRefT<comp::Meta> const meta =
 		ref.AddComponentInstanceT<comp::Meta>(
 			DefaultCreator<comp::Meta>::Create( objIdentifier ) );
-	RFLOG_TEST_AND_FATAL( meta != nullptr, nullptr, RFCAT_CC3O3, "Failed to add meta component" );
+	RFLOG_TEST_AND_FATAL( meta != nullptr, ref, RFCAT_CC3O3, "Failed to add meta component" );
+
+	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as empty object" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

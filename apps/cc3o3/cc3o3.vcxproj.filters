@@ -115,6 +115,9 @@
     <ClCompile Include="state\components\OverworldMovement.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="state\StateLogging.cpp">
+      <Filter>state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -323,6 +326,9 @@
     </ClInclude>
     <ClInclude Include="state\components\OverworldMovement.h">
       <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\StateLogging.h">
+      <Filter>state</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

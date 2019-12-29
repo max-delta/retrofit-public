@@ -5,6 +5,7 @@
 #include "cc3o3/state/objects/EmptyObject.h"
 #include "cc3o3/state/components/OverworldVisual.h"
 #include "cc3o3/state/components/OverworldMovement.h"
+#include "cc3o3/state/StateLogging.h"
 
 #include "Logging/Logging.h"
 
@@ -32,7 +33,7 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 		MutableComponentInstanceRefT<comp::OverworldVisual> const visual =
 			ref.AddComponentInstanceT<comp::OverworldVisual>(
 				DefaultCreator<comp::OverworldVisual>::Create() );
-		RFLOG_TEST_AND_FATAL( visual != nullptr, nullptr, RFCAT_CC3O3, "Failed to add overworld visual component" );
+		RFLOG_TEST_AND_FATAL( visual != nullptr, ref, RFCAT_CC3O3, "Failed to add overworld visual component" );
 
 		// TODO
 		( (void)visual );
@@ -43,11 +44,13 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 		MutableComponentInstanceRefT<comp::OverworldMovement> const move =
 			ref.AddComponentInstanceT<comp::OverworldMovement>(
 				DefaultCreator<comp::OverworldMovement>::Create() );
-		RFLOG_TEST_AND_FATAL( move != nullptr, nullptr, RFCAT_CC3O3, "Failed to add overworld movement component" );
+		RFLOG_TEST_AND_FATAL( move != nullptr, ref, RFCAT_CC3O3, "Failed to add overworld movement component" );
 
 		// TODO
 		( (void)move );
 	}
+
+	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as overworld character" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

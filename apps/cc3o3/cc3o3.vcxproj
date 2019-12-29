@@ -69,6 +69,7 @@
     <ClCompile Include="state\objects\EmptyObject.cpp" />
     <ClCompile Include="state\objects\OverworldCharacter.cpp" />
     <ClCompile Include="state\objects\SiteCharacter.cpp" />
+    <ClCompile Include="state\StateLogging.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -139,6 +140,7 @@
     <ClInclude Include="state\objects\stdafx.h" />
     <ClInclude Include="state\project.h" />
     <ClInclude Include="state\StateFwd.h" />
+    <ClInclude Include="state\StateLogging.h" />
     <ClInclude Include="state\stdafx.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="time\project.h" />
