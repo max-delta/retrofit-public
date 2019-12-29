@@ -4,6 +4,8 @@
 #include "core_component/ObjectManager.h"
 #include "core_component/ComponentRef.h"
 
+#include "core/ptr/weak_ptr.h"
+
 
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,6 +20,13 @@ ObjectIdentifier ObjectRef::GetIdentifier() const
 ComponentRef ObjectRef::GetComponent( ResolvedComponentType componentType ) const
 {
 	return ObjectManager::ConversionHelpers::CreateComponentRef( *this, componentType );
+}
+
+
+
+ComponentInstanceRef ObjectRef::GetComponentInstance( ResolvedComponentType componentType ) const
+{
+	return mManager->GetComponentInstance( GetComponent( componentType ) );
 }
 
 
@@ -39,6 +48,20 @@ ObjectIdentifier MutableObjectRef::GetIdentifier() const
 MutableComponentRef MutableObjectRef::GetComponent( ResolvedComponentType componentType ) const
 {
 	return ObjectManager::ConversionHelpers::CreateMutableComponentRef( *this, componentType );
+}
+
+
+
+ComponentInstanceRef MutableObjectRef::GetComponentInstance( ResolvedComponentType componentType ) const
+{
+	return mManager->GetComponentInstance( GetComponent( componentType ) );
+}
+
+
+
+MutableComponentInstanceRef MutableObjectRef::GetMutableComponentInstance( ResolvedComponentType componentType ) const
+{
+	return mManager->GetMutableComponentInstance( GetComponent( componentType ) );
 }
 
 

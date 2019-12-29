@@ -29,9 +29,8 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 {
 	// Visual
 	{
-		MutableComponentRef const visualRef = ref.AddComponentT<comp::OverworldVisual>( DefaultCreator<comp::OverworldVisual>::Create() );
-		RFLOG_TEST_AND_FATAL( visualRef.IsSet(), nullptr, RFCAT_CC3O3, "Failed to added overworld visual component" );
-		MutableComponentInstanceRefT<comp::OverworldVisual> const visual = visualRef.GetMutableComponentInstanceT<comp::OverworldVisual>();
+		MutableComponentInstanceRefT<comp::OverworldVisual> const visual = ref.AddComponentInstanceT<comp::OverworldVisual>( DefaultCreator<comp::OverworldVisual>::Create() );
+		RFLOG_TEST_AND_FATAL( visual != nullptr, nullptr, RFCAT_CC3O3, "Failed to added overworld visual component" );
 
 		// TODO
 		( (void)visual );
@@ -39,9 +38,8 @@ void MakeOverworldCharacterFromDB( MutableObjectRef const& ref, rftl::immutable_
 
 	// Movement
 	{
-		MutableComponentRef const moveRef = ref.AddComponentT<comp::OverworldMovement>( DefaultCreator<comp::OverworldMovement>::Create() );
-		RFLOG_TEST_AND_FATAL( moveRef.IsSet(), nullptr, RFCAT_CC3O3, "Failed to added overworld movement component" );
-		MutableComponentInstanceRefT<comp::OverworldMovement> const move = moveRef.GetMutableComponentInstanceT<comp::OverworldMovement>();
+		MutableComponentInstanceRefT<comp::OverworldMovement> const move = ref.AddComponentInstanceT<comp::OverworldMovement>( DefaultCreator<comp::OverworldMovement>::Create() );
+		RFLOG_TEST_AND_FATAL( move != nullptr, nullptr, RFCAT_CC3O3, "Failed to added overworld movement component" );
 
 		// TODO
 		( (void)move );

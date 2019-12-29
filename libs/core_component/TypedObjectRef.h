@@ -18,6 +18,8 @@ public:
 
 	template<typename ComponentType>
 	TypedComponentRef<TypeResolver> GetComponentT() const;
+	template<typename ComponentType>
+	ComponentInstanceRefT<ComponentType> GetComponentInstanceT() const;
 
 
 	//
@@ -42,7 +44,13 @@ public:
 	template<typename ComponentType>
 	TypedMutableComponentRef<TypeResolver> GetComponentT() const;
 	template<typename ComponentType>
-	TypedMutableComponentRef<TypeResolver> AddComponentT( ComponentInstance&& instance ) const;
+	ComponentInstanceRefT<ComponentType> GetComponentInstanceT() const;
+	template<typename ComponentType>
+	MutableComponentInstanceRefT<ComponentType> GetMutableComponentInstanceT() const;
+	template<typename ComponentType>
+	TypedMutableComponentRef<TypeResolver> AddComponentT( ComponentInstanceT<ComponentType>&& instance ) const;
+	template<typename ComponentType>
+	MutableComponentInstanceRefT<ComponentType> AddComponentInstanceT( ComponentInstanceT<ComponentType>&& instance ) const;
 
 	// Implicit decay to const ref
 	operator TypedObjectRef<TypeResolver>() const;

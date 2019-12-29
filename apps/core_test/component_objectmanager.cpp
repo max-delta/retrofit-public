@@ -119,6 +119,13 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 		ASSERT_EQ( viaMutCompGet, newInstRef );
 		MutableComponentInstanceRef const viaMutCompMut = viaObjMut.GetMutableComponentInstance();
 		ASSERT_EQ( viaMutCompMut, newInstRef );
+
+		ComponentInstanceRef const viaGetObjInstGet = newObj.GetComponentInstance( newComp.GetComponentType() );
+		ASSERT_EQ( viaGetObjInstGet, newInstRef );
+		ComponentInstanceRef const viaMutObjInstGet = mutObj.GetComponentInstance( newComp.GetComponentType() );
+		ASSERT_EQ( viaMutObjInstGet, newInstRef );
+		MutableComponentInstanceRef const viaMutObjInstMut = mutObj.GetMutableComponentInstance( newComp.GetComponentType() );
+		ASSERT_EQ( viaMutObjInstMut, newInstRef );
 	}
 
 	bool const removeSuccess = manager.RemoveComponent( objID, kCompType );

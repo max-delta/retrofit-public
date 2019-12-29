@@ -24,6 +24,7 @@ public:
 	ObjectIdentifier GetIdentifier() const;
 
 	ComponentRef GetComponent( ResolvedComponentType componentType ) const;
+	ComponentInstanceRef GetComponentInstance( ResolvedComponentType componentType ) const;
 
 	bool operator==( ObjectRef const& rhs ) const;
 
@@ -56,6 +57,8 @@ public:
 	ObjectIdentifier GetIdentifier() const;
 
 	MutableComponentRef GetComponent( ResolvedComponentType componentType ) const;
+	ComponentInstanceRef GetComponentInstance( ResolvedComponentType componentType ) const;
+	MutableComponentInstanceRef GetMutableComponentInstance( ResolvedComponentType componentType ) const;
 	MutableComponentRef AddComponent( ResolvedComponentType componentType, ComponentInstance&& instance ) const;
 
 	// Implicit decay to const ref

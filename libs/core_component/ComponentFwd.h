@@ -25,6 +25,7 @@ using ComponentInstance = UniquePtr<void>;
 using ComponentInstanceRef = WeakPtr<void const>;
 using MutableComponentInstanceRef = WeakPtr<void>;
 
+template<typename ComponentType> using ComponentInstanceT = UniquePtr<ComponentType>;
 template<typename ComponentType> using ComponentInstanceRefT = WeakPtr<ComponentType const>;
 template<typename ComponentType> using MutableComponentInstanceRefT = WeakPtr<ComponentType>;
 
