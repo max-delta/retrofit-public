@@ -67,6 +67,7 @@ public:
 	virtual ~ResourceManager();
 
 	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
+	WeakPtr<Resource> GetResourceFromResourceName( Filename const& filename ) const;
 	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const;

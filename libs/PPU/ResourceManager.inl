@@ -45,6 +45,14 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( Filename const& filename ) const
+{
+	return GetResourceFromResourceName( filename.CreateString() );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
