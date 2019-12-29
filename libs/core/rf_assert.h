@@ -19,7 +19,8 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+// HACK: Intellisense craters in VS 16.4.2 on this macro, despite cpp.hint help
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS ) && !defined(__INTELLISENSE__)
 #define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
 	do \
 	{ \
