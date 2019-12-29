@@ -17,6 +17,7 @@ bool TypeDatabase::RegisterNewClassByName( char const* name, reflect::ClassInfo 
 
 	if( IsValidClassName( name ) == false )
 	{
+		RF_DBGFAIL();
 		return false;
 	}
 
