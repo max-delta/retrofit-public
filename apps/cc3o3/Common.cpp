@@ -71,6 +71,7 @@ void SystemStartup()
 
 void SystemShutdown()
 {
+	sObjectManager = nullptr;
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
