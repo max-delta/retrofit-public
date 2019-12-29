@@ -27,7 +27,8 @@ template<size_t MaxChangesT>
 inline size_t StateBag<MaxChangesT>::RemoveAllStreams()
 {
 	size_t retVal = 0;
-	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	retVal += mB.RemoveAllStreams();
 	retVal += mU8.RemoveAllStreams();
 	retVal += mS8.RemoveAllStreams();
 	retVal += mU16.RemoveAllStreams();
@@ -45,7 +46,8 @@ template<size_t MaxChangesT>
 inline size_t StateBag<MaxChangesT>::RewindAllStreams( time::CommonClock::time_point time )
 {
 	size_t retVal = 0;
-	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	retVal += mB.RewindAllStreams( time );
 	retVal += mU8.RewindAllStreams( time );
 	retVal += mS8.RewindAllStreams( time );
 	retVal += mU16.RewindAllStreams( time );
@@ -82,7 +84,7 @@ template<typename T>
 inline typename StateBag<MaxChangesT>::template Tree<T> const& RF::state::StateBag<MaxChangesT>::GetTree() const
 {
 	// Sadly, a weakness in the language means we can't use specialization here
-	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
 	if constexpr( false )
 	{
 		//
@@ -92,6 +94,7 @@ inline typename StateBag<MaxChangesT>::template Tree<T> const& RF::state::StateB
 	{ \
 		return VAR; \
 	}
+	RF_STATE_TREE( bool, mB )
 	RF_STATE_TREE( uint8_t, mU8 )
 	RF_STATE_TREE( int8_t, mS8 )
 	RF_STATE_TREE( uint16_t, mU16 )
@@ -114,7 +117,7 @@ template<typename T>
 inline typename StateBag<MaxChangesT>::template Tree<T>& RF::state::StateBag<MaxChangesT>::GetMutableTree()
 {
 	// Sadly, a weakness in the language means we can't use specialization here
-	static_assert( ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
 	if constexpr( false )
 	{
 		//
@@ -124,6 +127,7 @@ inline typename StateBag<MaxChangesT>::template Tree<T>& RF::state::StateBag<Max
 	{ \
 		return VAR; \
 	}
+	RF_STATE_TREE( bool, mB )
 	RF_STATE_TREE( uint8_t, mU8 )
 	RF_STATE_TREE( int8_t, mS8 )
 	RF_STATE_TREE( uint16_t, mU16 )

@@ -89,6 +89,7 @@ typename Var<T>::Type Var<T>::As() const
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
+template class ROLLBACK_API RF::rollback::Var<bool>;
 template class ROLLBACK_API RF::rollback::Var<uint8_t>;
 template class ROLLBACK_API RF::rollback::Var<int8_t>;
 template class ROLLBACK_API RF::rollback::Var<uint16_t>;

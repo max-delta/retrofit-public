@@ -19,6 +19,7 @@ public:
 	static constexpr size_t kMaxChanges = MaxChangesT;
 
 	using ContainedTypes = TypeList<
+		bool,
 		uint8_t, int8_t,
 		uint16_t, int16_t,
 		uint32_t, int32_t,
@@ -67,6 +68,7 @@ public:
 	//
 	// Private data
 private:
+	Tree<bool> mB;
 	Tree<uint8_t> mU8;
 	Tree<int8_t> mS8;
 	Tree<uint16_t> mU16;

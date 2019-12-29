@@ -49,6 +49,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
+extern template class RF::rollback::AutoVar<bool>;
 extern template class RF::rollback::AutoVar<uint8_t>;
 extern template class RF::rollback::AutoVar<int8_t>;
 extern template class RF::rollback::AutoVar<uint16_t>;

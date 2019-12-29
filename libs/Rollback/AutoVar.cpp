@@ -87,6 +87,8 @@ UniquePtr<rollback::Stream<typename AutoVar<T>::Type>> AutoVar<T>::Unbind()
 ///////////////////////////////////////////////////////////////////////////////
 }}
 
+static_assert( RF::state::StateBag<1>::ContainedTypes::kNumTypes == 9, "Unexpected size" );
+template class ROLLBACK_API RF::rollback::AutoVar<bool>;
 template class ROLLBACK_API RF::rollback::AutoVar<uint8_t>;
 template class ROLLBACK_API RF::rollback::AutoVar<int8_t>;
 template class ROLLBACK_API RF::rollback::AutoVar<uint16_t>;

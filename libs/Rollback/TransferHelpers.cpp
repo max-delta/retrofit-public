@@ -32,7 +32,8 @@ void WriteAllIdentifiers( state::StateTree<ValueT, MaxChangesT>& dest, state::St
 void WriteToSnapshot( Snapshot& dest, Window const& src, time::CommonClock::time_point time, alloc::Allocator& allocator )
 {
 	// TODO: Unpack typelist instead of copy-paste
-	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	details::WriteAllIdentifiers<bool>( dest.second.GetMutableTree<bool>(), src.GetTree<bool>(), time, allocator );
 	details::WriteAllIdentifiers<uint8_t>( dest.second.GetMutableTree<uint8_t>(), src.GetTree<uint8_t>(), time, allocator );
 	details::WriteAllIdentifiers<int8_t>( dest.second.GetMutableTree<int8_t>(), src.GetTree<int8_t>(), time, allocator );
 	details::WriteAllIdentifiers<uint16_t>( dest.second.GetMutableTree<uint16_t>(), src.GetTree<uint16_t>(), time, allocator );
@@ -50,7 +51,8 @@ void ReadFromSnapshot( Window& dest, Snapshot const& src, alloc::Allocator& allo
 	time::CommonClock::time_point const time = src.first;
 
 	// TODO: Unpack typelist instead of copy-paste
-	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 8, "Unexpected size" );
+	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	details::WriteAllIdentifiers<bool>( dest.GetMutableTree<bool>(), src.second.GetTree<bool>(), time, allocator );
 	details::WriteAllIdentifiers<uint8_t>( dest.GetMutableTree<uint8_t>(), src.second.GetTree<uint8_t>(), time, allocator );
 	details::WriteAllIdentifiers<int8_t>( dest.GetMutableTree<int8_t>(), src.second.GetTree<int8_t>(), time, allocator );
 	details::WriteAllIdentifiers<uint16_t>( dest.GetMutableTree<uint16_t>(), src.second.GetTree<uint16_t>(), time, allocator );
