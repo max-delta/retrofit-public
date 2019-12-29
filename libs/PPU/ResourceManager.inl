@@ -207,14 +207,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
+		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
+		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource not found" );
 		return false;
 	}
 
@@ -227,6 +227,8 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	mFileBackedResources.erase( resourceName );
 	mResourceIDs.erase( IDIter );
 	mResources.erase( resourceIter );
+
+	RFLOG_INFO( resourceName.c_str(), RFCAT_PPU, "Resource destroyed" );
 	return true;
 }
 
@@ -334,7 +336,10 @@ inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Int
 
 	while( mResourceIDs.empty() == false )
 	{
-		DestroyResource( mResourceIDs.begin()->first );
+		// NOTE: Subtle, copy resource name so we don't pass by reference and
+		//  have it deleted mid-function
+		ResourceName const resourceName = mResourceIDs.begin()->first;
+		DestroyResource( resourceName );
 	}
 	RF_ASSERT( mResources.empty() );
 	RF_ASSERT( mFileBackedResources.empty() );
@@ -477,14 +482,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource ID not found" );
+		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
 	typename ResourcesByManagedID::iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found" );
+		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource not found" );
 		return false;
 	}
 
