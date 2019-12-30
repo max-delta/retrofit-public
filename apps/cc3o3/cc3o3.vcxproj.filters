@@ -118,6 +118,9 @@
     <ClCompile Include="state\StateLogging.cpp">
       <Filter>state</Filter>
     </ClCompile>
+    <ClCompile Include="state\StateHelpers.cpp">
+      <Filter>state</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -328,6 +331,9 @@
       <Filter>state\components</Filter>
     </ClInclude>
     <ClInclude Include="state\StateLogging.h">
+      <Filter>state</Filter>
+    </ClInclude>
+    <ClInclude Include="state\StateHelpers.h">
       <Filter>state</Filter>
     </ClInclude>
   </ItemGroup>
