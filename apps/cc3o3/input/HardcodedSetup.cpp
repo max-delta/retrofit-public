@@ -222,6 +222,13 @@ void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonCl
 
 
 
+PlayerID HardcodedGetLocalPlayer()
+{
+	return player::P1;
+}
+
+
+
 void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, rollback::InputValue input )
 {
 	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, input ) );

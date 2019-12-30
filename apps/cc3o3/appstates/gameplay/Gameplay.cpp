@@ -12,6 +12,7 @@
 #include "cc3o3/state/objects/OverworldCharacter.h"
 #include "cc3o3/state/objects/SiteCharacter.h"
 #include "cc3o3/state/objects/BattleCharacter.h"
+#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
@@ -118,23 +119,33 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		rollback::Window& sharedWindow = rollMan.GetMutableSharedDomain().GetMutableWindow();
 		rollback::Window& privateWindow = rollMan.GetMutablePrivateDomain().GetMutableWindow();
 
-		// Set up all party characters
-		// TODO: Data-driven list
-		VariableIdentifier const charRoot{ "party" };
-		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
+		// Set up each company
+		// TODO: Multiple companies for competitive multiplayer
 		{
-			MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
-				sharedWindow, privateWindow,
-				charRoot.GetChild( characterID ), characterID );
-			MakeSiteCharacterFromDB(
-				sharedWindow, privateWindow,
-				newChar, characterID );
-			MakeBattleCharacterFromDB(
-				sharedWindow, privateWindow,
-				newChar, characterID );
-		}
+			// HACK: Only local player
+			input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
 
-		// TODO: Check party conditions, auto-fill if needed
+			char const playerIDAsChar = math::integer_cast<char>( '0' + playerID );
+			VariableIdentifier const companyRoot{ rftl::string( "company" ) + playerIDAsChar };
+
+			// Set up all characters
+			// TODO: Data-driven list
+			VariableIdentifier const charRoot = companyRoot.GetChild( "char" );
+			for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
+			{
+				MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
+					sharedWindow, privateWindow,
+					charRoot.GetChild( characterID ), characterID );
+				MakeSiteCharacterFromDB(
+					sharedWindow, privateWindow,
+					newChar, characterID );
+				MakeBattleCharacterFromDB(
+					sharedWindow, privateWindow,
+					newChar, characterID );
+			}
+
+			// TODO: Check active team conditions, auto-fill if needed
+		}
 	}
 
 	// Start sub-states
