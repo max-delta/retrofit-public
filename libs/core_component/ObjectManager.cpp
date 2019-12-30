@@ -286,6 +286,27 @@ MutableComponentInstanceRef ObjectManager::GetMutableComponentInstance( MutableC
 
 
 
+rftl::unordered_set<ObjectIdentifier> ObjectManager::FindObjects( ResolvedComponentType componentType ) const
+{
+	ObjectsByComponentTypeMap::const_iterator const componentIter = mComponentManifest.find( componentType );
+	if( componentIter == mComponentManifest.end() )
+	{
+		return rftl::unordered_set<ObjectIdentifier>();
+	}
+
+	ComponentInstanceByObjectMap const& objects = componentIter->second;
+	rftl::unordered_set<ObjectIdentifier> retVal;
+	retVal.reserve( objects.size() );
+	for( ComponentInstanceByObjectMap::value_type const& objPair : objects )
+	{
+		ObjectIdentifier const& object = objPair.first;
+		retVal.emplace( object );
+	}
+	return retVal;
+}
+
+
+
 ObjectManager::InternalStateIteration ObjectManager::GetInternalStateIteration() const
 {
 	return mInternalStateIteration.GetLastGeneratedID();

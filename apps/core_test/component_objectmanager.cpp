@@ -89,6 +89,10 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_TRUE( validPostAdd );
 
+	rftl::unordered_set<ObjectIdentifier> const objectsFound = manager.FindObjects( newComp.GetComponentType() );
+	ASSERT_EQ( objectsFound.size(), 1 );
+	ASSERT_EQ( *objectsFound.begin(), objID );
+
 	ComponentInstanceRef const instRef = manager.GetComponentInstance( newComp );
 	ASSERT_EQ( manager.GetInternalStateIteration(), latestState );
 	ASSERT_EQ( instRef, newComp.GetComponentInstance() );

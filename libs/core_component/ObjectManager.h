@@ -72,6 +72,9 @@ public:
 	ComponentInstanceRef GetComponentInstance( ComponentRef const& component ) const;
 	MutableComponentInstanceRef GetMutableComponentInstance( MutableComponentRef const& component );
 
+	// Object lookup
+	rftl::unordered_set<ObjectIdentifier> FindObjects( ResolvedComponentType componentType ) const;
+
 	// Adding/removing items will cause the state to iterate, which can be used
 	//  to detect unsafe multi-threaded operations, or modifying while
 	//  iterating in a single-threaded operation
@@ -96,16 +99,6 @@ public:
 		static ComponentRef CreateComponentRef( MutableComponentRef const& component );
 		static ComponentRef CreateComponentRef( ObjectRef const& object, ResolvedComponentType componentType );
 		static MutableComponentRef CreateMutableComponentRef( MutableObjectRef const& object, ResolvedComponentType componentType );
-	};
-
-	struct AccessHelpers
-	{
-	private:
-		friend class ObjectRef;
-		friend class MutableObjectRef;
-		friend class ComponentRef;
-		friend class MutableComponentRef;
-
 	};
 
 

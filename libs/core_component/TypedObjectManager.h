@@ -39,6 +39,8 @@ public:
 	template<typename ComponentType> ComponentInstanceRefT<ComponentType> GetComponentInstanceT( ComponentRef const& component ) const;
 	template<typename ComponentType> MutableComponentInstanceRefT<ComponentType> GetMutableComponentInstanceT( MutableComponentRef const& component );
 
+	template<typename ComponentType> rftl::unordered_set<ObjectIdentifier> FindObjectsT() const;
+
 
 	//
 	// Private data

@@ -158,5 +158,14 @@ inline MutableComponentInstanceRefT<ComponentType> TypedObjectManager<TypeResolv
 	return typed;
 }
 
+
+
+template<typename TypeResolver>
+template<typename ComponentType>
+inline rftl::unordered_set<ObjectIdentifier> TypedObjectManager<TypeResolver>::FindObjectsT() const
+{
+	return FindObjects( ResolveComponentType<ComponentType>( mTypeResolver ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
