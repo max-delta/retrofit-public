@@ -6,11 +6,26 @@
 	-->
 
 	<Type Name = "rftl::static_vector&lt;*&gt;::Storage">
-		<DisplayString>{ *(value_type*)mData }</DisplayString>
+		<DisplayString>
+			{ *(value_type*)mData }
+		</DisplayString>
 		<Expand>
-			<Item Name = "Element">
+			<Item Name = "[Element]">
 				*(value_type*)mData
 			</Item>
+		</Expand>
+	</Type>
+
+
+	<Type Name = "rftl::static_vector&lt;*&gt;">
+		<Expand>
+			<Item Name = "[Size]">
+				m_CurrentSize
+			</Item>
+			<ArrayItems>
+				<Size>m_CurrentSize</Size>
+				<ValuePointer>m_Storage</ValuePointer>
+			</ArrayItems>
 		</Expand>
 	</Type>
 
@@ -29,5 +44,43 @@
 			</ExpandedItem>
 		</Expand>
 	</Type>
+
+
+	<!--
+		Rollback
+	-->
+
+	<Type Name = "RF::state::StateStream&lt;*&gt;">
+		<Expand>
+			<Item Name = "[Latest]">
+				mValues.m_Storage[mValues.m_CurrentSize - 1]
+			</Item>
+			<Item Name = "[Values]">
+				mValues
+			</Item>
+			<Item Name = "[Times]">
+				mTimes
+			</Item>
+		</Expand>
+	</Type>
+
+
+	<Type Name = "RF::rollback::Var&lt;*&gt;">
+		<Expand>
+			<ExpandedItem>
+				*mBackingVar.mTarget
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
+
+	<Type Name = "RF::rollback::AutoVar&lt;*&gt;">
+		<Expand>
+			<ExpandedItem>
+				mVar
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
 
 </AutoVisualizer>
