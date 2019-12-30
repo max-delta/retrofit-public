@@ -255,7 +255,7 @@ View ObjectManager::GetIntersectionView( rftl::unordered_set<ResolvedComponentTy
 ComponentInstanceRef ObjectManager::GetComponentInstance( ComponentRef const& component ) const
 {
 	ObjectsByComponentTypeMap::const_iterator const compIter = mComponentManifest.find( component.mComponentType );
-	if(compIter != mComponentManifest.end())
+	if( compIter != mComponentManifest.end() )
 	{
 		ComponentInstanceByObjectMap const& objs = compIter->second;
 		ComponentInstanceByObjectMap::const_iterator const objIter = objs.find( component.mIdentifier );
