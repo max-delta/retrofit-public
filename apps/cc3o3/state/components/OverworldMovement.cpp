@@ -19,8 +19,6 @@ void OverworldMovement::Bind( Window& sharedWindow, Window& privateWindow, Varia
 {
 	VariableIdentifier const compRoot = parent.GetChild( "overworld", "movement" );
 	mCurPos.Bind( sharedWindow, compRoot, mAlloc );
-
-	mCurPos.mFacing = Pos::Facing::North;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
