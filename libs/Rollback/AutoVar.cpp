@@ -14,7 +14,13 @@ AutoVar<T>::~AutoVar()
 {
 	if( mWindow != nullptr )
 	{
-		Unbind();
+		UniquePtr<rollback::Stream<Type>> const ref = Unbind();
+
+		// The expected use case of the AutoVar is for it to be used instead of
+		//  streams. In such a scenario, it should be the only reference to a
+		//  given stream. Having multiple AutoVar's pointing to the same
+		//  stream, for example, can cause this assert to fail
+		RF_ASSERT_MSG( ref.IsOnlyWeakReference(), "AutoVar destroying stream with weak references" );
 	}
 }
 
@@ -64,9 +70,11 @@ typename AutoVar<T>::Type AutoVar<T>::As() const
 template<typename T>
 WeakPtr<rollback::Stream<typename AutoVar<T>::Type>> AutoVar<T>::Bind( Window& window, state::VariableIdentifier const& identifier, alloc::Allocator& allocator )
 {
+	RF_ASSERT( mWindow == nullptr );
 	mWindow = &window;
 	mIdentifier = identifier;
 	WeakPtr<rollback::Stream<Type>> const retVal = window.GetOrCreateStream<Type>( mIdentifier, allocator );
+	RF_ASSERT( retVal != nullptr );
 	mVar = retVal;
 	return retVal;
 }
@@ -78,9 +86,10 @@ UniquePtr<rollback::Stream<typename AutoVar<T>::Type>> AutoVar<T>::Unbind()
 {
 	RF_ASSERT( mWindow != nullptr );
 	UniquePtr<rollback::Stream<Type>> retVal = mWindow->RemoveStream<Type>( mIdentifier );
+	RF_ASSERT( retVal != nullptr );
 	mWindow = nullptr;
 	mIdentifier.clear();
-	mVar = {};
+	mVar = Var<Type>{ nullptr };
 	return retVal;
 }
 
