@@ -128,20 +128,30 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			char const playerIDAsChar = math::integer_cast<char>( '0' + playerID );
 			VariableIdentifier const companyRoot{ rftl::string( "company" ) + playerIDAsChar };
 
+			// TODO: Create company object
+
+			// TODO: Create roster, and store on company object
+
 			// Set up all characters
 			// TODO: Data-driven list
+			size_t rosterIndex = 1;
 			VariableIdentifier const charRoot = companyRoot.GetChild( "char" );
 			for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 			{
+				rftl::immutable_string const rosterIndexAsString = ( rftl::stringstream() << rosterIndex ).str();
+				rosterIndex++;
+
 				MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
 					sharedWindow, privateWindow,
-					charRoot.GetChild( characterID ), characterID );
+					charRoot.GetChild( rosterIndexAsString ), characterID );
 				MakeSiteCharacterFromDB(
 					sharedWindow, privateWindow,
 					newChar, characterID );
 				MakeBattleCharacterFromDB(
 					sharedWindow, privateWindow,
 					newChar, characterID );
+
+				// TODO: Add to company roster
 			}
 
 			// TODO: Check active team conditions, auto-fill if needed
