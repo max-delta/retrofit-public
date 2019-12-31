@@ -54,6 +54,24 @@ public:
 		payload.Clean();
 	}
 
+	// For asserts only, do not use in real logic
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	bool IsOnlyStrongReference() const
+	{
+		RF_ASSERT_MSG( mRef != nullptr, "Nonsensical operation on uninitialized pointer" );
+		return mRef->GetStrongCount() == 1;
+	}
+#endif
+
+	// For asserts only, do not use in real logic
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	bool IsOnlyWeakReference() const
+	{
+		RF_ASSERT_MSG( mRef != nullptr, "Nonsensical operation on uninitialized pointer" );
+		return mRef->GetWeakCount() == 1;
+	}
+#endif
+
 
 	//
 	// Protected methods
