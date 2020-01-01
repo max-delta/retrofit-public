@@ -17,6 +17,7 @@ namespace RF::cc::state {
 // All components listed and paired here
 namespace comp {
 class Meta;
+class Roster;
 class OverworldVisual;
 class OverworldMovement;
 }
@@ -25,11 +26,13 @@ enum : ComponentID
 {
 	Invalid = component::kInvalidResolvedComponentType,
 	Meta,
+	Roster,
 	OverworldVisual,
 	OverworldMovement,
 };
 }
 RF_COMP_PAIR( details::id::Meta, comp::Meta );
+RF_COMP_PAIR( details::id::Roster, comp::Roster );
 RF_COMP_PAIR( details::id::OverworldVisual, comp::OverworldVisual );
 RF_COMP_PAIR( details::id::OverworldMovement, comp::OverworldMovement );
 

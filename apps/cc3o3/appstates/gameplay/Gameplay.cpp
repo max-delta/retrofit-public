@@ -9,9 +9,11 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/objects/Company.h"
 #include "cc3o3/state/objects/OverworldCharacter.h"
 #include "cc3o3/state/objects/SiteCharacter.h"
 #include "cc3o3/state/objects/BattleCharacter.h"
+#include "cc3o3/state/components/Roster.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
@@ -125,21 +127,22 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			// HACK: Only local player
 			input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
 
-			char const playerIDAsChar = math::integer_cast<char>( '0' + playerID );
-			VariableIdentifier const companyRoot{ rftl::string( "company" ) + playerIDAsChar };
+			rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
+			VariableIdentifier const companyRoot( "company", playerIDAsString );
 
-			// TODO: Create company object
-
-			// TODO: Create roster, and store on company object
+			// Create company object
+			MutableObjectRef const company = CreateCompany( sharedWindow, privateWindow, companyRoot );
+			comp::Roster& roster = *company.GetMutableComponentInstanceT<comp::Roster>();
 
 			// Set up all characters
+			// NOTE: Characters with the company as their root are implicitly
+			//  on the company's roster
 			// TODO: Data-driven list
-			size_t rosterIndex = 1;
-			VariableIdentifier const charRoot = companyRoot.GetChild( "char" );
+			comp::Roster::RosterIndex rosterIndex = comp::Roster::kInititialRosterIndex;
+			VariableIdentifier const charRoot = companyRoot.GetChild( "member" );
 			for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 			{
-				rftl::immutable_string const rosterIndexAsString = ( rftl::stringstream() << rosterIndex ).str();
-				rosterIndex++;
+				rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
 
 				MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
 					sharedWindow, privateWindow,
@@ -151,7 +154,11 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 					sharedWindow, privateWindow,
 					newChar, characterID );
 
-				// TODO: Add to company roster
+				// HACK: All valid characters are eligible
+				// TODO: Tie to story progression
+				roster.mEligible.at( rosterIndex ) = true;
+
+				rosterIndex++;
 			}
 
 			// TODO: Check active team conditions, auto-fill if needed
