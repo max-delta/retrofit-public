@@ -5,11 +5,13 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
+    <ClCompile Include="SnapshotSerializer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
+    <ClInclude Include="SnapshotSerializer.h" />
   </ItemGroup>
 </Project>

@@ -23,10 +23,13 @@
 #include "GameAppState/AppStateManager.h"
 #include "GameAppState/AppStateTickContext.h"
 #include "GameSprite/CharacterCreator.h"
+#include "GameSync/SnapshotSerializer.h"
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFSPath.h"
 #include "Rollback/RollbackManager.h"
+#include "Timing/FrameClock.h"
+#include "PlatformFilesystem/VFS.h"
 
 #include "core_component/TypedObjectManager.h"
 #include "core_component/TypedObjectRef.h"
@@ -118,8 +121,10 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		using namespace state::obj;
 
 		rollback::RollbackManager& rollMan = *app::gRollbackManager;
-		rollback::Window& sharedWindow = rollMan.GetMutableSharedDomain().GetMutableWindow();
-		rollback::Window& privateWindow = rollMan.GetMutablePrivateDomain().GetMutableWindow();
+		rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
+		rollback::Domain& privateDomain = rollMan.GetMutablePrivateDomain();
+		rollback::Window& sharedWindow = sharedDomain.GetMutableWindow();
+		rollback::Window& privateWindow = privateDomain.GetMutableWindow();
 
 		// Set up each company
 		// TODO: Multiple companies for competitive multiplayer
@@ -162,6 +167,23 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			}
 
 			// TODO: Check active team conditions, auto-fill if needed
+		}
+
+		// HACK: Save out the state for diagnostics
+		// TODO: More formal snapshotting
+		{
+			WeakPtr<rollback::Snapshot const> const sharedSnapshot =
+				sharedDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
+			RF_ASSERT( sharedSnapshot != nullptr );
+			WeakPtr<rollback::Snapshot const> const privateSnapshot =
+				privateDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
+			RF_ASSERT( privateSnapshot != nullptr );
+
+			file::VFS const& vfs = *app::gVfs;
+			sync::SnapshotSerializer::SerializeToDiagnosticFile(
+				*sharedSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "sharedTest.diag" ) );
+			sync::SnapshotSerializer::SerializeToDiagnosticFile(
+				*privateSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "privateTest.diag" ) );
 		}
 	}
 
