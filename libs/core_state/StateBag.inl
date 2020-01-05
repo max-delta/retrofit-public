@@ -28,15 +28,15 @@ inline size_t StateBag<MaxChangesT>::RemoveAllStreams()
 {
 	size_t retVal = 0;
 	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
-	retVal += mB.RemoveAllStreams();
-	retVal += mU8.RemoveAllStreams();
-	retVal += mS8.RemoveAllStreams();
-	retVal += mU16.RemoveAllStreams();
-	retVal += mS16.RemoveAllStreams();
-	retVal += mU32.RemoveAllStreams();
-	retVal += mS32.RemoveAllStreams();
-	retVal += mU64.RemoveAllStreams();
-	retVal += mS64.RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<0>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<1>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<2>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<3>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<4>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<5>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<6>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<7>::type>().RemoveAllStreams();
+	retVal += GetMutableTree<ContainedTypes::ByIndex<8>::type>().RemoveAllStreams();
 	return retVal;
 }
 
@@ -47,15 +47,15 @@ inline size_t StateBag<MaxChangesT>::RewindAllStreams( time::CommonClock::time_p
 {
 	size_t retVal = 0;
 	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
-	retVal += mB.RewindAllStreams( time );
-	retVal += mU8.RewindAllStreams( time );
-	retVal += mS8.RewindAllStreams( time );
-	retVal += mU16.RewindAllStreams( time );
-	retVal += mS16.RewindAllStreams( time );
-	retVal += mU32.RewindAllStreams( time );
-	retVal += mS32.RewindAllStreams( time );
-	retVal += mU64.RewindAllStreams( time );
-	retVal += mS64.RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<0>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<1>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<2>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<3>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<4>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<5>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<6>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<7>::type>().RewindAllStreams( time );
+	retVal += GetMutableTree<ContainedTypes::ByIndex<8>::type>().RewindAllStreams( time );
 	return retVal;
 }
 

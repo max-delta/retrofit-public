@@ -32,16 +32,17 @@ void WriteAllIdentifiers( state::StateTree<ValueT, MaxChangesT>& dest, state::St
 void WriteToSnapshot( Snapshot& dest, Window const& src, time::CommonClock::time_point time, alloc::Allocator& allocator )
 {
 	// TODO: Unpack typelist instead of copy-paste
-	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 9, "Unexpected size" );
-	details::WriteAllIdentifiers<bool>( dest.second.GetMutableTree<bool>(), src.GetTree<bool>(), time, allocator );
-	details::WriteAllIdentifiers<uint8_t>( dest.second.GetMutableTree<uint8_t>(), src.GetTree<uint8_t>(), time, allocator );
-	details::WriteAllIdentifiers<int8_t>( dest.second.GetMutableTree<int8_t>(), src.GetTree<int8_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint16_t>( dest.second.GetMutableTree<uint16_t>(), src.GetTree<uint16_t>(), time, allocator );
-	details::WriteAllIdentifiers<int16_t>( dest.second.GetMutableTree<int16_t>(), src.GetTree<int16_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint32_t>( dest.second.GetMutableTree<uint32_t>(), src.GetTree<uint32_t>(), time, allocator );
-	details::WriteAllIdentifiers<int32_t>( dest.second.GetMutableTree<int32_t>(), src.GetTree<int32_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint64_t>( dest.second.GetMutableTree<uint64_t>(), src.GetTree<uint64_t>(), time, allocator );
-	details::WriteAllIdentifiers<int64_t>( dest.second.GetMutableTree<int64_t>(), src.GetTree<int64_t>(), time, allocator );
+	using ContainedTypes = Snapshot::second_type::ContainedTypes;
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<0>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<0>::type>(), src.GetTree<ContainedTypes::ByIndex<0>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<1>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<1>::type>(), src.GetTree<ContainedTypes::ByIndex<1>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<2>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<2>::type>(), src.GetTree<ContainedTypes::ByIndex<2>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<3>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<3>::type>(), src.GetTree<ContainedTypes::ByIndex<3>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<4>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<4>::type>(), src.GetTree<ContainedTypes::ByIndex<4>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<5>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<5>::type>(), src.GetTree<ContainedTypes::ByIndex<5>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<6>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<6>::type>(), src.GetTree<ContainedTypes::ByIndex<6>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<7>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<7>::type>(), src.GetTree<ContainedTypes::ByIndex<7>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<8>::type>( dest.second.GetMutableTree<ContainedTypes::ByIndex<8>::type>(), src.GetTree<ContainedTypes::ByIndex<8>::type>(), time, allocator );
 }
 
 
@@ -51,16 +52,17 @@ void ReadFromSnapshot( Window& dest, Snapshot const& src, alloc::Allocator& allo
 	time::CommonClock::time_point const time = src.first;
 
 	// TODO: Unpack typelist instead of copy-paste
-	static_assert( Snapshot::second_type::ContainedTypes::kNumTypes == 9, "Unexpected size" );
-	details::WriteAllIdentifiers<bool>( dest.GetMutableTree<bool>(), src.second.GetTree<bool>(), time, allocator );
-	details::WriteAllIdentifiers<uint8_t>( dest.GetMutableTree<uint8_t>(), src.second.GetTree<uint8_t>(), time, allocator );
-	details::WriteAllIdentifiers<int8_t>( dest.GetMutableTree<int8_t>(), src.second.GetTree<int8_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint16_t>( dest.GetMutableTree<uint16_t>(), src.second.GetTree<uint16_t>(), time, allocator );
-	details::WriteAllIdentifiers<int16_t>( dest.GetMutableTree<int16_t>(), src.second.GetTree<int16_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint32_t>( dest.GetMutableTree<uint32_t>(), src.second.GetTree<uint32_t>(), time, allocator );
-	details::WriteAllIdentifiers<int32_t>( dest.GetMutableTree<int32_t>(), src.second.GetTree<int32_t>(), time, allocator );
-	details::WriteAllIdentifiers<uint64_t>( dest.GetMutableTree<uint64_t>(), src.second.GetTree<uint64_t>(), time, allocator );
-	details::WriteAllIdentifiers<int64_t>( dest.GetMutableTree<int64_t>(), src.second.GetTree<int64_t>(), time, allocator );
+	using ContainedTypes = Snapshot::second_type::ContainedTypes;
+	static_assert( ContainedTypes::kNumTypes == 9, "Unexpected size" );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<0>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<0>::type>(), src.second.GetTree<ContainedTypes::ByIndex<0>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<1>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<1>::type>(), src.second.GetTree<ContainedTypes::ByIndex<1>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<2>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<2>::type>(), src.second.GetTree<ContainedTypes::ByIndex<2>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<3>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<3>::type>(), src.second.GetTree<ContainedTypes::ByIndex<3>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<4>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<4>::type>(), src.second.GetTree<ContainedTypes::ByIndex<4>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<5>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<5>::type>(), src.second.GetTree<ContainedTypes::ByIndex<5>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<6>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<6>::type>(), src.second.GetTree<ContainedTypes::ByIndex<6>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<7>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<7>::type>(), src.second.GetTree<ContainedTypes::ByIndex<7>::type>(), time, allocator );
+	details::WriteAllIdentifiers<ContainedTypes::ByIndex<8>::type>( dest.GetMutableTree<ContainedTypes::ByIndex<8>::type>(), src.second.GetTree<ContainedTypes::ByIndex<8>::type>(), time, allocator );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -25,15 +25,15 @@ public:
 		uint32_t, int32_t,
 		uint64_t, int64_t>;
 
-private:
-	using ReaderWriterMutex = rftl::shared_mutex;
-	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
-	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
-
 	template<typename T>
 	using Tree = StateTree<T, kMaxChanges>;
 	template<typename T>
 	using Stream = typename Tree<T>::StreamType;
+
+private:
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 
 	//
