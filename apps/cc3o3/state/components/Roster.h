@@ -24,8 +24,8 @@ class Roster final : public state::Component
 	// Types and constants
 public:
 	using RosterIndex = uint8_t;
-	static constexpr RosterIndex kInvalidRosterIndex = 0;
-	static constexpr RosterIndex kInititialRosterIndex = kInvalidRosterIndex + 1;
+	static constexpr RosterIndex kInvalidRosterIndex = rftl::numeric_limits<RosterIndex>::max();
+	static constexpr RosterIndex kInititialRosterIndex = 0;
 	static constexpr size_t kActiveTeamSize = 3;
 	static constexpr size_t kRosterSize = 8;
 
