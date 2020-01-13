@@ -22,6 +22,7 @@ public:
 	struct Anim
 	{
 		gfx::ManagedFramePackID mFramePackID = gfx::kInvalidManagedFramePackID;
+		gfx::TimeSlowdownRate mSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 		uint8_t mMaxTimeIndex = 0;
 	};
 

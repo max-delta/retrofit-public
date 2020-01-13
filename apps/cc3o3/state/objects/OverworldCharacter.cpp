@@ -72,7 +72,9 @@ void MakeOverworldCharacterFromDB(
 		auto setAnim = [&fPackMan]( comp::OverworldVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
 			anim.mFramePackID = fPackMan.GetManagedResourceIDFromResourceName( source );
-			anim.mMaxTimeIndex = fPackMan.GetResourceFromResourceName( source )->CalculateTimeIndexBoundary();
+			gfx::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
+			anim.mSlowdownRate = fPack.mPreferredSlowdownRate;
+			anim.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary();
 			RF_ASSERT_MSG( anim.mMaxTimeIndex == 4, "Unexpected format" );
 		};
 		setAnim( visual->mWalkNorth, nWalk );

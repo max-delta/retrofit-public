@@ -2,12 +2,21 @@
 #include "Gameplay_Overworld.h"
 
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/state/StateLogging.h"
+#include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/Roster.h"
+#include "cc3o3/state/components/OverworldVisual.h"
+#include "cc3o3/state/StateHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/TileLayerCSVLoader.h"
+
+#include "core_state/VariableIdentifier.h"
+#include "core_component/TypedObjectRef.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -137,7 +146,50 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( cloudB );
 	}
 
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Overworld" );
+	// Draw overworld characters
+	{
+		using namespace state;
+
+		input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
+
+		rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
+		VariableIdentifier const companyRoot( "company", playerIDAsString );
+
+		// Find company object
+		ObjectRef const company = FindObjectByIdentifier( companyRoot );
+		RFLOG_TEST_AND_FATAL( company.IsSet(), companyRoot, RFCAT_CC3O3, "Failed to find company" );
+
+		// For each active team member...
+		VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
+		comp::Roster const& roster = *company.GetComponentInstanceT<comp::Roster>();
+		for( size_t i_teamIndex = 0; i_teamIndex < comp::Roster::kActiveTeamSize; i_teamIndex++ )
+		{
+			comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
+			if( rosterIndex == comp::Roster::kInvalidRosterIndex )
+			{
+				continue;
+			}
+			rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
+			VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
+
+			// Find character object
+			MutableObjectRef const character = FindMutableObjectByIdentifier( charRoot );
+			RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
+
+			// HACK: Basic test drawing
+			// TODO: Properly set up visuals and updating based on movement
+			comp::OverworldVisual& visual = *character.GetMutableComponentInstanceT<comp::OverworldVisual>();
+			visual.mObject.mZLayer = -math::integer_cast<gfx::PPUDepthLayer>( 5u - i_teamIndex );
+			visual.mObject.mLooping = true;
+			visual.mObject.mFramePackID = visual.mIdleSouth.mFramePackID;
+			visual.mObject.mTimer.mMaxTimeIndex = visual.mIdleSouth.mMaxTimeIndex;
+			visual.mObject.mTimer.mTimeSlowdown = visual.mIdleSouth.mSlowdownRate;
+			visual.mObject.Animate();
+			ppu.DrawObject( visual.mObject );
+		}
+	}
+
+	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Overworld" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

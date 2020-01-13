@@ -166,7 +166,12 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 				rosterIndex++;
 			}
 
+			// HACK: Make sure some hard-coded characters are present
 			// TODO: Check active team conditions, auto-fill if needed
+			RF_ASSERT( roster.mEligible.at( 1 ) );
+			RF_ASSERT( roster.mEligible.at( 2 ) );
+			roster.mActiveTeam.at( 0 ) = 1;
+			roster.mActiveTeam.at( 1 ) = 2;
 		}
 
 		// HACK: Save out the state for diagnostics
