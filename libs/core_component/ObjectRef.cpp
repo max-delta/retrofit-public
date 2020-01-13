@@ -10,6 +10,13 @@
 namespace RF { namespace component {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool ObjectRef::IsSet() const
+{
+	return mManager != nullptr;
+}
+
+
+
 ObjectIdentifier ObjectRef::GetIdentifier() const
 {
 	return mIdentifier;
@@ -37,6 +44,13 @@ bool ObjectRef::operator==( ObjectRef const& rhs ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+bool MutableObjectRef::IsSet() const
+{
+	return mManager != nullptr;
+}
+
+
 
 ObjectIdentifier MutableObjectRef::GetIdentifier() const
 {
