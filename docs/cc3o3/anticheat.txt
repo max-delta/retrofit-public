@@ -68,7 +68,7 @@ Counter-mitigations:
 * Reverser can brute-force generate all permutations of grid, and search for hash
 
 Counter-counter-mitigations:
-* Hash of grid must include huge salt freshly generated before battle
+* Hash of grid must include huge salt freshly generated before battle, with contributions from both players
 	* Salt must be sent along with grid after battle, to allow hash verification
 
 Counter-counter-counter-mitigations:
