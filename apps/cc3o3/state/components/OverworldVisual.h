@@ -3,7 +3,7 @@
 
 #include "cc3o3/state/Component.h"
 
-#include "PPU/Object.h"
+#include "PPU/PPUTimer.h"
 
 #include "core/macros.h"
 
@@ -35,7 +35,7 @@ public:
 	//
 	// Public data
 public:
-	gfx::Object mObject = {};
+	gfx::PPUTimer mTimer = {};
 
 	Anim mWalkNorth = {};
 	Anim mWalkEast = {};

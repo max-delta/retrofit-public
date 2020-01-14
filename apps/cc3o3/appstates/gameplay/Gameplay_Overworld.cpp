@@ -7,6 +7,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/state/components/OverworldVisual.h"
+#include "cc3o3/state/components/OverworldMovement.h"
 #include "cc3o3/state/StateHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -146,7 +147,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( cloudB );
 	}
 
-	// Draw overworld characters
+	// Process overworld characters
 	{
 		using namespace state;
 
@@ -172,20 +173,63 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
 			VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
 
-			// Find character object
+			// Find character object and components
 			MutableObjectRef const character = FindMutableObjectByIdentifier( charRoot );
 			RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
-
-			// HACK: Basic test drawing
-			// TODO: Properly set up visuals and updating based on movement
 			comp::OverworldVisual& visual = *character.GetMutableComponentInstanceT<comp::OverworldVisual>();
-			visual.mObject.mZLayer = -math::integer_cast<gfx::PPUDepthLayer>( 5u - i_teamIndex );
-			visual.mObject.mLooping = true;
-			visual.mObject.mFramePackID = visual.mIdleSouth.mFramePackID;
-			visual.mObject.mTimer.mMaxTimeIndex = visual.mIdleSouth.mMaxTimeIndex;
-			visual.mObject.mTimer.mTimeSlowdown = visual.mIdleSouth.mSlowdownRate;
-			visual.mObject.Animate();
-			ppu.DrawObject( visual.mObject );
+			comp::OverworldMovement& movement = *character.GetMutableComponentInstanceT<comp::OverworldMovement>();
+
+			// Update movement
+			{
+				// HACK: Face south
+				// TODO: Input, etc.
+				movement.mCurPos.mFacing = comp::OverworldMovement::Pos::Facing::South;
+			}
+
+			// Update and draw visuals
+			{
+				gfx::Object object = {};
+
+				object.mXCoord = movement.mCurPos.mX;
+				object.mYCoord = movement.mCurPos.mY;
+
+				// HACK: Sort by reverse team order
+				// TODO: Something clever with the Y-axis as input
+				object.mZLayer = -math::integer_cast<gfx::PPUDepthLayer>( 5u - i_teamIndex );
+
+				bool const idle = movement.mCurPos.mMoving == false;
+
+				// Animate based on movement
+				comp::OverworldVisual::Anim const* anim;
+				switch( movement.mCurPos.mFacing )
+				{
+					case comp::OverworldMovement::Pos::Facing::North:
+						anim = idle ? &visual.mIdleNorth : &visual.mWalkNorth;
+						break;
+					case comp::OverworldMovement::Pos::Facing::East:
+						anim = idle ? &visual.mIdleEast : &visual.mWalkEast;
+						break;
+					case comp::OverworldMovement::Pos::Facing::South:
+						anim = idle ? &visual.mIdleSouth : &visual.mWalkSouth;
+						break;
+					case comp::OverworldMovement::Pos::Facing::West:
+						anim = idle ? &visual.mIdleWest : &visual.mWalkWest;
+						break;
+					default:
+						RFLOG_FATAL( charRoot, RFCAT_CC3O3, "Unexpected codepath" );
+				}
+				object.mFramePackID = anim->mFramePackID;
+
+				// Use timer from component, and update it
+				object.mTimer = visual.mTimer;
+				object.mTimer.mMaxTimeIndex = anim->mMaxTimeIndex;
+				object.mTimer.mTimeSlowdown = anim->mSlowdownRate;
+				object.mLooping = true;
+				object.Animate();
+				visual.mTimer = object.mTimer;
+
+				ppu.DrawObject( object );
+			}
 		}
 	}
 

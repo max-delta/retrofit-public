@@ -38,7 +38,7 @@ public:
 			South,
 			West,
 		};
-		rollback::AutoVar<int16_t> mFacing;
+		rollback::AutoVar<uint8_t> mFacing;
 
 		rollback::AutoVar<bool> mMoving;
 	};
