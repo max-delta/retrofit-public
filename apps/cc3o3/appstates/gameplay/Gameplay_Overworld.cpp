@@ -181,9 +181,10 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			// Update movement
 			{
-				// HACK: Face south
+				// HACK: Face south, split positions out
 				// TODO: Input, etc.
 				movement.mCurPos.mFacing = comp::OverworldMovement::Pos::Facing::South;
+				movement.mCurPos.mX = math::integer_cast<gfx::PPUCoordElem>( i_teamIndex * 32 );
 			}
 
 			// Update and draw visuals
