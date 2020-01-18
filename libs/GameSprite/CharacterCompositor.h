@@ -14,6 +14,8 @@ namespace RF { namespace sprite {
 
 struct GAMESPRITE_API CompositeCharacterParams
 {
+	rftl::string mMode = {};
+
 	size_t mCompositeWidth = 0;
 	size_t mCompositeHeight = 0;
 
@@ -41,6 +43,8 @@ enum class CharacterPieceType : uint8_t
 
 struct GAMESPRITE_API CompositeSequenceParams
 {
+	static constexpr size_t kInvalidRow = rftl::numeric_limits<size_t>::max();
+
 	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
 
 	size_t mCompositeWidth = 0;
@@ -134,6 +138,14 @@ struct GAMESPRITE_API CharacterPieceCategories
 	CollectionsByType mCollectionsByType = {};
 };
 
+
+
+struct GAMESPRITE_API CharacterModes
+{
+	using CategoriesByMode = rftl::unordered_map<rftl::string, CharacterPieceCategories>;
+	CategoriesByMode mCategoriesByMode = {};
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMESPRITE_API CharacterCompositor
@@ -145,7 +157,7 @@ class GAMESPRITE_API CharacterCompositor
 public:
 	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
-	bool LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir );
+	bool LoadPieceTables( file::VFSPath const& pieceTablesDir );
 	CompositeCharacter CreateCompositeCharacter( CompositeCharacterParams const& params );
 
 
@@ -157,7 +169,8 @@ private:
 	void CreateCompositeAnims( CompositeAnimParams const& params );
 
 	rftl::deque<rftl::deque<rftl::string>> LoadCSV( file::VFSPath const& path );
-	bool LoadPieceTable( CharacterPieceType pieceType, file::VFSPath const& pieceTablePath );
+	bool LoadPieceTable( rftl::string mode, CharacterPieceType pieceType, file::VFSPath const& pieceTablePath );
+	bool LoadPieceTableDirectory( rftl::string mode, CharacterPieceType pieceType, file::VFSPath const& pieceTableDirectory );
 
 
 	//
@@ -166,7 +179,7 @@ private:
 	WeakPtr<file::VFS const> mVfs;
 	WeakPtr<gfx::PPUController> mPpu;
 	BitmapCache mBitmapCache;
-	CharacterPieceCategories mCharacterPieceCategories;
+	CharacterModes mCharacterModes;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

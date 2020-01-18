@@ -33,7 +33,7 @@ private:
 public:
 	CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
 
-	bool LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir );
+	bool LoadPieceTables( file::VFSPath const& pieceTablesDir );
 	bool LoadCompositionTable( file::VFSPath const& compositionTablePath );
 
 	TagBits GetTagsAsFlags( Tags const& tags ) const;

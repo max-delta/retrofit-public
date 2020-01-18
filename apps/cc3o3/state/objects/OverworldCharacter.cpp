@@ -57,7 +57,11 @@ void MakeOverworldCharacterFromDB(
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
 		sprite::CompositeCharacter const composite = charDB.FetchExistingComposite( charID );
-		RFLOG_TEST_AND_FATAL( composite.mCharacterSequenceType == sprite::CharacterSequenceType::N3_E3_S3_W3, ref, RFCAT_CC3O3, "Unsupported sequence" );
+		RFLOG_TEST_AND_FATAL( composite.mCharacterSequenceType == sprite::CharacterSequenceType::P_NESW_i121, ref, RFCAT_CC3O3, "Unsupported sequence" );
+		file::VFSPath const nIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::NIdle );
+		file::VFSPath const eIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::EIdle );
+		file::VFSPath const sIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::SIdle );
+		file::VFSPath const wIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::WIdle );
 		file::VFSPath const nWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::NWalk );
 		file::VFSPath const eWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::EWalk );
 		file::VFSPath const sWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::SWalk );
@@ -65,6 +69,10 @@ void MakeOverworldCharacterFromDB(
 
 		gfx::PPUController& ppu = *app::gGraphics;
 		gfx::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, nIdle );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, eIdle );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, sIdle );
+		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, wIdle );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, nWalk );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, eWalk );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, sWalk );
@@ -77,16 +85,14 @@ void MakeOverworldCharacterFromDB(
 			anim.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary();
 			RF_ASSERT_MSG( anim.mMaxTimeIndex == 4, "Unexpected format" );
 		};
+		setAnim( visual->mIdleNorth, nIdle );
+		setAnim( visual->mIdleEast, eIdle );
+		setAnim( visual->mIdleSouth, sIdle );
+		setAnim( visual->mIdleWest, wIdle );
 		setAnim( visual->mWalkNorth, nWalk );
 		setAnim( visual->mWalkEast, eWalk );
 		setAnim( visual->mWalkSouth, sWalk );
 		setAnim( visual->mWalkWest, wWalk );
-
-		// TODO: Different format, with dedicated idle framepacks
-		setAnim( visual->mIdleNorth, nWalk );
-		setAnim( visual->mIdleEast, eWalk );
-		setAnim( visual->mIdleSouth, sWalk );
-		setAnim( visual->mIdleWest, wWalk );
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as overworld character" );

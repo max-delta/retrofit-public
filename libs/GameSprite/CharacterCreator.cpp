@@ -19,9 +19,9 @@ CharacterCreator::CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::P
 
 
 
-bool CharacterCreator::LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir )
+bool CharacterCreator::LoadPieceTables( file::VFSPath const& pieceTablesDir )
 {
-	return mCompositor.LoadPieceTables( masterTablePath, pieceTablesDir );
+	return mCompositor.LoadPieceTables( pieceTablesDir );
 }
 
 

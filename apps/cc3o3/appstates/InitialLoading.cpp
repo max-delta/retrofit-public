@@ -129,7 +129,6 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load character creator
 	{
 		gCharacterCreator->LoadPieceTables(
-			paths::CharacterTables().GetChild( "pieces.csv" ),
 			paths::CharacterTables().GetChild( "pieces" ) );
 		gCharacterCreator->LoadCompositionTable(
 			paths::CharacterTables().GetChild( "composite.csv" ) );

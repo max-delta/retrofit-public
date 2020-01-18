@@ -15,13 +15,13 @@ enum class CharacterSequenceType : uint8_t
 
 	// Top-down
 	// Cardinal directions [N; E; S; W]
-	// Walk cycles only
+	// Pallete reference tile
+	// Idle frame and walk cycles
 	// 4 frames, 3 unique [Step 1; Mid-step; Step 2]
-	// Empty tile between contiguous sequences
-	N3_E3_S3_W3,
+	P_NESW_i121,
 
-	// As N3_E3_S3_W3, but in 3 rows for layering
-	Near_far_tail_N3_E3_S3_W3
+	// As P_NESW_i121, but in 3 rows for layering
+	Near_mid_far_P_NESW_i121
 };
 
 
@@ -29,6 +29,12 @@ enum class CharacterSequenceType : uint8_t
 enum class CharacterAnimKey : uint8_t
 {
 	Invalid = 0,
+
+	NIdle,
+	EIdle,
+	SIdle,
+	WIdle,
+
 	NWalk,
 	EWalk,
 	SWalk,

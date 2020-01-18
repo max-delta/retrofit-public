@@ -96,6 +96,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		sprite::CharacterCreator& charCreate = *gCharacterCreator;
 
 		sprite::CompositeCharacterParams params = {};
+		params.mMode = "24";
 		params.mCompositeWidth = 32;
 		params.mCompositeHeight = 32;
 		params.mCharPiecesDir = paths::CharacterPieces();

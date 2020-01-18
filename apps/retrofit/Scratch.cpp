@@ -34,7 +34,6 @@ void Start()
 
 	sprite::CharacterCreator creator( app::gVfs, app::gGraphics );
 	bool const loadPieceSuccess = creator.LoadPieceTables(
-		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces.csv" ),
 		file::VFS::kRoot.GetChild( "assets", "tables", "char", "pieces" ) );
 	RF_ASSERT( loadPieceSuccess );
 	bool const loadCompositionSuccess = creator.LoadCompositionTable(
@@ -59,6 +58,7 @@ void Start()
 	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
 
 	sprite::CompositeCharacterParams params = {};
+	params.mMode = "24";
 	params.mCompositeWidth = 32;
 	params.mCompositeHeight = 32;
 	params.mBaseId = base;

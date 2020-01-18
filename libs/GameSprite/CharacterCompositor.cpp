@@ -31,71 +31,73 @@ CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<
 
 
 
-bool CharacterCompositor::LoadPieceTables( file::VFSPath const& masterTablePath, file::VFSPath const& pieceTablesDir )
+bool CharacterCompositor::LoadPieceTables( file::VFSPath const& pieceTablesDir )
 {
-	rftl::deque<rftl::deque<rftl::string>> masterTable = LoadCSV( masterTablePath );
-	if( masterTable.empty() )
+	// Enumerate what modes exist
+	rftl::vector<file::VFSPath> modeDirectories;
 	{
-		RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Failed to load master piece table file" );
+		rftl::vector<file::VFSPath> unexpectedModeFiles;
+		mVfs->EnumerateDirectory(
+			pieceTablesDir,
+			file::VFSMount::Permissions::ReadOnly,
+			unexpectedModeFiles,
+			modeDirectories );
+		for( file::VFSPath const& unexpectedModeFile : unexpectedModeFiles )
+		{
+			RFLOG_WARNING( unexpectedModeFile, RFCAT_GAMESPRITE, "Unexpected file found alongside mode directories" );
+		}
+	}
+
+	if( modeDirectories.empty() )
+	{
+		RFLOG_NOTIFY( pieceTablesDir, RFCAT_GAMESPRITE, "Failed to find any mode directories" );
 		return false;
 	}
 
-	size_t line = 0;
-
-	rftl::deque<rftl::string> const header = masterTable.front();
-	masterTable.pop_front();
-	if( header.size() != 2 || header.at( 0 ) != "type" || header.at( 1 ) != "vfs suffix" )
+	for( file::VFSPath const& modeDirectory : modeDirectories )
 	{
-		RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece header, expected 'type, vfs suffix'" );
-		return false;
-	}
-	line++;
+		rftl::string const mode = modeDirectory.GetElement( modeDirectory.NumElements() - 1 );
 
-	while( masterTable.empty() == false )
-	{
-		rftl::deque<rftl::string> const entry = masterTable.front();
-		if( entry.size() != 2 )
 		{
-			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line %i, expected 2 columns", math::integer_cast<int>( line ) );
-			return false;
+			CharacterPieceType type = CharacterPieceType::Base;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "base" );
+			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
+			if( loadResult == false )
+			{
+				RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Couldn't load piece table directory" );
+				return false;
+			}
 		}
-		rftl::string const& typeString = entry.at( 0 );
-		rftl::string const& vfsSuffix = entry.at( 1 );
-
-		CharacterPieceType type = CharacterPieceType::Invalid;
-		if( typeString == "base" )
 		{
-			type = CharacterPieceType::Base;
+			CharacterPieceType type = CharacterPieceType::Clothing;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "clothing" );
+			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
+			if( loadResult == false )
+			{
+				RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Couldn't load piece table directory" );
+				return false;
+			}
 		}
-		else if( typeString == "clothing" )
 		{
-			type = CharacterPieceType::Clothing;
+			CharacterPieceType type = CharacterPieceType::Hair;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "hair" );
+			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
+			if( loadResult == false )
+			{
+				RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Couldn't load piece table directory" );
+				return false;
+			}
 		}
-		else if( typeString == "hair" )
 		{
-			type = CharacterPieceType::Hair;
+			CharacterPieceType type = CharacterPieceType::Species;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "species" );
+			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
+			if( loadResult == false )
+			{
+				RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Couldn't load piece table directory" );
+				return false;
+			}
 		}
-		else if( typeString == "species" )
-		{
-			type = CharacterPieceType::Species;
-		}
-		else
-		{
-			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line %i, not a valid piece type", math::integer_cast<int>( line ) );
-			return false;
-		}
-
-		file::VFSPath const pieceTablePath = pieceTablesDir.GetChild( vfsSuffix );
-
-		bool loadResult = LoadPieceTable( type, pieceTablePath );
-		if( loadResult == false )
-		{
-			RFLOG_NOTIFY( masterTablePath, RFCAT_GAMESPRITE, "Couldn't load piece table at line %i of master file", math::integer_cast<int>( line ) );
-			return false;
-		}
-
-		masterTable.pop_front();
-		line++;
 	}
 
 	return true;
@@ -107,10 +109,12 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 {
 	// TODO: Better error-reporting
 
-	CharacterPiece const basePiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( params.mBaseId );
-	CharacterPiece const clothingPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mClothingId );
-	CharacterPiece const hairPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
-	CharacterPiece const speciesPiece = mCharacterPieceCategories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
+	CharacterPieceCategories& categories = mCharacterModes.mCategoriesByMode.at( params.mMode );
+
+	CharacterPiece const basePiece = categories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( params.mBaseId );
+	CharacterPiece const clothingPiece = categories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mClothingId );
+	CharacterPiece const hairPiece = categories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
+	CharacterPiece const speciesPiece = categories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
 
 	// Expect all tiles to be the same size
 	// TODO: More flexibility?
@@ -129,16 +133,16 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	RF_ASSERT( commonHeight == basePiece.mTileHeight );
 	RF_ASSERT( commonHeight <= params.mCompositeHeight );
 
-	RF_ASSERT( basePiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
-	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
-	RF_ASSERT( hairPiece.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3 );
-	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Near_far_tail_N3_E3_S3_W3 );
+	RF_ASSERT( basePiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
+	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
+	RF_ASSERT( hairPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
+	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Near_mid_far_P_NESW_i121 );
 
 	file::VFSPath const& charPieces = params.mCharPiecesDir;
 	file::VFSPath const& outDir = params.mOutputDir;
 
 	CompositeAnimParams animParams = {};
-	animParams.mSequence.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
+	animParams.mSequence.mCharacterSequenceType = CharacterSequenceType::P_NESW_i121;
 	animParams.mSequence.mCompositeWidth = params.mCompositeWidth;
 	animParams.mSequence.mCompositeHeight = params.mCompositeHeight;
 	animParams.mSequence.mTileWidth = commonWidth;
@@ -149,12 +153,12 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	animParams.mSequence.mBaseOffsetY = basePiece.mOffsetY;
 	animParams.mSequence.mClothingCol = clothingPiece.mStartColumn;
 	animParams.mSequence.mClothingNearRow = clothingPiece.mStartRow;
-	animParams.mSequence.mClothingFarRow = 0; // TODO: Add 'invalid' concept
+	animParams.mSequence.mClothingFarRow = CompositeSequenceParams::kInvalidRow;
 	animParams.mSequence.mClothingOffsetX = clothingPiece.mOffsetX;
 	animParams.mSequence.mClothingOffsetY = clothingPiece.mOffsetY;
 	animParams.mSequence.mHairCol = hairPiece.mStartColumn;
 	animParams.mSequence.mHairNearRow = hairPiece.mStartRow;
-	animParams.mSequence.mHairFarRow = 0; // TODO: Add 'invalid' concept
+	animParams.mSequence.mHairFarRow = CompositeSequenceParams::kInvalidRow;
 	animParams.mSequence.mHairOffsetX = hairPiece.mOffsetX;
 	animParams.mSequence.mHairOffsetY = hairPiece.mOffsetY;
 	animParams.mSequence.mSpeciesCol = speciesPiece.mStartColumn;
@@ -163,15 +167,19 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	animParams.mSequence.mSpeciesTailRow = speciesPiece.mStartRow + 2;
 	animParams.mSequence.mSpeciesOffsetX = speciesPiece.mOffsetX;
 	animParams.mSequence.mSpeciesOffsetY = speciesPiece.mOffsetY;
-	animParams.mBasePieces = charPieces.GetChild( basePiece.mFilename );
-	animParams.mClothingPieces = charPieces.GetChild( clothingPiece.mFilename );
-	animParams.mHairPieces = charPieces.GetChild( hairPiece.mFilename );
-	animParams.mSpeciesPieces = charPieces.GetChild( speciesPiece.mFilename );
+	animParams.mBasePieces = charPieces.GetChild( params.mMode, "base", basePiece.mFilename );
+	animParams.mClothingPieces = charPieces.GetChild( params.mMode, "clothing", clothingPiece.mFilename );
+	animParams.mHairPieces = charPieces.GetChild( params.mMode, "hair", hairPiece.mFilename );
+	animParams.mSpeciesPieces = charPieces.GetChild( params.mMode, "species", speciesPiece.mFilename );
 	animParams.mTextureOutputDirectory = outDir;
-	animParams.mOutputPaths[CharacterAnimKey::NWalk] = outDir.GetChild( "n.fpack" );
-	animParams.mOutputPaths[CharacterAnimKey::EWalk] = outDir.GetChild( "e.fpack" );
-	animParams.mOutputPaths[CharacterAnimKey::SWalk] = outDir.GetChild( "s.fpack" );
-	animParams.mOutputPaths[CharacterAnimKey::WWalk] = outDir.GetChild( "w.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::NIdle] = outDir.GetChild( "n_idle.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::EIdle] = outDir.GetChild( "e_idle.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::SIdle] = outDir.GetChild( "s_idle.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::WIdle] = outDir.GetChild( "w_idle.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::NWalk] = outDir.GetChild( "n_walk.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::EWalk] = outDir.GetChild( "e_walk.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::SWalk] = outDir.GetChild( "s_walk.fpack" );
+	animParams.mOutputPaths[CharacterAnimKey::WWalk] = outDir.GetChild( "w_walk.fpack" );
 
 	CreateCompositeAnims( animParams );
 
@@ -190,66 +198,82 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 	RF_ASSERT( sequence.mTileWidth <= sequence.mCompositeWidth );
 	RF_ASSERT( sequence.mTileHeight <= sequence.mCompositeHeight );
 
-	sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mBaseCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mBaseRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap clothingNearFrame = params.mClothingTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mClothingNearRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap clothingFarFrame = params.mClothingTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mClothingFarRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap hairNearFrame = params.mHairTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mHairNearRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap hairFarFrame = params.mHairTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mHairFarRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap speciesNearFrame = params.mSpeciesTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mSpeciesNearRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap speciesFarFrame = params.mSpeciesTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mSpeciesFarRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
-	sprite::Bitmap speciesTailFrame = params.mSpeciesTex->ExtractRegion(
-		sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-		sequence.mTileHeight * sequence.mSpeciesTailRow,
-		sequence.mTileWidth,
-		sequence.mTileHeight );
-
 	// Composite
 	sprite::Bitmap composite( sequence.mCompositeWidth, sequence.mCompositeHeight );
 	{
 		static constexpr sprite::Bitmap::ElementType::ElementType kMinAlpha = 1;
-		composite.ApplyStencilOverwrite( speciesFarFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( hairFarFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( clothingFarFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( baseFrame, sequence.mBaseOffsetX, sequence.mBaseOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( clothingNearFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( hairNearFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( speciesTailFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
-		composite.ApplyStencilOverwrite( speciesNearFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+		if( sequence.mSpeciesFarRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap speciesFarFrame = params.mSpeciesTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mSpeciesFarRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( speciesFarFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+		}
+		if( sequence.mHairFarRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap hairFarFrame = params.mHairTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mHairFarRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( hairFarFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
+		}
+		if( sequence.mClothingFarRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap clothingFarFrame = params.mClothingTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mClothingFarRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( clothingFarFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
+		}
+		if( sequence.mBaseRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mBaseCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mBaseRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( baseFrame, sequence.mBaseOffsetX, sequence.mBaseOffsetY, kMinAlpha );
+		}
+		if( sequence.mClothingNearRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap clothingNearFrame = params.mClothingTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mClothingNearRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( clothingNearFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
+		}
+		if( sequence.mHairNearRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap hairNearFrame = params.mHairTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mHairNearRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( hairNearFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
+		}
+		if( sequence.mSpeciesTailRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap speciesTailFrame = params.mSpeciesTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mSpeciesTailRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( speciesTailFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+		}
+		if( sequence.mSpeciesNearRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap speciesNearFrame = params.mSpeciesTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mSpeciesNearRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( speciesNearFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+		}
 	}
 
 	// Set transparency color for external editors (for debugging)
@@ -294,24 +318,24 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	frameParams.mHairTex = hairTex;
 	frameParams.mSpeciesTex = speciesTex;
 
-	RF_ASSERT_MSG( params.mSequence.mCharacterSequenceType == CharacterSequenceType::N3_E3_S3_W3, "Only 'N3_E3_S3_W3' is currently supported" );
+	RF_ASSERT_MSG( params.mSequence.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121, "Only 'P_NESW_i121' is currently supported" );
 
-	static constexpr size_t kBitmapFramesPerDirection = 3;
+	static constexpr size_t kBitmapFramesPerDirection = 4;
 	static constexpr size_t kTotalFrames = 4 * kBitmapFramesPerDirection;
 	static constexpr char const* kFrameNames[kTotalFrames] = {
 		// clang-format off
-		"n0.bmp", "n1.bmp", "n2.bmp",
-		"e0.bmp", "e1.bmp", "e2.bmp",
-		"s0.bmp", "s1.bmp", "s2.bmp",
-		"w0.bmp", "w1.bmp", "w2.bmp"
+		"ni.bmp", "n0.bmp", "n1.bmp", "n2.bmp",
+		"ei.bmp", "e0.bmp", "e1.bmp", "e2.bmp",
+		"si.bmp", "s0.bmp", "s1.bmp", "s2.bmp",
+		"wi.bmp", "w0.bmp", "w1.bmp", "w2.bmp"
 		// clang-format on
 	};
 	static constexpr size_t kColumnOffsets[kTotalFrames] = {
 		// clang-format off
-		0, 1, 2,
-		4, 5, 6,
-		8, 9, 10,
-		12, 13, 14
+		1, 2, 3, 4,
+		5, 6, 7, 8,
+		9, 10, 11, 12,
+		13, 14, 15, 16
 		// clang-format on
 	};
 
@@ -323,18 +347,26 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 	}
 
 	static constexpr size_t kAnimFramesPerDirection = 4;
-	static constexpr size_t kTotalFramepacks = 4;
+	static constexpr size_t kTotalFramepacks = 8;
 	static constexpr CharacterAnimKey kFramepackKeys[kTotalFramepacks] = {
+		CharacterAnimKey::NIdle,
+		CharacterAnimKey::EIdle,
+		CharacterAnimKey::SIdle,
+		CharacterAnimKey::WIdle,
 		CharacterAnimKey::NWalk,
 		CharacterAnimKey::EWalk,
 		CharacterAnimKey::SWalk,
 		CharacterAnimKey::WWalk
 	};
 	static constexpr size_t kFramepackSourceFrames[kTotalFramepacks][kAnimFramesPerDirection] = {
-		{ 0, 1, 2, 1 },
-		{ 3, 4, 5, 4 },
-		{ 6, 7, 8, 7 },
-		{ 9, 10, 11, 10 }
+		{ 0, 0, 0, 0 },
+		{ 4, 4, 4, 4 },
+		{ 8, 8, 8, 8 },
+		{ 12, 12, 12, 12 },
+		{ 1, 2, 3, 2 },
+		{ 5, 6, 7, 6 },
+		{ 9, 10, 11, 10 },
+		{ 13, 14, 15, 14 }
 	};
 
 	// Create framepacks
@@ -406,7 +438,7 @@ rftl::deque<rftl::deque<rftl::string>> CharacterCompositor::LoadCSV( file::VFSPa
 
 
 
-bool CharacterCompositor::LoadPieceTable( CharacterPieceType pieceType, file::VFSPath const& pieceTablePath )
+bool CharacterCompositor::LoadPieceTable( rftl::string mode, CharacterPieceType pieceType, file::VFSPath const& pieceTablePath )
 {
 	rftl::deque<rftl::deque<rftl::string>> pieceTable = LoadCSV( pieceTablePath );
 	if( pieceTable.empty() )
@@ -415,7 +447,8 @@ bool CharacterCompositor::LoadPieceTable( CharacterPieceType pieceType, file::VF
 		return false;
 	}
 
-	CharacterPieceCollection& collection = mCharacterPieceCategories.mCollectionsByType[pieceType];
+	CharacterPieceCategories& categories = mCharacterModes.mCategoriesByMode[mode];
+	CharacterPieceCollection& collection = categories.mCollectionsByType[pieceType];
 
 	size_t line = 0;
 
@@ -490,13 +523,13 @@ bool CharacterCompositor::LoadPieceTable( CharacterPieceType pieceType, file::VF
 		( rftl::stringstream() << offsetXString ) >> piece.mOffsetX;
 		( rftl::stringstream() << offsetYString ) >> piece.mOffsetY;
 
-		if( sequenceString == "n3_e3_s3_w3" )
+		if( sequenceString == "p_nesw_i121" )
 		{
-			piece.mCharacterSequenceType = CharacterSequenceType::N3_E3_S3_W3;
+			piece.mCharacterSequenceType = CharacterSequenceType::P_NESW_i121;
 		}
-		else if( sequenceString == "near_far_tail_n3_e3_s3_w3" )
+		else if( sequenceString == "nmf_p_nesw_i121" )
 		{
-			piece.mCharacterSequenceType = CharacterSequenceType::Near_far_tail_N3_E3_S3_W3;
+			piece.mCharacterSequenceType = CharacterSequenceType::Near_mid_far_P_NESW_i121;
 		}
 		else
 		{
@@ -508,6 +541,45 @@ bool CharacterCompositor::LoadPieceTable( CharacterPieceType pieceType, file::VF
 
 		pieceTable.pop_front();
 		line++;
+	}
+
+	return true;
+}
+
+
+
+bool CharacterCompositor::LoadPieceTableDirectory( rftl::string mode, CharacterPieceType pieceType, file::VFSPath const& pieceTableDirectory )
+{
+	// Enumerate piece tables
+	rftl::vector<file::VFSPath> pieceTableFiles;
+	{
+		rftl::vector<file::VFSPath> unexpectedDirectories;
+		mVfs->EnumerateDirectory(
+			pieceTableDirectory,
+			file::VFSMount::Permissions::ReadOnly,
+			pieceTableFiles,
+			unexpectedDirectories );
+		for( file::VFSPath const& unexpectedDirectory : unexpectedDirectories )
+		{
+			RFLOG_WARNING( unexpectedDirectory, RFCAT_GAMESPRITE, "Unexpected directory found alongside piece table files" );
+		}
+	}
+
+	if( pieceTableFiles.empty() )
+	{
+		RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Failed to find any piece table files" );
+		return false;
+	}
+
+	// Load all piece tables
+	for( file::VFSPath const& pieceTableFile : pieceTableFiles )
+	{
+		bool const loadResult = LoadPieceTable( mode, pieceType, pieceTableFile );
+		if( loadResult == false )
+		{
+			RFLOG_NOTIFY( pieceTableFile, RFCAT_GAMESPRITE, "Couldn't load piece table file" );
+			return false;
+		}
 	}
 
 	return true;

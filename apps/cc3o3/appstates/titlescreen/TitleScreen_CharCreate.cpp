@@ -419,6 +419,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	static constexpr char const kId[] = "CHAR_CREATE_TEMP";
 
 	sprite::CompositeCharacterParams params = {};
+	params.mMode = "24";
 	params.mCompositeWidth = 32;
 	params.mCompositeHeight = 32;
 	params.mBaseId = mChar.mVisuals.mBase;
