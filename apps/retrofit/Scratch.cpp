@@ -59,8 +59,8 @@ void Start()
 
 	sprite::CompositeCharacterParams params = {};
 	params.mMode = "24";
-	params.mCompositeWidth = 32;
-	params.mCompositeHeight = 32;
+	params.mCompositeWidth = 24;
+	params.mCompositeHeight = 24;
 	params.mBaseId = base;
 	params.mClothingId = clothing;
 	params.mHairId = hair;

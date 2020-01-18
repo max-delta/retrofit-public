@@ -164,9 +164,9 @@ size_t Bitmap::ApplyStencilOverwrite( Bitmap const& source, size_t x, size_t y, 
 	size_t const targetYStart = y;
 	size_t const yLen = source.GetHeight();
 	RF_ASSERT( targetXStart < GetWidth() );
-	RF_ASSERT( targetXStart + xLen < GetWidth() );
+	RF_ASSERT( targetXStart + xLen <= GetWidth() );
 	RF_ASSERT( targetYStart < GetHeight() );
-	RF_ASSERT( targetYStart + yLen < GetHeight() );
+	RF_ASSERT( targetYStart + yLen <= GetHeight() );
 
 	size_t numOverwritten = 0;
 	for( size_t ix = 0; ix < xLen; ix++ )

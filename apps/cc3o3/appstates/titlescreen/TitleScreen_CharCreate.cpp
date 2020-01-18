@@ -420,8 +420,8 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 
 	sprite::CompositeCharacterParams params = {};
 	params.mMode = "24";
-	params.mCompositeWidth = 32;
-	params.mCompositeHeight = 32;
+	params.mCompositeWidth = 24;
+	params.mCompositeHeight = 24;
 	params.mBaseId = mChar.mVisuals.mBase;
 	params.mClothingId = mChar.mVisuals.mClothing;
 	params.mHairId = mChar.mVisuals.mHair;
@@ -636,8 +636,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			preview->SetFramePack(
 				previewFpackID,
 				fPack.CalculateTimeIndexBoundary(),
-				32,
-				32 );
+				24,
+				24 );
 			preview->SetSlowdown( fPack.mPreferredSlowdownRate );
 
 			// Cut bottom in 2
