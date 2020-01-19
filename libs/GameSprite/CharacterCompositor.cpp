@@ -136,7 +136,7 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	RF_ASSERT( basePiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
 	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
 	RF_ASSERT( hairPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
-	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Near_mid_far_P_NESW_i121 );
+	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Far_mid_near_P_NESW_i121 );
 
 	file::VFSPath const& charPieces = params.mCharPiecesDir;
 	file::VFSPath const& outDir = params.mOutputDir;
@@ -152,19 +152,19 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	animParams.mSequence.mBaseOffsetX = basePiece.mOffsetX;
 	animParams.mSequence.mBaseOffsetY = basePiece.mOffsetY;
 	animParams.mSequence.mClothingCol = clothingPiece.mStartColumn;
-	animParams.mSequence.mClothingNearRow = clothingPiece.mStartRow;
 	animParams.mSequence.mClothingFarRow = CompositeSequenceParams::kInvalidRow;
+	animParams.mSequence.mClothingNearRow = clothingPiece.mStartRow;
 	animParams.mSequence.mClothingOffsetX = clothingPiece.mOffsetX;
 	animParams.mSequence.mClothingOffsetY = clothingPiece.mOffsetY;
 	animParams.mSequence.mHairCol = hairPiece.mStartColumn;
-	animParams.mSequence.mHairNearRow = hairPiece.mStartRow;
 	animParams.mSequence.mHairFarRow = CompositeSequenceParams::kInvalidRow;
+	animParams.mSequence.mHairNearRow = hairPiece.mStartRow;
 	animParams.mSequence.mHairOffsetX = hairPiece.mOffsetX;
 	animParams.mSequence.mHairOffsetY = hairPiece.mOffsetY;
 	animParams.mSequence.mSpeciesCol = speciesPiece.mStartColumn;
-	animParams.mSequence.mSpeciesNearRow = speciesPiece.mStartRow + 0;
-	animParams.mSequence.mSpeciesFarRow = speciesPiece.mStartRow + 1;
-	animParams.mSequence.mSpeciesTailRow = speciesPiece.mStartRow + 2;
+	animParams.mSequence.mSpeciesFarRow = speciesPiece.mStartRow + 0;
+	animParams.mSequence.mSpeciesMidRow = speciesPiece.mStartRow + 1;
+	animParams.mSequence.mSpeciesNearRow = speciesPiece.mStartRow + 2;
 	animParams.mSequence.mSpeciesOffsetX = speciesPiece.mOffsetX;
 	animParams.mSequence.mSpeciesOffsetY = speciesPiece.mOffsetY;
 	animParams.mBasePieces = charPieces.GetChild( params.mMode, "base", basePiece.mFilename );
@@ -238,6 +238,15 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 				sequence.mTileHeight );
 			composite.ApplyStencilOverwrite( baseFrame, sequence.mBaseOffsetX, sequence.mBaseOffsetY, kMinAlpha );
 		}
+		if( sequence.mSpeciesMidRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap speciesMidFrame = params.mSpeciesTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mSpeciesMidRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( speciesMidFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+		}
 		if( sequence.mClothingNearRow != CompositeSequenceParams::kInvalidRow )
 		{
 			sprite::Bitmap clothingNearFrame = params.mClothingTex->ExtractRegion(
@@ -255,15 +264,6 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 				sequence.mTileWidth,
 				sequence.mTileHeight );
 			composite.ApplyStencilOverwrite( hairNearFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
-		}
-		if( sequence.mSpeciesTailRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap speciesTailFrame = params.mSpeciesTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mSpeciesTailRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( speciesTailFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
 		}
 		if( sequence.mSpeciesNearRow != CompositeSequenceParams::kInvalidRow )
 		{
@@ -527,9 +527,9 @@ bool CharacterCompositor::LoadPieceTable( rftl::string mode, CharacterPieceType 
 		{
 			piece.mCharacterSequenceType = CharacterSequenceType::P_NESW_i121;
 		}
-		else if( sequenceString == "nmf_p_nesw_i121" )
+		else if( sequenceString == "fmn_p_nesw_i121" )
 		{
-			piece.mCharacterSequenceType = CharacterSequenceType::Near_mid_far_P_NESW_i121;
+			piece.mCharacterSequenceType = CharacterSequenceType::Far_mid_near_P_NESW_i121;
 		}
 		else
 		{

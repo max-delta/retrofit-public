@@ -21,7 +21,7 @@ enum class CharacterSequenceType : uint8_t
 	P_NESW_i121,
 
 	// As P_NESW_i121, but in 3 rows for layering
-	Near_mid_far_P_NESW_i121
+	Far_mid_near_P_NESW_i121
 };
 
 
