@@ -44,11 +44,13 @@ void Start()
 
 	// Choose first valid
 	sprite::CharacterCreator::PieceId const base = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Base, characterTagBits );
-	sprite::CharacterCreator::PieceId const clothing = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Clothing, characterTagBits );
+	sprite::CharacterCreator::PieceId const top = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Top, characterTagBits );
+	sprite::CharacterCreator::PieceId const bottom = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Bottom, characterTagBits );
 	sprite::CharacterCreator::PieceId const hair = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Hair, characterTagBits );
 	sprite::CharacterCreator::PieceId const species = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Species, characterTagBits );
 	RF_ASSERT( base.empty() == false );
-	RF_ASSERT( clothing.empty() == false );
+	RF_ASSERT( top.empty() == false );
+	RF_ASSERT( bottom.empty() == false );
 	RF_ASSERT( hair.empty() == false );
 	RF_ASSERT( species.empty() == false );
 
@@ -62,7 +64,8 @@ void Start()
 	params.mCompositeWidth = 24;
 	params.mCompositeHeight = 24;
 	params.mBaseId = base;
-	params.mClothingId = clothing;
+	params.mTopId = top;
+	params.mBottomId = bottom;
 	params.mHairId = hair;
 	params.mSpeciesId = species;
 	params.mCharPiecesDir = charPieces;

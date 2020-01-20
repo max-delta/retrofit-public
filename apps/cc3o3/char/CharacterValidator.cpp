@@ -412,7 +412,8 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 		};
 
 		sanitizePiece( charCreate, tagBits, visuals.mBase, sprite::CharacterPieceType::Base );
-		sanitizePiece( charCreate, tagBits, visuals.mClothing, sprite::CharacterPieceType::Clothing );
+		sanitizePiece( charCreate, tagBits, visuals.mTop, sprite::CharacterPieceType::Top );
+		sanitizePiece( charCreate, tagBits, visuals.mBottom, sprite::CharacterPieceType::Bottom );
 		sanitizePiece( charCreate, tagBits, visuals.mHair, sprite::CharacterPieceType::Hair );
 		sanitizePiece( charCreate, tagBits, visuals.mSpecies, sprite::CharacterPieceType::Species );
 	}

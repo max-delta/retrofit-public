@@ -423,7 +423,8 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	params.mCompositeWidth = 24;
 	params.mCompositeHeight = 24;
 	params.mBaseId = mChar.mVisuals.mBase;
-	params.mClothingId = mChar.mVisuals.mClothing;
+	params.mTopId = mChar.mVisuals.mTop;
+	params.mBottomId = mChar.mVisuals.mBottom;
 	params.mHairId = mChar.mVisuals.mHair;
 	params.mSpeciesId = mChar.mVisuals.mSpecies;
 	params.mCharPiecesDir = paths::CharacterPieces();

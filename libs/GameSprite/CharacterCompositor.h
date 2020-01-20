@@ -20,7 +20,8 @@ struct GAMESPRITE_API CompositeCharacterParams
 	size_t mCompositeHeight = 0;
 
 	rftl::string mBaseId = {};
-	rftl::string mClothingId = {};
+	rftl::string mTopId = {};
+	rftl::string mBottomId = {};
 	rftl::string mHairId = {};
 	rftl::string mSpeciesId = {};
 
@@ -34,7 +35,8 @@ enum class CharacterPieceType : uint8_t
 {
 	Invalid = 0,
 	Base,
-	Clothing,
+	Top,
+	Bottom,
 	Hair,
 	Species
 };
@@ -58,11 +60,17 @@ struct GAMESPRITE_API CompositeSequenceParams
 	size_t mBaseOffsetX = 0;
 	size_t mBaseOffsetY = 0;
 
-	size_t mClothingCol = 0;
-	size_t mClothingFarRow = 0;
-	size_t mClothingNearRow = 0;
-	size_t mClothingOffsetX = 0;
-	size_t mClothingOffsetY = 0;
+	size_t mTopCol = 0;
+	size_t mTopFarRow = 0;
+	size_t mTopNearRow = 0;
+	size_t mTopOffsetX = 0;
+	size_t mTopOffsetY = 0;
+
+	size_t mBottomCol = 0;
+	size_t mBottomFarRow = 0;
+	size_t mBottomNearRow = 0;
+	size_t mBottomOffsetX = 0;
+	size_t mBottomOffsetY = 0;
 
 	size_t mHairCol = 0;
 	size_t mHairFarRow = 0;
@@ -87,7 +95,8 @@ struct GAMESPRITE_API CompositeFrameParams
 	size_t mColumnOffset = 0;
 
 	sprite::Bitmap const* mBaseTex = nullptr;
-	sprite::Bitmap const* mClothingTex = nullptr;
+	sprite::Bitmap const* mTopTex = nullptr;
+	sprite::Bitmap const* mBottomTex = nullptr;
 	sprite::Bitmap const* mHairTex = nullptr;
 	sprite::Bitmap const* mSpeciesTex = nullptr;
 };
@@ -99,7 +108,8 @@ struct GAMESPRITE_API CompositeAnimParams
 	CompositeSequenceParams mSequence = {};
 
 	file::VFSPath mBasePieces = {};
-	file::VFSPath mClothingPieces = {};
+	file::VFSPath mTopPieces = {};
+	file::VFSPath mBottomPieces = {};
 	file::VFSPath mHairPieces = {};
 	file::VFSPath mSpeciesPieces = {};
 

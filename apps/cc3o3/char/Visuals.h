@@ -10,7 +10,8 @@ namespace RF { namespace cc { namespace character {
 struct Visuals
 {
 	rftl::string mBase = {};
-	rftl::string mClothing = {};
+	rftl::string mTop = {};
+	rftl::string mBottom = {};
 	rftl::string mHair = {};
 	rftl::string mSpecies = {};
 };

@@ -10,7 +10,8 @@ RFTYPE_CREATE_META( RF::cc::character::Visuals )
 {
 	using namespace RF::cc::character;
 	RFTYPE_META().ExtensionProperty( "mBase", &Visuals::mBase );
-	RFTYPE_META().ExtensionProperty( "mClothing", &Visuals::mClothing );
+	RFTYPE_META().ExtensionProperty( "mTop", &Visuals::mTop );
+	RFTYPE_META().ExtensionProperty( "mBottom", &Visuals::mBottom );
 	RFTYPE_META().ExtensionProperty( "mHair", &Visuals::mHair );
 	RFTYPE_META().ExtensionProperty( "mSpecies", &Visuals::mSpecies );
 	RFTYPE_REGISTER_BY_NAME( "Visuals" );

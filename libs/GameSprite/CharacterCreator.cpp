@@ -87,9 +87,13 @@ bool CharacterCreator::LoadCompositionTable( file::VFSPath const& compositionTab
 		{
 			type = CharacterPieceType::Base;
 		}
-		else if( typeString == "clothing" )
+		else if( typeString == "top" )
 		{
-			type = CharacterPieceType::Clothing;
+			type = CharacterPieceType::Top;
+		}
+		else if( typeString == "bottom" )
+		{
+			type = CharacterPieceType::Bottom;
 		}
 		else if( typeString == "hair" )
 		{

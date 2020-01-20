@@ -106,7 +106,8 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			character::Character const input = charDB.FetchExistingCharacter( characterID );
 
 			params.mBaseId = input.mVisuals.mBase;
-			params.mClothingId = input.mVisuals.mClothing;
+			params.mTopId = input.mVisuals.mTop;
+			params.mBottomId = input.mVisuals.mBottom;
 			params.mHairId = input.mVisuals.mHair;
 			params.mSpeciesId = input.mVisuals.mSpecies;
 			params.mOutputDir = paths::CompositeCharacters().GetChild( characterID );

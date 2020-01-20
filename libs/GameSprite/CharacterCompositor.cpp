@@ -69,8 +69,18 @@ bool CharacterCompositor::LoadPieceTables( file::VFSPath const& pieceTablesDir )
 			}
 		}
 		{
-			CharacterPieceType type = CharacterPieceType::Clothing;
-			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "clothing" );
+			CharacterPieceType type = CharacterPieceType::Top;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "top" );
+			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
+			if( loadResult == false )
+			{
+				RFLOG_NOTIFY( pieceTableDirectory, RFCAT_GAMESPRITE, "Couldn't load piece table directory" );
+				return false;
+			}
+		}
+		{
+			CharacterPieceType type = CharacterPieceType::Bottom;
+			file::VFSPath const pieceTableDirectory = modeDirectory.GetChild( "bottom" );
 			bool const loadResult = LoadPieceTableDirectory( mode, type, pieceTableDirectory );
 			if( loadResult == false )
 			{
@@ -112,7 +122,8 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	CharacterPieceCategories& categories = mCharacterModes.mCategoriesByMode.at( params.mMode );
 
 	CharacterPiece const basePiece = categories.mCollectionsByType.at( CharacterPieceType::Base ).mPiecesById.at( params.mBaseId );
-	CharacterPiece const clothingPiece = categories.mCollectionsByType.at( CharacterPieceType::Clothing ).mPiecesById.at( params.mClothingId );
+	CharacterPiece const topPiece = categories.mCollectionsByType.at( CharacterPieceType::Top ).mPiecesById.at( params.mTopId );
+	CharacterPiece const bottomPiece = categories.mCollectionsByType.at( CharacterPieceType::Bottom ).mPiecesById.at( params.mBottomId );
 	CharacterPiece const hairPiece = categories.mCollectionsByType.at( CharacterPieceType::Hair ).mPiecesById.at( params.mHairId );
 	CharacterPiece const speciesPiece = categories.mCollectionsByType.at( CharacterPieceType::Species ).mPiecesById.at( params.mSpeciesId );
 
@@ -120,21 +131,24 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	// TODO: More flexibility?
 	size_t const commonWidth =
 		basePiece.mTileWidth &
-		clothingPiece.mTileWidth &
+		topPiece.mTileWidth &
+		bottomPiece.mTileWidth &
 		hairPiece.mTileWidth &
 		speciesPiece.mTileWidth;
 	RF_ASSERT( commonWidth == basePiece.mTileWidth );
 	RF_ASSERT( commonWidth <= params.mCompositeWidth );
 	size_t const commonHeight =
 		basePiece.mTileHeight &
-		clothingPiece.mTileHeight &
+		topPiece.mTileHeight &
+		bottomPiece.mTileHeight &
 		hairPiece.mTileHeight &
 		speciesPiece.mTileHeight;
 	RF_ASSERT( commonHeight == basePiece.mTileHeight );
 	RF_ASSERT( commonHeight <= params.mCompositeHeight );
 
 	RF_ASSERT( basePiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
-	RF_ASSERT( clothingPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
+	RF_ASSERT( topPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
+	RF_ASSERT( bottomPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
 	RF_ASSERT( hairPiece.mCharacterSequenceType == CharacterSequenceType::P_NESW_i121 );
 	RF_ASSERT( speciesPiece.mCharacterSequenceType == CharacterSequenceType::Far_mid_near_P_NESW_i121 );
 
@@ -151,11 +165,16 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	animParams.mSequence.mBaseRow = basePiece.mStartRow;
 	animParams.mSequence.mBaseOffsetX = basePiece.mOffsetX;
 	animParams.mSequence.mBaseOffsetY = basePiece.mOffsetY;
-	animParams.mSequence.mClothingCol = clothingPiece.mStartColumn;
-	animParams.mSequence.mClothingFarRow = CompositeSequenceParams::kInvalidRow;
-	animParams.mSequence.mClothingNearRow = clothingPiece.mStartRow;
-	animParams.mSequence.mClothingOffsetX = clothingPiece.mOffsetX;
-	animParams.mSequence.mClothingOffsetY = clothingPiece.mOffsetY;
+	animParams.mSequence.mTopCol = topPiece.mStartColumn;
+	animParams.mSequence.mTopFarRow = CompositeSequenceParams::kInvalidRow;
+	animParams.mSequence.mTopNearRow = topPiece.mStartRow;
+	animParams.mSequence.mTopOffsetX = topPiece.mOffsetX;
+	animParams.mSequence.mTopOffsetY = topPiece.mOffsetY;
+	animParams.mSequence.mBottomCol = topPiece.mStartColumn;
+	animParams.mSequence.mBottomFarRow = CompositeSequenceParams::kInvalidRow;
+	animParams.mSequence.mBottomNearRow = bottomPiece.mStartRow;
+	animParams.mSequence.mBottomOffsetX = bottomPiece.mOffsetX;
+	animParams.mSequence.mBottomOffsetY = bottomPiece.mOffsetY;
 	animParams.mSequence.mHairCol = hairPiece.mStartColumn;
 	animParams.mSequence.mHairFarRow = CompositeSequenceParams::kInvalidRow;
 	animParams.mSequence.mHairNearRow = hairPiece.mStartRow;
@@ -168,7 +187,8 @@ CompositeCharacter CharacterCompositor::CreateCompositeCharacter( CompositeChara
 	animParams.mSequence.mSpeciesOffsetX = speciesPiece.mOffsetX;
 	animParams.mSequence.mSpeciesOffsetY = speciesPiece.mOffsetY;
 	animParams.mBasePieces = charPieces.GetChild( params.mMode, "base", basePiece.mFilename );
-	animParams.mClothingPieces = charPieces.GetChild( params.mMode, "clothing", clothingPiece.mFilename );
+	animParams.mTopPieces = charPieces.GetChild( params.mMode, "top", topPiece.mFilename );
+	animParams.mBottomPieces = charPieces.GetChild( params.mMode, "bottom", bottomPiece.mFilename );
 	animParams.mHairPieces = charPieces.GetChild( params.mMode, "hair", hairPiece.mFilename );
 	animParams.mSpeciesPieces = charPieces.GetChild( params.mMode, "species", speciesPiece.mFilename );
 	animParams.mTextureOutputDirectory = outDir;
@@ -220,14 +240,23 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 				sequence.mTileHeight );
 			composite.ApplyStencilOverwrite( hairFarFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
 		}
-		if( sequence.mClothingFarRow != CompositeSequenceParams::kInvalidRow )
+		if( sequence.mTopFarRow != CompositeSequenceParams::kInvalidRow )
 		{
-			sprite::Bitmap clothingFarFrame = params.mClothingTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mClothingFarRow,
+			sprite::Bitmap topFarFrame = params.mTopTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mTopCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mTopFarRow,
 				sequence.mTileWidth,
 				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( clothingFarFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
+			composite.ApplyStencilOverwrite( topFarFrame, sequence.mTopOffsetX, sequence.mTopOffsetY, kMinAlpha );
+		}
+		if( sequence.mBottomFarRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap bottomFarFrame = params.mBottomTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mBottomCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mBottomFarRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( bottomFarFrame, sequence.mBottomOffsetX, sequence.mBottomOffsetY, kMinAlpha );
 		}
 		if( sequence.mBaseRow != CompositeSequenceParams::kInvalidRow )
 		{
@@ -247,14 +276,23 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 				sequence.mTileHeight );
 			composite.ApplyStencilOverwrite( speciesMidFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
 		}
-		if( sequence.mClothingNearRow != CompositeSequenceParams::kInvalidRow )
+		if( sequence.mBottomNearRow != CompositeSequenceParams::kInvalidRow )
 		{
-			sprite::Bitmap clothingNearFrame = params.mClothingTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mClothingCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mClothingNearRow,
+			sprite::Bitmap bottomNearFrame = params.mBottomTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mBottomCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mBottomNearRow,
 				sequence.mTileWidth,
 				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( clothingNearFrame, sequence.mClothingOffsetX, sequence.mClothingOffsetY, kMinAlpha );
+			composite.ApplyStencilOverwrite( bottomNearFrame, sequence.mBottomOffsetX, sequence.mBottomOffsetY, kMinAlpha );
+		}
+		if( sequence.mTopNearRow != CompositeSequenceParams::kInvalidRow )
+		{
+			sprite::Bitmap topNearFrame = params.mTopTex->ExtractRegion(
+				sequence.mTileWidth * ( sequence.mTopCol + params.mColumnOffset ),
+				sequence.mTileHeight * sequence.mTopNearRow,
+				sequence.mTileWidth,
+				sequence.mTileHeight );
+			composite.ApplyStencilOverwrite( topNearFrame, sequence.mTopOffsetX, sequence.mTopOffsetY, kMinAlpha );
 		}
 		if( sequence.mHairNearRow != CompositeSequenceParams::kInvalidRow )
 		{
@@ -307,14 +345,16 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 
 	// Load textures
 	WeakPtr<sprite::Bitmap const> baseTex = mBitmapCache.Fetch( params.mBasePieces );
-	WeakPtr<sprite::Bitmap const> clothingTex = mBitmapCache.Fetch( params.mClothingPieces );
+	WeakPtr<sprite::Bitmap const> topTex = mBitmapCache.Fetch( params.mTopPieces );
+	WeakPtr<sprite::Bitmap const> bottomTex = mBitmapCache.Fetch( params.mBottomPieces );
 	WeakPtr<sprite::Bitmap const> hairTex = mBitmapCache.Fetch( params.mHairPieces );
 	WeakPtr<sprite::Bitmap const> speciesTex = mBitmapCache.Fetch( params.mSpeciesPieces );
 
 	CompositeFrameParams frameParams = {};
 	frameParams.mSequence = params.mSequence;
 	frameParams.mBaseTex = baseTex;
-	frameParams.mClothingTex = clothingTex;
+	frameParams.mTopTex = topTex;
+	frameParams.mBottomTex = bottomTex;
 	frameParams.mHairTex = hairTex;
 	frameParams.mSpeciesTex = speciesTex;
 
