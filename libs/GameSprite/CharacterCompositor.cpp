@@ -222,95 +222,42 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 	sprite::Bitmap composite( sequence.mCompositeWidth, sequence.mCompositeHeight );
 	{
 		static constexpr sprite::Bitmap::ElementType::ElementType kMinAlpha = 1;
-		if( sequence.mSpeciesFarRow != CompositeSequenceParams::kInvalidRow )
+
+		struct Input
 		{
-			sprite::Bitmap speciesFarFrame = params.mSpeciesTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mSpeciesFarRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( speciesFarFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
-		}
-		if( sequence.mHairFarRow != CompositeSequenceParams::kInvalidRow )
+			Input() = delete;
+			RF_NO_COPY( Input );
+
+			size_t const row;
+			size_t const col;
+			size_t const offsetX;
+			size_t const offsetY;
+			sprite::Bitmap const* const tex;
+		};
+		Input const input[] = {
+			{ sequence.mSpeciesFarRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex },
+			{ sequence.mHairFarRow, sequence.mHairCol, sequence.mHairOffsetX, sequence.mHairOffsetY, params.mHairTex },
+			{ sequence.mTopFarRow, sequence.mTopCol, sequence.mTopOffsetX, sequence.mTopOffsetY, params.mTopTex },
+			{ sequence.mBottomFarRow, sequence.mBottomCol, sequence.mBottomOffsetX, sequence.mBottomOffsetY, params.mBottomTex },
+			{ sequence.mBaseRow, sequence.mBaseCol, sequence.mBaseOffsetX, sequence.mBaseOffsetY, params.mBaseTex },
+			{ sequence.mSpeciesMidRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex },
+			{ sequence.mBottomNearRow, sequence.mBottomCol, sequence.mBottomOffsetX, sequence.mBottomOffsetY, params.mBottomTex },
+			{ sequence.mTopNearRow, sequence.mTopCol, sequence.mTopOffsetX, sequence.mTopOffsetY, params.mTopTex },
+			{ sequence.mHairNearRow, sequence.mHairCol, sequence.mHairOffsetX, sequence.mHairOffsetY, params.mHairTex },
+			{ sequence.mSpeciesNearRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex }
+		};
+
+		for( Input const& entry : input )
 		{
-			sprite::Bitmap hairFarFrame = params.mHairTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mHairFarRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( hairFarFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
-		}
-		if( sequence.mTopFarRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap topFarFrame = params.mTopTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mTopCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mTopFarRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( topFarFrame, sequence.mTopOffsetX, sequence.mTopOffsetY, kMinAlpha );
-		}
-		if( sequence.mBottomFarRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap bottomFarFrame = params.mBottomTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mBottomCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mBottomFarRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( bottomFarFrame, sequence.mBottomOffsetX, sequence.mBottomOffsetY, kMinAlpha );
-		}
-		if( sequence.mBaseRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap baseFrame = params.mBaseTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mBaseCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mBaseRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( baseFrame, sequence.mBaseOffsetX, sequence.mBaseOffsetY, kMinAlpha );
-		}
-		if( sequence.mSpeciesMidRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap speciesMidFrame = params.mSpeciesTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mSpeciesMidRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( speciesMidFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
-		}
-		if( sequence.mBottomNearRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap bottomNearFrame = params.mBottomTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mBottomCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mBottomNearRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( bottomNearFrame, sequence.mBottomOffsetX, sequence.mBottomOffsetY, kMinAlpha );
-		}
-		if( sequence.mTopNearRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap topNearFrame = params.mTopTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mTopCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mTopNearRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( topNearFrame, sequence.mTopOffsetX, sequence.mTopOffsetY, kMinAlpha );
-		}
-		if( sequence.mHairNearRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap hairNearFrame = params.mHairTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mHairCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mHairNearRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( hairNearFrame, sequence.mHairOffsetX, sequence.mHairOffsetY, kMinAlpha );
-		}
-		if( sequence.mSpeciesNearRow != CompositeSequenceParams::kInvalidRow )
-		{
-			sprite::Bitmap speciesNearFrame = params.mSpeciesTex->ExtractRegion(
-				sequence.mTileWidth * ( sequence.mSpeciesCol + params.mColumnOffset ),
-				sequence.mTileHeight * sequence.mSpeciesNearRow,
-				sequence.mTileWidth,
-				sequence.mTileHeight );
-			composite.ApplyStencilOverwrite( speciesNearFrame, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, kMinAlpha );
+			if( entry.row != CompositeSequenceParams::kInvalidRow )
+			{
+				sprite::Bitmap frame = entry.tex->ExtractRegion(
+					sequence.mTileWidth * ( entry.col + params.mColumnOffset ),
+					sequence.mTileHeight * entry.row,
+					sequence.mTileWidth,
+					sequence.mTileHeight );
+				composite.ApplyStencilOverwrite( frame, entry.offsetX, entry.offsetY, kMinAlpha );
+			}
 		}
 	}
 
