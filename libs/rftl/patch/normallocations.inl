@@ -22,6 +22,7 @@
 #define RFTL_MEMORY <memory>
 #define RFTL_MUTEX <mutex>
 #define RFTL_NEW <new>
+#define RFTL_NUMERIC <numeric>
 #define RFTL_OPTIONAL <optional>
 #define RFTL_RATIO <ratio>
 #define RFTL_SET <set>

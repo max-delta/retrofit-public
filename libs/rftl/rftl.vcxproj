@@ -71,6 +71,7 @@
     <None Include="extension\static_vector.inl" />
     <None Include="map" />
     <None Include="new" />
+    <None Include="numeric" />
     <None Include="optional" />
     <None Include="patch\normallocations.inl" />
     <None Include="patch\postinclude.inl" />

@@ -81,5 +81,6 @@
     <None Include="extension\static_vector.inl">
       <Filter>extension</Filter>
     </None>
+    <None Include="numeric" />
   </ItemGroup>
 </Project>
