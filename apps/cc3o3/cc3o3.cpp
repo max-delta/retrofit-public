@@ -6,6 +6,7 @@
 #include "cc3o3/appstates/titlescreen/TitleScreen.h"
 #include "cc3o3/appstates/gameplay/Gameplay.h"
 #include "cc3o3/appstates/devtest/DevTestCombatCharts.h"
+#include "cc3o3/appstates/devtest/DevTestGridCharts.h"
 #include "cc3o3/appstates/devtest/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/DeveloperHud.h"
@@ -67,6 +68,7 @@ void Startup()
 	if( kAllowDevTests )
 	{
 		sAppStateManager.AddState( appstate::id::DevTestCombatCharts, DefaultCreator<appstate::DevTestCombatCharts>::Create() );
+		sAppStateManager.AddState( appstate::id::DevTestGridCharts, DefaultCreator<appstate::DevTestGridCharts>::Create() );
 		sAppStateManager.AddState( appstate::id::DevTestRollback, DefaultCreator<appstate::DevTestRollback>::Create() );
 	}
 

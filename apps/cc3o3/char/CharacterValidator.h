@@ -13,6 +13,7 @@
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
 #include "rftl/deque"
+#include "rftl/array"
 #include "rftl/string"
 
 
@@ -40,6 +41,8 @@ public:
 	using SpeciesID = rftl::string;
 	static constexpr int8_t kMaxTotalStatPoints = 16;
 	static constexpr int8_t kMaxPointsPerStat = 5;
+	using SlotsPerElemLevel = rftl::array<size_t, kMaxElementLevels>;
+
 private:
 	using GeneticsStorage = rftl::unordered_map<GeneticsID, GeneticsEntry>;
 	using StatBonuesStorage = rftl::unordered_map<SpeciesID, Stats>;
@@ -58,6 +61,11 @@ public:
 	bool LoadStatBonusesTable( file::VFSPath const& statBonusesTablePath );
 	Stats const& GetStatBonuses( SpeciesID const& id ) const;
 	static int8_t CalculateTotalPoints( Stats const& stats );
+
+	size_t GetMinimumTotalSlots( uint8_t storyTier ) const;
+	SlotsPerElemLevel GetMinimumSlotDistribution( uint8_t storyTier ) const;
+	size_t CalculateTotalSlots( Stats::StatModifier elemPower, uint8_t storyTier ) const;
+	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, uint8_t storyTier ) const;
 
 	void SanitizeForCharacterCreation( Character& character ) const;
 	void SanitizeForGameplay( Character& character ) const;

@@ -12,10 +12,16 @@ struct Stats
 	static constexpr StatModifier kDefaultModifier = 0;
 	static constexpr StatModifier kMaxModifier = 10;
 
-	using GridShape = int8_t;
-	static constexpr GridShape kMaxBreadth = 0;
-	static constexpr GridShape kDefaultShape = 4;
-	static constexpr GridShape kMaxDepth = 9;
+	enum class GridShape : uint8_t
+	{
+		Standard = 0,
+		Wide,
+		Heavy,
+
+		NumShapeTypes
+	};
+	static constexpr GridShape kDefaultShape = GridShape::Standard;
+	static constexpr uint8_t kMaxShapeValue = static_cast<uint8_t>( GridShape::NumShapeTypes ) - 1;
 
 	StatModifier mMHealth = kDefaultModifier; // More max hit points
 
@@ -29,7 +35,11 @@ struct Stats
 	StatModifier mTechniq = kDefaultModifier; // Faster combo growth
 
 	StatModifier mElemPwr = kDefaultModifier; // Better grid
-	GridShape mGridDep = kDefaultShape; // Breadth vs. depth
+	union
+	{
+		GridShape mGridShp = kDefaultShape; // Layout of grid
+		uint8_t mGridShpReflect; // TODO: Enum support in reflection
+	};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

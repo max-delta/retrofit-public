@@ -32,6 +32,7 @@
     <ClCompile Include="appstates\AppStateRoute.cpp" />
     <ClCompile Include="appstates\Boot.cpp" />
     <ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp" />
+    <ClCompile Include="appstates\devtest\DevTestGridCharts.cpp" />
     <ClCompile Include="appstates\devtest\DevTestRollback.cpp" />
     <ClCompile Include="appstates\gameplay\Gameplay.cpp" />
     <ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp" />
@@ -83,6 +84,7 @@
     <ClInclude Include="appstates\AppStatesFwd.h" />
     <ClInclude Include="appstates\Boot.h" />
     <ClInclude Include="appstates\devtest\DevTestCombatCharts.h" />
+    <ClInclude Include="appstates\devtest\DevTestGridCharts.h" />
     <ClInclude Include="appstates\devtest\DevTestRollback.h" />
     <ClInclude Include="appstates\devtest\project.h" />
     <ClInclude Include="appstates\devtest\stdafx.h" />

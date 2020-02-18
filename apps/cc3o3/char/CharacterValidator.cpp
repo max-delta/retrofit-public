@@ -13,6 +13,8 @@
 #include "core_math/math_casts.h"
 
 #include "rftl/sstream"
+#include "rftl/numeric"
+#include "rftl/algorithm"
 
 
 namespace RF { namespace cc { namespace character {
@@ -212,7 +214,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 
 		rftl::stringstream ss;
 
-		static constexpr auto load = []( rftl::stringstream& ss, rftl::string const& str, int8_t& val ) -> bool
+		static constexpr auto load = []( rftl::stringstream& ss, rftl::string const& str, int8_t& val ) -> bool //
 		{
 			ss.clear();
 			ss << str;
@@ -271,6 +273,257 @@ int8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
 		stats.mBalance +
 		stats.mTechniq +
 		stats.mElemPwr;
+}
+
+
+
+size_t CharacterValidator::GetMinimumTotalSlots( uint8_t storyTier ) const
+{
+	SlotsPerElemLevel const minSlots = GetMinimumSlotDistribution( storyTier );
+	return rftl::accumulate( minSlots.begin(), minSlots.end(), SlotsPerElemLevel::value_type{} );
+}
+
+
+
+CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( uint8_t storyTier ) const
+{
+	switch( storyTier )
+	{
+		case 0:
+			// Invalid
+			return { 1, 1, 1, 0, 0, 0, 0, 0 };
+		case 1:
+			// Tutorial
+			return { 1, 1, 1, 0, 0, 0, 0, 0 };
+		case 2:
+			// Tutorial
+			return { 2, 1, 1, 0, 0, 0, 0, 0 };
+		case 3:
+			// Tutorial
+			return { 2, 2, 1, 0, 0, 0, 0, 0 };
+		case 4:
+			// Unlock 4
+			return { 2, 2, 1, 1, 0, 0, 0, 0 };
+		case 5:
+			// Unlock 5
+			return { 2, 2, 2, 1, 1, 0, 0, 0 };
+		case 6:
+			// Unlock 6
+			return { 3, 2, 2, 3, 1, 1, 0, 0 };
+		case 7:
+			// Unlock 7
+			return { 3, 3, 3, 3, 2, 2, 1, 0 };
+		case 8:
+			// Unlock 8
+			return { 3, 3, 3, 3, 2, 2, 1, 1 };
+		default:
+			// Unbalanced
+			return { 3, 3, 3, 3, 3, 3, 2, 2 };
+	}
+}
+
+
+
+size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, uint8_t storyTier ) const
+{
+	size_t const min = GetMinimumTotalSlots( storyTier );
+	switch( storyTier )
+	{
+		case 0:
+			// Invalid
+			return min;
+		case 1:
+			// Tutorial
+			return min;
+		case 2:
+			// Tutorial
+			return min;
+		case 3:
+			// Tutorial
+			return min;
+		case 4:
+			// Unlock 4
+			return min + ( elemPower + 1 ) / 2;
+		case 5:
+			// Unlock 5
+			return min + elemPower * 1;
+		case 6:
+			// Unlock 6
+			return min + elemPower * 1;
+		case 7:
+			// Unlock 7
+			return min + elemPower * 1;
+		case 8:
+			// Unlock 8
+			return min + elemPower * 2;
+		default:
+			// Unbalanced
+			return min + elemPower * 2 + 5;
+	}
+}
+
+
+
+CharacterValidator::SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, uint8_t storyTier ) const
+{
+	// NOTE: Non-optimal, but not expected to be called frequently
+
+	// Will level up from the start of the game, and assign slots
+	SlotsPerElemLevel expenditures = {};
+	for( uint8_t i_story = 1; i_story <= storyTier; i_story++ )
+	{
+		// We just leveled up, how many slots do we have to spend
+		size_t const slotsLastTier = CalculateTotalSlots( elemPower, i_story - 1u ) - GetMinimumTotalSlots( i_story - 1u );
+		size_t const slotsThisTier = CalculateTotalSlots( elemPower, i_story ) - GetMinimumTotalSlots( i_story );
+		RF_ASSERT( slotsThisTier >= slotsLastTier );
+		size_t const newSlotsThisTier = slotsThisTier - slotsLastTier;
+
+		// Spend each slot
+		SlotsPerElemLevel const min = GetMinimumSlotDistribution( i_story );
+		for( size_t i_expenditure = 0; i_expenditure < newSlotsThisTier; i_expenditure++ )
+		{
+			// Where are we at now?
+			SlotsPerElemLevel currentSlots = min;
+			for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+			{
+				currentSlots.at( i_level ) += expenditures.at( i_level );
+			}
+
+			// How do we rate our choices?
+			rftl::array<size_t, kMaxElementLevels> weights = {};
+			for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+			{
+				size_t const& cur = currentSlots.at( i_level );
+				size_t& weight = weights.at( i_level );
+
+				if( cur == 0 )
+				{
+					// Can't choose this
+					weight = 0;
+					continue;
+				}
+
+				using GridShape = Stats::GridShape;
+				switch( gridShape )
+				{
+					case GridShape::Standard:
+						// Prefer earlier slots
+						// 3  2  1
+						// 4  3  2
+						// 5  4  3
+						// -------
+						// 0  1  2
+						weight = ( kMaxSlotsPerElementLevel - cur ) + ( kMaxElementLevels - i_level );
+						break;
+					case GridShape::Wide:
+						// Want all levels to have equal number of slots
+						// 1  1  1
+						// 2  2  2
+						// 3  3  3
+						// -------
+						// 0  1  2
+						weight = kMaxSlotsPerElementLevel - cur;
+						break;
+					case GridShape::Heavy:
+						// Prefer later slots
+						// 1  2  3
+						// 2  3  4
+						// 3  4  5
+						// -------
+						// 0  1  2
+						weight = ( kMaxSlotsPerElementLevel - cur ) + i_level;
+						break;
+					case GridShape::NumShapeTypes:
+					default:
+						RF_DBGFAIL();
+						break;
+				}
+			}
+
+			// Find the best choice
+			size_t bestWeightLevel;
+			{
+				// Sort the weights
+				rftl::static_vector<rftl::pair<size_t, size_t>, kMaxElementLevels> weightsToLevels;
+				for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+				{
+					weightsToLevels.emplace_back( { weights.at( i_level ), i_level } );
+				}
+				rftl::sort( weightsToLevels.begin(), weightsToLevels.end() );
+				rftl::reverse( weightsToLevels.begin(), weightsToLevels.end() );
+
+				// Remove everything below the maximum weight found
+				size_t const bestWeight = weightsToLevels.front().first;
+				while( weightsToLevels.back().first < bestWeight )
+				{
+					weightsToLevels.pop_back();
+				}
+
+				RF_ASSERT( weightsToLevels.empty() == false );
+				if( weightsToLevels.size() == 1 )
+				{
+					// Only one choice
+					bestWeightLevel = weightsToLevels.front().second;
+				}
+				else
+				{
+					// Competing choices
+
+					rftl::static_vector<size_t, kMaxElementLevels> levelChoices;
+					for( rftl::pair<size_t, size_t> const& weightToLevel : weightsToLevels )
+					{
+						levelChoices.emplace_back( weightToLevel.second );
+					}
+					rftl::sort(
+						levelChoices.begin(),
+						levelChoices.end(),
+						[&currentSlots, gridShape]( size_t const& lhs, size_t const& rhs ) -> bool //
+						{
+							// Returning true here for {lhs, rhs} means lhs is
+							//  preferred, and is moved towards front of list
+
+							// Prefer to equalize levels
+							if( currentSlots.at( lhs ) < currentSlots.at( rhs ) )
+							{
+								return true;
+							}
+							else if( currentSlots.at( lhs ) > currentSlots.at( rhs ) )
+							{
+								return false;
+							}
+
+							using GridShape = Stats::GridShape;
+							switch( gridShape )
+							{
+								case GridShape::Standard:
+								case GridShape::Wide:
+									// Prefer earlier slots
+									return lhs < rhs;
+								case GridShape::Heavy:
+									// Prefer later slots
+									return lhs > rhs;
+								case GridShape::NumShapeTypes:
+								default:
+									RF_DBGFAIL();
+									return false;
+							}
+						} );
+					bestWeightLevel = levelChoices.front();
+				}
+			}
+
+			// Spend the point
+			expenditures.at( bestWeightLevel )++;
+		}
+	}
+
+	// Apply the expenditures
+	SlotsPerElemLevel retVal = GetMinimumSlotDistribution( storyTier );
+	for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+	{
+		retVal.at( i_level ) += expenditures.at( i_level );
+	}
+	return retVal;
 }
 
 
@@ -425,7 +678,7 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{
-			static constexpr auto siphon = []( int16_t& reserve, int8_t& cur, int8_t const& desire ) -> bool
+			static constexpr auto siphon = []( int16_t& reserve, int8_t& cur, int8_t const& desire ) -> bool //
 			{
 				if(
 					reserve > 0 &&
@@ -459,7 +712,7 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 			}
 		}
 
-		sanitizedStats.mGridDep = math::Clamp( Stats::kMaxBreadth, stats.mGridDep, Stats::kMaxDepth );
+		sanitizedStats.mGridShp = static_cast<Stats::GridShape>( math::Clamp<uint8_t>( 0, static_cast<uint8_t>( stats.mGridShp ), Stats::kMaxShapeValue ) );
 		stats = sanitizedStats;
 	}
 }
@@ -481,7 +734,7 @@ void CharacterValidator::SanitizeForGameplay( Character& character ) const
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{
-			static constexpr auto grow = []( int16_t& reserve, int8_t& dest ) -> bool
+			static constexpr auto grow = []( int16_t& reserve, int8_t& dest ) -> bool //
 			{
 				if(
 					reserve > 0 &&

@@ -16,6 +16,7 @@ enum : AppStateID
 	InitialLoading,
 
 	DevTestCombatCharts,
+	DevTestGridCharts,
 	DevTestRollback,
 
 	TitleScreen,
@@ -37,6 +38,7 @@ class Boot;
 class InitialLoading;
 
 class DevTestCombatCharts;
+class DevTestGridCharts;
 class DevTestRollback;
 
 class TitleScreen;

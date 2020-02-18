@@ -99,7 +99,7 @@ static constexpr char const* kLeftStatusTags[rftl::extent<decltype( kLeftText )>
 	"S_Balance",
 	"S_Techniq",
 	"S_ElemPwr",
-	"S_Breadth",
+	"S_Shape",
 	"S_UNUSED_L2",
 	"S_UNUSED_L3",
 };
@@ -307,8 +307,9 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( format5Pips( bonuses.mElemPwr, stats.mElemPwr, avail ) );
 
 	// Breadth vs depth
-	int8_t const breadth = mChar.mStats.mGridDep;
-	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Breadth" )->SetText( format10Slider( breadth ) );
+	character::Stats::GridShape const shape = mChar.mStats.mGridShp;
+	(void)shape; // TODO
+	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Shape" )->SetText( format9( "TODO" ) );
 
 	// TODO
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Body1" )->SetText( format2( 5 ) );
@@ -398,7 +399,7 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_Breadth" ) )
 	{
-		mChar.mStats.mGridDep += increase ? 1 : -1;
+		// TODO
 	}
 
 	charValidate.SanitizeForCharacterCreation( mChar );

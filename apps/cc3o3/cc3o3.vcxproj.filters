@@ -127,6 +127,9 @@
     <ClCompile Include="state\objects\Company.cpp">
       <Filter>state\objects</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\devtest\DevTestGridCharts.cpp">
+      <Filter>appstates\devtest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -347,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="state\objects\Company.h">
       <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\devtest\DevTestGridCharts.h">
+      <Filter>appstates\devtest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

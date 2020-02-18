@@ -17,7 +17,7 @@ RFTYPE_CREATE_META( RF::cc::character::Stats )
 	RFTYPE_META().RawProperty( "mBalance", &Stats::mBalance );
 	RFTYPE_META().RawProperty( "mTechniq", &Stats::mTechniq );
 	RFTYPE_META().RawProperty( "mElemPwr", &Stats::mElemPwr );
-	RFTYPE_META().RawProperty( "mGridDep", &Stats::mGridDep );
+	RFTYPE_META().RawProperty( "mGridShp", &Stats::mGridShpReflect );
 	RFTYPE_REGISTER_BY_NAME( "Stats" );
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::cc::character::Stats );
 }
