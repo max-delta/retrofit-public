@@ -244,7 +244,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 			return false;
 		}
 
-		mStatBonuesStorage[species] = rftl::move( stats );
+		mStatBonusesStorage[species] = rftl::move( stats );
 
 		statBonusesTable.pop_front();
 		line++;
@@ -257,7 +257,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 
 Stats const& CharacterValidator::GetStatBonuses( SpeciesID const& id ) const
 {
-	return mStatBonuesStorage.at( id );
+	return mStatBonusesStorage.at( id );
 }
 
 

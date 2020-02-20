@@ -45,7 +45,7 @@ public:
 
 private:
 	using GeneticsStorage = rftl::unordered_map<GeneticsID, GeneticsEntry>;
-	using StatBonuesStorage = rftl::unordered_map<SpeciesID, Stats>;
+	using StatBonusesStorage = rftl::unordered_map<SpeciesID, Stats>;
 
 
 	//
@@ -92,7 +92,7 @@ private:
 
 	// TODO: This should probably be seperated and then re-used by the various
 	//  systems that need it
-	StatBonuesStorage mStatBonuesStorage;
+	StatBonusesStorage mStatBonusesStorage;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
