@@ -72,6 +72,7 @@
     <ClCompile Include="rftype_virtual_cast.cpp" />
     <ClCompile Include="state_stream.cpp" />
     <ClCompile Include="state_tree.cpp" />
+    <ClCompile Include="static_string.cpp" />
     <ClCompile Include="static_vector.cpp" />
     <ClCompile Include="ptr_sharedptr.cpp" />
     <ClCompile Include="stdafx.cpp">

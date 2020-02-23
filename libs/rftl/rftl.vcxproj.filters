@@ -61,6 +61,9 @@
     <ClInclude Include="extension\static_vector.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\static_string.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="patch\preinclude.inl">
@@ -82,5 +85,8 @@
       <Filter>extension</Filter>
     </None>
     <None Include="numeric" />
+    <None Include="extension\static_string.inl">
+      <Filter>extension</Filter>
+    </None>
   </ItemGroup>
 </Project>
