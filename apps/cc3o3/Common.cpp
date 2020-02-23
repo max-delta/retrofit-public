@@ -3,6 +3,7 @@
 
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/CommonPaths.h"
 
@@ -27,10 +28,12 @@ namespace RF { namespace cc {
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<state::ObjectManager> gObjectManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
+static UniquePtr<element::ElementDatabase> sElementDatabase;
 static UniquePtr<state::ObjectManager> sObjectManager;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,6 +61,10 @@ void SystemStartup()
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character database..." );
 	sCharacterDatabase = DefaultCreator<character::CharacterDatabase>::Create();
 	gCharacterDatabase = sCharacterDatabase;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing element database..." );
+	sElementDatabase = DefaultCreator<element::ElementDatabase>::Create( app::gVfs );
+	gElementDatabase = sElementDatabase;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing object manager..." );
 	sObjectManager = DefaultCreator<state::ObjectManager>::Create(

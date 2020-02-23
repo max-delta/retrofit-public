@@ -26,6 +26,7 @@ file::VFSPath CharacterPieces();
 file::VFSPath Localizations();
 file::VFSPath BaseCharacters();
 file::VFSPath CompositeCharacters();
+file::VFSPath ElementDescTables();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

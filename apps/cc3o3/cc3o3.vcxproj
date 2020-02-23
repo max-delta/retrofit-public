@@ -59,6 +59,9 @@
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="DeveloperHud.cpp" />
+    <ClCompile Include="elements\ElementDatabase.cpp" />
+    <ClCompile Include="elements\ElementDesc.cpp" />
+    <ClCompile Include="elements\IdentifierUtils.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="state\Component.cpp" />
@@ -125,6 +128,12 @@
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPaths.h" />
     <ClInclude Include="DeveloperHud.h" />
+    <ClInclude Include="elements\ElementDatabase.h" />
+    <ClInclude Include="elements\ElementDesc.h" />
+    <ClInclude Include="elements\ElementFwd.h" />
+    <ClInclude Include="elements\IdentifierUtils.h" />
+    <ClInclude Include="elements\project.h" />
+    <ClInclude Include="elements\stdafx.h" />
     <ClInclude Include="input\HardcodedSetup.h" />
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />

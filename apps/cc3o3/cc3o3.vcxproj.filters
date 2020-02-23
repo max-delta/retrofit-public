@@ -130,6 +130,15 @@
     <ClCompile Include="appstates\devtest\DevTestGridCharts.cpp">
       <Filter>appstates\devtest</Filter>
     </ClCompile>
+    <ClCompile Include="elements\ElementDesc.cpp">
+      <Filter>elements</Filter>
+    </ClCompile>
+    <ClCompile Include="elements\ElementDatabase.cpp">
+      <Filter>elements</Filter>
+    </ClCompile>
+    <ClCompile Include="elements\IdentifierUtils.cpp">
+      <Filter>elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -354,6 +363,24 @@
     <ClInclude Include="appstates\devtest\DevTestGridCharts.h">
       <Filter>appstates\devtest</Filter>
     </ClInclude>
+    <ClInclude Include="elements\stdafx.h">
+      <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="elements\project.h">
+      <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="elements\ElementDesc.h">
+      <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="elements\ElementFwd.h">
+      <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="elements\ElementDatabase.h">
+      <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="elements\IdentifierUtils.h">
+      <Filter>elements</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -391,6 +418,9 @@
     </Filter>
     <Filter Include="state\objects">
       <UniqueIdentifier>{af48043f-db11-4e59-9e25-6340184c412d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="elements">
+      <UniqueIdentifier>{ff4b4de9-e795-42a2-82bd-ab64628a5612}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

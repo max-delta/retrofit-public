@@ -78,6 +78,10 @@ file::VFSPath CompositeCharacters()
 {
 	return file::VFS::kRoot.GetChild( "scratch", "composite_char" );
 }
+file::VFSPath ElementDescTables()
+{
+	return file::VFS::kRoot.GetChild( "assets", "tables", "elements", "descs" );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

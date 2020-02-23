@@ -11,6 +11,9 @@ namespace RF::cc::character {
 class CharacterValidator;
 class CharacterDatabase;
 }
+namespace RF::cc::element {
+class ElementDatabase;
+}
 namespace RF::component {
 template<typename TypeResolver>
 class TypedObjectManager;
@@ -27,6 +30,7 @@ namespace RF { namespace cc {
 extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+extern WeakPtr<element::ElementDatabase> gElementDatabase;
 extern WeakPtr<state::ObjectManager> gObjectManager;
 
 void SystemStartup();

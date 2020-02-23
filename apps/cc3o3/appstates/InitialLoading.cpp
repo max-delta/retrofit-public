@@ -4,6 +4,7 @@
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
@@ -140,6 +141,12 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 			paths::CharacterTables().GetChild( "genetics.csv" ) );
 		gCharacterValidator->LoadStatBonusesTable(
 			paths::CharacterTables().GetChild( "statbonuses.csv" ) );
+	}
+
+	// Load element database
+	{
+		gElementDatabase->LoadDescTables(
+			paths::ElementDescTables() );
 	}
 
 	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );
