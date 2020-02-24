@@ -12,6 +12,8 @@ struct ElementDesc
 	size_t mBaseLevel = 0;
 	size_t mMinLevel = 0;
 	size_t mMaxLevel = 0;
+	size_t mStackSize = 0;
+	bool mChain = false;
 
 	// Only the identifier matters during comparison
 	bool operator==( ElementDesc const& rhs ) const;

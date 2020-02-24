@@ -132,12 +132,15 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 	rftl::deque<rftl::string> const header = descTable.front();
 	descTable.pop_front();
 	if(
-		header.size() != 5 ||
+		header.size() != 8 ||
 		header.at( 0 ) != "id" ||
 		header.at( 1 ) != "innate" ||
 		header.at( 2 ) != "base" ||
 		header.at( 3 ) != "min" ||
-		header.at( 4 ) != "max" )
+		header.at( 4 ) != "max" ||
+		header.at( 5 ) != "stack" ||
+		header.at( 6 ) != "chain" ||
+		header.at( 7 ) != "remark" )
 	{
 		RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc table header" );
 		return false;
@@ -147,9 +150,9 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 	while( descTable.empty() == false )
 	{
 		rftl::deque<rftl::string> const entry = descTable.front();
-		if( entry.size() != 5 )
+		if( entry.size() != 8 )
 		{
-			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, expected 5 columns", math::integer_cast<int>( line ) );
+			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, expected 7 columns", math::integer_cast<int>( line ) );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -157,6 +160,8 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		rftl::string const& baseLevel = entry.at( 2 );
 		rftl::string const& minLevel = entry.at( 3 );
 		rftl::string const& maxLevel = entry.at( 4 );
+		rftl::string const& stack = entry.at( 5 );
+		rftl::string const& chain = entry.at( 6 );
 
 		ElementDesc desc = {};
 
@@ -200,6 +205,20 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad max level", math::integer_cast<int>( line ) );
 			return false;
 		}
+
+		( rftl::stringstream() << stack ) >> desc.mStackSize;
+		if( desc.mStackSize > 99 )
+		{
+			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad stack size", math::integer_cast<int>( line ) );
+			return false;
+		}
+
+		if( chain != "Y" && chain != "N" )
+		{
+			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad chain", math::integer_cast<int>( line ) );
+			return false;
+		}
+		desc.mChain = chain == "Y" ? true : false;
 
 		mElementDescs.emplace_back( rftl::move( desc ) );
 
