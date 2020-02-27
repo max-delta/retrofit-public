@@ -14,6 +14,7 @@
 #include "cc3o3/state/objects/SiteCharacter.h"
 #include "cc3o3/state/objects/BattleCharacter.h"
 #include "cc3o3/state/components/Roster.h"
+#include "cc3o3/state/components/Progression.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
@@ -140,6 +141,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			// Create company object
 			MutableObjectRef const company = CreateCompany( sharedWindow, privateWindow, companyRoot );
 			comp::Roster& roster = *company.GetMutableComponentInstanceT<comp::Roster>();
+			comp::Progression& progression = *company.GetMutableComponentInstanceT<comp::Progression>();
 
 			// Set up all characters
 			// NOTE: Characters with the company as their root are implicitly
@@ -176,6 +178,9 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			roster.mActiveTeam.at( 0 ) = 1;
 			roster.mActiveTeam.at( 1 ) = 2;
 			roster.mActiveTeam.at( 2 ) = 0;
+
+			// HACK: Set some fake progression
+			progression.mStoryTier = 6;
 		}
 
 		// HACK: Save out the state for diagnostics

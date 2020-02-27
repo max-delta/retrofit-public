@@ -4,6 +4,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/EmptyObject.h"
 #include "cc3o3/state/components/Roster.h"
+#include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/StateLogging.h"
 
 #include "core_component/TypedObjectRef.h"
@@ -37,6 +38,15 @@ void MakeCompany(
 				DefaultCreator<comp::Roster>::Create() );
 		RFLOG_TEST_AND_FATAL( roster != nullptr, ref, RFCAT_CC3O3, "Failed to add roster component" );
 		roster->BindToMeta( sharedWindow, privateWindow, ref );
+	}
+
+	// Progression
+	{
+		MutableComponentInstanceRefT<comp::Progression> const progression =
+			ref.AddComponentInstanceT<comp::Progression>(
+				DefaultCreator<comp::Progression>::Create() );
+		RFLOG_TEST_AND_FATAL( progression != nullptr, ref, RFCAT_CC3O3, "Failed to add progression component" );
+		progression->BindToMeta( sharedWindow, privateWindow, ref );
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as company" );

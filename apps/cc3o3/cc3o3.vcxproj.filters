@@ -139,6 +139,9 @@
     <ClCompile Include="elements\IdentifierUtils.cpp">
       <Filter>elements</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\Progression.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="elements\IdentifierUtils.h">
       <Filter>elements</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Progression.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
