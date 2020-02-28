@@ -142,6 +142,9 @@
     <ClCompile Include="state\components\Progression.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="company\CompanyManager.cpp">
+      <Filter>company</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -387,6 +390,18 @@
     <ClInclude Include="state\components\Progression.h">
       <Filter>state\components</Filter>
     </ClInclude>
+    <ClInclude Include="company\CompanyManager.h">
+      <Filter>company</Filter>
+    </ClInclude>
+    <ClInclude Include="company\project.h">
+      <Filter>company</Filter>
+    </ClInclude>
+    <ClInclude Include="company\stdafx.h">
+      <Filter>company</Filter>
+    </ClInclude>
+    <ClInclude Include="company\CompanyFwd.h">
+      <Filter>company</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -427,6 +442,9 @@
     </Filter>
     <Filter Include="elements">
       <UniqueIdentifier>{ff4b4de9-e795-42a2-82bd-ab64628a5612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="company">
+      <UniqueIdentifier>{d3e47703-9660-4e59-a195-ed9a8e5bd9bd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -58,6 +58,7 @@
     <ClCompile Include="combat\CombatEngine.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
+    <ClCompile Include="company\CompanyManager.cpp" />
     <ClCompile Include="DeveloperHud.cpp" />
     <ClCompile Include="elements\ElementDatabase.cpp" />
     <ClCompile Include="elements\ElementDesc.cpp" />
@@ -128,6 +129,10 @@
     <ClInclude Include="combat\stdafx.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPaths.h" />
+    <ClInclude Include="company\CompanyFwd.h" />
+    <ClInclude Include="company\CompanyManager.h" />
+    <ClInclude Include="company\project.h" />
+    <ClInclude Include="company\stdafx.h" />
     <ClInclude Include="DeveloperHud.h" />
     <ClInclude Include="elements\ElementDatabase.h" />
     <ClInclude Include="elements\ElementDesc.h" />
