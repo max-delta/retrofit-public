@@ -42,12 +42,20 @@ void Start()
 
 	sprite::CharacterCreator::TagBits const characterTagBits = creator.GetTagsAsFlags( { "female", "portal" } );
 
+#if 0
 	// Choose first valid
 	sprite::CharacterCreator::PieceId const base = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Base, characterTagBits );
 	sprite::CharacterCreator::PieceId const top = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Top, characterTagBits );
 	sprite::CharacterCreator::PieceId const bottom = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Bottom, characterTagBits );
 	sprite::CharacterCreator::PieceId const hair = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Hair, characterTagBits );
 	sprite::CharacterCreator::PieceId const species = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Species, characterTagBits );
+#else
+	sprite::CharacterCreator::PieceId const base = "awokenc_f";
+	sprite::CharacterCreator::PieceId const top = "shirt_long_f";
+	sprite::CharacterCreator::PieceId const bottom = "skirt_long_f";
+	sprite::CharacterCreator::PieceId const hair = "short1_f";
+	sprite::CharacterCreator::PieceId const species = "awokenc_f";
+#endif
 	RF_ASSERT( base.empty() == false );
 	RF_ASSERT( top.empty() == false );
 	RF_ASSERT( bottom.empty() == false );
@@ -56,13 +64,13 @@ void Start()
 
 	file::VFSPath const charPieces = file::VFS::kRoot.GetChild( "assets", "textures", "char" );
 
-	char const* const id = "ID_TODO";
-	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "char", id );
+	char const* const id = "ID_TEST";
+	file::VFSPath const outDir = file::VFS::kRoot.GetChild( "scratch", "composite_char", id );
 
 	sprite::CompositeCharacterParams params = {};
-	params.mMode = "24";
-	params.mCompositeWidth = 24;
-	params.mCompositeHeight = 24;
+	params.mMode = "36";
+	params.mCompositeWidth = 36;
+	params.mCompositeHeight = 36;
 	params.mBaseId = base;
 	params.mTopId = top;
 	params.mBottomId = bottom;
