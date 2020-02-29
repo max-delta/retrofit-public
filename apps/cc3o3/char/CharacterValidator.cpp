@@ -327,6 +327,7 @@ CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribu
 size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, uint8_t storyTier ) const
 {
 	size_t const min = GetMinimumTotalSlots( storyTier );
+	size_t const power = math::integer_cast<size_t>( elemPower );
 	switch( storyTier )
 	{
 		case 0:
@@ -343,22 +344,22 @@ size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, u
 			return min;
 		case 4:
 			// Unlock 4
-			return min + ( elemPower + 1 ) / 2;
+			return min + ( power + 1 ) / 2;
 		case 5:
 			// Unlock 5
-			return min + elemPower * 1;
+			return min + power * 1;
 		case 6:
 			// Unlock 6
-			return min + elemPower * 1;
+			return min + power * 1;
 		case 7:
 			// Unlock 7
-			return min + elemPower * 1;
+			return min + power * 1;
 		case 8:
 			// Unlock 8
-			return min + elemPower * 2;
+			return min + power * 2;
 		default:
 			// Unbalanced
-			return min + elemPower * 2 + 5;
+			return min + power * 2 + 5;
 	}
 }
 

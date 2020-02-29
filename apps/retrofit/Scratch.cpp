@@ -40,9 +40,9 @@ void Start()
 		file::VFS::kRoot.GetChild( "assets", "tables", "char", "composite.csv" ) );
 	RF_ASSERT( loadCompositionSuccess );
 
+#if 0
 	sprite::CharacterCreator::TagBits const characterTagBits = creator.GetTagsAsFlags( { "female", "portal" } );
 
-#if 0
 	// Choose first valid
 	sprite::CharacterCreator::PieceId const base = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Base, characterTagBits );
 	sprite::CharacterCreator::PieceId const top = creator.IterateNextValidPiece( {}, sprite::CharacterPieceType::Top, characterTagBits );

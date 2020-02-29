@@ -260,31 +260,6 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format10Slider = []( int8_t val ) -> rftl::string //
-	{
-		RF_ASSERT( val >= 0 );
-		RF_ASSERT( val <= 10 );
-		rftl::string retVal;
-		retVal += "|";
-		for( int8_t i = 0; i < 11; i++ )
-		{
-			if( i == val )
-			{
-				retVal += "[";
-			}
-			else if( i == val + 1 )
-			{
-				retVal += "]";
-			}
-			else
-			{
-				retVal += "-";
-			}
-		}
-		retVal += "|";
-		return retVal;
-	};
-
 	// TODO
 	rftl::string innate = "YYYYYYY";
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Innate" )->SetText( format9( innate ) );
