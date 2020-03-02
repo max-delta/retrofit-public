@@ -18,7 +18,7 @@ PLATFORMUTILS_API rftl::string OpenFileDialog( FileFilters filters )
 	a.lpstrFile = filePath;
 	a.nMaxFile = sizeof( filePath );
 
-	using namespace std::string_literals;
+	using namespace rftl::string_literals;
 	rftl::string filterStr = "All files (*.*)\0*.*\0"s;
 	for( FileFilter const& filter : filters )
 	{

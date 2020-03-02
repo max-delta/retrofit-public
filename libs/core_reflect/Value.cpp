@@ -6,6 +6,7 @@
 #include "core/macros.h"
 
 #include "rftl/sstream"
+#include "rftl/string"
 
 
 namespace RF { namespace reflect {
@@ -50,7 +51,7 @@ template<> VirtualClass const* ConvertSSToTemp<VirtualClass const*>( rftl::strin
 }
 template<> char ConvertSSToTemp<char>( rftl::stringstream && ss )
 {
-	std::string const asStr = ss.str();
+	rftl::string const asStr = ss.str();
 	if( asStr.size() == 1 )
 	{
 		// WARNING: (ss >> ch) causes (' ' -> '\0'), so don't use '>>' for char

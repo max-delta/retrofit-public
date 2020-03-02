@@ -27,7 +27,7 @@ namespace details {
 
 static WeakPtr<input::RawInputController> sRawInputController;
 static rftl::vector<WeakPtr<input::RollbackController>> sRollbackControllers;
-static rftl::deque<std::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> sDebugQueuedTestInput;
+static rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> sDebugQueuedTestInput;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputSt
 void DebugSubmitTestInput()
 {
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-	for( std::pair<rollback::InputStreamIdentifier, rollback::InputEvent> const& input : details::sDebugQueuedTestInput )
+	for( rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent> const& input : details::sDebugQueuedTestInput )
 	{
 		rollback::InputStreamRef const stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, input.first );
 		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
