@@ -277,7 +277,7 @@ int8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
 
 
 
-size_t CharacterValidator::GetMinimumTotalSlots( uint8_t storyTier ) const
+size_t CharacterValidator::GetMinimumTotalSlots( company::StoryTier storyTier ) const
 {
 	SlotsPerElemLevel const minSlots = GetMinimumSlotDistribution( storyTier );
 	return rftl::accumulate( minSlots.begin(), minSlots.end(), SlotsPerElemLevel::value_type{} );
@@ -285,7 +285,7 @@ size_t CharacterValidator::GetMinimumTotalSlots( uint8_t storyTier ) const
 
 
 
-CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( uint8_t storyTier ) const
+CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( company::StoryTier storyTier ) const
 {
 	switch( storyTier )
 	{
@@ -324,7 +324,7 @@ CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribu
 
 
 
-size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, uint8_t storyTier ) const
+size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, company::StoryTier storyTier ) const
 {
 	size_t const min = GetMinimumTotalSlots( storyTier );
 	size_t const power = math::integer_cast<size_t>( elemPower );
@@ -365,7 +365,7 @@ size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, u
 
 
 
-CharacterValidator::SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, uint8_t storyTier ) const
+CharacterValidator::SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
 {
 	// NOTE: Non-optimal, but not expected to be called frequently
 

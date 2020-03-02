@@ -9,9 +9,9 @@ struct ElementDesc
 {
 	ElementIdentifier mIdentifier = kInvalidElementIdentifier;
 	InnateIdentifier mInnate = kInvalidInnateIdentifier;
-	size_t mBaseLevel = 0;
-	size_t mMinLevel = 0;
-	size_t mMaxLevel = 0;
+	ElementLevel mBaseLevel = kInvalidElementLevel;
+	ElementLevel mMinLevel = kInvalidElementLevel;
+	ElementLevel mMaxLevel = kInvalidElementLevel;
 	size_t mStackSize = 0;
 	bool mChain = false;
 

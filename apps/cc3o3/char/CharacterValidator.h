@@ -3,6 +3,7 @@
 
 #include "cc3o3/char/CharFwd.h"
 #include "cc3o3/char/Stats.h"
+#include "cc3o3/company/CompanyFwd.h"
 
 #include "GameSprite/SpriteFwd.h"
 
@@ -62,10 +63,10 @@ public:
 	Stats const& GetStatBonuses( SpeciesID const& id ) const;
 	static int8_t CalculateTotalPoints( Stats const& stats );
 
-	size_t GetMinimumTotalSlots( uint8_t storyTier ) const;
-	SlotsPerElemLevel GetMinimumSlotDistribution( uint8_t storyTier ) const;
-	size_t CalculateTotalSlots( Stats::StatModifier elemPower, uint8_t storyTier ) const;
-	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, uint8_t storyTier ) const;
+	size_t GetMinimumTotalSlots( company::StoryTier storyTier ) const;
+	SlotsPerElemLevel GetMinimumSlotDistribution( company::StoryTier storyTier ) const;
+	size_t CalculateTotalSlots( Stats::StatModifier elemPower, company::StoryTier storyTier ) const;
+	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const;
 
 	void SanitizeForCharacterCreation( Character& character ) const;
 	void SanitizeForGameplay( Character& character ) const;

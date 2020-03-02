@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "cc3o3/state/Component.h"
+#include "cc3o3/company/CompanyFwd.h"
 
 #include "Rollback/AutoVar.h"
 
@@ -38,7 +39,7 @@ public:
 	//  * 1-3: Tutorial
 	//  * 4-8: Element level unlocks
 	//  * 9+: Unbalanced
-	rollback::AutoVar<uint8_t> mStoryTier;
+	rollback::AutoVar<company::StoryTier> mStoryTier;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
