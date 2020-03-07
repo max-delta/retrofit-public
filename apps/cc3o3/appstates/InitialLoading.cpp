@@ -147,6 +147,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	{
 		gElementDatabase->LoadDescTables(
 			paths::ElementDescTables() );
+		gElementDatabase->LoadTierUnlockTables(
+			paths::ElementTierUnlockTables() );
 	}
 
 	context.mManager.RequestDeferredStateChange( GetStateAfterInitialLoad() );

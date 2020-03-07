@@ -69,6 +69,48 @@ bool ElementDatabase::LoadDescTables( file::VFSPath const& descTablesDir )
 
 
 
+bool ElementDatabase::LoadTierUnlockTables( file::VFSPath const& tierUnlockTablesDir )
+{
+	// Unload current tier unlocks
+	mTierUnlocks.clear();
+
+	// Enumerate tier unlock tables
+	rftl::vector<file::VFSPath> iterUnlockTableFiles;
+	{
+		rftl::vector<file::VFSPath> unexpectedDirectories;
+		mVfs->EnumerateDirectory(
+			tierUnlockTablesDir,
+			file::VFSMount::Permissions::ReadOnly,
+			iterUnlockTableFiles,
+			unexpectedDirectories );
+		for( file::VFSPath const& unexpectedDirectory : unexpectedDirectories )
+		{
+			RFLOG_WARNING( unexpectedDirectory, RFCAT_CC3O3, "Unexpected directory found alongside tier unlock table files" );
+		}
+	}
+
+	if( iterUnlockTableFiles.empty() )
+	{
+		RFLOG_NOTIFY( tierUnlockTablesDir, RFCAT_CC3O3, "Failed to find any tier unlock table files" );
+		return false;
+	}
+
+	// Load all tier unlock tables
+	for( file::VFSPath const& tierUnlockTableFile : iterUnlockTableFiles )
+	{
+		bool const loadResult = LoadTierUnlockTable( tierUnlockTableFile );
+		if( loadResult == false )
+		{
+			RFLOG_NOTIFY( tierUnlockTableFile, RFCAT_CC3O3, "Couldn't load tier unlock table file" );
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
 ElementDesc ElementDatabase::GetElementDesc( ElementIdentifier identifier ) const
 {
 	ElementDesc asDesc = {};
@@ -152,7 +194,7 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		rftl::deque<rftl::string> const entry = descTable.front();
 		if( entry.size() != 8 )
 		{
-			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, expected 7 columns", math::integer_cast<int>( line ) );
+			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, expected 8 columns", math::integer_cast<int>( line ) );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -223,6 +265,95 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		mElementDescs.emplace_back( rftl::move( desc ) );
 
 		descTable.pop_front();
+		line++;
+	}
+
+	return true;
+}
+
+
+
+bool ElementDatabase::LoadTierUnlockTable( file::VFSPath const& tierUnlockTablePath )
+{
+	rftl::deque<rftl::deque<rftl::string>> csv = LoadCSV( tierUnlockTablePath );
+	if( csv.empty() )
+	{
+		RFLOG_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Failed to load tier unlock table file" );
+		return false;
+	}
+
+	size_t line = 0;
+
+	rftl::deque<rftl::string> const header = csv.front();
+	csv.pop_front();
+	if(
+		header.size() != 9 ||
+		header.at( 0 ) != "id" ||
+		header.at( 1 ) != "1" ||
+		header.at( 2 ) != "2" ||
+		header.at( 3 ) != "3" ||
+		header.at( 4 ) != "4" ||
+		header.at( 5 ) != "5" ||
+		header.at( 6 ) != "6" ||
+		header.at( 7 ) != "7" ||
+		header.at( 8 ) != "8" )
+	{
+		RFLOG_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock table header" );
+		return false;
+	}
+	line++;
+
+	while( csv.empty() == false )
+	{
+		rftl::deque<rftl::string> const entry = csv.front();
+		if( entry.size() != 9 )
+		{
+			RFLOG_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line %i, expected 9 columns", math::integer_cast<int>( line ) );
+			return false;
+		}
+		rftl::string const& id = entry.at( 0 );
+		static constexpr size_t kTierColFirst = 1;
+		static constexpr size_t kTierColLast = 8;
+
+		ElementIdentifier identifier = {};
+		TierUnlocks unlocks = {};
+
+		if( id.empty() || id.size() > sizeof( ElementIdentifier ) )
+		{
+			RFLOG_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line %i, bad id", math::integer_cast<int>( line ) );
+			return false;
+		}
+		identifier = MakeElementIdentifier( id );
+
+		if( mTierUnlocks.count( identifier ) != 0 )
+		{
+			RFLOG_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Duplicate tier unlock identifier %s", GetElementString( identifier ).c_str() );
+			return false;
+		}
+
+		bool hasUnlocks = false;
+		for( size_t col = kTierColFirst; col <= kTierColLast; col++ )
+		{
+			size_t const tier = col - kTierColFirst;
+			size_t& unlock = unlocks.at( tier );
+			( rftl::stringstream() << entry.at( col ) ) >> unlock;
+			if( unlock > 0 )
+			{
+				hasUnlocks = true;
+			}
+		}
+
+		if( hasUnlocks )
+		{
+			mTierUnlocks[identifier] = rftl::move( unlocks );
+		}
+		else
+		{
+			// Don't bother tracking things with no unlocks
+			// TODO: Clean up data long-term and make this an error case?
+		}
+
+		csv.pop_front();
 		line++;
 	}
 

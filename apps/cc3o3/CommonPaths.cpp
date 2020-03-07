@@ -82,6 +82,10 @@ file::VFSPath ElementDescTables()
 {
 	return file::VFS::kRoot.GetChild( "assets", "tables", "elements", "descs" );
 }
+file::VFSPath ElementTierUnlockTables()
+{
+	return file::VFS::kRoot.GetChild( "assets", "tables", "elements", "tier_unlocks" );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}

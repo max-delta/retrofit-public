@@ -27,6 +27,7 @@ file::VFSPath Localizations();
 file::VFSPath BaseCharacters();
 file::VFSPath CompositeCharacters();
 file::VFSPath ElementDescTables();
+file::VFSPath ElementTierUnlockTables();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
