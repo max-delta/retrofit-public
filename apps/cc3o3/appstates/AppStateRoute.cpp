@@ -24,6 +24,7 @@ enum class Mode : uint8_t
 
 	// Directly to gameplay
 	GameplayOverworld,
+	GameplayMenus,
 };
 
 static Mode sMode = Mode::Invalid;
@@ -51,15 +52,19 @@ AppStateID GetStateAfterInitialLoad()
 	{
 		return id::DevTestCombatCharts;
 	}
-	else if( fasttrack::sMode == fasttrack::Mode::DevTestGridCharts )
+	if( fasttrack::sMode == fasttrack::Mode::DevTestGridCharts )
 	{
 		return id::DevTestGridCharts;
 	}
-	else if( fasttrack::sMode == fasttrack::Mode::DevTestRollback )
+	if( fasttrack::sMode == fasttrack::Mode::DevTestRollback )
 	{
 		return id::DevTestRollback;
 	}
-	else if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
+	if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
+	{
+		return id::Gameplay;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
 	{
 		return id::Gameplay;
 	}
@@ -76,7 +81,7 @@ AppStateID GetFirstTitleScreenState()
 	{
 		return id::TitleScreen_Options;
 	}
-	else if( fasttrack::sMode == fasttrack::Mode::TitleScreenCharCreate )
+	if( fasttrack::sMode == fasttrack::Mode::TitleScreenCharCreate )
 	{
 		return id::TitleScreen_CharCreate;
 	}
@@ -92,9 +97,13 @@ AppStateID GetFirstGameplayState()
 	{
 		return id::Gameplay_Overworld;
 	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
+	{
+		return id::Gameplay_Menus;
+	}
 
 	// TODO: This should be based on the save file
-	return id::Gameplay_Overworld;
+	return id::Gameplay_Menus;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
