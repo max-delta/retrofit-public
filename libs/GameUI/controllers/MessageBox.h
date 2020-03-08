@@ -34,7 +34,12 @@ public:
 		math::Color3f color,
 		rftl::unordered_set<char> const& breakableChars );
 
-	void SetFrameTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoord expectedTileDimensions, gfx::PPUCoord paddingDimensions );
+	void SetFrameTileset(
+		ui::UIContext& context,
+		gfx::ManagedTilesetID tileset,
+		gfx::PPUCoord expectedTileDimensions,
+		gfx::PPUCoord expectedPatternDimensions,
+		gfx::PPUCoord paddingDimensions );
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 
 	ContainerID GetChildContainerID() const;

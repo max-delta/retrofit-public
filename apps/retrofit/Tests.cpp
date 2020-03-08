@@ -517,7 +517,7 @@ void InitUITest()
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
 	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
-	frame6->SetTileset( uiContext, frameTileset, { 4, 4 }, { 0, 0 } );
+	frame6->SetTileset( uiContext, frameTileset, { 4, 4 }, { 12, 12 }, { 0, 0 } );
 
 	// Put some text in the frame to make sure it's readable
 	rftl::vector<rftl::string> frame6Text;

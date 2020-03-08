@@ -21,10 +21,16 @@ RFTYPE_CREATE_META( RF::ui::controller::BorderFrame )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void BorderFrame::SetTileset( ui::UIContext& context, gfx::ManagedTilesetID tileset, gfx::PPUCoord expectedTileDimensions, gfx::PPUCoord paddingDimensions )
+void BorderFrame::SetTileset(
+	ui::UIContext& context,
+	gfx::ManagedTilesetID tileset,
+	gfx::PPUCoord expectedTileDimensions,
+	gfx::PPUCoord expectedPatternDimensions,
+	gfx::PPUCoord paddingDimensions )
 {
 	mTileLayer.mTilesetReference = tileset;
 	mExpectedTileDimensions = expectedTileDimensions;
+	mExpectedPatternDimensions = expectedPatternDimensions;
 	mPaddingDimensions = paddingDimensions;
 
 	// Invalidate tilemap and wait for recalc
@@ -146,51 +152,98 @@ void BorderFrame::RecalcTilemap( Container const& container )
 	size_t const numAvailableColumns = math::integer_cast<size_t>( availableWidth / mExpectedTileDimensions.x );
 	size_t const numAvailableRows = math::integer_cast<size_t>( availableHeight / mExpectedTileDimensions.y );
 
+	gfx::TileLayer::TileIndex const numInputColumns = mExpectedPatternDimensions.x / mExpectedTileDimensions.x;
+	gfx::TileLayer::TileIndex const numInputRows = mExpectedPatternDimensions.y / mExpectedTileDimensions.y;
+
 	// Needs to be atleast 2x2, even if the AABB isn't big enough to fit it
-	size_t const numColumns = math::Max<size_t>( numAvailableColumns, 2 );
-	size_t const numRows = math::Max<size_t>( numAvailableRows, 2 );
+	size_t const numOutputColumns = math::Max<size_t>( numAvailableColumns, 2 );
+	size_t const numOutputRows = math::Max<size_t>( numAvailableRows, 2 );
 
-	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::PPUCoordElem>( numColumns );
-	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::PPUCoordElem>( numRows );
+	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::PPUCoordElem>( numOutputColumns );
+	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::PPUCoordElem>( numOutputRows );
 
-	mTileLayer.ClearAndResize( numColumns, numRows );
+	mTileLayer.ClearAndResize( numOutputColumns, numOutputRows );
 
-	// Frame tilesets are laid out as follows:
-	// 0 1 2
-	// 3 4 5
-	// 6 7 8
-	//
-	//  /-\
-	//  |#|
-	//  \-/
-
-	// Fill in center
-	for( size_t x = 1; x < numColumns - 1; x++ )
-	{
-		for( size_t y = 1; y < numRows - 1; y++ )
-		{
-			mTileLayer.GetMutableTile( x, y ).mIndex = 4;
-		}
-	}
-
-	// Fill in sides
-	for( size_t x = 1; x < numColumns - 1; x++ )
-	{
-		mTileLayer.GetMutableTile( x, 0 ).mIndex = 1;
-		mTileLayer.GetMutableTile( x, numRows - 1 ).mIndex = 7;
-	}
-	for( size_t y = 1; y < numRows - 1; y++ )
-	{
-		mTileLayer.GetMutableTile( 0, y ).mIndex = 3;
-		mTileLayer.GetMutableTile( numColumns - 1, y ).mIndex = 5;
-	}
+	// Frame tilesets are laid out in varying sizes with this pattern:
+	// / - \
+	// | # |
+	// \ - /
+	// The interior space '#' and edges '|' or '-' may be multiple tiles
+	const gfx::TileLayer::TileIndex patternCountX = numInputColumns - 2;
+	const gfx::TileLayer::TileIndex patternCountY = numInputRows - 2;
+	gfx::TileLayer::TileIndex patternX;
+	gfx::TileLayer::TileIndex patternY;
 
 	// Fill in corners
 	// NOTE: In 2x2 case, this is the only thing that will actually get run
-	mTileLayer.GetMutableTile( 0, 0 ).mIndex = 0;
-	mTileLayer.GetMutableTile( 0, numRows - 1 ).mIndex = 6;
-	mTileLayer.GetMutableTile( numColumns - 1, 0 ).mIndex = 2;
-	mTileLayer.GetMutableTile( numColumns - 1, numRows - 1 ).mIndex = 8;
+	const gfx::TileLayer::TileIndex corner0 = 0;
+	const gfx::TileLayer::TileIndex corner1 = numInputColumns - 1;
+	const gfx::TileLayer::TileIndex corner2 = numInputColumns * ( numInputRows - 1 );
+	const gfx::TileLayer::TileIndex corner3 = ( numInputColumns * numInputRows ) - 1;
+	mTileLayer.GetMutableTile( 0, 0 ).mIndex = corner0;
+	mTileLayer.GetMutableTile( numOutputColumns - 1, 0 ).mIndex = corner1;
+	mTileLayer.GetMutableTile( 0, numOutputRows - 1 ).mIndex = corner2;
+	mTileLayer.GetMutableTile( numOutputColumns - 1, numOutputRows - 1 ).mIndex = corner3;
+
+	// Fill in horizontal sides
+	const gfx::TileLayer::TileIndex topStart = corner0 + 1;
+	const gfx::TileLayer::TileIndex bottomStart = corner2 + 1;
+	patternX = 0;
+	for( size_t x = 1; x < numOutputColumns - 1; x++ )
+	{
+		if( patternX >= patternCountX )
+		{
+			patternX = 0;
+		}
+
+		mTileLayer.GetMutableTile( x, 0 ).mIndex = topStart + patternX;
+		mTileLayer.GetMutableTile( x, numOutputRows - 1 ).mIndex = bottomStart + patternX;
+
+		patternX++;
+	}
+
+	// Fill in vertical sides
+	const gfx::TileLayer::TileIndex leftStart = corner0 + numInputColumns;
+	const gfx::TileLayer::TileIndex rightStart = corner1 + numInputColumns;
+	patternY = 0;
+	for( size_t y = 1; y < numOutputRows - 1; y++ )
+	{
+		if( patternY >= patternCountY )
+		{
+			patternY = 0;
+		}
+
+		mTileLayer.GetMutableTile( 0, y ).mIndex = leftStart + patternY * numInputColumns;
+		mTileLayer.GetMutableTile( numOutputColumns - 1, y ).mIndex = rightStart + patternY * numInputColumns;
+
+		patternY++;
+	}
+
+	// Fill in center
+	const gfx::TileLayer::TileIndex centerStart = leftStart + 1;
+	patternX = 0;
+	for( size_t x = 1; x < numOutputColumns - 1; x++ )
+	{
+		if( patternX >= patternCountX )
+		{
+			patternX = 0;
+		}
+
+		patternY = 0;
+		for( size_t y = 1; y < numOutputRows - 1; y++ )
+		{
+			if( patternY >= patternCountY )
+			{
+				patternY = 0;
+			}
+
+			mTileLayer.GetMutableTile( x, y ).mIndex = centerStart + patternX + patternY * numInputColumns;
+
+			patternY++;
+		}
+
+		patternX++;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

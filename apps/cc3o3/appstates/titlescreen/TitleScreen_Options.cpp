@@ -210,7 +210,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 2, 0 } );
+		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 		// Cut the frame into columns
 		ui::controller::ColumnSlicer::Ratios const frameColumnRatios = {
