@@ -64,7 +64,7 @@ bool TextureManager::PostLoadFromFile( ResourceType& resource, Filename filename
 	if( mDeviceInterface != nullptr )
 	{
 		bool const successfulLoad = LoadToDevice( resource, filename );
-		RF_ASSERT( successfulLoad );
+		RFLOG_TEST_AND_NOTIFY( successfulLoad, filename, RFCAT_PPU, "Failed to load to device" );
 		return successfulLoad;
 	}
 	else
@@ -109,7 +109,7 @@ bool TextureManager::LoadToDevice( ResourceType& resource, Filename const& filen
 	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Failed to load file" );
+		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load file" );
 		return false;
 	}
 	file::FileBuffer const buffer{ *fileHandle.Get(), false };
