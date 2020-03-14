@@ -44,8 +44,8 @@ AllowShortLoopsOnASingleLine : false
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
 AlwaysBreakTemplateDeclarations : No # In some versions this has to be false instead...
-BinPackArguments : false # But prefer true
-BinPackParameters : true
+BinPackArguments : true # But prefer false
+BinPackParameters : false
 BraceWrapping :
  AfterCaseLabel : true
  AfterClass : true
