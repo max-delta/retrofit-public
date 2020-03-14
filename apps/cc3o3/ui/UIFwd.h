@@ -17,6 +17,9 @@ enum : FontPurposeID
 	NarrowHalfTileMono,
 	NarrowQuarterTileMono,
 
+	SmallMenuText,
+	LargeMenuText,
+
 	SmallMenuSelection,
 	LargeMenuSelection,
 

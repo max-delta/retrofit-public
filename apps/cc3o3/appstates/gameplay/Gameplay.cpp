@@ -9,6 +9,7 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/state/objects/Company.h"
 #include "cc3o3/state/objects/OverworldCharacter.h"
 #include "cc3o3/state/objects/SiteCharacter.h"
@@ -181,6 +182,12 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 			// HACK: Set some fake progression
 			progression.mStoryTier = 6;
+		}
+
+		// Set up the UI
+		{
+			VariableIdentifier const localUIRoot( "localUI" );
+			CreateLocalUI( sharedWindow, privateWindow, localUIRoot );
 		}
 
 		// HACK: Save out the state for diagnostics

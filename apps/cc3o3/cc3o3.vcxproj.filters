@@ -145,6 +145,12 @@
     <ClCompile Include="company\CompanyManager.cpp">
       <Filter>company</Filter>
     </ClCompile>
+    <ClCompile Include="state\objects\LocalUI.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="state\components\UINavigation.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -401,6 +407,12 @@
     </ClInclude>
     <ClInclude Include="company\CompanyFwd.h">
       <Filter>company</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\LocalUI.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\UINavigation.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

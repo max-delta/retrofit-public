@@ -77,8 +77,9 @@ void Startup()
 	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
 	app::gGraphics->HideZoomFactor( kDebugHideZoomFactor );
 
-	// Leave atleast a pixel around all edges of the screen
-	app::gUiManager->SetRootAABBReduction( 1 );
+	// Keep the pixels flush with the edges of the screen, to make some more
+	//  precise UI math easier
+	app::gUiManager->SetRootAABBReduction( 0 );
 
 	if( kDebugUIScaler )
 	{

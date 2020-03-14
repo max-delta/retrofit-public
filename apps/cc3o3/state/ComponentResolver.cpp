@@ -21,6 +21,7 @@ class Roster;
 class Progression;
 class OverworldVisual;
 class OverworldMovement;
+class UINavigation;
 }
 namespace details::id {
 enum : ComponentID
@@ -31,6 +32,7 @@ enum : ComponentID
 	Progression,
 	OverworldVisual,
 	OverworldMovement,
+	UINavigation,
 };
 }
 RF_COMP_PAIR( details::id::Meta, comp::Meta );
@@ -38,6 +40,7 @@ RF_COMP_PAIR( details::id::Roster, comp::Roster );
 RF_COMP_PAIR( details::id::Progression, comp::Progression );
 RF_COMP_PAIR( details::id::OverworldVisual, comp::OverworldVisual );
 RF_COMP_PAIR( details::id::OverworldMovement, comp::OverworldMovement );
+RF_COMP_PAIR( details::id::UINavigation, comp::UINavigation );
 
 #undef RF_COMP_PAIR
 

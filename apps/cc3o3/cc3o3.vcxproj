@@ -72,9 +72,11 @@
     <ClCompile Include="state\components\OverworldVisual.cpp" />
     <ClCompile Include="state\components\Progression.cpp" />
     <ClCompile Include="state\components\Roster.cpp" />
+    <ClCompile Include="state\components\UINavigation.cpp" />
     <ClCompile Include="state\objects\BattleCharacter.cpp" />
     <ClCompile Include="state\objects\Company.cpp" />
     <ClCompile Include="state\objects\EmptyObject.cpp" />
+    <ClCompile Include="state\objects\LocalUI.cpp" />
     <ClCompile Include="state\objects\OverworldCharacter.cpp" />
     <ClCompile Include="state\objects\SiteCharacter.cpp" />
     <ClCompile Include="state\StateHelpers.cpp" />
@@ -154,9 +156,11 @@
     <ClInclude Include="state\components\project.h" />
     <ClInclude Include="state\components\Roster.h" />
     <ClInclude Include="state\components\stdafx.h" />
+    <ClInclude Include="state\components\UINavigation.h" />
     <ClInclude Include="state\objects\BattleCharacter.h" />
     <ClInclude Include="state\objects\Company.h" />
     <ClInclude Include="state\objects\EmptyObject.h" />
+    <ClInclude Include="state\objects\LocalUI.h" />
     <ClInclude Include="state\objects\OverworldCharacter.h" />
     <ClInclude Include="state\objects\project.h" />
     <ClInclude Include="state\objects\SiteCharacter.h" />
