@@ -81,7 +81,7 @@ void Container::OnRender( UIConstContext const& context, bool& blockChildRenderi
 		if( controller->IsChildRenderingBlocked() )
 		{
 			// Generic option overrides controller-specific behavior
-			blockChildRendering = true;
+			blockChildRendering = false;
 		}
 	}
 }
