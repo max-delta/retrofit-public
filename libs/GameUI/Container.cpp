@@ -73,7 +73,16 @@ void Container::OnRender( UIConstContext const& context, bool& blockChildRenderi
 	Controller* const controller = mWeakUIController;
 	if( controller != nullptr )
 	{
-		controller->OnRender( context, *this, blockChildRendering );
+		if( controller->IsRenderingBlocked() == false )
+		{
+			controller->OnRender( context, *this, blockChildRendering );
+		}
+
+		if( controller->IsChildRenderingBlocked() )
+		{
+			// Generic option overrides controller-specific behavior
+			blockChildRendering = true;
+		}
 	}
 }
 

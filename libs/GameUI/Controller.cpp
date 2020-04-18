@@ -49,6 +49,34 @@ void Controller::OnRender( UIConstContext const& context, Container const& conta
 
 
 
+void Controller::SetRenderingBlocked( bool value )
+{
+	mBlockRendering = value;
+}
+
+
+
+bool Controller::IsRenderingBlocked() const
+{
+	return mBlockRendering;
+}
+
+
+
+void Controller::SetChildRenderingBlocked( bool value )
+{
+	mBlockChildRendering = value;
+}
+
+
+
+bool Controller::IsChildRenderingBlocked() const
+{
+	return mBlockChildRendering;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 gfx::PPUController& Controller::GetRenderer( ContainerManager const& manager ) const
 {
 	return manager.GetRenderer();

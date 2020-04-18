@@ -33,6 +33,12 @@ public:
 	// NOTE: Manager is const to help enforce this
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering );
 
+	// Override the normal rendering behavior of the controller
+	void SetRenderingBlocked( bool value );
+	bool IsRenderingBlocked() const;
+	void SetChildRenderingBlocked( bool value );
+	bool IsChildRenderingBlocked() const;
+
 
 	//
 	// Protected methods
@@ -52,6 +58,12 @@ protected:
 
 	AnchorID CreateAnchor( ContainerManager& manager, Container& container );
 	void MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::PPUCoord pos );
+
+	//
+	// Private data
+private:
+	bool mBlockRendering = false;
+	bool mBlockChildRendering = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
