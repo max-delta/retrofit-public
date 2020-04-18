@@ -53,6 +53,9 @@
     <ClCompile Include="controllers\MessageBox.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\PaddedPassthrough.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -112,6 +115,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="controllers\MessageBox.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\PaddedPassthrough.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>
