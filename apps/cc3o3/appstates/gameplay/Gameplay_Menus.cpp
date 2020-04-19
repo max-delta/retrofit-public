@@ -1,9 +1,13 @@
 #include "stdafx.h"
 #include "Gameplay_Menus.h"
 
+#include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
+#include "cc3o3/state/components/Roster.h"
+#include "cc3o3/state/components/SiteVisual.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 
@@ -36,6 +40,13 @@ struct Gameplay_Menus::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
+
+	struct CharSlot
+	{
+		WeakPtr<ui::controller::BorderFrame> mFrame;
+		WeakPtr<ui::controller::FramePackDisplay> mDisplay;
+	};
+	rftl::array<CharSlot, 3> mCharSlots;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
@@ -154,6 +165,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						characterRowSlicer->GetChildContainerID( i_char ),
 						DefaultCreator<ui::controller::BorderFrame>::Create() );
 				frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+				frame->SetChildRenderingBlocked( true );
+				internalState.mCharSlots.at( i_char ).mFrame = frame;
 
 				// 2 subsections for info and display
 				ui::controller::ColumnSlicer::Ratios const charSlotColumnRatios = {
@@ -193,11 +206,12 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				}
 
 				// Display
-				//WeakPtr<ui::controller::FramePackDisplay> const display =
-				//	uiManager.AssignStrongController(
-				//		charSlotColumnSlicer->GetChildContainerID( 1 ),
-				//		DefaultCreator<ui::controller::FramePackDisplay>::Create() );
-				//display->SetJustification( ui::Justification::MiddleCenter );
+				WeakPtr<ui::controller::FramePackDisplay> const display =
+					uiManager.AssignStrongController(
+						charSlotColumnSlicer->GetChildContainerID( 1 ),
+						DefaultCreator<ui::controller::FramePackDisplay>::Create() );
+				display->SetJustification( ui::Justification::MiddleCenter );
+				internalState.mCharSlots.at( i_char ).mDisplay = display;
 			}
 
 			// 2 subsections for element manager on right
@@ -225,10 +239,69 @@ void Gameplay_Menus::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Menus::OnTick( AppStateTickContext& context )
 {
-	//InternalState& internalState = *mInternalState;
+	using namespace state;
+
+	InternalState& internalState = *mInternalState;
 	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
+
+	// Menus use the local player
+	input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
+	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
+
+	// Find company object
+	VariableIdentifier const companyRoot( "company", playerIDAsString );
+	ObjectRef const company = FindObjectByIdentifier( companyRoot );
+	RFLOG_TEST_AND_FATAL( company.IsSet(), companyRoot, RFCAT_CC3O3, "Failed to find company" );
+
+	// Get the roster
+	VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
+	comp::Roster const& roster = *company.GetComponentInstanceT<comp::Roster>();
+
+	// Get the active party characters
+	rftl::array<MutableObjectRef, 3> activePartyCharacters;
+	for( size_t i_teamIndex = 0; i_teamIndex < comp::Roster::kActiveTeamSize; i_teamIndex++ )
+	{
+		MutableObjectRef& activePartyCharacter = activePartyCharacters.at( i_teamIndex );
+
+		comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
+		if( rosterIndex == comp::Roster::kInvalidRosterIndex )
+		{
+			// Not active
+			continue;
+		}
+		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
+
+		VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
+		MutableObjectRef const character = FindMutableObjectByIdentifier( charRoot );
+		RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
+		activePartyCharacter = character;
+	}
+
+	// TODO
+	{
+		for( size_t i_char = 0; i_char < 3; i_char++ )
+		{
+			MutableObjectRef const& character = activePartyCharacters.at( i_char );
+			InternalState::CharSlot& charSlot = internalState.mCharSlots.at( i_char );
+			if( character.IsSet() == false )
+			{
+				charSlot.mFrame->SetChildRenderingBlocked( true );
+				continue;
+			}
+			charSlot.mFrame->SetChildRenderingBlocked( false );
+
+			comp::SiteVisual& visual = *character.GetMutableComponentInstanceT<comp::SiteVisual>();
+			comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
+			charSlot.mDisplay->SetFramePack(
+				anim.mFramePackID,
+				anim.mMaxTimeIndex,
+				( gfx::kTileSize / 4 ) * 3,
+				( gfx::kTileSize / 4 ) * 5 );
+			anim.mFramePackID;
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
