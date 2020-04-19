@@ -151,6 +151,9 @@
     <ClCompile Include="state\components\UINavigation.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\SiteVisual.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -412,6 +415,9 @@
       <Filter>state\objects</Filter>
     </ClInclude>
     <ClInclude Include="state\components\UINavigation.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\SiteVisual.h">
       <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>

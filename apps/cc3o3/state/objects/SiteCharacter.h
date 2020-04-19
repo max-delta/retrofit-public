@@ -12,11 +12,15 @@ namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
 MutableObjectRef CreateSiteCharacterFromDB(
-	rollback::Window& sharedWindow, rollback::Window& privateWindow,
-	state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID );
+	rollback::Window& sharedWindow,
+	rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier,
+	rftl::immutable_string const& charID );
 void MakeSiteCharacterFromDB(
-	rollback::Window& sharedWindow, rollback::Window& privateWindow,
-	MutableObjectRef const& ref, rftl::immutable_string const& charID );
+	rollback::Window& sharedWindow,
+	rollback::Window& privateWindow,
+	MutableObjectRef const& ref,
+	rftl::immutable_string const& charID );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -72,6 +72,7 @@
     <ClCompile Include="state\components\OverworldVisual.cpp" />
     <ClCompile Include="state\components\Progression.cpp" />
     <ClCompile Include="state\components\Roster.cpp" />
+    <ClCompile Include="state\components\SiteVisual.cpp" />
     <ClCompile Include="state\components\UINavigation.cpp" />
     <ClCompile Include="state\objects\BattleCharacter.cpp" />
     <ClCompile Include="state\objects\Company.cpp" />
@@ -155,6 +156,7 @@
     <ClInclude Include="state\components\Progression.h" />
     <ClInclude Include="state\components\project.h" />
     <ClInclude Include="state\components\Roster.h" />
+    <ClInclude Include="state\components\SiteVisual.h" />
     <ClInclude Include="state\components\stdafx.h" />
     <ClInclude Include="state\components\UINavigation.h" />
     <ClInclude Include="state\objects\BattleCharacter.h" />
