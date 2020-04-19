@@ -57,6 +57,7 @@ TEST( ReflectBuilder, ClassInfos )
 			virtual void Virt()
 			{
 			}
+			RF_MSVC_INLINE_SUPPRESS( 5204 ); // No virtual destructor
 		};
 		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );
@@ -74,6 +75,7 @@ TEST( ReflectBuilder, ClassInfos )
 		struct Test
 		{
 			virtual void Virt() = 0;
+			RF_MSVC_INLINE_SUPPRESS( 5204 ); // No virtual destructor
 		};
 		ClassInfo classInfo{ ExplicitDefaultConstruct() };
 		builder::CreateClassInfo<Test>( classInfo );

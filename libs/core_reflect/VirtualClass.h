@@ -3,7 +3,7 @@
 
 // Forwards
 namespace RF { namespace reflect {
-	struct ClassInfo;
+struct ClassInfo;
 }}
 
 namespace RF { namespace reflect {
@@ -14,6 +14,8 @@ class VirtualClassWithoutDestructor
 {
 public:
 	virtual ClassInfo const* GetVirtualClassInfo() const = 0;
+
+	RF_MSVC_INLINE_SUPPRESS( 5204 ); // No virtual destructor
 };
 
 
