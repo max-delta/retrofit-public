@@ -70,7 +70,7 @@ void Start()
 	sprite::CompositeCharacterParams params = {};
 	params.mMode = "36";
 	params.mCompositeWidth = 36;
-	params.mCompositeHeight = 36;
+	params.mCompositeHeight = 40;
 	params.mBaseId = base;
 	params.mTopId = top;
 	params.mBottomId = bottom;

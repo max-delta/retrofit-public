@@ -104,7 +104,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		paramSets.at( 0 ).mCharPiecesDir = paths::CharacterPieces();
 		paramSets.at( 1 ).mMode = "36";
 		paramSets.at( 1 ).mCompositeWidth = 36;
-		paramSets.at( 1 ).mCompositeHeight = 36;
+		paramSets.at( 1 ).mCompositeHeight = 40;
 		paramSets.at( 1 ).mCharPiecesDir = paths::CharacterPieces();
 
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
