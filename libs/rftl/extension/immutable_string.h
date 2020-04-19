@@ -35,6 +35,11 @@ public:
 	{
 		//
 	}
+	immutable_basic_string( CharT const* value )
+		: immutable_basic_string( backing_type( value ) )
+	{
+		//
+	}
 	immutable_basic_string& operator=( immutable_basic_string const& ) = delete;
 
 	operator backing_type const&() const
