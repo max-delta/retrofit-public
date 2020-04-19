@@ -395,9 +395,9 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	static constexpr char const kId[] = "CHAR_CREATE_TEMP";
 
 	sprite::CompositeCharacterParams params = {};
-	params.mMode = "24";
-	params.mCompositeWidth = 24;
-	params.mCompositeHeight = 24;
+	params.mMode = "36";
+	params.mCompositeWidth = 36;
+	params.mCompositeHeight = 40;
 	params.mBaseId = mChar.mVisuals.mBase;
 	params.mTopId = mChar.mVisuals.mTop;
 	params.mBottomId = mChar.mVisuals.mBottom;
@@ -413,7 +413,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 		ppu.ForceImmediateLoadRequest(
 			gfx::PPUController::AssetType::FramePack,
 			details::kPreviewFpackName,
-			character.mFramepacksByAnim.at( sprite::CharacterAnimKey::SWalk ) );
+			character.mFramepacksByAnim.at( sprite::CharacterAnimKey::SIdle ) );
 	}
 	else
 	{
@@ -613,8 +613,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			preview->SetFramePack(
 				previewFpackID,
 				fPack.CalculateTimeIndexBoundary(),
-				24,
-				24 );
+				36,
+				40 );
 			preview->SetSlowdown( fPack.mPreferredSlowdownRate );
 
 			// Cut bottom in 2
