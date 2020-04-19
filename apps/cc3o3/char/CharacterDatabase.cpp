@@ -79,21 +79,28 @@ size_t CharacterDatabase::DeleteAllCharacters()
 
 
 
-sprite::CompositeCharacter CharacterDatabase::FetchExistingComposite( CharacterID const& id ) const
+sprite::CompositeCharacter CharacterDatabase::FetchExistingComposite( CharacterID const& id, CharacterMode const& mode ) const
 {
-	CompositeStorage::const_iterator const iter = mCompositeStorage.find( id );
-	if( iter == mCompositeStorage.end() )
+	CompositeStorage::const_iterator const charIter = mCompositeStorage.find( id );
+	if( charIter == mCompositeStorage.end() )
 	{
 		return sprite::CompositeCharacter();
 	}
-	return iter->second;
+
+	CompositeModeStorage const& modes = charIter->second;
+	CompositeModeStorage::const_iterator const modeIter = modes.find( mode );
+	if( modeIter == modes.end() )
+	{
+		return sprite::CompositeCharacter();
+	}
+	return modeIter->second;
 }
 
 
 
-void CharacterDatabase::SubmitOrOverwriteComposite( CharacterID const& id, sprite::CompositeCharacter&& composite )
+void CharacterDatabase::SubmitOrOverwriteComposite( CharacterID const& id, CharacterMode const& mode, sprite::CompositeCharacter&& composite )
 {
-	mCompositeStorage[id] = rftl::move( composite );
+	mCompositeStorage[id][mode] = rftl::move( composite );
 }
 
 

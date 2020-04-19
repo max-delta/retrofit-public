@@ -26,10 +26,12 @@ class CharacterDatabase
 public:
 	using CharacterID = rftl::immutable_string;
 	using CharacterIDs = rftl::vector<CharacterID>;
+	using CharacterMode = rftl::immutable_string;
 
 private:
 	using CharacterStorage = rftl::unordered_map<CharacterID, Character>;
-	using CompositeStorage = rftl::unordered_map<CharacterID, sprite::CompositeCharacter>;
+	using CompositeModeStorage = rftl::unordered_map<CharacterMode, sprite::CompositeCharacter>;
+	using CompositeStorage = rftl::unordered_map<CharacterID, CompositeModeStorage>;
 
 
 	//
@@ -44,8 +46,8 @@ public:
 	bool DeleteExistingCharacter( CharacterID const& id );
 	size_t DeleteAllCharacters();
 
-	sprite::CompositeCharacter FetchExistingComposite( CharacterID const& id ) const;
-	void SubmitOrOverwriteComposite( CharacterID const& id, sprite::CompositeCharacter&& composite );
+	sprite::CompositeCharacter FetchExistingComposite( CharacterID const& id, CharacterMode const& mode ) const;
+	void SubmitOrOverwriteComposite( CharacterID const& id, CharacterMode const& mode, sprite::CompositeCharacter&& composite );
 
 	CharacterIDs GetAllCharacterIDs() const;
 

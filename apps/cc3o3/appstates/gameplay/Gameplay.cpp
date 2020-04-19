@@ -97,25 +97,33 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	{
 		sprite::CharacterCreator& charCreate = *gCharacterCreator;
 
-		sprite::CompositeCharacterParams params = {};
-		params.mMode = "24";
-		params.mCompositeWidth = 24;
-		params.mCompositeHeight = 24;
-		params.mCharPiecesDir = paths::CharacterPieces();
+		rftl::array<sprite::CompositeCharacterParams, 2> paramSets = {};
+		paramSets.at( 0 ).mMode = "24";
+		paramSets.at( 0 ).mCompositeWidth = 24;
+		paramSets.at( 0 ).mCompositeHeight = 24;
+		paramSets.at( 0 ).mCharPiecesDir = paths::CharacterPieces();
+		paramSets.at( 1 ).mMode = "36";
+		paramSets.at( 1 ).mCompositeWidth = 36;
+		paramSets.at( 1 ).mCompositeHeight = 36;
+		paramSets.at( 1 ).mCharPiecesDir = paths::CharacterPieces();
 
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 		{
 			character::Character const input = charDB.FetchExistingCharacter( characterID );
 
-			params.mBaseId = input.mVisuals.mBase;
-			params.mTopId = input.mVisuals.mTop;
-			params.mBottomId = input.mVisuals.mBottom;
-			params.mHairId = input.mVisuals.mHair;
-			params.mSpeciesId = input.mVisuals.mSpecies;
-			params.mOutputDir = paths::CompositeCharacters().GetChild( characterID );
+			for( sprite::CompositeCharacterParams const& paramSet : paramSets )
+			{
+				sprite::CompositeCharacterParams params = paramSet;
+				params.mBaseId = input.mVisuals.mBase;
+				params.mTopId = input.mVisuals.mTop;
+				params.mBottomId = input.mVisuals.mBottom;
+				params.mHairId = input.mVisuals.mHair;
+				params.mSpeciesId = input.mVisuals.mSpecies;
+				params.mOutputDir = paths::CompositeCharacters().GetChild( characterID ).GetChild( params.mMode );
 
-			sprite::CompositeCharacter output = charCreate.CreateCompositeCharacter( params );
-			charDB.SubmitOrOverwriteComposite( characterID, rftl::move( output ) );
+				sprite::CompositeCharacter output = charCreate.CreateCompositeCharacter( params );
+				charDB.SubmitOrOverwriteComposite( characterID, params.mMode, rftl::move( output ) );
+			}
 		}
 	}
 

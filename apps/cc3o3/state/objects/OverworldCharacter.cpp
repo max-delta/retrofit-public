@@ -24,8 +24,10 @@ namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
 MutableObjectRef CreateOverworldCharacterFromDB(
-	rollback::Window& sharedWindow, rollback::Window& privateWindow,
-	state::VariableIdentifier const& objIdentifier, rftl::immutable_string const& charID )
+	rollback::Window& sharedWindow,
+	rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier,
+	rftl::immutable_string const& charID )
 {
 	MutableObjectRef const ref = CreateEmptyObject( sharedWindow, privateWindow, objIdentifier );
 	MakeOverworldCharacterFromDB( sharedWindow, privateWindow, ref, charID );
@@ -35,8 +37,10 @@ MutableObjectRef CreateOverworldCharacterFromDB(
 
 
 void MakeOverworldCharacterFromDB(
-	rollback::Window& sharedWindow, rollback::Window& privateWindow,
-	MutableObjectRef const& ref, rftl::immutable_string const& charID )
+	rollback::Window& sharedWindow,
+	rollback::Window& privateWindow,
+	MutableObjectRef const& ref,
+	rftl::immutable_string const& charID )
 {
 	// Movement
 	{
@@ -56,7 +60,7 @@ void MakeOverworldCharacterFromDB(
 		visual->BindToMeta( sharedWindow, privateWindow, ref );
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
-		sprite::CompositeCharacter const composite = charDB.FetchExistingComposite( charID );
+		sprite::CompositeCharacter const composite = charDB.FetchExistingComposite( charID, "24" );
 		RFLOG_TEST_AND_FATAL( composite.mCharacterSequenceType == sprite::CharacterSequenceType::P_NESW_i121, ref, RFCAT_CC3O3, "Unsupported sequence" );
 		file::VFSPath const nIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::NIdle );
 		file::VFSPath const eIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::EIdle );
