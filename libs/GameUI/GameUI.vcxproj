@@ -42,6 +42,7 @@
     <ClInclude Include="controllers\InstancedController.h" />
     <ClInclude Include="controllers\ListBox.h" />
     <ClInclude Include="controllers\MessageBox.h" />
+    <ClInclude Include="controllers\MultiPassthrough.h" />
     <ClInclude Include="controllers\NineSlicer.h" />
     <ClInclude Include="controllers\PaddedPassthrough.h" />
     <ClInclude Include="controllers\Passthrough.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="controllers\InstancedController.cpp" />
     <ClCompile Include="controllers\ListBox.cpp" />
     <ClCompile Include="controllers\MessageBox.cpp" />
+    <ClCompile Include="controllers\MultiPassthrough.cpp" />
     <ClCompile Include="controllers\NineSlicer.cpp" />
     <ClCompile Include="controllers\PaddedPassthrough.cpp" />
     <ClCompile Include="controllers\Passthrough.cpp" />
