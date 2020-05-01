@@ -39,6 +39,7 @@ constexpr bool kDebugUI = kAllowDebug && true;
 constexpr bool kDebugUIScaler = kAllowDebug && false;
 constexpr bool kDebugHideZoomFactor = kAllowDebug && false;
 constexpr bool kDebugSuppressRender = kAllowDebug && false;
+constexpr bool kDebugUILayering = kAllowDebug && true;
 
 constexpr bool kAllowDevTests = true;
 constexpr bool kAllowDeveloperHud = true;
@@ -364,7 +365,7 @@ void ProcessFrame()
 	uiMan.ProcessRecalcs();
 	if( kDebugUI )
 	{
-		uiMan.DebugRender( kDebugSuppressRender );
+		uiMan.DebugRender( kDebugSuppressRender || kDebugUILayering );
 	}
 	if( kDebugSuppressRender == false )
 	{
