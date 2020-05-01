@@ -116,7 +116,6 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 		// TODO: Some kind of machinery for automating frames
 		// TODO: Defer load requests instead of forcing immediate load
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "frame9_24", paths::CommonTilesets().GetChild( "frame9_24.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "template_8_48", paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "wood_8_48", paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );

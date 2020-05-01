@@ -485,7 +485,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3f::kWhite,
 					ui::GetBreakableChars() ) );
-		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 12, 12 }, { 2, 0 } );
+		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 		messageBox->SetAnimationSpeed( ui::kTextSpeed );
 		messageBox->SetText(
 			"This is some text. It may take up a fair amount of space, so it"
@@ -521,10 +521,10 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				leftFrameFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		leftFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 12, 12 }, { 2, 0 } );
+		leftFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 		// Floating frame in middle right
-		gfx::PPUCoord const rightFrameDimensions = { 64 + 4, 128 + ( 16 - 4 ) };
+		gfx::PPUCoord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
 		WeakPtr<ui::controller::Floater> const rightFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 2 ),
@@ -536,7 +536,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rightFrameFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		rightFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "frame9_24" ), { 4, 4 }, { 12, 12 }, { 2, 0 } );
+		rightFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 		// Left frame
 		{
