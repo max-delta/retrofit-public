@@ -20,6 +20,8 @@
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/controllers/Passthrough.h"
+#include "GameUI/controllers/MultiPassthrough.h"
+#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/FramePackDisplay.h"
 
@@ -39,7 +41,38 @@ namespace RF { namespace cc { namespace appstate {
 struct Gameplay_Menus::InternalState
 {
 	RF_NO_COPY( InternalState );
+
+public:
+	struct TopLevelSections
+	{
+		enum Section : size_t
+		{
+			kStatus = 0,
+			kLoadout,
+
+			kNumSections
+		};
+
+		static constexpr char const* kLabels[kNumSections] = {
+			"Status",
+			"Loadout"
+		};
+	};
+
+
+public:
 	InternalState() = default;
+
+	void SwitchTopLevelSection( TopLevelSections::Section section );
+
+
+public:
+	WeakPtr<ui::controller::TextLabel> mMainHeader;
+
+	WeakPtr<ui::Controller> mSectionSelector;
+
+	using TopLevelControllers = rftl::array<WeakPtr<ui::Controller>, TopLevelSections::kNumSections>;
+	TopLevelControllers mTopLevelControllers;
 
 	struct CharSlot
 	{
@@ -50,6 +83,21 @@ struct Gameplay_Menus::InternalState
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
+
+
+
+void Gameplay_Menus::InternalState::SwitchTopLevelSection( TopLevelSections::Section section )
+{
+	// Only show current section
+	for( WeakPtr<ui::Controller> const& controller : mTopLevelControllers )
+	{
+		controller->SetChildRenderingBlocked( true );
+	}
+	mTopLevelControllers.at( section )->SetChildRenderingBlocked( false );
+
+	RF_ASSERT( section < rftl::extent<decltype( TopLevelSections::kLabels )>::value );
+	mMainHeader->SetText( TopLevelSections::kLabels[section] );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -110,6 +158,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		mainHeader->SetText( "UNSET" );
 		mainHeader->SetColor( math::Color3f::kWhite );
 		mainHeader->SetBorder( true );
+		internalState.mMainHeader = mainHeader;
 
 		// Controls in bottom right
 		WeakPtr<ui::controller::TextLabel> const mainFooter =
@@ -123,16 +172,58 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		mainFooter->SetBorder( true );
 
 		// Main sections are in the center
-		ui::ContainerID const centerContainerID = middleRowSlicer->GetChildContainerID( 1 );
+		using TopLevelSections = InternalState::TopLevelSections;
+		WeakPtr<ui::controller::MultiPassthrough> const sectionPassthroughs =
+			uiManager.AssignStrongController(
+				middleRowSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::MultiPassthrough>::Create( TopLevelSections::kNumSections + 1 ) );
 
-		// Loadout
+		// Section selector floats above the screen
+		WeakPtr<ui::controller::Floater> const sectionSelector =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kNumSections ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					ui::Justification::MiddleCenter ) );
+		uiManager.AdjustRecommendedRenderDepth( sectionSelector->GetContainerID(), -20 );
+		internalState.mSectionSelector = sectionSelector;
+
+		// Sections each get a passthrough that can be used to shut off all
+		//  children when switching sections
+		WeakPtr<ui::controller::Passthrough> const statusPassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kStatus ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const loadoutPassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kLoadout ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		internalState.mTopLevelControllers.at( TopLevelSections::kStatus ) = statusPassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kLoadout ) = loadoutPassthrough;
+
+		// Section selector
 		{
-			// Passthrough
-			WeakPtr<ui::controller::Passthrough> const loadoutPassthrough =
+			// Placeholder
+			WeakPtr<ui::controller::BorderFrame> const frame =
 				uiManager.AssignStrongController(
-					centerContainerID,
-					DefaultCreator<ui::controller::Passthrough>::Create() );
+					sectionSelector->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		}
 
+		// Status section
+		{
+			// Placeholder
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					statusPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		}
+
+		// Loadout section
+		{
 			// Cut the section into columns
 			ui::controller::ColumnSlicer::Ratios const loadoutColumnRatios = {
 				{ 6.f / 18.f, true },
@@ -226,6 +317,9 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						elementManagerRowRatios ) );
 		}
 	}
+
+	// Start on a section
+	internalState.SwitchTopLevelSection( InternalState::TopLevelSections::kLoadout );
 }
 
 
@@ -279,7 +373,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 		activePartyCharacter = character;
 	}
 
-	// TODO
+	// Update character displays
 	{
 		for( size_t i_char = 0; i_char < 3; i_char++ )
 		{
@@ -300,6 +394,8 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 				( gfx::kTileSize / 4 ) * 3,
 				( gfx::kTileSize / 4 ) * 5 );
 			anim.mFramePackID;
+
+			// TODO: Update text
 		}
 	}
 }
