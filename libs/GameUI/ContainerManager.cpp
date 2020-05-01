@@ -81,14 +81,14 @@ void ContainerManager::RecreateRootContainer()
 
 	RF_ASSERT( mContainers.size() == 1 );
 	RF_ASSERT( mAnchors.empty() );
-	#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 	{
 		for( LabelToContainerID::value_type const& label : mLabelsToContainerIDs )
 		{
 			RF_ASSERT( label.second == kRootContainerID );
 		}
 	}
-	#endif
+#endif
 }
 
 
@@ -183,10 +183,37 @@ gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const&
 	{
 		Container const& currentContainer = mContainers.at( id );
 		id = currentContainer.mParentContainerID;
-		RF_ASSERT_MSG( retVal > gfx::kNearestLayer, "UI stack too deep" );
+		RF_ASSERT_MSG(
+			retVal > gfx::kNearestLayer,
+			"UI stack too deep" );
 		retVal--;
+		RF_ASSERT_MSG(
+			math::integer_cast<int32_t>( retVal + currentContainer.mDepthOffset ) > gfx::kNearestLayer,
+			"UI stack too deep" );
+		retVal += currentContainer.mDepthOffset;
 	}
 	return retVal;
+}
+
+
+
+void ContainerManager::AdjustRecommendedRenderDepth( ContainerID containerID, gfx::PPUDepthLayer offset )
+{
+	gfx::PPUDepthLayer& current = GetMutableContainer( containerID ).mDepthOffset;
+	RF_ASSERT_MSG(
+		math::integer_cast<int32_t>( current + offset ) > gfx::kNearestLayer,
+		"Offset causes rollover" );
+	RF_ASSERT_MSG(
+		math::integer_cast<int32_t>( current + offset ) < gfx::kFarthestLayer,
+		"Offset causes rollover" );
+	current += offset;
+}
+
+
+
+void ContainerManager::ResetRecommendedRenderDepth( ContainerID containerID )
+{
+	GetMutableContainer( containerID ).mDepthOffset = 0;
 }
 
 

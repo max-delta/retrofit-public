@@ -82,6 +82,8 @@ public:
 	void SetRootRenderDepth( gfx::PPUDepthLayer depth );
 	gfx::PPUDepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
 	gfx::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
+	void AdjustRecommendedRenderDepth( ContainerID containerID, gfx::PPUDepthLayer offset );
+	void ResetRecommendedRenderDepth( ContainerID containerID );
 
 	void SetRootAABBReduction( gfx::PPUCoordElem delta );
 	void SetDebugAABBReduction( gfx::PPUCoordElem delta );
