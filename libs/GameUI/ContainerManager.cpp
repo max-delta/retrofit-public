@@ -340,7 +340,7 @@ void ContainerManager::Render() const
 
 
 
-void ContainerManager::DebugRender( bool uzeZlayers ) const
+void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors ) const
 {
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
@@ -369,15 +369,18 @@ void ContainerManager::DebugRender( bool uzeZlayers ) const
 		}
 	}
 
-	for( AnchorStorage::value_type const& anchorEntry : mAnchors )
+	if( includeAnchors )
 	{
-		Anchor const& anchor = anchorEntry.second;
-		ContainerID const parentID = anchor.mParentContainerID;
-		gfx::PPUCoord const& pos = anchor.mPos;
-		gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
-		math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, zLayer, color );
-		mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, zLayer, color );
+		for( AnchorStorage::value_type const& anchorEntry : mAnchors )
+		{
+			Anchor const& anchor = anchorEntry.second;
+			ContainerID const parentID = anchor.mParentContainerID;
+			gfx::PPUCoord const& pos = anchor.mPos;
+			gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
+			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
+			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, 2, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, 2, zLayer, color );
+		}
 	}
 }
 

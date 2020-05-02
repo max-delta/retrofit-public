@@ -94,7 +94,7 @@ public:
 
 	void Render() const;
 
-	void DebugRender( bool uzeZlayers ) const;
+	void DebugRender( bool uzeZlayers, bool includeAnchors ) const;
 
 
 	//
