@@ -225,14 +225,16 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 
 		struct Input
 		{
-			Input() = delete;
-			RF_NO_COPY( Input );
-
 			size_t const row;
 			size_t const col;
 			size_t const offsetX;
 			size_t const offsetY;
 			sprite::Bitmap const* const tex;
+
+			// TODO: Figure out a technique for aggregate initialization that
+			//  is warning-free in C++20, since the standards made a mess of
+			//  the whole thing
+			RF_MSVC_INLINE_SUPPRESS( 4623 4626 ); // Implicit deletion
 		};
 		Input const input[] = {
 			{ sequence.mSpeciesFarRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex },
