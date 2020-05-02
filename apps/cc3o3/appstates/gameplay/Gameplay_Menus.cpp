@@ -456,7 +456,6 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 				anim.mMaxTimeIndex,
 				( gfx::kTileSize / 4 ) * 3,
 				( gfx::kTileSize / 4 ) * 5 );
-			anim.mFramePackID;
 
 			// TODO: Update text
 		}
