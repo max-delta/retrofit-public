@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Gameplay_Menus.h"
 
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/StateHelpers.h"
@@ -15,6 +16,8 @@
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
+#include "GameUI/FocusEvent.h"
+#include "GameUI/FocusTarget.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/ColumnSlicer.h"
@@ -23,6 +26,7 @@
 #include "GameUI/controllers/MultiPassthrough.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/BorderFrame.h"
+#include "GameUI/controllers/ListBox.h"
 #include "GameUI/controllers/FramePackDisplay.h"
 
 #include "PPU/PPUController.h"
@@ -120,7 +124,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 	// Setup UI
 	{
 		ui::ContainerManager& uiManager = *app::gUiManager;
-		//ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+		ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
@@ -204,12 +208,30 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 
 		// Section selector
 		{
-			// Placeholder
+			// Frame
 			WeakPtr<ui::controller::BorderFrame> const frame =
 				uiManager.AssignStrongController(
 					sectionSelector->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+
+			// Implement selector as horizontal list
+			// TODO: Image support in list boxes
+			WeakPtr<ui::controller::ListBox> const selector =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::ListBox>::Create(
+						ui::Orientation::Horizontal,
+						TopLevelSections::kNumSections,
+						ui::font::NarrowHalfTileMono ) );
+			rftl::vector<rftl::string> labels;
+			for( char const* const& label : TopLevelSections::kLabels )
+			{
+				rftl::string firstChars = { label[0], label[1], label[2] };
+				labels.emplace_back( rftl::move( firstChars ) );
+			}
+			selector->SetText( labels );
+			selector->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
 		}
 
 		// Status section
@@ -335,10 +357,51 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 {
 	using namespace state;
 
+	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
+
 	InternalState& internalState = *mInternalState;
 	//state::comp::UINavigation& navigation = *internalState.mNavigation;
+	ui::ContainerManager& uiManager = *app::gUiManager;
+	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
+	ui::UIContext uiContext( uiManager );
+	focusMan.UpdateHardFocus( uiContext );
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
+	for( ui::FocusEventType const& focusEvent : focusEvents )
+	{
+		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
+		if( handled == false )
+		{
+			// Wasn't handled by general UI
+
+			// Figure out the useful focus information
+			WeakPtr<ui::FocusTreeNode const> currentFocus;
+			WeakPtr<ui::FocusTarget const> currentFocusTarget;
+			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
+			{
+				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
+				if( currentFocus != nullptr )
+				{
+					currentFocusTarget = currentFocus->mFocusTarget;
+				}
+				if( currentFocusTarget != nullptr )
+				{
+					RF_ASSERT( currentFocusTarget->HasHardFocus() );
+					currentFocusContainerID = currentFocusTarget->mContainerID;
+				}
+			}
+
+			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+			{
+				if( currentFocusContainerID != ui::kInvalidContainerID )
+				{
+					// TODO
+				}
+			}
+		}
+		focusMan.UpdateHardFocus( uiContext );
+	}
+
 
 	// Menus use the local player
 	input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
