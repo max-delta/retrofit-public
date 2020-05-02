@@ -8,11 +8,14 @@
 #include "GameUI/FocusTarget.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/controllers/RowSlicer.h"
+#include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
 #include "core/ptr/default_creator.h"
+
+#include "rftl/functional"
 
 
 RFTYPE_CREATE_META( RF::ui::controller::ListBox )
@@ -24,14 +27,13 @@ RFTYPE_CREATE_META( RF::ui::controller::ListBox )
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ListBox::ListBox( size_t numSlots, FontPurposeID purpose )
+ListBox::ListBox(
+	size_t numSlots,
+	FontPurposeID purpose )
 	: ListBox(
-		numSlots,
-		purpose,
-		Justification::MiddleCenter,
-		math::Color3f::kGray50,
-		math::Color3f::kWhite,
-		math::Color3f::kYellow )
+		  Orientation::Vertical,
+		  numSlots,
+		  purpose )
 {
 	//
 }
@@ -39,13 +41,33 @@ ListBox::ListBox( size_t numSlots, FontPurposeID purpose )
 
 
 ListBox::ListBox(
+	Orientation orientation,
+	size_t numSlots,
+	FontPurposeID purpose )
+	: ListBox(
+		  orientation,
+		  numSlots,
+		  purpose,
+		  Justification::MiddleCenter,
+		  math::Color3f::kGray50,
+		  math::Color3f::kWhite,
+		  math::Color3f::kYellow )
+{
+	//
+}
+
+
+
+ListBox::ListBox(
+	Orientation orientation,
 	size_t numSlots,
 	FontPurposeID purpose,
 	Justification justification,
 	math::Color3f unfocusedColor,
 	math::Color3f unselectedColor,
 	math::Color3f selectedColor )
-	: mNumSlots( numSlots )
+	: mOrientation( orientation )
+	, mNumSlots( numSlots )
 	, mFontPurpose( purpose )
 	, mJustification( justification )
 	, mUnfocusedColor( unfocusedColor )
@@ -99,18 +121,38 @@ void ListBox::OnInstanceAssign( UIContext& context, Container& container )
 		container.mTopConstraint,
 		container.mBottomConstraint );
 
-	WeakPtr<ui::controller::RowSlicer> const rowSlicer =
-		context.GetMutableContainerManager().AssignStrongController(
-			mChildContainerID,
-			DefaultCreator<ui::controller::RowSlicer>::Create(
-				mNumSlots ) );
+	rftl::function<ContainerID( size_t )> getChildContainerID;
+	if( mOrientation == Orientation::Vertical )
+	{
+		WeakPtr<RowSlicer> const slicer =
+			context.GetMutableContainerManager().AssignStrongController(
+				mChildContainerID,
+				DefaultCreator<RowSlicer>::Create(
+					mNumSlots ) );
+		getChildContainerID = [slicer]( size_t i ) -> ContainerID //
+		{
+			return slicer->GetChildContainerID( i );
+		};
+	}
+	else
+	{
+		WeakPtr<ColumnSlicer> const slicer =
+			context.GetMutableContainerManager().AssignStrongController(
+				mChildContainerID,
+				DefaultCreator<ColumnSlicer>::Create(
+					mNumSlots ) );
+		getChildContainerID = [slicer]( size_t i ) -> ContainerID //
+		{
+			return slicer->GetChildContainerID( i );
+		};
+	}
 
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		WeakPtr<ui::controller::TextLabel> const slotController =
+		WeakPtr<TextLabel> const slotController =
 			context.GetMutableContainerManager().AssignStrongController(
-				rowSlicer->GetChildContainerID( i ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
+				getChildContainerID( i ),
+				DefaultCreator<TextLabel>::Create() );
 		slotController->SetJustification( mJustification );
 		slotController->SetFont( mFontPurpose );
 		slotController->SetText( "<UNSET>" );
@@ -143,8 +185,18 @@ void ListBox::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNo
 
 bool ListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
-	bool const isPrevious = focusEvent.mEventType == focusevent::Command_NavigateUp;
-	bool const isNext = focusEvent.mEventType == focusevent::Command_NavigateDown;
+	bool isPrevious;
+	bool isNext;
+	if( mOrientation == Orientation::Vertical )
+	{
+		isPrevious = focusEvent.mEventType == focusevent::Command_NavigateUp;
+		isNext = focusEvent.mEventType == focusevent::Command_NavigateDown;
+	}
+	else
+	{
+		isPrevious = focusEvent.mEventType == focusevent::Command_NavigateLeft;
+		isNext = focusEvent.mEventType == focusevent::Command_NavigateRight;
+	}
 	bool const isFirst = focusEvent.mEventType == focusevent::Command_NavigateToFirst;
 	bool const isLast = focusEvent.mEventType == focusevent::Command_NavigateToLast;
 	bool const isCycle = isPrevious || isNext || isFirst || isLast;

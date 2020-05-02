@@ -228,6 +228,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				frameColumnSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::ListBox>::Create(
+					ui::Orientation::Vertical,
 					details::kNumOptionsFields,
 					ui::font::SmallMenuSelection,
 					ui::Justification::MiddleLeft,

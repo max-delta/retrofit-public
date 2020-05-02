@@ -556,6 +556,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					leftColumnSlicer->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::ListBox>::Create(
+						ui::Orientation::Vertical,
 						rftl::extent<decltype( details::kLeftText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
@@ -633,6 +634,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					rightColumnSlicer->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::ListBox>::Create(
+						ui::Orientation::Vertical,
 						rftl::extent<decltype( details::kRightText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,

@@ -8,7 +8,7 @@
 
 // Forwards
 namespace RF { namespace ui { namespace controller {
-	class TextLabel;
+class TextLabel;
 }}}
 
 namespace RF { namespace ui { namespace controller {
@@ -23,8 +23,15 @@ class GAMEUI_API ListBox final : public InstancedController
 	// Public methods
 public:
 	ListBox() = delete;
-	ListBox( size_t numSlots, FontPurposeID purpose );
 	ListBox(
+		size_t numSlots,
+		FontPurposeID purpose );
+	ListBox(
+		Orientation orientation,
+		size_t numSlots,
+		FontPurposeID purpose );
+	ListBox(
+		Orientation orientation,
 		size_t numSlots,
 		FontPurposeID purpose,
 		Justification justification,
@@ -53,6 +60,7 @@ private:
 	//
 	// Private data
 private:
+	Orientation const mOrientation;
 	size_t const mNumSlots;
 	FontPurposeID const mFontPurpose;
 	Justification const mJustification;

@@ -10,6 +10,12 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+enum class Orientation : uint8_t
+{
+	Horizontal = 0,
+	Vertical
+};
+
 enum class Justification : uint8_t
 {
 	Top = 1 << 3,
