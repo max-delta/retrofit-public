@@ -58,8 +58,13 @@ public:
 		};
 
 		static constexpr char const* kLabels[kNumSections] = {
-			"Status",
-			"Loadout"
+			"H_status",
+			"H_loadout"
+		};
+
+		static constexpr char const* kHeaders[kNumSections] = {
+			"$gamemenu_status_header",
+			"$gamemenu_loadout_header"
 		};
 	};
 
@@ -73,7 +78,7 @@ public:
 public:
 	WeakPtr<ui::controller::TextLabel> mMainHeader;
 
-	WeakPtr<ui::Controller> mSectionSelector;
+	WeakPtr<ui::controller::InstancedController> mSectionSelector;
 
 	using TopLevelControllers = rftl::array<WeakPtr<ui::Controller>, TopLevelSections::kNumSections>;
 	TopLevelControllers mTopLevelControllers;
@@ -99,8 +104,8 @@ void Gameplay_Menus::InternalState::SwitchTopLevelSection( TopLevelSections::Sec
 	}
 	mTopLevelControllers.at( section )->SetChildRenderingBlocked( false );
 
-	RF_ASSERT( section < rftl::extent<decltype( TopLevelSections::kLabels )>::value );
-	mMainHeader->SetText( TopLevelSections::kLabels[section] );
+	RF_ASSERT( section < rftl::extent<decltype( TopLevelSections::kHeaders )>::value );
+	mMainHeader->SetText( TopLevelSections::kHeaders[section] );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,6 +196,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
 					ui::Justification::MiddleCenter ) );
 		uiManager.AdjustRecommendedRenderDepth( sectionSelector->GetContainerID(), -20 );
+		sectionSelector->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
 		internalState.mSectionSelector = sectionSelector;
 
 		// Sections each get a passthrough that can be used to shut off all
@@ -224,14 +230,18 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						ui::Orientation::Horizontal,
 						TopLevelSections::kNumSections,
 						ui::font::NarrowHalfTileMono ) );
-			rftl::vector<rftl::string> labels;
-			for( char const* const& label : TopLevelSections::kLabels )
+			for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
 			{
-				rftl::string firstChars = { label[0], label[1], label[2] };
-				labels.emplace_back( rftl::move( firstChars ) );
+				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetSlotController( i );
+				{
+					// TODO: Image support
+					rftl::string temp = "0";
+					temp.at( 0 ) += math::integer_cast<char>( i );
+					slotController->SetText( rftl::move( temp ) );
+				}
+				uiManager.AssignLabel( slotController->GetContainerID(), TopLevelSections::kLabels[i] );
 			}
-			selector->SetText( labels );
-			selector->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+			selector->AddAsChildToFocusTreeNode( uiContext, *sectionSelector->GetMutableFocusTreeNode( uiContext ) );
 		}
 
 		// Status section
@@ -340,8 +350,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		}
 	}
 
-	// Start on a section
-	internalState.SwitchTopLevelSection( InternalState::TopLevelSections::kLoadout );
+	// Start on the first section
+	internalState.SwitchTopLevelSection( static_cast<InternalState::TopLevelSections::Section>( 0 ) );
 }
 
 
@@ -355,6 +365,8 @@ void Gameplay_Menus::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Menus::OnTick( AppStateTickContext& context )
 {
+	using TopLevelSections = InternalState::TopLevelSections;
+
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
 
 	InternalState& internalState = *mInternalState;
@@ -368,26 +380,48 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
-		if( handled == false )
+		focusMan.UpdateHardFocus( uiContext );
+
+		// Figure out the useful focus information
+		WeakPtr<ui::FocusTreeNode const> currentFocus;
+		WeakPtr<ui::FocusTarget const> currentFocusTarget;
+		ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
+		{
+			currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
+			if( currentFocus != nullptr )
+			{
+				currentFocusTarget = currentFocus->mFocusTarget;
+			}
+			if( currentFocusTarget != nullptr )
+			{
+				RF_ASSERT( currentFocusTarget->HasHardFocus() );
+				currentFocusContainerID = currentFocusTarget->mContainerID;
+			}
+		}
+
+		if( handled )
+		{
+			// Normally we would ignore this, but we want to check to see if
+			//  this was the section selector moving, in which case we want to
+			//  change which section is displayed behind it
+			if( focusMan.GetFocusTree().IsInCurrentFocusStack( internalState.mSectionSelector->GetContainerID() ) )
+			{
+				bool foundSection = false;
+				for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
+				{
+					if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
+					{
+						internalState.SwitchTopLevelSection( static_cast<TopLevelSections::Section>( i ) );
+						foundSection = true;
+						break;
+					}
+				}
+				RF_ASSERT( foundSection );
+			}
+		}
+		else
 		{
 			// Wasn't handled by general UI
-
-			// Figure out the useful focus information
-			WeakPtr<ui::FocusTreeNode const> currentFocus;
-			WeakPtr<ui::FocusTarget const> currentFocusTarget;
-			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
-			{
-				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
-				if( currentFocus != nullptr )
-				{
-					currentFocusTarget = currentFocus->mFocusTarget;
-				}
-				if( currentFocusTarget != nullptr )
-				{
-					RF_ASSERT( currentFocusTarget->HasHardFocus() );
-					currentFocusContainerID = currentFocusTarget->mContainerID;
-				}
-			}
 
 			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{
