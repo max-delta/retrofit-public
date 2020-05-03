@@ -48,6 +48,9 @@ public:
 
 	bool IsCurrentFocus( FocusTreeNode const& node ) const;
 	bool IsCurrentFocus( FocusTarget const& target ) const;
+	bool IsInCurrentFocusStack( FocusTreeNode const& node ) const;
+	bool IsInCurrentFocusStack( FocusTarget const& target ) const;
+	bool IsInCurrentFocusStack( ContainerID const& containerID ) const;
 
 	static bool IsValidForFocus( FocusTreeNode const& node );
 	static bool ShouldTraverseForFocus( FocusTreeNode const& node );

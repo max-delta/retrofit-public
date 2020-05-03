@@ -104,6 +104,57 @@ bool FocusTree::IsCurrentFocus( FocusTarget const& target ) const
 
 
 
+bool FocusTree::IsInCurrentFocusStack( FocusTreeNode const& node ) const
+{
+	RF_ASSERT( node.mFocusTarget != nullptr );
+	ConstNodeStack const stack = GetCurrentFocusStack();
+	for( WeakPtr<FocusTreeNode const> const& elem : stack )
+	{
+		RF_ASSERT( elem != nullptr );
+		if( elem == &node )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+bool FocusTree::IsInCurrentFocusStack( FocusTarget const& target ) const
+{
+	ConstNodeStack const stack = GetCurrentFocusStack();
+	for( WeakPtr<FocusTreeNode const> const& elem : stack )
+	{
+		RF_ASSERT( elem != nullptr );
+		RF_ASSERT( elem->mFocusTarget != nullptr );
+		if( elem->mFocusTarget == &target )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
+bool FocusTree::IsInCurrentFocusStack( ContainerID const& containerID ) const
+{
+	ConstNodeStack const stack = GetCurrentFocusStack();
+	for( WeakPtr<FocusTreeNode const> const& elem : stack )
+	{
+		RF_ASSERT( elem != nullptr );
+		RF_ASSERT( elem->mFocusTarget != nullptr );
+		if( elem->mFocusTarget->mContainerID == containerID )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
 bool FocusTree::IsValidForFocus( FocusTreeNode const& node )
 {
 	FocusTarget const* const target = node.mFocusTarget;
