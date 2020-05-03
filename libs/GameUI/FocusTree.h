@@ -31,6 +31,7 @@ class GAMEUI_API FocusTree
 public:
 	using NodeStack = rftl::vector<WeakPtr<FocusTreeNode>>;
 	using ConstNodeStack = rftl::vector<WeakPtr<FocusTreeNode const>>;
+
 private:
 	using BackingNodeStorage = rftl::vector<UniquePtr<FocusTreeNode>>;
 

@@ -433,7 +433,7 @@ void FocusTree::TrimDeadLinks()
 		RF_ASSERT( liveNodes.count( currentNodeRef ) == 0 );
 		liveNodes.emplace( currentNodeRef );
 
-		static constexpr auto onChainNode = []( WeakPtr<FocusTreeNode>& chainNode, rftl::unordered_set<FocusTreeNode*>& nodesToVisit ) -> void
+		static constexpr auto onChainNode = []( WeakPtr<FocusTreeNode>& chainNode, rftl::unordered_set<FocusTreeNode*>& nodesToVisit ) -> void //
 		{
 			FocusTreeNode const* ptr = chainNode;
 			if( ptr != nullptr )
