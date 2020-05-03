@@ -355,8 +355,6 @@ void Gameplay_Menus::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Menus::OnTick( AppStateTickContext& context )
 {
-	using namespace state;
-
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
 
 	InternalState& internalState = *mInternalState;
@@ -408,30 +406,30 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
 
 	// Find company object
-	VariableIdentifier const companyRoot( "company", playerIDAsString );
-	ObjectRef const company = FindObjectByIdentifier( companyRoot );
+	state::VariableIdentifier const companyRoot( "company", playerIDAsString );
+	state::ObjectRef const company = state::FindObjectByIdentifier( companyRoot );
 	RFLOG_TEST_AND_FATAL( company.IsSet(), companyRoot, RFCAT_CC3O3, "Failed to find company" );
 
 	// Get the roster
-	VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
-	comp::Roster const& roster = *company.GetComponentInstanceT<comp::Roster>();
+	state::VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
+	state::comp::Roster const& roster = *company.GetComponentInstanceT<state::comp::Roster>();
 
 	// Get the active party characters
-	rftl::array<MutableObjectRef, 3> activePartyCharacters;
-	for( size_t i_teamIndex = 0; i_teamIndex < comp::Roster::kActiveTeamSize; i_teamIndex++ )
+	rftl::array<state::MutableObjectRef, 3> activePartyCharacters;
+	for( size_t i_teamIndex = 0; i_teamIndex < state::comp::Roster::kActiveTeamSize; i_teamIndex++ )
 	{
-		MutableObjectRef& activePartyCharacter = activePartyCharacters.at( i_teamIndex );
+		state::MutableObjectRef& activePartyCharacter = activePartyCharacters.at( i_teamIndex );
 
-		comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
-		if( rosterIndex == comp::Roster::kInvalidRosterIndex )
+		state::comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
+		if( rosterIndex == state::comp::Roster::kInvalidRosterIndex )
 		{
 			// Not active
 			continue;
 		}
 		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
 
-		VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
-		MutableObjectRef const character = FindMutableObjectByIdentifier( charRoot );
+		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
+		state::MutableObjectRef const character = state::FindMutableObjectByIdentifier( charRoot );
 		RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
 		activePartyCharacter = character;
 	}
@@ -440,7 +438,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	{
 		for( size_t i_char = 0; i_char < 3; i_char++ )
 		{
-			MutableObjectRef const& character = activePartyCharacters.at( i_char );
+			state::MutableObjectRef const& character = activePartyCharacters.at( i_char );
 			InternalState::CharSlot& charSlot = internalState.mCharSlots.at( i_char );
 			if( character.IsSet() == false )
 			{
@@ -449,8 +447,8 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 			}
 			charSlot.mFrame->SetChildRenderingBlocked( false );
 
-			comp::SiteVisual& visual = *character.GetMutableComponentInstanceT<comp::SiteVisual>();
-			comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
+			state::comp::SiteVisual& visual = *character.GetMutableComponentInstanceT<state::comp::SiteVisual>();
+			state::comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
 			charSlot.mDisplay->SetFramePack(
 				anim.mFramePackID,
 				anim.mMaxTimeIndex,
