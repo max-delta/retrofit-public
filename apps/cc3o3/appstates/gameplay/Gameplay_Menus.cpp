@@ -53,18 +53,21 @@ public:
 		{
 			kStatus = 0,
 			kLoadout,
+			kOptions,
 
 			kNumSections
 		};
 
 		static constexpr char const* kLabels[kNumSections] = {
 			"H_status",
-			"H_loadout"
+			"H_loadout",
+			"H_options",
 		};
 
 		static constexpr char const* kHeaders[kNumSections] = {
 			"$gamemenu_status_header",
-			"$gamemenu_loadout_header"
+			"$gamemenu_loadout_header",
+			"$gamemenu_options_header",
 		};
 	};
 
@@ -73,6 +76,9 @@ public:
 	InternalState() = default;
 
 	void SwitchTopLevelSection( TopLevelSections::Section section );
+	bool IsActiveSection( TopLevelSections::Section section ) const;
+	void ShowSelector( ui::UIContext& context );
+	void HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection );
 
 
 public:
@@ -106,6 +112,30 @@ void Gameplay_Menus::InternalState::SwitchTopLevelSection( TopLevelSections::Sec
 
 	RF_ASSERT( section < rftl::extent<decltype( TopLevelSections::kHeaders )>::value );
 	mMainHeader->SetText( TopLevelSections::kHeaders[section] );
+}
+
+
+
+bool Gameplay_Menus::InternalState::IsActiveSection( TopLevelSections::Section section ) const
+{
+	return mTopLevelControllers.at( section )->IsChildRenderingBlocked() == false;
+}
+
+
+
+void Gameplay_Menus::InternalState::ShowSelector( ui::UIContext& context )
+{
+	mSectionSelector->SetChildRenderingBlocked( false );
+	mSectionSelector->GetMutableFocusTreeNode( context )->mFocusTarget->mIsFocusable = true;
+}
+
+
+
+void Gameplay_Menus::InternalState::HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection )
+{
+	SwitchTopLevelSection( chosenSection );
+	mSectionSelector->SetChildRenderingBlocked( true );
+	mSectionSelector->GetMutableFocusTreeNode( context )->mFocusTarget->mIsFocusable = false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -209,8 +239,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kLoadout ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const optionsPassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kOptions ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mTopLevelControllers.at( TopLevelSections::kStatus ) = statusPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kLoadout ) = loadoutPassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kOptions ) = optionsPassthrough;
 
 		// Section selector
 		{
@@ -348,6 +383,16 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::RowSlicer>::Create(
 						elementManagerRowRatios ) );
 		}
+
+		// Options section
+		{
+			// Placeholder
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					optionsPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		}
 	}
 
 	// Start on the first section
@@ -427,8 +472,40 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 			{
 				if( currentFocusContainerID != ui::kInvalidContainerID )
 				{
-					// TODO
+					if( focusMan.GetFocusTree().IsInCurrentFocusStack( internalState.mSectionSelector->GetContainerID() ) )
+					{
+						// Section selection
+						bool foundSection = false;
+						for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
+						{
+							if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
+							{
+								TopLevelSections::Section const chosenSection = static_cast<TopLevelSections::Section>( i );
+
+								// This should've already been made active
+								RF_ASSERT( internalState.IsActiveSection( chosenSection ) );
+
+								// Hide the selector, moving focus to the
+								//  chosen section instead
+								internalState.HideSelector( uiContext, chosenSection );
+
+								foundSection = true;
+								break;
+							}
+						}
+						RF_ASSERT( foundSection );
+					}
+					else
+					{
+						// TODO: Sections
+					}
 				}
+			}
+			else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+			{
+				// HACK: Always pop back up to section selector
+				// TODO: Proper logic
+				internalState.ShowSelector( uiContext );
 			}
 		}
 		focusMan.UpdateHardFocus( uiContext );
