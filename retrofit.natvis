@@ -36,7 +36,7 @@
 
 	<Type Name = "RF::PtrBase&lt;*&gt;">
 		<DisplayString>
-			Strong: { mRef->mStrongCount._Storage._Value }, Weak: { mRef->mWeakCount._Storage._Value }
+			{(void*)mTarget}(Strong:{ mRef->mStrongCount._Storage._Value }, Weak:{ mRef->mWeakCount._Storage._Value })
 		</DisplayString>
 		<Expand>
 			<ExpandedItem>
