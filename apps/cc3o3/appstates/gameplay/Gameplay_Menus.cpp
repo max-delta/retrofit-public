@@ -86,7 +86,7 @@ public:
 
 	WeakPtr<ui::controller::InstancedController> mSectionSelector;
 
-	using TopLevelControllers = rftl::array<WeakPtr<ui::Controller>, TopLevelSections::kNumSections>;
+	using TopLevelControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, TopLevelSections::kNumSections>;
 	TopLevelControllers mTopLevelControllers;
 
 	struct CharSlot
@@ -126,7 +126,8 @@ bool Gameplay_Menus::InternalState::IsActiveSection( TopLevelSections::Section s
 void Gameplay_Menus::InternalState::ShowSelector( ui::UIContext& context )
 {
 	mSectionSelector->SetChildRenderingBlocked( false );
-	mSectionSelector->GetMutableFocusTreeNode( context )->mFocusTarget->mIsFocusable = true;
+	context.GetMutableFocusManager().GetMutableFocusTree().SetRootFocusToSpecificChild(
+		mSectionSelector->GetMutableFocusTreeNode( context ) );
 }
 
 
@@ -134,8 +135,10 @@ void Gameplay_Menus::InternalState::ShowSelector( ui::UIContext& context )
 void Gameplay_Menus::InternalState::HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection )
 {
 	SwitchTopLevelSection( chosenSection );
+
 	mSectionSelector->SetChildRenderingBlocked( true );
-	mSectionSelector->GetMutableFocusTreeNode( context )->mFocusTarget->mIsFocusable = false;
+	context.GetMutableFocusManager().GetMutableFocusTree().SetRootFocusToSpecificChild(
+		mTopLevelControllers.at( chosenSection )->GetMutableFocusTreeNode( context ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -246,6 +249,10 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		internalState.mTopLevelControllers.at( TopLevelSections::kStatus ) = statusPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kLoadout ) = loadoutPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kOptions ) = optionsPassthrough;
+		for( WeakPtr<ui::controller::InstancedController> const& controller : internalState.mTopLevelControllers )
+		{
+			controller->AddAsSiblingAfterFocusTreeNode( uiContext, sectionSelector->GetMutableFocusTreeNode( uiContext ) );
+		}
 
 		// Section selector
 		{
