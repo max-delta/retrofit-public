@@ -295,6 +295,47 @@ WeakPtr<FocusTreeNode> FocusTree::CreateNewSiblingBefore( WeakPtr<FocusTreeNode>
 
 
 
+bool FocusTree::HasImmediateChild( FocusTreeNode const& parentNode, WeakPtr<FocusTreeNode const> queryNode ) const
+{
+	if( queryNode == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Current
+	if( parentNode.mFavoredChild == queryNode )
+	{
+		return true;
+	}
+
+	// Before
+	WeakPtr<FocusTreeNode const> reverse = parentNode.mFavoredChild->mPreviousSibling;
+	while( reverse != nullptr )
+	{
+		if( reverse == queryNode )
+		{
+			return true;
+		}
+		reverse = reverse->mPreviousSibling;
+	}
+
+	// After
+	WeakPtr<FocusTreeNode const> forward = parentNode.mFavoredChild->mNextSibling;
+	while( forward != nullptr )
+	{
+		if( forward == queryNode )
+		{
+			return true;
+		}
+		forward = forward->mNextSibling;
+	}
+
+	return false;
+}
+
+
+
 bool FocusTree::CycleRootFocusToNextChild( bool wrapIfLastChild )
 {
 	return CycleFocusToNextChild( *mRootNode, wrapIfLastChild );
@@ -305,6 +346,13 @@ bool FocusTree::CycleRootFocusToNextChild( bool wrapIfLastChild )
 bool FocusTree::CycleRootFocusToPreviousChild( bool wrapIfLastChild )
 {
 	return CycleFocusToPreviousChild( *mRootNode, wrapIfLastChild );
+}
+
+
+
+bool FocusTree::SetRootFocusToSpecificChild( WeakPtr<FocusTreeNode> targetNode )
+{
+	return SetFocusToSpecificChild( *mRootNode, targetNode );
 }
 
 
@@ -407,6 +455,26 @@ bool FocusTree::CycleFocusToLastChild( FocusTreeNode& parentNode )
 		anyChange = true;
 	}
 	return anyChange;
+}
+
+
+
+bool FocusTree::SetFocusToSpecificChild( FocusTreeNode& parentNode, WeakPtr<FocusTreeNode> targetNode )
+{
+	if( parentNode.mFavoredChild == targetNode )
+	{
+		// No change
+		return false;
+	}
+
+	if( HasImmediateChild( parentNode, targetNode ) == false )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+
+	parentNode.mFavoredChild = targetNode;
+	return true;
 }
 
 

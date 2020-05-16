@@ -62,13 +62,17 @@ public:
 	WeakPtr<FocusTreeNode> CreateNewSiblingAfter( WeakPtr<FocusTreeNode> previousNode, UniquePtr<FocusTarget> const& newTarget );
 	WeakPtr<FocusTreeNode> CreateNewSiblingBefore( WeakPtr<FocusTreeNode> nextNode, UniquePtr<FocusTarget> const& newTarget );
 
+	bool HasImmediateChild( FocusTreeNode const& parentNode, WeakPtr<FocusTreeNode const> queryNode ) const;
+
 	bool CycleRootFocusToNextChild( bool wrapIfLastChild );
 	bool CycleRootFocusToPreviousChild( bool wrapIfLastChild );
+	bool SetRootFocusToSpecificChild( WeakPtr<FocusTreeNode> targetNode );
 
 	bool CycleFocusToNextChild( FocusTreeNode& parentNode, bool wrapIfLastChild );
 	bool CycleFocusToPreviousChild( FocusTreeNode& parentNode, bool wrapIfLastChild );
 	bool CycleFocusToFirstChild( FocusTreeNode& parentNode );
 	bool CycleFocusToLastChild( FocusTreeNode& parentNode );
+	bool SetFocusToSpecificChild( FocusTreeNode& parentNode, WeakPtr<FocusTreeNode> targetNode );
 
 	void TrimDeadLinks();
 
