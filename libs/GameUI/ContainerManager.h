@@ -94,7 +94,7 @@ public:
 
 	void Render() const;
 
-	void DebugRender( bool uzeZlayers, bool includeAnchors ) const;
+	void DebugRender( bool uzeZlayers, bool includeAnchors, bool includeHidden ) const;
 
 
 	//
@@ -117,6 +117,8 @@ private:
 	void NotifyZoomFactorChange();
 
 	bool HasValidConstraints( Container const& container ) const;
+
+	bool IsHiddenFromRoot( Container const& container ) const;
 
 	void RecalcRootContainer( bool force );
 

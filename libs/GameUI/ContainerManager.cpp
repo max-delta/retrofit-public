@@ -3,6 +3,7 @@
 
 #include "GameUI/Container.h"
 #include "GameUI/Anchor.h"
+#include "GameUI/Controller.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/FocusTarget.h"
@@ -340,7 +341,7 @@ void ContainerManager::Render() const
 
 
 
-void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors ) const
+void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool includeHidden ) const
 {
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
@@ -364,8 +365,17 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors ) const
 		}
 		else
 		{
-			math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
-			mGraphics->DebugDrawAABB( container.mAABB, 2, zLayer, color );
+			bool shouldRender = true;
+			if( includeHidden == false && IsHiddenFromRoot( container ) )
+			{
+				shouldRender = false;
+			}
+
+			if( shouldRender )
+			{
+				math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
+				mGraphics->DebugDrawAABB( container.mAABB, 2, zLayer, color );
+			}
 		}
 	}
 
@@ -503,6 +513,51 @@ bool ContainerManager::HasValidConstraints( Container const& container ) const
 	RF_ASSERT( topConstraint.mPos.y < bottomConstraint.mPos.y );
 
 	return true;
+}
+
+
+
+bool ContainerManager::IsHiddenFromRoot( Container const& container ) const
+{
+	bool first = true;
+
+	ContainerID curID = container.mContainerID;
+	while( curID != kInvalidContainerID )
+	{
+		Container const& iter = GetContainer( curID );
+
+		WeakPtr<Controller> const& controller = iter.mWeakUIController;
+		if( controller == nullptr )
+		{
+			// Need a controller to be able to hide
+			// NOTE: Controller-less containers are inert, and likely prototype
+			//  placeholders, or otherwise structurally interesting leaf nodes,
+			//  so it also is valuable to say they are not hidden for debug
+			//  display purposes
+		}
+		else
+		{
+			if( first )
+			{
+				if( controller->IsRenderingBlocked() )
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if( controller->IsChildRenderingBlocked() )
+				{
+					return true;
+				}
+			}
+		}
+
+		curID = iter.mParentContainerID;
+		first = false;
+	}
+
+	return false;
 }
 
 
