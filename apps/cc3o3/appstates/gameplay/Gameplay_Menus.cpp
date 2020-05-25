@@ -310,25 +310,19 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						loadoutColumnRatios ) );
 
 			// 3 character slots on left
-			ui::controller::RowSlicer::Ratios const characterRowRatios = {
-				{ 4.f / 12.f, true },
-				{ 4.f / 12.f, true },
-				{ 4.f / 12.f, true },
-			};
-			WeakPtr<ui::controller::RowSlicer> const characterRowSlicer =
+			WeakPtr<ui::controller::GenericListBox> const characterList =
 				uiManager.AssignStrongController(
 					loadoutColumnSlicer->GetChildContainerID( 0 ),
-					DefaultCreator<ui::controller::RowSlicer>::Create(
-						characterRowRatios ) );
+					DefaultCreator<ui::controller::GenericListBox>::Create(
+						ui::Orientation::Vertical, 3u ) );
 
 			// Character slots
 			for( size_t i_char = 0; i_char < 3; i_char++ )
 			{
 				// Frame
 				WeakPtr<ui::controller::BorderFrame> const frame =
-					uiManager.AssignStrongController(
-						characterRowSlicer->GetChildContainerID( i_char ),
-						DefaultCreator<ui::controller::BorderFrame>::Create() );
+					characterList->AssignSlotController<ui::controller::BorderFrame>(
+						uiContext, i_char, DefaultCreator<ui::controller::BorderFrame>::Create() );
 				frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 				frame->SetChildRenderingBlocked( true );
 				internalState.mCharSlots.at( i_char ).mFrame = frame;
@@ -378,6 +372,12 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				display->SetJustification( ui::Justification::MiddleCenter );
 				internalState.mCharSlots.at( i_char ).mDisplay = display;
 			}
+
+			// Add character list to focus
+			// NOTE: This has to be delayed until after all the slot
+			//  controllers are assigned to the list
+			characterList->AddAsChildToFocusTreeNode(
+				uiContext, *internalState.mTopLevelControllers.at( TopLevelSections::kLoadout )->GetMutableFocusTreeNode( uiContext ) );
 
 			// 2 subsections for element manager on right
 			ui::controller::RowSlicer::Ratios const elementManagerRowRatios = {
