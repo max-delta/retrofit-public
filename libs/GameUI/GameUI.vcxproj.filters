@@ -140,5 +140,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ContainerManager.inl" />
+    <None Include="controllers\GenericListBox.inl">
+      <Filter>controllers</Filter>
+    </None>
   </ItemGroup>
 </Project>

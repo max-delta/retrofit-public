@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ContainerManager.inl" />
+    <None Include="controllers\GenericListBox.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -25,7 +25,8 @@ public:
 
 	ContainerID GetChildContainerID() const;
 	WeakPtr<InstancedController> GetSlotController( size_t slotIndex );
-	WeakPtr<InstancedController> AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<InstancedController>&& controller );
+	template<typename T>
+	WeakPtr<T> AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<T>&& controller );
 	void SetWrapping( bool wrapping );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override final;
@@ -36,6 +37,7 @@ public:
 	//
 	// Protected methods
 protected:
+	void AssignSlotControllerInternal( UIContext& context, size_t slotIndex, UniquePtr<InstancedController>&& controller );
 	InstancedController const* GetSlotWithFocus( UIConstContext const& context ) const;
 	bool ShouldSkipFocus( UIConstContext const& context, FocusTreeNode const& potentialFocus ) const;
 
@@ -56,3 +58,5 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
+
+#include "GenericListBox.inl"

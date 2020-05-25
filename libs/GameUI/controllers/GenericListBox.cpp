@@ -62,24 +62,6 @@ WeakPtr<InstancedController> GenericListBox::GetSlotController( size_t slotIndex
 
 
 
-WeakPtr<InstancedController> GenericListBox::AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<InstancedController>&& controller )
-{
-	RF_ASSERT( controller != nullptr );
-
-	WeakPtr<InstancedController>& slot = mSlotControllers.at( slotIndex );
-	RF_ASSERT( slot == nullptr );
-
-	ContainerID const slicerChildContainerID = mSlicerChildContainerIDs.at( slotIndex );
-	RF_ASSERT( slicerChildContainerID != kInvalidContainerID );
-
-	slot = context.GetMutableContainerManager().AssignStrongController(
-		slicerChildContainerID,
-		rftl::move( controller ) );
-	return slot;
-}
-
-
-
 void GenericListBox::SetWrapping( bool wrapping )
 {
 	mWrapping = wrapping;
@@ -358,6 +340,23 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void GenericListBox::AssignSlotControllerInternal( UIContext& context, size_t slotIndex, UniquePtr<InstancedController>&& controller )
+{
+	RF_ASSERT( controller != nullptr );
+
+	WeakPtr<InstancedController>& slot = mSlotControllers.at( slotIndex );
+	RF_ASSERT( slot == nullptr );
+
+	ContainerID const slicerChildContainerID = mSlicerChildContainerIDs.at( slotIndex );
+	RF_ASSERT( slicerChildContainerID != kInvalidContainerID );
+
+	slot = context.GetMutableContainerManager().AssignStrongController(
+		slicerChildContainerID,
+		rftl::move( controller ) );
+}
+
+
 
 InstancedController const* GenericListBox::GetSlotWithFocus( UIConstContext const& context ) const
 {

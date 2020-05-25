@@ -134,8 +134,7 @@ void ListBox::PostInstanceAssign( UIContext& context, Container& container )
 {
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		AssignSlotController( context, i, DefaultCreator<TextLabel>::Create() );
-		WeakPtr<TextLabel> const controller = GetSlotController( i );
+		WeakPtr<TextLabel> const controller = AssignSlotController<TextLabel>( context, i, DefaultCreator<TextLabel>::Create() );
 		controller->SetJustification( mJustification );
 		controller->SetFont( mFontPurpose );
 		controller->SetText( "<UNSET>" );
