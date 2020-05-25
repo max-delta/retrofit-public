@@ -59,6 +59,9 @@
     <ClCompile Include="controllers\MultiPassthrough.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\GenericListBox.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -124,6 +127,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="controllers\MultiPassthrough.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\GenericListBox.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>

@@ -39,6 +39,7 @@
     <ClInclude Include="controllers\ColumnSlicer.h" />
     <ClInclude Include="controllers\Floater.h" />
     <ClInclude Include="controllers\FramePackDisplay.h" />
+    <ClInclude Include="controllers\GenericListBox.h" />
     <ClInclude Include="controllers\InstancedController.h" />
     <ClInclude Include="controllers\ListBox.h" />
     <ClInclude Include="controllers\MessageBox.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="controllers\ColumnSlicer.cpp" />
     <ClCompile Include="controllers\Floater.cpp" />
     <ClCompile Include="controllers\FramePackDisplay.cpp" />
+    <ClCompile Include="controllers\GenericListBox.cpp" />
     <ClCompile Include="controllers\InstancedController.cpp" />
     <ClCompile Include="controllers\ListBox.cpp" />
     <ClCompile Include="controllers\MessageBox.cpp" />

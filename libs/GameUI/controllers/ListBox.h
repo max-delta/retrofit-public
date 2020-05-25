@@ -1,10 +1,9 @@
 #pragma once
 #include "project.h"
 
-#include "GameUI/controllers/InstancedController.h"
+#include "GameUI/controllers/GenericListBox.h"
 
 #include "core_math/Color3f.h"
-#include "core/ptr/unique_ptr.h"
 
 // Forwards
 namespace RF { namespace ui { namespace controller {
@@ -14,7 +13,7 @@ class TextLabel;
 namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-class GAMEUI_API ListBox final : public InstancedController
+class GAMEUI_API ListBox final : public GenericListBox
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
 	RF_NO_COPY( ListBox );
@@ -39,37 +38,27 @@ public:
 		math::Color3f unselectedColor,
 		math::Color3f selectedColor );
 
-	ContainerID GetChildContainerID() const;
 	WeakPtr<TextLabel> GetSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
-	void SetWrapping( bool wrapping );
 
-	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
-	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override;
-	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent ) override;
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
 
 	//
 	// Private methods
 private:
-	TextLabel const* GetSlotWithFocus( UIConstContext const& context ) const;
-	bool ShouldSkipFocus( UIConstContext const& context, FocusTreeNode const& potentialFocus ) const;
+	virtual void PostInstanceAssign( UIContext& context, Container& container ) override;
+	virtual bool ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const override;
 
 
 	//
 	// Private data
 private:
-	Orientation const mOrientation;
-	size_t const mNumSlots;
 	FontPurposeID const mFontPurpose;
 	Justification const mJustification;
 	math::Color3f const mUnfocusedColor;
 	math::Color3f const mUnselectedColor;
 	math::Color3f const mSelectedColor;
-	bool mWrapping = false;
-	ContainerID mChildContainerID = kInvalidContainerID;
-	rftl::vector<WeakPtr<TextLabel>> mSlotControllers;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
