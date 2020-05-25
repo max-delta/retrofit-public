@@ -104,7 +104,7 @@ public:
 void Gameplay_Menus::InternalState::SwitchTopLevelSection( TopLevelSections::Section section )
 {
 	// Only show current section
-	for( WeakPtr<ui::Controller> const& controller : mTopLevelControllers )
+	for( WeakPtr<ui::controller::InstancedController> const& controller : mTopLevelControllers )
 	{
 		controller->SetChildRenderingBlocked( true );
 	}
