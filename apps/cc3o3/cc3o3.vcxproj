@@ -85,6 +85,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
     <ClCompile Include="ui\LocalizationHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +177,9 @@
     <ClInclude Include="time\project.h" />
     <ClInclude Include="time\stdafx.h" />
     <ClInclude Include="time\TimeFwd.h" />
+    <ClInclude Include="ui\controllers\CharacterSlot.h" />
+    <ClInclude Include="ui\controllers\project.h" />
+    <ClInclude Include="ui\controllers\stdafx.h" />
     <ClInclude Include="ui\LocalizationHelpers.h" />
     <ClInclude Include="ui\project.h" />
     <ClInclude Include="ui\stdafx.h" />

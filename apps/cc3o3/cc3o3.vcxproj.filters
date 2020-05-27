@@ -154,6 +154,9 @@
     <ClCompile Include="state\components\SiteVisual.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\CharacterSlot.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -420,6 +423,15 @@
     <ClInclude Include="state\components\SiteVisual.h">
       <Filter>state\components</Filter>
     </ClInclude>
+    <ClInclude Include="ui\controllers\CharacterSlot.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\stdafx.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\project.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -463,6 +475,9 @@
     </Filter>
     <Filter Include="company">
       <UniqueIdentifier>{d3e47703-9660-4e59-a195-ed9a8e5bd9bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ui\controller">
+      <UniqueIdentifier>{97e2921f-2a56-42d8-9225-9d96e0472215}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

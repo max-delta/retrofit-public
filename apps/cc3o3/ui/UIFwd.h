@@ -6,6 +6,9 @@
 namespace RF { namespace cc { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+namespace controller {
+using namespace RF::ui::controller;
+}
 using namespace RF::ui;
 
 namespace font {

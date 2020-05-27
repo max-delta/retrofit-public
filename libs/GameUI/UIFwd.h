@@ -88,5 +88,9 @@ struct FocusTreeNode;
 struct UIContext;
 struct UIConstContext;
 
+// NOTE: Need to declare namespace before aliasing or wrapping
+namespace controller {
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 }}

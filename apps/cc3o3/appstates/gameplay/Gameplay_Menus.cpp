@@ -8,9 +8,8 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
 #include "cc3o3/state/components/Roster.h"
-#include "cc3o3/state/components/SiteVisual.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
-#include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/controllers/CharacterSlot.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -27,7 +26,6 @@
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/ListBox.h"
-#include "GameUI/controllers/FramePackDisplay.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
@@ -89,12 +87,7 @@ public:
 	using TopLevelControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, TopLevelSections::kNumSections>;
 	TopLevelControllers mTopLevelControllers;
 
-	struct CharSlot
-	{
-		WeakPtr<ui::controller::BorderFrame> mFrame;
-		WeakPtr<ui::controller::FramePackDisplay> mDisplay;
-	};
-	rftl::array<CharSlot, 3> mCharSlots;
+	rftl::array<WeakPtr<ui::controller::CharacterSlot>, 3> mCharSlots;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
@@ -319,58 +312,10 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			// Character slots
 			for( size_t i_char = 0; i_char < 3; i_char++ )
 			{
-				// Frame
-				WeakPtr<ui::controller::BorderFrame> const frame =
-					characterList->AssignSlotController<ui::controller::BorderFrame>(
-						uiContext, i_char, DefaultCreator<ui::controller::BorderFrame>::Create() );
-				frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
-				frame->SetChildRenderingBlocked( true );
-				internalState.mCharSlots.at( i_char ).mFrame = frame;
-
-				// 2 subsections for info and display
-				ui::controller::ColumnSlicer::Ratios const charSlotColumnRatios = {
-					{ 7.f / 10.f, true },
-					{ 3.f / 10.f, true },
-				};
-				WeakPtr<ui::controller::ColumnSlicer> const charSlotColumnSlicer =
-					uiManager.AssignStrongController(
-						frame->GetChildContainerID(),
-						DefaultCreator<ui::controller::ColumnSlicer>::Create(
-							charSlotColumnRatios ) );
-
-				// 3 info rows
-				ui::controller::RowSlicer::Ratios const infoRowRatios = {
-					{ 1.f / 3.f, true },
-					{ 1.f / 3.f, true },
-					{ 1.f / 3.f, true },
-				};
-				WeakPtr<ui::controller::RowSlicer> const infoRowSlicer =
-					uiManager.AssignStrongController(
-						charSlotColumnSlicer->GetChildContainerID( 0 ),
-						DefaultCreator<ui::controller::RowSlicer>::Create(
-							infoRowRatios ) );
-
-				for( size_t i_info = 0; i_info < 3; i_info++ )
-				{
-					// Info
-					WeakPtr<ui::controller::TextLabel> const info =
-						uiManager.AssignStrongController(
-							infoRowSlicer->GetChildContainerID( i_info ),
-							DefaultCreator<ui::controller::TextLabel>::Create() );
-					info->SetJustification( ui::Justification::MiddleLeft );
-					info->SetFont( ui::font::LargeMenuText );
-					info->SetText( "UNSET" );
-					info->SetColor( math::Color3f::kWhite );
-					info->SetBorder( true );
-				}
-
-				// Display
-				WeakPtr<ui::controller::FramePackDisplay> const display =
-					uiManager.AssignStrongController(
-						charSlotColumnSlicer->GetChildContainerID( 1 ),
-						DefaultCreator<ui::controller::FramePackDisplay>::Create() );
-				display->SetJustification( ui::Justification::MiddleCenter );
-				internalState.mCharSlots.at( i_char ).mDisplay = display;
+				WeakPtr<ui::controller::CharacterSlot> const charSlot =
+					characterList->AssignSlotController<ui::controller::CharacterSlot>(
+						uiContext, i_char, DefaultCreator<ui::controller::CharacterSlot>::Create() );
+				internalState.mCharSlots.at( i_char ) = charSlot;
 			}
 
 			// Add character list to focus
@@ -552,28 +497,19 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 		activePartyCharacter = character;
 	}
 
-	// Update character displays
+	// Update character slots
+	for( size_t i_char = 0; i_char < 3; i_char++ )
 	{
-		for( size_t i_char = 0; i_char < 3; i_char++ )
+		state::MutableObjectRef const& character = activePartyCharacters.at( i_char );
+		ui::controller::CharacterSlot& charSlot = *internalState.mCharSlots.at( i_char );
+
+		if( character.IsSet() )
 		{
-			state::MutableObjectRef const& character = activePartyCharacters.at( i_char );
-			InternalState::CharSlot& charSlot = internalState.mCharSlots.at( i_char );
-			if( character.IsSet() == false )
-			{
-				charSlot.mFrame->SetChildRenderingBlocked( true );
-				continue;
-			}
-			charSlot.mFrame->SetChildRenderingBlocked( false );
-
-			state::comp::SiteVisual& visual = *character.GetMutableComponentInstanceT<state::comp::SiteVisual>();
-			state::comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
-			charSlot.mDisplay->SetFramePack(
-				anim.mFramePackID,
-				anim.mMaxTimeIndex,
-				( gfx::kTileSize / 4 ) * 3,
-				( gfx::kTileSize / 4 ) * 5 );
-
-			// TODO: Update text
+			charSlot.UpdateCharacter( character );
+		}
+		else
+		{
+			charSlot.ClearCharacter();
 		}
 	}
 }
