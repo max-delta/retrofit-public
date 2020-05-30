@@ -53,6 +53,13 @@ ContainerID GenericListBox::GetChildContainerID() const
 
 
 
+size_t GenericListBox::GetNumSlots() const
+{
+	return mNumSlots;
+}
+
+
+
 WeakPtr<InstancedController> GenericListBox::GetSlotController( size_t slotIndex )
 {
 	WeakPtr<InstancedController> const retVal = mSlotControllers.at( slotIndex );

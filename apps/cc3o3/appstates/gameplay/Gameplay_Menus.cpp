@@ -9,7 +9,7 @@
 #include "cc3o3/state/components/UINavigation.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
-#include "cc3o3/ui/controllers/CharacterSlot.h"
+#include "cc3o3/ui/controllers/CharacterSlotList.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -87,7 +87,7 @@ public:
 	using TopLevelControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, TopLevelSections::kNumSections>;
 	TopLevelControllers mTopLevelControllers;
 
-	rftl::array<WeakPtr<ui::controller::CharacterSlot>, 3> mCharSlots;
+	WeakPtr<ui::controller::CharacterSlotList> mCharSlots;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
@@ -302,27 +302,14 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::ColumnSlicer>::Create(
 						loadoutColumnRatios ) );
 
-			// 3 character slots on left
-			WeakPtr<ui::controller::GenericListBox> const characterList =
+			// Character slots on left
+			WeakPtr<ui::controller::CharacterSlotList> const characterList =
 				uiManager.AssignStrongController(
 					loadoutColumnSlicer->GetChildContainerID( 0 ),
-					DefaultCreator<ui::controller::GenericListBox>::Create(
-						ui::Orientation::Vertical, 3u ) );
-
-			// Character slots
-			for( size_t i_char = 0; i_char < 3; i_char++ )
-			{
-				WeakPtr<ui::controller::CharacterSlot> const charSlot =
-					characterList->AssignSlotController<ui::controller::CharacterSlot>(
-						uiContext, i_char, DefaultCreator<ui::controller::CharacterSlot>::Create() );
-				internalState.mCharSlots.at( i_char ) = charSlot;
-			}
-
-			// Add character list to focus
-			// NOTE: This has to be delayed until after all the slot
-			//  controllers are assigned to the list
+					DefaultCreator<ui::controller::CharacterSlotList>::Create() );
 			characterList->AddAsChildToFocusTreeNode(
 				uiContext, *internalState.mTopLevelControllers.at( TopLevelSections::kLoadout )->GetMutableFocusTreeNode( uiContext ) );
+			internalState.mCharSlots = characterList;
 
 			// 2 subsections for element manager on right
 			ui::controller::RowSlicer::Ratios const elementManagerRowRatios = {
@@ -498,18 +485,18 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	}
 
 	// Update character slots
-	for( size_t i_char = 0; i_char < 3; i_char++ )
+	ui::controller::CharacterSlotList& charSlots = *internalState.mCharSlots;
+	for( size_t i_char = 0; i_char < charSlots.GetNumSlots(); i_char++ )
 	{
 		state::MutableObjectRef const& character = activePartyCharacters.at( i_char );
-		ui::controller::CharacterSlot& charSlot = *internalState.mCharSlots.at( i_char );
 
 		if( character.IsSet() )
 		{
-			charSlot.UpdateCharacter( character );
+			charSlots.UpdateCharacter( i_char, character );
 		}
 		else
 		{
-			charSlot.ClearCharacter();
+			charSlots.ClearCharacter( i_char );
 		}
 	}
 }

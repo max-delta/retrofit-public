@@ -28,6 +28,7 @@ class CharacterSlot final : public InstancedController
 public:
 	CharacterSlot() = default;
 
+	bool HasCharacter() const;
 	void ClearCharacter();
 	void UpdateCharacter( state::ObjectRef const& character );
 

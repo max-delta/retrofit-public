@@ -157,6 +157,9 @@
     <ClCompile Include="ui\controllers\CharacterSlot.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\CharacterSlotList.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -430,6 +433,9 @@
       <Filter>ui\controller</Filter>
     </ClInclude>
     <ClInclude Include="ui\controllers\project.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\CharacterSlotList.h">
       <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>

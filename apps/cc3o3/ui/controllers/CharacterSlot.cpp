@@ -34,6 +34,13 @@ RFTYPE_CREATE_META( RF::cc::ui::controller::CharacterSlot )
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool CharacterSlot::HasCharacter() const
+{
+	return mBorderFrame->IsChildRenderingBlocked() == false;
+}
+
+
+
 void CharacterSlot::ClearCharacter()
 {
 	mBorderFrame->SetChildRenderingBlocked( true );

@@ -24,6 +24,7 @@ public:
 		size_t numSlots );
 
 	ContainerID GetChildContainerID() const;
+	size_t GetNumSlots() const;
 	WeakPtr<InstancedController> GetSlotController( size_t slotIndex );
 	template<typename T>
 	WeakPtr<T> AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<T>&& controller );
