@@ -315,7 +315,7 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 								if( opt.mDynamicText != nullptr )
 								{
 									rftl::string const newText = opt.mDynamicText();
-									mInternalState->mOptionsListBox->GetSlotController( i )->SetText( newText.c_str() );
+									mInternalState->mOptionsListBox->GetMutableSlotController( i )->SetText( newText.c_str() );
 								}
 								break;
 							}

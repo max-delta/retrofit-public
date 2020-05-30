@@ -267,7 +267,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						ui::font::NarrowHalfTileMono ) );
 			for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
 			{
-				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetSlotController( i );
+				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetMutableSlotController( i );
 				{
 					// TODO: Image support
 					rftl::string temp = "0";

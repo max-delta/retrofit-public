@@ -60,7 +60,16 @@ size_t GenericListBox::GetNumSlots() const
 
 
 
-WeakPtr<InstancedController> GenericListBox::GetSlotController( size_t slotIndex )
+WeakPtr<InstancedController const> GenericListBox::GetSlotController( size_t slotIndex ) const
+{
+	WeakPtr<InstancedController const> const retVal = mSlotControllers.at( slotIndex );
+	RF_ASSERT_MSG( retVal != nullptr, "All slot controllers should've been assigned" );
+	return retVal;
+}
+
+
+
+WeakPtr<InstancedController> GenericListBox::GetMutableSlotController( size_t slotIndex )
 {
 	WeakPtr<InstancedController> const retVal = mSlotControllers.at( slotIndex );
 	RF_ASSERT_MSG( retVal != nullptr, "All slot controllers should've been assigned" );

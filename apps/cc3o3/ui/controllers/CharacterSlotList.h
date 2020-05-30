@@ -28,7 +28,8 @@ public:
 	void ClearCharacter( size_t slotIndex );
 	void UpdateCharacter( size_t slotIndex, state::ObjectRef const& character );
 
-	WeakPtr<CharacterSlot> GetSlotController( size_t slotIndex );
+	WeakPtr<CharacterSlot const> GetSlotController( size_t slotIndex ) const;
+	WeakPtr<CharacterSlot> GetMutableSlotController( size_t slotIndex );
 
 
 	//

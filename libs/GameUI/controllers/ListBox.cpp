@@ -78,11 +78,11 @@ ListBox::ListBox(
 
 
 
-WeakPtr<TextLabel> ListBox::GetSlotController( size_t slotIndex )
+WeakPtr<TextLabel> ListBox::GetMutableSlotController( size_t slotIndex )
 {
 	WeakPtr<TextLabel> textLabel;
 	PtrTransformer<TextLabel>::PerformNonTypesafeTransformation(
-		GenericListBox::GetSlotController( slotIndex ), textLabel );
+		GenericListBox::GetMutableSlotController( slotIndex ), textLabel );
 	return textLabel;
 }
 
@@ -93,7 +93,7 @@ void ListBox::SetText( rftl::vector<rftl::string> const& text )
 	RF_ASSERT( text.size() == mNumSlots );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		GetSlotController( i )->SetText( text.at( i ).c_str() );
+		GetMutableSlotController( i )->SetText( text.at( i ).c_str() );
 	}
 }
 
@@ -108,7 +108,7 @@ void ListBox::OnRender( UIConstContext const& context, Container const& containe
 	// Update colors
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		WeakPtr<TextLabel> const slotController = GetSlotController( i );
+		WeakPtr<TextLabel> const slotController = GetMutableSlotController( i );
 
 		if( listBoxHasImplicitFocus )
 		{

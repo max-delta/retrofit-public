@@ -566,7 +566,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
-				leftOptions->GetSlotController( i )->SetText( details::kLeftText[i] );
+				leftOptions->GetMutableSlotController( i )->SetText( details::kLeftText[i] );
 				uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), details::kLeftTextTags[i] );
 			}
 
@@ -584,7 +584,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
 				// This will be controlled dynamically by update logic
-				leftStatus->GetSlotController( i )->SetText( "" );
+				leftStatus->GetMutableSlotController( i )->SetText( "" );
 				uiManager.AssignLabel( leftStatus->GetSlotController( i )->GetContainerID(), details::kLeftStatusTags[i] );
 			}
 		}
@@ -644,7 +644,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			rightOptions->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode().mFavoredChild );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
-				rightOptions->GetSlotController( i )->SetText( details::kRightText[i] );
+				rightOptions->GetMutableSlotController( i )->SetText( details::kRightText[i] );
 				uiManager.AssignLabel( rightOptions->GetSlotController( i )->GetContainerID(), details::kRightTextTags[i] );
 			}
 
@@ -662,7 +662,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
 				// This will be controlled dynamically by update logic
-				rightStatus->GetSlotController( i )->SetText( "" );
+				rightStatus->GetMutableSlotController( i )->SetText( "" );
 				uiManager.AssignLabel( rightStatus->GetSlotController( i )->GetContainerID(), details::kRightStatusTags[i] );
 			}
 		}

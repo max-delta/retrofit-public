@@ -38,7 +38,7 @@ public:
 		math::Color3f unselectedColor,
 		math::Color3f selectedColor );
 
-	WeakPtr<TextLabel> GetSlotController( size_t slotIndex );
+	WeakPtr<TextLabel> GetMutableSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;

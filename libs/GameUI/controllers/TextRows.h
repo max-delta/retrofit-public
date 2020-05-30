@@ -7,7 +7,7 @@
 
 // Forwards
 namespace RF { namespace ui { namespace controller {
-	class TextLabel;
+class TextLabel;
 }}}
 
 namespace RF { namespace ui { namespace controller {
@@ -30,7 +30,8 @@ public:
 		math::Color3f color );
 
 	ContainerID GetChildContainerID() const;
-	WeakPtr<TextLabel> GetSlotController( size_t slotIndex );
+	WeakPtr<TextLabel const> GetSlotController( size_t slotIndex ) const;
+	WeakPtr<TextLabel> GetMutableSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;

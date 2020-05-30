@@ -23,10 +23,10 @@ namespace RF { namespace ui { namespace controller {
 
 TextRows::TextRows( size_t numSlots, FontPurposeID purpose )
 	: TextRows(
-		numSlots,
-		purpose,
-		Justification::MiddleCenter,
-		math::Color3f::kWhite )
+		  numSlots,
+		  purpose,
+		  Justification::MiddleCenter,
+		  math::Color3f::kWhite )
 {
 	//
 }
@@ -55,7 +55,14 @@ ContainerID TextRows::GetChildContainerID() const
 
 
 
-WeakPtr<TextLabel> TextRows::GetSlotController( size_t slotIndex )
+WeakPtr<TextLabel const> TextRows::GetSlotController( size_t slotIndex ) const
+{
+	return mSlotControllers.at( slotIndex );
+}
+
+
+
+WeakPtr<TextLabel> TextRows::GetMutableSlotController( size_t slotIndex )
 {
 	return mSlotControllers.at( slotIndex );
 }
@@ -67,7 +74,7 @@ void TextRows::SetText( rftl::vector<rftl::string> const& text )
 	RF_ASSERT( text.size() == mNumSlots );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		GetSlotController( i )->SetText( text.at( i ).c_str() );
+		GetMutableSlotController( i )->SetText( text.at( i ).c_str() );
 	}
 }
 

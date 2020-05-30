@@ -33,31 +33,40 @@ CharacterSlotList::CharacterSlotList()
 
 bool CharacterSlotList::HasCharacter( size_t slotIndex ) const
 {
-	// TODO: Fix API
-	return const_cast<CharacterSlotList*>( this )->GetSlotController( slotIndex )->HasCharacter();
+	return GetSlotController( slotIndex )->HasCharacter();
 }
 
 
 
 void CharacterSlotList::ClearCharacter( size_t slotIndex )
 {
-	GetSlotController( slotIndex )->ClearCharacter();
+	GetMutableSlotController( slotIndex )->ClearCharacter();
 }
 
 
 
 void CharacterSlotList::UpdateCharacter( size_t slotIndex, state::ObjectRef const& character )
 {
-	GetSlotController( slotIndex )->UpdateCharacter( character );
+	GetMutableSlotController( slotIndex )->UpdateCharacter( character );
 }
 
 
 
-WeakPtr<CharacterSlot> CharacterSlotList::GetSlotController( size_t slotIndex )
+WeakPtr<CharacterSlot const> CharacterSlotList::GetSlotController( size_t slotIndex ) const
+{
+	WeakPtr<CharacterSlot const> retVal;
+	PtrTransformer<CharacterSlot>::PerformNonTypesafeTransformation(
+		GenericListBox::GetSlotController( slotIndex ), retVal );
+	return retVal;
+}
+
+
+
+WeakPtr<CharacterSlot> CharacterSlotList::GetMutableSlotController( size_t slotIndex )
 {
 	WeakPtr<CharacterSlot> retVal;
 	PtrTransformer<CharacterSlot>::PerformNonTypesafeTransformation(
-		GenericListBox::GetSlotController( slotIndex ), retVal );
+		GenericListBox::GetMutableSlotController( slotIndex ), retVal );
 	return retVal;
 }
 
