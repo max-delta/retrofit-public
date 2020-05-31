@@ -20,6 +20,7 @@ file::VFSPath CommonTilesets();
 
 file::VFSPath BackgroundTilesets();
 file::VFSPath BackgroundTilemaps();
+file::VFSPath UITilesets();
 file::VFSPath DialogFrameTilesets();
 file::VFSPath LogoFramepacks();
 file::VFSPath CharacterTables();

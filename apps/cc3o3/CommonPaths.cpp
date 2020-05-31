@@ -54,6 +54,10 @@ file::VFSPath BackgroundTilemaps()
 {
 	return file::VFS::kRoot.GetChild( "assets", "tilemaps", "backgrounds" );
 }
+file::VFSPath UITilesets()
+{
+	return file::VFS::kRoot.GetChild( "assets", "tilesets", "ui" );
+}
 file::VFSPath DialogFrameTilesets()
 {
 	return file::VFS::kRoot.GetChild( "assets", "tilesets", "frames" );
