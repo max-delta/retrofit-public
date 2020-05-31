@@ -62,6 +62,9 @@
     <ClCompile Include="controllers\GenericListBox.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="controllers\TileLayerDisplay.cpp">
+      <Filter>controllers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -130,6 +133,9 @@
       <Filter>controllers</Filter>
     </ClInclude>
     <ClInclude Include="controllers\GenericListBox.h">
+      <Filter>controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="controllers\TileLayerDisplay.h">
       <Filter>controllers</Filter>
     </ClInclude>
   </ItemGroup>

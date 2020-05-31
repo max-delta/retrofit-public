@@ -53,6 +53,7 @@
     <ClInclude Include="controllers\TextBox.h" />
     <ClInclude Include="controllers\TextLabel.h" />
     <ClInclude Include="controllers\TextRows.h" />
+    <ClInclude Include="controllers\TileLayerDisplay.h" />
     <ClInclude Include="FocusEvent.h" />
     <ClInclude Include="FocusKey.h" />
     <ClInclude Include="FocusManager.h" />
@@ -85,6 +86,7 @@
     <ClCompile Include="controllers\TextBox.cpp" />
     <ClCompile Include="controllers\TextLabel.cpp" />
     <ClCompile Include="controllers\TextRows.cpp" />
+    <ClCompile Include="controllers\TileLayerDisplay.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FocusEvent.cpp" />
     <ClCompile Include="FocusKey.cpp" />
