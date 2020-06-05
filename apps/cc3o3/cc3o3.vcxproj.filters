@@ -160,6 +160,12 @@
     <ClCompile Include="ui\controllers\CharacterSlotList.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="state\objects\BaseCharacter.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="state\components\CharacterInfo.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -437,6 +443,12 @@
     </ClInclude>
     <ClInclude Include="ui\controllers\CharacterSlotList.h">
       <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\BaseCharacter.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\CharacterInfo.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

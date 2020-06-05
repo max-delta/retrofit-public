@@ -11,6 +11,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/state/objects/Company.h"
+#include "cc3o3/state/objects/BaseCharacter.h"
 #include "cc3o3/state/objects/OverworldCharacter.h"
 #include "cc3o3/state/objects/SiteCharacter.h"
 #include "cc3o3/state/objects/BattleCharacter.h"
@@ -162,9 +163,12 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			{
 				rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
 
-				MutableObjectRef const newChar = CreateOverworldCharacterFromDB(
+				MutableObjectRef const newChar = CreateBaseCharacterFromDB(
 					sharedWindow, privateWindow,
 					charRoot.GetChild( rosterIndexAsString ), characterID );
+				MakeOverworldCharacterFromDB(
+					sharedWindow, privateWindow,
+					newChar, characterID );
 				MakeSiteCharacterFromDB(
 					sharedWindow, privateWindow,
 					newChar, characterID );
