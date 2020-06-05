@@ -67,7 +67,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
-    <ClCompile Include="state\components\CharacterInfo.cpp" />
+    <ClCompile Include="state\components\Character.cpp" />
     <ClCompile Include="state\components\Meta.cpp" />
     <ClCompile Include="state\components\OverworldMovement.cpp" />
     <ClCompile Include="state\components\OverworldVisual.cpp" />
@@ -154,7 +154,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="state\Component.h" />
     <ClInclude Include="state\ComponentResolver.h" />
-    <ClInclude Include="state\components\CharacterInfo.h" />
+    <ClInclude Include="state\components\Character.h" />
     <ClInclude Include="state\components\Meta.h" />
     <ClInclude Include="state\components\OverworldMovement.h" />
     <ClInclude Include="state\components\OverworldVisual.h" />

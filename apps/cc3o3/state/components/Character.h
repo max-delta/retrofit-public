@@ -10,14 +10,14 @@
 namespace RF::cc::state::comp {
 ///////////////////////////////////////////////////////////////////////////////
 
-class CharacterInfo final : public state::Component
+class Character final : public state::Component
 {
-	RF_NO_COPY( CharacterInfo );
+	RF_NO_COPY( Character );
 
 	//
 	// Public methods
 public:
-	CharacterInfo() = default;
+	Character() = default;
 
 
 	//

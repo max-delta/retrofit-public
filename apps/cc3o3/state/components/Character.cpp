@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CharacterInfo.h"
+#include "Character.h"
 
 
 namespace RF::cc::state::comp {

@@ -160,11 +160,11 @@
     <ClCompile Include="state\objects\BaseCharacter.cpp">
       <Filter>state\objects</Filter>
     </ClCompile>
-    <ClCompile Include="state\components\CharacterInfo.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
     <ClCompile Include="char\CharData.cpp">
       <Filter>char</Filter>
+    </ClCompile>
+    <ClCompile Include="state\components\Character.cpp">
+      <Filter>state\components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -444,11 +444,11 @@
     <ClInclude Include="state\objects\BaseCharacter.h">
       <Filter>state\objects</Filter>
     </ClInclude>
-    <ClInclude Include="state\components\CharacterInfo.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
     <ClInclude Include="char\CharData.h">
       <Filter>char</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Character.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

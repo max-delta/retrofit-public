@@ -5,7 +5,7 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/EmptyObject.h"
-#include "cc3o3/state/components/CharacterInfo.h"
+#include "cc3o3/state/components/Character.h"
 #include "cc3o3/state/StateLogging.h"
 
 #include "core_component/TypedObjectRef.h"
@@ -37,9 +37,9 @@ void MakeBaseCharacterFromDB(
 {
 	// Character
 	{
-		MutableComponentInstanceRefT<comp::CharacterInfo> const chara =
-			ref.AddComponentInstanceT<comp::CharacterInfo>(
-				DefaultCreator<comp::CharacterInfo>::Create() );
+		MutableComponentInstanceRefT<comp::Character> const chara =
+			ref.AddComponentInstanceT<comp::Character>(
+				DefaultCreator<comp::Character>::Create() );
 		RFLOG_TEST_AND_FATAL( chara != nullptr, ref, RFCAT_CC3O3, "Failed to add character component" );
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
