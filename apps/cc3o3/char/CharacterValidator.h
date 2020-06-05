@@ -42,7 +42,6 @@ public:
 	using SpeciesID = rftl::string;
 	static constexpr int8_t kMaxTotalStatPoints = 16;
 	static constexpr int8_t kMaxPointsPerStat = 5;
-	using SlotsPerElemLevel = rftl::array<size_t, kMaxElementLevels>;
 
 private:
 	using GeneticsStorage = rftl::unordered_map<GeneticsID, GeneticsEntry>;

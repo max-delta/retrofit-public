@@ -285,7 +285,7 @@ size_t CharacterValidator::GetMinimumTotalSlots( company::StoryTier storyTier ) 
 
 
 
-CharacterValidator::SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( company::StoryTier storyTier ) const
+SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( company::StoryTier storyTier ) const
 {
 	switch( storyTier )
 	{
@@ -365,7 +365,7 @@ size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, c
 
 
 
-CharacterValidator::SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
+SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
 {
 	// NOTE: Non-optimal, but not expected to be called frequently
 
