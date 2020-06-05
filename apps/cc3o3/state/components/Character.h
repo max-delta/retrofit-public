@@ -23,7 +23,7 @@ public:
 	//
 	// Public data
 public:
-	character::CharData mCharacter = {};
+	character::CharData mCharData = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

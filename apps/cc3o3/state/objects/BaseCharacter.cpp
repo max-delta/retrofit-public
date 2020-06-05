@@ -43,7 +43,7 @@ void MakeBaseCharacterFromDB(
 		RFLOG_TEST_AND_FATAL( chara != nullptr, ref, RFCAT_CC3O3, "Failed to add character component" );
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
-		chara->mCharacter = charDB.FetchExistingCharacter( charID );
+		chara->mCharData = charDB.FetchExistingCharacter( charID );
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as base character" );
