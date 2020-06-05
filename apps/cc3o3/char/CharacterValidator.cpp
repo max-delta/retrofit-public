@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "CharacterValidator.h"
 
-#include "cc3o3/char/Character.h"
+#include "cc3o3/char/CharData.h"
 
 #include "GameSprite/CharacterCreator.h"
 
@@ -529,7 +529,7 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModi
 
 
 
-void CharacterValidator::SanitizeForCharacterCreation( Character& character ) const
+void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) const
 {
 	Description& description = character.mDescription;
 	rftl::string& innate = character.mInnate;
@@ -720,7 +720,7 @@ void CharacterValidator::SanitizeForCharacterCreation( Character& character ) co
 
 
 
-void CharacterValidator::SanitizeForGameplay( Character& character ) const
+void CharacterValidator::SanitizeForGameplay( CharData& character ) const
 {
 	Stats& stats = character.mStats;
 	Equipment& equipment = character.mEquipment;

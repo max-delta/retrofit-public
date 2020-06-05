@@ -88,7 +88,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 		{
-			character::Character character = charDB.FetchExistingCharacter( characterID );
+			character::CharData character = charDB.FetchExistingCharacter( characterID );
 			charValidate.SanitizeForGameplay( character );
 			charDB.OverwriteExistingCharacter( characterID, rftl::move( character ) );
 		}
@@ -110,7 +110,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 		for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 		{
-			character::Character const input = charDB.FetchExistingCharacter( characterID );
+			character::CharData const input = charDB.FetchExistingCharacter( characterID );
 
 			for( sprite::CompositeCharacterParams const& paramSet : paramSets )
 			{

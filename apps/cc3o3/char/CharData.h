@@ -12,7 +12,7 @@
 namespace RF { namespace cc { namespace character {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct Character
+struct CharData
 {
 	Description mDescription = {};
 	rftl::string mInnate = {};

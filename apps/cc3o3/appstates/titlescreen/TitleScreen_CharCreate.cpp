@@ -5,7 +5,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
-#include "cc3o3/char/Character.h"
+#include "cc3o3/char/CharData.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
@@ -160,7 +160,7 @@ struct TitleScreen_CharCreate::InternalState
 	using PlayableGeneticsList = rftl::vector<character::CharacterValidator::GeneticsID>;
 	PlayableGeneticsList mPlayableGenetics;
 
-	character::Character mChar = {};
+	character::CharData mChar = {};
 };
 
 

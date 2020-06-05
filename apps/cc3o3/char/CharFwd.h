@@ -13,7 +13,7 @@ static constexpr size_t kMaxSlotsPerElementLevel = 8;
 
 using SlotsPerElemLevel = rftl::array<size_t, kMaxElementLevels>;
 
-struct Character;
+struct CharData;
 struct Description;
 struct Genetics;
 struct Visuals;

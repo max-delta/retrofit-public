@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "cc3o3/char/Character.h"
+#include "cc3o3/char/CharData.h"
 
 #include "GameSprite/CompositeCharacter.h"
 
@@ -29,7 +29,7 @@ public:
 	using CharacterMode = rftl::immutable_string;
 
 private:
-	using CharacterStorage = rftl::unordered_map<CharacterID, Character>;
+	using CharacterStorage = rftl::unordered_map<CharacterID, CharData>;
 	using CompositeModeStorage = rftl::unordered_map<CharacterMode, sprite::CompositeCharacter>;
 	using CompositeStorage = rftl::unordered_map<CharacterID, CompositeModeStorage>;
 
@@ -39,10 +39,10 @@ private:
 public:
 	CharacterDatabase() = default;
 
-	bool SubmitNewCharacter( CharacterID const& id, Character&& character );
-	Character FetchExistingCharacter( CharacterID const& id ) const;
-	void SubmitOrOverwriteCharacter( CharacterID const& id, Character&& character );
-	bool OverwriteExistingCharacter( CharacterID const& id, Character&& character );
+	bool SubmitNewCharacter( CharacterID const& id, CharData&& character );
+	CharData FetchExistingCharacter( CharacterID const& id ) const;
+	void SubmitOrOverwriteCharacter( CharacterID const& id, CharData&& character );
+	bool OverwriteExistingCharacter( CharacterID const& id, CharData&& character );
 	bool DeleteExistingCharacter( CharacterID const& id );
 	size_t DeleteAllCharacters();
 

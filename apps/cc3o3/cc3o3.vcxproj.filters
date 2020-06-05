@@ -67,9 +67,6 @@
     <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp">
       <Filter>appstates\titlescreen</Filter>
     </ClCompile>
-    <ClCompile Include="char\Character.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
     <ClCompile Include="char\Description.cpp">
       <Filter>char</Filter>
     </ClCompile>
@@ -166,6 +163,9 @@
     <ClCompile Include="state\components\CharacterInfo.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="char\CharData.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -218,9 +218,6 @@
       <Filter>char</Filter>
     </ClInclude>
     <ClInclude Include="char\stdafx.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Character.h">
       <Filter>char</Filter>
     </ClInclude>
     <ClInclude Include="char\Visuals.h">
@@ -449,6 +446,9 @@
     </ClInclude>
     <ClInclude Include="state\components\CharacterInfo.h">
       <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="char\CharData.h">
+      <Filter>char</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,7 @@
 namespace RF { namespace cc { namespace character {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, Character&& character )
+bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, CharData&& character )
 {
 	if( mCharacterStorage.count( id ) != 0 )
 	{
@@ -25,26 +25,26 @@ bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, Ch
 
 
 
-Character CharacterDatabase::FetchExistingCharacter( CharacterID const& id ) const
+CharData CharacterDatabase::FetchExistingCharacter( CharacterID const& id ) const
 {
 	CharacterStorage::const_iterator const iter = mCharacterStorage.find( id );
 	if( iter == mCharacterStorage.end() )
 	{
-		return Character();
+		return CharData();
 	}
 	return iter->second;
 }
 
 
 
-void CharacterDatabase::SubmitOrOverwriteCharacter( CharacterID const& id, Character&& character )
+void CharacterDatabase::SubmitOrOverwriteCharacter( CharacterID const& id, CharData&& character )
 {
 	mCharacterStorage[id] = rftl::move( character );
 }
 
 
 
-bool CharacterDatabase::OverwriteExistingCharacter( CharacterID const& id, Character&& character )
+bool CharacterDatabase::OverwriteExistingCharacter( CharacterID const& id, CharData&& character )
 {
 	CharacterStorage::iterator const iter = mCharacterStorage.find( id );
 	if( iter == mCharacterStorage.end() )
@@ -164,7 +164,7 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 		// Inject types
 		{
 			bool success;
-			success = loader.InjectReflectedClassByCompileType<Character>( "Character" );
+			success = loader.InjectReflectedClassByCompileType<CharData>( "CharData" );
 			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
 			success = loader.InjectReflectedClassByCompileType<Description>( "Description" );
 			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
@@ -188,7 +188,7 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 		}
 
 		// Extract character
-		Character character = {};
+		CharData character = {};
 		{
 			bool const success = loader.PopulateClass( "c", character );
 			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to populate" );

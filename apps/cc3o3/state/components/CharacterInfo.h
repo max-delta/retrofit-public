@@ -2,7 +2,7 @@
 #include "project.h"
 
 #include "cc3o3/state/Component.h"
-#include "cc3o3/char/Character.h"
+#include "cc3o3/char/CharData.h"
 
 #include "core/macros.h"
 
@@ -23,7 +23,7 @@ public:
 	//
 	// Public data
 public:
-	character::Character mCharacter = {};
+	character::CharData mCharacter = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -67,8 +67,8 @@ public:
 	size_t CalculateTotalSlots( Stats::StatModifier elemPower, company::StoryTier storyTier ) const;
 	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const;
 
-	void SanitizeForCharacterCreation( Character& character ) const;
-	void SanitizeForGameplay( Character& character ) const;
+	void SanitizeForCharacterCreation( CharData& character ) const;
+	void SanitizeForGameplay( CharData& character ) const;
 
 
 	//
