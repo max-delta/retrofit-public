@@ -166,6 +166,9 @@
     <ClCompile Include="state\components\Character.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\ElementGrid.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -449,6 +452,9 @@
     </ClInclude>
     <ClInclude Include="state\components\Character.h">
       <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\ElementGrid.h">
+      <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

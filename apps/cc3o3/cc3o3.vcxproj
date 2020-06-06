@@ -89,6 +89,7 @@
     </ClCompile>
     <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
+    <ClCompile Include="ui\controllers\ElementGrid.cpp" />
     <ClCompile Include="ui\LocalizationHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -184,6 +185,7 @@
     <ClInclude Include="time\TimeFwd.h" />
     <ClInclude Include="ui\controllers\CharacterSlot.h" />
     <ClInclude Include="ui\controllers\CharacterSlotList.h" />
+    <ClInclude Include="ui\controllers\ElementGrid.h" />
     <ClInclude Include="ui\controllers\project.h" />
     <ClInclude Include="ui\controllers\stdafx.h" />
     <ClInclude Include="ui\LocalizationHelpers.h" />
