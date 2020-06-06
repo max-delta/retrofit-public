@@ -4,8 +4,6 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/SiteVisual.h"
 
-#include "AppCommon_GraphicalClient/Common.h"
-
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -69,8 +67,8 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 {
 	ui::ContainerManager& uiManager = context.GetMutableContainerManager();
-	gfx::PPUController const& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+	gfx::PPUController const& renderer = GetRenderer( uiManager );
+	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	mChildContainerID = CreateChildContainer(
 		uiManager,
