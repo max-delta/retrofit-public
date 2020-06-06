@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "ElementGrid.h"
 
-#include "cc3o3/Common.h"
-#include "cc3o3/char/CharFwd.h"
-
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -37,14 +34,25 @@ void ElementGrid::SetJustification( Justification justification )
 
 void ElementGrid::UpdateFromCharacter( state::ObjectRef const& character )
 {
-	// TODO
-	//RF_ASSERT( character.IsSet() );
+	mCache.UpdateFromCharacter( character, false );
 
-	size_t const numTiles = mTileLayer.NumTiles();
-	for( size_t i = 0; i < numTiles; i++ )
+	ElementGridDisplayCache::Grid const& grid = mCache.GetGridRef();
+	for( size_t i_col = 0; i_col < grid.size(); i_col++ )
 	{
-		mTileLayer.GetMutableTile( i ).mIndex = 5;
+		ElementGridDisplayCache::Column const& column = grid.at( i_col );
+		for( size_t i_row = 0; i_row < column.size(); i_row++ )
+		{
+			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
+			mTileLayer.GetMutableTile( i_col, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+		}
 	}
+}
+
+
+
+void ElementGrid::UpdateFromCache( ElementGridDisplayCache const& cache )
+{
+	mCache = cache;
 }
 
 
@@ -54,7 +62,7 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 	gfx::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
-	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kTilesetName );
+	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetMiniName );
 	mTileLayer.ClearAndResize( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel );
 }
 
@@ -67,8 +75,8 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	gfx::PPUCoord const expectedDimensions = {
-		kTileWidth * character::kMaxElementLevels,
-		kTileHeight * character::kMaxSlotsPerElementLevel
+		kElementTileMiniWidth * character::kMaxElementLevels,
+		kElementTileMiniHeight * character::kMaxSlotsPerElementLevel
 	};
 	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 

@@ -13,7 +13,8 @@ namespace RF { namespace cc { namespace character {
 struct ElementSlots
 {
 	using Slot = element::ElementIdentifier;
-	using Grid = rftl::array<Slot, kMaxElementLevels * kMaxSlotsPerElementLevel>;
+	using Column = rftl::array<Slot, kMaxSlotsPerElementLevel>;
+	using Grid = rftl::array<Column, kMaxElementLevels>;
 
 	Grid mGrid = {};
 };

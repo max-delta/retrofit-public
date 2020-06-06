@@ -90,6 +90,8 @@
     <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
     <ClCompile Include="ui\controllers\ElementGrid.cpp" />
+    <ClCompile Include="ui\ElementGridDisplayCache.cpp" />
+    <ClCompile Include="ui\ElementSlotDisplayCache.cpp" />
     <ClCompile Include="ui\LocalizationHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +190,9 @@
     <ClInclude Include="ui\controllers\ElementGrid.h" />
     <ClInclude Include="ui\controllers\project.h" />
     <ClInclude Include="ui\controllers\stdafx.h" />
+    <ClInclude Include="ui\ElementGridDisplayCache.h" />
+    <ClInclude Include="ui\ElementSlotDisplayCache.h" />
+    <ClInclude Include="ui\ElementTilesetValues.h" />
     <ClInclude Include="ui\LocalizationHelpers.h" />
     <ClInclude Include="ui\project.h" />
     <ClInclude Include="ui\stdafx.h" />

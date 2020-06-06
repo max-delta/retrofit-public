@@ -169,6 +169,12 @@
     <ClCompile Include="ui\controllers\ElementGrid.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="ui\ElementGridDisplayCache.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ElementSlotDisplayCache.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -455,6 +461,15 @@
     </ClInclude>
     <ClInclude Include="ui\controllers\ElementGrid.h">
       <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ElementGridDisplayCache.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ElementSlotDisplayCache.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ElementTilesetValues.h">
+      <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
