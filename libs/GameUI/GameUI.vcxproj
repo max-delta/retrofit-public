@@ -32,6 +32,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AlignmentHelpers.h" />
     <ClInclude Include="Anchor.h" />
     <ClInclude Include="Container.h" />
     <ClInclude Include="ContainerManager.h" />
@@ -67,6 +68,7 @@
     <ClInclude Include="UIFwd.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AlignmentHelpers.cpp" />
     <ClCompile Include="Anchor.cpp" />
     <ClCompile Include="Container.cpp" />
     <ClCompile Include="ContainerManager.cpp" />

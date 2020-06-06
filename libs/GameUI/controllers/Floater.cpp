@@ -4,10 +4,9 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/AlignmentHelpers.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
-
-#include "core_math/Lerp.h"
 
 
 RFTYPE_CREATE_META( RF::ui::controller::Floater )
@@ -51,44 +50,7 @@ void Floater::OnInstanceAssign( UIContext& context, Container& container )
 
 void Floater::OnAABBRecalc( UIContext& context, Container& container )
 {
-	gfx::PPUCoord pos = container.mAABB.mTopLeft;
-	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
-	{
-		pos.y = container.mAABB.Top();
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Bottom ) )
-	{
-		pos.y = container.mAABB.Bottom() - mDimensions.y;
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Middle ) )
-	{
-		gfx::PPUCoordElem const top = container.mAABB.Top();
-		gfx::PPUCoordElem const bottom = container.mAABB.Bottom() - mDimensions.y;
-		pos.y = math::Lerp( top, bottom, 0.5f );
-	}
-	else
-	{
-		RF_DBGFAIL();
-	}
-
-	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Left ) )
-	{
-		pos.x = container.mAABB.Left();
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Right ) )
-	{
-		pos.x = container.mAABB.Right() - mDimensions.x;
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Center ) )
-	{
-		gfx::PPUCoordElem const left = container.mAABB.Left();
-		gfx::PPUCoordElem const right = container.mAABB.Right() - mDimensions.x;
-		pos.x = math::Lerp( left, right, 0.5f );
-	}
-	else
-	{
-		RF_DBGFAIL();
-	}
+	gfx::PPUCoord const pos = AlignToJustify( mDimensions, container.mAABB, mJustification );
 
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, pos );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, pos + mDimensions );

@@ -4,13 +4,13 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/AlignmentHelpers.h"
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
-#include "core_math/Lerp.h"
 #include "core/rf_onceper.h"
 
 
@@ -108,48 +108,16 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	RF_ASSERT( mFontID != gfx::kInvalidManagedFontID );
 	RF_ASSERT( mDesiredHeight > mBaselineOffset );
 
-	gfx::PPUCoord pos = container.mAABB.mTopLeft;
-	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Top ) )
-	{
-		pos.y = container.mAABB.Top() - mBaselineOffset;
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Bottom ) )
-	{
-		pos.y = container.mAABB.Bottom() - mDesiredHeight;
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Middle ) )
-	{
-		gfx::PPUCoordElem const top = container.mAABB.Top() - mBaselineOffset;
-		gfx::PPUCoordElem const bottom = container.mAABB.Bottom() - mDesiredHeight;
-		pos.y = math::Lerp( top, bottom, 0.5f );
-	}
-	else
-	{
-		RF_DBGFAIL();
-	}
+	gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
+	gfx::PPUCoord const expectedDimensions = {
+		stringWidth,
+		// Push the descenders down below the baseline
+		//  (tails like g, j, p, q, y )
+		mDesiredHeight - mBaselineOffset
+	};
+	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
-	if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Left ) )
-	{
-		pos.x = container.mAABB.Left();
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Right ) )
-	{
-		gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
-		pos.x = container.mAABB.Right() - stringWidth;
-	}
-	else if( math::enum_bitcast( mJustification ) & math::enum_bitcast( Justification::Center ) )
-	{
-		gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
-		gfx::PPUCoordElem const left = container.mAABB.Left();
-		gfx::PPUCoordElem const right = container.mAABB.Right() - stringWidth;
-		pos.x = math::Lerp( left, right, 0.5f );
-	}
-	else
-	{
-		RF_DBGFAIL();
-	}
-
-	#if RF_IS_ALLOWED( RF_CONFIG_ONCEPER )
+#if RF_IS_ALLOWED( RF_CONFIG_ONCEPER )
 	if( mIgnoreOverflow == false )
 	{
 		if( container.mAABB.Height() < mDesiredHeight )
@@ -161,10 +129,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 			RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '%s'", mText.c_str() ) );
 		}
 	}
-	#endif
-
-	// Push the descenders down below the baseline (tails like g, j, p, q, y )
-	pos.y += mBaselineOffset;
+#endif
 
 	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
 }

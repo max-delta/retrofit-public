@@ -65,6 +65,7 @@
     <ClCompile Include="controllers\TileLayerDisplay.cpp">
       <Filter>controllers</Filter>
     </ClCompile>
+    <ClCompile Include="AlignmentHelpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="controllers\TileLayerDisplay.h">
       <Filter>controllers</Filter>
     </ClInclude>
+    <ClInclude Include="AlignmentHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="controllers">
