@@ -257,9 +257,9 @@ DST real_cast( SRC const src )
 
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_enum<SRC>::value, int>::type>
-constexpr uint64_t enum_bitcast( SRC const src )
+constexpr auto enum_bitcast( SRC const src ) -> typename rftl::underlying_type<SRC>::type
 {
-	return static_cast<uint64_t>(src);
+	return static_cast<typename rftl::underlying_type<SRC>::type>( src );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
