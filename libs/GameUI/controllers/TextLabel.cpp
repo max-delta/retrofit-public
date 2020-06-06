@@ -113,7 +113,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		stringWidth,
 		// Push the descenders down below the baseline
 		//  (tails like g, j, p, q, y )
-		mDesiredHeight - mBaselineOffset
+		math::integer_cast<gfx::PPUCoordElem>( mDesiredHeight - mBaselineOffset )
 	};
 	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
