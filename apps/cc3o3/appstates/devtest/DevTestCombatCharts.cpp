@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DevTestCombatCharts.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/combat/CombatEngine.h"
@@ -24,8 +25,6 @@ struct DevTestCombatCharts::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
-
-	combat::CombatEngine mCombatEngine = { app::gVfs };
 
 	size_t mCursor = 0;
 
@@ -61,7 +60,7 @@ void DevTestCombatCharts::OnExit( AppStateChangeContext& context )
 void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
-	combat::CombatEngine const& combatEngine = internalState.mCombatEngine;
+	combat::CombatEngine const& combatEngine = *gCombatEngine;
 	using SimVal = combat::CombatEngine::SimVal;
 	using SimDelta = combat::CombatEngine::SimDelta;
 	using SimColor = combat::CombatEngine::SimColor;
@@ -71,7 +70,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
 	{
 		gfx::PPUCoord const pos = gfx::PPUCoord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;

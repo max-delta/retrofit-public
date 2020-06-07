@@ -3,6 +3,7 @@
 
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -29,12 +30,14 @@ namespace RF { namespace cc {
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<state::ObjectManager> gObjectManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
+static UniquePtr<combat::CombatEngine> sCombatEngine;
 static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<element::ElementDatabase> sElementDatabase;
 static UniquePtr<state::ObjectManager> sObjectManager;
@@ -64,6 +67,10 @@ void SystemStartup()
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character database..." );
 	sCharacterDatabase = DefaultCreator<character::CharacterDatabase>::Create();
 	gCharacterDatabase = sCharacterDatabase;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing combat engine..." );
+	sCombatEngine = DefaultCreator<combat::CombatEngine>::Create( app::gVfs );
+	gCombatEngine = sCombatEngine;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing company manager..." );
 	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs );

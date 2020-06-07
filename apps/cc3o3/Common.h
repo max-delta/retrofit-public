@@ -11,6 +11,9 @@ namespace RF::cc::character {
 class CharacterValidator;
 class CharacterDatabase;
 }
+namespace RF::cc::combat {
+class CombatEngine;
+}
 namespace RF::cc::company {
 class CompanyManager;
 }
@@ -33,6 +36,7 @@ namespace RF { namespace cc {
 extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+extern WeakPtr<combat::CombatEngine> gCombatEngine;
 extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<element::ElementDatabase> gElementDatabase;
 extern WeakPtr<state::ObjectManager> gObjectManager;
