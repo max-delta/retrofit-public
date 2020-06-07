@@ -24,7 +24,7 @@ enum class ElementTilesetIndex : int8_t
 {
 	Empty = -1,
 
-	Reserved = 0,
+	TopLeftBorder = 0,
 	LeftBorder,
 	TopBorder,
 
