@@ -16,6 +16,77 @@ CombatEngine::CombatEngine( WeakPtr<file::VFS const> const& vfs )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+CombatEngine::DisplayVal CombatEngine::DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const
+{
+	return healthVal;
+}
+
+
+
+CombatEngine::DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const
+{
+	static constexpr SimVal kMinStat = 0;
+	static constexpr SimVal kMaxStat = 10;
+	statVal = math::Clamp( kMinStat, statVal, kMaxStat );
+
+	switch( entityClass )
+	{
+		case EntityClass::Peasant:
+		{
+			static constexpr DisplayVal kBaseline = 5;
+			static constexpr SimVal kScalar = 2;
+			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<DisplayVal>::max() );
+			return math::integer_cast<DisplayVal>( kBaseline + statVal * kScalar );
+		}
+		case EntityClass::Player:
+		{
+			static constexpr DisplayVal kBaseline = 10;
+			static constexpr SimVal kScalar = 3;
+			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<DisplayVal>::max() );
+			return math::integer_cast<DisplayVal>( kBaseline + statVal * kScalar );
+		}
+		default:
+		{
+			RF_DBGFAIL();
+			return 0;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+CombatEngine::LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, EntityClass entityClass ) const
+{
+	static constexpr SimVal kMinStat = 0;
+	static constexpr SimVal kMaxStat = 15;
+	healthStat = math::Clamp( kMinStat, healthStat, kMaxStat );
+
+	switch( entityClass )
+	{
+		case EntityClass::Peasant:
+		{
+			static constexpr LargeSimVal kBaseline = 70;
+			static constexpr SimVal kScalar = 5;
+			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<LargeSimVal>::max() );
+			return math::integer_cast<LargeSimVal>( kBaseline + healthStat * kScalar );
+		}
+		case EntityClass::Player:
+		{
+			static constexpr LargeSimVal kBaseline = 80;
+			static constexpr SimVal kScalar = 10;
+			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<LargeSimVal>::max() );
+			return math::integer_cast<LargeSimVal>( kBaseline + healthStat * kScalar );
+		}
+		default:
+		{
+			RF_DBGFAIL();
+			return 0;
+		}
+	}
+}
+
+
+
 CombatEngine::SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
 {
 	if( attackStrength >= 3 )

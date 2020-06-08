@@ -16,6 +16,11 @@ class CombatEngine
 	//
 	// Enums
 public:
+	enum class EntityClass : uint8_t
+	{
+		Peasant = 0,
+		Player,
+	};
 	enum class SimColor : uint8_t
 	{
 		Unrelated = 0,
@@ -29,6 +34,8 @@ public:
 public:
 	using SimVal = uint8_t;
 	using SimDelta = int8_t;
+	using LargeSimVal = uint16_t;
+	using DisplayVal = uint16_t;
 	static constexpr size_t kFieldSize = 5;
 	using FieldColors = rftl::array<SimColor, kFieldSize>;
 
@@ -40,8 +47,18 @@ public:
 
 
 	//
+	// Public methods (display calculations)
+public:
+	DisplayVal DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const;
+	DisplayVal DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const;
+
+
+	//
 	// Public methods (low-level calculations)
 public:
+	// Max health drives the balance and tuning of all combat
+	LargeSimVal LoCalcMaxHealth( SimVal healthStat, EntityClass entityClass ) const;
+
 	// Attack accuracy is affected by the strength of the attack
 	SimVal LoCalcAttackAccuracy( SimVal attackStrength ) const;
 
