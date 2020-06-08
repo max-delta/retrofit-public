@@ -41,7 +41,7 @@ private:
 	ContainerID mChildContainerID = kInvalidContainerID;
 	WeakPtr<BorderFrame> mBorderFrame;
 	WeakPtr<FramePackDisplay> mCharacterDisplay;
-	rftl::array<WeakPtr<TextLabel>, 3> mInfoRows;
+	rftl::array<WeakPtr<TextLabel>, 4> mInfoRows;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

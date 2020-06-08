@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "CharacterSlot.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/SiteVisual.h"
+#include "cc3o3/state/components/Character.h"
+#include "cc3o3/combat/CombatEngine.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -51,15 +54,64 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 	RF_ASSERT( character.IsSet() );
 	mBorderFrame->SetChildRenderingBlocked( false );
 
+	// Visual
 	state::comp::SiteVisual const& visual = *character.GetComponentInstanceT<state::comp::SiteVisual>();
 	state::comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
 	mCharacterDisplay->SetFramePack(
 		anim.mFramePackID,
 		anim.mMaxTimeIndex,
-		( gfx::kTileSize / 4 ) * 3,
+		( gfx::kTileSize / 4 ) * 4,
 		( gfx::kTileSize / 4 ) * 5 );
 
-	// TODO: Update text
+	// Text
+	{
+		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
+		character::CharData const& charData = chara.mCharData;
+
+		using EntityClass = combat::CombatEngine::EntityClass;
+		using SimVal = combat::CombatEngine::SimVal;
+		using DisplayVal = combat::CombatEngine::DisplayVal;
+		static constexpr EntityClass kEntityClass = EntityClass::Player;
+		combat::CombatEngine const& combatEngine = *gCombatEngine;
+
+		auto const dispStat = [&combatEngine]( character::Stats::StatModifier stat ) -> DisplayVal //
+		{
+			return combatEngine.DisplayStandardStat( math::integer_cast<SimVal>( stat ), kEntityClass );
+		};
+		DisplayVal const physAtk = dispStat( charData.mStats.mPhysAtk );
+		DisplayVal const physDef = dispStat( charData.mStats.mPhysDef );
+		DisplayVal const elemAtk = dispStat( charData.mStats.mElemAtk );
+		DisplayVal const elemDef = dispStat( charData.mStats.mElemDef );
+		DisplayVal const balance = dispStat( charData.mStats.mBalance );
+		DisplayVal const techniq = dispStat( charData.mStats.mTechniq );
+		//DisplayVal const elemPwr = dispStat( charData.mStats.mElemPwr );
+
+		//DisplayVal const hp = combatEngine.DisplayHealth(
+		//	combatEngine.LoCalcMaxHealth(
+		//		math::integer_cast<SimVal>( charData.mStats.mMHealth ), kEntityClass ),
+		//	kEntityClass );
+
+		static constexpr size_t kLineBufSize = 16;
+		rftl::array<char, kLineBufSize> lineBuf;
+
+		// TODO: Small icons to make more readable room for more stuff
+		{
+			mInfoRows.at( 0 )->SetText( charData.mDescription.mName );
+
+			//snprintf( lineBuf.data(), lineBuf.size(), "HP % 3u INN %s", hp, charData.mInnate.c_str() );
+			snprintf( lineBuf.data(), lineBuf.size(), "PAt % 2u EAt % 2u", physAtk, elemAtk );
+			lineBuf.back() = '\0';
+			mInfoRows.at( 1 )->SetText( lineBuf.data() );
+
+			snprintf( lineBuf.data(), lineBuf.size(), "PDf % 2u EDf % 2u", physDef, elemDef );
+			lineBuf.back() = '\0';
+			mInfoRows.at( 2 )->SetText( lineBuf.data() );
+
+			snprintf( lineBuf.data(), lineBuf.size(), "Bal % 2u Tec % 2u", balance, techniq );
+			lineBuf.back() = '\0';
+			mInfoRows.at( 3 )->SetText( lineBuf.data() );
+		}
+	}
 }
 
 
@@ -97,11 +149,12 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 			DefaultCreator<ColumnSlicer>::Create(
 				charSlotColumnRatios ) );
 
-	// 3 info rows
+	// 4 info rows
 	RowSlicer::Ratios const infoRowRatios = {
-		{ 1.f / 3.f, true },
-		{ 1.f / 3.f, true },
-		{ 1.f / 3.f, true },
+		{ 6.f / 18.f, true },
+		{ 4.f / 18.f, true },
+		{ 4.f / 18.f, true },
+		{ 4.f / 18.f, true },
 	};
 	WeakPtr<RowSlicer> const infoRowSlicer =
 		uiManager.AssignStrongController(
@@ -109,7 +162,7 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 			DefaultCreator<RowSlicer>::Create(
 				infoRowRatios ) );
 
-	for( size_t i_info = 0; i_info < 3; i_info++ )
+	for( size_t i_info = 0; i_info < 4; i_info++ )
 	{
 		// Info
 		WeakPtr<TextLabel>& info = mInfoRows.at( i_info );
@@ -118,7 +171,14 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 				infoRowSlicer->GetChildContainerID( i_info ),
 				DefaultCreator<TextLabel>::Create() );
 		info->SetJustification( ui::Justification::MiddleLeft );
-		info->SetFont( ui::font::LargeMenuText );
+		if( i_info == 0 )
+		{
+			info->SetFont( ui::font::LargeMenuText );
+		}
+		else
+		{
+			info->SetFont( ui::font::NarrowQuarterTileMono );
+		}
 		info->SetText( "UNSET" );
 		info->SetColor( math::Color3f::kWhite );
 		info->SetBorder( true );
