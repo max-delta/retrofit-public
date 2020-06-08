@@ -552,10 +552,10 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 	}
 
 	// TODO: Check for valid innates from a list
-	if( innate != "yellow" )
+	if( innate.size() != 3 )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid innate" );
-		innate = "yellow";
+		innate = "inv";
 	}
 
 	// Species
