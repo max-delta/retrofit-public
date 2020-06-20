@@ -31,6 +31,8 @@ public:
 	WeakPtr<T> AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<T>&& controller );
 	void SetWrapping( bool wrapping );
 
+	bool SlotHasCurrentFocus( UIConstContext const& context ) const;
+
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override final;
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override final;
 	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent ) override final;

@@ -85,6 +85,14 @@ void GenericListBox::SetWrapping( bool wrapping )
 
 
 
+bool GenericListBox::SlotHasCurrentFocus( UIConstContext const& context ) const
+{
+	InstancedController const* const slotWithFocus = GetSlotWithFocus( context );
+	return slotWithFocus != nullptr;
+}
+
+
+
 void GenericListBox::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mChildContainerID = CreateChildContainer(

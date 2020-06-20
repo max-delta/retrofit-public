@@ -22,6 +22,7 @@ public:
 	ContainerID GetContainerID() const;
 
 	bool IsCurrentFocus( UIConstContext const& context ) const;
+	bool IsInCurrentFocusStack( UIConstContext const& context ) const;
 
 	WeakPtr<FocusTreeNode> GetMutableFocusTreeNode( UIContext& context );
 	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode );

@@ -47,6 +47,13 @@ bool InstancedController::IsCurrentFocus( UIConstContext const& context ) const
 
 
 
+bool InstancedController::IsInCurrentFocusStack( UIConstContext const& context ) const
+{
+	return context.GetFocusManager().GetFocusTree().IsInCurrentFocusStack( *mFocusTarget );
+}
+
+
+
 WeakPtr<FocusTreeNode> InstancedController::GetMutableFocusTreeNode( UIContext& context )
 {
 	return mFocusTarget->mFocusTreeNode;
