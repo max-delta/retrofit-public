@@ -262,5 +262,14 @@ constexpr auto enum_bitcast( SRC const src ) -> typename rftl::underlying_type<S
 	return static_cast<typename rftl::underlying_type<SRC>::type>( src );
 }
 
+
+
+template<typename DEST,
+	typename rftl::enable_if<rftl::is_enum<DEST>::value, int>::type >
+constexpr DEST enum_bitcast( typename rftl::underlying_type<DEST>::type const src )
+{ 
+	return static_cast<DEST>( src );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }}
