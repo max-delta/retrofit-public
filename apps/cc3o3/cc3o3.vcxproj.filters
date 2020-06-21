@@ -175,6 +175,9 @@
     <ClCompile Include="ui\ElementSlotDisplayCache.cpp">
       <Filter>ui</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\ElementSelector.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -470,6 +473,9 @@
     </ClInclude>
     <ClInclude Include="ui\ElementTilesetValues.h">
       <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\ElementSelector.h">
+      <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
