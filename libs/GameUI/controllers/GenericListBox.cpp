@@ -360,7 +360,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 		return node.mFavoredChild != initial;
 	}
 
-	return false;
+	return OnUnhandledFocusEvent( context, focusEvent );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -427,6 +427,13 @@ void GenericListBox::PostInstanceAssign( UIContext& context, Container& containe
 
 
 bool GenericListBox::ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const
+{
+	return false;
+}
+
+
+
+bool GenericListBox::OnUnhandledFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
 	return false;
 }

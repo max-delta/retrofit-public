@@ -47,6 +47,7 @@ protected:
 
 	virtual void PostInstanceAssign( UIContext& context, Container& container );
 	virtual bool ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const;
+	virtual bool OnUnhandledFocusEvent( UIContext& context, FocusEvent const& focusEvent );
 
 
 	//
