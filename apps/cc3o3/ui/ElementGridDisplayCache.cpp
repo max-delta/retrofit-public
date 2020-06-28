@@ -27,7 +27,7 @@ void ElementGridDisplayCache::UpdateFromCharacter( state::ObjectRef const& chara
 				i++;
 			}
 
-			slot.mTilesetIndex = ElementTilesetIndex::Invalid;
+			slot.mTilesetIndex = ElementTilesetIndex::Purple;
 		}
 	}
 }

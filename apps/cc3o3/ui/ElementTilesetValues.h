@@ -19,6 +19,8 @@ static constexpr char const kElementTilesetMicroName[] = "elemgrid_2_4";
 static constexpr gfx::PPUCoordElem kElementTileMicroWidth = 2;
 static constexpr gfx::PPUCoordElem kElementTileMicroHeight = 4;
 
+static constexpr int8_t kElementTilesetOffsetDark = 1;
+static constexpr int8_t kElementTilesetOffsetReserved = 2;
 
 enum class ElementTilesetIndex : int8_t
 {
@@ -29,44 +31,48 @@ enum class ElementTilesetIndex : int8_t
 	TopBorder,
 
 	Unallocated,
-	Hashed,
-	Invalid,
+	ReservedHashed,
+	ReservedSolid,
 
-	White,
-	Grey,
+	ElementStart,
+
+	White = ElementStart,
+	WhiteDark,
+	WhiteReserved,
+
 	Black,
-
-	DarkRed,
-	DarkOrange,
-	DarkYellow,
-
-	DarkLime,
-	DarkGreen,
-	DarkTurqoise,
-
-	DarkCyan,
-	DarkSea,
-	DarkBlue,
-
-	DarkPurple,
-	DarkPink,
-	DarkMagenta,
+	BlackDark,
+	BlackReserved,
 
 	Red,
-	Orange,
-	Yellow,
+	RedDark,
+	RedReserved,
 
-	Lime,
-	Green,
-	Turqoise,
-
-	Cyan,
-	Sea,
 	Blue,
+	BlueDark,
+	BlueReserved,
+
+	Yellow,
+	YellowDark,
+	YellowReserved,
+
+	Green,
+	GreenDark,
+	GreenReserved,
+
+	Material,
+	MaterialDark,
+	MaterialReserved,
 
 	Purple,
-	Pink,
-	Magenta,
+	PurpleDark,
+	PurpleReserved,
+
+	Orange,
+	OrangeDark,
+	OrangeReserved,
+
+	ElementEnd = OrangeReserved,
 };
 
 ///////////////////////////////////////////////////////////////////////////////
