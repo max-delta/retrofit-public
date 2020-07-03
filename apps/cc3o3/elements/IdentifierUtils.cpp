@@ -7,7 +7,7 @@
 namespace RF::cc::element {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementIdentifier MakeElementIdentifier( ElementString& identifier )
+ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 {
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
@@ -38,9 +38,9 @@ ElementString GetElementString( ElementIdentifier identifier )
 ElementName GetElementName( ElementIdentifier identifier )
 {
 	ElementName retVal = {};
-	retVal.at( 0 ) = '$';
+	retVal.push_back( '$' );
 	memcpy( retVal.data() + 1, &identifier, sizeof( identifier ) );
-	retVal.at( 9 ) = 'N';
+	retVal.push_back( 'N' );
 	return retVal;
 }
 
@@ -48,16 +48,16 @@ ElementName GetElementName( ElementIdentifier identifier )
 
 ElementSynopsis GetElementSynopsis( ElementIdentifier identifier )
 {
-	ElementSynopsis retVal = {};
-	retVal.at( 0 ) = '$';
+	ElementSynopsis retVal( ElementSynopsis::fixed_capacity, '_' );
+	retVal.push_back( '$' );
 	memcpy( retVal.data() + 1, &identifier, sizeof( identifier ) );
-	retVal.at( 9 ) = 'S';
+	retVal.push_back( 'S' );
 	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-InnateIdentifier MakeInnateIdentifier( InnateString& identifier )
+InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 {
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );

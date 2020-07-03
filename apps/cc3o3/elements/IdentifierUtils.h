@@ -18,7 +18,7 @@ using InnateString = rftl::static_string<sizeof( InnateIdentifier )>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementIdentifier MakeElementIdentifier( ElementString& identifier );
+ElementIdentifier MakeElementIdentifier( ElementString const& identifier );
 ElementIdentifier MakeElementIdentifier( rftl::string const& identifier );
 ElementString GetElementString( ElementIdentifier identifier );
 ElementName GetElementName( ElementIdentifier identifier );
@@ -26,7 +26,7 @@ ElementSynopsis GetElementSynopsis( ElementIdentifier identifier );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-InnateIdentifier MakeInnateIdentifier( InnateString& identifier );
+InnateIdentifier MakeInnateIdentifier( InnateString const& identifier );
 InnateIdentifier MakeInnateIdentifier( rftl::string const& identifier );
 InnateString GetInnateString( InnateIdentifier identifier );
 
