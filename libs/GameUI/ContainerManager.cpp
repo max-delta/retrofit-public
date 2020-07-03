@@ -179,7 +179,7 @@ gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const&
 
 	// Walk back up tree to root
 	gfx::PPUDepthLayer retVal = mRootRenderDepth;
-	ContainerID id = container.mParentContainerID;
+	ContainerID id = container.mContainerID;
 	while( id != kInvalidContainerID )
 	{
 		Container const& currentContainer = mContainers.at( id );
