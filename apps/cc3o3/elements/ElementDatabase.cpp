@@ -130,6 +130,29 @@ ElementDesc ElementDatabase::GetElementDesc( ElementIdentifier identifier ) cons
 
 
 
+ElementDatabase::ElementCounts ElementDatabase::GetElementsBasedOnTier( company::StoryTier tier ) const
+{
+	RF_ASSERT( tier != company::kInvalidStoryTier );
+
+	ElementCounts retVal;
+
+	for( TierUnlockLookup::value_type const& pair : mTierUnlocks )
+	{
+		ElementIdentifier const& identifier = pair.first;
+		TierUnlocks const& unlocks = pair.second;
+
+		size_t const count = unlocks.at( tier - 1u );
+		if( count > 0 )
+		{
+			retVal[identifier] = count;
+		}
+	}
+
+	return retVal;
+}
+
+
+
 rftl::deque<rftl::deque<rftl::string>> ElementDatabase::LoadCSV( file::VFSPath const& path )
 {
 	file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
