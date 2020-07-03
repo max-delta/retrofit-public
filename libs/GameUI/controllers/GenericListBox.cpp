@@ -176,7 +176,9 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 	}
 	bool const isFirst = focusEvent.mEventType == focusevent::Command_NavigateToFirst;
 	bool const isLast = focusEvent.mEventType == focusevent::Command_NavigateToLast;
-	bool const isCycle = isPrevious || isNext || isFirst || isLast;
+	bool const isIncremental = isPrevious || isNext;
+	bool const isTargeted = isFirst || isLast;
+	bool const isCycle = isIncremental || isTargeted;
 
 	if( isCycle )
 	{
@@ -357,7 +359,27 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			}
 		}
 
-		return node.mFavoredChild != initial;
+		if( node.mFavoredChild != initial )
+		{
+			// Event resulted in a change
+			return true;
+		}
+		else if( isTargeted )
+		{
+			// Sink
+			// TODO: Configurable?
+			return false;
+		}
+		else if( isIncremental && mWrapping )
+		{
+			// Sink
+			// TODO: Configurable?
+			return false;
+		}
+		else
+		{
+			// Fallthrough
+		}
 	}
 
 	return OnUnhandledFocusEvent( context, focusEvent );
