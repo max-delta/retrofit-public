@@ -20,7 +20,7 @@ namespace RF { namespace ui { namespace controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 PaddedPassthrough::PaddedPassthrough( gfx::PPUCoord paddingDimensions )
-	: mPaddingDimensions( std::move( paddingDimensions ) )
+	: mPaddingDimensions( rftl::move( paddingDimensions ) )
 {
 	//
 }
