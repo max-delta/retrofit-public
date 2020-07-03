@@ -178,6 +178,12 @@
     <ClCompile Include="ui\controllers\ElementGridSelector.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="ui\ElementStockpileDisplayCache.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -475,6 +481,12 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="ui\controllers\ElementGridSelector.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ElementStockpileDisplayCache.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\ElementStockpileSelector.h">
       <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
