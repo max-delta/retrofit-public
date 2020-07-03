@@ -111,7 +111,7 @@ bool ElementStockpileSelector::OnUnhandledFocusEvent( UIContext& context, FocusE
 			UpdateDisplay();
 			return true;
 		}
-		else if( isNext && mListOffset + 1 < mCache.GetStockpileRef().size() )
+		else if( isNext && mListOffset + mNumSlots + 1 < mCache.GetStockpileRef().size() )
 		{
 			mListOffset++;
 			UpdateDisplay();
