@@ -4,8 +4,8 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/combat/CombatEngine.h"
-#include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/ElementDatabase.h"
+#include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/CommonPaths.h"
 
@@ -31,15 +31,15 @@ WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 WeakPtr<combat::CombatEngine> gCombatEngine;
-WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<element::ElementDatabase> gElementDatabase;
+WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<state::ObjectManager> gObjectManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
 static UniquePtr<combat::CombatEngine> sCombatEngine;
-static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<element::ElementDatabase> sElementDatabase;
+static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<state::ObjectManager> sObjectManager;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -72,13 +72,13 @@ void SystemStartup()
 	sCombatEngine = DefaultCreator<combat::CombatEngine>::Create( app::gVfs );
 	gCombatEngine = sCombatEngine;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing company manager..." );
-	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs );
-	gCompanyManager = sCompanyManager;
-
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing element database..." );
 	sElementDatabase = DefaultCreator<element::ElementDatabase>::Create( app::gVfs );
 	gElementDatabase = sElementDatabase;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing company manager..." );
+	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs, gElementDatabase );
+	gCompanyManager = sCompanyManager;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing object manager..." );
 	sObjectManager = DefaultCreator<state::ObjectManager>::Create(
@@ -93,8 +93,8 @@ void SystemStartup()
 void SystemShutdown()
 {
 	sObjectManager = nullptr;
-	sElementDatabase = nullptr;
 	sCompanyManager = nullptr;
+	sElementDatabase = nullptr;
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;

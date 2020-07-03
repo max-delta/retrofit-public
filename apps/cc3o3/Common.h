@@ -14,11 +14,11 @@ class CharacterDatabase;
 namespace RF::cc::combat {
 class CombatEngine;
 }
-namespace RF::cc::company {
-class CompanyManager;
-}
 namespace RF::cc::element {
 class ElementDatabase;
+}
+namespace RF::cc::company {
+class CompanyManager;
 }
 namespace RF::component {
 template<typename TypeResolver>
@@ -37,8 +37,8 @@ extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 extern WeakPtr<combat::CombatEngine> gCombatEngine;
-extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<element::ElementDatabase> gElementDatabase;
+extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;
 
 void SystemStartup();
