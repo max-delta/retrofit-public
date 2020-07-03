@@ -11,6 +11,7 @@
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CharacterSlotList.h"
 #include "cc3o3/ui/controllers/ElementGridSelector.h"
+#include "cc3o3/ui/controllers/ElementStockpileSelector.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -91,6 +92,7 @@ public:
 
 	WeakPtr<ui::controller::CharacterSlotList> mCharSlots;
 	WeakPtr<ui::controller::ElementGridSelector> mElementGridSelector;
+	WeakPtr<ui::controller::ElementStockpileSelector> mElementStockpileSelector;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
@@ -326,23 +328,54 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::RowSlicer>::Create(
 						elementManagerRowRatios ) );
 
-			WeakPtr<ui::controller::Floater> const elementSelectorFloater =
+			// TODO: Description display on top
+
+			// 2 subsections for selectors on bottom
+			WeakPtr<ui::controller::MultiPassthrough> const selectorPassthroughs =
 				uiManager.AssignStrongController(
 					elementManagerRowSlicer->GetChildContainerID( 1 ),
+					DefaultCreator<ui::controller::MultiPassthrough>::Create( 2u ) );
+
+			// Element grid selector
+			WeakPtr<ui::controller::Floater> const elementGridSelectorFloater =
+				uiManager.AssignStrongController(
+					selectorPassthroughs->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::Floater>::Create(
 						ui::controller::ElementGridSelector::kContainerWidth,
 						ui::controller::ElementGridSelector::kContainerHeight,
 						ui::Justification::MiddleCenter ) );
-
-			// Element grid selector
 			WeakPtr<ui::controller::ElementGridSelector> const elementGridSelector =
 				uiManager.AssignStrongController(
-					elementSelectorFloater->GetChildContainerID(),
+					elementGridSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::ElementGridSelector>::Create() );
 			elementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
 			elementGridSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mElementGridSelector = elementGridSelector;
+
+			// Element stockpile selector
+			WeakPtr<ui::controller::Floater> const elementStockpileSelectorFloater =
+				uiManager.AssignStrongController(
+					selectorPassthroughs->GetChildContainerID( 1 ),
+					DefaultCreator<ui::controller::Floater>::Create(
+						ui::controller::ElementStockpileSelector::kContainerWidth,
+						ui::controller::ElementStockpileSelector::kContainerHeight,
+						ui::Justification::BottomRight ) );
+			WeakPtr<ui::controller::ElementStockpileSelector> const elementStockpileSelector =
+				uiManager.AssignStrongController(
+					elementStockpileSelectorFloater->GetChildContainerID(),
+					DefaultCreator<ui::controller::ElementStockpileSelector>::Create() );
+			elementStockpileSelector->UpdateFromCompany( state::ObjectRef{} );
+			elementStockpileSelector->AddAsSiblingAfterFocusTreeNode(
+				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
+			internalState.mElementStockpileSelector = elementStockpileSelector;
+
+			// Raise the stockpile selector over the grid selector
+			uiManager.AdjustRecommendedRenderDepth( elementStockpileSelector->GetContainerID(), -3 );
+
+			// Hide stockpile selector by default
+			elementStockpileSelector->SetRenderingBlocked( true );
+			elementStockpileSelector->SetChildRenderingBlocked( true );
 		}
 
 		// Options section
@@ -508,10 +541,26 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
 							}
-							else
+							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
-								// TODO: Grid -> Stockpile
-								// TODO: Grid <- Stockpile (assign)
+								// Grid -> Stockpile
+								internalState.mElementStockpileSelector->SetRenderingBlocked( false );
+								internalState.mElementStockpileSelector->SetChildRenderingBlocked( false );
+								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
+									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
+									internalState.mElementStockpileSelector->GetMutableFocusTreeNode( uiContext ) );
+								// TODO: Darken grid
+							}
+							else if( internalState.mElementStockpileSelector->SlotHasCurrentFocus( uiContext ) )
+							{
+								// Grid <- Stockpile (assign)
+								internalState.mElementStockpileSelector->SetRenderingBlocked( true );
+								internalState.mElementStockpileSelector->SetChildRenderingBlocked( true );
+								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
+									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
+									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
+								// TODO: Un-darken grid
+								// TODO: Assignment logic
 							}
 						}
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
@@ -528,9 +577,15 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mCharSlots->GetMutableFocusTreeNode( uiContext ) );
 							}
-							else
+							else if( internalState.mElementStockpileSelector->SlotHasCurrentFocus( uiContext ) )
 							{
-								// TODO: Grid <- Stockpile
+								// Grid <- Stockpile
+								internalState.mElementStockpileSelector->SetRenderingBlocked( true );
+								internalState.mElementStockpileSelector->SetChildRenderingBlocked( true );
+								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
+									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
+									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
+								// TODO: Un-darken grid
 							}
 						}
 					}
