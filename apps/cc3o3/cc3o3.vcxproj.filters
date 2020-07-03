@@ -175,7 +175,7 @@
     <ClCompile Include="ui\ElementSlotDisplayCache.cpp">
       <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="ui\controllers\ElementSelector.cpp">
+    <ClCompile Include="ui\controllers\ElementGridSelector.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
   </ItemGroup>
@@ -474,7 +474,7 @@
     <ClInclude Include="ui\ElementTilesetValues.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\controllers\ElementSelector.h">
+    <ClInclude Include="ui\controllers\ElementGridSelector.h">
       <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>

@@ -15,10 +15,10 @@ namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 // NOTE: Requires a specifically-sized container
-class ElementSelector final : public GenericListBox
+class ElementGridSelector final : public GenericListBox
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
-	RF_NO_COPY( ElementSelector );
+	RF_NO_COPY( ElementGridSelector );
 
 	//
 	// Types and constants
@@ -30,7 +30,7 @@ public:
 	//
 	// Public methods
 public:
-	ElementSelector();
+	ElementGridSelector();
 
 	void UpdateFromCharacter( state::ObjectRef const& character );
 	void UpdateFromCache( ElementGridDisplayCache const& cache );

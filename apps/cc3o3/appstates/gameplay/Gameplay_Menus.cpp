@@ -10,7 +10,7 @@
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CharacterSlotList.h"
-#include "cc3o3/ui/controllers/ElementSelector.h"
+#include "cc3o3/ui/controllers/ElementGridSelector.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -90,7 +90,7 @@ public:
 	TopLevelControllers mTopLevelControllers;
 
 	WeakPtr<ui::controller::CharacterSlotList> mCharSlots;
-	WeakPtr<ui::controller::ElementSelector> mElementSelector;
+	WeakPtr<ui::controller::ElementGridSelector> mElementGridSelector;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 };
@@ -330,19 +330,19 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					elementManagerRowSlicer->GetChildContainerID( 1 ),
 					DefaultCreator<ui::controller::Floater>::Create(
-						ui::controller::ElementSelector::kContainerWidth,
-						ui::controller::ElementSelector::kContainerHeight,
+						ui::controller::ElementGridSelector::kContainerWidth,
+						ui::controller::ElementGridSelector::kContainerHeight,
 						ui::Justification::MiddleCenter ) );
 
-			// Element selector
-			WeakPtr<ui::controller::ElementSelector> const elementSelector =
+			// Element grid selector
+			WeakPtr<ui::controller::ElementGridSelector> const elementGridSelector =
 				uiManager.AssignStrongController(
 					elementSelectorFloater->GetChildContainerID(),
-					DefaultCreator<ui::controller::ElementSelector>::Create() );
-			elementSelector->UpdateFromCharacter( state::ObjectRef{} );
-			elementSelector->AddAsSiblingAfterFocusTreeNode(
+					DefaultCreator<ui::controller::ElementGridSelector>::Create() );
+			elementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
+			elementGridSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
-			internalState.mElementSelector = elementSelector;
+			internalState.mElementGridSelector = elementGridSelector;
 		}
 
 		// Options section
@@ -506,7 +506,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								// Char -> Grid
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
-									internalState.mElementSelector->GetMutableFocusTreeNode( uiContext ) );
+									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
 							}
 							else
 							{
@@ -521,7 +521,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								// Exit section
 								internalState.ShowSelector( uiContext );
 							}
-							else if( internalState.mElementSelector->SlotHasCurrentFocus( uiContext ) )
+							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
 								// Char <- Grid
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(

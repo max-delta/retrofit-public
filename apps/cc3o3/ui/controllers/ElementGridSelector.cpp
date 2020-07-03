@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ElementSelector.h"
+#include "ElementGridSelector.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -16,16 +16,16 @@
 #include "core/ptr/default_creator.h"
 
 
-RFTYPE_CREATE_META( RF::cc::ui::controller::ElementSelector )
+RFTYPE_CREATE_META( RF::cc::ui::controller::ElementGridSelector )
 {
 	RFTYPE_META().BaseClass<RF::ui::controller::InstancedController>();
-	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::cc::ui::controller::ElementSelector );
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::cc::ui::controller::ElementGridSelector );
 }
 
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementSelector::ElementSelector()
+ElementGridSelector::ElementGridSelector()
 	: GenericListBox( character::kMaxSlotsPerElementLevel )
 {
 	//
@@ -33,7 +33,7 @@ ElementSelector::ElementSelector()
 
 
 
-void ElementSelector::UpdateFromCharacter( state::ObjectRef const& character )
+void ElementGridSelector::UpdateFromCharacter( state::ObjectRef const& character )
 {
 	mCache.UpdateFromCharacter( character, true );
 	UpdateDisplay();
@@ -41,7 +41,7 @@ void ElementSelector::UpdateFromCharacter( state::ObjectRef const& character )
 
 
 
-void ElementSelector::UpdateFromCache( ElementGridDisplayCache const& cache )
+void ElementGridSelector::UpdateFromCache( ElementGridDisplayCache const& cache )
 {
 	mCache = cache;
 	UpdateDisplay();
@@ -49,7 +49,7 @@ void ElementSelector::UpdateFromCache( ElementGridDisplayCache const& cache )
 
 
 
-void ElementSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
+void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	RF_ASSERT_MSG( container.mAABB.Width() == kContainerWidth, "Container not sized as needed" );
 	RF_ASSERT_MSG( container.mAABB.Height() == kContainerHeight, "Container not sized as needed" );
@@ -68,7 +68,7 @@ void ElementSelector::OnRender( UIConstContext const& context, Container const& 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void ElementSelector::PostInstanceAssign( UIContext& context, Container& container )
+void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& container )
 {
 	gfx::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
@@ -89,7 +89,7 @@ void ElementSelector::PostInstanceAssign( UIContext& context, Container& contain
 
 
 
-bool ElementSelector::ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const
+bool ElementGridSelector::ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const
 {
 	// TODO
 	return false;
@@ -97,7 +97,7 @@ bool ElementSelector::ShouldSkipFocus( UIConstContext const& context, WeakPtr<In
 
 
 
-bool ElementSelector::OnUnhandledFocusEvent( UIContext& context, FocusEvent const& focusEvent )
+bool ElementGridSelector::OnUnhandledFocusEvent( UIContext& context, FocusEvent const& focusEvent )
 {
 	bool const isPrevious = focusEvent.mEventType == focusevent::Command_NavigateLeft;
 	bool const isNext = focusEvent.mEventType == focusevent::Command_NavigateRight;
@@ -128,7 +128,7 @@ bool ElementSelector::OnUnhandledFocusEvent( UIContext& context, FocusEvent cons
 
 
 
-WeakPtr<TextLabel> ElementSelector::GetMutableSlotController( size_t slotIndex )
+WeakPtr<TextLabel> ElementGridSelector::GetMutableSlotController( size_t slotIndex )
 {
 	WeakPtr<TextLabel> retVal;
 	PtrTransformer<TextLabel>::PerformNonTypesafeTransformation(
@@ -138,7 +138,7 @@ WeakPtr<TextLabel> ElementSelector::GetMutableSlotController( size_t slotIndex )
 
 
 
-void ElementSelector::UpdateDisplay()
+void ElementGridSelector::UpdateDisplay()
 {
 	// TODO: Sanitize level if it would be in a column that has no valid slots,
 	//  such as when not high enough level to unlock those
