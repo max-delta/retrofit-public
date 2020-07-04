@@ -84,4 +84,43 @@ InnateString GetInnateString( InnateIdentifier identifier )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+bool operator==( InnateIdentifier const& lhs, InnateString const& rhs )
+{
+	return lhs == MakeInnateIdentifier( rhs );
+}
+
+
+
+bool SortPredicateInnate( InnateIdentifier const& lhs, InnateIdentifier const& rhs )
+{
+	// Sort special known types before everything else
+	static constexpr auto coerce = []( InnateIdentifier& innate ) -> void //
+	{
+		if( innate <= 6 )
+			innate += 6;
+		else if( innate == InnateString{ 'r', 'e', 'd' } )
+			innate = 0;
+		else if( innate == InnateString{ 'b', 'l', 'u' } )
+			innate = 1;
+		else if( innate == InnateString{ 'y', 'e', 'l' } )
+			innate = 2;
+		else if( innate == InnateString{ 'g', 'r', 'n' } )
+			innate = 3;
+		else if( innate == InnateString{ 'w', 'h', 't' } )
+			innate = 4;
+		else if( innate == InnateString{ 'b', 'l', 'k' } )
+			innate = 5;
+		else if( innate == InnateString{ 't', 'e', 'k' } )
+			innate = 6;
+	};
+
+	InnateIdentifier l = lhs;
+	InnateIdentifier r = rhs;
+	coerce( l );
+	coerce( r );
+	return l < r;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 }

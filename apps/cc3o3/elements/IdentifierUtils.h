@@ -31,4 +31,9 @@ InnateIdentifier MakeInnateIdentifier( rftl::string const& identifier );
 InnateString GetInnateString( InnateIdentifier identifier );
 
 ///////////////////////////////////////////////////////////////////////////////
+
+bool operator==( InnateIdentifier const& lhs, InnateString const& rhs );
+bool SortPredicateInnate( InnateIdentifier const& lhs, InnateIdentifier const& rhs );
+
+///////////////////////////////////////////////////////////////////////////////
 }
