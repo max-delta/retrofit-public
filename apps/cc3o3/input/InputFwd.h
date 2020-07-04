@@ -53,6 +53,8 @@ enum : RawCommandType
 	HatRight,
 	HatRightStop,
 
+	PgUp,
+	PgDn,
 	Home,
 	End,
 
@@ -76,6 +78,8 @@ enum : GameCommandType
 	UINavigateDown,
 	UINavigateLeft,
 	UINavigateRight,
+	UINavigateToPreviousGroup,
+	UINavigateToNextGroup,
 	UINavigateToFirst,
 	UINavigateToLast,
 	UIActivateSelection,

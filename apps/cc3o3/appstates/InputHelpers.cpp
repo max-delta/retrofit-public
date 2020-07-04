@@ -42,6 +42,12 @@ rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 			case input::command::game::UINavigateRight:
 				retVal.emplace_back( ui::focusevent::Command_NavigateRight );
 				break;
+			case input::command::game::UINavigateToPreviousGroup:
+				retVal.emplace_back( ui::focusevent::Command_NavigateToPreviousGroup );
+				break;
+			case input::command::game::UINavigateToNextGroup:
+				retVal.emplace_back( ui::focusevent::Command_NavigateToNextGroup );
+				break;
 			case input::command::game::UINavigateToFirst:
 				retVal.emplace_back( ui::focusevent::Command_NavigateToFirst );
 				break;

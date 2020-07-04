@@ -49,6 +49,10 @@ void HardcodedSetup()
 		logicalMapping['D'][input::DigitalPinState::Active] = command::raw::Right;
 		logicalMapping['D'][input::DigitalPinState::Inactive] = command::raw::RightStop;
 
+		logicalMapping[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows ('[')
+		logicalMapping[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows (']')
+		logicalMapping[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows
+		logicalMapping[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows
 		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with arrows
 		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with arrows
 
@@ -71,6 +75,10 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = command::raw::Right;
 		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Inactive] = command::raw::RightStop;
 
+		logicalMapping[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD ('[')
+		logicalMapping[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD (']')
+		logicalMapping[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD
 		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with WASD
 		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with WASD
 
@@ -109,6 +117,8 @@ void HardcodedSetup()
 		commandMapping[command::raw::Down] = command::game::UINavigateDown;
 		commandMapping[command::raw::Left] = command::game::UINavigateLeft;
 		commandMapping[command::raw::Right] = command::game::UINavigateRight;
+		commandMapping[command::raw::PgUp] = command::game::UINavigateToPreviousGroup;
+		commandMapping[command::raw::PgDn] = command::game::UINavigateToNextGroup;
 		commandMapping[command::raw::Home] = command::game::UINavigateToFirst;
 		commandMapping[command::raw::End] = command::game::UINavigateToLast;
 		commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;

@@ -51,6 +51,8 @@ enum : FocusEventType
 	Command_NavigateLeft,
 	Command_NavigateRight,
 
+	Command_NavigateToPreviousGroup,
+	Command_NavigateToNextGroup,
 	Command_NavigateToFirst,
 	Command_NavigateToLast,
 
