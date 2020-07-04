@@ -365,6 +365,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					elementStockpileSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::ElementStockpileSelector>::Create() );
+			elementStockpileSelector->SetPagination( true );
 			elementStockpileSelector->UpdateFromCompany( state::ObjectRef{} );
 			elementStockpileSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );

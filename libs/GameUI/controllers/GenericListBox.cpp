@@ -85,6 +85,13 @@ void GenericListBox::SetWrapping( bool wrapping )
 
 
 
+void GenericListBox::SetPagination( bool pagination )
+{
+	mPagination = pagination;
+}
+
+
+
 bool GenericListBox::SlotHasCurrentFocus( UIConstContext const& context ) const
 {
 	InstancedController const* const slotWithFocus = GetSlotWithFocus( context );
@@ -174,9 +181,11 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 		isPrevious = focusEvent.mEventType == focusevent::Command_NavigateLeft;
 		isNext = focusEvent.mEventType == focusevent::Command_NavigateRight;
 	}
+	bool const isPageUp = mPagination && focusEvent.mEventType == focusevent::Command_NavigateToPreviousGroup;
+	bool const isPageDown = mPagination && focusEvent.mEventType == focusevent::Command_NavigateToNextGroup;
 	bool const isFirst = focusEvent.mEventType == focusevent::Command_NavigateToFirst;
 	bool const isLast = focusEvent.mEventType == focusevent::Command_NavigateToLast;
-	bool const isIncremental = isPrevious || isNext;
+	bool const isIncremental = isPrevious || isNext || isPageUp || isPageDown;
 	bool const isTargeted = isFirst || isLast;
 	bool const isCycle = isIncremental || isTargeted;
 
@@ -298,7 +307,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 				}
 			}
 		}
-		else if( isFirst )
+		else if( isFirst || isPageUp )
 		{
 			// Pass 1, snap forward
 			focusTree.CycleFocusToFirstChild( node );
@@ -328,7 +337,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 				}
 			}
 		}
-		else if( isLast )
+		else if( isLast || isPageDown )
 		{
 			// Pass 1, snap forward
 			focusTree.CycleFocusToLastChild( node );
@@ -363,12 +372,6 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 		{
 			// Event resulted in a change
 			return true;
-		}
-		else if( isTargeted )
-		{
-			// Sink
-			// TODO: Configurable?
-			return false;
 		}
 		else if( isIncremental && mWrapping )
 		{

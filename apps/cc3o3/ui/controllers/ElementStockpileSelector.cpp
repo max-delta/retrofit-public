@@ -101,19 +101,71 @@ bool ElementStockpileSelector::OnUnhandledFocusEvent( UIContext& context, FocusE
 {
 	bool const isPrevious = focusEvent.mEventType == focusevent::Command_NavigateUp;
 	bool const isNext = focusEvent.mEventType == focusevent::Command_NavigateDown;
-	bool const isCycle = isPrevious || isNext;
+	bool const isPageUp = mPagination && focusEvent.mEventType == focusevent::Command_NavigateToPreviousGroup;
+	bool const isPageDown = mPagination && focusEvent.mEventType == focusevent::Command_NavigateToNextGroup;
+	bool const isFirst = focusEvent.mEventType == focusevent::Command_NavigateToFirst;
+	bool const isLast = focusEvent.mEventType == focusevent::Command_NavigateToLast;
+	bool const isIncremental = isPrevious || isNext || isPageUp || isPageDown;
+	bool const isTargeted = isFirst || isLast;
+	bool const isCycle = isIncremental || isTargeted;
 
 	if( isCycle )
 	{
+		size_t const stockpileSize = mCache.GetStockpileRef().size();
+
 		if( isPrevious && mListOffset > 0 )
 		{
 			mListOffset--;
 			UpdateDisplay();
 			return true;
 		}
-		else if( isNext && mListOffset + mNumSlots < mCache.GetStockpileRef().size() )
+		else if( isPageUp )
+		{
+			if( mListOffset >= mNumSlots )
+			{
+				mListOffset -= mNumSlots;
+				UpdateDisplay();
+				return true;
+			}
+			else
+			{
+				// Snap to begin
+				mListOffset = 0;
+				UpdateDisplay();
+				return true;
+			}
+		}
+		else if( isFirst )
+		{
+			mListOffset = 0;
+			UpdateDisplay();
+			return true;
+		}
+		else if( isNext && mListOffset + mNumSlots < stockpileSize )
 		{
 			mListOffset++;
+			UpdateDisplay();
+			return true;
+		}
+		else if( isPageDown )
+		{
+			if( mListOffset + mNumSlots + ( mNumSlots - 1 ) < stockpileSize )
+			{
+				mListOffset += mNumSlots;
+				UpdateDisplay();
+				return true;
+			}
+			else
+			{
+				// Snap to end
+				mListOffset = stockpileSize - mNumSlots;
+				UpdateDisplay();
+				return true;
+			}
+		}
+		else if( isLast )
+		{
+			mListOffset = stockpileSize - mNumSlots;
 			UpdateDisplay();
 			return true;
 		}

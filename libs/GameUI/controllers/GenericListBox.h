@@ -30,6 +30,7 @@ public:
 	template<typename T>
 	WeakPtr<T> AssignSlotController( UIContext& context, size_t slotIndex, UniquePtr<T>&& controller );
 	void SetWrapping( bool wrapping );
+	void SetPagination( bool pagination );
 
 	bool SlotHasCurrentFocus( UIConstContext const& context ) const;
 
@@ -56,6 +57,7 @@ protected:
 	Orientation const mOrientation;
 	size_t const mNumSlots;
 	bool mWrapping = false;
+	bool mPagination = false;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::vector<ContainerID> mSlicerChildContainerIDs;
 	rftl::vector<WeakPtr<InstancedController>> mSlotControllers;
