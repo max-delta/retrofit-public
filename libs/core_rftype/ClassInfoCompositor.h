@@ -125,7 +125,7 @@ struct ClassInfoCompositor
 
 	template<typename T,
 		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
-		ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
+	ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
 	{
 		static_assert( false, "TODO" );
 		return *this;
@@ -182,17 +182,19 @@ struct CRTCompositionTrigger
 	{
 		Initialize( mCompositor );
 	}
-	template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
+	template<typename TCLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TCLASS, ___RFType_Static_ClassInfo ), int>::type = 0>
 	::RF::reflect::ClassInfo& GetClassInfoStorage()
 	{
+		static_assert( rftl::is_same<TCLASS, CLASS>::value );
 		return CLASS::___RFType_Static_ClassInfo();
 	}
-	template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLASS, ___RFType_Static_ClassInfo ) == false, int>::type = 0>
+	template<typename TCLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( TCLASS, ___RFType_Static_ClassInfo ) == false, int>::type = 0>
 	::RF::reflect::ClassInfo& GetClassInfoStorage()
 	{
+		static_assert( rftl::is_same<TCLASS, CLASS>::value );
 		return mFallbackClassInfo;
 	}
-	void Initialize(::RF::rftype::ClassInfoCompositor<CLASS>& ___RFType_Macro_Target );
+	void Initialize( ::RF::rftype::ClassInfoCompositor<CLASS>& ___RFType_Macro_Target );
 
 	using BackingClassType = CLASS;
 	::RF::reflect::ClassInfo mFallbackClassInfo;

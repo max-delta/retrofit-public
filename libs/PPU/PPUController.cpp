@@ -1162,8 +1162,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
 
 	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileset->mTileWidth );
-	float const texXStep = static_cast<float>( tileset->mTileWidth ) / texture->mWidthPostLoad;
-	float const texYStep = static_cast<float>( tileset->mTileHeight ) / texture->mHeightPostLoad;
+	float const texXStep = math::real_cast<float>( tileset->mTileWidth ) / math::real_cast<float>( texture->mWidthPostLoad );
+	float const texYStep = math::real_cast<float>( tileset->mTileHeight ) / math::real_cast<float>( texture->mHeightPostLoad );
 
 	PPUCoordElem xStep;
 	PPUCoordElem yStep;

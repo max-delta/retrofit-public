@@ -91,7 +91,7 @@ sprite::Bitmap MelaninColorGenerator::GeneratePallete( size_t toneCount ) const
 		float eu = -1.f;
 		if( y > 0 )
 		{
-			float const ratio = static_cast<float>( y ) / melaninCount;
+			float const ratio = math::real_cast<float>( y ) / math::real_cast<float>( melaninCount );
 			eu = math::Lerp( -1.f, 1.f, ratio );
 		}
 
@@ -100,7 +100,7 @@ sprite::Bitmap MelaninColorGenerator::GeneratePallete( size_t toneCount ) const
 			float pheo = -1.f;
 			if( x > 0 )
 			{
-				float const ratio = static_cast<float>( x ) / melaninCount;
+				float const ratio = math::real_cast<float>( x ) / math::real_cast<float>( melaninCount );
 				pheo = math::Lerp( -1.f, 1.f, ratio );
 			}
 

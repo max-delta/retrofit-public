@@ -99,15 +99,15 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 			mInfoRows.at( 0 )->SetText( charData.mDescription.mName );
 
 			//snprintf( lineBuf.data(), lineBuf.size(), "HP % 3u INN %s", hp, charData.mInnate.c_str() );
-			snprintf( lineBuf.data(), lineBuf.size(), "PAt % 2u EAt % 2u", physAtk, elemAtk );
+			snprintf( lineBuf.data(), lineBuf.size(), "PAt %2u EAt %2u", physAtk, elemAtk );
 			lineBuf.back() = '\0';
 			mInfoRows.at( 1 )->SetText( lineBuf.data() );
 
-			snprintf( lineBuf.data(), lineBuf.size(), "PDf % 2u EDf % 2u", physDef, elemDef );
+			snprintf( lineBuf.data(), lineBuf.size(), "PDf %2u EDf %2u", physDef, elemDef );
 			lineBuf.back() = '\0';
 			mInfoRows.at( 2 )->SetText( lineBuf.data() );
 
-			snprintf( lineBuf.data(), lineBuf.size(), "Bal % 2u Tec % 2u", balance, techniq );
+			snprintf( lineBuf.data(), lineBuf.size(), "Bal %2u Tec %2u", balance, techniq );
 			lineBuf.back() = '\0';
 			mInfoRows.at( 3 )->SetText( lineBuf.data() );
 		}

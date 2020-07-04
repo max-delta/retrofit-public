@@ -18,7 +18,7 @@ class PtrBase
 	//
 	// Friends
 private:
-	template<typename T>
+	template<typename AnyT>
 	friend struct PtrTransformer;
 
 

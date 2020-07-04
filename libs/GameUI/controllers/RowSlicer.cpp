@@ -23,7 +23,7 @@ RowSlicer::RowSlicer( Ratios const& ratios )
 	, mRatios( ratios )
 {
 	RF_ASSERT( mRatios.size() >= 2 );
-	#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 	{
 		float total = 0.f;
 		for( Ratios::value_type const& ratio : mRatios )
@@ -32,7 +32,7 @@ RowSlicer::RowSlicer( Ratios const& ratios )
 		}
 		RF_ASSERT( math::Equals( total, 1.f ) );
 	}
-	#endif
+#endif
 }
 
 
@@ -42,7 +42,7 @@ RowSlicer::RowSlicer( size_t numSlices )
 	, mContainers( numSlices, kInvalidContainerID )
 {
 	RF_ASSERT( numSlices >= 2 );
-	float const ratio = 1.f / numSlices;
+	float const ratio = 1.f / math::real_cast<float>( numSlices );
 	for( size_t i = 0; i < numSlices; i++ )
 	{
 		mRatios.emplace_back( ratio, true );
@@ -72,7 +72,7 @@ void RowSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceIn
 	{
 		DestroyContainer( manager, id );
 		id = kInvalidContainerID;
-		mRatios.at(sliceIndex).second = false;
+		mRatios.at( sliceIndex ).second = false;
 	}
 	else
 	{

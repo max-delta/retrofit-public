@@ -14,7 +14,13 @@ template<typename DST, typename SRC>
 constexpr bool could_overflow()
 {
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
+	RF_CLANG_PUSH();
+	// This can raise warnings when using high value integers and
+	//  low-precision floating point (rightfully so)
+	// TODO: Consider using more specializations instead
+	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
 	return rftl::numeric_limits<SRC>::max() > maxDest;
+	RF_CLANG_POP();
 }
 
 
@@ -95,7 +101,13 @@ template<typename DST, typename SRC>
 constexpr typename rftl::enable_if<could_overflow<DST, SRC>(), bool>::type will_overflow( SRC const src )
 {
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
+	RF_CLANG_PUSH();
+	// This can raise warnings when using high value integers and
+	//  low-precision floating point (rightfully so)
+	// TODO: Consider using more specializations instead
+	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
 	return src > maxDest;
+	RF_CLANG_POP();
 }
 
 template<typename DST, typename SRC>
@@ -237,8 +249,7 @@ constexpr uint64_t integer_unsigned_cast( uint64_t const src )
 
 
 
-template<typename DST, typename SRC,
-	typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type>
+template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
 	return integer_cast<DST>( src );
@@ -246,8 +257,7 @@ DST real_cast( SRC const src )
 
 
 
-template<typename DST, typename SRC,
-	typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type>
+template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
 	return static_cast<DST>( src );
@@ -265,9 +275,9 @@ constexpr auto enum_bitcast( SRC const src ) -> typename rftl::underlying_type<S
 
 
 template<typename DEST,
-	typename rftl::enable_if<rftl::is_enum<DEST>::value, int>::type >
+	typename rftl::enable_if<rftl::is_enum<DEST>::value, int>::type>
 constexpr DEST enum_bitcast( typename rftl::underlying_type<DEST>::type const src )
-{ 
+{
 	return static_cast<DEST>( src );
 }
 
