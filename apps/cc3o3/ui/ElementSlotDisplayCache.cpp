@@ -35,23 +35,19 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 	static constexpr auto getTilesetIndex = []( element::InnateIdentifier identifier ) -> ElementTilesetIndex //
 	{
 		using namespace element;
-		auto const match = [&identifier]( InnateString const& str ) -> bool //
-		{
-			return identifier == MakeInnateIdentifier( str );
-		};
-		if( match( { 'w', 'h', 't' } ) )
+		if( identifier == InnateString{ 'w', 'h', 't' } )
 			return ElementTilesetIndex::White;
-		if( match( { 'b', 'l', 'k' } ) )
+		if( identifier == InnateString{ 'b', 'l', 'k' } )
 			return ElementTilesetIndex::Black;
-		if( match( { 'r', 'e', 'd' } ) )
+		if( identifier == InnateString{ 'r', 'e', 'd' } )
 			return ElementTilesetIndex::Red;
-		if( match( { 'b', 'l', 'u' } ) )
+		if( identifier == InnateString{ 'b', 'l', 'u' } )
 			return ElementTilesetIndex::Blue;
-		if( match( { 'y', 'e', 'l' } ) )
+		if( identifier == InnateString{ 'y', 'e', 'l' } )
 			return ElementTilesetIndex::Yellow;
-		if( match( { 'g', 'r', 'n' } ) )
+		if( identifier == InnateString{ 'g', 'r', 'n' } )
 			return ElementTilesetIndex::Green;
-		if( match( { 't', 'e', 'k' } ) )
+		if( identifier == InnateString{ 't', 'e', 'k' } )
 			return ElementTilesetIndex::Material;
 		return ElementTilesetIndex::ReservedHashed;
 	};
