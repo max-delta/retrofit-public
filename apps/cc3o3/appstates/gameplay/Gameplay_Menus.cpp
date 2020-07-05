@@ -578,10 +578,13 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
 
-								// TODO: Assignment logic
+								// Assign
+								state::MutableObjectRef const currentChar = internalState.GetCurrentMutableLoadoutCharacter( uiContext );
+								character::ElementSlotIndex const slot = internalState.mElementGridSelector->GetSelectedIndex( uiContext );
+								element::ElementIdentifier const element = internalState.mElementStockpileSelector->GetSelectedIdentifier( uiContext );
+								gCompanyManager->AssignElementToCharacter( currentChar, slot, element );
 
 								// Un-darken grid (and refresh after assignment)
-								state::ObjectRef const currentChar = internalState.GetCurrentLoadoutCharacter( uiContext );
 								internalState.mElementGridSelector->UpdateFromCharacter( currentChar );
 							}
 						}

@@ -18,8 +18,20 @@ RFTYPE_CREATE_META( RF::cc::character::ElementSlots )
 }
 
 
-namespace RF { namespace cc { namespace character {
+namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
+ElementSlots::Slot const& ElementSlots::At( ElementSlotIndex const& location ) const
+{
+	return mGrid.at( location.first ).at( location.second );
+}
+
+
+
+ElementSlots::Slot& ElementSlots::At( ElementSlotIndex const& location )
+{
+	return mGrid.at( location.first ).at( location.second );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

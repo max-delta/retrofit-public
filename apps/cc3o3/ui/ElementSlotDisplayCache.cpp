@@ -10,6 +10,8 @@ namespace RF::cc::ui {
 
 void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, bool includeStrings )
 {
+	mIdentifier = desc.mIdentifier;
+
 	if( desc.mIdentifier == element::kInvalidElementIdentifier )
 	{
 		*this = {};
@@ -59,6 +61,7 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 
 void ElementSlotDisplayCache::Unallocate()
 {
+	mIdentifier = element::kInvalidElementIdentifier;
 	mName.clear();
 	mTilesetIndex = ElementTilesetIndex::Unallocated;
 }

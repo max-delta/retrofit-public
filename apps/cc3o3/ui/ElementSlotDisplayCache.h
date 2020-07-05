@@ -22,6 +22,7 @@ public:
 	//
 	// Public data
 public:
+	element::ElementIdentifier mIdentifier = element::kInvalidElementIdentifier;
 	rftl::string mName = {};
 	ElementTilesetIndex mTilesetIndex = ElementTilesetIndex::Empty;
 };

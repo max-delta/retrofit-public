@@ -49,6 +49,15 @@ void ElementStockpileSelector::UpdateFromCache( ElementStockpileDisplayCache con
 
 
 
+element::ElementIdentifier ElementStockpileSelector::GetSelectedIdentifier( UIConstContext const& context ) const
+{
+	size_t const displayOffset = GetSlotIndexWithSoftFocus( context );
+	size_t const cacheOffset = mListOffset + displayOffset;
+	return mCache.GetStockpileRef().at( cacheOffset ).mIdentifier;
+}
+
+
+
 void ElementStockpileSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	RF_ASSERT_MSG( container.mAABB.Width() == kContainerWidth, "Container not sized as needed" );

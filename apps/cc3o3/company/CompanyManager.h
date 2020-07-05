@@ -2,6 +2,7 @@
 #include "cc3o3/company/CompanyFwd.h"
 
 #include "cc3o3/elements/ElementFwd.h"
+#include "cc3o3/char/CharFwd.h"
 #include "cc3o3/state/StateFwd.h"
 
 #include "GameInput/InputFwd.h"
@@ -14,6 +15,7 @@
 
 // Forwards
 namespace RF::cc::state::comp {
+class Character;
 class Progression;
 }
 namespace RF::cc::element {
@@ -40,6 +42,7 @@ public:
 		WeakPtr<file::VFS const> const& vfs,
 		WeakPtr<element::ElementDatabase const> const& elementDatabase );
 
+	// Locate various company-related objects
 	state::VariableIdentifier FindCompanyIdentifier( input::PlayerID const& playerID ) const;
 	state::ObjectRef FindCompanyObject( input::PlayerID const& playerID ) const;
 	rftl::array<state::VariableIdentifier, kActiveTeamSize> FindActivePartyIdentifiers( input::PlayerID const& playerID ) const;
@@ -52,6 +55,10 @@ public:
 	// The company's total available elements are determined by progression
 	ElementCounts CalcTotalElements( state::ObjectRef const& company ) const;
 	ElementCounts CalcTotalElements( state::comp::Progression const& progression ) const;
+
+	// Elements are assigned without validation (performed seperately)
+	void AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element );
+	void AssignElementToCharacter( state::comp::Character& character, character::ElementSlotIndex slot, element::ElementIdentifier element );
 
 
 	//

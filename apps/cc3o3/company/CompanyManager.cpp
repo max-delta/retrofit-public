@@ -4,6 +4,7 @@
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/Character.h"
 #include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/elements/ElementDatabase.h"
@@ -161,6 +162,23 @@ CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::comp::Pr
 {
 	// TODO: Additional unlocks from progression
 	return mElementDatabase->GetElementsBasedOnTier( progression.mStoryTier );
+}
+
+
+
+void CompanyManager::AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element )
+{
+	RF_ASSERT( character.IsSet() );
+	WeakPtr<state::comp::Character> const charComp = character.GetMutableComponentInstanceT<state::comp::Character>();
+	RF_ASSERT( charComp != nullptr );
+	AssignElementToCharacter( *charComp, slot, element );
+}
+
+
+
+void CompanyManager::AssignElementToCharacter( state::comp::Character& character, character::ElementSlotIndex slot, element::ElementIdentifier element )
+{
+	character.mCharData.mEquippedElements.At( slot ) = element;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

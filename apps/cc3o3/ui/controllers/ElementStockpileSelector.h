@@ -35,6 +35,8 @@ public:
 	void UpdateFromCompany( state::ObjectRef const& company );
 	void UpdateFromCache( ElementStockpileDisplayCache const& cache );
 
+	element::ElementIdentifier GetSelectedIdentifier( UIConstContext const& context ) const;
+
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
 

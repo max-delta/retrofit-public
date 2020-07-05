@@ -57,6 +57,14 @@ void ElementGridSelector::DarkenAll()
 
 
 
+character::ElementSlotIndex ElementGridSelector::GetSelectedIndex( UIConstContext const& context ) const
+{
+	size_t const columnIndex = GetSlotIndexWithSoftFocus( context );
+	return character::ElementSlotIndex( mLevel, columnIndex );
+}
+
+
+
 void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	RF_ASSERT_MSG( container.mAABB.Width() == kContainerWidth, "Container not sized as needed" );

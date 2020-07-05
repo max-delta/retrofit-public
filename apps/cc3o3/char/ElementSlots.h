@@ -12,10 +12,26 @@ namespace RF { namespace cc { namespace character {
 
 struct ElementSlots
 {
+	//
+	// Types and constants
+public:
 	using Slot = element::ElementIdentifier;
 	using Column = rftl::array<Slot, kMaxSlotsPerElementLevel>;
 	using Grid = rftl::array<Column, kMaxElementLevels>;
 
+
+	//
+	// Public methods
+public:
+	ElementSlots() = default;
+
+	Slot const& At( ElementSlotIndex const& location ) const;
+	Slot& At( ElementSlotIndex const& location );
+
+
+	//
+	// Public data
+public:
 	Grid mGrid = {};
 };
 

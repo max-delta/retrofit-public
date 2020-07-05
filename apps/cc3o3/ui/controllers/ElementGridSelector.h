@@ -36,6 +36,8 @@ public:
 	void UpdateFromCache( ElementGridDisplayCache const& cache );
 	void DarkenAll();
 
+	character::ElementSlotIndex GetSelectedIndex( UIConstContext const& context ) const;
+
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
 
@@ -54,7 +56,7 @@ private:
 	//
 	// Private data
 private:
-	size_t mLevel = 0;
+	element::ElementLevel mLevel = 0;
 	gfx::TileLayer mTileLayer = {};
 	ElementGridDisplayCache mCache = {};
 };
