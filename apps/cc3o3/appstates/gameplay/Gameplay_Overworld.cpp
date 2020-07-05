@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Gameplay_Overworld.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Roster.h"
@@ -151,31 +153,21 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 	{
 		using namespace state;
 
-		input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
-
-		rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
-		VariableIdentifier const companyRoot( "company", playerIDAsString );
-
-		// Find company object
-		ObjectRef const company = FindObjectByIdentifier( companyRoot );
-		RFLOG_TEST_AND_FATAL( company.IsSet(), companyRoot, RFCAT_CC3O3, "Failed to find company" );
+		// Get the active party characters
+		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
+			gCompanyManager->FindMutableActivePartyObjects( input::HardcodedGetLocalPlayer() );
 
 		// For each active team member...
-		VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
-		comp::Roster const& roster = *company.GetComponentInstanceT<comp::Roster>();
-		for( size_t i_teamIndex = 0; i_teamIndex < comp::Roster::kActiveTeamSize; i_teamIndex++ )
+		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
 		{
-			comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
-			if( rosterIndex == comp::Roster::kInvalidRosterIndex )
+			state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
+			if( character.IsSet() == false )
 			{
+				// Not active
 				continue;
 			}
-			rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
-			VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
 
-			// Find character object and components
-			MutableObjectRef const character = FindMutableObjectByIdentifier( charRoot );
-			RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
+			// Find character components
 			comp::OverworldVisual& visual = *character.GetMutableComponentInstanceT<comp::OverworldVisual>();
 			comp::OverworldMovement& movement = *character.GetMutableComponentInstanceT<comp::OverworldMovement>();
 
@@ -218,7 +210,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 						anim = idle ? &visual.mIdleWest : &visual.mWalkWest;
 						break;
 					default:
-						RFLOG_FATAL( charRoot, RFCAT_CC3O3, "Unexpected codepath" );
+						RFLOG_FATAL( character, RFCAT_CC3O3, "Unexpected codepath" );
 				}
 				object.mFramePackID = anim->mFramePackID;
 

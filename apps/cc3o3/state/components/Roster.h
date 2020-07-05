@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "cc3o3/state/Component.h"
+#include "cc3o3/company/CompanyFwd.h"
 
 #include "Rollback/AutoVar.h"
 
@@ -21,16 +22,6 @@ class Roster final : public state::Component
 	RF_NO_COPY( Roster );
 
 	//
-	// Types and constants
-public:
-	using RosterIndex = uint8_t;
-	static constexpr RosterIndex kInvalidRosterIndex = rftl::numeric_limits<RosterIndex>::max();
-	static constexpr RosterIndex kInititialRosterIndex = 0;
-	static constexpr size_t kActiveTeamSize = 3;
-	static constexpr size_t kRosterSize = 8;
-
-
-	//
 	// Public methods
 public:
 	Roster() = default;
@@ -45,11 +36,11 @@ public:
 	alloc::AllocatorT<alloc::LinearAllocator<2048>> mAlloc{ ExplicitDefaultConstruct() };
 
 	// Whether or not a character is eligible (as dictated by story)
-	rftl::array<rollback::AutoVar<bool>, kRosterSize> mEligible;
+	rftl::array<rollback::AutoVar<bool>, company::kRosterSize> mEligible;
 
 	// The active team members, a subset of the roster
 	// NOTE: Some slots may be invalid
-	rftl::array<rollback::AutoVar<RosterIndex>, kActiveTeamSize> mActiveTeam;
+	rftl::array<rollback::AutoVar<company::RosterIndex>, company::kActiveTeamSize> mActiveTeam;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,7 @@ void Roster::Bind( Window& sharedWindow, Window& privateWindow, VariableIdentifi
 	{
 		rftl::string const indexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( i ) ).str();
 		mActiveTeam.at( i ).Bind( sharedWindow, parent.GetChild( "team", indexAsString ), mAlloc );
-		mActiveTeam.at( i ) = kInvalidRosterIndex;
+		mActiveTeam.at( i ) = company::kInvalidRosterIndex;
 	}
 }
 

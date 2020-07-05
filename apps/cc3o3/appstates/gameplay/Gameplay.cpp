@@ -157,7 +157,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			// NOTE: Characters with the company as their root are implicitly
 			//  on the company's roster
 			// TODO: Data-driven list
-			comp::Roster::RosterIndex rosterIndex = comp::Roster::kInititialRosterIndex;
+			company::RosterIndex rosterIndex = company::kInititialRosterIndex;
 			VariableIdentifier const charRoot = companyRoot.GetChild( "member" );
 			for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 			{

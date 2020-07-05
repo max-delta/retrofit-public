@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Gameplay_Menus.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -366,7 +368,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					elementStockpileSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::ElementStockpileSelector>::Create() );
 			elementStockpileSelector->SetPagination( true );
-			elementStockpileSelector->UpdateFromCompany( state::ObjectRef{} );
+			elementStockpileSelector->UpdateFromCompany(
+				gCompanyManager->FindCompanyObject( input::HardcodedGetLocalPlayer() ) );
 			elementStockpileSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mElementStockpileSelector = elementStockpileSelector;
@@ -621,40 +624,15 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
 	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
 
-	// Find company object
-	state::VariableIdentifier const companyRoot( "company", playerIDAsString );
-	state::ObjectRef const company = state::FindObjectByIdentifier( companyRoot );
-	RFLOG_TEST_AND_FATAL( company.IsSet(), companyRoot, RFCAT_CC3O3, "Failed to find company" );
-
-	// Get the roster
-	state::VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
-	state::comp::Roster const& roster = *company.GetComponentInstanceT<state::comp::Roster>();
-
 	// Get the active party characters
-	rftl::array<state::MutableObjectRef, 3> activePartyCharacters;
-	for( size_t i_teamIndex = 0; i_teamIndex < state::comp::Roster::kActiveTeamSize; i_teamIndex++ )
-	{
-		state::MutableObjectRef& activePartyCharacter = activePartyCharacters.at( i_teamIndex );
-
-		state::comp::Roster::RosterIndex const rosterIndex = roster.mActiveTeam.at( i_teamIndex );
-		if( rosterIndex == state::comp::Roster::kInvalidRosterIndex )
-		{
-			// Not active
-			continue;
-		}
-		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
-
-		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
-		state::MutableObjectRef const character = state::FindMutableObjectByIdentifier( charRoot );
-		RFLOG_TEST_AND_FATAL( character.IsSet(), charRoot, RFCAT_CC3O3, "Failed to find character" );
-		activePartyCharacter = character;
-	}
+	rftl::array<state::ObjectRef, 3> const activePartyCharacters =
+		gCompanyManager->FindActivePartyObjects( input::HardcodedGetLocalPlayer() );
 
 	// Update character slots
 	ui::controller::CharacterSlotList& charSlots = *internalState.mCharSlots;
 	for( size_t i_char = 0; i_char < charSlots.GetNumSlots(); i_char++ )
 	{
-		state::MutableObjectRef const& character = activePartyCharacters.at( i_char );
+		state::ObjectRef const& character = activePartyCharacters.at( i_char );
 
 		if( character.IsSet() )
 		{
