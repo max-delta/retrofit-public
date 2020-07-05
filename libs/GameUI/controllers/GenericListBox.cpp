@@ -100,6 +100,31 @@ bool GenericListBox::SlotHasCurrentFocus( UIConstContext const& context ) const
 
 
 
+size_t GenericListBox::GetSlotIndexWithSoftFocus( UIConstContext const& context ) const
+{
+	WeakPtr<ui::FocusTreeNode const> const listTreeNode = GetFocusTreeNode( context );
+	RF_ASSERT( listTreeNode != nullptr );
+	WeakPtr<ui::FocusTreeNode const> const currentSoftFocus = listTreeNode->mFavoredChild;
+	RF_ASSERT( currentSoftFocus != nullptr );
+
+	for( size_t i = 0; i < mSlotControllers.size(); i++ )
+	{
+		WeakPtr<InstancedController> const& slotController = mSlotControllers.at( i );
+		RF_ASSERT( slotController != nullptr );
+		WeakPtr<ui::FocusTreeNode const> const slotNode = slotController->GetFocusTreeNode( context );
+		RF_ASSERT( slotNode != nullptr );
+		if( slotNode == currentSoftFocus )
+		{
+			return i;
+		}
+	}
+
+	RF_DBGFAIL_MSG( "Focus corrupt, or not set up yet" );
+	return mSlotControllers.size();
+}
+
+
+
 void GenericListBox::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mChildContainerID = CreateChildContainer(

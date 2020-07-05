@@ -24,6 +24,7 @@ public:
 	bool IsCurrentFocus( UIConstContext const& context ) const;
 	bool IsInCurrentFocusStack( UIConstContext const& context ) const;
 
+	WeakPtr<FocusTreeNode const> GetFocusTreeNode( UIConstContext const& context ) const;
 	WeakPtr<FocusTreeNode> GetMutableFocusTreeNode( UIContext& context );
 	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode );
 	WeakPtr<FocusTreeNode> AddAsSiblingAfterFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> previousNode );
@@ -39,7 +40,8 @@ public:
 	//
 	// Protected methods
 protected:
-	FocusTarget& GetFocusTarget();
+	FocusTarget const& GetFocusTarget() const;
+	FocusTarget& GetMutableFocusTarget();
 
 
 	//

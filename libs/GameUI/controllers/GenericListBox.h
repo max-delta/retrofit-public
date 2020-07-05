@@ -33,6 +33,7 @@ public:
 	void SetPagination( bool pagination );
 
 	bool SlotHasCurrentFocus( UIConstContext const& context ) const;
+	size_t GetSlotIndexWithSoftFocus( UIConstContext const& context ) const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override final;
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override final;

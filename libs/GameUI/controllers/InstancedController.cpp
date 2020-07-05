@@ -54,6 +54,13 @@ bool InstancedController::IsInCurrentFocusStack( UIConstContext const& context )
 
 
 
+WeakPtr<FocusTreeNode const> InstancedController::GetFocusTreeNode( UIConstContext const& context ) const
+{
+	return mFocusTarget->mFocusTreeNode;
+}
+
+
+
 WeakPtr<FocusTreeNode> InstancedController::GetMutableFocusTreeNode( UIContext& context )
 {
 	return mFocusTarget->mFocusTreeNode;
@@ -133,7 +140,14 @@ void InstancedController::OnAssign( UIContext& context, Container& container )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-FocusTarget& InstancedController::GetFocusTarget()
+FocusTarget const& InstancedController::GetFocusTarget() const
+{
+	return *mFocusTarget;
+}
+
+
+
+FocusTarget& InstancedController::GetMutableFocusTarget()
 {
 	return *mFocusTarget;
 }
