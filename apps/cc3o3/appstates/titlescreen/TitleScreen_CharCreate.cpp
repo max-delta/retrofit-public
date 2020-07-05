@@ -563,7 +563,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						math::Color3f::kGray50,
 						math::Color3f::kWhite,
 						math::Color3f::kYellow ) );
-			leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+			leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
 				leftOptions->GetMutableSlotController( i )->SetText( details::kLeftText[i] );
@@ -641,7 +641,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						math::Color3f::kGray50,
 						math::Color3f::kWhite,
 						math::Color3f::kYellow ) );
-			rightOptions->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode().mFavoredChild );
+			rightOptions->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
 				rightOptions->GetMutableSlotController( i )->SetText( details::kRightText[i] );
@@ -706,21 +706,7 @@ void TitleScreen_CharCreate::OnTick( AppStateTickContext& context )
 			// Wasn't handled by general UI
 
 			// Figure out the useful focus information
-			WeakPtr<ui::FocusTreeNode const> currentFocus;
-			WeakPtr<ui::FocusTarget const> currentFocusTarget;
-			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
-			{
-				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
-				if( currentFocus != nullptr )
-				{
-					currentFocusTarget = currentFocus->mFocusTarget;
-				}
-				if( currentFocusTarget != nullptr )
-				{
-					RF_ASSERT( currentFocusTarget->HasHardFocus() );
-					currentFocusContainerID = currentFocusTarget->mContainerID;
-				}
-			}
+			ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
 
 			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{

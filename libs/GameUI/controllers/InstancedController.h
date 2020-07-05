@@ -26,12 +26,12 @@ public:
 
 	WeakPtr<FocusTreeNode const> GetFocusTreeNode( UIConstContext const& context ) const;
 	WeakPtr<FocusTreeNode> GetMutableFocusTreeNode( UIContext& context );
-	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode );
+	WeakPtr<FocusTreeNode> AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode& parentNode );
 	WeakPtr<FocusTreeNode> AddAsSiblingAfterFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> previousNode );
 	WeakPtr<FocusTreeNode> AddAsSiblingBeforeFocusTreeNode( UIContext& context, WeakPtr<FocusTreeNode> nextNode );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container );
-	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode );
+	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode& newNode );
 	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent );
 
 	virtual void OnAssign( UIContext& context, Container& container ) override final;

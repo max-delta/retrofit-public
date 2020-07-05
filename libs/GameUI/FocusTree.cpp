@@ -9,6 +9,32 @@
 namespace RF { namespace ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+ContainerID FocusTreeNode::GetContainerID() const
+{
+	if( mFocusTarget == nullptr )
+	{
+		return kInvalidContainerID;
+	}
+
+	return mFocusTarget->mContainerID;
+}
+
+
+
+WeakPtr<FocusTreeNode const> FocusTreeNode::GetFavoredChild() const
+{
+	return mFavoredChild;
+}
+
+
+
+WeakPtr<FocusTreeNode> FocusTreeNode::GetMutableFavoredChild()
+{
+	return mFavoredChild;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 FocusTree::FocusTree()
 	: mRootNode( DefaultCreator<FocusTreeNode>::Create() )
 	, mRootFocus( DefaultCreator<FocusTarget>::Create() )
@@ -24,6 +50,13 @@ FocusTree::FocusTree()
 
 
 FocusTreeNode const& FocusTree::GetRootNode() const
+{
+	return *mRootNode;
+}
+
+
+
+FocusTreeNode& FocusTree::GetMutableRootNode()
 {
 	return *mRootNode;
 }
@@ -82,6 +115,26 @@ WeakPtr<FocusTreeNode const> FocusTree::GetCurrentFocus() const
 
 
 
+ContainerID FocusTree::GetCurrentFocusContainerID() const
+{
+	WeakPtr<FocusTreeNode const> const currentFocus = GetCurrentFocus();
+	if( currentFocus == nullptr )
+	{
+		return kInvalidContainerID;
+	}
+
+	WeakPtr<ui::FocusTarget const> const currentFocusTarget = currentFocus->mFocusTarget;
+	if( currentFocusTarget == nullptr )
+	{
+		return kInvalidContainerID;
+	}
+
+	RF_ASSERT( currentFocusTarget->HasHardFocus() );
+	return currentFocusTarget->mContainerID;
+}
+
+
+
 bool FocusTree::IsCurrentFocus( FocusTreeNode const& node ) const
 {
 	FocusTreeNode const* currentFocus = GetCurrentFocus();
@@ -100,6 +153,14 @@ bool FocusTree::IsCurrentFocus( FocusTarget const& target ) const
 	FocusTarget const* currentTarget = currentFocus->mFocusTarget;
 	RF_ASSERT( currentFocus != nullptr );
 	return &target == currentTarget;
+}
+
+
+
+bool FocusTree::IsCurrentFocus( ContainerID const& containerID ) const
+{
+	RF_ASSERT( containerID != kInvalidContainerID );
+	return GetCurrentFocusContainerID() == containerID;
 }
 
 
@@ -213,7 +274,7 @@ WeakPtr<FocusTreeNode const> FocusTree::FindNode( FocusTarget const& target ) co
 
 
 
-WeakPtr<FocusTreeNode> FocusTree::CreateNewChild( FocusTreeNode const& parentNode, UniquePtr<FocusTarget> const& newTarget )
+WeakPtr<FocusTreeNode> FocusTree::CreateNewChild( FocusTreeNode& parentNode, UniquePtr<FocusTarget> const& newTarget )
 {
 	if( parentNode.mFavoredChild != nullptr )
 	{

@@ -68,7 +68,7 @@ WeakPtr<FocusTreeNode> InstancedController::GetMutableFocusTreeNode( UIContext& 
 
 
 
-WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode const& parentNode )
+WeakPtr<FocusTreeNode> InstancedController::AddAsChildToFocusTreeNode( UIContext& context, FocusTreeNode& parentNode )
 {
 	WeakPtr<FocusTreeNode> const retVal = context.GetMutableFocusManager().GetMutableFocusTree().CreateNewChild( parentNode, mFocusTarget );
 	if( retVal != nullptr )
@@ -111,7 +111,7 @@ void InstancedController::OnInstanceAssign( UIContext& context, Container& conta
 
 
 
-void InstancedController::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode )
+void InstancedController::OnAddedToFocusTree( UIContext& context, FocusTreeNode& newNode )
 {
 	//
 }

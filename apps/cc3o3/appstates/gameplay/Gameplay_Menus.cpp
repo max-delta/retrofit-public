@@ -248,7 +248,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
 					ui::Justification::MiddleCenter ) );
 		uiManager.AdjustRecommendedRenderDepth( sectionSelectorFloater->GetContainerID(), -20 );
-		sectionSelectorFloater->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+		sectionSelectorFloater->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		internalState.mSectionSelectorFloater = sectionSelectorFloater;
 
 		// Sections each get a passthrough that can be used to shut off all
@@ -446,21 +446,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 		focusMan.UpdateHardFocus( uiContext );
 
 		// Figure out the useful focus information
-		WeakPtr<ui::FocusTreeNode const> currentFocus;
-		WeakPtr<ui::FocusTarget const> currentFocusTarget;
-		ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
-		{
-			currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
-			if( currentFocus != nullptr )
-			{
-				currentFocusTarget = currentFocus->mFocusTarget;
-			}
-			if( currentFocusTarget != nullptr )
-			{
-				RF_ASSERT( currentFocusTarget->HasHardFocus() );
-				currentFocusContainerID = currentFocusTarget->mContainerID;
-			}
-		}
+		ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
 
 		if( handled )
 		{

@@ -354,7 +354,7 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 	rftl::unordered_set<ContainerID> focusedContainers;
 	for( WeakPtr<FocusTreeNode const> const& node : focusStack )
 	{
-		focusedContainers.emplace( node->mFocusTarget->mContainerID );
+		focusedContainers.emplace( node->GetContainerID() );
 	}
 
 	for( ContainerStorage::value_type const& containerEntry : mContainers )

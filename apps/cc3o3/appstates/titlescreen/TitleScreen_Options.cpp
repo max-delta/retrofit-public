@@ -236,7 +236,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 					math::Color3f::kWhite,
 					math::Color3f::kYellow ) );
 		details::sDevOptions.Update( *leftOptions );
-		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		for( size_t i = 0; i < details::kNumOptionsPerSet; i++ )
 		{
 			uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), details::kOptTag[i] );
@@ -274,21 +274,7 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 			// Wasn't handled by general UI
 
 			// Figure out the useful focus information
-			WeakPtr<ui::FocusTreeNode const> currentFocus;
-			WeakPtr<ui::FocusTarget const> currentFocusTarget;
-			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
-			{
-				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
-				if( currentFocus != nullptr )
-				{
-					currentFocusTarget = currentFocus->mFocusTarget;
-				}
-				if( currentFocusTarget != nullptr )
-				{
-					RF_ASSERT( currentFocusTarget->HasHardFocus() );
-					currentFocusContainerID = currentFocusTarget->mContainerID;
-				}
-			}
+			ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
 
 			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{

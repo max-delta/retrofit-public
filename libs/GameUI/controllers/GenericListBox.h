@@ -36,7 +36,7 @@ public:
 	size_t GetSlotIndexWithSoftFocus( UIConstContext const& context ) const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override final;
-	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode ) override final;
+	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode& newNode ) override final;
 	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent ) override final;
 
 

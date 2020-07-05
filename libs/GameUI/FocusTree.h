@@ -12,6 +12,25 @@ namespace RF { namespace ui {
 
 struct GAMEUI_API FocusTreeNode
 {
+	//
+	// Friends
+private:
+	friend class FocusTree;
+	friend class FocusManager;
+
+
+	//
+	// Public methods
+public:
+	ContainerID GetContainerID() const;
+
+	WeakPtr<FocusTreeNode const> GetFavoredChild() const;
+	WeakPtr<FocusTreeNode> GetMutableFavoredChild();
+
+
+	//
+	// Private data
+private:
 	WeakPtr<FocusTarget> mFocusTarget;
 
 	WeakPtr<FocusTreeNode> mPreviousSibling;
@@ -42,13 +61,16 @@ public:
 	FocusTree();
 
 	FocusTreeNode const& GetRootNode() const;
+	FocusTreeNode& GetMutableRootNode();
 
 	ConstNodeStack GetCurrentFocusStack() const;
 
 	WeakPtr<FocusTreeNode const> GetCurrentFocus() const;
+	ContainerID GetCurrentFocusContainerID() const;
 
 	bool IsCurrentFocus( FocusTreeNode const& node ) const;
 	bool IsCurrentFocus( FocusTarget const& target ) const;
+	bool IsCurrentFocus( ContainerID const& containerID ) const;
 	bool IsInCurrentFocusStack( FocusTreeNode const& node ) const;
 	bool IsInCurrentFocusStack( FocusTarget const& target ) const;
 	bool IsInCurrentFocusStack( ContainerID const& containerID ) const;
@@ -58,7 +80,7 @@ public:
 
 	WeakPtr<FocusTreeNode const> FindNode( FocusTarget const& target ) const;
 
-	WeakPtr<FocusTreeNode> CreateNewChild( FocusTreeNode const& parentNode, UniquePtr<FocusTarget> const& newTarget );
+	WeakPtr<FocusTreeNode> CreateNewChild( FocusTreeNode& parentNode, UniquePtr<FocusTarget> const& newTarget );
 	WeakPtr<FocusTreeNode> CreateNewSiblingAfter( WeakPtr<FocusTreeNode> previousNode, UniquePtr<FocusTarget> const& newTarget );
 	WeakPtr<FocusTreeNode> CreateNewSiblingBefore( WeakPtr<FocusTreeNode> nextNode, UniquePtr<FocusTarget> const& newTarget );
 

@@ -104,7 +104,7 @@ size_t GenericListBox::GetSlotIndexWithSoftFocus( UIConstContext const& context 
 {
 	WeakPtr<ui::FocusTreeNode const> const listTreeNode = GetFocusTreeNode( context );
 	RF_ASSERT( listTreeNode != nullptr );
-	WeakPtr<ui::FocusTreeNode const> const currentSoftFocus = listTreeNode->mFavoredChild;
+	WeakPtr<ui::FocusTreeNode const> const currentSoftFocus = listTreeNode->GetFavoredChild();
 	RF_ASSERT( currentSoftFocus != nullptr );
 
 	for( size_t i = 0; i < mSlotControllers.size(); i++ )
@@ -172,10 +172,10 @@ void GenericListBox::OnInstanceAssign( UIContext& context, Container& container 
 
 
 
-void GenericListBox::OnAddedToFocusTree( UIContext& context, FocusTreeNode const& newNode )
+void GenericListBox::OnAddedToFocusTree( UIContext& context, FocusTreeNode& newNode )
 {
 	// Add all the slots to focus tree
-	WeakPtr<FocusTreeNode> mostRecentNode = newNode.mFavoredChild;
+	WeakPtr<FocusTreeNode> mostRecentNode = newNode.GetMutableFavoredChild();
 	for( WeakPtr<InstancedController> const& slotController : mSlotControllers )
 	{
 		RF_ASSERT( slotController != nullptr );
@@ -229,9 +229,8 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 		RF_ASSERT_MSG( nodeRef != nullptr, "Handling focus event without being in tree?" );
 		FocusTreeNode& node = *nodeRef;
 
-		RF_ASSERT( node.mFavoredChild != nullptr );
-		WeakPtr<FocusTreeNode>& current = node.mFavoredChild;
-		FocusTreeNode const* const initial = node.mFavoredChild;
+		void const* const initial = node.GetFavoredChild();
+		RF_ASSERT( initial != nullptr );
 
 		FocusTree& focusTree = context.GetMutableFocusManager().GetMutableFocusTree();
 		static constexpr size_t kMaxIter = 500;
@@ -248,7 +247,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 					break;
 				}
 
-				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 				if( shouldSkip == false )
 				{
 					// Found a valid item
@@ -261,7 +260,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			{
 				for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 				{
-					bool const shouldSkip = ShouldSkipFocus( context, *current );
+					bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 					if( shouldSkip )
 					{
 						bool const modified = focusTree.CycleFocusToNextChild( node, mWrapping );
@@ -296,7 +295,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 					break;
 				}
 
-				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 				if( shouldSkip == false )
 				{
 					// Found a valid item
@@ -309,7 +308,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			{
 				for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 				{
-					bool const shouldSkip = ShouldSkipFocus( context, *current );
+					bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 					if( shouldSkip )
 					{
 						bool const modified = focusTree.CycleFocusToPreviousChild( node, mWrapping );
@@ -340,7 +339,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			// Pass 2, back up if we reached end and it was bad
 			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 			{
-				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 				if( shouldSkip )
 				{
 					bool const modified = focusTree.CycleFocusToNextChild( node, mWrapping );
@@ -370,7 +369,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			// Pass 2, back up if we reached end and it was bad
 			for( size_t infinitePrevention = 0; infinitePrevention < kMaxIter; infinitePrevention++ )
 			{
-				bool const shouldSkip = ShouldSkipFocus( context, *current );
+				bool const shouldSkip = ShouldSkipFocus( context, *node.GetFavoredChild() );
 				if( shouldSkip )
 				{
 					bool const modified = focusTree.CycleFocusToPreviousChild( node, mWrapping );
@@ -393,7 +392,7 @@ bool GenericListBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEv
 			}
 		}
 
-		if( node.mFavoredChild != initial )
+		if( node.GetFavoredChild() != initial )
 		{
 			// Event resulted in a change
 			return true;
@@ -449,8 +448,7 @@ InstancedController const* GenericListBox::GetSlotWithFocus( UIConstContext cons
 
 bool GenericListBox::ShouldSkipFocus( UIConstContext const& context, FocusTreeNode const& potentialFocus ) const
 {
-	RF_ASSERT( potentialFocus.mFocusTarget != nullptr );
-	ContainerID const containerID = potentialFocus.mFocusTarget->mContainerID;
+	ContainerID const containerID = potentialFocus.GetContainerID();
 	RF_ASSERT( containerID != kInvalidContainerID );
 
 	WeakPtr<InstancedController const> attemptedFocus;

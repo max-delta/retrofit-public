@@ -157,7 +157,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					ui::font::LargeMenuSelection ) );
 		menuEntries->SetText( menuText );
 		menuEntries->SetWrapping( true );
-		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetFocusTree().GetRootNode() );
+		menuEntries->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 0 )->GetContainerID(), details::kSinglePlayerTag );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 1 )->GetContainerID(), details::kMultiplayerTag );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 2 )->GetContainerID(), details::kCharacterCreatorTag );
@@ -259,21 +259,7 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 			// Wasn't handled by general UI
 
 			// Figure out the useful focus information
-			WeakPtr<ui::FocusTreeNode const> currentFocus;
-			WeakPtr<ui::FocusTarget const> currentFocusTarget;
-			ui::ContainerID currentFocusContainerID = ui::kInvalidContainerID;
-			{
-				currentFocus = focusMan.GetFocusTree().GetCurrentFocus();
-				if( currentFocus != nullptr )
-				{
-					currentFocusTarget = currentFocus->mFocusTarget;
-				}
-				if( currentFocusTarget != nullptr )
-				{
-					RF_ASSERT( currentFocusTarget->HasHardFocus() );
-					currentFocusContainerID = currentFocusTarget->mContainerID;
-				}
-			}
+			ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
 
 			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 			{
