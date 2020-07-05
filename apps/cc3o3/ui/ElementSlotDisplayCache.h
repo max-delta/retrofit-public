@@ -16,6 +16,7 @@ class ElementSlotDisplayCache
 	// Public methods
 public:
 	void UpdateFromDesc( element::ElementDesc const& desc, bool includeStrings );
+	void Darken();
 
 	//
 	// Public data

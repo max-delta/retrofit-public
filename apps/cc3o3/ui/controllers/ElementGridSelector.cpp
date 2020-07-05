@@ -49,6 +49,14 @@ void ElementGridSelector::UpdateFromCache( ElementGridDisplayCache const& cache 
 
 
 
+void ElementGridSelector::DarkenAll()
+{
+	mCache.DarkenAll();
+	UpdateDisplay();
+}
+
+
+
 void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	RF_ASSERT_MSG( container.mAABB.Width() == kContainerWidth, "Container not sized as needed" );

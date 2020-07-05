@@ -24,6 +24,9 @@ public:
 	ElementGridDisplayCache() = default;
 
 	void UpdateFromCharacter( state::ObjectRef const& character, bool includeStrings );
+
+	void DarkenAll();
+
 	Grid const& GetGridRef() const;
 
 

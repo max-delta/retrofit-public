@@ -34,6 +34,7 @@ public:
 
 	void UpdateFromCharacter( state::ObjectRef const& character );
 	void UpdateFromCache( ElementGridDisplayCache const& cache );
+	void DarkenAll();
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 

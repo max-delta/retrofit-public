@@ -34,6 +34,19 @@ void ElementGridDisplayCache::UpdateFromCharacter( state::ObjectRef const& chara
 
 
 
+void ElementGridDisplayCache::DarkenAll()
+{
+	for( Column& column : mGrid )
+	{
+		for( Slot& slot : column )
+		{
+			slot.Darken();
+		}
+	}
+}
+
+
+
 ElementGridDisplayCache::Grid const& ElementGridDisplayCache::GetGridRef() const
 {
 	return mGrid;

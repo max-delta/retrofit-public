@@ -553,7 +553,9 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementStockpileSelector->GetMutableFocusTreeNode( uiContext ) );
-								// TODO: Darken grid
+
+								// Darken grid
+								internalState.mElementGridSelector->DarkenAll();
 							}
 							else if( internalState.mElementStockpileSelector->SlotHasCurrentFocus( uiContext ) )
 							{
@@ -563,7 +565,11 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
-								// TODO: Un-darken grid
+
+								// Un-darken grid
+								// TODO: Actual character
+								internalState.mElementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
+
 								// TODO: Assignment logic
 							}
 						}
@@ -589,7 +595,10 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
-								// TODO: Un-darken grid
+
+								// Un-darken grid
+								// TODO: Actual character
+								internalState.mElementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
 							}
 						}
 					}

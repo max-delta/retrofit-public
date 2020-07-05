@@ -55,5 +55,29 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 	mTilesetIndex = getTilesetIndex( desc.mInnate );
 }
 
+
+
+void ElementSlotDisplayCache::Darken()
+{
+	// TODO: Move to ui color/innate helper functions
+	bool const isElement =
+		mTilesetIndex >= ElementTilesetIndex::ElementStart &&
+		mTilesetIndex <= ElementTilesetIndex::ElementEnd;
+	if( isElement )
+	{
+		rftl::underlying_type<ElementTilesetIndex>::type const offset =
+			math::enum_bitcast( mTilesetIndex ) -
+			math::enum_bitcast( ElementTilesetIndex::ElementStart );
+		bool const isLight = ( offset % 3 ) == 0;
+		if( isLight )
+		{
+			mTilesetIndex =
+				math::enum_bitcast<ElementTilesetIndex>(
+					math::enum_bitcast( mTilesetIndex ) +
+					kElementTilesetOffsetDark );
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
