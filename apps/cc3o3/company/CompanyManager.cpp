@@ -119,6 +119,34 @@ rftl::array<state::MutableObjectRef, kActiveTeamSize> CompanyManager::FindMutabl
 }
 
 
+
+state::VariableIdentifier CompanyManager::FindActivePartyCharacterIdentifier( input::PlayerID const& playerID, size_t partyIndex ) const
+{
+	return FindActivePartyIdentifiers( playerID ).at( partyIndex );
+}
+
+
+
+state::ObjectRef CompanyManager::FindActivePartyCharacterObject( input::PlayerID const& playerID, size_t partyIndex ) const
+{
+	state::VariableIdentifier const identifier = FindActivePartyCharacterIdentifier( playerID, partyIndex );
+	state::ObjectRef const character = state::FindObjectByIdentifier( identifier );
+	RFLOG_TEST_AND_FATAL( character.IsSet(), identifier, RFCAT_CC3O3, "Failed to find character" );
+	return character;
+}
+
+
+
+state::MutableObjectRef CompanyManager::FindMutableActivePartyCharacterObject( input::PlayerID const& playerID, size_t partyIndex ) const
+{
+	state::VariableIdentifier const identifier = FindActivePartyCharacterIdentifier( playerID, partyIndex );
+	state::MutableObjectRef const character = state::FindMutableObjectByIdentifier( identifier );
+	RFLOG_TEST_AND_FATAL( character.IsSet(), identifier, RFCAT_CC3O3, "Failed to find character" );
+	return character;
+}
+
+
+
 CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::ObjectRef const& company ) const
 {
 	RF_ASSERT( company.IsSet() );

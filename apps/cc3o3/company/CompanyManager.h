@@ -45,6 +45,9 @@ public:
 	rftl::array<state::VariableIdentifier, kActiveTeamSize> FindActivePartyIdentifiers( input::PlayerID const& playerID ) const;
 	rftl::array<state::ObjectRef, kActiveTeamSize> FindActivePartyObjects( input::PlayerID const& playerID ) const;
 	rftl::array<state::MutableObjectRef, kActiveTeamSize> FindMutableActivePartyObjects( input::PlayerID const& playerID ) const;
+	state::VariableIdentifier FindActivePartyCharacterIdentifier( input::PlayerID const& playerID, size_t partyIndex ) const;
+	state::ObjectRef FindActivePartyCharacterObject( input::PlayerID const& playerID, size_t partyIndex ) const;
+	state::MutableObjectRef FindMutableActivePartyCharacterObject( input::PlayerID const& playerID, size_t partyIndex ) const;
 
 	// The company's total available elements are determined by progression
 	ElementCounts CalcTotalElements( state::ObjectRef const& company ) const;

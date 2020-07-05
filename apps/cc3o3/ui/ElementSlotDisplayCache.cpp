@@ -57,6 +57,14 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 
 
 
+void ElementSlotDisplayCache::Unallocate()
+{
+	mName.clear();
+	mTilesetIndex = ElementTilesetIndex::Unallocated;
+}
+
+
+
 void ElementSlotDisplayCache::Darken()
 {
 	// TODO: Move to ui color/innate helper functions

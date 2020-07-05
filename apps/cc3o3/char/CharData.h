@@ -20,6 +20,7 @@ struct CharData
 	Visuals mVisuals = {};
 	Stats mStats = {};
 	Equipment mEquipment = {};
+	// TODO: Re-design how innate elements are stored
 	ElementSlots mInnateElements = {};
 	ElementSlots mEquippedElements = {};
 };

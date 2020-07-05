@@ -82,6 +82,9 @@ public:
 	void ShowSelector( ui::UIContext& context );
 	void HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection );
 
+	state::ObjectRef GetCurrentLoadoutCharacter( ui::UIConstContext const& context ) const;
+	state::MutableObjectRef GetCurrentMutableLoadoutCharacter( ui::UIConstContext const& context );
+
 
 public:
 	WeakPtr<ui::controller::TextLabel> mMainHeader;
@@ -139,6 +142,22 @@ void Gameplay_Menus::InternalState::HideSelector( ui::UIContext& context, TopLev
 	mSectionSelectorFloater->SetChildRenderingBlocked( true );
 	context.GetMutableFocusManager().GetMutableFocusTree().SetRootFocusToSpecificChild(
 		mTopLevelControllers.at( chosenSection )->GetMutableFocusTreeNode( context ) );
+}
+
+
+
+state::ObjectRef Gameplay_Menus::InternalState::GetCurrentLoadoutCharacter( ui::UIConstContext const& context ) const
+{
+	size_t const currentCharIndex = mCharSlots->GetSlotIndexWithSoftFocus( context );
+	return gCompanyManager->FindActivePartyCharacterObject( input::HardcodedGetLocalPlayer(), currentCharIndex );
+}
+
+
+
+state::MutableObjectRef Gameplay_Menus::InternalState::GetCurrentMutableLoadoutCharacter( ui::UIConstContext const& context )
+{
+	size_t const currentCharIndex = mCharSlots->GetSlotIndexWithSoftFocus( context );
+	return gCompanyManager->FindMutableActivePartyCharacterObject( input::HardcodedGetLocalPlayer(), currentCharIndex );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -350,7 +369,6 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					elementGridSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::ElementGridSelector>::Create() );
-			elementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
 			elementGridSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mElementGridSelector = elementGridSelector;
@@ -377,7 +395,9 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			// Raise the stockpile selector over the grid selector
 			uiManager.AdjustRecommendedRenderDepth( elementStockpileSelector->GetContainerID(), -3 );
 
-			// Hide stockpile selector by default
+			// Hide grid and stockpile selectors by default
+			elementGridSelector->SetRenderingBlocked( true );
+			elementGridSelector->SetChildRenderingBlocked( true );
 			elementStockpileSelector->SetRenderingBlocked( true );
 			elementStockpileSelector->SetChildRenderingBlocked( true );
 		}
@@ -541,9 +561,15 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 							if( internalState.mCharSlots->SlotHasCurrentFocus( uiContext ) )
 							{
 								// Char -> Grid
+								internalState.mElementGridSelector->SetRenderingBlocked( false );
+								internalState.mElementGridSelector->SetChildRenderingBlocked( false );
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
+
+								// Load the grid
+								state::ObjectRef const currentChar = internalState.GetCurrentLoadoutCharacter( uiContext );
+								internalState.mElementGridSelector->UpdateFromCharacter( currentChar );
 							}
 							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
@@ -566,11 +592,11 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
 
-								// Un-darken grid
-								// TODO: Actual character
-								internalState.mElementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
-
 								// TODO: Assignment logic
+
+								// Un-darken grid (and refresh after assignment)
+								state::ObjectRef const currentChar = internalState.GetCurrentLoadoutCharacter( uiContext );
+								internalState.mElementGridSelector->UpdateFromCharacter( currentChar );
 							}
 						}
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
@@ -583,6 +609,8 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
 								// Char <- Grid
+								internalState.mElementGridSelector->SetRenderingBlocked( true );
+								internalState.mElementGridSelector->SetChildRenderingBlocked( true );
 								focusMan.GetMutableFocusTree().SetFocusToSpecificChild(
 									*loadoutSection.GetMutableFocusTreeNode( uiContext ),
 									internalState.mCharSlots->GetMutableFocusTreeNode( uiContext ) );
@@ -597,8 +625,8 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 									internalState.mElementGridSelector->GetMutableFocusTreeNode( uiContext ) );
 
 								// Un-darken grid
-								// TODO: Actual character
-								internalState.mElementGridSelector->UpdateFromCharacter( state::ObjectRef{} );
+								state::ObjectRef const currentChar = internalState.GetCurrentLoadoutCharacter( uiContext );
+								internalState.mElementGridSelector->UpdateFromCharacter( currentChar );
 							}
 						}
 					}
