@@ -19,6 +19,7 @@ namespace comp {
 class Meta;
 class Roster;
 class Character;
+class Loadout;
 class Progression;
 class OverworldVisual;
 class OverworldMovement;
@@ -32,6 +33,7 @@ enum : ComponentID
 	Meta,
 	Roster,
 	Character,
+	Loadout,
 	Progression,
 	OverworldVisual,
 	OverworldMovement,
@@ -42,6 +44,7 @@ enum : ComponentID
 RF_COMP_PAIR( details::id::Meta, comp::Meta );
 RF_COMP_PAIR( details::id::Roster, comp::Roster );
 RF_COMP_PAIR( details::id::Character, comp::Character );
+RF_COMP_PAIR( details::id::Loadout, comp::Loadout );
 RF_COMP_PAIR( details::id::Progression, comp::Progression );
 RF_COMP_PAIR( details::id::OverworldVisual, comp::OverworldVisual );
 RF_COMP_PAIR( details::id::OverworldMovement, comp::OverworldMovement );

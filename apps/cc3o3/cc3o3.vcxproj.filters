@@ -184,6 +184,9 @@
     <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\Loadout.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -488,6 +491,9 @@
     </ClInclude>
     <ClInclude Include="ui\controllers\ElementStockpileSelector.h">
       <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Loadout.h">
+      <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

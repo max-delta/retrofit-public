@@ -723,9 +723,6 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 void CharacterValidator::SanitizeForGameplay( CharData& character ) const
 {
 	Stats& stats = character.mStats;
-	Equipment& equipment = character.mEquipment;
-	ElementSlots& innateElements = character.mInnateElements;
-	ElementSlots& equippedElements = character.mEquippedElements;
 
 	SanitizeForCharacterCreation( character );
 
@@ -770,15 +767,6 @@ void CharacterValidator::SanitizeForGameplay( CharData& character ) const
 			}
 		}
 	}
-
-	// TODO: Check for valid equipment from a list
-	equipment = {};
-
-	// TODO: Check for valid innates from a list
-	innateElements = {};
-
-	// TODO: Check for valid elements from a list
-	equippedElements = {};
 }
 
 ///////////////////////////////////////////////////////////////////////////////

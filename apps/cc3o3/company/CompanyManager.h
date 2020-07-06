@@ -15,7 +15,7 @@
 
 // Forwards
 namespace RF::cc::state::comp {
-class Character;
+class Loadout;
 class Progression;
 }
 namespace RF::cc::element {
@@ -58,7 +58,13 @@ public:
 
 	// Elements are assigned without validation (performed seperately)
 	void AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element );
-	void AssignElementToCharacter( state::comp::Character& character, character::ElementSlotIndex slot, element::ElementIdentifier element );
+	void AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element );
+
+	// TODO: Need various validation machinery:
+	//  * Loadout setup / UI helpers
+	//  * Hard-fail gameplay verification
+	//  * Cheat detection
+	void TODO_ValidateLoadouts();
 
 
 	//

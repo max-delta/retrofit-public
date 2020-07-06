@@ -5,8 +5,6 @@
 #include "cc3o3/char/Genetics.h"
 #include "cc3o3/char/Visuals.h"
 #include "cc3o3/char/Stats.h"
-#include "cc3o3/char/Equipment.h"
-#include "cc3o3/char/ElementSlots.h"
 
 
 namespace RF { namespace cc { namespace character {
@@ -19,10 +17,6 @@ struct CharData
 	Genetics mGenetics = {};
 	Visuals mVisuals = {};
 	Stats mStats = {};
-	Equipment mEquipment = {};
-	// TODO: Re-design how innate elements are stored
-	ElementSlots mInnateElements = {};
-	ElementSlots mEquippedElements = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

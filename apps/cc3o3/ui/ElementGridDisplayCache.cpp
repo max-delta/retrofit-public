@@ -3,7 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/state/ComponentResolver.h"
-#include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/components/Loadout.h"
 #include "cc3o3/elements/ElementDatabase.h"
 
 #include "core_component/TypedObjectRef.h"
@@ -15,11 +15,10 @@ namespace RF::cc::ui {
 void ElementGridDisplayCache::UpdateFromCharacter( state::ObjectRef const& character, bool includeStrings )
 {
 	RF_ASSERT( character.IsSet() );
-	WeakPtr<state::comp::Character const> const charComp = character.GetComponentInstanceT<state::comp::Character>();
-	RF_ASSERT( charComp != nullptr );
-	character::CharData const& charData = charComp->mCharData;
+	WeakPtr<state::comp::Loadout const> const loadout = character.GetComponentInstanceT<state::comp::Loadout>();
+	RF_ASSERT( loadout != nullptr );
 
-	character::ElementSlots::Grid const& sourceGrid = charData.mEquippedElements.mGrid;
+	character::ElementSlots::Grid const& sourceGrid = loadout->mEquippedElements.mGrid;
 	static_assert( rftl::tuple_size<character::ElementSlots::Grid>::value == rftl::tuple_size<Grid>::value );
 	static_assert( rftl::tuple_size<character::ElementSlots::Column>::value == rftl::tuple_size<Column>::value );
 

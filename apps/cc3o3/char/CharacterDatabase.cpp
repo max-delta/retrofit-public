@@ -174,10 +174,6 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
 			success = loader.InjectReflectedClassByCompileType<Stats>( "Stats" );
 			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<Equipment>( "Equipment" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<ElementSlots>( "ElementSlots" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
 		}
 
 		// Inject source

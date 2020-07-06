@@ -4,7 +4,7 @@
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
-#include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/components/Loadout.h"
 #include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/elements/ElementDatabase.h"
@@ -169,16 +169,27 @@ CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::comp::Pr
 void CompanyManager::AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element )
 {
 	RF_ASSERT( character.IsSet() );
-	WeakPtr<state::comp::Character> const charComp = character.GetMutableComponentInstanceT<state::comp::Character>();
-	RF_ASSERT( charComp != nullptr );
-	AssignElementToCharacter( *charComp, slot, element );
+	WeakPtr<state::comp::Loadout> const loadout = character.GetMutableComponentInstanceT<state::comp::Loadout>();
+	RF_ASSERT( loadout != nullptr );
+	AssignElementToCharacter( *loadout, slot, element );
 }
 
 
 
-void CompanyManager::AssignElementToCharacter( state::comp::Character& character, character::ElementSlotIndex slot, element::ElementIdentifier element )
+void CompanyManager::AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element )
 {
-	character.mCharData.mEquippedElements.At( slot ) = element;
+	loadout.mEquippedElements.At( slot ) = element;
+}
+
+
+
+void CompanyManager::TODO_ValidateLoadouts()
+{
+	// TODO: Check all active-party characters
+	// TODO: Check for valid equipment from a list
+	// TODO: Check for valid innate elements from a list
+	// TODO: Check for valid equipped elements from a list
+	// TODO: Check total active party loadout against company stockpile
 }
 
 ///////////////////////////////////////////////////////////////////////////////
