@@ -41,6 +41,7 @@ void MakeBaseCharacterFromDB(
 			ref.AddComponentInstanceT<comp::Character>(
 				DefaultCreator<comp::Character>::Create() );
 		RFLOG_TEST_AND_FATAL( chara != nullptr, ref, RFCAT_CC3O3, "Failed to add character component" );
+		chara->BindToMeta( sharedWindow, privateWindow, ref );
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
 		chara->mCharData = charDB.FetchExistingCharacter( charID );
