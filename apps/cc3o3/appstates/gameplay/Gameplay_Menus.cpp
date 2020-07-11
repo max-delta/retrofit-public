@@ -651,11 +651,10 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 
 	// Menus use the local player
 	input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
-	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
 
 	// Get the active party characters
 	rftl::array<state::ObjectRef, 3> const activePartyCharacters =
-		gCompanyManager->FindActivePartyObjects( input::HardcodedGetLocalPlayer() );
+		gCompanyManager->FindActivePartyObjects( playerID );
 
 	// Update character slots
 	ui::controller::CharacterSlotList& charSlots = *internalState.mCharSlots;

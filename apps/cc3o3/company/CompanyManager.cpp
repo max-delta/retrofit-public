@@ -36,8 +36,7 @@ CompanyManager::CompanyManager(
 
 state::VariableIdentifier CompanyManager::FindCompanyIdentifier( input::PlayerID const& playerID ) const
 {
-	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
-	return state::VariableIdentifier( "company", playerIDAsString );
+	return state::VariableIdentifier( "company", rftl::to_string( playerID ) );
 }
 
 
@@ -62,8 +61,7 @@ rftl::array<state::VariableIdentifier, kRosterSize> CompanyManager::FindRosterId
 	state::VariableIdentifier const rosterRoot = companyRoot.GetChild( "member" );
 	for( size_t i_rosterIndex = 0; i_rosterIndex < kRosterSize; i_rosterIndex++ )
 	{
-		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( i_rosterIndex ) ).str();
-		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
+		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rftl::to_string( i_rosterIndex ) );
 
 		retVal.at( i_rosterIndex ) = charRoot;
 	}
@@ -127,8 +125,7 @@ rftl::array<state::VariableIdentifier, kActiveTeamSize> CompanyManager::FindActi
 			// Not active
 			continue;
 		}
-		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
-		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rosterIndexAsString );
+		state::VariableIdentifier const charRoot = rosterRoot.GetChild( rftl::to_string( rosterIndex ) );
 
 		retVal.at( i_teamIndex ) = charRoot;
 	}
@@ -269,8 +266,7 @@ void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
 		WeakPtr<state::comp::Loadout> const loadout = character.GetMutableComponentInstanceT<state::comp::Loadout>();
 		RF_ASSERT( loadout != nullptr );
 
-		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( i_rosterIndex ) ).str();
-		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rosterIndexAsString );
+		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) );
 		file::FileHandlePtr const fileHandle = mVfs->GetFileForRead( loadoutFilePath );
 		if( fileHandle == nullptr )
 		{
@@ -347,8 +343,7 @@ void CompanyManager::WriteLoadoutsToSave( input::PlayerID const& playerID )
 		WeakPtr<state::comp::Loadout const> const loadout = character.GetComponentInstanceT<state::comp::Loadout>();
 		RF_ASSERT( loadout != nullptr );
 
-		rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( i_rosterIndex ) ).str();
-		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rosterIndexAsString );
+		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) );
 		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( loadoutFilePath );
 		if( fileHandle == nullptr )
 		{
@@ -407,8 +402,7 @@ file::VFSPath CompanyManager::GetLoadoutSavePath( input::PlayerID const& playerI
 {
 	// TODO: Save manager
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( "TODO" );
-	rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
-	file::VFSPath const companyLoadoutRoot = paths::UserSavesRoot().GetChild( "company", playerIDAsString, "loadout" );
+	file::VFSPath const companyLoadoutRoot = paths::UserSavesRoot().GetChild( "company", rftl::to_string( playerID ), "loadout" );
 	return companyLoadoutRoot;
 }
 

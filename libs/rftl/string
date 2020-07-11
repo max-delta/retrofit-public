@@ -17,6 +17,19 @@ using std::u32string;
 using std::hash;
 using std::swap;
 
+// Disabled as these don't allow for good error-handling
+//using std::stoi;
+//using std::stol;
+//using std::stoll;
+//using std::stoul;
+//using std::stoull;
+//using std::stof;
+//using std::stod;
+//using std::stold;
+
+using std::to_string;
+using std::to_wstring;
+
 namespace string_literals {
 using namespace std::string_literals;
 }

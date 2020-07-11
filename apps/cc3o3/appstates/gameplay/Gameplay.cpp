@@ -145,9 +145,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		{
 			// HACK: Only local player
 			input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
-
-			rftl::string const playerIDAsString = ( rftl::stringstream() << math::integer_cast<size_t>( playerID ) ).str();
-			VariableIdentifier const companyRoot( "company", playerIDAsString );
+			VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
 
 			// Create company object
 			MutableObjectRef const company = CreateCompany( sharedWindow, privateWindow, companyRoot );
@@ -162,11 +160,9 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			VariableIdentifier const charRoot = companyRoot.GetChild( "member" );
 			for( character::CharacterDatabase::CharacterID const& characterID : characterIDs )
 			{
-				rftl::string const rosterIndexAsString = ( rftl::stringstream() << math::integer_cast<size_t>( rosterIndex ) ).str();
-
 				MutableObjectRef const newChar = CreateBaseCharacterFromDB(
 					sharedWindow, privateWindow,
-					charRoot.GetChild( rosterIndexAsString ), characterID );
+					charRoot.GetChild( rftl::to_string( rosterIndex ) ), characterID );
 				MakeOverworldCharacterFromDB(
 					sharedWindow, privateWindow,
 					newChar, characterID );
