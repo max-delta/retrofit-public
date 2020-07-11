@@ -7,6 +7,15 @@
 namespace RF::cc::element {
 ///////////////////////////////////////////////////////////////////////////////
 
+ElementIdentifier MakeElementIdentifier( ElementBytes const& identifier )
+{
+	ElementIdentifier retVal = {};
+	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
+	return retVal;
+}
+
+
+
 ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 {
 	ElementIdentifier retVal = {};
@@ -21,6 +30,15 @@ ElementIdentifier MakeElementIdentifier( rftl::string const& identifier )
 	RF_ASSERT( identifier.size() <= sizeof( identifier ) );
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
+	return retVal;
+}
+
+
+
+ElementBytes GetElementBytes( ElementIdentifier identifier )
+{
+	ElementBytes retVal = {};
+	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
 }
 
@@ -57,6 +75,15 @@ ElementSynopsis GetElementSynopsis( ElementIdentifier identifier )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+InnateIdentifier MakeInnateIdentifier( InnateBytes const& identifier )
+{
+	InnateIdentifier retVal = {};
+	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
+	return retVal;
+}
+
+
+
 InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 {
 	InnateIdentifier retVal = {};
@@ -71,6 +98,15 @@ InnateIdentifier MakeInnateIdentifier( rftl::string const& identifier )
 	RF_ASSERT( identifier.size() <= sizeof( identifier ) );
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
+	return retVal;
+}
+
+
+
+InnateBytes GetInnateBytes( InnateIdentifier identifier )
+{
+	InnateBytes retVal = {};
+	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
 }
 
