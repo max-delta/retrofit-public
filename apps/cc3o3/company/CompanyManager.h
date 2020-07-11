@@ -45,6 +45,9 @@ public:
 	// Locate various company-related objects
 	state::VariableIdentifier FindCompanyIdentifier( input::PlayerID const& playerID ) const;
 	state::ObjectRef FindCompanyObject( input::PlayerID const& playerID ) const;
+	rftl::array<state::VariableIdentifier, kRosterSize> FindRosterIdentifiers( input::PlayerID const& playerID ) const;
+	rftl::array<state::ObjectRef, kRosterSize> FindRosterObjects( input::PlayerID const& playerID ) const;
+	rftl::array<state::MutableObjectRef, kRosterSize> FindMutableRosterObjects( input::PlayerID const& playerID ) const;
 	rftl::array<state::VariableIdentifier, kActiveTeamSize> FindActivePartyIdentifiers( input::PlayerID const& playerID ) const;
 	rftl::array<state::ObjectRef, kActiveTeamSize> FindActivePartyObjects( input::PlayerID const& playerID ) const;
 	rftl::array<state::MutableObjectRef, kActiveTeamSize> FindMutableActivePartyObjects( input::PlayerID const& playerID ) const;
@@ -60,11 +63,21 @@ public:
 	void AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element );
 	void AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element );
 
+	// Save/load loadouts to/from disk
+	void ReadLoadoutsFromSave( input::PlayerID const& playerID );
+	void WriteLoadoutsToSave( input::PlayerID const& playerID );
+
 	// TODO: Need various validation machinery:
 	//  * Loadout setup / UI helpers
 	//  * Hard-fail gameplay verification
 	//  * Cheat detection
 	void TODO_ValidateLoadouts();
+
+
+	//
+	// Private methods
+private:
+	file::VFSPath GetLoadoutSavePath( input::PlayerID const& playerID );
 
 
 	//

@@ -594,6 +594,9 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 							{
 								// Exit section
 								internalState.ShowSelector( uiContext );
+
+								// Save loadouts
+								gCompanyManager->WriteLoadoutsToSave( input::HardcodedGetLocalPlayer() );
 							}
 							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{

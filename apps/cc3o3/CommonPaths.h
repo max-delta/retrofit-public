@@ -14,6 +14,7 @@ file::VFSPath TilesetsRoot();
 file::VFSPath TilemapsRoot();
 file::VFSPath FramepacksRoot();
 file::VFSPath TablesRoot();
+file::VFSPath UserSavesRoot();
 
 file::VFSPath CommonFonts();
 file::VFSPath CommonTilesets();

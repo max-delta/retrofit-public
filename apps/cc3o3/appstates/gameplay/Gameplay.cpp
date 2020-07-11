@@ -8,6 +8,7 @@
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
+#include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/state/objects/Company.h"
@@ -194,6 +195,10 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 			// HACK: Set some fake progression
 			progression.mStoryTier = 6;
+
+			// Read in loadouts
+			// TODO: Sanitize? Or atleast warn on invalid setup
+			gCompanyManager->ReadLoadoutsFromSave( playerID );
 		}
 
 		// Set up the UI
