@@ -17,6 +17,9 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameAppState/AppStateTickContext.h"
+#include "GameAppState/AppStateManager.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/FocusEvent.h"
@@ -430,8 +433,6 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 {
 	using TopLevelSections = InternalState::TopLevelSections;
 
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Menus" );
-
 	InternalState& internalState = *mInternalState;
 	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 	ui::ContainerManager& uiManager = *app::gUiManager;
@@ -439,7 +440,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 
 	ui::UIContext uiContext( uiManager );
 	focusMan.UpdateHardFocus( uiContext );
-	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
@@ -502,10 +503,9 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 					}
 					else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 					{
-						RF_TODO_BREAK_MSG( "Exit menus" );
-						// HACK: Always pop back up to section selector
+						// HACK: Always assume returning to overworld
 						// TODO: Proper logic
-						internalState.ShowSelector( uiContext );
+						context.mManager.RequestDeferredStateChange( id::Gameplay_Overworld );
 					}
 				}
 				else

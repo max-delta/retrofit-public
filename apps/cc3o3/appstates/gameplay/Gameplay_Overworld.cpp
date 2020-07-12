@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
@@ -14,9 +15,20 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameAppState/AppStateTickContext.h"
+#include "GameAppState/AppStateManager.h"
+
+#include "GameUI/ContainerManager.h"
+#include "GameUI/controllers/NineSlicer.h"
+#include "GameUI/controllers/TextLabel.h"
+
+#include "GameInput/GameController.h"
+
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/TileLayerCSVLoader.h"
+
+#include "Timing/FrameClock.h"
 
 #include "core_state/VariableIdentifier.h"
 #include "core_component/TypedObjectRef.h"
@@ -35,6 +47,9 @@ struct Gameplay_Overworld::InternalState
 	gfx::TileLayer mTerrainLand = {};
 	gfx::TileLayer mTerrainCloudA = {};
 	gfx::TileLayer mTerrainCloudB = {};
+
+	WeakPtr<ui::Controller> mUI;
+	time::CommonClock::time_point mLastActivity;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,6 +111,51 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 			RF_ASSERT( loadSuccess );
 		}
 	}
+
+	// Setup UI
+	{
+		ui::ContainerManager& uiManager = *app::gUiManager;
+		uiManager.RecreateRootContainer();
+
+		// Nine-slice the whole screen
+		constexpr bool kSlicesEnabled[9] = {
+			false, false, true,
+			false, false, false,
+			true, false, false
+		};
+		WeakPtr<ui::controller::NineSlicer> const rootNineSlicer =
+			uiManager.AssignStrongController(
+				ui::kRootContainerID,
+				DefaultCreator<ui::controller::NineSlicer>::Create(
+					kSlicesEnabled ) );
+		internalState.mUI = rootNineSlicer;
+
+		// Header on top
+		WeakPtr<ui::controller::TextLabel> const header =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 2 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		header->SetJustification( ui::Justification::TopRight );
+		header->SetFont( ui::font::LargeMenuText );
+		header->SetText( "UNSET" );
+		header->SetColor( math::Color3f::kWhite );
+		header->SetBorder( true );
+
+		// Footer on bottom
+		WeakPtr<ui::controller::TextLabel> const footer =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 6 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		footer->SetJustification( ui::Justification::BottomLeft );
+		footer->SetFont( ui::font::SmallMenuText );
+		footer->SetText( "UNSET" );
+		footer->SetColor( math::Color3f::kWhite );
+		footer->SetBorder( true );
+
+		// UI hidden unless idle for a while
+		internalState.mUI->SetChildRenderingBlocked( true );
+		internalState.mLastActivity = time::FrameClock::now();
+	}
 }
 
 
@@ -111,6 +171,50 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	gfx::PPUController& ppu = *app::gGraphics;
+
+	// Show/hide UI based on idle/activity
+	time::CommonClock::duration const timeSinceLastActivity = time::FrameClock::now() - internalState.mLastActivity;
+	static constexpr rftl::chrono::seconds kActivityThreshold( 3 );
+	if( timeSinceLastActivity > kActivityThreshold )
+	{
+		internalState.mUI->SetChildRenderingBlocked( false );
+	}
+	else
+	{
+		internalState.mUI->SetChildRenderingBlocked( true );
+	}
+
+	// Process character control
+	rftl::vector<input::GameCommand> const charCommands =
+		InputHelpers::GetGameplayInputToProcess( input::HardcodedGetLocalPlayer(), input::layer::CharacterControl );
+	for( input::GameCommand const& charCommand : charCommands )
+	{
+		// Treat as activity
+		internalState.mLastActivity = time::FrameClock::now();
+
+		if( charCommand.mType == input::command::game::Interact )
+		{
+			// HACK: Just pop into site
+			// TODO: Make sure party is actually at a site, and set it up
+			context.mManager.RequestDeferredStateChange( id::Gameplay_Site );
+		}
+		else
+		{
+			// TODO: Movement
+		}
+	}
+
+	// Process menu actions
+	rftl::vector<input::GameCommand> const menuCommands =
+		InputHelpers::GetGameplayInputToProcess( input::HardcodedGetLocalPlayer(), input::layer::GameMenu );
+	for( input::GameCommand const& menuCommand : menuCommands )
+	{
+		if( menuCommand.mType == input::command::game::UIMenuAction )
+		{
+			// Bring up menus
+			context.mManager.RequestDeferredStateChange( id::Gameplay_Menus );
+		}
+	}
 
 	// Draw terrain
 	{
@@ -226,8 +330,6 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			}
 		}
 	}
-
-	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Overworld" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -60,7 +60,11 @@ enum : RawCommandType
 
 	Affirmative,
 	Negative,
-	Auxiliary,
+	Auxiliary1,
+	Auxiliary2,
+
+	GameSelect, // Historical name, generally opens menus
+	GameStart, // Historical name, generally pauses game
 
 	DeveloperToggle,
 	DeveloperCycle,
@@ -84,6 +88,10 @@ enum : GameCommandType
 	UINavigateToLast,
 	UIActivateSelection,
 	UICancelSelection,
+	UIAuxiliaryAction1,
+	UIAuxiliaryAction2,
+	UIMenuAction,
+	UIPauseAction,
 
 	WalkNorth,
 	WalkNorthStop,
@@ -93,6 +101,7 @@ enum : GameCommandType
 	WalkSouthStop,
 	WalkWest,
 	WalkWestStop,
+	Interact,
 
 	DeveloperToggle,
 	DeveloperCycle,

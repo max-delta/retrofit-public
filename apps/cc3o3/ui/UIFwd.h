@@ -39,7 +39,12 @@ enum : FocusEventType
 	UNUSED = BEGIN_CUSTOM_TYPES,
 
 	Command_ActivateCurrentFocus,
-	Command_CancelCurrentFocus
+	Command_CancelCurrentFocus,
+
+	Command_AuxiliaryAction1,
+	Command_AuxiliaryAction2,
+	Command_MenuAction,
+	Command_PauseAction,
 };
 }
 

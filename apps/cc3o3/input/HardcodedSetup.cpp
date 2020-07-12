@@ -59,10 +59,12 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_RETURN][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping['E'][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping[shim::VK_BACK][input::DigitalPinState::Active] = command::raw::Negative;
-		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::Negative; // '|' or '\'
 		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary; // NOTE: Shared with arrows
+		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with arrows
+		logicalMapping['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with arrows
+		logicalMapping['F'][input::DigitalPinState::Active] = command::raw::Auxiliary2;
+		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with arrows
+		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with arrows ('\')
 	}
 	{
 		// Arrow keys
@@ -84,8 +86,10 @@ void HardcodedSetup()
 
 		logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = command::raw::Affirmative;
 		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with WASD
+		logicalMapping['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with WASD
+		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with WASD ('\')
 	}
 	{
 		// Hat
@@ -123,6 +127,10 @@ void HardcodedSetup()
 		commandMapping[command::raw::End] = command::game::UINavigateToLast;
 		commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;
 		commandMapping[command::raw::Negative] = command::game::UICancelSelection;
+		commandMapping[command::raw::Auxiliary1] = command::game::UIAuxiliaryAction1;
+		commandMapping[command::raw::Auxiliary2] = command::game::UIAuxiliaryAction2;
+		commandMapping[command::raw::GameSelect] = command::game::UIMenuAction;
+		commandMapping[command::raw::GameStart] = command::game::UIPauseAction;
 		menuHotkeyController->SetCommandMapping( commandMapping );
 	}
 	manager.RegisterGameController( menuHotkeyController, player::P1, layer::MainMenu );
@@ -141,6 +149,7 @@ void HardcodedSetup()
 		commandMapping[command::raw::LeftStop] = command::game::WalkWestStop;
 		commandMapping[command::raw::Right] = command::game::WalkEast;
 		commandMapping[command::raw::RightStop] = command::game::WalkEastStop;
+		commandMapping[command::raw::Affirmative] = command::game::Interact;
 		p1HotkeyController->SetCommandMapping( commandMapping );
 	}
 	p1HotkeyController->SetSource( rawController );

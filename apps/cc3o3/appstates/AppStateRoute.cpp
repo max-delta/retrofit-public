@@ -103,7 +103,7 @@ AppStateID GetFirstGameplayState()
 	}
 
 	// TODO: This should be based on the save file
-	return id::Gameplay_Menus;
+	return id::Gameplay_Overworld;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

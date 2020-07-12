@@ -16,15 +16,37 @@ namespace RF { namespace cc { namespace appstate {
 
 rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 {
+	rftl::vector<input::GameCommand> const commands = GetGameplayInputToProcess( input::player::P1, input::layer::MainMenu );
+	return ConvertUICommandsToFocusEvents( commands );
+}
+
+
+
+rftl::vector<ui::FocusEventType> InputHelpers::GetGameMenuInputToProcess( input::PlayerID player )
+{
+	rftl::vector<input::GameCommand> const commands = GetGameplayInputToProcess( player, input::layer::GameMenu );
+	return ConvertUICommandsToFocusEvents( commands );
+}
+
+
+
+rftl::vector<input::GameCommand> InputHelpers::GetGameplayInputToProcess( input::PlayerID player, input::LayerID layer )
+{
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	input::GameController const& controller = *controllerManager.GetGameController( input::player::P1, input::layer::MainMenu );
+	input::GameController const& controller = *controllerManager.GetGameController( player, layer );
 
 	// Fetch commands that were entered for this current frame
 	rftl::vector<input::GameCommand> commands;
 	rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
 	controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
 
-	// Convert to UI
+	return commands;
+}
+
+
+
+rftl::vector<ui::FocusEventType> InputHelpers::ConvertUICommandsToFocusEvents( rftl::vector<input::GameCommand> const& commands )
+{
 	rftl::vector<ui::FocusEventType> retVal;
 	for( input::GameCommand const& command : commands )
 	{
@@ -59,6 +81,18 @@ rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 				break;
 			case input::command::game::UICancelSelection:
 				retVal.emplace_back( ui::focusevent::Command_CancelCurrentFocus );
+				break;
+			case input::command::game::UIAuxiliaryAction1:
+				retVal.emplace_back( ui::focusevent::Command_AuxiliaryAction1 );
+				break;
+			case input::command::game::UIAuxiliaryAction2:
+				retVal.emplace_back( ui::focusevent::Command_AuxiliaryAction2 );
+				break;
+			case input::command::game::UIMenuAction:
+				retVal.emplace_back( ui::focusevent::Command_MenuAction );
+				break;
+			case input::command::game::UIPauseAction:
+				retVal.emplace_back( ui::focusevent::Command_PauseAction );
 				break;
 			default:
 				RF_DBGFAIL_MSG(
