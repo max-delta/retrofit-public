@@ -1,13 +1,15 @@
 #pragma once
 
 #include "core/meta/TypeList.h"
+#include "core/macros.h"
+
 #include "rftl/variant"
 #include "rftl/cstdint"
 
 
 // Forwards
 namespace RF { namespace reflect {
-	class VirtualClass;
+class VirtualClass;
 }}
 
 namespace RF { namespace reflect {
@@ -21,7 +23,7 @@ namespace RF { namespace reflect {
 // NOTE: Conversion of types to characters is ESPECIALLY shady and error-prone
 
 #define RF_REFLECT_VALUE_TYPELIST \
-		bool, \
+	bool, \
 		void*, void const*, \
 		::RF::reflect::VirtualClass*, ::RF::reflect::VirtualClass const*, \
 		char, wchar_t, char16_t, char32_t, \
@@ -32,7 +34,7 @@ namespace RF { namespace reflect {
 		uint64_t, int64_t
 
 #define RF_REFLECT_VALUE_TYPELIST_NAMES \
-		Bool, \
+	Bool, \
 		VoidPtr, VoidConstPtr, \
 		VirtualClassPtr, VirtualClassConstPtr, \
 		Char, WChar, Char16, Char32, \
@@ -43,7 +45,7 @@ namespace RF { namespace reflect {
 		UInt64, Int64
 
 #define RF_REFLECT_VALUE_TYPELIST_STRINGS \
-		"Bool", \
+	"Bool", \
 		"VoidPtr", "VoidConstPtr", \
 		"VirtualClassPtr", "VirtualClassConstPtr", \
 		"Char", "WChar", "Char16", "Char32", \
@@ -55,6 +57,8 @@ namespace RF { namespace reflect {
 
 class Value
 {
+	RF_DEFAULT_COPY( Value );
+
 	//
 	// Forwards
 private:
@@ -99,8 +103,6 @@ public:
 	explicit Value( T const& value );
 	explicit Value( Type type );
 	explicit Value( Type type, void const* bytes );
-	Value( Value const& ) = default;
-	Value& operator=( Value const& ) = default;
 
 	// This is a very explicit equals, and will not do conversions
 	bool operator==( Value const& rhs ) const;
