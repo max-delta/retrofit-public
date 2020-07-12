@@ -24,15 +24,13 @@ bool PageMapper::InitializeFromCharmapFile( file::VFS const& vfs, file::VFSPath 
 	}
 
 	file::FileBuffer const charmapBuffer{ *charmapHandle.Get(), false };
-	if( charmapBuffer.GetData() == nullptr )
+	if( charmapBuffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get data from charmap file buffer" );
 		return false;
 	}
 
-	char const* const data = reinterpret_cast<char const*>( charmapBuffer.GetData() );
-	size_t const size = charmapBuffer.GetSize();
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( charmapBuffer.GetChars() );
 	if( csv.empty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to read charmap file as csv" );

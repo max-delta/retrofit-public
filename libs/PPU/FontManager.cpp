@@ -69,7 +69,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 	// Deserialize
 	rftl::string spacingModeString;
 	rftl::string pathString;
-	( rftl::stringstream() << reinterpret_cast<char const*>( buffer.GetData() ) ) >> spacingModeString >> pathString;
+	( rftl::stringstream() << buffer.GetChars().data() ) >> spacingModeString >> pathString;
 	Font::SpacingMode spacingMode = Font::SpacingMode::Invalid;
 	if( spacingModeString == "Fixed" )
 	{
@@ -79,7 +79,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 	{
 		spacingMode = Font::SpacingMode::Variable;
 	}
-	if(spacingMode == Font::SpacingMode::Invalid)
+	if( spacingMode == Font::SpacingMode::Invalid )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize spacing mode" );
 		return nullptr;
@@ -98,8 +98,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 
 	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( texPath );
 	file::FileBuffer fontBuffer{ *fontHandle.Get(), false };
-	RF_ASSERT( fontBuffer.GetData() != nullptr );
-	if( fontBuffer.GetSize() <= 0 )
+	if( fontBuffer.IsEmpty() )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture file for font" );
 		return nullptr;
@@ -151,8 +150,7 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 	uint32_t tileHeight = 0;
 	rftl::array<uint32_t, 256> variableWidth;
 	resource.mDeviceRepresentation = mDeviceInterface->CreateBitmapFont(
-		resource.mFileBuffer.GetData(),
-		resource.mFileBuffer.GetSize(),
+		resource.mFileBuffer.GetBytes(),
 		tileWidth,
 		tileHeight,
 		&variableWidth );

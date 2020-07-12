@@ -25,15 +25,13 @@ bool TileLayerCSVLoader::LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& 
 	}
 
 	file::FileBuffer const tilemapBuffer{ *tilemapHandle.Get(), false };
-	if( tilemapBuffer.GetData() == nullptr )
+	if( tilemapBuffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_PPU, "Failed to load tilemap" );
 		return false;
 	}
 
-	char const* const data = reinterpret_cast<char const*>( tilemapBuffer.GetData() );
-	size_t const size = tilemapBuffer.GetSize();
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( tilemapBuffer.GetChars() );
 	if( csv.empty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_PPU, "Failed to read tilemap" );

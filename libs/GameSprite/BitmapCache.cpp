@@ -37,7 +37,7 @@ WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
 		file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
 		RF_ASSERT( handle != nullptr );
 		file::FileBuffer const buffer( *handle, false );
-		*bitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetData(), buffer.GetSize() );
+		*bitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetBytes() );
 	}
 	mCachedBitmaps[path] = rftl::move( bitmap );
 	return retVal;

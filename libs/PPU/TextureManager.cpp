@@ -113,8 +113,8 @@ bool TextureManager::LoadToDevice( ResourceType& resource, Filename const& filen
 		return false;
 	}
 	file::FileBuffer const buffer{ *fileHandle.Get(), false };
-	RF_ASSERT( buffer.GetData() != nullptr );
-	resource.mDeviceRepresentation = mDeviceInterface->LoadTexture( buffer.GetData(), buffer.GetSize(), resource.mWidthPostLoad, resource.mHeightPostLoad );
+	RF_ASSERT( buffer.IsEmpty() == false );
+	resource.mDeviceRepresentation = mDeviceInterface->LoadTexture( buffer.GetBytes(), resource.mWidthPostLoad, resource.mHeightPostLoad );
 	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
 	resource.UpdateFrameUsage();
 	return true;

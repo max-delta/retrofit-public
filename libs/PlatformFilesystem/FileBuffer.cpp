@@ -68,9 +68,9 @@ FileBuffer& FileBuffer::operator=( FileBuffer&& rhs )
 
 
 
-void const* FileBuffer::GetData() const
+bool FileBuffer::IsEmpty() const
 {
-	return mBuffer.data();
+	return mBuffer.empty();
 }
 
 
@@ -78,6 +78,20 @@ void const* FileBuffer::GetData() const
 size_t FileBuffer::GetSize() const
 {
 	return mBuffer.size();
+}
+
+
+
+rftl::byte_view FileBuffer::GetBytes() const
+{
+	return rftl::byte_view( mBuffer.data(), mBuffer.size() );
+}
+
+
+
+rftl::string_view FileBuffer::GetChars() const
+{
+	return rftl::string_view( reinterpret_cast<char const*>( mBuffer.data() ), mBuffer.size() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

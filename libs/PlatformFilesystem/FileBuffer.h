@@ -4,12 +4,14 @@
 #include "core/macros.h"
 #include "core/meta/ConstructorOverload.h"
 
+#include "rftl/extension/byte_view.h"
+#include "rftl/string_view"
 #include "rftl/vector"
 
 
 // Forwards
 namespace RF { namespace file {
-	class FileHandle;
+class FileHandle;
 }}
 
 namespace RF { namespace file {
@@ -29,8 +31,11 @@ public:
 	~FileBuffer() = default;
 	FileBuffer& operator=( FileBuffer&& rhs );
 
-	void const* GetData() const;
+	bool IsEmpty() const;
 	size_t GetSize() const;
+
+	rftl::byte_view GetBytes() const;
+	rftl::string_view GetChars() const;
 
 
 	//

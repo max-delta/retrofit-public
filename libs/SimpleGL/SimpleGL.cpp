@@ -229,10 +229,10 @@ bool SimpleGL::SetFontScale( float scale )
 
 
 
-DeviceTextureID SimpleGL::LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height )
+DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& width, uint32_t& height )
 {
 	int x, y, n;
-	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer ), math::integer_cast<int>( len ), &x, &y, &n, 4 );
+	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
@@ -263,11 +263,11 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth )
+DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
-	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer ), math::integer_cast<int>( len ), &tx, &ty, &tn, kRGBAElements );
+	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &tx, &ty, &tn, kRGBAElements );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{
@@ -322,7 +322,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( void const* buffer, size_t len, uint32_
 	characterHeight = charHeight;
 	if( variableWidth != nullptr )
 	{
-		for(uint32_t& width : *variableWidth)
+		for( uint32_t& width : *variableWidth )
 		{
 			width = 0;
 		}
@@ -499,7 +499,7 @@ bool SimpleGL::BeginFrame()
 bool SimpleGL::RenderFrame()
 {
 	glColor3f( 1, 1, 1 );
-	#ifdef SIMPLEGL_DBG_GRID
+#ifdef SIMPLEGL_DBG_GRID
 	{
 		for( float horizontal = 0; horizontal <= 1; horizontal += 0.1f )
 		{
@@ -516,7 +516,7 @@ bool SimpleGL::RenderFrame()
 			glEnd();
 		}
 	}
-	#endif
+#endif
 	// Makes sure that all buffered commands are sent to the graphics card.
 	//  Note that this does NOT insure that the commands were executed, only
 	//  that they have been sent.

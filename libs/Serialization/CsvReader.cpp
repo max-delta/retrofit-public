@@ -7,15 +7,13 @@ namespace RF { namespace serialization {
 namespace details {
 
 template<typename CharT>
-rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( CharT const* buffer, size_t bufferLen )
+rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( rftl::basic_string_view<CharT> const& buffer )
 {
 	rftl::deque<rftl::deque<rftl::basic_string<CharT>>> retVal;
 	retVal.emplace_back();
 	rftl::basic_string<CharT> curField;
-	for( size_t i = 0; i < bufferLen; i++ )
+	for( CharT const& ch : buffer )
 	{
-		CharT const ch = buffer[i];
-
 		if( ch == '\r' )
 		{
 			// Ignore \r\n's \r
@@ -58,23 +56,23 @@ rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( CharT cons
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( char const* buffer, size_t bufferLen )
+rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( rftl::string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer, bufferLen );
+	return details::TokenizeToDeques( buffer );
 }
 
 
 
-rftl::deque<rftl::deque<rftl::basic_string<char16_t>>> CsvReader::TokenizeToDeques( char16_t const* buffer, size_t bufferLen )
+rftl::deque<rftl::deque<rftl::basic_string<char16_t>>> CsvReader::TokenizeToDeques( rftl::u16string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer, bufferLen );
+	return details::TokenizeToDeques( buffer );
 }
 
 
 
-rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDeques( char32_t const* buffer, size_t bufferLen )
+rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDeques( rftl::u32string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer, bufferLen );
+	return details::TokenizeToDeques( buffer );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

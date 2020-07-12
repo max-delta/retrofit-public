@@ -30,15 +30,13 @@ bool LocEngine::InitializeFromKeymapFile( file::VFS const& vfs, file::VFSPath co
 	}
 
 	file::FileBuffer const keymapBuffer{ *keymapHandle.Get(), false };
-	if( keymapBuffer.GetData() == nullptr )
+	if( keymapBuffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get data from keymap file buffer" );
 		return false;
 	}
 
-	char const* const data = reinterpret_cast<char const*>( keymapBuffer.GetData() );
-	size_t const size = keymapBuffer.GetSize();
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( keymapBuffer.GetChars() );
 	if( csv.empty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to read keymap file as csv" );
@@ -78,7 +76,7 @@ bool LocEngine::InitializeFromKeymapFile( file::VFS const& vfs, file::VFSPath co
 			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column", i_row );
 			return false;
 		}
-		if( fromVal.at(0) != '$' )
+		if( fromVal.at( 0 ) != '$' )
 		{
 			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column, expected to begin with '$'", i_row );
 			return false;

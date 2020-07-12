@@ -275,7 +275,7 @@ void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
 		}
 
 		file::FileBuffer const buffer = file::FileBuffer( *fileHandle, false );
-		if( buffer.GetData() == nullptr )
+		if( buffer.IsEmpty() )
 		{
 			RFLOG_ERROR( loadoutFilePath, RFCAT_CHAR, "Failed to read to file buffer" );
 			continue;
@@ -292,8 +292,7 @@ void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
 
 		// Deserialize
 		{
-			uint8_t const* const elementGridBytesStart = reinterpret_cast<uint8_t const*>( buffer.GetData() );
-			uint8_t const* const elementGridBytesEnd = elementGridBytesStart + kFileSize;
+			rftl::byte_view const data = buffer.GetBytes();
 			size_t readOffset = 0;
 			character::ElementSlots& elements = loadout->mEquippedElements;
 
@@ -303,11 +302,10 @@ void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
 				// Slot
 				for( size_t i_slot = 0; i_slot < character::kMaxSlotsPerElementLevel; i_slot++ )
 				{
-					RF_ASSERT( elementGridBytesStart + readOffset + rftl::extent<element::ElementBytes>::value < elementGridBytesEnd );
 					element::ElementBytes bytes = {};
 					for( uint8_t& byte : bytes )
 					{
-						byte = *( elementGridBytesStart + readOffset );
+						byte = data.at<uint8_t>( readOffset );
 						readOffset++;
 					}
 

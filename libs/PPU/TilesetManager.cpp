@@ -58,7 +58,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	uint64_t tileWidth = 0;
 	uint64_t tileHeight = 0;
 	rftl::string pathString;
-	( rftl::stringstream() << reinterpret_cast<char const*>( buffer.GetData() ) ) >> tileWidth >> tileHeight >> pathString;
+	( rftl::stringstream() << buffer.GetChars().data() ) >> tileWidth >> tileHeight >> pathString;
 	if( tileWidth == 0 )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize tile width" );

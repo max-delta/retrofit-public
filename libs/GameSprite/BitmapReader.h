@@ -3,6 +3,8 @@
 
 #include "GameSprite/SpriteFwd.h"
 
+#include "rftl/extension/byte_view.h"
+
 
 namespace RF { namespace sprite {
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,7 +20,7 @@ class GAMESPRITE_API BitmapReader
 
 public:
 	// NOTE: Source is expected to be some kind of image file
-	static Bitmap ReadRGBABitmap( void const* source, size_t len );
+	static Bitmap ReadRGBABitmap( rftl::byte_view const& buffer );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

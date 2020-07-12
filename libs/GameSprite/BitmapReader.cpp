@@ -11,10 +11,10 @@
 namespace RF { namespace sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
-Bitmap BitmapReader::ReadRGBABitmap( void const* source, size_t len )
+Bitmap BitmapReader::ReadRGBABitmap( rftl::byte_view const& buffer )
 {
 	int x, y, n;
-	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( source ), math::integer_cast<int>( len ), &x, &y, &n, 4 );
+	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
 	if( data == nullptr )
 	{

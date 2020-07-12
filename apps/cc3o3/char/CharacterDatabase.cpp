@@ -154,9 +154,8 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 			size_t const fileSize = fileBuffer.GetSize();
 			RFLOG_TEST_AND_FATAL( fileSize > 10, path, RFCAT_CC3O3, "Unreasonably small file" );
 			RFLOG_TEST_AND_FATAL( fileSize < 10'000, path, RFCAT_CC3O3, "Unreasonably large file" );
-			source.reserve( fileSize - sizeof( '\0' ) );
-			source.assign( reinterpret_cast<char const*>( fileBuffer.GetData() ) );
-			RFLOG_TEST_AND_FATAL( source.size() == fileSize - sizeof( '\0' ), path, RFCAT_CC3O3, "Unexpected file size after load, expected ASCII with no nulls" );
+			source.assign( fileBuffer.GetChars() );
+			RFLOG_TEST_AND_FATAL( source.size() == fileSize, path, RFCAT_CC3O3, "Unexpected file size after load, expected ASCII with no nulls" );
 		}
 
 		script::OOLoader loader;

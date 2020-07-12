@@ -266,14 +266,14 @@ inline byte_view byte_view::substr( size_type pos, size_type size )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool operator==( byte_view const& lhs, byte_view const& rhs )
+inline bool operator==( byte_view const& lhs, byte_view const& rhs )
 {
 	return lhs.size() == rhs.size() && rftl::memcmp( lhs.data(), rhs.data(), lhs.size() ) == 0;
 }
 
 
 
-bool operator!=( byte_view const& lhs, byte_view const& rhs )
+inline bool operator!=( byte_view const& lhs, byte_view const& rhs )
 {
 	return lhs.size() != rhs.size() || rftl::memcmp( lhs.data(), rhs.data(), lhs.size() ) != 0;
 }

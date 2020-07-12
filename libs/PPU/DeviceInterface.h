@@ -8,6 +8,7 @@
 #include "core_platform/win_shim.h"
 
 #include "rftl/array"
+#include "rftl/extension/byte_view.h"
 
 
 namespace RF { namespace gfx {
@@ -29,10 +30,10 @@ public:
 	virtual bool SetBackgroundColor( math::Color3f color ) = 0;
 	virtual bool SetFontScale( float scale ) = 0;
 
-	virtual DeviceTextureID LoadTexture( void const* buffer, size_t len, uint32_t& width, uint32_t& height ) = 0;
+	virtual DeviceTextureID LoadTexture( rftl::byte_view const& buffer, uint32_t& width, uint32_t& height ) = 0;
 	virtual bool UnloadTexture( DeviceTextureID textureID ) = 0;
 
-	virtual DeviceFontID CreateBitmapFont( void const* buffer, size_t len, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth ) = 0;
+	virtual DeviceFontID CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth ) = 0;
 	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color ) = 0;
 	virtual bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV ) = 0;
 

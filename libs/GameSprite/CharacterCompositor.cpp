@@ -407,15 +407,13 @@ rftl::deque<rftl::deque<rftl::string>> CharacterCompositor::LoadCSV( file::VFSPa
 	}
 
 	file::FileBuffer const buffer{ *handle.Get(), false };
-	if( buffer.GetData() == nullptr )
+	if( buffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get data from file buffer" );
 		return {};
 	}
 
-	char const* const data = reinterpret_cast<char const*>( buffer.GetData() );
-	size_t const size = buffer.GetSize();
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( data, size );
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( buffer.GetChars() );
 	if( csv.empty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to read file as csv" );
