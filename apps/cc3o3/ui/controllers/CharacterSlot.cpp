@@ -68,27 +68,24 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
 		character::CharData const& charData = chara.mCharData;
 
-		using EntityClass = combat::CombatEngine::EntityClass;
-		using SimVal = combat::CombatEngine::SimVal;
-		using DisplayVal = combat::CombatEngine::DisplayVal;
-		static constexpr EntityClass kEntityClass = EntityClass::Player;
+		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Player;
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
-		auto const dispStat = [&combatEngine]( character::Stats::StatModifier stat ) -> DisplayVal //
+		auto const dispStat = [&combatEngine]( character::Stats::StatModifier stat ) -> combat::DisplayVal //
 		{
-			return combatEngine.DisplayStandardStat( math::integer_cast<SimVal>( stat ), kEntityClass );
+			return combatEngine.DisplayStandardStat( math::integer_cast<combat::SimVal>( stat ), kEntityClass );
 		};
-		DisplayVal const physAtk = dispStat( charData.mStats.mPhysAtk );
-		DisplayVal const physDef = dispStat( charData.mStats.mPhysDef );
-		DisplayVal const elemAtk = dispStat( charData.mStats.mElemAtk );
-		DisplayVal const elemDef = dispStat( charData.mStats.mElemDef );
-		DisplayVal const balance = dispStat( charData.mStats.mBalance );
-		DisplayVal const techniq = dispStat( charData.mStats.mTechniq );
-		//DisplayVal const elemPwr = dispStat( charData.mStats.mElemPwr );
+		combat::DisplayVal const physAtk = dispStat( charData.mStats.mPhysAtk );
+		combat::DisplayVal const physDef = dispStat( charData.mStats.mPhysDef );
+		combat::DisplayVal const elemAtk = dispStat( charData.mStats.mElemAtk );
+		combat::DisplayVal const elemDef = dispStat( charData.mStats.mElemDef );
+		combat::DisplayVal const balance = dispStat( charData.mStats.mBalance );
+		combat::DisplayVal const techniq = dispStat( charData.mStats.mTechniq );
+		//combat::DisplayVal const elemPwr = dispStat( charData.mStats.mElemPwr );
 
-		//DisplayVal const hp = combatEngine.DisplayHealth(
+		//combat::DisplayVal const hp = combatEngine.DisplayHealth(
 		//	combatEngine.LoCalcMaxHealth(
-		//		math::integer_cast<SimVal>( charData.mStats.mMHealth ), kEntityClass ),
+		//		math::integer_cast<combat::SimVal>( charData.mStats.mMHealth ), kEntityClass ),
 		//	kEntityClass );
 
 		static constexpr size_t kLineBufSize = 16;

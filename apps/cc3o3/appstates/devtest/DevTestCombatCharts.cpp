@@ -28,13 +28,13 @@ struct DevTestCombatCharts::InternalState
 
 	size_t mCursor = 0;
 
-	combat::CombatEngine::SimVal mTech = 2;
-	combat::CombatEngine::SimVal mAtk = 2;
-	combat::CombatEngine::SimDelta mAtkField = 0;
-	combat::CombatEngine::SimVal mBalance = 2;
-	combat::CombatEngine::SimVal mDef = 2;
-	combat::CombatEngine::SimDelta mDefField = 0;
-	combat::CombatEngine::SimColor mColor = combat::CombatEngine::SimColor::Unrelated;
+	combat::SimVal mTech = 2;
+	combat::SimVal mAtk = 2;
+	combat::SimDelta mAtkField = 0;
+	combat::SimVal mBalance = 2;
+	combat::SimVal mDef = 2;
+	combat::SimDelta mDefField = 0;
+	combat::SimColor mColor = combat::SimColor::Unrelated;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,12 +59,11 @@ void DevTestCombatCharts::OnExit( AppStateChangeContext& context )
 
 void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 {
-	InternalState& internalState = *mInternalState;
-	combat::CombatEngine const& combatEngine = *gCombatEngine;
-	using SimVal = combat::CombatEngine::SimVal;
-	using SimDelta = combat::CombatEngine::SimDelta;
-	using SimColor = combat::CombatEngine::SimColor;
+	using namespace combat;
 	using FieldColors = combat::CombatEngine::FieldColors;
+
+	InternalState& internalState = *mInternalState;
+	CombatEngine const& combatEngine = *gCombatEngine;
 
 	gfx::PPUController& ppu = *app::gGraphics;
 

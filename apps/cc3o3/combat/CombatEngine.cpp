@@ -16,14 +16,14 @@ CombatEngine::CombatEngine( WeakPtr<file::VFS const> const& vfs )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CombatEngine::DisplayVal CombatEngine::DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const
+DisplayVal CombatEngine::DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const
 {
 	return healthVal;
 }
 
 
 
-CombatEngine::DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const
+DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const
 {
 	static constexpr SimVal kMinStat = 0;
 	static constexpr SimVal kMaxStat = 10;
@@ -55,7 +55,7 @@ CombatEngine::DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, Enti
 
 ///////////////////////////////////////////////////////////////////////////////
 
-CombatEngine::LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, EntityClass entityClass ) const
+LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, EntityClass entityClass ) const
 {
 	static constexpr SimVal kMinStat = 0;
 	static constexpr SimVal kMaxStat = 15;
@@ -87,7 +87,7 @@ CombatEngine::LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, Enti
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
+SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
 {
 	if( attackStrength >= 3 )
 	{
@@ -114,7 +114,7 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength )
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
+SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
 	static constexpr SimVal kMaxTechniq = 10u;
 	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
@@ -136,7 +136,7 @@ CombatEngine::SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, S
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
+SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
 {
 	static constexpr SimVal kMaxTechniq = 10u;
 	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
@@ -158,7 +158,7 @@ CombatEngine::SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComb
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcMinComboToHit( SimVal defenderBalanceStat ) const
+SimVal CombatEngine::LoCalcMinComboToHit( SimVal defenderBalanceStat ) const
 {
 	static constexpr SimVal kMaxBalance = 10u;
 	defenderBalanceStat = math::Clamp<SimVal>( 0u, defenderBalanceStat, kMaxBalance );
@@ -189,7 +189,7 @@ bool CombatEngine::LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defend
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor attackVsTarget, FieldColors const& attackerField ) const
+SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor attackVsTarget, FieldColors const& attackerField ) const
 {
 	static constexpr SimVal kMaxAttackStrength = 5;
 	RF_ASSERT( attackStrength <= kMaxAttackStrength );
@@ -365,14 +365,14 @@ CombatEngine::SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkSta
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) const
+SimVal CombatEngine::LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) const
 {
 	return attackerComboMeter;
 }
 
 
 
-CombatEngine::SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
+SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
 {
 	return attackDamage / 2u;
 }
