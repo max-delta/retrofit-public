@@ -24,6 +24,7 @@ using DisplayVal = uint16_t;
 static constexpr size_t kFieldSize = 5;
 
 class CombatEngine;
+class CombatInstance;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
