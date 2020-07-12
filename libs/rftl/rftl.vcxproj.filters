@@ -64,6 +64,12 @@
     <ClInclude Include="extension\static_string.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\byte_view.h">
+      <Filter>extension</Filter>
+    </ClInclude>
+    <ClInclude Include="extension\void_traits.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="patch\preinclude.inl">
@@ -86,6 +92,10 @@
     </None>
     <None Include="numeric" />
     <None Include="extension\static_string.inl">
+      <Filter>extension</Filter>
+    </None>
+    <None Include="string_view" />
+    <None Include="extension\byte_view.inl">
       <Filter>extension</Filter>
     </None>
   </ItemGroup>

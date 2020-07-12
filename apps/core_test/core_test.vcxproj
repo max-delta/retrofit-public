@@ -35,6 +35,7 @@
     <ClCompile Include="allocate_linearallocator.cpp" />
     <ClCompile Include="allocate_rftlallocator.cpp" />
     <ClCompile Include="allocate_singleallocator.cpp" />
+    <ClCompile Include="byte_view.cpp" />
     <ClCompile Include="component_objectmanager.cpp" />
     <ClCompile Include="component_typedobjectmanager.cpp" />
     <ClCompile Include="event_eventdispatcher.cpp" />

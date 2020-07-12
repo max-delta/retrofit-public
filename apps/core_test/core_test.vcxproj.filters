@@ -54,6 +54,7 @@
     <ClCompile Include="static_vector.cpp" />
     <ClCompile Include="literal.cpp" />
     <ClCompile Include="static_string.cpp" />
+    <ClCompile Include="byte_view.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

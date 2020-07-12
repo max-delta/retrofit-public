@@ -1,0 +1,23 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_STRING_VIEW
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::basic_string_view;
+using std::string_view;
+//using std::u8string_view; // Too new in C++ 20
+using std::u16string_view;
+using std::u32string_view;
+using std::wstring_view;
+
+using std::hash;
+using std::swap;
+
+namespace string_literals {
+using namespace std::string_literals;
+}
+}

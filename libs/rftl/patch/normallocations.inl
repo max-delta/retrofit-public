@@ -29,6 +29,7 @@
 #define RFTL_SHARED_MUTEX <shared_mutex>
 #define RFTL_SSTREAM <sstream>
 #define RFTL_STRING <string>
+#define RFTL_STRING_VIEW <string_view>
 #define RFTL_SYSTEM_ERROR <system_error>
 #define RFTL_THREAD <thread>
 #define RFTL_TUPLE <tuple>
