@@ -501,6 +501,15 @@
     <ClInclude Include="combat\CombatInstance.h">
       <Filter>combat</Filter>
     </ClInclude>
+    <ClInclude Include="combat\Combatant.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\Party.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\Team.h">
+      <Filter>combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
