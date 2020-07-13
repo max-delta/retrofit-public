@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CombatEngine.h"
 
+#include "cc3o3/elements/IdentifierUtils.h"
+
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
@@ -12,6 +14,39 @@ CombatEngine::CombatEngine( WeakPtr<file::VFS const> const& vfs )
 	: mVfs( vfs )
 {
 	//
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+SimColor CombatEngine::EvalInnates( element::InnateIdentifier lhs, element::InnateIdentifier rhs ) const
+{
+	if( lhs == rhs )
+	{
+		return SimColor::Same;
+	}
+
+	// TODO: Use data from a file instead
+	using Pair = rftl::pair<element::InnateString, element::InnateString>;
+	using I = element::InnateString;
+	rftl::array<Pair, 3> const pairs = {
+		Pair{ I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' } },
+		Pair{ I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' } },
+		Pair{ I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' } }
+	};
+
+	for( Pair const& pair : pairs )
+	{
+		if( lhs == pair.first && rhs == pair.second )
+		{
+			return SimColor::Clash;
+		}
+		if( lhs == pair.second && rhs == pair.first )
+		{
+			return SimColor::Clash;
+		}
+	}
+
+	return SimColor::Unrelated;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "cc3o3/combat/CombatFwd.h"
+#include "cc3o3/elements/ElementFwd.h"
 
 #include "PlatformFilesystem/VFSFwd.h"
 
@@ -25,6 +26,12 @@ public:
 	// Public methods
 public:
 	CombatEngine( WeakPtr<file::VFS const> const& vfs );
+
+
+	//
+	// Public methods (lookup evalutaions)
+public:
+	SimColor EvalInnates( element::InnateIdentifier lhs, element::InnateIdentifier rhs ) const;
 
 
 	//
