@@ -513,6 +513,9 @@
     <ClInclude Include="combat\Field.h">
       <Filter>combat</Filter>
     </ClInclude>
+    <ClInclude Include="combat\Attack.h">
+      <Filter>combat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">

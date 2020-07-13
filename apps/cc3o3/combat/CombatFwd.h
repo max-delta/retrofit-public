@@ -50,6 +50,8 @@ struct CombatantID
 };
 static constexpr size_t kMaxTotalCombatants = kMaxTeamsPerFight * kMaxPartiesPerTeam * kMaxFightersPerParty;
 
+static constexpr SimDelta kMinStamina = -7;
+static constexpr SimDelta kMaxStamina = 7;
 static constexpr SimVal kCounterGaugeFull = 100;
 static constexpr SimVal kCounterGaugeMax = 175;
 static constexpr size_t kFieldSize = 5;
@@ -58,6 +60,10 @@ static constexpr size_t kFieldSize = 5;
 struct Party;
 struct Team;
 struct Combatant;
+struct Field;
+
+struct AttackProfile;
+struct AttackResult;
 
 class CombatEngine;
 class CombatInstance;

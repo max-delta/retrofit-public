@@ -15,6 +15,9 @@ struct Combatant
 	LargeSimVal mMaxHealth = 0;
 	LargeSimVal mCurHealth = 0;
 
+	SimDelta mMaxStamina = 0;
+	SimDelta mCurStamina = 0;
+
 	SimVal mPhysAtk = 0; // Punch harder
 	SimVal mPhysDef = 0; // Take less from punches
 

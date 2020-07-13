@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CombatEngine.h"
 
+#include "cc3o3/combat/Attack.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
 #include "core_math/math_casts.h"
@@ -86,6 +87,68 @@ DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entity
 			return 0;
 		}
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+AttackResult CombatEngine::HiCalcAttack( AttackProfile const& profile ) const
+{
+	AttackResult retVal = {};
+
+	SimVal const attackAccuracy = LoCalcAttackAccuracy( profile.mAttackStrength );
+
+	if( profile.mNewCombo )
+	{
+		retVal.mNewComboMeter = LoCalcNewComboMeter(
+			attackAccuracy,
+			profile.mAttackerTechnique,
+			profile.mDefenderBalance );
+	}
+	else
+	{
+		retVal.mNewComboMeter = LoCalcContinueComboMeter(
+			profile.mComboMeter,
+			attackAccuracy,
+			profile.mAttackerTechnique,
+			profile.mDefenderBalance );
+	}
+
+	retVal.mHit = LoCalcWillAttackHit(
+		retVal.mNewComboMeter,
+		profile.mDefenderBalance );
+
+	if( retVal.mHit )
+	{
+		SimColor const combatantClash = EvalInnates(
+			profile.mAttackerInnate,
+			profile.mDefenderInnate );
+
+		FieldColors attackerInfluenced = {};
+		for( size_t i = 0; i < kFieldSize; i++ )
+		{
+			attackerInfluenced.at( i ) = EvalInnates(
+				profile.mAttackerInnate,
+				profile.mInfluence.at( i ) );
+		}
+
+		retVal.mDamage = LoCalcAttackDamage(
+			profile.mAttackerPhysicalAttack,
+			profile.mDefenderPhysicalDefense,
+			profile.mAttackStrength,
+			combatantClash,
+			attackerInfluenced );
+
+		retVal.mCoungerGuageIncrease = 0;
+		retVal.mCoungerGuageIncrease += LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
+		retVal.mCoungerGuageIncrease += LoCalcCounterFromAttackDamage( retVal.mDamage );
+	}
+	else
+	{
+		retVal.mDamage = 0;
+		retVal.mCoungerGuageIncrease = LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
+	}
+
+	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

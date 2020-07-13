@@ -1,7 +1,11 @@
 #include "stdafx.h"
 #include "CombatInstance.h"
 
+#include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/CombatEngine.h"
+
 #include "core_math/math_casts.h"
+#include "core_math/math_clamps.h"
 
 
 namespace RF::cc::combat {
@@ -55,6 +59,16 @@ void CombatInstance::RemoveFighter( CombatantID combatantID )
 
 
 
+Combatant const& CombatInstance::GetCombatantRef( CombatantID combatantID ) const
+{
+	return mTeams.at( combatantID.mTeam )
+		.mParties.at( combatantID.mParty )
+		.mFighters.at( combatantID.mFighter )
+		.mCombatant;
+}
+
+
+
 void CombatInstance::SetCombatant( CombatantID combatantID, Combatant const& combatant )
 {
 	Parties& parties = mTeams.at( combatantID.mTeam ).mParties;
@@ -70,6 +84,13 @@ void CombatInstance::SetCombatant( CombatantID combatantID, Combatant const& com
 void CombatInstance::SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character )
 {
 	RF_TODO_BREAK();
+}
+
+
+
+rftl::array<element::InnateIdentifier, kFieldSize> CombatInstance::GetFieldInfluence() const
+{
+	return mField.mInfluence;
 }
 
 
@@ -92,6 +113,86 @@ void CombatInstance::AddFieldInfluence( element::InnateIdentifier influence, siz
 	{
 		AddFieldInfluence( influence );
 	}
+}
+
+
+
+SimVal CombatInstance::GetCounterGuage( PartyID party ) const
+{
+	return mTeams.at( party.mTeam ).mParties.at( party.mParty ).mParty.mCounterGuage;
+}
+
+
+
+void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
+{
+	SimVal& counterGuage = mTeams.at( party.mTeam ).mParties.at( party.mParty ).mParty.mCounterGuage;
+	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGuage );
+	counterGuage = math::Min( maxIncrease, value );
+}
+
+
+
+AttackProfile CombatInstance::PrepareAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength ) const
+{
+	Combatant const& attacker = GetCombatantRef( attackerID );
+	Combatant const& defender = GetCombatantRef( defenderID );
+
+	AttackProfile retVal = {};
+
+	retVal.mAttackStrength = attackStrength;
+
+	retVal.mNewCombo = true;
+	if( attacker.mComboTarget.mTeam == defenderID.mTeam &&
+		attacker.mComboTarget.mParty == defenderID.mParty &&
+		attacker.mComboTarget.mFighter == defenderID.mFighter )
+	{
+		// TODO: operator==(...) instead
+		retVal.mNewCombo = false;
+	}
+	retVal.mComboMeter = attacker.mComboMeter;
+	retVal.mAttackerTechnique = attacker.mTechniq;
+	retVal.mDefenderBalance = defender.mBalance;
+
+	retVal.mAttackerPhysicalAttack = attacker.mPhysAtk;
+	retVal.mDefenderPhysicalDefense = defender.mPhysDef;
+	retVal.mAttackerInnate = attacker.mInnate;
+	retVal.mDefenderInnate = defender.mInnate;
+	retVal.mInfluence = GetFieldInfluence();
+
+	return retVal;
+}
+
+
+
+AttackResult CombatInstance::ExecuteAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength )
+{
+	AttackProfile const profile = PrepareAttack( attackerID, defenderID, attackStrength );
+	AttackResult const result = mCombatEngine->HiCalcAttack( profile );
+
+	Combatant& attacker = GetMutableCombatantRef( attackerID );
+	Combatant& defender = GetMutableCombatantRef( defenderID );
+
+	attacker.mComboTarget = defenderID;
+	attacker.mCurStamina -= profile.mAttackStrength;
+	RF_ASSERT( attacker.mCurStamina >= kMinStamina );
+	RF_ASSERT( attacker.mCurStamina <= kMaxStamina );
+	attacker.mComboMeter = result.mNewComboMeter;
+	LargeSimVal const maxDamage = math::integer_cast<LargeSimVal>( defender.mMaxHealth - defender.mCurHealth );
+	defender.mCurHealth -= math::Min( result.mDamage, math::integer_truncast<SimVal>( maxDamage ) );
+	IncreaseCounterGuage( { defenderID.mTeam, defenderID.mParty }, result.mCoungerGuageIncrease );
+
+	return result;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+Combatant& CombatInstance::GetMutableCombatantRef( CombatantID combatantID )
+{
+	return mTeams.at( combatantID.mTeam )
+		.mParties.at( combatantID.mParty )
+		.mFighters.at( combatantID.mFighter )
+		.mCombatant;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,9 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
-#include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/CombatInstance.h"
+#include "cc3o3/elements/IdentifierUtils.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -60,10 +62,8 @@ void DevTestCombatCharts::OnExit( AppStateChangeContext& context )
 void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 {
 	using namespace combat;
-	using FieldColors = combat::CombatEngine::FieldColors;
 
 	InternalState& internalState = *mInternalState;
-	CombatEngine const& combatEngine = *gCombatEngine;
 
 	gfx::PPUController& ppu = *app::gGraphics;
 
@@ -225,31 +225,71 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		combos.emplace_back( Swings{ 2_u8, 3_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 3_u8, 3_u8, 1_u8 } );
 
-		// Setup field colors
-		FieldColors atkFieldColors;
+		// Setup combat instance
+		CombatInstance startInstance( gCombatEngine );
+		CombatantID const attackerID = { 0, 0, 0 };
+		CombatantID const defenderID = { 1, 0, 0 };
 		{
-			SimDelta pool = atkField;
-			for( FieldColors::value_type& fieldColor : atkFieldColors )
+			Combatant attacker = {};
+			Combatant defender = {};
+
+			attacker.mMaxHealth = 1;
+			attacker.mCurHealth = attacker.mMaxHealth;
+			attacker.mMaxStamina = 7;
+			attacker.mCurStamina = attacker.mMaxStamina;
+			attacker.mPhysAtk = atk;
+			attacker.mTechniq = tech;
+			attacker.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
+			element::InnateIdentifier const same = attacker.mInnate;
+			element::InnateIdentifier const clash = element::MakeInnateIdentifier( element::InnateString{ 'b', 'l', 'u' } );
+			element::InnateIdentifier const unrel = element::MakeInnateIdentifier( element::InnateString{ 'w', 'h', 't' } );
+
+			defender.mMaxHealth = 10'000;
+			defender.mCurHealth = defender.mMaxHealth;
+			defender.mPhysDef = def;
+			defender.mBalance = balance;
+			switch( color )
 			{
-				if( pool > 0 )
-				{
-					pool--;
-					fieldColor = SimColor::Same;
-				}
-				else if( pool < 0 )
-				{
-					pool++;
-					fieldColor = SimColor::Clash;
-				}
-				else
-				{
-					fieldColor = SimColor::Unrelated;
-				}
+				case SimColor::Unrelated:
+					defender.mInnate = unrel;
+					break;
+				case SimColor::Same:
+					defender.mInnate = same;
+					break;
+				case SimColor::Clash:
+					defender.mInnate = clash;
+					break;
+				default:
+					RF_DBGFAIL();
+			}
+
+			startInstance.AddTeam();
+			startInstance.AddParty( 0 );
+			startInstance.AddFighter( { 0, 0 } );
+			startInstance.SetCombatant( attackerID, attacker );
+			startInstance.AddTeam();
+			startInstance.AddParty( 1 );
+			startInstance.AddFighter( { 1, 0 } );
+			startInstance.SetCombatant( defenderID, defender );
+
+			// Field influence
+			startInstance.AddFieldInfluence( unrel, 5 );
+			if( atkField < 0 )
+			{
+				// Unfavorable
+				startInstance.AddFieldInfluence( clash, math::integer_cast<size_t>( -atkField ) );
+			}
+			else
+			{
+				// Favorable
+				startInstance.AddFieldInfluence( same, math::integer_cast<size_t>( atkField ) );
 			}
 		}
 
 		for( Swings const& combo : combos )
 		{
+			CombatInstance comboInstance = startInstance;
+
 			Swings const& swings = combo;
 			Hits hits;
 			Damages damages;
@@ -267,31 +307,21 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				bool& hit = hits.at( i );
 				SimVal& damage = damages.at( i );
 
-				SimVal const acc = combatEngine.LoCalcAttackAccuracy( swing );
-				if( i == 0 )
-				{
-					comboMeter = combatEngine.LoCalcNewComboMeter( acc, tech, balance );
-				}
-				else
-				{
-					comboMeter = combatEngine.LoCalcContinueComboMeter( comboMeter, acc, tech, balance );
-				}
-				hit = combatEngine.LoCalcWillAttackHit( comboMeter, balance );
-				damage = combatEngine.LoCalcAttackDamage( atk, def, swing, color, atkFieldColors );
+				AttackResult const result = comboInstance.ExecuteAttack( attackerID, defenderID, swing );
+				comboMeter = result.mNewComboMeter;
+				hit = result.mHit;
+				counterGuage = comboInstance.GetCounterGuage( { defenderID.mTeam, defenderID.mParty } );
+				damage = result.mDamage;
 
 				if( hit )
 				{
 					damageTotal += damage;
-					counterGuage += combatEngine.LoCalcCounterFromAttackSwing( comboMeter );
-					counterGuage += combatEngine.LoCalcCounterFromAttackDamage( damage );
 					drawText( x, y, " %i:%2i", swing, damage );
 					y += ystep;
 				}
 				else
 				{
 					damageTotal += 0;
-					counterGuage += combatEngine.LoCalcCounterFromAttackSwing( comboMeter );
-					counterGuage += 0;
 					drawText( x, y, " %i:--", swing );
 					y += ystep;
 				}

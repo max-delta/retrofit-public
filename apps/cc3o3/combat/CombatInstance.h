@@ -57,11 +57,25 @@ public:
 	CombatantID AddFighter( PartyID partyID );
 	void RemoveFighter( CombatantID combatantID );
 
+	Combatant const& GetCombatantRef( CombatantID combatantID ) const;
 	void SetCombatant( CombatantID combatantID, Combatant const& combatant );
 	void SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character );
 
+	rftl::array<element::InnateIdentifier, kFieldSize> GetFieldInfluence() const;
 	void AddFieldInfluence( element::InnateIdentifier influence );
 	void AddFieldInfluence( element::InnateIdentifier influence, size_t strength );
+
+	SimVal GetCounterGuage( PartyID party ) const;
+	void IncreaseCounterGuage( PartyID party, SimVal value );
+
+	AttackProfile PrepareAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength ) const;
+	AttackResult ExecuteAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength );
+
+
+	//
+	// Private methods
+private:
+	Combatant& GetMutableCombatantRef( CombatantID combatantID );
 
 
 	//

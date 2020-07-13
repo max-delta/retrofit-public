@@ -42,6 +42,13 @@ public:
 
 
 	//
+	// Public methods (high-level calculations)
+public:
+	// Physical attack
+	AttackResult HiCalcAttack( AttackProfile const& profile ) const;
+
+
+	//
 	// Public methods (low-level calculations)
 public:
 	// Max health drives the balance and tuning of all combat
