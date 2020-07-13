@@ -72,5 +72,27 @@ void CombatInstance::SetCombatant( CombatantID combatantID, component::MutableOb
 	RF_TODO_BREAK();
 }
 
+
+
+void CombatInstance::AddFieldInfluence( element::InnateIdentifier influence )
+{
+	// Shift everything back 1, push_back()
+	for( size_t i = 0; i < kFieldSize - 1; i++ )
+	{
+		mField.mInfluence.at( i ) = mField.mInfluence.at( i + 1 );
+	}
+	mField.mInfluence.back() = influence;
+}
+
+
+
+void CombatInstance::AddFieldInfluence( element::InnateIdentifier influence, size_t strength )
+{
+	for( size_t i = 0; i < strength; i++ )
+	{
+		AddFieldInfluence( influence );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

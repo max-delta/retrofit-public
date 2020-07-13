@@ -4,6 +4,7 @@
 #include "cc3o3/combat/Combatant.h"
 #include "cc3o3/combat/Party.h"
 #include "cc3o3/combat/Team.h"
+#include "cc3o3/combat/Field.h"
 #include "cc3o3/elements/ElementFwd.h"
 #include "cc3o3/state/StateFwd.h"
 
@@ -59,6 +60,9 @@ public:
 	void SetCombatant( CombatantID combatantID, Combatant const& combatant );
 	void SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character );
 
+	void AddFieldInfluence( element::InnateIdentifier influence );
+	void AddFieldInfluence( element::InnateIdentifier influence, size_t strength );
+
 
 	//
 	// Private data
@@ -66,6 +70,7 @@ private:
 	WeakPtr<CombatEngine const> mCombatEngine;
 
 	Teams mTeams;
+	Field mField;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
