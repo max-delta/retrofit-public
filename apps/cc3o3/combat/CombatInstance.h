@@ -51,6 +51,14 @@ public:
 public:
 	CombatInstance( WeakPtr<CombatEngine const> const& combatEngine );
 
+	TeamIndex AddTeam();
+	PartyID AddParty( TeamIndex teamID );
+	CombatantID AddFighter( PartyID partyID );
+	void RemoveFighter( CombatantID combatantID );
+
+	void SetCombatant( CombatantID combatantID, Combatant const& combatant );
+	void SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character );
+
 
 	//
 	// Private data

@@ -37,6 +37,11 @@ using FighterIndex = uint8_t;
 static constexpr FighterIndex kInvalidFighterIndex = rftl::numeric_limits<FighterIndex>::max();
 static constexpr size_t kMaxFightersPerParty = 5;
 
+struct PartyID
+{
+	TeamIndex mTeam;
+	PartyIndex mParty;
+};
 struct CombatantID
 {
 	TeamIndex mTeam;
