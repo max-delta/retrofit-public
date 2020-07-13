@@ -12,6 +12,8 @@ namespace RF::cc::element {
 // SEE: MakeInnateIdentifier(...) and GetInnateBytes(...)
 using ElementIdentifier = uint64_t; // 'B' 'u' 'f' 'S' '_' 'R' '\0' '\0'
 static constexpr ElementIdentifier kInvalidElementIdentifier = 0;
+// NOTE: More than just 1 char for readability and to reduce collision space of
+//  potential mods and user-created innates
 using InnateIdentifier = uint32_t; // 'r' 'e' 'd' '\0'
 static constexpr InnateIdentifier kInvalidInnateIdentifier = 0;
 
