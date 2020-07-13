@@ -20,6 +20,13 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 {
 	RF_ASSERT( mTimes.size() == mValues.size() );
 
+	if( value == Read( time ) )
+	{
+		// Writing this value wouldn't change the read behavior, so we'll skip
+		//  it to keep the stream high-entropy for performance reasons
+		return;
+	}
+
 	typename Times::iterator iterAtTime = rftl::lower_bound( mTimes.begin(), mTimes.end(), time );
 	if( iterAtTime == mTimes.end() )
 	{
