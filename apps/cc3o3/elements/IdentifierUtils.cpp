@@ -121,13 +121,6 @@ InnateString GetInnateString( InnateIdentifier identifier )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool operator==( InnateIdentifier const& lhs, InnateString const& rhs )
-{
-	return lhs == MakeInnateIdentifier( rhs );
-}
-
-
-
 bool SortPredicateInnate( InnateIdentifier const& lhs, InnateIdentifier const& rhs )
 {
 	// Sort special known types before everything else
@@ -159,4 +152,9 @@ bool SortPredicateInnate( InnateIdentifier const& lhs, InnateIdentifier const& r
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+}
+
+bool operator==( RF::cc::element::InnateIdentifier const& lhs, RF::cc::element::InnateString const& rhs )
+{
+	return lhs == RF::cc::element::MakeInnateIdentifier( rhs );
 }

@@ -39,8 +39,9 @@ InnateString GetInnateString( InnateIdentifier identifier );
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool operator==( InnateIdentifier const& lhs, InnateString const& rhs );
 bool SortPredicateInnate( InnateIdentifier const& lhs, InnateIdentifier const& rhs );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+bool operator==( RF::cc::element::InnateIdentifier const& lhs, RF::cc::element::InnateString const& rhs );
