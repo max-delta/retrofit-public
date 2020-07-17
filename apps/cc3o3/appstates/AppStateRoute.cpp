@@ -25,6 +25,7 @@ enum class Mode : uint8_t
 	// Directly to gameplay
 	GameplayOverworld,
 	GameplayMenus,
+	GameplayBattle
 };
 
 static Mode sMode = Mode::Invalid;
@@ -68,6 +69,10 @@ AppStateID GetStateAfterInitialLoad()
 	{
 		return id::Gameplay;
 	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayBattle )
+	{
+		return id::Gameplay;
+	}
 
 
 	return id::TitleScreen;
@@ -100,6 +105,10 @@ AppStateID GetFirstGameplayState()
 	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
 	{
 		return id::Gameplay_Menus;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayBattle )
+	{
+		return id::Gameplay_Battle;
 	}
 
 	// TODO: This should be based on the save file
