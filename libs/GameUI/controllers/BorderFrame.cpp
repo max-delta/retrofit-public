@@ -34,7 +34,7 @@ void BorderFrame::SetTileset(
 
 	// Invalidate tilemap and wait for recalc
 	mTileLayer.Clear();
-	context.GetMutableContainerManager().RequestHardRecalc( GetContainerID() );
+	RequestHardRecalc( context );
 }
 
 
