@@ -20,6 +20,9 @@ public:
 
 	ContainerID GetChildContainerID() const;
 
+	gfx::PPUCoord GetOffset() const;
+	void SetOffset( UIContext& context, gfx::PPUCoord offset );
+
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 
@@ -32,6 +35,7 @@ private:
 	ContainerID mContainer = kInvalidContainerID;
 	Justification mJustification = Justification::TopLeft;
 	gfx::PPUCoord mDimensions = {};
+	gfx::PPUCoord mOffset = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

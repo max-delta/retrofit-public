@@ -2,6 +2,7 @@
 #include "InstancedController.h"
 
 #include "GameUI/Container.h"
+#include "GameUI/ContainerManager.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/FocusManager.h"
@@ -150,6 +151,13 @@ FocusTarget const& InstancedController::GetFocusTarget() const
 FocusTarget& InstancedController::GetMutableFocusTarget()
 {
 	return *mFocusTarget;
+}
+
+
+
+void InstancedController::RequestHardRecalc( UIContext& context )
+{
+	context.GetMutableContainerManager().RequestHardRecalc( GetContainerID() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

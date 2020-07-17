@@ -43,6 +43,8 @@ protected:
 	FocusTarget const& GetFocusTarget() const;
 	FocusTarget& GetMutableFocusTarget();
 
+	void RequestHardRecalc( UIContext& context );
+
 
 	//
 	// Private methods

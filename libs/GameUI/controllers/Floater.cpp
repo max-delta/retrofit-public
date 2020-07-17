@@ -34,6 +34,21 @@ ContainerID Floater::GetChildContainerID() const
 
 
 
+gfx::PPUCoord Floater::GetOffset() const
+{
+	return mOffset;
+}
+
+
+
+void Floater::SetOffset( UIContext& context, gfx::PPUCoord offset )
+{
+	mOffset = offset;
+	RequestHardRecalc( context );
+}
+
+
+
 void Floater::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
@@ -50,7 +65,7 @@ void Floater::OnInstanceAssign( UIContext& context, Container& container )
 
 void Floater::OnAABBRecalc( UIContext& context, Container& container )
 {
-	gfx::PPUCoord const pos = AlignToJustify( mDimensions, container.mAABB, mJustification );
+	gfx::PPUCoord const pos = AlignToJustify( mDimensions, container.mAABB, mJustification ) + mOffset;
 
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, pos );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, pos + mDimensions );
