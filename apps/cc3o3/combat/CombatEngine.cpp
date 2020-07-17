@@ -6,6 +6,7 @@
 
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
+#include "core_math/Rand.h"
 
 
 namespace RF { namespace cc { namespace combat {
@@ -48,6 +49,21 @@ SimColor CombatEngine::EvalInnates( element::InnateIdentifier lhs, element::Inna
 	}
 
 	return SimColor::Unrelated;
+}
+
+
+
+element::InnateIdentifier CombatEngine::GenerateRandomInnate( uint32_t& lastGeneratorValue ) const
+{
+	// TODO: Use data from a file instead
+	using I = element::InnateString;
+	rftl::array<I, 6> const innates = {
+		I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' },
+		I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' },
+		I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' }
+	};
+	lastGeneratorValue = math::StableRandLCG( lastGeneratorValue );
+	return element::MakeInnateIdentifier( innates.at( lastGeneratorValue % innates.size() ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

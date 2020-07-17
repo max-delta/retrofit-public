@@ -32,6 +32,7 @@ public:
 	// Public methods (lookup evalutaions)
 public:
 	SimColor EvalInnates( element::InnateIdentifier lhs, element::InnateIdentifier rhs ) const;
+	element::InnateIdentifier GenerateRandomInnate( uint32_t& lastGeneratorValue ) const;
 
 
 	//
