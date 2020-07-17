@@ -19,6 +19,8 @@
 #include "GameAppState/AppStateManager.h"
 
 #include "GameUI/ContainerManager.h"
+#include "GameUI/UIContext.h"
+#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
@@ -115,6 +117,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	// Setup UI
 	{
 		ui::ContainerManager& uiManager = *app::gUiManager;
+		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
 		// Nine-slice the whole screen
@@ -131,22 +134,38 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		internalState.mUI = rootNineSlicer;
 
 		// Header on top
-		WeakPtr<ui::controller::TextLabel> const header =
+		WeakPtr<ui::controller::Floater> const headerFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 2 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					ui::Justification::TopRight ) );
+		headerFloater->SetOffset( uiContext, { -gfx::kTileSize / 4, gfx::kTileSize / 4 } );
+		WeakPtr<ui::controller::TextLabel> const header =
+			uiManager.AssignStrongController(
+				headerFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		header->SetJustification( ui::Justification::TopRight );
+		header->SetJustification( ui::Justification::MiddleCenter );
 		header->SetFont( ui::font::LargeMenuText );
 		header->SetText( "UNSET" );
 		header->SetColor( math::Color3f::kWhite );
 		header->SetBorder( true );
 
 		// Footer on bottom
-		WeakPtr<ui::controller::TextLabel> const footer =
+		WeakPtr<ui::controller::Floater> const footerFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 6 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize / 2 ),
+					ui::Justification::BottomLeft ) );
+		footerFloater->SetOffset( uiContext, { gfx::kTileSize / 4, -gfx::kTileSize / 4 } );
+		WeakPtr<ui::controller::TextLabel> const footer =
+			uiManager.AssignStrongController(
+				footerFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		footer->SetJustification( ui::Justification::BottomLeft );
+		footer->SetJustification( ui::Justification::MiddleCenter );
 		footer->SetFont( ui::font::SmallMenuText );
 		footer->SetText( "UNSET" );
 		footer->SetColor( math::Color3f::kWhite );
