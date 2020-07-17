@@ -48,6 +48,7 @@ struct CombatantID
 	PartyIndex mParty;
 	FighterIndex mFighter;
 };
+static constexpr size_t kMaxTotalParties = kMaxTeamsPerFight * kMaxPartiesPerTeam;
 static constexpr size_t kMaxTotalCombatants = kMaxTeamsPerFight * kMaxPartiesPerTeam * kMaxFightersPerParty;
 
 static constexpr SimDelta kMinStamina = -7;

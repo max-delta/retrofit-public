@@ -6,6 +6,7 @@
 
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
+#include "core_math/Rand.h"
 
 
 namespace RF::cc::combat {
@@ -23,7 +24,7 @@ TeamIndex CombatInstance::AddTeam()
 {
 	RF_ASSERT( mTeams.size() < kMaxTeamsPerFight );
 	mTeams.emplace_back();
-	return math::integer_cast<TeamIndex>( mTeams.size() );
+	return math::integer_cast<TeamIndex>( mTeams.size() - 1 );
 }
 
 
@@ -33,7 +34,7 @@ PartyID CombatInstance::AddParty( TeamIndex teamID )
 	Parties& parties = mTeams.at( teamID ).mParties;
 	RF_ASSERT( parties.size() < kMaxPartiesPerTeam );
 	parties.emplace_back();
-	return { teamID, math::integer_cast<PartyIndex>( parties.size() ) };
+	return { teamID, math::integer_cast<PartyIndex>( parties.size() - 1 ) };
 }
 
 
@@ -44,7 +45,7 @@ CombatantID CombatInstance::AddFighter( PartyID partyID )
 	Fighters& fighters = parties.at( partyID.mParty ).mFighters;
 	RF_ASSERT( fighters.size() < kMaxFightersPerParty );
 	fighters.emplace_back();
-	return { partyID.mTeam, partyID.mParty, math::integer_cast<FighterIndex>( fighters.size() ) };
+	return { partyID.mTeam, partyID.mParty, math::integer_cast<FighterIndex>( fighters.size() - 1 ) };
 }
 
 
@@ -59,12 +60,71 @@ void CombatInstance::RemoveFighter( CombatantID combatantID )
 
 
 
-Combatant const& CombatInstance::GetCombatantRef( CombatantID combatantID ) const
+CombatInstance::TeamIDs CombatInstance::GetTeamIDs() const
 {
-	return mTeams.at( combatantID.mTeam )
-		.mParties.at( combatantID.mParty )
-		.mFighters.at( combatantID.mFighter )
-		.mCombatant;
+	TeamIDs retVal = {};
+	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
+	{
+		retVal.emplace_back( i_team );
+	}
+	return retVal;
+}
+
+
+
+CombatInstance::PartyIDs CombatInstance::GetPartyIDs() const
+{
+	PartyIDs retVal = {};
+	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
+	{
+		TeamEntry const& team = mTeams.at( i_team );
+		for( PartyIndex i_party = 0; i_party < team.mParties.size(); i_party++ )
+		{
+			retVal.emplace_back( PartyID{ i_team, i_party } );
+		}
+	}
+	return retVal;
+}
+
+
+
+CombatInstance::CombatantIDs CombatInstance::GetCombatantIDs() const
+{
+	CombatantIDs retVal = {};
+	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
+	{
+		TeamEntry const& team = mTeams.at( i_team );
+		for( PartyIndex i_party = 0; i_party < team.mParties.size(); i_party++ )
+		{
+			PartyEntry const& party = team.mParties.at( i_party );
+			for( FighterIndex i_fighter = 0; i_fighter < party.mFighters.size(); i_fighter++ )
+			{
+				retVal.emplace_back( CombatantID{ i_team, i_party, i_fighter } );
+			}
+		}
+	}
+	return retVal;
+}
+
+
+
+Team CombatInstance::GetTeam( TeamIndex teamID ) const
+{
+	return GetTeamRef( teamID );
+}
+
+
+
+Party CombatInstance::GetParty( PartyID partyID ) const
+{
+	return GetPartyRef( partyID );
+}
+
+
+
+Combatant CombatInstance::GetCombatant( CombatantID combatantID ) const
+{
+	return GetCombatantRef( combatantID );
 }
 
 
@@ -83,7 +143,26 @@ void CombatInstance::SetCombatant( CombatantID combatantID, Combatant const& com
 
 void CombatInstance::SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character )
 {
-	RF_TODO_BREAK();
+	Parties& parties = mTeams.at( combatantID.mTeam ).mParties;
+	Fighters& fighters = parties.at( combatantID.mParty ).mFighters;
+	FighterEntry& fighter = fighters.at( combatantID.mFighter );
+	fighter.mPersist = character;
+
+	// HACK: Hard-coded
+	// TODO: Load from character
+	fighter.mCombatant = {};
+	uint32_t genVal = 0;
+	fighter.mCombatant.mInnate = mCombatEngine->GenerateRandomInnate( genVal );
+	fighter.mCombatant.mMaxHealth = 100;
+	fighter.mCombatant.mCurHealth = fighter.mCombatant.mMaxHealth;
+	fighter.mCombatant.mMaxStamina = 7;
+	fighter.mCombatant.mCurStamina = fighter.mCombatant.mMaxStamina;
+	fighter.mCombatant.mPhysAtk = 2;
+	fighter.mCombatant.mPhysDef = 2;
+	fighter.mCombatant.mElemAtk = 2;
+	fighter.mCombatant.mElemDef = 2;
+	fighter.mCombatant.mBalance = 2;
+	fighter.mCombatant.mTechniq = 2;
 }
 
 
@@ -111,6 +190,18 @@ void CombatInstance::AddFieldInfluence( element::InnateIdentifier influence, siz
 {
 	for( size_t i = 0; i < strength; i++ )
 	{
+		AddFieldInfluence( influence );
+	}
+}
+
+
+
+void CombatInstance::GenerateFieldInfluence( uint64_t seedHash )
+{
+	uint32_t genVal = math::GetSeedFromHash( seedHash );
+	for( size_t i = 0; i < kFieldSize; i++ )
+	{
+		element::InnateIdentifier const influence = mCombatEngine->GenerateRandomInnate( genVal );
 		AddFieldInfluence( influence );
 	}
 }
@@ -186,6 +277,50 @@ AttackResult CombatInstance::ExecuteAttack( CombatantID attackerID, CombatantID 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+Team const& CombatInstance::GetTeamRef( TeamIndex teamID ) const
+{
+	return mTeams.at( teamID )
+		.mTeam;
+}
+
+
+
+Team& CombatInstance::GetMutableTeamRef( TeamIndex teamID )
+{
+	return mTeams.at( teamID )
+		.mTeam;
+}
+
+
+
+Party const& CombatInstance::GetPartyRef( PartyID partyID ) const
+{
+	return mTeams.at( partyID.mTeam )
+		.mParties.at( partyID.mParty )
+		.mParty;
+}
+
+
+
+Party& CombatInstance::GetMutablePartyRef( PartyID partyID )
+{
+	return mTeams.at( partyID.mTeam )
+		.mParties.at( partyID.mParty )
+		.mParty;
+}
+
+
+
+Combatant const& CombatInstance::GetCombatantRef( CombatantID combatantID ) const
+{
+	return mTeams.at( combatantID.mTeam )
+		.mParties.at( combatantID.mParty )
+		.mFighters.at( combatantID.mFighter )
+		.mCombatant;
+}
+
+
 
 Combatant& CombatInstance::GetMutableCombatantRef( CombatantID combatantID )
 {
