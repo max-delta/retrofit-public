@@ -6,8 +6,20 @@
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/state/StateHelpers.h"
+#include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/UINavigation.h"
+#include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
+
+#include "GameUI/ContainerManager.h"
+#include "GameUI/FocusManager.h"
+#include "GameUI/FocusEvent.h"
+#include "GameUI/FocusTarget.h"
+#include "GameUI/UIContext.h"
+#include "GameUI/controllers/NineSlicer.h"
+#include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
 
@@ -26,6 +38,8 @@ struct Gameplay_Battle::InternalState
 
 	UniquePtr<combat::CombatInstance> mCombatInstance;
 	combat::PartyID mLocalPlayerParty;
+
+	WeakPtr<state::comp::UINavigation> mNavigation;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,13 +47,21 @@ struct Gameplay_Battle::InternalState
 void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
+	InternalState& internalState = *mInternalState;
+
+	// Find navigation component
+	state::VariableIdentifier const localUIRoot( "localUI" );
+	state::MutableObjectRef const localUI = state::FindMutableObjectByIdentifier( localUIRoot );
+	RFLOG_TEST_AND_FATAL( localUI.IsSet(), nullptr, RFCAT_CC3O3, "Failed to find UI object" );
+	internalState.mNavigation = localUI.GetMutableComponentInstanceT<state::comp::UINavigation>();
+	RFLOG_TEST_AND_FATAL( internalState.mNavigation != nullptr, nullptr, RFCAT_CC3O3, "Failed to find navigation component" );
 
 	// Setup combat instance
 	{
 		using namespace combat;
 
-		mInternalState->mCombatInstance = DefaultCreator<CombatInstance>::Create( gCombatEngine );
-		CombatInstance& instance = *mInternalState->mCombatInstance;
+		internalState.mCombatInstance = DefaultCreator<CombatInstance>::Create( gCombatEngine );
+		CombatInstance& instance = *internalState.mCombatInstance;
 
 		// Setup players
 		// HACK: One player
@@ -52,7 +74,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			PartyID const playerParty = instance.AddParty( playerTeam );
 			if( playerID == input::HardcodedGetLocalPlayer() )
 			{
-				mInternalState->mLocalPlayerParty = playerParty;
+				internalState.mLocalPlayerParty = playerParty;
 			}
 
 			// Get the active party characters
@@ -108,6 +130,70 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		// TODO: Encounter specified override or multiplayer-minded hash source
 		instance.GenerateFieldInfluence( 0 );
 	}
+
+	// Setup UI
+	{
+		ui::ContainerManager& uiManager = *app::gUiManager;
+		//ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+		//ui::UIContext uiContext( uiManager );
+		uiManager.RecreateRootContainer();
+
+		// Nine-slice the whole screen
+		constexpr bool kSlicesEnabled[9] = {
+			true, false, true,
+			false, true, false,
+			false, true, false
+		};
+		WeakPtr<ui::controller::NineSlicer> const rootNineSlicer =
+			uiManager.AssignStrongController(
+				ui::kRootContainerID,
+				DefaultCreator<ui::controller::NineSlicer>::Create(
+					kSlicesEnabled ) );
+
+		// Environment display in upper left
+		WeakPtr<ui::controller::TextLabel> const environmentTODO =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 0 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		environmentTODO->SetJustification( ui::Justification::TopLeft );
+		environmentTODO->SetFont( ui::font::LargeMenuText );
+		environmentTODO->SetText( "UNSET" );
+		environmentTODO->SetColor( math::Color3f::kWhite );
+		environmentTODO->SetBorder( true );
+
+		// Team display in upper right
+		WeakPtr<ui::controller::TextLabel> const teamTODO =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 2 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		teamTODO->SetJustification( ui::Justification::TopRight );
+		teamTODO->SetFont( ui::font::LargeMenuText );
+		teamTODO->SetText( "UNSET" );
+		teamTODO->SetColor( math::Color3f::kWhite );
+		teamTODO->SetBorder( true );
+
+		// Notification display in center
+		WeakPtr<ui::controller::TextLabel> const notificationTODO =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 4 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		notificationTODO->SetJustification( ui::Justification::MiddleCenter );
+		notificationTODO->SetFont( ui::font::LargeMenuText );
+		notificationTODO->SetText( "UNSET" );
+		notificationTODO->SetColor( math::Color3f::kWhite );
+		notificationTODO->SetBorder( true );
+
+		// Control display in bottom
+		WeakPtr<ui::controller::TextLabel> const controlTODO =
+			uiManager.AssignStrongController(
+				rootNineSlicer->GetChildContainerID( 7 ),
+				DefaultCreator<ui::controller::TextLabel>::Create() );
+		controlTODO->SetJustification( ui::Justification::BottomCenter );
+		controlTODO->SetFont( ui::font::LargeMenuText );
+		controlTODO->SetText( "UNSET" );
+		controlTODO->SetColor( math::Color3f::kWhite );
+		controlTODO->SetBorder( true );
+	}
 }
 
 
@@ -122,6 +208,7 @@ void Gameplay_Battle::OnExit( AppStateChangeContext& context )
 void Gameplay_Battle::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
+	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 	gfx::PPUController& ppu = *app::gGraphics;
 
 	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Battle" );
