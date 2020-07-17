@@ -6,10 +6,6 @@
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
-#include "cc3o3/state/StateHelpers.h"
-#include "cc3o3/state/ComponentResolver.h"
-#include "cc3o3/state/components/UINavigation.h"
-#include "cc3o3/state/components/Roster.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CharacterSlotList.h"
 #include "cc3o3/ui/controllers/ElementGridSelector.h"
@@ -36,8 +32,6 @@
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
-#include "PPU/FramePackManager.h"
-#include "PPU/FramePack.h"
 
 #include "core_component/TypedObjectRef.h"
 
@@ -101,8 +95,6 @@ public:
 	WeakPtr<ui::controller::CharacterSlotList> mCharSlots;
 	WeakPtr<ui::controller::ElementGridSelector> mElementGridSelector;
 	WeakPtr<ui::controller::ElementStockpileSelector> mElementStockpileSelector;
-
-	WeakPtr<state::comp::UINavigation> mNavigation;
 };
 
 
@@ -172,14 +164,6 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 
 	gfx::PPUController const& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
-	//gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
-
-	// Find navigation component
-	state::VariableIdentifier const localUIRoot( "localUI" );
-	state::MutableObjectRef const localUI = state::FindMutableObjectByIdentifier( localUIRoot );
-	RFLOG_TEST_AND_FATAL( localUI.IsSet(), nullptr, RFCAT_CC3O3, "Failed to find UI object" );
-	internalState.mNavigation = localUI.GetMutableComponentInstanceT<state::comp::UINavigation>();
-	RFLOG_TEST_AND_FATAL( internalState.mNavigation != nullptr, nullptr, RFCAT_CC3O3, "Failed to find navigation component" );
 
 	// Setup UI
 	{
@@ -434,7 +418,6 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	using TopLevelSections = InternalState::TopLevelSections;
 
 	InternalState& internalState = *mInternalState;
-	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 
