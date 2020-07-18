@@ -17,85 +17,47 @@
 namespace RF { namespace loc {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool LocEngine::InitializeFromKeymapFile( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection )
+bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection )
 {
 	mKeymap = {};
 	mTextDirection = TextDirection::kInvalid;
 
-	file::FileHandlePtr const keymapHandle = vfs.GetFileForRead( path );
-	if( keymapHandle == nullptr )
+	// Enumerate keymaps
+	rftl::vector<file::VFSPath> keymapFiles;
 	{
-		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get keymap file for read" );
+		rftl::vector<file::VFSPath> unexpectedDirectories;
+		vfs.EnumerateDirectory(
+			path,
+			file::VFSMount::Permissions::ReadOnly,
+			keymapFiles,
+			unexpectedDirectories );
+		for( file::VFSPath const& unexpectedDirectory : unexpectedDirectories )
+		{
+			RFLOG_WARNING( unexpectedDirectory, RFCAT_LOCALIZATION, "Unexpected directory found alongside keymap files" );
+		}
+	}
+
+	if( keymapFiles.empty() )
+	{
+		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to find any keymap files" );
 		return false;
 	}
 
-	file::FileBuffer const keymapBuffer{ *keymapHandle.Get(), false };
-	if( keymapBuffer.IsEmpty() )
-	{
-		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get data from keymap file buffer" );
-		return false;
-	}
-
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( keymapBuffer.GetChars() );
-	if( csv.empty() )
-	{
-		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to read keymap file as csv" );
-		return false;
-	}
-
+	// Load all keymaps
 	Keymap newKeymap = {};
-
-	size_t const numRows = csv.size();
-	for( size_t i_row = 0; i_row < numRows; i_row++ )
+	for( file::VFSPath const& keymapFile : keymapFiles )
 	{
-		rftl::deque<rftl::string> const& row = csv.at( i_row );
-		size_t const numCols = row.size();
-		if( numCols != 2 )
+		// Load
+		Keymap const loadedKeymap = LoadKeymapFromFile( vfs, keymapFile );
+		if( loadedKeymap.empty() )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has %llu columns, expected 2", i_row, numCols );
+			RFLOG_NOTIFY( keymapFile, RFCAT_LOCALIZATION, "Couldn't load keymap file" );
 			return false;
 		}
 
-		rftl::string const& fromField = row.at( 0 );
-		if( fromField.empty() )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'from' column", i_row );
-			return false;
-		}
-
-		rftl::string const& toField = row.at( 1 );
-		if( toField.empty() )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'to' column", i_row );
-			return false;
-		}
-
-		rftl::string const& fromVal = fromField;
-		if( fromVal.empty() )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column", i_row );
-			return false;
-		}
-		if( fromVal.at( 0 ) != '$' )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column, expected to begin with '$'", i_row );
-			return false;
-		}
-
-		rftl::u32string toVal = unicode::ConvertToUtf32( toField );
-		if( toVal.empty() )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'to' column", i_row );
-			return false;
-		}
-
-		if( newKeymap.count( fromVal ) != 0 )
-		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a duplicate 'from' value, already seen previously", i_row );
-			return false;
-		}
-
-		newKeymap[fromVal] = rftl::move( toVal );
+		// Merge
+		newKeymap.reserve( newKeymap.size() + loadedKeymap.size() );
+		newKeymap.insert( loadedKeymap.begin(), loadedKeymap.end() );
 	}
 
 	mKeymap = rftl::move( newKeymap );
@@ -144,6 +106,90 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 		rftl::u32string codePoints( id.begin(), id.end() );
 		return LocResult( rftl::move( codePoints ) );
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFSPath const& path )
+{
+	file::FileHandlePtr const keymapHandle = vfs.GetFileForRead( path );
+	if( keymapHandle == nullptr )
+	{
+		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get keymap file for read" );
+		return {};
+	}
+
+	file::FileBuffer const keymapBuffer{ *keymapHandle.Get(), false };
+	if( keymapBuffer.IsEmpty() )
+	{
+		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get data from keymap file buffer" );
+		return {};
+	}
+
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( keymapBuffer.GetChars() );
+	if( csv.empty() )
+	{
+		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to read keymap file as csv" );
+		return {};
+	}
+
+	Keymap newKeymap = {};
+
+	size_t const numRows = csv.size();
+	newKeymap.reserve( numRows );
+	for( size_t i_row = 0; i_row < numRows; i_row++ )
+	{
+		rftl::deque<rftl::string> const& row = csv.at( i_row );
+		size_t const numCols = row.size();
+		if( numCols != 2 )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has %llu columns, expected 2", i_row, numCols );
+			return {};
+		}
+
+		rftl::string const& fromField = row.at( 0 );
+		if( fromField.empty() )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'from' column", i_row );
+			return {};
+		}
+
+		rftl::string const& toField = row.at( 1 );
+		if( toField.empty() )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'to' column", i_row );
+			return {};
+		}
+
+		rftl::string const& fromVal = fromField;
+		if( fromVal.empty() )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column", i_row );
+			return {};
+		}
+		if( fromVal.at( 0 ) != '$' )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column, expected to begin with '$'", i_row );
+			return {};
+		}
+
+		rftl::u32string toVal = unicode::ConvertToUtf32( toField );
+		if( toVal.empty() )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'to' column", i_row );
+			return {};
+		}
+
+		if( newKeymap.count( fromVal ) != 0 )
+		{
+			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a duplicate 'from' value, already seen previously", i_row );
+			return {};
+		}
+
+		newKeymap[fromVal] = rftl::move( toVal );
+	}
+
+	return newKeymap;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

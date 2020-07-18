@@ -137,7 +137,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load localization
 	{
 		// TODO: Configurable language
-		app::gLocEngine->InitializeFromKeymapFile( vfs, paths::Localizations().GetChild( "en_us.keymap.csv" ), loc::TextDirection::LeftToRight );
+		app::gLocEngine->InitializeFromKeymapDirectory( vfs, paths::Localizations().GetChild( "en_us" ), loc::TextDirection::LeftToRight );
 		app::gPageMapper->InitializeFromCharmapFile( vfs, paths::Localizations().GetChild( "en_us.charmap.csv" ) );
 	}
 

@@ -23,12 +23,18 @@ private:
 	//
 	// Public methods
 public:
-	bool InitializeFromKeymapFile( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection );
+	bool InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection );
 
 	void SetKeyDebug( bool value );
 
 	TextDirection GetTextDirection() const;
 	LocResult Query( LocQuery const& query ) const;
+
+
+	//
+	// Private methods
+private:
+	static Keymap LoadKeymapFromFile( file::VFS const& vfs, file::VFSPath const& path );
 
 
 	//
