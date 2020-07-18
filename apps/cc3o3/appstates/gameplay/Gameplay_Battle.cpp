@@ -18,6 +18,8 @@
 #include "GameUI/FocusEvent.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/controllers/ColumnSlicer.h"
+#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
@@ -135,7 +137,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 	{
 		ui::ContainerManager& uiManager = *app::gUiManager;
 		//ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
-		//ui::UIContext uiContext( uiManager );
+		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
 		// Nine-slice the whole screen
@@ -151,31 +153,54 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					kSlicesEnabled ) );
 
 		// Environment display in upper left
-		WeakPtr<ui::controller::TextLabel> const environmentTODO =
+		WeakPtr<ui::controller::Floater> const environmentFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 0 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					ui::Justification::TopLeft ) );
+		environmentFloater->SetOffset( uiContext, { gfx::kTileSize / 4, gfx::kTileSize / 4 } );
+		WeakPtr<ui::controller::TextLabel> const environmentTODO =
+			uiManager.AssignStrongController(
+				environmentFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		environmentTODO->SetJustification( ui::Justification::TopLeft );
+		environmentTODO->SetJustification( ui::Justification::MiddleCenter );
 		environmentTODO->SetFont( ui::font::LargeMenuText );
 		environmentTODO->SetText( "UNSET" );
 		environmentTODO->SetColor( math::Color3f::kWhite );
 		environmentTODO->SetBorder( true );
 
 		// Team display in upper right
-		WeakPtr<ui::controller::TextLabel> const teamTODO =
+		WeakPtr<ui::controller::Floater> const teamFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 2 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+					ui::Justification::TopRight ) );
+		teamFloater->SetOffset( uiContext, { -gfx::kTileSize / 4, gfx::kTileSize / 4 } );
+		WeakPtr<ui::controller::TextLabel> const teamTODO =
+			uiManager.AssignStrongController(
+				teamFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		teamTODO->SetJustification( ui::Justification::TopRight );
+		teamTODO->SetJustification( ui::Justification::MiddleCenter );
 		teamTODO->SetFont( ui::font::LargeMenuText );
 		teamTODO->SetText( "UNSET" );
 		teamTODO->SetColor( math::Color3f::kWhite );
 		teamTODO->SetBorder( true );
 
 		// Notification display in center
-		WeakPtr<ui::controller::TextLabel> const notificationTODO =
+		WeakPtr<ui::controller::Floater> const notificationFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 4 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					ui::Justification::TopCenter ) );
+		WeakPtr<ui::controller::TextLabel> const notificationTODO =
+			uiManager.AssignStrongController(
+				notificationFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
 		notificationTODO->SetJustification( ui::Justification::MiddleCenter );
 		notificationTODO->SetFont( ui::font::LargeMenuText );
@@ -183,12 +208,57 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		notificationTODO->SetColor( math::Color3f::kWhite );
 		notificationTODO->SetBorder( true );
 
-		// Control display in bottom
-		WeakPtr<ui::controller::TextLabel> const controlTODO =
+		// Main display in bottom
+		WeakPtr<ui::controller::Floater> const mainFloater =
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 7 ),
+				DefaultCreator<ui::controller::Floater>::Create(
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 9 ),
+					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+					ui::Justification::BottomCenter ) );
+		mainFloater->SetOffset( uiContext, { 0, -gfx::kTileSize / 4 } );
+
+		// Main display split between control and party
+		ui::controller::ColumnSlicer::Ratios const mainColumnRatios = {
+			{ 3.f / 9.f, true },
+			{ 6.f / 9.f, true },
+		};
+		WeakPtr<ui::controller::ColumnSlicer> const mainColumnSlicer =
+			uiManager.AssignStrongController(
+				mainFloater->GetChildContainerID(),
+				DefaultCreator<ui::controller::ColumnSlicer>::Create(
+					mainColumnRatios ) );
+
+		// Party on right side
+		ui::controller::ColumnSlicer::Ratios const partyColumnRatios = {
+			{ 1.f / 3.f, true },
+			{ 1.f / 3.f, true },
+			{ 1.f / 3.f, true },
+		};
+		WeakPtr<ui::controller::ColumnSlicer> const partyColumnSlicer =
+			uiManager.AssignStrongController(
+				mainColumnSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::ColumnSlicer>::Create(
+					partyColumnRatios ) );
+		for( size_t i = 0; i < 3; i++ )
+		{
+			WeakPtr<ui::controller::TextLabel> const partyMemberTODO =
+				uiManager.AssignStrongController(
+					partyColumnSlicer->GetChildContainerID( i ),
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			partyMemberTODO->SetJustification( ui::Justification::MiddleCenter );
+			partyMemberTODO->SetFont( ui::font::LargeMenuText );
+			partyMemberTODO->SetText( "UNSET" );
+			partyMemberTODO->SetColor( math::Color3f::kWhite );
+			partyMemberTODO->SetBorder( true );
+		}
+
+		// Control on left side
+		WeakPtr<ui::controller::TextLabel> const controlTODO =
+			uiManager.AssignStrongController(
+				mainColumnSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		controlTODO->SetJustification( ui::Justification::BottomCenter );
+		controlTODO->SetJustification( ui::Justification::MiddleCenter );
 		controlTODO->SetFont( ui::font::LargeMenuText );
 		controlTODO->SetText( "UNSET" );
 		controlTODO->SetColor( math::Color3f::kWhite );
