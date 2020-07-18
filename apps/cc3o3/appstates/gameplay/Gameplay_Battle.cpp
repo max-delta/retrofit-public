@@ -2,6 +2,7 @@
 #include "Gameplay_Battle.h"
 
 #include "cc3o3/Common.h"
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/IdentifierUtils.h"
@@ -24,6 +25,7 @@
 #include "GameUI/controllers/ListBox.h"
 #include "GameUI/controllers/MultiPassthrough.h"
 #include "GameUI/controllers/NineSlicer.h"
+#include "GameUI/controllers/Passthrough.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
@@ -40,17 +42,16 @@ namespace RF { namespace cc { namespace appstate {
 struct Gameplay_Battle::InternalState
 {
 	RF_NO_COPY( InternalState );
-	InternalState() = default;
 
 public:
 	struct ControlStates
 	{
 		enum State : size_t
 		{
-			Waiting = 0,
-			Action,
-			Attack,
-			Element,
+			kWaiting = 0,
+			kAction,
+			kAttack,
+			kElement,
 
 			kNumStates
 		};
@@ -60,10 +61,10 @@ public:
 	{
 		enum Action : size_t
 		{
-			Attack = 0,
-			Element,
-			Defend,
-			Wait,
+			kAttack = 0,
+			kElement,
+			kDefend,
+			kWait,
 
 			kNumStates
 		};
@@ -76,13 +77,64 @@ public:
 		};
 	};
 
+	static constexpr char const kLabelStateWaiting[] = "$battle_state_waiting";
+	static constexpr char const kLabelAttackElement[] = "$battle_attack_element";
+
+
+public:
+	InternalState() = default;
+
+	void SwitchControlState( ui::UIContext& context, ControlStates::State state );
+	void RestoreUIState( ui::UIContext& context );
+	void SaveUIState( ui::UIContext& context );
+
 
 public:
 	UniquePtr<combat::CombatInstance> mCombatInstance;
 	combat::PartyID mLocalPlayerParty;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
+
+	using StateControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, ControlStates::kNumStates>;
+	StateControllers mStateControllers;
 };
+
+
+
+void Gameplay_Battle::InternalState::SwitchControlState( ui::UIContext& context, ControlStates::State state )
+{
+	// Only show current control state
+	for( WeakPtr<ui::controller::InstancedController> const& controller : mStateControllers )
+	{
+		controller->SetChildRenderingBlocked( true );
+	}
+	WeakPtr<ui::controller::InstancedController> const desiredController = mStateControllers.at( state );
+	desiredController->SetChildRenderingBlocked( false );
+
+	// Switch focus
+	ui::FocusManager& focusMan = context.GetMutableFocusManager();
+	focusMan.GetMutableFocusTree().SetRootFocusToSpecificChild( desiredController->GetMutableFocusTreeNode( context ) );
+}
+
+
+
+void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
+{
+	//state::comp::UINavigation& navigation = *mNavigation;
+
+	// TODO: Load UI state from navigation component
+	SwitchControlState( context, InternalState::ControlStates::kAction );
+	// TODO: Sanitize UI state against battle state
+}
+
+
+
+void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context )
+{
+	//state::comp::UINavigation& navigation = *mNavigation;
+
+	// TODO: Save UI state to navigation component
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -179,7 +231,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 	// Setup UI
 	{
 		ui::ContainerManager& uiManager = *app::gUiManager;
-		//ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+		ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
@@ -311,14 +363,69 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				mainColumnSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::MultiPassthrough>::Create( ControlStates::kNumStates ) );
 
-		// TODO: Waiting state
+		// Controls each get a passthrough that can be used to shut off all
+		//  children when switching control states
+		WeakPtr<ui::controller::Passthrough> const waitingPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kWaiting ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const actionPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kAction ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const attackPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kAttack ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const elementPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kElement ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		internalState.mStateControllers.at( ControlStates::kWaiting ) = waitingPassthrough;
+		internalState.mStateControllers.at( ControlStates::kAction ) = actionPassthrough;
+		internalState.mStateControllers.at( ControlStates::kAttack ) = attackPassthrough;
+		internalState.mStateControllers.at( ControlStates::kElement ) = elementPassthrough;
+		waitingPassthrough->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		actionPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
+		attackPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
+		elementPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
+
+		// Waiting state
+		{
+			// Floater
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					waitingPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::Floater>::Create(
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+						ui::Justification::MiddleCenter ) );
+
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// Display
+			WeakPtr<ui::controller::TextLabel> const label =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			label->SetJustification( ui::Justification::MiddleCenter );
+			label->SetFont( ui::font::SmallMenuText );
+			label->SetText( InternalState::kLabelStateWaiting );
+			label->SetColor( math::Color3f::kGray50 );
+			label->SetBorder( true );
+		}
 
 		// Action state
 		{
 			// Floater
 			WeakPtr<ui::controller::Floater> const floater =
 				uiManager.AssignStrongController(
-					controlPassthroughs->GetChildContainerID( math::enum_bitcast( ControlStates::Action ) ),
+					actionPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::Floater>::Create(
 						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
 						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
@@ -350,9 +457,50 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				text.emplace_back( label );
 			}
 			actionControls->SetText( text );
+			actionControls->AddAsChildToFocusTreeNode( uiContext, *actionPassthrough->GetMutableFocusTreeNode( uiContext ) );
 		}
 
-		// TODO: Attack state
+		// Attack state
+		{
+			// Floater
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					attackPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::Floater>::Create(
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+						ui::Justification::MiddleCenter ) );
+
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// List
+			using SelectorActions = InternalState::SelectorActions;
+			WeakPtr<ui::controller::ListBox> const attackControls =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::ListBox>::Create(
+						ui::Orientation::Vertical,
+						math::enum_bitcast( ControlStates::kNumStates ),
+						ui::font::SmallMenuSelection,
+						ui::Justification::MiddleLeft,
+						math::Color3f::kGray50,
+						math::Color3f::kWhite,
+						math::Color3f::kYellow ) );
+			rftl::vector<rftl::string> text = {
+				"1",
+				"2",
+				"3",
+				InternalState::kLabelStateWaiting
+			};
+			attackControls->SetText( text );
+			attackControls->AddAsChildToFocusTreeNode( uiContext, *attackPassthrough->GetMutableFocusTreeNode( uiContext ) );
+		}
+
 		// TODO: Element state
 	}
 }
@@ -371,8 +519,36 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	InternalState& internalState = *mInternalState;
 	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 	gfx::PPUController& ppu = *app::gGraphics;
+	ui::ContainerManager& uiManager = *app::gUiManager;
+	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+	ui::UIContext uiContext( uiManager );
 
 	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Battle" );
+
+	// Rollback may have triggered, restore UI to stay in sync
+	internalState.RestoreUIState( uiContext );
+
+	focusMan.UpdateHardFocus( uiContext );
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
+	for( ui::FocusEventType const& focusEvent : focusEvents )
+	{
+		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
+		focusMan.UpdateHardFocus( uiContext );
+
+		// Figure out the useful focus information
+		ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
+
+		if( handled == false )
+		{
+			// Wasn't handled by general UI
+
+			// TODO
+		}
+		focusMan.UpdateHardFocus( uiContext );
+	}
+
+	// Persist in case of rollback
+	internalState.SaveUIState( uiContext );
 
 	combat::CombatInstance& mainInstance = *internalState.mCombatInstance;
 
