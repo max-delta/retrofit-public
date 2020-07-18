@@ -56,8 +56,11 @@ ElementString GetElementString( ElementIdentifier identifier )
 ElementName GetElementName( ElementIdentifier identifier )
 {
 	ElementName retVal = {};
-	retVal.push_back( '$' );
-	memcpy( retVal.data() + 1, &identifier, sizeof( identifier ) );
+	for( char const& ch : kElementLocalizationPrefix )
+	{
+		retVal.push_back( ch );
+	}
+	memcpy( retVal.data() + sizeof( kElementLocalizationPrefix ), &identifier, sizeof( identifier ) );
 	retVal.push_back( 'N' );
 	return retVal;
 }
@@ -66,9 +69,12 @@ ElementName GetElementName( ElementIdentifier identifier )
 
 ElementSynopsis GetElementSynopsis( ElementIdentifier identifier )
 {
-	ElementSynopsis retVal( ElementSynopsis::fixed_capacity, '_' );
-	retVal.push_back( '$' );
-	memcpy( retVal.data() + 1, &identifier, sizeof( identifier ) );
+	ElementSynopsis retVal = {};
+	for( char const& ch : kElementLocalizationPrefix )
+	{
+		retVal.push_back( ch );
+	}
+	memcpy( retVal.data() + sizeof( kElementLocalizationPrefix ), &identifier, sizeof( identifier ) );
 	retVal.push_back( 'S' );
 	return retVal;
 }

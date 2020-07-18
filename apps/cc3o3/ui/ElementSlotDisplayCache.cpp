@@ -3,6 +3,7 @@
 
 #include "cc3o3/elements/ElementDesc.h"
 #include "cc3o3/elements/IdentifierUtils.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 
 
 namespace RF::cc::ui {
@@ -26,7 +27,7 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 	if( includeStrings )
 	{
 		element::ElementName const name = element::GetElementName( desc.mIdentifier );
-		mName.assign( name.begin(), name.end() );
+		mName = ui::LocalizeKey( rftl::string( name.begin(), name.end() ) );
 	}
 	else
 	{
