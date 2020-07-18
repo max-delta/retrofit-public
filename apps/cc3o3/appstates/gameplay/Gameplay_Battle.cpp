@@ -18,12 +18,16 @@
 #include "GameUI/FocusEvent.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/Floater.h"
+#include "GameUI/controllers/ListBox.h"
+#include "GameUI/controllers/MultiPassthrough.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
+#include "PPU/TilesetManager.h"
 
 #include "core_component/TypedObjectRef.h"
 
@@ -38,6 +42,42 @@ struct Gameplay_Battle::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+public:
+	struct ControlStates
+	{
+		enum State : size_t
+		{
+			Waiting = 0,
+			Action,
+			Attack,
+			Element,
+
+			kNumStates
+		};
+	};
+
+	struct SelectorActions
+	{
+		enum Action : size_t
+		{
+			Attack = 0,
+			Element,
+			Defend,
+			Wait,
+
+			kNumStates
+		};
+
+		static constexpr char const* kLabels[kNumStates] = {
+			"$battle_action_attack",
+			"$battle_action_element",
+			"$battle_action_defend",
+			"$battle_action_wait",
+		};
+	};
+
+
+public:
 	UniquePtr<combat::CombatInstance> mCombatInstance;
 	combat::PartyID mLocalPlayerParty;
 
@@ -50,6 +90,9 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
+
+	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Find navigation component
 	state::VariableIdentifier const localUIRoot( "localUI" );
@@ -242,9 +285,17 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					partyColumnRatios ) );
 		for( size_t i = 0; i < 3; i++ )
 		{
-			WeakPtr<ui::controller::TextLabel> const partyMemberTODO =
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
 				uiManager.AssignStrongController(
 					partyColumnSlicer->GetChildContainerID( i ),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// Display
+			WeakPtr<ui::controller::TextLabel> const partyMemberTODO =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::TextLabel>::Create() );
 			partyMemberTODO->SetJustification( ui::Justification::MiddleCenter );
 			partyMemberTODO->SetFont( ui::font::LargeMenuText );
@@ -254,15 +305,55 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		}
 
 		// Control on left side
-		WeakPtr<ui::controller::TextLabel> const controlTODO =
+		using ControlStates = InternalState::ControlStates;
+		WeakPtr<ui::controller::MultiPassthrough> const controlPassthroughs =
 			uiManager.AssignStrongController(
 				mainColumnSlicer->GetChildContainerID( 0 ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
-		controlTODO->SetJustification( ui::Justification::MiddleCenter );
-		controlTODO->SetFont( ui::font::LargeMenuText );
-		controlTODO->SetText( "UNSET" );
-		controlTODO->SetColor( math::Color3f::kWhite );
-		controlTODO->SetBorder( true );
+				DefaultCreator<ui::controller::MultiPassthrough>::Create( ControlStates::kNumStates ) );
+
+		// TODO: Waiting state
+
+		// Action state
+		{
+			// Floater
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					controlPassthroughs->GetChildContainerID( math::enum_bitcast( ControlStates::Action ) ),
+					DefaultCreator<ui::controller::Floater>::Create(
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+						ui::Justification::MiddleCenter ) );
+
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// List
+			using SelectorActions = InternalState::SelectorActions;
+			WeakPtr<ui::controller::ListBox> const actionControls =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::ListBox>::Create(
+						ui::Orientation::Vertical,
+						math::enum_bitcast( ControlStates::kNumStates ),
+						ui::font::SmallMenuSelection,
+						ui::Justification::MiddleLeft,
+						math::Color3f::kGray50,
+						math::Color3f::kWhite,
+						math::Color3f::kYellow ) );
+			rftl::vector<rftl::string> text;
+			for( char const* const& label : SelectorActions::kLabels )
+			{
+				text.emplace_back( label );
+			}
+			actionControls->SetText( text );
+		}
+
+		// TODO: Attack state
+		// TODO: Element state
 	}
 }
 
