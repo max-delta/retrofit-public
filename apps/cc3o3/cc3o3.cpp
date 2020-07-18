@@ -50,6 +50,9 @@ static appstate::AppStateManager sAppStateManager;
 
 static SimulationMode sDebugPreviousFrameSimulationMode = SimulationMode::Invalid;
 
+static bool sInstantReplayTriggered = false;
+static time::CommonClock::time_point sInstantReplayEndTime = {};
+
 // This is important enough that we want it to show up on the callstack, but
 //  want to keep all the complex rollback logic together
 template<typename FuncT>
@@ -108,6 +111,11 @@ void ProcessFrame()
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
 	input::ControllerManager& controllerManager = *app::gInputControllerManager;
 
+	auto const isInstantReplayInProgress = [&rollMan]() -> bool //
+	{
+		return rollMan.GetHeadClock() <= sInstantReplayEndTime;
+	};
+
 	// The head of rollback should be at the end of the previous frame
 	RFLOG_TEST_AND_FATAL(
 		rollMan.GetHeadClock() < time::FrameClock::now(),
@@ -126,6 +134,12 @@ void ProcessFrame()
 	//  logic for all the controllers
 	input::HardcodedRawTick();
 
+	if( isInstantReplayInProgress() == false )
+	{
+		// Clear the replay so a save/load state can't re-trigger it
+		sInstantReplayEndTime = {};
+	}
+
 	if( kAllowDeveloperHud )
 	{
 		// Developer input is global, and processed seperately from app states
@@ -135,12 +149,21 @@ void ProcessFrame()
 	if( rollMan.GetHeadClock() < time::FrameClock::now() )
 	{
 		// The head has moved backwards in time since we started the frame
-		if constexpr( false )
+		if( sInstantReplayTriggered )
 		{
+			sInstantReplayTriggered = false;
+
 			// This was caused by a replay, so we need to stop processing any
 			//  true input while we wait for the replay to catch up to the
 			//  current true time
-			// TODO: Replay logic
+			RFLOG_INFO( nullptr, RFCAT_CC3O3, "Rollback detected for instant replay" );
+
+			// The head clock is presumed to be valid, so we should begin
+			//  processing the frame afterwards (which is now what we're
+			//  considering the current frame)
+			time::CommonClock::time_point const frameAfterHead = rollMan.GetHeadClock() + time::kSimulationFrameDuration;
+			time::FrameClock::set_time( frameAfterHead );
+			rollMan.SetHeadClock( frameAfterHead );
 		}
 		else
 		{
@@ -181,7 +204,13 @@ void ProcessFrame()
 	SimulationMode simulationMode = SimulationMode::Invalid;
 	time::CommonClock::time_point const preFrameCommitHead = rollMan.GetMaxCommitHead();
 	rollback::InclusiveTimeRange preFrameCommitRange = { preFrameCommitHead, preFrameCommitHead };
-	if( preFrameCommitHead >= currentTrueFrame )
+	if( isInstantReplayInProgress() )
+	{
+		// Instant replay active, simulating frames with whatever input they
+		//  already had and blocking any new input
+		simulationMode = SimulationMode::OnRailsReplay;
+	}
+	else if( preFrameCommitHead >= currentTrueFrame )
 	{
 		// Committed input is in the future, which means the input for this
 		//  frame is pre-determined and we just need to simulate it
@@ -281,11 +310,18 @@ void ProcessFrame()
 	// Commit all frames that are ready
 	rollMan.CommitFrames( preFrameCommitRange, preFrameCommitRange.second );
 
-	// Lock read heads to after the last commit, and write heads to the start
-	//  of the current frame
-	input::HardcodedAdvance(
-		preFrameCommitRange.second + time::kSimulationFrameDuration,
-		time::FrameClock::now() );
+	if( simulationMode == SimulationMode::OnRailsReplay )
+	{
+		// Input disabled during replay
+	}
+	else
+	{
+		// Lock read heads to after the last commit, and write heads to the
+		//  start of the current frame
+		input::HardcodedAdvance(
+			preFrameCommitRange.second + time::kSimulationFrameDuration,
+			time::FrameClock::now() );
+	}
 
 	if( simulationMode == SimulationMode::RollbackAndSimulate )
 	{
@@ -335,10 +371,18 @@ void ProcessFrame()
 		ppu.SuppressDrawRequests( false );
 	}
 
-	// HACK: Tick hard-coded input
-	// TODO: Have an input processing tree that handles dependency-based update
-	//  logic for all the controllers
-	input::HardcodedRollbackTick();
+
+	if( simulationMode == SimulationMode::OnRailsReplay )
+	{
+		// Input disabled during replay
+	}
+	else
+	{
+		// HACK: Tick hard-coded input
+		// TODO: Have an input processing tree that handles dependency-based update
+		//  logic for all the controllers
+		input::HardcodedRollbackTick();
+	}
 
 	// Tick the current true frame
 	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
@@ -346,21 +390,35 @@ void ProcessFrame()
 	// WARNING: Rollback behavior unreliable across global state changes
 	sAppStateManager.ApplyDeferredStateChange();
 
-	// Lock read heads to after the last commit, and write heads to the start
-	//  of the current frame
-	input::HardcodedAdvance(
-		preFrameCommitRange.second + time::kSimulationFrameDuration,
-		time::FrameClock::now() );
+	if( simulationMode == SimulationMode::OnRailsReplay )
+	{
+		// Input disabled during replay
+	}
+	else
+	{
+		// Lock read heads to after the last commit, and write heads to the start
+		//  of the current frame
+		input::HardcodedAdvance(
+			preFrameCommitRange.second + time::kSimulationFrameDuration,
+			time::FrameClock::now() );
+	}
 
 	// Commit all frames that are ready
 	rollback::InclusiveTimeRange const postFrameCommitRange = rollMan.GetFramesReadyToCommit();
 	rollMan.CommitFrames( postFrameCommitRange, postFrameCommitRange.second + time::kSimulationFrameDuration );
 
-	// Lock read heads to after the last commit, and write heads to the end
-	//  of the current frame
-	input::HardcodedAdvance(
-		postFrameCommitRange.second,
-		time::FrameClock::now() );
+	if( simulationMode == SimulationMode::OnRailsReplay )
+	{
+		// Input disabled during replay
+	}
+	else
+	{
+		// Lock read heads to after the last commit, and write heads to the end
+		//  of the current frame
+		input::HardcodedAdvance(
+			postFrameCommitRange.second,
+			time::FrameClock::now() );
+	}
 
 	ui::ContainerManager& uiMan = *app::gUiManager;
 	uiMan.RecalcRootContainer();
@@ -419,6 +477,27 @@ void Shutdown()
 SimulationMode DebugGetPreviousFrameSimulationMode()
 {
 	return sDebugPreviousFrameSimulationMode;
+}
+
+
+
+void DebugInstantReplay( size_t numFrames )
+{
+	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+
+	if( rollMan.GetHeadClock() <= sInstantReplayEndTime )
+	{
+		// Currently in a replay
+		RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Instant replay request ignored" );
+		return;
+	}
+
+	sInstantReplayEndTime = time::FrameClock::now();
+	rollMan.SetHeadClock( time::FrameClock::now() - time::kSimulationFrameDuration * numFrames );
+	sInstantReplayTriggered = true;
+	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Instant replay triggered for frames %llu -> %llu",
+		rollMan.GetHeadClock().time_since_epoch().count(),
+		sInstantReplayEndTime.time_since_epoch().count() );
 }
 
 

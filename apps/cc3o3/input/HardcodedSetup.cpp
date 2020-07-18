@@ -109,6 +109,8 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_F2][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
 		logicalMapping[shim::VK_F3][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
 		logicalMapping[shim::VK_F4][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
+		logicalMapping[shim::VK_F5][input::DigitalPinState::Active] = command::raw::DeveloperAction4;
+		logicalMapping[shim::VK_F6][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
 	}
 	rawController->SetLogicalMapping( logicalMapping );
 
@@ -195,6 +197,8 @@ void HardcodedSetup()
 		commandMapping[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
 		commandMapping[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
 		commandMapping[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
+		commandMapping[command::raw::DeveloperAction4] = command::game::DeveloperAction4;
+		commandMapping[command::raw::DeveloperAction5] = command::game::DeveloperAction5;
 		developerHotkeyController->SetCommandMapping( commandMapping );
 	}
 	manager.RegisterGameController( developerHotkeyController, player::P1, layer::Developer );

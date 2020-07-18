@@ -59,6 +59,15 @@ void ProcessRollback( RF::input::GameCommand const& command )
 			rollMan.SetHeadClock( time );
 			break;
 		}
+		case input::command::game::DeveloperAction4:
+		{
+			DebugInstantReplay( rollback::kMaxChangesInWindow );
+			break;
+		}
+		case input::command::game::DeveloperAction5:
+		{
+			break;
+		}
 		default:
 			break;
 	}
@@ -141,7 +150,7 @@ void RenderRollback()
 		time::CommonClock::time_point const timelineNow = rollMan.GetHeadClock();
 
 		// Timeline starts before now
-		time::CommonClock::time_point const timelineStart = timelineNow - seconds( 1 );
+		time::CommonClock::time_point const timelineStart = timelineNow - ( time::kSimulationFrameDuration * 60 );
 
 		// Timeline commit starts at any committed streams commit time
 		// NOTE: All committed streams should share the same commit time
@@ -316,6 +325,8 @@ void ProcessInput()
 			case input::command::game::DeveloperAction1:
 			case input::command::game::DeveloperAction2:
 			case input::command::game::DeveloperAction3:
+			case input::command::game::DeveloperAction4:
+			case input::command::game::DeveloperAction5:
 			{
 				switch( sCurrentMode )
 				{

@@ -23,6 +23,7 @@ void ProcessFrame();
 void Shutdown();
 
 SimulationMode DebugGetPreviousFrameSimulationMode();
+void DebugInstantReplay( size_t numFrames );
 
 // WARNING: Rollback behavior unreliable across global state changes
 void RequestGlobalDeferredStateChange( appstate::AppStateID stateID );

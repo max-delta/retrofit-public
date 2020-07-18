@@ -71,6 +71,8 @@ enum : RawCommandType
 	DeveloperAction1,
 	DeveloperAction2,
 	DeveloperAction3,
+	DeveloperAction4,
+	DeveloperAction5,
 };
 }
 namespace game {
@@ -108,6 +110,8 @@ enum : GameCommandType
 	DeveloperAction1,
 	DeveloperAction2,
 	DeveloperAction3,
+	DeveloperAction4,
+	DeveloperAction5,
 };
 }
 }
