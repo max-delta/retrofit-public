@@ -10,7 +10,7 @@
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
-#include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -415,7 +415,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::TextLabel>::Create() );
 			label->SetJustification( ui::Justification::MiddleCenter );
 			label->SetFont( ui::font::SmallMenuText );
-			label->SetText( InternalState::kLabelStateWaiting );
+			label->SetText( ui::LocalizeKey( InternalState::kLabelStateWaiting ) );
 			label->SetColor( math::Color3f::kGray50 );
 			label->SetBorder( true );
 		}
@@ -454,7 +454,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			rftl::vector<rftl::string> text;
 			for( char const* const& label : SelectorActions::kLabels )
 			{
-				text.emplace_back( label );
+				text.emplace_back( ui::LocalizeKey( label ) );
 			}
 			actionControls->SetText( text );
 			actionControls->AddAsChildToFocusTreeNode( uiContext, *actionPassthrough->GetMutableFocusTreeNode( uiContext ) );
@@ -495,7 +495,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				"1",
 				"2",
 				"3",
-				InternalState::kLabelStateWaiting
+				ui::LocalizeKey( InternalState::kLabelAttackElement )
 			};
 			attackControls->SetText( text );
 			attackControls->AddAsChildToFocusTreeNode( uiContext, *attackPassthrough->GetMutableFocusTreeNode( uiContext ) );
