@@ -111,6 +111,19 @@ bool ElementDatabase::LoadTierUnlockTables( file::VFSPath const& tierUnlockTable
 
 
 
+ElementDatabase::ElementIdentifiers ElementDatabase::GetAllElementIdentifiers() const
+{
+	ElementIdentifiers retVal;
+	retVal.reserve( mElementDescs.size() );
+	for( ElementDesc const& desc : mElementDescs )
+	{
+		retVal.emplace_back( desc.mIdentifier );
+	}
+	return retVal;
+}
+
+
+
 ElementDesc ElementDatabase::GetElementDesc( ElementIdentifier identifier ) const
 {
 	ElementDesc asDesc = {};

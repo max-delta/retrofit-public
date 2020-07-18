@@ -24,6 +24,7 @@ class ElementDatabase
 	// Types and constants
 public:
 	using ElementDescs = rftl::vector<ElementDesc>;
+	using ElementIdentifiers = rftl::vector<ElementIdentifier>;
 	using ElementCounts = rftl::unordered_map<ElementIdentifier, size_t>;
 	using TierUnlocks = rftl::array<size_t, company::kMaxStoryTier>;
 
@@ -39,6 +40,7 @@ public:
 	bool LoadDescTables( file::VFSPath const& descTablesDir );
 	bool LoadTierUnlockTables( file::VFSPath const& tierUnlockTablesDir );
 
+	ElementIdentifiers GetAllElementIdentifiers() const;
 	ElementDesc GetElementDesc( ElementIdentifier identifier ) const;
 	ElementCounts GetElementsBasedOnTier( company::StoryTier tier ) const;
 
