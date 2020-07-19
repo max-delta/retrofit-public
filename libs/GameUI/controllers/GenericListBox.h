@@ -34,6 +34,7 @@ public:
 
 	bool SlotHasCurrentFocus( UIConstContext const& context ) const;
 	size_t GetSlotIndexWithSoftFocus( UIConstContext const& context ) const;
+	bool SetSlotIndexWithSoftFocus( UIContext& context, size_t index );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override final;
 	virtual void OnAddedToFocusTree( UIContext& context, FocusTreeNode& newNode ) override final;

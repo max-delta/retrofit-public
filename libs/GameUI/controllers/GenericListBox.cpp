@@ -109,7 +109,7 @@ size_t GenericListBox::GetSlotIndexWithSoftFocus( UIConstContext const& context 
 
 	for( size_t i = 0; i < mSlotControllers.size(); i++ )
 	{
-		WeakPtr<InstancedController> const& slotController = mSlotControllers.at( i );
+		WeakPtr<InstancedController const> const& slotController = mSlotControllers.at( i );
 		RF_ASSERT( slotController != nullptr );
 		WeakPtr<ui::FocusTreeNode const> const slotNode = slotController->GetFocusTreeNode( context );
 		RF_ASSERT( slotNode != nullptr );
@@ -121,6 +121,28 @@ size_t GenericListBox::GetSlotIndexWithSoftFocus( UIConstContext const& context 
 
 	RF_DBGFAIL_MSG( "Focus corrupt, or not set up yet" );
 	return mSlotControllers.size();
+}
+
+
+
+bool GenericListBox::SetSlotIndexWithSoftFocus( UIContext& context, size_t index )
+{
+	WeakPtr<ui::FocusTreeNode> const listTreeNode = GetMutableFocusTreeNode( context );
+	RF_ASSERT( listTreeNode != nullptr );
+
+	RF_ASSERT( index < mSlotControllers.size() );
+	WeakPtr<InstancedController> const& desiredController = mSlotControllers.at( index );
+	RF_ASSERT( desiredController != nullptr );
+	if( ShouldSkipFocus( context, desiredController ) )
+	{
+		return false;
+	}
+	WeakPtr<ui::FocusTreeNode> const desiredFocus = desiredController->GetMutableFocusTreeNode( context );
+	RF_ASSERT( desiredFocus != nullptr );
+
+	FocusManager& focusMan = context.GetMutableFocusManager();
+	focusMan.GetMutableFocusTree().SetFocusToSpecificChild( *listTreeNode, desiredFocus );
+	return true;
 }
 
 
