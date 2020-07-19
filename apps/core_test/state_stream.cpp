@@ -43,6 +43,23 @@ TEST( StateStream, Basic )
 	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 400 ) ), 9 );
 	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 401 ) ), 9 );
 
+	// Write to the past with same value truncates to previous change
+	stream.Write( time::CommonClock::TimePointFromNanos( 400 ), 7 );
+	ASSERT_EQ( stream.GetEarliestTime(), ( time::CommonClock::TimePointFromNanos( 100 ) ) );
+	ASSERT_EQ( stream.GetLatestTime(), ( time::CommonClock::TimePointFromNanos( 300 ) ) );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 99 ) ), int{} );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 100 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 101 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 199 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 200 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 201 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 299 ) ), 3 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 300 ) ), 7 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 301 ) ), 7 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 399 ) ), 7 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 400 ) ), 7 );
+	ASSERT_EQ( stream.Read( time::CommonClock::TimePointFromNanos( 401 ) ), 7 );
+
 	// Write to the past stomps the future
 	stream.Write( time::CommonClock::TimePointFromNanos( 200 ), 5 );
 	ASSERT_EQ( stream.GetEarliestTime(), ( time::CommonClock::TimePointFromNanos( 100 ) ) );

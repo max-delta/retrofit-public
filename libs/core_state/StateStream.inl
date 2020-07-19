@@ -20,13 +20,6 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 {
 	RF_ASSERT( mTimes.size() == mValues.size() );
 
-	if( value == Read( time ) )
-	{
-		// Writing this value wouldn't change the read behavior, so we'll skip
-		//  it to keep the stream high-entropy for performance reasons
-		return;
-	}
-
 	typename Times::iterator iterAtTime = rftl::lower_bound( mTimes.begin(), mTimes.end(), time );
 	if( iterAtTime == mTimes.end() )
 	{
@@ -44,18 +37,31 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 		return;
 	}
 
+	// Need to stomp and wipe everything aftewards
+
 	typename Times::difference_type const distance = iterAtTime - mTimes.begin();
 	typename Values::iterator const iterAtValue = mValues.begin() + distance;
-
-	// Need to stomp and wipe everything aftewards
-	*iterAtTime = time;
-	*iterAtValue = value;
-
 	RF_ASSERT( mTimes.begin() <= iterAtTime );
 	RF_ASSERT( mValues.begin() <= iterAtValue );
-	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime + 1 ) );
-	mTimes.resize( newSize );
-	mValues.resize( newSize );
+
+	if( distance > 0 && *( iterAtValue - 1 ) == value )
+	{
+		// Writing this value would be equivalent to discarding, so we'll do
+		//  that to keep the stream high-entropy for performance reasons
+		size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime ) );
+		mTimes.resize( newSize );
+		mValues.resize( newSize );
+		return;
+	}
+	else
+	{
+		*iterAtTime = time;
+		*iterAtValue = value;
+
+		size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime + 1 ) );
+		mTimes.resize( newSize );
+		mValues.resize( newSize );
+	}
 }
 
 
@@ -91,10 +97,11 @@ inline void StateStream<ValueT, MaxChangesT>::Discard( time::CommonClock::time_p
 		return;
 	}
 
+	// Need to stomp and wipe everything at and aftewards
+
 	typename Times::difference_type const distance = iterAtTime - mTimes.begin();
 	typename Values::iterator const iterAtValue = mValues.begin() + distance;
 
-	// Need to stomp and wipe everything at and aftewards
 	RF_ASSERT( mTimes.begin() <= iterAtTime );
 	RF_ASSERT( mValues.begin() <= iterAtValue );
 	size_t const newSize = static_cast<size_t>( rftl::distance( mTimes.begin(), iterAtTime ) );
