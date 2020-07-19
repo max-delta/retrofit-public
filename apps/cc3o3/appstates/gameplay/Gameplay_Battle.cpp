@@ -84,6 +84,7 @@ public:
 public:
 	InternalState() = default;
 
+	ControlStates::State GetControlState( ui::UIConstContext const& context ) const;
 	void SwitchControlState( ui::UIContext& context, ControlStates::State state );
 	void RestoreUIState( ui::UIContext& context );
 	void SaveUIState( ui::UIContext& context );
@@ -97,7 +98,27 @@ public:
 
 	using StateControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, ControlStates::kNumStates>;
 	StateControllers mStateControllers;
+
+	WeakPtr<ui::controller::ListBox> mActionMenu;
+	WeakPtr<ui::controller::ListBox> mAttackMenu;
 };
+
+
+
+Gameplay_Battle::InternalState::ControlStates::State Gameplay_Battle::InternalState::GetControlState( ui::UIConstContext const& context ) const
+{
+	ui::FocusManager const& focusMan = context.GetFocusManager();
+	WeakPtr<ui::FocusTreeNode const> focusedControls = focusMan.GetFocusTree().GetRootNode().GetFavoredChild();
+	for( size_t i = 0; i < mStateControllers.size(); i++ )
+	{
+		if( mStateControllers.at( i )->GetFocusTreeNode( context ) == focusedControls )
+		{
+			return math::enum_bitcast<ControlStates::State>( i );
+		}
+	}
+	RF_DBGFAIL();
+	return ControlStates::kNumStates;
+}
 
 
 
@@ -120,20 +141,65 @@ void Gameplay_Battle::InternalState::SwitchControlState( ui::UIContext& context,
 
 void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 {
-	//state::comp::UINavigation& navigation = *mNavigation;
+	// Load UI state from navigation component
+	state::comp::UINavigation::BattleMenu const& navigation = mNavigation->mBattleMenu;
 
-	// TODO: Load UI state from navigation component
-	SwitchControlState( context, InternalState::ControlStates::kAction );
+	ControlStates::State const currentState = math::enum_bitcast<ControlStates::State>( navigation.mControlState );
+	SwitchControlState( context, currentState );
+	if( currentState == ControlStates::kWaiting )
+	{
+		// No cursor
+	}
+	else if( currentState == ControlStates::kAction )
+	{
+		mActionMenu->SetSlotIndexWithSoftFocus( context, navigation.mCursorIndex.at( 0 ) );
+	}
+	else if( currentState == ControlStates::kAttack )
+	{
+		mAttackMenu->SetSlotIndexWithSoftFocus( context, navigation.mCursorIndex.at( 0 ) );
+	}
+	else if( currentState == ControlStates::kElement )
+	{
+		RF_TODO_BREAK();
+	}
+	else
+	{
+		RF_DBGFAIL();
+	}
+
 	// TODO: Sanitize UI state against battle state
+	SwitchControlState( context, ControlStates::kAction );
 }
 
 
 
 void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context )
 {
-	//state::comp::UINavigation& navigation = *mNavigation;
+	// Save UI state to navigation component
+	state::comp::UINavigation::BattleMenu& navigation = mNavigation->mBattleMenu;
 
-	// TODO: Save UI state to navigation component
+	ControlStates::State const currentState = GetControlState( context );
+	navigation.mControlState = math::integer_cast<uint8_t>( currentState );
+	if( currentState == ControlStates::kWaiting )
+	{
+		// No cursor
+	}
+	else if( currentState == ControlStates::kAction )
+	{
+		navigation.mCursorIndex.at( 0 ) = math::integer_cast<uint8_t>( mActionMenu->GetSlotIndexWithSoftFocus( context ) );
+	}
+	else if( currentState == ControlStates::kAttack )
+	{
+		navigation.mCursorIndex.at( 0 ) = math::integer_cast<uint8_t>( mAttackMenu->GetSlotIndexWithSoftFocus( context ) );
+	}
+	else if( currentState == ControlStates::kElement )
+	{
+		RF_TODO_BREAK();
+	}
+	else
+	{
+		RF_DBGFAIL();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -440,7 +506,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 			// List
 			using SelectorActions = InternalState::SelectorActions;
-			WeakPtr<ui::controller::ListBox> const actionControls =
+			WeakPtr<ui::controller::ListBox> const actionMenu =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
@@ -456,8 +522,9 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			{
 				text.emplace_back( ui::LocalizeKey( label ) );
 			}
-			actionControls->SetText( text );
-			actionControls->AddAsChildToFocusTreeNode( uiContext, *actionPassthrough->GetMutableFocusTreeNode( uiContext ) );
+			actionMenu->SetText( text );
+			actionMenu->AddAsChildToFocusTreeNode( uiContext, *actionPassthrough->GetMutableFocusTreeNode( uiContext ) );
+			internalState.mActionMenu = actionMenu;
 		}
 
 		// Attack state
@@ -480,7 +547,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 			// List
 			using SelectorActions = InternalState::SelectorActions;
-			WeakPtr<ui::controller::ListBox> const attackControls =
+			WeakPtr<ui::controller::ListBox> const attackMenu =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
@@ -497,8 +564,9 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				"3",
 				ui::LocalizeKey( InternalState::kLabelAttackElement )
 			};
-			attackControls->SetText( text );
-			attackControls->AddAsChildToFocusTreeNode( uiContext, *attackPassthrough->GetMutableFocusTreeNode( uiContext ) );
+			attackMenu->SetText( text );
+			attackMenu->AddAsChildToFocusTreeNode( uiContext, *attackPassthrough->GetMutableFocusTreeNode( uiContext ) );
+			internalState.mAttackMenu = attackMenu;
 		}
 
 		// TODO: Element state

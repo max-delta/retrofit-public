@@ -43,6 +43,15 @@ public:
 		rollback::AutoVar<uint8_t> mNavigationDepth;
 		rollback::AutoVar<uint8_t> mTopLevelCursor;
 	} mPauseMenu;
+
+	struct BattleMenu
+	{
+		RF_NO_COPY( BattleMenu );
+		BattleMenu() = default;
+
+		rollback::AutoVar<uint8_t> mControlState;
+		rftl::array<rollback::AutoVar<uint8_t>, 2> mCursorIndex;
+	} mBattleMenu;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
