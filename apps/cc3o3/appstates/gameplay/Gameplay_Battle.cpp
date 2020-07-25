@@ -49,6 +49,7 @@ public:
 		enum State : size_t
 		{
 			kWaiting = 0,
+			kTargeting,
 			kAction,
 			kAttack,
 			kElement,
@@ -66,10 +67,10 @@ public:
 			kDefend,
 			kWait,
 
-			kNumStates
+			kNumActions
 		};
 
-		static constexpr char const* kLabels[kNumStates] = {
+		static constexpr char const* kLabels[kNumActions] = {
 			"$battle_action_attack",
 			"$battle_action_element",
 			"$battle_action_defend",
@@ -99,6 +100,7 @@ public:
 	using StateControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, ControlStates::kNumStates>;
 	StateControllers mStateControllers;
 
+	uint8_t mTargetingIndex = 0;
 	WeakPtr<ui::controller::ListBox> mActionMenu;
 	WeakPtr<ui::controller::ListBox> mAttackMenu;
 };
@@ -150,6 +152,10 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	{
 		// No cursor
 	}
+	else if( currentState == ControlStates::kTargeting )
+	{
+		mTargetingIndex = navigation.mCursorIndex.at( 0 );
+	}
 	else if( currentState == ControlStates::kAction )
 	{
 		mActionMenu->SetSlotIndexWithSoftFocus( context, navigation.mCursorIndex.at( 0 ) );
@@ -183,6 +189,10 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context )
 	if( currentState == ControlStates::kWaiting )
 	{
 		// No cursor
+	}
+	else if( currentState == ControlStates::kTargeting )
+	{
+		navigation.mCursorIndex.at( 0 ) = mTargetingIndex;
 	}
 	else if( currentState == ControlStates::kAction )
 	{
@@ -435,6 +445,10 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				controlPassthroughs->GetChildContainerID( ControlStates::kWaiting ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const targetingPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kTargeting ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		WeakPtr<ui::controller::Passthrough> const actionPassthrough =
 			uiManager.AssignStrongController(
 				controlPassthroughs->GetChildContainerID( ControlStates::kAction ),
@@ -448,10 +462,12 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				controlPassthroughs->GetChildContainerID( ControlStates::kElement ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mStateControllers.at( ControlStates::kWaiting ) = waitingPassthrough;
+		internalState.mStateControllers.at( ControlStates::kTargeting ) = targetingPassthrough;
 		internalState.mStateControllers.at( ControlStates::kAction ) = actionPassthrough;
 		internalState.mStateControllers.at( ControlStates::kAttack ) = attackPassthrough;
 		internalState.mStateControllers.at( ControlStates::kElement ) = elementPassthrough;
 		waitingPassthrough->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		targetingPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		actionPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		attackPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		elementPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
@@ -486,6 +502,36 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			label->SetBorder( true );
 		}
 
+		// Targeting state
+		{
+			// Floater
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					targetingPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::Floater>::Create(
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
+						math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 / 2 ),
+						ui::Justification::MiddleCenter ) );
+
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// Display
+			WeakPtr<ui::controller::TextLabel> const label =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			label->SetJustification( ui::Justification::MiddleCenter );
+			label->SetFont( ui::font::SmallMenuText );
+			label->SetText( "TODO: TARGET" );
+			label->SetColor( math::Color3f::kGray50 );
+			label->SetBorder( true );
+		}
+
 		// Action state
 		{
 			// Floater
@@ -511,7 +557,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
 						ui::Orientation::Vertical,
-						math::enum_bitcast( ControlStates::kNumStates ),
+						math::enum_bitcast( SelectorActions::kNumActions ),
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kGray50,
@@ -552,7 +598,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
 						ui::Orientation::Vertical,
-						math::enum_bitcast( ControlStates::kNumStates ),
+						4u,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kGray50,
