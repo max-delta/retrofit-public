@@ -3,6 +3,7 @@
 
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
+#include "core_math/math_casts.h"
 #include "core_math/Lerp.h"
 #include "core_math/Rand.h"
 
@@ -50,9 +51,9 @@ Color3f Color3f::RandomFromHash( uint64_t hashVal )
 {
 	uint32_t seed = GetSeedFromHash( hashVal );
 	return Color3f(
-		StableRandLCGPercent( seed ) / 100.f,
-		StableRandLCGPercent( seed ) / 100.f,
-		StableRandLCGPercent( seed ) / 100.f );
+		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
+		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
+		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f );
 }
 
 
@@ -296,7 +297,7 @@ void Color3f::GetHSL( float& hueDegrees, float& saturationRatio, ElementType& lu
 		hueDegrees = ( 4.f + ( ( r - g ) / ( max - min ) ) ) * 60.f;
 	}
 	RF_ASSERT( min <= max );
-	if( Equals(min, max) )
+	if( Equals( min, max ) )
 	{
 		// Is some kind of gray, and thus hue is undefined, probably divided by
 		//  zero during the calculations

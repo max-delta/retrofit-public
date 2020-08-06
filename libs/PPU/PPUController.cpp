@@ -369,9 +369,9 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
 	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
 	targetString.mZLayer = zLayer;
-	targetString.mColor[0] = static_cast<uint8_t>( color.r * rftl::numeric_limits<uint8_t>::max() );
-	targetString.mColor[1] = static_cast<uint8_t>( color.g * rftl::numeric_limits<uint8_t>::max() );
-	targetString.mColor[2] = static_cast<uint8_t>( color.b * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[0] = math::integer_cast<uint8_t>( color.r * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+	targetString.mColor[1] = math::integer_cast<uint8_t>( color.g * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+	targetString.mColor[2] = math::integer_cast<uint8_t>( color.b * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
@@ -627,9 +627,9 @@ bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_
 	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
 	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
 	targetString.mZLayer = zLayer;
-	targetString.mColor[0] = static_cast<uint8_t>( color.r * rftl::numeric_limits<uint8_t>::max() );
-	targetString.mColor[1] = static_cast<uint8_t>( color.g * rftl::numeric_limits<uint8_t>::max() );
-	targetString.mColor[2] = static_cast<uint8_t>( color.b * rftl::numeric_limits<uint8_t>::max() );
+	targetString.mColor[0] = math::integer_cast<uint8_t>( color.r * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+	targetString.mColor[1] = math::integer_cast<uint8_t>( color.g * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+	targetString.mColor[2] = math::integer_cast<uint8_t>( color.b * math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
@@ -965,11 +965,11 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 			}
 
 			// Prefer to clump together like types
-			if( static_cast<uint8_t>( lhse.mType ) < static_cast<uint8_t>( rhse.mDepth ) )
+			if( math::enum_bitcast( lhse.mType ) < math::integer_unsigned_cast( rhse.mDepth ) )
 			{
 				return -1;
 			}
-			else if( static_cast<uint8_t>( lhse.mType ) > static_cast<uint8_t>( rhse.mDepth ) )
+			else if( math::enum_bitcast( lhse.mType ) > math::integer_unsigned_cast( rhse.mDepth ) )
 			{
 				return 1;
 			}
@@ -1265,8 +1265,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			math::integer_cast<int16_t>( tile.mIndex % texTilesPerRow ),
 			math::integer_cast<int16_t>( tile.mIndex / texTilesPerRow ) );
 		math::Vector2f const texTopLeft = math::Vector2f(
-			texTile.x * texXStep,
-			texTile.y * texYStep );
+			math::real_cast<float>( texTile.x ) * texXStep,
+			math::real_cast<float>( texTile.y ) * texYStep );
 		math::Vector2f const texBottomRight = texTopLeft + math::Vector2f( texXStep, texYStep );
 
 		deviceInterface->DrawBillboard( deviceTextureID, pos, z, math::AABB4f{ texTopLeft, texBottomRight } );
@@ -1357,11 +1357,11 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
 		float const deviceWidth = bottomRight.x - topLeft.x;
 		math::Color3f const color = math::Color3f{
-			static_cast<math::Color3f::ElementType>( string.mColor[0] ),
-			static_cast<math::Color3f::ElementType>( string.mColor[1] ),
-			static_cast<math::Color3f::ElementType>( string.mColor[2] )
-		} * ( 1.f / rftl::numeric_limits<uint8_t>::max() );
-		float const uvWidth = deviceWidth / ( ( deviceWidth * tileWidth ) / charWidth );
+			math::real_cast<math::Color3f::ElementType>( string.mColor[0] ),
+			math::real_cast<math::Color3f::ElementType>( string.mColor[1] ),
+			math::real_cast<math::Color3f::ElementType>( string.mColor[2] )
+		} * ( 1.f / math::real_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+		float const uvWidth = deviceWidth / ( ( deviceWidth * math::real_cast<float>( tileWidth ) ) / math::real_cast<float>( charWidth ) );
 		math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
 		float const z = LayerToDevice( string.mZLayer );
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, 1.f };
@@ -1396,7 +1396,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 {
 	math::Vector2f const p0 = CoordToDevice( line.mXCoord0, line.mYCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.mXCoord1, line.mYCoord1 );
-	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), static_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
+	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), math::real_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
 }
 
 
@@ -1483,7 +1483,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 	// TODO: Windowing
 	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
 	PPUZoomFactor const zoomFactor = GetZoomFactor();
-	float const diagonalTiles = ( static_cast<float>( smallestDimenssion ) ) / ( kTileSize * zoomFactor );
+	float const diagonalTiles = ( math::real_cast<float>( smallestDimenssion ) ) / math::real_cast<float>( kTileSize * zoomFactor );
 
 	// Baseline
 	// [0-64]
@@ -1503,7 +1503,7 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 	y *= tilesToPartialNDC;
 
 	// NDC, correcting mWidth
-	float const heightToWidthNDC = float( mHeight ) / mWidth;
+	float const heightToWidthNDC = math::real_cast<float>( mHeight ) / math::real_cast<float>( mWidth );
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );
@@ -1515,7 +1515,7 @@ float PPUController::LayerToDevice( PPUDepthLayer zDepth ) const
 {
 	static_assert( rftl::is_integral<PPUDepthLayer>::value, "Unexpected depth type" );
 	static_assert( rftl::is_signed<PPUDepthLayer>::value, "Unexpected depth type" );
-	float const scaledDepth = math::real_cast<float>( zDepth ) / rftl::numeric_limits<PPUDepthLayer>::max();
+	float const scaledDepth = math::real_cast<float>( zDepth ) / math::real_cast<float>( rftl::numeric_limits<PPUDepthLayer>::max() );
 	return scaledDepth;
 }
 
@@ -1537,7 +1537,7 @@ math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile
 	y *= tilesToPartialNDC;
 
 	// NDC, correcting mWidth
-	float const heightToWidthNDC = float( mHeight ) / mWidth;
+	float const heightToWidthNDC = math::real_cast<float>( mHeight ) / math::real_cast<float>( mWidth );
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );

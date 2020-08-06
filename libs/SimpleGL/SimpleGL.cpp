@@ -99,6 +99,8 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
 	this->mWidth = width;
 	this->mHeight = height;
+	float const widthf = math::real_cast<float>( width );
+	float const heightf = math::real_cast<float>( height );
 
 	// Reset The current viewport
 	glViewport( 0, 0, width, height );
@@ -133,25 +135,25 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
 			// Create Ortho View (0,0 At Top Left)
 			glOrtho( 0, 1, 1, 0, 1, -1 );
-			mXFudge = 1.f / width * 0.5f;
-			mYFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / widthf * 0.5f;
+			mYFudge = 1.f / heightf * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
 			// Create Ortho View (0,0 At Bottom Left)
 			glOrtho( 0, 1, 0, 1, 1, -1 );
-			mXFudge = 1.f / width * 0.5f;
-			mYFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / widthf * 0.5f;
+			mYFudge = 1.f / heightf * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
 			// Create Ortho View (1,1 At Top Right)
 			glOrtho( -1, 1, -1, 1, 1, -1 );
-			mXFudge = 2.f / width * 0.5f;
-			mYFudge = 2.f / height * 0.5f;
+			mXFudge = 2.f / widthf * 0.5f;
+			mYFudge = 2.f / heightf * 0.5f;
 			break;
 		default:
 			glOrtho( 0, 1, 1, 0, 1, -1 );
-			mXFudge = 1.f / width * 0.5f;
-			mYFudge = 1.f / height * 0.5f;
+			mXFudge = 1.f / widthf * 0.5f;
+			mYFudge = 1.f / heightf * 0.5f;
 			break;
 	}
 

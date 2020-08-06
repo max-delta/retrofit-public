@@ -185,7 +185,7 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context )
 	state::comp::UINavigation::BattleMenu& navigation = mNavigation->mBattleMenu;
 
 	ControlStates::State const currentState = GetControlState( context );
-	navigation.mControlState = math::integer_cast<uint8_t>( currentState );
+	navigation.mControlState = math::integer_cast<uint8_t>( math::enum_bitcast( currentState ) );
 	if( currentState == ControlStates::kWaiting )
 	{
 		// No cursor

@@ -18,7 +18,7 @@ constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, SCALAR const& t )
 template<typename TYPE>
 constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, float const& t )
 {
-	return static_cast<TYPE>( ( 1.f - t ) * vt0 ) + static_cast<TYPE>( t * vt1 );
+	return static_cast<TYPE>( ( 1.f - t ) * static_cast<float>( vt0 ) ) + static_cast<TYPE>( t * static_cast<float>( vt1 ) );
 }
 
 
@@ -26,7 +26,7 @@ constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, float const& t )
 template<typename TYPE>
 constexpr TYPE Lerp( TYPE const& vt0, TYPE const& vt1, double const& t )
 {
-	return static_cast<TYPE>( ( 1.0 - t ) * vt0 ) + static_cast<TYPE>( t * vt1 );
+	return static_cast<TYPE>( ( 1.0 - t ) * static_cast<double>( vt0 ) ) + static_cast<TYPE>( t * static_cast<double>( vt1 ) );
 }
 
 

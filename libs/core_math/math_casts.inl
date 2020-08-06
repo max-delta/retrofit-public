@@ -19,6 +19,7 @@ constexpr bool could_overflow()
 	//  low-precision floating point (rightfully so)
 	// TODO: Consider using more specializations instead
 	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
+	RF_MSVC_INLINE_SUPPRESS( 5219 );
 	return rftl::numeric_limits<SRC>::max() > maxDest;
 	RF_CLANG_POP();
 }
@@ -64,6 +65,10 @@ constexpr bool will_overflow( SRC const src )
 	if( could_overflow<DST, SRC>() )
 	{
 		constexpr DST maxDest = rftl::numeric_limits<DST>::max();
+		// This can raise warnings when using high value integers and
+		//  low-precision floating point (rightfully so)
+		// TODO: Consider using more specializations instead
+		RF_MSVC_INLINE_SUPPRESS( 5219 );
 		return src > maxDest;
 	}
 	return false;
@@ -153,6 +158,24 @@ constexpr typename rftl::enable_if<could_underflow<DST, SRC>() == false, bool>::
 
 #endif
 
+
+template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_integral<SRC>::value, int>::type = 0>
+void integer_cast_assert( DST const dst, SRC const src )
+{
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	RF_ASSERT( dst == static_cast<DST>( src ) );
+}
+
+
+
+template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_floating_point<SRC>::value, int>::type = 0>
+void integer_cast_assert( DST const dst, SRC const src )
+{
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	RF_ASSERT( static_cast<SRC>( dst ) >= src - 1 );
+	RF_ASSERT( static_cast<SRC>( dst ) <= src + 1 );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -161,15 +184,7 @@ DST integer_cast( SRC const src )
 {
 	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
 	DST retVal = integer_truncast<DST>( src );
-	if( rftl::is_floating_point<SRC>::value )
-	{
-		RF_ASSERT( static_cast<SRC>( retVal ) >= src - 1 );
-		RF_ASSERT( static_cast<SRC>( retVal ) <= src + 1 );
-	}
-	else
-	{
-		RF_ASSERT( retVal == static_cast<DST>( src ) );
-	}
+	details::integer_cast_assert( retVal, src );
 	return retVal;
 }
 

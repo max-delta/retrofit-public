@@ -8,10 +8,10 @@ namespace RF { namespace math {
 
 TEST( Vector2, Default_CommonTypes )
 {
-	ASSERT_EQ( Vector2f().x, 0 );
-	ASSERT_EQ( Vector2f().y, 0 );
-	ASSERT_EQ( Vector2d().x, 0 );
-	ASSERT_EQ( Vector2d().y, 0 );
+	ASSERT_EQ( Vector2f().x, 0.f );
+	ASSERT_EQ( Vector2f().y, 0.f );
+	ASSERT_EQ( Vector2d().x, 0.0 );
+	ASSERT_EQ( Vector2d().y, 0.0 );
 	ASSERT_EQ( Vector2i8().x, 0 );
 	ASSERT_EQ( Vector2i8().y, 0 );
 	ASSERT_EQ( Vector2i16().x, 0 );

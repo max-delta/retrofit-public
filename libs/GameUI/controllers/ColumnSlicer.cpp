@@ -125,7 +125,7 @@ void ColumnSlicer::OnAABBRecalc( UIContext& context, Container& container )
 	{
 		gfx::PPUCoordElem x = math::integer_truncast<gfx::PPUCoordElem>( rollingX );
 		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( i ), { x, y0 } );
-		rollingX += xDelta * mRatios.at( i ).first;
+		rollingX += math::real_cast<float>( xDelta ) * mRatios.at( i ).first;
 	}
 	RF_ASSERT( math::IsWithin<float>( rollingX, 1.f, x100 ) );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.back(), { x100, y100 } );

@@ -70,8 +70,8 @@ math::Color4u8 MelaninColorGenerator::GenerateColor( float pheomelaninRatio, flo
 	}
 
 	// Mix
-	float const pPlusE = ( pheo.a / 255.f ) + ( eu.a / 255.f );
-	float const pToERatio = 1.f - ( ( pheo.a / 255.f ) / pPlusE );
+	float const pPlusE = ( math::real_cast<float>( pheo.a ) / 255.f ) + ( math::real_cast<float>( eu.a ) / 255.f );
+	float const pToERatio = 1.f - ( ( math::real_cast<float>( pheo.a ) / 255.f ) / pPlusE );
 	math::Color4u8 const melanin = Mix( pheo, eu, pToERatio );
 	float const melaninRatio = math::Clamp( 0.f, pPlusE, 1.f );
 	math::Color4u8 const retVal = Mix( mBaseColor, melanin, melaninRatio );

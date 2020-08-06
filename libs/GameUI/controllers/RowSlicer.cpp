@@ -125,7 +125,7 @@ void RowSlicer::OnAABBRecalc( UIContext& context, Container& container )
 	{
 		gfx::PPUCoordElem y = math::integer_truncast<gfx::PPUCoordElem>( rollingY );
 		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( i ), { x0, y } );
-		rollingY += yDelta * mRatios.at( i ).first;
+		rollingY += math::real_cast<float>( yDelta ) * mRatios.at( i ).first;
 	}
 	RF_ASSERT( math::IsWithin<float>( rollingY, 1.f, y100 ) );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.back(), { x100, y100 } );
