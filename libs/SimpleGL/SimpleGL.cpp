@@ -561,7 +561,9 @@ void SimpleGL::BuildFont( int8_t height )
 		shim::kOUT_TT_PRECIS, // Output precision
 		shim::kCLIP_DEFAULT_PRECIS, // Clipping precision
 		shim::kANTIALIASED_QUALITY, // Output quality
-		math::enum_bitcast( shim::kFF_DONTCARE ) | math::enum_bitcast( shim::kDEFAULT_PITCH ), // Family and pitch
+		math::integer_cast<shim::DWORD>(
+			math::enum_bitcast( shim::kFF_DONTCARE ) |
+			math::enum_bitcast( shim::kDEFAULT_PITCH ) ), // Family and pitch
 		L"Arial" ); // Font name
 	// Selects the font we want
 	oldfont = static_cast<shim::HFONT>( shim::SelectObject( mHDC, font ) );
