@@ -592,7 +592,6 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
 
 			// List
-			using SelectorActions = InternalState::SelectorActions;
 			WeakPtr<ui::controller::ListBox> const attackMenu =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
@@ -657,6 +656,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			// Wasn't handled by general UI
 
 			// TODO
+			( (void)currentFocusContainerID );
 		}
 		focusMan.UpdateHardFocus( uiContext );
 	}
