@@ -6,12 +6,81 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+// TEMPLATE QUIRK: Clang will treat constexpr call results as different when
+//  evaluating them as an argument to enable_if, but MSVC will not, leading to
+//  duplicate declaration errors. Both compilers work as expected when the
+//  the constexpr calls are filtered through a bool_constant though. Unclear
+//  what the correct standards behavior is here.
+
 template<typename DST, typename SRC>
-constexpr bool could_overflow()
+constexpr typename rftl::enable_if<rftl::is_floating_point<DST>::value, bool>::type could_overflow_v()
+{
+	return false;
+}
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<rftl::is_integral<DST>::value && rftl::is_floating_point<SRC>::value, bool>::type could_overflow_v()
+{
+	return true;
+}
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<rftl::is_integral<DST>::value && rftl::is_integral<SRC>::value, bool>::type could_overflow_v()
+{
+	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
+	return rftl::numeric_limits<SRC>::max() > maxDest;
+}
+
+template<typename DST, typename SRC>
+struct could_overflow : public rftl::bool_constant<could_overflow_v<DST, SRC>()>
+{ };
+
+
+
+template<typename DST, typename SRC>
+constexpr bool could_drop_sign_v()
+{
+	return rftl::is_signed<SRC>::value && rftl::is_unsigned<DST>::value;
+}
+
+template<typename DST, typename SRC>
+struct could_drop_sign : public rftl::bool_constant<could_drop_sign_v<DST, SRC>()>
+{ };
+
+
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<rftl::is_unsigned<SRC>::value, bool>::type could_underflow_v()
+{
+	return false;
+}
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value && rftl::is_unsigned<DST>::value, bool>::type could_underflow_v()
+{
+	return true;
+}
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value && rftl::is_signed<DST>::value, bool>::type could_underflow_v()
+{
+	constexpr DST lowestDest = rftl::numeric_limits<DST>::lowest();
+	constexpr SRC lowestSrc = rftl::numeric_limits<SRC>::lowest();
+	return lowestSrc < lowestDest;
+}
+
+template<typename DST, typename SRC>
+struct could_underflow : public rftl::bool_constant<could_underflow_v<DST, SRC>()>
+{ };
+
+
+
+template<typename DST, typename SRC>
+constexpr typename rftl::enable_if<could_overflow<DST, SRC>::value, bool>::type will_overflow( SRC const src )
 {
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
 	RF_CLANG_PUSH();
@@ -20,103 +89,12 @@ constexpr bool could_overflow()
 	// TODO: Consider using more specializations instead
 	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
 	RF_MSVC_INLINE_SUPPRESS( 5219 );
-	return rftl::numeric_limits<SRC>::max() > maxDest;
-	RF_CLANG_POP();
-}
-
-
-
-template<typename DST, typename SRC>
-constexpr bool could_drop_sign()
-{
-	return rftl::is_signed<SRC>::value == true && rftl::is_signed<DST>::value == false;
-}
-
-
-
-template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value && rftl::is_signed<DST>::value, bool>::type could_underflow()
-{
-	constexpr DST lowestDest = rftl::numeric_limits<DST>::lowest();
-	constexpr SRC lowestSrc = rftl::numeric_limits<SRC>::lowest();
-	return lowestSrc < lowestDest;
-}
-
-template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value && rftl::is_signed<DST>::value == false, bool>::type could_underflow()
-{
-	return true;
-}
-
-template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value == false, bool>::type could_underflow()
-{
-	return false;
-}
-
-
-
-#ifdef RF_PLATFORM_MSVC
-// MSVC is once again, unable to do anything
-
-template<typename DST, typename SRC>
-constexpr bool will_overflow( SRC const src )
-{
-	if( could_overflow<DST, SRC>() )
-	{
-		constexpr DST maxDest = rftl::numeric_limits<DST>::max();
-		// This can raise warnings when using high value integers and
-		//  low-precision floating point (rightfully so)
-		// TODO: Consider using more specializations instead
-		RF_MSVC_INLINE_SUPPRESS( 5219 );
-		return src > maxDest;
-	}
-	return false;
-}
-
-template<typename DST, typename SRC>
-constexpr bool will_drop_sign( SRC const src )
-{
-	if( could_drop_sign<DST, SRC>() )
-	{
-		return src < 0;
-	}
-	return false;
-}
-
-template<typename DST, typename SRC>
-constexpr bool will_underflow( SRC const src )
-{
-	if( could_underflow<DST, SRC>() )
-	{
-		if( could_drop_sign<DST, SRC>() )
-		{
-			return will_drop_sign<DST, SRC>( src );
-		}
-		constexpr DST lowestDest = rftl::numeric_limits<DST>::lowest();
-		RF_ACK_CONSTEXPR_SIGN_MISMATCH;
-		return src < lowestDest;
-	}
-	return false;
-}
-
-#else
-
-template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_overflow<DST, SRC>(), bool>::type will_overflow( SRC const src )
-{
-	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
-	RF_CLANG_PUSH();
-	// This can raise warnings when using high value integers and
-	//  low-precision floating point (rightfully so)
-	// TODO: Consider using more specializations instead
-	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
 	return src > maxDest;
 	RF_CLANG_POP();
 }
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_overflow<DST, SRC>() == false, bool>::type will_overflow( SRC const src )
+constexpr typename rftl::enable_if<could_overflow<DST, SRC>::value == false, bool>::type will_overflow( SRC const src )
 {
 	return false;
 }
@@ -124,13 +102,13 @@ constexpr typename rftl::enable_if<could_overflow<DST, SRC>() == false, bool>::t
 
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_drop_sign<DST, SRC>(), bool>::type will_drop_sign( SRC const src )
+constexpr typename rftl::enable_if<could_drop_sign<DST, SRC>::value, bool>::type will_drop_sign( SRC const src )
 {
 	return src < 0;
 }
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_drop_sign<DST, SRC>() == false, bool>::type will_drop_sign( SRC const src )
+constexpr typename rftl::enable_if<could_drop_sign<DST, SRC>::value == false, bool>::type will_drop_sign( SRC const src )
 {
 	return false;
 }
@@ -138,25 +116,24 @@ constexpr typename rftl::enable_if<could_drop_sign<DST, SRC>() == false, bool>::
 
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_underflow<DST, SRC>() && could_drop_sign<DST, SRC>(), bool>::type will_underflow( SRC const src )
+constexpr typename rftl::enable_if<could_underflow<DST, SRC>::value && could_drop_sign<DST, SRC>::value, bool>::type will_underflow( SRC const src )
 {
 	return will_drop_sign<DST, SRC>( src );
 }
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_underflow<DST, SRC>() && could_drop_sign<DST, SRC>() == false, bool>::type will_underflow( SRC const src )
+constexpr typename rftl::enable_if<could_underflow<DST, SRC>::value && could_drop_sign<DST, SRC>::value == false, bool>::type will_underflow( SRC const src )
 {
 	constexpr DST lowestDest = rftl::numeric_limits<DST>::lowest();
 	return src < lowestDest;
 }
 
 template<typename DST, typename SRC>
-constexpr typename rftl::enable_if<could_underflow<DST, SRC>() == false, bool>::type will_underflow( SRC const src )
+constexpr typename rftl::enable_if<could_underflow<DST, SRC>::value == false, bool>::type will_underflow( SRC const src )
 {
 	return false;
 }
 
-#endif
 
 
 template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_integral<SRC>::value, int>::type = 0>
@@ -229,6 +206,12 @@ DST integer_truncast( SRC const src )
 
 
 
+template<typename SRC,
+	typename rftl::enable_if<rftl::is_integral<SRC>::value && rftl::is_unsigned<SRC>::value, int>::type>
+constexpr SRC integer_unsigned_cast( SRC const src )
+{
+	return src;
+}
 constexpr uint8_t integer_unsigned_cast( int8_t const src )
 {
 	return static_cast<uint8_t>( src );
@@ -244,22 +227,6 @@ constexpr uint32_t integer_unsigned_cast( int32_t const src )
 constexpr uint64_t integer_unsigned_cast( int64_t const src )
 {
 	return static_cast<uint64_t>( src );
-}
-constexpr uint8_t integer_unsigned_cast( uint8_t const src )
-{
-	return src;
-}
-constexpr uint16_t integer_unsigned_cast( uint16_t const src )
-{
-	return src;
-}
-constexpr uint32_t integer_unsigned_cast( uint32_t const src )
-{
-	return src;
-}
-constexpr uint64_t integer_unsigned_cast( uint64_t const src )
-{
-	return src;
 }
 
 
@@ -297,4 +264,4 @@ constexpr DEST enum_bitcast( typename rftl::underlying_type<DEST>::type const sr
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
