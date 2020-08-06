@@ -38,6 +38,10 @@
       <!--TODO: Document all these-->
       <DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
+      <!-- Azure build machines don't always have the latest VS, so ignore
+        complaints about unknown warnings -->
+      <DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">4619;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+
       <!--If we bothered to turn a warning on, yell about it-->
       <TreatWarningAsError>true</TreatWarningAsError>
 
