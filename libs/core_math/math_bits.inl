@@ -73,7 +73,7 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 {
 	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	uint64_t const extendedValue = integer_unsigned_cast( value );
+	uint64_t const extendedValue = integer_unsigned_bitcast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
 	#define RF_GETINDEXOFHIGHESBIT_TEST( X ) \
@@ -112,7 +112,7 @@ constexpr size_t GetZerosIndexOfHighestBit( T const value )
 {
 	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	uint64_t const extendedValue = integer_unsigned_cast( value );
+	uint64_t const extendedValue = integer_unsigned_bitcast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
 	#define RF_GETINDEXOFHIGHESBIT_TEST( X ) \

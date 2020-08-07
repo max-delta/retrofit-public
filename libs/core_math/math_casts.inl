@@ -208,23 +208,23 @@ DST integer_truncast( SRC const src )
 
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_integral<SRC>::value && rftl::is_unsigned<SRC>::value, int>::type>
-constexpr SRC integer_unsigned_cast( SRC const src )
+constexpr SRC integer_unsigned_bitcast( SRC const src )
 {
 	return src;
 }
-constexpr uint8_t integer_unsigned_cast( int8_t const src )
+constexpr uint8_t integer_unsigned_bitcast( int8_t const src )
 {
 	return static_cast<uint8_t>( src );
 }
-constexpr uint16_t integer_unsigned_cast( int16_t const src )
+constexpr uint16_t integer_unsigned_bitcast( int16_t const src )
 {
 	return static_cast<uint16_t>( src );
 }
-constexpr uint32_t integer_unsigned_cast( int32_t const src )
+constexpr uint32_t integer_unsigned_bitcast( int32_t const src )
 {
 	return static_cast<uint32_t>( src );
 }
-constexpr uint64_t integer_unsigned_cast( int64_t const src )
+constexpr uint64_t integer_unsigned_bitcast( int64_t const src )
 {
 	return static_cast<uint64_t>( src );
 }

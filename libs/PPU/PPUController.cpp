@@ -961,11 +961,11 @@ void PPUController::CalculateDepthOrder( DepthOrder& depthOrder ) const
 			}
 
 			// Prefer to clump together like types
-			if( math::enum_bitcast( lhse.mType ) < math::integer_unsigned_cast( rhse.mDepth ) )
+			if( math::enum_bitcast( lhse.mType ) < math::integer_unsigned_bitcast( rhse.mDepth ) )
 			{
 				return -1;
 			}
-			else if( math::enum_bitcast( lhse.mType ) > math::integer_unsigned_cast( rhse.mDepth ) )
+			else if( math::enum_bitcast( lhse.mType ) > math::integer_unsigned_bitcast( rhse.mDepth ) )
 			{
 				return 1;
 			}
