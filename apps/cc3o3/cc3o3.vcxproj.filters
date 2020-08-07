@@ -190,6 +190,9 @@
     <ClCompile Include="combat\CombatInstance.cpp">
       <Filter>combat</Filter>
     </ClCompile>
+    <ClCompile Include="combat\CombatantID.cpp">
+      <Filter>combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -501,9 +504,6 @@
     <ClInclude Include="combat\CombatInstance.h">
       <Filter>combat</Filter>
     </ClInclude>
-    <ClInclude Include="combat\Combatant.h">
-      <Filter>combat</Filter>
-    </ClInclude>
     <ClInclude Include="combat\Party.h">
       <Filter>combat</Filter>
     </ClInclude>
@@ -514,6 +514,12 @@
       <Filter>combat</Filter>
     </ClInclude>
     <ClInclude Include="combat\Attack.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\CombatantID.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\Fighter.h">
       <Filter>combat</Filter>
     </ClInclude>
   </ItemGroup>

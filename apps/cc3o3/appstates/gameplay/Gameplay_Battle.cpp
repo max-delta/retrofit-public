@@ -44,6 +44,12 @@ struct Gameplay_Battle::InternalState
 	RF_NO_COPY( InternalState );
 
 public:
+	struct INTELLISENSE_WORKAROUND
+	{
+		// Intellisense fails on partial updates of ControlStates::State, and
+		//  having this struct precede it fixes it... *shrug*
+	};
+
 	struct ControlStates
 	{
 		enum State : size_t
@@ -88,7 +94,7 @@ public:
 	ControlStates::State GetControlState( ui::UIConstContext const& context ) const;
 	void SwitchControlState( ui::UIContext& context, ControlStates::State state );
 	void RestoreUIState( ui::UIContext& context );
-	void SaveUIState( ui::UIContext& context );
+	void SaveUIState( ui::UIContext& context ) const;
 
 
 public:
@@ -100,6 +106,7 @@ public:
 	using StateControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, ControlStates::kNumStates>;
 	StateControllers mStateControllers;
 
+	uint8_t mControlCharIndex = 0;
 	uint8_t mTargetingIndex = 0;
 	WeakPtr<ui::controller::ListBox> mActionMenu;
 	WeakPtr<ui::controller::ListBox> mAttackMenu;
@@ -146,6 +153,8 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	// Load UI state from navigation component
 	state::comp::UINavigation::BattleMenu const& navigation = mNavigation->mBattleMenu;
 
+	mControlCharIndex = navigation.mControlCharIndex;
+
 	ControlStates::State const currentState = math::enum_bitcast<ControlStates::State>( navigation.mControlState );
 	SwitchControlState( context, currentState );
 	if( currentState == ControlStates::kWaiting )
@@ -179,10 +188,12 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 
 
 
-void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context )
+void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 {
 	// Save UI state to navigation component
 	state::comp::UINavigation::BattleMenu& navigation = mNavigation->mBattleMenu;
+
+	navigation.mControlCharIndex = mControlCharIndex;
 
 	ControlStates::State const currentState = GetControlState( context );
 	navigation.mControlState = math::integer_cast<uint8_t>( math::enum_bitcast( currentState ) );
@@ -243,7 +254,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		rftl::vector<input::PlayerID> const playerIDs = { input::HardcodedGetLocalPlayer() };
 		for( input::PlayerID const& playerID : playerIDs )
 		{
-			TeamIndex const playerTeam = instance.AddTeam();
+			TeamID const playerTeam = instance.AddTeam();
 			PartyID const playerParty = instance.AddParty( playerTeam );
 			if( playerID == input::HardcodedGetLocalPlayer() )
 			{
@@ -265,8 +276,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				}
 
 				// Add to party
-				CombatantID const combatant = instance.AddFighter( playerParty );
-				instance.SetCombatant( combatant, character );
+				FighterID const fighter = instance.AddFighter( playerParty );
+				instance.SetCombatant( fighter, character );
 			}
 		}
 
@@ -275,12 +286,12 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		// TODO: Encounters
 		if constexpr( true )
 		{
-			TeamIndex const enemyTeam = instance.AddTeam();
+			TeamID const enemyTeam = instance.AddTeam();
 			PartyID const enemyParty = instance.AddParty( enemyTeam );
 
-			rftl::array<Combatant, 1> enemies = {};
+			rftl::array<Fighter, 1> enemies = {};
 			{
-				Combatant& enemy = enemies.at( 0 );
+				Fighter& enemy = enemies.at( 0 );
 				enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
 				enemy.mMaxHealth = 999;
 				enemy.mCurHealth = enemy.mMaxHealth;
@@ -293,7 +304,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				enemy.mBalance = 2;
 				enemy.mTechniq = 2;
 
-				CombatantID const enemyID = instance.AddFighter( enemyParty );
+				FighterID const enemyID = instance.AddFighter( enemyParty );
 				instance.SetCombatant( enemyID, enemy );
 			}
 		}
@@ -648,15 +659,55 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
 		focusMan.UpdateHardFocus( uiContext );
 
-		// Figure out the useful focus information
-		ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
-
 		if( handled == false )
 		{
 			// Wasn't handled by general UI
 
-			// TODO
-			( (void)currentFocusContainerID );
+			using ControlState = InternalState::ControlStates::State;
+			ControlState const controlState = internalState.GetControlState( uiContext );
+			if( controlState == ControlState::kWaiting )
+			{
+				// TODO: (If enemy turn) Check for time counter input? Or
+				//  should that be on a different input layer than the menus?
+
+				// TODO: (If own turn) Wait for combat stuff to return control
+			}
+			else if( controlState == ControlState::kTargeting )
+			{
+				// TODO: (If for attack) Ascend to action menu
+
+				// TODO: (If for element) Ascend to element menu
+
+				// TODO: (If for attack) Descend to attack menu
+
+				// TODO: (If for element) Cast element, switch to waiting
+
+				// TODO: Change the current target
+			}
+			else if( controlState == ControlState::kAction )
+			{
+				// TODO: Descend to sub-menu
+
+				// TODO: Navigate to other character
+			}
+			else if( controlState == ControlState::kAttack )
+			{
+				// TODO: Ascend to action menu
+
+				// TODO: Execute attack
+
+				// TODO: Descend to element menu
+
+				// TODO: Navigate to other character, ascend to action menu
+			}
+			else if( controlState == ControlState::kElement )
+			{
+				// TODO
+			}
+			else
+			{
+				RF_DBGFAIL();
+			}
 		}
 		focusMan.UpdateHardFocus( uiContext );
 	}
@@ -678,30 +729,30 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			combat::Party const party = mainInstance.GetParty( partyID );
 			ppu.DebugDrawText( { x, y },
 				"%i:%i  %03i/%03i",
-				partyID.mTeam,
-				partyID.mParty,
+				partyID.GetTeamIndex(),
+				partyID.GetPartyIndex(),
 				party.mCounterGuage,
 				combat::kCounterGaugeFull );
 			y += yStep;
 		}
 
-		combat::CombatInstance::CombatantIDs const combatantIDs = mainInstance.GetCombatantIDs();
-		for( combat::CombatantID const& combatantID : combatantIDs )
+		combat::CombatInstance::FighterIDs const fighterIDs = mainInstance.GetFighterIDs();
+		for( combat::FighterID const& fighterID : fighterIDs )
 		{
-			combat::Combatant const combatant = mainInstance.GetCombatant( combatantID );
+			combat::Fighter const fighter = mainInstance.GetFighter( fighterID );
 			ppu.DebugDrawText( { x, y },
 				"%i:%i:%i  %03i/%03i  %1i/%1i  %2i -> %i:%i:%i",
-				combatantID.mTeam,
-				combatantID.mParty,
-				combatantID.mFighter,
-				combatant.mCurHealth,
-				combatant.mMaxHealth,
-				combatant.mCurStamina,
-				combatant.mMaxStamina,
-				combatant.mComboMeter,
-				combatant.mComboTarget.mTeam,
-				combatant.mComboTarget.mParty,
-				combatant.mComboTarget.mFighter );
+				fighterID.GetTeamIndex(),
+				fighterID.GetPartyIndex(),
+				fighterID.GetFighterIndex(),
+				fighter.mCurHealth,
+				fighter.mMaxHealth,
+				fighter.mCurStamina,
+				fighter.mMaxStamina,
+				fighter.mComboMeter,
+				fighter.mComboTarget.GetTeamIndex(),
+				fighter.mComboTarget.GetPartyIndex(),
+				fighter.mComboTarget.GetFighterIndex() );
 			y += yStep;
 		}
 	}

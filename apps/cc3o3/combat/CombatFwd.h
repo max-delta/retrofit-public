@@ -32,24 +32,12 @@ static constexpr size_t kMaxTeamsPerFight = 2;
 using PartyIndex = uint8_t;
 static constexpr PartyIndex kInvalidPartyIndex = rftl::numeric_limits<PartyIndex>::max();
 static constexpr size_t kMaxPartiesPerTeam = 3;
+static constexpr size_t kMaxTotalParties = kMaxTeamsPerFight * kMaxPartiesPerTeam;
 
 using FighterIndex = uint8_t;
 static constexpr FighterIndex kInvalidFighterIndex = rftl::numeric_limits<FighterIndex>::max();
 static constexpr size_t kMaxFightersPerParty = 5;
-
-struct PartyID
-{
-	TeamIndex mTeam;
-	PartyIndex mParty;
-};
-struct CombatantID
-{
-	TeamIndex mTeam;
-	PartyIndex mParty;
-	FighterIndex mFighter;
-};
-static constexpr size_t kMaxTotalParties = kMaxTeamsPerFight * kMaxPartiesPerTeam;
-static constexpr size_t kMaxTotalCombatants = kMaxTeamsPerFight * kMaxPartiesPerTeam * kMaxFightersPerParty;
+static constexpr size_t kMaxTotalFighters = kMaxTeamsPerFight * kMaxPartiesPerTeam * kMaxFightersPerParty;
 
 static constexpr SimDelta kMinStamina = -7;
 static constexpr SimDelta kMaxStamina = 7;
@@ -60,7 +48,7 @@ static constexpr size_t kFieldSize = 5;
 
 struct Party;
 struct Team;
-struct Combatant;
+struct Fighter;
 struct Field;
 
 struct AttackProfile;

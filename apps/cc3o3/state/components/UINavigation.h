@@ -49,6 +49,7 @@ public:
 		RF_NO_COPY( BattleMenu );
 		BattleMenu() = default;
 
+		rollback::AutoVar<uint8_t> mControlCharIndex;
 		rollback::AutoVar<uint8_t> mControlState;
 		rftl::array<rollback::AutoVar<uint8_t>, 2> mCursorIndex;
 	} mBattleMenu;

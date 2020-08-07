@@ -20,42 +20,42 @@ CombatInstance::CombatInstance( WeakPtr<CombatEngine const> const& combatEngine 
 
 
 
-TeamIndex CombatInstance::AddTeam()
+TeamID CombatInstance::AddTeam()
 {
 	RF_ASSERT( mTeams.size() < kMaxTeamsPerFight );
 	mTeams.emplace_back();
-	return math::integer_cast<TeamIndex>( mTeams.size() - 1 );
+	return TeamID::MakeTeam( math::integer_cast<TeamIndex>( mTeams.size() - 1 ) );
 }
 
 
 
-PartyID CombatInstance::AddParty( TeamIndex teamID )
+PartyID CombatInstance::AddParty( TeamID teamID )
 {
-	Parties& parties = mTeams.at( teamID ).mParties;
+	Parties& parties = mTeams.at( teamID.GetTeamIndex() ).mParties;
 	RF_ASSERT( parties.size() < kMaxPartiesPerTeam );
 	parties.emplace_back();
-	return { teamID, math::integer_cast<PartyIndex>( parties.size() - 1 ) };
+	return teamID.GetPartyAt( math::integer_cast<PartyIndex>( parties.size() - 1 ) );
 }
 
 
 
-CombatantID CombatInstance::AddFighter( PartyID partyID )
+FighterID CombatInstance::AddFighter( PartyID partyID )
 {
-	Parties& parties = mTeams.at( partyID.mTeam ).mParties;
-	Fighters& fighters = parties.at( partyID.mParty ).mFighters;
+	Parties& parties = mTeams.at( partyID.GetTeamIndex() ).mParties;
+	Fighters& fighters = parties.at( partyID.GetPartyIndex() ).mFighters;
 	RF_ASSERT( fighters.size() < kMaxFightersPerParty );
 	fighters.emplace_back();
-	return { partyID.mTeam, partyID.mParty, math::integer_cast<FighterIndex>( fighters.size() - 1 ) };
+	return partyID.GetFighterAt( math::integer_cast<FighterIndex>( fighters.size() - 1 ) );
 }
 
 
 
-void CombatInstance::RemoveFighter( CombatantID combatantID )
+void CombatInstance::RemoveFighter( FighterID fighterID )
 {
-	Parties& parties = mTeams.at( combatantID.mTeam ).mParties;
-	Fighters& fighters = parties.at( combatantID.mParty ).mFighters;
-	RF_ASSERT( combatantID.mFighter < fighters.size() );
-	fighters.erase( fighters.begin() + combatantID.mFighter );
+	Parties& parties = mTeams.at( fighterID.GetTeamIndex() ).mParties;
+	Fighters& fighters = parties.at( fighterID.GetPartyIndex() ).mFighters;
+	RF_ASSERT( fighterID.GetFighterIndex() < fighters.size() );
+	fighters.erase( fighters.begin() + fighterID.GetFighterIndex() );
 }
 
 
@@ -65,7 +65,7 @@ CombatInstance::TeamIDs CombatInstance::GetTeamIDs() const
 	TeamIDs retVal = {};
 	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
 	{
-		retVal.emplace_back( i_team );
+		retVal.emplace_back( TeamID::MakeTeam( i_team ) );
 	}
 	return retVal;
 }
@@ -80,7 +80,7 @@ CombatInstance::PartyIDs CombatInstance::GetPartyIDs() const
 		TeamEntry const& team = mTeams.at( i_team );
 		for( PartyIndex i_party = 0; i_party < team.mParties.size(); i_party++ )
 		{
-			retVal.emplace_back( PartyID{ i_team, i_party } );
+			retVal.emplace_back( PartyID::MakeParty( i_team, i_party ) );
 		}
 	}
 	return retVal;
@@ -88,9 +88,9 @@ CombatInstance::PartyIDs CombatInstance::GetPartyIDs() const
 
 
 
-CombatInstance::CombatantIDs CombatInstance::GetCombatantIDs() const
+CombatInstance::FighterIDs CombatInstance::GetFighterIDs() const
 {
-	CombatantIDs retVal = {};
+	FighterIDs retVal = {};
 	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
 	{
 		TeamEntry const& team = mTeams.at( i_team );
@@ -99,7 +99,7 @@ CombatInstance::CombatantIDs CombatInstance::GetCombatantIDs() const
 			PartyEntry const& party = team.mParties.at( i_party );
 			for( FighterIndex i_fighter = 0; i_fighter < party.mFighters.size(); i_fighter++ )
 			{
-				retVal.emplace_back( CombatantID{ i_team, i_party, i_fighter } );
+				retVal.emplace_back( FighterID::MakeFighter( i_team, i_party, i_fighter ) );
 			}
 		}
 	}
@@ -108,7 +108,7 @@ CombatInstance::CombatantIDs CombatInstance::GetCombatantIDs() const
 
 
 
-Team CombatInstance::GetTeam( TeamIndex teamID ) const
+Team CombatInstance::GetTeam( TeamID teamID ) const
 {
 	return GetTeamRef( teamID );
 }
@@ -122,47 +122,47 @@ Party CombatInstance::GetParty( PartyID partyID ) const
 
 
 
-Combatant CombatInstance::GetCombatant( CombatantID combatantID ) const
+Fighter CombatInstance::GetFighter( FighterID fighterID ) const
 {
-	return GetCombatantRef( combatantID );
+	return GetFighterRef( fighterID );
 }
 
 
 
-void CombatInstance::SetCombatant( CombatantID combatantID, Combatant const& combatant )
+void CombatInstance::SetCombatant( FighterID fighterID, Fighter const& combatant )
 {
-	Parties& parties = mTeams.at( combatantID.mTeam ).mParties;
-	Fighters& fighters = parties.at( combatantID.mParty ).mFighters;
-	FighterEntry& fighter = fighters.at( combatantID.mFighter );
-	fighter.mCombatant = combatant;
+	Parties& parties = mTeams.at( fighterID.GetTeamIndex() ).mParties;
+	Fighters& fighters = parties.at( fighterID.GetPartyIndex() ).mFighters;
+	FighterEntry& fighter = fighters.at( fighterID.GetFighterIndex() );
+	fighter.mFighter = combatant;
 	RF_ASSERT_MSG( fighter.mPersist.IsSet() == false, "Cutting combatant persistence, dubious" );
 	fighter.mPersist = {};
 }
 
 
 
-void CombatInstance::SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character )
+void CombatInstance::SetCombatant( FighterID fighterID, component::MutableObjectRef const& character )
 {
-	Parties& parties = mTeams.at( combatantID.mTeam ).mParties;
-	Fighters& fighters = parties.at( combatantID.mParty ).mFighters;
-	FighterEntry& fighter = fighters.at( combatantID.mFighter );
+	Parties& parties = mTeams.at( fighterID.GetTeamIndex() ).mParties;
+	Fighters& fighters = parties.at( fighterID.GetPartyIndex() ).mFighters;
+	FighterEntry& fighter = fighters.at( fighterID.GetFighterIndex() );
 	fighter.mPersist = character;
 
 	// HACK: Hard-coded
 	// TODO: Load from character
-	fighter.mCombatant = {};
+	fighter.mFighter = {};
 	uint32_t genVal = 0;
-	fighter.mCombatant.mInnate = mCombatEngine->GenerateRandomInnate( genVal );
-	fighter.mCombatant.mMaxHealth = 100;
-	fighter.mCombatant.mCurHealth = fighter.mCombatant.mMaxHealth;
-	fighter.mCombatant.mMaxStamina = 7;
-	fighter.mCombatant.mCurStamina = fighter.mCombatant.mMaxStamina;
-	fighter.mCombatant.mPhysAtk = 2;
-	fighter.mCombatant.mPhysDef = 2;
-	fighter.mCombatant.mElemAtk = 2;
-	fighter.mCombatant.mElemDef = 2;
-	fighter.mCombatant.mBalance = 2;
-	fighter.mCombatant.mTechniq = 2;
+	fighter.mFighter.mInnate = mCombatEngine->GenerateRandomInnate( genVal );
+	fighter.mFighter.mMaxHealth = 100;
+	fighter.mFighter.mCurHealth = fighter.mFighter.mMaxHealth;
+	fighter.mFighter.mMaxStamina = 7;
+	fighter.mFighter.mCurStamina = fighter.mFighter.mMaxStamina;
+	fighter.mFighter.mPhysAtk = 2;
+	fighter.mFighter.mPhysDef = 2;
+	fighter.mFighter.mElemAtk = 2;
+	fighter.mFighter.mElemDef = 2;
+	fighter.mFighter.mBalance = 2;
+	fighter.mFighter.mTechniq = 2;
 }
 
 
@@ -210,33 +210,31 @@ void CombatInstance::GenerateFieldInfluence( uint64_t seedHash )
 
 SimVal CombatInstance::GetCounterGuage( PartyID party ) const
 {
-	return mTeams.at( party.mTeam ).mParties.at( party.mParty ).mParty.mCounterGuage;
+	return mTeams.at( party.GetTeamIndex() ).mParties.at( party.GetPartyIndex() ).mParty.mCounterGuage;
 }
 
 
 
 void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
 {
-	SimVal& counterGuage = mTeams.at( party.mTeam ).mParties.at( party.mParty ).mParty.mCounterGuage;
+	SimVal& counterGuage = mTeams.at( party.GetTeamIndex() ).mParties.at( party.GetPartyIndex() ).mParty.mCounterGuage;
 	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGuage );
 	counterGuage = math::Min( maxIncrease, value );
 }
 
 
 
-AttackProfile CombatInstance::PrepareAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength ) const
+AttackProfile CombatInstance::PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const
 {
-	Combatant const& attacker = GetCombatantRef( attackerID );
-	Combatant const& defender = GetCombatantRef( defenderID );
+	Fighter const& attacker = GetFighterRef( attackerID );
+	Fighter const& defender = GetFighterRef( defenderID );
 
 	AttackProfile retVal = {};
 
 	retVal.mAttackStrength = attackStrength;
 
 	retVal.mNewCombo = true;
-	if( attacker.mComboTarget.mTeam == defenderID.mTeam &&
-		attacker.mComboTarget.mParty == defenderID.mParty &&
-		attacker.mComboTarget.mFighter == defenderID.mFighter )
+	if( attacker.mComboTarget == defenderID )
 	{
 		// TODO: operator==(...) instead
 		retVal.mNewCombo = false;
@@ -256,13 +254,13 @@ AttackProfile CombatInstance::PrepareAttack( CombatantID attackerID, CombatantID
 
 
 
-AttackResult CombatInstance::ExecuteAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength )
+AttackResult CombatInstance::ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength )
 {
 	AttackProfile const profile = PrepareAttack( attackerID, defenderID, attackStrength );
 	AttackResult const result = mCombatEngine->HiCalcAttack( profile );
 
-	Combatant& attacker = GetMutableCombatantRef( attackerID );
-	Combatant& defender = GetMutableCombatantRef( defenderID );
+	Fighter& attacker = GetMutableFighterRef( attackerID );
+	Fighter& defender = GetMutableFighterRef( defenderID );
 
 	attacker.mComboTarget = defenderID;
 	attacker.mCurStamina -= profile.mAttackStrength;
@@ -271,24 +269,24 @@ AttackResult CombatInstance::ExecuteAttack( CombatantID attackerID, CombatantID 
 	attacker.mComboMeter = result.mNewComboMeter;
 	LargeSimVal const maxDamage = math::integer_cast<LargeSimVal>( defender.mMaxHealth - defender.mCurHealth );
 	defender.mCurHealth -= math::Min( result.mDamage, math::integer_truncast<SimVal>( maxDamage ) );
-	IncreaseCounterGuage( { defenderID.mTeam, defenderID.mParty }, result.mCoungerGuageIncrease );
+	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
 
 	return result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Team const& CombatInstance::GetTeamRef( TeamIndex teamID ) const
+Team const& CombatInstance::GetTeamRef( TeamID teamID ) const
 {
-	return mTeams.at( teamID )
+	return mTeams.at( teamID.GetTeamIndex() )
 		.mTeam;
 }
 
 
 
-Team& CombatInstance::GetMutableTeamRef( TeamIndex teamID )
+Team& CombatInstance::GetMutableTeamRef( TeamID teamID )
 {
-	return mTeams.at( teamID )
+	return mTeams.at( teamID.GetTeamIndex() )
 		.mTeam;
 }
 
@@ -296,8 +294,8 @@ Team& CombatInstance::GetMutableTeamRef( TeamIndex teamID )
 
 Party const& CombatInstance::GetPartyRef( PartyID partyID ) const
 {
-	return mTeams.at( partyID.mTeam )
-		.mParties.at( partyID.mParty )
+	return mTeams.at( partyID.GetTeamIndex() )
+		.mParties.at( partyID.GetPartyIndex() )
 		.mParty;
 }
 
@@ -305,29 +303,29 @@ Party const& CombatInstance::GetPartyRef( PartyID partyID ) const
 
 Party& CombatInstance::GetMutablePartyRef( PartyID partyID )
 {
-	return mTeams.at( partyID.mTeam )
-		.mParties.at( partyID.mParty )
+	return mTeams.at( partyID.GetTeamIndex() )
+		.mParties.at( partyID.GetPartyIndex() )
 		.mParty;
 }
 
 
 
-Combatant const& CombatInstance::GetCombatantRef( CombatantID combatantID ) const
+Fighter const& CombatInstance::GetFighterRef( FighterID fighterID ) const
 {
-	return mTeams.at( combatantID.mTeam )
-		.mParties.at( combatantID.mParty )
-		.mFighters.at( combatantID.mFighter )
-		.mCombatant;
+	return mTeams.at( fighterID.GetTeamIndex() )
+		.mParties.at( fighterID.GetPartyIndex() )
+		.mFighters.at( fighterID.GetFighterIndex() )
+		.mFighter;
 }
 
 
 
-Combatant& CombatInstance::GetMutableCombatantRef( CombatantID combatantID )
+Fighter& CombatInstance::GetMutableFighterRef( FighterID fighterID )
 {
-	return mTeams.at( combatantID.mTeam )
-		.mParties.at( combatantID.mParty )
-		.mFighters.at( combatantID.mFighter )
-		.mCombatant;
+	return mTeams.at( fighterID.GetTeamIndex() )
+		.mParties.at( fighterID.GetPartyIndex() )
+		.mFighters.at( fighterID.GetFighterIndex() )
+		.mFighter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

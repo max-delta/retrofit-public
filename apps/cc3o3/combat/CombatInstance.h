@@ -1,7 +1,8 @@
 #pragma once
 #include "project.h"
 
-#include "cc3o3/combat/Combatant.h"
+#include "cc3o3/combat/CombatantID.h"
+#include "cc3o3/combat/Fighter.h"
 #include "cc3o3/combat/Party.h"
 #include "cc3o3/combat/Team.h"
 #include "cc3o3/combat/Field.h"
@@ -27,7 +28,7 @@ class CombatInstance
 public:
 	struct FighterEntry
 	{
-		Combatant mCombatant;
+		Fighter mFighter;
 		component::MutableObjectRef mPersist;
 	};
 	using Fighters = rftl::static_vector<FighterEntry, kMaxFightersPerParty>;
@@ -46,9 +47,9 @@ public:
 	};
 	using Teams = rftl::static_vector<TeamEntry, kMaxTeamsPerFight>;
 
-	using TeamIDs = rftl::static_vector<TeamIndex, kMaxTeamsPerFight>;
+	using TeamIDs = rftl::static_vector<TeamID, kMaxTeamsPerFight>;
 	using PartyIDs = rftl::static_vector<PartyID, kMaxTotalParties>;
-	using CombatantIDs = rftl::static_vector<CombatantID, kMaxTotalCombatants>;
+	using FighterIDs = rftl::static_vector<FighterID, kMaxTotalFighters>;
 
 
 	//
@@ -56,21 +57,21 @@ public:
 public:
 	CombatInstance( WeakPtr<CombatEngine const> const& combatEngine );
 
-	TeamIndex AddTeam();
-	PartyID AddParty( TeamIndex teamID );
-	CombatantID AddFighter( PartyID partyID );
-	void RemoveFighter( CombatantID combatantID );
+	TeamID AddTeam();
+	PartyID AddParty( TeamID teamID );
+	FighterID AddFighter( PartyID partyID );
+	void RemoveFighter( FighterID fighterID );
 
 	TeamIDs GetTeamIDs() const;
 	PartyIDs GetPartyIDs() const;
-	CombatantIDs GetCombatantIDs() const;
+	FighterIDs GetFighterIDs() const;
 
-	Team GetTeam( TeamIndex teamID ) const;
+	Team GetTeam( TeamID teamID ) const;
 	Party GetParty( PartyID partyID ) const;
-	Combatant GetCombatant( CombatantID combatantID ) const;
+	Fighter GetFighter( FighterID fighterID ) const;
 
-	void SetCombatant( CombatantID combatantID, Combatant const& combatant );
-	void SetCombatant( CombatantID combatantID, component::MutableObjectRef const& character );
+	void SetCombatant( FighterID fighterID, Fighter const& combatant );
+	void SetCombatant( FighterID fighterID, component::MutableObjectRef const& character );
 
 	rftl::array<element::InnateIdentifier, kFieldSize> GetFieldInfluence() const;
 	void AddFieldInfluence( element::InnateIdentifier influence );
@@ -80,19 +81,19 @@ public:
 	SimVal GetCounterGuage( PartyID party ) const;
 	void IncreaseCounterGuage( PartyID party, SimVal value );
 
-	AttackProfile PrepareAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength ) const;
-	AttackResult ExecuteAttack( CombatantID attackerID, CombatantID defenderID, SimVal attackStrength );
+	AttackProfile PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
+	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
 
 
 	//
 	// Private methods
 private:
-	Team const& GetTeamRef( TeamIndex teamID ) const;
-	Team& GetMutableTeamRef( TeamIndex teamID );
+	Team const& GetTeamRef( TeamID teamID ) const;
+	Team& GetMutableTeamRef( TeamID teamID );
 	Party const& GetPartyRef( PartyID partyID ) const;
 	Party& GetMutablePartyRef( PartyID partyID );
-	Combatant const& GetCombatantRef( CombatantID combatantID ) const;
-	Combatant& GetMutableCombatantRef( CombatantID combatantID );
+	Fighter const& GetFighterRef( FighterID fighterID ) const;
+	Fighter& GetMutableFighterRef( FighterID fighterID );
 
 
 	//

@@ -8,7 +8,7 @@
 namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct Combatant
+struct Fighter
 {
 	element::InnateIdentifier mInnate = element::kInvalidInnateIdentifier;
 
@@ -28,7 +28,7 @@ struct Combatant
 	SimVal mTechniq = 0; // Faster combo growth
 
 	SimVal mComboMeter = 0;
-	CombatantID mComboTarget = {}; // Changing targets drops combo meter
+	FighterID mComboTarget = {}; // Changing targets drops combo meter
 };
 
 ///////////////////////////////////////////////////////////////////////////////

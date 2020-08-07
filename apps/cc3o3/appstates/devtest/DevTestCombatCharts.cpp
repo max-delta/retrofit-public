@@ -227,11 +227,11 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 		// Setup combat instance
 		CombatInstance startInstance( gCombatEngine );
-		CombatantID const attackerID = { 0, 0, 0 };
-		CombatantID const defenderID = { 1, 0, 0 };
+		FighterID const attackerID = FighterID::MakeFighter( 0, 0, 0 );
+		FighterID const defenderID = FighterID::MakeFighter( 1, 0, 0 );
 		{
-			Combatant attacker = {};
-			Combatant defender = {};
+			Fighter attacker = {};
+			Fighter defender = {};
 
 			attacker.mMaxHealth = 1;
 			attacker.mCurHealth = attacker.mMaxHealth;
@@ -264,12 +264,12 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			}
 
 			startInstance.AddTeam();
-			startInstance.AddParty( 0 );
-			startInstance.AddFighter( { 0, 0 } );
+			startInstance.AddParty( TeamID::MakeTeam( 0 ) );
+			startInstance.AddFighter( PartyID::MakeParty( 0, 0 ) );
 			startInstance.SetCombatant( attackerID, attacker );
 			startInstance.AddTeam();
-			startInstance.AddParty( 1 );
-			startInstance.AddFighter( { 1, 0 } );
+			startInstance.AddParty( TeamID::MakeTeam( 1 ) );
+			startInstance.AddFighter( PartyID::MakeParty( 1, 0 ) );
 			startInstance.SetCombatant( defenderID, defender );
 
 			// Field influence
@@ -310,7 +310,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				AttackResult const result = comboInstance.ExecuteAttack( attackerID, defenderID, swing );
 				comboMeter = result.mNewComboMeter;
 				hit = result.mHit;
-				counterGuage = comboInstance.GetCounterGuage( { defenderID.mTeam, defenderID.mParty } );
+				counterGuage = comboInstance.GetCounterGuage( defenderID.GetParty() );
 				damage = result.mDamage;
 
 				if( hit )
