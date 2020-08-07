@@ -25,7 +25,7 @@ void Start()
 
 	{
 		file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "skin_color_test.bmp" );
-		sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GeneratePallete( 8 );
+		sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPallete( 4 );
 		rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( skinColorTest.GetData(), skinColorTest.GetWidth(), skinColorTest.GetHeight() );
 		file::FileHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
 		FILE* const file = fileHandle->GetFile();
