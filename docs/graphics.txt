@@ -1,0 +1,98 @@
+PPU object:
+9-bit sprite ID         ->  16-bit framepack lookup
+4-bti shape data        ->  8-bit gfx modifier
+1-bit pallete mode      ->  8-bit time index
+4-bit pallete ID        ->  8-bit time slowdown
+2-bit alpha blend       ->  1-bit looping
+1 bit mosaic            ->  TBD: Alpha blend overrides?
+                        ->
+8-bit x coord           ->  8-bit x-coord
+7-bit y coord           ->  8-bit y-coord
+2-bit z layer           ->  8-bit z layer
+                        ->
+1-bit horizontal flip   ->  1-bit horizontal flip
+1-bit vertical flip     ->  1-bit vertical flip
+1-bit use transform     ->  1-bit use transform
+3-bit transform data    ->  128-bit transform data
+1-bit double AABB size  ->
+
+
+
+Framepack:
+	GFX
+		Custom modifier handlers
+	Collision
+		Collider layer mapping (body=1, dmg=2, parry=4…)
+	Preferred framerate
+	Timeslots
+		GFX
+			Texture reference
+			Origin
+		Collision
+			Collider reference
+			Origin
+
+
+Framepack mem:
+	8x 64-bit GFX modifier handlers (ID into GFXManager)
+	2+x 16-bit layer mappings (8x max)
+		8-bit game layer type (body, dmg, parry…)
+		8-bit collider layer ID (1,2,4…)
+	1x 8-bit preferred rate (1=60,2=30,3=20,4=15…)
+	1+x 160-bit timeslots (256x max)
+		64-bit Texture reference (ID into TextureManager)
+		8-bit texture x origin
+		8-bit texture y origin
+		64-bit Collider reference (ID into ColliderManager)
+		8-bit collider x origin
+		8-bit collider y origin
+
+
+
+<framepack>.fpack.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<framepack>
+	<header>
+		<version>1</version>
+		<framerate_divisor>1</framerate_divisor>
+	</header>
+	<collider_mappings>
+		<!--Probably same for entire game, unless using character-specific game layers-->
+		<body>1</body>
+		<dmg>2</dmg>
+		<parry>4</parry>
+	</collider_mappings>
+	<frames>
+		<frame>
+			<id>0</id>
+			<texture>”a.png”</texture>
+			<tex_x_origin>20</tex_x_origin>
+			<tex_y_origin>15</tex_y_origin>
+			<collider>”a.collide”</collider >
+			<col_x_origin>18</col_x_origin>
+			<col_y_origin>36</col_y_origin>
+		</frame>
+		…
+	</frames>
+</framepack>
+
+
+
+<frame>.collide:
+	512-bit Header
+		64-bit [‘R’,’F’,’I’,’T’]
+		64-bit [‘C’,’O’,’L’,’L’]
+		8-bit version (must be 1)
+		64-bit data offset from file start (must be 64)
+		64-bit num entries (capped at 25)
+		248-bit reserved (pad to 512-bit)  // Maybe spend 8 bytes for short name later?
+	64-bit-aligned Data
+		8-bit layer mask (0 is invalid, must be skipped)  // Maybe use 0 for interlaced meta?
+		8-bit x coord
+		8-bit y coord
+		8-bit width
+		8-bit height
+		24-bit reserved (pad to 64-bit)  // Maybe have references into a meta segment?
+		<repeat…>
+File cannot exceed 2048-bits (256 bytes),
+excess bytes shouldn’t be read.  // Maybe have a meta segment?
