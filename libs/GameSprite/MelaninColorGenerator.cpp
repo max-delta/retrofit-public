@@ -70,8 +70,8 @@ math::Color4u8 MelaninColorGenerator::GenerateColor( float pheomelaninRatio, flo
 	}
 
 	// Mix
-	float const pPlusE = ( math::real_cast<float>( pheo.a ) / 255.f ) + ( math::real_cast<float>( eu.a ) / 255.f );
-	float const pToERatio = 1.f - ( ( math::real_cast<float>( pheo.a ) / 255.f ) / pPlusE );
+	float const pPlusE = ( math::float_cast<float>( pheo.a ) / 255.f ) + ( math::float_cast<float>( eu.a ) / 255.f );
+	float const pToERatio = 1.f - ( ( math::float_cast<float>( pheo.a ) / 255.f ) / pPlusE );
 	math::Color4u8 const melanin = Mix( pheo, eu, pToERatio );
 	float const melaninRatio = math::Clamp( 0.f, pPlusE, 1.f );
 	math::Color4u8 const retVal = Mix( mBaseColor, melanin, melaninRatio );
@@ -91,7 +91,7 @@ sprite::Bitmap MelaninColorGenerator::GeneratePallete( size_t toneCount ) const
 		float eu = -1.f;
 		if( y > 0 )
 		{
-			float const ratio = math::real_cast<float>( y ) / math::real_cast<float>( melaninCount );
+			float const ratio = math::float_cast<float>( y ) / math::float_cast<float>( melaninCount );
 			eu = math::Lerp( -1.f, 1.f, ratio );
 		}
 
@@ -100,7 +100,7 @@ sprite::Bitmap MelaninColorGenerator::GeneratePallete( size_t toneCount ) const
 			float pheo = -1.f;
 			if( x > 0 )
 			{
-				float const ratio = math::real_cast<float>( x ) / math::real_cast<float>( melaninCount );
+				float const ratio = math::float_cast<float>( x ) / math::float_cast<float>( melaninCount );
 				pheo = math::Lerp( -1.f, 1.f, ratio );
 			}
 

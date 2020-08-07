@@ -172,6 +172,9 @@ private:
 
 	void CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, PPUCoordElem& tileWidth, PPUCoordElem& tileHeight ) const;
 
+	static void ConvertColor( uint8_t ( &dest )[3], math::Color3f const& src );
+	static math::Color3f ConvertColor( uint8_t const ( &src )[3] );
+
 	static math::Color3f CalculateBorderColor( math::Color3f contentsColor );
 
 	void RenderObject( Object const& object ) const;

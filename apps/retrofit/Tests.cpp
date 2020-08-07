@@ -336,10 +336,10 @@ void DrawInputDebug()
 		coord.y += offset;
 
 		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-		app::gGraphics->DebugDrawText( coord, "  cax: %f", math::real_cast<double>( signalValue ) );
+		app::gGraphics->DebugDrawText( coord, "  cax: %f", math::float_cast<double>( signalValue ) );
 		coord.y += offset;
 		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-		app::gGraphics->DebugDrawText( coord, "  cay: %f", math::real_cast<double>( signalValue ) );
+		app::gGraphics->DebugDrawText( coord, "  cay: %f", math::float_cast<double>( signalValue ) );
 		coord.y += offset;
 
 		app::gWndProcInput->mText.GetTextStream( textStream, 100 );

@@ -99,8 +99,8 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
 	this->mWidth = width;
 	this->mHeight = height;
-	float const widthf = math::real_cast<float>( width );
-	float const heightf = math::real_cast<float>( height );
+	float const widthf = math::float_cast<float>( width );
+	float const heightf = math::float_cast<float>( height );
 
 	// Reset The current viewport
 	glViewport( 0, 0, width, height );

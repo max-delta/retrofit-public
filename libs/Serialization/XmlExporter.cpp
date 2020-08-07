@@ -193,7 +193,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		case reflect::Value::Type::Char32:				valueAttr = *value.GetAs<char32_t>(); break;
 		case reflect::Value::Type::Float:				valueAttr = *value.GetAs<float>(); break;
 		case reflect::Value::Type::Double:				valueAttr = *value.GetAs<double>(); break;
-		case reflect::Value::Type::LongDouble:			valueAttr = math::real_cast<double>( *value.GetAs<long double>() ); break;
+		case reflect::Value::Type::LongDouble:			valueAttr = math::float_cast<double>( *value.GetAs<long double>() ); break;
 		case reflect::Value::Type::UInt8:				valueAttr = *value.GetAs<uint8_t>(); break;
 		case reflect::Value::Type::UInt16:				valueAttr = *value.GetAs<uint16_t>(); break;
 		case reflect::Value::Type::UInt32:				valueAttr = *value.GetAs<uint32_t>(); break;

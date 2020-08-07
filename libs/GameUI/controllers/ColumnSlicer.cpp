@@ -42,7 +42,7 @@ ColumnSlicer::ColumnSlicer( size_t numSlices )
 	, mContainers( numSlices, kInvalidContainerID )
 {
 	RF_ASSERT( numSlices >= 2 );
-	float const ratio = 1.f / math::real_cast<float>( numSlices );
+	float const ratio = 1.f / math::float_cast<float>( numSlices );
 	for( size_t i = 0; i < numSlices; i++ )
 	{
 		mRatios.emplace_back( ratio, true );
@@ -125,7 +125,7 @@ void ColumnSlicer::OnAABBRecalc( UIContext& context, Container& container )
 	{
 		gfx::PPUCoordElem x = math::integer_truncast<gfx::PPUCoordElem>( rollingX );
 		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( i ), { x, y0 } );
-		rollingX += math::real_cast<float>( xDelta ) * mRatios.at( i ).first;
+		rollingX += math::float_cast<float>( xDelta ) * mRatios.at( i ).first;
 	}
 	RF_ASSERT( math::IsWithin<float>( rollingX, 1.f, x100 ) );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.back(), { x100, y100 } );

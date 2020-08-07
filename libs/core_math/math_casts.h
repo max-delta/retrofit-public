@@ -19,10 +19,13 @@ constexpr uint16_t integer_unsigned_cast( int16_t const src );
 constexpr uint32_t integer_unsigned_cast( int32_t const src );
 constexpr uint64_t integer_unsigned_cast( int64_t const src );
 
-template<typename DST, typename SRC,
+template<typename DST, typename SRC>
+constexpr DST float_cast( SRC const src );
+
+template<typename DST, typename SRC, //
 	typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type = 0>
 DST real_cast( SRC const src );
-template<typename DST, typename SRC,
+template<typename DST, typename SRC, //
 	typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type = 0>
 DST real_cast( SRC const src );
 

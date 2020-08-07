@@ -51,9 +51,9 @@ Color3f Color3f::RandomFromHash( uint64_t hashVal )
 {
 	uint32_t seed = GetSeedFromHash( hashVal );
 	return Color3f(
-		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
-		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
-		real_cast<float>( StableRandLCGPercent( seed ) ) / 100.f );
+		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
+		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
+		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f );
 }
 
 

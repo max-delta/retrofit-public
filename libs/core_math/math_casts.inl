@@ -231,6 +231,15 @@ constexpr uint64_t integer_unsigned_cast( int64_t const src )
 
 
 
+template<typename DST, typename SRC>
+constexpr DST float_cast( SRC const src )
+{
+	static_assert( rftl::is_floating_point<DST>::value, "float_cast only valid on integeral types" );
+	return static_cast<DST>( src );
+}
+
+
+
 template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_integral<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
@@ -242,7 +251,7 @@ DST real_cast( SRC const src )
 template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type>
 DST real_cast( SRC const src )
 {
-	return static_cast<DST>( src );
+	return float_cast<DST>( src );
 }
 
 
