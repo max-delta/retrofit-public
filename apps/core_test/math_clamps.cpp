@@ -262,6 +262,14 @@ TEST( MathClamps, SnapNearest )
 	static_assert( SnapNearest( 3, 4 ) == 4, "" );
 	static_assert( SnapNearest( 4, 4 ) == 4, "" );
 	static_assert( SnapNearest( 5, 4 ) == 4, "" );
+
+	// Uint8_t's get weird promotion rules, so take some extra casting
+	static_assert( SnapNearest<uint8_t>( 0, 4 ) == 0, "" );
+	static_assert( SnapNearest<uint8_t>( 1, 4 ) == 0, "" );
+	static_assert( SnapNearest<uint8_t>( 2, 4 ) == 0, "" );
+	static_assert( SnapNearest<uint8_t>( 3, 4 ) == 4, "" );
+	static_assert( SnapNearest<uint8_t>( 4, 4 ) == 4, "" );
+	static_assert( SnapNearest<uint8_t>( 5, 4 ) == 4, "" );
 }
 
 
@@ -280,6 +288,14 @@ TEST( MathClamps, SnapHighest )
 	static_assert( SnapHighest( 3, 4 ) == 4, "" );
 	static_assert( SnapHighest( 4, 4 ) == 4, "" );
 	static_assert( SnapHighest( 5, 4 ) == 8, "" );
+
+	// Uint8_t's get weird promotion rules, so take some extra casting
+	static_assert( SnapHighest<uint8_t>( 0, 4 ) == 0, "" );
+	static_assert( SnapHighest<uint8_t>( 1, 4 ) == 4, "" );
+	static_assert( SnapHighest<uint8_t>( 2, 4 ) == 4, "" );
+	static_assert( SnapHighest<uint8_t>( 3, 4 ) == 4, "" );
+	static_assert( SnapHighest<uint8_t>( 4, 4 ) == 4, "" );
+	static_assert( SnapHighest<uint8_t>( 5, 4 ) == 8, "" );
 }
 
 
@@ -298,6 +314,14 @@ TEST( MathClamps, SnapLowest )
 	static_assert( SnapLowest( 3, 4 ) == 0, "" );
 	static_assert( SnapLowest( 4, 4 ) == 4, "" );
 	static_assert( SnapLowest( 5, 4 ) == 4, "" );
+
+	// Uint8_t's get weird promotion rules, so take some extra casting
+	static_assert( SnapLowest<uint8_t>( 0, 4 ) == 0, "" );
+	static_assert( SnapLowest<uint8_t>( 1, 4 ) == 0, "" );
+	static_assert( SnapLowest<uint8_t>( 2, 4 ) == 0, "" );
+	static_assert( SnapLowest<uint8_t>( 3, 4 ) == 0, "" );
+	static_assert( SnapLowest<uint8_t>( 4, 4 ) == 4, "" );
+	static_assert( SnapLowest<uint8_t>( 5, 4 ) == 4, "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
