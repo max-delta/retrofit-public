@@ -4,8 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/combat/CombatInstance.h"
-#include "cc3o3/company/CompanyManager.h"
-#include "cc3o3/elements/IdentifierUtils.h"
+#include "cc3o3/combat/FightController.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -119,8 +118,7 @@ public:
 
 
 public:
-	UniquePtr<combat::CombatInstance> mCombatInstance;
-	combat::PartyID mLocalPlayerParty;
+	UniquePtr<combat::FightController> mFightController;
 
 	WeakPtr<state::comp::UINavigation> mNavigation;
 
@@ -204,9 +202,6 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	{
 		RF_DBGFAIL();
 	}
-
-	// TODO: Sanitize UI state against battle state
-	SwitchControlState( context, ControlStates::kAction );
 }
 
 
@@ -266,77 +261,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 	// Setup combat instance
 	{
-		using namespace combat;
-
-		internalState.mCombatInstance = DefaultCreator<CombatInstance>::Create( gCombatEngine );
-		CombatInstance& instance = *internalState.mCombatInstance;
-
-		// Setup players
-		// HACK: One player
-		// TODO: Multiplayer, opposing teams
-		// TODO: Multiplayer, same team
-		rftl::vector<input::PlayerID> const playerIDs = { input::HardcodedGetLocalPlayer() };
-		for( input::PlayerID const& playerID : playerIDs )
-		{
-			TeamID const playerTeam = instance.AddTeam();
-			PartyID const playerParty = instance.AddParty( playerTeam );
-			if( playerID == input::HardcodedGetLocalPlayer() )
-			{
-				internalState.mLocalPlayerParty = playerParty;
-			}
-
-			// Get the active party characters
-			rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
-				gCompanyManager->FindMutableActivePartyObjects( input::HardcodedGetLocalPlayer() );
-
-			// For each active team member...
-			for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
-			{
-				state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
-				if( character.IsSet() == false )
-				{
-					// Not active
-					continue;
-				}
-
-				// Add to party
-				FighterID const fighter = instance.AddFighter( playerParty );
-				instance.SetCombatant( fighter, character );
-			}
-		}
-
-		// Setup NPCs
-		// HACK: Hard-coded
-		// TODO: Encounters
-		if constexpr( true )
-		{
-			TeamID const enemyTeam = instance.AddTeam();
-			PartyID const enemyParty = instance.AddParty( enemyTeam );
-
-			rftl::array<Fighter, 1> enemies = {};
-			{
-				Fighter& enemy = enemies.at( 0 );
-				enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-				enemy.mMaxHealth = 999;
-				enemy.mCurHealth = enemy.mMaxHealth;
-				enemy.mMaxStamina = 7;
-				enemy.mCurStamina = enemy.mMaxStamina;
-				enemy.mPhysAtk = 2;
-				enemy.mPhysDef = 2;
-				enemy.mElemAtk = 2;
-				enemy.mElemDef = 2;
-				enemy.mBalance = 2;
-				enemy.mTechniq = 2;
-
-				FighterID const enemyID = instance.AddFighter( enemyParty );
-				instance.SetCombatant( enemyID, enemy );
-			}
-		}
-
-		// Setup initial field influence
-		// HACK: Hard-coded
-		// TODO: Encounter specified override or multiplayer-minded hash source
-		instance.GenerateFieldInfluence( 0 );
+		internalState.mFightController = DefaultCreator<combat::FightController>::Create( gCombatEngine, gCompanyManager );
+		internalState.mFightController->HardcodedPlaceholderSetup();
 	}
 
 	// Setup UI
@@ -651,6 +577,10 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		}
 
 		// TODO: Element state
+
+		// TODO: Sanitize UI state against battle state on tick start instead
+		internalState.SwitchControlState( uiContext, ControlStates::kAction );
+		internalState.SaveUIState( uiContext );
 	}
 }
 
@@ -665,17 +595,22 @@ void Gameplay_Battle::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Battle::OnTick( AppStateTickContext& context )
 {
+	using ControlState = InternalState::ControlStates::State;
+	using TargetingReason = InternalState::TargetingReason;
+
 	InternalState& internalState = *mInternalState;
 	//state::comp::UINavigation& navigation = *internalState.mNavigation;
 	gfx::PPUController& ppu = *app::gGraphics;
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 	ui::UIContext uiContext( uiManager );
+	combat::FightController& fightController = *internalState.mFightController;
 
 	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Battle" );
 
 	// Rollback may have triggered, restore UI to stay in sync
 	internalState.RestoreUIState( uiContext );
+	// TODO: Sanitize UI state against battle state
 
 	focusMan.UpdateHardFocus( uiContext );
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
@@ -688,7 +623,6 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		{
 			// Wasn't handled by general UI
 
-			using ControlState = InternalState::ControlStates::State;
 			ControlState const controlState = internalState.GetControlState( uiContext );
 			if( controlState == ControlState::kWaiting )
 			{
@@ -697,23 +631,23 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				// TODO: (If enemy turn) Check for time counter input? Or
 				//  should that be on a different input layer than the menus?
 
-				// TODO: (If own turn) Wait for combat stuff to return control
+				// TODO: (If own turn) How can this happen?
 			}
 			else if( controlState == ControlState::kTargeting )
 			{
 				// Targeting
 
-				using TargetingReason = InternalState::TargetingReason;
-
 				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 				{
 					if( internalState.mTargetingReason == TargetingReason::kAttack )
 					{
-						// TODO: Ascend to action menu
+						// Ascend to action menu
+						internalState.SwitchControlState( uiContext, ControlState::kAction );
 					}
 					else if( internalState.mTargetingReason == TargetingReason::kElement )
 					{
-						// TODO: Ascend to element menu
+						// Ascend to element menu
+						internalState.SwitchControlState( uiContext, ControlState::kElement );
 					}
 					else
 					{
@@ -724,11 +658,23 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				{
 					if( internalState.mTargetingReason == TargetingReason::kAttack )
 					{
-						// TODO: Descend to attack menu
+						bool const canAttack = fightController.CanCharacterPerformAttack(
+							internalState.mControlCharIndex,
+							internalState.mTargetingIndex );
+						if( canAttack )
+						{
+							// Descend to attack menu
+							internalState.SwitchControlState( uiContext, ControlState::kAttack );
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot attack target" );
+						}
 					}
 					else if( internalState.mTargetingReason == TargetingReason::kElement )
 					{
-						// TODO: Cast element, switch to waiting
+						// TODO: Cast element, ascend to action menu, navigate
+						//  to next character
 					}
 					else
 					{
@@ -750,19 +696,57 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					size_t const action = internalState.mActionMenu->GetSlotIndexWithSoftFocus( uiContext );
 					if( action == Action::kAttack )
 					{
-						// TODO: Descend to targeting
+						bool const canAttack = fightController.CanCharacterPerformAttack(
+							internalState.mControlCharIndex );
+						if( canAttack )
+						{
+							// Descend to targeting
+							internalState.mTargetingReason = TargetingReason::kAttack;
+							internalState.SwitchControlState( uiContext, ControlState::kTargeting );
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot perform an attack" );
+						}
 					}
 					else if( action == Action::kElement )
 					{
-						// TODO: Descend to element menu
+						bool const canCast = fightController.CanCharacterCastElement(
+							internalState.mControlCharIndex );
+						if( canCast )
+						{
+							// Descend to element menu
+							internalState.SwitchControlState( uiContext, ControlState::kElement );
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot cast an element" );
+						}
 					}
 					else if( action == Action::kDefend )
 					{
-						// TODO: Execute defense, navigate to next character
+						bool const canDefend = fightController.CanCharacterActivateDefense(
+							internalState.mControlCharIndex );
+						if( canDefend )
+						{
+							// TODO: Execute defense, navigate to next character
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot activate defense" );
+						}
 					}
 					else if( action == Action::kWait )
 					{
-						// TODO: Execute wait, navigate to next character
+						bool const canEndTurn = fightController.CanPartyEndTurn();
+						if( canEndTurn )
+						{
+							// TODO: End turn
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Party cannot end turn" );
+						}
 					}
 					else
 					{
@@ -780,7 +764,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 				{
-					// TODO: Ascend to action menu
+					// Ascend to action menu
+					internalState.SwitchControlState( uiContext, ControlState::kAction );
 				}
 				else if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 				{
@@ -788,11 +773,32 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					size_t const attackChoice = internalState.mAttackMenu->GetSlotIndexWithSoftFocus( uiContext );
 					if( attackChoice < AttackChoice::kNumAttacks )
 					{
-						// TODO: Execute attack
+						bool const canAttack = fightController.CanCharacterPerformAttack(
+							internalState.mControlCharIndex,
+							internalState.mTargetingIndex,
+							math::integer_cast<uint8_t>( attackChoice ) );
+						if( canAttack )
+						{
+							// TODO: Execute attack
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot execute attack" );
+						}
 					}
 					else if( attackChoice == AttackChoice::kElement )
 					{
-						// TODO: Descend to element menu
+						bool const canCast = fightController.CanCharacterCastElement(
+							internalState.mControlCharIndex );
+						if( canCast )
+						{
+							// Descend to element menu
+							internalState.SwitchControlState( uiContext, ControlState::kElement );
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot cast an element" );
+						}
 					}
 					else
 					{
@@ -810,7 +816,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 				{
-					// TODO: Ascend to action menu
+					// Ascend to action menu
+					internalState.SwitchControlState( uiContext, ControlState::kAction );
 				}
 				else
 				{
@@ -828,7 +835,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	// Persist in case of rollback
 	internalState.SaveUIState( uiContext );
 
-	combat::CombatInstance& mainInstance = *internalState.mCombatInstance;
+	combat::CombatInstance const& mainInstance = *internalState.mFightController->GetCombatInstance();
 
 	// HACK: Stub battle data
 	{
