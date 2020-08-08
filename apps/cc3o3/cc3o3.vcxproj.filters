@@ -193,6 +193,9 @@
     <ClCompile Include="combat\CombatantID.cpp">
       <Filter>combat</Filter>
     </ClCompile>
+    <ClCompile Include="combat\FightController.cpp">
+      <Filter>combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -520,6 +523,9 @@
       <Filter>combat</Filter>
     </ClInclude>
     <ClInclude Include="combat\Fighter.h">
+      <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\FightController.h">
       <Filter>combat</Filter>
     </ClInclude>
   </ItemGroup>

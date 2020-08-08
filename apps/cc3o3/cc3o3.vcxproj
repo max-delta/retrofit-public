@@ -58,6 +58,7 @@
     <ClCompile Include="combat\CombatantID.cpp" />
     <ClCompile Include="combat\CombatEngine.cpp" />
     <ClCompile Include="combat\CombatInstance.cpp" />
+    <ClCompile Include="combat\FightController.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="company\CompanyManager.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="char\stdafx.h" />
     <ClInclude Include="char\Visuals.h" />
     <ClInclude Include="combat\Attack.h" />
+    <ClInclude Include="combat\FightController.h" />
     <ClInclude Include="combat\Fighter.h" />
     <ClInclude Include="combat\CombatantID.h" />
     <ClInclude Include="combat\CombatEngine.h" />
