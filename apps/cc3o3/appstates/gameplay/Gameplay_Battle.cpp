@@ -84,8 +84,29 @@ public:
 		};
 	};
 
+	struct SelectorAttacks
+	{
+		enum Action : size_t
+		{
+			kAttack1 = 0,
+			kAttack2 = 1,
+			kAttack3 = 2,
+			kNumAttacks,
+			kElement = kNumAttacks,
+
+			kNumActions
+		};
+	};
+
 	static constexpr char const kLabelStateWaiting[] = "$battle_state_waiting";
 	static constexpr char const kLabelAttackElement[] = "$battle_attack_element";
+
+	enum class TargetingReason : uint8_t
+	{
+		kInvalid = 0,
+		kAttack,
+		kElement
+	};
 
 
 public:
@@ -107,6 +128,7 @@ public:
 	StateControllers mStateControllers;
 
 	uint8_t mControlCharIndex = 0;
+	TargetingReason mTargetingReason = TargetingReason::kInvalid;
 	uint8_t mTargetingIndex = 0;
 	WeakPtr<ui::controller::ListBox> mActionMenu;
 	WeakPtr<ui::controller::ListBox> mAttackMenu;
@@ -163,7 +185,8 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	}
 	else if( currentState == ControlStates::kTargeting )
 	{
-		mTargetingIndex = navigation.mCursorIndex.at( 0 );
+		mTargetingReason = math::enum_bitcast<TargetingReason>( navigation.mCursorIndex.at( 0 ) );
+		mTargetingIndex = navigation.mCursorIndex.at( 1 );
 	}
 	else if( currentState == ControlStates::kAction )
 	{
@@ -203,7 +226,8 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 	}
 	else if( currentState == ControlStates::kTargeting )
 	{
-		navigation.mCursorIndex.at( 0 ) = mTargetingIndex;
+		navigation.mCursorIndex.at( 0 ) = math::enum_bitcast( mTargetingReason );
+		navigation.mCursorIndex.at( 1 ) = mTargetingIndex;
 	}
 	else if( currentState == ControlStates::kAction )
 	{
@@ -603,12 +627,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
 
 			// List
+			using SelectorAttacks = InternalState::SelectorAttacks;
 			WeakPtr<ui::controller::ListBox> const attackMenu =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
 						ui::Orientation::Vertical,
-						4u,
+						SelectorAttacks::kNumActions,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
 						math::Color3f::kGray50,
@@ -667,6 +692,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			ControlState const controlState = internalState.GetControlState( uiContext );
 			if( controlState == ControlState::kWaiting )
 			{
+				// Waiting
+
 				// TODO: (If enemy turn) Check for time counter input? Or
 				//  should that be on a different input layer than the menus?
 
@@ -674,35 +701,121 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			}
 			else if( controlState == ControlState::kTargeting )
 			{
-				// TODO: (If for attack) Ascend to action menu
+				// Targeting
 
-				// TODO: (If for element) Ascend to element menu
+				using TargetingReason = InternalState::TargetingReason;
 
-				// TODO: (If for attack) Descend to attack menu
-
-				// TODO: (If for element) Cast element, switch to waiting
-
-				// TODO: Change the current target
+				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+				{
+					if( internalState.mTargetingReason == TargetingReason::kAttack )
+					{
+						// TODO: Ascend to action menu
+					}
+					else if( internalState.mTargetingReason == TargetingReason::kElement )
+					{
+						// TODO: Ascend to element menu
+					}
+					else
+					{
+						RF_DBGFAIL();
+					}
+				}
+				else if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+				{
+					if( internalState.mTargetingReason == TargetingReason::kAttack )
+					{
+						// TODO: Descend to attack menu
+					}
+					else if( internalState.mTargetingReason == TargetingReason::kElement )
+					{
+						// TODO: Cast element, switch to waiting
+					}
+					else
+					{
+						RF_DBGFAIL();
+					}
+				}
+				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
+				{
+					// TODO: Change the current target
+				}
 			}
 			else if( controlState == ControlState::kAction )
 			{
-				// TODO: Descend to sub-menu
+				// Action
 
-				// TODO: Navigate to other character
+				if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+				{
+					using Action = InternalState::SelectorActions::Action;
+					size_t const action = internalState.mActionMenu->GetSlotIndexWithSoftFocus( uiContext );
+					if( action == Action::kAttack )
+					{
+						// TODO: Descend to targeting
+					}
+					else if( action == Action::kElement )
+					{
+						// TODO: Descend to element menu
+					}
+					else if( action == Action::kDefend )
+					{
+						// TODO: Execute defense, navigate to next character
+					}
+					else if( action == Action::kWait )
+					{
+						// TODO: Execute wait, navigate to next character
+					}
+					else
+					{
+						RF_DBGFAIL();
+					}
+				}
+				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
+				{
+					// TODO: Navigate to other character
+				}
 			}
 			else if( controlState == ControlState::kAttack )
 			{
-				// TODO: Ascend to action menu
+				// Attack
 
-				// TODO: Execute attack
-
-				// TODO: Descend to element menu
-
-				// TODO: Navigate to other character, ascend to action menu
+				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+				{
+					// TODO: Ascend to action menu
+				}
+				else if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+				{
+					using AttackChoice = InternalState::SelectorAttacks::Action;
+					size_t const attackChoice = internalState.mAttackMenu->GetSlotIndexWithSoftFocus( uiContext );
+					if( attackChoice < AttackChoice::kNumAttacks )
+					{
+						// TODO: Execute attack
+					}
+					else if( attackChoice == AttackChoice::kElement )
+					{
+						// TODO: Descend to element menu
+					}
+					else
+					{
+						RF_DBGFAIL();
+					}
+				}
+				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
+				{
+					// TODO: Navigate to other character, ascend to action menu
+				}
 			}
 			else if( controlState == ControlState::kElement )
 			{
-				// TODO
+				// Element
+
+				if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+				{
+					// TODO: Ascend to action menu
+				}
+				else
+				{
+					// TODO
+				}
 			}
 			else
 			{
