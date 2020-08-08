@@ -6,17 +6,11 @@
 
 namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
 
 // Teams, parties, and fighters all share the same number space, arranged in
 //  predetermined strides
-struct TeamID;
-struct PartyID;
-struct FighterID;
-
-///////////////////////////////////////////////////////////////////////////////
-namespace details {
-
-// Base class for IDs, do not use directly
+// NOTE: Base class for IDs, do not use directly
 struct CombatantID
 {
 	//

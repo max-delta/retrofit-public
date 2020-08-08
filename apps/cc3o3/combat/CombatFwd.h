@@ -45,6 +45,9 @@ static constexpr SimVal kCounterGaugeFull = 100;
 static constexpr SimVal kCounterGaugeMax = 175;
 static constexpr size_t kFieldSize = 5;
 
+struct TeamID;
+struct PartyID;
+struct FighterID;
 
 struct Party;
 struct Team;
@@ -56,6 +59,7 @@ struct AttackResult;
 
 class CombatEngine;
 class CombatInstance;
+class FightController;
 
 ///////////////////////////////////////////////////////////////////////////////
 }}}
