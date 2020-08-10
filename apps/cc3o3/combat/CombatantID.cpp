@@ -39,6 +39,7 @@ FighterID CombatantID::GetFighter() const
 
 PartyID CombatantID::GetPartyAt( PartyIndex index ) const
 {
+	RF_ASSERT( index < kMaxPartiesPerTeam );
 	PartyID retVal;
 	retVal.mValue = math::integer_cast<Value>( GetTeam().mValue + index * kPartyStride );
 	return retVal;
@@ -48,6 +49,7 @@ PartyID CombatantID::GetPartyAt( PartyIndex index ) const
 
 FighterID CombatantID::GetFighterAt( FighterIndex index ) const
 {
+	RF_ASSERT( index < kMaxFightersPerParty );
 	FighterID retVal;
 	retVal.mValue = math::integer_cast<Value>( GetParty().mValue + index * kFighterStride );
 	return retVal;
@@ -89,6 +91,7 @@ CombatantID::CombatantID( Value value )
 
 TeamID TeamID::MakeTeam( TeamIndex team )
 {
+	RF_ASSERT( team < kMaxTeamsPerFight );
 	TeamID retVal = {};
 	retVal.mValue = math::integer_cast<Value>( team * kTeamStride );
 	return retVal;
