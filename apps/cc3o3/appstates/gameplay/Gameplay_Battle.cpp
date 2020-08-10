@@ -115,6 +115,10 @@ public:
 	void SwitchControlState( ui::UIContext& context, ControlStates::State state );
 	void RestoreUIState( ui::UIContext& context );
 	void SaveUIState( ui::UIContext& context ) const;
+	void SanitizeUIState( ui::UIContext& context );
+
+	void ShiftControlChar( int8_t applyOffset );
+	void ShiftTarget( int8_t applyOffset );
 
 
 public:
@@ -240,6 +244,37 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 	{
 		RF_DBGFAIL();
 	}
+}
+
+
+
+void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
+{
+	// TODO: Sanitize control state
+	ControlStates::State const currentState = GetControlState( context );
+
+	ShiftControlChar( 0 );
+
+	if( currentState == ControlStates::kTargeting )
+	{
+		ShiftTarget( 0 );
+	}
+}
+
+
+
+void Gameplay_Battle::InternalState::ShiftControlChar( int8_t applyOffset )
+{
+	mControlCharIndex = mFightController->SanitizeCharacterIndex(
+		mControlCharIndex, applyOffset );
+}
+
+
+
+void Gameplay_Battle::InternalState::ShiftTarget( int8_t applyOffset )
+{
+	mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
+		mControlCharIndex, mTargetingIndex, applyOffset );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -610,7 +645,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 	// Rollback may have triggered, restore UI to stay in sync
 	internalState.RestoreUIState( uiContext );
-	// TODO: Sanitize UI state against battle state
+	internalState.SanitizeUIState( uiContext );
 
 	focusMan.UpdateHardFocus( uiContext );
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
@@ -675,6 +710,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					{
 						// TODO: Cast element, ascend to action menu, navigate
 						//  to next character
+						internalState.SwitchControlState( uiContext, ControlState::kAction );
+						internalState.ShiftControlChar( 1 );
 					}
 					else
 					{
@@ -683,7 +720,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				}
 				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
 				{
-					// TODO: Change the current target
+					// Change the current target
+					bool const next = focusEvent == ui::focusevent::Command_NavigateRight;
+					internalState.ShiftTarget( next ? 1 : -1 );
 				}
 			}
 			else if( controlState == ControlState::kAction )
@@ -730,6 +769,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canDefend )
 						{
 							// TODO: Execute defense, navigate to next character
+							internalState.ShiftControlChar( 1 );
 						}
 						else
 						{
@@ -755,7 +795,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				}
 				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
 				{
-					// TODO: Navigate to other character
+					// Navigate to other character
+					bool const next = focusEvent == ui::focusevent::Command_NavigateRight;
+					internalState.ShiftControlChar( next ? 1 : -1 );
 				}
 			}
 			else if( controlState == ControlState::kAttack )
@@ -807,7 +849,10 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				}
 				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
 				{
-					// TODO: Navigate to other character, ascend to action menu
+					// Navigate to other character, ascend to action menu
+					internalState.SwitchControlState( uiContext, ControlState::kAction );
+					bool const next = focusEvent == ui::focusevent::Command_NavigateRight;
+					internalState.ShiftControlChar( next ? 1 : -1 );
 				}
 			}
 			else if( controlState == ControlState::kElement )
@@ -860,8 +905,18 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		for( combat::FighterID const& fighterID : fighterIDs )
 		{
 			combat::Fighter const fighter = mainInstance.GetFighter( fighterID );
+			char marker = ' ';
+			if( fighterID == fightController.GetCharacterByIndex( internalState.mControlCharIndex ) )
+			{
+				marker = '*';
+			}
+			else if( fighterID == fightController.GetAttackTargetByIndex( internalState.mControlCharIndex, internalState.mTargetingIndex ) )
+			{
+				marker = 'X';
+			}
 			ppu.DebugDrawText( { x, y },
-				"%i:%i:%i  %03i/%03i  %1i/%1i  %2i -> %i:%i:%i",
+				"%c%i:%i:%i  %03i/%03i  %1i/%1i  %2i -> %i:%i:%i",
+				marker,
 				fighterID.GetTeamIndex(),
 				fighterID.GetPartyIndex(),
 				fighterID.GetFighterIndex(),
