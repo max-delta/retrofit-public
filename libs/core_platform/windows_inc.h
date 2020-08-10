@@ -29,7 +29,7 @@ struct IUnknown; // Fix for Windows 8.1 SDK and "/permissive-" flag
 #undef far
 #undef FAR
 #undef NEAR
-#undef NULL
+//#undef NULL // Some bugs in the Microsoft STL rely on this
 #undef BOOL
 #undef TRUE
 #undef FALSE
