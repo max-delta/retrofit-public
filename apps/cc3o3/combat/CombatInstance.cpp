@@ -88,6 +88,19 @@ CombatInstance::PartyIDs CombatInstance::GetPartyIDs() const
 
 
 
+CombatInstance::PartyIDs CombatInstance::GetPartyIDs( TeamID teamID ) const
+{
+	PartyIDs retVal = {};
+	TeamEntry const& team = mTeams.at( teamID.GetTeamIndex() );
+	for( PartyIndex i_party = 0; i_party < team.mParties.size(); i_party++ )
+	{
+		retVal.emplace_back( teamID.GetPartyAt( i_party ) );
+	}
+	return retVal;
+}
+
+
+
 CombatInstance::FighterIDs CombatInstance::GetFighterIDs() const
 {
 	FighterIDs retVal = {};
@@ -101,6 +114,52 @@ CombatInstance::FighterIDs CombatInstance::GetFighterIDs() const
 			{
 				retVal.emplace_back( FighterID::MakeFighter( i_team, i_party, i_fighter ) );
 			}
+		}
+	}
+	return retVal;
+}
+
+
+
+CombatInstance::FighterIDs CombatInstance::GetFighterIDs( TeamID teamID ) const
+{
+	FighterIDs retVal = {};
+	TeamEntry const& team = mTeams.at( teamID.GetTeamIndex() );
+	for( PartyIndex i_party = 0; i_party < team.mParties.size(); i_party++ )
+	{
+		PartyEntry const& party = team.mParties.at( i_party );
+		for( FighterIndex i_fighter = 0; i_fighter < party.mFighters.size(); i_fighter++ )
+		{
+			retVal.emplace_back( teamID.GetPartyAt( i_party ).GetFighterAt( i_fighter ) );
+		}
+	}
+	return retVal;
+}
+
+
+
+CombatInstance::FighterIDs CombatInstance::GetFighterIDs( PartyID partyID ) const
+{
+	FighterIDs retVal = {};
+	TeamEntry const& team = mTeams.at( partyID.GetTeamIndex() );
+	PartyEntry const& party = team.mParties.at( partyID.GetPartyIndex() );
+	for( FighterIndex i_fighter = 0; i_fighter < party.mFighters.size(); i_fighter++ )
+	{
+		retVal.emplace_back( partyID.GetFighterAt( i_fighter ) );
+	}
+	return retVal;
+}
+
+
+
+CombatInstance::TeamIDs CombatInstance::GetOpposingTeams( TeamID teamID ) const
+{
+	TeamIDs retVal = {};
+	for( TeamIndex i_team = 0; i_team < mTeams.size(); i_team++ )
+	{
+		if( i_team != teamID.GetTeamIndex() )
+		{
+			retVal.emplace_back( TeamID::MakeTeam( i_team ) );
 		}
 	}
 	return retVal;
@@ -220,6 +279,23 @@ void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
 	SimVal& counterGuage = mTeams.at( party.GetTeamIndex() ).mParties.at( party.GetPartyIndex() ).mParty.mCounterGuage;
 	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGuage );
 	counterGuage = math::Min( maxIncrease, value );
+}
+
+
+
+CombatInstance::FighterIDs CombatInstance::GetValidAttackTargets( FighterID attackerID ) const
+{
+	FighterIDs retVal;
+	TeamIDs const opposingTeams = GetOpposingTeams( attackerID.GetTeam() );
+	for( TeamID const& opposingTeam : opposingTeams )
+	{
+		FighterIDs const fighters = GetFighterIDs( opposingTeam );
+		for( FighterID const& fighter : fighters )
+		{
+			retVal.emplace_back( fighter );
+		}
+	}
+	return retVal;
 }
 
 

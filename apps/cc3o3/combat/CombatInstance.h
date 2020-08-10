@@ -64,7 +64,12 @@ public:
 
 	TeamIDs GetTeamIDs() const;
 	PartyIDs GetPartyIDs() const;
+	PartyIDs GetPartyIDs( TeamID teamID ) const;
 	FighterIDs GetFighterIDs() const;
+	FighterIDs GetFighterIDs( TeamID teamID ) const;
+	FighterIDs GetFighterIDs( PartyID partyID ) const;
+
+	TeamIDs GetOpposingTeams( TeamID teamID ) const;
 
 	Team GetTeam( TeamID teamID ) const;
 	Party GetParty( PartyID partyID ) const;
@@ -81,6 +86,7 @@ public:
 	SimVal GetCounterGuage( PartyID party ) const;
 	void IncreaseCounterGuage( PartyID party, SimVal value );
 
+	FighterIDs GetValidAttackTargets( FighterID attackerID ) const;
 	AttackProfile PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
 
