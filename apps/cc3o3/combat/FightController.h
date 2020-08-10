@@ -10,6 +10,8 @@
 namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Manages logic for controlling a local party
+// NOTE: Most commands are 'local party'-centric
 class FightController
 {
 	RF_NO_COPY( FightController );
@@ -22,9 +24,15 @@ public:
 		WeakPtr<company::CompanyManager const> const& companyManager );
 
 	WeakPtr<CombatInstance const> GetCombatInstance() const;
-	PartyID GetLocalPartyID() const;
 
 	void HardcodedPlaceholderSetup();
+
+	uint8_t SanitizeCharacterIndex( uint8_t attackerIndex, int8_t applyOffset ) const;
+	uint8_t SanitizeAttackTargetIndex( uint8_t attackerIndex, uint8_t defenderIndex, int8_t applyOffset ) const;
+
+	PartyID GetLocalPartyID() const;
+	FighterID GetCharacterByIndex( uint8_t attackerIndex ) const;
+	FighterID GetAttackTargetByIndex( uint8_t attackerIndex, uint8_t defenderIndex ) const;
 
 	bool CanCharacterPerformAttack( uint8_t attackerIndex ) const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex, uint8_t defenderIndex ) const;
