@@ -86,9 +86,19 @@ public:
 	SimVal GetCounterGuage( PartyID party ) const;
 	void IncreaseCounterGuage( PartyID party, SimVal value );
 
+	void IncreaseHealth( FighterID fighterID, SimVal value );
+	void DecreaseHealth( FighterID fighterID, SimVal value );
+	void IncreaseStamina( FighterID fighterID, SimVal value );
+	void DecreaseStamina( FighterID fighterID, SimVal value );
+
 	FighterIDs GetValidAttackTargets( FighterID attackerID ) const;
+	bool CanPerformAttack( FighterID attackerID ) const;
+	bool CanPerformAttack( FighterID attackerID, FighterID defenderID ) const;
+	bool CanPerformAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackProfile PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
+
+	void PassTime( FighterID initiatorID );
 
 
 	//

@@ -283,6 +283,59 @@ void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
 
 
 
+void CombatInstance::IncreaseHealth( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID );
+	RF_ASSERT( fighter.mMaxHealth <= kMaxHealth );
+	RF_ASSERT( fighter.mCurHealth >= kMinHealth );
+	RF_ASSERT( fighter.mCurHealth <= fighter.mMaxHealth );
+	fighter.mCurHealth = math::Min( math::integer_cast<LargeSimVal>( fighter.mCurHealth + value ), fighter.mMaxHealth );
+	RF_ASSERT( fighter.mCurHealth >= kMinHealth );
+	RF_ASSERT( fighter.mCurHealth <= fighter.mMaxHealth );
+}
+
+
+
+void CombatInstance::DecreaseHealth( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID );
+	RF_ASSERT( fighter.mMaxHealth <= kMaxHealth );
+	RF_ASSERT( fighter.mCurHealth >= kMinHealth );
+	RF_ASSERT( fighter.mCurHealth <= fighter.mMaxHealth );
+	static_assert( kMinHealth == 0 );
+	LargeSimVal const maxLoss = fighter.mCurHealth;
+	fighter.mCurHealth -= math::Min( math::integer_cast<LargeSimVal>( value ), maxLoss );
+	RF_ASSERT( fighter.mCurHealth >= kMinHealth );
+	RF_ASSERT( fighter.mCurHealth <= fighter.mMaxHealth );
+}
+
+
+
+void CombatInstance::IncreaseStamina( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID );
+	RF_ASSERT( fighter.mMaxStamina <= kMaxStamina );
+	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
+	RF_ASSERT( fighter.mCurStamina <= fighter.mMaxStamina );
+	fighter.mCurStamina = math::Min( math::integer_cast<SimDelta>( fighter.mCurStamina + value ), fighter.mMaxStamina );
+	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
+	RF_ASSERT( fighter.mCurStamina <= fighter.mMaxStamina );
+}
+
+
+
+void CombatInstance::DecreaseStamina( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID );
+	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
+	RF_ASSERT( fighter.mCurStamina <= kMaxStamina );
+	fighter.mCurStamina -= value;
+	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
+	RF_ASSERT( fighter.mCurStamina <= kMaxStamina );
+}
+
+
+
 CombatInstance::FighterIDs CombatInstance::GetValidAttackTargets( FighterID attackerID ) const
 {
 	FighterIDs retVal;
@@ -300,6 +353,68 @@ CombatInstance::FighterIDs CombatInstance::GetValidAttackTargets( FighterID atta
 
 
 
+bool CombatInstance::CanPerformAttack( FighterID attackerID ) const
+{
+	Fighter const attacker = GetFighter( attackerID );
+
+	if( attacker.mCurHealth <= 0 )
+	{
+		// Attacker is dead
+		return false;
+	}
+
+	if( attacker.mCurStamina <= 0 )
+	{
+		// No stamina
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool CombatInstance::CanPerformAttack( FighterID attackerID, FighterID defenderID ) const
+{
+	if( CanPerformAttack( attackerID ) == false )
+	{
+		return false;
+	}
+
+	Fighter const defender = GetFighter( defenderID );
+
+	if( defender.mCurHealth <= 0 )
+	{
+		// Defender is dead
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool CombatInstance::CanPerformAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const
+{
+	if( CanPerformAttack( attackerID, defenderID ) == false )
+	{
+		return false;
+	}
+
+	Fighter const attacker = GetFighter( attackerID );
+	uint8_t const staminaCost = mCombatEngine->LoCalcAttackStaminaCost( attackStrength );
+
+	if( staminaCost > attacker.mCurStamina )
+	{
+		// Not enough stamina
+		return false;
+	}
+
+	return true;
+}
+
+
+
 AttackProfile CombatInstance::PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const
 {
 	Fighter const& attacker = GetFighterRef( attackerID );
@@ -312,7 +427,6 @@ AttackProfile CombatInstance::PrepareAttack( FighterID attackerID, FighterID def
 	retVal.mNewCombo = true;
 	if( attacker.mComboTarget == defenderID )
 	{
-		// TODO: operator==(...) instead
 		retVal.mNewCombo = false;
 	}
 	retVal.mComboMeter = attacker.mComboMeter;
@@ -332,22 +446,61 @@ AttackProfile CombatInstance::PrepareAttack( FighterID attackerID, FighterID def
 
 AttackResult CombatInstance::ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength )
 {
+	CombatEngine const& engine = *mCombatEngine;
+
 	AttackProfile const profile = PrepareAttack( attackerID, defenderID, attackStrength );
-	AttackResult const result = mCombatEngine->HiCalcAttack( profile );
+	AttackResult const result = engine.HiCalcAttack( profile );
 
 	Fighter& attacker = GetMutableFighterRef( attackerID );
-	Fighter& defender = GetMutableFighterRef( defenderID );
 
 	attacker.mComboTarget = defenderID;
-	attacker.mCurStamina -= profile.mAttackStrength;
-	RF_ASSERT( attacker.mCurStamina >= kMinStamina );
-	RF_ASSERT( attacker.mCurStamina <= kMaxStamina );
 	attacker.mComboMeter = result.mNewComboMeter;
-	LargeSimVal const maxDamage = math::integer_cast<LargeSimVal>( defender.mMaxHealth - defender.mCurHealth );
-	defender.mCurHealth -= math::Min( result.mDamage, math::integer_truncast<SimVal>( maxDamage ) );
+	DecreaseStamina( attackerID, engine.LoCalcAttackStaminaCost( profile.mAttackStrength ) );
+	DecreaseHealth( defenderID, result.mDamage );
 	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
+	PassTime( attackerID );
 
 	return result;
+}
+
+
+
+void CombatInstance::PassTime( FighterID initiatorID )
+{
+	CombatEngine const& engine = *mCombatEngine;
+
+	// Increase stamina pasively
+	SimVal const allyStaminaGain = engine.LoCalcIdleStaminaGainAlliedTurn();
+	SimVal const opposeStaminaGain = engine.LoCalcIdleStaminaGainOpposingTurn();
+	TeamIDs const opposingTeams = GetOpposingTeams( initiatorID.GetTeam() );
+	FighterIDs const allFighterIDs = GetFighterIDs();
+	for( FighterID const& fighterID : allFighterIDs )
+	{
+		if( fighterID == initiatorID )
+		{
+			// Initiator doesn't gain passive stamina
+			continue;
+		}
+
+		bool isOpposingFighter = false;
+		for( TeamID const& opposingTeam : opposingTeams )
+		{
+			if( fighterID.GetTeam() == opposingTeam )
+			{
+				isOpposingFighter = true;
+				break;
+			}
+		}
+
+		if( isOpposingFighter )
+		{
+			IncreaseStamina( fighterID, allyStaminaGain );
+		}
+		else
+		{
+			IncreaseStamina( fighterID, opposeStaminaGain );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
