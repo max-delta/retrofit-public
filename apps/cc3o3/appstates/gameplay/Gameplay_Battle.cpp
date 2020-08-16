@@ -815,13 +815,21 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					size_t const attackChoice = internalState.mAttackMenu->GetSlotIndexWithSoftFocus( uiContext );
 					if( attackChoice < AttackChoice::kNumAttacks )
 					{
+						uint8_t const attackerIndex = internalState.mControlCharIndex;
+						uint8_t const defenderIndex = internalState.mTargetingIndex;
+						uint8_t const attackStrength = math::integer_cast<uint8_t>( attackChoice + 1 );
+
 						bool const canAttack = fightController.CanCharacterPerformAttack(
-							internalState.mControlCharIndex,
-							internalState.mTargetingIndex,
-							math::integer_cast<uint8_t>( attackChoice ) );
+							attackerIndex,
+							defenderIndex,
+							attackStrength );
 						if( canAttack )
 						{
-							// TODO: Execute attack
+							// Buffer attack
+							fightController.BufferAttack(
+								attackerIndex,
+								defenderIndex,
+								attackStrength );
 						}
 						else
 						{
@@ -880,7 +888,10 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	// Persist in case of rollback
 	internalState.SaveUIState( uiContext );
 
-	combat::CombatInstance const& mainInstance = *internalState.mFightController->GetCombatInstance();
+	// Some actions may have been queued up
+	fightController.TickPendingActions();
+
+	combat::CombatInstance const& mainInstance = *fightController.GetCombatInstance();
 
 	// HACK: Stub battle data
 	{
