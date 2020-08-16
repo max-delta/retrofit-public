@@ -201,6 +201,30 @@ LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, EntityClass entity
 
 
 
+SimVal CombatEngine::LoCalcIdleStaminaGainAlliedTurn() const
+{
+	// TODO: This should be re-tuned so allies are suppressed
+	return 1;
+}
+
+
+
+SimVal CombatEngine::LoCalcIdleStaminaGainOpposingTurn() const
+{
+	// TODO: This should be re-tuned so allies are suppressed
+	return 1;
+}
+
+
+
+SimVal CombatEngine::LoCalcAttackStaminaCost( SimVal attackStrength ) const
+{
+	RF_ASSERT( attackStrength > 0 );
+	return attackStrength;
+}
+
+
+
 SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
 {
 	if( attackStrength >= 3 )

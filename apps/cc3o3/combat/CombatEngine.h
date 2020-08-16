@@ -55,6 +55,13 @@ public:
 	// Max health drives the balance and tuning of all combat
 	LargeSimVal LoCalcMaxHealth( SimVal healthStat, EntityClass entityClass ) const;
 
+	// Stamina regains over time
+	SimVal LoCalcIdleStaminaGainAlliedTurn() const;
+	SimVal LoCalcIdleStaminaGainOpposingTurn() const;
+
+	// Attacks cost stamina based on strength
+	SimVal LoCalcAttackStaminaCost( SimVal attackStrength ) const;
+
 	// Attack accuracy is affected by the strength of the attack
 	SimVal LoCalcAttackAccuracy( SimVal attackStrength ) const;
 
