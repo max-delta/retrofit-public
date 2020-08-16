@@ -30,6 +30,8 @@ protected:
 public:
 	CombatantID() = default;
 
+	bool IsValid() const;
+
 	// Ascend
 	TeamID GetTeam() const;
 	PartyID GetParty() const;

@@ -9,6 +9,13 @@ namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+bool CombatantID::IsValid() const
+{
+	return mValue != kInvalid;
+}
+
+
+
 TeamID CombatantID::GetTeam() const
 {
 	TeamID retVal;
