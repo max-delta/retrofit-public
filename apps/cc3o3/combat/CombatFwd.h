@@ -39,6 +39,8 @@ static constexpr FighterIndex kInvalidFighterIndex = rftl::numeric_limits<Fighte
 static constexpr size_t kMaxFightersPerParty = 5;
 static constexpr size_t kMaxTotalFighters = kMaxTeamsPerFight * kMaxPartiesPerTeam * kMaxFightersPerParty;
 
+static constexpr LargeSimVal kMinHealth = 0;
+static constexpr LargeSimVal kMaxHealth = 999;
 static constexpr SimDelta kMinStamina = -7;
 static constexpr SimDelta kMaxStamina = 7;
 static constexpr SimVal kCounterGaugeFull = 100;
