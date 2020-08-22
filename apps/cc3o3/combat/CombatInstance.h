@@ -78,6 +78,9 @@ public:
 	void SetCombatant( FighterID fighterID, Fighter const& combatant );
 	void SetCombatant( FighterID fighterID, component::MutableObjectRef const& character );
 
+	void CommitCombatData() const;
+	void ReloadCombatData();
+
 	rftl::array<element::InnateIdentifier, kFieldSize> GetFieldInfluence() const;
 	void AddFieldInfluence( element::InnateIdentifier influence );
 	void AddFieldInfluence( element::InnateIdentifier influence, size_t strength );
@@ -104,12 +107,15 @@ public:
 	//
 	// Private methods
 private:
-	Team const& GetTeamRef( TeamID teamID ) const;
-	Team& GetMutableTeamRef( TeamID teamID );
-	Party const& GetPartyRef( PartyID partyID ) const;
-	Party& GetMutablePartyRef( PartyID partyID );
-	Fighter const& GetFighterRef( FighterID fighterID ) const;
-	Fighter& GetMutableFighterRef( FighterID fighterID );
+	TeamEntry const& GetTeamRef( TeamID teamID ) const;
+	TeamEntry& GetMutableTeamRef( TeamID teamID );
+	PartyEntry const& GetPartyRef( PartyID partyID ) const;
+	PartyEntry& GetMutablePartyRef( PartyID partyID );
+	FighterEntry const& GetFighterRef( FighterID fighterID ) const;
+	FighterEntry& GetMutableFighterRef( FighterID fighterID );
+
+	static void LoadFighterFromCharacter( Fighter& fighter, component::ObjectRef const& character );
+	static void SaveFighterToCharacter( component::MutableObjectRef const& character, Fighter const& fighter );
 
 
 	//
