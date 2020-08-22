@@ -9,7 +9,7 @@
 #include "cc3o3/elements/ElementFwd.h"
 #include "cc3o3/state/StateFwd.h"
 
-#include "core_component/ObjectRef.h"
+#include "core_component/TypedObjectRef.h"
 
 #include "core/ptr/weak_ptr.h"
 
@@ -29,7 +29,7 @@ public:
 	struct FighterEntry
 	{
 		Fighter mFighter;
-		component::MutableObjectRef mPersist;
+		state::MutableObjectRef mPersist;
 	};
 	using Fighters = rftl::static_vector<FighterEntry, kMaxFightersPerParty>;
 
@@ -76,7 +76,7 @@ public:
 	Fighter GetFighter( FighterID fighterID ) const;
 
 	void SetCombatant( FighterID fighterID, Fighter const& combatant );
-	void SetCombatant( FighterID fighterID, component::MutableObjectRef const& character );
+	void SetCombatant( FighterID fighterID, state::MutableObjectRef const& character );
 
 	void CommitCombatData() const;
 	void ReloadCombatData();
@@ -114,8 +114,10 @@ private:
 	FighterEntry const& GetFighterRef( FighterID fighterID ) const;
 	FighterEntry& GetMutableFighterRef( FighterID fighterID );
 
-	static void LoadFighterFromCharacter( Fighter& fighter, component::ObjectRef const& character );
-	static void SaveFighterToCharacter( component::MutableObjectRef const& character, Fighter const& fighter );
+	void LoadFighterFromCharacter( Fighter& fighter, state::ObjectRef const& character );
+	void SaveFighterToCharacter( state::MutableObjectRef const& character, Fighter const& fighter ) const;
+
+	void InitializeFighter( Fighter& fighter ) const;
 
 
 	//

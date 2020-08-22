@@ -3,6 +3,12 @@
 
 #include "cc3o3/combat/Attack.h"
 #include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/elements/IdentifierUtils.h"
+#include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/StateLogging.h"
+
+#include "core_component/TypedComponentRef.h"
 
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
@@ -195,27 +201,13 @@ void CombatInstance::SetCombatant( FighterID fighterID, Fighter const& combatant
 
 
 
-void CombatInstance::SetCombatant( FighterID fighterID, component::MutableObjectRef const& character )
+void CombatInstance::SetCombatant( FighterID fighterID, state::MutableObjectRef const& character )
 {
 	FighterEntry& fighter = GetMutableFighterRef( fighterID );
 	fighter.mFighter = {};
 	fighter.mPersist = character;
-
-	// HACK: Hard-coded
-	// TODO: Load from character
-	//LoadFighterFromCharacter( fighter.mFighter, fighter.mPersist );
-	uint32_t genVal = 0;
-	fighter.mFighter.mInnate = mCombatEngine->GenerateRandomInnate( genVal );
-	fighter.mFighter.mMaxHealth = 100;
-	fighter.mFighter.mCurHealth = fighter.mFighter.mMaxHealth;
-	fighter.mFighter.mMaxStamina = 7;
-	fighter.mFighter.mCurStamina = fighter.mFighter.mMaxStamina;
-	fighter.mFighter.mPhysAtk = 2;
-	fighter.mFighter.mPhysDef = 2;
-	fighter.mFighter.mElemAtk = 2;
-	fighter.mFighter.mElemDef = 2;
-	fighter.mFighter.mBalance = 2;
-	fighter.mFighter.mTechniq = 2;
+	LoadFighterFromCharacter( fighter.mFighter, fighter.mPersist );
+	InitializeFighter( fighter.mFighter );
 }
 
 
@@ -587,16 +579,50 @@ CombatInstance::FighterEntry& CombatInstance::GetMutableFighterRef( FighterID fi
 
 
 
-void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, component::ObjectRef const& character )
+void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRef const& character )
+{
+	CombatEngine const& engine = *mCombatEngine;
+
+	// Character
+	state::ComponentInstanceRefT<state::comp::Character> const chara =
+		character.GetComponentInstanceT<state::comp::Character>();
+	RFLOG_TEST_AND_FATAL( chara != nullptr, character, RFCAT_CC3O3, "Missing character component" );
+	character::CharData const& charData = chara->mCharData;
+	character::Stats const& stats = charData.mStats;
+
+	// TODO: Figure this out
+	EntityClass const entityClass = EntityClass::Player;
+
+	fighter.mInnate = element::MakeInnateIdentifier( charData.mInnate );
+	fighter.mMaxHealth = engine.LoCalcMaxHealth( stats.mMHealth, entityClass );
+	fighter.mCurHealth; // TODO
+	fighter.mMaxStamina = kMaxStamina;
+	fighter.mCurStamina; // TODO
+	fighter.mPhysAtk = stats.mPhysAtk;
+	fighter.mPhysDef = stats.mPhysDef;
+	fighter.mElemAtk = stats.mElemAtk;
+	fighter.mElemDef = stats.mElemDef;
+	fighter.mBalance = stats.mBalance;
+	fighter.mTechniq = stats.mTechniq;
+	fighter.mComboMeter; // TODO
+	fighter.mComboTarget; // TODO
+}
+
+
+
+void CombatInstance::SaveFighterToCharacter( state::MutableObjectRef const& character, Fighter const& fighter ) const
 {
 	// TODO
 }
 
 
 
-void CombatInstance::SaveFighterToCharacter( component::MutableObjectRef const& character, Fighter const& fighter )
+void CombatInstance::InitializeFighter( Fighter& fighter ) const
 {
-	// TODO
+	fighter.mCurHealth = fighter.mMaxHealth;
+	fighter.mCurStamina = fighter.mMaxStamina;
+	fighter.mComboMeter = {};
+	fighter.mComboTarget = {};
 }
 
 ///////////////////////////////////////////////////////////////////////////////
