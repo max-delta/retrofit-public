@@ -25,6 +25,7 @@ class OverworldVisual;
 class OverworldMovement;
 class SiteVisual;
 class UINavigation;
+class Vitality;
 }
 namespace details::id {
 enum : ComponentID
@@ -39,6 +40,7 @@ enum : ComponentID
 	OverworldMovement,
 	SiteVisual,
 	UINavigation,
+	Vitality,
 };
 }
 RF_COMP_PAIR( details::id::Meta, comp::Meta );
@@ -50,6 +52,7 @@ RF_COMP_PAIR( details::id::OverworldVisual, comp::OverworldVisual );
 RF_COMP_PAIR( details::id::OverworldMovement, comp::OverworldMovement );
 RF_COMP_PAIR( details::id::SiteVisual, comp::SiteVisual );
 RF_COMP_PAIR( details::id::UINavigation, comp::UINavigation );
+RF_COMP_PAIR( details::id::Vitality, comp::Vitality );
 
 #undef RF_COMP_PAIR
 

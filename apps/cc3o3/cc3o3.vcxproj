@@ -79,6 +79,7 @@
     <ClCompile Include="state\components\Roster.cpp" />
     <ClCompile Include="state\components\SiteVisual.cpp" />
     <ClCompile Include="state\components\UINavigation.cpp" />
+    <ClCompile Include="state\components\Vitality.cpp" />
     <ClCompile Include="state\objects\BaseCharacter.cpp" />
     <ClCompile Include="state\objects\BattleCharacter.cpp" />
     <ClCompile Include="state\objects\Company.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="state\components\SiteVisual.h" />
     <ClInclude Include="state\components\stdafx.h" />
     <ClInclude Include="state\components\UINavigation.h" />
+    <ClInclude Include="state\components\Vitality.h" />
     <ClInclude Include="state\objects\BaseCharacter.h" />
     <ClInclude Include="state\objects\BattleCharacter.h" />
     <ClInclude Include="state\objects\Company.h" />

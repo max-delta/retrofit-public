@@ -4,6 +4,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/EmptyObject.h"
 #include "cc3o3/state/components/Loadout.h"
+#include "cc3o3/state/components/Vitality.h"
 #include "cc3o3/state/StateLogging.h"
 
 #include "core_component/TypedObjectRef.h"
@@ -41,6 +42,15 @@ void MakeBattleCharacterFromDB(
 				DefaultCreator<comp::Loadout>::Create() );
 		RFLOG_TEST_AND_FATAL( loadout != nullptr, ref, RFCAT_CC3O3, "Failed to add loadout component" );
 		loadout->BindToMeta( sharedWindow, privateWindow, ref );
+	}
+
+	// Vitality
+	{
+		MutableComponentInstanceRefT<comp::Vitality> const vitality =
+			ref.AddComponentInstanceT<comp::Vitality>(
+				DefaultCreator<comp::Vitality>::Create() );
+		RFLOG_TEST_AND_FATAL( vitality != nullptr, ref, RFCAT_CC3O3, "Failed to add vitality component" );
+		vitality->BindToMeta( sharedWindow, privateWindow, ref );
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as battle character" );
