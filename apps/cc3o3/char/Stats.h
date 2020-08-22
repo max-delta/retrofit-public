@@ -7,10 +7,10 @@ namespace RF { namespace cc { namespace character {
 
 struct Stats
 {
-	using StatModifier = int8_t;
-	static constexpr StatModifier kMinModifier = -10;
-	static constexpr StatModifier kDefaultModifier = 0;
-	static constexpr StatModifier kMaxModifier = 10;
+	using StatValue = uint8_t;
+	static constexpr StatValue kMinStatValue = 0;
+	static constexpr StatValue kDefaultStatValue = 0;
+	static constexpr StatValue kMaxStatValue = 10;
 
 	enum class GridShape : uint8_t
 	{
@@ -23,18 +23,18 @@ struct Stats
 	static constexpr GridShape kDefaultShape = GridShape::Standard;
 	static constexpr uint8_t kMaxShapeValue = static_cast<uint8_t>( GridShape::NumShapeTypes ) - 1;
 
-	StatModifier mMHealth = kDefaultModifier; // More max hit points
+	StatValue mMHealth = kDefaultStatValue; // More max hit points
 
-	StatModifier mPhysAtk = kDefaultModifier; // Punch harder
-	StatModifier mPhysDef = kDefaultModifier; // Take less from punches
+	StatValue mPhysAtk = kDefaultStatValue; // Punch harder
+	StatValue mPhysDef = kDefaultStatValue; // Take less from punches
 
-	StatModifier mElemAtk = kDefaultModifier; // Cast harder
-	StatModifier mElemDef = kDefaultModifier; // Take less from casts
+	StatValue mElemAtk = kDefaultStatValue; // Cast harder
+	StatValue mElemDef = kDefaultStatValue; // Take less from casts
 
-	StatModifier mBalance = kDefaultModifier; // Higher initial shield
-	StatModifier mTechniq = kDefaultModifier; // Faster combo growth
+	StatValue mBalance = kDefaultStatValue; // Higher initial shield
+	StatValue mTechniq = kDefaultStatValue; // Faster combo growth
 
-	StatModifier mElemPwr = kDefaultModifier; // Better grid
+	StatValue mElemPwr = kDefaultStatValue; // Better grid
 	union
 	{
 		GridShape mGridShp = kDefaultShape; // Layout of grid

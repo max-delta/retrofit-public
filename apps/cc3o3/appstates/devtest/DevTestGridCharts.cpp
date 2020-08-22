@@ -29,7 +29,7 @@ struct DevTestGridCharts::InternalState
 	size_t mCursor = 0;
 
 	uint8_t mStoryTier = 3;
-	character::Stats::StatModifier mElemPower = 2;
+	character::Stats::StatValue mElemPower = 2;
 	character::Stats::GridShape mGridShape = character::Stats::GridShape::Standard;
 };
 
@@ -57,7 +57,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	character::CharacterValidator const& charValidate = *gCharacterValidator;
-	using StatModifier = character::Stats::StatModifier;
+	using StatValue = character::Stats::StatValue;
 	using GridShape = character::Stats::GridShape;
 
 	gfx::PPUController& ppu = *app::gGraphics;
@@ -79,7 +79,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 
 	size_t& cursor = internalState.mCursor;
 	uint8_t& storyTier = internalState.mStoryTier;
-	StatModifier& elemPower = internalState.mElemPower;
+	StatValue& elemPower = internalState.mElemPower;
 	GridShape& gridShape = internalState.mGridShape;
 
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();

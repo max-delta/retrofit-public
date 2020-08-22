@@ -71,7 +71,7 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Player;
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
-		auto const dispStat = [&combatEngine]( character::Stats::StatModifier stat ) -> combat::DisplayVal //
+		auto const dispStat = [&combatEngine]( character::Stats::StatValue stat ) -> combat::DisplayVal //
 		{
 			return combatEngine.DisplayStandardStat( math::integer_cast<combat::SimVal>( stat ), kEntityClass );
 		};

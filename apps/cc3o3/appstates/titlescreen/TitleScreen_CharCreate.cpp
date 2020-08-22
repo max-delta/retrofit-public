@@ -223,17 +223,17 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		return retVal;
 	};
 
-	static constexpr auto format5Pips = []( int8_t min, int8_t cur, int8_t avail ) -> rftl::string //
+	static constexpr auto format5Pips = []( uint8_t min, uint8_t cur, uint8_t avail ) -> rftl::string //
 	{
 		RF_ASSERT( min >= 0 );
 		RF_ASSERT( min <= 5 );
 		RF_ASSERT( min <= cur );
 		RF_ASSERT( cur <= 5 );
-		int8_t const max = cur + avail;
+		uint8_t const max = math::integer_cast<uint8_t>( cur + avail );
 		RF_ASSERT( cur <= max );
 		rftl::string retVal;
 		retVal += "- ";
-		for( int8_t i = 0; i < 5; i++ )
+		for( uint8_t i = 0; i < 5; i++ )
 		{
 			if( i + 1 < min )
 			{
@@ -270,7 +270,9 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Genetics" )->SetText( format9( genetics ) );
 
 	// Stats
-	int8_t const avail = character::CharacterValidator::kMaxTotalStatPoints - character::CharacterValidator::CalculateTotalPoints( mChar.mStats );
+	uint8_t const avail = math::integer_cast<uint8_t>(
+		character::CharacterValidator::kMaxTotalStatPoints -
+		character::CharacterValidator::CalculateTotalPoints( mChar.mStats ) );
 	character::Stats const bonuses = charValidate.GetStatBonuses( mChar.mGenetics.mSpecies );
 	character::Stats const& stats = mChar.mStats;
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_PhysAtk" )->SetText( format5Pips( bonuses.mPhysAtk, stats.mPhysAtk, avail ) );
@@ -303,6 +305,18 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerManager const& uiManager, ui::ContainerID const& focusContainerID, bool increase )
 {
 	character::CharacterValidator const& charValidate = *gCharacterValidator;
+
+	static constexpr auto statChange = []( character::Stats::StatValue& stat, bool increase ) -> void //
+	{
+		if( stat < 5 && increase )
+		{
+			stat++;
+		}
+		else if( stat > 0 && increase == false )
+		{
+			stat--;
+		}
+	};
 
 	if( focusContainerID == uiManager.GetContainerID( "O_Charname" ) )
 	{
@@ -346,31 +360,31 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_PhysAtk" ) )
 	{
-		mChar.mStats.mPhysAtk += increase ? 1 : -1;
+		statChange( mChar.mStats.mPhysAtk, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_PhysDef" ) )
 	{
-		mChar.mStats.mPhysDef += increase ? 1 : -1;
+		statChange( mChar.mStats.mPhysDef, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_ElemAtk" ) )
 	{
-		mChar.mStats.mElemAtk += increase ? 1 : -1;
+		statChange( mChar.mStats.mElemAtk, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_ElemDef" ) )
 	{
-		mChar.mStats.mElemDef += increase ? 1 : -1;
+		statChange( mChar.mStats.mElemDef, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_Balance" ) )
 	{
-		mChar.mStats.mBalance += increase ? 1 : -1;
+		statChange( mChar.mStats.mBalance, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_Techniq" ) )
 	{
-		mChar.mStats.mTechniq += increase ? 1 : -1;
+		statChange( mChar.mStats.mTechniq, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_ElemPwr" ) )
 	{
-		mChar.mStats.mElemPwr += increase ? 1 : -1;
+		statChange( mChar.mStats.mElemPwr, increase );
 	}
 	else if( focusContainerID == uiManager.GetContainerID( "O_Breadth" ) )
 	{

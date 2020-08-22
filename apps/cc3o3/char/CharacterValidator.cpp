@@ -214,14 +214,14 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 
 		rftl::stringstream ss;
 
-		static constexpr auto load = []( rftl::stringstream& ss, rftl::string const& str, int8_t& val ) -> bool //
+		static constexpr auto load = []( rftl::stringstream& ss, rftl::string const& str, uint8_t& val ) -> bool //
 		{
 			ss.clear();
 			ss << str;
-			int16_t notAChar; // C++ I/O is stupid
+			uint16_t notAChar; // C++ I/O is stupid
 			ss >> notAChar;
-			val = math::integer_cast<int8_t>( notAChar );
-			if( val < Stats::kMinModifier || val > Stats::kMaxModifier )
+			val = math::integer_cast<uint8_t>( notAChar );
+			if( val < Stats::kMinStatValue || val > Stats::kMaxStatValue )
 			{
 				return false;
 			}
@@ -262,9 +262,9 @@ Stats const& CharacterValidator::GetStatBonuses( SpeciesID const& id ) const
 
 
 
-int8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
+uint8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
 {
-	return 0 +
+	return math::integer_cast<uint8_t>( 0 +
 		stats.mMHealth +
 		stats.mPhysAtk +
 		stats.mPhysDef +
@@ -272,7 +272,7 @@ int8_t CharacterValidator::CalculateTotalPoints( Stats const& stats )
 		stats.mElemDef +
 		stats.mBalance +
 		stats.mTechniq +
-		stats.mElemPwr;
+		stats.mElemPwr );
 }
 
 
@@ -324,7 +324,7 @@ SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( company::Story
 
 
 
-size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, company::StoryTier storyTier ) const
+size_t CharacterValidator::CalculateTotalSlots( Stats::StatValue elemPower, company::StoryTier storyTier ) const
 {
 	size_t const min = GetMinimumTotalSlots( storyTier );
 	size_t const power = math::integer_cast<size_t>( elemPower );
@@ -365,7 +365,7 @@ size_t CharacterValidator::CalculateTotalSlots( Stats::StatModifier elemPower, c
 
 
 
-SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
+SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValue elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
 {
 	// NOTE: Non-optimal, but not expected to be called frequently
 
@@ -675,11 +675,11 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 	// Stats
 	{
 		Stats sanitizedStats = GetStatBonuses( genetics.mSpecies );
-		int16_t availablePoints = kMaxTotalStatPoints - CalculateTotalPoints( sanitizedStats );
+		uint16_t availablePoints = math::integer_cast<uint16_t>( kMaxTotalStatPoints - CalculateTotalPoints( sanitizedStats ) );
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{
-			static constexpr auto siphon = []( int16_t& reserve, int8_t& cur, int8_t const& desire ) -> bool //
+			static constexpr auto siphon = []( uint16_t& reserve, uint8_t& cur, uint8_t const& desire ) -> bool //
 			{
 				if(
 					reserve > 0 &&
@@ -728,11 +728,11 @@ void CharacterValidator::SanitizeForGameplay( CharData& character ) const
 
 	// Stats
 	{
-		int16_t availablePoints = kMaxTotalStatPoints - CalculateTotalPoints( stats );
+		uint16_t availablePoints = math::integer_cast<uint16_t>( kMaxTotalStatPoints - CalculateTotalPoints( stats ) );
 		RF_ASSERT( availablePoints >= 0 );
 		while( availablePoints > 0 )
 		{
-			static constexpr auto grow = []( int16_t& reserve, int8_t& dest ) -> bool //
+			static constexpr auto grow = []( uint16_t& reserve, uint8_t& dest ) -> bool //
 			{
 				if(
 					reserve > 0 &&

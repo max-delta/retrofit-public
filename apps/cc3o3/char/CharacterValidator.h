@@ -40,8 +40,8 @@ class CharacterValidator
 public:
 	using GeneticsID = rftl::string;
 	using SpeciesID = rftl::string;
-	static constexpr int8_t kMaxTotalStatPoints = 16;
-	static constexpr int8_t kMaxPointsPerStat = 5;
+	static constexpr uint8_t kMaxTotalStatPoints = 16;
+	static constexpr uint8_t kMaxPointsPerStat = 5;
 
 private:
 	using GeneticsStorage = rftl::unordered_map<GeneticsID, GeneticsEntry>;
@@ -60,12 +60,12 @@ public:
 
 	bool LoadStatBonusesTable( file::VFSPath const& statBonusesTablePath );
 	Stats const& GetStatBonuses( SpeciesID const& id ) const;
-	static int8_t CalculateTotalPoints( Stats const& stats );
+	static uint8_t CalculateTotalPoints( Stats const& stats );
 
 	size_t GetMinimumTotalSlots( company::StoryTier storyTier ) const;
 	SlotsPerElemLevel GetMinimumSlotDistribution( company::StoryTier storyTier ) const;
-	size_t CalculateTotalSlots( Stats::StatModifier elemPower, company::StoryTier storyTier ) const;
-	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatModifier elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const;
+	size_t CalculateTotalSlots( Stats::StatValue elemPower, company::StoryTier storyTier ) const;
+	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatValue elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const;
 
 	void SanitizeForCharacterCreation( CharData& character ) const;
 	void SanitizeForGameplay( CharData& character ) const;
