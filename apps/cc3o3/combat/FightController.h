@@ -42,6 +42,8 @@ public:
 
 	void HardcodedPlaceholderSetup();
 
+	void StartCombatFrame();
+	void EndCombatFrame();
 	void TickPendingActions();
 
 	uint8_t SanitizeCharacterIndex( uint8_t attackerIndex, int8_t applyOffset ) const;
@@ -77,6 +79,8 @@ private:
 	WeakPtr<CombatEngine const> mCombatEngine;
 	WeakPtr<company::CompanyManager const> mCompanyManager;
 	UniquePtr<combat::CombatInstance> mCombatInstance;
+
+	bool mFrameActive = false;
 
 	PartyID mLocalPartyID = {};
 	AttackBuffer mAttackBuffer = {};

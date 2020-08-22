@@ -77,6 +77,8 @@ WeakPtr<CombatInstance const> FightController::GetCombatInstance() const
 
 void FightController::HardcodedPlaceholderSetup()
 {
+	RF_ASSERT( mFrameActive == false );
+
 	CombatInstance& instance = *mCombatInstance;
 
 	// Setup players
@@ -165,8 +167,34 @@ void FightController::HardcodedPlaceholderSetup()
 
 
 
+void FightController::StartCombatFrame()
+{
+	RF_ASSERT( mFrameActive == false );
+
+	mCombatInstance->ReloadCombatData();
+	// TODO: Load attack buffer
+
+	mFrameActive = true;
+}
+
+
+
+void FightController::EndCombatFrame()
+{
+	RF_ASSERT( mFrameActive );
+
+	mCombatInstance->CommitCombatData();
+	// TODO: Save attack buffer
+
+	mFrameActive = false;
+}
+
+
+
 void FightController::TickPendingActions()
 {
+	RF_ASSERT( mFrameActive );
+
 	// TODO: Actions have animations and other delays, which need to be handled
 	// NOTE: Probably want a seperate system to handle that aspect, since it
 	//  needs to work for other parties as well. Ownership of the main combat
@@ -317,6 +345,8 @@ void FightController::PredictAttack( AttackProfile& profile, AttackResult& resul
 
 void FightController::BufferAttack( uint8_t attackerIndex, uint8_t defenderIndex, uint8_t attackStrength )
 {
+	RF_ASSERT( mFrameActive );
+
 	// TODO: This buffering needs to be re-designed to be stored into a
 	//  rollback domain, probably something like:
 	//  * buffered:Attacker

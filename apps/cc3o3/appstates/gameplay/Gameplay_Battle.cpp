@@ -643,6 +643,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "TODO: Battle" );
 
+	// Start combat frame
+	fightController.StartCombatFrame();
+
 	// Rollback may have triggered, restore UI to stay in sync
 	internalState.RestoreUIState( uiContext );
 	internalState.SanitizeUIState( uiContext );
@@ -890,6 +893,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 	// Some actions may have been queued up
 	fightController.TickPendingActions();
+
+	// End combat frame
+	fightController.EndCombatFrame();
 
 	combat::CombatInstance const& mainInstance = *fightController.GetCombatInstance();
 
