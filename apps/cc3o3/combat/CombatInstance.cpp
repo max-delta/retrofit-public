@@ -6,6 +6,7 @@
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/components/Vitality.h"
 #include "cc3o3/state/StateLogging.h"
 
 #include "core_component/TypedComponentRef.h"
@@ -590,14 +591,19 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 	character::CharData const& charData = chara->mCharData;
 	character::Stats const& stats = charData.mStats;
 
+	// Vitality
+	state::ComponentInstanceRefT<state::comp::Vitality> const vitality =
+		character.GetComponentInstanceT<state::comp::Vitality>();
+	RFLOG_TEST_AND_FATAL( vitality != nullptr, character, RFCAT_CC3O3, "Missing vitality component" );
+
 	// TODO: Figure this out
 	EntityClass const entityClass = EntityClass::Player;
 
 	fighter.mInnate = element::MakeInnateIdentifier( charData.mInnate );
 	fighter.mMaxHealth = engine.LoCalcMaxHealth( stats.mMHealth, entityClass );
-	fighter.mCurHealth; // TODO
+	fighter.mCurHealth = vitality->mCurHealth;
 	fighter.mMaxStamina = kMaxStamina;
-	fighter.mCurStamina; // TODO
+	fighter.mCurStamina = vitality->mCurStamina;
 	fighter.mPhysAtk = stats.mPhysAtk;
 	fighter.mPhysDef = stats.mPhysDef;
 	fighter.mElemAtk = stats.mElemAtk;
@@ -612,7 +618,16 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 
 void CombatInstance::SaveFighterToCharacter( state::MutableObjectRef const& character, Fighter const& fighter ) const
 {
-	// TODO
+	// Vitality
+	state::MutableComponentInstanceRefT<state::comp::Vitality> const vitality =
+		character.GetMutableComponentInstanceT<state::comp::Vitality>();
+	RFLOG_TEST_AND_FATAL( vitality != nullptr, character, RFCAT_CC3O3, "Missing vitality component" );
+
+	// NOTE: Stats are immutable in combat, and thus not saved back out
+	vitality->mCurHealth = fighter.mCurHealth;
+	vitality->mCurStamina = fighter.mCurStamina;
+
+	// TODO: Combo meter and target
 }
 
 

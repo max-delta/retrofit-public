@@ -163,6 +163,9 @@ void FightController::HardcodedPlaceholderSetup()
 	// HACK: Hard-coded
 	// TODO: Encounter specified override or multiplayer-minded hash source
 	instance.GenerateFieldInfluence( 0 );
+
+	// Initial save
+	instance.CommitCombatData();
 }
 
 
