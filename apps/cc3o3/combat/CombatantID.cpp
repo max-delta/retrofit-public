@@ -83,6 +83,26 @@ FighterIndex CombatantID::GetFighterIndex() const
 	return math::integer_cast<Value>( ( ( GetFighter().mValue % kTeamStride ) % kPartyStride ) / kFighterStride );
 }
 
+
+
+CombatantID::Value CombatantID::GetAsRaw() const
+{
+	return mValue;
+}
+
+
+
+void CombatantID::SetAsRaw( Value value )
+{
+	mValue = value;
+	if( IsValid() )
+	{
+		RF_ASSERT( GetTeamIndex() < kMaxTeamsPerFight );
+		RF_ASSERT( GetPartyIndex() < kMaxPartiesPerTeam );
+		RF_ASSERT( GetFighterIndex() < kMaxFightersPerParty );
+	}
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {

@@ -3,6 +3,7 @@
 
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/EmptyObject.h"
+#include "cc3o3/state/components/Combo.h"
 #include "cc3o3/state/components/Loadout.h"
 #include "cc3o3/state/components/Vitality.h"
 #include "cc3o3/state/StateLogging.h"
@@ -35,6 +36,15 @@ void MakeBattleCharacterFromDB(
 	MutableObjectRef const& ref,
 	rftl::immutable_string const& charID )
 {
+	// Combo
+	{
+		MutableComponentInstanceRefT<comp::Combo> const combo =
+			ref.AddComponentInstanceT<comp::Combo>(
+				DefaultCreator<comp::Combo>::Create() );
+		RFLOG_TEST_AND_FATAL( combo != nullptr, ref, RFCAT_CC3O3, "Failed to add combo component" );
+		combo->BindToMeta( sharedWindow, privateWindow, ref );
+	}
+
 	// Loadout
 	{
 		MutableComponentInstanceRefT<comp::Loadout> const loadout =

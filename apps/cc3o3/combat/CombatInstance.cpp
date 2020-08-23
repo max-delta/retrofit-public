@@ -6,6 +6,7 @@
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/components/Combo.h"
 #include "cc3o3/state/components/Vitality.h"
 #include "cc3o3/state/StateLogging.h"
 
@@ -584,6 +585,11 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 {
 	CombatEngine const& engine = *mCombatEngine;
 
+	// Combo
+	state::ComponentInstanceRefT<state::comp::Combo> const combo =
+		character.GetComponentInstanceT<state::comp::Combo>();
+	RFLOG_TEST_AND_FATAL( combo != nullptr, character, RFCAT_CC3O3, "Missing combo component" );
+
 	// Character
 	state::ComponentInstanceRefT<state::comp::Character> const chara =
 		character.GetComponentInstanceT<state::comp::Character>();
@@ -610,14 +616,19 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 	fighter.mElemDef = stats.mElemDef;
 	fighter.mBalance = stats.mBalance;
 	fighter.mTechniq = stats.mTechniq;
-	fighter.mComboMeter; // TODO
-	fighter.mComboTarget; // TODO
+	fighter.mComboMeter = combo->mComboMeter;
+	fighter.mComboTarget.SetAsRaw( combo->mComboTarget );
 }
 
 
 
 void CombatInstance::SaveFighterToCharacter( state::MutableObjectRef const& character, Fighter const& fighter ) const
 {
+	// Combo
+	state::MutableComponentInstanceRefT<state::comp::Combo> const combo =
+		character.GetMutableComponentInstanceT<state::comp::Combo>();
+	RFLOG_TEST_AND_FATAL( combo != nullptr, character, RFCAT_CC3O3, "Missing combo component" );
+
 	// Vitality
 	state::MutableComponentInstanceRefT<state::comp::Vitality> const vitality =
 		character.GetMutableComponentInstanceT<state::comp::Vitality>();
@@ -626,8 +637,8 @@ void CombatInstance::SaveFighterToCharacter( state::MutableObjectRef const& char
 	// NOTE: Stats are immutable in combat, and thus not saved back out
 	vitality->mCurHealth = fighter.mCurHealth;
 	vitality->mCurStamina = fighter.mCurStamina;
-
-	// TODO: Combo meter and target
+	combo->mComboMeter = fighter.mComboMeter;
+	combo->mComboTarget = fighter.mComboTarget.GetAsRaw();
 }
 
 

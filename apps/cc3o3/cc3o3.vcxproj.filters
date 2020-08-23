@@ -199,6 +199,9 @@
     <ClCompile Include="state\components\Vitality.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="state\components\Combo.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -532,6 +535,9 @@
       <Filter>combat</Filter>
     </ClInclude>
     <ClInclude Include="state\components\Vitality.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Combo.h">
       <Filter>state\components</Filter>
     </ClInclude>
   </ItemGroup>

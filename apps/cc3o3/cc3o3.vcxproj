@@ -71,6 +71,7 @@
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="state\components\Character.cpp" />
+    <ClCompile Include="state\components\Combo.cpp" />
     <ClCompile Include="state\components\Loadout.cpp" />
     <ClCompile Include="state\components\Meta.cpp" />
     <ClCompile Include="state\components\OverworldMovement.cpp" />
@@ -174,6 +175,7 @@
     <ClInclude Include="state\Component.h" />
     <ClInclude Include="state\ComponentResolver.h" />
     <ClInclude Include="state\components\Character.h" />
+    <ClInclude Include="state\components\Combo.h" />
     <ClInclude Include="state\components\Loadout.h" />
     <ClInclude Include="state\components\Meta.h" />
     <ClInclude Include="state\components\OverworldMovement.h" />

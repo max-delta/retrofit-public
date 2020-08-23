@@ -48,6 +48,10 @@ public:
 	PartyIndex GetPartyIndex() const;
 	FighterIndex GetFighterIndex() const;
 
+	// Raw value
+	Value GetAsRaw() const;
+	void SetAsRaw( Value value );
+
 
 	//
 	// Private methods
