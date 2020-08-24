@@ -468,6 +468,44 @@ TEST( StaticVector, Erase )
 
 
 
+TEST( StaticVector, EraseRange )
+{
+	rftl::static_vector<Proxy, 4> sa;
+	sa.push_back( 2 );
+	sa.push_back( 5 );
+	sa.push_back( 7 );
+	sa.push_back( 11 );
+	ASSERT_TRUE( sa.size() == 4 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 5 );
+	ASSERT_TRUE( sa.data()[2] == 7 );
+	ASSERT_TRUE( sa.data()[3] == 11 );
+
+	rftl::static_vector<Proxy, 4>::iterator iter;
+
+	iter = sa.erase( sa.begin() + 1, sa.begin() + 3 );
+	ASSERT_TRUE( iter == sa.begin() + 1 );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 11 );
+
+	iter = sa.erase( sa.begin() + 1, sa.end() );
+	ASSERT_TRUE( iter == sa.end() );
+	ASSERT_TRUE( sa.size() == 1 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+
+	iter = sa.erase( sa.begin(), sa.begin() );
+	ASSERT_TRUE( iter == sa.begin() );
+	ASSERT_TRUE( sa.size() == 1 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+
+	iter = sa.erase( sa.begin(), sa.end() );
+	ASSERT_TRUE( iter == sa.end() );
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
 TEST( StaticVector, BackInsertCompat )
 {
 	rftl::static_vector<Proxy, 5> sa;

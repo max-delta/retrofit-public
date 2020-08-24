@@ -517,6 +517,23 @@ inline typename static_vector<Element, ElementCapacity, Alignment>::iterator sta
 
 
 template<typename Element, size_t ElementCapacity, size_t Alignment>
+inline typename static_vector<Element, ElementCapacity, Alignment>::iterator static_vector<Element, ElementCapacity, Alignment>::erase( const_iterator first, const_iterator last )
+{
+	RF_ASSERT( first >= begin() );
+	RF_ASSERT( last <= end() );
+	RF_ASSERT( first <= last );
+	RF_ASSERT( m_CurrentSize > 0 );
+	difference_type const numToErase = last - first;
+	for( difference_type i = 0; i < numToErase; i++ )
+	{
+		erase( first );
+	}
+	return const_cast<iterator>( first );
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline void static_vector<Element, ElementCapacity, Alignment>::resize( size_type count )
 {
 	while( size() > count )
