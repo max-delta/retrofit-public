@@ -16,6 +16,7 @@
 #include "Serialization/CsvReader.h"
 
 #include "rftl/sstream"
+#include "rftl/unordered_set"
 
 
 namespace RF { namespace sprite {
@@ -387,10 +388,15 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 		}
 
 		// Release textures
+		rftl::unordered_set<rftl::string> frameResourceNames;
 		for( size_t i = 0; i < kAnimFramesPerDirection; i++ )
 		{
 			file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( kFrameNames[sourceFrames[i]] );
-			texMan.DestroyResource( frameTexture.CreateString() );
+			frameResourceNames.emplace( frameTexture.CreateString() );
+		}
+		for( rftl::string const& resourceName : frameResourceNames )
+		{
+			texMan.DestroyResource( resourceName );
 		}
 	}
 }
