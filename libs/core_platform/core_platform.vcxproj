@@ -28,6 +28,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="BufferStream.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="gdi_shim.h" />
     <ClInclude Include="gl_inc.h" />

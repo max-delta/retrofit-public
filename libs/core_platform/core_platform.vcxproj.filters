@@ -11,6 +11,7 @@
     <ClInclude Include="rpc_inc.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="MemoryRegion.h" />
+    <ClInclude Include="BufferStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
