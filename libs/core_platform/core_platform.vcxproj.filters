@@ -12,6 +12,7 @@
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="MemoryRegion.h" />
     <ClInclude Include="BufferStream.h" />
+    <ClInclude Include="winsock2_inc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

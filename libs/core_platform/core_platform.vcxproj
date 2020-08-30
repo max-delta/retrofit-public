@@ -37,6 +37,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="uuid.h" />
     <ClInclude Include="windows_inc.h" />
+    <ClInclude Include="winsock2_inc.h" />
     <ClInclude Include="winuser_shim.h" />
     <ClInclude Include="win_shim.h" />
   </ItemGroup>
