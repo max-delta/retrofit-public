@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="TCPSocket.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TCPSocket.cpp" />
   </ItemGroup>
 </Project>
