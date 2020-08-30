@@ -15,6 +15,7 @@
 // Need to guard STL before windows destroys it
 #include "rftl/cstddef"
 #include "rftl/cstring"
+#include "rftl/cctype"
 
 namespace win32 {
 struct IUnknown; // Fix for Windows 8.1 SDK and "/permissive-" flag
