@@ -98,5 +98,6 @@
     <None Include="extension\byte_view.inl">
       <Filter>extension</Filter>
     </None>
+    <None Include="cctype" />
   </ItemGroup>
 </Project>

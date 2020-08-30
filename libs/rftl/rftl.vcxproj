@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="algorithm" />
+    <None Include="cctype" />
     <None Include="extension\byte_view.inl" />
     <None Include="extension\static_string.inl" />
     <None Include="extension\static_vector.inl" />

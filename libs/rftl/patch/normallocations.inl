@@ -4,6 +4,7 @@
 #define RFTL_ARRAY <array>
 #define RFTL_ATOMIC <atomic>
 #define RFTL_BITSET <bitset>
+#define RFTL_CCTYPE <cctype>
 #define RFTL_CHRONO <chrono>
 #define RFTL_CSTDARG <cstdarg>
 #define RFTL_CSTDDEF <cstddef>
