@@ -9,7 +9,7 @@
 		shim::DWORD ul_reason_for_call, \
 		shim::LPVOID lpReserved ) \
 	{ \
-		return 1 /*win32::TRUE*/; \
+		return shim::kTRUE; \
 	}
 #define RF_DLLMAIN() \
 	shim::BOOL __stdcall DllMain( shim::HMODULE hModule, \
@@ -27,7 +27,7 @@
 			case 0 /*DLL_PROCESS_DETACH*/: \
 				return OnDllMainProcessDetach(); \
 			default: \
-				return 1 /*win32::TRUE*/; \
+				return shim::kTRUE; \
 		} \
 	}
 

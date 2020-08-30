@@ -9,22 +9,22 @@ void InsertFallbackLogger();
 shim::BOOL OnDllMainProcessAttach()
 {
 	RF::logging::InsertFallbackLogger();
-	return 1 /*win32::TRUE*/;
+	return shim::kTRUE;
 }
 
 shim::BOOL OnDllMainProcessDetach()
 {
-	return 1 /*win32::TRUE*/;
+	return shim::kTRUE;
 }
 
 shim::BOOL OnDllMainThreadAttach()
 {
-	return 1 /*win32::TRUE*/;
+	return shim::kTRUE;
 }
 
 shim::BOOL OnDllMainThreadDetach()
 {
-	return 1 /*win32::TRUE*/;
+	return shim::kTRUE;
 }
 
 RF_DLLMAIN();
