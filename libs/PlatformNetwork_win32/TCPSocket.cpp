@@ -135,9 +135,11 @@ rftl::string GetAddress( win32::sockaddr const& sockAddr, size_t sockAddrLen )
 ///////////////////////////////////////////////////////////////////////////////
 
 TCPSocket::TCPSocket( TCPSocket&& rhs )
-	: RF_MOVE_CONSTRUCT( mSocket )
+	: mShutdown( rhs.mShutdown.load( rftl::memory_order::memory_order_acquire ) )
+	, RF_MOVE_CONSTRUCT( mListener )
 {
-	rhs.mSocket = shim::kINVALID_SOCKET;
+	shim::SOCKET const transfer = rhs.mSocket.exchange( shim::kINVALID_SOCKET, rftl::memory_order::memory_order_acq_rel );
+	mSocket.store( transfer, rftl::memory_order::memory_order_release );
 }
 
 
@@ -147,8 +149,10 @@ TCPSocket& TCPSocket::operator=( TCPSocket&& rhs )
 	if( this != &rhs )
 	{
 		CloseSocketIfValid();
-		RF_MOVE_ASSIGN( mSocket );
-		rhs.InvalidateSocket();
+		shim::SOCKET const transfer = rhs.mSocket.exchange( shim::kINVALID_SOCKET, rftl::memory_order::memory_order_acq_rel );
+		mShutdown.store( rhs.mShutdown.load( rftl::memory_order::memory_order_acquire ), rftl::memory_order::memory_order_release );
+		mListener = rhs.mListener;
+		mSocket.store( transfer, rftl::memory_order::memory_order_release );
 	}
 	return *this;
 }
@@ -164,21 +168,14 @@ TCPSocket::~TCPSocket()
 
 bool TCPSocket::IsValid() const
 {
-	return mSocket != shim::kINVALID_SOCKET;
+	return IsValidSocketHandle();
 }
 
 
 
-bool TCPSocket::IsServer() const
+bool TCPSocket::IsListener() const
 {
-	return mServer;
-}
-
-
-
-shim::SOCKET TCPSocket::GetSocketHandle()
-{
-	return mSocket;
+	return mListener;
 }
 
 
@@ -202,14 +199,14 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create client TCP socket at \"%s\"", name.c_str() );
 
 		// Create
-		retVal.mSocket = win32::WSASocketW(
+		retVal.InitSocketHandle( win32::WSASocketW(
 			suggestion.ai_family,
 			suggestion.ai_socktype,
 			suggestion.ai_protocol,
 			nullptr, // No contraints
 			0, // No grouping
-			WSA_FLAG_OVERLAPPED ); // Allow async usage
-		if( retVal.mSocket == shim::kINVALID_SOCKET )
+			WSA_FLAG_OVERLAPPED ) ); // Allow async usage
+		if( retVal.IsValidSocketHandle() == false )
 		{
 			RFLOG_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unconnected TCP socket: WSA %i", win32::WSAGetLastError() );
 		}
@@ -217,7 +214,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 		{
 			// Connect
 			int const connectResult = win32::WSAConnect(
-				retVal.mSocket,
+				retVal.GetMutableSocketHandle(),
 				suggestion.ai_addr,
 				math::integer_cast<int>( suggestion.ai_addrlen ),
 				nullptr, // N/A on TCP
@@ -268,14 +265,14 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server TCP socket at \"%s\"", name.c_str() );
 
 		// Create
-		retVal.mSocket = win32::WSASocketW(
+		retVal.InitSocketHandle( win32::WSASocketW(
 			suggestion.ai_family,
 			suggestion.ai_socktype,
 			suggestion.ai_protocol,
 			nullptr, // No contraints
 			0, // No grouping
-			WSA_FLAG_OVERLAPPED ); // Allow async usage
-		if( retVal.mSocket == shim::kINVALID_SOCKET )
+			WSA_FLAG_OVERLAPPED ) ); // Allow async usage
+		if( retVal.IsValidSocketHandle() == false )
 		{
 			RFLOG_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unbound TCP socket: WSA %i", win32::WSAGetLastError() );
 		}
@@ -283,7 +280,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 		{
 			// Bind
 			int const bindResult = win32::bind(
-				retVal.mSocket,
+				retVal.GetMutableSocketHandle(),
 				suggestion.ai_addr,
 				math::integer_cast<int>( suggestion.ai_addrlen ) );
 			if( bindResult != 0 )
@@ -295,7 +292,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 			{
 				// Listen
 				int const listenResult = win32::listen(
-					retVal.mSocket,
+					retVal.GetMutableSocketHandle(),
 					SOMAXCONN );
 				if( listenResult != 0 )
 				{
@@ -306,7 +303,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 				{
 					// Success!
 					RF_ASSERT( retVal.IsValid() );
-					retVal.mServer = true;
+					retVal.mListener = true;
 					RFLOG_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Bound a listening TCP server socket at \"%s\"", name.c_str() );
 					return retVal;
 				}
@@ -323,68 +320,174 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 
 
 
+TCPSocket TCPSocket::WaitForNewClientConnection( TCPSocket& listeningServerSocket )
+{
+	TCPSocket retVal = {};
+
+	RF_ASSERT( listeningServerSocket.IsValid() );
+	RF_ASSERT( listeningServerSocket.IsListener() );
+
+	// Accept
+	win32::sockaddr_storage newAddress = {};
+	win32::INT newAddressLen = sizeof( newAddress );
+	retVal.InitSocketHandle( win32::WSAAccept(
+		listeningServerSocket.GetMutableSocketHandle(),
+		reinterpret_cast<win32::sockaddr*>( &newAddress ),
+		&newAddressLen,
+		nullptr, // No conditional check
+		0 ) ); // No conditional check
+	if( retVal.IsValidSocketHandle() == false )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to accept a TCP socket: WSA %i", win32::WSAGetLastError() );
+	}
+	else
+	{
+		rftl::string const name = details::GetAddress( *reinterpret_cast<win32::sockaddr*>( &newAddress ), math::integer_cast<size_t>( newAddressLen ) );
+		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Accepted a TCP connection from \"%s\"", name.c_str() );
+	}
+
+	return retVal;
+}
+
+
+
 void TCPSocket::Shutdown()
 {
-	ShutdownSocketIfValid();
+	if constexpr( false )
+	{
+		// See internal comments, this doesn't work
+		ShutdownSocketIfValid();
+	}
+	else
+	{
+		// This is theoretically not thread-safe, because a socket identifier
+		//  can be re-used once closed. However, since shutdown doesn't work,
+		//  this is the only viable option for stopping blocking calls without
+		//  a much more elaborate setup. The expectation is that identifier
+		//  re-use will happen across a large enough time-scale that it will
+		//  note result in bugs under normal circumstances.
+		// TODO: Evaluate a much more convoluted setup that uses
+		//  WSAEventSelect(...) and WaitForMultipleObjectsEx(...) for some
+		//  overly contrived signalling+blocking system to abort blocking
+		//  socket calls on shutdown.
+		CloseSocketIfValid();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
+bool TCPSocket::MakeNonBlocking()
+{
+	win32::u_long one = 1;
+	static constexpr uint32_t kFIONBIO = _IOW( 'f', 126, win32::u_long );
+	int const nonblockingResult = win32::ioctlsocket( GetMutableSocketHandle(), kFIONBIO, &one );
+	if( nonblockingResult != 0 )
+	{
+		RF_ASSERT( nonblockingResult == SOCKET_ERROR );
+		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to make TCP socket non-blocking: WSA %i", win32::WSAGetLastError() );
+		return false;
+	}
+	return true;
+}
+
+
+
+bool TCPSocket::IsValidSocketHandle() const
+{
+	return mSocket.load( rftl::memory_order::memory_order_acquire ) != shim::kINVALID_SOCKET;
+}
+
+
+
+shim::SOCKET TCPSocket::GetMutableSocketHandle()
+{
+	return mSocket.load( rftl::memory_order::memory_order_acquire );
+}
+
+
+
+void TCPSocket::InitSocketHandle( shim::SOCKET socket )
+{
+	RF_ASSERT( IsValid() == false );
+	mSocket.store( socket, rftl::memory_order::memory_order_release );
+}
+
+
+
+void TCPSocket::ClearSocketHandle()
+{
+	mSocket.store( shim::kINVALID_SOCKET, rftl::memory_order::memory_order_release );
+}
+
+
+
 void TCPSocket::ShutdownSocketIfValid()
 {
-	if( mShutdown )
+	if( IsValid() == false )
+	{
+		return;
+	}
+
+	bool const previousShutdown = mShutdown.exchange( true, rftl::memory_order::memory_order_acq_rel );
+	if( previousShutdown )
 	{
 		// Already shutdown
 		return;
 	}
 
-	if( mSocket == shim::kINVALID_SOCKET )
-	{
-		return;
-	}
+	// Make non-blocking
+	// NOTE: This does not work, accept(...) calls are not interrupted
+	MakeNonBlocking();
 
-	int const result = win32::shutdown( mSocket, SD_BOTH );
-	if( result != 0 )
+	if( mListener )
 	{
-		RF_ASSERT( result == SOCKET_ERROR );
-		int const lastError = win32::WSAGetLastError();
-		if( lastError == WSAENOTCONN )
+		// Listeners cannot be 'shutdown' because they are not yet connected
+		// TODO: An equivalent concept for disabling listeners that will stop
+		//  any new accept(...) calls, and interrupting any that are blocking
+		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Shutdown a listening TCP socket" );
+	}
+	else
+	{
+		// Disable further reads/writes
+		int const shutdownResult = win32::shutdown( GetMutableSocketHandle(), SD_BOTH );
+		if( shutdownResult != 0 )
 		{
-			RFLOG_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket because it was already disconnected" );
+			RF_ASSERT( shutdownResult == SOCKET_ERROR );
+			int const lastError = win32::WSAGetLastError();
+			if( lastError == WSAENOTCONN )
+			{
+				RFLOG_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket because it was already disconnected" );
+			}
+			else
+			{
+				RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket: WSA %i", lastError );
+			}
 		}
 		else
 		{
-			RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket: WSA %i", lastError );
+			RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Shutdown a connected TCP socket" );
 		}
 	}
-	mShutdown = true;
 }
 
 
 
 void TCPSocket::CloseSocketIfValid()
 {
-	if( mSocket == shim::kINVALID_SOCKET )
+	if( IsValid() == false )
 	{
 		return;
 	}
 
 	ShutdownSocketIfValid();
 
-	int const result = win32::closesocket( mSocket );
+	int const result = win32::closesocket( GetMutableSocketHandle() );
 	if( result != 0 )
 	{
 		RF_ASSERT( result == SOCKET_ERROR );
 		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close TCP socket: WSA %i", win32::WSAGetLastError() );
 	}
-	mSocket = shim::kINVALID_SOCKET;
-}
-
-
-
-void TCPSocket::InvalidateSocket()
-{
-	mSocket = shim::kINVALID_SOCKET;
+	ClearSocketHandle();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
