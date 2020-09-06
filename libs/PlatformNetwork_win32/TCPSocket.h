@@ -30,10 +30,13 @@ public:
 	static TCPSocket ConnectClientSocket( rftl::string hostname, uint16_t port );
 	static TCPSocket BindServerSocket( bool preferIPv6, bool loopback, uint16_t port );
 
+	void Shutdown();
+
 
 	//
 	// Private methods
 private:
+	void ShutdownSocketIfValid();
 	void CloseSocketIfValid();
 	void InvalidateSocket();
 
@@ -41,6 +44,7 @@ private:
 	//
 	// Private data
 private:
+	bool mShutdown = false;
 	bool mServer = false;
 	shim::SOCKET mSocket = shim::kINVALID_SOCKET;
 };

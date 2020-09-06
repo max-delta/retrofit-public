@@ -321,20 +321,63 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 	return retVal;
 }
 
+
+
+void TCPSocket::Shutdown()
+{
+	ShutdownSocketIfValid();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
+
+void TCPSocket::ShutdownSocketIfValid()
+{
+	if( mShutdown )
+	{
+		// Already shutdown
+		return;
+	}
+
+	if( mSocket == shim::kINVALID_SOCKET )
+	{
+		return;
+	}
+
+	int const result = win32::shutdown( mSocket, SD_BOTH );
+	if( result != 0 )
+	{
+		RF_ASSERT( result == SOCKET_ERROR );
+		int const lastError = win32::WSAGetLastError();
+		if( lastError == WSAENOTCONN )
+		{
+			RFLOG_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket because it was already disconnected" );
+		}
+		else
+		{
+			RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket: WSA %i", lastError );
+		}
+	}
+	mShutdown = true;
+}
+
+
 
 void TCPSocket::CloseSocketIfValid()
 {
-	if( mSocket != shim::kINVALID_SOCKET )
+	if( mSocket == shim::kINVALID_SOCKET )
 	{
-		int const result = win32::closesocket( mSocket );
-		if( result != 0 )
-		{
-			RF_ASSERT( result == SOCKET_ERROR );
-			RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close TCP socket: WSA %i", win32::WSAGetLastError() );
-		}
-		mSocket = shim::kINVALID_SOCKET;
+		return;
 	}
+
+	ShutdownSocketIfValid();
+
+	int const result = win32::closesocket( mSocket );
+	if( result != 0 )
+	{
+		RF_ASSERT( result == SOCKET_ERROR );
+		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close TCP socket: WSA %i", win32::WSAGetLastError() );
+	}
+	mSocket = shim::kINVALID_SOCKET;
 }
 
 
