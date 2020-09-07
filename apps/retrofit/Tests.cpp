@@ -29,11 +29,13 @@
 #include "PPU/FontManager.h"
 #include "PPU/TextureManager.h"
 
+#include "Scheduling/tasks/FunctorTask.h"
+#include "RFType/CreateClassInfoDefinition.h"
+
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
-#include "Scheduling/tasks/FunctorTask.h"
-#include "RFType/CreateClassInfoDefinition.h"
+#include "PlatformNetwork_win32/TCPSocket.h"
 
 #include "core_platform/uuid.h"
 #include "core_platform/winuser_shim.h"
@@ -836,6 +838,128 @@ void SQReflectTest()
 	RF_ASSERT( testClass.mObjArray.size() == 1 );
 	RF_ASSERT( testClass.mObjArray[0].mBool == true );
 	RF_ASSERT( testClass.mNested.mBool == true );
+}
+
+
+
+void TCPTest()
+{
+	using TCPSocket = platform::network::TCPSocket;
+
+	// Start listening
+	SharedPtr<TCPSocket> const serverSocket = DefaultCreator<TCPSocket>::Create(
+		TCPSocket::BindServerSocket( true, true, 8271 ) );
+
+	// Connect
+	SharedPtr<TCPSocket> const clientConnection = DefaultCreator<TCPSocket>::Create(
+		TCPSocket::ConnectClientSocket( "localhost", 8271 ) );
+
+	// Accept and stop listening
+	SharedPtr<TCPSocket> serverConnection = {};
+	{
+		using AcceptTask = rftl::packaged_task<SharedPtr<TCPSocket>( SharedPtr<TCPSocket> )>;
+		using PendingSocket = rftl::future<SharedPtr<TCPSocket>>;
+
+		static constexpr auto accept = []( SharedPtr<TCPSocket> listeningSocket ) -> SharedPtr<TCPSocket> //
+		{
+			return DefaultCreator<TCPSocket>::Create(
+				TCPSocket::WaitForNewClientConnection( *listeningSocket ) );
+		};
+
+		// Accept the client
+		{
+			AcceptTask acceptTask( accept );
+			PendingSocket pendingClient = acceptTask.get_future();
+			rftl::thread acceptThread( rftl::move( acceptTask ), serverSocket );
+			serverConnection = pendingClient.get();
+			RF_ASSERT( serverConnection->IsValid() );
+			acceptThread.join();
+		}
+
+		// Try to accept a new client, but fail the blocking call by shutting down
+		//  the listener socket mid-accept
+		{
+			AcceptTask acceptTask( accept );
+			PendingSocket pendingClient = acceptTask.get_future();
+			rftl::thread acceptThread( rftl::move( acceptTask ), serverSocket );
+
+			// There's a race for whether the socket fails due to being closed,
+			//  versus interrupted, but results in equivalent handling
+			rftl::this_thread::sleep_for( rftl::chrono::milliseconds( 500 ) );
+			serverSocket->Shutdown();
+
+			SharedPtr<TCPSocket> const failedConnection = pendingClient.get();
+			RF_ASSERT( failedConnection->IsValid() == false );
+			acceptThread.join();
+		}
+	}
+
+	// Transmit some data
+	{
+		using SendTask = rftl::packaged_task<bool( SharedPtr<TCPSocket>, TCPSocket::Buffer && )>;
+		using PendingSend = rftl::future<bool>;
+		using ReceiveTask = rftl::packaged_task<TCPSocket::Buffer( SharedPtr<TCPSocket> )>;
+		using PendingReceive = rftl::future<TCPSocket::Buffer>;
+
+		static constexpr auto send = []( SharedPtr<TCPSocket> socket, TCPSocket::Buffer&& data ) -> bool //
+		{
+			return socket->SendBuffer( data );
+		};
+
+		static constexpr auto receive = []( SharedPtr<TCPSocket> socket ) -> TCPSocket::Buffer //
+		{
+			TCPSocket::Buffer retVal = {};
+			socket->ReceiveBuffer( retVal, 10 );
+			return retVal;
+		};
+
+		// Successfully send data
+		{
+			// Receive on client
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), clientConnection );
+
+			// Send from server
+			SendTask sendTask( send );
+			PendingSend pendingSend = sendTask.get_future();
+			rftl::thread sendThread( rftl::move( sendTask ), serverConnection, TCPSocket::Buffer{ 7 } );
+
+			TCPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data == TCPSocket::Buffer{ 7 } );
+			receiveThread.join();
+
+			bool const sendSuccess = pendingSend.get();
+			RF_ASSERT( sendSuccess );
+			sendThread.join();
+		}
+
+		// Fail on connection close
+		{
+			// Receive on client
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), clientConnection );
+
+			// There's a race for whether the socket fails due to being closed,
+			//  versus interrupted, but results in equivalent handling
+			rftl::this_thread::sleep_for( rftl::chrono::milliseconds( 500 ) );
+			if constexpr( false )
+			{
+				// Server initiates shutdown
+				serverConnection->Shutdown();
+			}
+			else
+			{
+				// Client initiates shutdown (on own recv)
+				clientConnection->Shutdown();
+			}
+
+			TCPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data.empty() );
+			receiveThread.join();
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -26,6 +26,7 @@ constexpr bool kFPackSerializationTest = true;
 constexpr bool kPlatformTest = true;
 constexpr bool kFrameBuilderTest = true;
 constexpr bool kSQReflectTest = true;
+constexpr bool kTCPTest = true;
 
 constexpr bool kAllowScratch = true;
 
@@ -91,6 +92,11 @@ void TestStart()
 	if( kSQReflectTest )
 	{
 		test::SQReflectTest();
+	}
+
+	if( kTCPTest )
+	{
+		test::TCPTest();
 	}
 }
 

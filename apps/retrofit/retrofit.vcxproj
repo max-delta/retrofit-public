@@ -85,6 +85,9 @@
     <ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
       <Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\PlatformNetwork_win32\PlatformNetwork_win32.vcxproj">
+      <Project>{0bc4e215-b91a-41cc-8fe4-12b460e9cbdc}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
       <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
     </ProjectReference>
