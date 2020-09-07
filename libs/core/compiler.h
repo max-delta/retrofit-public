@@ -83,6 +83,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#define RF_NOP() __nop()
 	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_NO_LINK_STRIP __declspec( dllexport )
 	#define RF_ACK_ANY_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#define RF_ACK_UNSAFE_INHERITANCE RF_MSVC_INLINE_SUPPRESS( 4435 )
 	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH RF_MSVC_INLINE_SUPPRESS( 4287 )
@@ -128,6 +129,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#define RF_NOP() asm volatile("nop")
 	#define RF_NO_INLINE __declspec( noinline )
+	#define RF_NO_LINK_STRIP __declspec( dllexport )
 	#define RF_ACK_ANY_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
 	#define RF_ACK_UNSAFE_INHERITANCE RF_MSVC_INLINE_SUPPRESS( 4435 )
 	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH RF_MSVC_INLINE_SUPPRESS( 4287 )

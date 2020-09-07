@@ -14,7 +14,7 @@ struct WSALifetime
 };
 
 static size_t sWSAStartupSuccess = 0;
-__declspec( dllexport ) WSALifetime sWSALifetime = {};
+RF_NO_LINK_STRIP WSALifetime sWSALifetime = {};
 
 
 ///////////////////////////////////////////////////////////////////////////////

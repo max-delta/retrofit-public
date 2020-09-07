@@ -33,7 +33,7 @@
 	namespace RF { namespace rftype { /* Opening rftype namespace */ \
 	/* Template specialization for lookup only within module */ \
 	template<> \
-	__declspec( dllexport )::RF::reflect::ClassInfo const& GetClassInfoWithinModule<CLASSTYPE>() \
+	RF_NO_LINK_STRIP ::RF::reflect::ClassInfo const& GetClassInfoWithinModule<CLASSTYPE>() \
 	{ \
 		return RF_CONCAT( ___rftype_macro_generated_instance_, __LINE__ ).GetClassInfoStorage<CLASSTYPE>(); \
 	} \
