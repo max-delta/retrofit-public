@@ -5,6 +5,7 @@
 
 #include "rftl/atomic"
 #include "rftl/string"
+#include "rftl/vector"
 
 
 namespace RF::platform::network {
@@ -13,6 +14,11 @@ namespace RF::platform::network {
 class PLATFORMNETWORK_API TCPSocket final
 {
 	RF_NO_COPY( TCPSocket );
+
+	//
+	// Types and constants
+public:
+	using Buffer = rftl::vector<uint8_t>;
 
 	//
 	// Public methods
@@ -30,6 +36,13 @@ public:
 	static TCPSocket ConnectClientSocket( rftl::string hostname, uint16_t port );
 	static TCPSocket BindServerSocket( bool preferIPv6, bool loopback, uint16_t port );
 	static TCPSocket WaitForNewClientConnection( TCPSocket& listeningServerSocket );
+
+	// NOTE: Intention is for buffer to be cleared and re-used by caller
+	bool SendBuffer( Buffer const& buffer );
+
+	// NOTE: Empty buffer indicates connection failure
+	// NOTE: Intention is for buffer to be re-used by caller
+	bool ReceiveBuffer( Buffer& buffer, size_t maxLen );
 
 	void Shutdown();
 

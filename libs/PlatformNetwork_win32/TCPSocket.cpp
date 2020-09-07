@@ -324,7 +324,6 @@ TCPSocket TCPSocket::WaitForNewClientConnection( TCPSocket& listeningServerSocke
 {
 	TCPSocket retVal = {};
 
-	RF_ASSERT( listeningServerSocket.IsValid() );
 	RF_ASSERT( listeningServerSocket.IsListener() );
 
 	// Accept
@@ -347,6 +346,85 @@ TCPSocket TCPSocket::WaitForNewClientConnection( TCPSocket& listeningServerSocke
 	}
 
 	return retVal;
+}
+
+
+
+bool TCPSocket::SendBuffer( Buffer const& buffer )
+{
+	// HACK: Treating buffer as non-const, assumed to be yet another design
+	//  flaw in Microsoft APIs and that no modifications will actually happen
+	Buffer& HACK_nonConstBuffer = *const_cast<Buffer*>( &buffer );
+
+	rftl::array<win32::WSABUF, 1> wsaBufs = {};
+	wsaBufs.at( 0 ).buf = reinterpret_cast<win32::CHAR*>( HACK_nonConstBuffer.data() );
+	wsaBufs.at( 0 ).len = math::integer_cast<win32::ULONG>( buffer.size() );
+
+	// Send
+	win32::DWORD bytesSent = 0;
+	int const sendResult = win32::WSASend(
+		GetMutableSocketHandle(),
+		wsaBufs.data(),
+		math::integer_cast<win32::DWORD>( wsaBufs.size() ),
+		&bytesSent,
+		0, // No flags
+		nullptr, // No overlapped
+		nullptr ); // No overlapped
+	if( sendResult != 0 )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send TCP socket data: WSA %i", win32::WSAGetLastError() );
+		return false;
+	}
+	else if( bytesSent != buffer.size() )
+	{
+		// This should never occur on a blocking call
+		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send some TCP socket data" );
+		return false;
+	}
+
+	RFLOG_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Sent TCP data (%lu bytes)", bytesSent );
+	return true;
+}
+
+
+
+bool TCPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
+{
+	buffer.resize( maxLen );
+
+	rftl::array<win32::WSABUF, 1> wsaBufs = {};
+	wsaBufs.at( 0 ).buf = reinterpret_cast<win32::CHAR*>( buffer.data() );
+	wsaBufs.at( 0 ).len = math::integer_cast<win32::ULONG>( buffer.size() );
+
+	// Receive
+	win32::DWORD flags = MSG_PUSH_IMMEDIATE; // Get data ASAP
+	win32::DWORD bytesReceived = 0;
+	int const receiveResult = win32::WSARecv(
+		GetMutableSocketHandle(),
+		wsaBufs.data(),
+		math::integer_cast<win32::DWORD>( wsaBufs.size() ),
+		&bytesReceived,
+		&flags,
+		nullptr, // No overlapped
+		nullptr ); // No overlapped
+	if( receiveResult != 0 )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive TCP socket data: WSA %i", win32::WSAGetLastError() );
+		buffer.clear();
+		return false;
+	}
+	else if( bytesReceived == 0 )
+	{
+		// This should indicate a graceful connection close
+		RFLOG_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive any TCP socket data" );
+		buffer.clear();
+		return false;
+	}
+
+	RFLOG_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Received TCP data (%lu bytes)", bytesReceived );
+	RF_ASSERT( bytesReceived <= buffer.size() );
+	buffer.resize( bytesReceived );
+	return true;
 }
 
 
