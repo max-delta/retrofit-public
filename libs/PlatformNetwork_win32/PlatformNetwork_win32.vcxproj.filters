@@ -9,5 +9,6 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
+    <ClCompile Include="WSALifetime.cpp" />
   </ItemGroup>
 </Project>
