@@ -60,6 +60,7 @@
         -Wno-extra-semi
         -Wno-extra-semi-stmt
         -Wno-missing-prototypes
+        -Wno-missing-variable-declarations
         -Wno-covered-switch-default
         -Wno-tautological-undefined-compare
         -Wno-shadow-field-in-constructor

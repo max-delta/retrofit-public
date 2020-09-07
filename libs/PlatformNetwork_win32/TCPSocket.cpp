@@ -458,7 +458,7 @@ bool TCPSocket::MakeNonBlocking()
 {
 	win32::u_long one = 1;
 	static constexpr uint32_t kFIONBIO = _IOW( 'f', 126, win32::u_long );
-	int const nonblockingResult = win32::ioctlsocket( GetMutableSocketHandle(), kFIONBIO, &one );
+	int const nonblockingResult = win32::ioctlsocket( GetMutableSocketHandle(), math::integer_cast<long>( kFIONBIO ), &one );
 	if( nonblockingResult != 0 )
 	{
 		RF_ASSERT( nonblockingResult == SOCKET_ERROR );
