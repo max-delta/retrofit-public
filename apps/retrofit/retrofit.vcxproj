@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+    <Import Project="..\..\config\RF.Apps.Module.Platform.props" />
   </ImportGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -11,7 +11,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+    <Import Project="..\..\config\RF.Apps.Module.Preconfig.props" />
   </ImportGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -22,12 +22,11 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\config\Global.Cpp.props" />
     <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Apps.Exe.props" />
+    <Import Project="..\..\config\RF.Apps.Module.props" />
     <Import Project="..\..\config\AppCommon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
-  <ItemDefinitionGroup />
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -41,6 +40,9 @@
     <ClInclude Include="Scratch.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Tests.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nostrip.def" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\libs\core\core.vcxproj">

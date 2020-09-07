@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "project.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 #include "Tests.h"
@@ -136,7 +137,7 @@ void TestEnd()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int main()
+RF_MODULE_POINT int module_main()
 {
 	using namespace RF;
 

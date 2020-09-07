@@ -12,4 +12,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="Scratch.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="nostrip.def" />
+  </ItemGroup>
 </Project>

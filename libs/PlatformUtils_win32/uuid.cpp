@@ -11,6 +11,8 @@
 
 #include "rftl/cstring"
 
+#pragma comment( lib, "rpcrt4.lib" )
+
 
 namespace RF { namespace platform {
 ///////////////////////////////////////////////////////////////////////////////

@@ -93,6 +93,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		config\RF.Apps.Exe.Platform.props = config\RF.Apps.Exe.Platform.props
 		config\RF.Apps.Exe.Preconfig.props = config\RF.Apps.Exe.Preconfig.props
 		config\RF.Apps.Exe.props = config\RF.Apps.Exe.props
+		config\RF.Apps.Module.Platform.props = config\RF.Apps.Module.Platform.props
+		config\RF.Apps.Module.Preconfig.props = config\RF.Apps.Module.Preconfig.props
+		config\RF.Apps.Module.props = config\RF.Apps.Module.props
 		config\RF.Core.Lib.Platform.props = config\RF.Core.Lib.Platform.props
 		config\RF.Core.Lib.Preconfig.props = config\RF.Core.Lib.Preconfig.props
 		config\RF.Core.Lib.props = config\RF.Core.Lib.props
@@ -169,6 +172,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PlatformNetwork_win32", "libs\PlatformNetwork_win32\PlatformNetwork_win32.vcxproj", "{0BC4E215-B91A-41CC-8FE4-12B460E9CBDC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Communication", "libs\Communication\Communication.vcxproj", "{536F05B6-166F-4358-A9C8-DE05A06768EA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "retrofit_exe", "apps\retrofit\retrofit_exe.vcxproj", "{5BEA20EC-42C3-4C04-902C-F95752FD04CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2176,6 +2181,42 @@ Global
 		{536F05B6-166F-4358-A9C8-DE05A06768EA}.MSVC_Retail|x64.Build.0 = MSVC_Retail|x64
 		{536F05B6-166F-4358-A9C8-DE05A06768EA}.MSVC_Retail|x86.ActiveCfg = MSVC_Retail|Win32
 		{536F05B6-166F-4358-A9C8-DE05A06768EA}.MSVC_Retail|x86.Build.0 = MSVC_Retail|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|ARM.ActiveCfg = LLVM_Debug|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|ARM64.ActiveCfg = LLVM_Debug|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|x64.ActiveCfg = LLVM_Debug|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|x64.Build.0 = LLVM_Debug|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|x86.ActiveCfg = LLVM_Debug|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Debug|x86.Build.0 = LLVM_Debug|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|ARM.ActiveCfg = LLVM_Release|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|ARM64.ActiveCfg = LLVM_Release|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|x64.ActiveCfg = LLVM_Release|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|x64.Build.0 = LLVM_Release|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|x86.ActiveCfg = LLVM_Release|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Release|x86.Build.0 = LLVM_Release|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|ARM.ActiveCfg = LLVM_Retail|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|ARM64.ActiveCfg = LLVM_Retail|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|x64.ActiveCfg = LLVM_Retail|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|x64.Build.0 = LLVM_Retail|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|x86.ActiveCfg = LLVM_Retail|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.LLVM_Retail|x86.Build.0 = LLVM_Retail|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|ARM.ActiveCfg = MSVC_Debug|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|ARM64.ActiveCfg = MSVC_Debug|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|x64.ActiveCfg = MSVC_Debug|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|x64.Build.0 = MSVC_Debug|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|x86.ActiveCfg = MSVC_Debug|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Debug|x86.Build.0 = MSVC_Debug|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|ARM.ActiveCfg = MSVC_Release|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|ARM64.ActiveCfg = MSVC_Release|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|x64.ActiveCfg = MSVC_Release|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|x64.Build.0 = MSVC_Release|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|x86.ActiveCfg = MSVC_Release|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Release|x86.Build.0 = MSVC_Release|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|ARM.ActiveCfg = MSVC_Retail|ARM
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|ARM64.ActiveCfg = MSVC_Retail|ARM64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|x64.ActiveCfg = MSVC_Retail|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|x64.Build.0 = MSVC_Retail|x64
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|x86.ActiveCfg = MSVC_Retail|Win32
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB}.MSVC_Retail|x86.Build.0 = MSVC_Retail|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -2239,6 +2280,7 @@ Global
 		{28A88109-D5BF-43B7-B2F3-ECB499FC3291} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
 		{0BC4E215-B91A-41CC-8FE4-12B460E9CBDC} = {3EC23263-D4ED-4E38-995F-C0391F560049}
 		{536F05B6-166F-4358-A9C8-DE05A06768EA} = {08FA27AA-1FC9-4100-B186-035269101155}
+		{5BEA20EC-42C3-4C04-902C-F95752FD04CB} = {9FD8E78B-E043-4B9E-9AE5-31C4BC16D6CB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F154CB3-9527-436A-9487-F586122585E3}

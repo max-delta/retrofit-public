@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="RF.Shared.props" />
+	<ImportGroup Label="PropertySheets" />
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+		<Link>
+			<SubSystem>Windows</SubSystem>
+
+			<!--TODO: Need to come up with a way to procedurally generate this file
+				for Retail builds, likely with a custom build step using some trickery
+				with annotations from PDBs. The issue is specifically in relation to
+				pulling out the dllexport specifiers from static libs-->
+			<ModuleDefinitionFile Condition="'$(RFConfig)'=='Retail'">nostrip.def</ModuleDefinitionFile>
+
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemGroup />
+</Project>
