@@ -37,6 +37,13 @@ public:
 	static TCPSocket BindServerSocket( bool preferIPv6, bool loopback, uint16_t port );
 	static TCPSocket WaitForNewClientConnection( TCPSocket& listeningServerSocket );
 
+	// Checks if an operation would be non-blocking
+	// WARNING: Result may be invalidated by a related socket operation on
+	//  another thread
+	bool PeekAcceptNewClientNonBlocking();
+	bool PeekSendNonBlocking();
+	bool PeekReceiveNonBlocking();
+
 	// NOTE: Intention is for buffer to be cleared and re-used by caller
 	bool SendBuffer( Buffer const& buffer );
 
@@ -56,6 +63,9 @@ private:
 	shim::SOCKET GetMutableSocketHandle();
 	void InitSocketHandle( shim::SOCKET socket );
 	void ClearSocketHandle();
+
+	bool PeekWriteNonBlocking();
+	bool PeekReadNonBlocking();
 
 	void ShutdownSocketIfValid();
 	void CloseSocketIfValid();

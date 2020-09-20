@@ -849,10 +849,14 @@ void TCPTest()
 	// Start listening
 	SharedPtr<TCPSocket> const serverSocket = DefaultCreator<TCPSocket>::Create(
 		TCPSocket::BindServerSocket( true, true, 8271 ) );
+	RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() == false );
 
 	// Connect
 	SharedPtr<TCPSocket> const clientConnection = DefaultCreator<TCPSocket>::Create(
 		TCPSocket::ConnectClientSocket( "localhost", 8271 ) );
+	RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() );
+	RF_ASSERT( clientConnection->PeekSendNonBlocking() ); // Unclear if valid on all platforms
+	RF_ASSERT( clientConnection->PeekReceiveNonBlocking() == false );
 
 	// Accept and stop listening
 	SharedPtr<TCPSocket> serverConnection = {};
@@ -868,17 +872,23 @@ void TCPTest()
 
 		// Accept the client
 		{
+			RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() );
+
 			AcceptTask acceptTask( accept );
 			PendingSocket pendingClient = acceptTask.get_future();
 			rftl::thread acceptThread( rftl::move( acceptTask ), serverSocket );
 			serverConnection = pendingClient.get();
 			RF_ASSERT( serverConnection->IsValid() );
 			acceptThread.join();
+
+			RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() == false );
 		}
 
 		// Try to accept a new client, but fail the blocking call by shutting down
 		//  the listener socket mid-accept
 		{
+			RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() == false );
+
 			AcceptTask acceptTask( accept );
 			PendingSocket pendingClient = acceptTask.get_future();
 			rftl::thread acceptThread( rftl::move( acceptTask ), serverSocket );
@@ -891,6 +901,8 @@ void TCPTest()
 			SharedPtr<TCPSocket> const failedConnection = pendingClient.get();
 			RF_ASSERT( failedConnection->IsValid() == false );
 			acceptThread.join();
+
+			RF_ASSERT( serverSocket->PeekAcceptNewClientNonBlocking() == false );
 		}
 	}
 
@@ -913,8 +925,13 @@ void TCPTest()
 			return retVal;
 		};
 
-		// Successfully send data
+		// Successfully send data (blocking receive)
 		{
+			RF_ASSERT( clientConnection->PeekSendNonBlocking() );
+			RF_ASSERT( clientConnection->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( serverConnection->PeekSendNonBlocking() );
+			RF_ASSERT( serverConnection->PeekReceiveNonBlocking() == false );
+
 			// Receive on client
 			ReceiveTask receiveTask( receive );
 			PendingReceive pendingReceive = receiveTask.get_future();
@@ -932,6 +949,45 @@ void TCPTest()
 			bool const sendSuccess = pendingSend.get();
 			RF_ASSERT( sendSuccess );
 			sendThread.join();
+
+			RF_ASSERT( clientConnection->PeekSendNonBlocking() );
+			RF_ASSERT( clientConnection->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( serverConnection->PeekSendNonBlocking() );
+			RF_ASSERT( serverConnection->PeekReceiveNonBlocking() == false );
+		}
+
+		// Successfully send data (non-blocking receive)
+		{
+			RF_ASSERT( clientConnection->PeekSendNonBlocking() );
+			RF_ASSERT( clientConnection->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( serverConnection->PeekSendNonBlocking() );
+			RF_ASSERT( serverConnection->PeekReceiveNonBlocking() == false );
+
+			// Send from server
+			SendTask sendTask( send );
+			PendingSend pendingSend = sendTask.get_future();
+			rftl::thread sendThread( rftl::move( sendTask ), serverConnection, TCPSocket::Buffer{ 7 } );
+
+			bool const sendSuccess = pendingSend.get();
+			RF_ASSERT( sendSuccess );
+			sendThread.join();
+
+			// Unlike the blocking case, the data should already be available
+			RF_ASSERT( clientConnection->PeekReceiveNonBlocking() );
+
+			// Receive on client
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), clientConnection );
+
+			TCPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data == TCPSocket::Buffer{ 7 } );
+			receiveThread.join();
+
+			RF_ASSERT( clientConnection->PeekSendNonBlocking() );
+			RF_ASSERT( clientConnection->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( serverConnection->PeekSendNonBlocking() );
+			RF_ASSERT( serverConnection->PeekReceiveNonBlocking() == false );
 		}
 
 		// Fail on connection close

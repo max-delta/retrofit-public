@@ -350,6 +350,30 @@ TCPSocket TCPSocket::WaitForNewClientConnection( TCPSocket& listeningServerSocke
 
 
 
+bool TCPSocket::PeekAcceptNewClientNonBlocking()
+{
+	RF_ASSERT( IsListener() );
+	return PeekReadNonBlocking();
+}
+
+
+
+bool TCPSocket::PeekSendNonBlocking()
+{
+	RF_ASSERT( IsListener() == false );
+	return PeekWriteNonBlocking();
+}
+
+
+
+bool TCPSocket::PeekReceiveNonBlocking()
+{
+	RF_ASSERT( IsListener() == false );
+	return PeekReadNonBlocking();
+}
+
+
+
 bool TCPSocket::SendBuffer( Buffer const& buffer )
 {
 	// HACK: Treating buffer as non-const, assumed to be yet another design
@@ -458,7 +482,7 @@ bool TCPSocket::MakeNonBlocking()
 {
 	win32::u_long one = 1;
 	static constexpr uint32_t kFIONBIO = _IOW( 'f', 126, win32::u_long );
-	int const nonblockingResult = win32::ioctlsocket( GetMutableSocketHandle(), math::integer_cast<long>( kFIONBIO ), &one );
+	int const nonblockingResult = win32::ioctlsocket( GetMutableSocketHandle(), static_cast<long>( kFIONBIO ), &one );
 	if( nonblockingResult != 0 )
 	{
 		RF_ASSERT( nonblockingResult == SOCKET_ERROR );
@@ -495,6 +519,44 @@ void TCPSocket::InitSocketHandle( shim::SOCKET socket )
 void TCPSocket::ClearSocketHandle()
 {
 	mSocket.store( shim::kINVALID_SOCKET, rftl::memory_order::memory_order_release );
+}
+
+
+
+bool TCPSocket::PeekWriteNonBlocking()
+{
+	win32::fd_set socketSet = {};
+	socketSet.fd_count = 1;
+	socketSet.fd_array[0] = mSocket.load( rftl::memory_order::memory_order_acquire );
+
+	win32::timeval const timeout = { 0, 0 };
+	int const selectResult = win32::select(
+		0, // Unused legacy param
+		nullptr, // Read
+		&socketSet, // Write
+		nullptr, // Error state
+		&timeout );
+
+	return selectResult == 1;
+}
+
+
+
+bool TCPSocket::PeekReadNonBlocking()
+{
+	win32::fd_set socketSet = {};
+	socketSet.fd_count = 1;
+	socketSet.fd_array[0] = mSocket.load( rftl::memory_order::memory_order_acquire );
+
+	win32::timeval const timeout = { 0, 0 };
+	int const selectResult = win32::select(
+		0, // Unused legacy param
+		&socketSet, // Read
+		nullptr, // Write
+		nullptr, // Error state
+		&timeout );
+
+	return selectResult == 1;
 }
 
 
