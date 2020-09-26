@@ -34,6 +34,7 @@
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TCPBufferStream.h" />
     <ClInclude Include="TCPSocket.h" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TCPBufferStream.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
     <ClCompile Include="WSALifetime.cpp" />
   </ItemGroup>

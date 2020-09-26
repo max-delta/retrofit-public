@@ -4,11 +4,13 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="TCPSocket.h" />
+    <ClInclude Include="TCPBufferStream.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="TCPSocket.cpp" />
     <ClCompile Include="WSALifetime.cpp" />
+    <ClCompile Include="TCPBufferStream.cpp" />
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 namespace RF::platform {
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Implementations are expected to be thread-safe
 class IncomingBufferStream
 {
 	//
@@ -21,17 +22,15 @@ public:
 	// NOTE: Size may increase between this call and an attempt to fetch
 	// NOTE: Size will never decrease between this call and an attempt to fetch
 	// NOTE: Size does not necessarily represent the total size of all buffers
+	// WARNING: Results are invalidated by fetches on other threads
 	virtual size_t PeekNextBufferSize() const = 0;
 
-	// Destructively read the next buffer, optionally with a size restriction
+	// Destructively read the next buffer
 	// NOTE: If the peeked size was zero, a fetch may be blocking
 	// NOTE: If the peeked size was non-zero, a fetch will not be blocking
 	// NOTE: If the fetched size is zero after a non-zero peek, this indicates
 	//  an error has occurred
-	// NOTE: Implementations may not be able to provide a buffer smaller than
-	//  the max requested size, and will treat that as an error
 	virtual Buffer FetchNextBuffer() = 0;
-	virtual Buffer FetchNextBuffer( size_t maxBufferSize ) = 0;
 
 	// When true, the stream's source has been unrecoverably terminated, and no
 	//  additional buffers will become available once peek returns zero
@@ -41,6 +40,7 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Implementations are expected to be thread-safe
 class OutgoingBufferStream
 {
 	//
