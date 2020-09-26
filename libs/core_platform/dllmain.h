@@ -3,7 +3,7 @@
 
 #ifdef RF_PLATFORM_WINDOWS
 
-#include "core_platform/win_shim.h"
+#include "core_platform/shim/win_shim.h"
 #define RF_EMPTY_DLLMAIN() \
 	shim::BOOL __stdcall DllMain( shim::HMODULE hModule, \
 		shim::DWORD ul_reason_for_call, \

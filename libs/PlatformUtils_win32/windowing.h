@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "core_platform/win_shim.h"
+#include "core_platform/shim/win_shim.h"
 
 #include "rftl/cstdint"
 

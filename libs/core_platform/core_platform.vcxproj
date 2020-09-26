@@ -30,26 +30,27 @@
   <ItemGroup>
     <ClInclude Include="BufferStream.h" />
     <ClInclude Include="dllmain.h" />
-    <ClInclude Include="gdi_shim.h" />
     <ClInclude Include="gl_inc.h" />
     <ClInclude Include="IncomingBufferStitcher.h" />
     <ClInclude Include="MemoryRegion.h" />
     <ClInclude Include="rpc_inc.h" />
+    <ClInclude Include="shim\gdi_shim.h" />
+    <ClInclude Include="shim\stdafx.h" />
+    <ClInclude Include="shim\winuser_shim.h" />
+    <ClInclude Include="shim\win_shim.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="uuid.h" />
     <ClInclude Include="windows_inc.h" />
     <ClInclude Include="winsock2_inc.h" />
-    <ClInclude Include="winuser_shim.h" />
-    <ClInclude Include="win_shim.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="gdi_shim.cpp" />
     <ClCompile Include="IncomingBufferStitcher.cpp" />
+    <ClCompile Include="shim\gdi_shim.cpp" />
+    <ClCompile Include="shim\win_shim.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="uuid.cpp" />
-    <ClCompile Include="win_shim.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

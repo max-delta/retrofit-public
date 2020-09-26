@@ -4,7 +4,7 @@
 #include "core/macros.h"
 #include "core_math/math_casts.h"
 
-#include "core_platform/gdi_shim.h"
+#include "core_platform/shim/gdi_shim.h"
 #include "core_platform/gl_inc.h"
 #pragma comment( lib, "opengl32.lib" )
 

@@ -17,7 +17,7 @@
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 
-#include "core_platform/winuser_shim.h"
+#include "core_platform/shim/winuser_shim.h"
 #include "core/ptr/default_creator.h"
 
 

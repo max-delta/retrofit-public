@@ -4,9 +4,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="windows_inc.h" />
     <ClInclude Include="gl_inc.h" />
-    <ClInclude Include="win_shim.h" />
-    <ClInclude Include="gdi_shim.h" />
-    <ClInclude Include="winuser_shim.h" />
     <ClInclude Include="uuid.h" />
     <ClInclude Include="rpc_inc.h" />
     <ClInclude Include="dllmain.h" />
@@ -14,12 +11,33 @@
     <ClInclude Include="BufferStream.h" />
     <ClInclude Include="winsock2_inc.h" />
     <ClInclude Include="IncomingBufferStitcher.h" />
+    <ClInclude Include="shim\gdi_shim.h">
+      <Filter>shim</Filter>
+    </ClInclude>
+    <ClInclude Include="shim\win_shim.h">
+      <Filter>shim</Filter>
+    </ClInclude>
+    <ClInclude Include="shim\winuser_shim.h">
+      <Filter>shim</Filter>
+    </ClInclude>
+    <ClInclude Include="shim\stdafx.h">
+      <Filter>shim</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="win_shim.cpp" />
-    <ClCompile Include="gdi_shim.cpp" />
     <ClCompile Include="uuid.cpp" />
     <ClCompile Include="IncomingBufferStitcher.cpp" />
+    <ClCompile Include="shim\gdi_shim.cpp">
+      <Filter>shim</Filter>
+    </ClCompile>
+    <ClCompile Include="shim\win_shim.cpp">
+      <Filter>shim</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shim">
+      <UniqueIdentifier>{d62befaa-7a06-4176-93d3-13d88a5d9709}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

@@ -5,7 +5,7 @@
 
 #include "core_math/AABB4.h"
 #include "core_math/Color3f.h"
-#include "core_platform/win_shim.h"
+#include "core_platform/shim/win_shim.h"
 
 #include "rftl/array"
 #include "rftl/extension/byte_view.h"

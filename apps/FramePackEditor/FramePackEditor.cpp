@@ -18,7 +18,7 @@
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 
-#include "core_platform/winuser_shim.h"
+#include "core_platform/shim/winuser_shim.h"
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/static_vector.h"

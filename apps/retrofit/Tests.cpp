@@ -38,7 +38,7 @@
 #include "PlatformNetwork_win32/TCPSocket.h"
 
 #include "core_platform/uuid.h"
-#include "core_platform/winuser_shim.h"
+#include "core_platform/shim/winuser_shim.h"
 #include "core_rftype/stl_extensions/vector.h"
 #include "core_rftype/stl_extensions/string.h"
 #include "core/ptr/default_creator.h"

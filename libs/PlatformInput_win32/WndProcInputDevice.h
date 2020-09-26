@@ -3,7 +3,7 @@
 
 #include "core_input/InputDevice.h"
 
-#include "core_platform/win_shim.h"
+#include "core_platform/shim/win_shim.h"
 
 #include "rftl/limits"
 #include "rftl/deque"
