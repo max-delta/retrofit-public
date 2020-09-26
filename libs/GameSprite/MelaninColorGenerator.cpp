@@ -150,7 +150,7 @@ sprite::Bitmap MelaninColorGenerator::GenerateComplexPallete( size_t toneCountSc
 	//  differences in bases while supressing melanin
 	static constexpr float kMinAlbMel = -1.f;
 	static constexpr float kMaxAlbMel = -.75f;
-	std::array<sprite::Bitmap, 4> const albinoAlternatePalletes = {
+	rftl::array<sprite::Bitmap, 4> const albinoAlternatePalletes = {
 		GeneratePallete( 0.0f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
 		GeneratePallete( .25f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
 		GeneratePallete( .75f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
