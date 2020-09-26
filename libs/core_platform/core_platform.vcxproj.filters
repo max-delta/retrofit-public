@@ -13,11 +13,13 @@
     <ClInclude Include="MemoryRegion.h" />
     <ClInclude Include="BufferStream.h" />
     <ClInclude Include="winsock2_inc.h" />
+    <ClInclude Include="IncomingBufferStitcher.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="win_shim.cpp" />
     <ClCompile Include="gdi_shim.cpp" />
     <ClCompile Include="uuid.cpp" />
+    <ClCompile Include="IncomingBufferStitcher.cpp" />
   </ItemGroup>
 </Project>

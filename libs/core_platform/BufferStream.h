@@ -28,8 +28,7 @@ public:
 	// Destructively read the next buffer
 	// NOTE: If the peeked size was zero, a fetch may be blocking
 	// NOTE: If the peeked size was non-zero, a fetch will not be blocking
-	// NOTE: If the fetched size is zero after a non-zero peek, this indicates
-	//  an error has occurred
+	// NOTE: If the fetched size is zero, this indicates an error has occurred
 	virtual Buffer FetchNextBuffer() = 0;
 
 	// When true, the stream's source has been unrecoverably terminated, and no
