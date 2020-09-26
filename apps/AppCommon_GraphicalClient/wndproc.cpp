@@ -7,7 +7,7 @@
 
 #include "PPU/PPUController.h"
 
-#include "core_platform/windows_inc.h"
+#include "core_platform/inc/windows_inc.h"
 #include "core_math/math_casts.h"
 #include "core/ptr/unique_ptr.h"
 #include "core/macros.h"

@@ -30,18 +30,19 @@
   <ItemGroup>
     <ClInclude Include="BufferStream.h" />
     <ClInclude Include="dllmain.h" />
-    <ClInclude Include="gl_inc.h" />
     <ClInclude Include="IncomingBufferStitcher.h" />
+    <ClInclude Include="inc\gl_inc.h" />
+    <ClInclude Include="inc\rpc_inc.h" />
+    <ClInclude Include="inc\stdafx.h" />
+    <ClInclude Include="inc\windows_inc.h" />
+    <ClInclude Include="inc\winsock2_inc.h" />
     <ClInclude Include="MemoryRegion.h" />
-    <ClInclude Include="rpc_inc.h" />
     <ClInclude Include="shim\gdi_shim.h" />
     <ClInclude Include="shim\stdafx.h" />
     <ClInclude Include="shim\winuser_shim.h" />
     <ClInclude Include="shim\win_shim.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="uuid.h" />
-    <ClInclude Include="windows_inc.h" />
-    <ClInclude Include="winsock2_inc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IncomingBufferStitcher.cpp" />

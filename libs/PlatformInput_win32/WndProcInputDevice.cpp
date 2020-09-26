@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "WndProcInputDevice.h"
 
-#include "core_platform/windows_inc.h"
+#include "core_platform/inc/windows_inc.h"
 #include "core/ptr/default_creator.h"
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"

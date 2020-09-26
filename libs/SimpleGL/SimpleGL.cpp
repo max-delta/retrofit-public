@@ -5,7 +5,7 @@
 #include "core_math/math_casts.h"
 
 #include "core_platform/shim/gdi_shim.h"
-#include "core_platform/gl_inc.h"
+#include "core_platform/inc/gl_inc.h"
 #pragma comment( lib, "opengl32.lib" )
 
 #include "stb_image/stb_image.h"

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "core_platform/windows_inc.h"
+#include "core_platform/inc/windows_inc.h"
 #include "win_shim.h"
 
 shim::HDC shim::GetDC( HWND hWnd )

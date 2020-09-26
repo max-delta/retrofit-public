@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "core_platform/winsock2_inc.h"
+#include "core_platform/inc/winsock2_inc.h"
 #pragma comment( lib, "Ws2_32.lib" )
 
 

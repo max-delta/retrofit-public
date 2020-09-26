@@ -4,7 +4,7 @@
 #include "Logging/Logging.h"
 
 #include "core_platform/uuid.h"
-#include "core_platform/rpc_inc.h"
+#include "core_platform/inc/rpc_inc.h"
 #include "core_math/math_bytes.h"
 #include "core/compiler.h"
 #include "core/macros.h"
