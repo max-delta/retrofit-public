@@ -180,6 +180,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		buildText.emplace_back( RF_BUILDSTAMP_TYPE );
 		buildText.emplace_back( RF_BUILDSTAMP_VERSION );
 		buildText.emplace_back( RF_BUILDSTAMP_SOURCE );
+		buildText.emplace_back( compiler::kToolDesc );
 		uint8_t const buildFontHeight = fontReg.SelectBestFont( ui::font::MinSize, 1 ).mFontHeight;
 		constexpr gfx::PPUCoordElem kBuildEntryHitboxWidth = 80;
 		constexpr gfx::PPUCoordElem kBuildEntryPadding = 1;

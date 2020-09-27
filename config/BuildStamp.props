@@ -6,7 +6,7 @@
 			<!--The overall type of the build, which might not be obvious from
 				just inspecting the assembly-->
 			<PreprocessorDefinitions Condition="'$(RFBuildStampType)'!=''">RF_BUILDSTAMP_TYPE="$(RFBuildStampType)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-			<PreprocessorDefinitions Condition="'$(RFBuildStampType)'==''">RF_BUILDSTAMP_TYPE="$(RFConfig)$(RFCompiler)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(RFBuildStampType)'==''">RF_BUILDSTAMP_TYPE="$(RFConfig)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
 			<!--The version, which will likely only be stamped for releases-->
 			<PreprocessorDefinitions Condition="'$(RFBuildStampVersion)'!=''">RF_BUILDSTAMP_VERSION="$(RFBuildStampVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>

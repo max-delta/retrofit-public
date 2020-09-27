@@ -71,6 +71,9 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_PLATFORM_MSVC
 	static constexpr Compiler kCompiler = Compiler::MSVC;
 
+	#define RF_TOOL_DESC "MSVC_" RF_STRINGIFY( _MSC_FULL_VER )
+	static constexpr char const kToolDesc[] = RF_TOOL_DESC;
+
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
 
@@ -116,6 +119,9 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#ifndef _MSC_VER
 		#error Normal clang not supported yet
 	#endif
+
+	#define RF_TOOL_DESC "ClangCL_" __clang_version__ RF_STRINGIFY( _MSC_FULL_VER )
+	static constexpr char const kToolDesc[] = RF_TOOL_DESC;
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
