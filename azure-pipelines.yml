@@ -116,6 +116,7 @@ variables:
   solution: 'retrofit.sln'
   buildTimeFormat: '{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}' # Can't use condensed .NET syntax?
   buildStartTime: $[format(variables.buildTimeFormat, pipeline.startTime)]
+  commonBuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime) /p:RFBuildStampSource=$(Agent.MachineName)'
 
 steps:
 
@@ -138,7 +139,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime) /p:RFBuildStampSource=$(Agent.MachineName)'
+    msbuildArgs: '$(commonBuildArgs)'
 
 #
 # Publish
@@ -182,4 +183,4 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:RFBuildMachine=Azure /p:RFCodeAnalysis=true'
+    msbuildArgs: '$(commonBuildArgs) /p:RFCodeAnalysis=true'
