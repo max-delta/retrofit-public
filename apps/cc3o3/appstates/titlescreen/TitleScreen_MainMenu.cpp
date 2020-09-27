@@ -176,10 +176,10 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 
 		// Build stamp floater in top right
 		rftl::vector<rftl::string> buildText;
-		buildText.emplace_back( RF_BUILDSTAMP_TIME );
-		buildText.emplace_back( RF_BUILDSTAMP_TYPE );
-		buildText.emplace_back( RF_BUILDSTAMP_VERSION );
-		buildText.emplace_back( RF_BUILDSTAMP_SOURCE );
+		buildText.emplace_back( buildstamp::kTime );
+		buildText.emplace_back( buildstamp::kType );
+		buildText.emplace_back( buildstamp::kVersion );
+		buildText.emplace_back( buildstamp::kSource );
 		buildText.emplace_back( compiler::kToolDesc );
 		uint8_t const buildFontHeight = fontReg.SelectBestFont( ui::font::MinSize, 1 ).mFontHeight;
 		constexpr gfx::PPUCoordElem kBuildEntryHitboxWidth = 80;
@@ -222,14 +222,14 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::TextLabel>::Create() );
 		url->SetJustification( ui::Justification::BottomRight );
 		url->SetFont( ui::font::MinSize );
-		#if RF_IS_ALLOWED( RF_CONFIG_INTERNAL_BUILD_NOTICE )
+#if RF_IS_ALLOWED( RF_CONFIG_INTERNAL_BUILD_NOTICE )
 		url->SetText( "INTERNAL USE ONLY" );
 		url->SetColor( math::Color3f::kRed );
 		url->SetBorder( true );
-		#else
+#else
 		url->SetText( "http://TODO" );
 		url->SetColor( math::Color3f::kBlack );
-		#endif
+#endif
 	}
 }
 
