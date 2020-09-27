@@ -11,8 +11,9 @@
     <!--All on by default, then manipulated by StaticAnalysis.h-->
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 
-    <!-- Sadly, code analysis hangs the compiler in VS2019 with the v142 toolset (Last checked: v16.3.10) -->
-    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <!-- Code analysis is still rocky, so it's only on for special builds -->
+    <RunCodeAnalysis Condition="'$(RFCodeAnalysis)'=='true'">true</RunCodeAnalysis>
+    <RunCodeAnalysis Condition="'$(RFCodeAnalysis)'!='true'">false</RunCodeAnalysis>
     <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
     <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
 
