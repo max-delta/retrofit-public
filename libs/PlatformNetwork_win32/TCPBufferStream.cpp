@@ -82,7 +82,7 @@ TCPIncomingBufferStream::Buffer TCPIncomingBufferStream::FetchNextBuffer()
 
 	if( mPrefetchBuffer.empty() )
 	{
-		Hardfetch( prefetchLock, kDefaultPrefetchSize );
+		Hardfetch( prefetchLock, mMaxPrefetchSize );
 	}
 	return rftl::move( mPrefetchBuffer );
 }
@@ -115,7 +115,7 @@ void TCPIncomingBufferStream::Prefetch( WriterLock const& lock ) const
 		return;
 	}
 
-	const_cast<TCPIncomingBufferStream*>( this )->Hardfetch( lock, kDefaultPrefetchSize );
+	const_cast<TCPIncomingBufferStream*>( this )->Hardfetch( lock, mMaxPrefetchSize );
 }
 
 
