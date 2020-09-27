@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<!--The overall type of the build, which might not be obvious from
+				just inspecting the assembly-->
+			<PreprocessorDefinitions Condition="'$(RFBuildStampType)'!=''">RF_BUILDSTAMP_TYPE="$(RFBuildStampType)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(RFBuildStampType)'==''">RF_BUILDSTAMP_TYPE="$(RFConfig)$(RFCompiler)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+			<!--The version, which will likely only be stamped for releases-->
+			<PreprocessorDefinitions Condition="'$(RFBuildStampVersion)'!=''">RF_BUILDSTAMP_VERSION="$(RFBuildStampVersion)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+			<!--The time, which should be preferred to come from build machinery,
+				and not from the C preprocessor-->
+			<PreprocessorDefinitions Condition="'$(RFBuildStampTime)'!=''">RF_BUILDSTAMP_TIME="$(RFBuildStampTime)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+			<!--The source, for tracking down faulty build machines-->
+			<PreprocessorDefinitions Condition="'$(RFBuildStampSource)'!=''">RF_BUILDSTAMP_SOURCE="$(RFBuildStampSource)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+			<!--This handles any missing values or other stamp-related helpers-->
+			<ForcedIncludeFiles>$(RFRootDir)config\BuildStamp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+		</ClCompile>
+
+		<Link />
+	</ItemDefinitionGroup>
+
+</Project>
