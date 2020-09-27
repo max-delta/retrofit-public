@@ -14,3 +14,7 @@
 #ifndef RF_BUILDSTAMP_SOURCE
 	#define RF_BUILDSTAMP_SOURCE "devpc"
 #endif
+
+
+// This semicolon is here because clang-format is a pile of shit
+;
