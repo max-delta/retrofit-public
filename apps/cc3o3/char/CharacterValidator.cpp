@@ -221,10 +221,13 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 			uint16_t notAChar; // C++ I/O is stupid
 			ss >> notAChar;
 			val = math::integer_cast<uint8_t>( notAChar );
+			RF_CLANG_PUSH();
+			RF_CLANG_IGNORE( "-Wtautological-unsigned-zero-compare" ); // Min value may be zero
 			if( val < Stats::kMinStatValue || val > Stats::kMaxStatValue )
 			{
 				return false;
 			}
+			RF_CLANG_POP();
 			return true;
 		};
 

@@ -109,6 +109,14 @@
         -Werror=unused-variable
         %(AdditionalOptions)
       </AdditionalOptions>
+
+      <!--Don't care about intentionally unreachable code, and there isn't a
+        good way to ditinguish from accidentally unreachable-->
+      <AdditionalOptions>
+        -Wno-unreachable-code
+        %(AdditionalOptions)
+      </AdditionalOptions>
+
     </ClCompile>
 
     <Link>

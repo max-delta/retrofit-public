@@ -455,6 +455,7 @@ bool TCPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
 
 void TCPSocket::Shutdown()
 {
+	RF_TODO_ANNOTATION( "Implement a cleaner/safer way to do this" );
 	if constexpr( false )
 	{
 		// See internal comments, this doesn't work
