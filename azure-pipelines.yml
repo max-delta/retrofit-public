@@ -136,7 +136,7 @@ steps:
     solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    msbuildArgs: '/p:RFBuildMachine=Azure'
+    msbuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampSource=$(Agent.MachineName)'
 
 #
 # Publish
