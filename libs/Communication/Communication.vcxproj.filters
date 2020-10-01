@@ -3,9 +3,16 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ChannelSpec.cpp" />
+    <ClCompile Include="LogicalEndpoint.cpp" />
+    <ClCompile Include="EndpointManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="CommunicationFwd.h" />
+    <ClInclude Include="ChannelSpec.h" />
+    <ClInclude Include="LogicalEndpoint.h" />
+    <ClInclude Include="EndpointManager.h" />
   </ItemGroup>
 </Project>
