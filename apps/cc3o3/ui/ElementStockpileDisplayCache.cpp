@@ -6,7 +6,7 @@
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
-#include "rftl/algorithm"
+#include "rftl/extension/algorithms.h"
 
 
 namespace RF::cc::ui {
@@ -45,7 +45,7 @@ void ElementStockpileDisplayCache::UpdateFromCompany( state::ObjectRef const& co
 		};
 		rftl::stable_sort( sortedElements.begin(), sortedElements.end(), sortLevel );
 		rftl::stable_sort( sortedElements.begin(), sortedElements.end(), sortInnate );
-		sortedElements.erase( rftl::remove_if( sortedElements.begin(), sortedElements.end(), filterNone ), sortedElements.end() );
+		rftl::erase_if( sortedElements, filterNone );
 	}
 
 	size_t const numSlots = sortedElements.size();
