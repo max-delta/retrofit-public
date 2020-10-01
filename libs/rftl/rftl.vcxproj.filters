@@ -70,6 +70,9 @@
     <ClInclude Include="extension\void_traits.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\algorithms.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="patch\preinclude.inl">
@@ -99,5 +102,8 @@
       <Filter>extension</Filter>
     </None>
     <None Include="cctype" />
+    <None Include="extension\algorithms.inl">
+      <Filter>extension</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -38,6 +38,7 @@
     <ClInclude Include="cstdlib" />
     <ClInclude Include="cstring" />
     <ClInclude Include="deque" />
+    <ClInclude Include="extension\algorithms.h" />
     <ClInclude Include="extension\byte_view.h" />
     <ClInclude Include="extension\immutable_string.h" />
     <ClInclude Include="extension\integer_literals.h" />
@@ -72,6 +73,7 @@
   <ItemGroup>
     <None Include="algorithm" />
     <None Include="cctype" />
+    <None Include="extension\algorithms.inl" />
     <None Include="extension\byte_view.inl" />
     <None Include="extension\static_string.inl" />
     <None Include="extension\static_vector.inl" />
