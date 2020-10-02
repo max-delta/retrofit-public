@@ -32,6 +32,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ConnectionMananger.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
@@ -39,6 +40,7 @@
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ConnectionMananger.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
