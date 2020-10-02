@@ -202,6 +202,9 @@
     <ClCompile Include="state\components\Combo.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="appstates\devtest\DevTestLobby.cpp">
+      <Filter>appstates\devtest</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -539,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="state\components\Combo.h">
       <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="appstates\devtest\DevTestLobby.h">
+      <Filter>appstates\devtest</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

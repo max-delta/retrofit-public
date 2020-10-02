@@ -272,7 +272,7 @@ void TitleScreen_MainMenu::OnTick( AppStateTickContext& context )
 					}
 					else if( currentFocusContainerID == uiManager.GetContainerID( details::kMultiplayerTag ) )
 					{
-						RF_TODO_BREAK_MSG( "Multiplayer" );
+						RequestGlobalDeferredStateChange( id::DevTestLobby );
 					}
 					else if( currentFocusContainerID == uiManager.GetContainerID( details::kCharacterCreatorTag ) )
 					{

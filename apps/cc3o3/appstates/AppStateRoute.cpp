@@ -14,6 +14,7 @@ enum class Mode : uint8_t
 	// Various developer tests
 	DevTestCombatCharts,
 	DevTestGridCharts,
+	DevTestLobby,
 	DevTestRollback,
 
 	// Directly to options menu on the title screen
@@ -56,6 +57,10 @@ AppStateID GetStateAfterInitialLoad()
 	if( fasttrack::sMode == fasttrack::Mode::DevTestGridCharts )
 	{
 		return id::DevTestGridCharts;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::DevTestLobby )
+	{
+		return id::DevTestLobby;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::DevTestRollback )
 	{
