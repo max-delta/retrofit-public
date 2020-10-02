@@ -31,6 +31,7 @@
     <ClInclude Include="PerfClock.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="CommonClock.h" />
+    <ClInclude Include="SteadyClock.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
