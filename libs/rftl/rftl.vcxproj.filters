@@ -105,5 +105,6 @@
     <None Include="extension\algorithms.inl">
       <Filter>extension</Filter>
     </None>
+    <None Include="condition_variable" />
   </ItemGroup>
 </Project>

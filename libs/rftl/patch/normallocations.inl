@@ -6,6 +6,7 @@
 #define RFTL_BITSET <bitset>
 #define RFTL_CCTYPE <cctype>
 #define RFTL_CHRONO <chrono>
+#define RFTL_CONDITION_VARIABLE <condition_variable>
 #define RFTL_CSTDARG <cstdarg>
 #define RFTL_CSTDDEF <cstddef>
 #define RFTL_CSTDINT <cstdint>

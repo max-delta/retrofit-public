@@ -73,6 +73,7 @@
   <ItemGroup>
     <None Include="algorithm" />
     <None Include="cctype" />
+    <None Include="condition_variable" />
     <None Include="extension\algorithms.inl" />
     <None Include="extension\byte_view.inl" />
     <None Include="extension\static_string.inl" />
