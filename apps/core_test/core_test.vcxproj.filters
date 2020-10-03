@@ -55,6 +55,9 @@
     <ClCompile Include="literal.cpp" />
     <ClCompile Include="static_string.cpp" />
     <ClCompile Include="byte_view.cpp" />
+    <ClCompile Include="thread_signal.cpp" />
+    <ClCompile Include="thread_async.cpp" />
+    <ClCompile Include="thread_sequential_work_pump.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />

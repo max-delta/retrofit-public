@@ -79,6 +79,9 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="thread_async.cpp" />
+    <ClCompile Include="thread_sequential_work_pump.cpp" />
+    <ClCompile Include="thread_signal.cpp" />
     <ClCompile Include="typelist.cpp" />
     <ClCompile Include="ptr_uniqueptr.cpp" />
     <ClCompile Include="unicode_bufferconvert.cpp" />
@@ -94,6 +97,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
       <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_thread\core_thread.vcxproj">
+      <Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
       <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>

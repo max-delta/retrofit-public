@@ -28,12 +28,19 @@
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <ClInclude Include="AsyncThread.h" />
+    <ClInclude Include="SequentialWorkPump.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="ThreadSignal.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AsyncThread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SequentialWorkPump.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
