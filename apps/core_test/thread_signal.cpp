@@ -2,9 +2,9 @@
 
 #include "core_thread/ThreadSignal.h"
 
+#include "rftl/atomic"
 #include "rftl/thread"
 #include "rftl/functional"
-#include "rftl/chrono"
 
 
 namespace RF::thread {
@@ -12,20 +12,31 @@ namespace RF::thread {
 
 TEST( ThreadSignal, Basic )
 {
-	ThreadSignal outgoingSignal;
-	ThreadSignal incomingSignal;
+	ThreadSignal signal;
+	rftl::atomic<bool> ready = false;
 
-	static constexpr auto wait = []( ThreadSignal& out, ThreadSignal& in ) -> void //
+	static constexpr auto wait = []( rftl::atomic<bool>& ready, ThreadSignal& signal ) -> void //
 	{
-		in.Signal();
-		out.Wait();
+		ready.store( true, rftl::memory_order::memory_order_release );
+		signal.Wait();
 	};
 
 	rftl::chrono::steady_clock::time_point const startTime = rftl::chrono::steady_clock::now();
 	{
-		rftl::thread thread{ wait, rftl::ref( outgoingSignal ), rftl::ref( incomingSignal ) };
-		incomingSignal.Wait();
-		outgoingSignal.Signal();
+		rftl::thread thread{ wait, rftl::ref( ready ), rftl::ref( signal ) };
+
+		// Once ready, the wait should happen very soon after, barring some
+		//  truly absurd scheduling behavior
+		// NOTE: In such an edge-case, the signal will be sent and dropped
+		//  before the wait has begun, and the wait will be left blocking on
+		//  the thread with no further signals coming
+		while( ready.load( rftl::memory_order::memory_order_acquire ) == false )
+		{
+			rftl::this_thread::yield();
+		}
+		rftl::this_thread::sleep_for( rftl::chrono::milliseconds( 10 ) );
+		signal.Signal();
+
 		thread.join();
 	}
 	rftl::chrono::steady_clock::time_point const endTime = rftl::chrono::steady_clock::now();
