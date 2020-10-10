@@ -5,6 +5,8 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="TCPSocket.h" />
     <ClInclude Include="TCPBufferStream.h" />
+    <ClInclude Include="UDPSocket.h" />
+    <ClInclude Include="AddressHelpers.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -12,5 +14,7 @@
     <ClCompile Include="TCPSocket.cpp" />
     <ClCompile Include="WSALifetime.cpp" />
     <ClCompile Include="TCPBufferStream.cpp" />
+    <ClCompile Include="UDPSocket.cpp" />
+    <ClCompile Include="AddressHelpers.cpp" />
   </ItemGroup>
 </Project>

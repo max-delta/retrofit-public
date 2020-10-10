@@ -1,137 +1,16 @@
 #include "stdafx.h"
 #include "TCPSocket.h"
 
+#include "PlatformNetwork_win32/AddressHelpers.h"
+
 #include "Logging/Logging.h"
 
 #include "core_platform/inc/winsock2_inc.h"
 
 #include "core_math/math_casts.h"
-#include "core_math/math_bytes.h"
-
-#include "rftl/vector"
 
 
 namespace RF::platform::network {
-///////////////////////////////////////////////////////////////////////////////
-namespace details {
-
-// Addresses have pointer graphs that need free-ing
-struct AddressList
-{
-	RF_NO_COPY( AddressList );
-
-public:
-	AddressList() = default;
-	AddressList( AddressList&& rhs )
-		: RF_MOVE_CONSTRUCT( mList )
-		, RF_MOVE_CONSTRUCT( mHead )
-	{
-		rhs.mHead = nullptr;
-	}
-
-	~AddressList()
-	{
-		if( mHead != nullptr )
-		{
-			win32::freeaddrinfo( mHead );
-			mHead = nullptr;
-		}
-	}
-
-public:
-	rftl::vector<win32::addrinfo> mList;
-
-private:
-	friend AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* hostnameHint, uint16_t portHint );
-	win32::addrinfo* mHead = nullptr;
-};
-
-
-
-void SortSuggestions( AddressList& suggestions )
-{
-	// No known reason to sort currently, using OS order
-}
-
-
-
-AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* hostnameHint, uint16_t portHint )
-{
-	AddressList retVal = {};
-
-	// Lookup
-	rftl::string const portHintAsString = rftl::to_string( portHint );
-	int const suggestionResult = win32::getaddrinfo(
-		hostnameHint,
-		portHintAsString.c_str(),
-		&hints,
-		&retVal.mHead );
-	if( suggestionResult != 0 )
-	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to get suggested addresses: ret %i", suggestionResult );
-		return {};
-	}
-
-	// Store
-	win32::addrinfo const* iter = retVal.mHead;
-	while( iter != nullptr )
-	{
-		win32::addrinfo& back = retVal.mList.emplace_back( *iter );
-		RF_ASSERT( back.ai_family == AF_INET || back.ai_family == AF_INET6 );
-		back.ai_next = nullptr;
-		iter = iter->ai_next;
-	}
-
-	// Sort
-	SortSuggestions( retVal );
-
-	return retVal;
-}
-
-
-
-rftl::string GetAddress( win32::sockaddr const& sockAddr, size_t sockAddrLen )
-{
-	if( sockAddr.sa_family == AF_INET )
-	{
-		win32::sockaddr_in const& ipv4 = *reinterpret_cast<win32::sockaddr_in const*>( &sockAddr );
-		uint16_t const port = win32::ntohs( ipv4.sin_port );
-		auto const& bytes = ipv4.sin_addr.S_un.S_un_b;
-		static constexpr char kExample[] = "255.255.255.255:65535";
-		rftl::array<char, sizeof( kExample )> buf;
-		snprintf( buf.data(), buf.size(), "%u.%u.%u.%u:%u", bytes.s_b1, bytes.s_b2, bytes.s_b3, bytes.s_b4, port );
-		buf.back() = '\0';
-		return buf.data();
-	}
-	else if( sockAddr.sa_family == AF_INET6 )
-	{
-		win32::sockaddr_in6 const& ipv6 = *reinterpret_cast<win32::sockaddr_in6 const*>( &sockAddr );
-		uint16_t const port = win32::ntohs( ipv6.sin6_port );
-		uint8_t const( &bytes )[16] = ipv6.sin6_addr.u.Byte;
-		static constexpr char kExample[] = "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:65535";
-		rftl::array<uint16_t, 8> hextets = {};
-		for( size_t i = 0; i < 16; i += 2 )
-		{
-			hextets.at( i / 2 ) = math::integer_cast<uint16_t>( ( bytes[i] << 8 ) | bytes[i + 1] );
-			if constexpr( compiler::kEndianness == compiler::Endianness::Big )
-			{
-				hextets.at( i / 2 ) = math::ReverseByteOrder( hextets.at( i / 2 ) );
-			}
-		}
-		rftl::array<char, sizeof( kExample )> buf;
-		snprintf( buf.data(), buf.size(), "[%x:%x:%x:%x:%x:%x:%x:%x]:%u",
-			hextets[0], hextets[1], hextets[2], hextets[3],
-			hextets[4], hextets[5], hextets[6], hextets[7], port );
-		buf.back() = '\0';
-		return buf.data();
-	}
-	else
-	{
-		return "<UNKNOWN>";
-	}
-}
-
-}
 ///////////////////////////////////////////////////////////////////////////////
 
 TCPSocket::TCPSocket( TCPSocket&& rhs )
@@ -193,8 +72,11 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 	details::AddressList const suggestions = details::LookupSuggestedAddresses( hints, hostname.c_str(), port );
 
 	// Try suggestions in order
-	for( win32::addrinfo const& suggestion : suggestions.mList )
+	for( win32::addrinfo const* const& suggestionPtr : suggestions.mList )
 	{
+		RF_ASSERT( suggestionPtr != nullptr );
+		win32::addrinfo const& suggestion = *suggestionPtr;
+
 		rftl::string const name = details::GetAddress( *suggestion.ai_addr, suggestion.ai_addrlen );
 		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create client TCP socket at \"%s\"", name.c_str() );
 
@@ -259,8 +141,11 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 	details::AddressList const suggestions = details::LookupSuggestedAddresses( hints, serverHostname, port );
 
 	// Try suggestions in order
-	for( win32::addrinfo const& suggestion : suggestions.mList )
+	for( win32::addrinfo const* const& suggestionPtr : suggestions.mList )
 	{
+		RF_ASSERT( suggestionPtr != nullptr );
+		win32::addrinfo const& suggestion = *suggestionPtr;
+
 		rftl::string const name = details::GetAddress( *suggestion.ai_addr, suggestion.ai_addrlen );
 		RFLOG_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server TCP socket at \"%s\"", name.c_str() );
 
