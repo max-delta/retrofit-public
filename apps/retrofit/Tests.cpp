@@ -36,6 +36,7 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformNetwork_win32/TCPSocket.h"
+#include "PlatformNetwork_win32/UDPSocket.h"
 
 #include "core_platform/uuid.h"
 #include "core_platform/shim/winuser_shim.h"
@@ -1012,6 +1013,140 @@ void TCPTest()
 			}
 
 			TCPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data.empty() );
+			receiveThread.join();
+		}
+	}
+}
+
+
+
+void UDPTest()
+{
+	using UDPSocket = platform::network::UDPSocket;
+
+	// Choose IPv4 or IPv6
+	static constexpr bool kIPv6 = true;
+	using IPAddress = platform::IPv6Address;
+	static constexpr IPAddress kIPAddress = platform::kIPv6Localhost;
+
+	// Will use 2 peer sockets
+	// NOTE: Different ports to allow same-machine testing
+	static constexpr size_t kNumPeers = 2;
+	static constexpr uint16_t kPorts[kNumPeers] = { 8271, 8272 };
+	rftl::array<SharedPtr<UDPSocket>, kNumPeers> sockets = {};
+	static constexpr size_t kSender = 0;
+	static constexpr size_t kReceiver = 1;
+	SharedPtr<UDPSocket> const& sender = sockets.at( kSender );
+	SharedPtr<UDPSocket> const& receiver = sockets.at( kReceiver );
+	static constexpr uint16_t kRecieverPort = kPorts[kReceiver];
+
+	// Create peer sockets
+	for( size_t i = 0; i < kNumPeers; i++ )
+	{
+		uint16_t const port = kPorts[i];
+		SharedPtr<UDPSocket>& socket = sockets.at( i );
+		socket = DefaultCreator<UDPSocket>::Create(
+			UDPSocket::BindSocket( kIPv6, true, port ) );
+	}
+
+	// Transmit some data
+	{
+		using SendTask = rftl::packaged_task<bool( SharedPtr<UDPSocket>, UDPSocket::Buffer&&, uint16_t )>;
+		using PendingSend = rftl::future<bool>;
+		using ReceiveTask = rftl::packaged_task<UDPSocket::Buffer( SharedPtr<UDPSocket> )>;
+		using PendingReceive = rftl::future<UDPSocket::Buffer>;
+
+		static constexpr auto send = []( SharedPtr<UDPSocket> socket, UDPSocket::Buffer&& data, uint16_t port ) -> bool //
+		{
+			return socket->SendBuffer( data, kIPAddress, port );
+		};
+
+		static constexpr auto receive = []( SharedPtr<UDPSocket> socket ) -> UDPSocket::Buffer //
+		{
+			UDPSocket::Buffer retVal = {};
+			socket->ReceiveBuffer( retVal, 10 );
+			return retVal;
+		};
+
+		// Successfully send data (blocking receive)
+		{
+			RF_ASSERT( sender->PeekSendNonBlocking() );
+			RF_ASSERT( sender->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( receiver->PeekSendNonBlocking() );
+			RF_ASSERT( receiver->PeekReceiveNonBlocking() == false );
+
+			// Receive
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), receiver );
+
+			// Send
+			SendTask sendTask( send );
+			PendingSend pendingSend = sendTask.get_future();
+			rftl::thread sendThread( rftl::move( sendTask ), sender, UDPSocket::Buffer{ 7 }, kRecieverPort );
+
+			UDPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data == UDPSocket::Buffer{ 7 } );
+			receiveThread.join();
+
+			bool const sendSuccess = pendingSend.get();
+			RF_ASSERT( sendSuccess );
+			sendThread.join();
+
+			RF_ASSERT( sender->PeekSendNonBlocking() );
+			RF_ASSERT( sender->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( receiver->PeekSendNonBlocking() );
+			RF_ASSERT( receiver->PeekReceiveNonBlocking() == false );
+		}
+
+		// Successfully send data (non-blocking receive)
+		{
+			RF_ASSERT( sender->PeekSendNonBlocking() );
+			RF_ASSERT( sender->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( receiver->PeekSendNonBlocking() );
+			RF_ASSERT( receiver->PeekReceiveNonBlocking() == false );
+
+			// Send
+			SendTask sendTask( send );
+			PendingSend pendingSend = sendTask.get_future();
+			rftl::thread sendThread( rftl::move( sendTask ), sender, UDPSocket::Buffer{ 7 }, kRecieverPort );
+
+			bool const sendSuccess = pendingSend.get();
+			RF_ASSERT( sendSuccess );
+			sendThread.join();
+
+			// Unlike the blocking case, the data should already be available
+			RF_ASSERT( receiver->PeekReceiveNonBlocking() );
+
+			// Receive
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), receiver );
+
+			UDPSocket::Buffer const data = pendingReceive.get();
+			RF_ASSERT( data == UDPSocket::Buffer{ 7 } );
+			receiveThread.join();
+
+			RF_ASSERT( sender->PeekSendNonBlocking() );
+			RF_ASSERT( sender->PeekReceiveNonBlocking() == false );
+			RF_ASSERT( receiver->PeekSendNonBlocking() );
+			RF_ASSERT( receiver->PeekReceiveNonBlocking() == false );
+		}
+
+		// Fail on socket close
+		{
+			// Receive
+			ReceiveTask receiveTask( receive );
+			PendingReceive pendingReceive = receiveTask.get_future();
+			rftl::thread receiveThread( rftl::move( receiveTask ), receiver );
+
+			// There's a race for whether the socket fails due to being closed,
+			//  versus interrupted, but results in equivalent handling
+			rftl::this_thread::sleep_for( rftl::chrono::milliseconds( 500 ) );
+			receiver->Shutdown();
+
+			UDPSocket::Buffer const data = pendingReceive.get();
 			RF_ASSERT( data.empty() );
 			receiveThread.join();
 		}

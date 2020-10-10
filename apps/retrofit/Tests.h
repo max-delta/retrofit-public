@@ -25,6 +25,7 @@ void TerminateFrameBuilderTest();
 void SQReflectTest();
 
 void TCPTest();
+void UDPTest();
 
 ///////////////////////////////////////////////////////////////////////////////
 }}
