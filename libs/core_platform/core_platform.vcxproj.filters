@@ -34,6 +34,7 @@
     <ClInclude Include="inc\stdafx.h">
       <Filter>inc</Filter>
     </ClInclude>
+    <ClInclude Include="IPAddressFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

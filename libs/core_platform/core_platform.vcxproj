@@ -36,6 +36,7 @@
     <ClInclude Include="inc\stdafx.h" />
     <ClInclude Include="inc\windows_inc.h" />
     <ClInclude Include="inc\winsock2_inc.h" />
+    <ClInclude Include="IPAddressFwd.h" />
     <ClInclude Include="MemoryRegion.h" />
     <ClInclude Include="shim\gdi_shim.h" />
     <ClInclude Include="shim\stdafx.h" />
