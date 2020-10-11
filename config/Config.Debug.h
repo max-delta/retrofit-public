@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "PreConfig.h"
 
 // Debug builds are for local iteration only. Not for internal or public
 //  release. Likely have bad performance and contain secrets.
@@ -16,3 +16,5 @@
 
 // Override new
 #define RF_CONFIG_HOOK_NEW RF_ALLOW
+
+#include "PostConfig.inl"

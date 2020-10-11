@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "PreConfig.h"
 
 // Release builds are for internal development. Not for public release. Should
 //  have decent performance, but may contain secrets.
@@ -16,3 +16,5 @@
 
 // Override new
 #define RF_CONFIG_HOOK_NEW RF_ALLOW
+
+#include "PostConfig.inl"

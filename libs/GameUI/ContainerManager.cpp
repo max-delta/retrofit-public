@@ -82,14 +82,13 @@ void ContainerManager::RecreateRootContainer()
 
 	RF_ASSERT( mContainers.size() == 1 );
 	RF_ASSERT( mAnchors.empty() );
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	if constexpr( config::kAsserts )
 	{
 		for( LabelToContainerID::value_type const& label : mLabelsToContainerIDs )
 		{
 			RF_ASSERT( label.second == kRootContainerID );
 		}
 	}
-#endif
 }
 
 

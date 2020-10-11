@@ -222,21 +222,22 @@ CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::ObjectRe
 
 CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::comp::Progression const& progression ) const
 {
-#if RF_IS_ALLOWED( RF_CONFIG_DEV_CHEATS )
-	static bool sDevCheatAllElements = false;
-	if( sDevCheatAllElements )
+	if constexpr( config::kDevCheats )
 	{
-		element::ElementDatabase::ElementIdentifiers const allElements =
-			mElementDatabase->GetAllElementIdentifiers();
-		ElementCounts cheatVal;
-		cheatVal.reserve( cheatVal.size() );
-		for( element::ElementIdentifier const& identifier : allElements )
+		static bool sDevCheatAllElements = false;
+		if( sDevCheatAllElements )
 		{
-			cheatVal[identifier] = 99;
+			element::ElementDatabase::ElementIdentifiers const allElements =
+				mElementDatabase->GetAllElementIdentifiers();
+			ElementCounts cheatVal;
+			cheatVal.reserve( cheatVal.size() );
+			for( element::ElementIdentifier const& identifier : allElements )
+			{
+				cheatVal[identifier] = 99;
+			}
+			return cheatVal;
 		}
-		return cheatVal;
 	}
-#endif
 
 	// TODO: Additional unlocks from progression
 	return mElementDatabase->GetElementsBasedOnTier( progression.mStoryTier );

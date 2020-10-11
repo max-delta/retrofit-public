@@ -1,4 +1,4 @@
-#include "Config.h"
+#include "PreConfig.h"
 
 // Retail builds are for public release. Should have optimal performance and
 //  contain no secrets. Should be string-scanned before release to verify.
@@ -16,3 +16,5 @@
 
 // Override new
 #define RF_CONFIG_HOOK_NEW RF_FORBID
+
+#include "PostConfig.inl"

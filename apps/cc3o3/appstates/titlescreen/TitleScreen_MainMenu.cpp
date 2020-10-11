@@ -222,14 +222,17 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::TextLabel>::Create() );
 		url->SetJustification( ui::Justification::BottomRight );
 		url->SetFont( ui::font::MinSize );
-#if RF_IS_ALLOWED( RF_CONFIG_INTERNAL_BUILD_NOTICE )
-		url->SetText( "INTERNAL USE ONLY" );
-		url->SetColor( math::Color3f::kRed );
-		url->SetBorder( true );
-#else
-		url->SetText( "http://TODO" );
-		url->SetColor( math::Color3f::kBlack );
-#endif
+		if constexpr( config::kInternalBuildNotice )
+		{
+			url->SetText( "INTERNAL USE ONLY" );
+			url->SetColor( math::Color3f::kRed );
+			url->SetBorder( true );
+		}
+		else
+		{
+			url->SetText( "http://TODO" );
+			url->SetColor( math::Color3f::kBlack );
+		}
 	}
 }
 

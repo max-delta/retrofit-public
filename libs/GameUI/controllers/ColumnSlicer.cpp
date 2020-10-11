@@ -23,7 +23,7 @@ ColumnSlicer::ColumnSlicer( Ratios const& ratios )
 	, mRatios( ratios )
 {
 	RF_ASSERT( mRatios.size() >= 2 );
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	if constexpr( config::kAsserts )
 	{
 		float total = 0.f;
 		for( Ratios::value_type const& ratio : mRatios )
@@ -32,7 +32,6 @@ ColumnSlicer::ColumnSlicer( Ratios const& ratios )
 		}
 		RF_ASSERT( math::Equals( total, 1.f ) );
 	}
-#endif
 }
 
 

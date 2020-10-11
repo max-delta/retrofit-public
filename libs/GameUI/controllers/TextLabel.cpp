@@ -117,19 +117,20 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	};
 	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
-#if RF_IS_ALLOWED( RF_CONFIG_ONCEPER )
-	if( mIgnoreOverflow == false )
+	if constexpr( config::kOncePer )
 	{
-		if( container.mAABB.Height() < mDesiredHeight )
+		if( mIgnoreOverflow == false )
 		{
-			RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB height: '%s'", mText.c_str() ) );
-		}
-		if( container.mAABB.Width() < renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() ) )
-		{
-			RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '%s'", mText.c_str() ) );
+			if( container.mAABB.Height() < mDesiredHeight )
+			{
+				RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB height: '%s'", mText.c_str() ) );
+			}
+			if( container.mAABB.Width() < renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() ) )
+			{
+				RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '%s'", mText.c_str() ) );
+			}
 		}
 	}
-#endif
 
 	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
 }
