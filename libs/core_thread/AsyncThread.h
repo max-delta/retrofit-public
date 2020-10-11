@@ -55,7 +55,7 @@ public:
 
 	// Thread will wake on explicit wakeup, spontaneous wakeup, or on a safety
 	//  interval used to protect against lock-ups due to logic errors
-	void Wake();
+	void Wake(); // Thread-safe
 	void SetSafetyWakeupInterval( rftl::chrono::nanoseconds duration );
 
 

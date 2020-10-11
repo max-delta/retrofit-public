@@ -39,6 +39,7 @@ private:
 public:
 	NonloopingIDGenerator() = default;
 
+	// Thread-safe
 	ID Generate()
 	{
 		if( kRolloverUnrealistic )
@@ -63,6 +64,7 @@ public:
 		return newID;
 	}
 
+	// Thread-safe
 	ID GetLastGeneratedID() const
 	{
 		ID const nextID = mStorage.load( rftl::memory_order::memory_order_acquire );
