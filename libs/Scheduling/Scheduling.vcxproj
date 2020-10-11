@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
-		<VCProjectVersion>15.0</VCProjectVersion>
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{B0E6AFEE-5AF7-4235-8F9B-6DD3DE941DF7}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>Scheduling</RootNamespace>

@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\..\config\ThirdParty.Lib.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{C8F6C172-56F2-4E76-B5FA-C3B423B31BE7}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 	</PropertyGroup>
@@ -19,9 +20,6 @@
 		<Import Project="..\..\..\config\ThirdParty.Lib.props" />
 	</ImportGroup>
 	<PropertyGroup Label="UserMacros" />
-	<PropertyGroup>
-		<_ProjectFileVersion>14.0.24720.0</_ProjectFileVersion>
-	</PropertyGroup>
 	<PropertyGroup>
 		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 		<CodeAnalysisRules />

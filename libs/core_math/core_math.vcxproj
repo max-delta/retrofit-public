@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\config\RF.Core.Lib.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
-		<VCProjectVersion>15.0</VCProjectVersion>
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{D445A586-71A5-4228-8CC9-7E77EBD059D8}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>core_math</RootNamespace>

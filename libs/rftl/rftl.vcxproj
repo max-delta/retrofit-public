@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\config\RF.Core.Lib.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
-		<VCProjectVersion>15.0</VCProjectVersion>
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{D27C937A-7856-4C13-BBE5-895766D01E1F}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>rftl</RootNamespace>

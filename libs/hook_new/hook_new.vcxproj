@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\config\RF.Core.Lib.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
-		<VCProjectVersion>15.0</VCProjectVersion>
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{A5B5EDE9-82A2-4B25-BB9D-D2B2FEFDF489}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>hooknew</RootNamespace>

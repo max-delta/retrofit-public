@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ImportGroup Label="PropertySheets">
 		<Import Project="..\..\config\RF.Platform.Dll.Platform.props" />
 	</ImportGroup>
 	<PropertyGroup Label="Globals">
-		<VCProjectVersion>15.0</VCProjectVersion>
+		<VCProjectVersion>16.0</VCProjectVersion>
 		<ProjectGuid>{10894604-ED30-4E76-803A-8DE0FEE2E470}</ProjectGuid>
 		<Keyword>Win32Proj</Keyword>
 		<RootNamespace>PlatformInput_win32</RootNamespace>
