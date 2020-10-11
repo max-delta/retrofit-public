@@ -4,10 +4,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
   <ItemDefinitionGroup>
-    <ClCompile>
-      <!--TODO: This shouldn't be here, need to clean up prop file hierarchy-->
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
     <ClCompile Condition="'$(RFCompiler)'=='LLVM'">
       <AdditionalOptions>
         -Wno-unused-function
