@@ -31,6 +31,11 @@
 			<!--Eh... the additional runtime cost is trivial and the checks are nice-->
 			<SDLCheck>true</SDLCheck>
 
+			<!--Checks on uninitialized variables and stack corruption (incompatible
+				with most optimizations, according to documentation)-->
+			<BasicRuntimeChecks Condition="'$(RFConfig)'!='Debug'">Default</BasicRuntimeChecks>
+			<BasicRuntimeChecks Condition="'$(RFConfig)'=='Debug'">EnableFastChecks</BasicRuntimeChecks>
+
 			<!--This just pollutes the assembly and has low value-->
 			<SupportJustMyCode>false</SupportJustMyCode>
 		</ClCompile>
