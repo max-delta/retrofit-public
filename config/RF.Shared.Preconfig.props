@@ -19,14 +19,6 @@
 		<WholeProgramOptimization Condition="'$(RFCompiler)'=='LLVM'">false</WholeProgramOptimization>
 	</PropertyGroup>
 
-	<ImportGroup Label="PropertySheets" />
-
-	<PropertyGroup Label="UserMacros" />
-
-	<ItemDefinitionGroup />
-
-	<ItemGroup />
-
 	<!--Keep things as DLLs for iteration speed, but then slam everything
 		together during retails builds for better optimization opportunities-->
 	<PropertyGroup>
@@ -39,4 +31,5 @@
 		<IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
 		<OutDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Out\</OutDir>
 	</PropertyGroup>
+
 </Project>
