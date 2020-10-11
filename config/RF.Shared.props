@@ -1,70 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ImportGroup Label="PropertySheets" />
+	<ImportGroup Label="PropertySheets" />
 
-  <PropertyGroup Label="UserMacros">
-    <RFRootDir>$(SolutionDir)</RFRootDir>
-  </PropertyGroup>
+	<PropertyGroup Label="UserMacros">
+		<RFRootDir>$(SolutionDir)</RFRootDir>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <!--Incremental linking is great for iteration speed, but leaves a bunch
-      of crap in the binaries for padding and patching-->
-    <LinkIncremental Condition="'$(RFConfig)'=='Debug'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(RFConfig)'=='Release'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(RFConfig)'=='Retail'">false</LinkIncremental>
-  </PropertyGroup>
+	<PropertyGroup>
+		<!--Incremental linking is great for iteration speed, but leaves a bunch
+			of crap in the binaries for padding and patching-->
+		<LinkIncremental Condition="'$(RFConfig)'=='Debug'">true</LinkIncremental>
+		<LinkIncremental Condition="'$(RFConfig)'=='Release'">false</LinkIncremental>
+		<LinkIncremental Condition="'$(RFConfig)'=='Retail'">false</LinkIncremental>
+	</PropertyGroup>
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <!--We use precompiled headers, except in LLVM which doesn't support them-->
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(RFCompiler)'=='LLVM'">NotUsing</PrecompiledHeader>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<!--We use precompiled headers, except in LLVM which doesn't support them-->
+			<PrecompiledHeader>Use</PrecompiledHeader>
+			<PrecompiledHeader Condition="'$(RFCompiler)'=='LLVM'">NotUsing</PrecompiledHeader>
 
-      <!--Optimize for speed, except in debug builds-->
-      <Optimization Condition="'$(RFConfig)'=='Debug'">Disabled</Optimization>
-      <Optimization Condition="'$(RFConfig)'=='Release'">MaxSpeed</Optimization>
-      <Optimization Condition="'$(RFConfig)'=='Retail'">MaxSpeed</Optimization>
+			<!--Optimize for speed, except in debug builds-->
+			<Optimization Condition="'$(RFConfig)'=='Debug'">Disabled</Optimization>
+			<Optimization Condition="'$(RFConfig)'=='Release'">MaxSpeed</Optimization>
+			<Optimization Condition="'$(RFConfig)'=='Retail'">MaxSpeed</Optimization>
 
-      <!--Function-level linking gives each symbol it's own COMDAT, which is
-        great for optimizations since everything is more granular, but it kills
-        build times-->
-      <FunctionLevelLinking Condition="'$(RFConfig)'=='Release'">true</FunctionLevelLinking>
-      <FunctionLevelLinking Condition="'$(RFConfig)'=='Retail'">true</FunctionLevelLinking>
+			<!--Function-level linking gives each symbol it's own COMDAT, which is
+				great for optimizations since everything is more granular, but it kills
+				build times-->
+			<FunctionLevelLinking Condition="'$(RFConfig)'=='Release'">true</FunctionLevelLinking>
+			<FunctionLevelLinking Condition="'$(RFConfig)'=='Retail'">true</FunctionLevelLinking>
 
-      <!--Replace things like memcpy with intrinsic assembly logic inline-->
-      <IntrinsicFunctions Condition="'$(RFConfig)'=='Release'">true</IntrinsicFunctions>
-      <IntrinsicFunctions Condition="'$(RFConfig)'=='Retail'">true</IntrinsicFunctions>
+			<!--Replace things like memcpy with intrinsic assembly logic inline-->
+			<IntrinsicFunctions Condition="'$(RFConfig)'=='Release'">true</IntrinsicFunctions>
+			<IntrinsicFunctions Condition="'$(RFConfig)'=='Retail'">true</IntrinsicFunctions>
 
-      <!--Specifically, don't require the redistributable for retail-->
-      <RuntimeLibrary Condition="'$(RFConfig)'=='Retail'">MultiThreaded</RuntimeLibrary>
+			<!--Specifically, don't require the redistributable for retail-->
+			<RuntimeLibrary Condition="'$(RFConfig)'=='Retail'">MultiThreaded</RuntimeLibrary>
 
-      <!--Per-configuration config files set a bunch of giant switches-->
-      <ForcedIncludeFiles>$(RFRootDir)config\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+			<!--Per-configuration config files set a bunch of giant switches-->
+			<ForcedIncludeFiles>$(RFRootDir)config\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
 
-      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(RFConfig)'=='Retail'">NDEBUG;RF_NO_SHARED_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(RFArch)'=='x86_32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
+			<PreprocessorDefinitions Condition="'$(RFConfig)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(RFConfig)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(RFConfig)'=='Retail'">NDEBUG;RF_NO_SHARED_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions Condition="'$(RFArch)'=='x86_32'">WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
 
-    <Link>
-      <!--COMDAT folding makes debugging confusing, so keep it off for debug-->
-      <EnableCOMDATFolding Condition="'$(RFConfig)'=='Release'">true</EnableCOMDATFolding>
-      <EnableCOMDATFolding Condition="'$(RFConfig)'=='Retail'">true</EnableCOMDATFolding>
+		<Link>
+			<!--COMDAT folding makes debugging confusing, so keep it off for debug-->
+			<EnableCOMDATFolding Condition="'$(RFConfig)'=='Release'">true</EnableCOMDATFolding>
+			<EnableCOMDATFolding Condition="'$(RFConfig)'=='Retail'">true</EnableCOMDATFolding>
 
-      <!--Orphaned code removal can be confusing, so keep all the code debug-->
-      <OptimizeReferences Condition="'$(RFConfig)'=='Release'">true</OptimizeReferences>
-      <OptimizeReferences Condition="'$(RFConfig)'=='Retail'">true</OptimizeReferences>
+			<!--Orphaned code removal can be confusing, so keep all the code debug-->
+			<OptimizeReferences Condition="'$(RFConfig)'=='Release'">true</OptimizeReferences>
+			<OptimizeReferences Condition="'$(RFConfig)'=='Retail'">true</OptimizeReferences>
 
-      <!--Don't store personably-identifiable-information in the binaries for
-        retail builds that will actually go out into the wild-->
-      <AdditionalOptions Condition="'$(RFConfig)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
+			<!--Don't store personably-identifiable-information in the binaries for
+				retail builds that will actually go out into the wild-->
+			<AdditionalOptions Condition="'$(RFConfig)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
 
-      <!--LLVM doesn't support link-time-code-generation-->
-      <LinkTimeCodeGeneration Condition="'$(RFCompiler)'=='LLVM'">Default</LinkTimeCodeGeneration>
-    </Link>
-  </ItemDefinitionGroup>
+			<!--LLVM doesn't support link-time-code-generation-->
+			<LinkTimeCodeGeneration Condition="'$(RFCompiler)'=='LLVM'">Default</LinkTimeCodeGeneration>
+		</Link>
+	</ItemDefinitionGroup>
 
-  <ItemGroup />
+	<ItemGroup />
 </Project>

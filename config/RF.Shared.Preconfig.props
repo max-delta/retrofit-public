@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <PropertyGroup Label="Configuration">
-    <!--Only debug configurations get debug libraries-->
-    <UseDebugLibraries Condition="'$(RFConfig)'=='Debug'">true</UseDebugLibraries>
-    <UseDebugLibraries Condition="'$(RFConfig)'=='Release'">false</UseDebugLibraries>
-    <UseDebugLibraries Condition="'$(RFConfig)'=='Retail'">false</UseDebugLibraries>
+	<PropertyGroup Label="Configuration">
+		<!--Only debug configurations get debug libraries-->
+		<UseDebugLibraries Condition="'$(RFConfig)'=='Debug'">true</UseDebugLibraries>
+		<UseDebugLibraries Condition="'$(RFConfig)'=='Release'">false</UseDebugLibraries>
+		<UseDebugLibraries Condition="'$(RFConfig)'=='Retail'">false</UseDebugLibraries>
 
-    <!--This controls the compiler versions and whatnot (v142 is early VS2019)-->
-    <PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v142</PlatformToolset>
-    <PlatformToolset Condition="'$(RFCompiler)'=='LLVM'">ClangCL</PlatformToolset>
+		<!--This controls the compiler versions and whatnot (v142 is early VS2019)-->
+		<PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v142</PlatformToolset>
+		<PlatformToolset Condition="'$(RFCompiler)'=='LLVM'">ClangCL</PlatformToolset>
 
-    <!--Whole-program-optimization/link-time-code-generation is amazing, but
-      takes forever and a day, so don't do it for debug builds (Also, LLVM
-      doesn't support it)-->
-    <WholeProgramOptimization Condition="'$(RFConfig)'=='Release'">true</WholeProgramOptimization>
-    <WholeProgramOptimization Condition="'$(RFConfig)'=='Retail'">true</WholeProgramOptimization>
-    <WholeProgramOptimization Condition="'$(RFCompiler)'=='LLVM'">false</WholeProgramOptimization>
-  </PropertyGroup>
+		<!--Whole-program-optimization/link-time-code-generation is amazing, but
+			takes forever and a day, so don't do it for debug builds (Also, LLVM
+			doesn't support it)-->
+		<WholeProgramOptimization Condition="'$(RFConfig)'=='Release'">true</WholeProgramOptimization>
+		<WholeProgramOptimization Condition="'$(RFConfig)'=='Retail'">true</WholeProgramOptimization>
+		<WholeProgramOptimization Condition="'$(RFCompiler)'=='LLVM'">false</WholeProgramOptimization>
+	</PropertyGroup>
 
-  <ImportGroup Label="PropertySheets" />
+	<ImportGroup Label="PropertySheets" />
 
-  <PropertyGroup Label="UserMacros" />
+	<PropertyGroup Label="UserMacros" />
 
-  <ItemDefinitionGroup />
+	<ItemDefinitionGroup />
 
-  <ItemGroup />
+	<ItemGroup />
 
-  <!--Keep things as DLLs for iteration speed, but then slam everything
-    together during retails builds for better optimization opportunities-->
-  <PropertyGroup>
-    <SharedLibConfigType Condition="'$(RFConfig)'!='Retail'">DynamicLibrary</SharedLibConfigType>
-    <SharedLibConfigType Condition="'$(RFConfig)'=='Retail'">StaticLibrary</SharedLibConfigType>
-  </PropertyGroup>
+	<!--Keep things as DLLs for iteration speed, but then slam everything
+		together during retails builds for better optimization opportunities-->
+	<PropertyGroup>
+		<SharedLibConfigType Condition="'$(RFConfig)'!='Retail'">DynamicLibrary</SharedLibConfigType>
+		<SharedLibConfigType Condition="'$(RFConfig)'=='Retail'">StaticLibrary</SharedLibConfigType>
+	</PropertyGroup>
 
-  <!--Override where build artifacts are stored-->
-  <PropertyGroup>
-    <IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
-    <OutDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Out\</OutDir>
-  </PropertyGroup>
+	<!--Override where build artifacts are stored-->
+	<PropertyGroup>
+		<IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
+		<OutDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Out\</OutDir>
+	</PropertyGroup>
 </Project>

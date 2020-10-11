@@ -1,138 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!--Our myriad configurations-->
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="MSVC_Debug|x64">
-      <Configuration>MSVC_Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Release|x64">
-      <Configuration>MSVC_Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Retail|x64">
-      <Configuration>MSVC_Retail</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Debug|Win32">
-      <Configuration>MSVC_Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Release|Win32">
-      <Configuration>MSVC_Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Retail|Win32">
-      <Configuration>MSVC_Retail</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Debug|ARM">
-      <Configuration>MSVC_Debug</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Release|ARM">
-      <Configuration>MSVC_Release</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Retail|ARM">
-      <Configuration>MSVC_Retail</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Debug|ARM64">
-      <Configuration>MSVC_Debug</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Release|ARM64">
-      <Configuration>MSVC_Release</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="MSVC_Retail|ARM64">
-      <Configuration>MSVC_Retail</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Debug|x64">
-      <Configuration>LLVM_Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Release|x64">
-      <Configuration>LLVM_Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Retail|x64">
-      <Configuration>LLVM_Retail</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Debug|Win32">
-      <Configuration>LLVM_Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Release|Win32">
-      <Configuration>LLVM_Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Retail|Win32">
-      <Configuration>LLVM_Retail</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Debug|ARM">
-      <Configuration>LLVM_Debug</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Release|ARM">
-      <Configuration>LLVM_Release</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Retail|ARM">
-      <Configuration>LLVM_Retail</Configuration>
-      <Platform>ARM</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Debug|ARM64">
-      <Configuration>LLVM_Debug</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Release|ARM64">
-      <Configuration>LLVM_Release</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="LLVM_Retail|ARM64">
-      <Configuration>LLVM_Retail</Configuration>
-      <Platform>ARM64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
+	<!--Our myriad configurations-->
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="MSVC_Debug|x64">
+			<Configuration>MSVC_Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Release|x64">
+			<Configuration>MSVC_Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Retail|x64">
+			<Configuration>MSVC_Retail</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Debug|Win32">
+			<Configuration>MSVC_Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Release|Win32">
+			<Configuration>MSVC_Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Retail|Win32">
+			<Configuration>MSVC_Retail</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Debug|ARM">
+			<Configuration>MSVC_Debug</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Release|ARM">
+			<Configuration>MSVC_Release</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Retail|ARM">
+			<Configuration>MSVC_Retail</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Debug|ARM64">
+			<Configuration>MSVC_Debug</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Release|ARM64">
+			<Configuration>MSVC_Release</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="MSVC_Retail|ARM64">
+			<Configuration>MSVC_Retail</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Debug|x64">
+			<Configuration>LLVM_Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Release|x64">
+			<Configuration>LLVM_Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Retail|x64">
+			<Configuration>LLVM_Retail</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Debug|Win32">
+			<Configuration>LLVM_Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Release|Win32">
+			<Configuration>LLVM_Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Retail|Win32">
+			<Configuration>LLVM_Retail</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Debug|ARM">
+			<Configuration>LLVM_Debug</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Release|ARM">
+			<Configuration>LLVM_Release</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Retail|ARM">
+			<Configuration>LLVM_Retail</Configuration>
+			<Platform>ARM</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Debug|ARM64">
+			<Configuration>LLVM_Debug</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Release|ARM64">
+			<Configuration>LLVM_Release</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="LLVM_Retail|ARM64">
+			<Configuration>LLVM_Retail</Configuration>
+			<Platform>ARM64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
 
-  <ImportGroup Label="PropertySheets" />
+	<ImportGroup Label="PropertySheets" />
 
-  <!-- VS stock toolset design is flawed in that it only has 2 axis -->
-  <PropertyGroup Label="UserMacros">
-    <RFConfig Condition="'$(Configuration)'=='MSVC_Debug'">Debug</RFConfig>
-    <RFConfig Condition="'$(Configuration)'=='MSVC_Release'">Release</RFConfig>
-    <RFConfig Condition="'$(Configuration)'=='MSVC_Retail'">Retail</RFConfig>
-    <RFConfig Condition="'$(Configuration)'=='LLVM_Debug'">Debug</RFConfig>
-    <RFConfig Condition="'$(Configuration)'=='LLVM_Release'">Release</RFConfig>
-    <RFConfig Condition="'$(Configuration)'=='LLVM_Retail'">Retail</RFConfig>
-    <RFArch Condition="'$(Platform)'=='x64'">x86_64</RFArch>
-    <RFArch Condition="'$(Platform)'=='Win32'">x86_32</RFArch>
-    <RFArch Condition="'$(Platform)'=='ARM'">ARM32</RFArch>
-    <RFArch Condition="'$(Platform)'=='ARM64'">ARM64</RFArch>
-    <RFCompiler Condition="'$(Configuration)'=='MSVC_Debug'">MSVC</RFCompiler>
-    <RFCompiler Condition="'$(Configuration)'=='MSVC_Release'">MSVC</RFCompiler>
-    <RFCompiler Condition="'$(Configuration)'=='MSVC_Retail'">MSVC</RFCompiler>
-    <RFCompiler Condition="'$(Configuration)'=='LLVM_Debug'">LLVM</RFCompiler>
-    <RFCompiler Condition="'$(Configuration)'=='LLVM_Release'">LLVM</RFCompiler>
-    <RFCompiler Condition="'$(Configuration)'=='LLVM_Retail'">LLVM</RFCompiler>
-  </PropertyGroup>
+	<!-- VS stock toolset design is flawed in that it only has 2 axis -->
+	<PropertyGroup Label="UserMacros">
+		<RFConfig Condition="'$(Configuration)'=='MSVC_Debug'">Debug</RFConfig>
+		<RFConfig Condition="'$(Configuration)'=='MSVC_Release'">Release</RFConfig>
+		<RFConfig Condition="'$(Configuration)'=='MSVC_Retail'">Retail</RFConfig>
+		<RFConfig Condition="'$(Configuration)'=='LLVM_Debug'">Debug</RFConfig>
+		<RFConfig Condition="'$(Configuration)'=='LLVM_Release'">Release</RFConfig>
+		<RFConfig Condition="'$(Configuration)'=='LLVM_Retail'">Retail</RFConfig>
+		<RFArch Condition="'$(Platform)'=='x64'">x86_64</RFArch>
+		<RFArch Condition="'$(Platform)'=='Win32'">x86_32</RFArch>
+		<RFArch Condition="'$(Platform)'=='ARM'">ARM32</RFArch>
+		<RFArch Condition="'$(Platform)'=='ARM64'">ARM64</RFArch>
+		<RFCompiler Condition="'$(Configuration)'=='MSVC_Debug'">MSVC</RFCompiler>
+		<RFCompiler Condition="'$(Configuration)'=='MSVC_Release'">MSVC</RFCompiler>
+		<RFCompiler Condition="'$(Configuration)'=='MSVC_Retail'">MSVC</RFCompiler>
+		<RFCompiler Condition="'$(Configuration)'=='LLVM_Debug'">LLVM</RFCompiler>
+		<RFCompiler Condition="'$(Configuration)'=='LLVM_Release'">LLVM</RFCompiler>
+		<RFCompiler Condition="'$(Configuration)'=='LLVM_Retail'">LLVM</RFCompiler>
+	</PropertyGroup>
 
-  <ItemDefinitionGroup />
+	<ItemDefinitionGroup />
 
-  <ItemGroup />
+	<ItemGroup />
 
-  <!-- Handle quirks of some build targets -->
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <AdditionalOptions Condition="'$(RFArch)'=='ARM32'">/D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1 %(AdditionalOptions)</AdditionalOptions>
-    </ClCompile>
-  </ItemDefinitionGroup>
+	<!-- Handle quirks of some build targets -->
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<AdditionalOptions Condition="'$(RFArch)'=='ARM32'">/D_ARM_WINAPI_PARTITION_DESKTOP_SDK_AVAILABLE=1 %(AdditionalOptions)</AdditionalOptions>
+		</ClCompile>
+	</ItemDefinitionGroup>
 
 </Project>

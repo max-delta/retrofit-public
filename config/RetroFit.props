@@ -1,82 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ImportGroup Label="PropertySheets">
-    <Import Project=".\Directories.props" />
-    <Import Project=".\BuildStamp.props" />
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project=".\Directories.props" />
+		<Import Project=".\BuildStamp.props" />
+	</ImportGroup>
 
-  <PropertyGroup Condition="'$(RFCompiler)'=='MSVC'">
-    <!--All on by default, then manipulated by StaticAnalysis.h-->
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+	<PropertyGroup Condition="'$(RFCompiler)'=='MSVC'">
+		<!--All on by default, then manipulated by StaticAnalysis.h-->
+		<CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
 
-    <!-- Code analysis is still rocky, so it's only on for special builds -->
-    <RunCodeAnalysis Condition="'$(RFCodeAnalysis)'=='true'">true</RunCodeAnalysis>
-    <RunCodeAnalysis Condition="'$(RFCodeAnalysis)'!='true'">false</RunCodeAnalysis>
-    <EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
-    <EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
+		<!-- Code analysis is still rocky, so it's only on for special builds -->
+		<RunCodeAnalysis Condition="'$(RFCodeAnalysis)'=='true'">true</RunCodeAnalysis>
+		<RunCodeAnalysis Condition="'$(RFCodeAnalysis)'!='true'">false</RunCodeAnalysis>
+		<EnableMicrosoftCodeAnalysis>true</EnableMicrosoftCodeAnalysis>
+		<EnableClangTidyCodeAnalysis>false</EnableClangTidyCodeAnalysis>
 
-    <!--If we bothered to turn a rule on, yell about it-->
-    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-  </PropertyGroup>
+		<!--If we bothered to turn a rule on, yell about it-->
+		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(RFCompiler)'=='LLVM'">
-    <!-- Sadly, clang-tidy hangs (Last checked: v9.0.0) -->
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
-    <EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
+	<PropertyGroup Condition="'$(RFCompiler)'=='LLVM'">
+		<!-- Sadly, clang-tidy hangs (Last checked: v9.0.0) -->
+		<RunCodeAnalysis>false</RunCodeAnalysis>
+		<EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
+		<EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
 
-    <!--If we bothered to turn a rule on, yell about it-->
-    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-  </PropertyGroup>
+		<!--If we bothered to turn a rule on, yell about it-->
+		<CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
+	</PropertyGroup>
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <!--It's us!-->
-      <PreprocessorDefinitions>RETROFIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<!--It's us!-->
+			<PreprocessorDefinitions>RETROFIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
-      <!--TODO: Document all these-->
-      <DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<!--TODO: Document all these-->
+			<DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
-      <!-- Azure build machines don't always have the latest VS, so ignore
-        complaints about unknown warnings -->
-      <DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">4619;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<!-- Azure build machines don't always have the latest VS, so ignore
+				complaints about unknown warnings -->
+			<DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">4619;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
-      <!--If we bothered to turn a warning on, yell about it-->
-      <TreatWarningAsError>true</TreatWarningAsError>
+			<!--If we bothered to turn a warning on, yell about it-->
+			<TreatWarningAsError>true</TreatWarningAsError>
 
-      <!--All warnings on, unless explicitly disabled-->
-      <WarningLevel>EnableAllWarnings</WarningLevel>
+			<!--All warnings on, unless explicitly disabled-->
+			<WarningLevel>EnableAllWarnings</WarningLevel>
 
-      <!--Various top-level includes, kept to a minimum-->
-      <AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
+			<!--Various top-level includes, kept to a minimum-->
+			<AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+		</ClCompile>
 
-    <ClCompile Condition="'$(RFCompiler)'=='MSVC'">
-      <!--PREfast is the undocumented (yet publicly known) internal name for
-        the C++ static code analysis logic-->
-      <EnablePREfast>true</EnablePREfast>
+		<ClCompile Condition="'$(RFCompiler)'=='MSVC'">
+			<!--PREfast is the undocumented (yet publicly known) internal name for
+				the C++ static code analysis logic-->
+			<EnablePREfast>true</EnablePREfast>
 
-      <!--Reduce warning level in crappy MS headers, determnied via angle
-        bracket include directives-->
-      <AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
+			<!--Reduce warning level in crappy MS headers, determnied via angle
+				bracket include directives-->
+			<AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
 
-      <!--This configures static analysis rules-->
-      <ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
-    </ClCompile>
+			<!--This configures static analysis rules-->
+			<ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+		</ClCompile>
 
-    <ClCompile Condition="'$(RFCompiler)'=='LLVM'">
-      <!--Treat these as system headers (not our code)-->
-      <AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
+			<!--Treat these as system headers (not our code)-->
+			<AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
 
-      <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
-      <AdditionalOptions>
-        -Werror=float-equal
-        %(AdditionalOptions)
-      </AdditionalOptions>
-    </ClCompile>
+			<!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
+			<AdditionalOptions>
+				-Werror=float-equal
+				%(AdditionalOptions)
+			</AdditionalOptions>
+		</ClCompile>
 
-    <Link />
-  </ItemDefinitionGroup>
+		<Link />
+	</ItemDefinitionGroup>
 
 </Project>

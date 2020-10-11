@@ -1,140 +1,140 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <ImportGroup Label="PropertySheets" />
+	<ImportGroup Label="PropertySheets" />
 
-  <PropertyGroup Label="UserMacros" />
+	<PropertyGroup Label="UserMacros" />
 
-  <PropertyGroup />
+	<PropertyGroup />
 
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <!--Disable exception handling, prefer to just crash instead-->
-      <ExceptionHandling>false</ExceptionHandling>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<!--Disable exception handling, prefer to just crash instead-->
+			<ExceptionHandling>false</ExceptionHandling>
 
-      <!--Complains that exceptions aren't enabled, don't care-->
-      <DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<!--Complains that exceptions aren't enabled, don't care-->
+			<DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
-      <!--Complains about subtle DLL logic. Would like to have on, but the warning is flawed-->
-      <DisableSpecificWarnings>4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<!--Complains about subtle DLL logic. Would like to have on, but the warning is flawed-->
+			<DisableSpecificWarnings>4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
 
-      <!--Don't care about variables just used for asserts-->
-      <DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
-        4189;%(DisableSpecificWarnings)
-      </DisableSpecificWarnings>
+			<!--Don't care about variables just used for asserts-->
+			<DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
+				4189;%(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
 
-      <!--MS STL implementation gets pissy if this define isn't set-->
-      <PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<!--MS STL implementation gets pissy if this define isn't set-->
+			<PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
-      <!--C++17 for now, C++20 isn't ready yet-->
-      <LanguageStandard>stdcpp17</LanguageStandard>
+			<!--C++17 for now, C++20 isn't ready yet-->
+			<LanguageStandard>stdcpp17</LanguageStandard>
 
-      <!--This is sometimes futzy and can cause corruption, but corruption
-        seems to be mostly limited to batch builds (batch_build.bat avoids
-        the associated problems)-->
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+			<!--This is sometimes futzy and can cause corruption, but corruption
+				seems to be mostly limited to batch builds (batch_build.bat avoids
+				the associated problems)-->
+			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 
-      <!--Eh... the additional runtime cost is trivial and the checks are nice-->
-      <SDLCheck>true</SDLCheck>
+			<!--Eh... the additional runtime cost is trivial and the checks are nice-->
+			<SDLCheck>true</SDLCheck>
 
-      <!--This just pollutes the assembly and has low value-->
-      <SupportJustMyCode>false</SupportJustMyCode>
-    </ClCompile>
+			<!--This just pollutes the assembly and has low value-->
+			<SupportJustMyCode>false</SupportJustMyCode>
+		</ClCompile>
 
-    <ClCompile Condition="'$(RFCompiler)'=='MSVC'">
-      <!--Avoid MS-specific hacks since we're cross-platform-->
-      <ConformanceMode>true</ConformanceMode>
-    </ClCompile>
+		<ClCompile Condition="'$(RFCompiler)'=='MSVC'">
+			<!--Avoid MS-specific hacks since we're cross-platform-->
+			<ConformanceMode>true</ConformanceMode>
+		</ClCompile>
 
-    <ClCompile Condition="'$(RFCompiler)'=='LLVM'">
-      <AdditionalOptions>
-        -Wno-error
-        -Wno-clang-cl-pch
-        -Wno-unused-command-line-argument
-        -Wno-pedantic
-        -Wno-c++98-compat
-        -Wno-c++98-compat-pedantic
-        -Wno-unused-macros
-        -Wno-unused-parameter
-        -Wno-reserved-id-macro
-        -Wno-extra-semi
-        -Wno-extra-semi-stmt
-        -Wno-missing-prototypes
-        -Wno-missing-variable-declarations
-        -Wno-covered-switch-default
-        -Wno-tautological-undefined-compare
-        -Wno-shadow-field-in-constructor
-        -Wno-shadow-uncaptured-local
-        -Wno-global-constructors
-        -Wno-exit-time-destructors
-        -Wno-format-nonliteral
-        -Wno-ignored-attributes
-        -Wno-undefined-func-template
-        -Wno-ctad-maybe-unsupported
-        %(AdditionalOptions)
-      </AdditionalOptions>
+		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
+			<AdditionalOptions>
+				-Wno-error
+				-Wno-clang-cl-pch
+				-Wno-unused-command-line-argument
+				-Wno-pedantic
+				-Wno-c++98-compat
+				-Wno-c++98-compat-pedantic
+				-Wno-unused-macros
+				-Wno-unused-parameter
+				-Wno-reserved-id-macro
+				-Wno-extra-semi
+				-Wno-extra-semi-stmt
+				-Wno-missing-prototypes
+				-Wno-missing-variable-declarations
+				-Wno-covered-switch-default
+				-Wno-tautological-undefined-compare
+				-Wno-shadow-field-in-constructor
+				-Wno-shadow-uncaptured-local
+				-Wno-global-constructors
+				-Wno-exit-time-destructors
+				-Wno-format-nonliteral
+				-Wno-ignored-attributes
+				-Wno-undefined-func-template
+				-Wno-ctad-maybe-unsupported
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
-      <AdditionalOptions>
-        -Werror=newline-eof
-        -Werror=extra-qualification
-        -Werror=unused-lambda-capture
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
+			<AdditionalOptions>
+				-Werror=newline-eof
+				-Werror=extra-qualification
+				-Werror=unused-lambda-capture
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!-- Azure build machines violate this when forced includes are used -->
-      <AdditionalOptions Condition="'$(RFBuildMachine)'=='Azure'">
-        -Wno-nonportable-include-path
-        %(AdditionalOptions)
-      </AdditionalOptions>
-      <AdditionalOptions Condition="'$(RFBuildMachine)'!='Azure'">
-        -Werror=nonportable-include-path
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!-- Azure build machines violate this when forced includes are used -->
+			<AdditionalOptions Condition="'$(RFBuildMachine)'=='Azure'">
+				-Wno-nonportable-include-path
+				%(AdditionalOptions)
+			</AdditionalOptions>
+			<AdditionalOptions Condition="'$(RFBuildMachine)'!='Azure'">
+				-Werror=nonportable-include-path
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!--Goal is to use targeted suppression machinery instead of these-->
-      <AdditionalOptions>
-        -Wno-non-virtual-dtor
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!--Goal is to use targeted suppression machinery instead of these-->
+			<AdditionalOptions>
+				-Wno-non-virtual-dtor
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!--Don't care about variables just used for asserts-->
-      <AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
-        -Wno-unused-variable
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!--Don't care about variables just used for asserts-->
+			<AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
+				-Wno-unused-variable
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!--Truly unused variables should be an error-->
-      <AdditionalOptions Condition="'$(RFConfig)'=='Debug'">
-        -Werror=unused-variable
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!--Truly unused variables should be an error-->
+			<AdditionalOptions Condition="'$(RFConfig)'=='Debug'">
+				-Werror=unused-variable
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-      <!--Don't care about intentionally unreachable code, and there isn't a
-        good way to ditinguish from accidentally unreachable-->
-      <AdditionalOptions>
-        -Wno-unreachable-code
-        %(AdditionalOptions)
-      </AdditionalOptions>
+			<!--Don't care about intentionally unreachable code, and there isn't a
+				good way to ditinguish from accidentally unreachable-->
+			<AdditionalOptions>
+				-Wno-unreachable-code
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
-    </ClCompile>
+		</ClCompile>
 
-    <Link>
-      <!--Want full PDBs so third-party tools work better-->
-      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
-    </Link>
+		<Link>
+			<!--Want full PDBs so third-party tools work better-->
+			<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
+		</Link>
 
-    <Lib>
-      <!--Complains about effectively empty compilations units, but we use
-        those for targeted header tests-->
-      <AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-    </Lib>
-  </ItemDefinitionGroup>
+		<Lib>
+			<!--Complains about effectively empty compilations units, but we use
+				those for targeted header tests-->
+			<AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+		</Lib>
+	</ItemDefinitionGroup>
 
-  <ItemGroup Condition="'$(ProjectName)'!='hook_new'">
-    <!-- Link hook lib with everything, to allow for hooks during linking -->
-    <ProjectReference Include="$(SolutionDir)libs\hook_new\hook_new.vcxproj">
-      <Project>{A5B5EDE9-82A2-4B25-BB9D-D2B2FEFDF489}</Project>
-    </ProjectReference>
-  </ItemGroup>
+	<ItemGroup Condition="'$(ProjectName)'!='hook_new'">
+		<!-- Link hook lib with everything, to allow for hooks during linking -->
+		<ProjectReference Include="$(SolutionDir)libs\hook_new\hook_new.vcxproj">
+			<Project>{A5B5EDE9-82A2-4B25-BB9D-D2B2FEFDF489}</Project>
+		</ProjectReference>
+	</ItemGroup>
 </Project>
