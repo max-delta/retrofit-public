@@ -1,94 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{6247200C-4CF4-49D8-BC3C-DFC300BC8E0E}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>foundationtest</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Apps.Exe.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup />
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="logging.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="platform_memoryregion.cpp" />
-    <ClCompile Include="rftype_typedatabase.cpp" />
-    <ClCompile Include="rftype_typetraverser.cpp" />
-    <ClCompile Include="rollback_domain.cpp" />
-    <ClCompile Include="rollback_inputstream.cpp" />
-    <ClCompile Include="scheduling_taskscheduler.cpp" />
-    <ClCompile Include="scripting_squirrel.cpp" />
-    <ClCompile Include="serialization_diagnosticexporter.cpp" />
-    <ClCompile Include="serialization_objectserializer.cpp" />
-    <ClCompile Include="serialization_xmlexporter.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
-      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
-      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
-      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
-      <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
-      <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
-      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
-      <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Scheduling\Scheduling.vcxproj">
-      <Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Scripting_squirrel\Scripting_squirrel.vcxproj">
-      <Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
-      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{6247200C-4CF4-49D8-BC3C-DFC300BC8E0E}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>foundationtest</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Apps.Exe.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="logging.cpp" />
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="platform_memoryregion.cpp" />
+		<ClCompile Include="rftype_typedatabase.cpp" />
+		<ClCompile Include="rftype_typetraverser.cpp" />
+		<ClCompile Include="rollback_domain.cpp" />
+		<ClCompile Include="rollback_inputstream.cpp" />
+		<ClCompile Include="scheduling_taskscheduler.cpp" />
+		<ClCompile Include="scripting_squirrel.cpp" />
+		<ClCompile Include="serialization_diagnosticexporter.cpp" />
+		<ClCompile Include="serialization_objectserializer.cpp" />
+		<ClCompile Include="serialization_xmlexporter.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
+			<Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+			<Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
+			<Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
+			<Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
+			<Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
+			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Scheduling\Scheduling.vcxproj">
+			<Project>{b0e6afee-5af7-4235-8f9b-6dd3de941df7}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Scripting_squirrel\Scripting_squirrel.vcxproj">
+			<Project>{c39f2d8a-f048-4111-8505-28ddb9167b81}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
+			<Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

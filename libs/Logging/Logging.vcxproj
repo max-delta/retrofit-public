@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{4A264B07-ADE9-4B0C-BEEA-7E159E011BEA}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Logging</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Foundation.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>LOGGING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="ANSIConsoleLogger.h" />
-    <ClInclude Include="AssertLogger.h" />
-    <ClInclude Include="Constants.h" />
-    <ClInclude Include="FallbackLogger.h" />
-    <ClInclude Include="Logging.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ANSIConsoleLogger.cpp" />
-    <ClCompile Include="AssertLogger.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FallbackLogger.cpp" />
-    <ClCompile Include="Logging.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_logging\core_logging.vcxproj">
-      <Project>{b78d7122-5da0-4173-a556-4aba37431896}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_unicode\core_unicode.vcxproj">
-      <Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Logging.inl" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{4A264B07-ADE9-4B0C-BEEA-7E159E011BEA}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>Logging</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Foundation.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>LOGGING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="ANSIConsoleLogger.h" />
+		<ClInclude Include="AssertLogger.h" />
+		<ClInclude Include="Constants.h" />
+		<ClInclude Include="FallbackLogger.h" />
+		<ClInclude Include="Logging.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="ANSIConsoleLogger.cpp" />
+		<ClCompile Include="AssertLogger.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="FallbackLogger.cpp" />
+		<ClCompile Include="Logging.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_logging\core_logging.vcxproj">
+			<Project>{b78d7122-5da0-4173-a556-4aba37431896}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_unicode\core_unicode.vcxproj">
+			<Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Logging.inl" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

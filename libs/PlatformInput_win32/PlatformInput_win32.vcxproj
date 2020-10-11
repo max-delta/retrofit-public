@@ -1,62 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Platform.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{10894604-ED30-4E76-803A-8DE0FEE2E470}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PlatformInput_win32</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Platform.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Platform.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>PLATFORMINPUT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="DirectInputDevice.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="WndProcInputDevice.h" />
-    <ClInclude Include="XInputDevice.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="WndProcInputDevice.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_input\core_input.vcxproj">
-      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Timing\Timing.vcxproj">
-      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Platform.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{10894604-ED30-4E76-803A-8DE0FEE2E470}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>PlatformInput_win32</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Platform.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Platform.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>PLATFORMINPUT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="DirectInputDevice.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="WndProcInputDevice.h" />
+		<ClInclude Include="XInputDevice.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="WndProcInputDevice.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_input\core_input.vcxproj">
+			<Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Timing\Timing.vcxproj">
+			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

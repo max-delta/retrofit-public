@@ -1,78 +1,78 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Platform.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{76AC6911-6A5A-44D3-8D87-807B3720D68A}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PlatformUtils_win32</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Platform.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Platform.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>PLATFORMUTILS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <AdditionalDependencies>rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='Win32'">project.32.def</ModuleDefinitionFile>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='x64'">project.64.def</ModuleDefinitionFile>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='LLVM_x64'">project.64.def</ModuleDefinitionFile>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="Debugging.h" />
-    <ClInclude Include="dialogs.h" />
-    <ClInclude Include="windowing.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Console.cpp" />
-    <ClCompile Include="Debugging.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="dialogs.cpp" />
-    <ClCompile Include="MemoryRegion.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="uuid.cpp" />
-    <ClCompile Include="windowing.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_platform\core_platform.vcxproj">
-      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="project.32.def" />
-    <None Include="project.64.def" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Platform.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{76AC6911-6A5A-44D3-8D87-807B3720D68A}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>PlatformUtils_win32</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Platform.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Platform.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>PLATFORMUTILS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+		<Link>
+			<AdditionalDependencies>rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+			<ModuleDefinitionFile Condition="'$(Platform)'=='Win32'">project.32.def</ModuleDefinitionFile>
+			<ModuleDefinitionFile Condition="'$(Platform)'=='x64'">project.64.def</ModuleDefinitionFile>
+			<ModuleDefinitionFile Condition="'$(Platform)'=='LLVM_x64'">project.64.def</ModuleDefinitionFile>
+		</Link>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="Console.h" />
+		<ClInclude Include="Debugging.h" />
+		<ClInclude Include="dialogs.h" />
+		<ClInclude Include="windowing.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="Console.cpp" />
+		<ClCompile Include="Debugging.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="dialogs.cpp" />
+		<ClCompile Include="MemoryRegion.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="uuid.cpp" />
+		<ClCompile Include="windowing.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_platform\core_platform.vcxproj">
+			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="project.32.def" />
+		<None Include="project.64.def" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

@@ -1,113 +1,113 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{CD506C73-100B-4E08-ACD1-8AD079EE9363}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>PPU</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Foundation.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>PPU_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Font.h" />
-    <ClInclude Include="FontManager.h" />
-    <ClInclude Include="TileLayer.h" />
-    <ClInclude Include="DeviceInterface.h" />
-    <ClInclude Include="FramePack.h" />
-    <ClInclude Include="FramePackManager.h" />
-    <ClInclude Include="FramePackSerDes.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="PPUController.h" />
-    <ClInclude Include="PPUDebugState.h" />
-    <ClInclude Include="PPUFwd.h" />
-    <ClInclude Include="PPUState.h" />
-    <ClInclude Include="PPUTimer.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="TileLayerCSVLoader.h" />
-    <ClInclude Include="Tileset.h" />
-    <ClInclude Include="TilesetManager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Font.cpp" />
-    <ClCompile Include="FontManager.cpp" />
-    <ClCompile Include="project.cpp" />
-    <ClCompile Include="TileLayer.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="FramePack.cpp" />
-    <ClCompile Include="FramePackManager.cpp" />
-    <ClCompile Include="FramePackSerDes.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PPUController.cpp" />
-    <ClCompile Include="PPUDebugState.cpp" />
-    <ClCompile Include="PPUState.cpp" />
-    <ClCompile Include="PPUTimer.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="TileLayerCSVLoader.cpp" />
-    <ClCompile Include="Tileset.cpp" />
-    <ClCompile Include="TilesetManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Allocation\Allocation.vcxproj">
-      <Project>{ce763dbd-9ca5-4952-970c-fdcb60f9d9a8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
-      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Serialization\Serialization.vcxproj">
-      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Timing\Timing.vcxproj">
-      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FramePack.inl" />
-    <None Include="ResourceManager.inl" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{CD506C73-100B-4E08-ACD1-8AD079EE9363}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>PPU</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Foundation.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>PPU_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="Font.h" />
+		<ClInclude Include="FontManager.h" />
+		<ClInclude Include="TileLayer.h" />
+		<ClInclude Include="DeviceInterface.h" />
+		<ClInclude Include="FramePack.h" />
+		<ClInclude Include="FramePackManager.h" />
+		<ClInclude Include="FramePackSerDes.h" />
+		<ClInclude Include="Object.h" />
+		<ClInclude Include="PPUController.h" />
+		<ClInclude Include="PPUDebugState.h" />
+		<ClInclude Include="PPUFwd.h" />
+		<ClInclude Include="PPUState.h" />
+		<ClInclude Include="PPUTimer.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="ResourceManager.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="Texture.h" />
+		<ClInclude Include="TextureManager.h" />
+		<ClInclude Include="TileLayerCSVLoader.h" />
+		<ClInclude Include="Tileset.h" />
+		<ClInclude Include="TilesetManager.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="Font.cpp" />
+		<ClCompile Include="FontManager.cpp" />
+		<ClCompile Include="project.cpp" />
+		<ClCompile Include="TileLayer.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="FramePack.cpp" />
+		<ClCompile Include="FramePackManager.cpp" />
+		<ClCompile Include="FramePackSerDes.cpp" />
+		<ClCompile Include="Object.cpp" />
+		<ClCompile Include="PPUController.cpp" />
+		<ClCompile Include="PPUDebugState.cpp" />
+		<ClCompile Include="PPUState.cpp" />
+		<ClCompile Include="PPUTimer.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="Texture.cpp" />
+		<ClCompile Include="TextureManager.cpp" />
+		<ClCompile Include="TileLayerCSVLoader.cpp" />
+		<ClCompile Include="Tileset.cpp" />
+		<ClCompile Include="TilesetManager.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Allocation\Allocation.vcxproj">
+			<Project>{ce763dbd-9ca5-4952-970c-fdcb60f9d9a8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
+			<Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Serialization\Serialization.vcxproj">
+			<Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Timing\Timing.vcxproj">
+			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="FramePack.inl" />
+		<None Include="ResourceManager.inl" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

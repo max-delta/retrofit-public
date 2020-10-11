@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B0E6AFEE-5AF7-4235-8F9B-6DD3DE941DF7}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Scheduling</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-	<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Foundation.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>SCHEDULING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="project.h" />
-    <ClInclude Include="SchedulingFwd.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="taskpools\FIFOTaskPool.h" />
-    <ClInclude Include="taskpools\project.h" />
-    <ClInclude Include="taskpools\stdafx.h" />
-    <ClInclude Include="taskpools\TaskPool.h" />
-    <ClInclude Include="taskpools\TaskPoolListener.h" />
-    <ClInclude Include="TaskScheduler.h" />
-    <ClInclude Include="Tasks\FunctorTask.h" />
-    <ClInclude Include="tasks\NonIncrementalTask.h" />
-    <ClInclude Include="Tasks\project.h" />
-    <ClInclude Include="tasks\stdafx.h" />
-    <ClInclude Include="tasks\Task.h" />
-    <ClInclude Include="taskworkers\project.h" />
-    <ClInclude Include="taskworkers\stdafx.h" />
-    <ClInclude Include="taskworkers\TaskWorker.h" />
-    <ClInclude Include="taskworkers\ThreadableTaskWorker.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="taskpools\FIFOTaskPool.cpp" />
-    <ClCompile Include="taskpools\TaskPool.cpp" />
-    <ClCompile Include="TaskScheduler.cpp" />
-    <ClCompile Include="taskworkers\TaskWorker.cpp" />
-    <ClCompile Include="taskworkers\ThreadableTaskWorker.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{B0E6AFEE-5AF7-4235-8F9B-6DD3DE941DF7}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>Scheduling</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Foundation.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>SCHEDULING_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="SchedulingFwd.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="taskpools\FIFOTaskPool.h" />
+		<ClInclude Include="taskpools\project.h" />
+		<ClInclude Include="taskpools\stdafx.h" />
+		<ClInclude Include="taskpools\TaskPool.h" />
+		<ClInclude Include="taskpools\TaskPoolListener.h" />
+		<ClInclude Include="TaskScheduler.h" />
+		<ClInclude Include="Tasks\FunctorTask.h" />
+		<ClInclude Include="tasks\NonIncrementalTask.h" />
+		<ClInclude Include="Tasks\project.h" />
+		<ClInclude Include="tasks\stdafx.h" />
+		<ClInclude Include="tasks\Task.h" />
+		<ClInclude Include="taskworkers\project.h" />
+		<ClInclude Include="taskworkers\stdafx.h" />
+		<ClInclude Include="taskworkers\TaskWorker.h" />
+		<ClInclude Include="taskworkers\ThreadableTaskWorker.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="taskpools\FIFOTaskPool.cpp" />
+		<ClCompile Include="taskpools\TaskPool.cpp" />
+		<ClCompile Include="TaskScheduler.cpp" />
+		<ClCompile Include="taskworkers\TaskWorker.cpp" />
+		<ClCompile Include="taskworkers\ThreadableTaskWorker.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

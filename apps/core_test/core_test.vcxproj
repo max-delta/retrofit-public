@@ -1,132 +1,132 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{E21D2683-E07F-4AD4-81B1-50F89611D9A0}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>core_test</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Apps.Exe.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup />
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="allocate_creators.cpp" />
-    <ClCompile Include="allocate_linearallocator.cpp" />
-    <ClCompile Include="allocate_rftlallocator.cpp" />
-    <ClCompile Include="allocate_singleallocator.cpp" />
-    <ClCompile Include="byte_view.cpp" />
-    <ClCompile Include="component_objectmanager.cpp" />
-    <ClCompile Include="component_typedobjectmanager.cpp" />
-    <ClCompile Include="event_eventdispatcher.cpp" />
-    <ClCompile Include="event_eventqueue.cpp" />
-    <ClCompile Include="idgen.cpp" />
-    <ClCompile Include="literal.cpp" />
-    <ClCompile Include="logic_directededgegraph.cpp" />
-    <ClCompile Include="logic_partialplanner.cpp" />
-    <ClCompile Include="math_bitfield.cpp" />
-    <ClCompile Include="math_bytes.cpp" />
-    <ClCompile Include="math_listoperations.cpp" />
-    <ClCompile Include="math_numerictraits.cpp" />
-    <ClCompile Include="platform_uuid.cpp" />
-    <ClCompile Include="ptr_transform.cpp" />
-    <ClCompile Include="reflect_class_info_builder.cpp" />
-    <ClCompile Include="rftl_string_traits.cpp" />
-    <ClCompile Include="rftype_class_info_compositor.cpp" />
-    <ClCompile Include="compiler.cpp" />
-    <ClCompile Include="ptr_entwinedcreator.cpp" />
-    <ClCompile Include="logging_router.cpp" />
-    <ClCompile Include="math_bits.cpp" />
-    <ClCompile Include="math_hash.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="math_casts.cpp" />
-    <ClCompile Include="math_clamps.cpp" />
-    <ClCompile Include="math_compare.cpp" />
-    <ClCompile Include="membertest.cpp" />
-    <ClCompile Include="minclude_shared.cpp" />
-    <ClCompile Include="minclude_unique.cpp" />
-    <ClCompile Include="minclude_weak.cpp" />
-    <ClCompile Include="reflect_inspect_function.cpp" />
-    <ClCompile Include="reflect_inspect_variable.cpp" />
-    <ClCompile Include="reflect_value.cpp" />
-    <ClCompile Include="rftype_identifier.cpp" />
-    <ClCompile Include="rftype_virtual_cast.cpp" />
-    <ClCompile Include="state_stream.cpp" />
-    <ClCompile Include="state_tree.cpp" />
-    <ClCompile Include="static_string.cpp" />
-    <ClCompile Include="static_vector.cpp" />
-    <ClCompile Include="ptr_sharedptr.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="thread_async.cpp" />
-    <ClCompile Include="thread_sequential_work_pump.cpp" />
-    <ClCompile Include="thread_signal.cpp" />
-    <ClCompile Include="typelist.cpp" />
-    <ClCompile Include="ptr_uniqueptr.cpp" />
-    <ClCompile Include="unicode_bufferconvert.cpp" />
-    <ClCompile Include="unicode_charconvert.cpp" />
-    <ClCompile Include="unicode_stringconvert.cpp" />
-    <ClCompile Include="valuelist.cpp" />
-    <ClCompile Include="vector2.cpp" />
-    <ClCompile Include="ptr_weaksharedptr.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
-      <Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_thread\core_thread.vcxproj">
-      <Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
-      <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_logging\core_logging.vcxproj">
-      <Project>{b78d7122-5da0-4173-a556-4aba37431896}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
-      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
-      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
-      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_unicode\core_unicode.vcxproj">
-      <Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{E21D2683-E07F-4AD4-81B1-50F89611D9A0}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>core_test</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Apps.Exe.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="allocate_creators.cpp" />
+		<ClCompile Include="allocate_linearallocator.cpp" />
+		<ClCompile Include="allocate_rftlallocator.cpp" />
+		<ClCompile Include="allocate_singleallocator.cpp" />
+		<ClCompile Include="byte_view.cpp" />
+		<ClCompile Include="component_objectmanager.cpp" />
+		<ClCompile Include="component_typedobjectmanager.cpp" />
+		<ClCompile Include="event_eventdispatcher.cpp" />
+		<ClCompile Include="event_eventqueue.cpp" />
+		<ClCompile Include="idgen.cpp" />
+		<ClCompile Include="literal.cpp" />
+		<ClCompile Include="logic_directededgegraph.cpp" />
+		<ClCompile Include="logic_partialplanner.cpp" />
+		<ClCompile Include="math_bitfield.cpp" />
+		<ClCompile Include="math_bytes.cpp" />
+		<ClCompile Include="math_listoperations.cpp" />
+		<ClCompile Include="math_numerictraits.cpp" />
+		<ClCompile Include="platform_uuid.cpp" />
+		<ClCompile Include="ptr_transform.cpp" />
+		<ClCompile Include="reflect_class_info_builder.cpp" />
+		<ClCompile Include="rftl_string_traits.cpp" />
+		<ClCompile Include="rftype_class_info_compositor.cpp" />
+		<ClCompile Include="compiler.cpp" />
+		<ClCompile Include="ptr_entwinedcreator.cpp" />
+		<ClCompile Include="logging_router.cpp" />
+		<ClCompile Include="math_bits.cpp" />
+		<ClCompile Include="math_hash.cpp" />
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="math_casts.cpp" />
+		<ClCompile Include="math_clamps.cpp" />
+		<ClCompile Include="math_compare.cpp" />
+		<ClCompile Include="membertest.cpp" />
+		<ClCompile Include="minclude_shared.cpp" />
+		<ClCompile Include="minclude_unique.cpp" />
+		<ClCompile Include="minclude_weak.cpp" />
+		<ClCompile Include="reflect_inspect_function.cpp" />
+		<ClCompile Include="reflect_inspect_variable.cpp" />
+		<ClCompile Include="reflect_value.cpp" />
+		<ClCompile Include="rftype_identifier.cpp" />
+		<ClCompile Include="rftype_virtual_cast.cpp" />
+		<ClCompile Include="state_stream.cpp" />
+		<ClCompile Include="state_tree.cpp" />
+		<ClCompile Include="static_string.cpp" />
+		<ClCompile Include="static_vector.cpp" />
+		<ClCompile Include="ptr_sharedptr.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="thread_async.cpp" />
+		<ClCompile Include="thread_sequential_work_pump.cpp" />
+		<ClCompile Include="thread_signal.cpp" />
+		<ClCompile Include="typelist.cpp" />
+		<ClCompile Include="ptr_uniqueptr.cpp" />
+		<ClCompile Include="unicode_bufferconvert.cpp" />
+		<ClCompile Include="unicode_charconvert.cpp" />
+		<ClCompile Include="unicode_stringconvert.cpp" />
+		<ClCompile Include="valuelist.cpp" />
+		<ClCompile Include="vector2.cpp" />
+		<ClCompile Include="ptr_weaksharedptr.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
+			<Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_thread\core_thread.vcxproj">
+			<Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
+			<Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_logging\core_logging.vcxproj">
+			<Project>{b78d7122-5da0-4173-a556-4aba37431896}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
+			<Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
+			<Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_unicode\core_unicode.vcxproj">
+			<Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

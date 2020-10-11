@@ -1,90 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Game.Dll.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{6D71C9F7-3605-4D12-8826-E4C095534887}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>GameSprite</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Game.Dll.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Game.Dll.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>GAMESPRITE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="BitmapCache.h" />
-    <ClInclude Include="BitmapReader.h" />
-    <ClInclude Include="BitmapWriter.h" />
-    <ClInclude Include="CharacterCompositor.h" />
-    <ClInclude Include="CharacterCreator.h" />
-    <ClInclude Include="CompositeCharacter.h" />
-    <ClInclude Include="MelaninColorGenerator.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="SpriteFwd.h" />
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Bitmap.cpp" />
-    <ClCompile Include="BitmapCache.cpp" />
-    <ClCompile Include="BitmapReader.cpp" />
-    <ClCompile Include="BitmapWriter.cpp" />
-    <ClCompile Include="CharacterCompositor.cpp" />
-    <ClCompile Include="CharacterCreator.cpp" />
-    <ClCompile Include="CompositeCharacter.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="MelaninColorGenerator.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\third_party\stb_image\stb_image.vcxproj">
-      <Project>{c2adeee6-0ab0-4b7c-833f-7b96832f1a01}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
-      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PPU\PPU.vcxproj">
-      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Serialization\Serialization.vcxproj">
-      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Game.Dll.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{6D71C9F7-3605-4D12-8826-E4C095534887}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>GameSprite</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Game.Dll.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Game.Dll.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<PreprocessorDefinitions>GAMESPRITE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+		</ClCompile>
+	</ItemDefinitionGroup>
+	<ItemGroup>
+		<ClInclude Include="Bitmap.h" />
+		<ClInclude Include="BitmapCache.h" />
+		<ClInclude Include="BitmapReader.h" />
+		<ClInclude Include="BitmapWriter.h" />
+		<ClInclude Include="CharacterCompositor.h" />
+		<ClInclude Include="CharacterCreator.h" />
+		<ClInclude Include="CompositeCharacter.h" />
+		<ClInclude Include="MelaninColorGenerator.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="SpriteFwd.h" />
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="Bitmap.cpp" />
+		<ClCompile Include="BitmapCache.cpp" />
+		<ClCompile Include="BitmapReader.cpp" />
+		<ClCompile Include="BitmapWriter.cpp" />
+		<ClCompile Include="CharacterCompositor.cpp" />
+		<ClCompile Include="CharacterCreator.cpp" />
+		<ClCompile Include="CompositeCharacter.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="MelaninColorGenerator.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\third_party\stb_image\stb_image.vcxproj">
+			<Project>{c2adeee6-0ab0-4b7c-833f-7b96832f1a01}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
+			<Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\PPU\PPU.vcxproj">
+			<Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Serialization\Serialization.vcxproj">
+			<Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

@@ -1,300 +1,300 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{252E935A-D4CF-4D6E-8D92-B6A7B7C9534C}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>cc3o3</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Apps.Exe.props" />
-    <Import Project="..\..\config\AppCommon.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup />
-  <ItemGroup>
-    <ClCompile Include="appstates\AppStateRoute.cpp" />
-    <ClCompile Include="appstates\Boot.cpp" />
-    <ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp" />
-    <ClCompile Include="appstates\devtest\DevTestGridCharts.cpp" />
-    <ClCompile Include="appstates\devtest\DevTestLobby.cpp" />
-    <ClCompile Include="appstates\devtest\DevTestRollback.cpp" />
-    <ClCompile Include="appstates\gameplay\Gameplay.cpp" />
-    <ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp" />
-    <ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp" />
-    <ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp" />
-    <ClCompile Include="appstates\gameplay\Gameplay_Site.cpp" />
-    <ClCompile Include="appstates\InitialLoading.cpp" />
-    <ClCompile Include="appstates\InputHelpers.cpp" />
-    <ClCompile Include="appstates\titlescreen\TitleScreen.cpp" />
-    <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp" />
-    <ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp" />
-    <ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp" />
-    <ClCompile Include="cc3o3.cpp" />
-    <ClCompile Include="char\CharData.cpp" />
-    <ClCompile Include="char\CharacterDatabase.cpp" />
-    <ClCompile Include="char\CharacterValidator.cpp" />
-    <ClCompile Include="char\Description.cpp" />
-    <ClCompile Include="char\ElementSlots.cpp" />
-    <ClCompile Include="char\Equipment.cpp" />
-    <ClCompile Include="char\Genetics.cpp" />
-    <ClCompile Include="char\Stats.cpp" />
-    <ClCompile Include="char\Visuals.cpp" />
-    <ClCompile Include="combat\CombatantID.cpp" />
-    <ClCompile Include="combat\CombatEngine.cpp" />
-    <ClCompile Include="combat\CombatInstance.cpp" />
-    <ClCompile Include="combat\FightController.cpp" />
-    <ClCompile Include="Common.cpp" />
-    <ClCompile Include="CommonPaths.cpp" />
-    <ClCompile Include="company\CompanyManager.cpp" />
-    <ClCompile Include="DeveloperHud.cpp" />
-    <ClCompile Include="elements\ElementDatabase.cpp" />
-    <ClCompile Include="elements\ElementDesc.cpp" />
-    <ClCompile Include="elements\IdentifierUtils.cpp" />
-    <ClCompile Include="input\HardcodedSetup.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="state\Component.cpp" />
-    <ClCompile Include="state\ComponentResolver.cpp" />
-    <ClCompile Include="state\components\Character.cpp" />
-    <ClCompile Include="state\components\Combo.cpp" />
-    <ClCompile Include="state\components\Loadout.cpp" />
-    <ClCompile Include="state\components\Meta.cpp" />
-    <ClCompile Include="state\components\OverworldMovement.cpp" />
-    <ClCompile Include="state\components\OverworldVisual.cpp" />
-    <ClCompile Include="state\components\Progression.cpp" />
-    <ClCompile Include="state\components\Roster.cpp" />
-    <ClCompile Include="state\components\SiteVisual.cpp" />
-    <ClCompile Include="state\components\UINavigation.cpp" />
-    <ClCompile Include="state\components\Vitality.cpp" />
-    <ClCompile Include="state\objects\BaseCharacter.cpp" />
-    <ClCompile Include="state\objects\BattleCharacter.cpp" />
-    <ClCompile Include="state\objects\Company.cpp" />
-    <ClCompile Include="state\objects\EmptyObject.cpp" />
-    <ClCompile Include="state\objects\LocalUI.cpp" />
-    <ClCompile Include="state\objects\OverworldCharacter.cpp" />
-    <ClCompile Include="state\objects\SiteCharacter.cpp" />
-    <ClCompile Include="state\StateHelpers.cpp" />
-    <ClCompile Include="state\StateLogging.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
-    <ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
-    <ClCompile Include="ui\controllers\ElementGrid.cpp" />
-    <ClCompile Include="ui\controllers\ElementGridSelector.cpp" />
-    <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp" />
-    <ClCompile Include="ui\ElementGridDisplayCache.cpp" />
-    <ClCompile Include="ui\ElementSlotDisplayCache.cpp" />
-    <ClCompile Include="ui\ElementStockpileDisplayCache.cpp" />
-    <ClCompile Include="ui\LocalizationHelpers.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="appstates\AppStateRoute.h" />
-    <ClInclude Include="appstates\AppStatesFwd.h" />
-    <ClInclude Include="appstates\Boot.h" />
-    <ClInclude Include="appstates\devtest\DevTestCombatCharts.h" />
-    <ClInclude Include="appstates\devtest\DevTestGridCharts.h" />
-    <ClInclude Include="appstates\devtest\DevTestLobby.h" />
-    <ClInclude Include="appstates\devtest\DevTestRollback.h" />
-    <ClInclude Include="appstates\devtest\project.h" />
-    <ClInclude Include="appstates\devtest\stdafx.h" />
-    <ClInclude Include="appstates\gameplay\Gameplay.h" />
-    <ClInclude Include="appstates\gameplay\Gameplay_Battle.h" />
-    <ClInclude Include="appstates\gameplay\Gameplay_Menus.h" />
-    <ClInclude Include="appstates\gameplay\Gameplay_Overworld.h" />
-    <ClInclude Include="appstates\gameplay\Gameplay_Site.h" />
-    <ClInclude Include="appstates\gameplay\project.h" />
-    <ClInclude Include="appstates\gameplay\stdafx.h" />
-    <ClInclude Include="appstates\InitialLoading.h" />
-    <ClInclude Include="appstates\InputHelpers.h" />
-    <ClInclude Include="appstates\project.h" />
-    <ClInclude Include="appstates\stdafx.h" />
-    <ClInclude Include="appstates\titlescreen\project.h" />
-    <ClInclude Include="appstates\titlescreen\stdafx.h" />
-    <ClInclude Include="appstates\titlescreen\TitleScreen.h" />
-    <ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h" />
-    <ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h" />
-    <ClInclude Include="appstates\titlescreen\TitleScreen_Options.h" />
-    <ClInclude Include="cc3o3.h" />
-    <ClInclude Include="char\CharData.h" />
-    <ClInclude Include="char\CharacterDatabase.h" />
-    <ClInclude Include="char\CharacterValidator.h" />
-    <ClInclude Include="char\CharFwd.h" />
-    <ClInclude Include="char\Description.h" />
-    <ClInclude Include="char\ElementSlots.h" />
-    <ClInclude Include="char\Equipment.h" />
-    <ClInclude Include="char\Genetics.h" />
-    <ClInclude Include="char\project.h" />
-    <ClInclude Include="char\Stats.h" />
-    <ClInclude Include="char\stdafx.h" />
-    <ClInclude Include="char\Visuals.h" />
-    <ClInclude Include="combat\Attack.h" />
-    <ClInclude Include="combat\FightController.h" />
-    <ClInclude Include="combat\Fighter.h" />
-    <ClInclude Include="combat\CombatantID.h" />
-    <ClInclude Include="combat\CombatEngine.h" />
-    <ClInclude Include="combat\CombatFwd.h" />
-    <ClInclude Include="combat\CombatInstance.h" />
-    <ClInclude Include="combat\Field.h" />
-    <ClInclude Include="combat\Party.h" />
-    <ClInclude Include="combat\project.h" />
-    <ClInclude Include="combat\stdafx.h" />
-    <ClInclude Include="combat\Team.h" />
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="CommonPaths.h" />
-    <ClInclude Include="company\CompanyFwd.h" />
-    <ClInclude Include="company\CompanyManager.h" />
-    <ClInclude Include="company\project.h" />
-    <ClInclude Include="company\stdafx.h" />
-    <ClInclude Include="DeveloperHud.h" />
-    <ClInclude Include="elements\ElementDatabase.h" />
-    <ClInclude Include="elements\ElementDesc.h" />
-    <ClInclude Include="elements\ElementFwd.h" />
-    <ClInclude Include="elements\IdentifierUtils.h" />
-    <ClInclude Include="elements\project.h" />
-    <ClInclude Include="elements\stdafx.h" />
-    <ClInclude Include="input\HardcodedSetup.h" />
-    <ClInclude Include="input\InputFwd.h" />
-    <ClInclude Include="input\project.h" />
-    <ClInclude Include="input\stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="state\Component.h" />
-    <ClInclude Include="state\ComponentResolver.h" />
-    <ClInclude Include="state\components\Character.h" />
-    <ClInclude Include="state\components\Combo.h" />
-    <ClInclude Include="state\components\Loadout.h" />
-    <ClInclude Include="state\components\Meta.h" />
-    <ClInclude Include="state\components\OverworldMovement.h" />
-    <ClInclude Include="state\components\OverworldVisual.h" />
-    <ClInclude Include="state\components\Progression.h" />
-    <ClInclude Include="state\components\project.h" />
-    <ClInclude Include="state\components\Roster.h" />
-    <ClInclude Include="state\components\SiteVisual.h" />
-    <ClInclude Include="state\components\stdafx.h" />
-    <ClInclude Include="state\components\UINavigation.h" />
-    <ClInclude Include="state\components\Vitality.h" />
-    <ClInclude Include="state\objects\BaseCharacter.h" />
-    <ClInclude Include="state\objects\BattleCharacter.h" />
-    <ClInclude Include="state\objects\Company.h" />
-    <ClInclude Include="state\objects\EmptyObject.h" />
-    <ClInclude Include="state\objects\LocalUI.h" />
-    <ClInclude Include="state\objects\OverworldCharacter.h" />
-    <ClInclude Include="state\objects\project.h" />
-    <ClInclude Include="state\objects\SiteCharacter.h" />
-    <ClInclude Include="state\objects\stdafx.h" />
-    <ClInclude Include="state\project.h" />
-    <ClInclude Include="state\StateFwd.h" />
-    <ClInclude Include="state\StateHelpers.h" />
-    <ClInclude Include="state\StateLogging.h" />
-    <ClInclude Include="state\stdafx.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="time\project.h" />
-    <ClInclude Include="time\stdafx.h" />
-    <ClInclude Include="time\TimeFwd.h" />
-    <ClInclude Include="ui\controllers\CharacterSlot.h" />
-    <ClInclude Include="ui\controllers\CharacterSlotList.h" />
-    <ClInclude Include="ui\controllers\ElementGrid.h" />
-    <ClInclude Include="ui\controllers\ElementGridSelector.h" />
-    <ClInclude Include="ui\controllers\ElementStockpileSelector.h" />
-    <ClInclude Include="ui\controllers\project.h" />
-    <ClInclude Include="ui\controllers\stdafx.h" />
-    <ClInclude Include="ui\ElementGridDisplayCache.h" />
-    <ClInclude Include="ui\ElementSlotDisplayCache.h" />
-    <ClInclude Include="ui\ElementStockpileDisplayCache.h" />
-    <ClInclude Include="ui\ElementTilesetValues.h" />
-    <ClInclude Include="ui\LocalizationHelpers.h" />
-    <ClInclude Include="ui\project.h" />
-    <ClInclude Include="ui\stdafx.h" />
-    <ClInclude Include="ui\UIFwd.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\libs\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
-      <Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
-      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
-      <Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
-      <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
-      <Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
-      <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
-      <Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameSprite\GameSprite.vcxproj">
-      <Project>{6d71c9f7-3605-4d12-8826-e4c095534887}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameSync\GameSync.vcxproj">
-      <Project>{ee5501a8-43c3-4ece-acf7-82df8a5d3ac8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
-      <Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Localization\Localization.vcxproj">
-      <Project>{0bac9079-d421-4e6b-86c3-a9244644b29a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
-      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
-      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
-      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
-      <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
-      <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
-      <Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
-      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
-      <Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{252E935A-D4CF-4D6E-8D92-B6A7B7C9534C}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>cc3o3</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Apps.Exe.props" />
+		<Import Project="..\..\config\AppCommon.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<ItemGroup>
+		<ClCompile Include="appstates\AppStateRoute.cpp" />
+		<ClCompile Include="appstates\Boot.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestGridCharts.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestLobby.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestRollback.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay_Site.cpp" />
+		<ClCompile Include="appstates\InitialLoading.cpp" />
+		<ClCompile Include="appstates\InputHelpers.cpp" />
+		<ClCompile Include="appstates\titlescreen\TitleScreen.cpp" />
+		<ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp" />
+		<ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp" />
+		<ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp" />
+		<ClCompile Include="cc3o3.cpp" />
+		<ClCompile Include="char\CharData.cpp" />
+		<ClCompile Include="char\CharacterDatabase.cpp" />
+		<ClCompile Include="char\CharacterValidator.cpp" />
+		<ClCompile Include="char\Description.cpp" />
+		<ClCompile Include="char\ElementSlots.cpp" />
+		<ClCompile Include="char\Equipment.cpp" />
+		<ClCompile Include="char\Genetics.cpp" />
+		<ClCompile Include="char\Stats.cpp" />
+		<ClCompile Include="char\Visuals.cpp" />
+		<ClCompile Include="combat\CombatantID.cpp" />
+		<ClCompile Include="combat\CombatEngine.cpp" />
+		<ClCompile Include="combat\CombatInstance.cpp" />
+		<ClCompile Include="combat\FightController.cpp" />
+		<ClCompile Include="Common.cpp" />
+		<ClCompile Include="CommonPaths.cpp" />
+		<ClCompile Include="company\CompanyManager.cpp" />
+		<ClCompile Include="DeveloperHud.cpp" />
+		<ClCompile Include="elements\ElementDatabase.cpp" />
+		<ClCompile Include="elements\ElementDesc.cpp" />
+		<ClCompile Include="elements\IdentifierUtils.cpp" />
+		<ClCompile Include="input\HardcodedSetup.cpp" />
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="state\Component.cpp" />
+		<ClCompile Include="state\ComponentResolver.cpp" />
+		<ClCompile Include="state\components\Character.cpp" />
+		<ClCompile Include="state\components\Combo.cpp" />
+		<ClCompile Include="state\components\Loadout.cpp" />
+		<ClCompile Include="state\components\Meta.cpp" />
+		<ClCompile Include="state\components\OverworldMovement.cpp" />
+		<ClCompile Include="state\components\OverworldVisual.cpp" />
+		<ClCompile Include="state\components\Progression.cpp" />
+		<ClCompile Include="state\components\Roster.cpp" />
+		<ClCompile Include="state\components\SiteVisual.cpp" />
+		<ClCompile Include="state\components\UINavigation.cpp" />
+		<ClCompile Include="state\components\Vitality.cpp" />
+		<ClCompile Include="state\objects\BaseCharacter.cpp" />
+		<ClCompile Include="state\objects\BattleCharacter.cpp" />
+		<ClCompile Include="state\objects\Company.cpp" />
+		<ClCompile Include="state\objects\EmptyObject.cpp" />
+		<ClCompile Include="state\objects\LocalUI.cpp" />
+		<ClCompile Include="state\objects\OverworldCharacter.cpp" />
+		<ClCompile Include="state\objects\SiteCharacter.cpp" />
+		<ClCompile Include="state\StateHelpers.cpp" />
+		<ClCompile Include="state\StateLogging.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\CharacterSlot.cpp" />
+		<ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
+		<ClCompile Include="ui\controllers\ElementGrid.cpp" />
+		<ClCompile Include="ui\controllers\ElementGridSelector.cpp" />
+		<ClCompile Include="ui\controllers\ElementStockpileSelector.cpp" />
+		<ClCompile Include="ui\ElementGridDisplayCache.cpp" />
+		<ClCompile Include="ui\ElementSlotDisplayCache.cpp" />
+		<ClCompile Include="ui\ElementStockpileDisplayCache.cpp" />
+		<ClCompile Include="ui\LocalizationHelpers.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="appstates\AppStateRoute.h" />
+		<ClInclude Include="appstates\AppStatesFwd.h" />
+		<ClInclude Include="appstates\Boot.h" />
+		<ClInclude Include="appstates\devtest\DevTestCombatCharts.h" />
+		<ClInclude Include="appstates\devtest\DevTestGridCharts.h" />
+		<ClInclude Include="appstates\devtest\DevTestLobby.h" />
+		<ClInclude Include="appstates\devtest\DevTestRollback.h" />
+		<ClInclude Include="appstates\devtest\project.h" />
+		<ClInclude Include="appstates\devtest\stdafx.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay_Battle.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay_Menus.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay_Overworld.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay_Site.h" />
+		<ClInclude Include="appstates\gameplay\project.h" />
+		<ClInclude Include="appstates\gameplay\stdafx.h" />
+		<ClInclude Include="appstates\InitialLoading.h" />
+		<ClInclude Include="appstates\InputHelpers.h" />
+		<ClInclude Include="appstates\project.h" />
+		<ClInclude Include="appstates\stdafx.h" />
+		<ClInclude Include="appstates\titlescreen\project.h" />
+		<ClInclude Include="appstates\titlescreen\stdafx.h" />
+		<ClInclude Include="appstates\titlescreen\TitleScreen.h" />
+		<ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h" />
+		<ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h" />
+		<ClInclude Include="appstates\titlescreen\TitleScreen_Options.h" />
+		<ClInclude Include="cc3o3.h" />
+		<ClInclude Include="char\CharData.h" />
+		<ClInclude Include="char\CharacterDatabase.h" />
+		<ClInclude Include="char\CharacterValidator.h" />
+		<ClInclude Include="char\CharFwd.h" />
+		<ClInclude Include="char\Description.h" />
+		<ClInclude Include="char\ElementSlots.h" />
+		<ClInclude Include="char\Equipment.h" />
+		<ClInclude Include="char\Genetics.h" />
+		<ClInclude Include="char\project.h" />
+		<ClInclude Include="char\Stats.h" />
+		<ClInclude Include="char\stdafx.h" />
+		<ClInclude Include="char\Visuals.h" />
+		<ClInclude Include="combat\Attack.h" />
+		<ClInclude Include="combat\FightController.h" />
+		<ClInclude Include="combat\Fighter.h" />
+		<ClInclude Include="combat\CombatantID.h" />
+		<ClInclude Include="combat\CombatEngine.h" />
+		<ClInclude Include="combat\CombatFwd.h" />
+		<ClInclude Include="combat\CombatInstance.h" />
+		<ClInclude Include="combat\Field.h" />
+		<ClInclude Include="combat\Party.h" />
+		<ClInclude Include="combat\project.h" />
+		<ClInclude Include="combat\stdafx.h" />
+		<ClInclude Include="combat\Team.h" />
+		<ClInclude Include="Common.h" />
+		<ClInclude Include="CommonPaths.h" />
+		<ClInclude Include="company\CompanyFwd.h" />
+		<ClInclude Include="company\CompanyManager.h" />
+		<ClInclude Include="company\project.h" />
+		<ClInclude Include="company\stdafx.h" />
+		<ClInclude Include="DeveloperHud.h" />
+		<ClInclude Include="elements\ElementDatabase.h" />
+		<ClInclude Include="elements\ElementDesc.h" />
+		<ClInclude Include="elements\ElementFwd.h" />
+		<ClInclude Include="elements\IdentifierUtils.h" />
+		<ClInclude Include="elements\project.h" />
+		<ClInclude Include="elements\stdafx.h" />
+		<ClInclude Include="input\HardcodedSetup.h" />
+		<ClInclude Include="input\InputFwd.h" />
+		<ClInclude Include="input\project.h" />
+		<ClInclude Include="input\stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="state\Component.h" />
+		<ClInclude Include="state\ComponentResolver.h" />
+		<ClInclude Include="state\components\Character.h" />
+		<ClInclude Include="state\components\Combo.h" />
+		<ClInclude Include="state\components\Loadout.h" />
+		<ClInclude Include="state\components\Meta.h" />
+		<ClInclude Include="state\components\OverworldMovement.h" />
+		<ClInclude Include="state\components\OverworldVisual.h" />
+		<ClInclude Include="state\components\Progression.h" />
+		<ClInclude Include="state\components\project.h" />
+		<ClInclude Include="state\components\Roster.h" />
+		<ClInclude Include="state\components\SiteVisual.h" />
+		<ClInclude Include="state\components\stdafx.h" />
+		<ClInclude Include="state\components\UINavigation.h" />
+		<ClInclude Include="state\components\Vitality.h" />
+		<ClInclude Include="state\objects\BaseCharacter.h" />
+		<ClInclude Include="state\objects\BattleCharacter.h" />
+		<ClInclude Include="state\objects\Company.h" />
+		<ClInclude Include="state\objects\EmptyObject.h" />
+		<ClInclude Include="state\objects\LocalUI.h" />
+		<ClInclude Include="state\objects\OverworldCharacter.h" />
+		<ClInclude Include="state\objects\project.h" />
+		<ClInclude Include="state\objects\SiteCharacter.h" />
+		<ClInclude Include="state\objects\stdafx.h" />
+		<ClInclude Include="state\project.h" />
+		<ClInclude Include="state\StateFwd.h" />
+		<ClInclude Include="state\StateHelpers.h" />
+		<ClInclude Include="state\StateLogging.h" />
+		<ClInclude Include="state\stdafx.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="time\project.h" />
+		<ClInclude Include="time\stdafx.h" />
+		<ClInclude Include="time\TimeFwd.h" />
+		<ClInclude Include="ui\controllers\CharacterSlot.h" />
+		<ClInclude Include="ui\controllers\CharacterSlotList.h" />
+		<ClInclude Include="ui\controllers\ElementGrid.h" />
+		<ClInclude Include="ui\controllers\ElementGridSelector.h" />
+		<ClInclude Include="ui\controllers\ElementStockpileSelector.h" />
+		<ClInclude Include="ui\controllers\project.h" />
+		<ClInclude Include="ui\controllers\stdafx.h" />
+		<ClInclude Include="ui\ElementGridDisplayCache.h" />
+		<ClInclude Include="ui\ElementSlotDisplayCache.h" />
+		<ClInclude Include="ui\ElementStockpileDisplayCache.h" />
+		<ClInclude Include="ui\ElementTilesetValues.h" />
+		<ClInclude Include="ui\LocalizationHelpers.h" />
+		<ClInclude Include="ui\project.h" />
+		<ClInclude Include="ui\stdafx.h" />
+		<ClInclude Include="ui\UIFwd.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\libs\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_component\core_component.vcxproj">
+			<Project>{835d2394-6e2c-4c7d-9648-75fb2bdc1aa8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
+			<Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
+			<Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
+			<Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
+			<Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
+			<Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
+			<Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameSprite\GameSprite.vcxproj">
+			<Project>{6d71c9f7-3605-4d12-8826-e4c095534887}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameSync\GameSync.vcxproj">
+			<Project>{ee5501a8-43c3-4ece-acf7-82df8a5d3ac8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameUI\GameUI.vcxproj">
+			<Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Localization\Localization.vcxproj">
+			<Project>{0bac9079-d421-4e6b-86c3-a9244644b29a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
+			<Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+			<Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
+			<Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\RFType\RFType.vcxproj">
+			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Rollback\Rollback.vcxproj">
+			<Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Serialization\Serialization.vcxproj">
+			<Project>{54f120d7-d0ca-4e72-8487-1d3aa63d8135}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
+			<Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>

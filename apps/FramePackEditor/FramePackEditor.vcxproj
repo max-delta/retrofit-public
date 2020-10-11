@@ -1,87 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
-  </ImportGroup>
-  <PropertyGroup Label="Globals">
-    <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{08B8981A-E605-4C94-BD88-98DC142FC169}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FramePackEditor</RootNamespace>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ImportGroup Label="PropertySheets">
-    <Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
-  </ImportGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\config\Global.Cpp.props" />
-    <Import Project="..\..\config\RetroFit.props" />
-    <Import Project="..\..\config\RF.Apps.Exe.props" />
-    <Import Project="..\..\config\AppCommon.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
-  <ItemDefinitionGroup />
-  <ItemGroup>
-    <ClInclude Include="FramePackEditor.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="FramePackEditor.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader>Create</PrecompiledHeader>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\libs\core\core.vcxproj">
-      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
-      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
-      <Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
-      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
-      <Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
-      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
-      <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
-      <Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
-      <Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
-      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
-      <Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
-      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
-      <Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Platform.props" />
+	</ImportGroup>
+	<PropertyGroup Label="Globals">
+		<VCProjectVersion>15.0</VCProjectVersion>
+		<ProjectGuid>{08B8981A-E605-4C94-BD88-98DC142FC169}</ProjectGuid>
+		<Keyword>Win32Proj</Keyword>
+		<RootNamespace>FramePackEditor</RootNamespace>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<ImportGroup Label="PropertySheets">
+		<Import Project="..\..\config\RF.Apps.Exe.Preconfig.props" />
+	</ImportGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Label="Shared">
+	</ImportGroup>
+	<ImportGroup Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+		<Import Project="..\..\config\Global.Cpp.props" />
+		<Import Project="..\..\config\RetroFit.props" />
+		<Import Project="..\..\config\RF.Apps.Exe.props" />
+		<Import Project="..\..\config\AppCommon.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup />
+	<ItemDefinitionGroup />
+	<ItemGroup>
+		<ClInclude Include="FramePackEditor.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="FramePackEditor.cpp" />
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="stdafx.cpp">
+			<PrecompiledHeader>Create</PrecompiledHeader>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\libs\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
+			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_input\core_input.vcxproj">
+			<Project>{cf0b2c7f-ad84-4337-be90-0471e51b180c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformFilesystem\PlatformFilesystem.vcxproj">
+			<Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformInput_win32\PlatformInput_win32.vcxproj">
+			<Project>{10894604-ed30-4e76-803a-8de0fee2e470}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+			<Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PPU\PPU.vcxproj">
+			<Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
+			<Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj">
+			<Project>{981a2bff-ae14-498b-857c-efc0dbcb2af7}</Project>
+		</ProjectReference>
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
 </Project>
