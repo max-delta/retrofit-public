@@ -36,6 +36,7 @@
     <ClInclude Include="project.h" />
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
+    <ClInclude Include="SessionHostManager.h" />
     <ClInclude Include="SnapshotSerializer.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
@@ -44,6 +45,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
+    <ClCompile Include="SessionHostManager.cpp" />
     <ClCompile Include="SnapshotSerializer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -56,6 +58,9 @@
     <ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
       <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\core_thread\core_thread.vcxproj">
+      <Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\GameInput\GameInput.vcxproj">
       <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
     </ProjectReference>
@@ -64,6 +69,9 @@
     </ProjectReference>
     <ProjectReference Include="..\PlatformFilesystem\PlatformFilesystem.vcxproj">
       <Project>{a4a81e7c-ef84-4beb-b7ef-404e3184d6ab}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PlatformNetwork_win32\PlatformNetwork_win32.vcxproj">
+      <Project>{0bc4e215-b91a-41cc-8fe4-12b460e9cbdc}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Rollback\Rollback.vcxproj">
       <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>

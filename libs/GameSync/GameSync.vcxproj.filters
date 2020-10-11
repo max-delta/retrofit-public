@@ -7,6 +7,7 @@
     <ClCompile Include="RollbackFilters.cpp" />
     <ClCompile Include="SnapshotSerializer.cpp" />
     <ClCompile Include="ConnectionMananger.cpp" />
+    <ClCompile Include="SessionHostManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -15,5 +16,6 @@
     <ClInclude Include="RollbackFilters.h" />
     <ClInclude Include="SnapshotSerializer.h" />
     <ClInclude Include="ConnectionMananger.h" />
+    <ClInclude Include="SessionHostManager.h" />
   </ItemGroup>
 </Project>
