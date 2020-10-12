@@ -38,7 +38,7 @@ public:
 	//  thread priorities and thread names
 	void Init(
 		AsyncThread::PrepFunc&& prep,
-		WorkItemFunc&& exec );
+		WorkItemFunc&& work );
 
 	// NOTE: Stop is not terminal, work can be started again without re-init
 	bool IsStarted() const;

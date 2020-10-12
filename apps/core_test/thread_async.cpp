@@ -19,11 +19,11 @@ TEST( AsyncThread, Basic )
 
 	rftl::atomic<bool> ready = false;
 	rftl::atomic<bool> ran = false;
-	auto exec = [&ran]() -> void //
+	auto work = [&ran]() -> void //
 	{
 		ran.store( true, rftl::memory_order::memory_order_release );
 	};
-	auto work = [&ready, &ran]() -> bool //
+	auto workCheck = [&ready, &ran]() -> bool //
 	{
 		return //
 			( ready.load( rftl::memory_order::memory_order_acquire ) == true ) &&
@@ -37,8 +37,8 @@ TEST( AsyncThread, Basic )
 
 	thread.Init(
 		rftl::move( prep ),
-		rftl::move( exec ),
 		rftl::move( work ),
+		rftl::move( workCheck ),
 		nullptr );
 	ASSERT_FALSE( thread.IsStarted() );
 

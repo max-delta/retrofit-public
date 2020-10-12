@@ -44,9 +44,9 @@ public:
 	//  run until explicitly told to stop
 	void Init(
 		PrepFunc&& prep,
-		WorkFunc&& exec,
-		WorkConditionFunc&& work,
-		TerminateConditionFunc&& term );
+		WorkFunc&& work,
+		WorkConditionFunc&& workCheck,
+		TerminateConditionFunc&& termCheck );
 
 	// NOTE: Stop is not terminal, work can be started again without re-init
 	bool IsStarted() const;

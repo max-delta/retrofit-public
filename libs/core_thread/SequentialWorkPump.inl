@@ -19,10 +19,10 @@ inline SequentialWorkPump<WorkItemT>::~SequentialWorkPump()
 template<typename WorkItemT>
 inline void SequentialWorkPump<WorkItemT>::Init(
 	AsyncThread::PrepFunc&& prep,
-	WorkItemFunc&& exec )
+	WorkItemFunc&& work )
 {
-	RF_ASSERT( exec != nullptr );
-	mWork = rftl::move( exec );
+	RF_ASSERT( work != nullptr );
+	mWork = rftl::move( work );
 	auto doWork = [this]() -> void //
 	{
 		return this->DoWork();

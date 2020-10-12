@@ -17,9 +17,9 @@ AsyncThread::~AsyncThread()
 
 void AsyncThread::Init(
 	PrepFunc&& prep,
-	WorkFunc&& exec,
-	WorkConditionFunc&& work,
-	TerminateConditionFunc&& term )
+	WorkFunc&& work,
+	WorkConditionFunc&& workCheck,
+	TerminateConditionFunc&& termCheck )
 {
 	if( IsStarted() )
 	{
@@ -29,13 +29,13 @@ void AsyncThread::Init(
 
 	mPrep = rftl::move( prep );
 
-	RF_ASSERT( exec != nullptr );
-	mWork = rftl::move( exec );
-
 	RF_ASSERT( work != nullptr );
-	mWorkCondition = rftl::move( work );
+	mWork = rftl::move( work );
 
-	mTerminateCondition = rftl::move( term );
+	RF_ASSERT( workCheck != nullptr );
+	mWorkCondition = rftl::move( workCheck );
+
+	mTerminateCondition = rftl::move( termCheck );
 }
 
 

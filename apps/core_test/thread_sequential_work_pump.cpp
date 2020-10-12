@@ -18,14 +18,14 @@ TEST( SequentialWorkPump, Basic )
 	};
 
 	int accumulator = 0;
-	auto exec = [&accumulator]( int&& workItem ) -> void //
+	auto work = [&accumulator]( int&& workItem ) -> void //
 	{
 		accumulator += workItem;
 	};
 
 	pump.Init(
 		rftl::move( prep ),
-		rftl::move( exec ) );
+		rftl::move( work ) );
 	ASSERT_FALSE( pump.IsStarted() );
 
 	pump.AddWorkItem( 1 );
