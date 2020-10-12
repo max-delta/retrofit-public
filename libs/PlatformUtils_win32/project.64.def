@@ -18,3 +18,6 @@ EXPORTS
 	?AllocateInLargeDynamicHeap@platform@RF@@YAPEAXPEBX_K@Z
 	?DeleteInLargeDynamicHeap@platform@RF@@YAXPEBXPEAX@Z
 	?QueryLargeDynamicHeapSize@platform@RF@@YA_KPEBX@Z
+
+	?SetThreadName@thread@platform@RF@@YAXPEBD@Z
+	?SetThreadPriority@thread@platform@RF@@YAXW4ThreadPriority@123@@Z

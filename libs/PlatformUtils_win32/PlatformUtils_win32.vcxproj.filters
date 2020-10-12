@@ -17,6 +17,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="uuid.cpp" />
     <ClCompile Include="MemoryRegion.cpp" />
+    <ClCompile Include="ThreadSettings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.32.def" />
