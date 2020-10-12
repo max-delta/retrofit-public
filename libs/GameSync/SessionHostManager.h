@@ -70,11 +70,18 @@ private:
 	// Public methods
 public:
 	explicit SessionHostManager( HostSpec spec );
-	~SessionHostManager() = default;
+	~SessionHostManager();
 
+	// Thread-safe
 	bool IsHostingASession() const;
 	void StartHostingASession();
 	void StopHostingASession();
+
+
+	//
+	// Private methods
+private:
+	void AcceptNewConnection();
 
 
 	//
