@@ -118,6 +118,28 @@ void EndpointManager::RemoveEndpoint( EndpointIdentifier identifier )
 
 
 
+EndpointManager::EndpointIdentifiers EndpointManager::GetAllEndpoints() const
+{
+	ReaderLock const lock( mCommonMutex );
+
+	EndpointIdentifiers retVal;
+	for( LogicalEndpoints::value_type const& logicalEndpoint : mLogicalEndpoints )
+	{
+		retVal.emplace_back( logicalEndpoint.first );
+	}
+	return retVal;
+}
+
+
+
+void EndpointManager::RemoveAllEndpoints()
+{
+	WriterLock const lock( mCommonMutex );
+	mLogicalEndpoints.clear();
+}
+
+
+
 void EndpointManager::RemoveOrphanedStreams( InStreams& incoming, OutStreams& outgoing )
 {
 	incoming = {};

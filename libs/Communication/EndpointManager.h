@@ -26,6 +26,7 @@ class COMMUNICATION_API EndpointManager
 public:
 	using InStreams = rftl::vector<SharedPtr<IncomingStream>>;
 	using OutStreams = rftl::vector<SharedPtr<OutgoingStream>>;
+	using EndpointIdentifiers = rftl::vector<EndpointIdentifier>;
 
 private:
 	using ReaderWriterMutex = rftl::shared_mutex;
@@ -38,17 +39,25 @@ private:
 	//
 	// Public methods
 public:
+	EndpointManager() = default;
+	~EndpointManager() = default;
+
 	// NOTE: Endpoints are allowed to share streams if desired
+	// Thread-safe
 	WeakSharedPtr<IncomingStream> AddIncomingStream( SharedPtr<IncomingStream>&& stream );
 	WeakSharedPtr<OutgoingStream> AddOutgoingStream( SharedPtr<OutgoingStream>&& stream );
 	SharedPtr<IncomingStream> RemoveIncomingStream( WeakPtr<IncomingStream> const& stream );
 	SharedPtr<OutgoingStream> RemoveOutgoingStream( WeakPtr<OutgoingStream> const& stream );
 
+	// Thread-safe
 	WeakSharedPtr<LogicalEndpoint> AddEndpoint( EndpointIdentifier identifier );
 	WeakSharedPtr<LogicalEndpoint> GetEndpoint( EndpointIdentifier identifier );
 	void RemoveEndpoint( EndpointIdentifier identifier );
+	EndpointIdentifiers GetAllEndpoints() const;
+	void RemoveAllEndpoints();
 
 	// Removes all streams not associated with any endpoints
+	// Thread-safe
 	void RemoveOrphanedStreams( InStreams& incoming, OutStreams& outgoing );
 
 
