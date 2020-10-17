@@ -40,6 +40,7 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="Debugging.h" />
     <ClInclude Include="dialogs.h" />
+    <ClInclude Include="ProcessLaunch.h" />
     <ClInclude Include="windowing.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="dialogs.cpp" />
     <ClCompile Include="MemoryRegion.cpp" />
+    <ClCompile Include="ProcessLaunch.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

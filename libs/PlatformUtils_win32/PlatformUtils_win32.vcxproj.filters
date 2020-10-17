@@ -7,6 +7,7 @@
     <ClInclude Include="dialogs.h" />
     <ClInclude Include="Debugging.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="ProcessLaunch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -18,6 +19,7 @@
     <ClCompile Include="uuid.cpp" />
     <ClCompile Include="MemoryRegion.cpp" />
     <ClCompile Include="ThreadSettings.cpp" />
+    <ClCompile Include="ProcessLaunch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="project.32.def" />
