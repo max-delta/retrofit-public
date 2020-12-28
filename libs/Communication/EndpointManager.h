@@ -59,6 +59,7 @@ public:
 	// Removes all streams not associated with any endpoints
 	// Thread-safe
 	void RemoveOrphanedStreams( InStreams& incoming, OutStreams& outgoing );
+	void RemoveOrphanedStreams( bool terminateOnRemoval );
 
 
 	//

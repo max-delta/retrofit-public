@@ -8,6 +8,7 @@
     <ClCompile Include="SnapshotSerializer.cpp" />
     <ClCompile Include="ConnectionMananger.cpp" />
     <ClCompile Include="SessionHostManager.cpp" />
+    <ClCompile Include="SessionClientManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -17,5 +18,6 @@
     <ClInclude Include="SnapshotSerializer.h" />
     <ClInclude Include="ConnectionMananger.h" />
     <ClInclude Include="SessionHostManager.h" />
+    <ClInclude Include="SessionClientManager.h" />
   </ItemGroup>
 </Project>

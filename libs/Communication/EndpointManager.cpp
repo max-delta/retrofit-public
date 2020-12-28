@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "EndpointManager.h"
 
+#include "core_platform/IncomingBufferStitcher.h"
+
+#include "core/ptr/default_creator.h"
+
 #include "rftl/extension/algorithms.h"
 
 
@@ -92,7 +96,14 @@ SharedPtr<OutgoingStream> EndpointManager::RemoveOutgoingStream( WeakPtr<Outgoin
 WeakSharedPtr<LogicalEndpoint> EndpointManager::AddEndpoint( EndpointIdentifier identifier )
 {
 	WriterLock const lock( mCommonMutex );
-	return mLogicalEndpoints[identifier];
+	LogicalEndpoints::const_iterator const iter = mLogicalEndpoints.find( identifier );
+	if( iter == mLogicalEndpoints.end() )
+	{
+		SharedPtr<LogicalEndpoint>& newEndpoint = mLogicalEndpoints[identifier];
+		newEndpoint = DefaultCreator<LogicalEndpoint>::Create();
+		return newEndpoint;
+	}
+	return iter->second;
 }
 
 
@@ -105,6 +116,7 @@ WeakSharedPtr<LogicalEndpoint> EndpointManager::GetEndpoint( EndpointIdentifier 
 	{
 		return nullptr;
 	}
+	RF_ASSERT( iter->second != nullptr );
 	return iter->second;
 }
 
@@ -197,6 +209,29 @@ void EndpointManager::RemoveOrphanedStreams( InStreams& incoming, OutStreams& ou
 		static constexpr auto isNull = []( auto const& value ) -> bool { return value == nullptr; };
 		rftl::erase_if( mInStreams, isNull );
 		rftl::erase_if( mOutStreams, isNull );
+	}
+}
+
+
+
+void EndpointManager::RemoveOrphanedStreams( bool terminateOnRemoval )
+{
+	InStreams inStreams = {};
+	OutStreams outStreams = {};
+	RemoveOrphanedStreams( inStreams, outStreams );
+
+	if( terminateOnRemoval )
+	{
+		for( SharedPtr<comm::IncomingStream>& stream : inStreams )
+		{
+			RF_ASSERT( stream != nullptr );
+			stream->Terminate();
+		}
+		for( SharedPtr<comm::OutgoingStream>& stream : outStreams )
+		{
+			RF_ASSERT( stream != nullptr );
+			stream->Terminate();
+		}
 	}
 }
 
