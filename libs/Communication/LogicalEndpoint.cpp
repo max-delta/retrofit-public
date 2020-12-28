@@ -57,6 +57,12 @@ void LogicalEndpoint::ChooseIncomingChannel( WeakSharedPtr<IncomingStream>& stre
 	spec = {};
 
 	ReaderLock const lock( mChannelMutex );
+
+	if( mIncomingChannels.empty() )
+	{
+		return;
+	}
+
 	RF_TODO_ANNOTATION( "Implement" );
 	RF_ASSERT( mIncomingChannels.size() == 1 );
 	IncomingChannel const& channel = mIncomingChannels.front();
@@ -72,11 +78,33 @@ void LogicalEndpoint::ChooseOutgoingChannel( WeakSharedPtr<OutgoingStream>& stre
 	spec = {};
 
 	ReaderLock const lock( mChannelMutex );
+
+	if( mOutgoingChannels.empty() )
+	{
+		return;
+	}
+
 	RF_TODO_ANNOTATION( "Implement" );
 	RF_ASSERT( mOutgoingChannels.size() == 1 );
 	OutgoingChannel const& channel = mOutgoingChannels.front();
 	stream = channel.first;
 	spec = channel.second;
+}
+
+
+
+void LogicalEndpoint::ChooseIncomingChannel( WeakSharedPtr<IncomingStream>& stream, ChannelFlags::Value flags )
+{
+	ChannelSpec unused = {};
+	ChooseIncomingChannel( stream, unused, flags );
+}
+
+
+
+void LogicalEndpoint::ChooseOutgoingChannel( WeakSharedPtr<OutgoingStream>& stream, ChannelFlags::Value flags )
+{
+	ChannelSpec unused = {};
+	ChooseOutgoingChannel( stream, unused, flags );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -32,6 +32,8 @@ private:
 	//
 	// Public methods
 public:
+	LogicalEndpoint() = default;
+
 	void AddIncomingChannel( WeakSharedPtr<IncomingStream> const& stream, ChannelSpec const& spec );
 	void AddOutgoingChannel( WeakSharedPtr<OutgoingStream> const& stream, ChannelSpec const& spec );
 
@@ -40,6 +42,8 @@ public:
 
 	void ChooseIncomingChannel( WeakSharedPtr<IncomingStream>& stream, ChannelSpec& spec, ChannelFlags::Value flags );
 	void ChooseOutgoingChannel( WeakSharedPtr<OutgoingStream>& stream, ChannelSpec& spec, ChannelFlags::Value flags );
+	void ChooseIncomingChannel( WeakSharedPtr<IncomingStream>& stream, ChannelFlags::Value flags );
+	void ChooseOutgoingChannel( WeakSharedPtr<OutgoingStream>& stream, ChannelFlags::Value flags );
 
 
 	//
