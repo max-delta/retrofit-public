@@ -16,9 +16,10 @@ namespace ChannelFlags {
 enum Value : uint8_t
 {
 	Invalid = 0,
-	Reliable = 1 << 0,
-	LowLateny = 1 << 1,
-	Broadcast = 1 << 2,
+	Ordered = 1 << 0,
+	Reliable = 1 << 1,
+	LowLateny = 1 << 2,
+	Broadcast = 1 << 3,
 };
 }
 
