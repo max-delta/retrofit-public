@@ -89,6 +89,7 @@ void SessionClientManager::StartReceivingASession()
 			// TODO: Add a throttling mechanism controlled by the update
 			//  function, for fast error-loop cases (LAN unplugged, etc)
 			RF_TODO_ANNOTATION( "Throttling logic" );
+			( (void)this );
 			return true;
 		};
 		auto termCheck = [this]() -> bool //
