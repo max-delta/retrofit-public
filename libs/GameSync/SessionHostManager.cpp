@@ -170,6 +170,12 @@ void SessionHostManager::AcceptNewConnection()
 		return;
 	}
 
+	// TODO:
+	//  * Store connection and endpoint, marking them as untrusted
+	//   * Will need another async thread that processes these, and can
+	//      periodically check in to see if they've sent along a legit welcome
+	//      payload, and then we can send out an initial connection list and
+	//      mark the connectionas trusted for sending out future updates to it
 	RF_TODO_BREAK();
 }
 
