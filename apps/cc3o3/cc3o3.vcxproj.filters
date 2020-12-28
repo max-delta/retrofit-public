@@ -594,4 +594,7 @@
       <UniqueIdentifier>{97e2921f-2a56-42d8-9225-9d96e0472215}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="nostrip.def" />
+  </ItemGroup>
 </Project>
