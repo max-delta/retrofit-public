@@ -95,8 +95,7 @@ private:
 	mutable ReaderWriterMutex mListenerThreadMutex;
 	thread::AsyncThread mListenerThread;
 
-	mutable ReaderWriterMutex mEndpointManangerMutex;
-	UniquePtr<comm::EndpointManager> mEndpointMananger;
+	UniquePtr<comm::EndpointManager> const mEndpointManager;
 
 	ConnectionIDGen mConnectionIdentifierGen;
 

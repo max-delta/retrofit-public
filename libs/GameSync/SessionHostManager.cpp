@@ -16,8 +16,9 @@ namespace RF::sync {
 
 SessionHostManager::SessionHostManager( HostSpec spec )
 	: mSpec( spec )
+	, mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
 {
-	mEndpointMananger = DefaultCreator<comm::EndpointManager>::Create();
+	//
 }
 
 
@@ -56,12 +57,7 @@ void SessionHostManager::StartHostingASession()
 		}
 
 		// Ensure there are no endpoints
-		{
-			ReaderLock const endpointLock( mEndpointManangerMutex );
-
-			RF_ASSERT( mEndpointMananger != nullptr );
-			RF_ASSERT( mEndpointMananger->GetAllEndpoints().empty() );
-		}
+		RF_ASSERT( mEndpointManager->GetAllEndpoints().empty() );
 	}
 
 	// Create listener socket
