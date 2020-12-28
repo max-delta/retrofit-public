@@ -121,7 +121,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 		retVal = {};
 	}
 
-	RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and connect TCP socket: WSA %i", win32::WSAGetLastError() );
+	RFLOG_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and connect TCP socket after trying %llu interfaces", suggestions.mList.size() );
 	return retVal;
 }
 
