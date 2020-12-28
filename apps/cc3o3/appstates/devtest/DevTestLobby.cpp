@@ -5,9 +5,13 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameSync/SessionHostManager.h"
+#include "GameSync/SessionClientManager.h"
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
+
+#include "PlatformUtils_win32/ProcessLaunch.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -19,6 +23,9 @@ struct DevTestLobby::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
+
+	UniquePtr<sync::SessionHostManager> mAsHost;
+	UniquePtr<sync::SessionClientManager> mAsClient;
 
 	size_t mCursor = 0;
 };
@@ -65,11 +72,13 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 
 	enum OptionID : size_t
 	{
-		kStartHosting = 0,
-		kConnectToHost = 1,
+		kLaunchClone = 0,
+		kStartHosting = 1,
+		kConnectToHost = 2,
 		kNumOptions
 	};
 	static constexpr char const* kOptionText[] = {
+		"Launch clone",
 		"Start hosting",
 		"Connect to host"
 	};
@@ -99,8 +108,34 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		}
 	}
 
-	uint8_t x = 2;
-	uint8_t y = 2;
+	if( selected[kLaunchClone] )
+	{
+		platform::process::LaunchSelfClone( true );
+	}
+	else if( selected[kStartHosting] )
+	{
+		// TODO: Host
+		static constexpr sync::SessionHostManager::HostSpec kSpec{ true, true, 8271 };
+		internalState.mAsHost = DefaultCreator<sync::SessionHostManager>::Create(
+			kSpec );
+		sync::SessionHostManager& asHost = *internalState.mAsHost;
+		asHost.StartHostingASession();
+	}
+	else if( selected[kConnectToHost] )
+	{
+		// TODO: Connect
+		sync::SessionClientManager::ClientSpec const kSpec{ "localhost", 8271 };
+		internalState.mAsClient = DefaultCreator<sync::SessionClientManager>::Create(
+			kSpec );
+		sync::SessionClientManager& asClient = *internalState.mAsClient;
+		asClient.StartReceivingASession();
+	}
+
+	uint8_t x;
+	uint8_t y;
+
+	x = 2;
+	y = 2;
 	for( size_t i = 0; i < kNumOptions; i++ )
 	{
 		if( cursor == i )
@@ -112,15 +147,6 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			drawText( x, y, " %s", kOptionText[i] );
 		}
 		y++;
-	}
-
-	if( selected[kStartHosting] )
-	{
-		// TODO: Host
-	}
-	else if( selected[kConnectToHost] )
-	{
-		// TODO: Connect
 	}
 }
 
