@@ -31,6 +31,10 @@ public:
 	// NOTE: If the fetched size is zero, this indicates an error has occurred
 	virtual Buffer FetchNextBuffer() = 0;
 
+	// Force an unrecoverable termination of the source, releasing any blocked
+	//  calls, and preventing future calls from blocking
+	virtual void Terminate() = 0;
+
 	// When true, the stream's source has been unrecoverably terminated, and no
 	//  additional buffers will become available once peek returns zero
 	// NOTE: One or more buffers may still be available after termination
@@ -55,6 +59,10 @@ public:
 	// Attempts to store a buffer
 	// NOTE: Buffer unmoved/unmodified if a failure occurs
 	virtual bool StoreNextBuffer( Buffer&& buffer ) = 0;
+
+	// Force an unrecoverable termination of the destination, releasing any
+	//  blocked calls, and preventing future calls from blocking
+	virtual void Terminate() = 0;
 
 	// When true, the stream's destination has been unrecoverably terminated,
 	//  and no additional buffers will be accepted for storing

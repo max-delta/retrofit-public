@@ -38,6 +38,7 @@ public:
 
 	virtual size_t PeekNextBufferSize() const override;
 	virtual Buffer FetchNextBuffer() override;
+	virtual void Terminate() override;
 	virtual bool IsTerminated() const override;
 
 	SharedPtr<TCPSocket const> GetSocket() const;
@@ -73,6 +74,7 @@ public:
 	virtual ~TCPOutgoingBufferStream() override = default;
 
 	virtual bool StoreNextBuffer( Buffer&& buffer ) override;
+	virtual void Terminate() override;
 	virtual bool IsTerminated() const override;
 
 	SharedPtr<TCPSocket const> GetSocket() const;

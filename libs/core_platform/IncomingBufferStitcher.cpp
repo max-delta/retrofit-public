@@ -9,10 +9,10 @@
 namespace RF::platform {
 ///////////////////////////////////////////////////////////////////////////////
 
-IncomingBufferStitcher::IncomingBufferStitcher( IncomingBufferStream& underlyingStream )
-	: mUnderlyingStream( underlyingStream )
+IncomingBufferStitcher::IncomingBufferStitcher( UniquePtr<IncomingBufferStream>&& underlyingStream )
+	: mUnderlyingStream( rftl::move( underlyingStream ) )
 {
-	//
+	RF_ASSERT( mUnderlyingStream != nullptr );
 }
 
 
@@ -30,7 +30,7 @@ size_t IncomingBufferStitcher::PeekNextBufferSize() const
 	}
 
 	// Fall back to underlying
-	return mUnderlyingStream.PeekNextBufferSize();
+	return mUnderlyingStream->PeekNextBufferSize();
 }
 
 
@@ -49,14 +49,21 @@ IncomingBufferStitcher::Buffer IncomingBufferStitcher::FetchNextBuffer()
 
 	// Fall back to underlying
 	// NOTE: Skips our stiching capabilities
-	return mUnderlyingStream.FetchNextBuffer();
+	return mUnderlyingStream->FetchNextBuffer();
+}
+
+
+
+void IncomingBufferStitcher::Terminate()
+{
+	mUnderlyingStream->Terminate();
 }
 
 
 
 bool IncomingBufferStitcher::IsTerminated() const
 {
-	return mUnderlyingStream.IsTerminated();
+	return mUnderlyingStream->IsTerminated();
 }
 
 
@@ -71,7 +78,7 @@ IncomingBufferStitcher::Buffer IncomingBufferStitcher::FetchNextBuffer( size_t e
 	while( mWorkingBuffer.size() < exactSize )
 	{
 		// Fetch
-		Buffer const tempBuf = mUnderlyingStream.FetchNextBuffer();
+		Buffer const tempBuf = mUnderlyingStream->FetchNextBuffer();
 		if( tempBuf.empty() )
 		{
 			// Error, bail

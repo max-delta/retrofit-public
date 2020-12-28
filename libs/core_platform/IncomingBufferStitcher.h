@@ -1,7 +1,7 @@
 #pragma once
 #include "core_platform/BufferStream.h"
 
-#include "core/macros.h"
+#include "core/ptr/unique_ptr.h"
 
 #include "rftl/shared_mutex"
 
@@ -30,11 +30,12 @@ private:
 	//
 	// Public methods
 public:
-	IncomingBufferStitcher( IncomingBufferStream& underlyingStream );
+	IncomingBufferStitcher( UniquePtr<IncomingBufferStream>&& underlyingStream );
 	virtual ~IncomingBufferStitcher() override = default;
 
 	virtual size_t PeekNextBufferSize() const override;
 	virtual Buffer FetchNextBuffer() override;
+	void Terminate() override;
 	virtual bool IsTerminated() const override;
 
 	// Will repeatedly fetch, append, and trim to ensure the buffer size is
@@ -48,7 +49,7 @@ public:
 	//
 	// Private data
 private:
-	IncomingBufferStream& mUnderlyingStream;
+	UniquePtr<IncomingBufferStream> const mUnderlyingStream;
 
 	mutable ReaderWriterMutex mWorkingBufferMutex;
 	Buffer mWorkingBuffer;

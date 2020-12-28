@@ -89,6 +89,13 @@ TCPIncomingBufferStream::Buffer TCPIncomingBufferStream::FetchNextBuffer()
 
 
 
+void TCPIncomingBufferStream::Terminate()
+{
+	mSocket->Shutdown();
+}
+
+
+
 bool TCPIncomingBufferStream::IsTerminated() const
 {
 	return mSocket->IsValid() == false;
@@ -148,6 +155,13 @@ bool TCPOutgoingBufferStream::StoreNextBuffer( Buffer&& buffer )
 		buffer.clear();
 	}
 	return success;
+}
+
+
+
+void TCPOutgoingBufferStream::Terminate()
+{
+	mSocket->Shutdown();
 }
 
 
