@@ -22,6 +22,7 @@
 			<PrecompiledHeader Condition="'$(RFCompiler)'=='LLVM'">NotUsing</PrecompiledHeader>
 
 			<!--Optimize for speed, except in debug builds-->
+			<!--NOTE: Can also use 'MinSpace' for some esoteric builds-->
 			<Optimization Condition="'$(RFConfig)'=='Debug'">Disabled</Optimization>
 			<Optimization Condition="'$(RFConfig)'=='Release'">MaxSpeed</Optimization>
 			<Optimization Condition="'$(RFConfig)'=='Retail'">MaxSpeed</Optimization>
