@@ -76,6 +76,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
+	#define RF_SOFTWARE_FASTFAIL() __fastfail( 0xFFFFFFFF )
 
 	#define RF_MSVC_INLINE_SUPPRESS( x ) __pragma( warning( suppress : x ) )
 
@@ -125,6 +126,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
+	#define RF_SOFTWARE_FASTFAIL() __fastfail( 0xFFFFFFFF )
 
 	#define RF_MSVC_INLINE_SUPPRESS( x ) __pragma( warning( suppress : x ) )
 
@@ -350,5 +352,7 @@ static_assert( alignof( void* ) == sizeof( void* ), "Unexpected pointer alignmen
 // MSVC needs some intrinsics declared before they can be invoked
 #if defined( RF_PLATFORM_MSVC )
 extern "C" void __nop();
-__pragma(intrinsic(__nop));
+__pragma( intrinsic( __nop ) );
+extern "C" __declspec( noreturn ) void __fastfail( unsigned int );
+__pragma( intrinsic( __fastfail ) );
 #endif

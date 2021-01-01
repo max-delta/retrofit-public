@@ -37,10 +37,10 @@ extern "C"
 }
 #endif
 
-namespace RF { namespace assert {
+namespace RF::assert {
 ///////////////////////////////////////////////////////////////////////////////
 
-AssertResponse AssertNotification( char const* file, size_t line, char const* failure, char const* message )
+RF_NO_INLINE AssertResponse AssertNotification( char const* file, size_t line, char const* failure, char const* message )
 {
 	#if defined( _DEBUG ) && defined( RF_PLATFORM_MSVC )
 	{
@@ -115,5 +115,12 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 	rftl::abort();
 }
 
+
+
+[[noreturn]] RF_NO_INLINE void FatalInterrupt()
+{
+	RF_SOFTWARE_FASTFAIL();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
