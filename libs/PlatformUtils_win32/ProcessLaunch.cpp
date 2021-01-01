@@ -187,7 +187,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 
 	// Resume process
 	win32::DWORD const suspendCount = win32::ResumeThread( processInfo.hThread );
-	if( suspendCount == -1 )
+	if( suspendCount == static_cast<win32::DWORD>( -1 ) )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to resume suspended process: ERR %i", win32::GetLastError() );
 
