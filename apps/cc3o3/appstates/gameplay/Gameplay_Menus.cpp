@@ -108,7 +108,7 @@ void Gameplay_Menus::InternalState::SwitchTopLevelSection( TopLevelSections::Sec
 	}
 	mTopLevelControllers.at( section )->SetChildRenderingBlocked( false );
 
-	RF_ASSERT( section < rftl::extent<decltype( TopLevelSections::kHeaders )>::value );
+	RF_ASSERT_ASSUME( section < rftl::extent<decltype( TopLevelSections::kHeaders )>::value );
 	mMainHeader->SetText( ui::LocalizeKey( TopLevelSections::kHeaders[section] ) );
 }
 

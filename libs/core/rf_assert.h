@@ -28,16 +28,28 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 #define RF_RETAIL_FATAL_MSG( TRIGGER, MSG ) \
 	::RF::assert::FatalNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), TRIGGER, MSG )
 
+// Asserts are as follows:
+//  RF_ASSERT, RF_ASSERT_MSG
+//    Perform a test, interrupt on failure, present an optional message
+//  RF_ASSERT_ASSUME
+//    As RF_ASSERT, but remains as an assumption when asserts are disabled and
+//    static code analysis is enabled (intended to be used infrequently, to
+//    silence code analysis warnings as needed)
+//  RF_DBGFAIL, RF_DBGFAIL_MSG
+//    Interrupt, present an optional message
+
 // HACK: Intellisense craters in VS 16.4.2 on normal assert macros, despite
 //  cpp.hint help, so is always disabled
 #if defined( __INTELLISENSE__ )
 	#define RF_ASSERT( TEST ) RF_EMPTY_FUNCLET()
 	#define RF_ASSERT_MSG( TEST, MSG ) RF_EMPTY_FUNCLET()
+	#define RF_ASSERT_ASSUME( TEST ) RF_EMPTY_FUNCLET()
 	#define RF_DBGFAIL() RF_EMPTY_FUNCLET()
 	#define RF_DBGFAIL_MSG( MSG ) RF_EMPTY_FUNCLET()
 // Static analysis builds need to assume that asserts can't fail, so they are
 //  replaced with non-returning failure paths that can't be skipped
 #elif defined( _PREFAST_ )
+	// When asserts are enabled, use them
 	#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 		#define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
 			do \
@@ -47,8 +59,14 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 					RF_RETAIL_FATAL_MSG( "Analysis assert", #TEST ); \
 				} \
 			} while( false )
+		#define RF_ASSERT( TEST ) ___RF_ASSERT_IMPL___( TEST, "FAIL" )
+		#define RF_ASSERT_MSG( TEST, MSG ) ___RF_ASSERT_IMPL___( TEST, MSG )
+		#define RF_ASSERT_ASSUME( TEST ) RF_ASSERT( TEST )
+		#define RF_DBGFAIL() ___RF_ASSERT_IMPL___( false, "FAIL" )
+		#define RF_DBGFAIL_MSG( MSG ) ___RF_ASSERT_IMPL___( false, MSG )
+	// When asserts are disabled, still allow assumptions
 	#else
-		#define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
+		#define ___RF_ASSUME_IMPL___( TEST ) \
 			do \
 			{ \
 				if( !( TEST ) ) \
@@ -56,11 +74,12 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 					::RF::assert::FatalInterrupt(); \
 				} \
 			} while( false )
+		#define RF_ASSERT( TEST ) RF_EMPTY_FUNCLET()
+		#define RF_ASSERT_MSG( TEST, MSG ) RF_EMPTY_FUNCLET()
+		#define RF_ASSERT_ASSUME( TEST ) ___RF_ASSUME_IMPL___( TEST )
+		#define RF_DBGFAIL() RF_EMPTY_FUNCLET()
+		#define RF_DBGFAIL_MSG( MSG ) RF_EMPTY_FUNCLET()
 	#endif
-	#define RF_ASSERT( TEST ) ___RF_ASSERT_IMPL___( TEST, "FAIL" )
-	#define RF_ASSERT_MSG( TEST, MSG ) ___RF_ASSERT_IMPL___( TEST, MSG )
-	#define RF_DBGFAIL() ___RF_ASSERT_IMPL___( false, "FAIL" )
-	#define RF_DBGFAIL_MSG( MSG ) ___RF_ASSERT_IMPL___( false, MSG )
 // Normal asserts can be skipped while development is still ongoing
 #elif RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 	#define ___RF_ASSERT_IMPL___( TEST, MESSAGEEXPRESSION ) \
@@ -88,12 +107,14 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 		} while( false )
 	#define RF_ASSERT( TEST ) ___RF_ASSERT_IMPL___( TEST, "FAIL" )
 	#define RF_ASSERT_MSG( TEST, MSG ) ___RF_ASSERT_IMPL___( TEST, MSG )
+	#define RF_ASSERT_ASSUME( TEST ) RF_ASSERT( TEST )
 	#define RF_DBGFAIL() ___RF_ASSERT_IMPL___( false, "FAIL" )
 	#define RF_DBGFAIL_MSG( MSG ) ___RF_ASSERT_IMPL___( false, MSG )
 // In all other cases, asserts are inert
 #else
 	#define RF_ASSERT( TEST ) RF_EMPTY_FUNCLET()
 	#define RF_ASSERT_MSG( TEST, MSG ) RF_EMPTY_FUNCLET()
+	#define RF_ASSERT_ASSUME( TEST ) RF_EMPTY_FUNCLET()
 	#define RF_DBGFAIL() RF_EMPTY_FUNCLET()
 	#define RF_DBGFAIL_MSG( MSG ) RF_EMPTY_FUNCLET()
 #endif
