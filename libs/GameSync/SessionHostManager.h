@@ -48,6 +48,11 @@ private:
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
 
+	// If there are more connections than this, it probably indicates something
+	//  has gone wrong, possibly even a malicious client attempting to flood
+	//  the connection-handling capabilities, at which point: they've succeeded
+	static constexpr size_t kMaxConnectionCount = 32;
+
 
 	//
 	// Structs
@@ -62,6 +67,7 @@ public:
 private:
 	struct Connection
 	{
+		Clock::time_point mInitialConnectionTime = Clock::kLowest;
 		Clock::time_point mLatestValidInboundData = Clock::kLowest;
 	};
 
@@ -82,6 +88,8 @@ public:
 	// Private methods
 private:
 	void AcceptNewConnection();
+	void CreateClientChannels( comm::EndpointIdentifier clientIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
+	void ValidateUntrustedConnections();
 
 
 	//
@@ -94,6 +102,9 @@ private:
 
 	mutable ReaderWriterMutex mListenerThreadMutex;
 	thread::AsyncThread mListenerThread;
+
+	mutable ReaderWriterMutex mValidatorThreadMutex;
+	thread::AsyncThread mValidatorThread;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;
 
