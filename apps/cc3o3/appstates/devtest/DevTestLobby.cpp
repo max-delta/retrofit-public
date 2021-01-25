@@ -134,19 +134,31 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	uint8_t x;
 	uint8_t y;
 
+	// Draw options
 	x = 2;
 	y = 2;
 	for( size_t i = 0; i < kNumOptions; i++ )
 	{
 		if( cursor == i )
 		{
-			drawText( x, y, "*%s", kOptionText[i] );
+			drawText( x, y++, "*%s", kOptionText[i] );
 		}
 		else
 		{
-			drawText( x, y, " %s", kOptionText[i] );
+			drawText( x, y++, " %s", kOptionText[i] );
 		}
-		y++;
+	}
+
+	// Draw Status
+	x = 26;
+	y = 2;
+	if( internalState.mAsHost != nullptr )
+	{
+		drawText( x, y++, "HOST" );
+	}
+	if( internalState.mAsClient != nullptr )
+	{
+		drawText( x, y++, "CLIENT" );
 	}
 }
 
