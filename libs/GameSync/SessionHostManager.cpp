@@ -19,6 +19,13 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool SessionHostManager::Connection::HasValidData() const
+{
+	return mInitialConnectionTime < mLatestValidInboundData;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 SessionHostManager::SessionHostManager( HostSpec spec )
 	: mSpec( spec )
 	, mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
@@ -186,6 +193,32 @@ void SessionHostManager::StopHostingASession()
 	RF_TODO_ANNOTATION( "Destroy all endpoints" );
 }
 
+
+
+SessionHostManager::Diagnostics SessionHostManager::ReportDiagnostics() const
+{
+	Diagnostics retVal = {};
+
+	{
+		ReaderLock const connectionLock( mClientConnectionsMutex );
+
+		for( Connections::value_type const& clientConnection : mClientConnections )
+		{
+			Connection const& conn = clientConnection.second;
+			if( conn.HasValidData() )
+			{
+				retVal.mValidConnections++;
+			}
+			else
+			{
+				retVal.mInvalidConnections++;
+			}
+		}
+	}
+
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void SessionHostManager::AcceptNewConnection()
@@ -283,7 +316,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 			ConnectionIdentifier const& id = clientConnection.first;
 			Connection const& conn = clientConnection.second;
 
-			if( conn.mLatestValidInboundData < conn.mInitialConnectionTime )
+			if( conn.HasValidData() == false )
 			{
 				// No valid data yet
 				untrustedIdentifiers.emplace_back( id );

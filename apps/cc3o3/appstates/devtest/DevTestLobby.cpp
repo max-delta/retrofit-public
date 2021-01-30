@@ -154,7 +154,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	y = 2;
 	if( internalState.mAsHost != nullptr )
 	{
+		using namespace sync;
+
 		drawText( x, y++, "HOST" );
+
+		SessionHostManager::Diagnostics const diag = internalState.mAsHost->ReportDiagnostics();
+		drawText( x, y++, "CONN: %llu (+%llu) / %llu",
+			diag.mValidConnections,
+			diag.mInvalidConnections,
+			SessionHostManager::kMaxConnectionCount );
 	}
 	if( internalState.mAsClient != nullptr )
 	{

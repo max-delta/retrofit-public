@@ -38,6 +38,12 @@ private:
 
 	//
 	// Types and constants
+public:
+	// If there are more connections than this, it probably indicates something
+	//  has gone wrong, possibly even a malicious client attempting to flood
+	//  the connection-handling capabilities, at which point: they've succeeded
+	static constexpr size_t kMaxConnectionCount = 32;
+
 private:
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
@@ -47,11 +53,6 @@ private:
 	using ConnectionIdentifier = comm::EndpointIdentifier;
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
-
-	// If there are more connections than this, it probably indicates something
-	//  has gone wrong, possibly even a malicious client attempting to flood
-	//  the connection-handling capabilities, at which point: they've succeeded
-	static constexpr size_t kMaxConnectionCount = 32;
 
 
 	//
@@ -64,9 +65,17 @@ public:
 		uint16_t mPort = 0;
 	};
 
+	struct Diagnostics
+	{
+		size_t mInvalidConnections = 0;
+		size_t mValidConnections = 0;
+	};
+
 private:
 	struct Connection
 	{
+		bool HasValidData() const;
+
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
 		Clock::time_point mLatestValidInboundData = Clock::kLowest;
 	};
@@ -82,6 +91,9 @@ public:
 	bool IsHostingASession() const;
 	void StartHostingASession();
 	void StopHostingASession();
+
+	// Thread-safe
+	Diagnostics ReportDiagnostics() const;
 
 
 	//
