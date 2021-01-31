@@ -33,6 +33,12 @@
   <ItemGroup>
     <ClInclude Include="ConnectionMananger.h" />
     <ClInclude Include="project.h" />
+    <ClInclude Include="protocol\Encryption.h" />
+    <ClInclude Include="protocol\Logic.h" />
+    <ClInclude Include="protocol\Messages.h" />
+    <ClInclude Include="protocol\project.h" />
+    <ClInclude Include="protocol\stdafx.h" />
+    <ClInclude Include="protocol\Structure.h" />
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
     <ClInclude Include="SessionClientManager.h" />
@@ -43,6 +49,10 @@
   <ItemGroup>
     <ClCompile Include="ConnectionMananger.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="protocol\Encryption.cpp" />
+    <ClCompile Include="protocol\Logic.cpp" />
+    <ClCompile Include="protocol\Messages.cpp" />
+    <ClCompile Include="protocol\Structure.cpp" />
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
     <ClCompile Include="SessionClientManager.cpp" />

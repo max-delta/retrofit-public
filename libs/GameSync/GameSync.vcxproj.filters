@@ -9,6 +9,18 @@
     <ClCompile Include="ConnectionMananger.cpp" />
     <ClCompile Include="SessionHostManager.cpp" />
     <ClCompile Include="SessionClientManager.cpp" />
+    <ClCompile Include="protocol\Logic.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\Messages.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\Encryption.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\Structure.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -19,5 +31,28 @@
     <ClInclude Include="ConnectionMananger.h" />
     <ClInclude Include="SessionHostManager.h" />
     <ClInclude Include="SessionClientManager.h" />
+    <ClInclude Include="protocol\Messages.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\Logic.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\stdafx.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\project.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\Encryption.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\Structure.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{6e37a0ca-fe46-432d-b37c-58663cbb008b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
