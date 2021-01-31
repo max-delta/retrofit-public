@@ -66,8 +66,8 @@ public:
 private:
 	struct Connection
 	{
+		Clock::time_point mInitialConnectionTime = Clock::kLowest;
 		Clock::time_point mLatestValidInboundData = Clock::kLowest;
-		Clock::time_point mLatestValidOutboundData = Clock::kLowest;
 	};
 
 
@@ -89,17 +89,19 @@ private:
 	void ReceiveUpdate();
 
 	void GetOrCreateNextUpdateChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream );
-	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
+	void FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
+	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 
 
 	//
 	// Private data
 private:
+	mutable ReaderWriterMutex mStartStopMutex;
+
 	ClientSpec const mSpec;
 
 	rftl::atomic<bool> mShouldReceiveASession = false;
 
-	mutable ReaderWriterMutex mUpdateThreadMutex;
 	thread::AsyncThread mUpdateThread;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;

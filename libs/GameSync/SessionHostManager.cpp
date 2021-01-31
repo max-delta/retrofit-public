@@ -47,8 +47,6 @@ SessionHostManager::~SessionHostManager()
 
 bool SessionHostManager::IsHostingASession() const
 {
-	ReaderLock const listenThreadLock( mListenerThreadMutex );
-
 	return mListenerThread.IsStarted();
 }
 
@@ -57,7 +55,7 @@ bool SessionHostManager::IsHostingASession() const
 void SessionHostManager::StartHostingASession()
 {
 	// NOTE: Taking lock entire time to lock start/stop logic
-	WriterLock const listenThreadLock( mListenerThreadMutex );
+	WriterLock const startStopLock( mStartStopMutex );
 
 	if constexpr( config::kAsserts )
 	{
@@ -89,8 +87,6 @@ void SessionHostManager::StartHostingASession()
 
 	// Initialize listener thread
 	{
-		// NOTE: Lock taken at start of function
-
 		static constexpr auto prep = []() -> void //
 		{
 			using namespace platform::thread;
@@ -118,8 +114,6 @@ void SessionHostManager::StartHostingASession()
 
 	// Initialize validator thread
 	{
-		WriterLock const validatorThreadLock( mValidatorThreadMutex );
-
 		static constexpr auto prep = []() -> void //
 		{
 			using namespace platform::thread;
@@ -154,7 +148,7 @@ void SessionHostManager::StartHostingASession()
 void SessionHostManager::StopHostingASession()
 {
 	// NOTE: Taking lock entire time to lock start/stop logic
-	WriterLock const listenThreadLock( mListenerThreadMutex );
+	WriterLock const startStopLock( mStartStopMutex );
 
 	// Stop listener socket
 	// NOTE: We have to do this, not the listener thread, as it is likely
@@ -167,18 +161,12 @@ void SessionHostManager::StopHostingASession()
 	}
 
 	// Stop validator thread
-	{
-		RF_ASSERT( mValidatorThread.IsStarted() );
-		mValidatorThread.Stop();
-	}
+	RF_ASSERT( mValidatorThread.IsStarted() );
+	mValidatorThread.Stop();
 
 	// Stop listener thread
-	{
-		// NOTE: Lock taken at start of function
-
-		RF_ASSERT( mListenerThread.IsStarted() );
-		mListenerThread.Stop();
-	}
+	RF_ASSERT( mListenerThread.IsStarted() );
+	mListenerThread.Stop();
 
 	// Destroy listener socket
 	{

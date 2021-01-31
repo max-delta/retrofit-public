@@ -11,6 +11,7 @@
 #include "core_platform/IncomingBufferStitcher.h"
 
 #include "core/ptr/default_creator.h"
+#include "core/ptr/ptr_transform.h"
 
 
 namespace RF::sync {
@@ -37,8 +38,6 @@ SessionClientManager::~SessionClientManager()
 
 bool SessionClientManager::IsReceivingASession() const
 {
-	ReaderLock const updateThreadLock( mUpdateThreadMutex );
-
 	return mUpdateThread.IsStarted();
 }
 
@@ -47,7 +46,7 @@ bool SessionClientManager::IsReceivingASession() const
 void SessionClientManager::StartReceivingASession()
 {
 	// NOTE: Taking lock entire time to lock start/stop logic
-	WriterLock const updateThreadLock( mUpdateThreadMutex );
+	WriterLock const startStopLock( mStartStopMutex );
 
 	if constexpr( config::kAsserts )
 	{
@@ -112,7 +111,7 @@ void SessionClientManager::StartReceivingASession()
 void SessionClientManager::StopReceivingASession()
 {
 	// NOTE: Taking lock entire time to lock start/stop logic
-	WriterLock const updateThreadLock( mUpdateThreadMutex );
+	WriterLock const startStopLock( mStartStopMutex );
 
 	// Indicate our intent, which could potentially result in the update thread
 	//  stopping on its own if we're extremely lucky
@@ -192,7 +191,7 @@ void SessionClientManager::GetOrCreateNextUpdateChannels( SharedPtr<comm::Incomi
 	if( foundExistingStreams == false )
 	{
 		// Failed to select streams, attempt to make new ones
-		CreateHostChannels( kSingleHostIdentifier, mSpec );
+		FormHostConnection( kSingleHostIdentifier, mSpec );
 		bool const foundNewStreams = selectChannels( *singleHost );
 		if( foundNewStreams == false )
 		{
@@ -203,7 +202,7 @@ void SessionClientManager::GetOrCreateNextUpdateChannels( SharedPtr<comm::Incomi
 
 
 
-void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIdentifier, ClientSpec spec )
+void SessionClientManager::FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec )
 {
 	using TCPSocket = platform::network::TCPSocket;
 
@@ -226,14 +225,33 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 	// Block for new connection
 	// NOTE: Not expected to block for an unreasonable time, but may need to
 	//  re-visit with the addition of a timeout parameter on the API
-	SharedPtr<TCPSocket> newConnection = DefaultCreator<TCPSocket>::Create(
-		TCPSocket::ConnectClientSocket( spec.mHostname, spec.mPort ) );
-	if( newConnection->IsValid() == false )
+	TCPSocket newConnection = TCPSocket::ConnectClientSocket( spec.mHostname, spec.mPort );
+	if( newConnection.IsValid() == false )
 	{
 		// Failure may be intermittent, and may succeed if tried again later
 		RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Failed to form a new host connection as client" );
 		return;
 	}
+
+	// Update connection data
+	{
+		WriterLock const connectionLock( mHostConnectionsMutex );
+
+		mHostConnections.at( kSingleHostIdentifier ).mInitialConnectionTime = Clock::now();
+	}
+
+	// Create channels
+	CreateHostChannels( hostIdentifier, DefaultCreator<TCPSocket>::Create( std::move( newConnection ) ) );
+
+	// Wake the updater to check out the new connection
+	mUpdateThread.Wake();
+}
+
+
+
+void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection )
+{
+	comm::EndpointManager& endpointManager = *mEndpointManager;
 
 	// Add new streams to manager
 	WeakSharedPtr<comm::IncomingStream> incomingStream;
@@ -241,8 +259,10 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 	{
 		using namespace platform;
 		using namespace platform::network;
-		UniquePtr<TCPIncomingBufferStream> incomingTCPStream = DefaultCreator<TCPIncomingBufferStream>::Create( newConnection );
-		SharedPtr<TCPOutgoingBufferStream> outgoingTCPStream = DefaultCreator<TCPOutgoingBufferStream>::Create( newConnection );
+		SharedPtr<TCPSocket> sharedSocket;
+		PtrTransformer<TCPSocket>::PerformTransformation( rftl::move( newConnection ), sharedSocket );
+		UniquePtr<TCPIncomingBufferStream> incomingTCPStream = DefaultCreator<TCPIncomingBufferStream>::Create( sharedSocket );
+		SharedPtr<TCPOutgoingBufferStream> outgoingTCPStream = DefaultCreator<TCPOutgoingBufferStream>::Create( sharedSocket );
 		SharedPtr<IncomingBufferStitcher> incomingStitcher = DefaultCreator<IncomingBufferStitcher>::Create( std::move( incomingTCPStream ) );
 		incomingStream = endpointManager.AddIncomingStream( std::move( incomingStitcher ) );
 		outgoingStream = endpointManager.AddOutgoingStream( std::move( outgoingTCPStream ) );

@@ -107,15 +107,14 @@ private:
 	//
 	// Private data
 private:
+	mutable ReaderWriterMutex mStartStopMutex;
+
 	HostSpec const mSpec;
 
 	mutable ReaderWriterMutex mListenerSocketMutex;
 	UniquePtr<platform::network::TCPSocket> mListenerSocket;
 
-	mutable ReaderWriterMutex mListenerThreadMutex;
 	thread::AsyncThread mListenerThread;
-
-	mutable ReaderWriterMutex mValidatorThreadMutex;
 	thread::AsyncThread mValidatorThread;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;
