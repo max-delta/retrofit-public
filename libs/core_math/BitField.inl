@@ -123,19 +123,19 @@ struct Compressor
 		typename rftl::enable_if<rftl::is_integral<AccessType>::value, int>::type = 0>
 	static void CompressImpl( AccessType const& source, void* destination )
 	{
-		#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+#if defined( RF_PLATFORM_LITTLE_ENDIAN )
 		AccessType const& sourceValue = source;
-		#elif defined( RF_PLATFORM_BIG_ENDIAN )
+#elif defined( RF_PLATFORM_BIG_ENDIAN )
 		AccessType const sourceValue = ReverseByteOrder( source );
-		#endif
+#endif
 
 		constexpr size_t kBytesNeededingModification = SnapHighest<size_t>( storageSizeBits, 8 ) / 8;
 		constexpr int64_t kLeftMostByte = 0;
 		constexpr int64_t kRightmostByte = kBytesNeededingModification - 1;
 
 		constexpr size_t kExcessBytesToTrim = ( sizeof( AccessType ) * 8 ) - storageSizeBits;
-		constexpr AccessType kIncomingSizeMask = GetAllBitsSet<AccessType>() >> kExcessBytesToTrim;
-		AccessType incomingBitsFromRight = sourceValue & kIncomingSizeMask;
+		constexpr AccessType kIncomingSizeMask = static_cast<AccessType>( GetAllBitsSet<AccessType>() >> kExcessBytesToTrim );
+		AccessType incomingBitsFromRight = static_cast<AccessType>( sourceValue & kIncomingSizeMask );
 		size_t bitsLeft = storageSizeBits;
 		for( int64_t byteOffset = kRightmostByte; byteOffset >= kLeftMostByte; byteOffset-- )
 		{
@@ -218,7 +218,7 @@ struct Compressor
 				constexpr size_t bitsInByte = math::Min<size_t>( storageSizeBits, 8 - storageOffsetBits );
 				constexpr size_t rightShiftToMatchOffset = ( 8 - bitsInByte ) - storageOffsetBits;
 				constexpr size_t leftShiftToMatchSize = bitsInByte;
-				constexpr AccessType outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				constexpr AccessType outgoingMask = static_cast<AccessType>( ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize ) );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
 				destination <<= leftShiftToMatchSize; // Shift
 				destination &= ~outgoingMask; // Clear
@@ -233,7 +233,7 @@ struct Compressor
 				size_t const bitsInByte = bitsLeft;
 				size_t const rightShiftToMatchOffset = 8 - bitsInByte;
 				size_t const leftShiftToMatchSize = bitsInByte;
-				AccessType const outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				AccessType const outgoingMask = static_cast<AccessType>( ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize ) );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
 				destination <<= leftShiftToMatchSize; // Shift
 				destination &= ~outgoingMask; // Clear
@@ -248,7 +248,7 @@ struct Compressor
 				constexpr size_t bitsInByte = 8;
 				constexpr size_t rightShiftToMatchOffset = 0;
 				constexpr size_t leftShiftToMatchSize = bitsInByte;
-				constexpr AccessType outgoingMask = ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize );
+				constexpr AccessType outgoingMask = static_cast<AccessType>( ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize ) );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
 				destination <<= leftShiftToMatchSize; // Shift
 				destination &= ~outgoingMask; // Clear

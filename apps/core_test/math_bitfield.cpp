@@ -110,6 +110,24 @@ TEST( MathBitField, OffsetTruncationAcrossThreeBytes )
 
 
 
+TEST( MathBitField, SmallUnsigned )
+{
+	// Signed/unsigned compilation errors only seem to come into play on
+	//  types smaller than uint32_t, so this is mostly just to instantiate the
+	//  templates and make sure they compile
+	using bf_u16_16 = BitField<uint16_t, 16>;
+	static_assert( sizeof( bf_u16_16 ) == 2, "Unexpected size" );
+	bf_u16_16 bf = {};
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
+	bf.WriteAt<0>( 0x1234 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x12 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x34 );
+	ASSERT_EQ( bf.ReadAt<0>(), 0x1234 );
+}
+
+
+
 TEST( MathBitField, IEEE754Binary32Nonsense )
 {
 	static_assert( rftl::numeric_limits<float>::is_iec559, "This test assumes standard floats" );
@@ -118,8 +136,7 @@ TEST( MathBitField, IEEE754Binary32Nonsense )
 	static_assert( sizeof( float ) == 4, "Unexpected size" );
 	static_assert( sizeof( uint32_t ) == 4, "Unexpected size" );
 	auto convertToSoft = [](
-		float hardFloat ) -> bf_u32_1_7_24
-	{
+							 float hardFloat ) -> bf_u32_1_7_24 {
 		// HACK: This is probably wildly unsafe and hardware-dependent
 		uint32_t const softUnswapped = *reinterpret_cast<uint32_t const*>( &hardFloat );
 		uint32_t const softSwapped = math::FromPlatformToBigEndian( softUnswapped );
