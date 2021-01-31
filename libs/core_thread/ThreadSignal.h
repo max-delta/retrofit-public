@@ -22,6 +22,7 @@ public:
 
 	// WARNING: May stop waiting spontaneously, use additional checks to ensure
 	//  correct behavior
+	// Thread-safe
 	void Wait() const
 	{
 		rftl::unique_lock<rftl::mutex> lock( mMutex );
@@ -40,6 +41,7 @@ public:
 		mConditionVariable.wait_until( lock, timePoint );
 	}
 
+	// Thread-safe
 	void Signal()
 	{
 		mConditionVariable.notify_all();
