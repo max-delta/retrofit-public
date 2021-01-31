@@ -27,21 +27,27 @@ void AsyncThread::Init(
 		return;
 	}
 
-	mPrep = rftl::move( prep );
+	{
+		WriterLock const lock( mCallbacksMutex );
 
-	RF_ASSERT( work != nullptr );
-	mWork = rftl::move( work );
+		mPrep = rftl::move( prep );
 
-	RF_ASSERT( workCheck != nullptr );
-	mWorkCondition = rftl::move( workCheck );
+		RF_ASSERT( work != nullptr );
+		mWork = rftl::move( work );
 
-	mTerminateCondition = rftl::move( termCheck );
+		RF_ASSERT( workCheck != nullptr );
+		mWorkCondition = rftl::move( workCheck );
+
+		mTerminateCondition = rftl::move( termCheck );
+	}
 }
 
 
 
 bool AsyncThread::IsStarted() const
 {
+	ReaderLock const lock( mThreadMutex );
+
 	return mThread.joinable();
 }
 
@@ -49,7 +55,9 @@ bool AsyncThread::IsStarted() const
 
 void AsyncThread::Start()
 {
-	if( IsStarted() )
+	WriterLock const lock( mThreadMutex );
+
+	if( IsStartedGuarded( lock ) )
 	{
 		RF_DBGFAIL();
 		return;
@@ -58,14 +66,16 @@ void AsyncThread::Start()
 	RF_ASSERT( mRunFlag.load( rftl::memory_order::memory_order_acquire ) == false );
 	mRunFlag.store( true, rftl::memory_order::memory_order_release );
 	mThread = rftl::thread( WorkThread, rftl::ref( *this ) );
-	RF_ASSERT( IsStarted() );
+	RF_ASSERT( IsStartedGuarded( lock ) );
 }
 
 
 
 void AsyncThread::Stop()
 {
-	if( IsStarted() == false )
+	WriterLock const lock( mThreadMutex );
+
+	if( IsStartedGuarded( lock ) == false )
 	{
 		RF_DBGFAIL();
 		return;
@@ -76,7 +86,7 @@ void AsyncThread::Stop()
 	Wake();
 	mThread.join();
 	mThread = {};
-	RF_ASSERT( IsStarted() == false );
+	RF_ASSERT( IsStartedGuarded( lock ) == false );
 }
 
 
@@ -97,12 +107,25 @@ void AsyncThread::SetSafetyWakeupInterval( rftl::chrono::nanoseconds duration )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+template<typename Lock>
+bool thread::AsyncThread::IsStartedGuarded( Lock const& lock ) const
+{
+	RF_ASSERT( lock.owns_lock() );
+	RF_ASSERT( lock.mutex() == &mThreadMutex );
+	return mThread.joinable();
+}
+
+
+
 void AsyncThread::WorkThread( AsyncThread& parent )
 {
 	static constexpr auto shouldForceTerminate = []( AsyncThread& parent ) -> bool //
 	{
 		return parent.mRunFlag.load( rftl::memory_order::memory_order_acquire ) == false;
 	};
+
+	// NOTE: Callback changes are locked for the entire lifetime of the thread
+	ReaderLock const lock( parent.mCallbacksMutex );
 
 	// Prep
 	if( parent.mPrep != nullptr )

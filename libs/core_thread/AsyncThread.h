@@ -1,9 +1,10 @@
 #pragma once
 #include "core_thread/ThreadSignal.h"
 
+#include "rftl/atomic"
 #include "rftl/thread"
 #include "rftl/functional"
-#include "rftl/atomic"
+#include "rftl/shared_mutex"
 
 
 namespace RF::thread {
@@ -27,6 +28,10 @@ public:
 	using TerminateConditionFunc = rftl::function<TerminateConditionSig>;
 
 private:
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
+
 	using SafetyTime = rftl::chrono::milliseconds;
 
 
@@ -42,6 +47,7 @@ public:
 	//  in excessive CPU load
 	// NOTE: Termination condition may be null, which will cause the thread to
 	//  run until explicitly told to stop
+	// Thread-safe
 	void Init(
 		PrepFunc&& prep,
 		WorkFunc&& work,
@@ -49,25 +55,31 @@ public:
 		TerminateConditionFunc&& termCheck );
 
 	// NOTE: Stop is not terminal, work can be started again without re-init
+	// Thread-safe
 	bool IsStarted() const;
 	void Start();
 	void Stop();
 
 	// Thread will wake on explicit wakeup, spontaneous wakeup, or on a safety
 	//  interval used to protect against lock-ups due to logic errors
-	void Wake(); // Thread-safe
+	// Thread-safe
+	void Wake();
 	void SetSafetyWakeupInterval( rftl::chrono::nanoseconds duration );
 
 
 	//
 	// Private methods
 private:
+	template<typename Lock>
+	bool IsStartedGuarded( Lock const& lock ) const;
+
 	static void WorkThread( AsyncThread& parent );
 
 
 	//
 	// Private data
 private:
+	mutable ReaderWriterMutex mCallbacksMutex;
 	PrepFunc mPrep;
 	WorkFunc mWork;
 	WorkConditionFunc mWorkCondition;
@@ -76,7 +88,9 @@ private:
 	rftl::atomic<SafetyTime::rep> mSafetyWakeupInterval =
 		rftl::chrono::duration_cast<SafetyTime>( rftl::chrono::seconds{ 5 } ).count();
 
+	mutable ReaderWriterMutex mThreadMutex;
 	rftl::thread mThread;
+
 	ThreadSignal mWakeSignal;
 	rftl::atomic<bool> mRunFlag = false;
 };
