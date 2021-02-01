@@ -68,6 +68,50 @@ bool IncomingBufferStitcher::IsTerminated() const
 
 
 
+IncomingBufferStitcher::Buffer IncomingBufferStitcher::CloneNextBuffer()
+{
+	// NOTE: Lock intentionally kept past buffer access, to ensure a competing
+	//  stitching fetch on the working buffer is blocked
+	WriterLock const lock( mWorkingBufferMutex );
+
+	// Fetch if our working buffer is empty
+	if( mWorkingBuffer.empty() )
+	{
+		mWorkingBuffer = mUnderlyingStream->FetchNextBuffer();
+	}
+
+	// Clone
+	return mWorkingBuffer;
+}
+
+
+
+size_t IncomingBufferStitcher::TryStitchNextBuffer()
+{
+	WriterLock const lock( mWorkingBufferMutex );
+
+	if( mUnderlyingStream->PeekNextBufferSize() <= 0 )
+	{
+		// Nothing to fetch, would need to block
+		return 0;
+	}
+
+	// Fetch
+	Buffer const tempBuf = mUnderlyingStream->FetchNextBuffer();
+	if( tempBuf.empty() )
+	{
+		// Error, bail
+		return 0;
+	}
+
+	// Append
+	mWorkingBuffer.insert( mWorkingBuffer.end(), tempBuf.begin(), tempBuf.end() );
+
+	return tempBuf.size();
+}
+
+
+
 IncomingBufferStitcher::Buffer IncomingBufferStitcher::FetchNextBuffer( size_t exactSize )
 {
 	RF_ASSERT( exactSize > 0 );

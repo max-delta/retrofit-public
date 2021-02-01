@@ -38,6 +38,19 @@ public:
 	void Terminate() override;
 	virtual bool IsTerminated() const override;
 
+	// Will behave identically to the normal fetch, except it will not discard
+	//  the buffer, and instead produce a clone
+	// NOTE: If the clone size is non-zero, a subsequent normal fetch will
+	//  return an identical buffer to the clone (there is no performance
+	//  penalty for the subsequent fetch, and its buffer can be discarded)
+	Buffer CloneNextBuffer();
+
+	// Attempts to stitch a single buffer, non-blocking. Returns the size of
+	//  additional buffer.
+	// NOTE: If the returned size is zero, this indicates either an error has
+	//  occurred, or the stitch would've been blocking
+	size_t TryStitchNextBuffer();
+
 	// Will repeatedly fetch, append, and trim to ensure the buffer size is
 	//  exactly the size requested
 	// NOTE: If the fetched size is zero, this indicates an error has occurred
