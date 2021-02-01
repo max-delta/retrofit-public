@@ -67,7 +67,7 @@ private:
 	struct Connection
 	{
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
-		Clock::time_point mLatestValidInboundData = Clock::kLowest;
+		Clock::time_point mLatestValidOutboundData = Clock::kLowest;
 	};
 
 

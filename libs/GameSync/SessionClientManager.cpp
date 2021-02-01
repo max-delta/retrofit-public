@@ -147,12 +147,26 @@ void SessionClientManager::ReceiveUpdate()
 		return;
 	}
 
-	// TODO:
-	//  * Check how long since we've sent data
-	//   * If never, tell the host we're legit and need a session data feed
-	//  * Check if host has sent us new data
-	//   * If so, process it
-	RF_TODO_BREAK();
+	// Get connection data
+	{
+		WriterLock const connectionLock( mHostConnectionsMutex );
+
+		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
+
+		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
+		if( hostConnection.mLatestValidOutboundData < hostConnection.mInitialConnectionTime )
+		{
+			// Never attempted handshake, need to do that
+			RF_TODO_BREAK();
+		}
+	}
+
+	// Check if host has sent us new data
+	if( incomingStream->PeekNextBufferSize() > 0 )
+	{
+		// TODO: 
+		RF_TODO_BREAK();
+	}
 }
 
 
