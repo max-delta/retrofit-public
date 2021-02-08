@@ -261,6 +261,8 @@ bool TCPSocket::PeekReceiveNonBlocking()
 
 bool TCPSocket::SendBuffer( Buffer const& buffer )
 {
+	RF_ASSERT( buffer.empty() == false );
+
 	// HACK: Treating buffer as non-const, assumed to be yet another design
 	//  flaw in Microsoft APIs and that no modifications will actually happen
 	Buffer& HACK_nonConstBuffer = *const_cast<Buffer*>( &buffer );

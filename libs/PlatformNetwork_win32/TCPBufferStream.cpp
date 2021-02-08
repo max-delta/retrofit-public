@@ -62,7 +62,7 @@ size_t TCPIncomingBufferStream::PeekNextBufferSize() const
 		}
 
 		// Check to make sure we didn't enter a race when we briefly dropped
-		//  our lock to upgrae to a write
+		//  our lock to upgrade to a write
 		if( mPrefetchBuffer.empty() == false )
 		{
 			raceWarning();
@@ -133,7 +133,12 @@ void TCPIncomingBufferStream::Hardfetch( WriterLock const& lock, size_t maxSize 
 	RF_ASSERT( mPrefetchBuffer.empty() );
 
 	TCPSocket& socket = *mSocket;
-	socket.ReceiveBuffer( mPrefetchBuffer, maxSize );
+	bool const success = socket.ReceiveBuffer( mPrefetchBuffer, maxSize );
+	if( success == false )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Socket receive failed, terminating stream" );
+		Terminate();
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,6 +154,8 @@ TCPOutgoingBufferStream::TCPOutgoingBufferStream( SharedPtr<TCPSocket> connected
 
 bool TCPOutgoingBufferStream::StoreNextBuffer( Buffer&& buffer )
 {
+	RF_ASSERT( buffer.empty() == false );
+
 	bool const success = mSocket->SendBuffer( buffer );
 	if( success )
 	{

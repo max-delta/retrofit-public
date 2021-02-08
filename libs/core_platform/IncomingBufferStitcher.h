@@ -43,6 +43,9 @@ public:
 	// NOTE: If the clone size is non-zero, a subsequent normal fetch will
 	//  return an identical buffer to the clone (there is no performance
 	//  penalty for the subsequent fetch, and its buffer can be discarded)
+	// NOTE: If the clone size is non-zero, a subsequent exact fetch of the
+	//  same size or smaller will return bytes that match the clone (there will
+	//  be a performance penalty for the partial buffer discard)
 	Buffer CloneNextBuffer();
 
 	// Attempts to stitch a single buffer, non-blocking. Returns the size of
