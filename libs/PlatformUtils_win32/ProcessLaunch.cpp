@@ -15,7 +15,11 @@ namespace details {
 
 // There seems to be no practical way to find anonymous job objects, so we'll
 //  generate a name for the one our application owns
-static Uuid const sJobUUID = Uuid::GenerateNewUuid();
+static Uuid GetJobUUID()
+{
+	static Uuid const sJobUUID = Uuid::GenerateNewUuid();
+	return sJobUUID;
+}
 
 
 
@@ -25,7 +29,7 @@ win32::HANDLE EnsureJobObject()
 
 	win32::HANDLE const job = win32::CreateJobObjectA(
 		nullptr, // Cannot inherit
-		sJobUUID.GetDebugString().c_str() );
+		GetJobUUID().GetDebugString().c_str() );
 	if( job == nullptr )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to create job object: ERR %i", win32::GetLastError() );
