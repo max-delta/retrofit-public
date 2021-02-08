@@ -49,6 +49,9 @@
     <ClInclude Include="protocol\Structure.h">
       <Filter>protocol</Filter>
     </ClInclude>
+    <ClInclude Include="protocol\Standards.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="protocol">

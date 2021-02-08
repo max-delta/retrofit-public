@@ -37,6 +37,7 @@
     <ClInclude Include="protocol\Logic.h" />
     <ClInclude Include="protocol\Messages.h" />
     <ClInclude Include="protocol\project.h" />
+    <ClInclude Include="protocol\Standards.h" />
     <ClInclude Include="protocol\stdafx.h" />
     <ClInclude Include="protocol\Structure.h" />
     <ClInclude Include="RollbackController.h" />
