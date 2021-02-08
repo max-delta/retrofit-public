@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "SessionHostManager.h"
 
+#include "GameSync/protocol/Logic.h"
+#include "GameSync/protocol/Standards.h"
+
 #include "Communication/EndpointManager.h"
 #include "Logging/Logging.h"
 
@@ -293,8 +296,16 @@ void SessionHostManager::CreateClientChannels( comm::EndpointIdentifier clientId
 
 void SessionHostManager::ValidateUntrustedConnections()
 {
+	Clock::time_point const now = Clock::now();
+
+	struct UntrustedConnection
+	{
+		ConnectionIdentifier mIdentifier = {};
+		Clock::time_point mInitialConnectionTime = Clock::kLowest;
+	};
+
 	// Figure out which connections to check
-	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> untrustedIdentifiers;
+	rftl::static_vector<UntrustedConnection, kMaxConnectionCount> untrustedConnections;
 	{
 		ReaderLock const connectionLock( mClientConnectionsMutex );
 
@@ -307,20 +318,26 @@ void SessionHostManager::ValidateUntrustedConnections()
 			if( conn.HasValidData() == false )
 			{
 				// No valid data yet
-				untrustedIdentifiers.emplace_back( id );
+				UntrustedConnection untrustedConnection = {};
+				untrustedConnection.mIdentifier = id;
+				untrustedConnection.mInitialConnectionTime = conn.mInitialConnectionTime;
+				untrustedConnections.emplace_back( rftl::move( untrustedConnection ) );
 			}
 		}
 	}
-	if( untrustedIdentifiers.empty() )
+	if( untrustedConnections.empty() )
 	{
 		return;
 	}
 
 	// Check each identifier
 	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> newlyTrustedIdentifiers;
+	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> identifiersToDestroy;
 	comm::EndpointManager& endpointManager = *mEndpointManager;
-	for( ConnectionIdentifier const& id : untrustedIdentifiers )
+	for( UntrustedConnection const& untrusted : untrustedConnections )
 	{
+		ConnectionIdentifier const& id = untrusted.mIdentifier;
+
 		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
 		if( endpointPtr == nullptr )
 		{
@@ -333,9 +350,12 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
 		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
+		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
 		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
+		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
 		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-		if( incomingPtr == nullptr )
+		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+		if( incomingPtr == nullptr || outgoingPtr == nullptr )
 		{
 			// We weren't holding a lock on the connections, so it's possible
 			//  this was recently terminated or still being setup
@@ -343,6 +363,24 @@ void SessionHostManager::ValidateUntrustedConnections()
 			continue;
 		}
 		comm::IncomingStream& incoming = *incomingPtr;
+		comm::OutgoingStream& outgoing = *outgoingPtr;
+
+		if( incoming.IsTerminated() )
+		{
+			// Terminated, needs to be removed
+			identifiersToDestroy.emplace_back( id );
+			continue;
+		}
+
+		Clock::duration const timePassed = now - untrusted.mInitialConnectionTime;
+		RF_ASSERT( timePassed >= Clock::duration{ 0 } );
+		if( timePassed > protocol::kRecommendedHandshakeTimeout )
+		{
+			// Timed out, kill the connection and let it get cleaned up
+			RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Untrusted connection has timed out, terminating connection" );
+			incoming.Terminate();
+			continue;
+		}
 
 		size_t const incomingSize = incoming.PeekNextBufferSize();
 		if( incomingSize == 0 )
@@ -351,15 +389,40 @@ void SessionHostManager::ValidateUntrustedConnections()
 			continue;
 		}
 
-		// TODO: See if data is valid
-		RF_TODO_BREAK();
-		bool dataIsValid = false;
-		if( dataIsValid )
+		// See if data is valid
+		protocol::Buffer const& buffer = incoming.CloneNextBuffer();
+		rftl::byte_view bytes( buffer.begin(), buffer.end() );
+		protocol::ReadResult const result = protocol::TryDecodeHelloTransmission( bytes );
+		if( result == protocol::ReadResult::kSuccess )
 		{
+			// Success, consume the bytes
+			RFLOG_MILESTONE( nullptr, RFCAT_GAMESYNC, "Hello transmission was valid, upgrading connection" );
+			size_t const consumedBytes = buffer.size() - bytes.size();
+			protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
+
+			// Flag the identifier for upgrade
 			newlyTrustedIdentifiers.emplace_back( id );
+
+			// Finish handshake
+			protocol::Buffer welcome = protocol::CreateWelcomeTransmission( protocol::kMaxRecommendedTransmissionSize );
+			outgoing.StoreNextBuffer( rftl::move( welcome ) );
+		}
+		else if( result == protocol::ReadResult::kTooSmall )
+		{
+			// Not enough data yet, attempt a stitch and try again next pass
+			RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Hello transmission wasn't large enough to decode. Suspicious..." );
+			incoming.TryStitchNextBuffer();
+			continue;
+		}
+		else
+		{
+			// Bad transmission, kill the connection and let it get cleaned up
+			RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Hello transmission was invalid, terminating connection" );
+			incoming.Terminate();
+			continue;
 		}
 	}
-	if( newlyTrustedIdentifiers.empty() )
+	if( newlyTrustedIdentifiers.empty() && identifiersToDestroy.empty() )
 	{
 		return;
 	}
@@ -368,8 +431,6 @@ void SessionHostManager::ValidateUntrustedConnections()
 	bool validConnectionsChanged = false;
 	{
 		WriterLock const connectionLock( mClientConnectionsMutex );
-
-		Clock::time_point const now = Clock::now();
 
 		RF_ASSERT( mClientConnections.size() <= kMaxConnectionCount );
 		for( ConnectionIdentifier const& id : newlyTrustedIdentifiers )
@@ -389,6 +450,11 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 			validConnectionsChanged = true;
 		}
+	}
+
+	if( identifiersToDestroy.empty() == false )
+	{
+		RF_TODO_BREAK();
 	}
 
 	// Need to send a connection list, an update to existing connections as

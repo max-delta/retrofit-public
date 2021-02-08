@@ -4,6 +4,12 @@
 #include "GameSync/protocol/Encryption.h"
 #include "GameSync/protocol/Messages.h"
 
+#include "Logging/Logging.h"
+
+#include "core_math/math_clamps.h"
+
+#include "rftl/algorithm"
+
 
 namespace RF::sync::protocol {
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,6 +60,16 @@ struct MessageWalker<TypeList<CurrentType, RemainingTypes...>>
 	}
 };
 
+
+
+size_t CalcStandardTransmissionHeaderSize()
+{
+	Buffer temp;
+	CommonHeader{}.Append( temp );
+	MessageBatch{}.Append( temp );
+	return temp.size();
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +88,7 @@ ReadResult TryDecodeBatch(
 	EncryptionState const& encryption,
 	OnMessageFunc const& onMessage )
 {
+	RF_ASSERT( bytes.empty() == false );
 	RF_ASSERT( onMessage != nullptr );
 
 	// If encrypted, decrypt into a new buffer and switch to that
@@ -119,6 +136,73 @@ ReadResult TryDecodeBatch(
 	return ReadResult::kSuccess;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+GAMESYNC_API rftl::vector<Buffer> CreateTransmissions(
+	Buffer&& messages,
+	EncryptionState const& encryption,
+	size_t maxTransmissionSize )
+{
+	RF_ASSERT( messages.empty() == false );
+
+	rftl::vector<Buffer> retVal;
+
+	// Pre-calc sizes
+	static size_t const transmissionPrefixSize = details::CalcStandardTransmissionHeaderSize();
+	RF_ASSERT( transmissionPrefixSize < maxTransmissionSize );
+	size_t const maxMessageBytesPerTransmission = maxTransmissionSize - transmissionPrefixSize;
+	RF_ASSERT( maxMessageBytesPerTransmission > 0 );
+
+	// If encryption is needed, encrypt into a new buffer and switch to that
+	rftl::byte_view messageBytes( messages.begin(), messages.end() );
+	Buffer encryptionBuffer;
+	if( encryption.mMode != EncryptionMode::kUnencrypted )
+	{
+		encryptionBuffer = messages;
+		bool const encrypted = EncryptBytes( encryptionBuffer.begin(), encryptionBuffer.end(), encryption );
+		if( encrypted == false )
+		{
+			RF_RETAIL_FATAL_MSG( "Failed to encrypt", "Encryption failed. Corruption of encryption state?" );
+		}
+		messageBytes = rftl::byte_view( encryptionBuffer.begin(), encryptionBuffer.end() );
+	}
+
+	// Consume all message bytes...
+	size_t const totalBytes = messageBytes.size();
+	while( messageBytes.empty() == false )
+	{
+		// How much can be fit in this transmission?
+		size_t const remainingMessageBytes = messageBytes.size();
+		size_t const messageBytesInThisTransmission = math::Min( remainingMessageBytes, maxMessageBytesPerTransmission );
+
+		// Create the transmission buffer
+		Buffer transmission;
+		transmission.reserve( transmissionPrefixSize + messageBytesInThisTransmission );
+
+		// Write the headers
+		CommonHeader{}.Append( transmission );
+		MessageBatch batch = {};
+		batch.mTotalBytes = totalBytes;
+		batch.mBatchBytes = messageBytesInThisTransmission;
+		batch.mEncryption = encryption.mMode;
+		batch.Append( transmission );
+		RF_ASSERT( transmission.size() == transmissionPrefixSize );
+
+		// Write the messages
+		transmission.resize( transmission.size() + messageBytesInThisTransmission );
+		rftl::memcpy(
+			&transmission.at( transmissionPrefixSize ),
+			messageBytes.data(),
+			messageBytesInThisTransmission );
+		messageBytes.remove_prefix( messageBytesInThisTransmission );
+
+		// Store the transmission
+		retVal.emplace_back( rftl::move( transmission ) );
+	}
+
+	return retVal;
+}
+
 
 
 ReadResult TryDecodeTransmission(
@@ -156,7 +240,7 @@ ReadResult TryDecodeTransmission(
 	}
 
 	// Batch payload
-	rftl::byte_view const batchBytes = tempBytes.substr( batch.mBatchBytes );
+	rftl::byte_view const batchBytes = tempBytes.substr( 0, batch.mBatchBytes );
 	ReadResult const payloadResult = onBatch( batch.mTotalBytes, batchBytes );
 	if( payloadResult != kSuccess )
 	{
@@ -166,6 +250,83 @@ ReadResult TryDecodeTransmission(
 
 	bytes = tempBytes;
 	return kSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+GAMESYNC_API Buffer CreateHelloTransmission(
+	size_t maxTransmissionSize )
+{
+	Buffer messages;
+	MessageIdentifier{ MsgHello::kID }.Append( messages );
+	MsgHello{}.Append( messages );
+
+	rftl::vector<Buffer> transmissions = CreateTransmissions(
+		rftl::move( messages ),
+		EncryptionState{},
+		maxTransmissionSize );
+	RF_ASSERT( transmissions.size() == 1 );
+
+	return transmissions.at( 0 );
+}
+
+
+
+GAMESYNC_API ReadResult TryDecodeHelloTransmission( rftl::byte_view& bytes )
+{
+	static constexpr auto onMessage = []( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
+	{
+		if( id == MsgHello::kID )
+		{
+			return MsgHello{}.TryRead( bytes );
+		}
+		return ReadResult::kLogicError;
+	};
+
+	static constexpr auto const onBatch = []( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+	{
+		return TryDecodeBatch( bytes, EncryptionState{}, onMessage );
+	};
+
+	return TryDecodeTransmission( bytes, EncryptionState{}, onBatch );
+}
+
+
+
+GAMESYNC_API Buffer CreateWelcomeTransmission( size_t maxTransmissionSize )
+{
+	Buffer messages;
+	MessageIdentifier{ MsgWelcome::kID }.Append( messages );
+	MsgWelcome{}.Append( messages );
+
+	rftl::vector<Buffer> transmissions = CreateTransmissions(
+		rftl::move( messages ),
+		EncryptionState{},
+		maxTransmissionSize );
+	RF_ASSERT( transmissions.size() == 1 );
+
+	return transmissions.at( 0 );
+}
+
+
+
+GAMESYNC_API ReadResult TryDecodeWelcomeTransmission( rftl::byte_view& bytes )
+{
+	static constexpr auto onMessage = []( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
+	{
+		if( id == MsgWelcome::kID )
+		{
+			return MsgWelcome{}.TryRead( bytes );
+		}
+		return ReadResult::kLogicError;
+	};
+
+	static constexpr auto const onBatch = []( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+	{
+		return TryDecodeBatch( bytes, EncryptionState{}, onMessage );
+	};
+
+	return TryDecodeTransmission( bytes, EncryptionState{}, onBatch );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

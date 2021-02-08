@@ -10,7 +10,6 @@
 namespace RF::sync::protocol {
 ///////////////////////////////////////////////////////////////////////////////
 
-
 enum class ReadResult : uint8_t
 {
 	kSuccess = 0,
@@ -19,6 +18,7 @@ enum class ReadResult : uint8_t
 	kWrongEncryption,
 	kBadEncryption,
 	kUnknownMessage,
+	kLogicError,
 };
 
 enum class EncryptionMode : uint8_t

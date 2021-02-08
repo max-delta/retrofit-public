@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "SessionClientManager.h"
 
+#include "GameSync/protocol/Logic.h"
+#include "GameSync/protocol/Standards.h"
+
 #include "Communication/EndpointManager.h"
 #include "Logging/Logging.h"
 
@@ -147,6 +150,8 @@ void SessionClientManager::ReceiveUpdate()
 		return;
 	}
 
+	Clock::time_point const now = Clock::now();
+
 	// Get connection data
 	{
 		WriterLock const connectionLock( mHostConnectionsMutex );
@@ -157,14 +162,16 @@ void SessionClientManager::ReceiveUpdate()
 		if( hostConnection.mLatestValidOutboundData < hostConnection.mInitialConnectionTime )
 		{
 			// Never attempted handshake, need to do that
-			RF_TODO_BREAK();
+			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize );
+			outgoingStream->StoreNextBuffer( rftl::move( hello ) );
+			hostConnection.mLatestValidOutboundData = now;
 		}
 	}
 
 	// Check if host has sent us new data
 	if( incomingStream->PeekNextBufferSize() > 0 )
 	{
-		// TODO: 
+		// TODO:
 		RF_TODO_BREAK();
 	}
 }
