@@ -230,7 +230,7 @@ ReadResult TryDecodeTransmission(
 	{
 		return batchResult;
 	}
-	if( batch.mBatchBytes < tempBytes.size() )
+	if( tempBytes.size() < batch.mBatchBytes )
 	{
 		return ReadResult::kTooSmall;
 	}
