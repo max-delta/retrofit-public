@@ -44,8 +44,10 @@
     <ClInclude Include="RollbackFilters.h" />
     <ClInclude Include="SessionClientManager.h" />
     <ClInclude Include="SessionHostManager.h" />
+    <ClInclude Include="SessionMembers.h" />
     <ClInclude Include="SnapshotSerializer.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SyncFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConnectionMananger.cpp" />
@@ -58,6 +60,7 @@
     <ClCompile Include="RollbackFilters.cpp" />
     <ClCompile Include="SessionClientManager.cpp" />
     <ClCompile Include="SessionHostManager.cpp" />
+    <ClCompile Include="SessionMembers.cpp" />
     <ClCompile Include="SnapshotSerializer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>

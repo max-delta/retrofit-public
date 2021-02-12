@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "GameSync/SyncFwd.h"
 #include "GameSync/protocol/Encryption.h"
 
 #include "Communication/CommunicationFwd.h"
@@ -52,7 +53,6 @@ private:
 	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 	using Clock = time::SteadyClock;
-	using ConnectionIdentifier = comm::EndpointIdentifier;
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
 

@@ -21,6 +21,7 @@
     <ClCompile Include="protocol\Structure.cpp">
       <Filter>protocol</Filter>
     </ClCompile>
+    <ClCompile Include="SessionMembers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -52,6 +53,8 @@
     <ClInclude Include="protocol\Standards.h">
       <Filter>protocol</Filter>
     </ClInclude>
+    <ClInclude Include="SessionMembers.h" />
+    <ClInclude Include="SyncFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="protocol">
