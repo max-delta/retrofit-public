@@ -20,6 +20,25 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool SessionClientManager::Connection::HasPartialHandshake() const
+{
+	return mInitialConnectionTime < mOutgoingHandshakeTime;
+}
+
+
+
+bool SessionClientManager::Connection::HasHandshake() const
+{
+	if( mInitialConnectionTime < mCompletedHandshakeTime )
+	{
+		RF_ASSERT( mOutgoingHandshakeTime < mCompletedHandshakeTime );
+		return true;
+	}
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 SessionClientManager::SessionClientManager( ClientSpec spec )
 	: mSpec( spec )
 	, mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
@@ -41,7 +60,7 @@ SessionClientManager::~SessionClientManager()
 
 bool SessionClientManager::IsReceivingASession() const
 {
-	return mUpdateThread.IsStarted();
+	return mHandshakeThread.IsStarted();
 }
 
 
@@ -74,39 +93,41 @@ void SessionClientManager::StartReceivingASession()
 	// Add our host endpoints
 	mEndpointManager->AddEndpoint( kSingleHostIdentifier );
 
-	// Initialize update thread
+	// Initialize handshake thread
 	{
 		static constexpr auto prep = []() -> void //
 		{
 			using namespace platform::thread;
-			SetThreadName( "Session Client Updater" );
+			SetThreadName( "Session Client Handshaker" );
 			SetThreadPriority( ThreadPriority::Normal );
 		};
 		auto work = [this]() -> void //
 		{
-			this->ReceiveUpdate();
+			this->DoHandshakes();
 		};
 		auto workCheck = [this]() -> bool //
 		{
-			// TODO: Add a throttling mechanism controlled by the update
-			//  function, for fast error-loop cases (LAN unplugged, etc)
-			RF_TODO_ANNOTATION( "Throttling logic" );
-			( (void)this );
+			bool const wasUneventful = mLastHandshakeUneventful.exchange( false, rftl::memory_order::memory_order_acquire );
+			if( wasUneventful )
+			{
+				return false;
+			}
 			return true;
 		};
 		auto termCheck = [this]() -> bool //
 		{
 			return mShouldReceiveASession.load( rftl::memory_order::memory_order_acquire ) == false;
 		};
-		mUpdateThread.Init( prep, work, workCheck, termCheck );
+		mHandshakeThread.Init( prep, work, workCheck, termCheck );
+		mHandshakeThread.SetSafetyWakeupInterval( kHandshakeThrottle );
 	}
 
 	// Indicate the thread should run
 	bool const wasReceiving = mShouldReceiveASession.exchange( true, rftl::memory_order::memory_order_acq_rel );
 	RF_ASSERT( wasReceiving == false );
 
-	RF_ASSERT( mUpdateThread.IsStarted() == false );
-	mUpdateThread.Start();
+	RF_ASSERT( mHandshakeThread.IsStarted() == false );
+	mHandshakeThread.Start();
 }
 
 
@@ -116,8 +137,8 @@ void SessionClientManager::StopReceivingASession()
 	// NOTE: Taking lock entire time to lock start/stop logic
 	WriterLock const startStopLock( mStartStopMutex );
 
-	// Indicate our intent, which could potentially result in the update thread
-	//  stopping on its own if we're extremely lucky
+	// Indicate our intent, which could potentially result in the handshake
+	//  thread stopping on its own if we're extremely lucky
 	bool const wasReceiving = mShouldReceiveASession.exchange( false, rftl::memory_order::memory_order_acq_rel );
 	RF_ASSERT( wasReceiving );
 
@@ -126,12 +147,72 @@ void SessionClientManager::StopReceivingASession()
 	//  blocked waiting for communications
 	RF_TODO_ANNOTATION( "Stop all host connections" );
 
-	// Stop update thread
-	RF_ASSERT( mUpdateThread.IsStarted() );
-	mUpdateThread.Stop();
+	// Stop handshake thread
+	RF_ASSERT( mHandshakeThread.IsStarted() );
+	mHandshakeThread.Stop();
 
 	RF_TODO_ANNOTATION( "Destroy all host connections" );
 	RF_TODO_ANNOTATION( "Destroy all endpoints" );
+}
+
+
+
+bool SessionClientManager::HasPendingOperations() const
+{
+	size_t bytesIncoming = 0;
+
+	ReaderLock const connectionLock( mHostConnectionsMutex );
+
+	comm::EndpointManager& endpointManager = *mEndpointManager;
+	for( Connections::value_type const& connection : mHostConnections )
+	{
+		ConnectionIdentifier const& id = connection.first;
+		Connection const& conn = connection.second;
+		if( conn.HasHandshake() == false )
+		{
+			continue;
+		}
+
+		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
+		if( endpointPtr == nullptr )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint in operation check" );
+			continue;
+		}
+		comm::LogicalEndpoint& endpoint = *endpointPtr;
+
+		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
+		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
+		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
+		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
+		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
+		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
+		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+		if( incomingPtr == nullptr || outgoingPtr == nullptr )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel in operation check" );
+			continue;
+		}
+		comm::IncomingStream& incoming = *incomingPtr;
+		comm::OutgoingStream& outgoing = *outgoingPtr;
+
+		if( incoming.IsTerminated() || outgoing.IsTerminated() )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Terminated stream in operation check" );
+			continue;
+		}
+
+		size_t const incomingSize = incoming.PeekNextBufferSize();
+		if( incomingSize == 0 )
+		{
+			// No data yet
+			continue;
+		}
+
+		bytesIncoming += incomingSize;
+	}
+
+	return bytesIncoming > 0;
 }
 
 
@@ -162,16 +243,17 @@ SessionClientManager::Diagnostics SessionClientManager::ReportDiagnostics() cons
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void SessionClientManager::ReceiveUpdate()
+void SessionClientManager::DoHandshakes()
 {
 	Clock::time_point const now = Clock::now();
 
+	// NOTE: In a multi-host scenario, this will need to be refactored into a
+	//  looping concept, similar to the host manager and client connections
+
 	// Get the streams to communicate with a host
-	// NOTE: In a multi-host scenario, another update will be responsible for
-	//  the next host
 	SharedPtr<comm::IncomingStream> incomingStream = nullptr;
 	SharedPtr<comm::OutgoingStream> outgoingStream = nullptr;
-	GetOrCreateNextUpdateChannels( incomingStream, outgoingStream );
+	GetOrCreateNextHandshakeChannels( incomingStream, outgoingStream );
 	if( incomingStream == nullptr || outgoingStream == nullptr )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Failed to create/select a host connection as client" );
@@ -180,15 +262,28 @@ void SessionClientManager::ReceiveUpdate()
 	comm::IncomingStream& incoming = *incomingStream;
 	comm::OutgoingStream& outgoing = *outgoingStream;
 
-	// Get connection data, handshake if needed
-	protocol::EncryptionState encryption = {};
+	// Check if we can probably ignore it before taking a write lock
+	{
+		ReaderLock const connectionLock( mHostConnectionsMutex );
+
+		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
+		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
+		if( hostConnection.HasHandshake() )
+		{
+			// Already has handshake
+			mLastHandshakeUneventful.store( true, rftl::memory_order::memory_order_release );
+			return;
+		}
+	}
+
+	// Check for, and perform any needed handshakes
 	{
 		WriterLock const connectionLock( mHostConnectionsMutex );
 
 		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
 
 		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
-		if( hostConnection.mOutgoingHandshakeTime < hostConnection.mInitialConnectionTime )
+		if( hostConnection.HasPartialHandshake() == false )
 		{
 			// Never attempted handshake, need to do that
 
@@ -201,7 +296,7 @@ void SessionClientManager::ReceiveUpdate()
 			hostConnection.mOutgoingHandshakeTime = now;
 		}
 
-		if( hostConnection.mCompletedHandshakeTime < hostConnection.mOutgoingHandshakeTime )
+		if( hostConnection.HasHandshake() == false )
 		{
 			// Never completed handshake, need to do that
 
@@ -209,6 +304,7 @@ void SessionClientManager::ReceiveUpdate()
 			if( incomingSize == 0 )
 			{
 				// No data yet
+				mLastHandshakeUneventful.store( true, rftl::memory_order::memory_order_release );
 				return;
 			}
 
@@ -253,24 +349,12 @@ void SessionClientManager::ReceiveUpdate()
 				return;
 			}
 		}
-
-		encryption = hostConnection.mEncryption;
 	}
-
-	size_t const incomingSize = incoming.PeekNextBufferSize();
-	if( incomingSize == 0 )
-	{
-		// No data yet
-		return;
-	}
-
-	// TODO: Handle updates, other data
-	RF_TODO_BREAK();
 }
 
 
 
-void SessionClientManager::GetOrCreateNextUpdateChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream )
+void SessionClientManager::GetOrCreateNextHandshakeChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream )
 {
 	comm::EndpointManager& endpointManager = *mEndpointManager;
 	RF_ASSERT( endpointManager.GetAllEndpoints().empty() == false );
@@ -356,8 +440,8 @@ void SessionClientManager::FormHostConnection( comm::EndpointIdentifier hostIden
 	// Create channels
 	CreateHostChannels( hostIdentifier, DefaultCreator<TCPSocket>::Create( std::move( newConnection ) ) );
 
-	// Wake the updater to check out the new connection
-	mUpdateThread.Wake();
+	// Wake the handshaker to check out the new connection
+	mHandshakeThread.Wake();
 }
 
 

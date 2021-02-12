@@ -51,6 +51,8 @@ private:
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
 
+	static constexpr rftl::chrono::milliseconds kHandshakeThrottle{ 100 };
+
 	// NOTE: May add support for multiple hosts in the future, possibly with a
 	//  shared ownership model for the total connection list
 	static constexpr ConnectionIdentifier kSingleHostIdentifier = 1;
@@ -74,6 +76,9 @@ public:
 private:
 	struct Connection
 	{
+		bool HasPartialHandshake() const;
+		bool HasHandshake() const;
+
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
 		Clock::time_point mOutgoingHandshakeTime = Clock::kLowest;
 		Clock::time_point mCompletedHandshakeTime = Clock::kLowest;
@@ -93,15 +98,18 @@ public:
 	void StopReceivingASession();
 
 	// Thread-safe
+	bool HasPendingOperations() const;
+
+	// Thread-safe
 	Diagnostics ReportDiagnostics() const;
 
 
 	//
 	// Private methods
 private:
-	void ReceiveUpdate();
+	void DoHandshakes();
 
-	void GetOrCreateNextUpdateChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream );
+	void GetOrCreateNextHandshakeChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream );
 	void FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
 	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 
@@ -114,8 +122,8 @@ private:
 	ClientSpec const mSpec;
 
 	rftl::atomic<bool> mShouldReceiveASession = false;
-
-	thread::AsyncThread mUpdateThread;
+	thread::AsyncThread mHandshakeThread;
+	rftl::atomic<bool> mLastHandshakeUneventful = false;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;
 

@@ -56,6 +56,8 @@ private:
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
 
+	static constexpr rftl::chrono::milliseconds kHandshakeThrottle{ 100 };
+
 
 	//
 	// Structs
@@ -96,6 +98,9 @@ public:
 	void StopHostingASession();
 
 	// Thread-safe
+	bool HasPendingOperations() const;
+
+	// Thread-safe
 	Diagnostics ReportDiagnostics() const;
 
 
@@ -119,6 +124,8 @@ private:
 
 	thread::AsyncThread mListenerThread;
 	thread::AsyncThread mValidatorThread;
+	rftl::atomic<bool> mLastValidationUneventful = false;
+	rftl::atomic<bool> mRecentConnectionChanges = false;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;
 

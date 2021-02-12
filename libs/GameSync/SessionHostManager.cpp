@@ -130,14 +130,15 @@ void SessionHostManager::StartHostingASession()
 		};
 		auto workCheck = [this]() -> bool //
 		{
-			// TODO: Add a throttling mechanism controlled by the validate
-			//  function, for dealing for potentially malicious clients or
-			//  waiting for buggy/slow clients
-			RF_TODO_ANNOTATION( "Throttling logic" );
-			( (void)this );
+			bool const wasUneventful = mLastValidationUneventful.exchange( false, rftl::memory_order::memory_order_acquire );
+			if( wasUneventful )
+			{
+				return false;
+			}
 			return true;
 		};
 		mValidatorThread.Init( prep, work, workCheck, nullptr );
+		mValidatorThread.SetSafetyWakeupInterval( kHandshakeThrottle );
 	}
 
 	// Start threads
@@ -183,6 +184,71 @@ void SessionHostManager::StopHostingASession()
 	RF_TODO_ANNOTATION( "Stop all client connections" );
 	RF_TODO_ANNOTATION( "Destroy all client connections" );
 	RF_TODO_ANNOTATION( "Destroy all endpoints" );
+}
+
+
+
+bool SessionHostManager::HasPendingOperations() const
+{
+	size_t bytesIncoming = 0;
+	size_t terminatedConnections = 0;
+
+	ReaderLock const connectionLock( mClientConnectionsMutex );
+
+	comm::EndpointManager& endpointManager = *mEndpointManager;
+	for( Connections::value_type const& connection : mClientConnections )
+	{
+		ConnectionIdentifier const& id = connection.first;
+		Connection const& conn = connection.second;
+		if( conn.HasHandshake() == false )
+		{
+			continue;
+		}
+
+		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
+		if( endpointPtr == nullptr )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint in operation check" );
+			continue;
+		}
+		comm::LogicalEndpoint& endpoint = *endpointPtr;
+
+		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
+		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
+		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
+		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
+		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
+		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
+		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+		if( incomingPtr == nullptr || outgoingPtr == nullptr )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel in operation check" );
+			continue;
+		}
+		comm::IncomingStream& incoming = *incomingPtr;
+		comm::OutgoingStream& outgoing = *outgoingPtr;
+
+		if( incoming.IsTerminated() || outgoing.IsTerminated() )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Terminated stream in operation check" );
+			terminatedConnections++;
+			continue;
+		}
+
+		size_t const incomingSize = incoming.PeekNextBufferSize();
+		if( incomingSize == 0 )
+		{
+			// No data yet
+			continue;
+		}
+
+		bytesIncoming += incomingSize;
+	}
+
+	return //
+		bytesIncoming > 0 ||
+		terminatedConnections > 0 ||
+		mRecentConnectionChanges.load( rftl::memory_order::memory_order_acquire );
 }
 
 
@@ -332,6 +398,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 	}
 	if( untrustedConnections.empty() )
 	{
+		mLastValidationUneventful.store( true, rftl::memory_order::memory_order_release );
 		return;
 	}
 
@@ -453,6 +520,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 	}
 	if( untrustedConnections.empty() )
 	{
+		mLastValidationUneventful.store( true, rftl::memory_order::memory_order_release );
 		return;
 	}
 
@@ -500,12 +568,12 @@ void SessionHostManager::ValidateUntrustedConnections()
 	// Need to send a connection list, an update to existing connections as
 	//  well as an initial list for the newly trusted connections
 	// NOTE: There is a theoretical race condition where we can get here
-	//  by changing the trust on onlys connections that were terminated while
+	//  by changing the trust on only connections that were terminated while
 	//  we were inspecting them, but the superfluous connection update we send
 	//  should be benign
 
 	RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, need to send a connection update" );
-	RF_TODO_BREAK();
+	mRecentConnectionChanges.store( true, rftl::memory_order::memory_order_release );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

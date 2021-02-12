@@ -150,30 +150,36 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 
 	// Draw Status
-	x = 26;
+	x = 30;
 	y = 2;
 	if( internalState.mAsHost != nullptr )
 	{
 		using namespace sync;
 
-		drawText( x, y++, "HOST" );
+		drawText( x - 4u, y++, "HOST" );
+		SessionHostManager& host = *internalState.mAsHost;
 
-		SessionHostManager::Diagnostics const diag = internalState.mAsHost->ReportDiagnostics();
+		SessionHostManager::Diagnostics const diag = host.ReportDiagnostics();
 		drawText( x, y++, "CONN: %llu (+%llu) / %llu",
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
+		drawText( x, y++, "WORK: %c",
+			host.HasPendingOperations() ? '1' : '0' );
 	}
 	if( internalState.mAsClient != nullptr )
 	{
 		using namespace sync;
 
-		drawText( x, y++, "CLIENT" );
+		drawText( x - 4u, y++, "CLIENT" );
+		SessionClientManager& client = *internalState.mAsClient;
 
-		SessionClientManager::Diagnostics const diag = internalState.mAsClient->ReportDiagnostics();
+		SessionClientManager::Diagnostics const diag = client.ReportDiagnostics();
 		drawText( x, y++, "CONN: %llu (+%llu)",
 			diag.mValidConnections,
 			diag.mInvalidConnections );
+		drawText( x, y++, "WORK: %c",
+			client.HasPendingOperations() ? '1' : '0' );
 	}
 }
 
