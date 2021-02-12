@@ -162,7 +162,12 @@ void SessionClientManager::ReceiveUpdate()
 		if( hostConnection.mLatestValidOutboundData < hostConnection.mInitialConnectionTime )
 		{
 			// Never attempted handshake, need to do that
-			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize );
+
+			protocol::EncryptionState& attemptedEncryption = hostConnection.mEncryption;
+			attemptedEncryption.mPending = protocol::kExpectedEncryption;
+
+			protocol::PrepareEncryptionRequest( attemptedEncryption );
+			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize, attemptedEncryption );
 			outgoingStream->StoreNextBuffer( rftl::move( hello ) );
 			hostConnection.mLatestValidOutboundData = now;
 		}

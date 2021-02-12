@@ -57,16 +57,20 @@ GAMESYNC_API ReadResult TryDecodeTransmission(
 // Hello payloads are special in that they cannot be broken up across multiple
 //  transmissions, and are never encrypted
 GAMESYNC_API Buffer CreateHelloTransmission(
-	size_t maxTransmissionSize );
+	size_t maxTransmissionSize,
+	EncryptionState const& attemptedEncryption );
 GAMESYNC_API ReadResult TryDecodeHelloTransmission(
-	rftl::byte_view& bytes );
+	rftl::byte_view& bytes,
+	EncryptionState& attemptedEncryption );
 
 // Welcome payloads are special in that they cannot be broken up across multiple
 //  transmissions, and are never encrypted
 GAMESYNC_API Buffer CreateWelcomeTransmission(
-	size_t maxTransmissionSize );
+	size_t maxTransmissionSize,
+	EncryptionState const& attemptedEncryption );
 GAMESYNC_API ReadResult TryDecodeWelcomeTransmission(
-	rftl::byte_view& bytes );
+	rftl::byte_view& bytes,
+	EncryptionState& attemptedEncryption );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

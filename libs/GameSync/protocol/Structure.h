@@ -23,7 +23,8 @@ enum class ReadResult : uint8_t
 
 enum class EncryptionMode : uint8_t
 {
-	kUnencrypted = 0
+	kUnencrypted = 0,
+	kMockInert
 };
 
 using MessageID = rftl::array<char, 4>;

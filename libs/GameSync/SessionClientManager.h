@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "GameSync/protocol/Encryption.h"
+
 #include "Communication/CommunicationFwd.h"
 
 #include "core_math/Hash.h"
@@ -68,6 +70,7 @@ private:
 	{
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
 		Clock::time_point mLatestValidOutboundData = Clock::kLowest;
+		protocol::EncryptionState mEncryption = {};
 	};
 
 

@@ -255,11 +255,17 @@ ReadResult TryDecodeTransmission(
 ///////////////////////////////////////////////////////////////////////////////
 
 GAMESYNC_API Buffer CreateHelloTransmission(
-	size_t maxTransmissionSize )
+	size_t maxTransmissionSize,
+	EncryptionState const& attemptedEncryption )
 {
+	// Clients start unencrypted
+	RF_ASSERT( attemptedEncryption.mMode == protocol::EncryptionMode::kUnencrypted );
+
 	Buffer messages;
 	MessageIdentifier{ MsgHello::kID }.Append( messages );
-	MsgHello{}.Append( messages );
+	MsgHello hello = {};
+	hello.mModeRequest = attemptedEncryption.mPending;
+	hello.Append( messages );
 
 	rftl::vector<Buffer> transmissions = CreateTransmissions(
 		rftl::move( messages ),
@@ -272,18 +278,29 @@ GAMESYNC_API Buffer CreateHelloTransmission(
 
 
 
-GAMESYNC_API ReadResult TryDecodeHelloTransmission( rftl::byte_view& bytes )
+GAMESYNC_API ReadResult TryDecodeHelloTransmission(
+	rftl::byte_view& bytes,
+	EncryptionState& attemptedEncryption )
 {
-	static constexpr auto onMessage = []( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
+	// Clients start unencrypted
+	RF_ASSERT( attemptedEncryption.mMode == protocol::EncryptionMode::kUnencrypted );
+
+	auto const onMessage = [&attemptedEncryption]( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
 	{
 		if( id == MsgHello::kID )
 		{
-			return MsgHello{}.TryRead( bytes );
+			MsgHello msg = {};
+			ReadResult const result = msg.TryRead( bytes );
+			if( result == ReadResult::kSuccess )
+			{
+				attemptedEncryption.mPending = msg.mModeRequest;
+			}
+			return result;
 		}
 		return ReadResult::kLogicError;
 	};
 
-	static constexpr auto const onBatch = []( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+	auto const onBatch = [&onMessage]( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
 	{
 		return TryDecodeBatch( bytes, EncryptionState{}, onMessage );
 	};
@@ -293,11 +310,18 @@ GAMESYNC_API ReadResult TryDecodeHelloTransmission( rftl::byte_view& bytes )
 
 
 
-GAMESYNC_API Buffer CreateWelcomeTransmission( size_t maxTransmissionSize )
+GAMESYNC_API Buffer CreateWelcomeTransmission(
+	size_t maxTransmissionSize,
+	EncryptionState const& attemptedEncryption )
 {
+	// Hosts respond unencrypted
+	RF_ASSERT( attemptedEncryption.mMode == protocol::EncryptionMode::kUnencrypted );
+
 	Buffer messages;
 	MessageIdentifier{ MsgWelcome::kID }.Append( messages );
-	MsgWelcome{}.Append( messages );
+	MsgWelcome welcome = {};
+	welcome.mModeChange = attemptedEncryption.mPending;
+	welcome.Append( messages );
 
 	rftl::vector<Buffer> transmissions = CreateTransmissions(
 		rftl::move( messages ),
@@ -310,18 +334,29 @@ GAMESYNC_API Buffer CreateWelcomeTransmission( size_t maxTransmissionSize )
 
 
 
-GAMESYNC_API ReadResult TryDecodeWelcomeTransmission( rftl::byte_view& bytes )
+GAMESYNC_API ReadResult TryDecodeWelcomeTransmission(
+	rftl::byte_view& bytes,
+	EncryptionState& attemptedEncryption )
 {
-	static constexpr auto onMessage = []( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
+	// Hosts respond unencrypted
+	RF_ASSERT( attemptedEncryption.mMode == protocol::EncryptionMode::kUnencrypted );
+
+	auto const onMessage = [&attemptedEncryption]( MessageID const& id, rftl::byte_view& bytes ) -> ReadResult //
 	{
 		if( id == MsgWelcome::kID )
 		{
-			return MsgWelcome{}.TryRead( bytes );
+			MsgWelcome msg = {};
+			ReadResult const result = msg.TryRead( bytes );
+			if( result == ReadResult::kSuccess )
+			{
+				attemptedEncryption.mPending = msg.mModeChange;
+			}
+			return result;
 		}
 		return ReadResult::kLogicError;
 	};
 
-	static constexpr auto const onBatch = []( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+	auto const onBatch = [&onMessage]( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
 	{
 		return TryDecodeBatch( bytes, EncryptionState{}, onMessage );
 	};

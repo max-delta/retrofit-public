@@ -17,6 +17,7 @@
 #include "core/ptr/ptr_transform.h"
 
 #include "rftl/extension/static_vector.h"
+#include "rftl/extension/algorithms.h"
 
 
 namespace RF::sync {
@@ -302,6 +303,9 @@ void SessionHostManager::ValidateUntrustedConnections()
 	{
 		ConnectionIdentifier mIdentifier = {};
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
+		protocol::EncryptionState mEncryption = {};
+		bool shouldTrust = false;
+		bool shouldDestroy = false;
 	};
 
 	// Figure out which connections to check
@@ -321,6 +325,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 				UntrustedConnection untrustedConnection = {};
 				untrustedConnection.mIdentifier = id;
 				untrustedConnection.mInitialConnectionTime = conn.mInitialConnectionTime;
+				untrustedConnection.mEncryption = conn.mEncryption;
 				untrustedConnections.emplace_back( rftl::move( untrustedConnection ) );
 			}
 		}
@@ -331,10 +336,8 @@ void SessionHostManager::ValidateUntrustedConnections()
 	}
 
 	// Check each identifier
-	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> newlyTrustedIdentifiers;
-	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> identifiersToDestroy;
 	comm::EndpointManager& endpointManager = *mEndpointManager;
-	for( UntrustedConnection const& untrusted : untrustedConnections )
+	for( UntrustedConnection& untrusted : untrustedConnections )
 	{
 		ConnectionIdentifier const& id = untrusted.mIdentifier;
 
@@ -368,7 +371,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 		if( incoming.IsTerminated() )
 		{
 			// Terminated, needs to be removed
-			identifiersToDestroy.emplace_back( id );
+			untrusted.shouldDestroy = true;
 			continue;
 		}
 
@@ -389,23 +392,39 @@ void SessionHostManager::ValidateUntrustedConnections()
 			continue;
 		}
 
+		// If the handshake succeeds, we expect to enable encryption
+		protocol::EncryptionState& attemptedEncryption = untrusted.mEncryption;
+
 		// See if data is valid
 		protocol::Buffer const& buffer = incoming.CloneNextBuffer();
 		rftl::byte_view bytes( buffer.begin(), buffer.end() );
-		protocol::ReadResult const result = protocol::TryDecodeHelloTransmission( bytes );
+		protocol::ReadResult const result = protocol::TryDecodeHelloTransmission( bytes, attemptedEncryption );
 		if( result == protocol::ReadResult::kSuccess )
 		{
+			if( attemptedEncryption.mPending != protocol::kExpectedEncryption )
+			{
+				// Unsupported encryption, kill the connection and let it get
+				//  cleaned up
+				RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Hello transmission requested unsupported encryption, terminating connection" );
+				incoming.Terminate();
+				continue;
+			}
+
 			// Success, consume the bytes
 			RFLOG_MILESTONE( nullptr, RFCAT_GAMESYNC, "Hello transmission was valid, upgrading connection" );
 			size_t const consumedBytes = buffer.size() - bytes.size();
 			protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
 
 			// Flag the identifier for upgrade
-			newlyTrustedIdentifiers.emplace_back( id );
+			untrusted.shouldTrust = true;
 
 			// Finish handshake
-			protocol::Buffer welcome = protocol::CreateWelcomeTransmission( protocol::kMaxRecommendedTransmissionSize );
+			protocol::PrepareEncryptionResponse( attemptedEncryption );
+			protocol::Buffer welcome = protocol::CreateWelcomeTransmission(
+				protocol::kMaxRecommendedTransmissionSize,
+				attemptedEncryption );
 			outgoing.StoreNextBuffer( rftl::move( welcome ) );
+			protocol::ApplyPendingEncryption( attemptedEncryption );
 		}
 		else if( result == protocol::ReadResult::kTooSmall )
 		{
@@ -422,19 +441,31 @@ void SessionHostManager::ValidateUntrustedConnections()
 			continue;
 		}
 	}
-	if( newlyTrustedIdentifiers.empty() && identifiersToDestroy.empty() )
+
+	// Clean out unchanged connections
+	{
+		static constexpr auto isUnchanged = []( UntrustedConnection const& untrusted ) -> bool //
+		{
+			RF_ASSERT( ( untrusted.shouldTrust && untrusted.shouldDestroy ) == false );
+			return untrusted.shouldTrust == false && untrusted.shouldDestroy == false;
+		};
+		rftl::erase_if( untrustedConnections, isUnchanged );
+	}
+	if( untrustedConnections.empty() )
 	{
 		return;
 	}
 
-	// Update the connection times
-	bool validConnectionsChanged = false;
+	// Update the connection data
 	{
 		WriterLock const connectionLock( mClientConnectionsMutex );
 
 		RF_ASSERT( mClientConnections.size() <= kMaxConnectionCount );
-		for( ConnectionIdentifier const& id : newlyTrustedIdentifiers )
+		for( UntrustedConnection const& untrusted : untrustedConnections )
 		{
+			RF_ASSERT( untrusted.shouldTrust || untrusted.shouldDestroy );
+			ConnectionIdentifier const& id = untrusted.mIdentifier;
+
 			Connections::iterator const iter = mClientConnections.find( id );
 			if( iter == mClientConnections.end() )
 			{
@@ -444,26 +475,37 @@ void SessionHostManager::ValidateUntrustedConnections()
 				continue;
 			}
 
-			RF_ASSERT( Clock::kLowest < iter->second.mInitialConnectionTime );
-			RF_ASSERT( iter->second.mInitialConnectionTime < now );
-			iter->second.mLatestValidInboundData = now;
+			if( untrusted.shouldDestroy )
+			{
+				mClientConnections.erase( iter );
+			}
+			else if( untrusted.shouldTrust )
+			{
+				// Apply encryption
+				iter->second.mEncryption = untrusted.mEncryption;
 
-			validConnectionsChanged = true;
+				// Make valid
+				RF_ASSERT( Clock::kLowest < iter->second.mInitialConnectionTime );
+				RF_ASSERT( iter->second.mInitialConnectionTime < now );
+				iter->second.mLatestValidInboundData = now;
+				RF_ASSERT( iter->second.HasValidData() );
+			}
+			else
+			{
+				RF_DBGFAIL();
+			}
 		}
-	}
-
-	if( identifiersToDestroy.empty() == false )
-	{
-		RF_TODO_BREAK();
 	}
 
 	// Need to send a connection list, an update to existing connections as
 	//  well as an initial list for the newly trusted connections
-	if( validConnectionsChanged )
-	{
-		RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, need to send a connection update" );
-		RF_TODO_BREAK();
-	}
+	// NOTE: There is a theoretical race condition where we can get here
+	//  by changing the trust on onlys connections that were terminated while
+	//  we were inspecting them, but the superfluous connection update we send
+	//  should be benign
+
+	RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, need to send a connection update" );
+	RF_TODO_BREAK();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

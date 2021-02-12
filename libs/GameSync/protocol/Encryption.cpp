@@ -5,6 +5,45 @@
 namespace RF::sync::protocol {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool PrepareEncryptionRequest( EncryptionState& encryption )
+{
+	switch( encryption.mPending )
+	{
+		case EncryptionMode::kUnencrypted:
+			return true;
+		case EncryptionMode::kMockInert:
+			return true;
+		default:
+			RF_DBGFAIL();
+			return false;
+	}
+}
+
+
+
+bool PrepareEncryptionResponse( EncryptionState& encryption )
+{
+	switch( encryption.mPending )
+	{
+		case EncryptionMode::kUnencrypted:
+			return true;
+		case EncryptionMode::kMockInert:
+			return true;
+		default:
+			RF_DBGFAIL();
+			return false;
+	}
+}
+
+
+
+void ApplyPendingEncryption( EncryptionState& encryption )
+{
+	encryption.mMode = encryption.mPending;
+}
+
+
+
 bool EncryptBytes( Buffer::iterator begin, Buffer::iterator end, EncryptionState const& encryption )
 {
 	if( encryption.mMode == EncryptionMode::kUnencrypted )
