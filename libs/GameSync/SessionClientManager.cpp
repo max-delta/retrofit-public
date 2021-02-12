@@ -134,10 +134,38 @@ void SessionClientManager::StopReceivingASession()
 	RF_TODO_ANNOTATION( "Destroy all endpoints" );
 }
 
+
+
+SessionClientManager::Diagnostics SessionClientManager::ReportDiagnostics() const
+{
+	Diagnostics retVal = {};
+
+	{
+		ReaderLock const connectionLock( mHostConnectionsMutex );
+
+		for( Connections::value_type const& hostConnection : mHostConnections )
+		{
+			Connection const& conn = hostConnection.second;
+			if( conn.mInitialConnectionTime < conn.mCompletedHandshakeTime )
+			{
+				retVal.mValidConnections++;
+			}
+			else
+			{
+				retVal.mInvalidConnections++;
+			}
+		}
+	}
+
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void SessionClientManager::ReceiveUpdate()
 {
+	Clock::time_point const now = Clock::now();
+
 	// Get the streams to communicate with a host
 	// NOTE: In a multi-host scenario, another update will be responsible for
 	//  the next host
@@ -149,17 +177,18 @@ void SessionClientManager::ReceiveUpdate()
 		RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Failed to create/select a host connection as client" );
 		return;
 	}
+	comm::IncomingStream& incoming = *incomingStream;
+	comm::OutgoingStream& outgoing = *outgoingStream;
 
-	Clock::time_point const now = Clock::now();
-
-	// Get connection data
+	// Get connection data, handshake if needed
+	protocol::EncryptionState encryption = {};
 	{
 		WriterLock const connectionLock( mHostConnectionsMutex );
 
 		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
 
 		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
-		if( hostConnection.mLatestValidOutboundData < hostConnection.mInitialConnectionTime )
+		if( hostConnection.mOutgoingHandshakeTime < hostConnection.mInitialConnectionTime )
 		{
 			// Never attempted handshake, need to do that
 
@@ -168,17 +197,75 @@ void SessionClientManager::ReceiveUpdate()
 
 			protocol::PrepareEncryptionRequest( attemptedEncryption );
 			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize, attemptedEncryption );
-			outgoingStream->StoreNextBuffer( rftl::move( hello ) );
-			hostConnection.mLatestValidOutboundData = now;
+			outgoing.StoreNextBuffer( rftl::move( hello ) );
+			hostConnection.mOutgoingHandshakeTime = now;
 		}
+
+		if( hostConnection.mCompletedHandshakeTime < hostConnection.mOutgoingHandshakeTime )
+		{
+			// Never completed handshake, need to do that
+
+			size_t const incomingSize = incoming.PeekNextBufferSize();
+			if( incomingSize == 0 )
+			{
+				// No data yet
+				return;
+			}
+
+			// If the handshake succeeds, we expect to enable encryption
+			protocol::EncryptionState& attemptedEncryption = hostConnection.mEncryption;
+
+			// See if data is valid
+			protocol::Buffer const& buffer = incoming.CloneNextBuffer();
+			rftl::byte_view bytes( buffer.begin(), buffer.end() );
+			protocol::ReadResult const result = protocol::TryDecodeWelcomeTransmission( bytes, attemptedEncryption );
+			if( result == protocol::ReadResult::kSuccess )
+			{
+				if( attemptedEncryption.mPending != protocol::kExpectedEncryption )
+				{
+					// Unsupported encryption, kill the connection
+					RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Welcome transmission specified unsupported encryption, terminating connection" );
+					incoming.Terminate();
+					return;
+				}
+
+				// Success, consume the bytes
+				RFLOG_MILESTONE( nullptr, RFCAT_GAMESYNC, "Welcome transmission was valid, upgrading connection" );
+				size_t const consumedBytes = buffer.size() - bytes.size();
+				protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
+
+				// Finish handshake
+				protocol::ApplyPendingEncryption( attemptedEncryption );
+				hostConnection.mCompletedHandshakeTime = now;
+			}
+			else if( result == protocol::ReadResult::kTooSmall )
+			{
+				// Not enough data yet, attempt a stitch and try again next pass
+				RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Welcome transmission wasn't large enough to decode. Suspicious..." );
+				incoming.TryStitchNextBuffer();
+				return;
+			}
+			else
+			{
+				// Bad transmission, kill the connection
+				RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Welcome transmission was invalid, terminating connection" );
+				incoming.Terminate();
+				return;
+			}
+		}
+
+		encryption = hostConnection.mEncryption;
 	}
 
-	// Check if host has sent us new data
-	if( incomingStream->PeekNextBufferSize() > 0 )
+	size_t const incomingSize = incoming.PeekNextBufferSize();
+	if( incomingSize == 0 )
 	{
-		// TODO:
-		RF_TODO_BREAK();
+		// No data yet
+		return;
 	}
+
+	// TODO: Handle updates, other data
+	RF_TODO_BREAK();
 }
 
 

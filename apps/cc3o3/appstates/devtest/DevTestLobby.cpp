@@ -166,7 +166,14 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 	if( internalState.mAsClient != nullptr )
 	{
+		using namespace sync;
+
 		drawText( x, y++, "CLIENT" );
+
+		SessionClientManager::Diagnostics const diag = internalState.mAsClient->ReportDiagnostics();
+		drawText( x, y++, "CONN: %llu (+%llu)",
+			diag.mValidConnections,
+			diag.mInvalidConnections );
 	}
 }
 

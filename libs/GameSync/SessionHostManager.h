@@ -76,10 +76,10 @@ public:
 private:
 	struct Connection
 	{
-		bool HasValidData() const;
+		bool HasHandshake() const;
 
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
-		Clock::time_point mLatestValidInboundData = Clock::kLowest;
+		Clock::time_point mIncomingHandshakeTime = Clock::kLowest;
 		protocol::EncryptionState mEncryption = {};
 	};
 

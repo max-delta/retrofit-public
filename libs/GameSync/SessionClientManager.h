@@ -65,11 +65,18 @@ public:
 		uint16_t mPort = 0;
 	};
 
+	struct Diagnostics
+	{
+		size_t mInvalidConnections = 0;
+		size_t mValidConnections = 0;
+	};
+
 private:
 	struct Connection
 	{
 		Clock::time_point mInitialConnectionTime = Clock::kLowest;
-		Clock::time_point mLatestValidOutboundData = Clock::kLowest;
+		Clock::time_point mOutgoingHandshakeTime = Clock::kLowest;
+		Clock::time_point mCompletedHandshakeTime = Clock::kLowest;
 		protocol::EncryptionState mEncryption = {};
 	};
 
@@ -84,6 +91,9 @@ public:
 	bool IsReceivingASession() const;
 	void StartReceivingASession();
 	void StopReceivingASession();
+
+	// Thread-safe
+	Diagnostics ReportDiagnostics() const;
 
 
 	//

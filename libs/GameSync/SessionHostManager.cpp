@@ -23,9 +23,9 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool SessionHostManager::Connection::HasValidData() const
+bool SessionHostManager::Connection::HasHandshake() const
 {
-	return mInitialConnectionTime < mLatestValidInboundData;
+	return mInitialConnectionTime < mIncomingHandshakeTime;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ SessionHostManager::Diagnostics SessionHostManager::ReportDiagnostics() const
 		for( Connections::value_type const& clientConnection : mClientConnections )
 		{
 			Connection const& conn = clientConnection.second;
-			if( conn.HasValidData() )
+			if( conn.HasHandshake() )
 			{
 				retVal.mValidConnections++;
 			}
@@ -319,7 +319,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 			ConnectionIdentifier const& id = clientConnection.first;
 			Connection const& conn = clientConnection.second;
 
-			if( conn.HasValidData() == false )
+			if( conn.HasHandshake() == false )
 			{
 				// No valid data yet
 				UntrustedConnection untrustedConnection = {};
@@ -487,8 +487,8 @@ void SessionHostManager::ValidateUntrustedConnections()
 				// Make valid
 				RF_ASSERT( Clock::kLowest < iter->second.mInitialConnectionTime );
 				RF_ASSERT( iter->second.mInitialConnectionTime < now );
-				iter->second.mLatestValidInboundData = now;
-				RF_ASSERT( iter->second.HasValidData() );
+				iter->second.mIncomingHandshakeTime = now;
+				RF_ASSERT( iter->second.HasHandshake() );
 			}
 			else
 			{
