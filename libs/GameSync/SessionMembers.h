@@ -28,7 +28,7 @@ public:
 	using Connections = rftl::unordered_set<ConnectionIdentifier, math::DirectHash>;
 	using PlayerIDs = rftl::unordered_set<input::PlayerID, math::DirectHash>;
 	using PlayerConnections = rftl::unordered_map<input::PlayerID, ConnectionIdentifier, math::DirectHash>;
-
+	using ConnectionPlayerIDs = rftl::unordered_map<ConnectionIdentifier, PlayerIDs, math::DirectHash>;
 
 	//
 	// Public methods
@@ -39,6 +39,7 @@ public:
 	PlayerIDs GetPlayerIDs() const;
 	PlayerIDs GetUnclaimedPlayerIDs() const;
 	input::PlayerID GetLocalPlayerID() const;
+	ConnectionPlayerIDs GetConnectionPlayerIDs() const;
 
 	void ReclaimOrphanedPlayerIDs();
 

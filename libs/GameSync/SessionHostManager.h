@@ -73,6 +73,7 @@ public:
 	{
 		size_t mInvalidConnections = 0;
 		size_t mValidConnections = 0;
+		SessionMembers mSessionMembers = {};
 	};
 
 private:

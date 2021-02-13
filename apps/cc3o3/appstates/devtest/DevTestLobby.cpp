@@ -162,6 +162,43 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	// Draw Status
 	x = 30;
 	y = 2;
+	auto const drawSessionMembersText = [&y, &drawText]( uint8_t x, sync::SessionMembers const& members ) -> void //
+	{
+		drawText( x, y++, "MEMB:" );
+		rftl::stringstream ss;
+		auto const drawEntry = [&y, &drawText, &ss]( uint8_t x, sync::ConnectionIdentifier conn, sync::SessionMembers::PlayerIDs players ) -> void //
+		{
+			ss.clear();
+			bool init = true;
+			for( input::PlayerID const& id : players )
+			{
+				if( init == false )
+				{
+					ss << ' ';
+				}
+				ss << math::integer_cast<uint16_t>( id );
+				init = false;
+			}
+			if( conn == sync::kInvalidConnectionIdentifier )
+			{
+				drawText( x + 4u, y++, "? [%s]", ss.str().c_str() );
+			}
+			else
+			{
+				drawText( x + 4u, y++, "%llu [%s]", conn, ss.str().c_str() );
+			}
+		};
+		sync::SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
+		for( sync::SessionMembers::ConnectionPlayerIDs::value_type const& connEntry : connEntries )
+		{
+			drawEntry( x + 4u, connEntry.first, connEntry.second );
+		}
+		sync::SessionMembers::PlayerIDs const unclaimed = members.GetUnclaimedPlayerIDs();
+		if( unclaimed.empty() == false )
+		{
+			drawEntry( x + 4u, sync::kInvalidConnectionIdentifier, unclaimed );
+		}
+	};
 	if( internalState.mAsHost != nullptr )
 	{
 		using namespace sync;
@@ -174,6 +211,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
+		drawSessionMembersText( x, diag.mSessionMembers );
 	}
 	if( internalState.mAsClient != nullptr )
 	{

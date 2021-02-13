@@ -381,6 +381,12 @@ SessionHostManager::Diagnostics SessionHostManager::ReportDiagnostics() const
 		}
 	}
 
+	{
+		ReaderLock const membersLock( mSessionMembersMutex );
+
+		retVal.mSessionMembers = mSessionMembers;
+	}
+
 	return retVal;
 }
 

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SessionMembers.h"
 
+#include "core/macros.h"
+
 
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,6 +52,25 @@ input::PlayerID SessionMembers::GetLocalPlayerID() const
 	}
 
 	return input::kInvalidPlayerID;
+}
+
+
+
+SessionMembers::ConnectionPlayerIDs SessionMembers::GetConnectionPlayerIDs() const
+{
+	ConnectionPlayerIDs retVal;
+	retVal.reserve( mAllConnections.size() );
+	for( ConnectionIdentifier const& id : mAllConnections )
+	{
+		retVal[id];
+	}
+	for( PlayerConnections::value_type const& playerConn : mPlayerConnections )
+	{
+		ConnectionPlayerIDs::iterator const iter = retVal.find( playerConn.second );
+		RF_ASSERT( iter != retVal.end() );
+		iter->second.emplace( playerConn.first );
+	}
+	return retVal;
 }
 
 
