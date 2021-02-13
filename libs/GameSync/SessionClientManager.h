@@ -112,6 +112,7 @@ private:
 	void GetOrCreateNextHandshakeChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream );
 	void FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
 	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
+	void GetHostChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing );
 
 
 	//

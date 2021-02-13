@@ -245,8 +245,6 @@ SessionClientManager::Diagnostics SessionClientManager::ReportDiagnostics() cons
 
 void SessionClientManager::DoHandshakes()
 {
-	Clock::time_point const now = Clock::now();
-
 	// NOTE: In a multi-host scenario, this will need to be refactored into a
 	//  looping concept, similar to the host manager and client connections
 
@@ -281,6 +279,7 @@ void SessionClientManager::DoHandshakes()
 		WriterLock const connectionLock( mHostConnectionsMutex );
 
 		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
+		Clock::time_point const now = Clock::now();
 
 		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
 		if( hostConnection.HasPartialHandshake() == false )
@@ -358,40 +357,31 @@ void SessionClientManager::DoHandshakes()
 
 void SessionClientManager::GetOrCreateNextHandshakeChannels( SharedPtr<comm::IncomingStream>& incomingStream, SharedPtr<comm::OutgoingStream>& outgoingStream )
 {
-	comm::EndpointManager& endpointManager = *mEndpointManager;
-	RF_ASSERT( endpointManager.GetAllEndpoints().empty() == false );
 
 	// NOTE: In a multi-host scenario, we need more complex logic to
 	//  evaluate what hosts we have, when we've heard from them, and which
 	//  we're missing but could possibly connect to (and haven't failed to
 	//  connect to them recently)
-	SharedPtr<comm::LogicalEndpoint> const singleHost = endpointManager.GetEndpoint( kSingleHostIdentifier ).Lock();
-	RF_ASSERT( singleHost != nullptr );
 	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-	auto const selectChannels = [&incomingStream, &outgoingStream]( comm::LogicalEndpoint& endpoint ) -> bool //
+	auto const selectChannels = [this, &incomingStream, &outgoingStream]() -> bool //
 	{
-		WeakSharedPtr<comm::IncomingStream> attemptIncoming = nullptr;
-		WeakSharedPtr<comm::OutgoingStream> attemptOutgoing = nullptr;
-		endpoint.ChooseIncomingChannel( attemptIncoming, kDesiredFlags );
-		endpoint.ChooseOutgoingChannel( attemptOutgoing, kDesiredFlags );
-		incomingStream = attemptIncoming.Lock();
-		outgoingStream = attemptOutgoing.Lock();
+		GetHostChannels( kSingleHostIdentifier, incomingStream, outgoingStream );
 		if( incomingStream == nullptr || outgoingStream == nullptr )
 		{
-			RF_ASSERT( incomingStream == nullptr );
-			RF_ASSERT( outgoingStream == nullptr );
+			incomingStream = nullptr;
+			outgoingStream = nullptr;
 			return false;
 		}
 		return true;
 	};
 
 	// Select the best available streams
-	bool const foundExistingStreams = selectChannels( *singleHost );
+	bool const foundExistingStreams = selectChannels();
 	if( foundExistingStreams == false )
 	{
 		// Failed to select streams, attempt to make new ones
 		FormHostConnection( kSingleHostIdentifier, mSpec );
-		bool const foundNewStreams = selectChannels( *singleHost );
+		bool const foundNewStreams = selectChannels();
 		if( foundNewStreams == false )
 		{
 			RF_TODO_ANNOTATION( "Update timings for throttling logic" );
@@ -472,6 +462,40 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 	RF_ASSERT( hostEndpoint != nullptr );
 	hostEndpoint->AddIncomingChannel( incomingStream, {} );
 	hostEndpoint->AddOutgoingChannel( outgoingStream, {} );
+}
+
+
+
+void SessionClientManager::GetHostChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing )
+{
+	incoming = nullptr;
+	outgoing = nullptr;
+
+	comm::EndpointManager& endpointManager = *mEndpointManager;
+
+	SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
+	if( endpointPtr == nullptr )
+	{
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint" );
+		return;
+	}
+	comm::LogicalEndpoint& endpoint = *endpointPtr;
+
+	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
+	WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
+	WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
+	endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
+	endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
+	SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
+	SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+	if( incomingPtr == nullptr || outgoingPtr == nullptr )
+	{
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel" );
+		return;
+	}
+
+	incoming = incomingPtr;
+	outgoing = outgoingPtr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
