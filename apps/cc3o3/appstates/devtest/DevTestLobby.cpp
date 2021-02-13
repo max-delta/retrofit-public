@@ -149,6 +149,16 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		}
 	}
 
+	// Process
+	if( internalState.mAsHost != nullptr )
+	{
+		internalState.mAsHost->ProcessPendingOperations();
+	}
+	if( internalState.mAsClient != nullptr )
+	{
+		internalState.mAsClient->HasPendingOperations();
+	}
+
 	// Draw Status
 	x = 30;
 	y = 2;
@@ -164,8 +174,6 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
-		drawText( x, y++, "WORK: %c",
-			host.HasPendingOperations() ? '1' : '0' );
 	}
 	if( internalState.mAsClient != nullptr )
 	{
@@ -178,8 +186,6 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		drawText( x, y++, "CONN: %llu (+%llu)",
 			diag.mValidConnections,
 			diag.mInvalidConnections );
-		drawText( x, y++, "WORK: %c",
-			client.HasPendingOperations() ? '1' : '0' );
 	}
 }
 

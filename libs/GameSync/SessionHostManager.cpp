@@ -74,6 +74,15 @@ void SessionHostManager::StartHostingASession()
 		RF_ASSERT( mEndpointManager->GetAllEndpoints().empty() );
 	}
 
+	// Wipe out session and give ourselves a new local connection id
+	{
+		WriterLock const membersLock( mSessionMembersMutex );
+
+		mSessionMembers = {};
+		mSessionMembers.mLocalConnection = mConnectionIdentifierGen.Generate();
+		mSessionMembers.mAllConnections.emplace( mSessionMembers.mLocalConnection );
+	}
+
 	// Create listener socket
 	{
 		WriterLock const listenSocketLock( mListenerSocketMutex );
@@ -181,74 +190,172 @@ void SessionHostManager::StopHostingASession()
 		mListenerSocket = nullptr;
 	}
 
-	RF_TODO_ANNOTATION( "Stop all client connections" );
-	RF_TODO_ANNOTATION( "Destroy all client connections" );
-	RF_TODO_ANNOTATION( "Destroy all endpoints" );
+	// Destroy all connections and endpoints
+	RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying all connections" );
+	{
+		WriterLock const connectionLock( mClientConnectionsMutex );
+
+		comm::EndpointManager& endpointManager = *mEndpointManager;
+		for( Connections::value_type const& conn : mClientConnections )
+		{
+			endpointManager.RemoveEndpoint( conn.first );
+		}
+		mClientConnections.clear();
+		endpointManager.RemoveOrphanedStreams( true );
+	}
 }
 
 
 
-bool SessionHostManager::HasPendingOperations() const
+void SessionHostManager::ProcessPendingOperations()
 {
-	size_t bytesIncoming = 0;
-	size_t terminatedConnections = 0;
+	RF_ASSERT( IsHostingASession() );
 
-	ReaderLock const connectionLock( mClientConnectionsMutex );
-
-	comm::EndpointManager& endpointManager = *mEndpointManager;
-	for( Connections::value_type const& connection : mClientConnections )
+	// Check all the connections for basic connectivity
+	struct ValidConnection
 	{
-		ConnectionIdentifier const& id = connection.first;
-		Connection const& conn = connection.second;
-		if( conn.HasHandshake() == false )
+		ConnectionIdentifier mIdentifier = {};
+		SharedPtr<comm::IncomingStream> incomingPtr;
+		SharedPtr<comm::OutgoingStream> outgoingPtr;
+		protocol::EncryptionState encryption;
+	};
+	rftl::static_vector<ValidConnection, kMaxConnectionCount> validConnections;
+	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> connectionsToDestroy;
+	{
+		ReaderLock const connectionLock( mClientConnectionsMutex );
+
+		// Lookup the valid channels
+		for( Connections::value_type const& connection : mClientConnections )
 		{
-			continue;
+			ConnectionIdentifier const& id = connection.first;
+			Connection const& conn = connection.second;
+			if( conn.HasHandshake() == false )
+			{
+				continue;
+			}
+
+			SharedPtr<comm::IncomingStream> incomingPtr;
+			SharedPtr<comm::OutgoingStream> outgoingPtr;
+			GetClientChannels( id, incomingPtr, outgoingPtr );
+			if( incomingPtr == nullptr || outgoingPtr == nullptr )
+			{
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				continue;
+			}
+
+			if( incomingPtr->IsTerminated() || outgoingPtr->IsTerminated() )
+			{
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				continue;
+			}
+
+			ValidConnection valid = {};
+			valid.mIdentifier = id;
+			valid.incomingPtr = incomingPtr;
+			valid.outgoingPtr = outgoingPtr;
+			valid.encryption = conn.mEncryption;
+			validConnections.emplace_back( rftl::move( valid ) );
+		}
+	}
+
+	// Update session members based on connections
+	bool sessionMembersChanged = false;
+	{
+		WriterLock const membersLock( mSessionMembersMutex );
+
+		// Expect we generated our identifier earlier
+		RF_ASSERT( mSessionMembers.mLocalConnection != kInvalidConnectionIdentifier );
+
+		// Stomp the connections
+		SessionMembers::Connections const old = rftl::move( mSessionMembers.mAllConnections );
+		mSessionMembers.mAllConnections.clear();
+		mSessionMembers.mAllConnections.emplace( mSessionMembers.mLocalConnection );
+		for( ValidConnection const& valid : validConnections )
+		{
+			mSessionMembers.mAllConnections.emplace( valid.mIdentifier );
+		}
+		if( mSessionMembers.mAllConnections != old )
+		{
+			sessionMembersChanged = true;
 		}
 
-		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
-		if( endpointPtr == nullptr )
+		// Adjust player IDs if necessary
+		if( sessionMembersChanged )
 		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint in operation check" );
-			continue;
+			mSessionMembers.ReclaimOrphanedPlayerIDs();
 		}
-		comm::LogicalEndpoint& endpoint = *endpointPtr;
+	}
 
-		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
-		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
-		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
-		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
-		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
-		if( incomingPtr == nullptr || outgoingPtr == nullptr )
-		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel in operation check" );
-			continue;
-		}
-		comm::IncomingStream& incoming = *incomingPtr;
-		comm::OutgoingStream& outgoing = *outgoingPtr;
-
-		if( incoming.IsTerminated() || outgoing.IsTerminated() )
-		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Terminated stream in operation check" );
-			terminatedConnections++;
-			continue;
-		}
+	// Process incoming
+	for( ValidConnection const& valid : validConnections )
+	{
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::IncomingStream& incoming = *valid.incomingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
 
 		size_t const incomingSize = incoming.PeekNextBufferSize();
 		if( incomingSize == 0 )
 		{
 			// No data yet
-			continue;
+			return;
 		}
 
-		bytesIncoming += incomingSize;
+		// TODO: See if there's enough data to decode an entire batch
+		// TODO: Store any payloads that are complete and ready to process
+		( (void)id );
+		( (void)encryption );
+		RF_TODO_BREAK();
 	}
 
-	return //
-		bytesIncoming > 0 ||
-		terminatedConnections > 0 ||
-		mRecentConnectionChanges.load( rftl::memory_order::memory_order_acquire );
+	// Process outgoing
+	for( ValidConnection const& valid : validConnections )
+	{
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
+
+		( (void)id );
+		( (void)outgoing );
+		( (void)encryption );
+		if( sessionMembersChanged )
+		{
+			RF_TODO_BREAK_MSG( "Session updates" );
+		}
+		RF_TODO_ANNOTATION( "Local queue" );
+		RF_TODO_ANNOTATION( "Proxy queue" );
+	}
+
+	// Destroy connections
+	if( connectionsToDestroy.empty() == false )
+	{
+		WriterLock const connectionLock( mClientConnectionsMutex );
+
+		comm::EndpointManager& endpointManager = *mEndpointManager;
+		rftl::erase_duplicates( connectionsToDestroy );
+		for( ConnectionIdentifier const& id : connectionsToDestroy )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying a connection in operations" );
+
+			Connections::iterator const iter = mClientConnections.find( id );
+			if( iter == mClientConnections.end() )
+			{
+				// We dropped the lock on the connections, so it's possible
+				//  this was terminated during processing
+				RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Missing connection in operations" );
+			}
+			else
+			{
+				mClientConnections.erase( iter );
+			}
+
+			endpointManager.RemoveEndpoint( id );
+		}
+		endpointManager.RemoveOrphanedStreams( true );
+
+		RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Connections destroyed, expect a connection update" );
+	}
 }
 
 
@@ -361,6 +468,40 @@ void SessionHostManager::CreateClientChannels( comm::EndpointIdentifier clientId
 
 
 
+void SessionHostManager::GetClientChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing )
+{
+	incoming = nullptr;
+	outgoing = nullptr;
+
+	comm::EndpointManager& endpointManager = *mEndpointManager;
+
+	SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
+	if( endpointPtr == nullptr )
+	{
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint" );
+		return;
+	}
+	comm::LogicalEndpoint& endpoint = *endpointPtr;
+
+	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
+	WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
+	WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
+	endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
+	endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
+	SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
+	SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+	if( incomingPtr == nullptr || outgoingPtr == nullptr )
+	{
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel" );
+		return;
+	}
+
+	incoming = incomingPtr;
+	outgoing = outgoingPtr;
+}
+
+
+
 void SessionHostManager::ValidateUntrustedConnections()
 {
 	Clock::time_point const now = Clock::now();
@@ -403,39 +544,23 @@ void SessionHostManager::ValidateUntrustedConnections()
 	}
 
 	// Check each identifier
-	comm::EndpointManager& endpointManager = *mEndpointManager;
 	for( UntrustedConnection& untrusted : untrustedConnections )
 	{
 		ConnectionIdentifier const& id = untrusted.mIdentifier;
 
-		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
-		if( endpointPtr == nullptr )
-		{
-			// We weren't holding a lock on the connections, so it's possible
-			//  this was recently terminated or still being setup
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint in untrusted check" );
-			continue;
-		}
-		comm::LogicalEndpoint& endpoint = *endpointPtr;
-
-		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
-		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
-		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
-		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
-		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
+		SharedPtr<comm::IncomingStream> incomingPtr;
+		SharedPtr<comm::OutgoingStream> outgoingPtr;
+		GetClientChannels( id, incomingPtr, outgoingPtr );
 		if( incomingPtr == nullptr || outgoingPtr == nullptr )
 		{
 			// We weren't holding a lock on the connections, so it's possible
-			//  this was recently terminated or still being setup
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel in untrusted check" );
+			//  some were recently terminated or still being setup
 			continue;
 		}
 		comm::IncomingStream& incoming = *incomingPtr;
 		comm::OutgoingStream& outgoing = *outgoingPtr;
 
-		if( incoming.IsTerminated() )
+		if( incoming.IsTerminated() || outgoing.IsTerminated() )
 		{
 			// Terminated, needs to be removed
 			untrusted.shouldDestroy = true;
@@ -490,8 +615,16 @@ void SessionHostManager::ValidateUntrustedConnections()
 			protocol::Buffer welcome = protocol::CreateWelcomeTransmission(
 				protocol::kMaxRecommendedTransmissionSize,
 				attemptedEncryption );
-			outgoing.StoreNextBuffer( rftl::move( welcome ) );
-			protocol::ApplyPendingEncryption( attemptedEncryption );
+			if( outgoing.StoreNextBuffer( rftl::move( welcome ) ) )
+			{
+				protocol::ApplyPendingEncryption( attemptedEncryption );
+			}
+			else
+			{
+				RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Failed to respond to hello, terminating connection" );
+				incoming.Terminate();
+				continue;
+			}
 		}
 		else if( result == protocol::ReadResult::kTooSmall )
 		{
@@ -528,6 +661,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 	{
 		WriterLock const connectionLock( mClientConnectionsMutex );
 
+		comm::EndpointManager& endpointManager = *mEndpointManager;
 		RF_ASSERT( mClientConnections.size() <= kMaxConnectionCount );
 		for( UntrustedConnection const& untrusted : untrustedConnections )
 		{
@@ -546,6 +680,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 			if( untrusted.shouldDestroy )
 			{
 				mClientConnections.erase( iter );
+				endpointManager.RemoveEndpoint( id );
 			}
 			else if( untrusted.shouldTrust )
 			{
@@ -563,17 +698,17 @@ void SessionHostManager::ValidateUntrustedConnections()
 				RF_DBGFAIL();
 			}
 		}
+		endpointManager.RemoveOrphanedStreams( true );
 	}
 
 	// Need to send a connection list, an update to existing connections as
 	//  well as an initial list for the newly trusted connections
-	// NOTE: There is a theoretical race condition where we can get here
-	//  by changing the trust on only connections that were terminated while
-	//  we were inspecting them, but the superfluous connection update we send
-	//  should be benign
+	// NOTE: There are a lot of race conditions throughout this whole process
+	//  w.r.t. new connections forming and terminating, but a snapshot will be
+	//  taken when processing the main incoming/outgoing logic, that will check
+	//  for any differences since the last snapshot
 
-	RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, need to send a connection update" );
-	mRecentConnectionChanges.store( true, rftl::memory_order::memory_order_release );
+	RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, expect a connection update" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

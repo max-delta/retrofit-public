@@ -40,6 +40,8 @@ public:
 	PlayerIDs GetUnclaimedPlayerIDs() const;
 	input::PlayerID GetLocalPlayerID() const;
 
+	void ReclaimOrphanedPlayerIDs();
+
 
 	//
 	// Public data

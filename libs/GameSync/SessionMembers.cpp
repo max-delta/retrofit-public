@@ -52,5 +52,18 @@ input::PlayerID SessionMembers::GetLocalPlayerID() const
 	return input::kInvalidPlayerID;
 }
 
+
+
+void SessionMembers::ReclaimOrphanedPlayerIDs()
+{
+	for( PlayerConnections::value_type& playerConn : mPlayerConnections )
+	{
+		if( mAllConnections.count( playerConn.second ) <= 0 )
+		{
+			playerConn.second = kInvalidConnectionIdentifier;
+		}
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameSync/SyncFwd.h"
+#include "GameSync/SessionMembers.h"
 #include "GameSync/protocol/Encryption.h"
 
 #include "Communication/CommunicationFwd.h"
@@ -98,7 +98,7 @@ public:
 	void StopHostingASession();
 
 	// Thread-safe
-	bool HasPendingOperations() const;
+	void ProcessPendingOperations();
 
 	// Thread-safe
 	Diagnostics ReportDiagnostics() const;
@@ -109,6 +109,7 @@ public:
 private:
 	void AcceptNewConnection();
 	void CreateClientChannels( comm::EndpointIdentifier clientIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
+	void GetClientChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing );
 	void ValidateUntrustedConnections();
 
 
@@ -125,7 +126,6 @@ private:
 	thread::AsyncThread mListenerThread;
 	thread::AsyncThread mValidatorThread;
 	rftl::atomic<bool> mLastValidationUneventful = false;
-	rftl::atomic<bool> mRecentConnectionChanges = false;
 
 	UniquePtr<comm::EndpointManager> const mEndpointManager;
 
@@ -133,6 +133,9 @@ private:
 
 	mutable ReaderWriterMutex mClientConnectionsMutex;
 	Connections mClientConnections;
+
+	mutable ReaderWriterMutex mSessionMembersMutex;
+	SessionMembers mSessionMembers;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
