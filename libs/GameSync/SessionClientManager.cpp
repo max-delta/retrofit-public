@@ -362,7 +362,6 @@ void SessionClientManager::GetOrCreateNextHandshakeChannels( SharedPtr<comm::Inc
 	//  evaluate what hosts we have, when we've heard from them, and which
 	//  we're missing but could possibly connect to (and haven't failed to
 	//  connect to them recently)
-	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
 	auto const selectChannels = [this, &incomingStream, &outgoingStream]() -> bool //
 	{
 		GetHostChannels( kSingleHostIdentifier, incomingStream, outgoingStream );
