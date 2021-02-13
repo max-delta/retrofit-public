@@ -292,8 +292,10 @@ void SessionClientManager::DoHandshakes()
 
 			protocol::PrepareEncryptionRequest( attemptedEncryption );
 			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize, attemptedEncryption );
-			outgoing.StoreNextBuffer( rftl::move( hello ) );
-			hostConnection.mOutgoingHandshakeTime = now;
+			if( outgoing.StoreNextBuffer( rftl::move( hello ) ) )
+			{
+				hostConnection.mOutgoingHandshakeTime = now;
+			}
 		}
 
 		if( hostConnection.HasHandshake() == false )
