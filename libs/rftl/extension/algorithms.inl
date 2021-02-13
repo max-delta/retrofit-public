@@ -15,5 +15,16 @@ inline auto erase_if( Container& container, UnaryPredicate const& condition ) ->
 		container.end() );
 }
 
+
+
+template<typename Container>
+inline size_t erase_duplicates( Container& container )
+{
+	size_t const originalSize = container.size();
+	typename Container::const_iterator const newEnd = rftl::unique( container.begin(), container.end() );
+	container.erase( newEnd, container.end() );
+	return container.size() - originalSize;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
