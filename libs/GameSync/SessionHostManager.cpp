@@ -299,7 +299,7 @@ void SessionHostManager::ProcessPendingOperations()
 		if( incomingSize == 0 )
 		{
 			// No data yet
-			return;
+			continue;
 		}
 
 		// TODO: See if there's enough data to decode an entire batch
