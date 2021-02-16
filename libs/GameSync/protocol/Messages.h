@@ -1,7 +1,10 @@
 #pragma once
 #include "project.h"
 
+#include "GameSync/SyncFwd.h"
 #include "GameSync/protocol/Structure.h"
+
+#include "GameInput/InputFwd.h"
 
 #include "core/meta/TypeList.h"
 
@@ -33,11 +36,29 @@ struct GAMESYNC_API MsgWelcome final
 	ReadResult TryRead( rftl::byte_view& bytes );
 };
 
+
+
+struct GAMESYNC_API MsgSessionList final
+{
+	static constexpr MessageID kID = { 'S', 'S', 'N', 'L' };
+	static constexpr char const kDesc[] = "Here's the current session participants";
+
+	ConnectionIdentifier mYourConnectionID = kInvalidConnectionIdentifier;
+
+	using ConnectionEntry = rftl::pair<ConnectionIdentifier, input::PlayerID>;
+	using ConnectionEntries = rftl::vector<ConnectionEntry>;
+	ConnectionEntries mConnectionEntries;
+
+	void Append( Buffer& bytes ) const;
+	ReadResult TryRead( rftl::byte_view& bytes );
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 using AllMessages = TypeList<
 	MsgHello,
-	MsgWelcome>;
+	MsgWelcome,
+	MsgSessionList>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

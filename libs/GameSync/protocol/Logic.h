@@ -9,6 +9,10 @@
 // Forwards
 namespace RF::sync::protocol {
 struct EncryptionState;
+struct MsgSessionList;
+}
+namespace RF::sync {
+class SessionMembers;
 }
 
 namespace RF::sync::protocol {
@@ -38,6 +42,8 @@ GAMESYNC_API ReadResult TryDecodeBatch(
 
 // Message need to be batched, encrypted, and may need to be broken up into
 //  multiple transmissions
+// NOTE: Batch headers are appended within the function, and so should not be
+//  included in the provided message buffer
 GAMESYNC_API rftl::vector<Buffer> CreateTransmissions(
 	Buffer&& messages,
 	EncryptionState const& encryption,
@@ -71,6 +77,16 @@ GAMESYNC_API Buffer CreateWelcomeTransmission(
 GAMESYNC_API ReadResult TryDecodeWelcomeTransmission(
 	rftl::byte_view& bytes,
 	EncryptionState& attemptedEncryption );
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Various message helpers
+
+GAMESYNC_API MsgSessionList CreateSessionListMessage(
+	SessionMembers const& members,
+	ConnectionIdentifier targetConnectionID );
+GAMESYNC_API SessionMembers ReadSessionListMessage(
+	MsgSessionList const& message );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -2,6 +2,7 @@
 #include "SessionHostManager.h"
 
 #include "GameSync/protocol/Logic.h"
+#include "GameSync/protocol/Messages.h"
 #include "GameSync/protocol/Standards.h"
 
 #include "Communication/EndpointManager.h"
@@ -18,6 +19,7 @@
 
 #include "rftl/extension/static_vector.h"
 #include "rftl/extension/algorithms.h"
+#include "rftl/optional"
 
 
 namespace RF::sync {
@@ -262,6 +264,7 @@ void SessionHostManager::ProcessPendingOperations()
 
 	// Update session members based on connections
 	bool sessionMembersChanged = false;
+	rftl::optional<SessionMembers> sessionMembersSnapshot;
 	{
 		WriterLock const membersLock( mSessionMembersMutex );
 
@@ -285,6 +288,12 @@ void SessionHostManager::ProcessPendingOperations()
 		if( sessionMembersChanged )
 		{
 			mSessionMembers.ReclaimOrphanedPlayerIDs();
+		}
+
+		// Snapshot the session members while still under lock
+		if( sessionMembersChanged )
+		{
+			sessionMembersSnapshot = mSessionMembers;
 		}
 	}
 
@@ -316,15 +325,39 @@ void SessionHostManager::ProcessPendingOperations()
 		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
 		protocol::EncryptionState const& encryption = valid.encryption;
 
-		( (void)id );
-		( (void)outgoing );
-		( (void)encryption );
+		protocol::Buffer messages;
+
 		if( sessionMembersChanged )
 		{
-			RF_TODO_BREAK_MSG( "Session updates" );
+			// Send an update about the session having changed
+
+			RF_ASSERT( sessionMembersSnapshot.has_value() );
+			SessionMembers const& members = sessionMembersSnapshot.value();
+
+			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
+			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
+			session.Append( messages );
 		}
+
 		RF_TODO_ANNOTATION( "Local queue" );
 		RF_TODO_ANNOTATION( "Proxy queue" );
+
+		if( messages.empty() == false )
+		{
+			// Create and send out the transmissions
+			rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
+				rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
+			for( protocol::Buffer& transmission : transmissions )
+			{
+				bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
+				if( success == false )
+				{
+					// Flag for destroy
+					connectionsToDestroy.emplace_back( id );
+					break;
+				}
+			}
+		}
 	}
 
 	// Destroy connections

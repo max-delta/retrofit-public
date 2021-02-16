@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "GameSync/SyncFwd.h"
+
 #include "rftl/extension/byte_view.h"
 #include "rftl/array"
 #include "rftl/vector"

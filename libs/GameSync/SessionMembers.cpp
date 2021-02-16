@@ -36,22 +36,24 @@ SessionMembers::PlayerIDs SessionMembers::GetUnclaimedPlayerIDs() const
 
 
 
-input::PlayerID SessionMembers::GetLocalPlayerID() const
+SessionMembers::PlayerIDs SessionMembers::GetLocalPlayerIDs() const
 {
+	PlayerIDs retVal = {};
+
 	if( mLocalConnection == kInvalidConnectionIdentifier )
 	{
-		return input::kInvalidPlayerID;
+		return {};
 	}
 
 	for( PlayerConnections::value_type const& playerConn : mPlayerConnections )
 	{
 		if( playerConn.second == mLocalConnection )
 		{
-			return playerConn.first;
+			retVal.emplace( playerConn.first );
 		}
 	}
 
-	return input::kInvalidPlayerID;
+	return retVal;
 }
 
 

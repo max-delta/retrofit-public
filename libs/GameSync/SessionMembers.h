@@ -38,7 +38,7 @@ public:
 
 	PlayerIDs GetPlayerIDs() const;
 	PlayerIDs GetUnclaimedPlayerIDs() const;
-	input::PlayerID GetLocalPlayerID() const;
+	PlayerIDs GetLocalPlayerIDs() const;
 	ConnectionPlayerIDs GetConnectionPlayerIDs() const;
 
 	void ReclaimOrphanedPlayerIDs();

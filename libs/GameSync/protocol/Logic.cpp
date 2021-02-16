@@ -3,6 +3,7 @@
 
 #include "GameSync/protocol/Encryption.h"
 #include "GameSync/protocol/Messages.h"
+#include "GameSync/SessionMembers.h"
 
 #include "Logging/Logging.h"
 
@@ -362,6 +363,88 @@ GAMESYNC_API ReadResult TryDecodeWelcomeTransmission(
 	};
 
 	return TryDecodeTransmission( bytes, EncryptionState{}, onBatch );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+GAMESYNC_API MsgSessionList CreateSessionListMessage(
+	SessionMembers const& members,
+	ConnectionIdentifier targetConnectionID )
+{
+	MsgSessionList retVal = {};
+
+	retVal.mYourConnectionID = targetConnectionID;
+
+	SessionMembers::ConnectionPlayerIDs const connections = members.GetConnectionPlayerIDs();
+	for( SessionMembers::ConnectionPlayerIDs::value_type const& connection : connections )
+	{
+		ConnectionIdentifier const& connID = connection.first;
+
+		if( connection.second.empty() )
+		{
+			// Player-less connections represented with an invalid player ID
+			retVal.mConnectionEntries.emplace_back( connID, input::kInvalidPlayerID );
+		}
+		else
+		{
+			for( input::PlayerID const& playerID : connection.second )
+			{
+				retVal.mConnectionEntries.emplace_back( connID, playerID );
+			}
+		}
+	}
+
+	SessionMembers::PlayerIDs const unclaimed = members.GetUnclaimedPlayerIDs();
+	for( input::PlayerID const& playerID : unclaimed )
+	{
+		// Connection-less players represented with an invalid connection ID
+		retVal.mConnectionEntries.emplace_back( kInvalidConnectionIdentifier, playerID );
+	}
+
+	return retVal;
+}
+
+
+
+GAMESYNC_API SessionMembers ReadSessionListMessage(
+	MsgSessionList const& message )
+{
+	SessionMembers retVal = {};
+
+	retVal.mLocalConnection = message.mYourConnectionID;
+
+	for( MsgSessionList::ConnectionEntry const& entry : message.mConnectionEntries )
+	{
+		ConnectionIdentifier const& conn = entry.first;
+		input::PlayerID const& player = entry.second;
+
+		bool const badConn = conn == kInvalidConnectionIdentifier;
+		bool const badPlayer = player == input::kInvalidPlayerID;
+
+		if( badConn && badPlayer )
+		{
+			RF_DBGFAIL();
+			continue;
+		}
+		else if( badConn )
+		{
+			// Connection-less player
+			retVal.mPlayerConnections[player];
+		}
+		else if( badPlayer )
+		{
+			// Player-less connection
+			retVal.mAllConnections.emplace( conn );
+		}
+		else
+		{
+			retVal.mAllConnections.emplace( conn );
+			RF_ASSERT( retVal.mPlayerConnections.count( player ) == 0 );
+			retVal.mPlayerConnections[player] = conn;
+		}
+	}
+
+	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
