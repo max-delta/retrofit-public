@@ -46,12 +46,19 @@ void ApplyPendingEncryption( EncryptionState& encryption )
 
 bool EncryptBytes( Buffer::iterator begin, Buffer::iterator end, EncryptionState const& encryption )
 {
+	RF_ASSERT( begin != end );
+
 	if( encryption.mMode == EncryptionMode::kUnencrypted )
 	{
 		return true;
 	}
+	else if( encryption.mMode == EncryptionMode::kMockInert )
+	{
+		// No change
+		return true;
+	}
 
-	RF_TODO_BREAK();
+	RF_DBGFAIL_MSG( "Unsupported encryption mode" );
 	return false;
 }
 
@@ -59,12 +66,19 @@ bool EncryptBytes( Buffer::iterator begin, Buffer::iterator end, EncryptionState
 
 bool DecryptBytes( Buffer::iterator begin, Buffer::iterator end, EncryptionState const& encryption )
 {
+	RF_ASSERT( begin != end );
+
 	if( encryption.mMode == EncryptionMode::kUnencrypted )
 	{
 		return true;
 	}
+	else if( encryption.mMode == EncryptionMode::kMockInert )
+	{
+		// No change
+		return true;
+	}
 
-	RF_TODO_BREAK();
+	RF_DBGFAIL_MSG( "Unsupported encryption mode" );
 	return false;
 }
 
