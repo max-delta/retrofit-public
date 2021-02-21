@@ -257,6 +257,14 @@ void SessionClientManager::ProcessPendingOperations()
 		fullBatchesBySender[id] = rftl::move( fullBatches );
 	}
 
+	// Create permitted recipient buffers
+	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
+	MessagesByRecipient messagesByRecipient;
+	for( ValidConnection const& valid : validConnections )
+	{
+		messagesByRecipient[valid.mIdentifier];
+	}
+
 	// Process local logic
 	for( FullBatchesBySender::value_type const& senderBatches : fullBatchesBySender )
 	{
@@ -268,6 +276,7 @@ void SessionClientManager::ProcessPendingOperations()
 
 			( (void)id );
 			( (void)messages );
+			RF_TODO_ANNOTATION( "Local queue" );
 			RF_TODO_BREAK();
 		}
 	}
@@ -279,24 +288,23 @@ void SessionClientManager::ProcessPendingOperations()
 		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
 		protocol::EncryptionState const& encryption = valid.encryption;
 
-		protocol::Buffer messages;
-
-		RF_TODO_ANNOTATION( "Local queue" );
-
-		if( messages.empty() == false )
+		protocol::Buffer& messages = messagesByRecipient.at( id );
+		if( messages.empty() )
 		{
-			// Create and send out the transmissions
-			rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
-				rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
-			for( protocol::Buffer& transmission : transmissions )
+			continue;
+		}
+
+		// Create and send out the transmissions
+		rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
+			rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
+		for( protocol::Buffer& transmission : transmissions )
+		{
+			bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
+			if( success == false )
 			{
-				bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
-				if( success == false )
-				{
-					// Flag for destroy
-					connectionsToDestroy.emplace_back( id );
-					break;
-				}
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				break;
 			}
 		}
 	}

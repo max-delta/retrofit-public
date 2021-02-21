@@ -254,6 +254,95 @@ void SessionHostManager::ProcessPendingOperations()
 		}
 	}
 
+	// Process incoming
+	using FullBatches = rftl::vector<protocol::Buffer>;
+	using FullBatchesBySender = rftl::unordered_map<ConnectionIdentifier, FullBatches>;
+	FullBatchesBySender fullBatchesBySender;
+	for( ValidConnection const& valid : validConnections )
+	{
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::IncomingStream& incoming = *valid.incomingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
+
+		// Form as many full batches as possible
+		FullBatches fullBatches;
+		while( true )
+		{
+			size_t const incomingSize = incoming.PeekNextBufferSize();
+			if( incomingSize == 0 )
+			{
+				// No data yet / no more data after finishing a batch
+				break;
+			}
+
+			// Try to decode a full batch
+			protocol::Buffer const& buffer = incoming.CloneNextBuffer();
+			rftl::byte_view bytes( buffer.begin(), buffer.end() );
+			protocol::Buffer attemptedBatch;
+			protocol::ReadResult const result = protocol::TryDecodeTransmissionsIntoFullBatch( bytes, encryption, attemptedBatch );
+			if( result == protocol::ReadResult::kSuccess )
+			{
+				// Success, consume the bytes, store the batch
+				size_t const consumedBytes = buffer.size() - bytes.size();
+				protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
+				fullBatches.emplace_back( rftl::move( attemptedBatch ) );
+			}
+			else if( result == protocol::ReadResult::kTooSmall )
+			{
+				// Not enough, try to stitch
+				size_t const bytesStitched = incoming.TryStitchNextBuffer();
+				if( bytesStitched <= 0 )
+				{
+					// Failed to stitch, will need to wait for more
+					break;
+				}
+			}
+			else
+			{
+				// Bad transmission
+				RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Transmission was invalid, terminating connection" );
+				incoming.Terminate();
+				connectionsToDestroy.emplace_back( id );
+			}
+		}
+		if( fullBatches.empty() )
+		{
+			// No full batches could be formed
+			continue;
+		}
+
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Recieved %llu full batches from %llu", fullBatches.size(), id );
+
+		// Store
+		RF_ASSERT( fullBatchesBySender.count( id ) == 0 );
+		fullBatchesBySender[id] = rftl::move( fullBatches );
+	}
+
+	// Create permitted recipient buffers
+	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
+	MessagesByRecipient messagesByRecipient;
+	for( ValidConnection const& valid : validConnections )
+	{
+		messagesByRecipient[valid.mIdentifier];
+	}
+
+	// Process local logic
+	for( FullBatchesBySender::value_type const& senderBatches : fullBatchesBySender )
+	{
+		ConnectionIdentifier const& id = senderBatches.first;
+		FullBatches const& fullBatches = senderBatches.second;
+		for( protocol::Buffer const& fullBatch : fullBatches )
+		{
+			rftl::byte_view messages( fullBatch.begin(), fullBatch.end() );
+
+			( (void)id );
+			( (void)messages );
+			RF_TODO_ANNOTATION( "Local queue" );
+			RF_TODO_ANNOTATION( "Proxy queue" );
+			RF_TODO_BREAK();
+		}
+	}
+
 	// Update session members based on connections
 	bool sessionMembersChanged = false;
 	rftl::optional<SessionMembers> sessionMembersSnapshot;
@@ -289,25 +378,21 @@ void SessionHostManager::ProcessPendingOperations()
 		}
 	}
 
-	// Process incoming
-	for( ValidConnection const& valid : validConnections )
+	// Send out a session update if needed
+	if( sessionMembersChanged )
 	{
-		ConnectionIdentifier const& id = valid.mIdentifier;
-		comm::IncomingStream& incoming = *valid.incomingPtr;
-		protocol::EncryptionState const& encryption = valid.encryption;
-
-		size_t const incomingSize = incoming.PeekNextBufferSize();
-		if( incomingSize == 0 )
+		for( ValidConnection const& valid : validConnections )
 		{
-			// No data yet
-			continue;
-		}
+			ConnectionIdentifier const& id = valid.mIdentifier;
+			protocol::Buffer& messages = messagesByRecipient.at( id );
 
-		// TODO: See if there's enough data to decode an entire batch
-		// TODO: Store any payloads that are complete and ready to process
-		( (void)id );
-		( (void)encryption );
-		RF_TODO_BREAK();
+			RF_ASSERT( sessionMembersSnapshot.has_value() );
+			SessionMembers const& members = sessionMembersSnapshot.value();
+
+			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
+			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
+			session.Append( messages );
+		}
 	}
 
 	// Process outgoing
@@ -317,37 +402,23 @@ void SessionHostManager::ProcessPendingOperations()
 		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
 		protocol::EncryptionState const& encryption = valid.encryption;
 
-		protocol::Buffer messages;
-
-		if( sessionMembersChanged )
+		protocol::Buffer& messages = messagesByRecipient.at( id );
+		if( messages.empty() )
 		{
-			// Send an update about the session having changed
-
-			RF_ASSERT( sessionMembersSnapshot.has_value() );
-			SessionMembers const& members = sessionMembersSnapshot.value();
-
-			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
-			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
-			session.Append( messages );
+			continue;
 		}
 
-		RF_TODO_ANNOTATION( "Local queue" );
-		RF_TODO_ANNOTATION( "Proxy queue" );
-
-		if( messages.empty() == false )
+		// Create and send out the transmissions
+		rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
+			rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
+		for( protocol::Buffer& transmission : transmissions )
 		{
-			// Create and send out the transmissions
-			rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
-				rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
-			for( protocol::Buffer& transmission : transmissions )
+			bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
+			if( success == false )
 			{
-				bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
-				if( success == false )
-				{
-					// Flag for destroy
-					connectionsToDestroy.emplace_back( id );
-					break;
-				}
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				break;
 			}
 		}
 	}
