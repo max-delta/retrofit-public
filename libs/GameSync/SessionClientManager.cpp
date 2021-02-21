@@ -23,25 +23,6 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool SessionClientManager::Connection::HasPartialHandshake() const
-{
-	return mInitialConnectionTime < mOutgoingHandshakeTime;
-}
-
-
-
-bool SessionClientManager::Connection::HasHandshake() const
-{
-	if( mInitialConnectionTime < mCompletedHandshakeTime )
-	{
-		RF_ASSERT( mOutgoingHandshakeTime < mCompletedHandshakeTime );
-		return true;
-	}
-	return false;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 SessionClientManager::SessionClientManager( ClientSpec spec )
 	: mSpec( spec )
 {
@@ -76,9 +57,9 @@ void SessionClientManager::StartReceivingASession()
 	{
 		// Ensure there are no host connections
 		{
-			ReaderLock const connectionLock( mHostConnectionsMutex );
+			ReaderLock const connectionLock( mConnectionsMutex );
 
-			RF_ASSERT( mHostConnections.empty() );
+			RF_ASSERT( mConnections.empty() );
 		}
 
 		// Ensure there are no endpoints
@@ -87,9 +68,9 @@ void SessionClientManager::StartReceivingASession()
 
 	// Add our host connections
 	{
-		WriterLock const connectionLock( mHostConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
-		mHostConnections[kSingleHostIdentifier];
+		mConnections[kSingleHostIdentifier];
 	}
 
 	// Add our host endpoints
@@ -174,10 +155,10 @@ void SessionClientManager::ProcessPendingOperations()
 	rftl::static_vector<ValidConnection, kSingleHostCount> validConnections;
 	rftl::static_vector<ConnectionIdentifier, kSingleHostCount> connectionsToDestroy;
 	{
-		ReaderLock const connectionLock( mHostConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
 		// Lookup the valid channels
-		for( Connections::value_type const& connection : mHostConnections )
+		for( Connections::value_type const& connection : mConnections )
 		{
 			ConnectionIdentifier const& id = connection.first;
 			Connection const& conn = connection.second;
@@ -323,7 +304,7 @@ void SessionClientManager::ProcessPendingOperations()
 	// Destroy connections
 	if( connectionsToDestroy.empty() == false )
 	{
-		WriterLock const connectionLock( mHostConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
 		comm::EndpointManager& endpointManager = *mEndpointManager;
 		rftl::erase_duplicates( connectionsToDestroy );
@@ -331,8 +312,8 @@ void SessionClientManager::ProcessPendingOperations()
 		{
 			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying a connection in operations" );
 
-			Connections::iterator const iter = mHostConnections.find( id );
-			if( iter == mHostConnections.end() )
+			Connections::iterator const iter = mConnections.find( id );
+			if( iter == mConnections.end() )
 			{
 				// We dropped the lock on the connections, so it's possible
 				//  this was terminated during processing
@@ -340,7 +321,7 @@ void SessionClientManager::ProcessPendingOperations()
 			}
 			else
 			{
-				mHostConnections.erase( iter );
+				mConnections.erase( iter );
 			}
 
 			endpointManager.RemoveEndpoint( id );
@@ -358,9 +339,9 @@ SessionClientManager::Diagnostics SessionClientManager::ReportDiagnostics() cons
 	Diagnostics retVal = {};
 
 	{
-		ReaderLock const connectionLock( mHostConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
-		for( Connections::value_type const& hostConnection : mHostConnections )
+		for( Connections::value_type const& hostConnection : mConnections )
 		{
 			Connection const& conn = hostConnection.second;
 			if( conn.mInitialConnectionTime < conn.mCompletedHandshakeTime )
@@ -398,9 +379,9 @@ void SessionClientManager::DoHandshakes()
 
 	// Check if we can probably ignore it before taking a write lock
 	{
-		ReaderLock const connectionLock( mHostConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
-		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
+		Connection& hostConnection = mConnections.at( kSingleHostIdentifier );
 		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
 		if( hostConnection.HasHandshake() )
 		{
@@ -412,9 +393,9 @@ void SessionClientManager::DoHandshakes()
 
 	// Check for, and perform any needed handshakes
 	{
-		WriterLock const connectionLock( mHostConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
-		Connection& hostConnection = mHostConnections.at( kSingleHostIdentifier );
+		Connection& hostConnection = mConnections.at( kSingleHostIdentifier );
 		Clock::time_point const now = Clock::now();
 
 		RF_ASSERT( Clock::kLowest < hostConnection.mInitialConnectionTime );
@@ -429,7 +410,7 @@ void SessionClientManager::DoHandshakes()
 			protocol::Buffer hello = protocol::CreateHelloTransmission( protocol::kMaxRecommendedTransmissionSize, attemptedEncryption );
 			if( outgoing.StoreNextBuffer( rftl::move( hello ) ) )
 			{
-				hostConnection.mOutgoingHandshakeTime = now;
+				hostConnection.mPartialHandshakeTime = now;
 			}
 		}
 
@@ -541,9 +522,9 @@ void SessionClientManager::FormHostConnection( comm::EndpointIdentifier hostIden
 
 	// Reset connection data
 	{
-		WriterLock const connectionLock( mHostConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
-		mHostConnections.at( kSingleHostIdentifier ) = Connection{};
+		mConnections.at( kSingleHostIdentifier ) = Connection{};
 	}
 
 	// Block for new connection
@@ -559,9 +540,9 @@ void SessionClientManager::FormHostConnection( comm::EndpointIdentifier hostIden
 
 	// Update connection data
 	{
-		WriterLock const connectionLock( mHostConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
-		mHostConnections.at( kSingleHostIdentifier ).mInitialConnectionTime = Clock::now();
+		mConnections.at( kSingleHostIdentifier ).mInitialConnectionTime = Clock::now();
 	}
 
 	// Create channels

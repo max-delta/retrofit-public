@@ -25,13 +25,6 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool SessionHostManager::Connection::HasHandshake() const
-{
-	return mInitialConnectionTime < mIncomingHandshakeTime;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 SessionHostManager::SessionHostManager( HostSpec spec )
 	: mSpec( spec )
 {
@@ -66,9 +59,9 @@ void SessionHostManager::StartHostingASession()
 	{
 		// Ensure there are no client connections
 		{
-			ReaderLock const connectionLock( mClientConnectionsMutex );
+			ReaderLock const connectionLock( mConnectionsMutex );
 
-			RF_ASSERT( mClientConnections.empty() );
+			RF_ASSERT( mConnections.empty() );
 		}
 
 		// Ensure there are no endpoints
@@ -194,14 +187,14 @@ void SessionHostManager::StopHostingASession()
 	// Destroy all connections and endpoints
 	RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying all connections" );
 	{
-		WriterLock const connectionLock( mClientConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
 		comm::EndpointManager& endpointManager = *mEndpointManager;
-		for( Connections::value_type const& conn : mClientConnections )
+		for( Connections::value_type const& conn : mConnections )
 		{
 			endpointManager.RemoveEndpoint( conn.first );
 		}
-		mClientConnections.clear();
+		mConnections.clear();
 		endpointManager.RemoveOrphanedStreams( true );
 	}
 }
@@ -223,10 +216,10 @@ void SessionHostManager::ProcessPendingOperations()
 	rftl::static_vector<ValidConnection, kMaxConnectionCount> validConnections;
 	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> connectionsToDestroy;
 	{
-		ReaderLock const connectionLock( mClientConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
 		// Lookup the valid channels
-		for( Connections::value_type const& connection : mClientConnections )
+		for( Connections::value_type const& connection : mConnections )
 		{
 			ConnectionIdentifier const& id = connection.first;
 			Connection const& conn = connection.second;
@@ -362,7 +355,7 @@ void SessionHostManager::ProcessPendingOperations()
 	// Destroy connections
 	if( connectionsToDestroy.empty() == false )
 	{
-		WriterLock const connectionLock( mClientConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
 		comm::EndpointManager& endpointManager = *mEndpointManager;
 		rftl::erase_duplicates( connectionsToDestroy );
@@ -370,8 +363,8 @@ void SessionHostManager::ProcessPendingOperations()
 		{
 			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying a connection in operations" );
 
-			Connections::iterator const iter = mClientConnections.find( id );
-			if( iter == mClientConnections.end() )
+			Connections::iterator const iter = mConnections.find( id );
+			if( iter == mConnections.end() )
 			{
 				// We dropped the lock on the connections, so it's possible
 				//  this was terminated during processing
@@ -379,7 +372,7 @@ void SessionHostManager::ProcessPendingOperations()
 			}
 			else
 			{
-				mClientConnections.erase( iter );
+				mConnections.erase( iter );
 			}
 
 			endpointManager.RemoveEndpoint( id );
@@ -397,9 +390,9 @@ SessionHostManager::Diagnostics SessionHostManager::ReportDiagnostics() const
 	Diagnostics retVal = {};
 
 	{
-		ReaderLock const connectionLock( mClientConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
-		for( Connections::value_type const& clientConnection : mClientConnections )
+		for( Connections::value_type const& clientConnection : mConnections )
 		{
 			Connection const& conn = clientConnection.second;
 			if( conn.HasHandshake() )
@@ -451,9 +444,9 @@ void SessionHostManager::AcceptNewConnection()
 	// Generate a new ID and store the connection
 	ConnectionIdentifier newID = ConnectionIDGen::kInvalid;
 	{
-		WriterLock const connectionLock( mClientConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
-		if( mClientConnections.size() >= kMaxConnectionCount )
+		if( mConnections.size() >= kMaxConnectionCount )
 		{
 			// Drop the connection
 			RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Max connection count exceeded, had to drop a new connection" );
@@ -462,8 +455,8 @@ void SessionHostManager::AcceptNewConnection()
 
 		newID = mConnectionIdentifierGen.Generate();
 
-		RF_ASSERT( mClientConnections.count( newID ) == 0 );
-		Connection& conn = mClientConnections[newID];
+		RF_ASSERT( mConnections.count( newID ) == 0 );
+		Connection& conn = mConnections[newID];
 		conn.mInitialConnectionTime = Clock::now();
 	}
 
@@ -522,10 +515,10 @@ void SessionHostManager::ValidateUntrustedConnections()
 	// Figure out which connections to check
 	rftl::static_vector<UntrustedConnection, kMaxConnectionCount> untrustedConnections;
 	{
-		ReaderLock const connectionLock( mClientConnectionsMutex );
+		ReaderLock const connectionLock( mConnectionsMutex );
 
-		RF_ASSERT( mClientConnections.size() <= kMaxConnectionCount );
-		for( Connections::value_type const& clientConnection : mClientConnections )
+		RF_ASSERT( mConnections.size() <= kMaxConnectionCount );
+		for( Connections::value_type const& clientConnection : mConnections )
 		{
 			ConnectionIdentifier const& id = clientConnection.first;
 			Connection const& conn = clientConnection.second;
@@ -663,17 +656,17 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 	// Update the connection data
 	{
-		WriterLock const connectionLock( mClientConnectionsMutex );
+		WriterLock const connectionLock( mConnectionsMutex );
 
 		comm::EndpointManager& endpointManager = *mEndpointManager;
-		RF_ASSERT( mClientConnections.size() <= kMaxConnectionCount );
+		RF_ASSERT( mConnections.size() <= kMaxConnectionCount );
 		for( UntrustedConnection const& untrusted : untrustedConnections )
 		{
 			RF_ASSERT( untrusted.shouldTrust || untrusted.shouldDestroy );
 			ConnectionIdentifier const& id = untrusted.mIdentifier;
 
-			Connections::iterator const iter = mClientConnections.find( id );
-			if( iter == mClientConnections.end() )
+			Connections::iterator const iter = mConnections.find( id );
+			if( iter == mConnections.end() )
 			{
 				// We dropped the lock on the connections, so it's possible
 				//  this was terminated during processing
@@ -683,7 +676,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 			if( untrusted.shouldDestroy )
 			{
-				mClientConnections.erase( iter );
+				mConnections.erase( iter );
 				endpointManager.RemoveEndpoint( id );
 			}
 			else if( untrusted.shouldTrust )
@@ -694,7 +687,8 @@ void SessionHostManager::ValidateUntrustedConnections()
 				// Make valid
 				RF_ASSERT( Clock::kLowest < iter->second.mInitialConnectionTime );
 				RF_ASSERT( iter->second.mInitialConnectionTime < now );
-				iter->second.mIncomingHandshakeTime = now;
+				iter->second.mPartialHandshakeTime = now;
+				iter->second.mCompletedHandshakeTime = now;
 				RF_ASSERT( iter->second.HasHandshake() );
 			}
 			else

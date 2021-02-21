@@ -10,6 +10,25 @@
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
+bool SessionManager::Connection::HasPartialHandshake() const
+{
+	return mInitialConnectionTime < mPartialHandshakeTime;
+}
+
+
+
+bool SessionManager::Connection::HasHandshake() const
+{
+	if( mInitialConnectionTime < mCompletedHandshakeTime )
+	{
+		RF_ASSERT( mPartialHandshakeTime <= mCompletedHandshakeTime );
+		return true;
+	}
+	return false;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 SessionManager::SessionManager()
 	: mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
 {

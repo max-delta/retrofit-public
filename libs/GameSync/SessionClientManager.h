@@ -4,10 +4,8 @@
 #include "GameSync/SessionManager.h"
 #include "GameSync/protocol/Encryption.h"
 
-#include "core_math/Hash.h"
 #include "core_thread/AsyncThread.h"
 
-#include "rftl/unordered_map"
 #include "rftl/future"
 #include "rftl/string"
 
@@ -28,16 +26,8 @@ class GAMESYNC_API SessionClientManager final : private SessionManager
 	RF_NO_COPY( SessionClientManager );
 
 	//
-	// Forwards
-private:
-	struct Connection;
-
-
-	//
 	// Types and constants
 private:
-	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
-
 	static constexpr rftl::chrono::milliseconds kHandshakeThrottle{ 100 };
 
 	// NOTE: May add support for multiple hosts in the future, possibly with a
@@ -59,18 +49,6 @@ public:
 	{
 		size_t mInvalidConnections = 0;
 		size_t mValidConnections = 0;
-	};
-
-private:
-	struct Connection
-	{
-		bool HasPartialHandshake() const;
-		bool HasHandshake() const;
-
-		Clock::time_point mInitialConnectionTime = Clock::kLowest;
-		Clock::time_point mOutgoingHandshakeTime = Clock::kLowest;
-		Clock::time_point mCompletedHandshakeTime = Clock::kLowest;
-		protocol::EncryptionState mEncryption = {};
 	};
 
 
@@ -112,9 +90,6 @@ private:
 	rftl::atomic<bool> mShouldReceiveASession = false;
 	thread::AsyncThread mHandshakeThread;
 	rftl::atomic<bool> mLastHandshakeUneventful = false;
-
-	mutable ReaderWriterMutex mHostConnectionsMutex;
-	Connections mHostConnections;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
