@@ -44,7 +44,6 @@ bool SessionClientManager::Connection::HasHandshake() const
 
 SessionClientManager::SessionClientManager( ClientSpec spec )
 	: mSpec( spec )
-	, mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
 {
 	//
 }

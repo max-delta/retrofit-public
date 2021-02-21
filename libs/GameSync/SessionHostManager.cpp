@@ -34,7 +34,6 @@ bool SessionHostManager::Connection::HasHandshake() const
 
 SessionHostManager::SessionHostManager( HostSpec spec )
 	: mSpec( spec )
-	, mEndpointManager( DefaultCreator<comm::EndpointManager>::Create() )
 {
 	//
 }
