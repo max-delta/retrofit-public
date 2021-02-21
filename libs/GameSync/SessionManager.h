@@ -38,6 +38,15 @@ public:
 
 
 	//
+	// Protected methods
+protected:
+	void GetChannels(
+		ConnectionIdentifier id,
+		SharedPtr<comm::IncomingStream>& incoming,
+		SharedPtr<comm::OutgoingStream>& outgoing );
+
+
+	//
 	// Protected data
 protected:
 	UniquePtr<comm::EndpointManager> const mEndpointManager;

@@ -188,7 +188,7 @@ void SessionClientManager::ProcessPendingOperations()
 
 			SharedPtr<comm::IncomingStream> incomingPtr;
 			SharedPtr<comm::OutgoingStream> outgoingPtr;
-			GetHostChannels( id, incomingPtr, outgoingPtr );
+			GetChannels( id, incomingPtr, outgoingPtr );
 			if( incomingPtr == nullptr || outgoingPtr == nullptr )
 			{
 				// Flag for destroy
@@ -500,7 +500,7 @@ void SessionClientManager::GetOrCreateNextHandshakeChannels( SharedPtr<comm::Inc
 	//  connect to them recently)
 	auto const selectChannels = [this, &incomingStream, &outgoingStream]() -> bool //
 	{
-		GetHostChannels( kSingleHostIdentifier, incomingStream, outgoingStream );
+		GetChannels( kSingleHostIdentifier, incomingStream, outgoingStream );
 		if( incomingStream == nullptr || outgoingStream == nullptr )
 		{
 			incomingStream = nullptr;
@@ -597,40 +597,6 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 	RF_ASSERT( hostEndpoint != nullptr );
 	hostEndpoint->AddIncomingChannel( incomingStream, {} );
 	hostEndpoint->AddOutgoingChannel( outgoingStream, {} );
-}
-
-
-
-void SessionClientManager::GetHostChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing )
-{
-	incoming = nullptr;
-	outgoing = nullptr;
-
-	comm::EndpointManager& endpointManager = *mEndpointManager;
-
-	SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
-	if( endpointPtr == nullptr )
-	{
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint" );
-		return;
-	}
-	comm::LogicalEndpoint& endpoint = *endpointPtr;
-
-	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-	WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
-	WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
-	endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
-	endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
-	SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-	SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
-	if( incomingPtr == nullptr || outgoingPtr == nullptr )
-	{
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel" );
-		return;
-	}
-
-	incoming = incomingPtr;
-	outgoing = outgoingPtr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

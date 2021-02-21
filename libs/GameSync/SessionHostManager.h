@@ -98,7 +98,6 @@ public:
 private:
 	void AcceptNewConnection();
 	void CreateClientChannels( comm::EndpointIdentifier clientIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
-	void GetClientChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing );
 	void ValidateUntrustedConnections();
 
 

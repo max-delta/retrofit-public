@@ -237,7 +237,7 @@ void SessionHostManager::ProcessPendingOperations()
 
 			SharedPtr<comm::IncomingStream> incomingPtr;
 			SharedPtr<comm::OutgoingStream> outgoingPtr;
-			GetClientChannels( id, incomingPtr, outgoingPtr );
+			GetChannels( id, incomingPtr, outgoingPtr );
 			if( incomingPtr == nullptr || outgoingPtr == nullptr )
 			{
 				// Flag for destroy
@@ -506,40 +506,6 @@ void SessionHostManager::CreateClientChannels( comm::EndpointIdentifier clientId
 
 
 
-void SessionHostManager::GetClientChannels( ConnectionIdentifier id, SharedPtr<comm::IncomingStream>& incoming, SharedPtr<comm::OutgoingStream>& outgoing )
-{
-	incoming = nullptr;
-	outgoing = nullptr;
-
-	comm::EndpointManager& endpointManager = *mEndpointManager;
-
-	SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
-	if( endpointPtr == nullptr )
-	{
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint" );
-		return;
-	}
-	comm::LogicalEndpoint& endpoint = *endpointPtr;
-
-	static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-	WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
-	WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
-	endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
-	endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
-	SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-	SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
-	if( incomingPtr == nullptr || outgoingPtr == nullptr )
-	{
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel" );
-		return;
-	}
-
-	incoming = incomingPtr;
-	outgoing = outgoingPtr;
-}
-
-
-
 void SessionHostManager::ValidateUntrustedConnections()
 {
 	Clock::time_point const now = Clock::now();
@@ -588,7 +554,7 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 		SharedPtr<comm::IncomingStream> incomingPtr;
 		SharedPtr<comm::OutgoingStream> outgoingPtr;
-		GetClientChannels( id, incomingPtr, outgoingPtr );
+		GetChannels( id, incomingPtr, outgoingPtr );
 		if( incomingPtr == nullptr || outgoingPtr == nullptr )
 		{
 			// We weren't holding a lock on the connections, so it's possible
