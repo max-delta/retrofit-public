@@ -156,7 +156,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 	if( internalState.mAsClient != nullptr )
 	{
-		internalState.mAsClient->HasPendingOperations();
+		internalState.mAsClient->ProcessPendingOperations();
 	}
 
 	// Draw Status

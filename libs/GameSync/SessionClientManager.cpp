@@ -16,6 +16,9 @@
 #include "core/ptr/default_creator.h"
 #include "core/ptr/ptr_transform.h"
 
+#include "rftl/extension/static_vector.h"
+#include "rftl/extension/algorithms.h"
+
 
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
@@ -157,62 +160,196 @@ void SessionClientManager::StopReceivingASession()
 
 
 
-bool SessionClientManager::HasPendingOperations() const
+void SessionClientManager::ProcessPendingOperations()
 {
-	size_t bytesIncoming = 0;
+	RF_ASSERT( IsReceivingASession() );
 
-	ReaderLock const connectionLock( mHostConnectionsMutex );
-
-	comm::EndpointManager& endpointManager = *mEndpointManager;
-	for( Connections::value_type const& connection : mHostConnections )
+	// Check all the connections for basic connectivity
+	struct ValidConnection
 	{
-		ConnectionIdentifier const& id = connection.first;
-		Connection const& conn = connection.second;
-		if( conn.HasHandshake() == false )
-		{
-			continue;
-		}
+		ConnectionIdentifier mIdentifier = {};
+		SharedPtr<comm::IncomingStream> incomingPtr;
+		SharedPtr<comm::OutgoingStream> outgoingPtr;
+		protocol::EncryptionState encryption;
+	};
+	rftl::static_vector<ValidConnection, kSingleHostCount> validConnections;
+	rftl::static_vector<ConnectionIdentifier, kSingleHostCount> connectionsToDestroy;
+	{
+		ReaderLock const connectionLock( mHostConnectionsMutex );
 
-		SharedPtr<comm::LogicalEndpoint> const endpointPtr = endpointManager.GetEndpoint( id ).Lock();
-		if( endpointPtr == nullptr )
+		// Lookup the valid channels
+		for( Connections::value_type const& connection : mHostConnections )
 		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null endpoint in operation check" );
-			continue;
-		}
-		comm::LogicalEndpoint& endpoint = *endpointPtr;
+			ConnectionIdentifier const& id = connection.first;
+			Connection const& conn = connection.second;
+			if( conn.HasHandshake() == false )
+			{
+				continue;
+			}
 
-		static constexpr comm::ChannelFlags::Value kDesiredFlags = comm::ChannelFlags::Ordered;
-		WeakSharedPtr<comm::IncomingStream> incomingWPtr = nullptr;
-		WeakSharedPtr<comm::OutgoingStream> outgoingWPtr = nullptr;
-		endpoint.ChooseIncomingChannel( incomingWPtr, kDesiredFlags );
-		endpoint.ChooseOutgoingChannel( outgoingWPtr, kDesiredFlags );
-		SharedPtr<comm::IncomingStream> const incomingPtr = incomingWPtr.Lock();
-		SharedPtr<comm::OutgoingStream> const outgoingPtr = outgoingWPtr.Lock();
-		if( incomingPtr == nullptr || outgoingPtr == nullptr )
-		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Null channel in operation check" );
-			continue;
-		}
-		comm::IncomingStream& incoming = *incomingPtr;
-		comm::OutgoingStream& outgoing = *outgoingPtr;
+			SharedPtr<comm::IncomingStream> incomingPtr;
+			SharedPtr<comm::OutgoingStream> outgoingPtr;
+			GetHostChannels( id, incomingPtr, outgoingPtr );
+			if( incomingPtr == nullptr || outgoingPtr == nullptr )
+			{
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				continue;
+			}
 
-		if( incoming.IsTerminated() || outgoing.IsTerminated() )
-		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Terminated stream in operation check" );
-			continue;
-		}
+			if( incomingPtr->IsTerminated() || outgoingPtr->IsTerminated() )
+			{
+				// Flag for destroy
+				connectionsToDestroy.emplace_back( id );
+				continue;
+			}
 
-		size_t const incomingSize = incoming.PeekNextBufferSize();
-		if( incomingSize == 0 )
-		{
-			// No data yet
-			continue;
+			ValidConnection valid = {};
+			valid.mIdentifier = id;
+			valid.incomingPtr = incomingPtr;
+			valid.outgoingPtr = outgoingPtr;
+			valid.encryption = conn.mEncryption;
+			validConnections.emplace_back( rftl::move( valid ) );
 		}
-
-		bytesIncoming += incomingSize;
 	}
 
-	return bytesIncoming > 0;
+	// Process incoming
+	using FullBatches = rftl::vector<protocol::Buffer>;
+	using FullBatchesBySender = rftl::unordered_map<ConnectionIdentifier, FullBatches>;
+	FullBatchesBySender fullBatchesBySender;
+	for( ValidConnection const& valid : validConnections )
+	{
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::IncomingStream& incoming = *valid.incomingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
+
+		// Form as many full batches as possible
+		FullBatches fullBatches;
+		while( true )
+		{
+			size_t const incomingSize = incoming.PeekNextBufferSize();
+			if( incomingSize == 0 )
+			{
+				// No data yet / no more data after finishing a batch
+				break;
+			}
+
+			// Try to decode a full batch
+			protocol::Buffer const& buffer = incoming.CloneNextBuffer();
+			rftl::byte_view bytes( buffer.begin(), buffer.end() );
+			protocol::Buffer attemptedBatch;
+			protocol::ReadResult const result = protocol::TryDecodeTransmissionsIntoFullBatch( bytes, encryption, attemptedBatch );
+			if( result == protocol::ReadResult::kSuccess )
+			{
+				// Success, consume the bytes, store the batch
+				size_t const consumedBytes = buffer.size() - bytes.size();
+				protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
+				fullBatches.emplace_back( rftl::move( attemptedBatch ) );
+			}
+			else if( result == protocol::ReadResult::kTooSmall )
+			{
+				// Not enough, try to stitch
+				size_t const bytesStitched = incoming.TryStitchNextBuffer();
+				if( bytesStitched <= 0 )
+				{
+					// Failed to stitch, will need to wait for more
+					break;
+				}
+			}
+			else
+			{
+				// Bad transmission
+				RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Transmission was invalid, terminating connection" );
+				incoming.Terminate();
+				connectionsToDestroy.emplace_back( id );
+			}
+		}
+		if( fullBatches.empty() )
+		{
+			// No full batches could be formed
+			continue;
+		}
+
+		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Recieved %llu full batches from %llu", fullBatches.size(), id );
+
+		// Store
+		RF_ASSERT( fullBatchesBySender.count( id ) == 0 );
+		fullBatchesBySender[id] = rftl::move( fullBatches );
+	}
+
+	// Process local logic
+	for( FullBatchesBySender::value_type const& senderBatches : fullBatchesBySender )
+	{
+		ConnectionIdentifier const& id = senderBatches.first;
+		FullBatches const& fullBatches = senderBatches.second;
+		for( protocol::Buffer const& fullBatch : fullBatches )
+		{
+			rftl::byte_view messages( fullBatch.begin(), fullBatch.end() );
+
+			( (void)id );
+			( (void)messages );
+			RF_TODO_BREAK();
+		}
+	}
+
+	// Process outgoing
+	for( ValidConnection const& valid : validConnections )
+	{
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
+
+		protocol::Buffer messages;
+
+		RF_TODO_ANNOTATION( "Local queue" );
+
+		if( messages.empty() == false )
+		{
+			// Create and send out the transmissions
+			rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
+				rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
+			for( protocol::Buffer& transmission : transmissions )
+			{
+				bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
+				if( success == false )
+				{
+					// Flag for destroy
+					connectionsToDestroy.emplace_back( id );
+					break;
+				}
+			}
+		}
+	}
+
+	// Destroy connections
+	if( connectionsToDestroy.empty() == false )
+	{
+		WriterLock const connectionLock( mHostConnectionsMutex );
+
+		comm::EndpointManager& endpointManager = *mEndpointManager;
+		rftl::erase_duplicates( connectionsToDestroy );
+		for( ConnectionIdentifier const& id : connectionsToDestroy )
+		{
+			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying a connection in operations" );
+
+			Connections::iterator const iter = mHostConnections.find( id );
+			if( iter == mHostConnections.end() )
+			{
+				// We dropped the lock on the connections, so it's possible
+				//  this was terminated during processing
+				RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Missing connection in operations" );
+			}
+			else
+			{
+				mHostConnections.erase( iter );
+			}
+
+			endpointManager.RemoveEndpoint( id );
+		}
+		endpointManager.RemoveOrphanedStreams( true );
+
+		RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Connections destroyed, expect a connection update" );
+	}
 }
 
 

@@ -56,6 +56,7 @@ private:
 	// NOTE: May add support for multiple hosts in the future, possibly with a
 	//  shared ownership model for the total connection list
 	static constexpr ConnectionIdentifier kSingleHostIdentifier = 1;
+	static constexpr size_t kSingleHostCount = 1;
 
 
 	//
@@ -98,7 +99,7 @@ public:
 	void StopReceivingASession();
 
 	// Thread-safe
-	bool HasPendingOperations() const;
+	void ProcessPendingOperations();
 
 	// Thread-safe
 	Diagnostics ReportDiagnostics() const;

@@ -58,6 +58,11 @@ GAMESYNC_API ReadResult TryDecodeTransmission(
 	EncryptionState const& encryption,
 	OnBatchFunc const& onBatch );
 
+GAMESYNC_API ReadResult TryDecodeTransmissionsIntoFullBatch(
+	rftl::byte_view& bytes,
+	EncryptionState const& encryption,
+	Buffer& fullBatch );
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Hello payloads are special in that they cannot be broken up across multiple

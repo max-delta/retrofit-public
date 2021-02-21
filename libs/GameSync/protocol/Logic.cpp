@@ -71,6 +71,15 @@ size_t CalcStandardTransmissionHeaderSize()
 	return temp.size();
 }
 
+
+
+static uint8_t* Grow( Buffer& bytes, size_t additional )
+{
+	// NOTE: Resize may re-allocate, use pointer post-grow
+	bytes.resize( bytes.size() + additional );
+	return &( bytes.at( bytes.size() - additional ) );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -251,6 +260,87 @@ ReadResult TryDecodeTransmission(
 
 	bytes = tempBytes;
 	return kSuccess;
+}
+
+
+
+GAMESYNC_API ReadResult TryDecodeTransmissionsIntoFullBatch(
+	rftl::byte_view& bytes,
+	EncryptionState const& encryption,
+	Buffer& fullBatch )
+{
+	rftl::byte_view const originalBytes = bytes;
+	fullBatch.clear();
+
+	// First attempt a dry-run to see if the bytes form a full batch
+	size_t expectedTotalBytes = 0;
+	{
+		size_t bytesFound = 0;
+		auto const onBatch = [&expectedTotalBytes, &bytesFound]( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+		{
+			if( expectedTotalBytes == 0 )
+			{
+				// Not set yet
+				if( totalBytes == 0 )
+				{
+					// Empty batch, odd...
+					return ReadResult::kSuccess;
+				}
+				else
+				{
+					expectedTotalBytes = totalBytes;
+				}
+			}
+
+			if( expectedTotalBytes != totalBytes )
+			{
+				// Unexpected batch change
+				return ReadResult::kLogicError;
+			}
+
+			bytesFound += bytes.size();
+			return ReadResult::kSuccess;
+		};
+
+		// Read as dry-run
+		rftl::byte_view dryRunBytes = originalBytes;
+		ReadResult result = TryDecodeTransmission( dryRunBytes, encryption, onBatch );
+		while( result == ReadResult::kSuccess && bytesFound < expectedTotalBytes )
+		{
+			result = TryDecodeTransmission( dryRunBytes, encryption, onBatch );
+		}
+		if( result != ReadResult::kSuccess )
+		{
+			return result;
+		}
+		if( bytesFound < expectedTotalBytes )
+		{
+			return ReadResult::kTooSmall;
+		}
+		RF_ASSERT( expectedTotalBytes == bytesFound );
+		RF_ASSERT( expectedTotalBytes <= originalBytes.size() );
+	}
+
+	// Pull the bytes out
+	{
+		fullBatch.reserve( expectedTotalBytes );
+		auto const onBatch = [&fullBatch]( size_t totalBytes, rftl::byte_view bytes ) -> ReadResult //
+		{
+			uint8_t* const dest = details::Grow( fullBatch, bytes.size() );
+			memcpy( dest, bytes.data(), bytes.size() );
+			return ReadResult::kSuccess;
+		};
+
+		RF_ASSERT( bytes == originalBytes );
+		ReadResult result = TryDecodeTransmission( bytes, encryption, onBatch );
+		while( result == ReadResult::kSuccess && fullBatch.size() < expectedTotalBytes )
+		{
+			result = TryDecodeTransmission( bytes, encryption, onBatch );
+		}
+		RF_ASSERT( result == ReadResult::kSuccess );
+		RF_ASSERT( fullBatch.size() == expectedTotalBytes );
+		return result;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
