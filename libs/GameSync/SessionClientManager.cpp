@@ -144,7 +144,7 @@ void SessionClientManager::ProcessPendingOperations()
 {
 	RF_ASSERT( IsReceivingASession() );
 
-	auto const onMessage = [this]( MessageParams const& params ) -> protocol::ReadResult //
+	auto const onMessage = []( MessageParams const& params ) -> protocol::ReadResult //
 	{
 		RF_TODO_ANNOTATION( "Handle session list" );
 		RF_TODO_BREAK();
