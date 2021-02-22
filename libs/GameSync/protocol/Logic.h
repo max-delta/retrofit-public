@@ -25,6 +25,14 @@ using OnMessageFunc = rftl::function<OnMessageSig>;
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Attempt to blindly decode a message, ignoring validity and only seeking to
+//  consume the bytes, effectively discarding the message
+GAMESYNC_API ReadResult TryBlindMessageRead(
+	MessageID const& id,
+	rftl::byte_view& bytes );
+
+///////////////////////////////////////////////////////////////////////////////
+
 // Attempt to blindly decode a batch, ignoring state/logic errors, and simply
 //  checking whether the messages seem like they follows the basic structure of
 //  the protocol and can be decoded

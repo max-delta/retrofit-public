@@ -28,6 +28,7 @@ class GAMESYNC_API SessionManager
 	// Forwards
 protected:
 	struct Connection;
+	struct MessageParams;
 	struct MessageWorkParams;
 
 
@@ -51,7 +52,7 @@ protected:
 	using ConnectionIDs = rftl::unordered_set<ConnectionIdentifier, math::DirectHash>;
 	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
 
-	using OnMessageSig = void();
+	using OnMessageSig = protocol::ReadResult( MessageParams const& params );
 	using OnMessageFunc = rftl::function<OnMessageSig>;
 	using DoMessageWorkSig = void( MessageWorkParams const& params );
 	using DoMessageWorkFunc = rftl::function<DoMessageWorkSig>;
@@ -70,6 +71,14 @@ protected:
 		Clock::time_point mPartialHandshakeTime = Clock::kLowest;
 		Clock::time_point mCompletedHandshakeTime = Clock::kLowest;
 		protocol::EncryptionState mEncryption = {};
+	};
+
+	struct MessageParams
+	{
+		RF_NO_COPY( MessageParams );
+		ConnectionIdentifier connectionID;
+		protocol::MessageID const& messageID;
+		rftl::byte_view& bytes;
 	};
 
 	struct MessageWorkParams

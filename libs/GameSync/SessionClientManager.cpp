@@ -144,9 +144,12 @@ void SessionClientManager::ProcessPendingOperations()
 {
 	RF_ASSERT( IsReceivingASession() );
 
-	auto const onMessage = [this]() -> void //
+	auto const onMessage = [this]( MessageParams const& params ) -> protocol::ReadResult //
 	{
 		RF_TODO_ANNOTATION( "Handle session list" );
+		RF_TODO_BREAK();
+		// HACK: Discard
+		return protocol::TryBlindMessageRead( params.messageID, params.bytes );
 	};
 	auto const doMessageWork = [this]( MessageWorkParams const& params ) -> void //
 	{

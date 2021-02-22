@@ -83,12 +83,19 @@ static uint8_t* Grow( Buffer& bytes, size_t additional )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
+GAMESYNC_API ReadResult TryBlindMessageRead( MessageID const& id, rftl::byte_view& bytes )
+{
+	using WalkAllMessages = details::MessageWalker<AllMessages>;
+	return WalkAllMessages::TryRead( id, bytes );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 ReadResult TryBlindDecodeBatch(
 	rftl::byte_view bytes,
 	EncryptionState const& encryption )
 {
-	using WalkAllMessages = details::MessageWalker<AllMessages>;
-	return TryDecodeBatch( bytes, encryption, WalkAllMessages::TryRead );
+	return TryDecodeBatch( bytes, encryption, TryBlindMessageRead );
 }
 
 

@@ -173,18 +173,58 @@ void SessionManager::ProcessPendingConnectionOperations(
 	}
 
 	// Process messages
-	for( FullBatchesBySender::value_type const& senderBatches : fullBatchesBySender )
+	for( ValidConnection const& valid : validConnections )
 	{
-		ConnectionIdentifier const& id = senderBatches.first;
-		FullBatches const& fullBatches = senderBatches.second;
+		ConnectionIdentifier const& id = valid.mIdentifier;
+		comm::IncomingStream& incoming = *valid.incomingPtr;
+		protocol::EncryptionState const& encryption = valid.encryption;
+
+		FullBatchesBySender::const_iterator const senderBatchesIter = fullBatchesBySender.find( id );
+		if( senderBatchesIter == fullBatchesBySender.end() )
+		{
+			// No batches from this connection
+			continue;
+		}
+		FullBatches const& fullBatches = senderBatchesIter->second;
+
+		// For each batch...
 		for( protocol::Buffer const& fullBatch : fullBatches )
 		{
-			rftl::byte_view messages( fullBatch.begin(), fullBatch.end() );
+			rftl::byte_view const messages( fullBatch.begin(), fullBatch.end() );
 
-			( (void)id );
-			( (void)messages );
-			( (void)onMessage );
-			RF_TODO_BREAK();
+			// Try a blind decode first
+			{
+				protocol::ReadResult const blindResult = protocol::TryBlindDecodeBatch( messages, encryption );
+				if( blindResult != protocol::ReadResult::kSuccess )
+				{
+					// Bad blind decode
+					RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Batch was trivially invalid, terminating connection" );
+					incoming.Terminate();
+					connectionsToDestroy.emplace_back( id );
+					break;
+				}
+			}
+
+			// Decode messages
+			{
+				auto const onMessageWrapper = //
+					[&onMessage, connectionID = id] //
+					( protocol::MessageID const& messageID, rftl::byte_view& bytes ) //
+					-> protocol::ReadResult //
+				{
+					return onMessage( MessageParams{ connectionID, messageID, bytes } );
+				};
+
+				protocol::ReadResult const blindResult = protocol::TryDecodeBatch( messages, encryption, onMessageWrapper );
+				if( blindResult != protocol::ReadResult::kSuccess )
+				{
+					// Bad decode
+					RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Batch was invalid, terminating connection" );
+					incoming.Terminate();
+					connectionsToDestroy.emplace_back( id );
+					break;
+				}
+			}
 		}
 	}
 
