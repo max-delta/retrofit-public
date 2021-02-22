@@ -80,6 +80,8 @@ private:
 	void CreateClientChannels( comm::EndpointIdentifier clientIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 	void ValidateUntrustedConnections();
 
+	void DoMessageWork( MessageWorkParams const& params );
+
 
 	//
 	// Private data

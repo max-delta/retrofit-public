@@ -79,6 +79,8 @@ private:
 	void FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
 	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 
+	void DoMessageWork( MessageWorkParams const& params );
+
 
 	//
 	// Private data

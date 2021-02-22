@@ -10,8 +10,10 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/idgen.h"
 
+#include "rftl/functional"
 #include "rftl/shared_mutex"
 #include "rftl/unordered_map"
+#include "rftl/unordered_set"
 
 
 namespace RF::sync {
@@ -26,10 +28,17 @@ class GAMESYNC_API SessionManager
 	// Forwards
 protected:
 	struct Connection;
+	struct MessageWorkParams;
 
 
 	//
 	// Types and constants
+public:
+	// If there are more connections than this, it probably indicates something
+	//  has gone wrong, possibly even a malicious client attempting to flood
+	//  the connection-handling capabilities, at which point: they've succeeded
+	static constexpr size_t kMaxConnectionCount = 32;
+
 protected:
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
@@ -39,6 +48,14 @@ protected:
 	using ConnectionIDGen = NonloopingIDGenerator<ConnectionIdentifier>;
 
 	using Connections = rftl::unordered_map<ConnectionIdentifier, Connection, math::DirectHash>;
+	using ConnectionIDs = rftl::unordered_set<ConnectionIdentifier, math::DirectHash>;
+	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
+
+	using OnMessageSig = void();
+	using OnMessageFunc = rftl::function<OnMessageSig>;
+	using DoMessageWorkSig = void( MessageWorkParams const& params );
+	using DoMessageWorkFunc = rftl::function<DoMessageWorkSig>;
+
 
 
 	//
@@ -55,6 +72,13 @@ protected:
 		protocol::EncryptionState mEncryption = {};
 	};
 
+	struct MessageWorkParams
+	{
+		RF_NO_COPY( MessageWorkParams );
+		ConnectionIDs const& validConnectionIDs;
+		MessagesByRecipient& messagesByRecipient;
+	};
+
 
 	//
 	// Public methods
@@ -66,6 +90,10 @@ public:
 	//
 	// Protected methods
 protected:
+	void ProcessPendingConnectionOperations(
+		OnMessageFunc const& onMessage,
+		DoMessageWorkFunc const& doMessageWork );
+
 	void GetChannels(
 		ConnectionIdentifier id,
 		SharedPtr<comm::IncomingStream>& incoming,

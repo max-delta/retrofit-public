@@ -205,253 +205,16 @@ void SessionHostManager::ProcessPendingOperations()
 {
 	RF_ASSERT( IsHostingASession() );
 
-	// Check all the connections for basic connectivity
-	struct ValidConnection
+	auto const onMessage = [this]() -> void //
 	{
-		ConnectionIdentifier mIdentifier = {};
-		SharedPtr<comm::IncomingStream> incomingPtr;
-		SharedPtr<comm::OutgoingStream> outgoingPtr;
-		protocol::EncryptionState encryption;
+		RF_TODO_ANNOTATION( "Proxy queue" );
 	};
-	rftl::static_vector<ValidConnection, kMaxConnectionCount> validConnections;
-	rftl::static_vector<ConnectionIdentifier, kMaxConnectionCount> connectionsToDestroy;
+	auto const doMessageWork = [this]( MessageWorkParams const& params ) -> void //
 	{
-		ReaderLock const connectionLock( mConnectionsMutex );
+		this->DoMessageWork( params );
+	};
 
-		// Lookup the valid channels
-		for( Connections::value_type const& connection : mConnections )
-		{
-			ConnectionIdentifier const& id = connection.first;
-			Connection const& conn = connection.second;
-			if( conn.HasHandshake() == false )
-			{
-				continue;
-			}
-
-			SharedPtr<comm::IncomingStream> incomingPtr;
-			SharedPtr<comm::OutgoingStream> outgoingPtr;
-			GetChannels( id, incomingPtr, outgoingPtr );
-			if( incomingPtr == nullptr || outgoingPtr == nullptr )
-			{
-				// Flag for destroy
-				connectionsToDestroy.emplace_back( id );
-				continue;
-			}
-
-			if( incomingPtr->IsTerminated() || outgoingPtr->IsTerminated() )
-			{
-				// Flag for destroy
-				connectionsToDestroy.emplace_back( id );
-				continue;
-			}
-
-			ValidConnection valid = {};
-			valid.mIdentifier = id;
-			valid.incomingPtr = incomingPtr;
-			valid.outgoingPtr = outgoingPtr;
-			valid.encryption = conn.mEncryption;
-			validConnections.emplace_back( rftl::move( valid ) );
-		}
-	}
-
-	// Process incoming
-	using FullBatches = rftl::vector<protocol::Buffer>;
-	using FullBatchesBySender = rftl::unordered_map<ConnectionIdentifier, FullBatches>;
-	FullBatchesBySender fullBatchesBySender;
-	for( ValidConnection const& valid : validConnections )
-	{
-		ConnectionIdentifier const& id = valid.mIdentifier;
-		comm::IncomingStream& incoming = *valid.incomingPtr;
-		protocol::EncryptionState const& encryption = valid.encryption;
-
-		// Form as many full batches as possible
-		FullBatches fullBatches;
-		while( true )
-		{
-			size_t const incomingSize = incoming.PeekNextBufferSize();
-			if( incomingSize == 0 )
-			{
-				// No data yet / no more data after finishing a batch
-				break;
-			}
-
-			// Try to decode a full batch
-			protocol::Buffer const& buffer = incoming.CloneNextBuffer();
-			rftl::byte_view bytes( buffer.begin(), buffer.end() );
-			protocol::Buffer attemptedBatch;
-			protocol::ReadResult const result = protocol::TryDecodeTransmissionsIntoFullBatch( bytes, encryption, attemptedBatch );
-			if( result == protocol::ReadResult::kSuccess )
-			{
-				// Success, consume the bytes, store the batch
-				size_t const consumedBytes = buffer.size() - bytes.size();
-				protocol::Buffer const discarded = incoming.FetchNextBuffer( consumedBytes );
-				fullBatches.emplace_back( rftl::move( attemptedBatch ) );
-			}
-			else if( result == protocol::ReadResult::kTooSmall )
-			{
-				// Not enough, try to stitch
-				size_t const bytesStitched = incoming.TryStitchNextBuffer();
-				if( bytesStitched <= 0 )
-				{
-					// Failed to stitch, will need to wait for more
-					break;
-				}
-			}
-			else
-			{
-				// Bad transmission
-				RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Transmission was invalid, terminating connection" );
-				incoming.Terminate();
-				connectionsToDestroy.emplace_back( id );
-			}
-		}
-		if( fullBatches.empty() )
-		{
-			// No full batches could be formed
-			continue;
-		}
-
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Recieved %llu full batches from %llu", fullBatches.size(), id );
-
-		// Store
-		RF_ASSERT( fullBatchesBySender.count( id ) == 0 );
-		fullBatchesBySender[id] = rftl::move( fullBatches );
-	}
-
-	// Create permitted recipient buffers
-	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
-	MessagesByRecipient messagesByRecipient;
-	for( ValidConnection const& valid : validConnections )
-	{
-		messagesByRecipient[valid.mIdentifier];
-	}
-
-	// Process local logic
-	for( FullBatchesBySender::value_type const& senderBatches : fullBatchesBySender )
-	{
-		ConnectionIdentifier const& id = senderBatches.first;
-		FullBatches const& fullBatches = senderBatches.second;
-		for( protocol::Buffer const& fullBatch : fullBatches )
-		{
-			rftl::byte_view messages( fullBatch.begin(), fullBatch.end() );
-
-			( (void)id );
-			( (void)messages );
-			RF_TODO_ANNOTATION( "Local queue" );
-			RF_TODO_ANNOTATION( "Proxy queue" );
-			RF_TODO_BREAK();
-		}
-	}
-
-	// Update session members based on connections
-	bool sessionMembersChanged = false;
-	rftl::optional<SessionMembers> sessionMembersSnapshot;
-	{
-		WriterLock const membersLock( mSessionMembersMutex );
-
-		// Expect we generated our identifier earlier
-		RF_ASSERT( mSessionMembers.mLocalConnection != kInvalidConnectionIdentifier );
-
-		// Stomp the connections
-		SessionMembers::Connections const old = rftl::move( mSessionMembers.mAllConnections );
-		mSessionMembers.mAllConnections.clear();
-		mSessionMembers.mAllConnections.emplace( mSessionMembers.mLocalConnection );
-		for( ValidConnection const& valid : validConnections )
-		{
-			mSessionMembers.mAllConnections.emplace( valid.mIdentifier );
-		}
-		if( mSessionMembers.mAllConnections != old )
-		{
-			sessionMembersChanged = true;
-		}
-
-		// Adjust player IDs if necessary
-		if( sessionMembersChanged )
-		{
-			mSessionMembers.ReclaimOrphanedPlayerIDs();
-		}
-
-		// Snapshot the session members while still under lock
-		if( sessionMembersChanged )
-		{
-			sessionMembersSnapshot = mSessionMembers;
-		}
-	}
-
-	// Send out a session update if needed
-	if( sessionMembersChanged )
-	{
-		for( ValidConnection const& valid : validConnections )
-		{
-			ConnectionIdentifier const& id = valid.mIdentifier;
-			protocol::Buffer& messages = messagesByRecipient.at( id );
-
-			RF_ASSERT( sessionMembersSnapshot.has_value() );
-			SessionMembers const& members = sessionMembersSnapshot.value();
-
-			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
-			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
-			session.Append( messages );
-		}
-	}
-
-	// Process outgoing
-	for( ValidConnection const& valid : validConnections )
-	{
-		ConnectionIdentifier const& id = valid.mIdentifier;
-		comm::OutgoingStream& outgoing = *valid.outgoingPtr;
-		protocol::EncryptionState const& encryption = valid.encryption;
-
-		protocol::Buffer& messages = messagesByRecipient.at( id );
-		if( messages.empty() )
-		{
-			continue;
-		}
-
-		// Create and send out the transmissions
-		rftl::vector<protocol::Buffer> transmissions = protocol::CreateTransmissions(
-			rftl::move( messages ), encryption, protocol::kMaxRecommendedTransmissionSize );
-		for( protocol::Buffer& transmission : transmissions )
-		{
-			bool const success = outgoing.StoreNextBuffer( rftl::move( transmission ) );
-			if( success == false )
-			{
-				// Flag for destroy
-				connectionsToDestroy.emplace_back( id );
-				break;
-			}
-		}
-	}
-
-	// Destroy connections
-	if( connectionsToDestroy.empty() == false )
-	{
-		WriterLock const connectionLock( mConnectionsMutex );
-
-		comm::EndpointManager& endpointManager = *mEndpointManager;
-		rftl::erase_duplicates( connectionsToDestroy );
-		for( ConnectionIdentifier const& id : connectionsToDestroy )
-		{
-			RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Destroying a connection in operations" );
-
-			Connections::iterator const iter = mConnections.find( id );
-			if( iter == mConnections.end() )
-			{
-				// We dropped the lock on the connections, so it's possible
-				//  this was terminated during processing
-				RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Missing connection in operations" );
-			}
-			else
-			{
-				mConnections.erase( iter );
-			}
-
-			endpointManager.RemoveEndpoint( id );
-		}
-		endpointManager.RemoveOrphanedStreams( true );
-
-		RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Connections destroyed, expect a connection update" );
-	}
+	ProcessPendingConnectionOperations( onMessage, doMessageWork );
 }
 
 
@@ -778,6 +541,67 @@ void SessionHostManager::ValidateUntrustedConnections()
 	//  for any differences since the last snapshot
 
 	RFLOG_INFO( nullptr, RFCAT_GAMESYNC, "Trust additions performed, expect a connection update" );
+}
+
+
+
+void SessionHostManager::DoMessageWork( MessageWorkParams const& params )
+{
+	ConnectionIDs const& validConnectionIDs = params.validConnectionIDs;
+	MessagesByRecipient& messagesByRecipient = params.messagesByRecipient;
+
+	RF_TODO_ANNOTATION( "Local queue" );
+
+	// Update session members based on connections
+	bool sessionMembersChanged = false;
+	rftl::optional<SessionMembers> sessionMembersSnapshot;
+	{
+		WriterLock const membersLock( mSessionMembersMutex );
+
+		// Expect we generated our identifier earlier
+		RF_ASSERT( mSessionMembers.mLocalConnection != kInvalidConnectionIdentifier );
+
+		// Stomp the connections
+		SessionMembers::Connections const old = rftl::move( mSessionMembers.mAllConnections );
+		mSessionMembers.mAllConnections.clear();
+		mSessionMembers.mAllConnections.emplace( mSessionMembers.mLocalConnection );
+		for( ConnectionIdentifier const& id : validConnectionIDs )
+		{
+			mSessionMembers.mAllConnections.emplace( id );
+		}
+		if( mSessionMembers.mAllConnections != old )
+		{
+			sessionMembersChanged = true;
+		}
+
+		// Adjust player IDs if necessary
+		if( sessionMembersChanged )
+		{
+			mSessionMembers.ReclaimOrphanedPlayerIDs();
+		}
+
+		// Snapshot the session members while still under lock
+		if( sessionMembersChanged )
+		{
+			sessionMembersSnapshot = mSessionMembers;
+		}
+	}
+
+	// Send out a session update if needed
+	if( sessionMembersChanged )
+	{
+		for( ConnectionIdentifier const& id : validConnectionIDs )
+		{
+			protocol::Buffer& messages = messagesByRecipient.at( id );
+
+			RF_ASSERT( sessionMembersSnapshot.has_value() );
+			SessionMembers const& members = sessionMembersSnapshot.value();
+
+			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
+			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
+			session.Append( messages );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
