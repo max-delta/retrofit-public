@@ -72,6 +72,8 @@ struct DevTestRollback::InternalState
 
 void DevTestRollback::OnEnter( AppStateChangeContext& context )
 {
+	input::HardcodedHackSetup();
+
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
