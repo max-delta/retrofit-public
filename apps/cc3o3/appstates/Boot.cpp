@@ -44,7 +44,10 @@ void Boot::OnTick( AppStateTickContext& context )
 
 	// HACK: Spin up hard-coded input
 	// TODO: Get this from a file
-	input::HardcodedSetup();
+	input::HardcodedRawSetup();
+	input::HardcodedMainSetup();
+	input::HardcodedGameSetup(); // TODO: Move this
+	input::HardcodedHackSetup(); // TODO: Move this
 
 	// Hop out of boot ASAP
 	context.mManager.RequestDeferredStateChange( GetStateAfterBoot() );

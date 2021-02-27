@@ -19,8 +19,10 @@ using GameSignalValue = float;
 
 using PlayerID = uint8_t;
 constexpr PlayerID kInvalidPlayerID = 0;
+constexpr PlayerID kMaxPlayerID = 255;
 using LayerID = uint8_t;
 constexpr LayerID kInvalidLayerID = 0;
+constexpr LayerID kMaxLayerID = 0;
 
 struct RawCommand;
 struct GameCommand;

@@ -13,7 +13,8 @@ enum : PlayerID
 {
 	Invalid = kInvalidPlayerID,
 	P1,
-	P2
+	P2,
+	Global = kMaxPlayerID,
 };
 }
 

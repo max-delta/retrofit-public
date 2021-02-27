@@ -32,7 +32,7 @@ static rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEv
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-void HardcodedSetup()
+void HardcodedRawSetup()
 {
 	ControllerManager& manager = *app::gInputControllerManager;
 
@@ -113,10 +113,19 @@ void HardcodedSetup()
 		logicalMapping[shim::VK_F6][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
 	}
 	rawController->SetLogicalMapping( logicalMapping );
+	details::sRawInputController = rawController;
+	manager.StoreRawController( rftl::move( rawController ) );
+}
+
+
+
+void HardcodedMainSetup()
+{
+	ControllerManager& manager = *app::gInputControllerManager;
 
 	// Menus
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	menuHotkeyController->SetSource( rawController );
+	menuHotkeyController->SetSource( details::sRawInputController );
 	{
 		input::HotkeyController::CommandMapping commandMapping;
 		commandMapping[command::raw::Up] = command::game::UINavigateUp;
@@ -135,12 +144,44 @@ void HardcodedSetup()
 		commandMapping[command::raw::GameStart] = command::game::UIPauseAction;
 		menuHotkeyController->SetCommandMapping( commandMapping );
 	}
-	manager.RegisterGameController( menuHotkeyController, player::P1, layer::MainMenu );
-	manager.RegisterGameController( menuHotkeyController, player::P1, layer::GameMenu );
+	manager.RegisterGameController( menuHotkeyController, player::Global, layer::MainMenu );
+	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+
+	// Text
+	manager.RegisterTextProvider( details::sRawInputController, player::Global );
+
+	// Developer
+	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	developerHotkeyController->SetSource( details::sRawInputController );
+	{
+		input::HotkeyController::CommandMapping commandMapping;
+		commandMapping[command::raw::DeveloperToggle] = command::game::DeveloperToggle;
+		commandMapping[command::raw::DeveloperCycle] = command::game::DeveloperCycle;
+		commandMapping[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
+		commandMapping[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
+		commandMapping[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
+		commandMapping[command::raw::DeveloperAction4] = command::game::DeveloperAction4;
+		commandMapping[command::raw::DeveloperAction5] = command::game::DeveloperAction5;
+		developerHotkeyController->SetCommandMapping( commandMapping );
+	}
+	manager.RegisterGameController( developerHotkeyController, player::Global, layer::Developer );
+	manager.StoreGameController( rftl::move( developerHotkeyController ) );
+}
+
+
+
+void HardcodedGameSetup()
+{
+	ControllerManager& manager = *app::gInputControllerManager;
+
+	// Clone main menu controller to P1
+	manager.RegisterGameController(
+		manager.GetGameController( player::Global, layer::MainMenu ),
+		player::P1, layer::GameMenu );
 
 	// Gameplay
 	UniquePtr<input::HotkeyController> p1HotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	p1HotkeyController->SetSource( rawController );
+	p1HotkeyController->SetSource( details::sRawInputController );
 	{
 		input::HotkeyController::CommandMapping commandMapping;
 		commandMapping[command::raw::Up] = command::game::WalkNorth;
@@ -154,7 +195,7 @@ void HardcodedSetup()
 		commandMapping[command::raw::Affirmative] = command::game::Interact;
 		p1HotkeyController->SetCommandMapping( commandMapping );
 	}
-	p1HotkeyController->SetSource( rawController );
+	p1HotkeyController->SetSource( details::sRawInputController );
 	UniquePtr<input::RollbackController> p1RollbackController = DefaultCreator<input::RollbackController>::Create();
 	p1RollbackController->SetSource( p1HotkeyController );
 	p1RollbackController->SetRollbackManager( app::gRollbackManager );
@@ -163,9 +204,19 @@ void HardcodedSetup()
 	details::sRollbackControllers.emplace_back( p1RollbackController );
 	manager.RegisterGameController( p1RollbackController, player::P1, layer::CharacterControl );
 
+	manager.StoreGameController( rftl::move( p1HotkeyController ) );
+	manager.StoreGameController( rftl::move( p1RollbackController ) );
+}
+
+
+
+void HardcodedHackSetup()
+{
+	ControllerManager& manager = *app::gInputControllerManager;
+
 	// Testing
 	UniquePtr<input::HotkeyController> p2HotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	p2HotkeyController->SetSource( rawController );
+	p2HotkeyController->SetSource( details::sRawInputController );
 	{
 		input::HotkeyController::CommandMapping commandMapping;
 		commandMapping[command::raw::HatUp] = command::game::WalkNorth;
@@ -187,32 +238,8 @@ void HardcodedSetup()
 	details::sRollbackControllers.emplace_back( p2RollbackController );
 	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
 
-	// Developer
-	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	developerHotkeyController->SetSource( rawController );
-	{
-		input::HotkeyController::CommandMapping commandMapping;
-		commandMapping[command::raw::DeveloperToggle] = command::game::DeveloperToggle;
-		commandMapping[command::raw::DeveloperCycle] = command::game::DeveloperCycle;
-		commandMapping[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
-		commandMapping[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
-		commandMapping[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
-		commandMapping[command::raw::DeveloperAction4] = command::game::DeveloperAction4;
-		commandMapping[command::raw::DeveloperAction5] = command::game::DeveloperAction5;
-		developerHotkeyController->SetCommandMapping( commandMapping );
-	}
-	manager.RegisterGameController( developerHotkeyController, player::P1, layer::Developer );
-
-	details::sRawInputController = rawController;
-	WeakPtr<RawController> const storedRaw = manager.StoreRawController( rftl::move( rawController ) );
-	manager.RegisterTextProvider( storedRaw, player::P1 );
-
-	manager.StoreGameController( rftl::move( menuHotkeyController ) );
-	manager.StoreGameController( rftl::move( p1HotkeyController ) );
-	manager.StoreGameController( rftl::move( p1RollbackController ) );
 	manager.StoreGameController( rftl::move( p2HotkeyController ) );
 	manager.StoreGameController( rftl::move( p2RollbackController ) );
-	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
 

@@ -11,7 +11,10 @@ namespace RF { namespace cc { namespace input {
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: This is obviously gross, replace it
-void HardcodedSetup();
+void HardcodedRawSetup();
+void HardcodedMainSetup();
+void HardcodedGameSetup();
+void HardcodedHackSetup();
 void HardcodedRawTick();
 void HardcodedRollbackTick();
 void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );

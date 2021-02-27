@@ -296,7 +296,7 @@ void Startup()
 void ProcessInput()
 {
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::P1, input::layer::Developer );
+	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::Global, input::layer::Developer );
 	if( controller == nullptr )
 	{
 		// No controller, so we may still be booting
