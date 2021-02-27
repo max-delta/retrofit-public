@@ -3,6 +3,7 @@
 
 #include "GameSync/SyncFwd.h"
 #include "GameSync/protocol/Encryption.h"
+#include "GameSync/SessionMembers.h"
 
 #include "core_math/Hash.h"
 #include "core_time/SteadyClock.h"
@@ -95,6 +96,9 @@ public:
 	SessionManager();
 	~SessionManager() = default;
 
+	// Thread-safe
+	SessionMembers GetSessionMembers() const;
+
 
 	//
 	// Protected methods
@@ -118,6 +122,9 @@ protected:
 
 	mutable ReaderWriterMutex mConnectionsMutex;
 	Connections mConnections;
+
+	mutable ReaderWriterMutex mSessionMembersMutex;
+	SessionMembers mSessionMembers;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -43,6 +43,14 @@ SessionManager::SessionManager()
 	//
 }
 
+
+
+SessionMembers SessionManager::GetSessionMembers() const
+{
+	ReaderLock const membersLock( mSessionMembersMutex );
+	return mSessionMembers;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void SessionManager::ProcessPendingConnectionOperations(

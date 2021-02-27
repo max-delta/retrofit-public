@@ -21,7 +21,7 @@ namespace RF::sync {
 // A client treats the connection list of a host as authoritative
 // NOTE: A host is not required to maintain a session once formed, but lacking
 //  an authority for the connection list prevents it from updating
-class GAMESYNC_API SessionClientManager final : private SessionManager
+class GAMESYNC_API SessionClientManager final : public SessionManager
 {
 	RF_NO_COPY( SessionClientManager );
 
@@ -79,6 +79,7 @@ private:
 	void FormHostConnection( comm::EndpointIdentifier hostIdentifier, ClientSpec spec );
 	void CreateHostChannels( comm::EndpointIdentifier hostIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 
+	protocol::ReadResult HandleMessage( MessageParams const& params );
 	void DoMessageWork( MessageWorkParams const& params );
 
 

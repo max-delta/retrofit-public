@@ -2,7 +2,6 @@
 #include "project.h"
 
 #include "GameSync/SessionManager.h"
-#include "GameSync/SessionMembers.h"
 #include "GameSync/protocol/Encryption.h"
 
 #include "core_thread/AsyncThread.h"
@@ -21,7 +20,7 @@ namespace RF::sync {
 // A host acts as the authoritative owner of the connection list
 // NOTE: A host is not required to maintain a session once formed, but
 //  new connections will not be able to be accepted
-class GAMESYNC_API SessionHostManager final : private SessionManager
+class GAMESYNC_API SessionHostManager final : public SessionManager
 {
 	RF_NO_COPY( SessionHostManager );
 
@@ -51,7 +50,6 @@ public:
 	{
 		size_t mInvalidConnections = 0;
 		size_t mValidConnections = 0;
-		SessionMembers mSessionMembers = {};
 	};
 
 
@@ -96,9 +94,6 @@ private:
 	thread::AsyncThread mListenerThread;
 	thread::AsyncThread mValidatorThread;
 	rftl::atomic<bool> mLastValidationUneventful = false;
-
-	mutable ReaderWriterMutex mSessionMembersMutex;
-	SessionMembers mSessionMembers;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,7 @@
 
 #include "GameSync/protocol/Logic.h"
 #include "GameSync/protocol/Standards.h"
+#include "GameSync/protocol/Messages.h"
 
 #include "Communication/EndpointManager.h"
 #include "Logging/Logging.h"
@@ -144,12 +145,9 @@ void SessionClientManager::ProcessPendingOperations()
 {
 	RF_ASSERT( IsReceivingASession() );
 
-	auto const onMessage = []( MessageParams const& params ) -> protocol::ReadResult //
+	auto const onMessage = [this]( MessageParams const& params ) -> protocol::ReadResult //
 	{
-		RF_TODO_ANNOTATION( "Handle session list" );
-		RF_TODO_BREAK();
-		// HACK: Discard
-		return protocol::TryBlindMessageRead( params.messageID, params.bytes );
+		return this->HandleMessage( params );
 	};
 	auto const doMessageWork = [this]( MessageWorkParams const& params ) -> void //
 	{
@@ -405,6 +403,35 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 	RF_ASSERT( hostEndpoint != nullptr );
 	hostEndpoint->AddIncomingChannel( incomingStream, {} );
 	hostEndpoint->AddOutgoingChannel( outgoingStream, {} );
+}
+
+
+
+protocol::ReadResult SessionClientManager::HandleMessage( MessageParams const& params )
+{
+	using namespace protocol;
+
+	// Session list
+	if( params.messageID == MsgSessionList::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved session list" );
+		MsgSessionList msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+		SessionMembers members = ReadSessionListMessage( msg );
+		{
+			WriterLock const membersLock( mSessionMembersMutex );
+			mSessionMembers = rftl::move( members );
+		}
+		return ReadResult::kSuccess;
+	}
+
+	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
+	RF_DBGFAIL();
+	return ReadResult::kUnknownMessage;
 }
 
 

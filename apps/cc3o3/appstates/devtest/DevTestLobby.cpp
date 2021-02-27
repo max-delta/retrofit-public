@@ -165,8 +165,13 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	auto const drawSessionMembersText = [&y, &drawText]( uint8_t x, sync::SessionMembers const& members ) -> void //
 	{
 		drawText( x, y++, "MEMB:" );
+		sync::ConnectionIdentifier const& self = members.mLocalConnection;
 		rftl::stringstream ss;
-		auto const drawEntry = [&y, &drawText, &ss]( uint8_t x, sync::ConnectionIdentifier conn, sync::SessionMembers::PlayerIDs players ) -> void //
+		auto const drawEntry =
+			[&y, &drawText, &ss, &self](
+				uint8_t x,
+				sync::ConnectionIdentifier conn,
+				sync::SessionMembers::PlayerIDs players ) -> void //
 		{
 			ss.clear();
 			bool init = true;
@@ -181,11 +186,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			}
 			if( conn == sync::kInvalidConnectionIdentifier )
 			{
-				drawText( x + 4u, y++, "? [%s]", ss.str().c_str() );
+				drawText( x + 4u, y++, "?? [%s]", ss.str().c_str() );
+			}
+			else if( conn == self )
+			{
+				drawText( x + 4u, y++, "*%llu [%s]", conn, ss.str().c_str() );
 			}
 			else
 			{
-				drawText( x + 4u, y++, "%llu [%s]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "-%llu [%s]", conn, ss.str().c_str() );
 			}
 		};
 		sync::SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
@@ -211,7 +220,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
-		drawSessionMembersText( x, diag.mSessionMembers );
+		drawSessionMembersText( x, host.GetSessionMembers() );
 	}
 	if( internalState.mAsClient != nullptr )
 	{
@@ -224,6 +233,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		drawText( x, y++, "CONN: %llu (+%llu)",
 			diag.mValidConnections,
 			diag.mInvalidConnections );
+		drawSessionMembersText( x, client.GetSessionMembers() );
 	}
 }
 
