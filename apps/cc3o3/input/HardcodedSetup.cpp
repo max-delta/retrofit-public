@@ -144,8 +144,15 @@ void HardcodedMainSetup()
 		commandMapping[command::raw::GameStart] = command::game::UIPauseAction;
 		menuHotkeyController->SetCommandMapping( commandMapping );
 	}
-	manager.RegisterGameController( menuHotkeyController, player::Global, layer::MainMenu );
+	UniquePtr<input::RollbackController> menuRollbackController = DefaultCreator<input::RollbackController>::Create();
+	menuRollbackController->SetSource( menuHotkeyController );
+	menuRollbackController->SetRollbackManager( app::gRollbackManager );
+	menuRollbackController->SetRollbackIdentifier( 0 );
+	app::gRollbackManager->CreateNewStream( 0, time::FrameClock::now() );
+	details::sRollbackControllers.emplace_back( menuRollbackController );
+	manager.RegisterGameController( menuRollbackController, player::Global, layer::MainMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+	manager.StoreGameController( rftl::move( menuRollbackController ) );
 
 	// Text
 	manager.RegisterTextProvider( details::sRawInputController, player::Global );
