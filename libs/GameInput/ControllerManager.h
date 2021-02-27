@@ -28,6 +28,7 @@ private:
 	using GameControllerStorage = rftl::vector<UniquePtr<GameController>>;
 	using LayerMapping = rftl::unordered_map<LayerID, WeakPtr<GameController>>;
 	using PlayerMapping = rftl::unordered_map<PlayerID, LayerMapping>;
+	using TextMapping = rftl::unordered_map<PlayerID, WeakPtr<RawController>>;
 
 
 	//
@@ -38,9 +39,13 @@ public:
 	PlayerIDs GetRegisteredPlayers() const;
 	LayerIDs GetRegisteredLayers() const;
 	WeakPtr<GameController> GetGameController( PlayerID player, LayerID layer ) const;
+	WeakPtr<RawController> GetTextProvider( PlayerID player ) const;
 
 	void RegisterGameController( WeakPtr<GameController> controller, PlayerID player, LayerID layer );
 	WeakPtr<GameController> UnregisterGameController( PlayerID player, LayerID layer );
+
+	void RegisterTextProvider( WeakPtr<RawController> controller, PlayerID player );
+	WeakPtr<RawController> UnregisterTextProvider( PlayerID player );
 
 	WeakPtr<RawController> StoreRawController( UniquePtr<RawController>&& controller );
 	WeakPtr<GameController> StoreGameController( UniquePtr<GameController>&& controller );
@@ -54,6 +59,7 @@ private:
 	RawControllerStorage mRawControllerStorage;
 	GameControllerStorage mGameControllerStorage;
 	PlayerMapping mRegisteredGameControllers;
+	TextMapping mRegisteredTextProviders;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

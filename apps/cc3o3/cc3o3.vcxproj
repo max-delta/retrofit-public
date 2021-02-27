@@ -247,6 +247,9 @@
     <ProjectReference Include="..\..\libs\core_rftype\core_rftype.vcxproj">
       <Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\core_unicode\core_unicode.vcxproj">
+      <Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameAppState\GameAppState.vcxproj">
       <Project>{f4f870c9-64f5-4ab0-83e2-a2c7293e0586}</Project>
     </ProjectReference>

@@ -204,7 +204,9 @@ void HardcodedSetup()
 	manager.RegisterGameController( developerHotkeyController, player::P1, layer::Developer );
 
 	details::sRawInputController = rawController;
-	manager.StoreRawController( rftl::move( rawController ) );
+	WeakPtr<RawController> const storedRaw = manager.StoreRawController( rftl::move( rawController ) );
+	manager.RegisterTextProvider( storedRaw, player::P1 );
+
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( p1HotkeyController ) );
 	manager.StoreGameController( rftl::move( p1RollbackController ) );

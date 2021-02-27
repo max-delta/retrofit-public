@@ -5,18 +5,29 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
-#include "Timing/FrameClock.h"
-
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
+#include "GameInput/RawController.h"
+
+#include "Timing/FrameClock.h"
+#include "Localization/PageMapper.h"
+
+#include "core_unicode/StringConvert.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+
+namespace RF::cc::appstate {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static constexpr input::PlayerID kMainMenuPlayer = input::player::P1;
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 {
-	rftl::vector<input::GameCommand> const commands = GetGameplayInputToProcess( input::player::P1, input::layer::MainMenu );
+	rftl::vector<input::GameCommand> const commands = GetGameplayInputToProcess( details::kMainMenuPlayer, input::layer::MainMenu );
 	return ConvertUICommandsToFocusEvents( commands );
 }
 
@@ -41,6 +52,48 @@ rftl::vector<input::GameCommand> InputHelpers::GetGameplayInputToProcess( input:
 	controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
 
 	return commands;
+}
+
+
+
+rftl::string InputHelpers::GetMainMenuPageMappedTextBuffer()
+{
+	return GetMainMenuPageMappedTextBuffer( rftl::numeric_limits<size_t>::max() );
+}
+
+
+
+rftl::string InputHelpers::GetMainMenuPageMappedTextBuffer( size_t maxLen )
+{
+	return app::gPageMapper->MapTo8Bit(
+		unicode::ConvertToUtf32(
+			GetMainMenuUnicodeTextBuffer( maxLen ) ) );
+}
+
+
+rftl::u16string InputHelpers::GetMainMenuUnicodeTextBuffer()
+{
+	return GetMainMenuUnicodeTextBuffer( rftl::numeric_limits<size_t>::max() );
+}
+
+
+
+rftl::u16string InputHelpers::GetMainMenuUnicodeTextBuffer( size_t maxLen )
+{
+	rftl::u16string retVal;
+	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+	input::RawController const& controller = *controllerManager.GetTextProvider( details::kMainMenuPlayer );
+	controller.GetTextStream( retVal, maxLen );
+	return retVal;
+}
+
+
+
+void InputHelpers::ClearMainMenuTextBuffer()
+{
+	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+	input::RawController& controller = *controllerManager.GetTextProvider( details::kMainMenuPlayer );
+	controller.ClearTextStream();
 }
 
 
@@ -107,4 +160,4 @@ rftl::vector<ui::FocusEventType> InputHelpers::ConvertUICommandsToFocusEvents( r
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

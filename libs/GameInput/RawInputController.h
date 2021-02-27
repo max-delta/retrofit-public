@@ -47,6 +47,7 @@ public:
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const override;
 	virtual void GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, size_t maxSamples, RawSignalType type ) const override;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const override;
+	virtual void ClearTextStream() override;
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) override;
 
 

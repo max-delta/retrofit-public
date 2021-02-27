@@ -75,19 +75,5 @@ void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sa
 	GetGameSignalStream( filter, type );
 }
 
-
-
-void GameController::GetTextStream( rftl::u16string& text ) const
-{
-	return GetTextStream( text, rftl::numeric_limits<size_t>::max() );
-}
-
-
-
-void GameController::GetTextStream( rftl::u16string& text, size_t maxLen ) const
-{
-	text.clear();
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 }}

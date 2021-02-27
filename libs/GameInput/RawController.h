@@ -48,6 +48,7 @@ public:
 	void GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, RawSignalType type ) const;
 	void GetTextStream( rftl::u16string& text ) const;
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const = 0;
+	virtual void ClearTextStream() = 0;
 
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) = 0;
 };

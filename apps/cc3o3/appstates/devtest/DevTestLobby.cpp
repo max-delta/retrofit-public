@@ -235,6 +235,14 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			diag.mInvalidConnections );
 		drawSessionMembersText( x, client.GetSessionMembers() );
 	}
+
+	// Draw text buffer
+	x = 2;
+	y = 20;
+	{
+		rftl::string const textBuffer = InputHelpers::GetMainMenuPageMappedTextBuffer( 32 );
+		drawText( x, y++, "TEXT BUFFER: [%s]", textBuffer.c_str() );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

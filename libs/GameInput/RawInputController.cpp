@@ -179,6 +179,13 @@ void RawInputController::GetTextStream( rftl::u16string& text, size_t maxLen ) c
 
 
 
+void RawInputController::ClearTextStream()
+{
+	mTextBuffer.clear();
+}
+
+
+
 void RawInputController::TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
 {
 	while( mCommandBuffer.empty() == false && mCommandBuffer.front().mTime < earliestTime )
