@@ -115,9 +115,8 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	else if( selected[kStartHosting] )
 	{
 		// TODO: Host
-		static constexpr sync::SessionHostManager::HostSpec kSpec{ true, true, 8271 };
-		internalState.mAsHost = DefaultCreator<sync::SessionHostManager>::Create(
-			kSpec );
+		sync::SessionHostManager::HostSpec const spec{ true, true, 8271, { input::player::P1, input::player::P2 } };
+		internalState.mAsHost = DefaultCreator<sync::SessionHostManager>::Create( spec );
 		sync::SessionHostManager& asHost = *internalState.mAsHost;
 		asHost.StartHostingASession();
 	}
@@ -186,15 +185,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			}
 			if( conn == sync::kInvalidConnectionIdentifier )
 			{
-				drawText( x + 4u, y++, "?? [%s]", ss.str().c_str() );
+				drawText( x + 4u, y++, "??? p[%s]", ss.str().c_str() );
 			}
 			else if( conn == self )
 			{
-				drawText( x + 4u, y++, "*%llu [%s]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "*%-2llu p[%s]", conn, ss.str().c_str() );
 			}
 			else
 			{
-				drawText( x + 4u, y++, "-%llu [%s]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "-%-2llu p[%s]", conn, ss.str().c_str() );
 			}
 		};
 		sync::SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();

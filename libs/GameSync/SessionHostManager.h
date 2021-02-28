@@ -44,6 +44,7 @@ public:
 		bool mIPv6 = false;
 		bool mDevLoopback = false;
 		uint16_t mPort = 0;
+		SessionMembers::PlayerIDs mPermittedPlayerIDs;
 	};
 
 	struct Diagnostics

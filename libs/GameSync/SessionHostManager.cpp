@@ -75,6 +75,10 @@ void SessionHostManager::StartHostingASession()
 		mSessionMembers = {};
 		mSessionMembers.mLocalConnection = mConnectionIdentifierGen.Generate();
 		mSessionMembers.mAllConnections.emplace( mSessionMembers.mLocalConnection );
+		for( input::PlayerID const& id : mSpec.mPermittedPlayerIDs )
+		{
+			mSessionMembers.mPlayerConnections[id] = kInvalidConnectionIdentifier;
+		}
 	}
 
 	// Create listener socket

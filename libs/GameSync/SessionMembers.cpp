@@ -26,7 +26,7 @@ SessionMembers::PlayerIDs SessionMembers::GetUnclaimedPlayerIDs() const
 	retVal.reserve( mPlayerConnections.size() );
 	for( PlayerConnections::value_type const& playerConn : mPlayerConnections )
 	{
-		if( playerConn.second != kInvalidConnectionIdentifier )
+		if( playerConn.second == kInvalidConnectionIdentifier )
 		{
 			retVal.emplace( playerConn.first );
 		}
@@ -68,6 +68,10 @@ SessionMembers::ConnectionPlayerIDs SessionMembers::GetConnectionPlayerIDs() con
 	}
 	for( PlayerConnections::value_type const& playerConn : mPlayerConnections )
 	{
+		if( playerConn.second == kInvalidConnectionIdentifier )
+		{
+			continue;
+		}
 		ConnectionPlayerIDs::iterator const iter = retVal.find( playerConn.second );
 		RF_ASSERT( iter != retVal.end() );
 		iter->second.emplace( playerConn.first );
