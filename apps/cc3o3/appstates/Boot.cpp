@@ -46,7 +46,6 @@ void Boot::OnTick( AppStateTickContext& context )
 	// TODO: Get this from a file
 	input::HardcodedRawSetup();
 	input::HardcodedMainSetup();
-	input::HardcodedGameSetup(); // TODO: Move this
 
 	// Hop out of boot ASAP
 	context.mManager.RequestDeferredStateChange( GetStateAfterBoot() );

@@ -61,6 +61,9 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
 
+	// TODO: Multiplayer considerations and logic
+	input::HardcodedGameSetup();
+
 	// TODO: Load save
 
 	// Prepare the character database

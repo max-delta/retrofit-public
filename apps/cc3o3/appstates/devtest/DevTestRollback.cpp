@@ -72,6 +72,7 @@ struct DevTestRollback::InternalState
 
 void DevTestRollback::OnEnter( AppStateChangeContext& context )
 {
+	input::HardcodedGameSetup();
 	input::HardcodedHackSetup();
 
 	mInternalState = DefaultCreator<InternalState>::Create();
