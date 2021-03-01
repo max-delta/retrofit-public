@@ -75,12 +75,16 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		kLaunchClone = 0,
 		kStartHosting = 1,
 		kConnectToHost = 2,
+		kClaimAPlayer = 3,
+		kRelinquishAPlayer = 4,
 		kNumOptions
 	};
 	static constexpr char const* kOptionText[] = {
 		"Launch clone",
 		"Start hosting",
-		"Connect to host"
+		"Connect to host",
+		"Claim a player",
+		"Relinquish a player"
 	};
 	bool selected[kNumOptions] = {};
 
@@ -129,6 +133,28 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		sync::SessionClientManager& asClient = *internalState.mAsClient;
 		asClient.StartReceivingASession();
 	}
+	else if( selected[kClaimAPlayer] )
+	{
+		if( internalState.mAsHost != nullptr )
+		{
+			internalState.mAsHost->AttemptPlayerChange( input::player::P1, true );
+		}
+		if( internalState.mAsClient != nullptr )
+		{
+			internalState.mAsClient->RequestPlayerChange( input::player::P2, true );
+		}
+	}
+	else if( selected[kRelinquishAPlayer] )
+	{
+		if( internalState.mAsHost != nullptr )
+		{
+			internalState.mAsHost->AttemptPlayerChange( input::player::P1, false );
+		}
+		if( internalState.mAsClient != nullptr )
+		{
+			internalState.mAsClient->RequestPlayerChange( input::player::P2, false );
+		}
+	}
 
 	uint8_t x;
 	uint8_t y;
@@ -165,14 +191,13 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	{
 		drawText( x, y++, "MEMB:" );
 		sync::ConnectionIdentifier const& self = members.mLocalConnection;
-		rftl::stringstream ss;
 		auto const drawEntry =
-			[&y, &drawText, &ss, &self](
+			[&y, &drawText, &self](
 				uint8_t x,
 				sync::ConnectionIdentifier conn,
 				sync::SessionMembers::PlayerIDs players ) -> void //
 		{
-			ss.clear();
+			rftl::stringstream ss;
 			bool init = true;
 			for( input::PlayerID const& id : players )
 			{

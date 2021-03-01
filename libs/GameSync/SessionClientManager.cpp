@@ -183,6 +183,18 @@ SessionClientManager::Diagnostics SessionClientManager::ReportDiagnostics() cons
 	return retVal;
 }
 
+
+
+void SessionClientManager::RequestPlayerChange( input::PlayerID id, bool claim )
+{
+	RF_ASSERT( id != input::kInvalidPlayerID );
+
+	ReaderLock const lock( mPlayerChangesMutex );
+	PlayerChange& playerChange = mPlayerChanges[id];
+	playerChange = {};
+	playerChange.mClaim = claim;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void SessionClientManager::DoHandshakes()
@@ -438,6 +450,101 @@ protocol::ReadResult SessionClientManager::HandleMessage( MessageParams const& p
 
 void SessionClientManager::DoMessageWork( MessageWorkParams const& params )
 {
+	if( params.validConnectionIDs.empty() )
+	{
+		// No host yet
+		return;
+	}
+
+	RF_ASSERT( params.validConnectionIDs.size() == 1 );
+	RF_ASSERT( *params.validConnectionIDs.begin() == kSingleHostIdentifier );
+	protocol::Buffer& messages = params.messagesByRecipient.at( kSingleHostIdentifier );
+
+	// Process player claims
+	{
+		ReaderLock const currentLock( mSessionMembersMutex );
+
+		// Get our connection
+		ConnectionIdentifier const& connectionID = mSessionMembers.mLocalConnection;
+		if( connectionID != kInvalidConnectionIdentifier )
+		{
+			WriterLock const requestLock( mPlayerChangesMutex );
+
+			SessionMembers::PlayerIDs const all = mSessionMembers.GetPlayerIDs();
+			SessionMembers::PlayerIDs const local = mSessionMembers.GetLocalPlayerIDs();
+			SessionMembers::PlayerIDs const unclaimed = mSessionMembers.GetUnclaimedPlayerIDs();
+
+			Clock::time_point const now = Clock::now();
+
+			// For each request...
+			PlayerChanges::iterator requestIter = mPlayerChanges.begin();
+			while( requestIter != mPlayerChanges.end() )
+			{
+				input::PlayerID const& id = requestIter->first;
+				RF_ASSERT( id != input::kInvalidPlayerID );
+				PlayerChange& change = requestIter->second;
+
+				if( all.count( id ) == 0 )
+				{
+					// Not a valid ID yet
+					requestIter++;
+					continue;
+				}
+
+				if( change.mClaim && local.count( id ) != 0 )
+				{
+					// Claim succeeded
+					requestIter = mPlayerChanges.erase( requestIter );
+					continue;
+				}
+
+				if( change.mClaim == false && unclaimed.count( id ) != 0 )
+				{
+					// Relinquish succeeded
+					requestIter = mPlayerChanges.erase( requestIter );
+					continue;
+				}
+
+				if( change.mClaim && unclaimed.count( id ) == 0 )
+				{
+					// Want to claim, but it's not available yet
+					requestIter++;
+					continue;
+				}
+
+				// Want to make a request
+				if( change.mClaim )
+				{
+					RF_ASSERT( unclaimed.count( id ) != 0 );
+				}
+				else
+				{
+					RF_ASSERT( local.count( id ) != 0 );
+				}
+
+				if( now - change.mSent < kPlayerClaimThrottle )
+				{
+					// Not enough time since last time this was sent
+					requestIter++;
+					continue;
+				}
+
+				// Make request
+				protocol::MessageIdentifier{ protocol::MsgClaimPlayer::kID }.Append( messages );
+				protocol::MsgClaimPlayer claimPlayer = {};
+				claimPlayer.mPlayerID = id;
+				claimPlayer.mClaim = change.mClaim;
+				claimPlayer.Append( messages );
+
+				// Update sent time
+				change.mSent = now;
+
+				requestIter++;
+				continue;
+			}
+		}
+	}
+
 	RF_TODO_ANNOTATION( "Local queue" );
 }
 

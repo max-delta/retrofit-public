@@ -26,14 +26,23 @@ class GAMESYNC_API SessionClientManager final : public SessionManager
 	RF_NO_COPY( SessionClientManager );
 
 	//
+	// Forwards
+private:
+	struct PlayerChange;
+
+
+	//
 	// Types and constants
 private:
 	static constexpr rftl::chrono::milliseconds kHandshakeThrottle{ 100 };
+	static constexpr rftl::chrono::milliseconds kPlayerClaimThrottle{ 100 };
 
 	// NOTE: May add support for multiple hosts in the future, possibly with a
 	//  shared ownership model for the total connection list
 	static constexpr ConnectionIdentifier kSingleHostIdentifier = 1;
 	static constexpr size_t kSingleHostCount = 1;
+
+	using PlayerChanges = rftl::unordered_map<input::PlayerID, PlayerChange>;
 
 
 	//
@@ -49,6 +58,13 @@ public:
 	{
 		size_t mInvalidConnections = 0;
 		size_t mValidConnections = 0;
+	};
+
+private:
+	struct PlayerChange
+	{
+		bool mClaim = false;
+		Clock::time_point mSent = {};
 	};
 
 
@@ -68,6 +84,9 @@ public:
 
 	// Thread-safe
 	Diagnostics ReportDiagnostics() const;
+
+	// Thread-safe
+	void RequestPlayerChange( input::PlayerID id, bool claim );
 
 
 	//
@@ -93,6 +112,9 @@ private:
 	rftl::atomic<bool> mShouldReceiveASession = false;
 	thread::AsyncThread mHandshakeThread;
 	rftl::atomic<bool> mLastHandshakeUneventful = false;
+
+	mutable ReaderWriterMutex mPlayerChangesMutex;
+	PlayerChanges mPlayerChanges;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -41,6 +41,8 @@ public:
 	PlayerIDs GetLocalPlayerIDs() const;
 	ConnectionPlayerIDs GetConnectionPlayerIDs() const;
 
+	bool TryClaimPlayer( input::PlayerID playerID, ConnectionIdentifier newConnID );
+	bool TryRelinquishPlayer( input::PlayerID playerID, ConnectionIdentifier oldConnID );
 	void ReclaimOrphanedPlayerIDs();
 
 

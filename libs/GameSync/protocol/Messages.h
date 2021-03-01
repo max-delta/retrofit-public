@@ -53,12 +53,27 @@ struct GAMESYNC_API MsgSessionList final
 	ReadResult TryRead( rftl::byte_view& bytes );
 };
 
+
+
+struct GAMESYNC_API MsgClaimPlayer final
+{
+	static constexpr MessageID kID = { 'P', 'L', 'Y', 'R' };
+	static constexpr char const kDesc[] = "I want to claim/release this player";
+
+	input::PlayerID mPlayerID = input::kInvalidPlayerID;
+	bool mClaim = false;
+
+	void Append( Buffer& bytes ) const;
+	ReadResult TryRead( rftl::byte_view& bytes );
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 using AllMessages = TypeList<
 	MsgHello,
 	MsgWelcome,
-	MsgSessionList>;
+	MsgSessionList,
+	MsgClaimPlayer>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

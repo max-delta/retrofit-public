@@ -81,6 +81,53 @@ SessionMembers::ConnectionPlayerIDs SessionMembers::GetConnectionPlayerIDs() con
 
 
 
+bool SessionMembers::TryClaimPlayer( input::PlayerID playerID, ConnectionIdentifier newConnID )
+{
+	RF_ASSERT( playerID != input::kInvalidPlayerID );
+	RF_ASSERT( newConnID != kInvalidConnectionIdentifier );
+	ConnectionIdentifier& curConnID = mPlayerConnections.at( playerID );
+
+	if( curConnID == newConnID )
+	{
+		// Already claimed
+		return true;
+	}
+
+	if( curConnID == kInvalidConnectionIdentifier )
+	{
+		// Claim
+		curConnID = newConnID;
+		return true;
+	}
+
+	// Claimed by another connection
+	return false;
+}
+
+
+
+bool SessionMembers::TryRelinquishPlayer( input::PlayerID playerID, ConnectionIdentifier oldConnID )
+{
+	RF_ASSERT( playerID != input::kInvalidPlayerID );
+	RF_ASSERT( oldConnID != kInvalidConnectionIdentifier );
+	ConnectionIdentifier& curConnID = mPlayerConnections.at( playerID );
+
+	if( curConnID == oldConnID )
+	{
+		// Relinquish
+		curConnID = kInvalidConnectionIdentifier;
+		return true;
+	}
+
+	// Not claimed by this connection
+	// NOTE: May currently be claimed by another connection, the semantics of
+	//  this return are that this connection has successfuly ensured that it
+	//  holds no claim to the player
+	return true;
+}
+
+
+
 void SessionMembers::ReclaimOrphanedPlayerIDs()
 {
 	for( PlayerConnections::value_type& playerConn : mPlayerConnections )

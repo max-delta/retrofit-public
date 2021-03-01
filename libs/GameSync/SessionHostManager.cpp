@@ -209,12 +209,9 @@ void SessionHostManager::ProcessPendingOperations()
 {
 	RF_ASSERT( IsHostingASession() );
 
-	auto const onMessage = []( MessageParams const& params ) -> protocol::ReadResult //
+	auto const onMessage = [this]( MessageParams const& params ) -> protocol::ReadResult //
 	{
-		RF_TODO_ANNOTATION( "Proxy queue" );
-		RF_TODO_BREAK();
-		// HACK: Discard
-		return protocol::TryBlindMessageRead( params.messageID, params.bytes );
+		return this->HandleMessage( params );
 	};
 	auto const doMessageWork = [this]( MessageWorkParams const& params ) -> void //
 	{
@@ -248,6 +245,28 @@ SessionHostManager::Diagnostics SessionHostManager::ReportDiagnostics() const
 	}
 
 	return retVal;
+}
+
+
+
+bool SessionHostManager::AttemptPlayerChange( input::PlayerID id, bool claim )
+{
+	RF_ASSERT( id != input::kInvalidPlayerID );
+
+	WriterLock const membersLock( mSessionMembersMutex );
+
+	ConnectionIdentifier const& localConnID = mSessionMembers.mLocalConnection;
+	RF_ASSERT( localConnID != kInvalidConnectionIdentifier );
+
+	mLocalPlayerChangesMade.store( true, rftl::memory_order::memory_order_release );
+	if( claim )
+	{
+		return mSessionMembers.TryClaimPlayer( id, localConnID );
+	}
+	else
+	{
+		return mSessionMembers.TryRelinquishPlayer( id, localConnID );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -546,6 +565,49 @@ void SessionHostManager::ValidateUntrustedConnections()
 
 
 
+protocol::ReadResult SessionHostManager::HandleMessage( MessageParams const& params )
+{
+	using namespace protocol;
+
+	// Claim player
+	if( params.messageID == MsgClaimPlayer::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved claim player" );
+		MsgClaimPlayer msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+		{
+			WriterLock const membersLock( mSessionMembersMutex );
+
+			bool changeSuccess;
+			if( msg.mClaim )
+			{
+				changeSuccess = mSessionMembers.TryClaimPlayer( msg.mPlayerID, params.connectionID );
+			}
+			else
+			{
+				changeSuccess = mSessionMembers.TryRelinquishPlayer( msg.mPlayerID, params.connectionID );
+			}
+			if( changeSuccess )
+			{
+				mLocalPlayerChangesMade.store( true, rftl::memory_order::memory_order_release );
+			}
+		}
+		return ReadResult::kSuccess;
+	}
+
+	RF_TODO_ANNOTATION( "Proxy queue" );
+
+	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
+	RF_DBGFAIL();
+	return ReadResult::kUnknownMessage;
+}
+
+
+
 void SessionHostManager::DoMessageWork( MessageWorkParams const& params )
 {
 	ConnectionIDs const& validConnectionIDs = params.validConnectionIDs;
@@ -579,6 +641,13 @@ void SessionHostManager::DoMessageWork( MessageWorkParams const& params )
 		if( sessionMembersChanged )
 		{
 			mSessionMembers.ReclaimOrphanedPlayerIDs();
+		}
+
+		// Check for other player changes
+		bool const localPlayerChangesMade = mLocalPlayerChangesMade.exchange( false, rftl::memory_order::memory_order_acq_rel );
+		if( localPlayerChangesMade )
+		{
+			sessionMembersChanged = true;
 		}
 
 		// Snapshot the session members while still under lock

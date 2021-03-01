@@ -136,4 +136,36 @@ ReadResult MsgSessionList::TryRead( rftl::byte_view& bytes )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void MsgClaimPlayer::Append( Buffer& bytes ) const
+{
+	using Rep = math::BitField<uint8_t, 8, 1>;
+	Rep rep = {};
+	rep.WriteAt<0>( mPlayerID );
+	rep.WriteAt<1>( mClaim ? 1u : 0u );
+
+	uint8_t* const dest = details::Grow( bytes, sizeof( Rep ) );
+	memcpy( dest, rep.Data(), sizeof( Rep ) );
+}
+
+
+
+ReadResult MsgClaimPlayer::TryRead( rftl::byte_view& bytes )
+{
+	using Rep = math::BitField<uint8_t, 8, 1>;
+
+	if( bytes.size() < sizeof( Rep ) )
+	{
+		return ReadResult::kTooSmall;
+	}
+
+	Rep const* const rep = reinterpret_cast<Rep const*>( bytes.data() );
+	mPlayerID = rep->ReadAt<0>();
+	mClaim = rep->ReadAt<1>() != 0;
+
+	bytes.remove_prefix( sizeof( Rep ) );
+	return ReadResult::kSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
 }

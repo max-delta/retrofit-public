@@ -71,6 +71,9 @@ public:
 	// Thread-safe
 	Diagnostics ReportDiagnostics() const;
 
+	// Thread-safe
+	bool AttemptPlayerChange( input::PlayerID id, bool claim );
+
 
 	//
 	// Private methods
@@ -79,6 +82,7 @@ private:
 	void CreateClientChannels( comm::EndpointIdentifier clientIdentifier, UniquePtr<platform::network::TCPSocket>&& newConnection );
 	void ValidateUntrustedConnections();
 
+	protocol::ReadResult HandleMessage( MessageParams const& params );
 	void DoMessageWork( MessageWorkParams const& params );
 
 
@@ -95,6 +99,8 @@ private:
 	thread::AsyncThread mListenerThread;
 	thread::AsyncThread mValidatorThread;
 	rftl::atomic<bool> mLastValidationUneventful = false;
+
+	rftl::atomic<bool> mLocalPlayerChangesMade = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

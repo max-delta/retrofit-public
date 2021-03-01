@@ -207,6 +207,7 @@ void SessionManager::ProcessPendingConnectionOperations(
 				{
 					// Bad blind decode
 					RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Batch was trivially invalid, terminating connection" );
+					RF_DBGFAIL();
 					incoming.Terminate();
 					connectionsToDestroy.emplace_back( id );
 					break;
@@ -228,6 +229,7 @@ void SessionManager::ProcessPendingConnectionOperations(
 				{
 					// Bad decode
 					RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "Batch was invalid, terminating connection" );
+					RF_DBGFAIL();
 					incoming.Terminate();
 					connectionsToDestroy.emplace_back( id );
 					break;
