@@ -103,6 +103,67 @@ inline static_basic_string<Element, ElementCapacity>::~static_basic_string()
 
 
 template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string const& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+	}
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string const&& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+		other.clear();
+	}
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<size_t OtherCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string<value_type, OtherCapacity> const& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+	}
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<size_t OtherCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string<value_type, OtherCapacity>&& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+		other.clear();
+	}
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<Element, ElementCapacity>::operator=( rftl::initializer_list<value_type> init )
+{
+	assign( init );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline void static_basic_string<Element, ElementCapacity>::assign( size_type count, value_type const& value )
 {
 	clear();
@@ -411,7 +472,7 @@ inline void static_basic_string<Element, ElementCapacity>::push_back( value_type
 {
 	RF_ASSERT_MSG( value != Element{}, "Null characters not supported" );
 	RF_ASSERT_MSG( size() < capacity(), "Attempting grow on full container" );
-	m_Storage[ size() ] = rftl::move( value );
+	m_Storage[size()] = rftl::move( value );
 }
 
 
@@ -421,7 +482,7 @@ inline void static_basic_string<Element, ElementCapacity>::pop_back()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting pop_back on empty container" );
 	RF_ASSERT( size() > 0 );
-	m_Storage[ size() - 1 ] = {};
+	m_Storage[size() - 1] = {};
 }
 
 
