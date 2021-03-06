@@ -10,8 +10,11 @@
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
+#include "Localization/PageMapper.h"
 
 #include "PlatformUtils_win32/ProcessLaunch.h"
+
+#include "core_unicode/StringConvert.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -77,6 +80,8 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		kConnectToHost = 2,
 		kClaimAPlayer = 3,
 		kRelinquishAPlayer = 4,
+		kClearText = 5,
+		kSendText = 6,
 		kNumOptions
 	};
 	static constexpr char const* kOptionText[] = {
@@ -84,7 +89,9 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		"Start hosting",
 		"Connect to host",
 		"Claim a player",
-		"Relinquish a player"
+		"Relinquish a player",
+		"Clear text",
+		"Send text"
 	};
 	bool selected[kNumOptions] = {};
 
@@ -154,6 +161,23 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		{
 			internalState.mAsClient->RequestPlayerChange( input::player::P2, false );
 		}
+	}
+	else if( selected[kClearText] )
+	{
+		InputHelpers::ClearMainMenuTextBuffer();
+	}
+	else if( selected[kSendText] )
+	{
+		rftl::string text = unicode::ConvertToUtf8( InputHelpers::GetMainMenuUnicodeTextBuffer( 32 ) );
+		if( internalState.mAsHost != nullptr )
+		{
+			internalState.mAsHost->QueueOutgoingChatMessage( rftl::move( text ) );
+		}
+		if( internalState.mAsClient != nullptr )
+		{
+			internalState.mAsClient->QueueOutgoingChatMessage( rftl::move( text ) );
+		}
+		InputHelpers::ClearMainMenuTextBuffer();
 	}
 
 	uint8_t x;
@@ -260,9 +284,35 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		drawSessionMembersText( x, client.GetSessionMembers() );
 	}
 
+	// Draw chat log
+	x = 2;
+	y = 15;
+	auto const drawChatLog = [x, &y, &drawText]( sync::SessionManager::ChatMessages const& messages ) -> void //
+	{
+		drawText( x, y++, "CHAT:" );
+		for( sync::SessionManager::ChatMessage const& message : messages )
+		{
+			rftl::string const textBuffer = app::gPageMapper->MapTo8Bit(
+				unicode::ConvertToUtf32( message.mText ) );
+			drawText( x + 4u, y++, "%-2llu: \"%s\"",
+				message.mSourceConnectionID,
+				textBuffer.c_str() );
+		}
+	};
+	if( internalState.mAsHost != nullptr )
+	{
+		sync::SessionHostManager const& host = *internalState.mAsHost;
+		drawChatLog( host.GetRecentChatMessages( 5 ) );
+	}
+	if( internalState.mAsClient != nullptr )
+	{
+		sync::SessionClientManager const& client = *internalState.mAsClient;
+		drawChatLog( client.GetRecentChatMessages( 5 ) );
+	}
+
 	// Draw text buffer
 	x = 2;
-	y = 20;
+	y = 21;
 	{
 		rftl::string const textBuffer = InputHelpers::GetMainMenuPageMappedTextBuffer( 32 );
 		drawText( x, y++, "TEXT BUFFER: [%s]", textBuffer.c_str() );

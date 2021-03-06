@@ -15,6 +15,8 @@
 #include "rftl/shared_mutex"
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
+#include "rftl/deque"
+#include "rftl/string"
 
 
 namespace RF::sync {
@@ -27,6 +29,9 @@ class GAMESYNC_API SessionManager
 
 	//
 	// Forwards
+public:
+	struct ChatMessage;
+
 protected:
 	struct Connection;
 	struct MessageParams;
@@ -40,6 +45,8 @@ public:
 	//  has gone wrong, possibly even a malicious client attempting to flood
 	//  the connection-handling capabilities, at which point: they've succeeded
 	static constexpr size_t kMaxConnectionCount = 32;
+
+	using ChatMessages = rftl::deque<ChatMessage>;
 
 protected:
 	using ReaderWriterMutex = rftl::shared_mutex;
@@ -62,6 +69,15 @@ protected:
 
 	//
 	// Structs
+public:
+	struct ChatMessage
+	{
+		ConnectionIdentifier mSourceConnectionID = kInvalidConnectionIdentifier;
+		Clock::time_point mReceiveTime = {};
+		RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
+		rftl::string mText;
+	};
+
 protected:
 	struct Connection
 	{
@@ -99,6 +115,11 @@ public:
 	// Thread-safe
 	SessionMembers GetSessionMembers() const;
 
+	// Thread-safe
+	RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
+	bool QueueOutgoingChatMessage( std::string&& text );
+	ChatMessages GetRecentChatMessages( size_t maxHistory ) const;
+
 
 	//
 	// Protected methods
@@ -125,6 +146,12 @@ protected:
 
 	mutable ReaderWriterMutex mSessionMembersMutex;
 	SessionMembers mSessionMembers;
+
+	mutable ReaderWriterMutex mUnsentChatMessagesMutex;
+	ChatMessages mUnsentChatMessages;
+
+	mutable ReaderWriterMutex mChatMessagesMutex;
+	ChatMessages mChatMessages;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

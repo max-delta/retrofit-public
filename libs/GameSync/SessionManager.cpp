@@ -8,6 +8,7 @@
 #include "Logging/Logging.h"
 
 #include "core_platform/IncomingBufferStitcher.h"
+#include "core_math/math_casts.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -49,6 +50,56 @@ SessionMembers SessionManager::GetSessionMembers() const
 {
 	ReaderLock const membersLock( mSessionMembersMutex );
 	return mSessionMembers;
+}
+
+
+
+bool SessionManager::QueueOutgoingChatMessage( std::string&& text )
+{
+	RF_ASSERT( text.empty() == false );
+
+	ConnectionIdentifier localIdentifier = kInvalidConnectionIdentifier;
+	{
+		ReaderLock const membersLock( mSessionMembersMutex );
+		localIdentifier = mSessionMembers.mLocalConnection;
+	}
+	if( localIdentifier == kInvalidConnectionIdentifier )
+	{
+		return false;
+	}
+
+	ChatMessage message = {};
+	message.mText = rftl::move( text );
+
+	{
+		WriterLock const unsentLock( mUnsentChatMessagesMutex );
+		mUnsentChatMessages.emplace_back( message ); // Via copy
+	}
+
+	// Local copy adds information that would normally be set on receipt
+	message.mSourceConnectionID = localIdentifier;
+	message.mReceiveTime = Clock::now();
+
+	{
+		WriterLock const messagesLock( mChatMessagesMutex );
+		mChatMessages.emplace_back( rftl::move( message ) ); // Via move
+	}
+
+	return true;
+}
+
+
+
+SessionManager::ChatMessages SessionManager::GetRecentChatMessages( size_t maxHistory ) const
+{
+	ReaderLock const messagesLock( mChatMessagesMutex );
+	if( mChatMessages.size() <= maxHistory )
+	{
+		return mChatMessages;
+	}
+	return ChatMessages(
+		mChatMessages.end() - math::integer_cast<ChatMessages::difference_type>( maxHistory ),
+		mChatMessages.end() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
