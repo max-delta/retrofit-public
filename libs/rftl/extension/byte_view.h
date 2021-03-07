@@ -1,4 +1,5 @@
 #pragma once
+#include "rftl/extension/void_alias.h"
 #include "rftl/extension/void_traits.h"
 
 
@@ -17,8 +18,8 @@ public:
 	typedef value_type const* const_pointer;
 	typedef value_type const* iterator;
 	typedef value_type const* const_iterator;
-	typedef rftl::reverse_iterator<iterator> reverse_iterator;
-	typedef rftl::reverse_iterator<const_iterator> const_reverse_iterator;
+	typedef rftl::reverse_iterator<void_alias const*> reverse_iterator;
+	typedef rftl::reverse_iterator<void_alias const*> const_reverse_iterator;
 
 
 	//

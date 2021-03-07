@@ -73,6 +73,9 @@
     <ClInclude Include="extension\algorithms.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\void_alias.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="patch\preinclude.inl">

@@ -176,7 +176,7 @@ inline byte_view::const_reverse_iterator byte_view::rbegin() const
 
 inline byte_view::const_reverse_iterator byte_view::crbegin() const
 {
-	return const_reverse_iterator( cend() );
+	return const_reverse_iterator( reinterpret_cast<void_alias const*>( cend() ) );
 }
 
 
@@ -197,7 +197,7 @@ inline byte_view::const_reverse_iterator byte_view::rend() const
 
 inline byte_view::const_reverse_iterator byte_view::crend() const
 {
-	return const_reverse_iterator( cbegin() );
+	return const_reverse_iterator( reinterpret_cast<void_alias const*>( cbegin() ) );
 }
 
 
