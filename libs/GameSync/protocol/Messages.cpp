@@ -77,7 +77,7 @@ void MsgSessionList::Append( Buffer& bytes ) const
 	IDRep idRep = {};
 	idRep.WriteAt<0>( mYourConnectionID );
 	uint8_t* const id = details::Grow( bytes, sizeof( IDRep ) );
-	memcpy( id, idRep.Data(), sizeof( EntryRep ) );
+	memcpy( id, idRep.Data(), sizeof( IDRep ) );
 
 	// Count
 	uint8_t* const count = details::Grow( bytes, 1 );
