@@ -91,6 +91,20 @@
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
+			<!-- Build machines provide buildstamps via scripts, but local builds can
+				be more lax and use the C preprocessor, since otherwise the changing
+				buildstamp would force a full rebuild each time -->
+			<AdditionalOptions Condition="'$(RFBuildMachine)'!=''">
+				-Werror=date-time
+				-Werror=pch-date-time
+				%(AdditionalOptions)
+			</AdditionalOptions>
+			<AdditionalOptions Condition="'$(RFBuildMachine)'==''">
+				-Wno-date-time
+				-Wno-pch-date-time
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
 			<!--Goal is to use targeted suppression machinery instead of these-->
 			<AdditionalOptions>
 				-Wno-non-virtual-dtor
