@@ -18,11 +18,10 @@ struct Compressor;
 // Bitfields store data in bits in a platform-independent way with consistent
 //  endianness and padding behaviors, in contrast to the platform-dependent
 //  bitfield language feature specified in the C++ standard
-template<typename AccessTypeT, size_t... fieldSizes>
+template<size_t... fieldSizes>
 class BitField
 {
 public:
-	using AccessType = AccessTypeT;
 	using FieldSizes = ValueList<size_t, fieldSizes...>;
 	template<size_t index>
 	using FieldsBeforeIndex = typename FieldSizes::template Split<index>::former;
@@ -36,10 +35,10 @@ public:
 
 
 public:
-	template<size_t index>
-	AccessType ReadAt() const;
-	template<size_t index>
-	void WriteAt( AccessType const& value );
+	template<size_t index, typename AccessTypeT>
+	AccessTypeT ReadAt() const;
+	template<size_t index, typename AccessTypeT>
+	void WriteAt( AccessTypeT const& value );
 
 	void const* Data() const;
 

@@ -67,8 +67,8 @@ ReadResult MsgWelcome::TryRead( rftl::byte_view& bytes )
 
 void MsgSessionList::Append( Buffer& bytes ) const
 {
-	using IDRep = math::BitField<uint64_t, 64>;
-	using EntryRep = math::BitField<uint64_t, 64, 8>;
+	using IDRep = math::BitField<64>;
+	using EntryRep = math::BitField<64, 8>;
 
 	uint8_t const numEntries = math::integer_cast<uint8_t>( mConnectionEntries.size() );
 	bytes.reserve( sizeof( IDRep ) + 1 + sizeof( EntryRep ) * numEntries );
@@ -98,8 +98,8 @@ void MsgSessionList::Append( Buffer& bytes ) const
 
 ReadResult MsgSessionList::TryRead( rftl::byte_view& bytes )
 {
-	using IDRep = math::BitField<uint64_t, 64>;
-	using EntryRep = math::BitField<uint64_t, 64, 8>;
+	using IDRep = math::BitField<64>;
+	using EntryRep = math::BitField<64, 8>;
 
 	if( bytes.size() < sizeof( IDRep ) + 1 )
 	{
@@ -108,7 +108,7 @@ ReadResult MsgSessionList::TryRead( rftl::byte_view& bytes )
 
 	// ID
 	IDRep const* const idRep = reinterpret_cast<IDRep const*>( bytes.data() );
-	mYourConnectionID = idRep->ReadAt<0>();
+	mYourConnectionID = idRep->ReadAt<0, ConnectionIdentifier>();
 	bytes.remove_prefix( sizeof( IDRep ) );
 
 	// Count
@@ -126,8 +126,8 @@ ReadResult MsgSessionList::TryRead( rftl::byte_view& bytes )
 	{
 		ConnectionEntry entry = {};
 		EntryRep const* const entryRep = reinterpret_cast<EntryRep const*>( bytes.data() );
-		entry.first = entryRep->ReadAt<0>();
-		entry.second = math::integer_cast<input::PlayerID>( entryRep->ReadAt<1>() );
+		entry.first = entryRep->ReadAt<0, ConnectionIdentifier>();
+		entry.second = entryRep->ReadAt<1, input::PlayerID>();
 		mConnectionEntries.emplace_back( rftl::move( entry ) );
 		bytes.remove_prefix( sizeof( EntryRep ) );
 	}
@@ -139,7 +139,7 @@ ReadResult MsgSessionList::TryRead( rftl::byte_view& bytes )
 
 void MsgClaimPlayer::Append( Buffer& bytes ) const
 {
-	using Rep = math::BitField<uint8_t, 8, 1>;
+	using Rep = math::BitField<8, 1>;
 	Rep rep = {};
 	rep.WriteAt<0>( mPlayerID );
 	rep.WriteAt<1>( mClaim ? 1u : 0u );
@@ -152,7 +152,7 @@ void MsgClaimPlayer::Append( Buffer& bytes ) const
 
 ReadResult MsgClaimPlayer::TryRead( rftl::byte_view& bytes )
 {
-	using Rep = math::BitField<uint8_t, 8, 1>;
+	using Rep = math::BitField<8, 1>;
 
 	if( bytes.size() < sizeof( Rep ) )
 	{
@@ -160,8 +160,8 @@ ReadResult MsgClaimPlayer::TryRead( rftl::byte_view& bytes )
 	}
 
 	Rep const* const rep = reinterpret_cast<Rep const*>( bytes.data() );
-	mPlayerID = rep->ReadAt<0>();
-	mClaim = rep->ReadAt<1>() != 0;
+	mPlayerID = rep->ReadAt<0, input::PlayerID>();
+	mClaim = rep->ReadAt<1, uint8_t>() != 0;
 
 	bytes.remove_prefix( sizeof( Rep ) );
 	return ReadResult::kSuccess;
@@ -216,7 +216,7 @@ ReadResult MsgChat::TryRead( rftl::byte_view& bytes )
 template<typename Msg>
 void MsgProxyT<Msg>::Append( Buffer& bytes ) const
 {
-	using IDRep = math::BitField<uint64_t, 64>;
+	using IDRep = math::BitField<64>;
 
 	// ID
 	IDRep idRep = {};
@@ -233,7 +233,7 @@ void MsgProxyT<Msg>::Append( Buffer& bytes ) const
 template<typename Msg>
 ReadResult MsgProxyT<Msg>::TryRead( rftl::byte_view& bytes )
 {
-	using IDRep = math::BitField<uint64_t, 64>;
+	using IDRep = math::BitField<64>;
 
 	if( bytes.size() < sizeof( IDRep ) )
 	{
@@ -242,7 +242,7 @@ ReadResult MsgProxyT<Msg>::TryRead( rftl::byte_view& bytes )
 
 	// ID
 	IDRep const* const idRep = reinterpret_cast<IDRep const*>( bytes.data() );
-	mSourceConnectionID = idRep->ReadAt<0>();
+	mSourceConnectionID = idRep->ReadAt<0, ConnectionIdentifier>();
 	bytes.remove_prefix( sizeof( IDRep ) );
 
 	// Msg

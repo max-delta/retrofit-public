@@ -53,7 +53,7 @@ ReadResult CommonHeader::TryRead( rftl::byte_view& bytes )
 
 void MessageBatch::Append( Buffer& bytes ) const
 {
-	using Rep = math::BitField<uint16_t, 16, 16, 4>;
+	using Rep = math::BitField<16, 16, 4>;
 	Rep rep = {};
 	rep.WriteAt<0>( math::integer_cast<uint16_t>( mTotalBytes ) );
 	rep.WriteAt<1>( math::integer_cast<uint16_t>( mBatchBytes ) );
@@ -67,7 +67,7 @@ void MessageBatch::Append( Buffer& bytes ) const
 
 ReadResult MessageBatch::TryRead( rftl::byte_view& bytes )
 {
-	using Rep = math::BitField<uint16_t, 16, 16, 4>;
+	using Rep = math::BitField<16, 16, 4>;
 
 	if( bytes.size() < sizeof( Rep ) )
 	{
@@ -75,9 +75,9 @@ ReadResult MessageBatch::TryRead( rftl::byte_view& bytes )
 	}
 
 	Rep const* const rep = reinterpret_cast<Rep const*>( bytes.data() );
-	mTotalBytes = rep->ReadAt<0>();
-	mBatchBytes = rep->ReadAt<1>();
-	mEncryption = math::enum_bitcast<EncryptionMode>( math::integer_cast<uint8_t>( rep->ReadAt<2>() ) );
+	mTotalBytes = rep->ReadAt<0, size_t>();
+	mBatchBytes = rep->ReadAt<1, size_t>();
+	mEncryption = math::enum_bitcast<EncryptionMode>( rep->ReadAt<2, uint8_t>() );
 
 	bytes.remove_prefix( sizeof( Rep ) );
 	return ReadResult::kSuccess;

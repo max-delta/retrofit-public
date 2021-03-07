@@ -9,18 +9,20 @@
 namespace RF { namespace math {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename AccessTypeT, size_t... fieldSizes>
-inline void const* BitField<AccessTypeT, fieldSizes...>::Data() const
+template<size_t... fieldSizes>
+inline void const* BitField<fieldSizes...>::Data() const
 {
 	return &mStorage[0];
 }
 
 
 
-template<typename AccessTypeT, size_t... fieldSizes>
-template<size_t index>
-inline typename BitField<AccessTypeT, fieldSizes...>::AccessType BitField<AccessTypeT, fieldSizes...>::ReadAt() const
+template<size_t... fieldSizes>
+template<size_t index, typename AccessTypeT>
+inline typename AccessTypeT BitField<fieldSizes...>::ReadAt() const
 {
+	using AccessType = AccessTypeT;
+
 	constexpr size_t kBytesBeforeIndex = GetBytesBeforeIndex<index>();
 	constexpr size_t kBitsOffsetIntoIndex = GetBitsOffsetIntoIndex<index>();
 	constexpr size_t kBitsAtIndex = GetBitsAtIndex<index>();
@@ -32,10 +34,12 @@ inline typename BitField<AccessTypeT, fieldSizes...>::AccessType BitField<Access
 
 
 
-template<typename AccessTypeT, size_t... fieldSizes>
-template<size_t index>
-inline void BitField<AccessTypeT, fieldSizes...>::WriteAt( AccessType const& value )
+template<size_t... fieldSizes>
+template<size_t index, typename AccessTypeT>
+inline void BitField<fieldSizes...>::WriteAt( AccessTypeT const& value )
 {
+	using AccessType = AccessTypeT;
+
 	constexpr size_t kBytesBeforeIndex = GetBytesBeforeIndex<index>();
 	constexpr size_t kBitsOffsetIntoIndex = GetBitsOffsetIntoIndex<index>();
 	constexpr size_t kBitsAtIndex = GetBitsAtIndex<index>();
@@ -47,9 +51,9 @@ inline void BitField<AccessTypeT, fieldSizes...>::WriteAt( AccessType const& val
 
 
 
-template<typename AccessTypeT, size_t... fieldSizes>
+template<size_t... fieldSizes>
 template<size_t index>
-inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBytesBeforeIndex()
+inline constexpr size_t BitField<fieldSizes...>::GetBytesBeforeIndex()
 {
 	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex<index>>::value;
 	constexpr size_t kBytesBeforeIndex = kBitsBeforeIndex / 8;
@@ -58,9 +62,9 @@ inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBytesBeforeInde
 
 
 
-template<typename AccessTypeT, size_t... fieldSizes>
+template<size_t... fieldSizes>
 template<size_t index>
-inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsOffsetIntoIndex()
+inline constexpr size_t BitField<fieldSizes...>::GetBitsOffsetIntoIndex()
 {
 	constexpr size_t kBitsBeforeIndex = ListSum<size_t, FieldsBeforeIndex<index>>::value;
 	constexpr size_t kBytesBeforeIndex = kBitsBeforeIndex / 8;
@@ -70,9 +74,9 @@ inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsOffsetIntoI
 
 
 
-template<typename AccessTypeT, size_t... fieldSizes>
+template<size_t... fieldSizes>
 template<size_t index>
-inline constexpr size_t BitField<AccessTypeT, fieldSizes...>::GetBitsAtIndex()
+inline constexpr size_t BitField<fieldSizes...>::GetBitsAtIndex()
 {
 	static_assert( FieldsAtOrAfterIndex<index>::kNumValues > 0, "Index past number of fields" );
 	using FirstFieldAfterIndex = typename FieldsAtOrAfterIndex<index>::template ByIndex<0>;
