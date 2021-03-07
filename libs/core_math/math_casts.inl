@@ -256,6 +256,25 @@ DST real_cast( SRC const src )
 
 
 
+constexpr int8_t char_integer_bitcast( char const src )
+{
+	return static_cast<int8_t>( src );
+}
+constexpr int16_t char_integer_bitcast( wchar_t const src )
+{
+	return static_cast<int16_t>( src );
+}
+constexpr int16_t char_integer_bitcast( char16_t const src )
+{
+	return static_cast<int16_t>( src );
+}
+constexpr int32_t char_integer_bitcast( char32_t const src )
+{
+	return static_cast<int32_t>( src );
+}
+
+
+
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_enum<SRC>::value, int>::type>
 constexpr auto enum_bitcast( SRC const src ) -> typename rftl::underlying_type<SRC>::type

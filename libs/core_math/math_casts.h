@@ -34,6 +34,12 @@ template<typename DST, typename SRC, //
 	typename rftl::enable_if<rftl::is_floating_point<DST>::value, int>::type = 0>
 DST real_cast( SRC const src );
 
+// Reinterpret character bits as their integer equivalent
+constexpr int8_t char_integer_bitcast( char const src );
+constexpr int16_t char_integer_bitcast( wchar_t const src );
+constexpr int16_t char_integer_bitcast( char16_t const src );
+constexpr int32_t char_integer_bitcast( char32_t const src );
+
 // Reintepret to/from an enum and its underlying type
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_enum<SRC>::value, int>::type = 0>

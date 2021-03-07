@@ -7,13 +7,15 @@
 
 #include "rftl/sstream"
 #include "rftl/string"
+#include "rftl/extension/string_traits.h"
 
 
 namespace RF { namespace reflect {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-template<typename InT>
+template<typename InT,
+	typename rftl::enable_if<rftl::is_char<InT>::value == false, int>::type = 0>
 rftl::stringstream ConvertTempToSS( InT const& source )
 {
 	rftl::stringstream ss;
@@ -21,14 +23,34 @@ rftl::stringstream ConvertTempToSS( InT const& source )
 	return ss;
 }
 
+template<typename InT,
+	typename rftl::enable_if<rftl::is_char<InT>::value, int>::type = 0>
+rftl::stringstream ConvertTempToSS( InT const& source )
+{
+	rftl::stringstream ss;
+	ss << math::char_integer_bitcast( source );
+	return ss;
+}
 
 
-template<typename OutT>
+
+template<typename OutT,
+	typename rftl::enable_if<rftl::is_char<OutT>::value == false, int>::type = 0>
 OutT ConvertSSToTemp( rftl::stringstream&& ss )
 {
 	OutT temp = OutT();
 	ss >> temp;
 	return temp;
+}
+
+template<typename OutT,
+	typename rftl::enable_if<rftl::is_char<OutT>::value, int>::type = 0>
+OutT ConvertSSToTemp( rftl::stringstream&& ss )
+{
+	using Temp = decltype( math::char_integer_bitcast( OutT() ) );
+	Temp temp = 0;
+	ss >> temp;
+	return static_cast<OutT>( temp );
 }
 
 
