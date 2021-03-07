@@ -113,6 +113,12 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#else
 		#error Undefined architecture
 	#endif
+
+	// TODO: Figure out a technique for aggregate initialization that
+	//  is warning-free in C++20, since the standards made a mess of
+	//  the whole thing
+	#define RF_ACK_AGGREGATE_NOCOPY() RF_MSVC_INLINE_SUPPRESS( 4623 4626 ); // Implicit deletion
+
 #elif defined( __clang__ )
 	#define RF_PLATFORM_CLANG
 	static constexpr Compiler kCompiler = Compiler::Clang;
@@ -165,6 +171,12 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#else
 		#error Undefined architecture
 	#endif
+
+	// TODO: Figure out a technique for aggregate initialization that
+	//  is warning-free in C++20, since the standards made a mess of
+	//  the whole thing
+	#define RF_ACK_AGGREGATE_NOCOPY() RF_MSVC_INLINE_SUPPRESS( 4623 4626 ); // Implicit deletion
+
 #else
 	#error Undefined platform
 #endif

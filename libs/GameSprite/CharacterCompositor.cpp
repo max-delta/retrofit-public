@@ -232,10 +232,7 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 			size_t const offsetY;
 			sprite::Bitmap const* const tex;
 
-			// TODO: Figure out a technique for aggregate initialization that
-			//  is warning-free in C++20, since the standards made a mess of
-			//  the whole thing
-			RF_MSVC_INLINE_SUPPRESS( 4623 4626 ); // Implicit deletion
+			RF_ACK_AGGREGATE_NOCOPY();
 		};
 		Input const input[] = {
 			{ sequence.mSpeciesFarRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex },

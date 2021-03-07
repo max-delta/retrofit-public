@@ -92,17 +92,19 @@ protected:
 
 	struct MessageParams
 	{
-		RF_NO_COPY( MessageParams );
 		ConnectionIdentifier connectionID;
 		protocol::MessageID const& messageID;
 		rftl::byte_view& bytes;
+
+		RF_ACK_AGGREGATE_NOCOPY();
 	};
 
 	struct MessageWorkParams
 	{
-		RF_NO_COPY( MessageWorkParams );
 		ConnectionIDs const& validConnectionIDs;
 		MessagesByRecipient& messagesByRecipient;
+
+		RF_ACK_AGGREGATE_NOCOPY();
 	};
 
 
