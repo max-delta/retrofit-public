@@ -10,9 +10,9 @@ namespace RF { namespace math {
 
 TEST( MathBitField, Empty )
 {
-	using bf_u64_empty = BitField<>;
-	static_assert( sizeof( bf_u64_empty ) == 1, "Unexpected size" );
-	bf_u64_empty bf = {};
+	using bf_empty = BitField<>;
+	static_assert( sizeof( bf_empty ) == 1, "Unexpected size" );
+	bf_empty bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 }
 
@@ -20,9 +20,9 @@ TEST( MathBitField, Empty )
 
 TEST( MathBitField, ZeroSize )
 {
-	using bf_u64_0_0_0 = BitField<0, 0, 0>;
-	static_assert( sizeof( bf_u64_0_0_0 ) == 1, "Unexpected size" );
-	bf_u64_0_0_0 bf = {};
+	using bf_0_0_0 = BitField<0, 0, 0>;
+	static_assert( sizeof( bf_0_0_0 ) == 1, "Unexpected size" );
+	bf_0_0_0 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	bf.WriteAt<0>( 0xffffffffffffffffull );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
@@ -39,9 +39,9 @@ TEST( MathBitField, ZeroSize )
 
 TEST( MathBitField, SizeTruncatedInFirstByte )
 {
-	using bf_u64_3 = BitField<3>;
-	static_assert( sizeof( bf_u64_3 ) == 1, "Unexpected size" );
-	bf_u64_3 bf = {};
+	using bf_3 = BitField<3>;
+	static_assert( sizeof( bf_3 ) == 1, "Unexpected size" );
+	bf_3 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	bf.WriteAt<0>( 0x0d );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0xa0 );
@@ -52,9 +52,9 @@ TEST( MathBitField, SizeTruncatedInFirstByte )
 
 TEST( MathBitField, SizeTruncatedInSecondByte )
 {
-	using bf_u64_11 = BitField<11>;
-	static_assert( sizeof( bf_u64_11 ) == 2, "Unexpected size" );
-	bf_u64_11 bf = {};
+	using bf_11 = BitField<11>;
+	static_assert( sizeof( bf_11 ) == 2, "Unexpected size" );
+	bf_11 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
 	bf.WriteAt<0>( 0x0ffd );
@@ -67,9 +67,9 @@ TEST( MathBitField, SizeTruncatedInSecondByte )
 
 TEST( MathBitField, OffsetTruncationInFirstByte )
 {
-	using bf_u64_3_3 = BitField<3, 3>;
-	static_assert( sizeof( bf_u64_3_3 ) == 1, "Unexpected size" );
-	bf_u64_3_3 bf = {};
+	using bf_3_3 = BitField<3, 3>;
+	static_assert( sizeof( bf_3_3 ) == 1, "Unexpected size" );
+	bf_3_3 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	bf.WriteAt<1>( 0x0d );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x14 );
@@ -80,9 +80,9 @@ TEST( MathBitField, OffsetTruncationInFirstByte )
 
 TEST( MathBitField, OffsetTruncationAcrossTwoBytes )
 {
-	using bf_u64_3_11 = BitField<3, 11>;
-	static_assert( sizeof( bf_u64_3_11 ) == 2, "Unexpected size" );
-	bf_u64_3_11 bf = {};
+	using bf_3_11 = BitField<3, 11>;
+	static_assert( sizeof( bf_3_11 ) == 2, "Unexpected size" );
+	bf_3_11 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
 	bf.WriteAt<1>( 0x0ffd );
@@ -95,9 +95,9 @@ TEST( MathBitField, OffsetTruncationAcrossTwoBytes )
 
 TEST( MathBitField, OffsetTruncationAcrossThreeBytes )
 {
-	using bf_u64_3_11 = BitField<3, 19>;
-	static_assert( sizeof( bf_u64_3_11 ) == 3, "Unexpected size" );
-	bf_u64_3_11 bf = {};
+	using bf_3_11 = BitField<3, 19>;
+	static_assert( sizeof( bf_3_11 ) == 3, "Unexpected size" );
+	bf_3_11 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[2], 0x00 );
@@ -115,9 +115,9 @@ TEST( MathBitField, SmallUnsigned )
 	// Signed/unsigned compilation errors only seem to come into play on
 	//  types smaller than uint32_t, so this is mostly just to instantiate the
 	//  templates and make sure they compile
-	using bf_u16_16 = BitField<16>;
-	static_assert( sizeof( bf_u16_16 ) == 2, "Unexpected size" );
-	bf_u16_16 bf = {};
+	using bf_16 = BitField<16>;
+	static_assert( sizeof( bf_16 ) == 2, "Unexpected size" );
+	bf_16 bf = {};
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
 	bf.WriteAt<0>( 0x1234 );
@@ -131,61 +131,61 @@ TEST( MathBitField, SmallUnsigned )
 TEST( MathBitField, IEEE754Binary32Nonsense )
 {
 	static_assert( rftl::numeric_limits<float>::is_iec559, "This test assumes standard floats" );
-	using bf_u32_1_7_24 = BitField<1, 8, 23>;
-	static_assert( sizeof( bf_u32_1_7_24 ) == 4, "Unexpected size" );
+	using bf_1_7_24 = BitField<1, 8, 23>;
+	static_assert( sizeof( bf_1_7_24 ) == 4, "Unexpected size" );
 	static_assert( sizeof( float ) == 4, "Unexpected size" );
 	static_assert( sizeof( uint32_t ) == 4, "Unexpected size" );
-	auto convertToSoft = []( float hardFloat ) -> bf_u32_1_7_24 //
+	auto convertToSoft = []( float hardFloat ) -> bf_1_7_24 //
 	{
 		// HACK: This is probably wildly unsafe and hardware-dependent
 		uint32_t const softUnswapped = *reinterpret_cast<uint32_t const*>( &hardFloat );
 		uint32_t const softSwapped = math::FromPlatformToBigEndian( softUnswapped );
-		return *reinterpret_cast<bf_u32_1_7_24 const*>( &softSwapped );
+		return *reinterpret_cast<bf_1_7_24 const*>( &softSwapped );
 	};
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( 0.f );
+		bf_1_7_24 const softFloat = convertToSoft( 0.f );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( -0.f );
+		bf_1_7_24 const softFloat = convertToSoft( -0.f );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( -2.f );
+		bf_1_7_24 const softFloat = convertToSoft( -2.f );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 128 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( -3.f );
+		bf_1_7_24 const softFloat = convertToSoft( -3.f );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 128 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::denorm_min() );
+		bf_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::denorm_min() );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000001 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::infinity() );
+		bf_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::infinity() );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::quiet_NaN() );
+		bf_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::quiet_NaN() );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
 		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
 	}
 	{
-		bf_u32_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::signaling_NaN() );
+		bf_1_7_24 const softFloat = convertToSoft( rftl::numeric_limits<float>::signaling_NaN() );
 		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
 		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
 		switch( compiler::kCompiler )
