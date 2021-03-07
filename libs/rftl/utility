@@ -34,6 +34,6 @@ using std::in_place_index_t;
 using std::tuple;
 
 namespace rel_ops {
-using namespace std::rel_ops;
+//using namespace std::rel_ops; // Deprecated in C++20
 }
 }

@@ -40,7 +40,7 @@ using std::is_volatile;
 using std::is_trivial;
 using std::is_trivially_copyable;
 using std::is_standard_layout;
-using std::is_pod;
+//using std::is_pod; // Deprecated in C++20
 //using std::is_literal_type; // Deprecated in C++17
 //using std::has_unique_object_representations; // Fun fact: Intellisense compiler supports it, but msvc doesn't :/
 using std::is_empty;
