@@ -19,7 +19,7 @@ inline void const* BitField<fieldSizes...>::Data() const
 
 template<size_t... fieldSizes>
 template<size_t index, typename AccessTypeT>
-inline typename AccessTypeT BitField<fieldSizes...>::ReadAt() const
+inline AccessTypeT BitField<fieldSizes...>::ReadAt() const
 {
 	using AccessType = AccessTypeT;
 
@@ -174,7 +174,16 @@ struct Compressor
 				sharedBits &= ~incomingMask; // Clear
 				sharedBits |= incomingBits; // Set
 				storageByte = sharedBits; // Store
-				incomingBitsFromRight >>= bitsInByte;
+				if constexpr( bitsInByte == sizeof( AccessType ) * 8 )
+				{
+					// Shift would result in clear
+					incomingBitsFromRight = 0;
+				}
+				else
+				{
+					static_assert( bitsInByte <= sizeof( AccessType ) * 8 );
+					incomingBitsFromRight >>= bitsInByte;
+				}
 				bitsLeft -= bitsInByte;
 				RF_ASSERT( bitsLeft > 0 );
 				RF_ASSERT( bitsLeft <= storageSizeBits );
@@ -192,7 +201,16 @@ struct Compressor
 				sharedBits &= ~incomingMask; // Clear
 				sharedBits |= incomingBits; // Set
 				storageByte = sharedBits; // Store
-				incomingBitsFromRight >>= bitsInByte;
+				if constexpr( bitsInByte == sizeof( AccessType ) * 8 )
+				{
+					// Shift would result in clear
+					incomingBitsFromRight = 0;
+				}
+				else
+				{
+					static_assert( bitsInByte <= sizeof( AccessType ) * 8 );
+					incomingBitsFromRight >>= bitsInByte;
+				}
 				bitsLeft -= bitsInByte;
 				RF_ASSERT( bitsLeft > 0 );
 				RF_ASSERT( bitsLeft <= storageSizeBits );
@@ -224,8 +242,17 @@ struct Compressor
 				constexpr size_t leftShiftToMatchSize = bitsInByte;
 				constexpr AccessType outgoingMask = static_cast<AccessType>( ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize ) );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
-				destination <<= leftShiftToMatchSize; // Shift
-				destination &= ~outgoingMask; // Clear
+				if constexpr( leftShiftToMatchSize == sizeof( AccessType ) * 8 )
+				{
+					// Shift would result in clear
+					destination = 0;
+				}
+				else
+				{
+					static_assert( leftShiftToMatchSize <= sizeof( AccessType ) * 8 );
+					destination <<= leftShiftToMatchSize; // Shift
+					destination &= ~outgoingMask; // Clear
+				}
 				destination |= outgoingBits; // Set
 				bitsLeft -= bitsInByte;
 				RF_ASSERT( bitsLeft >= 0 );
@@ -254,8 +281,17 @@ struct Compressor
 				constexpr size_t leftShiftToMatchSize = bitsInByte;
 				constexpr AccessType outgoingMask = static_cast<AccessType>( ~static_cast<AccessType>( GetAllBitsSet<AccessType>() << leftShiftToMatchSize ) );
 				uint8_t const outgoingBits = static_cast<uint8_t>( static_cast<uint8_t>( static_cast<uint8_t>( storageByte ) >> rightShiftToMatchOffset ) & outgoingMask );
-				destination <<= leftShiftToMatchSize; // Shift
-				destination &= ~outgoingMask; // Clear
+				if constexpr( leftShiftToMatchSize == sizeof( AccessType ) * 8 )
+				{
+					// Shift would result in clear
+					destination = 0;
+				}
+				else
+				{
+					static_assert( leftShiftToMatchSize <= sizeof( AccessType ) * 8 );
+					destination <<= leftShiftToMatchSize; // Shift
+					destination &= ~outgoingMask; // Clear
+				}
 				destination |= outgoingBits; // Set
 				bitsLeft -= bitsInByte;
 				RF_ASSERT( bitsLeft > 0 );
