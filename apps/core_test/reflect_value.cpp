@@ -3,9 +3,16 @@
 #include "core_reflect/Value.h"
 
 #include "core_math/math_compare.h"
+#include "core_math/math_casts.h"
 
 
 namespace RF { namespace reflect {
+///////////////////////////////////////////////////////////////////////////////
+
+// GTest can't handle unicode
+#define ASSERT_CHAR( A, B ) \
+	ASSERT_EQ( ::RF::math::char_integer_bitcast( A ), ::RF::math::char_integer_bitcast( A ) )
+
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( Reflect, ValueInvalid )
@@ -294,10 +301,10 @@ TEST( Reflect, StandardValueConvert )
 	ASSERT_EQ( *Value( reinterpret_cast<void*>( 0x8 ) ).ConvertTo<VirtualClass const*>().GetAs<VirtualClass const*>(), reinterpret_cast<VirtualClass const*>( 0x8 ) );
 
 	// Chars can cast around
-	ASSERT_EQ( *Value( static_cast<char>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
-	ASSERT_EQ( *Value( static_cast<char>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
-	ASSERT_EQ( *Value( static_cast<char>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
-	ASSERT_EQ( *Value( static_cast<char>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
+	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
+	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
+	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
 
 	// Floats can cast around
 	ASSERT_EQ( *Value( static_cast<float>( 0.5f ) ).ConvertTo<float>().GetAs<float>(), 0.5 );
@@ -322,25 +329,25 @@ TEST( Reflect, WhitespaceConvert )
 	// Whitespace often gets questionable special handling in the STL, so we
 	//  need to make sure nothing sketchy ends up in our machinery
 
-	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char>().GetAs<char>(), ' ' );
-	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L' ' );
-	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u' ' );
-	ASSERT_EQ( *Value( static_cast<char>( ' ' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U' ' );
+	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char>().GetAs<char>(), ' ' );
+	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L' ' );
+	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u' ' );
+	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U' ' );
 
-	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char>().GetAs<char>(), '\t' );
-	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\t' );
-	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\t' );
-	ASSERT_EQ( *Value( static_cast<char>( '\t' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\t' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char>().GetAs<char>(), '\t' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\t' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\t' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\t' );
 
-	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char>().GetAs<char>(), '\r' );
-	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\r' );
-	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\r' );
-	ASSERT_EQ( *Value( static_cast<char>( '\r' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\r' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char>().GetAs<char>(), '\r' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\r' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\r' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\r' );
 
-	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char>().GetAs<char>(), '\n' );
-	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\n' );
-	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\n' );
-	ASSERT_EQ( *Value( static_cast<char>( '\n' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\n' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char>().GetAs<char>(), '\n' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\n' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\n' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\n' );
 }
 
 
@@ -349,22 +356,22 @@ TEST( Reflect, SketchyValueConvert )
 {
 	// Converting ints to chars is dangerous business, but Squirrel does it, so
 	//  we need to support it
-	ASSERT_EQ( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
-	ASSERT_EQ( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
-	ASSERT_EQ( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
-	ASSERT_EQ( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
-	ASSERT_EQ( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
-	ASSERT_EQ( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
-	ASSERT_EQ( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
-	ASSERT_EQ( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
-	ASSERT_EQ( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
-	ASSERT_EQ( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
-	ASSERT_EQ( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
-	ASSERT_EQ( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
-	ASSERT_EQ( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
-	ASSERT_EQ( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
-	ASSERT_EQ( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
-	ASSERT_EQ( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
+	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
+	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
+	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
+	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
+	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
+	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
+	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
+	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
+	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
+	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
+	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
+	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
 }
 
 

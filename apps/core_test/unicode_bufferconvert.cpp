@@ -2,8 +2,16 @@
 
 #include "core_unicode/BufferConvert.h"
 
+#include "core_math/math_casts.h"
+
 
 namespace RF { namespace unicode {
+///////////////////////////////////////////////////////////////////////////////
+
+// GTest can't handle unicode
+#define ASSERT_CHAR( A, B ) \
+	ASSERT_EQ( ::RF::math::char_integer_bitcast( A ), ::RF::math::char_integer_bitcast( A ) )
+
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( BufferConvert, EmptySource )
@@ -56,43 +64,43 @@ TEST( BufferConvert, Null )
 
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( &c, 1, "\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( &c, 1, u"\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( &c, 1, U"\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 
 	c = 'a';
 	ASSERT_EQ( ConvertToUtf8( &c, 1, "\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 	c = 'a';
 	ASSERT_EQ( ConvertToUtf8( &c, 1, u"\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 	c = 'a';
 	ASSERT_EQ( ConvertToUtf8( &c, 1, U"\0", 2 ), 2 );
-	ASSERT_EQ( c, '\0' );
+	ASSERT_CHAR( c, '\0' );
 
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( &u, 1, "\0", 2 ), 2 );
-	ASSERT_EQ( u, u'\0' );
+	ASSERT_CHAR( u, u'\0' );
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( &u, 1, u"\0", 2 ), 2 );
-	ASSERT_EQ( u, u'\0' );
+	ASSERT_CHAR( u, u'\0' );
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( &u, 1, U"\0", 2 ), 2 );
-	ASSERT_EQ( u, u'\0' );
+	ASSERT_CHAR( u, u'\0' );
 
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( &U, 1, "\0", 2 ), 2 );
-	ASSERT_EQ( U, U'\0' );
+	ASSERT_CHAR( U, U'\0' );
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( &U, 1, u"\0", 2 ), 2 );
-	ASSERT_EQ( U, U'\0' );
+	ASSERT_CHAR( U, U'\0' );
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( &U, 1, U"\0", 2 ), 2 );
-	ASSERT_EQ( U, U'\0' );
+	ASSERT_CHAR( U, U'\0' );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
