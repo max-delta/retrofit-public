@@ -441,6 +441,31 @@ protocol::ReadResult SessionClientManager::HandleMessage( MessageParams const& p
 		return ReadResult::kSuccess;
 	}
 
+	// Chat message
+	if( params.messageID == MsgProxyChat::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved chat" );
+		MsgProxyChat msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+
+		ChatMessage chat = {};
+		chat.mSourceConnectionID = msg.mSourceConnectionID;
+		chat.mReceiveTime = Clock::now();
+		chat.mText.assign( msg.mMsg.mText.begin(), msg.mMsg.mText.end() );
+
+		// Store for local log
+		{
+			WriterLock const messagesLock( mChatMessagesMutex );
+			mChatMessages.emplace_back( rftl::move( chat ) );
+		}
+
+		return ReadResult::kSuccess;
+	}
+
 	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
 	RF_DBGFAIL();
 	return ReadResult::kUnknownMessage;
@@ -542,6 +567,26 @@ void SessionClientManager::DoMessageWork( MessageWorkParams const& params )
 				requestIter++;
 				continue;
 			}
+		}
+	}
+
+	// Process chat
+	{
+		// Pull all the unsent chat messages
+		ChatMessages chatsToSend;
+		{
+			WriterLock const chatLock( mUnsentChatMessagesMutex );
+			chatsToSend.swap( mUnsentChatMessages );
+		}
+
+		// For each chat message...
+		for( ChatMessage const& chatToSend : chatsToSend )
+		{
+			// Send
+			protocol::MessageIdentifier{ protocol::MsgChat::kID }.Append( messages );
+			protocol::MsgChat chat = {};
+			chat.mText.assign( chatToSend.mText.begin(), chatToSend.mText.end() );
+			chat.Append( messages );
 		}
 	}
 

@@ -147,11 +147,11 @@ protected:
 	mutable ReaderWriterMutex mSessionMembersMutex;
 	SessionMembers mSessionMembers;
 
-	mutable ReaderWriterMutex mUnsentChatMessagesMutex;
-	ChatMessages mUnsentChatMessages;
-
 	mutable ReaderWriterMutex mChatMessagesMutex;
 	ChatMessages mChatMessages;
+
+	mutable ReaderWriterMutex mUnsentChatMessagesMutex;
+	ChatMessages mUnsentChatMessages;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -101,6 +101,9 @@ private:
 	rftl::atomic<bool> mLastValidationUneventful = false;
 
 	rftl::atomic<bool> mLocalPlayerChangesMade = false;
+
+	mutable ReaderWriterMutex mProxyChatMessagesMutex;
+	ChatMessages mProxyChatMessages;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

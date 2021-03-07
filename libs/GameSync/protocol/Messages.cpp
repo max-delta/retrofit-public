@@ -168,4 +168,90 @@ ReadResult MsgClaimPlayer::TryRead( rftl::byte_view& bytes )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void MsgChat::Append( Buffer& bytes ) const
+{
+	// Count
+	uint8_t* const count = details::Grow( bytes, 1 );
+	*count = math::integer_cast<uint8_t>( mText.size() );
+
+	// Chars
+	uint8_t* const chars = details::Grow( bytes, mText.size() );
+	memcpy( chars, mText.data(), mText.size() );
+}
+
+
+
+ReadResult MsgChat::TryRead( rftl::byte_view& bytes )
+{
+	if( bytes.size() < sizeof( uint8_t ) + 1 )
+	{
+		return ReadResult::kTooSmall;
+	}
+
+	// Count
+	uint8_t const count = bytes.at<uint8_t>( 0 );
+	bytes.remove_prefix( 1 );
+	if( count == 0 )
+	{
+		return ReadResult::kLogicError;
+	}
+
+	if( bytes.size() < count )
+	{
+		return ReadResult::kTooSmall;
+	}
+
+	// Chars
+	mText.clear();
+	mText.resize( count, '?' );
+	memcpy( mText.data(), &bytes.at<char>( 0 ), count );
+	bytes.remove_prefix( count );
+
+	return ReadResult::kSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename Msg>
+void MsgProxyT<Msg>::Append( Buffer& bytes ) const
+{
+	using IDRep = math::BitField<uint64_t, 64>;
+
+	// ID
+	IDRep idRep = {};
+	idRep.WriteAt<0>( mSourceConnectionID );
+	uint8_t* const id = details::Grow( bytes, sizeof( IDRep ) );
+	memcpy( id, idRep.Data(), sizeof( IDRep ) );
+
+	// Msg
+	mMsg.Append( bytes );
+}
+
+
+
+template<typename Msg>
+ReadResult MsgProxyT<Msg>::TryRead( rftl::byte_view& bytes )
+{
+	using IDRep = math::BitField<uint64_t, 64>;
+
+	if( bytes.size() < sizeof( IDRep ) )
+	{
+		return ReadResult::kTooSmall;
+	}
+
+	// ID
+	IDRep const* const idRep = reinterpret_cast<IDRep const*>( bytes.data() );
+	mSourceConnectionID = idRep->ReadAt<0>();
+	bytes.remove_prefix( sizeof( IDRep ) );
+
+	// Msg
+	return mMsg.TryRead( bytes );
+}
+
+
+
+template struct GAMESYNC_API MsgProxyT<MsgChat>;
+
+///////////////////////////////////////////////////////////////////////////////
 }

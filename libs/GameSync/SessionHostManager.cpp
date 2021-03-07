@@ -599,6 +599,37 @@ protocol::ReadResult SessionHostManager::HandleMessage( MessageParams const& par
 		return ReadResult::kSuccess;
 	}
 
+	// Chat message
+	if( params.messageID == MsgChat::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved chat" );
+		MsgChat msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+
+		ChatMessage chat = {};
+		chat.mSourceConnectionID = params.connectionID;
+		chat.mReceiveTime = Clock::now();
+		chat.mText.assign( msg.mText.begin(), msg.mText.end() );
+
+		// Store for local log
+		{
+			WriterLock const messagesLock( mChatMessagesMutex );
+			mChatMessages.emplace_back( chat ); // Via copy
+		}
+
+		// Store for proxy
+		{
+			WriterLock const messagesLock( mProxyChatMessagesMutex );
+			mProxyChatMessages.emplace_back( rftl::move( chat ) ); // Via move
+		}
+
+		return ReadResult::kSuccess;
+	}
+
 	RF_TODO_ANNOTATION( "Proxy queue" );
 
 	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
@@ -670,6 +701,59 @@ void SessionHostManager::DoMessageWork( MessageWorkParams const& params )
 			protocol::MessageIdentifier{ protocol::MsgSessionList::kID }.Append( messages );
 			protocol::MsgSessionList const session = protocol::CreateSessionListMessage( members, id );
 			session.Append( messages );
+		}
+	}
+
+	// Send out chat messages
+	{
+		// Pull all the proxy chat messages
+		ChatMessages chatsToSend;
+		{
+			WriterLock const chatLock( mProxyChatMessagesMutex );
+
+			chatsToSend.swap( mProxyChatMessages );
+		}
+
+		// Pull all the unsent chat messages, and convert them to proxies
+		ConnectionIdentifier localConnection = kInvalidConnectionIdentifier;
+		{
+			ReaderLock const membersLock( mSessionMembersMutex );
+
+			localConnection = mSessionMembers.mLocalConnection;
+		}
+		RF_ASSERT( localConnection != kInvalidConnectionIdentifier );
+		{
+			WriterLock const chatLock( mUnsentChatMessagesMutex );
+
+			for( ChatMessage& unsent : mUnsentChatMessages )
+			{
+				unsent.mSourceConnectionID = localConnection;
+				chatsToSend.emplace_back( rftl::move( unsent ) );
+			}
+			mUnsentChatMessages.clear();
+		}
+
+		// For each connection...
+		for( ConnectionIdentifier const& id : validConnectionIDs )
+		{
+			protocol::Buffer& messages = messagesByRecipient.at( id );
+
+			// For each message...
+			for( ChatMessage const& chatToSend : chatsToSend )
+			{
+				if( chatToSend.mSourceConnectionID == id )
+				{
+					// Don't proxy back to sender
+					continue;
+				}
+
+				// Send
+				protocol::MessageIdentifier{ protocol::MsgProxyChat::kID }.Append( messages );
+				protocol::MsgProxyChat chat = {};
+				chat.mSourceConnectionID = chatToSend.mSourceConnectionID;
+				chat.mMsg.mText.assign( chatToSend.mText.begin(), chatToSend.mText.end() );
+				chat.Append( messages );
+			}
 		}
 	}
 }

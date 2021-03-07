@@ -8,6 +8,8 @@
 
 #include "core/meta/TypeList.h"
 
+#include "rftl/extension/static_string.h"
+
 
 namespace RF::sync::protocol {
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,13 +69,55 @@ struct GAMESYNC_API MsgClaimPlayer final
 	ReadResult TryRead( rftl::byte_view& bytes );
 };
 
+
+
+struct GAMESYNC_API MsgChat final
+{
+	static constexpr MessageID kID = { 'C', 'H', 'A', 'T' };
+	static constexpr char const kDesc[] = "Chat message text";
+
+	RF_TODO_ANNOTATION( "Convert to static_u8string in C++20" );
+	static constexpr size_t kMaxChars = std::numeric_limits<uint8_t>::max();
+	using Text = rftl::static_string<kMaxChars>;
+	Text mText;
+
+	void Append( Buffer& bytes ) const;
+	ReadResult TryRead( rftl::byte_view& bytes );
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Helper for creating proxy messages
+struct GAMESYNC_API MsgProxy
+{
+	ConnectionIdentifier mSourceConnectionID = kInvalidConnectionIdentifier;
+};
+template<typename Msg>
+struct GAMESYNC_API MsgProxyT : public MsgProxy
+{
+	Msg mMsg;
+
+	void Append( Buffer& bytes ) const;
+	ReadResult TryRead( rftl::byte_view& bytes );
+};
+
+
+
+struct GAMESYNC_API MsgProxyChat final : public MsgProxyT<MsgChat>
+{
+	static constexpr MessageID kID = { 'P', 'X', 'C', 'H' };
+	static constexpr char const kDesc[] = "PROXY Chat message text";
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 using AllMessages = TypeList<
 	MsgHello,
 	MsgWelcome,
 	MsgSessionList,
-	MsgClaimPlayer>;
+	MsgClaimPlayer,
+	MsgChat,
+	MsgProxyChat>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }
