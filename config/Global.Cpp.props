@@ -7,18 +7,13 @@
 			<ExceptionHandling>false</ExceptionHandling>
 
 			<!--Complains that exceptions aren't enabled, don't care-->
-			<DisableSpecificWarnings>4577;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<DisableSpecificWarnings>4577; %(DisableSpecificWarnings)</DisableSpecificWarnings>
 
 			<!--Complains about subtle DLL logic. Would like to have on, but the warning is flawed-->
-			<DisableSpecificWarnings>4275;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-
-			<!--Don't care about variables just used for asserts-->
-			<DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
-				4189;%(DisableSpecificWarnings)
-			</DisableSpecificWarnings>
+			<DisableSpecificWarnings>4275; %(DisableSpecificWarnings)</DisableSpecificWarnings>
 
 			<!--MS STL implementation gets pissy if this define isn't set-->
-			<PreprocessorDefinitions>_HAS_EXCEPTIONS=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+			<PreprocessorDefinitions>_HAS_EXCEPTIONS=0; %(PreprocessorDefinitions)</PreprocessorDefinitions>
 
 			<!--C++17 for now, C++20 isn't ready yet-->
 			<LanguageStandard>stdcpp17</LanguageStandard>
@@ -46,34 +41,6 @@
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
-			<!-- Misc overly pedantic style warnings -->
-			<AdditionalOptions>
-				-Wno-format-nonliteral
-				-Wno-missing-prototypes
-				-Wno-missing-variable-declarations
-				-Wno-pedantic
-				-Wno-shadow-field-in-constructor
-				-Wno-shadow-uncaptured-local
-				-Wno-unused-macros
-				-Wno-unused-parameter
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!-- Disable warnings that complain about code intended to catch various
-			  forms of memory corruption in unoptimized builds, even though it
-				*shouldn't* be possible in well-formed code -->
-			<AdditionalOptions>
-				-Wno-covered-switch-default
-				-Wno-tautological-undefined-compare
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!-- Some warnings are just plain broken -->
-			<AdditionalOptions>
-				-Wno-ignored-attributes
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
 			<!-- ClangCL sometimes lags behind on new CL features -->
 			<AdditionalOptions>
 				-Wno-unused-command-line-argument
@@ -87,86 +54,19 @@
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
-			<!-- Some token patterns are practically unavoidable with macros -->
-			<AdditionalOptions>
-				-Wno-extra-semi
-				-Wno-extra-semi-stmt
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!-- CRT-init hooks are a fact of life, even though they should be
-				carefully considered and scrutinized -->
-			<AdditionalOptions>
-				-Wno-exit-time-destructors
-				-Wno-global-constructors
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!-- Disable warnings about template patterns that reduce link times -->
-			<AdditionalOptions>
-				-Wno-undefined-func-template
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!-- Technically '__' prefixes are reserved, but we use '___RF' to denote
-				internal engine details, which should be safe in practical cases -->
-			<AdditionalOptions>
-				-Wno-reserved-id-macro
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
 			<!-- Azure build machines violate this when forced includes are used -->
 			<AdditionalOptions Condition="'$(RFBuildMachine)'=='Azure'">
 				-Wno-nonportable-include-path
 				%(AdditionalOptions)
 			</AdditionalOptions>
-
-			<!-- Build machines provide buildstamps via scripts, but local builds can
-				be more lax and use the C preprocessor, since otherwise the changing
-				buildstamp would force a full rebuild each time -->
-			<AdditionalOptions Condition="'$(RFBuildMachine)'==''">
-				-Wno-date-time
-				-Wno-pch-date-time
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!--Goal is to use targeted suppression machinery instead of these-->
-			<AdditionalOptions>
-				-Wno-non-virtual-dtor
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!--Don't care about variables just used for asserts-->
-			<AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
-				-Wno-unused-variable
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!--Truly unused variables should be an error-->
-			<AdditionalOptions Condition="'$(RFConfig)'=='Debug'">
-				-Werror=unused-variable
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
-			<!--Don't care about intentionally unreachable code, and there isn't a
-				good way to ditinguish from accidentally unreachable-->
-			<AdditionalOptions>
-				-Wno-unreachable-code
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
 		</ClCompile>
+
+		<Lib/>
 
 		<Link>
 			<!--Want full PDBs so third-party tools work better-->
 			<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
 		</Link>
-
-		<Lib>
-			<!--Complains about effectively empty compilations units, but we use
-				those for targeted header tests-->
-			<AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
-		</Lib>
 	</ItemDefinitionGroup>
 
 	<ItemGroup Condition="'$(ProjectName)'!='hook_new'">

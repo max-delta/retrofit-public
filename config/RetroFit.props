@@ -34,14 +34,7 @@
 	<ItemDefinitionGroup>
 		<ClCompile>
 			<!--It's us!-->
-			<PreprocessorDefinitions>RETROFIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-
-			<!--TODO: Document all these-->
-			<DisableSpecificWarnings>4100;4127;4251;4514;4710;4711;4738;4820;4946;5026;5027;5045;6326;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-
-			<!-- Azure build machines don't always have the latest VS, so ignore
-				complaints about unknown warnings -->
-			<DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">4619;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+			<PreprocessorDefinitions>RETROFIT; %(PreprocessorDefinitions)</PreprocessorDefinitions>
 
 			<!--If we bothered to turn a warning on, yell about it-->
 			<TreatWarningAsError>true</TreatWarningAsError>
@@ -50,7 +43,12 @@
 			<WarningLevel>EnableAllWarnings</WarningLevel>
 
 			<!--Various top-level includes, kept to a minimum-->
-			<AdditionalIncludeDirectories>$(RFRootDir)libs\;$(RFRootDir)third_party\;$(RFRootDir)third_party\googletest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+			<AdditionalIncludeDirectories>
+				$(RFRootDir)libs\;
+				$(RFRootDir)third_party\;
+				$(RFRootDir)third_party\googletest\include;
+				%(AdditionalIncludeDirectories)
+			</AdditionalIncludeDirectories>
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='MSVC'">
@@ -63,13 +61,123 @@
 			<AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
 
 			<!--This configures static analysis rules-->
-			<ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+			<ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h; %(ForcedIncludeFiles)</ForcedIncludeFiles>
+
+			<!--TODO: Document all these-->
+			<DisableSpecificWarnings>
+				4100;	4127; 4251; 4514; 4710; 4711; 4738; 4820; 4946;
+				5026; 5027; 5045;
+				6326;
+				%(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
+
+			<!--Don't care about variables just used for asserts-->
+			<DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
+				4189; %(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
+
+			<!-- Azure build machines don't always have the latest VS, so ignore
+				complaints about unknown warnings -->
+			<DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">
+				4619; %(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<!--Treat these as system headers (not our code)-->
 			<AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+
+			<!-- Misc overly pedantic style warnings -->
+			<AdditionalOptions>
+				-Wno-format-nonliteral
+				-Wno-missing-prototypes
+				-Wno-missing-variable-declarations
+				-Wno-pedantic
+				-Wno-shadow-field-in-constructor
+				-Wno-shadow-uncaptured-local
+				-Wno-unused-macros
+				-Wno-unused-parameter
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Disable warnings that complain about code intended to catch various
+			  forms of memory corruption in unoptimized builds, even though it
+				*shouldn't* be possible in well-formed code -->
+			<AdditionalOptions>
+				-Wno-covered-switch-default
+				-Wno-tautological-undefined-compare
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Some warnings are just plain broken -->
+			<AdditionalOptions>
+				-Wno-ignored-attributes
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Some token patterns are practically unavoidable with macros -->
+			<AdditionalOptions>
+				-Wno-extra-semi
+				-Wno-extra-semi-stmt
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Disable warnings about template patterns that reduce link times -->
+			<AdditionalOptions>
+				-Wno-undefined-func-template
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Technically '__' prefixes are reserved, but we use '___RF' to denote
+				internal engine details, which should be safe in practical cases -->
+			<AdditionalOptions>
+				-Wno-reserved-id-macro
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- CRT-init hooks are a fact of life, even though they should be
+				carefully considered and scrutinized -->
+			<AdditionalOptions>
+				-Wno-exit-time-destructors
+				-Wno-global-constructors
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!--Goal is to use targeted suppression machinery instead of these-->
+			<AdditionalOptions>
+				-Wno-non-virtual-dtor
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!--Don't care about variables just used for asserts, but truly unused
+				variables should be an error -->
+			<AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
+				-Wno-unused-variable
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!--Don't care about intentionally unreachable code, and there isn't a
+				good way to ditinguish from accidentally unreachable-->
+			<AdditionalOptions>
+				-Wno-unreachable-code
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Build machines provide buildstamps via scripts, but local builds can
+				be more lax and use the C preprocessor, since otherwise the changing
+				buildstamp would force a full rebuild each time -->
+			<AdditionalOptions Condition="'$(RFBuildMachine)'==''">
+				-Wno-date-time
+				-Wno-pch-date-time
+				%(AdditionalOptions)
+			</AdditionalOptions>
 		</ClCompile>
+
+		<Lib>
+			<!--Complains about effectively empty compilations units, but we use
+				those for targeted header tests-->
+			<AdditionalOptions>/ignore:4221 %(AdditionalOptions)</AdditionalOptions>
+		</Lib>
 
 		<Link />
 	</ItemDefinitionGroup>
