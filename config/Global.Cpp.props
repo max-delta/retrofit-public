@@ -46,12 +46,6 @@
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
-			<AdditionalOptions>
-				-Wno-clang-cl-pch
-				-Wno-reserved-id-macro
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
 			<!-- Misc overly pedantic style warnings -->
 			<AdditionalOptions>
 				-Wno-format-nonliteral
@@ -111,6 +105,13 @@
 			<!-- Disable warnings about template patterns that reduce link times -->
 			<AdditionalOptions>
 				-Wno-undefined-func-template
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Technically '__' prefixes are reserved, but we use '___RF' to denote
+				internal engine details, which should be safe in practical cases -->
+			<AdditionalOptions>
+				-Wno-reserved-id-macro
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
