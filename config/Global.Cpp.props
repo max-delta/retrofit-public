@@ -48,25 +48,68 @@
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<AdditionalOptions>
 				-Wno-clang-cl-pch
-				-Wno-unused-command-line-argument
-				-Wno-pedantic
-				-Wno-c++98-compat
-				-Wno-c++98-compat-pedantic
-				-Wno-unused-macros
-				-Wno-unused-parameter
 				-Wno-reserved-id-macro
-				-Wno-extra-semi
-				-Wno-extra-semi-stmt
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Misc overly pedantic style warnings -->
+			<AdditionalOptions>
+				-Wno-format-nonliteral
 				-Wno-missing-prototypes
 				-Wno-missing-variable-declarations
-				-Wno-covered-switch-default
-				-Wno-tautological-undefined-compare
+				-Wno-pedantic
 				-Wno-shadow-field-in-constructor
 				-Wno-shadow-uncaptured-local
-				-Wno-global-constructors
-				-Wno-exit-time-destructors
-				-Wno-format-nonliteral
+				-Wno-unused-macros
+				-Wno-unused-parameter
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Disable warnings that complain about code intended to catch various
+			  forms of memory corruption in unoptimized builds, even though it
+				*shouldn't* be possible in well-formed code -->
+			<AdditionalOptions>
+				-Wno-covered-switch-default
+				-Wno-tautological-undefined-compare
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Some warnings are just plain broken -->
+			<AdditionalOptions>
 				-Wno-ignored-attributes
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- ClangCL sometimes lags behind on new CL features -->
+			<AdditionalOptions>
+				-Wno-unused-command-line-argument
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Disable compat with ancient versions of C++ -->
+			<AdditionalOptions>
+				-Wno-c++98-compat
+				-Wno-c++98-compat-pedantic
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Some token patterns are practically unavoidable with macros -->
+			<AdditionalOptions>
+				-Wno-extra-semi
+				-Wno-extra-semi-stmt
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- CRT-init hooks are a fact of life, even though they should be
+				carefully considered and scrutinized -->
+			<AdditionalOptions>
+				-Wno-exit-time-destructors
+				-Wno-global-constructors
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
+			<!-- Disable warnings about template patterns that reduce link times -->
+			<AdditionalOptions>
 				-Wno-undefined-func-template
 				%(AdditionalOptions)
 			</AdditionalOptions>
