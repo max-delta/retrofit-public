@@ -145,11 +145,15 @@ steps:
 # Publish
 #
 
-- task: PublishBuildArtifacts@1
+- task: PublishPipelineArtifact@1
   inputs:
-    PathtoPublish: '_artifacts'
-    ArtifactName: 'artifacts'
-    publishLocation: 'Container'
+    targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+    artifactName: 'out_$(buildPlatform)_$(buildConfiguration)'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Intermediate/'
+    artifactName: 'intermediate_$(buildPlatform)_$(buildConfiguration)'
 
 #
 # Test
