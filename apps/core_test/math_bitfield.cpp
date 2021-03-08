@@ -194,8 +194,22 @@ TEST( MathBitField, IEEE754Binary32Nonsense )
 				ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000001 ); // ... * (1+FRAC) * ...
 				break;
 			case compiler::Compiler::Clang:
-				ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000001 ); // ... * (1+FRAC) * ...
+			{
+				uint32_t const frac = softFloat.ReadAt<2, uint32_t>(); // ... * (1+FRAC) * ...
+				if constexpr( compiler::kArchitecture == compiler::Architecture::x86_32 )
+				{
+					// Clang seems to have some bizarre behaviors here that
+					//  results in inconsistent literals in the assembly
+					ASSERT_TRUE(
+						frac == 0b00000000000000000000001 ||
+						frac == 0b10000000000000000000001 );
+				}
+				else
+				{
+					ASSERT_EQ( frac, 0b00000000000000000000001 );
+				}
 				break;
+			}
 			case compiler::Compiler::Invalid:
 			default:
 				// Unimplemented
