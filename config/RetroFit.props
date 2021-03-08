@@ -69,12 +69,6 @@
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<!--Treat these as system headers (not our code)-->
 			<AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
-
-			<!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
-			<AdditionalOptions>
-				-Werror=float-equal
-				%(AdditionalOptions)
-			</AdditionalOptions>
 		</ClCompile>
 
 		<Link />

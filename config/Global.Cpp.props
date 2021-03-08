@@ -47,7 +47,6 @@
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<AdditionalOptions>
-				-Wno-error
 				-Wno-clang-cl-pch
 				-Wno-unused-command-line-argument
 				-Wno-pedantic
@@ -72,33 +71,15 @@
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
-			<!--Goal is to have warnings as errors on LLVM, but it's ongoing-->
-			<AdditionalOptions>
-				-Werror=newline-eof
-				-Werror=extra-qualification
-				-Werror=unused-lambda-capture
-				-Werror=ctad-maybe-unsupported
-				%(AdditionalOptions)
-			</AdditionalOptions>
-
 			<!-- Azure build machines violate this when forced includes are used -->
 			<AdditionalOptions Condition="'$(RFBuildMachine)'=='Azure'">
 				-Wno-nonportable-include-path
-				%(AdditionalOptions)
-			</AdditionalOptions>
-			<AdditionalOptions Condition="'$(RFBuildMachine)'!='Azure'">
-				-Werror=nonportable-include-path
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
 			<!-- Build machines provide buildstamps via scripts, but local builds can
 				be more lax and use the C preprocessor, since otherwise the changing
 				buildstamp would force a full rebuild each time -->
-			<AdditionalOptions Condition="'$(RFBuildMachine)'!=''">
-				-Werror=date-time
-				-Werror=pch-date-time
-				%(AdditionalOptions)
-			</AdditionalOptions>
 			<AdditionalOptions Condition="'$(RFBuildMachine)'==''">
 				-Wno-date-time
 				-Wno-pch-date-time
