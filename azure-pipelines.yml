@@ -145,6 +145,24 @@ steps:
 # Publish
 #
 
+- task: CopyFiles@2
+  inputs:
+    contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.exe'
+    targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+    flattenFolders: true
+
+- task: CopyFiles@2
+  inputs:
+    contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.dll'
+    targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+    flattenFolders: true
+
+- task: PublishPipelineArtifact@1
+  condition: or( eq(variables['buildPlatform'], 'x86_32'), eq(variables['buildPlatform'], 'x86_64') )
+  inputs:
+    targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+    artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
+
 - task: PublishPipelineArtifact@1
   inputs:
     targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
