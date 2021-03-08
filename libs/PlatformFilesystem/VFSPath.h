@@ -8,7 +8,7 @@
 #include "core_identifier/SegmentedIdentifier.h"
 
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 class VFSPath : public id::SegmentedIdentifier<rftl::string>
@@ -32,12 +32,12 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
-namespace RF { namespace logging {
+namespace RF::logging {
 template<>
 void PLATFORMFILESYSTEM_API WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer );
-}}
+}
 
 template<>
 struct PLATFORMFILESYSTEM_API rftl::hash<RF::file::VFSPath> : public rftl::hash<RF::id::SegmentedIdentifier<rftl::string>>

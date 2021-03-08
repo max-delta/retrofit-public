@@ -5,7 +5,7 @@
 #include "rftl/utility"
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -410,4 +410,4 @@ template<typename InserterT> void ConvertToUtf32( char32_t const* source, size_t
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include "rftl/cstdint"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 // This random function will not change based on platform
@@ -15,4 +15,4 @@ bool StableRandLCGPercentBelow( uint8_t percentThreshold, uint32_t& lastGenerato
 uint32_t GetSeedFromHash( uint64_t hash );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

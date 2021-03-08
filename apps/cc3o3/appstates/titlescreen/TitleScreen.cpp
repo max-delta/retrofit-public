@@ -28,7 +28,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct TitleScreen::InternalState
@@ -148,4 +148,4 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

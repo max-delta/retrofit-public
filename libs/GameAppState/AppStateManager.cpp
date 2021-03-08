@@ -8,7 +8,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 AppStateManager::AppStateManager()
@@ -81,4 +81,4 @@ AppStateChangeContext AppStateManager::CreateStateChangeContext()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

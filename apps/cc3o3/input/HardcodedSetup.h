@@ -7,7 +7,7 @@
 
 #include "core_time/CommonClock.h"
 
-namespace RF { namespace cc { namespace input {
+namespace RF::cc::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: This is obviously gross, replace it
@@ -25,4 +25,4 @@ void DebugSubmitTestInput();
 void DebugClearTestInput();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

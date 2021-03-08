@@ -3,7 +3,7 @@
 #include "rftl/ratio"
 
 
-namespace RF { namespace time {
+namespace RF::time {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Performance clock for measuring with reasonably high-precision, but not
@@ -18,4 +18,4 @@ static_assert(
 	PerfClock::is_steady, "PerfClock isn't steady" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

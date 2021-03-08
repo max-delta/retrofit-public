@@ -7,7 +7,7 @@
 #include "PPU/ResourceManager.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API FontManager final : public ResourceManager<Font, ManagedFontID, kInvalidManagedFontID>
@@ -45,4 +45,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

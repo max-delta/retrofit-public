@@ -4,7 +4,7 @@
 #include "core/rf_assert.h"
 
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ClassInfo::IsSameOrDerivedFrom( ClassInfo const& ancestor ) const
@@ -74,4 +74,4 @@ char const* ClassInfo::StoreString( char const* string )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

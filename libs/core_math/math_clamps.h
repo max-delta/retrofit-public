@@ -2,7 +2,7 @@
 #include "rftl/cstdint"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TYPE>
@@ -31,6 +31,6 @@ template<typename BASE, typename OFFSET>
 constexpr BASE WrapPositiveOffset( BASE const& value, BASE const& mod, OFFSET const& offset );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "math_clamps.inl"

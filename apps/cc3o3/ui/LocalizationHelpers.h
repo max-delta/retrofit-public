@@ -7,7 +7,7 @@
 #include "rftl/unordered_set"
 
 
-namespace RF { namespace cc { namespace ui {
+namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 loc::TextDirection GetTextDirection();
@@ -17,4 +17,4 @@ rftl::string LocalizeKey( rftl::string const& key );
 rftl::string LocalizeKey( rftl::string&& key );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

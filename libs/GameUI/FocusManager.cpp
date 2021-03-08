@@ -8,7 +8,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool FocusManager::HandleEvent( UIContext& context, FocusEvent const& focusEvent ) const
@@ -140,4 +140,4 @@ void FocusManager::UpdateHardFocusSinglePass( UIContext& context, bool& causedCh
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

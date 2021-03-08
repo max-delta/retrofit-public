@@ -7,7 +7,7 @@
 #include "core/ptr/weak_ptr.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ObjectRef::IsSet() const
@@ -100,4 +100,4 @@ bool MutableObjectRef::operator==( ObjectRef const& rhs ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

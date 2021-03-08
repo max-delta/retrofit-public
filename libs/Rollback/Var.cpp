@@ -6,7 +6,7 @@
 #include "core_state/StateStream.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -87,7 +87,7 @@ typename Var<T>::Type Var<T>::As() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 template class ROLLBACK_API RF::rollback::Var<bool>;
 template class ROLLBACK_API RF::rollback::Var<uint8_t>;

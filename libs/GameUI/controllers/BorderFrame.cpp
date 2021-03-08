@@ -17,7 +17,7 @@ RFTYPE_CREATE_META( RF::ui::controller::BorderFrame )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::BorderFrame );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 void BorderFrame::SetTileset(
@@ -209,4 +209,4 @@ void BorderFrame::RecalcTilemap( Container const& container )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

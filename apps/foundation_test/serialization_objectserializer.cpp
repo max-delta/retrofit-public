@@ -6,7 +6,7 @@
 #include "RFType/Example.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( Serialization, ObjectSerializerSanityCheck )
@@ -29,4 +29,4 @@ TEST( Serialization, ObjectSerializerSanityCheck )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

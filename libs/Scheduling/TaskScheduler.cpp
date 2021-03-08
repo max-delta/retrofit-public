@@ -9,7 +9,7 @@
 #include "rftl/thread"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 TaskScheduler::RegisteredWorker::RegisteredWorker( SharedPtr<TaskWorker> const& worker )
@@ -511,4 +511,4 @@ TaskScheduler::PriorityBlock& TaskScheduler::GetPriorityBlock( TaskPriority prio
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

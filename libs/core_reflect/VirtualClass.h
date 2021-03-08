@@ -2,11 +2,11 @@
 
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 struct ClassInfo;
-}}
+}
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 // For specialized cases where the destructor in VirtualClass is undesired
@@ -31,7 +31,7 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 inline RF::reflect::VirtualClass::~VirtualClass()
 {

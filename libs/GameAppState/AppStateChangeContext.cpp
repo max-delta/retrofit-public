@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AppStateChangeContext.h"
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 AppStateChangeContext::AppStateChangeContext( AppStateManager const& manager )
@@ -11,4 +11,4 @@ AppStateChangeContext::AppStateChangeContext( AppStateManager const& manager )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -5,7 +5,7 @@
 #include "rftl/deque"
 
 
-namespace RF { namespace rftype { namespace extensions {
+namespace RF::rftype::extensions {
 ///////////////////////////////////////////////////////////////////////////////
 namespace basic_string_accessor_details {
 static rftl::deque<size_t> gStableKeys;
@@ -22,4 +22,4 @@ size_t const* GetStableKey( size_t key )
 }
 }
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

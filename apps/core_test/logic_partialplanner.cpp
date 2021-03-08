@@ -5,7 +5,7 @@
 #include "rftl/string"
 
 
-namespace RF { namespace logic {
+namespace RF::logic {
 ///////////////////////////////////////////////////////////////////////////////
 namespace partial_planner_tests {
 constexpr bool kIncludeFailureCases = false;
@@ -228,4 +228,4 @@ TEST( LogicPartialPlanner, MutuallyDependentPair )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

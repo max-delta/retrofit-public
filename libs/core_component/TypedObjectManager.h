@@ -2,7 +2,7 @@
 #include "core_component/ObjectManager.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TypeResolver>
@@ -49,6 +49,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "TypedObjectManager.inl"

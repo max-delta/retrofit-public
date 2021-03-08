@@ -11,7 +11,7 @@
 #include "rftl/optional"
 
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEAPPSTATE_API AppStateManager final : private fsm::FiniteStateMachine<
@@ -50,4 +50,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

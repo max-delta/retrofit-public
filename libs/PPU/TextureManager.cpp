@@ -15,7 +15,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 TextureManager::TextureManager( WeakPtr<file::VFS> const& vfs )
@@ -132,4 +132,4 @@ bool TextureManager::UnloadFromDevice( ResourceType& resource )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

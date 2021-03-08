@@ -4,7 +4,7 @@
 #include "core_platform/inc/windows_inc.h"
 
 
-namespace RF { namespace platform { namespace debugging {
+namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API void OutputToDebugger( char const* string )
@@ -13,4 +13,4 @@ PLATFORMUTILS_API void OutputToDebugger( char const* string )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

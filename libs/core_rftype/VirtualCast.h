@@ -1,11 +1,11 @@
 #pragma once
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 	struct ClassInfo;
-}}
+}
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -26,6 +26,6 @@ template<typename TargetT, typename SourceT>
 TargetT virtual_cast( SourceT* source );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "VirtualCast.inl"

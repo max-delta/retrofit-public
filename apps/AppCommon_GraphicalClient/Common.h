@@ -31,7 +31,7 @@ namespace rollback {
 }
 }
 
-namespace RF { namespace app {
+namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
 APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
@@ -52,4 +52,4 @@ APPCOMMONGRAPHICALCLIENT_API void Startup();
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -10,7 +10,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 BitmapCache::BitmapCache( WeakPtr<file::VFS const> vfs )
@@ -44,4 +44,4 @@ WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

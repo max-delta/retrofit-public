@@ -3,7 +3,7 @@
 #include "Serialization/DiagnosticExporter.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( Serialization, DiagnosticExporterSanityCheck )
@@ -39,4 +39,4 @@ TEST( Serialization, DiagnosticExporterSanityCheck )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

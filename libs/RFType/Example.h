@@ -4,7 +4,7 @@
 #include "RFType/CreateClassInfoDeclaration.h"
 
 
-namespace RF { namespace rftype_example {
+namespace RF::rftype_example {
 ///////////////////////////////////////////////////////////////////////////////
 
 // NOTE: Static class info not needed, but is similar to the pattern required
@@ -98,4 +98,4 @@ class RFTYPE_API ExamplePoorLifeDecision : virtual public ExampleBaseClass, virt
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

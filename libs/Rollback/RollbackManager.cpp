@@ -7,7 +7,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 RollbackManager::RollbackManager()
@@ -340,4 +340,4 @@ size_t RollbackManager::ClearAllSnapshotsAfter( time::CommonClock::time_point ti
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

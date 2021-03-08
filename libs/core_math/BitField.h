@@ -4,7 +4,7 @@
 #include "core_math/math_clamps.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Compressors compress/decompress different types in a bit-oriented manner
@@ -57,6 +57,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "BitField.inl"

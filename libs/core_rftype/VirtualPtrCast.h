@@ -3,11 +3,11 @@
 #include "core/ptr/weak_ptr.h"
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 	struct ClassInfo;
-}}
+}
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 // See description and warnings on virtual_cast<...>(...)
@@ -17,6 +17,6 @@ template<typename TargetT, typename SourceT>
 WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT> && source );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "VirtualPtrCast.inl"

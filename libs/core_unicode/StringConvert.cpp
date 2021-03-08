@@ -5,7 +5,7 @@
 #include "rftl/iterator"
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
 rftl::string ConvertToASCII( char const* source, size_t numBytes )
@@ -211,4 +211,4 @@ rftl::u32string ConvertToUtf32( rftl::u32string const& source )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -10,7 +10,7 @@
 #include "core/ptr/unique_ptr.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 ObjectManager::ObjectManager( ManagerIdentifier identifier, ScopeIdentifier generationScope )
@@ -529,4 +529,4 @@ MutableComponentRef ObjectManager::ConversionHelpers::CreateMutableComponentRef(
 
 ///////////////////////////////////////////////////////////////////////////////
 
-}}
+}

@@ -6,7 +6,7 @@
 #include "core/macros.h"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
@@ -198,4 +198,4 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

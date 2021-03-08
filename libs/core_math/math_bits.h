@@ -1,6 +1,6 @@
 #pragma once
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -22,6 +22,6 @@ void SetBit( void* root, size_t offsetInBits );
 void ClearBit( void* root, size_t offsetInBits );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "math_bits.inl"

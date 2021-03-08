@@ -3,7 +3,7 @@
 #include "Hash.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t )
@@ -59,4 +59,4 @@ HashVal64 NullTerminatedStringHash::operator()( char const* const buffer ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

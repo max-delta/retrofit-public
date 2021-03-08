@@ -5,7 +5,7 @@
 
 #include "core/ptr/ptr_transform.h"
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TargetT, typename SourceT>
@@ -42,4 +42,4 @@ WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT>&& source )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

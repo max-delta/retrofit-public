@@ -9,7 +9,7 @@
 #include "PlatformFilesystem/FileBuffer.h"
 
 
-namespace RF { namespace cc { namespace character {
+namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool character::CharacterDatabase::SubmitNewCharacter( CharacterID const& id, CharData&& character )
@@ -206,4 +206,4 @@ size_t CharacterDatabase::SaveToPersistentStorage( file::VFSPath const& director
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

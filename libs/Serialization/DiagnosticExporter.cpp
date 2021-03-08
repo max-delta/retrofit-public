@@ -12,7 +12,7 @@
 		RFLOG_MILESTONE( nullptr, RFCAT_SERIALIZATION, __VA_ARGS__ ); \
 	}
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 DiagnosticExporter::DiagnosticExporter( bool silent )
@@ -270,6 +270,6 @@ bool DiagnosticExporter::Property_OutdentFromLastIndent()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #undef RF_DIAG_EXP_TR

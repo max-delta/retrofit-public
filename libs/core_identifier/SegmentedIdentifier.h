@@ -8,7 +8,7 @@
 #include "rftl/type_traits"
 
 
-namespace RF { namespace id {
+namespace RF::id {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ElementT>
@@ -88,7 +88,7 @@ template<typename CharT, CharT DelimiterT>
 rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<CharT>> const& identifier );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 template<typename ElementT>
 struct rftl::hash<RF::id::SegmentedIdentifier<ElementT>>
@@ -97,9 +97,9 @@ struct rftl::hash<RF::id::SegmentedIdentifier<ElementT>>
 };
 
 // Explicitly instantiate and alias common types
-namespace RF { namespace id {
+namespace RF::id {
 using SegmentedStringIdentifier = SegmentedIdentifier<rftl::string>;
-}}
+}
 extern template class RF::id::SegmentedIdentifier<rftl::string>;
 
 #include "SegmentedIdentifier.inl"

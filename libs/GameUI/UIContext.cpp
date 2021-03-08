@@ -4,7 +4,7 @@
 #include "GameUI/ContainerManager.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 UIContext::UIContext( ContainerManager& containerManager )
@@ -75,4 +75,4 @@ FocusManager const& UIConstContext::GetFocusManager() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

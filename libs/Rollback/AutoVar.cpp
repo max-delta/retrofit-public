@@ -6,7 +6,7 @@
 #include "core_state/StateBag.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -94,7 +94,7 @@ UniquePtr<rollback::Stream<typename AutoVar<T>::Type>> AutoVar<T>::Unbind()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 static_assert( RF::state::StateBag<1>::ContainedTypes::kNumTypes == 9, "Unexpected size" );
 template class ROLLBACK_API RF::rollback::AutoVar<bool>;

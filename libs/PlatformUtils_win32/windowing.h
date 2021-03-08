@@ -6,7 +6,7 @@
 #include "rftl/cstdint"
 
 
-namespace RF { namespace platform { namespace windowing {
+namespace RF::platform::windowing {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API shim::HWND CreateNewWindow( int width = 640, int height = 480, shim::WNDPROC WndProc = shim::DefWindowProcW );
@@ -18,4 +18,4 @@ PLATFORMUTILS_API int32_t ProcessAllMessages();
 PLATFORMUTILS_API int32_t ProcessSingleMessage();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

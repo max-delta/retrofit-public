@@ -8,7 +8,7 @@
 #include "core_math/Color3f.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API PPUState
@@ -79,4 +79,4 @@ static_assert( sizeof( PPUState ) <= 8192, "Double-check PPUState storage" );
 static_assert( alignof( PPUState ) == RF::compiler::kPointerBytes, "Double-check PPUState alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -7,10 +7,10 @@
 
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 	struct ClassInfo;
-}}
-namespace RF { namespace serialization {
+}
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SERIALIZATION_API ObjectSerializer
@@ -22,4 +22,4 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

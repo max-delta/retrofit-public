@@ -20,7 +20,7 @@ RFTYPE_CREATE_META( RF::ui::controller::TextLabel )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::TextLabel );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TextLabel::SetFont( FontPurposeID purpose )
@@ -161,4 +161,4 @@ void TextLabel::InvalidateFont()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

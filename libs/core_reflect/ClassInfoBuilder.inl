@@ -5,7 +5,7 @@
 #include "core/compiler.h"
 
 
-namespace RF { namespace reflect { namespace builder {
+namespace RF::reflect::builder {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -131,4 +131,4 @@ void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

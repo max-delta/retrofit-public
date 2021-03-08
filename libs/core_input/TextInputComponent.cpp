@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TextInputComponent::GetTextStream( rftl::u16string& text ) const
@@ -13,4 +13,4 @@ void TextInputComponent::GetTextStream( rftl::u16string& text ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -11,7 +11,7 @@
 #include "core/ptr/weak_ptr.h"
 
 
-namespace RF { namespace cc { namespace ui {
+namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 loc::TextDirection GetTextDirection()
@@ -42,4 +42,4 @@ rftl::string LocalizeKey( rftl::string&& key )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

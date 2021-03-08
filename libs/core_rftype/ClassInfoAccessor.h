@@ -8,7 +8,7 @@
 
 RF_DECLARE_HAS_PUBLIC_MEMBER_NAME_TEST( ___RFType_Static_ClassInfo );
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Created by macro-machinery and exported, this will need to be imported when
@@ -38,4 +38,4 @@ template<typename CLASS, typename rftl::enable_if<RF_HAS_PUBLIC_MEMBER_NAME( CLA
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

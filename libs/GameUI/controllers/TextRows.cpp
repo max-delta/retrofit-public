@@ -18,7 +18,7 @@ RFTYPE_CREATE_META( RF::ui::controller::TextRows )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::TextRows );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 TextRows::TextRows( size_t numSlots, FontPurposeID purpose )
@@ -123,4 +123,4 @@ void TextRows::OnRender( UIConstContext const& context, Container const& contain
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

@@ -10,15 +10,15 @@
 #include "rftl/bitset"
 
 // Forwards
-namespace RF { namespace input {
+namespace RF::input {
 	class PLATFORMINPUT_API InputDevice;
 	class PLATFORMINPUT_API DigitalInputComponent;
 	class PLATFORMINPUT_API AnalogInputComponent;
 	class PLATFORMINPUT_API TextInputComponent;
-}}
+}
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 class WndProcDigitalInputComponent;
@@ -159,4 +159,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

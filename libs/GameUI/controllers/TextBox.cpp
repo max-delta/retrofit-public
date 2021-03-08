@@ -23,7 +23,7 @@ RFTYPE_CREATE_META( RF::ui::controller::TextBox )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::TextBox );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 TextBox::TextBox(
@@ -204,4 +204,4 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

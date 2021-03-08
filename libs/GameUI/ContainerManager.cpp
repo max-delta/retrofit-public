@@ -14,7 +14,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 ContainerManager::ContainerManager(
@@ -899,4 +899,4 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

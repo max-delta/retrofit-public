@@ -9,7 +9,7 @@
 #include "rftl/string"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 void GlobalRegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo )
@@ -37,4 +37,4 @@ void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

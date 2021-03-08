@@ -9,7 +9,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace script {
+namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -604,4 +604,4 @@ bool OOLoader::PopulateClass( SquirrelVM::NestedTraversalPath scriptPath, reflec
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

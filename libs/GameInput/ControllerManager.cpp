@@ -4,7 +4,7 @@
 #include "GameInput/GameController.h"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 ControllerManager::PlayerIDs ControllerManager::GetRegisteredPlayers() const
@@ -160,4 +160,4 @@ void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock:
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

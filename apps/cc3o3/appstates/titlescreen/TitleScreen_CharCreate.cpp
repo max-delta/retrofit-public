@@ -43,7 +43,7 @@
 #include "rftl/algorithm"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -763,4 +763,4 @@ void TitleScreen_CharCreate::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

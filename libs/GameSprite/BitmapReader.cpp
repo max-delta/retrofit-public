@@ -8,7 +8,7 @@
 #include "stb_image/stb_image.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 Bitmap BitmapReader::ReadRGBABitmap( rftl::byte_view const& buffer )
@@ -51,4 +51,4 @@ Bitmap BitmapReader::ReadRGBABitmap( rftl::byte_view const& buffer )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

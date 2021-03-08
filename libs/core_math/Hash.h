@@ -2,7 +2,7 @@
 #include "rftl/cstdint"
 #include "rftl/cstddef"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 using HashVal64 = uint64_t;
@@ -77,4 +77,4 @@ inline constexpr HashVal64 ConstStableHashString( char const* nullTerminatedStri
 
 }
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

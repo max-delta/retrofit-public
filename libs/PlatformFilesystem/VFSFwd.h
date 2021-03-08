@@ -2,7 +2,7 @@
 #include "core/ptr/unique_ptr.h"
 
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 class VFS;
@@ -17,4 +17,4 @@ constexpr char kPathAscensionElement[] = "..";
 constexpr char kPathCurrentElement[] = ".";
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

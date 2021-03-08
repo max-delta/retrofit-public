@@ -7,7 +7,7 @@
 #include "core_math/math_clamps.h"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 void RawInputController::SetPhysicalMapping( PhysicalMapping const& mapping )
@@ -214,4 +214,4 @@ void RawInputController::TruncateBuffers( time::CommonClock::time_point earliest
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

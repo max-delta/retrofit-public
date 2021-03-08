@@ -2,7 +2,7 @@
 #include "LocResult.h"
 
 
-namespace RF { namespace loc {
+namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
 LocResult::LocResult( rftl::u32string const& codePoints )
@@ -27,4 +27,4 @@ rftl::u32string const& LocResult::GetCodePoints() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

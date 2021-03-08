@@ -6,7 +6,7 @@
 #include "rftl/unordered_map"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class CharacterSequenceType : uint8_t
@@ -57,4 +57,4 @@ struct GAMESPRITE_API CompositeCharacter
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

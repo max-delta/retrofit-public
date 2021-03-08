@@ -4,7 +4,7 @@
 #include "core_rftype/ClassInfoAccessor.h"
 
 
-namespace RF { namespace script {
+namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ReflectedClass>
@@ -30,4 +30,4 @@ bool OOLoader::PopulateClass( SquirrelVM::NestedTraversalPath scriptPath, Reflec
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

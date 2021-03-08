@@ -4,7 +4,7 @@
 #include "rftl/algorithm"
 
 
-namespace RF { namespace state {
+namespace RF::state {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ValueT, size_t MaxChangesT>
@@ -134,4 +134,4 @@ inline time::CommonClock::time_point StateStream<ValueT, MaxChangesT>::GetLatest
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

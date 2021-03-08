@@ -3,14 +3,14 @@
 
 #include "core_rftype/CreateClassInfoDefinition.h"
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 RFTYPE_API void GlobalRegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
 RFTYPE_API void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo const& classInfo );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 // Used to register ClassInfo meta information in the type database
 // NOTE: Must be used at the root namespace, due to definitions of forwards

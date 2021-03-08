@@ -18,7 +18,7 @@
 #include "rftl/extension/integer_literals.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct DevTestGridCharts::InternalState
@@ -202,4 +202,4 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

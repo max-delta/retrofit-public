@@ -4,7 +4,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF { namespace rftype { namespace extensions {
+namespace RF::rftype::extensions {
 ///////////////////////////////////////////////////////////////////////////////
 namespace basic_string_accessor_details {
 size_t const* GetStableKey( size_t key );
@@ -159,4 +159,4 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

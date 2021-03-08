@@ -5,7 +5,7 @@
 #include "rftl/utility"
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -170,4 +170,4 @@ size_t ConvertToUtf32( char32_t* dest, size_t destLen, char32_t const* source, s
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

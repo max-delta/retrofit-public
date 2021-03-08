@@ -3,7 +3,7 @@
 #include "core_reflect/ClassInfo.h"
 
 
-namespace RF { namespace rftype { namespace extensions {
+namespace RF::rftype::extensions {
 ///////////////////////////////////////////////////////////////////////////////
 
 // This just provides some useful typedefs needed for properly building an
@@ -45,4 +45,4 @@ struct Accessor final : private AccessorTemplate
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

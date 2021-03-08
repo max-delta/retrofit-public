@@ -12,7 +12,7 @@
 #include "rftl/chrono"
 
 
-namespace RF { namespace app {
+namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
 StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
@@ -164,4 +164,4 @@ WeakPtr<scheduling::TaskScheduler> StandardTaskScheduler::GetTaskScheduler() con
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

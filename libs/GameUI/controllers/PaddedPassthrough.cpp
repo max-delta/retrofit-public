@@ -16,7 +16,7 @@ RFTYPE_CREATE_META( RF::ui::controller::PaddedPassthrough )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::PaddedPassthrough );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 PaddedPassthrough::PaddedPassthrough( gfx::PPUCoord paddingDimensions )
@@ -57,4 +57,4 @@ void PaddedPassthrough::OnAABBRecalc( UIContext& context, Container& container )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

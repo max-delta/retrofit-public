@@ -20,7 +20,7 @@
 #include "rftl/extension/integer_literals.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct DevTestCombatCharts::InternalState
@@ -346,4 +346,4 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

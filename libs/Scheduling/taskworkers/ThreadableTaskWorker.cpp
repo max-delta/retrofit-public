@@ -5,7 +5,7 @@
 #include "Logging/Logging.h"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 ThreadableTaskWorker::~ThreadableTaskWorker()
@@ -64,4 +64,4 @@ size_t ThreadableTaskWorker::ExecuteUntilStarved()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

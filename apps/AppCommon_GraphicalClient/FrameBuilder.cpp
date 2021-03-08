@@ -11,7 +11,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace app {
+namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
 FrameBuilder::FrameBuilder( WeakPtr<scheduling::TaskScheduler> const& scheduler )
@@ -367,4 +367,4 @@ void FrameBuilder::LogTrivial( PartialPlanner::PartialPlan::PlannedActionID id )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

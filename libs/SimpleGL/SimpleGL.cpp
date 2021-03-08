@@ -17,7 +17,7 @@
 #include "rftl/array"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool SimpleGL::AttachToWindow( shim::HWND hWnd )
@@ -639,4 +639,4 @@ bool SimpleGL::glPrint( char const* fmt, va_list args )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

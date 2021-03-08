@@ -30,7 +30,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace cc {
+namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 constexpr bool kAllowDebug = true;
@@ -510,4 +510,4 @@ void RequestGlobalDeferredStateChange( appstate::AppStateID stateID )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

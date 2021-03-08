@@ -38,7 +38,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct Gameplay_Menus::InternalState
@@ -657,4 +657,4 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

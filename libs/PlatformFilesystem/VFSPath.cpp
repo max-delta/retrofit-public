@@ -7,7 +7,7 @@
 #include "core_math/Hash.h"
 
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 VFSPath::VFSPath()
@@ -39,7 +39,7 @@ rftl::string VFSPath::CreateString() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 template<>
 void RF::logging::WriteContextString( file::VFSPath const& context, Utf8LogContextBuffer& buffer )

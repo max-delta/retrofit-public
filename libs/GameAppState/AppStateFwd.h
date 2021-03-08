@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 using AppStateID = uint8_t;
@@ -14,4 +14,4 @@ struct AppStateTickContext;
 struct AppStateChangeContext;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser ) const
@@ -62,4 +62,4 @@ void RawController::GetTextStream( rftl::u16string& text ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

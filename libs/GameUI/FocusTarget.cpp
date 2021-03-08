@@ -2,7 +2,7 @@
 #include "FocusTarget.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool FocusTarget::HandleEvent( UIContext& context, FocusEvent const& focusEvent ) const
@@ -19,4 +19,4 @@ bool FocusTarget::HasHardFocus() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

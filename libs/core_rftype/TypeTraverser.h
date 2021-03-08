@@ -3,14 +3,14 @@
 
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 	class VirtualClass;
 	struct ClassInfo;
 	struct MemberVariableInfo;
 	struct VariableTypeInfo;
-}}
+}
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 class TypeTraverser
@@ -117,6 +117,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "TypeTraverser.inl"

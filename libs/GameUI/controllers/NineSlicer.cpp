@@ -16,7 +16,7 @@ RFTYPE_CREATE_META( RF::ui::controller::NineSlicer )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::NineSlicer );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 NineSlicer::NineSlicer()
@@ -162,4 +162,4 @@ void NineSlicer::CreateChildContainerInternal( ContainerManager& manager, Contai
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

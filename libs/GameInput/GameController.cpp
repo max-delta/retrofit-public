@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 void GameController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser ) const
@@ -76,4 +76,4 @@ void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

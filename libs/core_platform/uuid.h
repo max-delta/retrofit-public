@@ -3,7 +3,7 @@
 #include "rftl/string"
 
 
-namespace RF { namespace platform {
+namespace RF::platform {
 ///////////////////////////////////////////////////////////////////////////////
 
 // A "Universally Unique IDentifer" to be used in distributed scenarios across
@@ -69,4 +69,4 @@ private:
 static_assert( sizeof( Uuid ) == 16, "Unexpected size" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

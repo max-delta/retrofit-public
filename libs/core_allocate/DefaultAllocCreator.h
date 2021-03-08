@@ -5,7 +5,7 @@
 
 #include "rftl/type_traits"
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T, typename Unused = void>
@@ -35,4 +35,4 @@ class DefaultAllocCreator<T, typename rftl::enable_if<( sizeof( T ) + sizeof( Pt
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

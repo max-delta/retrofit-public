@@ -2,7 +2,7 @@
 #include "SinglethreadEventQueue.h"
 
 
-namespace RF { namespace event {
+namespace RF::event {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename EventT>
@@ -79,4 +79,4 @@ inline typename SinglethreadEventQueue<EventT>::EventQueue SinglethreadEventQueu
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

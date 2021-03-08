@@ -4,7 +4,7 @@
 #include "core_component/TypedObjectManager.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TypeResolver>
@@ -95,4 +95,4 @@ inline TypedMutableComponentRef<TypeResolver>::operator TypedComponentRef<TypeRe
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

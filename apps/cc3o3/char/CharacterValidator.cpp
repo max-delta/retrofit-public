@@ -17,7 +17,7 @@
 #include "rftl/algorithm"
 
 
-namespace RF { namespace cc { namespace character {
+namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
 CharacterValidator::CharacterValidator( WeakPtr<file::VFS const> vfs, WeakPtr<sprite::CharacterCreator const> characterCreator )
@@ -801,4 +801,4 @@ rftl::deque<rftl::deque<rftl::string>> CharacterValidator::LoadCSV( file::VFSPat
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

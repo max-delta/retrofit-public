@@ -1,7 +1,7 @@
 #pragma once
 #include "core/compiler.h"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -18,6 +18,6 @@ template<typename T>
 constexpr T FromLittleEndianToPlatform( T const value );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "math_bytes.inl"

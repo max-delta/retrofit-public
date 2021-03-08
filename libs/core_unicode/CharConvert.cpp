@@ -4,7 +4,7 @@
 #include "core/macros.h"
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
 size_t NumBytesExpectedInUtf8( char firstByte )
@@ -243,4 +243,4 @@ size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

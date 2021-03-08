@@ -4,7 +4,7 @@
 #include "core_state/StateBag.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -66,4 +66,4 @@ void ReadFromSnapshot( Window& dest, Snapshot const& src, alloc::Allocator& allo
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

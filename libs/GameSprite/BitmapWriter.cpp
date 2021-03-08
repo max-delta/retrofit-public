@@ -5,7 +5,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 const* source, size_t width, size_t height )
@@ -112,4 +112,4 @@ rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

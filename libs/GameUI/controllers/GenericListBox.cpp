@@ -21,7 +21,7 @@ RFTYPE_CREATE_META( RF::ui::controller::GenericListBox )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::GenericListBox );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 GenericListBox::GenericListBox(
@@ -509,4 +509,4 @@ bool GenericListBox::OnUnhandledFocusEvent( UIContext& context, FocusEvent const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

@@ -6,11 +6,11 @@
 #include "core_math/Color3f.h"
 
 // Forwards
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 class TextLabel;
-}}}
+}
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API ListBox final : public GenericListBox
@@ -62,4 +62,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

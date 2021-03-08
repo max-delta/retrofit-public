@@ -6,7 +6,7 @@
 #include "rftl/patch/postinclude.inl"
 
 // Namespace wrapping
-namespace rftl { namespace filesystem {
+namespace rftl::filesystem {
 using std::filesystem::path;
 using std::filesystem::filesystem_error;
 using std::filesystem::directory_entry;
@@ -61,4 +61,4 @@ using std::filesystem::is_regular_file;
 using std::filesystem::is_socket;
 using std::filesystem::is_symlink;
 using std::filesystem::status_known;
-}}
+}

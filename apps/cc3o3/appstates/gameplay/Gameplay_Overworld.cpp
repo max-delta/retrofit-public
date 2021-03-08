@@ -38,7 +38,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct Gameplay_Overworld::InternalState
@@ -352,4 +352,4 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

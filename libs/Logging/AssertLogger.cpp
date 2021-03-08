@@ -10,7 +10,7 @@
 #include "rftl/mutex"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 void AssertLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
@@ -51,4 +51,4 @@ void AssertLogger( LoggingRouter const& router, LogEvent<char> const& event, va_
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

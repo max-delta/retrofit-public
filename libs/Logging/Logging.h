@@ -19,11 +19,11 @@
 #define RF_STATIC_ASSERT_ON_UNDECLARED_CONTEXT_SPECIALIZATIONS
 
 // Forwards
-namespace RF { namespace logging {
+namespace RF::logging {
 	class LoggingRouter;
-}}
+}
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -265,6 +265,6 @@ LOGGING_API void LogVA(
 
 }
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "Logging.inl"

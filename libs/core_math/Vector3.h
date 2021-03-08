@@ -2,7 +2,7 @@
 #include "rftl/cstdint"
 #include "rftl/type_traits"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -50,17 +50,17 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 // Explicitly instantiate and alias common types
-namespace RF { namespace math {
+namespace RF::math {
 typedef Vector3<float> Vector3f;
 typedef Vector3<double> Vector3d;
 typedef Vector3<int8_t> Vector3i8;
 typedef Vector3<int16_t> Vector3i16;
 typedef Vector3<int32_t> Vector3i32;
 typedef Vector3<int64_t> Vector3i64;
-}}
+}
 extern template class RF::math::Vector3<float>;
 extern template class RF::math::Vector3<double>;
 extern template class RF::math::Vector3<int8_t>;

@@ -3,7 +3,7 @@
 
 #include "cc3o3/appstates/AppStatesFwd.h"
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Except under extraordinary circumstances, state should start in boot and go
@@ -16,4 +16,4 @@ AppStateID GetFirstTitleScreenState();
 AppStateID GetFirstGameplayState();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

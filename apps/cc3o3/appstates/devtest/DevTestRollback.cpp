@@ -26,7 +26,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct DevTestRollback::InternalState
@@ -209,4 +209,4 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

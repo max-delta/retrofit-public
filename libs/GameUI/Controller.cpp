@@ -11,7 +11,7 @@ RFTYPE_CREATE_META( RF::ui::Controller )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::Controller );
 }
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 void Controller::OnAssign( UIContext& context, Container& container )
@@ -136,4 +136,4 @@ void Controller::MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

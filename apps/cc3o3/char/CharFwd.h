@@ -5,7 +5,7 @@
 
 #include "rftl/array"
 
-namespace RF { namespace cc { namespace character {
+namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
 static constexpr size_t kMaxElementLevels = element::kMaxElementLevel;
@@ -26,4 +26,4 @@ class CharacterDatabase;
 class CharacterValidator;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

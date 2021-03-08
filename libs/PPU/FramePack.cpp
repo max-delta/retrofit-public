@@ -7,7 +7,7 @@
 #include "rftl/cstring"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 uint8_t const* FramePackBase::GetTimeSlotSustains() const
@@ -166,4 +166,4 @@ FramePackBase::FramePackBase( uint8_t maxTimeSlots )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

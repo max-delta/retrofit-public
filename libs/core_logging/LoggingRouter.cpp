@@ -7,7 +7,7 @@
 #include "rftl/cstdarg"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -400,4 +400,4 @@ bool LoggingRouter::IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityM
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

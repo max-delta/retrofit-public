@@ -18,7 +18,7 @@ RFTYPE_CREATE_META( RF::ui::controller::InstancedController )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::InstancedController );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 InstancedController::InstancedController()
@@ -169,4 +169,4 @@ bool InstancedController::HandleFocusEvent( UIContext& context, void* userData, 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

@@ -7,7 +7,7 @@
 	defined(_EXPERIMENTAL_FILESYSTEM_) && \
 	!defined(RFTL_SHIM_FILESYSTEM)
 #define RFTL_SHIM_FILESYSTEM
-	namespace std { namespace filesystem {
+	namespace std::filesystem {
 		using namespace std::experimental::filesystem::v1;
 	}}
 #endif

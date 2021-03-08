@@ -1,15 +1,15 @@
 #pragma once
 
 // Forwards
-namespace RF { namespace alloc {
+namespace RF::alloc {
 class Allocator;
-}}
+}
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TagT>
 Allocator* GetAllocator();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

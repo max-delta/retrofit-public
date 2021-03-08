@@ -4,7 +4,7 @@
 #include "rftl/cstdint"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum Severity : uint64_t
@@ -45,4 +45,4 @@ constexpr Severity kDefaultSeverityMask = static_cast<Severity>( -1 );
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

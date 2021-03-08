@@ -4,7 +4,7 @@
 #include "Logging/Logging.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
@@ -528,4 +528,4 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

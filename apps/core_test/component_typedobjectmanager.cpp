@@ -8,7 +8,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -199,4 +199,4 @@ TEST( TypedObjectManager, BasicAddRemoveComponent )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

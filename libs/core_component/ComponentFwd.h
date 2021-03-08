@@ -4,7 +4,7 @@
 #include "rftl/cstdint"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 using ManagerIdentifier = uint16_t;
@@ -46,4 +46,4 @@ template<typename TypeResolver>
 class TypedObjectManager;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

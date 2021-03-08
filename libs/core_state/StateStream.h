@@ -6,7 +6,7 @@
 #include "rftl/extension/static_vector.h"
 
 
-namespace RF { namespace state {
+namespace RF::state {
 ///////////////////////////////////////////////////////////////////////////////
 
 // A state stream represents a variable with limited historical knowledge of
@@ -51,6 +51,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "StateStream.inl"

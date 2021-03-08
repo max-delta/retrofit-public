@@ -6,7 +6,7 @@
 #include "core/macros.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API Object
@@ -50,4 +50,4 @@ static_assert( sizeof( Object ) == 32, "Double-check Object storage" );
 static_assert( alignof( Object ) == 4, "Double-check Object alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

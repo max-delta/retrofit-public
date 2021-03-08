@@ -15,7 +15,7 @@
 #include "rftl/unordered_set"
 
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 VFSPath const VFS::kRoot = VFSPath( "RF:" );
@@ -896,4 +896,4 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -9,7 +9,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 static rftl::atomic<HandlerID> sFallbackHandlerID = kInvalidHandlerID;
@@ -67,4 +67,4 @@ void RemoveFallbackLoggerIfPresent()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

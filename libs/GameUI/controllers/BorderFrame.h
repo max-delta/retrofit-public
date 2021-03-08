@@ -6,7 +6,7 @@
 #include "PPU/TileLayer.h"
 
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API BorderFrame final : public InstancedController
@@ -54,4 +54,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

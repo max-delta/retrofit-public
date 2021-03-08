@@ -3,7 +3,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( MathCasts, IntegerTruncast_Unsigned )
@@ -142,4 +142,4 @@ TEST( MathCasts, IntegerUnsignedBitCast )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

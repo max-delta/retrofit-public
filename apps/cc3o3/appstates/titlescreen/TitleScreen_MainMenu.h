@@ -8,7 +8,7 @@
 #include "core/ptr/unique_ptr.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 class TitleScreen_MainMenu final : public AppState
@@ -29,4 +29,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

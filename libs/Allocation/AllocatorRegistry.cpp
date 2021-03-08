@@ -7,7 +7,7 @@
 #include "core/meta/LazyInitSingleton.h"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 AllocatorRegistry::AllocatorRegistry()
@@ -63,4 +63,4 @@ AllocatorRegistry& GetOrCreateGlobalAllocatorRegistry()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

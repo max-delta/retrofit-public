@@ -2,7 +2,7 @@
 #include "core_rftype/ClassInfoAccessor.h"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Un-defined, requires a specialization to match
@@ -38,4 +38,4 @@ struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineTyp
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

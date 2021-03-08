@@ -6,7 +6,7 @@
 #include "rftl/extension/byte_view.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 // NOTE: It is undesirable, but technically correct to throw away the alpha, as
@@ -24,4 +24,4 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -30,7 +30,7 @@
 	template<> \
 	void ___rftype_macro_generated_initializer<CLASSTYPE>(::RF::rftype::ClassInfoCompositor<CLASSTYPE> & ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger ); \
 	\
-	namespace RF { namespace rftype { /* Opening rftype namespace */ \
+	namespace RF::rftype { /* Opening rftype namespace */ \
 	/* Template specialization for lookup only within module */ \
 	template<> \
 	RF_NO_LINK_STRIP ::RF::reflect::ClassInfo const& GetClassInfoWithinModule<CLASSTYPE>() \
@@ -47,7 +47,7 @@
 	{ \
 		___rftype_macro_generated_initializer<CLASSTYPE>( ___RFType_Macro_Target, this ); \
 	} \
-	}} /* Closing rftype namespace */ \
+	} /* Closing rftype namespace */ \
 	\
 	/* Header before user-supplied directives */ \
 	template<> \

@@ -7,7 +7,7 @@
 #include "PlatformFilesystem/FileBuffer.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 CharacterCreator::CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu )
@@ -247,4 +247,4 @@ rftl::deque<rftl::deque<rftl::string>> CharacterCreator::LoadCSV( file::VFSPath 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

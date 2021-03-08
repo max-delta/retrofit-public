@@ -4,7 +4,7 @@
 #include "PPUFwd.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct PPU_API PPUTimer
@@ -28,4 +28,4 @@ static_assert( sizeof( PPUTimer ) == 4, "Double-check PPUTimer storage" );
 static_assert( alignof( PPUTimer ) == 1, "Double-check PPUTimer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

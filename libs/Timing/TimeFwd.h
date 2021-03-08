@@ -2,7 +2,7 @@
 #include "rftl/chrono"
 #include "rftl/ratio"
 
-namespace RF { namespace time {
+namespace RF::time {
 ///////////////////////////////////////////////////////////////////////////////
 
 class FrameClock;
@@ -25,4 +25,4 @@ using Limiter2Fps = Limiter<decltype( k2FpsFrame ), k2FpsFrame.count()>;
 using Limiter1Fps = Limiter<decltype( k1FpsFrame ), k1FpsFrame.count()>;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -6,7 +6,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 ContainerID FocusTreeNode::GetContainerID() const
@@ -612,4 +612,4 @@ bool FocusTree::OnRootFocusEvent( UIContext& context, void* userData, FocusEvent
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

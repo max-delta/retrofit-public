@@ -5,7 +5,7 @@
 
 RF_CLANG_IGNORE( "-Wunreachable-code" );
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 	struct TestLoggingContext
@@ -68,4 +68,4 @@ TEST( Logging, CustomContext )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -95,4 +95,4 @@ inline typename RftlAllocator<T>::ThisType RftlAllocator<T>::select_on_container
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

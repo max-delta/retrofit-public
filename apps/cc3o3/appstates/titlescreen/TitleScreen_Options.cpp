@@ -30,7 +30,7 @@
 #include "rftl/functional"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -315,4 +315,4 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

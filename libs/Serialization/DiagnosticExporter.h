@@ -4,7 +4,7 @@
 #include "Serialization/Exporter.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SERIALIZATION_API DiagnosticExporter final : public Exporter
@@ -41,4 +41,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

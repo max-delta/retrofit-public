@@ -12,7 +12,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool TileLayerCSVLoader::LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path )
@@ -65,4 +65,4 @@ bool TileLayerCSVLoader::LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

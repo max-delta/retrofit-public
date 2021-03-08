@@ -29,7 +29,7 @@ struct ComponentResolver;
 using ObjectManager = component::TypedObjectManager<ComponentResolver>;
 }
 
-namespace RF { namespace cc {
+namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
@@ -45,4 +45,4 @@ void SystemStartup();
 void SystemShutdown();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

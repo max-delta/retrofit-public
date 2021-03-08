@@ -6,7 +6,7 @@
 #include "rftl/deque"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 WeakPtr<RawController> HotkeyController::GetSource() const
@@ -66,4 +66,4 @@ void HotkeyController::TruncateBuffers( time::CommonClock::time_point earliestTi
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

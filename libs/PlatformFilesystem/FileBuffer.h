@@ -10,11 +10,11 @@
 
 
 // Forwards
-namespace RF { namespace file {
+namespace RF::file {
 class FileHandle;
-}}
+}
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PLATFORMFILESYSTEM_API FileBuffer
@@ -45,4 +45,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

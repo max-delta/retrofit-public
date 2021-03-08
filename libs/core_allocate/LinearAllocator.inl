@@ -4,7 +4,7 @@
 #include "core_math/math_clamps.h"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<size_t MaxTotalSize, size_t Align>
@@ -122,4 +122,4 @@ inline void LinearAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

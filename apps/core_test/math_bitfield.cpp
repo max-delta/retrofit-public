@@ -5,7 +5,7 @@
 
 RF_CLANG_IGNORE( "-Wundefined-reinterpret-cast" );
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( MathBitField, Empty )
@@ -206,4 +206,4 @@ TEST( MathBitField, IEEE754Binary32Nonsense )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

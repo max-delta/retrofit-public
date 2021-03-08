@@ -3,7 +3,7 @@
 #include "Serialization/XmlExporter.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( Serialization, XmlExporterSanityCheck )
@@ -42,4 +42,4 @@ TEST( Serialization, XmlExporterSanityCheck )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

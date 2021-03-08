@@ -11,7 +11,7 @@
 #include "rftl/array"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 math::Color4u8 MelaninColorGenerator::GenerateColor( float baseRatio, float pheomelaninRatio, float eumelaninRatio ) const
@@ -191,4 +191,4 @@ math::Color4u8 MelaninColorGenerator::Mix( math::Color4u8 const& base, math::Col
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "rftl/cstddef"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // The maximum alignment is generally for 'double' or 'long double'
@@ -25,4 +25,4 @@ constexpr bool IsValidAlignment( size_t const align )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

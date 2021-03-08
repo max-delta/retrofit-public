@@ -2,7 +2,7 @@
 #include "CsvReader.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -76,4 +76,4 @@ rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDequ
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

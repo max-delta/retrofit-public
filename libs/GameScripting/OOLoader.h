@@ -6,7 +6,7 @@
 #include "core_reflect/ClassInfo.h"
 
 
-namespace RF { namespace script {
+namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 
 // OO files are not able to contain executable logic that interacts with the
@@ -58,6 +58,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "OOLoader.inl"

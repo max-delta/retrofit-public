@@ -8,7 +8,7 @@
 #include "rftl/string"
 
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API TextLabel final : public InstancedController
@@ -58,4 +58,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

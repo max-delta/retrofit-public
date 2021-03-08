@@ -9,7 +9,7 @@
 
 RF_CLANG_IGNORE( "-Wshadow-uncaptured-local" );
 
-namespace RF { namespace event {
+namespace RF::event {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( EventDispatcher, Empty )
@@ -570,4 +570,4 @@ TEST( EventDispatcher, HandlerReevaluateDefer )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

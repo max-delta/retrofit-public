@@ -7,11 +7,11 @@
 #include "rftl/array"
 
 // Forwards
-namespace RF { namespace gfx {
+namespace RF::gfx {
 class SIMPLEGL_API DeviceInterface;
-}}
+}
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SIMPLEGL_API SimpleGL final : public DeviceInterface
@@ -90,4 +90,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -5,7 +5,7 @@
 #include "rftl/functional"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 void FontRegistry::RegisterFallbackFont( Font const& font )
@@ -61,4 +61,4 @@ Font FontRegistry::SelectBestFont( FontPurposeID purpose, uint8_t zoomFactor ) c
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

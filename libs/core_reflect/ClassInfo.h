@@ -8,7 +8,7 @@
 #include "rftl/extension/immutable_string.h"
 
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct ClassInfo;
@@ -265,4 +265,4 @@ inline bool operator!=( VariableTypeInfo const& lhs, VariableTypeInfo const& rhs
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -3,7 +3,7 @@
 #include "core/meta/TypeList.h"
 
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class CallType : uint8_t
@@ -76,4 +76,4 @@ struct FunctionTraits<RetType ( This::* )( Params... ) const>
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

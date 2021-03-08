@@ -4,7 +4,7 @@
 #include "Scheduling/TaskScheduler.h"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TaskWorker::OnWorkComplete( Task* task, TaskState newState, TaskScheduler* scheduler )
@@ -13,4 +13,4 @@ void TaskWorker::OnWorkComplete( Task* task, TaskState newState, TaskScheduler* 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

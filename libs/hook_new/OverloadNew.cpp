@@ -18,7 +18,7 @@
 
 #if RF_IS_ALLOWED( RF_CONFIG_HOOK_NEW )
 ///////////////////////////////////////////////////////////////////////////////
-namespace RF { namespace hook { namespace details {
+namespace RF::hook::details {
 
 void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 {
@@ -47,7 +47,7 @@ void HookedObjectDeallocate( void* ptr ) noexcept
 	GlobalObjectDeallocate( ptr );
 }
 
-}}}
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES;

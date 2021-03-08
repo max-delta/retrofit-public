@@ -77,7 +77,7 @@ RFTYPE_CREATE_META( RF::rftype_example::ExamplePoorLifeDecision )
 	RFTYPE_REGISTER_BY_NAME( "ExamplePoorLifeDecision" );
 }
 
-namespace RF { namespace rftype_example {
+namespace RF::rftype_example {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ExampleWithStaticClassInfo::mExampleStaticVariable;
@@ -127,4 +127,4 @@ bool ExampleBaseClass::ExampleStaticFunction( int i, float f, char c )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

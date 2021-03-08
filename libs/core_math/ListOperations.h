@@ -2,7 +2,7 @@
 #include "core/meta/ValueList.h"
 #include "core_math/NumericTraits.h"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ValueType, typename ValueListType>
@@ -42,4 +42,4 @@ struct ListProduct<ValueType, ValueList<ValueType, CurrentValue, RemainingValues
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

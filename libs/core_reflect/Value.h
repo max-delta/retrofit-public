@@ -8,11 +8,11 @@
 
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 class VirtualClass;
-}}
+}
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 // WARNING: It's a pretty bad idea to be trying to store Unicode information
@@ -135,7 +135,7 @@ private:
 #undef RF_REFLECT_VALUE_TYPELIST_STRINGS
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 namespace std {
 template<> struct hash<RF::reflect::Value>

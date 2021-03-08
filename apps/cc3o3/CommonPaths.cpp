@@ -4,7 +4,7 @@
 #include "PlatformFilesystem/VFS.h"
 
 
-namespace RF { namespace cc { namespace paths {
+namespace RF::cc::paths {
 ///////////////////////////////////////////////////////////////////////////////
 
 file::VFSPath VfsConfig()
@@ -100,4 +100,4 @@ file::VFSPath ElementTierUnlockTables()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

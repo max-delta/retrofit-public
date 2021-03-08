@@ -24,7 +24,7 @@ RFTYPE_CREATE_META( RF::ui::controller::ListBox )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::ListBox );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 ListBox::ListBox(
@@ -159,4 +159,4 @@ bool ListBox::ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedC
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

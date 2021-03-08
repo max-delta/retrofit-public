@@ -2,11 +2,11 @@
 #include "CompositeCharacter.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 CompositeCharacter::CompositeCharacter() = default;
 CompositeCharacter::~CompositeCharacter() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

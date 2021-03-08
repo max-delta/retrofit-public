@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool DigitalInputComponent::WasActivatedPhysical( PhysicalCode code ) const
@@ -52,4 +52,4 @@ void DigitalInputComponent::GetLogicalEventStream( rftl::virtual_iterator<Logica
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include "rftl/type_traits"
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class VariableType : uint8_t
@@ -41,4 +41,4 @@ struct VariableTraits<Member Class::*>
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

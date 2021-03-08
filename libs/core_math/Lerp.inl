@@ -4,7 +4,7 @@
 #include "rftl/type_traits"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TYPE, typename SCALAR>
@@ -67,4 +67,4 @@ constexpr OUTTYPE Rescale( OUTTYPE const& outMin, OUTTYPE const& outMax, INTYPE 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

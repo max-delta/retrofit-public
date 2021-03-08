@@ -6,7 +6,7 @@
 
 #include "rftl/utility"
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 class RollbackManager;
@@ -46,4 +46,4 @@ using InclusiveTimeRange = rftl::pair<
 	time::CommonClock::time_point>;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

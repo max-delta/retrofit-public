@@ -14,7 +14,7 @@ RFTYPE_CREATE_META( RF::ui::controller::ColumnSlicer )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::ColumnSlicer );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 ColumnSlicer::ColumnSlicer( Ratios const& ratios )
@@ -151,4 +151,4 @@ void ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Cont
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

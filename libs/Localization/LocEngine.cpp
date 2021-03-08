@@ -14,7 +14,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace loc {
+namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection )
@@ -193,4 +193,4 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

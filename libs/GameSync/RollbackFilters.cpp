@@ -7,7 +7,7 @@
 #include "Logging/Logging.h"
 
 
-namespace RF { namespace sync {
+namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
 rollback::InputStreamRef RollbackFilters::GetMutableStreamRef(
@@ -65,4 +65,4 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

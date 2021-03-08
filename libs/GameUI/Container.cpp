@@ -5,7 +5,7 @@
 #include "GameUI/UIContext.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool Container::IsConstrainedBy( AnchorID anchorID ) const
@@ -87,4 +87,4 @@ void Container::OnRender( UIConstContext const& context, bool& blockChildRenderi
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

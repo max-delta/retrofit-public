@@ -9,7 +9,7 @@
 #include "core_math/Rand.h"
 
 
-namespace RF { namespace cc { namespace combat {
+namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
 
 CombatEngine::CombatEngine( WeakPtr<file::VFS const> const& vfs )
@@ -516,4 +516,4 @@ SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

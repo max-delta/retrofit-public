@@ -8,7 +8,7 @@
 #include "core/ptr/unique_ptr.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 class DevTestGridCharts final : public AppState
@@ -29,4 +29,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

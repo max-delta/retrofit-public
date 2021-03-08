@@ -9,11 +9,11 @@
 #include "rftl/array"
 
 // Forwards
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 class BorderFrame;
 class FramePackDisplay;
 class TextLabel;
-}}}
+}
 
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////

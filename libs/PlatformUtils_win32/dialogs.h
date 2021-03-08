@@ -7,7 +7,7 @@
 #include "rftl/vector"
 
 
-namespace RF { namespace platform { namespace dialogs {
+namespace RF::platform::dialogs {
 ///////////////////////////////////////////////////////////////////////////////
 
 // NOTE: Filters are of the form { "Myfile", "*.mf" }
@@ -19,4 +19,4 @@ PLATFORMUTILS_API rftl::string OpenFileDialog( FileFilters filters = {} );
 PLATFORMUTILS_API rftl::string SaveFileDialog( FileFilters filters = {} );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

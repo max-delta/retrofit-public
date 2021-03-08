@@ -3,7 +3,7 @@
 
 #include "GameUI/UIFwd.h"
 
-namespace RF { namespace cc { namespace ui {
+namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace controller {
@@ -53,4 +53,4 @@ enum : FocusEventType
 static constexpr uint8_t kTextSpeed = 4;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

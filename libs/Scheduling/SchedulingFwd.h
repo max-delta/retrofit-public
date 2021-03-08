@@ -8,7 +8,7 @@
 #include "rftl/utility"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class TaskState : uint8_t
@@ -59,4 +59,4 @@ using TaskWeakPtr = WeakPtr<Task>;
 using TaskIDWeakPair = rftl::pair<TaskID, TaskWeakPtr>;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

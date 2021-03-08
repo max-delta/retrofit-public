@@ -8,7 +8,7 @@
 #include "PlatformFilesystem/FileHandle.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs )
@@ -101,4 +101,4 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

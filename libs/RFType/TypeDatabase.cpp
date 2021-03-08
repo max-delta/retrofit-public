@@ -8,7 +8,7 @@
 #include "rftl/memory"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool TypeDatabase::RegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo )
@@ -94,4 +94,4 @@ TypeDatabase& TypeDatabase::GetOrCreateGlobalInstance()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

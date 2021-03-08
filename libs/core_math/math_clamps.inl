@@ -7,7 +7,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TYPE>
@@ -234,4 +234,4 @@ constexpr BASE WrapPositiveOffset( BASE const& value, BASE const& mod, OFFSET co
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

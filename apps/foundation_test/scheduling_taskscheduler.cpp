@@ -14,7 +14,7 @@
 
 RF_CLANG_IGNORE( "-Wshadow-uncaptured-local" );
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace details {
@@ -264,4 +264,4 @@ TEST( Scheduling, AsyncThreadedSchedulerLifetime )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

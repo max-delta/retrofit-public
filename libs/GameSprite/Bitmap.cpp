@@ -4,7 +4,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 Bitmap::Bitmap( ExplicitDefaultConstruct )
@@ -371,4 +371,4 @@ Bitmap Bitmap::ExtractRegion( size_t x, size_t y, size_t width, size_t height ) 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

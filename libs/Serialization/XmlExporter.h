@@ -10,7 +10,7 @@
 #include <pugixml/pugixml.h>
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SERIALIZATION_API XmlExporter final : public Exporter
@@ -57,4 +57,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -6,7 +6,7 @@
 #include "core/ptr/weak_ptr.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Helper class for making state streams act more like normal variables
@@ -40,7 +40,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 extern template class RF::rollback::Var<bool>;
 extern template class RF::rollback::Var<uint8_t>;

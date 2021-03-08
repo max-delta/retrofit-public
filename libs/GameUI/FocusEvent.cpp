@@ -2,7 +2,7 @@
 #include "FocusEvent.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 FocusEvent::FocusEvent( FocusEventType eventType )
@@ -12,4 +12,4 @@ FocusEvent::FocusEvent( FocusEventType eventType )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

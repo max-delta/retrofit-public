@@ -2,7 +2,7 @@
 #include "rftl/string"
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
 rftl::string ConvertToASCII( char const* source, size_t numBytes );
@@ -51,4 +51,4 @@ template<> inline rftl::u16string ConvertToUtf<char16_t>( rftl::u32string const&
 template<> inline rftl::u32string ConvertToUtf<char32_t>( rftl::u32string const& source ){return ConvertToUtf32( source );}
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

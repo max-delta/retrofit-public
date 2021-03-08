@@ -6,7 +6,7 @@
 
 RF_CLANG_IGNORE( "-Winvalid-offsetof" );
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace details {
@@ -152,7 +152,7 @@ struct Containing
 ////
 //////
 ////////
-}} // Temp close of namespace, simulate .cpp file vs .h file
+} // Temp close of namespace, simulate .cpp file vs .h file
 //////////
 
 RFTYPE_DEFINE_STATIC_CLASSINFO( RF::reflect::details::ClassWithStaticClassInfo );
@@ -256,7 +256,7 @@ RFTYPE_CREATE_META( RF::reflect::details::nested::Containing )
 }
 
 //////////
-namespace RF { namespace reflect { // Re-open namespace
+namespace RF::reflect { // Re-open namespace
 ////////
 //////
 ////
@@ -449,4 +449,4 @@ TEST( RFType, Nested )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

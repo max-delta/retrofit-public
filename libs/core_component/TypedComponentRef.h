@@ -2,7 +2,7 @@
 #include "core_component/ComponentRef.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 // IMPORTANT: All references are invalid if their parent manager is destroyed,
@@ -57,6 +57,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "TypedComponentRef.inl"

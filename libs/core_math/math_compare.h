@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TYPE>
@@ -23,6 +23,6 @@ template<typename TYPE>
 constexpr bool IsWithin( TYPE const& lhs, TYPE const& delta, TYPE const& rhs );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "math_compare.inl"

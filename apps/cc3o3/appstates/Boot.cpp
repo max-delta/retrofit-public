@@ -12,7 +12,7 @@
 #include "PPU/PPUController.h"
 
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 static bool sHasBooted = false;
@@ -52,4 +52,4 @@ void Boot::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

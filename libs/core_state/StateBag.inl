@@ -2,7 +2,7 @@
 #include "core_state/StateBag.h"
 
 
-namespace RF { namespace state {
+namespace RF::state {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<size_t MaxChangesT>
@@ -144,4 +144,4 @@ inline typename StateBag<MaxChangesT>::template Tree<T>& RF::state::StateBag<Max
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace cc { namespace combat {
+namespace RF::cc::combat {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class EntityClass : uint8_t
@@ -64,4 +64,4 @@ class CombatInstance;
 class FightController;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

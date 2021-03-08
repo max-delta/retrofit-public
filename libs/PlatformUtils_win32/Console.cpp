@@ -4,7 +4,7 @@
 #include "core_platform/inc/windows_inc.h"
 
 
-namespace RF { namespace platform { namespace console {
+namespace RF::platform::console {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API bool EnableANSIEscapeSequences()
@@ -34,4 +34,4 @@ PLATFORMUTILS_API bool EnableANSIEscapeSequences()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

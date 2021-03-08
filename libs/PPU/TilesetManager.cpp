@@ -15,7 +15,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 TilesetManager::TilesetManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs )
@@ -107,4 +107,4 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

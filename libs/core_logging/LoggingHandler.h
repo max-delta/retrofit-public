@@ -3,11 +3,11 @@
 
 
 // Forwards
-namespace RF { namespace logging {
+namespace RF::logging {
 	class LoggingRouter;
-}}
+}
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 using HandlerID = uint64_t;
@@ -30,4 +30,4 @@ struct HandlerDefinition
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

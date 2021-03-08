@@ -12,12 +12,12 @@
 #include "rftl/vector"
 
 // Forwards
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 	class ThreadableTaskWorker;
-}}
+}
 
 
-namespace RF { namespace app {
+namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
 class APPCOMMONGRAPHICALCLIENT_API StandardTaskScheduler
@@ -65,4 +65,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

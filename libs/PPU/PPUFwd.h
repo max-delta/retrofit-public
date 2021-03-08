@@ -5,7 +5,7 @@
 #include "rftl/cstdint"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef uint64_t DeviceTextureID;
@@ -95,4 +95,4 @@ typedef FramePack<16> FramePack_512;
 typedef FramePack<6> FramePack_256;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -11,7 +11,7 @@
 #include "rftl/deque"
 
 
-namespace RF { namespace sync {
+namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -99,4 +99,4 @@ bool SnapshotSerializer::SerializeToDiagnosticFile( rollback::Snapshot const& sn
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

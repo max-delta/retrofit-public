@@ -12,7 +12,7 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/macros.h"
 
-namespace RF { namespace app {
+namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Window Procedure
@@ -119,4 +119,4 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -2,9 +2,9 @@
 #include "core_platform/dllmain.h"
 
 // Direct forwards to avoid Windows.h contamination into headers
-namespace RF { namespace logging {
+namespace RF::logging {
 void InsertFallbackLogger();
-}}
+}
 
 shim::BOOL OnDllMainProcessAttach()
 {

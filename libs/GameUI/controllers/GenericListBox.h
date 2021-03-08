@@ -5,7 +5,7 @@
 
 #include "core/ptr/unique_ptr.h"
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API GenericListBox : public InstancedController
@@ -66,6 +66,6 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}
 
 #include "GenericListBox.inl"

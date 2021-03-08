@@ -4,7 +4,7 @@
 #include "core_platform/inc/windows_inc.h"
 
 
-namespace RF { namespace platform { namespace windowing {
+namespace RF::platform::windowing {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPROC WndProc )
@@ -117,4 +117,4 @@ PLATFORMUTILS_API int32_t ProcessSingleMessage()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

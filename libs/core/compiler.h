@@ -3,7 +3,7 @@
 #include "core/macros.h"
 
 
-namespace RF { namespace compiler {
+namespace RF::compiler {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class Compiler
@@ -359,7 +359,7 @@ static_assert( alignof( void* ) == sizeof( void* ), "Unexpected pointer alignmen
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 // MSVC needs some intrinsics declared before they can be invoked
 #if defined( RF_PLATFORM_MSVC )

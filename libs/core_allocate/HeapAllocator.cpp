@@ -6,7 +6,7 @@
 #include "core_platform/MemoryRegion.h"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 HeapAllocator::HeapAllocator( ExplicitDefaultConstruct )
@@ -89,4 +89,4 @@ void HeapAllocator::RelinquishAllAllocations()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

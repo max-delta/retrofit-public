@@ -7,7 +7,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
@@ -73,4 +73,4 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

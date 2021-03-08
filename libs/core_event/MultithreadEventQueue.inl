@@ -2,7 +2,7 @@
 #include "MultithreadEventQueue.h"
 
 
-namespace RF { namespace event {
+namespace RF::event {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename EventT>
@@ -95,4 +95,4 @@ inline typename MultithreadEventQueue<EventT>::EventQueue MultithreadEventQueue<
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

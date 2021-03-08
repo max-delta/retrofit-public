@@ -3,7 +3,7 @@
 
 #include "GameAppState/AppStateFwd.h"
 
-namespace RF { namespace cc { namespace appstate {
+namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 using namespace RF::appstate;
@@ -49,4 +49,4 @@ class TitleScreen_CharCreate;
 class TitleScreen_Options;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

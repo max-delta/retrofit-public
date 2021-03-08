@@ -9,7 +9,7 @@
 #include "squirrel3/include/squirrel.h"
 
 
-namespace RF { namespace script {
+namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace {
 
@@ -575,4 +575,4 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

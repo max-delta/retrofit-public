@@ -4,7 +4,7 @@
 #include "core_event/SinglethreadEventQueue.h"
 
 
-namespace RF { namespace event {
+namespace RF::event {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( EventQueue, MultithreadBasics )
@@ -146,4 +146,4 @@ TEST( EventQueue, SinglethreadBasics )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

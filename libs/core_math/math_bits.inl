@@ -8,7 +8,7 @@
 #include "rftl/type_traits"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<> constexpr uint8_t GetAllBitsSet()
@@ -145,4 +145,4 @@ constexpr size_t GetZerosIndexOfHighestBit( T const value )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

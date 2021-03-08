@@ -4,7 +4,7 @@
 #include "core_rftype/CreateClassInfoDefinition.h"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace details {
@@ -112,7 +112,7 @@ struct VirtualExtremeDiamondCenter : virtual public VirtualFarLeft, virtual publ
 ////
 //////
 ////////
-}} // Temp close of namespace, simulate .cpp file vs .h file
+} // Temp close of namespace, simulate .cpp file vs .h file
 //////////
 
 RFTYPE_CREATE_META( RF::rftype::details::Parent )
@@ -179,7 +179,7 @@ RFTYPE_CREATE_META( RF::rftype::details::VirtualExtremeDiamondCenter )
 }
 
 //////////
-namespace RF { namespace rftype { // Re-open namespace
+namespace RF::rftype { // Re-open namespace
 ////////
 //////
 ////
@@ -501,4 +501,4 @@ TEST( VirtualCast, DISABLED_VirtualDiamond )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

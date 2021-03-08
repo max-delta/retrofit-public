@@ -6,7 +6,7 @@
 #include "core_rftype/TypeTraverser.h"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::ClassInfo const& classInfo, void const* classInstance )
@@ -106,4 +106,4 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

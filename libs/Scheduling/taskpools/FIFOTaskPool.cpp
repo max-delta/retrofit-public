@@ -5,7 +5,7 @@
 #include "rftl/vector"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 FIFOTaskPool::TaskRecord::TaskRecord( TaskID id, TaskPtr&& task )
@@ -196,4 +196,4 @@ void FIFOTaskPool::RemoveBlockedTask( TaskID taskID, TaskState newState )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -7,7 +7,7 @@
 #include "PPU/ResourceManager.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API TilesetManager final : public ResourceManager<Tileset, ManagedTilesetID, kInvalidManagedTilesetID>
@@ -35,4 +35,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

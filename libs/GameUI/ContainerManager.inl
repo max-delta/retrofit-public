@@ -4,7 +4,7 @@
 #include "core_rftype/VirtualPtrCast.h"
 
 
-namespace RF { namespace ui {
+namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -74,4 +74,4 @@ inline WeakPtr<T> ContainerManager::AssignStrongController( Container& container
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

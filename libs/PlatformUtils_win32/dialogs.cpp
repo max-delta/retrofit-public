@@ -4,7 +4,7 @@
 #include "core_platform/inc/windows_inc.h"
 
 
-namespace RF { namespace platform { namespace dialogs {
+namespace RF::platform::dialogs {
 ///////////////////////////////////////////////////////////////////////////////
 
 PLATFORMUTILS_API rftl::string OpenFileDialog( FileFilters filters )
@@ -103,4 +103,4 @@ PLATFORMUTILS_API rftl::string SaveFileDialog( FileFilters filters )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

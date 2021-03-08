@@ -2,7 +2,7 @@
 #include "TypeTraverser.h"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 TypeTraverser::MemberVariableInstance::MemberVariableInstance(
@@ -58,4 +58,4 @@ void TypeTraverser::TraverseVariables(
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

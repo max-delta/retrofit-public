@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT& insertIterator );
@@ -43,6 +43,6 @@ template<typename InserterT> void ConvertToUtf32( char16_t const* source, size_t
 template<typename InserterT> void ConvertToUtf32( char32_t const* source, size_t numCodePoints, InserterT&& insertIterator );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "InsertConvert.inl"

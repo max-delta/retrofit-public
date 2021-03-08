@@ -8,7 +8,7 @@
 #include "core/ptr/void_creator.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 TEST( ObjectManager, Empty )
@@ -147,4 +147,4 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

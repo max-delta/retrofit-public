@@ -8,11 +8,11 @@
 
 
 // Forwards
-namespace RF { namespace reflect {
+namespace RF::reflect {
 	struct ClassInfo;
-}}
+}
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 class RFTYPE_API TypeDatabase
@@ -60,4 +60,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

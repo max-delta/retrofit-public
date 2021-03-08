@@ -2,7 +2,7 @@
 #include "core_component/ObjectRef.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 // IMPORTANT: All references are invalid if their parent manager is destroyed,
@@ -63,6 +63,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "TypedObjectRef.inl"

@@ -6,7 +6,7 @@
 #include "core_allocate/DefaultAllocCreator.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 Domain::Domain( alloc::Allocator& windowAllocator, alloc::Allocator& snapshotAllocator )
@@ -182,4 +182,4 @@ size_t Domain::ClearAllSnapshotsAfter( time::CommonClock::time_point time )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RF { namespace platform {
+namespace RF::platform {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Readable, writable, but not executable
@@ -18,4 +18,4 @@ void DeleteInLargeDynamicHeap( void const* heapHandle, void* address );
 size_t QueryLargeDynamicHeapSize( void const* heapHandle );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

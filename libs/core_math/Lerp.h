@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 // This lerp prefers the (vt1 - vt0) option
@@ -23,6 +23,6 @@ template<typename OUTTYPE, typename INTYPE, typename RATIOTYPE = float>
 constexpr OUTTYPE Rescale( OUTTYPE const& outMin, OUTTYPE const& outMax, INTYPE const& inMin, INTYPE const& inMax, INTYPE const& inVal );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "Lerp.inl"

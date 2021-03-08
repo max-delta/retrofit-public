@@ -4,7 +4,7 @@
 #include "GameUI/controllers/InstancedController.h"
 
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API Passthrough final : public InstancedController
@@ -29,4 +29,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

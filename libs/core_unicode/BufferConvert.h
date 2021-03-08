@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RF { namespace unicode {
+namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
 size_t ConvertToASCII( char* dest, size_t destLen, char const* source, size_t numBytes );
@@ -21,4 +21,4 @@ size_t ConvertToUtf32( char32_t* dest, size_t destLen, char16_t const* source, s
 size_t ConvertToUtf32( char32_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

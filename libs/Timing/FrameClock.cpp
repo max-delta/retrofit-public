@@ -2,7 +2,7 @@
 #include "FrameClock.h"
 
 
-namespace RF { namespace time {
+namespace RF::time {
 ///////////////////////////////////////////////////////////////////////////////
 
 FrameClock::time_point FrameClock::sAccumulatedTime( FrameClock::duration::zero() );
@@ -29,4 +29,4 @@ void FrameClock::set_time( time_point const& time )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

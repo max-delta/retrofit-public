@@ -6,7 +6,7 @@
 #include "core_math/Rand.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 Color4u8 const Color4u8::kBlack{ 0, 0, 0, 255 };
@@ -201,4 +201,4 @@ Color4u8& Color4u8::operator*=( ElementType const& rhs )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

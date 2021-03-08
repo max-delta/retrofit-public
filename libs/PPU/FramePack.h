@@ -7,7 +7,7 @@
 #include "core/ptr/ptr_traits.h"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor
@@ -183,6 +183,6 @@ static_assert(
 	"Double-check FramePack offset math" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "FramePack.inl"

@@ -9,7 +9,7 @@
 #include "rftl/vector"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API TileLayer
@@ -100,4 +100,4 @@ static_assert( sizeof( TileLayer ) <= 96, "Double-check TileLayer storage" );
 static_assert( alignof( TileLayer ) == RF::compiler::kPointerBytes, "Double-check TileLayer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

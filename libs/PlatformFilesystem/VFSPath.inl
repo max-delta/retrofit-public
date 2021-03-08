@@ -1,7 +1,7 @@
 #pragma once
 #include "VFSPath.h"
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename... Nodes>
@@ -12,4 +12,4 @@ inline RF::file::VFSPath::VFSPath( Element element, Nodes... elements )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

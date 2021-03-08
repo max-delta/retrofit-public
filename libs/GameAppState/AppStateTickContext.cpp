@@ -2,7 +2,7 @@
 #include "AppStateTickContext.h"
 
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 AppStateTickContext::AppStateTickContext( AppStateManager const& manager )
@@ -12,4 +12,4 @@ AppStateTickContext::AppStateTickContext( AppStateManager const& manager )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

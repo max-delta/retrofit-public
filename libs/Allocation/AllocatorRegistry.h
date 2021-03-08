@@ -10,7 +10,7 @@
 #include "rftl/unordered_map"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 class ALLOCATION_API AllocatorRegistry
@@ -47,4 +47,4 @@ private:
 ALLOCATION_API AllocatorRegistry& GetOrCreateGlobalAllocatorRegistry();
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

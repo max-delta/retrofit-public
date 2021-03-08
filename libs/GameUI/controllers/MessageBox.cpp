@@ -23,7 +23,7 @@ RFTYPE_CREATE_META( RF::ui::controller::MessageBox )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::MessageBox );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 MessageBox::MessageBox(
@@ -217,4 +217,4 @@ void MessageBox::OnZoomFactorChange( UIContext& context, Container& container )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

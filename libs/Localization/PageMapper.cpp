@@ -9,7 +9,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace loc {
+namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool PageMapper::InitializeFromCharmapFile( file::VFS const& vfs, file::VFSPath const& path )
@@ -121,4 +121,4 @@ rftl::string PageMapper::MapTo8Bit( rftl::u32string const& codePoints ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

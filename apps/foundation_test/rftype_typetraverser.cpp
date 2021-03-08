@@ -8,7 +8,7 @@
 #include "rftl/unordered_set"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 void EnsureAllFunctionsFound( rftl::unordered_set<void const*> expectedLocations, rftl::vector<TypeTraverser::MemberVariableInstance> const& members )
@@ -371,4 +371,4 @@ TEST( RFType, TraverseNullVecVecInts )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

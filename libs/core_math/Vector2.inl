@@ -6,7 +6,7 @@
 #include "core_math/NumericTraits.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -145,4 +145,4 @@ inline Vector2<T>& Vector2<T>::operator*=( ElementType const& rhs )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

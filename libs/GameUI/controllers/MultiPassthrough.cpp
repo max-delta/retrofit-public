@@ -14,7 +14,7 @@ RFTYPE_CREATE_META( RF::ui::controller::MultiPassthrough )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::MultiPassthrough );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 MultiPassthrough::MultiPassthrough( size_t numChildren )
@@ -47,4 +47,4 @@ void MultiPassthrough::OnInstanceAssign( UIContext& context, Container& containe
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

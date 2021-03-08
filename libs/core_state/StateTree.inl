@@ -4,7 +4,7 @@
 #include "core_allocate/DefaultAllocCreator.h"
 
 
-namespace RF { namespace state {
+namespace RF::state {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ValueT, size_t MaxChangesT>
@@ -133,4 +133,4 @@ inline rftl::vector<VariableIdentifier> StateTree<ValueT, MaxChangesT>::GetIdent
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

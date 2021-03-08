@@ -6,12 +6,12 @@
 #include "core_math/Color3f.h"
 
 // Forwards
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 	class TextBox;
 	class BorderFrame;
-}}}
+}
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API MessageBox final : public InstancedController
@@ -79,4 +79,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

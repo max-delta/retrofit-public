@@ -9,9 +9,9 @@
 namespace rftl {
 using std::common_type;
 
-namespace literals { namespace chrono_literals {
+namespace literals::chrono_literals {
 using namespace std::literals::chrono_literals;
-}}
+}
 
 namespace chrono {
 using std::chrono::duration;

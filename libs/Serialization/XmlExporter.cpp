@@ -6,7 +6,7 @@
 #include "rftl/cstring"
 
 
-namespace RF { namespace serialization {
+namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 XmlExporter::XmlExporter()
@@ -238,4 +238,4 @@ bool XmlExporter::Property_OutdentFromLastIndent()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

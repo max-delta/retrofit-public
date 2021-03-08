@@ -14,7 +14,7 @@ RFTYPE_CREATE_META( RF::ui::controller::Passthrough )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::Passthrough );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 ContainerID Passthrough::GetChildContainerID() const
@@ -36,4 +36,4 @@ void Passthrough::OnInstanceAssign( UIContext& context, Container& container )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

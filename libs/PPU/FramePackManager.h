@@ -6,7 +6,7 @@
 
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API FramePackManager final : public ResourceManager<FramePackBase, ManagedFramePackID, kInvalidManagedFramePackID>
@@ -34,4 +34,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -6,7 +6,7 @@
 #include "rftl/limits"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 namespace internal {
 
@@ -106,4 +106,4 @@ constexpr bool IsWithin( TYPE const& lhs, TYPE const& delta, TYPE const& rhs )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

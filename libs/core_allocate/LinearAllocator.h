@@ -6,7 +6,7 @@
 #include "rftl/atomic"
 
 
-namespace RF { namespace alloc {
+namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<size_t MaxTotalSize, size_t Align = kMaxAlign>
@@ -57,6 +57,6 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 #include "LinearAllocator.inl"

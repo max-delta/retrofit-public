@@ -4,7 +4,7 @@
 #include "core/ptr/default_creator.h"
 
 
-namespace RF { namespace event {
+namespace RF::event {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename HandlerT>
@@ -254,4 +254,4 @@ inline size_t EventDispatcher<EventT, HandlerT, EventQueueT, PoliciesT>::Dispatc
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

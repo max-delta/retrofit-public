@@ -9,7 +9,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 WeakPtr<GameController> RollbackController::GetSource() const
@@ -165,4 +165,4 @@ void RollbackController::TruncateBuffers( time::CommonClock::time_point earliest
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

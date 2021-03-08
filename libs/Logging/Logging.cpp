@@ -9,7 +9,7 @@
 #include "core_math/math_clamps.h"
 
 
-namespace RF { namespace logging {
+namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
 void FallbackConversion( Utf16LogContextBuffer& dest, Utf8LogContextBuffer const& source )
@@ -187,4 +187,4 @@ void LogVA(
 
 }
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

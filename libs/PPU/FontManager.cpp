@@ -15,7 +15,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 FontManager::FontManager( WeakPtr<file::VFS> const& vfs )
@@ -164,4 +164,4 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

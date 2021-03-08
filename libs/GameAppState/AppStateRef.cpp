@@ -4,7 +4,7 @@
 #include "GameAppState/AppState.h"
 
 
-namespace RF { namespace appstate {
+namespace RF::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
 void AppStateRef::OnEnter( AppStateChangeContext& context )
@@ -30,4 +30,4 @@ void AppStateRef::OnTick( AppStateTickContext& context )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

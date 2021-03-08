@@ -1,7 +1,7 @@
 #pragma once
 #include "GenericListBox.h"
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -13,4 +13,4 @@ inline WeakPtr<T> GenericListBox::AssignSlotController( UIContext& context, size
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

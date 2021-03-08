@@ -2,7 +2,7 @@
 #include "core_component/ComponentFwd.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 // IMPORTANT: All references are invalid if their parent manager is destroyed,
@@ -78,4 +78,4 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

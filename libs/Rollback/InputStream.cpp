@@ -6,7 +6,7 @@
 #include "rftl/algorithm"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 InputEvent::InputEvent( time::CommonClock::time_point time, InputValue value )
@@ -227,4 +227,4 @@ InputStream::const_iterator InputStream::upper_bound( time::CommonClock::time_po
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "Timing/TimeFwd.h"
 
 
-namespace RF { namespace cc { namespace time {
+namespace RF::cc::time {
 ///////////////////////////////////////////////////////////////////////////////
 
 using namespace RF::time;
@@ -15,4 +15,4 @@ static constexpr rftl::chrono::nanoseconds kGraphicalFrameDuration = k60FpsFrame
 static constexpr rftl::chrono::nanoseconds kSimulationFrameDuration = kGraphicalFrameDuration;
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

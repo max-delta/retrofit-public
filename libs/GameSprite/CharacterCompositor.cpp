@@ -19,7 +19,7 @@
 #include "rftl/unordered_set"
 
 
-namespace RF { namespace sprite {
+namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
 CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu )
@@ -576,4 +576,4 @@ bool CharacterCompositor::LoadPieceTableDirectory( rftl::string mode, CharacterP
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

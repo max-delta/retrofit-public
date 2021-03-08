@@ -17,7 +17,7 @@ RFTYPE_CREATE_META( RF::ui::controller::FramePackDisplay )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::FramePackDisplay );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 void FramePackDisplay::SetFramePack( gfx::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight )
@@ -59,4 +59,4 @@ void FramePackDisplay::OnRender( UIConstContext const& context, Container const&
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

@@ -7,7 +7,7 @@
 RF_CLANG_IGNORE( "-Wmissing-variable-declarations" );
 RF_CLANG_IGNORE( "-Wunneeded-internal-declaration" );
 
-namespace RF { namespace reflect {
+namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
 
 // NOTE: Not anonymous, so as to allow external linkage
@@ -168,4 +168,4 @@ TEST( Reflect, NonStaticMemberVariables )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

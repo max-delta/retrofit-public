@@ -2,7 +2,7 @@
 #include "rftl/cstdint"
 #include "rftl/type_traits"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 class Color4u8 final
@@ -69,4 +69,4 @@ static_assert( sizeof( Color4u8 ) == 4, "Unexpected size" );
 static_assert( alignof( Color4u8 ) == 1, "Unexpected size" );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

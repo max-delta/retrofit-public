@@ -6,7 +6,7 @@
 #include "rftl/sstream"
 
 
-namespace RF { namespace id {
+namespace RF::id {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename ElementT>
@@ -350,7 +350,7 @@ rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<C
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 template<typename ElementT>
 inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const

@@ -4,7 +4,7 @@
 #include "PlatformFilesystem/FileHandle.h"
 
 
-namespace RF { namespace file {
+namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
 FileBuffer::FileBuffer( ExplicitDefaultConstruct )
@@ -95,4 +95,4 @@ rftl::string_view FileBuffer::GetChars() const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

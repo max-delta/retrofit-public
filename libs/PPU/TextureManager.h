@@ -12,7 +12,7 @@
 #include "rftl/unordered_map"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API TextureManager final : public ResourceManager<Texture, ManagedTextureID, kInvalidManagedTextureID>
@@ -52,4 +52,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

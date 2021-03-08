@@ -2,7 +2,7 @@
 #include "rftl/cstdint"
 
 
-namespace rftl { namespace literals {
+namespace rftl::literals {
 ///////////////////////////////////////////////////////////////////////////////
 
 inline constexpr uint8_t operator"" _u8( unsigned long long arg )
@@ -32,4 +32,4 @@ inline constexpr int16_t operator"" _s16( unsigned long long arg )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

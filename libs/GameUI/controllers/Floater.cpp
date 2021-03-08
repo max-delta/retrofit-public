@@ -15,7 +15,7 @@ RFTYPE_CREATE_META( RF::ui::controller::Floater )
 	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::ui::controller::Floater );
 }
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 Floater::Floater( gfx::PPUCoordElem width, gfx::PPUCoordElem height, Justification justification )
@@ -72,4 +72,4 @@ void Floater::OnAABBRecalc( UIContext& context, Container& container )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

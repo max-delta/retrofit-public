@@ -6,7 +6,7 @@
 #include "core_allocate/AllocatorFwd.h"
 
 
-namespace RF { namespace rollback {
+namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Wrapper for helper Vars that handles automatic cleanup, at the cost of
@@ -47,7 +47,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 extern template class RF::rollback::AutoVar<bool>;
 extern template class RF::rollback::AutoVar<uint8_t>;

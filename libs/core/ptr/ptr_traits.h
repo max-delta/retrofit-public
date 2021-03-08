@@ -17,7 +17,7 @@
 		"Failed to cast PTR<" #DERIVEDTYPE "> to PTR<" #BASETYPE ">" ); \
 	RF_PTR_ASSERT_DELETABLE( BASETYPE );
 
-namespace RF { namespace PtrTrait {
+namespace RF::PtrTrait {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct NoVirtualDestructor
@@ -25,4 +25,4 @@ struct NoVirtualDestructor
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

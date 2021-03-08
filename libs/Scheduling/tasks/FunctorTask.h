@@ -7,7 +7,7 @@
 #include "rftl/type_traits"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Template helper to determine functor type, for use in cases such as lambdas,
@@ -118,4 +118,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

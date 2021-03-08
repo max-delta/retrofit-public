@@ -7,7 +7,7 @@
 #include "core/ptr/ptr_transform.h"
 
 
-namespace RF { namespace component {
+namespace RF::component {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename TypeResolver>
@@ -118,4 +118,4 @@ inline TypedMutableObjectRef<TypeResolver>::operator TypedObjectRef<TypeResolver
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

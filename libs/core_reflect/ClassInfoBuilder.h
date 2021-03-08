@@ -4,7 +4,7 @@
 #include "core_reflect/FunctionTraits.h"
 
 
-namespace RF { namespace reflect { namespace builder {
+namespace RF::reflect::builder {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<class T>
@@ -23,6 +23,6 @@ template<typename T>
 void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}
 
 #include "ClassInfoBuilder.inl"

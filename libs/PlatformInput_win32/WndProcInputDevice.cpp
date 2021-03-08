@@ -7,7 +7,7 @@
 #include "core_math/math_clamps.h"
 
 
-namespace RF { namespace input {
+namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 WndProcInputDevice::WndProcInputDevice()
@@ -591,4 +591,4 @@ shim::LRESULT WndProcTextInputComponent::ExamineTranslatedMessage( shim::HWND hW
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

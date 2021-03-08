@@ -6,7 +6,7 @@
 #include "PPU/Object.h"
 
 
-namespace RF { namespace ui { namespace controller {
+namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
 class GAMEUI_API FramePackDisplay final : public InstancedController
@@ -35,4 +35,4 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}}
+}

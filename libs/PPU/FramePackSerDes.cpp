@@ -13,7 +13,7 @@
 #include "rftl/cstring"
 
 
-namespace RF { namespace gfx {
+namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 namespace fpackserdes_details {
 static constexpr char kMagicType[4] = { 'F', 'P', 'A', 'K' };
@@ -439,4 +439,4 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

@@ -4,7 +4,7 @@
 #include "core_identifier/SegmentedIdentifier.h"
 
 
-namespace RF { namespace state {
+namespace RF::state {
 ///////////////////////////////////////////////////////////////////////////////
 
 class VariableIdentifier : public id::SegmentedIdentifier<rftl::string>
@@ -22,7 +22,7 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 template<>
 struct rftl::hash<RF::state::VariableIdentifier> : public rftl::hash<RF::id::SegmentedIdentifier<rftl::string>>

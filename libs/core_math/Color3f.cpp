@@ -8,7 +8,7 @@
 #include "core_math/Rand.h"
 
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 Color3f const Color3f::kBlack{ 0.f, 0.f, 0.f };
@@ -425,4 +425,4 @@ Color3f& Color3f::operator*=( ElementType const& rhs )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

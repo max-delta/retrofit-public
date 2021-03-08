@@ -4,7 +4,7 @@
 #include "core/macros.h"
 
 
-namespace RF { namespace rftype {
+namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 bool IsValidIdentifier( char const* name )
@@ -79,4 +79,4 @@ void SanitizeIdentifier( char const* in, char* out )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

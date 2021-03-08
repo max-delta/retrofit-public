@@ -4,7 +4,7 @@
 #include "Scheduling/TaskScheduler.h"
 
 
-namespace RF { namespace scheduling {
+namespace RF::scheduling {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TaskPool::SetListener( TaskPoolListener&& listener )
@@ -43,4 +43,4 @@ void TaskPool::OnTaskRemoved( TaskPtr&& task, TaskID taskID, TaskState newState 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

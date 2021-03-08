@@ -4,7 +4,7 @@
 #include "GameAppState/AppStateFwd.h"
 
 
-namespace RF { namespace cc {
+namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 enum class SimulationMode : uint8_t
@@ -29,4 +29,4 @@ void DebugInstantReplay( size_t numFrames );
 void RequestGlobalDeferredStateChange( appstate::AppStateID stateID );
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}

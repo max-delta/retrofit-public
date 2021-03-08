@@ -1,7 +1,7 @@
 #pragma once
 #include "core_math/Vector2.h"
 
-namespace RF { namespace math {
+namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
@@ -45,17 +45,17 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
-}}
+}
 
 // Explicitly instantiate and alias common types
-namespace RF { namespace math {
+namespace RF::math {
 typedef AABB4<float> AABB4f;
 typedef AABB4<double> AABB4d;
 typedef AABB4<int8_t> AABB4i8;
 typedef AABB4<int16_t> AABB4i16;
 typedef AABB4<int32_t> AABB4i32;
 typedef AABB4<int64_t> AABB4i64;
-}}
+}
 extern template class RF::math::AABB4<float>;
 extern template class RF::math::AABB4<double>;
 extern template class RF::math::AABB4<int8_t>;
