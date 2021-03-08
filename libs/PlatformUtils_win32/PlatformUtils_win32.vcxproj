@@ -31,9 +31,8 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='Win32'">project.32.def</ModuleDefinitionFile>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='x64'">project.64.def</ModuleDefinitionFile>
-      <ModuleDefinitionFile Condition="'$(Platform)'=='LLVM_x64'">project.64.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile Condition="'$(RFArch)'=='x86_32'">project.32.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile Condition="'$(RFArch)'=='x86_64'">project.64.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

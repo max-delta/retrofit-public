@@ -28,8 +28,8 @@
 
 	<!--Override where build artifacts are stored-->
 	<PropertyGroup>
-		<IntDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
-		<OutDir>$(SolutionDir)_artifacts\$(Platform)\$(Configuration)\Out\</OutDir>
+		<IntDir>$(SolutionDir)_artifacts\$(RFArch)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
+		<OutDir>$(SolutionDir)_artifacts\$(RFArch)\$(Configuration)\Out\</OutDir>
 	</PropertyGroup>
 
 </Project>

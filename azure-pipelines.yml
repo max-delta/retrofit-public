@@ -6,41 +6,41 @@ strategy:
   matrix:
 
     msvc-x86-debug:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
     msvc-x86-release:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
     msvc-x86-retail:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
 
     msvc-x64-debug:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
     msvc-x64-release:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
     msvc-x64-retail:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
 
     msvc-arm-debug:
-      buildPlatform: 'ARM'
+      buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
     msvc-arm-release:
-      buildPlatform: 'ARM'
+      buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
     msvc-arm-retail:
-      buildPlatform: 'ARM'
+      buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
 
@@ -58,28 +58,28 @@ strategy:
       buildTool: 'MSVC'
 
     llvm-x86-debug:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Debug'
       buildTool: 'LLVM'
     llvm-x86-release:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Release'
       buildTool: 'LLVM'
     llvm-x86-retail:
-      buildPlatform: 'x86'
+      buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Retail'
       buildTool: 'LLVM'
 
     llvm-x64-debug:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Debug'
       buildTool: 'LLVM'
     llvm-x64-release:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Release'
       buildTool: 'LLVM'
     llvm-x64-retail:
-      buildPlatform: 'x64'
+      buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Retail'
       buildTool: 'LLVM'
 
