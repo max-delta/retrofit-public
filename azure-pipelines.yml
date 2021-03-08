@@ -9,105 +9,153 @@ strategy:
       buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
     msvc-x86-release:
       buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
     msvc-x86-retail:
       buildPlatform: 'x86_32'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
 
     msvc-x64-debug:
       buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
     msvc-x64-release:
       buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
     msvc-x64-retail:
       buildPlatform: 'x86_64'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
+      hasBinaries: true
+      hasTests: true
 
     msvc-arm-debug:
       buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
     msvc-arm-release:
       buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
     msvc-arm-retail:
       buildPlatform: 'ARM32'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
 
     msvc-arm64-debug:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Debug'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
     msvc-arm64-release:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Release'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
     msvc-arm64-retail:
       buildPlatform: 'ARM64'
       buildConfiguration: 'MSVC_Retail'
       buildTool: 'MSVC'
+      hasBinaries: false
+      hasTests: false
 
     llvm-x86-debug:
       buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Debug'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
     llvm-x86-release:
       buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Release'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
     llvm-x86-retail:
       buildPlatform: 'x86_32'
       buildConfiguration: 'LLVM_Retail'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
 
     llvm-x64-debug:
       buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Debug'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
     llvm-x64-release:
       buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Release'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
     llvm-x64-retail:
       buildPlatform: 'x86_64'
       buildConfiguration: 'LLVM_Retail'
       buildTool: 'LLVM'
+      hasBinaries: true
+      hasTests: true
 
 #    llvm-arm-debug:
 #      buildPlatform: 'ARM'
 #      buildConfiguration: 'LLVM_Debug'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 #    llvm-arm-release:
 #      buildPlatform: 'ARM'
 #      buildConfiguration: 'LLVM_Release'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 #    llvm-arm-retail:
 #      buildPlatform: 'ARM'
 #      buildConfiguration: 'LLVM_Retail'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 
 #    llvm-arm64-debug:
 #      buildPlatform: 'ARM64'
 #      buildConfiguration: 'LLVM_Debug'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 #    llvm-arm64-release:
 #      buildPlatform: 'ARM64'
 #      buildConfiguration: 'LLVM_Release'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 #    llvm-arm64-retail:
 #      buildPlatform: 'ARM64'
 #      buildConfiguration: 'LLVM_Retail'
 #      buildTool: 'LLVM'
+#      hasBinaries: false
+#      hasTests: false
 
 pool:
   vmImage: 'windows-latest'
@@ -158,7 +206,7 @@ steps:
     flattenFolders: true
 
 - task: PublishPipelineArtifact@1
-  condition: or( eq(variables['buildPlatform'], 'x86_32'), eq(variables['buildPlatform'], 'x86_64') )
+  condition: eq(variables['hasBinaries'], true)
   inputs:
     targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
     artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
@@ -178,7 +226,7 @@ steps:
 #
 
 - task: CmdLine@2
-  condition: eq(variables['buildPlatform'], 'x64')
+  condition: eq(variables['hasTests'], true)
   timeoutInMinutes: 1
   inputs:
     script: 'core_test.exe --nopause'
@@ -186,7 +234,7 @@ steps:
     failOnStderr: true
 
 - task: CmdLine@2
-  condition: eq(variables['buildPlatform'], 'x64')
+  condition: eq(variables['hasTests'], true)
   timeoutInMinutes: 1
   inputs:
     script: 'foundation_test.exe --nopause'
@@ -198,7 +246,7 @@ steps:
 #
 
 - task: VSBuild@1
-  condition: and( eq(variables['buildPlatform'], 'x64'), eq(variables['buildTool'], 'MSVC') )
+  condition: and( eq(variables['buildPlatform'], 'x86_64'), eq(variables['buildTool'], 'MSVC') )
   continueOnError: true
   timeoutInMinutes: 60
   inputs:
