@@ -37,6 +37,7 @@ struct OnScopeEnd
 
 	CALLABLE const mCallable;
 };
+template<typename CALLABLE> OnScopeEnd( CALLABLE const& callable ) -> OnScopeEnd<CALLABLE>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

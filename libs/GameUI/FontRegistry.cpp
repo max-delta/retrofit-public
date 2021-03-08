@@ -26,10 +26,9 @@ void FontRegistry::RegisterFont( FontPurposeID purpose, Font const& font )
 
 	fontsByZoomFactor.emplace_back( font );
 
-	rftl::sort( fontsByZoomFactor.begin(), fontsByZoomFactor.end(), []( Font const& lhs, Font const& rhs )
-	{
+	rftl::sort( fontsByZoomFactor.begin(), fontsByZoomFactor.end(), []( Font const& lhs, Font const& rhs ) {
 		// Reverse order
-		return rftl::greater()( lhs.mMinimumZoomFactor, rhs.mMinimumZoomFactor );
+		return lhs.mMinimumZoomFactor > rhs.mMinimumZoomFactor;
 	} );
 }
 

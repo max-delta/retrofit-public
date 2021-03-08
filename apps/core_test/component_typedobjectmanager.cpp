@@ -76,6 +76,7 @@ TEST( TypedObjectManager, BasicAddRemoveObject )
 
 	using Manager = TypedObjectManager<details::PrimitiveResolver>;
 	using TypedObjectRef = TypedObjectRef<details::PrimitiveResolver>;
+	using TypedMutableObjectRef = TypedMutableObjectRef<details::PrimitiveResolver>;
 
 	Manager manager( kMan, kScope, details::PrimitiveResolver() );
 	Manager::InternalStateIteration latestState = manager.GetInternalStateIteration();
@@ -116,6 +117,9 @@ TEST( TypedObjectManager, BasicAddRemoveComponent )
 
 	using Manager = TypedObjectManager<details::PrimitiveResolver>;
 	using TypedObjectRef = TypedObjectRef<details::PrimitiveResolver>;
+	using TypedMutableObjectRef = TypedMutableObjectRef<details::PrimitiveResolver>;
+	using TypedComponentRef = TypedComponentRef<details::PrimitiveResolver>;
+	using TypedMutableComponentRef = TypedMutableComponentRef<details::PrimitiveResolver>;
 	using CompType = int;
 	static constexpr CompType kVal = 7;
 

@@ -250,7 +250,7 @@ TEST( EventDispatcher, SortedHandlers )
 			{
 				rftl::sort( lhs, rhs, []( KeyedHandler<Handler> const& lhs, KeyedHandler<Handler> const& rhs ) {
 					// Reverse order
-					return rftl::greater()( lhs.mHandler.mVal, rhs.mHandler.mVal );
+					return lhs.mHandler.mVal > rhs.mHandler.mVal;
 				} );
 			}
 		};
@@ -404,7 +404,7 @@ TEST( EventDispatcher, SortedEvents )
 			{
 				rftl::sort( lhs, rhs, []( Event const& lhs, Event const& rhs ) {
 					// Reverse order
-					return rftl::greater()( lhs, rhs );
+					return lhs > rhs;
 				} );
 			}
 		};
