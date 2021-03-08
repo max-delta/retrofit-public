@@ -22,7 +22,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(RFCompiler)'=='LLVM'">
-		<!-- Sadly, clang-tidy hangs (Last checked: v9.0.0) -->
+		<!-- Sadly, clang-tidy still hangs (Last checked: v10.0.0) -->
 		<RunCodeAnalysis>false</RunCodeAnalysis>
 		<EnableMicrosoftCodeAnalysis>false</EnableMicrosoftCodeAnalysis>
 		<EnableClangTidyCodeAnalysis>true</EnableClangTidyCodeAnalysis>
@@ -85,7 +85,11 @@
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<!--Treat these as system headers (not our code)-->
-			<AdditionalOptions>-imsvc $(RFRootDir)third_party\ -imsvc $(RFRootDir)third_party\googletest\include %(AdditionalOptions)</AdditionalOptions>
+			<AdditionalOptions>
+				-imsvc $(RFRootDir)third_party\
+				-imsvc $(RFRootDir)third_party\googletest\include
+				%(AdditionalOptions)
+			</AdditionalOptions>
 
 			<!-- Misc overly pedantic style warnings -->
 			<AdditionalOptions>
