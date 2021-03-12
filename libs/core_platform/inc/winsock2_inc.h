@@ -21,7 +21,16 @@ namespace win32 {
 #define NOMINMAX
 #define STRICT
 #include <WinSock2.h>
-#include <WS2tcpip.h>
+#ifdef RF_PLATFORM_MSVC
+	// WSAGetIPUserMtu(...) can return uninitialized memory in Windows 10 SDK
+	//  version 10.0.19047.0
+	#pragma warning( push )
+	#pragma warning( disable : 6101 )
+	#include <WS2tcpip.h>
+	#pragma warning(pop)
+#else
+	#include <WS2tcpip.h>
+#endif
 #undef NOMINMAX
 #undef STRICT
 
