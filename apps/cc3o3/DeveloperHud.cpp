@@ -40,13 +40,11 @@ namespace mode {
 
 void ProcessRollback( RF::input::GameCommand const& command )
 {
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-
 	switch( command.mType )
 	{
 		case input::command::game::DeveloperAction1:
 		{
-			rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
+			DebugTakeSnapshot( kSnapshotName );
 			break;
 		}
 		case input::command::game::DeveloperAction2:
@@ -55,8 +53,7 @@ void ProcessRollback( RF::input::GameCommand const& command )
 		}
 		case input::command::game::DeveloperAction3:
 		{
-			time::CommonClock::time_point const time = rollMan.LoadManualSnapshot( kSnapshotName );
-			rollMan.SetHeadClock( time );
+			DebugLoadSnapshot( kSnapshotName );
 			break;
 		}
 		case input::command::game::DeveloperAction4:
@@ -66,6 +63,7 @@ void ProcessRollback( RF::input::GameCommand const& command )
 		}
 		case input::command::game::DeveloperAction5:
 		{
+			DebugHardTimeReset();
 			break;
 		}
 		default:
@@ -208,8 +206,8 @@ void RenderRollback()
 			1,
 			kCommitDepth,
 			timelineCommit < timelineNow ?
-				math::Color3f::kYellow :
-				math::Color3f::kGreen );
+				  math::Color3f::kYellow :
+				  math::Color3f::kGreen );
 
 		size_t i_lane = 0;
 		for( RollbackManager::InputStreams::value_type const& streamPair : committedStreams )

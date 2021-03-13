@@ -29,6 +29,8 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/optional"
+
 
 namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
@@ -51,8 +53,14 @@ static appstate::AppStateManager sAppStateManager;
 
 static SimulationMode sDebugPreviousFrameSimulationMode = SimulationMode::Invalid;
 
+static rftl::optional<rftl::string> sSnapshotTakeQueued = {};
+static rftl::optional<rftl::string> sSnapshotLoadQueued = {};
+
 static bool sInstantReplayTriggered = false;
 static time::CommonClock::time_point sInstantReplayEndTime = {};
+
+static rftl::optional<time::CommonClock::time_point> sHardTimeReset = {};
+
 
 // This is important enough that we want it to show up on the callstack, but
 //  want to keep all the complex rollback logic together
@@ -146,6 +154,37 @@ void ProcessFrame()
 	{
 		// Developer input is global, and processed seperately from app states
 		developer::ProcessInput();
+	}
+
+	// Check for things that could trigger a time change
+	{
+		auto const triggerTimeChange = [&rollMan]( time::CommonClock::time_point time ) -> void //
+		{
+			// NOTE: Setting frame clock to max, so all time changes are
+			//  interpreted as a rewind
+			time::FrameClock::set_time( time::CommonClock::kMax );
+			RF_ASSERT( time < time::CommonClock::kMax );
+			rollMan.SetHeadClock( time );
+		};
+
+		if( sSnapshotTakeQueued.has_value() )
+		{
+			rollMan.TakeManualSnapshot( sSnapshotTakeQueued.value(), time::FrameClock::now() );
+			sSnapshotTakeQueued.reset();
+		}
+
+		if( sSnapshotLoadQueued.has_value() )
+		{
+			time::CommonClock::time_point const time = rollMan.LoadManualSnapshot( sSnapshotLoadQueued.value() );
+			triggerTimeChange( time );
+			sSnapshotLoadQueued.reset();
+		}
+
+		if( sHardTimeReset.has_value() )
+		{
+			triggerTimeChange( sHardTimeReset.value() );
+			sHardTimeReset.reset();
+		}
 	}
 
 	if( rollMan.GetHeadClock() < time::FrameClock::now() )
@@ -483,6 +522,22 @@ SimulationMode DebugGetPreviousFrameSimulationMode()
 
 
 
+void DebugTakeSnapshot( rftl::string const& name )
+{
+	sSnapshotTakeQueued = name;
+	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Debug take snapshot triggered" );
+}
+
+
+
+void DebugLoadSnapshot( rftl::string const& name )
+{
+	sSnapshotLoadQueued = name;
+	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Debug load snapshot triggered" );
+}
+
+
+
 void DebugInstantReplay( size_t numFrames )
 {
 	rollback::RollbackManager& rollMan = *app::gRollbackManager;
@@ -500,6 +555,14 @@ void DebugInstantReplay( size_t numFrames )
 	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Instant replay triggered for frames %llu -> %llu",
 		rollMan.GetHeadClock().time_since_epoch().count(),
 		sInstantReplayEndTime.time_since_epoch().count() );
+}
+
+
+
+void DebugHardTimeReset()
+{
+	sHardTimeReset = time::CommonClock::TimePointFromNanos( 0 );
+	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Hard time reset triggered" );
 }
 
 

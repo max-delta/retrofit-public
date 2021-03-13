@@ -3,6 +3,8 @@
 
 #include "GameAppState/AppStateFwd.h"
 
+#include "rftl/string"
+
 
 namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,7 +25,10 @@ void ProcessFrame();
 void Shutdown();
 
 SimulationMode DebugGetPreviousFrameSimulationMode();
+void DebugTakeSnapshot( rftl::string const& name );
+void DebugLoadSnapshot( rftl::string const& name );
 void DebugInstantReplay( size_t numFrames );
+void DebugHardTimeReset();
 
 // WARNING: Rollback behavior unreliable across global state changes
 void RequestGlobalDeferredStateChange( appstate::AppStateID stateID );
