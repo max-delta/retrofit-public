@@ -16,6 +16,7 @@
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFS.h"
+#include "Rollback/RollbackManager.h"
 
 #include "core_component/TypedObjectManager.h"
 
@@ -28,6 +29,7 @@ namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
+WeakPtr<rollback::RollbackManager> gRollbackManager;
 WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
@@ -36,6 +38,7 @@ WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<state::ObjectManager> gObjectManager;
+static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
@@ -59,8 +62,12 @@ void SystemStartup()
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing rollback manager..." );
+	sRollbackManager = DefaultCreator<rollback::RollbackManager>::Create();
+	gRollbackManager = sRollbackManager;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing rollback input..." );
-	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( app::gRollbackManager );
+	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( gRollbackManager );
 	gRollbackInputManager = sRollbackInputManager;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character creator..." );
@@ -106,6 +113,7 @@ void SystemShutdown()
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
 	sRollbackInputManager = nullptr;
+	sRollbackManager = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

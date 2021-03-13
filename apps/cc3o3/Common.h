@@ -4,6 +4,9 @@
 #include "core/ptr/ptr_fwd.h"
 
 // Forwards
+namespace RF::rollback {
+class RollbackManager;
+}
 namespace RF::sync {
 class RollbackInputManager;
 }
@@ -36,6 +39,7 @@ namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
+extern WeakPtr<rollback::RollbackManager> gRollbackManager;
 extern WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 extern WeakPtr<character::CharacterValidator> gCharacterValidator;

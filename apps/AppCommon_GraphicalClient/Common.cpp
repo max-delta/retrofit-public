@@ -47,7 +47,6 @@ APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::LocEngine> gLocEngine;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<rollback::RollbackManager> gRollbackManager;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<input::ControllerManager> sInputControllerManager;
 static UniquePtr<gfx::PPUController> sGraphics;
@@ -57,7 +56,6 @@ static UniquePtr<loc::LocEngine> sLocEngine;
 static UniquePtr<loc::PageMapper> sPageMapper;
 static UniquePtr<file::VFS> sVfs;
 static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
-static UniquePtr<rollback::RollbackManager> sRollbackManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -151,10 +149,6 @@ void Startup()
 	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
 	gTaskScheduler = sTaskScheduler;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing rollback manager..." );
-	sRollbackManager = DefaultCreator<rollback::RollbackManager>::Create();
-	gRollbackManager = sRollbackManager;
-
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
 }
 
@@ -168,7 +162,6 @@ void Shutdown()
 	sVfs = nullptr;
 	sWndProcInput = nullptr;
 	sTaskScheduler = nullptr;
-	sRollbackManager = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -82,7 +82,7 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollback::RollbackManager& rollMan = *gRollbackManager;
 	gfx::PPUController& ppu = *app::gGraphics;
 
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
@@ -92,12 +92,12 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 
 	rollMan.CreateNewStream( InternalState::kP3, rollMan.GetHeadClock() );
 	internalState.mP3RollbackController = DefaultCreator<input::RollbackController>::Create();
-	internalState.mP3RollbackController->SetRollbackManager( app::gRollbackManager );
+	internalState.mP3RollbackController->SetRollbackManager( gRollbackManager );
 	internalState.mP3RollbackController->SetRollbackIdentifier( InternalState::kP3 );
 
 	rollMan.CreateNewStream( InternalState::kP4, rollMan.GetHeadClock() );
 	internalState.mP4RollbackController = DefaultCreator<input::RollbackController>::Create();
-	internalState.mP4RollbackController->SetRollbackManager( app::gRollbackManager );
+	internalState.mP4RollbackController->SetRollbackManager( gRollbackManager );
 	internalState.mP4RollbackController->SetRollbackIdentifier( InternalState::kP4 );
 }
 

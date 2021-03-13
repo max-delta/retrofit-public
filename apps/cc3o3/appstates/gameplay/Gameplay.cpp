@@ -137,7 +137,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		using namespace state;
 		using namespace state::obj;
 
-		rollback::RollbackManager& rollMan = *app::gRollbackManager;
+		rollback::RollbackManager& rollMan = *gRollbackManager;
 		rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
 		rollback::Domain& privateDomain = rollMan.GetMutablePrivateDomain();
 		rollback::Window& sharedWindow = sharedDomain.GetMutableWindow();

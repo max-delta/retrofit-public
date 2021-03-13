@@ -26,9 +26,6 @@ namespace file {
 namespace app {
 	class StandardTaskScheduler;
 }
-namespace rollback {
-	class RollbackManager;
-}
 }
 
 namespace RF::app {
@@ -46,7 +43,6 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::LocEngine> gLocEngine;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<rollback::RollbackManager> gRollbackManager;
 
 APPCOMMONGRAPHICALCLIENT_API void Startup();
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();

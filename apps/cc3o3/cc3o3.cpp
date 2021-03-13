@@ -119,7 +119,7 @@ void Startup()
 
 void ProcessFrame()
 {
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollback::RollbackManager& rollMan = *gRollbackManager;
 	input::ControllerManager& controllerManager = *app::gInputControllerManager;
 
 	auto const isInstantReplayInProgress = [&rollMan]() -> bool //
@@ -536,7 +536,7 @@ void DebugLoadSnapshot( rftl::string const& name )
 
 void DebugInstantReplay( size_t numFrames )
 {
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollback::RollbackManager& rollMan = *gRollbackManager;
 
 	if( rollMan.GetHeadClock() <= sInstantReplayEndTime )
 	{

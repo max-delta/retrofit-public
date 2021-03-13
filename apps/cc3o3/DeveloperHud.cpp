@@ -2,6 +2,7 @@
 #include "DeveloperHud.h"
 
 #include "cc3o3.h"
+#include "cc3o3/Common.h"
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/ui/UIFwd.h"
@@ -79,7 +80,7 @@ void RenderRollback()
 	using rollback::RollbackManager;
 
 	gfx::PPUController& ppu = *app::gGraphics;
-	RollbackManager const& rollMan = *app::gRollbackManager;
+	RollbackManager const& rollMan = *gRollbackManager;
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
@@ -285,7 +286,7 @@ void RenderRollback()
 
 void Startup()
 {
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
+	rollback::RollbackManager& rollMan = *gRollbackManager;
 	rollMan.TakeManualSnapshot( kSnapshotName, time::FrameClock::now() );
 }
 
