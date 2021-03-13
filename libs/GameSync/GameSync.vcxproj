@@ -32,6 +32,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConnectionMananger.h" />
+    <ClInclude Include="InputFwd.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="protocol\Encryption.h" />
     <ClInclude Include="protocol\Logic.h" />
@@ -42,6 +43,7 @@
     <ClInclude Include="protocol\Structure.h" />
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
+    <ClInclude Include="RollbackInputManager.h" />
     <ClInclude Include="SessionClientManager.h" />
     <ClInclude Include="SessionHostManager.h" />
     <ClInclude Include="SessionManager.h" />
@@ -59,6 +61,7 @@
     <ClCompile Include="protocol\Structure.cpp" />
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
+    <ClCompile Include="RollbackInputManager.cpp" />
     <ClCompile Include="SessionClientManager.cpp" />
     <ClCompile Include="SessionHostManager.cpp" />
     <ClCompile Include="SessionManager.cpp" />
@@ -104,6 +107,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Rollback\Rollback.vcxproj">
       <Project>{7959828d-a531-4ba3-b291-afbec3f87528}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

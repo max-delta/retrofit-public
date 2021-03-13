@@ -20,6 +20,7 @@
 
 #include "GameAppState/AppStateManager.h"
 #include "GameInput/ControllerManager.h"
+#include "GameSync/RollbackInputManager.h"
 #include "GameUI/ContainerManager.h"
 
 #include "PPU/PPUController.h"
@@ -218,7 +219,7 @@ void ProcessFrame()
 			// Make sure we've truncated any state that is rollback-sensitive,
 			//  but not rollback-aware
 			controllerManager.TruncateAllRegisteredGameControllers( time::CommonClock::time_point(), rollMan.GetHeadClock() );
-			input::DebugClearTestInput();
+			gRollbackInputManager->DebugClearTestInput();
 
 			// The head clock is presumed to be valid, so we should begin
 			//  processing the frame afterwards (which is now what we're
@@ -229,10 +230,9 @@ void ProcessFrame()
 		}
 	}
 
-	// HACK: Tick test input
-	// TODO: Have some sync manager that can submit queued up input from debug
-	//  as well as more legitimate systems like networking
-	input::DebugSubmitTestInput();
+	// Submit queued up input from debug as well as more legitimate systems
+	//  like networking
+	gRollbackInputManager->SubmitNonControllerInputs();
 
 	// We're about to do some really weird stuff to time, so we need to make
 	//  sure we don't lose track of what frame we're ultimately trying to
@@ -344,9 +344,8 @@ void ProcessFrame()
 	RF_ASSERT( simulationMode != SimulationMode::Invalid );
 
 	// For locally-owned streams, we'll want to manipulate read/write heads
-	// HACK: Advance hard-coded input
 	RF_TODO_ANNOTATION( "Have a manifest for what is locally-owned" );
-	(void)( &input::HardcodedAdvance );
+	(void)( &sync::RollbackInputManager::AdvanceControllers );
 
 	// Commit all frames that are ready
 	rollMan.CommitFrames( preFrameCommitRange, preFrameCommitRange.second );
@@ -359,7 +358,7 @@ void ProcessFrame()
 	{
 		// Lock read heads to after the last commit, and write heads to the
 		//  start of the current frame
-		input::HardcodedAdvance(
+		gRollbackInputManager->AdvanceControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
 			time::FrameClock::now() );
 	}
@@ -406,7 +405,7 @@ void ProcessFrame()
 		time::FrameClock::set_time( currentTrueFrame );
 
 		// Throw away any test input that debug code may have just produced
-		input::DebugClearTestInput();
+		gRollbackInputManager->DebugClearTestInput();
 
 		// Restore graphics before ticking true frame
 		ppu.SuppressDrawRequests( false );
@@ -419,10 +418,7 @@ void ProcessFrame()
 	}
 	else
 	{
-		// HACK: Tick hard-coded input
-		// TODO: Have an input processing tree that handles dependency-based update
-		//  logic for all the controllers
-		input::HardcodedRollbackTick();
+		gRollbackInputManager->TickControllers();
 	}
 
 	// Tick the current true frame
@@ -439,7 +435,7 @@ void ProcessFrame()
 	{
 		// Lock read heads to after the last commit, and write heads to the start
 		//  of the current frame
-		input::HardcodedAdvance(
+		gRollbackInputManager->AdvanceControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
 			time::FrameClock::now() );
 	}
@@ -456,7 +452,7 @@ void ProcessFrame()
 	{
 		// Lock read heads to after the last commit, and write heads to the end
 		//  of the current frame
-		input::HardcodedAdvance(
+		gRollbackInputManager->AdvanceControllers(
 			postFrameCommitRange.second,
 			time::FrameClock::now() );
 	}

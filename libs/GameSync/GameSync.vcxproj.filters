@@ -23,6 +23,7 @@
     </ClCompile>
     <ClCompile Include="SessionMembers.cpp" />
     <ClCompile Include="SessionManager.cpp" />
+    <ClCompile Include="RollbackInputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -57,6 +58,8 @@
     <ClInclude Include="SessionMembers.h" />
     <ClInclude Include="SyncFwd.h" />
     <ClInclude Include="SessionManager.h" />
+    <ClInclude Include="RollbackInputManager.h" />
+    <ClInclude Include="InputFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="protocol">

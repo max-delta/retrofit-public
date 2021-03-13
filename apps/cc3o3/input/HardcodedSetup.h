@@ -3,10 +3,6 @@
 
 #include "cc3o3/input/InputFwd.h"
 
-#include "Rollback/RollbackFwd.h"
-
-#include "core_time/CommonClock.h"
-
 namespace RF::cc::input {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,13 +12,7 @@ void HardcodedMainSetup();
 void HardcodedPlayerSetup( PlayerID playerID );
 void HardcodedHackSetup();
 void HardcodedRawTick();
-void HardcodedRollbackTick();
-void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead );
 PlayerID HardcodedGetLocalPlayer();
-
-void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, rollback::InputValue input );
-void DebugSubmitTestInput();
-void DebugClearTestInput();
 
 ///////////////////////////////////////////////////////////////////////////////
 }

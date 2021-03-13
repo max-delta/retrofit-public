@@ -11,6 +11,7 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameSync/RollbackInputManager.h"
 #include "GameSprite/CharacterCreator.h"
 
 #include "Logging/Logging.h"
@@ -27,6 +28,7 @@ namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
+WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
@@ -34,6 +36,7 @@ WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<state::ObjectManager> gObjectManager;
+static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
@@ -55,6 +58,10 @@ void SystemStartup()
 	{
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
 	}
+
+	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing rollback input..." );
+	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( app::gRollbackManager );
+	gRollbackInputManager = sRollbackInputManager;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character creator..." );
 	sCharacterCreator = DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics );
@@ -98,6 +105,7 @@ void SystemShutdown()
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
+	sRollbackInputManager = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "HardcodedSetup.h"
 
-#include "cc3o3/input/InputFwd.h"
+#include "cc3o3/Common.h"
 #include "cc3o3/time/TimeFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -10,10 +10,7 @@
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
 #include "GameSync/RollbackController.h"
-#include "GameSync/RollbackFilters.h"
-
-#include "Rollback/RollbackManager.h"
-#include "Rollback/InputStreamRef.h"
+#include "GameSync/RollbackInputManager.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
 
@@ -26,8 +23,6 @@ namespace RF::cc::input {
 namespace details {
 
 static WeakPtr<input::RawInputController> sRawInputController;
-static rftl::vector<WeakPtr<input::RollbackController>> sRollbackControllers;
-static rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> sDebugQueuedTestInput;
 
 
 
@@ -37,10 +32,7 @@ UniquePtr<input::RollbackController> WrapWithRollback(
 {
 	UniquePtr<input::RollbackController> rollbackController = DefaultCreator<input::RollbackController>::Create();
 	rollbackController->SetSource( source );
-	rollbackController->SetRollbackManager( app::gRollbackManager );
-	rollbackController->SetRollbackIdentifier( identifier );
-	app::gRollbackManager->CreateNewStream( identifier, time::FrameClock::now() );
-	details::sRollbackControllers.emplace_back( rollbackController );
+	gRollbackInputManager->AddController( identifier, rollbackController );
 	return rollbackController;
 }
 
@@ -293,60 +285,9 @@ void HardcodedRawTick()
 
 
 
-void HardcodedRollbackTick()
-{
-	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
-	{
-		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
-	}
-}
-
-
-
-void HardcodedAdvance( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead )
-{
-	for( WeakPtr<input::RollbackController> const& controller : details::sRollbackControllers )
-	{
-		controller->AdvanceInputStream( lockedFrame, newWriteHead );
-	}
-}
-
-
-
 PlayerID HardcodedGetLocalPlayer()
 {
 	return player::P1;
-}
-
-
-
-void DebugQueueTestInput( time::CommonClock::time_point frame, rollback::InputStreamIdentifier streamID, rollback::InputValue input )
-{
-	details::sDebugQueuedTestInput.emplace_back( streamID, rollback::InputEvent( frame, input ) );
-}
-
-
-
-void DebugSubmitTestInput()
-{
-	rollback::RollbackManager& rollMan = *app::gRollbackManager;
-	for( rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent> const& input : details::sDebugQueuedTestInput )
-	{
-		rollback::InputStreamRef const stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, input.first );
-		bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.second.mTime );
-		if( valid && input.second.mValue != rollback::kInvalidInputValue )
-		{
-			stream.mUncommitted.emplace_back( input.second );
-		}
-	}
-	details::sDebugQueuedTestInput.clear();
-}
-
-
-
-void DebugClearTestInput()
-{
-	details::sDebugQueuedTestInput.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

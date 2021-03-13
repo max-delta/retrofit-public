@@ -1,0 +1,79 @@
+#pragma once
+#include "project.h"
+
+#include "GameSync/InputFwd.h"
+
+#include "Rollback/InputStream.h"
+
+#include "core/ptr/weak_ptr.h"
+
+#include "rftl/shared_mutex"
+#include "rftl/vector"
+#include "rftl/deque"
+
+
+namespace RF::sync {
+///////////////////////////////////////////////////////////////////////////////
+
+class GAMESYNC_API RollbackInputManager
+{
+	RF_NO_COPY( RollbackInputManager );
+
+	//
+	// Types and constants
+public:
+	using Controller = input::RollbackController;
+
+private:
+	using ReaderWriterMutex = rftl::shared_mutex;
+	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
+	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
+
+	using Controllers = rftl::vector<WeakPtr<Controller>>;
+
+
+	//
+	// Public methods
+public:
+	RollbackInputManager( WeakPtr<rollback::RollbackManager> rollMan );
+	~RollbackInputManager() = default;
+
+	// Thread-safe
+	void AddController(
+		rollback::InputStreamIdentifier const& identifier,
+		WeakPtr<Controller> controller );
+	void ClearAllControllers();
+
+	// Thread-safe
+	void SubmitNonControllerInputs();
+
+	// Thread-safe
+	void TickControllers();
+
+	// Thread-safe
+	void AdvanceControllers(
+		time::CommonClock::time_point lockedFrame,
+		time::CommonClock::time_point newWriteHead );
+
+	// Thread-safe
+	void DebugQueueTestInput(
+		time::CommonClock::time_point frame,
+		rollback::InputStreamIdentifier streamID,
+		rollback::InputValue input );
+	void DebugClearTestInput();
+
+
+	//
+	// Private data
+private:
+	WeakPtr<rollback::RollbackManager> const mRollMan;
+
+	mutable ReaderWriterMutex mControllersMutex;
+	Controllers mControllers;
+
+	mutable ReaderWriterMutex mDebugInputMutex;
+	rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> mDebugQueuedTestInput;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}

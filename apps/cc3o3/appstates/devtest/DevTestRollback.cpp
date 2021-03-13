@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "DevTestRollback.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/time/TimeFwd.h"
+#include "cc3o3/state/StateFwd.h"
 #include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -13,6 +15,7 @@
 #include "GameAppState/AppStateTickContext.h"
 #include "GameSync/RollbackFilters.h"
 #include "GameSync/RollbackController.h"
+#include "GameSync/RollbackInputManager.h"
 
 #include "PPU/PPUController.h"
 
@@ -179,10 +182,12 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				input::DebugQueueTestInput( command.mTime + kForwardDuration, InternalState::kP3, command.mType );
+				gRollbackInputManager->DebugQueueTestInput(
+					command.mTime + kForwardDuration, InternalState::kP3, command.mType );
 
 				// Clone player 2's commands onto player 4
-				input::DebugQueueTestInput( command.mTime - kLateDuration, InternalState::kP4, command.mType );
+				gRollbackInputManager->DebugQueueTestInput(
+					command.mTime - kLateDuration, InternalState::kP4, command.mType );
 			}
 
 			if( command.mType == input::command::game::WalkWest )
@@ -206,8 +211,10 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 	// Player 4's input stream should be updated even if we didn't send a
 	//  proper command, so we'll use an invalid command to mark the frame end
-	input::DebugQueueTestInput( time::FrameClock::now() + kForwardDuration, InternalState::kP3, input::kInvalidGameCommand );
-	input::DebugQueueTestInput( time::FrameClock::now() - kLateDuration, InternalState::kP4, input::kInvalidGameCommand );
+	gRollbackInputManager->DebugQueueTestInput(
+		time::FrameClock::now() + kForwardDuration, InternalState::kP3, input::kInvalidGameCommand );
+	gRollbackInputManager->DebugQueueTestInput(
+		time::FrameClock::now() - kLateDuration, InternalState::kP4, input::kInvalidGameCommand );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
