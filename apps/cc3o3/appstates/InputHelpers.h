@@ -16,6 +16,10 @@ class InputHelpers final
 	RF_NO_INSTANCE( InputHelpers );
 
 public:
+	static void SetSinglePlayer( input::PlayerID player );
+	static input::PlayerID GetSinglePlayer();
+	static void ClearSinglePlayer();
+
 	static rftl::vector<ui::FocusEventType> GetMainMenuInputToProcess();
 	static rftl::vector<ui::FocusEventType> GetGameMenuInputToProcess( input::PlayerID player );
 	static rftl::vector<input::GameCommand> GetGameplayInputToProcess( input::PlayerID player, input::LayerID layer );

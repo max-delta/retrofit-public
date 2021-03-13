@@ -6,7 +6,6 @@
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/IdentifierUtils.h"
-#include "cc3o3/input/HardcodedSetup.h"
 
 #include "Logging/Logging.h"
 
@@ -75,7 +74,7 @@ WeakPtr<CombatInstance const> FightController::GetCombatInstance() const
 
 
 
-void FightController::HardcodedPlaceholderSetup()
+void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack )
 {
 	RF_ASSERT( mFrameActive == false );
 
@@ -85,19 +84,19 @@ void FightController::HardcodedPlaceholderSetup()
 	// HACK: One player
 	// TODO: Multiplayer, opposing teams
 	// TODO: Multiplayer, same team
-	rftl::vector<input::PlayerID> const playerIDs = { input::HardcodedGetLocalPlayer() };
+	rftl::vector<input::PlayerID> const playerIDs = { singlePlayerHack };
 	for( input::PlayerID const& playerID : playerIDs )
 	{
 		TeamID const playerTeam = instance.AddTeam();
 		PartyID const playerParty = instance.AddParty( playerTeam );
-		if( playerID == input::HardcodedGetLocalPlayer() )
+		if( playerID == singlePlayerHack )
 		{
 			mLocalPartyID = playerParty;
 		}
 
 		// Get the active party characters
 		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
-			mCompanyManager->FindMutableActivePartyObjects( input::HardcodedGetLocalPlayer() );
+			mCompanyManager->FindMutableActivePartyObjects( singlePlayerHack );
 
 		// For each active team member...
 		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )

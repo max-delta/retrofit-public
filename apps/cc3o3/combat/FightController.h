@@ -3,6 +3,7 @@
 
 #include "cc3o3/combat/CombatantID.h"
 #include "cc3o3/company/CompanyFwd.h"
+#include "cc3o3/input/InputFwd.h"
 
 #include "core/ptr/unique_ptr.h"
 
@@ -40,7 +41,7 @@ public:
 
 	WeakPtr<CombatInstance const> GetCombatInstance() const;
 
-	void HardcodedPlaceholderSetup();
+	void HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack );
 
 	void StartCombatFrame();
 	void EndCombatFrame();

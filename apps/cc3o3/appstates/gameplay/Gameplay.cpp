@@ -6,6 +6,7 @@
 #include "cc3o3/appstates/gameplay/Gameplay_Battle.h"
 #include "cc3o3/appstates/gameplay/Gameplay_Menus.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/company/CompanyManager.h"
@@ -62,7 +63,8 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	InternalState& internalState = *mInternalState;
 
 	// TODO: Multiplayer considerations and logic
-	input::HardcodedPlayerSetup( input::player::P1 );
+	InputHelpers::SetSinglePlayer( input::player::P1 );
+	input::HardcodedPlayerSetup( InputHelpers::GetSinglePlayer() );
 
 	// TODO: Load save
 
@@ -147,7 +149,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		// TODO: Multiple companies for competitive multiplayer
 		{
 			// HACK: Only local player
-			input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
+			input::PlayerID const playerID = InputHelpers::GetSinglePlayer();
 			VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
 
 			// Create company object
@@ -243,6 +245,9 @@ void Gameplay::OnExit( AppStateChangeContext& context )
 	appStateMan.Stop();
 
 	mInternalState = nullptr;
+
+	// TODO: Multiplayer considerations and logic
+	InputHelpers::ClearSinglePlayer();
 }
 
 

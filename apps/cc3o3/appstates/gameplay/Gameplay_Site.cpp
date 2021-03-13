@@ -2,7 +2,6 @@
 #include "Gameplay_Site.h"
 
 #include "cc3o3/appstates/InputHelpers.h"
-#include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -47,7 +46,7 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 
 	// Process menu actions
 	rftl::vector<input::GameCommand> const menuCommands =
-		InputHelpers::GetGameplayInputToProcess( input::HardcodedGetLocalPlayer(), input::layer::GameMenu );
+		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::GameMenu );
 	for( input::GameCommand const& menuCommand : menuCommands )
 	{
 		if( menuCommand.mType == input::command::game::UIActivateSelection )

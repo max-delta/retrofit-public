@@ -4,7 +4,6 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
-#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -205,7 +204,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 	// Process character control
 	rftl::vector<input::GameCommand> const charCommands =
-		InputHelpers::GetGameplayInputToProcess( input::HardcodedGetLocalPlayer(), input::layer::CharacterControl );
+		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::CharacterControl );
 	for( input::GameCommand const& charCommand : charCommands )
 	{
 		// Treat as activity
@@ -225,7 +224,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 	// Process menu actions
 	rftl::vector<input::GameCommand> const menuCommands =
-		InputHelpers::GetGameplayInputToProcess( input::HardcodedGetLocalPlayer(), input::layer::GameMenu );
+		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::GameMenu );
 	for( input::GameCommand const& menuCommand : menuCommands )
 	{
 		if( menuCommand.mType == input::command::game::UIMenuAction )
@@ -278,7 +277,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 		// Get the active party characters
 		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
-			gCompanyManager->FindMutableActivePartyObjects( input::HardcodedGetLocalPlayer() );
+			gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
 
 		// For each active team member...
 		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )

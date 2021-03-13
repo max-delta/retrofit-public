@@ -12,7 +12,6 @@ void HardcodedMainSetup();
 void HardcodedPlayerSetup( PlayerID playerID );
 void HardcodedHackSetup();
 void HardcodedRawTick();
-PlayerID HardcodedGetLocalPlayer();
 
 ///////////////////////////////////////////////////////////////////////////////
 }

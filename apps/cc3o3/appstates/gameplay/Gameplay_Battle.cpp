@@ -5,7 +5,6 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/combat/FightController.h"
-#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
@@ -297,7 +296,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 	// Setup combat instance
 	{
 		internalState.mFightController = DefaultCreator<combat::FightController>::Create( gCombatEngine, gCompanyManager );
-		internalState.mFightController->HardcodedPlaceholderSetup();
+		internalState.mFightController->HardcodedPlaceholderSetup( InputHelpers::GetSinglePlayer() );
 	}
 
 	// Setup UI
@@ -651,7 +650,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	internalState.SanitizeUIState( uiContext );
 
 	focusMan.UpdateHardFocus( uiContext );
-	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( InputHelpers::GetSinglePlayer() );
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );

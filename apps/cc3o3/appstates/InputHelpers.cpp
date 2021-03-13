@@ -15,9 +15,39 @@
 #include "core_unicode/StringConvert.h"
 
 
-
 namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static input::PlayerID sSinglePlayer = input::kInvalidPlayerID;
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+void InputHelpers::SetSinglePlayer( input::PlayerID player )
+{
+	RF_ASSERT( player != input::kInvalidPlayerID );
+	RF_ASSERT( details::sSinglePlayer == input::kInvalidPlayerID );
+	details::sSinglePlayer = player;
+}
+
+
+
+input::PlayerID InputHelpers::GetSinglePlayer()
+{
+	RF_ASSERT( details::sSinglePlayer != input::kInvalidPlayerID );
+	return details::sSinglePlayer;
+}
+
+
+
+void InputHelpers::ClearSinglePlayer()
+{
+	RF_ASSERT( details::sSinglePlayer != input::kInvalidPlayerID );
+	details::sSinglePlayer = input::kInvalidPlayerID;
+}
+
+
 
 rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 {

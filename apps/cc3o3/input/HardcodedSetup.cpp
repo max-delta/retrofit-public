@@ -283,12 +283,5 @@ void HardcodedRawTick()
 	}
 }
 
-
-
-PlayerID HardcodedGetLocalPlayer()
-{
-	return player::P1;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 }

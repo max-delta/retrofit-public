@@ -3,7 +3,6 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
-#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
@@ -144,7 +143,7 @@ void Gameplay_Menus::InternalState::HideSelector( ui::UIContext& context, TopLev
 state::ObjectRef Gameplay_Menus::InternalState::GetCurrentLoadoutCharacter( ui::UIConstContext const& context ) const
 {
 	size_t const currentCharIndex = mCharSlots->GetSlotIndexWithSoftFocus( context );
-	return gCompanyManager->FindActivePartyCharacterObject( input::HardcodedGetLocalPlayer(), currentCharIndex );
+	return gCompanyManager->FindActivePartyCharacterObject( InputHelpers::GetSinglePlayer(), currentCharIndex );
 }
 
 
@@ -152,7 +151,7 @@ state::ObjectRef Gameplay_Menus::InternalState::GetCurrentLoadoutCharacter( ui::
 state::MutableObjectRef Gameplay_Menus::InternalState::GetCurrentMutableLoadoutCharacter( ui::UIConstContext const& context )
 {
 	size_t const currentCharIndex = mCharSlots->GetSlotIndexWithSoftFocus( context );
-	return gCompanyManager->FindMutableActivePartyCharacterObject( input::HardcodedGetLocalPlayer(), currentCharIndex );
+	return gCompanyManager->FindMutableActivePartyCharacterObject( InputHelpers::GetSinglePlayer(), currentCharIndex );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -374,7 +373,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::ElementStockpileSelector>::Create() );
 			elementStockpileSelector->SetPagination( true );
 			elementStockpileSelector->UpdateFromCompany(
-				gCompanyManager->FindCompanyObject( input::HardcodedGetLocalPlayer() ) );
+				gCompanyManager->FindCompanyObject( InputHelpers::GetSinglePlayer() ) );
 			elementStockpileSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mElementStockpileSelector = elementStockpileSelector;
@@ -423,7 +422,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 
 	ui::UIContext uiContext( uiManager );
 	focusMan.UpdateHardFocus( uiContext );
-	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( input::HardcodedGetLocalPlayer() );
+	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( InputHelpers::GetSinglePlayer() );
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
 		bool const handled = focusMan.HandleEvent( uiContext, focusEvent );
@@ -579,7 +578,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								internalState.ShowSelector( uiContext );
 
 								// Save loadouts
-								gCompanyManager->WriteLoadoutsToSave( input::HardcodedGetLocalPlayer() );
+								gCompanyManager->WriteLoadoutsToSave( InputHelpers::GetSinglePlayer() );
 							}
 							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
@@ -633,7 +632,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 
 
 	// Menus use the local player
-	input::PlayerID const playerID = input::HardcodedGetLocalPlayer();
+	input::PlayerID const playerID = InputHelpers::GetSinglePlayer();
 
 	// Get the active party characters
 	rftl::array<state::ObjectRef, 3> const activePartyCharacters =
