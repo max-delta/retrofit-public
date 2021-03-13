@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TitleScreen_Options.h"
 
+#include "cc3o3/cc3o3.h"
 #include "cc3o3/appstates/titlescreen/TitleScreen.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
@@ -128,12 +129,24 @@ struct ToggleTest
 	};
 };
 
+struct DevHop
+{
+	static OptionSet::Option Option( AppStateID id, char const* name )
+	{
+		return OptionSet::Option{
+			rftl::string( "DevHop -> " ) + name,
+			[id] { RequestGlobalDeferredStateChange( id ); },
+			nullptr
+		};
+	}
+};
+
 static OptionSet sDevOptions = { { //
+	DevHop::Option( id::DevTestRollback, "Rollback" ),
+	DevHop::Option( id::DevTestCombatCharts, "Combat charts" ),
+	DevHop::Option( id::DevTestGridCharts, "Grid charts" ),
 	UpdateTest::sOption,
 	ToggleTest::sOption,
-	{ "Menu option text for slot 3" },
-	{ "Menu option text for slot 4" },
-	{ "Menu option text for slot 5" },
 	{ "Menu option text for slot 6" },
 	{ "Menu option text for slot 7" },
 	{ "Menu option text for slot 8" },
