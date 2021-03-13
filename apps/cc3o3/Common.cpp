@@ -52,9 +52,9 @@ static UniquePtr<state::ObjectManager> sObjectManager;
 
 void SystemStartup()
 {
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "System start" );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "System startup" );
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Mounting cc3o3 VFS layers..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Mounting cc3o3 VFS layers..." );
 	file::VFSPath const mountFile = paths::VfsConfig();
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( mountFile );
 	if( vfsTestDataLoad == false )
@@ -62,44 +62,44 @@ void SystemStartup()
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
 	}
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing rollback manager..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing rollback manager..." );
 	sRollbackManager = DefaultCreator<rollback::RollbackManager>::Create();
 	gRollbackManager = sRollbackManager;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing rollback input..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing rollback input..." );
 	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( gRollbackManager );
 	gRollbackInputManager = sRollbackInputManager;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character creator..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character creator..." );
 	sCharacterCreator = DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics );
 	gCharacterCreator = sCharacterCreator;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character validator..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character validator..." );
 	sCharacterValidator = DefaultCreator<character::CharacterValidator>::Create( app::gVfs, gCharacterCreator );
 	gCharacterValidator = sCharacterValidator;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing character database..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character database..." );
 	sCharacterDatabase = DefaultCreator<character::CharacterDatabase>::Create();
 	gCharacterDatabase = sCharacterDatabase;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing combat engine..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing combat engine..." );
 	sCombatEngine = DefaultCreator<combat::CombatEngine>::Create( app::gVfs );
 	gCombatEngine = sCombatEngine;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing element database..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing element database..." );
 	sElementDatabase = DefaultCreator<element::ElementDatabase>::Create( app::gVfs );
 	gElementDatabase = sElementDatabase;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing company manager..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing company manager..." );
 	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs, gElementDatabase );
 	gCompanyManager = sCompanyManager;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "Initializing object manager..." );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing object manager..." );
 	sObjectManager = DefaultCreator<state::ObjectManager>::Create(
 		component::ManagerIdentifier( 1u ), component::ScopeIdentifier( 1u ), state::ComponentResolver() );
 	gObjectManager = sObjectManager;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_CC3O3, "System startup complete" );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "System startup complete" );
 }
 
 

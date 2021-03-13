@@ -61,7 +61,7 @@ static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
 void Startup()
 {
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main start" );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup" );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing console logging..." );
 	bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
@@ -149,7 +149,7 @@ void Startup()
 	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
 	gTaskScheduler = sTaskScheduler;
 
-	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Startup complete" );
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup complete" );
 }
 
 
