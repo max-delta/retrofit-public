@@ -63,6 +63,8 @@ struct DevTestRollback::InternalState
 	Pos mP2;
 	Pos mP3;
 	Pos mP4;
+	static constexpr rollback::InputStreamIdentifier kP3 = 5;
+	static constexpr rollback::InputStreamIdentifier kP4 = 7;
 
 	UniquePtr<input::RollbackController> mP3RollbackController;
 	UniquePtr<input::RollbackController> mP4RollbackController;
@@ -72,7 +74,7 @@ struct DevTestRollback::InternalState
 
 void DevTestRollback::OnEnter( AppStateChangeContext& context )
 {
-	input::HardcodedGameSetup();
+	input::HardcodedPlayerSetup( input::player::P1 );
 	input::HardcodedHackSetup();
 
 	mInternalState = DefaultCreator<InternalState>::Create();
@@ -85,15 +87,15 @@ void DevTestRollback::OnEnter( AppStateChangeContext& context )
 	rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
 	internalState.Bind( window, state::VariableIdentifier( "DevTest", "Rollback" ) );
 
-	rollMan.CreateNewStream( 3, rollMan.GetHeadClock() );
+	rollMan.CreateNewStream( InternalState::kP3, rollMan.GetHeadClock() );
 	internalState.mP3RollbackController = DefaultCreator<input::RollbackController>::Create();
 	internalState.mP3RollbackController->SetRollbackManager( app::gRollbackManager );
-	internalState.mP3RollbackController->SetRollbackIdentifier( 3 );
+	internalState.mP3RollbackController->SetRollbackIdentifier( InternalState::kP3 );
 
-	rollMan.CreateNewStream( 4, rollMan.GetHeadClock() );
+	rollMan.CreateNewStream( InternalState::kP4, rollMan.GetHeadClock() );
 	internalState.mP4RollbackController = DefaultCreator<input::RollbackController>::Create();
 	internalState.mP4RollbackController->SetRollbackManager( app::gRollbackManager );
-	internalState.mP4RollbackController->SetRollbackIdentifier( 4 );
+	internalState.mP4RollbackController->SetRollbackIdentifier( InternalState::kP4 );
 }
 
 
@@ -177,10 +179,10 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 			if( playerID == input::player::P2 )
 			{
 				// Clone player 2's commands onto player 3
-				input::DebugQueueTestInput( command.mTime + kForwardDuration, 3, command.mType );
+				input::DebugQueueTestInput( command.mTime + kForwardDuration, InternalState::kP3, command.mType );
 
 				// Clone player 2's commands onto player 4
-				input::DebugQueueTestInput( command.mTime - kLateDuration, 4, command.mType );
+				input::DebugQueueTestInput( command.mTime - kLateDuration, InternalState::kP4, command.mType );
 			}
 
 			if( command.mType == input::command::game::WalkWest )
@@ -204,8 +206,8 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 	// Player 4's input stream should be updated even if we didn't send a
 	//  proper command, so we'll use an invalid command to mark the frame end
-	input::DebugQueueTestInput( time::FrameClock::now() + kForwardDuration, 3, input::kInvalidGameCommand );
-	input::DebugQueueTestInput( time::FrameClock::now() - kLateDuration, 4, input::kInvalidGameCommand );
+	input::DebugQueueTestInput( time::FrameClock::now() + kForwardDuration, InternalState::kP3, input::kInvalidGameCommand );
+	input::DebugQueueTestInput( time::FrameClock::now() - kLateDuration, InternalState::kP4, input::kInvalidGameCommand );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -29,6 +29,157 @@ static WeakPtr<input::RawInputController> sRawInputController;
 static rftl::vector<WeakPtr<input::RollbackController>> sRollbackControllers;
 static rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> sDebugQueuedTestInput;
 
+
+
+UniquePtr<input::RollbackController> WrapWithRollback(
+	WeakPtr<input::GameController> source,
+	rollback::InputStreamIdentifier const& identifier )
+{
+	UniquePtr<input::RollbackController> rollbackController = DefaultCreator<input::RollbackController>::Create();
+	rollbackController->SetSource( source );
+	rollbackController->SetRollbackManager( app::gRollbackManager );
+	rollbackController->SetRollbackIdentifier( identifier );
+	app::gRollbackManager->CreateNewStream( identifier, time::FrameClock::now() );
+	details::sRollbackControllers.emplace_back( rollbackController );
+	return rollbackController;
+}
+
+
+
+input::RawInputController::LogicalMapping HardcodedRawMapping()
+{
+	input::RawInputController::LogicalMapping retVal;
+	{
+		// WASD
+		retVal['W'][input::DigitalPinState::Active] = command::raw::Up;
+		retVal['W'][input::DigitalPinState::Inactive] = command::raw::UpStop;
+		retVal['A'][input::DigitalPinState::Active] = command::raw::Left;
+		retVal['A'][input::DigitalPinState::Inactive] = command::raw::LeftStop;
+		retVal['S'][input::DigitalPinState::Active] = command::raw::Down;
+		retVal['S'][input::DigitalPinState::Inactive] = command::raw::DownStop;
+		retVal['D'][input::DigitalPinState::Active] = command::raw::Right;
+		retVal['D'][input::DigitalPinState::Inactive] = command::raw::RightStop;
+
+		retVal[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows ('[')
+		retVal[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows (']')
+		retVal[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows
+		retVal[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows
+		retVal[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with arrows
+		retVal[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with arrows
+
+		retVal[shim::VK_RETURN][input::DigitalPinState::Active] = command::raw::Affirmative;
+		retVal['E'][input::DigitalPinState::Active] = command::raw::Affirmative;
+		retVal[shim::VK_BACK][input::DigitalPinState::Active] = command::raw::Negative;
+		retVal[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
+		retVal[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with arrows
+		retVal['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with arrows
+		retVal['F'][input::DigitalPinState::Active] = command::raw::Auxiliary2;
+		retVal[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with arrows
+		retVal[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with arrows ('\')
+	}
+	{
+		// Arrow keys
+		retVal[shim::VK_UP][input::DigitalPinState::Active] = command::raw::Up;
+		retVal[shim::VK_UP][input::DigitalPinState::Inactive] = command::raw::UpStop;
+		retVal[shim::VK_LEFT][input::DigitalPinState::Active] = command::raw::Left;
+		retVal[shim::VK_LEFT][input::DigitalPinState::Inactive] = command::raw::LeftStop;
+		retVal[shim::VK_DOWN][input::DigitalPinState::Active] = command::raw::Down;
+		retVal[shim::VK_DOWN][input::DigitalPinState::Inactive] = command::raw::DownStop;
+		retVal[shim::VK_RIGHT][input::DigitalPinState::Active] = command::raw::Right;
+		retVal[shim::VK_RIGHT][input::DigitalPinState::Inactive] = command::raw::RightStop;
+
+		retVal[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD ('[')
+		retVal[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD (']')
+		retVal[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD
+		retVal[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD
+		retVal[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with WASD
+		retVal[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with WASD
+
+		retVal[shim::VK_SPACE][input::DigitalPinState::Active] = command::raw::Affirmative;
+		retVal[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
+		retVal[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with WASD
+		retVal['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with WASD
+		retVal[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with WASD
+		retVal[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with WASD ('\')
+	}
+	{
+		// Hat
+		retVal['I'][input::DigitalPinState::Active] = command::raw::HatUp;
+		retVal['I'][input::DigitalPinState::Inactive] = command::raw::HatUpStop;
+		retVal['J'][input::DigitalPinState::Active] = command::raw::HatLeft;
+		retVal['J'][input::DigitalPinState::Inactive] = command::raw::HatLeftStop;
+		retVal['K'][input::DigitalPinState::Active] = command::raw::HatDown;
+		retVal['K'][input::DigitalPinState::Inactive] = command::raw::HatDownStop;
+		retVal['L'][input::DigitalPinState::Active] = command::raw::HatRight;
+		retVal['L'][input::DigitalPinState::Inactive] = command::raw::HatRightStop;
+	}
+	{
+		// Developer
+		retVal[shim::VK_OEM_3][input::DigitalPinState::Active] = command::raw::DeveloperToggle; // Tilde
+		retVal[shim::VK_F1][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
+		retVal[shim::VK_F2][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
+		retVal[shim::VK_F3][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
+		retVal[shim::VK_F4][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
+		retVal[shim::VK_F5][input::DigitalPinState::Active] = command::raw::DeveloperAction4;
+		retVal[shim::VK_F6][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
+	}
+	return retVal;
+}
+
+
+
+input::HotkeyController::CommandMapping HardcodedMenuMapping()
+{
+	input::HotkeyController::CommandMapping retVal;
+	retVal[command::raw::Up] = command::game::UINavigateUp;
+	retVal[command::raw::Down] = command::game::UINavigateDown;
+	retVal[command::raw::Left] = command::game::UINavigateLeft;
+	retVal[command::raw::Right] = command::game::UINavigateRight;
+	retVal[command::raw::PgUp] = command::game::UINavigateToPreviousGroup;
+	retVal[command::raw::PgDn] = command::game::UINavigateToNextGroup;
+	retVal[command::raw::Home] = command::game::UINavigateToFirst;
+	retVal[command::raw::End] = command::game::UINavigateToLast;
+	retVal[command::raw::Affirmative] = command::game::UIActivateSelection;
+	retVal[command::raw::Negative] = command::game::UICancelSelection;
+	retVal[command::raw::Auxiliary1] = command::game::UIAuxiliaryAction1;
+	retVal[command::raw::Auxiliary2] = command::game::UIAuxiliaryAction2;
+	retVal[command::raw::GameSelect] = command::game::UIMenuAction;
+	retVal[command::raw::GameStart] = command::game::UIPauseAction;
+	return retVal;
+}
+
+
+
+input::HotkeyController::CommandMapping HardcodedDevMapping()
+{
+	input::HotkeyController::CommandMapping retVal;
+	retVal[command::raw::DeveloperToggle] = command::game::DeveloperToggle;
+	retVal[command::raw::DeveloperCycle] = command::game::DeveloperCycle;
+	retVal[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
+	retVal[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
+	retVal[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
+	retVal[command::raw::DeveloperAction4] = command::game::DeveloperAction4;
+	retVal[command::raw::DeveloperAction5] = command::game::DeveloperAction5;
+	return retVal;
+}
+
+
+
+input::HotkeyController::CommandMapping HardcodedGameMapping()
+{
+	input::HotkeyController::CommandMapping retVal;
+	retVal[command::raw::Up] = command::game::WalkNorth;
+	retVal[command::raw::UpStop] = command::game::WalkNorthStop;
+	retVal[command::raw::Down] = command::game::WalkSouth;
+	retVal[command::raw::DownStop] = command::game::WalkSouthStop;
+	retVal[command::raw::Left] = command::game::WalkWest;
+	retVal[command::raw::LeftStop] = command::game::WalkWestStop;
+	retVal[command::raw::Right] = command::game::WalkEast;
+	retVal[command::raw::RightStop] = command::game::WalkEastStop;
+	retVal[command::raw::Affirmative] = command::game::Interact;
+	return retVal;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -37,82 +188,7 @@ void HardcodedRawSetup()
 	ControllerManager& manager = *app::gInputControllerManager;
 
 	UniquePtr<input::RawInputController> rawController = DefaultCreator<input::RawInputController>::Create();
-	input::RawInputController::LogicalMapping logicalMapping;
-	{
-		// WASD
-		logicalMapping['W'][input::DigitalPinState::Active] = command::raw::Up;
-		logicalMapping['W'][input::DigitalPinState::Inactive] = command::raw::UpStop;
-		logicalMapping['A'][input::DigitalPinState::Active] = command::raw::Left;
-		logicalMapping['A'][input::DigitalPinState::Inactive] = command::raw::LeftStop;
-		logicalMapping['S'][input::DigitalPinState::Active] = command::raw::Down;
-		logicalMapping['S'][input::DigitalPinState::Inactive] = command::raw::DownStop;
-		logicalMapping['D'][input::DigitalPinState::Active] = command::raw::Right;
-		logicalMapping['D'][input::DigitalPinState::Inactive] = command::raw::RightStop;
-
-		logicalMapping[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows ('[')
-		logicalMapping[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows (']')
-		logicalMapping[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with arrows
-
-		logicalMapping[shim::VK_RETURN][input::DigitalPinState::Active] = command::raw::Affirmative;
-		logicalMapping['E'][input::DigitalPinState::Active] = command::raw::Affirmative;
-		logicalMapping[shim::VK_BACK][input::DigitalPinState::Active] = command::raw::Negative;
-		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with arrows
-		logicalMapping['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with arrows
-		logicalMapping['F'][input::DigitalPinState::Active] = command::raw::Auxiliary2;
-		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with arrows
-		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with arrows ('\')
-	}
-	{
-		// Arrow keys
-		logicalMapping[shim::VK_UP][input::DigitalPinState::Active] = command::raw::Up;
-		logicalMapping[shim::VK_UP][input::DigitalPinState::Inactive] = command::raw::UpStop;
-		logicalMapping[shim::VK_LEFT][input::DigitalPinState::Active] = command::raw::Left;
-		logicalMapping[shim::VK_LEFT][input::DigitalPinState::Inactive] = command::raw::LeftStop;
-		logicalMapping[shim::VK_DOWN][input::DigitalPinState::Active] = command::raw::Down;
-		logicalMapping[shim::VK_DOWN][input::DigitalPinState::Inactive] = command::raw::DownStop;
-		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Active] = command::raw::Right;
-		logicalMapping[shim::VK_RIGHT][input::DigitalPinState::Inactive] = command::raw::RightStop;
-
-		logicalMapping[shim::VK_OEM_4][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD ('[')
-		logicalMapping[shim::VK_OEM_6][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD (']')
-		logicalMapping[shim::VK_PRIOR][input::DigitalPinState::Active] = command::raw::PgUp; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_NEXT][input::DigitalPinState::Active] = command::raw::PgDn; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_HOME][input::DigitalPinState::Active] = command::raw::Home; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_END][input::DigitalPinState::Active] = command::raw::End; // NOTE: Shared with WASD
-
-		logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = command::raw::Affirmative;
-		logicalMapping[shim::VK_CONTROL][input::DigitalPinState::Active] = command::raw::Negative; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_SHIFT][input::DigitalPinState::Active] = command::raw::Auxiliary1; // NOTE: Shared with WASD
-		logicalMapping['X'][input::DigitalPinState::Active] = command::raw::Auxiliary2; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_TAB][input::DigitalPinState::Active] = command::raw::GameSelect; // NOTE: Shared with WASD
-		logicalMapping[shim::VK_OEM_5][input::DigitalPinState::Active] = command::raw::GameStart; // NOTE: Shared with WASD ('\')
-	}
-	{
-		// Hat
-		logicalMapping['I'][input::DigitalPinState::Active] = command::raw::HatUp;
-		logicalMapping['I'][input::DigitalPinState::Inactive] = command::raw::HatUpStop;
-		logicalMapping['J'][input::DigitalPinState::Active] = command::raw::HatLeft;
-		logicalMapping['J'][input::DigitalPinState::Inactive] = command::raw::HatLeftStop;
-		logicalMapping['K'][input::DigitalPinState::Active] = command::raw::HatDown;
-		logicalMapping['K'][input::DigitalPinState::Inactive] = command::raw::HatDownStop;
-		logicalMapping['L'][input::DigitalPinState::Active] = command::raw::HatRight;
-		logicalMapping['L'][input::DigitalPinState::Inactive] = command::raw::HatRightStop;
-	}
-	{
-		// Developer
-		logicalMapping[shim::VK_OEM_3][input::DigitalPinState::Active] = command::raw::DeveloperToggle; // Tilde
-		logicalMapping[shim::VK_F1][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
-		logicalMapping[shim::VK_F2][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
-		logicalMapping[shim::VK_F3][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
-		logicalMapping[shim::VK_F4][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
-		logicalMapping[shim::VK_F5][input::DigitalPinState::Active] = command::raw::DeveloperAction4;
-		logicalMapping[shim::VK_F6][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
-	}
-	rawController->SetLogicalMapping( logicalMapping );
+	rawController->SetLogicalMapping( details::HardcodedRawMapping() );
 	details::sRawInputController = rawController;
 	manager.StoreRawController( rftl::move( rawController ) );
 }
@@ -126,30 +202,8 @@ void HardcodedMainSetup()
 	// Menus
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	menuHotkeyController->SetSource( details::sRawInputController );
-	{
-		input::HotkeyController::CommandMapping commandMapping;
-		commandMapping[command::raw::Up] = command::game::UINavigateUp;
-		commandMapping[command::raw::Down] = command::game::UINavigateDown;
-		commandMapping[command::raw::Left] = command::game::UINavigateLeft;
-		commandMapping[command::raw::Right] = command::game::UINavigateRight;
-		commandMapping[command::raw::PgUp] = command::game::UINavigateToPreviousGroup;
-		commandMapping[command::raw::PgDn] = command::game::UINavigateToNextGroup;
-		commandMapping[command::raw::Home] = command::game::UINavigateToFirst;
-		commandMapping[command::raw::End] = command::game::UINavigateToLast;
-		commandMapping[command::raw::Affirmative] = command::game::UIActivateSelection;
-		commandMapping[command::raw::Negative] = command::game::UICancelSelection;
-		commandMapping[command::raw::Auxiliary1] = command::game::UIAuxiliaryAction1;
-		commandMapping[command::raw::Auxiliary2] = command::game::UIAuxiliaryAction2;
-		commandMapping[command::raw::GameSelect] = command::game::UIMenuAction;
-		commandMapping[command::raw::GameStart] = command::game::UIPauseAction;
-		menuHotkeyController->SetCommandMapping( commandMapping );
-	}
-	UniquePtr<input::RollbackController> menuRollbackController = DefaultCreator<input::RollbackController>::Create();
-	menuRollbackController->SetSource( menuHotkeyController );
-	menuRollbackController->SetRollbackManager( app::gRollbackManager );
-	menuRollbackController->SetRollbackIdentifier( 0 );
-	app::gRollbackManager->CreateNewStream( 0, time::FrameClock::now() );
-	details::sRollbackControllers.emplace_back( menuRollbackController );
+	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback( menuHotkeyController, 0 );
 	manager.RegisterGameController( menuRollbackController, player::Global, layer::MainMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( menuRollbackController ) );
@@ -160,59 +214,42 @@ void HardcodedMainSetup()
 	// Developer
 	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	developerHotkeyController->SetSource( details::sRawInputController );
-	{
-		input::HotkeyController::CommandMapping commandMapping;
-		commandMapping[command::raw::DeveloperToggle] = command::game::DeveloperToggle;
-		commandMapping[command::raw::DeveloperCycle] = command::game::DeveloperCycle;
-		commandMapping[command::raw::DeveloperAction1] = command::game::DeveloperAction1;
-		commandMapping[command::raw::DeveloperAction2] = command::game::DeveloperAction2;
-		commandMapping[command::raw::DeveloperAction3] = command::game::DeveloperAction3;
-		commandMapping[command::raw::DeveloperAction4] = command::game::DeveloperAction4;
-		commandMapping[command::raw::DeveloperAction5] = command::game::DeveloperAction5;
-		developerHotkeyController->SetCommandMapping( commandMapping );
-	}
+	developerHotkeyController->SetCommandMapping( details::HardcodedDevMapping() );
 	manager.RegisterGameController( developerHotkeyController, player::Global, layer::Developer );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
 }
 
 
 
-void HardcodedGameSetup()
+void HardcodedPlayerSetup( PlayerID playerID )
 {
 	ControllerManager& manager = *app::gInputControllerManager;
 
-	// Clone main menu controller to P1
-	manager.RegisterGameController(
-		manager.GetGameController( player::Global, layer::MainMenu ),
-		player::P1, layer::GameMenu );
+	static constexpr uint8_t kStride = 2;
+	static_assert( kInvalidPlayerID == 0 );
+	RF_ASSERT( playerID != kInvalidPlayerID );
+	rollback::InputStreamIdentifier const rollbackStartID = ( ( playerID - 1u ) * kStride ) + 1u;
+	rollback::InputStreamIdentifier const rollbackMenusID = rollbackStartID + 0u;
+	rollback::InputStreamIdentifier const rollbackGamplayID = rollbackStartID + 1u;
+
+	// Game menus
+	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	menuHotkeyController->SetSource( details::sRawInputController );
+	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback( menuHotkeyController, rollbackMenusID );
+	manager.RegisterGameController( menuRollbackController, playerID, layer::GameMenu );
+	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+	manager.StoreGameController( rftl::move( menuRollbackController ) );
 
 	// Gameplay
-	UniquePtr<input::HotkeyController> p1HotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	p1HotkeyController->SetSource( details::sRawInputController );
-	{
-		input::HotkeyController::CommandMapping commandMapping;
-		commandMapping[command::raw::Up] = command::game::WalkNorth;
-		commandMapping[command::raw::UpStop] = command::game::WalkNorthStop;
-		commandMapping[command::raw::Down] = command::game::WalkSouth;
-		commandMapping[command::raw::DownStop] = command::game::WalkSouthStop;
-		commandMapping[command::raw::Left] = command::game::WalkWest;
-		commandMapping[command::raw::LeftStop] = command::game::WalkWestStop;
-		commandMapping[command::raw::Right] = command::game::WalkEast;
-		commandMapping[command::raw::RightStop] = command::game::WalkEastStop;
-		commandMapping[command::raw::Affirmative] = command::game::Interact;
-		p1HotkeyController->SetCommandMapping( commandMapping );
-	}
-	p1HotkeyController->SetSource( details::sRawInputController );
-	UniquePtr<input::RollbackController> p1RollbackController = DefaultCreator<input::RollbackController>::Create();
-	p1RollbackController->SetSource( p1HotkeyController );
-	p1RollbackController->SetRollbackManager( app::gRollbackManager );
-	p1RollbackController->SetRollbackIdentifier( 1 );
-	app::gRollbackManager->CreateNewStream( 1, time::FrameClock::now() );
-	details::sRollbackControllers.emplace_back( p1RollbackController );
-	manager.RegisterGameController( p1RollbackController, player::P1, layer::CharacterControl );
-
-	manager.StoreGameController( rftl::move( p1HotkeyController ) );
-	manager.StoreGameController( rftl::move( p1RollbackController ) );
+	UniquePtr<input::HotkeyController> gameplayHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	gameplayHotkeyController->SetSource( details::sRawInputController );
+	gameplayHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
+	gameplayHotkeyController->SetSource( details::sRawInputController );
+	UniquePtr<input::RollbackController> gameplayRollbackController = details::WrapWithRollback( gameplayHotkeyController, rollbackGamplayID );
+	manager.RegisterGameController( gameplayRollbackController, playerID, layer::CharacterControl );
+	manager.StoreGameController( rftl::move( gameplayHotkeyController ) );
+	manager.StoreGameController( rftl::move( gameplayRollbackController ) );
 }
 
 
@@ -236,13 +273,8 @@ void HardcodedHackSetup()
 		commandMapping[command::raw::HatRightStop] = command::game::WalkEastStop;
 		p2HotkeyController->SetCommandMapping( commandMapping );
 	}
-	UniquePtr<input::RollbackController> p2RollbackController = DefaultCreator<input::RollbackController>::Create();
-	p2RollbackController->SetSource( p2HotkeyController );
-	p2RollbackController->SetRollbackManager( app::gRollbackManager );
-	p2RollbackController->SetRollbackIdentifier( 2 );
+	UniquePtr<input::RollbackController> p2RollbackController = details::WrapWithRollback( p2HotkeyController, 3 );
 	p2RollbackController->SetArtificialDelay( time::kSimulationFrameDuration * 7 );
-	app::gRollbackManager->CreateNewStream( 2, time::FrameClock::now() );
-	details::sRollbackControllers.emplace_back( p2RollbackController );
 	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
 
 	manager.StoreGameController( rftl::move( p2HotkeyController ) );

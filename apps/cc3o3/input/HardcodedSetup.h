@@ -13,7 +13,7 @@ namespace RF::cc::input {
 // TODO: This is obviously gross, replace it
 void HardcodedRawSetup();
 void HardcodedMainSetup();
-void HardcodedGameSetup();
+void HardcodedPlayerSetup( PlayerID playerID );
 void HardcodedHackSetup();
 void HardcodedRawTick();
 void HardcodedRollbackTick();

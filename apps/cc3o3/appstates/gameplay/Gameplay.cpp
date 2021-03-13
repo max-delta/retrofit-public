@@ -62,7 +62,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	InternalState& internalState = *mInternalState;
 
 	// TODO: Multiplayer considerations and logic
-	input::HardcodedGameSetup();
+	input::HardcodedPlayerSetup( input::player::P1 );
 
 	// TODO: Load save
 
