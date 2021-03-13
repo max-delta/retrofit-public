@@ -244,7 +244,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			element::InnateIdentifier const clash = element::MakeInnateIdentifier( element::InnateString{ 'b', 'l', 'u' } );
 			element::InnateIdentifier const unrel = element::MakeInnateIdentifier( element::InnateString{ 'w', 'h', 't' } );
 
-			defender.mMaxHealth = 10'000;
+			defender.mMaxHealth = kMaxHealth;
 			defender.mCurHealth = defender.mMaxHealth;
 			defender.mPhysDef = def;
 			defender.mBalance = balance;
