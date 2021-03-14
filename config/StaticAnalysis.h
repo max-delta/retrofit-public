@@ -11,6 +11,9 @@
 #if _MSC_FULL_VER >= 191526726 && _MSC_FULL_VER <= 191526732
 	#pragma warning( disable : 26455 )
 #endif
+#if _MSC_FULL_VER >= 192829912 && _MSC_FULL_VER <= 192829912
+	#pragma warning( disable : 26457 )
+#endif
 
 // False positives about locks being dropped in non-sensical locations
 // NOTE: Specifically observed with rftl::lock_guard<rftl::mutex> not
