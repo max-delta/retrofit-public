@@ -20,6 +20,9 @@ public:
 	static input::PlayerID GetSinglePlayer();
 	static void ClearSinglePlayer();
 
+	static void MakeLocal( input::PlayerID player );
+	static void MakeRemote( input::PlayerID player );
+
 	static rftl::vector<ui::FocusEventType> GetMainMenuInputToProcess();
 	static rftl::vector<ui::FocusEventType> GetGameMenuInputToProcess( input::PlayerID player );
 	static rftl::vector<input::GameCommand> GetGameplayInputToProcess( input::PlayerID player, input::LayerID layer );

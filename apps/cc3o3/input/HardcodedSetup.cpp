@@ -195,10 +195,12 @@ void HardcodedMainSetup()
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	menuHotkeyController->SetSource( details::sRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback( menuHotkeyController, 0 );
+	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback(
+		menuHotkeyController, HardcodedRollbackIdentifiers::kRollbackMainMenusID );
 	manager.RegisterGameController( menuRollbackController, player::Global, layer::MainMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( menuRollbackController ) );
+	gRollbackInputManager->AddLocalStreams( { HardcodedRollbackIdentifiers::kRollbackMainMenusID } );
 
 	// Text
 	manager.RegisterTextProvider( details::sRawInputController, player::Global );
@@ -215,20 +217,18 @@ void HardcodedMainSetup()
 
 void HardcodedPlayerSetup( PlayerID playerID )
 {
+	RF_ASSERT( playerID != kInvalidPlayerID );
+
 	ControllerManager& manager = *app::gInputControllerManager;
 
-	static constexpr uint8_t kStride = 2;
-	static_assert( kInvalidPlayerID == 0 );
-	RF_ASSERT( playerID != kInvalidPlayerID );
-	rollback::InputStreamIdentifier const rollbackStartID = ( ( playerID - 1u ) * kStride ) + 1u;
-	rollback::InputStreamIdentifier const rollbackMenusID = rollbackStartID + 0u;
-	rollback::InputStreamIdentifier const rollbackGamplayID = rollbackStartID + 1u;
+	HardcodedRollbackIdentifiers const identifiers( playerID );
 
 	// Game menus
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	menuHotkeyController->SetSource( details::sRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback( menuHotkeyController, rollbackMenusID );
+	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback(
+		menuHotkeyController, identifiers.mRollbackGameMenusID );
 	manager.RegisterGameController( menuRollbackController, playerID, layer::GameMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
 	manager.StoreGameController( rftl::move( menuRollbackController ) );
@@ -238,7 +238,8 @@ void HardcodedPlayerSetup( PlayerID playerID )
 	gameplayHotkeyController->SetSource( details::sRawInputController );
 	gameplayHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
 	gameplayHotkeyController->SetSource( details::sRawInputController );
-	UniquePtr<input::RollbackController> gameplayRollbackController = details::WrapWithRollback( gameplayHotkeyController, rollbackGamplayID );
+	UniquePtr<input::RollbackController> gameplayRollbackController = details::WrapWithRollback(
+		gameplayHotkeyController, identifiers.mRollbackGamplayID );
 	manager.RegisterGameController( gameplayRollbackController, playerID, layer::CharacterControl );
 	manager.StoreGameController( rftl::move( gameplayHotkeyController ) );
 	manager.StoreGameController( rftl::move( gameplayRollbackController ) );
@@ -246,13 +247,15 @@ void HardcodedPlayerSetup( PlayerID playerID )
 
 
 
-void HardcodedHackSetup()
+void HardcodedHackSetup( PlayerID playerID )
 {
 	ControllerManager& manager = *app::gInputControllerManager;
 
+	HardcodedRollbackIdentifiers const identifiers( playerID );
+
 	// Testing
-	UniquePtr<input::HotkeyController> p2HotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	p2HotkeyController->SetSource( details::sRawInputController );
+	UniquePtr<input::HotkeyController> hotkeyController = DefaultCreator<input::HotkeyController>::Create();
+	hotkeyController->SetSource( details::sRawInputController );
 	{
 		input::HotkeyController::CommandMapping commandMapping;
 		commandMapping[command::raw::HatUp] = command::game::WalkNorth;
@@ -263,14 +266,15 @@ void HardcodedHackSetup()
 		commandMapping[command::raw::HatLeftStop] = command::game::WalkWestStop;
 		commandMapping[command::raw::HatRight] = command::game::WalkEast;
 		commandMapping[command::raw::HatRightStop] = command::game::WalkEastStop;
-		p2HotkeyController->SetCommandMapping( commandMapping );
+		hotkeyController->SetCommandMapping( commandMapping );
 	}
-	UniquePtr<input::RollbackController> p2RollbackController = details::WrapWithRollback( p2HotkeyController, 3 );
-	p2RollbackController->SetArtificialDelay( time::kSimulationFrameDuration * 7 );
-	manager.RegisterGameController( p2RollbackController, player::P2, layer::CharacterControl );
+	UniquePtr<input::RollbackController> rollbackController = details::WrapWithRollback(
+		hotkeyController, identifiers.mRollbackGamplayID );
+	rollbackController->SetArtificialDelay( time::kSimulationFrameDuration * 7 );
+	manager.RegisterGameController( rollbackController, playerID, layer::CharacterControl );
 
-	manager.StoreGameController( rftl::move( p2HotkeyController ) );
-	manager.StoreGameController( rftl::move( p2RollbackController ) );
+	manager.StoreGameController( rftl::move( hotkeyController ) );
+	manager.StoreGameController( rftl::move( rollbackController ) );
 }
 
 

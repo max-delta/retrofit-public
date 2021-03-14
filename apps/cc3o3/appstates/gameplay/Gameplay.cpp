@@ -65,6 +65,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	// TODO: Multiplayer considerations and logic
 	InputHelpers::SetSinglePlayer( input::player::P1 );
 	input::HardcodedPlayerSetup( InputHelpers::GetSinglePlayer() );
+	InputHelpers::MakeLocal( InputHelpers::GetSinglePlayer() );
 
 	// TODO: Load save
 

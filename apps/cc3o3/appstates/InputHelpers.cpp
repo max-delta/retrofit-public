@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "InputHelpers.h"
 
-#include "cc3o3/input/InputFwd.h"
+#include "cc3o3/Common.h"
+#include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
 #include "GameInput/RawController.h"
+#include "GameSync/RollbackInputManager.h"
 
 #include "Timing/FrameClock.h"
 #include "Localization/PageMapper.h"
@@ -45,6 +47,28 @@ void InputHelpers::ClearSinglePlayer()
 {
 	RF_ASSERT( details::sSinglePlayer != input::kInvalidPlayerID );
 	details::sSinglePlayer = input::kInvalidPlayerID;
+}
+
+
+
+void InputHelpers::MakeLocal( input::PlayerID player )
+{
+	RF_ASSERT( player != input::kInvalidPlayerID );
+	input::HardcodedRollbackIdentifiers const identifiers( player );
+	gRollbackInputManager->AddLocalStreams( { //
+		identifiers.mRollbackGameMenusID,
+		identifiers.mRollbackGamplayID } );
+}
+
+
+
+void InputHelpers::MakeRemote( input::PlayerID player )
+{
+	RF_ASSERT( player != input::kInvalidPlayerID );
+	input::HardcodedRollbackIdentifiers const identifiers( player );
+	gRollbackInputManager->RemoveLocalStreams( { //
+		identifiers.mRollbackGameMenusID,
+		identifiers.mRollbackGamplayID } );
 }
 
 

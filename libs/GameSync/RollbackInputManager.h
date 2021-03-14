@@ -5,9 +5,12 @@
 
 #include "Rollback/InputStream.h"
 
+#include "core_math/Hash.h"
+
 #include "core/ptr/weak_ptr.h"
 
 #include "rftl/shared_mutex"
+#include "rftl/unordered_set"
 #include "rftl/vector"
 #include "rftl/deque"
 
@@ -23,6 +26,8 @@ class GAMESYNC_API RollbackInputManager
 	// Types and constants
 public:
 	using Controller = input::RollbackController;
+
+	using StreamIdentifiers = rftl::unordered_set<rollback::InputStreamIdentifier, math::DirectHash>;
 
 private:
 	using ReaderWriterMutex = rftl::shared_mutex;
@@ -45,10 +50,15 @@ public:
 	void ClearAllControllers();
 
 	// Thread-safe
+	void AddLocalStreams( StreamIdentifiers const& identifiers );
+	void RemoveLocalStreams( StreamIdentifiers const& identifiers );
+	StreamIdentifiers GetLocalStreams() const;
+
+	// Thread-safe
 	void SubmitNonControllerInputs();
 
 	// Thread-safe
-	void TickControllers();
+	void TickLocalControllers();
 
 	// Thread-safe
 	void AdvanceControllers(
@@ -70,6 +80,9 @@ private:
 
 	mutable ReaderWriterMutex mControllersMutex;
 	Controllers mControllers;
+
+	mutable ReaderWriterMutex mLocalStreamsMutex;
+	StreamIdentifiers mLocalStreams;
 
 	mutable ReaderWriterMutex mDebugInputMutex;
 	rftl::deque<rftl::pair<rollback::InputStreamIdentifier, rollback::InputEvent>> mDebugQueuedTestInput;

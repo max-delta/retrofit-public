@@ -6,6 +6,7 @@
 #include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/state/StateFwd.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/appstates/InputHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -78,7 +79,9 @@ struct DevTestRollback::InternalState
 void DevTestRollback::OnEnter( AppStateChangeContext& context )
 {
 	input::HardcodedPlayerSetup( input::player::P1 );
-	input::HardcodedHackSetup();
+	input::HardcodedHackSetup( input::player::P2 );
+	InputHelpers::MakeLocal( input::player::P1 );
+	InputHelpers::MakeLocal( input::player::P2 );
 
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;

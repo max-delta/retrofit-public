@@ -53,6 +53,39 @@ void RollbackInputManager::ClearAllControllers()
 
 
 
+void RollbackInputManager::AddLocalStreams( StreamIdentifiers const& identifiers )
+{
+	WriterLock const lock( mLocalStreamsMutex );
+
+	for( rollback::InputStreamIdentifier const& identifier : identifiers )
+	{
+		mLocalStreams.emplace( identifier );
+	}
+}
+
+
+
+void RollbackInputManager::RemoveLocalStreams( StreamIdentifiers const& identifiers )
+{
+	WriterLock const lock( mLocalStreamsMutex );
+
+	for( rollback::InputStreamIdentifier const& identifier : identifiers )
+	{
+		mLocalStreams.erase( identifier );
+	}
+}
+
+
+
+RollbackInputManager::StreamIdentifiers RollbackInputManager::GetLocalStreams() const
+{
+	ReaderLock const lock( mLocalStreamsMutex );
+
+	return mLocalStreams;
+}
+
+
+
 void RollbackInputManager::SubmitNonControllerInputs()
 {
 	WriterLock const lock( mDebugInputMutex );
@@ -72,14 +105,19 @@ void RollbackInputManager::SubmitNonControllerInputs()
 
 
 
-void RollbackInputManager::TickControllers()
+void RollbackInputManager::TickLocalControllers()
 {
-	WriterLock const lock( mControllersMutex );
+	WriterLock const controllerLock( mControllersMutex );
+	ReaderLock const streamsLock( mLocalStreamsMutex );
 
 	for( WeakPtr<Controller> const& controller : mControllers )
 	{
 		RF_ASSERT( controller != nullptr );
-		controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
+		rollback::InputStreamIdentifier const identifier = controller->GetRollbackIdentifier();
+		if( mLocalStreams.count( identifier ) > 0 )
+		{
+			controller->ProcessInput( time::FrameClock::now(), time::FrameClock::now() );
+		}
 	}
 }
 

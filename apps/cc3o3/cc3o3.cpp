@@ -418,7 +418,7 @@ void ProcessFrame()
 	}
 	else
 	{
-		gRollbackInputManager->TickControllers();
+		gRollbackInputManager->TickLocalControllers();
 	}
 
 	// Tick the current true frame
