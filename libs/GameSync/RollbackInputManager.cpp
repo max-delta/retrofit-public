@@ -123,7 +123,7 @@ void RollbackInputManager::TickLocalControllers()
 
 
 
-void RollbackInputManager::AdvanceControllers(
+void RollbackInputManager::AdvanceLocalControllers(
 	time::CommonClock::time_point lockedFrame,
 	time::CommonClock::time_point newWriteHead )
 {
@@ -132,7 +132,11 @@ void RollbackInputManager::AdvanceControllers(
 	for( WeakPtr<Controller> const& controller : mControllers )
 	{
 		RF_ASSERT( controller != nullptr );
-		controller->AdvanceInputStream( lockedFrame, newWriteHead );
+		rollback::InputStreamIdentifier const identifier = controller->GetRollbackIdentifier();
+		if( mLocalStreams.count( identifier ) > 0 )
+		{
+			controller->AdvanceInputStream( lockedFrame, newWriteHead );
+		}
 	}
 }
 

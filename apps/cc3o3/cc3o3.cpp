@@ -345,7 +345,7 @@ void ProcessFrame()
 
 	// For locally-owned streams, we'll want to manipulate read/write heads
 	RF_TODO_ANNOTATION( "Have a manifest for what is locally-owned" );
-	(void)( &sync::RollbackInputManager::AdvanceControllers );
+	(void)( &sync::RollbackInputManager::AdvanceLocalControllers );
 
 	// Commit all frames that are ready
 	rollMan.CommitFrames( preFrameCommitRange, preFrameCommitRange.second );
@@ -358,7 +358,7 @@ void ProcessFrame()
 	{
 		// Lock read heads to after the last commit, and write heads to the
 		//  start of the current frame
-		gRollbackInputManager->AdvanceControllers(
+		gRollbackInputManager->AdvanceLocalControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
 			time::FrameClock::now() );
 	}
@@ -435,7 +435,7 @@ void ProcessFrame()
 	{
 		// Lock read heads to after the last commit, and write heads to the start
 		//  of the current frame
-		gRollbackInputManager->AdvanceControllers(
+		gRollbackInputManager->AdvanceLocalControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
 			time::FrameClock::now() );
 	}
@@ -458,7 +458,7 @@ void ProcessFrame()
 		{
 			// Lock read heads to after the last commit, and write heads to the end
 			//  of the current frame
-			gRollbackInputManager->AdvanceControllers(
+			gRollbackInputManager->AdvanceLocalControllers(
 				postFrameCommitRange.second,
 				time::FrameClock::now() );
 		}

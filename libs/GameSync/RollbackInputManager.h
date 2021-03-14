@@ -61,7 +61,7 @@ public:
 	void TickLocalControllers();
 
 	// Thread-safe
-	void AdvanceControllers(
+	void AdvanceLocalControllers(
 		time::CommonClock::time_point lockedFrame,
 		time::CommonClock::time_point newWriteHead );
 
