@@ -440,21 +440,28 @@ void ProcessFrame()
 			time::FrameClock::now() );
 	}
 
-	// Commit all frames that are ready
-	rollback::InclusiveTimeRange const postFrameCommitRange = rollMan.GetFramesReadyToCommit();
-	rollMan.CommitFrames( postFrameCommitRange, postFrameCommitRange.second + time::kSimulationFrameDuration );
-
-	if( simulationMode == SimulationMode::OnRailsReplay )
+	if( rollMan.HasInputStreams() == false )
 	{
-		// Input disabled during replay
+		// No input streams, simulation is running freely
 	}
 	else
 	{
-		// Lock read heads to after the last commit, and write heads to the end
-		//  of the current frame
-		gRollbackInputManager->AdvanceControllers(
-			postFrameCommitRange.second,
-			time::FrameClock::now() );
+		// Commit all frames that are ready
+		rollback::InclusiveTimeRange const postFrameCommitRange = rollMan.GetFramesReadyToCommit();
+		rollMan.CommitFrames( postFrameCommitRange, postFrameCommitRange.second + time::kSimulationFrameDuration );
+
+		if( simulationMode == SimulationMode::OnRailsReplay )
+		{
+			// Input disabled during replay
+		}
+		else
+		{
+			// Lock read heads to after the last commit, and write heads to the end
+			//  of the current frame
+			gRollbackInputManager->AdvanceControllers(
+				postFrameCommitRange.second,
+				time::FrameClock::now() );
+		}
 	}
 
 	ui::ContainerManager& uiMan = *app::gUiManager;

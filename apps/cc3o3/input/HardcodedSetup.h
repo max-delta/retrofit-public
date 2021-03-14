@@ -24,9 +24,6 @@ struct HardcodedRollbackIdentifiers
 {
 	RF_NO_COPY( HardcodedRollbackIdentifiers );
 
-public:
-	static constexpr rollback::InputStreamIdentifier kRollbackMainMenusID = 0;
-
 private:
 	static constexpr uint8_t kStride = 2;
 	static_assert( kInvalidPlayerID == 0 );

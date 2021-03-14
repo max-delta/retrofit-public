@@ -48,7 +48,7 @@ public:
 	time::CommonClock::time_point LoadManualSnapshot( ManualSnapshotIdentifier const& identifier );
 
 	// Destructively rewind all domains to an older time point, effectively
-	//  undoing all state modifications 
+	//  undoing all state modifications
 	// NOTE: Intended to be used for rollback scenarios, where a re-simulation
 	//  needs to be run, and may not touch all values that a previous
 	//  simulation may have written to
@@ -61,6 +61,12 @@ public:
 	//  machinery, and are expected if the window has been moved
 	time::CommonClock::time_point GetHeadClock() const;
 	void SetHeadClock( time::CommonClock::time_point time );
+
+	// Input streams are long historical sequence of input events that can be
+	//  replayed back into a simulatino
+	// NOTE: Simulations are assumed to be deterministic, so that the same
+	//  input for a starting state will result in the same ending state
+	bool HasInputStreams() const;
 
 	// Committed streams are intended to store input for frames that have
 	//  representation from all interested parties. Specifically: the frames

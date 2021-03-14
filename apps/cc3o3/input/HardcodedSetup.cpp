@@ -195,12 +195,8 @@ void HardcodedMainSetup()
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	menuHotkeyController->SetSource( details::sRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback(
-		menuHotkeyController, HardcodedRollbackIdentifiers::kRollbackMainMenusID );
-	manager.RegisterGameController( menuRollbackController, player::Global, layer::MainMenu );
+	manager.RegisterGameController( menuHotkeyController, player::Global, layer::MainMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
-	manager.StoreGameController( rftl::move( menuRollbackController ) );
-	gRollbackInputManager->AddLocalStreams( { HardcodedRollbackIdentifiers::kRollbackMainMenusID } );
 
 	// Text
 	manager.RegisterTextProvider( details::sRawInputController, player::Global );

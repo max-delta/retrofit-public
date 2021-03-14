@@ -125,6 +125,14 @@ void RollbackManager::SetHeadClock( time::CommonClock::time_point time )
 
 
 
+bool RollbackManager::HasInputStreams() const
+{
+	RF_ASSERT( mCommittedStreams.empty() == mUncommittedStreams.empty() );
+	return mCommittedStreams.empty() == false;
+}
+
+
+
 RollbackManager::InputStreams const& RollbackManager::GetCommittedStreams() const
 {
 	return mCommittedStreams;
