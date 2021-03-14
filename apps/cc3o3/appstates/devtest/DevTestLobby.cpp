@@ -2,6 +2,7 @@
 #include "DevTestLobby.h"
 
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/input/HardcodedSetup.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -42,6 +43,11 @@ void DevTestLobby::OnEnter( AppStateChangeContext& context )
 	gfx::PPUController& ppu = *app::gGraphics;
 
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
+
+	input::HardcodedPlayerSetup( input::player::P1 );
+	input::HardcodedPlayerSetup( input::player::P2 );
+	InputHelpers::MakeRemote( input::player::P1 );
+	InputHelpers::MakeRemote( input::player::P2 );
 }
 
 
@@ -142,24 +148,42 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 	else if( selected[kClaimAPlayer] )
 	{
+		static constexpr auto getUnclaimed = []( sync::SessionManager const& manager ) -> input::PlayerID //
+		{
+			sync::SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetUnclaimedPlayerIDs();
+			RF_ASSERT( ids.empty() == false );
+			return *ids.begin();
+		};
+
 		if( internalState.mAsHost != nullptr )
 		{
-			internalState.mAsHost->AttemptPlayerChange( input::player::P1, true );
+			sync::SessionHostManager& host = *internalState.mAsHost;
+			host.AttemptPlayerChange( getUnclaimed( host ), true );
 		}
 		if( internalState.mAsClient != nullptr )
 		{
-			internalState.mAsClient->RequestPlayerChange( input::player::P2, true );
+			sync::SessionClientManager& client = *internalState.mAsClient;
+			client.RequestPlayerChange( getUnclaimed( client ), true );
 		}
 	}
 	else if( selected[kRelinquishAPlayer] )
 	{
+		static constexpr auto getLocal = []( sync::SessionManager const& manager ) -> input::PlayerID //
+		{
+			sync::SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetLocalPlayerIDs();
+			RF_ASSERT( ids.empty() == false );
+			return *ids.begin();
+		};
+
 		if( internalState.mAsHost != nullptr )
 		{
-			internalState.mAsHost->AttemptPlayerChange( input::player::P1, false );
+			sync::SessionHostManager& host = *internalState.mAsHost;
+			host.AttemptPlayerChange( getLocal( host ), false );
 		}
 		if( internalState.mAsClient != nullptr )
 		{
-			internalState.mAsClient->RequestPlayerChange( input::player::P2, false );
+			sync::SessionClientManager& client = *internalState.mAsClient;
+			client.RequestPlayerChange( getLocal( client ), false );
 		}
 	}
 	else if( selected[kClearText] )
@@ -199,13 +223,33 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 
 	// Process
+	static constexpr auto updateControllers = []( sync::SessionMembers const& members ) -> void //
+	{
+		using PlayerIDs = sync::SessionMembers::PlayerIDs;
+		PlayerIDs const all = members.GetPlayerIDs();
+		PlayerIDs const local = members.GetLocalPlayerIDs();
+		for( input::PlayerID const& id : all )
+		{
+			bool const isLocal = local.count( id ) > 0;
+			if( isLocal )
+			{
+				InputHelpers::MakeLocal( id );
+			}
+			else
+			{
+				InputHelpers::MakeRemote( id );
+			}
+		}
+	};
 	if( internalState.mAsHost != nullptr )
 	{
 		internalState.mAsHost->ProcessPendingOperations();
+		updateControllers( internalState.mAsHost->GetSessionMembers() );
 	}
 	if( internalState.mAsClient != nullptr )
 	{
 		internalState.mAsClient->ProcessPendingOperations();
+		updateControllers( internalState.mAsClient->GetSessionMembers() );
 	}
 
 	// Draw Status
