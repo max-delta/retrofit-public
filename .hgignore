@@ -1,5 +1,6 @@
 ^_artifacts/.*$
 ^_binaries/.*$
+^_packages/.*$
 ^_scratch/.*$
 ^_user/.*$
 
