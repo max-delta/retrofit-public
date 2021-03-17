@@ -11,7 +11,7 @@
 #if _MSC_FULL_VER >= 191526726 && _MSC_FULL_VER <= 191526732
 	#pragma warning( disable : 26455 )
 #endif
-#if _MSC_FULL_VER >= 192829912 && _MSC_FULL_VER <= 192829912
+#if _MSC_FULL_VER >= 192829910 && _MSC_FULL_VER <= 192829912
 	#pragma warning( disable : 26457 )
 #endif
 
