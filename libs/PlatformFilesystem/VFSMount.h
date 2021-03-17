@@ -45,10 +45,11 @@ public:
 	//
 	// Private data
 private:
-	Type mType;
-	Permissions mPermissions;
-	VFSPath mVirtualPath;
-	VFSPath mRealMount;
+	MountPriority mPriority = 0;
+	Type mType = Type::Invalid;
+	Permissions mPermissions = Permissions::Invalid;
+	VFSPath mVirtualPath = {};
+	VFSPath mRealMount = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

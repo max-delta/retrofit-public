@@ -121,7 +121,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		config\ThirdParty.Lib.props = config\ThirdParty.Lib.props
 		config\ThirdParty.props = config\ThirdParty.props
 		config\vfs_cc3o3.ini = config\vfs_cc3o3.ini
-		config\vfs_game.ini = config\vfs_game.ini
+		config\vfs_core.ini = config\vfs_core.ini
+		config\vfs_example.ini = config\vfs_example.ini
 		config\vfs_test.ini = config\vfs_test.ini
 	EndProjectSection
 EndProject

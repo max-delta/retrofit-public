@@ -10,6 +10,7 @@
 #include "core_math/math_clamps.h"
 
 #include "rftl/cstdio"
+#include "rftl/algorithm"
 #include "rftl/filesystem"
 #include "rftl/system_error"
 #include "rftl/unordered_set"
@@ -173,7 +174,7 @@ void VFS::EnumerateDirectory(
 
 
 
-bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string const& userDirectory )
+bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mountTableFile, rftl::string const& userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );
 	RF_ASSERT( userDirectory.empty() == false );
@@ -218,12 +219,12 @@ bool VFS::AttemptInitialMount( rftl::string const& mountTableFile, rftl::string 
 		return false;
 	}
 
-	return ProcessMountFile( fileHandle.GetFile() );
+	return ProcessMountFile( priority, fileHandle.GetFile() );
 }
 
 
 
-bool VFS::AttemptSubsequentMount( VFSPath const& mountTableFile )
+bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTableFile )
 {
 	RFLOG_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", mountTableFile.CreateString().c_str() );
 	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
@@ -238,7 +239,7 @@ bool VFS::AttemptSubsequentMount( VFSPath const& mountTableFile )
 		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
-	return ProcessMountFile( file );
+	return ProcessMountFile( priority, file );
 }
 
 
@@ -339,7 +340,8 @@ void VFS::DebugDumpMountTable() const
 		RFLOG_INFO(
 			nullptr,
 			RFCAT_VFS,
-			"  %s %s \"%s\" \"%s\"",
+			"  % 3u %s %s \"%s\" \"%s\"",
+			mountRule.mPriority,
 			type,
 			permissions,
 			mountRule.mVirtualPath.CreateString().c_str(),
@@ -400,7 +402,7 @@ VFSPath VFS::ChrootCollapse( VFSPath const& path )
 
 
 
-bool VFS::ProcessMountFile( FILE* file )
+bool VFS::ProcessMountFile( MountPriority priority, FILE* file )
 {
 	rftl::string tokenBuilder;
 	rftl::vector<rftl::string> tokenStream;
@@ -518,6 +520,7 @@ bool VFS::ProcessMountFile( FILE* file )
 					{
 						// Form mount rule from tokens
 						VFSMount mountRule = ProcessMountRule(
+							priority,
 							tokenStream[0],
 							tokenStream[1],
 							tokenStream[2],
@@ -573,7 +576,7 @@ bool VFS::ProcessMountFile( FILE* file )
 
 
 
-VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint )
+VFSMount VFS::ProcessMountRule( MountPriority priority, rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint )
 {
 	constexpr size_t prefixLen = sizeof( VFSMountTableTokens::kMountTokenAffix );
 	constexpr size_t affixesLen = sizeof( VFSMountTableTokens::kMountTokenAffix ) * 2;
@@ -581,9 +584,10 @@ VFSMount VFS::ProcessMountRule( rftl::string const& type, rftl::string const& pe
 	RF_ASSERT( permissions.size() >= affixesLen );
 	RF_ASSERT( virtualPoint.size() >= affixesLen );
 	RF_ASSERT( realPoint.size() >= affixesLen );
-	VFSMount retVal;
-	retVal.mType = VFSMount::Type::Invalid;
-	retVal.mPermissions = VFSMount::Permissions::Invalid;
+	VFSMount retVal = {};
+
+	// Priority
+	retVal.mPriority = priority;
 
 	// Type
 	rftl::string typeVal = type.substr( prefixLen, type.size() - affixesLen );
@@ -786,12 +790,14 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 		return nullptr;
 	}
 
-	// Evaluate each mount point in order
+	// Evaluate each mount point
+	using PotentialMapping = rftl::pair<rftl::string, VFSMount const*>;
+	rftl::vector<PotentialMapping> potentialMappings;
 	for( VFSMount const& mount : mMountTable )
 	{
 		// Attempt mount
-		rftl::string const finalFilename = AttemptMountMapping( mount, path, permissions );
-		if( finalFilename.empty() )
+		rftl::string const potentialMapping = AttemptMountMapping( mount, path, permissions );
+		if( potentialMapping.empty() )
 		{
 			// Cannot mount here
 			continue;
@@ -799,7 +805,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 		if( mustExist )
 		{
-			bool const exists = rftl::filesystem::exists( finalFilename );
+			bool const exists = rftl::filesystem::exists( potentialMapping );
 			if( exists == false )
 			{
 				// Not here, maybe it's in an overlapping mount point
@@ -807,92 +813,109 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 			}
 		}
 
-		// Locked to this mount layer, let's see what happens!
-		RFLOG_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
-		bool parentsCreated = false;
-		while( true )
+		potentialMappings.emplace_back( potentialMapping, &mount );
+	}
+	if( potentialMappings.empty() )
+	{
+		// No valid mappings
+		return nullptr;
+	}
+
+	// Take the lowest numbered priority
+	rftl::stable_sort( potentialMappings.begin(), potentialMappings.end(),
+		[]( PotentialMapping const& lhs, PotentialMapping const& rhs ) -> bool {
+			return lhs.second->mPriority < rhs.second->mPriority;
+		} );
+	if( potentialMappings.size() > 1 )
+	{
+		RFLOG_TRACE( path, RFCAT_VFS, "Multiple potential mount points found, taking earliest rule from highest priority" );
+	}
+	PotentialMapping const& finalMapping = potentialMappings.front();
+	rftl::string const finalFilename = finalMapping.first;
+	VFSMount const& finalMount = *finalMapping.second;
+
+	// Locked to this mount layer, let's see what happens!
+	RFLOG_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
+	bool parentsCreated = false;
+	while( true )
+	{
+		FILE* file = nullptr;
+		errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
+		if( file == nullptr )
 		{
-			FILE* file = nullptr;
-			errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
-			if( file == nullptr )
+			// Tough luck, no easy way to tell what went wrong
+			if( mustExist )
 			{
-				// Tough luck, no easy way to tell what went wrong
-				if( mustExist )
+				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
+				return nullptr;
+			}
+			else
+			{
+				VFSPath const immediateParentPath = VFSPath::CreatePathFromString( finalFilename ).GetParent();
+				if( rftl::filesystem::exists( immediateParentPath.CreateString() ) == false )
 				{
-					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
-					return nullptr;
-				}
-				else
-				{
-					VFSPath const immediateParentPath = VFSPath::CreatePathFromString( finalFilename ).GetParent();
-					if( rftl::filesystem::exists( immediateParentPath.CreateString() ) == false )
+					RFLOG_WARNING( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
+					if( parentsCreated == false )
 					{
-						RFLOG_WARNING( path, RFCAT_VFS, "Failed to open file, perhaps parent is missing?" );
-						if( parentsCreated == false )
+						// Try to create parents
 						{
-							// Try to create parents
+							// Must be a writeable mount point
+							if( ( static_cast<uint8_t>( finalMount.mPermissions ) & VFSMount::kWriteBit ) == 0 )
 							{
-								// Must be a writeable mount point
-								if( ( static_cast<uint8_t>( mount.mPermissions ) & VFSMount::kWriteBit ) == 0 )
+								RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount rule not writable" );
+							}
+							else
+							{
+								// Mount point must already exist
+								VFSPath const realMountPoint = GetRealMountPoint( finalMount );
+								if( rftl::filesystem::exists( realMountPoint.CreateString() ) == false )
 								{
-									RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount rule not writable" );
+									RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount point doesn't exist" );
 								}
 								else
 								{
-									// Mount point must already exist
-									VFSPath const realMountPoint = GetRealMountPoint( mount );
-									if( rftl::filesystem::exists( realMountPoint.CreateString() ) == false )
+									VFSPath const& deepestParent = realMountPoint;
+									VFSPath const& shallowestParent = immediateParentPath;
+									bool parentSanityCheck = false;
+									VFSPath const route = shallowestParent.GetAsBranchOf( deepestParent, parentSanityCheck );
+									RFLOG_TEST_AND_FATAL( parentSanityCheck, path, RFCAT_VFS, "Parent calculation for mount point failed internal sanity check. Likely a code bug." );
+									RFLOG_TEST_AND_FATAL( route.Empty() == false, path, RFCAT_VFS, "Parent calculation for mount point failed internal route check. Likely a code bug." );
+									VFSPath traverse = deepestParent;
+									for( VFSPath::Element const& element : route )
 									{
-										RFLOG_WARNING( path, RFCAT_VFS, "Can't create parents, mount point doesn't exist" );
-									}
-									else
-									{
-										VFSPath const& deepestParent = realMountPoint;
-										VFSPath const& shallowestParent = immediateParentPath;
-										bool parentSanityCheck = false;
-										VFSPath const route = shallowestParent.GetAsBranchOf( deepestParent, parentSanityCheck );
-										RFLOG_TEST_AND_FATAL( parentSanityCheck, path, RFCAT_VFS, "Parent calculation for mount point failed internal sanity check. Likely a code bug." );
-										RFLOG_TEST_AND_FATAL( route.Empty() == false, path, RFCAT_VFS, "Parent calculation for mount point failed internal route check. Likely a code bug." );
-										VFSPath traverse = deepestParent;
-										for( VFSPath::Element const& element : route )
+										traverse.Append( element );
+										RFLOG_INFO( traverse, RFCAT_VFS, "Creating directory" );
+										rftl::error_code err = {};
+										rftl::filesystem::create_directory( traverse.CreateString(), err );
+										if( err )
 										{
-											traverse.Append( element );
-											RFLOG_INFO( traverse, RFCAT_VFS, "Creating directory" );
-											rftl::error_code err = {};
-											rftl::filesystem::create_directory( traverse.CreateString(), err );
-											if( err )
-											{
-												RFLOG_ERROR( traverse, RFCAT_VFS, "Filesystem reported an error of '%i' when creating directory", err.value() );
-											}
+											RFLOG_ERROR( traverse, RFCAT_VFS, "Filesystem reported an error of '%i' when creating directory", err.value() );
 										}
 									}
 								}
 							}
-							parentsCreated = true;
-							continue;
 						}
-						else
-						{
-							RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, parent seems to be missing" );
-							return nullptr;
-						}
+						parentsCreated = true;
+						continue;
 					}
 					else
 					{
-						RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
+						RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file, parent seems to be missing" );
 						return nullptr;
 					}
 				}
+				else
+				{
+					RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was supposed to be flagged with creation" );
+					return nullptr;
+				}
 			}
-
-			// Sweet! Got it
-			RF_ASSERT( file != nullptr );
-			return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
 		}
-	}
 
-	// Couldn't find
-	return nullptr;
+		// Sweet! Got it
+		RF_ASSERT( file != nullptr );
+		return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

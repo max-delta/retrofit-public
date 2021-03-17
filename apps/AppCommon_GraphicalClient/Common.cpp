@@ -90,21 +90,22 @@ void Startup()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
 	sVfs = DefaultCreator<file::VFS>::Create();
 	gVfs = sVfs;
-	bool vfsInitialized = gVfs->AttemptInitialMount( "config/vfs_game.ini", "_user" );
+	static constexpr file::MountPriority kMountPriority = file::kMountPriorityHighest;
+	bool vfsInitialized = gVfs->AttemptInitialMount( kMountPriority, "config/vfs_core.ini", "_user" );
 	if( vfsInitialized == false )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_STARTUP, "Failed to startup VFS, trying again assuming _binaries launch" );
-		vfsInitialized = gVfs->AttemptInitialMount( "../config/vfs_game.ini", "../_user" );
+		vfsInitialized = gVfs->AttemptInitialMount( kMountPriority, "../config/vfs_core.ini", "../_user" );
 	}
 	if( vfsInitialized == false )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_STARTUP, "Failed to startup VFS, trying again assuming F5 launch" );
-		vfsInitialized = gVfs->AttemptInitialMount( "../../config/vfs_game.ini", "../../_user" );
+		vfsInitialized = gVfs->AttemptInitialMount( kMountPriority, "../../config/vfs_core.ini", "../../_user" );
 	}
 	if( vfsInitialized == false )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_STARTUP, "Failed to startup VFS, trying again assuming _artifacts launch" );
-		vfsInitialized = gVfs->AttemptInitialMount( "../../../../config/vfs_game.ini", "../../../../_user" );
+		vfsInitialized = gVfs->AttemptInitialMount( kMountPriority, "../../../../config/vfs_core.ini", "../../../../_user" );
 	}
 	if( vfsInitialized == false )
 	{
