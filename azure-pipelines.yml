@@ -1,256 +1,261 @@
+name: 'master-build'
 
 trigger:
 - master
 
-strategy:
-  matrix:
-
-    msvc-x86-debug:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'MSVC_Debug'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-    msvc-x86-release:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'MSVC_Release'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-    msvc-x86-retail:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'MSVC_Retail'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-
-    msvc-x64-debug:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'MSVC_Debug'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-    msvc-x64-release:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'MSVC_Release'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-    msvc-x64-retail:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'MSVC_Retail'
-      buildTool: 'MSVC'
-      hasBinaries: true
-      hasTests: true
-
-    msvc-arm-debug:
-      buildPlatform: 'ARM32'
-      buildConfiguration: 'MSVC_Debug'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-    msvc-arm-release:
-      buildPlatform: 'ARM32'
-      buildConfiguration: 'MSVC_Release'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-    msvc-arm-retail:
-      buildPlatform: 'ARM32'
-      buildConfiguration: 'MSVC_Retail'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-
-    msvc-arm64-debug:
-      buildPlatform: 'ARM64'
-      buildConfiguration: 'MSVC_Debug'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-    msvc-arm64-release:
-      buildPlatform: 'ARM64'
-      buildConfiguration: 'MSVC_Release'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-    msvc-arm64-retail:
-      buildPlatform: 'ARM64'
-      buildConfiguration: 'MSVC_Retail'
-      buildTool: 'MSVC'
-      hasBinaries: false
-      hasTests: false
-
-    llvm-x86-debug:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'LLVM_Debug'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-    llvm-x86-release:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'LLVM_Release'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-    llvm-x86-retail:
-      buildPlatform: 'x86_32'
-      buildConfiguration: 'LLVM_Retail'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-
-    llvm-x64-debug:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'LLVM_Debug'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-    llvm-x64-release:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'LLVM_Release'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-    llvm-x64-retail:
-      buildPlatform: 'x86_64'
-      buildConfiguration: 'LLVM_Retail'
-      buildTool: 'LLVM'
-      hasBinaries: true
-      hasTests: true
-
-#    llvm-arm-debug:
-#      buildPlatform: 'ARM'
-#      buildConfiguration: 'LLVM_Debug'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-#    llvm-arm-release:
-#      buildPlatform: 'ARM'
-#      buildConfiguration: 'LLVM_Release'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-#    llvm-arm-retail:
-#      buildPlatform: 'ARM'
-#      buildConfiguration: 'LLVM_Retail'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-
-#    llvm-arm64-debug:
-#      buildPlatform: 'ARM64'
-#      buildConfiguration: 'LLVM_Debug'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-#    llvm-arm64-release:
-#      buildPlatform: 'ARM64'
-#      buildConfiguration: 'LLVM_Release'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-#    llvm-arm64-retail:
-#      buildPlatform: 'ARM64'
-#      buildConfiguration: 'LLVM_Retail'
-#      buildTool: 'LLVM'
-#      hasBinaries: false
-#      hasTests: false
-
-pool:
-  vmImage: 'windows-latest'
-
-variables:
-  solution: 'retrofit.sln'
-  buildTimeFormat: '{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}' # Can't use condensed .NET syntax?
-  buildStartTime: $[format(variables.buildTimeFormat, pipeline.startTime)]
-  commonBuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime) /p:RFBuildStampSource=$(Agent.MachineName)'
-
-steps:
-
-#
-# Prepare
-#
-
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-#
-# Build
-#
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '$(commonBuildArgs)'
-
-#
-# Publish
-#
-
-- task: CopyFiles@2
-  inputs:
-    contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.exe'
-    targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-    flattenFolders: true
-
-- task: CopyFiles@2
-  inputs:
-    contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.dll'
-    targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-    flattenFolders: true
-
-- task: PublishPipelineArtifact@1
-  condition: eq(variables['hasBinaries'], true)
-  inputs:
-    targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-    artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
-    artifactName: 'out_$(buildPlatform)_$(buildConfiguration)'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Intermediate/'
-    artifactName: 'intermediate_$(buildPlatform)_$(buildConfiguration)'
-
-#
-# Test
-#
-
-- task: CmdLine@2
-  condition: eq(variables['hasTests'], true)
-  timeoutInMinutes: 1
-  inputs:
-    script: 'core_test.exe --nopause'
-    workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
-    failOnStderr: true
-
-- task: CmdLine@2
-  condition: eq(variables['hasTests'], true)
-  timeoutInMinutes: 1
-  inputs:
-    script: 'foundation_test.exe --nopause'
-    workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
-    failOnStderr: true
-
-#
-# Analysis
-#
-
-- task: VSBuild@1
-  condition: and( eq(variables['buildPlatform'], 'x86_64'), eq(variables['buildTool'], 'MSVC') )
-  continueOnError: true
-  timeoutInMinutes: 60
-  inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    msbuildArgs: '$(commonBuildArgs) /p:RFCodeAnalysis=true'
+stages:
+- stage: combined
+  jobs:
+  - job: build
+    timeoutInMinutes: 120
+    strategy:
+      matrix:
+    
+        msvc-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Debug'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+        msvc-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Release'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+        msvc-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Retail'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+    
+        msvc-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Debug'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+        msvc-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Release'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+        msvc-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Retail'
+          buildTool: 'MSVC'
+          hasBinaries: true
+          hasTests: true
+    
+        msvc-arm-debug:
+          buildPlatform: 'ARM32'
+          buildConfiguration: 'MSVC_Debug'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+        msvc-arm-release:
+          buildPlatform: 'ARM32'
+          buildConfiguration: 'MSVC_Release'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+        msvc-arm-retail:
+          buildPlatform: 'ARM32'
+          buildConfiguration: 'MSVC_Retail'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+    
+        msvc-arm64-debug:
+          buildPlatform: 'ARM64'
+          buildConfiguration: 'MSVC_Debug'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+        msvc-arm64-release:
+          buildPlatform: 'ARM64'
+          buildConfiguration: 'MSVC_Release'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+        msvc-arm64-retail:
+          buildPlatform: 'ARM64'
+          buildConfiguration: 'MSVC_Retail'
+          buildTool: 'MSVC'
+          hasBinaries: false
+          hasTests: false
+    
+        llvm-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Debug'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+        llvm-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Release'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+        llvm-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Retail'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+    
+        llvm-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Debug'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+        llvm-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Release'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+        llvm-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Retail'
+          buildTool: 'LLVM'
+          hasBinaries: true
+          hasTests: true
+    
+    #    llvm-arm-debug:
+    #      buildPlatform: 'ARM'
+    #      buildConfiguration: 'LLVM_Debug'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    #    llvm-arm-release:
+    #      buildPlatform: 'ARM'
+    #      buildConfiguration: 'LLVM_Release'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    #    llvm-arm-retail:
+    #      buildPlatform: 'ARM'
+    #      buildConfiguration: 'LLVM_Retail'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    
+    #    llvm-arm64-debug:
+    #      buildPlatform: 'ARM64'
+    #      buildConfiguration: 'LLVM_Debug'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    #    llvm-arm64-release:
+    #      buildPlatform: 'ARM64'
+    #      buildConfiguration: 'LLVM_Release'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    #    llvm-arm64-retail:
+    #      buildPlatform: 'ARM64'
+    #      buildConfiguration: 'LLVM_Retail'
+    #      buildTool: 'LLVM'
+    #      hasBinaries: false
+    #      hasTests: false
+    
+    pool:
+      vmImage: 'windows-latest'
+    
+    variables:
+      solution: 'retrofit.sln'
+      buildTimeFormat: '{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}' # Can't use condensed .NET syntax?
+      buildStartTime: $[format(variables.buildTimeFormat, pipeline.startTime)]
+      commonBuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime) /p:RFBuildStampSource=$(Agent.MachineName)'
+    
+    steps:
+    
+    #
+    # Prepare
+    #
+    
+    - task: NuGetToolInstaller@1
+    
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+    
+    #
+    # Build
+    #
+    
+    - task: VSBuild@1
+      inputs:
+        solution: '$(solution)'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+        msbuildArgs: '$(commonBuildArgs)'
+    
+    #
+    # Publish
+    #
+    
+    - task: CopyFiles@2
+      inputs:
+        contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.exe'
+        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        flattenFolders: true
+    
+    - task: CopyFiles@2
+      inputs:
+        contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.dll'
+        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        flattenFolders: true
+    
+    - task: PublishPipelineArtifact@1
+      condition: eq(variables['hasBinaries'], true)
+      inputs:
+        targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
+    
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+        artifactName: 'out_$(buildPlatform)_$(buildConfiguration)'
+    
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Intermediate/'
+        artifactName: 'intermediate_$(buildPlatform)_$(buildConfiguration)'
+    
+    #
+    # Test
+    #
+    
+    - task: CmdLine@2
+      condition: eq(variables['hasTests'], true)
+      timeoutInMinutes: 1
+      inputs:
+        script: 'core_test.exe --nopause'
+        workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+        failOnStderr: true
+    
+    - task: CmdLine@2
+      condition: eq(variables['hasTests'], true)
+      timeoutInMinutes: 1
+      inputs:
+        script: 'foundation_test.exe --nopause'
+        workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+        failOnStderr: true
+    
+    #
+    # Analysis
+    #
+    
+    - task: VSBuild@1
+      condition: and( eq(variables['buildPlatform'], 'x86_64'), eq(variables['buildTool'], 'MSVC') )
+      continueOnError: true
+      inputs:
+        solution: '$(solution)'
+        platform: '$(buildPlatform)'
+        configuration: '$(buildConfiguration)'
+        msbuildArgs: '$(commonBuildArgs) /p:RFCodeAnalysis=true'
