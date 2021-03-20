@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "DevTestLobby.h"
 
+#include "cc3o3/cc3o3.h" // HACK: Time reset
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
 
@@ -48,6 +49,10 @@ void DevTestLobby::OnEnter( AppStateChangeContext& context )
 	input::HardcodedPlayerSetup( input::player::P2 );
 	InputHelpers::MakeRemote( input::player::P1 );
 	InputHelpers::MakeRemote( input::player::P2 );
+
+	// HACK: Time reset to get all clients into same frame
+	// TODO: Use save/load snapshot machinery instead on host-triggered sync
+	DebugHardTimeReset();
 }
 
 
