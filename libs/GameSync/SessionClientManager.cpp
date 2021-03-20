@@ -27,7 +27,9 @@ namespace RF::sync {
 SessionClientManager::SessionClientManager( ClientSpec spec )
 	: mSpec( spec )
 {
-	//
+	AddBlindReader<protocol::MsgWelcome>();
+	AddBlindReader<protocol::MsgSessionList>();
+	AddBlindReader<protocol::MsgProxyChat>();
 }
 
 

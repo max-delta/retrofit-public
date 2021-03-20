@@ -28,7 +28,9 @@ namespace RF::sync {
 SessionHostManager::SessionHostManager( HostSpec spec )
 	: mSpec( spec )
 {
-	//
+	AddBlindReader<protocol::MsgHello>();
+	AddBlindReader<protocol::MsgClaimPlayer>();
+	AddBlindReader<protocol::MsgChat>();
 }
 
 

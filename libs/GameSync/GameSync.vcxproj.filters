@@ -66,4 +66,7 @@
       <UniqueIdentifier>{6e37a0ca-fe46-432d-b37c-58663cbb008b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="SessionManager.inl" />
+  </ItemGroup>
 </Project>

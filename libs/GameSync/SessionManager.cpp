@@ -253,7 +253,7 @@ void SessionManager::ProcessPendingConnectionOperations(
 
 			// Try a blind decode first
 			{
-				protocol::ReadResult const blindResult = protocol::TryBlindDecodeBatch( messages, encryption );
+				protocol::ReadResult const blindResult = TryBlindDecodeBatch( messages, encryption );
 				if( blindResult != protocol::ReadResult::kSuccess )
 				{
 					// Bad blind decode
@@ -394,6 +394,41 @@ void SessionManager::GetChannels(
 
 	incoming = incomingPtr;
 	outgoing = outgoingPtr;
+}
+
+//
+
+bool SessionManager::HasBlindReader( protocol::MessageID const& id ) const
+{
+	ReaderLock const lock( mBlindReadersMutex );
+
+	return mBlindReaders.count( id ) > 0;
+}
+
+//
+
+protocol::ReadResult SessionManager::TryBlindMessageRead( protocol::MessageID const& id, rftl::byte_view& bytes )
+{
+	ReaderLock const lock( mBlindReadersMutex );
+
+	BlindReaders::const_iterator const iter = mBlindReaders.find( id );
+	if( iter == mBlindReaders.end() )
+	{
+		return protocol::ReadResult::kUnknownMessage;
+	}
+
+	return iter->second( bytes );
+}
+
+//
+
+protocol::ReadResult SessionManager::TryBlindDecodeBatch( rftl::byte_view bytes, protocol::EncryptionState const& encryption )
+{
+	return protocol::TryDecodeBatch( bytes, encryption,
+		[this]( protocol::MessageID const& id, rftl::byte_view& bytes ) -> protocol::ReadResult //
+		{
+			return this->TryBlindMessageRead( id, bytes );
+		} );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

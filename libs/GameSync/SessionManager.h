@@ -60,10 +60,14 @@ protected:
 	using ConnectionIDs = rftl::unordered_set<ConnectionIdentifier, math::DirectHash>;
 	using MessagesByRecipient = rftl::unordered_map<ConnectionIdentifier, protocol::Buffer>;
 
+	using BlindMessageReadSig = protocol::ReadResult( rftl::byte_view& bytes );
+	using BlindMessageReadFunc = rftl::function<BlindMessageReadSig>;
 	using OnMessageSig = protocol::ReadResult( MessageParams const& params );
 	using OnMessageFunc = rftl::function<OnMessageSig>;
 	using DoMessageWorkSig = void( MessageWorkParams const& params );
 	using DoMessageWorkFunc = rftl::function<DoMessageWorkSig>;
+
+	using BlindReaders = rftl::unordered_map<protocol::MessageID, BlindMessageReadFunc, math::RawBytesHash<protocol::MessageID>>;
 
 
 
@@ -135,6 +139,26 @@ protected:
 		SharedPtr<comm::IncomingStream>& incoming,
 		SharedPtr<comm::OutgoingStream>& outgoing );
 
+	// Blind readers are used for basic correctness checks, and must be present
+	//  for a message to be able to be received
+	// NOTE: Not required for sending messages
+	bool HasBlindReader( protocol::MessageID const& id ) const;
+	template<typename Message>
+	void AddBlindReader();
+
+	// Attempt to blindly decode a message, ignoring validity and only seeking
+	//  to consume the bytes, effectively discarding the message
+	protocol::ReadResult TryBlindMessageRead(
+		protocol::MessageID const& id,
+		rftl::byte_view& bytes );
+
+	// Attempt to blindly decode a batch, ignoring state/logic errors, and
+	//  simply checking whether the messages seem like they follows the basic
+	//  structure of the protocol and can be decoded
+	protocol::ReadResult TryBlindDecodeBatch(
+		rftl::byte_view bytes,
+		protocol::EncryptionState const& encryption );
+
 
 	//
 	// Protected data
@@ -145,6 +169,9 @@ protected:
 
 	mutable ReaderWriterMutex mConnectionsMutex;
 	Connections mConnections;
+
+	mutable ReaderWriterMutex mBlindReadersMutex;
+	BlindReaders mBlindReaders;
 
 	mutable ReaderWriterMutex mSessionMembersMutex;
 	SessionMembers mSessionMembers;
@@ -158,3 +185,5 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+#include "SessionManager.inl"

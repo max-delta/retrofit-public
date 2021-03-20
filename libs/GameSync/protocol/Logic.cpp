@@ -16,53 +16,6 @@ namespace RF::sync::protocol {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-template<typename TypeListType>
-struct MessageWalker;
-
-// 0 case
-template<>
-struct MessageWalker<TypeList<>>
-{
-	static bool IsInList( MessageID const& id )
-	{
-		return false;
-	}
-
-	static ReadResult TryRead( MessageID const& id, rftl::byte_view& bytes )
-	{
-		return ReadResult::kUnknownMessage;
-	}
-};
-
-// N case
-template<typename CurrentType, typename... RemainingTypes>
-struct MessageWalker<TypeList<CurrentType, RemainingTypes...>>
-{
-	static bool IsInList( MessageID const& id )
-	{
-		if( id == CurrentType::kID )
-		{
-			return true;
-		}
-		using Next = MessageWalker<TypeList<RemainingTypes...>>;
-		return Next::IsInList( id );
-	}
-
-	static ReadResult TryRead( MessageID const& id, rftl::byte_view& bytes )
-	{
-		if( id == CurrentType::kID )
-		{
-			CurrentType cur = {};
-			return cur.TryRead( bytes );
-		}
-
-		using Next = MessageWalker<TypeList<RemainingTypes...>>;
-		return Next::TryRead( id, bytes );
-	}
-};
-
-
-
 size_t CalcStandardTransmissionHeaderSize()
 {
 	Buffer temp;
@@ -82,23 +35,6 @@ static uint8_t* Grow( Buffer& bytes, size_t additional )
 
 }
 ///////////////////////////////////////////////////////////////////////////////
-
-GAMESYNC_API ReadResult TryBlindMessageRead( MessageID const& id, rftl::byte_view& bytes )
-{
-	using WalkAllMessages = details::MessageWalker<AllMessages>;
-	return WalkAllMessages::TryRead( id, bytes );
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-ReadResult TryBlindDecodeBatch(
-	rftl::byte_view bytes,
-	EncryptionState const& encryption )
-{
-	return TryDecodeBatch( bytes, encryption, TryBlindMessageRead );
-}
-
-
 
 ReadResult TryDecodeBatch(
 	rftl::byte_view bytes,
@@ -135,11 +71,6 @@ ReadResult TryDecodeBatch(
 		if( identifierResult != ReadResult::kSuccess )
 		{
 			return identifierResult;
-		}
-		using WalkAllMessages = details::MessageWalker<AllMessages>;
-		if( WalkAllMessages::IsInList( identifier.mID ) == false )
-		{
-			return ReadResult::kUnknownMessage;
 		}
 
 		// Message
