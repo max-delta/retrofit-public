@@ -9,15 +9,6 @@
 namespace RF::rollback {
 ///////////////////////////////////////////////////////////////////////////////
 
-InputEvent::InputEvent( time::CommonClock::time_point time, InputValue value )
-	: mTime( time )
-	, mValue( value )
-{
-	//
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
 InputStream::value_type const& InputStream::at( size_t index ) const
 {
 	return Parent::at( index );

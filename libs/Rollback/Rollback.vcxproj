@@ -1,79 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ImportGroup Label="PropertySheets">
-		<Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
-	</ImportGroup>
-	<PropertyGroup Label="Globals">
-		<VCProjectVersion>16.0</VCProjectVersion>
-		<ProjectGuid>{7959828D-A531-4BA3-B291-AFBEC3F87528}</ProjectGuid>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>Rollback</RootNamespace>
-	</PropertyGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-	<ImportGroup Label="PropertySheets">
-		<Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
-	</ImportGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-	<ImportGroup Label="ExtensionSettings">
-	</ImportGroup>
-	<ImportGroup Label="Shared">
-	</ImportGroup>
-	<ImportGroup Label="PropertySheets">
-		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\config\RetroFit.props" />
-		<Import Project="..\..\config\RF.Foundation.Dll.props" />
-	</ImportGroup>
-	<PropertyGroup Label="UserMacros" />
-	<PropertyGroup />
-	<ItemDefinitionGroup>
-		<ClCompile>
-			<PreprocessorDefinitions>ROLLBACK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemDefinitionGroup>
-	<ItemGroup>
-		<ClInclude Include="AutoVar.h" />
-		<ClInclude Include="Domain.h" />
-		<ClInclude Include="InputStream.h" />
-		<ClInclude Include="InputStreamRef.h" />
-		<ClInclude Include="project.h" />
-		<ClInclude Include="RollbackFwd.h" />
-		<ClInclude Include="RollbackManager.h" />
-		<ClInclude Include="stdafx.h" />
-		<ClInclude Include="TransferHelpers.h" />
-		<ClInclude Include="Var.h" />
-	</ItemGroup>
-	<ItemGroup>
-		<ClCompile Include="AutoVar.cpp" />
-		<ClCompile Include="dllmain.cpp" />
-		<ClCompile Include="Domain.cpp" />
-		<ClCompile Include="InputStream.cpp" />
-		<ClCompile Include="InputStreamRef.cpp" />
-		<ClCompile Include="project.cpp" />
-		<ClCompile Include="RollbackManager.cpp" />
-		<ClCompile Include="stdafx.cpp">
-			<PrecompiledHeader>Create</PrecompiledHeader>
-		</ClCompile>
-		<ClCompile Include="TransferHelpers.cpp" />
-		<ClCompile Include="Var.cpp" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Allocation\Allocation.vcxproj">
-			<Project>{ce763dbd-9ca5-4952-970c-fdcb60f9d9a8}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\core\core.vcxproj">
-			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
-			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\Logging\Logging.vcxproj">
-			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\Timing\Timing.vcxproj">
-			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
-		</ProjectReference>
-	</ItemGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-	<ImportGroup Label="ExtensionTargets">
-	</ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\config\RF.Foundation.Dll.Platform.props" />
+  </ImportGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{7959828D-A531-4BA3-B291-AFBEC3F87528}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Rollback</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\config\RF.Foundation.Dll.Preconfig.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\config\RetroFit.props" />
+    <Import Project="..\..\config\RF.Foundation.Dll.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>ROLLBACK_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AutoVar.h" />
+    <ClInclude Include="Domain.h" />
+    <ClInclude Include="InputEvent.h" />
+    <ClInclude Include="InputStream.h" />
+    <ClInclude Include="InputStreamRef.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="RollbackFwd.h" />
+    <ClInclude Include="RollbackManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TransferHelpers.h" />
+    <ClInclude Include="Var.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AutoVar.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Domain.cpp" />
+    <ClCompile Include="InputEvent.cpp" />
+    <ClCompile Include="InputStream.cpp" />
+    <ClCompile Include="InputStreamRef.cpp" />
+    <ClCompile Include="project.cpp" />
+    <ClCompile Include="RollbackManager.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TransferHelpers.cpp" />
+    <ClCompile Include="Var.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Allocation\Allocation.vcxproj">
+      <Project>{ce763dbd-9ca5-4952-970c-fdcb60f9d9a8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
+      <Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Timing\Timing.vcxproj">
+      <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>
