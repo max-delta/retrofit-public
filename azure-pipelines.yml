@@ -1,261 +1,559 @@
 name: 'master-build'
 
+variables:
+  solution: 'retrofit.sln'
+  buildTimeFormat: '{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}' # Can't use condensed .NET syntax?
+  buildStartTime: $[format(variables.buildTimeFormat, pipeline.startTime)]
+  pipelineBuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime)'
+
 trigger:
 - master
 
 stages:
-- stage: combined
+###############################################################################
+###############################################################################
+###############################################################################
+
+- stage: 'build'
+  displayName: 'Build'
   jobs:
   - job: build
-    timeoutInMinutes: 120
+    timeoutInMinutes: 60
     strategy:
       matrix:
-    
+
         msvc-x86-debug:
           buildPlatform: 'x86_32'
           buildConfiguration: 'MSVC_Debug'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
         msvc-x86-release:
           buildPlatform: 'x86_32'
           buildConfiguration: 'MSVC_Release'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
         msvc-x86-retail:
           buildPlatform: 'x86_32'
           buildConfiguration: 'MSVC_Retail'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
-    
+
         msvc-x64-debug:
           buildPlatform: 'x86_64'
           buildConfiguration: 'MSVC_Debug'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
         msvc-x64-release:
           buildPlatform: 'x86_64'
           buildConfiguration: 'MSVC_Release'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
         msvc-x64-retail:
           buildPlatform: 'x86_64'
           buildConfiguration: 'MSVC_Retail'
-          buildTool: 'MSVC'
-          hasBinaries: true
-          hasTests: true
-    
+
         msvc-arm-debug:
           buildPlatform: 'ARM32'
           buildConfiguration: 'MSVC_Debug'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
         msvc-arm-release:
           buildPlatform: 'ARM32'
           buildConfiguration: 'MSVC_Release'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
         msvc-arm-retail:
           buildPlatform: 'ARM32'
           buildConfiguration: 'MSVC_Retail'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
-    
+
         msvc-arm64-debug:
           buildPlatform: 'ARM64'
           buildConfiguration: 'MSVC_Debug'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
         msvc-arm64-release:
           buildPlatform: 'ARM64'
           buildConfiguration: 'MSVC_Release'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
         msvc-arm64-retail:
           buildPlatform: 'ARM64'
           buildConfiguration: 'MSVC_Retail'
-          buildTool: 'MSVC'
-          hasBinaries: false
-          hasTests: false
-    
+
         llvm-x86-debug:
           buildPlatform: 'x86_32'
           buildConfiguration: 'LLVM_Debug'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
         llvm-x86-release:
           buildPlatform: 'x86_32'
           buildConfiguration: 'LLVM_Release'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
         llvm-x86-retail:
           buildPlatform: 'x86_32'
           buildConfiguration: 'LLVM_Retail'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
-    
+
         llvm-x64-debug:
           buildPlatform: 'x86_64'
           buildConfiguration: 'LLVM_Debug'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
         llvm-x64-release:
           buildPlatform: 'x86_64'
           buildConfiguration: 'LLVM_Release'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
         llvm-x64-retail:
           buildPlatform: 'x86_64'
           buildConfiguration: 'LLVM_Retail'
-          buildTool: 'LLVM'
-          hasBinaries: true
-          hasTests: true
-    
-    #    llvm-arm-debug:
-    #      buildPlatform: 'ARM'
-    #      buildConfiguration: 'LLVM_Debug'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    #    llvm-arm-release:
-    #      buildPlatform: 'ARM'
-    #      buildConfiguration: 'LLVM_Release'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    #    llvm-arm-retail:
-    #      buildPlatform: 'ARM'
-    #      buildConfiguration: 'LLVM_Retail'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    
-    #    llvm-arm64-debug:
-    #      buildPlatform: 'ARM64'
-    #      buildConfiguration: 'LLVM_Debug'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    #    llvm-arm64-release:
-    #      buildPlatform: 'ARM64'
-    #      buildConfiguration: 'LLVM_Release'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    #    llvm-arm64-retail:
-    #      buildPlatform: 'ARM64'
-    #      buildConfiguration: 'LLVM_Retail'
-    #      buildTool: 'LLVM'
-    #      hasBinaries: false
-    #      hasTests: false
-    
+
+        #llvm-arm-debug:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm-release:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm-retail:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Retail'
+
     pool:
       vmImage: 'windows-latest'
-    
+
     variables:
-      solution: 'retrofit.sln'
-      buildTimeFormat: '{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}' # Can't use condensed .NET syntax?
-      buildStartTime: $[format(variables.buildTimeFormat, pipeline.startTime)]
-      commonBuildArgs: '/p:RFBuildMachine=Azure /p:RFBuildStampTime=$(buildStartTime) /p:RFBuildStampSource=$(Agent.MachineName)'
-    
+      jobBuildArgs: '$(pipelineBuildArgs)  /p:RFBuildStampSource=$(Agent.MachineName)'
+
     steps:
-    
+
     #
     # Prepare
     #
-    
+
+    - checkout: self
+      displayName: 'Checkout'
+
     - task: NuGetToolInstaller@1
-    
+      displayName: 'NuGet Install'
+
     - task: NuGetCommand@2
+      displayName: 'NuGet Restore'
       inputs:
         restoreSolution: '$(solution)'
-    
+
+    - bash: 'find .'
+      displayName: 'List /**'
+
     #
     # Build
     #
-    
+
     - task: VSBuild@1
+      displayName: 'Build'
       inputs:
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
-        msbuildArgs: '$(commonBuildArgs)'
-    
+        msbuildArgs: '$(jobBuildArgs)'
+
     #
     # Publish
     #
-    
-    - task: CopyFiles@2
-      inputs:
-        contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.exe'
-        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-        flattenFolders: true
-    
-    - task: CopyFiles@2
-      inputs:
-        contents: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/*.dll'
-        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-        flattenFolders: true
-    
+
+    - bash: 'find _artifacts'
+      displayName: 'List /_artifacts/'
+
     - task: PublishPipelineArtifact@1
-      condition: eq(variables['hasBinaries'], true)
-      inputs:
-        targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
-        artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
-    
-    - task: PublishPipelineArtifact@1
+      displayName: 'Save /Out/'
       inputs:
         targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
         artifactName: 'out_$(buildPlatform)_$(buildConfiguration)'
-    
+
     - task: PublishPipelineArtifact@1
+      displayName: 'Save /Intermediate/'
       inputs:
         targetPath: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Intermediate/'
         artifactName: 'intermediate_$(buildPlatform)_$(buildConfiguration)'
-    
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+- stage: 'publish'
+  displayName: 'Publish'
+  jobs:
+  - job: publish
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+
+        msvc-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Debug'
+        msvc-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Release'
+        msvc-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Retail'
+
+        msvc-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Debug'
+        msvc-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Release'
+        msvc-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm-debug:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm-release:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm-retail:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        llvm-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Debug'
+        llvm-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Release'
+        llvm-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Retail'
+
+        llvm-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Debug'
+        llvm-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Release'
+        llvm-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm-debug:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm-release:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm-retail:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Retail'
+
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+
+    #
+    # Prepare
+    #
+
+    - checkout: none
+      displayName: 'Empty Checkout'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download /_out/'
+      inputs:
+        artifact: 'out_$(buildPlatform)_$(buildConfiguration)'
+        path: '_out'
+
+    - bash: 'find .'
+      displayName: 'List /**'
+
+    #
+    # Publish
+    #
+
+    - task: CopyFiles@2
+      displayName: 'Copy EXEs'
+      inputs:
+        contents: '_out/*.exe'
+        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        flattenFolders: true
+
+    - task: CopyFiles@2
+      displayName: 'Copy DLLs'
+      inputs:
+        contents: '_out/*.dll'
+        targetFolder: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        flattenFolders: true
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Binaries'
+      inputs:
+        targetPath: '_binaries/$(buildPlatform)_$(buildConfiguration)'
+        artifactName: 'binaries_$(buildPlatform)_$(buildConfiguration)'
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+- stage: 'test'
+  displayName: 'Test'
+  jobs:
+  - job: test
+    timeoutInMinutes: 15
+    strategy:
+      matrix:
+
+        msvc-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Debug'
+        msvc-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Release'
+        msvc-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'MSVC_Retail'
+
+        msvc-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Debug'
+        msvc-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Release'
+        msvc-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm-debug:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm-release:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm-retail:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        llvm-x86-debug:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Debug'
+        llvm-x86-release:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Release'
+        llvm-x86-retail:
+          buildPlatform: 'x86_32'
+          buildConfiguration: 'LLVM_Retail'
+
+        llvm-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Debug'
+        llvm-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Release'
+        llvm-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm-debug:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm-release:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm-retail:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Retail'
+
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+
+    #
+    # Prepare
+    #
+
+    - checkout: none
+      displayName: 'Empty Checkout'
+
+    - task: DownloadPipelineArtifact@2
+      displayName: 'Download /_binaries/'
+      inputs:
+        artifact: 'binaries_$(buildPlatform)_$(buildConfiguration)'
+        path: '_binaries'
+
+    - bash: 'find .'
+      displayName: 'List /**'
+
     #
     # Test
     #
-    
+
     - task: CmdLine@2
-      condition: eq(variables['hasTests'], true)
-      timeoutInMinutes: 1
+      displayName: 'Test Core'
       inputs:
         script: 'core_test.exe --nopause'
-        workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+        workingDirectory: '_binaries/'
         failOnStderr: true
-    
+
     - task: CmdLine@2
-      condition: eq(variables['hasTests'], true)
-      timeoutInMinutes: 1
+      displayName: 'Test Foundation'
       inputs:
         script: 'foundation_test.exe --nopause'
-        workingDirectory: '_artifacts/$(buildPlatform)/$(buildConfiguration)/Out/'
+        workingDirectory: '_binaries/'
         failOnStderr: true
-    
+
+###############################################################################
+###############################################################################
+###############################################################################
+
+- stage: 'Analysis'
+  displayName: 'Analysis'
+  jobs:
+  - job: Analysis
+    timeoutInMinutes: 120
+    strategy:
+      matrix:
+
+        #msvc-x86-debug:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-x86-release:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-x86-retail:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        msvc-x64-debug:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Debug'
+        msvc-x64-release:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Release'
+        msvc-x64-retail:
+          buildPlatform: 'x86_64'
+          buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm-debug:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm-release:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm-retail:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        #msvc-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'MSVC_Retail'
+
+        #llvm-x86-debug:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-x86-release:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-x86-retail:
+        #  buildPlatform: 'x86_32'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-x64-debug:
+        #  buildPlatform: 'x86_64'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-x64-release:
+        #  buildPlatform: 'x86_64'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-x64-retail:
+        #  buildPlatform: 'x86_64'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm-debug:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm-release:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm-retail:
+        #  buildPlatform: 'ARM'
+        #  buildConfiguration: 'LLVM_Retail'
+
+        #llvm-arm64-debug:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Debug'
+        #llvm-arm64-release:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Release'
+        #llvm-arm64-retail:
+        #  buildPlatform: 'ARM64'
+        #  buildConfiguration: 'LLVM_Retail'
+
+    pool:
+      vmImage: 'windows-latest'
+
+    variables:
+      jobBuildArgs: '$(pipelineBuildArgs)  /p:RFBuildStampSource=$(Agent.MachineName)'
+
+    steps:
+
+    #
+    # Prepare
+    #
+
+    - checkout: self
+      displayName: 'Checkout'
+
+    - task: NuGetToolInstaller@1
+      displayName: 'NuGet Install'
+
+    - task: NuGetCommand@2
+      displayName: 'NuGet Restore'
+      inputs:
+        restoreSolution: '$(solution)'
+
+    - bash: 'find .'
+      displayName: 'List /**'
+
     #
     # Analysis
     #
-    
+
     - task: VSBuild@1
-      condition: and( eq(variables['buildPlatform'], 'x86_64'), eq(variables['buildTool'], 'MSVC') )
+      displayName: 'Build w/ Analysis'
       continueOnError: true
       inputs:
         solution: '$(solution)'
         platform: '$(buildPlatform)'
         configuration: '$(buildConfiguration)'
-        msbuildArgs: '$(commonBuildArgs) /p:RFCodeAnalysis=true'
+        msbuildArgs: '$(jobBuildArgs) /p:RFCodeAnalysis=true'
