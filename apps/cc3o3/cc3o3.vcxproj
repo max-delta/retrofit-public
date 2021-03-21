@@ -93,6 +93,7 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="sync\Session.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
     <ClCompile Include="ui\controllers\ElementGrid.cpp" />
@@ -203,6 +204,10 @@
     <ClInclude Include="state\StateLogging.h" />
     <ClInclude Include="state\stdafx.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="sync\project.h" />
+    <ClInclude Include="sync\Session.h" />
+    <ClInclude Include="sync\stdafx.h" />
+    <ClInclude Include="sync\SyncFwd.h" />
     <ClInclude Include="time\project.h" />
     <ClInclude Include="time\stdafx.h" />
     <ClInclude Include="time\TimeFwd.h" />

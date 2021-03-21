@@ -4,6 +4,7 @@
 #include "cc3o3/cc3o3.h" // HACK: Time reset
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/sync/Session.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -28,9 +29,6 @@ struct DevTestLobby::InternalState
 {
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
-
-	UniquePtr<sync::SessionHostManager> mAsHost;
-	UniquePtr<sync::SessionClientManager> mAsClient;
 
 	size_t mCursor = 0;
 };
@@ -66,6 +64,12 @@ void DevTestLobby::OnExit( AppStateChangeContext& context )
 
 void DevTestLobby::OnTick( AppStateTickContext& context )
 {
+	using sync::SessionManager;
+	using sync::SessionHostManager;
+	using sync::SessionClientManager;
+	using sync::SessionMembers;
+	using sync::ConnectionIdentifier;
+
 	InternalState& internalState = *mInternalState;
 	gfx::PPUController& ppu = *app::gGraphics;
 
@@ -137,57 +141,54 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	else if( selected[kStartHosting] )
 	{
 		// TODO: Host
-		sync::SessionHostManager::HostSpec const spec{ true, true, 8271, { input::player::P1, input::player::P2 } };
-		internalState.mAsHost = DefaultCreator<sync::SessionHostManager>::Create( spec );
-		sync::SessionHostManager& asHost = *internalState.mAsHost;
-		asHost.StartHostingASession();
+		SessionHostManager::HostSpec const spec{ true, true, 8271, { input::player::P1, input::player::P2 } };
+		sync::SetSessionHostManager( DefaultCreator<SessionHostManager>::Create( spec ) );
+		sync::gSessionHostManager->StartHostingASession();
 	}
 	else if( selected[kConnectToHost] )
 	{
 		// TODO: Connect
-		sync::SessionClientManager::ClientSpec const kSpec{ "localhost", 8271 };
-		internalState.mAsClient = DefaultCreator<sync::SessionClientManager>::Create(
-			kSpec );
-		sync::SessionClientManager& asClient = *internalState.mAsClient;
-		asClient.StartReceivingASession();
+		SessionClientManager::ClientSpec const kSpec{ "localhost", 8271 };
+		sync::SetSessionClientManager( DefaultCreator<SessionClientManager>::Create( kSpec ) );
+		sync::gSessionClientManager->StartReceivingASession();
 	}
 	else if( selected[kClaimAPlayer] )
 	{
-		static constexpr auto getUnclaimed = []( sync::SessionManager const& manager ) -> input::PlayerID //
+		static constexpr auto getUnclaimed = []( SessionManager const& manager ) -> input::PlayerID //
 		{
-			sync::SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetUnclaimedPlayerIDs();
+			SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetUnclaimedPlayerIDs();
 			RF_ASSERT( ids.empty() == false );
 			return *ids.begin();
 		};
 
-		if( internalState.mAsHost != nullptr )
+		if( sync::gSessionHostManager != nullptr )
 		{
-			sync::SessionHostManager& host = *internalState.mAsHost;
+			SessionHostManager& host = *sync::gSessionHostManager;
 			host.AttemptPlayerChange( getUnclaimed( host ), true );
 		}
-		if( internalState.mAsClient != nullptr )
+		if( sync::gSessionClientManager != nullptr )
 		{
-			sync::SessionClientManager& client = *internalState.mAsClient;
+			SessionClientManager& client = *sync::gSessionClientManager;
 			client.RequestPlayerChange( getUnclaimed( client ), true );
 		}
 	}
 	else if( selected[kRelinquishAPlayer] )
 	{
-		static constexpr auto getLocal = []( sync::SessionManager const& manager ) -> input::PlayerID //
+		static constexpr auto getLocal = []( SessionManager const& manager ) -> input::PlayerID //
 		{
-			sync::SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetLocalPlayerIDs();
+			SessionMembers::PlayerIDs const ids = manager.GetSessionMembers().GetLocalPlayerIDs();
 			RF_ASSERT( ids.empty() == false );
 			return *ids.begin();
 		};
 
-		if( internalState.mAsHost != nullptr )
+		if( sync::gSessionHostManager != nullptr )
 		{
-			sync::SessionHostManager& host = *internalState.mAsHost;
+			SessionHostManager& host = *sync::gSessionHostManager;
 			host.AttemptPlayerChange( getLocal( host ), false );
 		}
-		if( internalState.mAsClient != nullptr )
+		if( sync::gSessionClientManager != nullptr )
 		{
-			sync::SessionClientManager& client = *internalState.mAsClient;
+			SessionClientManager& client = *sync::gSessionClientManager;
 			client.RequestPlayerChange( getLocal( client ), false );
 		}
 	}
@@ -198,13 +199,9 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	else if( selected[kSendText] )
 	{
 		rftl::string text = unicode::ConvertToUtf8( InputHelpers::GetMainMenuUnicodeTextBuffer( 32 ) );
-		if( internalState.mAsHost != nullptr )
+		if( sync::gSessionManager != nullptr )
 		{
-			internalState.mAsHost->QueueOutgoingChatMessage( rftl::move( text ) );
-		}
-		if( internalState.mAsClient != nullptr )
-		{
-			internalState.mAsClient->QueueOutgoingChatMessage( rftl::move( text ) );
+			sync::gSessionManager->QueueOutgoingChatMessage( rftl::move( text ) );
 		}
 		InputHelpers::ClearMainMenuTextBuffer();
 	}
@@ -228,9 +225,9 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 
 	// Process
-	static constexpr auto updateControllers = []( sync::SessionMembers const& members ) -> void //
+	static constexpr auto updateControllers = []( SessionMembers const& members ) -> void //
 	{
-		using PlayerIDs = sync::SessionMembers::PlayerIDs;
+		using PlayerIDs = SessionMembers::PlayerIDs;
 		PlayerIDs const all = members.GetPlayerIDs();
 		PlayerIDs const local = members.GetLocalPlayerIDs();
 		for( input::PlayerID const& id : all )
@@ -246,29 +243,35 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			}
 		}
 	};
-	if( internalState.mAsHost != nullptr )
+	static constexpr auto process = []( auto& typed ) -> void //
 	{
-		internalState.mAsHost->ProcessPendingOperations();
-		updateControllers( internalState.mAsHost->GetSessionMembers() );
+		SessionManager& manager = typed;
+		typed.ProcessPendingOperations();
+		updateControllers( manager.GetSessionMembers() );
+	};
+	if( sync::gSessionHostManager != nullptr )
+	{
+		SessionHostManager& host = *sync::gSessionHostManager;
+		process( host );
 	}
-	if( internalState.mAsClient != nullptr )
+	if( sync::gSessionClientManager != nullptr )
 	{
-		internalState.mAsClient->ProcessPendingOperations();
-		updateControllers( internalState.mAsClient->GetSessionMembers() );
+		SessionClientManager& client = *sync::gSessionClientManager;
+		process( client );
 	}
 
 	// Draw Status
 	x = 30;
 	y = 2;
-	auto const drawSessionMembersText = [&y, &drawText]( uint8_t x, sync::SessionMembers const& members ) -> void //
+	auto const drawSessionMembersText = [&y, &drawText]( uint8_t x, SessionMembers const& members ) -> void //
 	{
 		drawText( x, y++, "MEMB:" );
-		sync::ConnectionIdentifier const& self = members.mLocalConnection;
+		ConnectionIdentifier const& self = members.mLocalConnection;
 		auto const drawEntry =
 			[&y, &drawText, &self](
 				uint8_t x,
-				sync::ConnectionIdentifier conn,
-				sync::SessionMembers::PlayerIDs players ) -> void //
+				ConnectionIdentifier conn,
+				SessionMembers::PlayerIDs players ) -> void //
 		{
 			rftl::stringstream ss;
 			bool init = true;
@@ -294,52 +297,50 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 				drawText( x + 4u, y++, "-%-2llu p[%s]", conn, ss.str().c_str() );
 			}
 		};
-		sync::SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
-		for( sync::SessionMembers::ConnectionPlayerIDs::value_type const& connEntry : connEntries )
+		SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
+		for( SessionMembers::ConnectionPlayerIDs::value_type const& connEntry : connEntries )
 		{
 			drawEntry( x + 4u, connEntry.first, connEntry.second );
 		}
-		sync::SessionMembers::PlayerIDs const unclaimed = members.GetUnclaimedPlayerIDs();
+		SessionMembers::PlayerIDs const unclaimed = members.GetUnclaimedPlayerIDs();
 		if( unclaimed.empty() == false )
 		{
 			drawEntry( x + 4u, sync::kInvalidConnectionIdentifier, unclaimed );
 		}
 	};
-	if( internalState.mAsHost != nullptr )
+	if( sync::gSessionHostManager != nullptr )
 	{
-		using namespace sync;
-
 		drawText( x - 4u, y++, "HOST" );
-		SessionHostManager& host = *internalState.mAsHost;
+		SessionHostManager& host = *sync::gSessionHostManager;
 
 		SessionHostManager::Diagnostics const diag = host.ReportDiagnostics();
 		drawText( x, y++, "CONN: %llu (+%llu) / %llu",
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
-		drawSessionMembersText( x, host.GetSessionMembers() );
 	}
-	if( internalState.mAsClient != nullptr )
+	if( sync::gSessionClientManager != nullptr )
 	{
-		using namespace sync;
-
 		drawText( x - 4u, y++, "CLIENT" );
-		SessionClientManager& client = *internalState.mAsClient;
+		SessionClientManager& client = *sync::gSessionClientManager;
 
 		SessionClientManager::Diagnostics const diag = client.ReportDiagnostics();
 		drawText( x, y++, "CONN: %llu (+%llu)",
 			diag.mValidConnections,
 			diag.mInvalidConnections );
-		drawSessionMembersText( x, client.GetSessionMembers() );
+	}
+	if( sync::gSessionManager != nullptr )
+	{
+		drawSessionMembersText( x, sync::gSessionManager->GetSessionMembers() );
 	}
 
 	// Draw chat log
 	x = 2;
 	y = 15;
-	auto const drawChatLog = [x, &y, &drawText]( sync::SessionManager::ChatMessages const& messages ) -> void //
+	auto const drawChatLog = [x, &y, &drawText]( SessionManager::ChatMessages const& messages ) -> void //
 	{
 		drawText( x, y++, "CHAT:" );
-		for( sync::SessionManager::ChatMessage const& message : messages )
+		for( SessionManager::ChatMessage const& message : messages )
 		{
 			rftl::string const textBuffer = app::gPageMapper->MapTo8Bit(
 				unicode::ConvertToUtf32( message.mText ) );
@@ -348,15 +349,9 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 				textBuffer.c_str() );
 		}
 	};
-	if( internalState.mAsHost != nullptr )
+	if( sync::gSessionManager != nullptr )
 	{
-		sync::SessionHostManager const& host = *internalState.mAsHost;
-		drawChatLog( host.GetRecentChatMessages( 5 ) );
-	}
-	if( internalState.mAsClient != nullptr )
-	{
-		sync::SessionClientManager const& client = *internalState.mAsClient;
-		drawChatLog( client.GetRecentChatMessages( 5 ) );
+		drawChatLog( sync::gSessionManager->GetRecentChatMessages( 5 ) );
 	}
 
 	// Draw text buffer

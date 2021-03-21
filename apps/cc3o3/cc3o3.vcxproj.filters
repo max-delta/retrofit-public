@@ -205,6 +205,9 @@
     <ClCompile Include="appstates\devtest\DevTestLobby.cpp">
       <Filter>appstates\devtest</Filter>
     </ClCompile>
+    <ClCompile Include="sync\Session.cpp">
+      <Filter>sync</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -546,6 +549,18 @@
     <ClInclude Include="appstates\devtest\DevTestLobby.h">
       <Filter>appstates\devtest</Filter>
     </ClInclude>
+    <ClInclude Include="sync\project.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\stdafx.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\SyncFwd.h">
+      <Filter>sync</Filter>
+    </ClInclude>
+    <ClInclude Include="sync\Session.h">
+      <Filter>sync</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -592,6 +607,9 @@
     </Filter>
     <Filter Include="ui\controller">
       <UniqueIdentifier>{97e2921f-2a56-42d8-9225-9d96e0472215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sync">
+      <UniqueIdentifier>{87a0fe54-76a3-45fa-b4da-07880d0f517a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
