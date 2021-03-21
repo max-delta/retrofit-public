@@ -128,6 +128,36 @@ TEST( MathBitField, SmallUnsigned )
 
 
 
+TEST( MathBitField, LargeSigned )
+{
+	// Shifting of negative value compilation errors only seem to come into
+	//  play on types larger than uint32_t, so this is mostly just to
+	//  instantiate the templates and make sure they compile
+	using bf_64 = BitField<64>;
+	static_assert( sizeof( bf_64 ) == 8, "Unexpected size" );
+	bf_64 bf = {};
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[2], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[3], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[4], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[5], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[6], 0x00 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[7], 0x00 );
+	bf.WriteAt<0>( 0x1234567890abcdef );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[0], 0x12 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[1], 0x34 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[2], 0x56 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[3], 0x78 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[4], 0x90 );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[5], 0xab );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[6], 0xcd );
+	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[7], 0xef );
+	ASSERT_EQ( ( bf.ReadAt<0, int64_t>() ), 0x1234567890abcdef );
+}
+
+
+
 TEST( MathBitField, IEEE754Binary32Nonsense )
 {
 	static_assert( rftl::numeric_limits<float>::is_iec559, "This test assumes standard floats" );
