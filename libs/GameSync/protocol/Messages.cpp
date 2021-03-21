@@ -309,7 +309,7 @@ ReadResult MsgRollbackInputEvents::TryRead( rftl::byte_view& bytes )
 			return ReadResult::kTooSmall;
 		}
 		events.reserve( eventCount );
-		for( size_t i_event = 0; i_event < streamCount; i_event++ )
+		for( size_t i_event = 0; i_event < eventCount; i_event++ )
 		{
 			rollback::InputEvent event = {};
 			EventRep const* const entryRep = reinterpret_cast<EventRep const*>( bytes.data() );
