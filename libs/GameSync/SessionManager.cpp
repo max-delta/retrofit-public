@@ -102,6 +102,27 @@ SessionManager::ChatMessages SessionManager::GetRecentChatMessages( size_t maxHi
 		mChatMessages.end() );
 }
 
+
+
+bool SessionManager::QueueOutgoingRollbackInputPack( RollbackInputPack&& pack )
+{
+	WriterLock const lock( mUnsentRollbackInputPacksMutex );
+	mUnsentRollbackInputPacks.emplace_back( rftl::move( pack ) );
+	return true;
+}
+
+
+
+SessionManager::RollbackSourcedPacks SessionManager::ConsumeRollbackInputPacks()
+{
+	RollbackSourcedPacks retVal = {};
+	{
+		WriterLock const lock( mRollbackSourcedPacksMutex );
+		retVal = rftl::move( mRollbackSourcedPacks );
+	}
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void SessionManager::ProcessPendingConnectionOperations(

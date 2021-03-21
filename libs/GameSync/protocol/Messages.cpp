@@ -213,6 +213,118 @@ ReadResult MsgChat::TryRead( rftl::byte_view& bytes )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void MsgRollbackInputEvents::Append( Buffer& bytes ) const
+{
+	using CommitRep = math::BitField<64>;
+	using StreamIDRep = math::BitField<8>;
+	using EventRep = math::BitField<64, 8>;
+
+	// Commit frame
+	CommitRep commitRep = {};
+	commitRep.WriteAt<0>( mInputPack.mFrameReadyToCommit.time_since_epoch().count() );
+	uint8_t* const commit = details::Grow( bytes, sizeof( CommitRep ) );
+	memcpy( commit, commitRep.Data(), sizeof( CommitRep ) );
+
+	// Stream count
+	uint8_t* const streamCount = details::Grow( bytes, 1 );
+	*streamCount = math::integer_cast<uint8_t>( mInputPack.mStreams.size() );
+
+	// Streams
+	for( RollbackInputPack::Streams::value_type const& stream : mInputPack.mStreams )
+	{
+		// Stream ID
+		StreamIDRep streamIDRep = {};
+		streamIDRep.WriteAt<0>( stream.first );
+		uint8_t* const streamDest = details::Grow( bytes, sizeof( StreamIDRep ) );
+		memcpy( streamDest, streamIDRep.Data(), sizeof( StreamIDRep ) );
+
+		RollbackInputPack::Events const& events = stream.second;
+
+		// Event count
+		uint8_t* const eventCount = details::Grow( bytes, 1 );
+		*eventCount = math::integer_cast<uint8_t>( events.size() );
+
+		// Events
+		for( rollback::InputEvent const& event : events )
+		{
+			EventRep eventRep = {};
+			eventRep.WriteAt<0>( event.mTime.time_since_epoch().count() );
+			eventRep.WriteAt<1>( event.mValue );
+			uint8_t* const eventDest = details::Grow( bytes, sizeof( EventRep ) );
+			memcpy( eventDest, eventRep.Data(), sizeof( EventRep ) );
+		}
+	}
+}
+
+
+
+ReadResult MsgRollbackInputEvents::TryRead( rftl::byte_view& bytes )
+{
+	using CommitRep = math::BitField<64>;
+	using StreamIDRep = math::BitField<8>;
+	using EventRep = math::BitField<64, 8>;
+
+	// Commit frame
+	if( bytes.size() < sizeof( CommitRep ) )
+	{
+		return ReadResult::kTooSmall;
+	}
+	CommitRep const* const commitRep = reinterpret_cast<CommitRep const*>( bytes.data() );
+	mInputPack.mFrameReadyToCommit = time::CommonClock::TimePointFromNanos( commitRep->ReadAt<0, int64_t>() );
+	bytes.remove_prefix( sizeof( CommitRep ) );
+
+	// Stream count
+	if( bytes.size() < 1 )
+	{
+		return ReadResult::kTooSmall;
+	}
+	uint8_t const streamCount = bytes.at<uint8_t>( 0 );
+	bytes.remove_prefix( 1 );
+
+	// Streams
+	for( size_t i_stream = 0; i_stream < streamCount; i_stream++ )
+	{
+		// Stream ID
+		if( bytes.size() < sizeof( StreamIDRep ) )
+		{
+			return ReadResult::kTooSmall;
+		}
+		StreamIDRep const* const streamIDRep = reinterpret_cast<StreamIDRep const*>( bytes.data() );
+		rollback::InputStreamIdentifier const streamID = streamIDRep->ReadAt<0, rollback::InputStreamIdentifier>();
+		bytes.remove_prefix( sizeof( StreamIDRep ) );
+
+		RollbackInputPack::Events& events = mInputPack.mStreams[streamID];
+
+		// Event count
+		if( bytes.size() < 1 )
+		{
+			return ReadResult::kTooSmall;
+		}
+		uint8_t const eventCount = bytes.at<uint8_t>( 0 );
+		bytes.remove_prefix( 1 );
+
+		// Events
+		if( bytes.size() < eventCount * sizeof( EventRep ) )
+		{
+			return ReadResult::kTooSmall;
+		}
+		events.reserve( eventCount );
+		for( size_t i_event = 0; i_event < streamCount; i_event++ )
+		{
+			rollback::InputEvent event = {};
+			EventRep const* const entryRep = reinterpret_cast<EventRep const*>( bytes.data() );
+			event.mTime = time::CommonClock::TimePointFromNanos( entryRep->ReadAt<0, int64_t>() );
+			event.mValue = entryRep->ReadAt<1, rollback::InputValue>();
+			events.emplace_back( rftl::move( event ) );
+			bytes.remove_prefix( sizeof( EventRep ) );
+		}
+	}
+
+	return ReadResult::kSuccess;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 template<typename Msg>
 void MsgProxyT<Msg>::Append( Buffer& bytes ) const
 {
@@ -252,6 +364,7 @@ ReadResult MsgProxyT<Msg>::TryRead( rftl::byte_view& bytes )
 
 
 template struct GAMESYNC_API MsgProxyT<MsgChat>;
+template struct GAMESYNC_API MsgProxyT<MsgRollbackInputEvents>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

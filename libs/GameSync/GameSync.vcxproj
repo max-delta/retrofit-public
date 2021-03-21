@@ -44,6 +44,7 @@
     <ClInclude Include="RollbackController.h" />
     <ClInclude Include="RollbackFilters.h" />
     <ClInclude Include="RollbackInputManager.h" />
+    <ClInclude Include="RollbackInputPack.h" />
     <ClInclude Include="SessionClientManager.h" />
     <ClInclude Include="SessionHostManager.h" />
     <ClInclude Include="SessionManager.h" />
@@ -62,6 +63,7 @@
     <ClCompile Include="RollbackController.cpp" />
     <ClCompile Include="RollbackFilters.cpp" />
     <ClCompile Include="RollbackInputManager.cpp" />
+    <ClCompile Include="RollbackInputPack.cpp" />
     <ClCompile Include="SessionClientManager.cpp" />
     <ClCompile Include="SessionHostManager.cpp" />
     <ClCompile Include="SessionManager.cpp" />

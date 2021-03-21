@@ -30,6 +30,7 @@ SessionClientManager::SessionClientManager( ClientSpec spec )
 	AddBlindReader<protocol::MsgWelcome>();
 	AddBlindReader<protocol::MsgSessionList>();
 	AddBlindReader<protocol::MsgProxyChat>();
+	AddBlindReader<protocol::MsgProxyRollbackInputEvents>();
 }
 
 
@@ -468,6 +469,30 @@ protocol::ReadResult SessionClientManager::HandleMessage( MessageParams const& p
 		return ReadResult::kSuccess;
 	}
 
+	// Input message
+	if( params.messageID == MsgProxyRollbackInputEvents::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved input" );
+		MsgProxyRollbackInputEvents msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+
+		RollbackSourcedPack pack = {};
+		pack.mSourceConnectionID = msg.mSourceConnectionID;
+		pack.mInputPack = rftl::move( msg.mMsg.mInputPack );
+
+		// Store for local queue
+		{
+			WriterLock const packLock( mRollbackSourcedPacksMutex );
+			mRollbackSourcedPacks.emplace_back( rftl::move( pack ) );
+		}
+
+		return ReadResult::kSuccess;
+	}
+
 	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
 	RF_DBGFAIL();
 	return ReadResult::kUnknownMessage;
@@ -589,6 +614,26 @@ void SessionClientManager::DoMessageWork( MessageWorkParams const& params )
 			protocol::MsgChat chat = {};
 			chat.mText.assign( chatToSend.mText.begin(), chatToSend.mText.end() );
 			chat.Append( messages );
+		}
+	}
+
+	// Process input
+	{
+		// Pull all the unsent input packs
+		RollbackInputPacks packsToSend;
+		{
+			WriterLock const packLock( mUnsentRollbackInputPacksMutex );
+			packsToSend.swap( mUnsentRollbackInputPacks );
+		}
+
+		// For each input pack...
+		for( RollbackInputPack& packToSend : packsToSend )
+		{
+			// Send
+			protocol::MessageIdentifier{ protocol::MsgRollbackInputEvents::kID }.Append( messages );
+			protocol::MsgRollbackInputEvents pack = {};
+			pack.mInputPack = rftl::move( packToSend );
+			pack.Append( messages );
 		}
 	}
 

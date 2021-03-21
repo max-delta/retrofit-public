@@ -4,6 +4,7 @@
 #include "GameSync/SyncFwd.h"
 #include "GameSync/protocol/Encryption.h"
 #include "GameSync/SessionMembers.h"
+#include "GameSync/RollbackInputPack.h"
 
 #include "core_math/Hash.h"
 #include "core_time/SteadyClock.h"
@@ -31,6 +32,7 @@ class GAMESYNC_API SessionManager
 	// Forwards
 public:
 	struct ChatMessage;
+	struct RollbackSourcedPack;
 
 protected:
 	struct Connection;
@@ -47,6 +49,8 @@ public:
 	static constexpr size_t kMaxConnectionCount = 32;
 
 	using ChatMessages = rftl::deque<ChatMessage>;
+	using RollbackInputPacks = rftl::deque<RollbackInputPack>;
+	using RollbackSourcedPacks = rftl::deque<RollbackSourcedPack>;
 
 protected:
 	using ReaderWriterMutex = rftl::shared_mutex;
@@ -80,6 +84,12 @@ public:
 		Clock::time_point mReceiveTime = {};
 		RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
 		rftl::string mText;
+	};
+
+	struct RollbackSourcedPack
+	{
+		ConnectionIdentifier mSourceConnectionID = kInvalidConnectionIdentifier;
+		RollbackInputPack mInputPack = {};
 	};
 
 protected:
@@ -125,6 +135,10 @@ public:
 	RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
 	bool QueueOutgoingChatMessage( std::string&& text );
 	ChatMessages GetRecentChatMessages( size_t maxHistory ) const;
+
+	// Thread-safe
+	bool QueueOutgoingRollbackInputPack( RollbackInputPack&& pack );
+	RollbackSourcedPacks ConsumeRollbackInputPacks();
 
 
 	//
@@ -181,6 +195,12 @@ protected:
 
 	mutable ReaderWriterMutex mUnsentChatMessagesMutex;
 	ChatMessages mUnsentChatMessages;
+
+	mutable ReaderWriterMutex mRollbackSourcedPacksMutex;
+	RollbackSourcedPacks mRollbackSourcedPacks;
+
+	mutable ReaderWriterMutex mUnsentRollbackInputPacksMutex;
+	RollbackInputPacks mUnsentRollbackInputPacks;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

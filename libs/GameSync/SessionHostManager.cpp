@@ -31,6 +31,7 @@ SessionHostManager::SessionHostManager( HostSpec spec )
 	AddBlindReader<protocol::MsgHello>();
 	AddBlindReader<protocol::MsgClaimPlayer>();
 	AddBlindReader<protocol::MsgChat>();
+	AddBlindReader<protocol::MsgRollbackInputEvents>();
 }
 
 
@@ -632,6 +633,36 @@ protocol::ReadResult SessionHostManager::HandleMessage( MessageParams const& par
 		return ReadResult::kSuccess;
 	}
 
+	// Input message
+	if( params.messageID == MsgRollbackInputEvents::kID )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved input" );
+		MsgRollbackInputEvents msg = {};
+		ReadResult const read = msg.TryRead( params.bytes );
+		if( read != ReadResult::kSuccess )
+		{
+			return read;
+		}
+
+		RollbackSourcedPack pack = {};
+		pack.mSourceConnectionID = params.connectionID;
+		pack.mInputPack = rftl::move( msg.mInputPack );
+
+		// Store for local queue
+		{
+			WriterLock const packLock( mRollbackSourcedPacksMutex );
+			mRollbackSourcedPacks.emplace_back( pack ); // Via copy
+		}
+
+		// Store for proxy
+		{
+			WriterLock const packLock( mProxyRollbackSourcedPacksMutex );
+			mProxyRollbackSourcedPacks.emplace_back( rftl::move( pack ) ); // Via move
+		}
+
+		return ReadResult::kSuccess;
+	}
+
 	RF_TODO_ANNOTATION( "Proxy queue" );
 
 	RFLOG_WARNING( nullptr, RFCAT_GAMESYNC, "Unhandled message ID" );
@@ -755,6 +786,61 @@ void SessionHostManager::DoMessageWork( MessageWorkParams const& params )
 				chat.mSourceConnectionID = chatToSend.mSourceConnectionID;
 				chat.mMsg.mText.assign( chatToSend.mText.begin(), chatToSend.mText.end() );
 				chat.Append( messages );
+			}
+		}
+	}
+
+	// Send out input packs
+	{
+		// Pull all the proxy input packs
+		RollbackSourcedPacks packsToSend;
+		{
+			WriterLock const packLock( mProxyRollbackSourcedPacksMutex );
+
+			packsToSend.swap( mProxyRollbackSourcedPacks );
+		}
+
+		// Pull all the unsent input packs, and convert them to proxies
+		ConnectionIdentifier localConnection = kInvalidConnectionIdentifier;
+		{
+			ReaderLock const membersLock( mSessionMembersMutex );
+
+			localConnection = mSessionMembers.mLocalConnection;
+		}
+		RF_ASSERT( localConnection != kInvalidConnectionIdentifier );
+		{
+			WriterLock const packLock( mUnsentRollbackInputPacksMutex );
+
+			for( RollbackInputPack& unsent : mUnsentRollbackInputPacks )
+			{
+				RollbackSourcedPack sourced = {};
+				sourced.mSourceConnectionID = localConnection;
+				sourced.mInputPack = rftl::move( unsent );
+				packsToSend.emplace_back( rftl::move( sourced ) );
+			}
+			mUnsentRollbackInputPacks.clear();
+		}
+
+		// For each connection...
+		for( ConnectionIdentifier const& id : validConnectionIDs )
+		{
+			protocol::Buffer& messages = messagesByRecipient.at( id );
+
+			// For each message...
+			for( RollbackSourcedPack const& packToSend : packsToSend )
+			{
+				if( packToSend.mSourceConnectionID == id )
+				{
+					// Don't proxy back to sender
+					continue;
+				}
+
+				// Send
+				protocol::MessageIdentifier{ protocol::MsgProxyRollbackInputEvents::kID }.Append( messages );
+				protocol::MsgProxyRollbackInputEvents pack = {};
+				pack.mSourceConnectionID = packToSend.mSourceConnectionID;
+				pack.mMsg.mInputPack = packToSend.mInputPack;
+				pack.Append( messages );
 			}
 		}
 	}

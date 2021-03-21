@@ -104,6 +104,9 @@ private:
 
 	mutable ReaderWriterMutex mProxyChatMessagesMutex;
 	ChatMessages mProxyChatMessages;
+
+	mutable ReaderWriterMutex mProxyRollbackSourcedPacksMutex;
+	RollbackSourcedPacks mProxyRollbackSourcedPacks;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

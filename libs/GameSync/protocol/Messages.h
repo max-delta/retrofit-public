@@ -3,12 +3,14 @@
 
 #include "GameSync/SyncFwd.h"
 #include "GameSync/protocol/Structure.h"
+#include "GameSync/RollbackInputPack.h"
 
 #include "GameInput/InputFwd.h"
 
 #include "core/meta/TypeList.h"
 
 #include "rftl/extension/static_string.h"
+#include "rftl/unordered_map"
 
 
 namespace RF::sync::protocol {
@@ -85,6 +87,19 @@ struct GAMESYNC_API MsgChat final
 	ReadResult TryRead( rftl::byte_view& bytes );
 };
 
+
+
+struct GAMESYNC_API MsgRollbackInputEvents final
+{
+	static constexpr MessageID kID = { 'R', 'B', 'I', 'E' };
+	static constexpr char const kDesc[] = "Rollback inputs have happened";
+
+	RollbackInputPack mInputPack = {};
+
+	void Append( Buffer& bytes ) const;
+	ReadResult TryRead( rftl::byte_view& bytes );
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 // Helper for creating proxy messages
@@ -107,6 +122,12 @@ struct GAMESYNC_API MsgProxyChat final : public MsgProxyT<MsgChat>
 {
 	static constexpr MessageID kID = { 'P', 'X', 'C', 'H' };
 	static constexpr char const kDesc[] = "PROXY Chat message text";
+};
+
+struct GAMESYNC_API MsgProxyRollbackInputEvents final : public MsgProxyT<MsgRollbackInputEvents>
+{
+	static constexpr MessageID kID = { 'P', 'X', 'R', 'E' };
+	static constexpr char const kDesc[] = "PROXY Rollback inputs have happened";
 };
 
 ///////////////////////////////////////////////////////////////////////////////
