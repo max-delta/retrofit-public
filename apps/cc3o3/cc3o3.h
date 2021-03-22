@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameAppState/AppStateFwd.h"
+#include "cc3o3/appstates/AppStatesFwd.h"
 
 #include "rftl/string"
 

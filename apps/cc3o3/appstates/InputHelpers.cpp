@@ -73,6 +73,31 @@ void InputHelpers::MakeRemote( input::PlayerID player )
 
 
 
+bool InputHelpers::HasRemotePlayers()
+{
+	input::ControllerManager::PlayerIDs const players = app::gInputControllerManager->GetRegisteredPlayers();
+	sync::RollbackInputManager::StreamIdentifiers const localStreams = gRollbackInputManager->GetLocalStreams();
+	for( input::PlayerID const& player : players )
+	{
+		RF_ASSERT( player != input::kInvalidPlayerID );
+		if( player == input::player::Global )
+		{
+			continue;
+		}
+		input::HardcodedRollbackIdentifiers const identifiers( player );
+		bool const local =
+			localStreams.count( identifiers.mRollbackGameMenusID ) ||
+			localStreams.count( identifiers.mRollbackGameMenusID );
+		if( local == false )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
 rftl::vector<ui::FocusEventType> InputHelpers::GetMainMenuInputToProcess()
 {
 	rftl::vector<input::GameCommand> const commands = GetGameplayInputToProcess( input::player::Global, input::layer::MainMenu );

@@ -2,6 +2,7 @@
 #include "Session.h"
 
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/cc3o3.h" // HACK: Last frame simulation mode
 #include "cc3o3/Common.h"
 
 #include "GameSync/SessionClientManager.h"
@@ -134,6 +135,31 @@ void ProcessSessionControllerOperations()
 			rollInputMan.ApplyPackFromRemote( rftl::move( sourcedPack.mInputPack ) );
 		}
 	};
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+RecommendedFrameSpeed CalcRecommendedFrameSpeed()
+{
+	if( appstate::InputHelpers::HasRemotePlayers() == false )
+	{
+		// No remote players, maintain speed
+		return RecommendedFrameSpeed::Maintain;
+	}
+
+	// HACK: Adjust based on previous rollback behavior
+	RF_TODO_ANNOTATION( "More intelligent tuning, based on observed input stream read/write heads" );
+	SimulationMode const previousMode = DebugGetPreviousFrameSimulationMode();
+	if( previousMode == SimulationMode::RollbackAndSimulate )
+	{
+		return RecommendedFrameSpeed::SlowDown;
+	}
+	if( previousMode == SimulationMode::SingleFrameSimulate )
+	{
+		return RecommendedFrameSpeed::SpeedUp;
+	}
+
+	return RecommendedFrameSpeed::Maintain;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -37,4 +37,15 @@ void ProcessSessionNetworkOperations();
 void ProcessSessionControllerOperations();
 
 ///////////////////////////////////////////////////////////////////////////////
+
+enum class RecommendedFrameSpeed : uint8_t
+{
+	Maintain = 0,
+	SpeedUp,
+	SlowDown
+};
+
+RecommendedFrameSpeed CalcRecommendedFrameSpeed();
+
+///////////////////////////////////////////////////////////////////////////////
 }

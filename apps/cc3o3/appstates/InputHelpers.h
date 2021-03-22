@@ -22,6 +22,7 @@ public:
 
 	static void MakeLocal( input::PlayerID player );
 	static void MakeRemote( input::PlayerID player );
+	static bool HasRemotePlayers();
 
 	static rftl::vector<ui::FocusEventType> GetMainMenuInputToProcess();
 	static rftl::vector<ui::FocusEventType> GetGameMenuInputToProcess( input::PlayerID player );
