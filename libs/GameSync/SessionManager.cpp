@@ -238,7 +238,7 @@ void SessionManager::ProcessPendingConnectionOperations(
 			continue;
 		}
 
-		RFLOG_DEBUG( nullptr, RFCAT_GAMESYNC, "Recieved %llu full batches from %llu", fullBatches.size(), id );
+		RFLOG_TRACE( nullptr, RFCAT_GAMESYNC, "Recieved %llu full batches from %llu", fullBatches.size(), id );
 
 		// Store
 		RF_ASSERT( fullBatchesBySender.count( id ) == 0 );

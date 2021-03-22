@@ -12,4 +12,4 @@
 #endif
 
 constexpr char const* RFCAT_PLATFORMNETWORK = "PlatformNetwork";
-constexpr uint64_t RFCAT_PLATFORMNETWORK_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+constexpr uint64_t RFCAT_PLATFORMNETWORK_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::RF_SEV_TRACE;
