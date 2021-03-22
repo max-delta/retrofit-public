@@ -385,6 +385,9 @@ void ProcessFrame()
 		// Suppress any draw requests while performing rollback re-simulation
 		ppu.SuppressDrawRequests( true );
 
+		// Suppress passthrough input
+		gRollbackInputManager->SuppressAllPassthroughs( true );
+
 		// Rewind to right before the commit range, since logic differences
 		//  mean that some variables might not get overwritten naturally
 		rollMan.RewindAllDomains( preFrameCommitRange.first - time::CommonClock::duration( 1 ) );
@@ -422,6 +425,9 @@ void ProcessFrame()
 
 		// Restore graphics before ticking true frame
 		ppu.SuppressDrawRequests( false );
+
+		// Restore input before ticking true frame
+		gRollbackInputManager->SuppressAllPassthroughs( false );
 	}
 
 

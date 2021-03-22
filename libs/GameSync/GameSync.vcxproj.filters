@@ -25,6 +25,7 @@
     <ClCompile Include="SessionManager.cpp" />
     <ClCompile Include="RollbackInputManager.cpp" />
     <ClCompile Include="RollbackInputPack.cpp" />
+    <ClCompile Include="PassthroughController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -62,6 +63,7 @@
     <ClInclude Include="RollbackInputManager.h" />
     <ClInclude Include="InputFwd.h" />
     <ClInclude Include="RollbackInputPack.h" />
+    <ClInclude Include="PassthroughController.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="protocol">

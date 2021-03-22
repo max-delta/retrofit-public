@@ -10,6 +10,7 @@
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
 #include "GameSync/RollbackController.h"
+#include "GameSync/PassthroughController.h"
 #include "GameSync/RollbackInputManager.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
@@ -34,6 +35,17 @@ UniquePtr<input::RollbackController> WrapWithRollback(
 	rollbackController->SetSource( source );
 	gRollbackInputManager->AddController( identifier, rollbackController );
 	return rollbackController;
+}
+
+
+
+UniquePtr<input::PassthroughController> WrapWithPassthrough(
+	WeakPtr<input::GameController> source )
+{
+	UniquePtr<input::PassthroughController> passthroughController = DefaultCreator<input::PassthroughController>::Create();
+	passthroughController->SetSource( source );
+	gRollbackInputManager->AddPassthrough( passthroughController );
+	return passthroughController;
 }
 
 
@@ -195,8 +207,10 @@ void HardcodedMainSetup()
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
 	menuHotkeyController->SetSource( details::sRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	manager.RegisterGameController( menuHotkeyController, player::Global, layer::MainMenu );
+	UniquePtr<input::PassthroughController> menuPassthroughController = details::WrapWithPassthrough( menuHotkeyController );
+	manager.RegisterGameController( menuPassthroughController, player::Global, layer::MainMenu );
 	manager.StoreGameController( rftl::move( menuHotkeyController ) );
+	manager.StoreGameController( rftl::move( menuPassthroughController ) );
 
 	// Text
 	manager.RegisterTextProvider( details::sRawInputController, player::Global );

@@ -2,6 +2,7 @@
 #include "RollbackInputManager.h"
 
 #include "GameSync/RollbackController.h"
+#include "GameSync/PassthroughController.h"
 #include "GameSync/RollbackFilters.h"
 
 #include "Rollback/RollbackManager.h"
@@ -51,6 +52,46 @@ void RollbackInputManager::ClearAllControllers()
 	WriterLock const lock( mControllersMutex );
 
 	mControllers.clear();
+}
+
+
+
+void RollbackInputManager::AddPassthrough( WeakPtr<Passthrough> passthrough )
+{
+	RF_ASSERT( passthrough != nullptr );
+
+	WriterLock const lock( mPassthroughsMutex );
+
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	for( WeakPtr<Passthrough> const& curPassthrough : mPassthroughs )
+	{
+		RF_ASSERT( curPassthrough != passthrough );
+	}
+#endif
+
+	mPassthroughs.emplace_back( passthrough );
+}
+
+
+
+void RollbackInputManager::ClearAllPassthroughs()
+{
+	WriterLock const lock( mPassthroughsMutex );
+
+	mPassthroughs.clear();
+}
+
+
+
+void RollbackInputManager::SuppressAllPassthroughs( bool suppress )
+{
+	WriterLock const lock( mPassthroughsMutex );
+
+	for( WeakPtr<Passthrough> const& passthrough : mPassthroughs )
+	{
+		RF_ASSERT( passthrough != nullptr );
+		passthrough->SuppressCommands( suppress );
+	}
 }
 
 

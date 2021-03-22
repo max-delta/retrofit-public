@@ -27,6 +27,7 @@ class GAMESYNC_API RollbackInputManager
 	// Types and constants
 public:
 	using Controller = input::RollbackController;
+	using Passthrough = input::PassthroughController;
 
 	using StreamIdentifiers = rftl::unordered_set<rollback::InputStreamIdentifier, math::DirectHash>;
 
@@ -36,6 +37,7 @@ private:
 	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
 
 	using Controllers = rftl::vector<WeakPtr<Controller>>;
+	using Passthroughs = rftl::vector<WeakPtr<Passthrough>>;
 
 
 	//
@@ -49,6 +51,11 @@ public:
 		rollback::InputStreamIdentifier const& identifier,
 		WeakPtr<Controller> controller );
 	void ClearAllControllers();
+
+	// Thread-safe
+	void AddPassthrough( WeakPtr<Passthrough> passthrough );
+	void ClearAllPassthroughs();
+	void SuppressAllPassthroughs( bool suppress );
 
 	// Thread-safe
 	void AddLocalStreams( StreamIdentifiers const& identifiers );
@@ -86,6 +93,9 @@ private:
 
 	mutable ReaderWriterMutex mControllersMutex;
 	Controllers mControllers;
+
+	mutable ReaderWriterMutex mPassthroughsMutex;
+	Passthroughs mPassthroughs;
 
 	mutable ReaderWriterMutex mLocalStreamsMutex;
 	StreamIdentifiers mLocalStreams;
