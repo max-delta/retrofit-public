@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "Session.h"
 
+#include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/Common.h"
+
 #include "GameSync/SessionClientManager.h"
 #include "GameSync/SessionHostManager.h"
+#include "GameSync/RollbackInputManager.h"
 
 
 namespace RF::cc::sync {
@@ -56,6 +60,80 @@ void ClearSessionManager()
 	gSessionClientManager = nullptr;
 	sSessionHostManager = nullptr;
 	sSessionClientManager = nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+bool QueueRollbackInputForSend( time::CommonClock::time_point frameReadyToCommit )
+{
+	if( gSessionManager == nullptr )
+	{
+		return false;
+	}
+
+	return gSessionManager->QueueOutgoingRollbackInputPack(
+		gRollbackInputManager->PreparePackForSend(
+			frameReadyToCommit ) );
+}
+
+
+
+void ProcessSessionNetworkOperations()
+{
+	if( sync::gSessionHostManager != nullptr )
+	{
+		SessionHostManager& host = *sync::gSessionHostManager;
+		host.ProcessPendingOperations();
+	}
+	if( sync::gSessionClientManager != nullptr )
+	{
+		SessionClientManager& client = *sync::gSessionClientManager;
+		client.ProcessPendingOperations();
+	}
+}
+
+
+
+void ProcessSessionControllerOperations()
+{
+	if( sync::gSessionManager == nullptr )
+	{
+		return;
+	}
+	SessionManager& manager = *sync::gSessionManager;
+
+	SessionMembers const members = manager.GetSessionMembers();
+
+	// Update controller modes
+	{
+		using PlayerIDs = SessionMembers::PlayerIDs;
+		PlayerIDs const all = members.GetPlayerIDs();
+		PlayerIDs const local = members.GetLocalPlayerIDs();
+		for( input::PlayerID const& id : all )
+		{
+			bool const isLocal = local.count( id ) > 0;
+			if( isLocal )
+			{
+				appstate::InputHelpers::MakeLocal( id );
+			}
+			else
+			{
+				appstate::InputHelpers::MakeRemote( id );
+			}
+		}
+	}
+
+	// Update remote input
+	{
+		sync::RollbackInputManager& rollInputMan = *gRollbackInputManager;
+
+		SessionManager::RollbackSourcedPacks packs = manager.ConsumeRollbackInputPacks();
+		for( SessionManager::RollbackSourcedPack& sourcedPack : packs )
+		{
+			RF_TODO_ANNOTATION( "Filter out input streams that don't appear to belong to the connection" );
+			rollInputMan.ApplyPackFromRemote( rftl::move( sourcedPack.mInputPack ) );
+		}
+	};
 }
 
 ///////////////////////////////////////////////////////////////////////////////

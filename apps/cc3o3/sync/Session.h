@@ -3,6 +3,8 @@
 
 #include "cc3o3/sync/SyncFwd.h"
 
+#include "core_time/CommonClock.h"
+
 #include "core/ptr/weak_ptr.h"
 #include "core/ptr/unique_ptr.h"
 
@@ -27,6 +29,12 @@ extern WeakPtr<sync::SessionClientManager> gSessionClientManager;
 void SetSessionHostManager( UniquePtr<sync::SessionHostManager>&& manager );
 void SetSessionClientManager( UniquePtr<sync::SessionClientManager>&& manager );
 void ClearSessionManager();
+
+///////////////////////////////////////////////////////////////////////////////
+
+bool QueueRollbackInputForSend( time::CommonClock::time_point frameReadyToCommit );
+void ProcessSessionNetworkOperations();
+void ProcessSessionControllerOperations();
 
 ///////////////////////////////////////////////////////////////////////////////
 }

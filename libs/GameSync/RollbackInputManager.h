@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "GameSync/InputFwd.h"
+#include "GameSync/RollbackInputPack.h"
 
 #include "Rollback/InputStream.h"
 
@@ -43,7 +44,7 @@ public:
 	RollbackInputManager( WeakPtr<rollback::RollbackManager> rollMan );
 	~RollbackInputManager() = default;
 
-	// Thread-safe
+	// Partial thread-safety (RollbackManager unsafe)
 	void AddController(
 		rollback::InputStreamIdentifier const& identifier,
 		WeakPtr<Controller> controller );
@@ -54,7 +55,7 @@ public:
 	void RemoveLocalStreams( StreamIdentifiers const& identifiers );
 	StreamIdentifiers GetLocalStreams() const;
 
-	// Thread-safe
+	// Partial thread-safety (RollbackManager unsafe)
 	void SubmitNonControllerInputs();
 
 	// Thread-safe
@@ -64,6 +65,11 @@ public:
 	void AdvanceLocalControllers(
 		time::CommonClock::time_point lockedFrame,
 		time::CommonClock::time_point newWriteHead );
+
+	// Partial thread-safety (RollbackManager unsafe)
+	RollbackInputPack PreparePackForSend(
+		time::CommonClock::time_point frameReadyToCommit ) const;
+	void ApplyPackFromRemote( RollbackInputPack&& pack );
 
 	// Thread-safe
 	void DebugQueueTestInput(

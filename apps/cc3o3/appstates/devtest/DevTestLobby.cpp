@@ -224,42 +224,6 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		}
 	}
 
-	// Process
-	static constexpr auto updateControllers = []( SessionMembers const& members ) -> void //
-	{
-		using PlayerIDs = SessionMembers::PlayerIDs;
-		PlayerIDs const all = members.GetPlayerIDs();
-		PlayerIDs const local = members.GetLocalPlayerIDs();
-		for( input::PlayerID const& id : all )
-		{
-			bool const isLocal = local.count( id ) > 0;
-			if( isLocal )
-			{
-				InputHelpers::MakeLocal( id );
-			}
-			else
-			{
-				InputHelpers::MakeRemote( id );
-			}
-		}
-	};
-	static constexpr auto process = []( auto& typed ) -> void //
-	{
-		SessionManager& manager = typed;
-		typed.ProcessPendingOperations();
-		updateControllers( manager.GetSessionMembers() );
-	};
-	if( sync::gSessionHostManager != nullptr )
-	{
-		SessionHostManager& host = *sync::gSessionHostManager;
-		process( host );
-	}
-	if( sync::gSessionClientManager != nullptr )
-	{
-		SessionClientManager& client = *sync::gSessionClientManager;
-		process( client );
-	}
-
 	// Draw Status
 	x = 30;
 	y = 2;

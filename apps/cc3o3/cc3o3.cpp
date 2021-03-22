@@ -10,10 +10,11 @@
 #include "cc3o3/appstates/devtest/DevTestLobby.h"
 #include "cc3o3/appstates/devtest/DevTestRollback.h"
 #include "cc3o3/appstates/AppStateRoute.h"
-#include "cc3o3/DeveloperHud.h"
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/sync/Session.h"
 #include "cc3o3/time/TimeFwd.h"
+#include "cc3o3/DeveloperHud.h"
 #include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -281,7 +282,19 @@ void ProcessFrame()
 			//  the current frame
 			preFrameCommitRange = rollMan.GetFramesReadyToCommit();
 			RF_ASSERT( preFrameCommitHead <= preFrameCommitRange.first );
-			RF_ASSERT( preFrameCommitRange.second < currentTrueFrame );
+			RF_ASSERT( preFrameCommitRange.second <= currentTrueFrame );
+			if( preFrameCommitRange.second == currentTrueFrame )
+			{
+				// We think we can commit the current frame, which should
+				//  indicate we're recovering from a stall
+				RF_ASSERT( sDebugPreviousFrameSimulationMode == SimulationMode::StallSimulation );
+
+				// Don't commit quite yet, we'll wait to see if anything new
+				//  gets added onto the end of this stalled frame
+				preFrameCommitRange.second = previousTrueFrame;
+			}
+
+			// Anything to commit?
 			if( preFrameCommitRange.second <= preFrameCommitHead )
 			{
 				// Nothing new to commit
@@ -418,6 +431,7 @@ void ProcessFrame()
 	}
 	else
 	{
+		// Process local controllers
 		gRollbackInputManager->TickLocalControllers();
 	}
 
@@ -438,6 +452,22 @@ void ProcessFrame()
 		gRollbackInputManager->AdvanceLocalControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
 			time::FrameClock::now() );
+
+		// Handle any session-related work
+		{
+			time::CommonClock::time_point const localInputFrameReadyToCommit =
+				simulationMode == SimulationMode::StallSimulation ?
+				  previousTrueFrame :
+				  currentTrueFrame;
+
+			// NOTE: Regardless of the frame declared, uncommitted input from the
+			//  future can still be sent, such as when a local input is delayed to
+			//  try and avoid triggering rollbacks on peers
+			sync::QueueRollbackInputForSend( localInputFrameReadyToCommit );
+
+			sync::ProcessSessionNetworkOperations();
+			sync::ProcessSessionControllerOperations();
+		}
 	}
 
 	if( rollMan.HasInputStreams() == false )
