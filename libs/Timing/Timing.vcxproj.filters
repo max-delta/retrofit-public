@@ -11,5 +11,6 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FrameClock.cpp" />
+    <ClCompile Include="Limiter.cpp" />
   </ItemGroup>
 </Project>

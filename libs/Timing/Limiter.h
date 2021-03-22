@@ -1,41 +1,45 @@
 #pragma once
+#include "project.h"
+
 #include "Timing/TimeFwd.h"
 
+#include "core_time/CommonClock.h"
 #include "core_time/PerfClock.h"
-
-#include "rftl/thread"
 
 namespace RF::time {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+struct TIMING_API Limiter
+{
+public:
+	void Reset();
+
+protected:
+	CommonClock::duration StallFor( CommonClock::duration desiredSpanTime );
+
+private:
+	PerfClock::time_point m_SpanStart;
+	PerfClock::time_point m_SpanEnd;
+};
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 template<typename ChronoDurationType, long long DesiredTimeSpan>
-struct Limiter
+struct StaticLimiter : public details::Limiter
 {
 	static constexpr ChronoDurationType kSpanDuration = ChronoDurationType( DesiredTimeSpan );
 
-	void Reset()
+	CommonClock::duration Stall()
 	{
-		m_SpanStart = RF::time::PerfClock::now();
-		m_SpanEnd = RF::time::PerfClock::now();
+		return StallFor( kSpanDuration );
 	}
 
-	void Stall()
+	CommonClock::duration AdjustedStall( CommonClock::duration adjust )
 	{
-		static constexpr RF::time::PerfClock::duration const desiredSpanTime = kSpanDuration;
-
-		time::PerfClock::time_point const naturalSpanEnd = time::PerfClock::now();
-		time::PerfClock::duration const naturalSpanTime = naturalSpanEnd - m_SpanStart;
-		if( naturalSpanTime < desiredSpanTime )
-		{
-			time::PerfClock::duration const timeRemaining = desiredSpanTime - naturalSpanTime;
-			rftl::this_thread::sleep_for( timeRemaining );
-		}
-		m_SpanEnd = time::PerfClock::now();
-		m_SpanStart = time::PerfClock::now();
+		return StallFor( kSpanDuration + adjust );
 	}
-
-	RF::time::PerfClock::time_point m_SpanStart;
-	RF::time::PerfClock::time_point m_SpanEnd;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
