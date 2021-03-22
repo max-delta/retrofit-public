@@ -436,7 +436,8 @@ void ProcessFrame()
 	}
 
 	// Tick the current true frame
-	sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
+	RF_ASSERT( time::FrameClock::now() == currentTrueFrame );
+	sAppStateManager.Tick( currentTrueFrame, time::kSimulationFrameDuration );
 
 	// WARNING: Rollback behavior unreliable across global state changes
 	sAppStateManager.ApplyDeferredStateChange();
@@ -451,23 +452,19 @@ void ProcessFrame()
 		//  of the current frame
 		gRollbackInputManager->AdvanceLocalControllers(
 			preFrameCommitRange.second + time::kSimulationFrameDuration,
-			time::FrameClock::now() );
+			currentTrueFrame );
 
-		// Handle any session-related work
-		{
-			time::CommonClock::time_point const localInputFrameReadyToCommit =
-				simulationMode == SimulationMode::StallSimulation ?
-				  previousTrueFrame :
-				  currentTrueFrame;
+		// We want to inform peers we've advanced our local controllers, and
+		//  send along any input
+		time::CommonClock::time_point const localInputFrameReadyToCommit =
+			simulationMode == SimulationMode::StallSimulation ?
+			  previousTrueFrame :
+			  currentTrueFrame;
 
-			// NOTE: Regardless of the frame declared, uncommitted input from the
-			//  future can still be sent, such as when a local input is delayed to
-			//  try and avoid triggering rollbacks on peers
-			sync::QueueRollbackInputForSend( localInputFrameReadyToCommit );
-
-			sync::ProcessSessionNetworkOperations();
-			sync::ProcessSessionControllerOperations();
-		}
+		// NOTE: Regardless of the frame declared, uncommitted input from the
+		//  future can still be sent, such as when a local input is delayed to
+		//  try and avoid triggering rollbacks on peers
+		sync::QueueRollbackInputForSend( localInputFrameReadyToCommit );
 	}
 
 	if( rollMan.HasInputStreams() == false )
@@ -509,6 +506,19 @@ void ProcessFrame()
 	if( kAllowDeveloperHud )
 	{
 		developer::RenderHud();
+	}
+
+	// Now that we're done with the frame, do any session stuff
+	sync::ProcessSessionNetworkOperations();
+	if( simulationMode == SimulationMode::OnRailsReplay )
+	{
+		// Input disabled during replay
+	}
+	else
+	{
+		// NOTE: This needs to be after the frame is complete, so that the next
+		//  frame can see that it needs to rollback at the top of the frame
+		sync::ProcessSessionControllerOperations();
 	}
 
 	if( simulationMode == SimulationMode::StallSimulation )

@@ -7,7 +7,9 @@
 #include "Rollback/RollbackManager.h"
 #include "Rollback/InputStreamRef.h"
 #include "Timing/FrameClock.h"
+#include "Logging/Logging.h"
 
+#include "core_math/math_casts.h"
 
 
 namespace RF::sync {
@@ -170,7 +172,11 @@ RollbackInputPack RollbackInputManager::PreparePackForSend(
 		RollbackInputPack::Events& eventsToSend = retVal.mStreams[identifier];
 		for( rollback::InputEvent const& event : stream )
 		{
-			eventsToSend.emplace_back( event );
+			// Streams use an invalid event to denote the read head, ignore it
+			if( event.mValue != rollback::kInvalidInputValue )
+			{
+				eventsToSend.emplace_back( event );
+			}
 		}
 	}
 
@@ -183,10 +189,6 @@ void RollbackInputManager::ApplyPackFromRemote( RollbackInputPack&& pack )
 {
 	rollback::RollbackManager& rollMan = *mRollMan;
 
-	RF_TODO_ANNOTATION(
-		"Figure out the best policy for race conditions on controller or time"
-		" changes. Multi-frame buffer in gameplay, or grace windows?" );
-
 	// For each stream...
 	for( RollbackInputPack::Streams::value_type const& streamEntry : pack.mStreams )
 	{
@@ -194,24 +196,42 @@ void RollbackInputManager::ApplyPackFromRemote( RollbackInputPack&& pack )
 		RollbackInputPack::Events const& events = streamEntry.second;
 		rollback::InputStreamRef const stream = sync::RollbackFilters::GetMutableStreamRef( rollMan, identifier );
 
-		// For each event...
-		for( rollback::InputEvent const& input : events )
+		if( events.empty() == false )
 		{
-			bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.mTime );
-			if( valid && input.mValue != rollback::kInvalidInputValue )
+			size_t overlapCount;
+			bool const canOverlap = sync::RollbackFilters::CanOverlapOrSuffix( rollMan, stream, events, overlapCount );
+			if( canOverlap == false )
 			{
-				stream.mUncommitted.emplace_back( input );
+				RFLOG_ERROR( nullptr, RFCAT_GAMESYNC, "No overlap found on rollback merge" );
+				RF_TODO_BREAK_MSG(
+					"Figure out the best policy for race conditions on"
+					" controller or time changes. Multi-frame buffer in"
+					" gameplay, or grace windows?" );
+			}
+			RF_ASSERT( overlapCount <= events.size() );
+			RollbackInputPack::Events const overhangEvents(
+				events.begin() + math::integer_cast<RollbackInputPack::Events::difference_type>( overlapCount ),
+				events.end() );
+
+			// For each event...
+			for( rollback::InputEvent const& input : overhangEvents )
+			{
+				bool const valid = sync::RollbackFilters::TryPrepareRemoteFrame( rollMan, stream, input.mTime );
+				if( valid && input.mValue != rollback::kInvalidInputValue )
+				{
+					stream.mUncommitted.emplace_back( input );
+				}
 			}
 		}
 
 		// Input should normally be quite sparse, see if the remote says we can
 		//  commit farther than the last event
-		bool tryCommitPastInput = false;
+		bool tryCommitPastInput = true;
 		if( events.empty() == false )
 		{
-			if( events.back().mTime < pack.mFrameReadyToCommit )
+			if( pack.mFrameReadyToCommit < events.back().mTime )
 			{
-				tryCommitPastInput = true;
+				tryCommitPastInput = false;
 			}
 		}
 		if( tryCommitPastInput )

@@ -5,6 +5,8 @@
 
 #include "core/macros.h"
 
+#include "rftl/vector"
+
 
 namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,6 +19,12 @@ public:
 	static rollback::InputStreamRef GetMutableStreamRef(
 		rollback::RollbackManager& rollMan,
 		rollback::InputStreamIdentifier const& identifier );
+
+	static bool CanOverlapOrSuffix(
+		rollback::RollbackManager const& rollMan,
+		rollback::InputStreamRef const& streamRef,
+		rftl::vector<rollback::InputEvent> const& newEvents,
+		size_t& overlapCount );
 
 	// Prepare a frame for writing
 	// NOTE: Trusted local input sources must succeed

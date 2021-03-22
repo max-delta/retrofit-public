@@ -12,5 +12,14 @@ InputEvent::InputEvent( time::CommonClock::time_point time, InputValue value )
 	//
 }
 
+
+
+bool InputEvent::AreEqual( InputEvent const& lhs, InputEvent const& rhs )
+{
+	return //
+		lhs.mTime == rhs.mTime &&
+		lhs.mValue == rhs.mValue;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
