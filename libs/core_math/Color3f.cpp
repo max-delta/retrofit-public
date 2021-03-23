@@ -25,6 +25,10 @@ Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
 Color3f const Color3f::kMagenta{ 1.f, 0.f, 1.f };
 Color3f const Color3f::kYellow{ 1.f, 1.f, 0.f };
 
+Color3f const Color3f::kTeal{ 0.f, 1.f, .5f };
+Color3f const Color3f::kPurple{ .5f, 0.f, 1.f };
+Color3f const Color3f::kOrange{ 1.f, .5f, 0.f };
+
 ///////////////////////////////////////////////////////////////////////////////
 
 Color3f::Color3f()

@@ -25,10 +25,14 @@ public:
 	static Color3f const kRed;
 	static Color3f const kGreen;
 	static Color3f const kBlue;
-	static Color3f const kCyan;
 
+	static Color3f const kCyan;
 	static Color3f const kMagenta;
 	static Color3f const kYellow;
+
+	static Color3f const kTeal;
+	static Color3f const kPurple;
+	static Color3f const kOrange;
 
 
 	//
