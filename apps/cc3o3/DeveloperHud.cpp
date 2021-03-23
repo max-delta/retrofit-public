@@ -226,21 +226,23 @@ void RenderRollback()
 			RF_ASSERT( start <= end );
 			gfx::PPUCoordElem const gfxStartPos = rescaleToGfx( start );
 			gfx::PPUCoordElem const gfxEndPos = rescaleToGfx( end );
-			ppu.DebugDrawLine(
-				{ gfxStartPos, gfxAnnotationStart + gfxAnnotationHeight * rank },
-				{ gfxStartPos, gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) },
-				1, kAnnotationDepth, color );
-			ppu.DebugDrawLine(
-				{ gfxEndPos, gfxAnnotationStart + gfxAnnotationHeight * rank },
-				{ gfxEndPos, gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) },
-				1, kAnnotationDepth, color );
+			gfx::PPUCoordElem const topY = math::integer_cast<gfx::PPUCoordElem>( gfxAnnotationStart + gfxAnnotationHeight * rank );
+			gfx::PPUCoordElem const bottomY = math::integer_cast<gfx::PPUCoordElem>( gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) );
 			gfx::PPUCoordElem const spanY = gfxAnnotationStart + gfxAnnotationHeight * rank + gfxAnnotationHeight / 2;
+			ppu.DebugDrawLine(
+				{ gfxStartPos, topY },
+				{ gfxStartPos, bottomY },
+				1, kAnnotationDepth, color );
+			ppu.DebugDrawLine(
+				{ gfxEndPos, topY },
+				{ gfxEndPos, bottomY },
+				1, kAnnotationDepth, color );
 			ppu.DebugDrawLine(
 				{ gfxStartPos, spanY },
 				{ gfxEndPos, spanY },
 				1, kAnnotationDepth, color );
 		};
-		auto const drawWindow = [&]( rftl::optional<rollback::InclusiveTimeRange> startRange, rftl::optional<rollback::InclusiveTimeRange> endRange, uint8_t rank ) -> void //
+		auto const drawWindow = [&]( rftl::optional<rollback::InclusiveTimeRange> const& startRange, rftl::optional<rollback::InclusiveTimeRange> const& endRange, uint8_t rank ) -> void //
 		{
 			if( startRange.has_value() )
 			{

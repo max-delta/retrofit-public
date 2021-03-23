@@ -65,7 +65,7 @@ template<size_t MaxChangesT>
 inline rftl::optional<InclusiveTimeRange> StateBag<MaxChangesT>::GetEarliestTimes() const
 {
 	rftl::optional<InclusiveTimeRange> retVal;
-	auto const expand = [this, &retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
+	auto const expand = [&retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
 	{
 		if( range.has_value() == false )
 		{
@@ -101,7 +101,7 @@ template<size_t MaxChangesT>
 inline rftl::optional<InclusiveTimeRange> StateBag<MaxChangesT>::GetLatestTimes() const
 {
 	rftl::optional<InclusiveTimeRange> retVal;
-	auto const expand = [this, &retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
+	auto const expand = [&retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
 	{
 		if( range.has_value() == false )
 		{

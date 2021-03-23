@@ -136,7 +136,7 @@ inline rftl::optional<InclusiveTimeRange> StateTree<ValueT, MaxChangesT>::GetEar
 		range.first = math::Min( range.first, time );
 		range.second = math::Max( range.second, time );
 	}
-	return range;
+	return { range };
 }
 
 
@@ -159,7 +159,7 @@ inline rftl::optional<InclusiveTimeRange> StateTree<ValueT, MaxChangesT>::GetLat
 		range.second = math::Max( range.second, time );
 	}
 	RF_ASSERT( range.first <= range.second );
-	return range;
+	return { range };
 }
 
 
