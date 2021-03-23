@@ -312,8 +312,11 @@ void ProcessFrame()
 					RF_ASSERT( preFrameCommitHead < previousTrueFrame );
 					time::CommonClock::duration const timeSinceLastCommit =
 						previousTrueFrame - preFrameCommitHead;
-					static constexpr time::CommonClock::duration kMaxRollbackDuration =
-						rollback::kMaxChangesInWindow * time::kSimulationFrameDuration;
+					RF_TODO_ANNOTATION(
+						"Why 3 frames? This behavior is observable in debug displays,"
+						" document what's going on and where we're losing frames to" );
+					static constexpr size_t kMaxRollbackFrames = rollback::kMaxChangesInWindow - 3;
+					static constexpr time::CommonClock::duration kMaxRollbackDuration = kMaxRollbackFrames * time::kSimulationFrameDuration;
 					if( timeSinceLastCommit < kMaxRollbackDuration )
 					{
 						// We're still not so far ahead that we can't rollback,
@@ -390,7 +393,26 @@ void ProcessFrame()
 
 		// Rewind to right before the commit range, since logic differences
 		//  mean that some variables might not get overwritten naturally
-		rollMan.RewindAllDomains( preFrameCommitRange.first - time::CommonClock::duration( 1 ) );
+		time::CommonClock::time_point rewindPoint;
+		if( preFrameCommitRange.first == time::CommonClock::kLowest )
+		{
+			// Quirky case should only happen near the beginning of a recent
+			//  time reset to zero
+			RF_TODO_ANNOTATION( "Don't let rollbacks rewind to frame 0" );
+			RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Rollback rewind to frame 0" );
+			rewindPoint = preFrameCommitRange.first;
+		}
+		else
+		{
+			rewindPoint = preFrameCommitRange.first - time::CommonClock::duration( 1 );
+			rftl::optional<rollback::InclusiveTimeRange> const streamStartRanges = rollMan.GetSharedDomain().GetWindow().GetEarliestTimes();
+			if( streamStartRanges.has_value() )
+			{
+				time::CommonClock::time_point const earliestSafeRewind = streamStartRanges->second;
+				RF_ASSERT( earliestSafeRewind < rewindPoint );
+			}
+		}
+		rollMan.RewindAllDomains( rewindPoint );
 
 		// Tick every frame up to the current frame
 		// NOTE: We are possibly ticking frames past the commit range, in which

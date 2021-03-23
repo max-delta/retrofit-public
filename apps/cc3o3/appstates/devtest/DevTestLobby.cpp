@@ -61,6 +61,13 @@ struct DevTestLobby::InternalState
 			mY.Bind( window, parent.GetChild( "y" ), allocator );
 			mXNeg.Bind( window, parent.GetChild( "xn" ), allocator );
 			mXPos.Bind( window, parent.GetChild( "xp" ), allocator );
+
+			// HACK: Ensure values are set from zero onwards
+			RF_TODO_ANNOTATION( "Set up proper session time logic so these are scoped to the proper times" );
+			mX.Write( {}, {} );
+			mY.Write( {}, {} );
+			mXNeg.Write( {}, {} );
+			mXPos.Write( {}, {} );
 		}
 
 		rollback::AutoVar<gfx::PPUCoordElem> mX;
