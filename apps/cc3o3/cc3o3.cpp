@@ -405,13 +405,26 @@ void ProcessFrame()
 		else
 		{
 			rewindPoint = preFrameCommitRange.first - time::CommonClock::duration( 1 );
-			rftl::optional<rollback::InclusiveTimeRange> const streamStartRanges = rollMan.GetSharedDomain().GetWindow().GetEarliestTimes();
-			if( streamStartRanges.has_value() )
-			{
-				time::CommonClock::time_point const earliestSafeRewind = streamStartRanges->second;
-				RF_ASSERT( earliestSafeRewind < rewindPoint );
-			}
 		}
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+		{
+			static constexpr auto assertSafeRewind = []( rollback::Domain const& domain, time::CommonClock::time_point const rewindAttempt ) -> void //
+			{
+				rftl::optional<rollback::InclusiveTimeRange> const streamStartRanges = domain.GetWindow().GetEarliestTimes();
+				if( streamStartRanges.has_value() )
+				{
+					time::CommonClock::time_point const earliestSafeRewind = streamStartRanges->second;
+					RF_ASSERT_MSG(
+						earliestSafeRewind <= rewindAttempt,
+						"Some streams in this domain would lose their earliest"
+						" values with this rewind, and would thus be reset to"
+						" their default values." );
+				}
+			};
+			assertSafeRewind( rollMan.GetSharedDomain(), rewindPoint );
+			assertSafeRewind( rollMan.GetPrivateDomain(), rewindPoint );
+		}
+#endif
 		rollMan.RewindAllDomains( rewindPoint );
 
 		// Tick every frame up to the current frame
