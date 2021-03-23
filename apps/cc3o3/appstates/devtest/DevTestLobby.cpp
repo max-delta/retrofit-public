@@ -4,22 +4,33 @@
 #include "cc3o3/cc3o3.h" // HACK: Time reset
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/state/StateFwd.h"
 #include "cc3o3/sync/Session.h"
+#include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameInput/ControllerManager.h"
+#include "GameInput/GameController.h"
 #include "GameSync/SessionHostManager.h"
 #include "GameSync/SessionClientManager.h"
 #include "GameUI/FontRegistry.h"
 
-#include "PPU/PPUController.h"
 #include "Localization/PageMapper.h"
+#include "PPU/PPUController.h"
+#include "Rollback/AutoVar.h"
+#include "Rollback/RollbackManager.h"
+#include "Timing/FrameClock.h"
 
 #include "PlatformUtils_win32/ProcessLaunch.h"
 
+#include "core_allocate/Allocator.h"
+#include "core_allocate/LinearAllocator.h"
 #include "core_unicode/StringConvert.h"
 
 #include "core/ptr/default_creator.h"
+
+#include "rftl/extension/virtual_iterator.h"
 
 
 namespace RF::cc::appstate {
@@ -30,6 +41,36 @@ struct DevTestLobby::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+	void Bind( rollback::Window& window, state::VariableIdentifier const& parent )
+	{
+		mP1.Bind( window, parent.GetChild( "p1" ), mAlloc );
+		mP2.Bind( window, parent.GetChild( "p2" ), mAlloc );
+	}
+
+	// NOTE: Must be before vars so it destructs last
+	alloc::AllocatorT<alloc::LinearAllocator<2048>> mAlloc{ ExplicitDefaultConstruct() };
+
+	struct Pos
+	{
+		RF_NO_COPY( Pos );
+		Pos() = default;
+
+		void Bind( rollback::Window& window, state::VariableIdentifier const& parent, alloc::Allocator& allocator )
+		{
+			mX.Bind( window, parent.GetChild( "x" ), allocator );
+			mY.Bind( window, parent.GetChild( "y" ), allocator );
+			mXNeg.Bind( window, parent.GetChild( "xn" ), allocator );
+			mXPos.Bind( window, parent.GetChild( "xp" ), allocator );
+		}
+
+		rollback::AutoVar<gfx::PPUCoordElem> mX;
+		rollback::AutoVar<gfx::PPUCoordElem> mY;
+		rollback::AutoVar<bool> mXNeg;
+		rollback::AutoVar<bool> mXPos;
+	};
+	Pos mP1;
+	Pos mP2;
+
 	size_t mCursor = 0;
 };
 
@@ -38,7 +79,7 @@ struct DevTestLobby::InternalState
 void DevTestLobby::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
-	//InternalState& internalState = *mInternalState;
+	InternalState& internalState = *mInternalState;
 	gfx::PPUController& ppu = *app::gGraphics;
 
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
@@ -47,6 +88,13 @@ void DevTestLobby::OnEnter( AppStateChangeContext& context )
 	input::HardcodedPlayerSetup( input::player::P2 );
 	InputHelpers::MakeRemote( input::player::P1 );
 	InputHelpers::MakeRemote( input::player::P2 );
+
+	// Set up mini-game
+	{
+		rollback::RollbackManager& rollMan = *gRollbackManager;
+		rollback::Window& window = rollMan.GetMutableSharedDomain().GetMutableWindow();
+		internalState.Bind( window, state::VariableIdentifier( "DevTest", "Lobby" ) );
+	}
 
 	// HACK: Time reset to get all clients into same frame
 	// TODO: Use save/load snapshot machinery instead on host-triggered sync
@@ -204,6 +252,91 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			sync::gSessionManager->QueueOutgoingChatMessage( rftl::move( text ) );
 		}
 		InputHelpers::ClearMainMenuTextBuffer();
+	}
+
+	// Process mini-game
+	{
+		static constexpr input::PlayerID kPlayerIDs[] = {
+			input::player::P1,
+			input::player::P2,
+		};
+		InternalState::Pos* const positions[] = {
+			&internalState.mP1,
+			&internalState.mP2,
+		};
+
+		input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+		input::GameController const* const controllers[] = {
+			controllerManager.GetGameController( input::player::P1, input::layer::CharacterControl ),
+			controllerManager.GetGameController( input::player::P2, input::layer::CharacterControl ),
+		};
+
+		for( size_t i = 0; i < 2; i++ )
+		{
+			input::PlayerID const playerID = kPlayerIDs[i];
+			InternalState::Pos& pos = *positions[i];
+			input::GameController const& controller = *controllers[i];
+
+			// Fetch commands that were entered for this current frame
+			rftl::vector<input::GameCommand> commands;
+			rftl::virtual_back_inserter_iterator<input::GameCommand, decltype( commands )> parser( commands );
+			controller.GetGameCommandStream( parser, time::FrameClock::now(), time::FrameClock::now() );
+
+			// Process commands
+			for( input::GameCommand const& command : commands )
+			{
+				if( command.mType == input::command::game::WalkWest )
+				{
+					pos.mXNeg = true;
+				}
+				else if( command.mType == input::command::game::WalkWestStop )
+				{
+					pos.mXNeg = false;
+				}
+				else if( command.mType == input::command::game::WalkEast )
+				{
+					pos.mXPos = true;
+				}
+				else if( command.mType == input::command::game::WalkEastStop )
+				{
+					pos.mXPos = false;
+				}
+			}
+
+			// Apply movement
+			if( pos.mXNeg )
+			{
+				pos.mX -= 1;
+			}
+			if( pos.mXPos )
+			{
+				pos.mX += 1;
+			}
+			pos.mX = math::Clamp<gfx::PPUCoordElem>( gfx::kTileSize, pos.mX, gfx::kDesiredWidth - gfx::kTileSize );
+			pos.mY = math::Clamp<gfx::PPUCoordElem>( gfx::kDesiredHeight - gfx::kTileSize, pos.mY, gfx::kDesiredHeight - gfx::kTileSize );
+		}
+	}
+
+	// Draw mini-game
+	{
+		InternalState::Pos const* const positions[] = {
+			&internalState.mP1,
+			&internalState.mP2
+		};
+
+		math::Color3f const colors[] = {
+			math::Color3f::kYellow,
+			math::Color3f::kWhite
+		};
+
+		for( size_t i = 0; i < 2; i++ )
+		{
+			InternalState::Pos const& pos = *positions[i];
+			math::Color3f const& color = colors[i];
+
+			gfx::PPUCoord const renderPos = gfx::PPUCoord( pos.mX, pos.mY );
+			ppu.DebugDrawAuxText( renderPos, -1, font.mFontHeight, font.mManagedFontID, false, color, "#" );
+		}
 	}
 
 	uint8_t x;
