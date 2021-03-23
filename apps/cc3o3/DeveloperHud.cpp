@@ -245,14 +245,13 @@ void RenderRollback()
 			if( startRange.has_value() )
 			{
 				RF_ASSERT( endRange.has_value() );
-				drawAnnotationRange(
-					math::Clamp( timelineStart, startRange->second, timelineEnd ),
-					math::Clamp( timelineStart, endRange->second, timelineEnd ),
-					rank, math::Color3f::kWhite );
-				drawAnnotationRange(
-					math::Clamp( timelineStart, startRange->first, timelineEnd ),
-					math::Clamp( timelineStart, startRange->second, timelineEnd ),
-					rank, math::Color3f::kOrange );
+				time::CommonClock::time_point const a = math::Clamp( timelineStart, startRange->first, timelineEnd );
+				time::CommonClock::time_point const b = math::Clamp( timelineStart, startRange->second, timelineEnd );
+				time::CommonClock::time_point const c = math::Clamp( timelineStart, endRange->second, timelineEnd );
+				time::CommonClock::time_point const& d = timelineEnd;
+				drawAnnotationRange( a, b, rank, math::Color3f::kOrange );
+				drawAnnotationRange( b, c, rank, math::Color3f::kWhite );
+				drawAnnotationRange( c, d, rank, math::Color3f::kGray50 );
 			}
 		};
 		drawWindow( sharedWindowStart, sharedWindowEnd, 0 );
