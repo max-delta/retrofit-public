@@ -27,10 +27,12 @@ public:
 	~AutoVar();
 
 	AutoVar& operator=( Type const& value );
+	operator Var<T>() const;
 	operator Type() const;
 
 	void Write( time::CommonClock::time_point time, Type const& value );
 	Type Read( time::CommonClock::time_point time ) const;
+	Var<T> VarT() const;
 	Type As() const;
 
 
@@ -58,3 +60,6 @@ extern template class RF::rollback::AutoVar<uint32_t>;
 extern template class RF::rollback::AutoVar<int32_t>;
 extern template class RF::rollback::AutoVar<uint64_t>;
 extern template class RF::rollback::AutoVar<int64_t>;
+
+// NOTE: Many operators in here
+#include "AutoVar.inl"

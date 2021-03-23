@@ -26,4 +26,8 @@
     <ClInclude Include="InputStreamRef.h" />
     <ClInclude Include="InputEvent.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="AutoVar.inl" />
+    <None Include="Var.inl" />
+  </ItemGroup>
 </Project>

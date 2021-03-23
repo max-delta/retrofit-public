@@ -51,3 +51,6 @@ extern template class RF::rollback::Var<uint32_t>;
 extern template class RF::rollback::Var<int32_t>;
 extern template class RF::rollback::Var<uint64_t>;
 extern template class RF::rollback::Var<int64_t>;
+
+// NOTE: Many operators in here
+#include "Var.inl"

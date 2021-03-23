@@ -75,6 +75,10 @@
       <Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="AutoVar.inl" />
+    <None Include="Var.inl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

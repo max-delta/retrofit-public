@@ -36,6 +36,14 @@ AutoVar<T>& AutoVar<T>::operator=( Type const& value )
 
 
 template<typename T>
+AutoVar<T>::operator Var<T>() const
+{
+	return mVar;
+}
+
+
+
+template<typename T>
 AutoVar<T>::operator Type() const
 {
 	return mVar.operator Type();
@@ -55,6 +63,14 @@ template<typename T>
 typename AutoVar<T>::Type AutoVar<T>::Read( time::CommonClock::time_point time ) const
 {
 	return mVar.Read( time );
+}
+
+
+
+template<typename T>
+Var<T> AutoVar<T>::VarT() const
+{
+	return mVar;
 }
 
 
