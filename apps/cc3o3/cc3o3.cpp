@@ -406,7 +406,7 @@ void ProcessFrame()
 		{
 			rewindPoint = preFrameCommitRange.first - time::CommonClock::duration( 1 );
 		}
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+		if constexpr( config::kAsserts )
 		{
 			static constexpr auto assertSafeRewind = []( rollback::Domain const& domain, time::CommonClock::time_point const rewindAttempt ) -> void //
 			{
@@ -424,7 +424,6 @@ void ProcessFrame()
 			assertSafeRewind( rollMan.GetSharedDomain(), rewindPoint );
 			assertSafeRewind( rollMan.GetPrivateDomain(), rewindPoint );
 		}
-#endif
 		rollMan.RewindAllDomains( rewindPoint );
 
 		// Tick every frame up to the current frame
