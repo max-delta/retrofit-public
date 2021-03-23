@@ -25,6 +25,15 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 	{
 		// Need to add to end
 
+		if constexpr( config::kRollbackPerfOptimizations )
+		{
+			if( mValues.empty() == false && mValues.back() == value )
+			{
+				// This doesn't change the value, so just ignore the write
+				return;
+			}
+		}
+
 		if( mTimes.size() == mTimes.max_size() )
 		{
 			// Full, pop front
