@@ -4,7 +4,7 @@
 
 namespace RF::config {
 ///////////////////////////////////////////////////////////////////////////////
-#define RF_CONFIG_FLAG( MACRO ) ( RF_IS_ALLOWED( RF_CONFIG_ASSERTS ) ? true : false )
+#define RF_CONFIG_FLAG( MACRO ) ( RF_IS_ALLOWED( MACRO ) ? true : false )
 
 static constexpr bool kAsserts = RF_CONFIG_FLAG( RF_CONFIG_ASSERTS );
 static constexpr bool kOncePer = RF_CONFIG_FLAG( RF_CONFIG_ONCEPER );
