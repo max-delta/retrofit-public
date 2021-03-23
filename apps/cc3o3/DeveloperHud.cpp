@@ -158,6 +158,13 @@ void RenderRollback()
 		// Timeline ends at one full window away from now
 		time::CommonClock::time_point const timelineEnd = timelineNow + time::kSimulationFrameDuration * rollback::kMaxChangesInWindow;
 
+		rollback::Window const& sharedWindow = rollMan.GetSharedDomain().GetWindow();
+		rollback::Window const& privateWindow = rollMan.GetPrivateDomain().GetWindow();
+		rftl::optional<rollback::InclusiveTimeRange> const sharedWindowStart = sharedWindow.GetEarliestTimes();
+		rftl::optional<rollback::InclusiveTimeRange> const sharedWindowEnd = sharedWindow.GetLatestTimes();
+		rftl::optional<rollback::InclusiveTimeRange> const privateWindowStart = privateWindow.GetEarliestTimes();
+		rftl::optional<rollback::InclusiveTimeRange> const privateWindowEnd = privateWindow.GetLatestTimes();
+
 		// Will need to lerp data into a graphical representation
 		gfx::PPUCoord::ElementType const gfxTimelineStart = gfx::kTileSize;
 		gfx::PPUCoord::ElementType const gfxTimelineEnd = gfx::kDesiredWidth - gfx::kTileSize;
@@ -168,6 +175,8 @@ void RenderRollback()
 			gfxLanesStart +
 			math::integer_cast<gfx::PPUCoord::ElementType>(
 				gfxLanesHeight * gfxNumLanes );
+		gfx::PPUCoord::ElementType const gfxAnnotationStart = gfxLanesEnd + 2;
+		gfx::PPUCoord::ElementType const gfxAnnotationHeight = 4;
 
 		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::PPUCoord::ElementType {
 			return math::Rescale(
@@ -182,6 +191,7 @@ void RenderRollback()
 		static constexpr gfx::PPUDepthLayer kNowDepth = gfx::kNearestLayer + 4;
 		static constexpr gfx::PPUDepthLayer kCommitDepth = gfx::kNearestLayer + 3;
 		static constexpr gfx::PPUDepthLayer kEventDepth = gfx::kNearestLayer + 2;
+		static constexpr gfx::PPUDepthLayer kAnnotationDepth = gfx::kNearestLayer + 4;
 
 		// Border
 		ppu.DebugDrawAABB(
@@ -209,6 +219,44 @@ void RenderRollback()
 			timelineCommit < timelineNow ?
 				  math::Color3f::kYellow :
 				  math::Color3f::kGreen );
+
+		// Window lines
+		auto const drawAnnotationRange = [&]( time::CommonClock::time_point start, time::CommonClock::time_point end, uint8_t rank, math::Color3f color ) -> void //
+		{
+			RF_ASSERT( start <= end );
+			gfx::PPUCoordElem const gfxStartPos = rescaleToGfx( start );
+			gfx::PPUCoordElem const gfxEndPos = rescaleToGfx( end );
+			ppu.DebugDrawLine(
+				{ gfxStartPos, gfxAnnotationStart + gfxAnnotationHeight * rank },
+				{ gfxStartPos, gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) },
+				1, kAnnotationDepth, color );
+			ppu.DebugDrawLine(
+				{ gfxEndPos, gfxAnnotationStart + gfxAnnotationHeight * rank },
+				{ gfxEndPos, gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) },
+				1, kAnnotationDepth, color );
+			gfx::PPUCoordElem const spanY = gfxAnnotationStart + gfxAnnotationHeight * rank + gfxAnnotationHeight / 2;
+			ppu.DebugDrawLine(
+				{ gfxStartPos, spanY },
+				{ gfxEndPos, spanY },
+				1, kAnnotationDepth, color );
+		};
+		auto const drawWindow = [&]( rftl::optional<rollback::InclusiveTimeRange> startRange, rftl::optional<rollback::InclusiveTimeRange> endRange, uint8_t rank ) -> void //
+		{
+			if( startRange.has_value() )
+			{
+				RF_ASSERT( endRange.has_value() );
+				drawAnnotationRange(
+					math::Clamp( timelineStart, startRange->second, timelineEnd ),
+					math::Clamp( timelineStart, endRange->second, timelineEnd ),
+					rank, math::Color3f::kWhite );
+				drawAnnotationRange(
+					math::Clamp( timelineStart, startRange->first, timelineEnd ),
+					math::Clamp( timelineStart, startRange->second, timelineEnd ),
+					rank, math::Color3f::kOrange );
+			}
+		};
+		drawWindow( sharedWindowStart, sharedWindowEnd, 0 );
+		drawWindow( privateWindowStart, privateWindowEnd, 1 );
 
 		size_t i_lane = 0;
 		for( RollbackManager::InputStreams::value_type const& streamPair : committedStreams )
