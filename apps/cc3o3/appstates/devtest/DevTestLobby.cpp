@@ -272,17 +272,11 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			&internalState.mP2,
 		};
 
-		input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-		input::GameController const* const controllers[] = {
-			controllerManager.GetGameController( input::player::P1, input::layer::CharacterControl ),
-			controllerManager.GetGameController( input::player::P2, input::layer::CharacterControl ),
-		};
-
 		for( size_t i = 0; i < 2; i++ )
 		{
-			input::PlayerID const playerID = kPlayerIDs[i];
 			InternalState::Pos& pos = *positions[i];
-			input::GameController const& controller = *controllers[i];
+			input::GameController const& controller =
+				*app::gInputControllerManager->GetGameController( kPlayerIDs[i], input::layer::CharacterControl );
 
 			// Fetch commands that were entered for this current frame
 			rftl::vector<input::GameCommand> commands;
