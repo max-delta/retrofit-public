@@ -10,6 +10,7 @@
 #include "rftl/vector"
 #include "rftl/shared_mutex"
 #include "rftl/string"
+#include "rftl/optional"
 
 
 namespace RF::state {
@@ -49,6 +50,9 @@ public:
 	WeakPtr<StreamType> GetMutableStream( VariableIdentifier const& identifier );
 
 	size_t RewindAllStreams( time::CommonClock::time_point time );
+
+	rftl::optional<InclusiveTimeRange> GetEarliestTimes() const;
+	rftl::optional<InclusiveTimeRange> GetLatestTimes() const;
 
 	rftl::vector<VariableIdentifier> GetIdentifiers() const;
 

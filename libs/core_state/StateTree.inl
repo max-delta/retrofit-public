@@ -2,6 +2,7 @@
 #include "StateTree.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
+#include "core_math/math_clamps.h"
 
 
 namespace RF::state {
@@ -114,6 +115,51 @@ inline size_t StateTree<ValueT, MaxChangesT>::RewindAllStreams( time::CommonCloc
 	}
 
 	return mTree.size();
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
+inline rftl::optional<InclusiveTimeRange> StateTree<ValueT, MaxChangesT>::GetEarliestTimes() const
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	if( mTree.empty() )
+	{
+		return rftl::optional<InclusiveTimeRange>();
+	}
+
+	InclusiveTimeRange range = { time::CommonClock::kMax, time::CommonClock::kLowest };
+	for( typename Tree::value_type const& entry : mTree )
+	{
+		time::CommonClock::time_point const time = entry.second->GetEarliestTime();
+		range.first = math::Min( range.first, time );
+		range.second = math::Max( range.second, time );
+	}
+	return range;
+}
+
+
+
+template<typename ValueT, size_t MaxChangesT>
+inline rftl::optional<InclusiveTimeRange> StateTree<ValueT, MaxChangesT>::GetLatestTimes() const
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	if( mTree.empty() )
+	{
+		return rftl::optional<InclusiveTimeRange>();
+	}
+
+	InclusiveTimeRange range = { time::CommonClock::kMax, time::CommonClock::kLowest };
+	for( typename Tree::value_type const& entry : mTree )
+	{
+		time::CommonClock::time_point const time = entry.second->GetLatestTime();
+		range.first = math::Min( range.first, time );
+		range.second = math::Max( range.second, time );
+	}
+	RF_ASSERT( range.first <= range.second );
+	return range;
 }
 
 

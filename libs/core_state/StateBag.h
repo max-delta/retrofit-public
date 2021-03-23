@@ -58,6 +58,9 @@ public:
 
 	size_t RewindAllStreams( time::CommonClock::time_point time );
 
+	rftl::optional<InclusiveTimeRange> GetEarliestTimes() const;
+	rftl::optional<InclusiveTimeRange> GetLatestTimes() const;
+
 	template<typename T>
 	Tree<T> const& GetTree() const;
 

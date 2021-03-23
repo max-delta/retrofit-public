@@ -62,6 +62,78 @@ inline size_t StateBag<MaxChangesT>::RewindAllStreams( time::CommonClock::time_p
 
 
 template<size_t MaxChangesT>
+inline rftl::optional<InclusiveTimeRange> StateBag<MaxChangesT>::GetEarliestTimes() const
+{
+	rftl::optional<InclusiveTimeRange> retVal;
+	auto const expand = [this, &retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
+	{
+		if( range.has_value() == false )
+		{
+			return;
+		}
+		if( retVal.has_value() == false )
+		{
+			retVal = range;
+			return;
+		}
+		retVal->first = math::Min( retVal->first, range->first );
+		retVal->second = math::Max( retVal->second, range->second );
+	};
+	auto const expandTree = [&expand]( auto const& tree ) -> void //
+	{
+		expand( tree.GetEarliestTimes() );
+	};
+	expandTree( GetTree<ContainedTypes::ByIndex<0>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<1>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<2>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<3>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<4>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<5>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<6>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<7>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<8>::type>() );
+	return retVal;
+}
+
+
+
+template<size_t MaxChangesT>
+inline rftl::optional<InclusiveTimeRange> StateBag<MaxChangesT>::GetLatestTimes() const
+{
+	rftl::optional<InclusiveTimeRange> retVal;
+	auto const expand = [this, &retVal]( rftl::optional<InclusiveTimeRange> range ) -> void //
+	{
+		if( range.has_value() == false )
+		{
+			return;
+		}
+		if( retVal.has_value() == false )
+		{
+			retVal = range;
+			return;
+		}
+		retVal->first = math::Min( retVal->first, range->first );
+		retVal->second = math::Max( retVal->second, range->second );
+	};
+	auto const expandTree = [&expand]( auto const& tree ) -> void //
+	{
+		expand( tree.GetLatestTimes() );
+	};
+	expandTree( GetTree<ContainedTypes::ByIndex<0>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<1>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<2>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<3>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<4>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<5>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<6>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<7>::type>() );
+	expandTree( GetTree<ContainedTypes::ByIndex<8>::type>() );
+	return retVal;
+}
+
+
+
+template<size_t MaxChangesT>
 template<typename T>
 inline WeakPtr<typename StateBag<MaxChangesT>::template Stream<T> const> StateBag<MaxChangesT>::GetStream( VariableIdentifier const& identifier ) const
 {
