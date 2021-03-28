@@ -11,17 +11,18 @@
 #include "PPU/PPUController.h"
 #include "SimpleGL/SimpleGL.h"
 
-#include "Rollback/RollbackManager.h"
-
+#include "CommandLine/ArgParse.h"
+#include "CommandLine/ArgView.h"
 #include "Localization/LocEngine.h"
 #include "Localization/PageMapper.h"
+#include "Logging/ANSIConsoleLogger.h"
+#include "Logging/AssertLogger.h"
+#include "Rollback/RollbackManager.h"
 
 #include "PlatformUtils_win32/Console.h"
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
-#include "Logging/ANSIConsoleLogger.h"
-#include "Logging/AssertLogger.h"
 
 #include "core_math/math_bits.h"
 #include "core/ptr/default_creator.h"
@@ -38,6 +39,7 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 APPCOMMONGRAPHICALCLIENT_API bool gShouldExit = false;
 
 // Global systems
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<cli::ArgParse const> gCommandLineArgs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
@@ -47,6 +49,7 @@ APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::LocEngine> gLocEngine;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
+static UniquePtr<cli::ArgParse const> sCommandLineArgs;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<input::ControllerManager> sInputControllerManager;
 static UniquePtr<gfx::PPUController> sGraphics;
@@ -59,8 +62,11 @@ static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Startup()
+void Startup( cli::ArgView const& args )
 {
+	sCommandLineArgs = DefaultCreator<cli::ArgParse>::Create( args );
+	gCommandLineArgs = sCommandLineArgs;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup" );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing console logging..." );
@@ -163,6 +169,7 @@ void Shutdown()
 	sVfs = nullptr;
 	sWndProcInput = nullptr;
 	sTaskScheduler = nullptr;
+	sCommandLineArgs = nullptr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

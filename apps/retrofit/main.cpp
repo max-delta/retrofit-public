@@ -11,6 +11,7 @@
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/windowing.h"
+#include "CommandLine/ArgView.h"
 #include "Logging/Logging.h"
 #include "Timing/Limiter.h"
 
@@ -143,11 +144,11 @@ void TestEnd()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-RF_MODULE_POINT int module_main()
+RF_MODULE_POINT int module_main( int argc, char* argv[] )
 {
 	using namespace RF;
 
-	app::Startup();
+	app::Startup( { argc, argv } );
 
 	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, testDataMountFile );

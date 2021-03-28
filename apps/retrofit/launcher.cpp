@@ -1,7 +1,7 @@
 
-__declspec( dllimport ) int module_main();
+__declspec( dllimport ) int module_main( int argc, char* argv[] );
 
-int main()
+int main( int argc, char* argv[] )
 {
-	return module_main();
+	return module_main( argc, argv );
 }

@@ -5,6 +5,10 @@
 
 // Forwards
 namespace RF {
+namespace cli {
+	class ArgView;
+	class ArgParse;
+}
 namespace input {
 	class WndProcInputDevice;
 	class ControllerManager;
@@ -34,6 +38,7 @@ namespace RF::app {
 APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
 
 // Global systems
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<cli::ArgParse const> gCommandLineArgs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
@@ -44,7 +49,7 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
-APPCOMMONGRAPHICALCLIENT_API void Startup();
+APPCOMMONGRAPHICALCLIENT_API void Startup( cli::ArgView const& args );
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();
 
 ///////////////////////////////////////////////////////////////////////////////

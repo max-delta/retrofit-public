@@ -9,6 +9,7 @@
 #include "PlatformUtils_win32/Console.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformFilesystem/VFS.h"
+#include "CommandLine/ArgView.h"
 #include "SimpleGL/SimpleGL.h"
 #include "Logging/Logging.h"
 #include "Logging/ANSIConsoleLogger.h"
@@ -22,11 +23,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int main()
+int main( int argc, char* argv[] )
 {
 	using namespace RF;
 
-	app::Startup();
+	app::Startup( { argc, argv } );
 
 	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, testDataMountFile );

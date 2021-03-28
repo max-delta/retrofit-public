@@ -1,7 +1,5 @@
 #include "project.h"
 
-#include "core/macros.h"
-
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
 #include "rftl/vector"
@@ -21,8 +19,6 @@ namespace RF::cli {
 //  options and the arguments are ('--version' and '--help' may be re-ordered)
 class COMMANDLINE_API ArgParse
 {
-	RF_NO_COPY( ArgParse );
-
 	//
 	// Types and constants
 public:
