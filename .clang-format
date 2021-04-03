@@ -1,18 +1,11 @@
 #https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 #############################
-# Known issues as of v8.0
+# Known issues as of v11.0
 #############################
 #
 # Lambdas are a disaster
 ## https://bugs.llvm.org/show_bug.cgi?id=27640
-#
-# Pre-processor directives suck
-## https://bugs.llvm.org/show_bug.cgi?id=36019
-#
-# Namespaces eat newlines
-## https://reviews.llvm.org/rL330324
-## (Fixed between 5.0 and 8.0?)
 #
 # Arbitrary empty lines are added unconditionally
 ## https://stackoverflow.com/questions/55169938/clang-linebreak-after-access-modifier
@@ -26,20 +19,26 @@
 #  updates, and patches just sit around forever without getting traction
 #
 
-BasedOnStyle : WebKit
+BasedOnStyle : Microsoft
 
 AccessModifierOffset : -4
 AlignAfterOpenBracket  : DontAlign
 AlignConsecutiveAssignments : false
+AlignConsecutiveBitFields : false
 AlignConsecutiveDeclarations : false
+AlignConsecutiveMacros : false
 AlignEscapedNewlines : DontAlign
 AlignOperands : false
 AlignTrailingComments : false
+AllowAllArgumentsOnNextLine : false
+AllowAllConstructorInitializersOnNextLine : false
 AllowAllParametersOfDeclarationOnNextLine : false
 AllowShortBlocksOnASingleLine : false
 AllowShortCaseLabelsOnASingleLine : false
+AllowShortEnumsOnASingleLine : false
 AllowShortFunctionsOnASingleLine : Empty
 AllowShortIfStatementsOnASingleLine : false
+AllowShortLambdasOnASingleLine : false
 AllowShortLoopsOnASingleLine : false
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
@@ -59,6 +58,8 @@ BraceWrapping :
  AfterExternBlock : true
  BeforeCatch : true
  BeforeElse : true
+ BeforeLambdaBody : false # Want to be true, but since Clang-format is trash, this overrides 'AfterNamespace'
+ BeforeWhile : true
  IndentBraces : false
  SplitEmptyFunction : false
  SplitEmptyRecord : false
@@ -76,7 +77,8 @@ CompactNamespaces : true
 ConstructorInitializerAllOnOneLineOrOnePerLine : true
 ConstructorInitializerIndentWidth : 4
 ContinuationIndentWidth : 4
-Cpp11BracedListStyle : false # This fucks up spacing if it's on
+Cpp11BracedListStyle : true # This used to fuck up spacing when it was on
+DeriveLineEnding : true
 DerivePointerAlignment : false
 DisableFormat : false
 #ExperimentalAutoDetectBinPacking
@@ -85,37 +87,32 @@ FixNamespaceComments : false
 IncludeBlocks : Preserve
 #IncludeCategories
 #IncludeIsMainRegex
+#IncludeIsMainSourceRegex
+IndentCaseBlocks : false
 IndentCaseLabels : true
+IndentExternBlock : NoIndent
+IndentGotoLabels : true
 IndentPPDirectives : BeforeHash
 IndentWidth : 4
 IndentWrappedFunctionNames : false
-#JavaImportGroups
-#JavaScriptQuotes
-#JavaScriptWrapImports
+#InsertTrailingCommas
+#Java...
 KeepEmptyLinesAtTheStartOfBlocks : true
 #Language
 #MacroBlockBegin
 #MacroBlockEnd
 MaxEmptyLinesToKeep : 4
 NamespaceIndentation : None
-#ObjCBinPackProtocolList
-#ObjCBlockIndentWidth
-#ObjCSpaceAfterProperty
-#ObjCSpaceBeforeProtocolList
-#PenaltyBreakAssignment
-#PenaltyBreakBeforeFirstCallParameter
-#PenaltyBreakComment
-#PenaltyBreakFirstLessLess
-#PenaltyBreakString
-#PenaltyBreakTemplateDeclaration
-#PenaltyExcessCharacter
-#PenaltyReturnTypeOnItsOwnLine
+#NamespaceMacros
+#ObjC...
+#Penalty...
 PointerAlignment : Left
 #RawStringFormats
 ReflowComments : false
 SortIncludes : false # But prefer true
 SortUsingDeclarations : false
 SpaceAfterCStyleCast : false
+SpaceAfterLogicalNot : false
 SpaceAfterTemplateKeyword : false
 SpaceBeforeAssignmentOperators : true
 SpaceBeforeCpp11BracedList : false
@@ -123,6 +120,8 @@ SpaceBeforeCtorInitializerColon : true
 SpaceBeforeInheritanceColon : true
 SpaceBeforeParens : false
 SpaceBeforeRangeBasedForLoopColon : true
+SpaceBeforeSquareBrackets : false
+SpaceInEmptyBlock : false
 SpaceInEmptyParentheses : false
 SpacesBeforeTrailingComments : 1
 SpacesInAngles : false
@@ -130,7 +129,10 @@ SpacesInCStyleCastParentheses : false
 SpacesInContainerLiterals : true
 SpacesInParentheses : true
 SpacesInSquareBrackets : false
-Standard : Cpp11 # Broken? Should be 'Cpp17'?
+Standard : c++17
 #StatementMacros
 TabWidth : 4 # ClangFormat seems to corrupt everything if this isn't 4???
+#TypenameMacros
+UseCRLF : true
 UseTab : Always
+#WhitespaceSensitiveMacros
