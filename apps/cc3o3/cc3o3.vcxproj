@@ -69,6 +69,7 @@
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="save\SaveBlob.cpp" />
+    <ClCompile Include="save\SaveLoader.cpp" />
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="state\components\Character.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="save\project.h" />
     <ClInclude Include="save\SaveBlob.h" />
     <ClInclude Include="save\SaveFwd.h" />
+    <ClInclude Include="save\SaveLoader.h" />
     <ClInclude Include="save\stdafx.h" />
     <ClInclude Include="state\Component.h" />
     <ClInclude Include="state\ComponentResolver.h" />

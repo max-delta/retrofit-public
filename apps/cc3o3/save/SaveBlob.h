@@ -12,5 +12,12 @@ struct SaveFileBlob final
 	bool mNewGame = true;
 };
 
+
+
+struct SaveBlob final
+{
+	SaveFileBlob mFile;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 }
