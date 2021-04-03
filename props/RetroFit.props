@@ -61,7 +61,7 @@
 			<AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
 
 			<!--This configures static analysis rules-->
-			<ForcedIncludeFiles>$(RFRootDir)config\StaticAnalysis.h; %(ForcedIncludeFiles)</ForcedIncludeFiles>
+			<ForcedIncludeFiles>$(RFRootDir)props\StaticAnalysis.h; %(ForcedIncludeFiles)</ForcedIncludeFiles>
 
 			<!--TODO: Document all these-->
 			<DisableSpecificWarnings>

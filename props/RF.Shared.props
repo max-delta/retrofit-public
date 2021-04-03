@@ -41,7 +41,7 @@
 			<RuntimeLibrary Condition="'$(RFConfig)'=='Retail'">MultiThreaded</RuntimeLibrary>
 
 			<!--Per-configuration config files set a bunch of giant switches-->
-			<ForcedIncludeFiles>$(RFRootDir)config\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+			<ForcedIncludeFiles>$(RFRootDir)props\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
 
 			<PreprocessorDefinitions Condition="'$(RFConfig)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
 			<PreprocessorDefinitions Condition="'$(RFConfig)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

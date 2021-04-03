@@ -19,7 +19,7 @@
 			<PreprocessorDefinitions Condition="'$(RFBuildStampSource)'!=''">RF_BUILDSTAMP_SOURCE="$(RFBuildStampSource)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
 			<!--This handles any missing values or other stamp-related helpers-->
-			<ForcedIncludeFiles>$(RFRootDir)config\BuildStamp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+			<ForcedIncludeFiles>$(RFRootDir)props\BuildStamp.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
 		</ClCompile>
 
 		<Link />
