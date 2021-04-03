@@ -74,57 +74,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AppCommon_GraphicalClient", "apps\AppCommon_GraphicalClient\AppCommon_GraphicalClient.vcxproj", "{981A2BFF-AE14-498B-857C-EFC0DBCB2AF7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{85C25EA0-1E41-4615-BDCB-AF262A401BB2}"
-	ProjectSection(SolutionItems) = preProject
-		.clang-format = .clang-format
-		.hgignore = .hgignore
-		config\AppCommon.props = config\AppCommon.props
-		azure-pipelines.yml = azure-pipelines.yml
-		config\BuildStamp.h = config\BuildStamp.h
-		config\BuildStamp.props = config\BuildStamp.props
-		config\Config.Debug.h = config\Config.Debug.h
-		config\Config.Release.h = config\Config.Release.h
-		config\Config.Retail.h = config\Config.Retail.h
-		cpp.hint = cpp.hint
-		config\Directories.props = config\Directories.props
-		config\Global.Cpp.props = config\Global.Cpp.props
-		config\PostConfig.inl = config\PostConfig.inl
-		config\PreConfig.h = config\PreConfig.h
-		retrofit.natvis = retrofit.natvis
-		config\RetroFit.props = config\RetroFit.props
-		config\RF.Apps.Dll.Platform.props = config\RF.Apps.Dll.Platform.props
-		config\RF.Apps.Dll.Preconfig.props = config\RF.Apps.Dll.Preconfig.props
-		config\RF.Apps.Dll.props = config\RF.Apps.Dll.props
-		config\RF.Apps.Exe.Platform.props = config\RF.Apps.Exe.Platform.props
-		config\RF.Apps.Exe.Preconfig.props = config\RF.Apps.Exe.Preconfig.props
-		config\RF.Apps.Exe.props = config\RF.Apps.Exe.props
-		config\RF.Apps.Module.Platform.props = config\RF.Apps.Module.Platform.props
-		config\RF.Apps.Module.Preconfig.props = config\RF.Apps.Module.Preconfig.props
-		config\RF.Apps.Module.props = config\RF.Apps.Module.props
-		config\RF.Core.Lib.Platform.props = config\RF.Core.Lib.Platform.props
-		config\RF.Core.Lib.Preconfig.props = config\RF.Core.Lib.Preconfig.props
-		config\RF.Core.Lib.props = config\RF.Core.Lib.props
-		config\RF.Foundation.Dll.Platform.props = config\RF.Foundation.Dll.Platform.props
-		config\RF.Foundation.Dll.Preconfig.props = config\RF.Foundation.Dll.Preconfig.props
-		config\RF.Foundation.Dll.props = config\RF.Foundation.Dll.props
-		config\RF.Game.Dll.Platform.props = config\RF.Game.Dll.Platform.props
-		config\RF.Game.Dll.Preconfig.props = config\RF.Game.Dll.Preconfig.props
-		config\RF.Game.Dll.props = config\RF.Game.Dll.props
-		config\RF.Platform.Dll.Platform.props = config\RF.Platform.Dll.Platform.props
-		config\RF.Platform.Dll.Preconfig.props = config\RF.Platform.Dll.Preconfig.props
-		config\RF.Platform.Dll.props = config\RF.Platform.Dll.props
-		config\RF.Shared.Platform.props = config\RF.Shared.Platform.props
-		config\RF.Shared.Preconfig.props = config\RF.Shared.Preconfig.props
-		config\RF.Shared.props = config\RF.Shared.props
-		config\StaticAnalysis.h = config\StaticAnalysis.h
-		config\ThirdParty.Lib.Platform.props = config\ThirdParty.Lib.Platform.props
-		config\ThirdParty.Lib.Preconfig.props = config\ThirdParty.Lib.Preconfig.props
-		config\ThirdParty.Lib.props = config\ThirdParty.Lib.props
-		config\ThirdParty.props = config\ThirdParty.props
-		config\vfs_cc3o3.ini = config\vfs_cc3o3.ini
-		config\vfs_core.ini = config\vfs_core.ini
-		config\vfs_example.ini = config\vfs_example.ini
-		config\vfs_test.ini = config\vfs_test.ini
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_logic", "libs\core_logic\core_logic.vcxproj", "{2948C034-415B-44ED-96F5-802EE3525F30}"
 EndProject
@@ -185,6 +134,63 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cc3o3_exe", "apps\cc3o3\cc3o3_exe.vcxproj", "{BF8CD658-749F-418F-8443-DD20122A2BC4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommandLine", "libs\CommandLine\CommandLine.vcxproj", "{7262B777-82D0-45BA-AF9A-4CCEFC43B240}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{2670AB90-A61C-4D97-B5E3-3BBA7718EC03}"
+	ProjectSection(SolutionItems) = preProject
+		config\AppCommon.props = config\AppCommon.props
+		config\BuildStamp.h = config\BuildStamp.h
+		config\BuildStamp.props = config\BuildStamp.props
+		config\Config.Debug.h = config\Config.Debug.h
+		config\Config.Release.h = config\Config.Release.h
+		config\Config.Retail.h = config\Config.Retail.h
+		config\Directories.props = config\Directories.props
+		config\Global.Cpp.props = config\Global.Cpp.props
+		config\PostConfig.inl = config\PostConfig.inl
+		config\PreConfig.h = config\PreConfig.h
+		config\RetroFit.props = config\RetroFit.props
+		config\RF.Apps.Dll.Platform.props = config\RF.Apps.Dll.Platform.props
+		config\RF.Apps.Dll.Preconfig.props = config\RF.Apps.Dll.Preconfig.props
+		config\RF.Apps.Dll.props = config\RF.Apps.Dll.props
+		config\RF.Apps.Exe.Platform.props = config\RF.Apps.Exe.Platform.props
+		config\RF.Apps.Exe.Preconfig.props = config\RF.Apps.Exe.Preconfig.props
+		config\RF.Apps.Exe.props = config\RF.Apps.Exe.props
+		config\RF.Apps.Module.Platform.props = config\RF.Apps.Module.Platform.props
+		config\RF.Apps.Module.Preconfig.props = config\RF.Apps.Module.Preconfig.props
+		config\RF.Apps.Module.props = config\RF.Apps.Module.props
+		config\RF.Core.Lib.Platform.props = config\RF.Core.Lib.Platform.props
+		config\RF.Core.Lib.Preconfig.props = config\RF.Core.Lib.Preconfig.props
+		config\RF.Core.Lib.props = config\RF.Core.Lib.props
+		config\RF.Foundation.Dll.Platform.props = config\RF.Foundation.Dll.Platform.props
+		config\RF.Foundation.Dll.Preconfig.props = config\RF.Foundation.Dll.Preconfig.props
+		config\RF.Foundation.Dll.props = config\RF.Foundation.Dll.props
+		config\RF.Game.Dll.Platform.props = config\RF.Game.Dll.Platform.props
+		config\RF.Game.Dll.Preconfig.props = config\RF.Game.Dll.Preconfig.props
+		config\RF.Game.Dll.props = config\RF.Game.Dll.props
+		config\RF.Platform.Dll.Platform.props = config\RF.Platform.Dll.Platform.props
+		config\RF.Platform.Dll.Preconfig.props = config\RF.Platform.Dll.Preconfig.props
+		config\RF.Platform.Dll.props = config\RF.Platform.Dll.props
+		config\RF.Shared.Platform.props = config\RF.Shared.Platform.props
+		config\RF.Shared.Preconfig.props = config\RF.Shared.Preconfig.props
+		config\RF.Shared.props = config\RF.Shared.props
+		config\StaticAnalysis.h = config\StaticAnalysis.h
+		config\ThirdParty.Lib.Platform.props = config\ThirdParty.Lib.Platform.props
+		config\ThirdParty.Lib.Preconfig.props = config\ThirdParty.Lib.Preconfig.props
+		config\ThirdParty.Lib.props = config\ThirdParty.Lib.props
+		config\ThirdParty.props = config\ThirdParty.props
+		config\vfs_cc3o3.ini = config\vfs_cc3o3.ini
+		config\vfs_core.ini = config\vfs_core.ini
+		config\vfs_example.ini = config\vfs_example.ini
+		config\vfs_test.ini = config\vfs_test.ini
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{13C7E520-F56E-40A1-B81B-D8518CF69614}"
+	ProjectSection(SolutionItems) = preProject
+		.clang-format = .clang-format
+		.hgignore = .hgignore
+		azure-pipelines.yml = azure-pipelines.yml
+		cpp.hint = cpp.hint
+		retrofit.natvis = retrofit.natvis
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -2403,6 +2409,8 @@ Global
 		{C4BE5BB1-6A7B-451F-86E3-64F6A77B37E7} = {4C2D7D6C-0C6A-46EC-9809-A255A81E2310}
 		{BF8CD658-749F-418F-8443-DD20122A2BC4} = {9FD8E78B-E043-4B9E-9AE5-31C4BC16D6CB}
 		{7262B777-82D0-45BA-AF9A-4CCEFC43B240} = {08FA27AA-1FC9-4100-B186-035269101155}
+		{2670AB90-A61C-4D97-B5E3-3BBA7718EC03} = {85C25EA0-1E41-4615-BDCB-AF262A401BB2}
+		{13C7E520-F56E-40A1-B81B-D8518CF69614} = {85C25EA0-1E41-4615-BDCB-AF262A401BB2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6F154CB3-9527-436A-9487-F586122585E3}
