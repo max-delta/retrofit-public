@@ -36,24 +36,24 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> members;
 
-	auto onMemberVariableFunc = [&members](
-		rftype::TypeTraverser::MemberVariableInstance const& varInst ) -> void
+	auto onMemberVariableFunc = [&members] //
+		( rftype::TypeTraverser::MemberVariableInstance const& varInst ) -> void //
 	{
 		members.emplace_back( varInst );
 	};
 
-	auto onTraversalTypeFoundFunc = [](
-										rftype::TypeTraverser::TraversalType traversalType,
-										rftype::TypeTraverser::TraversalVariableInstance const& varInst,
-		bool& shouldRecurse ) -> void
-	{
+	auto onTraversalTypeFoundFunc = //
+		[](
+			rftype::TypeTraverser::TraversalType traversalType,
+			rftype::TypeTraverser::TraversalVariableInstance const& varInst,
+			bool& shouldRecurse ) -> void {
 		shouldRecurse = false;
 	};
 
-	auto onReturnFromTraversalTypeFunc = [](
-											 rftype::TypeTraverser::TraversalType traversalType,
-		rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void
-	{
+	auto onReturnFromTraversalTypeFunc = //
+		[](
+			rftype::TypeTraverser::TraversalType traversalType,
+			rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void {
 		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unexpected recursion" );
 	};
 
@@ -179,13 +179,14 @@ bool WriteScriptStringToMemberVariable(
 	{
 		accessor->mBeginMutation( location );
 	}
-	auto endMutation = OnScopeEnd( [accessor, location]()
-	{
-		if( accessor->mEndMutation != nullptr )
+	auto endMutation = OnScopeEnd(
+		[accessor, location]() //
 		{
-			accessor->mEndMutation( location );
-		}
-	} );
+			if( accessor->mEndMutation != nullptr )
+			{
+				accessor->mEndMutation( location );
+			}
+		} );
 
 	// For each character...
 	size_t indexCounter = 0;
@@ -226,13 +227,14 @@ bool ProcessElementArrayPopulationWork(
 	{
 		accessor->mBeginMutation( location );
 	}
-	auto endMutation = OnScopeEnd( [accessor, location]()
-	{
-		if( accessor->mEndMutation != nullptr )
+	auto endMutation = OnScopeEnd(
+		[accessor, location]() //
 		{
-			accessor->mEndMutation( location );
-		}
-	} );
+			if( accessor->mEndMutation != nullptr )
+			{
+				accessor->mEndMutation( location );
+			}
+		} );
 
 	reflect::VariableTypeInfo keyInfo = {};
 	keyInfo.mValueType = reflect::Value::DetermineType<size_t>();

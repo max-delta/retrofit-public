@@ -244,8 +244,7 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 			{ sequence.mBottomNearRow, sequence.mBottomCol, sequence.mBottomOffsetX, sequence.mBottomOffsetY, params.mBottomTex },
 			{ sequence.mTopNearRow, sequence.mTopCol, sequence.mTopOffsetX, sequence.mTopOffsetY, params.mTopTex },
 			{ sequence.mHairNearRow, sequence.mHairCol, sequence.mHairOffsetX, sequence.mHairOffsetY, params.mHairTex },
-			{ sequence.mSpeciesNearRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex }
-		};
+			{ sequence.mSpeciesNearRow, sequence.mSpeciesCol, sequence.mSpeciesOffsetX, sequence.mSpeciesOffsetY, params.mSpeciesTex } };
 
 		for( Input const& entry : input )
 		{
@@ -343,8 +342,7 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 		CharacterAnimKey::NWalk,
 		CharacterAnimKey::EWalk,
 		CharacterAnimKey::SWalk,
-		CharacterAnimKey::WWalk
-	};
+		CharacterAnimKey::WWalk };
 	static constexpr size_t kFramepackSourceFrames[kTotalFramepacks][kAnimFramesPerDirection] = {
 		{ 0, 0, 0, 0 },
 		{ 4, 4, 4, 4 },
@@ -353,8 +351,7 @@ void CharacterCompositor::CreateCompositeAnims( CompositeAnimParams const& param
 		{ 1, 2, 3, 2 },
 		{ 5, 6, 7, 6 },
 		{ 9, 10, 11, 10 },
-		{ 13, 14, 15, 14 }
-	};
+		{ 13, 14, 15, 14 } };
 
 	// Create framepacks
 	for( size_t i_framepack = 0; i_framepack < kTotalFramepacks; i_framepack++ )
