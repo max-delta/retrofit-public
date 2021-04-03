@@ -208,6 +208,9 @@
     <ClCompile Include="sync\Session.cpp">
       <Filter>sync</Filter>
     </ClCompile>
+    <ClCompile Include="save\SaveBlob.cpp">
+      <Filter>save</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -561,6 +564,18 @@
     <ClInclude Include="sync\Session.h">
       <Filter>sync</Filter>
     </ClInclude>
+    <ClInclude Include="save\stdafx.h">
+      <Filter>save</Filter>
+    </ClInclude>
+    <ClInclude Include="save\project.h">
+      <Filter>save</Filter>
+    </ClInclude>
+    <ClInclude Include="save\SaveBlob.h">
+      <Filter>save</Filter>
+    </ClInclude>
+    <ClInclude Include="save\SaveFwd.h">
+      <Filter>save</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -610,6 +625,9 @@
     </Filter>
     <Filter Include="sync">
       <UniqueIdentifier>{87a0fe54-76a3-45fa-b4da-07880d0f517a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="save">
+      <UniqueIdentifier>{0c541ae1-7342-431c-85fc-4c65e1def9aa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
