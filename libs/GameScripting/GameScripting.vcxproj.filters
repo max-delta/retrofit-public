@@ -9,6 +9,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="OOLoader.h" />
+    <ClInclude Include="ScriptFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OOLoader.inl" />

@@ -1,9 +1,13 @@
 #pragma once
 #include "project.h"
 
+#include "GameScripting/ScriptFwd.h"
+
 #include "Scripting_squirrel/squirrel.h"
 
 #include "core_reflect/ClassInfo.h"
+
+#include "rftl/string_view"
 
 
 namespace RF::script {
@@ -31,6 +35,7 @@ public:
 	// Source must be added before the loader can populate data
 	bool AddSourceFromBuffer( rftl::string const& buffer );
 	bool AddSourceFromBuffer( char const* buffer, size_t len );
+	bool AddSourceFromBuffer( rftl::string_view buffer );
 
 	// Reflected classes can be populated
 	template<typename ReflectedClass>

@@ -6,8 +6,15 @@
 #include "core_rftype/TypeTraverser.h"
 #include "core/meta/ScopedCleanup.h"
 
+#include "rftl/extension/string_copy.h"
 #include "rftl/sstream"
 
+
+template<>
+void RF::logging::WriteContextString( rftype::TypeTraverser::MemberVariableInstance const& context, Utf8LogContextBuffer& buffer )
+{
+	rftl::string_copy( buffer, rftl::string_view( context.mMemberVariableInfo.mIdentifier ) );
+}
 
 namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,15 +43,15 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 	};
 
 	auto onTraversalTypeFoundFunc = [](
-		rftype::TypeTraverser::TraversalType traversalType,
-		rftype::TypeTraverser::TraversalVariableInstance const& varInst,
+										rftype::TypeTraverser::TraversalType traversalType,
+										rftype::TypeTraverser::TraversalVariableInstance const& varInst,
 		bool& shouldRecurse ) -> void
 	{
 		shouldRecurse = false;
 	};
 
 	auto onReturnFromTraversalTypeFunc = [](
-		rftype::TypeTraverser::TraversalType traversalType,
+											 rftype::TypeTraverser::TraversalType traversalType,
 		rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unexpected recursion" );
@@ -127,7 +134,7 @@ bool WriteScriptValueToMemberVariable(
 	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
 	if( destinationType == reflect::Value::Type::Invalid )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Cannot convert script element to an invalid member variable type" );
+		RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING, "Cannot convert script element to an invalid member variable type" );
 		return false;
 	}
 
@@ -138,7 +145,7 @@ bool WriteScriptValueToMemberVariable(
 	reflect::Value const intermediate = source.ConvertTo( destinationType );
 	if( intermediate.GetStoredType() != destinationType )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script element to member variable type" );
+		RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING, "Failed to convert script element to member variable type" );
 		return false;
 	}
 
@@ -587,6 +594,13 @@ bool OOLoader::AddSourceFromBuffer( rftl::string const& buffer )
 bool OOLoader::AddSourceFromBuffer( char const* buffer, size_t len )
 {
 	return mVm.AddSourceFromBuffer( buffer, len );
+}
+
+
+
+bool OOLoader::AddSourceFromBuffer( rftl::string_view buffer )
+{
+	return mVm.AddSourceFromBuffer( buffer.data(), buffer.size() );
 }
 
 
