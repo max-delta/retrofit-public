@@ -76,6 +76,9 @@
     <ClInclude Include="extension\void_alias.h">
       <Filter>extension</Filter>
     </ClInclude>
+    <ClInclude Include="extension\string_copy.h">
+      <Filter>extension</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="patch\preinclude.inl">

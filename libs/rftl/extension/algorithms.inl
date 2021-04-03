@@ -26,5 +26,22 @@ inline size_t erase_duplicates( Container& container )
 	return container.size() - originalSize;
 }
 
+
+
+template<typename DestContainer, typename SourceContainer>
+auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator
+{
+	typename DestContainer::iterator destIter = dest.begin();
+	typename SourceContainer::const_iterator sourceIter = source.begin();
+	while( destIter != dest.end() && sourceIter != source.end() )
+	{
+		*destIter = *sourceIter;
+		destIter++;
+		sourceIter++;
+	}
+
+	return destIter;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
