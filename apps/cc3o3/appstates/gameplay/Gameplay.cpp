@@ -20,6 +20,7 @@
 #include "cc3o3/state/objects/BattleCharacter.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/state/components/Progression.h"
+#include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
@@ -68,19 +69,24 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	input::HardcodedPlayerSetup( InputHelpers::GetSinglePlayer() );
 	InputHelpers::MakeLocal( InputHelpers::GetSinglePlayer() );
 
-	// Load save blob
-	UniquePtr<save::SaveBlob> saveBlobPtr;
+	// HACK: Choose arbitrary save
+	// TODO: Actual save management logic should've happend before this
+	save::SaveManager::SaveName saveName;
 	{
 		save::SaveManager const& saveMan = *gSaveManager;
 		save::SaveManager::SaveNames const saveNames = saveMan.FindSaveNames();
-
-		// HACK: Choose arbitrary save
-		// TODO: Actual save management logic
 		RF_ASSERT( saveNames.size() == 1 );
-		saveBlobPtr = saveMan.LoadBlob( *saveNames.begin() );
+		saveName = *saveNames.begin();
 	}
-	RFLOG_TEST_AND_FATAL( saveBlobPtr != nullptr, nullptr, RFCAT_CC3O3, "Failed to load save data" );
-	save::SaveBlob const& saveBlob = *saveBlobPtr;
+
+	// Load save blob
+	UniquePtr<save::SaveBlob> initialSaveBlobPtr;
+	{
+		save::SaveManager const& saveMan = *gSaveManager;
+		initialSaveBlobPtr = saveMan.LoadBlob( saveName );
+	}
+	RFLOG_TEST_AND_FATAL( initialSaveBlobPtr != nullptr, nullptr, RFCAT_CC3O3, "Failed to load initial save data" );
+	save::SaveBlob const& saveBlob = *initialSaveBlobPtr;
 
 	RF_TODO_ANNOTATION( "Use save data" );
 	( (void)saveBlob );
@@ -171,8 +177,6 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 			// Create company object
 			MutableObjectRef const company = CreateCompany( sharedWindow, privateWindow, companyRoot );
-			comp::Roster& roster = *company.GetMutableComponentInstanceT<comp::Roster>();
-			comp::Progression& progression = *company.GetMutableComponentInstanceT<comp::Progression>();
 
 			// Set up all characters
 			// NOTE: Characters with the company as their root are implicitly
@@ -195,11 +199,42 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 					sharedWindow, privateWindow,
 					newChar, characterID );
 
-				// HACK: All valid characters are eligible
-				// TODO: Tie to story progression
-				roster.mEligible.at( rosterIndex ) = true;
-
 				rosterIndex++;
+			}
+		}
+
+		// Set up the UI
+		{
+			VariableIdentifier const localUIRoot( "localUI" );
+			CreateLocalUI( sharedWindow, privateWindow, localUIRoot );
+		}
+	}
+
+	// HACK: Setup hardcoded game data
+	{
+		using namespace state;
+		using namespace state::obj;
+
+		// Set up each company
+		// TODO: Multiple companies for competitive multiplayer
+		{
+			// HACK: Only local player
+			input::PlayerID const playerID = InputHelpers::GetSinglePlayer();
+			VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
+
+			// Get company object
+			MutableObjectRef const company = FindMutableObjectByIdentifier( companyRoot );
+			comp::Roster& roster = *company.GetMutableComponentInstanceT<comp::Roster>();
+			comp::Progression& progression = *company.GetMutableComponentInstanceT<comp::Progression>();
+
+			// HACK: All valid characters are eligible
+			// TODO: Tie to story progression
+			for( size_t i_char = 0; i_char < characterIDs.size(); i_char++ )
+			{
+				company::RosterIndex const rosterIndex =
+					math::integer_cast<company::RosterIndex>(
+						company::kInititialRosterIndex + i_char );
+				roster.mEligible.at( rosterIndex ) = true;
 			}
 
 			// HACK: Make sure some hard-coded characters are present
@@ -218,29 +253,27 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			// TODO: Sanitize? Or atleast warn on invalid setup
 			gCompanyManager->ReadLoadoutsFromSave( playerID );
 		}
+	}
 
-		// Set up the UI
-		{
-			VariableIdentifier const localUIRoot( "localUI" );
-			CreateLocalUI( sharedWindow, privateWindow, localUIRoot );
-		}
+	// HACK: Save out the state for diagnostics
+	// TODO: More formal snapshotting
+	{
+		rollback::RollbackManager& rollMan = *gRollbackManager;
+		rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
+		rollback::Domain& privateDomain = rollMan.GetMutablePrivateDomain();
 
-		// HACK: Save out the state for diagnostics
-		// TODO: More formal snapshotting
-		{
-			WeakPtr<rollback::Snapshot const> const sharedSnapshot =
-				sharedDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
-			RF_ASSERT( sharedSnapshot != nullptr );
-			WeakPtr<rollback::Snapshot const> const privateSnapshot =
-				privateDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
-			RF_ASSERT( privateSnapshot != nullptr );
+		WeakPtr<rollback::Snapshot const> const sharedSnapshot =
+			sharedDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
+		RF_ASSERT( sharedSnapshot != nullptr );
+		WeakPtr<rollback::Snapshot const> const privateSnapshot =
+			privateDomain.TakeManualSnapshot( "GameStart", time::FrameClock::now() );
+		RF_ASSERT( privateSnapshot != nullptr );
 
-			file::VFS const& vfs = *app::gVfs;
-			sync::SnapshotSerializer::SerializeToDiagnosticFile(
-				*sharedSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "sharedTest.diag" ) );
-			sync::SnapshotSerializer::SerializeToDiagnosticFile(
-				*privateSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "privateTest.diag" ) );
-		}
+		file::VFS const& vfs = *app::gVfs;
+		sync::SnapshotSerializer::SerializeToDiagnosticFile(
+			*sharedSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "sharedTest.diag" ) );
+		sync::SnapshotSerializer::SerializeToDiagnosticFile(
+			*privateSnapshot, vfs, file::VFS::kRoot.GetChild( "scratch", "snapshots", "privateTest.diag" ) );
 	}
 
 	// Start sub-states
