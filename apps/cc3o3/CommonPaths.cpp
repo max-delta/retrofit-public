@@ -36,7 +36,7 @@ file::VFSPath TablesRoot()
 }
 file::VFSPath UserSavesRoot()
 {
-	return file::VFS::kRoot.GetChild( "scratch", "saves" );
+	return file::VFS::kRoot.GetChild( "saves" );
 }
 
 file::VFSPath CommonFonts()
