@@ -4,6 +4,8 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/save/SaveBlob.h"
+#include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CharacterSlotList.h"
@@ -51,6 +53,7 @@ public:
 		{
 			kStatus = 0,
 			kLoadout,
+			kSaves,
 			kOptions,
 
 			kNumSections
@@ -59,12 +62,14 @@ public:
 		static constexpr char const* kLabels[kNumSections] = {
 			"H_status",
 			"H_loadout",
+			"H_saves",
 			"H_options",
 		};
 
 		static constexpr char const* kHeaders[kNumSections] = {
 			"$gamemenu_status_header",
 			"$gamemenu_loadout_header",
+			"$gamemenu_saves_header",
 			"$gamemenu_options_header",
 		};
 	};
@@ -247,12 +252,17 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kLoadout ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const savesPassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kSaves ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		WeakPtr<ui::controller::Passthrough> const optionsPassthrough =
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kOptions ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mTopLevelControllers.at( TopLevelSections::kStatus ) = statusPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kLoadout ) = loadoutPassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kSaves ) = savesPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kOptions ) = optionsPassthrough;
 		for( WeakPtr<ui::controller::InstancedController> const& controller : internalState.mTopLevelControllers )
 		{
@@ -386,6 +396,16 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			elementGridSelector->SetChildRenderingBlocked( true );
 			elementStockpileSelector->SetRenderingBlocked( true );
 			elementStockpileSelector->SetChildRenderingBlocked( true );
+		}
+
+		// Saves section
+		{
+			// Placeholder
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					savesPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 		}
 
 		// Options section
@@ -602,6 +622,30 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 								state::ObjectRef const currentChar = internalState.GetCurrentLoadoutCharacter( uiContext );
 								internalState.mElementGridSelector->UpdateFromCharacter( currentChar );
 							}
+						}
+					}
+					else if( currentSection == TopLevelSections::kSaves )
+					{
+						// Saves
+
+						if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+						{
+							// HACK: Save to an arbitrary slot
+							// TODO: Proper logic
+							save::SaveManager& saveMan = *gSaveManager;
+							save::SaveManager::SaveNames const saveNames = saveMan.FindSaveNames();
+							RF_ASSERT( saveNames.size() == 1 );
+							bool const saved = saveMan.PerformStore( *saveNames.begin(), save::SaveBlob{} );
+							if( saved == false )
+							{
+								RFLOG_NOTIFY( nullptr, RFCAT_CC3O3, "Failed to save" );
+							}
+						}
+						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+						{
+							// HACK: Always pop back up to section selector
+							// TODO: Proper logic
+							internalState.ShowSelector( uiContext );
 						}
 					}
 					else if( currentSection == TopLevelSections::kOptions )

@@ -41,7 +41,7 @@ SaveManager::SaveNames SaveManager::FindSaveNames() const
 
 
 
-UniquePtr<SaveBlob> SaveManager::LoadSave( SaveName const& name ) const
+UniquePtr<SaveBlob> SaveManager::LoadBlob( SaveName const& name ) const
 {
 	file::VFS const& vfs = *app::gVfs;
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
@@ -62,6 +62,30 @@ UniquePtr<SaveBlob> SaveManager::LoadSave( SaveName const& name ) const
 	// Load
 	SaveLoader const loader;
 	return loader.LoadFromBuffer( fileBuffer.GetChars() );
+}
+
+
+
+bool SaveManager::StoreBlob( SaveName const& name, SaveBlob const& blob )
+{
+	RF_TODO_BREAK();
+	return false;
+}
+
+
+
+UniquePtr<SaveBlob> SaveManager::PerformLoad( SaveName const& name )
+{
+	RF_TODO_BREAK();
+	return LoadBlob( name );
+}
+
+
+
+bool SaveManager::PerformStore( SaveName const& name, SaveBlob const& blob )
+{
+	RF_TODO_BREAK();
+	return StoreBlob( name, blob );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

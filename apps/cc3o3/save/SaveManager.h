@@ -30,7 +30,13 @@ public:
 
 	SaveNames FindSaveNames() const;
 
-	UniquePtr<SaveBlob> LoadSave( SaveName const& name ) const;
+	// Simple save/load of blob data associated with save
+	UniquePtr<SaveBlob> LoadBlob( SaveName const& name ) const;
+	bool StoreBlob( SaveName const& name, SaveBlob const& blob );
+
+	// Comprehensive load/save of data for major gameplay systems
+	UniquePtr<SaveBlob> PerformLoad( SaveName const& name );
+	bool PerformStore( SaveName const& name, SaveBlob const& blob );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

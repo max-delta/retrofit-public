@@ -10,6 +10,7 @@
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/state/objects/Company.h"
@@ -67,7 +68,22 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	input::HardcodedPlayerSetup( InputHelpers::GetSinglePlayer() );
 	InputHelpers::MakeLocal( InputHelpers::GetSinglePlayer() );
 
-	// TODO: Load save
+	// Load save blob
+	UniquePtr<save::SaveBlob> saveBlobPtr;
+	{
+		save::SaveManager const& saveMan = *gSaveManager;
+		save::SaveManager::SaveNames const saveNames = saveMan.FindSaveNames();
+
+		// HACK: Choose arbitrary save
+		// TODO: Actual save management logic
+		RF_ASSERT( saveNames.size() == 1 );
+		saveBlobPtr = saveMan.LoadBlob( *saveNames.begin() );
+	}
+	RFLOG_TEST_AND_FATAL( saveBlobPtr != nullptr, nullptr, RFCAT_CC3O3, "Failed to load save data" );
+	save::SaveBlob const& saveBlob = *saveBlobPtr;
+
+	RF_TODO_ANNOTATION( "Use save data" );
+	( (void)saveBlob );
 
 	// Prepare the character database
 	character::CharacterDatabase& charDB = *gCharacterDatabase;

@@ -9,7 +9,7 @@ namespace RF::cc::save {
 
 struct SaveFileBlob final
 {
-	bool mNewGame = true;
+	bool mNewGame = false;
 };
 
 
