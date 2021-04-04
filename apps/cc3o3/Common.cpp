@@ -6,6 +6,7 @@
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/CommonPaths.h"
 
@@ -38,6 +39,7 @@ WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<state::ObjectManager> gObjectManager;
+WeakPtr<save::SaveManager> gSaveManager;
 static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
@@ -47,6 +49,7 @@ static UniquePtr<combat::CombatEngine> sCombatEngine;
 static UniquePtr<element::ElementDatabase> sElementDatabase;
 static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<state::ObjectManager> sObjectManager;
+static UniquePtr<save::SaveManager> sSaveManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -99,6 +102,10 @@ void SystemStartup()
 		component::ManagerIdentifier( 1u ), component::ScopeIdentifier( 1u ), state::ComponentResolver() );
 	gObjectManager = sObjectManager;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing save manager..." );
+	sSaveManager = DefaultCreator<save::SaveManager>::Create();
+	gSaveManager = sSaveManager;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "System startup complete" );
 }
 
@@ -106,6 +113,7 @@ void SystemStartup()
 
 void SystemShutdown()
 {
+	sSaveManager = nullptr;
 	sObjectManager = nullptr;
 	sCompanyManager = nullptr;
 	sElementDatabase = nullptr;

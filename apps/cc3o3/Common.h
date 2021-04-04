@@ -30,6 +30,9 @@ namespace RF::component {
 template<typename TypeResolver>
 class TypedObjectManager;
 }
+namespace RF::cc::save {
+class SaveManager;
+}
 namespace RF::cc::state {
 struct ComponentResolver;
 using ObjectManager = component::TypedObjectManager<ComponentResolver>;
@@ -48,6 +51,7 @@ extern WeakPtr<combat::CombatEngine> gCombatEngine;
 extern WeakPtr<element::ElementDatabase> gElementDatabase;
 extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;
+extern WeakPtr<save::SaveManager> gSaveManager;
 
 void SystemStartup();
 void SystemShutdown();
