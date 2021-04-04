@@ -758,6 +758,12 @@ rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& col
 		return rftl::string();
 	}
 
+	if( collapsedPath == mount.mVirtualPath )
+	{
+		// At mount, with no overlap
+		return GetRealMountPoint( mount ).CreateString();
+	}
+
 	if( collapsedPath.IsDescendantOf( mount.mVirtualPath ) == false )
 	{
 		// Not under this mount point
