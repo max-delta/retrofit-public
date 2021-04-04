@@ -56,7 +56,7 @@ UniquePtr<SaveBlob> SaveManager::LoadBlob( SaveName const& name ) const
 	{
 		file::FileHandlePtr const fileHandle = vfs.GetFileForRead( filePath );
 		RFLOG_TEST_AND_FATAL( fileHandle != nullptr, filePath, RFCAT_CC3O3, "Failed to open save for read" );
-		fileBuffer = rftl::move( file::FileBuffer( *fileHandle, true ) );
+		fileBuffer = file::FileBuffer( *fileHandle, true );
 		size_t const fileSize = fileBuffer.GetSize();
 		RFLOG_TEST_AND_FATAL( fileSize > 10, filePath, RFCAT_CC3O3, "Unreasonably small file" );
 		RFLOG_TEST_AND_FATAL( fileSize < 10'000, filePath, RFCAT_CC3O3, "Unreasonably large file" );

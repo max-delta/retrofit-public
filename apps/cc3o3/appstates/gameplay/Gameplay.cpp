@@ -164,7 +164,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 			VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
 
 			// Create company object
-			MutableObjectRef const company = CreateCompany( sharedWindow, privateWindow, companyRoot );
+			CreateCompany( sharedWindow, privateWindow, companyRoot );
 
 			// Set up all characters
 			// NOTE: Characters with the company as their root are implicitly
