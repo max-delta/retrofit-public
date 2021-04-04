@@ -244,6 +244,14 @@ inline typename SegmentedIdentifier<ElementT>::Element const& SegmentedIdentifie
 
 
 template<typename ElementT>
+inline typename SegmentedIdentifier<ElementT>::Element const& SegmentedIdentifier<ElementT>::GetLastElement() const
+{
+	return m_ElementList.back();
+}
+
+
+
+template<typename ElementT>
 inline typename SegmentedIdentifier<ElementT>::const_iterator SegmentedIdentifier<ElementT>::begin() const
 {
 	return m_ElementList.cbegin();

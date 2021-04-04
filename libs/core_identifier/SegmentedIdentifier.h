@@ -57,6 +57,7 @@ public:
 	bool Empty() const;
 	size_t NumElements() const;
 	Element const& GetElement( size_t index ) const;
+	Element const& GetLastElement() const;
 
 	// Range support
 	const_iterator begin() const;
