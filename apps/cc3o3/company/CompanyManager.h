@@ -64,20 +64,14 @@ public:
 	void AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element );
 
 	// Save/load loadouts to/from disk
-	void ReadLoadoutsFromSave( input::PlayerID const& playerID );
-	void WriteLoadoutsToSave( input::PlayerID const& playerID );
+	void ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
+	void WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
 
 	// TODO: Need various validation machinery:
 	//  * Loadout setup / UI helpers
 	//  * Hard-fail gameplay verification
 	//  * Cheat detection
 	void TODO_ValidateLoadouts();
-
-
-	//
-	// Private methods
-private:
-	file::VFSPath GetLoadoutSavePath( input::PlayerID const& playerID );
 
 
 	//

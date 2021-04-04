@@ -35,8 +35,8 @@ public:
 	bool StoreBlob( SaveName const& name, SaveBlob const& blob );
 
 	// Comprehensive load/save of data for major gameplay systems
-	UniquePtr<SaveBlob> PerformLoad( SaveName const& name );
-	bool PerformStore( SaveName const& name, SaveBlob const& blob );
+	bool PerformLoad( SaveName const& name );
+	bool PerformStore( SaveName const& name );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

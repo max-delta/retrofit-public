@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "SaveManager.h"
 
+#include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/save/SaveBlob.h"
 #include "cc3o3/save/SaveLoader.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -69,23 +73,34 @@ UniquePtr<SaveBlob> SaveManager::LoadBlob( SaveName const& name ) const
 bool SaveManager::StoreBlob( SaveName const& name, SaveBlob const& blob )
 {
 	RF_TODO_BREAK();
-	return false;
+	return true;
 }
 
 
 
-UniquePtr<SaveBlob> SaveManager::PerformLoad( SaveName const& name )
+bool SaveManager::PerformLoad( SaveName const& name )
 {
-	RF_TODO_BREAK();
-	return LoadBlob( name );
+	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
+
+	// Read in loadouts
+	// TODO: Sanitize? Or atleast warn on invalid setup
+	gCompanyManager->ReadLoadoutsFromSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );
+
+	RF_TODO_ANNOTATION( "Use the blob for system data?" );
+	return LoadBlob( name ) != nullptr;
 }
 
 
 
-bool SaveManager::PerformStore( SaveName const& name, SaveBlob const& blob )
+bool SaveManager::PerformStore( SaveName const& name )
 {
-	RF_TODO_BREAK();
-	return StoreBlob( name, blob );
+	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
+
+	// Save loadouts
+	gCompanyManager->WriteLoadoutsToSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );
+
+	RF_TODO_ANNOTATION( "Build the blob from system data" );
+	return StoreBlob( name, SaveBlob{} );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -70,7 +70,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	InputHelpers::MakeLocal( InputHelpers::GetSinglePlayer() );
 
 	// HACK: Choose arbitrary save
-	// TODO: Actual save management logic should've happend before this
+	// TODO: Actual save management logic should've happened before this
 	save::SaveManager::SaveName saveName;
 	{
 		save::SaveManager const& saveMan = *gSaveManager;
@@ -78,18 +78,6 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		RF_ASSERT( saveNames.size() == 1 );
 		saveName = *saveNames.begin();
 	}
-
-	// Load save blob
-	UniquePtr<save::SaveBlob> initialSaveBlobPtr;
-	{
-		save::SaveManager const& saveMan = *gSaveManager;
-		initialSaveBlobPtr = saveMan.LoadBlob( saveName );
-	}
-	RFLOG_TEST_AND_FATAL( initialSaveBlobPtr != nullptr, nullptr, RFCAT_CC3O3, "Failed to load initial save data" );
-	save::SaveBlob const& saveBlob = *initialSaveBlobPtr;
-
-	RF_TODO_ANNOTATION( "Use save data" );
-	( (void)saveBlob );
 
 	// Prepare the character database
 	character::CharacterDatabase& charDB = *gCharacterDatabase;
@@ -248,11 +236,13 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 
 			// HACK: Set some fake progression
 			progression.mStoryTier = 6;
-
-			// Read in loadouts
-			// TODO: Sanitize? Or atleast warn on invalid setup
-			gCompanyManager->ReadLoadoutsFromSave( playerID );
 		}
+	}
+
+	// Load save
+	{
+		bool const loaded = gSaveManager->PerformLoad( saveName );
+		RFLOG_TEST_AND_FATAL( loaded, nullptr, RFCAT_CC3O3, "Failed to load save data" );
 	}
 
 	// HACK: Save out the state for diagnostics

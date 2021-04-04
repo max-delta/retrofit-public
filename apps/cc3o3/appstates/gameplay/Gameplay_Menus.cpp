@@ -4,7 +4,6 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/company/CompanyManager.h"
-#include "cc3o3/save/SaveBlob.h"
 #include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
@@ -596,9 +595,6 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 							{
 								// Exit section
 								internalState.ShowSelector( uiContext );
-
-								// Save loadouts
-								gCompanyManager->WriteLoadoutsToSave( InputHelpers::GetSinglePlayer() );
 							}
 							else if( internalState.mElementGridSelector->SlotHasCurrentFocus( uiContext ) )
 							{
@@ -635,7 +631,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 							save::SaveManager& saveMan = *gSaveManager;
 							save::SaveManager::SaveNames const saveNames = saveMan.FindSaveNames();
 							RF_ASSERT( saveNames.size() == 1 );
-							bool const saved = saveMan.PerformStore( *saveNames.begin(), save::SaveBlob{} );
+							bool const saved = saveMan.PerformStore( *saveNames.begin() );
 							if( saved == false )
 							{
 								RFLOG_NOTIFY( nullptr, RFCAT_CC3O3, "Failed to save" );

@@ -22,6 +22,15 @@
 
 namespace RF::cc::company {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static file::VFSPath GetLoadoutSavePath( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
+{
+	return saveRoot.GetChild( "company", rftl::to_string( playerID ), "loadout" );
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 CompanyManager::CompanyManager(
 	WeakPtr<file::VFS const> const& vfs,
@@ -262,9 +271,9 @@ void CompanyManager::AssignElementToCharacter( state::comp::Loadout& loadout, ch
 
 
 
-void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
+void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
 {
-	file::VFSPath const loadoutRoot = GetLoadoutSavePath( playerID );
+	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
 
 	static constexpr size_t kFileSize =
 		sizeof( element::ElementIdentifier ) *
@@ -336,9 +345,9 @@ void CompanyManager::ReadLoadoutsFromSave( input::PlayerID const& playerID )
 
 
 
-void CompanyManager::WriteLoadoutsToSave( input::PlayerID const& playerID )
+void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
 {
-	file::VFSPath const loadoutRoot = GetLoadoutSavePath( playerID );
+	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
 
 	static constexpr size_t kFileSize =
 		sizeof( element::ElementIdentifier ) *
@@ -409,16 +418,6 @@ void CompanyManager::TODO_ValidateLoadouts()
 	// TODO: Check for valid innate elements from a list
 	// TODO: Check for valid equipped elements from a list
 	// TODO: Check total active party loadout against company stockpile
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-file::VFSPath CompanyManager::GetLoadoutSavePath( input::PlayerID const& playerID )
-{
-	// TODO: Save manager
-	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( "TODO" );
-	file::VFSPath const companyLoadoutRoot = paths::UserSavesRoot().GetChild( "company", rftl::to_string( playerID ), "loadout" );
-	return companyLoadoutRoot;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
