@@ -61,15 +61,15 @@ void MakeOverworldCharacterFromDB(
 
 		character::CharacterDatabase const& charDB = *gCharacterDatabase;
 		sprite::CompositeCharacter const composite = charDB.FetchExistingComposite( charID, "24" );
-		RFLOG_TEST_AND_FATAL( composite.mCharacterSequenceType == sprite::CharacterSequenceType::P_NESW_i121, ref, RFCAT_CC3O3, "Unsupported sequence" );
-		file::VFSPath const nIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::NIdle );
-		file::VFSPath const eIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::EIdle );
-		file::VFSPath const sIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::SIdle );
-		file::VFSPath const wIdle = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::WIdle );
-		file::VFSPath const nWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::NWalk );
-		file::VFSPath const eWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::EWalk );
-		file::VFSPath const sWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::SWalk );
-		file::VFSPath const wWalk = composite.mFramepacksByAnim.at( sprite::CharacterAnimKey::WWalk );
+		RF_TODO_ANNOTATION( "Clean up this logic and make it better at checking data integrity" );
+		file::VFSPath const nIdle = composite.mFramepacksByAnim.at( "idle_n" );
+		file::VFSPath const eIdle = composite.mFramepacksByAnim.at( "idle_e" );
+		file::VFSPath const sIdle = composite.mFramepacksByAnim.at( "idle_s" );
+		file::VFSPath const wIdle = composite.mFramepacksByAnim.at( "idle_w" );
+		file::VFSPath const nWalk = composite.mFramepacksByAnim.at( "walk_n" );
+		file::VFSPath const eWalk = composite.mFramepacksByAnim.at( "walk_e" );
+		file::VFSPath const sWalk = composite.mFramepacksByAnim.at( "walk_s" );
+		file::VFSPath const wWalk = composite.mFramepacksByAnim.at( "walk_w" );
 
 		gfx::PPUController& ppu = *app::gGraphics;
 		gfx::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
@@ -87,7 +87,7 @@ void MakeOverworldCharacterFromDB(
 			gfx::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
 			anim.mSlowdownRate = fPack.mPreferredSlowdownRate;
 			anim.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary();
-			RF_ASSERT_MSG( anim.mMaxTimeIndex == 4, "Unexpected format" );
+			RF_ASSERT_MSG( anim.mMaxTimeIndex == 1 || anim.mMaxTimeIndex == 4, "Unexpected format" );
 		};
 		setAnim( visual->mIdleNorth, nIdle );
 		setAnim( visual->mIdleEast, eIdle );

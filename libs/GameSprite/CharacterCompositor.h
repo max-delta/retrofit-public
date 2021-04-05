@@ -45,12 +45,18 @@ enum class CharacterPieceType : uint8_t
 
 struct GAMESPRITE_API CompositeSequenceParams
 {
-	static constexpr size_t kInvalidRow = rftl::numeric_limits<size_t>::max();
-
-	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
-
 	size_t mCompositeWidth = 0;
 	size_t mCompositeHeight = 0;
+};
+
+
+
+struct GAMESPRITE_API CompositeFrameParams
+{
+	static constexpr size_t kInvalidRow = rftl::numeric_limits<size_t>::max();
+	static constexpr size_t kInvalidCol = rftl::numeric_limits<size_t>::max();
+
+	CompositeSequenceParams mSequence = {};
 
 	size_t mTileWidth = 0;
 	size_t mTileHeight = 0;
@@ -84,15 +90,6 @@ struct GAMESPRITE_API CompositeSequenceParams
 	size_t mSpeciesNearRow = 0;
 	size_t mSpeciesOffsetX = 0;
 	size_t mSpeciesOffsetY = 0;
-};
-
-
-
-struct GAMESPRITE_API CompositeFrameParams
-{
-	CompositeSequenceParams mSequence = {};
-
-	size_t mColumnOffset = 0;
 
 	sprite::Bitmap const* mBaseTex = nullptr;
 	sprite::Bitmap const* mTopTex = nullptr;
@@ -115,21 +112,15 @@ struct GAMESPRITE_API CompositeAnimParams
 
 	file::VFSPath mTextureOutputDirectory = {};
 
-	rftl::unordered_map<CharacterAnimKey, file::VFSPath> mOutputPaths = {};
+	using OutputPaths = rftl::unordered_map<CharacterAnimKey, file::VFSPath>;
+	OutputPaths mOutputPaths = {};
 };
 
 
 
 struct GAMESPRITE_API CharacterPiece
 {
-	rftl::string mFilename = {};
-	size_t mTileWidth = 0;
-	size_t mTileHeight = 0;
-	size_t mStartColumn = 0;
-	size_t mStartRow = 0;
-	size_t mOffsetX = 0;
-	size_t mOffsetY = 0;
-	CharacterSequenceType mCharacterSequenceType = CharacterSequenceType::Invalid;
+	rftl::string mResources = {};
 };
 
 
@@ -177,6 +168,7 @@ private:
 	static sprite::Bitmap CreateCompositeFrame( CompositeFrameParams const& params );
 	void WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path );
 	void CreateCompositeAnims( CompositeAnimParams const& params );
+	void CreateCompositeAnim( CompositeAnimParams const& params, CharacterAnimKey const& anim );
 
 	rftl::deque<rftl::deque<rftl::string>> LoadCSV( file::VFSPath const& path );
 	bool LoadPieceTable( rftl::string mode, CharacterPieceType pieceType, file::VFSPath const& pieceTablePath );

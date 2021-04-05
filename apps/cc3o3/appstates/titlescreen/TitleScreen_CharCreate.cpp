@@ -427,7 +427,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 		ppu.ForceImmediateLoadRequest(
 			gfx::PPUController::AssetType::FramePack,
 			details::kPreviewFpackName,
-			character.mFramepacksByAnim.at( sprite::CharacterAnimKey::SIdle ) );
+			character.mFramepacksByAnim.at( "idle_n" ) );
 	}
 	else
 	{
