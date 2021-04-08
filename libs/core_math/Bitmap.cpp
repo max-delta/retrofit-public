@@ -39,6 +39,15 @@ size_t Bitmap::GetHeight() const
 
 
 
+bool Bitmap::IsInBounds( size_t x, size_t y ) const
+{
+	return //
+		x < GetWidth() &&
+		y < GetHeight();
+}
+
+
+
 bool Bitmap::GetBit( size_t x, size_t y ) const
 {
 	size_t const index = y * mScanlinelength + x;

@@ -25,6 +25,8 @@ public:
 	size_t GetWidth() const;
 	size_t GetHeight() const;
 
+	bool IsInBounds( size_t x, size_t y ) const;
+
 	// NOTE: Mutations return the previous value of the bit
 	bool GetBit( size_t x, size_t y ) const;
 	bool SetBit( size_t x, size_t y );
