@@ -18,6 +18,7 @@
     <ClInclude Include="Rand.h" />
     <ClInclude Include="Lerp.h" />
     <ClInclude Include="Color4u8.h" />
+    <ClInclude Include="Bitmap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="Color3f.cpp" />
     <ClCompile Include="Rand.cpp" />
     <ClCompile Include="Color4u8.cpp" />
+    <ClCompile Include="Bitmap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
