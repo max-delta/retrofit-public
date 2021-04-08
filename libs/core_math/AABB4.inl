@@ -1,6 +1,8 @@
 #pragma once
 #include "AABB4.h"
 
+#include "core_math/math_clamps.h"
+
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,9 +131,41 @@ inline T const& AABB4<T>::Bottom() const
 
 
 template<typename T>
+inline T& AABB4<T>::Left()
+{
+	return mTopLeft.x;
+}
+
+
+
+template<typename T>
+inline T& AABB4<T>::Right()
+{
+	return mBottomRight.x;
+}
+
+
+
+template<typename T>
+inline T& AABB4<T>::Top()
+{
+	return mTopLeft.y;
+}
+
+
+
+template<typename T>
+inline T& AABB4<T>::Bottom()
+{
+	return mBottomRight.y;
+}
+
+
+
+template<typename T>
 inline T AABB4<T>::Width() const
 {
-	return Right() - Left();
+	return Abs<T>( Right() - Left() );
 }
 
 
@@ -139,7 +173,7 @@ inline T AABB4<T>::Width() const
 template<typename T>
 inline T AABB4<T>::Height() const
 {
-	return Bottom() - Top();
+	return Abs<T>( Bottom() - Top() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

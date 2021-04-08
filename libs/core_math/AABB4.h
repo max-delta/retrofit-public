@@ -4,6 +4,7 @@
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
+// NOTE: Does not assume +/- behavior of X and Y w.r.t. directions
 template<typename T>
 class AABB4 final
 {
@@ -34,6 +35,11 @@ public:
 	T const& Right() const;
 	T const& Top() const;
 	T const& Bottom() const;
+
+	T& Left();
+	T& Right();
+	T& Top();
+	T& Bottom();
 
 	T Width() const;
 	T Height() const;
