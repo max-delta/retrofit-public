@@ -3,9 +3,12 @@
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="PixelCast.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="PixelCast.h" />
+    <ClInclude Include="PhysicsFwd.h" />
   </ItemGroup>
 </Project>
