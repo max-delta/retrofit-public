@@ -55,8 +55,10 @@ constexpr FrameID kFirstFrameID = 0;
 typedef uint64_t GFXModifierHandlerID;
 constexpr size_t kNumGFXModifiers = 8;
 
+// Coordinates are +X=left, +Y=down
 typedef int16_t PPUCoordElem;
 typedef math::Vector2<PPUCoordElem> PPUCoord;
+
 typedef int8_t PPUTileElem;
 typedef int8_t PPUDepthLayer;
 constexpr PPUCoordElem kTileSize = 32;
