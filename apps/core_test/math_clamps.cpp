@@ -364,5 +364,24 @@ TEST( MathClamps, WrapPositiveOffset )
 	static_assert( WrapPositiveOffset<uint8_t, uint8_t>( 252, 254, 4 ) == 2, "" );
 }
 
+
+
+TEST( MathClamps, AbsInt )
+{
+	{
+		constexpr int abs = Abs( 5 );
+		static_assert( abs == 5 );
+	}
+	{
+		constexpr int abs = Abs( -5 );
+		static_assert( abs == 5 );
+	}
+	{
+		static_assert( -rftl::numeric_limits<int>::min() == rftl::numeric_limits<int>::min() );
+		constexpr int abs = Abs( rftl::numeric_limits<int>::min() );
+		static_assert( abs == rftl::numeric_limits<int>::max() );
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

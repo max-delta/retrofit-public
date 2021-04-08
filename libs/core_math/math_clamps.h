@@ -30,6 +30,9 @@ constexpr TYPE SnapLowest( TYPE const& value, TYPE const& step );
 template<typename BASE, typename OFFSET>
 constexpr BASE WrapPositiveOffset( BASE const& value, BASE const& mod, OFFSET const& offset );
 
+template<typename TYPE>
+constexpr TYPE Abs( TYPE const& value );
+
 ///////////////////////////////////////////////////////////////////////////////
 }
 

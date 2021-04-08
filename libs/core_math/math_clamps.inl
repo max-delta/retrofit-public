@@ -233,5 +233,27 @@ constexpr BASE WrapPositiveOffset( BASE const& value, BASE const& mod, OFFSET co
 	}
 }
 
+
+
+template<typename TYPE>
+constexpr TYPE Abs( TYPE const& value )
+{
+	// TODO: Specialize for integers
+	if constexpr( rftl::is_integral<TYPE>::value )
+	{
+		if( value == rftl::numeric_limits<TYPE>::min() )
+		{
+			// Poor behavior due to overflow
+			return rftl::numeric_limits<TYPE>::max();
+		}
+	}
+
+	if( value < TYPE{} )
+	{
+		return -value;
+	}
+	return value;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
