@@ -176,6 +176,9 @@
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />
     <ClInclude Include="input\stdafx.h" />
+    <ClInclude Include="overworld\OverworldFwd.h" />
+    <ClInclude Include="overworld\project.h" />
+    <ClInclude Include="overworld\stdafx.h" />
     <ClInclude Include="project.h" />
     <ClInclude Include="save\project.h" />
     <ClInclude Include="save\SaveBlob.h" />

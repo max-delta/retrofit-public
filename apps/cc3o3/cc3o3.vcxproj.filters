@@ -588,6 +588,15 @@
     <ClInclude Include="save\SaveManager.h">
       <Filter>save</Filter>
     </ClInclude>
+    <ClInclude Include="overworld\stdafx.h">
+      <Filter>overworld</Filter>
+    </ClInclude>
+    <ClInclude Include="overworld\OverworldFwd.h">
+      <Filter>overworld</Filter>
+    </ClInclude>
+    <ClInclude Include="overworld\project.h">
+      <Filter>overworld</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -640,6 +649,9 @@
     </Filter>
     <Filter Include="save">
       <UniqueIdentifier>{0c541ae1-7342-431c-85fc-4c65e1def9aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="overworld">
+      <UniqueIdentifier>{03409ddd-3ac7-4ba0-af17-aa8710c61415}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
