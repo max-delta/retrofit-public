@@ -377,7 +377,6 @@ TEST( MathClamps, AbsInt )
 		static_assert( abs == 5 );
 	}
 	{
-		static_assert( -rftl::numeric_limits<int>::min() == rftl::numeric_limits<int>::min() );
 		constexpr int abs = Abs( rftl::numeric_limits<int>::min() );
 		static_assert( abs == rftl::numeric_limits<int>::max() );
 	}
