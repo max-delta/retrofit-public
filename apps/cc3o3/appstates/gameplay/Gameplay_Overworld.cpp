@@ -5,6 +5,7 @@
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/overworld/Overworld.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Roster.h"
@@ -60,9 +61,21 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
 
-	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::PPUController& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
+
+	// Load map
+	// HACK: Hard-coded
+	// TODO: Figure out from current pawn position and a world manager
+	static constexpr char const kHackMap[] = "island1";
+	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( kHackMap ) + ".oo" );
+	overworld::Overworld const map = overworld::Overworld::LoadFromDesc( mapDescPath );
+
+	// TODO: Defer load requests instead of forcing immediate load
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
+	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
 
 	// Setup terrain
 	{
@@ -71,7 +84,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		gfx::TileLayer& cloudB = internalState.mTerrainCloudB;
 
 		land = {};
-		land.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "island_mock_64" );
+		land.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mTerrainTilesetPath );
 		land.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
 		land.mXCoord = 0;
 		land.mYCoord = 0;
@@ -80,35 +93,35 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		land.mLooping = true;
 		land.mTimer.mMaxTimeIndex = 50;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( land, vfs, paths::BackgroundTilemaps().GetChild( "island_mock.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( land, vfs, map.mTerrainTilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 
 		cloudA = {};
-		cloudA.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "cloud_fog_a_512" );
+		cloudA.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud1TilesetPath );
 		cloudA.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
 		cloudA.mXCoord = 0;
 		cloudA.mYCoord = 0;
 		cloudA.mZLayer = -50;
 		cloudA.mWrapping = true;
 		cloudA.mLooping = true;
-		cloudA.mTimer.mMaxTimeIndex = 5;
+		cloudA.mTimer.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudA, vfs, paths::BackgroundTilemaps().GetChild( "cloud_fog_a_512.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudA, vfs, map.mCloud1TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 
 		cloudB = {};
-		cloudB.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "cloud_fog_b_512" );
+		cloudB.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud2TilesetPath );
 		cloudB.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
 		cloudB.mXCoord = 0;
 		cloudB.mYCoord = 0;
 		cloudB.mZLayer = -51;
 		cloudB.mWrapping = true;
 		cloudB.mLooping = true;
-		cloudB.mTimer.mMaxTimeIndex = 10;
+		cloudB.mTimer.mMaxTimeIndex = map.mCloud2ParallaxDelay;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudB, vfs, paths::BackgroundTilemaps().GetChild( "cloud_fog_b_512.csv" ) );
+			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudB, vfs, map.mCloud2TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 	}
@@ -123,8 +136,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		constexpr bool kSlicesEnabled[9] = {
 			false, false, true,
 			false, false, false,
-			true, false, false
-		};
+			true, false, false };
 		WeakPtr<ui::controller::NineSlicer> const rootNineSlicer =
 			uiManager.AssignStrongController(
 				ui::kRootContainerID,

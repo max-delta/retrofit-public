@@ -68,6 +68,8 @@
     <ClCompile Include="elements\IdentifierUtils.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="overworld\Overworld.cpp" />
+    <ClCompile Include="overworld\OverworldDesc.cpp" />
     <ClCompile Include="save\SaveBlob.cpp" />
     <ClCompile Include="save\SaveLoader.cpp" />
     <ClCompile Include="save\SaveManager.cpp" />
@@ -176,6 +178,8 @@
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />
     <ClInclude Include="input\stdafx.h" />
+    <ClInclude Include="overworld\Overworld.h" />
+    <ClInclude Include="overworld\OverworldDesc.h" />
     <ClInclude Include="overworld\OverworldFwd.h" />
     <ClInclude Include="overworld\project.h" />
     <ClInclude Include="overworld\stdafx.h" />

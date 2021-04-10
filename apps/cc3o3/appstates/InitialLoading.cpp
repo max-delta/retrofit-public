@@ -110,9 +110,6 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// TODO: Defer load requests instead of forcing immediate load
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", paths::BackgroundTilesets().GetChild( "country_hills_back_96.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", paths::BackgroundTilesets().GetChild( "country_hills_mid_32.tset.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "cloud_fog_a_512", paths::BackgroundTilesets().GetChild( "cloud_fog_a_512.tset.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "cloud_fog_b_512", paths::BackgroundTilesets().GetChild( "cloud_fog_b_512.tset.txt" ) );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "island_mock_64", paths::BackgroundTilesets().GetChild( "island_mock_64.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_2_4", paths::UITilesets().GetChild( "elemgrid_2_4.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_8_16", paths::UITilesets().GetChild( "elemgrid_8_16.tset.txt" ) );
 		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
