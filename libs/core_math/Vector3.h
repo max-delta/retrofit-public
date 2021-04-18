@@ -54,12 +54,12 @@ public:
 
 // Explicitly instantiate and alias common types
 namespace RF::math {
-typedef Vector3<float> Vector3f;
-typedef Vector3<double> Vector3d;
-typedef Vector3<int8_t> Vector3i8;
-typedef Vector3<int16_t> Vector3i16;
-typedef Vector3<int32_t> Vector3i32;
-typedef Vector3<int64_t> Vector3i64;
+using Vector3f = Vector3<float>;
+using Vector3d = Vector3<double>;
+using Vector3i8 = Vector3<int8_t>;
+using Vector3i16 = Vector3<int16_t>;
+using Vector3i32 = Vector3<int32_t>;
+using Vector3i64 = Vector3<int64_t>;
 }
 extern template class RF::math::Vector3<float>;
 extern template class RF::math::Vector3<double>;

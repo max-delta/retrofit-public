@@ -68,10 +68,10 @@ public:
 	static constexpr uint8_t kVkScrollWheelUp = 0x88;
 	static constexpr uint8_t kVkScrollWheelDown = 0x89;
 private:
-	typedef rftl::bitset<kNumVKeys> LogicalCodeStates;
-	typedef rftl::bitset<kNumScanCodes> PhysicalCodeStates;
-	typedef rftl::deque<LogicalEvent> LogicalEventBuffer;
-	typedef rftl::deque<PhysicalEvent> PhysicalEventBuffer;
+	using LogicalCodeStates = rftl::bitset<kNumVKeys>;
+	using PhysicalCodeStates = rftl::bitset<kNumScanCodes>;
+	using LogicalEventBuffer = rftl::deque<LogicalEvent>;
+	using PhysicalEventBuffer = rftl::deque<PhysicalEvent>;
 public:
 	WndProcDigitalInputComponent() = default;
 	virtual void OnTick() override;
@@ -118,7 +118,7 @@ public:
 		k_NumSignals
 	};
 private:
-	typedef AnalogSignalValue SignalValues[k_NumSignals];
+	using SignalValues = AnalogSignalValue[k_NumSignals];
 public:
 	WndProcAnalogInputComponent() = default;
 	virtual void OnTick() override;
@@ -146,7 +146,7 @@ private:
 	//  every frame, and otherwise just let it spin
 	static constexpr size_t kMaxStorage = 16;
 private:
-	typedef rftl::deque<char16_t> TextBuffer;
+	using TextBuffer = rftl::deque<char16_t>;
 public:
 	WndProcTextInputComponent() = default;
 	virtual void OnTick() override;

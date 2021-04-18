@@ -26,7 +26,7 @@ private:
 	//
 	// Types
 public:
-	typedef PtrBase<T> PtrBase;
+	using PtrBase = PtrBase<T>;
 
 
 	//

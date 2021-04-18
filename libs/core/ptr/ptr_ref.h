@@ -17,9 +17,9 @@ class PtrRef
 	//
 	// Types
 public:
-	typedef uint32_t CountType;
-	typedef rftl::atomic<CountType> CountStorageType;
-	typedef void ( *DeletionFunc )( void const*, PtrRef*, void* );
+	using CountType = uint32_t;
+	using CountStorageType = rftl::atomic<CountType>;
+	using DeletionFunc = void ( * )( void const*, PtrRef*, void* );
 
 	// NOTE: "Lock free" in this context applies to truly massive locks like
 	//  mutexes and critical sections. CPU cache behavior and bus nuances are

@@ -21,11 +21,12 @@ class ResourceManagerBase
 	//
 	// Types
 public:
-	typedef file::VFSPath Filename;
-	typedef rftl::string ResourceName;
-	typedef rftl::unordered_map<ResourceName, Filename> ResourcesByFilename;
+	using Filename = file::VFSPath;
+	using ResourceName = rftl::string;
+	using ResourcesByFilename = rftl::unordered_map<ResourceName, Filename>;
+
 protected:
-	typedef rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator> FileBackedResourceRange;
+	using FileBackedResourceRange = rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator>;
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
 	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
@@ -47,11 +48,11 @@ class ResourceManager : public ResourceManagerBase
 	//
 	// Types
 public:
-	typedef Resource ResourceType;
-	typedef ManagedResourceID ManagedResourceIDType;
-	typedef ResourceManager<Resource, ManagedResourceID, InvalidResourceID> ResourceManagerType;
-	typedef rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>> ResourcesByManagedID;
-	typedef rftl::unordered_map<ResourceName, ManagedResourceID> ResourceIDsByName;
+	using ResourceType = Resource;
+	using ManagedResourceIDType = ManagedResourceID;
+	using ResourceManagerType = ResourceManager<Resource, ManagedResourceID, InvalidResourceID>;
+	using ResourcesByManagedID = rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>>;
+	using ResourceIDsByName = rftl::unordered_map<ResourceName, ManagedResourceID>;
 
 
 	//

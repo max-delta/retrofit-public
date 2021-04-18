@@ -8,13 +8,13 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef uint64_t DeviceTextureID;
+using DeviceTextureID = uint64_t;
 constexpr DeviceTextureID kInvalidDeviceTextureID = 0;
 
-typedef uint64_t DeviceFontID;
+using DeviceFontID = uint64_t;
 constexpr DeviceFontID kInvalidDeviceFontID = 0;
 
-typedef uint8_t TimeSlowdownRate;
+using TimeSlowdownRate = uint8_t;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Normal = 1;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
 static constexpr TimeSlowdownRate kTimeSlowdownRate_Third = 3;
@@ -30,37 +30,37 @@ static constexpr size_t kMaxDebugAuxStrings = 128;
 static constexpr size_t kMaxDebugLines = 255;
 static constexpr size_t kMaxDebugStringLen = 127;
 
-typedef uint8_t GameLayerID;
+using GameLayerID = uint8_t;
 static constexpr size_t kNumGameLayers = 8;
 
-typedef uint64_t ManagedColliderID;
+using ManagedColliderID = uint64_t;
 constexpr ManagedColliderID kInvalidManagedColliderID = 0;
 
-typedef uint64_t ManagedTextureID;
+using ManagedTextureID = uint64_t;
 constexpr ManagedTextureID kInvalidManagedTextureID = 0;
 
-typedef uint16_t ManagedFramePackID;
+using ManagedFramePackID = uint16_t;
 constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
 
-typedef uint16_t ManagedTilesetID;
+using ManagedTilesetID = uint16_t;
 constexpr ManagedTilesetID kInvalidManagedTilesetID = 0;
 
-typedef uint16_t ManagedFontID;
+using ManagedFontID = uint16_t;
 constexpr ManagedFontID kInvalidManagedFontID = 0;
 
-typedef uint64_t FrameID;
+using FrameID = uint64_t;
 constexpr FrameID kInvalidFrameID = 0;
 constexpr FrameID kFirstFrameID = 0;
 
-typedef uint64_t GFXModifierHandlerID;
+using GFXModifierHandlerID = uint64_t;
 constexpr size_t kNumGFXModifiers = 8;
 
 // Coordinates are +X=left, +Y=down
-typedef int16_t PPUCoordElem;
-typedef math::Vector2<PPUCoordElem> PPUCoord;
+using PPUCoordElem = int16_t;
+using PPUCoord = math::Vector2<PPUCoordElem>;
 
-typedef int8_t PPUTileElem;
-typedef int8_t PPUDepthLayer;
+using PPUTileElem = int8_t;
+using PPUDepthLayer = int8_t;
 constexpr PPUCoordElem kTileSize = 32;
 constexpr PPUDepthLayer kFarthestLayer = 100;
 constexpr PPUDepthLayer kNearestLayer = -100;
@@ -91,10 +91,10 @@ class PPUController;
 class FramePackBase;
 template<size_t>
 class FramePack;
-typedef FramePack<160> FramePack_4096;
-typedef FramePack<37> FramePack_1024;
-typedef FramePack<16> FramePack_512;
-typedef FramePack<6> FramePack_256;
+using FramePack_4096 = FramePack<160>;
+using FramePack_1024 = FramePack<37>;
+using FramePack_512 = FramePack<16>;
+using FramePack_256 = FramePack<6>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

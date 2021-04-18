@@ -12,7 +12,7 @@ class AABB4 final
 	static_assert( rftl::is_arithmetic<T>::value, "AABB4 must support arithmetic operations" );
 
 public:
-	typedef T ElementType;
+	using ElementType = T;
 
 
 public:
@@ -55,12 +55,12 @@ public:
 
 // Explicitly instantiate and alias common types
 namespace RF::math {
-typedef AABB4<float> AABB4f;
-typedef AABB4<double> AABB4d;
-typedef AABB4<int8_t> AABB4i8;
-typedef AABB4<int16_t> AABB4i16;
-typedef AABB4<int32_t> AABB4i32;
-typedef AABB4<int64_t> AABB4i64;
+using AABB4f = AABB4<float>;
+using AABB4d = AABB4<double>;
+using AABB4i8 = AABB4<int8_t>;
+using AABB4i16 = AABB4<int16_t>;
+using AABB4i32 = AABB4<int32_t>;
+using AABB4i64 = AABB4<int64_t>;
 }
 extern template class RF::math::AABB4<float>;
 extern template class RF::math::AABB4<double>;
