@@ -19,13 +19,13 @@ class ResourceManagerBase
 	RF_NO_COPY( ResourceManagerBase );
 
 	//
-	// Types
+	// Types and constants
 public:
 	using Filename = file::VFSPath;
 	using ResourceName = rftl::string;
-	using ResourcesByFilename = rftl::unordered_map<ResourceName, Filename>;
 
 protected:
+	using ResourcesByFilename = rftl::unordered_map<ResourceName, Filename>;
 	using FileBackedResourceRange = rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator>;
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
@@ -46,19 +46,16 @@ class ResourceManager : public ResourceManagerBase
 	RF_NO_COPY( ResourceManager );
 
 	//
-	// Types
+	// Types and constants
 public:
+	static constexpr ManagedResourceID kInvalidResourceID = InvalidResourceID;
+
+protected:
 	using ResourceType = Resource;
 	using ManagedResourceIDType = ManagedResourceID;
 	using ResourceManagerType = ResourceManager<Resource, ManagedResourceID, InvalidResourceID>;
 	using ResourcesByManagedID = rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>>;
 	using ResourceIDsByName = rftl::unordered_map<ResourceName, ManagedResourceID>;
-
-
-	//
-	// Constants
-public:
-	static constexpr ManagedResourceID kInvalidResourceID = InvalidResourceID;
 
 
 	//

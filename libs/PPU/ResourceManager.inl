@@ -121,8 +121,8 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource )
 {
-	RF_TODO_BREAK();
-	return false;
+	WeakPtr<Resource> handle = LoadNewResourceGetHandle( resourceName, rftl::move( resource ) );
+	return handle != nullptr;
 }
 
 
