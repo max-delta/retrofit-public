@@ -8,6 +8,23 @@
 
 #include "squirrel3/include/squirrel.h"
 
+#include "rftl/extension/string_copy.h"
+
+
+template<>
+void RF::logging::WriteContextString( RF::script::SquirrelVM::NestedTraversalPath const& context, Utf8LogContextBuffer& buffer )
+{
+	rftl::string out;
+	for( RF::script::SquirrelVM::NestedTraversalNode const& node : context )
+	{
+		if( out.empty() == false )
+		{
+			out += "::";
+		}
+		out += node.mIdentifier;
+	}
+	rftl::string_copy( buffer, out );
+}
 
 namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
@@ -425,7 +442,11 @@ SquirrelVM::Element SquirrelVM::GetNestedVariable( NestedTraversalPath const& pa
 
 	// Lookup and preserve stack
 	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
-	RF_ASSERT( foundSuccess );
+	if( foundSuccess == false )
+	{
+		RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find variable" );
+		return {};
+	}
 
 	return currentElement;
 }
@@ -443,7 +464,11 @@ SquirrelVM::ElementArray SquirrelVM::GetNestedVariableAsArray( NestedTraversalPa
 
 	// Lookup and preserve stack
 	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
-	RF_ASSERT( foundSuccess );
+	if( foundSuccess == false )
+	{
+		RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find variable" );
+		return {};
+	}
 
 	return GetElementArrayFromStack( mVm );
 }
@@ -461,7 +486,11 @@ SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalP
 
 	// Lookup and preserve stack
 	bool const foundSuccess = NoCleanup_GetNestedVariable( stackGuard, path, currentElement );
-	RF_ASSERT( foundSuccess );
+	if( foundSuccess == false )
+	{
+		RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find variable" );
+		return {};
+	}
 
 	return GetElementMapFromStack( mVm );
 }
@@ -539,7 +568,11 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			sq_pushstring( mVm, identifier.c_str(), math::integer_cast<SQInteger>( identifier.length() ) );
 			AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
 			SQRESULT const foundResult = sq_get( mVm, -2 );
-			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+			if( SQ_FAILED( foundResult ) )
+			{
+				RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				return false;
+			}
 		}
 		else if( rftl::get_if<SquirrelVM::InstanceTag>( &currentElement ) != nullptr )
 		{
@@ -547,7 +580,11 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			sq_pushstring( mVm, identifier.c_str(), math::integer_cast<SQInteger>( identifier.length() ) );
 			AssertStackTypes( mVm, -1, OT_STRING, OT_INSTANCE );
 			SQRESULT const foundResult = sq_get( mVm, -2 );
-			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+			if( SQ_FAILED( foundResult ) )
+			{
+				RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				return false;
+			}
 		}
 		else if( rftl::get_if<SquirrelVM::ArrayTag>( &currentElement ) != nullptr )
 		{
@@ -559,7 +596,11 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			sq_pushinteger( mVm, index );
 			AssertStackTypes( mVm, -1, OT_INTEGER, OT_ARRAY );
 			SQRESULT const foundResult = sq_get( mVm, -2 );
-			RF_ASSERT( SQ_SUCCEEDED( foundResult ) );
+			if( SQ_FAILED( foundResult ) )
+			{
+				RFLOG_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				return false;
+			}
 		}
 		else
 		{

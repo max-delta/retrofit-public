@@ -486,7 +486,8 @@ bool ProcessWorkItem(
 	SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
 	if( elemMap.empty() )
 	{
-		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element map is empty" );
+		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element map is empty, assuming failure" );
+		return false;
 	}
 
 	// For each element...
@@ -562,7 +563,14 @@ bool PopulateClassFromScript(
 			// TODO: This should probably be conditional whether it
 			//  ignores, or aborts the whole process
 			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to convert part of a script" );
-			continue;
+			if constexpr( true )
+			{
+				return false;
+			}
+			else
+			{
+				continue;
+			}
 		}
 	}
 
