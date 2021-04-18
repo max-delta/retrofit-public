@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "CharacterDatabase.h"
 
+#include "cc3o3/resource/ResourceLoad.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
 
-#include "GameScripting/OOLoader.h"
-
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 
 namespace RF::cc::character {
@@ -145,52 +144,12 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 		RFLOG_TEST_AND_FATAL( id.at( id.size() - 3 ) == '.', path, RFCAT_CC3O3, "Expected file to end with '.oo'" );
 		id.resize( id.size() - 3 );
 
-		// Load file
-		source.clear();
-		{
-			file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
-			RFLOG_TEST_AND_FATAL( fileHandle != nullptr, path, RFCAT_CC3O3, "Failed to open character for read" );
-			file::FileBuffer const fileBuffer = file::FileBuffer( *fileHandle, true );
-			size_t const fileSize = fileBuffer.GetSize();
-			RFLOG_TEST_AND_FATAL( fileSize > 10, path, RFCAT_CC3O3, "Unreasonably small file" );
-			RFLOG_TEST_AND_FATAL( fileSize < 10'000, path, RFCAT_CC3O3, "Unreasonably large file" );
-			source.assign( fileBuffer.GetChars() );
-			RFLOG_TEST_AND_FATAL( source.size() == fileSize, path, RFCAT_CC3O3, "Unexpected file size after load, expected ASCII with no nulls" );
-		}
-
-		script::OOLoader loader;
-
-		// Inject types
-		{
-			bool success;
-			success = loader.InjectReflectedClassByCompileType<CharData>( "CharData" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<Description>( "Description" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<Genetics>( "Genetics" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<Visuals>( "Visuals" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-			success = loader.InjectReflectedClassByCompileType<Stats>( "Stats" );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to inject" );
-		}
-
-		// Inject source
-		{
-			bool success;
-			success = loader.AddSourceFromBuffer( source );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to load" );
-		}
-
 		// Extract character
-		CharData character = {};
-		{
-			bool const success = loader.PopulateClass( "c", character );
-			RFLOG_TEST_AND_FATAL( success, path, RFCAT_CC3O3, "Failed to populate" );
-		}
+		UniquePtr<CharData> character = resource::LoadFromFile<CharData>( path );
+		RFLOG_TEST_AND_FATAL( character != nullptr, path, RFCAT_CC3O3, "Failed to load character" );
 
 		// Store character
-		SubmitOrOverwriteCharacter( id, rftl::move( character ) );
+		SubmitOrOverwriteCharacter( id, rftl::move( *character ) );
 		charsLoaded++;
 	}
 
