@@ -72,7 +72,6 @@
     <ClCompile Include="overworld\OverworldDesc.cpp" />
     <ClCompile Include="resource\ResourceLoad.cpp" />
     <ClCompile Include="save\SaveBlob.cpp" />
-    <ClCompile Include="save\SaveLoader.cpp" />
     <ClCompile Include="save\SaveManager.cpp" />
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
@@ -192,7 +191,6 @@
     <ClInclude Include="save\project.h" />
     <ClInclude Include="save\SaveBlob.h" />
     <ClInclude Include="save\SaveFwd.h" />
-    <ClInclude Include="save\SaveLoader.h" />
     <ClInclude Include="save\SaveManager.h" />
     <ClInclude Include="save\stdafx.h" />
     <ClInclude Include="state\Component.h" />

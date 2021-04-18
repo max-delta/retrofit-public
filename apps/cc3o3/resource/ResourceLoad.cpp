@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/overworld/OverworldDesc.h"
+#include "cc3o3/save/SaveBlob.h"
 
 #include "GameResource/ResourceLoader.h"
 
@@ -17,6 +18,7 @@ namespace type {
 enum : ResourceTypeIdentifier
 {
 	Invalid = kInvalidResourceTypeIdentifier,
+	SaveBlob,
 	OverworldDesc
 };
 }
@@ -38,6 +40,8 @@ void InitializeLoader()
 
 	{
 		using namespace details::type;
+		loader.AddResourceClass( SaveBlob, "SaveBlob" );
+		loader.AddResourceClass( SaveBlob, "SaveFileBlob" );
 		loader.AddResourceClass( OverworldDesc, "OverworldDesc" );
 	}
 }
@@ -56,6 +60,7 @@ void InitializeLoader()
 		return LoadFromFile<TYPE>( path ); \
 	}
 
+RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
 
 #undef RF_LOADER

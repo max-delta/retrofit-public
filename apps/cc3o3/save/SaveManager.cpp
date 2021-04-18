@@ -3,8 +3,8 @@
 
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/resource/ResourceLoad.h"
 #include "cc3o3/save/SaveBlob.h"
-#include "cc3o3/save/SaveLoader.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
@@ -47,25 +47,9 @@ SaveManager::SaveNames SaveManager::FindSaveNames() const
 
 UniquePtr<SaveBlob> SaveManager::LoadBlob( SaveName const& name ) const
 {
-	file::VFS const& vfs = *app::gVfs;
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
-
-	// Open file
 	file::VFSPath const filePath = saveRoot.GetChild( "file.oo" );
-	file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
-	{
-		file::FileHandlePtr const fileHandle = vfs.GetFileForRead( filePath );
-		RFLOG_TEST_AND_FATAL( fileHandle != nullptr, filePath, RFCAT_CC3O3, "Failed to open save for read" );
-		fileBuffer = file::FileBuffer( *fileHandle, true );
-		size_t const fileSize = fileBuffer.GetSize();
-		RFLOG_TEST_AND_FATAL( fileSize > 10, filePath, RFCAT_CC3O3, "Unreasonably small file" );
-		RFLOG_TEST_AND_FATAL( fileSize < 10'000, filePath, RFCAT_CC3O3, "Unreasonably large file" );
-		RFLOG_TEST_AND_FATAL( fileBuffer.GetChars().size() == fileSize, filePath, RFCAT_CC3O3, "Unexpected file size after load, expected ASCII with no nulls" );
-	}
-
-	// Load
-	SaveLoader const loader;
-	return loader.LoadFromBuffer( fileBuffer.GetChars() );
+	return resource::LoadFromFile<SaveBlob>( filePath );
 }
 
 
