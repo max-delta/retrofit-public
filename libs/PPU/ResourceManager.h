@@ -70,6 +70,9 @@ public:
 	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const;
 
+	bool ReserveNullResource( Filename const& filename );
+	bool ReserveNullResource( ResourceName const& resourceName );
+
 	bool LoadNewResource( Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );
 	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
@@ -80,7 +83,9 @@ public:
 	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, Filename const& filename );
 	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
 
+	bool UpdateExistingResource( Filename const& filename );
 	bool UpdateExistingResource( ResourceName const& resourceName, Filename const& filename );
+	bool ReloadExistingResource( Filename const& filename );
 	bool ReloadExistingResource( ResourceName const& resourceName );
 	bool DestroyResource( ResourceName const& resourceName );
 
@@ -111,6 +116,7 @@ private:
 	FileBackedResourceRange SearchForResourcesByFilenameInternal( Filename const& filename ) const;
 	ManagedResourceID GenerateNewManagedID();
 
+	bool ReserveNullResourceInternal( ResourceName const& resourceName );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
 	bool UpdateExistingResourceWithoutLock( ResourceName const& resourceName, Filename const& filename );

@@ -485,6 +485,13 @@ PPUCoord PPUController::CalculateTileLayerSize( TileLayer const& tileLayer ) con
 
 
 
+bool PPUController::HasOutstandingLoadRequests() const
+{
+	return mDeferredLoadRequests.empty() == false;
+}
+
+
+
 bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& filename )
 {
 	return QueueDeferredLoadRequest( type, ResourceName{}, filename );
@@ -494,7 +501,8 @@ bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& fi
 
 bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename )
 {
-	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::New, type, resourceName, filename } );
+	FullfillLoadRequest( LoadRequest{ LoadType::Reserve, type, resourceName, filename } );
+	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, type, resourceName, filename } );
 	return true;
 }
 
@@ -1574,55 +1582,85 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 	Filename const& filename = request.mFilename;
 	switch( request.mLoadType )
 	{
+		case LoadType::Reserve:
+		{
+			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
+			{
+				if( resourceName.empty() )
+				{
+					return manager->ReserveNullResource( filename );
+				}
+				else
+				{
+					return manager->ReserveNullResource( resourceName );
+				}
+			};
+			switch( request.mAssetType )
+			{
+				case AssetType::Texture:
+					return load( mTextureManager );
+				case AssetType::FramePack:
+					return load( mFramePackManager );
+				case AssetType::Tileset:
+					return load( mTilesetManager );
+				case AssetType::Font:
+					return load( mFontManager );
+				case AssetType::Invalid:
+					RF_DBGFAIL();
+					return false;
+			}
+		}
 		case LoadType::New:
 		{
-			if( resourceName.empty() )
+			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
 			{
-				switch( request.mAssetType )
+				if( resourceName.empty() )
 				{
-					case AssetType::Texture:
-						return mTextureManager->LoadNewResource( filename );
-					case AssetType::FramePack:
-						return mFramePackManager->LoadNewResource( filename );
-					case AssetType::Tileset:
-						return mTilesetManager->LoadNewResource( filename );
-					case AssetType::Font:
-						return mFontManager->LoadNewResource( filename );
-					case AssetType::Invalid:
-						RF_DBGFAIL();
-						return false;
+					return manager->LoadNewResource( filename );
 				}
-			}
-			else
+				else
+				{
+					return manager->LoadNewResource( resourceName, filename );
+				}
+			};
+			switch( request.mAssetType )
 			{
-				switch( request.mAssetType )
-				{
-					case AssetType::Texture:
-						return mTextureManager->LoadNewResource( resourceName, filename );
-					case AssetType::FramePack:
-						return mFramePackManager->LoadNewResource( resourceName, filename );
-					case AssetType::Tileset:
-						return mTilesetManager->LoadNewResource( resourceName, filename );
-					case AssetType::Font:
-						return mFontManager->LoadNewResource( resourceName, filename );
-					case AssetType::Invalid:
-						RF_DBGFAIL();
-						return false;
-				}
+				case AssetType::Texture:
+					return load( mTextureManager );
+				case AssetType::FramePack:
+					return load( mFramePackManager );
+				case AssetType::Tileset:
+					return load( mTilesetManager );
+				case AssetType::Font:
+					return load( mFontManager );
+				case AssetType::Invalid:
+					RF_DBGFAIL();
+					return false;
 			}
 		}
 		case LoadType::Modify:
 		{
+			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
+			{
+				if( resourceName.empty() )
+				{
+					return manager->UpdateExistingResource( filename );
+				}
+				else
+				{
+					return manager->UpdateExistingResource( resourceName, filename );
+				}
+			};
 			switch( request.mAssetType )
 			{
 				case AssetType::Texture:
-					return mTextureManager->UpdateExistingResource( resourceName, filename );
+					return load( mTextureManager );
 				case AssetType::FramePack:
-					return mFramePackManager->UpdateExistingResource( resourceName, filename );
+					return load( mFramePackManager );
 				case AssetType::Tileset:
-					return mTilesetManager->UpdateExistingResource( resourceName, filename );
+					return load( mTilesetManager );
 				case AssetType::Font:
-					return mFontManager->UpdateExistingResource( resourceName, filename );
+					return load( mFontManager );
 				case AssetType::Invalid:
 					RF_DBGFAIL();
 					return false;
@@ -1630,16 +1668,27 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 		}
 		case LoadType::Reload:
 		{
+			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
+			{
+				if( resourceName.empty() )
+				{
+					return manager->ReloadExistingResource( filename );
+				}
+				else
+				{
+					return manager->ReloadExistingResource( resourceName );
+				}
+			};
 			switch( request.mAssetType )
 			{
 				case AssetType::Texture:
-					return mTextureManager->ReloadExistingResource( resourceName );
+					return load( mTextureManager );
 				case AssetType::FramePack:
-					return mFramePackManager->ReloadExistingResource( resourceName );
+					return load( mFramePackManager );
 				case AssetType::Tileset:
-					return mTilesetManager->ReloadExistingResource( resourceName );
+					return load( mTilesetManager );
 				case AssetType::Font:
-					return mFontManager->ReloadExistingResource( resourceName );
+					return load( mFontManager );
 				case AssetType::Invalid:
 					RF_DBGFAIL();
 					return false;

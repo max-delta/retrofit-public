@@ -45,6 +45,7 @@ private:
 	enum class LoadType : uint8_t
 	{
 		Invalid = 0,
+		Reserve,
 		New,
 		Modify,
 		Reload
@@ -127,6 +128,7 @@ public:
 
 	PPUCoord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 
+	bool HasOutstandingLoadRequests() const;
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
 	bool QueueDeferredReloadRequest( AssetType type, ResourceName const& resourceName );

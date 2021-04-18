@@ -39,7 +39,19 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 		return nullptr;
 	}
 
-	return resourceIter->second;
+	WeakPtr<Resource> const& retVal = resourceIter->second;
+	if( retVal == nullptr )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_PPU,
+			"Found resource, but it is null, which should indicate a"
+			" reservation" );
+		RF_DBGFAIL_MSG(
+			"Seem to be trying to fetch a reserved resource that isn't loaded"
+			" yet. Should this have been force-fetched? Is there data in it"
+			" that is needed outside the render passes? Render passes should"
+			" be able to survive missing resources while they're loading." );
+	}
+	return retVal;
 }
 
 
@@ -56,6 +68,8 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	RF_ASSERT( resourceName.empty() == false );
 
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
@@ -89,6 +103,8 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
 
+	RF_ASSERT( resourceName.empty() == false );
+
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
@@ -97,6 +113,22 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 	}
 
 	return IDIter->second;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( Filename const& filename )
+{
+	return ReserveNullResource( filename.CreateString() );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( ResourceName const& resourceName )
+{
+	return ReserveNullResourceInternal( resourceName );
 }
 
 
@@ -182,6 +214,14 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( Filename const& filename )
+{
+	return UpdateExistingResource( filename.CreateString(), filename );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( ResourceName const& resourceName, Filename const& filename )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
@@ -191,9 +231,19 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Upd
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( Filename const& filename )
+{
+	return ReloadExistingResource( filename.CreateString() );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReloadExistingResource( ResourceName const& resourceName )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
+
+	RF_ASSERT( resourceName.empty() == false );
 
 	typename ResourcesByFilename::const_iterator fileIter = mFileBackedResources.find( resourceName );
 	if( fileIter == mFileBackedResources.end() )
@@ -266,6 +316,8 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Filename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::SearchForFilenameByResourceName( ResourceName const& resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	RF_ASSERT( resourceName.empty() == false );
 
 	for( ResourcesByFilename::value_type const& resourcePair : mFileBackedResources )
 	{
@@ -391,6 +443,26 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResourceInternal( ResourceName const& resourceName )
+{
+	WriterLock const lock( mMultiReaderSingleWriterLock );
+
+	RF_ASSERT( resourceName.empty() == false );
+
+	ManagedResourceID managedResourceID = GenerateNewManagedID();
+
+	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
+	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
+	mResources.emplace( managedResourceID, nullptr );
+	mResourceIDs.emplace( resourceName, managedResourceID );
+
+	RFLOG_INFO( nullptr, RFCAT_PPU, "Null resource reserved" );
+	return true;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
@@ -487,6 +559,8 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResourceWithoutLock( ResourceName const& resourceName, Filename const& filename )
 {
+	RF_ASSERT( resourceName.empty() == false );
+
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
@@ -502,7 +576,10 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	}
 
 	UniquePtr<Resource>& resourceRef = resourceIter->second;
-	RF_ASSERT( resourceRef != nullptr );
+	if( resourceRef )
+	{
+		RFLOG_TRACE( nullptr, RFCAT_PPU, "Updating null resource, assumed to have been a reserve" );
+	}
 
 	// Attempt to load new
 	UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
@@ -513,9 +590,12 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	}
 
 	// Swap out old
-	bool const preDestroySuccess = PreDestroy( *resourceRef );
-	RF_ASSERT( preDestroySuccess );
-	resourceRef = nullptr;
+	if( resourceRef != nullptr )
+	{
+		bool const preDestroySuccess = PreDestroy( *resourceRef );
+		RF_ASSERT( preDestroySuccess );
+		resourceRef = nullptr;
+	}
 
 	// Swap in new
 	Resource* const res = newResource;
