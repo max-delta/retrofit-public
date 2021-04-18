@@ -3,7 +3,6 @@
 
 #include "PPU/FramePackSerDes.h"
 #include "PPU/FramePack.h"
-#include "PPU/TextureManager.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 
@@ -11,12 +10,13 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackManager::FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs )
+FramePackManager::FramePackManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc )
 	: ResourceManagerType()
-	, mTextureManager( texMan )
 	, mVfs( vfs )
+	, mTexLoadFunc( rftl::move( texLoadFunc ) )
 {
-	//
+	RF_ASSERT( mVfs != nullptr );
+	RF_ASSERT( mTexLoadFunc != nullptr );
 }
 
 
@@ -30,8 +30,6 @@ FramePackManager::~FramePackManager()
 
 UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const& filename )
 {
-	RF_ASSERT( mTextureManager != nullptr );
-
 	// Open
 	file::VFS const& vfs = *mVfs;
 	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
@@ -79,7 +77,6 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	buffer.clear();
 	buffer.shrink_to_fit();
 
-	TextureManager& texMan = *mTextureManager.Get();
 	FramePackBase::TimeSlot* const timeSlots = framePack->GetMutableTimeSlots();
 	size_t const numSlots = framePack->mNumTimeSlots;
 	RF_ASSERT( textures.size() == numSlots );
@@ -87,7 +84,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	{
 		FramePackBase::TimeSlot& timeSlot = timeSlots[i];
 		file::VFSPath const& texPath = textures[i];
-		ManagedTextureID const texID = texMan.LoadNewResourceGetID( texPath );
+		ManagedTextureID const texID = mTexLoadFunc( texPath );
 		if( texID == kInvalidManagedTextureID )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );

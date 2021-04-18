@@ -449,9 +449,14 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Res
 
 	RF_ASSERT( resourceName.empty() == false );
 
+	if( mResourceIDs.count( resourceName ) != 0 )
+	{
+		// Already exists
+		return true;
+	}
+
 	ManagedResourceID managedResourceID = GenerateNewManagedID();
 
-	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
 	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
 	mResources.emplace( managedResourceID, nullptr );
 	mResourceIDs.emplace( resourceName, managedResourceID );

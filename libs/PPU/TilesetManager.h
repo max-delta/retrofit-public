@@ -6,6 +6,8 @@
 #include "PPUFwd.h"
 #include "PPU/ResourceManager.h"
 
+#include "rftl/functional"
+
 
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
@@ -15,10 +17,17 @@ class PPU_API TilesetManager final : public ResourceManager<Tileset, ManagedTile
 	RF_NO_COPY( TilesetManager );
 
 	//
+	// Types and constants
+public:
+	using TextureLoadRefSig = ManagedTextureID( file::VFSPath const& path );
+	using TextureLoadRefFunc = rftl::function<TextureLoadRefSig>;
+
+
+	//
 	// Public methods
 public:
 	TilesetManager() = delete;
-	explicit TilesetManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs );
+	explicit TilesetManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc );
 	virtual ~TilesetManager() override;
 
 
@@ -30,8 +39,8 @@ protected:
 
 	// Private data
 private:
-	WeakPtr<gfx::TextureManager> const mTextureManager;
 	WeakPtr<file::VFS> const mVfs;
+	TextureLoadRefFunc mTexLoadFunc;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

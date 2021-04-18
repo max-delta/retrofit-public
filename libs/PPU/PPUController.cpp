@@ -83,12 +83,28 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	}
 
 	// Create frame pack manager
-	RF_ASSERT( mFramePackManager == nullptr );
-	mFramePackManager = alloc::DefaultAllocCreator<gfx::FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mTextureManager, mVfs );
+	{
+		RF_ASSERT( mFramePackManager == nullptr );
+		FramePackManager::TextureLoadRefFunc texLoad = //
+			[this]( file::VFSPath const& path ) -> ManagedTextureID //
+		{
+			QueueDeferredLoadRequest( AssetType::Texture, path );
+			return mTextureManager->GetManagedResourceIDFromResourceName( path );
+		};
+		mFramePackManager = alloc::DefaultAllocCreator<gfx::FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
+	}
 
 	// Create tileset manager
-	RF_ASSERT( mTilesetManager == nullptr );
-	mTilesetManager = alloc::DefaultAllocCreator<gfx::TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mTextureManager, mVfs );
+	{
+		RF_ASSERT( mTilesetManager == nullptr );
+		TilesetManager::TextureLoadRefFunc texLoad = //
+			[this]( file::VFSPath const& path ) -> ManagedTextureID //
+		{
+			QueueDeferredLoadRequest( AssetType::Texture, path );
+			return mTextureManager->GetManagedResourceIDFromResourceName( path );
+		};
+		mTilesetManager = alloc::DefaultAllocCreator<gfx::TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
+	}
 
 	// Create font manager
 	RF_ASSERT( mFontManager == nullptr );

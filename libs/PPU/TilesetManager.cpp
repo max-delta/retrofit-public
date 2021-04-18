@@ -2,7 +2,6 @@
 #include "TilesetManager.h"
 
 #include "PPU/Tileset.h"
-#include "PPU/TextureManager.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
@@ -18,12 +17,13 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-TilesetManager::TilesetManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs )
+TilesetManager::TilesetManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc )
 	: ResourceManagerType()
-	, mTextureManager( texMan )
 	, mVfs( vfs )
+	, mTexLoadFunc( rftl::move( texLoadFunc ) )
 {
-	//
+	RF_ASSERT( mVfs != nullptr );
+	RF_ASSERT( mTexLoadFunc != nullptr );
 }
 
 
@@ -37,8 +37,6 @@ TilesetManager::~TilesetManager()
 
 UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile( Filename const& filename )
 {
-	RF_ASSERT( mTextureManager != nullptr );
-
 	// Open
 	file::VFS const& vfs = *mVfs;
 	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
@@ -91,8 +89,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 		return nullptr;
 	}
 
-	TextureManager& texMan = *mTextureManager.Get();
-	ManagedTextureID const texID = texMan.LoadNewResourceGetID( texPath );
+	ManagedTextureID const texID = mTexLoadFunc( texPath );
 	if( texID == kInvalidManagedTextureID )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for tileset" );

@@ -4,6 +4,7 @@
 #include "PPUFwd.h"
 #include "PPU/ResourceManager.h"
 
+#include "rftl/functional"
 
 
 namespace RF::gfx {
@@ -14,10 +15,17 @@ class PPU_API FramePackManager final : public ResourceManager<FramePackBase, Man
 	RF_NO_COPY( FramePackManager );
 
 	//
+	// Types and constants
+public:
+	using TextureLoadRefSig = ManagedTextureID( file::VFSPath const& path );
+	using TextureLoadRefFunc = rftl::function<TextureLoadRefSig>;
+
+
+	//
 	// Public methods
 public:
 	FramePackManager() = delete;
-	explicit FramePackManager( WeakPtr<gfx::TextureManager> const& texMan, WeakPtr<file::VFS> const& vfs );
+	explicit FramePackManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc );
 	virtual ~FramePackManager() override;
 
 
@@ -29,8 +37,8 @@ protected:
 
 	// Private data
 private:
-	WeakPtr<gfx::TextureManager> const mTextureManager;
 	WeakPtr<file::VFS> const mVfs;
+	TextureLoadRefFunc mTexLoadFunc;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
