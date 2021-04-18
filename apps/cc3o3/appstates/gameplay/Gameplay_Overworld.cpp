@@ -72,10 +72,9 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( kHackMap ) + ".oo" );
 	overworld::Overworld const map = overworld::Overworld::LoadFromDesc( mapDescPath );
 
-	// TODO: Defer load requests instead of forcing immediate load
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
+	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
+	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
+	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
 
 	// Setup terrain
 	{
