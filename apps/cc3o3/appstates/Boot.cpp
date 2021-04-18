@@ -3,6 +3,7 @@
 
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/input/HardcodedSetup.h"
+#include "cc3o3/resource/ResourceLoad.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -41,6 +42,9 @@ void Boot::OnTick( AppStateTickContext& context )
 
 	// Debug in case something goes wrong and we get stuck in boot
 	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Booting..." );
+
+	// Prep loader
+	resource::InitializeLoader();
 
 	// HACK: Spin up hard-coded input
 	// TODO: Get this from a file

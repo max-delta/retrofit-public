@@ -12,6 +12,7 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameResource/ResourceLoader.h"
 #include "GameSync/RollbackInputManager.h"
 #include "GameSprite/CharacterCreator.h"
 
@@ -32,6 +33,7 @@ namespace RF::cc {
 // Global systems
 WeakPtr<rollback::RollbackManager> gRollbackManager;
 WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
+WeakPtr<resource::ResourceLoader> gResourceLoader;
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
@@ -42,6 +44,7 @@ WeakPtr<state::ObjectManager> gObjectManager;
 WeakPtr<save::SaveManager> gSaveManager;
 static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
+static UniquePtr<resource::ResourceLoader> sResourceLoader;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
@@ -72,6 +75,10 @@ void SystemStartup()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing rollback input..." );
 	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( gRollbackManager );
 	gRollbackInputManager = sRollbackInputManager;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing resource loader..." );
+	sResourceLoader = DefaultCreator<resource::ResourceLoader>::Create( app::gVfs );
+	gResourceLoader = sResourceLoader;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character creator..." );
 	sCharacterCreator = DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics );
@@ -120,6 +127,7 @@ void SystemShutdown()
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
+	sResourceLoader = nullptr;
 	sRollbackInputManager = nullptr;
 	sRollbackManager = nullptr;
 }

@@ -223,6 +223,9 @@
     <ClCompile Include="overworld\Overworld.cpp">
       <Filter>overworld</Filter>
     </ClCompile>
+    <ClCompile Include="resource\ResourceLoad.cpp">
+      <Filter>resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -609,6 +612,18 @@
     <ClInclude Include="overworld\Overworld.h">
       <Filter>overworld</Filter>
     </ClInclude>
+    <ClInclude Include="resource\stdafx.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\project.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ResourceFwd.h">
+      <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource\ResourceLoad.h">
+      <Filter>resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -664,6 +679,9 @@
     </Filter>
     <Filter Include="overworld">
       <UniqueIdentifier>{03409ddd-3ac7-4ba0-af17-aa8710c61415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{fdc4ba5f-5062-461e-8ac4-35389713afcf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
