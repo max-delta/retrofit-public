@@ -28,9 +28,14 @@ enum : ResourceTypeIdentifier
 
 
 template<typename T>
+using ResourceCreator = DefaultCreator<T>;
+
+
+
+template<typename T>
 UniquePtr<T> LoadFromFile( ResourceTypeIdentifier typeID, file::VFSPath const& path )
 {
-	return gResourceLoader->LoadClassFromFile<T, DefaultCreator>( typeID, path );
+	return gResourceLoader->LoadClassFromFile<T, ResourceCreator>( typeID, path );
 }
 
 }

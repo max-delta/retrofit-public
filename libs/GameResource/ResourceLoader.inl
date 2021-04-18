@@ -7,7 +7,7 @@
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename ReflectedClass, template<typename ReflectedClass> typename Creator>
+template<typename ReflectedClass, template<typename> typename Creator>
 inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 	ResourceTypeIdentifier typeID,
 	file::VFSPath const& path )
@@ -21,7 +21,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 		return nullptr;
 	}
 
-	UniquePtr<ReflectedClass> classInstance = typename Creator<ReflectedClass>::Create();
+	UniquePtr<ReflectedClass> classInstance = Creator<ReflectedClass>::Create();
 	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{
@@ -33,7 +33,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 
 
 
-template<typename ReflectedClass, template<typename ReflectedClass> typename Creator>
+template<typename ReflectedClass, template<typename> typename Creator>
 inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 	ResourceTypeIdentifier typeID,
 	rftl::string_view buffer )
@@ -47,7 +47,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 		return nullptr;
 	}
 
-	UniquePtr<ReflectedClass> classInstance = typename Creator<ReflectedClass>::Create();
+	UniquePtr<ReflectedClass> classInstance = Creator<ReflectedClass>::Create();
 	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{

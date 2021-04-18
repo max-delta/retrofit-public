@@ -43,11 +43,11 @@ public:
 		char const* typeName );
 
 	// Load class
-	template<typename ReflectedClass, template<typename ReflectedClass> typename Creator>
+	template<typename ReflectedClass, template<typename> typename Creator>
 	UniquePtr<ReflectedClass> LoadClassFromFile(
 		ResourceTypeIdentifier typeID,
 		file::VFSPath const& path );
-	template<typename ReflectedClass, template<typename ReflectedClass> typename Creator>
+	template<typename ReflectedClass, template<typename> typename Creator>
 	UniquePtr<ReflectedClass> LoadClassFromBuffer(
 		ResourceTypeIdentifier typeID,
 		rftl::string_view buffer );
