@@ -9,6 +9,7 @@
 RFTYPE_CREATE_META( RF::cc::overworld::OverworldDesc )
 {
 	using RF::cc::overworld::OverworldDesc;
+	RFTYPE_META().ExtensionProperty( "mCollisionMapPath", &OverworldDesc::mCollisionMapPath );
 	RFTYPE_META().ExtensionProperty( "mTerrainTilesetPath", &OverworldDesc::mTerrainTilesetPath );
 	RFTYPE_META().ExtensionProperty( "mTerrainTilemapPath", &OverworldDesc::mTerrainTilemapPath );
 	RFTYPE_META().ExtensionProperty( "mCloud1TilesetPath", &OverworldDesc::mCloud1TilesetPath );

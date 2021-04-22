@@ -9,6 +9,7 @@ namespace RF::cc::overworld {
 
 struct OverworldDesc
 {
+	rftl::string mCollisionMapPath;
 	rftl::string mTerrainTilesetPath;
 	rftl::string mTerrainTilemapPath;
 	rftl::string mCloud1TilesetPath;

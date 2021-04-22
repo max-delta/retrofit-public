@@ -3,6 +3,8 @@
 
 #include "PlatformFilesystem/VFSPath.h"
 
+#include "core_math/Bitmap.h"
+
 
 namespace RF::cc::overworld {
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,6 +22,7 @@ public:
 	//
 	// Public data
 public:
+	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
 	file::VFSPath mTerrainTilesetPath;
 	file::VFSPath mTerrainTilemapPath;
 	file::VFSPath mCloud1TilesetPath;
