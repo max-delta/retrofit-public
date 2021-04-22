@@ -79,6 +79,9 @@
     <ClInclude Include="meta\Literal.h">
       <Filter>meta</Filter>
     </ClInclude>
+    <ClInclude Include="meta\FailTemplate.h">
+      <Filter>meta</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />

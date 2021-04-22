@@ -1,5 +1,6 @@
 #pragma once
 #include "core/macros.h"
+#include "core/meta/FailTemplate.h"
 #include "core_allocate/SplitAllocCreator.h"
 #include "core_allocate/EntwinedAllocCreator.h"
 
@@ -11,8 +12,7 @@ namespace RF::alloc {
 template<typename T, typename Unused = void>
 class DefaultAllocCreator
 {
-	// HACK: Template arg prevents evaluation without substitution
-	static_assert( sizeof( T ) == 0 && sizeof( T ) == 1, "Failed to determine correct creator to use" );
+	static_assert( FailTemplate<T>(), "Failed to determine correct creator to use" );
 
 public:
 	// NOTE: This is mostly just for Intellisense, this class isn't valid
