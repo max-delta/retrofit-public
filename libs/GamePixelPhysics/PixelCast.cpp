@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "PixelCast.h"
 
+#include "Logging/Logging.h"
+
 #include "core_math/Bitmap.h"
 
 #include "rftl/extension/static_vector.h"
@@ -61,6 +63,36 @@ bool PixelCast::HasCollision( math::Bitmap const& collisionMap, PhysCoord const&
 
 	bool const hasCollision = collisionMap.GetBit( x, y );
 	return hasCollision;
+}
+
+
+
+PhysCoord PixelCast::FixOutOfBounds( math::Bitmap const& collisionMap, PhysCoord const& pos )
+{
+	if( HasCollision( collisionMap, pos ) == false )
+	{
+		// Already safe
+		return pos;
+	}
+
+	// Naive scanline approach, wildly unsafe
+	RFLOG_WARNING( nullptr, RFCAT_GAMEPIXELPHYSICS, "Trying naive out-of-bounds fix" );
+	PhysCoordElem const width = math::integer_cast<PhysCoordElem>( collisionMap.GetWidth() );
+	PhysCoordElem const height = math::integer_cast<PhysCoordElem>( collisionMap.GetHeight() );
+	for( PhysCoordElem y = 0; y < height; y++ )
+	{
+		for( PhysCoordElem x = 0; x < width; x++ )
+		{
+			PhysCoord const testPos{ x, y };
+			if( HasCollision( collisionMap, testPos ) == false )
+			{
+				return testPos;
+			}
+		}
+	}
+
+	// Failed
+	return pos;
 }
 
 
