@@ -4,6 +4,14 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
+template<typename Container>
+bool contains( Container const& container, typename Container::value_type const& value );
+template<typename T, size_t N>
+bool contains( T const ( &container )[N], T const& value );
+
+template<typename Container>
+auto erase_all( Container& container, typename Container::value_type const& value ) -> typename Container::iterator;
+
 template<typename Container, typename UnaryPredicate>
 auto erase_if( Container& container, UnaryPredicate const& condition ) -> typename Container::iterator;
 
