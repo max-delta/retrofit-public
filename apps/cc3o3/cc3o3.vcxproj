@@ -283,6 +283,9 @@
     <ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
       <Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\libs\GamePixelPhysics\GamePixelPhysics.vcxproj">
+      <Project>{fbd0e21e-5e16-42bf-96a1-c1154536314d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\libs\GameResource\GameResource.vcxproj">
       <Project>{955cfce2-f31e-4915-b045-da51b5c8036c}</Project>
     </ProjectReference>

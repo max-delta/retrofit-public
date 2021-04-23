@@ -3,6 +3,8 @@
 
 #include "cc3o3/state/Component.h"
 
+#include "GamePixelPhysics/PhysicsFwd.h"
+
 #include "Rollback/AutoVar.h"
 
 #include "core_allocate/LinearAllocator.h"
@@ -28,17 +30,13 @@ public:
 
 		void Bind( rollback::Window& window, state::VariableIdentifier const& parent, alloc::Allocator& allocator );
 
-		rollback::AutoVar<int16_t> mX;
-		rollback::AutoVar<int16_t> mY;
+		phys::PhysCoord GetCoord() const;
+		void SetCoord( phys::PhysCoord pos );
 
-		enum Facing : uint8_t
-		{
-			North = 0,
-			East,
-			South,
-			West,
-		};
-		rollback::AutoVar<uint8_t> mFacing;
+		rollback::AutoVar<phys::PhysCoordElem> mX;
+		rollback::AutoVar<phys::PhysCoordElem> mY;
+
+		rollback::AutoVar<phys::Direction::Value> mFacing;
 
 		rollback::AutoVar<bool> mMoving;
 	};

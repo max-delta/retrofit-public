@@ -17,14 +17,13 @@
 
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
-
+#include "GameInput/GameController.h"
+#include "GamePixelPhysics/PixelCast.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/NineSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
-
-#include "GameInput/GameController.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
@@ -32,10 +31,13 @@
 
 #include "Timing/FrameClock.h"
 
-#include "core_state/VariableIdentifier.h"
 #include "core_component/TypedObjectRef.h"
+#include "core_math/BitwiseEnums.h"
+#include "core_state/VariableIdentifier.h"
 
 #include "core/ptr/default_creator.h"
+
+#include "rftl/extension/static_vector.h"
 
 
 namespace RF::cc::appstate {
@@ -46,6 +48,7 @@ struct Gameplay_Overworld::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
 	gfx::TileLayer mTerrainLand = {};
 	gfx::TileLayer mTerrainCloudA = {};
 	gfx::TileLayer mTerrainCloudB = {};
@@ -72,12 +75,17 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( kHackMap ) + ".oo" );
 	overworld::Overworld const map = overworld::Overworld::LoadFromDesc( mapDescPath );
 
-	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
-	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
-	ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
+	// Setup collision
+	{
+		internalState.mCollisionMap = map.mCollisionMap;
+	}
 
 	// Setup terrain
 	{
+		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
+
 		gfx::TileLayer& land = internalState.mTerrainLand;
 		gfx::TileLayer& cloudA = internalState.mTerrainCloudA;
 		gfx::TileLayer& cloudB = internalState.mTerrainCloudB;
@@ -122,6 +130,31 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		{
 			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudB, vfs, map.mCloud2TilemapPath );
 			RF_ASSERT( loadSuccess );
+		}
+	}
+
+	// Setup overworld characters
+	{
+		using namespace state;
+
+		// Get the active party characters
+		rftl::array<state::MutableObjectRef, company::kActiveTeamSize> const activePartyCharacters =
+			gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
+
+		// For each active team member...
+		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
+		{
+			state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
+			if( character.IsSet() == false )
+			{
+				// Not active
+				continue;
+			}
+
+			// Clear movement
+			comp::OverworldMovement& movement = *character.GetMutableComponentInstanceT<comp::OverworldMovement>();
+			movement.mCurPos.mFacing = phys::Direction::South;
+			movement.mCurPos.mMoving = false;
 		}
 	}
 
@@ -213,11 +246,17 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		internalState.mUI->SetChildRenderingBlocked( true );
 	}
 
+	// Want to determine movement intent
+	phys::Direction::Value moveStarts = phys::Direction::Invalid;
+	phys::Direction::Value moveStops = phys::Direction::Invalid;
+
 	// Process character control
 	rftl::vector<input::GameCommand> const charCommands =
 		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::CharacterControl );
 	for( input::GameCommand const& charCommand : charCommands )
 	{
+		using namespace math::enums::bitwise;
+
 		// Treat as activity
 		internalState.mLastActivity = time::FrameClock::now();
 
@@ -227,9 +266,37 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			// TODO: Make sure party is actually at a site, and set it up
 			context.mManager.RequestDeferredStateChange( id::Gameplay_Site );
 		}
-		else
+		else if( charCommand.mType == input::command::game::WalkNorth )
 		{
-			// TODO: Movement
+			moveStarts |= phys::Direction::North;
+		}
+		else if( charCommand.mType == input::command::game::WalkNorthStop )
+		{
+			moveStops |= phys::Direction::North;
+		}
+		else if( charCommand.mType == input::command::game::WalkEast )
+		{
+			moveStarts |= phys::Direction::East;
+		}
+		else if( charCommand.mType == input::command::game::WalkEastStop )
+		{
+			moveStops |= phys::Direction::East;
+		}
+		else if( charCommand.mType == input::command::game::WalkSouth )
+		{
+			moveStarts |= phys::Direction::South;
+		}
+		else if( charCommand.mType == input::command::game::WalkSouthStop )
+		{
+			moveStops |= phys::Direction::South;
+		}
+		else if( charCommand.mType == input::command::game::WalkWest )
+		{
+			moveStarts |= phys::Direction::West;
+		}
+		else if( charCommand.mType == input::command::game::WalkWestStop )
+		{
+			moveStops |= phys::Direction::West;
 		}
 	}
 
@@ -243,6 +310,92 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			// Bring up menus
 			context.mManager.RequestDeferredStateChange( id::Gameplay_Menus );
 		}
+	}
+
+	// Update movement
+	{
+		using namespace state;
+
+		// Find movement components
+		using MovementPtr = WeakPtr<comp::OverworldMovement>;
+		using MovementPtrs = rftl::static_vector<MovementPtr, company::kActiveTeamSize>;
+		MovementPtr pawnMovementPtr;
+		MovementPtrs followerMovementPtrs;
+		{
+			// Get the active party characters
+			rftl::array<state::MutableObjectRef, company::kActiveTeamSize> const activePartyCharacters =
+				gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
+
+			// For each active team member...
+			for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
+			{
+				state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
+				if( character.IsSet() == false )
+				{
+					// Not active
+					continue;
+				}
+
+				// Get movement
+				MovementPtr const movementPtr = character.GetMutableComponentInstanceT<comp::OverworldMovement>();
+				RF_ASSERT( movementPtr != nullptr );
+				if( pawnMovementPtr == nullptr )
+				{
+					pawnMovementPtr = movementPtr;
+				}
+				else
+				{
+					followerMovementPtrs.emplace_back( movementPtr );
+				}
+			}
+		}
+		RF_ASSERT( pawnMovementPtr != nullptr );
+		comp::OverworldMovement& pawnMovement = *pawnMovementPtr;
+
+		// Update main movement direction
+		{
+			using namespace math::enums::bitwise;
+
+			comp::OverworldMovement::Pos& curPos = pawnMovement.mCurPos;
+
+			// Where are we moving?
+			phys::Direction::Value desiredMovement = curPos.mFacing;
+			if( curPos.mMoving == false )
+			{
+				// Standing only, not actually moving
+				desiredMovement = phys::Direction::Invalid;
+			}
+
+			// How do we want to change that?
+			desiredMovement |= moveStarts;
+			desiredMovement &= ~moveStops;
+
+			if( desiredMovement != phys::Direction::Invalid )
+			{
+				curPos.mFacing = desiredMovement;
+				curPos.mMoving = true;
+			}
+			else
+			{
+				// Leave facing unchanged
+				curPos.mMoving = false;
+			}
+		}
+
+		// Update main position
+		if( pawnMovement.mCurPos.mMoving )
+		{
+			phys::PhysCoord pos = pawnMovement.mCurPos.GetCoord();
+			phys::Direction::Value dir = pawnMovement.mCurPos.mFacing;
+
+			// Step
+			pos = phys::PixelCast::FixOutOfBounds( internalState.mCollisionMap, pos );
+			pos = phys::PixelCast::CardinalStepCast( internalState.mCollisionMap, pos, dir );
+
+			pawnMovement.mCurPos.SetCoord( pos );
+		}
+
+		RF_TODO_ANNOTATION( "Move followers" );
 	}
 
 	// Draw terrain
@@ -282,12 +435,12 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( cloudB );
 	}
 
-	// Process overworld characters
+	// Draw overworld characters
 	{
 		using namespace state;
 
 		// Get the active party characters
-		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
+		rftl::array<state::MutableObjectRef, company::kActiveTeamSize> const activePartyCharacters =
 			gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
 
 		// For each active team member...
@@ -302,16 +455,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			// Find character components
 			comp::OverworldVisual& visual = *character.GetMutableComponentInstanceT<comp::OverworldVisual>();
-			comp::OverworldMovement& movement = *character.GetMutableComponentInstanceT<comp::OverworldMovement>();
-
-			// Update movement
-			{
-				// HACK: Face south, split positions out
-				// TODO: Input, etc.
-				movement.mCurPos.mFacing = comp::OverworldMovement::Pos::Facing::South;
-				movement.mCurPos.mMoving = true;
-				movement.mCurPos.mX = math::integer_cast<gfx::PPUCoordElem>( i_teamIndex * 32 );
-			}
+			comp::OverworldMovement const& movement = *character.GetComponentInstanceT<comp::OverworldMovement>();
 
 			// Update and draw visuals
 			{
@@ -327,21 +471,27 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				bool const idle = movement.mCurPos.mMoving == false;
 
 				// Animate based on movement
+				RF_TODO_ANNOTATION( "Better facing handling" );
 				comp::OverworldVisual::Anim const* anim;
 				switch( movement.mCurPos.mFacing )
 				{
-					case comp::OverworldMovement::Pos::Facing::North:
+					case phys::Direction::North:
+					case phys::Direction::NE:
+					case phys::Direction::NW:
 						anim = idle ? &visual.mIdleNorth : &visual.mWalkNorth;
 						break;
-					case comp::OverworldMovement::Pos::Facing::East:
+					case phys::Direction::East:
 						anim = idle ? &visual.mIdleEast : &visual.mWalkEast;
 						break;
-					case comp::OverworldMovement::Pos::Facing::South:
+					case phys::Direction::South:
+					case phys::Direction::SE:
+					case phys::Direction::SW:
 						anim = idle ? &visual.mIdleSouth : &visual.mWalkSouth;
 						break;
-					case comp::OverworldMovement::Pos::Facing::West:
+					case phys::Direction::West:
 						anim = idle ? &visual.mIdleWest : &visual.mWalkWest;
 						break;
+					case phys::Direction::Invalid:
 					default:
 						RFLOG_FATAL( character, RFCAT_CC3O3, "Unexpected codepath" );
 				}

@@ -13,6 +13,21 @@ void OverworldMovement::Pos::Bind( rollback::Window& window, state::VariableIden
 	mMoving.Bind( window, parent.GetChild( "moving" ), allocator );
 }
 
+
+
+phys::PhysCoord OverworldMovement::Pos::GetCoord() const
+{
+	return phys::PhysCoord( mX, mY );
+}
+
+
+
+void OverworldMovement::Pos::SetCoord( phys::PhysCoord pos )
+{
+	mX = pos.x;
+	mY = pos.y;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void OverworldMovement::Bind( Window& sharedWindow, Window& privateWindow, VariableIdentifier const& parent )
