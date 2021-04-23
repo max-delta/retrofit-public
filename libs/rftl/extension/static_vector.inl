@@ -462,7 +462,7 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline typename static_vector<Element, ElementCapacity, Alignment>::iterator static_vector<Element, ElementCapacity, Alignment>::insert( const_iterator pos, const value_type& value )
 {
 	value_type copy = value;
-	return insert( rftl::move( copy ) );
+	return insert( pos, rftl::move( copy ) );
 }
 
 
