@@ -367,6 +367,10 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 		sourceFrames = { 0, 1, 2, 1 };
 	}
 
+	// HACK: Hard-coded
+	// TODO: Use data to control this
+	static constexpr uint8_t kHACKSlowdownRate = 6;
+
 	// HACK: Direct access to texture manager
 	// TODO: Re-visit API surface
 	gfx::TextureManager& texMan = *mPpu->DebugGetTextureManager();
@@ -374,7 +378,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	// Create framepack
 	gfx::FramePack_256 newFPack = {};
 	newFPack.mNumTimeSlots = math::integer_cast<uint8_t>( sourceFrames.size() );
-	newFPack.mPreferredSlowdownRate = 20;
+	newFPack.mPreferredSlowdownRate = kHACKSlowdownRate;
 	for( size_t i = 0; i < sourceFrames.size(); i++ )
 	{
 		rftl::string const frameName = calcFrameName( i );
