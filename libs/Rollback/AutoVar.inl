@@ -58,7 +58,8 @@ Var<typename AutoVar<T>::VarType> AutoVar<T>::VarT() const
 template<typename T>
 typename AutoVar<T>::Type AutoVar<T>::As() const
 {
-	return this->mVar.As();
+	// NOTE: May be different type
+	return static_cast<Type>( this->mVar.As() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
