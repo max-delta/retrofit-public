@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "core_math/BitwiseEnums.h"
 #include "core_math/Vector2.h"
 
 
@@ -8,6 +9,7 @@ namespace RF::phys {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace Direction {
+using namespace enable_bitwise_enums;
 enum Value : uint8_t
 {
 	Invalid = 0,
@@ -22,6 +24,10 @@ enum Value : uint8_t
 	NW = North | West,
 	SW = South | West,
 };
+
+static constexpr Value kCardinals[4] = { North, East, South, West };
+static constexpr Value kInterCardinals[4] = { NE, SE, NW, SW };
+static constexpr Value kConflicts[2] = { North | South, East | West };
 }
 
 

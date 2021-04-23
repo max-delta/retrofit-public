@@ -31,6 +31,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DirectionLogic.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="PixelCast.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -38,6 +39,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DirectionLogic.h" />
     <ClInclude Include="PhysicsFwd.h" />
     <ClInclude Include="PixelCast.h" />
     <ClInclude Include="project.h" />
