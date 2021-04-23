@@ -60,8 +60,8 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 	mCharacterDisplay->SetFramePack(
 		anim.mFramePackID,
 		anim.mMaxTimeIndex,
-		( gfx::kTileSize / 4 ) * 4,
-		( gfx::kTileSize / 4 ) * 5 );
+		0,
+		gfx::kTileSize / 2 );
 
 	// Text
 	{
@@ -186,7 +186,7 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 		uiManager.AssignStrongController(
 			charSlotColumnSlicer->GetChildContainerID( 1 ),
 			DefaultCreator<FramePackDisplay>::Create() );
-	mCharacterDisplay->SetJustification( ui::Justification::MiddleCenter );
+	mCharacterDisplay->SetJustification( ui::Justification::BottomCenter );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -370,6 +370,8 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	// HACK: Hard-coded
 	// TODO: Use data to control this
 	static constexpr uint8_t kHACKSlowdownRate = 6;
+	uint8_t const originX = math::integer_cast<uint8_t>( tileWidth / 2 );
+	uint8_t const originY = math::integer_cast<uint8_t>( tileHeight * 5 / 6 );
 
 	// HACK: Direct access to texture manager
 	// TODO: Re-visit API surface
@@ -383,7 +385,10 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	{
 		rftl::string const frameName = calcFrameName( i );
 		file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( calcFrameName( sourceFrames.at( i ) ) );
-		newFPack.GetMutableTimeSlots()[i].mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
+		gfx::FramePackBase::TimeSlot& slot = newFPack.GetMutableTimeSlots()[i];
+		slot.mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
+		slot.mTextureOriginX = originX;
+		slot.mTextureOriginY = originY;
 		newFPack.GetMutableTimeSlotSustains()[i] = 1;
 	}
 
