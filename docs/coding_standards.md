@@ -100,7 +100,7 @@ Class/Struct/Union/Enum/Typedef/Typename: UpperCamelCase
 
 Functions: UpperCamelCase
 
-Namespace: lowerCamelCase (Note that the super-namespace 'RF' is an exception)
+Namespace: lower\_snake\_case (Note that the super-namespace 'RF' is an exception)
 
 Function parameter: lowerCamelCase
 
