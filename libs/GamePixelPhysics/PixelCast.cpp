@@ -12,6 +12,10 @@ namespace RF::phys {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+using StepAttempts = rftl::static_vector<PhysCoord, 3>;
+
+
+
 PhysCoord GetStep( Direction::Value direction )
 {
 	using namespace Direction;
@@ -40,6 +44,30 @@ PhysCoord GetStep( Direction::Value direction )
 			RF_DBGFAIL();
 			return PhysCoord( 0, 0 );
 	}
+}
+
+
+
+PhysCoord StepCast(
+	math::Bitmap const& collisionMap,
+	PhysCoord const& pos,
+	StepAttempts const& attempts )
+{
+	RF_ASSERT( pos.x >= 0 );
+	RF_ASSERT( pos.y >= 0 );
+	RF_ASSERT( pos.x <= math::integer_cast<PhysCoordElem>( collisionMap.GetWidth() ) );
+	RF_ASSERT( pos.y <= math::integer_cast<PhysCoordElem>( collisionMap.GetHeight() ) );
+	RF_ASSERT( attempts.empty() == false );
+
+	for( PhysCoord const& attempt : attempts )
+	{
+		if( PixelCast::HasCollision( collisionMap, attempt ) == false )
+		{
+			return attempt;
+		}
+	}
+
+	return pos;
 }
 
 }
@@ -103,12 +131,7 @@ PhysCoord PixelCast::CardinalStepCast(
 	PhysCoord const& pos,
 	Direction::Value direction )
 {
-	RF_ASSERT( pos.x >= 0 );
-	RF_ASSERT( pos.y >= 0 );
-	RF_ASSERT( pos.x <= math::integer_cast<PhysCoordElem>( collisionMap.GetWidth() ) );
-	RF_ASSERT( pos.y <= math::integer_cast<PhysCoordElem>( collisionMap.GetHeight() ) );
-
-	rftl::static_vector<PhysCoord, 3> attempts;
+	details::StepAttempts attempts;
 	{
 		using namespace Direction;
 
@@ -162,15 +185,78 @@ PhysCoord PixelCast::CardinalStepCast(
 	}
 	RF_ASSERT( attempts.empty() == false );
 
-	for( PhysCoord const& attempt : attempts )
+	return details::StepCast( collisionMap, pos, attempts );
+}
+
+
+
+PhysCoord PixelCast::SlideStepCast(
+	math::Bitmap const& collisionMap,
+	PhysCoord const& pos,
+	Direction::Value direction )
+{
+	details::StepAttempts attempts;
 	{
-		if( HasCollision( collisionMap, attempt ) == false )
+		using namespace Direction;
+
+		auto const addAttempt = [&attempts, &pos]( Value dir ) -> void //
 		{
-			return attempt;
+			RF_ASSERT( dir != Invalid );
+			attempts.emplace_back( pos + details::GetStep( dir ) );
+		};
+
+		switch( direction )
+		{
+			// All directions should feel like a quadrant cone
+			case North:
+				addAttempt( North );
+				addAttempt( NE );
+				addAttempt( NW );
+				break;
+			case East:
+				addAttempt( East );
+				addAttempt( NE );
+				addAttempt( SE );
+				break;
+			case South:
+				addAttempt( South );
+				addAttempt( SE );
+				addAttempt( SW );
+				break;
+			case West:
+				addAttempt( West );
+				addAttempt( NW );
+				addAttempt( SW );
+				break;
+			case NE:
+				addAttempt( NE );
+				addAttempt( North );
+				addAttempt( East );
+				break;
+			case NW:
+				addAttempt( NW );
+				addAttempt( North );
+				addAttempt( West );
+				break;
+			case SE:
+				addAttempt( SE );
+				addAttempt( South );
+				addAttempt( East );
+				break;
+			case SW:
+				addAttempt( SW );
+				addAttempt( South );
+				addAttempt( West );
+				break;
+			case Invalid:
+			default:
+				RF_DBGFAIL();
+				break;
 		}
 	}
+	RF_ASSERT( attempts.empty() == false );
 
-	return pos;
+	return details::StepCast( collisionMap, pos, attempts );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

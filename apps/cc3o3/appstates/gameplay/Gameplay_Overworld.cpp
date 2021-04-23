@@ -421,8 +421,15 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			phys::Direction::Value dir = pawnMovement.mCurPos.mPrimary.As() | pawnMovement.mCurPos.mSecondary.As();
 
 			// Step
+			static constexpr bool kDoubleSpeed = false;
 			pos = phys::PixelCast::FixOutOfBounds( internalState.mCollisionMap, pos );
-			pos = phys::PixelCast::CardinalStepCast( internalState.mCollisionMap, pos, dir );
+			pos = phys::PixelCast::SlideStepCast( internalState.mCollisionMap, pos, dir );
+			if constexpr( kDoubleSpeed )
+			{
+				// Make second step more restrictive, giving the effect of
+				//  sliding against walls cause the feeling of half-speed
+				pos = phys::PixelCast::CardinalStepCast( internalState.mCollisionMap, pos, dir );
+			}
 
 			pawnMovement.mCurPos.SetCoord( pos );
 		}

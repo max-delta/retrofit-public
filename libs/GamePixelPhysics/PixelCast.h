@@ -34,8 +34,12 @@ public:
 
 	// Attempt to step a pixel in a direction, under the assumption it is
 	//  under user control (and so should be lenient but intuitive)
-	// NOTE: Assumes cardinals are the primary movement intent
+	// NOTE: Cardinal step is more restrictive on cardinal movement
 	static PhysCoord CardinalStepCast(
+		math::Bitmap const& collisionMap,
+		PhysCoord const& pos,
+		Direction::Value direction );
+	static PhysCoord SlideStepCast(
 		math::Bitmap const& collisionMap,
 		PhysCoord const& pos,
 		Direction::Value direction );
