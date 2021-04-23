@@ -255,7 +255,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::CharacterControl );
 	for( input::GameCommand const& charCommand : charCommands )
 	{
-		using namespace math::enums::bitwise;
+		using namespace enable_bitwise_enums;
 
 		// Treat as activity
 		internalState.mLastActivity = time::FrameClock::now();
@@ -354,7 +354,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 		// Update main movement direction
 		{
-			using namespace math::enums::bitwise;
+			using namespace enable_bitwise_enums;
 
 			comp::OverworldMovement::Pos& curPos = pawnMovement.mCurPos;
 
