@@ -19,6 +19,7 @@
     <ClInclude Include="Lerp.h" />
     <ClInclude Include="Color4u8.h" />
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="BitwiseEnums.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -31,6 +32,7 @@
     <ClCompile Include="Rand.cpp" />
     <ClCompile Include="Color4u8.cpp" />
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="BitwiseEnums.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />

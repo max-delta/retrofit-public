@@ -30,6 +30,7 @@
     <ClInclude Include="AABB4.h" />
     <ClInclude Include="BitField.h" />
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="BitwiseEnums.h" />
     <ClInclude Include="Color3f.h" />
     <ClInclude Include="Color4u8.h" />
     <ClInclude Include="Hash.h" />
@@ -49,6 +50,7 @@
   <ItemGroup>
     <ClCompile Include="AABB4.cpp" />
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="BitwiseEnums.cpp" />
     <ClCompile Include="Color3f.cpp" />
     <ClCompile Include="Color4u8.cpp" />
     <ClCompile Include="Hash.cpp" />
