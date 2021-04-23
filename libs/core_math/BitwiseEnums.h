@@ -12,7 +12,8 @@ namespace RF::enable_bitwise_enums {
 template<typename T, typename Unused = typename rftl::enable_if<rftl::is_enum<T>::value, int>::type>
 static constexpr T operator~( T const& val )
 {
-	return static_cast<T>( ~static_cast<rftl::underlying_type<T>::type>( val ) );
+	return static_cast<T>(
+		~static_cast<typename rftl::underlying_type<T>::type>( val ) );
 }
 
 
@@ -21,8 +22,8 @@ template<typename T, typename Unused = typename rftl::enable_if<rftl::is_enum<T>
 static constexpr T operator&( T const& lhs, T const& rhs )
 {
 	return static_cast<T>(
-		static_cast<rftl::underlying_type<T>::type>( lhs ) &
-		static_cast<rftl::underlying_type<T>::type>( rhs ) );
+		static_cast<typename rftl::underlying_type<T>::type>( lhs ) &
+		static_cast<typename rftl::underlying_type<T>::type>( rhs ) );
 }
 
 
@@ -31,8 +32,8 @@ template<typename T, typename Unused = typename rftl::enable_if<rftl::is_enum<T>
 static constexpr T operator|( T const& lhs, T const& rhs )
 {
 	return static_cast<T>(
-		static_cast<rftl::underlying_type<T>::type>( lhs ) |
-		static_cast<rftl::underlying_type<T>::type>( rhs ) );
+		static_cast<typename rftl::underlying_type<T>::type>( lhs ) |
+		static_cast<typename rftl::underlying_type<T>::type>( rhs ) );
 }
 
 
@@ -40,7 +41,7 @@ static constexpr T operator|( T const& lhs, T const& rhs )
 template<typename T, typename Unused = typename rftl::enable_if<rftl::is_enum<T>::value, int>::type>
 static constexpr T& operator&=( T& lhs, T const& rhs )
 {
-	return lhs = static_cast<T>( lhs & rhs );
+	return lhs = lhs & rhs;
 }
 
 
@@ -48,7 +49,7 @@ static constexpr T& operator&=( T& lhs, T const& rhs )
 template<typename T, typename Unused = typename rftl::enable_if<rftl::is_enum<T>::value, int>::type>
 static constexpr T& operator|=( T& lhs, T const& rhs )
 {
-	return lhs = static_cast<T>( lhs | rhs );
+	return lhs = lhs | rhs;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
