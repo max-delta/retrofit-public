@@ -9,7 +9,9 @@ void OverworldMovement::Pos::Bind( rollback::Window& window, state::VariableIden
 {
 	mX.Bind( window, parent.GetChild( "x" ), allocator );
 	mY.Bind( window, parent.GetChild( "y" ), allocator );
-	mFacing.Bind( window, parent.GetChild( "facing" ), allocator );
+	mPrimary.Bind( window, parent.GetChild( "primary" ), allocator );
+	mSecondary.Bind( window, parent.GetChild( "secondary" ), allocator );
+	mLatent.Bind( window, parent.GetChild( "latent" ), allocator );
 	mMoving.Bind( window, parent.GetChild( "moving" ), allocator );
 }
 

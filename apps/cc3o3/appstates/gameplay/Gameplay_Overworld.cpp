@@ -18,6 +18,7 @@
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
 #include "GameInput/GameController.h"
+#include "GamePixelPhysics/DirectionLogic.h"
 #include "GamePixelPhysics/PixelCast.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/UIContext.h"
@@ -32,7 +33,6 @@
 #include "Timing/FrameClock.h"
 
 #include "core_component/TypedObjectRef.h"
-#include "core_math/BitwiseEnums.h"
 #include "core_state/VariableIdentifier.h"
 
 #include "core/ptr/default_creator.h"
@@ -153,7 +153,9 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 
 			// Clear movement
 			comp::OverworldMovement& movement = *character.GetMutableComponentInstanceT<comp::OverworldMovement>();
-			movement.mCurPos.mFacing = phys::Direction::South;
+			movement.mCurPos.mPrimary = phys::Direction::South;
+			movement.mCurPos.mSecondary = phys::Direction::Invalid;
+			movement.mCurPos.mLatent = phys::Direction::Invalid;
 			movement.mCurPos.mMoving = false;
 		}
 	}
@@ -247,6 +249,13 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 	}
 
 	// Want to determine movement intent
+	RF_TODO_ANNOTATION(
+		"This breaks sub-frame input sequences. Do we care? If yes, then these"
+		" should be changed to a vector sequence of adds/removes and then"
+		" applied later, or the direction evaluation logic should be prepared"
+		" before the commands are processed, and then that subset of logic"
+		" should be run inside of command processing, with the results"
+		" applied later after command processing is finished." );
 	phys::Direction::Value moveStarts = phys::Direction::Invalid;
 	phys::Direction::Value moveStops = phys::Direction::Invalid;
 
@@ -358,35 +367,58 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			comp::OverworldMovement::Pos& curPos = pawnMovement.mCurPos;
 
-			// Where are we moving?
-			phys::Direction::Value desiredMovement = curPos.mFacing;
-			if( curPos.mMoving == false )
+			// Calc movement layers
+			phys::Direction::Value primary;
+			phys::Direction::Value secondary;
+			phys::Direction::Value latent;
+			if( curPos.mMoving )
 			{
-				// Standing only, not actually moving
-				desiredMovement = phys::Direction::Invalid;
-			}
-
-			// How do we want to change that?
-			desiredMovement |= moveStarts;
-			desiredMovement &= ~moveStops;
-
-			if( desiredMovement != phys::Direction::Invalid )
-			{
-				curPos.mFacing = desiredMovement;
-				curPos.mMoving = true;
+				primary = curPos.mPrimary;
+				secondary = curPos.mSecondary;
+				latent = curPos.mLatent;
+				RF_ASSERT( primary != phys::Direction::Invalid );
 			}
 			else
 			{
-				// Leave facing unchanged
+				primary = phys::Direction::Invalid;
+				secondary = phys::Direction::Invalid;
+				latent = phys::Direction::Invalid;
+			}
+			phys::DirectionLogic::UpdateStack(
+				primary, secondary, latent,
+				moveStarts, moveStops );
+
+			// Are we moving?
+			phys::Direction::Value desiredMovement = primary | secondary;
+			if( desiredMovement == phys::Direction::Invalid )
+			{
+				// Standing only, not actually moving
+				RF_ASSERT( primary == phys::Direction::Invalid );
+				( (void)curPos.mPrimary ); // Don't change, used for visuals
+				RF_ASSERT( secondary == phys::Direction::Invalid );
+				curPos.mSecondary = secondary;
+				RF_ASSERT( latent == phys::Direction::Invalid );
+				curPos.mLatent = latent;
 				curPos.mMoving = false;
+			}
+			else
+			{
+				// Moving
+				RF_ASSERT( primary != phys::Direction::Invalid );
+				curPos.mPrimary = primary;
+				curPos.mSecondary = secondary;
+				curPos.mLatent = latent;
+				curPos.mMoving = true;
 			}
 		}
 
 		// Update main position
 		if( pawnMovement.mCurPos.mMoving )
 		{
+			using namespace enable_bitwise_enums;
+
 			phys::PhysCoord pos = pawnMovement.mCurPos.GetCoord();
-			phys::Direction::Value dir = pawnMovement.mCurPos.mFacing;
+			phys::Direction::Value dir = pawnMovement.mCurPos.mPrimary.As() | pawnMovement.mCurPos.mSecondary.As();
 
 			// Step
 			pos = phys::PixelCast::FixOutOfBounds( internalState.mCollisionMap, pos );
@@ -471,26 +503,25 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				bool const idle = movement.mCurPos.mMoving == false;
 
 				// Animate based on movement
-				RF_TODO_ANNOTATION( "Better facing handling" );
 				comp::OverworldVisual::Anim const* anim;
-				switch( movement.mCurPos.mFacing )
+				switch( movement.mCurPos.mPrimary )
 				{
 					case phys::Direction::North:
-					case phys::Direction::NE:
-					case phys::Direction::NW:
 						anim = idle ? &visual.mIdleNorth : &visual.mWalkNorth;
 						break;
 					case phys::Direction::East:
 						anim = idle ? &visual.mIdleEast : &visual.mWalkEast;
 						break;
 					case phys::Direction::South:
-					case phys::Direction::SE:
-					case phys::Direction::SW:
 						anim = idle ? &visual.mIdleSouth : &visual.mWalkSouth;
 						break;
 					case phys::Direction::West:
 						anim = idle ? &visual.mIdleWest : &visual.mWalkWest;
 						break;
+					case phys::Direction::NE:
+					case phys::Direction::NW:
+					case phys::Direction::SE:
+					case phys::Direction::SW:
 					case phys::Direction::Invalid:
 					default:
 						RFLOG_FATAL( character, RFCAT_CC3O3, "Unexpected codepath" );

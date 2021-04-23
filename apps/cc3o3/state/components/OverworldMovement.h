@@ -36,7 +36,9 @@ public:
 		rollback::AutoVar<phys::PhysCoordElem> mX;
 		rollback::AutoVar<phys::PhysCoordElem> mY;
 
-		rollback::AutoVar<phys::Direction::Value> mFacing;
+		rollback::AutoVar<phys::Direction::Value> mPrimary;
+		rollback::AutoVar<phys::Direction::Value> mSecondary;
+		rollback::AutoVar<phys::Direction::Value> mLatent;
 
 		rollback::AutoVar<bool> mMoving;
 	};
