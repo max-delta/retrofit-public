@@ -18,13 +18,15 @@ enum class Orientation : uint8_t
 
 enum class Justification : uint8_t
 {
-	Top = 1 << 3,
-	Middle = 2 << 3,
-	Bottom = 4 << 3,
+	Invalid = 0,
 
-	Left = 1,
-	Center = 2,
-	Right = 4,
+	Top = 1 << 3,
+	Middle = 1 << 4,
+	Bottom = 1 << 5,
+
+	Left = 1 << 0,
+	Center = 1 << 1,
+	Right = 1 << 2,
 
 	TopLeft = Top | Left,
 	TopCenter = Top | Center,
