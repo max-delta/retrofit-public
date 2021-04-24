@@ -7,6 +7,7 @@
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
+#include "core_math/math_casts.h"
 
 #include "core/ptr/default_creator.h"
 

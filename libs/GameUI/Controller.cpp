@@ -5,6 +5,8 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core_math/Vector2.h"
+
 
 RFTYPE_CREATE_META( RF::ui::Controller )
 {

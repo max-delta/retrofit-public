@@ -3,6 +3,8 @@
 
 #include "PPUFwd.h"
 
+#include "core_math/Vector2.h"
+
 
 // Forwards
 namespace RF::math {

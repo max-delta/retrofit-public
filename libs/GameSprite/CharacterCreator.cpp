@@ -6,6 +6,8 @@
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
+#include "core_math/math_casts.h"
+
 
 namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////

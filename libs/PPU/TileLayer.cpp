@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "TileLayer.h"
 
+#include "core_math/math_casts.h"
+
 
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////

@@ -5,6 +5,8 @@
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 
+#include "core_math/math_casts.h"
+
 
 namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////

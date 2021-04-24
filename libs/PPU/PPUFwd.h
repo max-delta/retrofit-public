@@ -1,9 +1,13 @@
 #pragma once
-#include "core_math/Vector2.h"
 #include "core_math/math_clamps.h"
 
 #include "rftl/cstdint"
 
+// Forwards
+namespace RF::math {
+template<typename T>
+class Vector2;
+}
 
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////

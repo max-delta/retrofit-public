@@ -5,6 +5,8 @@
 
 #include "PPU/TileLayer.h"
 
+#include "core_math/Vector2.h"
+
 
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
