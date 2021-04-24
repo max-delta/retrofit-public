@@ -442,7 +442,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		// Update viewport
 		static constexpr gfx::PPUCoordElem kViewportMarginX = gfx::kTileSize * 4;
 		static constexpr gfx::PPUCoordElem kViewportMarginY = gfx::kTileSize * 3;
-		math::AABB4<gfx::PPUCoordElem> const mapLimits = {
+		gfx::AABB const mapLimits = {
 			gfx::PPUCoord{ 0, 0 },
 			gfx::PPUCoord{
 				math::integer_cast<gfx::PPUCoordElem>( internalState.mCollisionMap.GetWidth() ),

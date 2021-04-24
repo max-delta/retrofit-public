@@ -7,6 +7,8 @@
 namespace RF::math {
 template<typename T>
 class Vector2;
+template<typename T>
+class AABB4;
 }
 
 namespace RF::gfx {
@@ -63,6 +65,7 @@ constexpr size_t kNumGFXModifiers = 8;
 using PPUCoordElem = int16_t;
 using PPUCoord = math::Vector2<PPUCoordElem>;
 using PPUVec = math::Vector2<PPUCoordElem>;
+using AABB = math::AABB4<PPUCoordElem>;
 
 using PPUTileElem = int8_t;
 using PPUDepthLayer = int8_t;

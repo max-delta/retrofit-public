@@ -575,7 +575,7 @@ void ContainerManager::RecalcRootContainer( bool force )
 
 	Container& root = GetMutableRootContainer();
 
-	Container::AABB4 newAABB;
+	gfx::AABB newAABB;
 	newAABB.mTopLeft = { mRootAABBReduction, mRootAABBReduction };
 	newAABB.mBottomRight.x = mGraphics->GetWidth() - mRootAABBReduction;
 	newAABB.mBottomRight.y = mGraphics->GetHeight() - mRootAABBReduction;
@@ -613,7 +613,7 @@ void ContainerManager::RecalcContainer( Container& container, bool force )
 	Anchor const& rightConstraint = mAnchors.at( container.mRightConstraint );
 	Anchor const& bottomConstraint = mAnchors.at( container.mBottomConstraint );
 
-	Container::AABB4 newAABB;
+	gfx::AABB newAABB;
 	newAABB.mTopLeft.x = leftConstraint.mPos.x + mDebugAABBReduction;
 	newAABB.mTopLeft.y = topConstraint.mPos.y + mDebugAABBReduction;
 	newAABB.mBottomRight.x = rightConstraint.mPos.x - mDebugAABBReduction;

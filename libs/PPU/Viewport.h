@@ -25,7 +25,7 @@ public:
 
 	void SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMargin );
 
-	void ClampToWithin( math::AABB4<PPUCoordElem> aabb );
+	void ClampToWithin( AABB aabb );
 
 	//
 	// Public data

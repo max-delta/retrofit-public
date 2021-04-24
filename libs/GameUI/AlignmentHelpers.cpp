@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "AlignmentHelpers.h"
 
+#include "core_math/AABB4.h"
 #include "core_math/Lerp.h"
 
 
@@ -9,7 +10,7 @@ namespace RF::ui {
 
 gfx::PPUCoord AlignToJustify(
 	gfx::PPUCoord objectDimensions,
-	math::AABB4<gfx::PPUCoordElem> const& enclosure,
+	gfx::AABB const& enclosure,
 	Justification justification )
 {
 	// Fallback

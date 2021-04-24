@@ -18,12 +18,6 @@ struct GAMEUI_API Container
 	RF_NO_COPY( Container );
 
 	//
-	// Types
-public:
-	using AABB4 = math::AABB4<gfx::PPUCoordElem>;
-
-
-	//
 	// Public methods
 public:
 	Container() = default;
@@ -53,7 +47,7 @@ public:
 	AnchorID mRightConstraint = kInvalidAnchorID;
 	AnchorID mTopConstraint = kInvalidAnchorID;
 	AnchorID mBottomConstraint = kInvalidAnchorID;
-	AABB4 mAABB;
+	gfx::AABB mAABB;
 
 	// Containers may own anchor points, which descendants may constrain
 	//  themselves to

@@ -94,7 +94,7 @@ void NineSlicer::OnInstanceAssign( UIContext& context, Container& container )
 
 void NineSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
-	Container::AABB4 const& aabb = container.mAABB;
+	gfx::AABB const& aabb = container.mAABB;
 	gfx::PPUCoordElem const x0 = aabb.Left();
 	gfx::PPUCoordElem const x100 = aabb.Right();
 	gfx::PPUCoordElem const x33 = math::Lerp( x0, x100, 1.f / 3.f );

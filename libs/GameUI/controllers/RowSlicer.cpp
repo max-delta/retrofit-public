@@ -109,7 +109,7 @@ void RowSlicer::OnInstanceAssign( UIContext& context, Container& container )
 
 void RowSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
-	Container::AABB4 const& aabb = container.mAABB;
+	gfx::AABB const& aabb = container.mAABB;
 	gfx::PPUCoordElem const x0 = aabb.Left();
 	gfx::PPUCoordElem const x100 = aabb.Right();
 	gfx::PPUCoordElem const y0 = aabb.Top();

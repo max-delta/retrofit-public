@@ -744,28 +744,28 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 
 
 
-bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb )
+bool PPUController::DebugDrawAABB( AABB aabb )
 {
 	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width )
+bool PPUController::DebugDrawAABB( AABB aabb, PPUCoordElem width )
 {
 	return DebugDrawAABB( aabb, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, math::Color3f color )
+bool PPUController::DebugDrawAABB( AABB aabb, math::Color3f color )
 {
 	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawAABB( math::AABB4<PPUCoordElem> aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
+bool PPUController::DebugDrawAABB( AABB aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
 {
 	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
 	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
