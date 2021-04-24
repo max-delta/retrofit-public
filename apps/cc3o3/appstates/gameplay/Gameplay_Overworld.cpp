@@ -29,6 +29,7 @@
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/TileLayerCSVLoader.h"
+#include "PPU/Viewport.h"
 
 #include "Timing/FrameClock.h"
 
@@ -52,6 +53,8 @@ struct Gameplay_Overworld::InternalState
 	gfx::TileLayer mTerrainLand = {};
 	gfx::TileLayer mTerrainCloudA = {};
 	gfx::TileLayer mTerrainCloudB = {};
+
+	gfx::Viewport mViewport = {};
 
 	WeakPtr<ui::Controller> mUI;
 	time::CommonClock::time_point mLastActivity;
@@ -435,7 +438,22 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		}
 
 		RF_TODO_ANNOTATION( "Move followers" );
+
+		// Update viewport
+		static constexpr gfx::PPUCoordElem kViewportMarginX = gfx::kTileSize * 4;
+		static constexpr gfx::PPUCoordElem kViewportMarginY = gfx::kTileSize * 3;
+		math::AABB4<gfx::PPUCoordElem> const mapLimits = {
+			gfx::PPUCoord{ 0, 0 },
+			gfx::PPUCoord{
+				math::integer_cast<gfx::PPUCoordElem>( internalState.mCollisionMap.GetWidth() ),
+				math::integer_cast<gfx::PPUCoordElem>( internalState.mCollisionMap.GetHeight() ) } };
+		ppu.UpdateViewportExtents( internalState.mViewport );
+		internalState.mViewport.SlideToFit( pawnMovement.mCurPos.GetCoord(), kViewportMarginX, kViewportMarginY );
+		internalState.mViewport.ClampToWithin( mapLimits );
 	}
+
+	// Apply viewport
+	ppu.ApplyViewport( internalState.mViewport );
 
 	// Draw terrain
 	{
