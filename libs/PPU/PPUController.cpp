@@ -1148,11 +1148,12 @@ void PPUController::ConvertColor( uint8_t ( &dest )[3], math::Color3f const& src
 
 math::Color3f PPUController::ConvertColor( uint8_t const ( &src )[3] )
 {
-	return math::Color3f{
-		math::float_cast<math::Color3f::ElementType>( src[0] ),
-		math::float_cast<math::Color3f::ElementType>( src[1] ),
-		math::float_cast<math::Color3f::ElementType>( src[2] )
-	} * ( 1.f / math::float_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
+	return //
+		math::Color3f{
+			math::float_cast<math::Color3f::ElementType>( src[0] ),
+			math::float_cast<math::Color3f::ElementType>( src[1] ),
+			math::float_cast<math::Color3f::ElementType>( src[2] ) } *
+		( 1.f / math::float_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
 }
 
 
