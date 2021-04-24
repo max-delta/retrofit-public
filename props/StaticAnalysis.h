@@ -11,7 +11,7 @@
 #if _MSC_FULL_VER >= 191526726 && _MSC_FULL_VER <= 191526732
 	#pragma warning( disable : 26455 )
 #endif
-#if _MSC_FULL_VER >= 192829910 && _MSC_FULL_VER <= 192829913
+#if _MSC_FULL_VER >= 192829910 && _MSC_FULL_VER <= 192829914
 	#pragma warning( disable : 26457 )
 #endif
 
@@ -19,6 +19,6 @@
 // NOTE: Specifically observed with rftl::lock_guard<rftl::mutex> not
 //  understanding where scope ends, and thinking the destructor would happen
 //  in the same line as the constructor
-#if _MSC_FULL_VER >= 192729111 && _MSC_FULL_VER <= 192829913
+#if _MSC_FULL_VER >= 192729111 && _MSC_FULL_VER <= 192829914
 	#pragma warning( disable : 26110 )
 #endif
