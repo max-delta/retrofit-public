@@ -10,6 +10,8 @@
 #include "PPU/Tileset.h"
 #include "PPU/Font.h"
 #include "PPU/FontManager.h"
+#include "PPU/Viewport.h"
+
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
@@ -267,6 +269,29 @@ void PPUController::SuppressDrawRequests( bool suppress )
 
 
 
+void PPUController::UpdateViewportExtents( Viewport& viewport ) const
+{
+	viewport.mSurfaceExtents = {
+		math::integer_cast<PPUCoordElem>( mWidth / GetZoomFactor() ),
+		math::integer_cast<PPUCoordElem>( mHeight / GetZoomFactor() ) };
+}
+
+
+
+void PPUController::ApplyViewport( Viewport const& viewport )
+{
+	mDrawOffset = -viewport.mOffset;
+}
+
+
+
+void PPUController::ResetViewport()
+{
+	mDrawOffset = {};
+}
+
+
+
 bool PPUController::DrawObject( Object const& object )
 {
 	if( mDrawRequestsSuppressed )
@@ -289,6 +314,8 @@ bool PPUController::DrawObject( Object const& object )
 	targetState.mNumObjects++;
 
 	targetObject = object;
+	targetObject.mXCoord += mDrawOffset.x;
+	targetObject.mYCoord += mDrawOffset.y;
 
 	return true;
 }
@@ -317,6 +344,8 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 	targetState.mNumTileLayers++;
 
 	targetTileLayer = tileLayer;
+	targetTileLayer.mXCoord += mDrawOffset.x;
+	targetTileLayer.mYCoord += mDrawOffset.y;
 
 	return true;
 }
@@ -382,8 +411,8 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 	PPUState::String& targetString = targetState.mStrings[targetState.mNumStrings];
 	targetState.mNumStrings++;
 
-	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
-	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mXCoord = pos.x + mDrawOffset.x;
+	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
 	ConvertColor( targetString.mColor, color );
 	targetString.mDesiredHeight = desiredHeight;
@@ -604,8 +633,8 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 	PPUDebugState::DebugString& targetString = targetState.mStrings[targetState.mNumStrings];
 	targetState.mNumStrings++;
 
-	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
-	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mXCoord = pos.x + mDrawOffset.x;
+	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mText[0] = '\0';
 	{
 		va_list args;
@@ -646,8 +675,8 @@ bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_
 	PPUDebugState::DebugAuxString& targetString = targetState.mAuxStrings[targetState.mNumAuxStrings];
 	targetState.mNumAuxStrings++;
 
-	targetString.mXCoord = math::integer_cast<PPUCoordElem>( pos.x );
-	targetString.mYCoord = math::integer_cast<PPUCoordElem>( pos.y );
+	targetString.mXCoord = pos.x + mDrawOffset.x;
+	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
 	ConvertColor( targetString.mColor, color );
 	targetString.mDesiredHeight = desiredHeight;
@@ -702,10 +731,10 @@ bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width,
 	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
 	targetState.mNumLines++;
 
-	targetLine.mXCoord0 = math::integer_cast<PPUCoordElem>( p0.x );
-	targetLine.mYCoord0 = math::integer_cast<PPUCoordElem>( p0.y );
-	targetLine.mXCoord1 = math::integer_cast<PPUCoordElem>( p1.x );
-	targetLine.mYCoord1 = math::integer_cast<PPUCoordElem>( p1.y );
+	targetLine.mXCoord0 = p0.x + mDrawOffset.x;
+	targetLine.mYCoord0 = p0.y + mDrawOffset.y;
+	targetLine.mXCoord1 = p1.x + mDrawOffset.x;
+	targetLine.mYCoord1 = p1.y + mDrawOffset.y;
 	targetLine.mWidth = width;
 	targetLine.mZLayer = zLayer;
 	targetLine.mColor = color;
@@ -1238,8 +1267,6 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		PPUCoordElem wrapRootX;
 		PPUCoordElem wrapRootY;
 		{
-			RF_ASSERT_MSG( rootX >= 0, "Untested math!" );
-			RF_ASSERT_MSG( rootY >= 0, "Untested math!" );
 			PPUCoordElem const xStepDifferenceFromZero = rootX % xLayerStep;
 			PPUCoordElem const yStepDifferenceFromZero = rootY % yLayerStep;
 			wrapRootX = xStepDifferenceFromZero;

@@ -475,6 +475,9 @@ void ProcessFrame()
 		gRollbackInputManager->TickLocalControllers();
 	}
 
+	// Reset viewport so ticks get good default behavior
+	app::gGraphics->ResetViewport();
+
 	// Tick the current true frame
 	RF_ASSERT( time::FrameClock::now() == currentTrueFrame );
 	sAppStateManager.Tick( currentTrueFrame, time::kSimulationFrameDuration );
@@ -531,6 +534,10 @@ void ProcessFrame()
 		}
 	}
 
+	// Reset viewport for UI
+	app::gGraphics->ResetViewport();
+
+	// Process and render UI
 	ui::ContainerManager& uiMan = *app::gUiManager;
 	uiMan.RecalcRootContainer();
 	uiMan.ProcessRecalcs();

@@ -22,6 +22,7 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="TileLayerCSVLoader.h" />
+    <ClInclude Include="Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="TileLayerCSVLoader.cpp" />
     <ClCompile Include="project.cpp" />
+    <ClCompile Include="Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FramePack.inl" />

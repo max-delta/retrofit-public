@@ -113,6 +113,10 @@ public:
 
 	void SuppressDrawRequests( bool suppress );
 
+	void UpdateViewportExtents( Viewport& viewport ) const;
+	void ApplyViewport( Viewport const& viewport );
+	void ResetViewport();
+
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
 	bool DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
@@ -211,8 +215,10 @@ private:
 
 	LoadRequests mDeferredLoadRequests;
 
-	uint16_t mWidth;
-	uint16_t mHeight;
+	uint16_t mWidth = 0;
+	uint16_t mHeight = 0;
+
+	PPUVec mDrawOffset = {};
 
 	bool mDrawRequestsSuppressed = false;
 	bool mHideZoomFactor = false;

@@ -58,6 +58,7 @@ constexpr size_t kNumGFXModifiers = 8;
 // Coordinates are +X=left, +Y=down
 using PPUCoordElem = int16_t;
 using PPUCoord = math::Vector2<PPUCoordElem>;
+using PPUVec = math::Vector2<PPUCoordElem>;
 
 using PPUTileElem = int8_t;
 using PPUDepthLayer = int8_t;
@@ -81,10 +82,13 @@ class TileLayer;
 class Texture;
 class Tileset;
 class Font;
+
 class TextureManager;
 class FramePackManager;
 class TilesetManager;
 class FontManager;
+
+class Viewport;
 class DeviceInterface;
 class PPUController;
 
