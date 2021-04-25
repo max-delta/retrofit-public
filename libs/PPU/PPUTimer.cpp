@@ -2,6 +2,7 @@
 #include "PPUTimer.h"
 
 #include "core_math/math_casts.h"
+#include "core_math/math_clamps.h"
 
 
 namespace RF::gfx {
