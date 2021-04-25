@@ -4,6 +4,7 @@
 #include "Logging/Logging.h"
 
 #include "core_math/Bitmap.h"
+#include "core_math/Vector2.h"
 
 #include "rftl/extension/static_vector.h"
 

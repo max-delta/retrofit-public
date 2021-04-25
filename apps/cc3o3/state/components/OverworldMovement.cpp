@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "OverworldMovement.h"
 
+#include "core_math/Vector2.h"
+
 
 namespace RF::cc::state::comp {
 ///////////////////////////////////////////////////////////////////////////////

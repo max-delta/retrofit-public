@@ -3,8 +3,6 @@
 
 #include "core_math/BitwiseEnums.h"
 
-// TODO: Remove
-#include "core_math/Vector2.h"
 
 // Forwards
 namespace RF::math {
