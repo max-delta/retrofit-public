@@ -24,6 +24,7 @@
     <ClInclude Include="TileLayerCSVLoader.h" />
     <ClInclude Include="Viewport.h" />
     <ClInclude Include="GfxFwd.h" />
+    <ClInclude Include="PPUConfig.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

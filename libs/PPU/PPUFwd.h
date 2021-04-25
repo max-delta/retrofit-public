@@ -3,6 +3,7 @@
 
 #include "PPU/GfxFwd.h"
 
+// TODO: Remove
 #include "core_math/math_clamps.h"
 
 
@@ -28,27 +29,9 @@ using PPUDepthLayer = int8_t;
 constexpr PPUCoordElem kTileSize = 32;
 constexpr PPUDepthLayer kFarthestLayer = 100;
 constexpr PPUDepthLayer kNearestLayer = -100;
-// At 32 tile size, here are some interesting tile ratios:
-//  8x7 = SNES (Internal resolution)
-//  8x7.5 = SNES output (Stretched pixels)
-//  10x7 = Almost QVGA (4:3)
-//  12x7 = Almost WQVGA (16:9 widescreen)
-constexpr PPUCoordElem kDesiredWidth = kTileSize * 10;
-constexpr PPUCoordElem kDesiredHeight = kTileSize * 7;
-constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
 using PPUZoomFactor = uint8_t;
 constexpr PPUZoomFactor kInvalidZoomFactor = 0;
-
-static constexpr size_t kMaxObjects = 32;
-static constexpr size_t kMaxTileLayers = 16;
-static constexpr size_t kMaxStrings = 48;
-static constexpr size_t kMaxStringLen = 71;
-
-static constexpr size_t kMaxDebugStrings = 32;
-static constexpr size_t kMaxDebugAuxStrings = 128;
-static constexpr size_t kMaxDebugLines = 255;
-static constexpr size_t kMaxDebugStringLen = 127;
 
 using GameLayerID = uint8_t;
 static constexpr size_t kNumGameLayers = 8;

@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUConfig.h"
 #include "PPU/Object.h"
 #include "PPU/TileLayer.h"
 
