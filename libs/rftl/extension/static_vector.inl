@@ -522,7 +522,6 @@ inline typename static_vector<Element, ElementCapacity, Alignment>::iterator sta
 	RF_ASSERT( first >= begin() );
 	RF_ASSERT( last <= end() );
 	RF_ASSERT( first <= last );
-	RF_ASSERT( m_CurrentSize > 0 );
 	difference_type const numToErase = last - first;
 	for( difference_type i = 0; i < numToErase; i++ )
 	{
