@@ -3,7 +3,7 @@
 
 #include "PlatformFilesystem/VFSFwd.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUFwd.h"
 #include "PPU/ResourceManager.h"
 
 

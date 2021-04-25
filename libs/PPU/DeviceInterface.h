@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUFwd.h"
 
 #include "core_math/AABB4.h"
 #include "core_math/Color3f.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUFwd.h"
 #include "PPU/ResourceManager.h"
 
 #include "PlatformFilesystem/VFSFwd.h"

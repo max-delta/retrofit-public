@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPUFwd.h"
+#include "PPU/PPUFwd.h"
 
 #include "core/macros.h"
 #include "core/ptr/ptr_traits.h"
