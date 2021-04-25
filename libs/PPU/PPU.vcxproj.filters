@@ -23,6 +23,7 @@
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="TileLayerCSVLoader.h" />
     <ClInclude Include="Viewport.h" />
+    <ClInclude Include="GfxFwd.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />

@@ -33,6 +33,7 @@
   <ItemGroup>
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
+    <ClInclude Include="GfxFwd.h" />
     <ClInclude Include="TileLayer.h" />
     <ClInclude Include="DeviceInterface.h" />
     <ClInclude Include="FramePack.h" />
