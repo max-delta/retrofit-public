@@ -134,7 +134,18 @@ bool WriteScriptValueToMemberVariable(
 	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
 	if( destinationType == reflect::Value::Type::Invalid )
 	{
-		RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING, "Cannot convert script element to an invalid member variable type" );
+		if( member.mMemberVariableInfo.mVariableTypeInfo.mAccessor != nullptr )
+		{
+			RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING,
+				"Cannot convert script element to an invalid member variable type"
+				" (An accessor is available, script probably is improperly using a simpler value type)" );
+		}
+		else
+		{
+			RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING,
+				"Cannot convert script element to an invalid member variable type"
+				" (No accessor is present either, this is probably a registration failure in code)" );
+		}
 		return false;
 	}
 
@@ -327,7 +338,7 @@ bool ProcessElementArrayPopulationWork(
 			newWorkItem.mPath = currentPath;
 			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
 			workItems.emplace_back( rftl::move( newWorkItem ) );
-			return true;
+			continue;
 		}
 		else
 		{
