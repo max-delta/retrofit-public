@@ -49,10 +49,16 @@ struct Gameplay_Overworld::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+	static constexpr gfx::ppu::PPUDepthLayer kLayerTerrain = 100;
+	static constexpr gfx::ppu::PPUDepthLayer kLayerRegion = -20;
+	static constexpr gfx::ppu::PPUDepthLayer kLayerCharStart = 10;
+	static constexpr gfx::ppu::PPUDepthLayer kLayerCloudStart = -50;
+
 	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
 	gfx::ppu::TileLayer mTerrainLand = {};
 	gfx::ppu::TileLayer mTerrainCloudA = {};
 	gfx::ppu::TileLayer mTerrainCloudB = {};
+	overworld::Overworld::Areas mAreas;
 
 	gfx::ppu::Viewport mViewport = {};
 
@@ -83,6 +89,11 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		internalState.mCollisionMap = map.mCollisionMap;
 	}
 
+	// Setup areas and transitions
+	{
+		internalState.mAreas = map.mAreas;
+	}
+
 	// Setup terrain
 	{
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
@@ -98,7 +109,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		land.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		land.mXCoord = 0;
 		land.mYCoord = 0;
-		land.mZLayer = 100;
+		land.mZLayer = InternalState::kLayerTerrain;
 		land.mWrapping = false;
 		land.mLooping = true;
 		land.mTimer.mMaxTimeIndex = 50;
@@ -112,7 +123,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudA.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudA.mXCoord = 0;
 		cloudA.mYCoord = 0;
-		cloudA.mZLayer = -50;
+		cloudA.mZLayer = InternalState::kLayerCloudStart - 0;
 		cloudA.mWrapping = true;
 		cloudA.mLooping = true;
 		cloudA.mTimer.mMaxTimeIndex = map.mCloud1ParallaxDelay;
@@ -126,7 +137,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudB.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudB.mXCoord = 0;
 		cloudB.mYCoord = 0;
-		cloudB.mZLayer = -51;
+		cloudB.mZLayer = InternalState::kLayerCloudStart - 1;
 		cloudB.mWrapping = true;
 		cloudB.mLooping = true;
 		cloudB.mTimer.mMaxTimeIndex = map.mCloud2ParallaxDelay;
@@ -492,6 +503,16 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( cloudB );
 	}
 
+	// Draw areas
+	{
+		for( overworld::Area const& area : internalState.mAreas )
+		{
+			// TODO: Configurable debug rendering
+			ppu.DebugDrawAABB( area.mAABB, 1, InternalState::kLayerRegion, math::Color3f::kCyan );
+			ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
+		}
+	}
+
 	// Draw overworld characters
 	{
 		using namespace state;
@@ -523,7 +544,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 				// HACK: Sort by reverse team order
 				// TODO: Something clever with the Y-axis as input
-				object.mZLayer = -math::integer_cast<gfx::ppu::PPUDepthLayer>( 5u - i_teamIndex );
+				object.mZLayer = InternalState::kLayerCharStart - math::integer_cast<gfx::ppu::PPUDepthLayer>( i_teamIndex );
 
 				bool const idle = movement.mCurPos.mMoving == false;
 
