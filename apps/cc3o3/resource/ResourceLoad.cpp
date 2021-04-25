@@ -57,6 +57,7 @@ void InitializeLoader()
 		loader.AddResourceClass( SaveBlob, "SaveBlob" );
 		loader.AddResourceClass( SaveBlob, "SaveFileBlob" );
 		loader.AddResourceClass( OverworldDesc, "OverworldDesc" );
+		loader.AddResourceClass( OverworldDesc, "AreaDesc" );
 	}
 }
 

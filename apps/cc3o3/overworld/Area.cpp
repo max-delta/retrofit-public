@@ -1,21 +1,9 @@
-#pragma once
-#include "project.h"
+#include "stdafx.h"
+#include "Area.h"
 
 
 namespace RF::cc::overworld {
 ///////////////////////////////////////////////////////////////////////////////
-
-enum class AreaType : uint8_t
-{
-	Invalid = 0,
-	Site
-};
-
-class Area;
-class Overworld;
-
-struct AreaDesc;
-struct OverworldDesc;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

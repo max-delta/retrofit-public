@@ -223,6 +223,9 @@
     <ClCompile Include="resource\ResourceLoad.cpp">
       <Filter>resource</Filter>
     </ClCompile>
+    <ClCompile Include="overworld\Area.cpp">
+      <Filter>overworld</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -617,6 +620,9 @@
     </ClInclude>
     <ClInclude Include="resource\ResourceLoad.h">
       <Filter>resource</Filter>
+    </ClInclude>
+    <ClInclude Include="overworld\Area.h">
+      <Filter>overworld</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

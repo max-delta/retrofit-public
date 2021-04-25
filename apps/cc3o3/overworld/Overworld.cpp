@@ -63,6 +63,23 @@ Overworld Overworld::LoadFromDesc( file::VFSPath const& descPath )
 	retVal.mCloud1ParallaxDelay = desc.mCloud1ParallaxDelay;
 	retVal.mCloud2ParallaxDelay = desc.mCloud1ParallaxDelay;
 
+	// Areas
+	retVal.mAreas.reserve( desc.mAreas.size() );
+	for( AreaDesc const& areaDesc : desc.mAreas )
+	{
+		Area area = {};
+		area.mIdentifier = areaDesc.mIdentifier;
+		if( areaDesc.mType == "Site" )
+		{
+			area.mType = AreaType::Site;
+		}
+		phys::PhysCoord const aabbStart = { areaDesc.mX, areaDesc.mY };
+		phys::PhysVec const aabbSize = { areaDesc.mWidth, areaDesc.mHeight };
+		area.mAABB = { aabbStart, aabbStart + aabbSize };
+		area.mFocus = { areaDesc.mFocusX, areaDesc.mFocusY };
+		retVal.mAreas.emplace_back( rftl::move( area ) );
+	}
+
 	return retVal;
 }
 
