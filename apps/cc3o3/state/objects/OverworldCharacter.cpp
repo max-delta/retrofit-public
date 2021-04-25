@@ -71,20 +71,20 @@ void MakeOverworldCharacterFromDB(
 		file::VFSPath const sWalk = composite.mFramepacksByAnim.at( "walk_s" );
 		file::VFSPath const wWalk = composite.mFramepacksByAnim.at( "walk_w" );
 
-		gfx::PPUController& ppu = *app::gGraphics;
-		gfx::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, nIdle );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, eIdle );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, sIdle );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, wIdle );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, nWalk );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, eWalk );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, sWalk );
-		ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, wWalk );
+		gfx::ppu::PPUController& ppu = *app::gGraphics;
+		gfx::ppu::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, nIdle );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, eIdle );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, sIdle );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, wIdle );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, nWalk );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, eWalk );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, sWalk );
+		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, wWalk );
 		auto setAnim = [&fPackMan]( comp::OverworldVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
 			anim.mFramePackID = fPackMan.GetManagedResourceIDFromResourceName( source );
-			gfx::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
+			gfx::ppu::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
 			anim.mSlowdownRate = fPack.mPreferredSlowdownRate;
 			anim.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary();
 			RF_ASSERT_MSG( anim.mMaxTimeIndex == 1 || anim.mMaxTimeIndex == 4, "Unexpected format" );

@@ -2,7 +2,7 @@
 #include "PPUState.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 void PPUState::Clear()

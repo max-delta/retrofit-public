@@ -58,8 +58,8 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 
-	gfx::PPUController const& ppu = *app::gGraphics;
-	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	gfx::ppu::PPUController const& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	ui::FontRegistry const& fontReg = *app::gFontRegistry;
 
 	// Setup UI
@@ -120,8 +120,8 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				centerRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::FramePackDisplay>::Create() );
 		logo->SetJustification( ui::Justification::MiddleCenter );
-		gfx::ManagedFramePackID const logoFpackID = framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" );
-		gfx::FramePackBase const& logoFpack = *framePackMan.GetResourceFromManagedResourceID( logoFpackID );
+		gfx::ppu::ManagedFramePackID const logoFpackID = framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" );
+		gfx::ppu::FramePackBase const& logoFpack = *framePackMan.GetResourceFromManagedResourceID( logoFpackID );
 		logo->SetFramePack(
 			logoFpackID,
 			logoFpack.CalculateTimeIndexBoundary(),
@@ -136,11 +136,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_opt" ) );
 		menuText.emplace_back( ui::LocalizeKey( "$mainmenu_exit" ) );
 		uint8_t const menuFontHeight = fontReg.SelectBestFont( ui::font::LargeMenuSelection, 1 ).mFontHeight;
-		constexpr gfx::PPUCoordElem kMenuEntryHitboxWidth = 160;
-		constexpr gfx::PPUCoordElem kMenuEntryPadding = 6;
-		gfx::PPUCoord const menuDimensions = {
+		constexpr gfx::ppu::PPUCoordElem kMenuEntryHitboxWidth = 160;
+		constexpr gfx::ppu::PPUCoordElem kMenuEntryPadding = 6;
+		gfx::ppu::PPUCoord const menuDimensions = {
 			kMenuEntryHitboxWidth,
-			math::integer_cast<gfx::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() )
+			math::integer_cast<gfx::ppu::PPUCoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() )
 		};
 		WeakPtr<ui::controller::Floater> const menuPane =
 			uiManager.AssignStrongController(
@@ -182,11 +182,11 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		buildText.emplace_back( buildstamp::kSource );
 		buildText.emplace_back( compiler::kToolDesc );
 		uint8_t const buildFontHeight = fontReg.SelectBestFont( ui::font::MinSize, 1 ).mFontHeight;
-		constexpr gfx::PPUCoordElem kBuildEntryHitboxWidth = 80;
-		constexpr gfx::PPUCoordElem kBuildEntryPadding = 1;
-		gfx::PPUCoord const buildDimensions = {
+		constexpr gfx::ppu::PPUCoordElem kBuildEntryHitboxWidth = 80;
+		constexpr gfx::ppu::PPUCoordElem kBuildEntryPadding = 1;
+		gfx::ppu::PPUCoord const buildDimensions = {
 			kBuildEntryHitboxWidth,
-			math::integer_cast<gfx::PPUCoordElem>( ( buildFontHeight + kBuildEntryPadding ) * buildText.size() )
+			math::integer_cast<gfx::ppu::PPUCoordElem>( ( buildFontHeight + kBuildEntryPadding ) * buildText.size() )
 		};
 		WeakPtr<ui::controller::Floater> const buildPane =
 			uiManager.AssignStrongController(

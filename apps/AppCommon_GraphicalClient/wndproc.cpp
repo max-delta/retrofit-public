@@ -58,8 +58,8 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 				xPadding += 5;
 				yPadding += 10;
 			}
-			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.x = RF::gfx::kDesiredWidth * 1 + xPadding;
-			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.y = RF::gfx::kDesiredHeight * 1 + yPadding;
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.x = RF::gfx::ppu::kDesiredWidth * 1 + xPadding;
+			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMinTrackSize.y = RF::gfx::ppu::kDesiredHeight * 1 + yPadding;
 			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMaxTrackSize.x = win32::GetSystemMetrics( SM_CXMAXTRACK );
 			( *( reinterpret_cast<win32::MINMAXINFO*>( lParam ) ) ).ptMaxTrackSize.y = win32::GetSystemMetrics( SM_CYMAXTRACK );
 		}

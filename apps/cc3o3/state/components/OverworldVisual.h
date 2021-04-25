@@ -21,7 +21,7 @@ class OverworldVisual final : public state::NonBindingComponent
 public:
 	struct Anim
 	{
-		gfx::ManagedFramePackID mFramePackID = gfx::kInvalidManagedFramePackID;
+		gfx::ppu::ManagedFramePackID mFramePackID = gfx::ppu::kInvalidManagedFramePackID;
 		gfx::TimeSlowdownRate mSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 		uint8_t mMaxTimeIndex = 0;
 	};

@@ -45,7 +45,7 @@ void DevTestCombatCharts::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 	//InternalState& internalState = *mInternalState;
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
 	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
 }
@@ -65,13 +65,13 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 	InternalState& internalState = *mInternalState;
 
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
 	{
-		gfx::PPUCoord const pos = gfx::PPUCoord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		gfx::ppu::PPUCoord const pos = gfx::ppu::PPUCoord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;
 		va_start( args, fmt );
 		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );

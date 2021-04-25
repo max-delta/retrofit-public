@@ -9,7 +9,7 @@
 #include "rftl/vector"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API TileLayer

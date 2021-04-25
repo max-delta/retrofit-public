@@ -37,9 +37,9 @@ public:
 	void SetFrameTileset(
 		ui::UIContext& context,
 		gfx::ManagedTilesetID tileset,
-		gfx::PPUCoord expectedTileDimensions,
-		gfx::PPUCoord expectedPatternDimensions,
-		gfx::PPUCoord paddingDimensions );
+		gfx::ppu::PPUCoord expectedTileDimensions,
+		gfx::ppu::PPUCoord expectedPatternDimensions,
+		gfx::ppu::PPUCoord paddingDimensions );
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 
 	ContainerID GetChildContainerID() const;

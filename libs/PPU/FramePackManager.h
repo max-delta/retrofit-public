@@ -7,7 +7,7 @@
 #include "rftl/functional"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API FramePackManager final : public ResourceManager<FramePackBase, ManagedFramePackID, kInvalidManagedFramePackID>

@@ -62,9 +62,9 @@ void InitialLoading::OnExit( AppStateChangeContext& context )
 
 void InitialLoading::OnTick( AppStateTickContext& context )
 {
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	ppu.DebugDrawText( gfx::PPUCoord( 32, 32 ), "Loading..." );
+	ppu.DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "Loading..." );
 
 	if( mInternalState->mLoadsQueued )
 	{
@@ -82,8 +82,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 	// Load fonts
 	{
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_1x.fnt.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_1x.fnt.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
 		gfx::FontManager const& fontMan = *ppu.DebugGetFontManager();
 		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_1x.fnt.txt" ) );
 		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
@@ -91,9 +91,9 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 0, 2 } );
-		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::kTileSize, 0, 1 } );
-		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont1xMono, gfx::kTileSize / 2, 0, 1 } );
-		fontReg.RegisterFont( ui::font::NarrowQuarterTileMono, { narrowFont1xMono, gfx::kTileSize / 4, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::ppu::kTileSize, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 2, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowQuarterTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 4, 0, 1 } );
 		fontReg.RegisterFont( ui::font::SmallMenuText, { narrowFont1xMono, 8, 1, 1 } );
 		fontReg.RegisterFont( ui::font::SmallMenuText, { narrowFont2xVari, 8, 1, 2 } );
 		fontReg.RegisterFont( ui::font::LargeMenuText, { narrowFont2xVari, 16, 3, 1 } );
@@ -108,25 +108,25 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load tilesets
 	// NOTE: Will cause associated textures to load
 	{
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_back_96", paths::BackgroundTilesets().GetChild( "country_hills_back_96.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "country_hills_mid_32", paths::BackgroundTilesets().GetChild( "country_hills_mid_32.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_2_4", paths::UITilesets().GetChild( "elemgrid_2_4.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_8_16", paths::UITilesets().GetChild( "elemgrid_8_16.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "elemgrid_16_128", paths::UITilesets().GetChild( "elemgrid_16_128.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "country_hills_back_96", paths::BackgroundTilesets().GetChild( "country_hills_back_96.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "country_hills_mid_32", paths::BackgroundTilesets().GetChild( "country_hills_mid_32.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_2_4", paths::UITilesets().GetChild( "elemgrid_2_4.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_8_16", paths::UITilesets().GetChild( "elemgrid_8_16.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_16_128", paths::UITilesets().GetChild( "elemgrid_16_128.tset.txt" ) );
 
 		// TODO: Some kind of machinery for automating frames
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "flat1_8_48", paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "retro2_8_48", paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "template_8_48", paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, "wood_8_48", paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat1_8_48", paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro2_8_48", paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "template_8_48", paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "wood_8_48", paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
 	}
 
 	// Load framepacks
 	// NOTE: Will cause associated textures to load
 	{
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::FramePack, "cc303_composite_192", paths::LogoFramepacks().GetChild( "cc303_composite_192.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "cc303_composite_192", paths::LogoFramepacks().GetChild( "cc303_composite_192.fpack" ) );
 	}
 
 	// Load localization

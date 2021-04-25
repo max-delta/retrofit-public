@@ -46,7 +46,7 @@ public:
 private:
 	Size const mSize = Size::Mini;
 	Justification mJustification = Justification::MiddleCenter;
-	gfx::TileLayer mTileLayer = {};
+	gfx::ppu::TileLayer mTileLayer = {};
 	ElementGridDisplayCache mCache = {};
 };
 

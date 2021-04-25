@@ -9,9 +9,9 @@
 namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-gfx::PPUCoord GAMEUI_API AlignToJustify(
-	gfx::PPUCoord objectDimensions,
-	gfx::AABB const& enclosure,
+gfx::ppu::PPUCoord GAMEUI_API AlignToJustify(
+	gfx::ppu::PPUCoord objectDimensions,
+	gfx::ppu::AABB const& enclosure,
 	Justification justification );
 
 ///////////////////////////////////////////////////////////////////////////////

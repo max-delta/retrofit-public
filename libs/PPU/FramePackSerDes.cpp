@@ -14,7 +14,7 @@
 #include "rftl/cstring"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 namespace fpackserdes_details {
 static constexpr char kMagicType[4] = { 'F', 'P', 'A', 'K' };
@@ -319,21 +319,21 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	// Allocate
 	UniquePtr<FramePackBase> retValFPack;
 	{
-		if( numSlots <= gfx::FramePack_256::kMaxTimeSlots )
+		if( numSlots <= FramePack_256::kMaxTimeSlots )
 		{
-			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_256>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
+			retValFPack = alloc::DefaultAllocCreator<FramePack_256>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
-		else if( numSlots <= gfx::FramePack_512::kMaxTimeSlots )
+		else if( numSlots <= FramePack_512::kMaxTimeSlots )
 		{
-			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_512>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
+			retValFPack = alloc::DefaultAllocCreator<FramePack_512>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
-		else if( numSlots <= gfx::FramePack_1024::kMaxTimeSlots )
+		else if( numSlots <= FramePack_1024::kMaxTimeSlots )
 		{
-			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_1024>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
+			retValFPack = alloc::DefaultAllocCreator<FramePack_1024>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
-		else if( numSlots <= gfx::FramePack_4096::kMaxTimeSlots )
+		else if( numSlots <= FramePack_4096::kMaxTimeSlots )
 		{
-			retValFPack = alloc::DefaultAllocCreator<gfx::FramePack_4096>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
+			retValFPack = alloc::DefaultAllocCreator<FramePack_4096>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 		}
 		else
 		{

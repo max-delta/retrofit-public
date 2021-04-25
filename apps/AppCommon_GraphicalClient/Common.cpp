@@ -42,7 +42,7 @@ APPCOMMONGRAPHICALCLIENT_API bool gShouldExit = false;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<cli::ArgParse const> gCommandLineArgs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::ppu::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::LocEngine> gLocEngine;
@@ -52,7 +52,7 @@ APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<cli::ArgParse const> sCommandLineArgs;
 static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<input::ControllerManager> sInputControllerManager;
-static UniquePtr<gfx::PPUController> sGraphics;
+static UniquePtr<gfx::ppu::PPUController> sGraphics;
 static UniquePtr<ui::FontRegistry> sFontRegistry;
 static UniquePtr<ui::ContainerManager> sUiManager;
 static UniquePtr<loc::LocEngine> sLocEngine;
@@ -120,14 +120,14 @@ void Startup( cli::ArgView const& args )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	constexpr uint8_t k_WindowScaleFactor = 4;
-	constexpr uint16_t k_Width = gfx::kDesiredWidth * k_WindowScaleFactor;
-	constexpr uint16_t k_Height = gfx::kDesiredHeight * k_WindowScaleFactor;
+	constexpr uint16_t k_Width = gfx::ppu::kDesiredWidth * k_WindowScaleFactor;
+	constexpr uint16_t k_Height = gfx::ppu::kDesiredHeight * k_WindowScaleFactor;
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
 	renderDevice->AttachToWindow( hwnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
-	sGraphics = DefaultCreator<gfx::PPUController>::Create( rftl::move( renderDevice ), gVfs );
+	sGraphics = DefaultCreator<gfx::ppu::PPUController>::Create( rftl::move( renderDevice ), gVfs );
 	gGraphics = sGraphics;
 	gGraphics->Initialize( k_Width, k_Height );
 

@@ -41,7 +41,7 @@ void Boot::OnTick( AppStateTickContext& context )
 	sHasBooted = true;
 
 	// Debug in case something goes wrong and we get stuck in boot
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Booting..." );
+	app::gGraphics->DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "Booting..." );
 
 	// Prep loader
 	resource::InitializeLoader();

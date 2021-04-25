@@ -28,7 +28,7 @@ void TileLayerDisplay::SetTileset( gfx::ManagedTilesetID tileset )
 
 
 
-gfx::TileLayer& TileLayerDisplay::GetMutableTileLayer()
+gfx::ppu::TileLayer& TileLayerDisplay::GetMutableTileLayer()
 {
 	return mTileLayer;
 }
@@ -37,9 +37,9 @@ gfx::TileLayer& TileLayerDisplay::GetMutableTileLayer()
 
 void TileLayerDisplay::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::PPUCoord const pos = container.mAABB.mTopLeft;
+	gfx::ppu::PPUCoord const pos = container.mAABB.mTopLeft;
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;

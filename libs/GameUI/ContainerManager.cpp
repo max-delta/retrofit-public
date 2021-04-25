@@ -18,7 +18,7 @@ namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 ContainerManager::ContainerManager(
-	WeakPtr<gfx::PPUController> const& ppuController,
+	WeakPtr<gfx::ppu::PPUController> const& ppuController,
 	WeakPtr<FontRegistry const> const& fontRegistry )
 	: mFocusManager( DefaultCreator<FocusManager>::Create() )
 	, mGraphics( ppuController )
@@ -158,37 +158,37 @@ void ContainerManager::AssignLabel( ContainerID containerID, char const* label )
 
 
 
-void ContainerManager::SetRootRenderDepth( gfx::PPUDepthLayer depth )
+void ContainerManager::SetRootRenderDepth( gfx::ppu::PPUDepthLayer depth )
 {
 	mRootRenderDepth = depth;
 }
 
 
 
-gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( ContainerID containerID ) const
+gfx::ppu::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( ContainerID containerID ) const
 {
 	return GetRecommendedRenderDepth( GetContainer( containerID ) );
 }
 
 
 
-gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
+gfx::ppu::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
 {
-	static_assert( gfx::kNearestLayer < gfx::kFarthestLayer, "Expected negative to be closer" );
+	static_assert( gfx::ppu::kNearestLayer < gfx::ppu::kFarthestLayer, "Expected negative to be closer" );
 
 	// Walk back up tree to root
-	gfx::PPUDepthLayer retVal = mRootRenderDepth;
+	gfx::ppu::PPUDepthLayer retVal = mRootRenderDepth;
 	ContainerID id = container.mContainerID;
 	while( id != kInvalidContainerID )
 	{
 		Container const& currentContainer = mContainers.at( id );
 		id = currentContainer.mParentContainerID;
 		RF_ASSERT_MSG(
-			retVal > gfx::kNearestLayer,
+			retVal > gfx::ppu::kNearestLayer,
 			"UI stack too deep" );
 		retVal--;
 		RF_ASSERT_MSG(
-			math::integer_cast<int32_t>( retVal + currentContainer.mDepthOffset ) > gfx::kNearestLayer,
+			math::integer_cast<int32_t>( retVal + currentContainer.mDepthOffset ) > gfx::ppu::kNearestLayer,
 			"UI stack too deep" );
 		retVal += currentContainer.mDepthOffset;
 	}
@@ -197,14 +197,14 @@ gfx::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const&
 
 
 
-void ContainerManager::AdjustRecommendedRenderDepth( ContainerID containerID, gfx::PPUDepthLayer offset )
+void ContainerManager::AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::PPUDepthLayer offset )
 {
-	gfx::PPUDepthLayer& current = GetMutableContainer( containerID ).mDepthOffset;
+	gfx::ppu::PPUDepthLayer& current = GetMutableContainer( containerID ).mDepthOffset;
 	RF_ASSERT_MSG(
-		math::integer_cast<int32_t>( current + offset ) > gfx::kNearestLayer,
+		math::integer_cast<int32_t>( current + offset ) > gfx::ppu::kNearestLayer,
 		"Offset causes rollover" );
 	RF_ASSERT_MSG(
-		math::integer_cast<int32_t>( current + offset ) < gfx::kFarthestLayer,
+		math::integer_cast<int32_t>( current + offset ) < gfx::ppu::kFarthestLayer,
 		"Offset causes rollover" );
 	current += offset;
 }
@@ -218,14 +218,14 @@ void ContainerManager::ResetRecommendedRenderDepth( ContainerID containerID )
 
 
 
-void ContainerManager::SetRootAABBReduction( gfx::PPUCoordElem delta )
+void ContainerManager::SetRootAABBReduction( gfx::ppu::PPUCoordElem delta )
 {
 	mRootAABBReduction = delta;
 }
 
 
 
-void ContainerManager::SetDebugAABBReduction( gfx::PPUCoordElem delta )
+void ContainerManager::SetDebugAABBReduction( gfx::ppu::PPUCoordElem delta )
 {
 	mDebugAABBReduction = delta;
 }
@@ -344,10 +344,10 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 {
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
-	static constexpr gfx::PPUCoordElem kAnchorRadius = 3;
-	static constexpr gfx::PPUCoordElem kLineWidth = 2;
-	static constexpr gfx::PPUCoordElem kFocusWidth = 3;
-	static constexpr gfx::PPUDepthLayer kFocusOffset = -2;
+	static constexpr gfx::ppu::PPUCoordElem kAnchorRadius = 3;
+	static constexpr gfx::ppu::PPUCoordElem kLineWidth = 2;
+	static constexpr gfx::ppu::PPUCoordElem kFocusWidth = 3;
+	static constexpr gfx::ppu::PPUDepthLayer kFocusOffset = -2;
 
 	FocusTree::ConstNodeStack const focusStack = mFocusManager->GetFocusTree().GetCurrentFocusStack();
 	rftl::unordered_set<ContainerID> focusedContainers;
@@ -360,7 +360,7 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 	{
 		ContainerID const id = containerEntry.first;
 		Container const& container = containerEntry.second;
-		gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
+		gfx::ppu::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
 		if( focusedContainers.count( id ) > 0 )
 		{
 			mGraphics->DebugDrawAABB( container.mAABB, kFocusWidth, zLayer + kFocusOffset, math::Color3f::kYellow );
@@ -387,20 +387,20 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 		{
 			Anchor const& anchor = anchorEntry.second;
 			ContainerID const parentID = anchor.mParentContainerID;
-			gfx::PPUCoord const& pos = anchor.mPos;
-			gfx::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
+			gfx::ppu::PPUCoord const& pos = anchor.mPos;
+			gfx::ppu::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
 			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, color );
-			mGraphics->DebugDrawLine( pos + gfx::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::PPUCoord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::ppu::PPUCoord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::ppu::PPUCoord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, color );
 		}
 	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-gfx::PPUController& ContainerManager::GetRenderer() const
+gfx::ppu::PPUController& ContainerManager::GetRenderer() const
 {
-	gfx::PPUController* const graphics = mGraphics;
+	gfx::ppu::PPUController* const graphics = mGraphics;
 	RF_ASSERT( graphics != nullptr );
 	return *graphics;
 }
@@ -566,7 +566,7 @@ bool ContainerManager::IsHiddenFromRoot( Container const& container ) const
 
 void ContainerManager::RecalcRootContainer( bool force )
 {
-	gfx::PPUZoomFactor const zoomFactor = mGraphics->GetCurrentZoomFactor();
+	gfx::ppu::PPUZoomFactor const zoomFactor = mGraphics->GetCurrentZoomFactor();
 	if( mMostRecentZoomFactor != zoomFactor )
 	{
 		mMostRecentZoomFactor = zoomFactor;
@@ -575,7 +575,7 @@ void ContainerManager::RecalcRootContainer( bool force )
 
 	Container& root = GetMutableRootContainer();
 
-	gfx::AABB newAABB;
+	gfx::ppu::AABB newAABB;
 	newAABB.mTopLeft = { mRootAABBReduction, mRootAABBReduction };
 	newAABB.mBottomRight.x = mGraphics->GetWidth() - mRootAABBReduction;
 	newAABB.mBottomRight.y = mGraphics->GetHeight() - mRootAABBReduction;
@@ -613,7 +613,7 @@ void ContainerManager::RecalcContainer( Container& container, bool force )
 	Anchor const& rightConstraint = mAnchors.at( container.mRightConstraint );
 	Anchor const& bottomConstraint = mAnchors.at( container.mBottomConstraint );
 
-	gfx::AABB newAABB;
+	gfx::ppu::AABB newAABB;
 	newAABB.mTopLeft.x = leftConstraint.mPos.x + mDebugAABBReduction;
 	newAABB.mTopLeft.y = topConstraint.mPos.y + mDebugAABBReduction;
 	newAABB.mBottomRight.x = rightConstraint.mPos.x - mDebugAABBReduction;
@@ -660,7 +660,7 @@ AnchorID ContainerManager::CreateAnchor( Container& container )
 
 
 
-void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::PPUCoord pos )
+void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::ppu::PPUCoord pos )
 {
 	RF_ASSERT( anchorID != kInvalidAnchorID );
 	Anchor& anchor = mAnchors.at( anchorID );

@@ -22,7 +22,7 @@
 namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
-CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu )
+CharacterCompositor::CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::ppu::PPUController> ppu )
 	: mVfs( vfs )
 	, mPpu( ppu )
 	, mBitmapCache( vfs )
@@ -378,14 +378,14 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	gfx::TextureManager& texMan = *mPpu->DebugGetTextureManager();
 
 	// Create framepack
-	gfx::FramePack_256 newFPack = {};
+	gfx::ppu::FramePack_256 newFPack = {};
 	newFPack.mNumTimeSlots = math::integer_cast<uint8_t>( sourceFrames.size() );
 	newFPack.mPreferredSlowdownRate = kHACKSlowdownRate;
 	for( size_t i = 0; i < sourceFrames.size(); i++ )
 	{
 		rftl::string const frameName = calcFrameName( i );
 		file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( calcFrameName( sourceFrames.at( i ) ) );
-		gfx::FramePackBase::TimeSlot& slot = newFPack.GetMutableTimeSlots()[i];
+		gfx::ppu::FramePackBase::TimeSlot& slot = newFPack.GetMutableTimeSlots()[i];
 		slot.mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
 		slot.mTextureOriginX = originX;
 		slot.mTextureOriginY = originY;
@@ -395,7 +395,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	// Write
 	{
 		rftl::vector<uint8_t> toWrite;
-		bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
+		bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
 		RF_ASSERT( writeSuccess );
 		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( framepackPath );
 		FILE* const file = fileHandle->GetFile();

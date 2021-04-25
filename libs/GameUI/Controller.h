@@ -43,7 +43,7 @@ public:
 	//
 	// Protected methods
 protected:
-	gfx::PPUController& GetRenderer( ContainerManager const& manager ) const;
+	gfx::ppu::PPUController& GetRenderer( ContainerManager const& manager ) const;
 	FontRegistry const& GetFontRegistry( ContainerManager const& manager ) const;
 
 	Container& GetMutableContainer( ContainerManager& manager, ContainerID containerID );
@@ -57,7 +57,7 @@ protected:
 	void DestroyContainer( ContainerManager& manager, ContainerID containerID );
 
 	AnchorID CreateAnchor( ContainerManager& manager, Container& container );
-	void MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::PPUCoord pos );
+	void MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::PPUCoord pos );
 
 	//
 	// Private data

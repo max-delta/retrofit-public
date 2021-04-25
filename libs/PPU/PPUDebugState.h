@@ -4,7 +4,7 @@
 #include "PPUState.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API PPUDebugState
@@ -14,9 +14,9 @@ class PPU_API PPUDebugState
 
 	// Constants
 public:
-	static constexpr size_t kMaxDebugStrings = gfx::kMaxDebugStrings;
-	static constexpr size_t kMaxDebugAuxStrings = gfx::kMaxDebugAuxStrings;
-	static constexpr size_t kMaxDebugLines = gfx::kMaxDebugLines;
+	static constexpr size_t kMaxDebugStrings = ppu::kMaxDebugStrings;
+	static constexpr size_t kMaxDebugAuxStrings = ppu::kMaxDebugAuxStrings;
+	static constexpr size_t kMaxDebugLines = ppu::kMaxDebugLines;
 	static constexpr size_t kMaxTotalElements =
 		kMaxDebugStrings +
 		kMaxDebugAuxStrings +

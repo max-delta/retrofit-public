@@ -14,7 +14,7 @@
 #include "rftl/string"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API PPUController
@@ -139,10 +139,10 @@ public:
 	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
 
-	WeakPtr<gfx::TextureManager const> GetTextureManager() const;
-	WeakPtr<gfx::FramePackManager const> GetFramePackManager() const;
-	WeakPtr<gfx::TilesetManager const> GetTilesetManager() const;
-	WeakPtr<gfx::FontManager const> GetFontManager() const;
+	WeakPtr<TextureManager const> GetTextureManager() const;
+	WeakPtr<FramePackManager const> GetFramePackManager() const;
+	WeakPtr<TilesetManager const> GetTilesetManager() const;
+	WeakPtr<FontManager const> GetFontManager() const;
 
 	void DebugSetGridEnabled( bool enabled );
 	void DebugSetBackgroundColor( math::Color3f color );
@@ -157,11 +157,11 @@ public:
 	bool DebugDrawAABB( AABB aabb, PPUCoordElem width );
 	bool DebugDrawAABB( AABB aabb, math::Color3f color );
 	bool DebugDrawAABB( AABB aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color );
-	WeakPtr<gfx::DeviceInterface> DebugGetDeviceInterface() const;
-	WeakPtr<gfx::TextureManager> DebugGetTextureManager() const;
-	WeakPtr<gfx::FramePackManager> DebugGetFramePackManager() const;
-	WeakPtr<gfx::TilesetManager> DebugGetTilesetManager() const;
-	WeakPtr<gfx::FontManager> DebugGetFontManager() const;
+	WeakPtr<DeviceInterface> DebugGetDeviceInterface() const;
+	WeakPtr<TextureManager> DebugGetTextureManager() const;
+	WeakPtr<FramePackManager> DebugGetFramePackManager() const;
+	WeakPtr<TilesetManager> DebugGetTilesetManager() const;
+	WeakPtr<FontManager> DebugGetFontManager() const;
 
 
 	//
@@ -206,11 +206,11 @@ private:
 	//
 	// Private data
 private:
-	UniquePtr<gfx::DeviceInterface> mDeviceInterface;
-	UniquePtr<gfx::TextureManager> mTextureManager;
-	UniquePtr<gfx::FramePackManager> mFramePackManager;
-	UniquePtr<gfx::TilesetManager> mTilesetManager;
-	UniquePtr<gfx::FontManager> mFontManager;
+	UniquePtr<DeviceInterface> mDeviceInterface;
+	UniquePtr<TextureManager> mTextureManager;
+	UniquePtr<FramePackManager> mFramePackManager;
+	UniquePtr<TilesetManager> mTilesetManager;
+	UniquePtr<FontManager> mFontManager;
 	WeakPtr<file::VFS> const mVfs;
 
 	LoadRequests mDeferredLoadRequests;

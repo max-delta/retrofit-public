@@ -12,10 +12,10 @@
 #include "rftl/sstream"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TileLayerCSVLoader::LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path )
+bool TileLayerCSVLoader::LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path )
 {
 	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( path );
 	if( tilemapHandle == nullptr )
@@ -55,7 +55,7 @@ bool TileLayerCSVLoader::LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& 
 		for( size_t i_col = 0; i_col < numCols; i_col++ )
 		{
 			rftl::string const& field = row.at( i_col );
-			gfx::TileLayer::TileIndex val = gfx::TileLayer::kEmptyTileIndex;
+			TileLayer::TileIndex val = TileLayer::kEmptyTileIndex;
 			( rftl::stringstream() << field ) >> val;
 			tileLayer.GetMutableTile( i_col, i_row ).mIndex = val;
 		}

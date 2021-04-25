@@ -16,7 +16,7 @@ class PPU_API Texture
 	RF_NO_COPY( Texture );
 
 private:
-	friend class PPUController;
+	friend class ppu::PPUController;
 	friend class TextureManager;
 	friend class FontManager;
 

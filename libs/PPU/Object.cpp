@@ -2,7 +2,7 @@
 #include "Object.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 void Object::Animate()

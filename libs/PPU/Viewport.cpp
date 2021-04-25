@@ -4,7 +4,7 @@
 #include "core_math/AABB4.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 void Viewport::SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMargin )

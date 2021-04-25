@@ -12,7 +12,7 @@ template<typename T>
 class AABB4;
 }
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API Viewport
@@ -23,15 +23,15 @@ public:
 	Viewport() = default;
 	~Viewport() = default;
 
-	void SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMargin );
+	void SlideToFit( ppu::PPUCoord pos, ppu::PPUCoordElem xMargin, ppu::PPUCoordElem yMargin );
 
-	void ClampToWithin( AABB aabb );
+	void ClampToWithin( ppu::AABB aabb );
 
 	//
 	// Public data
 public:
-	PPUCoord mOffset = {};
-	PPUVec mSurfaceExtents = {};
+	ppu::PPUCoord mOffset = {};
+	ppu::PPUVec mSurfaceExtents = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

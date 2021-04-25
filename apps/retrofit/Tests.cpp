@@ -135,18 +135,18 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 namespace RF::test {
 ///////////////////////////////////////////////////////////////////////////////
 
-static gfx::Object testObjDigit = {};
-static gfx::Object testObjDigitFlips[3] = {};
-static gfx::Object testObjWiggle = {};
-static gfx::TileLayer testTileLayer = {};
+static gfx::ppu::Object testObjDigit = {};
+static gfx::ppu::Object testObjDigitFlips[3] = {};
+static gfx::ppu::Object testObjWiggle = {};
+static gfx::ppu::TileLayer testTileLayer = {};
 static constexpr ui::FontPurposeID k1xFont = 1;
 static constexpr ui::FontPurposeID k2xFont = 2;
 void InitDrawTest()
 {
 	using namespace RF;
 
-	gfx::PPUController& ppu = *app::gGraphics;
-	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	gfx::FontManager const& fontMan = *ppu.GetFontManager();
 	file::VFS& vfs = *app::gVfs;
@@ -156,52 +156,52 @@ void InitDrawTest()
 	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	gfx::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	WeakPtr<gfx::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ppu::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	WeakPtr<gfx::ppu::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
 	testObjDigit.mTimer.mMaxTimeIndex = digitAnimationLength;
 	testObjDigit.mTimer.mTimeSlowdown = 3;
 	testObjDigit.mLooping = true;
-	testObjDigit.mXCoord = gfx::kTileSize * 2;
-	testObjDigit.mYCoord = gfx::kTileSize * 1;
+	testObjDigit.mXCoord = gfx::ppu::kTileSize * 2;
+	testObjDigit.mYCoord = gfx::ppu::kTileSize * 1;
 	testObjDigit.mZLayer = 0;
 
 	testObjDigitFlips[0] = testObjDigit;
-	testObjDigitFlips[0].mXCoord += gfx::kTileSize * 1;
+	testObjDigitFlips[0].mXCoord += gfx::ppu::kTileSize * 1;
 	testObjDigitFlips[0].mHorizontalFlip = true;
 	testObjDigitFlips[1] = testObjDigit;
-	testObjDigitFlips[1].mXCoord += gfx::kTileSize * 2;
+	testObjDigitFlips[1].mXCoord += gfx::ppu::kTileSize * 2;
 	testObjDigitFlips[1].mVerticalFlip = true;
 	testObjDigitFlips[2] = testObjDigit;
-	testObjDigitFlips[2].mXCoord += gfx::kTileSize * 3;
+	testObjDigitFlips[2].mXCoord += gfx::ppu::kTileSize * 3;
 	testObjDigitFlips[2].mHorizontalFlip = true;
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	gfx::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	WeakPtr<gfx::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ppu::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	WeakPtr<gfx::ppu::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	testObjWiggle.mFramePackID = wiggleFPackID;
 	testObjWiggle.mTimer.mMaxTimeIndex = 4;
 	testObjWiggle.mTimer.mTimeSlowdown = 33 / 4;
 	testObjWiggle.mLooping = true;
-	testObjWiggle.mXCoord = gfx::kTileSize * 4;
-	testObjWiggle.mYCoord = gfx::kTileSize * 4;
+	testObjWiggle.mXCoord = gfx::ppu::kTileSize * 4;
+	testObjWiggle.mYCoord = gfx::ppu::kTileSize * 4;
 	testObjWiggle.mZLayer = 0;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
 	testTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
-	testTileLayer.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Quadruple;
+	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
-	gfx::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
+	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
 
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
 	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
 
@@ -217,7 +217,7 @@ void DrawTest()
 {
 	using namespace RF;
 
-	app::gGraphics->DebugDrawLine( gfx::PPUCoord( 32, 32 ), gfx::PPUCoord( 64, 64 ) );
+	app::gGraphics->DebugDrawLine( gfx::ppu::PPUCoord( 32, 32 ), gfx::ppu::PPUCoord( 64, 64 ) );
 	testObjDigit.Animate();
 	app::gGraphics->DrawObject( testObjDigit );
 	for( size_t i = 0; i < rftl::extent<decltype( testObjDigitFlips )>::value; i++ )
@@ -229,24 +229,24 @@ void DrawTest()
 	app::gGraphics->DrawObject( testObjWiggle );
 	testTileLayer.Animate();
 	app::gGraphics->DrawTileLayer( testTileLayer );
-	app::gGraphics->DebugDrawText( gfx::PPUCoord( 32, 32 ), "Test" );
+	app::gGraphics->DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "Test" );
 	ui::Font const testFont1 = app::gFontRegistry->SelectBestFont( k1xFont, app::gGraphics->GetCurrentZoomFactor() );
 	ui::Font const testFont2 = app::gFontRegistry->SelectBestFont( k2xFont, app::gGraphics->GetCurrentZoomFactor() );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::PPUCoord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
 
 	ui::Font const uncheckedTestFont1 = app::gFontRegistry->SelectBestFont( k1xFont, 50 );
 	ui::Font const uncheckedTestFont2 = app::gFontRegistry->SelectBestFont( k2xFont, 50 );
-	gfx::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "|||" );
-	gfx::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "WWW" );
-	gfx::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "|||" );
-	gfx::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "WWW" );
+	gfx::ppu::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "|||" );
+	gfx::ppu::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "WWW" );
+	gfx::ppu::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "|||" );
+	gfx::ppu::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "WWW" );
 	RF_ASSERT( monoPipeLen != 0 );
 	RF_ASSERT( monoPipeLen == monoWLen );
 	RF_ASSERT( varPipeLen != 0 );
@@ -293,8 +293,8 @@ void InitInputDebug()
 
 void DrawInputDebug()
 {
-	gfx::PPUCoord coord( 32, 64 );
-	gfx::PPUCoord::ElementType const offset = 16;
+	gfx::ppu::PPUCoord coord( 32, 64 );
+	gfx::ppu::PPUCoord::ElementType const offset = 16;
 
 	app::gGraphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;
@@ -458,17 +458,17 @@ void DrawInputDebug()
 
 void InitUITest()
 {
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::UIContext uiContext( uiManager );
-	uiManager.SetRootRenderDepth( gfx::kNearestLayer + 50 );
+	uiManager.SetRootRenderDepth( gfx::ppu::kNearestLayer + 50 );
 
 	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
 
 	// HACK: Slightly smaller, for testing
-	uiManager.SetRootAABBReduction( gfx::kTileSize / 16 );
-	uiManager.SetDebugAABBReduction( gfx::kTileSize / 16 );
+	uiManager.SetRootAABBReduction( gfx::ppu::kTileSize / 16 );
+	uiManager.SetDebugAABBReduction( gfx::ppu::kTileSize / 16 );
 
 	// Slice the root canvas
 	constexpr bool kSlicesEnabled[9] = { false, false, true, false, false, false, true, false, true };
@@ -518,7 +518,7 @@ void InitUITest()
 		uiManager.AssignStrongController(
 			nineSlicer->GetChildContainerID( 6 ),
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
-	ppu.ForceImmediateLoadRequest( gfx::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	frame6->SetTileset( uiContext, frameTileset, { 4, 4 }, { 12, 12 }, { 0, 0 } );
 
@@ -587,19 +587,19 @@ void XMLTest()
 
 void FPackSerializationTest()
 {
-	gfx::PPUController& ppu = *app::gGraphics;
-	gfx::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
 	// Load a common test asset
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
 	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack" );
-	gfx::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
-	WeakPtr<gfx::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
+	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
+	WeakPtr<gfx::ppu::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Serialize
 	rftl::vector<uint8_t> buffer;
-	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );
+	bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );
 
 	// Cleanup
 	fpackMan.DestroyResource( "sertestpack" );
@@ -612,8 +612,8 @@ void FPackSerializationTest()
 
 	// Deserialize
 	rftl::vector<file::VFSPath> textures;
-	UniquePtr<gfx::FramePackBase> framePack;
-	bool const readSuccess = gfx::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
+	UniquePtr<gfx::ppu::FramePackBase> framePack;
+	bool const readSuccess = gfx::ppu::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
 	if( readSuccess == false )
 	{
 		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to deserialize FPack" );

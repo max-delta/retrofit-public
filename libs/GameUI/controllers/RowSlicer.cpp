@@ -109,12 +109,12 @@ void RowSlicer::OnInstanceAssign( UIContext& context, Container& container )
 
 void RowSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
-	gfx::AABB const& aabb = container.mAABB;
-	gfx::PPUCoordElem const x0 = aabb.Left();
-	gfx::PPUCoordElem const x100 = aabb.Right();
-	gfx::PPUCoordElem const y0 = aabb.Top();
-	gfx::PPUCoordElem const y100 = aabb.Bottom();
-	gfx::PPUCoordElem const yDelta = y100 - y0;
+	gfx::ppu::AABB const& aabb = container.mAABB;
+	gfx::ppu::PPUCoordElem const x0 = aabb.Left();
+	gfx::ppu::PPUCoordElem const x100 = aabb.Right();
+	gfx::ppu::PPUCoordElem const y0 = aabb.Top();
+	gfx::ppu::PPUCoordElem const y100 = aabb.Bottom();
+	gfx::ppu::PPUCoordElem const yDelta = y100 - y0;
 
 	// NOTE: Every anchor except the last one is at x0
 	// NOTE: Last anchor is at x100
@@ -122,7 +122,7 @@ void RowSlicer::OnAABBRecalc( UIContext& context, Container& container )
 	RF_ASSERT( mAnchors.size() == mRatios.size() + 1 );
 	for( size_t i = 0; i < mRatios.size(); i++ )
 	{
-		gfx::PPUCoordElem y = math::integer_truncast<gfx::PPUCoordElem>( rollingY );
+		gfx::ppu::PPUCoordElem y = math::integer_truncast<gfx::ppu::PPUCoordElem>( rollingY );
 		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( i ), { x0, y } );
 		rollingY += math::float_cast<float>( yDelta ) * mRatios.at( i ).first;
 	}

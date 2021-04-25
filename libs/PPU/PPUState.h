@@ -8,7 +8,7 @@
 #include "core_math/Color3f.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API PPUState
@@ -18,9 +18,9 @@ class PPU_API PPUState
 
 	// Constants
 public:
-	static constexpr size_t kMaxObjects = gfx::kMaxObjects;
-	static constexpr size_t kMaxTileLayers = gfx::kMaxTileLayers;
-	static constexpr size_t kMaxStrings = gfx::kMaxStrings;
+	static constexpr size_t kMaxObjects = ppu::kMaxObjects;
+	static constexpr size_t kMaxTileLayers = ppu::kMaxTileLayers;
+	static constexpr size_t kMaxStrings = ppu::kMaxStrings;
 	static constexpr size_t kMaxTotalElements =
 		kMaxObjects +
 		kMaxTileLayers +

@@ -50,11 +50,11 @@ struct Gameplay_Overworld::InternalState
 	InternalState() = default;
 
 	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
-	gfx::TileLayer mTerrainLand = {};
-	gfx::TileLayer mTerrainCloudA = {};
-	gfx::TileLayer mTerrainCloudB = {};
+	gfx::ppu::TileLayer mTerrainLand = {};
+	gfx::ppu::TileLayer mTerrainCloudA = {};
+	gfx::ppu::TileLayer mTerrainCloudB = {};
 
-	gfx::Viewport mViewport = {};
+	gfx::ppu::Viewport mViewport = {};
 
 	WeakPtr<ui::Controller> mUI;
 	time::CommonClock::time_point mLastActivity;
@@ -67,7 +67,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
 
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
 
@@ -85,17 +85,17 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 
 	// Setup terrain
 	{
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
 
-		gfx::TileLayer& land = internalState.mTerrainLand;
-		gfx::TileLayer& cloudA = internalState.mTerrainCloudA;
-		gfx::TileLayer& cloudB = internalState.mTerrainCloudB;
+		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
+		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;
+		gfx::ppu::TileLayer& cloudB = internalState.mTerrainCloudB;
 
 		land = {};
 		land.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mTerrainTilesetPath );
-		land.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
+		land.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		land.mXCoord = 0;
 		land.mYCoord = 0;
 		land.mZLayer = 100;
@@ -103,13 +103,13 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		land.mLooping = true;
 		land.mTimer.mMaxTimeIndex = 50;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( land, vfs, map.mTerrainTilemapPath );
+			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( land, vfs, map.mTerrainTilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 
 		cloudA = {};
 		cloudA.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud1TilesetPath );
-		cloudA.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
+		cloudA.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudA.mXCoord = 0;
 		cloudA.mYCoord = 0;
 		cloudA.mZLayer = -50;
@@ -117,13 +117,13 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudA.mLooping = true;
 		cloudA.mTimer.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudA, vfs, map.mCloud1TilemapPath );
+			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( cloudA, vfs, map.mCloud1TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 
 		cloudB = {};
 		cloudB.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud2TilesetPath );
-		cloudB.mTileZoomFactor = gfx::TileLayer::kTileZoomFactor_Normal;
+		cloudB.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudB.mXCoord = 0;
 		cloudB.mYCoord = 0;
 		cloudB.mZLayer = -51;
@@ -131,7 +131,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudB.mLooping = true;
 		cloudB.mTimer.mMaxTimeIndex = map.mCloud2ParallaxDelay;
 		{
-			bool const loadSuccess = gfx::TileLayerCSVLoader::LoadTiles( cloudB, vfs, map.mCloud2TilemapPath );
+			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( cloudB, vfs, map.mCloud2TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
 	}
@@ -186,10 +186,10 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 3 ),
-					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize ),
+					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 ),
+					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
 					ui::Justification::TopRight ) );
-		headerFloater->SetOffset( uiContext, { -gfx::kTileSize / 4, gfx::kTileSize / 4 } );
+		headerFloater->SetOffset( uiContext, { -gfx::ppu::kTileSize / 4, gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const header =
 			uiManager.AssignStrongController(
 				headerFloater->GetChildContainerID(),
@@ -205,10 +205,10 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 6 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize * 2 ),
-					math::integer_cast<gfx::PPUCoordElem>( gfx::kTileSize / 2 ),
+					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
+					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize / 2 ),
 					ui::Justification::BottomLeft ) );
-		footerFloater->SetOffset( uiContext, { gfx::kTileSize / 4, -gfx::kTileSize / 4 } );
+		footerFloater->SetOffset( uiContext, { gfx::ppu::kTileSize / 4, -gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const footer =
 			uiManager.AssignStrongController(
 				footerFloater->GetChildContainerID(),
@@ -237,7 +237,7 @@ void Gameplay_Overworld::OnExit( AppStateChangeContext& context )
 void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
-	gfx::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
 	// Show/hide UI based on idle/activity
 	time::CommonClock::duration const timeSinceLastActivity = time::FrameClock::now() - internalState.mLastActivity;
@@ -440,13 +440,13 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		RF_TODO_ANNOTATION( "Move followers" );
 
 		// Update viewport
-		static constexpr gfx::PPUCoordElem kViewportMarginX = gfx::kTileSize * 4;
-		static constexpr gfx::PPUCoordElem kViewportMarginY = gfx::kTileSize * 3;
-		gfx::AABB const mapLimits = {
-			gfx::PPUCoord{ 0, 0 },
-			gfx::PPUCoord{
-				math::integer_cast<gfx::PPUCoordElem>( internalState.mCollisionMap.GetWidth() ),
-				math::integer_cast<gfx::PPUCoordElem>( internalState.mCollisionMap.GetHeight() ) } };
+		static constexpr gfx::ppu::PPUCoordElem kViewportMarginX = gfx::ppu::kTileSize * 4;
+		static constexpr gfx::ppu::PPUCoordElem kViewportMarginY = gfx::ppu::kTileSize * 3;
+		gfx::ppu::AABB const mapLimits = {
+			gfx::ppu::PPUCoord{ 0, 0 },
+			gfx::ppu::PPUCoord{
+				math::integer_cast<gfx::ppu::PPUCoordElem>( internalState.mCollisionMap.GetWidth() ),
+				math::integer_cast<gfx::ppu::PPUCoordElem>( internalState.mCollisionMap.GetHeight() ) } };
 		ppu.UpdateViewportExtents( internalState.mViewport );
 		internalState.mViewport.SlideToFit( pawnMovement.mCurPos.GetCoord(), kViewportMarginX, kViewportMarginY );
 		internalState.mViewport.ClampToWithin( mapLimits );
@@ -457,14 +457,14 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 	// Draw terrain
 	{
-		gfx::TileLayer& land = internalState.mTerrainLand;
-		gfx::TileLayer& cloudA = internalState.mTerrainCloudA;
-		gfx::TileLayer& cloudB = internalState.mTerrainCloudB;
+		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
+		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;
+		gfx::ppu::TileLayer& cloudB = internalState.mTerrainCloudB;
 
 		constexpr auto parralax =
 			[](
-				gfx::PPUController const& ppu,
-				gfx::TileLayer& tileLayer ) -> void //
+				gfx::ppu::PPUController const& ppu,
+				gfx::ppu::TileLayer& tileLayer ) -> void //
 		{
 			tileLayer.Animate();
 			if( tileLayer.mTimer.IsFullZero() )
@@ -516,14 +516,14 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			// Update and draw visuals
 			{
-				gfx::Object object = {};
+				gfx::ppu::Object object = {};
 
 				object.mXCoord = movement.mCurPos.mX;
 				object.mYCoord = movement.mCurPos.mY;
 
 				// HACK: Sort by reverse team order
 				// TODO: Something clever with the Y-axis as input
-				object.mZLayer = -math::integer_cast<gfx::PPUDepthLayer>( 5u - i_teamIndex );
+				object.mZLayer = -math::integer_cast<gfx::ppu::PPUDepthLayer>( 5u - i_teamIndex );
 
 				bool const idle = movement.mCurPos.mMoving == false;
 

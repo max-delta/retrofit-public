@@ -8,7 +8,7 @@
 #include "core/macros.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API TileLayerCSVLoader
@@ -16,7 +16,7 @@ class PPU_API TileLayerCSVLoader
 	RF_NO_INSTANCE( TileLayerCSVLoader );
 
 public:
-	static bool LoadTiles( gfx::TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path );
+	static bool LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

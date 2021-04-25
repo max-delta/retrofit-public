@@ -2,7 +2,7 @@
 #include "FramePack.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<size_t TIMESLOTS>

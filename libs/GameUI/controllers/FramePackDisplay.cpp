@@ -20,7 +20,7 @@ RFTYPE_CREATE_META( RF::ui::controller::FramePackDisplay )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void FramePackDisplay::SetFramePack( gfx::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::PPUCoordElem expectedWidth, gfx::PPUCoordElem expectedHeight )
+void FramePackDisplay::SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::PPUCoordElem expectedWidth, gfx::ppu::PPUCoordElem expectedHeight )
 {
 	mObject.mFramePackID = framePack;
 	mObject.mTimer.mMaxTimeIndex = maxTimeIndex;
@@ -45,9 +45,9 @@ void FramePackDisplay::SetJustification( Justification justification )
 
 void FramePackDisplay::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::PPUCoord const pos = AlignToJustify( mExpectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::PPUCoord const pos = AlignToJustify( mExpectedDimensions, container.mAABB, mJustification );
 
 	mObject.mXCoord = pos.x;
 	mObject.mYCoord = pos.y;

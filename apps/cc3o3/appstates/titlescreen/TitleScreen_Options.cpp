@@ -172,7 +172,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 
-	gfx::PPUController const& ppu = *app::gGraphics;
+	gfx::ppu::PPUController const& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Setup UI

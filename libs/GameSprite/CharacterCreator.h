@@ -31,7 +31,7 @@ private:
 	//
 	// Public methods
 public:
-	CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
+	CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::ppu::PPUController> ppu );
 
 	bool LoadPieceTables( file::VFSPath const& pieceTablesDir );
 	bool LoadCompositionTable( file::VFSPath const& compositionTablePath );

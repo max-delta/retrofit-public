@@ -38,10 +38,10 @@ FramePackEditor::FramePackEditor( WeakPtr<file::VFS> const& vfs )
 
 void FramePackEditor::Init()
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
 	mMasterMode = MasterMode::Meta;
-	mFramePackID = gfx::kInvalidManagedFramePackID;
+	mFramePackID = gfx::ppu::kInvalidManagedFramePackID;
 	mEditingFrame = 0;
 	mPreviewSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	mPreviewObject = {};
@@ -269,53 +269,53 @@ void FramePackEditor::Process()
 
 void FramePackEditor::Render()
 {
-	gfx::PPUController* const ppu = app::gGraphics;
-	gfx::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu->GetTextureManager();
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
 	constexpr uint8_t fontSize = 8;
-	gfx::PPUCoord const textOffset( 0, fontSize );
+	gfx::ppu::PPUCoord const textOffset( 0, fontSize );
 
-	gfx::PPUCoord const headerOffset( gfx::kTileSize / 16, gfx::kTileSize / 16 );
-	gfx::PPUCoord const previewHeaderStart = gfx::PPUCoord( 0, 0 ) + headerOffset;
+	gfx::ppu::PPUCoord const headerOffset( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize / 16 );
+	gfx::ppu::PPUCoord const previewHeaderStart = gfx::ppu::PPUCoord( 0, 0 ) + headerOffset;
 
 	constexpr size_t k_NumFooterLines = 6;
-	gfx::PPUCoord const footerStart( gfx::kTileSize / 16, gfx::kTileSize * gfx::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::PPUCoordElem>( k_NumFooterLines ) );
+	gfx::ppu::PPUCoord const footerStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::ppu::PPUCoordElem>( k_NumFooterLines ) );
 
-	gfx::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::kTileSize ) - gfx::kTileSize;
-	gfx::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::PPUCoordElem>( ppu->GetWidth() / 2, gfx::kTileSize );
-	gfx::PPUCoordElem const previewOriginX = math::SnapNearest<gfx::PPUCoordElem>( verticalPlaneX / 2, gfx::kTileSize );
-	gfx::PPUCoordElem const editingOriginX = math::SnapNearest<gfx::PPUCoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::kTileSize );
+	gfx::ppu::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
+	gfx::ppu::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::ppu::PPUCoordElem>( ppu->GetWidth() / 2, gfx::ppu::kTileSize );
+	gfx::ppu::PPUCoordElem const previewOriginX = math::SnapNearest<gfx::ppu::PPUCoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
+	gfx::ppu::PPUCoordElem const editingOriginX = math::SnapNearest<gfx::ppu::PPUCoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
 
 	uint8_t animationLength = 0;
 	gfx::TimeSlowdownRate preferredSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	uint8_t numTimeSlots = 0;
 	uint8_t slotSustain = 0;
-	gfx::PPUCoord texOrigin{ 0, 0 };
+	gfx::ppu::PPUCoord texOrigin{ 0, 0 };
 	math::Vector2<int64_t> texSize{ 0, 0 };
 
 	//
 	// Plane lines
 	{
-		ppu->DebugDrawLine( gfx::PPUCoord( 0, horizontalPlaneY ), gfx::PPUCoord( ppu->GetWidth(), horizontalPlaneY ), 1 );
-		ppu->DebugDrawLine( gfx::PPUCoord( verticalPlaneX, 0 ), gfx::PPUCoord( verticalPlaneX, horizontalPlaneY ), 1 );
+		ppu->DebugDrawLine( gfx::ppu::PPUCoord( 0, horizontalPlaneY ), gfx::ppu::PPUCoord( ppu->GetWidth(), horizontalPlaneY ), 1 );
+		ppu->DebugDrawLine( gfx::ppu::PPUCoord( verticalPlaneX, 0 ), gfx::ppu::PPUCoord( verticalPlaneX, horizontalPlaneY ), 1 );
 	}
 
 	//
 	// Origin point
 	{
-		gfx::PPUCoord const editingOriginPoint( editingOriginX, horizontalPlaneY );
-		constexpr gfx::PPUCoordElem pointSize = gfx::kTileSize / 8;
+		gfx::ppu::PPUCoord const editingOriginPoint( editingOriginX, horizontalPlaneY );
+		constexpr gfx::ppu::PPUCoordElem pointSize = gfx::ppu::kTileSize / 8;
 		ppu->DebugDrawLine( editingOriginPoint - pointSize, editingOriginPoint + pointSize, 1 );
 	}
 
 	//
 	// FramePacks
 	gfx::ManagedTextureID editingTextureID = gfx::kInvalidDeviceTextureID;
-	if( mFramePackID != gfx::kInvalidManagedFramePackID )
+	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		gfx::FramePackBase const* const fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
+		gfx::ppu::FramePackBase const* const fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 		RF_ASSERT( fpack != nullptr );
 
 		numTimeSlots = fpack->mNumTimeSlots;
@@ -328,7 +328,7 @@ void FramePackEditor::Render()
 			mEditingFrame = numTimeSlots - 1u;
 		}
 
-		gfx::FramePackBase::TimeSlot const& timeSlot = fpack->GetTimeSlots()[mEditingFrame];
+		gfx::ppu::FramePackBase::TimeSlot const& timeSlot = fpack->GetTimeSlots()[mEditingFrame];
 
 		animationLength = fpack->CalculateTimeIndexBoundary();
 		preferredSlowdownRate = fpack->mPreferredSlowdownRate;
@@ -342,17 +342,17 @@ void FramePackEditor::Render()
 		mPreviewObject.mLooping = true;
 		mPreviewObject.mXCoord = previewOriginX;
 		mPreviewObject.mYCoord = horizontalPlaneY;
-		mPreviewObject.mZLayer = gfx::kFarthestLayer;
+		mPreviewObject.mZLayer = gfx::ppu::kFarthestLayer;
 
 		ppu->DrawObject( mPreviewObject );
 		mPreviewObject.Animate();
 
-		gfx::Object editingObject = mPreviewObject;
+		gfx::ppu::Object editingObject = mPreviewObject;
 		editingObject.mPaused = true;
 		editingObject.mTimer.mTimeIndex = fpack->CalculateFirstTimeIndexOfTimeSlot( mEditingFrame );
 		editingObject.mXCoord = editingOriginX;
 		editingObject.mYCoord = horizontalPlaneY;
-		editingObject.mZLayer = gfx::kFarthestLayer - 1;
+		editingObject.mZLayer = gfx::ppu::kFarthestLayer - 1;
 
 		ppu->DrawObject( editingObject );
 
@@ -389,7 +389,7 @@ void FramePackEditor::Render()
 	//
 	// Editing header
 	{
-		gfx::PPUCoord const editingHeaderStart = gfx::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
+		gfx::ppu::PPUCoord const editingHeaderStart = gfx::ppu::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DrawText( editingHeaderStart, fontSize, mDefaultFontID, "Editing" );
 		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: %i / [0-%i] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
@@ -444,12 +444,12 @@ void FramePackEditor::Render()
 	//
 	// Footer
 	{
-		gfx::PPUCoord const footerLine1Start( footerStart );
-		gfx::PPUCoord const footerLine2Start( footerLine1Start + textOffset );
-		gfx::PPUCoord const footerLine3Start( footerLine2Start + textOffset );
-		gfx::PPUCoord const footerLine4Start( footerLine3Start + textOffset );
-		gfx::PPUCoord const footerLine5Start( footerLine4Start + textOffset );
-		gfx::PPUCoord const footerLine6Start( footerLine5Start + textOffset );
+		gfx::ppu::PPUCoord const footerLine1Start( footerStart );
+		gfx::ppu::PPUCoord const footerLine2Start( footerLine1Start + textOffset );
+		gfx::ppu::PPUCoord const footerLine3Start( footerLine2Start + textOffset );
+		gfx::ppu::PPUCoord const footerLine4Start( footerLine3Start + textOffset );
+		gfx::ppu::PPUCoord const footerLine5Start( footerLine4Start + textOffset );
+		gfx::ppu::PPUCoord const footerLine6Start( footerLine5Start + textOffset );
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
@@ -556,14 +556,14 @@ void FramePackEditor::Command_ChangePreviewSpeed( bool faster )
 
 void FramePackEditor::Command_ChangeSustainCount( bool increase )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
@@ -584,14 +584,14 @@ void FramePackEditor::Command_ChangeSustainCount( bool increase )
 
 void FramePackEditor::Command_BatchChangeSustainCount( bool increase )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
@@ -628,14 +628,14 @@ void FramePackEditor::Command_ChangeEditingFrame( bool increase )
 
 void FramePackEditor::Command_ReloadFramePack()
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
+	gfx::ppu::FramePackManager const& fpackMan = *ppu->GetFramePackManager();
 	file::VFSPath const filename = fpackMan.SearchForFilenameByResourceName( kFramePackName );
 	OpenFramePack( filename );
 }
@@ -644,14 +644,14 @@ void FramePackEditor::Command_ReloadFramePack()
 
 void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	uint8_t& slowdownRate = fpack->mPreferredSlowdownRate;
@@ -670,15 +670,15 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 
 void FramePackEditor::Command_Meta_CreateFramePack()
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	gfx::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
+	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
 	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
-	if( mFramePackID != gfx::kInvalidManagedFramePackID )
+	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
 		fpackMan.DestroyResource( kFramePackName );
 	}
-	UniquePtr<gfx::FramePackBase> newFPack = DefaultCreator<gfx::FramePack_256>::Create();
+	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
 	file::VFSPath const defaultFrame = file::VFS::kRoot.GetChild( "assets", "textures", "common", "max_delta_32.png" );
 	newFPack->mNumTimeSlots = 1;
 	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
@@ -721,14 +721,14 @@ void FramePackEditor::Command_Meta_SaveFramePack()
 
 void FramePackEditor::Command_Meta_DeleteFrame()
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 	size_t const& numSlots = fpack->mNumTimeSlots;
 	if( numSlots <= 1 )
@@ -743,7 +743,7 @@ void FramePackEditor::Command_Meta_DeleteFrame()
 
 void FramePackEditor::Command_Texture_InsertBefore()
 {
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
@@ -756,7 +756,7 @@ void FramePackEditor::Command_Texture_InsertBefore()
 
 void FramePackEditor::Command_Texture_InsertAfter()
 {
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
@@ -768,22 +768,22 @@ void FramePackEditor::Command_Texture_InsertAfter()
 
 
 
-void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y )
+void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	RF_ASSERT( mEditingFrame <= fpack->mNumTimeSlots );
 
-	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
-	gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[mEditingFrame];
+	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ppu::FramePackBase::TimeSlot& timeSlot = timeSlots[mEditingFrame];
 
 	timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
 	timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
@@ -791,22 +791,22 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PP
 
 
 
-void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y )
+void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	if( mFramePackID == gfx::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		return;
 	}
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
-	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	for( size_t i = 0; i < fpack->mNumTimeSlots; i++ )
 	{
-		gfx::FramePackBase::TimeSlot& timeSlot = timeSlots[i];
+		gfx::ppu::FramePackBase::TimeSlot& timeSlot = timeSlots[i];
 
 		timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
 		timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
@@ -826,24 +826,24 @@ void FramePackEditor::OpenFramePack( rftl::string const& rawPath )
 
 void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	gfx::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
-	if( mFramePackID != gfx::kInvalidManagedFramePackID )
+	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
+	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
 		fpackMan.DestroyResource( kFramePackName );
 	}
 	if( path.Empty() )
 	{
 		RFLOG_ERROR( path, RFCAT_FRAMEPACKEDITOR, "Invalid frame pack filename" );
-		mFramePackID = gfx::kInvalidManagedFramePackID;
+		mFramePackID = gfx::ppu::kInvalidManagedFramePackID;
 		return;
 	}
 	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, path );
 
-	if( mFramePackID != gfx::kInvalidManagedFramePackID )
+	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		gfx::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
+		gfx::ppu::FramePackBase const* fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 		RF_ASSERT( fpack != nullptr );
 		mPreviewSlowdownRate = math::Clamp<gfx::TimeSlowdownRate>( 1, fpack->mPreferredSlowdownRate, 60 );
 	}
@@ -861,11 +861,11 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 		RFLOG_NOTIFY( filePath, RFCAT_FRAMEPACKEDITOR, "Unable to map to VFS" );
 	}
 
-	gfx::PPUController const& ppu = *app::gGraphics;
-	gfx::FramePackManager const& fpackMan = *ppu.DebugGetFramePackManager();
+	gfx::ppu::PPUController const& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu.DebugGetTextureManager();
 
-	WeakPtr<gfx::FramePackBase> const currentFPack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
+	WeakPtr<gfx::ppu::FramePackBase> const currentFPack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 	if( currentFPack == nullptr )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEPACKEDITOR, "Unable to fetch current framepack" );
@@ -874,7 +874,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 
 	// Serialize
 	rftl::vector<uint8_t> buffer;
-	bool const writeSuccess = gfx::FramePackSerDes::SerializeToBuffer( texMan, buffer, *currentFPack );
+	bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, buffer, *currentFPack );
 	RF_ASSERT( writeSuccess );
 
 	// Create file
@@ -898,16 +898,16 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 
 void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	RF_ASSERT( mFramePackID != gfx::kInvalidManagedFramePackID );
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	RF_ASSERT( mFramePackID != gfx::ppu::kInvalidManagedFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	size_t const& numSlots = fpack->mNumTimeSlots;
 	RF_ASSERT( numSlots + 1 <= fpack->mMaxTimeSlots );
 
-	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
 
 	// Push everything over
@@ -939,15 +939,15 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 
 void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	size_t const& numSlots = fpack->mNumTimeSlots;
 	RF_ASSERT( numSlots - 1 > 0 );
 
-	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	uint8_t* const timeSlotSustains = fpack->GetMutableTimeSlotSustains();
 
 	// Push everything over
@@ -968,14 +968,14 @@ void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
 
 void FramePackEditor::ChangeTexture( size_t slotIndex )
 {
-	gfx::PPUController* const ppu = app::gGraphics;
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
-	RF_ASSERT( mFramePackID != gfx::kInvalidManagedFramePackID );
-	gfx::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
+	RF_ASSERT( mFramePackID != gfx::ppu::kInvalidManagedFramePackID );
+	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
 	RF_ASSERT( slotIndex < fpack->mNumTimeSlots );
-	gfx::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
+	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	gfx::ManagedTextureID& textureID = timeSlots[slotIndex].mTextureReference;
 
 	// User needs to select texture

@@ -47,7 +47,7 @@ public:
 	AnchorID mRightConstraint = kInvalidAnchorID;
 	AnchorID mTopConstraint = kInvalidAnchorID;
 	AnchorID mBottomConstraint = kInvalidAnchorID;
-	gfx::AABB mAABB;
+	gfx::ppu::AABB mAABB;
 
 	// Containers may own anchor points, which descendants may constrain
 	//  themselves to
@@ -56,7 +56,7 @@ public:
 	// Depth is calculated automatically, but some special cases may need to
 	//  adjust the behavior slightly
 	// NOTE: This recursively affects all children as well
-	gfx::PPUDepthLayer mDepthOffset = 0;
+	gfx::ppu::PPUDepthLayer mDepthOffset = 0;
 
 	// Containers may have a controller that runs their logic
 	// NOTE: Possible to only have a weak reference, such as when sharing

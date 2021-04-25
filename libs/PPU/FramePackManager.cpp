@@ -9,7 +9,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 FramePackManager::FramePackManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc )
@@ -69,8 +69,8 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 
 	// Deserialize
 	rftl::vector<file::VFSPath> textures;
-	UniquePtr<gfx::FramePackBase> framePack;
-	bool const readSuccess = gfx::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
+	UniquePtr<FramePackBase> framePack;
+	bool const readSuccess = FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
 	if( readSuccess == false )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize FPack" );

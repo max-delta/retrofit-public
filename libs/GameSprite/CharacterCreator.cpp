@@ -12,7 +12,7 @@
 namespace RF::sprite {
 ///////////////////////////////////////////////////////////////////////////////
 
-CharacterCreator::CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu )
+CharacterCreator::CharacterCreator( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::ppu::PPUController> ppu )
 	: mVfs( vfs )
 	, mCompositor( vfs, ppu )
 {

@@ -2,7 +2,7 @@
 #include "PPUDebugState.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 void PPUDebugState::Clear()

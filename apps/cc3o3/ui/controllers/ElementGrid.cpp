@@ -67,7 +67,7 @@ void ElementGrid::UpdateFromCache( ElementGridDisplayCache const& cache )
 
 void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 {
-	gfx::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	switch( mSize )
@@ -104,9 +104,9 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 {
 	RF_ASSERT( mTileLayer.NumTiles() > 0 );
 
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::PPUCoord expectedDimensions;
+	gfx::ppu::PPUCoord expectedDimensions;
 	switch( mSize )
 	{
 		case Size::Mini:
@@ -124,7 +124,7 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 		default:
 			RF_DBGFAIL();
 	}
-	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;

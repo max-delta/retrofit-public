@@ -20,7 +20,7 @@ public:
 	TileLayerDisplay() = default;
 
 	void SetTileset( gfx::ManagedTilesetID tileset );
-	gfx::TileLayer& GetMutableTileLayer();
+	gfx::ppu::TileLayer& GetMutableTileLayer();
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
@@ -28,7 +28,7 @@ public:
 	//
 	// Private data
 private:
-	gfx::TileLayer mTileLayer = {};
+	gfx::ppu::TileLayer mTileLayer = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

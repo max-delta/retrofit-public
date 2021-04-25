@@ -96,7 +96,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		return;
 	}
 
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	if( mDesiredHeight == 0 || mFontID == gfx::kInvalidManagedFontID )
 	{
@@ -108,14 +108,14 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	RF_ASSERT( mFontID != gfx::kInvalidManagedFontID );
 	RF_ASSERT( mDesiredHeight > mBaselineOffset );
 
-	gfx::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
-	gfx::PPUCoord const expectedDimensions = {
+	gfx::ppu::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
+	gfx::ppu::PPUCoord const expectedDimensions = {
 		stringWidth,
 		// Push the descenders down below the baseline
 		//  (tails like g, j, p, q, y )
-		math::integer_cast<gfx::PPUCoordElem>( mDesiredHeight - mBaselineOffset )
+		math::integer_cast<gfx::ppu::PPUCoordElem>( mDesiredHeight - mBaselineOffset )
 	};
-	gfx::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	if constexpr( config::kOncePer )
 	{

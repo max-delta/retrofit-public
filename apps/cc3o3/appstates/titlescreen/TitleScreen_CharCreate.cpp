@@ -402,8 +402,8 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 
 void TitleScreen_CharCreate::InternalState::Recomposite()
 {
-	gfx::PPUController& ppu = *app::gGraphics;
-	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	sprite::CharacterCreator& charCreate = *gCharacterCreator;
 
 	static constexpr char const kId[] = "CHAR_CREATE_TEMP";
@@ -421,18 +421,18 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	params.mOutputDir = paths::CompositeCharacters().GetChild( kId );
 	sprite::CompositeCharacter const character = charCreate.CreateCompositeCharacter( params );
 
-	gfx::ManagedFramePackID const previewID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
-	if( previewID == gfx::kInvalidManagedFramePackID )
+	gfx::ppu::ManagedFramePackID const previewID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
+	if( previewID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		ppu.ForceImmediateLoadRequest(
-			gfx::PPUController::AssetType::FramePack,
+			gfx::ppu::PPUController::AssetType::FramePack,
 			details::kPreviewFpackName,
 			character.mFramepacksByAnim.at( "idle_n" ) );
 	}
 	else
 	{
 		ppu.QueueDeferredReloadRequest(
-			gfx::PPUController::AssetType::FramePack,
+			gfx::ppu::PPUController::AssetType::FramePack,
 			details::kPreviewFpackName );
 	}
 }
@@ -467,8 +467,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 	// Load
 	mInternalState->Load();
 
-	gfx::PPUController const& ppu = *app::gGraphics;
-	gfx::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
+	gfx::ppu::PPUController const& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Setup UI
@@ -523,7 +523,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					topColumnRatios ) );
 
 		// Floating frame in middle left
-		gfx::PPUCoord const leftFrameDimensions = { 128 - ( 16 + 8 ), 128 + 16 };
+		gfx::ppu::PPUCoord const leftFrameDimensions = { 128 - ( 16 + 8 ), 128 + 16 };
 		WeakPtr<ui::controller::Floater> const leftFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 1 ),
@@ -538,7 +538,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 		leftFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 		// Floating frame in middle right
-		gfx::PPUCoord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
+		gfx::ppu::PPUCoord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
 		WeakPtr<ui::controller::Floater> const rightFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 2 ),
@@ -623,8 +623,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					rightRowSlicer->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::FramePackDisplay>::Create() );
 			preview->SetJustification( ui::Justification::MiddleCenter );
-			gfx::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
-			gfx::FramePackBase const& fPack = *framePackMan.GetResourceFromManagedResourceID( previewFpackID );
+			gfx::ppu::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
+			gfx::ppu::FramePackBase const& fPack = *framePackMan.GetResourceFromManagedResourceID( previewFpackID );
 			preview->SetFramePack(
 				previewFpackID,
 				fPack.CalculateTimeIndexBoundary(),

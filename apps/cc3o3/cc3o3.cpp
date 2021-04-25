@@ -383,7 +383,7 @@ void ProcessFrame()
 	{
 		// Rollback and simulate each frame up to the current true frame
 
-		gfx::PPUController& ppu = *app::gGraphics;
+		gfx::ppu::PPUController& ppu = *app::gGraphics;
 
 		// Suppress any draw requests while performing rollback re-simulation
 		ppu.SuppressDrawRequests( true );

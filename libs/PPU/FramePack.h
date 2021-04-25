@@ -7,7 +7,7 @@
 #include "core/ptr/ptr_traits.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor

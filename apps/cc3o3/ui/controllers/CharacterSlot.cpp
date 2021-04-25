@@ -61,7 +61,7 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		anim.mFramePackID,
 		anim.mMaxTimeIndex,
 		0,
-		gfx::kTileSize / 2 );
+		gfx::ppu::kTileSize / 2 );
 
 	// Text
 	{
@@ -116,7 +116,7 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 {
 	ui::ContainerManager& uiManager = context.GetMutableContainerManager();
-	gfx::PPUController const& renderer = GetRenderer( uiManager );
+	gfx::ppu::PPUController const& renderer = GetRenderer( uiManager );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	mChildContainerID = CreateChildContainer(

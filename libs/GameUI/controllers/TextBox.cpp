@@ -113,12 +113,12 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 		return;
 	}
 
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurpose, renderer.GetCurrentZoomFactor() );
 
 	// TODO: Optimize
-	gfx::PPUCoordElem const maxLineLen = container.mAABB.Width();
+	gfx::ppu::PPUCoordElem const maxLineLen = container.mAABB.Width();
 	rftl::vector<rftl::string> textLines;
 	textLines.resize( mNumRows );
 	rftl::deque<char> unwrittenText( mText.begin(), mText.end() );
@@ -137,7 +137,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 		}
 
 		bool fits = true;
-		if( fits && line.length() > gfx::PPUState::String::k_MaxLen )
+		if( fits && line.length() > gfx::ppu::PPUState::String::k_MaxLen )
 		{
 			// Hard limit on render draw request
 			RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '%s'", line.c_str() ) );

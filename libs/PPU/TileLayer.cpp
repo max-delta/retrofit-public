@@ -4,7 +4,7 @@
 #include "core_math/math_casts.h"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 void TileLayer::Animate()

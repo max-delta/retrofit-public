@@ -64,7 +64,7 @@ void ElementStockpileSelector::OnRender( UIConstContext const& context, Containe
 	RF_ASSERT_MSG( container.mAABB.Height() == kContainerHeight, "Container not sized as needed" );
 	RF_ASSERT( mTileLayer.NumTiles() > 0 );
 
-	gfx::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	mTileLayer.mXCoord = container.mAABB.Left();
 	mTileLayer.mYCoord = container.mAABB.Top();
@@ -79,7 +79,7 @@ void ElementStockpileSelector::OnRender( UIConstContext const& context, Containe
 
 void ElementStockpileSelector::PostInstanceAssign( UIContext& context, Container& container )
 {
-	gfx::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
+	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetFullName );

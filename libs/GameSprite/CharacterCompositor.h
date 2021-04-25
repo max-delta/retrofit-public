@@ -156,7 +156,7 @@ class GAMESPRITE_API CharacterCompositor
 	//
 	// Public methods
 public:
-	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::PPUController> ppu );
+	CharacterCompositor( WeakPtr<file::VFS const> vfs, WeakPtr<gfx::ppu::PPUController> ppu );
 
 	bool LoadPieceTables( file::VFSPath const& pieceTablesDir );
 	CompositeCharacter CreateCompositeCharacter( CompositeCharacterParams const& params );
@@ -179,7 +179,7 @@ private:
 	// Private data
 private:
 	WeakPtr<file::VFS const> mVfs;
-	WeakPtr<gfx::PPUController> mPpu;
+	WeakPtr<gfx::ppu::PPUController> mPpu;
 	BitmapCache mBitmapCache;
 	CharacterModes mCharacterModes;
 };

@@ -79,7 +79,7 @@ bool Controller::IsChildRenderingBlocked() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
-gfx::PPUController& Controller::GetRenderer( ContainerManager const& manager ) const
+gfx::ppu::PPUController& Controller::GetRenderer( ContainerManager const& manager ) const
 {
 	return manager.GetRenderer();
 }
@@ -132,7 +132,7 @@ AnchorID Controller::CreateAnchor( ContainerManager& manager, Container& contain
 
 
 
-void Controller::MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::PPUCoord pos )
+void Controller::MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::PPUCoord pos )
 {
 	manager.MoveAnchor( anchorID, pos );
 }

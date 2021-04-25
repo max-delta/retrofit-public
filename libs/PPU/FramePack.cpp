@@ -7,7 +7,7 @@
 #include "rftl/cstring"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 uint8_t const* FramePackBase::GetTimeSlotSustains() const

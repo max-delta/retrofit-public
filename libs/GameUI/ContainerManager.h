@@ -37,7 +37,7 @@ private:
 	// Public methods
 public:
 	ContainerManager(
-		WeakPtr<gfx::PPUController> const& ppuController,
+		WeakPtr<gfx::ppu::PPUController> const& ppuController,
 		WeakPtr<FontRegistry const> const& fontRegistry );
 	~ContainerManager();
 
@@ -79,14 +79,14 @@ public:
 	template<typename T>
 	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller );
 
-	void SetRootRenderDepth( gfx::PPUDepthLayer depth );
-	gfx::PPUDepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
-	gfx::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
-	void AdjustRecommendedRenderDepth( ContainerID containerID, gfx::PPUDepthLayer offset );
+	void SetRootRenderDepth( gfx::ppu::PPUDepthLayer depth );
+	gfx::ppu::PPUDepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
+	gfx::ppu::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
+	void AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::PPUDepthLayer offset );
 	void ResetRecommendedRenderDepth( ContainerID containerID );
 
-	void SetRootAABBReduction( gfx::PPUCoordElem delta );
-	void SetDebugAABBReduction( gfx::PPUCoordElem delta );
+	void SetRootAABBReduction( gfx::ppu::PPUCoordElem delta );
+	void SetDebugAABBReduction( gfx::ppu::PPUCoordElem delta );
 
 	void RequestHardRecalc( ContainerID containerID );
 
@@ -100,7 +100,7 @@ public:
 	//
 	// Private methods
 private:
-	gfx::PPUController& GetRenderer() const;
+	gfx::ppu::PPUController& GetRenderer() const;
 	FontRegistry const& GetFontRegistry() const;
 
 	Container& GetMutableRootContainer();
@@ -126,7 +126,7 @@ private:
 	void DestroyContainer( ContainerID containerID );
 
 	AnchorID CreateAnchor( Container& container );
-	void MoveAnchor( AnchorID anchorID, gfx::PPUCoord pos );
+	void MoveAnchor( AnchorID anchorID, gfx::ppu::PPUCoord pos );
 	void DestroyAnchor( AnchorID anchorID );
 
 	WeakPtr<Controller> AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller );
@@ -141,7 +141,7 @@ private:
 	// Private data
 private:
 	UniquePtr<FocusManager> mFocusManager;
-	WeakPtr<gfx::PPUController> mGraphics;
+	WeakPtr<gfx::ppu::PPUController> mGraphics;
 	WeakPtr<FontRegistry const> mFontRegistry;
 
 	ContainerStorage mContainers;
@@ -158,14 +158,14 @@ private:
 	// TODO: Use actual value
 	size_t mMaxDepthSeen = 30;
 
-	gfx::PPUDepthLayer mRootRenderDepth = 0;
+	gfx::ppu::PPUDepthLayer mRootRenderDepth = 0;
 
 	bool mIsDestroyingContainers = false;
 
-	gfx::PPUCoordElem mRootAABBReduction = 0;
-	gfx::PPUCoordElem mDebugAABBReduction = 0;
+	gfx::ppu::PPUCoordElem mRootAABBReduction = 0;
+	gfx::ppu::PPUCoordElem mDebugAABBReduction = 0;
 
-	gfx::PPUZoomFactor mMostRecentZoomFactor = gfx::kInvalidZoomFactor;
+	gfx::ppu::PPUZoomFactor mMostRecentZoomFactor = gfx::ppu::kInvalidZoomFactor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

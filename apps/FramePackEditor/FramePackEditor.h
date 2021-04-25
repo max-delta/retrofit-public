@@ -55,8 +55,8 @@ public:
 
 	void Command_Texture_InsertBefore();
 	void Command_Texture_InsertAfter();
-	void Command_Texture_ChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y );
-	void Command_Texture_BatchChangeOffset( gfx::PPUCoordElem x, gfx::PPUCoordElem y );
+	void Command_Texture_ChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y );
+	void Command_Texture_BatchChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y );
 
 
 	//
@@ -75,11 +75,11 @@ private:
 private:
 	WeakPtr<file::VFS> const mVfs;
 	MasterMode mMasterMode;
-	gfx::ManagedFramePackID mFramePackID;
+	gfx::ppu::ManagedFramePackID mFramePackID;
 	gfx::ManagedFontID mDefaultFontID = gfx::kInvalidDeviceFontID;
 	uint8_t mEditingFrame;
 	gfx::TimeSlowdownRate mPreviewSlowdownRate;
-	gfx::Object mPreviewObject;
+	gfx::ppu::Object mPreviewObject;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ class PPU_API Tileset
 	RF_NO_COPY( Tileset );
 
 private:
-	friend class PPUController;
+	friend class ppu::PPUController;
 	friend class TilesetManager;
 
 

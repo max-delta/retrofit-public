@@ -18,12 +18,12 @@ class GAMEUI_API Floater final : public InstancedController
 	// Public methods
 public:
 	Floater() = delete;
-	Floater( gfx::PPUCoordElem width, gfx::PPUCoordElem height, Justification justification );
+	Floater( gfx::ppu::PPUCoordElem width, gfx::ppu::PPUCoordElem height, Justification justification );
 
 	ContainerID GetChildContainerID() const;
 
-	gfx::PPUCoord GetOffset() const;
-	void SetOffset( UIContext& context, gfx::PPUCoord offset );
+	gfx::ppu::PPUCoord GetOffset() const;
+	void SetOffset( UIContext& context, gfx::ppu::PPUCoord offset );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
@@ -36,8 +36,8 @@ private:
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mContainer = kInvalidContainerID;
 	Justification mJustification = Justification::TopLeft;
-	gfx::PPUCoord mDimensions = {};
-	gfx::PPUCoord mOffset = {};
+	gfx::ppu::PPUCoord mDimensions = {};
+	gfx::ppu::PPUCoord mOffset = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

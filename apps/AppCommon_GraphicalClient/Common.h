@@ -13,7 +13,7 @@ namespace input {
 	class WndProcInputDevice;
 	class ControllerManager;
 }
-namespace gfx {
+namespace gfx::ppu {
 	class PPUController;
 }
 namespace ui {
@@ -41,7 +41,7 @@ APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<cli::ArgParse const> gCommandLineArgs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::ppu::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::LocEngine> gLocEngine;

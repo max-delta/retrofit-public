@@ -17,7 +17,7 @@ class PPU_API Font
 	RF_NO_COPY( Font );
 
 private:
-	friend class PPUController;
+	friend class ppu::PPUController;
 	friend class FontManager;
 
 

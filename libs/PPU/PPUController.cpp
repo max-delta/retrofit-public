@@ -26,7 +26,7 @@
 #include "rftl/cstdarg"
 
 
-namespace RF::gfx {
+namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
@@ -39,7 +39,7 @@ static constexpr PPUDepthLayer kDefaultDebugLineLayer = 0;
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-PPUController::PPUController( UniquePtr<gfx::DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs )
+PPUController::PPUController( UniquePtr<DeviceInterface>&& deviceInterface, WeakPtr<file::VFS> const& vfs )
 	: mDeviceInterface( rftl::move( deviceInterface ) )
 	, mTextureManager( nullptr )
 	, mFramePackManager( nullptr )
@@ -76,7 +76,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 	// Create texture manager
 	RF_ASSERT( mTextureManager == nullptr );
-	mTextureManager = alloc::DefaultAllocCreator<gfx::TextureManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
+	mTextureManager = alloc::DefaultAllocCreator<TextureManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
 	success = mTextureManager->AttachToDevice( mDeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )
@@ -93,7 +93,7 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 			QueueDeferredLoadRequest( AssetType::Texture, path );
 			return mTextureManager->GetManagedResourceIDFromResourceName( path );
 		};
-		mFramePackManager = alloc::DefaultAllocCreator<gfx::FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
+		mFramePackManager = alloc::DefaultAllocCreator<FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}
 
 	// Create tileset manager
@@ -105,12 +105,12 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 			QueueDeferredLoadRequest( AssetType::Texture, path );
 			return mTextureManager->GetManagedResourceIDFromResourceName( path );
 		};
-		mTilesetManager = alloc::DefaultAllocCreator<gfx::TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
+		mTilesetManager = alloc::DefaultAllocCreator<TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}
 
 	// Create font manager
 	RF_ASSERT( mFontManager == nullptr );
-	mFontManager = alloc::DefaultAllocCreator<gfx::FontManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
+	mFontManager = alloc::DefaultAllocCreator<FontManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs );
 	success = mFontManager->AttachToDevice( mDeviceInterface );
 	RF_ASSERT( success );
 	if( success == false )
@@ -576,28 +576,28 @@ bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceName cons
 
 
 
-WeakPtr<gfx::TextureManager const> PPUController::GetTextureManager() const
+WeakPtr<TextureManager const> PPUController::GetTextureManager() const
 {
 	return mTextureManager;
 }
 
 
 
-WeakPtr<gfx::FramePackManager const> PPUController::GetFramePackManager() const
+WeakPtr<FramePackManager const> PPUController::GetFramePackManager() const
 {
 	return mFramePackManager;
 }
 
 
 
-WeakPtr<gfx::TilesetManager const> PPUController::GetTilesetManager() const
+WeakPtr<TilesetManager const> PPUController::GetTilesetManager() const
 {
 	return mTilesetManager;
 }
 
 
 
-WeakPtr<gfx::FontManager const> PPUController::GetFontManager() const
+WeakPtr<FontManager const> PPUController::GetFontManager() const
 {
 	return mFontManager;
 }
@@ -777,35 +777,35 @@ bool PPUController::DebugDrawAABB( AABB aabb, PPUCoordElem width, PPUDepthLayer 
 
 
 
-WeakPtr<gfx::DeviceInterface> PPUController::DebugGetDeviceInterface() const
+WeakPtr<DeviceInterface> PPUController::DebugGetDeviceInterface() const
 {
 	return mDeviceInterface;
 }
 
 
 
-WeakPtr<gfx::TextureManager> PPUController::DebugGetTextureManager() const
+WeakPtr<TextureManager> PPUController::DebugGetTextureManager() const
 {
 	return mTextureManager;
 }
 
 
 
-WeakPtr<gfx::FramePackManager> PPUController::DebugGetFramePackManager() const
+WeakPtr<FramePackManager> PPUController::DebugGetFramePackManager() const
 {
 	return mFramePackManager;
 }
 
 
 
-WeakPtr<gfx::TilesetManager> PPUController::DebugGetTilesetManager() const
+WeakPtr<TilesetManager> PPUController::DebugGetTilesetManager() const
 {
 	return mTilesetManager;
 }
 
 
 
-WeakPtr<gfx::FontManager> PPUController::DebugGetFontManager() const
+WeakPtr<FontManager> PPUController::DebugGetFontManager() const
 {
 	return mFontManager;
 }
@@ -867,27 +867,27 @@ void PPUController::Render() const
 		bool terminate = false;
 		switch( element.mType )
 		{
-			case RF::gfx::PPUController::ElementType::Invalid:
+			case ElementType::Invalid:
 				// End of list
 				terminate = true;
 				break;
 
-			case RF::gfx::PPUController::ElementType::Object:
+			case ElementType::Object:
 				RenderObject( targetState.mObjects[i] );
 				break;
-			case RF::gfx::PPUController::ElementType::TileLayer:
+			case ElementType::TileLayer:
 				RenderTileLayer( targetState.mTileLayers[i] );
 				break;
-			case RF::gfx::PPUController::ElementType::String:
+			case ElementType::String:
 				RenderString( targetState.mStrings[i] );
 				break;
-			case RF::gfx::PPUController::ElementType::DebugLine:
+			case ElementType::DebugLine:
 				RenderDebugLine( targetDebugState.mLines[i] );
 				break;
-			case RF::gfx::PPUController::ElementType::DebugString:
+			case ElementType::DebugString:
 				RenderDebugString( targetDebugState.mStrings[i] );
 				break;
-			case RF::gfx::PPUController::ElementType::DebugAuxString:
+			case ElementType::DebugAuxString:
 				RenderString( targetDebugState.mAuxStrings[i] );
 				break;
 		}
