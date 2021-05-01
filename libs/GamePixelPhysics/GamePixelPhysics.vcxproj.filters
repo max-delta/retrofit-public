@@ -5,6 +5,7 @@
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="PixelCast.cpp" />
     <ClCompile Include="DirectionLogic.cpp" />
+    <ClCompile Include="PrimitiveCollision.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -12,5 +13,6 @@
     <ClInclude Include="PixelCast.h" />
     <ClInclude Include="PhysicsFwd.h" />
     <ClInclude Include="DirectionLogic.h" />
+    <ClInclude Include="PrimitiveCollision.h" />
   </ItemGroup>
 </Project>
