@@ -24,9 +24,9 @@ public:
 	void SetTileset(
 		ui::UIContext& context,
 		gfx::ManagedTilesetID tileset,
-		gfx::ppu::PPUCoord expectedTileDimensions,
-		gfx::ppu::PPUCoord expectedPatternDimensions,
-		gfx::ppu::PPUCoord paddingDimensions );
+		gfx::ppu::Coord expectedTileDimensions,
+		gfx::ppu::Coord expectedPatternDimensions,
+		gfx::ppu::Coord paddingDimensions );
 	void SetJustification( Justification justification );
 
 	ContainerID GetChildContainerID() const;
@@ -48,10 +48,10 @@ private:
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	Justification mJustification = Justification::MiddleCenter;
-	gfx::ppu::PPUCoord mExpectedTileDimensions = {};
-	gfx::ppu::PPUCoord mExpectedPatternDimensions = {};
-	gfx::ppu::PPUCoord mPaddingDimensions = {};
-	gfx::ppu::PPUCoord mExpectedDimensions = {};
+	gfx::ppu::Coord mExpectedTileDimensions = {};
+	gfx::ppu::Coord mExpectedPatternDimensions = {};
+	gfx::ppu::Coord mPaddingDimensions = {};
+	gfx::ppu::Coord mExpectedDimensions = {};
 	gfx::ppu::TileLayer mTileLayer = {};
 };
 

@@ -23,9 +23,9 @@ namespace RF::ui::controller {
 void BorderFrame::SetTileset(
 	ui::UIContext& context,
 	gfx::ManagedTilesetID tileset,
-	gfx::ppu::PPUCoord expectedTileDimensions,
-	gfx::ppu::PPUCoord expectedPatternDimensions,
-	gfx::ppu::PPUCoord paddingDimensions )
+	gfx::ppu::Coord expectedTileDimensions,
+	gfx::ppu::Coord expectedPatternDimensions,
+	gfx::ppu::Coord paddingDimensions )
 {
 	mTileLayer.mTilesetReference = tileset;
 	mExpectedTileDimensions = expectedTileDimensions;
@@ -73,7 +73,7 @@ void BorderFrame::OnRender( UIConstContext const& context, Container const& cont
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::PPUCoord const pos = AlignToJustify( mExpectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::Coord const pos = AlignToJustify( mExpectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;
@@ -90,8 +90,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 {
 	RecalcTilemap( container );
 
-	gfx::ppu::PPUCoord const topLeft = container.mAABB.mTopLeft + ( mExpectedTileDimensions + mPaddingDimensions );
-	gfx::ppu::PPUCoord const bottomRight = container.mAABB.mBottomRight - ( mExpectedTileDimensions + mPaddingDimensions );
+	gfx::ppu::Coord const topLeft = container.mAABB.mTopLeft + ( mExpectedTileDimensions + mPaddingDimensions );
+	gfx::ppu::Coord const bottomRight = container.mAABB.mBottomRight - ( mExpectedTileDimensions + mPaddingDimensions );
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }
@@ -109,8 +109,8 @@ void BorderFrame::RecalcTilemap( Container const& container )
 		return;
 	}
 
-	gfx::ppu::PPUCoordElem const availableWidth = container.mAABB.Width();
-	gfx::ppu::PPUCoordElem const availableHeight = container.mAABB.Height();
+	gfx::ppu::CoordElem const availableWidth = container.mAABB.Width();
+	gfx::ppu::CoordElem const availableHeight = container.mAABB.Height();
 	size_t const numAvailableColumns = math::integer_cast<size_t>( availableWidth / mExpectedTileDimensions.x );
 	size_t const numAvailableRows = math::integer_cast<size_t>( availableHeight / mExpectedTileDimensions.y );
 
@@ -121,8 +121,8 @@ void BorderFrame::RecalcTilemap( Container const& container )
 	size_t const numOutputColumns = math::Max<size_t>( numAvailableColumns, 2 );
 	size_t const numOutputRows = math::Max<size_t>( numAvailableRows, 2 );
 
-	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::ppu::PPUCoordElem>( numOutputColumns );
-	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::ppu::PPUCoordElem>( numOutputRows );
+	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::ppu::CoordElem>( numOutputColumns );
+	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::ppu::CoordElem>( numOutputRows );
 
 	mTileLayer.ClearAndResize( numOutputColumns, numOutputRows );
 

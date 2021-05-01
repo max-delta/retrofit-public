@@ -30,8 +30,8 @@ public:
 	{
 		static constexpr size_t k_MaxLen = kMaxDebugStringLen;
 
-		PPUCoordElem mXCoord;
-		PPUCoordElem mYCoord;
+		CoordElem mXCoord;
+		CoordElem mYCoord;
 		char mText[k_MaxLen + sizeof( '\0' )];
 	};
 	struct DebugAuxString : PPUState::String
@@ -40,12 +40,12 @@ public:
 	};
 	struct DebugLine
 	{
-		PPUCoordElem mXCoord0;
-		PPUCoordElem mYCoord0;
-		PPUCoordElem mXCoord1;
-		PPUCoordElem mYCoord1;
-		PPUCoordElem mWidth;
-		PPUDepthLayer mZLayer;
+		CoordElem mXCoord0;
+		CoordElem mYCoord0;
+		CoordElem mXCoord1;
+		CoordElem mYCoord1;
+		CoordElem mWidth;
+		DepthLayer mZLayer;
 		math::Color3f mColor;
 	};
 

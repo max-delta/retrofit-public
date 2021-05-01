@@ -18,7 +18,7 @@ RFTYPE_CREATE_META( RF::ui::controller::Floater )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-Floater::Floater( gfx::ppu::PPUCoordElem width, gfx::ppu::PPUCoordElem height, Justification justification )
+Floater::Floater( gfx::ppu::CoordElem width, gfx::ppu::CoordElem height, Justification justification )
 	: mJustification( justification )
 	, mDimensions( width, height )
 {
@@ -34,14 +34,14 @@ ContainerID Floater::GetChildContainerID() const
 
 
 
-gfx::ppu::PPUCoord Floater::GetOffset() const
+gfx::ppu::Coord Floater::GetOffset() const
 {
 	return mOffset;
 }
 
 
 
-void Floater::SetOffset( UIContext& context, gfx::ppu::PPUCoord offset )
+void Floater::SetOffset( UIContext& context, gfx::ppu::Coord offset )
 {
 	mOffset = offset;
 	RequestHardRecalc( context );
@@ -65,7 +65,7 @@ void Floater::OnInstanceAssign( UIContext& context, Container& container )
 
 void Floater::OnAABBRecalc( UIContext& context, Container& container )
 {
-	gfx::ppu::PPUCoord const pos = AlignToJustify( mDimensions, container.mAABB, mJustification ) + mOffset;
+	gfx::ppu::Coord const pos = AlignToJustify( mDimensions, container.mAABB, mJustification ) + mOffset;
 
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, pos );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, pos + mDimensions );

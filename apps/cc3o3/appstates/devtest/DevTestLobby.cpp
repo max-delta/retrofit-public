@@ -70,8 +70,8 @@ struct DevTestLobby::InternalState
 			mXPos.Write( {}, {} );
 		}
 
-		rollback::AutoVar<gfx::ppu::PPUCoordElem> mX;
-		rollback::AutoVar<gfx::ppu::PPUCoordElem> mY;
+		rollback::AutoVar<gfx::ppu::CoordElem> mX;
+		rollback::AutoVar<gfx::ppu::CoordElem> mY;
 		rollback::AutoVar<bool> mXNeg;
 		rollback::AutoVar<bool> mXPos;
 	};
@@ -132,7 +132,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
 	{
-		gfx::ppu::PPUCoord const pos = gfx::ppu::PPUCoord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;
 		va_start( args, fmt );
 		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
@@ -313,8 +313,8 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			{
 				pos.mX += 1;
 			}
-			pos.mX = math::Clamp<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize, pos.mX, gfx::ppu::kDesiredWidth - gfx::ppu::kTileSize );
-			pos.mY = math::Clamp<gfx::ppu::PPUCoordElem>( gfx::ppu::kDesiredHeight - gfx::ppu::kTileSize, pos.mY, gfx::ppu::kDesiredHeight - gfx::ppu::kTileSize );
+			pos.mX = math::Clamp<gfx::ppu::CoordElem>( gfx::ppu::kTileSize, pos.mX, gfx::ppu::kDesiredWidth - gfx::ppu::kTileSize );
+			pos.mY = math::Clamp<gfx::ppu::CoordElem>( gfx::ppu::kDesiredHeight - gfx::ppu::kTileSize, pos.mY, gfx::ppu::kDesiredHeight - gfx::ppu::kTileSize );
 		}
 	}
 
@@ -335,7 +335,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			InternalState::Pos const& pos = *positions[i];
 			math::Color3f const& color = colors[i];
 
-			gfx::ppu::PPUCoord const renderPos = gfx::ppu::PPUCoord( pos.mX, pos.mY );
+			gfx::ppu::Coord const renderPos = gfx::ppu::Coord( pos.mX, pos.mY );
 			ppu.DebugDrawAuxText( renderPos, -1, font.mFontHeight, font.mManagedFontID, false, color, "#" );
 		}
 	}

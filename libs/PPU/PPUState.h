@@ -34,9 +34,9 @@ public:
 	{
 		static constexpr size_t k_MaxLen = kMaxStringLen;
 
-		PPUCoordElem mXCoord;
-		PPUCoordElem mYCoord;
-		PPUDepthLayer mZLayer;
+		CoordElem mXCoord;
+		CoordElem mYCoord;
+		DepthLayer mZLayer;
 		uint8_t mColor[3];
 		uint8_t mDesiredHeight;
 		bool mBorder : 1;

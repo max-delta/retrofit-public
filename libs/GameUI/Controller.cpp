@@ -132,7 +132,7 @@ AnchorID Controller::CreateAnchor( ContainerManager& manager, Container& contain
 
 
 
-void Controller::MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::PPUCoord pos )
+void Controller::MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::Coord pos )
 {
 	manager.MoveAnchor( anchorID, pos );
 }

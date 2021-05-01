@@ -62,9 +62,9 @@ MessageBox::MessageBox(
 void MessageBox::SetFrameTileset(
 	ui::UIContext& context,
 	gfx::ManagedTilesetID tileset,
-	gfx::ppu::PPUCoord expectedTileDimensions,
-	gfx::ppu::PPUCoord expectedPatternDimensions,
-	gfx::ppu::PPUCoord paddingDimensions )
+	gfx::ppu::Coord expectedTileDimensions,
+	gfx::ppu::Coord expectedPatternDimensions,
+	gfx::ppu::Coord paddingDimensions )
 {
 	mFrameController->SetTileset( context, tileset, expectedTileDimensions, expectedPatternDimensions, paddingDimensions );
 }

@@ -18,7 +18,7 @@ class GAMEUI_API PaddedPassthrough final : public InstancedController
 	// Public methods
 public:
 	PaddedPassthrough() = delete;
-	PaddedPassthrough( gfx::ppu::PPUCoord paddingDimensions );
+	PaddedPassthrough( gfx::ppu::Coord paddingDimensions );
 
 	ContainerID GetChildContainerID() const;
 
@@ -32,7 +32,7 @@ private:
 	AnchorID mTopLeftAnchor = kInvalidAnchorID;
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mChildContainerID = kInvalidContainerID;
-	gfx::ppu::PPUCoord mPaddingDimensions = {};
+	gfx::ppu::Coord mPaddingDimensions = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

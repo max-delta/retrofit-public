@@ -39,7 +39,7 @@ void TileLayerDisplay::OnRender( UIConstContext const& context, Container const&
 {
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::PPUCoord const pos = container.mAABB.mTopLeft;
+	gfx::ppu::Coord const pos = container.mAABB.mTopLeft;
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;

@@ -118,7 +118,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 	Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurpose, renderer.GetCurrentZoomFactor() );
 
 	// TODO: Optimize
-	gfx::ppu::PPUCoordElem const maxLineLen = container.mAABB.Width();
+	gfx::ppu::CoordElem const maxLineLen = container.mAABB.Width();
 	rftl::vector<rftl::string> textLines;
 	textLines.resize( mNumRows );
 	rftl::deque<char> unwrittenText( mText.begin(), mText.end() );

@@ -158,26 +158,26 @@ void ContainerManager::AssignLabel( ContainerID containerID, char const* label )
 
 
 
-void ContainerManager::SetRootRenderDepth( gfx::ppu::PPUDepthLayer depth )
+void ContainerManager::SetRootRenderDepth( gfx::ppu::DepthLayer depth )
 {
 	mRootRenderDepth = depth;
 }
 
 
 
-gfx::ppu::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( ContainerID containerID ) const
+gfx::ppu::DepthLayer ContainerManager::GetRecommendedRenderDepth( ContainerID containerID ) const
 {
 	return GetRecommendedRenderDepth( GetContainer( containerID ) );
 }
 
 
 
-gfx::ppu::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
+gfx::ppu::DepthLayer ContainerManager::GetRecommendedRenderDepth( Container const& container ) const
 {
 	static_assert( gfx::ppu::kNearestLayer < gfx::ppu::kFarthestLayer, "Expected negative to be closer" );
 
 	// Walk back up tree to root
-	gfx::ppu::PPUDepthLayer retVal = mRootRenderDepth;
+	gfx::ppu::DepthLayer retVal = mRootRenderDepth;
 	ContainerID id = container.mContainerID;
 	while( id != kInvalidContainerID )
 	{
@@ -197,9 +197,9 @@ gfx::ppu::PPUDepthLayer ContainerManager::GetRecommendedRenderDepth( Container c
 
 
 
-void ContainerManager::AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::PPUDepthLayer offset )
+void ContainerManager::AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::DepthLayer offset )
 {
-	gfx::ppu::PPUDepthLayer& current = GetMutableContainer( containerID ).mDepthOffset;
+	gfx::ppu::DepthLayer& current = GetMutableContainer( containerID ).mDepthOffset;
 	RF_ASSERT_MSG(
 		math::integer_cast<int32_t>( current + offset ) > gfx::ppu::kNearestLayer,
 		"Offset causes rollover" );
@@ -218,14 +218,14 @@ void ContainerManager::ResetRecommendedRenderDepth( ContainerID containerID )
 
 
 
-void ContainerManager::SetRootAABBReduction( gfx::ppu::PPUCoordElem delta )
+void ContainerManager::SetRootAABBReduction( gfx::ppu::CoordElem delta )
 {
 	mRootAABBReduction = delta;
 }
 
 
 
-void ContainerManager::SetDebugAABBReduction( gfx::ppu::PPUCoordElem delta )
+void ContainerManager::SetDebugAABBReduction( gfx::ppu::CoordElem delta )
 {
 	mDebugAABBReduction = delta;
 }
@@ -344,10 +344,10 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 {
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
-	static constexpr gfx::ppu::PPUCoordElem kAnchorRadius = 3;
-	static constexpr gfx::ppu::PPUCoordElem kLineWidth = 2;
-	static constexpr gfx::ppu::PPUCoordElem kFocusWidth = 3;
-	static constexpr gfx::ppu::PPUDepthLayer kFocusOffset = -2;
+	static constexpr gfx::ppu::CoordElem kAnchorRadius = 3;
+	static constexpr gfx::ppu::CoordElem kLineWidth = 2;
+	static constexpr gfx::ppu::CoordElem kFocusWidth = 3;
+	static constexpr gfx::ppu::DepthLayer kFocusOffset = -2;
 
 	FocusTree::ConstNodeStack const focusStack = mFocusManager->GetFocusTree().GetCurrentFocusStack();
 	rftl::unordered_set<ContainerID> focusedContainers;
@@ -360,7 +360,7 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 	{
 		ContainerID const id = containerEntry.first;
 		Container const& container = containerEntry.second;
-		gfx::ppu::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
+		gfx::ppu::DepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
 		if( focusedContainers.count( id ) > 0 )
 		{
 			mGraphics->DebugDrawAABB( container.mAABB, kFocusWidth, zLayer + kFocusOffset, math::Color3f::kYellow );
@@ -387,11 +387,11 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 		{
 			Anchor const& anchor = anchorEntry.second;
 			ContainerID const parentID = anchor.mParentContainerID;
-			gfx::ppu::PPUCoord const& pos = anchor.mPos;
-			gfx::ppu::PPUDepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
+			gfx::ppu::Coord const& pos = anchor.mPos;
+			gfx::ppu::DepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
 			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-			mGraphics->DebugDrawLine( pos + gfx::ppu::PPUCoord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::ppu::PPUCoord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, color );
-			mGraphics->DebugDrawLine( pos + gfx::ppu::PPUCoord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::ppu::PPUCoord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, color );
 		}
 	}
 }
@@ -566,7 +566,7 @@ bool ContainerManager::IsHiddenFromRoot( Container const& container ) const
 
 void ContainerManager::RecalcRootContainer( bool force )
 {
-	gfx::ppu::PPUZoomFactor const zoomFactor = mGraphics->GetCurrentZoomFactor();
+	gfx::ppu::ZoomFactor const zoomFactor = mGraphics->GetCurrentZoomFactor();
 	if( mMostRecentZoomFactor != zoomFactor )
 	{
 		mMostRecentZoomFactor = zoomFactor;
@@ -660,7 +660,7 @@ AnchorID ContainerManager::CreateAnchor( Container& container )
 
 
 
-void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::ppu::PPUCoord pos )
+void ContainerManager::MoveAnchor( AnchorID anchorID, gfx::ppu::Coord pos )
 {
 	RF_ASSERT( anchorID != kInvalidAnchorID );
 	Anchor& anchor = mAnchors.at( anchorID );

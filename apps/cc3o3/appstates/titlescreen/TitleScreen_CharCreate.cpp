@@ -523,7 +523,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					topColumnRatios ) );
 
 		// Floating frame in middle left
-		gfx::ppu::PPUCoord const leftFrameDimensions = { 128 - ( 16 + 8 ), 128 + 16 };
+		gfx::ppu::Coord const leftFrameDimensions = { 128 - ( 16 + 8 ), 128 + 16 };
 		WeakPtr<ui::controller::Floater> const leftFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 1 ),
@@ -538,7 +538,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 		leftFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 		// Floating frame in middle right
-		gfx::ppu::PPUCoord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
+		gfx::ppu::Coord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
 		WeakPtr<ui::controller::Floater> const rightFrameFloater =
 			uiManager.AssignStrongController(
 				topColumnSlicer->GetChildContainerID( 2 ),

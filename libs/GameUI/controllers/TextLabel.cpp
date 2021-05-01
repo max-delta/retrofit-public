@@ -108,14 +108,14 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	RF_ASSERT( mFontID != gfx::kInvalidManagedFontID );
 	RF_ASSERT( mDesiredHeight > mBaselineOffset );
 
-	gfx::ppu::PPUCoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
-	gfx::ppu::PPUCoord const expectedDimensions = {
+	gfx::ppu::CoordElem const stringWidth = renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() );
+	gfx::ppu::Coord const expectedDimensions = {
 		stringWidth,
 		// Push the descenders down below the baseline
 		//  (tails like g, j, p, q, y )
-		math::integer_cast<gfx::ppu::PPUCoordElem>( mDesiredHeight - mBaselineOffset )
+		math::integer_cast<gfx::ppu::CoordElem>( mDesiredHeight - mBaselineOffset )
 	};
-	gfx::ppu::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	if constexpr( config::kOncePer )
 	{

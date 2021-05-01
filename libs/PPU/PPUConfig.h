@@ -14,9 +14,9 @@ namespace RF::gfx::ppu {
 //  8x7.5 = SNES output (Stretched pixels)
 //  10x7 = Almost QVGA (4:3)
 //  12x7 = Almost WQVGA (16:9 widescreen)
-constexpr PPUCoordElem kDesiredWidth = kTileSize * 10;
-constexpr PPUCoordElem kDesiredHeight = kTileSize * 7;
-constexpr PPUTileElem kDesiredDiagonalTiles = static_cast<PPUTileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
+constexpr CoordElem kDesiredWidth = kTileSize * 10;
+constexpr CoordElem kDesiredHeight = kTileSize * 7;
+constexpr TileElem kDesiredDiagonalTiles = static_cast<TileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
 static constexpr size_t kMaxObjects = 32;
 static constexpr size_t kMaxTileLayers = 16;

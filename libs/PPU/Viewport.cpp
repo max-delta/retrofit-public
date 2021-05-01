@@ -7,17 +7,17 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-void Viewport::SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMargin )
+void Viewport::SlideToFit( Coord pos, CoordElem xMargin, CoordElem yMargin )
 {
 	RF_ASSERT( xMargin >= 0 );
 	RF_ASSERT( yMargin >= 0 );
-	PPUVec const marginVec = { xMargin, yMargin };
+	Vec2 const marginVec = { xMargin, yMargin };
 	AABB const bounds = {
 		mOffset + marginVec,
 		mOffset + mSurfaceExtents - marginVec };
 
-	PPUCoordElem const distToLeft = bounds.Left() - pos.x;
-	PPUCoordElem const distToRight = bounds.Right() - pos.x;
+	CoordElem const distToLeft = bounds.Left() - pos.x;
+	CoordElem const distToRight = bounds.Right() - pos.x;
 	if( distToLeft > 0 )
 	{
 		mOffset.x -= distToLeft;
@@ -27,8 +27,8 @@ void Viewport::SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMar
 		mOffset.x -= distToRight;
 	}
 
-	PPUCoordElem const distToTop = bounds.Top() - pos.y;
-	PPUCoordElem const distToBottom = bounds.Bottom() - pos.y;
+	CoordElem const distToTop = bounds.Top() - pos.y;
+	CoordElem const distToBottom = bounds.Bottom() - pos.y;
 	if( distToTop > 0 )
 	{
 		mOffset.y -= distToTop;
@@ -43,8 +43,8 @@ void Viewport::SlideToFit( PPUCoord pos, PPUCoordElem xMargin, PPUCoordElem yMar
 
 void Viewport::ClampToWithin( AABB aabb )
 {
-	mOffset.x = math::Clamp<PPUCoordElem>( aabb.Left(), mOffset.x, aabb.Right() - mSurfaceExtents.x );
-	mOffset.y = math::Clamp<PPUCoordElem>( aabb.Top(), mOffset.y, aabb.Bottom() - mSurfaceExtents.y );
+	mOffset.x = math::Clamp<CoordElem>( aabb.Left(), mOffset.x, aabb.Right() - mSurfaceExtents.x );
+	mOffset.y = math::Clamp<CoordElem>( aabb.Top(), mOffset.y, aabb.Bottom() - mSurfaceExtents.y );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -64,7 +64,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	ppu.DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "Loading..." );
+	ppu.DebugDrawText( gfx::ppu::Coord( 32, 32 ), "Loading..." );
 
 	if( mInternalState->mLoadsQueued )
 	{

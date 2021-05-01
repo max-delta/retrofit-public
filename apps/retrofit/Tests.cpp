@@ -217,7 +217,7 @@ void DrawTest()
 {
 	using namespace RF;
 
-	app::gGraphics->DebugDrawLine( gfx::ppu::PPUCoord( 32, 32 ), gfx::ppu::PPUCoord( 64, 64 ) );
+	app::gGraphics->DebugDrawLine( gfx::ppu::Coord( 32, 32 ), gfx::ppu::Coord( 64, 64 ) );
 	testObjDigit.Animate();
 	app::gGraphics->DrawObject( testObjDigit );
 	for( size_t i = 0; i < rftl::extent<decltype( testObjDigitFlips )>::value; i++ )
@@ -229,24 +229,24 @@ void DrawTest()
 	app::gGraphics->DrawObject( testObjWiggle );
 	testTileLayer.Animate();
 	app::gGraphics->DrawTileLayer( testTileLayer );
-	app::gGraphics->DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "Test" );
+	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 32, 32 ), "Test" );
 	ui::Font const testFont1 = app::gFontRegistry->SelectBestFont( k1xFont, app::gGraphics->GetCurrentZoomFactor() );
 	ui::Font const testFont2 = app::gFontRegistry->SelectBestFont( k2xFont, app::gGraphics->GetCurrentZoomFactor() );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::ppu::PPUCoord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
 
 	ui::Font const uncheckedTestFont1 = app::gFontRegistry->SelectBestFont( k1xFont, 50 );
 	ui::Font const uncheckedTestFont2 = app::gFontRegistry->SelectBestFont( k2xFont, 50 );
-	gfx::ppu::PPUCoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "|||" );
-	gfx::ppu::PPUCoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "WWW" );
-	gfx::ppu::PPUCoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "|||" );
-	gfx::ppu::PPUCoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "WWW" );
+	gfx::ppu::CoordElem const monoPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "|||" );
+	gfx::ppu::CoordElem const monoWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont1.mFontHeight, uncheckedTestFont1.mManagedFontID, "WWW" );
+	gfx::ppu::CoordElem const varPipeLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "|||" );
+	gfx::ppu::CoordElem const varWLen = app::gGraphics->CalculateStringLengthFormatted( uncheckedTestFont2.mFontHeight, uncheckedTestFont2.mManagedFontID, "WWW" );
 	RF_ASSERT( monoPipeLen != 0 );
 	RF_ASSERT( monoPipeLen == monoWLen );
 	RF_ASSERT( varPipeLen != 0 );
@@ -293,8 +293,8 @@ void InitInputDebug()
 
 void DrawInputDebug()
 {
-	gfx::ppu::PPUCoord coord( 32, 64 );
-	gfx::ppu::PPUCoord::ElementType const offset = 16;
+	gfx::ppu::Coord coord( 32, 64 );
+	gfx::ppu::Coord::ElementType const offset = 16;
 
 	app::gGraphics->DebugDrawText( coord, "Input" );
 	coord.y += offset;

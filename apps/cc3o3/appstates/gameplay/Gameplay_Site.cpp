@@ -42,7 +42,7 @@ void Gameplay_Site::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Site::OnTick( AppStateTickContext& context )
 {
-	app::gGraphics->DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "TODO: Site" );
+	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 32, 32 ), "TODO: Site" );
 
 	// Process menu actions
 	rftl::vector<input::GameCommand> const menuCommands =

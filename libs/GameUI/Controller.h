@@ -57,7 +57,7 @@ protected:
 	void DestroyContainer( ContainerManager& manager, ContainerID containerID );
 
 	AnchorID CreateAnchor( ContainerManager& manager, Container& container );
-	void MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::PPUCoord pos );
+	void MoveAnchor( ContainerManager& manager, AnchorID anchorID, gfx::ppu::Coord pos );
 
 	//
 	// Private data

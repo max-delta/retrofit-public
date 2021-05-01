@@ -16,21 +16,21 @@ namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Coordinates are +X=right, +Y=down (scanlines)
-using PPUCoordElem = int16_t;
-using PPUCoord = math::Vector2<PPUCoordElem>;
-using PPUVec = math::Vector2<PPUCoordElem>;
-using AABB = math::AABB4<PPUCoordElem>;
+using CoordElem = int16_t;
+using Coord = math::Vector2<CoordElem>;
+using Vec2 = math::Vector2<CoordElem>;
+using AABB = math::AABB4<CoordElem>;
 
 // Coordinates are +Z=behind (right-handed)
-using PPUDepthLayer = int8_t;
-constexpr PPUDepthLayer kFarthestLayer = 100;
-constexpr PPUDepthLayer kNearestLayer = -100;
+using DepthLayer = int8_t;
+constexpr DepthLayer kFarthestLayer = 100;
+constexpr DepthLayer kNearestLayer = -100;
 
-using PPUTileElem = int8_t;
-constexpr PPUCoordElem kTileSize = 32;
+using TileElem = int8_t;
+constexpr CoordElem kTileSize = 32;
 
-using PPUZoomFactor = uint8_t;
-constexpr PPUZoomFactor kInvalidZoomFactor = 0;
+using ZoomFactor = uint8_t;
+constexpr ZoomFactor kInvalidZoomFactor = 0;
 
 using GameLayerID = uint8_t;
 static constexpr size_t kNumGameLayers = 8;

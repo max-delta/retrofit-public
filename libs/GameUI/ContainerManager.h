@@ -79,14 +79,14 @@ public:
 	template<typename T>
 	WeakPtr<T> AssignStrongController( Container& container, UniquePtr<T>&& controller );
 
-	void SetRootRenderDepth( gfx::ppu::PPUDepthLayer depth );
-	gfx::ppu::PPUDepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
-	gfx::ppu::PPUDepthLayer GetRecommendedRenderDepth( Container const& container ) const;
-	void AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::PPUDepthLayer offset );
+	void SetRootRenderDepth( gfx::ppu::DepthLayer depth );
+	gfx::ppu::DepthLayer GetRecommendedRenderDepth( ContainerID containerID ) const;
+	gfx::ppu::DepthLayer GetRecommendedRenderDepth( Container const& container ) const;
+	void AdjustRecommendedRenderDepth( ContainerID containerID, gfx::ppu::DepthLayer offset );
 	void ResetRecommendedRenderDepth( ContainerID containerID );
 
-	void SetRootAABBReduction( gfx::ppu::PPUCoordElem delta );
-	void SetDebugAABBReduction( gfx::ppu::PPUCoordElem delta );
+	void SetRootAABBReduction( gfx::ppu::CoordElem delta );
+	void SetDebugAABBReduction( gfx::ppu::CoordElem delta );
 
 	void RequestHardRecalc( ContainerID containerID );
 
@@ -126,7 +126,7 @@ private:
 	void DestroyContainer( ContainerID containerID );
 
 	AnchorID CreateAnchor( Container& container );
-	void MoveAnchor( AnchorID anchorID, gfx::ppu::PPUCoord pos );
+	void MoveAnchor( AnchorID anchorID, gfx::ppu::Coord pos );
 	void DestroyAnchor( AnchorID anchorID );
 
 	WeakPtr<Controller> AssignStrongControllerInternal( Container& container, UniquePtr<Controller>&& controller );
@@ -158,14 +158,14 @@ private:
 	// TODO: Use actual value
 	size_t mMaxDepthSeen = 30;
 
-	gfx::ppu::PPUDepthLayer mRootRenderDepth = 0;
+	gfx::ppu::DepthLayer mRootRenderDepth = 0;
 
 	bool mIsDestroyingContainers = false;
 
-	gfx::ppu::PPUCoordElem mRootAABBReduction = 0;
-	gfx::ppu::PPUCoordElem mDebugAABBReduction = 0;
+	gfx::ppu::CoordElem mRootAABBReduction = 0;
+	gfx::ppu::CoordElem mDebugAABBReduction = 0;
 
-	gfx::ppu::PPUZoomFactor mMostRecentZoomFactor = gfx::ppu::kInvalidZoomFactor;
+	gfx::ppu::ZoomFactor mMostRecentZoomFactor = gfx::ppu::kInvalidZoomFactor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

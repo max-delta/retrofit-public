@@ -323,8 +323,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
 					ui::Justification::TopLeft ) );
 		environmentFloater->SetOffset( uiContext, { gfx::ppu::kTileSize / 4, gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const environmentTODO =
@@ -342,8 +342,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 					ui::Justification::TopRight ) );
 		teamFloater->SetOffset( uiContext, { -gfx::ppu::kTileSize / 4, gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const teamTODO =
@@ -361,8 +361,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 4 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
 					ui::Justification::TopCenter ) );
 		WeakPtr<ui::controller::TextLabel> const notificationTODO =
 			uiManager.AssignStrongController(
@@ -379,8 +379,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 7 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 9 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 9 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 					ui::Justification::BottomCenter ) );
 		mainFloater->SetOffset( uiContext, { 0, -gfx::ppu::kTileSize / 4 } );
 
@@ -474,8 +474,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					waitingPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::Floater>::Create(
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 						ui::Justification::MiddleCenter ) );
 
 			// Frame
@@ -504,8 +504,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					targetingPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::Floater>::Create(
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 						ui::Justification::MiddleCenter ) );
 
 			// Frame
@@ -534,8 +534,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					actionPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::Floater>::Create(
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 						ui::Justification::MiddleCenter ) );
 
 			// Frame
@@ -575,8 +575,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					attackPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::Floater>::Create(
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-						math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
 						ui::Justification::MiddleCenter ) );
 
 			// Frame
@@ -640,7 +640,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	ui::UIContext uiContext( uiManager );
 	combat::FightController& fightController = *internalState.mFightController;
 
-	ppu.DebugDrawText( gfx::ppu::PPUCoord( 32, 32 ), "TODO: Battle" );
+	ppu.DebugDrawText( gfx::ppu::Coord( 32, 32 ), "TODO: Battle" );
 
 	// Start combat frame
 	fightController.StartCombatFrame();
@@ -900,9 +900,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 	// HACK: Stub battle data
 	{
-		static constexpr gfx::ppu::PPUCoordElem x = 64;
-		static constexpr gfx::ppu::PPUCoordElem yStep = gfx::ppu::kTileSize / 4;
-		gfx::ppu::PPUCoordElem y = 32 + yStep;
+		static constexpr gfx::ppu::CoordElem x = 64;
+		static constexpr gfx::ppu::CoordElem yStep = gfx::ppu::kTileSize / 4;
+		gfx::ppu::CoordElem y = 32 + yStep;
 
 		combat::CombatInstance::PartyIDs const partyIDs = mainInstance.GetPartyIDs();
 		for( combat::PartyID const& partyID : partyIDs )

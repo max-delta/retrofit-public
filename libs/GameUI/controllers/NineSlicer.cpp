@@ -95,14 +95,14 @@ void NineSlicer::OnInstanceAssign( UIContext& context, Container& container )
 void NineSlicer::OnAABBRecalc( UIContext& context, Container& container )
 {
 	gfx::ppu::AABB const& aabb = container.mAABB;
-	gfx::ppu::PPUCoordElem const x0 = aabb.Left();
-	gfx::ppu::PPUCoordElem const x100 = aabb.Right();
-	gfx::ppu::PPUCoordElem const x33 = math::Lerp( x0, x100, 1.f / 3.f );
-	gfx::ppu::PPUCoordElem const x66 = math::Lerp( x0, x100, 2.f / 3.f );
-	gfx::ppu::PPUCoordElem const y0 = aabb.Top();
-	gfx::ppu::PPUCoordElem const y100 = aabb.Bottom();
-	gfx::ppu::PPUCoordElem const y33 = math::Lerp( y0, y100, 1.f / 3.f );
-	gfx::ppu::PPUCoordElem const y66 = math::Lerp( y0, y100, 2.f / 3.f );
+	gfx::ppu::CoordElem const x0 = aabb.Left();
+	gfx::ppu::CoordElem const x100 = aabb.Right();
+	gfx::ppu::CoordElem const x33 = math::Lerp( x0, x100, 1.f / 3.f );
+	gfx::ppu::CoordElem const x66 = math::Lerp( x0, x100, 2.f / 3.f );
+	gfx::ppu::CoordElem const y0 = aabb.Top();
+	gfx::ppu::CoordElem const y100 = aabb.Bottom();
+	gfx::ppu::CoordElem const y33 = math::Lerp( y0, y100, 1.f / 3.f );
+	gfx::ppu::CoordElem const y66 = math::Lerp( y0, y100, 2.f / 3.f );
 
 	MoveAnchor( context.GetMutableContainerManager(), m0, { x0, y0 } );
 	MoveAnchor( context.GetMutableContainerManager(), m33, { x33, y33 } );

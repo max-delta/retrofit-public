@@ -19,7 +19,7 @@ RFTYPE_CREATE_META( RF::ui::controller::PaddedPassthrough )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-PaddedPassthrough::PaddedPassthrough( gfx::ppu::PPUCoord paddingDimensions )
+PaddedPassthrough::PaddedPassthrough( gfx::ppu::Coord paddingDimensions )
 	: mPaddingDimensions( rftl::move( paddingDimensions ) )
 {
 	//
@@ -50,8 +50,8 @@ void PaddedPassthrough::OnInstanceAssign( UIContext& context, Container& contain
 
 void PaddedPassthrough::OnAABBRecalc( UIContext& context, Container& container )
 {
-	gfx::ppu::PPUCoord const topLeft = container.mAABB.mTopLeft + mPaddingDimensions;
-	gfx::ppu::PPUCoord const bottomRight = container.mAABB.mBottomRight - mPaddingDimensions;
+	gfx::ppu::Coord const topLeft = container.mAABB.mTopLeft + mPaddingDimensions;
+	gfx::ppu::Coord const bottomRight = container.mAABB.mBottomRight - mPaddingDimensions;
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }

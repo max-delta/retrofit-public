@@ -23,15 +23,15 @@ public:
 	Viewport() = default;
 	~Viewport() = default;
 
-	void SlideToFit( ppu::PPUCoord pos, ppu::PPUCoordElem xMargin, ppu::PPUCoordElem yMargin );
+	void SlideToFit( ppu::Coord pos, ppu::CoordElem xMargin, ppu::CoordElem yMargin );
 
 	void ClampToWithin( ppu::AABB aabb );
 
 	//
 	// Public data
 public:
-	ppu::PPUCoord mOffset = {};
-	ppu::PPUVec mSurfaceExtents = {};
+	ppu::Coord mOffset = {};
+	ppu::Vec2 mSurfaceExtents = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

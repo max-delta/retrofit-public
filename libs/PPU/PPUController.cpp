@@ -30,11 +30,11 @@ namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr PPUDepthLayer kDebugStringLayer = kNearestLayer;
-static constexpr PPUDepthLayer kDebugGridLayer = 0;
+static constexpr DepthLayer kDebugStringLayer = kNearestLayer;
+static constexpr DepthLayer kDebugGridLayer = 0;
 
-static constexpr PPUDepthLayer kDefaultTextLayer = 0;
-static constexpr PPUDepthLayer kDefaultDebugLineLayer = 0;
+static constexpr DepthLayer kDefaultTextLayer = 0;
+static constexpr DepthLayer kDefaultDebugLineLayer = 0;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -176,16 +176,16 @@ bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 
 
 
-PPUCoordElem PPUController::GetWidth() const
+CoordElem PPUController::GetWidth() const
 {
-	return math::integer_cast<PPUCoordElem>( mWidth / GetZoomFactor() );
+	return math::integer_cast<CoordElem>( mWidth / GetZoomFactor() );
 }
 
 
 
-PPUCoordElem PPUController::GetHeight() const
+CoordElem PPUController::GetHeight() const
 {
-	return math::integer_cast<PPUCoordElem>( mHeight / GetZoomFactor() );
+	return math::integer_cast<CoordElem>( mHeight / GetZoomFactor() );
 }
 
 
@@ -272,8 +272,8 @@ void PPUController::SuppressDrawRequests( bool suppress )
 void PPUController::UpdateViewportExtents( Viewport& viewport ) const
 {
 	viewport.mSurfaceExtents = {
-		math::integer_cast<PPUCoordElem>( mWidth / GetZoomFactor() ),
-		math::integer_cast<PPUCoordElem>( mHeight / GetZoomFactor() ) };
+		math::integer_cast<CoordElem>( mWidth / GetZoomFactor() ),
+		math::integer_cast<CoordElem>( mHeight / GetZoomFactor() ) };
 }
 
 
@@ -352,7 +352,7 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 
 
 
-bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
+bool PPUController::DrawText( Coord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
@@ -363,7 +363,7 @@ bool PPUController::DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
+bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
@@ -374,7 +374,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... )
+bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
@@ -385,7 +385,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
+bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
@@ -396,7 +396,7 @@ bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desire
 
 
 
-bool PPUController::DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
+bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -434,7 +434,7 @@ void PPUController::HideZoomFactor( bool hide )
 
 
 
-PPUZoomFactor PPUController::GetCurrentZoomFactor() const
+ZoomFactor PPUController::GetCurrentZoomFactor() const
 {
 	// TODO: Thread-safe?
 	return mHideZoomFactor ? 1u : GetZoomFactor();
@@ -442,7 +442,7 @@ PPUZoomFactor PPUController::GetCurrentZoomFactor() const
 
 
 
-PPUCoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
+CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
 {
 	decltype( PPUState::String::mText ) string = {};
 	static_assert( rftl::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
@@ -462,11 +462,11 @@ PPUCoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeigh
 
 
 
-PPUCoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text )
+CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text )
 {
 	// !!!WARNING!!! This must be kept logically equivalent to RenderString(...)
 
-	PPUCoordElem retVal = 0;
+	CoordElem retVal = 0;
 
 	Font const* font = mFontManager->GetResourceFromManagedResourceID( fontID );
 	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
@@ -515,17 +515,17 @@ PPUCoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, Manage
 
 
 
-PPUCoord PPUController::CalculateTileLayerSize( TileLayer const& tileLayer ) const
+Coord PPUController::CalculateTileLayerSize( TileLayer const& tileLayer ) const
 {
 	Tileset const* tileset = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
 	RF_ASSERT_MSG( tileset != nullptr, "Failed to fetch tileset" );
 
-	PPUCoordElem xStep;
-	PPUCoordElem yStep;
+	CoordElem xStep;
+	CoordElem yStep;
 	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
-	PPUCoordElem const xLayerStep = xStep * math::integer_cast<PPUCoordElem>( tileLayer.NumColumns() );
-	PPUCoordElem const yLayerStep = yStep * math::integer_cast<PPUCoordElem>( tileLayer.NumRows() );
-	return PPUCoord{ xLayerStep, yLayerStep };
+	CoordElem const xLayerStep = xStep * math::integer_cast<CoordElem>( tileLayer.NumColumns() );
+	CoordElem const yLayerStep = yStep * math::integer_cast<CoordElem>( tileLayer.NumRows() );
+	return Coord{ xLayerStep, yLayerStep };
 }
 
 
@@ -618,7 +618,7 @@ void PPUController::DebugSetBackgroundColor( math::Color3f color )
 
 
 
-bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
+bool PPUController::DebugDrawText( Coord pos, const char* fmt, ... )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -649,7 +649,7 @@ bool PPUController::DebugDrawText( PPUCoord pos, const char* fmt, ... )
 
 
 
-bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
+bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
@@ -660,7 +660,7 @@ bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_
 
 
 
-bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
+bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -691,28 +691,28 @@ bool PPUController::DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1 )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1 )
 {
 	return DebugDrawLine( p0, p1, math::Color3f::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width )
 {
 	return DebugDrawLine( p0, p1, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1, math::Color3f color )
 {
 	return DebugDrawLine( p0, p1, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3f color )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -751,7 +751,7 @@ bool PPUController::DebugDrawAABB( AABB aabb )
 
 
 
-bool PPUController::DebugDrawAABB( AABB aabb, PPUCoordElem width )
+bool PPUController::DebugDrawAABB( AABB aabb, CoordElem width )
 {
 	return DebugDrawAABB( aabb, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
 }
@@ -765,12 +765,12 @@ bool PPUController::DebugDrawAABB( AABB aabb, math::Color3f color )
 
 
 
-bool PPUController::DebugDrawAABB( AABB aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color )
+bool PPUController::DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3f color )
 {
-	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
-	DebugDrawLine( aabb.mTopLeft, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
-	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
-	DebugDrawLine( aabb.mBottomRight, PPUCoord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mTopLeft, Coord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mTopLeft, Coord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mBottomRight, Coord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
+	DebugDrawLine( aabb.mBottomRight, Coord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
 
 	return true;
 }
@@ -1073,7 +1073,7 @@ void PPUController::CalculateDesiredFontZoomShrink( Font const& font, uint8_t de
 		// Shrink
 		zoomDesired = 1;
 		shrinkDesired = math::integer_cast<uint8_t>( tileHeight / desiredHeight );
-		PPUZoomFactor const zoomFactor = GetZoomFactor();
+		ZoomFactor const zoomFactor = GetZoomFactor();
 		if( ( zoomFactor - shrinkDesired ) < 0 )
 		{
 			// Font bigger than desired height, can't downscale enough, will
@@ -1126,7 +1126,7 @@ void PPUController::CalculateFontVariableCharWidth( Font const& font, char chara
 	}
 }
 
-void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, PPUCoordElem& tileWidth, PPUCoordElem& tileHeight ) const
+void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, CoordElem& tileWidth, CoordElem& tileHeight ) const
 {
 	uint8_t scaleUp;
 	uint8_t scaleDown;
@@ -1199,12 +1199,12 @@ void PPUController::RenderObject( Object const& object ) const
 	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
 
 	// TODO: Transforms
-	PPUCoordElem const x = object.mXCoord - timeSlot.mTextureOriginX;
-	PPUCoordElem const y = object.mYCoord - timeSlot.mTextureOriginY;
+	CoordElem const x = object.mXCoord - timeSlot.mTextureOriginX;
+	CoordElem const y = object.mYCoord - timeSlot.mTextureOriginY;
 	math::Vector2f topLeft = CoordToDevice( x, y );
 	math::Vector2f bottomRight = CoordToDevice(
-		x + math::integer_cast<PPUCoordElem>( texture->mWidthPostLoad ),
-		y + math::integer_cast<PPUCoordElem>( texture->mHeightPostLoad ) );
+		x + math::integer_cast<CoordElem>( texture->mWidthPostLoad ),
+		y + math::integer_cast<CoordElem>( texture->mHeightPostLoad ) );
 
 	// Perform flips
 	// NOTE: Assuming the device billboards are implemented similarly to a
@@ -1235,16 +1235,16 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	float const texXStep = math::float_cast<float>( tileset->mTileWidth ) / math::float_cast<float>( texture->mWidthPostLoad );
 	float const texYStep = math::float_cast<float>( tileset->mTileHeight ) / math::float_cast<float>( texture->mHeightPostLoad );
 
-	PPUCoordElem xStep;
-	PPUCoordElem yStep;
+	CoordElem xStep;
+	CoordElem yStep;
 	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
-	PPUCoordElem const xLayerStep = xStep * math::integer_cast<PPUCoordElem>( tileLayer.NumColumns() );
-	PPUCoordElem const yLayerStep = yStep * math::integer_cast<PPUCoordElem>( tileLayer.NumRows() );
+	CoordElem const xLayerStep = xStep * math::integer_cast<CoordElem>( tileLayer.NumColumns() );
+	CoordElem const yLayerStep = yStep * math::integer_cast<CoordElem>( tileLayer.NumRows() );
 
 	float const z = LayerToDevice( tileLayer.mZLayer );
 
-	PPUCoordElem const rootX = tileLayer.mXCoord;
-	PPUCoordElem const rootY = tileLayer.mYCoord;
+	CoordElem const rootX = tileLayer.mXCoord;
+	CoordElem const rootY = tileLayer.mYCoord;
 
 	// TODO: Animations? Probably done via shaders and passing in the timer
 
@@ -1256,8 +1256,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	int16_t posColEnd = math::integer_cast<int16_t>( tileLayer.NumColumns() );
 	int16_t posRowStart = 0;
 	int16_t posRowEnd = math::integer_cast<int16_t>( tileLayer.NumRows() );
-	PPUCoordElem drawRootX = rootX;
-	PPUCoordElem drawRootY = rootY;
+	CoordElem drawRootX = rootX;
+	CoordElem drawRootY = rootY;
 	int16_t tileColOffset = 0;
 	int16_t tileRowOffset = 0;
 
@@ -1265,11 +1265,11 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	if( tileLayer.mWrapping )
 	{
 		// How far off screen do we need to start rendering?
-		PPUCoordElem wrapRootX;
-		PPUCoordElem wrapRootY;
+		CoordElem wrapRootX;
+		CoordElem wrapRootY;
 		{
-			PPUCoordElem const xStepDifferenceFromZero = rootX % xLayerStep;
-			PPUCoordElem const yStepDifferenceFromZero = rootY % yLayerStep;
+			CoordElem const xStepDifferenceFromZero = rootX % xLayerStep;
+			CoordElem const yStepDifferenceFromZero = rootY % yLayerStep;
 			wrapRootX = xStepDifferenceFromZero;
 			wrapRootY = yStepDifferenceFromZero;
 			if( wrapRootX > 0 )
@@ -1290,8 +1290,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		int16_t xCyclesBeforeRoot;
 		int16_t yCyclesBeforeRoot;
 		{
-			PPUCoordElem const xWrapDifferenceFromRoot = rootX - wrapRootX;
-			PPUCoordElem const yWrapDifferenceFromRoot = rootY - wrapRootY;
+			CoordElem const xWrapDifferenceFromRoot = rootX - wrapRootX;
+			CoordElem const yWrapDifferenceFromRoot = rootY - wrapRootY;
 			RF_ASSERT( xWrapDifferenceFromRoot % xStep == 0 );
 			RF_ASSERT( yWrapDifferenceFromRoot % yStep == 0 );
 			xCyclesBeforeRoot = xWrapDifferenceFromRoot / xStep;
@@ -1306,8 +1306,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		int16_t xCyclesBeforeScreenEscape;
 		int16_t yCyclesBeforeScreenEscape;
 		{
-			PPUCoordElem const xWrapDifferenceFromEscape = GetWidth() - wrapRootX;
-			PPUCoordElem const yWrapDifferenceFromEscape = GetHeight() - wrapRootY;
+			CoordElem const xWrapDifferenceFromEscape = GetWidth() - wrapRootX;
+			CoordElem const yWrapDifferenceFromEscape = GetHeight() - wrapRootY;
 			xCyclesBeforeScreenEscape = xWrapDifferenceFromEscape / xStep;
 			yCyclesBeforeScreenEscape = yWrapDifferenceFromEscape / yStep;
 		}
@@ -1353,12 +1353,12 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 				continue;
 			}
 
-			PPUCoordElem const x = drawRootX + xStep * math::integer_cast<PPUCoordElem>( i_col );
-			PPUCoordElem const y = drawRootY + yStep * math::integer_cast<PPUCoordElem>( i_row );
+			CoordElem const x = drawRootX + xStep * math::integer_cast<CoordElem>( i_col );
+			CoordElem const y = drawRootY + yStep * math::integer_cast<CoordElem>( i_row );
 			math::Vector2f const topLeft = CoordToDevice( x, y );
 			math::Vector2f const bottomRight = CoordToDevice(
-				math::integer_cast<PPUCoordElem>( x + xStep ),
-				math::integer_cast<PPUCoordElem>( y + yStep ) );
+				math::integer_cast<CoordElem>( x + xStep ),
+				math::integer_cast<CoordElem>( y + yStep ) );
 			math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
 
 			renderTile( mDeviceInterface, tile, deviceTextureID, texTilesPerRow, texXStep, texYStep, pos, z );
@@ -1391,7 +1391,7 @@ void PPUController::RenderString( PPUState::String const& string ) const
 	RF_ASSERT( tileHeight > 0 );
 
 	char const* text = string.mText;
-	PPUCoordElem lastCharX = string.mXCoord;
+	CoordElem lastCharX = string.mXCoord;
 	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
 	{
 		char const character = text[i_char];
@@ -1415,10 +1415,10 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		RF_ASSERT( charWidth > 0 );
 		RF_ASSERT( charHeight > 0 );
 
-		PPUCoordElem const x1 = lastCharX;
-		PPUCoordElem const y1 = string.mYCoord;
-		PPUCoordElem const x2 = x1 + charWidth;
-		PPUCoordElem const y2 = y1 + charHeight;
+		CoordElem const x1 = lastCharX;
+		CoordElem const y1 = string.mYCoord;
+		CoordElem const x2 = x1 + charWidth;
+		CoordElem const y2 = y1 + charHeight;
 		lastCharX = x2 + charMargin;
 
 		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
@@ -1476,7 +1476,7 @@ void PPUController::RenderDebugString( PPUDebugState::DebugString const& string 
 void PPUController::RenderDebugGrid() const
 {
 	math::Color3f const& color = math::Color3f::kBlack;
-	for( PPUCoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
+	for( CoordElem horizontal = 0; horizontal <= mWidth; horizontal += kTileSize )
 	{
 		math::Vector2f const posA = CoordToDevice( horizontal, 0 );
 		math::Vector2f const posB = CoordToDevice( horizontal - 1, 0 );
@@ -1493,7 +1493,7 @@ void PPUController::RenderDebugGrid() const
 			1.f,
 			color );
 	}
-	for( PPUCoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
+	for( CoordElem vertical = 0; vertical <= mHeight; vertical += kTileSize )
 	{
 		math::Vector2f const posA = CoordToDevice( 0, vertical );
 		math::Vector2f const posB = CoordToDevice( 0, vertical - 1 );
@@ -1514,11 +1514,11 @@ void PPUController::RenderDebugGrid() const
 
 
 
-PPUZoomFactor PPUController::GetZoomFactor() const
+ZoomFactor PPUController::GetZoomFactor() const
 {
 	uint16_t const smallestDimension = math::Min( mWidth, mHeight );
 	uint16_t const approximateDiagonalTiles = math::integer_cast<uint16_t>( smallestDimension / kTileSize );
-	PPUZoomFactor const zoomFactor = math::integer_cast<PPUZoomFactor>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
+	ZoomFactor const zoomFactor = math::integer_cast<ZoomFactor>( math::Max( 1, approximateDiagonalTiles / kDesiredDiagonalTiles ) );
 	return zoomFactor;
 }
 
@@ -1535,18 +1535,18 @@ math::Vector2f PPUController::GetDevicePixelStep( bool allowZoomHiding ) const
 
 
 
-math::Vector2f PPUController::CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const
+math::Vector2f PPUController::CoordToDevice( CoordElem xCoord, CoordElem yCoord ) const
 {
-	return CoordToDevice( PPUCoord( xCoord, yCoord ) );
+	return CoordToDevice( Coord( xCoord, yCoord ) );
 }
 
 
 
-math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
+math::Vector2f PPUController::CoordToDevice( Coord const& coord ) const
 {
 	// TODO: Windowing
 	uint16_t const smallestDimenssion = math::Min( mWidth, mHeight );
-	PPUZoomFactor const zoomFactor = GetZoomFactor();
+	ZoomFactor const zoomFactor = GetZoomFactor();
 	float const diagonalTiles = ( math::float_cast<float>( smallestDimenssion ) ) / math::float_cast<float>( kTileSize * zoomFactor );
 
 	// Baseline
@@ -1575,17 +1575,17 @@ math::Vector2f PPUController::CoordToDevice( PPUCoord const& coord ) const
 
 
 
-float PPUController::LayerToDevice( PPUDepthLayer zDepth ) const
+float PPUController::LayerToDevice( DepthLayer zDepth ) const
 {
-	static_assert( rftl::is_integral<PPUDepthLayer>::value, "Unexpected depth type" );
-	static_assert( rftl::is_signed<PPUDepthLayer>::value, "Unexpected depth type" );
-	float const scaledDepth = math::float_cast<float>( zDepth ) / math::float_cast<float>( rftl::numeric_limits<PPUDepthLayer>::max() );
+	static_assert( rftl::is_integral<DepthLayer>::value, "Unexpected depth type" );
+	static_assert( rftl::is_signed<DepthLayer>::value, "Unexpected depth type" );
+	float const scaledDepth = math::float_cast<float>( zDepth ) / math::float_cast<float>( rftl::numeric_limits<DepthLayer>::max() );
 	return scaledDepth;
 }
 
 
 
-math::Vector2f PPUController::TileToDevice( PPUTileElem xTile, PPUTileElem yTile ) const
+math::Vector2f PPUController::TileToDevice( TileElem xTile, TileElem yTile ) const
 {
 	// TODO: Windowing, scaling, etc
 	//constexpr uint8_t zoomFactor = 1;

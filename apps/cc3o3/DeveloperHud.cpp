@@ -86,11 +86,11 @@ void RenderRollback()
 	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
 	{
 		// No font (not even a backup), so we may still be booting
-		ppu.DebugDrawText( gfx::ppu::PPUCoord( 16, 16 ), "No font loaded for developer hud" );
+		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
 		return;
 	}
 	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool {
-		gfx::ppu::PPUCoord const pos = gfx::ppu::PPUCoord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;
 		va_start( args, fmt );
 		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
@@ -166,19 +166,19 @@ void RenderRollback()
 		rftl::optional<rollback::InclusiveTimeRange> const privateWindowEnd = privateWindow.GetLatestTimes();
 
 		// Will need to lerp data into a graphical representation
-		gfx::ppu::PPUCoord::ElementType const gfxTimelineStart = gfx::ppu::kTileSize;
-		gfx::ppu::PPUCoord::ElementType const gfxTimelineEnd = gfx::ppu::kDesiredWidth - gfx::ppu::kTileSize;
+		gfx::ppu::Coord::ElementType const gfxTimelineStart = gfx::ppu::kTileSize;
+		gfx::ppu::Coord::ElementType const gfxTimelineEnd = gfx::ppu::kDesiredWidth - gfx::ppu::kTileSize;
 		size_t const gfxNumLanes = numStreams;
-		gfx::ppu::PPUCoord::ElementType const gfxLanesStart = gfx::ppu::kTileSize * 1;
-		gfx::ppu::PPUCoord::ElementType const gfxLanesHeight = 4;
-		gfx::ppu::PPUCoord::ElementType const gfxLanesEnd =
+		gfx::ppu::Coord::ElementType const gfxLanesStart = gfx::ppu::kTileSize * 1;
+		gfx::ppu::Coord::ElementType const gfxLanesHeight = 4;
+		gfx::ppu::Coord::ElementType const gfxLanesEnd =
 			gfxLanesStart +
-			math::integer_cast<gfx::ppu::PPUCoord::ElementType>(
+			math::integer_cast<gfx::ppu::Coord::ElementType>(
 				gfxLanesHeight * gfxNumLanes );
-		gfx::ppu::PPUCoord::ElementType const gfxAnnotationStart = gfxLanesEnd + 2;
-		gfx::ppu::PPUCoord::ElementType const gfxAnnotationHeight = 4;
+		gfx::ppu::Coord::ElementType const gfxAnnotationStart = gfxLanesEnd + 2;
+		gfx::ppu::Coord::ElementType const gfxAnnotationHeight = 4;
 
-		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::ppu::PPUCoord::ElementType {
+		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::ppu::Coord::ElementType {
 			return math::Rescale(
 				gfxTimelineStart,
 				gfxTimelineEnd,
@@ -187,11 +187,11 @@ void RenderRollback()
 				time.time_since_epoch().count() );
 		};
 
-		static constexpr gfx::ppu::PPUDepthLayer kBorderDepth = gfx::ppu::kNearestLayer + 5;
-		static constexpr gfx::ppu::PPUDepthLayer kNowDepth = gfx::ppu::kNearestLayer + 4;
-		static constexpr gfx::ppu::PPUDepthLayer kCommitDepth = gfx::ppu::kNearestLayer + 3;
-		static constexpr gfx::ppu::PPUDepthLayer kEventDepth = gfx::ppu::kNearestLayer + 2;
-		static constexpr gfx::ppu::PPUDepthLayer kAnnotationDepth = gfx::ppu::kNearestLayer + 4;
+		static constexpr gfx::ppu::DepthLayer kBorderDepth = gfx::ppu::kNearestLayer + 5;
+		static constexpr gfx::ppu::DepthLayer kNowDepth = gfx::ppu::kNearestLayer + 4;
+		static constexpr gfx::ppu::DepthLayer kCommitDepth = gfx::ppu::kNearestLayer + 3;
+		static constexpr gfx::ppu::DepthLayer kEventDepth = gfx::ppu::kNearestLayer + 2;
+		static constexpr gfx::ppu::DepthLayer kAnnotationDepth = gfx::ppu::kNearestLayer + 4;
 
 		// Border
 		ppu.DebugDrawAABB(
@@ -201,7 +201,7 @@ void RenderRollback()
 			math::Color3f::kGray25 );
 
 		// Now line
-		gfx::ppu::PPUCoord::ElementType const gfxTimelineNow = rescaleToGfx( timelineNow );
+		gfx::ppu::Coord::ElementType const gfxTimelineNow = rescaleToGfx( timelineNow );
 		ppu.DebugDrawLine(
 			{ gfxTimelineNow, gfxLanesStart },
 			{ gfxTimelineNow, gfxLanesEnd },
@@ -210,7 +210,7 @@ void RenderRollback()
 			math::Color3f::kGray50 );
 
 		// Commit line
-		gfx::ppu::PPUCoord::ElementType const gfxTimelineCommit = rescaleToGfx( timelineCommit );
+		gfx::ppu::Coord::ElementType const gfxTimelineCommit = rescaleToGfx( timelineCommit );
 		ppu.DebugDrawLine(
 			{ gfxTimelineCommit, gfxLanesStart },
 			{ gfxTimelineCommit, gfxLanesEnd },
@@ -224,11 +224,11 @@ void RenderRollback()
 		auto const drawAnnotationRange = [&]( time::CommonClock::time_point start, time::CommonClock::time_point end, uint8_t rank, math::Color3f color ) -> void //
 		{
 			RF_ASSERT( start <= end );
-			gfx::ppu::PPUCoordElem const gfxStartPos = rescaleToGfx( start );
-			gfx::ppu::PPUCoordElem const gfxEndPos = rescaleToGfx( end );
-			gfx::ppu::PPUCoordElem const topY = math::integer_cast<gfx::ppu::PPUCoordElem>( gfxAnnotationStart + gfxAnnotationHeight * rank );
-			gfx::ppu::PPUCoordElem const bottomY = math::integer_cast<gfx::ppu::PPUCoordElem>( gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) );
-			gfx::ppu::PPUCoordElem const spanY = gfxAnnotationStart + gfxAnnotationHeight * rank + gfxAnnotationHeight / 2;
+			gfx::ppu::CoordElem const gfxStartPos = rescaleToGfx( start );
+			gfx::ppu::CoordElem const gfxEndPos = rescaleToGfx( end );
+			gfx::ppu::CoordElem const topY = math::integer_cast<gfx::ppu::CoordElem>( gfxAnnotationStart + gfxAnnotationHeight * rank );
+			gfx::ppu::CoordElem const bottomY = math::integer_cast<gfx::ppu::CoordElem>( gfxAnnotationStart + gfxAnnotationHeight * ( rank + 1 ) );
+			gfx::ppu::CoordElem const spanY = gfxAnnotationStart + gfxAnnotationHeight * rank + gfxAnnotationHeight / 2;
 			ppu.DebugDrawLine(
 				{ gfxStartPos, topY },
 				{ gfxStartPos, bottomY },
@@ -288,10 +288,10 @@ void RenderRollback()
 						hasDrawnAFarFutureEvent = true;
 					}
 				}
-				gfx::ppu::PPUCoord::ElementType const gfxTimelineEvent = rescaleToGfx( event.mTime );
+				gfx::ppu::Coord::ElementType const gfxTimelineEvent = rescaleToGfx( event.mTime );
 				ppu.DebugDrawLine(
-					{ gfxTimelineEvent, math::integer_cast<gfx::ppu::PPUCoord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::ppu::PPUCoord::ElementType>( i_lane ) + 0 ) ) ) },
-					{ gfxTimelineEvent, math::integer_cast<gfx::ppu::PPUCoord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::ppu::PPUCoord::ElementType>( i_lane ) + 1 ) ) ) },
+					{ gfxTimelineEvent, math::integer_cast<gfx::ppu::Coord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::ppu::Coord::ElementType>( i_lane ) + 0 ) ) ) },
+					{ gfxTimelineEvent, math::integer_cast<gfx::ppu::Coord::ElementType>( gfxLanesStart + ( gfxLanesHeight * ( math::integer_cast<gfx::ppu::Coord::ElementType>( i_lane ) + 1 ) ) ) },
 					1,
 					kEventDepth,
 					color );

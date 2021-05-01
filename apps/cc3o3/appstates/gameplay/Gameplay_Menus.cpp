@@ -234,8 +234,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kNumSections ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
 					ui::Justification::MiddleCenter ) );
 		uiManager.AdjustRecommendedRenderDepth( sectionSelectorFloater->GetContainerID(), -20 );
 		sectionSelectorFloater->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );

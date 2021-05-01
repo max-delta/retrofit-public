@@ -50,10 +50,10 @@ struct Gameplay_Overworld::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
-	static constexpr gfx::ppu::PPUDepthLayer kLayerTerrain = 100;
-	static constexpr gfx::ppu::PPUDepthLayer kLayerRegion = -20;
-	static constexpr gfx::ppu::PPUDepthLayer kLayerCharStart = 10;
-	static constexpr gfx::ppu::PPUDepthLayer kLayerCloudStart = -50;
+	static constexpr gfx::ppu::DepthLayer kLayerTerrain = 100;
+	static constexpr gfx::ppu::DepthLayer kLayerRegion = -20;
+	static constexpr gfx::ppu::DepthLayer kLayerCharStart = 10;
+	static constexpr gfx::ppu::DepthLayer kLayerCloudStart = -50;
 
 	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
 	gfx::ppu::TileLayer mTerrainLand = {};
@@ -198,8 +198,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 3 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
 					ui::Justification::TopRight ) );
 		headerFloater->SetOffset( uiContext, { -gfx::ppu::kTileSize / 4, gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const header =
@@ -217,8 +217,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootNineSlicer->GetChildContainerID( 6 ),
 				DefaultCreator<ui::controller::Floater>::Create(
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize * 2 ),
-					math::integer_cast<gfx::ppu::PPUCoordElem>( gfx::ppu::kTileSize / 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 2 ),
 					ui::Justification::BottomLeft ) );
 		footerFloater->SetOffset( uiContext, { gfx::ppu::kTileSize / 4, -gfx::ppu::kTileSize / 4 } );
 		WeakPtr<ui::controller::TextLabel> const footer =
@@ -456,13 +456,13 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		RF_TODO_ANNOTATION( "Move followers" );
 
 		// Update viewport
-		static constexpr gfx::ppu::PPUCoordElem kViewportMarginX = gfx::ppu::kTileSize * 4;
-		static constexpr gfx::ppu::PPUCoordElem kViewportMarginY = gfx::ppu::kTileSize * 3;
+		static constexpr gfx::ppu::CoordElem kViewportMarginX = gfx::ppu::kTileSize * 4;
+		static constexpr gfx::ppu::CoordElem kViewportMarginY = gfx::ppu::kTileSize * 3;
 		gfx::ppu::AABB const mapLimits = {
-			gfx::ppu::PPUCoord{ 0, 0 },
-			gfx::ppu::PPUCoord{
-				math::integer_cast<gfx::ppu::PPUCoordElem>( internalState.mCollisionMap.GetWidth() ),
-				math::integer_cast<gfx::ppu::PPUCoordElem>( internalState.mCollisionMap.GetHeight() ) } };
+			gfx::ppu::Coord{ 0, 0 },
+			gfx::ppu::Coord{
+				math::integer_cast<gfx::ppu::CoordElem>( internalState.mCollisionMap.GetWidth() ),
+				math::integer_cast<gfx::ppu::CoordElem>( internalState.mCollisionMap.GetHeight() ) } };
 		ppu.UpdateViewportExtents( internalState.mViewport );
 		internalState.mViewport.SlideToFit( pawnMovement.mCurPos.GetCoord(), kViewportMarginX, kViewportMarginY );
 		internalState.mViewport.ClampToWithin( mapLimits );
@@ -554,7 +554,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 				// HACK: Sort by reverse team order
 				// TODO: Something clever with the Y-axis as input
-				object.mZLayer = InternalState::kLayerCharStart - math::integer_cast<gfx::ppu::PPUDepthLayer>( i_teamIndex );
+				object.mZLayer = InternalState::kLayerCharStart - math::integer_cast<gfx::ppu::DepthLayer>( i_teamIndex );
 
 				bool const idle = movement.mCurPos.mMoving == false;
 

@@ -78,7 +78,7 @@ private:
 	struct DepthElement
 	{
 		// NOTE: Zero-initialize for optimizer to make cheap clears of array
-		PPUDepthLayer mDepth = {};
+		DepthLayer mDepth = {};
 		ElementType mType = {};
 		static_assert( ElementType{} == ElementType::Invalid, "Non-zero invalid" );
 		uint8_t mId = {};
@@ -102,8 +102,8 @@ public:
 	bool Initialize( uint16_t width, uint16_t height );
 	bool ResizeSurface( uint16_t width, uint16_t height );
 
-	PPUCoordElem GetWidth() const;
-	PPUCoordElem GetHeight() const;
+	CoordElem GetWidth() const;
+	CoordElem GetHeight() const;
 
 	bool BeginFrame();
 	bool SubmitToRender();
@@ -118,18 +118,18 @@ public:
 
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
-	bool DrawText( PPUCoord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
-	bool DrawText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
+	bool DrawText( Coord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
 
 	void HideZoomFactor( bool hide );
-	PPUZoomFactor GetCurrentZoomFactor() const;
-	PPUCoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
-	PPUCoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
+	ZoomFactor GetCurrentZoomFactor() const;
+	CoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
+	CoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
 
-	PPUCoord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
+	Coord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 
 	bool HasOutstandingLoadRequests() const;
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
@@ -145,17 +145,17 @@ public:
 
 	void DebugSetGridEnabled( bool enabled );
 	void DebugSetBackgroundColor( math::Color3f color );
-	bool DebugDrawText( PPUCoord pos, const char* fmt, ... );
-	bool DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
-	bool DebugDrawAuxText( PPUCoord pos, PPUDepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1 );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, math::Color3f color );
-	bool DebugDrawLine( PPUCoord p0, PPUCoord p1, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color );
+	bool DebugDrawText( Coord pos, const char* fmt, ... );
+	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
+	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
+	bool DebugDrawLine( Coord p0, Coord p1 );
+	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width );
+	bool DebugDrawLine( Coord p0, Coord p1, math::Color3f color );
+	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3f color );
 	bool DebugDrawAABB( AABB aabb );
-	bool DebugDrawAABB( AABB aabb, PPUCoordElem width );
+	bool DebugDrawAABB( AABB aabb, CoordElem width );
 	bool DebugDrawAABB( AABB aabb, math::Color3f color );
-	bool DebugDrawAABB( AABB aabb, PPUCoordElem width, PPUDepthLayer zLayer, math::Color3f color );
+	bool DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3f color );
 	WeakPtr<DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<TextureManager> DebugGetTextureManager() const;
 	WeakPtr<FramePackManager> DebugGetFramePackManager() const;
@@ -175,7 +175,7 @@ private:
 	void CalculateFontVariableWhitespaceWidth( Font const& font, uint8_t& whitespaceWidth ) const;
 	void CalculateFontVariableCharWidth( Font const& font, char character, uint8_t whitespaceWidth, uint8_t zoomDesired, uint8_t shrinkDesired, uint8_t& varCharWidth ) const;
 
-	void CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, PPUCoordElem& tileWidth, PPUCoordElem& tileHeight ) const;
+	void CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, CoordElem& tileWidth, CoordElem& tileHeight ) const;
 
 	static void ConvertColor( uint8_t ( &dest )[3], math::Color3f const& src );
 	static math::Color3f ConvertColor( uint8_t const ( &src )[3] );
@@ -189,14 +189,14 @@ private:
 	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
 	void RenderDebugGrid() const;
 
-	PPUZoomFactor GetZoomFactor() const;
+	ZoomFactor GetZoomFactor() const;
 	math::Vector2f GetDevicePixelStep( bool allowZoomHiding ) const;
 
-	math::Vector2f CoordToDevice( PPUCoordElem xCoord, PPUCoordElem yCoord ) const;
-	math::Vector2f CoordToDevice( PPUCoord const& coord ) const;
-	float LayerToDevice( PPUDepthLayer zDepth ) const;
+	math::Vector2f CoordToDevice( CoordElem xCoord, CoordElem yCoord ) const;
+	math::Vector2f CoordToDevice( Coord const& coord ) const;
+	float LayerToDevice( DepthLayer zDepth ) const;
 
-	math::Vector2f TileToDevice( PPUTileElem xTile, PPUTileElem yTile ) const;
+	math::Vector2f TileToDevice( TileElem xTile, TileElem yTile ) const;
 
 	void FullfillAllDeferredLoadRequests();
 	bool FullfillLoadRequest( LoadRequest const& request );
@@ -217,7 +217,7 @@ private:
 	uint16_t mWidth = 0;
 	uint16_t mHeight = 0;
 
-	PPUVec mDrawOffset = {};
+	Vec2 mDrawOffset = {};
 
 	bool mDrawRequestsSuppressed = false;
 	bool mHideZoomFactor = false;

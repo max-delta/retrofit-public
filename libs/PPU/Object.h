@@ -25,11 +25,11 @@ public:
 	static_assert( sizeof( ManagedFramePackID ) == sizeof( uint16_t ), "Re-evaluate packing" );
 	ManagedFramePackID mFramePackID = kInvalidManagedFramePackID;
 
-	static_assert( sizeof( PPUCoordElem ) == sizeof( int16_t ), "Re-evaluate packing" );
-	PPUCoordElem mXCoord = 0;
-	PPUCoordElem mYCoord = 0;
-	static_assert( sizeof( PPUDepthLayer ) == sizeof( int8_t ), "Re-evaluate packing" );
-	PPUDepthLayer mZLayer = 0;
+	static_assert( sizeof( CoordElem ) == sizeof( int16_t ), "Re-evaluate packing" );
+	CoordElem mXCoord = 0;
+	CoordElem mYCoord = 0;
+	static_assert( sizeof( DepthLayer ) == sizeof( int8_t ), "Re-evaluate packing" );
+	DepthLayer mZLayer = 0;
 
 	uint8_t mGFXModifier = 0;
 	PPUTimer mTimer = {};

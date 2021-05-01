@@ -275,38 +275,38 @@ void FramePackEditor::Render()
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
 	constexpr uint8_t fontSize = 8;
-	gfx::ppu::PPUCoord const textOffset( 0, fontSize );
+	gfx::ppu::Coord const textOffset( 0, fontSize );
 
-	gfx::ppu::PPUCoord const headerOffset( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize / 16 );
-	gfx::ppu::PPUCoord const previewHeaderStart = gfx::ppu::PPUCoord( 0, 0 ) + headerOffset;
+	gfx::ppu::Coord const headerOffset( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize / 16 );
+	gfx::ppu::Coord const previewHeaderStart = gfx::ppu::Coord( 0, 0 ) + headerOffset;
 
 	constexpr size_t k_NumFooterLines = 6;
-	gfx::ppu::PPUCoord const footerStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::ppu::PPUCoordElem>( k_NumFooterLines ) );
+	gfx::ppu::Coord const footerStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::ppu::CoordElem>( k_NumFooterLines ) );
 
-	gfx::ppu::PPUCoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
-	gfx::ppu::PPUCoordElem const verticalPlaneX = math::SnapNearest<gfx::ppu::PPUCoordElem>( ppu->GetWidth() / 2, gfx::ppu::kTileSize );
-	gfx::ppu::PPUCoordElem const previewOriginX = math::SnapNearest<gfx::ppu::PPUCoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
-	gfx::ppu::PPUCoordElem const editingOriginX = math::SnapNearest<gfx::ppu::PPUCoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
+	gfx::ppu::CoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
+	gfx::ppu::CoordElem const verticalPlaneX = math::SnapNearest<gfx::ppu::CoordElem>( ppu->GetWidth() / 2, gfx::ppu::kTileSize );
+	gfx::ppu::CoordElem const previewOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
+	gfx::ppu::CoordElem const editingOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
 
 	uint8_t animationLength = 0;
 	gfx::TimeSlowdownRate preferredSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	uint8_t numTimeSlots = 0;
 	uint8_t slotSustain = 0;
-	gfx::ppu::PPUCoord texOrigin{ 0, 0 };
+	gfx::ppu::Coord texOrigin{ 0, 0 };
 	math::Vector2<int64_t> texSize{ 0, 0 };
 
 	//
 	// Plane lines
 	{
-		ppu->DebugDrawLine( gfx::ppu::PPUCoord( 0, horizontalPlaneY ), gfx::ppu::PPUCoord( ppu->GetWidth(), horizontalPlaneY ), 1 );
-		ppu->DebugDrawLine( gfx::ppu::PPUCoord( verticalPlaneX, 0 ), gfx::ppu::PPUCoord( verticalPlaneX, horizontalPlaneY ), 1 );
+		ppu->DebugDrawLine( gfx::ppu::Coord( 0, horizontalPlaneY ), gfx::ppu::Coord( ppu->GetWidth(), horizontalPlaneY ), 1 );
+		ppu->DebugDrawLine( gfx::ppu::Coord( verticalPlaneX, 0 ), gfx::ppu::Coord( verticalPlaneX, horizontalPlaneY ), 1 );
 	}
 
 	//
 	// Origin point
 	{
-		gfx::ppu::PPUCoord const editingOriginPoint( editingOriginX, horizontalPlaneY );
-		constexpr gfx::ppu::PPUCoordElem pointSize = gfx::ppu::kTileSize / 8;
+		gfx::ppu::Coord const editingOriginPoint( editingOriginX, horizontalPlaneY );
+		constexpr gfx::ppu::CoordElem pointSize = gfx::ppu::kTileSize / 8;
 		ppu->DebugDrawLine( editingOriginPoint - pointSize, editingOriginPoint + pointSize, 1 );
 	}
 
@@ -389,7 +389,7 @@ void FramePackEditor::Render()
 	//
 	// Editing header
 	{
-		gfx::ppu::PPUCoord const editingHeaderStart = gfx::ppu::PPUCoord( verticalPlaneX, 0 ) + headerOffset;
+		gfx::ppu::Coord const editingHeaderStart = gfx::ppu::Coord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DrawText( editingHeaderStart, fontSize, mDefaultFontID, "Editing" );
 		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: %i / [0-%i] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
@@ -444,12 +444,12 @@ void FramePackEditor::Render()
 	//
 	// Footer
 	{
-		gfx::ppu::PPUCoord const footerLine1Start( footerStart );
-		gfx::ppu::PPUCoord const footerLine2Start( footerLine1Start + textOffset );
-		gfx::ppu::PPUCoord const footerLine3Start( footerLine2Start + textOffset );
-		gfx::ppu::PPUCoord const footerLine4Start( footerLine3Start + textOffset );
-		gfx::ppu::PPUCoord const footerLine5Start( footerLine4Start + textOffset );
-		gfx::ppu::PPUCoord const footerLine6Start( footerLine5Start + textOffset );
+		gfx::ppu::Coord const footerLine1Start( footerStart );
+		gfx::ppu::Coord const footerLine2Start( footerLine1Start + textOffset );
+		gfx::ppu::Coord const footerLine3Start( footerLine2Start + textOffset );
+		gfx::ppu::Coord const footerLine4Start( footerLine3Start + textOffset );
+		gfx::ppu::Coord const footerLine5Start( footerLine4Start + textOffset );
+		gfx::ppu::Coord const footerLine6Start( footerLine5Start + textOffset );
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
@@ -768,7 +768,7 @@ void FramePackEditor::Command_Texture_InsertAfter()
 
 
 
-void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y )
+void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::CoordElem x, gfx::ppu::CoordElem y )
 {
 	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
@@ -791,7 +791,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::PPUCoordElem x, gf
 
 
 
-void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::PPUCoordElem x, gfx::ppu::PPUCoordElem y )
+void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::CoordElem x, gfx::ppu::CoordElem y )
 {
 	gfx::ppu::PPUController* const ppu = app::gGraphics;
 

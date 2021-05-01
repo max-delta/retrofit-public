@@ -69,9 +69,9 @@ public:
 	ManagedTilesetID mTilesetReference;
 	uint16_t mNumColumns;
 
-	PPUCoordElem mXCoord;
-	PPUCoordElem mYCoord;
-	PPUDepthLayer mZLayer;
+	CoordElem mXCoord;
+	CoordElem mYCoord;
+	DepthLayer mZLayer;
 
 	uint8_t mGFXModifier;
 	PPUTimer mTimer;

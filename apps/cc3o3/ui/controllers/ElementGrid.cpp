@@ -106,7 +106,7 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::PPUCoord expectedDimensions;
+	gfx::ppu::Coord expectedDimensions;
 	switch( mSize )
 	{
 		case Size::Mini:
@@ -124,7 +124,7 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 		default:
 			RF_DBGFAIL();
 	}
-	gfx::ppu::PPUCoord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
+	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;

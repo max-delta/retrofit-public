@@ -8,13 +8,13 @@
 namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-gfx::ppu::PPUCoord AlignToJustify(
-	gfx::ppu::PPUCoord objectDimensions,
+gfx::ppu::Coord AlignToJustify(
+	gfx::ppu::Coord objectDimensions,
 	gfx::ppu::AABB const& enclosure,
 	Justification justification )
 {
 	// Fallback
-	gfx::ppu::PPUCoord pos = enclosure.mTopLeft;
+	gfx::ppu::Coord pos = enclosure.mTopLeft;
 
 	// Y
 	if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Top ) )
@@ -27,8 +27,8 @@ gfx::ppu::PPUCoord AlignToJustify(
 	}
 	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Middle ) )
 	{
-		gfx::ppu::PPUCoordElem const top = enclosure.Top();
-		gfx::ppu::PPUCoordElem const bottom = enclosure.Bottom() - objectDimensions.y;
+		gfx::ppu::CoordElem const top = enclosure.Top();
+		gfx::ppu::CoordElem const bottom = enclosure.Bottom() - objectDimensions.y;
 		pos.y = math::Lerp( top, bottom, 0.5f );
 	}
 	else
@@ -47,8 +47,8 @@ gfx::ppu::PPUCoord AlignToJustify(
 	}
 	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Center ) )
 	{
-		gfx::ppu::PPUCoordElem const left = enclosure.Left();
-		gfx::ppu::PPUCoordElem const right = enclosure.Right() - objectDimensions.x;
+		gfx::ppu::CoordElem const left = enclosure.Left();
+		gfx::ppu::CoordElem const right = enclosure.Right() - objectDimensions.x;
 		pos.x = math::Lerp( left, right, 0.5f );
 	}
 	else
