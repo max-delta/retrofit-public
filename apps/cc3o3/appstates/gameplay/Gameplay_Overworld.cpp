@@ -262,16 +262,106 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		internalState.mUI->SetChildRenderingBlocked( true );
 	}
 
+	// Prepare for movement
+	using MovementPtr = WeakPtr<state::comp::OverworldMovement>;
+	using MovementPtrs = rftl::static_vector<MovementPtr, company::kActiveTeamSize>;
+	MovementPtr pawnMovementPtr;
+	MovementPtrs followerMovementPtrs;
+	{
+		// Get the active party characters
+		rftl::array<state::MutableObjectRef, company::kActiveTeamSize> const activePartyCharacters =
+			gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
+
+		// For each active team member...
+		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
+		{
+			state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
+			if( character.IsSet() == false )
+			{
+				// Not active
+				continue;
+			}
+
+			// Get movement
+			MovementPtr const movementPtr = character.GetMutableComponentInstanceT<state::comp::OverworldMovement>();
+			RF_ASSERT( movementPtr != nullptr );
+			if( pawnMovementPtr == nullptr )
+			{
+				pawnMovementPtr = movementPtr;
+			}
+			else
+			{
+				followerMovementPtrs.emplace_back( movementPtr );
+			}
+		}
+	}
+	RF_ASSERT( pawnMovementPtr != nullptr );
+
 	// Want to determine movement intent
-	RF_TODO_ANNOTATION(
-		"This breaks sub-frame input sequences. Do we care? If yes, then these"
-		" should be changed to a vector sequence of adds/removes and then"
-		" applied later, or the direction evaluation logic should be prepared"
-		" before the commands are processed, and then that subset of logic"
-		" should be run inside of command processing, with the results"
-		" applied later after command processing is finished." );
-	phys::Direction::Value moveStarts = phys::Direction::Invalid;
-	phys::Direction::Value moveStops = phys::Direction::Invalid;
+	auto const onMoveIntent = //
+		[&pawnMovementPtr] //
+		( phys::Direction::Value moveStart, phys::Direction::Value moveStop ) -> void //
+	{
+		using namespace enable_bitwise_enums;
+
+		RF_ASSERT( pawnMovementPtr != nullptr );
+		state::comp::OverworldMovement& pawnMovement = *pawnMovementPtr;
+
+		// Will update movement direction
+		state::comp::OverworldMovement::Pos& curPos = pawnMovement.mCurPos;
+
+		// Calc movement layers
+		phys::Direction::Value primary;
+		phys::Direction::Value secondary;
+		phys::Direction::Value latent;
+		if( curPos.mMoving )
+		{
+			primary = curPos.mPrimary;
+			secondary = curPos.mSecondary;
+			latent = curPos.mLatent;
+			RF_ASSERT( primary != phys::Direction::Invalid );
+		}
+		else
+		{
+			primary = phys::Direction::Invalid;
+			secondary = phys::Direction::Invalid;
+			latent = phys::Direction::Invalid;
+		}
+		phys::DirectionLogic::UpdateStack(
+			primary, secondary, latent,
+			moveStart, moveStop );
+
+		// Are we moving?
+		phys::Direction::Value desiredMovement = primary | secondary;
+		if( desiredMovement == phys::Direction::Invalid )
+		{
+			// Standing only, not actually moving
+			RF_ASSERT( primary == phys::Direction::Invalid );
+			( (void)curPos.mPrimary ); // Don't change, used for visuals
+			RF_ASSERT( secondary == phys::Direction::Invalid );
+			curPos.mSecondary = secondary;
+			RF_ASSERT( latent == phys::Direction::Invalid );
+			curPos.mLatent = latent;
+			curPos.mMoving = false;
+		}
+		else
+		{
+			// Moving
+			RF_ASSERT( primary != phys::Direction::Invalid );
+			curPos.mPrimary = primary;
+			curPos.mSecondary = secondary;
+			curPos.mLatent = latent;
+			curPos.mMoving = true;
+		}
+	};
+	auto const onMoveStart = [&onMoveIntent]( phys::Direction::Value direction ) -> void //
+	{
+		onMoveIntent( direction, phys::Direction::Invalid );
+	};
+	auto const onMoveStop = [&onMoveIntent]( phys::Direction::Value direction ) -> void //
+	{
+		onMoveIntent( phys::Direction::Invalid, direction );
+	};
 
 	// Process character control
 	rftl::vector<input::GameCommand> const charCommands =
@@ -291,35 +381,35 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		}
 		else if( charCommand.mType == input::command::game::WalkNorth )
 		{
-			moveStarts |= phys::Direction::North;
+			onMoveStart( phys::Direction::North );
 		}
 		else if( charCommand.mType == input::command::game::WalkNorthStop )
 		{
-			moveStops |= phys::Direction::North;
+			onMoveStop( phys::Direction::North );
 		}
 		else if( charCommand.mType == input::command::game::WalkEast )
 		{
-			moveStarts |= phys::Direction::East;
+			onMoveStart( phys::Direction::East );
 		}
 		else if( charCommand.mType == input::command::game::WalkEastStop )
 		{
-			moveStops |= phys::Direction::East;
+			onMoveStop( phys::Direction::East );
 		}
 		else if( charCommand.mType == input::command::game::WalkSouth )
 		{
-			moveStarts |= phys::Direction::South;
+			onMoveStart( phys::Direction::South );
 		}
 		else if( charCommand.mType == input::command::game::WalkSouthStop )
 		{
-			moveStops |= phys::Direction::South;
+			onMoveStop( phys::Direction::South );
 		}
 		else if( charCommand.mType == input::command::game::WalkWest )
 		{
-			moveStarts |= phys::Direction::West;
+			onMoveStart( phys::Direction::West );
 		}
 		else if( charCommand.mType == input::command::game::WalkWestStop )
 		{
-			moveStops |= phys::Direction::West;
+			onMoveStop( phys::Direction::West );
 		}
 	}
 
@@ -337,94 +427,8 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 	// Update movement
 	{
-		using namespace state;
-
-		// Find movement components
-		using MovementPtr = WeakPtr<comp::OverworldMovement>;
-		using MovementPtrs = rftl::static_vector<MovementPtr, company::kActiveTeamSize>;
-		MovementPtr pawnMovementPtr;
-		MovementPtrs followerMovementPtrs;
-		{
-			// Get the active party characters
-			rftl::array<state::MutableObjectRef, company::kActiveTeamSize> const activePartyCharacters =
-				gCompanyManager->FindMutableActivePartyObjects( InputHelpers::GetSinglePlayer() );
-
-			// For each active team member...
-			for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
-			{
-				state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
-				if( character.IsSet() == false )
-				{
-					// Not active
-					continue;
-				}
-
-				// Get movement
-				MovementPtr const movementPtr = character.GetMutableComponentInstanceT<comp::OverworldMovement>();
-				RF_ASSERT( movementPtr != nullptr );
-				if( pawnMovementPtr == nullptr )
-				{
-					pawnMovementPtr = movementPtr;
-				}
-				else
-				{
-					followerMovementPtrs.emplace_back( movementPtr );
-				}
-			}
-		}
 		RF_ASSERT( pawnMovementPtr != nullptr );
-		comp::OverworldMovement& pawnMovement = *pawnMovementPtr;
-
-		// Update main movement direction
-		{
-			using namespace enable_bitwise_enums;
-
-			comp::OverworldMovement::Pos& curPos = pawnMovement.mCurPos;
-
-			// Calc movement layers
-			phys::Direction::Value primary;
-			phys::Direction::Value secondary;
-			phys::Direction::Value latent;
-			if( curPos.mMoving )
-			{
-				primary = curPos.mPrimary;
-				secondary = curPos.mSecondary;
-				latent = curPos.mLatent;
-				RF_ASSERT( primary != phys::Direction::Invalid );
-			}
-			else
-			{
-				primary = phys::Direction::Invalid;
-				secondary = phys::Direction::Invalid;
-				latent = phys::Direction::Invalid;
-			}
-			phys::DirectionLogic::UpdateStack(
-				primary, secondary, latent,
-				moveStarts, moveStops );
-
-			// Are we moving?
-			phys::Direction::Value desiredMovement = primary | secondary;
-			if( desiredMovement == phys::Direction::Invalid )
-			{
-				// Standing only, not actually moving
-				RF_ASSERT( primary == phys::Direction::Invalid );
-				( (void)curPos.mPrimary ); // Don't change, used for visuals
-				RF_ASSERT( secondary == phys::Direction::Invalid );
-				curPos.mSecondary = secondary;
-				RF_ASSERT( latent == phys::Direction::Invalid );
-				curPos.mLatent = latent;
-				curPos.mMoving = false;
-			}
-			else
-			{
-				// Moving
-				RF_ASSERT( primary != phys::Direction::Invalid );
-				curPos.mPrimary = primary;
-				curPos.mSecondary = secondary;
-				curPos.mLatent = latent;
-				curPos.mMoving = true;
-			}
-		}
+		state::comp::OverworldMovement& pawnMovement = *pawnMovementPtr;
 
 		// Update main position
 		if( pawnMovement.mCurPos.mMoving )
