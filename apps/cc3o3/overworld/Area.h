@@ -19,7 +19,7 @@ public:
 	rftl::string mIdentifier;
 	AreaType mType = AreaType::Invalid;
 	phys::AABB mAABB = {};
-	phys::PhysCoord mFocus = {};
+	phys::Coord mFocus = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

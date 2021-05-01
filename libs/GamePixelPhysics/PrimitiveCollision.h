@@ -19,7 +19,7 @@ class GAMEPIXELPHYSICS_API PrimitiveCollision
 public:
 	static bool HasCollision(
 		AABB const& aabb,
-		PhysCoord const& pos );
+		Coord const& pos );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -436,7 +436,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		{
 			using namespace enable_bitwise_enums;
 
-			phys::PhysCoord pos = pawnMovement.mCurPos.GetCoord();
+			phys::Coord pos = pawnMovement.mCurPos.GetCoord();
 			phys::Direction::Value dir = pawnMovement.mCurPos.mPrimary.As() | pawnMovement.mCurPos.mSecondary.As();
 
 			// Step
@@ -511,7 +511,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 	// Draw areas
 	{
 		RF_ASSERT( pawnMovementPtr != nullptr );
-		phys::PhysCoord const curPos = pawnMovementPtr->mCurPos.GetCoord();
+		phys::Coord const curPos = pawnMovementPtr->mCurPos.GetCoord();
 
 		for( overworld::Area const& area : internalState.mAreas )
 		{

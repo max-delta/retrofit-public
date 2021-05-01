@@ -9,7 +9,7 @@ namespace RF::phys {
 
 bool PrimitiveCollision::HasCollision(
 	AABB const& aabb,
-	PhysCoord const& pos )
+	Coord const& pos )
 {
 	RF_ASSERT( aabb.Left() <= aabb.Right() );
 	RF_ASSERT( aabb.Top() <= aabb.Bottom() );

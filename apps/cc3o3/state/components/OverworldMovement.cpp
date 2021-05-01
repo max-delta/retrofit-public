@@ -19,14 +19,14 @@ void OverworldMovement::Pos::Bind( rollback::Window& window, state::VariableIden
 
 
 
-phys::PhysCoord OverworldMovement::Pos::GetCoord() const
+phys::Coord OverworldMovement::Pos::GetCoord() const
 {
-	return phys::PhysCoord( mX, mY );
+	return phys::Coord( mX, mY );
 }
 
 
 
-void OverworldMovement::Pos::SetCoord( phys::PhysCoord pos )
+void OverworldMovement::Pos::SetCoord( phys::Coord pos )
 {
 	mX = pos.x;
 	mY = pos.y;

@@ -30,11 +30,11 @@ public:
 
 		void Bind( rollback::Window& window, state::VariableIdentifier const& parent, alloc::Allocator& allocator );
 
-		phys::PhysCoord GetCoord() const;
-		void SetCoord( phys::PhysCoord pos );
+		phys::Coord GetCoord() const;
+		void SetCoord( phys::Coord pos );
 
-		rollback::AutoVar<phys::PhysCoordElem> mX;
-		rollback::AutoVar<phys::PhysCoordElem> mY;
+		rollback::AutoVar<phys::CoordElem> mX;
+		rollback::AutoVar<phys::CoordElem> mY;
 
 		rollback::AutoVar<phys::Direction::Value> mPrimary;
 		rollback::AutoVar<phys::Direction::Value> mSecondary;

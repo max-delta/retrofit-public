@@ -13,54 +13,54 @@ namespace RF::phys {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-using StepAttempts = rftl::static_vector<PhysCoord, 3>;
+using StepAttempts = rftl::static_vector<Coord, 3>;
 
 
 
-PhysCoord GetStep( Direction::Value direction )
+Coord GetStep( Direction::Value direction )
 {
 	using namespace Direction;
 
 	switch( direction )
 	{
 		case North:
-			return PhysCoord( 0, -1 );
+			return Coord( 0, -1 );
 		case East:
-			return PhysCoord( 1, 0 );
+			return Coord( 1, 0 );
 		case South:
-			return PhysCoord( 0, 1 );
+			return Coord( 0, 1 );
 		case West:
-			return PhysCoord( -1, 0 );
+			return Coord( -1, 0 );
 		case NE:
-			return PhysCoord( 1, -1 );
+			return Coord( 1, -1 );
 		case NW:
-			return PhysCoord( -1, -1 );
+			return Coord( -1, -1 );
 		case SE:
-			return PhysCoord( 1, 1 );
+			return Coord( 1, 1 );
 		case SW:
-			return PhysCoord( -1, 1 );
+			return Coord( -1, 1 );
 		case Invalid:
-			return PhysCoord( 0, 0 );
+			return Coord( 0, 0 );
 		default:
 			RF_DBGFAIL();
-			return PhysCoord( 0, 0 );
+			return Coord( 0, 0 );
 	}
 }
 
 
 
-PhysCoord StepCast(
+Coord StepCast(
 	math::Bitmap const& collisionMap,
-	PhysCoord const& pos,
+	Coord const& pos,
 	StepAttempts const& attempts )
 {
 	RF_ASSERT( pos.x >= 0 );
 	RF_ASSERT( pos.y >= 0 );
-	RF_ASSERT( pos.x <= math::integer_cast<PhysCoordElem>( collisionMap.GetWidth() ) );
-	RF_ASSERT( pos.y <= math::integer_cast<PhysCoordElem>( collisionMap.GetHeight() ) );
+	RF_ASSERT( pos.x <= math::integer_cast<CoordElem>( collisionMap.GetWidth() ) );
+	RF_ASSERT( pos.y <= math::integer_cast<CoordElem>( collisionMap.GetHeight() ) );
 	RF_ASSERT( attempts.empty() == false );
 
-	for( PhysCoord const& attempt : attempts )
+	for( Coord const& attempt : attempts )
 	{
 		if( PixelCast::HasCollision( collisionMap, attempt ) == false )
 		{
@@ -74,7 +74,7 @@ PhysCoord StepCast(
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-bool PixelCast::HasCollision( math::Bitmap const& collisionMap, PhysCoord const& pos )
+bool PixelCast::HasCollision( math::Bitmap const& collisionMap, Coord const& pos )
 {
 	if( pos.x < 0 || pos.y < 0 )
 	{
@@ -96,7 +96,7 @@ bool PixelCast::HasCollision( math::Bitmap const& collisionMap, PhysCoord const&
 
 
 
-PhysCoord PixelCast::FixOutOfBounds( math::Bitmap const& collisionMap, PhysCoord const& pos )
+Coord PixelCast::FixOutOfBounds( math::Bitmap const& collisionMap, Coord const& pos )
 {
 	if( HasCollision( collisionMap, pos ) == false )
 	{
@@ -106,13 +106,13 @@ PhysCoord PixelCast::FixOutOfBounds( math::Bitmap const& collisionMap, PhysCoord
 
 	// Naive scanline approach, wildly unsafe
 	RFLOG_WARNING( nullptr, RFCAT_GAMEPIXELPHYSICS, "Trying naive out-of-bounds fix" );
-	PhysCoordElem const width = math::integer_cast<PhysCoordElem>( collisionMap.GetWidth() );
-	PhysCoordElem const height = math::integer_cast<PhysCoordElem>( collisionMap.GetHeight() );
-	for( PhysCoordElem y = 0; y < height; y++ )
+	CoordElem const width = math::integer_cast<CoordElem>( collisionMap.GetWidth() );
+	CoordElem const height = math::integer_cast<CoordElem>( collisionMap.GetHeight() );
+	for( CoordElem y = 0; y < height; y++ )
 	{
-		for( PhysCoordElem x = 0; x < width; x++ )
+		for( CoordElem x = 0; x < width; x++ )
 		{
-			PhysCoord const testPos{ x, y };
+			Coord const testPos{ x, y };
 			if( HasCollision( collisionMap, testPos ) == false )
 			{
 				return testPos;
@@ -127,9 +127,9 @@ PhysCoord PixelCast::FixOutOfBounds( math::Bitmap const& collisionMap, PhysCoord
 
 
 
-PhysCoord PixelCast::CardinalStepCast(
+Coord PixelCast::CardinalStepCast(
 	math::Bitmap const& collisionMap,
-	PhysCoord const& pos,
+	Coord const& pos,
 	Direction::Value direction )
 {
 	details::StepAttempts attempts;
@@ -191,9 +191,9 @@ PhysCoord PixelCast::CardinalStepCast(
 
 
 
-PhysCoord PixelCast::SlideStepCast(
+Coord PixelCast::SlideStepCast(
 	math::Bitmap const& collisionMap,
-	PhysCoord const& pos,
+	Coord const& pos,
 	Direction::Value direction )
 {
 	details::StepAttempts attempts;

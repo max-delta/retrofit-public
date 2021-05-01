@@ -14,12 +14,12 @@ struct AreaDesc
 {
 	rftl::string mIdentifier;
 	rftl::string mType;
-	phys::PhysCoordElem mX = 0;
-	phys::PhysCoordElem mY = 0;
-	phys::PhysCoordElem mWidth = 0;
-	phys::PhysCoordElem mHeight = 0;
-	phys::PhysCoordElem mFocusX = 0;
-	phys::PhysCoordElem mFocusY = 0;
+	phys::CoordElem mX = 0;
+	phys::CoordElem mY = 0;
+	phys::CoordElem mWidth = 0;
+	phys::CoordElem mHeight = 0;
+	phys::CoordElem mFocusX = 0;
+	phys::CoordElem mFocusY = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

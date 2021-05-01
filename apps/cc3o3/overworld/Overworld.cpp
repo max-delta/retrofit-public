@@ -73,8 +73,8 @@ Overworld Overworld::LoadFromDesc( file::VFSPath const& descPath )
 		{
 			area.mType = AreaType::Site;
 		}
-		phys::PhysCoord const aabbStart = { areaDesc.mX, areaDesc.mY };
-		phys::PhysVec const aabbSize = { areaDesc.mWidth, areaDesc.mHeight };
+		phys::Coord const aabbStart = { areaDesc.mX, areaDesc.mY };
+		phys::Vec2 const aabbSize = { areaDesc.mWidth, areaDesc.mHeight };
 		area.mAABB = { aabbStart, aabbStart + aabbSize };
 		area.mFocus = { areaDesc.mFocusX, areaDesc.mFocusY };
 		retVal.mAreas.emplace_back( rftl::move( area ) );
