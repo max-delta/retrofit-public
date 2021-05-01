@@ -20,6 +20,7 @@
 #include "GameInput/GameController.h"
 #include "GamePixelPhysics/DirectionLogic.h"
 #include "GamePixelPhysics/PixelCast.h"
+#include "GamePixelPhysics/PrimitiveCollision.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/Floater.h"
@@ -509,10 +510,15 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 	// Draw areas
 	{
+		RF_ASSERT( pawnMovementPtr != nullptr );
+		phys::PhysCoord const curPos = pawnMovementPtr->mCurPos.GetCoord();
+
 		for( overworld::Area const& area : internalState.mAreas )
 		{
+			bool const inArea = phys::PrimitiveCollision::HasCollision( area.mAABB, curPos );
+
 			// TODO: Configurable debug rendering
-			ppu.DebugDrawAABB( area.mAABB, 1, InternalState::kLayerRegion, math::Color3f::kCyan );
+			ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerRegion, math::Color3f::kCyan );
 			ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
 		}
 	}
