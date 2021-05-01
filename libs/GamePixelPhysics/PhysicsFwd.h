@@ -38,7 +38,7 @@ static constexpr Value kConflicts[2] = { North | South, East | West };
 }
 
 
-// Coordinates are +X=left, +Y=down
+// Coordinates are +X=right, +Y=down (scanlines)
 using PhysCoordElem = int16_t;
 using PhysCoord = math::Vector2<PhysCoordElem>;
 using PhysVec = math::Vector2<PhysCoordElem>;

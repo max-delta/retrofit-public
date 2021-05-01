@@ -15,17 +15,19 @@ class AABB4;
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-// Coordinates are +X=left, +Y=down
+// Coordinates are +X=right, +Y=down (scanlines)
 using PPUCoordElem = int16_t;
 using PPUCoord = math::Vector2<PPUCoordElem>;
 using PPUVec = math::Vector2<PPUCoordElem>;
 using AABB = math::AABB4<PPUCoordElem>;
 
-using PPUTileElem = int8_t;
+// Coordinates are +Z=behind (right-handed)
 using PPUDepthLayer = int8_t;
-constexpr PPUCoordElem kTileSize = 32;
 constexpr PPUDepthLayer kFarthestLayer = 100;
 constexpr PPUDepthLayer kNearestLayer = -100;
+
+using PPUTileElem = int8_t;
+constexpr PPUCoordElem kTileSize = 32;
 
 using PPUZoomFactor = uint8_t;
 constexpr PPUZoomFactor kInvalidZoomFactor = 0;
