@@ -126,8 +126,8 @@ public:
 
 	void HideZoomFactor( bool hide );
 	ZoomFactor GetCurrentZoomFactor() const;
-	CoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... );
-	CoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text );
+	CoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... ) const;
+	CoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text ) const;
 
 	Coord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 

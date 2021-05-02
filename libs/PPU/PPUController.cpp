@@ -442,7 +442,7 @@ ZoomFactor PPUController::GetCurrentZoomFactor() const
 
 
 
-CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... )
+CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... ) const
 {
 	decltype( PPUState::String::mText ) string = {};
 	static_assert( rftl::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
@@ -462,7 +462,7 @@ CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, 
 
 
 
-CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text )
+CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text ) const
 {
 	// !!!WARNING!!! This must be kept logically equivalent to RenderString(...)
 
