@@ -12,6 +12,7 @@
 #include "cc3o3/state/components/OverworldVisual.h"
 #include "cc3o3/state/components/OverworldMovement.h"
 #include "cc3o3/state/StateHelpers.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -547,14 +548,14 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			if( inArea )
 			{
-				rftl::string const TODO_Localize = area.mIdentifier;
+				rftl::string const label = ui::LocalizeKey( area.mIdentifier );
 
-				gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, TODO_Localize.c_str() );
+				gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label.c_str() );
 				gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
 				ppu.DrawText(
 					pos, InternalState::kLayerAreaLabel,
 					font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
-					"%s", TODO_Localize.c_str() );
+					"%s", label.c_str() );
 			}
 
 			if( inArea && attemptingInteraction )
