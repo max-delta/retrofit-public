@@ -364,6 +364,9 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		onMoveIntent( phys::Direction::Invalid, direction );
 	};
 
+	// Interactions handled in later processing
+	bool attemptingInteraction = false;
+
 	// Process character control
 	rftl::vector<input::GameCommand> const charCommands =
 		InputHelpers::GetGameplayInputToProcess( InputHelpers::GetSinglePlayer(), input::layer::CharacterControl );
@@ -376,9 +379,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 		if( charCommand.mType == input::command::game::Interact )
 		{
-			// HACK: Just pop into site
-			// TODO: Make sure party is actually at a site, and set it up
-			context.mManager.RequestDeferredStateChange( id::Gameplay_Site );
+			attemptingInteraction = true;
 		}
 		else if( charCommand.mType == input::command::game::WalkNorth )
 		{
@@ -508,7 +509,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		ppu.DrawTileLayer( cloudB );
 	}
 
-	// Draw areas
+	// Process areas
 	{
 		RF_ASSERT( pawnMovementPtr != nullptr );
 		phys::Coord const curPos = pawnMovementPtr->mCurPos.GetCoord();
@@ -520,6 +521,24 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			// TODO: Configurable debug rendering
 			ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerRegion, math::Color3f::kCyan );
 			ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
+
+			if( inArea && attemptingInteraction )
+			{
+				// By default, consume interaction
+				attemptingInteraction = false;
+
+				if( area.mType == overworld::AreaType::Site )
+				{
+					// HACK: Just pop into site
+					// TODO: Make sure party can actually enter site, and set it up
+					context.mManager.RequestDeferredStateChange( id::Gameplay_Site );
+				}
+				else
+				{
+					// Can't interact with this area, restore attempt
+					attemptingInteraction = true;
+				}
+			}
 		}
 	}
 
