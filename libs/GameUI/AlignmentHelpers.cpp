@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "AlignmentHelpers.h"
 
+#include "GameUI/Font.h"
+
+#include "PPU/PPUController.h"
+
 #include "core_math/AABB4.h"
 #include "core_math/Lerp.h"
 
@@ -9,10 +13,13 @@ namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 gfx::ppu::Coord AlignToJustify(
-	gfx::ppu::Coord objectDimensions,
+	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::AABB const& enclosure,
 	Justification justification )
 {
+	RF_ASSERT( enclosure.Left() <= enclosure.Right() );
+	RF_ASSERT( enclosure.Top() <= enclosure.Bottom() );
+
 	// Fallback
 	gfx::ppu::Coord pos = enclosure.mTopLeft;
 
@@ -57,6 +64,44 @@ gfx::ppu::Coord AlignToJustify(
 	}
 
 	return pos;
+}
+
+
+
+gfx::ppu::Coord GAMEUI_API AlignToJustifyOnPoint(
+	gfx::ppu::Vec2 objectDimensions,
+	gfx::ppu::Coord point,
+	Justification justification )
+{
+	return AlignToJustify( objectDimensions, { point, point }, justification );
+}
+
+
+
+gfx::ppu::Vec2 GAMEUI_API CalculatePrimaryFontExtents(
+	gfx::ppu::PPUController const& renderer,
+	Font const& font,
+	char const* text )
+{
+	return CalculatePrimaryFontExtents( renderer, font.mManagedFontID, font.mFontHeight, font.mBaselineOffset, text );
+}
+
+
+
+gfx::ppu::Vec2 GAMEUI_API CalculatePrimaryFontExtents(
+	gfx::ppu::PPUController const& renderer,
+	gfx::ManagedFontID managedFontID,
+	uint8_t fontHeight,
+	uint8_t baselineOffset,
+	char const* text )
+{
+	gfx::ppu::CoordElem const stringWidth = renderer.CalculateStringLength( fontHeight, managedFontID, text );
+
+	// Push the descenders down below the baseline
+	//  (tails like g, j, p, q, y )
+	gfx::ppu::CoordElem const effectiveHeight = math::integer_cast<gfx::ppu::CoordElem>( fontHeight - baselineOffset );
+
+	return { stringWidth, effectiveHeight };
 }
 
 ///////////////////////////////////////////////////////////////////////////////
