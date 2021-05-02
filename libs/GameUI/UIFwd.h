@@ -89,6 +89,7 @@ struct FocusKey;
 struct FocusEvent;
 struct FocusTarget;
 struct FocusTreeNode;
+struct Font;
 struct UIContext;
 struct UIConstContext;
 

@@ -1,128 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<ImportGroup Label="PropertySheets">
-		<Import Project="..\..\props\RF.Game.Dll.Platform.props" />
-	</ImportGroup>
-	<PropertyGroup Label="Globals">
-		<VCProjectVersion>16.0</VCProjectVersion>
-		<ProjectGuid>{F5EED9E1-B289-43D5-B0AB-DA54F7A88C0C}</ProjectGuid>
-		<Keyword>Win32Proj</Keyword>
-		<RootNamespace>GameUI</RootNamespace>
-	</PropertyGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-	<ImportGroup Label="PropertySheets">
-		<Import Project="..\..\props\RF.Game.Dll.Preconfig.props" />
-	</ImportGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-	<ImportGroup Label="ExtensionSettings">
-	</ImportGroup>
-	<ImportGroup Label="Shared">
-	</ImportGroup>
-	<ImportGroup Label="PropertySheets">
-		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-		<Import Project="..\..\props\RetroFit.props" />
-		<Import Project="..\..\props\RF.Game.Dll.props" />
-	</ImportGroup>
-	<PropertyGroup Label="UserMacros" />
-	<PropertyGroup />
-	<ItemDefinitionGroup>
-		<ClCompile>
-			<PreprocessorDefinitions>GAMEUI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-		</ClCompile>
-	</ItemDefinitionGroup>
-	<ItemGroup>
-		<ClInclude Include="AlignmentHelpers.h" />
-		<ClInclude Include="Anchor.h" />
-		<ClInclude Include="Container.h" />
-		<ClInclude Include="ContainerManager.h" />
-		<ClInclude Include="controllers\BorderFrame.h" />
-		<ClInclude Include="controllers\ColumnSlicer.h" />
-		<ClInclude Include="controllers\Floater.h" />
-		<ClInclude Include="controllers\FramePackDisplay.h" />
-		<ClInclude Include="controllers\GenericListBox.h" />
-		<ClInclude Include="controllers\InstancedController.h" />
-		<ClInclude Include="controllers\ListBox.h" />
-		<ClInclude Include="controllers\MessageBox.h" />
-		<ClInclude Include="controllers\MultiPassthrough.h" />
-		<ClInclude Include="controllers\NineSlicer.h" />
-		<ClInclude Include="controllers\PaddedPassthrough.h" />
-		<ClInclude Include="controllers\Passthrough.h" />
-		<ClInclude Include="controllers\project.h" />
-		<ClInclude Include="controllers\RowSlicer.h" />
-		<ClInclude Include="controllers\stdafx.h" />
-		<ClInclude Include="controllers\TextBox.h" />
-		<ClInclude Include="controllers\TextLabel.h" />
-		<ClInclude Include="controllers\TextRows.h" />
-		<ClInclude Include="controllers\TileLayerDisplay.h" />
-		<ClInclude Include="FocusEvent.h" />
-		<ClInclude Include="FocusKey.h" />
-		<ClInclude Include="FocusManager.h" />
-		<ClInclude Include="FocusTarget.h" />
-		<ClInclude Include="FocusTree.h" />
-		<ClInclude Include="FontRegistry.h" />
-		<ClInclude Include="project.h" />
-		<ClInclude Include="stdafx.h" />
-		<ClInclude Include="Controller.h" />
-		<ClInclude Include="UIContext.h" />
-		<ClInclude Include="UIFwd.h" />
-	</ItemGroup>
-	<ItemGroup>
-		<ClCompile Include="AlignmentHelpers.cpp" />
-		<ClCompile Include="Anchor.cpp" />
-		<ClCompile Include="Container.cpp" />
-		<ClCompile Include="ContainerManager.cpp" />
-		<ClCompile Include="controllers\BorderFrame.cpp" />
-		<ClCompile Include="controllers\ColumnSlicer.cpp" />
-		<ClCompile Include="controllers\Floater.cpp" />
-		<ClCompile Include="controllers\FramePackDisplay.cpp" />
-		<ClCompile Include="controllers\GenericListBox.cpp" />
-		<ClCompile Include="controllers\InstancedController.cpp" />
-		<ClCompile Include="controllers\ListBox.cpp" />
-		<ClCompile Include="controllers\MessageBox.cpp" />
-		<ClCompile Include="controllers\MultiPassthrough.cpp" />
-		<ClCompile Include="controllers\NineSlicer.cpp" />
-		<ClCompile Include="controllers\PaddedPassthrough.cpp" />
-		<ClCompile Include="controllers\Passthrough.cpp" />
-		<ClCompile Include="controllers\RowSlicer.cpp" />
-		<ClCompile Include="controllers\TextBox.cpp" />
-		<ClCompile Include="controllers\TextLabel.cpp" />
-		<ClCompile Include="controllers\TextRows.cpp" />
-		<ClCompile Include="controllers\TileLayerDisplay.cpp" />
-		<ClCompile Include="dllmain.cpp" />
-		<ClCompile Include="FocusEvent.cpp" />
-		<ClCompile Include="FocusKey.cpp" />
-		<ClCompile Include="FocusManager.cpp" />
-		<ClCompile Include="FocusTarget.cpp" />
-		<ClCompile Include="FocusTree.cpp" />
-		<ClCompile Include="FontRegistry.cpp" />
-		<ClCompile Include="stdafx.cpp">
-			<PrecompiledHeader>Create</PrecompiledHeader>
-		</ClCompile>
-		<ClCompile Include="Controller.cpp" />
-		<ClCompile Include="UIContext.cpp" />
-	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\core\core.vcxproj">
-			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\core_math\core_math.vcxproj">
-			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\Logging\Logging.vcxproj">
-			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\PPU\PPU.vcxproj">
-			<Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
-		</ProjectReference>
-		<ProjectReference Include="..\RFType\RFType.vcxproj">
-			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
-		</ProjectReference>
-	</ItemGroup>
-	<ItemGroup>
-		<None Include="ContainerManager.inl" />
-		<None Include="controllers\GenericListBox.inl" />
-	</ItemGroup>
-	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-	<ImportGroup Label="ExtensionTargets">
-	</ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\props\RF.Game.Dll.Platform.props" />
+  </ImportGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{F5EED9E1-B289-43D5-B0AB-DA54F7A88C0C}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>GameUI</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="..\..\props\RF.Game.Dll.Preconfig.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\props\RetroFit.props" />
+    <Import Project="..\..\props\RF.Game.Dll.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>GAMEUI_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AlignmentHelpers.h" />
+    <ClInclude Include="Anchor.h" />
+    <ClInclude Include="Container.h" />
+    <ClInclude Include="ContainerManager.h" />
+    <ClInclude Include="controllers\BorderFrame.h" />
+    <ClInclude Include="controllers\ColumnSlicer.h" />
+    <ClInclude Include="controllers\Floater.h" />
+    <ClInclude Include="controllers\FramePackDisplay.h" />
+    <ClInclude Include="controllers\GenericListBox.h" />
+    <ClInclude Include="controllers\InstancedController.h" />
+    <ClInclude Include="controllers\ListBox.h" />
+    <ClInclude Include="controllers\MessageBox.h" />
+    <ClInclude Include="controllers\MultiPassthrough.h" />
+    <ClInclude Include="controllers\NineSlicer.h" />
+    <ClInclude Include="controllers\PaddedPassthrough.h" />
+    <ClInclude Include="controllers\Passthrough.h" />
+    <ClInclude Include="controllers\project.h" />
+    <ClInclude Include="controllers\RowSlicer.h" />
+    <ClInclude Include="controllers\stdafx.h" />
+    <ClInclude Include="controllers\TextBox.h" />
+    <ClInclude Include="controllers\TextLabel.h" />
+    <ClInclude Include="controllers\TextRows.h" />
+    <ClInclude Include="controllers\TileLayerDisplay.h" />
+    <ClInclude Include="FocusEvent.h" />
+    <ClInclude Include="FocusKey.h" />
+    <ClInclude Include="FocusManager.h" />
+    <ClInclude Include="FocusTarget.h" />
+    <ClInclude Include="FocusTree.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontRegistry.h" />
+    <ClInclude Include="project.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Controller.h" />
+    <ClInclude Include="UIContext.h" />
+    <ClInclude Include="UIFwd.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AlignmentHelpers.cpp" />
+    <ClCompile Include="Anchor.cpp" />
+    <ClCompile Include="Container.cpp" />
+    <ClCompile Include="ContainerManager.cpp" />
+    <ClCompile Include="controllers\BorderFrame.cpp" />
+    <ClCompile Include="controllers\ColumnSlicer.cpp" />
+    <ClCompile Include="controllers\Floater.cpp" />
+    <ClCompile Include="controllers\FramePackDisplay.cpp" />
+    <ClCompile Include="controllers\GenericListBox.cpp" />
+    <ClCompile Include="controllers\InstancedController.cpp" />
+    <ClCompile Include="controllers\ListBox.cpp" />
+    <ClCompile Include="controllers\MessageBox.cpp" />
+    <ClCompile Include="controllers\MultiPassthrough.cpp" />
+    <ClCompile Include="controllers\NineSlicer.cpp" />
+    <ClCompile Include="controllers\PaddedPassthrough.cpp" />
+    <ClCompile Include="controllers\Passthrough.cpp" />
+    <ClCompile Include="controllers\RowSlicer.cpp" />
+    <ClCompile Include="controllers\TextBox.cpp" />
+    <ClCompile Include="controllers\TextLabel.cpp" />
+    <ClCompile Include="controllers\TextRows.cpp" />
+    <ClCompile Include="controllers\TileLayerDisplay.cpp" />
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="FocusEvent.cpp" />
+    <ClCompile Include="FocusKey.cpp" />
+    <ClCompile Include="FocusManager.cpp" />
+    <ClCompile Include="FocusTarget.cpp" />
+    <ClCompile Include="FocusTree.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontRegistry.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader>Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="UIContext.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\core\core.vcxproj">
+      <Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\core_math\core_math.vcxproj">
+      <Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.vcxproj">
+      <Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PPU\PPU.vcxproj">
+      <Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\RFType\RFType.vcxproj">
+      <Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ContainerManager.inl" />
+    <None Include="controllers\GenericListBox.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>
