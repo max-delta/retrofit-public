@@ -36,7 +36,7 @@ TextRows::TextRows( size_t numSlots, FontPurposeID purpose )
 TextRows::TextRows(
 	size_t numSlots,
 	FontPurposeID purpose,
-	Justification justification,
+	Justification::Value justification,
 	math::Color3f color )
 	: mNumSlots( numSlots )
 	, mFontPurpose( purpose )

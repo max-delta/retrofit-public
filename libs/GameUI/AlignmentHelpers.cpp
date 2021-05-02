@@ -15,7 +15,7 @@ namespace RF::ui {
 gfx::ppu::Coord AlignToJustify(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::AABB const& enclosure,
-	Justification justification )
+	Justification::Value justification )
 {
 	RF_ASSERT( enclosure.Left() <= enclosure.Right() );
 	RF_ASSERT( enclosure.Top() <= enclosure.Bottom() );
@@ -71,7 +71,7 @@ gfx::ppu::Coord AlignToJustify(
 gfx::ppu::Coord GAMEUI_API AlignToJustifyOnPoint(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::Coord point,
-	Justification justification )
+	Justification::Value justification )
 {
 	return AlignToJustify( objectDimensions, { point, point }, justification );
 }

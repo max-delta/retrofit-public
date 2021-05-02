@@ -23,7 +23,7 @@ public:
 
 	void SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight );
 	void SetSlowdown( gfx::TimeSlowdownRate rate );
-	void SetJustification( Justification justification );
+	void SetJustification( Justification::Value justification );
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
@@ -31,7 +31,7 @@ public:
 	//
 	// Private data
 private:
-	Justification mJustification = Justification::TopLeft;
+	Justification::Value mJustification = Justification::TopLeft;
 	gfx::ppu::Coord mExpectedDimensions = {};
 	gfx::ppu::Object mObject = {};
 };

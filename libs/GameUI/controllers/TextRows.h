@@ -26,7 +26,7 @@ public:
 	TextRows(
 		size_t numSlots,
 		FontPurposeID purpose,
-		Justification justification,
+		Justification::Value justification,
 		math::Color3f color );
 
 	ContainerID GetChildContainerID() const;
@@ -43,7 +43,7 @@ public:
 private:
 	size_t const mNumSlots;
 	FontPurposeID const mFontPurpose;
-	Justification const mJustification;
+	Justification::Value const mJustification;
 	math::Color3f const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::vector<WeakPtr<TextLabel>> mSlotControllers;

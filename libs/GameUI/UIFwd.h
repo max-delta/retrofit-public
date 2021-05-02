@@ -16,7 +16,8 @@ enum class Orientation : uint8_t
 	Vertical
 };
 
-enum class Justification : uint8_t
+namespace Justification {
+enum Value : uint8_t
 {
 	Invalid = 0,
 
@@ -38,6 +39,7 @@ enum class Justification : uint8_t
 	BottomCenter = Bottom | Center,
 	BottomRight = Bottom | Right
 };
+}
 
 using FocusEventType = uint64_t;
 namespace focusevent {

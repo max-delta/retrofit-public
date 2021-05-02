@@ -18,7 +18,7 @@ class GAMEUI_API Floater final : public InstancedController
 	// Public methods
 public:
 	Floater() = delete;
-	Floater( gfx::ppu::CoordElem width, gfx::ppu::CoordElem height, Justification justification );
+	Floater( gfx::ppu::CoordElem width, gfx::ppu::CoordElem height, Justification::Value justification );
 
 	ContainerID GetChildContainerID() const;
 
@@ -35,7 +35,7 @@ private:
 	AnchorID mTopLeftAnchor = kInvalidAnchorID;
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mContainer = kInvalidContainerID;
-	Justification mJustification = Justification::TopLeft;
+	Justification::Value mJustification = Justification::TopLeft;
 	gfx::ppu::Coord mDimensions = {};
 	gfx::ppu::Coord mOffset = {};
 };

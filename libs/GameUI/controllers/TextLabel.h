@@ -25,7 +25,7 @@ public:
 	void SetText( rftl::string const& text );
 	void SetText( rftl::string&& text );
 	void SetText( char const* text );
-	void SetJustification( Justification justification );
+	void SetJustification( Justification::Value justification );
 	void SetColor( math::Color3f color );
 	void SetBorder( bool border );
 	void SetIgnoreOverflow( bool ignoreOverflow );
@@ -50,7 +50,7 @@ private:
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
 	uint8_t mDesiredHeight = 0;
 	uint8_t mBaselineOffset = 0;
-	Justification mJustification = Justification::TopLeft;
+	Justification::Value mJustification = Justification::TopLeft;
 	rftl::string mText;
 	math::Color3f mColor = math::Color3f::kBlack;
 	bool mBorder = false;

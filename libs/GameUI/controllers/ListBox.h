@@ -33,7 +33,7 @@ public:
 		Orientation orientation,
 		size_t numSlots,
 		FontPurposeID purpose,
-		Justification justification,
+		Justification::Value justification,
 		math::Color3f unfocusedColor,
 		math::Color3f unselectedColor,
 		math::Color3f selectedColor );
@@ -55,7 +55,7 @@ private:
 	// Private data
 private:
 	FontPurposeID const mFontPurpose;
-	Justification const mJustification;
+	Justification::Value const mJustification;
 	math::Color3f const mUnfocusedColor;
 	math::Color3f const mUnselectedColor;
 	math::Color3f const mSelectedColor;

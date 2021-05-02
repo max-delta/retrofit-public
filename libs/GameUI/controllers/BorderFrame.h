@@ -27,7 +27,7 @@ public:
 		gfx::ppu::Coord expectedTileDimensions,
 		gfx::ppu::Coord expectedPatternDimensions,
 		gfx::ppu::Coord paddingDimensions );
-	void SetJustification( Justification justification );
+	void SetJustification( Justification::Value justification );
 
 	ContainerID GetChildContainerID() const;
 
@@ -47,7 +47,7 @@ private:
 	AnchorID mTopLeftAnchor = kInvalidAnchorID;
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mChildContainerID = kInvalidContainerID;
-	Justification mJustification = Justification::MiddleCenter;
+	Justification::Value mJustification = Justification::MiddleCenter;
 	gfx::ppu::Coord mExpectedTileDimensions = {};
 	gfx::ppu::Coord mExpectedPatternDimensions = {};
 	gfx::ppu::Coord mPaddingDimensions = {};

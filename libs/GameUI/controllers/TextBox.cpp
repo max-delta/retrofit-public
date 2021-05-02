@@ -45,7 +45,7 @@ TextBox::TextBox(
 TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
-	Justification justification,
+	Justification::Value justification,
 	math::Color3f color,
 	rftl::unordered_set<char> const& breakableChars )
 	: mNumRows( numRows )

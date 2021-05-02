@@ -36,7 +36,7 @@ void FramePackDisplay::SetSlowdown( gfx::TimeSlowdownRate rate )
 
 
 
-void FramePackDisplay::SetJustification( Justification justification )
+void FramePackDisplay::SetJustification( Justification::Value justification )
 {
 	mJustification = justification;
 }

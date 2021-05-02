@@ -33,7 +33,7 @@ public:
 public:
 	ElementGrid( Size size );
 
-	void SetJustification( Justification justification );
+	void SetJustification( Justification::Value justification );
 	void UpdateFromCharacter( state::ObjectRef const& character );
 	void UpdateFromCache( ElementGridDisplayCache const& cache );
 
@@ -45,7 +45,7 @@ public:
 	// Private data
 private:
 	Size const mSize = Size::Mini;
-	Justification mJustification = Justification::MiddleCenter;
+	Justification::Value mJustification = Justification::MiddleCenter;
 	gfx::ppu::TileLayer mTileLayer = {};
 	ElementGridDisplayCache mCache = {};
 };

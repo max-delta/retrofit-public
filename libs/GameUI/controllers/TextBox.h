@@ -29,7 +29,7 @@ public:
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
-		Justification justification,
+		Justification::Value justification,
 		math::Color3f color,
 		rftl::unordered_set<char> const& breakableChars );
 
@@ -50,7 +50,7 @@ public:
 private:
 	size_t const mNumRows;
 	FontPurposeID const mFontPurpose;
-	Justification const mJustification;
+	Justification::Value const mJustification;
 	math::Color3f const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	bool mRightToLeft = false;

@@ -33,7 +33,7 @@ ElementGrid::ElementGrid( Size size )
 
 
 
-void ElementGrid::SetJustification( Justification justification )
+void ElementGrid::SetJustification( Justification::Value justification )
 {
 	mJustification = justification;
 }

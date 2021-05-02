@@ -12,12 +12,12 @@ namespace RF::ui {
 gfx::ppu::Coord GAMEUI_API AlignToJustify(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::AABB const& enclosure,
-	Justification justification );
+	Justification::Value justification );
 
 gfx::ppu::Coord GAMEUI_API AlignToJustifyOnPoint(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::Coord point,
-	Justification justification );
+	Justification::Value justification );
 
 
 // NOTE: Differs from naive glyph sizes, takes into account 'tails' and other

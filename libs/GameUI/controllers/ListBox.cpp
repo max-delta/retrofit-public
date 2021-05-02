@@ -62,7 +62,7 @@ ListBox::ListBox(
 	Orientation orientation,
 	size_t numSlots,
 	FontPurposeID purpose,
-	Justification justification,
+	Justification::Value justification,
 	math::Color3f unfocusedColor,
 	math::Color3f unselectedColor,
 	math::Color3f selectedColor )

@@ -28,6 +28,8 @@ enum : FontPurposeID
 
 	LargeMenuHeader,
 
+	OverworldLabel,
+
 	MessageBox
 };
 }

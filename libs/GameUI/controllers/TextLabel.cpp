@@ -54,7 +54,7 @@ void TextLabel::SetText( char const* text )
 
 
 
-void TextLabel::SetJustification( Justification justification )
+void TextLabel::SetJustification( Justification::Value justification )
 {
 	mJustification = justification;
 }

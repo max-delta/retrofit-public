@@ -39,7 +39,7 @@ void BorderFrame::SetTileset(
 
 
 
-void BorderFrame::SetJustification( Justification justification )
+void BorderFrame::SetJustification( Justification::Value justification )
 {
 	mJustification = justification;
 }

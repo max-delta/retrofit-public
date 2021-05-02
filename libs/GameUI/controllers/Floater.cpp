@@ -18,7 +18,7 @@ RFTYPE_CREATE_META( RF::ui::controller::Floater )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-Floater::Floater( gfx::ppu::CoordElem width, gfx::ppu::CoordElem height, Justification justification )
+Floater::Floater( gfx::ppu::CoordElem width, gfx::ppu::CoordElem height, Justification::Value justification )
 	: mJustification( justification )
 	, mDimensions( width, height )
 {
