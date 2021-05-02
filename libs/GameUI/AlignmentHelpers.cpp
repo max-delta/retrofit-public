@@ -7,6 +7,7 @@
 
 #include "core_math/AABB4.h"
 #include "core_math/Lerp.h"
+#include "core_math/BitwiseEnums.h"
 
 
 namespace RF::ui {
@@ -17,6 +18,8 @@ gfx::ppu::Coord AlignToJustify(
 	gfx::ppu::AABB const& enclosure,
 	Justification::Value justification )
 {
+	using namespace enable_bitwise_enums;
+
 	RF_ASSERT( enclosure.Left() <= enclosure.Right() );
 	RF_ASSERT( enclosure.Top() <= enclosure.Bottom() );
 
@@ -24,15 +27,15 @@ gfx::ppu::Coord AlignToJustify(
 	gfx::ppu::Coord pos = enclosure.mTopLeft;
 
 	// Y
-	if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Top ) )
+	if( justification & Justification::Top )
 	{
 		pos.y = enclosure.Top();
 	}
-	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Bottom ) )
+	else if( justification & Justification::Bottom )
 	{
 		pos.y = enclosure.Bottom() - objectDimensions.y;
 	}
-	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Middle ) )
+	else if( justification & Justification::Middle )
 	{
 		gfx::ppu::CoordElem const top = enclosure.Top();
 		gfx::ppu::CoordElem const bottom = enclosure.Bottom() - objectDimensions.y;
@@ -44,15 +47,15 @@ gfx::ppu::Coord AlignToJustify(
 	}
 
 	// X
-	if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Left ) )
+	if( justification & Justification::Left )
 	{
 		pos.x = enclosure.Left();
 	}
-	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Right ) )
+	else if( justification & Justification::Right )
 	{
 		pos.x = enclosure.Right() - objectDimensions.x;
 	}
-	else if( math::enum_bitcast( justification ) & math::enum_bitcast( Justification::Center ) )
+	else if( justification & Justification::Center )
 	{
 		gfx::ppu::CoordElem const left = enclosure.Left();
 		gfx::ppu::CoordElem const right = enclosure.Right() - objectDimensions.x;
