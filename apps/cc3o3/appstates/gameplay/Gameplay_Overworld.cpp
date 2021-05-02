@@ -21,6 +21,7 @@
 #include "GamePixelPhysics/DirectionLogic.h"
 #include "GamePixelPhysics/PixelCast.h"
 #include "GamePixelPhysics/PrimitiveCollision.h"
+#include "GameUI/AlignmentHelpers.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FontRegistry.h"
 #include "GameUI/UIContext.h"
@@ -531,6 +532,9 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		RF_ASSERT( pawnMovementPtr != nullptr );
 		phys::Coord const curPos = pawnMovementPtr->mCurPos.GetCoord();
 
+		ui::Font const font = app::gFontRegistry->SelectBestFont(
+			ui::font::OverworldLabel, app::gGraphics->GetCurrentZoomFactor() );
+
 		for( overworld::Area const& area : internalState.mAreas )
 		{
 			bool const inArea = phys::PrimitiveCollision::HasCollision( area.mAABB, curPos );
@@ -538,7 +542,19 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			if( kDebugRendering )
 			{
 				ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerAreaDebug, math::Color3f::kCyan );
-				ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
+				ppu.DebugDrawText( area.mAABB.mBottomRight, "%s", area.mIdentifier.c_str() );
+			}
+
+			if( inArea )
+			{
+				rftl::string const TODO_Localize = area.mIdentifier;
+
+				gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, TODO_Localize.c_str() );
+				gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
+				ppu.DrawText(
+					pos, InternalState::kLayerAreaLabel,
+					font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
+					"%s", TODO_Localize.c_str() );
 			}
 
 			if( inArea && attemptingInteraction )
