@@ -71,11 +71,40 @@ gfx::ppu::Coord AlignToJustify(
 
 
 
-gfx::ppu::Coord GAMEUI_API AlignToJustifyOnPoint(
+gfx::ppu::Coord GAMEUI_API AlignToJustifyAroundPoint(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::Coord point,
 	Justification::Value justification )
 {
+	using namespace enable_bitwise_enums;
+
+	// Will use AABB logic with a zero-sized AABB, so need to invert
+	//  justifications to get correct results
+
+	// Y
+	if( justification & Justification::Top )
+	{
+		justification &= ~Justification::Top;
+		justification |= Justification::Bottom;
+	}
+	else if( justification & Justification::Bottom )
+	{
+		justification &= ~Justification::Bottom;
+		justification |= Justification::Top;
+	}
+
+	// X
+	if( justification & Justification::Left )
+	{
+		justification &= ~Justification::Left;
+		justification |= Justification::Right;
+	}
+	else if( justification & Justification::Right )
+	{
+		justification &= ~Justification::Right;
+		justification |= Justification::Left;
+	}
+
 	return AlignToJustify( objectDimensions, { point, point }, justification );
 }
 

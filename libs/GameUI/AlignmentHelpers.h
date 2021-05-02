@@ -14,7 +14,9 @@ gfx::ppu::Coord GAMEUI_API AlignToJustify(
 	gfx::ppu::AABB const& enclosure,
 	Justification::Value justification );
 
-gfx::ppu::Coord GAMEUI_API AlignToJustifyOnPoint(
+// NOTE: Justifies relative to point, so for example 'Top' will display above
+//  the specified point
+gfx::ppu::Coord GAMEUI_API AlignToJustifyAroundPoint(
 	gfx::ppu::Vec2 objectDimensions,
 	gfx::ppu::Coord point,
 	Justification::Value justification );
