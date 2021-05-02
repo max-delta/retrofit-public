@@ -22,6 +22,7 @@
 #include "GamePixelPhysics/PixelCast.h"
 #include "GamePixelPhysics/PrimitiveCollision.h"
 #include "GameUI/ContainerManager.h"
+#include "GameUI/FontRegistry.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/NineSlicer.h"
@@ -51,9 +52,11 @@ struct Gameplay_Overworld::InternalState
 	InternalState() = default;
 
 	static constexpr gfx::ppu::DepthLayer kLayerTerrain = 100;
-	static constexpr gfx::ppu::DepthLayer kLayerRegion = -20;
+	static constexpr gfx::ppu::DepthLayer kLayerAreaDebug = 20;
 	static constexpr gfx::ppu::DepthLayer kLayerCharStart = 10;
+	static constexpr gfx::ppu::DepthLayer kLayerAreaLabel = -20;
 	static constexpr gfx::ppu::DepthLayer kLayerCloudStart = -50;
+	static constexpr gfx::ppu::DepthLayer kLayerDebugOverlay = -70;
 
 	math::Bitmap mCollisionMap{ ExplicitDefaultConstruct{} };
 	gfx::ppu::TileLayer mTerrainLand = {};
@@ -250,6 +253,9 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	// TODO: Configurable debug rendering
+	static constexpr bool kDebugRendering = true;
 
 	// Show/hide UI based on idle/activity
 	time::CommonClock::duration const timeSinceLastActivity = time::FrameClock::now() - internalState.mLastActivity;
@@ -454,6 +460,17 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			pawnMovement.mCurPos.SetCoord( pos );
 		}
 
+		if( kDebugRendering )
+		{
+			phys::Coord const curPos = pawnMovementPtr->mCurPos.GetCoord();
+			ui::Font const font = app::gFontRegistry->SelectBestFont(
+				ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
+			ppu.DebugDrawAuxText(
+				{ 0, 0 }, InternalState::kLayerDebugOverlay,
+				font.mFontHeight, font.mManagedFontID, true, math::Color3f::kCyan,
+				"X:%03i Y:%03i", curPos.x, curPos.y );
+		}
+
 		RF_TODO_ANNOTATION( "Move followers" );
 
 		// Update viewport
@@ -518,9 +535,11 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		{
 			bool const inArea = phys::PrimitiveCollision::HasCollision( area.mAABB, curPos );
 
-			// TODO: Configurable debug rendering
-			ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerRegion, math::Color3f::kCyan );
-			ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
+			if( kDebugRendering )
+			{
+				ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerAreaDebug, math::Color3f::kCyan );
+				ppu.DebugDrawText( area.mFocus, "%s", area.mIdentifier.c_str() );
+			}
 
 			if( inArea && attemptingInteraction )
 			{
