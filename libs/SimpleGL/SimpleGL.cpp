@@ -19,6 +19,22 @@
 
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+void ConsumeErrors()
+{
+	GLenum const error = glGetError();
+	if( error != GL_NO_ERROR )
+	{
+		rftl::abort();
+	}
+}
+#define CONSUME_ERRORS() ::RF::gfx::details::ConsumeErrors()
+#define CANT_ERROR()
+#define API_ERROR_BUG() // Can't call glGetError() here
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 {
@@ -64,6 +80,7 @@ bool SimpleGL::DetachFromWindow()
 {
 	// Delete the font list
 	glDeleteLists( font_base, 96 );
+	CONSUME_ERRORS();
 
 	// All calls to OpenGL will be ignored
 	shim::wglMakeCurrent( nullptr, nullptr );
@@ -104,14 +121,19 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 	// Reset The current viewport
 	glViewport( 0, 0, width, height );
+	CONSUME_ERRORS();
 
 	// Select and reset the texture matrix
 	glMatrixMode( GL_TEXTURE );
+	CONSUME_ERRORS();
 	glLoadIdentity();
+	CONSUME_ERRORS();
 
 	// Select and reset the projection matrix
 	glMatrixMode( GL_PROJECTION );
+	CONSUME_ERRORS();
 	glLoadIdentity();
+	CONSUME_ERRORS();
 
 	// WARNING: glOrtho has TERRIBLE parameters
 	// SEE: https://www.opengl.org/discussion_boards/showthread.php/176234-glortho-zNear-and-zFar
@@ -129,29 +151,34 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 		case RF::gfx::SimpleGL::ProjectionMode::TRUE_BUFFER_00UPLEFT:
 			// Create Ortho View (0,0 At Top Left)
 			glOrtho( 0, width, height, 0, 1, -1 );
+			CONSUME_ERRORS();
 			mXFudge = 0.5f;
 			mYFudge = 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT:
 			// Create Ortho View (0,0 At Top Left)
 			glOrtho( 0, 1, 1, 0, 1, -1 );
+			CONSUME_ERRORS();
 			mXFudge = 1.f / widthf * 0.5f;
 			mYFudge = 1.f / heightf * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC01_00DWNLEFT:
 			// Create Ortho View (0,0 At Bottom Left)
 			glOrtho( 0, 1, 0, 1, 1, -1 );
+			CONSUME_ERRORS();
 			mXFudge = 1.f / widthf * 0.5f;
 			mYFudge = 1.f / heightf * 0.5f;
 			break;
 		case RF::gfx::SimpleGL::ProjectionMode::NDC11_11UPRIGHT:
 			// Create Ortho View (1,1 At Top Right)
 			glOrtho( -1, 1, -1, 1, 1, -1 );
+			CONSUME_ERRORS();
 			mXFudge = 2.f / widthf * 0.5f;
 			mYFudge = 2.f / heightf * 0.5f;
 			break;
 		default:
 			glOrtho( 0, 1, 1, 0, 1, -1 );
+			CONSUME_ERRORS();
 			mXFudge = 1.f / widthf * 0.5f;
 			mYFudge = 1.f / heightf * 0.5f;
 			break;
@@ -159,55 +186,70 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 	// Select and reset the modelview matrix
 	glMatrixMode( GL_MODELVIEW );
+	CONSUME_ERRORS();
 	glLoadIdentity();
+	CONSUME_ERRORS();
 
 	// The front faces of polygons will be drawn filled
 	glPolygonMode( GL_FRONT, GL_FILL );
+	CONSUME_ERRORS();
 
 	//The back faces of polygons will be drawn filled
 	glPolygonMode( GL_BACK, GL_FILL );
+	CONSUME_ERRORS();
 
 	// Individual vertexes in a polygon can have individual color values. These
 	//  values are then smoothed across the polygon in relation to a point's
 	//  proximity to a vertex.
 	glShadeModel( GL_SMOOTH );
+	CONSUME_ERRORS();
 
 	// Enable texture mapping
 	glEnable( GL_TEXTURE_2D );
+	CONSUME_ERRORS();
 
 	// Enable depth-buffer
 	// NOTE: May not be needed if depth-sorting is performed before raster
 	glDepthMask( GL_TRUE );
+	CONSUME_ERRORS();
 
 	// Enable depth-testing
 	// NOTE: May not be needed if depth-sorting is performed before raster
 	glEnable( GL_DEPTH_TEST );
+	CONSUME_ERRORS();
 
 	// Passes if the incoming depth value is GL_LESS than the stored depth
 	//  value
 	// NOTE: May not be needed if depth-sorting is performed before raster
 	glDepthFunc( GL_LESS );
+	CONSUME_ERRORS();
 
 	// Enable antialiasing for points
 	glEnable( GL_POINT_SMOOTH );
+	CONSUME_ERRORS();
 
 	// For deciding how to calculate antialiasing for points, we prefer the
 	//  nicest possible algorithms
 	glHint( GL_POINT_SMOOTH_HINT, GL_NICEST );
+	CONSUME_ERRORS();
 
 	// Enable antialiasing for lines
 	glEnable( GL_LINE_SMOOTH );
+	CONSUME_ERRORS();
 
 	// For deciding how to calculate antialiasing for lines, we prefer the
 	//  nicest possible algorithms
 	glHint( GL_LINE_SMOOTH_HINT, GL_NICEST );
+	CONSUME_ERRORS();
 
 	// Enable alpha-blending. Note that this is also required for antialiasing.
 	glEnable( GL_BLEND );
+	CONSUME_ERRORS();
 
 	// When we blend two colors together, alpha calculations will be done based
 	//  on the overlapping color's alpha value
 	glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+	CONSUME_ERRORS();
 
 	return true;
 }
@@ -218,6 +260,7 @@ bool SimpleGL::SetBackgroundColor( math::Color3f color )
 {
 	// When we call Clear, it will clear to this color
 	glClearColor( color.r, color.g, color.b, 1.f );
+	CONSUME_ERRORS();
 	return true;
 }
 
@@ -246,10 +289,15 @@ DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& 
 
 	unsigned int retVal = 0;
 	glGenTextures( 1, &retVal );
+	CONSUME_ERRORS();
 	glBindTexture( GL_TEXTURE_2D, retVal );
+	CONSUME_ERRORS();
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+	CONSUME_ERRORS();
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+	CONSUME_ERRORS();
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+	CONSUME_ERRORS();
 	stbi_image_free( data );
 	return retVal;
 }
@@ -260,6 +308,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glDeleteTextures( 1, &texID );
+	CONSUME_ERRORS();
 	return true;
 }
 
@@ -385,6 +434,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	{
 		rftl::array<GLuint, 256> tempStore;
 		glGenTextures( math::integer_cast<GLsizei>( fontStorage.size() ), tempStore.data() );
+		CONSUME_ERRORS();
 		for( size_t i = 0; i < tempStore.size(); i++ )
 		{
 			fontStorage[i] = tempStore[i];
@@ -396,6 +446,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 		uint8_t const* const listBuffer = listStorage[i].data();
 		GLuint const texID = math::integer_cast<GLuint>( fontStorage[i] );
 		glBindTexture( GL_TEXTURE_2D, texID );
+		CONSUME_ERRORS();
 		glTexImage2D(
 			GL_TEXTURE_2D,
 			0,
@@ -406,8 +457,11 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 			GL_ALPHA,
 			GL_UNSIGNED_BYTE,
 			listBuffer );
+		CONSUME_ERRORS();
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+		CONSUME_ERRORS();
 		glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+		CONSUME_ERRORS();
 	}
 
 	return retVal;
@@ -426,6 +480,7 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 {
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<unsigned char>( character ) );
 	glColor3f( color.r, color.g, color.b );
+	CANT_ERROR();
 	return DrawBillboardInternal( texID, pos, z, texUV );
 }
 
@@ -434,10 +489,12 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 bool SimpleGL::DebugRenderText( math::Vector2f pos, float z, const char* fmt, ... )
 {
 	glColor3f( 0, 0, 0 );
+	CANT_ERROR();
 	glRasterPos3f( pos.x, pos.y, z );
+	CANT_ERROR();
 	va_list args;
 	va_start( args, fmt );
-	bool const retVal = glPrint( fmt, args );
+	bool const retVal = DrawTextInternal( fmt, args );
 	va_end( args );
 	return retVal;
 }
@@ -447,22 +504,34 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, float z, const char* fmt, ..
 bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, float width, math::Color3f color )
 {
 	glBindTexture( GL_TEXTURE_2D, 0 );
+	CONSUME_ERRORS();
 	glColor3f( color.r, color.g, color.b );
+	CANT_ERROR();
 	if( width < 1 )
 	{
 		glLineWidth( 1.1f ); // HACK: Make diagonals fatter, but not horizontal or vertical
+		CONSUME_ERRORS();
 		glBegin( GL_LINES );
+		API_ERROR_BUG();
 		glVertex3f( p0.x + mXFudge, p0.y + mYFudge, z );
+		CANT_ERROR();
 		glVertex3f( p1.x + mXFudge, p1.y + mYFudge, z );
+		CANT_ERROR();
 		glEnd();
+		CONSUME_ERRORS();
 	}
 	else
 	{
 		glLineWidth( width );
+		CONSUME_ERRORS();
 		glBegin( GL_LINES );
+		API_ERROR_BUG();
 		glVertex3f( p0.x - mXFudge * width, p0.y - mYFudge * width, z );
+		CANT_ERROR();
 		glVertex3f( p1.x - mXFudge * width, p1.y - mYFudge * width, z );
+		CANT_ERROR();
 		glEnd();
+		CONSUME_ERRORS();
 	}
 	return true;
 }
@@ -472,6 +541,7 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, flo
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z )
 {
 	glColor3f( 1, 1, 1 );
+	CANT_ERROR();
 	DrawBillboardInternal( textureID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
 	return true;
 }
@@ -481,6 +551,7 @@ bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
 	glColor3f( 1, 1, 1 );
+	CANT_ERROR();
 	DrawBillboardInternal( textureID, pos, z, texUV );
 	return true;
 }
@@ -492,7 +563,9 @@ bool SimpleGL::BeginFrame()
 	shim::wglMakeCurrent( mHDC, mHRC );
 	// Clear the buffer
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	CONSUME_ERRORS();
 	glPushMatrix();
+	CONSUME_ERRORS();
 	return true;
 }
 
@@ -501,21 +574,30 @@ bool SimpleGL::BeginFrame()
 bool SimpleGL::RenderFrame()
 {
 	glColor3f( 1, 1, 1 );
+	CANT_ERROR();
 #ifdef SIMPLEGL_DBG_GRID
 	{
 		for( float horizontal = 0; horizontal <= 1; horizontal += 0.1f )
 		{
 			glBegin( GL_LINES );
+			API_ERROR_BUG();
 			glVertex2d( horizontal, 0 );
+			CANT_ERROR();
 			glVertex2d( horizontal, 1 );
+			CANT_ERROR();
 			glEnd();
+			CONSUME_ERRORS();
 		}
 		for( float vertical = 0; vertical <= 1; vertical += 0.1f )
 		{
 			glBegin( GL_LINES );
+			API_ERROR_BUG();
 			glVertex2d( 0, vertical );
+			CANT_ERROR();
 			glVertex2d( 1, vertical );
+			CANT_ERROR();
 			glEnd();
+			CONSUME_ERRORS();
 		}
 	}
 #endif
@@ -523,6 +605,7 @@ bool SimpleGL::RenderFrame()
 	//  Note that this does NOT insure that the commands were executed, only
 	//  that they have been sent.
 	glFlush();
+	CONSUME_ERRORS();
 	return true;
 }
 
@@ -531,11 +614,12 @@ bool SimpleGL::RenderFrame()
 bool SimpleGL::EndFrame()
 {
 	glPopMatrix();
+	CONSUME_ERRORS();
 	shim::SwapBuffers( mHDC );
 	return true;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////
 
 void SimpleGL::BuildFont( int8_t height )
 {
@@ -546,8 +630,10 @@ void SimpleGL::BuildFont( int8_t height )
 	shim::HFONT oldfont{};
 
 	glDeleteLists( font_base, 96 );
+	CONSUME_ERRORS();
 	// Storage For 96 Characters
 	font_base = glGenLists( 96 );
+	CONSUME_ERRORS();
 	font = shim::CreateFontW(
 		-height /*-12*/, // Height of font
 		0, // Width of font
@@ -579,10 +665,54 @@ void SimpleGL::BuildFont( int8_t height )
 
 
 
+bool SimpleGL::DrawTextInternal( char const* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	bool const retVal = DrawTextInternal( fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+
+
+bool SimpleGL::DrawTextInternal( char const* fmt, va_list args )
+{
+	if( fmt == nullptr )
+	{
+		return false;
+	}
+
+	char text[256];
+	vsprintf_s( text, fmt, args );
+	text[255] = '\0';
+
+	// Pushes the display list bits
+	glPushAttrib( GL_LIST_BIT );
+	CONSUME_ERRORS();
+
+	// Sets the base character to 32
+	glListBase( font_base - 32 );
+	CONSUME_ERRORS();
+
+	// Draws the display list text
+	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text );
+	CANT_ERROR();
+
+	// Pops the display list bits
+	glPopAttrib();
+	CONSUME_ERRORS();
+
+	return true;
+}
+
+
+
 bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glBindTexture( GL_TEXTURE_2D, texID );
+	CONSUME_ERRORS();
 	float const left = pos.mTopLeft.x;
 	float const top = pos.mTopLeft.y;
 	float const right = pos.mBottomRight.x;
@@ -592,51 +722,37 @@ bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f po
 	float const u1 = texUV.mBottomRight.x;
 	float const v1 = texUV.mBottomRight.y;
 	glBegin( GL_QUADS );
+	API_ERROR_BUG();
 	{
 		glTexCoord2f( u0, v0 );
+		CANT_ERROR();
 		glVertex3f( left, top, z );
+		CANT_ERROR();
 		glTexCoord2f( u1, v0 );
+		CANT_ERROR();
 		glVertex3f( right, top, z );
+		CANT_ERROR();
 		glTexCoord2f( u1, v1 );
+		CANT_ERROR();
 		glVertex3f( right, bottom, z );
+		CANT_ERROR();
 		glTexCoord2f( u0, v1 );
+		CANT_ERROR();
 		glVertex3f( left, bottom, z );
+		CANT_ERROR();
 	}
 	glEnd();
+	CONSUME_ERRORS();
 	glBindTexture( GL_TEXTURE_2D, 0 );
+	CONSUME_ERRORS();
 	return true;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 
-
-bool SimpleGL::glPrint( char const* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = glPrint( fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool SimpleGL::glPrint( char const* fmt, va_list args )
-{
-	char text[256];
-	if( fmt == nullptr )
-		return false;
-	vsprintf_s( text, fmt, args );
-	text[255] = '\0';
-	// Pushes the display list bits
-	glPushAttrib( GL_LIST_BIT );
-	// Sets the base character to 32
-	glListBase( font_base - 32 );
-	// Draws the display list text
-	glCallLists( static_cast<GLsizei>( strlen( text ) ), GL_UNSIGNED_BYTE, text );
-	// Pops the display list bits
-	glPopAttrib();
-	return true;
-}
+#undef CONSUME_ERRORS
+#undef CANT_ERROR
+#undef API_ERROR_BUG
 
 ///////////////////////////////////////////////////////////////////////////////
 }

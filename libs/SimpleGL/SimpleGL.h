@@ -53,9 +53,6 @@ public:
 	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color ) override;
 	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV ) override;
 
-	bool glPrint( char const* fmt, ... );
-	bool glPrint( char const* fmt, va_list args );
-
 	bool DebugRenderText( math::Vector2f pos, float z, const char* fmt, ... ) override;
 	bool DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, float width, math::Color3f color ) override;
 	bool DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z ) override;
@@ -70,6 +67,8 @@ public:
 	// Private methods
 private:
 	void BuildFont( int8_t height );
+	bool DrawTextInternal( char const* fmt, ... );
+	bool DrawTextInternal( char const* fmt, va_list args );
 	bool DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV );
 
 
