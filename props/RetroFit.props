@@ -58,7 +58,8 @@
 
 			<!--Reduce warning level in crappy MS headers, determnied via angle
 				bracket include directives-->
-			<AdditionalOptions>/experimental:external /external:W3 /external:anglebrackets %(AdditionalOptions)</AdditionalOptions>
+			<ExternalWarningLevel>Level3</ExternalWarningLevel>
+			<TreatAngleIncludeAsExternal>true</TreatAngleIncludeAsExternal>
 
 			<!--This configures static analysis rules-->
 			<ForcedIncludeFiles>$(RFRootDir)props\StaticAnalysis.h; %(ForcedIncludeFiles)</ForcedIncludeFiles>

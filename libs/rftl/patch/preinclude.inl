@@ -34,6 +34,14 @@
 	#pragma warning( push )
 	#pragma warning( disable : 4355 ) // <thread> has invalid use of 'this' ptr
 	#pragma warning( disable : 5204 ) // <thread> has virtuals without destructor
+#elif defined( _MSC_VER ) && \
+	( _MSC_VER >= 1929 && _MSC_VER <= 1929 ) && \
+	!defined( RFTL_DISABLE_BAD_MSVC_WARNINGS )
+#define RFTL_DISABLE_BAD_MSVC_WARNINGS
+	#pragma warning( push )
+	#pragma warning( disable : 4355 ) // <thread> has invalid use of 'this' ptr
+	#pragma warning( disable : 5204 ) // <thread> has virtuals without destructor
+	#pragma warning( disable : 6285 ) // <functional> triggers analysis failure
 #endif
 
 #if \
