@@ -135,7 +135,11 @@ void Startup( cli::ArgView const& args )
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
 	sGraphics = DefaultCreator<gfx::ppu::PPUController>::Create( rftl::move( renderDevice ), gVfs );
 	gGraphics = sGraphics;
-	gGraphics->Initialize( k_Width, k_Height );
+	bool const graphicsInitialized = gGraphics->Initialize( k_Width, k_Height );
+	if( graphicsInitialized == false )
+	{
+		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to initialize graphics" );
+	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	sWndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();

@@ -13,6 +13,7 @@
 #include "rftl/cstdio"
 #include "rftl/cstdarg"
 #include "rftl/string"
+#include "rftl/string_view"
 #include "rftl/vector"
 #include "rftl/array"
 
@@ -85,8 +86,6 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 		return false;
 	}
 
-	SetFontScale( 1.f );
-
 	return true;
 }
 
@@ -128,6 +127,34 @@ bool SimpleGL::DetachFromWindow()
 
 bool SimpleGL::Initialize2DGraphics()
 {
+	{
+		// Oldest version check support, gets a UTF-8 string that begins with
+		//  the major number followed by a dot, and then quickly degenerates
+		//  into a bunhc of vendor-specific stuff past that
+		GLubyte const* const versionStringBytes = glGetString( GL_VERSION );
+		CONSUME_ERRORS();
+		if( versionStringBytes == nullptr )
+		{
+			fprintf( stderr, "Invalid OpenGL version string\n" );
+			return false;
+		}
+		rftl::string_view const versionString( reinterpret_cast<char const*>( versionStringBytes ) );
+		if( versionString.size() < 2 )
+		{
+			fprintf( stderr, "Unsupported OpenGL version string\n" );
+			return false;
+		}
+		if( versionString.at( 0 ) == '1' && versionString.at( 1 ) == '.' )
+		{
+			// Specifically want to avoid anything before OpenGL 2.0, since we
+			//  want to make use of non-power-of-two (NPOT) textures
+			fprintf( stderr, "Unsupported OpenGL version: %s\n", versionStringBytes );
+			return false;
+		}
+	}
+
+	SetFontScale( 1.f );
+
 	SetProjectionMode( RF::gfx::SimpleGL::ProjectionMode::NDC01_00UPLEFT );
 	return true;
 }
