@@ -123,8 +123,14 @@ void Startup( cli::ArgView const& args )
 	constexpr uint16_t k_Width = gfx::ppu::kDesiredWidth * k_WindowScaleFactor;
 	constexpr uint16_t k_Height = gfx::ppu::kDesiredHeight * k_WindowScaleFactor;
 	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Attaching renderer..." );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
-	renderDevice->AttachToWindow( hwnd );
+	bool const rendererAttached = renderDevice->AttachToWindow( hwnd );
+	if( rendererAttached == false )
+	{
+		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to attach a renderer to window" );
+	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
 	sGraphics = DefaultCreator<gfx::ppu::PPUController>::Create( rftl::move( renderDevice ), gVfs );

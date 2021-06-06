@@ -59,15 +59,31 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 
 	// Try to find an appropriate pixel format to meet our demands
 	int const iFormat = shim::ChoosePixelFormat( mHDC, &pfd );
+	if( iFormat == 0 )
+	{
+		return false;
+	}
 
 	// Set the chosen pixel format
-	shim::SetPixelFormat( mHDC, iFormat, &pfd );
+	bool const pixelFormatSuccess = shim::SetPixelFormat( mHDC, iFormat, &pfd );
+	if( pixelFormatSuccess == false )
+	{
+		return false;
+	}
 
 	// Create a render context for OpenGL
 	mHRC = shim::wglCreateContext( mHDC );
+	if( mHRC == nullptr )
+	{
+		return false;
+	}
 
 	// All calls to OpenGL will use this context
-	shim::wglMakeCurrent( mHDC, mHRC );
+	bool const makeCurrentSuccess = shim::wglMakeCurrent( mHDC, mHRC );
+	if( makeCurrentSuccess == false )
+	{
+		return false;
+	}
 
 	SetFontScale( 1.f );
 
@@ -78,20 +94,34 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 
 bool SimpleGL::DetachFromWindow()
 {
+	bool totalSuccess = true;
+
 	// Delete the font list
 	glDeleteLists( font_base, 96 );
 	CONSUME_ERRORS();
 
 	// All calls to OpenGL will be ignored
-	shim::wglMakeCurrent( nullptr, nullptr );
+	bool const makeCurrentSuccess = shim::wglMakeCurrent( nullptr, nullptr );
+	if( makeCurrentSuccess == false )
+	{
+		totalSuccess = false;
+	}
 
 	// Discard the old render context
-	shim::wglDeleteContext( mHRC );
+	bool const deleteContextSuccess = shim::wglDeleteContext( mHRC );
+	if( deleteContextSuccess == false )
+	{
+		totalSuccess = false;
+	}
 
 	// Release control of the device context
-	shim::ReleaseDC( mHWnd, mHDC );
+	int const releaseResult = shim::ReleaseDC( mHWnd, mHDC );
+	if( releaseResult != 1 )
+	{
+		totalSuccess = false;
+	}
 
-	return true;
+	return totalSuccess;
 }
 
 
