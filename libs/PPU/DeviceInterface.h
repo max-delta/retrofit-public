@@ -8,6 +8,7 @@
 #include "core_platform/shim/win_shim.h"
 
 #include "rftl/array"
+#include "rftl/string"
 #include "rftl/extension/byte_view.h"
 
 
@@ -24,6 +25,8 @@ public:
 
 	virtual bool AttachToWindow( shim::HWND hWnd ) = 0;
 	virtual bool DetachFromWindow() = 0;
+
+	virtual rftl::string GetAttachedDeviceDescription() const = 0;
 	virtual bool Initialize2DGraphics() = 0;
 
 	virtual bool SetSurfaceSize( uint16_t width, uint16_t height ) = 0;

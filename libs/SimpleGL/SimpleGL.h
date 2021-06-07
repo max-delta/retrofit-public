@@ -39,6 +39,8 @@ public:
 
 	bool AttachToWindow( shim::HWND hWnd ) override;
 	bool DetachFromWindow() override;
+
+	rftl::string GetAttachedDeviceDescription() const override;
 	bool Initialize2DGraphics() override;
 
 	bool SetProjectionMode( ProjectionMode mode );

@@ -125,6 +125,21 @@ bool SimpleGL::DetachFromWindow()
 
 
 
+rftl::string SimpleGL::GetAttachedDeviceDescription() const
+{
+	GLubyte const* const versionStringBytes = glGetString( GL_VERSION );
+	CONSUME_ERRORS();
+	if( versionStringBytes == nullptr )
+	{
+		return "SimpleGL - Invalid version string";
+	}
+
+	rftl::string_view const versionString( reinterpret_cast<char const*>( versionStringBytes ) );
+	return rftl::string( "SimpleGL - " ).append( versionString );
+}
+
+
+
 bool SimpleGL::Initialize2DGraphics()
 {
 	{
