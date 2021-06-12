@@ -4,6 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/overworld/Overworld.h"
 #include "cc3o3/state/StateLogging.h"
@@ -255,6 +256,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	campaign::CampaignManager& campaign = *gCampaignManager;
 
 	// TODO: Configurable debug rendering
 	static constexpr bool kDebugRendering = true;
@@ -546,34 +548,43 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				ppu.DebugDrawText( area.mAABB.mBottomRight, "%s", area.mIdentifier.c_str() );
 			}
 
-			if( inArea )
+			if( area.mType == overworld::AreaType::Campaign )
 			{
-				rftl::string const label = ui::LocalizeKey( rftl::string( "$location_area_" ) + area.mIdentifier );
+				// Campaign-related
 
-				gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label.c_str() );
-				gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
-				ppu.DrawText(
-					pos, InternalState::kLayerAreaLabel,
-					font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
-					"%s", label.c_str() );
+				if( inArea == false )
+				{
+					continue;
+				}
+
+				// Display label
+				{
+					rftl::string const labelKey = campaign.DetermineOverworldAreaLocKey( area.mIdentifier );
+					RF_ASSERT( labelKey.empty() == false );
+					rftl::string const label = ui::LocalizeKey( labelKey );
+
+					gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label.c_str() );
+					gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
+					ppu.DrawText(
+						pos, InternalState::kLayerAreaLabel,
+						font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
+						"%s", label.c_str() );
+				}
+
+				// Interacting?
+				if( attemptingInteraction )
+				{
+					bool const success = campaign.TryInteractWithOverworldArea( context, area.mIdentifier );
+					if( success )
+					{
+						// Consume interaction
+						attemptingInteraction = false;
+					}
+				}
 			}
-
-			if( inArea && attemptingInteraction )
+			else
 			{
-				// By default, consume interaction
-				attemptingInteraction = false;
-
-				if( area.mType == overworld::AreaType::Site )
-				{
-					// HACK: Just pop into site
-					// TODO: Make sure party can actually enter site, and set it up
-					context.mManager.RequestDeferredStateChange( id::Gameplay_Site );
-				}
-				else
-				{
-					// Can't interact with this area, restore attempt
-					attemptingInteraction = true;
-				}
+				RF_DBGFAIL_MSG( "Unknown area type" );
 			}
 		}
 	}

@@ -69,9 +69,9 @@ Overworld Overworld::LoadFromDesc( file::VFSPath const& descPath )
 	{
 		Area area = {};
 		area.mIdentifier = areaDesc.mIdentifier;
-		if( areaDesc.mType == "Site" )
+		if( areaDesc.mType == "Campaign" )
 		{
-			area.mType = AreaType::Site;
+			area.mType = AreaType::Campaign;
 		}
 		phys::Coord const aabbStart = { areaDesc.mX, areaDesc.mY };
 		phys::Vec2 const aabbSize = { areaDesc.mWidth, areaDesc.mHeight };

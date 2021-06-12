@@ -8,7 +8,7 @@ namespace RF::cc::overworld {
 enum class AreaType : uint8_t
 {
 	Invalid = 0,
-	Site
+	Campaign
 };
 
 class Area;

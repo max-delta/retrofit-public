@@ -1,6 +1,10 @@
 #pragma once
 #include "cc3o3/campaign/CampaignFwd.h"
 
+#include "GameAppState/AppStateFwd.h"
+
+#include "rftl/string"
+
 
 namespace RF::cc::campaign {
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,6 +20,12 @@ class CampaignManager
 	// Public methods
 public:
 	CampaignManager() = default;
+
+	std::string DetermineOverworldAreaLocKey(
+		rftl::string identifier );
+	bool TryInteractWithOverworldArea(
+		appstate::AppStateTickContext& context,
+		rftl::string identifier );
 
 
 	//
