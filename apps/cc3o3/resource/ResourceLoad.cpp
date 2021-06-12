@@ -4,6 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/char/CharData.h"
 #include "cc3o3/overworld/OverworldDesc.h"
+#include "cc3o3/site/SiteDesc.h"
 #include "cc3o3/save/SaveBlob.h"
 
 #include "GameResource/ResourceLoader.h"
@@ -18,10 +19,12 @@ namespace details {
 namespace type {
 enum : ResourceTypeIdentifier
 {
+	// This list enumerates all of the top-level resources that can be loaded
 	Invalid = kInvalidResourceTypeIdentifier,
 	CharData,
 	SaveBlob,
-	OverworldDesc
+	OverworldDesc,
+	SiteDesc
 };
 }
 
@@ -46,6 +49,8 @@ void InitializeLoader()
 	ResourceLoader& loader = *gResourceLoader;
 
 	{
+		// This list specifies which classes can be deserialized when loading
+		//  a given resource type
 		using namespace details::type;
 		loader.AddResourceClass( CharData, "CharData" );
 		loader.AddResourceClass( CharData, "Description" );
@@ -58,6 +63,7 @@ void InitializeLoader()
 		loader.AddResourceClass( SaveBlob, "SaveFileBlob" );
 		loader.AddResourceClass( OverworldDesc, "OverworldDesc" );
 		loader.AddResourceClass( OverworldDesc, "AreaDesc" );
+		loader.AddResourceClass( SiteDesc, "SiteDesc" );
 	}
 }
 
@@ -75,9 +81,11 @@ void InitializeLoader()
 		return LoadFromFile<TYPE>( path ); \
 	}
 
+// This list correlates top-level resource types with their classes
 RF_LOADER( details::type::CharData, character::CharData );
 RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
+RF_LOADER( details::type::SiteDesc, site::SiteDesc );
 
 #undef RF_LOADER
 

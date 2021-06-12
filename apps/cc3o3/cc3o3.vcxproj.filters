@@ -226,6 +226,12 @@
     <ClCompile Include="overworld\Area.cpp">
       <Filter>overworld</Filter>
     </ClCompile>
+    <ClCompile Include="site\Site.cpp">
+      <Filter>site</Filter>
+    </ClCompile>
+    <ClCompile Include="site\SiteDesc.cpp">
+      <Filter>site</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -624,6 +630,21 @@
     <ClInclude Include="overworld\Area.h">
       <Filter>overworld</Filter>
     </ClInclude>
+    <ClInclude Include="site\SiteFwd.h">
+      <Filter>site</Filter>
+    </ClInclude>
+    <ClInclude Include="site\stdafx.h">
+      <Filter>site</Filter>
+    </ClInclude>
+    <ClInclude Include="site\project.h">
+      <Filter>site</Filter>
+    </ClInclude>
+    <ClInclude Include="site\Site.h">
+      <Filter>site</Filter>
+    </ClInclude>
+    <ClInclude Include="site\SiteDesc.h">
+      <Filter>site</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -682,6 +703,9 @@
     </Filter>
     <Filter Include="resource">
       <UniqueIdentifier>{fdc4ba5f-5062-461e-8ac4-35389713afcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="site">
+      <UniqueIdentifier>{fe3cba7d-6c86-4a0d-9e25-31bf1ee02b89}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

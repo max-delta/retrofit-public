@@ -74,6 +74,8 @@
     <ClCompile Include="resource\ResourceLoad.cpp" />
     <ClCompile Include="save\SaveBlob.cpp" />
     <ClCompile Include="save\SaveManager.cpp" />
+    <ClCompile Include="site\Site.cpp" />
+    <ClCompile Include="site\SiteDesc.cpp" />
     <ClCompile Include="state\Component.cpp" />
     <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="state\components\Character.cpp" />
@@ -195,6 +197,11 @@
     <ClInclude Include="save\SaveFwd.h" />
     <ClInclude Include="save\SaveManager.h" />
     <ClInclude Include="save\stdafx.h" />
+    <ClInclude Include="site\project.h" />
+    <ClInclude Include="site\Site.h" />
+    <ClInclude Include="site\SiteDesc.h" />
+    <ClInclude Include="site\SiteFwd.h" />
+    <ClInclude Include="site\stdafx.h" />
     <ClInclude Include="state\Component.h" />
     <ClInclude Include="state\ComponentResolver.h" />
     <ClInclude Include="state\components\Character.h" />
