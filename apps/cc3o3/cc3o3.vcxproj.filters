@@ -232,6 +232,9 @@
     <ClCompile Include="site\SiteDesc.cpp">
       <Filter>site</Filter>
     </ClCompile>
+    <ClCompile Include="campaign\CampaignManager.cpp">
+      <Filter>campaign</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -645,6 +648,18 @@
     <ClInclude Include="site\SiteDesc.h">
       <Filter>site</Filter>
     </ClInclude>
+    <ClInclude Include="campaign\CampaignManager.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\project.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\stdafx.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\CampaignFwd.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -706,6 +721,9 @@
     </Filter>
     <Filter Include="site">
       <UniqueIdentifier>{fe3cba7d-6c86-4a0d-9e25-31bf1ee02b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="campaign">
+      <UniqueIdentifier>{fd4cf30c-7494-4043-ac94-83a9b60868d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

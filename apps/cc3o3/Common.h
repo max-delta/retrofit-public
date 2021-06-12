@@ -40,6 +40,9 @@ namespace RF::cc::state {
 struct ComponentResolver;
 using ObjectManager = component::TypedObjectManager<ComponentResolver>;
 }
+namespace RF::cc::campaign {
+class CampaignManager;
+}
 
 namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
@@ -56,6 +59,7 @@ extern WeakPtr<element::ElementDatabase> gElementDatabase;
 extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;
 extern WeakPtr<save::SaveManager> gSaveManager;
+extern WeakPtr<campaign::CampaignManager> gCampaignManager;
 
 void SystemStartup();
 void SystemShutdown();

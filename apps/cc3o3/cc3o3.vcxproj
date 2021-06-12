@@ -45,6 +45,7 @@
     <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp" />
     <ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp" />
     <ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp" />
+    <ClCompile Include="campaign\CampaignManager.cpp" />
     <ClCompile Include="cc3o3.cpp" />
     <ClCompile Include="char\CharData.cpp" />
     <ClCompile Include="char\CharacterDatabase.cpp" />
@@ -139,6 +140,10 @@
     <ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h" />
     <ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h" />
     <ClInclude Include="appstates\titlescreen\TitleScreen_Options.h" />
+    <ClInclude Include="campaign\CampaignFwd.h" />
+    <ClInclude Include="campaign\CampaignManager.h" />
+    <ClInclude Include="campaign\project.h" />
+    <ClInclude Include="campaign\stdafx.h" />
     <ClInclude Include="cc3o3.h" />
     <ClInclude Include="char\CharData.h" />
     <ClInclude Include="char\CharacterDatabase.h" />

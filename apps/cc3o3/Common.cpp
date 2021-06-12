@@ -8,6 +8,7 @@
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -42,6 +43,7 @@ WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<state::ObjectManager> gObjectManager;
 WeakPtr<save::SaveManager> gSaveManager;
+WeakPtr<campaign::CampaignManager> gCampaignManager;
 static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
 static UniquePtr<resource::ResourceLoader> sResourceLoader;
@@ -53,6 +55,7 @@ static UniquePtr<element::ElementDatabase> sElementDatabase;
 static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<state::ObjectManager> sObjectManager;
 static UniquePtr<save::SaveManager> sSaveManager;
+static UniquePtr<campaign::CampaignManager> sCampaignManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -113,6 +116,10 @@ void SystemStartup()
 	sSaveManager = DefaultCreator<save::SaveManager>::Create();
 	gSaveManager = sSaveManager;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing campaign manager..." );
+	sCampaignManager = DefaultCreator<campaign::CampaignManager>::Create();
+	gCampaignManager = sCampaignManager;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "System startup complete" );
 }
 
@@ -120,6 +127,7 @@ void SystemStartup()
 
 void SystemShutdown()
 {
+	sCampaignManager = nullptr;
 	sSaveManager = nullptr;
 	sObjectManager = nullptr;
 	sCompanyManager = nullptr;
