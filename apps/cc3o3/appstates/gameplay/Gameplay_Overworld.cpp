@@ -548,7 +548,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			if( inArea )
 			{
-				rftl::string const label = ui::LocalizeKey( area.mIdentifier );
+				rftl::string const label = ui::LocalizeKey( rftl::string( "$location_area_" ) + area.mIdentifier );
 
 				gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label.c_str() );
 				gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
