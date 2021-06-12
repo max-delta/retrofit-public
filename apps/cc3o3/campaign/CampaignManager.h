@@ -1,6 +1,9 @@
 #pragma once
 #include "cc3o3/campaign/CampaignFwd.h"
 
+#include "cc3o3/overworld/OverworldFwd.h"
+#include "cc3o3/site/SiteFwd.h"
+
 #include "GameAppState/AppStateFwd.h"
 
 #include "rftl/string"
@@ -21,11 +24,15 @@ class CampaignManager
 public:
 	CampaignManager() = default;
 
+	overworld::Overworld LoadDataForOverworld();
+
 	std::string DetermineOverworldAreaLocKey(
 		rftl::string identifier );
 	bool TryInteractWithOverworldArea(
 		appstate::AppStateTickContext& context,
 		rftl::string identifier );
+
+	site::Site LoadDataForSite();
 
 
 	//

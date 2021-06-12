@@ -2,7 +2,6 @@
 #include "Gameplay_Overworld.h"
 
 #include "cc3o3/Common.h"
-#include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/company/CompanyManager.h"
@@ -83,13 +82,10 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
+	campaign::CampaignManager& campaign = *gCampaignManager;
 
-	// Load map
-	// HACK: Hard-coded
-	// TODO: Figure out from current pawn position and a world manager
-	static constexpr char const kHackMap[] = "island1";
-	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( kHackMap ) + ".oo" );
-	overworld::Overworld const map = overworld::Overworld::LoadFromDesc( mapDescPath );
+	// Load overworld
+	overworld::Overworld const map = campaign.LoadDataForOverworld();
 
 	// Setup collision
 	{

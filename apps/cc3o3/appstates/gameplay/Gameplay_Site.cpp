@@ -1,8 +1,10 @@
 #include "stdafx.h"
 #include "Gameplay_Site.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/site/Site.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -32,12 +34,13 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 
+	campaign::CampaignManager& campaign = *gCampaignManager;
+
 	// Load site
-	// HACK: Hard-coded
-	// TODO: Figure out from a world manager
-	static constexpr char const kHackSite[] = "temp";
-	file::VFSPath const siteDescPath = paths::TablesRoot().GetChild( "world", "sites", rftl::string( kHackSite ) + ".oo" );
-	site::Site const site = site::Site::LoadFromDesc( siteDescPath );
+	site::Site const site = campaign.LoadDataForSite();
+
+	// TODO
+	( (void)site );
 }
 
 
