@@ -73,7 +73,7 @@ public:
 	~static_vector();
 
 	static_vector& operator=( static_vector const& other );
-	static_vector& operator=( static_vector const&& other );
+	static_vector& operator=( static_vector&& other );
 	template<size_t OtherCapacity>
 	static_vector& operator=( static_vector<value_type, OtherCapacity> const& other );
 	template<size_t OtherCapacity>

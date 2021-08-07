@@ -396,6 +396,96 @@ TEST( StaticVector, ValueConstruct )
 
 
 
+TEST( StaticVector, CopyAssign )
+{
+	rftl::static_vector<Proxy, 5> source;
+	source.push_back( 2 );
+	source.push_back( 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	rftl::static_vector<Proxy, 5> const& input = source;
+
+	rftl::static_vector<Proxy, 5> sa;
+	sa = input;
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
+TEST( StaticVector, CopyAssignCrossCapacity )
+{
+	rftl::static_vector<Proxy, 2> source;
+	source.push_back( 2 );
+	source.push_back( 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	rftl::static_vector<Proxy, 5> const& input = source;
+
+	rftl::static_vector<Proxy, 5> sa;
+	sa = input;
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
+TEST( StaticVector, MoveAssign )
+{
+	rftl::static_vector<Proxy, 5> source;
+	source.push_back( 2 );
+	source.push_back( 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+
+	rftl::static_vector<Proxy, 5> sa;
+	sa = rftl::move( source );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 0 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
+TEST( StaticVector, MoveAssignCrossCapacity )
+{
+	rftl::static_vector<Proxy, 2> source;
+	source.push_back( 2 );
+	source.push_back( 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+
+	rftl::static_vector<Proxy, 5> sa;
+	sa = rftl::move( source );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 0 );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
 TEST( StaticVector, ValueWipe )
 {
 	rftl::static_vector<Proxy, 5> sa;

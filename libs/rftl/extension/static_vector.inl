@@ -69,9 +69,9 @@ inline static_vector<Element, ElementCapacity, Alignment>::static_vector( InputI
 
 template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline static_vector<Element, ElementCapacity, Alignment>::static_vector( static_vector const& other )
-	: static_vector( other.begin(), other.end() )
+	: static_vector()
 {
-	//
+	operator=( other );
 }
 
 
@@ -79,9 +79,9 @@ inline static_vector<Element, ElementCapacity, Alignment>::static_vector( static
 template<typename Element, size_t ElementCapacity, size_t Alignment>
 template<size_t OtherCapacity>
 inline static_vector<Element, ElementCapacity, Alignment>::static_vector( static_vector<value_type, OtherCapacity> const& other )
-	: static_vector( other.begin(), other.end() )
+	: static_vector()
 {
-	//
+	operator=( other );
 }
 
 
@@ -91,8 +91,7 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline static_vector<Element, ElementCapacity, Alignment>::static_vector( static_vector&& other )
 	: static_vector()
 {
-	extract( other.begin(), other.end() );
-	other.clear();
+	operator=( std::move( other ) );
 }
 
 
@@ -102,8 +101,7 @@ template<size_t OtherCapacity>
 inline static_vector<Element, ElementCapacity, Alignment>::static_vector( static_vector<value_type, OtherCapacity>&& other )
 	: static_vector()
 {
-	extract( other.begin(), other.end() );
-	other.clear();
+	operator=( std::move( other ) );
 }
 
 
@@ -131,6 +129,60 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline static_vector<Element, ElementCapacity, Alignment>::~static_vector()
 {
 	clear();
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+static_vector<Element, ElementCapacity, Alignment>&
+static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector const& other )
+{
+	append( other.begin(), other.end() );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+static_vector<Element, ElementCapacity, Alignment>&
+static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector&& other )
+{
+	extract( other.begin(), other.end() );
+	other.clear();
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+template<size_t OtherCapacity>
+static_vector<Element, ElementCapacity, Alignment>&
+static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector<value_type, OtherCapacity> const& other )
+{
+	append( other.begin(), other.end() );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+template<size_t OtherCapacity>
+static_vector<Element, ElementCapacity, Alignment>&
+static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector<value_type, OtherCapacity>&& other )
+{
+	extract( other.begin(), other.end() );
+	other.clear();
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+static_vector<Element, ElementCapacity, Alignment>&
+static_vector<Element, ElementCapacity, Alignment>::operator=( rftl::initializer_list<value_type> init )
+{
+	append( init );
+	return *this;
 }
 
 
