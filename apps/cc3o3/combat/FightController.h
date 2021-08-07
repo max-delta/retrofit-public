@@ -41,6 +41,7 @@ public:
 
 	WeakPtr<CombatInstance const> GetCombatInstance() const;
 
+	void SetupFromCombatInstance( CombatInstance const& setup );
 	void HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack );
 
 	void StartCombatFrame();

@@ -57,6 +57,8 @@ public:
 public:
 	CombatInstance( WeakPtr<CombatEngine const> const& combatEngine );
 
+	void ReplaceState( CombatInstance const& source );
+
 	TeamID AddTeam();
 	PartyID AddParty( TeamID teamID );
 	FighterID AddFighter( PartyID partyID );

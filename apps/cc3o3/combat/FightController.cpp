@@ -74,11 +74,23 @@ WeakPtr<CombatInstance const> FightController::GetCombatInstance() const
 
 
 
-void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack )
+void FightController::SetupFromCombatInstance( CombatInstance const& setup )
 {
 	RF_ASSERT( mFrameActive == false );
 
 	CombatInstance& instance = *mCombatInstance;
+
+	instance.ReplaceState( setup );
+
+	// Initial save
+	instance.CommitCombatData();
+}
+
+
+
+void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack )
+{
+	CombatInstance setup( mCombatEngine );
 
 	// Setup players
 	// HACK: One player
@@ -87,8 +99,8 @@ void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHac
 	rftl::vector<input::PlayerID> const playerIDs = { singlePlayerHack };
 	for( input::PlayerID const& playerID : playerIDs )
 	{
-		TeamID const playerTeam = instance.AddTeam();
-		PartyID const playerParty = instance.AddParty( playerTeam );
+		TeamID const playerTeam = setup.AddTeam();
+		PartyID const playerParty = setup.AddParty( playerTeam );
 		if( playerID == singlePlayerHack )
 		{
 			mLocalPartyID = playerParty;
@@ -109,8 +121,8 @@ void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHac
 			}
 
 			// Add to party
-			FighterID const fighter = instance.AddFighter( playerParty );
-			instance.SetCombatant( fighter, character );
+			FighterID const fighter = setup.AddFighter( playerParty );
+			setup.SetCombatant( fighter, character );
 		}
 	}
 
@@ -119,8 +131,8 @@ void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHac
 	// TODO: Encounters
 	if constexpr( true )
 	{
-		TeamID const enemyTeam = instance.AddTeam();
-		PartyID const enemyParty = instance.AddParty( enemyTeam );
+		TeamID const enemyTeam = setup.AddTeam();
+		PartyID const enemyParty = setup.AddParty( enemyTeam );
 
 		rftl::array<Fighter, 2> enemies = {};
 		{
@@ -153,18 +165,17 @@ void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHac
 		}
 		for( Fighter const& enemy : enemies )
 		{
-			FighterID const enemyID = instance.AddFighter( enemyParty );
-			instance.SetCombatant( enemyID, enemy );
+			FighterID const enemyID = setup.AddFighter( enemyParty );
+			setup.SetCombatant( enemyID, enemy );
 		}
 	}
 
 	// Setup initial field influence
 	// HACK: Hard-coded
 	// TODO: Encounter specified override or multiplayer-minded hash source
-	instance.GenerateFieldInfluence( 0 );
+	setup.GenerateFieldInfluence( 0 );
 
-	// Initial save
-	instance.CommitCombatData();
+	SetupFromCombatInstance( setup );
 }
 
 
