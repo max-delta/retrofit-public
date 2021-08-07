@@ -1,0 +1,2 @@
+# Try to prevent Git from secretly corrupting files
+* -text
