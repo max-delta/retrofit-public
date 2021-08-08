@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/combat/FightController.h"
 #include "cc3o3/state/StateHelpers.h"
@@ -285,6 +286,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 	gfx::ppu::PPUController const& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+	campaign::CampaignManager& campaign = *gCampaignManager;
 
 	// Find navigation component
 	state::VariableIdentifier const localUIRoot( "localUI" );
@@ -295,8 +297,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 	// Setup combat instance
 	{
-		internalState.mFightController = DefaultCreator<combat::FightController>::Create( gCombatEngine, gCompanyManager );
-		internalState.mFightController->HardcodedPlaceholderSetup( InputHelpers::GetSinglePlayer() );
+		internalState.mFightController = DefaultCreator<combat::FightController>::Create();
+		campaign.HardcodedCombatSetup( *internalState.mFightController );
 	}
 
 	// Setup UI

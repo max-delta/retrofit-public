@@ -28,14 +28,6 @@ CombatInstance::CombatInstance( WeakPtr<CombatEngine const> const& combatEngine 
 
 
 
-void CombatInstance::ReplaceState( CombatInstance const& source )
-{
-	mTeams = source.mTeams;
-	mField = source.mField;
-}
-
-
-
 TeamID CombatInstance::AddTeam()
 {
 	RF_ASSERT( mTeams.size() < kMaxTeamsPerFight );

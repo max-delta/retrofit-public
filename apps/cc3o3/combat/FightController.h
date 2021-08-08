@@ -2,8 +2,6 @@
 #include "project.h"
 
 #include "cc3o3/combat/CombatantID.h"
-#include "cc3o3/company/CompanyFwd.h"
-#include "cc3o3/input/InputFwd.h"
 
 #include "core/ptr/unique_ptr.h"
 
@@ -35,14 +33,11 @@ private:
 	//
 	// Public methods
 public:
-	FightController(
-		WeakPtr<CombatEngine const> const& combatEngine,
-		WeakPtr<company::CompanyManager const> const& companyManager );
+	FightController();
 
 	WeakPtr<CombatInstance const> GetCombatInstance() const;
 
-	void SetupFromCombatInstance( CombatInstance const& setup );
-	void HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack );
+	void SetupFromCombatInstance( UniquePtr<combat::CombatInstance>&& setup, PartyID localPartyID );
 
 	void StartCombatFrame();
 	void EndCombatFrame();
@@ -78,8 +73,6 @@ private:
 	//
 	// Private data
 private:
-	WeakPtr<CombatEngine const> mCombatEngine;
-	WeakPtr<company::CompanyManager const> mCompanyManager;
 	UniquePtr<combat::CombatInstance> mCombatInstance;
 
 	bool mFrameActive = false;

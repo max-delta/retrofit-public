@@ -2,21 +2,14 @@
 #include "FightController.h"
 
 #include "cc3o3/combat/Attack.h"
-#include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/CombatInstance.h"
-#include "cc3o3/company/CompanyManager.h"
-#include "cc3o3/elements/IdentifierUtils.h"
 
 #include "Logging/Logging.h"
 
-#include "core_component/TypedObjectRef.h"
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
-#include "core/ptr/default_creator.h"
-
 #include "rftl/algorithm"
-#include "rftl/vector"
 
 
 namespace RF::cc::combat {
@@ -56,14 +49,7 @@ uint8_t SanitizeFighterIndex( CombatInstance::FighterIDs const& ids, uint8_t ind
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-FightController::FightController(
-	WeakPtr<CombatEngine const> const& combatEngine,
-	WeakPtr<company::CompanyManager const> const& companyManager )
-	: mCombatEngine( combatEngine )
-	, mCompanyManager( companyManager )
-{
-	mCombatInstance = DefaultCreator<CombatInstance>::Create( combatEngine );
-}
+FightController::FightController() = default;
 
 
 
@@ -74,108 +60,18 @@ WeakPtr<CombatInstance const> FightController::GetCombatInstance() const
 
 
 
-void FightController::SetupFromCombatInstance( CombatInstance const& setup )
+void FightController::SetupFromCombatInstance( UniquePtr<combat::CombatInstance>&& setup, PartyID localPartyID )
 {
 	RF_ASSERT( mFrameActive == false );
 
-	CombatInstance& instance = *mCombatInstance;
+	RF_ASSERT( setup != nullptr );
+	mCombatInstance = rftl::move( setup );
 
-	instance.ReplaceState( setup );
+	RF_ASSERT( localPartyID.IsValid() );
+	mLocalPartyID = localPartyID;
 
 	// Initial save
-	instance.CommitCombatData();
-}
-
-
-
-void FightController::HardcodedPlaceholderSetup( input::PlayerID singlePlayerHack )
-{
-	CombatInstance setup( mCombatEngine );
-
-	// Setup players
-	// HACK: One player
-	// TODO: Multiplayer, opposing teams
-	// TODO: Multiplayer, same team
-	rftl::vector<input::PlayerID> const playerIDs = { singlePlayerHack };
-	for( input::PlayerID const& playerID : playerIDs )
-	{
-		TeamID const playerTeam = setup.AddTeam();
-		PartyID const playerParty = setup.AddParty( playerTeam );
-		if( playerID == singlePlayerHack )
-		{
-			mLocalPartyID = playerParty;
-		}
-
-		// Get the active party characters
-		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
-			mCompanyManager->FindMutableActivePartyObjects( singlePlayerHack );
-
-		// For each active team member...
-		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
-		{
-			state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
-			if( character.IsSet() == false )
-			{
-				// Not active
-				continue;
-			}
-
-			// Add to party
-			FighterID const fighter = setup.AddFighter( playerParty );
-			setup.SetCombatant( fighter, character );
-		}
-	}
-
-	// Setup NPCs
-	// HACK: Hard-coded
-	// TODO: Encounters
-	if constexpr( true )
-	{
-		TeamID const enemyTeam = setup.AddTeam();
-		PartyID const enemyParty = setup.AddParty( enemyTeam );
-
-		rftl::array<Fighter, 2> enemies = {};
-		{
-			Fighter& enemy = enemies.at( 0 );
-			enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-			enemy.mMaxHealth = 999;
-			enemy.mCurHealth = enemy.mMaxHealth;
-			enemy.mMaxStamina = 7;
-			enemy.mCurStamina = enemy.mMaxStamina;
-			enemy.mPhysAtk = 2;
-			enemy.mPhysDef = 2;
-			enemy.mElemAtk = 2;
-			enemy.mElemDef = 2;
-			enemy.mBalance = 2;
-			enemy.mTechniq = 2;
-		}
-		{
-			Fighter& enemy = enemies.at( 1 );
-			enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-			enemy.mMaxHealth = 999;
-			enemy.mCurHealth = enemy.mMaxHealth;
-			enemy.mMaxStamina = 7;
-			enemy.mCurStamina = enemy.mMaxStamina;
-			enemy.mPhysAtk = 2;
-			enemy.mPhysDef = 2;
-			enemy.mElemAtk = 2;
-			enemy.mElemDef = 2;
-			enemy.mBalance = 2;
-			enemy.mTechniq = 2;
-		}
-		for( Fighter const& enemy : enemies )
-		{
-			FighterID const enemyID = setup.AddFighter( enemyParty );
-			setup.SetCombatant( enemyID, enemy );
-		}
-	}
-
-	// Setup initial field influence
-	// HACK: Hard-coded
-	// TODO: Encounter specified override or multiplayer-minded hash source
-	setup.GenerateFieldInfluence( 0 );
-
-	SetupFromCombatInstance( setup );
+	mCombatInstance->CommitCombatData();
 }
 
 

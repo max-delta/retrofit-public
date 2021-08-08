@@ -1,6 +1,7 @@
 #pragma once
 #include "cc3o3/campaign/CampaignFwd.h"
 
+#include "cc3o3/combat/CombatFwd.h"
 #include "cc3o3/overworld/OverworldFwd.h"
 #include "cc3o3/site/SiteFwd.h"
 
@@ -33,6 +34,8 @@ public:
 		rftl::string identifier );
 
 	site::Site LoadDataForSite();
+
+	void HardcodedCombatSetup( combat::FightController& fight );
 
 
 	//
