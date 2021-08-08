@@ -1,0 +1,12 @@
+# Try to prevent Git from secretly corrupting files
+.gitattributes: * -text
+
+# Scrub some weird EOL garbage out of Git
+git add --renormalize .
+git restore --staged .
+
+# Search for files that seem to be non-binary, and have carriage returns
+grep --recursive --binary-files=without-match --files-with-matches $'\r' . | grep --invert-match "^./.git/" | grep --invert-match "^./_" | less
+
+# Remove carriage returns
+grep --recursive --binary-files=without-match --files-with-matches $'\r' FOLDER | xargs sed --in-place 's/\r$//'
