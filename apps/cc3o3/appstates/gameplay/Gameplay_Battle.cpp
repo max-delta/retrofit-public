@@ -312,8 +312,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		constexpr bool kSlicesEnabled[9] = {
 			true, false, true,
 			false, true, false,
-			false, true, false
-		};
+			false, true, false };
 		WeakPtr<ui::controller::NineSlicer> const rootNineSlicer =
 			uiManager.AssignStrongController(
 				ui::kRootContainerID,
@@ -605,8 +604,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				"1",
 				"2",
 				"3",
-				ui::LocalizeKey( InternalState::kLabelAttackElement )
-			};
+				ui::LocalizeKey( InternalState::kLabelAttackElement ) };
 			attackMenu->SetText( text );
 			attackMenu->AddAsChildToFocusTreeNode( uiContext, *attackPassthrough->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mAttackMenu = attackMenu;
