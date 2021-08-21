@@ -20,6 +20,85 @@
 
 namespace RF::cc::campaign {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+combat::PartyID BuildPlayerParty( combat::CombatInstance& setup, combat::TeamID team, input::PlayerID playerID )
+{
+	using namespace combat;
+
+	PartyID const party = setup.AddParty( team );
+
+	// Get the active party characters
+	rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
+		gCompanyManager->FindMutableActivePartyObjects( playerID );
+
+	// For each active team member...
+	for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
+	{
+		state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
+		if( character.IsSet() == false )
+		{
+			// Not active
+			continue;
+		}
+
+		// Add to party
+		FighterID const fighter = setup.AddFighter( party );
+		setup.SetCombatant( fighter, character );
+	}
+
+	return party;
+}
+
+
+
+combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup )
+{
+	using namespace combat;
+
+	TeamID const team = setup.AddTeam();
+	PartyID const party = setup.AddParty( team );
+
+	rftl::array<Fighter, 2> enemies = {};
+	{
+		Fighter& enemy = enemies.at( 0 );
+		enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
+		enemy.mMaxHealth = 999;
+		enemy.mCurHealth = enemy.mMaxHealth;
+		enemy.mMaxStamina = 7;
+		enemy.mCurStamina = enemy.mMaxStamina;
+		enemy.mPhysAtk = 2;
+		enemy.mPhysDef = 2;
+		enemy.mElemAtk = 2;
+		enemy.mElemDef = 2;
+		enemy.mBalance = 2;
+		enemy.mTechniq = 2;
+	}
+	{
+		Fighter& enemy = enemies.at( 1 );
+		enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
+		enemy.mMaxHealth = 999;
+		enemy.mCurHealth = enemy.mMaxHealth;
+		enemy.mMaxStamina = 7;
+		enemy.mCurStamina = enemy.mMaxStamina;
+		enemy.mPhysAtk = 2;
+		enemy.mPhysDef = 2;
+		enemy.mElemAtk = 2;
+		enemy.mElemDef = 2;
+		enemy.mBalance = 2;
+		enemy.mTechniq = 2;
+	}
+	for( Fighter const& enemy : enemies )
+	{
+		FighterID const enemyID = setup.AddFighter( party );
+		setup.SetCombatant( enemyID, enemy );
+	}
+
+	return team;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 overworld::Overworld CampaignManager::LoadDataForOverworld()
 {
@@ -83,29 +162,10 @@ void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 	for( input::PlayerID const& playerID : playerIDs )
 	{
 		TeamID const playerTeam = setup.AddTeam();
-		PartyID const playerParty = setup.AddParty( playerTeam );
+		PartyID const playerParty = details::BuildPlayerParty( setup, playerTeam, playerID );
 		if( playerID == singlePlayerHack )
 		{
 			localPartyID = playerParty;
-		}
-
-		// Get the active party characters
-		rftl::array<state::MutableObjectRef, 3> const activePartyCharacters =
-			gCompanyManager->FindMutableActivePartyObjects( singlePlayerHack );
-
-		// For each active team member...
-		for( size_t i_teamIndex = 0; i_teamIndex < company::kActiveTeamSize; i_teamIndex++ )
-		{
-			state::MutableObjectRef const& character = activePartyCharacters.at( i_teamIndex );
-			if( character.IsSet() == false )
-			{
-				// Not active
-				continue;
-			}
-
-			// Add to party
-			FighterID const fighter = setup.AddFighter( playerParty );
-			setup.SetCombatant( fighter, character );
 		}
 	}
 
@@ -114,43 +174,7 @@ void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 	// TODO: Encounters
 	if constexpr( true )
 	{
-		TeamID const enemyTeam = setup.AddTeam();
-		PartyID const enemyParty = setup.AddParty( enemyTeam );
-
-		rftl::array<Fighter, 2> enemies = {};
-		{
-			Fighter& enemy = enemies.at( 0 );
-			enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-			enemy.mMaxHealth = 999;
-			enemy.mCurHealth = enemy.mMaxHealth;
-			enemy.mMaxStamina = 7;
-			enemy.mCurStamina = enemy.mMaxStamina;
-			enemy.mPhysAtk = 2;
-			enemy.mPhysDef = 2;
-			enemy.mElemAtk = 2;
-			enemy.mElemDef = 2;
-			enemy.mBalance = 2;
-			enemy.mTechniq = 2;
-		}
-		{
-			Fighter& enemy = enemies.at( 1 );
-			enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-			enemy.mMaxHealth = 999;
-			enemy.mCurHealth = enemy.mMaxHealth;
-			enemy.mMaxStamina = 7;
-			enemy.mCurStamina = enemy.mMaxStamina;
-			enemy.mPhysAtk = 2;
-			enemy.mPhysDef = 2;
-			enemy.mElemAtk = 2;
-			enemy.mElemDef = 2;
-			enemy.mBalance = 2;
-			enemy.mTechniq = 2;
-		}
-		for( Fighter const& enemy : enemies )
-		{
-			FighterID const enemyID = setup.AddFighter( enemyParty );
-			setup.SetCombatant( enemyID, enemy );
-		}
+		details::BuildHackEnemyTeam( setup );
 	}
 
 	// Setup initial field influence
