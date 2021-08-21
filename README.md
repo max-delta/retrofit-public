@@ -93,6 +93,24 @@ Fixes for common engine deficiencies:
 
 ----
 
+## What about this weird non-standard stuff?
+
+### Graphics - PPU
+
+A quirky graphics engine inspired by old-school tile-based graphics processing chips for home consoles.
+The most notable difference is that objects are animation-based, not sprite-based, which helps many common cases.
+
+### State control - Rollback
+
+Simpler games with limited state can get away with brute-forcing otherwise difficult state management.
+This most often comes up in the context of "rewind/replay" features or networked gameplay collision resolution.
+This is several orders of magnitude more expensive than standard collision resolution, but requires far less work to maintain once fully implemented.
+
+RetroFit's implementation avoids the naive serialization approach in favor of seekable sparse storage.
+This more performant approach is similar to delta-based storage/history solutions.
+
+----
+
 ## What's the license?
 
 MIT-style, super permissive, but you can't make lawsuits or advertise your usage of it as a selling point. See LICENSE file for details.
