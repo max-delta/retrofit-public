@@ -8,13 +8,13 @@ RF_CLANG_IGNORE( "-Wunused-function" );
 class ForwardedClass;
 
 // Do not need type to be defined to destroy it
-void test_destroy( RF::WeakPtr<ForwardedClass>&& wptr )
+RF_ACK_LINK_STRIP void test_destroy( RF::WeakPtr<ForwardedClass>&& wptr )
 {
 	wptr = nullptr;
 }
 
 // Do not need type to be defined to assign it
-void test_assign( RF::WeakPtr<ForwardedClass>&& wptr )
+RF_ACK_LINK_STRIP void test_assign( RF::WeakPtr<ForwardedClass>&& wptr )
 {
 	RF::WeakPtr<ForwardedClass> same{ wptr };
 	same = wptr;
