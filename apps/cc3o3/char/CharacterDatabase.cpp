@@ -121,13 +121,7 @@ size_t CharacterDatabase::LoadFromPersistentStorage( file::VFSPath const& direct
 	file::VFS const& vfs = *app::gVfs;
 
 	rftl::vector<file::VFSPath> files;
-	rftl::vector<file::VFSPath> folders;
-	vfs.EnumerateDirectory( directory, file::VFSMount::Permissions::ReadOnly, files, folders );
-
-	if( folders.empty() == false )
-	{
-		RFLOG_WARNING( directory, RFCAT_CC3O3, "Found unexpected folders when enumerating character directory" );
-	}
+	vfs.EnumerateDirectoryRecursive( directory, file::VFSMount::Permissions::ReadOnly, files );
 
 	// Enumerate all chars
 	rftl::string source;

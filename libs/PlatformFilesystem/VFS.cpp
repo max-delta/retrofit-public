@@ -174,6 +174,60 @@ void VFS::EnumerateDirectory(
 
 
 
+void VFS::EnumerateDirectoryRecursive(
+	VFSPath const& directory,
+	VFSMount::Permissions permissions,
+	rftl::vector<VFSPath>& files ) const
+{
+	files.clear();
+
+	// Initial crawl
+	rftl::vector<VFSPath> folders;
+	EnumerateDirectory( directory, file::VFSMount::Permissions::ReadOnly, files, folders );
+
+	// Recursion
+	size_t recursionCount = 0;
+	static constexpr size_t kRecursionWarningCount = 1'000;
+	static constexpr size_t kRecursionErrorCount = 10'000;
+	while( folders.empty() == false )
+	{
+		recursionCount++;
+		if( recursionCount == kRecursionWarningCount )
+		{
+			RFLOG_WARNING( directory, RFCAT_VFS, "Large number of folders recursed into, may indicate infinite loop" );
+		}
+		if( recursionCount >= kRecursionErrorCount )
+		{
+			RFLOG_NOTIFY( directory, RFCAT_VFS, "Massive number of folders recursed into, assumed to be infinite loop" );
+			files.clear();
+			return;
+		}
+
+		// Pop front
+		file::VFSPath const curFolder = folders.front();
+		folders.erase( folders.begin() );
+
+		// Crawl
+		rftl::vector<file::VFSPath> newFiles;
+		rftl::vector<file::VFSPath> newFolders;
+		EnumerateDirectory( curFolder, file::VFSMount::Permissions::ReadOnly, newFiles, newFolders );
+
+		// Merge
+		newFiles.reserve( newFiles.size() + files.size() );
+		for( file::VFSPath& file : newFiles )
+		{
+			files.emplace_back( rftl::move( file ) );
+		}
+		newFolders.reserve( newFolders.size() + folders.size() );
+		for( file::VFSPath& folder : newFolders )
+		{
+			folders.emplace_back( rftl::move( folder ) );
+		}
+	}
+}
+
+
+
 bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mountTableFile, rftl::string const& userDirectory )
 {
 	RF_ASSERT( mountTableFile.empty() == false );

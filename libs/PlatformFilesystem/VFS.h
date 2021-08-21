@@ -75,6 +75,10 @@ public:
 		VFSMount::Permissions permissions,
 		rftl::vector<VFSPath>& files,
 		rftl::vector<VFSPath>& folders ) const;
+	void EnumerateDirectoryRecursive(
+		VFSPath const& directory,
+		VFSMount::Permissions permissions,
+		rftl::vector<VFSPath>& files ) const;
 
 	// The mount table file contains the base rules for all VFS operations
 	// NOTE: Relative entries are relative to the location of the mount file
