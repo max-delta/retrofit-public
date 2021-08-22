@@ -35,7 +35,7 @@ public:
 	bool StoreBlob( SaveName const& name, SaveBlob const& blob );
 
 	// Comprehensive load/save of data for major gameplay systems
-	bool PerformLoad( SaveName const& name );
+	bool PerformInitialLoad( SaveName const& name );
 	bool PerformStore( SaveName const& name );
 };
 

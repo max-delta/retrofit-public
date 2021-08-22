@@ -2,6 +2,7 @@
 #include "SaveManager.h"
 
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/resource/ResourceLoad.h"
 #include "cc3o3/save/SaveBlob.h"
@@ -62,9 +63,23 @@ bool SaveManager::StoreBlob( SaveName const& name, SaveBlob const& blob )
 
 
 
-bool SaveManager::PerformLoad( SaveName const& name )
+bool SaveManager::PerformInitialLoad( SaveName const& name )
 {
+	campaign::CampaignManager& campaign = *gCampaignManager;
+
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
+
+	// Read in campaign progress
+	gCampaignManager->HardcodedPrepareCampaign( nullptr );
+	gCampaignManager->HardcodedLoadCampaignProgress( nullptr );
+
+	// Setup campaign
+	// TODO: Use save data
+	// TODO: Competitive multiplayer
+	// TODO: Cooperative multiplayer
+	campaign.HardcodedSinglePlayerCharacterLoad();
+	campaign.HardcodedSinglePlayerObjectSetup();
+	campaign.HardcodedSinglePlayerApplyProgression();
 
 	// Read in loadouts
 	// TODO: Sanitize? Or atleast warn on invalid setup
@@ -79,6 +94,9 @@ bool SaveManager::PerformLoad( SaveName const& name )
 bool SaveManager::PerformStore( SaveName const& name )
 {
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
+
+	// Save campaign progress
+	gCampaignManager->HardcodedSaveCampaignProgress( nullptr );
 
 	// Save loadouts
 	gCompanyManager->WriteLoadoutsToSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );

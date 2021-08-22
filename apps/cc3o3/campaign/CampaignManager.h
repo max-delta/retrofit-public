@@ -25,6 +25,14 @@ class CampaignManager
 public:
 	CampaignManager() = default;
 
+	void HardcodedPrepareCampaign( nullptr_t todoFromSave );
+	void HardcodedLoadCampaignProgress( nullptr_t todoFromSave );
+	void HardcodedSaveCampaignProgress( nullptr_t todoToSave );
+
+	void HardcodedSinglePlayerCharacterLoad();
+	void HardcodedSinglePlayerObjectSetup();
+	void HardcodedSinglePlayerApplyProgression();
+
 	overworld::Overworld LoadDataForOverworld();
 
 	std::string DetermineOverworldAreaLocKey(

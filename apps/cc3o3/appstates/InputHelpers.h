@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/appstates/AppStatesFwd.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/input/InputFwd.h"
 
