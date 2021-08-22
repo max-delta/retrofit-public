@@ -235,6 +235,12 @@
     <ClCompile Include="campaign\CampaignManager.cpp">
       <Filter>campaign</Filter>
     </ClCompile>
+    <ClCompile Include="campaign\Campaign.cpp">
+      <Filter>campaign</Filter>
+    </ClCompile>
+    <ClCompile Include="campaign\CampaignDesc.cpp">
+      <Filter>campaign</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -658,6 +664,12 @@
       <Filter>campaign</Filter>
     </ClInclude>
     <ClInclude Include="campaign\CampaignFwd.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\CampaignDesc.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\Campaign.h">
       <Filter>campaign</Filter>
     </ClInclude>
   </ItemGroup>

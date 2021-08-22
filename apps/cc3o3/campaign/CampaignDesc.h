@@ -1,15 +1,14 @@
 #pragma once
-#include "project.h"
+#include "cc3o3/campaign/CampaignFwd.h"
 
 
 namespace RF::cc::campaign {
 ///////////////////////////////////////////////////////////////////////////////
 
-class Campaign;
-
-struct CampaignDesc;
-
-class CampaignManager;
+struct CampaignDesc
+{
+	bool mPlaceholder = false;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 }

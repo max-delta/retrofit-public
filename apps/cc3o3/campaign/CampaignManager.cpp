@@ -5,6 +5,7 @@
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/AppStatesFwd.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/Campaign.h"
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/combat/CombatInstance.h"
@@ -121,7 +122,15 @@ combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup )
 
 void CampaignManager::HardcodedPrepareCampaign( nullptr_t todoFromSave )
 {
-	// TODO: Store read-only for later intialization
+	// Load campaign
+	// HACK: Hard-coded
+	// TODO: Figure out from save data
+	static constexpr char const kHackCampaign[] = "campaign1";
+	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "campaigns", rftl::string( kHackCampaign ) );
+	UniquePtr<Campaign const> campaign = Campaign::LoadFromFolder( mapDescPath );
+
+	// TODO: Store
+	( (void)campaign );
 }
 
 

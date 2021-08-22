@@ -2,6 +2,7 @@
 #include "ResourceLoad.h"
 
 #include "cc3o3/Common.h"
+#include "cc3o3/campaign/CampaignDesc.h"
 #include "cc3o3/char/CharData.h"
 #include "cc3o3/overworld/OverworldDesc.h"
 #include "cc3o3/site/SiteDesc.h"
@@ -21,6 +22,7 @@ enum : ResourceTypeIdentifier
 {
 	// This list enumerates all of the top-level resources that can be loaded
 	Invalid = kInvalidResourceTypeIdentifier,
+	CampaignDesc,
 	CharData,
 	SaveBlob,
 	OverworldDesc,
@@ -52,6 +54,7 @@ void InitializeLoader()
 		// This list specifies which classes can be deserialized when loading
 		//  a given resource type
 		using namespace details::type;
+		loader.AddResourceClass( CampaignDesc, "CampaignDesc" );
 		loader.AddResourceClass( CharData, "CharData" );
 		loader.AddResourceClass( CharData, "Description" );
 		loader.AddResourceClass( CharData, "ElementSlots" );
@@ -82,6 +85,7 @@ void InitializeLoader()
 	}
 
 // This list correlates top-level resource types with their classes
+RF_LOADER( details::type::CampaignDesc, campaign::CampaignDesc );
 RF_LOADER( details::type::CharData, character::CharData );
 RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
