@@ -13,6 +13,7 @@
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/overworld/Overworld.h"
+#include "cc3o3/save/SaveBlob.h"
 #include "cc3o3/site/Site.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/state/components/Progression.h"
@@ -120,37 +121,55 @@ combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-void CampaignManager::HardcodedPrepareCampaign( nullptr_t todoFromSave )
+bool CampaignManager::PrepareCampaign( save::SaveBlob const& saveBlob )
 {
+	mCampaignName = saveBlob.mFile.mCampaignName;
+	if( mCampaignName.empty() )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_CC3O3, "Save blob has empty campaign name" );
+		return false;
+	}
+
 	// Load campaign
-	// HACK: Hard-coded
-	// TODO: Figure out from save data
-	static constexpr char const kHackCampaign[] = "campaign1";
-	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "campaigns", rftl::string( kHackCampaign ) );
-	UniquePtr<Campaign const> campaign = Campaign::LoadFromFolder( mapDescPath );
+	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "campaigns", mCampaignName );
+	mCampaign = Campaign::LoadFromFolder( mapDescPath );
+	if( mCampaign == nullptr )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_CC3O3, "Failed to load campaign from folder" );
+		return false;
+	}
 
-	// TODO: Store
-	( (void)campaign );
+	return true;
 }
 
 
 
-void CampaignManager::HardcodedLoadCampaignProgress( nullptr_t todoFromSave )
+bool CampaignManager::LoadCampaignProgress( save::SaveBlob const& saveBlob )
 {
+	VerifyCampaignLoaded();
+
 	// TODO: Store read-only temporary for later initialization
+	return true;
 }
 
 
 
-void CampaignManager::HardcodedSaveCampaignProgress( nullptr_t todoToSave )
+bool CampaignManager::SaveCampaignProgress( save::SaveBlob& saveBlob )
 {
+	VerifyCampaignLoaded();
+
+	saveBlob.mFile.mCampaignName = mCampaignName;
+
 	// TODO: Crawl data and write to save
+	return true;
 }
 
 
 
 void CampaignManager::HardcodedSinglePlayerCharacterLoad()
 {
+	VerifyCampaignLoaded();
+
 	// Prepare the character database
 	character::CharacterDatabase& charDB = *gCharacterDatabase;
 	{
@@ -225,6 +244,8 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 	using namespace state;
 	using namespace state::obj;
 
+	VerifyCampaignLoaded();
+
 	rollback::RollbackManager& rollMan = *gRollbackManager;
 	rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
 	rollback::Domain& privateDomain = rollMan.GetMutablePrivateDomain();
@@ -274,6 +295,8 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 	using namespace state;
 	using namespace state::obj;
 
+	VerifyCampaignLoaded();
+
 	// Configure each company
 	// TODO: Multiple companies for competitive multiplayer
 	{
@@ -314,6 +337,8 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 overworld::Overworld CampaignManager::LoadDataForOverworld()
 {
+	VerifyCampaignLoaded();
+
 	// Load map
 	// HACK: Hard-coded
 	// TODO: Figure out from current pawn position
@@ -326,6 +351,8 @@ overworld::Overworld CampaignManager::LoadDataForOverworld()
 
 std::string CampaignManager::DetermineOverworldAreaLocKey( rftl::string identifier )
 {
+	VerifyCampaignLoaded();
+
 	// TODO: Under some conditions, this may change, such as to a key for "???"
 	return rftl::string( "$location_area_" ) + identifier;
 }
@@ -334,6 +361,8 @@ std::string CampaignManager::DetermineOverworldAreaLocKey( rftl::string identifi
 
 bool CampaignManager::TryInteractWithOverworldArea( appstate::AppStateTickContext& context, rftl::string identifier )
 {
+	VerifyCampaignLoaded();
+
 	// HACK: Just pop into site
 	// TODO: Make sure party can actually enter site, and set it up
 	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Site );
@@ -345,6 +374,8 @@ bool CampaignManager::TryInteractWithOverworldArea( appstate::AppStateTickContex
 
 site::Site CampaignManager::LoadDataForSite()
 {
+	VerifyCampaignLoaded();
+
 	// Load site
 	// HACK: Hard-coded
 	// TODO: Figure out from current pawn position
@@ -358,6 +389,8 @@ site::Site CampaignManager::LoadDataForSite()
 void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 {
 	using namespace combat;
+
+	VerifyCampaignLoaded();
 
 	UniquePtr<CombatInstance> instance = DefaultCreator<CombatInstance>::Create( gCombatEngine );
 	CombatInstance& setup = *instance;
@@ -395,6 +428,14 @@ void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 	setup.GenerateFieldInfluence( 0 );
 
 	fight.SetupFromCombatInstance( rftl::move( instance ), localPartyID );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void CampaignManager::VerifyCampaignLoaded()
+{
+	RF_ASSERT( mCampaignName.empty() == false );
+	RF_ASSERT( mCampaign != nullptr );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

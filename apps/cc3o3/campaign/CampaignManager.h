@@ -3,9 +3,13 @@
 
 #include "cc3o3/combat/CombatFwd.h"
 #include "cc3o3/overworld/OverworldFwd.h"
+#include "cc3o3/save/SaveFwd.h"
 #include "cc3o3/site/SiteFwd.h"
 
 #include "GameAppState/AppStateFwd.h"
+
+#include "core/macros.h"
+#include "core/ptr/unique_ptr.h"
 
 #include "rftl/string"
 
@@ -20,14 +24,16 @@ namespace RF::cc::campaign {
 //  * Have we won the game yet? Should we show the credits now?
 class CampaignManager
 {
+	RF_NO_COPY( CampaignManager );
+
 	//
 	// Public methods
 public:
 	CampaignManager() = default;
 
-	void HardcodedPrepareCampaign( nullptr_t todoFromSave );
-	void HardcodedLoadCampaignProgress( nullptr_t todoFromSave );
-	void HardcodedSaveCampaignProgress( nullptr_t todoToSave );
+	bool PrepareCampaign( save::SaveBlob const& saveBlob );
+	bool LoadCampaignProgress( save::SaveBlob const& saveBlob );
+	bool SaveCampaignProgress( save::SaveBlob& saveBlob );
 
 	void HardcodedSinglePlayerCharacterLoad();
 	void HardcodedSinglePlayerObjectSetup();
@@ -47,9 +53,16 @@ public:
 
 
 	//
+	// Private methods
+private:
+	void VerifyCampaignLoaded();
+
+
+	//
 	// Private data
 private:
-	// TODO
+	rftl::string mCampaignName;
+	UniquePtr<Campaign const> mCampaign;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -69,9 +69,27 @@ bool SaveManager::PerformInitialLoad( SaveName const& name )
 
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
 
+	// Main blob
+	UniquePtr<SaveBlob const> const saveBlob = LoadBlob( name );
+	if( saveBlob == nullptr )
+	{
+		RFLOG_ERROR( saveRoot, RFCAT_CC3O3, "Failed to load save blob" );
+		return false;
+	}
+
 	// Read in campaign progress
-	gCampaignManager->HardcodedPrepareCampaign( nullptr );
-	gCampaignManager->HardcodedLoadCampaignProgress( nullptr );
+	bool const campaignPrepareSuccess = gCampaignManager->PrepareCampaign( *saveBlob );
+	if( campaignPrepareSuccess == false )
+	{
+		RFLOG_ERROR( saveRoot, RFCAT_CC3O3, "Failed to prepare campaign" );
+		return false;
+	}
+	bool const campaignLoadSuccess = gCampaignManager->LoadCampaignProgress( *saveBlob );
+	if( campaignLoadSuccess == false )
+	{
+		RFLOG_ERROR( saveRoot, RFCAT_CC3O3, "Failed to load campaign" );
+		return false;
+	}
 
 	// Setup campaign
 	// TODO: Use save data
@@ -85,8 +103,7 @@ bool SaveManager::PerformInitialLoad( SaveName const& name )
 	// TODO: Sanitize? Or atleast warn on invalid setup
 	gCompanyManager->ReadLoadoutsFromSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );
 
-	RF_TODO_ANNOTATION( "Use the blob for system data?" );
-	return LoadBlob( name ) != nullptr;
+	return true;
 }
 
 
@@ -95,14 +112,21 @@ bool SaveManager::PerformStore( SaveName const& name )
 {
 	file::VFSPath const saveRoot = paths::UserSavesRoot().GetChild( name );
 
+	// Main blob
+	SaveBlob saveBlob = {};
+
 	// Save campaign progress
-	gCampaignManager->HardcodedSaveCampaignProgress( nullptr );
+	bool const campaignSaveSuccess = gCampaignManager->SaveCampaignProgress( saveBlob );
+	if( campaignSaveSuccess == false )
+	{
+		RFLOG_ERROR( saveRoot, RFCAT_CC3O3, "Failed to save campaign" );
+		return false;
+	}
 
 	// Save loadouts
 	gCompanyManager->WriteLoadoutsToSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );
 
-	RF_TODO_ANNOTATION( "Build the blob from system data" );
-	return StoreBlob( name, SaveBlob{} );
+	return StoreBlob( name, saveBlob );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -3,6 +3,8 @@
 
 #include "cc3o3/save/SaveFwd.h"
 
+#include "rftl/string"
+
 
 namespace RF::cc::save {
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,6 +12,7 @@ namespace RF::cc::save {
 struct SaveFileBlob final
 {
 	bool mNewGame = false;
+	rftl::string mCampaignName;
 };
 
 

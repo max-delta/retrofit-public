@@ -3,11 +3,14 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core_rftype/stl_extensions/string.h"
+
 
 RFTYPE_CREATE_META( RF::cc::save::SaveFileBlob )
 {
 	using RF::cc::save::SaveFileBlob;
 	RFTYPE_META().RawProperty( "mNewGame", &SaveFileBlob::mNewGame );
+	RFTYPE_META().ExtensionProperty( "mCampaignName", &SaveFileBlob::mCampaignName );
 	RFTYPE_REGISTER_BY_NAME( "SaveFileBlob" );
 }
 
