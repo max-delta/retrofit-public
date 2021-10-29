@@ -168,6 +168,14 @@
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
+			<!--Older versions of Clang failed to move, and instead did an improper
+				copy on returns that required an implicit cast, but we don't care about
+				those old versions, and this is just a portability warning for them-->
+			<AdditionalOptions>
+				-Wno-return-std-move-in-c++11
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
 			<!-- Build machines provide buildstamps via scripts, but local builds can
 				be more lax and use the C preprocessor, since otherwise the changing
 				buildstamp would force a full rebuild each time -->
