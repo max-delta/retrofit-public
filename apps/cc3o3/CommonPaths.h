@@ -39,6 +39,7 @@ file::VFSPath LogoFramepacks();
 file::VFSPath CharacterPieces();
 
 // Tables
+file::VFSPath Campaigns();
 file::VFSPath CharacterTables();
 file::VFSPath BaseCharacters();
 file::VFSPath ElementDescTables();

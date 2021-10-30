@@ -131,7 +131,7 @@ bool CampaignManager::PrepareCampaign( save::SaveBlob const& saveBlob )
 	}
 
 	// Load campaign
-	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "campaigns", mCampaignName );
+	file::VFSPath const mapDescPath = paths::Campaigns().GetChild( mCampaignName );
 	mCampaign = Campaign::LoadFromFolder( mapDescPath );
 	if( mCampaign == nullptr )
 	{

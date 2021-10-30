@@ -104,6 +104,10 @@ file::VFSPath CharacterPieces()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+file::VFSPath Campaigns()
+{
+	return TablesRoot().GetChild( "campaigns" );
+}
 file::VFSPath CharacterTables()
 {
 	return TablesRoot().GetChild( "char" );
