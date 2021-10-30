@@ -18,6 +18,7 @@ bool OOLoader::InjectReflectedClassByCompileType( char const* name )
 template<typename ReflectedClass>
 bool OOLoader::PopulateClass( char const* rootVariableName, ReflectedClass& classInstance )
 {
+	static_assert( rftl::is_const<ReflectedClass>::value == false );
 	return PopulateClass( rootVariableName, rftype::GetClassInfo<ReflectedClass>(), &classInstance );
 }
 
@@ -26,6 +27,7 @@ bool OOLoader::PopulateClass( char const* rootVariableName, ReflectedClass& clas
 template<typename ReflectedClass>
 bool OOLoader::PopulateClass( SquirrelVM::NestedTraversalPath scriptPath, ReflectedClass& classInstance )
 {
+	static_assert( rftl::is_const<ReflectedClass>::value == false );
 	return PopulateClass( scriptPath, rftype::GetClassInfo<ReflectedClass>(), &classInstance );
 }
 

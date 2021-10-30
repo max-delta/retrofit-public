@@ -21,7 +21,8 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 		return nullptr;
 	}
 
-	UniquePtr<ReflectedClass> classInstance = Creator<ReflectedClass>::Create();
+	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
+	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
 	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{
@@ -47,7 +48,8 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 		return nullptr;
 	}
 
-	UniquePtr<ReflectedClass> classInstance = Creator<ReflectedClass>::Create();
+	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
+	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
 	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{

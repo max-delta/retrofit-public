@@ -111,28 +111,6 @@ rftl::vector<UniquePtr<T>> LoadFromDirectory(
 	return retVal;
 }
 
-
-
-template<typename T>
-rftl::vector<UniquePtr<T const>> MakeConst( rftl::vector<UniquePtr<T>>&& nonConst )
-{
-	// TODO: Find a more clever non-allocation way to accomplish this, that
-	//  isn't too painful on code duplication
-	// NOTE: Can't just blindly reinterpret types, since const-ness may
-	//  theoretically influence conversion operations (though this is unlikely
-	//  in practice for these types)
-	// NOTE: May be best to push const/non-const handling up to the resource
-	//  loader itself
-	rftl::vector<UniquePtr<T const>> retVal;
-	retVal.reserve( nonConst.size() );
-	for( UniquePtr<T>& val : nonConst )
-	{
-		retVal.emplace_back( rftl::move( val ) );
-	}
-
-	return retVal;
-}
-
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -163,27 +141,21 @@ void InitializeLoader()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-#define RF_LOADER( TYPE_ID, TYPE ) \
+#define RF_LOADER_CONSTLESS( TYPE_ID, TYPE ) \
 	template<> \
 	UniquePtr<TYPE> LoadFromFile<TYPE>( file::VFSPath const& path ) \
 	{ \
 		return details::LoadFromFile<TYPE>( TYPE_ID, path ); \
 	} \
 	template<> \
-	UniquePtr<TYPE const> LoadFromFile<TYPE const>( file::VFSPath const& path ) \
-	{ \
-		return LoadFromFile<TYPE>( path ); \
-	} \
-	template<> \
 	rftl::vector<UniquePtr<TYPE>> LoadFromDirectory<TYPE>( file::VFSPath const& path, bool recursive ) \
 	{ \
 		return details::LoadFromDirectory<TYPE>( TYPE_ID, path, recursive ); \
-	} \
-	template<> \
-	rftl::vector<UniquePtr<TYPE const>> LoadFromDirectory<TYPE const>( file::VFSPath const& path, bool recursive ) \
-	{ \
-		return details::MakeConst<TYPE>( LoadFromDirectory<TYPE>( path, recursive ) ); \
 	}
+
+#define RF_LOADER( TYPE_ID, TYPE ) \
+	RF_LOADER_CONSTLESS( TYPE_ID, TYPE ); \
+	RF_LOADER_CONSTLESS( TYPE_ID, TYPE const );
 
 // This list correlates top-level resource types with their classes
 RF_LOADER( details::type::CampaignDesc, campaign::CampaignDesc );
@@ -194,6 +166,7 @@ RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::SiteDesc, site::SiteDesc );
 
 #undef RF_LOADER
+#undef RF_LOADER_CONSTLESS
 
 ///////////////////////////////////////////////////////////////////////////////
 }
