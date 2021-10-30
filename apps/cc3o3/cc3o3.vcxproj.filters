@@ -241,6 +241,9 @@
     <ClCompile Include="campaign\CampaignDesc.cpp">
       <Filter>campaign</Filter>
     </ClCompile>
+    <ClCompile Include="campaign\RosterMemberDesc.cpp">
+      <Filter>campaign</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -670,6 +673,9 @@
       <Filter>campaign</Filter>
     </ClInclude>
     <ClInclude Include="campaign\Campaign.h">
+      <Filter>campaign</Filter>
+    </ClInclude>
+    <ClInclude Include="campaign\RosterMemberDesc.h">
       <Filter>campaign</Filter>
     </ClInclude>
   </ItemGroup>

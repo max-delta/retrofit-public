@@ -3,8 +3,25 @@
 
 #include "PlatformFilesystem/VFSFwd.h"
 
+#include "rftl/string"
+#include "rftl/vector"
+
 
 namespace RF::cc::campaign {
+///////////////////////////////////////////////////////////////////////////////
+
+struct RosterMember
+{
+	rftl::string mIdentifier;
+};
+
+
+
+struct Company
+{
+	rftl::vector<RosterMember> mRoster;
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 
 class Campaign
@@ -20,7 +37,7 @@ public:
 	//
 	// Public data
 public:
-	// TODO
+	Company mPlayerCompany;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

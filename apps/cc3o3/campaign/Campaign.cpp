@@ -2,6 +2,7 @@
 #include "Campaign.h"
 
 #include "cc3o3/campaign/CampaignDesc.h"
+#include "cc3o3/campaign/RosterMemberDesc.h"
 #include "cc3o3/resource/ResourceLoad.h"
 
 #include "PlatformFilesystem/VFS.h"
@@ -27,6 +28,24 @@ UniquePtr<Campaign const> Campaign::LoadFromFolder( file::VFSPath const& campaig
 
 		// TODO
 		( (void)desc.mPlaceholder );
+	}
+
+	// Load roster descs
+	{
+		file::VFSPath const& descPath = campaignPath.GetChild( "company", "roster" );
+
+		rftl::vector<UniquePtr<RosterMemberDesc const>> descPtrs = resource::LoadFromDirectory<RosterMemberDesc const>( descPath, false );
+		RFLOG_TEST_AND_FATAL( descPtrs.empty() == false, descPath, RFCAT_CC3O3, "Failed to load any roster descs" );
+		for( UniquePtr<RosterMemberDesc const> const& descPtr : descPtrs )
+		{
+			RFLOG_TEST_AND_FATAL( descPtr != nullptr, descPath, RFCAT_CC3O3, "Failed to load a roster desc" );
+			RosterMemberDesc const& desc = *descPtr;
+
+			RosterMember member = {};
+			member.mIdentifier = desc.mIdentifier;
+
+			campaign.mPlayerCompany.mRoster.emplace_back( rftl::move( member ) );
+		}
 	}
 
 	// TODO: Lots of other complex data from other files

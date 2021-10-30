@@ -1,19 +1,16 @@
 #pragma once
-#include "project.h"
+#include "cc3o3/campaign/CampaignFwd.h"
+
+#include "rftl/string"
 
 
 namespace RF::cc::campaign {
 ///////////////////////////////////////////////////////////////////////////////
 
-class Campaign;
-
-struct Company;
-struct RosterMember;
-
-struct CampaignDesc;
-struct RosterMemberDesc;
-
-class CampaignManager;
+struct RosterMemberDesc
+{
+	rftl::string mIdentifier;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -38,11 +38,6 @@ namespace RF::cc::campaign {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr char const* kHardcodedCharacterIDs[] = { "claire", "brick", "laura" };
-static constexpr size_t kHardcodedRosterCount = 3;
-
-
-
 combat::PartyID BuildPlayerParty( combat::CombatInstance& setup, combat::TeamID team, input::PlayerID playerID )
 {
 	using namespace combat;
@@ -245,6 +240,7 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 	using namespace state::obj;
 
 	VerifyCampaignLoaded();
+	Campaign const& campaign = *mCampaign;
 
 	rollback::RollbackManager& rollMan = *gRollbackManager;
 	rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
@@ -258,6 +254,7 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 		// HACK: Only local player
 		input::PlayerID const playerID = appstate::InputHelpers::GetSinglePlayer();
 		VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
+		Company const& companyDesc = campaign.mPlayerCompany;
 
 		// Create company object
 		CreateCompany( sharedWindow, privateWindow, companyRoot );
@@ -268,8 +265,9 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 		// TODO: Data-driven list
 		company::RosterIndex rosterIndex = company::kInititialRosterIndex;
 		VariableIdentifier const charRoot = companyRoot.GetChild( "member" );
-		for( char const* const& characterID : details::kHardcodedCharacterIDs )
+		for( RosterMember const& member : companyDesc.mRoster )
 		{
+			rftl::string const& characterID = member.mIdentifier;
 			MutableObjectRef const newChar = CreateBaseCharacterFromDB(
 				sharedWindow, privateWindow,
 				charRoot.GetChild( rftl::to_string( rosterIndex ) ), characterID );
@@ -296,6 +294,7 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 	using namespace state::obj;
 
 	VerifyCampaignLoaded();
+	Campaign const& campaign = *mCampaign;
 
 	// Configure each company
 	// TODO: Multiple companies for competitive multiplayer
@@ -303,6 +302,7 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 		// HACK: Only local player
 		input::PlayerID const playerID = appstate::InputHelpers::GetSinglePlayer();
 		VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
+		Company const& companyDesc = campaign.mPlayerCompany;
 
 		// Get company object
 		MutableObjectRef const company = FindMutableObjectByIdentifier( companyRoot );
@@ -311,7 +311,7 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 		// HACK: All valid characters are eligible
 		// TODO: Tie to story progression
-		for( size_t i_char = 0; i_char < details::kHardcodedRosterCount; i_char++ )
+		for( size_t i_char = 0; i_char < companyDesc.mRoster.size(); i_char++ )
 		{
 			company::RosterIndex const rosterIndex =
 				math::integer_cast<company::RosterIndex>(
@@ -321,12 +321,13 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 		// HACK: Make sure some hard-coded characters are present
 		// TODO: Check active team conditions, auto-fill if needed
+		RF_ASSERT( companyDesc.mRoster.size() == 3 );
 		RF_ASSERT( roster.mEligible.at( 0 ) );
 		RF_ASSERT( roster.mEligible.at( 1 ) );
 		RF_ASSERT( roster.mEligible.at( 2 ) );
-		roster.mActiveTeam.at( 0 ) = 0;
+		roster.mActiveTeam.at( 0 ) = 1;
 		roster.mActiveTeam.at( 1 ) = 2;
-		roster.mActiveTeam.at( 2 ) = 1;
+		roster.mActiveTeam.at( 2 ) = 0;
 
 		// HACK: Set some fake progression
 		progression.mStoryTier = 6;
