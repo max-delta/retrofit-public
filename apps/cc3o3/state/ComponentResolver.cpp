@@ -20,6 +20,7 @@ class Meta;
 class Roster;
 class Character;
 class Combo;
+class Encounter;
 class Loadout;
 class Progression;
 class OverworldVisual;
@@ -36,6 +37,7 @@ enum : ComponentID
 	Roster,
 	Character,
 	Combo,
+	Encounter,
 	Loadout,
 	Progression,
 	OverworldVisual,
@@ -49,6 +51,7 @@ RF_COMP_PAIR( details::id::Meta, comp::Meta );
 RF_COMP_PAIR( details::id::Roster, comp::Roster );
 RF_COMP_PAIR( details::id::Character, comp::Character );
 RF_COMP_PAIR( details::id::Combo, comp::Combo );
+RF_COMP_PAIR( details::id::Encounter, comp::Encounter );
 RF_COMP_PAIR( details::id::Loadout, comp::Loadout );
 RF_COMP_PAIR( details::id::Progression, comp::Progression );
 RF_COMP_PAIR( details::id::OverworldVisual, comp::OverworldVisual );

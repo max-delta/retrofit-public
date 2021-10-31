@@ -70,6 +70,7 @@
     <ClCompile Include="elements\ElementDatabase.cpp" />
     <ClCompile Include="elements\ElementDesc.cpp" />
     <ClCompile Include="elements\IdentifierUtils.cpp" />
+    <ClCompile Include="encounter\EncounterManager.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="overworld\Area.cpp" />
@@ -84,6 +85,7 @@
     <ClCompile Include="state\ComponentResolver.cpp" />
     <ClCompile Include="state\components\Character.cpp" />
     <ClCompile Include="state\components\Combo.cpp" />
+    <ClCompile Include="state\components\Encounter.cpp" />
     <ClCompile Include="state\components\Loadout.cpp" />
     <ClCompile Include="state\components\Meta.cpp" />
     <ClCompile Include="state\components\OverworldMovement.cpp" />
@@ -97,6 +99,7 @@
     <ClCompile Include="state\objects\BattleCharacter.cpp" />
     <ClCompile Include="state\objects\Company.cpp" />
     <ClCompile Include="state\objects\EmptyObject.cpp" />
+    <ClCompile Include="state\objects\Encounter.cpp" />
     <ClCompile Include="state\objects\LocalUI.cpp" />
     <ClCompile Include="state\objects\OverworldCharacter.cpp" />
     <ClCompile Include="state\objects\SiteCharacter.cpp" />
@@ -188,6 +191,10 @@
     <ClInclude Include="elements\IdentifierUtils.h" />
     <ClInclude Include="elements\project.h" />
     <ClInclude Include="elements\stdafx.h" />
+    <ClInclude Include="encounter\EncounterFwd.h" />
+    <ClInclude Include="encounter\EncounterManager.h" />
+    <ClInclude Include="encounter\project.h" />
+    <ClInclude Include="encounter\stdafx.h" />
     <ClInclude Include="input\HardcodedSetup.h" />
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />
@@ -217,6 +224,7 @@
     <ClInclude Include="state\ComponentResolver.h" />
     <ClInclude Include="state\components\Character.h" />
     <ClInclude Include="state\components\Combo.h" />
+    <ClInclude Include="state\components\Encounter.h" />
     <ClInclude Include="state\components\Loadout.h" />
     <ClInclude Include="state\components\Meta.h" />
     <ClInclude Include="state\components\OverworldMovement.h" />
@@ -232,6 +240,7 @@
     <ClInclude Include="state\objects\BattleCharacter.h" />
     <ClInclude Include="state\objects\Company.h" />
     <ClInclude Include="state\objects\EmptyObject.h" />
+    <ClInclude Include="state\objects\Encounter.h" />
     <ClInclude Include="state\objects\LocalUI.h" />
     <ClInclude Include="state\objects\OverworldCharacter.h" />
     <ClInclude Include="state\objects\project.h" />

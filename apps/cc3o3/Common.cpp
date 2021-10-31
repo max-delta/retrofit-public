@@ -6,6 +6,7 @@
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/encounter/EncounterManager.h"
 #include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/campaign/CampaignManager.h"
@@ -41,6 +42,7 @@ WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<element::ElementDatabase> gElementDatabase;
 WeakPtr<company::CompanyManager> gCompanyManager;
+WeakPtr<encounter::EncounterManager> gEncounterManager;
 WeakPtr<state::ObjectManager> gObjectManager;
 WeakPtr<save::SaveManager> gSaveManager;
 WeakPtr<campaign::CampaignManager> gCampaignManager;
@@ -53,6 +55,7 @@ static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
 static UniquePtr<combat::CombatEngine> sCombatEngine;
 static UniquePtr<element::ElementDatabase> sElementDatabase;
 static UniquePtr<company::CompanyManager> sCompanyManager;
+static UniquePtr<encounter::EncounterManager> sEncounterManager;
 static UniquePtr<state::ObjectManager> sObjectManager;
 static UniquePtr<save::SaveManager> sSaveManager;
 static UniquePtr<campaign::CampaignManager> sCampaignManager;
@@ -107,6 +110,10 @@ void SystemStartup()
 	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs, gElementDatabase );
 	gCompanyManager = sCompanyManager;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing encounter manager..." );
+	sEncounterManager = DefaultCreator<encounter::EncounterManager>::Create();
+	gEncounterManager = sEncounterManager;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing object manager..." );
 	sObjectManager = DefaultCreator<state::ObjectManager>::Create(
 		component::ManagerIdentifier( 1u ), component::ScopeIdentifier( 1u ), state::ComponentResolver() );
@@ -130,6 +137,7 @@ void SystemShutdown()
 	sCampaignManager = nullptr;
 	sSaveManager = nullptr;
 	sObjectManager = nullptr;
+	sEncounterManager = nullptr;
 	sCompanyManager = nullptr;
 	sElementDatabase = nullptr;
 	sCharacterDatabase = nullptr;

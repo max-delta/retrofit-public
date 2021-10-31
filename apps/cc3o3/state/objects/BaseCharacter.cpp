@@ -16,24 +16,22 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateBaseCharacterFromDB(
-	rollback::Window& sharedWindow,
-	rollback::Window& privateWindow,
+MutableObjectRef CreateBaseCharacter(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
 	state::VariableIdentifier const& objIdentifier,
-	rftl::immutable_string const& charID )
+	character::CharData const& charData )
 {
 	MutableObjectRef const ref = CreateEmptyObject( sharedWindow, privateWindow, objIdentifier );
-	MakeBaseCharacterFromDB( sharedWindow, privateWindow, ref, charID );
+	MakeBaseCharacter( sharedWindow, privateWindow, ref, charData );
 	return ref;
 }
 
 
 
-void MakeBaseCharacterFromDB(
-	rollback::Window& sharedWindow,
-	rollback::Window& privateWindow,
+void MakeBaseCharacter(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
 	MutableObjectRef const& ref,
-	rftl::immutable_string const& charID )
+	character::CharData const& charData )
 {
 	// Character
 	{
@@ -43,11 +41,34 @@ void MakeBaseCharacterFromDB(
 		RFLOG_TEST_AND_FATAL( chara != nullptr, ref, RFCAT_CC3O3, "Failed to add character component" );
 		chara->BindToMeta( sharedWindow, privateWindow, ref );
 
-		character::CharacterDatabase const& charDB = *gCharacterDatabase;
-		chara->mCharData = charDB.FetchExistingCharacter( charID );
+		chara->mCharData = charData;
 	}
 
 	RFLOG_DEBUG( ref, RFCAT_CC3O3, "Prepared as base character" );
+}
+
+
+
+MutableObjectRef CreateBaseCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	state::VariableIdentifier const& objIdentifier,
+	rftl::immutable_string const& charID )
+{
+	character::CharacterDatabase const& charDB = *gCharacterDatabase;
+	character::CharData const charData = charDB.FetchExistingCharacter( charID );
+	return CreateBaseCharacter( sharedWindow, privateWindow, objIdentifier, charData );
+}
+
+
+
+void MakeBaseCharacterFromDB(
+	rollback::Window& sharedWindow, rollback::Window& privateWindow,
+	MutableObjectRef const& ref,
+	rftl::immutable_string const& charID )
+{
+	character::CharacterDatabase const& charDB = *gCharacterDatabase;
+	character::CharData const charData = charDB.FetchExistingCharacter( charID );
+	MakeBaseCharacter( sharedWindow, privateWindow, ref, charData );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

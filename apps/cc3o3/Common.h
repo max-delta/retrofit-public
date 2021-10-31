@@ -29,6 +29,9 @@ class ElementDatabase;
 namespace RF::cc::company {
 class CompanyManager;
 }
+namespace RF::cc::encounter {
+class EncounterManager;
+}
 namespace RF::component {
 template<typename TypeResolver>
 class TypedObjectManager;
@@ -57,6 +60,7 @@ extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 extern WeakPtr<combat::CombatEngine> gCombatEngine;
 extern WeakPtr<element::ElementDatabase> gElementDatabase;
 extern WeakPtr<company::CompanyManager> gCompanyManager;
+extern WeakPtr<encounter::EncounterManager> gEncounterManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;
 extern WeakPtr<save::SaveManager> gSaveManager;
 extern WeakPtr<campaign::CampaignManager> gCampaignManager;

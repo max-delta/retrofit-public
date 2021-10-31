@@ -9,10 +9,10 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateBattleCharacter(
+MutableObjectRef CreateEncounter(
 	rollback::Window& sharedWindow, rollback::Window& privateWindow,
 	state::VariableIdentifier const& objIdentifier );
-void MakeBattleCharacter(
+void MakeEncounter(
 	rollback::Window& sharedWindow, rollback::Window& privateWindow,
 	MutableObjectRef const& ref );
 

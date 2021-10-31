@@ -12,12 +12,14 @@
 #include "cc3o3/combat/FightController.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/elements/IdentifierUtils.h"
+#include "cc3o3/encounter/EncounterManager.h"
 #include "cc3o3/overworld/Overworld.h"
 #include "cc3o3/save/SaveBlob.h"
 #include "cc3o3/site/Site.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/objects/Company.h"
+#include "cc3o3/state/objects/Encounter.h"
 #include "cc3o3/state/objects/BaseCharacter.h"
 #include "cc3o3/state/objects/OverworldCharacter.h"
 #include "cc3o3/state/objects/SiteCharacter.h"
@@ -251,9 +253,11 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 	// Set up each company
 	// TODO: Multiple companies for competitive multiplayer
 	{
+		company::CompanyManager const& companyManager = *gCompanyManager;
+
 		// HACK: Only local player
 		input::PlayerID const playerID = appstate::InputHelpers::GetSinglePlayer();
-		VariableIdentifier const companyRoot( "company", rftl::to_string( playerID ) );
+		VariableIdentifier const companyRoot = companyManager.FindCompanyIdentifier( playerID );
 		Company const& companyDesc = campaign.mPlayerCompany;
 
 		// Create company object
@@ -262,7 +266,6 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 		// Set up characters
 		// NOTE: Characters with the company as their root are implicitly
 		//  on the company's roster
-		// TODO: Data-driven list
 		company::RosterIndex rosterIndex = company::kInititialRosterIndex;
 		VariableIdentifier const charRoot = companyRoot.GetChild( "member" );
 		for( RosterMember const& member : companyDesc.mRoster )
@@ -277,11 +280,43 @@ void CampaignManager::HardcodedSinglePlayerObjectSetup()
 			MakeSiteCharacterFromDB(
 				sharedWindow, privateWindow,
 				newChar, characterID );
-			MakeBattleCharacterFromDB(
+			MakeBattleCharacter(
 				sharedWindow, privateWindow,
-				newChar, characterID );
+				newChar );
 
 			rosterIndex++;
+		}
+	}
+
+	// Set up encounter scratch space
+	{
+		encounter::EncounterManager const& encounterManager = *gEncounterManager;
+
+		// HACK: Only local player
+		// NOTE: The idea is that maybe there is a situation where there could
+		//  be parallel battles
+		input::PlayerID const playerID = appstate::InputHelpers::GetSinglePlayer();
+		VariableIdentifier const encounterRoot = encounterManager.FindEncounterIdentifier( playerID );
+
+		// Create encounter object
+		CreateEncounter( sharedWindow, privateWindow, encounterRoot );
+
+		// Set up spawns
+		// NOTE: Spawns with the encounter as their root are implicitly
+		//  part of the encounter
+		encounter::SpawnIndex spawnIndex = encounter::kInititialSpawnIndex;
+		VariableIdentifier const charRoot = encounterRoot.GetChild( "spawn" );
+		for( size_t i_spawnIndex = 0; i_spawnIndex < encounter::kMaxSpawns; i_spawnIndex++ )
+		{
+			character::CharData const invalidCharData = {};
+			MutableObjectRef const newChar = CreateBaseCharacter(
+				sharedWindow, privateWindow,
+				charRoot.GetChild( rftl::to_string( spawnIndex ) ), invalidCharData );
+			MakeBattleCharacter(
+				sharedWindow, privateWindow,
+				newChar );
+
+			spawnIndex++;
 		}
 	}
 }

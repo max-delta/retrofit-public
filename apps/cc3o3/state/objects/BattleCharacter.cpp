@@ -17,24 +17,22 @@
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
-MutableObjectRef CreateBattleCharacterFromDB(
+MutableObjectRef CreateBattleCharacter(
 	rollback::Window& sharedWindow,
 	rollback::Window& privateWindow,
-	state::VariableIdentifier const& objIdentifier,
-	rftl::immutable_string const& charID )
+	state::VariableIdentifier const& objIdentifier )
 {
 	MutableObjectRef const ref = CreateEmptyObject( sharedWindow, privateWindow, objIdentifier );
-	MakeBattleCharacterFromDB( sharedWindow, privateWindow, ref, charID );
+	MakeBattleCharacter( sharedWindow, privateWindow, ref );
 	return ref;
 }
 
 
 
-void MakeBattleCharacterFromDB(
+void MakeBattleCharacter(
 	rollback::Window& sharedWindow,
 	rollback::Window& privateWindow,
-	MutableObjectRef const& ref,
-	rftl::immutable_string const& charID )
+	MutableObjectRef const& ref )
 {
 	// Combo
 	{

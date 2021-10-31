@@ -244,6 +244,15 @@
     <ClCompile Include="campaign\RosterMemberDesc.cpp">
       <Filter>campaign</Filter>
     </ClCompile>
+    <ClCompile Include="encounter\EncounterManager.cpp">
+      <Filter>encounter</Filter>
+    </ClCompile>
+    <ClCompile Include="state\objects\Encounter.cpp">
+      <Filter>state\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="state\components\Encounter.cpp">
+      <Filter>state\components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -678,6 +687,24 @@
     <ClInclude Include="campaign\RosterMemberDesc.h">
       <Filter>campaign</Filter>
     </ClInclude>
+    <ClInclude Include="encounter\EncounterManager.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\project.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\stdafx.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\EncounterFwd.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="state\objects\Encounter.h">
+      <Filter>state\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="state\components\Encounter.h">
+      <Filter>state\components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -742,6 +769,9 @@
     </Filter>
     <Filter Include="campaign">
       <UniqueIdentifier>{fd4cf30c-7494-4043-ac94-83a9b60868d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="encounter">
+      <UniqueIdentifier>{b2a80f4a-80d4-448e-a5e6-10aa9f146587}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
