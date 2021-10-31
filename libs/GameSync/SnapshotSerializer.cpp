@@ -39,6 +39,10 @@ void AppendDiagnosticsFromTree( rftl::deque<rftl::string>& output, StateTree<Val
 		{
 			ss << static_cast<uint16_t>( value );
 		}
+		else if constexpr( rftl::is_same<int8_t, ValueT>::value )
+		{
+			ss << static_cast<int16_t>( value );
+		}
 		else
 		{
 			ss << value;
