@@ -31,5 +31,10 @@
 		<IntDir>$(SolutionDir)_artifacts\$(RFArch)\$(Configuration)\Intermediate\$(ProjectName)\</IntDir>
 		<OutDir>$(SolutionDir)_artifacts\$(RFArch)\$(Configuration)\Out\</OutDir>
 	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<ClCompile>
+			<ObjectFileName>$(IntDir)\obj\%(RelativeDir)\</ObjectFileName>
+		</ClCompile>
+	</ItemDefinitionGroup>
 
 </Project>
