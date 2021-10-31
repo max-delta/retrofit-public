@@ -44,7 +44,7 @@ AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
 AlwaysBreakTemplateDeclarations : No # In some versions this has to be false instead...
 BinPackArguments : true # But prefer false
-BinPackParameters : false
+BinPackParameters : true # But prefer false
 BraceWrapping :
  AfterCaseLabel : true
  AfterClass : true
