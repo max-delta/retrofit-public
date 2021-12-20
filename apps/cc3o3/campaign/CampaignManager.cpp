@@ -16,6 +16,7 @@
 #include "cc3o3/overworld/Overworld.h"
 #include "cc3o3/save/SaveBlob.h"
 #include "cc3o3/site/Site.h"
+#include "cc3o3/state/components/Encounter.h"
 #include "cc3o3/state/components/Roster.h"
 #include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/objects/Company.h"
@@ -70,46 +71,42 @@ combat::PartyID BuildPlayerParty( combat::CombatInstance& setup, combat::TeamID 
 
 
 
-combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup )
+combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerID hostPlayerID )
 {
 	using namespace combat;
+
+	encounter::EncounterManager const& encounterManager = *gEncounterManager;
 
 	TeamID const team = setup.AddTeam();
 	PartyID const party = setup.AddParty( team );
 
-	rftl::array<Fighter, 2> enemies = {};
+	// Prepare an encounter
+	encounterManager.PrepareHackEnemyEncounter( hostPlayerID );
+
+	// Get the encounter
+	state::MutableObjectRef const encounterObject = encounterManager.FindMutableEncounterObject( hostPlayerID );
+	state::comp::Encounter& encounter = *encounterObject.GetMutableComponentInstanceT<state::comp::Encounter>();
+
+	// Get the available spawn objects
+	rftl::array<state::MutableObjectRef, encounter::kMaxSpawns> const spawnObjects =
+		encounterManager.FindMutableSpawnObjects( hostPlayerID );
+
+	// For each spawn...
+	for( size_t i_spawn = 0; i_spawn < encounter::kMaxSpawns; i_spawn++ )
 	{
-		Fighter& enemy = enemies.at( 0 );
-		enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-		enemy.mMaxHealth = 999;
-		enemy.mCurHealth = enemy.mMaxHealth;
-		enemy.mMaxStamina = 7;
-		enemy.mCurStamina = enemy.mMaxStamina;
-		enemy.mPhysAtk = 2;
-		enemy.mPhysDef = 2;
-		enemy.mElemAtk = 2;
-		enemy.mElemDef = 2;
-		enemy.mBalance = 2;
-		enemy.mTechniq = 2;
-	}
-	{
-		Fighter& enemy = enemies.at( 1 );
-		enemy.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
-		enemy.mMaxHealth = 999;
-		enemy.mCurHealth = enemy.mMaxHealth;
-		enemy.mMaxStamina = 7;
-		enemy.mCurStamina = enemy.mMaxStamina;
-		enemy.mPhysAtk = 2;
-		enemy.mPhysDef = 2;
-		enemy.mElemAtk = 2;
-		enemy.mElemDef = 2;
-		enemy.mBalance = 2;
-		enemy.mTechniq = 2;
-	}
-	for( Fighter const& enemy : enemies )
-	{
-		FighterID const enemyID = setup.AddFighter( party );
-		setup.SetCombatant( enemyID, enemy );
+		if( encounter.mDeployed.at( i_spawn ) == false )
+		{
+			// Not active
+			continue;
+		}
+
+		// NOTE: Spawn objects should always exist as scratch, even if not used
+		state::MutableObjectRef const& spawn = spawnObjects.at( i_spawn );
+		RF_ASSERT( spawn.IsSet() );
+
+		// Add to party
+		FighterID const fighter = setup.AddFighter( party );
+		setup.SetCombatant( fighter, spawn );
 	}
 
 	return team;
@@ -455,7 +452,7 @@ void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 	// TODO: Encounters
 	if constexpr( true )
 	{
-		details::BuildHackEnemyTeam( setup );
+		details::BuildHackEnemyTeam( setup, singlePlayerHack );
 	}
 
 	// Setup initial field influence

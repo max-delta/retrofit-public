@@ -25,9 +25,12 @@ public:
 	// Locate various encounter-related objects
 	state::VariableIdentifier FindEncounterIdentifier( input::PlayerID const& playerID ) const;
 	state::ObjectRef FindEncounterObject( input::PlayerID const& playerID ) const;
+	state::MutableObjectRef FindMutableEncounterObject( input::PlayerID const& playerID ) const;
 	rftl::array<state::VariableIdentifier, kMaxSpawns> FindSpawnIdentifiers( input::PlayerID const& playerID ) const;
 	rftl::array<state::ObjectRef, kMaxSpawns> FindSpawnObjects( input::PlayerID const& playerID ) const;
 	rftl::array<state::MutableObjectRef, kMaxSpawns> FindMutableSpawnObjects( input::PlayerID const& playerID ) const;
+
+	void PrepareHackEnemyEncounter( input::PlayerID const& playerID ) const;
 
 
 	//

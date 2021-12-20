@@ -1,6 +1,13 @@
 #include "stdafx.h"
 #include "EncounterManager.h"
 
+#include "cc3o3/Common.h"
+#include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/state/components/Encounter.h"
+#include "cc3o3/state/components/Character.h"
+#include "cc3o3/state/components/Combo.h"
+#include "cc3o3/state/components/Vitality.h"
+#include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
 
@@ -25,6 +32,13 @@ state::VariableIdentifier EncounterManager::FindEncounterIdentifier( input::Play
 state::ObjectRef EncounterManager::FindEncounterObject( input::PlayerID const& playerID ) const
 {
 	return state::FindObjectByIdentifier( FindEncounterIdentifier( playerID ) );
+}
+
+
+
+state::MutableObjectRef EncounterManager::FindMutableEncounterObject( input::PlayerID const& playerID ) const
+{
+	return state::FindMutableObjectByIdentifier( FindEncounterIdentifier( playerID ) );
 }
 
 
@@ -82,6 +96,59 @@ rftl::array<state::MutableObjectRef, kMaxSpawns> EncounterManager::FindMutableSp
 	}
 
 	return retVal;
+}
+
+
+
+void EncounterManager::PrepareHackEnemyEncounter( input::PlayerID const& playerID ) const
+{
+	// Get the encounter
+	state::MutableObjectRef const encounterObject = FindMutableEncounterObject( playerID );
+	state::comp::Encounter& encounter = *encounterObject.GetMutableComponentInstanceT<state::comp::Encounter>();
+
+	// Get the available spawn objects
+	rftl::array<state::MutableObjectRef, encounter::kMaxSpawns> const spawnObjects =
+		FindMutableSpawnObjects( playerID );
+
+	// Clear all
+	for( size_t i_spawn = 0; i_spawn < encounter::kMaxSpawns; i_spawn++ )
+	{
+		encounter.mDeployed.at( i_spawn ) = false;
+	}
+
+	// Spawn some
+	for( size_t i = 0; i < 2; i++ )
+	{
+		encounter.mDeployed.at( i ) = true;
+		state::MutableObjectRef const spawn = spawnObjects.at( i );
+
+		// TODO: Figure this out
+		combat::EntityClass const entityClass = combat::EntityClass::Player;
+
+		// Combo
+		state::comp::Combo& combo = *spawn.GetMutableComponentInstanceT<state::comp::Combo>();
+		combo.mComboTarget = {};
+		combo.mComboMeter = {};
+
+		// Character
+		state::comp::Character& chara = *spawn.GetMutableComponentInstanceT<state::comp::Character>();
+		character::CharData& charData = chara.mCharData;
+		charData.mInnate = "red";
+		character::Stats& stats = charData.mStats;
+		stats = {};
+		stats.mMHealth = character::Stats::kMaxStatValue;
+		stats.mPhysAtk = 2;
+		stats.mPhysDef = 2;
+		stats.mElemAtk = 2;
+		stats.mElemDef = 2;
+		stats.mBalance = 2;
+		stats.mTechniq = 2;
+
+		// Vitality
+		state::comp::Vitality& vitality = *spawn.GetMutableComponentInstanceT<state::comp::Vitality>();
+		vitality.mCurHealth = gCombatEngine->LoCalcMaxHealth( stats.mMHealth, entityClass );
+		vitality.mCurStamina = combat::kMaxStamina;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
