@@ -253,6 +253,15 @@
     <ClCompile Include="state\components\Encounter.cpp">
       <Filter>state\components</Filter>
     </ClCompile>
+    <ClCompile Include="encounter\Encounter.cpp">
+      <Filter>encounter</Filter>
+    </ClCompile>
+    <ClCompile Include="encounter\EncounterDesc.cpp">
+      <Filter>encounter</Filter>
+    </ClCompile>
+    <ClCompile Include="encounter\Entity.cpp">
+      <Filter>encounter</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -704,6 +713,15 @@
     </ClInclude>
     <ClInclude Include="state\components\Encounter.h">
       <Filter>state\components</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\EncounterDesc.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\Encounter.h">
+      <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="encounter\Entity.h">
+      <Filter>encounter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

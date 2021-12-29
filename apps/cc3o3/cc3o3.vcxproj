@@ -70,7 +70,10 @@
     <ClCompile Include="elements\ElementDatabase.cpp" />
     <ClCompile Include="elements\ElementDesc.cpp" />
     <ClCompile Include="elements\IdentifierUtils.cpp" />
+    <ClCompile Include="encounter\Encounter.cpp" />
+    <ClCompile Include="encounter\EncounterDesc.cpp" />
     <ClCompile Include="encounter\EncounterManager.cpp" />
+    <ClCompile Include="encounter\Entity.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="overworld\Area.cpp" />
@@ -191,8 +194,11 @@
     <ClInclude Include="elements\IdentifierUtils.h" />
     <ClInclude Include="elements\project.h" />
     <ClInclude Include="elements\stdafx.h" />
+    <ClInclude Include="encounter\Encounter.h" />
+    <ClInclude Include="encounter\EncounterDesc.h" />
     <ClInclude Include="encounter\EncounterFwd.h" />
     <ClInclude Include="encounter\EncounterManager.h" />
+    <ClInclude Include="encounter\Entity.h" />
     <ClInclude Include="encounter\project.h" />
     <ClInclude Include="encounter\stdafx.h" />
     <ClInclude Include="input\HardcodedSetup.h" />

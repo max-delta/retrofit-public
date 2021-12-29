@@ -7,6 +7,7 @@
 
 #include "core/macros.h"
 
+#include "rftl/extension/immutable_string.h"
 #include "rftl/array"
 
 
@@ -16,6 +17,12 @@ namespace RF::cc::encounter {
 class EncounterManager
 {
 	RF_NO_COPY( EncounterManager );
+
+	//
+	// Types
+public:
+	using EncounterID = rftl::immutable_string;
+
 
 	//
 	// Public methods
@@ -30,7 +37,7 @@ public:
 	rftl::array<state::ObjectRef, kMaxSpawns> FindSpawnObjects( input::PlayerID const& playerID ) const;
 	rftl::array<state::MutableObjectRef, kMaxSpawns> FindMutableSpawnObjects( input::PlayerID const& playerID ) const;
 
-	void PrepareHackEnemyEncounter( input::PlayerID const& playerID ) const;
+	void PrepareHackEnemyEncounter( EncounterID const& encounterID, input::PlayerID const& playerID ) const;
 
 
 	//

@@ -2,7 +2,9 @@
 #include "EncounterManager.h"
 
 #include "cc3o3/Common.h"
+#include "cc3o3/CommonPaths.h"
 #include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/encounter/Encounter.h"
 #include "cc3o3/state/components/Encounter.h"
 #include "cc3o3/state/components/Character.h"
 #include "cc3o3/state/components/Combo.h"
@@ -10,6 +12,8 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
+
+#include "PlatformFilesystem/VFSPath.h"
 
 #include "core_component/TypedObjectRef.h"
 #include "core_state/VariableIdentifier.h"
@@ -100,27 +104,42 @@ rftl::array<state::MutableObjectRef, kMaxSpawns> EncounterManager::FindMutableSp
 
 
 
-void EncounterManager::PrepareHackEnemyEncounter( input::PlayerID const& playerID ) const
+void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID, input::PlayerID const& playerID ) const
 {
 	// Get the encounter
 	state::MutableObjectRef const encounterObject = FindMutableEncounterObject( playerID );
 	state::comp::Encounter& encounter = *encounterObject.GetMutableComponentInstanceT<state::comp::Encounter>();
 
 	// Get the available spawn objects
-	rftl::array<state::MutableObjectRef, encounter::kMaxSpawns> const spawnObjects =
+	rftl::array<state::MutableObjectRef, kMaxSpawns> const spawnObjects =
 		FindMutableSpawnObjects( playerID );
 
 	// Clear all
-	for( size_t i_spawn = 0; i_spawn < encounter::kMaxSpawns; i_spawn++ )
+	for( size_t i_spawn = 0; i_spawn < kMaxSpawns; i_spawn++ )
 	{
 		encounter.mDeployed.at( i_spawn ) = false;
 	}
 
-	// Spawn some
-	for( size_t i = 0; i < 2; i++ )
+	// HACK: Load here
+	// TODO: Pre-load into manager
+	file::VFSPath const encounterDescPath = paths::TablesRoot().GetChild( "world", "encounters", rftl::string( encounterID ) + ".oo" );
+	Encounter const encounterSpec = Encounter::LoadFromDesc( encounterDescPath );
+	RFLOG_TEST_AND_FATAL( encounterSpec.mEntities.size() <= kMaxSpawns, encounterDescPath, RFCAT_CC3O3, "Encounter has too many spawns" );
+
+	// HACK: Spawn all
+	// TODO: Support for reinforcements and delayed spawns
+	size_t nextSpawnIndex = 0;
+	for( Entity const& entity : encounterSpec.mEntities )
 	{
-		encounter.mDeployed.at( i ) = true;
-		state::MutableObjectRef const spawn = spawnObjects.at( i );
+		size_t const curSpawnIndex = nextSpawnIndex;
+		nextSpawnIndex++;
+		RF_ASSERT( curSpawnIndex < kMaxSpawns );
+
+		encounter.mDeployed.at( curSpawnIndex ) = true;
+		state::MutableObjectRef const spawn = spawnObjects.at( curSpawnIndex );
+
+		// TODO: Actual data
+		( (void)entity );
 
 		// TODO: Figure this out
 		combat::EntityClass const entityClass = combat::EntityClass::Player;

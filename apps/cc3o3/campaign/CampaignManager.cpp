@@ -81,7 +81,10 @@ combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerI
 	PartyID const party = setup.AddParty( team );
 
 	// Prepare an encounter
-	encounterManager.PrepareHackEnemyEncounter( hostPlayerID );
+	// HACK: Hard-coded
+	// TODO: Figure out from current campaign state
+	static constexpr char const kHackEncounter[] = "temp";
+	encounterManager.PrepareHackEnemyEncounter( kHackEncounter, hostPlayerID );
 
 	// Get the encounter
 	state::MutableObjectRef const encounterObject = encounterManager.FindMutableEncounterObject( hostPlayerID );
