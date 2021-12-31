@@ -78,6 +78,14 @@ public:
 	void SetCombatant( FighterID fighterID, Fighter const& combatant );
 	void SetCombatant( FighterID fighterID, state::MutableObjectRef const& character );
 
+	// Get the persistent character that a combatant was sourced from
+	// NOTE: Not all combatants are sourced from persistent characters, so this
+	//   may return an invalidated reference
+	// NOTE: The current combat data of the character may differ, as a result of
+	//  changes that occurred during combat that have not been committed back to
+	//  the persistent character
+	state::ObjectRef GetCharacter( FighterID fighterID ) const;
+
 	void CommitCombatData() const;
 	void ReloadCombatData();
 

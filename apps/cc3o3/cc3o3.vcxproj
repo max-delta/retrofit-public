@@ -114,6 +114,7 @@
     <ClCompile Include="sync\Session.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlot.cpp" />
     <ClCompile Include="ui\controllers\CharacterSlotList.cpp" />
+    <ClCompile Include="ui\controllers\CombatCharacter.cpp" />
     <ClCompile Include="ui\controllers\ElementGrid.cpp" />
     <ClCompile Include="ui\controllers\ElementGridSelector.cpp" />
     <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp" />
@@ -267,6 +268,7 @@
     <ClInclude Include="time\TimeFwd.h" />
     <ClInclude Include="ui\controllers\CharacterSlot.h" />
     <ClInclude Include="ui\controllers\CharacterSlotList.h" />
+    <ClInclude Include="ui\controllers\CombatCharacter.h" />
     <ClInclude Include="ui\controllers\ElementGrid.h" />
     <ClInclude Include="ui\controllers\ElementGridSelector.h" />
     <ClInclude Include="ui\controllers\ElementStockpileSelector.h" />

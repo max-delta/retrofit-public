@@ -39,6 +39,7 @@ public:
 	// Public methods (display calculations)
 public:
 	DisplayVal DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const;
+	SignedDisplayVal DisplayStamina( SimDelta staminaVal, EntityClass entityClass ) const;
 	DisplayVal DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const;
 
 

@@ -75,6 +75,13 @@ DisplayVal CombatEngine::DisplayHealth( LargeSimVal healthVal, EntityClass entit
 
 
 
+SignedDisplayVal CombatEngine::DisplayStamina( SimDelta staminaVal, EntityClass entityClass ) const
+{
+	return staminaVal;
+}
+
+
+
 DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const
 {
 	static constexpr SimVal kMinStat = 0;

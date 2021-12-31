@@ -24,6 +24,7 @@ using SimVal = uint8_t;
 using SimDelta = int8_t;
 using LargeSimVal = uint16_t;
 using DisplayVal = uint16_t;
+using SignedDisplayVal = int16_t;
 
 using TeamIndex = uint8_t;
 static constexpr TeamIndex kInvalidTeamIndex = rftl::numeric_limits<TeamIndex>::max();

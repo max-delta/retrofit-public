@@ -262,6 +262,9 @@
     <ClCompile Include="encounter\Entity.cpp">
       <Filter>encounter</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\CombatCharacter.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -722,6 +725,9 @@
     </ClInclude>
     <ClInclude Include="encounter\Entity.h">
       <Filter>encounter</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\CombatCharacter.h">
+      <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

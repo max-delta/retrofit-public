@@ -214,6 +214,14 @@ void CombatInstance::SetCombatant( FighterID fighterID, state::MutableObjectRef 
 
 
 
+state::ObjectRef CombatInstance::GetCharacter( FighterID fighterID ) const
+{
+	FighterEntry const& fighter = GetFighterRef( fighterID );
+	return fighter.mPersist;
+}
+
+
+
 void CombatInstance::CommitCombatData() const
 {
 	// TODO: Field data

@@ -30,6 +30,10 @@ enum : FontPurposeID
 
 	OverworldLabel,
 
+	BattleName,
+	BattleHealth,
+	BattleStamina,
+
 	MessageBox
 };
 }

@@ -102,6 +102,10 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 3, 1 } );
 		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 3, 1 } );
 		fontReg.RegisterFont( ui::font::OverworldLabel, { narrowFont2xVari, 16, 3, 1 } );
+		fontReg.RegisterFont( ui::font::BattleName, { narrowFont1xMono, 8, 1, 1 } );
+		fontReg.RegisterFont( ui::font::BattleName, { narrowFont2xVari, 8, 1, 2 } );
+		fontReg.RegisterFont( ui::font::BattleHealth, { narrowFont1xMono, 16, 2, 1 } );
+		fontReg.RegisterFont( ui::font::BattleStamina, { narrowFont1xMono, 8, 1, 1 } );
 		fontReg.RegisterFont( ui::font::MessageBox, { narrowFont2xVari, 16, 3, 1 } );
 		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 0, 1 } );
 	}

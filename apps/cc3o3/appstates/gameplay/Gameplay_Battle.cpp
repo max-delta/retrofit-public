@@ -10,6 +10,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
+#include "cc3o3/ui/controllers/CombatCharacter.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -107,6 +108,8 @@ public:
 		kElement
 	};
 
+	static constexpr size_t kMaxControllablePartyCharacters = 3;
+
 
 public:
 	InternalState() = default;
@@ -128,6 +131,9 @@ public:
 
 	using StateControllers = rftl::array<WeakPtr<ui::controller::InstancedController>, ControlStates::kNumStates>;
 	StateControllers mStateControllers;
+
+	using CharacterSlots = rftl::array<WeakPtr<ui::controller::CombatCharacter>, kMaxControllablePartyCharacters>;
+	CharacterSlots mCharacterSlots;
 
 	uint8_t mControlCharIndex = 0;
 	TargetingReason mTargetingReason = TargetingReason::kInvalid;
@@ -397,6 +403,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					mainColumnRatios ) );
 
 		// Party on right side
+		static_assert( InternalState::kMaxControllablePartyCharacters == 3 );
 		ui::controller::ColumnSlicer::Ratios const partyColumnRatios = {
 			{ 1.f / 3.f, true },
 			{ 1.f / 3.f, true },
@@ -407,25 +414,14 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				mainColumnSlicer->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::ColumnSlicer>::Create(
 					partyColumnRatios ) );
-		for( size_t i = 0; i < 3; i++ )
+		for( size_t i = 0; i < InternalState::kMaxControllablePartyCharacters; i++ )
 		{
-			// Frame
-			WeakPtr<ui::controller::BorderFrame> const frame =
+			// Slot
+			WeakPtr<ui::controller::CombatCharacter> const slot =
 				uiManager.AssignStrongController(
 					partyColumnSlicer->GetChildContainerID( i ),
-					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
-
-			// Display
-			WeakPtr<ui::controller::TextLabel> const partyMemberTODO =
-				uiManager.AssignStrongController(
-					frame->GetChildContainerID(),
-					DefaultCreator<ui::controller::TextLabel>::Create() );
-			partyMemberTODO->SetJustification( ui::Justification::MiddleCenter );
-			partyMemberTODO->SetFont( ui::font::LargeMenuText );
-			partyMemberTODO->SetText( "UNSET" );
-			partyMemberTODO->SetColor( math::Color3f::kWhite );
-			partyMemberTODO->SetBorder( true );
+					DefaultCreator<ui::controller::CombatCharacter>::Create() );
+			internalState.mCharacterSlots.at( i ) = slot;
 		}
 
 		// Control on left side
@@ -897,6 +893,52 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	fightController.EndCombatFrame();
 
 	combat::CombatInstance const& mainInstance = *fightController.GetCombatInstance();
+
+	// Update character slots
+	{
+		combat::PartyID const partyID = fightController.GetLocalPartyID();
+		combat::CombatInstance::FighterIDs const fighterIDs = mainInstance.GetFighterIDs( partyID );
+		RF_ASSERT( fighterIDs.size() <= InternalState::kMaxControllablePartyCharacters );
+
+		size_t nextSlotIndex = 0;
+		for( combat::FighterID const& fighterID : fighterIDs )
+		{
+			size_t const curSlotIndex = nextSlotIndex;
+			nextSlotIndex++;
+
+			if( curSlotIndex >= InternalState::kMaxControllablePartyCharacters )
+			{
+				RF_DBGFAIL_MSG( "More fighters in party than can be controlled by UI" );
+				break;
+			}
+
+			WeakPtr<ui::controller::CombatCharacter> const slot = internalState.mCharacterSlots.at( curSlotIndex );
+			RF_ASSERT( slot != nullptr );
+
+			state::ObjectRef const character = mainInstance.GetCharacter( fighterID );
+
+			combat::Fighter const fighter = mainInstance.GetFighter( fighterID );
+
+			bool selected = false;
+			if( fighterID == fightController.GetCharacterByIndex( internalState.mControlCharIndex ) )
+			{
+				// Currently selected character
+				// TODO: Check if it's our turn
+				// TODO: Only consider if we're not in a action selection menu
+				selected = true;
+			}
+
+			slot->UpdateCharacter( fighter, character, selected );
+		}
+
+		// Clear any unsued slots
+		for( size_t i = nextSlotIndex; i < InternalState::kMaxControllablePartyCharacters; i++ )
+		{
+			WeakPtr<ui::controller::CombatCharacter> const slot = internalState.mCharacterSlots.at( i );
+			RF_ASSERT( slot != nullptr );
+			slot->ClearCharacter();
+		}
+	}
 
 	// HACK: Stub battle data
 	{
