@@ -89,25 +89,40 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
+
+		// Fallback
+		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 0, 1 } );
+
+		// Procedural fonts, useful for debug or mockups, but shouldn't ship
+		// NOTE: These don't respect baseline, so operate as raw blocks
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 0, 2 } );
 		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::ppu::kTileSize, 0, 1 } );
 		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 2, 0, 1 } );
 		fontReg.RegisterFont( ui::font::NarrowQuarterTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 4, 0, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuText, { narrowFont1xMono, 8, 1, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuText, { narrowFont2xVari, 8, 1, 2 } );
-		fontReg.RegisterFont( ui::font::LargeMenuText, { narrowFont2xVari, 16, 3, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont1xMono, 8, 1, 1 } );
-		fontReg.RegisterFont( ui::font::SmallMenuSelection, { narrowFont2xVari, 8, 1, 2 } );
-		fontReg.RegisterFont( ui::font::LargeMenuSelection, { narrowFont2xVari, 16, 3, 1 } );
-		fontReg.RegisterFont( ui::font::LargeMenuHeader, { narrowFont2xVari, 16, 3, 1 } );
-		fontReg.RegisterFont( ui::font::OverworldLabel, { narrowFont2xVari, 16, 3, 1 } );
-		fontReg.RegisterFont( ui::font::BattleName, { narrowFont1xMono, 8, 1, 1 } );
-		fontReg.RegisterFont( ui::font::BattleName, { narrowFont2xVari, 8, 1, 2 } );
-		fontReg.RegisterFont( ui::font::BattleHealth, { narrowFont1xMono, 16, 2, 1 } );
-		fontReg.RegisterFont( ui::font::BattleStamina, { narrowFont1xMono, 8, 1, 1 } );
-		fontReg.RegisterFont( ui::font::MessageBox, { narrowFont2xVari, 16, 3, 1 } );
-		fontReg.RegisterFallbackFont( { narrowFont1xMono, 8, 0, 1 } );
+		static_assert( gfx::ppu::kTileSize / 4 >= 8, "Tile size too small for smallest font" );
+
+		// Normal fonts
+		// NOTE: These use baselines, so may extend below the given y-coordinate
+		ui::Font const mono8_1x{ narrowFont1xMono, 8, 1, 1 };
+		ui::Font const vari8_2x{ narrowFont2xVari, 8, 1, 2 };
+		ui::Font const mono16_1x{ narrowFont1xMono, 16, 2, 1 };
+		ui::Font const vari16_1x{ narrowFont2xVari, 16, 3, 1 };
+
+		// Normal fonts
+		fontReg.RegisterFont( ui::font::SmallMenuText, mono8_1x );
+		fontReg.RegisterFont( ui::font::SmallMenuText, vari8_2x );
+		fontReg.RegisterFont( ui::font::LargeMenuText, vari16_1x );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, mono8_1x );
+		fontReg.RegisterFont( ui::font::SmallMenuSelection, vari8_2x );
+		fontReg.RegisterFont( ui::font::LargeMenuSelection, vari16_1x );
+		fontReg.RegisterFont( ui::font::LargeMenuHeader, vari16_1x );
+		fontReg.RegisterFont( ui::font::OverworldLabel, vari16_1x );
+		fontReg.RegisterFont( ui::font::BattleName, mono8_1x );
+		fontReg.RegisterFont( ui::font::BattleName, vari8_2x );
+		fontReg.RegisterFont( ui::font::BattleHealth, mono16_1x );
+		fontReg.RegisterFont( ui::font::BattleStamina, mono8_1x );
+		fontReg.RegisterFont( ui::font::MessageBox, vari16_1x );
 	}
 
 	// Load tilesets
