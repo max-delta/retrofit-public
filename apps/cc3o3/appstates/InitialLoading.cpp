@@ -137,6 +137,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 		// TODO: Some kind of machinery for automating frames
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat1_8_48", paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat2_8_48", paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro2_8_48", paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "template_8_48", paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
