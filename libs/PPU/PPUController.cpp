@@ -1126,6 +1126,33 @@ void PPUController::CalculateFontVariableCharWidth( Font const& font, char chara
 	}
 }
 
+
+
+void PPUController::CalculateFontVariableCharHeight( Font const& font, char character, uint8_t zoomDesired, uint8_t shrinkDesired, uint8_t& varCharHeight ) const
+{
+	// NOTE: 'True height' is just for debugging ease
+	uint8_t const trueVarCharHeight = math::integer_cast<uint8_t>( font.mVariableHeight.at( static_cast<unsigned char>( character ) ) );
+	varCharHeight = trueVarCharHeight;
+	if( varCharHeight == 0 )
+	{
+		// Whitespace?
+		return;
+	}
+	RF_ASSERT( varCharHeight > 0 );
+	varCharHeight *= zoomDesired;
+	RF_ASSERT( varCharHeight > 0 );
+	uint8_t const shrinkLoss = math::integer_cast<uint8_t>( varCharHeight % shrinkDesired );
+	varCharHeight /= shrinkDesired;
+	varCharHeight += shrinkLoss;
+	if( varCharHeight < 1 )
+	{
+		// Cannot be shrunk as much as desired
+		varCharHeight = 1;
+	}
+}
+
+
+
 void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, CoordElem& tileWidth, CoordElem& tileHeight ) const
 {
 	uint8_t scaleUp;
@@ -1397,13 +1424,15 @@ void PPUController::RenderString( PPUState::String const& string ) const
 		char const character = text[i_char];
 		if( character == '\0' )
 		{
+			// End of string
 			break;
 		}
 
 		uint8_t charWidth = tileWidth;
-		uint8_t const& charHeight = tileHeight;
+		uint8_t charHeight = tileHeight;
 		uint8_t charMargin = 0;
 
+		// Variable fonts use variable width
 		if( font->mSpacingMode == Font::SpacingMode::Variable )
 		{
 			uint8_t whitespaceWidth = 0;
@@ -1412,23 +1441,46 @@ void PPUController::RenderString( PPUState::String const& string ) const
 			charMargin = 1;
 		}
 
-		RF_ASSERT( charWidth > 0 );
-		RF_ASSERT( charHeight > 0 );
+		// Most fonts (even monospace) have varying heights, which we can use to
+		//  reduce some overlap issues
+		static constexpr bool kTrimHeight = true;
+		if constexpr( kTrimHeight )
+		{
+			CalculateFontVariableCharHeight( *font, character, zoomDesired, shrinkDesired, charHeight );
+		}
 
+		RF_ASSERT( charWidth > 0 );
+		RF_ASSERT( charHeight >= 0 );
+
+		// Calculate the PPU position
 		CoordElem const x1 = lastCharX;
 		CoordElem const y1 = string.mYCoord;
 		CoordElem const x2 = x1 + charWidth;
 		CoordElem const y2 = y1 + charHeight;
 		lastCharX = x2 + charMargin;
 
+		if( charHeight <= 0 )
+		{
+			// Whitespace, doesn't need to be rendered
+			continue;
+		}
+
+		RF_ASSERT( charWidth > 0 );
+		RF_ASSERT( charHeight > 0 );
+
+		// Calculate render coordinates
 		math::Vector2f const topLeft = CoordToDevice( x1, y1 );
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
 		float const deviceWidth = bottomRight.x - topLeft.x;
+		float const deviceHeight = bottomRight.y - topLeft.y;
 		math::Color3f const color = ConvertColor( string.mColor );
 		float const uvWidth = deviceWidth / ( ( deviceWidth * math::float_cast<float>( tileWidth ) ) / math::float_cast<float>( charWidth ) );
+		float const uvHeight = deviceHeight / ( ( deviceHeight * math::float_cast<float>( tileHeight ) ) / math::float_cast<float>( charHeight ) );
 		math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
 		float const z = LayerToDevice( string.mZLayer );
-		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, 1.f };
+		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
+
+		// Render
 		if( string.mBorder )
 		{
 			float const subZStep = math::Lerp( z, LayerToDevice( string.mZLayer + 1 ), 0.1f ) - z;

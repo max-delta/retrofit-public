@@ -51,7 +51,7 @@ public:
 	DeviceTextureID LoadTexture( rftl::byte_view const& buffer, uint32_t& width, uint32_t& height ) override;
 	bool UnloadTexture( DeviceTextureID textureID ) override;
 
-	DeviceFontID CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth ) override;
+	DeviceFontID CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth, rftl::array<uint32_t, 256>* variableHeight ) override;
 	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color ) override;
 	bool DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV ) override;
 

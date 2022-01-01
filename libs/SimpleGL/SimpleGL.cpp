@@ -386,7 +386,7 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 
 
-DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth )
+DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth, rftl::array<uint32_t, 256>* variableHeight )
 {
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
@@ -450,6 +450,13 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 			width = 0;
 		}
 	}
+	if( variableHeight != nullptr )
+	{
+		for( uint32_t& height : *variableHeight )
+		{
+			height = 0;
+		}
+	}
 
 	using CharacterStorage = rftl::vector<uint8_t>;
 	using CharacterListStorage = rftl::vector<CharacterStorage>;
@@ -460,19 +467,27 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	uint8_t const* const maxReadHead = &data[x * y * n];
 	for( size_t row = 0; row < kCharactersPerColumn; row++ )
 	{
-		for( size_t scanline = 0; scanline < charHeight; scanline++ )
+		for( uint32_t scanline = 0; scanline < charHeight; scanline++ )
 		{
 			for( size_t column = 0; column < kCharactersPerRow; column++ )
 			{
 				size_t const characterIndex = row * kCharactersPerRow + column;
 				CharacterStorage& characterStorage = listStorage.at( characterIndex );
-				uint32_t unusedVariableCharWidth = 0;
-				uint32_t* variableCharWidthPtr = &unusedVariableCharWidth;
+
+				uint32_t unusedVariableWidth = 0;
+				uint32_t* variableCharWidthPtr = &unusedVariableWidth;
+				uint32_t* variableCharHeightPtr = &unusedVariableWidth;
 				if( variableWidth != nullptr )
 				{
 					variableCharWidthPtr = &variableWidth->at( characterIndex );
 				}
+				if( variableHeight != nullptr )
+				{
+					variableCharHeightPtr = &variableHeight->at( characterIndex );
+				}
 				uint32_t& variableCharWidth = *variableCharWidthPtr;
+				uint32_t& variableCharHeight = *variableCharHeightPtr;
+
 				for( uint32_t pixel = 0; pixel < charWidth; pixel++ )
 				{
 					static_assert( kRGBAElements == 3, "Unexpected pixel size" );
@@ -486,6 +501,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 					{
 						rgba2Element = 255;
 						variableCharWidth = math::Max( variableCharWidth, pixel + 1 );
+						variableCharHeight = math::Max( variableCharHeight, scanline + 1 );
 					}
 					else
 					{

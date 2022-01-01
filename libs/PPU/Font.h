@@ -54,7 +54,8 @@ private:
 	DeviceFontID mDeviceRepresentation = kInvalidDeviceFontID;
 	TileSize mTileWidth = kInvalidTileSize;
 	TileSize mTileHeight = kInvalidTileSize;
-	rftl::array<uint32_t, 256> mVariableWidth;
+	rftl::array<TileSize, 256> mVariableWidth;
+	rftl::array<TileSize, 256> mVariableHeight;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

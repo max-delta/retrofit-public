@@ -149,17 +149,26 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 	uint32_t tileWidth = 0;
 	uint32_t tileHeight = 0;
 	rftl::array<uint32_t, 256> variableWidth;
+	rftl::array<uint32_t, 256> variableHeight;
 	resource.mDeviceRepresentation = mDeviceInterface->CreateBitmapFont(
 		resource.mFileBuffer.GetBytes(),
 		tileWidth,
 		tileHeight,
-		&variableWidth );
+		&variableWidth,
+		&variableHeight );
 	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 	resource.mTileWidth = math::integer_cast<uint8_t>( tileWidth );
 	resource.mTileHeight = math::integer_cast<uint8_t>( tileHeight );
-	resource.mVariableWidth = rftl::move( variableWidth );
+	for( size_t i = 0; i < 256; i++ )
+	{
+		resource.mVariableWidth.at( i ) = math::integer_cast<Font::TileSize>( variableWidth.at( i ) );
+	}
+	for( size_t i = 0; i < 256; i++ )
+	{
+		resource.mVariableHeight.at( i ) = math::integer_cast<Font::TileSize>( variableHeight.at( i ) );
+	}
 	return true;
 }
 
