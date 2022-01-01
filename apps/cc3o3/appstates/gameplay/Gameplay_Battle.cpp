@@ -1053,6 +1053,17 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				RF_DBGFAIL();
 			}
 		}
+
+		// Do we need to switch targets?
+		if( controlState == ControlState::kAttack )
+		{
+			bool const valid = internalState.IsTargetValid();
+			if( valid == false )
+			{
+				// Ascend to action menu
+				internalState.SwitchControlState( uiContext, ControlState::kAction );
+			}
+		}
 	}
 
 	// Persist in case of rollback
