@@ -123,6 +123,9 @@ public:
 	bool CanControlCharAct() const;
 	bool EnsureControlCharCanAct( int8_t direction );
 	void ShiftControlChar( int8_t applyOffset );
+
+	bool IsTargetValid() const;
+	bool EnsureTargetIsValid( int8_t direction );
 	void ShiftTarget( int8_t applyOffset );
 
 
@@ -339,10 +342,78 @@ void Gameplay_Battle::InternalState::ShiftControlChar( int8_t applyOffset )
 
 
 
+bool Gameplay_Battle::InternalState::IsTargetValid() const
+{
+	combat::FightController const& fightController = *mFightController;
+
+	if( mTargetingReason == TargetingReason::kAttack )
+	{
+		bool const canAttack = fightController.CanCharacterPerformAttack(
+			mControlCharIndex,
+			mTargetingIndex );
+		return canAttack;
+	}
+
+	if( mTargetingReason == TargetingReason::kElement )
+	{
+		RF_TODO_BREAK();
+		return false;
+	}
+
+	RF_DBGFAIL_MSG( "Target check done while not targeting" );
+	return false;
+}
+
+
+
+bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction )
+{
+	RF_ASSERT( direction == -1 || direction == 1 );
+	direction = ( direction == -1 ? -1 : 1 );
+
+	uint8_t const startingTargetIndex = mTargetingIndex;
+	while( true )
+	{
+		bool const isValid = IsTargetValid();
+		if( isValid )
+		{
+			// This target is valid, we're fine here
+			break;
+		}
+
+		// This target is invalid
+
+		// Shift target
+		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
+			mControlCharIndex, mTargetingIndex, direction );
+
+		if( mTargetingIndex == startingTargetIndex )
+		{
+			// Uh-oh... we've looped around through all targets
+			// TODO: Handle this, it probably means we haven't implemented earlier
+			//  checks such as win-state, or no valid targets for an element
+			RF_DBGFAIL_MSG( "No target is valid... Uh... earlier should guard against this?" );
+			return false;
+		}
+
+		// Re-check
+		continue;
+	}
+
+	return true;
+}
+
+
+
 void Gameplay_Battle::InternalState::ShiftTarget( int8_t applyOffset )
 {
+	// Shift target
 	mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
 		mControlCharIndex, mTargetingIndex, applyOffset );
+
+	// NOTE: If the offset was zero, we go forward
+	int8_t const direction = applyOffset < 0 ? -1 : 1;
+	EnsureTargetIsValid( direction );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
