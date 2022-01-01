@@ -121,11 +121,11 @@ public:
 	void SanitizeUIState( ui::UIContext& context );
 
 	bool CanControlCharAct() const;
-	bool EnsureControlCharCanAct( int8_t direction );
+	bool EnsureControlCharCanAct( int8_t direction, bool& wasChanged );
 	void ShiftControlChar( int8_t applyOffset );
 
 	bool IsTargetValid() const;
-	bool EnsureTargetIsValid( int8_t direction );
+	bool EnsureTargetIsValid( int8_t direction, bool& wasChanged );
 	void ShiftTarget( int8_t applyOffset );
 
 
@@ -264,11 +264,13 @@ void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
 	// TODO: Sanitize control state
 	ControlStates::State const currentState = GetControlState( context );
 
-	ShiftControlChar( 0 );
+	mControlCharIndex = mFightController->SanitizeCharacterIndex(
+		mControlCharIndex, 0 );
 
 	if( currentState == ControlStates::kTargeting )
 	{
-		ShiftTarget( 0 );
+		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
+			mControlCharIndex, mTargetingIndex, 0 );
 	}
 }
 
@@ -290,10 +292,12 @@ bool Gameplay_Battle::InternalState::CanControlCharAct() const
 
 
 
-bool Gameplay_Battle::InternalState::EnsureControlCharCanAct( int8_t direction )
+bool Gameplay_Battle::InternalState::EnsureControlCharCanAct( int8_t direction, bool& wasChanged )
 {
 	RF_ASSERT( direction == -1 || direction == 1 );
 	direction = ( direction == -1 ? -1 : 1 );
+
+	wasChanged = false;
 
 	uint8_t const startingControlCharIndex = mControlCharIndex;
 	while( true )
@@ -310,6 +314,7 @@ bool Gameplay_Battle::InternalState::EnsureControlCharCanAct( int8_t direction )
 		// Shift control character
 		mControlCharIndex = mFightController->SanitizeCharacterIndex(
 			mControlCharIndex, direction );
+		wasChanged = true;
 
 		if( mControlCharIndex == startingControlCharIndex )
 		{
@@ -331,13 +336,16 @@ bool Gameplay_Battle::InternalState::EnsureControlCharCanAct( int8_t direction )
 
 void Gameplay_Battle::InternalState::ShiftControlChar( int8_t applyOffset )
 {
+	RF_ASSERT( applyOffset != 0 );
+
 	// Shift control character
 	mControlCharIndex = mFightController->SanitizeCharacterIndex(
 		mControlCharIndex, applyOffset );
 
 	// NOTE: If the offset was zero, we go forward
 	int8_t const direction = applyOffset < 0 ? -1 : 1;
-	EnsureControlCharCanAct( direction );
+	bool unusedChange;
+	EnsureControlCharCanAct( direction, unusedChange );
 }
 
 
@@ -366,10 +374,12 @@ bool Gameplay_Battle::InternalState::IsTargetValid() const
 
 
 
-bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction )
+bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction, bool& wasChanged )
 {
 	RF_ASSERT( direction == -1 || direction == 1 );
 	direction = ( direction == -1 ? -1 : 1 );
+
+	wasChanged = false;
 
 	uint8_t const startingTargetIndex = mTargetingIndex;
 	while( true )
@@ -386,6 +396,7 @@ bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction )
 		// Shift target
 		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
 			mControlCharIndex, mTargetingIndex, direction );
+		wasChanged = true;
 
 		if( mTargetingIndex == startingTargetIndex )
 		{
@@ -407,13 +418,16 @@ bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction )
 
 void Gameplay_Battle::InternalState::ShiftTarget( int8_t applyOffset )
 {
+	RF_ASSERT( applyOffset != 0 );
+
 	// Shift target
 	mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
 		mControlCharIndex, mTargetingIndex, applyOffset );
 
 	// NOTE: If the offset was zero, we go forward
 	int8_t const direction = applyOffset < 0 ? -1 : 1;
-	EnsureTargetIsValid( direction );
+	bool unusedChange;
+	EnsureTargetIsValid( direction, unusedChange );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1045,12 +1059,19 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		// Do we need to switch characters?
 		if( makingCharacterDecisions )
 		{
-			bool const success = internalState.EnsureControlCharCanAct( 1 );
+			bool wasChanged;
+			bool const success = internalState.EnsureControlCharCanAct( 1, wasChanged );
 			if( success == false )
 			{
 				// Uh...
 				// TODO: End-turn logic to guard this before-hand?
 				RF_DBGFAIL();
+			}
+
+			if( wasChanged )
+			{
+				// Ascend to action menu
+				internalState.SwitchControlState( uiContext, ControlState::kAction );
 			}
 		}
 
