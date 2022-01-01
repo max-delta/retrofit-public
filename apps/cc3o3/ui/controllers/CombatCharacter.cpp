@@ -64,18 +64,13 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		combat::DisplayVal const curHP = combatEngine.DisplayHealth( fighter.mCurHealth, kEntityClass );
 		combat::SignedDisplayVal const curStamina = combatEngine.DisplayStamina( fighter.mCurStamina, kEntityClass );
 
-		// HACK: Change font color
-		// TODO: Change frame instead
-		for( WeakPtr<TextLabel> const& info : mInfoRows )
+		if( selected )
 		{
-			if( selected )
-			{
-				info->SetColor( math::Color3f::kWhite );
-			}
-			else
-			{
-				info->SetColor( math::Color3f::kGray75 );
-			}
+			mBorderFrame->SwapPeerTileset( mActiveTileset );
+		}
+		else
+		{
+			mBorderFrame->SwapPeerTileset( mInactiveTileset );
 		}
 
 		static constexpr size_t kLineBufSize = 16;
@@ -105,6 +100,9 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	gfx::ppu::PPUController const& renderer = GetRenderer( uiManager );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
+	mActiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" );
+	mInactiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" );
+
 	mChildContainerID = CreateChildContainer(
 		uiManager,
 		container,
@@ -118,7 +116,7 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 		uiManager.AssignStrongController(
 			mChildContainerID,
 			DefaultCreator<BorderFrame>::Create() );
-	mBorderFrame->SetTileset( context, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+	mBorderFrame->SetTileset( context, mInactiveTileset, { 8, 8 }, { 48, 48 }, { -4, -4 } );
 	mBorderFrame->SetChildRenderingBlocked( true );
 
 	// 4 info rows
@@ -143,7 +141,7 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 				infoRowSlicer->GetChildContainerID( i_info ),
 				DefaultCreator<TextLabel>::Create() );
 		info->SetText( "UNSET" );
-		info->SetColor( math::Color3f::kGray75 );
+		info->SetColor( math::Color3f::kWhite );
 		info->SetBorder( true );
 	}
 

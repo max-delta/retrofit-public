@@ -29,6 +29,9 @@ public:
 		gfx::ppu::Coord paddingDimensions );
 	void SetJustification( Justification::Value justification );
 
+	// NOTE: Must have the same dimensions, will not perform a recalc
+	void SwapPeerTileset( gfx::ManagedTilesetID tileset );
+
 	ContainerID GetChildContainerID() const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;

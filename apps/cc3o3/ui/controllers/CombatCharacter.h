@@ -39,6 +39,10 @@ public:
 	// Private data
 private:
 	ContainerID mChildContainerID = kInvalidContainerID;
+
+	gfx::ManagedTilesetID mActiveTileset = gfx::kInvalidManagedTilesetID;
+	gfx::ManagedTilesetID mInactiveTileset = gfx::kInvalidManagedTilesetID;
+
 	WeakPtr<BorderFrame> mBorderFrame;
 	rftl::array<WeakPtr<TextLabel>, 4> mInfoRows;
 };

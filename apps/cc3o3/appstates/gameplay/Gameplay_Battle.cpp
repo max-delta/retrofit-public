@@ -540,7 +540,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
 
 			// List
 			using SelectorActions = InternalState::SelectorActions;
@@ -581,7 +581,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
 
 			// List
 			using SelectorAttacks = InternalState::SelectorAttacks;
@@ -900,6 +900,17 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		combat::CombatInstance::FighterIDs const fighterIDs = mainInstance.GetFighterIDs( partyID );
 		RF_ASSERT( fighterIDs.size() <= InternalState::kMaxControllablePartyCharacters );
 
+		// The idea of 'selected' might not make sense in all situations, even if
+		//  that's where the navigation considers selection to be
+		bool selectionIsMeaningful = false;
+		{
+			ControlState const controlState = internalState.GetControlState( uiContext );
+			if( controlState != InternalState::ControlStates::kWaiting )
+			{
+				selectionIsMeaningful = true;
+			}
+		}
+
 		size_t nextSlotIndex = 0;
 		for( combat::FighterID const& fighterID : fighterIDs )
 		{
@@ -920,12 +931,13 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			combat::Fighter const fighter = mainInstance.GetFighter( fighterID );
 
 			bool selected = false;
-			if( fighterID == fightController.GetCharacterByIndex( internalState.mControlCharIndex ) )
+			if( selectionIsMeaningful )
 			{
-				// Currently selected character
-				// TODO: Check if it's our turn
-				// TODO: Only consider if we're not in a action selection menu
-				selected = true;
+				if( fighterID == fightController.GetCharacterByIndex( internalState.mControlCharIndex ) )
+				{
+					// Currently selected character
+					selected = true;
+				}
 			}
 
 			slot->UpdateCharacter( fighter, character, selected );

@@ -46,6 +46,13 @@ void BorderFrame::SetJustification( Justification::Value justification )
 
 
 
+void BorderFrame::SwapPeerTileset( gfx::ManagedTilesetID tileset )
+{
+	mTileLayer.mTilesetReference = tileset;
+}
+
+
+
 ContainerID BorderFrame::GetChildContainerID() const
 {
 	return mChildContainerID;
