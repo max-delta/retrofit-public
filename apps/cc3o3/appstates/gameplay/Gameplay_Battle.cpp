@@ -884,9 +884,18 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 							internalState.mControlCharIndex );
 						if( canAttack )
 						{
-							// Descend to targeting
 							internalState.mTargetingReason = TargetingReason::kAttack;
-							internalState.SwitchControlState( uiContext, ControlState::kTargeting );
+							bool unusedChange;
+							bool const hasValidTarget = internalState.EnsureTargetIsValid( 1, unusedChange );
+							if( hasValidTarget )
+							{
+								// Descend to targeting
+								internalState.SwitchControlState( uiContext, ControlState::kTargeting );
+							}
+							else
+							{
+								RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character has nothing valid to attack" );
+							}
 						}
 						else
 						{
