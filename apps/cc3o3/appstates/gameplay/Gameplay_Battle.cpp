@@ -120,6 +120,8 @@ public:
 	void SaveUIState( ui::UIContext& context ) const;
 	void SanitizeUIState( ui::UIContext& context );
 
+	bool CanControlCharAct() const;
+	bool EnsureControlCharCanAct( int8_t direction );
 	void ShiftControlChar( int8_t applyOffset );
 	void ShiftTarget( int8_t applyOffset );
 
@@ -269,10 +271,70 @@ void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
 
 
 
+bool Gameplay_Battle::InternalState::CanControlCharAct() const
+{
+	combat::FightController const& fightController = *mFightController;
+
+	bool const canAttack = fightController.CanCharacterPerformAttack(
+		mControlCharIndex );
+	bool const canCast = fightController.CanCharacterCastElement(
+		mControlCharIndex );
+	bool const canDefend = fightController.CanCharacterActivateDefense(
+		mControlCharIndex );
+
+	return canAttack || canCast || canDefend;
+}
+
+
+
+bool Gameplay_Battle::InternalState::EnsureControlCharCanAct( int8_t direction )
+{
+	RF_ASSERT( direction == -1 || direction == 1 );
+	direction = ( direction == -1 ? -1 : 1 );
+
+	uint8_t const startingControlCharIndex = mControlCharIndex;
+	while( true )
+	{
+		bool const canAct = CanControlCharAct();
+		if( canAct )
+		{
+			// This character can act, we're fine here
+			break;
+		}
+
+		// This character can't do anything!
+
+		// Shift control character
+		mControlCharIndex = mFightController->SanitizeCharacterIndex(
+			mControlCharIndex, direction );
+
+		if( mControlCharIndex == startingControlCharIndex )
+		{
+			// Uh-oh... we've looped around through the whole party
+			// TODO: Handle this, it probably means we haven't implemented
+			//  the end-turn logic yet
+			RF_DBGFAIL_MSG( "No character can act... Uh... end turn logic should guard against this?" );
+			return false;
+		}
+
+		// Re-check
+		continue;
+	}
+
+	return true;
+}
+
+
+
 void Gameplay_Battle::InternalState::ShiftControlChar( int8_t applyOffset )
 {
+	// Shift control character
 	mControlCharIndex = mFightController->SanitizeCharacterIndex(
 		mControlCharIndex, applyOffset );
+
+	// NOTE: If the offset was zero, we go forward
+	int8_t const direction = applyOffset < 0 ? -1 : 1;
+	EnsureControlCharCanAct( direction );
 }
 
 
@@ -831,7 +893,15 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						}
 						else
 						{
+							// Should avoid getting here, but we'll navigate to
+							//  the next character to try and recover
+							// NOTE: The concern is with buffering attacks, delays
+							//  in animation, rollback, and savestates all finding
+							//  some way to collide and get into this state, so we
+							//  need to have a graceful solution
+							RF_DBGFAIL_MSG( "Able to attempt an attack that won't succeed, debug this?" );
 							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot execute attack" );
+							internalState.ShiftControlChar( 1 );
 						}
 					}
 					else if( attackChoice == AttackChoice::kElement )
@@ -883,6 +953,37 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		focusMan.UpdateHardFocus( uiContext );
 	}
 
+	// May need to have the UI respond to the results of actions
+	if( fightController.HasPendingActions() )
+	{
+		// Stuff still happening, let them continue
+	}
+	else
+	{
+		// No actions in progress, at a steady state
+
+		ControlState const controlState = internalState.GetControlState( uiContext );
+
+		// Are we able to make decisions?
+		bool makingCharacterDecisions = false;
+		if( controlState != ControlState::kWaiting )
+		{
+			makingCharacterDecisions = true;
+		}
+
+		// Do we need to switch characters?
+		if( makingCharacterDecisions )
+		{
+			bool const success = internalState.EnsureControlCharCanAct( 1 );
+			if( success == false )
+			{
+				// Uh...
+				// TODO: End-turn logic to guard this before-hand?
+				RF_DBGFAIL();
+			}
+		}
+	}
+
 	// Persist in case of rollback
 	internalState.SaveUIState( uiContext );
 
@@ -905,7 +1006,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		bool selectionIsMeaningful = false;
 		{
 			ControlState const controlState = internalState.GetControlState( uiContext );
-			if( controlState != InternalState::ControlStates::kWaiting )
+			if( controlState != ControlState::kWaiting )
 			{
 				selectionIsMeaningful = true;
 			}

@@ -41,6 +41,8 @@ public:
 
 	void StartCombatFrame();
 	void EndCombatFrame();
+
+	bool HasPendingActions() const;
 	void TickPendingActions();
 
 	uint8_t SanitizeCharacterIndex( uint8_t attackerIndex, int8_t applyOffset ) const;

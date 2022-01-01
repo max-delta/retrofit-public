@@ -100,6 +100,15 @@ void FightController::EndCombatFrame()
 
 
 
+bool FightController::HasPendingActions() const
+{
+	RF_ASSERT( mFrameActive );
+
+	return mAttackBuffer.empty() == false;
+}
+
+
+
 void FightController::TickPendingActions()
 {
 	RF_ASSERT( mFrameActive );
