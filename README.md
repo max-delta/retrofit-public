@@ -10,7 +10,7 @@ It's a game engine, some tools, and a general assortment of coding bits you need
 
 ## But why though?
 
-Firstly, it saves a lot of time and headache to point at something in a professional setting and say "Look: this can be done, here's what it looks like, and here's how it works". It's safer to attempt a new technique or coding pattern after you've already seen it applied somewhere else successfully.
+Firstly, it's hard to take certain types of risks in a professional setting. You can only try to push the envelope so many times before you start seriously jeapordizing release dates. Having a space to try out new techniques without those pressures can lead to some great innovations.
 
 Secondly, sometimes you just want to make a certain game! But there aren't many good options for high-quality C++ game engine pieces.
 
@@ -18,12 +18,13 @@ Secondly, sometimes you just want to make a certain game! But there aren't many 
 
 ## Can I make a game with this stuff?
 
-You *can*, but not out-of-box. You're going to have to already be an experienced gameplay or engine programmer to tie together the parts into the architecture you want. It helps to also have AAA experience so you can recognize some common patterns and machinery.
+You *can*, but not out-of-box. You're going to have to already be an experienced gameplay or engine programmer to tie together the parts into the architecture you want. It helps to also have some big-budget experience so you can recognize some common patterns and machinery.
 
 If that doesn't sound like what you're looking for, here's some more approachable game-making packages you may be interested in (in increasing complexity):
 
 * Zelda Classic
 * RPG Maker
+* GameMaker
 * Unity
 * Unreal Engine
 
@@ -31,7 +32,7 @@ If that doesn't sound like what you're looking for, here's some more approachabl
 
 ## So what's even in this thing?
 
-Pretty standard AAA machinery. Often with some extra improvements for common problems.
+Bits and pieces of pretty standard AAA machinery. Often with some extra improvements for common problems.
 A few of the notable pieces:
 
 ### STL Wrapper
@@ -70,7 +71,7 @@ Fixes for common engine deficiencies:
 
 ### Logging
 
-* Log4j figured out most of the best-practices over a decade ago, RetroFit's logging follows them as well
+* Most logging best-practices were figured out over a decade ago, RetroFit's logging follows them as well
 
 ### Testing
 
@@ -108,6 +109,25 @@ This is several orders of magnitude more expensive than standard collision resol
 
 RetroFit's implementation avoids the naive serialization approach in favor of seekable sparse storage.
 This more performant approach is similar to delta-based storage/history solutions.
+
+----
+
+## What's this horrendous pile of hacks over here?
+
+### CC3O3
+
+The beginnings of a game. The only way to know your engine is any good is to try and build something with it, watch it all fall over, and fix it.
+The name "RetroFit" alludes to this process of iteration and trial-by-fire. More ambitious projects rely on the engine improvements this first game will cause.
+
+### FramePack Editor
+
+Early bare-bones editor to help with authoring graphics assets for the PPU renderer.
+Intended to be replaced by a more proper and complete editor.
+
+### RetroFit.exe
+
+Dumping ground for early engine bring-up, before enough engine pieces existed to build a more reasonable structure.
+Still serves as an engine sanity check, and home to some unfinished work or shelved experiments.
 
 ----
 
