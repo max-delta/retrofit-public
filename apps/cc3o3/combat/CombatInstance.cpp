@@ -314,7 +314,7 @@ void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
 {
 	SimVal& counterGuage = GetMutablePartyRef( party ).mParty.mCounterGuage;
 	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGuage );
-	counterGuage = math::Min( maxIncrease, value );
+	counterGuage += math::Min( maxIncrease, value );
 }
 
 
