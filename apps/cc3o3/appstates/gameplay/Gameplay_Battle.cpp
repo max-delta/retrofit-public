@@ -4,6 +4,8 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
+#include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/combat/FightController.h"
 #include "cc3o3/state/StateHelpers.h"
@@ -119,6 +121,8 @@ public:
 	void RestoreUIState( ui::UIContext& context );
 	void SaveUIState( ui::UIContext& context ) const;
 	void SanitizeUIState( ui::UIContext& context );
+
+	void UpdateAttackMenu( ui::UIContext& context );
 
 	bool CanControlCharAct() const;
 	bool EnsureControlCharCanAct( int8_t direction, bool& wasChanged );
@@ -272,6 +276,64 @@ void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
 		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
 			mControlCharIndex, mTargetingIndex, 0 );
 	}
+}
+
+
+
+void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
+{
+	combat::CombatEngine const& combatEngine = *gCombatEngine;
+	combat::FightController const& fightController = *mFightController;
+
+	// TODO: Figure this out
+	combat::EntityClass const entityClass = combat::EntityClass::Player;
+
+	static constexpr uint8_t kAttackStrength[] = {
+		1,
+		2,
+		3 };
+	rftl::vector<rftl::string> text = {
+		{},
+		{},
+		{},
+		ui::LocalizeKey( InternalState::kLabelAttackElement ) };
+
+	// The largest attack that succeeds is generally going to be the best
+	size_t bestAttackIndex = 0;
+
+	combat::AttackProfile profile = {};
+	combat::AttackResult result = {};
+	for( size_t i = 0; i < 3; i++ )
+	{
+		rftl::string& attackText = text.at( i );
+		uint8_t const& attackStrength = kAttackStrength[i];
+
+		attackText += '0' + attackStrength;
+		attackText += " - ";
+
+		bool const canAttack = fightController.CanCharacterPerformAttack( mControlCharIndex, mTargetingIndex, attackStrength );
+		if( canAttack == false )
+		{
+			attackText += "NO STAM";
+			continue;
+		}
+
+		fightController.PredictAttack( profile, result, mControlCharIndex, mTargetingIndex, attackStrength );
+		if( result.mHit )
+		{
+			attackText += "DMG ";
+			attackText += rftl::to_string( combatEngine.DisplayHealth( result.mDamage, entityClass ) );
+
+			bestAttackIndex = math::Max( bestAttackIndex, i );
+		}
+		else
+		{
+			attackText += "MISS";
+		}
+	}
+
+	mAttackMenu->SetText( text );
+	mAttackMenu->SetSlotIndexWithSoftFocus( context, bestAttackIndex );
 }
 
 
@@ -844,6 +906,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canAttack )
 						{
 							// Descend to attack menu
+							internalState.UpdateAttackMenu( uiContext );
 							internalState.SwitchControlState( uiContext, ControlState::kAttack );
 						}
 						else
@@ -973,19 +1036,9 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						uint8_t const defenderIndex = internalState.mTargetingIndex;
 						uint8_t const attackStrength = math::integer_cast<uint8_t>( attackChoice + 1 );
 
-						bool const canAttack = fightController.CanCharacterPerformAttack(
-							attackerIndex,
-							defenderIndex,
-							attackStrength );
-						if( canAttack )
-						{
-							// Buffer attack
-							fightController.BufferAttack(
-								attackerIndex,
-								defenderIndex,
-								attackStrength );
-						}
-						else
+						bool const canAttackAny = fightController.CanCharacterPerformAttack(
+							attackerIndex );
+						if( canAttackAny == false )
 						{
 							// Should avoid getting here, but we'll navigate to
 							//  the next character to try and recover
@@ -994,8 +1047,30 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 							//  some way to collide and get into this state, so we
 							//  need to have a graceful solution
 							RF_DBGFAIL_MSG( "Able to attempt an attack that won't succeed, debug this?" );
-							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot execute attack" );
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot execute any attack" );
 							internalState.ShiftControlChar( 1 );
+						}
+						else
+						{
+							bool const canAttack = fightController.CanCharacterPerformAttack(
+								attackerIndex,
+								defenderIndex,
+								attackStrength );
+							if( canAttack )
+							{
+								// Buffer attack
+								fightController.BufferAttack(
+									attackerIndex,
+									defenderIndex,
+									attackStrength );
+
+								// Update for next attack
+								internalState.UpdateAttackMenu( uiContext );
+							}
+							else
+							{
+								RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot execute attack" );
+							}
 						}
 					}
 					else if( attackChoice == AttackChoice::kElement )
