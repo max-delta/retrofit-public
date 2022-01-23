@@ -4,6 +4,7 @@
 #include "cc3o3/cc3o3.h"
 #include "cc3o3/appstates/titlescreen/TitleScreen.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/options/OptionSet.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 
@@ -28,143 +29,100 @@
 
 #include "core/ptr/default_creator.h"
 
-#include "rftl/functional"
-
 
 namespace RF::cc::appstate {
-///////////////////////////////////////////////////////////////////////////////
-namespace details {
-
-static constexpr size_t kNumOptionsPerSet = 12;
-static constexpr size_t kNumOptionsFields = kNumOptionsPerSet + 2;
-static constexpr char const* kOptTag[kNumOptionsPerSet] = {
-	"OPT0",
-	"OPT1",
-	"OPT2",
-	"OPT3",
-	"OPT4",
-	"OPT5",
-	"OPT6",
-	"OPT7",
-	"OPT8",
-	"OPT9",
-	"OPT10",
-	"OPT11"
-};
-static constexpr char kUnusedTag[] = "UNUSED";
-static constexpr char kReturnTag[] = "RETURN";
-
-struct OptionSet
-{
-	struct Option
-	{
-		rftl::string mStaticText;
-		rftl::function<void()> mFunction = nullptr;
-
-		rftl::function<rftl::string()> mDynamicText = nullptr;
-	};
-
-	void Update( ui::controller::ListBox& listBox ) const;
-
-	Option mOptions[kNumOptionsPerSet] = {};
-};
-
-void OptionSet::Update( ui::controller::ListBox& listBox ) const
-{
-	rftl::vector<rftl::string> optionsText;
-	for( size_t i = 0; i < kNumOptionsPerSet; i++ )
-	{
-		Option const& opt = mOptions[i];
-		if( opt.mDynamicText != nullptr )
-		{
-			optionsText.emplace_back( opt.mDynamicText() );
-		}
-		else
-		{
-			optionsText.emplace_back( opt.mStaticText );
-		}
-	}
-	optionsText.emplace_back(); // Unused
-	optionsText.emplace_back( ui::LocalizeKey( "$titleopt_mainmenu" ) );
-	listBox.SetText( optionsText );
-}
-
-struct UpdateTest
-{
-	static inline char sVal = '0';
-	static rftl::string String()
-	{
-		return rftl::string( "Option update test: " ) + sVal;
-	}
-	static void Action()
-	{
-		sVal++;
-		if( sVal > '9' )
-		{
-			sVal = '0';
-		}
-	}
-	static inline OptionSet::Option const sOption{
-		"",
-		Action,
-		String
-	};
-};
-
-struct ToggleTest
-{
-	static inline bool sVal = false;
-	static rftl::string String()
-	{
-		return rftl::string( "Option toggle test: " ) + ( sVal ? "True" : "False" );
-	}
-	static void Action()
-	{
-		sVal = !sVal;
-	}
-	static inline OptionSet::Option const sOption{
-		"",
-		Action,
-		String
-	};
-};
-
-struct DevHop
-{
-	static OptionSet::Option Option( AppStateID id, char const* name )
-	{
-		return OptionSet::Option{
-			rftl::string( "DevHop -> " ) + name,
-			[id] { RequestGlobalDeferredStateChange( id ); },
-			nullptr
-		};
-	}
-};
-
-static OptionSet sDevOptions = { { //
-	DevHop::Option( id::DevTestRollback, "Rollback" ),
-	DevHop::Option( id::DevTestCombatCharts, "Combat charts" ),
-	DevHop::Option( id::DevTestGridCharts, "Grid charts" ),
-	UpdateTest::sOption,
-	ToggleTest::sOption,
-	{ "Menu option text for slot 6" },
-	{ "Menu option text for slot 7" },
-	{ "Menu option text for slot 8" },
-	{ "Menu option text for slot 9" },
-	{ "Menu option text for slot 10" },
-	{ "Menu option text for slot 11" },
-	{ "Menu option text for slot 12" } } };
-
-}
 ///////////////////////////////////////////////////////////////////////////////
 
 struct TitleScreen_Options::InternalState
 {
+public:
+	static constexpr size_t kNumOptionsFields = 14;
+
+public:
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
+	void GenerateOptions();
+	void UpdateOptions();
+
+public:
+	options::OptionSet mTempOptions;
+	bool mReturnToMainMenu = false;
 	WeakPtr<ui::controller::ListBox> mOptionsListBox;
 };
+
+
+
+void TitleScreen_Options::InternalState::GenerateOptions()
+{
+	using namespace options;
+
+	mTempOptions = {};
+
+	mTempOptions.mName = "Temp";
+	OptionSet::Options& options = mTempOptions.mOptions;
+
+	static constexpr auto makeDevHop = []( rftl::string_view name, AppStateID id ) -> Option {
+		return Option::MakeAction( name, [id] {
+			RequestGlobalDeferredStateChange( id );
+		} );
+	};
+
+	{
+		Option option = makeDevHop( "DevHop -> Rollback", id::DevTestRollback );
+		options.emplace_back( rftl::move( option ) );
+	}
+	{
+		Option option = makeDevHop( "DevHop -> Combat charts", id::DevTestCombatCharts );
+		options.emplace_back( rftl::move( option ) );
+	}
+	{
+		Option option = makeDevHop( "DevHop -> Grid charts", id::DevTestGridCharts );
+		options.emplace_back( rftl::move( option ) );
+	}
+	{
+		Option option = Option::MakeList( "Test", { "A", "B", "C" } );
+		options.emplace_back( rftl::move( option ) );
+	}
+	{
+		Option option = Option::MakeAction(
+			ui::LocalizeKey( "$titleopt_mainmenu" ),
+			[this] {
+				this->mReturnToMainMenu = true;
+			} );
+		options.emplace_back( rftl::move( option ) );
+	}
+}
+
+
+
+void TitleScreen_Options::InternalState::UpdateOptions()
+{
+	// TODO: Other sets
+	options::OptionSet const& options = mTempOptions;
+
+	ui::controller::ListBox& listBox = *mOptionsListBox;
+
+	rftl::vector<rftl::string> optionsText;
+
+	// Unused by defauls
+	optionsText.resize( kNumOptionsFields );
+
+	// TODO: Scrolling?
+	RF_ASSERT( options.mOptions.size() <= optionsText.size() );
+
+	size_t const numOptions = options.mOptions.size();
+	for( size_t i = 0; i < numOptions; i++ )
+	{
+		rftl::string& text = optionsText.at( i );
+		options::Option const& option = options.mOptions.at( i );
+
+		// TODO: Values
+		text = option.mName;
+	}
+
+	listBox.SetText( optionsText );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -242,22 +200,20 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 				frameColumnSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::ListBox>::Create(
 					ui::Orientation::Vertical,
-					details::kNumOptionsFields,
+					InternalState::kNumOptionsFields,
 					ui::font::SmallMenuSelection,
 					ui::Justification::MiddleLeft,
 					math::Color3f::kGray50,
 					math::Color3f::kWhite,
 					math::Color3f::kYellow ) );
-		details::sDevOptions.Update( *leftOptions );
 		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
-		for( size_t i = 0; i < details::kNumOptionsPerSet; i++ )
-		{
-			uiManager.AssignLabel( leftOptions->GetSlotController( i )->GetContainerID(), details::kOptTag[i] );
-		}
-		uiManager.AssignLabel( leftOptions->GetSlotController( details::kNumOptionsPerSet )->GetContainerID(), details::kUnusedTag );
-		uiManager.AssignLabel( leftOptions->GetSlotController( details::kNumOptionsPerSet + 1 )->GetContainerID(), details::kReturnTag );
 		mInternalState->mOptionsListBox = leftOptions;
 	}
+
+	// HACK: Temp options
+	// TODO: Pages
+	mInternalState->GenerateOptions();
+	mInternalState->UpdateOptions();
 }
 
 
@@ -273,6 +229,8 @@ void TitleScreen_Options::OnExit( AppStateChangeContext& context )
 
 void TitleScreen_Options::OnTick( AppStateTickContext& context )
 {
+	bool shouldUpdateOptions = false;
+
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
 
 	ui::ContainerManager& uiManager = *app::gUiManager;
@@ -286,44 +244,43 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 		{
 			// Wasn't handled by general UI
 
-			// Figure out the useful focus information
-			ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
-
-			if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+			// Focused on the list?
+			bool const listHasFocus = focusMan.GetFocusTree().IsInCurrentFocusStack( mInternalState->mOptionsListBox->GetContainerID() );
+			if( listHasFocus )
 			{
-				if( currentFocusContainerID != ui::kInvalidContainerID )
+				// Focused on an option?
+				size_t const focusIndex = mInternalState->mOptionsListBox->GetSlotIndexWithSoftFocus( uiContext );
+				options::OptionSet::Options const& options = mInternalState->mTempOptions.mOptions;
+				if( focusIndex < options.size() )
 				{
-					if( currentFocusContainerID == uiManager.GetContainerID( details::kReturnTag ) )
+					options::Option const& option = options.at( focusIndex );
+					options::OptionValue const& value = option.mValue;
+
+					if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 					{
-						// Return
-						context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
-					}
-					else
-					{
-						for( size_t i = 0; i < details::kNumOptionsPerSet; i++ )
+						// Activate
+
+						if( value.mAction.has_value() )
 						{
-							char const* const tag = details::kOptTag[i];
-							if( currentFocusContainerID == uiManager.GetContainerID( tag ) )
-							{
-								// Option
-								details::OptionSet::Option const& opt = details::sDevOptions.mOptions[i];
-								if( opt.mFunction != nullptr )
-								{
-									opt.mFunction();
-								}
-								if( opt.mDynamicText != nullptr )
-								{
-									rftl::string const newText = opt.mDynamicText();
-									mInternalState->mOptionsListBox->GetMutableSlotController( i )->SetText( newText.c_str() );
-								}
-								break;
-							}
+							// Perform action
+							value.mAction->mFunc();
+							shouldUpdateOptions = true;
 						}
 					}
 				}
 			}
 		}
 		focusMan.UpdateHardFocus( uiContext );
+	}
+
+	if( shouldUpdateOptions )
+	{
+		mInternalState->UpdateOptions();
+	}
+
+	if( mInternalState->mReturnToMainMenu )
+	{
+		context.mManager.RequestDeferredStateChange( id::TitleScreen_MainMenu );
 	}
 }
 

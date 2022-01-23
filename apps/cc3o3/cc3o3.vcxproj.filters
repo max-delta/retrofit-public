@@ -265,6 +265,15 @@
     <ClCompile Include="ui\controllers\CombatCharacter.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="options\Option.cpp">
+      <Filter>options</Filter>
+    </ClCompile>
+    <ClCompile Include="options\OptionValue.cpp">
+      <Filter>options</Filter>
+    </ClCompile>
+    <ClCompile Include="options\OptionSet.cpp">
+      <Filter>options</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -729,6 +738,24 @@
     <ClInclude Include="ui\controllers\CombatCharacter.h">
       <Filter>ui\controller</Filter>
     </ClInclude>
+    <ClInclude Include="options\stdafx.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\OptionsFwd.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\project.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\Option.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\OptionValue.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\OptionSet.h">
+      <Filter>options</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appstates">
@@ -796,6 +823,9 @@
     </Filter>
     <Filter Include="encounter">
       <UniqueIdentifier>{b2a80f4a-80d4-448e-a5e6-10aa9f146587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="options">
+      <UniqueIdentifier>{3ea117f1-a0b7-452f-8087-2ea2bd043593}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

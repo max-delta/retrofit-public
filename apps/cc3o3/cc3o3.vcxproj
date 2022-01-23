@@ -76,6 +76,9 @@
     <ClCompile Include="encounter\Entity.cpp" />
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="options\Option.cpp" />
+    <ClCompile Include="options\OptionSet.cpp" />
+    <ClCompile Include="options\OptionValue.cpp" />
     <ClCompile Include="overworld\Area.cpp" />
     <ClCompile Include="overworld\Overworld.cpp" />
     <ClCompile Include="overworld\OverworldDesc.cpp" />
@@ -206,6 +209,12 @@
     <ClInclude Include="input\InputFwd.h" />
     <ClInclude Include="input\project.h" />
     <ClInclude Include="input\stdafx.h" />
+    <ClInclude Include="options\Option.h" />
+    <ClInclude Include="options\OptionSet.h" />
+    <ClInclude Include="options\OptionsFwd.h" />
+    <ClInclude Include="options\OptionValue.h" />
+    <ClInclude Include="options\project.h" />
+    <ClInclude Include="options\stdafx.h" />
     <ClInclude Include="overworld\Area.h" />
     <ClInclude Include="overworld\Overworld.h" />
     <ClInclude Include="overworld\OverworldDesc.h" />
