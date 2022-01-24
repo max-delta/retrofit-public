@@ -7,6 +7,7 @@
 #include "cc3o3/options/OptionSet.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/controllers/OptionSlotList.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -22,7 +23,6 @@
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 #include "GameUI/controllers/BorderFrame.h"
-#include "GameUI/controllers/ListBox.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
@@ -48,7 +48,7 @@ public:
 public:
 	options::OptionSet mTempOptions;
 	bool mReturnToMainMenu = false;
-	WeakPtr<ui::controller::ListBox> mOptionsListBox;
+	WeakPtr<ui::controller::OptionSlotList> mOptionsListBox;
 };
 
 
@@ -101,27 +101,26 @@ void TitleScreen_Options::InternalState::UpdateOptions()
 	// TODO: Other sets
 	options::OptionSet const& options = mTempOptions;
 
-	ui::controller::ListBox& listBox = *mOptionsListBox;
-
-	rftl::vector<rftl::string> optionsText;
-
-	// Unused by defauls
-	optionsText.resize( kNumOptionsFields );
+	ui::controller::OptionSlotList& listBox = *mOptionsListBox;
 
 	// TODO: Scrolling?
-	RF_ASSERT( options.mOptions.size() <= optionsText.size() );
-
 	size_t const numOptions = options.mOptions.size();
-	for( size_t i = 0; i < numOptions; i++ )
+	size_t const numSlots = listBox.GetNumSlots();
+	RF_ASSERT( numOptions <= numSlots );
+
+	for( size_t i = 0; i < numSlots; i++ )
 	{
-		rftl::string& text = optionsText.at( i );
-		options::Option const& option = options.mOptions.at( i );
-
-		// TODO: Values
-		text = option.mName;
+		if( i < numOptions )
+		{
+			// TODO: Values
+			options::Option const& option = options.mOptions.at( i );
+			listBox.UpdateOption( i, option );
+		}
+		else
+		{
+			listBox.ClearOption( i );
+		}
 	}
-
-	listBox.SetText( optionsText );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -183,31 +182,16 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
 		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
-		// Cut the frame into columns
-		ui::controller::ColumnSlicer::Ratios const frameColumnRatios = {
-			{ 1.f / 2.f, true },
-			{ 1.f / 2.f, true },
-		};
-		WeakPtr<ui::controller::ColumnSlicer> const frameColumnSlicer =
+		// Create menu selections in the left columns
+		WeakPtr<ui::controller::OptionSlotList> const listBox =
 			uiManager.AssignStrongController(
 				frame->GetChildContainerID(),
-				DefaultCreator<ui::controller::ColumnSlicer>::Create(
-					frameColumnRatios ) );
-
-		// Create menu selections in the left columns
-		WeakPtr<ui::controller::ListBox> const leftOptions =
-			uiManager.AssignStrongController(
-				frameColumnSlicer->GetChildContainerID( 0 ),
-				DefaultCreator<ui::controller::ListBox>::Create(
-					ui::Orientation::Vertical,
-					InternalState::kNumOptionsFields,
-					ui::font::SmallMenuSelection,
-					ui::Justification::MiddleLeft,
-					math::Color3f::kGray50,
-					math::Color3f::kWhite,
-					math::Color3f::kYellow ) );
-		leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
-		mInternalState->mOptionsListBox = leftOptions;
+				DefaultCreator<ui::controller::OptionSlotList>::Create(
+					InternalState::kNumOptionsFields ) );
+		listBox->SetWrapping( true );
+		listBox->SetPagination( true );
+		listBox->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		mInternalState->mOptionsListBox = listBox;
 	}
 
 	// HACK: Temp options

@@ -274,6 +274,12 @@
     <ClCompile Include="options\OptionSet.cpp">
       <Filter>options</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\OptionSlot.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\controllers\OptionSlotList.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -755,6 +761,12 @@
     </ClInclude>
     <ClInclude Include="options\OptionSet.h">
       <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\OptionSlot.h">
+      <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\OptionSlotList.h">
+      <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
