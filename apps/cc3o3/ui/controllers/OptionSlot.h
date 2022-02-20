@@ -29,7 +29,7 @@ public:
 
 	bool HasOption() const;
 	void ClearOption();
-	void UpdateOption( options::Option const& option );
+	void UpdateOption( options::Option const& option, options::OptionValue const& value );
 
 	void UpdateState( bool active, bool selected );
 

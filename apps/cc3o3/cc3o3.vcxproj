@@ -78,6 +78,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="options\Option.cpp" />
     <ClCompile Include="options\OptionSet.cpp" />
+    <ClCompile Include="options\OptionDesc.cpp" />
     <ClCompile Include="options\OptionValue.cpp" />
     <ClCompile Include="overworld\Area.cpp" />
     <ClCompile Include="overworld\Overworld.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="options\Option.h" />
     <ClInclude Include="options\OptionSet.h" />
     <ClInclude Include="options\OptionsFwd.h" />
+    <ClInclude Include="options\OptionDesc.h" />
     <ClInclude Include="options\OptionValue.h" />
     <ClInclude Include="options\project.h" />
     <ClInclude Include="options\stdafx.h" />

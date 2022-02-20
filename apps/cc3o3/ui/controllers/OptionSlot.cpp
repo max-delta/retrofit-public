@@ -37,7 +37,7 @@ void OptionSlot::ClearOption()
 
 
 
-void OptionSlot::UpdateOption( options::Option const& option )
+void OptionSlot::UpdateOption( options::Option const& option, options::OptionValue const& value )
 {
 	mColumnSlicer->SetChildRenderingBlocked( false );
 

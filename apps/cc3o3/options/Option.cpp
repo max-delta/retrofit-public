@@ -5,13 +5,13 @@
 namespace RF::cc::options {
 ///////////////////////////////////////////////////////////////////////////////
 
-Option Option::MakeAction( rftl::string_view name, OptionValue::Action::Func&& func )
+Option Option::MakeAction( rftl::string_view name, OptionDesc::Action::Func&& func )
 {
 	Option retVal = {};
 	retVal.mName = name;
-	retVal.mValue.mAction.emplace();
+	retVal.mDesc.mAction.emplace();
 
-	retVal.mValue.mAction->mFunc = rftl::move( func );
+	retVal.mDesc.mAction->mFunc = rftl::move( func );
 
 	return retVal;
 }
@@ -22,9 +22,9 @@ Option Option::MakeList( rftl::string_view name, rftl::initializer_list<rftl::st
 {
 	Option retVal = {};
 	retVal.mName = name;
-	retVal.mValue.mList.emplace();
+	retVal.mDesc.mList.emplace();
 
-	OptionValue::List::Items& items = retVal.mValue.mList->items;
+	OptionDesc::List::Items& items = retVal.mDesc.mList->items;
 	for( rftl::string_view const& entry : list )
 	{
 		items.emplace_back( entry );

@@ -268,7 +268,7 @@
     <ClCompile Include="options\Option.cpp">
       <Filter>options</Filter>
     </ClCompile>
-    <ClCompile Include="options\OptionValue.cpp">
+    <ClCompile Include="options\OptionDesc.cpp">
       <Filter>options</Filter>
     </ClCompile>
     <ClCompile Include="options\OptionSet.cpp">
@@ -279,6 +279,9 @@
     </ClCompile>
     <ClCompile Include="ui\controllers\OptionSlotList.cpp">
       <Filter>ui\controller</Filter>
+    </ClCompile>
+    <ClCompile Include="options\OptionValue.cpp">
+      <Filter>options</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -756,7 +759,7 @@
     <ClInclude Include="options\Option.h">
       <Filter>options</Filter>
     </ClInclude>
-    <ClInclude Include="options\OptionValue.h">
+    <ClInclude Include="options\OptionDesc.h">
       <Filter>options</Filter>
     </ClInclude>
     <ClInclude Include="options\OptionSet.h">
@@ -767,6 +770,9 @@
     </ClInclude>
     <ClInclude Include="ui\controllers\OptionSlotList.h">
       <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="options\OptionValue.h">
+      <Filter>options</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

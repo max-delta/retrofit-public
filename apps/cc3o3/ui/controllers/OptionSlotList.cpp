@@ -45,9 +45,9 @@ void OptionSlotList::ClearOption( size_t slotIndex )
 
 
 
-void OptionSlotList::UpdateOption( size_t slotIndex, options::Option const& option )
+void OptionSlotList::UpdateOption( size_t slotIndex, options::Option const& option, options::OptionValue const& value )
 {
-	GetMutableSlotController( slotIndex )->UpdateOption( option );
+	GetMutableSlotController( slotIndex )->UpdateOption( option, value );
 }
 
 

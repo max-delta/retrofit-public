@@ -28,7 +28,7 @@ public:
 
 	bool HasOption( size_t slotIndex ) const;
 	void ClearOption( size_t slotIndex );
-	void UpdateOption( size_t slotIndex, options::Option const& option );
+	void UpdateOption( size_t slotIndex, options::Option const& option, options::OptionValue const& value );
 
 	WeakPtr<OptionSlot const> GetSlotController( size_t slotIndex ) const;
 	WeakPtr<OptionSlot> GetMutableSlotController( size_t slotIndex );

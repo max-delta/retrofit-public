@@ -62,6 +62,10 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	mTempOptions.mName = "Temp";
 	OptionSet::Options& options = mTempOptions.mOptions;
 
+	static auto const addUnboundOption = [&options]( Option&& option ) -> void {
+		options.emplace_back( OptionSet::Entry{ option, OptionValue{} } );
+	};
+
 	static constexpr auto makeDevHop = []( rftl::string_view name, AppStateID id ) -> Option {
 		return Option::MakeAction( name, [id] {
 			RequestGlobalDeferredStateChange( id );
@@ -70,19 +74,19 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 
 	{
 		Option option = makeDevHop( "DevHop -> Rollback", id::DevTestRollback );
-		options.emplace_back( rftl::move( option ) );
+		addUnboundOption( rftl::move( option ) );
 	}
 	{
 		Option option = makeDevHop( "DevHop -> Combat charts", id::DevTestCombatCharts );
-		options.emplace_back( rftl::move( option ) );
+		addUnboundOption( rftl::move( option ) );
 	}
 	{
 		Option option = makeDevHop( "DevHop -> Grid charts", id::DevTestGridCharts );
-		options.emplace_back( rftl::move( option ) );
+		addUnboundOption( rftl::move( option ) );
 	}
 	{
 		Option option = Option::MakeList( "Test", { "A", "B", "C" } );
-		options.emplace_back( rftl::move( option ) );
+		addUnboundOption( rftl::move( option ) );
 	}
 	{
 		Option option = Option::MakeAction(
@@ -90,7 +94,7 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 			[this] {
 				this->mReturnToMainMenu = true;
 			} );
-		options.emplace_back( rftl::move( option ) );
+		addUnboundOption( rftl::move( option ) );
 	}
 }
 
@@ -113,8 +117,10 @@ void TitleScreen_Options::InternalState::UpdateOptions()
 		if( i < numOptions )
 		{
 			// TODO: Values
-			options::Option const& option = options.mOptions.at( i );
-			listBox.UpdateOption( i, option );
+			options::OptionSet::Entry const& entry = options.mOptions.at( i );
+			options::Option const& option = entry.mOption;
+			options::OptionValue const& value = entry.mValue;
+			listBox.UpdateOption( i, option, value );
 		}
 		else
 		{
@@ -237,17 +243,18 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 				options::OptionSet::Options const& options = mInternalState->mTempOptions.mOptions;
 				if( focusIndex < options.size() )
 				{
-					options::Option const& option = options.at( focusIndex );
-					options::OptionValue const& value = option.mValue;
+					options::OptionSet::Entry const& entry = options.at( focusIndex );
+					options::Option const& option = entry.mOption;
+					options::OptionDesc const& desc = option.mDesc;
 
 					if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 					{
 						// Activate
 
-						if( value.mAction.has_value() )
+						if( desc.mAction.has_value() )
 						{
 							// Perform action
-							value.mAction->mFunc();
+							desc.mAction->mFunc();
 							shouldUpdateOptions = true;
 						}
 					}

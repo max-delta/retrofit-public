@@ -7,6 +7,7 @@ namespace RF::cc::options {
 
 struct OptionSet;
 struct Option;
+struct OptionDesc;
 struct OptionValue;
 
 ///////////////////////////////////////////////////////////////////////////////
