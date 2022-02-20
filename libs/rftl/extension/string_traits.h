@@ -75,7 +75,7 @@ struct is_char_array<CharT ( & )[Len], typename rftl::enable_if<rftl::is_char<Ch
 {
 };
 
-#ifdef RF_PLATFORM_MSVC
+#if defined( RF_PLATFORM_MSVC ) && _MSC_VER < 1931
 // As usual, MSVC can't figure anything out so we have to do its job for it
 template<typename CharT, size_t Len>
 struct is_char_array<CharT const[Len], CharT const[Len]> : public is_char_array<CharT[Len], CharT[Len]>
@@ -123,7 +123,7 @@ struct is_sized_char_array<CharT ( & )[Len], typename rftl::enable_if<rftl::is_c
 {
 };
 
-#ifdef RF_PLATFORM_MSVC
+#if defined( RF_PLATFORM_MSVC ) && _MSC_VER < 1931
 // As usual, MSVC can't figure anything out so we have to do its job for it
 template<typename CharT, size_t Len>
 struct is_sized_char_array<CharT const[Len], CharT const[Len]> : public is_sized_char_array<CharT[Len], CharT[Len]>

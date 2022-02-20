@@ -1,10 +1,12 @@
 #pragma once
 #include "project.h"
 
-#include "core/macros.h"
 #include "Logging/Constants.h"
 
 #include "core_logging/LoggingHandler.h"
+
+#include "core/meta/FailTemplate.h"
+#include "core/macros.h"
 
 #include "rftl/cstdarg"
 #include "rftl/cstddef"
@@ -20,7 +22,7 @@
 
 // Forwards
 namespace RF::logging {
-	class LoggingRouter;
+class LoggingRouter;
 }
 
 namespace RF::logging {
@@ -167,7 +169,7 @@ void WriteContextString( Context const& context, Utf32LogContextBuffer& buffer )
 template<typename Context>
 void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer )
 {
-	static_assert( false,
+	static_assert( FailTemplate<Context>(),
 		"No declaration was found for this context. The linker may still be"
 		" able to locate and resolve it, but this is currently flagged to"
 		" cause a compilation error instead." );

@@ -4,6 +4,7 @@
 #include "core_rftype/ExtensionAccessorLookup.h"
 #include "core_reflect/ClassInfoBuilder.h"
 #include "core_reflect/VariableTraits.h"
+#include "core/meta/FailTemplate.h"
 #include "core/meta/MemberTest.h"
 #include "core/macros.h"
 
@@ -127,7 +128,7 @@ struct ClassInfoCompositor
 		typename rftl::enable_if<reflect::VariableTraits<T>::kVariableType == reflect::VariableType::FreeStanding, int>::type = 0>
 	ClassInfoCompositor& ExtensionProperty( char const* identifier, T variable )
 	{
-		static_assert( false, "TODO" );
+		static_assert( FailTemplate<T>(), "TODO" );
 		return *this;
 	}
 
