@@ -24,7 +24,12 @@ struct OptionDesc
 	// List - Choose something
 	struct List
 	{
-		using Item = rftl::string;
+		struct Item
+		{
+			using Identifier = rftl::string;
+			Identifier mIdentifier;
+			rftl::string mDisplayName;
+		};
 		using Items = rftl::vector<Item>;
 		Items items;
 	};

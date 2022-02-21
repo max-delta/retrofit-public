@@ -59,37 +59,41 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 
 	mTempOptions = {};
 
-	mTempOptions.mName = "Temp";
+	mTempOptions.mIdentifier = "temp";
+	mTempOptions.mDisplayName = "Temp";
 	OptionSet::Options& options = mTempOptions.mOptions;
 
 	static auto const addUnboundOption = [&options]( Option&& option ) -> void {
 		options.emplace_back( OptionSet::Entry{ option, OptionValue{} } );
 	};
 
-	static constexpr auto makeDevHop = []( rftl::string_view name, AppStateID id ) -> Option {
-		return Option::MakeAction( name, [id] {
+	static constexpr auto makeDevHop =
+		[]( rftl::string_view identifier, std::string_view displayName, AppStateID id ) -> Option {
+		return Option::MakeAction( identifier, displayName, [id] {
 			RequestGlobalDeferredStateChange( id );
 		} );
 	};
 
 	{
-		Option option = makeDevHop( "DevHop -> Rollback", id::DevTestRollback );
+		Option option = makeDevHop( "devhop_rollback", "DevHop -> Rollback", id::DevTestRollback );
 		addUnboundOption( rftl::move( option ) );
 	}
 	{
-		Option option = makeDevHop( "DevHop -> Combat charts", id::DevTestCombatCharts );
+		Option option = makeDevHop( "devhop_comcharts", "DevHop -> Combat charts", id::DevTestCombatCharts );
 		addUnboundOption( rftl::move( option ) );
 	}
 	{
-		Option option = makeDevHop( "DevHop -> Grid charts", id::DevTestGridCharts );
+		Option option = makeDevHop( "devhop_gridcharts", "DevHop -> Grid charts", id::DevTestGridCharts );
 		addUnboundOption( rftl::move( option ) );
 	}
 	{
-		Option option = Option::MakeList( "Test", { "A", "B", "C" } );
+		Option option = Option::MakeList( "test", "Test",
+			{ { "a", "A" }, { "b", "B" }, { "c", "C" } } );
 		addUnboundOption( rftl::move( option ) );
 	}
 	{
 		Option option = Option::MakeAction(
+			"mainmenu",
 			ui::LocalizeKey( "$titleopt_mainmenu" ),
 			[this] {
 				this->mReturnToMainMenu = true;

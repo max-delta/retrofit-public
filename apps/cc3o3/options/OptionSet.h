@@ -8,7 +8,9 @@ namespace RF::cc::options {
 
 struct OptionSet
 {
-	rftl::string mName;
+	using Identifier = rftl::string;
+	Identifier mIdentifier;
+	rftl::string mDisplayName;
 
 	struct Entry
 	{

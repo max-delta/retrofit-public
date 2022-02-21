@@ -17,7 +17,7 @@ struct OptionValue
 	// List - Choose something
 	struct List
 	{
-		OptionDesc::List::Item mCurrent;
+		OptionDesc::List::Item::Identifier mCurrent;
 	};
 	rftl::optional<List> mList;
 };

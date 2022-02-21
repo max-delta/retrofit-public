@@ -41,7 +41,7 @@ void OptionSlot::UpdateOption( options::Option const& option, options::OptionVal
 {
 	mColumnSlicer->SetChildRenderingBlocked( false );
 
-	mNameLabel->SetText( option.mName );
+	mNameLabel->SetText( option.mDisplayName );
 	mValueLabel->SetText( "TODO" );
 }
 

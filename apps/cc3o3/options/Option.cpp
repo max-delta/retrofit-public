@@ -5,10 +5,14 @@
 namespace RF::cc::options {
 ///////////////////////////////////////////////////////////////////////////////
 
-Option Option::MakeAction( rftl::string_view name, OptionDesc::Action::Func&& func )
+Option Option::MakeAction(
+	rftl::string_view identifier,
+	rftl::string_view displayName,
+	OptionDesc::Action::Func&& func )
 {
 	Option retVal = {};
-	retVal.mName = name;
+	retVal.mIdentifier = identifier;
+	retVal.mDisplayName = displayName;
 	retVal.mDesc.mAction.emplace();
 
 	retVal.mDesc.mAction->mFunc = rftl::move( func );
@@ -18,16 +22,23 @@ Option Option::MakeAction( rftl::string_view name, OptionDesc::Action::Func&& fu
 
 
 
-Option Option::MakeList( rftl::string_view name, rftl::initializer_list<rftl::string_view> list )
+Option Option::MakeList(
+	rftl::string_view identifier,
+	rftl::string_view displayName,
+	rftl::initializer_list<ListItemInitializer> list )
 {
 	Option retVal = {};
-	retVal.mName = name;
+	retVal.mIdentifier = identifier;
+	retVal.mDisplayName = displayName;
 	retVal.mDesc.mList.emplace();
 
 	OptionDesc::List::Items& items = retVal.mDesc.mList->items;
-	for( rftl::string_view const& entry : list )
+	for( ListItemInitializer const& entry : list )
 	{
-		items.emplace_back( entry );
+		OptionDesc::List::Item item = {};
+		item.mIdentifier = entry.mIdentifier;
+		item.mDisplayName = entry.mDisplayName;
+		items.emplace_back( std::move( item ) );
 	}
 
 	return retVal;

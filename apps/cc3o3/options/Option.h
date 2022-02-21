@@ -9,10 +9,24 @@ namespace RF::cc::options {
 
 struct Option
 {
-	static Option MakeAction( rftl::string_view name, OptionDesc::Action::Func&& func );
-	static Option MakeList( rftl::string_view name, rftl::initializer_list<rftl::string_view> list );
+	static Option MakeAction(
+		rftl::string_view identifier,
+		rftl::string_view displayName,
+		OptionDesc::Action::Func&& func );
 
-	rftl::string mName;
+	struct ListItemInitializer
+	{
+		rftl::string_view mIdentifier;
+		rftl::string_view mDisplayName;
+	};
+	static Option MakeList(
+		rftl::string_view identifier,
+		rftl::string_view displayName,
+		rftl::initializer_list<ListItemInitializer> list );
+
+	using Identifier = rftl::string;
+	Identifier mIdentifier;
+	rftl::string mDisplayName;
 	OptionDesc mDesc;
 };
 
