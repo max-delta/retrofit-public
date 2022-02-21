@@ -63,8 +63,9 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	mTempOptions.mDisplayName = "Temp";
 	OptionSet::Options& options = mTempOptions.mOptions;
 
-	static auto const addUnboundOption = [&options]( Option&& option ) -> void {
-		options.emplace_back( OptionSet::Entry{ option, OptionValue{} } );
+	static auto const addDefaultOption = [&options]( Option&& option ) -> void {
+		OptionValue value = OptionValue::MakeDefault( option.mDesc );
+		options.emplace_back( OptionSet::Entry{ rftl::move( option ), rftl::move( value ) } );
 	};
 
 	static constexpr auto makeDevHop =
@@ -76,20 +77,24 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 
 	{
 		Option option = makeDevHop( "devhop_rollback", "DevHop -> Rollback", id::DevTestRollback );
-		addUnboundOption( rftl::move( option ) );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
 	}
 	{
 		Option option = makeDevHop( "devhop_comcharts", "DevHop -> Combat charts", id::DevTestCombatCharts );
-		addUnboundOption( rftl::move( option ) );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
 	}
 	{
 		Option option = makeDevHop( "devhop_gridcharts", "DevHop -> Grid charts", id::DevTestGridCharts );
-		addUnboundOption( rftl::move( option ) );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
 	}
 	{
 		Option option = Option::MakeList( "test", "Test",
 			{ { "a", "A" }, { "b", "B" }, { "c", "C" } } );
-		addUnboundOption( rftl::move( option ) );
+		option.mDesc.mList->mDefault = 1;
+		addDefaultOption( rftl::move( option ) );
 	}
 	{
 		Option option = Option::MakeAction(
@@ -98,7 +103,8 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 			[this] {
 				this->mReturnToMainMenu = true;
 			} );
-		addUnboundOption( rftl::move( option ) );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
 	}
 }
 

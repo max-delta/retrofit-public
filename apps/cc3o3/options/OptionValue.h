@@ -7,6 +7,8 @@ namespace RF::cc::options {
 
 struct OptionValue
 {
+	static OptionValue MakeDefault( OptionDesc const& desc );
+
 	// Action - Do something
 	struct Action
 	{

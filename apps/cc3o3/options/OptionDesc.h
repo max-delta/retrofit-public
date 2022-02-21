@@ -4,6 +4,7 @@
 #include "rftl/functional"
 #include "rftl/optional"
 #include "rftl/string"
+#include "rftl/string_view"
 #include "rftl/vector"
 
 
@@ -18,6 +19,7 @@ struct OptionDesc
 		using FuncSig = void();
 		using Func = rftl::function<FuncSig>;
 		Func mFunc;
+		bool mEnabledByDefault = false;
 	};
 	rftl::optional<Action> mAction;
 
@@ -31,7 +33,10 @@ struct OptionDesc
 			rftl::string mDisplayName;
 		};
 		using Items = rftl::vector<Item>;
-		Items items;
+		Items mItems;
+		size_t mDefault = 0;
+
+		bool FindIdentifier( size_t& index, rftl::string_view identifier ) const;
 	};
 	rftl::optional<List> mList;
 };

@@ -32,7 +32,7 @@ Option Option::MakeList(
 	retVal.mDisplayName = displayName;
 	retVal.mDesc.mList.emplace();
 
-	OptionDesc::List::Items& items = retVal.mDesc.mList->items;
+	OptionDesc::List::Items& items = retVal.mDesc.mList->mItems;
 	for( ListItemInitializer const& entry : list )
 	{
 		OptionDesc::List::Item item = {};

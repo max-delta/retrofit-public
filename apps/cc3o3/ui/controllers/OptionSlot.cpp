@@ -2,6 +2,7 @@
 #include "OptionSlot.h"
 
 #include "cc3o3/options/Option.h"
+#include "cc3o3/options/OptionValue.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -39,10 +40,52 @@ void OptionSlot::ClearOption()
 
 void OptionSlot::UpdateOption( options::Option const& option, options::OptionValue const& value )
 {
+	options::OptionDesc const& desc = option.mDesc;
+
 	mColumnSlicer->SetChildRenderingBlocked( false );
 
 	mNameLabel->SetText( option.mDisplayName );
-	mValueLabel->SetText( "TODO" );
+
+	rftl::optional<rftl::string_view> valueText;
+
+	// NOTE: Can fall-through to other displays
+	if( desc.mAction.has_value() )
+	{
+		// Action
+		valueText = "";
+	}
+
+	if( desc.mList.has_value() )
+	{
+		// List
+		if( value.mList.has_value() == false )
+		{
+			RF_DBGFAIL_MSG( "Invalid value" );
+			valueText = "!!!INVALID!!!";
+		}
+		else
+		{
+			// Find the current item
+			size_t index;
+			bool const foundCurrent = desc.mList->FindIdentifier( index, value.mList->mCurrent );
+			if( foundCurrent )
+			{
+				valueText = desc.mList->mItems.at( index ).mDisplayName;
+			}
+			else
+			{
+				RF_DBGFAIL_MSG( "Missing entry" );
+				valueText = "!!!MISSING!!!";
+			}
+		}
+	}
+
+	if( valueText.has_value() == false )
+	{
+		RF_DBGFAIL_MSG( "Unknown option type" );
+		valueText = "!!!UKNOWN!!!";
+	}
+	mValueLabel->SetText( rftl::string( valueText.value() ) );
 }
 
 
