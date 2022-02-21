@@ -891,6 +891,10 @@ void PPUController::Render() const
 				RenderString( targetDebugState.mAuxStrings[i] );
 				break;
 		}
+		if( terminate )
+		{
+			break;
+		}
 	}
 
 	// Have we drawn the grid yet?

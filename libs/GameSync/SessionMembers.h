@@ -34,7 +34,6 @@ public:
 	// Public methods
 public:
 	SessionMembers() = default;
-	~SessionMembers() = default;
 
 	PlayerIDs GetPlayerIDs() const;
 	PlayerIDs GetUnclaimedPlayerIDs() const;

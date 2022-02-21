@@ -8,6 +8,7 @@
 	<ItemDefinitionGroup>
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
 			<AdditionalOptions>
+				-Wno-unused-but-set-variable
 				-Wno-unused-function
 				-Wno-format
 				-Wno-deprecated-declarations

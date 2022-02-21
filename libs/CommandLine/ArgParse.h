@@ -40,7 +40,6 @@ public:
 public:
 	ArgParse() = delete;
 	ArgParse( ArgView const& args );
-	~ArgParse() = default;
 
 	OptionNames GetOptionNames() const;
 	bool HasOption( OptionName const& name ) const;

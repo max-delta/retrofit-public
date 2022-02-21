@@ -308,7 +308,7 @@ void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
 		rftl::string& attackText = text.at( i );
 		uint8_t const& attackStrength = kAttackStrength[i];
 
-		attackText += '0' + attackStrength;
+		attackText += static_cast<char>( '0' + attackStrength );
 		attackText += " - ";
 
 		bool const canAttack = fightController.CanCharacterPerformAttack( mControlCharIndex, mTargetingIndex, attackStrength );

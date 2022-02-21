@@ -403,28 +403,32 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	size_t y = static_cast<size_t>( ty );
 	size_t n = static_cast<size_t>( tn );
 
-	enum class FontType
+	// Check font type
 	{
-		Invalid = -1,
-		Square,
-		Narrow
-	};
-	FontType fontType = FontType::Invalid;
-	if( x == y )
-	{
-		// 2x2
-		fontType = FontType::Square;
-	}
-	else if( x * 2 == y )
-	{
-		// 2x1
-		fontType = FontType::Narrow;
-	}
-	else
-	{
-		// Unsupported ratio
-		stbi_image_free( data );
-		return false;
+		enum class FontType
+		{
+			Invalid = -1,
+			Square,
+			Narrow
+		};
+		FontType fontType = FontType::Invalid;
+		if( x == y )
+		{
+			// 2x2
+			fontType = FontType::Square;
+		}
+		else if( x * 2 == y )
+		{
+			// 2x1
+			fontType = FontType::Narrow;
+		}
+		else
+		{
+			// Unsupported ratio
+			stbi_image_free( data );
+			return false;
+		}
+		( (void)fontType );
 	}
 
 	// Expect 16x16 characters
@@ -496,16 +500,10 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 					//uint8_t const redElement = readHead[0]; // Unused
 					uint8_t const greenElement = readHead[1];
 					//uint8_t const blueElement = readHead[2]; // Unused
-					uint8_t rgba2Element;
 					if( greenElement > 128 )
 					{
-						rgba2Element = 255;
 						variableCharWidth = math::Max( variableCharWidth, pixel + 1 );
 						variableCharHeight = math::Max( variableCharHeight, scanline + 1 );
-					}
-					else
-					{
-						rgba2Element = 0;
 					}
 					characterStorage.emplace_back( greenElement );
 					readHead += n;

@@ -137,6 +137,7 @@
 				internal engine details, which should be safe in practical cases -->
 			<AdditionalOptions>
 				-Wno-reserved-id-macro
+				-Wno-reserved-identifier
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
@@ -158,6 +159,7 @@
 				variables should be an error -->
 			<AdditionalOptions Condition="'$(RFConfig)'!='Debug'">
 				-Wno-unused-variable
+				-Wno-unused-but-set-variable
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
@@ -171,10 +173,11 @@
 			<!--Older versions of Clang failed to move, and instead did an improper
 				copy on returns that required an implicit cast, but we don't care about
 				those old versions, and this is just a portability warning for them-->
-			<AdditionalOptions>
+			<!--NOTE: Removed as legacy in https://reviews.llvm.org/D88220-->
+			<!--AdditionalOptions>
 				-Wno-return-std-move-in-c++11
 				%(AdditionalOptions)
-			</AdditionalOptions>
+			</AdditionalOptions-->
 
 			<!-- Build machines provide buildstamps via scripts, but local builds can
 				be more lax and use the C preprocessor, since otherwise the changing

@@ -21,7 +21,6 @@ class PPU_API Viewport
 	// Public methods
 public:
 	Viewport() = default;
-	~Viewport() = default;
 
 	void SlideToFit( ppu::Coord pos, ppu::CoordElem xMargin, ppu::CoordElem yMargin );
 
