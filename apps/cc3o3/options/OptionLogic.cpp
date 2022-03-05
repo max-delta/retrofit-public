@@ -4,6 +4,8 @@
 #include "cc3o3/options/OptionDesc.h"
 #include "cc3o3/options/OptionValue.h"
 
+#include "core_math/math_casts.h"
+
 #include "rftl/limits"
 
 
@@ -74,7 +76,9 @@ bool OptionLogic::CycleList( OptionValue& value, OptionDesc const& desc, bool fo
 	}
 
 	// Cycle
-	index = static_cast<size_t>( index + ( forward ? 1 : -1 ) );
+	index = math::integer_cast<size_t>(
+		math::integer_cast<int64_t>( index ) +
+		( forward ? 1 : -1 ) );
 
 	// Update
 	value.mList->mCurrent = desc.mList->mItems.at( index ).mIdentifier;
