@@ -35,8 +35,6 @@ struct OptionDesc
 		using Items = rftl::vector<Item>;
 		Items mItems;
 		size_t mDefault = 0;
-
-		bool FindIdentifier( size_t& index, rftl::string_view identifier ) const;
 	};
 	rftl::optional<List> mList;
 };

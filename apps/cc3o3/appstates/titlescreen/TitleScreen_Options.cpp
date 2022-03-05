@@ -4,6 +4,7 @@
 #include "cc3o3/cc3o3.h"
 #include "cc3o3/appstates/titlescreen/TitleScreen.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/options/OptionLogic.h"
 #include "cc3o3/options/OptionSet.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
@@ -63,7 +64,7 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	mTempOptions.mDisplayName = "Temp";
 	OptionSet::Options& options = mTempOptions.mOptions;
 
-	static auto const addDefaultOption = [&options]( Option&& option ) -> void {
+	auto const addDefaultOption = [&options]( Option&& option ) -> void {
 		OptionValue value = OptionValue::MakeDefault( option.mDesc );
 		options.emplace_back( OptionSet::Entry{ rftl::move( option ), rftl::move( value ) } );
 	};
@@ -250,12 +251,17 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 			{
 				// Focused on an option?
 				size_t const focusIndex = mInternalState->mOptionsListBox->GetSlotIndexWithSoftFocus( uiContext );
-				options::OptionSet::Options const& options = mInternalState->mTempOptions.mOptions;
+				options::OptionSet::Options& options = mInternalState->mTempOptions.mOptions;
 				if( focusIndex < options.size() )
 				{
-					options::OptionSet::Entry const& entry = options.at( focusIndex );
+					options::OptionSet::Entry& entry = options.at( focusIndex );
 					options::Option const& option = entry.mOption;
 					options::OptionDesc const& desc = option.mDesc;
+					options::OptionValue& value = entry.mValue;
+
+					bool const isCycleLeft = focusEvent == ui::focusevent::Command_NavigateLeft;
+					bool const isCycleRight = focusEvent == ui::focusevent::Command_NavigateRight;
+					bool const isCycle = isCycleLeft || isCycleRight;
 
 					if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 					{
@@ -265,6 +271,17 @@ void TitleScreen_Options::OnTick( AppStateTickContext& context )
 						{
 							// Perform action
 							desc.mAction->mFunc();
+							shouldUpdateOptions = true;
+						}
+					}
+					else if( isCycle )
+					{
+						// Cycle
+
+						if( desc.mList.has_value() )
+						{
+							// Change
+							options::OptionLogic::CycleList( value, desc, isCycleRight );
 							shouldUpdateOptions = true;
 						}
 					}

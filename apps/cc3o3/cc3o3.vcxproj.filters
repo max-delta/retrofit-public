@@ -283,6 +283,9 @@
     <ClCompile Include="options\OptionValue.cpp">
       <Filter>options</Filter>
     </ClCompile>
+    <ClCompile Include="options\OptionLogic.cpp">
+      <Filter>options</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -772,6 +775,9 @@
       <Filter>ui\controller</Filter>
     </ClInclude>
     <ClInclude Include="options\OptionValue.h">
+      <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="options\OptionLogic.h">
       <Filter>options</Filter>
     </ClInclude>
   </ItemGroup>

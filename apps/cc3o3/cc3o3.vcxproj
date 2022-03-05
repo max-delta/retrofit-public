@@ -77,6 +77,7 @@
     <ClCompile Include="input\HardcodedSetup.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="options\Option.cpp" />
+    <ClCompile Include="options\OptionLogic.cpp" />
     <ClCompile Include="options\OptionSet.cpp" />
     <ClCompile Include="options\OptionDesc.cpp" />
     <ClCompile Include="options\OptionValue.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="input\project.h" />
     <ClInclude Include="input\stdafx.h" />
     <ClInclude Include="options\Option.h" />
+    <ClInclude Include="options\OptionLogic.h" />
     <ClInclude Include="options\OptionSet.h" />
     <ClInclude Include="options\OptionsFwd.h" />
     <ClInclude Include="options\OptionDesc.h" />

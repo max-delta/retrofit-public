@@ -2,6 +2,7 @@
 #include "OptionSlot.h"
 
 #include "cc3o3/options/Option.h"
+#include "cc3o3/options/OptionLogic.h"
 #include "cc3o3/options/OptionValue.h"
 
 #include "GameUI/ContainerManager.h"
@@ -67,7 +68,7 @@ void OptionSlot::UpdateOption( options::Option const& option, options::OptionVal
 		{
 			// Find the current item
 			size_t index;
-			bool const foundCurrent = desc.mList->FindIdentifier( index, value.mList->mCurrent );
+			bool const foundCurrent = options::OptionLogic::FindListIdentifier( index, desc, value.mList->mCurrent );
 			if( foundCurrent )
 			{
 				valueText = desc.mList->mItems.at( index ).mDisplayName;
