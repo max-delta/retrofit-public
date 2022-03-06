@@ -34,6 +34,7 @@
     <ClInclude Include="Color3f.h" />
     <ClInclude Include="Color4u8.h" />
     <ClInclude Include="Hash.h" />
+    <ClInclude Include="Limits.h" />
     <ClInclude Include="ListOperations.h" />
     <ClInclude Include="math_bits.h" />
     <ClInclude Include="math_bytes.h" />
@@ -43,6 +44,7 @@
     <ClInclude Include="Lerp.h" />
     <ClInclude Include="NumericTraits.h" />
     <ClInclude Include="Rand.h" />
+    <ClInclude Include="SoftFloat.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -56,6 +58,7 @@
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="math_bits.cpp" />
     <ClCompile Include="Rand.cpp" />
+    <ClCompile Include="SoftFloat.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
@@ -65,6 +68,7 @@
   <ItemGroup>
     <None Include="AABB4.inl" />
     <None Include="BitField.inl" />
+    <None Include="Limits.inl" />
     <None Include="math_bits.inl" />
     <None Include="math_bytes.inl" />
     <None Include="math_casts.inl" />

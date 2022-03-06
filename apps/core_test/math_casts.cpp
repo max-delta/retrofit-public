@@ -113,30 +113,15 @@ TEST( MathCasts, IntegerTruncast_Float )
 	}
 	{
 		// Hmm...
+		static_assert( rftl::numeric_limits<uint8_t>::has_quiet_NaN == false, "" );
 		static_assert( rftl::numeric_limits<uint8_t>::quiet_NaN() == 0, "" );
 		constexpr float source = rftl::numeric_limits<float>::quiet_NaN();
 		uint8_t const val = integer_truncast<uint8_t>( source );
-		switch( compiler::kCompiler )
-		{
-			case compiler::Compiler::MSVC:
-				ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::quiet_NaN() );
-				break;
-			case compiler::Compiler::Clang:
-				// Clang seems to have some bizarre behaviors here that
-				//  results in inconsistent literals in the assembly
-				ASSERT_TRUE(
-					val == rftl::numeric_limits<uint8_t>::quiet_NaN() ||
-					val == 0xff );
-				break;
-			case compiler::Compiler::Invalid:
-			default:
-				// Unimplemented
-				ASSERT_TRUE( false );
-				break;
-		}
+		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::quiet_NaN() );
 	}
 	{
 		// Uh... sure, I guess?
+		static_assert( rftl::numeric_limits<uint8_t>::has_signaling_NaN == false, "" );
 		static_assert( rftl::numeric_limits<uint8_t>::signaling_NaN() == 0, "" );
 		constexpr float source = rftl::numeric_limits<float>::signaling_NaN();
 		uint8_t const val = integer_truncast<uint8_t>( source );

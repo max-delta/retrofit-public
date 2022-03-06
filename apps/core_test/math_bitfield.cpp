@@ -3,8 +3,6 @@
 #include "core_math/BitField.h"
 
 
-RF_CLANG_IGNORE( "-Wundefined-reinterpret-cast" );
-
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -154,99 +152,6 @@ TEST( MathBitField, LargeSigned )
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[6], 0xcd );
 	ASSERT_EQ( reinterpret_cast<uint8_t const*>( bf.Data() )[7], 0xef );
 	ASSERT_EQ( ( bf.ReadAt<0, int64_t>() ), 0x1234567890abcdef );
-}
-
-
-
-TEST( MathBitField, IEEE754Binary32Nonsense )
-{
-	static_assert( rftl::numeric_limits<float>::is_iec559, "This test assumes standard floats" );
-	using bf_1_8_23 = BitField<1, 8, 23>;
-	static_assert( sizeof( bf_1_8_23 ) == 4, "Unexpected size" );
-	static_assert( sizeof( float ) == 4, "Unexpected size" );
-	static_assert( sizeof( uint32_t ) == 4, "Unexpected size" );
-	auto convertToSoft = []( float hardFloat ) -> bf_1_8_23 //
-	{
-		// HACK: This is probably wildly unsafe and hardware-dependent
-		uint32_t const softUnswapped = *reinterpret_cast<uint32_t const*>( &hardFloat );
-		uint32_t const softSwapped = math::FromPlatformToBigEndian( softUnswapped );
-		return *reinterpret_cast<bf_1_8_23 const*>( &softSwapped );
-	};
-	{
-		bf_1_8_23 const softFloat = convertToSoft( 0.f );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( -0.f );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( -2.f );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 128 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( -3.f );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 1 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 128 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( rftl::numeric_limits<float>::denorm_min() );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 0 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000001 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( rftl::numeric_limits<float>::infinity() );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b00000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( rftl::numeric_limits<float>::quiet_NaN() );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
-		ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000000 ); // ... * (1+FRAC) * ...
-	}
-	{
-		bf_1_8_23 const softFloat = convertToSoft( rftl::numeric_limits<float>::signaling_NaN() );
-		ASSERT_EQ( ( softFloat.ReadAt<0, uint32_t>() ), 0 ); // ... * -1^<SIGN> * ...
-		ASSERT_EQ( ( softFloat.ReadAt<1, uint32_t>() ), 255 ); // ... * 2^(<EXP>-127) * ...
-		switch( compiler::kCompiler )
-		{
-			case compiler::Compiler::MSVC:
-				ASSERT_EQ( ( softFloat.ReadAt<2, uint32_t>() ), 0b10000000000000000000001 ); // ... * (1+FRAC) * ...
-				break;
-			case compiler::Compiler::Clang:
-			{
-				uint32_t const frac = softFloat.ReadAt<2, uint32_t>(); // ... * (1+FRAC) * ...
-				if constexpr( compiler::kArchitecture == compiler::Architecture::x86_32 )
-				{
-					// Clang seems to have some bizarre behaviors here that
-					//  results in inconsistent literals in the assembly
-					ASSERT_TRUE(
-						frac == 0b00000000000000000000001 ||
-						frac == 0b10000000000000000000001 );
-				}
-				else
-				{
-					ASSERT_EQ( frac, 0b00000000000000000000001 );
-				}
-				break;
-			}
-			case compiler::Compiler::Invalid:
-			default:
-				// Unimplemented
-				ASSERT_TRUE( false );
-				break;
-		}
-	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

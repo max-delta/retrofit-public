@@ -20,6 +20,8 @@
     <ClInclude Include="Color4u8.h" />
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="BitwiseEnums.h" />
+    <ClInclude Include="Limits.h" />
+    <ClInclude Include="SoftFloat.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -33,6 +35,7 @@
     <ClCompile Include="Color4u8.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="BitwiseEnums.cpp" />
+    <ClCompile Include="SoftFloat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Vector2.inl" />
@@ -45,5 +48,6 @@
     <None Include="AABB4.inl" />
     <None Include="Vector3.inl" />
     <None Include="Lerp.inl" />
+    <None Include="Limits.inl" />
   </ItemGroup>
 </Project>

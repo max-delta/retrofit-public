@@ -1,6 +1,8 @@
 #pragma once
 #include "math_casts.h"
 
+#include "core_math/Limits.h"
+
 #include "core/macros.h"
 
 #include "rftl/limits"
@@ -184,14 +186,24 @@ DST integer_truncast( SRC const src )
 		return lowestDest;
 	}
 
-	if( rftl::is_floating_point<SRC>::value )
+	if constexpr( rftl::is_floating_point<SRC>::value )
 	{
-		if( rftl::is_same<SRC, long double>::value )
+		if( is_quiet_NaN( src ) )
+		{
+			return rftl::numeric_limits<DST>::quiet_NaN();
+		}
+
+		if( is_signaling_NaN( src ) )
+		{
+			return rftl::numeric_limits<DST>::signaling_NaN();
+		}
+
+		if constexpr( rftl::is_same<SRC, long double>::value )
 		{
 			return static_cast<DST>( roundl( static_cast<long double>( src ) ) );
 		}
 
-		if( rftl::is_same<SRC, double>::value )
+		if constexpr( rftl::is_same<SRC, double>::value )
 		{
 			return static_cast<DST>( round( static_cast<double>( src ) ) );
 		}

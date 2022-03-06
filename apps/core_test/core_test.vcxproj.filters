@@ -58,6 +58,7 @@
     <ClCompile Include="thread_signal.cpp" />
     <ClCompile Include="thread_async.cpp" />
     <ClCompile Include="thread_sequential_work_pump.cpp" />
+    <ClCompile Include="math_softfloat.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
