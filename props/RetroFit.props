@@ -72,6 +72,12 @@
 				%(DisableSpecificWarnings)
 			</DisableSpecificWarnings>
 
+			<!--Warning about some brace-list pedantry with initialization (C++ defect)
+				SEE: https://www.open-std.org/JTC1/SC22/WG21/docs/papers/2012/n3367.html#1270-->
+			<DisableSpecificWarnings>
+				5246; %(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
+
 			<!--Don't care about variables just used for asserts-->
 			<DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
 				4189; %(DisableSpecificWarnings)

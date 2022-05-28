@@ -85,14 +85,17 @@ template<typename DST, typename SRC>
 constexpr typename rftl::enable_if<could_overflow<DST, SRC>::value, bool>::type will_overflow( SRC const src )
 {
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
-	RF_CLANG_PUSH();
-	// This can raise warnings when using high value integers and
-	//  low-precision floating point (rightfully so)
-	// TODO: Consider using more specializations instead
-	RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
-	RF_MSVC_INLINE_SUPPRESS( 5219 );
-	return src > maxDest;
-	RF_CLANG_POP();
+	static constexpr auto lessThan = []( auto lhs, auto rhs ) -> bool {
+		RF_CLANG_PUSH();
+		// This can raise warnings when using high value integers and
+		//  low-precision floating point (rightfully so), or different signedness
+		// TODO: Consider using more specializations instead
+		RF_CLANG_IGNORE( "-Wimplicit-int-float-conversion" );
+		RF_MSVC_INLINE_SUPPRESS( 5219 4018 4388 );
+		return lhs < rhs;
+		RF_CLANG_POP();
+	};
+	return lessThan( maxDest, src );
 }
 
 template<typename DST, typename SRC>
