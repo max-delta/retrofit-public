@@ -1,7 +1,7 @@
 #https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 #############################
-# Known issues as of v11.0
+# Known issues as of v13.0
 #############################
 #
 # Lambdas are a disaster
@@ -19,10 +19,18 @@
 #  updates, and patches just sit around forever without getting traction
 #
 
+# Coming soon? (v12.0 release notes)
+#IndentPragmas : ???
+#BreakBeforeConceptDeclarations : ???
+
+# Coming soon? (v13.0 release notes)
+#PointerAligment : ???
+
 BasedOnStyle : Microsoft
 
 AccessModifierOffset : -4
 AlignAfterOpenBracket  : DontAlign
+AlignArrayOfStructures : None
 AlignConsecutiveAssignments : false
 AlignConsecutiveBitFields : false
 AlignConsecutiveDeclarations : false
@@ -43,8 +51,10 @@ AllowShortLoopsOnASingleLine : false
 AlwaysBreakAfterReturnType : None
 AlwaysBreakBeforeMultilineStrings : false
 AlwaysBreakTemplateDeclarations : No # In some versions this has to be false instead...
+AttributeMacros: [] # TODO: Add any special macros here
 BinPackArguments : true # But prefer false
 BinPackParameters : true # But prefer false
+BitFieldColonSpacing : Both
 BraceWrapping :
  AfterCaseLabel : true
  AfterClass : true
@@ -58,7 +68,7 @@ BraceWrapping :
  AfterExternBlock : true
  BeforeCatch : true
  BeforeElse : true
- BeforeLambdaBody : false # Want to be true, but since Clang-format is trash, this overrides 'AfterNamespace'
+ BeforeLambdaBody : true # Want to be true, but since Clang-format is trash, this overrides 'AfterNamespace'
  BeforeWhile : true
  IndentBraces : false
  SplitEmptyFunction : false
@@ -81,40 +91,51 @@ Cpp11BracedListStyle : true # This used to fuck up spacing when it was on
 DeriveLineEnding : true
 DerivePointerAlignment : false
 DisableFormat : false
+EmptyLineAfterAccessModifier : Leave
+EmptyLineBeforeAccessModifier : Leave
 #ExperimentalAutoDetectBinPacking
 FixNamespaceComments : false
-#ForEachMacros
+ForEachMacros : [] # TODO: Add any special macros here
+IfMacros : [] # TODO: Add any special macros here
 IncludeBlocks : Preserve
 #IncludeCategories
 #IncludeIsMainRegex
 #IncludeIsMainSourceRegex
+IndentAccessModifiers : false
 IndentCaseBlocks : false
 IndentCaseLabels : true
 IndentExternBlock : NoIndent
 IndentGotoLabels : true
 IndentPPDirectives : BeforeHash
+IndentRequires : false
 IndentWidth : 4
 IndentWrappedFunctionNames : false
 #InsertTrailingCommas
 #Java...
 KeepEmptyLinesAtTheStartOfBlocks : true
+LambdaBodyIndentation : Signature
 #Language
 #MacroBlockBegin
 #MacroBlockEnd
 MaxEmptyLinesToKeep : 4
 NamespaceIndentation : None
-#NamespaceMacros
+NamespaceMacros : [] # TODO: Add any special macros here
 #ObjC...
 #Penalty...
 PointerAlignment : Left
+PPIndentWidth : -1
 #RawStringFormats
+ReferenceAlignment : Pointer
 ReflowComments : false
-SortIncludes : false # But prefer true
+ShortNamespaceLines : 1
+SortIncludes : Never # But prefer CaseInsensitive
 SortUsingDeclarations : false
 SpaceAfterCStyleCast : false
 SpaceAfterLogicalNot : false
 SpaceAfterTemplateKeyword : false
+SpaceAroundPointerQualifiers : Default
 SpaceBeforeAssignmentOperators : true
+SpaceBeforeCaseColon : false
 SpaceBeforeCpp11BracedList : false
 SpaceBeforeCtorInitializerColon : true
 SpaceBeforeInheritanceColon : true
@@ -127,12 +148,16 @@ SpacesBeforeTrailingComments : 1
 SpacesInAngles : false
 SpacesInCStyleCastParentheses : false
 SpacesInContainerLiterals : true
+SpacesInLineCommentPrefix:
+ Minimum : 0
+ Maximum : -1
 SpacesInParentheses : true
 SpacesInSquareBrackets : false
+StatementAttributeLikeMacros : [] # TODO: Add any special macros here
 Standard : c++17
-#StatementMacros
+StatementMacros : [] # TODO: Add any special macros here
 TabWidth : 4 # ClangFormat seems to corrupt everything if this isn't 4???
-#TypenameMacros
+TypenameMacros : [] # TODO: Add any special macros here
 UseCRLF : true
 UseTab : Always
-#WhitespaceSensitiveMacros
+WhitespaceSensitiveMacros : [] # TODO: Add any special macros here
