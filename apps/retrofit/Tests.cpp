@@ -676,7 +676,8 @@ void InitFrameBuilderTest()
 	gTestFrameBuilder = DefaultCreator<app::FrameBuilder>::Create( app::gTaskScheduler->GetTaskScheduler() );
 
 	{
-		auto func = []() -> void {
+		auto func = []() -> void
+		{
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "START running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
@@ -688,7 +689,8 @@ void InitFrameBuilderTest()
 		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
 	}
 	{
-		auto func = []() -> void {
+		auto func = []() -> void
+		{
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR1 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
@@ -701,7 +703,8 @@ void InitFrameBuilderTest()
 		gTestFrameBuilder->AddTask( rftl::move( taskDef ), rftl::move( newTask ) );
 	}
 	{
-		auto func = []() -> void {
+		auto func = []() -> void
+		{
 			RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR2 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );

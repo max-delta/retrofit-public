@@ -13,7 +13,7 @@
 
 // Forwards
 namespace RF::scheduling {
-	class ThreadableTaskWorker;
+class ThreadableTaskWorker;
 }
 
 

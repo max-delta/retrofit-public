@@ -12,7 +12,7 @@ namespace RF::cli {
 TEST( ArgParse, Empty )
 {
 	static constexpr char const* kArgv[] = {
-		nullptr
+		nullptr,
 	};
 	static constexpr size_t kArgc = rftl::extent<decltype( kArgv )>::value;
 	ArgParse const parsed( { kArgc, kArgv } );
@@ -27,7 +27,7 @@ TEST( ArgParse, EmptyTerm )
 {
 	static constexpr char const* kArgv[] = {
 		nullptr,
-		"--"
+		"--",
 	};
 	static constexpr size_t kArgc = rftl::extent<decltype( kArgv )>::value;
 	ArgParse const parsed( { kArgc, kArgv } );
@@ -43,7 +43,7 @@ TEST( ArgParse, FalseEmptyTerm )
 	static constexpr char const* kArgv[] = {
 		nullptr,
 		"--",
-		"--"
+		"--",
 	};
 	static constexpr size_t kArgc = rftl::extent<decltype( kArgv )>::value;
 	ArgParse const parsed( { kArgc, kArgv } );
@@ -60,7 +60,7 @@ TEST( ArgParse, ArgOnly )
 	static constexpr char const* kArgv[] = {
 		nullptr,
 		"aaa",
-		"bbb"
+		"bbb",
 	};
 	static constexpr size_t kArgc = rftl::extent<decltype( kArgv )>::value;
 	ArgParse const parsed( { kArgc, kArgv } );
@@ -162,7 +162,7 @@ TEST( ArgParse, HyphenArg )
 {
 	static constexpr char const* kArgv[] = {
 		nullptr,
-		"-"
+		"-",
 	};
 	static constexpr size_t kArgc = rftl::extent<decltype( kArgv )>::value;
 	ArgParse const parsed( { kArgc, kArgv } );

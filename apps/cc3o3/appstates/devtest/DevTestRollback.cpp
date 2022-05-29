@@ -121,7 +121,8 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool {
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool
+	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;
 		va_start( args, fmt );
@@ -147,13 +148,13 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 		input::player::P1,
 		input::player::P2,
 		3,
-		4
+		4,
 	};
 	InternalState::Pos* const positions[] = {
 		&internalState.mP1,
 		&internalState.mP2,
 		&internalState.mP3,
-		&internalState.mP4
+		&internalState.mP4,
 	};
 
 	input::GameController const* const controllers[] = {

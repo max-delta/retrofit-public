@@ -85,7 +85,8 @@ TEST( EventDispatcher, NoEventDispatch )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -113,7 +114,8 @@ TEST( EventDispatcher, EventBeforeHandler )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -154,7 +156,8 @@ TEST( EventDispatcher, HandlerBeforeEvent )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -195,7 +198,8 @@ TEST( EventDispatcher, MutableEvent )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 		event++;
 	};
@@ -248,10 +252,11 @@ TEST( EventDispatcher, SortedHandlers )
 			using Iter = rftl::vector<KeyedHandler<Handler>>::iterator;
 			void operator()( Iter const& lhs, Iter const& rhs )
 			{
-				rftl::sort( lhs, rhs, []( KeyedHandler<Handler> const& lhs, KeyedHandler<Handler> const& rhs ) {
-					// Reverse order
-					return lhs.mHandler.mVal > rhs.mHandler.mVal;
-				} );
+				rftl::sort( lhs, rhs, []( KeyedHandler<Handler> const& lhs, KeyedHandler<Handler> const& rhs )
+					{
+						// Reverse order
+						return lhs.mHandler.mVal > rhs.mHandler.mVal;
+					} );
 			}
 		};
 		using HandlerOrderPolicy = traits::HandlersAreRunInSortOrder<Sort>;
@@ -361,7 +366,8 @@ TEST( EventDispatcher, CustomDispatch )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -402,10 +408,11 @@ TEST( EventDispatcher, SortedEvents )
 			using Iter = rftl::vector<Event>::iterator;
 			void operator()( Iter const& lhs, Iter const& rhs )
 			{
-				rftl::sort( lhs, rhs, []( Event const& lhs, Event const& rhs ) {
-					// Reverse order
-					return lhs > rhs;
-				} );
+				rftl::sort( lhs, rhs, []( Event const& lhs, Event const& rhs )
+					{
+						// Reverse order
+						return lhs > rhs;
+					} );
 			}
 		};
 		using EventSortPolicy = traits::EventsAreSorted<Sort>;
@@ -413,7 +420,8 @@ TEST( EventDispatcher, SortedEvents )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -464,7 +472,8 @@ TEST( EventDispatcher, DiscardEvents )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 
@@ -519,7 +528,8 @@ TEST( EventDispatcher, DeferEvents )
 	using Dispatcher = EventDispatcher<Event, Handler, Queue, Policies>;
 
 	rftl::vector<Event> seenEvents;
-	auto const onEvent = [&seenEvents]( Event const& event ) -> void {
+	auto const onEvent = [&seenEvents]( Event const& event ) -> void
+	{
 		seenEvents.emplace_back( event );
 	};
 

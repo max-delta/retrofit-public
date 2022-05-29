@@ -51,7 +51,7 @@ void WriteContextString( cc::state::ObjectRef const& context, Utf8LogContextBuff
 {
 	using namespace cc::state;
 	ComponentInstanceRefT<comp::Meta> const meta = context.GetComponentInstanceT<comp::Meta>();
-	if(meta == nullptr)
+	if( meta == nullptr )
 	{
 		return WriteContextString<char const*>( "!!NoMeta!!", buffer );
 	}

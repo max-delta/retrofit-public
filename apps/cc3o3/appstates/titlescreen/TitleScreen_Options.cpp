@@ -64,16 +64,20 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	mTempOptions.mDisplayName = "Temp";
 	OptionSet::Options& options = mTempOptions.mOptions;
 
-	auto const addDefaultOption = [&options]( Option&& option ) -> void {
+	auto const addDefaultOption = [&options]( Option&& option ) -> void
+	{
 		OptionValue value = OptionValue::MakeDefault( option.mDesc );
 		options.emplace_back( OptionSet::Entry{ rftl::move( option ), rftl::move( value ) } );
 	};
 
 	static constexpr auto makeDevHop =
-		[]( rftl::string_view identifier, std::string_view displayName, AppStateID id ) -> Option {
-		return Option::MakeAction( identifier, displayName, [id] {
-			RequestGlobalDeferredStateChange( id );
-		} );
+		[]( rftl::string_view identifier, std::string_view displayName, AppStateID id ) -> Option
+	{
+		return Option::MakeAction( identifier, displayName,
+			[id]() -> void
+			{
+				RequestGlobalDeferredStateChange( id );
+			} );
 	};
 
 	{
@@ -101,7 +105,8 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 		Option option = Option::MakeAction(
 			"mainmenu",
 			ui::LocalizeKey( "$titleopt_mainmenu" ),
-			[this] {
+			[this]
+			{
 				this->mReturnToMainMenu = true;
 			} );
 		option.mDesc.mAction->mEnabledByDefault = true;

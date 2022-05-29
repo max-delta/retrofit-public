@@ -140,7 +140,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		constexpr gfx::ppu::CoordElem kMenuEntryPadding = 6;
 		gfx::ppu::Coord const menuDimensions = {
 			kMenuEntryHitboxWidth,
-			math::integer_cast<gfx::ppu::CoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() )
+			math::integer_cast<gfx::ppu::CoordElem>( ( menuFontHeight + kMenuEntryPadding ) * menuText.size() ),
 		};
 		WeakPtr<ui::controller::Floater> const menuPane =
 			uiManager.AssignStrongController(
@@ -186,7 +186,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		constexpr gfx::ppu::CoordElem kBuildEntryPadding = 1;
 		gfx::ppu::Coord const buildDimensions = {
 			kBuildEntryHitboxWidth,
-			math::integer_cast<gfx::ppu::CoordElem>( ( buildFontHeight + kBuildEntryPadding ) * buildText.size() )
+			math::integer_cast<gfx::ppu::CoordElem>( ( buildFontHeight + kBuildEntryPadding ) * buildText.size() ),
 		};
 		WeakPtr<ui::controller::Floater> const buildPane =
 			uiManager.AssignStrongController(

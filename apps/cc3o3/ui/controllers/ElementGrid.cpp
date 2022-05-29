@@ -112,13 +112,13 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 		case Size::Mini:
 			expectedDimensions = {
 				kElementTileMiniWidth * character::kMaxElementLevels,
-				kElementTileMiniHeight * character::kMaxSlotsPerElementLevel
+				kElementTileMiniHeight * character::kMaxSlotsPerElementLevel,
 			};
 			break;
 		case Size::Micro:
 			expectedDimensions = {
 				kElementTileMicroWidth * character::kMaxElementLevels,
-				kElementTileMicroHeight * character::kMaxSlotsPerElementLevel
+				kElementTileMicroHeight * character::kMaxSlotsPerElementLevel,
 			};
 			break;
 		default:

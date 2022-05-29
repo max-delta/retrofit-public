@@ -161,7 +161,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		"Claim a player",
 		"Relinquish a player",
 		"Clear text",
-		"Send text"
+		"Send text",
 	};
 	bool selected[kNumOptions] = {};
 
@@ -322,12 +322,12 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	{
 		InternalState::Pos const* const positions[] = {
 			&internalState.mP1,
-			&internalState.mP2
+			&internalState.mP2,
 		};
 
 		math::Color3f const colors[] = {
 			math::Color3f::kYellow,
-			math::Color3f::kWhite
+			math::Color3f::kWhite,
 		};
 
 		for( size_t i = 0; i < 2; i++ )

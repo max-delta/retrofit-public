@@ -83,7 +83,7 @@ TEST( InputStream, TripleFrame )
 		time::CommonClock::TimePointFromNanos( 40 ),
 		time::CommonClock::TimePointFromNanos( 40 ),
 		time::CommonClock::TimePointFromNanos( 50 ),
-		time::CommonClock::TimePointFromNanos( 50 )
+		time::CommonClock::TimePointFromNanos( 50 ),
 	};
 	static constexpr InputValue kVals[kNumInputs] = { 1, 2, 3, 4, 5, 6 };
 	static constexpr time::CommonClock::time_point kZeroTime = time::CommonClock::TimePointFromNanos( 0 );

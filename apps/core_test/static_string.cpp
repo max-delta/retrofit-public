@@ -428,7 +428,7 @@ TEST( StaticString, StringConversion )
 	rftl::static_string<5> sa;
 	ASSERT_TRUE( sa.c_str() == rftl::string( "" ) );
 	sa.push_back( '2' );
-	ASSERT_TRUE( sa.c_str() == rftl::string("2") );
+	ASSERT_TRUE( sa.c_str() == rftl::string( "2" ) );
 	sa.push_back( '7' );
 	ASSERT_TRUE( sa.c_str() == rftl::string( "27" ) );
 	sa.push_back( 'A' );

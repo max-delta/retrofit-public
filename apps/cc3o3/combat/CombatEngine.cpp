@@ -33,7 +33,7 @@ SimColor CombatEngine::EvalInnates( element::InnateIdentifier lhs, element::Inna
 	rftl::array<Pair, 3> const pairs = {
 		Pair{ I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' } },
 		Pair{ I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' } },
-		Pair{ I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' } }
+		Pair{ I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' } },
 	};
 
 	for( Pair const& pair : pairs )
@@ -60,7 +60,7 @@ element::InnateIdentifier CombatEngine::GenerateRandomInnate( uint32_t& lastGene
 	rftl::array<I, 6> const innates = {
 		I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' },
 		I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' },
-		I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' }
+		I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' },
 	};
 	lastGeneratorValue = math::StableRandLCG( lastGeneratorValue );
 	return element::MakeInnateIdentifier( innates.at( lastGeneratorValue % innates.size() ) );

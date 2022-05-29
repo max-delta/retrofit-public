@@ -108,8 +108,8 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 			return 0;
 
 		default: // Parameters vary
-				 // We really don't care what just happened, Windows can fuck with it
-				 // to its heart's desire.
+			// We really don't care what just happened, Windows can fuck with it
+			// to its heart's desire.
 			if( inputIntercepted )
 			{
 				return inputResult;

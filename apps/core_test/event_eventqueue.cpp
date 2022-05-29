@@ -27,7 +27,7 @@ TEST( EventQueue, MultithreadBasics )
 		ASSERT_EQ( numStaged, 1 );
 		Queue::EventQueue const events = queue.ExtractStagedEvents();
 		ASSERT_EQ( events.size(), 1 );
-		ASSERT_EQ( events.at(0), 1 );
+		ASSERT_EQ( events.at( 0 ), 1 );
 	}
 
 	{

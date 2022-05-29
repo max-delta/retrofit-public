@@ -438,13 +438,15 @@ void ProcessFrame()
 			time::FrameClock::set_time( resimulationTime );
 
 			// Tick the frame
-			RollbackTickWrapper( []() -> void {
-				sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
+			RollbackTickWrapper(
+				[]() -> void
+				{
+					sAppStateManager.Tick( time::FrameClock::now(), time::kSimulationFrameDuration );
 
-				// WARNING: Intentionally not re-simulating global state change
-				// NOTE: Behaviour here will be erratic, but likely non-fatal
-				//sAppStateManager.ApplyDeferredStateChange();
-			} );
+					// WARNING: Intentionally not re-simulating global state change
+					// NOTE: Behaviour here will be erratic, but likely non-fatal
+					//sAppStateManager.ApplyDeferredStateChange();
+				} );
 
 			// Move to the next frame
 			resimulationTime += time::kSimulationFrameDuration;
@@ -501,8 +503,8 @@ void ProcessFrame()
 		//  send along any input
 		time::CommonClock::time_point const localInputFrameReadyToCommit =
 			simulationMode == SimulationMode::StallSimulation ?
-			  previousTrueFrame :
-			  currentTrueFrame;
+				previousTrueFrame :
+				currentTrueFrame;
 
 		// NOTE: Regardless of the frame declared, uncommitted input from the
 		//  future can still be sent, such as when a local input is delayed to

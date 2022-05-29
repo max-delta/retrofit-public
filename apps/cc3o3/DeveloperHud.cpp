@@ -89,7 +89,8 @@ void RenderRollback()
 		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
 		return;
 	}
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool {
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		va_list args;
 		va_start( args, fmt );
@@ -103,7 +104,8 @@ void RenderRollback()
 	uint8_t x = kStartX;
 	uint8_t y = kStartY;
 
-	static constexpr auto timeAsIndex = []( time::CommonClock::time_point const& time ) -> size_t {
+	static constexpr auto timeAsIndex = []( time::CommonClock::time_point const& time ) -> size_t
+	{
 		return math::integer_cast<size_t>( duration_cast<nanoseconds>( time.time_since_epoch() ) / duration_cast<nanoseconds>( time::kSimulationFrameDuration ) );
 	};
 
@@ -178,7 +180,8 @@ void RenderRollback()
 		gfx::ppu::Coord::ElementType const gfxAnnotationStart = gfxLanesEnd + 2;
 		gfx::ppu::Coord::ElementType const gfxAnnotationHeight = 4;
 
-		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::ppu::Coord::ElementType {
+		auto const rescaleToGfx = [&]( time::CommonClock::time_point const& time ) -> gfx::ppu::Coord::ElementType
+		{
 			return math::Rescale(
 				gfxTimelineStart,
 				gfxTimelineEnd,
@@ -217,8 +220,8 @@ void RenderRollback()
 			1,
 			kCommitDepth,
 			timelineCommit < timelineNow ?
-				  math::Color3f::kYellow :
-				  math::Color3f::kGreen );
+				math::Color3f::kYellow :
+				math::Color3f::kGreen );
 
 		// Window lines
 		auto const drawAnnotationRange = [&]( time::CommonClock::time_point start, time::CommonClock::time_point end, uint8_t rank, math::Color3f color ) -> void //
@@ -266,7 +269,8 @@ void RenderRollback()
 			rollback::InputStream const& uncommittedStream = uncommittedStreams.at( streamPair.first );
 
 			bool hasDrawnAFarFutureEvent = false;
-			auto const onEvent = [&]( rollback::InputEvent const& event, math::Color3f const& color, bool renderInvalid ) -> void {
+			auto const onEvent = [&]( rollback::InputEvent const& event, math::Color3f const& color, bool renderInvalid ) -> void
+			{
 				if( event.mValue == rollback::kInvalidInputValue && renderInvalid == false )
 				{
 					return;

@@ -637,10 +637,11 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 				{ genetics.mSpecies, genetics.mGender } );
 
 		static constexpr auto sanitizePiece = [](
-												  sprite::CharacterCreator const& charCreate,
-												  sprite::CharacterCreator::TagBits const& tagBits,
-												  rftl::string& targetPiece,
-												  sprite::CharacterPieceType const pieceType ) -> void {
+			sprite::CharacterCreator const& charCreate,
+			sprite::CharacterCreator::TagBits const& tagBits,
+			rftl::string& targetPiece,
+			sprite::CharacterPieceType const pieceType ) -> void
+		{
 			bool validPiece = false;
 			sprite::CharacterCreator::PieceId fallbackPiece;
 			sprite::CharacterCreator::PieceId iter = charCreate.IterateNextValidPiece( {}, pieceType, tagBits );
