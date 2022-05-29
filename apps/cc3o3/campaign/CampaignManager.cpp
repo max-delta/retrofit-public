@@ -3,7 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
-#include "cc3o3/appstates/AppStatesFwd.h"
+#include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/Campaign.h"
 #include "cc3o3/char/CharacterDatabase.h"
@@ -71,7 +71,7 @@ combat::PartyID BuildPlayerParty( combat::CombatInstance& setup, combat::TeamID 
 
 
 
-combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerID hostPlayerID )
+combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerID hostPlayerID, std::string identifier )
 {
 	using namespace combat;
 
@@ -81,10 +81,7 @@ combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerI
 	PartyID const party = setup.AddParty( team );
 
 	// Prepare an encounter
-	// HACK: Hard-coded
-	// TODO: Figure out from current campaign state
-	static constexpr char const kHackEncounter[] = "temp";
-	encounterManager.PrepareHackEnemyEncounter( kHackEncounter, hostPlayerID );
+	encounterManager.PrepareHackEnemyEncounter( identifier, hostPlayerID );
 
 	// Get the encounter
 	state::MutableObjectRef const encounterObject = encounterManager.FindMutableEncounterObject( hostPlayerID );
@@ -118,6 +115,16 @@ combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerI
 }
 ///////////////////////////////////////////////////////////////////////////////
 
+CampaignManager::CampaignManager()
+{
+	RF_TODO_ANNOTATION( "Remove campaign fallbacks in retail builds" );
+	mLastOverworldTransition = appstate::GetFallbackOverworldIdentifier();
+	mLastSiteTransition = appstate::GetFallbackSiteIdentifier();
+	mLastEncounterTransition = appstate::GetFallbackEncounterIdentifier();
+}
+
+
+
 bool CampaignManager::PrepareCampaign( save::SaveBlob const& saveBlob )
 {
 	mCampaignName = saveBlob.mFile.mCampaignName;
@@ -144,6 +151,9 @@ bool CampaignManager::PrepareCampaign( save::SaveBlob const& saveBlob )
 bool CampaignManager::LoadCampaignProgress( save::SaveBlob const& saveBlob )
 {
 	VerifyCampaignLoaded();
+
+	// TODO: Actually load stuff
+	TODO_ChangeOverworldLocation( 0 );
 
 	// TODO: Store read-only temporary for later initialization
 	return true;
@@ -371,15 +381,31 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 
 
+void CampaignManager::TODO_ChangeOverworldLocation( int todo )
+{
+	// TODO: Setup which overworld to be in, and where in it to be
+	( (void)mLastOverworldTransition );
+}
+
+
+
+void CampaignManager::TravelToOverworld( appstate::AppStateTickContext& context )
+{
+	VerifyCampaignLoaded();
+
+	// HACK: Just pop into overworld
+	// TODO: Validation? Setup?
+	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Overworld );
+}
+
+
+
 overworld::Overworld CampaignManager::LoadDataForOverworld()
 {
 	VerifyCampaignLoaded();
 
 	// Load map
-	// HACK: Hard-coded
-	// TODO: Figure out from current pawn position
-	static constexpr char const kHackMap[] = "island1";
-	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( kHackMap ) + ".oo" );
+	file::VFSPath const mapDescPath = paths::TablesRoot().GetChild( "world", "overworlds", rftl::string( mLastOverworldTransition ) + ".oo" );
 	return overworld::Overworld::LoadFromDesc( mapDescPath );
 }
 
@@ -401,6 +427,10 @@ bool CampaignManager::TryInteractWithOverworldArea( appstate::AppStateTickContex
 
 	// HACK: Just pop into site
 	// TODO: Make sure party can actually enter site, and set it up
+	// TODO: Set site exit position, and also ensure which overworld it's on
+	//  (otherwise speedrunners will glitch it out somehow to teleport around)
+	TODO_ChangeOverworldLocation( 0 );
+	( (void)mLastSiteTransition );
 	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Site );
 
 	return true;
@@ -413,11 +443,19 @@ site::Site CampaignManager::LoadDataForSite()
 	VerifyCampaignLoaded();
 
 	// Load site
-	// HACK: Hard-coded
-	// TODO: Figure out from current pawn position
-	static constexpr char const kHackSite[] = "temp";
-	file::VFSPath const siteDescPath = paths::TablesRoot().GetChild( "world", "sites", rftl::string( kHackSite ) + ".oo" );
+	file::VFSPath const siteDescPath = paths::TablesRoot().GetChild( "world", "sites", rftl::string( mLastSiteTransition ) + ".oo" );
 	return site::Site::LoadFromDesc( siteDescPath );
+}
+
+
+
+void CampaignManager::StartEncounter( appstate::AppStateTickContext& context, rftl::string identifier )
+{
+	VerifyCampaignLoaded();
+
+	// HACK: Just pop into battle
+	// TODO: Actually set it up
+	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Battle );
 }
 
 
@@ -455,7 +493,7 @@ void CampaignManager::HardcodedCombatSetup( combat::FightController& fight )
 	// TODO: Encounters
 	if constexpr( true )
 	{
-		details::BuildHackEnemyTeam( setup, singlePlayerHack );
+		details::BuildHackEnemyTeam( setup, singlePlayerHack, mLastEncounterTransition );
 	}
 
 	// Setup initial field influence

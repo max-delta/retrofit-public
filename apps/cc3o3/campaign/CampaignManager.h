@@ -29,7 +29,7 @@ class CampaignManager
 	//
 	// Public methods
 public:
-	CampaignManager() = default;
+	CampaignManager();
 
 	bool PrepareCampaign( save::SaveBlob const& saveBlob );
 	bool LoadCampaignProgress( save::SaveBlob const& saveBlob );
@@ -39,6 +39,9 @@ public:
 	void HardcodedSinglePlayerObjectSetup();
 	void HardcodedSinglePlayerApplyProgression();
 
+	void TODO_ChangeOverworldLocation( int todo );
+	void TravelToOverworld(
+		appstate::AppStateTickContext& context );
 	overworld::Overworld LoadDataForOverworld();
 
 	std::string DetermineOverworldAreaLocKey(
@@ -48,6 +51,9 @@ public:
 		rftl::string identifier );
 
 	site::Site LoadDataForSite();
+	void StartEncounter(
+		appstate::AppStateTickContext& context,
+		rftl::string identifier );
 
 	void HardcodedCombatSetup( combat::FightController& fight );
 
@@ -63,6 +69,10 @@ private:
 private:
 	rftl::string mCampaignName;
 	UniquePtr<Campaign const> mCampaign;
+
+	rftl::string mLastOverworldTransition;
+	rftl::string mLastSiteTransition;
+	rftl::string mLastEncounterTransition;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -54,6 +54,8 @@ void Gameplay_Site::OnExit( AppStateChangeContext& context )
 
 void Gameplay_Site::OnTick( AppStateTickContext& context )
 {
+	campaign::CampaignManager& campaign = *gCampaignManager;
+
 	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 32, 32 ), "TODO: Site" );
 
 	// Process menu actions
@@ -63,13 +65,13 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 	{
 		if( menuCommand.mType == input::command::game::UIActivateSelection )
 		{
-			// Enter battle
-			context.mManager.RequestDeferredStateChange( id::Gameplay_Battle );
+			// Start encounter
+			campaign.StartEncounter( context, "TODO" );
 		}
 		else if( menuCommand.mType == input::command::game::UICancelSelection )
 		{
 			// Exit site
-			context.mManager.RequestDeferredStateChange( id::Gameplay_Overworld );
+			campaign.TravelToOverworld( context );
 		}
 	}
 }

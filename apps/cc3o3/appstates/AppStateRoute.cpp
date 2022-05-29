@@ -31,6 +31,10 @@ enum class Mode : uint8_t
 
 static Mode sMode = Mode::Invalid;
 
+static rftl::string sOverworld = "island1";
+static rftl::string sSite = "temp";
+static rftl::string sEncounter = "temp";
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -118,6 +122,27 @@ AppStateID GetFirstGameplayState()
 
 	// TODO: This should be based on the save file
 	return id::Gameplay_Overworld;
+}
+
+
+
+rftl::string GetFallbackOverworldIdentifier()
+{
+	return fasttrack::sOverworld;
+}
+
+
+
+rftl::string GetFallbackSiteIdentifier()
+{
+	return fasttrack::sSite;
+}
+
+
+
+rftl::string GetFallbackEncounterIdentifier()
+{
+	return fasttrack::sEncounter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

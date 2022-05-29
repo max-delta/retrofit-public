@@ -3,6 +3,8 @@
 
 #include "cc3o3/appstates/AppStatesFwd.h"
 
+#include "rftl/string"
+
 namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,6 +16,10 @@ AppStateID GetStateAfterBoot();
 AppStateID GetStateAfterInitialLoad();
 AppStateID GetFirstTitleScreenState();
 AppStateID GetFirstGameplayState();
+
+rftl::string GetFallbackOverworldIdentifier();
+rftl::string GetFallbackSiteIdentifier();
+rftl::string GetFallbackEncounterIdentifier();
 
 ///////////////////////////////////////////////////////////////////////////////
 }
