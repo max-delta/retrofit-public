@@ -20,6 +20,44 @@
 
 namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static void SanitizePiece(
+	sprite::CharacterCreator const& charCreate,
+	sprite::CharacterCreator::TagBits const& tagBits,
+	rftl::string& targetPiece,
+	sprite::CharacterPieceType const pieceType )
+{
+	bool validPiece = false;
+	sprite::CharacterCreator::PieceId fallbackPiece;
+	sprite::CharacterCreator::PieceId iter = charCreate.IterateNextValidPiece( {}, pieceType, tagBits );
+	RF_ASSERT( iter.empty() == false );
+	while( iter.empty() == false )
+	{
+		if( fallbackPiece.empty() )
+		{
+			fallbackPiece = iter;
+		}
+
+		if( targetPiece == iter )
+		{
+			validPiece = true;
+			break;
+		}
+
+		iter = charCreate.IterateNextValidPiece( iter, pieceType, tagBits );
+		continue;
+	}
+	if( validPiece == false )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid piece" );
+		RF_ASSERT( fallbackPiece.empty() == false );
+		targetPiece = fallbackPiece;
+	}
+};
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 CharacterValidator::CharacterValidator( WeakPtr<file::VFS const> vfs, WeakPtr<sprite::CharacterCreator const> characterCreator )
 	: mVfs( vfs )
@@ -261,7 +299,12 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 
 Stats const& CharacterValidator::GetStatBonuses( SpeciesID const& id ) const
 {
-	return mStatBonusesStorage.at( id );
+	StatBonusesStorage::const_iterator const iter = mStatBonusesStorage.find( id );
+	if( iter == mStatBonusesStorage.end() )
+	{
+		RFLOG_FATAL( nullptr, RFCAT_CHAR, "Species has no stat bonus entries" );
+	}
+	return iter->second;
 }
 
 
@@ -630,51 +673,31 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 	}
 
 	// Visuals
+	if( visuals.mCompositable )
 	{
 		sprite::CharacterCreator const& charCreate = *mCharacterCreator;
 		sprite::CharacterCreator::TagBits const tagBits =
 			charCreate.GetTagsAsFlags(
 				{ genetics.mSpecies, genetics.mGender } );
 
-		static constexpr auto sanitizePiece = [](
-			sprite::CharacterCreator const& charCreate,
-			sprite::CharacterCreator::TagBits const& tagBits,
-			rftl::string& targetPiece,
-			sprite::CharacterPieceType const pieceType ) -> void
+		details::SanitizePiece( charCreate, tagBits, visuals.mBase, sprite::CharacterPieceType::Base );
+		details::SanitizePiece( charCreate, tagBits, visuals.mTop, sprite::CharacterPieceType::Top );
+		details::SanitizePiece( charCreate, tagBits, visuals.mBottom, sprite::CharacterPieceType::Bottom );
+		details::SanitizePiece( charCreate, tagBits, visuals.mHair, sprite::CharacterPieceType::Hair );
+		details::SanitizePiece( charCreate, tagBits, visuals.mSpecies, sprite::CharacterPieceType::Species );
+	}
+	else
+	{
+		bool const allPiecesEmpty =
+			visuals.mBase.empty() &&
+			visuals.mTop.empty() &&
+			visuals.mBottom.empty() &&
+			visuals.mHair.empty() &&
+			visuals.mSpecies.empty();
+		if( allPiecesEmpty == false )
 		{
-			bool validPiece = false;
-			sprite::CharacterCreator::PieceId fallbackPiece;
-			sprite::CharacterCreator::PieceId iter = charCreate.IterateNextValidPiece( {}, pieceType, tagBits );
-			RF_ASSERT( iter.empty() == false );
-			while( iter.empty() == false )
-			{
-				if( fallbackPiece.empty() )
-				{
-					fallbackPiece = iter;
-				}
-
-				if( targetPiece == iter )
-				{
-					validPiece = true;
-					break;
-				}
-
-				iter = charCreate.IterateNextValidPiece( iter, pieceType, tagBits );
-				continue;
-			}
-			if( validPiece == false )
-			{
-				RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid piece" );
-				RF_ASSERT( fallbackPiece.empty() == false );
-				targetPiece = fallbackPiece;
-			}
-		};
-
-		sanitizePiece( charCreate, tagBits, visuals.mBase, sprite::CharacterPieceType::Base );
-		sanitizePiece( charCreate, tagBits, visuals.mTop, sprite::CharacterPieceType::Top );
-		sanitizePiece( charCreate, tagBits, visuals.mBottom, sprite::CharacterPieceType::Bottom );
-		sanitizePiece( charCreate, tagBits, visuals.mHair, sprite::CharacterPieceType::Hair );
-		sanitizePiece( charCreate, tagBits, visuals.mSpecies, sprite::CharacterPieceType::Species );
+			RFLOG_WARNING( nullptr, RFCAT_CHAR, "One or more pieces set on a noncompositable character" );
+		}
 	}
 
 	// Stats

@@ -9,6 +9,7 @@
 RFTYPE_CREATE_META( RF::cc::character::Visuals )
 {
 	using namespace RF::cc::character;
+	RFTYPE_META().RawProperty( "mCompositable", &Visuals::mCompositable );
 	RFTYPE_META().ExtensionProperty( "mBase", &Visuals::mBase );
 	RFTYPE_META().ExtensionProperty( "mTop", &Visuals::mTop );
 	RFTYPE_META().ExtensionProperty( "mBottom", &Visuals::mBottom );

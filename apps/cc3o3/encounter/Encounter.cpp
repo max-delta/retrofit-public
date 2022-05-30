@@ -23,7 +23,7 @@ Encounter Encounter::LoadFromDesc( file::VFSPath const& descPath )
 	for( EntityDesc const& entityDesc : desc.mEntities )
 	{
 		Entity entity = {};
-		entity.mTODO = entityDesc.mTODO;
+		entity.mCharacterID = entityDesc.mCharacterID;
 		retVal.mEntities.emplace_back( rftl::move( entity ) );
 	}
 

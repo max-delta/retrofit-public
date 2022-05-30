@@ -1,6 +1,7 @@
 #pragma once
 #include "cc3o3/encounter/EncounterFwd.h"
 
+#include "rftl/string"
 #include "rftl/vector"
 
 
@@ -9,7 +10,7 @@ namespace RF::cc::encounter {
 
 struct EntityDesc
 {
-	uint32_t mTODO = 0;
+	rftl::string mCharacterID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

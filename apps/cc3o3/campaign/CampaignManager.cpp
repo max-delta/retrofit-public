@@ -227,6 +227,17 @@ void CampaignManager::HardcodedSinglePlayerCharacterLoad()
 		{
 			character::CharData const input = charDB.FetchExistingCharacter( characterID );
 
+			if( input.mVisuals.mCompositable == false )
+			{
+				continue;
+			}
+			else
+			{
+				// TODO: There needs to be a mechanism for non-composited
+				//  characters
+				RFLOG_WARNING( nullptr, RFCAT_CC3O3, "TODO: Handle uncompositable characters" );
+			}
+
 			for( sprite::CompositeCharacterParams const& paramSet : paramSets )
 			{
 				sprite::CompositeCharacterParams params = paramSet;

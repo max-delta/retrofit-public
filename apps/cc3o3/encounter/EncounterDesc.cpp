@@ -3,13 +3,14 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core_rftype/stl_extensions/string.h"
 #include "core_rftype/stl_extensions/vector.h"
 
 
 RFTYPE_CREATE_META( RF::cc::encounter::EntityDesc )
 {
 	using RF::cc::encounter::EntityDesc;
-	RFTYPE_META().RawProperty( "mTODO", &EntityDesc::mTODO );
+	RFTYPE_META().ExtensionProperty( "mCharacterID", &EntityDesc::mCharacterID );
 	RFTYPE_REGISTER_BY_NAME( "EntityDesc" );
 }
 

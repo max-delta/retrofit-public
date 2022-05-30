@@ -9,6 +9,7 @@ namespace RF::cc::character {
 
 struct Visuals
 {
+	bool mCompositable = false;
 	rftl::string mBase = {};
 	rftl::string mTop = {};
 	rftl::string mBottom = {};

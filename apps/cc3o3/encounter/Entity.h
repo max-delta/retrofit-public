@@ -1,6 +1,8 @@
 #pragma once
 #include "cc3o3/encounter/EncounterFwd.h"
 
+#include "rftl/string"
+
 
 namespace RF::cc::encounter {
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,7 +12,7 @@ class Entity
 	//
 	// Public data
 public:
-	uint32_t mTODO = 0;
+	rftl::string mCharacterID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
