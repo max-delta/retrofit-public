@@ -286,7 +286,7 @@ void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
 	combat::FightController const& fightController = *mFightController;
 
 	// TODO: Figure this out
-	combat::EntityClass const entityClass = combat::EntityClass::Player;
+	combat::EntityClass const entityClass = combat::EntityClass::Hero;
 
 	static constexpr uint8_t kAttackStrength[] = {
 		1,

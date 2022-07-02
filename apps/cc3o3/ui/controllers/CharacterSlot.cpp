@@ -68,7 +68,9 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
 		character::CharData const& charData = chara.mCharData;
 
-		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Player;
+		// TODO: Figure this out
+		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Hero;
+
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
 		auto const dispStat = [&combatEngine]( character::Stats::StatValue stat ) -> combat::DisplayVal //

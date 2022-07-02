@@ -142,7 +142,7 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		state::MutableObjectRef const spawn = spawnObjects.at( curSpawnIndex );
 
 		// TODO: Figure this out
-		combat::EntityClass const entityClass = combat::EntityClass::Player;
+		combat::EntityClass const entityClass = combat::EntityClass::Hero;
 
 		// Combo
 		state::comp::Combo& combo = *spawn.GetMutableComponentInstanceT<state::comp::Combo>();

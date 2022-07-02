@@ -9,8 +9,10 @@ namespace RF::cc::combat {
 
 enum class EntityClass : uint8_t
 {
-	Peasant = 0,
-	Player,
+	Invalid = 0,
+	Peasant,
+	Hero,
+	Monster,
 };
 
 enum class SimColor : uint8_t

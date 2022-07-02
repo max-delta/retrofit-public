@@ -97,13 +97,15 @@ DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entity
 			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<DisplayVal>::max() );
 			return math::integer_cast<DisplayVal>( kBaseline + statVal * kScalar );
 		}
-		case EntityClass::Player:
+		case EntityClass::Hero:
+		case EntityClass::Monster:
 		{
 			static constexpr DisplayVal kBaseline = 10;
 			static constexpr SimVal kScalar = 3;
 			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<DisplayVal>::max() );
 			return math::integer_cast<DisplayVal>( kBaseline + statVal * kScalar );
 		}
+		case EntityClass::Invalid:
 		default:
 		{
 			RF_DBGFAIL();
@@ -191,13 +193,21 @@ LargeSimVal CombatEngine::LoCalcMaxHealth( SimVal healthStat, EntityClass entity
 			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<LargeSimVal>::max() );
 			return math::integer_cast<LargeSimVal>( kBaseline + healthStat * kScalar );
 		}
-		case EntityClass::Player:
+		case EntityClass::Hero:
 		{
 			static constexpr LargeSimVal kBaseline = 80;
 			static constexpr SimVal kScalar = 10;
 			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<LargeSimVal>::max() );
 			return math::integer_cast<LargeSimVal>( kBaseline + healthStat * kScalar );
 		}
+		case EntityClass::Monster:
+		{
+			static constexpr LargeSimVal kBaseline = 100;
+			static constexpr SimVal kScalar = 50;
+			static_assert( kBaseline + kMaxStat * kScalar < rftl::numeric_limits<LargeSimVal>::max() );
+			return math::integer_cast<LargeSimVal>( kBaseline + healthStat * kScalar );
+		}
+		case EntityClass::Invalid:
 		default:
 		{
 			RF_DBGFAIL();

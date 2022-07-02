@@ -611,7 +611,7 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 	RFLOG_TEST_AND_FATAL( vitality != nullptr, character, RFCAT_CC3O3, "Missing vitality component" );
 
 	// TODO: Figure this out
-	EntityClass const entityClass = EntityClass::Player;
+	EntityClass const entityClass = EntityClass::Hero;
 
 	fighter.mInnate = element::MakeInnateIdentifier( charData.mInnate );
 	fighter.mMaxHealth = engine.LoCalcMaxHealth( stats.mMHealth, entityClass );

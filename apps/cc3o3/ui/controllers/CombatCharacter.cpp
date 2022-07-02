@@ -57,7 +57,9 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
 		character::CharData const& charData = chara.mCharData;
 
-		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Player;
+		// TODO: Figure this out
+		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Hero;
+
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
 		combat::DisplayVal const maxHP = combatEngine.DisplayHealth( fighter.mMaxHealth, kEntityClass );
