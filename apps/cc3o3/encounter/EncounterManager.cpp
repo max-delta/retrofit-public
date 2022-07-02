@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/encounter/Encounter.h"
 #include "cc3o3/state/components/Encounter.h"
@@ -106,6 +107,8 @@ rftl::array<state::MutableObjectRef, kMaxSpawns> EncounterManager::FindMutableSp
 
 void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID, input::PlayerID const& playerID ) const
 {
+	character::CharacterDatabase const& charDB = *gCharacterDatabase;
+
 	// Get the encounter
 	state::MutableObjectRef const encounterObject = FindMutableEncounterObject( playerID );
 	state::comp::Encounter& encounter = *encounterObject.GetMutableComponentInstanceT<state::comp::Encounter>();
@@ -138,9 +141,6 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		encounter.mDeployed.at( curSpawnIndex ) = true;
 		state::MutableObjectRef const spawn = spawnObjects.at( curSpawnIndex );
 
-		// TODO: Actual data
-		( (void)entity );
-
 		// TODO: Figure this out
 		combat::EntityClass const entityClass = combat::EntityClass::Player;
 
@@ -152,16 +152,8 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		// Character
 		state::comp::Character& chara = *spawn.GetMutableComponentInstanceT<state::comp::Character>();
 		character::CharData& charData = chara.mCharData;
-		charData.mInnate = "red";
+		charData = charDB.FetchExistingCharacter( entity.mCharacterID );
 		character::Stats& stats = charData.mStats;
-		stats = {};
-		stats.mMHealth = character::Stats::kMaxStatValue;
-		stats.mPhysAtk = 2;
-		stats.mPhysDef = 2;
-		stats.mElemAtk = 2;
-		stats.mElemDef = 2;
-		stats.mBalance = 2;
-		stats.mTechniq = 2;
 
 		// Vitality
 		state::comp::Vitality& vitality = *spawn.GetMutableComponentInstanceT<state::comp::Vitality>();
