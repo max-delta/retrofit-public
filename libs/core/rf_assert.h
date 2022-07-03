@@ -26,7 +26,7 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 
 // Retail builds lack normal assert machinery, and use a fatal path instead
 #define RF_RETAIL_FATAL_MSG( TRIGGER, MSG ) \
-	::RF::assert::FatalNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), TRIGGER, MSG )
+	::RF::assert::FatalNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), "" TRIGGER "", "" MSG "" )
 
 // Asserts are as follows:
 //  RF_ASSERT, RF_ASSERT_MSG
