@@ -81,7 +81,21 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		{
 			mInfoRows.at( 0 )->SetText( charData.mDescription.mName );
 
-			mInfoRows.at( 1 )->SetText( "TODO: GRID" );
+			// TODO: Grid charge
+			// TODO: Make this something graphical instead
+			static size_t HACK_unknownRoller = 0;
+			size_t const gridChargeLevel = ( ( HACK_unknownRoller++ ) / 60 ) % ( element::kMaxElementLevel + 1 );
+			RF_ASSERT( gridChargeLevel <= element::kMaxElementLevel );
+			lineBuf.fill( '-' );
+			lineBuf.at( 0 ) = '[';
+			lineBuf.at( 1 + element::kMaxElementLevel ) = ']';
+			lineBuf.at( 1 + element::kMaxElementLevel + 1 ) = '\0';
+			for( size_t i = 0; i < gridChargeLevel; i++ )
+			{
+				lineBuf.at( 1 + i ) = '#';
+			}
+			lineBuf.back() = '\0';
+			mInfoRows.at( 1 )->SetText( lineBuf.data() );
 
 			snprintf( lineBuf.data(), lineBuf.size(), "%3u/%-3u", curHP, maxHP );
 			lineBuf.back() = '\0';
@@ -154,11 +168,12 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 		info->SetFont( ui::font::BattleName );
 	}
 
-	// Grid
+	// Grid charge
 	{
+		// TODO: Make this something graphical instead
 		WeakPtr<TextLabel> const& info = mInfoRows.at( 1 );
 		info->SetJustification( ui::Justification::MiddleCenter );
-		info->SetFont( ui::font::BattleName );
+		info->SetFont( ui::font::NarrowQuarterTileMono );
 	}
 
 	// Health
