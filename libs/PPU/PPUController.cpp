@@ -1516,7 +1516,8 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 {
 	math::Vector2f const p0 = CoordToDevice( line.mXCoord0, line.mYCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.mXCoord1, line.mYCoord1 );
-	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), math::float_cast<float>( line.mWidth * GetZoomFactor() ), line.mColor );
+	float const lineWidth = math::float_cast<float>( math::Max( 1, line.mWidth * GetZoomFactor() ) );
+	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), lineWidth, line.mColor );
 }
 
 
