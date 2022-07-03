@@ -1,0 +1,2 @@
+Variable
+RF:/assets/textures/fonts/font_narrow_2x_vari.bmp

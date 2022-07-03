@@ -82,11 +82,11 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 	// Load fonts
 	{
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_1x.fnt.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 		gfx::FontManager const& fontMan = *ppu.DebugGetFontManager();
-		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_1x.fnt.txt" ) );
-		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
 

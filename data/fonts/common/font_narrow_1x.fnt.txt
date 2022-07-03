@@ -1,2 +1,0 @@
-Fixed
-RF:/assets/textures/fonts/font_narrow_1x.bmp
