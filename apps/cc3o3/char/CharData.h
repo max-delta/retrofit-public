@@ -12,6 +12,9 @@ namespace RF::cc::character {
 
 struct CharData
 {
+	// TODO: Better solution for enum<->string (probably in C++20)
+	rftl::string mEntityClass = {};
+
 	Description mDescription = {};
 	rftl::string mInnate = {};
 	Genetics mGenetics = {};

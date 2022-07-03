@@ -3,6 +3,7 @@
 
 #include "cc3o3/combat/Attack.h"
 #include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/combat/IdentifierUtils.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
@@ -610,9 +611,9 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 		character.GetComponentInstanceT<state::comp::Vitality>();
 	RFLOG_TEST_AND_FATAL( vitality != nullptr, character, RFCAT_CC3O3, "Missing vitality component" );
 
-	// TODO: Figure this out
-	EntityClass const entityClass = EntityClass::Hero;
+	EntityClass const entityClass = ReadEntityClassFromString( charData.mEntityClass );
 
+	fighter.mEntityClass = entityClass;
 	fighter.mInnate = element::MakeInnateIdentifier( charData.mInnate );
 	fighter.mMaxHealth = engine.LoCalcMaxHealth( stats.mMHealth, entityClass );
 	fighter.mCurHealth = vitality->mCurHealth;

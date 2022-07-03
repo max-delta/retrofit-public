@@ -4,6 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/Fighter.h"
+#include "cc3o3/combat/IdentifierUtils.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
 
@@ -57,14 +58,13 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
 		character::CharData const& charData = chara.mCharData;
 
-		// TODO: Figure this out
-		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Hero;
+		combat::EntityClass const entityClass = combat::ReadEntityClassFromString( charData.mEntityClass );
 
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
-		combat::DisplayVal const maxHP = combatEngine.DisplayHealth( fighter.mMaxHealth, kEntityClass );
-		combat::DisplayVal const curHP = combatEngine.DisplayHealth( fighter.mCurHealth, kEntityClass );
-		combat::SignedDisplayVal const curStamina = combatEngine.DisplayStamina( fighter.mCurStamina, kEntityClass );
+		combat::DisplayVal const maxHP = combatEngine.DisplayHealth( fighter.mMaxHealth, entityClass );
+		combat::DisplayVal const curHP = combatEngine.DisplayHealth( fighter.mCurHealth, entityClass );
+		combat::SignedDisplayVal const curStamina = combatEngine.DisplayStamina( fighter.mCurStamina, entityClass );
 
 		if( selected )
 		{

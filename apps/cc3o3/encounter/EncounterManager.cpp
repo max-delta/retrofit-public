@@ -5,6 +5,7 @@
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/char/CharacterDatabase.h"
 #include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/combat/IdentifierUtils.h"
 #include "cc3o3/encounter/Encounter.h"
 #include "cc3o3/state/components/Encounter.h"
 #include "cc3o3/state/components/Character.h"
@@ -141,9 +142,6 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		encounter.mDeployed.at( curSpawnIndex ) = true;
 		state::MutableObjectRef const spawn = spawnObjects.at( curSpawnIndex );
 
-		// TODO: Figure this out
-		combat::EntityClass const entityClass = combat::EntityClass::Hero;
-
 		// Combo
 		state::comp::Combo& combo = *spawn.GetMutableComponentInstanceT<state::comp::Combo>();
 		combo.mComboTarget = {};
@@ -154,6 +152,8 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		character::CharData& charData = chara.mCharData;
 		charData = charDB.FetchExistingCharacter( entity.mCharacterID );
 		character::Stats& stats = charData.mStats;
+
+		combat::EntityClass const entityClass = combat::ReadEntityClassFromString( charData.mEntityClass );
 
 		// Vitality
 		state::comp::Vitality& vitality = *spawn.GetMutableComponentInstanceT<state::comp::Vitality>();

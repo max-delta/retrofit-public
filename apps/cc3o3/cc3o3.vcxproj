@@ -63,6 +63,7 @@
     <ClCompile Include="combat\CombatEngine.cpp" />
     <ClCompile Include="combat\CombatInstance.cpp" />
     <ClCompile Include="combat\FightController.cpp" />
+    <ClCompile Include="combat\IdentifierUtils.cpp" />
     <ClCompile Include="Common.cpp" />
     <ClCompile Include="CommonPaths.cpp" />
     <ClCompile Include="company\CompanyManager.cpp" />
@@ -185,6 +186,7 @@
     <ClInclude Include="combat\CombatFwd.h" />
     <ClInclude Include="combat\CombatInstance.h" />
     <ClInclude Include="combat\Field.h" />
+    <ClInclude Include="combat\IdentifierUtils.h" />
     <ClInclude Include="combat\Party.h" />
     <ClInclude Include="combat\project.h" />
     <ClInclude Include="combat\stdafx.h" />

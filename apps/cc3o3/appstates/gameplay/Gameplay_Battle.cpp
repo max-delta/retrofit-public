@@ -285,9 +285,6 @@ void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
 	combat::CombatEngine const& combatEngine = *gCombatEngine;
 	combat::FightController const& fightController = *mFightController;
 
-	// TODO: Figure this out
-	combat::EntityClass const entityClass = combat::EntityClass::Hero;
-
 	static constexpr uint8_t kAttackStrength[] = {
 		1,
 		2,
@@ -321,6 +318,10 @@ void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
 		fightController.PredictAttack( profile, result, mControlCharIndex, mTargetingIndex, attackStrength );
 		if( result.mHit )
 		{
+			WeakPtr<combat::CombatInstance const> combatInstance = fightController.GetCombatInstance();
+			combat::Fighter const fighter = combatInstance->GetFighter( fightController.GetAttackTargetByIndex( mControlCharIndex, mTargetingIndex ) );
+			combat::EntityClass const entityClass = fighter.mEntityClass;
+
 			attackText += "DMG ";
 			attackText += rftl::to_string( combatEngine.DisplayHealth( result.mDamage, entityClass ) );
 

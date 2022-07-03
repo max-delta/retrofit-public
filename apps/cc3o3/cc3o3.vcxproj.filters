@@ -286,6 +286,9 @@
     <ClCompile Include="options\OptionLogic.cpp">
       <Filter>options</Filter>
     </ClCompile>
+    <ClCompile Include="combat\IdentifierUtils.cpp">
+      <Filter>combat</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -779,6 +782,9 @@
     </ClInclude>
     <ClInclude Include="options\OptionLogic.h">
       <Filter>options</Filter>
+    </ClInclude>
+    <ClInclude Include="combat\IdentifierUtils.h">
+      <Filter>combat</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

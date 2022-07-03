@@ -10,6 +10,8 @@ namespace RF::cc::combat {
 
 struct Fighter
 {
+	EntityClass mEntityClass = EntityClass::Invalid;
+
 	element::InnateIdentifier mInnate = element::kInvalidInnateIdentifier;
 
 	LargeSimVal mMaxHealth = 0;

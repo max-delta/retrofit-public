@@ -6,6 +6,7 @@
 #include "cc3o3/state/components/SiteVisual.h"
 #include "cc3o3/state/components/Character.h"
 #include "cc3o3/combat/CombatEngine.h"
+#include "cc3o3/combat/IdentifierUtils.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -68,14 +69,13 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		state::comp::Character const& chara = *character.GetComponentInstanceT<state::comp::Character>();
 		character::CharData const& charData = chara.mCharData;
 
-		// TODO: Figure this out
-		static constexpr combat::EntityClass kEntityClass = combat::EntityClass::Hero;
+		combat::EntityClass const entityClass = combat::ReadEntityClassFromString( charData.mEntityClass );
 
 		combat::CombatEngine const& combatEngine = *gCombatEngine;
 
-		auto const dispStat = [&combatEngine]( character::Stats::StatValue stat ) -> combat::DisplayVal //
+		auto const dispStat = [&combatEngine, &entityClass]( character::Stats::StatValue stat ) -> combat::DisplayVal //
 		{
-			return combatEngine.DisplayStandardStat( math::integer_cast<combat::SimVal>( stat ), kEntityClass );
+			return combatEngine.DisplayStandardStat( math::integer_cast<combat::SimVal>( stat ), entityClass );
 		};
 		combat::DisplayVal const physAtk = dispStat( charData.mStats.mPhysAtk );
 		combat::DisplayVal const physDef = dispStat( charData.mStats.mPhysDef );
@@ -87,8 +87,8 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 
 		//combat::DisplayVal const hp = combatEngine.DisplayHealth(
 		//	combatEngine.LoCalcMaxHealth(
-		//		math::integer_cast<combat::SimVal>( charData.mStats.mMHealth ), kEntityClass ),
-		//	kEntityClass );
+		//		math::integer_cast<combat::SimVal>( charData.mStats.mMHealth ), entityClass ),
+		//	entityClass );
 
 		static constexpr size_t kLineBufSize = 16;
 		rftl::array<char, kLineBufSize> lineBuf;
