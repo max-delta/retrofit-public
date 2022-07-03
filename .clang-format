@@ -69,7 +69,7 @@ BraceWrapping :
  BeforeCatch : true
  BeforeElse : true
  BeforeLambdaBody : true # Want to be true, but since Clang-format is trash, this overrides 'AfterNamespace'
- BeforeWhile : true
+ BeforeWhile : false
  IndentBraces : false
  SplitEmptyFunction : false
  SplitEmptyRecord : false
