@@ -7,17 +7,35 @@
 namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-static constexpr char const kElementTilesetFullName[] = "elemgrid_16_128";
-static constexpr gfx::ppu::CoordElem kElementTileFullWidth = 128;
-static constexpr gfx::ppu::CoordElem kElementTileFullHeight = 16;
+struct ElementTilesetDef
+{
+	char const* mName = nullptr;
+	gfx::ppu::CoordElem mTileWidth = 0;
+	gfx::ppu::CoordElem mTileHeight = 0;
+	bool mUsesBorderSlots = false;
+	bool mSupportsText = false;
+};
 
-static constexpr char const kElementTilesetMiniName[] = "elemgrid_8_16";
-static constexpr gfx::ppu::CoordElem kElementTileMiniWidth = 16;
-static constexpr gfx::ppu::CoordElem kElementTileMiniHeight = 8;
-
-static constexpr char const kElementTilesetMicroName[] = "elemgrid_2_4";
-static constexpr gfx::ppu::CoordElem kElementTileMicroWidth = 2;
-static constexpr gfx::ppu::CoordElem kElementTileMicroHeight = 4;
+static constexpr ElementTilesetDef kElementTilesetFull = {
+	"elemgrid_16_128",
+	128, 16,
+	false,
+	true };
+static constexpr ElementTilesetDef kElementTilesetMedium = {
+	"elemgrid_10_80",
+	80, 10,
+	false,
+	true };
+static constexpr ElementTilesetDef kElementTilesetMini = {
+	"elemgrid_8_16",
+	8, 16,
+	false,
+	false };
+static constexpr ElementTilesetDef kElementTilesetMicro = {
+	"elemgrid_2_4",
+	4, 2,
+	true,
+	false };
 
 static constexpr int8_t kElementTilesetOffsetDark = 1;
 static constexpr int8_t kElementTilesetOffsetReserved = 2;

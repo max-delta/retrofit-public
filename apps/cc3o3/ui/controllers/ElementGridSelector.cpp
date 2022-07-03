@@ -89,7 +89,7 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
-	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetFullName );
+	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetDef.mName );
 	mTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
 
 	for( size_t i = 0; i < mNumSlots; i++ )

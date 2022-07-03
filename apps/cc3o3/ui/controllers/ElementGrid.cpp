@@ -70,31 +70,42 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
+	ElementTilesetDef tilesetDef = {};
 	switch( mSize )
 	{
 		case Size::Mini:
-			mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetMiniName );
-			mTileLayer.ClearAndResize( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel );
+			tilesetDef = kElementTilesetMini;
 			break;
 		case Size::Micro:
-			mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetMicroName );
-			// NOTE: Extra pseudo-slots on side for borders
-			mTileLayer.ClearAndResize( character::kMaxElementLevels + 1, character::kMaxSlotsPerElementLevel + 1 );
-			for( size_t i_col = 0; i_col < character::kMaxElementLevels; i_col++ )
-			{
-				mTileLayer.GetMutableTile( i_col, character::kMaxSlotsPerElementLevel ).mIndex =
-					math::enum_bitcast( ElementTilesetIndex::TopBorder );
-			}
-			for( size_t i_row = 0; i_row < character::kMaxSlotsPerElementLevel; i_row++ )
-			{
-				mTileLayer.GetMutableTile( character::kMaxElementLevels, i_row ).mIndex =
-					math::enum_bitcast( ElementTilesetIndex::LeftBorder );
-			}
-			mTileLayer.GetMutableTile( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
-				math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
+			tilesetDef = kElementTilesetMicro;
 			break;
 		default:
 			RF_DBGFAIL();
+	}
+
+	RF_ASSERT_ASSUME( tilesetDef.mName != nullptr );
+	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( tilesetDef.mName );
+
+	if( tilesetDef.mUsesBorderSlots == false )
+	{
+		mTileLayer.ClearAndResize( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel );
+	}
+	else
+	{
+		// NOTE: Extra pseudo-slots on side for borders
+		mTileLayer.ClearAndResize( character::kMaxElementLevels + 1, character::kMaxSlotsPerElementLevel + 1 );
+		for( size_t i_col = 0; i_col < character::kMaxElementLevels; i_col++ )
+		{
+			mTileLayer.GetMutableTile( i_col, character::kMaxSlotsPerElementLevel ).mIndex =
+				math::enum_bitcast( ElementTilesetIndex::TopBorder );
+		}
+		for( size_t i_row = 0; i_row < character::kMaxSlotsPerElementLevel; i_row++ )
+		{
+			mTileLayer.GetMutableTile( character::kMaxElementLevels, i_row ).mIndex =
+				math::enum_bitcast( ElementTilesetIndex::LeftBorder );
+		}
+		mTileLayer.GetMutableTile( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
+			math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
 	}
 }
 
@@ -106,24 +117,25 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::Coord expectedDimensions;
+	ElementTilesetDef tilesetDef = {};
 	switch( mSize )
 	{
 		case Size::Mini:
-			expectedDimensions = {
-				kElementTileMiniWidth * character::kMaxElementLevels,
-				kElementTileMiniHeight * character::kMaxSlotsPerElementLevel,
-			};
+			tilesetDef = kElementTilesetMini;
 			break;
 		case Size::Micro:
-			expectedDimensions = {
-				kElementTileMicroWidth * character::kMaxElementLevels,
-				kElementTileMicroHeight * character::kMaxSlotsPerElementLevel,
-			};
+			tilesetDef = kElementTilesetMicro;
 			break;
 		default:
 			RF_DBGFAIL();
 	}
+
+	gfx::ppu::Coord const expectedDimensions = {
+		tilesetDef.mTileWidth *
+			static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
+		tilesetDef.mTileHeight *
+			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ),
+	};
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;

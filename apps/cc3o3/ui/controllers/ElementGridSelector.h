@@ -23,8 +23,10 @@ class ElementGridSelector final : public GenericListBox
 	//
 	// Types and constants
 public:
-	static constexpr gfx::ppu::CoordElem kContainerWidth = kElementTileFullWidth;
-	static constexpr gfx::ppu::CoordElem kContainerHeight = kElementTileFullHeight * character::kMaxSlotsPerElementLevel;
+	static constexpr ElementTilesetDef kElementTilesetDef = kElementTilesetFull;
+	static constexpr gfx::ppu::CoordElem kContainerWidth = kElementTilesetDef.mTileWidth;
+	static constexpr gfx::ppu::CoordElem kContainerHeight = kElementTilesetDef.mTileHeight *
+		static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel );
 
 
 	//
