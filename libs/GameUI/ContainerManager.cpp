@@ -345,8 +345,8 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 	float const minLum = math::Color3f::kGray25.r;
 	float const maxLum = math::Color3f::kGray50.r;
 	static constexpr gfx::ppu::CoordElem kAnchorRadius = 3;
-	static constexpr gfx::ppu::CoordElem kLineWidth = 2;
-	static constexpr gfx::ppu::CoordElem kFocusWidth = 3;
+	static constexpr gfx::ppu::CoordElem kLineWidth = 1;
+	static constexpr gfx::ppu::CoordElem kFocusWidth = 1;
 	static constexpr gfx::ppu::DepthLayer kFocusOffset = -2;
 
 	FocusTree::ConstNodeStack const focusStack = mFocusManager->GetFocusTree().GetCurrentFocusStack();
