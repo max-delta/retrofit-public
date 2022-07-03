@@ -83,9 +83,11 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load fonts
 	{
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x_mono.fnt.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Font, paths::CommonFonts().GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 		gfx::FontManager const& fontMan = *ppu.DebugGetFontManager();
 		gfx::ManagedFontID const narrowFont1xMono = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+		gfx::ManagedFontID const narrowFont2xMono = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x_mono.fnt.txt" ) );
 		gfx::ManagedFontID const narrowFont2xVari = fontMan.GetManagedResourceIDFromResourceName( paths::CommonFonts().GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 
 		ui::FontRegistry& fontReg = *app::gFontRegistry;
@@ -97,8 +99,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// NOTE: These don't respect baseline, so operate as raw blocks
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont1xMono, 8, 0, 1 } );
 		fontReg.RegisterFont( ui::font::MinSize, { narrowFont2xVari, 8, 0, 2 } );
-		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont1xMono, gfx::ppu::kTileSize, 0, 1 } );
-		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 2, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowTileMono, { narrowFont2xMono, gfx::ppu::kTileSize, 0, 1 } );
+		fontReg.RegisterFont( ui::font::NarrowHalfTileMono, { narrowFont2xMono, gfx::ppu::kTileSize / 2, 0, 1 } );
 		fontReg.RegisterFont( ui::font::NarrowQuarterTileMono, { narrowFont1xMono, gfx::ppu::kTileSize / 4, 0, 1 } );
 		static_assert( gfx::ppu::kTileSize / 4 >= 8, "Tile size too small for smallest font" );
 
@@ -106,7 +108,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		// NOTE: These use baselines, so may extend below the given y-coordinate
 		ui::Font const mono8_1x{ narrowFont1xMono, 8, 1, 1 };
 		ui::Font const vari8_2x{ narrowFont2xVari, 8, 1, 2 };
-		ui::Font const mono16_1x{ narrowFont1xMono, 16, 2, 1 };
+		ui::Font const mono16_1x{ narrowFont2xMono, 16, 2, 1 };
 		ui::Font const vari16_1x{ narrowFont2xVari, 16, 3, 1 };
 
 		// Normal fonts
