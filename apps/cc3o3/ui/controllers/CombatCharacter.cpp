@@ -7,13 +7,15 @@
 #include "cc3o3/combat/IdentifierUtils.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
+#include "cc3o3/ui/controllers/ElementGrid.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/controllers/BorderFrame.h"
+#include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
-#include "GameUI/controllers/BorderFrame.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -106,6 +108,9 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 			mInfoRows.at( 3 )->SetText( lineBuf.data() );
 		}
 	}
+
+	// Grid
+	mElementGrid->UpdateFromCharacter( character );
 }
 
 
@@ -119,7 +124,15 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	mActiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" );
 	mInactiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" );
 
-	mChildContainerID = CreateChildContainer(
+	mFrameContainerID = CreateChildContainer(
+		uiManager,
+		container,
+		container.mLeftConstraint,
+		container.mRightConstraint,
+		container.mTopConstraint,
+		container.mBottomConstraint );
+
+	mGridContainerID = CreateChildContainer(
 		uiManager,
 		container,
 		container.mLeftConstraint,
@@ -130,7 +143,7 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	// Frame
 	mBorderFrame =
 		uiManager.AssignStrongController(
-			mChildContainerID,
+			mFrameContainerID,
 			DefaultCreator<BorderFrame>::Create() );
 	mBorderFrame->SetTileset( context, mInactiveTileset, { 8, 8 }, { 48, 48 }, { -4, -4 } );
 	mBorderFrame->SetChildRenderingBlocked( true );
@@ -191,6 +204,26 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 		WeakPtr<TextLabel> const& info = mInfoRows.at( 3 );
 		info->SetJustification( ui::Justification::MiddleRight );
 		info->SetFont( ui::font::BattleStamina );
+	}
+
+	// Element grid
+	{
+		WeakPtr<ui::controller::Floater> const elementGridFloater =
+			uiManager.AssignStrongController(
+				mGridContainerID,
+				DefaultCreator<ui::controller::Floater>::Create(
+					ui::controller::ElementGrid::kMicroContainerWidth,
+					ui::controller::ElementGrid::kMicroContainerHeight,
+					ui::Justification::TopLeft ) );
+		elementGridFloater->SetOffset( context,
+			gfx::ppu::Coord(
+				gfx::ppu::kTileSize / 8,
+				-ui::controller::ElementGrid::kMicroContainerHeight + -( gfx::ppu::kTileSize / 8 ) ) );
+		mElementGrid =
+			uiManager.AssignStrongController(
+				elementGridFloater->GetChildContainerID(),
+				DefaultCreator<ui::controller::ElementGrid>::Create(
+					ui::controller::ElementGrid::Size::Micro ) );
 	}
 }
 

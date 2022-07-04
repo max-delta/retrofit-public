@@ -14,6 +14,9 @@ namespace RF::ui::controller {
 class BorderFrame;
 class TextLabel;
 }
+namespace RF::cc::ui::controller {
+class ElementGrid;
+}
 
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,13 +41,16 @@ public:
 	//
 	// Private data
 private:
-	ContainerID mChildContainerID = kInvalidContainerID;
+	ContainerID mFrameContainerID = kInvalidContainerID;
+	ContainerID mGridContainerID = kInvalidContainerID;
 
 	gfx::ManagedTilesetID mActiveTileset = gfx::kInvalidManagedTilesetID;
 	gfx::ManagedTilesetID mInactiveTileset = gfx::kInvalidManagedTilesetID;
 
 	WeakPtr<BorderFrame> mBorderFrame;
 	rftl::array<WeakPtr<TextLabel>, 4> mInfoRows;
+
+	WeakPtr<ElementGrid> mElementGrid;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

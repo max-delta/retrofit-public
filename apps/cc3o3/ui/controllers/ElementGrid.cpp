@@ -117,25 +117,22 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	ElementTilesetDef tilesetDef = {};
+	gfx::ppu::Coord expectedDimensions = {};
 	switch( mSize )
 	{
 		case Size::Mini:
-			tilesetDef = kElementTilesetMini;
+			expectedDimensions = {
+				kMiniContainerWidth,
+				kMiniContainerHeight };
 			break;
 		case Size::Micro:
-			tilesetDef = kElementTilesetMicro;
+			expectedDimensions = {
+				kMicroContainerWidth,
+				kMicroContainerHeight };
 			break;
 		default:
 			RF_DBGFAIL();
 	}
-
-	gfx::ppu::Coord const expectedDimensions = {
-		tilesetDef.mTileWidth *
-			static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
-		tilesetDef.mTileHeight *
-			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ),
-	};
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;
