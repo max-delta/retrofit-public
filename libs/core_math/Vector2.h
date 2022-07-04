@@ -20,28 +20,28 @@ public:
 	//
 	// Public methods
 public:
-	Vector2();
-	Vector2( T x, T y );
+	constexpr Vector2();
+	constexpr Vector2( T x, T y );
 
 	template<typename OtherT>
 	operator Vector2<OtherT>() const;
 
-	bool operator==( Vector2 const& rhs ) const;
-	bool operator!=( Vector2 const& rhs ) const;
+	constexpr bool operator==( Vector2 const& rhs ) const;
+	constexpr bool operator!=( Vector2 const& rhs ) const;
 
-	Vector2 operator-() const;
+	constexpr Vector2 operator-() const;
 
-	Vector2 operator+( Vector2 const& rhs ) const;
-	Vector2 operator-( Vector2 const& rhs ) const;
-	Vector2& operator+=( Vector2 const& rhs );
-	Vector2& operator-=( Vector2 const& rhs );
+	constexpr Vector2 operator+( Vector2 const& rhs ) const;
+	constexpr Vector2 operator-( Vector2 const& rhs ) const;
+	constexpr Vector2& operator+=( Vector2 const& rhs );
+	constexpr Vector2& operator-=( Vector2 const& rhs );
 
-	Vector2 operator+( ElementType const& rhs ) const;
-	Vector2 operator-( ElementType const& rhs ) const;
-	Vector2 operator*( ElementType const& rhs ) const;
-	Vector2& operator+=( ElementType const& rhs );
-	Vector2& operator-=( ElementType const& rhs );
-	Vector2& operator*=( ElementType const& rhs );
+	constexpr Vector2 operator+( ElementType const& rhs ) const;
+	constexpr Vector2 operator-( ElementType const& rhs ) const;
+	constexpr Vector2 operator*( ElementType const& rhs ) const;
+	constexpr Vector2& operator+=( ElementType const& rhs );
+	constexpr Vector2& operator-=( ElementType const& rhs );
+	constexpr Vector2& operator*=( ElementType const& rhs );
 
 
 	//

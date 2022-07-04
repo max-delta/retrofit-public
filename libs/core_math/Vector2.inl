@@ -10,7 +10,7 @@ namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename T>
-inline Vector2<T>::Vector2()
+inline constexpr Vector2<T>::Vector2()
 	: x( NumericTraits<T>::Empty() )
 	, y( NumericTraits<T>::Empty() )
 {
@@ -20,7 +20,7 @@ inline Vector2<T>::Vector2()
 
 
 template<typename T>
-inline Vector2<T>::Vector2( T x, T y )
+inline constexpr Vector2<T>::Vector2( T x, T y )
 	: x( x )
 	, y( y )
 {
@@ -41,7 +41,7 @@ inline Vector2<T>::operator Vector2<OtherT>() const
 
 
 template<typename T>
-inline bool Vector2<T>::operator==( Vector2 const& rhs ) const
+inline constexpr bool Vector2<T>::operator==( Vector2 const& rhs ) const
 {
 	return Equals( x, rhs.x ) && Equals( y, rhs.y );
 }
@@ -49,7 +49,7 @@ inline bool Vector2<T>::operator==( Vector2 const& rhs ) const
 
 
 template<typename T>
-inline bool Vector2<T>::operator!=( Vector2 const& rhs ) const
+inline constexpr bool Vector2<T>::operator!=( Vector2 const& rhs ) const
 {
 	return this->operator==( rhs ) == false;
 }
@@ -57,7 +57,7 @@ inline bool Vector2<T>::operator!=( Vector2 const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator-() const
+inline constexpr Vector2<T> Vector2<T>::operator-() const
 {
 	return Vector2( -x, -y );
 }
@@ -65,7 +65,7 @@ inline Vector2<T> Vector2<T>::operator-() const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator+( Vector2 const& rhs ) const
+inline constexpr Vector2<T> Vector2<T>::operator+( Vector2 const& rhs ) const
 {
 	return Vector2( x + rhs.x, y + rhs.y );
 }
@@ -73,7 +73,7 @@ inline Vector2<T> Vector2<T>::operator+( Vector2 const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator-( Vector2 const& rhs ) const
+inline constexpr Vector2<T> Vector2<T>::operator-( Vector2 const& rhs ) const
 {
 	return Vector2( x - rhs.x, y - rhs.y );
 }
@@ -81,7 +81,7 @@ inline Vector2<T> Vector2<T>::operator-( Vector2 const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator+=( Vector2 const& rhs )
+inline constexpr Vector2<T>& Vector2<T>::operator+=( Vector2 const& rhs )
 {
 	x += rhs.x;
 	y += rhs.y;
@@ -91,7 +91,7 @@ inline Vector2<T>& Vector2<T>::operator+=( Vector2 const& rhs )
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator-=( Vector2 const& rhs )
+inline constexpr Vector2<T>& Vector2<T>::operator-=( Vector2 const& rhs )
 {
 	x -= rhs.x;
 	y -= rhs.y;
@@ -101,7 +101,7 @@ inline Vector2<T>& Vector2<T>::operator-=( Vector2 const& rhs )
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator+( ElementType const& rhs ) const
+inline constexpr Vector2<T> Vector2<T>::operator+( ElementType const& rhs ) const
 {
 	return Vector2( x + rhs, y + rhs );
 }
@@ -109,7 +109,7 @@ inline Vector2<T> Vector2<T>::operator+( ElementType const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator-( ElementType const& rhs ) const
+inline constexpr Vector2<T> Vector2<T>::operator-( ElementType const& rhs ) const
 {
 	return Vector2( x - rhs, y - rhs );
 }
@@ -117,7 +117,7 @@ inline Vector2<T> Vector2<T>::operator-( ElementType const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T> Vector2<T>::operator*( ElementType const& rhs ) const
+inline constexpr Vector2<T> Vector2<T>::operator*( ElementType const& rhs ) const
 {
 	return Vector2( x * rhs, y * rhs );
 }
@@ -125,7 +125,7 @@ inline Vector2<T> Vector2<T>::operator*( ElementType const& rhs ) const
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator+=( ElementType const& rhs )
+inline constexpr Vector2<T>& Vector2<T>::operator+=( ElementType const& rhs )
 {
 	x += rhs;
 	y += rhs;
@@ -135,7 +135,7 @@ inline Vector2<T>& Vector2<T>::operator+=( ElementType const& rhs )
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator-=( ElementType const& rhs )
+inline constexpr Vector2<T>& Vector2<T>::operator-=( ElementType const& rhs )
 {
 	x -= rhs;
 	y -= rhs;
@@ -145,7 +145,7 @@ inline Vector2<T>& Vector2<T>::operator-=( ElementType const& rhs )
 
 
 template<typename T>
-inline Vector2<T>& Vector2<T>::operator*=( ElementType const& rhs )
+inline constexpr Vector2<T>& Vector2<T>::operator*=( ElementType const& rhs )
 {
 	x *= rhs;
 	y *= rhs;
