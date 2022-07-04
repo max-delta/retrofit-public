@@ -24,8 +24,8 @@ class ElementStockpileSelector final : public GenericListBox
 	// Types and constants
 public:
 	static constexpr ElementTilesetDef kElementTilesetDef = kElementTilesetFull;
-	static constexpr gfx::ppu::CoordElem kContainerWidth = kElementTilesetFull.mTileWidth;
-	static constexpr gfx::ppu::CoordElem kContainerHeight = kElementTilesetFull.mTileHeight *
+	static constexpr gfx::ppu::CoordElem kContainerWidth = kElementTilesetDef.mTileWidth;
+	static constexpr gfx::ppu::CoordElem kContainerHeight = kElementTilesetDef.mTileHeight *
 		static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel );
 
 
