@@ -26,7 +26,7 @@ RFTYPE_CREATE_META( RF::cc::ui::controller::ElementSlotOverlay )
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementSlotOverlay::ElementSlotOverlay( Size size )
+ElementSlotOverlay::ElementSlotOverlay( ElementTileSize size )
 	: mSize( size )
 {
 	//
@@ -34,14 +34,18 @@ ElementSlotOverlay::ElementSlotOverlay( Size size )
 
 
 
-gfx::ppu::Coord ElementSlotOverlay::CalcContainerDimensions( Size size )
+gfx::ppu::Coord ElementSlotOverlay::CalcContainerDimensions( ElementTileSize size )
 {
 	switch( size )
 	{
-		case Size::Full:
+		case ElementTileSize::Full:
 			return {
 				kElementTilesetFull.mTileWidth,
 				kElementTilesetFull.mTileHeight };
+		case ElementTileSize::Medium:
+		case ElementTileSize::Mini:
+		case ElementTileSize::Micro:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 			return {};
@@ -94,9 +98,13 @@ void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& contai
 	ElementTilesetDef tilesetDef = {};
 	switch( mSize )
 	{
-		case Size::Full:
+		case ElementTileSize::Full:
 			tilesetDef = kElementTilesetFull;
 			break;
+		case ElementTileSize::Medium:
+		case ElementTileSize::Mini:
+		case ElementTileSize::Micro:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 	}

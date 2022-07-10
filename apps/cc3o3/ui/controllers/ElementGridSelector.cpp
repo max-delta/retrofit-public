@@ -27,7 +27,7 @@ RFTYPE_CREATE_META( RF::cc::ui::controller::ElementGridSelector )
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementGridSelector::ElementGridSelector( Size size )
+ElementGridSelector::ElementGridSelector( ElementTileSize size )
 	: GenericListBox( character::kMaxSlotsPerElementLevel )
 	, mSize( size )
 {
@@ -36,15 +36,19 @@ ElementGridSelector::ElementGridSelector( Size size )
 
 
 
-gfx::ppu::Coord ElementGridSelector::CalcContainerDimensions( Size size )
+gfx::ppu::Coord ElementGridSelector::CalcContainerDimensions( ElementTileSize size )
 {
 	switch( size )
 	{
-		case Size::Full:
+		case ElementTileSize::Full:
 			return {
 				kElementTilesetFull.mTileWidth,
 				kElementTilesetFull.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+		case ElementTileSize::Medium:
+		case ElementTileSize::Micro:
+		case ElementTileSize::Mini:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 			return {};
@@ -140,9 +144,13 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	ElementTilesetDef tilesetDef = {};
 	switch( mSize )
 	{
-		case Size::Full:
+		case ElementTileSize::Full:
 			tilesetDef = kElementTilesetFull;
 			break;
+		case ElementTileSize::Medium:
+		case ElementTileSize::Micro:
+		case ElementTileSize::Mini:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 	}
@@ -156,14 +164,11 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	RF_ASSERT( tilesetDef.mSupportsText );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		// TODO: Unify these sizes in a central location
-		RF_ASSERT( mSize == Size::Full );
-
 		WeakPtr<ElementSlotOverlay> const overlay =
 			AssignSlotController<ElementSlotOverlay>(
 				context, i,
 				DefaultCreator<ElementSlotOverlay>::Create(
-					ElementSlotOverlay::Size::Full ) );
+					mSize ) );
 	}
 }
 

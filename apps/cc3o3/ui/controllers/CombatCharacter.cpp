@@ -208,8 +208,8 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 
 	// Element grid
 	{
-		static constexpr ui::controller::ElementGrid::Size kGridSize =
-			ui::controller::ElementGrid::Size::Micro;
+		static constexpr ui::ElementTileSize kGridSize =
+			ui::ElementTileSize::Micro;
 		gfx::ppu::Coord const gridDimensions =
 			ui::controller::ElementGrid::CalcContainerDimensions(
 				kGridSize );

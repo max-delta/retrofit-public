@@ -23,20 +23,11 @@ class ElementSlotOverlay final : public InstancedController
 	RF_NO_COPY( ElementSlotOverlay );
 
 	//
-	// Types and constants
-public:
-	enum class Size : uint8_t
-	{
-		Full = 0
-	};
-
-
-	//
 	// Public methods
 public:
-	ElementSlotOverlay( Size size );
+	ElementSlotOverlay( ElementTileSize size );
 
-	static gfx::ppu::Coord CalcContainerDimensions( Size size );
+	static gfx::ppu::Coord CalcContainerDimensions( ElementTileSize size );
 
 	void UpdateFromCache( ElementSlotDisplayCache const& cache );
 
@@ -55,7 +46,7 @@ private:
 	//
 	// Private data
 private:
-	Size const mSize = Size::Full;
+	ElementTileSize const mSize = ElementTileSize::Invalid;
 	WeakPtr<TextLabel> mNameLabel;
 	ElementSlotDisplayCache mCache = {};
 };

@@ -7,8 +7,18 @@
 namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
+enum class ElementTileSize : uint8_t
+{
+	Invalid = 0,
+	Full,
+	Medium,
+	Mini,
+	Micro
+};
+
 struct ElementTilesetDef
 {
+	ElementTileSize mSize = ElementTileSize::Invalid;
 	char const* mName = nullptr;
 	gfx::ppu::CoordElem mTileWidth = 0;
 	gfx::ppu::CoordElem mTileHeight = 0;
@@ -17,21 +27,25 @@ struct ElementTilesetDef
 };
 
 static constexpr ElementTilesetDef kElementTilesetFull = {
+	ElementTileSize::Full,
 	"elemgrid_16_128",
 	128, 16,
 	false,
 	true };
 static constexpr ElementTilesetDef kElementTilesetMedium = {
+	ElementTileSize::Medium,
 	"elemgrid_10_80",
 	80, 10,
 	false,
 	true };
 static constexpr ElementTilesetDef kElementTilesetMini = {
+	ElementTileSize::Mini,
 	"elemgrid_8_16",
 	8, 16,
 	false,
 	false };
 static constexpr ElementTilesetDef kElementTilesetMicro = {
+	ElementTileSize::Micro,
 	"elemgrid_2_4",
 	4, 2,
 	true,

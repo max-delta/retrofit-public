@@ -25,7 +25,7 @@ RFTYPE_CREATE_META( RF::cc::ui::controller::ElementGrid )
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementGrid::ElementGrid( Size size )
+ElementGrid::ElementGrid( ElementTileSize size )
 	: mSize( size )
 {
 	//
@@ -33,22 +33,25 @@ ElementGrid::ElementGrid( Size size )
 
 
 
-gfx::ppu::Coord ElementGrid::CalcContainerDimensions( Size size )
+gfx::ppu::Coord ElementGrid::CalcContainerDimensions( ElementTileSize size )
 {
 	switch( size )
 	{
-		case Size::Mini:
+		case ElementTileSize::Mini:
 			return {
 				kElementTilesetMini.mTileWidth *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
 				kElementTilesetMini.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
-		case Size::Micro:
+		case ElementTileSize::Micro:
 			return {
 				kElementTilesetMicro.mTileWidth *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
 				kElementTilesetMicro.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+		case ElementTileSize::Full:
+		case ElementTileSize::Medium:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 			return {};
@@ -97,12 +100,15 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 	ElementTilesetDef tilesetDef = {};
 	switch( mSize )
 	{
-		case Size::Mini:
+		case ElementTileSize::Mini:
 			tilesetDef = kElementTilesetMini;
 			break;
-		case Size::Micro:
+		case ElementTileSize::Micro:
 			tilesetDef = kElementTilesetMicro;
 			break;
+		case ElementTileSize::Full:
+		case ElementTileSize::Medium:
+		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 	}

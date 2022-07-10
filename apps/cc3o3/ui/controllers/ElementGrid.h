@@ -19,21 +19,11 @@ class ElementGrid final : public InstancedController
 	RF_NO_COPY( ElementGrid );
 
 	//
-	// Types and constants
-public:
-	enum class Size : uint8_t
-	{
-		Mini = 0,
-		Micro
-	};
-
-
-	//
 	// Public methods
 public:
-	ElementGrid( Size size );
+	ElementGrid( ElementTileSize size );
 
-	static gfx::ppu::Coord CalcContainerDimensions( Size size );
+	static gfx::ppu::Coord CalcContainerDimensions( ElementTileSize size );
 
 	void SetJustification( Justification::Value justification );
 	void UpdateFromCharacter( state::ObjectRef const& character );
@@ -46,7 +36,7 @@ public:
 	//
 	// Private data
 private:
-	Size const mSize = Size::Mini;
+	ElementTileSize const mSize = ElementTileSize::Invalid;
 	Justification::Value mJustification = Justification::MiddleCenter;
 	gfx::ppu::TileLayer mTileLayer = {};
 	ElementGridDisplayCache mCache = {};

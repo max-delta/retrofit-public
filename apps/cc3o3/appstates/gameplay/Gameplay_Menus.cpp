@@ -353,8 +353,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::MultiPassthrough>::Create( 2u ) );
 
 			// Element grid selector
-			static constexpr ui::controller::ElementGridSelector::Size kGridSize =
-				ui::controller::ElementGridSelector::Size::Full;
+			static constexpr ui::ElementTileSize kGridSize =
+				ui::ElementTileSize::Full;
 			gfx::ppu::Coord const gridDimensions =
 				ui::controller::ElementGridSelector::CalcContainerDimensions(
 					kGridSize );
@@ -375,8 +375,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			internalState.mElementGridSelector = elementGridSelector;
 
 			// Element stockpile selector
-			static constexpr ui::controller::ElementStockpileSelector::Size kStockpileSize =
-				ui::controller::ElementStockpileSelector::Size::Full;
+			static constexpr ui::ElementTileSize kStockpileSize =
+				ui::ElementTileSize::Full;
 			gfx::ppu::Coord const stockpileDimensions =
 				ui::controller::ElementStockpileSelector::CalcContainerDimensions(
 					kStockpileSize );

@@ -25,20 +25,11 @@ class ElementGridSelector final : public GenericListBox
 	RF_NO_COPY( ElementGridSelector );
 
 	//
-	// Types and constants
-public:
-	enum class Size : uint8_t
-	{
-		Full = 0
-	};
-
-
-	//
 	// Public methods
 public:
-	ElementGridSelector( Size size );
+	ElementGridSelector( ElementTileSize size );
 
-	static gfx::ppu::Coord CalcContainerDimensions( Size size );
+	static gfx::ppu::Coord CalcContainerDimensions( ElementTileSize size );
 
 	void UpdateFromCharacter( state::ObjectRef const& character );
 	void UpdateFromCache( ElementGridDisplayCache const& cache );
@@ -64,7 +55,7 @@ private:
 	//
 	// Private data
 private:
-	Size const mSize = Size::Full;
+	ElementTileSize const mSize = ElementTileSize::Invalid;
 	element::ElementLevel mLevel = 0;
 	gfx::ppu::TileLayer mTileLayer = {};
 	ElementGridDisplayCache mCache = {};

@@ -25,20 +25,11 @@ class ElementStockpileSelector final : public GenericListBox
 	RF_NO_COPY( ElementStockpileSelector );
 
 	//
-	// Types and constants
-public:
-	enum class Size : uint8_t
-	{
-		Full = 0
-	};
-
-
-	//
 	// Public methods
 public:
-	ElementStockpileSelector( Size size );
+	ElementStockpileSelector( ElementTileSize size );
 
-	static gfx::ppu::Coord CalcContainerDimensions( Size size );
+	static gfx::ppu::Coord CalcContainerDimensions( ElementTileSize size );
 
 	void UpdateFromCompany( state::ObjectRef const& company );
 	void UpdateFromCache( ElementStockpileDisplayCache const& cache );
@@ -63,7 +54,7 @@ private:
 	//
 	// Private data
 private:
-	Size const mSize = Size::Full;
+	ElementTileSize const mSize = ElementTileSize::Invalid;
 	size_t mListOffset = 0;
 	gfx::ppu::TileLayer mTileLayer = {};
 	ElementStockpileDisplayCache mCache = {};
