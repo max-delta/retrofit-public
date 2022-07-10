@@ -131,6 +131,8 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 		mTileLayer.GetMutableTile( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
 			math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
 	}
+
+	RF_ASSERT( tilesetDef.mSupportsText == false );
 }
 
 

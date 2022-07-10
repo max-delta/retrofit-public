@@ -353,8 +353,11 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::MultiPassthrough>::Create( 2u ) );
 
 			// Element grid selector
+			static constexpr ui::controller::ElementGridSelector::Size kGridSize =
+				ui::controller::ElementGridSelector::Size::Full;
 			gfx::ppu::Coord const gridDimensions =
-				ui::controller::ElementGridSelector::CalcContainerDimensions();
+				ui::controller::ElementGridSelector::CalcContainerDimensions(
+					kGridSize );
 			WeakPtr<ui::controller::Floater> const elementGridSelectorFloater =
 				uiManager.AssignStrongController(
 					selectorPassthroughs->GetChildContainerID( 0 ),
@@ -365,14 +368,18 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			WeakPtr<ui::controller::ElementGridSelector> const elementGridSelector =
 				uiManager.AssignStrongController(
 					elementGridSelectorFloater->GetChildContainerID(),
-					DefaultCreator<ui::controller::ElementGridSelector>::Create() );
+					DefaultCreator<ui::controller::ElementGridSelector>::Create(
+						kGridSize ) );
 			elementGridSelector->AddAsSiblingAfterFocusTreeNode(
 				uiContext, characterList->GetMutableFocusTreeNode( uiContext ) );
 			internalState.mElementGridSelector = elementGridSelector;
 
 			// Element stockpile selector
+			static constexpr ui::controller::ElementStockpileSelector::Size kStockpileSize =
+				ui::controller::ElementStockpileSelector::Size::Full;
 			gfx::ppu::Coord const stockpileDimensions =
-				ui::controller::ElementStockpileSelector::CalcContainerDimensions();
+				ui::controller::ElementStockpileSelector::CalcContainerDimensions(
+					kStockpileSize );
 			WeakPtr<ui::controller::Floater> const elementStockpileSelectorFloater =
 				uiManager.AssignStrongController(
 					selectorPassthroughs->GetChildContainerID( 1 ),
@@ -383,7 +390,8 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			WeakPtr<ui::controller::ElementStockpileSelector> const elementStockpileSelector =
 				uiManager.AssignStrongController(
 					elementStockpileSelectorFloater->GetChildContainerID(),
-					DefaultCreator<ui::controller::ElementStockpileSelector>::Create() );
+					DefaultCreator<ui::controller::ElementStockpileSelector>::Create(
+						kStockpileSize ) );
 			elementStockpileSelector->SetPagination( true );
 			elementStockpileSelector->UpdateFromCompany(
 				gCompanyManager->FindCompanyObject( InputHelpers::GetSinglePlayer() ) );

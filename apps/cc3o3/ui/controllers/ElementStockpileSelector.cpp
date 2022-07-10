@@ -25,20 +25,28 @@ RFTYPE_CREATE_META( RF::cc::ui::controller::ElementStockpileSelector )
 namespace RF::cc::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-ElementStockpileSelector::ElementStockpileSelector()
+ElementStockpileSelector::ElementStockpileSelector( Size size )
 	: GenericListBox( character::kMaxSlotsPerElementLevel )
+	, mSize( size )
 {
 	//
 }
 
 
 
-gfx::ppu::Coord ElementStockpileSelector::CalcContainerDimensions()
+gfx::ppu::Coord ElementStockpileSelector::CalcContainerDimensions( Size size )
 {
-	return {
-		kElementTilesetDef.mTileWidth,
-		kElementTilesetDef.mTileHeight *
-			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+	switch( size )
+	{
+		case Size::Full:
+			return {
+				kElementTilesetFull.mTileWidth,
+				kElementTilesetFull.mTileHeight *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+		default:
+			RF_DBGFAIL();
+			return {};
+	}
 }
 
 
@@ -74,7 +82,7 @@ void ElementStockpileSelector::OnRender( UIConstContext const& context, Containe
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::Coord const expectedDimensions = CalcContainerDimensions();
+	gfx::ppu::Coord const expectedDimensions = CalcContainerDimensions( mSize );
 	RF_ASSERT_MSG( container.mAABB.Width() == expectedDimensions.x, "Container not sized as needed" );
 	RF_ASSERT_MSG( container.mAABB.Height() == expectedDimensions.y, "Container not sized as needed" );
 
@@ -94,9 +102,23 @@ void ElementStockpileSelector::PostInstanceAssign( UIContext& context, Container
 	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
-	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kElementTilesetDef.mName );
+	ElementTilesetDef tilesetDef = {};
+	switch( mSize )
+	{
+		case Size::Full:
+			tilesetDef = kElementTilesetFull;
+			break;
+		default:
+			RF_DBGFAIL();
+	}
+
+	RF_ASSERT_ASSUME( tilesetDef.mName != nullptr );
+	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( tilesetDef.mName );
+
+	RF_ASSERT( tilesetDef.mUsesBorderSlots == false );
 	mTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
 
+	RF_ASSERT( tilesetDef.mSupportsText );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
 		WeakPtr<TextLabel> const label = AssignSlotController<TextLabel>( context, i, DefaultCreator<TextLabel>::Create() );

@@ -23,15 +23,18 @@ class ElementStockpileSelector final : public GenericListBox
 	//
 	// Types and constants
 public:
-	static constexpr ElementTilesetDef kElementTilesetDef = kElementTilesetFull;
+	enum class Size : uint8_t
+	{
+		Full = 0
+	};
 
 
 	//
 	// Public methods
 public:
-	ElementStockpileSelector();
+	ElementStockpileSelector( Size size );
 
-	static gfx::ppu::Coord CalcContainerDimensions();
+	static gfx::ppu::Coord CalcContainerDimensions( Size size );
 
 	void UpdateFromCompany( state::ObjectRef const& company );
 	void UpdateFromCache( ElementStockpileDisplayCache const& cache );
@@ -56,6 +59,7 @@ private:
 	//
 	// Private data
 private:
+	Size const mSize = Size::Full;
 	size_t mListOffset = 0;
 	gfx::ppu::TileLayer mTileLayer = {};
 	ElementStockpileDisplayCache mCache = {};
