@@ -124,6 +124,7 @@
     <ClCompile Include="ui\controllers\ElementGrid.cpp" />
     <ClCompile Include="ui\controllers\ElementGridSelector.cpp" />
     <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp" />
+    <ClCompile Include="ui\controllers\ElementSlotOverlay.cpp" />
     <ClCompile Include="ui\controllers\OptionSlot.cpp" />
     <ClCompile Include="ui\controllers\OptionSlotList.cpp" />
     <ClCompile Include="ui\ElementGridDisplayCache.cpp" />
@@ -289,6 +290,7 @@
     <ClInclude Include="ui\controllers\ElementGrid.h" />
     <ClInclude Include="ui\controllers\ElementGridSelector.h" />
     <ClInclude Include="ui\controllers\ElementStockpileSelector.h" />
+    <ClInclude Include="ui\controllers\ElementSlotOverlay.h" />
     <ClInclude Include="ui\controllers\OptionSlot.h" />
     <ClInclude Include="ui\controllers\OptionSlotList.h" />
     <ClInclude Include="ui\controllers\project.h" />

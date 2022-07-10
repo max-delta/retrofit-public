@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ElementGridSelector.h"
 
+#include "cc3o3/ui/controllers/ElementSlotOverlay.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -128,12 +130,14 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	RF_ASSERT( tilesetDef.mSupportsText );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		WeakPtr<TextLabel> const label = AssignSlotController<TextLabel>( context, i, DefaultCreator<TextLabel>::Create() );
-		label->SetJustification( ui::Justification::MiddleCenter );
-		label->SetFont( ui::font::LargeMenuText );
-		label->SetText( "UNSET" );
-		label->SetColor( math::Color3f::kWhite );
-		label->SetBorder( true );
+		// TODO: Unify these sizes in a central location
+		RF_ASSERT( mSize == Size::Full );
+
+		WeakPtr<ElementSlotOverlay> const overlay =
+			AssignSlotController<ElementSlotOverlay>(
+				context, i,
+				DefaultCreator<ElementSlotOverlay>::Create(
+					ElementSlotOverlay::Size::Full ) );
 	}
 }
 
@@ -178,10 +182,10 @@ bool ElementGridSelector::OnUnhandledFocusEvent( UIContext& context, FocusEvent 
 
 
 
-WeakPtr<TextLabel> ElementGridSelector::GetMutableSlotController( size_t slotIndex )
+WeakPtr<ElementSlotOverlay> ElementGridSelector::GetMutableSlotController( size_t slotIndex )
 {
-	WeakPtr<TextLabel> retVal;
-	PtrTransformer<TextLabel>::PerformNonTypesafeTransformation(
+	WeakPtr<ElementSlotOverlay> retVal;
+	PtrTransformer<ElementSlotOverlay>::PerformNonTypesafeTransformation(
 		GenericListBox::GetMutableSlotController( slotIndex ), retVal );
 	return retVal;
 }
@@ -199,7 +203,7 @@ void ElementGridSelector::UpdateDisplay()
 	{
 		ElementGridDisplayCache::Slot const& slot = column.at( i_row );
 		mTileLayer.GetMutableTile( 0, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
-		GetMutableSlotController( i_row )->SetText( slot.mName );
+		GetMutableSlotController( i_row )->UpdateFromCache( slot );
 	}
 }
 

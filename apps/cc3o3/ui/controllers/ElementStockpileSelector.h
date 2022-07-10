@@ -6,9 +6,13 @@
 #include "cc3o3/state/StateFwd.h"
 
 #include "GameUI/controllers/GenericListBox.h"
-#include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/TileLayer.h"
+
+// Forwards
+namespace RF::cc::ui::controller {
+class ElementSlotOverlay;
+}
 
 
 namespace RF::cc::ui::controller {
@@ -51,7 +55,7 @@ private:
 	virtual bool ShouldSkipFocus( UIConstContext const& context, WeakPtr<InstancedController const> attemptedFocus ) const override;
 	virtual bool OnUnhandledFocusEvent( UIContext& context, FocusEvent const& focusEvent ) override;
 
-	WeakPtr<TextLabel> GetMutableSlotController( size_t slotIndex );
+	WeakPtr<ElementSlotOverlay> GetMutableSlotController( size_t slotIndex );
 
 	void UpdateDisplay();
 

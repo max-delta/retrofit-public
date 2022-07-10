@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ElementStockpileSelector.h"
 
+#include "cc3o3/ui/controllers/ElementSlotOverlay.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -121,12 +123,14 @@ void ElementStockpileSelector::PostInstanceAssign( UIContext& context, Container
 	RF_ASSERT( tilesetDef.mSupportsText );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		WeakPtr<TextLabel> const label = AssignSlotController<TextLabel>( context, i, DefaultCreator<TextLabel>::Create() );
-		label->SetJustification( ui::Justification::MiddleCenter );
-		label->SetFont( ui::font::LargeMenuText );
-		label->SetText( "UNSET" );
-		label->SetColor( math::Color3f::kWhite );
-		label->SetBorder( true );
+		// TODO: Unify these sizes in a central location
+		RF_ASSERT( mSize == Size::Full );
+
+		WeakPtr<ElementSlotOverlay> const overlay =
+			AssignSlotController<ElementSlotOverlay>(
+				context, i,
+				DefaultCreator<ElementSlotOverlay>::Create(
+					ElementSlotOverlay::Size::Full ) );
 	}
 }
 
@@ -223,10 +227,10 @@ bool ElementStockpileSelector::OnUnhandledFocusEvent( UIContext& context, FocusE
 
 
 
-WeakPtr<TextLabel> ElementStockpileSelector::GetMutableSlotController( size_t slotIndex )
+WeakPtr<ElementSlotOverlay> ElementStockpileSelector::GetMutableSlotController( size_t slotIndex )
 {
-	WeakPtr<TextLabel> retVal;
-	PtrTransformer<TextLabel>::PerformNonTypesafeTransformation(
+	WeakPtr<ElementSlotOverlay> retVal;
+	PtrTransformer<ElementSlotOverlay>::PerformNonTypesafeTransformation(
 		GenericListBox::GetMutableSlotController( slotIndex ), retVal );
 	return retVal;
 }
@@ -243,7 +247,7 @@ void ElementStockpileSelector::UpdateDisplay()
 	{
 		ElementStockpileDisplayCache::Slot const& slot = stockpile.at( mListOffset + i_slot );
 		mTileLayer.GetMutableTile( 0, i_slot ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
-		GetMutableSlotController( i_slot )->SetText( slot.mName );
+		GetMutableSlotController( i_slot )->UpdateFromCache( slot );
 	}
 }
 

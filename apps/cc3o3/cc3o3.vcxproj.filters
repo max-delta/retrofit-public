@@ -289,6 +289,9 @@
     <ClCompile Include="combat\IdentifierUtils.cpp">
       <Filter>combat</Filter>
     </ClCompile>
+    <ClCompile Include="ui\controllers\ElementSlotOverlay.cpp">
+      <Filter>ui\controller</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -785,6 +788,9 @@
     </ClInclude>
     <ClInclude Include="combat\IdentifierUtils.h">
       <Filter>combat</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\controllers\ElementSlotOverlay.h">
+      <Filter>ui\controller</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
