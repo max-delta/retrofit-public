@@ -353,12 +353,14 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::MultiPassthrough>::Create( 2u ) );
 
 			// Element grid selector
+			gfx::ppu::Coord const gridDimensions =
+				ui::controller::ElementGridSelector::CalcContainerDimensions();
 			WeakPtr<ui::controller::Floater> const elementGridSelectorFloater =
 				uiManager.AssignStrongController(
 					selectorPassthroughs->GetChildContainerID( 0 ),
 					DefaultCreator<ui::controller::Floater>::Create(
-						ui::controller::ElementGridSelector::kContainerWidth,
-						ui::controller::ElementGridSelector::kContainerHeight,
+						gridDimensions.x,
+						gridDimensions.y,
 						ui::Justification::MiddleCenter ) );
 			WeakPtr<ui::controller::ElementGridSelector> const elementGridSelector =
 				uiManager.AssignStrongController(
@@ -369,12 +371,14 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			internalState.mElementGridSelector = elementGridSelector;
 
 			// Element stockpile selector
+			gfx::ppu::Coord const stockpileDimensions =
+				ui::controller::ElementStockpileSelector::CalcContainerDimensions();
 			WeakPtr<ui::controller::Floater> const elementStockpileSelectorFloater =
 				uiManager.AssignStrongController(
 					selectorPassthroughs->GetChildContainerID( 1 ),
 					DefaultCreator<ui::controller::Floater>::Create(
-						ui::controller::ElementStockpileSelector::kContainerWidth,
-						ui::controller::ElementStockpileSelector::kContainerHeight,
+						stockpileDimensions.x,
+						stockpileDimensions.y,
 						ui::Justification::BottomRight ) );
 			WeakPtr<ui::controller::ElementStockpileSelector> const elementStockpileSelector =
 				uiManager.AssignStrongController(

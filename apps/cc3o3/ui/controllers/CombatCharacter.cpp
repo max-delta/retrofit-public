@@ -208,22 +208,27 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 
 	// Element grid
 	{
+		static constexpr ui::controller::ElementGrid::Size kGridSize =
+			ui::controller::ElementGrid::Size::Micro;
+		gfx::ppu::Coord const gridDimensions =
+			ui::controller::ElementGrid::CalcContainerDimensions(
+				kGridSize );
 		WeakPtr<ui::controller::Floater> const elementGridFloater =
 			uiManager.AssignStrongController(
 				mGridContainerID,
 				DefaultCreator<ui::controller::Floater>::Create(
-					ui::controller::ElementGrid::kMicroContainerWidth,
-					ui::controller::ElementGrid::kMicroContainerHeight,
+					gridDimensions.x,
+					gridDimensions.y,
 					ui::Justification::TopLeft ) );
 		elementGridFloater->SetOffset( context,
 			gfx::ppu::Coord(
 				gfx::ppu::kTileSize / 8,
-				-ui::controller::ElementGrid::kMicroContainerHeight + -( gfx::ppu::kTileSize / 8 ) ) );
+				-gridDimensions.y + -( gfx::ppu::kTileSize / 8 ) ) );
 		mElementGrid =
 			uiManager.AssignStrongController(
 				elementGridFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::ElementGrid>::Create(
-					ui::controller::ElementGrid::Size::Micro ) );
+					kGridSize ) );
 	}
 }
 

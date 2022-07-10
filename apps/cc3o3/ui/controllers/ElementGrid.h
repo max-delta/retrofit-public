@@ -27,21 +27,13 @@ public:
 		Micro
 	};
 
-	static constexpr gfx::ppu::CoordElem kMiniContainerWidth = kElementTilesetMini.mTileWidth *
-		static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels );
-	static constexpr gfx::ppu::CoordElem kMiniContainerHeight = kElementTilesetMini.mTileHeight *
-		static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel );
-
-	static constexpr gfx::ppu::CoordElem kMicroContainerWidth = kElementTilesetMicro.mTileWidth *
-		static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels );
-	static constexpr gfx::ppu::CoordElem kMicroContainerHeight = kElementTilesetMicro.mTileHeight *
-		static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel );
-
 
 	//
 	// Public methods
 public:
 	ElementGrid( Size size );
+
+	static gfx::ppu::Coord CalcContainerDimensions( Size size );
 
 	void SetJustification( Justification::Value justification );
 	void UpdateFromCharacter( state::ObjectRef const& character );

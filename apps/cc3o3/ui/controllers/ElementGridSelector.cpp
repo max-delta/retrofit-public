@@ -33,6 +33,16 @@ ElementGridSelector::ElementGridSelector()
 
 
 
+gfx::ppu::Coord ElementGridSelector::CalcContainerDimensions()
+{
+	return {
+		kElementTilesetDef.mTileWidth,
+		kElementTilesetDef.mTileHeight *
+			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+}
+
+
+
 void ElementGridSelector::UpdateFromCharacter( state::ObjectRef const& character )
 {
 	mCache.UpdateFromCharacter( character, true );
@@ -67,11 +77,13 @@ character::ElementSlotIndex ElementGridSelector::GetSelectedIndex( UIConstContex
 
 void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	RF_ASSERT_MSG( container.mAABB.Width() == kContainerWidth, "Container not sized as needed" );
-	RF_ASSERT_MSG( container.mAABB.Height() == kContainerHeight, "Container not sized as needed" );
 	RF_ASSERT( mTileLayer.NumTiles() > 0 );
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+
+	gfx::ppu::Coord const expectedDimensions = CalcContainerDimensions();
+	RF_ASSERT_MSG( container.mAABB.Width() == expectedDimensions.x, "Container not sized as needed" );
+	RF_ASSERT_MSG( container.mAABB.Height() == expectedDimensions.y, "Container not sized as needed" );
 
 	mTileLayer.mXCoord = container.mAABB.Left();
 	mTileLayer.mYCoord = container.mAABB.Top();

@@ -33,6 +33,30 @@ ElementGrid::ElementGrid( Size size )
 
 
 
+gfx::ppu::Coord ElementGrid::CalcContainerDimensions( Size size )
+{
+	switch( size )
+	{
+		case Size::Mini:
+			return {
+				kElementTilesetMini.mTileWidth *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
+				kElementTilesetMini.mTileHeight *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+		case Size::Micro:
+			return {
+				kElementTilesetMicro.mTileWidth *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
+				kElementTilesetMicro.mTileHeight *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+		default:
+			RF_DBGFAIL();
+			return {};
+	}
+}
+
+
+
 void ElementGrid::SetJustification( Justification::Value justification )
 {
 	mJustification = justification;
@@ -117,22 +141,10 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::Coord expectedDimensions = {};
-	switch( mSize )
-	{
-		case Size::Mini:
-			expectedDimensions = {
-				kMiniContainerWidth,
-				kMiniContainerHeight };
-			break;
-		case Size::Micro:
-			expectedDimensions = {
-				kMicroContainerWidth,
-				kMicroContainerHeight };
-			break;
-		default:
-			RF_DBGFAIL();
-	}
+	gfx::ppu::Coord const expectedDimensions = CalcContainerDimensions( mSize );
+	RF_ASSERT_MSG( container.mAABB.Width() == expectedDimensions.x, "Container not sized as needed" );
+	RF_ASSERT_MSG( container.mAABB.Height() == expectedDimensions.y, "Container not sized as needed" );
+
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	mTileLayer.mXCoord = pos.x;

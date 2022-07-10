@@ -24,15 +24,14 @@ class ElementStockpileSelector final : public GenericListBox
 	// Types and constants
 public:
 	static constexpr ElementTilesetDef kElementTilesetDef = kElementTilesetFull;
-	static constexpr gfx::ppu::CoordElem kContainerWidth = kElementTilesetDef.mTileWidth;
-	static constexpr gfx::ppu::CoordElem kContainerHeight = kElementTilesetDef.mTileHeight *
-		static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel );
 
 
 	//
 	// Public methods
 public:
 	ElementStockpileSelector();
+
+	static gfx::ppu::Coord CalcContainerDimensions();
 
 	void UpdateFromCompany( state::ObjectRef const& company );
 	void UpdateFromCache( ElementStockpileDisplayCache const& cache );
