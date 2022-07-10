@@ -58,6 +58,27 @@ void ElementSlotOverlay::UpdateFromCache( ElementSlotDisplayCache const& cache )
 
 
 
+void ElementSlotOverlay::UpdateState( bool active, bool selected )
+{
+	if( active == false )
+	{
+		// Inactive
+		mNameLabel->SetColor( math::Color3f::kGray50 );
+	}
+	else if( selected )
+	{
+		// Selected
+		mNameLabel->SetColor( math::Color3f::kYellow );
+	}
+	else
+	{
+		// Unselected
+		mNameLabel->SetColor( math::Color3f::kWhite );
+	}
+}
+
+
+
 void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& container )
 {
 	ui::ContainerManager& uiManager = context.GetMutableContainerManager();

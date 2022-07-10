@@ -102,6 +102,32 @@ void ElementGridSelector::OnRender( UIConstContext const& context, Container con
 	mTileLayer.Animate();
 
 	renderer.DrawTileLayer( mTileLayer );
+
+	// Do any of our slots have direct focus?
+	InstancedController const* const slotWithFocus = GetSlotWithFocus( context );
+	bool const listBoxHasImplicitFocus = slotWithFocus != nullptr;
+
+	// Update colors
+	for( size_t i = 0; i < mNumSlots; i++ )
+	{
+		WeakPtr<ElementSlotOverlay> const slotController = GetMutableSlotController( i );
+
+		if( listBoxHasImplicitFocus )
+		{
+			if( slotController == slotWithFocus )
+			{
+				slotController->UpdateState( true, true );
+			}
+			else
+			{
+				slotController->UpdateState( true, false );
+			}
+		}
+		else
+		{
+			slotController->UpdateState( false, false );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

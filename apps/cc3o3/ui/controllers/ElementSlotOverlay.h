@@ -40,6 +40,8 @@ public:
 
 	void UpdateFromCache( ElementSlotDisplayCache const& cache );
 
+	void UpdateState( bool active, bool selected );
+
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
