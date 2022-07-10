@@ -65,7 +65,7 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 void ElementSlotDisplayCache::Unallocate()
 {
 	mIdentifier = element::kInvalidElementIdentifier;
-	mName.clear();
+	mName = ui::LocalizeKey( "$element_unallocated" );
 	mTilesetIndex = ElementTilesetIndex::Unallocated;
 }
 
