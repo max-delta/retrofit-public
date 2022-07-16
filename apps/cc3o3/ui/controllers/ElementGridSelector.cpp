@@ -3,6 +3,7 @@
 
 #include "cc3o3/ui/controllers/ElementSlotOverlay.h"
 
+#include "GameUI/AlignmentHelpers.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -91,7 +92,9 @@ character::ElementSlotIndex ElementGridSelector::GetSelectedIndex( UIConstContex
 
 void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	RF_ASSERT( mTileLayer.NumTiles() > 0 );
+	RF_ASSERT( mMainTileLayer.NumTiles() > 0 );
+	RF_ASSERT( mLeftWingTileLayer.NumTiles() > 0 );
+	RF_ASSERT( mRightWingTileLayer.NumTiles() > 0 );
 
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
@@ -99,13 +102,53 @@ void ElementGridSelector::OnRender( UIConstContext const& context, Container con
 	RF_ASSERT_MSG( container.mAABB.Width() == expectedDimensions.x, "Container not sized as needed" );
 	RF_ASSERT_MSG( container.mAABB.Height() == expectedDimensions.y, "Container not sized as needed" );
 
-	mTileLayer.mXCoord = container.mAABB.Left();
-	mTileLayer.mYCoord = container.mAABB.Top();
-	mTileLayer.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
-	mTileLayer.mLooping = true;
-	mTileLayer.Animate();
+	// Center elements
+	{
+		mMainTileLayer.mXCoord = container.mAABB.Left();
+		mMainTileLayer.mYCoord = container.mAABB.Top();
+		mMainTileLayer.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+		mMainTileLayer.mLooping = true;
+		mMainTileLayer.Animate();
 
-	renderer.DrawTileLayer( mTileLayer );
+		renderer.DrawTileLayer( mMainTileLayer );
+	}
+
+	static constexpr gfx::ppu::Coord kWingDimensions = {
+		kWingTileset.mTileWidth,
+		kWingTileset.mTileHeight *
+			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+
+	// Left wing elements
+	{
+		gfx::ppu::AABB wingEnclosure = container.mAABB;
+		wingEnclosure -= gfx::ppu::Coord( wingEnclosure.Width(), 0 );
+		wingEnclosure -= gfx::ppu::Coord( gfx::ppu::kTileSize / 4, 0 );
+		gfx::ppu::Coord const tilePos = AlignToJustify( kWingDimensions, wingEnclosure, Justification::MiddleRight );
+
+		mLeftWingTileLayer.mXCoord = tilePos.x;
+		mLeftWingTileLayer.mYCoord = tilePos.y;
+		mLeftWingTileLayer.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+		mLeftWingTileLayer.mLooping = true;
+		mLeftWingTileLayer.Animate();
+
+		renderer.DrawTileLayer( mLeftWingTileLayer );
+	}
+
+	// Right wing elements
+	{
+		gfx::ppu::AABB wingEnclosure = container.mAABB;
+		wingEnclosure += gfx::ppu::Coord( wingEnclosure.Width(), 0 );
+		wingEnclosure += gfx::ppu::Coord( gfx::ppu::kTileSize / 4, 0 );
+		gfx::ppu::Coord const tilePos = AlignToJustify( kWingDimensions, wingEnclosure, Justification::MiddleLeft );
+
+		mRightWingTileLayer.mXCoord = tilePos.x;
+		mRightWingTileLayer.mYCoord = tilePos.y;
+		mRightWingTileLayer.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+		mRightWingTileLayer.mLooping = true;
+		mRightWingTileLayer.Animate();
+
+		renderer.DrawTileLayer( mRightWingTileLayer );
+	}
 
 	// Do any of our slots have direct focus?
 	InstancedController const* const slotWithFocus = GetSlotWithFocus( context );
@@ -141,34 +184,49 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
-	ElementTilesetDef tilesetDef = {};
-	switch( mSize )
+	// Center elements
 	{
-		case ElementTileSize::Full:
-			tilesetDef = kElementTilesetFull;
-			break;
-		case ElementTileSize::Medium:
-		case ElementTileSize::Micro:
-		case ElementTileSize::Mini:
-		case ElementTileSize::Invalid:
-		default:
-			RF_DBGFAIL();
+		ElementTilesetDef tilesetDef = {};
+		switch( mSize )
+		{
+			case ElementTileSize::Full:
+				tilesetDef = kElementTilesetFull;
+				break;
+			case ElementTileSize::Medium:
+			case ElementTileSize::Micro:
+			case ElementTileSize::Mini:
+			case ElementTileSize::Invalid:
+			default:
+				RF_DBGFAIL();
+		}
+
+		RF_ASSERT_ASSUME( tilesetDef.mName != nullptr );
+		mMainTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( tilesetDef.mName );
+
+		RF_ASSERT( tilesetDef.mUsesBorderSlots == false );
+		mMainTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
+
+		RF_ASSERT( tilesetDef.mSupportsText );
+		for( size_t i = 0; i < mNumSlots; i++ )
+		{
+			WeakPtr<ElementSlotOverlay> const overlay =
+				AssignSlotController<ElementSlotOverlay>(
+					context, i,
+					DefaultCreator<ElementSlotOverlay>::Create(
+						mSize ) );
+		}
 	}
 
-	RF_ASSERT_ASSUME( tilesetDef.mName != nullptr );
-	mTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( tilesetDef.mName );
-
-	RF_ASSERT( tilesetDef.mUsesBorderSlots == false );
-	mTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
-
-	RF_ASSERT( tilesetDef.mSupportsText );
-	for( size_t i = 0; i < mNumSlots; i++ )
+	// Wing elements
 	{
-		WeakPtr<ElementSlotOverlay> const overlay =
-			AssignSlotController<ElementSlotOverlay>(
-				context, i,
-				DefaultCreator<ElementSlotOverlay>::Create(
-					mSize ) );
+		static_assert( kWingTileset.mUsesBorderSlots == false );
+		static_assert( kWingTileset.mSupportsText == false );
+
+		mLeftWingTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kWingTileset.mName );
+		mRightWingTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kWingTileset.mName );
+
+		mLeftWingTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
+		mRightWingTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
 	}
 }
 
@@ -229,12 +287,56 @@ void ElementGridSelector::UpdateDisplay()
 	//  such as when not high enough level to unlock those
 
 	ElementGridDisplayCache::Grid const& grid = mCache.GetGridRef();
-	ElementGridDisplayCache::Column const& column = grid.at( mLevel );
-	for( size_t i_row = 0; i_row < column.size(); i_row++ )
+
+	static constexpr auto updateTileColumn =
+		[]( gfx::ppu::TileLayer& tileLayer, ElementGridDisplayCache::Column const& column ) -> void
 	{
-		ElementGridDisplayCache::Slot const& slot = column.at( i_row );
-		mTileLayer.GetMutableTile( 0, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
-		GetMutableSlotController( i_row )->UpdateFromCache( slot );
+		for( size_t i_row = 0; i_row < column.size(); i_row++ )
+		{
+			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
+			tileLayer.GetMutableTile( 0, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+		}
+	};
+
+	static constexpr auto updateTextColumn =
+		[]( ElementGridSelector& selector, ElementGridDisplayCache::Column const& column ) -> void
+	{
+		for( size_t i_row = 0; i_row < column.size(); i_row++ )
+		{
+			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
+			selector.GetMutableSlotController( i_row )->UpdateFromCache( slot );
+		}
+	};
+
+	// Center elements
+	{
+		ElementGridDisplayCache::Column const& column = grid.at( mLevel );
+		updateTileColumn( mMainTileLayer, column );
+		updateTextColumn( *this, column );
+	}
+
+	// Left wing elements
+	if( mLevel > 0 )
+	{
+		element::ElementLevel const level = math::integer_cast<element::ElementLevel>( mLevel - 1 );
+		ElementGridDisplayCache::Column const& column = grid.at( level );
+		updateTileColumn( mLeftWingTileLayer, column );
+	}
+	else
+	{
+		mLeftWingTileLayer.Clear();
+	}
+
+	// Right wing elements
+	if( mLevel < element::kMaxElementLevel - 1 )
+	{
+		element::ElementLevel const level = math::integer_cast<element::ElementLevel>( mLevel + 1 );
+		ElementGridDisplayCache::Column const& column = grid.at( level );
+		updateTileColumn( mRightWingTileLayer, column );
+	}
+	else
+	{
+		mRightWingTileLayer.Clear();
 	}
 }
 

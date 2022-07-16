@@ -25,6 +25,12 @@ class ElementGridSelector final : public GenericListBox
 	RF_NO_COPY( ElementGridSelector );
 
 	//
+	// Types and constants
+public:
+	static constexpr ElementTilesetDef kWingTileset = kElementTilesetMini;
+
+
+	//
 	// Public methods
 public:
 	ElementGridSelector( ElementTileSize size );
@@ -57,7 +63,9 @@ private:
 private:
 	ElementTileSize const mSize = ElementTileSize::Invalid;
 	element::ElementLevel mLevel = 0;
-	gfx::ppu::TileLayer mTileLayer = {};
+	gfx::ppu::TileLayer mMainTileLayer = {};
+	gfx::ppu::TileLayer mLeftWingTileLayer = {};
+	gfx::ppu::TileLayer mRightWingTileLayer = {};
 	ElementGridDisplayCache mCache = {};
 };
 
