@@ -41,7 +41,7 @@ static constexpr ElementTilesetDef kElementTilesetMedium = {
 static constexpr ElementTilesetDef kElementTilesetMini = {
 	ElementTileSize::Mini,
 	"elemgrid_8_16",
-	8, 16,
+	16, 8,
 	false,
 	false };
 static constexpr ElementTilesetDef kElementTilesetMicro = {
