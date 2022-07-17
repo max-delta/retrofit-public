@@ -57,6 +57,7 @@
     <ClCompile Include="char\ElementSlots.cpp" />
     <ClCompile Include="char\Equipment.cpp" />
     <ClCompile Include="char\Genetics.cpp" />
+    <ClCompile Include="char\GridMask.cpp" />
     <ClCompile Include="char\Stats.cpp" />
     <ClCompile Include="char\Visuals.cpp" />
     <ClCompile Include="combat\CombatantID.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="char\ElementSlots.h" />
     <ClInclude Include="char\Equipment.h" />
     <ClInclude Include="char\Genetics.h" />
+    <ClInclude Include="char\GridMask.h" />
     <ClInclude Include="char\project.h" />
     <ClInclude Include="char\Stats.h" />
     <ClInclude Include="char\stdafx.h" />

@@ -15,7 +15,6 @@ static constexpr StatValue kMaxStatValue = 10;
 
 static constexpr size_t kMaxSlotsPerElementLevel = 8;
 
-using SlotsPerElemLevel = rftl::array<size_t, element::kNumElementLevels>;
 using ElementSlotIndex = rftl::pair<element::ElementLevel, size_t>;
 
 enum class GridShape : uint8_t
@@ -35,6 +34,7 @@ struct Visuals;
 struct Stats;
 struct Equipment;
 struct ElementSlots;
+struct GridMask;
 
 class CharacterDatabase;
 class CharacterValidator;

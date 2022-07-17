@@ -292,6 +292,9 @@
     <ClCompile Include="ui\controllers\ElementSlotOverlay.cpp">
       <Filter>ui\controller</Filter>
     </ClCompile>
+    <ClCompile Include="char\GridMask.cpp">
+      <Filter>char</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="project.h" />
@@ -791,6 +794,9 @@
     </ClInclude>
     <ClInclude Include="ui\controllers\ElementSlotOverlay.h">
       <Filter>ui\controller</Filter>
+    </ClInclude>
+    <ClInclude Include="char\GridMask.h">
+      <Filter>char</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

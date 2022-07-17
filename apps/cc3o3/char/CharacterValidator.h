@@ -61,11 +61,6 @@ public:
 	Stats const& GetStatBonuses( SpeciesID const& id ) const;
 	static uint8_t CalculateTotalPoints( Stats const& stats );
 
-	size_t GetMinimumTotalSlots( company::StoryTier storyTier ) const;
-	SlotsPerElemLevel GetMinimumSlotDistribution( company::StoryTier storyTier ) const;
-	size_t CalculateTotalSlots( StatValue elemPower, company::StoryTier storyTier ) const;
-	SlotsPerElemLevel CalculateSlotDistribution( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier ) const;
-
 	void SanitizeForCharacterCreation( CharData& character ) const;
 	void SanitizeForGameplay( CharData& character ) const;
 

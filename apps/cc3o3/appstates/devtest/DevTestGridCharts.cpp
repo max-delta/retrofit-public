@@ -3,8 +3,8 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/char/GridMask.h"
 #include "cc3o3/ui/UIFwd.h"
-#include "cc3o3/char/CharacterValidator.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -56,7 +56,6 @@ void DevTestGridCharts::OnExit( AppStateChangeContext& context )
 void DevTestGridCharts::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
-	character::CharacterValidator const& charValidate = *gCharacterValidator;
 	using StatValue = character::StatValue;
 	using GridShape = character::GridShape;
 
@@ -170,20 +169,18 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 	x = xStart;
 	y = yStart;
 	{
-		using SlotsPerElemLevel = character::SlotsPerElemLevel;
-		SlotsPerElemLevel const minSlots = charValidate.GetMinimumSlotDistribution( storyTier );
-		SlotsPerElemLevel const curSlots = charValidate.CalculateSlotDistribution( elemPower, gridShape, storyTier );
+		using character::GridMask;
+		GridMask const minSlots = GridMask::CalcMinimumSlots( storyTier );
+		GridMask const curSlots = GridMask::CalcSlots( elemPower, gridShape, storyTier );
 
 		for( element::ElementLevel const& level : element::kElementLevels )
 		{
-			size_t const levelOffset = element::AsLevelOffset( level );
-
 			drawText( x, y, " %i", level );
 			y += ystep;
 			y += ystep;
 
-			size_t const& minCount = minSlots.at( levelOffset );
-			size_t const& curCount = curSlots.at( levelOffset );
+			size_t const& minCount = minSlots.GetNumSlotsAtLevel( level );
+			size_t const& curCount = curSlots.GetNumSlotsAtLevel( level );
 
 			for( size_t slot = 0; slot < character::kMaxSlotsPerElementLevel; slot++ )
 			{
