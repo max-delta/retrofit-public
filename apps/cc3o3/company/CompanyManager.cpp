@@ -266,6 +266,9 @@ void CompanyManager::AssignElementToCharacter( state::MutableObjectRef character
 
 void CompanyManager::AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element )
 {
+	RF_ASSERT( slot.first != element::kInvalidElementLevel );
+	RF_ASSERT( slot.first >= element::kMinElementLevel );
+	RF_ASSERT( slot.first <= element::kMaxElementLevel );
 	loadout.mEquippedElements.At( slot ) = element;
 }
 
@@ -277,7 +280,7 @@ void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input:
 
 	static constexpr size_t kFileSize =
 		sizeof( element::ElementIdentifier ) *
-		character::kMaxElementLevels *
+		element::kNumElementLevels *
 		character::kMaxSlotsPerElementLevel;
 
 	rftl::array<state::MutableObjectRef, kRosterSize> const rosterObjects = FindMutableRosterObjects( playerID );
@@ -323,7 +326,7 @@ void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input:
 			character::ElementSlots& elements = loadout->mEquippedElements;
 
 			// Level
-			for( element::ElementLevel i_lvl = 0; i_lvl < character::kMaxElementLevels; i_lvl++ )
+			for( element::ElementLevel const& level : element::kElementLevels )
 			{
 				// Slot
 				for( size_t i_slot = 0; i_slot < character::kMaxSlotsPerElementLevel; i_slot++ )
@@ -335,7 +338,7 @@ void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input:
 						readOffset++;
 					}
 
-					character::ElementSlots::Slot& slot = elements.At( { i_lvl, i_slot } );
+					character::ElementSlots::Slot& slot = elements.At( { level, i_slot } );
 					slot = element::MakeElementIdentifier( bytes );
 				}
 			}
@@ -351,7 +354,7 @@ void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::
 
 	static constexpr size_t kFileSize =
 		sizeof( element::ElementIdentifier ) *
-		character::kMaxElementLevels *
+		element::kNumElementLevels *
 		character::kMaxSlotsPerElementLevel;
 	rftl::static_vector<uint8_t, kFileSize> buffer = {};
 
@@ -381,12 +384,12 @@ void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::
 			character::ElementSlots const& elements = loadout->mEquippedElements;
 
 			// Level
-			for( element::ElementLevel i_lvl = 0; i_lvl < character::kMaxElementLevels; i_lvl++ )
+			for( element::ElementLevel const& level : element::kElementLevels )
 			{
 				// Slot
 				for( size_t i_slot = 0; i_slot < character::kMaxSlotsPerElementLevel; i_slot++ )
 				{
-					element::ElementIdentifier const element = elements.At( { i_lvl, i_slot } );
+					element::ElementIdentifier const element = elements.At( { level, i_slot } );
 					element::ElementBytes const bytes = element::GetElementBytes( element );
 					for( uint8_t const& byte : bytes )
 					{

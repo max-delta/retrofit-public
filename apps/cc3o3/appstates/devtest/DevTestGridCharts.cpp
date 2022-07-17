@@ -174,14 +174,16 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 		SlotsPerElemLevel const minSlots = charValidate.GetMinimumSlotDistribution( storyTier );
 		SlotsPerElemLevel const curSlots = charValidate.CalculateSlotDistribution( elemPower, gridShape, storyTier );
 
-		for( size_t level = 0; level < character::kMaxElementLevels; level++ )
+		for( element::ElementLevel const& level : element::kElementLevels )
 		{
-			drawText( x, y, " %i", level + 1 );
+			size_t const levelOffset = element::AsLevelOffset( level );
+
+			drawText( x, y, " %i", level );
 			y += ystep;
 			y += ystep;
 
-			size_t const& minCount = minSlots.at( level );
-			size_t const& curCount = curSlots.at( level );
+			size_t const& minCount = minSlots.at( levelOffset );
+			size_t const& curCount = curSlots.at( levelOffset );
 
 			for( size_t slot = 0; slot < character::kMaxSlotsPerElementLevel; slot++ )
 			{

@@ -8,10 +8,9 @@
 namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
-static constexpr size_t kMaxElementLevels = element::kMaxElementLevel;
 static constexpr size_t kMaxSlotsPerElementLevel = 8;
 
-using SlotsPerElemLevel = rftl::array<size_t, kMaxElementLevels>;
+using SlotsPerElemLevel = rftl::array<size_t, element::kNumElementLevels>;
 using ElementSlotIndex = rftl::pair<element::ElementLevel, size_t>;
 
 struct CharData;

@@ -23,14 +23,16 @@ namespace RF::cc::character {
 
 ElementSlots::Slot const& ElementSlots::At( ElementSlotIndex const& location ) const
 {
-	return mGrid.at( location.first ).at( location.second );
+	size_t const levelOffset = element::AsLevelOffset( location.first );
+	return mGrid.at( levelOffset ).at( location.second );
 }
 
 
 
 ElementSlots::Slot& ElementSlots::At( ElementSlotIndex const& location )
 {
-	return mGrid.at( location.first ).at( location.second );
+	size_t const levelOffset = element::AsLevelOffset( location.first );
+	return mGrid.at( levelOffset ).at( location.second );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

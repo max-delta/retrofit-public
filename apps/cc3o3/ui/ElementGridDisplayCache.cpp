@@ -63,9 +63,17 @@ void ElementGridDisplayCache::DarkenAll()
 
 
 
-ElementGridDisplayCache::Grid const& ElementGridDisplayCache::GetGridRef() const
+ElementGridDisplayCache::Slot const& ElementGridDisplayCache::GetSlotRef( character::ElementSlotIndex const& location ) const
 {
-	return mGrid;
+	return GetColumnRef( location.first ).at( location.second );
+}
+
+
+
+ElementGridDisplayCache::Column const& ElementGridDisplayCache::GetColumnRef( element::ElementLevel const& level ) const
+{
+	size_t const levelOffset = element::AsLevelOffset( level );
+	return mGrid.at( levelOffset );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

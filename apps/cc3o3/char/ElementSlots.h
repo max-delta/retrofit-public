@@ -17,7 +17,7 @@ struct ElementSlots
 public:
 	using Slot = element::ElementIdentifier;
 	using Column = rftl::array<Slot, kMaxSlotsPerElementLevel>;
-	using Grid = rftl::array<Column, kMaxElementLevels>;
+	using Grid = rftl::array<Column, element::kNumElementLevels>;
 
 
 	//

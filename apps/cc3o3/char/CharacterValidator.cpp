@@ -432,17 +432,20 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 		{
 			// Where are we at now?
 			SlotsPerElemLevel currentSlots = min;
-			for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+			for( element::ElementLevel const& level : element::kElementLevels )
 			{
-				currentSlots.at( i_level ) += expenditures.at( i_level );
+				size_t const levelOffset = element::AsLevelOffset( level );
+				currentSlots.at( levelOffset ) += expenditures.at( levelOffset );
 			}
 
 			// How do we rate our choices?
-			rftl::array<size_t, kMaxElementLevels> weights = {};
-			for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+			rftl::array<size_t, element::kNumElementLevels> weights = {};
+			for( element::ElementLevel const& level : element::kElementLevels )
 			{
-				size_t const& cur = currentSlots.at( i_level );
-				size_t& weight = weights.at( i_level );
+				size_t const levelOffset = element::AsLevelOffset( level );
+
+				size_t const& cur = currentSlots.at( levelOffset );
+				size_t& weight = weights.at( levelOffset );
 
 				if( cur == 0 )
 				{
@@ -461,7 +464,7 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 						// 5  4  3
 						// -------
 						// 0  1  2
-						weight = ( kMaxSlotsPerElementLevel - cur ) + ( kMaxElementLevels - i_level );
+						weight = ( kMaxSlotsPerElementLevel - cur ) + ( element::kMaxElementLevel - level );
 						break;
 					case GridShape::Wide:
 						// Want all levels to have equal number of slots
@@ -479,7 +482,7 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 						// 3  4  5
 						// -------
 						// 0  1  2
-						weight = ( kMaxSlotsPerElementLevel - cur ) + i_level;
+						weight = ( kMaxSlotsPerElementLevel - cur ) + ( level - element::kMinElementLevel );
 						break;
 					case GridShape::NumShapeTypes:
 					default:
@@ -492,10 +495,11 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 			size_t bestWeightLevel;
 			{
 				// Sort the weights
-				rftl::static_vector<rftl::pair<size_t, size_t>, kMaxElementLevels> weightsToLevels;
-				for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+				rftl::static_vector<rftl::pair<size_t, size_t>, element::kNumElementLevels> weightsToLevels;
+				for( element::ElementLevel const& level : element::kElementLevels )
 				{
-					weightsToLevels.emplace_back( { weights.at( i_level ), i_level } );
+					size_t const levelOffset = element::AsLevelOffset( level );
+					weightsToLevels.emplace_back( { weights.at( levelOffset ), levelOffset } );
 				}
 				rftl::sort( weightsToLevels.begin(), weightsToLevels.end() );
 				rftl::reverse( weightsToLevels.begin(), weightsToLevels.end() );
@@ -517,7 +521,7 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 				{
 					// Competing choices
 
-					rftl::static_vector<size_t, kMaxElementLevels> levelChoices;
+					rftl::static_vector<size_t, element::kNumElementLevels> levelChoices;
 					for( rftl::pair<size_t, size_t> const& weightToLevel : weightsToLevels )
 					{
 						levelChoices.emplace_back( weightToLevel.second );
@@ -567,9 +571,10 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 
 	// Apply the expenditures
 	SlotsPerElemLevel retVal = GetMinimumSlotDistribution( storyTier );
-	for( size_t i_level = 0; i_level < kMaxElementLevels; i_level++ )
+	for( element::ElementLevel const& level : element::kElementLevels )
 	{
-		retVal.at( i_level ) += expenditures.at( i_level );
+		size_t const levelOffset = element::AsLevelOffset( level );
+		retVal.at( levelOffset ) += expenditures.at( levelOffset );
 	}
 	return retVal;
 }

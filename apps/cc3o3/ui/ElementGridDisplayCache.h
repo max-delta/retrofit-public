@@ -16,7 +16,9 @@ class ElementGridDisplayCache
 public:
 	using Slot = ElementSlotDisplayCache;
 	using Column = rftl::array<Slot, character::kMaxSlotsPerElementLevel>;
-	using Grid = rftl::array<Column, character::kMaxElementLevels>;
+
+private:
+	using Grid = rftl::array<Column, element::kNumElementLevels>;
 
 	//
 	// Public methods
@@ -27,7 +29,8 @@ public:
 
 	void DarkenAll();
 
-	Grid const& GetGridRef() const;
+	Slot const& GetSlotRef( character::ElementSlotIndex const& location ) const;
+	Column const& GetColumnRef( element::ElementLevel const& level ) const;
 
 
 	//

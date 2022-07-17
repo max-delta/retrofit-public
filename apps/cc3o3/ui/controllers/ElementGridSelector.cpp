@@ -248,13 +248,13 @@ bool ElementGridSelector::OnUnhandledFocusEvent( UIContext& context, FocusEvent 
 
 	if( isCycle )
 	{
-		if( isPrevious && mLevel > 0 )
+		if( isPrevious && mLevel > element::kMinElementLevel )
 		{
 			mLevel--;
 			UpdateDisplay();
 			return true;
 		}
-		else if( isNext && mLevel + 1 < character::kMaxElementLevels )
+		else if( isNext && mLevel + 1 <= element::kMaxElementLevel )
 		{
 			mLevel++;
 			UpdateDisplay();
@@ -286,8 +286,6 @@ void ElementGridSelector::UpdateDisplay()
 	// TODO: Sanitize level if it would be in a column that has no valid slots,
 	//  such as when not high enough level to unlock those
 
-	ElementGridDisplayCache::Grid const& grid = mCache.GetGridRef();
-
 	static constexpr auto updateTileColumn =
 		[]( gfx::ppu::TileLayer& tileLayer, ElementGridDisplayCache::Column const& column ) -> void
 	{
@@ -310,16 +308,16 @@ void ElementGridSelector::UpdateDisplay()
 
 	// Center elements
 	{
-		ElementGridDisplayCache::Column const& column = grid.at( mLevel );
+		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( mLevel );
 		updateTileColumn( mMainTileLayer, column );
 		updateTextColumn( *this, column );
 	}
 
 	// Left wing elements
-	if( mLevel > 0 )
+	if( mLevel > element::kMinElementLevel )
 	{
 		element::ElementLevel const level = math::integer_cast<element::ElementLevel>( mLevel - 1 );
-		ElementGridDisplayCache::Column const& column = grid.at( level );
+		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( level );
 		updateTileColumn( mLeftWingTileLayer, column );
 	}
 	else
@@ -328,10 +326,10 @@ void ElementGridSelector::UpdateDisplay()
 	}
 
 	// Right wing elements
-	if( mLevel < element::kMaxElementLevel - 1 )
+	if( mLevel < element::kMaxElementLevel )
 	{
 		element::ElementLevel const level = math::integer_cast<element::ElementLevel>( mLevel + 1 );
-		ElementGridDisplayCache::Column const& column = grid.at( level );
+		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( level );
 		updateTileColumn( mRightWingTileLayer, column );
 	}
 	else

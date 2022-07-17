@@ -62,7 +62,7 @@ private:
 	// Private data
 private:
 	ElementTileSize const mSize = ElementTileSize::Invalid;
-	element::ElementLevel mLevel = 0;
+	element::ElementLevel mLevel = element::kMinElementLevel;
 	gfx::ppu::TileLayer mMainTileLayer = {};
 	gfx::ppu::TileLayer mLeftWingTileLayer = {};
 	gfx::ppu::TileLayer mRightWingTileLayer = {};

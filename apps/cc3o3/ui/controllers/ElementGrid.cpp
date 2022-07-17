@@ -40,13 +40,13 @@ gfx::ppu::Coord ElementGrid::CalcContainerDimensions( ElementTileSize size )
 		case ElementTileSize::Mini:
 			return {
 				kElementTilesetMini.mTileWidth *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
+					static_cast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
 				kElementTilesetMini.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Micro:
 			return {
 				kElementTilesetMicro.mTileWidth *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxElementLevels ),
+					static_cast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
 				kElementTilesetMicro.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Full:
@@ -71,14 +71,15 @@ void ElementGrid::UpdateFromCharacter( state::ObjectRef const& character )
 {
 	mCache.UpdateFromCharacter( character, false );
 
-	ElementGridDisplayCache::Grid const& grid = mCache.GetGridRef();
-	for( size_t i_col = 0; i_col < grid.size(); i_col++ )
+	for( element::ElementLevel const& level : element::kElementLevels )
 	{
-		ElementGridDisplayCache::Column const& column = grid.at( i_col );
+		size_t const levelOffset = element::AsLevelOffset( level );
+
+		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( level );
 		for( size_t i_row = 0; i_row < column.size(); i_row++ )
 		{
 			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
-			mTileLayer.GetMutableTile( i_col, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+			mTileLayer.GetMutableTile( levelOffset, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
 		}
 	}
 }
@@ -118,23 +119,23 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 
 	if( tilesetDef.mUsesBorderSlots == false )
 	{
-		mTileLayer.ClearAndResize( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel );
+		mTileLayer.ClearAndResize( element::kNumElementLevels, character::kMaxSlotsPerElementLevel );
 	}
 	else
 	{
 		// NOTE: Extra pseudo-slots on side for borders
-		mTileLayer.ClearAndResize( character::kMaxElementLevels + 1, character::kMaxSlotsPerElementLevel + 1 );
-		for( size_t i_col = 0; i_col < character::kMaxElementLevels; i_col++ )
+		mTileLayer.ClearAndResize( element::kNumElementLevels + 1, character::kMaxSlotsPerElementLevel + 1 );
+		for( size_t i_col = 0; i_col < element::kNumElementLevels; i_col++ )
 		{
 			mTileLayer.GetMutableTile( i_col, character::kMaxSlotsPerElementLevel ).mIndex =
 				math::enum_bitcast( ElementTilesetIndex::TopBorder );
 		}
 		for( size_t i_row = 0; i_row < character::kMaxSlotsPerElementLevel; i_row++ )
 		{
-			mTileLayer.GetMutableTile( character::kMaxElementLevels, i_row ).mIndex =
+			mTileLayer.GetMutableTile( element::kNumElementLevels, i_row ).mIndex =
 				math::enum_bitcast( ElementTilesetIndex::LeftBorder );
 		}
-		mTileLayer.GetMutableTile( character::kMaxElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
+		mTileLayer.GetMutableTile( element::kNumElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
 			math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
 	}
 
