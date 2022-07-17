@@ -25,6 +25,7 @@ namespace RF::ui::controller {
 
 void TextLabel::SetFont( FontPurposeID purpose )
 {
+	RF_ASSERT( purpose != kInvalidFontPurposeID );
 	mFontPurposeID = purpose;
 
 	// Clear to cause font to re-load later
@@ -100,6 +101,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 
 	if( mDesiredHeight == 0 || mFontID == gfx::kInvalidManagedFontID )
 	{
+		RF_ASSERT( mFontPurposeID != kInvalidFontPurposeID );
 		Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurposeID, renderer.GetCurrentZoomFactor() );
 		mFontID = font.mManagedFontID;
 		mDesiredHeight = font.mFontHeight;
