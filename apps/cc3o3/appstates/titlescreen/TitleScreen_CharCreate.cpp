@@ -284,7 +284,7 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_ElemPwr" )->SetText( format5Pips( bonuses.mElemPwr, stats.mElemPwr, avail ) );
 
 	// Breadth vs depth
-	character::Stats::GridShape const shape = mChar.mStats.mGridShp;
+	character::GridShape const shape = mChar.mStats.mGridShp;
 	(void)shape; // TODO
 	uiManager.GetMutableControllerAs<ui::controller::TextLabel>( "S_Shape" )->SetText( format9( "TODO" ) );
 
@@ -306,7 +306,7 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 {
 	character::CharacterValidator const& charValidate = *gCharacterValidator;
 
-	static constexpr auto statChange = []( character::Stats::StatValue& stat, bool increase ) -> void //
+	static constexpr auto statChange = []( character::StatValue& stat, bool increase ) -> void //
 	{
 		if( stat < 5 && increase )
 		{

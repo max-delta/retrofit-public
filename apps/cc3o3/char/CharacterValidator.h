@@ -2,7 +2,6 @@
 #include "project.h"
 
 #include "cc3o3/char/CharFwd.h"
-#include "cc3o3/char/Stats.h"
 #include "cc3o3/company/CompanyFwd.h"
 
 #include "GameSprite/SpriteFwd.h"
@@ -64,8 +63,8 @@ public:
 
 	size_t GetMinimumTotalSlots( company::StoryTier storyTier ) const;
 	SlotsPerElemLevel GetMinimumSlotDistribution( company::StoryTier storyTier ) const;
-	size_t CalculateTotalSlots( Stats::StatValue elemPower, company::StoryTier storyTier ) const;
-	SlotsPerElemLevel CalculateSlotDistribution( Stats::StatValue elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const;
+	size_t CalculateTotalSlots( StatValue elemPower, company::StoryTier storyTier ) const;
+	SlotsPerElemLevel CalculateSlotDistribution( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier ) const;
 
 	void SanitizeForCharacterCreation( CharData& character ) const;
 	void SanitizeForGameplay( CharData& character ) const;

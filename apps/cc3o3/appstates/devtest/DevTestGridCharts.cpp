@@ -29,8 +29,8 @@ struct DevTestGridCharts::InternalState
 	size_t mCursor = 0;
 
 	uint8_t mStoryTier = 3;
-	character::Stats::StatValue mElemPower = 2;
-	character::Stats::GridShape mGridShape = character::Stats::GridShape::Standard;
+	character::StatValue mElemPower = 2;
+	character::GridShape mGridShape = character::GridShape::Standard;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 {
 	InternalState& internalState = *mInternalState;
 	character::CharacterValidator const& charValidate = *gCharacterValidator;
-	using StatValue = character::Stats::StatValue;
-	using GridShape = character::Stats::GridShape;
+	using StatValue = character::StatValue;
+	using GridShape = character::GridShape;
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
@@ -113,7 +113,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 				case 2:
 				{
 					uint8_t temp = static_cast<uint8_t>( static_cast<int8_t>( gridShape ) + ( increase ? 1 : -1 ) );
-					if( temp > character::Stats::kMaxShapeValue )
+					if( temp > character::kMaxGridShapeValue )
 					{
 						temp = 0;
 					}

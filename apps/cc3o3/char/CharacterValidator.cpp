@@ -262,7 +262,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 			val = math::integer_cast<uint8_t>( notAChar );
 			RF_CLANG_PUSH();
 			RF_CLANG_IGNORE( "-Wtautological-unsigned-zero-compare" ); // Min value may be zero
-			if( val < Stats::kMinStatValue || val > Stats::kMaxStatValue )
+			if( val < kMinStatValue || val > kMaxStatValue )
 			{
 				return false;
 			}
@@ -371,7 +371,7 @@ SlotsPerElemLevel CharacterValidator::GetMinimumSlotDistribution( company::Story
 
 
 
-size_t CharacterValidator::CalculateTotalSlots( Stats::StatValue elemPower, company::StoryTier storyTier ) const
+size_t CharacterValidator::CalculateTotalSlots( StatValue elemPower, company::StoryTier storyTier ) const
 {
 	size_t const min = GetMinimumTotalSlots( storyTier );
 	size_t const power = math::integer_cast<size_t>( elemPower );
@@ -412,7 +412,7 @@ size_t CharacterValidator::CalculateTotalSlots( Stats::StatValue elemPower, comp
 
 
 
-SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValue elemPower, Stats::GridShape gridShape, company::StoryTier storyTier ) const
+SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier ) const
 {
 	// NOTE: Non-optimal, but not expected to be called frequently
 
@@ -454,7 +454,6 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 					continue;
 				}
 
-				using GridShape = Stats::GridShape;
 				switch( gridShape )
 				{
 					case GridShape::Standard:
@@ -544,7 +543,6 @@ SlotsPerElemLevel CharacterValidator::CalculateSlotDistribution( Stats::StatValu
 								return false;
 							}
 
-							using GridShape = Stats::GridShape;
 							switch( gridShape )
 							{
 								case GridShape::Standard:
@@ -746,7 +744,7 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 			}
 		}
 
-		sanitizedStats.mGridShp = static_cast<Stats::GridShape>( math::Clamp<uint8_t>( 0, static_cast<uint8_t>( stats.mGridShp ), Stats::kMaxShapeValue ) );
+		sanitizedStats.mGridShp = static_cast<GridShape>( math::Clamp<uint8_t>( 0, static_cast<uint8_t>( stats.mGridShp ), kMaxGridShapeValue ) );
 		stats = sanitizedStats;
 	}
 }

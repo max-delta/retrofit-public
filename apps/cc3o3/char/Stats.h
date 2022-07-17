@@ -1,27 +1,15 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/char/CharFwd.h"
+
 
 namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct Stats
 {
-	using StatValue = uint8_t;
-	static constexpr StatValue kMinStatValue = 0;
-	static constexpr StatValue kDefaultStatValue = 0;
-	static constexpr StatValue kMaxStatValue = 10;
-
-	enum class GridShape : uint8_t
-	{
-		Standard = 0,
-		Wide,
-		Heavy,
-
-		NumShapeTypes
-	};
 	static constexpr GridShape kDefaultShape = GridShape::Standard;
-	static constexpr uint8_t kMaxShapeValue = static_cast<uint8_t>( GridShape::NumShapeTypes ) - 1;
 
 	StatValue mMHealth = kDefaultStatValue; // More max hit points
 
