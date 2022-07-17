@@ -28,6 +28,9 @@ enum : FontPurposeID
 
 	LargeMenuHeader,
 
+	ElementLabelMedium,
+	ElementLabelFull,
+
 	OverworldLabel,
 
 	BattleName,

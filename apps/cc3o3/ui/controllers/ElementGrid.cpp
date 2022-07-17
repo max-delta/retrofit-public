@@ -129,7 +129,7 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 			math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
 	}
 
-	RF_ASSERT( tilesetDef.mSupportsText == false );
+	RF_ASSERT( tilesetDef.mFont == kInvalidFontPurposeID );
 }
 
 

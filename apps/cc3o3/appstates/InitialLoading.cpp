@@ -119,6 +119,9 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		fontReg.RegisterFont( ui::font::SmallMenuSelection, vari8_2x );
 		fontReg.RegisterFont( ui::font::LargeMenuSelection, vari16_1x );
 		fontReg.RegisterFont( ui::font::LargeMenuHeader, vari16_1x );
+		fontReg.RegisterFont( ui::font::ElementLabelMedium, mono8_1x );
+		fontReg.RegisterFont( ui::font::ElementLabelMedium, vari8_2x );
+		fontReg.RegisterFont( ui::font::ElementLabelFull, vari16_1x );
 		fontReg.RegisterFont( ui::font::OverworldLabel, vari16_1x );
 		fontReg.RegisterFont( ui::font::BattleName, mono8_1x );
 		fontReg.RegisterFont( ui::font::BattleName, vari8_2x );

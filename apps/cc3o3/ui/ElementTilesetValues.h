@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/ui/UIFwd.h"
+
 #include "PPU/PPUFwd.h"
 
 
@@ -22,34 +24,34 @@ struct ElementTilesetDef
 	char const* mName = nullptr;
 	gfx::ppu::CoordElem mTileWidth = 0;
 	gfx::ppu::CoordElem mTileHeight = 0;
+	ui::FontPurposeID mFont = ui::kInvalidFontPurposeID;
 	bool mUsesBorderSlots = false;
-	bool mSupportsText = false;
 };
 
 static constexpr ElementTilesetDef kElementTilesetFull = {
 	ElementTileSize::Full,
 	"elemgrid_16_128",
 	128, 16,
-	false,
-	true };
+	cc::ui::font::ElementLabelFull,
+	false };
 static constexpr ElementTilesetDef kElementTilesetMedium = {
 	ElementTileSize::Medium,
 	"elemgrid_10_80",
 	80, 10,
-	false,
-	true };
+	cc::ui::font::ElementLabelMedium,
+	false };
 static constexpr ElementTilesetDef kElementTilesetMini = {
 	ElementTileSize::Mini,
 	"elemgrid_8_16",
 	16, 8,
-	false,
+	ui::kInvalidFontPurposeID,
 	false };
 static constexpr ElementTilesetDef kElementTilesetMicro = {
 	ElementTileSize::Micro,
 	"elemgrid_2_4",
 	4, 2,
-	true,
-	false };
+	ui::kInvalidFontPurposeID,
+	true };
 
 static constexpr int8_t kElementTilesetOffsetDark = 1;
 static constexpr int8_t kElementTilesetOffsetReserved = 2;

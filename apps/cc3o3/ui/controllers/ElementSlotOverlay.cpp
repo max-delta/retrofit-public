@@ -43,6 +43,9 @@ gfx::ppu::Coord ElementSlotOverlay::CalcContainerDimensions( ElementTileSize siz
 				kElementTilesetFull.mTileWidth,
 				kElementTilesetFull.mTileHeight };
 		case ElementTileSize::Medium:
+			return {
+				kElementTilesetMedium.mTileWidth,
+				kElementTilesetMedium.mTileHeight };
 		case ElementTileSize::Mini:
 		case ElementTileSize::Micro:
 		case ElementTileSize::Invalid:
@@ -102,13 +105,15 @@ void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& contai
 			tilesetDef = kElementTilesetFull;
 			break;
 		case ElementTileSize::Medium:
+			tilesetDef = kElementTilesetMedium;
+			break;
 		case ElementTileSize::Mini:
 		case ElementTileSize::Micro:
 		case ElementTileSize::Invalid:
 		default:
 			RF_DBGFAIL();
 	}
-	RF_ASSERT( tilesetDef.mSupportsText );
+	RF_ASSERT( tilesetDef.mFont != kInvalidFontPurposeID );
 
 	// Name
 	mNameLabel =
@@ -116,7 +121,7 @@ void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& contai
 			nameContainerID,
 			DefaultCreator<TextLabel>::Create() );
 	mNameLabel->SetJustification( ui::Justification::MiddleCenter );
-	mNameLabel->SetFont( ui::font::LargeMenuText );
+	mNameLabel->SetFont( tilesetDef.mFont );
 	mNameLabel->SetText( "UNSET" );
 	mNameLabel->SetColor( math::Color3f::kWhite );
 	mNameLabel->SetBorder( true );

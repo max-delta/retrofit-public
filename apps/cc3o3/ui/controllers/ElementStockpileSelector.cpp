@@ -154,7 +154,7 @@ void ElementStockpileSelector::PostInstanceAssign( UIContext& context, Container
 	RF_ASSERT( tilesetDef.mUsesBorderSlots == false );
 	mTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
 
-	RF_ASSERT( tilesetDef.mSupportsText );
+	RF_ASSERT( tilesetDef.mFont != kInvalidFontPurposeID );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
 		WeakPtr<ElementSlotOverlay> const overlay =

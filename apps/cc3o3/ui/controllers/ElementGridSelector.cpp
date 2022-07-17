@@ -47,6 +47,10 @@ gfx::ppu::Coord ElementGridSelector::CalcContainerDimensions( ElementTileSize si
 				kElementTilesetFull.mTileHeight *
 					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Medium:
+			return {
+				kElementTilesetMedium.mTileWidth,
+				kElementTilesetMedium.mTileHeight *
+					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Micro:
 		case ElementTileSize::Mini:
 		case ElementTileSize::Invalid:
@@ -193,6 +197,8 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 				tilesetDef = kElementTilesetFull;
 				break;
 			case ElementTileSize::Medium:
+				tilesetDef = kElementTilesetMedium;
+				break;
 			case ElementTileSize::Micro:
 			case ElementTileSize::Mini:
 			case ElementTileSize::Invalid:
@@ -206,7 +212,7 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 		RF_ASSERT( tilesetDef.mUsesBorderSlots == false );
 		mMainTileLayer.ClearAndResize( 1, character::kMaxSlotsPerElementLevel );
 
-		RF_ASSERT( tilesetDef.mSupportsText );
+		RF_ASSERT( tilesetDef.mFont != kInvalidFontPurposeID );
 		for( size_t i = 0; i < mNumSlots; i++ )
 		{
 			WeakPtr<ElementSlotOverlay> const overlay =
@@ -220,7 +226,7 @@ void ElementGridSelector::PostInstanceAssign( UIContext& context, Container& con
 	// Wing elements
 	{
 		static_assert( kWingTileset.mUsesBorderSlots == false );
-		static_assert( kWingTileset.mSupportsText == false );
+		static_assert( kWingTileset.mFont == kInvalidFontPurposeID );
 
 		mLeftWingTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kWingTileset.mName );
 		mRightWingTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( kWingTileset.mName );
