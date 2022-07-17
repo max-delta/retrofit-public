@@ -70,18 +70,7 @@ void ElementGrid::SetJustification( Justification::Value justification )
 void ElementGrid::UpdateFromCharacter( state::ObjectRef const& character )
 {
 	mCache.UpdateFromCharacter( character, false );
-
-	for( element::ElementLevel const& level : element::kElementLevels )
-	{
-		size_t const levelOffset = element::AsLevelOffset( level );
-
-		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( level );
-		for( size_t i_row = 0; i_row < column.size(); i_row++ )
-		{
-			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
-			mTileLayer.GetMutableTile( levelOffset, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
-		}
-	}
+	UpdateDisplay();
 }
 
 
@@ -89,6 +78,7 @@ void ElementGrid::UpdateFromCharacter( state::ObjectRef const& character )
 void ElementGrid::UpdateFromCache( ElementGridDisplayCache const& cache )
 {
 	mCache = cache;
+	UpdateDisplay();
 }
 
 
@@ -163,6 +153,23 @@ void ElementGrid::OnRender( UIConstContext const& context, Container const& cont
 	mTileLayer.Animate();
 
 	renderer.DrawTileLayer( mTileLayer );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void ElementGrid::UpdateDisplay()
+{
+	for( element::ElementLevel const& level : element::kElementLevels )
+	{
+		size_t const levelOffset = element::AsLevelOffset( level );
+
+		ElementGridDisplayCache::Column const& column = mCache.GetColumnRef( level );
+		for( size_t i_row = 0; i_row < column.size(); i_row++ )
+		{
+			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
+			mTileLayer.GetMutableTile( levelOffset, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+		}
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

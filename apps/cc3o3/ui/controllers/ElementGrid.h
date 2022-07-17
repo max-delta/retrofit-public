@@ -34,6 +34,12 @@ public:
 
 
 	//
+	// Private methods
+private:
+	void UpdateDisplay();
+
+
+	//
 	// Private data
 private:
 	ElementTileSize const mSize = ElementTileSize::Invalid;
