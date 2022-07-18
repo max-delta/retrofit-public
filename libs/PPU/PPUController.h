@@ -199,6 +199,9 @@ private:
 
 	math::Vector2f TileToDevice( TileElem xTile, TileElem yTile ) const;
 
+	template<typename TypeT, size_t MaxCountT, typename SizeT>
+	auto RenderStateListItemSelect( TypeT ( &list )[MaxCountT], SizeT& count, char const* name ) -> TypeT&;
+
 	void FullfillAllDeferredLoadRequests();
 	bool FullfillLoadRequest( LoadRequest const& request );
 

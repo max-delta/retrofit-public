@@ -19,6 +19,7 @@
 #include "core_math/math_clamps.h"
 #include "core_math/math_bits.h"
 #include "core_math/Lerp.h"
+#include "core_math/Rand.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
@@ -302,16 +303,8 @@ bool PPUController::DrawObject( Object const& object )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	// TODO: Thread-safe
-
-	if( targetState.mNumObjects >= PPUState::kMaxObjects )
-	{
-		RF_DBGFAIL_MSG( "Too many objects drawn this frame" );
-		return false;
-	}
-
-	Object& targetObject = targetState.mObjects[targetState.mNumObjects];
-	targetState.mNumObjects++;
+	Object& targetObject = RenderStateListItemSelect(
+		targetState.mObjects, targetState.mNumObjects, "Object" );
 
 	targetObject = object;
 	targetObject.mXCoord += mDrawOffset.x;
@@ -332,16 +325,8 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	// TODO: Thread-safe
-
-	if( targetState.mNumTileLayers >= PPUState::kMaxTileLayers )
-	{
-		RF_DBGFAIL_MSG( "Too many tile layers drawn this frame" );
-		return false;
-	}
-
-	TileLayer& targetTileLayer = targetState.mTileLayers[targetState.mNumTileLayers];
-	targetState.mNumTileLayers++;
+	TileLayer& targetTileLayer = RenderStateListItemSelect(
+		targetState.mTileLayers, targetState.mNumTileLayers, "TileLayer" );
 
 	targetTileLayer = tileLayer;
 	targetTileLayer.mXCoord += mDrawOffset.x;
@@ -406,10 +391,8 @@ bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeigh
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumStrings < PPUState::kMaxStrings );
-	PPUState::String& targetString = targetState.mStrings[targetState.mNumStrings];
-	targetState.mNumStrings++;
+	PPUState::String& targetString = RenderStateListItemSelect(
+		targetState.mStrings, targetState.mNumStrings, "String" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -628,10 +611,8 @@ bool PPUController::DebugDrawText( Coord pos, const char* fmt, ... )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumStrings < PPUDebugState::kMaxDebugStrings );
-	PPUDebugState::DebugString& targetString = targetState.mStrings[targetState.mNumStrings];
-	targetState.mNumStrings++;
+	PPUDebugState::DebugString& targetString = RenderStateListItemSelect(
+		targetState.mStrings, targetState.mNumStrings, "DebugString" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -670,10 +651,8 @@ bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desi
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	// TODO: Thread-safe
-	RF_ASSERT( targetState.mNumAuxStrings < PPUDebugState::kMaxDebugAuxStrings );
-	PPUDebugState::DebugAuxString& targetString = targetState.mAuxStrings[targetState.mNumAuxStrings];
-	targetState.mNumAuxStrings++;
+	PPUDebugState::DebugAuxString& targetString = RenderStateListItemSelect(
+		targetState.mAuxStrings, targetState.mNumAuxStrings, "DebugAuxString" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -722,14 +701,8 @@ bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLay
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	// TODO: Thread-safe
-	if( targetState.mNumLines >= PPUDebugState::kMaxDebugLines )
-	{
-		RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_PPU, "Too many debug lines, some will be ignored" ) );
-		return false;
-	}
-	PPUDebugState::DebugLine& targetLine = targetState.mLines[targetState.mNumLines];
-	targetState.mNumLines++;
+	PPUDebugState::DebugLine& targetLine = RenderStateListItemSelect(
+		targetState.mLines, targetState.mNumLines, "DebugLine" );
 
 	targetLine.mXCoord0 = p0.x + mDrawOffset.x;
 	targetLine.mYCoord0 = p0.y + mDrawOffset.y;
@@ -1662,6 +1635,34 @@ math::Vector2f PPUController::TileToDevice( TileElem xTile, TileElem yTile ) con
 	x *= heightToWidthNDC;
 
 	return math::Vector2f( x, y );
+}
+
+
+
+template<typename TypeT, size_t MaxCountT, typename SizeT>
+auto PPUController::RenderStateListItemSelect( TypeT ( &list )[MaxCountT], SizeT& count, char const* name ) -> TypeT&
+{
+	// TODO: Thread-safe
+
+	if( count >= MaxCountT )
+	{
+		RF_DBGFAIL_MSG( "Draw command overflow" );
+		RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_PPU, "Draw command overflow of type '%s', some will be ignored", name ) );
+
+		static uint32_t randVal = 0;
+		randVal = math::StableRandLCG( randVal );
+
+		size_t const randomIndex = randVal % MaxCountT;
+		TypeT& target = list[randomIndex];
+		return target;
+	}
+	else
+	{
+		RF_ASSERT( count < MaxCountT );
+		TypeT& target = list[count];
+		count++;
+		return target;
+	}
 }
 
 
