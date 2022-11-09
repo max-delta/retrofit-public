@@ -6,6 +6,7 @@
 	#pragma warning( push )
 	#pragma warning( disable : 4826 )
 	#pragma warning( disable : 4619 )
+	#pragma warning( disable : 5262 )
 #endif
 #include <gtest/gtest.h>
 #ifdef RF_PLATFORM_MSVC

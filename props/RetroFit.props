@@ -78,6 +78,11 @@
 				5246; %(DisableSpecificWarnings)
 			</DisableSpecificWarnings>
 
+			<!--Excessive, warns on unused global constexprs (like PI=3.14, etc)-->
+			<DisableSpecificWarnings>
+				5264; %(DisableSpecificWarnings)
+			</DisableSpecificWarnings>
+
 			<!--Don't care about variables just used for asserts-->
 			<DisableSpecificWarnings Condition="'$(RFConfig)'!='Debug'">
 				4189; %(DisableSpecificWarnings)
