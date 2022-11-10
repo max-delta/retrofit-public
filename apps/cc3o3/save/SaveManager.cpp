@@ -102,6 +102,7 @@ bool SaveManager::PerformInitialLoad( SaveName const& name )
 	// Read in loadouts
 	// TODO: Sanitize? Or atleast warn on invalid setup
 	gCompanyManager->ReadLoadoutsFromSave( saveRoot, appstate::InputHelpers::GetSinglePlayer() );
+	gCompanyManager->TODO_ValidateLoadouts();
 
 	return true;
 }

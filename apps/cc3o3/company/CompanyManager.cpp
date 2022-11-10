@@ -5,6 +5,7 @@
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/Character.h"
 #include "cc3o3/state/components/Loadout.h"
 #include "cc3o3/state/components/Progression.h"
 #include "cc3o3/state/components/Roster.h"
@@ -254,6 +255,40 @@ CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::comp::Pr
 
 
 
+void CompanyManager::UpdateRosterGridMasks( input::PlayerID const& playerID )
+{
+	RF_ASSERT( playerID != input::kInvalidPlayerID );
+
+	state::ObjectRef const company = FindCompanyObject( playerID );
+	RF_ASSERT( company.IsSet() );
+
+	WeakPtr<state::comp::Progression const> const prog = company.GetComponentInstanceT<state::comp::Progression>();
+	RF_ASSERT( prog != nullptr );
+
+	// For each roster member...
+	rftl::array<state::MutableObjectRef, kRosterSize> const rosterObjects = FindMutableRosterObjects( playerID );
+	for( size_t i_rosterIndex = 0; i_rosterIndex < kRosterSize; i_rosterIndex++ )
+	{
+		state::MutableObjectRef const& character = rosterObjects.at( i_rosterIndex );
+		if( character.IsSet() == false )
+		{
+			continue;
+		}
+
+		WeakPtr<state::comp::Loadout> const loadout = character.GetMutableComponentInstanceT<state::comp::Loadout>();
+		RF_ASSERT( loadout != nullptr );
+
+		WeakPtr<state::comp::Character const> const chara = character.GetComponentInstanceT<state::comp::Character>();
+		RF_ASSERT( chara != nullptr );
+		character::Stats const& stats = chara->mCharData.mStats;
+
+		// Calculate and set the grid mask
+		loadout->mGridMask = character::GridMask::CalcSlots( stats.mElemPwr, stats.mGridShp, prog->mStoryTier );
+	}
+}
+
+
+
 void CompanyManager::AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element )
 {
 	RF_ASSERT( character.IsSet() );
@@ -266,10 +301,7 @@ void CompanyManager::AssignElementToCharacter( state::MutableObjectRef character
 
 void CompanyManager::AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element )
 {
-	RF_ASSERT( slot.first != element::kInvalidElementLevel );
-	RF_ASSERT( slot.first >= element::kMinElementLevel );
-	RF_ASSERT( slot.first <= element::kMaxElementLevel );
-	loadout.mEquippedElements.At( slot ) = element;
+	loadout.AssignEquippedElement( slot, element );
 }
 
 

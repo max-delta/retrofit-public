@@ -59,6 +59,9 @@ public:
 	ElementCounts CalcTotalElements( state::ObjectRef const& company ) const;
 	ElementCounts CalcTotalElements( state::comp::Progression const& progression ) const;
 
+	// The characters' grid limitations are determined by stats and progression
+	void UpdateRosterGridMasks( input::PlayerID const& playerID );
+
 	// Elements are assigned without validation (performed seperately)
 	void AssignElementToCharacter( state::MutableObjectRef character, character::ElementSlotIndex slot, element::ElementIdentifier element );
 	void AssignElementToCharacter( state::comp::Loadout& loadout, character::ElementSlotIndex slot, element::ElementIdentifier element );

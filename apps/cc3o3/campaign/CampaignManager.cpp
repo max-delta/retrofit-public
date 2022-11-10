@@ -387,6 +387,9 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 		// HACK: Set some fake progression
 		progression.mStoryTier = 6;
+
+		// Apply the effects of progression
+		gCompanyManager->UpdateRosterGridMasks( playerID );
 	}
 }
 

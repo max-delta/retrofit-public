@@ -62,6 +62,17 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 
 
 
+void ElementSlotDisplayCache::MaskOut()
+{
+	mIdentifier = element::kInvalidElementIdentifier;
+	mName = {};
+	mTilesetIndex = ElementTilesetIndex::ReservedHashed;
+	// TODO: Make this empty, fix up UI cursor logic and whatnot
+	//mTilesetIndex = ElementTilesetIndex::Empty;
+}
+
+
+
 void ElementSlotDisplayCache::Unallocate()
 {
 	mIdentifier = element::kInvalidElementIdentifier;

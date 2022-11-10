@@ -1,8 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/char/GridMask.h"
 #include "cc3o3/ui/ElementSlotDisplayCache.h"
-#include "cc3o3/char/CharFwd.h"
 #include "cc3o3/state/StateFwd.h"
 
 
@@ -36,7 +36,8 @@ public:
 	//
 	// Private data
 private:
-	Grid mGrid;
+	character::GridMask mGridMask = {};
+	Grid mGrid = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

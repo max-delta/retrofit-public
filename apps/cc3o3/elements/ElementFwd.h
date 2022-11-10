@@ -33,6 +33,14 @@ static constexpr size_t AsLevelOffset( ElementLevel level )
 {
 	return static_cast<size_t>( level - kMinElementLevel );
 }
+static constexpr ElementLevel FromLevelOffset( size_t offset )
+{
+	if( offset >= kNumElementLevels )
+	{
+		return kInvalidElementLevel;
+	}
+	return static_cast<ElementLevel>( kMinElementLevel + offset );
+}
 
 struct ElementDesc;
 
