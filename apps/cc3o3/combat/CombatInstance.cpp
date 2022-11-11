@@ -364,11 +364,55 @@ void CombatInstance::IncreaseStamina( FighterID fighterID, SimVal value )
 void CombatInstance::DecreaseStamina( FighterID fighterID, SimVal value )
 {
 	Fighter& fighter = GetMutableFighterRef( fighterID ).mFighter;
+	RF_ASSERT( fighter.mMaxStamina <= kMaxStamina );
 	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
-	RF_ASSERT( fighter.mCurStamina <= kMaxStamina );
+	RF_ASSERT( fighter.mCurStamina <= fighter.mMaxStamina );
 	fighter.mCurStamina -= value;
 	RF_ASSERT( fighter.mCurStamina >= kMinStamina );
-	RF_ASSERT( fighter.mCurStamina <= kMaxStamina );
+	RF_ASSERT( fighter.mCurStamina <= fighter.mMaxStamina );
+}
+
+
+
+void CombatInstance::IncreaseCharge( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID ).mFighter;
+	RF_ASSERT( fighter.mMaxCharge <= kMaxCharge );
+	RF_ASSERT( fighter.mCurCharge >= kMinCharge );
+	RF_ASSERT( fighter.mCurCharge <= fighter.mMaxCharge );
+	fighter.mCurCharge = math::Min( math::integer_cast<SimVal>( fighter.mCurCharge + value ), fighter.mMaxCharge );
+	RF_ASSERT( fighter.mCurCharge >= kMinCharge );
+	RF_ASSERT( fighter.mCurCharge <= fighter.mMaxCharge );
+}
+
+
+
+void CombatInstance::DecreaseCharge( FighterID fighterID, SimVal value )
+{
+	Fighter& fighter = GetMutableFighterRef( fighterID ).mFighter;
+	RF_ASSERT( fighter.mMaxCharge <= kMaxCharge );
+	RF_ASSERT( fighter.mCurCharge >= kMinCharge );
+	RF_ASSERT( fighter.mCurCharge <= fighter.mMaxCharge );
+	static_assert( kMinCharge == 0 );
+	SimVal const maxLoss = fighter.mCurCharge;
+	fighter.mCurCharge -= math::Min( value, maxLoss );
+	RF_ASSERT( fighter.mCurCharge >= kMinCharge );
+	RF_ASSERT( fighter.mCurCharge <= fighter.mMaxCharge );
+}
+
+
+
+bool CombatInstance::CanPerformAction( FighterID attackerID ) const
+{
+	Fighter const attacker = GetFighter( attackerID );
+
+	if( attacker.mCurHealth <= 0 )
+	{
+		// Attacker is dead
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -392,13 +436,12 @@ CombatInstance::FighterIDs CombatInstance::GetValidAttackTargets( FighterID atta
 
 bool CombatInstance::CanPerformAttack( FighterID attackerID ) const
 {
-	Fighter const attacker = GetFighter( attackerID );
-
-	if( attacker.mCurHealth <= 0 )
+	if( CanPerformAction( attackerID ) == false )
 	{
-		// Attacker is dead
 		return false;
 	}
+
+	Fighter const attacker = GetFighter( attackerID );
 
 	if( attacker.mCurStamina <= 0 )
 	{
@@ -494,10 +537,40 @@ AttackResult CombatInstance::ExecuteAttack( FighterID attackerID, FighterID defe
 	attacker.mComboMeter = result.mNewComboMeter;
 	DecreaseStamina( attackerID, engine.LoCalcAttackStaminaCost( profile.mAttackStrength ) );
 	DecreaseHealth( defenderID, result.mDamage );
+	if( result.mHit )
+	{
+		IncreaseCharge( attackerID, engine.LoCalcAttackChargeGain( profile.mAttackStrength ) );
+	}
 	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
 	PassTime( attackerID );
 
 	return result;
+}
+
+
+
+bool CombatInstance::CanPerformCast( FighterID attackerID ) const
+{
+	if( CanPerformAction( attackerID ) == false )
+	{
+		return false;
+	}
+
+	Fighter const attacker = GetFighter( attackerID );
+
+	if( attacker.mCurStamina <= 0 )
+	{
+		// No stamina
+		return false;
+	}
+
+	if( attacker.mCurCharge <= 0 )
+	{
+		// No charge
+		return false;
+	}
+
+	return true;
 }
 
 
@@ -619,6 +692,8 @@ void CombatInstance::LoadFighterFromCharacter( Fighter& fighter, state::ObjectRe
 	fighter.mCurHealth = vitality->mCurHealth;
 	fighter.mMaxStamina = kMaxStamina;
 	fighter.mCurStamina = vitality->mCurStamina;
+	fighter.mMaxCharge = kMaxCharge;
+	fighter.mCurCharge = vitality->mCurCharge;
 	fighter.mPhysAtk = stats.mPhysAtk;
 	fighter.mPhysDef = stats.mPhysDef;
 	fighter.mElemAtk = stats.mElemAtk;
@@ -646,6 +721,7 @@ void CombatInstance::SaveFighterToCharacter( state::MutableObjectRef const& char
 	// NOTE: Stats are immutable in combat, and thus not saved back out
 	vitality->mCurHealth = fighter.mCurHealth;
 	vitality->mCurStamina = fighter.mCurStamina;
+	vitality->mCurCharge = fighter.mCurCharge;
 	combo->mComboMeter = fighter.mComboMeter;
 	combo->mComboTarget = fighter.mComboTarget.GetAsRaw();
 }
@@ -656,6 +732,7 @@ void CombatInstance::InitializeFighter( Fighter& fighter ) const
 {
 	fighter.mCurHealth = fighter.mMaxHealth;
 	fighter.mCurStamina = fighter.mMaxStamina;
+	fighter.mCurCharge = kMinCharge;
 	fighter.mComboMeter = {};
 	fighter.mComboTarget = {};
 }

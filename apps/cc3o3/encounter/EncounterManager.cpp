@@ -159,6 +159,7 @@ void EncounterManager::PrepareHackEnemyEncounter( EncounterID const& encounterID
 		state::comp::Vitality& vitality = *spawn.GetMutableComponentInstanceT<state::comp::Vitality>();
 		vitality.mCurHealth = gCombatEngine->LoCalcMaxHealth( stats.mMHealth, entityClass );
 		vitality.mCurStamina = combat::kMaxStamina;
+		vitality.mCurCharge = combat::kMinCharge;
 	}
 }
 

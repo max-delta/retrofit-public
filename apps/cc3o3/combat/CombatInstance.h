@@ -101,6 +101,10 @@ public:
 	void DecreaseHealth( FighterID fighterID, SimVal value );
 	void IncreaseStamina( FighterID fighterID, SimVal value );
 	void DecreaseStamina( FighterID fighterID, SimVal value );
+	void IncreaseCharge( FighterID fighterID, SimVal value );
+	void DecreaseCharge( FighterID fighterID, SimVal value );
+
+	bool CanPerformAction( FighterID attackerID ) const;
 
 	FighterIDs GetValidAttackTargets( FighterID attackerID ) const;
 	bool CanPerformAttack( FighterID attackerID ) const;
@@ -108,6 +112,8 @@ public:
 	bool CanPerformAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackProfile PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
+
+	bool CanPerformCast( FighterID attackerID ) const;
 
 	void PassTime( FighterID initiatorID );
 

@@ -82,6 +82,13 @@ SignedDisplayVal CombatEngine::DisplayStamina( SimDelta staminaVal, EntityClass 
 
 
 
+DisplayVal CombatEngine::DisplayCharge( SimVal chargeVal, EntityClass entityClass ) const
+{
+	return chargeVal;
+}
+
+
+
 DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const
 {
 	static constexpr SimVal kMinStat = 0;
@@ -235,6 +242,14 @@ SimVal CombatEngine::LoCalcIdleStaminaGainOpposingTurn() const
 
 
 SimVal CombatEngine::LoCalcAttackStaminaCost( SimVal attackStrength ) const
+{
+	RF_ASSERT( attackStrength > 0 );
+	return attackStrength;
+}
+
+
+
+SimVal CombatEngine::LoCalcAttackChargeGain( SimVal attackStrength ) const
 {
 	RF_ASSERT( attackStrength > 0 );
 	return attackStrength;

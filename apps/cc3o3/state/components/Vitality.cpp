@@ -9,6 +9,7 @@ void Vitality::Bind( Window& sharedWindow, Window& privateWindow, VariableIdenti
 {
 	mCurHealth.Bind( sharedWindow, parent.GetChild( "hp" ), mAlloc );
 	mCurStamina.Bind( sharedWindow, parent.GetChild( "stamina" ), mAlloc );
+	mCurCharge.Bind( sharedWindow, parent.GetChild( "charge" ), mAlloc );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

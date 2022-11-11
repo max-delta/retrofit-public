@@ -1274,7 +1274,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				marker = 'X';
 			}
 			ppu.DebugDrawText( { x, y },
-				"%c%i:%i:%i  HP %03i/%03i  Sta %1i/%1i  Combo %2i -> %i:%i:%i",
+				"%c%i:%i:%i  HP %03i/%03i  Sta %1i/%1i  Chr %01i/%01i  Combo %2i -> %i:%i:%i",
 				marker,
 				fighterID.GetTeamIndex(),
 				fighterID.GetPartyIndex(),
@@ -1283,6 +1283,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				fighter.mMaxHealth,
 				fighter.mCurStamina,
 				fighter.mMaxStamina,
+				fighter.mCurCharge,
+				fighter.mMaxCharge,
 				fighter.mComboMeter,
 				fighter.mComboTarget.GetTeamIndex(),
 				fighter.mComboTarget.GetPartyIndex(),

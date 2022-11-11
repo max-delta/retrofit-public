@@ -235,8 +235,10 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 			attacker.mMaxHealth = 1;
 			attacker.mCurHealth = attacker.mMaxHealth;
-			attacker.mMaxStamina = 7;
+			attacker.mMaxStamina = combat::kMaxStamina;
 			attacker.mCurStamina = attacker.mMaxStamina;
+			attacker.mMaxCharge = combat::kMaxCharge;
+			attacker.mCurCharge = attacker.mMaxCharge;
 			attacker.mPhysAtk = atk;
 			attacker.mTechniq = tech;
 			attacker.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );

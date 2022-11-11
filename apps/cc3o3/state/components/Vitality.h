@@ -35,6 +35,7 @@ public:
 
 	rollback::AutoVar<combat::LargeSimVal> mCurHealth;
 	rollback::AutoVar<combat::SimDelta> mCurStamina;
+	rollback::AutoVar<combat::SimVal> mCurCharge;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

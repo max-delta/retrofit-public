@@ -67,6 +67,7 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		combat::DisplayVal const maxHP = combatEngine.DisplayHealth( fighter.mMaxHealth, entityClass );
 		combat::DisplayVal const curHP = combatEngine.DisplayHealth( fighter.mCurHealth, entityClass );
 		combat::SignedDisplayVal const curStamina = combatEngine.DisplayStamina( fighter.mCurStamina, entityClass );
+		combat::DisplayVal const curCharge = combatEngine.DisplayCharge( fighter.mCurCharge, entityClass );
 
 		if( selected )
 		{
@@ -83,10 +84,8 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 		{
 			mInfoRows.at( 0 )->SetText( charData.mDescription.mName );
 
-			// TODO: Grid charge
 			// TODO: Make this something graphical instead
-			static size_t HACK_unknownRoller = 0;
-			size_t const gridChargeLevel = ( ( HACK_unknownRoller++ ) / 60 ) % ( element::kMaxElementLevel + 1 );
+			size_t const gridChargeLevel = curCharge;
 			RF_ASSERT( gridChargeLevel <= element::kMaxElementLevel );
 			lineBuf.fill( '-' );
 			lineBuf.at( 0 ) = '[';

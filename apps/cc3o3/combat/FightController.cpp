@@ -288,8 +288,8 @@ void FightController::BufferAttack( uint8_t attackerIndex, uint8_t defenderIndex
 
 bool FightController::CanCharacterCastElement( uint8_t attackerIndex ) const
 {
-	// TODO
-	return false;
+	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
+	return mCombatInstance->CanPerformCast( attackerID );
 }
 
 

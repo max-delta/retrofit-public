@@ -40,6 +40,7 @@ public:
 public:
 	DisplayVal DisplayHealth( LargeSimVal healthVal, EntityClass entityClass ) const;
 	SignedDisplayVal DisplayStamina( SimDelta staminaVal, EntityClass entityClass ) const;
+	DisplayVal DisplayCharge( SimVal chargeVal, EntityClass entityClass ) const;
 	DisplayVal DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const;
 
 
@@ -62,6 +63,9 @@ public:
 
 	// Attacks cost stamina based on strength
 	SimVal LoCalcAttackStaminaCost( SimVal attackStrength ) const;
+
+	// Attacks grant charge based on strength
+	SimVal LoCalcAttackChargeGain( SimVal attackStrength ) const;
 
 	// Attack accuracy is affected by the strength of the attack
 	SimVal LoCalcAttackAccuracy( SimVal attackStrength ) const;
