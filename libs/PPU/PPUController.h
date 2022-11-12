@@ -49,6 +49,13 @@ private:
 		Modify,
 		Reload
 	};
+	enum class DrawOverflowBehavior : uint8_t
+	{
+		OverwriteSilent = 0,
+		OverwriteAssert,
+		FlickerSilent,
+		FlickerAssert,
+	};
 	using StateBufferID = uint8_t;
 	static constexpr StateBufferID kInvalidStateBufferID = rftl::numeric_limits<StateBufferID>::max();
 	static constexpr size_t kNumStateBuffers = 3;
@@ -199,7 +206,7 @@ private:
 
 	math::Vector2f TileToDevice( TileElem xTile, TileElem yTile ) const;
 
-	template<typename TypeT, size_t MaxCountT, typename SizeT>
+	template<DrawOverflowBehavior BehaviorT, typename TypeT, size_t MaxCountT, typename SizeT>
 	auto RenderStateListItemSelect( TypeT ( &list )[MaxCountT], SizeT& count, char const* name ) -> TypeT&;
 
 	void FullfillAllDeferredLoadRequests();

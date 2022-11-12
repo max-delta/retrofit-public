@@ -303,8 +303,9 @@ bool PPUController::DrawObject( Object const& object )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	Object& targetObject = RenderStateListItemSelect(
-		targetState.mObjects, targetState.mNumObjects, "Object" );
+	Object& targetObject =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerAssert>(
+			targetState.mObjects, targetState.mNumObjects, "Object" );
 
 	targetObject = object;
 	targetObject.mXCoord += mDrawOffset.x;
@@ -325,8 +326,9 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	TileLayer& targetTileLayer = RenderStateListItemSelect(
-		targetState.mTileLayers, targetState.mNumTileLayers, "TileLayer" );
+	TileLayer& targetTileLayer =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerAssert>(
+			targetState.mTileLayers, targetState.mNumTileLayers, "TileLayer" );
 
 	targetTileLayer = tileLayer;
 	targetTileLayer.mXCoord += mDrawOffset.x;
@@ -391,8 +393,9 @@ bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeigh
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
-	PPUState::String& targetString = RenderStateListItemSelect(
-		targetState.mStrings, targetState.mNumStrings, "String" );
+	PPUState::String& targetString =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerAssert>(
+			targetState.mStrings, targetState.mNumStrings, "String" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -611,8 +614,9 @@ bool PPUController::DebugDrawText( Coord pos, const char* fmt, ... )
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	PPUDebugState::DebugString& targetString = RenderStateListItemSelect(
-		targetState.mStrings, targetState.mNumStrings, "DebugString" );
+	PPUDebugState::DebugString& targetString =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerSilent>(
+			targetState.mStrings, targetState.mNumStrings, "DebugString" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -651,8 +655,9 @@ bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desi
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	PPUDebugState::DebugAuxString& targetString = RenderStateListItemSelect(
-		targetState.mAuxStrings, targetState.mNumAuxStrings, "DebugAuxString" );
+	PPUDebugState::DebugAuxString& targetString =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerSilent>(
+			targetState.mAuxStrings, targetState.mNumAuxStrings, "DebugAuxString" );
 
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
@@ -701,8 +706,9 @@ bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLay
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
-	PPUDebugState::DebugLine& targetLine = RenderStateListItemSelect(
-		targetState.mLines, targetState.mNumLines, "DebugLine" );
+	PPUDebugState::DebugLine& targetLine =
+		RenderStateListItemSelect<DrawOverflowBehavior::FlickerSilent>(
+			targetState.mLines, targetState.mNumLines, "DebugLine" );
 
 	targetLine.mXCoord0 = p0.x + mDrawOffset.x;
 	targetLine.mYCoord0 = p0.y + mDrawOffset.y;
@@ -1639,22 +1645,58 @@ math::Vector2f PPUController::TileToDevice( TileElem xTile, TileElem yTile ) con
 
 
 
-template<typename TypeT, size_t MaxCountT, typename SizeT>
+template<PPUController::DrawOverflowBehavior BehaviorT, typename TypeT, size_t MaxCountT, typename SizeT>
 auto PPUController::RenderStateListItemSelect( TypeT ( &list )[MaxCountT], SizeT& count, char const* name ) -> TypeT&
 {
+	static_assert(
+		0 < MaxCountT,
+		"List is somehow of max size zero" );
+	static_assert(
+		MaxCountT <= rftl::numeric_limits<SizeT>::max(),
+		"Count variable type is not large enough to reference all items in list" );
+
 	// TODO: Thread-safe
 
 	if( count >= MaxCountT )
 	{
-		RF_DBGFAIL_MSG( "Draw command overflow" );
-		RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_PPU, "Draw command overflow of type '%s', some will be ignored", name ) );
+		// Draw command would overflow
 
-		static uint32_t randVal = 0;
-		randVal = math::StableRandLCG( randVal );
+		static constexpr bool kAssert =
+			BehaviorT == DrawOverflowBehavior::OverwriteAssert ||
+			BehaviorT == DrawOverflowBehavior::FlickerAssert;
+		static constexpr bool kFlicker =
+			BehaviorT == DrawOverflowBehavior::FlickerSilent ||
+			BehaviorT == DrawOverflowBehavior::FlickerAssert;
 
-		size_t const randomIndex = randVal % MaxCountT;
-		TypeT& target = list[randomIndex];
-		return target;
+		if constexpr( kAssert )
+		{
+			// Some types are important enough we want to complain louder
+			RF_DBGFAIL_MSG( "Draw command overflow" );
+		}
+		RF_ONCEPER_MINUTE( RFLOG_WARNING( nullptr, RFCAT_PPU, "Draw command overflow of type '%s', some will be ignored", name ) );
+
+		if constexpr( kFlicker )
+		{
+			// Make the screen flicker so the commands are atleast somewhat
+			//  visible, even if they look terrible
+
+			static uint32_t randVal = 0;
+			randVal = math::StableRandLCG( randVal );
+
+			size_t const randomIndex = randVal % MaxCountT;
+			TypeT& target = list[randomIndex];
+			return target;
+		}
+		else
+		{
+			// Just overwrite the last entry, which prevents flickering but
+			//  essentially truncates the list, and may cause something to never
+			//  be seen if conditions are unlucky enough
+
+			static constexpr size_t kLastIndex = MaxCountT - 1;
+			TypeT& target = list[kLastIndex];
+			return target;
+		}
 	}
 	else
 	{
