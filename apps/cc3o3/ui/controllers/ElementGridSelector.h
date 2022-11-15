@@ -42,6 +42,7 @@ public:
 	void DarkenAll();
 
 	character::ElementSlotIndex GetSelectedIndex( UIConstContext const& context ) const;
+	bool SetSelectedIndex( UIContext& context, character::ElementSlotIndex index );
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 

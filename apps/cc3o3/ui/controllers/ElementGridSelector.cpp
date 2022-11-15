@@ -94,6 +94,26 @@ character::ElementSlotIndex ElementGridSelector::GetSelectedIndex( UIConstContex
 
 
 
+bool ElementGridSelector::SetSelectedIndex( UIContext& context, character::ElementSlotIndex index )
+{
+	element::ElementLevel const level = index.first;
+	RF_ASSERT( level >= element::kMinElementLevel );
+	RF_ASSERT( level <= element::kMaxElementLevel );
+
+	bool const rowSuccess = SetSlotIndexWithSoftFocus( context, index.second );
+	if( rowSuccess == false )
+	{
+		return false;
+	}
+
+	mLevel = level;
+
+	UpdateDisplay();
+	return true;
+}
+
+
+
 void ElementGridSelector::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	RF_ASSERT( mMainTileLayer.NumTiles() > 0 );
