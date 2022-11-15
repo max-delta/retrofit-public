@@ -13,6 +13,7 @@
 #include "cc3o3/state/components/UINavigation.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CombatCharacter.h"
+#include "cc3o3/ui/controllers/ElementGridSelector.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -123,6 +124,7 @@ public:
 	void SanitizeUIState( ui::UIContext& context );
 
 	void UpdateAttackMenu( ui::UIContext& context );
+	void UpdateElementSelector( ui::UIContext& context );
 
 	bool CanControlCharAct() const;
 	bool EnsureControlCharCanAct( int8_t direction, bool& wasChanged );
@@ -149,6 +151,7 @@ public:
 	uint8_t mTargetingIndex = 0;
 	WeakPtr<ui::controller::ListBox> mActionMenu;
 	WeakPtr<ui::controller::ListBox> mAttackMenu;
+	WeakPtr<ui::controller::ElementGridSelector> mElementGridSelector;
 };
 
 
@@ -215,7 +218,10 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	}
 	else if( currentState == ControlStates::kElement )
 	{
-		RF_TODO_BREAK();
+		character::ElementSlotIndex const gridIndex(
+			navigation.mCursorIndex.at( 0 ),
+			navigation.mCursorIndex.at( 1 ) );
+		mElementGridSelector->SetSelectedIndex( context, gridIndex );
 	}
 	else
 	{
@@ -253,7 +259,9 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 	}
 	else if( currentState == ControlStates::kElement )
 	{
-		RF_TODO_BREAK();
+		character::ElementSlotIndex const gridIndex = mElementGridSelector->GetSelectedIndex( context );
+		navigation.mCursorIndex.at( 0 ) = math::integer_cast<uint8_t>( gridIndex.first );
+		navigation.mCursorIndex.at( 1 ) = math::integer_cast<uint8_t>( gridIndex.second );
 	}
 	else
 	{
@@ -335,6 +343,19 @@ void Gameplay_Battle::InternalState::UpdateAttackMenu( ui::UIContext& context )
 
 	mAttackMenu->SetText( text );
 	mAttackMenu->SetSlotIndexWithSoftFocus( context, bestAttackIndex );
+}
+
+
+
+void Gameplay_Battle::InternalState::UpdateElementSelector( ui::UIContext& context )
+{
+	combat::FightController const& fightController = *mFightController;
+	combat::CombatInstance const& mainInstance = *fightController.GetCombatInstance();
+
+	combat::FighterID const fighterID = fightController.GetCharacterByIndex( mControlCharIndex );
+	state::ObjectRef const character = mainInstance.GetCharacter( fighterID );
+
+	mElementGridSelector->UpdateFromCharacter( character );
 }
 
 
@@ -816,7 +837,38 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			internalState.mAttackMenu = attackMenu;
 		}
 
-		// TODO: Element state
+		// Element state
+		{
+			static constexpr ui::ElementTileSize kGridSize =
+				ui::ElementTileSize::Medium;
+			gfx::ppu::Coord const gridDimensions =
+				ui::controller::ElementGridSelector::CalcContainerDimensions(
+					kGridSize );
+
+			// Floater
+			// TODO: Come up with a better achoring source than the control
+			//  passthrough, but keep the focus child to the control passthrough,
+			//  and manage the visibility logic for the selector some other way
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					elementPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::Floater>::Create(
+						gridDimensions.x,
+						gridDimensions.y,
+						ui::Justification::BottomLeft ) );
+			floater->SetOffset( uiContext, { gfx::ppu::kTileSize / 2, -gfx::ppu::kTileSize / 4 } );
+			uiManager.AdjustRecommendedRenderDepth( floater->GetContainerID(), -20 );
+
+			// Element grid selector
+			WeakPtr<ui::controller::ElementGridSelector> const elementGridSelector =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::ElementGridSelector>::Create(
+						kGridSize ) );
+			elementGridSelector->AddAsChildToFocusTreeNode(
+				uiContext, *elementPassthrough->GetMutableFocusTreeNode( uiContext ) );
+			internalState.mElementGridSelector = elementGridSelector;
+		}
 
 		// TODO: Sanitize UI state against battle state on tick start instead
 		internalState.SwitchControlState( uiContext, ControlStates::kAction );
@@ -890,6 +942,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					else if( internalState.mTargetingReason == TargetingReason::kElement )
 					{
 						// Ascend to element menu
+						internalState.UpdateElementSelector( uiContext );
 						internalState.SwitchControlState( uiContext, ControlState::kElement );
 					}
 					else
@@ -973,6 +1026,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canCast )
 						{
 							// Descend to element menu
+							internalState.UpdateElementSelector( uiContext );
 							internalState.SwitchControlState( uiContext, ControlState::kElement );
 						}
 						else
@@ -1081,6 +1135,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canCast )
 						{
 							// Descend to element menu
+							internalState.UpdateElementSelector( uiContext );
 							internalState.SwitchControlState( uiContext, ControlState::kElement );
 						}
 						else
@@ -1110,9 +1165,17 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					// Ascend to action menu
 					internalState.SwitchControlState( uiContext, ControlState::kAction );
 				}
-				else
+				else if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 				{
-					// TODO
+					// TODO: Probably all elements have a targeting concept, so we
+					//  should always be able to go into targeting mode to have
+					//  the player confirm the cast, which is probably where the
+					//  result previews will happen
+					RF_TODO_BREAK_MSG( "Handle the logic for trying to cast an element" );
+				}
+				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
+				{
+					RF_DBGFAIL_MSG( "Expecteded the grid selector to swallow these inputs" );
 				}
 			}
 			else
