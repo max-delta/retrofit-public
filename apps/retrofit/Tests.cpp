@@ -200,10 +200,10 @@ void InitDrawTest()
 	testTileLayer.mZLayer = 1;
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
-	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
-	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
+	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 
 	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 0, 1 } );
 	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 0, 2 } );
