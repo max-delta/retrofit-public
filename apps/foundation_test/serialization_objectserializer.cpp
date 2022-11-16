@@ -15,14 +15,23 @@ TEST( Serialization, ObjectSerializerSanityCheck )
 
 	{
 		DiagnosticExporter diag{ true };
-		bool const success = ObjectSerializer::SerializeSingleObject( diag, rftype::GetClassInfo<decltype( obj )>(), &obj );
-		ASSERT_TRUE( success );
+
+		bool const serializeSuccess = ObjectSerializer::SerializeSingleObject( diag, rftype::GetClassInfo<decltype( obj )>(), &obj );
+		ASSERT_TRUE( serializeSuccess );
+
+		bool const finalizeSuccess = diag.Root_FinalizeExport();
+		ASSERT_TRUE( finalizeSuccess );
 	}
 
 	{
 		XmlExporter xml{};
-		bool const success = ObjectSerializer::SerializeSingleObject( xml, rftype::GetClassInfo<decltype( obj )>(), &obj );
-		ASSERT_TRUE( success );
+
+		bool const serializeSuccess = ObjectSerializer::SerializeSingleObject( xml, rftype::GetClassInfo<decltype( obj )>(), &obj );
+		ASSERT_TRUE( serializeSuccess );
+
+		bool const finalizeSuccess = xml.Root_FinalizeExport();
+		ASSERT_TRUE( finalizeSuccess );
+
 		rftl::string string;
 		ASSERT_TRUE( xml.WriteToString( string ) );
 	}
