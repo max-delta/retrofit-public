@@ -69,6 +69,8 @@ public:
 	// Save/load loadouts to/from disk
 	void ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
 	void WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
+	void ReadLegacyLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
+	void WriteLegacyLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID );
 
 	// TODO: Need various validation machinery:
 	//  * Loadout setup / UI helpers

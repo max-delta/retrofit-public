@@ -12,6 +12,11 @@
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
+#include "RFType/CreateClassInfoDeclaration.h"
+#include "Serialization/ObjectSerializer.h"
+#include "Serialization/DiagnosticExporter.h"
+#include "Serialization/XmlExporter.h"
+
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
@@ -308,6 +313,103 @@ void CompanyManager::AssignElementToCharacter( state::comp::Loadout& loadout, ch
 
 void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
 {
+	// TODO: Remove
+	ReadLegacyLoadoutsFromSave( saveRoot, playerID );
+
+	// TODO: ObjectDeserializer
+	// TODO: BinaryImporter
+}
+
+
+
+void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
+{
+	// TODO: Remove
+	WriteLegacyLoadoutsToSave( saveRoot, playerID );
+
+	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
+
+	// TODO: BinaryExporter
+	static constexpr char kFileExtension[] = ".xml";
+	using PlaceholderExporter = serialization::XmlExporter;
+	rftl::string buffer;
+
+	rftl::array<state::ObjectRef, kRosterSize> const rosterObjects = FindRosterObjects( playerID );
+	for( size_t i_rosterIndex = 0; i_rosterIndex < kRosterSize; i_rosterIndex++ )
+	{
+		state::ObjectRef const& character = rosterObjects.at( i_rosterIndex );
+		if( character.IsSet() == false )
+		{
+			continue;
+		}
+
+		WeakPtr<state::comp::Loadout const> const loadout = character.GetComponentInstanceT<state::comp::Loadout>();
+		RF_ASSERT( loadout != nullptr );
+
+		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) + kFileExtension );
+		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( loadoutFilePath );
+		if( fileHandle == nullptr )
+		{
+			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to open loadout for write" );
+			continue;
+		}
+
+		// Serialize
+		buffer.clear();
+		{
+			character::ElementSlots const& elements = loadout->mEquippedElements;
+
+			// TODO: Remove
+			{
+				serialization::DiagnosticExporter diagExporter{ false };
+				bool const diagSuccess = serialization::ObjectSerializer::SerializeSingleObject(
+					diagExporter, rftype::GetClassInfo<character::ElementSlots>(), &elements );
+				RF_ASSERT( diagSuccess );
+				bool const diagFinalSuccess = diagExporter.Root_FinalizeExport();
+				RF_ASSERT( diagFinalSuccess );
+			}
+
+			PlaceholderExporter placeholderExporter = {};
+
+			bool const serializeSuccess = serialization::ObjectSerializer::SerializeSingleObject(
+				placeholderExporter, rftype::GetClassInfo<character::ElementSlots>(), &elements );
+			if( serializeSuccess == false )
+			{
+				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to serialize loadout for write" );
+				continue;
+			}
+
+			bool const finalizeSuccess = placeholderExporter.Root_FinalizeExport();
+			if( finalizeSuccess == false )
+			{
+				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to finalize exporter for write" );
+				continue;
+			}
+
+			bool const bufferSuccess = placeholderExporter.WriteToString( buffer );
+			if( bufferSuccess == false )
+			{
+				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to write loadout to buffer" );
+				continue;
+			}
+		}
+		RF_ASSERT( buffer.empty() == false );
+
+		FILE* const file = fileHandle->GetFile();
+		RF_ASSERT( file != nullptr );
+		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		if( bytesWritten != buffer.size() )
+		{
+			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to write loadout" );
+			continue;
+		}
+	}
+}
+
+
+
+void CompanyManager::ReadLegacyLoadoutsFromSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
+{
 	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
 
 	static constexpr size_t kFileSize =
@@ -380,7 +482,7 @@ void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input:
 
 
 
-void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
+void CompanyManager::WriteLegacyLoadoutsToSave( file::VFSPath const& saveRoot, input::PlayerID const& playerID )
 {
 	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
 
