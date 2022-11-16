@@ -40,6 +40,7 @@
 
 #include "core_platform/uuid.h"
 #include "core_platform/shim/winuser_shim.h"
+#include "core_rftype/stl_extensions/array.h"
 #include "core_rftype/stl_extensions/vector.h"
 #include "core_rftype/stl_extensions/string.h"
 #include "core/ptr/default_creator.h"
@@ -86,9 +87,10 @@ struct SQReflectTestClass
 	int64_t mS64;
 	rftl::string mString;
 	rftl::wstring mWString;
-	rftl::vector<int32_t> mIntArray;
+	rftl::vector<int32_t> mIntVector;
+	rftl::array<int32_t, 5> mIntArray;
 	SQReflectTestNestedClass mNested;
-	rftl::vector<SQReflectTestContainedClass> mObjArray;
+	rftl::vector<SQReflectTestContainedClass> mObjVector;
 };
 
 RFTYPE_CREATE_META( SQReflectTestContainedClass )
@@ -125,8 +127,9 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mS64", &SQReflectTestClass::mS64 );
 	RFTYPE_META().ExtensionProperty( "mString", &SQReflectTestClass::mString );
 	RFTYPE_META().ExtensionProperty( "mWString", &SQReflectTestClass::mWString );
+	RFTYPE_META().ExtensionProperty( "mIntVector", &SQReflectTestClass::mIntVector );
 	RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
-	RFTYPE_META().ExtensionProperty( "mObjArray", &SQReflectTestClass::mObjArray );
+	RFTYPE_META().ExtensionProperty( "mObjVector", &SQReflectTestClass::mObjVector );
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
@@ -797,9 +800,10 @@ void SQReflectTest()
 			"x.mS64 = 7;\n"
 			"x.mString = \"test\";\n"
 			"x.mWString = \"test\";\n"
-			"x.mIntArray = [3,5,7];\n"
-			"x.mObjArray = [ SQReflectTestContainedClass() ];\n"
-			"x.mObjArray[0].mBool = true;\n"
+			"x.mIntVector = [3,5,7];\n"
+			"x.mIntArray = [2,3,5,8,13];\n"
+			"x.mObjVector = [ SQReflectTestContainedClass() ];\n"
+			"x.mObjVector[0].mBool = true;\n"
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
 			"\n";
@@ -835,12 +839,18 @@ void SQReflectTest()
 	RF_ASSERT( testClass.mS64 == 7 );
 	RF_ASSERT( testClass.mString == "test" );
 	RF_ASSERT( testClass.mWString == L"test" );
-	RF_ASSERT( testClass.mIntArray.size() == 3 );
-	RF_ASSERT( testClass.mIntArray[0] == 3 );
-	RF_ASSERT( testClass.mIntArray[1] == 5 );
-	RF_ASSERT( testClass.mIntArray[2] == 7 );
-	RF_ASSERT( testClass.mObjArray.size() == 1 );
-	RF_ASSERT( testClass.mObjArray[0].mBool == true );
+	RF_ASSERT( testClass.mIntVector.size() == 3 );
+	RF_ASSERT( testClass.mIntVector[0] == 3 );
+	RF_ASSERT( testClass.mIntVector[1] == 5 );
+	RF_ASSERT( testClass.mIntVector[2] == 7 );
+	RF_ASSERT( testClass.mIntArray.size() == 5 );
+	RF_ASSERT( testClass.mIntArray[0] == 2 );
+	RF_ASSERT( testClass.mIntArray[1] == 3 );
+	RF_ASSERT( testClass.mIntArray[2] == 5 );
+	RF_ASSERT( testClass.mIntArray[3] == 8 );
+	RF_ASSERT( testClass.mIntArray[4] == 13 );
+	RF_ASSERT( testClass.mObjVector.size() == 1 );
+	RF_ASSERT( testClass.mObjVector[0].mBool == true );
 	RF_ASSERT( testClass.mNested.mBool == true );
 }
 

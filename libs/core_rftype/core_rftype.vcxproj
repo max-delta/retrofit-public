@@ -34,6 +34,7 @@
 		<ClInclude Include="ExtensionAccessorLookup.h" />
 		<ClInclude Include="Identifier.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="stl_extensions\array.h" />
 		<ClInclude Include="stl_extensions\stdafx.h" />
 		<ClInclude Include="stl_extensions\string.h" />
 		<ClInclude Include="stl_extensions\vector.h" />
@@ -47,6 +48,7 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="stl_extensions\array.cpp" />
 		<ClCompile Include="stl_extensions\string.cpp" />
 		<ClCompile Include="stl_extensions\vector.cpp" />
 		<ClCompile Include="TypeTraverser.cpp" />

@@ -21,6 +21,9 @@
     <ClInclude Include="TypeInference.h" />
     <ClInclude Include="VirtualCast.h" />
     <ClInclude Include="VirtualPtrCast.h" />
+    <ClInclude Include="stl_extensions\array.h">
+      <Filter>stl_extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -30,6 +33,9 @@
     </ClCompile>
     <ClCompile Include="TypeTraverser.cpp" />
     <ClCompile Include="stl_extensions\string.cpp">
+      <Filter>stl_extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="stl_extensions\array.cpp">
       <Filter>stl_extensions</Filter>
     </ClCompile>
   </ItemGroup>
