@@ -36,6 +36,12 @@ DiagnosticExporter::~DiagnosticExporter()
 
 bool DiagnosticExporter::Root_FinalizeExport()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter attempting to re-finalize" );
+		return false;
+	}
+
 	RF_DIAG_EXP_TR( "<CLOSE>" );
 	mFinalized = true;
 	mHasOpenInstance = false;

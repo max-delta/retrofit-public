@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "XmlExporter.h"
 
+#include "Logging/Logging.h"
+
 #include "core_math/math_casts.h"
 
 #include "rftl/cstring"
@@ -29,13 +31,19 @@ XmlExporter::XmlExporter()
 
 XmlExporter::~XmlExporter()
 {
-	//
+	RFLOG_TEST_AND_NOTIFY( mFinalized, nullptr, RFCAT_SERIALIZATION, "Exporter destructed without finalizing" );
 }
 
 
 
 bool XmlExporter::WriteToFile( FILE* file ) const
 {
+	if( mFinalized == false )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Exporter attempting to write before being finalized" );
+		return false;
+	}
+
 	pugi::xml_writer_file writer = pugi::xml_writer_file( file );
 	mDoc.save( writer );
 	return true;
@@ -45,6 +53,12 @@ bool XmlExporter::WriteToFile( FILE* file ) const
 
 bool XmlExporter::WriteToString( rftl::string& string ) const
 {
+	if( mFinalized == false )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Exporter attempting to write before being finalized" );
+		return false;
+	}
+
 	class xml_writer_string : public pugi::xml_writer
 	{
 		RF_NO_COPY( xml_writer_string );
@@ -73,6 +87,12 @@ bool XmlExporter::WriteToString( rftl::string& string ) const
 
 bool XmlExporter::Root_FinalizeExport()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter attempting to re-finalize" );
+		return false;
+	}
+
 	mHeader = {};
 	mTableOfContents = {};
 	mExternalDependencies = {};
@@ -82,6 +102,8 @@ bool XmlExporter::Root_FinalizeExport()
 
 	mCurrentInstance = {};
 	mPropertyStack.clear();
+
+	mFinalized = true;
 	return true;
 }
 
@@ -89,6 +111,12 @@ bool XmlExporter::Root_FinalizeExport()
 
 bool XmlExporter::Root_BeginNewInstance()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	mCurrentInstance = mData.append_child( "Instance" );
 	mPropertyStack.clear();
 	mNewIndent = false;
@@ -99,6 +127,12 @@ bool XmlExporter::Root_BeginNewInstance()
 
 bool XmlExporter::Root_RegisterLocalIndirection( IndirectionID const& indirectionID, InstanceID const& instanceID )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node dependency = mInternalDependencies.append_child( "Dependency" );
 	dependency.append_attribute( "IndirectionID" ) = indirectionID;
 	dependency.append_attribute( "InstanceID" ) = instanceID;
@@ -109,6 +143,12 @@ bool XmlExporter::Root_RegisterLocalIndirection( IndirectionID const& indirectio
 
 bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node dependency = mExternalDependencies.append_child( "Dependency" );
 	dependency.append_attribute( "IndirectionID" ) = indirectionID;
 	dependency.append_attribute( "ExternalReferenceID" ) = referenceID;
@@ -119,6 +159,12 @@ bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const& indirec
 
 bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	mCurrentInstance.append_attribute( "ID" ) = instanceID;
 	mTableOfContents.append_child( "Instance" ).append_attribute( "ID" ) = instanceID;
 	return true;
@@ -128,6 +174,12 @@ bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID 
 
 bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	mCurrentInstance.append_attribute( "TypeID" ) = typeID;
 
 	pugi::xml_node typeIDNode = mDebugData.append_child( "TypeID" );
@@ -141,6 +193,12 @@ bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const*
 
 bool XmlExporter::Instance_BeginNewProperty()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	if( mPropertyStack.empty() )
 	{
 		RF_ASSERT( mNewIndent == false );
@@ -164,6 +222,12 @@ bool XmlExporter::Instance_BeginNewProperty()
 
 bool XmlExporter::Property_AddNameAttribute( char const* name )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	currentProperty.append_attribute( "Name" ) = name;
 	return true;
@@ -173,6 +237,12 @@ bool XmlExporter::Property_AddNameAttribute( char const* name )
 
 bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	pugi::xml_attribute typeAttr = currentProperty.append_attribute( "Type" );
 	pugi::xml_attribute valueAttr = currentProperty.append_attribute( "Value" );
@@ -213,6 +283,12 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 
 bool XmlExporter::Property_AddIndirectionAttribute( IndirectionID const& indirectionID )
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	currentProperty.append_attribute( "IndirectionID" ) = indirectionID;
 	return true;
@@ -222,6 +298,12 @@ bool XmlExporter::Property_AddIndirectionAttribute( IndirectionID const& indirec
 
 bool XmlExporter::Property_IndentFromCurrentProperty()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	mPropertyStack.emplace_back( currentProperty.append_child( "Property" ) );
 	RF_ASSERT( mNewIndent == false );
@@ -233,6 +315,12 @@ bool XmlExporter::Property_IndentFromCurrentProperty()
 
 bool XmlExporter::Property_OutdentFromLastIndent()
 {
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
 	mPropertyStack.pop_back();
 	return true;
 }
