@@ -29,6 +29,12 @@ void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const
 template<>
 void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer )
 {
+	if( context == nullptr )
+	{
+		buffer.at( 0 ) = '\0';
+		return;
+	}
+
 	for( size_t i = 0; i < buffer.size(); i++ )
 	{
 		buffer.at( i ) = context[i];
@@ -44,6 +50,12 @@ void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffe
 template<>
 void WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer )
 {
+	if( context == nullptr )
+	{
+		buffer.at( 0 ) = u'\0';
+		return;
+	}
+
 	for( size_t i = 0; i < buffer.size(); i++ )
 	{
 		buffer.at( i ) = context[i];
@@ -59,6 +71,12 @@ void WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& 
 template<>
 void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer )
 {
+	if( context == nullptr )
+	{
+		buffer.at( 0 ) = U'\0';
+		return;
+	}
+
 	for( size_t i = 0; i < buffer.size(); i++ )
 	{
 		buffer.at( i ) = context[i];
