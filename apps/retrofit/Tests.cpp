@@ -89,8 +89,10 @@ struct SQReflectTestClass
 	rftl::wstring mWString;
 	rftl::vector<int32_t> mIntVector;
 	rftl::array<int32_t, 5> mIntArray;
-	SQReflectTestNestedClass mNested;
 	rftl::vector<SQReflectTestContainedClass> mObjVector;
+	rftl::vector<rftl::string> mStringVector;
+	rftl::vector<rftl::vector<int32_t>> mVectorVector;
+	SQReflectTestNestedClass mNested;
 };
 
 RFTYPE_CREATE_META( SQReflectTestContainedClass )
@@ -130,6 +132,8 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().ExtensionProperty( "mIntVector", &SQReflectTestClass::mIntVector );
 	RFTYPE_META().ExtensionProperty( "mIntArray", &SQReflectTestClass::mIntArray );
 	RFTYPE_META().ExtensionProperty( "mObjVector", &SQReflectTestClass::mObjVector );
+	RFTYPE_META().ExtensionProperty( "mStringVector", &SQReflectTestClass::mStringVector );
+	RFTYPE_META().ExtensionProperty( "mVectorVector", &SQReflectTestClass::mVectorVector );
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
@@ -804,6 +808,8 @@ void SQReflectTest()
 			"x.mIntArray = [2,3,5,8,13];\n"
 			"x.mObjVector = [ SQReflectTestContainedClass() ];\n"
 			"x.mObjVector[0].mBool = true;\n"
+			"x.mStringVector = [\"one\", \"two\"];\n"
+			"x.mVectorVector = [[1], [2]];\n"
 			"x.mNested = SQReflectTestNestedClass();\n"
 			"x.mNested.mBool = true;\n"
 			"\n";
@@ -851,6 +857,14 @@ void SQReflectTest()
 	RF_ASSERT( testClass.mIntArray[4] == 13 );
 	RF_ASSERT( testClass.mObjVector.size() == 1 );
 	RF_ASSERT( testClass.mObjVector[0].mBool == true );
+	RF_ASSERT( testClass.mStringVector.size() == 2 );
+	RF_ASSERT( testClass.mStringVector[0] == "one" );
+	RF_ASSERT( testClass.mStringVector[1] == "two" );
+	RF_ASSERT( testClass.mVectorVector.size() == 2 );
+	RF_ASSERT( testClass.mVectorVector[0].size() == 1 );
+	RF_ASSERT( testClass.mVectorVector[0][0] == 1 );
+	RF_ASSERT( testClass.mVectorVector[1].size() == 1 );
+	RF_ASSERT( testClass.mVectorVector[1][0] == 2 );
 	RF_ASSERT( testClass.mNested.mBool == true );
 }
 

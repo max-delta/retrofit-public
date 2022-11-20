@@ -20,11 +20,19 @@ namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+struct TargetItem
+{
+	reflect::VariableTypeInfo mTypeInfo;
+	void const* mLocation = nullptr;
+	char const* mIdentifier = nullptr;
+};
+
+
+
 struct WorkItem
 {
 	SquirrelVM::NestedTraversalPath mPath;
-	reflect::ClassInfo const* mClassInfo;
-	void const* mClassInstance;
+	TargetItem mTarget;
 };
 using WorkItems = rftl::vector<WorkItem>;
 
@@ -46,14 +54,16 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 		[](
 			rftype::TypeTraverser::TraversalType traversalType,
 			rftype::TypeTraverser::TraversalVariableInstance const& varInst,
-			bool& shouldRecurse ) -> void {
+			bool& shouldRecurse ) -> void
+	{
 		shouldRecurse = false;
 	};
 
 	auto onReturnFromTraversalTypeFunc = //
 		[](
 			rftype::TypeTraverser::TraversalType traversalType,
-			rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void {
+			rftype::TypeTraverser::TraversalVariableInstance const& varInst ) -> void
+	{
 		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unexpected recursion" );
 	};
 
@@ -123,26 +133,26 @@ bool StoreSingleValueInAccessor(
 
 
 
-bool WriteScriptValueToMemberVariable(
+bool WriteScriptValueToVariable(
 	SquirrelVM::Element const& elemValue,
-	rftype::TypeTraverser::MemberVariableInstance const& member )
+	TargetItem const& target )
 {
 	RF_ASSERT( rftl::holds_alternative<reflect::Value>( elemValue ) );
 
 	// Figure out where to write to
-	void* const destination = const_cast<void*>( member.mMemberVariableLocation );
-	reflect::Value::Type const destinationType = member.mMemberVariableInfo.mVariableTypeInfo.mValueType;
+	void* const destination = const_cast<void*>( target.mLocation );
+	reflect::Value::Type const destinationType = target.mTypeInfo.mValueType;
 	if( destinationType == reflect::Value::Type::Invalid )
 	{
-		if( member.mMemberVariableInfo.mVariableTypeInfo.mAccessor != nullptr )
+		if( target.mTypeInfo.mAccessor != nullptr )
 		{
-			RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
 				"Cannot convert script element to an invalid member variable type"
 				" (An accessor is available, script probably is improperly using a simpler value type)" );
 		}
 		else
 		{
-			RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
 				"Cannot convert script element to an invalid member variable type"
 				" (No accessor is present either, this is probably a registration failure in code)" );
 		}
@@ -156,7 +166,8 @@ bool WriteScriptValueToMemberVariable(
 	reflect::Value const intermediate = source.ConvertTo( destinationType );
 	if( intermediate.GetStoredType() != destinationType )
 	{
-		RFLOG_NOTIFY( member, RFCAT_GAMESCRIPTING, "Failed to convert script element to member variable type" );
+		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			"Failed to convert script element to member variable type" );
 		return false;
 	}
 
@@ -169,21 +180,22 @@ bool WriteScriptValueToMemberVariable(
 
 
 
-bool WriteScriptStringToMemberVariable(
+bool WriteScriptStringToVariable(
 	SquirrelVM::Element const& elemValue,
-	rftype::TypeTraverser::MemberVariableInstance const& member )
+	TargetItem const& target )
 {
 	RF_ASSERT( rftl::holds_alternative<SquirrelVM::String>( elemValue ) );
 	SquirrelVM::String const& string = rftl::get<SquirrelVM::String>( elemValue );
 
 	// Ensure it's even remotely compatible
-	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
+	reflect::ExtensionAccessor const* accessor = target.mTypeInfo.mAccessor;
 	if( accessor == nullptr )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script array to member variable type" );
+		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			"Failed to convert script array to member variable type" );
 		return false;
 	}
-	void* const location = const_cast<void*>( member.mMemberVariableLocation );
+	void* const location = const_cast<void*>( target.mLocation );
 
 	// Scoped mutation
 	if( accessor->mBeginMutation != nullptr )
@@ -215,7 +227,8 @@ bool WriteScriptStringToMemberVariable(
 		bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
 		if( storeSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to store script character in accessor" );
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+				"Failed to store script character in accessor" );
 			return false;
 		}
 	}
@@ -226,9 +239,8 @@ bool WriteScriptStringToMemberVariable(
 
 
 bool ProcessElementArrayPopulationWork(
-	WorkItem const& currentWorkItem,
 	WorkItems& workItems,
-	SquirrelVM::NestedTraversalPath currentPath,
+	SquirrelVM::NestedTraversalPath const& currentPath,
 	SquirrelVM::ElementArray const& elemArr,
 	reflect::ExtensionAccessor const* accessor,
 	void* location )
@@ -292,17 +304,75 @@ bool ProcessElementArrayPopulationWork(
 		{
 			// String
 
-			// ???Recurse???
-			RF_TODO_BREAK();
-			return false;
+			if( accessor->mInsertVariableDefault == nullptr )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
+				return false;
+			}
+
+			// Insert a placeholder
+			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
+			if( writeSuccess == false )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+				return false;
+			}
+
+			void const* arrayItemLoc = nullptr;
+			reflect::VariableTypeInfo arrayItemInfo = {};
+			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			if( readSuccess == false )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
+				return false;
+			}
+
+			// Queue population as later work
+			WorkItem newWorkItem;
+			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
+			newWorkItem.mTarget.mLocation = arrayItemLoc;
+			newWorkItem.mTarget.mIdentifier = "STRING_ARRAY";
+			newWorkItem.mPath = currentPath;
+			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			workItems.emplace_back( rftl::move( newWorkItem ) );
+			continue;
 		}
 		else if( rftl::holds_alternative<SquirrelVM::ArrayTag>( elemValue ) )
 		{
 			// Array
 
-			// ???Recurse???
-			RF_TODO_BREAK();
-			return false;
+			if( accessor->mInsertVariableDefault == nullptr )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
+				return false;
+			}
+
+			// Insert a placeholder
+			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
+			if( writeSuccess == false )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+				return false;
+			}
+
+			void const* arrayItemLoc = nullptr;
+			reflect::VariableTypeInfo arrayItemInfo = {};
+			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			if( readSuccess == false )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
+				return false;
+			}
+
+			// Queue population as later work
+			WorkItem newWorkItem;
+			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
+			newWorkItem.mTarget.mLocation = arrayItemLoc;
+			newWorkItem.mTarget.mIdentifier = "ARRAY_ARRAY";
+			newWorkItem.mPath = currentPath;
+			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			workItems.emplace_back( rftl::move( newWorkItem ) );
+			continue;
 		}
 		else if( rftl::holds_alternative<SquirrelVM::InstanceTag>( elemValue ) )
 		{
@@ -333,8 +403,9 @@ bool ProcessElementArrayPopulationWork(
 
 			// Queue population as later work
 			WorkItem newWorkItem;
-			newWorkItem.mClassInfo = arrayItemInfo.mClassInfo;
-			newWorkItem.mClassInstance = arrayItemLoc;
+			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
+			newWorkItem.mTarget.mLocation = arrayItemLoc;
+			newWorkItem.mTarget.mIdentifier = "ARRAY_ITEM";
 			newWorkItem.mPath = currentPath;
 			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
 			workItems.emplace_back( rftl::move( newWorkItem ) );
@@ -354,38 +425,35 @@ bool ProcessElementArrayPopulationWork(
 
 bool ProcessScriptArrayPopulationWork(
 	SquirrelVM& vm,
-	WorkItem const& currentWorkItem,
 	WorkItems& workItems,
-	char const* const elemName,
-	rftype::TypeTraverser::MemberVariableInstance const& member )
+	SquirrelVM::NestedTraversalPath const& currentPath,
+	TargetItem const& target )
 {
 	// Ensure it's even remotely compatible
-	reflect::ExtensionAccessor const* accessor = member.mMemberVariableInfo.mVariableTypeInfo.mAccessor;
+	reflect::ExtensionAccessor const* accessor = target.mTypeInfo.mAccessor;
 	if( accessor == nullptr )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to convert script array to member variable type" );
+		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			"Failed to convert script array to member variable type" );
 		return false;
 	}
-	void* const location = const_cast<void*>( member.mMemberVariableLocation );
+	void* const location = const_cast<void*>( target.mLocation );
 
 	// Load the script values
-	SquirrelVM::NestedTraversalPath path = currentWorkItem.mPath;
-	path.emplace_back( elemName );
-	SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( path );
+	SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( currentPath );
 
-	return ProcessElementArrayPopulationWork( currentWorkItem, workItems, path, elemArr, accessor, location );
+	return ProcessElementArrayPopulationWork( workItems, currentPath, elemArr, accessor, location );
 }
 
 
 
 bool QueueScriptInstancePopulationWork(
-	WorkItem const& currentWorkItem,
 	WorkItems& workItems,
-	char const* const elemName,
-	rftype::TypeTraverser::MemberVariableInstance const& member )
+	SquirrelVM::NestedTraversalPath const& currentPath,
+	TargetItem const& target )
 {
-	reflect::VariableTypeInfo const& targetTypeInfo = member.mMemberVariableInfo.mVariableTypeInfo;
-	void const* targetLocation = member.mMemberVariableLocation;
+	reflect::VariableTypeInfo const& targetTypeInfo = target.mTypeInfo;
+	void const* targetLocation = target.mLocation;
 
 	if( targetTypeInfo.mAccessor != nullptr )
 	{
@@ -404,10 +472,10 @@ bool QueueScriptInstancePopulationWork(
 
 		// Queue population as later work
 		WorkItem newWorkItem;
-		newWorkItem.mClassInfo = targetTypeInfo.mClassInfo;
-		newWorkItem.mClassInstance = targetLocation;
-		newWorkItem.mPath = currentWorkItem.mPath;
-		newWorkItem.mPath.emplace_back( elemName );
+		newWorkItem.mTarget.mTypeInfo = targetTypeInfo;
+		newWorkItem.mTarget.mLocation = targetLocation;
+		newWorkItem.mTarget.mIdentifier = "INSTANCE";
+		newWorkItem.mPath = currentPath;
 		workItems.emplace_back( rftl::move( newWorkItem ) );
 		return true;
 	}
@@ -415,7 +483,8 @@ bool QueueScriptInstancePopulationWork(
 	{
 		// Unknown
 
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to determine handling for script element instance into member variable type" );
+		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			"Failed to determine handling for script element instance into member variable type" );
 		return false;
 	}
 }
@@ -424,55 +493,62 @@ bool QueueScriptInstancePopulationWork(
 
 bool ProcessScriptVariable(
 	SquirrelVM& vm,
-	WorkItem const& currentWorkItem,
 	WorkItems& workItems,
-	char const* const elemName,
+	SquirrelVM::NestedTraversalPath const& currentPath,
 	SquirrelVM::Element const& elemValue,
-	rftype::TypeTraverser::MemberVariableInstance const& member )
+	TargetItem const& target )
 {
+	// TODO: Better diagnostic logic
+	char const* const diagnosticName = currentPath.back().mIdentifier.c_str();
+
 	if( rftl::holds_alternative<reflect::Value>( elemValue ) )
 	{
 		// Value
-		bool const writeSuccess = WriteScriptValueToMemberVariable( elemValue, member );
+		bool const writeSuccess = WriteScriptValueToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script value '%s' to member variable", elemName );
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+				"Failed to write script value '%s' to variable", diagnosticName );
 			return false;
 		}
 	}
 	else if( rftl::holds_alternative<SquirrelVM::String>( elemValue ) )
 	{
 		// String
-		bool const writeSuccess = WriteScriptStringToMemberVariable( elemValue, member );
+		bool const writeSuccess = WriteScriptStringToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script string '%s' to member variable", elemName );
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+				"Failed to write script string '%s' to variable", diagnosticName );
 			return false;
 		}
 	}
 	else if( rftl::holds_alternative<SquirrelVM::ArrayTag>( elemValue ) )
 	{
 		// Array
-		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, currentWorkItem, workItems, elemName, member );
+		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, workItems, currentPath, target );
 		if( processSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to process script array '%s' to member variable", elemName );
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+				"Failed to process script array '%s' to variable", diagnosticName );
 			return false;
 		}
 	}
 	else if( rftl::holds_alternative<SquirrelVM::InstanceTag>( elemValue ) )
 	{
 		// Instance
-		bool const queueSuccess = QueueScriptInstancePopulationWork( currentWorkItem, workItems, elemName, member );
+		bool const queueSuccess = QueueScriptInstancePopulationWork( workItems, currentPath, target );
 		if( queueSuccess == false )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to prepare processing for script instance '%s' to be written into member variable", elemName );
+			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+				"Failed to prepare processing for script instance '%s' to be written into variable", diagnosticName );
 			return false;
 		}
 	}
 	else
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unknown element type on '%s', probably an error in script-handling code", elemName );
+		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			"Unknown element type on '%s', probably an error in script-handling code", diagnosticName );
 		return false;
 	}
 
@@ -481,20 +557,18 @@ bool ProcessScriptVariable(
 
 
 
-bool ProcessWorkItem(
+bool ProcessClassWorkItem(
 	SquirrelVM& vm,
-	WorkItem const& currentWorkItem,
-	WorkItems& workItems )
+	WorkItems& workItems,
+	SquirrelVM::NestedTraversalPath const& currentPath,
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance )
 {
-	SquirrelVM::NestedTraversalPath const& path = currentWorkItem.mPath;
-	reflect::ClassInfo const& classInfo = *currentWorkItem.mClassInfo;
-	void const* classInstance = currentWorkItem.mClassInstance;
-
 	// Locally cache the class info from reflection
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = GetAllMembers( classInfo, classInstance );
 
 	// Extract the instance from script
-	SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
+	SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( currentPath );
 	if( elemMap.empty() )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element map is empty, assuming failure" );
@@ -531,9 +605,17 @@ bool ProcessWorkItem(
 		}
 		rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
 
+		// Demote to a target, dropping member information
+		TargetItem target = {};
+		target.mTypeInfo = member.mMemberVariableInfo.mVariableTypeInfo;
+		target.mLocation = member.mMemberVariableLocation;
+		target.mIdentifier = member.mMemberVariableInfo.mIdentifier;
+
 		// Handle the transfer from script->reflect
 		SquirrelVM::Element const& elemValue = elemPair.second;
-		bool const processSuccess = ProcessScriptVariable( vm, currentWorkItem, workItems, elemName, elemValue, member );
+		SquirrelVM::NestedTraversalPath nestedPath = currentPath;
+		nestedPath.emplace_back( elemName );
+		bool const processSuccess = ProcessScriptVariable( vm, workItems, nestedPath, elemValue, target );
 		if( processSuccess == false )
 		{
 			// TODO: This should probably be conditional whether it
@@ -547,6 +629,70 @@ bool ProcessWorkItem(
 
 
 
+bool ProcessAccessorWorkItem(
+	SquirrelVM& vm,
+	WorkItems& workItems,
+	SquirrelVM::NestedTraversalPath const& currentPath,
+	reflect::ExtensionAccessor const& accessor,
+	void const* location )
+{
+	// Extract the instance from script
+	SquirrelVM::Element const elemValue = vm.GetNestedVariable( currentPath );
+	if( rftl::holds_alternative<reflect::Value>( elemValue ) && rftl::get<reflect::Value>( elemValue ).GetStoredType() == reflect::Value::Type::Invalid )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element is invalid, assuming failure" );
+		return false;
+	}
+
+	RF_ASSERT( rftl::holds_alternative<SquirrelVM::String>( elemValue ) || rftl::holds_alternative<SquirrelVM::ArrayTag>( elemValue ) );
+
+	TargetItem target = {};
+	target.mTypeInfo.mAccessor = &accessor;
+	target.mLocation = location;
+	target.mIdentifier = "ACCESSOR";
+
+	// Handle the transfer from script->reflect
+	bool const processSuccess = ProcessScriptVariable( vm, workItems, currentPath, elemValue, target );
+	if( processSuccess == false )
+	{
+		// TODO: This should probably be conditional whether it
+		//  ignores, or aborts the whole process
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool ProcessWorkItem(
+	SquirrelVM& vm,
+	WorkItem const& currentWorkItem,
+	WorkItems& workItems )
+{
+	// Don't support direct values as work items, expect them to be handled
+	//  directly when encountered by a more complex work item
+	RF_ASSERT( currentWorkItem.mTarget.mTypeInfo.mValueType == reflect::Value::Type::Invalid );
+
+	// Class
+	if( currentWorkItem.mTarget.mTypeInfo.mClassInfo != nullptr )
+	{
+		return ProcessClassWorkItem( vm, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mClassInfo, currentWorkItem.mTarget.mLocation );
+	}
+
+	// Accessor
+	if( currentWorkItem.mTarget.mTypeInfo.mAccessor != nullptr )
+	{
+		return ProcessAccessorWorkItem( vm, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mAccessor, currentWorkItem.mTarget.mLocation );
+	}
+
+	RF_TODO_BREAK_MSG( "New type of work item?" );
+
+	return false;
+}
+
+
+
 bool PopulateClassFromScript(
 	SquirrelVM& vm,
 	SquirrelVM::NestedTraversalPath scriptPath,
@@ -555,11 +701,15 @@ bool PopulateClassFromScript(
 {
 	rftl::vector<WorkItem> workItems;
 
-	workItems.emplace_back(
-		WorkItem{
-			scriptPath,
-			&classInfo,
-			classInstance } );
+	// Seed with the root class instance
+	{
+		WorkItem rootWorkItem = {};
+		rootWorkItem.mPath = scriptPath;
+		rootWorkItem.mTarget.mTypeInfo.mClassInfo = &classInfo;
+		rootWorkItem.mTarget.mLocation = classInstance;
+		rootWorkItem.mTarget.mIdentifier = "ROOT";
+		workItems.emplace_back( rftl::move( rootWorkItem ) );
+	}
 
 	// While there is still work...
 	while( workItems.empty() == false )
