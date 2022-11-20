@@ -21,13 +21,24 @@ struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineTyp
 	}
 };
 
-// Matches non-value types
-// TODO: Support accessors. Will likely have to be able to identify accessors
-//  immediately after values during template consideration, and only try
-//  GetClassInfo() as a last resort, since GetClassInfo()will always compile
-//  and won't fail until link-time
+// Matches non-value types that have accessors
 template<typename Type>
-struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() == reflect::Value::Type::Invalid>::type>
+struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() == reflect::Value::Type::Invalid && extensions::Accessor<Type>::kExists>::type>
+{
+	static reflect::VariableTypeInfo GetTypeInfo()
+	{
+		reflect::VariableTypeInfo retVal = {};
+		static reflect::ExtensionAccessor const sSharedModuleCache = extensions::Accessor<Type>::Get();
+		retVal.mAccessor = &sSharedModuleCache;
+		return retVal;
+	}
+};
+
+// Matches non-value types without accessors
+// NOTE: Expects ClassInfo to be present, which will always compile, but may fail
+//  to be found during link-time if it isn't present
+template<typename Type>
+struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() == reflect::Value::Type::Invalid && extensions::Accessor<Type>::kExists == false>::type>
 {
 	static reflect::VariableTypeInfo GetTypeInfo()
 	{
