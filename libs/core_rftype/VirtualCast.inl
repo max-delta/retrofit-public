@@ -29,17 +29,28 @@ TargetT virtual_cast( SourceT* source )
 
 	if( source == nullptr )
 	{
+		// Trivial case
+		// NOTE: Avoids cost of walking inheritance trees
 		return nullptr;
 	}
 
+	// Figure out our target
 	reflect::ClassInfo const& target = GetClassInfo<UnconstTargetType>();
+
+	// Try to get to our target from our source
+	// NOTE: May return null, the same location, or a different location (such as
+	//  from implementation-specific handling of multiple inheritance)
 	void const* result = source->GetVirtualClassInfo()->AttemptInheritanceWalk( target, source );
 
+	// Ensure we enforce return const-ness based on the source type's const-ness
 	using ConstType = typename rftl::add_const<TargetType>::type;
 	ConstType* constResult = reinterpret_cast<ConstType*>( result );
 	constexpr bool shouldBeConst = rftl::is_const<SourceT>::value;
 	using ReturnType = typename rftl::conditional<shouldBeConst, ConstType*, TargetType*>::type;
-	return const_cast<ReturnType>( constResult );
+	ReturnType const retVal = const_cast<ReturnType>( constResult );
+
+	// NOTE: This will fail to compile if it would result in const being dropped
+	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
