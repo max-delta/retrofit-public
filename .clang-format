@@ -79,7 +79,7 @@ BreakBeforeBinaryOperators : None
 BreakBeforeBraces : Custom # But basically Allman, exception for namespaces
 BreakBeforeTernaryOperators : false
 BreakConstructorInitializers : BeforeComma
-BreakInheritanceList : BeforeComma
+BreakInheritanceList : AfterColon
 BreakStringLiterals : false
 ColumnLimit : 0 # But prefer 80 for comments and 120 for code
 #CommentPragmas
