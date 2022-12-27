@@ -1,876 +1,876 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="cc3o3.cpp" />
-    <ClCompile Include="appstates\InitialLoading.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\Boot.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
-    <ClCompile Include="input\HardcodedSetup.cpp">
-      <Filter>input</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\AppStateRoute.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\LocalizationHelpers.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="CommonPaths.cpp" />
-    <ClCompile Include="Common.cpp" />
-    <ClCompile Include="char\CharacterDatabase.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\CharacterValidator.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="combat\CombatEngine.cpp">
-      <Filter>combat</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\InputHelpers.cpp">
-      <Filter>appstates</Filter>
-    </ClCompile>
-    <ClCompile Include="DeveloperHud.cpp" />
-    <ClCompile Include="appstates\devtest\DevTestRollback.cpp">
-      <Filter>appstates\devtest</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp">
-      <Filter>appstates\devtest</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\gameplay\Gameplay_Site.cpp">
-      <Filter>appstates\gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\gameplay\Gameplay.cpp">
-      <Filter>appstates\gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp">
-      <Filter>appstates\gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp">
-      <Filter>appstates\gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp">
-      <Filter>appstates\gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp">
-      <Filter>appstates\titlescreen</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp">
-      <Filter>appstates\titlescreen</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\titlescreen\TitleScreen.cpp">
-      <Filter>appstates\titlescreen</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp">
-      <Filter>appstates\titlescreen</Filter>
-    </ClCompile>
-    <ClCompile Include="char\Description.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\Genetics.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\Visuals.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\Stats.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\Equipment.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="char\ElementSlots.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="state\Component.cpp">
-      <Filter>state</Filter>
-    </ClCompile>
-    <ClCompile Include="state\ComponentResolver.cpp">
-      <Filter>state</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Meta.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\OverworldCharacter.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\SiteCharacter.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\BattleCharacter.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\EmptyObject.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\OverworldVisual.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\OverworldMovement.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\StateLogging.cpp">
-      <Filter>state</Filter>
-    </ClCompile>
-    <ClCompile Include="state\StateHelpers.cpp">
-      <Filter>state</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Roster.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\Company.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\devtest\DevTestGridCharts.cpp">
-      <Filter>appstates\devtest</Filter>
-    </ClCompile>
-    <ClCompile Include="elements\ElementDesc.cpp">
-      <Filter>elements</Filter>
-    </ClCompile>
-    <ClCompile Include="elements\ElementDatabase.cpp">
-      <Filter>elements</Filter>
-    </ClCompile>
-    <ClCompile Include="elements\IdentifierUtils.cpp">
-      <Filter>elements</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Progression.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="company\CompanyManager.cpp">
-      <Filter>company</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\LocalUI.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\UINavigation.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\SiteVisual.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\CharacterSlot.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\CharacterSlotList.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\BaseCharacter.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="char\CharData.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Character.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\ElementGrid.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ElementGridDisplayCache.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ElementSlotDisplayCache.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\ElementGridSelector.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\ElementStockpileDisplayCache.cpp">
-      <Filter>ui</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\ElementStockpileSelector.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Loadout.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="combat\CombatInstance.cpp">
-      <Filter>combat</Filter>
-    </ClCompile>
-    <ClCompile Include="combat\CombatantID.cpp">
-      <Filter>combat</Filter>
-    </ClCompile>
-    <ClCompile Include="combat\FightController.cpp">
-      <Filter>combat</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Vitality.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Combo.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="appstates\devtest\DevTestLobby.cpp">
-      <Filter>appstates\devtest</Filter>
-    </ClCompile>
-    <ClCompile Include="sync\Session.cpp">
-      <Filter>sync</Filter>
-    </ClCompile>
-    <ClCompile Include="save\SaveBlob.cpp">
-      <Filter>save</Filter>
-    </ClCompile>
-    <ClCompile Include="save\SaveManager.cpp">
-      <Filter>save</Filter>
-    </ClCompile>
-    <ClCompile Include="overworld\OverworldDesc.cpp">
-      <Filter>overworld</Filter>
-    </ClCompile>
-    <ClCompile Include="overworld\Overworld.cpp">
-      <Filter>overworld</Filter>
-    </ClCompile>
-    <ClCompile Include="resource\ResourceLoad.cpp">
-      <Filter>resource</Filter>
-    </ClCompile>
-    <ClCompile Include="overworld\Area.cpp">
-      <Filter>overworld</Filter>
-    </ClCompile>
-    <ClCompile Include="site\Site.cpp">
-      <Filter>site</Filter>
-    </ClCompile>
-    <ClCompile Include="site\SiteDesc.cpp">
-      <Filter>site</Filter>
-    </ClCompile>
-    <ClCompile Include="campaign\CampaignManager.cpp">
-      <Filter>campaign</Filter>
-    </ClCompile>
-    <ClCompile Include="campaign\Campaign.cpp">
-      <Filter>campaign</Filter>
-    </ClCompile>
-    <ClCompile Include="campaign\CampaignDesc.cpp">
-      <Filter>campaign</Filter>
-    </ClCompile>
-    <ClCompile Include="campaign\RosterMemberDesc.cpp">
-      <Filter>campaign</Filter>
-    </ClCompile>
-    <ClCompile Include="encounter\EncounterManager.cpp">
-      <Filter>encounter</Filter>
-    </ClCompile>
-    <ClCompile Include="state\objects\Encounter.cpp">
-      <Filter>state\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="state\components\Encounter.cpp">
-      <Filter>state\components</Filter>
-    </ClCompile>
-    <ClCompile Include="encounter\Encounter.cpp">
-      <Filter>encounter</Filter>
-    </ClCompile>
-    <ClCompile Include="encounter\EncounterDesc.cpp">
-      <Filter>encounter</Filter>
-    </ClCompile>
-    <ClCompile Include="encounter\Entity.cpp">
-      <Filter>encounter</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\CombatCharacter.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="options\Option.cpp">
-      <Filter>options</Filter>
-    </ClCompile>
-    <ClCompile Include="options\OptionDesc.cpp">
-      <Filter>options</Filter>
-    </ClCompile>
-    <ClCompile Include="options\OptionSet.cpp">
-      <Filter>options</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\OptionSlot.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\OptionSlotList.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="options\OptionValue.cpp">
-      <Filter>options</Filter>
-    </ClCompile>
-    <ClCompile Include="options\OptionLogic.cpp">
-      <Filter>options</Filter>
-    </ClCompile>
-    <ClCompile Include="combat\IdentifierUtils.cpp">
-      <Filter>combat</Filter>
-    </ClCompile>
-    <ClCompile Include="ui\controllers\ElementSlotOverlay.cpp">
-      <Filter>ui\controller</Filter>
-    </ClCompile>
-    <ClCompile Include="char\GridMask.cpp">
-      <Filter>char</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="cc3o3.h" />
-    <ClInclude Include="appstates\InitialLoading.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\stdafx.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\project.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\AppStatesFwd.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\Boot.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\stdafx.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\project.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\UIFwd.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="input\stdafx.h">
-      <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="input\InputFwd.h">
-      <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="input\project.h">
-      <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="input\HardcodedSetup.h">
-      <Filter>input</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\AppStateRoute.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\LocalizationHelpers.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="CommonPaths.h" />
-    <ClInclude Include="char\project.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\stdafx.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Visuals.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\CharFwd.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Genetics.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Stats.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Equipment.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\ElementSlots.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\CharacterDatabase.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="char\Description.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="Common.h" />
-    <ClInclude Include="char\CharacterValidator.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\project.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\stdafx.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\CombatEngine.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\CombatFwd.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\InputHelpers.h">
-      <Filter>appstates</Filter>
-    </ClInclude>
-    <ClInclude Include="DeveloperHud.h" />
-    <ClInclude Include="time\stdafx.h">
-      <Filter>time</Filter>
-    </ClInclude>
-    <ClInclude Include="time\TimeFwd.h">
-      <Filter>time</Filter>
-    </ClInclude>
-    <ClInclude Include="time\project.h">
-      <Filter>time</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\DevTestRollback.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\DevTestCombatCharts.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\Gameplay_Overworld.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\Gameplay_Site.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\Gameplay.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\Gameplay_Battle.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\Gameplay_Menus.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\TitleScreen_Options.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\TitleScreen.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\project.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\project.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\project.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\stdafx.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\gameplay\stdafx.h">
-      <Filter>appstates\gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\titlescreen\stdafx.h">
-      <Filter>appstates\titlescreen</Filter>
-    </ClInclude>
-    <ClInclude Include="state\stdafx.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\project.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\project.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\stdafx.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\StateFwd.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\Component.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\ComponentResolver.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Meta.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\stdafx.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\project.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\OverworldCharacter.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\SiteCharacter.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\BattleCharacter.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\EmptyObject.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\OverworldVisual.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\OverworldMovement.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\StateLogging.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\StateHelpers.h">
-      <Filter>state</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Roster.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\Company.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\DevTestGridCharts.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\stdafx.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\project.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\ElementDesc.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\ElementFwd.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\ElementDatabase.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="elements\IdentifierUtils.h">
-      <Filter>elements</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Progression.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="company\CompanyManager.h">
-      <Filter>company</Filter>
-    </ClInclude>
-    <ClInclude Include="company\project.h">
-      <Filter>company</Filter>
-    </ClInclude>
-    <ClInclude Include="company\stdafx.h">
-      <Filter>company</Filter>
-    </ClInclude>
-    <ClInclude Include="company\CompanyFwd.h">
-      <Filter>company</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\LocalUI.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\UINavigation.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\SiteVisual.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\CharacterSlot.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\stdafx.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\project.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\CharacterSlotList.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\BaseCharacter.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="char\CharData.h">
-      <Filter>char</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Character.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\ElementGrid.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ElementGridDisplayCache.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ElementSlotDisplayCache.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ElementTilesetValues.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\ElementGridSelector.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\ElementStockpileDisplayCache.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\ElementStockpileSelector.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Loadout.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\CombatInstance.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\Party.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\Team.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\Field.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\Attack.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\CombatantID.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\Fighter.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\FightController.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Vitality.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Combo.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="appstates\devtest\DevTestLobby.h">
-      <Filter>appstates\devtest</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\project.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\stdafx.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\SyncFwd.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="sync\Session.h">
-      <Filter>sync</Filter>
-    </ClInclude>
-    <ClInclude Include="save\stdafx.h">
-      <Filter>save</Filter>
-    </ClInclude>
-    <ClInclude Include="save\project.h">
-      <Filter>save</Filter>
-    </ClInclude>
-    <ClInclude Include="save\SaveBlob.h">
-      <Filter>save</Filter>
-    </ClInclude>
-    <ClInclude Include="save\SaveFwd.h">
-      <Filter>save</Filter>
-    </ClInclude>
-    <ClInclude Include="save\SaveManager.h">
-      <Filter>save</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\stdafx.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\OverworldFwd.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\project.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\OverworldDesc.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\Overworld.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\stdafx.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\project.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\ResourceFwd.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="resource\ResourceLoad.h">
-      <Filter>resource</Filter>
-    </ClInclude>
-    <ClInclude Include="overworld\Area.h">
-      <Filter>overworld</Filter>
-    </ClInclude>
-    <ClInclude Include="site\SiteFwd.h">
-      <Filter>site</Filter>
-    </ClInclude>
-    <ClInclude Include="site\stdafx.h">
-      <Filter>site</Filter>
-    </ClInclude>
-    <ClInclude Include="site\project.h">
-      <Filter>site</Filter>
-    </ClInclude>
-    <ClInclude Include="site\Site.h">
-      <Filter>site</Filter>
-    </ClInclude>
-    <ClInclude Include="site\SiteDesc.h">
-      <Filter>site</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\CampaignManager.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\project.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\stdafx.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\CampaignFwd.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\CampaignDesc.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\Campaign.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="campaign\RosterMemberDesc.h">
-      <Filter>campaign</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\EncounterManager.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\project.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\stdafx.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\EncounterFwd.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="state\objects\Encounter.h">
-      <Filter>state\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="state\components\Encounter.h">
-      <Filter>state\components</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\EncounterDesc.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\Encounter.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="encounter\Entity.h">
-      <Filter>encounter</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\CombatCharacter.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="options\stdafx.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\OptionsFwd.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\project.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\Option.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\OptionDesc.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\OptionSet.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\OptionSlot.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\OptionSlotList.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="options\OptionValue.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="options\OptionLogic.h">
-      <Filter>options</Filter>
-    </ClInclude>
-    <ClInclude Include="combat\IdentifierUtils.h">
-      <Filter>combat</Filter>
-    </ClInclude>
-    <ClInclude Include="ui\controllers\ElementSlotOverlay.h">
-      <Filter>ui\controller</Filter>
-    </ClInclude>
-    <ClInclude Include="char\GridMask.h">
-      <Filter>char</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="appstates">
-      <UniqueIdentifier>{f51a17ff-828c-4298-9c76-d5542435e0bb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ui">
-      <UniqueIdentifier>{dd3e30f1-d240-4ee5-b979-9a5fcc628698}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="input">
-      <UniqueIdentifier>{5ba1e6a8-c973-4afe-8a56-76545c60e754}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="char">
-      <UniqueIdentifier>{7419a65b-047c-463a-b22c-61c48e852a6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="combat">
-      <UniqueIdentifier>{7aed0947-995d-4cbc-a641-435d43c37fd2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="time">
-      <UniqueIdentifier>{f1909fb8-7ba9-4a73-91a5-9e9a955574dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="appstates\devtest">
-      <UniqueIdentifier>{469305ee-1728-41c5-9572-7cedd9b11fae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="appstates\gameplay">
-      <UniqueIdentifier>{38e47fb8-05f2-4619-9c3e-b14b04c14204}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="appstates\titlescreen">
-      <UniqueIdentifier>{3f3236b5-7a84-40c0-aff6-4b544a4e0f7c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="state">
-      <UniqueIdentifier>{55e004f0-699c-4757-8ed6-499239c346e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="state\components">
-      <UniqueIdentifier>{f82d6ced-c55b-4776-87ad-17ca36c276b5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="state\objects">
-      <UniqueIdentifier>{af48043f-db11-4e59-9e25-6340184c412d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="elements">
-      <UniqueIdentifier>{ff4b4de9-e795-42a2-82bd-ab64628a5612}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="company">
-      <UniqueIdentifier>{d3e47703-9660-4e59-a195-ed9a8e5bd9bd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ui\controller">
-      <UniqueIdentifier>{97e2921f-2a56-42d8-9225-9d96e0472215}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="sync">
-      <UniqueIdentifier>{87a0fe54-76a3-45fa-b4da-07880d0f517a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="save">
-      <UniqueIdentifier>{0c541ae1-7342-431c-85fc-4c65e1def9aa}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="overworld">
-      <UniqueIdentifier>{03409ddd-3ac7-4ba0-af17-aa8710c61415}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="resource">
-      <UniqueIdentifier>{fdc4ba5f-5062-461e-8ac4-35389713afcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="site">
-      <UniqueIdentifier>{fe3cba7d-6c86-4a0d-9e25-31bf1ee02b89}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="campaign">
-      <UniqueIdentifier>{fd4cf30c-7494-4043-ac94-83a9b60868d5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="encounter">
-      <UniqueIdentifier>{b2a80f4a-80d4-448e-a5e6-10aa9f146587}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="options">
-      <UniqueIdentifier>{3ea117f1-a0b7-452f-8087-2ea2bd043593}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="nostrip.def" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="cc3o3.cpp" />
+		<ClCompile Include="appstates\InitialLoading.cpp">
+			<Filter>appstates</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\Boot.cpp">
+			<Filter>appstates</Filter>
+		</ClCompile>
+		<ClCompile Include="input\HardcodedSetup.cpp">
+			<Filter>input</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\AppStateRoute.cpp">
+			<Filter>appstates</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\LocalizationHelpers.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="CommonPaths.cpp" />
+		<ClCompile Include="Common.cpp" />
+		<ClCompile Include="char\CharacterDatabase.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\CharacterValidator.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="combat\CombatEngine.cpp">
+			<Filter>combat</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\InputHelpers.cpp">
+			<Filter>appstates</Filter>
+		</ClCompile>
+		<ClCompile Include="DeveloperHud.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestRollback.cpp">
+			<Filter>appstates\devtest</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp">
+			<Filter>appstates\devtest</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay_Site.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\titlescreen\TitleScreen_MainMenu.cpp">
+			<Filter>appstates\titlescreen</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\titlescreen\TitleScreen_Options.cpp">
+			<Filter>appstates\titlescreen</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\titlescreen\TitleScreen.cpp">
+			<Filter>appstates\titlescreen</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\titlescreen\TitleScreen_CharCreate.cpp">
+			<Filter>appstates\titlescreen</Filter>
+		</ClCompile>
+		<ClCompile Include="char\Description.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\Genetics.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\Visuals.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\Stats.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\Equipment.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="char\ElementSlots.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="state\Component.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="state\ComponentResolver.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Meta.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\OverworldCharacter.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\SiteCharacter.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\BattleCharacter.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\EmptyObject.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\OverworldVisual.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\OverworldMovement.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\StateLogging.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="state\StateHelpers.cpp">
+			<Filter>state</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Roster.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\Company.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\devtest\DevTestGridCharts.cpp">
+			<Filter>appstates\devtest</Filter>
+		</ClCompile>
+		<ClCompile Include="elements\ElementDesc.cpp">
+			<Filter>elements</Filter>
+		</ClCompile>
+		<ClCompile Include="elements\ElementDatabase.cpp">
+			<Filter>elements</Filter>
+		</ClCompile>
+		<ClCompile Include="elements\IdentifierUtils.cpp">
+			<Filter>elements</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Progression.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="company\CompanyManager.cpp">
+			<Filter>company</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\LocalUI.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\UINavigation.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\SiteVisual.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\CharacterSlot.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\CharacterSlotList.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\BaseCharacter.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="char\CharData.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Character.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\ElementGrid.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\ElementGridDisplayCache.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\ElementSlotDisplayCache.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\ElementGridSelector.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\ElementStockpileDisplayCache.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\ElementStockpileSelector.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Loadout.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="combat\CombatInstance.cpp">
+			<Filter>combat</Filter>
+		</ClCompile>
+		<ClCompile Include="combat\CombatantID.cpp">
+			<Filter>combat</Filter>
+		</ClCompile>
+		<ClCompile Include="combat\FightController.cpp">
+			<Filter>combat</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Vitality.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Combo.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="appstates\devtest\DevTestLobby.cpp">
+			<Filter>appstates\devtest</Filter>
+		</ClCompile>
+		<ClCompile Include="sync\Session.cpp">
+			<Filter>sync</Filter>
+		</ClCompile>
+		<ClCompile Include="save\SaveBlob.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="save\SaveManager.cpp">
+			<Filter>save</Filter>
+		</ClCompile>
+		<ClCompile Include="overworld\OverworldDesc.cpp">
+			<Filter>overworld</Filter>
+		</ClCompile>
+		<ClCompile Include="overworld\Overworld.cpp">
+			<Filter>overworld</Filter>
+		</ClCompile>
+		<ClCompile Include="resource\ResourceLoad.cpp">
+			<Filter>resource</Filter>
+		</ClCompile>
+		<ClCompile Include="overworld\Area.cpp">
+			<Filter>overworld</Filter>
+		</ClCompile>
+		<ClCompile Include="site\Site.cpp">
+			<Filter>site</Filter>
+		</ClCompile>
+		<ClCompile Include="site\SiteDesc.cpp">
+			<Filter>site</Filter>
+		</ClCompile>
+		<ClCompile Include="campaign\CampaignManager.cpp">
+			<Filter>campaign</Filter>
+		</ClCompile>
+		<ClCompile Include="campaign\Campaign.cpp">
+			<Filter>campaign</Filter>
+		</ClCompile>
+		<ClCompile Include="campaign\CampaignDesc.cpp">
+			<Filter>campaign</Filter>
+		</ClCompile>
+		<ClCompile Include="campaign\RosterMemberDesc.cpp">
+			<Filter>campaign</Filter>
+		</ClCompile>
+		<ClCompile Include="encounter\EncounterManager.cpp">
+			<Filter>encounter</Filter>
+		</ClCompile>
+		<ClCompile Include="state\objects\Encounter.cpp">
+			<Filter>state\objects</Filter>
+		</ClCompile>
+		<ClCompile Include="state\components\Encounter.cpp">
+			<Filter>state\components</Filter>
+		</ClCompile>
+		<ClCompile Include="encounter\Encounter.cpp">
+			<Filter>encounter</Filter>
+		</ClCompile>
+		<ClCompile Include="encounter\EncounterDesc.cpp">
+			<Filter>encounter</Filter>
+		</ClCompile>
+		<ClCompile Include="encounter\Entity.cpp">
+			<Filter>encounter</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\CombatCharacter.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="options\Option.cpp">
+			<Filter>options</Filter>
+		</ClCompile>
+		<ClCompile Include="options\OptionDesc.cpp">
+			<Filter>options</Filter>
+		</ClCompile>
+		<ClCompile Include="options\OptionSet.cpp">
+			<Filter>options</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\OptionSlot.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\OptionSlotList.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="options\OptionValue.cpp">
+			<Filter>options</Filter>
+		</ClCompile>
+		<ClCompile Include="options\OptionLogic.cpp">
+			<Filter>options</Filter>
+		</ClCompile>
+		<ClCompile Include="combat\IdentifierUtils.cpp">
+			<Filter>combat</Filter>
+		</ClCompile>
+		<ClCompile Include="ui\controllers\ElementSlotOverlay.cpp">
+			<Filter>ui\controller</Filter>
+		</ClCompile>
+		<ClCompile Include="char\GridMask.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="cc3o3.h" />
+		<ClInclude Include="appstates\InitialLoading.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\stdafx.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\project.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\AppStatesFwd.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\Boot.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\stdafx.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\project.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\UIFwd.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="input\stdafx.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="input\InputFwd.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="input\project.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="input\HardcodedSetup.h">
+			<Filter>input</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\AppStateRoute.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\LocalizationHelpers.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="CommonPaths.h" />
+		<ClInclude Include="char\project.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\stdafx.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\Visuals.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\CharFwd.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\Genetics.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\Stats.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\Equipment.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\ElementSlots.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\CharacterDatabase.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="char\Description.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="Common.h" />
+		<ClInclude Include="char\CharacterValidator.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\project.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\stdafx.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\CombatEngine.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\CombatFwd.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\InputHelpers.h">
+			<Filter>appstates</Filter>
+		</ClInclude>
+		<ClInclude Include="DeveloperHud.h" />
+		<ClInclude Include="time\stdafx.h">
+			<Filter>time</Filter>
+		</ClInclude>
+		<ClInclude Include="time\TimeFwd.h">
+			<Filter>time</Filter>
+		</ClInclude>
+		<ClInclude Include="time\project.h">
+			<Filter>time</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\DevTestRollback.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\DevTestCombatCharts.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay_Overworld.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay_Site.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay_Battle.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay_Menus.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\TitleScreen_CharCreate.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\TitleScreen_MainMenu.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\TitleScreen_Options.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\TitleScreen.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\project.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\project.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\project.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\stdafx.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\stdafx.h">
+			<Filter>appstates\gameplay</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\titlescreen\stdafx.h">
+			<Filter>appstates\titlescreen</Filter>
+		</ClInclude>
+		<ClInclude Include="state\stdafx.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\project.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\project.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\stdafx.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\StateFwd.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\Component.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\ComponentResolver.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Meta.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\stdafx.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\project.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\OverworldCharacter.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\SiteCharacter.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\BattleCharacter.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\EmptyObject.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\OverworldVisual.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\OverworldMovement.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\StateLogging.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\StateHelpers.h">
+			<Filter>state</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Roster.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\Company.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\DevTestGridCharts.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\stdafx.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\project.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\ElementDesc.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\ElementFwd.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\ElementDatabase.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="elements\IdentifierUtils.h">
+			<Filter>elements</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Progression.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="company\CompanyManager.h">
+			<Filter>company</Filter>
+		</ClInclude>
+		<ClInclude Include="company\project.h">
+			<Filter>company</Filter>
+		</ClInclude>
+		<ClInclude Include="company\stdafx.h">
+			<Filter>company</Filter>
+		</ClInclude>
+		<ClInclude Include="company\CompanyFwd.h">
+			<Filter>company</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\LocalUI.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\UINavigation.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\SiteVisual.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\CharacterSlot.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\stdafx.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\project.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\CharacterSlotList.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\BaseCharacter.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="char\CharData.h">
+			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Character.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\ElementGrid.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\ElementGridDisplayCache.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\ElementSlotDisplayCache.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\ElementTilesetValues.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\ElementGridSelector.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\ElementStockpileDisplayCache.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\ElementStockpileSelector.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Loadout.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\CombatInstance.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\Party.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\Team.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\Field.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\Attack.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\CombatantID.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\Fighter.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\FightController.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Vitality.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Combo.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\DevTestLobby.h">
+			<Filter>appstates\devtest</Filter>
+		</ClInclude>
+		<ClInclude Include="sync\project.h">
+			<Filter>sync</Filter>
+		</ClInclude>
+		<ClInclude Include="sync\stdafx.h">
+			<Filter>sync</Filter>
+		</ClInclude>
+		<ClInclude Include="sync\SyncFwd.h">
+			<Filter>sync</Filter>
+		</ClInclude>
+		<ClInclude Include="sync\Session.h">
+			<Filter>sync</Filter>
+		</ClInclude>
+		<ClInclude Include="save\stdafx.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="save\project.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="save\SaveBlob.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="save\SaveFwd.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="save\SaveManager.h">
+			<Filter>save</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\stdafx.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\OverworldFwd.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\project.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\OverworldDesc.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\Overworld.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="resource\stdafx.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="resource\project.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="resource\ResourceFwd.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="resource\ResourceLoad.h">
+			<Filter>resource</Filter>
+		</ClInclude>
+		<ClInclude Include="overworld\Area.h">
+			<Filter>overworld</Filter>
+		</ClInclude>
+		<ClInclude Include="site\SiteFwd.h">
+			<Filter>site</Filter>
+		</ClInclude>
+		<ClInclude Include="site\stdafx.h">
+			<Filter>site</Filter>
+		</ClInclude>
+		<ClInclude Include="site\project.h">
+			<Filter>site</Filter>
+		</ClInclude>
+		<ClInclude Include="site\Site.h">
+			<Filter>site</Filter>
+		</ClInclude>
+		<ClInclude Include="site\SiteDesc.h">
+			<Filter>site</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\CampaignManager.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\project.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\stdafx.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\CampaignFwd.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\CampaignDesc.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\Campaign.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="campaign\RosterMemberDesc.h">
+			<Filter>campaign</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\EncounterManager.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\project.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\stdafx.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\EncounterFwd.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="state\objects\Encounter.h">
+			<Filter>state\objects</Filter>
+		</ClInclude>
+		<ClInclude Include="state\components\Encounter.h">
+			<Filter>state\components</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\EncounterDesc.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\Encounter.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="encounter\Entity.h">
+			<Filter>encounter</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\CombatCharacter.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="options\stdafx.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\OptionsFwd.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\project.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\Option.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\OptionDesc.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\OptionSet.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\OptionSlot.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\OptionSlotList.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="options\OptionValue.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="options\OptionLogic.h">
+			<Filter>options</Filter>
+		</ClInclude>
+		<ClInclude Include="combat\IdentifierUtils.h">
+			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\ElementSlotOverlay.h">
+			<Filter>ui\controller</Filter>
+		</ClInclude>
+		<ClInclude Include="char\GridMask.h">
+			<Filter>char</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="appstates">
+			<UniqueIdentifier>{f51a17ff-828c-4298-9c76-d5542435e0bb}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui">
+			<UniqueIdentifier>{dd3e30f1-d240-4ee5-b979-9a5fcc628698}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="input">
+			<UniqueIdentifier>{5ba1e6a8-c973-4afe-8a56-76545c60e754}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="char">
+			<UniqueIdentifier>{7419a65b-047c-463a-b22c-61c48e852a6c}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="combat">
+			<UniqueIdentifier>{7aed0947-995d-4cbc-a641-435d43c37fd2}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="time">
+			<UniqueIdentifier>{f1909fb8-7ba9-4a73-91a5-9e9a955574dc}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="appstates\devtest">
+			<UniqueIdentifier>{469305ee-1728-41c5-9572-7cedd9b11fae}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="appstates\gameplay">
+			<UniqueIdentifier>{38e47fb8-05f2-4619-9c3e-b14b04c14204}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="appstates\titlescreen">
+			<UniqueIdentifier>{3f3236b5-7a84-40c0-aff6-4b544a4e0f7c}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="state">
+			<UniqueIdentifier>{55e004f0-699c-4757-8ed6-499239c346e1}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="state\components">
+			<UniqueIdentifier>{f82d6ced-c55b-4776-87ad-17ca36c276b5}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="state\objects">
+			<UniqueIdentifier>{af48043f-db11-4e59-9e25-6340184c412d}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="elements">
+			<UniqueIdentifier>{ff4b4de9-e795-42a2-82bd-ab64628a5612}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="company">
+			<UniqueIdentifier>{d3e47703-9660-4e59-a195-ed9a8e5bd9bd}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui\controller">
+			<UniqueIdentifier>{97e2921f-2a56-42d8-9225-9d96e0472215}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="sync">
+			<UniqueIdentifier>{87a0fe54-76a3-45fa-b4da-07880d0f517a}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="save">
+			<UniqueIdentifier>{0c541ae1-7342-431c-85fc-4c65e1def9aa}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="overworld">
+			<UniqueIdentifier>{03409ddd-3ac7-4ba0-af17-aa8710c61415}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="resource">
+			<UniqueIdentifier>{fdc4ba5f-5062-461e-8ac4-35389713afcf}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="site">
+			<UniqueIdentifier>{fe3cba7d-6c86-4a0d-9e25-31bf1ee02b89}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="campaign">
+			<UniqueIdentifier>{fd4cf30c-7494-4043-ac94-83a9b60868d5}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="encounter">
+			<UniqueIdentifier>{b2a80f4a-80d4-448e-a5e6-10aa9f146587}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="options">
+			<UniqueIdentifier>{3ea117f1-a0b7-452f-8087-2ea2bd043593}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="nostrip.def" />
+	</ItemGroup>
 </Project>

@@ -1,28 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="BitmapWriter.cpp" />
-    <ClCompile Include="Bitmap.cpp" />
-    <ClCompile Include="BitmapReader.cpp" />
-    <ClCompile Include="BitmapCache.cpp" />
-    <ClCompile Include="CharacterCompositor.cpp" />
-    <ClCompile Include="CharacterCreator.cpp" />
-    <ClCompile Include="MelaninColorGenerator.cpp" />
-    <ClCompile Include="CompositeCharacter.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="BitmapWriter.h" />
-    <ClInclude Include="SpriteFwd.h" />
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="BitmapReader.h" />
-    <ClInclude Include="BitmapCache.h" />
-    <ClInclude Include="CharacterCompositor.h" />
-    <ClInclude Include="CharacterCreator.h" />
-    <ClInclude Include="MelaninColorGenerator.h" />
-    <ClInclude Include="CompositeCharacter.h" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="BitmapWriter.cpp" />
+		<ClCompile Include="Bitmap.cpp" />
+		<ClCompile Include="BitmapReader.cpp" />
+		<ClCompile Include="BitmapCache.cpp" />
+		<ClCompile Include="CharacterCompositor.cpp" />
+		<ClCompile Include="CharacterCreator.cpp" />
+		<ClCompile Include="MelaninColorGenerator.cpp" />
+		<ClCompile Include="CompositeCharacter.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="BitmapWriter.h" />
+		<ClInclude Include="SpriteFwd.h" />
+		<ClInclude Include="Bitmap.h" />
+		<ClInclude Include="BitmapReader.h" />
+		<ClInclude Include="BitmapCache.h" />
+		<ClInclude Include="CharacterCompositor.h" />
+		<ClInclude Include="CharacterCreator.h" />
+		<ClInclude Include="MelaninColorGenerator.h" />
+		<ClInclude Include="CompositeCharacter.h" />
+	</ItemGroup>
 </Project>

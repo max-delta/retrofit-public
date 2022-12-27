@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="OOLoader.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="OOLoader.h" />
-    <ClInclude Include="ScriptFwd.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="OOLoader.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="OOLoader.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="OOLoader.h" />
+		<ClInclude Include="ScriptFwd.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="OOLoader.inl" />
+	</ItemGroup>
 </Project>

@@ -1,116 +1,116 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stub.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="extension">
-      <UniqueIdentifier>{a107c326-95f9-4b7b-945c-75200ef03e44}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="patch">
-      <UniqueIdentifier>{dedf7524-064a-45ea-8434-8750b1b333c3}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="chrono" />
-    <ClInclude Include="utility" />
-    <ClInclude Include="initializer_list" />
-    <ClInclude Include="iterator" />
-    <ClInclude Include="vector" />
-    <ClInclude Include="string" />
-    <ClInclude Include="thread" />
-    <ClInclude Include="sstream" />
-    <ClInclude Include="limits" />
-    <ClInclude Include="type_traits" />
-    <ClInclude Include="cstddef" />
-    <ClInclude Include="variant" />
-    <ClInclude Include="ratio" />
-    <ClInclude Include="array" />
-    <ClInclude Include="shared_mutex" />
-    <ClInclude Include="mutex" />
-    <ClInclude Include="unordered_map" />
-    <ClInclude Include="deque" />
-    <ClInclude Include="bitset" />
-    <ClInclude Include="cstdlib" />
-    <ClInclude Include="unordered_set" />
-    <ClInclude Include="atomic" />
-    <ClInclude Include="filesystem" />
-    <ClInclude Include="memory" />
-    <ClInclude Include="cstdint" />
-    <ClInclude Include="cstdarg" />
-    <ClInclude Include="cstdio" />
-    <ClInclude Include="cstring" />
-    <ClInclude Include="extension\immutable_string.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="tuple" />
-    <ClInclude Include="future" />
-    <ClInclude Include="functional" />
-    <ClInclude Include="extension\string_traits.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\string_compare.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\virtual_iterator.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\integer_literals.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\static_vector.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\static_string.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\byte_view.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\void_traits.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\algorithms.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\void_alias.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-    <ClInclude Include="extension\string_copy.h">
-      <Filter>extension</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="patch\preinclude.inl">
-      <Filter>patch</Filter>
-    </None>
-    <None Include="patch\postinclude.inl">
-      <Filter>patch</Filter>
-    </None>
-    <None Include="patch\normallocations.inl">
-      <Filter>patch</Filter>
-    </None>
-    <None Include="set" />
-    <None Include="map" />
-    <None Include="algorithm" />
-    <None Include="optional" />
-    <None Include="new" />
-    <None Include="system_error" />
-    <None Include="extension\static_vector.inl">
-      <Filter>extension</Filter>
-    </None>
-    <None Include="numeric" />
-    <None Include="extension\static_string.inl">
-      <Filter>extension</Filter>
-    </None>
-    <None Include="string_view" />
-    <None Include="extension\byte_view.inl">
-      <Filter>extension</Filter>
-    </None>
-    <None Include="cctype" />
-    <None Include="extension\algorithms.inl">
-      <Filter>extension</Filter>
-    </None>
-    <None Include="condition_variable" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stub.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="extension">
+			<UniqueIdentifier>{a107c326-95f9-4b7b-945c-75200ef03e44}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="patch">
+			<UniqueIdentifier>{dedf7524-064a-45ea-8434-8750b1b333c3}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="chrono" />
+		<ClInclude Include="utility" />
+		<ClInclude Include="initializer_list" />
+		<ClInclude Include="iterator" />
+		<ClInclude Include="vector" />
+		<ClInclude Include="string" />
+		<ClInclude Include="thread" />
+		<ClInclude Include="sstream" />
+		<ClInclude Include="limits" />
+		<ClInclude Include="type_traits" />
+		<ClInclude Include="cstddef" />
+		<ClInclude Include="variant" />
+		<ClInclude Include="ratio" />
+		<ClInclude Include="array" />
+		<ClInclude Include="shared_mutex" />
+		<ClInclude Include="mutex" />
+		<ClInclude Include="unordered_map" />
+		<ClInclude Include="deque" />
+		<ClInclude Include="bitset" />
+		<ClInclude Include="cstdlib" />
+		<ClInclude Include="unordered_set" />
+		<ClInclude Include="atomic" />
+		<ClInclude Include="filesystem" />
+		<ClInclude Include="memory" />
+		<ClInclude Include="cstdint" />
+		<ClInclude Include="cstdarg" />
+		<ClInclude Include="cstdio" />
+		<ClInclude Include="cstring" />
+		<ClInclude Include="extension\immutable_string.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="tuple" />
+		<ClInclude Include="future" />
+		<ClInclude Include="functional" />
+		<ClInclude Include="extension\string_traits.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\string_compare.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\virtual_iterator.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\integer_literals.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\static_vector.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\static_string.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\byte_view.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\void_traits.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\algorithms.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\void_alias.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+		<ClInclude Include="extension\string_copy.h">
+			<Filter>extension</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="patch\preinclude.inl">
+			<Filter>patch</Filter>
+		</None>
+		<None Include="patch\postinclude.inl">
+			<Filter>patch</Filter>
+		</None>
+		<None Include="patch\normallocations.inl">
+			<Filter>patch</Filter>
+		</None>
+		<None Include="set" />
+		<None Include="map" />
+		<None Include="algorithm" />
+		<None Include="optional" />
+		<None Include="new" />
+		<None Include="system_error" />
+		<None Include="extension\static_vector.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="numeric" />
+		<None Include="extension\static_string.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="string_view" />
+		<None Include="extension\byte_view.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="cctype" />
+		<None Include="extension\algorithms.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="condition_variable" />
+	</ItemGroup>
 </Project>

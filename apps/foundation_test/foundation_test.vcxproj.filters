@@ -1,22 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="rftype_typedatabase.cpp" />
-    <ClCompile Include="logging.cpp" />
-    <ClCompile Include="serialization_diagnosticexporter.cpp" />
-    <ClCompile Include="rftype_typetraverser.cpp" />
-    <ClCompile Include="serialization_xmlexporter.cpp" />
-    <ClCompile Include="serialization_objectserializer.cpp" />
-    <ClCompile Include="scheduling_taskscheduler.cpp" />
-    <ClCompile Include="scripting_squirrel.cpp" />
-    <ClCompile Include="platform_memoryregion.cpp" />
-    <ClCompile Include="rollback_domain.cpp" />
-    <ClCompile Include="rollback_inputstream.cpp" />
-    <ClCompile Include="commandline_argparse.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="rftype_typedatabase.cpp" />
+		<ClCompile Include="logging.cpp" />
+		<ClCompile Include="serialization_diagnosticexporter.cpp" />
+		<ClCompile Include="rftype_typetraverser.cpp" />
+		<ClCompile Include="serialization_xmlexporter.cpp" />
+		<ClCompile Include="serialization_objectserializer.cpp" />
+		<ClCompile Include="scheduling_taskscheduler.cpp" />
+		<ClCompile Include="scripting_squirrel.cpp" />
+		<ClCompile Include="platform_memoryregion.cpp" />
+		<ClCompile Include="rollback_domain.cpp" />
+		<ClCompile Include="rollback_inputstream.cpp" />
+		<ClCompile Include="commandline_argparse.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+	</ItemGroup>
 </Project>

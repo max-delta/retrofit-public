@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Tests.cpp" />
-    <ClCompile Include="Scratch.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Tests.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="Scratch.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="nostrip.def" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="main.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="Tests.cpp" />
+		<ClCompile Include="Scratch.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="Tests.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="Scratch.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="nostrip.def" />
+	</ItemGroup>
 </Project>

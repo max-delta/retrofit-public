@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StringConvert.h" />
-    <ClInclude Include="CharConvert.h" />
-    <ClInclude Include="InsertConvert.h" />
-    <ClInclude Include="BufferConvert.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="StringConvert.cpp" />
-    <ClCompile Include="CharConvert.cpp" />
-    <ClCompile Include="BufferConvert.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="InsertConvert.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="StringConvert.h" />
+		<ClInclude Include="CharConvert.h" />
+		<ClInclude Include="InsertConvert.h" />
+		<ClInclude Include="BufferConvert.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="StringConvert.cpp" />
+		<ClCompile Include="CharConvert.cpp" />
+		<ClCompile Include="BufferConvert.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="InsertConvert.inl" />
+	</ItemGroup>
 </Project>

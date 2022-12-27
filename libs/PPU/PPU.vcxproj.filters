@@ -1,55 +1,55 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="DeviceInterface.h" />
-    <ClInclude Include="PPUFwd.h" />
-    <ClInclude Include="TextureManager.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="PPUController.h" />
-    <ClInclude Include="PPUState.h" />
-    <ClInclude Include="PPUDebugState.h" />
-    <ClInclude Include="FramePack.h" />
-    <ClInclude Include="FramePackManager.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="FramePackSerDes.h" />
-    <ClInclude Include="PPUTimer.h" />
-    <ClInclude Include="TileLayer.h" />
-    <ClInclude Include="Tileset.h" />
-    <ClInclude Include="TilesetManager.h" />
-    <ClInclude Include="Font.h" />
-    <ClInclude Include="FontManager.h" />
-    <ClInclude Include="TileLayerCSVLoader.h" />
-    <ClInclude Include="Viewport.h" />
-    <ClInclude Include="GfxFwd.h" />
-    <ClInclude Include="PPUConfig.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PPUController.cpp" />
-    <ClCompile Include="PPUState.cpp" />
-    <ClCompile Include="PPUDebugState.cpp" />
-    <ClCompile Include="FramePack.cpp" />
-    <ClCompile Include="FramePackManager.cpp" />
-    <ClCompile Include="FramePackSerDes.cpp" />
-    <ClCompile Include="PPUTimer.cpp" />
-    <ClCompile Include="TileLayer.cpp" />
-    <ClCompile Include="Tileset.cpp" />
-    <ClCompile Include="TilesetManager.cpp" />
-    <ClCompile Include="Font.cpp" />
-    <ClCompile Include="FontManager.cpp" />
-    <ClCompile Include="TileLayerCSVLoader.cpp" />
-    <ClCompile Include="project.cpp" />
-    <ClCompile Include="Viewport.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="FramePack.inl" />
-    <None Include="ResourceManager.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="DeviceInterface.h" />
+		<ClInclude Include="PPUFwd.h" />
+		<ClInclude Include="TextureManager.h" />
+		<ClInclude Include="Texture.h" />
+		<ClInclude Include="Object.h" />
+		<ClInclude Include="PPUController.h" />
+		<ClInclude Include="PPUState.h" />
+		<ClInclude Include="PPUDebugState.h" />
+		<ClInclude Include="FramePack.h" />
+		<ClInclude Include="FramePackManager.h" />
+		<ClInclude Include="ResourceManager.h" />
+		<ClInclude Include="FramePackSerDes.h" />
+		<ClInclude Include="PPUTimer.h" />
+		<ClInclude Include="TileLayer.h" />
+		<ClInclude Include="Tileset.h" />
+		<ClInclude Include="TilesetManager.h" />
+		<ClInclude Include="Font.h" />
+		<ClInclude Include="FontManager.h" />
+		<ClInclude Include="TileLayerCSVLoader.h" />
+		<ClInclude Include="Viewport.h" />
+		<ClInclude Include="GfxFwd.h" />
+		<ClInclude Include="PPUConfig.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="TextureManager.cpp" />
+		<ClCompile Include="Texture.cpp" />
+		<ClCompile Include="Object.cpp" />
+		<ClCompile Include="PPUController.cpp" />
+		<ClCompile Include="PPUState.cpp" />
+		<ClCompile Include="PPUDebugState.cpp" />
+		<ClCompile Include="FramePack.cpp" />
+		<ClCompile Include="FramePackManager.cpp" />
+		<ClCompile Include="FramePackSerDes.cpp" />
+		<ClCompile Include="PPUTimer.cpp" />
+		<ClCompile Include="TileLayer.cpp" />
+		<ClCompile Include="Tileset.cpp" />
+		<ClCompile Include="TilesetManager.cpp" />
+		<ClCompile Include="Font.cpp" />
+		<ClCompile Include="FontManager.cpp" />
+		<ClCompile Include="TileLayerCSVLoader.cpp" />
+		<ClCompile Include="project.cpp" />
+		<ClCompile Include="Viewport.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="FramePack.inl" />
+		<None Include="ResourceManager.inl" />
+	</ItemGroup>
 </Project>

@@ -1,76 +1,76 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="RollbackController.cpp" />
-    <ClCompile Include="RollbackFilters.cpp" />
-    <ClCompile Include="SnapshotSerializer.cpp" />
-    <ClCompile Include="ConnectionMananger.cpp" />
-    <ClCompile Include="SessionHostManager.cpp" />
-    <ClCompile Include="SessionClientManager.cpp" />
-    <ClCompile Include="protocol\Logic.cpp">
-      <Filter>protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="protocol\Messages.cpp">
-      <Filter>protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="protocol\Encryption.cpp">
-      <Filter>protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="protocol\Structure.cpp">
-      <Filter>protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="SessionMembers.cpp" />
-    <ClCompile Include="SessionManager.cpp" />
-    <ClCompile Include="RollbackInputManager.cpp" />
-    <ClCompile Include="RollbackInputPack.cpp" />
-    <ClCompile Include="PassthroughController.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="RollbackController.h" />
-    <ClInclude Include="RollbackFilters.h" />
-    <ClInclude Include="SnapshotSerializer.h" />
-    <ClInclude Include="ConnectionMananger.h" />
-    <ClInclude Include="SessionHostManager.h" />
-    <ClInclude Include="SessionClientManager.h" />
-    <ClInclude Include="protocol\Messages.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\Logic.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\stdafx.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\project.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\Encryption.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\Structure.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="protocol\Standards.h">
-      <Filter>protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="SessionMembers.h" />
-    <ClInclude Include="SyncFwd.h" />
-    <ClInclude Include="SessionManager.h" />
-    <ClInclude Include="RollbackInputManager.h" />
-    <ClInclude Include="InputFwd.h" />
-    <ClInclude Include="RollbackInputPack.h" />
-    <ClInclude Include="PassthroughController.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="protocol">
-      <UniqueIdentifier>{6e37a0ca-fe46-432d-b37c-58663cbb008b}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SessionManager.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="RollbackController.cpp" />
+		<ClCompile Include="RollbackFilters.cpp" />
+		<ClCompile Include="SnapshotSerializer.cpp" />
+		<ClCompile Include="ConnectionMananger.cpp" />
+		<ClCompile Include="SessionHostManager.cpp" />
+		<ClCompile Include="SessionClientManager.cpp" />
+		<ClCompile Include="protocol\Logic.cpp">
+			<Filter>protocol</Filter>
+		</ClCompile>
+		<ClCompile Include="protocol\Messages.cpp">
+			<Filter>protocol</Filter>
+		</ClCompile>
+		<ClCompile Include="protocol\Encryption.cpp">
+			<Filter>protocol</Filter>
+		</ClCompile>
+		<ClCompile Include="protocol\Structure.cpp">
+			<Filter>protocol</Filter>
+		</ClCompile>
+		<ClCompile Include="SessionMembers.cpp" />
+		<ClCompile Include="SessionManager.cpp" />
+		<ClCompile Include="RollbackInputManager.cpp" />
+		<ClCompile Include="RollbackInputPack.cpp" />
+		<ClCompile Include="PassthroughController.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="RollbackController.h" />
+		<ClInclude Include="RollbackFilters.h" />
+		<ClInclude Include="SnapshotSerializer.h" />
+		<ClInclude Include="ConnectionMananger.h" />
+		<ClInclude Include="SessionHostManager.h" />
+		<ClInclude Include="SessionClientManager.h" />
+		<ClInclude Include="protocol\Messages.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\Logic.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\stdafx.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\project.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\Encryption.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\Structure.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="protocol\Standards.h">
+			<Filter>protocol</Filter>
+		</ClInclude>
+		<ClInclude Include="SessionMembers.h" />
+		<ClInclude Include="SyncFwd.h" />
+		<ClInclude Include="SessionManager.h" />
+		<ClInclude Include="RollbackInputManager.h" />
+		<ClInclude Include="InputFwd.h" />
+		<ClInclude Include="RollbackInputPack.h" />
+		<ClInclude Include="PassthroughController.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="protocol">
+			<UniqueIdentifier>{6e37a0ca-fe46-432d-b37c-58663cbb008b}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="SessionManager.inl" />
+	</ItemGroup>
 </Project>

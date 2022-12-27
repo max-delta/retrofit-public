@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="FunctionTraits.h" />
-    <ClInclude Include="Value.h" />
-    <ClInclude Include="VariableTraits.h" />
-    <ClInclude Include="ClassInfo.h" />
-    <ClInclude Include="ClassInfoBuilder.h" />
-    <ClInclude Include="VirtualClass.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Value.cpp" />
-    <ClCompile Include="ClassInfo.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Value.inl" />
-    <None Include="ClassInfoBuilder.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="FunctionTraits.h" />
+		<ClInclude Include="Value.h" />
+		<ClInclude Include="VariableTraits.h" />
+		<ClInclude Include="ClassInfo.h" />
+		<ClInclude Include="ClassInfoBuilder.h" />
+		<ClInclude Include="VirtualClass.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="Value.cpp" />
+		<ClCompile Include="ClassInfo.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Value.inl" />
+		<None Include="ClassInfoBuilder.inl" />
+	</ItemGroup>
 </Project>

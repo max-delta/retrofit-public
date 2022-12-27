@@ -1,53 +1,53 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="math_casts.h" />
-    <ClInclude Include="math_clamps.h" />
-    <ClInclude Include="math_compare.h" />
-    <ClInclude Include="Hash.h" />
-    <ClInclude Include="math_bits.h" />
-    <ClInclude Include="BitField.h" />
-    <ClInclude Include="ListOperations.h" />
-    <ClInclude Include="NumericTraits.h" />
-    <ClInclude Include="math_bytes.h" />
-    <ClInclude Include="AABB4.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Color3f.h" />
-    <ClInclude Include="Rand.h" />
-    <ClInclude Include="Lerp.h" />
-    <ClInclude Include="Color4u8.h" />
-    <ClInclude Include="Bitmap.h" />
-    <ClInclude Include="BitwiseEnums.h" />
-    <ClInclude Include="Limits.h" />
-    <ClInclude Include="SoftFloat.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Hash.cpp" />
-    <ClCompile Include="math_bits.cpp" />
-    <ClCompile Include="AABB4.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="Color3f.cpp" />
-    <ClCompile Include="Rand.cpp" />
-    <ClCompile Include="Color4u8.cpp" />
-    <ClCompile Include="Bitmap.cpp" />
-    <ClCompile Include="BitwiseEnums.cpp" />
-    <ClCompile Include="SoftFloat.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Vector2.inl" />
-    <None Include="math_casts.inl" />
-    <None Include="math_clamps.inl" />
-    <None Include="math_compare.inl" />
-    <None Include="math_bits.inl" />
-    <None Include="math_bytes.inl" />
-    <None Include="BitField.inl" />
-    <None Include="AABB4.inl" />
-    <None Include="Vector3.inl" />
-    <None Include="Lerp.inl" />
-    <None Include="Limits.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="Vector2.h" />
+		<ClInclude Include="math_casts.h" />
+		<ClInclude Include="math_clamps.h" />
+		<ClInclude Include="math_compare.h" />
+		<ClInclude Include="Hash.h" />
+		<ClInclude Include="math_bits.h" />
+		<ClInclude Include="BitField.h" />
+		<ClInclude Include="ListOperations.h" />
+		<ClInclude Include="NumericTraits.h" />
+		<ClInclude Include="math_bytes.h" />
+		<ClInclude Include="AABB4.h" />
+		<ClInclude Include="Vector3.h" />
+		<ClInclude Include="Color3f.h" />
+		<ClInclude Include="Rand.h" />
+		<ClInclude Include="Lerp.h" />
+		<ClInclude Include="Color4u8.h" />
+		<ClInclude Include="Bitmap.h" />
+		<ClInclude Include="BitwiseEnums.h" />
+		<ClInclude Include="Limits.h" />
+		<ClInclude Include="SoftFloat.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="Vector2.cpp" />
+		<ClCompile Include="Hash.cpp" />
+		<ClCompile Include="math_bits.cpp" />
+		<ClCompile Include="AABB4.cpp" />
+		<ClCompile Include="Vector3.cpp" />
+		<ClCompile Include="Color3f.cpp" />
+		<ClCompile Include="Rand.cpp" />
+		<ClCompile Include="Color4u8.cpp" />
+		<ClCompile Include="Bitmap.cpp" />
+		<ClCompile Include="BitwiseEnums.cpp" />
+		<ClCompile Include="SoftFloat.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Vector2.inl" />
+		<None Include="math_casts.inl" />
+		<None Include="math_clamps.inl" />
+		<None Include="math_compare.inl" />
+		<None Include="math_bits.inl" />
+		<None Include="math_bytes.inl" />
+		<None Include="BitField.inl" />
+		<None Include="AABB4.inl" />
+		<None Include="Vector3.inl" />
+		<None Include="Lerp.inl" />
+		<None Include="Limits.inl" />
+	</ItemGroup>
 </Project>

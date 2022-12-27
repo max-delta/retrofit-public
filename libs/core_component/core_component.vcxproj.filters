@@ -1,29 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="ObjectManager.cpp" />
-    <ClCompile Include="View.cpp" />
-    <ClCompile Include="ObjectRef.cpp" />
-    <ClCompile Include="ComponentRef.cpp" />
-    <ClCompile Include="TypedObjectManager.cpp" />
-    <ClCompile Include="TypedObjectRef.cpp" />
-    <ClCompile Include="TypedComponentRef.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="ObjectManager.h" />
-    <ClInclude Include="ComponentFwd.h" />
-    <ClInclude Include="TypedObjectManager.h" />
-    <ClInclude Include="ObjectRef.h" />
-    <ClInclude Include="ComponentRef.h" />
-    <ClInclude Include="View.h" />
-    <ClInclude Include="TypedObjectRef.h" />
-    <ClInclude Include="TypedComponentRef.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="TypedObjectManager.inl" />
-    <None Include="TypedObjectRef.inl" />
-    <None Include="TypedComponentRef.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="ObjectManager.cpp" />
+		<ClCompile Include="View.cpp" />
+		<ClCompile Include="ObjectRef.cpp" />
+		<ClCompile Include="ComponentRef.cpp" />
+		<ClCompile Include="TypedObjectManager.cpp" />
+		<ClCompile Include="TypedObjectRef.cpp" />
+		<ClCompile Include="TypedComponentRef.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="ObjectManager.h" />
+		<ClInclude Include="ComponentFwd.h" />
+		<ClInclude Include="TypedObjectManager.h" />
+		<ClInclude Include="ObjectRef.h" />
+		<ClInclude Include="ComponentRef.h" />
+		<ClInclude Include="View.h" />
+		<ClInclude Include="TypedObjectRef.h" />
+		<ClInclude Include="TypedComponentRef.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="TypedObjectManager.inl" />
+		<None Include="TypedObjectRef.inl" />
+		<None Include="TypedComponentRef.inl" />
+	</ItemGroup>
 </Project>

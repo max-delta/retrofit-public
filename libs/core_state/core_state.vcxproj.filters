@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StateFwd.h" />
-    <ClInclude Include="StateStream.h" />
-    <ClInclude Include="StateTree.h" />
-    <ClInclude Include="StateBag.h" />
-    <ClInclude Include="VariableIdentifier.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="StateStream.inl" />
-    <None Include="StateTree.inl" />
-    <None Include="StateBag.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="StateFwd.h" />
+		<ClInclude Include="StateStream.h" />
+		<ClInclude Include="StateTree.h" />
+		<ClInclude Include="StateBag.h" />
+		<ClInclude Include="VariableIdentifier.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="StateStream.inl" />
+		<None Include="StateTree.inl" />
+		<None Include="StateBag.inl" />
+	</ItemGroup>
 </Project>

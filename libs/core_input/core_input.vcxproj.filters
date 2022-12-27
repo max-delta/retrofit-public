@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="DigitalInputComponent.h" />
-    <ClInclude Include="InputComponent.h" />
-    <ClInclude Include="InputDevice.h" />
-    <ClInclude Include="AnalogInputComponent.h" />
-    <ClInclude Include="TextInputComponent.h" />
-    <ClInclude Include="InputFwd.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="InputDevice.cpp" />
-    <ClCompile Include="DigitalInputComponent.cpp" />
-    <ClCompile Include="TextInputComponent.cpp" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="DigitalInputComponent.h" />
+		<ClInclude Include="InputComponent.h" />
+		<ClInclude Include="InputDevice.h" />
+		<ClInclude Include="AnalogInputComponent.h" />
+		<ClInclude Include="TextInputComponent.h" />
+		<ClInclude Include="InputFwd.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="InputDevice.cpp" />
+		<ClCompile Include="DigitalInputComponent.cpp" />
+		<ClCompile Include="TextInputComponent.cpp" />
+	</ItemGroup>
 </Project>

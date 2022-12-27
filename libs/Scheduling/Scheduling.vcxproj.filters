@@ -1,79 +1,79 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="tasks\NonIncrementalTask.h">
-      <Filter>tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="tasks\Task.h">
-      <Filter>tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="Tasks\project.h">
-      <Filter>tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="Tasks\FunctorTask.h">
-      <Filter>tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="taskpools\project.h">
-      <Filter>taskpools</Filter>
-    </ClInclude>
-    <ClInclude Include="taskpools\TaskPool.h">
-      <Filter>taskpools</Filter>
-    </ClInclude>
-    <ClInclude Include="SchedulingFwd.h" />
-    <ClInclude Include="taskworkers\project.h">
-      <Filter>taskworkers</Filter>
-    </ClInclude>
-    <ClInclude Include="taskworkers\TaskWorker.h">
-      <Filter>taskworkers</Filter>
-    </ClInclude>
-    <ClInclude Include="TaskScheduler.h" />
-    <ClInclude Include="taskworkers\ThreadableTaskWorker.h">
-      <Filter>taskworkers</Filter>
-    </ClInclude>
-    <ClInclude Include="taskpools\FIFOTaskPool.h">
-      <Filter>taskpools</Filter>
-    </ClInclude>
-    <ClInclude Include="taskpools\TaskPoolListener.h">
-      <Filter>taskpools</Filter>
-    </ClInclude>
-    <ClInclude Include="taskpools\stdafx.h">
-      <Filter>taskpools</Filter>
-    </ClInclude>
-    <ClInclude Include="tasks\stdafx.h">
-      <Filter>tasks</Filter>
-    </ClInclude>
-    <ClInclude Include="taskworkers\stdafx.h">
-      <Filter>taskworkers</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="taskworkers\TaskWorker.cpp">
-      <Filter>taskworkers</Filter>
-    </ClCompile>
-    <ClCompile Include="taskpools\TaskPool.cpp">
-      <Filter>taskpools</Filter>
-    </ClCompile>
-    <ClCompile Include="TaskScheduler.cpp" />
-    <ClCompile Include="taskpools\FIFOTaskPool.cpp">
-      <Filter>taskpools</Filter>
-    </ClCompile>
-    <ClCompile Include="taskworkers\ThreadableTaskWorker.cpp">
-      <Filter>taskworkers</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="tasks">
-      <UniqueIdentifier>{dc97ced3-7cbd-4d89-8bac-bd47cb6ac28e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="taskpools">
-      <UniqueIdentifier>{1358b1c5-c549-476e-b295-e7bc0550c401}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="taskworkers">
-      <UniqueIdentifier>{11efa303-be6a-4283-89f8-e3a853e11950}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="tasks\NonIncrementalTask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="tasks\Task.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="Tasks\project.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="Tasks\FunctorTask.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="taskpools\project.h">
+			<Filter>taskpools</Filter>
+		</ClInclude>
+		<ClInclude Include="taskpools\TaskPool.h">
+			<Filter>taskpools</Filter>
+		</ClInclude>
+		<ClInclude Include="SchedulingFwd.h" />
+		<ClInclude Include="taskworkers\project.h">
+			<Filter>taskworkers</Filter>
+		</ClInclude>
+		<ClInclude Include="taskworkers\TaskWorker.h">
+			<Filter>taskworkers</Filter>
+		</ClInclude>
+		<ClInclude Include="TaskScheduler.h" />
+		<ClInclude Include="taskworkers\ThreadableTaskWorker.h">
+			<Filter>taskworkers</Filter>
+		</ClInclude>
+		<ClInclude Include="taskpools\FIFOTaskPool.h">
+			<Filter>taskpools</Filter>
+		</ClInclude>
+		<ClInclude Include="taskpools\TaskPoolListener.h">
+			<Filter>taskpools</Filter>
+		</ClInclude>
+		<ClInclude Include="taskpools\stdafx.h">
+			<Filter>taskpools</Filter>
+		</ClInclude>
+		<ClInclude Include="tasks\stdafx.h">
+			<Filter>tasks</Filter>
+		</ClInclude>
+		<ClInclude Include="taskworkers\stdafx.h">
+			<Filter>taskworkers</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="taskworkers\TaskWorker.cpp">
+			<Filter>taskworkers</Filter>
+		</ClCompile>
+		<ClCompile Include="taskpools\TaskPool.cpp">
+			<Filter>taskpools</Filter>
+		</ClCompile>
+		<ClCompile Include="TaskScheduler.cpp" />
+		<ClCompile Include="taskpools\FIFOTaskPool.cpp">
+			<Filter>taskpools</Filter>
+		</ClCompile>
+		<ClCompile Include="taskworkers\ThreadableTaskWorker.cpp">
+			<Filter>taskworkers</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="tasks">
+			<UniqueIdentifier>{dc97ced3-7cbd-4d89-8bac-bd47cb6ac28e}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="taskpools">
+			<UniqueIdentifier>{1358b1c5-c549-476e-b295-e7bc0550c401}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="taskworkers">
+			<UniqueIdentifier>{11efa303-be6a-4283-89f8-e3a853e11950}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
 </Project>

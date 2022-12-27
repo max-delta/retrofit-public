@@ -1,157 +1,157 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="Anchor.cpp" />
-    <ClCompile Include="controllers\NineSlicer.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\Passthrough.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="ContainerManager.cpp" />
-    <ClCompile Include="Container.cpp" />
-    <ClCompile Include="Controller.cpp" />
-    <ClCompile Include="controllers\TextLabel.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="FontRegistry.cpp" />
-    <ClCompile Include="controllers\ColumnSlicer.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\RowSlicer.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\FramePackDisplay.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\Floater.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="FocusTarget.cpp" />
-    <ClCompile Include="FocusTree.cpp" />
-    <ClCompile Include="FocusManager.cpp" />
-    <ClCompile Include="UIContext.cpp" />
-    <ClCompile Include="controllers\ListBox.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\InstancedController.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="FocusEvent.cpp" />
-    <ClCompile Include="FocusKey.cpp" />
-    <ClCompile Include="controllers\TextRows.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\BorderFrame.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\TextBox.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\MessageBox.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\PaddedPassthrough.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\MultiPassthrough.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\GenericListBox.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="controllers\TileLayerDisplay.cpp">
-      <Filter>controllers</Filter>
-    </ClCompile>
-    <ClCompile Include="AlignmentHelpers.cpp" />
-    <ClCompile Include="Font.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="project.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="UIFwd.h" />
-    <ClInclude Include="Anchor.h" />
-    <ClInclude Include="Container.h" />
-    <ClInclude Include="ContainerManager.h" />
-    <ClInclude Include="controllers\NineSlicer.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\Passthrough.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\project.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\stdafx.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="Controller.h" />
-    <ClInclude Include="controllers\TextLabel.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="FontRegistry.h" />
-    <ClInclude Include="controllers\ColumnSlicer.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\RowSlicer.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\FramePackDisplay.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\Floater.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="FocusTarget.h" />
-    <ClInclude Include="FocusTree.h" />
-    <ClInclude Include="FocusManager.h" />
-    <ClInclude Include="UIContext.h" />
-    <ClInclude Include="controllers\ListBox.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\InstancedController.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="FocusEvent.h" />
-    <ClInclude Include="FocusKey.h" />
-    <ClInclude Include="controllers\TextRows.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\BorderFrame.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\TextBox.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\MessageBox.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\PaddedPassthrough.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\MultiPassthrough.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\GenericListBox.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="controllers\TileLayerDisplay.h">
-      <Filter>controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="AlignmentHelpers.h" />
-    <ClInclude Include="Font.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="controllers">
-      <UniqueIdentifier>{ba8e8d01-1148-4956-81fb-60509b9176a3}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ContainerManager.inl" />
-    <None Include="controllers\GenericListBox.inl">
-      <Filter>controllers</Filter>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="Anchor.cpp" />
+		<ClCompile Include="controllers\NineSlicer.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\Passthrough.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="ContainerManager.cpp" />
+		<ClCompile Include="Container.cpp" />
+		<ClCompile Include="Controller.cpp" />
+		<ClCompile Include="controllers\TextLabel.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="FontRegistry.cpp" />
+		<ClCompile Include="controllers\ColumnSlicer.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\RowSlicer.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\FramePackDisplay.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\Floater.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="FocusTarget.cpp" />
+		<ClCompile Include="FocusTree.cpp" />
+		<ClCompile Include="FocusManager.cpp" />
+		<ClCompile Include="UIContext.cpp" />
+		<ClCompile Include="controllers\ListBox.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\InstancedController.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="FocusEvent.cpp" />
+		<ClCompile Include="FocusKey.cpp" />
+		<ClCompile Include="controllers\TextRows.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\BorderFrame.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\TextBox.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\MessageBox.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\PaddedPassthrough.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\MultiPassthrough.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\GenericListBox.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="controllers\TileLayerDisplay.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
+		<ClCompile Include="AlignmentHelpers.cpp" />
+		<ClCompile Include="Font.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="UIFwd.h" />
+		<ClInclude Include="Anchor.h" />
+		<ClInclude Include="Container.h" />
+		<ClInclude Include="ContainerManager.h" />
+		<ClInclude Include="controllers\NineSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\Passthrough.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\project.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\stdafx.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="Controller.h" />
+		<ClInclude Include="controllers\TextLabel.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="FontRegistry.h" />
+		<ClInclude Include="controllers\ColumnSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\RowSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\FramePackDisplay.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\Floater.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="FocusTarget.h" />
+		<ClInclude Include="FocusTree.h" />
+		<ClInclude Include="FocusManager.h" />
+		<ClInclude Include="UIContext.h" />
+		<ClInclude Include="controllers\ListBox.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\InstancedController.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="FocusEvent.h" />
+		<ClInclude Include="FocusKey.h" />
+		<ClInclude Include="controllers\TextRows.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\BorderFrame.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\TextBox.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\MessageBox.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\PaddedPassthrough.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\MultiPassthrough.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\GenericListBox.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\TileLayerDisplay.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="AlignmentHelpers.h" />
+		<ClInclude Include="Font.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="controllers">
+			<UniqueIdentifier>{ba8e8d01-1148-4956-81fb-60509b9176a3}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="ContainerManager.inl" />
+		<None Include="controllers\GenericListBox.inl">
+			<Filter>controllers</Filter>
+		</None>
+	</ItemGroup>
 </Project>

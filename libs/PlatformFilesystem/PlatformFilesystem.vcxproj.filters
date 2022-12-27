@@ -1,24 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="VFS.h" />
-    <ClInclude Include="VFSPath.h" />
-    <ClInclude Include="VFSMount.h" />
-    <ClInclude Include="FileHandle.h" />
-    <ClInclude Include="VFSFwd.h" />
-    <ClInclude Include="FileBuffer.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="VFS.cpp" />
-    <ClCompile Include="VFSPath.cpp" />
-    <ClCompile Include="FileHandle.cpp" />
-    <ClCompile Include="FileBuffer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="VFSPath.inl" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="VFS.h" />
+		<ClInclude Include="VFSPath.h" />
+		<ClInclude Include="VFSMount.h" />
+		<ClInclude Include="FileHandle.h" />
+		<ClInclude Include="VFSFwd.h" />
+		<ClInclude Include="FileBuffer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="VFS.cpp" />
+		<ClCompile Include="VFSPath.cpp" />
+		<ClCompile Include="FileHandle.cpp" />
+		<ClCompile Include="FileBuffer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="VFSPath.inl" />
+	</ItemGroup>
 </Project>

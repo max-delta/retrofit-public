@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="project.h" />
-    <ClInclude Include="Exporter.h" />
-    <ClInclude Include="DiagnosticExporter.h" />
-    <ClInclude Include="XmlExporter.h" />
-    <ClInclude Include="ObjectSerializer.h" />
-    <ClInclude Include="SerializationFwd.h" />
-    <ClInclude Include="CsvReader.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="DiagnosticExporter.cpp" />
-    <ClCompile Include="XmlExporter.cpp" />
-    <ClCompile Include="ObjectSerializer.cpp" />
-    <ClCompile Include="CsvReader.cpp" />
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="project.h" />
+		<ClInclude Include="Exporter.h" />
+		<ClInclude Include="DiagnosticExporter.h" />
+		<ClInclude Include="XmlExporter.h" />
+		<ClInclude Include="ObjectSerializer.h" />
+		<ClInclude Include="SerializationFwd.h" />
+		<ClInclude Include="CsvReader.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="DiagnosticExporter.cpp" />
+		<ClCompile Include="XmlExporter.cpp" />
+		<ClCompile Include="ObjectSerializer.cpp" />
+		<ClCompile Include="CsvReader.cpp" />
+	</ItemGroup>
 </Project>

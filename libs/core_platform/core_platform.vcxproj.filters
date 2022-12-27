@@ -1,59 +1,59 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="uuid.h" />
-    <ClInclude Include="dllmain.h" />
-    <ClInclude Include="MemoryRegion.h" />
-    <ClInclude Include="BufferStream.h" />
-    <ClInclude Include="IncomingBufferStitcher.h" />
-    <ClInclude Include="shim\gdi_shim.h">
-      <Filter>shim</Filter>
-    </ClInclude>
-    <ClInclude Include="shim\win_shim.h">
-      <Filter>shim</Filter>
-    </ClInclude>
-    <ClInclude Include="shim\winuser_shim.h">
-      <Filter>shim</Filter>
-    </ClInclude>
-    <ClInclude Include="shim\stdafx.h">
-      <Filter>shim</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\windows_inc.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\winsock2_inc.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\gl_inc.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\rpc_inc.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\stdafx.h">
-      <Filter>inc</Filter>
-    </ClInclude>
-    <ClInclude Include="IPAddressFwd.h" />
-    <ClInclude Include="ThreadSettings.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp" />
-    <ClCompile Include="uuid.cpp" />
-    <ClCompile Include="IncomingBufferStitcher.cpp" />
-    <ClCompile Include="shim\gdi_shim.cpp">
-      <Filter>shim</Filter>
-    </ClCompile>
-    <ClCompile Include="shim\win_shim.cpp">
-      <Filter>shim</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="shim">
-      <UniqueIdentifier>{d62befaa-7a06-4176-93d3-13d88a5d9709}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="inc">
-      <UniqueIdentifier>{a2f8a01d-8dbc-4e7c-841a-4bbdeb529186}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="uuid.h" />
+		<ClInclude Include="dllmain.h" />
+		<ClInclude Include="MemoryRegion.h" />
+		<ClInclude Include="BufferStream.h" />
+		<ClInclude Include="IncomingBufferStitcher.h" />
+		<ClInclude Include="shim\gdi_shim.h">
+			<Filter>shim</Filter>
+		</ClInclude>
+		<ClInclude Include="shim\win_shim.h">
+			<Filter>shim</Filter>
+		</ClInclude>
+		<ClInclude Include="shim\winuser_shim.h">
+			<Filter>shim</Filter>
+		</ClInclude>
+		<ClInclude Include="shim\stdafx.h">
+			<Filter>shim</Filter>
+		</ClInclude>
+		<ClInclude Include="inc\windows_inc.h">
+			<Filter>inc</Filter>
+		</ClInclude>
+		<ClInclude Include="inc\winsock2_inc.h">
+			<Filter>inc</Filter>
+		</ClInclude>
+		<ClInclude Include="inc\gl_inc.h">
+			<Filter>inc</Filter>
+		</ClInclude>
+		<ClInclude Include="inc\rpc_inc.h">
+			<Filter>inc</Filter>
+		</ClInclude>
+		<ClInclude Include="inc\stdafx.h">
+			<Filter>inc</Filter>
+		</ClInclude>
+		<ClInclude Include="IPAddressFwd.h" />
+		<ClInclude Include="ThreadSettings.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="uuid.cpp" />
+		<ClCompile Include="IncomingBufferStitcher.cpp" />
+		<ClCompile Include="shim\gdi_shim.cpp">
+			<Filter>shim</Filter>
+		</ClCompile>
+		<ClCompile Include="shim\win_shim.cpp">
+			<Filter>shim</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="shim">
+			<UniqueIdentifier>{d62befaa-7a06-4176-93d3-13d88a5d9709}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="inc">
+			<UniqueIdentifier>{a2f8a01d-8dbc-4e7c-841a-4bbdeb529186}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
 </Project>
