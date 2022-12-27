@@ -24,6 +24,12 @@
     <ClInclude Include="stl_extensions\array.h">
       <Filter>stl_extensions</Filter>
     </ClInclude>
+    <ClInclude Include="rf_extensions\stdafx.h">
+      <Filter>rf_extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="rf_extensions\UniquePtr.h">
+      <Filter>rf_extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -38,10 +44,16 @@
     <ClCompile Include="stl_extensions\array.cpp">
       <Filter>stl_extensions</Filter>
     </ClCompile>
+    <ClCompile Include="rf_extensions\UniquePtr.cpp">
+      <Filter>rf_extensions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="stl_extensions">
       <UniqueIdentifier>{9b08a52c-dca6-442a-a22b-01ee2e803539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rf_extensions">
+      <UniqueIdentifier>{1e51dc49-a792-4282-a3f3-bc23a10146f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
