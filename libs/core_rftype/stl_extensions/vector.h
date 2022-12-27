@@ -88,7 +88,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return true;
 	}
 
-	static bool mInsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	static bool InsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
@@ -115,7 +115,7 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		return true;
 	}
 
-	static bool mInsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
+	static bool InsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
@@ -139,9 +139,9 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 		}
 
 		ValueType const* castedValue = reinterpret_cast<ValueType const*>( value );
-		if( castedKey == nullptr )
+		if( castedValue == nullptr )
 		{
-			RF_DBGFAIL_MSG( "Key is null" );
+			RF_DBGFAIL_MSG( "Value is null" );
 			return false;
 		}
 
@@ -171,9 +171,9 @@ struct Accessor<rftl::vector<ValueType, Allocator>> final : private AccessorTemp
 
 		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
 
-		retVal.mInsertVariableDefault = &mInsertVariableDefault;
+		retVal.mInsertVariableDefault = &InsertVariableDefault;
 		// TODO: Move support
-		retVal.mInsertVariableViaCopy = &mInsertVariableViaCopy;
+		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
 
 		return retVal;
 	}

@@ -95,7 +95,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		return true;
 	}
 
-	static bool mInsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
+	static bool InsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "String only supports value types that do not rely on constructors" );
 
@@ -119,9 +119,9 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		}
 
 		ValueType const* castedValue = reinterpret_cast<ValueType const*>( value );
-		if( castedKey == nullptr )
+		if( castedValue == nullptr )
 		{
-			RF_DBGFAIL_MSG( "Key is null" );
+			RF_DBGFAIL_MSG( "Value is null" );
 			return false;
 		}
 
@@ -152,7 +152,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
 
 		// TODO: Move support
-		retVal.mInsertVariableViaCopy = &mInsertVariableViaCopy;
+		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
 
 		return retVal;
 	}

@@ -142,9 +142,9 @@ struct Accessor<rftl::array<ValueType, Size>> final : private AccessorTemplate
 		}
 
 		ValueType const* castedValue = reinterpret_cast<ValueType const*>( value );
-		if( castedKey == nullptr )
+		if( castedValue == nullptr )
 		{
-			RF_DBGFAIL_MSG( "Key is null" );
+			RF_DBGFAIL_MSG( "Value is null" );
 			return false;
 		}
 
