@@ -22,9 +22,23 @@ PLATFORMUTILS_API bool EnableANSIEscapeSequences()
 		return false;
 	}
 
+	// NOTE: At time of writing, there's a bug in the default Windows console
+	//  that garbles any newline that hits the final column if ANSI terminal
+	//  output is enabled
+	// SEE: https://stackoverflow.com/questions/66244924/windows-console-conhost-discards-newline-when-output-matches-witdth-of-the-win
+	static constexpr win32::DWORD kNeededBits =
+		1 /*ENABLE_PROCESSED_OUTPUT*/ |
+		4 /*ENABLE_VIRTUAL_TERMINAL_PROCESSING*/;
+
+	if( ( mode & kNeededBits ) == kNeededBits )
+	{
+		// Already set
+		return true;
+	}
+
 	win32::BOOL const modeSetSuccess = win32::SetConsoleMode(
 		stdOutputHandle,
-		mode | 4 /*ENABLE_VIRTUAL_TERMINAL_PROCESSING*/ );
+		mode | kNeededBits );
 	if( modeSetSuccess == false )
 	{
 		return false;

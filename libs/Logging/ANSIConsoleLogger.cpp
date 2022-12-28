@@ -64,6 +64,11 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event
 	}
 	*outputBuffer.rbegin() = '\0';
 
+	// NOTE: At time of writing, there's a bug in the default Windows console
+	//  that garbles any newline that hits the final column if ANSI terminal
+	//  output is enabled. This is NOT threading related or buffer related,
+	//  this puts(...) call is correctly implemented.
+	// SEE: https://stackoverflow.com/questions/66244924/windows-console-conhost-discards-newline-when-output-matches-witdth-of-the-win
 	puts( &outputBuffer[0] );
 	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
