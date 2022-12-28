@@ -11,6 +11,56 @@
 
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+template<typename CharT, typename BufferT>
+void WriteContextStringFromPointer( CharT const* const& context, BufferT& buffer, CharT const terminator )
+{
+	if( context == nullptr )
+	{
+		buffer.at( 0 ) = terminator;
+		return;
+	}
+
+	for( size_t i = 0; i < buffer.size(); i++ )
+	{
+		buffer.at( i ) = context[i];
+		if( context[i] == terminator )
+		{
+			break;
+		}
+	}
+}
+
+
+
+template<typename CharT, typename BufferT>
+void WriteContextStringFromView( rftl::basic_string_view<CharT> const& context, BufferT& buffer, CharT const terminator )
+{
+	for( size_t i = 0; i < buffer.size(); i++ )
+	{
+		if( i >= context.size() )
+		{
+			buffer.at( i ) = terminator;
+			break;
+		}
+
+		buffer.at( i ) = context[i];
+	}
+
+	*buffer.rbegin() = terminator;
+}
+
+
+
+template<typename CharT, typename BufferT>
+void WriteContextStringFromString( rftl::basic_string<CharT> const& context, BufferT& buffer, CharT const terminator )
+{
+	WriteContextStringFromPointer( context.c_str(), buffer, terminator );
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 void FallbackConversion( Utf16LogContextBuffer& dest, Utf8LogContextBuffer const& source )
 {
@@ -29,62 +79,59 @@ void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const
 template<>
 void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer )
 {
-	if( context == nullptr )
-	{
-		buffer.at( 0 ) = '\0';
-		return;
-	}
-
-	for( size_t i = 0; i < buffer.size(); i++ )
-	{
-		buffer.at( i ) = context[i];
-		if( context[i] == '\0' )
-		{
-			break;
-		}
-	}
+	details::WriteContextStringFromPointer( context, buffer, '\0' );
 }
-
-
 
 template<>
 void WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer )
 {
-	if( context == nullptr )
-	{
-		buffer.at( 0 ) = u'\0';
-		return;
-	}
+	details::WriteContextStringFromPointer( context, buffer, u'\0' );
+}
 
-	for( size_t i = 0; i < buffer.size(); i++ )
-	{
-		buffer.at( i ) = context[i];
-		if( context[i] == u'\0' )
-		{
-			break;
-		}
-	}
+template<>
+void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromPointer( context, buffer, U'\0' );
 }
 
 
 
 template<>
-void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer )
+void WriteContextString( rftl::basic_string_view<char> const& context, Utf8LogContextBuffer& buffer )
 {
-	if( context == nullptr )
-	{
-		buffer.at( 0 ) = U'\0';
-		return;
-	}
+	details::WriteContextStringFromView( context, buffer, '\0' );
+}
 
-	for( size_t i = 0; i < buffer.size(); i++ )
-	{
-		buffer.at( i ) = context[i];
-		if( context[i] == U'\0' )
-		{
-			break;
-		}
-	}
+template<>
+void WriteContextString( rftl::basic_string_view<char16_t> const& context, Utf16LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromView( context, buffer, u'\0' );
+}
+
+template<>
+void WriteContextString( rftl::basic_string_view<char32_t> const& context, Utf32LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromView( context, buffer, U'\0' );
+}
+
+
+
+template<>
+void WriteContextString( rftl::basic_string<char> const& context, Utf8LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromString( context, buffer, '\0' );
+}
+
+template<>
+void WriteContextString( rftl::basic_string<char16_t> const& context, Utf16LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromString( context, buffer, u'\0' );
+}
+
+template<>
+void WriteContextString( rftl::basic_string<char32_t> const& context, Utf32LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromString( context, buffer, U'\0' );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

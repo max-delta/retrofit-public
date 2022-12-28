@@ -8,9 +8,11 @@
 #include "core/meta/FailTemplate.h"
 #include "core/macros.h"
 
+#include "rftl/array"
+#include "rftl/string"
+#include "rftl/string_view"
 #include "rftl/cstdarg"
 #include "rftl/cstddef"
-#include "rftl/array"
 #include "rftl/cstdlib"
 
 
@@ -185,6 +187,18 @@ template<>
 void LOGGING_API WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string_view<char> const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string_view<char16_t> const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string_view<char32_t> const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string<char> const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string<char16_t> const& context, Utf8LogContextBuffer& buffer );
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string<char32_t> const& context, Utf8LogContextBuffer& buffer );
 
 //////////////////////////////////////////////////////////////////////////////
 
