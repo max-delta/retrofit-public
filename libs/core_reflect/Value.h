@@ -1,16 +1,13 @@
 #pragma once
 
+#include "core_reflect/ReflectFwd.h"
+
 #include "core/meta/TypeList.h"
 #include "core/macros.h"
 
 #include "rftl/variant"
 #include "rftl/cstdint"
 
-
-// Forwards
-namespace RF::reflect {
-class VirtualClass;
-}
 
 namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////

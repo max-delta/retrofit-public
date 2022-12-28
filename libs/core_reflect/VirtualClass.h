@@ -1,10 +1,7 @@
 #pragma once
 
+#include "core_reflect/ReflectFwd.h"
 
-// Forwards
-namespace RF::reflect {
-struct ClassInfo;
-}
 
 namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////

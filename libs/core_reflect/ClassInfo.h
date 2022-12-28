@@ -1,7 +1,9 @@
 #pragma once
 
 #include "core_reflect/Value.h"
+
 #include "core/meta/ConstructorOverload.h"
+
 #include "rftl/vector"
 #include "rftl/deque"
 #include "rftl/tuple"
@@ -10,11 +12,6 @@
 
 namespace RF::reflect {
 ///////////////////////////////////////////////////////////////////////////////
-
-struct ClassInfo;
-struct ExtensionAccessor;
-
-
 
 struct VariableTypeInfo
 {
