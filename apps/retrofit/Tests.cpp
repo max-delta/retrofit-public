@@ -70,6 +70,8 @@ struct SQReflectTestClass
 {
 	RF_NO_COPY( SQReflectTestClass );
 
+	SQReflectTestClass() = default;
+
 	bool mBool;
 	void* mVoidPtr;
 	RF::reflect::VirtualClass* mClassPtr;
