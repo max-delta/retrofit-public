@@ -7,6 +7,8 @@
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
 
+#include "core/ptr/default_creator.h"
+
 
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,19 +27,21 @@ ResourceLoader::~ResourceLoader() = default;
 
 void ResourceLoader::AddResourceClass(
 	ResourceTypeIdentifier typeID,
-	char const* typeName )
+	char const* className )
 {
 	RF_ASSERT( typeID != kInvalidResourceTypeIdentifier );
-	RF_ASSERT( typeName != nullptr );
 
-	// Make sure it exists
+	// HACK: Lazy register
+	// TODO: Require declaration
 	{
-		rftype::TypeDatabase const& typeDatabase = rftype::TypeDatabase::GetGlobalInstance();
-		reflect::ClassInfo const* const classInfo = typeDatabase.GetClassInfoByName( typeName );
-		RFLOG_TEST_AND_FATAL( classInfo != nullptr, nullptr, RFCAT_GAMERESOURCE, "Could not find type name '%s'", typeName );
+		if( mTypeRecords.count( typeID ) <= 0 )
+		{
+			mTypeRecords.emplace( typeID, DefaultCreator<ResourceTypeRecord>::Create( "TODO_Unset" ) );
+		}
 	}
 
-	mResourceClasses[typeID].emplace( typeName );
+	ResourceTypeRecord& typeRecord = *mTypeRecords.at( typeID ).Get();
+	typeRecord.RegisterClass( className );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,16 +52,18 @@ void ResourceLoader::InjectTypes(
 {
 	RF_ASSERT( typeID != kInvalidResourceTypeIdentifier );
 
-	ResourceClasses::const_iterator const typeListIter = mResourceClasses.find( typeID );
-	RFLOG_TEST_AND_FATAL( typeListIter != mResourceClasses.end(), nullptr, RFCAT_GAMERESOURCE, "Unregistered type id" );
-	RFTypeNames const& typeNames = typeListIter->second;
+	ResourceTypeRecords::const_iterator const typeRecordIter = mTypeRecords.find( typeID );
+	RFLOG_TEST_AND_FATAL( typeRecordIter != mTypeRecords.end(), nullptr, RFCAT_GAMERESOURCE, "Unregistered type id" );
 
-	rftype::TypeDatabase const& typeDatabase = rftype::TypeDatabase::GetGlobalInstance();
+	RF_ASSERT( typeRecordIter->second != nullptr );
+	ResourceTypeRecord const& typeRecord = *typeRecordIter->second.Get();
+	ResourceTypeRecord::ClassInfos const classInfos = typeRecord.GetClassInfos();
 
-	for( rftl::string const& typeName : typeNames )
+	for( ResourceTypeRecord::ClassInfos::value_type const& entry : classInfos )
 	{
-		reflect::ClassInfo const* const classInfo = typeDatabase.GetClassInfoByName( typeName.c_str() );
-		RFLOG_TEST_AND_FATAL( classInfo != nullptr, nullptr, RFCAT_GAMERESOURCE, "Could not find type name '%s'", typeName.c_str() );
+		rftl::string const& typeName = entry.first;
+		reflect::ClassInfo const* const& classInfo = entry.second;
+		RF_ASSERT( classInfo != nullptr );
 
 		bool const injected = loader.InjectReflectedClassByClassInfo( *classInfo, typeName.c_str() );
 		RFLOG_TEST_AND_FATAL( injected, nullptr, RFCAT_GAMERESOURCE, "Could not inject type '%s'", typeName.c_str() );

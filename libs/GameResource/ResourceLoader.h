@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameResource/ResourceFwd.h"
+#include "GameResource/ResourceTypeRecord.h"
 
 #include "PlatformFilesystem/VFSFwd.h"
 
@@ -26,8 +26,8 @@ class GAMERESOURCE_API ResourceLoader
 	// Types and constants
 private:
 	static constexpr char kRootVariableName[] = "resource";
-	using RFTypeNames = rftl::unordered_set<rftl::string>;
-	using ResourceClasses = rftl::unordered_map<ResourceTypeIdentifier, RFTypeNames>;
+	using ResourceTypeRecords = rftl::unordered_map<ResourceTypeIdentifier, UniquePtr<ResourceTypeRecord>>;
+
 
 	//
 	// Public methods
@@ -35,12 +35,12 @@ public:
 	ResourceLoader( WeakPtr<file::VFS const> vfs );
 	~ResourceLoader();
 
-	// Only explicitly injected types can be loaded, other types will cause
+	// Only explicitly injected class can be loaded, other class will cause
 	//  load errors when referenced
-	// NOTE: Uses type name as registered with RFType
+	// NOTE: Uses class name as registered with RFType
 	void AddResourceClass(
 		ResourceTypeIdentifier typeID,
-		char const* typeName );
+		char const* className );
 
 	// Load class
 	template<typename ReflectedClass, template<typename> typename Creator>
@@ -83,7 +83,7 @@ private:
 private:
 	WeakPtr<file::VFS const> mVfs;
 
-	ResourceClasses mResourceClasses;
+	ResourceTypeRecords mTypeRecords;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
