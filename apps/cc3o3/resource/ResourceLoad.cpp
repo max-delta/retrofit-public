@@ -12,6 +12,7 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"
 
 #include "PlatformFilesystem/VFS.h"
@@ -118,28 +119,28 @@ rftl::vector<UniquePtr<T>> LoadFromDirectory(
 
 void InitializeLoader()
 {
-	ResourceLoader& loader = *gResourceLoader;
+	ResourceTypeRegistry& typeRegistry = *gResourceTypeRegistry;
 
 	{
 		// This list specifies which classes can be deserialized when loading
 		//  a given resource type
 		using namespace details::type;
-		loader.AddResourceClass( CampaignDesc, "CampaignDesc" );
-		loader.AddResourceClass( RosterMemberDesc, "RosterMemberDesc" );
-		loader.AddResourceClass( CharData, "CharData" );
-		loader.AddResourceClass( CharData, "Description" );
-		loader.AddResourceClass( CharData, "ElementSlots" );
-		loader.AddResourceClass( CharData, "Equipment" );
-		loader.AddResourceClass( CharData, "Genetics" );
-		loader.AddResourceClass( CharData, "Stats" );
-		loader.AddResourceClass( CharData, "Visuals" );
-		loader.AddResourceClass( EncounterDesc, "EncounterDesc" );
-		loader.AddResourceClass( EncounterDesc, "EntityDesc" );
-		loader.AddResourceClass( OverworldDesc, "OverworldDesc" );
-		loader.AddResourceClass( OverworldDesc, "AreaDesc" );
-		loader.AddResourceClass( SaveBlob, "SaveBlob" );
-		loader.AddResourceClass( SaveBlob, "SaveFileBlob" );
-		loader.AddResourceClass( SiteDesc, "SiteDesc" );
+		typeRegistry.AddResourceClass( CampaignDesc, "CampaignDesc" );
+		typeRegistry.AddResourceClass( RosterMemberDesc, "RosterMemberDesc" );
+		typeRegistry.AddResourceClass( CharData, "CharData" );
+		typeRegistry.AddResourceClass( CharData, "Description" );
+		typeRegistry.AddResourceClass( CharData, "ElementSlots" );
+		typeRegistry.AddResourceClass( CharData, "Equipment" );
+		typeRegistry.AddResourceClass( CharData, "Genetics" );
+		typeRegistry.AddResourceClass( CharData, "Stats" );
+		typeRegistry.AddResourceClass( CharData, "Visuals" );
+		typeRegistry.AddResourceClass( EncounterDesc, "EncounterDesc" );
+		typeRegistry.AddResourceClass( EncounterDesc, "EntityDesc" );
+		typeRegistry.AddResourceClass( OverworldDesc, "OverworldDesc" );
+		typeRegistry.AddResourceClass( OverworldDesc, "AreaDesc" );
+		typeRegistry.AddResourceClass( SaveBlob, "SaveBlob" );
+		typeRegistry.AddResourceClass( SaveBlob, "SaveFileBlob" );
+		typeRegistry.AddResourceClass( SiteDesc, "SiteDesc" );
 	}
 }
 

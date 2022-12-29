@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ResourceLoader.h"
 
+#include "GameResource/ResourceTypeRegistry.h"
+
 #include "Logging/Logging.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
@@ -10,8 +12,11 @@
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
 
-ResourceLoader::ResourceLoader( WeakPtr<file::VFS const> vfs )
+ResourceLoader::ResourceLoader(
+	WeakPtr<file::VFS const> vfs,
+	WeakPtr<ResourceTypeRegistry const> typeRegistry )
 	: mVfs( vfs )
+	, mTypeRegistry( typeRegistry )
 {
 	//
 }
@@ -20,23 +25,15 @@ ResourceLoader::ResourceLoader( WeakPtr<file::VFS const> vfs )
 
 ResourceLoader::~ResourceLoader() = default;
 
-
-
-void ResourceLoader::AddResourceClass(
-	ResourceTypeIdentifier typeID,
-	char const* className )
-{
-	// TODO: Take in registry by WeakPtr, remove this wrapper function
-	mTypeRegistry.AddResourceClass( typeID, className );
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 
 void ResourceLoader::InjectTypes(
 	script::OOLoader& loader,
 	ResourceTypeIdentifier typeID )
 {
-	ResourceTypeRecord::ClassInfos const classInfos = mTypeRegistry.GetClassInfos( typeID );
+	ResourceTypeRegistry const& typeRegistry = *mTypeRegistry;
+
+	ResourceTypeRecord::ClassInfos const classInfos = typeRegistry.GetClassInfos( typeID );
 
 	for( ResourceTypeRecord::ClassInfos::value_type const& entry : classInfos )
 	{

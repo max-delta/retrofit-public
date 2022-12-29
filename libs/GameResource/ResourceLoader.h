@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameResource/ResourceTypeRegistry.h"
+#include "GameResource/ResourceFwd.h"
 
 #include "PlatformFilesystem/VFSFwd.h"
 
@@ -28,15 +28,10 @@ private:
 	//
 	// Public methods
 public:
-	ResourceLoader( WeakPtr<file::VFS const> vfs );
+	ResourceLoader(
+		WeakPtr<file::VFS const> vfs,
+		WeakPtr<ResourceTypeRegistry const> typeRegistry );
 	~ResourceLoader();
-
-	// Only explicitly injected class can be loaded, other class will cause
-	//  load errors when referenced
-	// NOTE: Uses class name as registered with RFType
-	void AddResourceClass(
-		ResourceTypeIdentifier typeID,
-		char const* className );
 
 	// Load class
 	template<typename ReflectedClass, template<typename> typename Creator>
@@ -78,8 +73,7 @@ private:
 	// Private data
 private:
 	WeakPtr<file::VFS const> mVfs;
-
-	ResourceTypeRegistry mTypeRegistry;
+	WeakPtr<ResourceTypeRegistry const> mTypeRegistry;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

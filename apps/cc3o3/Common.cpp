@@ -14,6 +14,7 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"
 #include "GameSync/RollbackInputManager.h"
 #include "GameSprite/CharacterCreator.h"
@@ -35,6 +36,7 @@ namespace RF::cc {
 // Global systems
 WeakPtr<rollback::RollbackManager> gRollbackManager;
 WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
+WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
 WeakPtr<resource::ResourceLoader> gResourceLoader;
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
@@ -48,6 +50,7 @@ WeakPtr<save::SaveManager> gSaveManager;
 WeakPtr<campaign::CampaignManager> gCampaignManager;
 static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
+static UniquePtr<resource::ResourceTypeRegistry> sResourceTypeRegistry;
 static UniquePtr<resource::ResourceLoader> sResourceLoader;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
@@ -82,8 +85,12 @@ void SystemStartup()
 	sRollbackInputManager = DefaultCreator<sync::RollbackInputManager>::Create( gRollbackManager );
 	gRollbackInputManager = sRollbackInputManager;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing resource type registry..." );
+	sResourceTypeRegistry = DefaultCreator<resource::ResourceTypeRegistry>::Create();
+	gResourceTypeRegistry = sResourceTypeRegistry;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing resource loader..." );
-	sResourceLoader = DefaultCreator<resource::ResourceLoader>::Create( app::gVfs );
+	sResourceLoader = DefaultCreator<resource::ResourceLoader>::Create( app::gVfs, gResourceTypeRegistry );
 	gResourceLoader = sResourceLoader;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character creator..." );
@@ -144,6 +151,7 @@ void SystemShutdown()
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
 	sResourceLoader = nullptr;
+	sResourceTypeRegistry = nullptr;
 	sRollbackInputManager = nullptr;
 	sRollbackManager = nullptr;
 }
