@@ -24,6 +24,12 @@ private:
 public:
 	ResourceTypeRegistry() = default;
 
+	// Resource types must be declared in advance before attempting to add
+	//  classes to them
+	void AddResourceType(
+		ResourceTypeIdentifier typeID,
+		rftl::string_view displayName );
+
 	// Only explicitly registerd classes can be used, other classes will cause
 	//  errors when referenced
 	// NOTE: Uses class name as registered with RFType

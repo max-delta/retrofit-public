@@ -125,8 +125,14 @@ void InitializeLoader()
 		// This list specifies which classes can be deserialized when loading
 		//  a given resource type
 		using namespace details::type;
+
+		typeRegistry.AddResourceType( CampaignDesc, "Campaign" );
 		typeRegistry.AddResourceClass( CampaignDesc, "CampaignDesc" );
+
+		typeRegistry.AddResourceType( RosterMemberDesc, "Roster" );
 		typeRegistry.AddResourceClass( RosterMemberDesc, "RosterMemberDesc" );
+
+		typeRegistry.AddResourceType( CharData, "Character" );
 		typeRegistry.AddResourceClass( CharData, "CharData" );
 		typeRegistry.AddResourceClass( CharData, "Description" );
 		typeRegistry.AddResourceClass( CharData, "ElementSlots" );
@@ -134,12 +140,20 @@ void InitializeLoader()
 		typeRegistry.AddResourceClass( CharData, "Genetics" );
 		typeRegistry.AddResourceClass( CharData, "Stats" );
 		typeRegistry.AddResourceClass( CharData, "Visuals" );
+
+		typeRegistry.AddResourceType( EncounterDesc, "Encounter" );
 		typeRegistry.AddResourceClass( EncounterDesc, "EncounterDesc" );
 		typeRegistry.AddResourceClass( EncounterDesc, "EntityDesc" );
+
+		typeRegistry.AddResourceType( OverworldDesc, "Overworld" );
 		typeRegistry.AddResourceClass( OverworldDesc, "OverworldDesc" );
 		typeRegistry.AddResourceClass( OverworldDesc, "AreaDesc" );
+
+		typeRegistry.AddResourceType( SaveBlob, "Save" );
 		typeRegistry.AddResourceClass( SaveBlob, "SaveBlob" );
 		typeRegistry.AddResourceClass( SaveBlob, "SaveFileBlob" );
+
+		typeRegistry.AddResourceType( SiteDesc, "Site" );
 		typeRegistry.AddResourceClass( SiteDesc, "SiteDesc" );
 	}
 }
