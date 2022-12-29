@@ -10,6 +10,7 @@ using ResourceTypeIdentifier = uint64_t;
 static constexpr ResourceTypeIdentifier kInvalidResourceTypeIdentifier = 0;
 
 class ResourceTypeRecord;
+class ResourceTypeRegistry;
 class ResourceLoader;
 
 ///////////////////////////////////////////////////////////////////////////////

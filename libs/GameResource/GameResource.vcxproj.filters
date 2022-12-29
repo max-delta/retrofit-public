@@ -5,6 +5,7 @@
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="ResourceLoader.cpp" />
 		<ClCompile Include="ResourceTypeRecord.cpp" />
+		<ClCompile Include="ResourceTypeRegistry.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -12,5 +13,6 @@
 		<ClInclude Include="ResourceFwd.h" />
 		<ClInclude Include="ResourceLoader.h" />
 		<ClInclude Include="ResourceTypeRecord.h" />
+		<ClInclude Include="ResourceTypeRegistry.h" />
 	</ItemGroup>
 </Project>

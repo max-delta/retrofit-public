@@ -1,14 +1,11 @@
 #pragma once
 #include "project.h"
 
-#include "GameResource/ResourceTypeRecord.h"
+#include "GameResource/ResourceTypeRegistry.h"
 
 #include "PlatformFilesystem/VFSFwd.h"
 
-#include "rftl/string"
 #include "rftl/string_view"
-#include "rftl/unordered_map"
-#include "rftl/unordered_set"
 
 
 namespace RF::script {
@@ -26,7 +23,6 @@ class GAMERESOURCE_API ResourceLoader
 	// Types and constants
 private:
 	static constexpr char kRootVariableName[] = "resource";
-	using ResourceTypeRecords = rftl::unordered_map<ResourceTypeIdentifier, UniquePtr<ResourceTypeRecord>>;
 
 
 	//
@@ -83,7 +79,7 @@ private:
 private:
 	WeakPtr<file::VFS const> mVfs;
 
-	ResourceTypeRecords mTypeRecords;
+	ResourceTypeRegistry mTypeRegistry;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

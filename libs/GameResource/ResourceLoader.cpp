@@ -1,13 +1,10 @@
 #include "stdafx.h"
 #include "ResourceLoader.h"
 
-#include "RFType/TypeDatabase.h"
 #include "Logging/Logging.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
-
-#include "core/ptr/default_creator.h"
 
 
 namespace RF::resource {
@@ -29,19 +26,8 @@ void ResourceLoader::AddResourceClass(
 	ResourceTypeIdentifier typeID,
 	char const* className )
 {
-	RF_ASSERT( typeID != kInvalidResourceTypeIdentifier );
-
-	// HACK: Lazy register
-	// TODO: Require declaration
-	{
-		if( mTypeRecords.count( typeID ) <= 0 )
-		{
-			mTypeRecords.emplace( typeID, DefaultCreator<ResourceTypeRecord>::Create( "TODO_Unset" ) );
-		}
-	}
-
-	ResourceTypeRecord& typeRecord = *mTypeRecords.at( typeID ).Get();
-	typeRecord.RegisterClass( className );
+	// TODO: Take in registry by WeakPtr, remove this wrapper function
+	mTypeRegistry.AddResourceClass( typeID, className );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,14 +36,7 @@ void ResourceLoader::InjectTypes(
 	script::OOLoader& loader,
 	ResourceTypeIdentifier typeID )
 {
-	RF_ASSERT( typeID != kInvalidResourceTypeIdentifier );
-
-	ResourceTypeRecords::const_iterator const typeRecordIter = mTypeRecords.find( typeID );
-	RFLOG_TEST_AND_FATAL( typeRecordIter != mTypeRecords.end(), nullptr, RFCAT_GAMERESOURCE, "Unregistered type id" );
-
-	RF_ASSERT( typeRecordIter->second != nullptr );
-	ResourceTypeRecord const& typeRecord = *typeRecordIter->second.Get();
-	ResourceTypeRecord::ClassInfos const classInfos = typeRecord.GetClassInfos();
+	ResourceTypeRecord::ClassInfos const classInfos = mTypeRegistry.GetClassInfos( typeID );
 
 	for( ResourceTypeRecord::ClassInfos::value_type const& entry : classInfos )
 	{
