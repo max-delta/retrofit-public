@@ -43,7 +43,7 @@
 	#pragma warning( disable : 5204 ) // <thread> has virtuals without destructor
 	#pragma warning( disable : 6285 ) // <functional> triggers analysis failure
 #elif defined( _MSC_VER ) && \
-	( _MSC_VER >= 1933 && _MSC_VER <= 1934 ) && \
+	( _MSC_VER >= 1933 && _MSC_VER <= 1936 ) && \
 	!defined( RFTL_DISABLE_BAD_MSVC_WARNINGS )
 #define RFTL_DISABLE_BAD_MSVC_WARNINGS
 	#pragma warning( push )
