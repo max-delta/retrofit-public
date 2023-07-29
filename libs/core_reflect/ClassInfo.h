@@ -210,9 +210,10 @@ struct ClassInfo
 	{
 	}
 
-	// Walk inheritance chain, optionally resolving a pointer along the way
+	// Walk inheritance chain, optionally resolving a pointer upwards to the
+	//  ancestor along the way
 	bool IsSameOrDerivedFrom( ClassInfo const& ancestor ) const;
-	void const* AttemptInheritanceWalk( ClassInfo const& ancestor, void const* source ) const;
+	void const* AttemptUpcastWalk( ClassInfo const& ancestor, void const* source ) const;
 
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;

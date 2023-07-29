@@ -31,7 +31,7 @@ bool ClassInfo::IsSameOrDerivedFrom( ClassInfo const& ancestor ) const
 
 
 
-void const* ClassInfo::AttemptInheritanceWalk( ClassInfo const& ancestor, void const* source ) const
+void const* ClassInfo::AttemptUpcastWalk( ClassInfo const& ancestor, void const* source ) const
 {
 	if( &ancestor == this )
 	{
@@ -55,7 +55,7 @@ void const* ClassInfo::AttemptInheritanceWalk( ClassInfo const& ancestor, void c
 
 		ClassInfo const* const parent = baseClass.mBaseClassInfo;
 		RF_ASSERT( parent != nullptr );
-		void const* const end = parent->AttemptInheritanceWalk( ancestor, chain );
+		void const* const end = parent->AttemptUpcastWalk( ancestor, chain );
 		if( end != nullptr )
 		{
 			return end;
