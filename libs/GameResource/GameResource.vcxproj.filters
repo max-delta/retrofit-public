@@ -15,4 +15,7 @@
 		<ClInclude Include="ResourceTypeRecord.h" />
 		<ClInclude Include="ResourceTypeRegistry.h" />
 	</ItemGroup>
+	<ItemGroup>
+		<None Include="ResourceLoader.inl" />
+	</ItemGroup>
 </Project>
