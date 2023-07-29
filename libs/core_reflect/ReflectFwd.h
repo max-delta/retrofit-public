@@ -7,6 +7,7 @@ struct ClassInfo;
 struct ExtensionAccessor;
 
 class Value;
+class VirtualClassWithoutDestructor;
 class VirtualClass;
 
 ///////////////////////////////////////////////////////////////////////////////
