@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "core_reflect/ClassInfoBuilder.h"
+#include "core_reflect/TypeInfoBuilder.h"
 #include "core/macros.h"
 
 

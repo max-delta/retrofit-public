@@ -25,4 +25,4 @@ void CreateMemberFunctionInfo( MemberFunctionInfo& functionInfo, T function );
 ///////////////////////////////////////////////////////////////////////////////
 }
 
-#include "ClassInfoBuilder.inl"
+#include "TypeInfoBuilder.inl"

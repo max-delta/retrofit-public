@@ -6,7 +6,7 @@
 		<ClInclude Include="Value.h" />
 		<ClInclude Include="VariableTraits.h" />
 		<ClInclude Include="ClassInfo.h" />
-		<ClInclude Include="ClassInfoBuilder.h" />
+		<ClInclude Include="TypeInfoBuilder.h" />
 		<ClInclude Include="VirtualClass.h" />
 		<ClInclude Include="ReflectFwd.h" />
 	</ItemGroup>
@@ -17,6 +17,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Value.inl" />
-		<None Include="ClassInfoBuilder.inl" />
+		<None Include="TypeInfoBuilder.inl" />
 	</ItemGroup>
 </Project>

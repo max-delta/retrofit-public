@@ -17,7 +17,7 @@
 		<ClCompile Include="rftype_identifier.cpp" />
 		<ClCompile Include="math_bits.cpp" />
 		<ClCompile Include="logging_router.cpp" />
-		<ClCompile Include="reflect_class_info_builder.cpp" />
+		<ClCompile Include="reflect_type_info_builder.cpp" />
 		<ClCompile Include="rftype_class_info_compositor.cpp" />
 		<ClCompile Include="math_bitfield.cpp" />
 		<ClCompile Include="valuelist.cpp" />

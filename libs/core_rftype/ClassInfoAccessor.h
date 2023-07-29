@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core_reflect/ClassInfoBuilder.h"
+#include "core_reflect/TypeInfoBuilder.h"
 #include "core_reflect/VariableTraits.h"
 #include "core/meta/MemberTest.h"
 #include "core/macros.h"

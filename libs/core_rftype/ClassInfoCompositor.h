@@ -2,7 +2,7 @@
 
 #include "core_rftype/ClassInfoAccessor.h"
 #include "core_rftype/ExtensionAccessorLookup.h"
-#include "core_reflect/ClassInfoBuilder.h"
+#include "core_reflect/TypeInfoBuilder.h"
 #include "core_reflect/VariableTraits.h"
 #include "core/meta/FailTemplate.h"
 #include "core/meta/MemberTest.h"

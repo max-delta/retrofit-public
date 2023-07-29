@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ClassInfoBuilder.h"
+#include "TypeInfoBuilder.h"
 
 #include "core/compiler.h"
 
