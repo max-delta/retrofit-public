@@ -21,7 +21,8 @@ struct ClassInfoCompositor
 	ClassInfoCompositor( reflect::ClassInfo& classInfo )
 		: mClassInfo( classInfo )
 	{
-		//
+		// Set things that don't require user-provided info to figure out
+		reflect::builder::CreateClassInfo<CLASS>( mClassInfo );
 	}
 
 	template<typename T>

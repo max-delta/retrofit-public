@@ -207,7 +207,16 @@ struct ClassInfo
 	//  you will need to use static local variables in block scope to be safe.
 	ClassInfo() = delete;
 	explicit ClassInfo( ExplicitDefaultConstruct )
+		: mIsPolymorphic{}
+		, mIsAbstract{}
+		, mIsDefaultConstructible{}
+		, mIsCopyConstructible{}
+		, mIsMoveConstructible{}
+		, mIsDestructible{}
+		, mHasVirtualDestructor{}
 	{
+		// In C++20, you can theoretically do 'bool field : 1 = false'
+		static_assert( __cplusplus < 202002L, "Replace bitfield initializers" );
 	}
 
 	// Walk inheritance chain, optionally resolving a pointer upwards to the
@@ -231,7 +240,7 @@ struct ClassInfo
 	bool mHasVirtualDestructor : 1;
 
 	// The minimum alignment required
-	size_t mMinimumAlignment;
+	size_t mMinimumAlignment = 0;
 
 	BaseTypes mBaseTypes;
 

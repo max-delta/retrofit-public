@@ -262,6 +262,41 @@ namespace RF::reflect { // Re-open namespace
 ////
 //
 
+
+
+TEST( RFType, AutoInit )
+{
+	// ClassInfo starts uninitialized, and needs to have the builder run on it
+	//  to pick up a bunch of the basics
+	{
+		reflect::ClassInfo stub = reflect::ClassInfo( ExplicitDefaultConstruct{} );
+		ASSERT_TRUE( stub.mIsDefaultConstructible == false );
+
+		struct Stub
+		{
+		};
+		reflect::builder::CreateClassInfo<Stub>( stub );
+		ASSERT_TRUE( stub.mIsDefaultConstructible == true );
+	}
+
+	// The compositor should make sure the builder gets run on the ClassInfos
+	//  as part of the overall composition process
+	{
+		using TargetClass = details::ClassWithStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+		ASSERT_TRUE( classInfo.mIsDestructible );
+	}
+	{
+		using TargetClass = details::ClassWithoutStaticClassInfo;
+
+		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+		ASSERT_TRUE( classInfo.mIsDestructible );
+	}
+}
+
+
+
 TEST( RFType, Basics )
 {
 	{
