@@ -10,6 +10,9 @@ namespace RF::reflect::builder {
 template<class T>
 void CreateClassInfo( ClassInfo& classInfo );
 
+template<class T>
+void CreateVirtualRootInfo( VirtualRootInfo& rootInfo );
+
 template<typename T>
 void CreateFreeStandingVariableInfo( FreeStandingVariableInfo& variableInfo, T* variable );
 

@@ -47,6 +47,7 @@
 		<ClCompile Include="rf_extensions\UniquePtr.cpp">
 			<Filter>rf_extensions</Filter>
 		</ClCompile>
+		<ClCompile Include="VirtualCast.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="stl_extensions">

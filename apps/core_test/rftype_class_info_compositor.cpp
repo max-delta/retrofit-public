@@ -333,6 +333,10 @@ TEST( RFType, NonVirtualChainInheritance )
 		using TargetClass = details::NonVirtualBaseClassWithoutStaticClassInfo;
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, false );
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, false );
+
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
@@ -346,9 +350,18 @@ TEST( RFType, NonVirtualChainInheritance )
 		using BaseClass = details::NonVirtualBaseClassWithoutStaticClassInfo;
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, false );
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, false );
+
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
+
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
+
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, false );
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClass, false );
+
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
@@ -370,6 +383,14 @@ TEST( RFType, VirtualChainInheritance )
 		using TargetClass = details::VirtualBaseClassWithoutStaticClassInfo;
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, true );
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, true );
+		// TODO: These should be null once the machinery for determining
+		//  they're trivial at compile-time is available
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootNonDestructingPointerFromCurrent, nullptr );
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
+
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
@@ -388,9 +409,26 @@ TEST( RFType, VirtualChainInheritance )
 		using BaseClass = details::VirtualBaseClassWithoutStaticClassInfo;
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, true );
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, true );
+		// TODO: These should be null once the machinery for determining
+		//  they're trivial at compile-time is available
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootNonDestructingPointerFromCurrent, nullptr );
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
+
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
+
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
+
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, true );
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClass, true );
+		// TODO: These should be null once the machinery for determining
+		//  they're trivial at compile-time is available
+		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootNonDestructingPointerFromCurrent, nullptr );
+		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
+
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
@@ -412,9 +450,26 @@ TEST( RFType, VirtualChainInheritance )
 		using BaseClass = details::VirtualBaseClassWithoutStaticClassInfo;
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
+
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, true );
+		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, true );
+		// TODO: These should be null once the machinery for determining
+		//  they're trivial at compile-time is available
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootNonDestructingPointerFromCurrent, nullptr );
+		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
+
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 0 );
 		ASSERT_TRUE( classInfo.mBaseTypes.size() == 1 );
+
 		reflect::ClassInfo const& baseClassInfo = *( classInfo.mBaseTypes[0].mBaseClassInfo );
+
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClassWithoutDestructor, true );
+		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClass, true );
+		// TODO: These should be null once the machinery for determining
+		//  they're trivial at compile-time is available
+		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootNonDestructingPointerFromCurrent, nullptr );
+		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
+
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );

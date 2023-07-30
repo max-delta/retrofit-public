@@ -2,6 +2,7 @@
 
 #include "TypeInfoBuilder.h"
 
+#include "core_reflect/DiamondChecks.h"
 #include "core/compiler.h"
 
 
@@ -31,6 +32,80 @@ struct ParamUnpacker<TypeList<CurrentType, RemainingTypes...>>
 	}
 };
 
+
+
+template<typename T>
+inline VirtualClassWithoutDestructor const* GetRootNonDestructingPointerFromCurrent( void const* ptr )
+{
+	static_assert( rftl::is_base_of<VirtualClassWithoutDestructor, T>::value, "Unrelated pointer types" );
+	return reinterpret_cast<T const*>( ptr );
+}
+
+template<typename T>
+inline VirtualClass const* GetRootPointerFromCurrent( void const* ptr )
+{
+	static_assert( rftl::is_base_of<VirtualClass, T>::value, "Unrelated pointer types" );
+	return reinterpret_cast<T const*>( ptr );
+}
+
+
+
+template<typename T, typename rftl::enable_if<rftl::is_base_of<VirtualClass, T>::value, int>::type = 0>
+inline void CreateVirtualRootInfo( VirtualRootInfo& rootInfo )
+{
+	rootInfo = {};
+
+	rootInfo.mDerivesFromVirtualClassWithoutDestructor = true;
+	rootInfo.mDerivesFromVirtualClass = true;
+
+	if constexpr( reflect::IsBasePointerAlwaysSameAsDerivedPointer<VirtualClass, T>() )
+	{
+		rootInfo.mGetRootNonDestructingPointerFromCurrent = nullptr;
+		rootInfo.mGetRootPointerFromCurrent = nullptr;
+	}
+	else
+	{
+		// NOTE: Can't do the unsafe pointer test here, as there isn't a
+		//  mechanism for callers to opt out of the test when it crashes
+		rootInfo.mGetRootNonDestructingPointerFromCurrent = GetRootNonDestructingPointerFromCurrent<T>;
+		rootInfo.mGetRootPointerFromCurrent = GetRootPointerFromCurrent<T>;
+	}
+}
+
+template<typename T, typename rftl::enable_if<rftl::is_base_of<VirtualClass, T>::value == false && rftl::is_base_of<VirtualClassWithoutDestructor, T>::value, int>::type = 0>
+inline void CreateVirtualRootInfo( VirtualRootInfo& rootInfo )
+{
+	rootInfo = {};
+
+	rootInfo.mDerivesFromVirtualClassWithoutDestructor = true;
+	rootInfo.mDerivesFromVirtualClass = false;
+
+	if constexpr( reflect::IsBasePointerAlwaysSameAsDerivedPointer<VirtualClassWithoutDestructor, T>() )
+	{
+		rootInfo.mGetRootNonDestructingPointerFromCurrent = nullptr;
+		rootInfo.mGetRootPointerFromCurrent = nullptr;
+	}
+	else
+	{
+		// NOTE: Can't do the unsafe pointer test here, as there isn't a
+		//  mechanism for callers to opt out of the test when it crashes
+		rootInfo.mGetRootNonDestructingPointerFromCurrent = GetRootNonDestructingPointerFromCurrent<T>;
+		rootInfo.mGetRootPointerFromCurrent = nullptr;
+	}
+}
+
+template<typename T, typename rftl::enable_if<rftl::is_base_of<VirtualClassWithoutDestructor, T>::value == false, int>::type = 0>
+inline void CreateVirtualRootInfo( VirtualRootInfo& rootInfo )
+{
+	rootInfo = {};
+
+	rootInfo.mDerivesFromVirtualClassWithoutDestructor = false;
+	rootInfo.mDerivesFromVirtualClass = false;
+
+	rootInfo.mGetRootNonDestructingPointerFromCurrent = nullptr;
+	rootInfo.mGetRootPointerFromCurrent = nullptr;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -46,6 +121,15 @@ void CreateClassInfo( ClassInfo& classInfo )
 	classInfo.mIsDestructible = rftl::is_default_constructible<T>::value;
 	classInfo.mHasVirtualDestructor = rftl::has_virtual_destructor<T>::value;
 	classInfo.mMinimumAlignment = rftl::alignment_of<T>::value;
+}
+
+
+
+template<class T>
+void CreateVirtualRootInfo( VirtualRootInfo& rootInfo )
+{
+	static_assert( rftl::is_class<T>::value, "CreateVirtualRootInfo requires a class" );
+	details::CreateVirtualRootInfo<T>( rootInfo );
 }
 
 

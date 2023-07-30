@@ -2,7 +2,8 @@
 
 // Forwards
 namespace RF::reflect {
-	struct ClassInfo;
+struct ClassInfo;
+class VirtualClassWithoutDestructor;
 }
 
 namespace RF::rftype {
@@ -24,6 +25,17 @@ bool IsSameOrDerivedFrom( reflect::ClassInfo const& descendent );
 //  program is ill-formed."
 template<typename TargetT, typename SourceT>
 TargetT virtual_cast( SourceT* source );
+
+// This relies on reflection to convert an unknown pointer into a VirtualClass
+//  pointer, generally so that further virtual casts can be performed on it to
+//  reach a concrete pointer type that the compiler can work with in normal
+//  non-reflection code
+reflect::VirtualClassWithoutDestructor const* virtual_reflect_cast(
+	reflect::ClassInfo const& classInfo,
+	void const* classLocation );
+reflect::VirtualClassWithoutDestructor* virtual_reflect_cast(
+	reflect::ClassInfo const& classInfo,
+	void* classLocation );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

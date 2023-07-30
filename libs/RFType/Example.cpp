@@ -69,7 +69,7 @@ RFTYPE_CREATE_META( RF::rftype_example::ExampleSecondaryBaseClass )
 	RFTYPE_REGISTER_BY_NAME( "ExampleSecondaryBaseClass" );
 }
 
-RFTYPE_CREATE_META( RF::rftype_example::ExamplePoorLifeDecision )
+RFTYPE_CREATE_META_FOR_DIAMONDS( RF::rftype_example::ExamplePoorLifeDecision )
 {
 	using RF::rftype_example::ExamplePoorLifeDecision;
 	RFTYPE_META().ComplexBaseClass<RF::rftype_example::ExampleBaseClass>();

@@ -135,7 +135,7 @@ RFTYPE_CREATE_META( RF::rftype::details::LeftParent )
 RFTYPE_CREATE_META( RF::rftype::details::RightParent )
 {
 }
-RFTYPE_CREATE_META( RF::rftype::details::MultiChild )
+RFTYPE_CREATE_META_FOR_DIAMONDS( RF::rftype::details::MultiChild )
 {
 	using namespace ::RF::rftype::details;
 	RFTYPE_META().ComplexBaseClass<LeftParent>();
@@ -497,6 +497,143 @@ TEST( VirtualCast, DISABLED_VirtualDiamond )
 			ASSERT_EQ( reinterpret_cast<Raw*>( target ), reinterpret_cast<Raw*>( source ) );
 		}
 		// ...
+	}
+}
+
+
+
+TEST( VirtualCast, ReflectNull )
+{
+	using Root = reflect::VirtualClassWithoutDestructor const;
+	reflect::ClassInfo const& classInfo = *details::Parent{}.GetVirtualClassInfo();
+
+	void const* const null = nullptr;
+	Root* const root = virtual_reflect_cast( classInfo, null );
+	ASSERT_EQ( root, nullptr );
+}
+
+
+
+TEST( VirtualCast, ReflectBasic )
+{
+	using Root = reflect::VirtualClassWithoutDestructor const;
+
+	{
+		// Single hop up to virtual
+		using Source = details::Parent const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_EQ( voided, &source );
+	}
+	{
+		// Double hop up to virtual
+		using Source = details::Child const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_EQ( voided, &source );
+	}
+}
+
+
+
+TEST( VirtualCast, ReflectAmbiguous )
+{
+	using Root = reflect::VirtualClassWithoutDestructor const;
+
+	{
+		// Ambiguous garbage, can't determine path to root
+		using Source = details::MultiChild const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_EQ( root, nullptr );
+		//Root* const compilerImpl = &source; // Compile error
+	}
+}
+
+
+
+TEST( VirtualCast, ReflectDiamond )
+{
+	using Root = reflect::VirtualClassWithoutDestructor const;
+
+	{
+		// Top
+		using Source = details::VirtualTop const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_NE( voided, &source ); // Implementation-dependent
+	}
+	{
+		// Left
+		using Source = details::VirtualLeft const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_NE( voided, &source ); // Implementation-dependent
+	}
+	{
+		// Right
+		using Source = details::VirtualRight const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_NE( voided, &source ); // Implementation-dependent
+	}
+	{
+		// Center
+		using Source = details::VirtualDiamondCenter const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_NE( voided, &source ); // Implementation-dependent
+	}
+	{
+		// Extreme center
+		using Source = details::VirtualDiamondCenter const;
+		Source source = Source{};
+		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+		Root* const root = virtual_reflect_cast( classInfo, &source );
+		ASSERT_NE( root, nullptr );
+		Root* const compilerImpl = &source;
+		ASSERT_EQ( root, compilerImpl );
+		void const* voided = root;
+		ASSERT_NE( voided, &source ); // Implementation-dependent
 	}
 }
 

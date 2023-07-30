@@ -26,6 +26,23 @@ struct VariableTypeInfo
 
 
 
+struct VirtualRootInfo
+{
+	// Inheritance is implementation-specifc, so must use compiler-generated
+	//  functions to perform the hop, even though all major compilers are
+	//  reasonably predictable at time of writing
+	// NOTE: If null, then it should be assumed that no adjustment is needed
+	using FuncPtrGetRootNonDestructingPointerFromCurrent = VirtualClassWithoutDestructor const* (*)( void const* );
+	FuncPtrGetRootNonDestructingPointerFromCurrent mGetRootNonDestructingPointerFromCurrent = nullptr;
+	using FuncPtrGetRootPointerFromCurrent = VirtualClass const* (*)( void const* );
+	FuncPtrGetRootPointerFromCurrent mGetRootPointerFromCurrent = nullptr;
+
+	bool mDerivesFromVirtualClassWithoutDestructor : 1;
+	bool mDerivesFromVirtualClass : 1;
+};
+
+
+
 struct BaseClassInfo
 {
 	// Inheritance is implementation-specifc, so must use compiler-generated
@@ -241,6 +258,12 @@ struct ClassInfo
 
 	// The minimum alignment required
 	size_t mMinimumAlignment = 0;
+
+	// If present, a known virtual root is a special form of base class that is
+	//  valuable to always be quickly reachable, as it can be used to access
+	//  polymorphic ClassInfo via a virtual function, to figure out the true
+	//  type of something
+	VirtualRootInfo mVirtualRootInfo = {};
 
 	BaseTypes mBaseTypes;
 

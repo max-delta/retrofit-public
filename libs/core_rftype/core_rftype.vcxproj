@@ -55,6 +55,7 @@
 		<ClCompile Include="stl_extensions\string.cpp" />
 		<ClCompile Include="stl_extensions\vector.cpp" />
 		<ClCompile Include="TypeTraverser.cpp" />
+		<ClCompile Include="VirtualCast.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="TypeTraverser.inl" />

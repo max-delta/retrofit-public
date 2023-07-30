@@ -26,6 +26,21 @@ struct ClassInfoCompositor
 		reflect::builder::CreateClassInfo<CLASS>( mClassInfo );
 	}
 
+	template<int = 0>
+	ClassInfoCompositor& AutoVirtualRoot()
+	{
+		// NOTE: Extra seemingly useless template layer prevents this from
+		//  being instantiated as part of the class, since diamonds can cause
+		//  this to fail to compile
+
+		// NOTE: This will compile even when there aren't virtual roots, it
+		//  just mark them as not existing, allowing this to be used on (most)
+		//  every type (diamonds will fail because they're ambigious,
+		//  nonsensical, and just generally a sign of gross incompetence)
+		reflect::builder::CreateVirtualRootInfo<CLASS>( mClassInfo.mVirtualRootInfo );
+		return *this;
+	}
+
 	template<typename T>
 	ClassInfoCompositor& BaseClass()
 	{
