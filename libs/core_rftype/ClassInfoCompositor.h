@@ -2,6 +2,7 @@
 
 #include "core_rftype/ClassInfoAccessor.h"
 #include "core_rftype/ExtensionAccessorLookup.h"
+#include "core_reflect/DiamondChecks.h"
 #include "core_reflect/TypeInfoBuilder.h"
 #include "core_reflect/VariableTraits.h"
 #include "core/meta/FailTemplate.h"
@@ -32,23 +33,26 @@ struct ClassInfoCompositor
 		static_assert( rftl::is_same<T, CLASS>::value == false, "Not a base class, is same class" );
 		reflect::BaseClassInfo classInfo = {};
 		classInfo.mBaseClassInfo = &GetClassInfo<T>();
-		CLASS const* const kInvalidClass = reinterpret_cast<CLASS const*>( compiler::kInvalidNonNullPointer );
 
-		// NOTE: Performing this transformation test requires the derived class
-		//  to be cast to the base class. This is normally required for
-		//  type-safe casts, and reflection COULD work around it, but that
-		//  creates dangerous assumptions, which this test is trying to detect.
-		// NOTE: In some inheritance implementations, the act of casting an
-		//  invalid pointer creates run-time code that will crash, so you will
-		//  need to use the more expensive ComplexBaseClass() instead
-		bool const nonTrivialTransformationNeeded = reinterpret_cast<T const*>( kInvalidClass ) != kInvalidClass;
-		if( nonTrivialTransformationNeeded )
+		if constexpr( reflect::IsBasePointerAlwaysSameAsDerivedPointer<T, CLASS>() )
 		{
-			classInfo.mGetBasePointerFromDerived = GetBasePointerFromDerived<T>;
+			classInfo.mGetBasePointerFromDerived = nullptr;
 		}
 		else
 		{
-			classInfo.mGetBasePointerFromDerived = nullptr;
+			// NOTE: In some inheritance implementations, this check can crash
+			//  due excessively poor code with exceptionally bad multiple
+			//  inheritance, so in those cases you will need to use the more
+			//  expensive ComplexBaseClass() instead
+			bool const nonTrivialTransformationNeeded = reflect::UnsafeTryDetermineIfNonTrivialPointerTransformNeeded<T, CLASS>();
+			if( nonTrivialTransformationNeeded )
+			{
+				classInfo.mGetBasePointerFromDerived = reflect::GetBasePointerFromDerivedUntyped<T, CLASS>;
+			}
+			else
+			{
+				classInfo.mGetBasePointerFromDerived = nullptr;
+			}
 		}
 		mClassInfo.mBaseTypes.emplace_back( rftl::move( classInfo ) );
 		return *this;
@@ -61,7 +65,7 @@ struct ClassInfoCompositor
 		static_assert( rftl::is_same<T, CLASS>::value == false, "Not a base class, is same class" );
 		reflect::BaseClassInfo classInfo = {};
 		classInfo.mBaseClassInfo = &GetClassInfo<T>();
-		classInfo.mGetBasePointerFromDerived = GetBasePointerFromDerived<T>;
+		classInfo.mGetBasePointerFromDerived = reflect::GetBasePointerFromDerivedUntyped<T, CLASS>;
 		mClassInfo.mBaseTypes.emplace_back( rftl::move( classInfo ) );
 		return *this;
 	}
@@ -155,14 +159,6 @@ struct ClassInfoCompositor
 		varInfo.mVariableTypeInfo.mAccessor = &emplacedAccessor;
 		mClassInfo.mNonStaticVariables.emplace_back( rftl::move( varInfo ) );
 		return *this;
-	}
-
-
-private:
-	template<typename T>
-	static void const* GetBasePointerFromDerived( void const* ptr )
-	{
-		return static_cast<T const*>( reinterpret_cast<CLASS const*>( ptr ) );
 	}
 
 

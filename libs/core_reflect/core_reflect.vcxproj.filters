@@ -9,6 +9,7 @@
 		<ClInclude Include="TypeInfoBuilder.h" />
 		<ClInclude Include="VirtualClass.h" />
 		<ClInclude Include="ReflectFwd.h" />
+		<ClInclude Include="DiamondChecks.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
