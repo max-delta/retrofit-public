@@ -12,6 +12,7 @@ static constexpr ResourceTypeIdentifier kInvalidResourceTypeIdentifier = 0;
 class ResourceTypeRecord;
 class ResourceTypeRegistry;
 class ResourceLoader;
+class ResourceSaver;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

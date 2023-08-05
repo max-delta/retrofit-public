@@ -16,6 +16,7 @@
 
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"
+#include "GameResource/ResourceSaver.h"
 #include "GameSync/RollbackInputManager.h"
 #include "GameSprite/CharacterCreator.h"
 
@@ -38,6 +39,7 @@ WeakPtr<rollback::RollbackManager> gRollbackManager;
 WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
 WeakPtr<resource::ResourceLoader> gResourceLoader;
+WeakPtr<resource::ResourceSaver> gResourceSaver;
 WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
@@ -52,6 +54,7 @@ static UniquePtr<rollback::RollbackManager> sRollbackManager;
 static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
 static UniquePtr<resource::ResourceTypeRegistry> sResourceTypeRegistry;
 static UniquePtr<resource::ResourceLoader> sResourceLoader;
+static UniquePtr<resource::ResourceSaver> sResourceSaver;
 static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
 static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
@@ -92,6 +95,10 @@ void SystemStartup()
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing resource loader..." );
 	sResourceLoader = DefaultCreator<resource::ResourceLoader>::Create( app::gVfs, gResourceTypeRegistry );
 	gResourceLoader = sResourceLoader;
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing resource saver..." );
+	sResourceSaver = DefaultCreator<resource::ResourceSaver>::Create( app::gVfs, gResourceTypeRegistry );
+	gResourceSaver = sResourceSaver;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing character creator..." );
 	sCharacterCreator = DefaultCreator<sprite::CharacterCreator>::Create( app::gVfs, app::gGraphics );
@@ -150,6 +157,7 @@ void SystemShutdown()
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
+	sResourceSaver = nullptr;
 	sResourceLoader = nullptr;
 	sResourceTypeRegistry = nullptr;
 	sRollbackInputManager = nullptr;

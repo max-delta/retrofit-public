@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CompanyManager.h"
 
+#include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
@@ -12,10 +13,9 @@
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
+#include "GameResource/ResourceSaver.h"
+
 #include "RFType/CreateClassInfoDeclaration.h"
-#include "Serialization/ObjectSerializer.h"
-#include "Serialization/DiagnosticExporter.h"
-#include "Serialization/XmlExporter.h"
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
@@ -329,11 +329,6 @@ void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::
 
 	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
 
-	// TODO: BinaryExporter
-	static constexpr char kFileExtension[] = ".xml";
-	using PlaceholderExporter = serialization::XmlExporter;
-	rftl::string buffer;
-
 	rftl::array<state::ObjectRef, kRosterSize> const rosterObjects = FindRosterObjects( playerID );
 	for( size_t i_rosterIndex = 0; i_rosterIndex < kRosterSize; i_rosterIndex++ )
 	{
@@ -346,61 +341,22 @@ void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::
 		WeakPtr<state::comp::Loadout const> const loadout = character.GetComponentInstanceT<state::comp::Loadout>();
 		RF_ASSERT( loadout != nullptr );
 
+		character::ElementSlots const& elements = loadout->mEquippedElements;
+
+		// TODO: BinaryExporter
+		// TODO: Figure out a better solution for filename extensions
+		static constexpr char kFileExtension[] = ".xml";
 		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) + kFileExtension );
-		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( loadoutFilePath );
-		if( fileHandle == nullptr )
+
+		// Save
+		bool const saveSuccess = gResourceSaver->SaveClassToFile(
+			rftype::GetClassInfo<character::ElementSlots>(),
+			&elements,
+			resource::kInvalidResourceTypeIdentifier,
+			loadoutFilePath );
+		if( saveSuccess == false )
 		{
-			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to open loadout for write" );
-			continue;
-		}
-
-		// Serialize
-		buffer.clear();
-		{
-			character::ElementSlots const& elements = loadout->mEquippedElements;
-
-			// TODO: Remove
-			{
-				serialization::DiagnosticExporter diagExporter{ false };
-				bool const diagSuccess = serialization::ObjectSerializer::SerializeSingleObject(
-					diagExporter, rftype::GetClassInfo<character::ElementSlots>(), &elements );
-				RF_ASSERT( diagSuccess );
-				bool const diagFinalSuccess = diagExporter.Root_FinalizeExport();
-				RF_ASSERT( diagFinalSuccess );
-			}
-
-			PlaceholderExporter placeholderExporter = {};
-
-			bool const serializeSuccess = serialization::ObjectSerializer::SerializeSingleObject(
-				placeholderExporter, rftype::GetClassInfo<character::ElementSlots>(), &elements );
-			if( serializeSuccess == false )
-			{
-				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to serialize loadout for write" );
-				continue;
-			}
-
-			bool const finalizeSuccess = placeholderExporter.Root_FinalizeExport();
-			if( finalizeSuccess == false )
-			{
-				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to finalize exporter for write" );
-				continue;
-			}
-
-			bool const bufferSuccess = placeholderExporter.WriteToString( buffer );
-			if( bufferSuccess == false )
-			{
-				RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to write loadout to buffer" );
-				continue;
-			}
-		}
-		RF_ASSERT( buffer.empty() == false );
-
-		FILE* const file = fileHandle->GetFile();
-		RF_ASSERT( file != nullptr );
-		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
-		if( bytesWritten != buffer.size() )
-		{
-			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to write loadout" );
+			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to save loadout to file" );
 			continue;
 		}
 	}

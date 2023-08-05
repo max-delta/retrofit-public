@@ -6,6 +6,7 @@
 		<ClCompile Include="ResourceLoader.cpp" />
 		<ClCompile Include="ResourceTypeRecord.cpp" />
 		<ClCompile Include="ResourceTypeRegistry.cpp" />
+		<ClCompile Include="ResourceSaver.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -14,6 +15,7 @@
 		<ClInclude Include="ResourceLoader.h" />
 		<ClInclude Include="ResourceTypeRecord.h" />
 		<ClInclude Include="ResourceTypeRegistry.h" />
+		<ClInclude Include="ResourceSaver.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ResourceLoader.inl" />

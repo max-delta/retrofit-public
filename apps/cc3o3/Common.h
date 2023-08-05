@@ -13,6 +13,7 @@ class RollbackInputManager;
 namespace RF::resource {
 class ResourceTypeRegistry;
 class ResourceLoader;
+class ResourceSaver;
 }
 namespace RF::sprite {
 class CharacterCreator;
@@ -56,6 +57,7 @@ extern WeakPtr<rollback::RollbackManager> gRollbackManager;
 extern WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 extern WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
 extern WeakPtr<resource::ResourceLoader> gResourceLoader;
+extern WeakPtr<resource::ResourceSaver> gResourceSaver;
 extern WeakPtr<sprite::CharacterCreator> gCharacterCreator;
 extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
