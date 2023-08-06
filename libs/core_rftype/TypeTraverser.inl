@@ -157,7 +157,10 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 				if( varLoc != nullptr )
 				{
 					ExtensionAccessor const& accessor = *varInfo.mVariableTypeInfo.mAccessor;
-					accessor.mBeginAccess( varLoc );
+					if( accessor.mBeginAccess != nullptr )
+					{
+						accessor.mBeginAccess( varLoc );
+					}
 					size_t const numVars = accessor.mGetNumVariables( varLoc );
 					for( size_t i = 0; i < numVars; i++ )
 					{
@@ -185,7 +188,10 @@ inline void TypeTraverser::TraverseVariablesWithoutInheritanceT(
 							onReturnFromNestedTypeFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ) );
 						}
 					}
-					accessor.mEndAccess( varLoc );
+					if( accessor.mEndAccess != nullptr )
+					{
+						accessor.mEndAccess( varLoc );
+					}
 				}
 
 				onReturnFromNestedTypeFunc( TraversalType::Accessor, TraversalVariableInstance( varInfo.mVariableTypeInfo, varLoc ) );
