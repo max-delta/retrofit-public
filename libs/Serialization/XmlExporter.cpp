@@ -10,6 +10,22 @@
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static bool hasAttribute( pugi::xml_node const& node, char const* attributeName )
+{
+	for( pugi::xml_attribute const& attribute : node.attributes() )
+	{
+		if( rftl::string_view( attribute.name() ) == rftl::string_view( attributeName ) )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 XmlExporter::XmlExporter()
 {
@@ -201,20 +217,37 @@ bool XmlExporter::Instance_BeginNewProperty()
 
 	if( mPropertyStack.empty() )
 	{
+		// No properties yet, create a new property on the instance
 		RF_ASSERT( mNewIndent == false );
-		mPropertyStack.emplace_back();
+		mPropertyStack.emplace_back( mCurrentInstance.append_child( "Property" ) );
 	}
-
-	if( mNewIndent )
+	else if( mNewIndent )
 	{
-		// Will use the property from the last indent
+		// Will use the property that was made from the last indent
 		mNewIndent = false;
 	}
 	else
 	{
-		pugi::xml_node& currentProperty = mPropertyStack.back();
-		currentProperty = mCurrentInstance.append_child( "Property" );
+		// Have an existing property, need to close it and make a new one
+		RF_ASSERT( mPropertyStack.empty() == false );
+		RF_ASSERT( mNewIndent == false );
+
+		// Close existing
+		mPropertyStack.pop_back();
+
+		if( mPropertyStack.empty() )
+		{
+			// That was the only property, need to make another at stack bottom
+			mPropertyStack.emplace_back( mCurrentInstance.append_child( "Property" ) );
+		}
+		else
+		{
+			// Nest a new one to keep our previous stack depth
+			pugi::xml_node& currentProperty = mPropertyStack.back();
+			mPropertyStack.emplace_back( currentProperty.append_child( "Property" ) );
+		}
 	}
+
 	return true;
 }
 
@@ -229,6 +262,7 @@ bool XmlExporter::Property_AddNameAttribute( char const* name )
 	}
 
 	pugi::xml_node& currentProperty = mPropertyStack.back();
+	RF_ASSERT( details::hasAttribute( currentProperty, "Name" ) == false );
 	currentProperty.append_attribute( "Name" ) = name;
 	return true;
 }
@@ -244,12 +278,24 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 	}
 
 	pugi::xml_node& currentProperty = mPropertyStack.back();
+	RF_ASSERT( details::hasAttribute( currentProperty, "Type" ) == false );
+	RF_ASSERT( details::hasAttribute( currentProperty, "Value" ) == false );
 	pugi::xml_attribute typeAttr = currentProperty.append_attribute( "Type" );
 	pugi::xml_attribute valueAttr = currentProperty.append_attribute( "Value" );
 
 	reflect::Value::Type const type = value.GetStoredType();
-	char const* const typeName = reflect::Value::GetTypeName( type );
-	typeAttr = typeName;
+	{
+		char const* typeName;
+		if( type != reflect::Value::Type::Invalid )
+		{
+			typeName = reflect::Value::GetTypeName( type );
+		}
+		else
+		{
+			typeName = "INVALID";
+		}
+		typeAttr = typeName;
+	}
 	switch( type )
 	{
 		case reflect::Value::Type::Bool:				valueAttr = *value.GetAs<bool>(); break;
@@ -319,6 +365,14 @@ bool XmlExporter::Property_OutdentFromLastIndent()
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
 		return false;
+	}
+
+	// NOTE: While an empty indent is probably a sign of a bug, it is possible
+	//  to immediately outdent right after an indent
+	if( mNewIndent )
+	{
+		RF_DBGFAIL_MSG("Outdent after indent, empty property?");
+		mNewIndent = false;
 	}
 
 	mPropertyStack.pop_back();
