@@ -3,6 +3,8 @@
 
 #include "Logging/Logging.h"
 
+#include "core_math/math_casts.h"
+
 #include "rftl/string"
 
 
@@ -205,8 +207,91 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value
 		return false;
 	}
 
+	char const* typeName = nullptr;
+	rftl::string valueStr;
+	{
+		reflect::Value::Type const type = value.GetStoredType();
+
+		if( type != reflect::Value::Type::Invalid )
+		{
+			typeName = reflect::Value::GetTypeName( type );
+		}
+		else
+		{
+			typeName = "INVALID";
+		}
+
+		switch( type )
+		{
+			case reflect::Value::Type::Bool:
+				valueStr = *value.GetAs<bool>() ? "true" : "false";
+				break;
+			case reflect::Value::Type::VoidPtr:
+				valueStr = "<PTR>";
+				break;
+			case reflect::Value::Type::VoidConstPtr:
+				valueStr = "<PTR>";
+				break;
+			case reflect::Value::Type::VirtualClassPtr:
+				valueStr = "<PTR>";
+				break;
+			case reflect::Value::Type::VirtualClassConstPtr:
+				valueStr = "<PTR>";
+				break;
+			case reflect::Value::Type::Char:
+				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<char>() ) );
+				break;
+			case reflect::Value::Type::WChar:
+				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<wchar_t>() ) );
+				break;
+			case reflect::Value::Type::Char16:
+				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<char16_t>() ) );
+				break;
+			case reflect::Value::Type::Char32:
+				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<char32_t>() ) );
+				break;
+			case reflect::Value::Type::Float:
+				valueStr = rftl::to_string( *value.GetAs<float>() );
+				break;
+			case reflect::Value::Type::Double:
+				valueStr = rftl::to_string( *value.GetAs<double>() );
+				break;
+			case reflect::Value::Type::LongDouble:
+				valueStr = rftl::to_string( *value.GetAs<long double>() );
+				break;
+			case reflect::Value::Type::UInt8:
+				valueStr = rftl::to_string( *value.GetAs<uint8_t>() );
+				break;
+			case reflect::Value::Type::UInt16:
+				valueStr = rftl::to_string( *value.GetAs<uint16_t>() );
+				break;
+			case reflect::Value::Type::UInt32:
+				valueStr = rftl::to_string( *value.GetAs<uint32_t>() );
+				break;
+			case reflect::Value::Type::UInt64:
+				valueStr = rftl::to_string( *value.GetAs<uint64_t>() );
+				break;
+			case reflect::Value::Type::Int8:
+				valueStr = rftl::to_string( *value.GetAs<int8_t>() );
+				break;
+			case reflect::Value::Type::Int16:
+				valueStr = rftl::to_string( *value.GetAs<int16_t>() );
+				break;
+			case reflect::Value::Type::Int32:
+				valueStr = rftl::to_string( *value.GetAs<int32_t>() );
+				break;
+			case reflect::Value::Type::Int64:
+				valueStr = rftl::to_string( *value.GetAs<int64_t>() );
+				break;
+			case reflect::Value::Type::Invalid:
+			default:
+				valueStr = "<UNSUPPORTED>";
+				break;
+		}
+	}
+
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s value := VAL", indents.c_str() );
+	RF_DIAG_EXP_TR( " %s value := [%s] %s", indents.c_str(), typeName, valueStr.c_str() );
 
 	return true;
 }
