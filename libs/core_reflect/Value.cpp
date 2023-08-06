@@ -290,7 +290,9 @@ char const* Value::GetStoredTypeName() const
 
 char const* Value::GetTypeName( Type type )
 {
+	RF_ASSERT( type != Type::Invalid );
 	size_t const typeAsIndex = static_cast<size_t>( type );
+	RF_ASSERT( typeAsIndex < rftl::extent<decltype( kTypeNameStrings )>::value );
 	return kTypeNameStrings[typeAsIndex];
 }
 
