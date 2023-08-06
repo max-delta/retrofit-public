@@ -36,11 +36,23 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 		void
 	{
 		char const* const name = memberVariableInstance.mMemberVariableInfo.mIdentifier;
-		reflect::Value::Type const type = memberVariableInstance.mMemberVariableInfo.mVariableTypeInfo.mValueType;
+		reflect::VariableTypeInfo const& typeInfo = memberVariableInstance.mMemberVariableInfo.mVariableTypeInfo;
+		reflect::Value::Type const type = typeInfo.mValueType;
 		void const* const location = memberVariableInstance.mMemberVariableLocation;
 		exporter.Instance_BeginNewProperty();
 		exporter.Property_AddNameAttribute( name );
-		exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+		if( type != reflect::Value::Type::Invalid )
+		{
+			RF_ASSERT( typeInfo.mClassInfo == nullptr );
+			RF_ASSERT( typeInfo.mAccessor == nullptr );
+			exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+		}
+		else
+		{
+			// Probably a nested type or another accessor, expect a traversal
+			//  callback soon
+			RF_TODO_ANNOTATION( "Information about what this is?" );
+		}
 	};
 
 	auto onTraversalTypeFound = [&exporter, &success](
@@ -59,12 +71,58 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 				break;
 			}
 			case RF::rftype::TypeTraverser::TraversalType::Accessor:
-			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
-			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
-				RF_TODO_BREAK_MSG( "UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
-				shouldRecurse = false;
-				success = false;
+			{
+				// onMemberVariable(...) should've already prepared this node
+				exporter.Property_IndentFromCurrentProperty();
+				shouldRecurse = true;
 				break;
+			}
+			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
+			{
+				char const* const name = "K"; // Key
+				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
+				reflect::Value::Type const type = typeInfo.mValueType;
+				void const* const location = varInst.mVariableLocation;
+				exporter.Instance_BeginNewProperty();
+				exporter.Property_AddNameAttribute( name );
+				if( type != reflect::Value::Type::Invalid )
+				{
+					RF_ASSERT( typeInfo.mClassInfo == nullptr );
+					RF_ASSERT( typeInfo.mAccessor == nullptr );
+					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+				}
+				else
+				{
+					// Probably a nested type or another accessor, recurse into
+					//  it and expect it'll trigger an indentation
+					RF_TODO_ANNOTATION( "Information about what this is?" );
+					shouldRecurse = true;
+				}
+				break;
+			}
+			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
+			{
+				char const* const name = "T"; // Target
+				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
+				reflect::Value::Type const type = typeInfo.mValueType;
+				void const* const location = varInst.mVariableLocation;
+				exporter.Instance_BeginNewProperty();
+				exporter.Property_AddNameAttribute( name );
+				if( type != reflect::Value::Type::Invalid )
+				{
+					RF_ASSERT( typeInfo.mClassInfo == nullptr );
+					RF_ASSERT( typeInfo.mAccessor == nullptr );
+					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+				}
+				else
+				{
+					// Probably a nested type or another accessor, recurse into
+					//  it and expect it'll trigger an indentation
+					RF_TODO_ANNOTATION( "Information about what this is?" );
+					shouldRecurse = true;
+				}
+				break;
+			}
 			case RF::rftype::TypeTraverser::TraversalType::Invalid:
 			default:
 				RF_DBGFAIL_MSG( "Unknown traversal type" );
@@ -87,11 +145,18 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 				break;
 			}
 			case RF::rftype::TypeTraverser::TraversalType::Accessor:
-			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
-			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
-				RF_TODO_BREAK_MSG( "UPDATE TO HANDLE NEW TRAVERSAL LOGIC, AND TEST!!!" );
-				success = false;
+			{
+				exporter.Property_OutdentFromLastIndent();
 				break;
+			}
+			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
+			{
+				break;
+			}
+			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
+			{
+				break;
+			}
 			case RF::rftype::TypeTraverser::TraversalType::Invalid:
 			default:
 				RF_DBGFAIL_MSG( "Unknown traversal type" );
