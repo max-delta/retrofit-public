@@ -197,7 +197,13 @@ inline void TypeTraverser::TraverseVariableInternalT(
 					onTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ), shouldTraverseKey );
 					if( shouldTraverseKey )
 					{
-						RF_TODO_BREAK();
+						TraverseVariableInternalT(
+							keyInfo,
+							keyLoc,
+							onMemberVariableFunc,
+							onTraversalFunc,
+							onReturnFromTraversalFunc );
+
 						onReturnFromTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ) );
 					}
 
@@ -209,7 +215,13 @@ inline void TypeTraverser::TraverseVariableInternalT(
 					onTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ), shouldTraverseTarget );
 					if( shouldTraverseTarget )
 					{
-						RF_TODO_BREAK();
+						TraverseVariableInternalT(
+							targetInfo,
+							targetLoc,
+							onMemberVariableFunc,
+							onTraversalFunc,
+							onReturnFromTraversalFunc );
+
 						onReturnFromTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ) );
 					}
 				}
