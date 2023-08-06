@@ -54,7 +54,8 @@ bool ResourceSaver::SaveClassToFile(
 	}
 
 	// TODO: BinaryExporter
-	static constexpr char kFileExtension[] = ".xml";
+	// TODO: Figure out a better solution for filename extensions
+	//static constexpr char kFileExtension[] = ".xml";
 	using PlaceholderExporter = serialization::XmlExporter;
 	rftl::string buffer;
 

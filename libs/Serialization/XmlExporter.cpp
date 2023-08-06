@@ -12,6 +12,7 @@ namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
 static bool hasAttribute( pugi::xml_node const& node, char const* attributeName )
 {
 	for( pugi::xml_attribute const& attribute : node.attributes() )
@@ -23,6 +24,7 @@ static bool hasAttribute( pugi::xml_node const& node, char const* attributeName 
 	}
 	return false;
 }
+#endif
 
 }
 ///////////////////////////////////////////////////////////////////////////////
