@@ -114,6 +114,14 @@ private:
 		OnMemberVariableFuncT const& onMemberVariableFunc,
 		OnTraversalFuncT const& onTraversalFunc,
 		OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc );
+
+	template<typename OnMemberVariableFuncT, typename OnTraversalFuncT, typename OnReturnFromTraversalFuncT>
+	static void TraverseVariableInternalT(
+		reflect::VariableTypeInfo const& typeInfo,
+		void const* varLoc,
+		OnMemberVariableFuncT const& onMemberVariableFunc,
+		OnTraversalFuncT const& onTraversalFunc,
+		OnReturnFromTraversalFuncT const& onReturnFromTraversalFunc );
 };
 
 ///////////////////////////////////////////////////////////////////////////////
