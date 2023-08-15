@@ -21,6 +21,8 @@ struct BufferInsertIterator
 		//
 	}
 
+	BufferInsertIterator( BufferInsertIterator const& rhs ) = default;
+
 	BufferInsertIterator& operator=( BufferInsertIterator const& rhs ) = delete;
 
 	BufferInsertIterator& operator=( CharT const& rhs )

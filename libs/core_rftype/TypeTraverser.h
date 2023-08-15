@@ -37,6 +37,7 @@ public:
 		MemberVariableInstance(
 			reflect::MemberVariableInfo const& memberVariableInfo,
 			void const* memberVariableLocation );
+		MemberVariableInstance( MemberVariableInstance const& ) = default;
 		MemberVariableInstance& operator=( MemberVariableInstance const& ) = delete;
 
 		reflect::MemberVariableInfo const& mMemberVariableInfo;
@@ -49,6 +50,7 @@ public:
 		TraversalVariableInstance(
 			reflect::VariableTypeInfo const& variableTypeInfo,
 			void const* const variableLocation );
+		TraversalVariableInstance( TraversalVariableInstance const& ) = default;
 		TraversalVariableInstance& operator=( TraversalVariableInstance const& ) = delete;
 
 		reflect::VariableTypeInfo const& mVariableTypeInfo;

@@ -55,6 +55,7 @@ public:
 public:
 	explicit RftlAllocator( Allocator& allocator );
 
+	RftlAllocator( RftlAllocator<T> const& ) = default;
 	RftlAllocator& operator=( RftlAllocator<T> const& ) = delete;
 
 

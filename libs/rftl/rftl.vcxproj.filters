@@ -112,5 +112,6 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="condition_variable" />
+		<None Include="cmath" />
 	</ItemGroup>
 </Project>

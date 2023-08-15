@@ -40,6 +40,7 @@ public:
 	{
 		//
 	}
+	immutable_basic_string( immutable_basic_string const& ) = default;
 	immutable_basic_string& operator=( immutable_basic_string const& ) = delete;
 
 	operator backing_type const&() const

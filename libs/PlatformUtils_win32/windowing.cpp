@@ -18,7 +18,10 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 
 	win32::WNDCLASSW wc = {};
 	wc.style = CS_OWNDC; // Individual instances of this window will not share device contexts.
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wcast-function-type-strict" ); // HWND pointer target is void in shim and stub struct in win32
 	wc.lpfnWndProc = reinterpret_cast<win32::WNDPROC>( WndProc ); // The function that will be called for events.
+	RF_CLANG_POP();
 	wc.cbClsExtra = 0; // The class has no extra memory.
 	wc.cbWndExtra = 0; // The window has no extra memory.
 	//wc.hInstance = hInstance; // The application that is managing the window.

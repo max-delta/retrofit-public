@@ -37,6 +37,7 @@ public:
 public:
 	Uuid();
 	Uuid( OctetSequence const& sequence );
+	Uuid( Uuid const& rhs ) = default;
 	Uuid& operator=( Uuid const& ) = delete;
 
 	bool operator==( Uuid const& rhs ) const;

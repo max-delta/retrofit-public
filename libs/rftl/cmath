@@ -1,0 +1,110 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_CMATH
+#include "rftl/patch/postinclude.inl"
+
+#define RFTL_FL( BASE ) \
+	using std::BASE; \
+	using std::BASE##f; \
+	using std::BASE##l;
+#define RFTL_ESOTERIC_MATH( X ) X
+
+// Namespace wrapping
+namespace rftl {
+using std::abs;
+RFTL_FL( fabs );
+RFTL_FL( fmod );
+RFTL_FL( remainder );
+RFTL_FL( remquo );
+RFTL_FL( fma );
+RFTL_FL( fmax );
+RFTL_FL( fmin );
+RFTL_FL( fdim );
+RFTL_FL( nan );
+RFTL_FL( exp );
+RFTL_FL( exp2 );
+RFTL_FL( expm1 );
+RFTL_FL( log );
+RFTL_FL( log10 );
+RFTL_FL( log2 );
+RFTL_FL( log1p );
+RFTL_FL( pow );
+RFTL_FL( sqrt );
+RFTL_FL( cbrt );
+RFTL_FL( hypot );
+RFTL_FL( sin );
+RFTL_FL( cos );
+RFTL_FL( tan );
+RFTL_FL( asin );
+RFTL_FL( acos );
+RFTL_FL( atan );
+RFTL_FL( atan2 );
+RFTL_FL( sinh );
+RFTL_FL( cosh );
+RFTL_FL( tanh );
+RFTL_FL( asinh );
+RFTL_FL( acosh );
+RFTL_FL( atanh );
+RFTL_FL( erf );
+RFTL_FL( erfc );
+RFTL_FL( tgamma );
+RFTL_FL( lgamma );
+RFTL_FL( ceil );
+RFTL_FL( floor );
+RFTL_FL( trunc );
+RFTL_FL( round );
+RFTL_FL( lround );
+RFTL_FL( llround );
+RFTL_FL( nearbyint );
+RFTL_FL( rint );
+RFTL_FL( lrint );
+RFTL_FL( llrint );
+RFTL_FL( frexp );
+RFTL_FL( ldexp );
+RFTL_FL( modf );
+RFTL_FL( scalbn );
+RFTL_FL( scalbln );
+RFTL_FL( ilogb );
+RFTL_FL( logb );
+RFTL_FL( nextafter );
+RFTL_FL( nexttoward );
+RFTL_FL( copysign );
+using std::fpclassify;
+using std::isfinite;
+using std::isinf;
+using std::isnan;
+using std::isnormal;
+using std::signbit;
+using std::isgreater;
+using std::isgreaterequal;
+using std::isless;
+using std::islessequal;
+using std::islessgreater;
+using std::isunordered;
+RFTL_ESOTERIC_MATH( RFTL_FL( assoc_laguerre ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( assoc_legendre ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( beta ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( comp_ellint_1 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( comp_ellint_2 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( comp_ellint_3 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( cyl_bessel_i ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( cyl_bessel_j ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( cyl_bessel_k ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( cyl_neumann ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( ellint_1 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( ellint_2 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( ellint_3 ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( expint ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( hermite ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( legendre ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( laguerre ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( riemann_zeta ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( sph_bessel ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( sph_legendre ) );
+RFTL_ESOTERIC_MATH( RFTL_FL( sph_neumann ) );
+}
+
+#undef RFTL_ESOTERIC_MATH
+#undef RFTL_FL

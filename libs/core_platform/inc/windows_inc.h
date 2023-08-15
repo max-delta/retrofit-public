@@ -14,6 +14,7 @@
 
 // Need to guard STL before windows destroys it
 #include "rftl/cstddef"
+#include "rftl/cstdlib"
 #include "rftl/cstring"
 #include "rftl/cctype"
 

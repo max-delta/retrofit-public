@@ -5,6 +5,7 @@
 
 #include "core/macros.h"
 
+#include "rftl/cmath"
 #include "rftl/limits"
 
 
@@ -204,15 +205,15 @@ DST integer_truncast( SRC const src )
 
 		if constexpr( rftl::is_same<SRC, long double>::value )
 		{
-			return static_cast<DST>( roundl( static_cast<long double>( src ) ) );
+			return static_cast<DST>( rftl::roundl( static_cast<long double>( src ) ) );
 		}
 
 		if constexpr( rftl::is_same<SRC, double>::value )
 		{
-			return static_cast<DST>( round( static_cast<double>( src ) ) );
+			return static_cast<DST>( rftl::round( static_cast<double>( src ) ) );
 		}
 
-		return static_cast<DST>( roundf( static_cast<float>( src ) ) );
+		return static_cast<DST>( rftl::roundf( static_cast<float>( src ) ) );
 	}
 	else
 	{
