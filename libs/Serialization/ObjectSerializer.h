@@ -5,20 +5,41 @@
 
 #include "core/macros.h"
 
+#include "rftl/optional"
+
 
 // Forwards
 namespace RF::reflect {
-	struct ClassInfo;
+struct ClassInfo;
 }
+
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
 class SERIALIZATION_API ObjectSerializer
 {
-public:
 	RF_NO_INSTANCE( ObjectSerializer );
 
-	static bool SerializeSingleObject( Exporter& exporter, reflect::ClassInfo const& classInfo, void const* classInstance );
+public:
+	struct Params
+	{
+		exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
+
+		rftl::optional<exporter::TypeID> mTypeID = rftl::nullopt;
+		char const* mTypeDebugName = nullptr;
+	};
+
+
+public:
+	static bool SerializeSingleObject(
+		Exporter& exporter,
+		reflect::ClassInfo const& classInfo,
+		void const* classInstance );
+	static bool SerializeSingleObject(
+		Exporter& exporter,
+		reflect::ClassInfo const& classInfo,
+		void const* classInstance,
+		Params const& params );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

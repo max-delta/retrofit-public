@@ -9,7 +9,40 @@
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::ClassInfo const& classInfo, void const* classInstance )
+bool ObjectSerializer::SerializeSingleObject(
+	Exporter& exporter,
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance )
+{
+	Params params = {};
+
+	// Not writing an instance ID, assuming there's only one and that it can't
+	//  have indirect references made to it
+	( (void)params.mInstanceID );
+
+	// Not writing a type ID, since that requires more complicated machinery
+	//  that we don't want to invoke so we can keep the single object
+	//  serialization simple
+	// NOTE: This means deserialization will need to have the root type made
+	//  for it, so single object serialization will need some other way to know
+	//  what type was serialized, such as filename extension or packet headers
+	( (void)params.mTypeID );
+	( (void)params.mTypeDebugName );
+
+	return SerializeSingleObject(
+		exporter,
+		classInfo,
+		classInstance,
+		params );
+}
+
+
+
+bool ObjectSerializer::SerializeSingleObject(
+	Exporter& exporter,
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance,
+	Params const& params )
 {
 	bool success;
 
@@ -19,17 +52,17 @@ bool ObjectSerializer::SerializeSingleObject( Exporter& exporter, reflect::Class
 		return false;
 	}
 
-	// Not writing an instance ID, since there's only one and can't have
-	//  indirect references made to it
-	//exporter.Instance_AddInstanceIDAttribute( ... );
+	// Instance ID
+	if( params.mInstanceID != exporter::kInvalidInstanceID )
+	{
+		exporter.Instance_AddInstanceIDAttribute( params.mInstanceID );
+	}
 
-	// Not writing a type ID, since that requires more complicated machinery
-	//  that we don't want to invoke so we can keep the single object
-	//  serialization simple
-	// NOTE: This means deserialization will need to have the root type made
-	//  for it, so single object serialization will need some other way to know
-	//  what type was serialized, such as filename extension or packet headers
-	//exporter.Instance_AddTypeIDAttribute( ... );
+	// Type ID
+	if( params.mTypeID.has_value() )
+	{
+		exporter.Instance_AddTypeIDAttribute( *params.mTypeID, params.mTypeDebugName );
+	}
 
 	auto onMemberVariable = [&exporter](
 		rftype::TypeTraverser::MemberVariableInstance const& memberVariableInstance ) ->
