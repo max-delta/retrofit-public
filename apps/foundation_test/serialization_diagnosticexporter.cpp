@@ -2,6 +2,8 @@
 
 #include "Serialization/DiagnosticExporter.h"
 
+#include "core_reflect/Value.h"
+
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////

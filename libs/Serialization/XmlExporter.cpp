@@ -4,6 +4,7 @@
 #include "Logging/Logging.h"
 
 #include "core_math/math_casts.h"
+#include "core_reflect/Value.h"
 
 #include "rftl/cstring"
 

@@ -1,8 +1,9 @@
 #pragma once
 #include "project.h"
 
-#include "core_math/Hash.h"
-#include "core_reflect/Value.h"
+#include "Serialization/SerializationFwd.h"
+
+#include "core_reflect/ReflectFwd.h"
 
 #include "core/macros.h"
 
@@ -15,10 +16,10 @@ class SERIALIZATION_API Exporter
 	RF_NO_COPY( Exporter );
 
 public:
-	using InstanceID = uint64_t;
-	using TypeID = math::HashVal64;
-	using IndirectionID = uint64_t;
-	using ExternalReferenceID = char const*;
+	using InstanceID = exporter::InstanceID;
+	using TypeID = exporter::TypeID;
+	using IndirectionID = exporter::IndirectionID;
+	using ExternalReferenceID = exporter::ExternalReferenceID;
 
 
 public:

@@ -2,6 +2,8 @@
 
 #include "Serialization/XmlExporter.h"
 
+#include "core_reflect/Value.h"
+
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
