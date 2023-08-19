@@ -39,6 +39,7 @@
 		<ClInclude Include="deque" />
 		<ClInclude Include="extension\algorithms.h" />
 		<ClInclude Include="extension\byte_view.h" />
+		<ClInclude Include="extension\c_str.h" />
 		<ClInclude Include="extension\immutable_string.h" />
 		<ClInclude Include="extension\integer_literals.h" />
 		<ClInclude Include="extension\static_string.h" />

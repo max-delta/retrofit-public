@@ -79,6 +79,9 @@
 		<ClInclude Include="extension\string_copy.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\c_str.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
