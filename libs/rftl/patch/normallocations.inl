@@ -5,6 +5,7 @@
 #define RFTL_ATOMIC <atomic>
 #define RFTL_BITSET <bitset>
 #define RFTL_CCTYPE <cctype>
+#define RFTL_CHARCONV <charconv>
 #define RFTL_CHRONO <chrono>
 #define RFTL_CMATH <cmath>
 #define RFTL_CONDITION_VARIABLE <condition_variable>

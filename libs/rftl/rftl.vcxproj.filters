@@ -116,5 +116,6 @@
 		</None>
 		<None Include="condition_variable" />
 		<None Include="cmath" />
+		<None Include="charconv" />
 	</ItemGroup>
 </Project>

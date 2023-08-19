@@ -1,0 +1,15 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_CHARCONV
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::chars_format;
+using std::from_chars;
+using std::from_chars_result;
+using std::to_chars;
+using std::to_chars_result;
+}

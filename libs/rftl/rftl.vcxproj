@@ -75,6 +75,7 @@
 	<ItemGroup>
 		<None Include="algorithm" />
 		<None Include="cctype" />
+		<None Include="charconv" />
 		<None Include="cmath" />
 		<None Include="condition_variable" />
 		<None Include="extension\algorithms.inl" />
