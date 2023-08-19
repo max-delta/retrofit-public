@@ -9,6 +9,9 @@
 		<ClInclude Include="ObjectSerializer.h" />
 		<ClInclude Include="SerializationFwd.h" />
 		<ClInclude Include="CsvReader.h" />
+		<ClInclude Include="Importer.h" />
+		<ClInclude Include="XmlImporter.h" />
+		<ClInclude Include="AutoImporter.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -17,5 +20,7 @@
 		<ClCompile Include="XmlExporter.cpp" />
 		<ClCompile Include="ObjectSerializer.cpp" />
 		<ClCompile Include="CsvReader.cpp" />
+		<ClCompile Include="XmlImporter.cpp" />
+		<ClCompile Include="AutoImporter.cpp" />
 	</ItemGroup>
 </Project>

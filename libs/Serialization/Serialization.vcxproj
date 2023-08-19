@@ -31,16 +31,20 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
+		<ClInclude Include="AutoImporter.h" />
 		<ClInclude Include="CsvReader.h" />
 		<ClInclude Include="DiagnosticExporter.h" />
 		<ClInclude Include="Exporter.h" />
+		<ClInclude Include="Importer.h" />
 		<ClInclude Include="ObjectSerializer.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="SerializationFwd.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="XmlExporter.h" />
+		<ClInclude Include="XmlImporter.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="AutoImporter.cpp" />
 		<ClCompile Include="CsvReader.cpp" />
 		<ClCompile Include="DiagnosticExporter.cpp" />
 		<ClCompile Include="dllmain.cpp" />
@@ -49,6 +53,7 @@
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 		<ClCompile Include="XmlExporter.cpp" />
+		<ClCompile Include="XmlImporter.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\third_party\pugixml\pugixml.vcxproj">
