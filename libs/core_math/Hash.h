@@ -1,11 +1,12 @@
 #pragma once
-#include "rftl/cstdint"
+
+#include "core_math/MathFwd.h"
+
 #include "rftl/cstddef"
+
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
-
-using HashVal64 = uint64_t;
 
 // This hash function will not change based on platform
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t );

@@ -22,6 +22,7 @@
 		<ClInclude Include="BitwiseEnums.h" />
 		<ClInclude Include="Limits.h" />
 		<ClInclude Include="SoftFloat.h" />
+		<ClInclude Include="MathFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
