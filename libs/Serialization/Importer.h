@@ -8,6 +8,7 @@
 #include "core/macros.h"
 
 #include "rftl/functional"
+#include "rftl/string_view"
 
 
 namespace RF::serialization {
@@ -33,7 +34,7 @@ public:
 		using Instance_AddInstanceIDAttributeFuncSig = bool( InstanceID const& instanceID );
 		using Instance_AddTypeIDAttributeFuncSig = bool( TypeID const& typeID, char const* debugName );
 		using Instance_BeginNewPropertyFuncSig = bool();
-		using Property_AddNameAttributeFuncSig = bool( char const* name );
+		using Property_AddNameAttributeFuncSig = bool( rftl::string_view const& name );
 		using Property_AddValueAttributeFuncSig = bool( reflect::Value const& value );
 		using Property_AddIndirectionAttributeFuncSig = bool( IndirectionID const& indirectionID );
 		using Property_IndentFromCurrentPropertyFuncSig = bool();

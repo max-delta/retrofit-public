@@ -4,8 +4,10 @@
 #include "Logging/Logging.h"
 
 #include "core_math/math_casts.h"
+#include "core_reflect/Value.h"
 
 #include "rftl/extension/c_str.h"
+#include "rftl/extension/static_vector.h"
 #include "rftl/extension/string_parse.h"
 #include "rftl/optional"
 
@@ -15,10 +17,297 @@ namespace RF::serialization {
 namespace details {
 
 // HACK: Can't be constexpr, since source values are non-constexpr
-static unsigned int getCommonParseMode()
+static unsigned int GetCommonParseMode()
 {
 	// Currently don't have a reason to enable any wierd XML features
 	return pugi::parse_minimal;
+}
+
+
+
+template<typename FuncT, typename... ArgsT>
+static bool TryInvoke( FuncT const& func, ArgsT const&... args )
+{
+	if( func == nullptr )
+	{
+		// Return means "keep processing", and null indicates caller doesn't
+		//  care what happens, so returning true to keep going
+		return true;
+	}
+
+	return func( args... );
+}
+
+
+
+static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::string_view const& value )
+{
+	RF_TODO_BREAK();
+	return reflect::Value( 5 );
+}
+
+
+
+static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_node const& prop )
+{
+	RF_ASSERT( prop.empty() == false );
+
+	// Node checks
+	{
+		rftl::string_view const name = prop.name();
+		pugi::xml_node_type const type = prop.type();
+
+		if( type != pugi::xml_node_type::node_element )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+			return false;
+		}
+
+		if( name != "Property" )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-property node '%s'", rftl::c_str( name ) );
+			return false;
+		}
+	}
+
+	bool keepProcessing = true;
+
+	// New property
+	keepProcessing = TryInvoke( callbacks.mInstance_BeginNewPropertyFunc );
+	if( keepProcessing == false )
+	{
+		return false;
+	}
+
+	rftl::string_view name = {};
+	rftl::string_view type = {};
+	rftl::string_view value = {};
+	for( pugi::xml_attribute const& attribute : prop.attributes() )
+	{
+		rftl::string_view const attributeName = attribute.name();
+		rftl::string_view const attributeValue = attribute.value();
+
+		if( attributeName == "Name" )
+		{
+			name = attributeValue;
+			continue;
+		}
+
+		if( attributeName == "Type" )
+		{
+			type = attributeValue;
+			continue;
+		}
+
+		if( attributeName == "Value" )
+		{
+			value = attributeValue;
+			continue;
+		}
+
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML property attribute name '%s'", rftl::c_str( attributeName ) );
+		return false;
+	}
+
+	// Name (optional)
+	if( name.empty() == false )
+	{
+		keepProcessing = TryInvoke( callbacks.mProperty_AddNameAttributeFunc, name );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	// Value (optional)
+	if( value.empty() == false )
+	{
+		if( type.empty() )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "No type specified for value '%s'", rftl::c_str( value ) );
+			return false;
+		}
+
+		reflect::Value const asVal = TryConvertValue( type, value );
+		if( asVal.GetStoredType() == reflect::Value::Type::Invalid )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to '%s' value", rftl::c_str( name ), rftl::c_str( value ) );
+			return false;
+		}
+
+		// Value
+		keepProcessing = TryInvoke( callbacks.mProperty_AddValueAttributeFunc, asVal );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
+
+static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_node const& instance )
+{
+	RF_ASSERT( instance.empty() == false );
+
+	bool keepProcessing = true;
+
+	// New instance
+	keepProcessing = TryInvoke( callbacks.mRoot_BeginNewInstanceFunc );
+	if( keepProcessing == false )
+	{
+		return false;
+	}
+
+	rftl::string_view instanceID = {};
+	rftl::string_view typeID = {};
+	for( pugi::xml_attribute const& attribute : instance.attributes() )
+	{
+		rftl::string_view const attributeName = attribute.name();
+		rftl::string_view const attributeValue = attribute.value();
+
+		if( attributeName == "ID" )
+		{
+			instanceID = attributeValue;
+			continue;
+		}
+
+		if( attributeName == "TypeID" )
+		{
+			typeID = attributeValue;
+			continue;
+		}
+
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML instance attribute name '%s'", rftl::c_str( attributeName ) );
+		return false;
+	}
+
+	// Instance ID (optional)
+	if( instanceID.empty() == false )
+	{
+		exporter::InstanceID val;
+		if( rftl::parse_int( val, instanceID ) == false )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", rftl::c_str( instanceID ) );
+			return false;
+		}
+
+		keepProcessing = TryInvoke( callbacks.mInstance_AddInstanceIDAttributeFunc, val );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	// Type ID (optional)
+	if( typeID.empty() == false )
+	{
+		exporter::TypeID val;
+		if( rftl::parse_int( val, typeID ) == false )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", rftl::c_str( typeID ) );
+			return false;
+		}
+
+		// Type ID
+		keepProcessing = TryInvoke( callbacks.mInstance_AddTypeIDAttributeFunc, val, "TODO_DEBUG_NAME" );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	static constexpr size_t kExcessivePropertyDepth = 10;
+	rftl::static_vector<pugi::xml_node, kExcessivePropertyDepth> nodeStack;
+	static constexpr size_t kExcessiveIterationLimit = 1000;
+	size_t iterationCheckVal = 0;
+
+	// Seed the property tree crawl
+	{
+		pugi::xml_node seed = instance.first_child();
+		if( seed.empty() )
+		{
+			RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION, "Empty instance, highly dubious" );
+		}
+		else
+		{
+			nodeStack.emplace_back( rftl::move( seed ) );
+		}
+	}
+
+	// Crawl the property tree
+	while( true )
+	{
+		iterationCheckVal++;
+		if( iterationCheckVal >= kExcessiveIterationLimit )
+		{
+			// Excessive iterations, bail
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Property iteration limit %llu exceeded", kExcessiveIterationLimit );
+			RF_DBGFAIL();
+			return false;
+		}
+
+		if( nodeStack.empty() )
+		{
+			// Finished crawl, leave
+			break;
+		}
+
+		// Will process at deepest available level
+		pugi::xml_node& currentNode = nodeStack.back();
+
+		if( currentNode.empty() )
+		{
+			// Finished level, ascend and continue
+
+			keepProcessing = TryInvoke( callbacks.mProperty_OutdentFromLastIndentFunc );
+			if( keepProcessing == false )
+			{
+				return false;
+			}
+
+			nodeStack.pop_back();
+			continue;
+		}
+
+		// Process node
+		keepProcessing = ProcessProperty( callbacks, currentNode );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+
+		// Note any children of this node before moving to next node
+		pugi::xml_node child = currentNode.first_child();
+
+		// Move forward to next node in this level
+		// NOTE: Want to always do this after processing, even if descending
+		currentNode = currentNode.next_sibling();
+
+		// Two iteration paths: continue at current level, or descend
+		if( child.empty() == false )
+		{
+			// Has children, descend and continue
+
+			keepProcessing = TryInvoke( callbacks.mProperty_IndentFromCurrentPropertyFunc );
+			if( keepProcessing == false )
+			{
+				return false;
+			}
+
+			nodeStack.emplace_back( rftl::move( child ) );
+			continue;
+		}
+		else
+		{
+			// No children, continue at current level
+			continue;
+		}
+	}
+
+	return true;
 }
 
 }
@@ -51,7 +340,7 @@ bool XmlImporter::ReadFromString( rftl::string_view const& string )
 	pugi::xml_parse_result const result = mDoc.load_buffer(
 		string.data(),
 		string.size(),
-		details::getCommonParseMode(),
+		details::GetCommonParseMode(),
 		pugi::encoding_latin1 );
 
 	if( result == false )
@@ -409,9 +698,22 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 		}
 	}
 
-	// TODO: Begin processing the instances
-	RF_TODO_BREAK();
-	return false;
+	// TODO: Emit indirections
+	RF_TODO_ANNOTATION( "Emit indirections" );
+	( (void)callbacks.mRoot_RegisterLocalIndirectionFunc );
+	( (void)callbacks.mRoot_RegisterExternalIndirectionFunc );
+
+	// Process the instances
+	for( pugi::xml_node const& instance : mRootInstances )
+	{
+		bool const keepProcessing = details::ProcessInstance( callbacks, instance );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
