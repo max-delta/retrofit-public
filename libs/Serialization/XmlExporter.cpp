@@ -299,31 +299,42 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		}
 		typeAttr = typeName;
 	}
+
 	switch( type )
 	{
-		case reflect::Value::Type::Bool:				valueAttr = *value.GetAs<bool>(); break;
-		case reflect::Value::Type::VoidPtr:				valueAttr = "<PTR>"; break;
-		case reflect::Value::Type::VoidConstPtr:		valueAttr = "<PTR>"; break;
-		case reflect::Value::Type::VirtualClassPtr:		valueAttr = "<PTR>"; break;
-		case reflect::Value::Type::VirtualClassConstPtr:valueAttr = "<PTR>"; break;
-		case reflect::Value::Type::Char:				valueAttr = *value.GetAs<char>(); break;
-		case reflect::Value::Type::WChar:				valueAttr = *value.GetAs<wchar_t>(); break;
-		case reflect::Value::Type::Char16:				valueAttr = *value.GetAs<char16_t>(); break;
-		case reflect::Value::Type::Char32:				valueAttr = *value.GetAs<char32_t>(); break;
-		case reflect::Value::Type::Float:				valueAttr = *value.GetAs<float>(); break;
-		case reflect::Value::Type::Double:				valueAttr = *value.GetAs<double>(); break;
-		case reflect::Value::Type::LongDouble:			valueAttr = math::float_cast<double>( *value.GetAs<long double>() ); break;
-		case reflect::Value::Type::UInt8:				valueAttr = *value.GetAs<uint8_t>(); break;
-		case reflect::Value::Type::UInt16:				valueAttr = *value.GetAs<uint16_t>(); break;
-		case reflect::Value::Type::UInt32:				valueAttr = *value.GetAs<uint32_t>(); break;
-		case reflect::Value::Type::UInt64:				valueAttr = *value.GetAs<uint64_t>(); break;
-		case reflect::Value::Type::Int8:				valueAttr = *value.GetAs<int8_t>(); break;
-		case reflect::Value::Type::Int16:				valueAttr = *value.GetAs<int16_t>(); break;
-		case reflect::Value::Type::Int32:				valueAttr = *value.GetAs<int32_t>(); break;
-		case reflect::Value::Type::Int64:				valueAttr = *value.GetAs<int64_t>(); break;
+
+#define RF_CASE( TYPE, VAL ) \
+	case TYPE: \
+		valueAttr = VAL; \
+		break
+
+		RF_CASE( reflect::Value::Type::Bool, *value.GetAs<bool>() );
+		RF_CASE( reflect::Value::Type::VoidPtr, "<PTR>" );
+		RF_CASE( reflect::Value::Type::VoidConstPtr, "<PTR>" );
+		RF_CASE( reflect::Value::Type::VirtualClassPtr, "<PTR>" );
+		RF_CASE( reflect::Value::Type::VirtualClassConstPtr, "<PTR>" );
+		RF_CASE( reflect::Value::Type::Char, *value.GetAs<char>() );
+		RF_CASE( reflect::Value::Type::WChar, *value.GetAs<wchar_t>() );
+		RF_CASE( reflect::Value::Type::Char16, *value.GetAs<char16_t>() );
+		RF_CASE( reflect::Value::Type::Char32, *value.GetAs<char32_t>() );
+		RF_CASE( reflect::Value::Type::Float, *value.GetAs<float>() );
+		RF_CASE( reflect::Value::Type::Double, *value.GetAs<double>() );
+		RF_CASE( reflect::Value::Type::LongDouble, math::float_cast<double>( *value.GetAs<long double>() ) );
+		RF_CASE( reflect::Value::Type::UInt8, *value.GetAs<uint8_t>() );
+		RF_CASE( reflect::Value::Type::UInt16, *value.GetAs<uint16_t>() );
+		RF_CASE( reflect::Value::Type::UInt32, *value.GetAs<uint32_t>() );
+		RF_CASE( reflect::Value::Type::UInt64, *value.GetAs<uint64_t>() );
+		RF_CASE( reflect::Value::Type::Int8, *value.GetAs<int8_t>() );
+		RF_CASE( reflect::Value::Type::Int16, *value.GetAs<int16_t>() );
+		RF_CASE( reflect::Value::Type::Int32, *value.GetAs<int32_t>() );
+		RF_CASE( reflect::Value::Type::Int64, *value.GetAs<int64_t>() );
+
+#undef RF_CASE
+
 		case reflect::Value::Type::Invalid:
 		default:
-			valueAttr = "<UNSUPPORTED>"; break;
+			valueAttr = "<UNSUPPORTED>";
+			break;
 	}
 	return true;
 }
@@ -374,7 +385,7 @@ bool XmlExporter::Property_OutdentFromLastIndent()
 	//  to immediately outdent right after an indent
 	if( mNewIndent )
 	{
-		RF_DBGFAIL_MSG("Outdent after indent, empty property?");
+		RF_DBGFAIL_MSG( "Outdent after indent, empty property?" );
 		mNewIndent = false;
 	}
 
