@@ -10,6 +10,7 @@
 #include "rftl/extension/static_vector.h"
 #include "rftl/extension/string_parse.h"
 #include "rftl/optional"
+#include "rftl/sstream"
 
 
 namespace RF::serialization {
@@ -40,10 +41,86 @@ static bool TryInvoke( FuncT const& func, ArgsT const&... args )
 
 
 
+template<typename ValT>
+static bool TryParse( ValT& value, rftl::string_view const& str )
+{
+	rftl::stringstream ss;
+	ss << str;
+	ss >> value;
+
+	if( ss.rdbuf()->in_avail() != 0 )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
 static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::string_view const& value )
 {
-	RF_TODO_BREAK();
-	return reflect::Value( 5 );
+	if( value.empty() )
+	{
+		return {};
+	}
+
+#define RF_TEST( ENUM, VARTYPE ) \
+	if( type == reflect::Value::GetTypeName( ENUM ) ) \
+	{ \
+		VARTYPE temp = {}; \
+		bool const success = TryParse( temp, value ); \
+		if( success == false ) \
+		{ \
+			return reflect::Value{}; \
+		} \
+		return reflect::Value( temp ); \
+	}
+#define RF_TEST_I( ENUM, INTERMEDIATE, VARTYPE ) \
+	if( type == reflect::Value::GetTypeName( ENUM ) ) \
+	{ \
+		static_assert( rftl::is_integral<INTERMEDIATE>::value ); \
+		static_assert( rftl::is_integral<VARTYPE>::value ); \
+		static_assert( rftl::is_signed<INTERMEDIATE>::value == rftl::is_signed<VARTYPE>::value ); \
+		static_assert( sizeof( INTERMEDIATE ) == sizeof( VARTYPE ) ); \
+		INTERMEDIATE temp = {}; \
+		bool const success = TryParse( temp, value ); \
+		if( success == false ) \
+		{ \
+			return reflect::Value{}; \
+		} \
+		VARTYPE emit = math::integer_cast<VARTYPE>( temp ); \
+		return reflect::Value( emit ); \
+	}
+
+	RF_TEST( reflect::Value::Type::Bool, bool );
+	//RF_TEST( reflect::Value::Type::VoidPtr, nullptr_t );
+	//RF_TEST( reflect::Value::Type::VoidConstPtr, nullptr_t );
+	//RF_TEST( reflect::Value::Type::VirtualClassPtr, nullptr_t );
+	//RF_TEST( reflect::Value::Type::VirtualClassConstPtr, nullptr_t );
+	RF_TEST( reflect::Value::Type::Char, char );
+	RF_TEST_I( reflect::Value::Type::WChar, uint16_t, wchar_t );
+	RF_TEST_I( reflect::Value::Type::Char16, uint16_t, char16_t );
+	RF_TEST_I( reflect::Value::Type::Char32, uint32_t, char32_t );
+	RF_TEST( reflect::Value::Type::Float, float );
+	RF_TEST( reflect::Value::Type::Double, double );
+	RF_TEST( reflect::Value::Type::LongDouble, long double );
+	RF_TEST( reflect::Value::Type::UInt8, uint8_t );
+	RF_TEST( reflect::Value::Type::UInt16, uint16_t );
+	RF_TEST( reflect::Value::Type::UInt32, uint32_t );
+	RF_TEST( reflect::Value::Type::UInt64, uint64_t );
+	RF_TEST( reflect::Value::Type::Int8, int8_t );
+	RF_TEST( reflect::Value::Type::Int16, int16_t );
+	RF_TEST( reflect::Value::Type::Int32, int32_t );
+	RF_TEST( reflect::Value::Type::Int64, int64_t );
+
+#undef RF_TEST
+#undef RF_TEST_I
+
+	RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected type '%s'", rftl::c_str( type ) );
+	RF_DBGFAIL();
+
+	return reflect::Value{};
 }
 
 
