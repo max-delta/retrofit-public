@@ -44,7 +44,6 @@ private:
 
 	pugi::xml_node mCurrentInstance;
 	rftl::vector<pugi::xml_node> mPropertyStack;
-	bool mNewIndent = false;
 
 	bool mFinalized = false;
 };

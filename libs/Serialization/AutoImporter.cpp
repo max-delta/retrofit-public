@@ -32,7 +32,7 @@ bool AutoImporter::ReadFromString( rftl::string_view const& string )
 
 	if( rftl::bagins_with( string, "<?xml" ) )
 	{
-		UniquePtr xml = DefaultCreator<XmlImporter>::Create();
+		UniquePtr<XmlImporter> xml = DefaultCreator<XmlImporter>::Create();
 		XmlImporter& ref = *xml;
 		mUnderlying = rftl::move( xml );
 		return ref.ReadFromString( string );
