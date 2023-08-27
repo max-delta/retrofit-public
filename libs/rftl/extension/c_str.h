@@ -5,12 +5,24 @@
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
 
 template<typename CharT>
-auto c_str( rftl::basic_string_view<CharT> const& view ) -> typename CharT const*
+using c_str_pair = rftl::pair<rftl::basic_string<CharT>, CharT const*>;
+
+template<typename CharT>
+auto c_str( typename rftl::basic_string_view<CharT> const& view ) -> c_str_pair<CharT>
 {
-	return rftl::basic_string<CharT>( view ).c_str();
+	c_str_pair<CharT> retVal = { rftl::basic_string<CharT>( view ), nullptr };
+	retVal.second = retVal.first.c_str();
+	return retVal;
 }
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+// TODO: Try to remove all usages of this where possible
+#define RFTL_CSTR( VIEW ) ::rftl::details::c_str( VIEW ).second
 
 ///////////////////////////////////////////////////////////////////////////////
 }
