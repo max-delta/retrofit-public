@@ -22,7 +22,7 @@ auto c_str( typename rftl::basic_string_view<CharT> const& view ) -> c_str_pair<
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: Try to remove all usages of this where possible
-#define RFTL_CSTR( VIEW ) ::rftl::details::c_str( VIEW ).second
+#define RFTLE_CSTR( VIEW ) ::rftl::details::c_str( VIEW ).second
 
 ///////////////////////////////////////////////////////////////////////////////
 }
