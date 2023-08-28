@@ -273,6 +273,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 			return false;
 		}
 
+		// Instance ID
 		keepProcessing = TryInvoke( callbacks.mInstance_AddInstanceIDAttributeFunc, val );
 		if( keepProcessing == false )
 		{
@@ -341,13 +342,23 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		{
 			// Finished level, ascend and continue
 
+			nodeStack.pop_back();
+
+			if( nodeStack.empty() )
+			{
+				// Last level (level 0), have now ascended past the initial
+				//  seed (level 1), so will not fire the outdent callback,
+				//  since that would mean going to a negative property depth
+				continue;
+			}
+
+			// Outdent
 			keepProcessing = TryInvoke( callbacks.mProperty_OutdentFromLastIndentFunc );
 			if( keepProcessing == false )
 			{
 				return false;
 			}
 
-			nodeStack.pop_back();
 			continue;
 		}
 
@@ -370,6 +381,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		{
 			// Has children, descend and continue
 
+			// Indent
 			keepProcessing = TryInvoke( callbacks.mProperty_IndentFromCurrentPropertyFunc );
 			if( keepProcessing == false )
 			{

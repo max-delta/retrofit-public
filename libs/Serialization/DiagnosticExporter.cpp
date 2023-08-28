@@ -353,7 +353,13 @@ bool DiagnosticExporter::Property_OutdentFromLastIndent()
 		return false;
 	}
 
+	if( mPropertyDepth == 0 )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Property depth rollover" );
+		return false;
+	}
 	mPropertyDepth--;
+
 	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s }", indents.c_str() );
 
