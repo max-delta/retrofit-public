@@ -34,6 +34,7 @@
 		<ClInclude Include="AutoImporter.h" />
 		<ClInclude Include="CsvReader.h" />
 		<ClInclude Include="DiagnosticExporter.h" />
+		<ClInclude Include="DiagnosticImportTestShim.h" />
 		<ClInclude Include="Exporter.h" />
 		<ClInclude Include="Importer.h" />
 		<ClInclude Include="ObjectSerializer.h" />
@@ -47,6 +48,7 @@
 		<ClCompile Include="AutoImporter.cpp" />
 		<ClCompile Include="CsvReader.cpp" />
 		<ClCompile Include="DiagnosticExporter.cpp" />
+		<ClCompile Include="DiagnosticImportTestShim.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="ObjectSerializer.cpp" />
 		<ClCompile Include="stdafx.cpp">

@@ -12,6 +12,7 @@
 		<ClInclude Include="Importer.h" />
 		<ClInclude Include="XmlImporter.h" />
 		<ClInclude Include="AutoImporter.h" />
+		<ClInclude Include="DiagnosticImportTestShim.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -22,5 +23,6 @@
 		<ClCompile Include="CsvReader.cpp" />
 		<ClCompile Include="XmlImporter.cpp" />
 		<ClCompile Include="AutoImporter.cpp" />
+		<ClCompile Include="DiagnosticImportTestShim.cpp" />
 	</ItemGroup>
 </Project>
