@@ -2,12 +2,15 @@
 #include "ResourceLoader.h"
 
 #include "GameResource/ResourceTypeRegistry.h"
+#include "GameScripting/OOLoader.h"
 
 #include "Logging/Logging.h"
 #include "Serialization/AutoImporter.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
+
+#include "core/ptr/default_creator.h"
 
 
 namespace RF::resource {
@@ -54,6 +57,13 @@ bool ResourceLoader::ProbablyAnImporter(
 	rftl::string_view buffer )
 {
 	return serialization::AutoImporter::LooksLikeSupportedType( buffer );
+}
+
+
+
+UniquePtr<script::OOLoader> ResourceLoader::CreateOOLoader()
+{
+	return DefaultCreator<script::OOLoader>::Create();
 }
 
 
@@ -115,6 +125,20 @@ bool ResourceLoader::AddSource(
 	bool const success = loader.AddSourceFromBuffer( buffer );
 	RFLOG_TEST_AND_NOTIFY( success, nullptr, RFCAT_GAMERESOURCE, "Failed to add source from buffer" );
 	return success;
+}
+
+
+
+bool ResourceLoader::PopulateClassViaOO(
+	script::OOLoader& loader,
+	char const* rootVariableName,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance )
+{
+	return loader.PopulateClass(
+		rootVariableName,
+		classInfo,
+		classInstance );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

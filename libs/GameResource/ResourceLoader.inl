@@ -1,7 +1,7 @@
 #pragma once
 #include "ResourceLoader.h"
 
-#include "GameScripting/OOLoader.h"
+#include "core_rftype/ClassInfoAccessor.h"
 
 
 namespace RF::resource {
@@ -19,10 +19,10 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 		return nullptr;
 	}
 
-	script::OOLoader loader;
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
 
-	InjectTypes( loader, typeID );
-	bool const sourceSuccess = AddSource( loader, path );
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, path );
 	if( sourceSuccess == false )
 	{
 		return nullptr;
@@ -30,7 +30,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 
 	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
 	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
-	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
+	bool const popSuccess = PopulateClassViaOO( *loader, kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{
 		return nullptr;
@@ -53,10 +53,10 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 		return nullptr;
 	}
 
-	script::OOLoader loader;
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
 
-	InjectTypes( loader, typeID );
-	bool const sourceSuccess = AddSource( loader, buffer );
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, buffer );
 	if( sourceSuccess == false )
 	{
 		return nullptr;
@@ -64,7 +64,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 
 	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
 	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
-	bool const popSuccess = loader.PopulateClass( kRootVariableName, *classInstance );
+	bool const popSuccess = PopulateClassViaOO( *loader, kRootVariableName, *classInstance );
 	if( popSuccess == false )
 	{
 		return nullptr;
@@ -88,16 +88,16 @@ inline bool ResourceLoader::PopulateClassFromFile(
 		return nullptr;
 	}
 
-	script::OOLoader loader;
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
 
-	InjectTypes( loader, typeID );
-	bool const sourceSuccess = AddSource( loader, path );
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, path );
 	if( sourceSuccess == false )
 	{
 		return false;
 	}
 
-	return loader.PopulateClass( kRootVariableName, classInstance );
+	return PopulateClassViaOO( *loader, kRootVariableName, classInstance );
 }
 
 
@@ -115,16 +115,32 @@ inline bool ResourceLoader::PopulateClassFromBuffer(
 		return nullptr;
 	}
 
-	script::OOLoader loader;
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
 
-	InjectTypes( loader, typeID );
-	bool const sourceSuccess = AddSource( loader, buffer );
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, buffer );
 	if( sourceSuccess == false )
 	{
 		return false;
 	}
 
-	return loader.PopulateClass( kRootVariableName, classInstance );
+	return PopulateClassViaOO( *loader, kRootVariableName, classInstance );
+}
+
+
+
+template<typename ReflectedClass>
+inline bool ResourceLoader::PopulateClassViaOO(
+	script::OOLoader& loader,
+	char const* rootVariableName,
+	ReflectedClass& classInstance )
+{
+	static_assert( rftl::is_const<ReflectedClass>::value == false );
+	return PopulateClassViaOO(
+		loader,
+		rootVariableName,
+		rftype::GetClassInfo<ReflectedClass>(),
+		&classInstance );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

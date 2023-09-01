@@ -3,14 +3,14 @@
 
 #include "GameResource/ResourceFwd.h"
 
+#include "GameScripting/ScriptFwd.h"
+
 #include "PlatformFilesystem/VFSFwd.h"
+
+#include "core_reflect/ReflectFwd.h"
 
 #include "rftl/string_view"
 
-
-namespace RF::script {
-class OOLoader;
-}
 
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,15 +64,26 @@ private:
 	bool ProbablyAnImporter(
 		rftl::string_view buffer );
 
+	static UniquePtr<script::OOLoader> CreateOOLoader();
 	void InjectTypes(
 		script::OOLoader& loader,
 		ResourceTypeIdentifier typeID );
 	bool AddSource(
 		script::OOLoader& loader,
 		file::VFSPath const& path );
-	bool AddSource(
+	static bool AddSource(
 		script::OOLoader& loader,
 		rftl::string_view buffer );
+	template<typename ReflectedClass>
+	static bool PopulateClassViaOO(
+		script::OOLoader& loader,
+		char const* rootVariableName,
+		ReflectedClass& classInstance );
+	static bool PopulateClassViaOO(
+		script::OOLoader& loader,
+		char const* rootVariableName,
+		reflect::ClassInfo const& classInfo,
+		void* classInstance );
 
 	//
 	// Private data
