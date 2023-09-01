@@ -12,25 +12,14 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 	ResourceTypeIdentifier typeID,
 	file::VFSPath const& path )
 {
-	if( ProbablyAnImporter( path ) )
-	{
-		// TODO: ObjectDeserializer
-		RF_TODO_BREAK();
-		return nullptr;
-	}
-
-	UniquePtr<script::OOLoader> loader = CreateOOLoader();
-
-	InjectTypes( *loader, typeID );
-	bool const sourceSuccess = AddSource( *loader, path );
-	if( sourceSuccess == false )
-	{
-		return nullptr;
-	}
-
 	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
 	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
-	bool const popSuccess = PopulateClassViaOO( *loader, kRootVariableName, *classInstance );
+
+	bool const popSuccess =
+		PopulateClassFromFile(
+			typeID,
+			*classInstance,
+			path );
 	if( popSuccess == false )
 	{
 		return nullptr;
@@ -46,25 +35,14 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 	ResourceTypeIdentifier typeID,
 	rftl::string_view buffer )
 {
-	if( ProbablyAnImporter( buffer ) )
-	{
-		// TODO: ObjectDeserializer
-		RF_TODO_BREAK();
-		return nullptr;
-	}
-
-	UniquePtr<script::OOLoader> loader = CreateOOLoader();
-
-	InjectTypes( *loader, typeID );
-	bool const sourceSuccess = AddSource( *loader, buffer );
-	if( sourceSuccess == false )
-	{
-		return nullptr;
-	}
-
 	using MutableClass = typename rftl::remove_cv<ReflectedClass>::type;
 	UniquePtr<MutableClass> classInstance = Creator<MutableClass>::Create();
-	bool const popSuccess = PopulateClassViaOO( *loader, kRootVariableName, *classInstance );
+
+	bool const popSuccess =
+		PopulateClassFromBuffer(
+			typeID,
+			*classInstance,
+			buffer );
 	if( popSuccess == false )
 	{
 		return nullptr;
@@ -85,7 +63,7 @@ inline bool ResourceLoader::PopulateClassFromFile(
 	{
 		// TODO: ObjectDeserializer
 		RF_TODO_BREAK();
-		return nullptr;
+		return false;
 	}
 
 	UniquePtr<script::OOLoader> loader = CreateOOLoader();
@@ -112,7 +90,7 @@ inline bool ResourceLoader::PopulateClassFromBuffer(
 	{
 		// TODO: ObjectDeserializer
 		RF_TODO_BREAK();
-		return nullptr;
+		return false;
 	}
 
 	UniquePtr<script::OOLoader> loader = CreateOOLoader();
