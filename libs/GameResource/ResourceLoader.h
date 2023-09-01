@@ -43,7 +43,7 @@ public:
 		ResourceTypeIdentifier typeID,
 		rftl::string_view buffer );
 
-	// Populate class
+	// Populate class (typed)
 	template<typename ReflectedClass>
 	bool PopulateClassFromFile(
 		ResourceTypeIdentifier typeID,
@@ -53,6 +53,18 @@ public:
 	bool PopulateClassFromBuffer(
 		ResourceTypeIdentifier typeID,
 		ReflectedClass& classInstance,
+		rftl::string_view buffer );
+
+	// Populate class (typeless)
+	bool PopulateClassFromFile(
+		ResourceTypeIdentifier typeID,
+		reflect::ClassInfo const& classInfo,
+		void* classInstance,
+		file::VFSPath const& path );
+	bool PopulateClassFromBuffer(
+		ResourceTypeIdentifier typeID,
+		reflect::ClassInfo const& classInfo,
+		void* classInstance,
 		rftl::string_view buffer );
 
 
@@ -74,11 +86,6 @@ private:
 	static bool AddSource(
 		script::OOLoader& loader,
 		rftl::string_view buffer );
-	template<typename ReflectedClass>
-	static bool PopulateClassViaOO(
-		script::OOLoader& loader,
-		char const* rootVariableName,
-		ReflectedClass& classInstance );
 	static bool PopulateClassViaOO(
 		script::OOLoader& loader,
 		char const* rootVariableName,

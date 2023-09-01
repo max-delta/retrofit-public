@@ -29,6 +29,68 @@ ResourceLoader::ResourceLoader(
 
 ResourceLoader::~ResourceLoader() = default;
 
+
+
+bool ResourceLoader::PopulateClassFromFile(
+	ResourceTypeIdentifier typeID,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance,
+	file::VFSPath const& path )
+{
+	if( ProbablyAnImporter( path ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return false;
+	}
+
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
+
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, path );
+	if( sourceSuccess == false )
+	{
+		return false;
+	}
+
+	return PopulateClassViaOO(
+		*loader,
+		kRootVariableName,
+		classInfo,
+		classInstance );
+}
+
+
+
+bool ResourceLoader::PopulateClassFromBuffer(
+	ResourceTypeIdentifier typeID,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance,
+	rftl::string_view buffer )
+{
+	if( ProbablyAnImporter( buffer ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return false;
+	}
+
+	UniquePtr<script::OOLoader> loader = CreateOOLoader();
+
+	InjectTypes( *loader, typeID );
+	bool const sourceSuccess = AddSource( *loader, buffer );
+	if( sourceSuccess == false )
+	{
+		return false;
+	}
+
+	return PopulateClassViaOO(
+		*loader,
+		kRootVariableName,
+		classInfo,
+		classInstance );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ResourceLoader::ProbablyAnImporter(
