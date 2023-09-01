@@ -76,7 +76,6 @@ private:
 	bool ProbablyAnImporter(
 		rftl::string_view buffer );
 
-	static UniquePtr<script::OOLoader> CreateOOLoader();
 	void InjectTypes(
 		script::OOLoader& loader,
 		ResourceTypeIdentifier typeID );

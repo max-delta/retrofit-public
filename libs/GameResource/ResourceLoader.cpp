@@ -44,17 +44,17 @@ bool ResourceLoader::PopulateClassFromFile(
 		return false;
 	}
 
-	UniquePtr<script::OOLoader> loader = CreateOOLoader();
+	script::OOLoader loader;
 
-	InjectTypes( *loader, typeID );
-	bool const sourceSuccess = AddSource( *loader, path );
+	InjectTypes( loader, typeID );
+	bool const sourceSuccess = AddSource( loader, path );
 	if( sourceSuccess == false )
 	{
 		return false;
 	}
 
 	return PopulateClassViaOO(
-		*loader,
+		loader,
 		kRootVariableName,
 		classInfo,
 		classInstance );
@@ -75,17 +75,17 @@ bool ResourceLoader::PopulateClassFromBuffer(
 		return false;
 	}
 
-	UniquePtr<script::OOLoader> loader = CreateOOLoader();
+	script::OOLoader loader;
 
-	InjectTypes( *loader, typeID );
-	bool const sourceSuccess = AddSource( *loader, buffer );
+	InjectTypes( loader, typeID );
+	bool const sourceSuccess = AddSource( loader, buffer );
 	if( sourceSuccess == false )
 	{
 		return false;
 	}
 
 	return PopulateClassViaOO(
-		*loader,
+		loader,
 		kRootVariableName,
 		classInfo,
 		classInstance );
@@ -119,13 +119,6 @@ bool ResourceLoader::ProbablyAnImporter(
 	rftl::string_view buffer )
 {
 	return serialization::AutoImporter::LooksLikeSupportedType( buffer );
-}
-
-
-
-UniquePtr<script::OOLoader> ResourceLoader::CreateOOLoader()
-{
-	return DefaultCreator<script::OOLoader>::Create();
 }
 
 
