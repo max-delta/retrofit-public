@@ -47,7 +47,7 @@ static rftl::string GetLastError( HSQUIRRELVM vm )
 static void NotifyLastError( HSQUIRRELVM vm )
 {
 	rftl::string const error = GetLastError( vm );
-	RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "%s", error.c_str() );
+	RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL, "Squirrel error: %s", error.c_str() );
 }
 
 
