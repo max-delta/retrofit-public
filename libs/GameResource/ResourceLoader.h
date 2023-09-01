@@ -59,6 +59,11 @@ public:
 	//
 	// Private methods
 private:
+	bool ProbablyAnImporter(
+		file::VFSPath const& path );
+	bool ProbablyAnImporter(
+		rftl::string_view buffer );
+
 	void InjectTypes(
 		script::OOLoader& loader,
 		ResourceTypeIdentifier typeID );

@@ -4,6 +4,7 @@
 #include "GameResource/ResourceTypeRegistry.h"
 
 #include "Logging/Logging.h"
+#include "Serialization/AutoImporter.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
@@ -26,6 +27,36 @@ ResourceLoader::ResourceLoader(
 ResourceLoader::~ResourceLoader() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
+
+bool ResourceLoader::ProbablyAnImporter(
+	file::VFSPath const& path )
+{
+	file::VFS const& vfs = *mVfs;
+
+	// Open file
+	file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
+	{
+		file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
+		if( fileHandle == nullptr )
+		{
+			RFLOG_NOTIFY( path, RFCAT_GAMERESOURCE, "Failed to open resource for read" );
+			return false;
+		}
+		fileBuffer = file::FileBuffer( *fileHandle, serialization::AutoImporter::kLongestPeekMagicBytes );
+	}
+
+	return ProbablyAnImporter( fileBuffer.GetChars() );
+}
+
+
+
+bool ResourceLoader::ProbablyAnImporter(
+	rftl::string_view buffer )
+{
+	return serialization::AutoImporter::LooksLikeSupportedType( buffer );
+}
+
+
 
 void ResourceLoader::InjectTypes(
 	script::OOLoader& loader,

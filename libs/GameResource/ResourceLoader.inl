@@ -12,6 +12,13 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 	ResourceTypeIdentifier typeID,
 	file::VFSPath const& path )
 {
+	if( ProbablyAnImporter( path ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return nullptr;
+	}
+
 	script::OOLoader loader;
 
 	InjectTypes( loader, typeID );
@@ -39,6 +46,13 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 	ResourceTypeIdentifier typeID,
 	rftl::string_view buffer )
 {
+	if( ProbablyAnImporter( buffer ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return nullptr;
+	}
+
 	script::OOLoader loader;
 
 	InjectTypes( loader, typeID );
@@ -67,6 +81,13 @@ inline bool ResourceLoader::PopulateClassFromFile(
 	ReflectedClass& classInstance,
 	file::VFSPath const& path )
 {
+	if( ProbablyAnImporter( path ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return nullptr;
+	}
+
 	script::OOLoader loader;
 
 	InjectTypes( loader, typeID );
@@ -87,6 +108,13 @@ inline bool ResourceLoader::PopulateClassFromBuffer(
 	ReflectedClass& classInstance,
 	rftl::string_view buffer )
 {
+	if( ProbablyAnImporter( buffer ) )
+	{
+		// TODO: ObjectDeserializer
+		RF_TODO_BREAK();
+		return nullptr;
+	}
+
 	script::OOLoader loader;
 
 	InjectTypes( loader, typeID );
