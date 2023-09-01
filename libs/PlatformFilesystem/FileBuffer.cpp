@@ -3,6 +3,8 @@
 
 #include "PlatformFilesystem/FileHandle.h"
 
+#include "core_math/math_clamps.h"
+
 
 namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,6 +40,29 @@ FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
 	{
 		mBuffer.resize( amountRead );
 	}
+
+	if( mBuffer.capacity() > mBuffer.size() )
+	{
+		// This shouldn't normally happen
+		RF_DBGFAIL_MSG( "Buffer for file will be shrunk, expected to perform extra allocations" );
+	}
+	mBuffer.shrink_to_fit();
+}
+
+
+
+FileBuffer::FileBuffer( FileHandle const& file, size_t maxBytes )
+{
+	RF_ASSERT( maxBytes > 0 );
+
+	rewind( file.GetFile() );
+
+	size_t const fileSize = file.GetFileSize();
+	size_t const bytesToRead = math::Min( fileSize, maxBytes );
+	mBuffer.resize( bytesToRead );
+
+	size_t const amountRead = fread( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ), bytesToRead, file.GetFile() );
+	mBuffer.resize( amountRead );
 
 	if( mBuffer.capacity() > mBuffer.size() )
 	{

@@ -27,6 +27,7 @@ public:
 	FileBuffer() = delete;
 	explicit FileBuffer( ExplicitDefaultConstruct );
 	explicit FileBuffer( FileHandle const& file, bool addTerminatingNull );
+	explicit FileBuffer( FileHandle const& file, size_t maxBytes );
 	FileBuffer( FileBuffer&& rhs );
 	~FileBuffer() = default;
 	FileBuffer& operator=( FileBuffer&& rhs );
