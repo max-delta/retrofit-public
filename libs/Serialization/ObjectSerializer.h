@@ -3,15 +3,12 @@
 
 #include "SerializationFwd.h"
 
+#include "core_reflect/ReflectFwd.h"
+
 #include "core/macros.h"
 
 #include "rftl/optional"
 
-
-// Forwards
-namespace RF::reflect {
-struct ClassInfo;
-}
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
