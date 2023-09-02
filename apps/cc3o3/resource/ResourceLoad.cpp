@@ -5,6 +5,7 @@
 #include "cc3o3/campaign/CampaignDesc.h"
 #include "cc3o3/campaign/RosterMemberDesc.h"
 #include "cc3o3/char/CharData.h"
+#include "cc3o3/char/ElementSlots.h"
 #include "cc3o3/encounter/EncounterDesc.h"
 #include "cc3o3/overworld/OverworldDesc.h"
 #include "cc3o3/site/SiteDesc.h"
@@ -35,6 +36,7 @@ enum : ResourceTypeIdentifier
 	EncounterDesc,
 	OverworldDesc,
 	SaveBlob,
+	Loadout,
 	SiteDesc
 };
 }
@@ -153,6 +155,9 @@ void InitializeLoader()
 		typeRegistry.AddResourceClass( SaveBlob, "SaveBlob" );
 		typeRegistry.AddResourceClass( SaveBlob, "SaveFileBlob" );
 
+		typeRegistry.AddResourceType( Loadout, "Loadout" );
+		typeRegistry.AddResourceClass( Loadout, "ElementSlots" );
+
 		typeRegistry.AddResourceType( SiteDesc, "Site" );
 		typeRegistry.AddResourceClass( SiteDesc, "SiteDesc" );
 	}
@@ -183,6 +188,7 @@ RF_LOADER( details::type::CharData, character::CharData );
 RF_LOADER( details::type::EncounterDesc, encounter::EncounterDesc );
 RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
 RF_LOADER( details::type::SaveBlob, save::SaveBlob );
+RF_LOADER( details::type::Loadout, character::ElementSlots );
 RF_LOADER( details::type::SiteDesc, site::SiteDesc );
 
 #undef RF_LOADER
