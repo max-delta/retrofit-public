@@ -6,6 +6,7 @@
 
 #include "Logging/Logging.h"
 #include "Serialization/AutoImporter.h"
+#include "Serialization/ObjectDeserializer.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/FileHandle.h"
@@ -166,10 +167,17 @@ bool ResourceLoader::PopulateClassViaImporter(
 	reflect::ClassInfo const& classInfo,
 	void* classInstance )
 {
-	// TODO: ObjectDeserializer
-	RF_TODO_BREAK();
-	importer.ImportAndFinalize( {} );
-	return false;
+	bool const deserializeSuccess = serialization::ObjectDeserializer::DeserializeSingleObject(
+		importer,
+		classInfo,
+		classInstance );
+	if( deserializeSuccess == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_GAMERESOURCE, "Failed to deserialize single object" );
+		return false;
+	}
+
+	return true;
 }
 
 
