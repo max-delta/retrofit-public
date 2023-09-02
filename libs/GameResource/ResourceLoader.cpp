@@ -8,6 +8,7 @@
 #include "Serialization/AutoImporter.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
+#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core/ptr/default_creator.h"
@@ -39,9 +40,37 @@ bool ResourceLoader::PopulateClassFromFile(
 {
 	if( ProbablyAnImporter( path ) )
 	{
-		// TODO: ObjectDeserializer
-		RF_TODO_BREAK();
-		return false;
+		file::VFS const& vfs = *mVfs;
+
+		// Open file
+		file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
+		{
+			file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
+			if( fileHandle == nullptr )
+			{
+				RFLOG_NOTIFY( path, RFCAT_GAMERESOURCE, "Failed to open resource for read" );
+				return false;
+			}
+
+			size_t const fileSize = fileHandle->GetFileSize();
+			RFLOG_TEST_AND_FATAL( fileSize > serialization::AutoImporter::kLongestPeekMagicBytes, nullptr, RFCAT_SERIALIZATION, "Unreasonably small file" );
+			RFLOG_TEST_AND_FATAL( fileSize < 10'000, nullptr, RFCAT_SERIALIZATION, "Unreasonably large file" );
+
+			fileBuffer = file::FileBuffer( *fileHandle, false );
+		}
+
+		serialization::AutoImporter importer;
+
+		bool const readSuccess = importer.ReadFromString( fileBuffer.GetChars() );
+		if( readSuccess == false )
+		{
+			return false;
+		}
+
+		return PopulateClassViaImporter(
+			importer,
+			classInfo,
+			classInstance );
 	}
 
 	script::OOLoader loader;
@@ -70,9 +99,18 @@ bool ResourceLoader::PopulateClassFromBuffer(
 {
 	if( ProbablyAnImporter( buffer ) )
 	{
-		// TODO: ObjectDeserializer
-		RF_TODO_BREAK();
-		return false;
+		serialization::AutoImporter importer;
+
+		bool const readSuccess = importer.ReadFromString( buffer );
+		if( readSuccess == false )
+		{
+			return false;
+		}
+
+		return PopulateClassViaImporter(
+			importer,
+			classInfo,
+			classInstance );
 	}
 
 	script::OOLoader loader;
@@ -119,6 +157,19 @@ bool ResourceLoader::ProbablyAnImporter(
 	rftl::string_view buffer )
 {
 	return serialization::AutoImporter::LooksLikeSupportedType( buffer );
+}
+
+
+
+bool ResourceLoader::PopulateClassViaImporter(
+	serialization::Importer& importer,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance )
+{
+	// TODO: ObjectDeserializer
+	RF_TODO_BREAK();
+	importer.ImportAndFinalize( {} );
+	return false;
 }
 
 

@@ -5,6 +5,8 @@
 
 #include "GameScripting/ScriptFwd.h"
 
+#include "Serialization/SerializationFwd.h"
+
 #include "PlatformFilesystem/VFSFwd.h"
 
 #include "core_reflect/ReflectFwd.h"
@@ -75,6 +77,11 @@ private:
 		file::VFSPath const& path );
 	bool ProbablyAnImporter(
 		rftl::string_view buffer );
+
+	static bool PopulateClassViaImporter(
+		serialization::Importer& importer,
+		reflect::ClassInfo const& classInfo,
+		void* classInstance );
 
 	void InjectTypes(
 		script::OOLoader& loader,
