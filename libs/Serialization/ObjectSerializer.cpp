@@ -112,12 +112,17 @@ bool ObjectSerializer::SerializeSingleObject(
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
 			{
-				char const* const name = "K"; // Key
+				char const* const pairName = "P"; // Pair
+				exporter.Instance_BeginNewProperty();
+				exporter.Property_AddNameAttribute( pairName );
+				exporter.Property_IndentFromCurrentProperty();
+
+				char const* const keyName = "K"; // Key
 				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
 				reflect::Value::Type const type = typeInfo.mValueType;
 				void const* const location = varInst.mVariableLocation;
 				exporter.Instance_BeginNewProperty();
-				exporter.Property_AddNameAttribute( name );
+				exporter.Property_AddNameAttribute( keyName );
 				if( type != reflect::Value::Type::Invalid )
 				{
 					RF_ASSERT( typeInfo.mClassInfo == nullptr );
@@ -135,9 +140,6 @@ bool ObjectSerializer::SerializeSingleObject(
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
 			{
-				// Expect targets to always follow the key they belong to
-				exporter.Property_IndentFromCurrentProperty();
-
 				char const* const name = "T"; // Target
 				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
 				reflect::Value::Type const type = typeInfo.mValueType;
@@ -150,7 +152,7 @@ bool ObjectSerializer::SerializeSingleObject(
 					RF_ASSERT( typeInfo.mAccessor == nullptr );
 					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
 
-					// Will not recurse, so need to close the indent here
+					// Will not recurse, so need to close the pair indent here
 					RF_ASSERT( shouldRecurse == false );
 					exporter.Property_OutdentFromLastIndent();
 				}
@@ -195,7 +197,8 @@ bool ObjectSerializer::SerializeSingleObject(
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
 			{
-				// Expect targets to always follow the key they belong to
+				// Expect targets to always follow the key they belong to, and
+				//  to close the pair that the key opened
 				// NOTE: This only gets called if the target was recursed into,
 				//  so an accessor target that doesn't ask for recursion won't
 				//  get this called, and so needs to make sure it closes any
