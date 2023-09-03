@@ -112,11 +112,6 @@ bool ObjectSerializer::SerializeSingleObject(
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
 			{
-				char const* const pairName = "P"; // Pair
-				exporter.Instance_BeginNewProperty();
-				exporter.Property_AddNameAttribute( pairName );
-				exporter.Property_IndentFromCurrentProperty();
-
 				char const* const keyName = "K"; // Key
 				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
 				reflect::Value::Type const type = typeInfo.mValueType;
@@ -151,10 +146,6 @@ bool ObjectSerializer::SerializeSingleObject(
 					RF_ASSERT( typeInfo.mClassInfo == nullptr );
 					RF_ASSERT( typeInfo.mAccessor == nullptr );
 					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
-
-					// Will not recurse, so need to close the pair indent here
-					RF_ASSERT( shouldRecurse == false );
-					exporter.Property_OutdentFromLastIndent();
 				}
 				else
 				{
@@ -197,14 +188,6 @@ bool ObjectSerializer::SerializeSingleObject(
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorTarget:
 			{
-				// Expect targets to always follow the key they belong to, and
-				//  to close the pair that the key opened
-				// NOTE: This only gets called if the target was recursed into,
-				//  so an accessor target that doesn't ask for recursion won't
-				//  get this called, and so needs to make sure it closes any
-				//  indent it performed for the target on its own (such as if
-				//  it encoded the target value fully already)
-				exporter.Property_OutdentFromLastIndent();
 				break;
 			}
 			case RF::rftype::TypeTraverser::TraversalType::Invalid:
