@@ -12,7 +12,26 @@ namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-using VariableIdentifier = rftl::vector<rftl::string>;
+static constexpr char kThis[] = "!this";
+static constexpr char kUnset[] = "!UNSET";
+
+struct WalkNode
+{
+	WalkNode() = default;
+
+	WalkNode( rftl::string&& identifier )
+		: mIdentifier( rftl::move( identifier ) )
+	{
+		//
+	}
+
+	rftl::string mIdentifier;
+
+	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
+	void const* mVariableLocation = nullptr;
+};
+
+using WalkChain = rftl::vector<WalkNode>;
 
 
 
@@ -23,17 +42,17 @@ struct SingleScratchSpace
 	SingleScratchSpace(
 		reflect::ClassInfo const& classInfo,
 		void* classInstance )
-		: classInfo( classInfo )
-		, classInstance( classInstance )
+		: mClassInfo( classInfo )
+		, mClassInstance( classInstance )
 	{
 		//
 	}
 
-	reflect::ClassInfo const& classInfo;
-	void* const classInstance;
+	reflect::ClassInfo const& mClassInfo;
+	void* const mClassInstance;
 
-	size_t instanceCount = 0;
-	VariableIdentifier propertyStack;
+	size_t mInstanceCount = 0;
+	WalkChain mWalkChain;
 };
 
 }
@@ -59,8 +78,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mRoot_BeginNewInstanceFunc =
 		[&scratch]() -> bool
 	{
-		scratch.instanceCount++;
-		if( scratch.instanceCount > 1 )
+		scratch.mInstanceCount++;
+		if( scratch.mInstanceCount > 1 )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
 				"Multiple instances encountered during single object"
@@ -68,8 +87,9 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 
-		scratch.propertyStack.clear();
-		scratch.propertyStack.emplace_back( "<this>" );
+		scratch.mWalkChain.clear();
+		scratch.mWalkChain.emplace_back( details::kThis );
+		scratch.mWalkChain.emplace_back( details::kUnset );
 
 		return true;
 	};
@@ -96,7 +116,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mInstance_AddInstanceIDAttributeFunc =
 		[&scratch]( InstanceID const& instanceID ) -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		// Don't care, only support one object
 		return true;
@@ -106,7 +126,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mInstance_AddTypeIDAttributeFunc =
 		[&scratch]( TypeID const& typeID, char const* debugName ) -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RF_TODO_ANNOTATION( "Make sure the type ID matches what we're expecting" );
 		return true;
@@ -116,10 +136,11 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mInstance_BeginNewPropertyFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RF_ASSERT( scratch.propertyStack.size() >= 1 );
-		scratch.propertyStack.back() = "<UNSET>";
+		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+		scratch.mWalkChain.pop_back();
+		scratch.mWalkChain.emplace_back( details::kUnset );
 
 		return true;
 	};
@@ -128,10 +149,10 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mProperty_AddNameAttributeFunc =
 		[&scratch]( rftl::string_view const& name ) -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RF_ASSERT( scratch.propertyStack.size() >= 1 );
-		scratch.propertyStack.back() = name;
+		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+		scratch.mWalkChain.back().mIdentifier = name;
 
 		return true;
 	};
@@ -140,9 +161,9 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mProperty_AddValueAttributeFunc =
 		[&scratch]( reflect::Value const& value ) -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RFLOG_WARNING( scratch.propertyStack, RFCAT_SERIALIZATION, "TODO: Set value" );
+		RFLOG_WARNING( scratch.mWalkChain, RFCAT_SERIALIZATION, "TODO: Set value" );
 		RF_TODO_BREAK_MSG( "Use some fancy path-based helper to set this" );
 
 		return true;
@@ -152,7 +173,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mProperty_AddIndirectionAttributeFunc =
 		[&scratch]( IndirectionID const& indirectionID ) -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
 			"Indirections not supported in single object deserialization" );
@@ -163,10 +184,10 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mProperty_IndentFromCurrentPropertyFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RF_ASSERT( scratch.propertyStack.size() >= 1 );
-		scratch.propertyStack.emplace_back( "<UNSET>" );
+		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+		scratch.mWalkChain.emplace_back( details::kUnset );
 
 		return true;
 	};
@@ -175,10 +196,10 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mProperty_OutdentFromLastIndentFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.instanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RF_ASSERT( scratch.propertyStack.size() >= 1 );
-		scratch.propertyStack.pop_back();
+		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+		scratch.mWalkChain.pop_back();
 
 		return true;
 	};
@@ -197,7 +218,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 }
 
 template<>
-static void RF::logging::WriteContextString( RF::serialization::details::VariableIdentifier const& context, Utf8LogContextBuffer& buffer )
+static void RF::logging::WriteContextString( RF::serialization::details::WalkChain const& context, Utf8LogContextBuffer& buffer )
 {
 	size_t bufferOffset = 0;
 	size_t const maxBufferOffset = buffer.size();
@@ -205,7 +226,7 @@ static void RF::logging::WriteContextString( RF::serialization::details::Variabl
 	size_t const numElements = context.size();
 	for( size_t i = 0; i < numElements; i++ )
 	{
-		RF::serialization::details::VariableIdentifier::value_type const& element = context.at( i );
+		RF::serialization::details::WalkChain::value_type const& element = context.at( i );
 
 		if( bufferOffset >= maxBufferOffset )
 		{
@@ -222,8 +243,8 @@ static void RF::logging::WriteContextString( RF::serialization::details::Variabl
 		}
 
 		size_t const bytesRemaining = maxBufferOffset - bufferOffset;
-		size_t const bytesToWrite = math::Min( bytesRemaining, element.size() );
-		memcpy( &buffer[bufferOffset], element.data(), bytesToWrite );
+		size_t const bytesToWrite = math::Min( bytesRemaining, element.mIdentifier.size() );
+		memcpy( &buffer[bufferOffset], element.mIdentifier.data(), bytesToWrite );
 		bufferOffset += bytesToWrite;
 	}
 }
