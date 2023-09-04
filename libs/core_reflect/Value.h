@@ -5,6 +5,7 @@
 #include "core/meta/TypeList.h"
 #include "core/macros.h"
 
+#include "rftl/extension/byte_view.h"
 #include "rftl/variant"
 #include "rftl/cstdint"
 
@@ -110,7 +111,8 @@ public:
 
 	template<typename T>
 	typename rftl::remove_const<T>::type const* GetAs() const;
-	void const* GetBytes() const;
+	rftl::byte_view GetBytes() const;
+	void const* GetRawBytes() const;
 	size_t GetNumBytes() const;
 	static size_t GetNumBytesNeeded( Type type );
 

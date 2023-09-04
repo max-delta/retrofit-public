@@ -20,7 +20,9 @@ TEST( Reflect, ValueInvalid )
 	Value const vInvalid;
 	ASSERT_TRUE( vInvalid.GetStoredType() == Value::Type::Invalid );
 	ASSERT_TRUE( vInvalid.GetAs<bool>() == nullptr );
-	ASSERT_TRUE( vInvalid.GetBytes() == nullptr );
+	ASSERT_TRUE( vInvalid.GetBytes().data() == nullptr );
+	ASSERT_TRUE( vInvalid.GetBytes().size() == 0 );
+	ASSERT_TRUE( vInvalid.GetRawBytes() == nullptr );
 	ASSERT_TRUE( vInvalid.GetNumBytes() == 0 );
 }
 
@@ -133,26 +135,47 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vUInt64.GetAs<uint64_t const>() != nullptr );
 	ASSERT_TRUE( vInt64.GetAs<int64_t const>() != nullptr );
 
-	ASSERT_TRUE( vBool.GetAs<bool>() == vBool.GetBytes() );
-	ASSERT_TRUE( vVoidPtr.GetAs<void*>() == vVoidPtr.GetBytes() );
-	ASSERT_TRUE( vVoidConstPtr.GetAs<void const*>() == vVoidConstPtr.GetBytes() );
-	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass*>() == vVirtualClassPtr.GetBytes() );
-	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetBytes() );
-	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetBytes() );
-	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetBytes() );
-	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetBytes() );
-	ASSERT_TRUE( vChar32.GetAs<char32_t>() == vChar32.GetBytes() );
-	ASSERT_TRUE( vFloat.GetAs<float>() == vFloat.GetBytes() );
-	ASSERT_TRUE( vDouble.GetAs<double>() == vDouble.GetBytes() );
-	ASSERT_TRUE( vLongDouble.GetAs<long double>() == vLongDouble.GetBytes() );
-	ASSERT_TRUE( vUInt8.GetAs<uint8_t>() == vUInt8.GetBytes() );
-	ASSERT_TRUE( vInt8.GetAs<int8_t>() == vInt8.GetBytes() );
-	ASSERT_TRUE( vUInt16.GetAs<uint16_t>() == vUInt16.GetBytes() );
-	ASSERT_TRUE( vInt16.GetAs<int16_t>() == vInt16.GetBytes() );
-	ASSERT_TRUE( vUInt32.GetAs<uint32_t>() == vUInt32.GetBytes() );
-	ASSERT_TRUE( vInt32.GetAs<int32_t>() == vInt32.GetBytes() );
-	ASSERT_TRUE( vUInt64.GetAs<uint64_t>() == vUInt64.GetBytes() );
-	ASSERT_TRUE( vInt64.GetAs<int64_t>() == vInt64.GetBytes() );
+	ASSERT_TRUE( vBool.GetAs<bool>() == vBool.GetBytes().data() );
+	ASSERT_TRUE( vVoidPtr.GetAs<void*>() == vVoidPtr.GetBytes().data() );
+	ASSERT_TRUE( vVoidConstPtr.GetAs<void const*>() == vVoidConstPtr.GetBytes().data() );
+	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass*>() == vVirtualClassPtr.GetBytes().data() );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetBytes().data() );
+	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetBytes().data() );
+	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetBytes().data() );
+	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetBytes().data() );
+	ASSERT_TRUE( vChar32.GetAs<char32_t>() == vChar32.GetBytes().data() );
+	ASSERT_TRUE( vFloat.GetAs<float>() == vFloat.GetBytes().data() );
+	ASSERT_TRUE( vDouble.GetAs<double>() == vDouble.GetBytes().data() );
+	ASSERT_TRUE( vLongDouble.GetAs<long double>() == vLongDouble.GetBytes().data() );
+	ASSERT_TRUE( vUInt8.GetAs<uint8_t>() == vUInt8.GetBytes().data() );
+	ASSERT_TRUE( vInt8.GetAs<int8_t>() == vInt8.GetBytes().data() );
+	ASSERT_TRUE( vUInt16.GetAs<uint16_t>() == vUInt16.GetBytes().data() );
+	ASSERT_TRUE( vInt16.GetAs<int16_t>() == vInt16.GetBytes().data() );
+	ASSERT_TRUE( vUInt32.GetAs<uint32_t>() == vUInt32.GetBytes().data() );
+	ASSERT_TRUE( vInt32.GetAs<int32_t>() == vInt32.GetBytes().data() );
+	ASSERT_TRUE( vUInt64.GetAs<uint64_t>() == vUInt64.GetBytes().data() );
+	ASSERT_TRUE( vInt64.GetAs<int64_t>() == vInt64.GetBytes().data() );
+
+	ASSERT_TRUE( vBool.GetAs<bool>() == vBool.GetRawBytes() );
+	ASSERT_TRUE( vVoidPtr.GetAs<void*>() == vVoidPtr.GetRawBytes() );
+	ASSERT_TRUE( vVoidConstPtr.GetAs<void const*>() == vVoidConstPtr.GetRawBytes() );
+	ASSERT_TRUE( vVirtualClassPtr.GetAs<VirtualClass*>() == vVirtualClassPtr.GetRawBytes() );
+	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetRawBytes() );
+	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetRawBytes() );
+	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetRawBytes() );
+	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetRawBytes() );
+	ASSERT_TRUE( vChar32.GetAs<char32_t>() == vChar32.GetRawBytes() );
+	ASSERT_TRUE( vFloat.GetAs<float>() == vFloat.GetRawBytes() );
+	ASSERT_TRUE( vDouble.GetAs<double>() == vDouble.GetRawBytes() );
+	ASSERT_TRUE( vLongDouble.GetAs<long double>() == vLongDouble.GetRawBytes() );
+	ASSERT_TRUE( vUInt8.GetAs<uint8_t>() == vUInt8.GetRawBytes() );
+	ASSERT_TRUE( vInt8.GetAs<int8_t>() == vInt8.GetRawBytes() );
+	ASSERT_TRUE( vUInt16.GetAs<uint16_t>() == vUInt16.GetRawBytes() );
+	ASSERT_TRUE( vInt16.GetAs<int16_t>() == vInt16.GetRawBytes() );
+	ASSERT_TRUE( vUInt32.GetAs<uint32_t>() == vUInt32.GetRawBytes() );
+	ASSERT_TRUE( vInt32.GetAs<int32_t>() == vInt32.GetRawBytes() );
+	ASSERT_TRUE( vUInt64.GetAs<uint64_t>() == vUInt64.GetRawBytes() );
+	ASSERT_TRUE( vInt64.GetAs<int64_t>() == vInt64.GetRawBytes() );
 
 	ASSERT_TRUE( vBool.GetNumBytes() == sizeof( bool ) );
 	ASSERT_TRUE( vVoidPtr.GetNumBytes() == sizeof( void* ) );
