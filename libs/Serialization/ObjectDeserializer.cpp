@@ -241,9 +241,8 @@ bool SetValueToChain( WalkChain& fullChain, reflect::Value const& incomingValue 
 		}
 
 		RF_ASSERT( srcType == destType );
-		rftl::byte_view srcBytes = incomingValue.GetBytes();
-		RF_ASSERT( srcBytes.size() == numBytesToWrite );
-		memcpy( destBytes, srcBytes.data(), numBytesToWrite );
+		rftl::byte_view const srcBytes = incomingValue.GetBytes();
+		srcBytes.mem_copy_to( destBytes, numBytesToWrite );
 
 		return true;
 	}

@@ -57,10 +57,10 @@ inline byte_view::byte_view( InputIterator first, InputIterator term )
 }
 template<>
 inline byte_view::byte_view( void* first, void* term )
-	: byte_view( static_cast<const_iterator>( first ), static_cast<const_iterator>( term ) ) { }
+	: byte_view( static_cast<const_iterator>( first ), static_cast<const_iterator>( term ) ) {}
 template<>
 inline byte_view::byte_view( nullptr_t first, nullptr_t term )
-	: byte_view() { }
+	: byte_view() {}
 
 
 
@@ -262,6 +262,17 @@ inline byte_view byte_view::substr( size_type pos, size_type size )
 	return byte_view(
 		reinterpret_cast<uint8_t const*>( begin() ) + pos,
 		reinterpret_cast<uint8_t const*>( begin() ) + size );
+}
+
+
+
+inline void* byte_view::mem_copy_to( void* dest, size_t size ) const
+{
+	RF_ASSERT( size == this->size() );
+	RF_ASSERT( dest != nullptr );
+	RF_ASSERT( data() != nullptr );
+	rftl::memcpy( dest, data(), size );
+	return dest;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -120,8 +120,8 @@ bool StoreSingleValueInAccessor(
 		return false;
 	}
 
-	void const* const writeableValue = intermediate.GetBytes();
-	bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue, targetInfo );
+	rftl::byte_view const writeableValue = intermediate.GetBytes();
+	bool const writeSuccess = accessor->mInsertVariableViaCopy( location, &key, keyInfo, writeableValue.data(), targetInfo );
 	if( writeSuccess == false )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write script value to accessor target" );
@@ -172,9 +172,8 @@ bool WriteScriptValueToVariable(
 	}
 
 	// Write to reflection
-	void const* intermediateData = intermediate.GetBytes();
-	size_t const intermediateSize = intermediate.GetNumBytes();
-	memcpy( destination, intermediateData, intermediateSize );
+	rftl::byte_view const intermediateBytes = intermediate.GetBytes();
+	intermediateBytes.mem_copy_to( destination, reflect::Value::GetNumBytesNeeded( destinationType ) );
 	return true;
 }
 
