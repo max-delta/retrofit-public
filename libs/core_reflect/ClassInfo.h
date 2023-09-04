@@ -178,25 +178,25 @@ struct ExtensionAccessor
 	// Different variables may have different key types, so the accessor will
 	//  need to be queried for info on a per-key basis
 	// NOTE: Null is forbidden
-	using FuncPtrGetVariableInfoByIndex = VariableTypeInfo ( * )( RootConstInst root, size_t index );
-	FuncPtrGetVariableInfoByIndex mGetVariableKeyInfoByIndex = nullptr;
+	using FuncPtrGetKeyInfoByIndex = VariableTypeInfo ( * )( RootConstInst root, size_t index );
+	FuncPtrGetKeyInfoByIndex mGetKeyInfoByIndex = nullptr;
 
 	// Access key using the type provided by the key info
 	// NOTE: Returns false on caller failure
 	// NOTE: Null is forbidden
 	using FuncPtrGetKeyByIndex = bool ( * )( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo );
-	FuncPtrGetKeyByIndex mGetVariableKeyByIndex = nullptr;
+	FuncPtrGetKeyByIndex mGetKeyByIndex = nullptr;
 
 	// Different variables may have different target types, so the accessor
 	//  will need to be queried for info on a per-variable basis
 	// NOTE: Null is forbidden
-	using FuncPtrGetVariableInfoByKey = VariableTypeInfo ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
-	FuncPtrGetVariableInfoByKey mGetVariableTargetInfoByKey = nullptr;
+	using FuncPtrGetTargetInfoByKey = VariableTypeInfo ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
+	FuncPtrGetTargetInfoByKey mGetTargetInfoByKey = nullptr;
 
 	// Access target by key
 	// NOTE: Null is forbidden
 	using FuncPtrGetTargetByKey = bool ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo );
-	FuncPtrGetTargetByKey mGetVariableTargetByKey = nullptr;
+	FuncPtrGetTargetByKey mGetTargetByKey = nullptr;
 
 	// Insert target by key
 	// NOTE: Returns false on caller failure

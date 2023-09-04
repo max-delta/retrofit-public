@@ -191,7 +191,7 @@ inline void TypeTraverser::TraverseVariableInternalT(
 				{
 					VariableTypeInfo keyInfo = {};
 					void const* keyLoc = nullptr;
-					bool const foundKey = accessor.mGetVariableKeyByIndex( varLoc, i, keyLoc, keyInfo );
+					bool const foundKey = accessor.mGetKeyByIndex( varLoc, i, keyLoc, keyInfo );
 					RF_ASSERT( foundKey );
 					bool shouldTraverseKey = false;
 					onTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ), shouldTraverseKey );
@@ -209,7 +209,7 @@ inline void TypeTraverser::TraverseVariableInternalT(
 
 					VariableTypeInfo targetInfo = {};
 					void const* targetLoc = nullptr;
-					bool const foundTarget = accessor.mGetVariableTargetByKey( varLoc, keyLoc, keyInfo, targetLoc, targetInfo );
+					bool const foundTarget = accessor.mGetTargetByKey( varLoc, keyLoc, keyInfo, targetLoc, targetInfo );
 					RF_ASSERT( foundTarget );
 					bool shouldTraverseTarget = false;
 					onTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ), shouldTraverseTarget );

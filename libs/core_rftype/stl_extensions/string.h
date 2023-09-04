@@ -49,25 +49,25 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		return pThis->size();
 	}
 
-	static VariableTypeInfo GetVariableKeyInfoByIndex( RootConstInst root, size_t index )
+	static VariableTypeInfo GetKeyInfoByIndex( RootConstInst root, size_t index )
 	{
 		return GetDirectKeyInfo( root );
 	}
 
-	static bool GetVariableKeyByIndex( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
+	static bool GetKeyByIndex( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
 	{
 		// Keyed directly by index
 		key = basic_string_accessor_details::GetStableKey( index );
-		keyInfo = GetVariableKeyInfoByIndex( root, index );
+		keyInfo = GetKeyInfoByIndex( root, index );
 		return true;
 	}
 
-	static VariableTypeInfo GetVariableTargetInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	static VariableTypeInfo GetTargetInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
 		return GetSharedTargetInfo( root );
 	}
 
-	static bool GetVariableTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "String only supports value types that do not rely on constructors" );
 
@@ -94,7 +94,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		}
 
 		value = &( pThis->at( index ) );
-		valueInfo = GetVariableTargetInfoByKey( root, key, keyInfo );
+		valueInfo = GetTargetInfoByKey( root, key, keyInfo );
 		return true;
 	}
 
@@ -149,11 +149,11 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		retVal.mGetSharedTargetInfo = &GetSharedTargetInfo;
 
 		retVal.mGetNumVariables = &GetNumVariables;
-		retVal.mGetVariableKeyInfoByIndex = &GetVariableKeyInfoByIndex;
-		retVal.mGetVariableKeyByIndex = &GetVariableKeyByIndex;
-		retVal.mGetVariableTargetInfoByKey = &GetVariableTargetInfoByKey;
+		retVal.mGetKeyInfoByIndex = &GetKeyInfoByIndex;
+		retVal.mGetKeyByIndex = &GetKeyByIndex;
+		retVal.mGetTargetInfoByKey = &GetTargetInfoByKey;
 
-		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
+		retVal.mGetTargetByKey = &GetTargetByKey;
 
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;

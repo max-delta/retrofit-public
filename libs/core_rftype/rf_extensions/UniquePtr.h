@@ -52,12 +52,12 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return 1;
 	}
 
-	static VariableTypeInfo GetVariableKeyInfoByIndex( RootConstInst root, size_t index )
+	static VariableTypeInfo GetKeyInfoByIndex( RootConstInst root, size_t index )
 	{
 		return GetDirectKeyInfo( root );
 	}
 
-	static bool GetVariableKeyByIndex( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
+	static bool GetKeyByIndex( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
 	{
 		// There is only one valid key, ant it's always the same
 		RF_ASSERT( index == 0 );
@@ -66,12 +66,12 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return true;
 	}
 
-	static VariableTypeInfo GetVariableTargetInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	static VariableTypeInfo GetTargetInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
 		return GetSharedTargetInfo( root );
 	}
 
-	static bool GetVariableTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
@@ -102,7 +102,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		}
 
 		value = pThis->Get();
-		valueInfo = GetVariableTargetInfoByKey( root, key, keyInfo );
+		valueInfo = GetTargetInfoByKey( root, key, keyInfo );
 		return true;
 	}
 
@@ -198,11 +198,11 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		retVal.mGetSharedTargetInfo = &GetSharedTargetInfo;
 
 		retVal.mGetNumVariables = &GetNumVariables;
-		retVal.mGetVariableKeyInfoByIndex = &GetVariableKeyInfoByIndex;
-		retVal.mGetVariableKeyByIndex = &GetVariableKeyByIndex;
-		retVal.mGetVariableTargetInfoByKey = &GetVariableTargetInfoByKey;
+		retVal.mGetKeyInfoByIndex = &GetKeyInfoByIndex;
+		retVal.mGetKeyByIndex = &GetKeyByIndex;
+		retVal.mGetTargetInfoByKey = &GetTargetInfoByKey;
 
-		retVal.mGetVariableTargetByKey = &GetVariableTargetByKey;
+		retVal.mGetTargetByKey = &GetTargetByKey;
 
 		retVal.mInsertVariableDefault = &InsertVariableDefault;
 		// TODO: Move support

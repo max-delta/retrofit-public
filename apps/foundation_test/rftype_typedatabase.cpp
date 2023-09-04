@@ -54,10 +54,10 @@ TEST( RFType, CrossDllExtension )
 	size_t const numVars = accessor->mGetNumVariables( varLoc );
 	ASSERT_EQ( numVars, 2 );
 
-	ASSERT_NE( accessor->mGetVariableKeyInfoByIndex, nullptr );
-	VariableTypeInfo const i0k_info = accessor->mGetVariableKeyInfoByIndex( varLoc, 0 );
+	ASSERT_NE( accessor->mGetKeyInfoByIndex, nullptr );
+	VariableTypeInfo const i0k_info = accessor->mGetKeyInfoByIndex( varLoc, 0 );
 	ASSERT_EQ( i0k_info.mValueType, Value::DetermineType<size_t>() );
-	VariableTypeInfo const i1k_info = accessor->mGetVariableKeyInfoByIndex( varLoc, 1 );
+	VariableTypeInfo const i1k_info = accessor->mGetKeyInfoByIndex( varLoc, 1 );
 	ASSERT_EQ( i1k_info.mValueType, Value::DetermineType<size_t>() );
 
 	size_t const i0k = 0;
@@ -65,21 +65,21 @@ TEST( RFType, CrossDllExtension )
 	VariableTypeInfo readKeyInfo = {};
 	readKeyInfo.mValueType = Value::DetermineType<size_t>();
 
-	ASSERT_NE( accessor->mGetVariableTargetInfoByKey, nullptr );
-	VariableTypeInfo const i0t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i0k, readKeyInfo );
+	ASSERT_NE( accessor->mGetTargetInfoByKey, nullptr );
+	VariableTypeInfo const i0t_info = accessor->mGetTargetInfoByKey( varLoc, &i0k, readKeyInfo );
 	ASSERT_EQ( i0t_info.mValueType, Value::Type::UInt16 );
-	VariableTypeInfo const i1t_info = accessor->mGetVariableTargetInfoByKey( varLoc, &i1k, readKeyInfo );
+	VariableTypeInfo const i1t_info = accessor->mGetTargetInfoByKey( varLoc, &i1k, readKeyInfo );
 	ASSERT_EQ( i1t_info.mValueType, Value::Type::UInt16 );
 
 	void const* i0v = nullptr;
 	void const* i1v = nullptr;
 	VariableTypeInfo i0vInfo = {};
 	VariableTypeInfo i1vInfo = {};
-	ASSERT_NE( accessor->mGetVariableTargetByKey, nullptr );
-	bool const i0Read = accessor->mGetVariableTargetByKey( varLoc, &i0k, readKeyInfo, i0v, i0vInfo );
+	ASSERT_NE( accessor->mGetTargetByKey, nullptr );
+	bool const i0Read = accessor->mGetTargetByKey( varLoc, &i0k, readKeyInfo, i0v, i0vInfo );
 	ASSERT_TRUE( i0Read );
 	ASSERT_EQ( i0t_info.mValueType, i0t_info.mValueType );
-	bool const i1Read = accessor->mGetVariableTargetByKey( varLoc, &i1k, readKeyInfo, i1v, i1vInfo );
+	bool const i1Read = accessor->mGetTargetByKey( varLoc, &i1k, readKeyInfo, i1v, i1vInfo );
 	ASSERT_TRUE( i1Read );
 	ASSERT_EQ( i1t_info.mValueType, i1t_info.mValueType );
 

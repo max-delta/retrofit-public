@@ -220,7 +220,7 @@ bool WriteScriptStringToVariable(
 		indexCounter++;
 
 		// We'll need to know how to prepare/convert into the target
-		reflect::VariableTypeInfo const targetInfo = accessor->mGetVariableTargetInfoByKey( location, &key, keyInfo );
+		reflect::VariableTypeInfo const targetInfo = accessor->mGetTargetInfoByKey( location, &key, keyInfo );
 
 		reflect::Value source{ ch };
 		bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
@@ -284,7 +284,7 @@ bool ProcessElementArrayPopulationWork(
 		indexCounter++;
 
 		// We'll need to know how to prepare/convert into the target
-		reflect::VariableTypeInfo const targetInfo = accessor->mGetVariableTargetInfoByKey( location, &key, keyInfo );
+		reflect::VariableTypeInfo const targetInfo = accessor->mGetTargetInfoByKey( location, &key, keyInfo );
 
 		if( rftl::holds_alternative<reflect::Value>( elemValue ) )
 		{
@@ -319,7 +319,7 @@ bool ProcessElementArrayPopulationWork(
 
 			void const* arrayItemLoc = nullptr;
 			reflect::VariableTypeInfo arrayItemInfo = {};
-			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
 				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
@@ -356,7 +356,7 @@ bool ProcessElementArrayPopulationWork(
 
 			void const* arrayItemLoc = nullptr;
 			reflect::VariableTypeInfo arrayItemInfo = {};
-			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
 				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
@@ -393,7 +393,7 @@ bool ProcessElementArrayPopulationWork(
 
 			void const* arrayItemLoc = nullptr;
 			reflect::VariableTypeInfo arrayItemInfo = {};
-			bool const readSuccess = accessor->mGetVariableTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
+			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
 				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
