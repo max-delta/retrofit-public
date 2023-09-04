@@ -112,6 +112,7 @@ public:
 	typename rftl::remove_const<T>::type const* GetAs() const;
 	void const* GetBytes() const;
 	size_t GetNumBytes() const;
+	static size_t GetNumBytesNeeded( Type type );
 
 	template<typename T>
 	static constexpr Type DetermineType();

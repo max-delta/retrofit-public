@@ -337,6 +337,13 @@ void const* Value::GetBytes() const
 size_t Value::GetNumBytes() const
 {
 	Type const type = GetStoredType();
+	return GetNumBytesNeeded( type );
+}
+
+
+
+size_t Value::GetNumBytesNeeded( Type type )
+{
 	// TODO: Template recursion instead on the typelist
 	switch( type )
 	{
