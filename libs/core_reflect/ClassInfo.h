@@ -198,6 +198,11 @@ struct ExtensionAccessor
 	using FuncPtrGetTargetByKey = bool ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo );
 	FuncPtrGetTargetByKey mGetTargetByKey = nullptr;
 
+	// Access mutable target by key
+	// NOTE: Null indicates lack of support for this operation
+	using FuncPtrGetMutableTargetByKey = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedInst& value, VariableTypeInfo& valueInfo );
+	FuncPtrGetMutableTargetByKey mGetMutableTargetByKey = nullptr;
+
 	// Insert target by key
 	// NOTE: Returns false on caller failure
 	// NOTE: Null indicates lack of support for that operation

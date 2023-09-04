@@ -71,7 +71,8 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return GetSharedTargetInfo( root );
 	}
 
-	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	template<typename AccessedTypeT, typename RootT, typename ValueT>
+	static bool GetTargetByKeyHelper( RootT root, UntypedConstInst key, VariableTypeInfo const& keyInfo, ValueT& value, VariableTypeInfo& valueInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
 		{
@@ -94,7 +95,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 			return false;
 		}
 
-		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
+		AccessedTypeT* const pThis = reinterpret_cast<AccessedTypeT*>( root );
 		if( pThis->Get() == nullptr )
 		{
 			RF_DBGFAIL_MSG( "Index out of bounds" );
@@ -104,6 +105,16 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		value = pThis->Get();
 		valueInfo = GetTargetInfoByKey( root, key, keyInfo );
 		return true;
+	}
+
+	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	{
+		return GetTargetByKeyHelper<AccessedType const>( root, key, keyInfo, value, valueInfo );
+	}
+
+	static bool GetMutableTargetByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedInst& value, VariableTypeInfo& valueInfo )
+	{
+		return GetTargetByKeyHelper<AccessedType>( root, key, keyInfo, value, valueInfo );
 	}
 
 	static bool InsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
@@ -203,6 +214,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		retVal.mGetTargetInfoByKey = &GetTargetInfoByKey;
 
 		retVal.mGetTargetByKey = &GetTargetByKey;
+		retVal.mGetMutableTargetByKey = &GetMutableTargetByKey;
 
 		retVal.mInsertVariableDefault = &InsertVariableDefault;
 		// TODO: Move support

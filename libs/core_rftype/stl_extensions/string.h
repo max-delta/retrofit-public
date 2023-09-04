@@ -67,7 +67,8 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		return GetSharedTargetInfo( root );
 	}
 
-	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	template<typename AccessedTypeT, typename RootT, typename ValueT>
+	static bool GetTargetByKeyHelper( RootT root, UntypedConstInst key, VariableTypeInfo const& keyInfo, ValueT& value, VariableTypeInfo& valueInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "String only supports value types that do not rely on constructors" );
 
@@ -84,7 +85,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 			return false;
 		}
 
-		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
+		AccessedTypeT* const pThis = reinterpret_cast<AccessedTypeT*>( root );
 		KeyType const index = *castedKey;
 		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
 		if( index >= pThis->size() )
@@ -96,6 +97,16 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		value = &( pThis->at( index ) );
 		valueInfo = GetTargetInfoByKey( root, key, keyInfo );
 		return true;
+	}
+
+	static bool GetTargetByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst& value, VariableTypeInfo& valueInfo )
+	{
+		return GetTargetByKeyHelper<AccessedType const>( root, key, keyInfo, value, valueInfo );
+	}
+
+	static bool GetMutableTargetByKey( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedInst& value, VariableTypeInfo& valueInfo )
+	{
+		return GetTargetByKeyHelper<AccessedType>( root, key, keyInfo, value, valueInfo );
 	}
 
 	static bool InsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
@@ -154,6 +165,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		retVal.mGetTargetInfoByKey = &GetTargetInfoByKey;
 
 		retVal.mGetTargetByKey = &GetTargetByKey;
+		retVal.mGetMutableTargetByKey = &GetMutableTargetByKey;
 
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
