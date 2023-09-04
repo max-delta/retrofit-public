@@ -10,6 +10,9 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
 
+RF_TODO_ANNOTATION( "Remove c_str usages, update logging to C++20 format" );
+#include "rftl/extension/c_str.h"
+
 #include "rftl/optional"
 
 
@@ -51,8 +54,13 @@ struct WalkNode
 	rftl::string mIdentifier;
 
 	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
-	void const* mVariableLocation = nullptr;
+	void* mVariableLocation = nullptr;
 
+	// Pending key stores the backing data for a key, and recent key stores the
+	//  root node for that key after it has closed
+	// NOTE: Pending key must persist while the recent key is present, as it
+	//  stores the backing data the node references while it's waiting to be
+	//  inserted into the accessor
 	rftl::optional<PendingAccessorKeyData> mPendingKey;
 	UniquePtr<WalkNode> mRecentKey = nullptr;
 
@@ -91,18 +99,177 @@ struct SingleScratchSpace
 
 
 
-bool TryPopFromChain( WalkChain& fullChain )
+bool PopFromChain( WalkChain& fullChain )
 {
 	RF_ASSERT( fullChain.empty() == false );
 
 	UniquePtr<WalkNode> extracted = rftl::move( fullChain.back() );
+	RF_ASSERT( extracted != nullptr );
 	fullChain.pop_back();
 
-	// TODO: Handle extracted node, if it's related to a parent accessor then
-	//  it needs to checked against the parent, and potentially inserted into
-	//  the accessor if it has a key+target pairing
+	RF_ASSERT( fullChain.back() != nullptr );
+	WalkNode& current = *fullChain.back();
+
+	RF_TODO_ANNOTATION(
+		"What about accessor keys and targets?"
+		" Do they really require identifiers?" );
+	RF_ASSERT( current.mIdentifier.empty() == false );
+	RF_ASSERT( current.mVariableTypeInfo != nullptr );
+	RF_ASSERT( current.mVariableLocation != nullptr );
+
+	// Value type
+	if( current.mVariableTypeInfo->mValueType != reflect::Value::Type::Invalid )
+	{
+		return true;
+	}
+
+	// Nested class
+	if( current.mVariableTypeInfo->mClassInfo != nullptr )
+	{
+		return true;
+	}
+
+	// Extension accessor
+	if( current.mVariableTypeInfo->mAccessor != nullptr )
+	{
+		WalkNode const& accessorNode = current;
+		reflect::ExtensionAccessor const& accessor = *accessorNode.mVariableTypeInfo->mAccessor;
+		void const* const accessorLocation = accessorNode.mVariableLocation;
+		RF_ASSERT( accessorLocation != nullptr );
+		rftl::string const& nodeIdentifier = extracted->mIdentifier;
+
+		if( nodeIdentifier == "K" )
+		{
+			// Key
+
+			WalkNode const& keyNode = *extracted;
+
+			RF_TODO_BREAK_MSG(
+				"Is the following correct? Or should it instead insert the"
+				" default target for that key so it can being writing the target?" );
+
+			// Store key node in the accessor node, and await for the
+			//  corresponding target node to arrive and close
+			RF_ASSERT( current.mPendingKey.has_value() );
+			RF_ASSERT( current.mPendingKey->mValueStorage.data() == keyNode.mVariableLocation );
+			RF_ASSERT( &current.mPendingKey->mVariableTypeInfoStorage == keyNode.mVariableTypeInfo );
+			RF_ASSERT( current.mRecentKey == nullptr );
+			current.mRecentKey = rftl::move( extracted );
+
+			return true;
+		}
+
+		if( nodeIdentifier == "T" )
+		{
+			// Target
+			RF_TODO_BREAK();
+			( (void)accessor );
+			return false;
+		}
+
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		RF_DBGFAIL();
+		return false;
+	}
+
+	RF_TODO_ANNOTATION( "At time of writing, the implementation of complex types is undecided, and will affect this code possibility" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if a complex key type was a parent? Depends on how that's implemented?" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if a complex target type was a parent? Depends on how that's implemented?" );
+
+	RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type of predecessors" );
+	RF_DBGFAIL();
+	return false;
+}
+
+
+
+bool ReplaceEndOfChain( WalkChain& fullChain, UniquePtr<WalkNode>&& newNode )
+{
+	RF_ASSERT( fullChain.empty() == false );
+	RF_ASSERT( newNode != nullptr );
+
+	if( fullChain.back() == nullptr )
+	{
+		// Null node, presumed to be a fresh indentation
+		fullChain.pop_back();
+	}
+	else
+	{
+		// Valid node, make sure to run proper pop logic
+		bool const popSuccess = PopFromChain( fullChain );
+		if( popSuccess == false )
+		{
+			return false;
+		}
+	}
+
+	fullChain.emplace_back( rftl::move( newNode ) );
 
 	return true;
+}
+
+
+
+bool SetValueToChain( WalkChain& fullChain, reflect::Value const& incomingValue )
+{
+	RF_ASSERT( fullChain.empty() == false );
+	RF_ASSERT( incomingValue.GetStoredType() != reflect::Value::Type::Invalid );
+
+	RF_ASSERT( fullChain.back() != nullptr );
+	WalkNode& current = *fullChain.back();
+
+	RF_TODO_ANNOTATION(
+		"What about accessor keys and targets?"
+		" Do they really require identifiers?" );
+	RF_ASSERT( current.mIdentifier.empty() == false );
+	RF_ASSERT( current.mVariableTypeInfo != nullptr );
+	RF_ASSERT( current.mVariableLocation != nullptr );
+
+	// Value type
+	if( current.mVariableTypeInfo->mValueType != reflect::Value::Type::Invalid )
+	{
+		reflect::Value::Type const& destType = current.mVariableTypeInfo->mValueType;
+		reflect::Value::Type const srcType = incomingValue.GetStoredType();
+
+		void* const& destBytes = current.mVariableLocation;
+		size_t const numBytesToWrite = reflect::Value::GetNumBytesNeeded( destType );
+
+		if( srcType != destType )
+		{
+			RF_TODO_BREAK_MSG( "Support for converting incoming values" );
+			return false;
+		}
+
+		RF_ASSERT( srcType == destType );
+		void const* const srcBytes = incomingValue.GetBytes();
+		memcpy( destBytes, srcBytes, numBytesToWrite );
+
+		return true;
+	}
+
+	// Nested class
+	if( current.mVariableTypeInfo->mClassInfo != nullptr )
+	{
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Attempting value set on a class instance" );
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Extension accessor
+	if( current.mVariableTypeInfo->mAccessor != nullptr )
+	{
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Attempting value set on an accessor instance" );
+		RF_DBGFAIL();
+		return false;
+	}
+
+	RF_TODO_ANNOTATION( "At time of writing, the implementation of complex types is undecided, and will affect this code possibility" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if in a complex key type? Depends on how that's implemented?" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if in a complex target type? Depends on how that's implemented?" );
+
+	RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type" );
+	RF_DBGFAIL();
+	return false;
 }
 
 
@@ -115,8 +282,11 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 		return false;
 	}
 
+	RF_ASSERT( fullChain.front() != nullptr );
 	WalkNode const& first = *fullChain.front();
+	RF_ASSERT( *( fullChain.rbegin() + 1 ) != nullptr );
 	WalkNode& previous = **( fullChain.rbegin() + 1 );
+	RF_ASSERT( fullChain.back() != nullptr );
 	WalkNode& current = *fullChain.back();
 
 	RF_TODO_ANNOTATION(
@@ -138,7 +308,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 	if( previous.mVariableTypeInfo->mValueType != reflect::Value::Type::Invalid )
 	{
 		// TODO: What about value keys in accessors?
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Attempting resolve on a value" );
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Attempting resolve on a value" );
 		RF_DBGFAIL();
 		return false;
 	}
@@ -160,20 +330,20 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 
 			// Apply offset and note the type
 			current.mVariableTypeInfo = &varInfo.mVariableTypeInfo;
-			current.mVariableLocation = reinterpret_cast<uint8_t const*>( previous.mVariableLocation ) + varInfo.mOffset;
+			current.mVariableLocation = reinterpret_cast<uint8_t*>( previous.mVariableLocation ) + varInfo.mOffset;
 			return true;
 		}
 
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not find member '%s'", memberNameToFind.c_str() );
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Could not find member '%s'", memberNameToFind.c_str() );
 		return false;
 	}
 
-	// Child of an accessor?
+	// Child of an accessor
 	if( previous.mVariableTypeInfo->mAccessor != nullptr )
 	{
 		WalkNode& accessorNode = previous;
-		reflect::ExtensionAccessor const& accessor = *previous.mVariableTypeInfo->mAccessor;
-		void const* const accessorLocation = previous.mVariableLocation;
+		reflect::ExtensionAccessor const& accessor = *accessorNode.mVariableTypeInfo->mAccessor;
+		void const* const accessorLocation = accessorNode.mVariableLocation;
 		RF_ASSERT( accessorLocation != nullptr );
 		rftl::string const& nodeIdentifier = current.mIdentifier;
 
@@ -202,6 +372,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			PendingAccessorKeyData& pendingKey = accessorNode.mPendingKey.emplace();
 			pendingKey.mVariableTypeInfoStorage.mValueType = keyTypeInfo.mValueType;
 			pendingKey.mValueStorage.resize( reflect::Value::GetNumBytesNeeded( keyTypeInfo.mValueType ) );
+			accessorNode.numKeyStartsObserved++;
 
 			RF_ASSERT( current.mVariableTypeInfo == nullptr );
 			current.mVariableTypeInfo = &pendingKey.mVariableTypeInfoStorage;
@@ -217,7 +388,8 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			return false;
 		}
 
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		RF_DBGFAIL();
 		return false;
 	}
 
@@ -225,7 +397,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 	RF_TODO_BREAK_MSG( "Can maybe get here if a complex key type was a parent? Depends on how that's implemented?" );
 	RF_TODO_BREAK_MSG( "Can maybe get here if a complex target type was a parent? Depends on how that's implemented?" );
 
-	RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type of predecessors" );
+	RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type of predecessors" );
 	RF_DBGFAIL();
 	return false;
 }
@@ -253,10 +425,12 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mRoot_BeginNewInstanceFunc =
 		[&scratch]() -> bool
 	{
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New instance" );
+
 		scratch.mInstanceCount++;
 		if( scratch.mInstanceCount > 1 )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
 				"Multiple instances encountered during single object"
 				" deserialization, these will be skipped" );
 			return false;
@@ -268,7 +442,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		root.mVariableTypeInfo = &scratch.mClassTypeInfo;
 		root.mVariableLocation = scratch.mClassInstance;
 
-		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
+		// Placeholder, waiting for first property
+		scratch.mWalkChain.emplace_back( nullptr );
 
 		return true;
 	};
@@ -297,6 +472,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID %llu", instanceID );
+
 		// Don't care, only support one object
 		return true;
 	};
@@ -306,6 +483,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		[&scratch]( TypeID const& typeID, char const* debugName ) -> bool
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
+
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID %llu ('%s')", typeID, debugName );
 
 		RF_TODO_ANNOTATION( "Make sure the type ID matches what we're expecting" );
 		return true;
@@ -317,9 +496,18 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New property" );
+
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		details::TryPopFromChain( scratch.mWalkChain );
-		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
+		bool const replaceSuccess = details::ReplaceEndOfChain(
+			scratch.mWalkChain,
+			DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
+		if( replaceSuccess == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Node replacement failed" );
+			return false;
+		}
 
 		return true;
 	};
@@ -329,6 +517,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		[&scratch]( rftl::string_view const& name ) -> bool
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
+
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply name '%s'", RFTLE_CSTR( name ) );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
 		scratch.mWalkChain.back()->mIdentifier = name;
@@ -351,8 +541,15 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RFLOG_WARNING( scratch.mWalkChain, RFCAT_SERIALIZATION, "TODO: Set value" );
-		RF_TODO_BREAK_MSG( "Use some fancy path-based helper to set this" );
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s'", value.GetStoredTypeName() );
+
+		bool const setSuccess = details::SetValueToChain( scratch.mWalkChain, value );
+		if( setSuccess == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Failed to set value" );
+			return false;
+		}
 
 		return true;
 	};
@@ -363,7 +560,9 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply indirection %llu", indirectionID );
+
+		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
 			"Indirections not supported in single object deserialization" );
 		return false;
 	};
@@ -374,8 +573,12 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Indent" );
+
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
+
+		// Placeholder, waiting for first property
+		scratch.mWalkChain.emplace_back( nullptr );
 
 		return true;
 	};
@@ -386,8 +589,10 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Outdent" );
+
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		details::TryPopFromChain( scratch.mWalkChain );
+		details::PopFromChain( scratch.mWalkChain );
 
 		return true;
 	};
@@ -430,10 +635,18 @@ static void RF::logging::WriteContextString( RF::serialization::details::WalkCha
 			break;
 		}
 
-		rftl::string_view toWrite = element->mIdentifier;
-		if( toWrite.empty() )
+		rftl::string_view toWrite = {};
+		if( element == nullptr )
 		{
-			toWrite = "!UNSET";
+			toWrite = "!NULL";
+		}
+		else
+		{
+			toWrite = element->mIdentifier;
+			if( toWrite.empty() )
+			{
+				toWrite = "!UNSET";
+			}
 		}
 
 		size_t const bytesRemaining = maxBufferOffset - bufferOffset;
