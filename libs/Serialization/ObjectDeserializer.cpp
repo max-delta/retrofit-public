@@ -7,6 +7,7 @@
 #include "core_math/math_clamps.h"
 #include "core_rftype/TypeTraverser.h"
 
+#include "core/meta/ScopedCleanup.h"
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
 
@@ -39,6 +40,19 @@ struct PendingAccessorKeyData
 
 
 
+struct PendingAccessorTargetData
+{
+	// Will be pointed to by target nodes, so must persist until the target
+	//  node has closed and returned back to the accessor
+	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
+
+	// TODO: This applies to things that don't support default construction,
+	//  and things that don't allow mutable access to their contents
+	RF_TODO_ANNOTATION( "Support for accessors that need targets to be created externally" );
+};
+
+
+
 struct WalkNode
 {
 	RF_NO_COPY( WalkNode );
@@ -51,21 +65,38 @@ struct WalkNode
 		//
 	}
 
+	~WalkNode()
+	{
+		RF_ASSERT( mAccessorOpened == false );
+	}
+
 	rftl::string mIdentifier;
 
 	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
 	void* mVariableLocation = nullptr;
 
-	// Pending key stores the backing data for a key, and recent key stores the
-	//  root node for that key after it has closed
+	// On an accessor node, whether the accessor has been opened for mutation
+	//  operations or not, which must be done before accessing / modifying and
+	//  must be closed when done
+	bool mAccessorOpened = false;
+
+	// Pending key stores the backing data for a key while it's still being
+	//  composed, and recent key stores the root node for that key after it has
+	//  closed and has been inserted in the container
 	// NOTE: Pending key must persist while the recent key is present, as it
-	//  stores the backing data the node references while it's waiting to be
-	//  inserted into the accessor
+	//  stores the backing key data the target node needs to reference in order
+	//  to find the storage location for the target in the accessor
 	rftl::optional<PendingAccessorKeyData> mPendingKey;
 	UniquePtr<WalkNode> mRecentKey = nullptr;
 
-	// If on an accessor, this indicates what index we're on
+	// Pending target stores the backing data for a target while it's still
+	//  being composed
+	rftl::optional<PendingAccessorTargetData> mPendingTarget;
+
+	// If on an accessor, these are used to help determine what what index
+	//  we're on
 	size_t numKeyStartsObserved = 0;
+	size_t numTargetStartsObserved = 0;
 };
 
 using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
@@ -99,6 +130,85 @@ struct SingleScratchSpace
 
 
 
+void EnsureAccessorOpened( WalkNode& accessorNode )
+{
+	RF_ASSERT( accessorNode.mVariableTypeInfo->mAccessor != nullptr );
+
+	// Is it closed?
+	if( accessorNode.mAccessorOpened == false )
+	{
+		reflect::ExtensionAccessor const& accessor = *accessorNode.mVariableTypeInfo->mAccessor;
+		void* const accessorLocation = accessorNode.mVariableLocation;
+		RF_ASSERT( accessorLocation != nullptr );
+
+		// Open it
+		if( accessor.mBeginMutation != nullptr )
+		{
+			accessor.mBeginMutation( accessorLocation );
+		}
+		accessorNode.mAccessorOpened = true;
+	}
+}
+
+
+
+void EnsureAccessorClosed( WalkNode& accessorNode )
+{
+	RF_ASSERT( accessorNode.mVariableTypeInfo->mAccessor != nullptr );
+
+	// Is it open?
+	if( accessorNode.mAccessorOpened )
+	{
+		reflect::ExtensionAccessor const& accessor = *accessorNode.mVariableTypeInfo->mAccessor;
+		void* const accessorLocation = accessorNode.mVariableLocation;
+		RF_ASSERT( accessorLocation != nullptr );
+
+		// Close it
+		if( accessor.mEndMutation != nullptr )
+		{
+			accessor.mEndMutation( accessorLocation );
+		}
+		accessorNode.mAccessorOpened = false;
+	}
+}
+
+
+
+void DestroyChain( WalkChain& fullChain )
+{
+	while( fullChain.empty() == false )
+	{
+		// Pop
+		UniquePtr<WalkNode> const extracted = rftl::move( fullChain.back() );
+		fullChain.pop_back();
+
+		if( extracted == nullptr )
+		{
+			// Placeholder node
+			continue;
+		}
+		WalkNode& node = *extracted;
+
+		if( node.mVariableTypeInfo == nullptr )
+		{
+			// Typeless node
+			continue;
+		}
+		RF_ASSERT( node.mVariableLocation != nullptr );
+		reflect::VariableTypeInfo const& typeInfo = *node.mVariableTypeInfo;
+
+		if( typeInfo.mAccessor != nullptr )
+		{
+			// Popped an accessor
+			WalkNode& accessorNode = *extracted;
+			EnsureAccessorClosed( accessorNode );
+			continue;
+		}
+	}
+}
+
+
+
 bool PopFromChain( WalkChain& fullChain )
 {
 	RF_ASSERT( fullChain.empty() == false );
@@ -117,19 +227,27 @@ bool PopFromChain( WalkChain& fullChain )
 	RF_ASSERT( current.mVariableTypeInfo != nullptr );
 	RF_ASSERT( current.mVariableLocation != nullptr );
 
-	// Value type
+	// Popped an accessor
+	if( extracted->mVariableTypeInfo->mAccessor != nullptr )
+	{
+		WalkNode& accessorNode = *extracted;
+		EnsureAccessorClosed( accessorNode );
+	}
+
+	// Child of a value type
 	if( current.mVariableTypeInfo->mValueType != reflect::Value::Type::Invalid )
 	{
+		RF_TODO_BREAK_MSG( "How did a child of a value type end up on the chain?" );
 		return true;
 	}
 
-	// Nested class
+	// Member on a class
 	if( current.mVariableTypeInfo->mClassInfo != nullptr )
 	{
 		return true;
 	}
 
-	// Extension accessor
+	// Node on an extension accessor
 	if( current.mVariableTypeInfo->mAccessor != nullptr )
 	{
 		WalkNode const& accessorNode = current;
@@ -144,12 +262,8 @@ bool PopFromChain( WalkChain& fullChain )
 
 			WalkNode const& keyNode = *extracted;
 
-			RF_TODO_BREAK_MSG(
-				"Is the following correct? Or should it instead insert the"
-				" default target for that key so it can being writing the target?" );
-
 			// Store key node in the accessor node, and await for the
-			//  corresponding target node to arrive and close
+			//  corresponding target node to arrive
 			RF_ASSERT( current.mPendingKey.has_value() );
 			RF_ASSERT( current.mPendingKey->mValueStorage.data() == keyNode.mVariableLocation );
 			RF_ASSERT( &current.mPendingKey->mVariableTypeInfoStorage == keyNode.mVariableTypeInfo );
@@ -162,9 +276,26 @@ bool PopFromChain( WalkChain& fullChain )
 		if( nodeIdentifier == "T" )
 		{
 			// Target
-			RF_TODO_BREAK();
+
+			WalkNode const& targetNode = *extracted;
+
+			RF_TODO_ANNOTATION(
+				"Currently assuming that no delayed accessor operations are"
+				" needed, which might not be true when more restrictive"
+				" accessors need to be supported" );
 			( (void)accessor );
-			return false;
+
+			// Wipe out the key and target data
+			RF_ASSERT( current.mPendingKey.has_value() );
+			RF_ASSERT( current.mRecentKey != nullptr );
+			RF_ASSERT( current.mRecentKey->mVariableTypeInfo == &current.mPendingKey->mVariableTypeInfoStorage );
+			RF_ASSERT( current.mPendingTarget.has_value() );
+			RF_ASSERT( targetNode.mVariableTypeInfo == &current.mPendingTarget->mVariableTypeInfoStorage );
+			current.mPendingTarget.reset();
+			current.mRecentKey = nullptr;
+			current.mPendingKey.reset();
+
+			return true;
 		}
 
 		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
@@ -343,13 +474,26 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 	{
 		WalkNode& accessorNode = previous;
 		reflect::ExtensionAccessor const& accessor = *accessorNode.mVariableTypeInfo->mAccessor;
-		void const* const accessorLocation = accessorNode.mVariableLocation;
+		void* const accessorLocation = accessorNode.mVariableLocation;
 		RF_ASSERT( accessorLocation != nullptr );
 		rftl::string const& nodeIdentifier = current.mIdentifier;
+
+		EnsureAccessorOpened( accessorNode );
 
 		if( nodeIdentifier == "K" )
 		{
 			// Key
+
+			// Wipe out old key information
+			accessorNode.mRecentKey = nullptr;
+			accessorNode.mPendingKey.reset();
+
+			// Note the index, in case we need it
+			size_t const theoreticalIndex = accessorNode.numKeyStartsObserved;
+			accessorNode.numKeyStartsObserved++;
+
+			RF_TODO_ANNOTATION( "Do we need the key index for anything?" );
+			( (void)theoreticalIndex );
 
 			if( accessor.mGetSharedKeyInfo == nullptr )
 			{
@@ -364,15 +508,10 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 				return false;
 			}
 
-			// Wipe out old key information
-			accessorNode.mRecentKey = nullptr;
-			accessorNode.mPendingKey.reset();
-
 			// Start new key
 			PendingAccessorKeyData& pendingKey = accessorNode.mPendingKey.emplace();
 			pendingKey.mVariableTypeInfoStorage.mValueType = keyTypeInfo.mValueType;
 			pendingKey.mValueStorage.resize( reflect::Value::GetNumBytesNeeded( keyTypeInfo.mValueType ) );
-			accessorNode.numKeyStartsObserved++;
 
 			RF_ASSERT( current.mVariableTypeInfo == nullptr );
 			current.mVariableTypeInfo = &pendingKey.mVariableTypeInfoStorage;
@@ -384,8 +523,76 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 		if( nodeIdentifier == "T" )
 		{
 			// Target
-			RF_TODO_BREAK();
-			return false;
+
+			// Wipe out old target information
+			accessorNode.mPendingTarget.reset();
+
+			// Note the index, in case we need it
+			size_t const theoreticalIndex = accessorNode.numTargetStartsObserved;
+			accessorNode.numTargetStartsObserved++;
+
+			if( accessorNode.mRecentKey == nullptr )
+			{
+				// No key, presumably this is a directly-keyed accessor
+				RF_ASSERT( accessorNode.mPendingKey.has_value() == false );
+				RF_ASSERT( accessorNode.numKeyStartsObserved == 0 );
+				RF_TODO_BREAK_MSG( "Support for direct-keyed accessors" );
+				( (void)theoreticalIndex );
+				return false;
+			}
+
+			WalkNode const& keyNode = *accessorNode.mRecentKey;
+			RF_ASSERT( keyNode.mVariableLocation != nullptr );
+			RF_ASSERT( keyNode.mVariableTypeInfo != nullptr );
+			void const* const& key = keyNode.mVariableLocation;
+			reflect::VariableTypeInfo const& keyInfo = *keyNode.mVariableTypeInfo;
+
+			if( accessor.mInsertVariableDefault == nullptr )
+			{
+				// Doesn't support creating a placeholder variable
+				RF_TODO_BREAK_MSG(
+					"Uh... What do do in this case? We need to create the"
+					" variable ourselves? Do we need the type ID?" );
+				return false;
+			}
+
+			bool const insertSuccess = accessor.mInsertVariableDefault( accessorLocation, key, keyInfo );
+			if( insertSuccess == false )
+			{
+				RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Failed to insert key" );
+				RF_DBGFAIL();
+				return false;
+			}
+
+			if( accessor.mGetMutableTargetByKey == nullptr )
+			{
+				// Doesn't support overwriting a variable in place
+				RF_TODO_BREAK_MSG(
+					"Uh... What do do in this case? We need to create the"
+					" variable ourselves and stomp it all later when the"
+					" target node closes? Do we need the type ID?" );
+				return false;
+			}
+
+			void* target = nullptr;
+			reflect::VariableTypeInfo targetInfo = {};
+			bool const mutableSuccess = accessor.mGetMutableTargetByKey( accessorLocation, key, keyInfo, target, targetInfo );
+			if( mutableSuccess == false )
+			{
+				RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Failed to get mutable target" );
+				RF_DBGFAIL();
+				return false;
+			}
+
+			// Start new target
+			PendingAccessorTargetData& pendingTarget = accessorNode.mPendingTarget.emplace();
+			pendingTarget.mVariableTypeInfoStorage = targetInfo;
+
+			RF_ASSERT( current.mVariableTypeInfo == nullptr );
+			current.mVariableTypeInfo = &pendingTarget.mVariableTypeInfoStorage;
+			current.mVariableLocation = target;
+
+			return true;
 		}
 
 		RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
@@ -414,6 +621,12 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 	details::SingleScratchSpace scratch( classInfo, classInstance );
 
+	auto const onScopeEnd = OnScopeEnd(
+		[&scratch]()
+		{
+			details::DestroyChain( scratch.mWalkChain );
+		} );
+
 	using InstanceID = Importer::InstanceID;
 	using TypeID = Importer::TypeID;
 	using IndirectionID = Importer::IndirectionID;
@@ -436,7 +649,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 
-		scratch.mWalkChain.clear();
+		details::DestroyChain( scratch.mWalkChain );
 		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kThis ) );
 		details::WalkNode& root = *scratch.mWalkChain.back();
 		root.mVariableTypeInfo = &scratch.mClassTypeInfo;
@@ -604,7 +817,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		return false;
 	}
 
-	return false;
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
