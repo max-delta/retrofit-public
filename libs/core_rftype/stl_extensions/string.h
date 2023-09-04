@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core_rftype/ExtensionAccessorLookup.h"
+#include "core_rftype/TypeInference.h"
 #include "core_math/math_casts.h"
 
 
@@ -25,9 +26,13 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 	static VariableTypeInfo GetDirectKeyInfo( RootConstInst root )
 	{
 		// Always key by same type
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<KeyType>();
-		return retVal;
+		return TypeInference<KeyType>::GetValueTypeInfo();
+	}
+
+	static VariableTypeInfo GetSharedKeyInfo( RootConstInst root )
+	{
+		// Key is always the same type
+		return TypeInference<KeyType>::GetValueTypeInfo();
 	}
 
 	static VariableTypeInfo GetSharedTargetInfo( RootConstInst root )
@@ -35,9 +40,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "String only supports value types that do not rely on constructors" );
 
 		// All targets are always the same type in STL containers
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<ValueType>();
-		return retVal;
+		return TypeInference<ValueType>::GetValueTypeInfo();
 	}
 
 	static size_t GetNumVariables( RootConstInst root )
@@ -142,6 +145,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		ExtensionAccessor retVal{};
 
 		retVal.mGetDirectKeyInfo = &GetDirectKeyInfo;
+		retVal.mGetSharedKeyInfo = &GetSharedKeyInfo;
 		retVal.mGetSharedTargetInfo = &GetSharedTargetInfo;
 
 		retVal.mGetNumVariables = &GetNumVariables;

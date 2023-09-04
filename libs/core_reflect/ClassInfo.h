@@ -151,6 +151,15 @@ struct ExtensionAccessor
 	using FuncPtrGetDirectKeyInfo = VariableTypeInfo ( * )( RootConstInst root );
 	FuncPtrGetDirectKeyInfo mGetDirectKeyInfo = nullptr;
 
+	// Some extensions have a simplified key system such that all keys share
+	//  the same type information (ex: all non-variant STL containers)
+	// NOTE: Normal index->key->value pattern is still always supported, but
+	//  this shared type characteristic has value to serializers since thay
+	//  may have a simpler storage option that is more efficient or practical
+	// NOTE: Null indicates a lack of this characteristic
+	using FuncPtrGetSharedKeyInfo = VariableTypeInfo ( * )( RootConstInst root );
+	FuncPtrGetSharedKeyInfo mGetSharedKeyInfo = nullptr;
+
 	// Some extensions have a simplified value system such that all values
 	//  share the same type information (ex: all non-variant STL containers)
 	// NOTE: Normal index->key->value pattern is still always supported, but

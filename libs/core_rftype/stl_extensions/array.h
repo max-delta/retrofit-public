@@ -26,9 +26,13 @@ struct Accessor<rftl::array<ValueType, Size>> final : private AccessorTemplate
 	static VariableTypeInfo GetDirectKeyInfo( RootConstInst root )
 	{
 		// Always key by same type
-		VariableTypeInfo retVal{};
-		retVal.mValueType = Value::DetermineType<KeyType>();
-		return retVal;
+		return TypeInference<KeyType>::GetValueTypeInfo();
+	}
+
+	static VariableTypeInfo GetSharedKeyInfo( RootConstInst root )
+	{
+		// Key is always the same type
+		return TypeInference<KeyType>::GetValueTypeInfo();
 	}
 
 	static VariableTypeInfo GetSharedTargetInfo( RootConstInst root )
@@ -166,6 +170,7 @@ struct Accessor<rftl::array<ValueType, Size>> final : private AccessorTemplate
 		ExtensionAccessor retVal{};
 
 		retVal.mGetDirectKeyInfo = &GetDirectKeyInfo;
+		retVal.mGetSharedKeyInfo = &GetSharedKeyInfo;
 		retVal.mGetSharedTargetInfo = &GetSharedTargetInfo;
 
 		retVal.mGetNumVariables = &GetNumVariables;
