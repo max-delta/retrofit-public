@@ -13,11 +13,16 @@ struct TypeInference;
 template<typename Type>
 struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() != reflect::Value::Type::Invalid>::type>
 {
-	static reflect::VariableTypeInfo GetTypeInfo()
+	static reflect::VariableTypeInfo GetValueTypeInfo()
 	{
 		reflect::VariableTypeInfo retVal = {};
 		retVal.mValueType = reflect::Value::DetermineType<Type>();
 		return retVal;
+	}
+
+	static reflect::VariableTypeInfo GetTypeInfo()
+	{
+		return GetValueTypeInfo();
 	}
 };
 
@@ -25,12 +30,17 @@ struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineTyp
 template<typename Type>
 struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() == reflect::Value::Type::Invalid && extensions::Accessor<Type>::kExists>::type>
 {
-	static reflect::VariableTypeInfo GetTypeInfo()
+	static reflect::VariableTypeInfo GetAccessorTypeInfo()
 	{
 		reflect::VariableTypeInfo retVal = {};
 		static reflect::ExtensionAccessor const sSharedModuleCache = extensions::Accessor<Type>::Get();
 		retVal.mAccessor = &sSharedModuleCache;
 		return retVal;
+	}
+
+	static reflect::VariableTypeInfo GetTypeInfo()
+	{
+		return GetAccessorTypeInfo();
 	}
 };
 
@@ -40,11 +50,16 @@ struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineTyp
 template<typename Type>
 struct TypeInference<Type, typename rftl::enable_if<reflect::Value::DetermineType<Type>() == reflect::Value::Type::Invalid && extensions::Accessor<Type>::kExists == false>::type>
 {
-	static reflect::VariableTypeInfo GetTypeInfo()
+	static reflect::VariableTypeInfo GetClassTypeInfo()
 	{
 		reflect::VariableTypeInfo retVal = {};
 		retVal.mClassInfo = &rftype::GetClassInfo<Type>();
 		return retVal;
+	}
+
+	static reflect::VariableTypeInfo GetTypeInfo()
+	{
+		return GetClassTypeInfo();
 	}
 };
 
