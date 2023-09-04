@@ -7,16 +7,39 @@
 #include "core_math/math_clamps.h"
 #include "core_rftype/TypeTraverser.h"
 
+#include "core/ptr/unique_ptr.h"
+#include "core/ptr/default_creator.h"
+
+#include "rftl/optional"
+
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
 static constexpr char kThis[] = "!this";
-static constexpr char kUnset[] = "!UNSET";
+static constexpr char kUnset[] = "";
+
+
+
+struct PendingAccessorKeyData
+{
+	// Will be pointed to by key nodes, so must persist until the key node has
+	//  closed and returned back to the accessor
+	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
+
+	// Values don't need fancy construction, so can exist as just bytes
+	rftl::vector<uint8_t> mValueStorage = {};
+
+	RF_TODO_ANNOTATION( "Support for keys that aren't value types" );
+};
+
+
 
 struct WalkNode
 {
+	RF_NO_COPY( WalkNode );
+
 	WalkNode() = default;
 
 	WalkNode( rftl::string&& identifier )
@@ -29,9 +52,15 @@ struct WalkNode
 
 	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
 	void const* mVariableLocation = nullptr;
+
+	rftl::optional<PendingAccessorKeyData> mPendingKey;
+	UniquePtr<WalkNode> mRecentKey = nullptr;
+
+	// If on an accessor, this indicates what index we're on
+	size_t numKeyStartsObserved = 0;
 };
 
-using WalkChain = rftl::vector<WalkNode>;
+using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
 
 
 
@@ -44,6 +73,7 @@ struct SingleScratchSpace
 		void* classInstance )
 		: mClassInfo( classInfo )
 		, mClassInstance( classInstance )
+		, mClassTypeInfo( { reflect::Value::Type::Invalid, &classInfo, nullptr } )
 	{
 		//
 	}
@@ -51,9 +81,154 @@ struct SingleScratchSpace
 	reflect::ClassInfo const& mClassInfo;
 	void* const mClassInstance;
 
+	// Need this to seed the root of the walk chain, must remain addressable
+	//  during the walk
+	reflect::VariableTypeInfo const mClassTypeInfo;
+
 	size_t mInstanceCount = 0;
 	WalkChain mWalkChain;
 };
+
+
+
+bool TryPopFromChain( WalkChain& fullChain )
+{
+	RF_ASSERT( fullChain.empty() == false );
+
+	UniquePtr<WalkNode> extracted = rftl::move( fullChain.back() );
+	fullChain.pop_back();
+
+	// TODO: Handle extracted node, if it's related to a parent accessor then
+	//  it needs to checked against the parent, and potentially inserted into
+	//  the accessor if it has a key+target pairing
+
+	return true;
+}
+
+
+
+bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
+{
+	if( fullChain.size() < 2 )
+	{
+		RF_DBGFAIL_MSG( "Can't resolve a chain without multiple nodes" );
+		return false;
+	}
+
+	WalkNode const& first = *fullChain.front();
+	WalkNode& previous = **( fullChain.rbegin() + 1 );
+	WalkNode& current = *fullChain.back();
+
+	RF_TODO_ANNOTATION(
+		"What about accessor keys and targets?"
+		" Do they really require identifiers?" );
+	RF_ASSERT( first.mIdentifier.empty() == false );
+	RF_ASSERT( first.mVariableTypeInfo != nullptr );
+	RF_ASSERT( first.mVariableLocation != nullptr );
+	RF_ASSERT( previous.mIdentifier.empty() == false );
+	RF_ASSERT( previous.mVariableTypeInfo != nullptr );
+	RF_ASSERT( previous.mVariableLocation != nullptr );
+	RF_ASSERT( current.mIdentifier.empty() == false );
+	RF_ASSERT( current.mVariableTypeInfo == nullptr );
+	RF_ASSERT( current.mVariableLocation == nullptr );
+	current.mVariableTypeInfo = nullptr;
+	current.mVariableLocation = nullptr;
+
+	// Child of a value type?
+	if( previous.mVariableTypeInfo->mValueType != reflect::Value::Type::Invalid )
+	{
+		// TODO: What about value keys in accessors?
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Attempting resolve on a value" );
+		RF_DBGFAIL();
+		return false;
+	}
+
+	// Member on a class
+	if( previous.mVariableTypeInfo->mClassInfo != nullptr )
+	{
+		reflect::ClassInfo const& classToSearch = *previous.mVariableTypeInfo->mClassInfo;
+		rftl::string const& memberNameToFind = current.mIdentifier;
+		RF_ASSERT( memberNameToFind.empty() == false );
+
+		// For each member...
+		for( reflect::MemberVariableInfo const& varInfo : classToSearch.mNonStaticVariables )
+		{
+			if( varInfo.mIdentifier != memberNameToFind )
+			{
+				continue;
+			}
+
+			// Apply offset and note the type
+			current.mVariableTypeInfo = &varInfo.mVariableTypeInfo;
+			current.mVariableLocation = reinterpret_cast<uint8_t const*>( previous.mVariableLocation ) + varInfo.mOffset;
+			return true;
+		}
+
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not find member '%s'", memberNameToFind.c_str() );
+		return false;
+	}
+
+	// Child of an accessor?
+	if( previous.mVariableTypeInfo->mAccessor != nullptr )
+	{
+		WalkNode& accessorNode = previous;
+		reflect::ExtensionAccessor const& accessor = *previous.mVariableTypeInfo->mAccessor;
+		void const* const accessorLocation = previous.mVariableLocation;
+		RF_ASSERT( accessorLocation != nullptr );
+		rftl::string const& nodeIdentifier = current.mIdentifier;
+
+		if( nodeIdentifier == "K" )
+		{
+			// Key
+
+			if( accessor.mGetSharedKeyInfo == nullptr )
+			{
+				RF_TODO_BREAK_MSG( "Support for variantly-keyed accessors" );
+				return false;
+			}
+			reflect::VariableTypeInfo const keyTypeInfo = accessor.mGetSharedKeyInfo( accessorLocation );
+
+			if( keyTypeInfo.mValueType == reflect::Value::Type::Invalid )
+			{
+				RF_TODO_BREAK_MSG( "Support for complex-keyed accessors" );
+				return false;
+			}
+
+			// Wipe out old key information
+			accessorNode.mRecentKey = nullptr;
+			accessorNode.mPendingKey.reset();
+
+			// Start new key
+			PendingAccessorKeyData& pendingKey = accessorNode.mPendingKey.emplace();
+			pendingKey.mVariableTypeInfoStorage.mValueType = keyTypeInfo.mValueType;
+			pendingKey.mValueStorage.resize( reflect::Value::GetNumBytesNeeded( keyTypeInfo.mValueType ) );
+
+			RF_ASSERT( current.mVariableTypeInfo == nullptr );
+			current.mVariableTypeInfo = &pendingKey.mVariableTypeInfoStorage;
+			current.mVariableLocation = pendingKey.mValueStorage.data();
+
+			return true;
+		}
+
+		if( nodeIdentifier == "T" )
+		{
+			// Target
+			RF_TODO_BREAK();
+			return false;
+		}
+
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		return false;
+	}
+
+	RF_TODO_ANNOTATION( "At time of writing, the implementation of complex types is undecided, and will affect this code possibility" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if a complex key type was a parent? Depends on how that's implemented?" );
+	RF_TODO_BREAK_MSG( "Can maybe get here if a complex target type was a parent? Depends on how that's implemented?" );
+
+	RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type of predecessors" );
+	RF_DBGFAIL();
+	return false;
+}
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -88,8 +263,12 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		}
 
 		scratch.mWalkChain.clear();
-		scratch.mWalkChain.emplace_back( details::kThis );
-		scratch.mWalkChain.emplace_back( details::kUnset );
+		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kThis ) );
+		details::WalkNode& root = *scratch.mWalkChain.back();
+		root.mVariableTypeInfo = &scratch.mClassTypeInfo;
+		root.mVariableLocation = scratch.mClassInstance;
+
+		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
 
 		return true;
 	};
@@ -139,8 +318,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		scratch.mWalkChain.pop_back();
-		scratch.mWalkChain.emplace_back( details::kUnset );
+		details::TryPopFromChain( scratch.mWalkChain );
+		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
 
 		return true;
 	};
@@ -152,7 +331,16 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		scratch.mWalkChain.back().mIdentifier = name;
+		scratch.mWalkChain.back()->mIdentifier = name;
+
+		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+		if( resolveSuccess == false )
+		{
+			// Normally, we'd want to bail, but there might be development
+			//  reasons for allowing soft upgrades or whatnot?
+			RF_TODO_BREAK_MSG( "Should this bail, or be resilient to non-existant properties? Options to control this?" );
+			return false;
+		}
 
 		return true;
 	};
@@ -187,7 +375,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		scratch.mWalkChain.emplace_back( details::kUnset );
+		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kUnset ) );
 
 		return true;
 	};
@@ -199,7 +387,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
-		scratch.mWalkChain.pop_back();
+		details::TryPopFromChain( scratch.mWalkChain );
 
 		return true;
 	};
@@ -242,9 +430,15 @@ static void RF::logging::WriteContextString( RF::serialization::details::WalkCha
 			break;
 		}
 
+		rftl::string_view toWrite = element->mIdentifier;
+		if( toWrite.empty() )
+		{
+			toWrite = "!UNSET";
+		}
+
 		size_t const bytesRemaining = maxBufferOffset - bufferOffset;
-		size_t const bytesToWrite = math::Min( bytesRemaining, element.mIdentifier.size() );
-		memcpy( &buffer[bufferOffset], element.mIdentifier.data(), bytesToWrite );
+		size_t const bytesToWrite = math::Min( bytesRemaining, toWrite.size() );
+		memcpy( &buffer[bufferOffset], toWrite.data(), bytesToWrite );
 		bufferOffset += bytesToWrite;
 	}
 }
