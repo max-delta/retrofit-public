@@ -270,8 +270,10 @@ inline void* byte_view::mem_copy_to( void* dest, size_t size ) const
 {
 	RF_ASSERT( size == this->size() );
 	RF_ASSERT( dest != nullptr );
-	RF_ASSERT( data() != nullptr );
-	rftl::memcpy( dest, data(), size );
+	void const* const src = data();
+	RF_ASSERT( src != nullptr );
+	RF_ASSERT( src != dest );
+	rftl::memcpy( dest, src, size );
 	return dest;
 }
 
