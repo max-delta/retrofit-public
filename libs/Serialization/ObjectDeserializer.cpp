@@ -14,6 +14,7 @@
 RF_TODO_ANNOTATION( "Remove c_str usages, update logging to C++20 format" );
 #include "rftl/extension/c_str.h"
 
+#include "rftl/extension/string_format.h"
 #include "rftl/optional"
 
 
@@ -754,7 +755,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
-		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s'", value.GetStoredTypeName() );
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s' [%s]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ).c_str() );
 
 		bool const setSuccess = details::SetValueToChain( scratch.mWalkChain, value );
 		if( setSuccess == false )
