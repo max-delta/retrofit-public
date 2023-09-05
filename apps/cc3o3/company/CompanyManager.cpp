@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/CommonPaths.h"
+#include "cc3o3/resource/ResourceLoad.h"
 #include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/StateLogging.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -316,8 +317,44 @@ void CompanyManager::ReadLoadoutsFromSave( file::VFSPath const& saveRoot, input:
 	// TODO: Remove
 	ReadLegacyLoadoutsFromSave( saveRoot, playerID );
 
-	// TODO: ObjectDeserializer
-	// TODO: BinaryImporter
+	// TODO: Let newer loader be authoritative
+	static constexpr bool kAllowLoadToComplete = false;
+
+	file::VFSPath const loadoutRoot = details::GetLoadoutSavePath( saveRoot, playerID );
+
+	rftl::array<state::MutableObjectRef, kRosterSize> const rosterObjects = FindMutableRosterObjects( playerID );
+	for( size_t i_rosterIndex = 0; i_rosterIndex < kRosterSize; i_rosterIndex++ )
+	{
+		state::MutableObjectRef const& character = rosterObjects.at( i_rosterIndex );
+		if( character.IsSet() == false )
+		{
+			continue;
+		}
+
+		WeakPtr<state::comp::Loadout> const loadout = character.GetMutableComponentInstanceT<state::comp::Loadout>();
+		RF_ASSERT( loadout != nullptr );
+
+		character::ElementSlots& elements = loadout->mEquippedElements;
+
+		// TODO: BinaryExporter
+		// TODO: Figure out a better solution for filename extensions
+		static constexpr char kFileExtension[] = ".xml";
+		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) + kFileExtension );
+
+		// Load
+		UniquePtr<character::ElementSlots const> loadoutPtr = resource::LoadFromFile<character::ElementSlots const>( loadoutFilePath );
+		if( loadoutPtr == nullptr )
+		{
+			RFLOG_NOTIFY( loadoutFilePath, RFCAT_CC3O3, "Failed to load loadout from file" );
+			continue;
+		}
+
+		if constexpr( kAllowLoadToComplete )
+		{
+			RF_TODO_ANNOTATION( "Allow this to actually perform the load" );
+			elements = *loadoutPtr;
+		}
+	}
 }
 
 
@@ -356,7 +393,7 @@ void CompanyManager::WriteLoadoutsToSave( file::VFSPath const& saveRoot, input::
 			loadoutFilePath );
 		if( saveSuccess == false )
 		{
-			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to save loadout to file" );
+			RFLOG_NOTIFY( loadoutFilePath, RFCAT_CC3O3, "Failed to save loadout to file" );
 			continue;
 		}
 	}
