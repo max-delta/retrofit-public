@@ -26,11 +26,11 @@ string to_string( byte_view const& view, size_t maxLen )
 	{
 		if( nibble <= 0x9 )
 		{
-			return '0' + nibble;
+			return static_cast<char>( '0' + nibble );
 		}
 		if( nibble <= 0xf )
 		{
-			return 'A' + ( nibble - 0xa );
+			return static_cast<char>( 'A' + ( nibble - 0xa ) );
 		}
 		return '#';
 	};

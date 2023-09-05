@@ -825,7 +825,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 }
 
 template<>
-static void RF::logging::WriteContextString( RF::serialization::details::WalkChain const& context, Utf8LogContextBuffer& buffer )
+void RF::logging::WriteContextString( RF::serialization::details::WalkChain const& context, Utf8LogContextBuffer& buffer )
 {
 	size_t bufferOffset = 0;
 	size_t const maxBufferOffset = buffer.size();
