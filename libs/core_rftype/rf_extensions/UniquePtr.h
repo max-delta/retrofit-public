@@ -59,7 +59,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 
 	static bool GetKeyByIndex( RootConstInst root, size_t index, UntypedConstInst& key, VariableTypeInfo& keyInfo )
 	{
-		// There is only one valid key, ant it's always the same
+		// There is only one valid key, and it's always the same
 		RF_ASSERT( index == 0 );
 		key = uniqueptr_accessor_details::GetStableKey();
 		keyInfo = GetDirectKeyInfo( root );
