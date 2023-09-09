@@ -94,12 +94,11 @@ bool DiagnosticProcessImport( Importer& importer )
 	};
 
 	bool const success = importer.ImportAndFinalize( callbacks );
-	if( success == false )
-	{
-		return false;
-	}
 
-	return diagExporter.Root_FinalizeExport();
+	// Regardless of success or failure, try to finalize the exporter
+	bool const finalized = diagExporter.Root_FinalizeExport();
+
+	return success && finalized;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
