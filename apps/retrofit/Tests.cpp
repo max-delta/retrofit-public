@@ -624,6 +624,14 @@ void FPackSerializationTest()
 	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
 	WeakPtr<gfx::ppu::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
+	// Force loads to finish so serializer can resolve the textures, since
+	//  they're not yet considered "file-backed"
+	RF_TODO_ANNOTATION(
+		"Don't require a full load for this? Keep track of tentatively"
+		" file-backed resources when queueing loads, even if the load hasn't"
+		" been attempted yet?" );
+	ppu.ForceImmediateLoadAllRequests();
+
 	// Serialize
 	rftl::vector<uint8_t> buffer;
 	bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );

@@ -600,11 +600,33 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 		bool const preDestroySuccess = PreDestroy( *resourceRef );
 		RF_ASSERT( preDestroySuccess );
 		resourceRef = nullptr;
+
+		ResourcesByFilename::const_iterator const fileIter = mFileBackedResources.find( resourceName );
+		if( fileIter != mFileBackedResources.end() )
+		{
+			if( fileIter->second == filename )
+			{
+				RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating file-backed resource to same filename, assuming a reload" );
+			}
+			else
+			{
+				RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating file-backed resource to different filename, assuming a modify" );
+			}
+
+			// Clear out file reference
+			mFileBackedResources.erase( fileIter );
+		}
+		else
+		{
+			RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating a non-file-backed resource to be file-backed" );
+		}
 	}
+	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
 
 	// Swap in new
 	Resource* const res = newResource;
 	resourceRef = rftl::move( newResource );
+	mFileBackedResources.emplace( resourceName, filename );
 	bool const postLoadSuccess = PostLoadFromFile( *res, filename );
 	RF_ASSERT( postLoadSuccess );
 	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );

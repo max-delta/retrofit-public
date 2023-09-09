@@ -561,6 +561,14 @@ bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceName cons
 
 
 
+bool PPUController::ForceImmediateLoadAllRequests()
+{
+	FullfillAllDeferredLoadRequests();
+	return true;
+}
+
+
+
 
 WeakPtr<TextureManager const> PPUController::GetTextureManager() const
 {

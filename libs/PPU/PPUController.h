@@ -144,6 +144,7 @@ public:
 	bool QueueDeferredReloadRequest( AssetType type, ResourceName const& resourceName );
 	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
+	bool ForceImmediateLoadAllRequests();
 
 	WeakPtr<TextureManager const> GetTextureManager() const;
 	WeakPtr<FramePackManager const> GetFramePackManager() const;
