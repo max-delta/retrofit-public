@@ -308,11 +308,17 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		valueAttr = VAL; \
 		break
 
+#define RF_CASE_UNSUPPORTED( TYPE, VAL ) \
+	case TYPE: \
+		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '%s' will be forced to a predetermined value", value.GetStoredTypeName() ); \
+		valueAttr = VAL; \
+		break
+
 		RF_CASE( reflect::Value::Type::Bool, ( *value.GetAs<bool>() ) ? 1u : 0u );
-		RF_CASE( reflect::Value::Type::VoidPtr, "<PTR>" );
-		RF_CASE( reflect::Value::Type::VoidConstPtr, "<PTR>" );
-		RF_CASE( reflect::Value::Type::VirtualClassPtr, "<PTR>" );
-		RF_CASE( reflect::Value::Type::VirtualClassConstPtr, "<PTR>" );
+		RF_CASE_UNSUPPORTED( reflect::Value::Type::VoidPtr, "<PTR>" );
+		RF_CASE_UNSUPPORTED( reflect::Value::Type::VoidConstPtr, "<PTR>" );
+		RF_CASE_UNSUPPORTED( reflect::Value::Type::VirtualClassPtr, "<PTR>" );
+		RF_CASE_UNSUPPORTED( reflect::Value::Type::VirtualClassConstPtr, "<PTR>" );
 		RF_CASE( reflect::Value::Type::Char, *value.GetAs<char>() );
 		RF_CASE( reflect::Value::Type::WChar, *value.GetAs<wchar_t>() );
 		RF_CASE( reflect::Value::Type::Char16, *value.GetAs<char16_t>() );
@@ -329,6 +335,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		RF_CASE( reflect::Value::Type::Int32, *value.GetAs<int32_t>() );
 		RF_CASE( reflect::Value::Type::Int64, *value.GetAs<int64_t>() );
 
+#undef RF_CASE_UNSUPPORTED
 #undef RF_CASE
 
 		case reflect::Value::Type::Invalid:

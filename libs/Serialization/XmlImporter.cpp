@@ -94,12 +94,19 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 		VARTYPE emit = math::integer_cast<VARTYPE>( temp ); \
 		return reflect::Value( emit ); \
 	}
+#define RF_TEST_S( ENUM, VARTYPE, VALUE ) \
+	if( type == reflect::Value::GetTypeName( ENUM ) ) \
+	{ \
+		VARTYPE temp = VALUE; \
+		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '%s' will be forced to a predetermined value", RFTLE_CSTR( type ) ); \
+		return reflect::Value( temp ); \
+	}
 
 	RF_TEST( reflect::Value::Type::Bool, bool );
-	//RF_TEST( reflect::Value::Type::VoidPtr, nullptr_t );
-	//RF_TEST( reflect::Value::Type::VoidConstPtr, nullptr_t );
-	//RF_TEST( reflect::Value::Type::VirtualClassPtr, nullptr_t );
-	//RF_TEST( reflect::Value::Type::VirtualClassConstPtr, nullptr_t );
+	RF_TEST_S( reflect::Value::Type::VoidPtr, void*, nullptr );
+	RF_TEST_S( reflect::Value::Type::VoidConstPtr, void const*, nullptr );
+	RF_TEST_S( reflect::Value::Type::VirtualClassPtr, void const*, nullptr );
+	RF_TEST_S( reflect::Value::Type::VirtualClassConstPtr, void const*, nullptr );
 	RF_TEST( reflect::Value::Type::Char, char );
 	RF_TEST_I( reflect::Value::Type::WChar, uint16_t, wchar_t );
 	RF_TEST_I( reflect::Value::Type::Char16, uint16_t, char16_t );
@@ -118,6 +125,7 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 
 #undef RF_TEST
 #undef RF_TEST_I
+#undef RF_TEST_S
 
 	RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected type '%s'", RFTLE_CSTR( type ) );
 	RF_DBGFAIL();
