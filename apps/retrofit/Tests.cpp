@@ -963,7 +963,7 @@ void TCPTest()
 
 	// Transmit some data
 	{
-		using SendTask = rftl::packaged_task<bool( SharedPtr<TCPSocket>, TCPSocket::Buffer && )>;
+		using SendTask = rftl::packaged_task<bool( SharedPtr<TCPSocket>, TCPSocket::Buffer&& )>;
 		using PendingSend = rftl::future<bool>;
 		using ReceiveTask = rftl::packaged_task<TCPSocket::Buffer( SharedPtr<TCPSocket> )>;
 		using PendingReceive = rftl::future<TCPSocket::Buffer>;
