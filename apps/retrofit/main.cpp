@@ -31,6 +31,7 @@ constexpr bool kSQReflectTest = true;
 constexpr bool kTCPTest = true;
 constexpr bool kUDPTest = true;
 constexpr bool kSkinColorTest = true;
+constexpr bool kCharacterCreatorTest = true;
 
 constexpr bool kAllowScratch = true;
 
@@ -111,6 +112,11 @@ void TestStart()
 	if( kSkinColorTest )
 	{
 		test::SkinColorTest();
+	}
+
+	if( kCharacterCreatorTest )
+	{
+		test::CharacterCreatorTest();
 	}
 }
 
