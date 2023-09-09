@@ -30,6 +30,7 @@ constexpr bool kFrameBuilderTest = true;
 constexpr bool kSQReflectTest = true;
 constexpr bool kTCPTest = true;
 constexpr bool kUDPTest = true;
+constexpr bool kSkinColorTest = true;
 
 constexpr bool kAllowScratch = true;
 
@@ -105,6 +106,11 @@ void TestStart()
 	if( kUDPTest )
 	{
 		test::UDPTest();
+	}
+
+	if( kSkinColorTest )
+	{
+		test::SkinColorTest();
 	}
 }
 

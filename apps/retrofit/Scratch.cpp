@@ -4,12 +4,8 @@
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameSprite/CharacterCreator.h"
-#include "GameSprite/Bitmap.h"
-#include "GameSprite/BitmapWriter.h"
-#include "GameSprite/MelaninColorGenerator.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 
 
 namespace RF::scratch {
@@ -22,15 +18,6 @@ namespace details {
 void Start()
 {
 	using namespace details;
-
-	{
-		file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "skin_color_test.bmp" );
-		sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPallete( 4 );
-		rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( skinColorTest.GetData(), skinColorTest.GetWidth(), skinColorTest.GetHeight() );
-		file::FileHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
-		FILE* const file = fileHandle->GetFile();
-		fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
-	}
 
 	sprite::CharacterCreator creator( app::gVfs, app::gGraphics );
 	bool const loadPieceSuccess = creator.LoadPieceTables(
