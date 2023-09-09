@@ -105,7 +105,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 			TextureManager::Filename const resFile = texMan.SearchForFilenameByResourceName( resName );
 			if( resFile.Empty() )
 			{
-				RFLOG_ERROR( context, RFCAT_PPU, "Failed to determine filename for resourced names \"%llu\"", resName.c_str() );
+				RFLOG_ERROR( context, RFCAT_PPU, "Failed to determine filename for resource name \"%s\"", resName.c_str() );
 				return false;
 			}
 
