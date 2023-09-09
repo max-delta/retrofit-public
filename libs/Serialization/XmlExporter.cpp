@@ -308,7 +308,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		valueAttr = VAL; \
 		break
 
-		RF_CASE( reflect::Value::Type::Bool, *value.GetAs<bool>() );
+		RF_CASE( reflect::Value::Type::Bool, ( *value.GetAs<bool>() ) ? 1u : 0u );
 		RF_CASE( reflect::Value::Type::VoidPtr, "<PTR>" );
 		RF_CASE( reflect::Value::Type::VoidConstPtr, "<PTR>" );
 		RF_CASE( reflect::Value::Type::VirtualClassPtr, "<PTR>" );
