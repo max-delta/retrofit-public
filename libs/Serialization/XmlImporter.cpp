@@ -58,6 +58,44 @@ static bool TryParse( ValT& value, rftl::string_view const& str )
 	return true;
 }
 
+template<>
+bool TryParse<int8_t>( int8_t& value, rftl::string_view const& str )
+{
+	// So much hate...
+	rftl::stringstream ss;
+	ss << str;
+	int16_t STOP_TREATING_INT8_AS_A_CHAR = {};
+	ss >> STOP_TREATING_INT8_AS_A_CHAR;
+	value = math::integer_cast<int8_t>( STOP_TREATING_INT8_AS_A_CHAR );
+
+	if( ss.rdbuf()->in_avail() != 0 )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+template<>
+bool TryParse<uint8_t>( uint8_t& value, rftl::string_view const& str )
+{
+	// So much hate...
+	rftl::stringstream ss;
+	ss << str;
+	uint16_t STOP_TREATING_UINT8_AS_A_CHAR = {};
+	ss >> STOP_TREATING_UINT8_AS_A_CHAR;
+	value = math::integer_cast<uint8_t>( STOP_TREATING_UINT8_AS_A_CHAR );
+
+	if( ss.rdbuf()->in_avail() != 0 )
+	{
+		return false;
+	}
+
+	return true;
+}
+
 
 
 static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::string_view const& value )
@@ -81,10 +119,10 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 #define RF_TEST_I( ENUM, INTERMEDIATE, VARTYPE ) \
 	if( type == reflect::Value::GetTypeName( ENUM ) ) \
 	{ \
-		static_assert( rftl::is_integral<INTERMEDIATE>::value ); \
-		static_assert( rftl::is_integral<VARTYPE>::value ); \
-		static_assert( rftl::is_signed<INTERMEDIATE>::value == rftl::is_signed<VARTYPE>::value ); \
-		static_assert( sizeof( INTERMEDIATE ) == sizeof( VARTYPE ) ); \
+		static_assert( rftl::is_integral<INTERMEDIATE>::value, "Intermediate not integral" ); \
+		static_assert( rftl::is_integral<VARTYPE>::value, "Var type not integral" ); \
+		static_assert( rftl::is_signed<INTERMEDIATE>::value == rftl::is_signed<VARTYPE>::value, "Sign difference" ); \
+		static_assert( sizeof( INTERMEDIATE ) == sizeof( VARTYPE ), "Size difference" ); \
 		INTERMEDIATE temp = {}; \
 		bool const success = TryParse( temp, value ); \
 		if( success == false ) \
@@ -107,7 +145,7 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 	RF_TEST_S( reflect::Value::Type::VoidConstPtr, void const*, nullptr );
 	RF_TEST_S( reflect::Value::Type::VirtualClassPtr, reflect::VirtualClass*, nullptr );
 	RF_TEST_S( reflect::Value::Type::VirtualClassConstPtr, reflect::VirtualClass const*, nullptr );
-	RF_TEST( reflect::Value::Type::Char, char );
+	RF_TEST_I( reflect::Value::Type::Char, int8_t, char );
 	RF_TEST_I( reflect::Value::Type::WChar, uint16_t, wchar_t );
 	RF_TEST_I( reflect::Value::Type::Char16, uint16_t, char16_t );
 	RF_TEST_I( reflect::Value::Type::Char32, uint32_t, char32_t );
