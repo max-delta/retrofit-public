@@ -16,9 +16,9 @@ RF_TODO_ANNOTATION( "Remove c_str usages, revise API" );
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool DiagnosticProcessImport( Importer& importer )
+bool DiagnosticProcessImport( Importer& importer, bool silent )
 {
-	DiagnosticExporter diagExporter{ false };
+	DiagnosticExporter diagExporter{ silent };
 
 	using InstanceID = Importer::InstanceID;
 	using TypeID = Importer::TypeID;
