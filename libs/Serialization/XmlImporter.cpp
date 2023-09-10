@@ -105,8 +105,8 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 	RF_TEST( reflect::Value::Type::Bool, bool );
 	RF_TEST_S( reflect::Value::Type::VoidPtr, void*, nullptr );
 	RF_TEST_S( reflect::Value::Type::VoidConstPtr, void const*, nullptr );
-	RF_TEST_S( reflect::Value::Type::VirtualClassPtr, void const*, nullptr );
-	RF_TEST_S( reflect::Value::Type::VirtualClassConstPtr, void const*, nullptr );
+	RF_TEST_S( reflect::Value::Type::VirtualClassPtr, reflect::VirtualClass*, nullptr );
+	RF_TEST_S( reflect::Value::Type::VirtualClassConstPtr, reflect::VirtualClass const*, nullptr );
 	RF_TEST( reflect::Value::Type::Char, char );
 	RF_TEST_I( reflect::Value::Type::WChar, uint16_t, wchar_t );
 	RF_TEST_I( reflect::Value::Type::Char16, uint16_t, char16_t );
