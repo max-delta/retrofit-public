@@ -5,6 +5,7 @@
 #include "AppCommon_GraphicalClient/FrameBuilder.h"
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
+#include "GameResource/ResourceLoader.h"
 #include "GameResource/ResourceSaver.h"
 
 #include "GameScripting/OOLoader.h"
@@ -858,56 +859,61 @@ void SQReflectTest()
 	RF_ASSERT( populateSuccess );
 
 	// Verify
-	RF_ASSERT( testClass.mBool == true );
-	RF_ASSERT( testClass.mVoidPtr == nullptr );
-	RF_ASSERT( testClass.mClassPtr == nullptr );
-	RF_ASSERT( testClass.mChar == 'a' );
-	RF_ASSERT( testClass.mWChar == L'a' );
-	RF_ASSERT( testClass.mChar16 == u'a' );
-	RF_ASSERT( testClass.mChar32 == U'a' );
-	RF_ASSERT( testClass.mFloat == 0.5f );
-	RF_ASSERT( testClass.mDouble == 0.5 );
-	RF_ASSERT( testClass.mLongDouble == 0.5l );
-	RF_ASSERT( testClass.mU8 == 7 );
-	RF_ASSERT( testClass.mS8 == 7 );
-	RF_ASSERT( testClass.mU16 == 7 );
-	RF_ASSERT( testClass.mS16 == 7 );
-	RF_ASSERT( testClass.mU32 == 7 );
-	RF_ASSERT( testClass.mS32 == 7 );
-	RF_ASSERT( testClass.mU64 == 7 );
-	RF_ASSERT( testClass.mS64 == 7 );
-	RF_ASSERT( testClass.mString == "test" );
-	RF_ASSERT( testClass.mWString == L"test" );
-	RF_ASSERT( testClass.mIntVector.size() == 3 );
-	RF_ASSERT( testClass.mIntVector[0] == 3 );
-	RF_ASSERT( testClass.mIntVector[1] == 5 );
-	RF_ASSERT( testClass.mIntVector[2] == 7 );
-	RF_ASSERT( testClass.mIntArray.size() == 5 );
-	RF_ASSERT( testClass.mIntArray[0] == 2 );
-	RF_ASSERT( testClass.mIntArray[1] == 3 );
-	RF_ASSERT( testClass.mIntArray[2] == 5 );
-	RF_ASSERT( testClass.mIntArray[3] == 8 );
-	RF_ASSERT( testClass.mIntArray[4] == 13 );
-	RF_ASSERT( testClass.mObjVector.size() == 1 );
-	RF_ASSERT( testClass.mObjVector[0].mBool == true );
-	RF_ASSERT( testClass.mStringVector.size() == 2 );
-	RF_ASSERT( testClass.mStringVector[0] == "one" );
-	RF_ASSERT( testClass.mStringVector[1] == "two" );
-	RF_ASSERT( testClass.mVectorVector.size() == 2 );
-	RF_ASSERT( testClass.mVectorVector[0].size() == 1 );
-	RF_ASSERT( testClass.mVectorVector[0][0] == 1 );
-	RF_ASSERT( testClass.mVectorVector[1].size() == 1 );
-	RF_ASSERT( testClass.mVectorVector[1][0] == 2 );
-	RF_ASSERT( testClass.mNested.mBool == true );
-	RF_ASSERT( testClass.mUniqueInt != nullptr );
-	RF_ASSERT( *testClass.mUniqueInt == 3 );
-	RF_ASSERT( testClass.mUniqueNested != nullptr );
-	RF_ASSERT( testClass.mUniqueNested->mBool == true );
+	static constexpr auto verify = []( SQReflectTestClass const& instance ) -> void
+	{
+		RF_ASSERT( instance.mBool == true );
+		RF_ASSERT( instance.mVoidPtr == nullptr );
+		RF_ASSERT( instance.mClassPtr == nullptr );
+		RF_ASSERT( instance.mChar == 'a' );
+		RF_ASSERT( instance.mWChar == L'a' );
+		RF_ASSERT( instance.mChar16 == u'a' );
+		RF_ASSERT( instance.mChar32 == U'a' );
+		RF_ASSERT( instance.mFloat == 0.5f );
+		RF_ASSERT( instance.mDouble == 0.5 );
+		RF_ASSERT( instance.mLongDouble == 0.5l );
+		RF_ASSERT( instance.mU8 == 7 );
+		RF_ASSERT( instance.mS8 == 7 );
+		RF_ASSERT( instance.mU16 == 7 );
+		RF_ASSERT( instance.mS16 == 7 );
+		RF_ASSERT( instance.mU32 == 7 );
+		RF_ASSERT( instance.mS32 == 7 );
+		RF_ASSERT( instance.mU64 == 7 );
+		RF_ASSERT( instance.mS64 == 7 );
+		RF_ASSERT( instance.mString == "test" );
+		RF_ASSERT( instance.mWString == L"test" );
+		RF_ASSERT( instance.mIntVector.size() == 3 );
+		RF_ASSERT( instance.mIntVector[0] == 3 );
+		RF_ASSERT( instance.mIntVector[1] == 5 );
+		RF_ASSERT( instance.mIntVector[2] == 7 );
+		RF_ASSERT( instance.mIntArray.size() == 5 );
+		RF_ASSERT( instance.mIntArray[0] == 2 );
+		RF_ASSERT( instance.mIntArray[1] == 3 );
+		RF_ASSERT( instance.mIntArray[2] == 5 );
+		RF_ASSERT( instance.mIntArray[3] == 8 );
+		RF_ASSERT( instance.mIntArray[4] == 13 );
+		RF_ASSERT( instance.mObjVector.size() == 1 );
+		RF_ASSERT( instance.mObjVector[0].mBool == true );
+		RF_ASSERT( instance.mStringVector.size() == 2 );
+		RF_ASSERT( instance.mStringVector[0] == "one" );
+		RF_ASSERT( instance.mStringVector[1] == "two" );
+		RF_ASSERT( instance.mVectorVector.size() == 2 );
+		RF_ASSERT( instance.mVectorVector[0].size() == 1 );
+		RF_ASSERT( instance.mVectorVector[0][0] == 1 );
+		RF_ASSERT( instance.mVectorVector[1].size() == 1 );
+		RF_ASSERT( instance.mVectorVector[1][0] == 2 );
+		RF_ASSERT( instance.mNested.mBool == true );
+		RF_ASSERT( instance.mUniqueInt != nullptr );
+		RF_ASSERT( *instance.mUniqueInt == 3 );
+		RF_ASSERT( instance.mUniqueNested != nullptr );
+		RF_ASSERT( instance.mUniqueNested->mBool == true );
+	};
+	verify( testClass );
 
+	file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "reflect_test.xml" );
+
+	// Export
 	{
 		resource::ResourceSaver saver( app::gVfs, nullptr );
-
-		file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "reflect_test.xml" );
 
 		bool const saveSuccess = saver.SaveClassToFile(
 			rftype::GetClassInfo<decltype( testClass )>(),
@@ -915,6 +921,20 @@ void SQReflectTest()
 			resource::kInvalidResourceTypeIdentifier,
 			testPath );
 		RF_ASSERT( saveSuccess );
+	}
+
+	// Import
+	{
+		resource::ResourceLoader resourceLoader( app::gVfs, nullptr );
+
+		UniquePtr<SQReflectTestClass> instancePtr =
+			resourceLoader.LoadClassFromFile<SQReflectTestClass, DefaultCreator>(
+				resource::kInvalidResourceTypeIdentifier,
+				testPath );
+		RF_ASSERT( instancePtr != nullptr );
+
+		// Verify
+		verify( *instancePtr );
 	}
 }
 
