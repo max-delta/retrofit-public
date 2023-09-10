@@ -5,6 +5,8 @@
 #include "AppCommon_GraphicalClient/FrameBuilder.h"
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
+#include "GameResource/ResourceSaver.h"
+
 #include "GameScripting/OOLoader.h"
 
 #include "GameSprite/Bitmap.h"
@@ -901,6 +903,19 @@ void SQReflectTest()
 	RF_ASSERT( *testClass.mUniqueInt == 3 );
 	RF_ASSERT( testClass.mUniqueNested != nullptr );
 	RF_ASSERT( testClass.mUniqueNested->mBool == true );
+
+	{
+		resource::ResourceSaver saver( app::gVfs, nullptr );
+
+		file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "reflect_test.xml" );
+
+		bool const saveSuccess = saver.SaveClassToFile(
+			rftype::GetClassInfo<decltype( testClass )>(),
+			&testClass,
+			resource::kInvalidResourceTypeIdentifier,
+			testPath );
+		RF_ASSERT( saveSuccess );
+	}
 }
 
 
