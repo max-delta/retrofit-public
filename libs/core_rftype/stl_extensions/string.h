@@ -109,6 +109,33 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		return GetTargetByKeyHelper<AccessedType>( root, key, keyInfo, value, valueInfo );
 	}
 
+	static bool InsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	{
+		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
+		{
+			RF_DBGFAIL_MSG( "Key type differs from expected" );
+			return false;
+		}
+
+		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
+		}
+
+		AccessedType* const pThis = reinterpret_cast<AccessedType*>( root );
+		KeyType const index = *castedKey;
+		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
+		if( index >= pThis->size() )
+		{
+			pThis->resize( index + 1 );
+		}
+
+		pThis->at( index ) = rftl::move( static_cast<ValueType>( '?' ) );
+		return true;
+	}
+
 	static bool InsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
 	{
 		static_assert( Value::DetermineType<ValueType>() != Value::Type::Invalid, "String only supports value types that do not rely on constructors" );
@@ -167,6 +194,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		retVal.mGetTargetByKey = &GetTargetByKey;
 		retVal.mGetMutableTargetByKey = &GetMutableTargetByKey;
 
+		retVal.mInsertVariableDefault = &InsertVariableDefault;
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
 
