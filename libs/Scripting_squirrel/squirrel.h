@@ -32,7 +32,7 @@ public:
 
 
 	//
-	// Types
+	// Types and constants
 public:
 	#if( RF_PLATFORM_POINTER_BYTES >= 8 )
 		using Integer = int64_t;
@@ -63,6 +63,9 @@ public:
 	using ElementArray = rftl::vector<Element>;
 	using ElementMap = rftl::unordered_map<Element, Element>;
 	using NestedTraversalPath = rftl::vector<NestedTraversalNode>;
+
+	// HACK: Special reserved member name
+	static constexpr char kReservedClassNameMemberName[] = "__sqname";
 private:
 	using HSQUIRRELVM = SQVM*;
 	using ElementNameCharType = char;

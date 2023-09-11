@@ -360,8 +360,9 @@ TEST( Squirrel, ArrayClasses )
 TEST( Squirrel, InjectSimpleStruct )
 {
 	SquirrelVM vm;
+	static constexpr char const kClassName[] = "C";
 	static constexpr char const* kMemberNames[] = { "a", "b" };
-	bool const inject = vm.InjectSimpleStruct( "C", kMemberNames, rftl::extent<decltype( kMemberNames )>::value );
+	bool const inject = vm.InjectSimpleStruct( kClassName, kMemberNames, rftl::extent<decltype( kMemberNames )>::value );
 	ASSERT_TRUE( inject );
 	constexpr char source[] =
 		"x <- C();\n"
@@ -375,12 +376,20 @@ TEST( Squirrel, InjectSimpleStruct )
 	ASSERT_NE( val, nullptr );
 	SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
 	{
-		ASSERT_EQ( elemMap.size(), 2 );
+		ASSERT_EQ( elemMap.size(), 3 );
+
+		SquirrelVM::String const reservedIndex = SquirrelVM::kReservedClassNameMemberName;
+		ASSERT_EQ( elemMap.count( reservedIndex ), 1 );
+		SquirrelVM::String const* const reservedVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( reservedIndex ) );
+		ASSERT_NE( reservedVal, nullptr );
+		ASSERT_EQ( *reservedVal, kClassName );
+
 		SquirrelVM::String const firstIndex = "a";
 		ASSERT_EQ( elemMap.count( firstIndex ), 1 );
 		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 		ASSERT_NE( firstVal, nullptr );
 		ASSERT_EQ( *firstVal, "first" );
+
 		SquirrelVM::String const secondIndex = "b";
 		ASSERT_EQ( elemMap.count( secondIndex ), 1 );
 		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( secondIndex ) );

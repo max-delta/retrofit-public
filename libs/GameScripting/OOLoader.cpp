@@ -20,6 +20,15 @@ namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+struct ScratchLookup
+{
+	RF_NO_COPY( ScratchLookup );
+
+	OOLoader::InjectedClasses const& mInjectedClasses;
+};
+
+
+
 struct TargetItem
 {
 	reflect::VariableTypeInfo mTypeInfo;
@@ -35,6 +44,27 @@ struct WorkItem
 	TargetItem mTarget;
 };
 using WorkItems = rftl::vector<WorkItem>;
+
+
+
+reflect::ClassInfo const* FindClassInfoForName(
+	ScratchLookup const& scratchLookup,
+	rftl::string_view const& name )
+{
+	RF_ASSERT( name.empty() == false );
+
+	for( OOLoader::InjectedClass const& injectedClass : scratchLookup.mInjectedClasses )
+	{
+		RF_ASSERT( injectedClass.mClassInfo != nullptr );
+		RF_ASSERT( injectedClass.mName.empty() == false );
+		if( injectedClass.mName == name )
+		{
+			return injectedClass.mClassInfo;
+		}
+	}
+
+	return nullptr;
+}
 
 
 
@@ -558,6 +588,7 @@ bool ProcessScriptVariable(
 
 bool ProcessClassWorkItem(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItems& workItems,
 	SquirrelVM::NestedTraversalPath const& currentPath,
 	reflect::ClassInfo const& classInfo,
@@ -577,12 +608,41 @@ bool ProcessClassWorkItem(
 	// For each element...
 	for( SquirrelVM::ElementMap::value_type const& elemPair : elemMap )
 	{
+		SquirrelVM::Element const& elemValue = elemPair.second;
+
 		// Get the name
 		SquirrelVM::String const* elemString = rftl::get_if<SquirrelVM::String>( &( elemPair.first ) );
 		char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
 		if( elemName == nullptr )
 		{
 			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to determine identifier for variable" );
+			continue;
+		}
+
+		// Check if it's the reserved class name member
+		if( strcmp( elemName, SquirrelVM::kReservedClassNameMemberName ) == 0 )
+		{
+			if( rftl::holds_alternative<SquirrelVM::String>( elemValue ) == false )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Reserved class name member is not a string" );
+				continue;
+			}
+			SquirrelVM::String const& className = rftl::get<SquirrelVM::String>( elemValue );
+
+			// Lookup the class info
+			reflect::ClassInfo const* const foundClassInfo = FindClassInfoForName( scratchLookup, className );
+			if( foundClassInfo == nullptr )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Class claims to be '%s', but could not find corresponding injected type", className.c_str() );
+				continue;
+			}
+
+			if( foundClassInfo != &classInfo )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Class claims to be '%s', injected type class info doesn't match", className.c_str() );
+				continue;
+			}
+
 			continue;
 		}
 
@@ -611,7 +671,6 @@ bool ProcessClassWorkItem(
 		target.mIdentifier = member.mMemberVariableInfo.mIdentifier;
 
 		// Handle the transfer from script->reflect
-		SquirrelVM::Element const& elemValue = elemPair.second;
 		SquirrelVM::NestedTraversalPath nestedPath = currentPath;
 		nestedPath.emplace_back( elemName );
 		bool const processSuccess = ProcessScriptVariable( vm, workItems, nestedPath, elemValue, target );
@@ -666,6 +725,7 @@ bool ProcessAccessorWorkItem(
 
 bool ProcessWorkItem(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItem const& currentWorkItem,
 	WorkItems& workItems )
 {
@@ -676,7 +736,7 @@ bool ProcessWorkItem(
 	// Class
 	if( currentWorkItem.mTarget.mTypeInfo.mClassInfo != nullptr )
 	{
-		return ProcessClassWorkItem( vm, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mClassInfo, currentWorkItem.mTarget.mLocation );
+		return ProcessClassWorkItem( vm, scratchLookup, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mClassInfo, currentWorkItem.mTarget.mLocation );
 	}
 
 	// Accessor
@@ -694,6 +754,7 @@ bool ProcessWorkItem(
 
 bool PopulateClassFromScript(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	SquirrelVM::NestedTraversalPath scriptPath,
 	reflect::ClassInfo const& classInfo,
 	void* classInstance )
@@ -717,7 +778,7 @@ bool PopulateClassFromScript(
 		WorkItem const workItem = workItems.back();
 		workItems.pop_back();
 
-		bool const processSuccess = ProcessWorkItem( vm, workItem, workItems );
+		bool const processSuccess = ProcessWorkItem( vm, scratchLookup, workItem, workItems );
 		if( processSuccess == false )
 		{
 			// TODO: This should probably be conditional whether it
@@ -749,7 +810,13 @@ bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classI
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = details::GetAllMembers( classInfo, nullptr );
 	rftl::vector<char const*> const memberNames = details::GetAllMemberNames( members );
-	return mVm.InjectSimpleStruct( name, memberNames.data(), memberNames.size() );
+	bool const success = mVm.InjectSimpleStruct( name, memberNames.data(), memberNames.size() );
+	if( success )
+	{
+		mInjectedClasses.emplace_back( InjectedClass{ &classInfo, name } );
+		RF_ASSERT( mInjectedClasses.back().mName.empty() == false );
+	}
+	return success;
 }
 
 
@@ -784,7 +851,8 @@ bool OOLoader::PopulateClass( char const* rootVariableName, reflect::ClassInfo c
 
 bool OOLoader::PopulateClass( SquirrelVM::NestedTraversalPath scriptPath, reflect::ClassInfo const& classInfo, void* classInstance )
 {
-	return details::PopulateClassFromScript( mVm, scriptPath, classInfo, classInstance );
+	details::ScratchLookup const scratchLookup{ mInjectedClasses };
+	return details::PopulateClassFromScript( mVm, scratchLookup, scriptPath, classInfo, classInstance );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

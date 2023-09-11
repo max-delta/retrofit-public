@@ -21,6 +21,17 @@ class GAMESCRIPTING_API OOLoader
 	RF_NO_COPY( OOLoader );
 
 	//
+	// Structs
+public:
+	struct InjectedClass
+	{
+		reflect::ClassInfo const* mClassInfo = nullptr;
+		rftl::string mName;
+	};
+	using InjectedClasses = rftl::vector<InjectedClass>;
+
+
+	//
 	// Public methods
 public:
 	OOLoader();
@@ -60,6 +71,13 @@ public:
 	// Private data
 private:
 	SquirrelVM mVm;
+
+	// Used for being able to tie Squirrel instances back to ClassInfo's, by
+	//  tracking what types have been injected for later lookup
+	// NOTE: Can't just store the ClassInfo pointer into instances and blindly
+	//  defereference them later, because malicious script could modify the
+	//  pointers and attack the dereferencing code
+	InjectedClasses mInjectedClasses;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

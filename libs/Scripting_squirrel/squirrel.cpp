@@ -354,6 +354,31 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 	RF_ASSERT( SQ_SUCCEEDED( result ) );
 	AssertStackTypes( mVm, -1, OT_CLASS, OT_STRING, OT_TABLE );
 
+	// Add name to class
+	RF_TODO_ANNOTATION( "Find a way to get the name of the class on an instance using built-in features?" );
+	RF_TODO_ANNOTATION( "Find a way to make the name of the class constant?" );
+	{
+		// HACK: Will use a special member variable that defaults to the class
+		//  name on all new instances of the class, and hope that people don't
+		//  mess with it
+		ElementNameCharType const* const& specialMemberName = kReservedClassNameMemberName;
+		ElementNameCharType const* const& className = name;
+
+		// Add member with string as the default value, and no attribute
+		// NOTE: Using sq_rawnemmember(...) to prevent callbacks firing
+		// WARNING: Documentation is incorrect for sq_rawnemmember(...),
+		//  the stack behavior is not popped, and not read in the
+		//  documented order
+		sq_pushstring( mVm, specialMemberName, math::integer_cast<SQInteger>( strlen( specialMemberName ) ) );
+		sq_pushstring( mVm, className, math::integer_cast<SQInteger>( strlen( className ) ) );
+		sq_pushnull( mVm );
+		AssertStackTypes( mVm, -1, OT_NULL, OT_STRING, OT_STRING, OT_CLASS );
+		result = sq_rawnewmember( mVm, -4, false );
+		RF_ASSERT( SQ_SUCCEEDED( result ) );
+		AssertStackTypes( mVm, -1, OT_NULL, OT_STRING, OT_STRING, OT_CLASS );
+		sq_pop( mVm, 3 );
+	}
+
 	// Add members
 	if( numMembers > 0 )
 	{
@@ -361,6 +386,16 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 		for( size_t i = 0; i < numMembers; i++ )
 		{
 			ElementNameCharType const* const memberName = memberNames[i];
+
+			if( memberName == rftl::string_view( kReservedClassNameMemberName ) )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_SQUIRREL,
+					"Failed to inject member name on class '%s' because it"
+					" uses a reserved name '%s'",
+					name,
+					memberName );
+				return false;
+			}
 
 			// Add member with null as the default value, and no attribute
 			// NOTE: Using sq_rawnemmember(...) to prevent callbacks firing
