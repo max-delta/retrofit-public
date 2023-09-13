@@ -71,7 +71,7 @@ struct PtrTransformer
 		CreationPayload<void> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<T> voidPayload(
 			static_cast<decltype( CreationPayload<T>::mTarget )>( normalPayload.mTarget ),
-			reinterpret_cast<decltype( CreationPayload<T>::mRef )>( normalPayload.mRef ) );
+			normalPayload.mRef );
 		normalPayload.Clean();
 		out = UniquePtr<T>{ rftl::move( voidPayload ) };
 	}
@@ -80,7 +80,7 @@ struct PtrTransformer
 		CreationPayload<void const> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<T const> voidPayload(
 			static_cast<decltype( CreationPayload<T const>::mTarget )>( normalPayload.mTarget ),
-			reinterpret_cast<decltype( CreationPayload<T const>::mRef )>( normalPayload.mRef ) );
+			normalPayload.mRef );
 		normalPayload.Clean();
 		out = UniquePtr<T const>{ rftl::move( voidPayload ) };
 	}
@@ -89,7 +89,7 @@ struct PtrTransformer
 		CreationPayload<void> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<T> voidPayload(
 			static_cast<decltype( CreationPayload<T>::mTarget )>( normalPayload.mTarget ),
-			reinterpret_cast<decltype( CreationPayload<T>::mRef )>( normalPayload.mRef ) );
+			normalPayload.mRef );
 		normalPayload.Clean();
 		out = WeakPtr<T>{ voidPayload.mTarget, voidPayload.mRef };
 		voidPayload.Clean();
@@ -99,7 +99,7 @@ struct PtrTransformer
 		CreationPayload<void const> normalPayload = in.CreateTransferPayloadAndWipeSelf();
 		CreationPayload<T const> voidPayload(
 			static_cast<decltype( CreationPayload<T const>::mTarget )>( normalPayload.mTarget ),
-			reinterpret_cast<decltype( CreationPayload<T const>::mRef )>( normalPayload.mRef ) );
+			normalPayload.mRef );
 		normalPayload.Clean();
 		out = WeakPtr<T const>{ voidPayload.mTarget, voidPayload.mRef };
 		voidPayload.Clean();
