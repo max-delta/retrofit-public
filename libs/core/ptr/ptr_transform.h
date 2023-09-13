@@ -64,6 +64,19 @@ struct PtrTransformer
 		voidPayload.Clean();
 	}
 
+	// NOTE: This is basically a const_cast, which means you might be
+	//  introducing terrible memory corruption in cases where it's assumed that
+	//  you can't modify the value
+	static void PerformConstDroppingTransformation( UniquePtr<T const>&& in, UniquePtr<T>& out )
+	{
+		CreationPayload<T const> normalPayload = in.CreateTransferPayloadAndWipeSelf();
+		CreationPayload<T> unconstPayload(
+			const_cast<decltype( CreationPayload<T>::mTarget )>( normalPayload.mTarget ),
+			normalPayload.mRef );
+		normalPayload.Clean();
+		out = UniquePtr<T>{ rftl::move( unconstPayload ) };
+	}
+
 	// NOTE: This is basically a reinterpret_cast, which means you're
 	//  completely on your own for type-safety
 	static void PerformNonTypesafeTransformation( UniquePtr<void>&& in, UniquePtr<T>& out )

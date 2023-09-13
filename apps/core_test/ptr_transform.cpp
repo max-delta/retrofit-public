@@ -89,6 +89,25 @@ TEST( SharedPtr, TransformToUnique )
 
 
 
+TEST( UniquePtr, TransformToFromConst )
+{
+	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
+	ASSERT_TRUE( uptr1 != nullptr );
+
+	UniquePtr<int const> uptr2 = rftl::move( uptr1 );
+	ASSERT_TRUE( uptr1 == nullptr );
+	ASSERT_TRUE( uptr2 != nullptr );
+	ASSERT_EQ( *uptr2, 47 );
+
+	UniquePtr<int> uptr3;
+	PtrTransformer<int>::PerformConstDroppingTransformation( rftl::move( uptr2 ), uptr3 );
+	ASSERT_TRUE( uptr2 == nullptr );
+	ASSERT_TRUE( uptr3 != nullptr );
+	ASSERT_EQ( *uptr3, 47 );
+}
+
+
+
 TEST( UniquePtr, TransformToFromVoid )
 {
 	UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
