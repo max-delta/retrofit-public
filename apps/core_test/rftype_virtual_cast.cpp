@@ -3,6 +3,9 @@
 #include "core_rftype/VirtualCast.h"
 #include "core_rftype/CreateClassInfoDefinition.h"
 
+#include "core/ptr/unique_ptr.h"
+#include "core/ptr/default_creator.h"
+
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
@@ -507,9 +510,19 @@ TEST( VirtualCast, ReflectNull )
 	using Root = reflect::VirtualClassWithoutDestructor const;
 	reflect::ClassInfo const& classInfo = *details::Parent{}.GetVirtualClassInfo();
 
-	void const* const null = nullptr;
-	Root* const root = virtual_reflect_cast( classInfo, null );
-	ASSERT_EQ( root, nullptr );
+	// Raw
+	{
+		void const* const null = nullptr;
+		Root* const root = virtual_reflect_cast( classInfo, null );
+		ASSERT_EQ( root, nullptr );
+	}
+
+	// Ptr
+	{
+		UniquePtr<void> null = nullptr;
+		UniquePtr<Root> const root = virtual_reflect_ptr_cast( classInfo, rftl::move( null ) );
+		ASSERT_EQ( root, nullptr );
+	}
 }
 
 
@@ -521,28 +534,64 @@ TEST( VirtualCast, ReflectBasic )
 	{
 		// Single hop up to virtual
 		using Source = details::Parent const;
-		Source source = Source{};
-		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
 
-		Root* const root = virtual_reflect_cast( classInfo, &source );
-		ASSERT_NE( root, nullptr );
-		Root* const compilerImpl = &source;
-		ASSERT_EQ( root, compilerImpl );
-		void const* voided = root;
-		ASSERT_EQ( voided, &source );
+		// Raw
+		{
+			Source source = Source{};
+			reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+			Root* const root = virtual_reflect_cast( classInfo, &source );
+			ASSERT_NE( root, nullptr );
+			Root* const compilerImpl = &source;
+			ASSERT_EQ( root, compilerImpl );
+			void const* voided = root;
+			ASSERT_EQ( voided, &source );
+		}
+
+		// Ptr
+		{
+			UniquePtr<Source> source = DefaultCreator<Source>::Create();
+			reflect::ClassInfo const& classInfo = *source->GetVirtualClassInfo();
+			Source const* sourceAddr = source;
+
+			UniquePtr<Root> const root = virtual_reflect_ptr_cast( classInfo, UniquePtr<void const>( rftl::move( source ) ) );
+			ASSERT_NE( root, nullptr );
+			Root* const compilerImpl = sourceAddr;
+			ASSERT_EQ( root, compilerImpl );
+			void const* voided = root;
+			ASSERT_EQ( voided, sourceAddr );
+		}
 	}
 	{
 		// Double hop up to virtual
 		using Source = details::Child const;
-		Source source = Source{};
-		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
 
-		Root* const root = virtual_reflect_cast( classInfo, &source );
-		ASSERT_NE( root, nullptr );
-		Root* const compilerImpl = &source;
-		ASSERT_EQ( root, compilerImpl );
-		void const* voided = root;
-		ASSERT_EQ( voided, &source );
+		// Raw
+		{
+			Source source = Source{};
+			reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+			Root* const root = virtual_reflect_cast( classInfo, &source );
+			ASSERT_NE( root, nullptr );
+			Root* const compilerImpl = &source;
+			ASSERT_EQ( root, compilerImpl );
+			void const* voided = root;
+			ASSERT_EQ( voided, &source );
+		}
+
+		// Ptr
+		{
+			UniquePtr<Source> source = DefaultCreator<Source>::Create();
+			reflect::ClassInfo const& classInfo = *source->GetVirtualClassInfo();
+			Source const* sourceAddr = source;
+
+			UniquePtr<Root> const root = virtual_reflect_ptr_cast( classInfo, UniquePtr<void const>( rftl::move( source ) ) );
+			ASSERT_NE( root, nullptr );
+			Root* const compilerImpl = sourceAddr;
+			ASSERT_EQ( root, compilerImpl );
+			void const* voided = root;
+			ASSERT_EQ( voided, sourceAddr );
+		}
 	}
 }
 
@@ -555,12 +604,26 @@ TEST( VirtualCast, ReflectAmbiguous )
 	{
 		// Ambiguous garbage, can't determine path to root
 		using Source = details::MultiChild const;
-		Source source = Source{};
-		reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
 
-		Root* const root = virtual_reflect_cast( classInfo, &source );
-		ASSERT_EQ( root, nullptr );
-		//Root* const compilerImpl = &source; // Compile error
+		// Raw
+		{
+			Source source = Source{};
+			reflect::ClassInfo const& classInfo = *source.GetVirtualClassInfo();
+
+			Root* const root = virtual_reflect_cast( classInfo, &source );
+			ASSERT_EQ( root, nullptr );
+			//Root* const compilerImpl = &source; // Compile error
+		}
+
+		// Ptr
+		{
+			UniquePtr<Source> source = DefaultCreator<Source>::Create();
+			reflect::ClassInfo const& classInfo = *source->GetVirtualClassInfo();
+
+			UniquePtr<Root> const root = virtual_reflect_ptr_cast( classInfo, UniquePtr<void const>( rftl::move( source ) ) );
+			ASSERT_EQ( root, nullptr );
+			// As with raw, this just doesn't work
+		}
 	}
 }
 

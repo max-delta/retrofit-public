@@ -1,5 +1,8 @@
 #pragma once
 
+#include "core/ptr/ptr_fwd.h"
+
+
 // Forwards
 namespace RF::reflect {
 struct ClassInfo;
@@ -36,6 +39,12 @@ reflect::VirtualClassWithoutDestructor const* virtual_reflect_cast(
 reflect::VirtualClassWithoutDestructor* virtual_reflect_cast(
 	reflect::ClassInfo const& classInfo,
 	void* classLocation );
+UniquePtr<reflect::VirtualClassWithoutDestructor const> virtual_reflect_ptr_cast(
+	reflect::ClassInfo const& classInfo,
+	UniquePtr<void const>&& classLocation );
+UniquePtr<reflect::VirtualClassWithoutDestructor> virtual_reflect_ptr_cast(
+	reflect::ClassInfo const& classInfo,
+	UniquePtr<void>&& classLocation );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
