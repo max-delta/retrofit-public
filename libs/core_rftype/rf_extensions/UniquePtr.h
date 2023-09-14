@@ -117,6 +117,8 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return GetTargetByKeyHelper<AccessedType>( root, key, keyInfo, value, valueInfo );
 	}
 
+	// Enable only if ValueType can be default constructed
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value, int>::type = 0>
 	static bool InsertVariableDefault( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
@@ -151,6 +153,8 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return true;
 	}
 
+	// Enable only if ValueType can be default constructed
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value, int>::type = 0>
 	static bool InsertVariableViaCopy( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo )
 	{
 		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
@@ -200,6 +204,28 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return true;
 	}
 
+	// Conditional function pointer checks
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value, int>::type = 0>
+	static ExtensionAccessor::FunctPtrInsertVariableDefault Conditional_InsertVariableDefault_Pointer()
+	{
+		return &InsertVariableDefault;
+	}
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value == false, int>::type = 0>
+	static ExtensionAccessor::FunctPtrInsertVariableDefault Conditional_InsertVariableDefault_Pointer()
+	{
+		return nullptr;
+	}
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value, int>::type = 0>
+	static ExtensionAccessor::FunctPtrInsertVariableViaCopy Conditional_InsertVariableViaCopy_Pointer()
+	{
+		return &InsertVariableViaCopy;
+	}
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_default_constructible<ValueTypeTest>::value == false, int>::type = 0>
+	static ExtensionAccessor::FunctPtrInsertVariableViaCopy Conditional_InsertVariableViaCopy_Pointer()
+	{
+		return nullptr;
+	}
+
 	static ExtensionAccessor Get()
 	{
 		ExtensionAccessor retVal{};
@@ -216,9 +242,9 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		retVal.mGetTargetByKey = &GetTargetByKey;
 		retVal.mGetMutableTargetByKey = &GetMutableTargetByKey;
 
-		retVal.mInsertVariableDefault = &InsertVariableDefault;
+		retVal.mInsertVariableDefault = Conditional_InsertVariableDefault_Pointer();
 		// TODO: Move support
-		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
+		retVal.mInsertVariableViaCopy = Conditional_InsertVariableViaCopy_Pointer();
 
 		return retVal;
 	}
