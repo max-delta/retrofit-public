@@ -39,6 +39,7 @@
 		<ClInclude Include="TypeDatabase.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="CoreLibrariesMetaInfo.cpp" />
 		<ClCompile Include="CreateClassInfoDefinition.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="Example.cpp" />

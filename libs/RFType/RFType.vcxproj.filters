@@ -14,5 +14,6 @@
 		<ClCompile Include="TypeDatabase.cpp" />
 		<ClCompile Include="CreateClassInfoDefinition.cpp" />
 		<ClCompile Include="Example.cpp" />
+		<ClCompile Include="CoreLibrariesMetaInfo.cpp" />
 	</ItemGroup>
 </Project>
