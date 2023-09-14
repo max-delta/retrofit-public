@@ -106,8 +106,25 @@ bool ObjectSerializer::SerializeSingleObject(
 			case RF::rftype::TypeTraverser::TraversalType::Accessor:
 			{
 				// onMemberVariable(...) should've already prepared this node
-				exporter.Property_IndentFromCurrentProperty();
-				shouldRecurse = true;
+
+				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
+				RF_ASSERT( typeInfo.mAccessor != nullptr );
+				void const* const location = varInst.mVariableLocation;
+				RF_ASSERT( location != nullptr );
+				size_t const numVariables = typeInfo.mAccessor->mGetNumVariables( location );
+				if( numVariables > 0 )
+				{
+					exporter.Property_IndentFromCurrentProperty();
+					shouldRecurse = true;
+				}
+				else
+				{
+					// Don't recurse or indent if there's no variables, since
+					//  all that would happen is an immediate outdent, which is
+					//  just wasteful, and would generally be suspected as a
+					//  bug when encountered
+					shouldRecurse = false;
+				}
 				break;
 			}
 			case RF::rftype::TypeTraverser::TraversalType::AccessorKey:
