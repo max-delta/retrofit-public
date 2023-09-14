@@ -216,6 +216,7 @@ bool PopFromChain( WalkChain& fullChain )
 
 	UniquePtr<WalkNode> extracted = rftl::move( fullChain.back() );
 	RF_ASSERT( extracted != nullptr );
+	RF_ASSERT( extracted->mVariableTypeInfo != nullptr );
 	fullChain.pop_back();
 
 	RF_ASSERT( fullChain.back() != nullptr );
