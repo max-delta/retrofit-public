@@ -108,6 +108,7 @@ struct SQReflectTestClass
 	SQReflectTestNestedClass mNested;
 	RF::UniquePtr<int32_t> mUniqueInt;
 	RF::UniquePtr<SQReflectTestNestedClass> mUniqueNested;
+	RF::UniquePtr<RF::reflect::VirtualClass> mUniqueVirtual;
 };
 
 RFTYPE_CREATE_META( SQReflectTestContainedClass )
@@ -152,6 +153,7 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_META().ExtensionProperty( "mUniqueInt", &SQReflectTestClass::mUniqueInt );
 	RFTYPE_META().ExtensionProperty( "mUniqueNested", &SQReflectTestClass::mUniqueNested );
+	RFTYPE_META().ExtensionProperty( "mUniqueVirtual", &SQReflectTestClass::mUniqueVirtual );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 
 	// TODO: Probably need a partial specialization for UniquePtr<Copyable> vs
@@ -846,6 +848,7 @@ void SQReflectTest()
 			"x.mUniqueInt = [3];\n"
 			"x.mUniqueNested = [SQReflectTestNestedClass()];\n"
 			"x.mUniqueNested[0].mBool = true;\n"
+			"x.mUniqueVirtual = [];\n"
 			"\n";
 		bool const sourceAdd = loader.AddSourceFromBuffer( source, sizeof( source ) );
 		RF_ASSERT( sourceAdd );
@@ -906,6 +909,7 @@ void SQReflectTest()
 		RF_ASSERT( *instance.mUniqueInt == 3 );
 		RF_ASSERT( instance.mUniqueNested != nullptr );
 		RF_ASSERT( instance.mUniqueNested->mBool == true );
+		RF_ASSERT( instance.mUniqueVirtual == nullptr );
 	};
 	verify( testClass );
 
