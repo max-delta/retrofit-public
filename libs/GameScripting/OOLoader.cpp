@@ -22,9 +22,9 @@ namespace details {
 
 struct ScratchLookup
 {
-	RF_NO_COPY( ScratchLookup );
-
 	OOLoader::InjectedClasses const& mInjectedClasses;
+
+	RF_ACK_AGGREGATE_NOCOPY();
 };
 
 

@@ -7,7 +7,7 @@
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename ReflectedClass, template<typename> typename Creator>
+template<typename ReflectedClass, template<typename...> typename Creator>
 inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 	ResourceTypeIdentifier typeID,
 	file::VFSPath const& path )
@@ -30,7 +30,7 @@ inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromFile(
 
 
 
-template<typename ReflectedClass, template<typename> typename Creator>
+template<typename ReflectedClass, template<typename...> typename Creator>
 inline UniquePtr<ReflectedClass> ResourceLoader::LoadClassFromBuffer(
 	ResourceTypeIdentifier typeID,
 	rftl::string_view buffer )
