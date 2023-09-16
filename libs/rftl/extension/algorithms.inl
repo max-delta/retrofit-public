@@ -62,6 +62,16 @@ inline size_t erase_duplicates( Container& container )
 
 
 
+template<typename Container>
+auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container
+{
+	Container retVal = container;
+	retVal.emplace_back( value );
+	return retVal;
+}
+
+
+
 template<typename DestContainer, typename SourceContainer>
 auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator
 {

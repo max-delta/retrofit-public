@@ -18,6 +18,9 @@ auto erase_if( Container& container, UnaryPredicate const& condition ) -> typena
 template<typename Container>
 size_t erase_duplicates( Container& container );
 
+template<typename Container>
+auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container;
+
 template<typename DestContainer, typename SourceContainer>
 auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator;
 
