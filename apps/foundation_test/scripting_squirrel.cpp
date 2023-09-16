@@ -438,6 +438,9 @@ TEST( Squirrel, InjectSimpleStruct )
 		ASSERT_NE( secondVal, nullptr );
 		ASSERT_EQ( *secondVal, "second" );
 	}
+
+	rftl::string const instanceClassName = vm.GetGlobalInstanceClassName( "x" );
+	ASSERT_EQ( instanceClassName, kClassName );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
