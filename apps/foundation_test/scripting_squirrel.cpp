@@ -16,11 +16,13 @@ TEST( Squirrel, EmptyVM )
 TEST( Squirrel, GlobalInteger )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- 5;"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
 	ASSERT_NE( ref, nullptr );
@@ -34,11 +36,13 @@ TEST( Squirrel, GlobalInteger )
 TEST( Squirrel, GlobalFloat )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- 7.0;"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
 	ASSERT_NE( ref, nullptr );
@@ -52,11 +56,13 @@ TEST( Squirrel, GlobalFloat )
 TEST( Squirrel, GlobalBoolean )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- true;"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
 	ASSERT_NE( ref, nullptr );
@@ -70,11 +76,13 @@ TEST( Squirrel, GlobalBoolean )
 TEST( Squirrel, GlobalNull )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- null;"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	reflect::Value const* const ref = rftl::get_if<reflect::Value>( &elem );
 	ASSERT_NE( ref, nullptr );
@@ -88,11 +96,13 @@ TEST( Squirrel, GlobalNull )
 TEST( Squirrel, GlobalString )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- \"STRING\";"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::String const* const val = rftl::get_if<SquirrelVM::String>( &elem );
 	ASSERT_NE( val, nullptr );
@@ -104,20 +114,25 @@ TEST( Squirrel, GlobalString )
 TEST( Squirrel, GlobalArray )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"x <- [\"first\", \"second\"];"
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::ArrayTag const* const val = rftl::get_if<SquirrelVM::ArrayTag>( &elem );
 	ASSERT_NE( val, nullptr );
+
 	SquirrelVM::ElementArray const elemArr = vm.GetGlobalVariableAsArray( "x" );
 	{
 		ASSERT_EQ( elemArr.size(), 2 );
+
 		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemArr[0] );
 		ASSERT_NE( firstVal, nullptr );
 		ASSERT_EQ( *firstVal, "first" );
+
 		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemArr[1] );
 		ASSERT_NE( secondVal, nullptr );
 		ASSERT_EQ( *secondVal, "second" );
@@ -129,6 +144,7 @@ TEST( Squirrel, GlobalArray )
 TEST( Squirrel, GlobalClass )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"class C\n"
 		"{\n"
@@ -142,22 +158,27 @@ TEST( Squirrel, GlobalClass )
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 	ASSERT_NE( val, nullptr );
+
 	SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
 	{
 		ASSERT_EQ( elemMap.size(), 3 );
+
 		SquirrelVM::String const firstIndex = "a";
 		ASSERT_EQ( elemMap.count( firstIndex ), 1 );
 		SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 		ASSERT_NE( firstVal, nullptr );
 		ASSERT_EQ( *firstVal, "first" );
+
 		SquirrelVM::String const secondIndex = "b";
 		ASSERT_EQ( elemMap.count( secondIndex ), 1 );
 		SquirrelVM::String const* const secondVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( secondIndex ) );
 		ASSERT_NE( secondVal, nullptr );
 		ASSERT_EQ( *secondVal, "second" );
+
 		SquirrelVM::String const defaultIndex = "c";
 		ASSERT_EQ( elemMap.count( defaultIndex ), 1 );
 		SquirrelVM::String const* const defaultVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( defaultIndex ) );
@@ -189,6 +210,7 @@ TEST( Squirrel, NestedEmpty )
 TEST( Squirrel, NestedClass )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"class C\n"
 		"{\n"
@@ -203,20 +225,24 @@ TEST( Squirrel, NestedClass )
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	{
 		SquirrelVM::NestedTraversalPath const path = { "x" };
 
 		SquirrelVM::Element const elem = vm.GetNestedVariable( path );
 		SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 		ASSERT_NE( val, nullptr );
+
 		SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
 		{
 			ASSERT_EQ( elemMap.size(), 2 );
+
 			SquirrelVM::String const firstIndex = "a";
 			ASSERT_EQ( elemMap.count( firstIndex ), 1 );
 			SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 			ASSERT_NE( firstVal, nullptr );
 			ASSERT_EQ( *firstVal, "first" );
+
 			SquirrelVM::String const secondIndex = "b";
 			ASSERT_EQ( elemMap.count( secondIndex ), 1 );
 			SquirrelVM::InstanceTag const* const secondVal = rftl::get_if<SquirrelVM::InstanceTag>( &elemMap.at( secondIndex ) );
@@ -237,14 +263,17 @@ TEST( Squirrel, NestedClass )
 		SquirrelVM::Element const elem = vm.GetNestedVariable( path );
 		SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 		ASSERT_NE( val, nullptr );
+
 		SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
 		{
 			ASSERT_EQ( elemMap.size(), 2 );
+
 			SquirrelVM::String const firstIndex = "a";
 			ASSERT_EQ( elemMap.count( firstIndex ), 1 );
 			SquirrelVM::String const* const firstVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( firstIndex ) );
 			ASSERT_NE( firstVal, nullptr );
 			ASSERT_EQ( *firstVal, "second" );
+
 			SquirrelVM::String const secondIndex = "b";
 			ASSERT_EQ( elemMap.count( secondIndex ), 1 );
 			reflect::Value const* const secondVal = rftl::get_if<reflect::Value>( &elemMap.at( secondIndex ) );
@@ -279,6 +308,7 @@ TEST( Squirrel, NestedClass )
 TEST( Squirrel, ArrayClasses )
 {
 	SquirrelVM vm;
+
 	constexpr char source[] =
 		"class C\n"
 		"{\n"
@@ -290,17 +320,21 @@ TEST( Squirrel, ArrayClasses )
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	{
 		SquirrelVM::NestedTraversalPath const path = { "x" };
 
 		SquirrelVM::Element const elem = vm.GetNestedVariable( path );
 		SquirrelVM::ArrayTag const* const val = rftl::get_if<SquirrelVM::ArrayTag>( &elem );
 		ASSERT_NE( val, nullptr );
+
 		SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( path );
 		{
 			ASSERT_EQ( elemArr.size(), 2 );
+
 			SquirrelVM::InstanceTag const* const firstVal = rftl::get_if<SquirrelVM::InstanceTag>( &elemArr[0] );
 			ASSERT_NE( firstVal, nullptr );
+
 			SquirrelVM::InstanceTag const* const secondVal = rftl::get_if<SquirrelVM::InstanceTag>( &elemArr[1] );
 			ASSERT_NE( secondVal, nullptr );
 		}
@@ -311,9 +345,11 @@ TEST( Squirrel, ArrayClasses )
 		SquirrelVM::Element const elem = vm.GetNestedVariable( path );
 		SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 		ASSERT_NE( val, nullptr );
+
 		SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
 		{
 			ASSERT_EQ( elemMap.size(), 1 );
+
 			SquirrelVM::String const index = "a";
 			ASSERT_EQ( elemMap.count( index ), 1 );
 			SquirrelVM::String const* const strVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( index ) );
@@ -335,9 +371,11 @@ TEST( Squirrel, ArrayClasses )
 		SquirrelVM::Element const elem = vm.GetNestedVariable( path );
 		SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 		ASSERT_NE( val, nullptr );
+
 		SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( path );
 		{
 			ASSERT_EQ( elemMap.size(), 1 );
+
 			SquirrelVM::String const index = "a";
 			ASSERT_EQ( elemMap.count( index ), 1 );
 			SquirrelVM::String const* const strVal = rftl::get_if<SquirrelVM::String>( &elemMap.at( index ) );
@@ -360,10 +398,12 @@ TEST( Squirrel, ArrayClasses )
 TEST( Squirrel, InjectSimpleStruct )
 {
 	SquirrelVM vm;
+
 	static constexpr char const kClassName[] = "C";
 	static constexpr char const* kMemberNames[] = { "a", "b" };
 	bool const inject = vm.InjectSimpleStruct( kClassName, kMemberNames, rftl::extent<decltype( kMemberNames )>::value );
 	ASSERT_TRUE( inject );
+
 	constexpr char source[] =
 		"x <- C();\n"
 		"x.a = \"first\";\n"
@@ -371,9 +411,11 @@ TEST( Squirrel, InjectSimpleStruct )
 		"\n";
 	bool const sourceAdd = vm.AddSourceFromBuffer( source );
 	ASSERT_TRUE( sourceAdd );
+
 	SquirrelVM::Element const elem = vm.GetGlobalVariable( "x" );
 	SquirrelVM::InstanceTag const* const val = rftl::get_if<SquirrelVM::InstanceTag>( &elem );
 	ASSERT_NE( val, nullptr );
+
 	SquirrelVM::ElementMap const elemMap = vm.GetGlobalVariableAsInstance( "x" );
 	{
 		ASSERT_EQ( elemMap.size(), 3 );
