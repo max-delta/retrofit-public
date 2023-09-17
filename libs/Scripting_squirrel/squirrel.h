@@ -9,6 +9,7 @@
 #include "rftl/vector"
 #include "rftl/unordered_map"
 #include "rftl/string"
+#include "rftl/string_view"
 
 //
 // Forwards
@@ -77,6 +78,7 @@ public:
 	struct SCRIPTINGSQUIRREL_API NestedTraversalNode
 	{
 		NestedTraversalNode() = default;
+		NestedTraversalNode( rftl::string_view const& identifier );
 		NestedTraversalNode( rftl::string const& identifier );
 		NestedTraversalNode( char const* identifier );
 
@@ -113,14 +115,10 @@ public:
 
 	bool InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers );
 
-	Element GetGlobalVariable( rftl::string const& name );
-	Element GetGlobalVariable( char const* name );
-	ElementArray GetGlobalVariableAsArray( rftl::string const& name );
-	ElementArray GetGlobalVariableAsArray( char const* name );
-	ElementMap GetGlobalVariableAsInstance( rftl::string const& name );
-	ElementMap GetGlobalVariableAsInstance( char const* name );
-	rftl::string GetGlobalInstanceClassName( rftl::string const& name );
-	rftl::string GetGlobalInstanceClassName( char const* name );
+	Element GetGlobalVariable( rftl::string_view const& name );
+	ElementArray GetGlobalVariableAsArray( rftl::string_view const& name );
+	ElementMap GetGlobalVariableAsInstance( rftl::string_view const& name );
+	rftl::string GetGlobalInstanceClassName( rftl::string_view const& name );
 
 	Element GetNestedVariable( NestedTraversalPath const& path );
 	ElementArray GetNestedVariableAsArray( NestedTraversalPath const& path );

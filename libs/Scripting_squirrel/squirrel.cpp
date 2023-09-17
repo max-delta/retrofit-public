@@ -246,12 +246,19 @@ SquirrelVM::ElementMap GetElementMapFromStack( HSQUIRRELVM vm )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const& identifier )
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string_view const& identifier )
 	: mIdentifier( identifier )
 {
 	//
 }
 
+
+
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string const& identifier )
+	: mIdentifier( identifier )
+{
+	//
+}
 
 
 SquirrelVM::NestedTraversalNode::NestedTraversalNode( char const* identifier )
@@ -424,58 +431,30 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string const& name )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string_view const& name )
 {
-	return GetGlobalVariable( name.c_str(), name.length() );
+	return GetGlobalVariable( name.data(), name.length() );
 }
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( char const* name )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string_view const& name )
 {
-	return GetGlobalVariable( name, strlen( name ) );
+	return GetGlobalVariableAsArray( name.data(), name.length() );
 }
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string const& name )
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string_view const& name )
 {
-	return GetGlobalVariableAsArray( name.c_str(), name.length() );
+	return GetGlobalVariableAsInstance( name.data(), name.length() );
 }
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( char const* name )
+rftl::string SquirrelVM::GetGlobalInstanceClassName( rftl::string_view const& name )
 {
-	return GetGlobalVariableAsArray( name, strlen( name ) );
-}
-
-
-
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string const& name )
-{
-	return GetGlobalVariableAsInstance( name.c_str(), name.length() );
-}
-
-
-
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( char const* name )
-{
-	return GetGlobalVariableAsInstance( name, strlen( name ) );
-}
-
-
-
-rftl::string SquirrelVM::GetGlobalInstanceClassName( rftl::string const& name )
-{
-	return GetGlobalInstanceClassName( name.c_str(), name.length() );
-}
-
-
-
-rftl::string SquirrelVM::GetGlobalInstanceClassName( char const* name )
-{
-	return GetGlobalInstanceClassName( name, strlen( name ) );
+	return GetGlobalInstanceClassName( name.data(), name.length() );
 }
 
 
@@ -548,14 +527,14 @@ SquirrelVM::ElementMap SquirrelVM::GetNestedVariableAsInstance( NestedTraversalP
 
 rftl::string SquirrelVM::GetNestedInstanceClassName( NestedTraversalPath const& path )
 {
-	SquirrelVM::NestedTraversalPath const variablePath = rftl::concatenate( path, SquirrelVM::kReservedClassNameMemberName );
-	SquirrelVM::Element const instanceClassNameElement = GetNestedVariable( variablePath );
-	if( rftl::holds_alternative<SquirrelVM::String>( instanceClassNameElement ) == false )
+	NestedTraversalPath const variablePath = rftl::concatenate( path, kReservedClassNameMemberName );
+	Element const instanceClassNameElement = GetNestedVariable( variablePath );
+	if( rftl::holds_alternative<String>( instanceClassNameElement ) == false )
 	{
 		RFLOG_NOTIFY( variablePath, RFCAT_SQUIRREL, "Expected class name to be a string" );
 		return {};
 	}
-	SquirrelVM::String const& instanceClassName = rftl::get<SquirrelVM::String>( instanceClassNameElement );
+	String const& instanceClassName = rftl::get<String>( instanceClassNameElement );
 	if( instanceClassName.empty() )
 	{
 		RFLOG_NOTIFY( variablePath, RFCAT_SQUIRREL, "Expected class name to not be empty" );
