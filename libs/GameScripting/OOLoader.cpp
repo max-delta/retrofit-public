@@ -313,6 +313,8 @@ bool ProcessElementArrayPopulationWork(
 		size_t const key = indexCounter;
 		indexCounter++;
 
+		SquirrelVM::NestedTraversalPath const targetPath = rftl::concatenate( currentPath, ( rftl::stringstream{} << key ).str() );
+
 		// We'll need to know how to prepare/convert into the target
 		reflect::VariableTypeInfo const targetInfo = accessor->mGetTargetInfoByKey( location, &key, keyInfo );
 
@@ -361,8 +363,7 @@ bool ProcessElementArrayPopulationWork(
 			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
 			newWorkItem.mTarget.mLocation = arrayItemLoc;
 			newWorkItem.mTarget.mIdentifier = "STRING_ARRAY";
-			newWorkItem.mPath = currentPath;
-			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			newWorkItem.mPath = targetPath;
 			workItems.emplace_back( rftl::move( newWorkItem ) );
 			continue;
 		}
@@ -398,8 +399,7 @@ bool ProcessElementArrayPopulationWork(
 			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
 			newWorkItem.mTarget.mLocation = arrayItemLoc;
 			newWorkItem.mTarget.mIdentifier = "ARRAY_ARRAY";
-			newWorkItem.mPath = currentPath;
-			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			newWorkItem.mPath = targetPath;
 			workItems.emplace_back( rftl::move( newWorkItem ) );
 			continue;
 		}
@@ -435,8 +435,7 @@ bool ProcessElementArrayPopulationWork(
 			newWorkItem.mTarget.mTypeInfo = arrayItemInfo;
 			newWorkItem.mTarget.mLocation = arrayItemLoc;
 			newWorkItem.mTarget.mIdentifier = "ARRAY_ITEM";
-			newWorkItem.mPath = currentPath;
-			newWorkItem.mPath.emplace_back( ( rftl::stringstream{} << key ).str() );
+			newWorkItem.mPath = targetPath;
 			workItems.emplace_back( rftl::move( newWorkItem ) );
 			continue;
 		}
