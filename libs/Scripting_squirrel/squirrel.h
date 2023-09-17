@@ -129,11 +129,6 @@ public:
 	//
 	// Private methods
 private:
-	Element GetGlobalVariable( ElementNameCharType const* name, size_t nameLen );
-	ElementArray GetGlobalVariableAsArray( ElementNameCharType const* name, size_t nameLen );
-	ElementMap GetGlobalVariableAsInstance( ElementNameCharType const* name, size_t nameLen );
-	rftl::string GetGlobalInstanceClassName( ElementNameCharType const* name, size_t nameLen );
-
 	bool NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTraversalPath const& path, Element& currentElement );
 
 

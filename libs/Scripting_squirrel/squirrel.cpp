@@ -433,28 +433,64 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 
 SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string_view const& name )
 {
-	return GetGlobalVariable( name.data(), name.length() );
+	VMRootStackGuard const stackGuard( mVm );
+
+	// Start from root
+	sq_pushroottable( mVm );
+	AssertStackTypes( mVm, -1, OT_TABLE );
+
+	// Lookup
+	sq_pushstring( mVm, name.data(), math::integer_cast<SQInteger>( name.length() ) );
+	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
+	SQRESULT const result = sq_get( mVm, -2 );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+
+	return GetElementFromStack( mVm, -1 );
 }
 
 
 
 SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string_view const& name )
 {
-	return GetGlobalVariableAsArray( name.data(), name.length() );
+	VMRootStackGuard const stackGuard( mVm );
+
+	// Start from root
+	sq_pushroottable( mVm );
+	AssertStackTypes( mVm, -1, OT_TABLE );
+
+	// Lookup
+	sq_pushstring( mVm, name.data(), math::integer_cast<SQInteger>( name.length() ) );
+	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
+	SQRESULT const result = sq_get( mVm, -2 );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+
+	return GetElementArrayFromStack( mVm );
 }
 
 
 
 SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string_view const& name )
 {
-	return GetGlobalVariableAsInstance( name.data(), name.length() );
+	VMRootStackGuard const stackGuard( mVm );
+
+	// Start from root
+	sq_pushroottable( mVm );
+	AssertStackTypes( mVm, -1, OT_TABLE );
+
+	// Lookup
+	sq_pushstring( mVm, name.data(), math::integer_cast<SQInteger>( name.length() ) );
+	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
+	SQRESULT const result = sq_get( mVm, -2 );
+	RF_ASSERT( SQ_SUCCEEDED( result ) );
+
+	return GetElementMapFromStack( mVm );
 }
 
 
 
 rftl::string SquirrelVM::GetGlobalInstanceClassName( rftl::string_view const& name )
 {
-	return GetGlobalInstanceClassName( name.data(), name.length() );
+	return GetNestedInstanceClassName( { name } );
 }
 
 
@@ -544,70 +580,6 @@ rftl::string SquirrelVM::GetNestedInstanceClassName( NestedTraversalPath const& 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( ElementNameCharType const* name, size_t nameLen )
-{
-	VMRootStackGuard const stackGuard( mVm );
-
-	// Start from root
-	sq_pushroottable( mVm );
-	AssertStackTypes( mVm, -1, OT_TABLE );
-
-	// Lookup
-	sq_pushstring( mVm, name, math::integer_cast<SQInteger>( nameLen ) );
-	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
-	SQRESULT const result = sq_get( mVm, -2 );
-	RF_ASSERT( SQ_SUCCEEDED( result ) );
-
-	return GetElementFromStack( mVm, -1 );
-}
-
-
-
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( ElementNameCharType const* name, size_t nameLen )
-{
-	VMRootStackGuard const stackGuard( mVm );
-
-	// Start from root
-	sq_pushroottable( mVm );
-	AssertStackTypes( mVm, -1, OT_TABLE );
-
-	// Lookup
-	sq_pushstring( mVm, name, math::integer_cast<SQInteger>( nameLen ) );
-	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
-	SQRESULT const result = sq_get( mVm, -2 );
-	RF_ASSERT( SQ_SUCCEEDED( result ) );
-
-	return GetElementArrayFromStack( mVm );
-}
-
-
-
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( ElementNameCharType const* name, size_t nameLen )
-{
-	VMRootStackGuard const stackGuard( mVm );
-
-	// Start from root
-	sq_pushroottable( mVm );
-	AssertStackTypes( mVm, -1, OT_TABLE );
-
-	// Lookup
-	sq_pushstring( mVm, name, math::integer_cast<SQInteger>( nameLen ) );
-	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
-	SQRESULT const result = sq_get( mVm, -2 );
-	RF_ASSERT( SQ_SUCCEEDED( result ) );
-
-	return GetElementMapFromStack( mVm );
-}
-
-
-
-rftl::string SquirrelVM::GetGlobalInstanceClassName( ElementNameCharType const* name, size_t nameLen )
-{
-	return GetNestedInstanceClassName( { name } );
-}
-
-
 
 bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTraversalPath const& path, Element& currentElement )
 {
