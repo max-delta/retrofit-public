@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "TypeDatabase.h"
 
-#include "core/macros.h"
-#include "core/meta/LazyInitSingleton.h"
 #include "core_rftype/Identifier.h"
+
+#include "core/meta/LazyInitSingleton.h"
+#include "core/macros.h"
 
 #include "rftl/memory"
 

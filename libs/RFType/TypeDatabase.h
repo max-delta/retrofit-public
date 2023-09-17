@@ -2,15 +2,11 @@
 #include "project.h"
 
 #include "core_math/Hash.h"
+#include "core_reflect/ReflectFwd.h"
 
 #include "rftl/unordered_map"
 #include "rftl/string"
 
-
-// Forwards
-namespace RF::reflect {
-	struct ClassInfo;
-}
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
