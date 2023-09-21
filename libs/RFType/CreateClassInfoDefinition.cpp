@@ -36,5 +36,17 @@ void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo
 	}
 }
 
+
+
+void GlobalRegisterNewConstructorForClass( rftl::function<ConstructedType()>&& constructor, reflect::ClassInfo const& classInfo )
+{
+	bool const success = TypeDatabase::GetGlobalMutableInstance().RegisterNewConstructorForClass( rftl::move( constructor ), classInfo );
+	RF_ASSERT( success );
+	if( success == false )
+	{
+		rftl::abort();
+	}
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

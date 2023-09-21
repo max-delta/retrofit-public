@@ -30,6 +30,8 @@
 		<ClInclude Include="rf_extensions\UniquePtr.h">
 			<Filter>rf_extensions</Filter>
 		</ClInclude>
+		<ClInclude Include="ConstructedType.h" />
+		<ClInclude Include="RFTypeFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -48,6 +50,7 @@
 			<Filter>rf_extensions</Filter>
 		</ClCompile>
 		<ClCompile Include="VirtualCast.cpp" />
+		<ClCompile Include="ConstructedType.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="stl_extensions">

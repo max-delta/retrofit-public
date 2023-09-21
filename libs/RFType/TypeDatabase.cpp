@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "TypeDatabase.h"
 
+#include "core_rftype/ConstructedType.h"
 #include "core_rftype/Identifier.h"
 
 #include "core/meta/LazyInitSingleton.h"
@@ -49,6 +50,42 @@ reflect::ClassInfo const* TypeDatabase::GetClassInfoByHash( math::HashVal64 cons
 
 	RF_ASSERT( iter->second.mClassInfo != nullptr );
 	return iter->second.mClassInfo;
+}
+
+
+
+bool TypeDatabase::RegisterNewConstructorForClass( TypeConstructorFunc&& constructor, reflect::ClassInfo const& classInfo )
+{
+	void const* const address = &classInfo;
+
+	if( constructor == nullptr )
+	{
+		return false;
+	}
+
+	if( mConstructorByClassInfoAddress.count( address ) != 0 )
+	{
+		return false;
+	}
+
+	mConstructorByClassInfoAddress[address] = rftl::move( constructor );
+	return true;
+}
+
+
+
+ConstructedType TypeDatabase::ConstructClass( reflect::ClassInfo const& classInfo ) const
+{
+	void const* const address = &classInfo;
+
+	ConstructorByClassInfoAddress::const_iterator const iter = mConstructorByClassInfoAddress.find( address );
+	if( iter == mConstructorByClassInfoAddress.end() )
+	{
+		return {};
+	}
+
+	RF_ASSERT( iter->second != nullptr );
+	return iter->second();
 }
 
 

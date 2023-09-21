@@ -29,10 +29,12 @@
 	<ItemGroup>
 		<ClInclude Include="ClassInfoAccessor.h" />
 		<ClInclude Include="ClassInfoCompositor.h" />
+		<ClInclude Include="ConstructedType.h" />
 		<ClInclude Include="CreateClassInfoDeclaration.h" />
 		<ClInclude Include="CreateClassInfoDefinition.h" />
 		<ClInclude Include="ExtensionAccessorLookup.h" />
 		<ClInclude Include="Identifier.h" />
+		<ClInclude Include="RFTypeFwd.h" />
 		<ClInclude Include="rf_extensions\stdafx.h" />
 		<ClInclude Include="rf_extensions\UniquePtr.h" />
 		<ClInclude Include="stdafx.h" />
@@ -46,6 +48,7 @@
 		<ClInclude Include="VirtualPtrCast.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="ConstructedType.cpp" />
 		<ClCompile Include="Identifier.cpp" />
 		<ClCompile Include="rf_extensions\UniquePtr.cpp" />
 		<ClCompile Include="stdafx.cpp">

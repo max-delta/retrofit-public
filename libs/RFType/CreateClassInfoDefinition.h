@@ -1,13 +1,21 @@
 #pragma once
 #include "project.h"
 
+#include "core_rftype/ConstructedType.h"
 #include "core_rftype/CreateClassInfoDefinition.h"
+
+#include "core/ptr/default_creator.h"
+
+#include "rftl/functional"
+
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 RFTYPE_API void GlobalRegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
 RFTYPE_API void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo const& classInfo );
+
+RFTYPE_API void GlobalRegisterNewConstructorForClass( rftl::function<ConstructedType()>&& constructor, reflect::ClassInfo const& classInfo );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
@@ -29,3 +37,12 @@ RFTYPE_API void GlobalRegisterNewClassByQualifiedName( char const* name, reflect
 #define RFTYPE_REGISTER_BY_QUALIFIED_NAME( CLASSNAME ) \
 	static_assert( alignof(::CLASSNAME) != 123456, "Unused test for compilation check of type name" );\
 	::RF::rftype::GlobalRegisterNewClassByQualifiedName( #CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )
+#define RFTYPE_REGISTER_DEFAULT_CREATOR() \
+	::RF::rftype::GlobalRegisterNewConstructorForClass( \
+		[]() -> ::RF::rftype::ConstructedType { \
+			::RF::rftype::ConstructedType retVal = {}; \
+			retVal.mClassInfo = &::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>(); \
+			retVal.mLocation = ::RF::DefaultCreator<RFTYPE_METATYPE()>::Create(); \
+			return retVal; \
+		}, \
+		::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )

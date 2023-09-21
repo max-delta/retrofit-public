@@ -1,10 +1,29 @@
 #include "stdafx.h"
 
+#include "RFType/CreateClassInfoDefinition.h"
 #include "RFType/TypeDatabase.h"
+
 #include "core_rftype/ClassInfoAccessor.h"
 
 #include "RFType/Example.h"
 
+
+
+namespace RF::rftype::test {
+///////////////////////////////////////////////////////////////////////////////
+struct RFTypeConstructionTest
+{
+	int mInt = 7;
+};
+///////////////////////////////////////////////////////////////////////////////
+}
+
+RFTYPE_CREATE_META( RF::rftype::test::RFTypeConstructionTest )
+{
+	using RF::rftype::test::RFTypeConstructionTest;
+	RFTYPE_META().RawProperty( "mInt", &RFTypeConstructionTest::mInt );
+	RFTYPE_REGISTER_DEFAULT_CREATOR();
+}
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,6 +139,23 @@ TEST( RFType, CrossDllExtension )
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 0 ), 5 );
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 1 ), 7 );
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 5 ), 43 );
+}
+
+
+
+TEST( RFType, Construction )
+{
+	TypeDatabase const& typeDatabase = TypeDatabase::GetGlobalInstance();
+
+	reflect::ClassInfo const& classInfo = GetClassInfo<test::RFTypeConstructionTest>();
+	ConstructedType constructed = typeDatabase.ConstructClass( classInfo );
+	ASSERT_EQ( constructed.mClassInfo, &classInfo );
+	ASSERT_NE( constructed.mLocation, nullptr );
+
+	test::RFTypeConstructionTest const* const casted =
+		reinterpret_cast<test::RFTypeConstructionTest*>(
+			constructed.mLocation.Get() );
+	ASSERT_EQ( casted->mInt, 7 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
