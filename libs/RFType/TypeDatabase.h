@@ -13,6 +13,10 @@
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Register and keep track of ClassInfo metadata, and some related information
+// IMPORTANT: Assumes that ClassInfo references are to static locations in
+//  memory, with a pretty heavy leaning towards the assumption that the
+//  locations are also in reserved module memory, and not heap-based
 class RFTYPE_API TypeDatabase
 {
 	//
