@@ -35,7 +35,7 @@ RFTYPE_API void GlobalRegisterNewConstructorForClass( rftl::function<Constructed
 #define RFTYPE_REGISTER_BY_NAME( CLASSNAME ) \
 	::RF::rftype::GlobalRegisterNewClassByName( CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )
 #define RFTYPE_REGISTER_BY_QUALIFIED_NAME( CLASSNAME ) \
-	static_assert( alignof(::CLASSNAME) != 123456, "Unused test for compilation check of type name" );\
+	static_assert( alignof( ::CLASSNAME ) != 123456, "Unused test for compilation check of type name" ); \
 	::RF::rftype::GlobalRegisterNewClassByQualifiedName( #CLASSNAME, ::RF::rftype::GetClassInfo<RFTYPE_METATYPE()>() )
 #define RFTYPE_REGISTER_DEFAULT_CREATOR() \
 	::RF::rftype::GlobalRegisterNewConstructorForClass( \
