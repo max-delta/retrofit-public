@@ -36,8 +36,14 @@ private:
 		(void)userData;
 		if( target != nullptr )
 		{
+			// NOTE: Clang suppression here is for the check that is already
+			//  done above by RF_PTR_ASSERT_DELETABLE(...), which supports a
+			//  mechanism to bypass it for special cases
+			RF_CLANG_PUSH();
+			RF_CLANG_IGNORE( "-Wdelete-non-abstract-non-virtual-dtor" );
 			// NOTE: Subtle... making sure we delete the actual pointer type
 			delete( reinterpret_cast<T const*>( target ) );
+			RF_CLANG_POP();
 		}
 		if( ref != nullptr )
 		{
