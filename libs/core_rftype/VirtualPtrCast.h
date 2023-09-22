@@ -14,7 +14,7 @@ namespace RF::rftype {
 // NOTE: This has the additional restriction that casts requiring pointer
 //  offsets are forbidden
 template<typename TargetT, typename SourceT>
-WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT> && source );
+WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT>&& source );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
