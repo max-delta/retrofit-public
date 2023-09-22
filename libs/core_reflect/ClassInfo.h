@@ -3,6 +3,7 @@
 #include "core_reflect/Value.h"
 
 #include "core/meta/ConstructorOverload.h"
+#include "core/ptr/ptr_fwd.h"
 
 #include "rftl/vector"
 #include "rftl/deque"
@@ -209,9 +210,11 @@ struct ExtensionAccessor
 	using FunctPtrInsertVariableDefault = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
 	using FunctPtrInsertVariableViaMove = bool ( * )( RootInst root, UntypedInst key, VariableTypeInfo const& keyInfo, UntypedInst value, VariableTypeInfo const& valueInfo );
 	using FunctPtrInsertVariableViaCopy = bool ( * )( RootInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo, UntypedConstInst value, VariableTypeInfo const& valueInfo );
+	using FunctPtrInsertVariableViaUPtr = bool ( * )( RootInst root, UniquePtr<void>&& key, VariableTypeInfo const& keyInfo, UniquePtr<void>&& value, VariableTypeInfo const& valueInfo );
 	FunctPtrInsertVariableDefault mInsertVariableDefault = nullptr;
 	FunctPtrInsertVariableViaMove mInsertVariableViaMove = nullptr;
 	FunctPtrInsertVariableViaCopy mInsertVariableViaCopy = nullptr;
+	FunctPtrInsertVariableViaUPtr mInsertVariableViaUPtr = nullptr;
 };
 
 

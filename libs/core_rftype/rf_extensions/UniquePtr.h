@@ -245,6 +245,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		retVal.mInsertVariableDefault = Conditional_InsertVariableDefault_Pointer();
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = Conditional_InsertVariableViaCopy_Pointer();
+		// TODO: UniquePtr support
 
 		return retVal;
 	}

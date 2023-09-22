@@ -197,6 +197,7 @@ struct Accessor<rftl::basic_string<ValueType, Allocator>> final : private Access
 		retVal.mInsertVariableDefault = &InsertVariableDefault;
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &InsertVariableViaCopy;
+		// TODO: UniquePtr support
 
 		return retVal;
 	}

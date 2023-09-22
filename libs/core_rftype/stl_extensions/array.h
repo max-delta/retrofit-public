@@ -195,6 +195,7 @@ struct Accessor<rftl::array<ValueType, Size>> final : private AccessorTemplate
 		retVal.mInsertVariableDefault = &mInsertVariableDefault;
 		// TODO: Move support
 		retVal.mInsertVariableViaCopy = &mInsertVariableViaCopy;
+		// TODO: UniquePtr support
 
 		return retVal;
 	}
