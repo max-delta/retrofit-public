@@ -1,6 +1,9 @@
 #pragma once
 #include "project.h"
 
+#include "Logging/Logging.h"
+RF_TODO_ANNOTATION( "Provide a narrower include for just specializing contexts" );
+
 #include "core_reflect/Value.h"
 
 #include "core/macros.h"
@@ -139,4 +142,9 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////////////
+}
+
+namespace RF::logging {
+template<>
+void SCRIPTINGSQUIRREL_API WriteContextString( RF::script::SquirrelVM::NestedTraversalPath const& context, Utf8LogContextBuffer& buffer );
 }

@@ -11,21 +11,6 @@
 #include "rftl/extension/string_copy.h"
 
 
-template<>
-void RF::logging::WriteContextString( RF::script::SquirrelVM::NestedTraversalPath const& context, Utf8LogContextBuffer& buffer )
-{
-	rftl::string out;
-	for( RF::script::SquirrelVM::NestedTraversalNode const& node : context )
-	{
-		if( out.empty() == false )
-		{
-			out += "::";
-		}
-		out += node.mIdentifier;
-	}
-	rftl::string_copy( buffer, out );
-}
-
 namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace {
@@ -643,4 +628,19 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+}
+
+template<>
+void RF::logging::WriteContextString( RF::script::SquirrelVM::NestedTraversalPath const& context, Utf8LogContextBuffer& buffer )
+{
+	rftl::string out;
+	for( RF::script::SquirrelVM::NestedTraversalNode const& node : context )
+	{
+		if( out.empty() == false )
+		{
+			out += "::";
+		}
+		out += node.mIdentifier;
+	}
+	rftl::string_copy( buffer, out );
 }
