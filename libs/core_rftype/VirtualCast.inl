@@ -8,18 +8,10 @@
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
-
-template<typename T>
-bool IsSameOrDerivedFrom( reflect::ClassInfo const& descendent )
-{
-	static_assert( rftl::is_base_of<reflect::VirtualClassWithoutDestructor, T>::value, "This function only works with virtual lookups" );
-	reflect::ClassInfo const& ancestor = GetClassInfo( T );
-	return descendent.IsSameOrDerivedFrom( ancestor );
-}
-
+namespace details {
 
 template<typename TargetT, typename SourceT>
-TargetT virtual_cast( SourceT* source )
+TargetT virtual_cast_impl( SourceT* source )
 {
 	static_assert( rftl::is_pointer<TargetT>::value, "Expected a pointer as template argument" );
 	using TargetType = typename rftl::remove_pointer<TargetT>::type;
@@ -64,6 +56,35 @@ TargetT virtual_cast( SourceT* source )
 
 	// NOTE: This will fail to compile if it would result in const being dropped
 	return retVal;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+bool IsSameOrDerivedFrom( reflect::ClassInfo const& descendent )
+{
+	static_assert( rftl::is_base_of<reflect::VirtualClassWithoutDestructor, T>::value, "This function only works with virtual lookups" );
+	reflect::ClassInfo const& ancestor = GetClassInfo( T );
+	return descendent.IsSameOrDerivedFrom( ancestor );
+}
+
+
+
+template<typename TargetT, typename SourceT>
+TargetT virtual_cast( SourceT* source )
+{
+	if constexpr( rftl::is_same<TargetT, SourceT*>::value )
+	{
+		// Trivial case
+		// NOTE: Reinterpret cast shouldn't do anything here, but allows the
+		//  template to compile in the cases that this branch isn't used
+		return reinterpret_cast<TargetT>( source );
+	}
+	else
+	{
+		return details::virtual_cast_impl<TargetT>( source );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
