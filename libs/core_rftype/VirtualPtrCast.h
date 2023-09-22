@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/ptr/weak_ptr.h"
+#include "core/ptr/unique_ptr.h"
 
 // Forwards
 namespace RF::reflect {
@@ -15,6 +16,8 @@ namespace RF::rftype {
 //  offsets are forbidden
 template<typename TargetT, typename SourceT>
 WeakPtr<TargetT> virtual_ptr_cast( WeakPtr<SourceT>&& source );
+template<typename TargetT, typename SourceT>
+UniquePtr<TargetT> virtual_ptr_cast( UniquePtr<SourceT>&& source );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
