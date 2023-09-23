@@ -340,7 +340,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const writeSuccess = accessor->mInsertVariableDefault( location, &i, keyInfo );
 			if( writeSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write reserve value to accessor target" );
+				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Failed to write reserve value to accessor target" );
 				return false;
 			}
 		}
@@ -367,7 +367,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const storeSuccess = StoreSingleValueInAccessor( key, keyInfo, source, targetInfo, accessor, location );
 			if( storeSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to store script value in accessor" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to store script value in accessor" );
 				return false;
 			}
 		}
@@ -377,7 +377,7 @@ bool ProcessElementArrayPopulationWork(
 
 			if( accessor->mInsertVariableDefault == nullptr )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
 				return false;
 			}
 
@@ -385,7 +385,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
 			if( writeSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
 				return false;
 			}
 
@@ -394,7 +394,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
 				return false;
 			}
 
@@ -413,7 +413,7 @@ bool ProcessElementArrayPopulationWork(
 
 			if( accessor->mInsertVariableDefault == nullptr )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
 				return false;
 			}
 
@@ -421,7 +421,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
 			if( writeSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
 				return false;
 			}
 
@@ -430,7 +430,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
 				return false;
 			}
 
@@ -455,7 +455,7 @@ bool ProcessElementArrayPopulationWork(
 				if( writeSuccess == false )
 				{
 					RF_TODO_ANNOTATION( "Try fallback to insert via unique pointer?" );
-					RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+					RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
 					return false;
 				}
 			}
@@ -493,7 +493,7 @@ bool ProcessElementArrayPopulationWork(
 						valueInfo );
 				if( writeSuccess == false )
 				{
-					RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to transfer placeholder value to accessor target" );
+					RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to transfer placeholder value to accessor target" );
 					return false;
 				}
 			}
@@ -512,7 +512,7 @@ bool ProcessElementArrayPopulationWork(
 			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
 			if( readSuccess == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to read placeholder value from accessor target" );
 				return false;
 			}
 
@@ -548,7 +548,7 @@ bool ProcessScriptArrayPopulationWork(
 	reflect::ExtensionAccessor const* accessor = target.mTypeInfo.mAccessor;
 	if( accessor == nullptr )
 	{
-		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+		RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 			"Failed to convert script array to member variable type" );
 		return false;
 	}
@@ -598,7 +598,7 @@ bool QueueScriptInstancePopulationWork(
 	{
 		// Unknown
 
-		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+		RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 			"Failed to determine handling for script element instance into member variable type" );
 		return false;
 	}
@@ -623,7 +623,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptValueToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to write script value '%s' to variable", diagnosticName );
 			return false;
 		}
@@ -634,7 +634,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptStringToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to write script string '%s' to variable", diagnosticName );
 			return false;
 		}
@@ -645,7 +645,7 @@ bool ProcessScriptVariable(
 		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, scratchLookup, workItems, currentPath, target );
 		if( processSuccess == false )
 		{
-			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to process script array '%s' to variable", diagnosticName );
 			return false;
 		}
@@ -656,14 +656,14 @@ bool ProcessScriptVariable(
 		bool const queueSuccess = QueueScriptInstancePopulationWork( workItems, currentPath, target );
 		if( queueSuccess == false )
 		{
-			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to prepare processing for script instance '%s' to be written into variable", diagnosticName );
 			return false;
 		}
 	}
 	else
 	{
-		RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
+		RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 			"Unknown element type on '%s', probably an error in script-handling code", diagnosticName );
 		return false;
 	}
@@ -688,7 +688,7 @@ bool ProcessClassWorkItem(
 	SquirrelVM::ElementMap const elemMap = vm.GetNestedVariableAsInstance( currentPath );
 	if( elemMap.empty() )
 	{
-		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element map is empty, assuming failure" );
+		RFLOG_WARNING( currentPath, RFCAT_GAMESCRIPTING, "Element map is empty, assuming failure" );
 		return false;
 	}
 
@@ -702,7 +702,7 @@ bool ProcessClassWorkItem(
 		char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
 		if( elemName == nullptr )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to determine identifier for variable" );
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Unable to determine identifier for variable" );
 			continue;
 		}
 
@@ -711,7 +711,7 @@ bool ProcessClassWorkItem(
 		{
 			if( rftl::holds_alternative<SquirrelVM::String>( elemValue ) == false )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Reserved class name member is not a string" );
+				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Reserved class name member is not a string" );
 				continue;
 			}
 			SquirrelVM::String const& className = rftl::get<SquirrelVM::String>( elemValue );
@@ -720,13 +720,13 @@ bool ProcessClassWorkItem(
 			reflect::ClassInfo const* const foundClassInfo = FindClassInfoForName( scratchLookup, className );
 			if( foundClassInfo == nullptr )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Class claims to be '%s', but could not find corresponding injected type", className.c_str() );
+				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Class claims to be '%s', but could not find corresponding injected type", className.c_str() );
 				continue;
 			}
 
 			if( foundClassInfo != &classInfo )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Class claims to be '%s', injected type class info doesn't match", className.c_str() );
+				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Class claims to be '%s', injected type class info doesn't match", className.c_str() );
 				continue;
 			}
 
@@ -746,7 +746,7 @@ bool ProcessClassWorkItem(
 		}
 		if( foundMember == nullptr )
 		{
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to find matching variable with identifier" );
+			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING, "Unable to find matching variable with identifier" );
 			continue;
 		}
 		rftype::TypeTraverser::MemberVariableInstance const& member = *foundMember;
@@ -786,7 +786,7 @@ bool ProcessAccessorWorkItem(
 	SquirrelVM::Element const elemValue = vm.GetNestedVariable( currentPath );
 	if( rftl::holds_alternative<reflect::Value>( elemValue ) && rftl::get<reflect::Value>( elemValue ).GetStoredType() == reflect::Value::Type::Invalid )
 	{
-		RFLOG_WARNING( nullptr, RFCAT_GAMESCRIPTING, "Element is invalid, assuming failure" );
+		RFLOG_WARNING( currentPath, RFCAT_GAMESCRIPTING, "Element is invalid, assuming failure" );
 		return false;
 	}
 
@@ -871,7 +871,7 @@ bool PopulateClassFromScript(
 		{
 			// TODO: This should probably be conditional whether it
 			//  ignores, or aborts the whole process
-			RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Unable to convert part of a script" );
+			RFLOG_NOTIFY( scriptPath, RFCAT_GAMESCRIPTING, "Unable to convert part of a script" );
 			if constexpr( true )
 			{
 				return false;
