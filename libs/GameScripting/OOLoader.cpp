@@ -487,7 +487,8 @@ bool ProcessElementArrayPopulationWork(
 
 				bool const writeSuccess =
 					accessor->mInsertVariableViaUPtr(
-						location, rftl::move( keyCopy ),
+						location,
+						rftl::move( keyCopy ),
 						keyInfo,
 						rftl::move( constructed.mLocation ),
 						valueInfo );
