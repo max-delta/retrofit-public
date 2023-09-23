@@ -3,8 +3,12 @@
 
 #include "Logging/Logging.h"
 
+#include "core_rftype/ConstructedType.h"
 #include "core_rftype/TypeTraverser.h"
+#include "core_rftype/VirtualCast.h"
+
 #include "core/meta/ScopedCleanup.h"
+#include "core/ptr/default_creator.h"
 
 #include "rftl/extension/string_copy.h"
 #include "rftl/sstream"
@@ -23,6 +27,8 @@ namespace details {
 struct ScratchLookup
 {
 	OOLoader::InjectedClasses const& mInjectedClasses;
+
+	OOLoader::TypeConstructor const& mTypeConstructor;
 
 	RF_ACK_AGGREGATE_NOCOPY();
 };
@@ -64,6 +70,38 @@ reflect::ClassInfo const* FindClassInfoForName(
 	}
 
 	return nullptr;
+}
+
+
+
+rftype::ConstructedType ConstructClassByClassName(
+	ScratchLookup const& scratchLookup,
+	rftl::string_view const& className )
+{
+	RF_ASSERT( className.empty() == false );
+
+	if( scratchLookup.mTypeConstructor == nullptr )
+	{
+		RFLOG_NOTIFY( className, RFCAT_GAMESCRIPTING, "Cannot construct class, no type constructor registered" );
+		return {};
+	}
+
+	reflect::ClassInfo const* const classInfo = FindClassInfoForName( scratchLookup, className );
+	if( classInfo == nullptr )
+	{
+		RFLOG_NOTIFY( className, RFCAT_GAMESCRIPTING, "No class info for name" );
+		return {};
+	}
+
+	rftype::ConstructedType constructedType = scratchLookup.mTypeConstructor( *classInfo );
+	if( constructedType.mLocation == nullptr )
+	{
+		RFLOG_NOTIFY( className, RFCAT_GAMESCRIPTING, "Type constructor failed to construct type" );
+		return {};
+	}
+	RF_ASSERT( constructedType.mClassInfo != nullptr );
+	RF_ASSERT( constructedType.mClassInfo == classInfo );
+	return constructedType;
 }
 
 
@@ -268,6 +306,8 @@ bool WriteScriptStringToVariable(
 
 
 bool ProcessElementArrayPopulationWork(
+	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItems& workItems,
 	SquirrelVM::NestedTraversalPath const& currentPath,
 	SquirrelVM::ElementArray const& elemArr,
@@ -407,20 +447,66 @@ bool ProcessElementArrayPopulationWork(
 		{
 			// Instance
 
-			if( accessor->mInsertVariableDefault == nullptr )
+			if( accessor->mInsertVariableDefault != nullptr )
 			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
+				// Insert a placeholder
+
+				bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
+				if( writeSuccess == false )
+				{
+					RF_TODO_ANNOTATION( "Try fallback to insert via unique pointer?" );
+					RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
+					return false;
+				}
+			}
+			else if( accessor->mInsertVariableViaUPtr != nullptr )
+			{
+				// Construct a placeholder instance and insert it
+
+				rftl::string const instanceClassName = vm.GetNestedInstanceClassName( targetPath );
+				if( instanceClassName.empty() )
+				{
+					RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to determine class name for instance to construct" );
+					return false;
+				}
+
+				rftype::ConstructedType constructed = ConstructClassByClassName( scratchLookup, instanceClassName );
+				if( constructed.mLocation == nullptr )
+				{
+					RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to construct instance" );
+					return false;
+				}
+				RF_ASSERT( constructed.mClassInfo != nullptr );
+
+				// Copy the key into a UniquePtr to transfer it
+				static_assert( rftl::is_same<decltype( key ), size_t const>::value );
+				UniquePtr<size_t> keyCopy = DefaultCreator<size_t>::Create( key );
+
+				reflect::VariableTypeInfo valueInfo = {};
+				valueInfo.mClassInfo = constructed.mClassInfo;
+
+				bool const writeSuccess =
+					accessor->mInsertVariableViaUPtr(
+						location, rftl::move( keyCopy ),
+						keyInfo,
+						rftl::move( constructed.mLocation ),
+						valueInfo );
+				if( writeSuccess == false )
+				{
+					RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to transfer placeholder value to accessor target" );
+					return false;
+				}
+			}
+			else
+			{
+				RFLOG_NOTIFY( targetPath, RFCAT_GAMESCRIPTING, "Failed to write any placeholder values to accessor target" );
 				return false;
 			}
 
-			// Insert a placeholder
-			bool const writeSuccess = accessor->mInsertVariableDefault( location, &key, keyInfo );
-			if( writeSuccess == false )
-			{
-				RFLOG_NOTIFY( nullptr, RFCAT_GAMESCRIPTING, "Failed to write placeholder value to accessor target" );
-				return false;
-			}
-
+			// Get the placeholder back out of the accessor to fill it out
+			// NOTE: In the complex case where a derived class is being stored
+			//  into a base class, this assumes that the accessor exposes
+			//  derived class, if it supports virtual reflection lookup
 			void const* arrayItemLoc = nullptr;
 			reflect::VariableTypeInfo arrayItemInfo = {};
 			bool const readSuccess = accessor->mGetTargetByKey( location, &key, keyInfo, arrayItemLoc, arrayItemInfo );
@@ -453,6 +539,7 @@ bool ProcessElementArrayPopulationWork(
 
 bool ProcessScriptArrayPopulationWork(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItems& workItems,
 	SquirrelVM::NestedTraversalPath const& currentPath,
 	TargetItem const& target )
@@ -470,7 +557,7 @@ bool ProcessScriptArrayPopulationWork(
 	// Load the script values
 	SquirrelVM::ElementArray const elemArr = vm.GetNestedVariableAsArray( currentPath );
 
-	return ProcessElementArrayPopulationWork( workItems, currentPath, elemArr, accessor, location );
+	return ProcessElementArrayPopulationWork( vm, scratchLookup, workItems, currentPath, elemArr, accessor, location );
 }
 
 
@@ -521,6 +608,7 @@ bool QueueScriptInstancePopulationWork(
 
 bool ProcessScriptVariable(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItems& workItems,
 	SquirrelVM::NestedTraversalPath const& currentPath,
 	SquirrelVM::Element const& elemValue,
@@ -554,7 +642,7 @@ bool ProcessScriptVariable(
 	else if( rftl::holds_alternative<SquirrelVM::ArrayTag>( elemValue ) )
 	{
 		// Array
-		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, workItems, currentPath, target );
+		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, scratchLookup, workItems, currentPath, target );
 		if( processSuccess == false )
 		{
 			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
@@ -672,7 +760,7 @@ bool ProcessClassWorkItem(
 		// Handle the transfer from script->reflect
 		SquirrelVM::NestedTraversalPath nestedPath = currentPath;
 		nestedPath.emplace_back( elemName );
-		bool const processSuccess = ProcessScriptVariable( vm, workItems, nestedPath, elemValue, target );
+		bool const processSuccess = ProcessScriptVariable( vm, scratchLookup, workItems, nestedPath, elemValue, target );
 		if( processSuccess == false )
 		{
 			// TODO: This should probably be conditional whether it
@@ -688,6 +776,7 @@ bool ProcessClassWorkItem(
 
 bool ProcessAccessorWorkItem(
 	SquirrelVM& vm,
+	ScratchLookup const& scratchLookup,
 	WorkItems& workItems,
 	SquirrelVM::NestedTraversalPath const& currentPath,
 	reflect::ExtensionAccessor const& accessor,
@@ -709,7 +798,7 @@ bool ProcessAccessorWorkItem(
 	target.mIdentifier = "ACCESSOR";
 
 	// Handle the transfer from script->reflect
-	bool const processSuccess = ProcessScriptVariable( vm, workItems, currentPath, elemValue, target );
+	bool const processSuccess = ProcessScriptVariable( vm, scratchLookup, workItems, currentPath, elemValue, target );
 	if( processSuccess == false )
 	{
 		// TODO: This should probably be conditional whether it
@@ -741,7 +830,7 @@ bool ProcessWorkItem(
 	// Accessor
 	if( currentWorkItem.mTarget.mTypeInfo.mAccessor != nullptr )
 	{
-		return ProcessAccessorWorkItem( vm, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mAccessor, currentWorkItem.mTarget.mLocation );
+		return ProcessAccessorWorkItem( vm, scratchLookup, workItems, currentWorkItem.mPath, *currentWorkItem.mTarget.mTypeInfo.mAccessor, currentWorkItem.mTarget.mLocation );
 	}
 
 	RF_TODO_BREAK_MSG( "New type of work item?" );
@@ -805,6 +894,26 @@ OOLoader::~OOLoader() = default;
 
 
 
+bool OOLoader::AllowTypeConstruction( TypeConstructor&& typeConstructor )
+{
+	if( typeConstructor == nullptr )
+	{
+		RF_DBGFAIL_MSG( "Null constructor" );
+		return false;
+	}
+
+	if( mTypeConstructor != nullptr )
+	{
+		RF_DBGFAIL_MSG( "Cannot change constructor" );
+		return false;
+	}
+
+	mTypeConstructor = rftl::move( typeConstructor );
+	return true;
+}
+
+
+
 bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, char const* name )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = details::GetAllMembers( classInfo, nullptr );
@@ -850,7 +959,7 @@ bool OOLoader::PopulateClass( char const* rootVariableName, reflect::ClassInfo c
 
 bool OOLoader::PopulateClass( SquirrelVM::NestedTraversalPath scriptPath, reflect::ClassInfo const& classInfo, void* classInstance )
 {
-	details::ScratchLookup const scratchLookup{ mInjectedClasses };
+	details::ScratchLookup const scratchLookup{ mInjectedClasses, mTypeConstructor };
 	return details::PopulateClassFromScript( mVm, scratchLookup, scriptPath, classInfo, classInstance );
 }
 

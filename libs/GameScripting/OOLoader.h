@@ -5,8 +5,10 @@
 
 #include "Scripting_squirrel/squirrel.h"
 
+#include "core_rftype/RFTypeFwd.h"
 #include "core_reflect/ClassInfo.h"
 
+#include "rftl/functional"
 #include "rftl/string_view"
 
 
@@ -21,7 +23,7 @@ class GAMESCRIPTING_API OOLoader
 	RF_NO_COPY( OOLoader );
 
 	//
-	// Structs
+	// Types and constants
 public:
 	struct InjectedClass
 	{
@@ -30,12 +32,22 @@ public:
 	};
 	using InjectedClasses = rftl::vector<InjectedClass>;
 
+	using TypeConstructor = rftl::function<rftype::ConstructedType( reflect::ClassInfo const& )>;
+
 
 	//
 	// Public methods
 public:
 	OOLoader();
 	~OOLoader();
+
+	// Some advanced cases may require dynamic construction, such as for
+	//  polymorphic types that rely on indirection
+	// NOTE: This is optional, if a type constructor isn't provided then most
+	//  simple loading cases will still work as expected
+	// NOTE: At time of writing, the RFType Type Database is the preferred
+	//  provide for this functionality, if desired
+	bool AllowTypeConstruction( TypeConstructor&& typeConstructor );
 
 	// Only explicitly injected types can be loaded, other types will cause
 	//  load errors when referenced
@@ -71,6 +83,9 @@ public:
 	// Private data
 private:
 	SquirrelVM mVm;
+
+	// For constructing types, might not be enabled
+	TypeConstructor mTypeConstructor;
 
 	// Used for being able to tie Squirrel instances back to ClassInfo's, by
 	//  tracking what types have been injected for later lookup
