@@ -39,6 +39,7 @@
 
 #include "Scheduling/tasks/FunctorTask.h"
 #include "RFType/CreateClassInfoDefinition.h"
+#include "RFType/TypeDatabase.h"
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
@@ -69,6 +70,15 @@ struct SQReflectTestContainedClass
 struct SQReflectTestNestedClass
 {
 	bool mBool;
+};
+
+struct SQReflectTestVirtualClass : public RF::reflect::VirtualClassWithoutDestructor, public RF::PtrTrait::NoVirtualDestructor
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
+	bool mBool;
+
+	RF_MSVC_INLINE_SUPPRESS( 5204 ); // No virtual destructor
 };
 
 // NOTE: These declarations don't have to be in the root namespace, but the
@@ -108,7 +118,8 @@ struct SQReflectTestClass
 	SQReflectTestNestedClass mNested;
 	RF::UniquePtr<int32_t> mUniqueInt;
 	RF::UniquePtr<SQReflectTestNestedClass> mUniqueNested;
-	RF::UniquePtr<RF::reflect::VirtualClass> mUniqueVirtual;
+	RF::UniquePtr<RF::reflect::VirtualClass> mUniqueVirtualNull;
+	RF::UniquePtr<RF::reflect::VirtualClassWithoutDestructor> mUniqueVirtualAbstract;
 };
 
 RFTYPE_CREATE_META( SQReflectTestContainedClass )
@@ -121,6 +132,13 @@ RFTYPE_CREATE_META( SQReflectTestNestedClass )
 {
 	RFTYPE_META().RawProperty( "mBool", &SQReflectTestNestedClass::mBool );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestNestedClass" );
+}
+
+RFTYPE_CREATE_META( SQReflectTestVirtualClass )
+{
+	RFTYPE_META().RawProperty( "mBool", &SQReflectTestVirtualClass ::mBool );
+	RFTYPE_REGISTER_BY_NAME( "SQReflectTestVirtualClass" );
+	RFTYPE_REGISTER_DEFAULT_CREATOR();
 }
 
 RFTYPE_CREATE_META( SQReflectTestClass )
@@ -153,7 +171,8 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mNested", &SQReflectTestClass::mNested );
 	RFTYPE_META().ExtensionProperty( "mUniqueInt", &SQReflectTestClass::mUniqueInt );
 	RFTYPE_META().ExtensionProperty( "mUniqueNested", &SQReflectTestClass::mUniqueNested );
-	RFTYPE_META().ExtensionProperty( "mUniqueVirtual", &SQReflectTestClass::mUniqueVirtual );
+	RFTYPE_META().ExtensionProperty( "mUniqueVirtualNull", &SQReflectTestClass::mUniqueVirtualNull );
+	RFTYPE_META().ExtensionProperty( "mUniqueVirtualAbstract", &SQReflectTestClass::mUniqueVirtualAbstract );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 
 	// TODO: Probably need a partial specialization for UniquePtr<Copyable> vs
@@ -799,9 +818,21 @@ void SQReflectTest()
 {
 	script::OOLoader loader;
 
+	// Allow type construction
+	loader.AllowTypeConstruction(
+		[]( reflect::ClassInfo const& classInfo ) -> rftype::ConstructedType
+		{
+			rftype::TypeDatabase const& typeDatabase = rftype::TypeDatabase::GetGlobalInstance();
+			return typeDatabase.ConstructClass( classInfo );
+		} );
+
 	// Inject
 	{
 		bool const inject = loader.InjectReflectedClassByCompileType<SQReflectTestClass>( "SQReflectTestClass" );
+		RF_ASSERT( inject );
+	}
+	{
+		bool const inject = loader.InjectReflectedClassByCompileType<SQReflectTestVirtualClass>( "SQReflectTestVirtualClass" );
 		RF_ASSERT( inject );
 	}
 	{
@@ -848,7 +879,9 @@ void SQReflectTest()
 			"x.mUniqueInt = [3];\n"
 			"x.mUniqueNested = [SQReflectTestNestedClass()];\n"
 			"x.mUniqueNested[0].mBool = true;\n"
-			"x.mUniqueVirtual = [];\n"
+			"x.mUniqueVirtualNull = [];\n"
+			"x.mUniqueVirtualAbstract = [SQReflectTestVirtualClass()];\n"
+			"x.mUniqueVirtualAbstract[0].mBool = true;\n"
 			"\n";
 		bool const sourceAdd = loader.AddSourceFromBuffer( source, sizeof( source ) );
 		RF_ASSERT( sourceAdd );
@@ -909,7 +942,10 @@ void SQReflectTest()
 		RF_ASSERT( *instance.mUniqueInt == 3 );
 		RF_ASSERT( instance.mUniqueNested != nullptr );
 		RF_ASSERT( instance.mUniqueNested->mBool == true );
-		RF_ASSERT( instance.mUniqueVirtual == nullptr );
+		RF_ASSERT( instance.mUniqueVirtualNull == nullptr );
+		RF_ASSERT( instance.mUniqueVirtualAbstract != nullptr );
+		RF_ASSERT( instance.mUniqueVirtualAbstract->GetVirtualClassInfo() == &rftype::GetClassInfo<SQReflectTestVirtualClass>() );
+		RF_ASSERT( reinterpret_cast<SQReflectTestVirtualClass*>( instance.mUniqueVirtualAbstract.Get() )->mBool == true );
 	};
 	verify( testClass );
 
@@ -928,6 +964,14 @@ void SQReflectTest()
 	}
 
 	// Import
+	if constexpr( true )
+	{
+		RF_TODO_BREAK_MSG(
+			"Loader needs to be updated to support construction of derived"
+			" classes into abstract base classes, just as was done with the"
+			" OOLoader for script" );
+	}
+	else
 	{
 		resource::ResourceLoader resourceLoader( app::gVfs, nullptr );
 
