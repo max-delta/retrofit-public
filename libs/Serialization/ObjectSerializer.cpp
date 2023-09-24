@@ -64,9 +64,10 @@ bool ObjectSerializer::SerializeSingleObject(
 		exporter.Instance_AddTypeIDAttribute( *params.mTypeID, params.mTypeDebugName );
 	}
 
-	auto onMemberVariable = [&exporter](
-		rftype::TypeTraverser::MemberVariableInstance const& memberVariableInstance ) ->
-		void
+	auto onMemberVariable =
+		[&exporter](
+			rftype::TypeTraverser::MemberVariableInstance const& memberVariableInstance )
+		-> void
 	{
 		char const* const name = memberVariableInstance.mMemberVariableInfo.mIdentifier;
 		reflect::VariableTypeInfo const& typeInfo = memberVariableInstance.mMemberVariableInfo.mVariableTypeInfo;
@@ -88,11 +89,12 @@ bool ObjectSerializer::SerializeSingleObject(
 		}
 	};
 
-	auto onTraversalTypeFound = [&exporter, &success](
-		rftype::TypeTraverser::TraversalType traversalType,
-		rftype::TypeTraverser::TraversalVariableInstance const& varInst,
-		bool& shouldRecurse ) ->
-		void
+	auto onTraversalTypeFound =
+		[&exporter, &success](
+			rftype::TypeTraverser::TraversalType traversalType,
+			rftype::TypeTraverser::TraversalVariableInstance const& varInst,
+			bool& shouldRecurse )
+		-> void
 	{
 		switch( traversalType )
 		{
@@ -182,10 +184,11 @@ bool ObjectSerializer::SerializeSingleObject(
 		}
 	};
 
-	auto onReturnFromTraversalType = [&exporter, &success](
-		rftype::TypeTraverser::TraversalType traversalType,
-		rftype::TypeTraverser::TraversalVariableInstance const& varInst ) ->
-		void
+	auto onReturnFromTraversalType =
+		[&exporter, &success](
+			rftype::TypeTraverser::TraversalType traversalType,
+			rftype::TypeTraverser::TraversalVariableInstance const& varInst )
+		-> void
 	{
 		switch( traversalType )
 		{
