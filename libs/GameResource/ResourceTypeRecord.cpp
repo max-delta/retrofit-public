@@ -27,7 +27,7 @@ void ResourceTypeRecord::RegisterClass( char const* className )
 {
 	RF_ASSERT( className != nullptr );
 
-	rftype::TypeDatabase const& typeDatabase = rftype::TypeDatabase::GetGlobalInstance();
+	rftype::TypeDatabase const& typeDatabase = rftype::GetGlobalTypeDatabase();
 
 	// Make sure it exists
 	reflect::ClassInfo const* const classInfo = typeDatabase.GetClassInfoByName( className );

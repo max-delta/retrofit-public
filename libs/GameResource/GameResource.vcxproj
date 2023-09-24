@@ -53,6 +53,12 @@
 		<ProjectReference Include="..\core\core.vcxproj">
 			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
+			<Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\GameScripting\GameScripting.vcxproj">
 			<Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
 		</ProjectReference>

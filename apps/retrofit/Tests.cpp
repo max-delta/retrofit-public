@@ -822,7 +822,7 @@ void SQReflectTest()
 	loader.AllowTypeConstruction(
 		[]( reflect::ClassInfo const& classInfo ) -> rftype::ConstructedType
 		{
-			rftype::TypeDatabase const& typeDatabase = rftype::TypeDatabase::GetGlobalInstance();
+			rftype::TypeDatabase const& typeDatabase = rftype::GetGlobalTypeDatabase();
 			return typeDatabase.ConstructClass( classInfo );
 		} );
 

@@ -33,7 +33,7 @@ TEST( RFType, CrossDllAccess )
 	reflect::ClassInfo const& classInfoViaStatic = GetClassInfo<rftype_example::ExampleWithStaticClassInfo>();
 	reflect::ClassInfo const& classInfoViaExport = GetClassInfo<rftype_example::ExampleWithoutStaticClassInfo>();
 
-	TypeDatabase const& typeDatabase = TypeDatabase::GetGlobalInstance();
+	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
 	reflect::ClassInfo const* classInfoStaticViaLookup = typeDatabase.GetClassInfoByName( "ExampleWithStaticClassInfo" );
 	ASSERT_TRUE( classInfoStaticViaLookup != nullptr );
 	reflect::ClassInfo const* classInfoExportViaLookup = typeDatabase.GetClassInfoByName( "ExampleWithoutStaticClassInfo" );
@@ -53,7 +53,7 @@ TEST( RFType, CrossDllExtension )
 	object.mExampleExtensionAsMember.push_back( 5 );
 	object.mExampleExtensionAsMember.push_back( 7 );
 
-	TypeDatabase const& typeDatabase = TypeDatabase::GetGlobalInstance();
+	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
 	ClassInfo const* classInfo = typeDatabase.GetClassInfoByName( "ExampleWithExtensionAsMember" );
 	ASSERT_NE( classInfo, nullptr );
 
@@ -145,7 +145,7 @@ TEST( RFType, CrossDllExtension )
 
 TEST( RFType, Construction )
 {
-	TypeDatabase const& typeDatabase = TypeDatabase::GetGlobalInstance();
+	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
 
 	reflect::ClassInfo const& classInfo = GetClassInfo<test::RFTypeConstructionTest>();
 	ConstructedType constructed = typeDatabase.ConstructClass( classInfo );

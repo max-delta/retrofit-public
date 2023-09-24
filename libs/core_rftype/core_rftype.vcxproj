@@ -42,6 +42,7 @@
 		<ClInclude Include="stl_extensions\stdafx.h" />
 		<ClInclude Include="stl_extensions\string.h" />
 		<ClInclude Include="stl_extensions\vector.h" />
+		<ClInclude Include="TypeDatabase.h" />
 		<ClInclude Include="TypeInference.h" />
 		<ClInclude Include="TypeTraverser.h" />
 		<ClInclude Include="VirtualCast.h" />
@@ -57,6 +58,7 @@
 		<ClCompile Include="stl_extensions\array.cpp" />
 		<ClCompile Include="stl_extensions\string.cpp" />
 		<ClCompile Include="stl_extensions\vector.cpp" />
+		<ClCompile Include="TypeDatabase.cpp" />
 		<ClCompile Include="TypeTraverser.cpp" />
 		<ClCompile Include="VirtualCast.cpp" />
 	</ItemGroup>

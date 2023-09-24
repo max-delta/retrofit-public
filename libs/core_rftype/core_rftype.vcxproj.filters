@@ -32,6 +32,7 @@
 		</ClInclude>
 		<ClInclude Include="ConstructedType.h" />
 		<ClInclude Include="RFTypeFwd.h" />
+		<ClInclude Include="TypeDatabase.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -51,6 +52,7 @@
 		</ClCompile>
 		<ClCompile Include="VirtualCast.cpp" />
 		<ClCompile Include="ConstructedType.cpp" />
+		<ClCompile Include="TypeDatabase.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="stl_extensions">
