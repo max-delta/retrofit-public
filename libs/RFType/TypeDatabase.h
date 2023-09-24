@@ -41,10 +41,19 @@ private:
 	//
 	// Public methods
 public:
+	// Classes can be registered by a name, which will produce a unique and
+	//  deterministic hash for that name, allowing the same class to be
+	//  separately identified across builds / processes / machines / etc
+	// NOTE: A class can be registered under multiple names, though it is
+	//  discouraged to do this intentionally, since a 1:1 mapping is generally
+	//  more intuitive and less error-prone
 	bool RegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
 	reflect::ClassInfo const* GetClassInfoByName( char const* name ) const;
 	reflect::ClassInfo const* GetClassInfoByHash( math::HashVal64 const& hash ) const;
 
+	// Classes can have a constructor registered for them, so that they can
+	//  allocated in a reflection-only situation, where the compiler is not
+	//  available to perform the necessary construction in-place
 	bool RegisterNewConstructorForClass( TypeConstructorFunc&& constructor, reflect::ClassInfo const& classInfo );
 	ConstructedType ConstructClass( reflect::ClassInfo const& classInfo ) const;
 
