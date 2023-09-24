@@ -175,6 +175,27 @@ void EnsureAccessorClosed( WalkNode& accessorNode )
 
 
 
+bool IsWalkNodeResolved( WalkNode const& walkNode )
+{
+	RF_TODO_ANNOTATION(
+		"What about accessor keys and targets?"
+		" Do they really require identifiers?" );
+
+	RF_ASSERT( walkNode.mIdentifier.empty() == false );
+
+	if( walkNode.mVariableLocation == nullptr )
+	{
+		RF_ASSERT( walkNode.mVariableTypeInfo == nullptr );
+		return false;
+	}
+
+	RF_ASSERT( walkNode.mVariableTypeInfo != nullptr );
+	RF_ASSERT( walkNode.mVariableLocation != nullptr );
+	return true;
+}
+
+
+
 void DestroyChain( WalkChain& fullChain )
 {
 	while( fullChain.empty() == false )
@@ -326,6 +347,17 @@ bool ReplaceEndOfChain( WalkChain& fullChain, UniquePtr<WalkNode>&& newNode )
 		// Null node, presumed to be a fresh indentation
 		fullChain.pop_back();
 	}
+	else if( IsWalkNodeResolved( *fullChain.back() ) == false )
+	{
+		// Unresolved node, dubious
+		RFLOG_WARNING( fullChain, RFCAT_SERIALIZATION,
+			"Replacing an unresloved end-of-chain node, this might imply that"
+			" a property was mentioned by the importer, but had no meaningful"
+			" actions associated with it, which would likely indicate wasteful"
+			" serialization" );
+		RF_TODO_ANNOTATION( "Fix any cases of wasteful exporter serialization" );
+		fullChain.pop_back();
+	}
 	else
 	{
 		// Valid node, make sure to run proper pop logic
@@ -403,6 +435,24 @@ bool SetValueToChain( WalkChain& fullChain, reflect::Value const& incomingValue 
 	RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Unexpected codepath, can't determine variable type" );
 	RF_DBGFAIL();
 	return false;
+}
+
+
+
+bool IsWalkChainLeadingEdgeResolved( WalkChain const& fullChain )
+{
+	if( fullChain.size() < 2 )
+	{
+		RF_DBGFAIL_MSG(
+			"Walk chain is too small to be resolved, but asking if it is"
+			" resolved, seems like a bug?" );
+		return false;
+	}
+
+	RF_ASSERT( fullChain.back() != nullptr );
+	WalkNode const& current = *fullChain.back();
+
+	return IsWalkNodeResolved( current );
 }
 
 
@@ -738,14 +788,12 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
 		scratch.mWalkChain.back()->mIdentifier = name;
 
-		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
-		if( resolveSuccess == false )
-		{
-			// Normally, we'd want to bail, but there might be development
-			//  reasons for allowing soft upgrades or whatnot?
-			RF_TODO_BREAK_MSG( "Should this bail, or be resilient to non-existant properties? Options to control this?" );
-			return false;
-		}
+		// NOTE: Could potentially resolve here, but there's no actual attempt
+		//  to perform a meaningful action yet, and it's possible that a
+		//  resolve would fail due to needing more information than just the
+		//  name (an example would be an accessor target that can't be default
+		//  constructed, and thus needs type information attribute data to
+		//  perform the construction and insertion)
 
 		return true;
 	};
@@ -757,6 +805,20 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s' [%s]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ).c_str() );
+
+		// At time of writing, it is expected resolving the current property
+		//  has been deferred, so that it could build up any name or type
+		//  information it needs first, and so will need to be attempted now
+		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
+		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+		if( resolveSuccess == false )
+		{
+			// Normally, we'd want to bail, but there might be development
+			//  reasons for allowing soft upgrades or whatnot?
+			RF_TODO_BREAK_MSG( "Should this bail, or be resilient to non-existant properties? Options to control this?" );
+			return false;
+		}
+		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) );
 
 		bool const setSuccess = details::SetValueToChain( scratch.mWalkChain, value );
 		if( setSuccess == false )
@@ -791,6 +853,24 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Indent" );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+
+		// At time of writing, it is expected resolving the current property
+		//  has been deferred, so that it could build up any name or type
+		//  information it needs first, and so will need to be attempted now
+		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
+		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+		if( resolveSuccess == false )
+		{
+			// Normally, we'd want to bail, but there might be development
+			//  reasons for allowing soft upgrades or whatnot?
+			RF_TODO_BREAK_MSG(
+				"Should this bail, or be resilient to non-existant properties?"
+				" Options to control this? Do we need to suppress indentation"
+				" past the first failed resolve, and track when we return back"
+				" to that level?" );
+			return false;
+		}
+		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) );
 
 		// Placeholder, waiting for first property
 		scratch.mWalkChain.emplace_back( nullptr );
