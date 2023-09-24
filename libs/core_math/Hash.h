@@ -56,6 +56,14 @@ struct SequenceHash
 		for( auto const& elem : value )
 		{
 			// Golden ratio (1.640531527) as negated digit sequence
+			// NOTE: This is pretty close to what Boost does, but that doesn't
+			//  mean it's any good, Boost does lots of dumb stuff
+			// NOTE: This is using a 32-bit salt, whereas Linux uses a 64-bit
+			//  multiplier, but for a whole different formula and use-case
+			// TODO: Find some academic research or something on this, maybe
+			//  replace it with something better
+			// SEE: boost::hash_combine<...>(...)
+			// SEE: https://lkml.org/lkml/2016/4/29/838
 			static constexpr uint32_t kSalt = 0x9e3779b9ul;
 			retVal ^= H()( elem ) + kSalt + ( retVal << 6 ) + ( retVal >> 3 );
 		}
