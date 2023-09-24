@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ResourceTypeRecord.h"
 
-#include "RFType/TypeDatabase.h"
+#include "RFType/GlobalTypeDatabase.h"
 #include "Logging/Logging.h"
 
 

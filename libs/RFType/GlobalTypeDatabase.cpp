@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "TypeDatabase.h"
+#include "GlobalTypeDatabase.h"
 
 #include "core/meta/LazyInitSingleton.h"
 

@@ -36,7 +36,7 @@
 		<ClInclude Include="Example.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
-		<ClInclude Include="TypeDatabase.h" />
+		<ClInclude Include="GlobalTypeDatabase.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="CoreLibrariesMetaInfo.cpp" />
@@ -46,7 +46,7 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
-		<ClCompile Include="TypeDatabase.cpp" />
+		<ClCompile Include="GlobalTypeDatabase.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\core\core.vcxproj">

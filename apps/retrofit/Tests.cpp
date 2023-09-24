@@ -39,7 +39,7 @@
 
 #include "Scheduling/tasks/FunctorTask.h"
 #include "RFType/CreateClassInfoDefinition.h"
-#include "RFType/TypeDatabase.h"
+#include "RFType/GlobalTypeDatabase.h"
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
-#include "RFType/TypeDatabase.h"
+#include "RFType/GlobalTypeDatabase.h"
 
 #include "core_rftype/ClassInfoAccessor.h"
 
