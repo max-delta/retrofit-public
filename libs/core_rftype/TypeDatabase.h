@@ -27,6 +27,12 @@ public:
 		reflect::ClassInfo const* mClassInfo;
 	};
 
+	struct ClassKey
+	{
+		rftl::string mName;
+		math::HashVal64 mHash = {};
+	};
+
 
 	//
 	// Types
@@ -49,6 +55,12 @@ public:
 	bool RegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
 	reflect::ClassInfo const* GetClassInfoByName( char const* name ) const;
 	reflect::ClassInfo const* GetClassInfoByHash( math::HashVal64 const& hash ) const;
+
+	// Lookup a previously registered class
+	// NOTE: If a class is registered under multiple keys, one will be chosen
+	//  arbitrarily and returned
+	// NOTE: Returns an empty key on failure
+	ClassKey LookupKeyForClass( reflect::ClassInfo const& classInfo ) const;
 
 	// Classes can have a constructor registered for them, so that they can
 	//  allocated in a reflection-only situation, where the compiler is not

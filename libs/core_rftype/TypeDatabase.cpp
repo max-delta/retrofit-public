@@ -53,6 +53,25 @@ reflect::ClassInfo const* TypeDatabase::GetClassInfoByHash( math::HashVal64 cons
 
 
 
+TypeDatabase::ClassKey TypeDatabase::LookupKeyForClass( reflect::ClassInfo const& classInfo ) const
+{
+	RF_TODO_ANNOTATION( "Faster reverse lookup table" );
+
+	// For each entry...
+	for( ClassInfoByHash::value_type const& entry : mClassInfoByHash )
+	{
+		if( entry.second.mClassInfo == &classInfo )
+		{
+			// Return first match
+			return ClassKey{ entry.second.mName, entry.first };
+		}
+	}
+
+	return ClassKey{};
+}
+
+
+
 bool TypeDatabase::RegisterNewConstructorForClass( TypeConstructorFunc&& constructor, reflect::ClassInfo const& classInfo )
 {
 	void const* const address = &classInfo;

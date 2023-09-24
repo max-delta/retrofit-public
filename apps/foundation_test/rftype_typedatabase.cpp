@@ -11,11 +11,23 @@
 
 namespace RF::rftype::test {
 ///////////////////////////////////////////////////////////////////////////////
+struct RFTypeNameTest
+{
+	bool mBool = false;
+};
+
 struct RFTypeConstructionTest
 {
 	int mInt = 7;
 };
 ///////////////////////////////////////////////////////////////////////////////
+}
+
+RFTYPE_CREATE_META( RF::rftype::test::RFTypeNameTest )
+{
+	using RF::rftype::test::RFTypeNameTest;
+	RFTYPE_META().RawProperty( "mBool", &RFTypeNameTest::mBool );
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::rftype::test::RFTypeNameTest );
 }
 
 RFTYPE_CREATE_META( RF::rftype::test::RFTypeConstructionTest )
@@ -139,6 +151,18 @@ TEST( RFType, CrossDllExtension )
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 0 ), 5 );
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 1 ), 7 );
 	ASSERT_EQ( object.mExampleExtensionAsMember.at( 5 ), 43 );
+}
+
+
+
+TEST( RFType, NameRegistation )
+{
+	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
+
+	reflect::ClassInfo const& classInfo = GetClassInfo<test::RFTypeNameTest>();
+	TypeDatabase::ClassKey const classKey = typeDatabase.LookupKeyForClass( classInfo );
+	ASSERT_EQ( classKey.mName, "RF__rftype__test__RFTypeNameTest" );
+	ASSERT_EQ( classKey.mHash, RF_HASH_FROM_STRING_LITERAL( "RF__rftype__test__RFTypeNameTest" ) );
 }
 
 
