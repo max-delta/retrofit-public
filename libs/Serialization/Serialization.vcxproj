@@ -51,6 +51,7 @@
 		<ClCompile Include="DiagnosticExporter.cpp" />
 		<ClCompile Include="DiagnosticImportTestShim.cpp" />
 		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="Exporter.cpp" />
 		<ClCompile Include="ObjectDeserializer.cpp" />
 		<ClCompile Include="ObjectSerializer.cpp" />
 		<ClCompile Include="stdafx.cpp">

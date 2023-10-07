@@ -26,5 +26,6 @@
 		<ClCompile Include="AutoImporter.cpp" />
 		<ClCompile Include="DiagnosticImportTestShim.cpp" />
 		<ClCompile Include="ObjectDeserializer.cpp" />
+		<ClCompile Include="Exporter.cpp" />
 	</ItemGroup>
 </Project>

@@ -135,6 +135,12 @@ bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char
 		return false;
 	}
 
+	if( mHasOpenProperty )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Instance type ID cannot be added after properties have already started" );
+		return false;
+	}
+
 	if( debugName != nullptr )
 	{
 		RF_DIAG_EXP_TR( " TypeId := %llu (\"%s\")", typeID, debugName );
@@ -293,6 +299,35 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
 	RF_DIAG_EXP_TR( " %s value := [%s] %s", indents.c_str(), typeName, valueStr.c_str() );
+
+	return true;
+}
+
+
+
+bool DiagnosticExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName )
+{
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
+	if( mHasOpenProperty == false )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Property operation without open property" );
+		return false;
+	}
+
+	rftl::string indents( mPropertyDepth * 2, ' ' );
+	if( debugName != nullptr )
+	{
+		RF_DIAG_EXP_TR( " %s Debug TypeId := %llu (\"%s\")", indents.c_str(), debugTypeID, debugName );
+	}
+	else
+	{
+		RF_DIAG_EXP_TR( " %s Debug TypeId := %llu", indents.c_str(), debugTypeID );
+	}
 
 	return true;
 }

@@ -230,6 +230,18 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 			continue;
 		}
 
+		if( attributeName == "DebugTypeID" )
+		{
+			// Unused
+			continue;
+		}
+
+		if( attributeName == "DebugName" )
+		{
+			// Unused
+			continue;
+		}
+
 		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML property attribute name '%s'", RFTLE_CSTR( attributeName ) );
 		return false;
 	}
@@ -302,6 +314,12 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		if( attributeName == "TypeID" )
 		{
 			typeID = attributeValue;
+			continue;
+		}
+
+		if( attributeName == "DebugName" )
+		{
+			// Unused
 			continue;
 		}
 

@@ -27,6 +27,7 @@ public:
 
 	virtual bool Property_AddNameAttribute( char const* name ) override;
 	virtual bool Property_AddValueAttribute( reflect::Value const& value ) override;
+	virtual bool Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName ) override;
 	virtual bool Property_AddIndirectionAttribute( IndirectionID const& indirectionID ) override;
 	virtual bool Property_IndentFromCurrentProperty() override;
 	virtual bool Property_OutdentFromLastIndent() override;

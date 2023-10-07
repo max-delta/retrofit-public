@@ -18,6 +18,20 @@ class SERIALIZATION_API XmlExporter final : public Exporter
 	RF_NO_COPY( XmlExporter );
 
 public:
+	struct Config
+	{
+		// If true, debug type IDs will be included
+		bool mIncludeDebugTypeIDs = false;
+
+		// If true, debug names for types will be included next to type IDs
+		bool mIncludeInlineDebugNames = false;
+
+		// If true, the debug data section will be excluded
+		bool mStripDebugDataSection = false;
+	};
+
+
+public:
 	XmlExporter();
 	~XmlExporter() override;
 
@@ -36,12 +50,15 @@ public:
 
 	virtual bool Property_AddNameAttribute( char const* name ) override;
 	virtual bool Property_AddValueAttribute( reflect::Value const& value ) override;
+	virtual bool Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName ) override;
 	virtual bool Property_AddIndirectionAttribute( IndirectionID const& indirectionID ) override;
 	virtual bool Property_IndentFromCurrentProperty() override;
 	virtual bool Property_OutdentFromLastIndent() override;
 
 
 private:
+	Config const mConfig = {};
+
 	pugi::xml_document mDoc;
 
 	pugi::xml_node mHeader;

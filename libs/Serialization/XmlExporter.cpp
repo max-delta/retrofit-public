@@ -27,6 +27,43 @@ static bool hasAttribute( pugi::xml_node const& node, char const* attributeName 
 }
 #endif
 
+
+
+static void AppendDebugTypeDataIfNotADuplicate( pugi::xml_node& debugData, Exporter::TypeID const& typeID, char const* debugName )
+{
+	for( pugi::xml_node const& node : debugData.children() )
+	{
+		RF_TODO_ANNOTATION( "More robust error-handling and generally less shitty code" );
+		RF_ASSERT( node.name() == rftl::string_view( "TypeID" ) );
+		RF_ASSERT( hasAttribute( node, "Value" ) );
+		RF_ASSERT( hasAttribute( node, "DebugName" ) );
+		bool const valueMatch =
+			node.find_attribute(
+					[]( pugi::xml_attribute const& attribute ) -> bool
+					{
+						return attribute.name() == rftl::string_view( "Value" );
+					} )
+				.as_ullong() == typeID;
+		bool const nameMatch =
+			node.find_attribute(
+					[]( pugi::xml_attribute const& attribute ) -> bool
+					{
+						return attribute.name() == rftl::string_view( "DebugName" );
+					} )
+				.as_string() == rftl::string_view( debugName );
+		if( valueMatch && nameMatch )
+		{
+			// Duplicate
+			return;
+		}
+	}
+
+	// Not a duplicate, add it
+	pugi::xml_node typeIDNode = debugData.append_child( "TypeID" );
+	typeIDNode.append_attribute( "Value" ) = typeID;
+	typeIDNode.append_attribute( "DebugName" ) = debugName;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -199,11 +236,21 @@ bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const*
 		return false;
 	}
 
+	// NOTE: Adding debug name first, so it appears before the type ID, since
+	//  this is purely for human-readable diagnostics
+	if( mConfig.mIncludeInlineDebugNames )
+	{
+		RF_ASSERT( details::hasAttribute( mCurrentInstance, "DebugName" ) == false );
+		mCurrentInstance.append_attribute( "DebugName" ) = debugName;
+	}
+
+	RF_ASSERT( details::hasAttribute( mCurrentInstance, "TypeID" ) == false );
 	mCurrentInstance.append_attribute( "TypeID" ) = typeID;
 
-	pugi::xml_node typeIDNode = mDebugData.append_child( "TypeID" );
-	typeIDNode.append_attribute( "Value" ) = typeID;
-	typeIDNode.append_attribute( "DebugName" ) = debugName;
+	if( mConfig.mStripDebugDataSection == false )
+	{
+		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, typeID, debugName );
+	}
 
 	return true;
 }
@@ -343,6 +390,43 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 			valueAttr = "<UNSUPPORTED>";
 			break;
 	}
+	return true;
+}
+
+
+
+bool XmlExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName )
+{
+	if( mFinalized )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
+		return false;
+	}
+
+	if( mConfig.mIncludeDebugTypeIDs == false )
+	{
+		// Not including these
+		return true;
+	}
+
+	pugi::xml_node& currentProperty = mPropertyStack.back();
+
+	// NOTE: Adding debug name first, so it appears before the type ID, since
+	//  this is purely for human-readable diagnostics
+	if( mConfig.mIncludeInlineDebugNames )
+	{
+		RF_ASSERT( details::hasAttribute( currentProperty, "DebugName" ) == false );
+		currentProperty.append_attribute( "DebugName" ) = debugName;
+	}
+
+	RF_ASSERT( details::hasAttribute( currentProperty, "DebugTypeID" ) == false );
+	currentProperty.append_attribute( "DebugTypeID" ) = debugTypeID;
+
+	if( mConfig.mStripDebugDataSection == false )
+	{
+		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, debugTypeID, debugName );
+	}
+
 	return true;
 }
 
