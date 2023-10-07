@@ -3,6 +3,8 @@
 
 #include "GameResource/ResourceTypeRegistry.h"
 
+#include "RFType/GlobalTypeDatabase.h"
+
 #include "Serialization/ObjectSerializer.h"
 #include "Serialization/XmlExporter.h"
 
@@ -17,6 +19,8 @@
 #include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
+
+#include "core_rftype/StoredClassKey.h"
 
 
 namespace RF::resource {
@@ -66,8 +70,11 @@ bool ResourceSaver::SaveClassToFile(
 	( (void)typeID );
 	RF_TODO_ANNOTATION( "Require non-invalid type ID" );
 	RF_TODO_ANNOTATION( "Verify all saved classes are in registry so they can load later" );
-	HACK_params.mTypeID = 2;
-	HACK_params.mTypeDebugName = "HACK";
+	HACK_params.mTypeLookupFunc = []( reflect::ClassInfo const& classInfo ) -> rftype::StoredClassKey
+	{
+		return rftype::GetGlobalTypeDatabase().LookupKeyForClass( classInfo );
+	};
+	HACK_params.mContinueOnMissingTypeLookups = false;
 
 	// Acquire file handle
 	file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( path );

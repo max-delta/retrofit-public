@@ -3,10 +3,56 @@
 
 #include "Serialization/Exporter.h"
 
+#include "Logging/Logging.h"
+
+#include "core_rftype/StoredClassKey.h"
 #include "core_rftype/TypeTraverser.h"
 
 
 namespace RF::serialization {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+bool Instance_TryAddTypeIDAttribute(
+	Exporter& exporter,
+	ObjectSerializer::Params const& params,
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance )
+{
+	if( params.mTypeLookupFunc == nullptr )
+	{
+		// Opted out of this functionality, treat as success
+		return true;
+	}
+
+	// Lookup the key
+	rftype::StoredClassKey const classKey = params.mTypeLookupFunc( classInfo );
+	if( classKey.IsValid() == false )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION,
+			"Failed to lookup class key for class instance during"
+			" serialization, cannot encode type ID" );
+		RF_DBGFAIL();
+		RF_TODO_ANNOTATION( "Need to find some useful context to log here" );
+
+		// Failed to find, how should this be treated?
+		if( params.mContinueOnMissingTypeLookups )
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Attempt add
+	return exporter.Instance_AddTypeIDAttribute(
+		classKey.GetHash(),
+		classKey.mName.c_str() );
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 bool ObjectSerializer::SerializeSingleObject(
@@ -20,14 +66,13 @@ bool ObjectSerializer::SerializeSingleObject(
 	//  have indirect references made to it
 	( (void)params.mInstanceID );
 
-	// Not writing a type ID, since that requires more complicated machinery
+	// Not writing any type IDs, since that requires more complicated machinery
 	//  that we don't want to invoke so we can keep the single object
 	//  serialization simple
 	// NOTE: This means deserialization will need to have the root type made
 	//  for it, so single object serialization will need some other way to know
 	//  what type was serialized, such as filename extension or packet headers
-	( (void)params.mTypeID );
-	( (void)params.mTypeDebugName );
+	( (void)params.mTypeLookupFunc );
 
 	return SerializeSingleObject(
 		exporter,
@@ -59,10 +104,7 @@ bool ObjectSerializer::SerializeSingleObject(
 	}
 
 	// Type ID
-	if( params.mTypeID.has_value() )
-	{
-		exporter.Instance_AddTypeIDAttribute( *params.mTypeID, params.mTypeDebugName );
-	}
+	details::Instance_TryAddTypeIDAttribute( exporter, params, classInfo, classInstance );
 
 	auto onMemberVariable =
 		[&exporter](
