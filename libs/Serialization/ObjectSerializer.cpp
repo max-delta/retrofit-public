@@ -52,6 +52,47 @@ bool Instance_TryAddTypeIDAttribute(
 		classKey.mName.c_str() );
 }
 
+
+
+bool Property_TryAddDebugTypeIDAttribute(
+	Exporter& exporter,
+	ObjectSerializer::Params const& params,
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance )
+{
+	if( params.mTypeLookupFunc == nullptr )
+	{
+		// Opted out of this functionality, treat as success
+		return true;
+	}
+
+	// Lookup the key
+	rftype::StoredClassKey const classKey = params.mTypeLookupFunc( classInfo );
+	if( classKey.IsValid() == false )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION,
+			"Failed to lookup class key for class instance during"
+			" serialization, cannot encode type ID" );
+		RF_DBGFAIL();
+		RF_TODO_ANNOTATION( "Need to find some useful context to log here" );
+
+		// Failed to find, how should this be treated?
+		if( params.mContinueOnMissingTypeLookups )
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	// Attempt add
+	return exporter.Property_AddDebugTypeIDAttribute(
+		classKey.GetHash(),
+		classKey.mName.c_str() );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -97,6 +138,10 @@ bool ObjectSerializer::SerializeSingleObject(
 		return false;
 	}
 
+	RF_TODO_ANNOTATION(
+		"Error handling for when operations return false, most code here"
+		" silently assumes success and keeps going" );
+
 	// Instance ID
 	if( params.mInstanceID != exporter::kInvalidInstanceID )
 	{
@@ -107,32 +152,54 @@ bool ObjectSerializer::SerializeSingleObject(
 	details::Instance_TryAddTypeIDAttribute( exporter, params, classInfo, classInstance );
 
 	auto onMemberVariable =
-		[&exporter](
+		[&exporter, &params](
 			rftype::TypeTraverser::MemberVariableInstance const& memberVariableInstance )
 		-> void
 	{
 		char const* const name = memberVariableInstance.mMemberVariableInfo.mIdentifier;
 		reflect::VariableTypeInfo const& typeInfo = memberVariableInstance.mMemberVariableInfo.mVariableTypeInfo;
-		reflect::Value::Type const type = typeInfo.mValueType;
 		void const* const location = memberVariableInstance.mMemberVariableLocation;
 		exporter.Instance_BeginNewProperty();
 		exporter.Property_AddNameAttribute( name );
-		if( type != reflect::Value::Type::Invalid )
+		if( typeInfo.mValueType != reflect::Value::Type::Invalid )
 		{
+			// A value, expect to be a leaf element with no traversal
 			RF_ASSERT( typeInfo.mClassInfo == nullptr );
 			RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+			// Serialize immediately
+			reflect::Value::Type const& type = typeInfo.mValueType;
 			exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+		}
+		else if( typeInfo.mClassInfo != nullptr )
+		{
+			// A nested type, expect a traversal callback soon
+			RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+			RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+			// Note the type for debug purposes
+			details::Property_TryAddDebugTypeIDAttribute(
+				exporter,
+				params,
+				*typeInfo.mClassInfo,
+				location );
+		}
+		else if( typeInfo.mAccessor != nullptr )
+		{
+			// An accessor, expect a traversal callback soon
+			RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+			RF_ASSERT( typeInfo.mClassInfo == nullptr );
+
+			RF_TODO_ANNOTATION( "Information about what this is?" );
 		}
 		else
 		{
-			// Probably a nested type or another accessor, expect a traversal
-			//  callback soon
-			RF_TODO_ANNOTATION( "Information about what this is?" );
+			RF_DBGFAIL_MSG( "Unexpected codepath" );
 		}
 	};
 
 	auto onTraversalTypeFound =
-		[&exporter, &success](
+		[&exporter, &params, &success](
 			rftype::TypeTraverser::TraversalType traversalType,
 			rftype::TypeTraverser::TraversalVariableInstance const& varInst,
 			bool& shouldRecurse )
@@ -175,22 +242,49 @@ bool ObjectSerializer::SerializeSingleObject(
 			{
 				char const* const keyName = "K"; // Key
 				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
-				reflect::Value::Type const type = typeInfo.mValueType;
 				void const* const location = varInst.mVariableLocation;
 				exporter.Instance_BeginNewProperty();
 				exporter.Property_AddNameAttribute( keyName );
-				if( type != reflect::Value::Type::Invalid )
+				if( typeInfo.mValueType != reflect::Value::Type::Invalid )
 				{
+					// A value key
 					RF_ASSERT( typeInfo.mClassInfo == nullptr );
 					RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+					// Serialize immediately
+					reflect::Value::Type const& type = typeInfo.mValueType;
 					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+				}
+				else if( typeInfo.mClassInfo != nullptr )
+				{
+					// A nested type key
+					RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+					RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+					// Recurse into it and expect it'll trigger an indentation
+					shouldRecurse = true;
+
+					// Note the type for debug purposes
+					details::Property_TryAddDebugTypeIDAttribute(
+						exporter,
+						params,
+						*typeInfo.mClassInfo,
+						location );
+				}
+				else if( typeInfo.mAccessor != nullptr )
+				{
+					// An accessor key
+					RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+					RF_ASSERT( typeInfo.mClassInfo == nullptr );
+
+					// Recurse into it and expect it'll trigger an indentation
+					shouldRecurse = true;
+
+					RF_TODO_ANNOTATION( "Information about what this is?" );
 				}
 				else
 				{
-					// Probably a nested type or another accessor, recurse into
-					//  it and expect it'll trigger an indentation
-					RF_TODO_ANNOTATION( "Information about what this is?" );
-					shouldRecurse = true;
+					RF_DBGFAIL_MSG( "Unexpected codepath" );
 				}
 				break;
 			}
@@ -198,22 +292,49 @@ bool ObjectSerializer::SerializeSingleObject(
 			{
 				char const* const name = "T"; // Target
 				reflect::VariableTypeInfo const& typeInfo = varInst.mVariableTypeInfo;
-				reflect::Value::Type const type = typeInfo.mValueType;
 				void const* const location = varInst.mVariableLocation;
 				exporter.Instance_BeginNewProperty();
 				exporter.Property_AddNameAttribute( name );
-				if( type != reflect::Value::Type::Invalid )
+				if( typeInfo.mValueType != reflect::Value::Type::Invalid )
 				{
+					// A value target
 					RF_ASSERT( typeInfo.mClassInfo == nullptr );
 					RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+					// Serialize immediately
+					reflect::Value::Type const& type = typeInfo.mValueType;
 					exporter.Property_AddValueAttribute( reflect::Value( type, location ) );
+				}
+				else if( typeInfo.mClassInfo != nullptr )
+				{
+					// A nested type target
+					RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+					RF_ASSERT( typeInfo.mAccessor == nullptr );
+
+					// Recurse into it and expect it'll trigger an indentation
+					shouldRecurse = true;
+
+					// Note the type for debug purposes
+					details::Property_TryAddDebugTypeIDAttribute(
+						exporter,
+						params,
+						*typeInfo.mClassInfo,
+						location );
+				}
+				else if( typeInfo.mAccessor != nullptr )
+				{
+					// An accessor target
+					RF_ASSERT( typeInfo.mValueType == reflect::Value::Type::Invalid );
+					RF_ASSERT( typeInfo.mClassInfo == nullptr );
+
+					// Recurse into it and expect it'll trigger an indentation
+					shouldRecurse = true;
+
+					RF_TODO_ANNOTATION( "Information about what this is?" );
 				}
 				else
 				{
-					// Probably a nested type or another accessor, recurse into
-					//  it and expect it'll trigger an indentation
-					RF_TODO_ANNOTATION( "Information about what this is?" );
-					shouldRecurse = true;
+					RF_DBGFAIL_MSG( "Unexpected codepath" );
 				}
 				break;
 			}
