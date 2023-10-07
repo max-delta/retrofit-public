@@ -33,6 +33,7 @@
 		<ClInclude Include="ConstructedType.h" />
 		<ClInclude Include="RFTypeFwd.h" />
 		<ClInclude Include="TypeDatabase.h" />
+		<ClInclude Include="StoredClassKey.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -53,6 +54,7 @@
 		<ClCompile Include="VirtualCast.cpp" />
 		<ClCompile Include="ConstructedType.cpp" />
 		<ClCompile Include="TypeDatabase.cpp" />
+		<ClCompile Include="StoredClassKey.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="stl_extensions">

@@ -4,6 +4,7 @@ namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
 struct ConstructedType;
+struct StoredClassKey;
 
 class TypeTraverser;
 

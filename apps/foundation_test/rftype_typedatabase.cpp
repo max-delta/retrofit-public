@@ -4,6 +4,7 @@
 #include "RFType/GlobalTypeDatabase.h"
 
 #include "core_rftype/ClassInfoAccessor.h"
+#include "core_rftype/StoredClassKey.h"
 
 #include "RFType/Example.h"
 
@@ -160,7 +161,7 @@ TEST( RFType, NameRegistation )
 	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
 
 	reflect::ClassInfo const& classInfo = GetClassInfo<test::RFTypeNameTest>();
-	TypeDatabase::ClassKey const classKey = typeDatabase.LookupKeyForClass( classInfo );
+	StoredClassKey const classKey = typeDatabase.LookupKeyForClass( classInfo );
 	ASSERT_EQ( classKey.mName, "RF__rftype__test__RFTypeNameTest" );
 	ASSERT_EQ( classKey.mHash, RF_HASH_FROM_STRING_LITERAL( "RF__rftype__test__RFTypeNameTest" ) );
 }

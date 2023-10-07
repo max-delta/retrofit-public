@@ -3,6 +3,7 @@
 
 #include "core_rftype/ConstructedType.h"
 #include "core_rftype/Identifier.h"
+#include "core_rftype/StoredClassKey.h"
 
 #include "core/macros.h"
 
@@ -53,7 +54,7 @@ reflect::ClassInfo const* TypeDatabase::GetClassInfoByHash( math::HashVal64 cons
 
 
 
-TypeDatabase::ClassKey TypeDatabase::LookupKeyForClass( reflect::ClassInfo const& classInfo ) const
+StoredClassKey TypeDatabase::LookupKeyForClass( reflect::ClassInfo const& classInfo ) const
 {
 	RF_TODO_ANNOTATION( "Faster reverse lookup table" );
 
@@ -63,11 +64,11 @@ TypeDatabase::ClassKey TypeDatabase::LookupKeyForClass( reflect::ClassInfo const
 		if( entry.second.mClassInfo == &classInfo )
 		{
 			// Return first match
-			return ClassKey{ entry.second.mName, entry.first };
+			return StoredClassKey( entry.second.mName, entry.first );
 		}
 	}
 
-	return ClassKey{};
+	return StoredClassKey{};
 }
 
 
