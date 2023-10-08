@@ -18,6 +18,7 @@ struct AccessorTemplate
 	using UntypedInst = ExtensionAccessor::UntypedInst;
 	using UntypedConstInst = ExtensionAccessor::UntypedConstInst;
 
+	using IndirectionInfo = ::RF::reflect::IndirectionInfo;
 	using VariableTypeInfo = ::RF::reflect::VariableTypeInfo;
 	using Value = ::RF::reflect::Value;
 };

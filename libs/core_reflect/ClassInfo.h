@@ -5,10 +5,11 @@
 #include "core/meta/ConstructorOverload.h"
 #include "core/ptr/ptr_fwd.h"
 
-#include "rftl/vector"
-#include "rftl/deque"
-#include "rftl/tuple"
 #include "rftl/extension/immutable_string.h"
+#include "rftl/deque"
+#include "rftl/optional"
+#include "rftl/tuple"
+#include "rftl/vector"
 
 
 namespace RF::reflect {
@@ -114,6 +115,20 @@ struct MemberFunctionInfo
 
 
 
+struct IndirectionInfo
+{
+	// For a memory lookup, such as a pointer
+	// NOTE: It's possible that the instance type is known to be different
+	//  from the pointer type, such as when the pointer type is to a virtual
+	//  base class, and the instance is a derived class
+	rftl::optional<VariableTypeInfo> mMemoryLookupPointerType = rftl::nullopt;
+	rftl::optional<VariableTypeInfo> mMemoryLookupInstanceType = rftl::nullopt;
+
+	// TODO: Other more exotic indirection types?
+};
+
+
+
 // A 'root' pointer is interpreted as some type of structure that contains
 //  key-value pairs, which the extension accessor knows how to extract
 struct ExtensionAccessor
@@ -193,6 +208,12 @@ struct ExtensionAccessor
 	// NOTE: Null is forbidden
 	using FuncPtrGetTargetInfoByKey = VariableTypeInfo ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
 	FuncPtrGetTargetInfoByKey mGetTargetInfoByKey = nullptr;
+
+	// Some variables may be an indirection, and the accessor may be aware of
+	//  this and able to provide some information about the indirection
+	// NOTE: Null indicates lack of knowledge of indirection
+	using FuncPtrGetTargetIndirectionInfoByKey = rftl::optional<IndirectionInfo> ( * )( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo );
+	FuncPtrGetTargetIndirectionInfoByKey mGetTargetIndirectionInfoByKey = nullptr;
 
 	// Access target by key
 	// NOTE: Null is forbidden

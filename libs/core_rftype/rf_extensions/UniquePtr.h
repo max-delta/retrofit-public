@@ -95,6 +95,33 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return true;
 	}
 
+	template<typename RootT>
+	static bool IsValidZeroKeyHelper( RootT root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	{
+		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
+		{
+			RF_DBGFAIL_MSG( "Key type differs from expected" );
+			return false;
+		}
+
+		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
+		if( castedKey == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Key is null" );
+			return false;
+		}
+
+		KeyType const index = *castedKey;
+		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
+		if( index != 0 )
+		{
+			RF_DBGFAIL_MSG( "Key value is invalid" );
+			return false;
+		}
+
+		return true;
+	}
+
 	// Varies depending on whether the type is virtual and reflectable
 	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_base_of<reflect::VirtualClassWithoutDestructor, ValueTypeTest>::value, int>::type = 0>
 	static VariableTypeInfo GetTargetInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
@@ -130,27 +157,60 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		return GetSharedTargetInfo( root );
 	}
 
+	// Varies depending on whether the type is virtual and reflectable
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_base_of<reflect::VirtualClassWithoutDestructor, ValueTypeTest>::value, int>::type = 0>
+	static rftl::optional<IndirectionInfo> GetTargetIndirectionInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	{
+		// Virtual and reflectable
+
+		if( IsValidZeroKeyHelper( root, key, keyInfo ) == false )
+		{
+			RF_DBGFAIL_MSG( "Not a valid zero key" );
+			return rftl::nullopt;
+		}
+
+		AccessedType const* const pThis = reinterpret_cast<AccessedType const*>( root );
+		if( pThis->Get() == nullptr )
+		{
+			RF_DBGFAIL_MSG( "Index out of bounds" );
+			return rftl::nullopt;
+		}
+
+		// Instance type might differ from pointer type
+		IndirectionInfo retVal = {};
+		retVal.mMemoryLookupPointerType = TypeInference<ValueType>::GetTypeInfo();
+		retVal.mMemoryLookupInstanceType = VariableTypeInfo{};
+		retVal.mMemoryLookupInstanceType->mClassInfo = pThis->Get()->GetVirtualClassInfo();
+		RF_ASSERT_MSG( retVal.mMemoryLookupInstanceType->mClassInfo != nullptr,
+			"Invalid virtual, has no class info, corrupt due to improper API"
+			" usage of reflection declarations?" );
+		return retVal;
+	}
+	template<typename ValueTypeTest = ValueType, typename rftl::enable_if<rftl::is_base_of<reflect::VirtualClassWithoutDestructor, ValueTypeTest>::value == false, int>::type = 0>
+	static rftl::optional<IndirectionInfo> GetTargetIndirectionInfoByKey( RootConstInst root, UntypedConstInst key, VariableTypeInfo const& keyInfo )
+	{
+		// Possibly virtual, but non-reflectable if so
+
+		if( IsValidZeroKeyHelper( root, key, keyInfo ) == false )
+		{
+			RF_DBGFAIL_MSG( "Not a valid zero key" );
+			return rftl::nullopt;
+		}
+
+		// Instance is same as pointer
+		VariableTypeInfo const pointerType = GetSharedTargetInfo( root );
+		IndirectionInfo retVal = {};
+		retVal.mMemoryLookupPointerType = pointerType;
+		retVal.mMemoryLookupInstanceType = pointerType;
+		return retVal;
+	}
+
 	template<typename AccessedTypeT, typename RootT, typename ValueT>
 	static bool GetTargetByKeyHelper( RootT root, UntypedConstInst key, VariableTypeInfo const& keyInfo, ValueT& value, VariableTypeInfo& valueInfo )
 	{
-		if( keyInfo.mValueType != Value::DetermineType<KeyType>() )
+		if( IsValidZeroKeyHelper( root, key, keyInfo ) == false )
 		{
-			RF_DBGFAIL_MSG( "Key type differs from expected" );
-			return false;
-		}
-
-		KeyType const* castedKey = reinterpret_cast<KeyType const*>( key );
-		if( castedKey == nullptr )
-		{
-			RF_DBGFAIL_MSG( "Key is null" );
-			return false;
-		}
-
-		KeyType const index = *castedKey;
-		static_assert( rftl::is_unsigned<KeyType>::value, "Assuming unsigned" );
-		if( index != 0 )
-		{
-			RF_DBGFAIL_MSG( "Key value is invalid" );
+			RF_DBGFAIL_MSG( "Not a valid zero key" );
 			return false;
 		}
 
@@ -416,6 +476,7 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 		retVal.mGetKeyInfoByIndex = &GetKeyInfoByIndex;
 		retVal.mGetKeyByIndex = &GetKeyByIndex;
 		retVal.mGetTargetInfoByKey = &GetTargetInfoByKey;
+		retVal.mGetTargetIndirectionInfoByKey = GetTargetIndirectionInfoByKey;
 
 		retVal.mGetTargetByKey = &GetTargetByKey;
 		retVal.mGetMutableTargetByKey = &GetMutableTargetByKey;
