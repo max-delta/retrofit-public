@@ -4,10 +4,10 @@
 
 // Forwards
 namespace RF::reflect {
-	class VirtualClass;
-	struct ClassInfo;
-	struct MemberVariableInfo;
-	struct VariableTypeInfo;
+class VirtualClass;
+struct ClassInfo;
+struct MemberVariableInfo;
+struct VariableTypeInfo;
 }
 
 namespace RF::rftype {
