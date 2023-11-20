@@ -207,6 +207,7 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 	rftl::string_view name = {};
 	rftl::string_view type = {};
 	rftl::string_view value = {};
+	rftl::string_view indirection = {};
 	for( pugi::xml_attribute const& attribute : prop.attributes() )
 	{
 		rftl::string_view const attributeName = attribute.name();
@@ -227,6 +228,12 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 		if( attributeName == "Value" )
 		{
 			value = attributeValue;
+			continue;
+		}
+
+		if( attributeName == "IndirectionID" )
+		{
+			indirection = attributeValue;
 			continue;
 		}
 
@@ -274,6 +281,33 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 
 		// Value
 		keepProcessing = TryInvoke( callbacks.mProperty_AddValueAttributeFunc, asVal );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	// Indirection (optional)
+	if( indirection.empty() == false )
+	{
+		// HACK: Use the XML convert helpers
+		// TODO: Use some simpler helpers, this just needs to go string->uint64
+		static_assert( rftl::is_same<exporter::IndirectionID, uint64_t>::value );
+		reflect::Value const asVal = TryConvertValue( "UInt64", indirection );
+		if( asVal.GetStoredType() == reflect::Value::Type::Invalid )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to Indirection value", RFTLE_CSTR( name ) );
+			return false;
+		}
+		uint64_t const* asID = asVal.GetAs<uint64_t>();
+		if( asID == nullptr )
+		{
+			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to integer Indirection value", RFTLE_CSTR( name ) );
+			return false;
+		}
+
+		// Indirection
+		keepProcessing = TryInvoke( callbacks.mProperty_AddIndirectionAttributeFunc, *asID );
 		if( keepProcessing == false )
 		{
 			return false;
