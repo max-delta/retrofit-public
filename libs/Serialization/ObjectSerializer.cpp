@@ -446,12 +446,23 @@ bool ObjectSerializer::SerializeSingleObject(
 						exporter::InstanceID const deferredID = params.mInstanceIDGenerator();
 						RF_ASSERT( deferredID != exporter::kInvalidInstanceID );
 
-						// Note the ID on the property, to form one side of the
-						//  link for later deserializers to use
-						// NOTE: At time of writing the indirection ID and the
-						//  instance ID are the same ID
-						exporter::IndirectionID const indirectionID = deferredID;
+						// HACK: Setup a local indirection
+						RF_TODO_ANNOTATION(
+							"Some kind of mechanism to allow an external"
+							" indirection, controlled by the caller" );
+						// NOTE: Using altered ID for indirection and instance,
+						//  to catch bugs
+						// HACK: Unsafe indirection ID generation
+						RF_TODO_ANNOTATION( "Safer indirection ID generation" )
+						RF_ASSERT( deferredID < 10'000 );
+						exporter::IndirectionID const indirectionID = deferredID + 10'000;
 						RF_ASSERT( indirectionID != exporter::kInvalidIndirectionID );
+						exporter.Root_RegisterLocalIndirection(
+							indirectionID,
+							deferredID );
+
+						// Note the indirection ID on the property, to form one
+						//  side of the link for later deserializers to use
 						exporter.Property_AddIndirectionAttribute(
 							indirectionID );
 
