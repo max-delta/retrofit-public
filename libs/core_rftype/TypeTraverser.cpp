@@ -25,6 +25,19 @@ TypeTraverser::TraversalVariableInstance::TraversalVariableInstance(
 	//
 }
 
+
+
+TypeTraverser::TraversalVariableInstance::TraversalVariableInstance(
+	reflect::VariableTypeInfo const& variableTypeInfo,
+	void const* const variableLocation,
+	reflect::IndirectionInfo const& indirectionInfo )
+	: mVariableTypeInfo( variableTypeInfo )
+	, mVariableLocation( variableLocation )
+	, mIndirectionInfo( &indirectionInfo )
+{
+	//
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 void TypeTraverser::TraverseVariables(

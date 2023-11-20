@@ -173,8 +173,13 @@ inline void TypeTraverser::TraverseVariableInternalT(
 		// Extension type
 
 		bool shouldTraverseAccessor = false;
-		// TODO: Callback
-		onTraversalFunc( TraversalType::Accessor, TraversalVariableInstance( typeInfo, varLoc ), shouldTraverseAccessor );
+		{
+			// Callback
+			onTraversalFunc(
+				TraversalType::Accessor,
+				TraversalVariableInstance( typeInfo, varLoc ),
+				shouldTraverseAccessor );
+		}
 		if( shouldTraverseAccessor )
 		{
 			// NOTE: Can't perform traversal on null accessors, so they
@@ -182,21 +187,33 @@ inline void TypeTraverser::TraverseVariableInternalT(
 			if( varLoc != nullptr )
 			{
 				ExtensionAccessor const& accessor = *typeInfo.mAccessor;
+
+				// Start access
 				if( accessor.mBeginAccess != nullptr )
 				{
 					accessor.mBeginAccess( varLoc );
 				}
+
+				// For each index...
 				size_t const numVars = accessor.mGetNumVariables( varLoc );
 				for( size_t i = 0; i < numVars; i++ )
 				{
+					// Key, via index
 					VariableTypeInfo keyInfo = {};
 					void const* keyLoc = nullptr;
 					bool const foundKey = accessor.mGetKeyByIndex( varLoc, i, keyLoc, keyInfo );
 					RF_ASSERT( foundKey );
 					bool shouldTraverseKey = false;
-					onTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ), shouldTraverseKey );
+					{
+						// Callback
+						onTraversalFunc(
+							TraversalType::AccessorKey,
+							TraversalVariableInstance( keyInfo, keyLoc ),
+							shouldTraverseKey );
+					}
 					if( shouldTraverseKey )
 					{
+						// Recurse
 						TraverseVariableInternalT(
 							keyInfo,
 							keyLoc,
@@ -204,17 +221,35 @@ inline void TypeTraverser::TraverseVariableInternalT(
 							onTraversalFunc,
 							onReturnFromTraversalFunc );
 
-						onReturnFromTraversalFunc( TraversalType::AccessorKey, TraversalVariableInstance( keyInfo, keyLoc ) );
+						// Callback
+						onReturnFromTraversalFunc(
+							TraversalType::AccessorKey,
+							TraversalVariableInstance( keyInfo, keyLoc ) );
 					}
 
+					// Target, via key
 					VariableTypeInfo targetInfo = {};
 					void const* targetLoc = nullptr;
 					bool const foundTarget = accessor.mGetTargetByKey( varLoc, keyLoc, keyInfo, targetLoc, targetInfo );
 					RF_ASSERT( foundTarget );
+					rftl::optional<reflect::IndirectionInfo> indirectionInfo = rftl::nullopt;
+					if( accessor.mGetTargetIndirectionInfoByKey != nullptr )
+					{
+						indirectionInfo = accessor.mGetTargetIndirectionInfoByKey( varLoc, keyLoc, keyInfo );
+					}
 					bool shouldTraverseTarget = false;
-					onTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ), shouldTraverseTarget );
+					{
+						// Callback
+						onTraversalFunc(
+							TraversalType::AccessorTarget,
+							indirectionInfo.has_value() ?
+								TraversalVariableInstance( targetInfo, targetLoc, indirectionInfo.value() ) :
+								TraversalVariableInstance( targetInfo, targetLoc ),
+							shouldTraverseTarget );
+					}
 					if( shouldTraverseTarget )
 					{
+						// Recurse
 						TraverseVariableInternalT(
 							targetInfo,
 							targetLoc,
@@ -222,16 +257,24 @@ inline void TypeTraverser::TraverseVariableInternalT(
 							onTraversalFunc,
 							onReturnFromTraversalFunc );
 
-						onReturnFromTraversalFunc( TraversalType::AccessorTarget, TraversalVariableInstance( targetInfo, targetLoc ) );
+						// Callback
+						onReturnFromTraversalFunc(
+							TraversalType::AccessorTarget,
+							TraversalVariableInstance( targetInfo, targetLoc ) );
 					}
 				}
+
+				// End access
 				if( accessor.mEndAccess != nullptr )
 				{
 					accessor.mEndAccess( varLoc );
 				}
 			}
 
-			onReturnFromTraversalFunc( TraversalType::Accessor, TraversalVariableInstance( typeInfo, varLoc ) );
+			// Callback
+			onReturnFromTraversalFunc(
+				TraversalType::Accessor,
+				TraversalVariableInstance( typeInfo, varLoc ) );
 		}
 		return;
 	}

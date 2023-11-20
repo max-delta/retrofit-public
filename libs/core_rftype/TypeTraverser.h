@@ -6,6 +6,7 @@
 namespace RF::reflect {
 class VirtualClass;
 struct ClassInfo;
+struct IndirectionInfo;
 struct MemberVariableInfo;
 struct VariableTypeInfo;
 }
@@ -41,7 +42,7 @@ public:
 		MemberVariableInstance& operator=( MemberVariableInstance const& ) = delete;
 
 		reflect::MemberVariableInfo const& mMemberVariableInfo;
-		void const* const mMemberVariableLocation;
+		void const* const mMemberVariableLocation = nullptr;
 	};
 
 	struct TraversalVariableInstance
@@ -50,11 +51,16 @@ public:
 		TraversalVariableInstance(
 			reflect::VariableTypeInfo const& variableTypeInfo,
 			void const* const variableLocation );
+		TraversalVariableInstance(
+			reflect::VariableTypeInfo const& variableTypeInfo,
+			void const* const variableLocation,
+			reflect::IndirectionInfo const& indirectionInfo );
 		TraversalVariableInstance( TraversalVariableInstance const& ) = default;
 		TraversalVariableInstance& operator=( TraversalVariableInstance const& ) = delete;
 
 		reflect::VariableTypeInfo const& mVariableTypeInfo;
-		void const* const mVariableLocation;
+		void const* const mVariableLocation = nullptr;
+		reflect::IndirectionInfo const* const mIndirectionInfo = nullptr;
 	};
 
 
