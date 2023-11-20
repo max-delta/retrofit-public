@@ -168,18 +168,17 @@ bool ObjectSerializer::SerializeSingleObject(
 	//  mechanisms like ID generation
 	params.mCollapseAllPossibleIndirections = true;
 
-	Intermediates intermediates = {};
+	// Should fail to be able to produce indirections, since we did not provide
+	//  a way to generate the IDs for them
+	// NOTE: Expect the serialize to have return as failed if it tried, before
+	//  trying to use this callback
+	( (void)params.mIndirectionDeferFunc );
+
 	bool const success = SerializeSingleObject(
 		exporter,
 		classInfo,
 		classInstance,
-		params,
-		intermediates );
-
-	// Should fail to be able to produce indirections, since we did not provide
-	//  a way to generate the IDs for them
-	// NOTE: Expect the serialize to have return as failed if it tried
-	RF_ASSERT( intermediates.mDeferredIndirections.empty() );
+		params );
 
 	return success;
 }
@@ -190,8 +189,7 @@ bool ObjectSerializer::SerializeSingleObject(
 	Exporter& exporter,
 	reflect::ClassInfo const& classInfo,
 	void const* classInstance,
-	Params const& params,
-	Intermediates& intermediates )
+	Params const& params )
 {
 	bool success;
 
@@ -262,7 +260,7 @@ bool ObjectSerializer::SerializeSingleObject(
 	};
 
 	auto onTraversalTypeFound =
-		[&exporter, &params, &intermediates, &success](
+		[&exporter, &params, &success](
 			rftype::TypeTraverser::TraversalType traversalType,
 			rftype::TypeTraverser::TraversalVariableInstance const& varInst,
 			bool& shouldRecurse )
@@ -457,14 +455,24 @@ bool ObjectSerializer::SerializeSingleObject(
 						exporter.Property_AddIndirectionAttribute(
 							indirectionID );
 
-						// Add the deferred indirection to a list to process
-						//  during later logic
-						Intermediates::DeferredIndirection deferredIndirection = {};
-						deferredIndirection.mInstanceID = deferredID;
-						deferredIndirection.mVariableTypeInfo = varInst.mVariableTypeInfo;
-						deferredIndirection.mVariableLocation = varInst.mVariableLocation;
-						deferredIndirection.mIndirectionInfo = *varInst.mIndirectionInfo;
-						intermediates.mDeferredIndirections.emplace_back( rftl::move( deferredIndirection ) );
+						// Report the deferred indirection so it can be
+						//  processed during later logic
+						if( params.mIndirectionDeferFunc == nullptr )
+						{
+							RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION,
+								"Needed to defer an indirection, but the"
+								" caller provided no callback to be notified"
+								" of this" );
+						}
+						else
+						{
+							DeferredIndirection deferredIndirection = {};
+							deferredIndirection.mInstanceID = deferredID;
+							deferredIndirection.mVariableTypeInfo = varInst.mVariableTypeInfo;
+							deferredIndirection.mVariableLocation = varInst.mVariableLocation;
+							deferredIndirection.mIndirectionInfo = *varInst.mIndirectionInfo;
+							params.mIndirectionDeferFunc( deferredIndirection );
+						}
 						shouldRecurse = false;
 					}
 					else
@@ -557,10 +565,13 @@ bool ObjectSerializer::SerializeMultipleObjects(
 	void const* classInstance,
 	Params const& params )
 {
+	// Will wrap the params to make modifications as needed
+	Params wrappedParams = params;
+
 	// Root instance ID is optional, but if missing, it means that it won't be
 	//  able to be referred to, which might create issues when trying to create
 	//  external indirections (as opposed to just local local indirections)
-	if( params.mInstanceID == exporter::kInvalidInstanceID )
+	if( wrappedParams.mInstanceID == exporter::kInvalidInstanceID )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION,
 			"Attempting to serialize multiple objects but instance ID for the"
@@ -569,7 +580,7 @@ bool ObjectSerializer::SerializeMultipleObjects(
 
 	// This is a suspicious call, and might be better to be an error
 	RF_TODO_ANNOTATION( "Re-evaluate whether this should be an error instead" );
-	if( params.mInstanceIDGenerator == nullptr )
+	if( wrappedParams.mInstanceIDGenerator == nullptr )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION,
 			"Attempting to serialize multiple objects but without a way to"
@@ -577,8 +588,26 @@ bool ObjectSerializer::SerializeMultipleObjects(
 			" objects are actually needed" );
 	}
 
-	// May pick up more objects while serializing
-	Intermediates intermediates = {};
+	// May pick up more objects while serializing, these need to be tracked
+	rftl::deque<DeferredIndirection> intermediates = {};
+	{
+		// Want to make sure we still call the original callback, if provided
+		Params::IndirectionDeferFunc const& original = params.mIndirectionDeferFunc;
+
+		auto const onDeferredIndirection =
+			[&intermediates, &original](
+				DeferredIndirection const& deferred )
+			-> void
+		{
+			intermediates.emplace_back( deferred );
+			if( original != nullptr )
+			{
+				original( deferred );
+			}
+		};
+
+		wrappedParams.mIndirectionDeferFunc = onDeferredIndirection;
+	}
 
 	// Will track visited locations, to avoid duplicates or loops in complex
 	//  pointer graphcs
@@ -588,12 +617,11 @@ bool ObjectSerializer::SerializeMultipleObjects(
 	// Root instance
 	{
 		bool const rootSuccess =
-			serialization::ObjectSerializer::SerializeSingleObject(
+			SerializeSingleObject(
 				exporter,
 				classInfo,
 				classInstance,
-				params,
-				intermediates );
+				wrappedParams );
 		if( rootSuccess == false )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
@@ -613,13 +641,13 @@ bool ObjectSerializer::SerializeMultipleObjects(
 
 
 	// Intermediates
-	while( intermediates.mDeferredIndirections.empty() == false )
+	while( intermediates.empty() == false )
 	{
-		using Node = serialization::ObjectSerializer::Intermediates::DeferredIndirection;
+		using Node = DeferredIndirection;
 
 		// Pop
-		Node const currentNode = intermediates.mDeferredIndirections.front();
-		intermediates.mDeferredIndirections.pop_front();
+		Node const currentNode = intermediates.front();
+		intermediates.pop_front();
 
 		// Location
 		void const* const instanceLocation = currentNode.mVariableLocation;
@@ -650,17 +678,16 @@ bool ObjectSerializer::SerializeMultipleObjects(
 		}
 
 		// Adjusted params
-		Params instanceParams = params;
+		Params instanceParams = wrappedParams;
 		instanceParams.mInstanceID = currentNode.mInstanceID;
 
 		// Intermediate
 		bool const intermediateSuccess =
-			serialization::ObjectSerializer::SerializeSingleObject(
+			SerializeSingleObject(
 				exporter,
 				instanceClassInfo,
 				instanceLocation,
-				instanceParams,
-				intermediates );
+				instanceParams );
 		if( intermediateSuccess == false )
 		{
 			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,

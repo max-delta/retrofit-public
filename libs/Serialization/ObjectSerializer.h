@@ -22,6 +22,14 @@ class SERIALIZATION_API ObjectSerializer
 	RF_NO_INSTANCE( ObjectSerializer );
 
 public:
+	struct DeferredIndirection
+	{
+		exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
+		reflect::VariableTypeInfo mVariableTypeInfo = {};
+		void const* mVariableLocation = nullptr;
+		reflect::IndirectionInfo mIndirectionInfo = {};
+	};
+
 	struct Params
 	{
 		exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
@@ -46,23 +54,16 @@ public:
 		// If indirections cause deferrals, they will need to have instance IDs
 		//  generated to assign to the indirection, to be able to link them
 		//  back together later
-		rftl::function<exporter::InstanceID()> mInstanceIDGenerator;
-	};
+		using InstanceIDGenSig = exporter::InstanceID();
+		using InstanceIDGenFunc = rftl::function<InstanceIDGenSig>;
+		InstanceIDGenFunc mInstanceIDGenerator = nullptr;
 
-
-	struct Intermediates
-	{
-		// Some indirections cause deferrals, which need to be serialized
-		//  somehow for the indirection to be later resolved during
+		// Some indirections cause deferrals, which will need to be serialized
+		//  later somehow for the indirection to be resolved during downstream
 		//  deserialization logic
-		struct DeferredIndirection
-		{
-			exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
-			reflect::VariableTypeInfo mVariableTypeInfo = {};
-			void const* mVariableLocation = nullptr;
-			reflect::IndirectionInfo mIndirectionInfo = {};
-		};
-		rftl::deque<DeferredIndirection> mDeferredIndirections;
+		using IndirectionDeferSig = void( DeferredIndirection const& );
+		using IndirectionDeferFunc = rftl::function<IndirectionDeferSig>;
+		IndirectionDeferFunc mIndirectionDeferFunc = nullptr;
 	};
 
 
@@ -75,8 +76,7 @@ public:
 		Exporter& exporter,
 		reflect::ClassInfo const& classInfo,
 		void const* classInstance,
-		Params const& params,
-		Intermediates& intermediates );
+		Params const& params );
 
 	static bool SerializeMultipleObjects(
 		Exporter& exporter,
