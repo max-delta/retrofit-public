@@ -216,7 +216,9 @@ bool WriteScriptValueToVariable(
 		{
 			RFLOG_NOTIFY( target.mIdentifier, RFCAT_GAMESCRIPTING,
 				"Cannot convert script element to an invalid member variable type"
-				" (An accessor is available, script probably is improperly using a simpler value type)" );
+				" (An accessor is available, script probably is improperly"
+				" using a simpler value type, which might also happen"
+				" implicitly if the variable was never set in script)" );
 		}
 		else
 		{
