@@ -59,12 +59,19 @@ bool ResourceSaver::SaveClassToFile(
 	file::VFSPath const& path )
 {
 	// HACK: Testing
-	// TODO: Proper params
+	RF_TODO_ANNOTATION( "Proper params" );
 	serialization::ObjectSerializer::Params HACK_params = {};
 
-	// HACK: Only doing simple single-object serialization right now
-	RF_TODO_ANNOTATION( "Support complex pointer graphs" );
+	// HACK: Only doing limited multi-object local serialization right now
 	HACK_params.mInstanceID = 1;
+	HACK_params.mCollapseAllPossibleIndirections = true;
+	serialization::exporter::InstanceID nextIDGen = 2;
+	HACK_params.mInstanceIDGenerator = [&nextIDGen]() -> serialization::exporter::InstanceID
+	{
+		serialization::exporter::InstanceID const nextID = nextIDGen;
+		nextIDGen++;
+		return nextID;
+	};
 
 	// HACK: Hard-coded type testing
 	( (void)typeID );
@@ -97,25 +104,46 @@ bool ResourceSaver::SaveClassToFile(
 #if RF_IS_ALLOWED( RF_CONFIG_RESOURCE_SAVE_DIAGNOSTICS )
 		// Diagnostic export
 		{
+			// NOTE: This sorta assumes that serializing is a non-mutating
+			//  operation, so the diagnostic pass will match the true pass, but
+			//  that might not be true, as accessors could secretly be
+			//  self-mutating behind-the-scenes if they really wanted to be,
+			//  but that is discouraged and should be rare in practice
+
+			// Exporter
 			serialization::DiagnosticExporter diagExporter{ details::kSilentDiagnosticOnExport };
-			bool const diagSuccess = serialization::ObjectSerializer::SerializeSingleObject(
-				diagExporter, classInfo, classInstance, HACK_params );
+
+			// Serialize (diagnostic only)
+			bool const diagSuccess =
+				serialization::ObjectSerializer::SerializeMultipleObjects(
+					diagExporter,
+					classInfo,
+					classInstance,
+					HACK_params );
 			RF_ASSERT( diagSuccess );
+
+			// Finalize
 			bool const diagFinalSuccess = diagExporter.Root_FinalizeExport();
 			RF_ASSERT( diagFinalSuccess );
 		}
 #endif
 
+		// Exporter
 		PlaceholderExporter placeholderExporter = {};
 
-		bool const serializeSuccess = serialization::ObjectSerializer::SerializeSingleObject(
-			placeholderExporter, classInfo, classInstance, HACK_params );
+		// Serialize
+		bool const serializeSuccess = serialization::ObjectSerializer::SerializeMultipleObjects(
+			placeholderExporter,
+			classInfo,
+			classInstance,
+			HACK_params );
 		if( serializeSuccess == false )
 		{
 			RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to serialize resource for write" );
 			return false;
 		}
 
+		// Finalize
 		bool const finalizeSuccess = placeholderExporter.Root_FinalizeExport();
 		if( finalizeSuccess == false )
 		{
@@ -123,6 +151,7 @@ bool ResourceSaver::SaveClassToFile(
 			return false;
 		}
 
+		// Write to buffer
 		bool const bufferSuccess = placeholderExporter.WriteToString( buffer );
 		if( bufferSuccess == false )
 		{
@@ -142,7 +171,7 @@ bool ResourceSaver::SaveClassToFile(
 	}
 #endif
 
-	// Write
+	// Write to file
 	FILE* const file = fileHandle->GetFile();
 	RF_ASSERT( file != nullptr );
 	size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
