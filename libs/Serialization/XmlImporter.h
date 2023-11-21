@@ -39,6 +39,7 @@ private:
 	pugi::xml_node mDebugData;
 
 	rftl::unordered_set<exporter::InstanceID> mTocIDs;
+	rftl::unordered_map<exporter::IndirectionID, exporter::InstanceID> mInternalDepIDs;
 	rftl::vector<pugi::xml_node> mRootInstances;
 	rftl::unordered_map<exporter::TypeID, rftl::string_view> mDebugNames;
 

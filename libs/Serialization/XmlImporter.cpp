@@ -784,7 +784,64 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 		{
 			RF_ASSERT( node.empty() == false );
 
-			RF_TODO_BREAK();
+			rftl::string_view const name = node.name();
+			pugi::xml_node_type const type = node.type();
+
+			if( type != pugi::xml_node_type::node_element )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				return false;
+			}
+
+			if( name != "Dependency" )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
+				return false;
+			}
+
+			rftl::string_view indirectionID = {};
+			rftl::string_view instanceID = {};
+			for( pugi::xml_attribute const& attribute : node.attributes() )
+			{
+				rftl::string_view const attributeName = attribute.name();
+				rftl::string_view const attributeValue = attribute.value();
+
+				if( attributeName == "IndirectionID" )
+				{
+					indirectionID = attributeValue;
+					continue;
+				}
+
+				if( attributeName == "InstanceID" )
+				{
+					instanceID = attributeValue;
+					continue;
+				}
+
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
+				return false;
+			}
+
+			exporter::IndirectionID indirectionIDVal;
+			if( rftl::parse_int( indirectionIDVal, indirectionID ) == false )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid indirection ID '%s'", RFTLE_CSTR( indirectionID ) );
+				return false;
+			}
+
+			exporter::InstanceID instanceIDVal;
+			if( rftl::parse_int( instanceIDVal, instanceID ) == false )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( instanceID ) );
+				return false;
+			}
+
+			bool const newEntry = mInternalDepIDs.emplace( indirectionIDVal, instanceIDVal ).second;
+			if( newEntry == false )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate internal dependency for indirection ID %llu", indirectionIDVal );
+				return false;
+			}
 		}
 	}
 
