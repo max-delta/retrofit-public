@@ -53,8 +53,9 @@ public:
 	// Lookup a previously registered class
 	// NOTE: If a class is registered under multiple keys, one will be chosen
 	//  arbitrarily and returned
-	// NOTE: Returns an empty key on failure
+	// NOTE: Returns an empty key / pointer on failure
 	StoredClassKey LookupKeyForClass( reflect::ClassInfo const& classInfo ) const;
+	reflect::ClassInfo const* LookupClassForKey( math::HashVal64 const& classKey ) const;
 
 	// Classes can have a constructor registered for them, so that they can
 	//  allocated in a reflection-only situation, where the compiler is not

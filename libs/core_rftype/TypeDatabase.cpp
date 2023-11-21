@@ -72,6 +72,19 @@ StoredClassKey TypeDatabase::LookupKeyForClass( reflect::ClassInfo const& classI
 }
 
 
+reflect::ClassInfo const* TypeDatabase::LookupClassForKey( math::HashVal64 const& classKey ) const
+{
+	// Lookup by key
+	ClassInfoByHash::const_iterator const iter = mClassInfoByHash.find( classKey );
+	if( iter == mClassInfoByHash.end() )
+	{
+		return nullptr;
+	}
+
+	return iter->second.mClassInfo;
+}
+
+
 
 bool TypeDatabase::RegisterNewConstructorForClass( TypeConstructorFunc&& constructor, reflect::ClassInfo const& classInfo )
 {

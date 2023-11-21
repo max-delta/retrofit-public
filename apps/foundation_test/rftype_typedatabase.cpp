@@ -161,9 +161,13 @@ TEST( RFType, NameRegistation )
 	TypeDatabase const& typeDatabase = GetGlobalTypeDatabase();
 
 	reflect::ClassInfo const& classInfo = GetClassInfo<test::RFTypeNameTest>();
+
 	StoredClassKey const classKey = typeDatabase.LookupKeyForClass( classInfo );
 	ASSERT_EQ( classKey.mName, "RF__rftype__test__RFTypeNameTest" );
 	ASSERT_EQ( classKey.mHash, RF_HASH_FROM_STRING_LITERAL( "RF__rftype__test__RFTypeNameTest" ) );
+
+	reflect::ClassInfo const* classInfoLookup = typeDatabase.LookupClassForKey( classKey.mHash.value() );
+	ASSERT_EQ( classInfoLookup, &classInfo );
 }
 
 
