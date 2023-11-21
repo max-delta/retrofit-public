@@ -110,9 +110,11 @@ struct SingleScratchSpace
 
 	SingleScratchSpace(
 		reflect::ClassInfo const& classInfo,
-		void* classInstance )
+		void* classInstance,
+		ObjectDeserializer::Params const& params )
 		: mClassInfo( classInfo )
 		, mClassInstance( classInstance )
+		, mParams( params )
 		, mClassTypeInfo( { reflect::Value::Type::Invalid, &classInfo, nullptr } )
 	{
 		//
@@ -120,6 +122,8 @@ struct SingleScratchSpace
 
 	reflect::ClassInfo const& mClassInfo;
 	void* const mClassInstance;
+
+	ObjectDeserializer::Params const& mParams;
 
 	// Need this to seed the root of the walk chain, must remain addressable
 	//  during the walk
@@ -669,9 +673,35 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	reflect::ClassInfo const& classInfo,
 	void* classInstance )
 {
+	Params params = {};
+
+	// Not having type lookup support means we need to have the objects
+	//  instantiated for us already, which is true in this case for the root,
+	//  but might not be true for other objects if there's things like
+	//  indirections, or other such complex cases
+	( (void)params.mTypeLookupFunc );
+
+	// Ignore where possible, but indirections will likely cause failures
+	( (void)params.mContinueOnMissingTypeLookups );
+
+	return DeserializeSingleObject(
+		importer,
+		classInfo,
+		classInstance,
+		params );
+}
+
+
+
+bool ObjectDeserializer::DeserializeSingleObject(
+	Importer& importer,
+	reflect::ClassInfo const& classInfo,
+	void* classInstance,
+	Params const& params )
+{
 	RF_ASSERT( classInstance != nullptr );
 
-	details::SingleScratchSpace scratch( classInfo, classInstance );
+	details::SingleScratchSpace scratch( classInfo, classInstance, params );
 
 	auto const onScopeEnd = OnScopeEnd(
 		[&scratch]()
@@ -739,7 +769,16 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID %llu", instanceID );
 
+		// There should be an instance node, and a null placeholder for the
+		//  first property node after that
+		RF_ASSERT( scratch.mWalkChain.size() == 2 );
+		RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
+		UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
+		RF_ASSERT( instanceNodePtr != nullptr );
+		details::WalkNode const& instanceNode = *instanceNodePtr;
+
 		// Don't care, only support one object
+		( (void)instanceNode );
 		return true;
 	};
 
@@ -751,7 +790,60 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID %llu ('%s')", typeID, debugName );
 
-		RF_TODO_ANNOTATION( "Make sure the type ID matches what we're expecting" );
+		// There should be an instance node that is a class type, and a null
+		//  placeholder for the first property node after that
+		RF_ASSERT( scratch.mWalkChain.size() == 2 );
+		RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
+		UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
+		RF_ASSERT( instanceNodePtr != nullptr );
+		details::WalkNode const& instanceNode = *instanceNodePtr;
+		RF_ASSERT( instanceNode.mVariableTypeInfo != nullptr );
+		reflect::VariableTypeInfo const& typeInfo = *instanceNode.mVariableTypeInfo;
+		RF_ASSERT( typeInfo.mClassInfo != nullptr );
+		reflect::ClassInfo const& classInfo = *typeInfo.mClassInfo;
+
+		if( scratch.mParams.mTypeLookupFunc == nullptr )
+		{
+			// No lookup support
+
+			if( scratch.mParams.mContinueOnMissingTypeLookups )
+			{
+				// Ignore
+				return true;
+			}
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Types found in data, but no type lookup support provided" );
+			return false;
+		}
+
+		// Lookup the type
+		static_assert( rftl::is_same<TypeID, math::HashVal64>::value );
+		reflect::ClassInfo const* expectedClassInfo = scratch.mParams.mTypeLookupFunc( typeID );
+		if( expectedClassInfo == nullptr )
+		{
+			// Not found
+
+			if( scratch.mParams.mContinueOnMissingTypeLookups )
+			{
+				// Ignore
+				return true;
+			}
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Type lookup could not find the type from the data" );
+			return false;
+		}
+
+		// Verify it matches
+		if( &classInfo != expectedClassInfo )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Type lookup resolved to a different type than what is being"
+				" serialized to" );
+			return false;
+		}
+
 		return true;
 	};
 

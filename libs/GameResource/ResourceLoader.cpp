@@ -4,6 +4,8 @@
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameScripting/OOLoader.h"
 
+#include "RFType/GlobalTypeDatabase.h"
+
 #include "Logging/Logging.h"
 #include "Serialization/AutoImporter.h"
 #include "Serialization/ObjectDeserializer.h"
@@ -167,10 +169,26 @@ bool ResourceLoader::PopulateClassViaImporter(
 	reflect::ClassInfo const& classInfo,
 	void* classInstance )
 {
+	// HACK: Testing
+	RF_TODO_ANNOTATION( "Proper params" );
+	serialization::ObjectDeserializer::Params HACK_params = {};
+
+	// HACK: Hard-coded type testing
+	ResourceTypeIdentifier typeID; // TODO: Param to this function
+	( (void)typeID );
+	RF_TODO_ANNOTATION( "Require non-invalid type ID" );
+	RF_TODO_ANNOTATION( "Verify all loaded classes are allowed for the resource type" );
+	HACK_params.mTypeLookupFunc = []( math::HashVal64 const& classKey ) -> reflect::ClassInfo const*
+	{
+		return rftype::GetGlobalTypeDatabase().LookupClassForKey( classKey );
+	};
+	HACK_params.mContinueOnMissingTypeLookups = false;
+
 	bool const deserializeSuccess = serialization::ObjectDeserializer::DeserializeSingleObject(
 		importer,
 		classInfo,
-		classInstance );
+		classInstance,
+		HACK_params );
 	if( deserializeSuccess == false )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_GAMERESOURCE, "Failed to deserialize single object" );
