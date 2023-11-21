@@ -836,7 +836,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				return false;
 			}
 
-			bool const newEntry = mInternalDepIDs.emplace( indirectionIDVal, instanceIDVal ).second;
+			bool const newEntry = mLocalIndirections.emplace( indirectionIDVal, instanceIDVal ).second;
 			if( newEntry == false )
 			{
 				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate internal dependency for indirection ID %llu", indirectionIDVal );
@@ -944,9 +944,24 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 		}
 	}
 
-	// TODO: Emit indirections
-	RF_TODO_ANNOTATION( "Emit indirections" );
-	( (void)callbacks.mRoot_RegisterLocalIndirectionFunc );
+	// Emit local indirections
+	for( LocalIndirections::value_type const& indirection : mLocalIndirections )
+	{
+		IndirectionID const& indirectionID = indirection.first;
+		InstanceID const& instanceID = indirection.second;
+		bool const keepProcessing =
+			details::TryInvoke(
+				callbacks.mRoot_RegisterLocalIndirectionFunc,
+				indirectionID,
+				instanceID );
+		if( keepProcessing == false )
+		{
+			return false;
+		}
+	}
+
+	// Emit external indirections
+	RF_TODO_ANNOTATION( "Emit external indirections" );
 	( (void)callbacks.mRoot_RegisterExternalIndirectionFunc );
 
 	// Process the instances

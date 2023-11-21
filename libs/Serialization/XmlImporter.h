@@ -19,6 +19,13 @@ class SERIALIZATION_API XmlImporter final : public Importer
 {
 	RF_NO_COPY( XmlImporter );
 
+private:
+	using TocIDs = rftl::unordered_set<exporter::InstanceID>;
+	using LocalIndirections = rftl::unordered_map<exporter::IndirectionID, exporter::InstanceID>;
+	using RootInstances = rftl::vector<pugi::xml_node>;
+	using DebugNames = rftl::unordered_map<exporter::TypeID, rftl::string_view>;
+
+
 public:
 	XmlImporter();
 	~XmlImporter() override;
@@ -38,10 +45,10 @@ private:
 	pugi::xml_node mData;
 	pugi::xml_node mDebugData;
 
-	rftl::unordered_set<exporter::InstanceID> mTocIDs;
-	rftl::unordered_map<exporter::IndirectionID, exporter::InstanceID> mInternalDepIDs;
-	rftl::vector<pugi::xml_node> mRootInstances;
-	rftl::unordered_map<exporter::TypeID, rftl::string_view> mDebugNames;
+	TocIDs mTocIDs;
+	LocalIndirections mLocalIndirections;
+	RootInstances mRootInstances;
+	DebugNames mDebugNames;
 
 	pugi::xml_node mCurrentInstance;
 	rftl::vector<pugi::xml_node> mPropertyStack;
