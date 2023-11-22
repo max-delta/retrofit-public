@@ -617,20 +617,28 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			void const* const& key = keyNode.mVariableLocation;
 			reflect::VariableTypeInfo const& keyInfo = *keyNode.mVariableTypeInfo;
 
-			if( accessor.mInsertVariableDefault == nullptr )
+			if( accessor.mInsertVariableDefault != nullptr )
 			{
-				// Doesn't support creating a placeholder variable
+				// Insert a placeholder
+
+				bool const insertSuccess = accessor.mInsertVariableDefault( accessorLocation, key, keyInfo );
+				if( insertSuccess == false )
+				{
+					RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Failed to insert key" );
+					RF_DBGFAIL();
+					return false;
+				}
+			}
+			else if( accessor.mInsertVariableViaUPtr != nullptr )
+			{
 				RF_TODO_BREAK_MSG(
 					"Uh... What do do in this case? We need to create the"
 					" variable ourselves? Do we need the type ID?" );
 				return false;
 			}
-
-			bool const insertSuccess = accessor.mInsertVariableDefault( accessorLocation, key, keyInfo );
-			if( insertSuccess == false )
+			else
 			{
-				RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "Failed to insert key" );
-				RF_DBGFAIL();
+				RFLOG_NOTIFY( fullChain, RFCAT_SERIALIZATION, "Failed to write any placeholder values to accessor target" );
 				return false;
 			}
 
