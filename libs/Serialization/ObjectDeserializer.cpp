@@ -717,6 +717,29 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	Importer::Callbacks callbacks = {};
 
 
+	callbacks.mPreload_TableOfContentsEntry =
+		[&scratch]( InstanceID const& instanceID, rftl::optional<TypeID> const& typeID ) -> bool
+	{
+		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "TOC entry" );
+
+		// Probably what needs to happen, is that there needs to be support for
+		//  passing along the TOC of all the instances in the importer process,
+		//  and that probably needs to include all the types.
+		// That would mean in the ideal case, that all instances can be
+		//  pre-created, and then sit in a holding area of
+		//  UniquePtrs+WeakPtrs(/raw pointers) waiting to be filled out, or
+		//  appropriately slotted into an appropriate indirection.
+		// If the types aren't present in the TOC, maybe that's optional, but
+		//  would mean that the caller has to help figure that out, which might
+		//  be okay if it's a single object or an array.
+		// If the TOC isn't provided, that's likely optional too, but would
+		//  have similar implications to not having type information.
+		RF_TODO_ANNOTATION( "Need to make use of the preload functionality" );
+
+		return true;
+	};
+
+
 	callbacks.mRoot_BeginNewInstanceFunc =
 		[&scratch]() -> bool
 	{

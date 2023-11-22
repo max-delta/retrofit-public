@@ -9,6 +9,7 @@
 
 #include "rftl/functional"
 #include "rftl/string_view"
+#include "rftl/optional"
 
 
 namespace RF::serialization {
@@ -28,6 +29,12 @@ public:
 	// SEE: RF::serialization::Exporter
 	struct Callbacks
 	{
+		// Special callback, for an 'in advance' list of instances, before the
+		//  main callbacks begin firing
+		// NOTE: Feature is optional, some importers might not support this, or
+		//  only conditionally support it
+		using Preload_TableOfContentsEntrySig = bool( InstanceID const& instanceID, rftl::optional<TypeID> const& typeID );
+
 		using Root_BeginNewInstanceFuncSig = bool();
 		using Root_RegisterLocalIndirectionFuncSig = bool( IndirectionID const& indirectionID, InstanceID const& instanceID );
 		using Root_RegisterExternalIndirectionFuncSig = bool( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID );
@@ -40,6 +47,7 @@ public:
 		using Property_IndentFromCurrentPropertyFuncSig = bool();
 		using Property_OutdentFromLastIndentFuncSig = bool();
 
+		using Preload_TableOfContentsEntryFunc = rftl::function<Preload_TableOfContentsEntrySig>;
 		using Root_BeginNewInstanceFunc = rftl::function<Root_BeginNewInstanceFuncSig>;
 		using Root_RegisterLocalIndirectionFunc = rftl::function<Root_RegisterLocalIndirectionFuncSig>;
 		using Root_RegisterExternalIndirectionFunc = rftl::function<Root_RegisterExternalIndirectionFuncSig>;
@@ -52,6 +60,7 @@ public:
 		using Property_IndentFromCurrentPropertyFunc = rftl::function<Property_IndentFromCurrentPropertyFuncSig>;
 		using Property_OutdentFromLastIndentFunc = rftl::function<Property_OutdentFromLastIndentFuncSig>;
 
+		Preload_TableOfContentsEntryFunc mPreload_TableOfContentsEntry = {};
 		Root_BeginNewInstanceFunc mRoot_BeginNewInstanceFunc = {};
 		Root_RegisterLocalIndirectionFunc mRoot_RegisterLocalIndirectionFunc = {};
 		Root_RegisterExternalIndirectionFunc mRoot_RegisterExternalIndirectionFunc = {};

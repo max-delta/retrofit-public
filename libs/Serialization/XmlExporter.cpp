@@ -157,6 +157,8 @@ bool XmlExporter::Root_FinalizeExport()
 	mDebugData = {};
 
 	mCurrentInstance = {};
+	mCurrentInstanceID = exporter::kInvalidInstanceID;
+	mTOCInstances = {};
 	mPropertyStack.clear();
 
 	mFinalized = true;
@@ -174,6 +176,7 @@ bool XmlExporter::Root_BeginNewInstance()
 	}
 
 	mCurrentInstance = mData.append_child( "Instance" );
+	mCurrentInstanceID = exporter::kInvalidInstanceID;
 	mPropertyStack.clear();
 	mNewIndent = false;
 	return true;
@@ -215,6 +218,12 @@ bool XmlExporter::Root_RegisterExternalIndirection( IndirectionID const& indirec
 
 bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID )
 {
+	if( instanceID == exporter::kInvalidInstanceID )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Exporter receiving an invalid instance ID" );
+		return false;
+	}
+
 	if( mFinalized )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Finalized exporter receiving new actions" );
@@ -222,7 +231,18 @@ bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID 
 	}
 
 	mCurrentInstance.append_attribute( "ID" ) = instanceID;
-	mTableOfContents.append_child( "Instance" ).append_attribute( "ID" ) = instanceID;
+	mCurrentInstanceID = instanceID;
+
+	if( mTOCInstances.count( instanceID ) > 0 )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_SERIALIZATION, "Table of contents received a duplicate instance ID" );
+		return false;
+	}
+	pugi::xml_node tocEntry = mTableOfContents.append_child( "Instance" );
+	tocEntry.append_attribute( "ID" ) = instanceID;
+	bool const newEntry = mTOCInstances.emplace( instanceID, tocEntry ).second;
+	RF_ASSERT( newEntry );
+
 	return true;
 }
 
@@ -250,6 +270,21 @@ bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const*
 	if( mConfig.mStripDebugDataSection == false )
 	{
 		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, typeID, debugName );
+	}
+
+	// Want to update the table of contents with this type info
+	if( mCurrentInstanceID == exporter::kInvalidInstanceID )
+	{
+		RF_TODO_BREAK_MSG(
+			"Type ID without instance ID, need to defer TOC update and wait"
+			" to see if an instance ID comes in, and then add the TOC entry"
+			" with the tpye info during the instance ID logic" );
+	}
+	else
+	{
+		// Instance ID logic should've made this entry for us
+		pugi::xml_node& tocEntry = mTOCInstances.at( mCurrentInstanceID );
+		tocEntry.append_attribute( "TypeID" ) = typeID;
 	}
 
 	return true;

@@ -5,6 +5,7 @@
 
 #include "core/macros.h"
 #include "rftl/string"
+#include "rftl/unordered_map"
 #include "rftl/vector"
 
 #include <pugixml/pugixml.h>
@@ -29,6 +30,10 @@ public:
 		// If true, the debug data section will be excluded
 		bool mStripDebugDataSection = false;
 	};
+
+
+private:
+	using TOCInstances = rftl::unordered_map<InstanceID, pugi::xml_node>;
 
 
 public:
@@ -69,6 +74,8 @@ private:
 	pugi::xml_node mDebugData;
 
 	pugi::xml_node mCurrentInstance;
+	InstanceID mCurrentInstanceID = exporter::kInvalidInstanceID;
+	TOCInstances mTOCInstances;
 	rftl::vector<pugi::xml_node> mPropertyStack;
 	bool mNewIndent = false;
 

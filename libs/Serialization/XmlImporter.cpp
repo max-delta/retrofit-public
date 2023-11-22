@@ -740,26 +740,49 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				return false;
 			}
 
-			exporter::InstanceID id = exporter::kInvalidInstanceID;
+			rftl::string_view id = {};
+			rftl::optional<rftl::string_view> typeID = {};
 			for( pugi::xml_attribute const& attribute : node.attributes() )
 			{
 				rftl::string_view const attributeName = attribute.name();
 				rftl::string_view const attributeValue = attribute.value();
 
-				if( attributeName != "ID" )
+				if( attributeName == "ID" )
 				{
-					RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML TOC attribute '%s'", RFTLE_CSTR( attributeName ) );
-					return false;
+					id = attributeValue;
+					continue;
 				}
 
-				if( rftl::parse_int( id, attributeValue ) == false )
+				if( attributeName == "TypeID" )
 				{
-					RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( attributeValue ) );
-					return false;
+					typeID = attributeValue;
+					continue;
 				}
+
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
+				return false;
 			}
 
-			bool const newEntry = mTocIDs.emplace( id ).second;
+			exporter::InstanceID instanceIDVal = exporter::kInvalidInstanceID;
+			if( rftl::parse_int( instanceIDVal, id ) == false )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( id ) );
+				return false;
+			}
+
+			rftl::optional<exporter::TypeID> typeIDVal;
+			if( typeID.has_value() )
+			{
+				exporter::TypeID temp;
+				if( rftl::parse_int( temp, typeID.value() ) == false )
+				{
+					RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( typeID.value() ) );
+					return false;
+				}
+				typeIDVal = temp;
+			}
+
+			bool const newEntry = mTocEntries.emplace( instanceIDVal, typeIDVal ).second;
 			if( newEntry == false )
 			{
 				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate TOC instance ID %llu", id );
@@ -941,6 +964,22 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate debug name for type ID %llu", id );
 				return false;
 			}
+		}
+	}
+
+	// Emit table of contents
+	for( TocEntries::value_type const& entry : mTocEntries )
+	{
+		InstanceID const& instanceID = entry.first;
+		rftl::optional<TypeID> const& typeID = entry.second;
+		bool const keepProcessing =
+			details::TryInvoke(
+				callbacks.mPreload_TableOfContentsEntry,
+				instanceID,
+				typeID );
+		if( keepProcessing == false )
+		{
+			return false;
 		}
 	}
 

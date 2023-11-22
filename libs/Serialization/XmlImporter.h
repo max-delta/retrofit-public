@@ -5,7 +5,7 @@
 
 #include "core/macros.h"
 #include "rftl/string_view"
-#include "rftl/unordered_set"
+#include "rftl/optional"
 #include "rftl/unordered_map"
 #include "rftl/vector"
 
@@ -20,7 +20,7 @@ class SERIALIZATION_API XmlImporter final : public Importer
 	RF_NO_COPY( XmlImporter );
 
 private:
-	using TocIDs = rftl::unordered_set<exporter::InstanceID>;
+	using TocEntries = rftl::unordered_map<exporter::InstanceID, rftl::optional<exporter::TypeID>>;
 	using LocalIndirections = rftl::unordered_map<exporter::IndirectionID, exporter::InstanceID>;
 	using RootInstances = rftl::vector<pugi::xml_node>;
 	using DebugNames = rftl::unordered_map<exporter::TypeID, rftl::string_view>;
@@ -45,7 +45,7 @@ private:
 	pugi::xml_node mData;
 	pugi::xml_node mDebugData;
 
-	TocIDs mTocIDs;
+	TocEntries mTocEntries;
 	LocalIndirections mLocalIndirections;
 	RootInstances mRootInstances;
 	DebugNames mDebugNames;

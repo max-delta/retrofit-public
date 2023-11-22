@@ -45,6 +45,7 @@ public:
 	// Add an attribute to the current instance to indicate its ID
 	// NOTE: Invalid if a property has begun on the current instance
 	// NOTE: Invalid if another instance in the current export shares the ID
+	// NOTE: Invalid if the instance ID is a reserved invalid ID
 	virtual bool Instance_AddInstanceIDAttribute( InstanceID const& instanceID ) = 0;
 
 	// Add an attribute to the current instance to indicate its type
