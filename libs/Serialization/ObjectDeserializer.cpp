@@ -130,11 +130,11 @@ struct OneTimeSingleInstance
 
 
 
-struct SingleScratchSpace
+struct ScratchSpace
 {
-	RF_NO_COPY( SingleScratchSpace );
+	RF_NO_COPY( ScratchSpace );
 
-	SingleScratchSpace(
+	ScratchSpace(
 		ObjectDeserializer::Params const& params )
 		: mParams( params )
 	{
@@ -724,7 +724,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	RF_ASSERT( classInstance != nullptr );
 
 	// Scratch space to simplify / optimize lambda captures
-	details::SingleScratchSpace scratch( params );
+	details::ScratchSpace scratch( params );
 
 	// HACK: Data for a one-time load, for the single-case
 	// TODO: Intent is to migrate to a fancier solution with objects pre-built
