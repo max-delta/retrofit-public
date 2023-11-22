@@ -73,7 +73,9 @@ struct WalkNode
 
 	rftl::string mIdentifier;
 
+	RF_TODO_ANNOTATION( "Replace type info pointer+store with optional<>" );
 	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
+	UniquePtr<void> mVariableTypeInfoStorage = nullptr;
 	void* mVariableLocation = nullptr;
 
 	// On an accessor node, whether the accessor has been opened for mutation
@@ -104,17 +106,15 @@ using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
 
 
 
-struct SingleScratchSpace
+struct OneTimeSingleInstance
 {
-	RF_NO_COPY( SingleScratchSpace );
+	RF_NO_COPY( OneTimeSingleInstance );
 
-	SingleScratchSpace(
+	OneTimeSingleInstance(
 		reflect::ClassInfo const& classInfo,
-		void* classInstance,
-		ObjectDeserializer::Params const& params )
+		void* classInstance )
 		: mClassInfo( classInfo )
 		, mClassInstance( classInstance )
-		, mParams( params )
 		, mClassTypeInfo( { reflect::Value::Type::Invalid, &classInfo, nullptr } )
 	{
 		//
@@ -123,11 +123,25 @@ struct SingleScratchSpace
 	reflect::ClassInfo const& mClassInfo;
 	void* const mClassInstance;
 
-	ObjectDeserializer::Params const& mParams;
-
 	// Need this to seed the root of the walk chain, must remain addressable
 	//  during the walk
 	reflect::VariableTypeInfo const mClassTypeInfo;
+};
+
+
+
+struct SingleScratchSpace
+{
+	RF_NO_COPY( SingleScratchSpace );
+
+	SingleScratchSpace(
+		ObjectDeserializer::Params const& params )
+		: mParams( params )
+	{
+		//
+	}
+
+	ObjectDeserializer::Params const& mParams;
 
 	size_t mInstanceCount = 0;
 	WalkChain mWalkChain;
@@ -701,7 +715,14 @@ bool ObjectDeserializer::DeserializeSingleObject(
 {
 	RF_ASSERT( classInstance != nullptr );
 
-	details::SingleScratchSpace scratch( classInfo, classInstance, params );
+	// Scratch space to simplify / optimize lambda captures
+	details::SingleScratchSpace scratch( params );
+
+	// HACK: Data for a one-time load, for the single-case
+	// TODO: Intent is to migrate to a fancier solution with objects pre-built
+	//  using the TOC data, and fallback to this if the TOC is missing, or
+	//  doesn't have the necessary type information to pre-create the objects
+	rftl::optional<details::OneTimeSingleInstance> oneTime( rftl::in_place, classInfo, classInstance );
 
 	auto const onScopeEnd = OnScopeEnd(
 		[&scratch]()
@@ -741,7 +762,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 
 	callbacks.mRoot_BeginNewInstanceFunc =
-		[&scratch]() -> bool
+		[&scratch, &oneTime]() -> bool
 	{
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New instance" );
 
@@ -757,8 +778,24 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		details::DestroyChain( scratch.mWalkChain );
 		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kThis ) );
 		details::WalkNode& root = *scratch.mWalkChain.back();
-		root.mVariableTypeInfo = &scratch.mClassTypeInfo;
-		root.mVariableLocation = scratch.mClassInstance;
+
+		// HACK: Use a one-time initialization
+		// TODO: A more sophisticated TOC-based setup that only falls back on
+		//  this when it has to
+		if( oneTime.has_value() == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Multiple instances encountered during single object"
+				" deserialization, these will be skipped" );
+			return false;
+		}
+		{
+			UniquePtr<reflect::VariableTypeInfo> storage = DefaultCreator<reflect::VariableTypeInfo>::Create( oneTime->mClassTypeInfo );
+			root.mVariableTypeInfo = storage.Get();
+			root.mVariableTypeInfoStorage = rftl::move( storage );
+			root.mVariableLocation = oneTime->mClassInstance;
+			oneTime.reset();
+		}
 
 		// Placeholder, waiting for first property
 		scratch.mWalkChain.emplace_back( nullptr );
