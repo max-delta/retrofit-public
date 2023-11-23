@@ -813,20 +813,32 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 
 	callbacks.mRoot_RegisterLocalIndirectionFunc =
-		[]( IndirectionID const& indirectionID, InstanceID const& instanceID ) -> bool
+		[&scratch]( IndirectionID const& indirectionID, InstanceID const& instanceID ) -> bool
 	{
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
-			"Indirections not supported in single object deserialization" );
-		return false;
+		if( scratch.mParams.mAllowLocalIndirections == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Encountered a local indirection, but the support for them is disabled" );
+			return false;
+		}
+
+		RF_TODO_BREAK_MSG( "Need to store the local indirection somewhere" );
+		return true;
 	};
 
 
 	callbacks.mRoot_RegisterExternalIndirectionFunc =
-		[]( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID ) -> bool
+		[&scratch]( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID ) -> bool
 	{
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
-			"Indirections not supported in single object deserialization" );
-		return false;
+		if( scratch.mParams.mAllowExternalIndirections == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Encountered an external indirection, but the support for them is disabled" );
+			return false;
+		}
+
+		RF_TODO_BREAK_MSG( "Need to store the external indirection somewhere" );
+		return true;
 	};
 
 
@@ -999,9 +1011,26 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply indirection %llu", indirectionID );
 
-		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-			"Indirections not supported in single object deserialization" );
-		return false;
+		bool const someIndirectionsSupported =
+			scratch.mParams.mAllowLocalIndirections ||
+			scratch.mParams.mAllowExternalIndirections;
+		if( someIndirectionsSupported == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Encountered an indirection attribute, but the support for them is disabled" );
+			return false;
+		}
+
+		RF_TODO_BREAK_MSG(
+			"Need to look up the indirection to see if it's local or external,"
+			" and see whether support for that indirection type is enabled" );
+
+		RF_TODO_BREAK_MSG(
+			"Uh... what do we do with this information? Do we need to make a"
+			" note about this linkage and perform a later linking step? Is"
+			" that going to be inside the walk-chain logic near where it does"
+			" inline construction?" );
+		return true;
 	};
 
 

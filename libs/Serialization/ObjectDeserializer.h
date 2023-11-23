@@ -30,6 +30,12 @@ public:
 		//  type, it's likely a sign of error, but deserialization can
 		//  sometimes be forced to continue on with the import anyways
 		bool mContinueOnMissingTypeLookups = false;
+
+		// Indirections are needed for more complex objects, but require extra
+		//  machinery to work, including on the serialization side, and so some
+		//  cases might not have the data necessary for indirection support
+		bool mAllowLocalIndirections = false;
+		bool mAllowExternalIndirections = false;
 	};
 
 

@@ -184,6 +184,8 @@ bool ResourceLoader::PopulateClassViaImporter(
 	};
 	HACK_params.mContinueOnMissingTypeLookups = false;
 
+	HACK_params.mAllowLocalIndirections = true;
+
 	bool const deserializeSuccess = serialization::ObjectDeserializer::DeserializeSingleObject(
 		importer,
 		classInfo,
