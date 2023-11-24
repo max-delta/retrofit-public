@@ -159,7 +159,6 @@ struct ScratchSpace
 
 	// HACK: Support the one-time non-constructing deserialization root case
 	RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
-	UniquePtr<ObjectInstance> mOneTimeSingleRootTOCOverride_Storage = nullptr;
 	WeakPtr<ObjectInstance> mOneTimeSingleRootTOCOverride_Ref = nullptr;
 };
 
@@ -806,23 +805,73 @@ bool ObjectDeserializer::DeserializeSingleObject(
 {
 	RF_ASSERT( classInstance != nullptr );
 
+	Params wrappedParams = params;
+
+	// Want to apply our override once
+	bool hasBeenApplied = false;
+
+	wrappedParams.mTocInstanceOverrideFunc =
+		[&params, &classInfo, &classInstance, &hasBeenApplied]( exporter::InstanceID const& instanceID, rftl::optional<exporter::TypeID> const& typeID )
+		-> rftl::optional<ObjectInstance>
+	{
+		// Give the caller a chance to override first
+		if( params.mTocInstanceOverrideFunc != nullptr )
+		{
+			rftl::optional<ObjectInstance> retVal = params.mTocInstanceOverrideFunc(
+				instanceID,
+				typeID );
+			if( retVal.has_value() )
+			{
+				return retVal;
+			}
+		}
+
+		if( hasBeenApplied )
+		{
+			// Already applied, let logic continue as normal
+			return rftl::nullopt;
+		}
+
+		if( typeID.has_value() )
+		{
+			RF_TODO_ANNOTATION( "What if this doesn't match the caller type?" );
+		}
+
+		hasBeenApplied = true;
+		return rftl::optional<ObjectInstance>(
+			rftl::in_place,
+			classInfo,
+			classInstance );
+	};
+
+	bool const success =
+		DeserializeMultipleObjects( importer, 0, wrappedParams );
+	if( success == false )
+	{
+		return false;
+	}
+
+	if( hasBeenApplied == false )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+			"Deserialization claimed success, but single-object in-place"
+			" deserialization was requested, and the provided single root"
+			" object was never hooked" );
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool ObjectDeserializer::DeserializeMultipleObjects(
+	Importer& importer,
+	int TODO_Output,
+	Params const& params )
+{
 	// Scratch space to simplify / optimize lambda captures
 	details::ScratchSpace scratch( params );
-
-	// HACK: Data for a one-time load, for the single-case
-	// TODO: Intent is to migrate to a fancier solution with objects pre-built
-	//  using the TOC data, and fallback to this if the TOC is missing, or
-	//  doesn't have the necessary type information to pre-create the objects
-	{
-		UniquePtr<ObjectInstance> newInstance =
-			DefaultCreator<ObjectInstance>::Create(
-				classInfo,
-				classInstance );
-		RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
-		RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr );
-		scratch.mOneTimeSingleRootTOCOverride_Ref = newInstance;
-		scratch.mOneTimeSingleRootTOCOverride_Storage = rftl::move( newInstance );
-	}
 
 	auto const onScopeEnd = OnScopeEnd(
 		[&scratch]()
@@ -865,24 +914,34 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			}
 		}
 
-		// HACK: Support the one-time non-constructing deserialization root case
-		RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
-		if( scratch.mOneTimeSingleRootTOCOverride_Storage != nullptr )
+		// Check for an override, such as when the caller wants to do an
+		//  in-place deserialization into one or more existing objects
+		if( scratch.mParams.mTocInstanceOverrideFunc != nullptr )
 		{
-			// Extract, but preserve reference
-			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
-			UniquePtr<ObjectInstance> newInstance = rftl::move( scratch.mOneTimeSingleRootTOCOverride_Storage );
-			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
-			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
+			rftl::optional<ObjectInstance> override =
+				scratch.mParams.mTocInstanceOverrideFunc( instanceID, typeID );
+			if( override.has_value() )
+			{
+				// Extract
+				UniquePtr<ObjectInstance> newInstance =
+					DefaultCreator<ObjectInstance>::Create(
+						rftl::move( override.value() ) );
 
-			// Store the instance by ID
-			bool const newEntry =
-				scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
-			RF_ASSERT_MSG( newEntry,
-				"Instance ID collision, this should've been prevented by"
-				" checking the TOC IDs for duplicates first, as that should be"
-				" the only way this list is populated at time of writing" );
-			return true;
+				// HACK: Support the one-time non-constructing deserialization
+				//  root case
+				RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
+				RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr );
+				scratch.mOneTimeSingleRootTOCOverride_Ref = newInstance;
+
+				// Store the instance by ID
+				bool const newEntry =
+					scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
+				RF_ASSERT_MSG( newEntry,
+					"Instance ID collision, this should've been prevented by"
+					" checking the TOC IDs for duplicates first, as that should be"
+					" the only way this list is populated at time of writing" );
+				return true;
+			}
 		}
 
 		// Hopefully it has type information, but this is optional, to allow
@@ -1029,6 +1088,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			{
 				// Get the one-time instance
 				handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
+				scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
 			}
 			else
 			{

@@ -9,6 +9,7 @@
 #include "core/macros.h"
 
 #include "rftl/functional"
+#include "rftl/optional"
 
 
 namespace RF::serialization {
@@ -33,6 +34,16 @@ public:
 		using ClassConstructFunc = rftl::function<ClassConstructSig>;
 		ClassConstructFunc mClassConstructFunc = nullptr;
 
+		// When a table of contents (TOC) entry is encountered, preload will
+		//  try to construct the objects, but this behavior can be overriden
+		// NOTE: An empty return will result in the normal TOC logic
+		//  progressing as usual
+		using TocInstanceOverrideSig = rftl::optional<ObjectInstance>(
+			exporter::InstanceID const&,
+			rftl::optional<exporter::TypeID> const& );
+		using TocInstanceOverrideFunc = rftl::function<TocInstanceOverrideSig>;
+		TocInstanceOverrideFunc mTocInstanceOverrideFunc = nullptr;
+
 		// If type lookup capability is enabled but fails to find a certain
 		//  type, it's likely a sign of error, but deserialization can
 		//  sometimes be forced to continue on with the import anyways
@@ -55,6 +66,11 @@ public:
 		Importer& importer,
 		reflect::ClassInfo const& classInfo,
 		void* classInstance,
+		Params const& params );
+
+	static bool DeserializeMultipleObjects(
+		Importer& importer,
+		int TODO_Output,
 		Params const& params );
 };
 
