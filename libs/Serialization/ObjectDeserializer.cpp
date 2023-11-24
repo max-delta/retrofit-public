@@ -33,6 +33,9 @@ struct PendingAccessorKeyData
 {
 	// Will be pointed to by key nodes, so must persist until the key node has
 	//  closed and returned back to the accessor
+	RF_TODO_ANNOTATION(
+		"Storage logic was changed to in-place, re-evaluate if this is still"
+		" needed or not" );
 	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
 
 	// Values don't need fancy construction, so can exist as just bytes
@@ -47,6 +50,9 @@ struct PendingAccessorTargetData
 {
 	// Will be pointed to by target nodes, so must persist until the target
 	//  node has closed and returned back to the accessor
+	RF_TODO_ANNOTATION(
+		"Storage logic was changed to in-place, re-evaluate if this is still"
+		" needed or not" );
 	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
 
 	// TODO: This applies to things that don't support default construction,
@@ -85,9 +91,7 @@ struct WalkNode
 
 	rftl::string mIdentifier;
 
-	RF_TODO_ANNOTATION( "Replace type info pointer+store with optional<>" );
-	reflect::VariableTypeInfo const* mVariableTypeInfo = nullptr;
-	UniquePtr<void> mVariableTypeInfoStorage = nullptr;
+	rftl::optional<reflect::VariableTypeInfo const> mVariableTypeInfo = rftl::nullopt;
 	void* mVariableLocation = nullptr;
 
 	// On an accessor node, whether the accessor has been opened for mutation
@@ -263,11 +267,11 @@ bool IsWalkNodeResolved( WalkNode const& walkNode )
 
 	if( walkNode.mVariableLocation == nullptr )
 	{
-		RF_ASSERT( walkNode.mVariableTypeInfo == nullptr );
+		RF_ASSERT( walkNode.mVariableTypeInfo.has_value() == false );
 		return false;
 	}
 
-	RF_ASSERT( walkNode.mVariableTypeInfo != nullptr );
+	RF_ASSERT( walkNode.mVariableTypeInfo.has_value() );
 	RF_ASSERT( walkNode.mVariableLocation != nullptr );
 	return true;
 }
@@ -289,7 +293,7 @@ void DestroyChain( WalkChain& fullChain )
 		}
 		WalkNode& node = *extracted;
 
-		if( node.mVariableTypeInfo == nullptr )
+		if( node.mVariableTypeInfo.has_value() == false )
 		{
 			// Typeless node
 			continue;
@@ -315,7 +319,7 @@ bool PopFromChain( WalkChain& fullChain )
 
 	UniquePtr<WalkNode> extracted = rftl::move( fullChain.back() );
 	RF_ASSERT( extracted != nullptr );
-	RF_ASSERT( extracted->mVariableTypeInfo != nullptr );
+	RF_ASSERT( extracted->mVariableTypeInfo.has_value() );
 	fullChain.pop_back();
 
 	RF_ASSERT( fullChain.back() != nullptr );
@@ -325,7 +329,7 @@ bool PopFromChain( WalkChain& fullChain )
 		"What about accessor keys and targets?"
 		" Do they really require identifiers?" );
 	RF_ASSERT( current.mIdentifier.empty() == false );
-	RF_ASSERT( current.mVariableTypeInfo != nullptr );
+	RF_ASSERT( current.mVariableTypeInfo.has_value() );
 	RF_ASSERT( current.mVariableLocation != nullptr );
 
 	// Popped an accessor
@@ -367,7 +371,7 @@ bool PopFromChain( WalkChain& fullChain )
 			//  corresponding target node to arrive
 			RF_ASSERT( current.mPendingKey.has_value() );
 			RF_ASSERT( current.mPendingKey->mValueStorage.data() == keyNode.mVariableLocation );
-			RF_ASSERT( &current.mPendingKey->mVariableTypeInfoStorage == keyNode.mVariableTypeInfo );
+			RF_ASSERT( current.mPendingKey->mVariableTypeInfoStorage == keyNode.mVariableTypeInfo );
 			RF_ASSERT( current.mRecentKey == nullptr );
 			current.mRecentKey = rftl::move( extracted );
 
@@ -389,9 +393,9 @@ bool PopFromChain( WalkChain& fullChain )
 			// Wipe out the key and target data
 			RF_ASSERT( current.mPendingKey.has_value() );
 			RF_ASSERT( current.mRecentKey != nullptr );
-			RF_ASSERT( current.mRecentKey->mVariableTypeInfo == &current.mPendingKey->mVariableTypeInfoStorage );
+			RF_ASSERT( current.mRecentKey->mVariableTypeInfo == current.mPendingKey->mVariableTypeInfoStorage );
 			RF_ASSERT( current.mPendingTarget.has_value() );
-			RF_ASSERT( targetNode.mVariableTypeInfo == &current.mPendingTarget->mVariableTypeInfoStorage );
+			RF_ASSERT( targetNode.mVariableTypeInfo == current.mPendingTarget->mVariableTypeInfoStorage );
 			current.mPendingTarget.reset();
 			current.mRecentKey = nullptr;
 			current.mPendingKey.reset();
@@ -465,7 +469,7 @@ bool SetValueToChain( WalkChain& fullChain, reflect::Value const& incomingValue 
 		"What about accessor keys and targets?"
 		" Do they really require identifiers?" );
 	RF_ASSERT( current.mIdentifier.empty() == false );
-	RF_ASSERT( current.mVariableTypeInfo != nullptr );
+	RF_ASSERT( current.mVariableTypeInfo.has_value() );
 	RF_ASSERT( current.mVariableLocation != nullptr );
 
 	// Value type
@@ -554,15 +558,15 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 		"What about accessor keys and targets?"
 		" Do they really require identifiers?" );
 	RF_ASSERT( first.mIdentifier.empty() == false );
-	RF_ASSERT( first.mVariableTypeInfo != nullptr );
+	RF_ASSERT( first.mVariableTypeInfo.has_value() );
 	RF_ASSERT( first.mVariableLocation != nullptr );
 	RF_ASSERT( previous.mIdentifier.empty() == false );
-	RF_ASSERT( previous.mVariableTypeInfo != nullptr );
+	RF_ASSERT( previous.mVariableTypeInfo.has_value() );
 	RF_ASSERT( previous.mVariableLocation != nullptr );
 	RF_ASSERT( current.mIdentifier.empty() == false );
-	RF_ASSERT( current.mVariableTypeInfo == nullptr );
+	RF_ASSERT( current.mVariableTypeInfo.has_value() == false );
 	RF_ASSERT( current.mVariableLocation == nullptr );
-	current.mVariableTypeInfo = nullptr;
+	current.mVariableTypeInfo.reset();
 	current.mVariableLocation = nullptr;
 
 	// Child of a value type?
@@ -590,7 +594,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			}
 
 			// Apply offset and note the type
-			current.mVariableTypeInfo = &varInfo.mVariableTypeInfo;
+			current.mVariableTypeInfo.emplace( varInfo.mVariableTypeInfo );
 			current.mVariableLocation = reinterpret_cast<uint8_t*>( previous.mVariableLocation ) + varInfo.mOffset;
 			return true;
 		}
@@ -643,8 +647,8 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			pendingKey.mVariableTypeInfoStorage.mValueType = keyTypeInfo.mValueType;
 			pendingKey.mValueStorage.resize( reflect::Value::GetNumBytesNeeded( keyTypeInfo.mValueType ) );
 
-			RF_ASSERT( current.mVariableTypeInfo == nullptr );
-			current.mVariableTypeInfo = &pendingKey.mVariableTypeInfoStorage;
+			RF_ASSERT( current.mVariableTypeInfo.has_value() == false );
+			current.mVariableTypeInfo.emplace( pendingKey.mVariableTypeInfoStorage );
 			current.mVariableLocation = pendingKey.mValueStorage.data();
 
 			return true;
@@ -673,7 +677,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 
 			WalkNode const& keyNode = *accessorNode.mRecentKey;
 			RF_ASSERT( keyNode.mVariableLocation != nullptr );
-			RF_ASSERT( keyNode.mVariableTypeInfo != nullptr );
+			RF_ASSERT( keyNode.mVariableTypeInfo.has_value() );
 			void const* const& key = keyNode.mVariableLocation;
 			reflect::VariableTypeInfo const& keyInfo = *keyNode.mVariableTypeInfo;
 
@@ -793,8 +797,8 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			PendingAccessorTargetData& pendingTarget = accessorNode.mPendingTarget.emplace();
 			pendingTarget.mVariableTypeInfoStorage = targetInfo;
 
-			RF_ASSERT( current.mVariableTypeInfo == nullptr );
-			current.mVariableTypeInfo = &pendingTarget.mVariableTypeInfoStorage;
+			RF_ASSERT( current.mVariableTypeInfo.has_value() == false );
+			current.mVariableTypeInfo.emplace( pendingTarget.mVariableTypeInfoStorage );
 			current.mVariableLocation = target;
 
 			return true;
@@ -1090,11 +1094,9 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			RF_ASSERT( handlePtr != nullptr );
 			details::ObjectInstance const& handle = *handlePtr;
 
-			UniquePtr<reflect::VariableTypeInfo> storage =
-				DefaultCreator<reflect::VariableTypeInfo>::Create();
-			storage->mClassInfo = &handle.mClassInfo;
-			root.mVariableTypeInfo = storage.Get();
-			root.mVariableTypeInfoStorage = rftl::move( storage );
+			reflect::VariableTypeInfo storage = {};
+			storage.mClassInfo = &handle.mClassInfo;
+			root.mVariableTypeInfo.emplace( storage );
 			root.mVariableLocation = handle.mClassInstance;
 		}
 
@@ -1188,7 +1190,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
 		RF_ASSERT( instanceNodePtr != nullptr );
 		details::WalkNode const& instanceNode = *instanceNodePtr;
-		RF_ASSERT( instanceNode.mVariableTypeInfo != nullptr );
+		RF_ASSERT( instanceNode.mVariableTypeInfo.has_value() );
 		reflect::VariableTypeInfo const& typeInfo = *instanceNode.mVariableTypeInfo;
 		RF_ASSERT( typeInfo.mClassInfo != nullptr );
 		reflect::ClassInfo const& classInfo = *typeInfo.mClassInfo;
@@ -1390,7 +1392,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			UniquePtr<details::WalkNode> const& currentNodePtr = scratch.mWalkChain.back();
 			RF_ASSERT( currentNodePtr != nullptr );
 			details::WalkNode& currentNode = *currentNodePtr;
-			RF_ASSERT_MSG( currentNode.mVariableTypeInfo == nullptr,
+			RF_ASSERT_MSG( currentNode.mVariableTypeInfo.has_value() == false,
 				"Currently assume indirections don't have type info until linkage" );
 			RF_ASSERT( currentNode.mVariableLocation == nullptr );
 
