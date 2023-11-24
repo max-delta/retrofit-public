@@ -25,5 +25,16 @@ ObjectInstance::ObjectInstance(
 	mObjectStorage = rftl::move( objectStorage );
 }
 
+
+
+ObjectInstance::ObjectInstance(
+	ObjectInstance&& rhs )
+	: RF_MOVE_CONSTRUCT( mClassInfo )
+	, RF_MOVE_CONSTRUCT( mClassInstance )
+	, RF_MOVE_CONSTRUCT( mObjectStorage )
+{
+	RF_MOVE_CLEAR( mObjectStorage );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

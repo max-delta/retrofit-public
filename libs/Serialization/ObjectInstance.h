@@ -26,6 +26,9 @@ public:
 		reflect::ClassInfo const& classInfo,
 		UniquePtr<void>&& objectStorage );
 
+	ObjectInstance(
+		ObjectInstance&& rhs );
+
 
 public:
 	// The class info, to make sense of the void pointers
