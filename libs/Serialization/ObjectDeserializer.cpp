@@ -122,26 +122,43 @@ using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
 
 
 
-struct OneTimeSingleInstance
+struct ObjectInstance
 {
-	RF_NO_COPY( OneTimeSingleInstance );
+	RF_NO_COPY( ObjectInstance );
 
-	OneTimeSingleInstance(
+	ObjectInstance(
 		reflect::ClassInfo const& classInfo,
 		void* classInstance )
 		: mClassInfo( classInfo )
 		, mClassInstance( classInstance )
-		, mClassTypeInfo( { reflect::Value::Type::Invalid, &classInfo, nullptr } )
 	{
 		//
 	}
 
+
+	ObjectInstance(
+		reflect::ClassInfo const& classInfo,
+		UniquePtr<void>&& objectStorage )
+		: mClassInfo( classInfo )
+		, mClassInstance( objectStorage.Get() )
+	{
+		mObjectStorage = rftl::move( objectStorage );
+	}
+
+
+	// The class info, to make sense of the void pointers
 	reflect::ClassInfo const& mClassInfo;
+
+	// The location, which might be same as the object storage, might be
+	//  sourced from a different location, or might be what USED to be in the
+	//  object storage but the object storage was migrated elsewhere
 	void* const mClassInstance;
 
-	// Need this to seed the root of the walk chain, must remain addressable
-	//  during the walk
-	reflect::VariableTypeInfo const mClassTypeInfo;
+	// Root-level instances don't have any place to live on their own, so this
+	//  is where they're stored, but they make get pulled out of here and
+	//  stored into sub-objects instead if indirections in complex pointer
+	//  graphs depend on them, and linkages start to get resolved
+	UniquePtr<void> mObjectStorage = nullptr;
 };
 
 
@@ -170,6 +187,24 @@ struct ScratchSpace
 
 	using ExternalIndirections = rftl::unordered_map<exporter::IndirectionID, rftl::string>;
 	ExternalIndirections mExternalIndirections;
+
+	// The preferred storage, where IDs are in use
+	using ObjectInstancesByID = rftl::unordered_map<exporter::InstanceID, UniquePtr<ObjectInstance>>;
+	ObjectInstancesByID mObjectInstancesByID;
+
+	// Non-ideal, not all objects will have instance IDs, as they are optional
+	// NOTE: This is not strictly an issue, but means that indirections can't
+	//  be performed
+	// NOTE: Since there's no ID for them, they just migrate in-order from
+	//  a 'fresh' queue to a 'filled out' queue as they get deserialized into
+	using ObjectInstancesWithoutIDs = rftl::deque<UniquePtr<ObjectInstance>>;
+	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_Fresh;
+	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_FilledOut;
+
+	// HACK: Support the one-time non-constructing deserialization root case
+	RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
+	UniquePtr<ObjectInstance> mOneTimeSingleRootTOCOverride_Storage = nullptr;
+	WeakPtr<ObjectInstance> mOneTimeSingleRootTOCOverride_Ref = nullptr;
 };
 
 
@@ -822,7 +857,16 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	// TODO: Intent is to migrate to a fancier solution with objects pre-built
 	//  using the TOC data, and fallback to this if the TOC is missing, or
 	//  doesn't have the necessary type information to pre-create the objects
-	rftl::optional<details::OneTimeSingleInstance> oneTime( rftl::in_place, classInfo, classInstance );
+	{
+		UniquePtr<details::ObjectInstance> newInstance =
+			DefaultCreator<details::ObjectInstance>::Create(
+				classInfo,
+				classInstance );
+		RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
+		RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr );
+		scratch.mOneTimeSingleRootTOCOverride_Ref = newInstance;
+		scratch.mOneTimeSingleRootTOCOverride_Storage = rftl::move( newInstance );
+	}
 
 	auto const onScopeEnd = OnScopeEnd(
 		[&scratch]()
@@ -843,12 +887,134 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "TOC entry" );
 
-		bool const newEntry = scratch.mTOCEntries.emplace( instanceID, typeID ).second;
-		if( newEntry == false )
+		// If an importer is going to go through the trouble to emit TOC
+		//  entries, then they should atleast have valid instance IDs, even if
+		//  they're not coming from data and are just generated on-the-fly
+		//  using simple incrementing
+		if( instanceID == exporter::kInvalidInstanceID )
 		{
 			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Duplicate instance IDs found in table of contents entries" );
+				"Invalid instance ID found in table of contents entries" );
 			return false;
+		}
+
+		// Make note of the TOC entry
+		{
+			bool const newEntry = scratch.mTOCEntries.emplace( instanceID, typeID ).second;
+			if( newEntry == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Duplicate instance IDs found in table of contents entries" );
+				return false;
+			}
+		}
+
+		// HACK: Support the one-time non-constructing deserialization root case
+		RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
+		if( scratch.mOneTimeSingleRootTOCOverride_Storage != nullptr )
+		{
+			// Extract, but preserve reference
+			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
+			UniquePtr<details::ObjectInstance> newInstance = rftl::move( scratch.mOneTimeSingleRootTOCOverride_Storage );
+			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
+			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
+
+			// Store the instance by ID
+			bool const newEntry =
+				scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
+			RF_ASSERT_MSG( newEntry,
+				"Instance ID collision, this should've been prevented by"
+				" checking the TOC IDs for duplicates first, as that should be"
+				" the only way this list is populated at time of writing" );
+			return true;
+		}
+
+		// Hopefully it has type information, but this is optional, to allow
+		//  simple cases to reduce the complexity and size of data they use
+		// EXAMPLE: Simple messaging protocol serialization, that might use
+		//  arrays and whatnot, but won't use complex pointer graphs or fancy
+		//  polymorphic types
+		if( typeID.has_value() == false )
+		{
+			if( scratch.mParams.mContinueOnMissingTypeLookups )
+			{
+				// Ignore, but may lead to an error during later logic
+				return true;
+			}
+
+			RFLOG_WARNING( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"A TOC entry is missing type information, and type lookups are"
+				" not set to continue on failure, this might be a sign of"
+				" error, where sparse data is being passed to strict code" );
+			RF_TODO_BREAK_MSG(
+				"Probably want to have a mechanism for dynamic lists of root"
+				" objects to load up, which might need something like a"
+				" caller-provided type-info fallback callback" );
+			return true;
+		}
+		TypeID const& typeIDVal = typeID.value();
+
+		// Need to get the class info from the type ID
+		if( scratch.mParams.mTypeLookupFunc == nullptr )
+		{
+			if( scratch.mParams.mContinueOnMissingTypeLookups )
+			{
+				// Ignore, but may lead to an error during later logic
+				return true;
+			}
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"No type lookup helper provided, cannot" );
+			return false;
+		}
+		reflect::ClassInfo const* const classInfoPtr = scratch.mParams.mTypeLookupFunc( typeIDVal );
+		if( classInfoPtr == nullptr )
+		{
+			if( scratch.mParams.mContinueOnMissingTypeLookups )
+			{
+				// Ignore, but may lead to an error during later logic
+				return true;
+			}
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Type lookup failed" );
+			return false;
+		}
+		reflect::ClassInfo const& classInfo = *classInfoPtr;
+
+		// Need to be able to construct the object to store in the scratch
+		//  space for deserializing into
+		if( scratch.mParams.mClassConstructFunc == nullptr )
+		{
+			RF_ASSERT( scratch.mParams.mTypeLookupFunc != nullptr );
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"No construction helper, cannot create instances from TOC" );
+			return false;
+		}
+		rftype::ConstructedType constructed = scratch.mParams.mClassConstructFunc( classInfo );
+		if( constructed.mLocation == nullptr )
+		{
+			RF_ASSERT( constructed.mClassInfo == nullptr );
+
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Failed to construct type" );
+			return false;
+		}
+		RF_ASSERT( constructed.mClassInfo != nullptr );
+
+		// Store the instance by ID
+		{
+			UniquePtr<details::ObjectInstance> newInstance =
+				DefaultCreator<details::ObjectInstance>::Create(
+					*constructed.mClassInfo,
+					rftl::move( constructed.mLocation ) );
+			bool const newEntry =
+				scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
+			RF_ASSERT_MSG( newEntry,
+				"Instance ID collision, this should've been prevented by"
+				" checking the TOC IDs for duplicates first, as that should be"
+				" the only way this list is populated at time of writing" );
 		}
 
 		// Probably what needs to happen, is that there needs to be support for
@@ -863,7 +1029,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		//  be okay if it's a single object or an array.
 		// If the TOC isn't provided, that's likely optional too, but would
 		//  have similar implications to not having type information.
-		RF_TODO_ANNOTATION(
+		RF_TODO_BREAK_MSG(
 			"Need to make use of the preload functionality to create instances"
 			" in advance, such as for indirections" );
 
@@ -872,7 +1038,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 
 	callbacks.mRoot_BeginNewInstanceFunc =
-		[&scratch, &oneTime]() -> bool
+		[&scratch]() -> bool
 	{
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New instance" );
 
@@ -892,19 +1058,44 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		// HACK: Use a one-time initialization
 		// TODO: A more sophisticated TOC-based setup that only falls back on
 		//  this when it has to
-		if( oneTime.has_value() == false )
+		if( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr )
 		{
 			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Multiple instances encountered during single object"
-				" deserialization, these will be skipped" );
+				"One-time single-object reference missing, this is not yet"
+				" properly supported" );
+			RF_TODO_BREAK_MSG( "Fix this whole pile of hacks" );
 			return false;
 		}
 		{
-			UniquePtr<reflect::VariableTypeInfo> storage = DefaultCreator<reflect::VariableTypeInfo>::Create( oneTime->mClassTypeInfo );
+			WeakPtr<details::ObjectInstance const> handlePtr = nullptr;
+			static constexpr bool kUseOneTimeInstance = true;
+			if constexpr( kUseOneTimeInstance )
+			{
+				// Get the one-time instance
+				handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
+			}
+			else
+			{
+				// Get the next non-ID'd instance in queue
+				UniquePtr<details::ObjectInstance> temp =
+					rftl::move( scratch.mObjectInstancesWithoutIDs_Fresh.front() );
+				RF_ASSERT( temp != nullptr );
+				scratch.mObjectInstancesWithoutIDs_Fresh.pop_front();
+
+				// Move it to the filled-out queue as an in-progress instance
+				handlePtr = temp;
+				scratch.mObjectInstancesWithoutIDs_FilledOut.push_back(
+					rftl::move( temp ) );
+			}
+			RF_ASSERT( handlePtr != nullptr );
+			details::ObjectInstance const& handle = *handlePtr;
+
+			UniquePtr<reflect::VariableTypeInfo> storage =
+				DefaultCreator<reflect::VariableTypeInfo>::Create();
+			storage->mClassInfo = &handle.mClassInfo;
 			root.mVariableTypeInfo = storage.Get();
 			root.mVariableTypeInfoStorage = rftl::move( storage );
-			root.mVariableLocation = oneTime->mClassInstance;
-			oneTime.reset();
+			root.mVariableLocation = handle.mClassInstance;
 		}
 
 		// Placeholder, waiting for first property

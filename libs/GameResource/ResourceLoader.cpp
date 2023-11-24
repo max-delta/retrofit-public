@@ -14,6 +14,8 @@
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 
+#include "core_rftype/ConstructedType.h"
+
 #include "core/ptr/default_creator.h"
 
 
@@ -181,6 +183,10 @@ bool ResourceLoader::PopulateClassViaImporter(
 	HACK_params.mTypeLookupFunc = []( math::HashVal64 const& classKey ) -> reflect::ClassInfo const*
 	{
 		return rftype::GetGlobalTypeDatabase().LookupClassForKey( classKey );
+	};
+	HACK_params.mClassConstructFunc = []( reflect::ClassInfo const& classInfo ) -> rftype::ConstructedType
+	{
+		return rftype::GetGlobalTypeDatabase().ConstructClass( classInfo );
 	};
 	HACK_params.mContinueOnMissingTypeLookups = false;
 

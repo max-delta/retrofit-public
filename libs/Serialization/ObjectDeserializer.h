@@ -4,6 +4,7 @@
 #include "SerializationFwd.h"
 
 #include "core_reflect/ReflectFwd.h"
+#include "core_rftype/RFTypeFwd.h"
 
 #include "core/macros.h"
 
@@ -25,6 +26,12 @@ public:
 		using TypeLookupSig = reflect::ClassInfo const*( math::HashVal64 const& );
 		using TypeLookupFunc = rftl::function<TypeLookupSig>;
 		TypeLookupFunc mTypeLookupFunc = nullptr;
+
+		// During complex deserialization, objects will often need to be
+		// instantiated, which the generic deserializer can't do on its own
+		using ClassConstructSig = rftype::ConstructedType( reflect::ClassInfo const& );
+		using ClassConstructFunc = rftl::function<ClassConstructSig>;
+		ClassConstructFunc mClassConstructFunc = nullptr;
 
 		// If type lookup capability is enabled but fails to find a certain
 		//  type, it's likely a sign of error, but deserialization can
