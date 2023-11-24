@@ -31,12 +31,8 @@ static constexpr char kUnset[] = "";
 
 struct PendingAccessorKeyData
 {
-	// Will be pointed to by key nodes, so must persist until the key node has
-	//  closed and returned back to the accessor
-	RF_TODO_ANNOTATION(
-		"Storage logic was changed to in-place, re-evaluate if this is still"
-		" needed or not" );
-	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
+	// The type of the key
+	reflect::VariableTypeInfo mKeyTypeInfo = {};
 
 	// Values don't need fancy construction, so can exist as just bytes
 	rftl::vector<uint8_t> mValueStorage = {};
@@ -48,12 +44,8 @@ struct PendingAccessorKeyData
 
 struct PendingAccessorTargetData
 {
-	// Will be pointed to by target nodes, so must persist until the target
-	//  node has closed and returned back to the accessor
-	RF_TODO_ANNOTATION(
-		"Storage logic was changed to in-place, re-evaluate if this is still"
-		" needed or not" );
-	reflect::VariableTypeInfo mVariableTypeInfoStorage = {};
+	// The type of the target
+	reflect::VariableTypeInfo mTargetTypeInfo = {};
 
 	// TODO: This applies to things that don't support default construction,
 	//  and things that don't allow mutable access to their contents
@@ -371,7 +363,7 @@ bool PopFromChain( WalkChain& fullChain )
 			//  corresponding target node to arrive
 			RF_ASSERT( current.mPendingKey.has_value() );
 			RF_ASSERT( current.mPendingKey->mValueStorage.data() == keyNode.mVariableLocation );
-			RF_ASSERT( current.mPendingKey->mVariableTypeInfoStorage == keyNode.mVariableTypeInfo );
+			RF_ASSERT( current.mPendingKey->mKeyTypeInfo == keyNode.mVariableTypeInfo );
 			RF_ASSERT( current.mRecentKey == nullptr );
 			current.mRecentKey = rftl::move( extracted );
 
@@ -393,9 +385,9 @@ bool PopFromChain( WalkChain& fullChain )
 			// Wipe out the key and target data
 			RF_ASSERT( current.mPendingKey.has_value() );
 			RF_ASSERT( current.mRecentKey != nullptr );
-			RF_ASSERT( current.mRecentKey->mVariableTypeInfo == current.mPendingKey->mVariableTypeInfoStorage );
+			RF_ASSERT( current.mRecentKey->mVariableTypeInfo == current.mPendingKey->mKeyTypeInfo );
 			RF_ASSERT( current.mPendingTarget.has_value() );
-			RF_ASSERT( targetNode.mVariableTypeInfo == current.mPendingTarget->mVariableTypeInfoStorage );
+			RF_ASSERT( targetNode.mVariableTypeInfo == current.mPendingTarget->mTargetTypeInfo );
 			current.mPendingTarget.reset();
 			current.mRecentKey = nullptr;
 			current.mPendingKey.reset();
@@ -644,11 +636,11 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 
 			// Start new key
 			PendingAccessorKeyData& pendingKey = accessorNode.mPendingKey.emplace();
-			pendingKey.mVariableTypeInfoStorage.mValueType = keyTypeInfo.mValueType;
+			pendingKey.mKeyTypeInfo.mValueType = keyTypeInfo.mValueType;
 			pendingKey.mValueStorage.resize( reflect::Value::GetNumBytesNeeded( keyTypeInfo.mValueType ) );
 
 			RF_ASSERT( current.mVariableTypeInfo.has_value() == false );
-			current.mVariableTypeInfo.emplace( pendingKey.mVariableTypeInfoStorage );
+			current.mVariableTypeInfo.emplace( pendingKey.mKeyTypeInfo );
 			current.mVariableLocation = pendingKey.mValueStorage.data();
 
 			return true;
@@ -795,10 +787,10 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 
 			// Start new target
 			PendingAccessorTargetData& pendingTarget = accessorNode.mPendingTarget.emplace();
-			pendingTarget.mVariableTypeInfoStorage = targetInfo;
+			pendingTarget.mTargetTypeInfo = targetInfo;
 
 			RF_ASSERT( current.mVariableTypeInfo.has_value() == false );
-			current.mVariableTypeInfo.emplace( pendingTarget.mVariableTypeInfoStorage );
+			current.mVariableTypeInfo.emplace( pendingTarget.mTargetTypeInfo );
 			current.mVariableLocation = target;
 
 			return true;
