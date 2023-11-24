@@ -5,6 +5,7 @@
 #include "Serialization/Importer.h"
 
 #include "core_math/math_clamps.h"
+#include "core_rftype/ConstructedType.h"
 #include "core_rftype/TypeTraverser.h"
 
 #include "core/meta/ScopedCleanup.h"
@@ -16,6 +17,7 @@ RF_TODO_ANNOTATION( "Remove c_str usages, update logging to C++20 format" );
 
 #include "rftl/extension/string_format.h"
 #include "rftl/optional"
+#include "rftl/unordered_map"
 
 
 namespace RF::serialization {
@@ -50,6 +52,16 @@ struct PendingAccessorTargetData
 	// TODO: This applies to things that don't support default construction,
 	//  and things that don't allow mutable access to their contents
 	RF_TODO_ANNOTATION( "Support for accessors that need targets to be created externally" );
+};
+
+
+
+struct UnlinkedAccessorIndirectionData
+{
+	// The indirection's target
+	// NOTE: One, and ONLY one, of these must be set
+	rftl::optional<exporter::InstanceID> mLocalInstanceID = rftl::nullopt;
+	rftl::optional<rftl::string> mExternalReferenceID = rftl::nullopt;
 };
 
 
@@ -95,6 +107,10 @@ struct WalkNode
 	// Pending target stores the backing data for a target while it's still
 	//  being composed
 	rftl::optional<PendingAccessorTargetData> mPendingTarget;
+
+	// Stores information about an indirection that is needed to properly
+	//  resolve the node
+	rftl::optional<UnlinkedAccessorIndirectionData> mUnlinkedIndirectionData;
 
 	// If on an accessor, these are used to help determine what what index
 	//  we're on
@@ -145,6 +161,15 @@ struct ScratchSpace
 
 	size_t mInstanceCount = 0;
 	WalkChain mWalkChain;
+
+	using TOCEntries = rftl::unordered_map<exporter::InstanceID, rftl::optional<exporter::TypeID>>;
+	TOCEntries mTOCEntries;
+
+	using LocalIndirections = rftl::unordered_map<exporter::IndirectionID, exporter::InstanceID>;
+	LocalIndirections mLocalIndirections;
+
+	using ExternalIndirections = rftl::unordered_map<exporter::IndirectionID, rftl::string>;
+	ExternalIndirections mExternalIndirections;
 };
 
 
@@ -631,10 +656,77 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 			}
 			else if( accessor.mInsertVariableViaUPtr != nullptr )
 			{
-				RF_TODO_BREAK_MSG(
-					"Uh... What do do in this case? We need to create the"
-					" variable ourselves? Do we need the type ID?" );
-				return false;
+				// Insert a constructed placeholder
+
+				if( current.mUnlinkedIndirectionData.has_value() )
+				{
+					// Fetch a pre-constructed instance and insert it
+
+					RF_TODO_BREAK_MSG( "Fetch a pre-constructed instance" );
+					RF_TODO_BREAK_MSG( "Support for deferred construction?" );
+					return false;
+				}
+				else
+				{
+					// Construct a placeholder instance and insert it
+
+					RF_TODO_BREAK_MSG(
+						"Uh... What do do in this case? We need to create the"
+						" variable ourselves? Do we need the type ID?" );
+					RF_TODO_BREAK_MSG(
+						"Is it possible / practical to implement this?" );
+
+					// HACK: Some sketching out of some possible code that is
+					//  based on how the OOLoader figures this out when it has
+					//  to instantiate from Squirrel files, but those have the
+					//  advantage of encoding the type information, which at
+					//  time of writing is not stored at the property, in favor
+					//  of using indirections instead (to allow for more
+					//  complex pointer graphs than what the OOLoader can
+					//  handle with all its limitations)
+					static constexpr bool kTheoreticalStubCode = false;
+					if constexpr( kTheoreticalStubCode )
+					{
+						rftl::string const instanceClassName = {}; //vm.GetNestedInstanceClassName( targetPath );
+						if( instanceClassName.empty() )
+						{
+							RFLOG_NOTIFY( fullChain, RFCAT_SERIALIZATION, "Failed to determine class name for instance to construct" );
+							return false;
+						}
+
+						rftype::ConstructedType constructed = {}; //ConstructClassByClassName( scratchLookup, instanceClassName );
+						if( constructed.mLocation == nullptr )
+						{
+							RFLOG_NOTIFY( fullChain, RFCAT_SERIALIZATION, "Failed to construct instance" );
+							return false;
+						}
+						RF_ASSERT( constructed.mClassInfo != nullptr );
+
+						// Copy the key into a UniquePtr to transfer it
+						RF_TODO_BREAK();
+						//static_assert( rftl::is_same<decltype( key ), size_t const>::value );
+						UniquePtr<size_t> keyCopy = nullptr; //DefaultCreator<size_t>::Create( key );
+
+						reflect::VariableTypeInfo valueInfo = {};
+						valueInfo.mClassInfo = constructed.mClassInfo;
+
+						bool const writeSuccess =
+							accessor.mInsertVariableViaUPtr(
+								accessorLocation,
+								rftl::move( keyCopy ),
+								keyInfo,
+								rftl::move( constructed.mLocation ),
+								valueInfo );
+						if( writeSuccess == false )
+						{
+							RFLOG_NOTIFY( fullChain, RFCAT_SERIALIZATION, "Failed to transfer placeholder value to accessor target" );
+							return false;
+						}
+					}
+
+					RF_TODO_BREAK();
+					return false;
+				}
 			}
 			else
 			{
@@ -751,6 +843,14 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	{
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "TOC entry" );
 
+		bool const newEntry = scratch.mTOCEntries.emplace( instanceID, typeID ).second;
+		if( newEntry == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Duplicate instance IDs found in table of contents entries" );
+			return false;
+		}
+
 		// Probably what needs to happen, is that there needs to be support for
 		//  passing along the TOC of all the instances in the importer process,
 		//  and that probably needs to include all the types.
@@ -763,7 +863,9 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		//  be okay if it's a single object or an array.
 		// If the TOC isn't provided, that's likely optional too, but would
 		//  have similar implications to not having type information.
-		RF_TODO_ANNOTATION( "Need to make use of the preload functionality" );
+		RF_TODO_ANNOTATION(
+			"Need to make use of the preload functionality to create instances"
+			" in advance, such as for indirections" );
 
 		return true;
 	};
@@ -815,6 +917,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mRoot_RegisterLocalIndirectionFunc =
 		[&scratch]( IndirectionID const& indirectionID, InstanceID const& instanceID ) -> bool
 	{
+		RF_ASSERT( instanceID != exporter::kInvalidInstanceID );
+
 		if( scratch.mParams.mAllowLocalIndirections == false )
 		{
 			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
@@ -822,7 +926,14 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 
-		RF_TODO_BREAK_MSG( "Need to store the local indirection somewhere" );
+		bool const newEntry = scratch.mLocalIndirections.emplace( indirectionID, instanceID ).second;
+		if( newEntry == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Duplicate indirection IDs found in local indirections entries" );
+			return false;
+		}
+
 		return true;
 	};
 
@@ -830,6 +941,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	callbacks.mRoot_RegisterExternalIndirectionFunc =
 		[&scratch]( IndirectionID const& indirectionID, ExternalReferenceID const& referenceID ) -> bool
 	{
+		RF_ASSERT( referenceID != nullptr );
+
 		if( scratch.mParams.mAllowExternalIndirections == false )
 		{
 			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
@@ -837,7 +950,14 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 
-		RF_TODO_BREAK_MSG( "Need to store the external indirection somewhere" );
+		bool const newEntry = scratch.mExternalIndirections.emplace( indirectionID, referenceID ).second;
+		if( newEntry == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Duplicate indirection IDs found in external indirections entries" );
+			return false;
+		}
+
 		return true;
 	};
 
@@ -1021,16 +1141,121 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 
-		RF_TODO_BREAK_MSG(
-			"Need to look up the indirection to see if it's local or external,"
-			" and see whether support for that indirection type is enabled" );
+		// Is it local?
+		rftl::optional<InstanceID> localIndirection = rftl::nullopt;
+		{
+			details::ScratchSpace::LocalIndirections::const_iterator const iter =
+				scratch.mLocalIndirections.find( indirectionID );
+			if( iter != scratch.mLocalIndirections.end() )
+			{
+				localIndirection = iter->second;
+			}
+		}
 
-		RF_TODO_BREAK_MSG(
-			"Uh... what do we do with this information? Do we need to make a"
-			" note about this linkage and perform a later linking step? Is"
-			" that going to be inside the walk-chain logic near where it does"
-			" inline construction?" );
-		return true;
+		// Is it external?
+		rftl::optional<rftl::string_view> externalIndirection = rftl::nullopt;
+		{
+			details::ScratchSpace::ExternalIndirections::const_iterator const iter =
+				scratch.mExternalIndirections.find( indirectionID );
+			if( iter != scratch.mExternalIndirections.end() )
+			{
+				externalIndirection = iter->second;
+			}
+		}
+
+		// Check that there's one of the options, and only one
+		if( localIndirection.has_value() == false && externalIndirection.has_value() == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Encountered an indirection attribute, but the indirection ID"
+				" isn't registered as either local OR external" );
+			return false;
+		}
+		if( localIndirection.has_value() && externalIndirection.has_value() )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Encountered an indirection attribute, but the indirection ID"
+				" is registered as both local AND external" );
+			return false;
+		}
+
+		if( localIndirection.has_value() )
+		{
+			// Local
+			InstanceID const& instanceID = localIndirection.value();
+			RF_ASSERT( instanceID != exporter::kInvalidInstanceID );
+
+			if( scratch.mParams.mAllowLocalIndirections == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Encountered an indirection attribute, but it's a local"
+					" indirection and the support for them is disabled" );
+				return false;
+			}
+
+			// Expect that we're currently at an unlinked node, that will need
+			//  some more information to resolve properly in the chain
+			RF_ASSERT( scratch.mWalkChain.size() > 1 );
+			UniquePtr<details::WalkNode> const& currentNodePtr = scratch.mWalkChain.back();
+			RF_ASSERT( currentNodePtr != nullptr );
+			details::WalkNode& currentNode = *currentNodePtr;
+			RF_ASSERT_MSG( currentNode.mVariableTypeInfo == nullptr,
+				"Currently assume indirections don't have type info until linkage" );
+			RF_ASSERT( currentNode.mVariableLocation == nullptr );
+
+			// Pass along the indirection information
+			RF_ASSERT( currentNode.mUnlinkedIndirectionData.has_value() == false );
+			currentNode.mUnlinkedIndirectionData.emplace();
+			currentNode.mUnlinkedIndirectionData->mLocalInstanceID = instanceID;
+
+			// Attempt to resolve the chain, which at time of writing is
+			//  expected to perform the linkage immediately (later
+			//  implementations may support deferring this)
+			RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
+			bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+			if( resolveSuccess == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Failed to resolve an indirection on the walk-chain, this"
+					" hopefully is preceded by more useful errors" );
+				return false;
+			}
+			RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) );
+
+			RF_TODO_BREAK_MSG(
+				"Uh... is that good? Did it work? If so, then presumably it'll"
+				" get filled in later when the proper instance comes around,"
+				" or it might've already been filled in and just needed to be"
+				" linked." );
+			return true;
+		}
+		else
+		{
+			// External
+			RF_ASSERT( externalIndirection.has_value() );
+			rftl::string_view const& externalReference = externalIndirection.value();
+
+			if( scratch.mParams.mAllowExternalIndirections == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Encountered an indirection attribute, but it's an"
+					" external indirection and the support for them is"
+					" disabled" );
+				return false;
+			}
+
+			// Unclear what to do here, as the deserializer isn't going to be
+			//  able to resolve this on its own, and may require some more
+			//  complex heavy-lifting to be done by that caller, through
+			//  callbacks passed along in the params, so that the caller can go
+			//  out to fetch the necessary dependencies, though that should
+			//  probably happen much earlier, when the initial indirections
+			//  come in before the real loading starts, instead of here during
+			//  the attribute step, since that's really quite late
+			RF_TODO_BREAK_MSG( "Support for external indirections" );
+			( (void)externalReference );
+			return true;
+		}
 	};
 
 
