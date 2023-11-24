@@ -14,6 +14,7 @@
 		<ClInclude Include="AutoImporter.h" />
 		<ClInclude Include="DiagnosticImportTestShim.h" />
 		<ClInclude Include="ObjectDeserializer.h" />
+		<ClInclude Include="ObjectInstance.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -27,5 +28,6 @@
 		<ClCompile Include="DiagnosticImportTestShim.cpp" />
 		<ClCompile Include="ObjectDeserializer.cpp" />
 		<ClCompile Include="Exporter.cpp" />
+		<ClCompile Include="ObjectInstance.cpp" />
 	</ItemGroup>
 </Project>

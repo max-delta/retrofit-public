@@ -19,6 +19,8 @@ static constexpr IndirectionID kInvalidIndirectionID = 0;
 using ExternalReferenceID = char const*;
 }
 
+class ObjectInstance;
+
 class Importer;
 class Exporter;
 class ObjectSerializer;

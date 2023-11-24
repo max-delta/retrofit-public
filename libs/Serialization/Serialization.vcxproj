@@ -38,6 +38,7 @@
 		<ClInclude Include="Exporter.h" />
 		<ClInclude Include="Importer.h" />
 		<ClInclude Include="ObjectDeserializer.h" />
+		<ClInclude Include="ObjectInstance.h" />
 		<ClInclude Include="ObjectSerializer.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="SerializationFwd.h" />
@@ -53,6 +54,7 @@
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="Exporter.cpp" />
 		<ClCompile Include="ObjectDeserializer.cpp" />
+		<ClCompile Include="ObjectInstance.cpp" />
 		<ClCompile Include="ObjectSerializer.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>

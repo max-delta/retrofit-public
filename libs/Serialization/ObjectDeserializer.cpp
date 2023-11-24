@@ -3,6 +3,7 @@
 
 #include "Logging/Logging.h"
 #include "Serialization/Importer.h"
+#include "Serialization/ObjectInstance.h"
 
 #include "core_math/math_clamps.h"
 #include "core_rftype/ConstructedType.h"
@@ -115,47 +116,6 @@ struct WalkNode
 };
 
 using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
-
-
-
-struct ObjectInstance
-{
-	RF_NO_COPY( ObjectInstance );
-
-	ObjectInstance(
-		reflect::ClassInfo const& classInfo,
-		void* classInstance )
-		: mClassInfo( classInfo )
-		, mClassInstance( classInstance )
-	{
-		//
-	}
-
-
-	ObjectInstance(
-		reflect::ClassInfo const& classInfo,
-		UniquePtr<void>&& objectStorage )
-		: mClassInfo( classInfo )
-		, mClassInstance( objectStorage.Get() )
-	{
-		mObjectStorage = rftl::move( objectStorage );
-	}
-
-
-	// The class info, to make sense of the void pointers
-	reflect::ClassInfo const& mClassInfo;
-
-	// The location, which might be same as the object storage, might be
-	//  sourced from a different location, or might be what USED to be in the
-	//  object storage but the object storage was migrated elsewhere
-	void* const mClassInstance;
-
-	// Root-level instances don't have any place to live on their own, so this
-	//  is where they're stored, but they make get pulled out of here and
-	//  stored into sub-objects instead if indirections in complex pointer
-	//  graphs depend on them, and linkages start to get resolved
-	UniquePtr<void> mObjectStorage = nullptr;
-};
 
 
 
@@ -854,8 +814,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 	//  using the TOC data, and fallback to this if the TOC is missing, or
 	//  doesn't have the necessary type information to pre-create the objects
 	{
-		UniquePtr<details::ObjectInstance> newInstance =
-			DefaultCreator<details::ObjectInstance>::Create(
+		UniquePtr<ObjectInstance> newInstance =
+			DefaultCreator<ObjectInstance>::Create(
 				classInfo,
 				classInstance );
 		RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
@@ -911,7 +871,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		{
 			// Extract, but preserve reference
 			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
-			UniquePtr<details::ObjectInstance> newInstance = rftl::move( scratch.mOneTimeSingleRootTOCOverride_Storage );
+			UniquePtr<ObjectInstance> newInstance = rftl::move( scratch.mOneTimeSingleRootTOCOverride_Storage );
 			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Storage == nullptr );
 			RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr );
 
@@ -1001,8 +961,8 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 		// Store the instance by ID
 		{
-			UniquePtr<details::ObjectInstance> newInstance =
-				DefaultCreator<details::ObjectInstance>::Create(
+			UniquePtr<ObjectInstance> newInstance =
+				DefaultCreator<ObjectInstance>::Create(
 					*constructed.mClassInfo,
 					rftl::move( constructed.mLocation ) );
 			bool const newEntry =
@@ -1063,7 +1023,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			return false;
 		}
 		{
-			WeakPtr<details::ObjectInstance const> handlePtr = nullptr;
+			WeakPtr<ObjectInstance const> handlePtr = nullptr;
 			static constexpr bool kUseOneTimeInstance = true;
 			if constexpr( kUseOneTimeInstance )
 			{
@@ -1073,7 +1033,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			else
 			{
 				// Get the next non-ID'd instance in queue
-				UniquePtr<details::ObjectInstance> temp =
+				UniquePtr<ObjectInstance> temp =
 					rftl::move( scratch.mObjectInstancesWithoutIDs_Fresh.front() );
 				RF_ASSERT( temp != nullptr );
 				scratch.mObjectInstancesWithoutIDs_Fresh.pop_front();
@@ -1084,7 +1044,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 					rftl::move( temp ) );
 			}
 			RF_ASSERT( handlePtr != nullptr );
-			details::ObjectInstance const& handle = *handlePtr;
+			ObjectInstance const& handle = *handlePtr;
 
 			reflect::VariableTypeInfo storage = {};
 			storage.mClassInfo = &handle.mClassInfo;
