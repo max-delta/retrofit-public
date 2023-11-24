@@ -242,6 +242,13 @@ struct ExtensionAccessor
 
 struct ClassInfo
 {
+	// IMPORTANT: Implicit copying of class infos is usually a sign of a bug,
+	//  as a common pattern is to have only one instance of a given type's
+	//  class info in the entire process, so that types can be strongly
+	//  compared by their addresses, instead of weakly compared by their data
+	RF_TODO_ANNOTATION( "Add an explicit clone helper? Is that needed?" );
+	RF_NO_COPY( ClassInfo );
+
 	using BaseTypes = rftl::vector<BaseClassInfo>;
 	using StaticVariables = rftl::vector<FreeStandingVariableInfo>;
 	using NonStaticVariables = rftl::vector<MemberVariableInfo>;
