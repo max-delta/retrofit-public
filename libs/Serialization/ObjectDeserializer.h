@@ -58,6 +58,17 @@ public:
 
 
 public:
+	// WARNING: In-place single-object deserialization is a little finicky,
+	//  since it's not allowing the deserializer to construct the instances, so
+	//  if there's multiple objects that need to be deserialized it can be
+	//  ambiguous which one is the 'root' that's meant to be used for that
+	// NOTE: Non-in-place single-object deserialization is a bit more robust,
+	//  since it can construct and re-organize objects freely, and then just
+	//  look for a single root at the end (and error out if there's either zero
+	//  or multiple roots)
+	RF_TODO_ANNOTATION(
+		"Rename these to DeserializeSingleObjectInPlace, and provide an"
+		" alternative DeserializeSingleObject that outputs an ObjectInstance" );
 	static bool DeserializeSingleObject(
 		Importer& importer,
 		reflect::ClassInfo const& classInfo,
