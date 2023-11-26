@@ -1048,6 +1048,15 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "TOC entry" );
 
+		// Goal is to use the TOC entries to pre-create instances, and put them
+		//  in a holding area waiting to be filled out, or appropriately
+		//  slotted into an appropriate indirection.
+		// If the types aren't present in the TOC, that's optional, but means
+		//  that the caller has to help figure that out later, which might be
+		//  okay if it's a single object or an array.
+		// If the TOC isn't provided, that's optional too, but has similar
+		//  implications to not having type information.
+
 		// If an importer is going to go through the trouble to emit TOC
 		//  entries, then they should atleast have valid instance IDs, even if
 		//  they're not coming from data and are just generated on-the-fly
@@ -1187,22 +1196,6 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 				" checking the TOC IDs for duplicates first, as that should be"
 				" the only way this list is populated at time of writing" );
 		}
-
-		// Probably what needs to happen, is that there needs to be support for
-		//  passing along the TOC of all the instances in the importer process,
-		//  and that probably needs to include all the types.
-		// That would mean in the ideal case, that all instances can be
-		//  pre-created, and then sit in a holding area of
-		//  UniquePtrs+WeakPtrs(/raw pointers) waiting to be filled out, or
-		//  appropriately slotted into an appropriate indirection.
-		// If the types aren't present in the TOC, maybe that's optional, but
-		//  would mean that the caller has to help figure that out, which might
-		//  be okay if it's a single object or an array.
-		// If the TOC isn't provided, that's likely optional too, but would
-		//  have similar implications to not having type information.
-		RF_TODO_BREAK_MSG(
-			"Need to make use of the preload functionality to create instances"
-			" in advance, such as for indirections" );
 
 		return true;
 	};
