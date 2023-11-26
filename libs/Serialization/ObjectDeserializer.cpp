@@ -119,6 +119,14 @@ using WalkChain = rftl::vector<UniquePtr<WalkNode>>;
 
 
 
+struct DeferredInstance
+{
+	exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
+	rftl::optional<exporter::TypeID> mTypeID = rftl::nullopt;
+};
+
+
+
 struct ScratchSpace
 {
 	RF_NO_COPY( ScratchSpace );
@@ -134,6 +142,8 @@ struct ScratchSpace
 
 	size_t mInstanceCount = 0;
 	WalkChain mWalkChain;
+
+	rftl::optional<DeferredInstance> mDeferredInstance = rftl::nullopt;
 
 	using TOCEntries = rftl::unordered_map<exporter::InstanceID, rftl::optional<exporter::TypeID>>;
 	TOCEntries mTOCEntries;
@@ -769,6 +779,152 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 	return false;
 }
 
+
+
+bool VerifyTypeIDOfNewInstance( ScratchSpace const& scratch, exporter::TypeID const& typeID )
+{
+	// There should be an instance node that is a class type, and a null
+	//  placeholder for the first property node after that
+	RF_ASSERT( scratch.mWalkChain.size() == 2 );
+	RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
+	UniquePtr<WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
+	RF_ASSERT( instanceNodePtr != nullptr );
+	WalkNode const& instanceNode = *instanceNodePtr;
+	RF_ASSERT( instanceNode.mVariableTypeInfo.has_value() );
+	reflect::VariableTypeInfo const& typeInfo = *instanceNode.mVariableTypeInfo;
+	RF_ASSERT( typeInfo.mClassInfo != nullptr );
+	reflect::ClassInfo const& classInfo = *typeInfo.mClassInfo;
+
+	if( scratch.mParams.mTypeLookupFunc == nullptr )
+	{
+		// No lookup support
+
+		if( scratch.mParams.mContinueOnMissingTypeLookups )
+		{
+			// Ignore
+			return true;
+		}
+
+		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+			"Types found in data, but no type lookup support provided" );
+		return false;
+	}
+
+	// Lookup the type
+	static_assert( rftl::is_same<exporter::TypeID, math::HashVal64>::value );
+	reflect::ClassInfo const* expectedClassInfo = scratch.mParams.mTypeLookupFunc( typeID );
+	if( expectedClassInfo == nullptr )
+	{
+		// Not found
+
+		if( scratch.mParams.mContinueOnMissingTypeLookups )
+		{
+			// Ignore
+			return true;
+		}
+
+		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+			"Type lookup could not find the type from the data" );
+		return false;
+	}
+
+	// Verify it matches
+	if( &classInfo != expectedClassInfo )
+	{
+		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+			"Type lookup resolved to a different type than what is being"
+			" serialized to" );
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool CreateDeferredInstanceOnWalkChain( ScratchSpace& scratch )
+{
+	if( scratch.mWalkChain.empty() == false )
+	{
+		RF_DBGFAIL_MSG( "Expect chain to be empty for deferred instances" );
+		return false;
+	}
+
+	if( scratch.mDeferredInstance.has_value() == false )
+	{
+		RF_DBGFAIL_MSG( "Instance wasn't deferred properly" );
+		return false;
+	}
+
+	// Pull off the deferred attributes
+	DeferredInstance const deferredInstance = scratch.mDeferredInstance.value();
+	scratch.mDeferredInstance = rftl::nullopt;
+
+	// Create the root node on the chain that we need to prepare
+	scratch.mWalkChain.emplace_back( DefaultCreator<WalkNode>::Create( kThis ) );
+	WalkNode& root = *scratch.mWalkChain.back();
+
+	// HACK: Use a one-time initialization
+	// TODO: A more sophisticated TOC-based setup that only falls back on
+	//  this when it has to
+	if( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr )
+	{
+		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+			"One-time single-object reference missing, this is not yet"
+			" properly supported" );
+		RF_TODO_BREAK_MSG( "Fix this whole pile of hacks" );
+		return false;
+	}
+	{
+		WeakPtr<ObjectInstance const> handlePtr = nullptr;
+		static constexpr bool kUseOneTimeInstance = true;
+		if constexpr( kUseOneTimeInstance )
+		{
+			// Get the one-time instance
+			handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
+			scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
+		}
+		else
+		{
+			// Get the next non-ID'd instance in queue
+			UniquePtr<ObjectInstance> temp =
+				rftl::move( scratch.mObjectInstancesWithoutIDs_Fresh.front() );
+			RF_ASSERT( temp != nullptr );
+			scratch.mObjectInstancesWithoutIDs_Fresh.pop_front();
+
+			// Move it to the filled-out queue as an in-progress instance
+			handlePtr = temp;
+			scratch.mObjectInstancesWithoutIDs_FilledOut.push_back(
+				rftl::move( temp ) );
+		}
+		RF_ASSERT( handlePtr != nullptr );
+		ObjectInstance const& handle = *handlePtr;
+
+		reflect::VariableTypeInfo storage = {};
+		storage.mClassInfo = &handle.mClassInfo;
+		root.mVariableTypeInfo.emplace( storage );
+		root.mVariableLocation = handle.mClassInstance;
+	}
+
+	// Placeholder, waiting for first property
+	scratch.mWalkChain.emplace_back( nullptr );
+
+	// Check the type ID, if that information is present
+	if( deferredInstance.mTypeID.has_value() )
+	{
+		exporter::TypeID const& typeID = deferredInstance.mTypeID.value();
+		bool const correctTypeID = VerifyTypeIDOfNewInstance( scratch, typeID );
+		if( correctTypeID == false )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"New instance has a mistmatched type ID" );
+			return false;
+		}
+	}
+
+	return true;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1066,54 +1222,48 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 			return false;
 		}
 
+		// It's possible to have an empty instance, which means the next
+		//  instance would show up and potentially skip the deferred creation,
+		//  so we check for that here as a last-chance fallback
+		if( scratch.mDeferredInstance.has_value() )
+		{
+			RF_TODO_BREAK_MSG( "Untested - Step through this, verify logic is correct" );
+
+			RF_ASSERT( scratch.mWalkChain.size() == 0 );
+
+			bool const createSuccess = details::CreateDeferredInstanceOnWalkChain( scratch );
+			if( createSuccess == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Deferred instance creation failed" );
+				return false;
+			}
+
+			// There should be an instance node, and a null placeholder for the
+			//  first property node after that
+			RF_ASSERT( scratch.mWalkChain.size() == 2 );
+			RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
+			UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
+			RF_ASSERT( instanceNodePtr != nullptr );
+
+			RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Deferred instance (new instance, empty previous?)" );
+		}
+
+		// Destroy the chain in preparation to start the next instance
 		details::DestroyChain( scratch.mWalkChain );
-		scratch.mWalkChain.emplace_back( DefaultCreator<details::WalkNode>::Create( details::kThis ) );
-		details::WalkNode& root = *scratch.mWalkChain.back();
 
-		// HACK: Use a one-time initialization
-		// TODO: A more sophisticated TOC-based setup that only falls back on
-		//  this when it has to
-		if( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr )
-		{
-			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"One-time single-object reference missing, this is not yet"
-				" properly supported" );
-			RF_TODO_BREAK_MSG( "Fix this whole pile of hacks" );
-			return false;
-		}
-		{
-			WeakPtr<ObjectInstance const> handlePtr = nullptr;
-			static constexpr bool kUseOneTimeInstance = true;
-			if constexpr( kUseOneTimeInstance )
-			{
-				// Get the one-time instance
-				handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
-				scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
-			}
-			else
-			{
-				// Get the next non-ID'd instance in queue
-				UniquePtr<ObjectInstance> temp =
-					rftl::move( scratch.mObjectInstancesWithoutIDs_Fresh.front() );
-				RF_ASSERT( temp != nullptr );
-				scratch.mObjectInstancesWithoutIDs_Fresh.pop_front();
-
-				// Move it to the filled-out queue as an in-progress instance
-				handlePtr = temp;
-				scratch.mObjectInstancesWithoutIDs_FilledOut.push_back(
-					rftl::move( temp ) );
-			}
-			RF_ASSERT( handlePtr != nullptr );
-			ObjectInstance const& handle = *handlePtr;
-
-			reflect::VariableTypeInfo storage = {};
-			storage.mClassInfo = &handle.mClassInfo;
-			root.mVariableTypeInfo.emplace( storage );
-			root.mVariableLocation = handle.mClassInstance;
-		}
-
-		// Placeholder, waiting for first property
-		scratch.mWalkChain.emplace_back( nullptr );
+		// Not actually creating the instance yet, we need to defer putting the
+		//  instance into the chain until the last possible moment (usually on
+		//  the first time a property is started on it), so that we have a
+		//  chance to get an instance ID and a type ID, which could let us use
+		//  a pre-created instance, or ask the caller for an override if we
+		//  think we need to construct the object ourselves (the override is
+		//  generally used by the single-object wrapper, so it could provide
+		//  its one-time in-place override in the event there wasn't a TOC
+		//  entry for it to have gotten it in already)
+		( (void)&details::CreateDeferredInstanceOnWalkChain );
+		RF_ASSERT( scratch.mDeferredInstance.has_value() == false );
+		scratch.mDeferredInstance.emplace();
 
 		return true;
 	};
@@ -1170,20 +1320,17 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mInstance_AddInstanceIDAttributeFunc =
 		[&scratch]( InstanceID const& instanceID ) -> bool
 	{
+		RF_ASSERT( instanceID != exporter::kInvalidInstanceID );
+
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID %llu", instanceID );
 
-		// There should be an instance node, and a null placeholder for the
-		//  first property node after that
-		RF_ASSERT( scratch.mWalkChain.size() == 2 );
-		RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
-		UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
-		RF_ASSERT( instanceNodePtr != nullptr );
-		details::WalkNode const& instanceNode = *instanceNodePtr;
+		// Note the instance ID for deferred instance creation to refer to
+		RF_ASSERT( scratch.mDeferredInstance.has_value() );
+		RF_ASSERT( scratch.mDeferredInstance->mInstanceID == exporter::kInvalidInstanceID );
+		scratch.mDeferredInstance->mInstanceID = instanceID;
 
-		// Don't care, only support one object
-		( (void)instanceNode );
 		return true;
 	};
 
@@ -1195,59 +1342,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID %llu ('%s')", typeID, debugName );
 
-		// There should be an instance node that is a class type, and a null
-		//  placeholder for the first property node after that
-		RF_ASSERT( scratch.mWalkChain.size() == 2 );
-		RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
-		UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
-		RF_ASSERT( instanceNodePtr != nullptr );
-		details::WalkNode const& instanceNode = *instanceNodePtr;
-		RF_ASSERT( instanceNode.mVariableTypeInfo.has_value() );
-		reflect::VariableTypeInfo const& typeInfo = *instanceNode.mVariableTypeInfo;
-		RF_ASSERT( typeInfo.mClassInfo != nullptr );
-		reflect::ClassInfo const& classInfo = *typeInfo.mClassInfo;
-
-		if( scratch.mParams.mTypeLookupFunc == nullptr )
-		{
-			// No lookup support
-
-			if( scratch.mParams.mContinueOnMissingTypeLookups )
-			{
-				// Ignore
-				return true;
-			}
-
-			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Types found in data, but no type lookup support provided" );
-			return false;
-		}
-
-		// Lookup the type
-		static_assert( rftl::is_same<TypeID, math::HashVal64>::value );
-		reflect::ClassInfo const* expectedClassInfo = scratch.mParams.mTypeLookupFunc( typeID );
-		if( expectedClassInfo == nullptr )
-		{
-			// Not found
-
-			if( scratch.mParams.mContinueOnMissingTypeLookups )
-			{
-				// Ignore
-				return true;
-			}
-
-			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Type lookup could not find the type from the data" );
-			return false;
-		}
-
-		// Verify it matches
-		if( &classInfo != expectedClassInfo )
-		{
-			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Type lookup resolved to a different type than what is being"
-				" serialized to" );
-			return false;
-		}
+		// Note the type ID for deferred instance creation to refer to
+		RF_ASSERT( scratch.mDeferredInstance.has_value() );
+		RF_ASSERT( scratch.mDeferredInstance->mTypeID.has_value() == false );
+		scratch.mDeferredInstance->mTypeID = typeID;
 
 		return true;
 	};
@@ -1259,6 +1357,26 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 		RF_ASSERT( scratch.mInstanceCount == 1 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New property" );
+
+		if( scratch.mWalkChain.size() == 0 )
+		{
+			bool const createSuccess = details::CreateDeferredInstanceOnWalkChain( scratch );
+			if( createSuccess == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Deferred instance creation failed" );
+				return false;
+			}
+
+			// There should be an instance node, and a null placeholder for the
+			//  first property node after that
+			RF_ASSERT( scratch.mWalkChain.size() == 2 );
+			RF_ASSERT( scratch.mWalkChain.at( 1 ) == nullptr );
+			UniquePtr<details::WalkNode> const& instanceNodePtr = scratch.mWalkChain.at( 0 );
+			RF_ASSERT( instanceNodePtr != nullptr );
+
+			RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Deferred instance (new property)" );
+		}
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
 		bool const replaceSuccess = details::ReplaceEndOfChain(
