@@ -24,20 +24,36 @@ public:
 		void* classInstance );
 	ObjectInstance(
 		reflect::ClassInfo const& classInfo,
+		WeakPtr<void>&& objectReference );
+	ObjectInstance(
+		reflect::ClassInfo const& classInfo,
 		UniquePtr<void>&& objectStorage );
 
 	ObjectInstance(
 		ObjectInstance&& rhs );
+
+	// Prefers UniquePtr, then WeakPtr, then raw pointer
+	void* GetStrongestAddress() const;
+
+	bool HasStorage() const;
+
+	// NOTE: Will also cause the the WeakPtr to be set
+	UniquePtr<void> ExtractStorage();
 
 
 public:
 	// The class info, to make sense of the void pointers
 	reflect::ClassInfo const& mClassInfo;
 
+
+private:
 	// The location, which might be same as the object storage, might be
 	//  sourced from a different location, or might be what USED to be in the
 	//  object storage but the object storage was migrated elsewhere
-	void* const mClassInstance;
+	void* const mClassInstance = nullptr;
+
+	// Better than a raw pointer, but might go null
+	WeakPtr<void> mObjectReference = nullptr;
 
 	// Root-level instances don't have any place to live on their own, so this
 	//  is where they're stored, but they may get pulled out of here and

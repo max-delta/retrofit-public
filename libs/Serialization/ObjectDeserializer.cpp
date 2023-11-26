@@ -127,6 +127,24 @@ struct DeferredInstance
 
 
 
+struct ScratchObjectStorage
+{
+	// The preferred storage, where IDs are in use
+	using ObjectInstancesByID = rftl::unordered_map<exporter::InstanceID, UniquePtr<ObjectInstance>>;
+	ObjectInstancesByID mObjectInstancesByID;
+
+	// Non-ideal, not all objects will have instance IDs, as they are optional
+	// NOTE: This is not strictly an issue, but means that indirections can't
+	//  be performed
+	// NOTE: Since there's no ID for them, they just migrate in-order from
+	//  a 'fresh' queue to a 'filled out' queue as they get deserialized into
+	using ObjectInstancesWithoutIDs = rftl::deque<UniquePtr<ObjectInstance>>;
+	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_Fresh;
+	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_FilledOut;
+};
+
+
+
 struct ScratchSpace
 {
 	RF_NO_COPY( ScratchSpace );
@@ -154,18 +172,7 @@ struct ScratchSpace
 	using ExternalIndirections = rftl::unordered_map<exporter::IndirectionID, rftl::string>;
 	ExternalIndirections mExternalIndirections;
 
-	// The preferred storage, where IDs are in use
-	using ObjectInstancesByID = rftl::unordered_map<exporter::InstanceID, UniquePtr<ObjectInstance>>;
-	ObjectInstancesByID mObjectInstancesByID;
-
-	// Non-ideal, not all objects will have instance IDs, as they are optional
-	// NOTE: This is not strictly an issue, but means that indirections can't
-	//  be performed
-	// NOTE: Since there's no ID for them, they just migrate in-order from
-	//  a 'fresh' queue to a 'filled out' queue as they get deserialized into
-	using ObjectInstancesWithoutIDs = rftl::deque<UniquePtr<ObjectInstance>>;
-	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_Fresh;
-	ObjectInstancesWithoutIDs mObjectInstancesWithoutIDs_FilledOut;
+	ScratchObjectStorage mScratchObjectStorage = {};
 
 	// HACK: Support the one-time non-constructing deserialization root case
 	RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
@@ -500,7 +507,7 @@ bool IsWalkChainLeadingEdgeResolved( WalkChain const& fullChain )
 
 
 
-bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
+bool ResolveWalkChainLeadingEdge( WalkChain& fullChain, ScratchObjectStorage& scratchObjectStorage )
 {
 	if( fullChain.size() < 2 )
 	{
@@ -662,9 +669,128 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain )
 				{
 					// Fetch a pre-constructed instance and insert it
 
-					RF_TODO_BREAK_MSG( "Fetch a pre-constructed instance" );
-					RF_TODO_BREAK_MSG( "Support for deferred construction?" );
-					return false;
+					RF_TODO_ANNOTATION(
+						"This is all a little bit dangerous, since it expects"
+						" that it can transfer memory into an accessor, and"
+						" then continue to reference it, through potentially"
+						" multiple insertions on the accessor, which is"
+						" highly dubious. This is probably the strongest"
+						" argument for deferring linking until the very end of"
+						" deserialization, after all the instances have been"
+						" filled out (minus their linkages)." );
+
+					if( current.mUnlinkedIndirectionData->mLocalInstanceID.has_value() )
+					{
+						// Local instance
+
+						RF_ASSERT( current.mUnlinkedIndirectionData->mExternalReferenceID.has_value() == false );
+
+						exporter::InstanceID const& instanceID =
+							current.mUnlinkedIndirectionData->mLocalInstanceID.value();
+
+						// Find the instance by ID
+						ScratchObjectStorage::ObjectInstancesByID::iterator const iter =
+							scratchObjectStorage.mObjectInstancesByID.find( instanceID );
+						if( iter == scratchObjectStorage.mObjectInstancesByID.end() )
+						{
+							RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION,
+								"Could not locate a pre-created local instance"
+								" to use to resolve an unlinked indirection" );
+							RF_TODO_BREAK_MSG( "Support for deferred construction?" );
+							return false;
+						}
+						UniquePtr<ObjectInstance>& handle = iter->second;
+						RF_ASSERT( handle != nullptr );
+
+						if( keyInfo.mValueType == reflect::Value::Type::Invalid )
+						{
+							RF_TODO_BREAK_MSG( "Support for complex-keyed accessors" );
+							return false;
+						}
+
+						// Copy the key into a UniquePtr to transfer it
+						// HACK: Assume it's a UInt64
+						RF_TODO_ANNOTATION( "Proper cloning of value types" );
+						reflect::Value const keyValue( keyInfo.mValueType, key );
+						RF_ASSERT( keyInfo.mValueType == reflect::Value::Type::UInt64 );
+						uint64_t const* const keyValuePtr = keyValue.GetAs<uint64_t>();
+						RF_ASSERT( keyValuePtr != nullptr );
+						UniquePtr<uint64_t> keyCopy = DefaultCreator<uint64_t>::Create( *keyValuePtr );
+
+						// Prep the type info
+						reflect::VariableTypeInfo transferTypeInfo = {};
+						transferTypeInfo.mClassInfo = &handle->mClassInfo;
+
+						// Extract the storage
+						if( handle->HasStorage() == false )
+						{
+							RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION,
+								"Found a pre-created local instance when"
+								" trying to resolve an unlinked indirection,"
+								" but it appears to not be relocatable" );
+							return false;
+						}
+						UniquePtr<void> transferValue = handle->ExtractStorage();
+						RF_ASSERT( handle->GetStrongestAddress() == transferValue );
+
+						// IMPORTANT: It is possible (but unlikely) that a
+						//  successful transfer operation will destroy the
+						//  memory, so fixup may need to occur
+						void const* const transferMemoryDestructionCanary = transferValue;
+
+						// Transfer it
+						bool const writeSuccess =
+							accessor.mInsertVariableViaUPtr(
+								accessorLocation,
+								rftl::move( keyCopy ),
+								keyInfo,
+								rftl::move( transferValue ),
+								transferTypeInfo );
+						if( writeSuccess == false )
+						{
+							RFLOG_NOTIFY( fullChain, RFCAT_SERIALIZATION,
+								"Failed to transfer local indirection value to"
+								" accessor target" );
+							return false;
+						}
+
+						if( transferMemoryDestructionCanary != handle->GetStrongestAddress() )
+						{
+							RF_ASSERT( handle->GetStrongestAddress() == nullptr );
+							RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION,
+								"While resolving an unlinked indirection, a"
+								" handle to transferred memory was wiped out,"
+								" and the re-fetch code post-transfer is not"
+								" yet implemented" );
+							RF_TODO_BREAK_MSG(
+								"Perform a re-fetch after transfer?" );
+							RF_TODO_ANNOTATION(
+								"Might be able to avoid this entirely by doing"
+								" deferred linking instead" );
+							return false;
+						}
+					}
+					else if( current.mUnlinkedIndirectionData->mExternalReferenceID.has_value() )
+					{
+						// External reference
+
+						RF_ASSERT( current.mUnlinkedIndirectionData->mLocalInstanceID.has_value() == false );
+
+						rftl::string const& referenceID =
+							current.mUnlinkedIndirectionData->mExternalReferenceID.value();
+
+						RF_TODO_BREAK_MSG( "Implement external reference support" );
+						RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION, "External references not supported yet" );
+						( (void)referenceID );
+						return false;
+					}
+					else
+					{
+						RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION,
+							"Could not determine how to handle an unlinked indirection" );
+						RF_DBGFAIL();
+						return false;
+					}
 				}
 				else
 				{
@@ -886,15 +1012,17 @@ bool CreateDeferredInstanceOnWalkChain( ScratchSpace& scratch )
 		}
 		else
 		{
+			ScratchObjectStorage& scratchObjectStorage = scratch.mScratchObjectStorage;
+
 			// Get the next non-ID'd instance in queue
 			UniquePtr<ObjectInstance> temp =
-				rftl::move( scratch.mObjectInstancesWithoutIDs_Fresh.front() );
+				rftl::move( scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.front() );
 			RF_ASSERT( temp != nullptr );
-			scratch.mObjectInstancesWithoutIDs_Fresh.pop_front();
+			scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.pop_front();
 
 			// Move it to the filled-out queue as an in-progress instance
 			handlePtr = temp;
-			scratch.mObjectInstancesWithoutIDs_FilledOut.push_back(
+			scratchObjectStorage.mObjectInstancesWithoutIDs_FilledOut.push_back(
 				rftl::move( temp ) );
 		}
 		RF_ASSERT( handlePtr != nullptr );
@@ -903,7 +1031,7 @@ bool CreateDeferredInstanceOnWalkChain( ScratchSpace& scratch )
 		reflect::VariableTypeInfo storage = {};
 		storage.mClassInfo = &handle.mClassInfo;
 		root.mVariableTypeInfo.emplace( storage );
-		root.mVariableLocation = handle.mClassInstance;
+		root.mVariableLocation = handle.GetStrongestAddress();
 	}
 
 	// Placeholder, waiting for first property
@@ -1099,8 +1227,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 				scratch.mOneTimeSingleRootTOCOverride_Ref = newInstance;
 
 				// Store the instance by ID
+				details::ScratchObjectStorage& scratchObjectStorage =
+					scratch.mScratchObjectStorage;
 				bool const newEntry =
-					scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
+					scratchObjectStorage.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
 				RF_ASSERT_MSG( newEntry,
 					"Instance ID collision, this should've been prevented by"
 					" checking the TOC IDs for duplicates first, as that should be"
@@ -1189,8 +1319,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 				DefaultCreator<ObjectInstance>::Create(
 					*constructed.mClassInfo,
 					rftl::move( constructed.mLocation ) );
+			details::ScratchObjectStorage& scratchObjectStorage =
+				scratch.mScratchObjectStorage;
 			bool const newEntry =
-				scratch.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
+				scratchObjectStorage.mObjectInstancesByID.emplace( instanceID, rftl::move( newInstance ) ).second;
 			RF_ASSERT_MSG( newEntry,
 				"Instance ID collision, this should've been prevented by"
 				" checking the TOC IDs for duplicates first, as that should be"
@@ -1418,7 +1550,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 		//  has been deferred, so that it could build up any name or type
 		//  information it needs first, and so will need to be attempted now
 		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
-		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+		bool const resolveSuccess =
+			details::ResolveWalkChainLeadingEdge(
+				scratch.mWalkChain,
+				scratch.mScratchObjectStorage );
 		if( resolveSuccess == false )
 		{
 			// Normally, we'd want to bail, but there might be development
@@ -1528,7 +1663,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 			//  expected to perform the linkage immediately (later
 			//  implementations may support deferring this)
 			RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
-			bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+			bool const resolveSuccess =
+				details::ResolveWalkChainLeadingEdge(
+					scratch.mWalkChain,
+					scratch.mScratchObjectStorage );
 			if( resolveSuccess == false )
 			{
 				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
@@ -1538,11 +1676,6 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 			}
 			RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) );
 
-			RF_TODO_BREAK_MSG(
-				"Uh... is that good? Did it work? If so, then presumably it'll"
-				" get filled in later when the proper instance comes around,"
-				" or it might've already been filled in and just needed to be"
-				" linked." );
 			return true;
 		}
 		else
@@ -1588,7 +1721,10 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 		//  has been deferred, so that it could build up any name or type
 		//  information it needs first, and so will need to be attempted now
 		RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false );
-		bool const resolveSuccess = details::ResolveWalkChainLeadingEdge( scratch.mWalkChain );
+		bool const resolveSuccess =
+			details::ResolveWalkChainLeadingEdge(
+				scratch.mWalkChain,
+				scratch.mScratchObjectStorage );
 		if( resolveSuccess == false )
 		{
 			// Normally, we'd want to bail, but there might be development
