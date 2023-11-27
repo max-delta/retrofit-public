@@ -964,14 +964,6 @@ void SQReflectTest()
 	}
 
 	// Import
-	if constexpr( true )
-	{
-		RF_TODO_BREAK_MSG(
-			"Loader needs to be updated to support construction of derived"
-			" classes into abstract base classes, just as was done with the"
-			" OOLoader for script" );
-	}
-	else
 	{
 		resource::ResourceLoader resourceLoader( app::gVfs, nullptr );
 
