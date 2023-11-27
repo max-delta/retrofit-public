@@ -401,7 +401,7 @@ bool ReplaceEndOfChain( WalkChain& fullChain, UniquePtr<WalkNode>&& newNode )
 	{
 		// Unresolved node, dubious
 		RFLOG_WARNING( fullChain, RFCAT_SERIALIZATION,
-			"Replacing an unresloved end-of-chain node, this might imply that"
+			"Replacing an unresolved end-of-chain node, this might imply that"
 			" a property was mentioned by the importer, but had no meaningful"
 			" actions associated with it, which would likely indicate wasteful"
 			" serialization" );
