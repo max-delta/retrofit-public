@@ -173,10 +173,6 @@ struct ScratchSpace
 	ExternalIndirections mExternalIndirections;
 
 	ScratchObjectStorage mScratchObjectStorage = {};
-
-	// HACK: Support the one-time non-constructing deserialization root case
-	RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
-	WeakPtr<ObjectInstance> mOneTimeSingleRootTOCOverride_Ref = nullptr;
 };
 
 
@@ -1007,23 +1003,6 @@ bool CreateDeferredInstanceOnWalkChain( ScratchSpace& scratch )
 			}
 		}
 
-		// HACK: Use a one-time initialization
-		// TODO: A more sophisticated TOC-based setup that only falls back on
-		//  this when it has to
-		if( handlePtr == nullptr )
-		{
-			static constexpr bool kUseOneTimeInstance = true;
-			if constexpr( kUseOneTimeInstance )
-			{
-				if( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr )
-				{
-					// Get the one-time instance
-					handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
-					scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
-				}
-			}
-		}
-
 		// Try to see if caller can provide the necessary instance
 		if( handlePtr == nullptr )
 		{
@@ -1251,12 +1230,6 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 				UniquePtr<ObjectInstance> newInstance =
 					DefaultCreator<ObjectInstance>::Create(
 						rftl::move( override.value() ) );
-
-				// HACK: Support the one-time non-constructing deserialization
-				//  root case
-				RF_TODO_ANNOTATION( "Re-evaluate how to do this" );
-				RF_ASSERT( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr );
-				scratch.mOneTimeSingleRootTOCOverride_Ref = newInstance;
 
 				// Store the instance by ID
 				details::ScratchObjectStorage& scratchObjectStorage =
