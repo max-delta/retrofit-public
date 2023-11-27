@@ -1,0 +1,33 @@
+# Resources
+
+NOTE: A lot of this is now implemented, so this is mostly just historical
+
+Current loose thoughts:
+* Write out to file
+	* Check to see if an accessor target is a polymorphic class or not
+		* ??? Also check that it derives from VirtualClass ???
+		* ??? Also check that it's a clean non-offset cast ???
+	* ??? Check to see if it's stored in a way that allows the polymorphism ???
+		* Vectors cannot, UniquePtrs can, extension would need to expose this
+	* ??? Scan the ClassInfo to find the best RFType registered name for it ???
+		* ??? Emphasis on 'best', may have multiple names ???
+		* ??? Pretty sure this should be reliable pointer-wise across DLLs ???
+			* ??? Should always get the same ClassInfo pointer, right ???
+	* Write out polymorphics with their RFType name as 'secondary' root objects
+	* Write out original root objects with the RFType name as 'primary' root objects
+	* Write out the indirection information for any linkages needed
+* Read in from file
+	* ??? Factory functors for registered RFType things that are default-constructible ???
+		* ??? Return as UniquePtr<void> and ClassInfo ???
+		* ??? TODO for allowing registration of special functors for RFType things that are NOT default-constructible ???
+	* Factory create all root objects into UniquePtrs of their constructed type
+		* ??? Return as UniquePtr<void> and ClassInfo ???
+	* Store these temporarily
+		* ??? Store as UniquePtr<void> and ClassInfo ???
+	* ...
+* ??? Make a new T* reflect_cast(void*, ClassInfo*) ???
+	* ??? Only goes upwards from source to the target ???
+	* ??? Special-case for VirtualClass if that's the target ???
+	* ??? Special-case for VirtualClassWithoutDestructor if that's the target ???
+* Make a new UniquePtr<TargetT> virtual_ptr_cast( UniquePtr<SourceT> && )
+	* Still forbids casts that need pointer offsets
