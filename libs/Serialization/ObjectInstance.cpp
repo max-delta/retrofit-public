@@ -58,6 +58,8 @@ void* ObjectInstance::GetStrongestAddress() const
 	retVal = mObjectStorage;
 	if( retVal != nullptr )
 	{
+		RF_ASSERT( mObjectReference == nullptr );
+		RF_ASSERT( mClassInstance == nullptr );
 		return retVal;
 	}
 
@@ -65,6 +67,9 @@ void* ObjectInstance::GetStrongestAddress() const
 	retVal = mObjectReference;
 	if( retVal != nullptr )
 	{
+
+		RF_ASSERT( mObjectStorage == nullptr );
+		RF_ASSERT( mClassInstance == nullptr );
 		return retVal;
 	}
 
@@ -72,6 +77,36 @@ void* ObjectInstance::GetStrongestAddress() const
 	retVal = mClassInstance;
 	if( retVal != nullptr )
 	{
+		RF_ASSERT( mObjectStorage == nullptr );
+		RF_ASSERT( mObjectReference == nullptr );
+		return retVal;
+	}
+
+	return nullptr;
+}
+
+
+
+WeakPtr<void> ObjectInstance::GetStrongestReference() const
+{
+	WeakPtr<void> retVal = nullptr;
+
+	// Strong
+	retVal = mObjectStorage;
+	if( retVal != nullptr )
+	{
+		RF_ASSERT( mObjectReference == nullptr );
+		RF_ASSERT( mClassInstance == nullptr );
+		return retVal;
+	}
+
+	// Weak
+	retVal = mObjectReference;
+	if( retVal != nullptr )
+	{
+
+		RF_ASSERT( mObjectStorage == nullptr );
+		RF_ASSERT( mClassInstance == nullptr );
 		return retVal;
 	}
 

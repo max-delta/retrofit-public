@@ -35,6 +35,9 @@ public:
 	// Prefers UniquePtr, then WeakPtr, then raw pointer
 	void* GetStrongestAddress() const;
 
+	// Prefers UniquePtr, then WeakPtr
+	WeakPtr<void> GetStrongestReference() const;
+
 	bool HasStorage() const;
 
 	// NOTE: Will also cause the the WeakPtr to be set
