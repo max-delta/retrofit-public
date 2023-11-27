@@ -985,47 +985,79 @@ bool CreateDeferredInstanceOnWalkChain( ScratchSpace& scratch )
 	// Pull off the deferred attributes
 	DeferredInstance const deferredInstance = scratch.mDeferredInstance.value();
 	scratch.mDeferredInstance = rftl::nullopt;
+	exporter::InstanceID const& instanceID = deferredInstance.mInstanceID;
 
 	// Create the root node on the chain that we need to prepare
 	scratch.mWalkChain.emplace_back( DefaultCreator<WalkNode>::Create( kThis ) );
 	WalkNode& root = *scratch.mWalkChain.back();
 
-	// HACK: Use a one-time initialization
-	// TODO: A more sophisticated TOC-based setup that only falls back on
-	//  this when it has to
-	if( scratch.mOneTimeSingleRootTOCOverride_Ref == nullptr )
-	{
-		RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-			"One-time single-object reference missing, this is not yet"
-			" properly supported" );
-		RF_TODO_BREAK_MSG( "Fix this whole pile of hacks" );
-		return false;
-	}
 	{
 		WeakPtr<ObjectInstance const> handlePtr = nullptr;
-		static constexpr bool kUseOneTimeInstance = true;
-		if constexpr( kUseOneTimeInstance )
-		{
-			// Get the one-time instance
-			handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
-			scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
-		}
-		else
+
+		// Try to find existing instance by ID
+		if( handlePtr == nullptr && instanceID != exporter::kInvalidInstanceID )
 		{
 			ScratchObjectStorage& scratchObjectStorage = scratch.mScratchObjectStorage;
 
-			// Get the next non-ID'd instance in queue
-			UniquePtr<ObjectInstance> temp =
-				rftl::move( scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.front() );
-			RF_ASSERT( temp != nullptr );
-			scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.pop_front();
-
-			// Move it to the filled-out queue as an in-progress instance
-			handlePtr = temp;
-			scratchObjectStorage.mObjectInstancesWithoutIDs_FilledOut.push_back(
-				rftl::move( temp ) );
+			ScratchObjectStorage::ObjectInstancesByID::const_iterator const iter =
+				scratchObjectStorage.mObjectInstancesByID.find( instanceID );
+			if( iter != scratchObjectStorage.mObjectInstancesByID.end() )
+			{
+				handlePtr = iter->second;
+			}
 		}
-		RF_ASSERT( handlePtr != nullptr );
+
+		// HACK: Use a one-time initialization
+		// TODO: A more sophisticated TOC-based setup that only falls back on
+		//  this when it has to
+		if( handlePtr == nullptr )
+		{
+			static constexpr bool kUseOneTimeInstance = true;
+			if constexpr( kUseOneTimeInstance )
+			{
+				if( scratch.mOneTimeSingleRootTOCOverride_Ref != nullptr )
+				{
+					// Get the one-time instance
+					handlePtr = scratch.mOneTimeSingleRootTOCOverride_Ref;
+					scratch.mOneTimeSingleRootTOCOverride_Ref = nullptr;
+				}
+			}
+		}
+
+		// Try to see if caller can provide the necessary instance
+		if( handlePtr == nullptr )
+		{
+			RF_TODO_BREAK_MSG(
+				"Ask caller if they have an instance they can make available,"
+				" and provide the type info (if available)" );
+		}
+
+		// Try to find existing instance without an ID
+		if( handlePtr == nullptr )
+		{
+			ScratchObjectStorage& scratchObjectStorage = scratch.mScratchObjectStorage;
+
+			if( scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.empty() == false )
+			{
+				// Get the next non-ID'd instance in queue
+				UniquePtr<ObjectInstance> temp =
+					rftl::move( scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.front() );
+				RF_ASSERT( temp != nullptr );
+				scratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.pop_front();
+
+				// Move it to the filled-out queue as an in-progress instance
+				handlePtr = temp;
+				scratchObjectStorage.mObjectInstancesWithoutIDs_FilledOut.push_back(
+					rftl::move( temp ) );
+			}
+		}
+
+		if( handlePtr == nullptr )
+		{
+			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Could not determine a way to create a new object instance" );
+			return false;
+		}
 		ObjectInstance const& handle = *handlePtr;
 
 		reflect::VariableTypeInfo storage = {};
@@ -1339,13 +1371,6 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New instance" );
 
 		scratch.mInstanceCount++;
-		if( scratch.mInstanceCount > 1 )
-		{
-			RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
-				"Multiple instances encountered during single object"
-				" deserialization, these will be skipped" );
-			return false;
-		}
 
 		// It's possible to have an empty instance, which means the next
 		//  instance would show up and potentially skip the deferred creation,
@@ -1447,7 +1472,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( instanceID != exporter::kInvalidInstanceID );
 
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID %llu", instanceID );
 
@@ -1463,7 +1488,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mInstance_AddTypeIDAttributeFunc =
 		[&scratch]( TypeID const& typeID, char const* debugName ) -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID %llu ('%s')", typeID, debugName );
 
@@ -1479,7 +1504,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mInstance_BeginNewPropertyFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "New property" );
 
@@ -1521,7 +1546,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mProperty_AddNameAttributeFunc =
 		[&scratch]( rftl::string_view const& name ) -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply name '%s'", RFTLE_CSTR( name ) );
 
@@ -1542,7 +1567,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mProperty_AddValueAttributeFunc =
 		[&scratch]( reflect::Value const& value ) -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s' [%s]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ).c_str() );
 
@@ -1578,7 +1603,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mProperty_AddIndirectionAttributeFunc =
 		[&scratch]( IndirectionID const& indirectionID ) -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply indirection %llu", indirectionID );
 
@@ -1711,7 +1736,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mProperty_IndentFromCurrentPropertyFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Indent" );
 
@@ -1748,7 +1773,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	callbacks.mProperty_OutdentFromLastIndentFunc =
 		[&scratch]() -> bool
 	{
-		RF_ASSERT( scratch.mInstanceCount == 1 );
+		RF_ASSERT( scratch.mInstanceCount > 0 );
 
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Outdent" );
 
