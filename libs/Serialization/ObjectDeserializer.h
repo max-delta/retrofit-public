@@ -20,6 +20,17 @@ class SERIALIZATION_API ObjectDeserializer
 	RF_NO_INSTANCE( ObjectDeserializer );
 
 public:
+	// Callback for receiving results
+	// NOTE: A return of false causes further results to be skipped, but is not
+	//  treated as an error
+	// IMPORTANT: The result handler is just for transmitting the results, it
+	//  does not affect the deserialization, and is only called after all of
+	//  the deserialization has completed successfully
+	using ResultHandlerSig = bool( TaggedObjectInstance&& );
+	using ResultHandlerFunc = rftl::function<ResultHandlerSig>;
+
+
+public:
 	struct Params
 	{
 		// When deserializing a class type, it may have a type identifier,
@@ -81,7 +92,7 @@ public:
 
 	static bool DeserializeMultipleObjects(
 		Importer& importer,
-		int TODO_Output,
+		ResultHandlerFunc& resultHandler,
 		Params const& params );
 };
 

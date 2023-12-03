@@ -20,6 +20,7 @@ using ExternalReferenceID = char const*;
 }
 
 class ObjectInstance;
+class TaggedObjectInstance;
 
 class Importer;
 class Exporter;

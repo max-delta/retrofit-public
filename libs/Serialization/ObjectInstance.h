@@ -7,6 +7,8 @@
 
 #include "core/ptr/unique_ptr.h"
 
+#include "rftl/optional"
+
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,6 +65,22 @@ private:
 	//  stored into sub-objects instead if indirections in complex pointer
 	//  graphs depend on them, and linkages start to get resolved
 	UniquePtr<void> mObjectStorage = nullptr;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Helper wrapper for object instances, that adds identifying information often
+//  associated with them
+class SERIALIZATION_API TaggedObjectInstance
+{
+	RF_NO_COPY( TaggedObjectInstance );
+
+public:
+	// Instance ID, if available
+	exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
+
+	// Object, if available
+	rftl::optional<ObjectInstance> mObject;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1139,8 +1139,49 @@ bool ObjectDeserializer::DeserializeSingleObject(
 			classInstance );
 	};
 
+	// Want to sanity-check results
+	struct ResultData
+	{
+		size_t numPointerMatches = 0;
+		size_t numNonPointerMatches = 0;
+		size_t numStorageMatches = 0;
+		size_t numEmptyMatches = 0;
+		size_t numNullMatches = 0;
+	} resultData = {};
+	ResultHandlerFunc resultHandler = [&resultData, classInstance]( TaggedObjectInstance&& result ) -> bool
+	{
+		if( result.mObject.has_value() == false )
+		{
+			resultData.numEmptyMatches++;
+			return true;
+		}
+		ObjectInstance const& object = result.mObject.value();
+
+		if( object.HasStorage() )
+		{
+			resultData.numStorageMatches++;
+			return true;
+		}
+
+		void const* const address = object.GetStrongestAddress();
+		if( address == nullptr )
+		{
+			resultData.numNullMatches++;
+			return true;
+		}
+
+		if( address != classInstance )
+		{
+			resultData.numNonPointerMatches++;
+			return true;
+		}
+
+		resultData.numPointerMatches++;
+		return true;
+	};
+
 	bool const success =
-		DeserializeMultipleObjects( importer, 0, wrappedParams );
+		DeserializeMultipleObjects( importer, resultHandler, wrappedParams );
 	if( success == false )
 	{
 		return false;
@@ -1155,6 +1196,44 @@ bool ObjectDeserializer::DeserializeSingleObject(
 		return false;
 	}
 
+	if( resultData.numPointerMatches <= 0 )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+			"Deserialization claimed success, but single-object in-place"
+			" deserialization was requested, and the provided single root"
+			" object wasn't found in the results, even though is was hooked" );
+		return false;
+	}
+
+	if( resultData.numPointerMatches > 1 )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+			"Deserialization claimed success, but single-object in-place"
+			" deserialization was requested, and the provided single root"
+			" object was reported multiple times in the results" );
+		return false;
+	}
+
+	// Assumed benign, probably sub-objects in indirections
+	( (void)resultData.numNonPointerMatches );
+
+	if( resultData.numStorageMatches > 0 )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION,
+			"Deserialization claimed success, but single-object in-place"
+			" deserialization was requested, and one or more root storage"
+			" objects were reported in the results" );
+		return false;
+	}
+
+	// Assumed benign, but suspicious
+	( (void)resultData.numEmptyMatches );
+	RF_ASSERT( resultData.numEmptyMatches == 0 );
+
+	// Definitely suspicious
+	( (void)resultData.numNullMatches );
+	RF_ASSERT( resultData.numNullMatches == 0 );
+
 	return true;
 }
 
@@ -1162,7 +1241,7 @@ bool ObjectDeserializer::DeserializeSingleObject(
 
 bool ObjectDeserializer::DeserializeMultipleObjects(
 	Importer& importer,
-	int TODO_Output,
+	ResultHandlerFunc& resultHandler,
 	Params const& params )
 {
 	// Scratch space to simplify / optimize lambda captures
@@ -1761,6 +1840,47 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	if( success == false )
 	{
 		return false;
+	}
+
+	RF_ASSERT_MSG(
+		scratch.mScratchObjectStorage.mObjectInstancesWithoutIDs_Fresh.empty(),
+		"Scratch instances were prepared but not filled out" );
+
+	// Emit results
+	if( resultHandler != nullptr )
+	{
+		bool emitResults = true;
+
+		// With IDs
+		for(
+			details::ScratchObjectStorage::ObjectInstancesByID::value_type& entry :
+			scratch.mScratchObjectStorage.mObjectInstancesByID )
+		{
+			if( emitResults == false )
+			{
+				break;
+			}
+
+			TaggedObjectInstance instance = {};
+			instance.mInstanceID = entry.first;
+			instance.mObject.emplace( rftl::move( *rftl::move( entry.second ) ) );
+			emitResults = resultHandler( rftl::move( instance ) );
+		}
+
+		// Without IDs
+		for(
+			details::ScratchObjectStorage::ObjectInstancesWithoutIDs::value_type& entry :
+			scratch.mScratchObjectStorage.mObjectInstancesWithoutIDs_FilledOut )
+		{
+			if( emitResults == false )
+			{
+				break;
+			}
+
+			TaggedObjectInstance instance = {};
+			instance.mObject.emplace( rftl::move( *rftl::move( entry ) ) );
+			emitResults = resultHandler( rftl::move( instance ) );
+		}
 	}
 
 	return true;
