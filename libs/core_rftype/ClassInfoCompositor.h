@@ -26,6 +26,15 @@ struct ClassInfoCompositor
 		reflect::builder::CreateClassInfo<CLASS>( mClassInfo );
 	}
 
+	ClassInfoCompositor& DebugName( char const* stringLiteral )
+	{
+#if RF_IS_ALLOWED( RF_CONFIG_CLASSINFO_DEBUG_NAMES )
+		RF_ASSERT_MSG( mClassInfo.mDebugName == nullptr, "Double-assign of debug name" );
+		mClassInfo.mDebugName = stringLiteral;
+#endif
+		return *this;
+	}
+
 	template<int = 0>
 	ClassInfoCompositor& AutoVirtualRoot()
 	{

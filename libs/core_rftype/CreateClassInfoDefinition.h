@@ -37,6 +37,12 @@
 	void CRTCompositionTrigger<CLASSTYPE>::Initialize( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target ) \
 	{ \
 		{ \
+			/* Set a debug name, primarily for when in a debugger */ \
+			static constexpr char const kDebugName[] = #CLASSTYPE; \
+			___RFType_Macro_Target.DebugName( kDebugName ); \
+		} \
+		/**/ \
+		{ \
 			/* Run any code the macro call has baked in */ \
 			__VA_ARGS__; \
 		} \

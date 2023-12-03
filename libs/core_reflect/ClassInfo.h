@@ -286,6 +286,11 @@ struct ClassInfo
 	bool IsSameOrDerivedFrom( ClassInfo const& ancestor ) const;
 	void const* AttemptUpcastWalk( ClassInfo const& ancestor, void const* source ) const;
 
+#if RF_IS_ALLOWED( RF_CONFIG_CLASSINFO_DEBUG_NAMES )
+	// Intended for debugging purposes only
+	char const* mDebugName = nullptr;
+#endif
+
 	// Has or inherits virtual functions
 	bool mIsPolymorphic : 1;
 
