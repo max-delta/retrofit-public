@@ -11,16 +11,16 @@
 	/*  much information into the variable name, and instead relying on access */ \
 	/*  via a template method with a stronger type signature */ \
 	static RF::rftype::CRTCompositionTrigger<CLASSTYPE> RF_CONCAT( ___rftype_macro_generated_instance_, __LINE__ ){}; \
-	\
+	/**/ \
 	/* Forward for user-provided initialization */ \
 	/* NOTE: Forwarded to allow macro to end with the body of this function */ \
 	/* NOTE: Forwarded as 1-time-use template instead of macro-magic, since */ \
 	/*  macros can't transform namespaces in CLASSTYPE into variable names */ \
 	template<class CLASS> \
-	void ___rftype_macro_generated_initializer(::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASS> const* __RFType_CRT_Trigger ); \
+	void ___rftype_macro_generated_initializer( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASS> const* __RFType_CRT_Trigger ); \
 	template<> \
-	void ___rftype_macro_generated_initializer<CLASSTYPE>(::RF::rftype::ClassInfoCompositor<CLASSTYPE> & ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger ); \
-	\
+	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor<CLASSTYPE> & ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger ); \
+	/**/ \
 	namespace RF::rftype { /* Opening rftype namespace */ \
 	/* Template specialization for lookup only within module */ \
 	template<> \
@@ -28,13 +28,13 @@
 	{ \
 		return RF_CONCAT( ___rftype_macro_generated_instance_, __LINE__ ).GetClassInfoStorage<CLASSTYPE>(); \
 	} \
-	\
+	/**/ \
 	/* Template specialization for chaining composition trigger into initialization */ \
 	/* NOTE: This seemingly redundant hop is to escape the namespace before the */ \
 	/*  macro ends, so users don't have to close it themselves, which would be */ \
 	/*  syntactically disastrous on Intellisense, and human sanity (ex: 'MACRO{}}' ) */ \
 	template<> \
-	void CRTCompositionTrigger<CLASSTYPE>::Initialize(::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target ) \
+	void CRTCompositionTrigger<CLASSTYPE>::Initialize( ::RF::rftype::ClassInfoCompositor<CLASSTYPE>& ___RFType_Macro_Target ) \
 	{ \
 		{ \
 			/* Run any code the macro call has baked in */ \
@@ -43,10 +43,10 @@
 		___rftype_macro_generated_initializer<CLASSTYPE>( ___RFType_Macro_Target, this ); \
 	} \
 	} /* Closing rftype namespace */ \
-	\
+	/**/ \
 	/* Header before user-supplied directives */ \
 	template<> \
-	void ___rftype_macro_generated_initializer<CLASSTYPE>(::RF::rftype::ClassInfoCompositor<CLASSTYPE> & ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger )
+	void ___rftype_macro_generated_initializer<CLASSTYPE>( ::RF::rftype::ClassInfoCompositor<CLASSTYPE> & ___RFType_Macro_Target, ::RF::rftype::CRTCompositionTrigger<CLASSTYPE> const* __RFType_CRT_Trigger )
 
 // Used to define and instantiate ClassInfo meta information
 // NOTE: Must be used at the root namespace, due to definitions of forwards
