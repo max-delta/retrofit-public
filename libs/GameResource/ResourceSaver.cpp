@@ -34,30 +34,17 @@ static constexpr bool kSilentDiagnosticOnExport = true;
 static constexpr bool kSilentDiagnosticTestImport = true;
 #endif
 
-}
-///////////////////////////////////////////////////////////////////////////////
-
-ResourceSaver::ResourceSaver(
-	WeakPtr<file::VFS const> vfs,
-	WeakPtr<ResourceTypeRegistry const> typeRegistry )
-	: mVfs( vfs )
-	, mTypeRegistry( typeRegistry )
-{
-	//
-}
 
 
-
-ResourceSaver::~ResourceSaver() = default;
-
-
-
-bool ResourceSaver::SaveClassToFile(
+bool SaveClassToBufferInternal(
 	reflect::ClassInfo const& classInfo,
 	void const* classInstance,
 	ResourceTypeIdentifier typeID,
-	file::VFSPath const& path )
+	rftl::string& buffer,
+	file::VFSPath const& logPathContext )
 {
+	buffer.clear();
+
 	// HACK: Testing
 	RF_TODO_ANNOTATION( "Proper params" );
 	serialization::ObjectSerializer::Params HACK_params = {};
@@ -83,22 +70,12 @@ bool ResourceSaver::SaveClassToFile(
 	};
 	HACK_params.mContinueOnMissingTypeLookups = false;
 
-	// Acquire file handle
-	file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( path );
-	if( fileHandle == nullptr )
-	{
-		RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to open resource for write" );
-		return false;
-	}
-
 	// TODO: BinaryExporter
 	// TODO: Figure out a better solution for filename extensions
 	//static constexpr char kFileExtension[] = ".xml";
 	using PlaceholderExporter = serialization::XmlExporter;
-	rftl::string buffer;
 
 	// Serialize
-	buffer.clear();
 	{
 
 #if RF_IS_ALLOWED( RF_CONFIG_RESOURCE_SAVE_DIAGNOSTICS )
@@ -111,7 +88,7 @@ bool ResourceSaver::SaveClassToFile(
 			//  but that is discouraged and should be rare in practice
 
 			// Exporter
-			serialization::DiagnosticExporter diagExporter{ details::kSilentDiagnosticOnExport };
+			serialization::DiagnosticExporter diagExporter{ kSilentDiagnosticOnExport };
 
 			// Serialize (diagnostic only)
 			bool const diagSuccess =
@@ -139,7 +116,7 @@ bool ResourceSaver::SaveClassToFile(
 			HACK_params );
 		if( serializeSuccess == false )
 		{
-			RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to serialize resource for write" );
+			RFLOG_ERROR( logPathContext, RFCAT_GAMERESOURCE, "Failed to serialize resource for write" );
 			return false;
 		}
 
@@ -147,7 +124,7 @@ bool ResourceSaver::SaveClassToFile(
 		bool const finalizeSuccess = placeholderExporter.Root_FinalizeExport();
 		if( finalizeSuccess == false )
 		{
-			RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to finalize exporter for write" );
+			RFLOG_ERROR( logPathContext, RFCAT_GAMERESOURCE, "Failed to finalize exporter for write" );
 			return false;
 		}
 
@@ -155,7 +132,7 @@ bool ResourceSaver::SaveClassToFile(
 		bool const bufferSuccess = placeholderExporter.WriteToString( buffer );
 		if( bufferSuccess == false )
 		{
-			RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to write resource to buffer" );
+			RFLOG_ERROR( logPathContext, RFCAT_GAMERESOURCE, "Failed to write resource to buffer" );
 			return false;
 		}
 	}
@@ -166,10 +143,60 @@ bool ResourceSaver::SaveClassToFile(
 	{
 		serialization::AutoImporter test = {};
 		test.ReadFromString( buffer );
-		bool const result = serialization::DiagnosticProcessImport( test, details::kSilentDiagnosticTestImport );
+		bool const result = serialization::DiagnosticProcessImport( test, kSilentDiagnosticTestImport );
 		RF_ASSERT( result );
 	}
 #endif
+
+	return true;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+ResourceSaver::ResourceSaver(
+	WeakPtr<file::VFS const> vfs,
+	WeakPtr<ResourceTypeRegistry const> typeRegistry )
+	: mVfs( vfs )
+	, mTypeRegistry( typeRegistry )
+{
+	//
+}
+
+
+
+ResourceSaver::~ResourceSaver() = default;
+
+
+
+bool ResourceSaver::SaveClassToFile(
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance,
+	ResourceTypeIdentifier typeID,
+	file::VFSPath const& path )
+{
+	// Acquire file handle
+	file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( path );
+	if( fileHandle == nullptr )
+	{
+		RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to open resource for write" );
+		return false;
+	}
+
+	rftl::string buffer;
+	bool const bufferResult =
+		details::SaveClassToBufferInternal(
+			classInfo,
+			classInstance,
+			typeID,
+			buffer,
+			path );
+	if( bufferResult == false )
+	{
+		RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to write resource to temp buffer" );
+		return false;
+	}
+
 
 	// Write to file
 	FILE* const file = fileHandle->GetFile();
@@ -182,6 +209,32 @@ bool ResourceSaver::SaveClassToFile(
 	}
 
 	RFLOG_INFO( path, RFCAT_GAMERESOURCE, "Resource written" );
+	return true;
+}
+
+
+
+bool ResourceSaver::SaveClassToBuffer(
+	reflect::ClassInfo const& classInfo,
+	void const* classInstance,
+	ResourceTypeIdentifier typeID,
+	rftl::string& buffer )
+{
+	file::VFSPath const logContextPath( "BUFFER" );
+
+	bool const bufferResult = details::SaveClassToBufferInternal(
+		classInfo,
+		classInstance,
+		typeID,
+		buffer,
+		logContextPath );
+	if( bufferResult == false )
+	{
+		RFLOG_ERROR( logContextPath, RFCAT_GAMERESOURCE, "Failed to write resource to buffer" );
+		return false;
+	}
+
+	RFLOG_INFO( logContextPath, RFCAT_GAMERESOURCE, "Resource written" );
 	return true;
 }
 

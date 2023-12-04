@@ -7,6 +7,8 @@
 
 #include "core_reflect/ReflectFwd.h"
 
+#include "rftl/string"
+
 
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,6 +37,11 @@ public:
 		void const* classInstance,
 		ResourceTypeIdentifier typeID,
 		file::VFSPath const& path );
+	bool SaveClassToBuffer(
+		reflect::ClassInfo const& classInfo,
+		void const* classInstance,
+		ResourceTypeIdentifier typeID,
+		rftl::string& buffer );
 
 
 	//
