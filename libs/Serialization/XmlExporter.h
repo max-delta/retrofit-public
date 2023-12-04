@@ -22,10 +22,10 @@ public:
 	struct Config
 	{
 		// If true, debug type IDs will be included
-		bool mIncludeDebugTypeIDs = false;
+		bool mIncludeDebugTypeIDs = config::kResourceSaveDiagnostics;
 
 		// If true, debug names for types will be included next to type IDs
-		bool mIncludeInlineDebugNames = false;
+		bool mIncludeInlineDebugNames = config::kResourceSaveDiagnostics;
 
 		// If true, the debug data section will be excluded
 		bool mStripDebugDataSection = false;
