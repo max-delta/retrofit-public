@@ -31,7 +31,19 @@ public:
 		WeakPtr<ResourceTypeRegistry const> typeRegistry );
 	~ResourceSaver();
 
-	// Save class
+	// Save class (typed)
+	template<typename ReflectedClass>
+	bool SaveClassToFile(
+		ResourceTypeIdentifier typeID,
+		ReflectedClass const& classInstance,
+		file::VFSPath const& path );
+	template<typename ReflectedClass>
+	bool SaveClassToBuffer(
+		ResourceTypeIdentifier typeID,
+		ReflectedClass const& classInstance,
+		rftl::string& buffer );
+
+	// Save class (typeless)
 	bool SaveClassToFile(
 		reflect::ClassInfo const& classInfo,
 		void const* classInstance,
@@ -53,3 +65,5 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+#include "ResourceSaver.inl"

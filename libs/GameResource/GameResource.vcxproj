@@ -80,6 +80,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="ResourceLoader.inl" />
+		<None Include="ResourceSaver.inl" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">
