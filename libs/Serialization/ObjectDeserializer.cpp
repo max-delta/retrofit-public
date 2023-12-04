@@ -1830,6 +1830,31 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 		RFLOG_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Outdent" );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
+
+		if( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) == false )
+		{
+			// Unresolved chain, dubious
+			RFLOG_WARNING( scratch.mWalkChain, RFCAT_SERIALIZATION,
+				"Popping an unresolved end-of-chain node, this might imply"
+				" that a property was mentioned by the importer, but had no"
+				" meaningful actions associated with it, which would likely"
+				" indicate wasteful serialization" );
+			RF_TODO_ANNOTATION( "Fix any cases of wasteful exporter serialization" );
+
+			bool const resolveSuccess =
+				details::ResolveWalkChainLeadingEdge(
+					scratch.mWalkChain,
+					scratch.mScratchObjectStorage );
+			if( resolveSuccess == false )
+			{
+				RFLOG_ERROR( scratch.mWalkChain, RFCAT_SERIALIZATION,
+					"Failed to resolve before an outdent on the walk-chain,"
+					" this hopefully is preceded by more useful errors" );
+				return false;
+			}
+			RF_ASSERT( details::IsWalkChainLeadingEdgeResolved( scratch.mWalkChain ) );
+		}
+
 		details::PopFromChain( scratch.mWalkChain );
 
 		return true;
