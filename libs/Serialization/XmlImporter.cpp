@@ -399,7 +399,11 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 
 	static constexpr size_t kExcessivePropertyDepth = 10;
 	rftl::static_vector<pugi::xml_node, kExcessivePropertyDepth> nodeStack;
-	static constexpr size_t kExcessiveIterationLimit = 1000;
+	RF_TODO_ANNOTATION(
+		"This value is really high right now, mostly because there's no"
+		" optimizations for same-typed directly-keyed accessors (strings are"
+		" the biggest offender here), but it should probably be tuned down" );
+	static constexpr size_t kExcessiveIterationLimit = 10'000;
 	size_t iterationCheckVal = 0;
 
 	// Seed the property tree crawl
