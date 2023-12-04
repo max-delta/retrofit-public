@@ -15,6 +15,9 @@
 
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"
+#if RF_IS_ALLOWED( RF_CONFIG_RESOURCE_LOAD_DIAGNOSTICS )
+	#include "GameResource/ResourceSaver.h"
+#endif
 
 #include "PlatformFilesystem/VFS.h"
 
@@ -58,6 +61,29 @@ UniquePtr<T> LoadFromFile(
 	{
 		RFLOG_ERROR( path, RFCAT_CC3O3, "Failed to load class from file" );
 	}
+
+#if RF_IS_ALLOWED( RF_CONFIG_RESOURCE_LOAD_DIAGNOSTICS )
+	{
+		// Write out to buffer
+		rftl::string buffer;
+		bool const shimSuccess = gResourceSaver->SaveClassToBuffer( typeID, *retVal, buffer );
+		if( shimSuccess == false )
+		{
+			RFLOG_FATAL( path, RFCAT_CC3O3, "Failed to re-save loaded class from file" );
+		}
+
+		// Load back in
+		// NOTE: Not stomping return immediately, so that the original can be
+		//  debugged alongside the buffer's contents
+		UniquePtr<T> shimVal = gResourceLoader->LoadClassFromBuffer<T, ResourceCreator>( typeID, buffer );
+		if( shimVal == nullptr )
+		{
+			RFLOG_FATAL( path, RFCAT_CC3O3, "Failed to load re-saved shim class" );
+		}
+		retVal = rftl::move( shimVal );
+	}
+#endif
+
 	return retVal;
 }
 

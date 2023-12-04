@@ -16,6 +16,7 @@ static constexpr bool kDevCheats = RF_CONFIG_FLAG( RF_CONFIG_DEV_CHEATS );
 static constexpr bool kLongTimeouts = RF_CONFIG_FLAG( RF_CONFIG_LONG_TIMEOUTS );
 static constexpr bool kRollbackPerfOptimizations = RF_CONFIG_FLAG( RF_CONFIG_ROLLBACK_PERF_OPTIMIZATIONS );
 static constexpr bool kResourceSaveDiagnostics = RF_CONFIG_FLAG( RF_CONFIG_RESOURCE_SAVE_DIAGNOSTICS );
+static constexpr bool kResourceLoadDiagnostics = RF_CONFIG_FLAG( RF_CONFIG_RESOURCE_LOAD_DIAGNOSTICS );
 static constexpr bool kHookNew = RF_CONFIG_FLAG( RF_CONFIG_HOOK_NEW );
 
 #undef RF_CONFIG_FLAG
