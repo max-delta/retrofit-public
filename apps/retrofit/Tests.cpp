@@ -174,12 +174,6 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().ExtensionProperty( "mUniqueVirtualNull", &SQReflectTestClass::mUniqueVirtualNull );
 	RFTYPE_META().ExtensionProperty( "mUniqueVirtualAbstract", &SQReflectTestClass::mUniqueVirtualAbstract );
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
-
-	// TODO: Probably need a partial specialization for UniquePtr<Copyable> vs
-	//  UniquePtr<MoveOnly>
-	// TODO: Likely need a new accessor option for non-insert, and instead a 'move
-	//  all' so it can access the peer smart-pointer to transfer from
-	RF_TODO_ANNOTATION( "More advance UniquePtr support" );
 }
 
 
