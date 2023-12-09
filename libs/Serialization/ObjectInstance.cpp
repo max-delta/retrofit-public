@@ -133,4 +133,18 @@ UniquePtr<void> ObjectInstance::ExtractStorage()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+TaggedObjectInstance::TaggedObjectInstance() = default;
+
+
+
+TaggedObjectInstance::TaggedObjectInstance(
+	TaggedObjectInstance&& rhs )
+	: RF_MOVE_CONSTRUCT( mInstanceID )
+	, RF_MOVE_CONSTRUCT( mObject )
+{
+	//
+}
+
+///////////////////////////////////////////////////////////////////////////////
 }

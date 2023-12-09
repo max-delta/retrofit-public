@@ -76,6 +76,12 @@ class SERIALIZATION_API TaggedObjectInstance
 	RF_NO_COPY( TaggedObjectInstance );
 
 public:
+	TaggedObjectInstance();
+	TaggedObjectInstance(
+		TaggedObjectInstance&& rhs );
+
+
+public:
 	// Instance ID, if available
 	exporter::InstanceID mInstanceID = exporter::kInvalidInstanceID;
 

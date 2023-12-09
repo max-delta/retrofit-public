@@ -789,7 +789,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 			bool const newEntry = mTocEntries.emplace( instanceIDVal, typeIDVal ).second;
 			if( newEntry == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate TOC instance ID %llu", id );
+				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate TOC instance ID %llu", RFTLE_CSTR( id ) );
 				return false;
 			}
 		}
