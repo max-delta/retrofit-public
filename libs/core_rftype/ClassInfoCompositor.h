@@ -65,7 +65,7 @@ struct ClassInfoCompositor
 		else
 		{
 			// NOTE: In some inheritance implementations, this check can crash
-			//  due excessively poor code with exceptionally bad multiple
+			//  due to excessively poor code with exceptionally bad multiple
 			//  inheritance, so in those cases you will need to use the more
 			//  expensive ComplexBaseClass() instead
 			bool const nonTrivialTransformationNeeded = reflect::UnsafeTryDetermineIfNonTrivialPointerTransformNeeded<T, CLASS>();
