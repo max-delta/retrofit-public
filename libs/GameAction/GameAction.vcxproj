@@ -31,14 +31,31 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
+		<ClCompile Include="ActionDatabase.cpp" />
+		<ClCompile Include="ActionRecord.cpp" />
+		<ClCompile Include="Condition.cpp" />
+		<ClCompile Include="ConditionDatabase.cpp" />
+		<ClCompile Include="ConditionRecord.cpp" />
+		<ClCompile Include="Context.cpp" />
 		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="Environment.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="Step.cpp" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="ActionDatabase.h" />
+		<ClInclude Include="ActionFwd.h" />
+		<ClInclude Include="ActionRecord.h" />
+		<ClInclude Include="Condition.h" />
+		<ClInclude Include="ConditionDatabase.h" />
+		<ClInclude Include="ConditionRecord.h" />
+		<ClInclude Include="Context.h" />
+		<ClInclude Include="Environment.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="Step.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\core\core.vcxproj">

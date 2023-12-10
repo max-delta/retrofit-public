@@ -1,2 +1,28 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="Environment.cpp" />
+		<ClCompile Include="ActionDatabase.cpp" />
+		<ClCompile Include="ConditionDatabase.cpp" />
+		<ClCompile Include="Context.cpp" />
+		<ClCompile Include="Condition.cpp" />
+		<ClCompile Include="Step.cpp" />
+		<ClCompile Include="ActionRecord.cpp" />
+		<ClCompile Include="ConditionRecord.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="ActionFwd.h" />
+		<ClInclude Include="Environment.h" />
+		<ClInclude Include="ActionDatabase.h" />
+		<ClInclude Include="ConditionDatabase.h" />
+		<ClInclude Include="Context.h" />
+		<ClInclude Include="Condition.h" />
+		<ClInclude Include="Step.h" />
+		<ClInclude Include="ActionRecord.h" />
+		<ClInclude Include="ConditionRecord.h" />
+	</ItemGroup>
+</Project>
