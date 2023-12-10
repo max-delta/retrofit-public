@@ -1,0 +1,110 @@
+# Action system
+
+### Generic structure
+
+// Stores big databases of stuff that is presumed to get reflected in from disk
+struct Environment final
+vector<ActionDatabase> Environment::mActionDatabases
+vector<ConditionDatabase> Environment::mConditionDatabases
+
+// The mutable 'stuff' that actually gets operated upon
+class Context : VirtualClass
+Unique<Context> Context::Clone() const = 0
+
+// Checks for things like 'is dead' or 'health >= X'
+class Condition : VirtualClass
+bool Condition::Test( Environment const&, Context const& ) const = 0
+
+// Causes changes like 'grow context to include targets allies' or 'do damage'
+class Step : VirtualClass
+Unique<Context> Step::Execute( Environment const&, Context& ) const = 0
+
+// Handle to the root of a potentially large tree of steps
+struct ActionRecord final
+Unique<Step> ActionRecord::mRootStep = nullptr
+
+// Holds a bunch of referenceable actions, by ID, probably the main way most
+//  of the game will ever trigger an action is by ID
+class ActionDatabase final
+ActionRecord const& ActionDatabase::LookupAction( SegmentedIdentifier )
+static ActionRecord sInvalidActionRecord = {};
+
+// Handle to the root of a potentially large tree of conditions
+struct ConditionRecord final
+Unique<Condition> ConditionRecord::mRootCondition = nullptr
+
+// Holds a bunch of referenceable conditions, by ID, probably used for common
+//  helper conditions that are re-used from many locations
+class ConditionDatabase final
+ConditionRecord const& ConditionDatabase::LookupCondition( SegmentedIdentifier )
+static ConditionRecord sInvalidConditionRecord = {};
+
+
+### Generic components
+
+action::context::Error
+	* For passing out of failed steps
+	* Stores the original context inside
+	* Not final, derived classes can extend
+action::context::error::WrongContextType final
+	* Stores references to one or more class infos that it expected
+	* There should be a helper function for trying virtual casts that uses this
+
+action::condition::And final
+	* And (multiple sub-conditions)
+action::condition::Or final
+	* Or (multiple sub-conditions)
+action::condition::Not final
+	* Not (single sub-condition)
+action::condition::External final
+	* Tests a condition from a specified identifier, passing along context
+
+action::step::Sequence final
+	* Run multiple sub-steps in order
+	* Option to clone original context instead of chaining through
+		* Option to ignore any errors (only meaningful when cloning)
+action::step::External final
+	* Runs an action from a specified identifier, passing along context
+	* Option to clone original context and discard any changes (isolate the exec)
+		* Option to ignore any errors (only meaningful when cloning)
+action::step::Conditional final
+	* Only runs the step if the condition passes
+
+
+### Theoretical example
+
+* Environment
+	* ActionDatabase
+		* "Rez II" - ActionRecord
+			* Conditional
+				* Condition - External
+					* ID = "IsRezzable"
+				* Step - Sequence
+					* Step - External
+						* ID = "Util_RezTo1HP"
+					* Step - Heal
+						* Amount% = 100
+		* "Util_RezTo1HP" - ActionRecord
+			* ...
+	* ConditionDatabase
+		* "IsRezzable" - ConditionRecord
+			* ...
+
+
+### Considerations
+
+// A 'buff / debuff' system needs to exist for specifically CC3O3.
+// One aspect of that system might be that buffs could have a list of actions
+//  they fire on every turn, which might have conditions they check or
+//  otherwise they just remain inert that turn.
+// And obviously actions would need to be able to apply / remove buffs.
+// Probably will need the buffs to hold onto both a const 'original' context
+//  that was the one they got applied with, and a mutable 'persistent' context
+//  that the buff holds onto while its still applied.
+
+// Actions in most games actions can't just 'happen', they almost always need
+//  to be associated with an animation or a timeline or something.
+// There needs to be consideration in the caller and design of the actions for
+//  this, likely that the context needs to be kept around while the timeline or
+//  animation is still going.
+// The simple case to consider here is a multi-hit move that animates each hit.
