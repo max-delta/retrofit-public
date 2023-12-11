@@ -1379,9 +1379,10 @@ void ActionSystemTest()
 		virtual UniquePtr<act::Context> Execute( act::Environment const& env, act::Context& ctx ) const override
 		{
 			// HACK: Reinterpret cast instead of virtual cast
-			reinterpret_cast<TestContext*>( &ctx )->mVal++;
+			reinterpret_cast<TestContext*>( &ctx )->mVal += mVal;
 			return nullptr;
 		}
+		int mVal = 0;
 	};
 
 	struct TestCheck final : public act::Check
@@ -1392,7 +1393,7 @@ void ActionSystemTest()
 			// HACK: Reinterpret cast instead of virtual cast
 			return reinterpret_cast<TestContext const*>( &ctx )->mVal == mVal;
 		}
-		int mVal = 1;
+		int mVal = 0;
 	};
 
 	act::Environment env = {};
@@ -1402,7 +1403,8 @@ void ActionSystemTest()
 
 		UniquePtr<act::ActionRecord> actionRecord = DefaultCreator<act::ActionRecord>::Create();
 
-		UniquePtr<act::Step> step = DefaultCreator<TestStep>::Create();
+		UniquePtr<TestStep> step = DefaultCreator<TestStep>::Create();
+		step->mVal = 1;
 		actionRecord->ReplaceRoot( rftl::move( step ) );
 
 		actions.AddAction( "test", rftl::move( actionRecord ) );
@@ -1413,7 +1415,8 @@ void ActionSystemTest()
 
 		UniquePtr<act::ConditionRecord> conditionRecord = DefaultCreator<act::ConditionRecord>::Create();
 
-		UniquePtr<act::Check> check = DefaultCreator<TestCheck>::Create();
+		UniquePtr<TestCheck> check = DefaultCreator<TestCheck>::Create();
+		check->mVal = 1;
 		conditionRecord->ReplaceRoot( rftl::move( check ) );
 
 		conditions.AddCondition( "test", rftl::move( conditionRecord ) );
@@ -1426,6 +1429,9 @@ void ActionSystemTest()
 	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );
 	RF_ASSERT( ctx.mVal == 1 );
 	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) );
+	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );
+	RF_ASSERT( ctx.mVal == 2 );
+	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
