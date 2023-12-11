@@ -8,7 +8,7 @@ namespace RF::act {
 class Environment;
 
 class Context;
-class Condition;
+class Check;
 class Step;
 
 class ActionDatabase;

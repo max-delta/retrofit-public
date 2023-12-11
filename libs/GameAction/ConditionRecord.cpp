@@ -9,25 +9,25 @@ ConditionRecord::ConditionRecord() = default;
 
 
 
-UniquePtr<Condition> ConditionRecord::ReplaceRoot( UniquePtr<Condition>&& newRoot )
+UniquePtr<Check> ConditionRecord::ReplaceRoot( UniquePtr<Check>&& newRoot )
 {
-	UniquePtr<Condition> retVal = rftl::move( mRootCondition );
-	mRootCondition = rftl::move( newRoot );
+	UniquePtr<Check> retVal = rftl::move( mRootCheck );
+	mRootCheck = rftl::move( newRoot );
 	return retVal;
 }
 
 
 
-WeakPtr<Condition const> ConditionRecord::GetRoot() const
+WeakPtr<Check const> ConditionRecord::GetRoot() const
 {
-	return mRootCondition;
+	return mRootCheck;
 }
 
 
 
-WeakPtr<Condition> ConditionRecord::GetMutableRoot()
+WeakPtr<Check> ConditionRecord::GetMutableRoot()
 {
-	return mRootCondition;
+	return mRootCheck;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "Condition.h"
+#include "Check.h"
 
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
 
-Condition::Condition() = default;
-Condition::~Condition() = default;
+Check::Check() = default;
+Check::~Check() = default;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

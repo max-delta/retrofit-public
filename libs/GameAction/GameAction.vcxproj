@@ -33,7 +33,7 @@
 	<ItemGroup>
 		<ClCompile Include="ActionDatabase.cpp" />
 		<ClCompile Include="ActionRecord.cpp" />
-		<ClCompile Include="Condition.cpp" />
+		<ClCompile Include="Check.cpp" />
 		<ClCompile Include="ConditionDatabase.cpp" />
 		<ClCompile Include="ConditionRecord.cpp" />
 		<ClCompile Include="Context.cpp" />
@@ -48,7 +48,7 @@
 		<ClInclude Include="ActionDatabase.h" />
 		<ClInclude Include="ActionFwd.h" />
 		<ClInclude Include="ActionRecord.h" />
-		<ClInclude Include="Condition.h" />
+		<ClInclude Include="Check.h" />
 		<ClInclude Include="ConditionDatabase.h" />
 		<ClInclude Include="ConditionRecord.h" />
 		<ClInclude Include="Context.h" />

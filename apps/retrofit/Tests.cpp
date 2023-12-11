@@ -7,7 +7,7 @@
 
 #include "GameAction/ActionDatabase.h"
 #include "GameAction/ActionRecord.h"
-#include "GameAction/Condition.h"
+#include "GameAction/Check.h"
 #include "GameAction/ConditionDatabase.h"
 #include "GameAction/ConditionRecord.h"
 #include "GameAction/Context.h"
@@ -1384,9 +1384,9 @@ void ActionSystemTest()
 		}
 	};
 
-	struct TestCondition final : public act::Condition
+	struct TestCheck final : public act::Check
 	{
-		TestCondition() = default;
+		TestCheck() = default;
 		virtual bool Evaluate( act::Environment const& env, act::Context const& ctx ) const override
 		{
 			// HACK: Reinterpret cast instead of virtual cast
@@ -1413,8 +1413,8 @@ void ActionSystemTest()
 
 		UniquePtr<act::ConditionRecord> conditionRecord = DefaultCreator<act::ConditionRecord>::Create();
 
-		UniquePtr<act::Condition> step = DefaultCreator<TestCondition>::Create();
-		conditionRecord->ReplaceRoot( rftl::move( step ) );
+		UniquePtr<act::Check> check = DefaultCreator<TestCheck>::Create();
+		conditionRecord->ReplaceRoot( rftl::move( check ) );
 
 		conditions.AddCondition( "test", rftl::move( conditionRecord ) );
 	}
