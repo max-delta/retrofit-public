@@ -3,6 +3,8 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core/ptr/ptr_fwd.h"
+
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,15 +16,19 @@ class GAMEACTION_API Context
 	//
 	// Public methods
 public:
-	Context() = default;
+	Context();
+	Context( Context const& rhs );
+	virtual ~Context();
 
-	// TODO: Implement
+	// Contexts must be deep-cloneable to allow for proper isolation when
+	//  running actions with multiple complex steps
+	virtual UniquePtr<Context> Clone() const = 0;
 
-
-	//
-	// Private data
-private:
-	// TODO: Implement
+	// Contexts can enter into an error state (or some contexts could ALWAYS
+	//  represent an error state), and this error state can inform calling code
+	//  that it should terminate any running logic and propogate the context up
+	//  as an error
+	virtual bool IsATerminalError() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

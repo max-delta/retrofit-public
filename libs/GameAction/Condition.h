@@ -13,15 +13,14 @@ class GAMEACTION_API Condition
 	//
 	// Public methods
 public:
-	Condition() = default;
+	Condition();
+	virtual ~Condition();
 
-	// TODO: Implement
-
-
-	//
-	// Private data
-private:
-	// TODO: Implement
+	// Evaluate a condition on a given context in a given environment
+	// NOTE: Assumed to not change context, custom contexts need to provide
+	//  one or more designated mutable portions if they wish to allow certain
+	//  conditions to bypass this
+	virtual bool Evaluate( Environment const& env, Context const& ctx ) const = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

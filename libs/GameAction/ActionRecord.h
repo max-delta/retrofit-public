@@ -3,6 +3,8 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core/ptr/unique_ptr.h"
+
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,18 +13,22 @@ namespace RF::act {
 //  entire 'action'
 class GAMEACTION_API ActionRecord final
 {
+	RF_NO_COPY( ActionRecord );
+
 	//
 	// Public methods
 public:
-	ActionRecord() = default;
+	ActionRecord();
 
-	// TODO: Implement
+	UniquePtr<Step> ReplaceRoot( UniquePtr<Step>&& newRoot );
+	WeakPtr<Step const> GetRoot() const;
+	WeakPtr<Step> GetMutableRoot();
 
 
 	//
 	// Private data
 private:
-	// TODO: Implement
+	UniquePtr<Step> mRootStep = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

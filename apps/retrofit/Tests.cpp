@@ -5,6 +5,15 @@
 #include "AppCommon_GraphicalClient/FrameBuilder.h"
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 
+#include "GameAction/ActionDatabase.h"
+#include "GameAction/ActionRecord.h"
+#include "GameAction/Condition.h"
+#include "GameAction/ConditionDatabase.h"
+#include "GameAction/ConditionRecord.h"
+#include "GameAction/Context.h"
+#include "GameAction/Environment.h"
+#include "GameAction/Step.h"
+
 #include "GameResource/ResourceLoader.h"
 #include "GameResource/ResourceSaver.h"
 
@@ -1347,6 +1356,76 @@ void CharacterCreatorTest()
 	params.mCharPiecesDir = charPieces;
 	params.mOutputDir = outDir;
 	creator.CreateCompositeCharacter( params );
+}
+
+
+
+void ActionSystemTest()
+{
+	struct TestContext final : public act::Context
+	{
+		TestContext() = default;
+		virtual UniquePtr<act::Context> Clone() const override
+		{
+			return DefaultCreator<TestContext>::Create( *this );
+		}
+		int mVal = 0;
+	};
+
+	struct TestStep final : public act::Step
+	{
+		RF_NO_COPY( TestStep );
+		TestStep() = default;
+		virtual UniquePtr<act::Context> Execute( act::Environment const& env, act::Context& ctx ) const override
+		{
+			// HACK: Reinterpret cast instead of virtual cast
+			reinterpret_cast<TestContext*>( &ctx )->mVal++;
+			return nullptr;
+		}
+	};
+
+	struct TestCondition final : public act::Condition
+	{
+		TestCondition() = default;
+		virtual bool Evaluate( act::Environment const& env, act::Context const& ctx ) const override
+		{
+			// HACK: Reinterpret cast instead of virtual cast
+			return reinterpret_cast<TestContext const*>( &ctx )->mVal == mVal;
+		}
+		int mVal = 1;
+	};
+
+	act::Environment env = {};
+
+	{
+		act::ActionDatabase& actions = env.GetMutableActionDatabase();
+
+		UniquePtr<act::ActionRecord> actionRecord = DefaultCreator<act::ActionRecord>::Create();
+
+		UniquePtr<act::Step> step = DefaultCreator<TestStep>::Create();
+		actionRecord->ReplaceRoot( rftl::move( step ) );
+
+		actions.AddAction( "test", rftl::move( actionRecord ) );
+	}
+
+	{
+		act::ConditionDatabase& conditions = env.GetMutableConditionDatabase();
+
+		UniquePtr<act::ConditionRecord> conditionRecord = DefaultCreator<act::ConditionRecord>::Create();
+
+		UniquePtr<act::Condition> step = DefaultCreator<TestCondition>::Create();
+		conditionRecord->ReplaceRoot( rftl::move( step ) );
+
+		conditions.AddCondition( "test", rftl::move( conditionRecord ) );
+	}
+
+
+	TestContext ctx = {};
+	RF_ASSERT( ctx.mVal == 0 );
+	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
+	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );
+	RF_ASSERT( ctx.mVal == 1 );
+	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

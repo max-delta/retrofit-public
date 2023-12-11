@@ -3,6 +3,8 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core/ptr/unique_ptr.h"
+
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,18 +13,25 @@ namespace RF::act {
 //  such as databases of operations that can be performed
 class GAMEACTION_API Environment final
 {
+	RF_NO_COPY( Environment );
+
 	//
 	// Public methods
 public:
-	Environment() = default;
+	Environment();
 
-	// TODO: Implement
+	ActionDatabase const& GetActionDatabase() const;
+	ActionDatabase& GetMutableActionDatabase();
+
+	ConditionDatabase const& GetConditionDatabase() const;
+	ConditionDatabase& GetMutableConditionDatabase();
 
 
 	//
 	// Private data
 private:
-	// TODO: Implement
+	UniquePtr<ActionDatabase> const mActionDatabase = nullptr;
+	UniquePtr<ConditionDatabase> const mConditionDatabase = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

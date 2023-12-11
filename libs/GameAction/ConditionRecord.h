@@ -3,6 +3,8 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core/ptr/unique_ptr.h"
+
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,18 +13,22 @@ namespace RF::act {
 //  sub-conditions, depending on the complexity of the concept it represents
 class GAMEACTION_API ConditionRecord final
 {
+	RF_NO_COPY( ConditionRecord );
+
 	//
 	// Public methods
 public:
-	ConditionRecord() = default;
+	ConditionRecord();
 
-	// TODO: Implement
+	UniquePtr<Condition> ReplaceRoot( UniquePtr<Condition>&& newRoot );
+	WeakPtr<Condition const> GetRoot() const;
+	WeakPtr<Condition> GetMutableRoot();
 
 
 	//
 	// Private data
 private:
-	// TODO: Implement
+	UniquePtr<Condition> mRootCondition = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
