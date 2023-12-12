@@ -18,6 +18,8 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/unordered_set"
+
 
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
@@ -214,8 +216,34 @@ void ResourceLoader::InjectTypes(
 {
 	ResourceTypeRegistry const& typeRegistry = *mTypeRegistry;
 
+	// Determine what classes are allowed
 	ResourceTypeRecord::ClassInfos const classInfos = typeRegistry.GetClassInfos( typeID );
 
+	// Enable type construction
+	{
+		// Faster lookup table for shim to use
+		rftl::unordered_set<reflect::ClassInfo const*> allowedClasses;
+		for( ResourceTypeRecord::ClassInfos::value_type const& entry : classInfos )
+		{
+			allowedClasses.emplace( entry.second );
+		}
+
+		// Check validity in shim, and pass along
+		auto classConstructFunc = [typeID, allowedClasses]( reflect::ClassInfo const& classInfo ) -> rftype::ConstructedType
+		{
+			if( allowedClasses.count( &classInfo ) <= 0 )
+			{
+				RFLOG_ERROR( nullptr, RFCAT_GAMERESOURCE, "Class info not in allowed list for type %llu", typeID );
+				RF_DBGFAIL_MSG( "Class not in allow list" );
+				return {};
+			}
+			return rftype::GetGlobalTypeDatabase().ConstructClass( classInfo );
+		};
+		bool const constructable = loader.AllowTypeConstruction( rftl::move( classConstructFunc ) );
+		RFLOG_TEST_AND_FATAL( constructable, nullptr, RFCAT_GAMERESOURCE, "Could not enable type construction" );
+	}
+
+	// Inject the types
 	for( ResourceTypeRecord::ClassInfos::value_type const& entry : classInfos )
 	{
 		rftl::string const& typeName = entry.first;
