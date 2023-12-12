@@ -31,6 +31,7 @@
 		<ClCompile Include="appstates\AppStateRoute.cpp" />
 		<ClCompile Include="appstates\Boot.cpp" />
 		<ClCompile Include="appstates\devtest\DevTestCombatCharts.cpp" />
+		<ClCompile Include="appstates\devtest\DevTestElementLab.cpp" />
 		<ClCompile Include="appstates\devtest\DevTestGridCharts.cpp" />
 		<ClCompile Include="appstates\devtest\DevTestLobby.cpp" />
 		<ClCompile Include="appstates\devtest\DevTestRollback.cpp" />
@@ -138,6 +139,7 @@
 		<ClInclude Include="appstates\AppStatesFwd.h" />
 		<ClInclude Include="appstates\Boot.h" />
 		<ClInclude Include="appstates\devtest\DevTestCombatCharts.h" />
+		<ClInclude Include="appstates\devtest\DevTestElementLab.h" />
 		<ClInclude Include="appstates\devtest\DevTestGridCharts.h" />
 		<ClInclude Include="appstates\devtest\DevTestLobby.h" />
 		<ClInclude Include="appstates\devtest\DevTestRollback.h" />

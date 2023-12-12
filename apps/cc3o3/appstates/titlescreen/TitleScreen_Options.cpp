@@ -91,6 +91,11 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 		addDefaultOption( rftl::move( option ) );
 	}
 	{
+		Option option = makeDevHop( "devhop_elemlab", "DevHop -> Element lab", id::DevTestElementLab );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
+	}
+	{
 		Option option = makeDevHop( "devhop_gridcharts", "DevHop -> Grid charts", id::DevTestGridCharts );
 		option.mDesc.mAction->mEnabledByDefault = true;
 		addDefaultOption( rftl::move( option ) );

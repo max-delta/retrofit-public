@@ -13,6 +13,7 @@ enum class Mode : uint8_t
 
 	// Various developer tests
 	DevTestCombatCharts,
+	DevTestElementLab,
 	DevTestGridCharts,
 	DevTestLobby,
 	DevTestRollback,
@@ -57,6 +58,10 @@ AppStateID GetStateAfterInitialLoad()
 	if( fasttrack::sMode == fasttrack::Mode::DevTestCombatCharts )
 	{
 		return id::DevTestCombatCharts;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::DevTestElementLab )
+	{
+		return id::DevTestElementLab;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::DevTestGridCharts )
 	{

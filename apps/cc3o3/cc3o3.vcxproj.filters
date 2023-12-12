@@ -295,6 +295,9 @@
 		<ClCompile Include="char\GridMask.cpp">
 			<Filter>char</Filter>
 		</ClCompile>
+		<ClCompile Include="appstates\devtest\DevTestElementLab.cpp">
+			<Filter>appstates\devtest</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -797,6 +800,9 @@
 		</ClInclude>
 		<ClInclude Include="char\GridMask.h">
 			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\devtest\DevTestElementLab.h">
+			<Filter>appstates\devtest</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
