@@ -12,6 +12,7 @@ namespace RF::reflect {
 class VirtualClassWithoutDestructor
 {
 public:
+	// NOTE: RFType provides this when using RFTYPE_ENABLE_VIRTUAL_LOOKUP(...)
 	virtual ClassInfo const* GetVirtualClassInfo() const = 0;
 
 	RF_MSVC_INLINE_SUPPRESS( 5204 ); // No virtual destructor
