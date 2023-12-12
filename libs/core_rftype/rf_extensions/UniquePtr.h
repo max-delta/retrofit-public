@@ -412,7 +412,10 @@ struct Accessor<UniquePtr<ValueType>> final : private AccessorTemplate
 				rftl::move( casted ) );
 			if( storableValue == nullptr )
 			{
-				RF_DBGFAIL_MSG( "Value couldn't be downcast to the target type" );
+				RF_DBGFAIL_MSG(
+					"Value couldn't be downcast to the target type,"
+					" the types may be unrelated or the inheritance chain"
+					" might not be properly annotated to reflection" );
 				return false;
 			}
 		}
