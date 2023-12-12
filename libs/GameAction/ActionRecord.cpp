@@ -1,6 +1,19 @@
 #include "stdafx.h"
 #include "ActionRecord.h"
 
+#include "GameAction/Step.h"
+
+#include "RFType/CreateClassInfoDefinition.h"
+
+#include "core_rftype/rf_extensions/UniquePtr.h"
+
+
+RFTYPE_CREATE_META( RF::act::ActionRecord )
+{
+	using RF::act::ActionRecord;
+	RFTYPE_META().ExtensionProperty( "mRootStep", &ActionRecord::mRootStepInternal );
+	RFTYPE_REGISTER_BY_NAME( "ActionRecord" );
+}
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,8 +24,8 @@ ActionRecord::ActionRecord() = default;
 
 UniquePtr<Step> ActionRecord::ReplaceRoot( UniquePtr<Step>&& newRoot )
 {
-	UniquePtr<Step> retVal = rftl::move( mRootStep );
-	mRootStep = rftl::move( newRoot );
+	UniquePtr<Step> retVal = rftl::move( mRootStepInternal );
+	mRootStepInternal = rftl::move( newRoot );
 	return retVal;
 }
 
@@ -20,14 +33,14 @@ UniquePtr<Step> ActionRecord::ReplaceRoot( UniquePtr<Step>&& newRoot )
 
 WeakPtr<Step const> ActionRecord::GetRoot() const
 {
-	return mRootStep;
+	return mRootStepInternal;
 }
 
 
 
 WeakPtr<Step> ActionRecord::GetMutableRoot()
 {
-	return mRootStep;
+	return mRootStepInternal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -26,9 +26,11 @@ public:
 
 
 	//
-	// Private data
-private:
-	UniquePtr<Step> mRootStep = nullptr;
+	// Public data
+public:
+	// NOTE: Not intended to be accessed directly, except by reflection
+	RF_TODO_ANNOTATION( "Need a better approach for this" );
+	UniquePtr<Step> mRootStepInternal = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
