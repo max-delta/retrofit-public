@@ -48,7 +48,7 @@ UniquePtr<ActionRecord> ActionDatabase::RemoveAction( rftl::string_view const& k
 
 
 
-WeakPtr<ActionRecord> ActionDatabase::GetAction( rftl::string_view const& key ) const
+WeakPtr<ActionRecord const> ActionDatabase::GetAction( rftl::string_view const& key ) const
 {
 	static_assert( __cplusplus < 202002L, "Replace string copy with templated find using string_view" );
 	ActionsByID::const_iterator const iter = mActionsByID.find( rftl::string( key ) );

@@ -33,7 +33,7 @@ public:
 
 	bool AddAction( rftl::string&& key, UniquePtr<ActionRecord>&& action );
 	UniquePtr<ActionRecord> RemoveAction( rftl::string_view const& key );
-	WeakPtr<ActionRecord> GetAction( rftl::string_view const& key ) const;
+	WeakPtr<ActionRecord const> GetAction( rftl::string_view const& key ) const;
 
 
 	//
