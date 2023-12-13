@@ -184,6 +184,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 			paths::ElementDescTables() );
 		gElementDatabase->LoadTierUnlockTables(
 			paths::ElementTierUnlockTables() );
+		gElementDatabase->LoadActionDefinitions(
+			paths::ElementActionDefinitions() );
 	}
 
 	mInternalState->mLoadsQueued = true;

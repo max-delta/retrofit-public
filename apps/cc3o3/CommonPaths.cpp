@@ -124,6 +124,10 @@ file::VFSPath ElementTierUnlockTables()
 {
 	return TablesRoot().GetChild( "elements", "tier_unlocks" );
 }
+file::VFSPath ElementActionDefinitions()
+{
+	return TablesRoot().GetChild( "elements", "actions" );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

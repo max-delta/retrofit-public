@@ -44,6 +44,7 @@ file::VFSPath CharacterTables();
 file::VFSPath BaseCharacters();
 file::VFSPath ElementDescTables();
 file::VFSPath ElementTierUnlockTables();
+file::VFSPath ElementActionDefinitions();
 
 // Misc
 file::VFSPath Localizations();
