@@ -13,6 +13,8 @@
 
 #include "AppCommon_GraphicalClient/Common.h"
 
+#include "GameAction/ActionRecord.h"
+
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"
 #if RF_IS_ALLOWED( RF_CONFIG_RESOURCE_LOAD_DIAGNOSTICS )
@@ -40,7 +42,8 @@ enum : ResourceTypeIdentifier
 	OverworldDesc,
 	SaveBlob,
 	Loadout,
-	SiteDesc
+	SiteDesc,
+	Action
 };
 }
 
@@ -186,6 +189,11 @@ void InitializeLoader()
 
 		typeRegistry.AddResourceType( SiteDesc, "Site" );
 		typeRegistry.AddResourceClass( SiteDesc, "SiteDesc" );
+
+		typeRegistry.AddResourceType( Action, "Action" );
+		typeRegistry.AddResourceClass( Action, "ActionRecord" );
+		typeRegistry.AddResourceClass( Action, "Step" );
+		typeRegistry.AddResourceClass( Action, "NopStep" );
 	}
 }
 
@@ -216,6 +224,7 @@ RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
 RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::Loadout, character::ElementSlots );
 RF_LOADER( details::type::SiteDesc, site::SiteDesc );
+RF_LOADER( details::type::Action, act::ActionRecord );
 
 #undef RF_LOADER
 #undef RF_LOADER_CONSTLESS
