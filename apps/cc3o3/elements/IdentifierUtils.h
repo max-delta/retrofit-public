@@ -2,7 +2,7 @@
 #include "cc3o3/elements/ElementFwd.h"
 
 #include "rftl/extension/static_string.h"
-#include "rftl/string"
+#include "rftl/string_view"
 #include "rftl/array"
 
 
@@ -24,7 +24,7 @@ using InnateString = rftl::static_string<sizeof( InnateIdentifier )>;
 
 ElementIdentifier MakeElementIdentifier( ElementBytes const& identifier );
 ElementIdentifier MakeElementIdentifier( ElementString const& identifier );
-ElementIdentifier MakeElementIdentifier( rftl::string const& identifier );
+ElementIdentifier MakeElementIdentifier( rftl::string_view const& identifier );
 ElementBytes GetElementBytes( ElementIdentifier identifier );
 ElementString GetElementString( ElementIdentifier identifier );
 ElementName GetElementName( ElementIdentifier identifier );
@@ -34,7 +34,7 @@ ElementSynopsis GetElementSynopsis( ElementIdentifier identifier );
 
 InnateIdentifier MakeInnateIdentifier( InnateBytes const& identifier );
 InnateIdentifier MakeInnateIdentifier( InnateString const& identifier );
-InnateIdentifier MakeInnateIdentifier( rftl::string const& identifier );
+InnateIdentifier MakeInnateIdentifier( rftl::string_view const& identifier );
 InnateBytes GetInnateBytes( InnateIdentifier identifier );
 InnateString GetInnateString( InnateIdentifier identifier );
 

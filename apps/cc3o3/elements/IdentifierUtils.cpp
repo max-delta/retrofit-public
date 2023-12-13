@@ -25,9 +25,9 @@ ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 
 
 
-ElementIdentifier MakeElementIdentifier( rftl::string const& identifier )
+ElementIdentifier MakeElementIdentifier( rftl::string_view const& identifier )
 {
-	RF_ASSERT( identifier.size() <= sizeof( identifier ) );
+	RF_ASSERT( identifier.size() <= sizeof( ElementIdentifier ) );
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
 	return retVal;
@@ -99,9 +99,9 @@ InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 
 
 
-InnateIdentifier MakeInnateIdentifier( rftl::string const& identifier )
+InnateIdentifier MakeInnateIdentifier( rftl::string_view const& identifier )
 {
-	RF_ASSERT( identifier.size() <= sizeof( identifier ) );
+	RF_ASSERT( identifier.size() <= sizeof( InnateIdentifier ) );
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
 	return retVal;
