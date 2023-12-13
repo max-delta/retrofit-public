@@ -9,6 +9,15 @@ ActionDatabase::ActionDatabase() = default;
 
 
 
+size_t ActionDatabase::RemoveAllActions()
+{
+	size_t const retVal = mActionsByID.size();
+	mActionsByID.clear();
+	return retVal;
+}
+
+
+
 bool ActionDatabase::AddAction( rftl::string&& key, UniquePtr<ActionRecord>&& action )
 {
 	RF_ASSERT( action != nullptr );

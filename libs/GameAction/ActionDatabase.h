@@ -31,6 +31,8 @@ private:
 public:
 	ActionDatabase();
 
+	size_t RemoveAllActions();
+
 	bool AddAction( rftl::string&& key, UniquePtr<ActionRecord>&& action );
 	UniquePtr<ActionRecord> RemoveAction( rftl::string_view const& key );
 	WeakPtr<ActionRecord const> GetAction( rftl::string_view const& key ) const;
