@@ -185,6 +185,46 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_REGISTER_BY_NAME( "SQReflectTestClass" );
 }
 
+struct ActTestContext final : public RF::act::Context
+{
+	ActTestContext() = default;
+	virtual RF::UniquePtr<RF::act::Context> Clone() const override
+	{
+		return RF::DefaultCreator<ActTestContext>::Create( *this );
+	}
+	int mVal = 0;
+};
+
+struct ActTestStep final : public RF::act::Step
+{
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+	RF_NO_COPY( ActTestStep );
+	ActTestStep() = default;
+	virtual RF::UniquePtr<RF::act::Context> Execute( RF::act::Environment const& env, RF::act::Context& ctx ) const override
+	{
+		// HACK: Reinterpret cast instead of virtual cast
+		reinterpret_cast<ActTestContext*>( &ctx )->mVal += mVal;
+		return nullptr;
+	}
+	int mVal = 0;
+};
+
+RFTYPE_CREATE_META( ActTestStep )
+{
+	RFTYPE_REGISTER_BY_NAME( "ActTestStep" );
+	RFTYPE_REGISTER_DEFAULT_CREATOR();
+}
+
+struct ActTestCheck final : public RF::act::Check
+{
+	ActTestCheck() = default;
+	virtual bool Evaluate( RF::act::Environment const& env, RF::act::Context const& ctx ) const override
+	{
+		// HACK: Reinterpret cast instead of virtual cast
+		return reinterpret_cast<ActTestContext const*>( &ctx )->mVal == mVal;
+	}
+	int mVal = 0;
+};
 
 namespace RF::test {
 ///////////////////////////////////////////////////////////////////////////////
@@ -1362,40 +1402,6 @@ void CharacterCreatorTest()
 
 void ActionSystemTest()
 {
-	struct TestContext final : public act::Context
-	{
-		TestContext() = default;
-		virtual UniquePtr<act::Context> Clone() const override
-		{
-			return DefaultCreator<TestContext>::Create( *this );
-		}
-		int mVal = 0;
-	};
-
-	struct TestStep final : public act::Step
-	{
-		RF_NO_COPY( TestStep );
-		TestStep() = default;
-		virtual UniquePtr<act::Context> Execute( act::Environment const& env, act::Context& ctx ) const override
-		{
-			// HACK: Reinterpret cast instead of virtual cast
-			reinterpret_cast<TestContext*>( &ctx )->mVal += mVal;
-			return nullptr;
-		}
-		int mVal = 0;
-	};
-
-	struct TestCheck final : public act::Check
-	{
-		TestCheck() = default;
-		virtual bool Evaluate( act::Environment const& env, act::Context const& ctx ) const override
-		{
-			// HACK: Reinterpret cast instead of virtual cast
-			return reinterpret_cast<TestContext const*>( &ctx )->mVal == mVal;
-		}
-		int mVal = 0;
-	};
-
 	act::Environment env = {};
 
 	{
@@ -1403,7 +1409,7 @@ void ActionSystemTest()
 
 		UniquePtr<act::ActionRecord> actionRecord = DefaultCreator<act::ActionRecord>::Create();
 
-		UniquePtr<TestStep> step = DefaultCreator<TestStep>::Create();
+		UniquePtr<ActTestStep> step = DefaultCreator<ActTestStep>::Create();
 		step->mVal = 1;
 		actionRecord->ReplaceRoot( rftl::move( step ) );
 
@@ -1415,15 +1421,14 @@ void ActionSystemTest()
 
 		UniquePtr<act::ConditionRecord> conditionRecord = DefaultCreator<act::ConditionRecord>::Create();
 
-		UniquePtr<TestCheck> check = DefaultCreator<TestCheck>::Create();
+		UniquePtr<ActTestCheck> check = DefaultCreator<ActTestCheck>::Create();
 		check->mVal = 1;
 		conditionRecord->ReplaceRoot( rftl::move( check ) );
 
 		conditions.AddCondition( "test", rftl::move( conditionRecord ) );
 	}
 
-
-	TestContext ctx = {};
+	ActTestContext ctx = {};
 	RF_ASSERT( ctx.mVal == 0 );
 	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
 	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );

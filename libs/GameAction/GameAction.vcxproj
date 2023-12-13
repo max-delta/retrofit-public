@@ -43,6 +43,7 @@
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 		<ClCompile Include="Step.cpp" />
+		<ClCompile Include="Steps\NopStep.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="ActionDatabase.h" />
@@ -56,6 +57,9 @@
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="Step.h" />
+		<ClInclude Include="Steps\NopStep.h" />
+		<ClInclude Include="Steps\project.h" />
+		<ClInclude Include="Steps\stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\core\core.vcxproj">
