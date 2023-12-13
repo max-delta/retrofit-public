@@ -241,10 +241,10 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			attacker.mCurCharge = attacker.mMaxCharge;
 			attacker.mPhysAtk = atk;
 			attacker.mTechniq = tech;
-			attacker.mInnate = element::MakeInnateIdentifier( element::InnateString{ 'r', 'e', 'd' } );
+			attacker.mInnate = element::MakeInnateIdentifier( "red" );
 			element::InnateIdentifier const same = attacker.mInnate;
-			element::InnateIdentifier const clash = element::MakeInnateIdentifier( element::InnateString{ 'b', 'l', 'u' } );
-			element::InnateIdentifier const unrel = element::MakeInnateIdentifier( element::InnateString{ 'w', 'h', 't' } );
+			element::InnateIdentifier const clash = element::MakeInnateIdentifier( "blu" );
+			element::InnateIdentifier const unrel = element::MakeInnateIdentifier( "wht" );
 
 			defender.mMaxHealth = kMaxHealth;
 			defender.mCurHealth = defender.mMaxHealth;
