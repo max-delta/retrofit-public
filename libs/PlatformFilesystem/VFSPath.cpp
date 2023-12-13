@@ -26,6 +26,29 @@ VFSPath::VFSPath( SegmentedIdentifier<rftl::string> const& path )
 
 
 
+VFSPath& VFSPath::RemoveTrailingExtensions()
+{
+	if( m_ElementList.empty() )
+	{
+		return *this;
+	}
+
+	// Find first dot
+	rftl::string& lastElement = m_ElementList.back();
+	size_t const firstDotIndex = lastElement.find_first_of( '.', 0 );
+	if( firstDotIndex == rftl::string::npos )
+	{
+		return *this;
+	}
+
+	// Shrink
+	lastElement.resize( firstDotIndex, '?' );
+
+	return *this;
+}
+
+
+
 VFSPath VFSPath::CreatePathFromString( rftl::string const& path )
 {
 	return id::CreateIdentifierFromString<char, kPathDelimiter>( path );

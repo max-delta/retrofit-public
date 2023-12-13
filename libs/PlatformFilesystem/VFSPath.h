@@ -26,6 +26,9 @@ public:
 	template<typename... Nodes>
 	explicit VFSPath( Element element, Nodes... elements );
 
+	// Removes everything after the first dot in the final element (if present)
+	PLATFORMFILESYSTEM_API VFSPath& RemoveTrailingExtensions();
+
 	// To/from string
 	PLATFORMFILESYSTEM_API static VFSPath CreatePathFromString( rftl::string const& path );
 	PLATFORMFILESYSTEM_API rftl::string CreateString() const;
