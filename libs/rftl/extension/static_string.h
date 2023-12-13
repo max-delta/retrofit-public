@@ -3,6 +3,7 @@
 
 #include "rftl/initializer_list"
 #include "rftl/iterator"
+#include "rftl/string_view"
 
 
 namespace rftl {
@@ -82,6 +83,7 @@ public:
 	value_type const* data() const;
 
 	value_type const* c_str() const;
+	operator basic_string_view<Element>() const;
 
 	iterator begin();
 	const_iterator begin() const;

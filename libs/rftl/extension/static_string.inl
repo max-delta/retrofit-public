@@ -288,6 +288,14 @@ inline typename static_basic_string<Element, ElementCapacity>::value_type const*
 
 
 template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>::operator basic_string_view<Element>() const
+{
+	return basic_string_view<Element>( data(), size() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::begin()
 {
 	return &( m_Storage[0] );

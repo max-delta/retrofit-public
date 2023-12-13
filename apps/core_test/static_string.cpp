@@ -426,19 +426,26 @@ TEST( StaticString, RangeForCompatibility )
 TEST( StaticString, StringConversion )
 {
 	rftl::static_string<5> sa;
-	ASSERT_TRUE( sa.c_str() == rftl::string( "" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "" );
 	sa.push_back( '2' );
-	ASSERT_TRUE( sa.c_str() == rftl::string( "2" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "2" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "2" );
 	sa.push_back( '7' );
-	ASSERT_TRUE( sa.c_str() == rftl::string( "27" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "27" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "27" );
 	sa.push_back( 'A' );
-	ASSERT_TRUE( sa.c_str() == rftl::string( "27A" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "27A" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "27A" );
 	sa.push_back( 'B' );
-	ASSERT_TRUE( sa.c_str() == rftl::string( "27AB" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "27AB" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "27AB" );
 	sa.push_back( 'C' );
-	ASSERT_TRUE( sa.c_str() == rftl::string( "27ABC" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "27ABC" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "27ABC" );
 	sa.clear();
-	ASSERT_TRUE( sa.c_str() == rftl::string( "" ) );
+	ASSERT_TRUE( sa.c_str() == rftl::string_view( "" ) );
+	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
