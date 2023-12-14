@@ -154,6 +154,7 @@ void SystemShutdown()
 	sEncounterManager = nullptr;
 	sCompanyManager = nullptr;
 	sElementDatabase = nullptr;
+	sCombatEngine = nullptr;
 	sCharacterDatabase = nullptr;
 	sCharacterValidator = nullptr;
 	sCharacterCreator = nullptr;
