@@ -1402,10 +1402,9 @@ void CharacterCreatorTest()
 
 void ActionSystemTest()
 {
-	act::Environment env = {};
-
+	UniquePtr<act::ActionDatabase> const actionDatabase = DefaultCreator<act::ActionDatabase>::Create();
 	{
-		act::ActionDatabase& actions = env.GetMutableActionDatabase();
+		act::ActionDatabase& actions = *actionDatabase;
 
 		UniquePtr<act::ActionRecord> actionRecord = DefaultCreator<act::ActionRecord>::Create();
 
@@ -1416,8 +1415,9 @@ void ActionSystemTest()
 		actions.AddAction( "test", rftl::move( actionRecord ) );
 	}
 
+	UniquePtr<act::ConditionDatabase> const conditionDatabase = DefaultCreator<act::ConditionDatabase>::Create();
 	{
-		act::ConditionDatabase& conditions = env.GetMutableConditionDatabase();
+		act::ConditionDatabase& conditions = *conditionDatabase;
 
 		UniquePtr<act::ConditionRecord> conditionRecord = DefaultCreator<act::ConditionRecord>::Create();
 
@@ -1428,15 +1428,19 @@ void ActionSystemTest()
 		conditions.AddCondition( "test", rftl::move( conditionRecord ) );
 	}
 
+	act::Environment env = {};
+	env.mActionDatabase = actionDatabase;
+	env.mConditionDatabase = conditionDatabase;
+
 	ActTestContext ctx = {};
 	RF_ASSERT( ctx.mVal == 0 );
-	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
-	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );
+	RF_ASSERT( env.mConditionDatabase->GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
+	env.mActionDatabase->GetAction( "test" )->GetRoot()->Execute( env, ctx );
 	RF_ASSERT( ctx.mVal == 1 );
-	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) );
-	env.GetActionDatabase().GetAction( "test" )->GetRoot()->Execute( env, ctx );
+	RF_ASSERT( env.mConditionDatabase->GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) );
+	env.mActionDatabase->GetAction( "test" )->GetRoot()->Execute( env, ctx );
 	RF_ASSERT( ctx.mVal == 2 );
-	RF_ASSERT( env.GetConditionDatabase().GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
+	RF_ASSERT( env.mConditionDatabase->GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
