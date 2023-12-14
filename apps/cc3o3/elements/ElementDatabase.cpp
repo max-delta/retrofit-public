@@ -3,7 +3,6 @@
 
 #include "cc3o3/elements/ElementDesc.h"
 #include "cc3o3/elements/IdentifierUtils.h"
-#include "cc3o3/resource/ResourceLoad.h"
 
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
@@ -112,56 +111,6 @@ bool ElementDatabase::LoadTierUnlockTables( file::VFSPath const& tierUnlockTable
 
 
 
-bool ElementDatabase::LoadActionDefinitions( file::VFSPath const& actionDefinitionsDir )
-{
-	// Unload current actions
-	mActionDatabase.RemoveAllActions();
-
-	// Enumerate action definitions
-	rftl::vector<file::VFSPath> actionFiles;
-	{
-		mVfs->EnumerateDirectoryRecursive(
-			actionDefinitionsDir,
-			file::VFSMount::Permissions::ReadOnly,
-			actionFiles );
-	}
-
-	if( actionFiles.empty() )
-	{
-		RFLOG_NOTIFY( actionDefinitionsDir, RFCAT_CC3O3, "Failed to find any action definition files" );
-		return false;
-	}
-
-	// Load all action definitions
-	for( file::VFSPath const& actionFile : actionFiles )
-	{
-		// Will use the relative path from the directory as the key
-		bool isBranch = false;
-		file::VFSPath asBranch = actionFile.GetAsBranchOf( actionDefinitionsDir, isBranch );
-		if( isBranch == false )
-		{
-			RFLOG_NOTIFY( actionFile, RFCAT_CC3O3, "Couldn't convert action definition file to relative path" );
-			return false;
-		}
-
-		// Trim extensions, use that as key
-		asBranch.RemoveTrailingExtensions();
-		rftl::string key = asBranch.CreateString();
-
-		// Load
-		bool const loadResult = LoadActionDefinition( actionFile, rftl::move( key ) );
-		if( loadResult == false )
-		{
-			RFLOG_NOTIFY( actionFile, RFCAT_CC3O3, "Couldn't load action definition file" );
-			return false;
-		}
-	}
-
-	return true;
-}
-
-
-
 ElementDatabase::ElementIdentifiers ElementDatabase::GetAllElementIdentifiers() const
 {
 	ElementIdentifiers retVal;
@@ -212,27 +161,6 @@ ElementDatabase::ElementCounts ElementDatabase::GetElementsBasedOnTier( company:
 		}
 	}
 
-	return retVal;
-}
-
-
-
-WeakPtr<act::ActionRecord const> ElementDatabase::GetElementActionDefinifion( ElementIdentifier identifier ) const
-{
-	ElementString const asString = GetElementString( identifier );
-	return GetRawActionDefinifion( asString );
-}
-
-
-
-WeakPtr<act::ActionRecord const> ElementDatabase::GetRawActionDefinifion( rftl::string_view const& key ) const
-{
-	WeakPtr<act::ActionRecord const> retVal = mActionDatabase.GetAction( key );
-	if( retVal == nullptr )
-	{
-		RFLOG_ERROR( key, RFCAT_CC3O3, "Couldn't fetch action definition from key" );
-		return nullptr;
-	}
 	return retVal;
 }
 
@@ -463,34 +391,6 @@ bool ElementDatabase::LoadTierUnlockTable( file::VFSPath const& tierUnlockTableP
 		line++;
 	}
 
-	return true;
-}
-
-
-
-bool ElementDatabase::LoadActionDefinition( file::VFSPath const& actionDefinitionPath, rftl::string&& key )
-{
-	// Load
-	UniquePtr<act::ActionRecord> action =
-		resource::LoadFromFile<act::ActionRecord>(
-			actionDefinitionPath );
-	if( action == nullptr )
-	{
-		RFLOG_NOTIFY( actionDefinitionPath, RFCAT_CC3O3, "Failed to load action from file" );
-		return false;
-	}
-
-	// Store
-	bool const success = mActionDatabase.AddAction(
-		rftl::move( key ),
-		rftl::move( action ) );
-	if( success == false )
-	{
-		RFLOG_NOTIFY( actionDefinitionPath, RFCAT_CC3O3, "Failed to action to database" );
-		return false;
-	}
-
-	RFLOG_DEBUG( actionDefinitionPath, RFCAT_CC3O3, "Added action to database" );
 	return true;
 }
 

@@ -3,6 +3,7 @@
 
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/casting/CastingEngine.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/CommonPaths.h"
@@ -184,8 +185,12 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 			paths::ElementDescTables() );
 		gElementDatabase->LoadTierUnlockTables(
 			paths::ElementTierUnlockTables() );
-		gElementDatabase->LoadActionDefinitions(
-			paths::ElementActionDefinitions() );
+	}
+
+	// Load casting engine
+	{
+		gCastingEngine->LoadActionDefinitions(
+			paths::CastingActionDefinitions() );
 	}
 
 	mInternalState->mLoadsQueued = true;

@@ -124,7 +124,7 @@ void SystemStartup()
 	gElementDatabase = sElementDatabase;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing casting engine..." );
-	sCastingEngine = DefaultCreator<cast::CastingEngine>::Create( gCombatEngine, gElementDatabase );
+	sCastingEngine = DefaultCreator<cast::CastingEngine>::Create( app::gVfs, gCombatEngine, gElementDatabase );
 	gCastingEngine = sCastingEngine;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing company manager..." );
