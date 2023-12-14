@@ -44,5 +44,7 @@ static constexpr ElementLevel FromLevelOffset( size_t offset )
 
 struct ElementDesc;
 
+class ElementDatabase;
+
 ///////////////////////////////////////////////////////////////////////////////
 }
