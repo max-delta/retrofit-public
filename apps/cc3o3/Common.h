@@ -28,6 +28,9 @@ class CombatEngine;
 namespace RF::cc::element {
 class ElementDatabase;
 }
+namespace RF::cc::cast {
+class CastingEngine;
+}
 namespace RF::cc::company {
 class CompanyManager;
 }
@@ -63,6 +66,7 @@ extern WeakPtr<character::CharacterValidator> gCharacterValidator;
 extern WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 extern WeakPtr<combat::CombatEngine> gCombatEngine;
 extern WeakPtr<element::ElementDatabase> gElementDatabase;
+extern WeakPtr<cast::CastingEngine> gCastingEngine;
 extern WeakPtr<company::CompanyManager> gCompanyManager;
 extern WeakPtr<encounter::EncounterManager> gEncounterManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;

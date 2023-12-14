@@ -5,6 +5,7 @@
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/elements/ElementDatabase.h"
+#include "cc3o3/casting/CastingEngine.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/encounter/EncounterManager.h"
 #include "cc3o3/save/SaveManager.h"
@@ -45,6 +46,7 @@ WeakPtr<character::CharacterValidator> gCharacterValidator;
 WeakPtr<character::CharacterDatabase> gCharacterDatabase;
 WeakPtr<combat::CombatEngine> gCombatEngine;
 WeakPtr<element::ElementDatabase> gElementDatabase;
+WeakPtr<cast::CastingEngine> gCastingEngine;
 WeakPtr<company::CompanyManager> gCompanyManager;
 WeakPtr<encounter::EncounterManager> gEncounterManager;
 WeakPtr<state::ObjectManager> gObjectManager;
@@ -60,6 +62,7 @@ static UniquePtr<character::CharacterValidator> sCharacterValidator;
 static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
 static UniquePtr<combat::CombatEngine> sCombatEngine;
 static UniquePtr<element::ElementDatabase> sElementDatabase;
+static UniquePtr<cast::CastingEngine> sCastingEngine;
 static UniquePtr<company::CompanyManager> sCompanyManager;
 static UniquePtr<encounter::EncounterManager> sEncounterManager;
 static UniquePtr<state::ObjectManager> sObjectManager;
@@ -120,6 +123,10 @@ void SystemStartup()
 	sElementDatabase = DefaultCreator<element::ElementDatabase>::Create( app::gVfs );
 	gElementDatabase = sElementDatabase;
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing casting engine..." );
+	sCastingEngine = DefaultCreator<cast::CastingEngine>::Create( gCombatEngine, gElementDatabase );
+	gCastingEngine = sCastingEngine;
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing company manager..." );
 	sCompanyManager = DefaultCreator<company::CompanyManager>::Create( app::gVfs, gElementDatabase );
 	gCompanyManager = sCompanyManager;
@@ -153,6 +160,7 @@ void SystemShutdown()
 	sObjectManager = nullptr;
 	sEncounterManager = nullptr;
 	sCompanyManager = nullptr;
+	sCastingEngine = nullptr;
 	sElementDatabase = nullptr;
 	sCombatEngine = nullptr;
 	sCharacterDatabase = nullptr;

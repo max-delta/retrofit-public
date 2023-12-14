@@ -50,6 +50,7 @@
 		<ClCompile Include="campaign\CampaignDesc.cpp" />
 		<ClCompile Include="campaign\CampaignManager.cpp" />
 		<ClCompile Include="campaign\RosterMemberDesc.cpp" />
+		<ClCompile Include="casting\CastingEngine.cpp" />
 		<ClCompile Include="cc3o3.cpp" />
 		<ClCompile Include="char\CharData.cpp" />
 		<ClCompile Include="char\CharacterDatabase.cpp" />
@@ -169,6 +170,10 @@
 		<ClInclude Include="campaign\project.h" />
 		<ClInclude Include="campaign\RosterMemberDesc.h" />
 		<ClInclude Include="campaign\stdafx.h" />
+		<ClInclude Include="casting\CastingEngine.h" />
+		<ClInclude Include="casting\CastingFwd.h" />
+		<ClInclude Include="casting\project.h" />
+		<ClInclude Include="casting\stdafx.h" />
 		<ClInclude Include="cc3o3.h" />
 		<ClInclude Include="char\CharData.h" />
 		<ClInclude Include="char\CharacterDatabase.h" />
