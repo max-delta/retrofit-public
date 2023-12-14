@@ -78,6 +78,12 @@ struct DevTestRollback::InternalState
 
 void DevTestRollback::OnEnter( AppStateChangeContext& context )
 {
+	RF_DBGFAIL_MSG(
+		"WARNING - This mode is pretty broken currently, as it was earlier in"
+		" development before the networking systems came online, and was a"
+		" hacky attempt to test the state storage. A better mode to use is the"
+		" lobby mode, as that's more modern and a more realistic use case." );
+
 	input::HardcodedPlayerSetup( input::player::P1 );
 	input::HardcodedHackSetup( input::player::P2 );
 	InputHelpers::MakeLocal( input::player::P1 );

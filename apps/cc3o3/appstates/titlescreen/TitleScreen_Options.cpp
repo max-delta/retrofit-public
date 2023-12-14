@@ -81,7 +81,12 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	};
 
 	{
-		Option option = makeDevHop( "devhop_rollback", "DevHop -> Rollback", id::DevTestRollback );
+		Option option = makeDevHop( "devhop_lobby", "DevHop -> Lobby", id::DevTestLobby );
+		option.mDesc.mAction->mEnabledByDefault = true;
+		addDefaultOption( rftl::move( option ) );
+	}
+	{
+		Option option = makeDevHop( "devhop_rollback", "DevHop -> Rollback (LEGACY)", id::DevTestRollback );
 		option.mDesc.mAction->mEnabledByDefault = true;
 		addDefaultOption( rftl::move( option ) );
 	}
