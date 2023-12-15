@@ -126,7 +126,7 @@ file::VFSPath ElementTierUnlockTables()
 }
 file::VFSPath CastingActionDefinitions()
 {
-	return TablesRoot().GetChild( "elements", "actions" );
+	return TablesRoot().GetChild( "actions" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

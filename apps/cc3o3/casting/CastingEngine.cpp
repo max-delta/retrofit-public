@@ -77,8 +77,16 @@ bool CastingEngine::LoadActionDefinitions(
 WeakPtr<act::ActionRecord const> CastingEngine::GetElementActionDefinifion(
 	element::ElementIdentifier identifier ) const
 {
+	static constexpr char kPrefix[] = "elements/";
+	static constexpr size_t kPrefixSize = rftl::extent<decltype( kPrefix )>::value - sizeof( '\0' );
+
 	element::ElementString const asString = element::GetElementString( identifier );
-	return GetRawActionDefinifion( asString );
+
+	rftl::static_string<kPrefixSize + element::ElementString::fixed_capacity> buffer = {};
+	buffer = kPrefix;
+	buffer += asString;
+
+	return GetRawActionDefinifion( buffer );
 }
 
 
