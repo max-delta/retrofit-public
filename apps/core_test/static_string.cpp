@@ -194,6 +194,18 @@ TEST( StaticString, InitializerListConstruct )
 
 
 
+TEST( StaticString, ViewConstruct )
+{
+	rftl::static_string<5> sa = rftl::static_string<5>( rftl::string_view( "27" ) );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	ASSERT_TRUE( sa.data()[1] == '7' );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
 TEST( StaticString, IterConstruct )
 {
 	char const source[] = { '2', '7' };

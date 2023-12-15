@@ -50,6 +50,8 @@ public:
 	template<size_t OtherCapacity>
 	static_basic_string( static_basic_string<value_type, OtherCapacity>&& other );
 	static_basic_string( rftl::initializer_list<value_type> init );
+	template<typename StringViewLike>
+	explicit static_basic_string( StringViewLike const& other );
 	template<typename Convertible>
 	static_basic_string( rftl::initializer_list<Convertible> init );
 	~static_basic_string();
@@ -61,11 +63,15 @@ public:
 	template<size_t OtherCapacity>
 	static_basic_string& operator=( static_basic_string<value_type, OtherCapacity>&& other );
 	static_basic_string& operator=( rftl::initializer_list<value_type> init );
+	template<typename StringViewLike>
+	static_basic_string& operator=( StringViewLike const& other );
 
 	void assign( size_type count, value_type const& value );
 	template<class InputIterator>
 	void assign( InputIterator first, InputIterator term );
 	void assign( rftl::initializer_list<value_type> init );
+	template<typename StringViewLike>
+	void assign( StringViewLike const& other );
 
 	reference at( size_type pos );
 	const_reference at( size_type pos ) const;
@@ -128,6 +134,8 @@ private:
 	template<class InputIterator>
 	void append( InputIterator first, InputIterator term );
 	void append( rftl::initializer_list<value_type> init );
+	template<typename StringViewLike>
+	void append( StringViewLike const& other );
 	template<typename Convertible>
 	void append( rftl::initializer_list<Convertible> init );
 	template<class InputIterator>

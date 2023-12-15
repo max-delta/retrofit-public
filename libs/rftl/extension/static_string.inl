@@ -85,6 +85,16 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl:
 
 
 template<typename Element, size_t ElementCapacity>
+template<typename StringViewLike>
+inline static_basic_string<Element, ElementCapacity>::static_basic_string( StringViewLike const& other )
+	: static_basic_string()
+{
+	append( other );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 template<typename Convertible>
 inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl::initializer_list<Convertible> init )
 	: static_basic_string()
@@ -164,6 +174,16 @@ inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<
 
 
 template<typename Element, size_t ElementCapacity>
+template<typename StringViewLike>
+inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<Element, ElementCapacity>::operator=( StringViewLike const& other )
+{
+	assign( other );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline void static_basic_string<Element, ElementCapacity>::assign( size_type count, value_type const& value )
 {
 	clear();
@@ -187,6 +207,16 @@ inline void static_basic_string<Element, ElementCapacity>::assign( rftl::initial
 {
 	clear();
 	append( init );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename StringViewLike>
+inline void static_basic_string<Element, ElementCapacity>::assign( StringViewLike const& other )
+{
+	clear();
+	append( other );
 }
 
 
@@ -577,6 +607,16 @@ template<typename Element, size_t ElementCapacity>
 inline void static_basic_string<Element, ElementCapacity>::append( rftl::initializer_list<value_type> init )
 {
 	append( init.begin(), init.end() );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename StringViewLike>
+inline void static_basic_string<Element, ElementCapacity>::append( StringViewLike const& other )
+{
+	rftl::basic_string_view<Element> const view( other );
+	append( view.begin(), view.end() );
 }
 
 
