@@ -574,6 +574,53 @@ inline typename static_basic_string<Element, ElementCapacity>::iterator static_b
 
 
 template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( static_basic_string const& other )
+{
+	append( other.begin(), other.end() );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<size_t OtherCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( static_basic_string<value_type, OtherCapacity> const& other )
+{
+	append( other.begin(), other.end() );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( value_type const& value )
+{
+	push_back( value );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( rftl::initializer_list<value_type> init )
+{
+	append( init );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename StringViewLike>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( StringViewLike const& other )
+{
+	append( other );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline void static_basic_string<Element, ElementCapacity>::resize( size_type count, value_type const& value )
 {
 	while( size() > count )

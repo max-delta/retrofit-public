@@ -125,6 +125,14 @@ public:
 	iterator insert( const_iterator pos, value_type&& value );
 	iterator erase( const_iterator pos );
 
+	static_basic_string& operator+=( static_basic_string const& other );
+	template<size_t OtherCapacity>
+	static_basic_string& operator+=( static_basic_string<value_type, OtherCapacity> const& other );
+	static_basic_string& operator+=( value_type const& value );
+	static_basic_string& operator+=( rftl::initializer_list<value_type> init );
+	template<typename StringViewLike>
+	static_basic_string& operator+=( StringViewLike const& other );
+
 	void resize( size_type count, value_type const& value );
 
 

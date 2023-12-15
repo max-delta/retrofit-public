@@ -395,6 +395,41 @@ TEST( StaticString, Erase )
 
 
 
+TEST( StaticString, Add )
+{
+	rftl::static_string<5> sa;
+	ASSERT_TRUE( sa.size() == 0 );
+	sa += decltype( sa )( { '2' } );
+	ASSERT_TRUE( sa.size() == 1 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	sa += rftl::static_string<1>( { '7' } );
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	ASSERT_TRUE( sa.data()[1] == '7' );
+	sa += '5';
+	ASSERT_TRUE( sa.size() == 3 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	ASSERT_TRUE( sa.data()[1] == '7' );
+	ASSERT_TRUE( sa.data()[2] == '5' );
+	sa += { 'A' };
+	ASSERT_TRUE( sa.size() == 4 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	ASSERT_TRUE( sa.data()[1] == '7' );
+	ASSERT_TRUE( sa.data()[2] == '5' );
+	ASSERT_TRUE( sa.data()[3] == 'A' );
+	sa += rftl::string_view( "B" );
+	ASSERT_TRUE( sa.size() == 5 );
+	ASSERT_TRUE( sa.data()[0] == '2' );
+	ASSERT_TRUE( sa.data()[1] == '7' );
+	ASSERT_TRUE( sa.data()[2] == '5' );
+	ASSERT_TRUE( sa.data()[3] == 'A' );
+	ASSERT_TRUE( sa.data()[4] == 'B' );
+	sa.clear();
+	ASSERT_TRUE( sa.size() == 0 );
+}
+
+
+
 TEST( StaticString, BackInsertCompat )
 {
 	rftl::static_string<5> sa;
