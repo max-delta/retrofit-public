@@ -1,13 +1,80 @@
 #include "stdafx.h"
 #include "CastingEngine.h"
 
+#include "cc3o3/casting/CastError.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/resource/ResourceLoad.h"
 
+#include "GameAction/ActionDatabase.h"
+#include "GameAction/ActionRecord.h"
+#include "GameAction/ConditionDatabase.h"
+#include "GameAction/Context.h"
+#include "GameAction/Environment.h"
+#include "GameAction/Step.h"
+
 #include "PlatformFilesystem/VFS.h"
+
+#include "core/ptr/default_creator.h"
 
 
 namespace RF::cc::cast {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+UniquePtr<CastError> ExecuteCast(
+	act::Environment&& env,
+	combat::CombatInstance& combatInstance,
+	combat::FighterID const& source,
+	combat::FighterID const& target,
+	rftl::string_view const& key )
+{
+	// Prepare context
+	RF_TODO_ANNOTATION( "Store the combat instance, target, etc in here" );
+	struct HACKContext : public act::Context
+	{
+		virtual UniquePtr<Context> Clone() const override
+		{
+			return nullptr;
+		};
+	};
+	HACKContext ctx = {};
+
+	// Fetch action from environment
+	RF_ASSERT( env.mActionDatabase != nullptr );
+	act::ActionDatabase const& actionDatabase = *env.mActionDatabase;
+	WeakPtr<act::ActionRecord const> actionPtr = actionDatabase.GetAction( key );
+	if( actionPtr == nullptr )
+	{
+		RFLOG_ERROR( key, RFCAT_CC3O3, "Couldn't fetch action definition from key" );
+		UniquePtr<CastError> err = CastError::Create( env, ctx );
+		err->mMissingActionKey = key;
+		return err;
+	}
+	act::ActionRecord const& action = *actionPtr;
+
+	// Get root step
+	WeakPtr<act::Step const> rootPtr = action.GetRoot();
+	RF_ASSERT( rootPtr );
+	act::Step const& root = *rootPtr;
+
+	// Execute the action
+	UniquePtr<act::Context> newCtx = root.Execute( env, ctx );
+	if( newCtx != nullptr )
+	{
+		if( newCtx->IsATerminalError() )
+		{
+			RF_TODO_BREAK_MSG(
+				"Check if it's an error ctx that we can pull a cast error out"
+				" of, otherwise create a cast error that wraps it" );
+			return CastError::Create( env, ctx );
+		}
+	}
+
+	// Success!
+	return CastError::kNoError;
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 CastingEngine::CastingEngine(
@@ -17,9 +84,15 @@ CastingEngine::CastingEngine(
 	: mVfs( vfs )
 	, mCombatEngine( combatEngine )
 	, mElementDatabase( elementDatabase )
+	, mActionDatabase( DefaultCreator<act::ActionDatabase>::Create() )
+	, mConditionDatabase( DefaultCreator<act::ConditionDatabase>::Create() )
 {
 	//
 }
+
+
+
+CastingEngine::~CastingEngine() = default;
 
 
 
@@ -27,7 +100,7 @@ bool CastingEngine::LoadActionDefinitions(
 	file::VFSPath const& actionDefinitionsDir )
 {
 	// Unload current actions
-	mActionDatabase.RemoveAllActions();
+	mActionDatabase->RemoveAllActions();
 
 	// Enumerate action definitions
 	rftl::vector<file::VFSPath> actionFiles;
@@ -74,7 +147,10 @@ bool CastingEngine::LoadActionDefinitions(
 
 
 
-WeakPtr<act::ActionRecord const> CastingEngine::GetElementActionDefinifion(
+UniquePtr<CastError> CastingEngine::ExecuteElementCast(
+	combat::CombatInstance& combatInstance,
+	combat::FighterID const& source,
+	combat::FighterID const& target,
 	element::ElementIdentifier identifier ) const
 {
 	static constexpr char kPrefix[] = "elements/";
@@ -82,25 +158,36 @@ WeakPtr<act::ActionRecord const> CastingEngine::GetElementActionDefinifion(
 
 	element::ElementString const asString = element::GetElementString( identifier );
 
-	rftl::static_string<kPrefixSize + element::ElementString::fixed_capacity> buffer = {};
-	buffer = kPrefix;
-	buffer += asString;
+	rftl::static_string<kPrefixSize + element::ElementString::fixed_capacity> key = {};
+	key = kPrefix;
+	key += asString;
 
-	return GetRawActionDefinifion( buffer );
+	return ExecuteRawCast(
+		combatInstance,
+		source,
+		target,
+		key );
 }
 
 
 
-WeakPtr<act::ActionRecord const> CastingEngine::GetRawActionDefinifion(
+
+UniquePtr<CastError> CastingEngine::ExecuteRawCast(
+	combat::CombatInstance& combatInstance,
+	combat::FighterID const& source,
+	combat::FighterID const& target,
 	rftl::string_view const& key ) const
 {
-	WeakPtr<act::ActionRecord const> retVal = mActionDatabase.GetAction( key );
-	if( retVal == nullptr )
-	{
-		RFLOG_ERROR( key, RFCAT_CC3O3, "Couldn't fetch action definition from key" );
-		return nullptr;
-	}
-	return retVal;
+	act::Environment env = {};
+	env.mActionDatabase = mActionDatabase;
+	env.mConditionDatabase = nullptr;
+
+	return details::ExecuteCast(
+		rftl::move( env ),
+		combatInstance,
+		source,
+		target,
+		key );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -109,6 +196,8 @@ bool CastingEngine::LoadActionDefinition(
 	file::VFSPath const& actionDefinitionPath,
 	rftl::string&& key )
 {
+	act::ActionDatabase& actionDatabase = *mActionDatabase;
+
 	// Load
 	UniquePtr<act::ActionRecord> action =
 		resource::LoadFromFile<act::ActionRecord>(
@@ -119,8 +208,15 @@ bool CastingEngine::LoadActionDefinition(
 		return false;
 	}
 
+	// Validate
+	if( action->GetRoot() == nullptr )
+	{
+		RFLOG_NOTIFY( actionDefinitionPath, RFCAT_CC3O3, "Action has no root step" );
+		return false;
+	}
+
 	// Store
-	bool const success = mActionDatabase.AddAction(
+	bool const success = actionDatabase.AddAction(
 		rftl::move( key ),
 		rftl::move( action ) );
 	if( success == false )
