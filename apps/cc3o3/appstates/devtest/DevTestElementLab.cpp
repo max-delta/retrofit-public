@@ -3,6 +3,10 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/casting/CastError.h"
+#include "cc3o3/casting/CastingEngine.h"
+#include "cc3o3/combat/CombatInstance.h"
+#include "cc3o3/elements/IdentifierUtils.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -66,6 +70,29 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 
 	drawText( 1, 1, "DEV TEST - ELEMENT LAB" );
+
+	// Setup initial combat instance
+	combat::CombatInstance initialCombatInstance( gCombatEngine );
+	combat::FighterID source = {};
+	combat::FighterID target = {};
+	{
+		// TODO: Setup initial combat instance
+	}
+
+	// TODO: Have a way to choose or configure this
+	element::ElementIdentifier elementToCast =
+		element::MakeElementIdentifier( "ST_R_1" );
+
+	// Cast the element to create a new combat instance
+	combat::CombatInstance resultingCombatInstance = initialCombatInstance;
+	UniquePtr<cast::CastError> const castError = gCastingEngine->ExecuteElementCast(
+		resultingCombatInstance,
+		source,
+		target,
+		elementToCast );
+
+	// TODO: Will want to display error information
+	RF_ASSERT( castError == cast::CastError::kNoError );
 
 	// TODO
 	( (void)internalState );
