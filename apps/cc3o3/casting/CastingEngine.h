@@ -35,9 +35,7 @@ public:
 
 	// Execute a cast, modifying the provided instance
 	// NOTE: On success, the return value is empty
-	// NOTE: On error, the provided instance still may have been modified, and
-	//  thus left in an undesirable state, so it is assumed that the caller
-	//  will clone the instance before passing
+	// NOTE: On error, the provided instance will not be modified
 	// NOTE: Source and/or target may be ommitted by setting them to explicitly
 	//  invalid values, though this may not be supported by the attempted cast
 	// NOTE: There may be non-element actions, such as helper actions used by

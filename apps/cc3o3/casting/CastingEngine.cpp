@@ -2,6 +2,7 @@
 #include "CastingEngine.h"
 
 #include "cc3o3/casting/CastError.h"
+#include "cc3o3/casting/CombatContext.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/resource/ResourceLoad.h"
 
@@ -13,6 +14,8 @@
 #include "GameAction/Step.h"
 
 #include "PlatformFilesystem/VFS.h"
+
+#include "core_rftype/VirtualPtrCast.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -29,15 +32,12 @@ UniquePtr<CastError> ExecuteCast(
 	rftl::string_view const& key )
 {
 	// Prepare context
-	RF_TODO_ANNOTATION( "Store the combat instance, target, etc in here" );
-	struct HACKContext : public act::Context
-	{
-		virtual UniquePtr<Context> Clone() const override
-		{
-			return nullptr;
-		};
-	};
-	HACKContext ctx = {};
+	// NOTE: Combat instance is copied by the context, will need to extract it
+	//  at the end and stomp the caller-provided instance
+	combat::CombatInstance const& constCombatInstance = combatInstance;
+	CombatContext ctx( constCombatInstance );
+	ctx.mSourceFighter = source;
+	ctx.mTargetFighter = target;
 
 	// Fetch action from environment
 	RF_ASSERT( env.mActionDatabase != nullptr );
@@ -58,19 +58,37 @@ UniquePtr<CastError> ExecuteCast(
 	act::Step const& root = *rootPtr;
 
 	// Execute the action
+	CombatContext* currentCombatCtx = &ctx;
 	UniquePtr<act::Context> newCtx = root.Execute( env, ctx );
 	if( newCtx != nullptr )
 	{
+		// Resulted in a new context
+
 		if( newCtx->IsATerminalError() )
 		{
+			// Error context
 			RF_TODO_BREAK_MSG(
 				"Check if it's an error ctx that we can pull a cast error out"
 				" of, otherwise create a cast error that wraps it" );
-			return CastError::Create( env, ctx );
+			return CastError::Create( env, *newCtx );
 		}
+
+		WeakPtr<CombatContext> const combatCtx = rftype::virtual_ptr_cast<CombatContext>( WeakPtr<act::Context>( newCtx ) );
+		if( combatCtx == nullptr )
+		{
+			// Non-combat context
+			return CastError::Create( env, *newCtx );
+		}
+
+		// New combat context
+		currentCombatCtx = combatCtx.Get();
 	}
 
 	// Success!
+	// NOTE: Caller-provided combat instance was left unmodified until this
+	//  point, where it is now stomped
+	RF_ASSERT( currentCombatCtx != nullptr );
+	combatInstance = currentCombatCtx->mCombatInstance;
 	return CastError::kNoError;
 }
 
