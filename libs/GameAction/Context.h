@@ -3,6 +3,9 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core_reflect/VirtualClass.h"
+#include "core_rftype/CreateClassInfoDeclaration.h"
+
 #include "core/ptr/ptr_fwd.h"
 
 
@@ -11,8 +14,10 @@ namespace RF::act {
 
 // The mutable 'stuff' that gets acted upon by actions, expected to be derived
 //  from and specialized for the needs of the game using it
-class GAMEACTION_API Context
+class GAMEACTION_API Context : public RF::reflect::VirtualClass
 {
+	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
+
 	//
 	// Public methods
 public:
