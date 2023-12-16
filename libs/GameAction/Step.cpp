@@ -6,8 +6,7 @@
 
 RFTYPE_CREATE_META( RF::act::Step )
 {
-	using RF::act::Step;
-	RFTYPE_REGISTER_BY_NAME( "Step" );
+	// No meta information, only used for virtual casting
 }
 
 namespace RF::act {

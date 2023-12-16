@@ -192,7 +192,6 @@ void InitializeLoader()
 
 		typeRegistry.AddResourceType( Action, "Action" );
 		typeRegistry.AddResourceClass( Action, "ActionRecord" );
-		typeRegistry.AddResourceClass( Action, "Step" );
 		typeRegistry.AddResourceClass( Action, "NopStep" );
 	}
 }
