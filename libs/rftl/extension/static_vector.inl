@@ -137,7 +137,7 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 static_vector<Element, ElementCapacity, Alignment>&
 static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector const& other )
 {
-	append( other.begin(), other.end() );
+	assign( other.begin(), other.end() );
 	return *this;
 }
 
@@ -147,6 +147,7 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 static_vector<Element, ElementCapacity, Alignment>&
 static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector&& other )
 {
+	clear();
 	extract( other.begin(), other.end() );
 	other.clear();
 	return *this;
@@ -159,7 +160,7 @@ template<size_t OtherCapacity>
 static_vector<Element, ElementCapacity, Alignment>&
 static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector<value_type, OtherCapacity> const& other )
 {
-	append( other.begin(), other.end() );
+	assign( other.begin(), other.end() );
 	return *this;
 }
 
@@ -170,6 +171,7 @@ template<size_t OtherCapacity>
 static_vector<Element, ElementCapacity, Alignment>&
 static_vector<Element, ElementCapacity, Alignment>::operator=( static_vector<value_type, OtherCapacity>&& other )
 {
+	clear();
 	extract( other.begin(), other.end() );
 	other.clear();
 	return *this;
@@ -181,7 +183,7 @@ template<typename Element, size_t ElementCapacity, size_t Alignment>
 static_vector<Element, ElementCapacity, Alignment>&
 static_vector<Element, ElementCapacity, Alignment>::operator=( rftl::initializer_list<value_type> init )
 {
-	append( init );
+	assign( init );
 	return *this;
 }
 

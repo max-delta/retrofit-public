@@ -414,6 +414,13 @@ TEST( StaticVector, CopyAssign )
 	ASSERT_TRUE( source.size() == 2 );
 	ASSERT_TRUE( source.data()[0] == 2 );
 	ASSERT_TRUE( source.data()[1] == 7 );
+	sa = input; // Second assign should clear first
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
 	sa.clear();
 	ASSERT_TRUE( sa.size() == 0 );
 }
@@ -432,6 +439,13 @@ TEST( StaticVector, CopyAssignCrossCapacity )
 
 	rftl::static_vector<Proxy, 5> sa;
 	sa = input;
+	ASSERT_TRUE( sa.size() == 2 );
+	ASSERT_TRUE( sa.data()[0] == 2 );
+	ASSERT_TRUE( sa.data()[1] == 7 );
+	ASSERT_TRUE( source.size() == 2 );
+	ASSERT_TRUE( source.data()[0] == 2 );
+	ASSERT_TRUE( source.data()[1] == 7 );
+	sa = input; // Second assign should clear first
 	ASSERT_TRUE( sa.size() == 2 );
 	ASSERT_TRUE( sa.data()[0] == 2 );
 	ASSERT_TRUE( sa.data()[1] == 7 );
