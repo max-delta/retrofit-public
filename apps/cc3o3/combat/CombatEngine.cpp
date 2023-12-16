@@ -121,6 +121,38 @@ DisplayVal CombatEngine::DisplayStandardStat( SimVal statVal, EntityClass entity
 	}
 }
 
+
+
+char CombatEngine::DisplayInnateGlyphAscii( element::InnateIdentifier innate ) const
+{
+	// TODO: Use data from a file instead
+	using I = element::InnateString;
+	rftl::array<I, 6> const innates = {
+		I{ 'w', 'h', 't' },
+		I{ 'b', 'l', 'k' },
+		I{ 'r', 'e', 'd' },
+		I{ 'b', 'l', 'u' },
+		I{ 'y', 'e', 'l' },
+		I{ 'g', 'r', 'n' },
+	};
+	rftl::array<char, 6> const glyphs = {
+		'W',
+		'B',
+		'R',
+		'U',
+		'Y',
+		'G',
+	};
+	for( size_t i = 0; i < 6; i++ )
+	{
+		if( innate == innates.at( i ) )
+		{
+			return glyphs.at( i );
+		}
+	}
+	return '?';
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 AttackResult CombatEngine::HiCalcAttack( AttackProfile const& profile ) const

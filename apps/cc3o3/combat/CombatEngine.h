@@ -42,6 +42,7 @@ public:
 	SignedDisplayVal DisplayStamina( SimDelta staminaVal, EntityClass entityClass ) const;
 	DisplayVal DisplayCharge( SimVal chargeVal, EntityClass entityClass ) const;
 	DisplayVal DisplayStandardStat( SimVal statVal, EntityClass entityClass ) const;
+	char DisplayInnateGlyphAscii( element::InnateIdentifier innate ) const;
 
 
 	//
