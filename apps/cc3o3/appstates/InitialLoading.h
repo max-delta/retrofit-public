@@ -22,6 +22,10 @@ public:
 	virtual void OnExit( AppStateChangeContext& context ) override;
 	virtual void OnTick( AppStateTickContext& context ) override;
 
+	// Helpers for on-the-fly reloads during development
+	static void ReloadElementDatabase();
+	static void ReloadCastingEngine();
+
 
 private:
 	struct InternalState;

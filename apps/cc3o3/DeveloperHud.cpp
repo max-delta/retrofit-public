@@ -3,6 +3,7 @@
 
 #include "cc3o3.h"
 #include "cc3o3/Common.h"
+#include "cc3o3/appstates/InitialLoading.h"
 #include "cc3o3/input/InputFwd.h"
 #include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/ui/UIFwd.h"
@@ -27,6 +28,7 @@ namespace RF::cc::developer {
 enum class Mode : uint8_t
 {
 	Rollback = 0,
+	Reload,
 
 	NumModes
 };
@@ -334,6 +336,72 @@ void RenderRollback()
 	}
 }
 
+
+
+void ProcessReload( RF::input::GameCommand const& command )
+{
+	switch( command.mType )
+	{
+		case input::command::game::DeveloperAction1:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction2:
+		{
+			// TODO: Choose what to reload?
+			break;
+		}
+		case input::command::game::DeveloperAction3:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction4:
+		{
+			appstate::InitialLoading::ReloadElementDatabase();
+			appstate::InitialLoading::ReloadCastingEngine();
+			break;
+		}
+		case input::command::game::DeveloperAction5:
+		{
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+
+
+void RenderReload()
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
+	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
+	{
+		// No font (not even a backup), so we may still be booting
+		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
+		return;
+	}
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	{
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		va_list args;
+		va_start( args, fmt );
+		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
+		va_end( args );
+		return retVal;
+	};
+
+	static constexpr uint8_t kStartX = 4;
+	static constexpr uint8_t kStartY = 1;
+	uint8_t x = kStartX;
+	uint8_t y = kStartY;
+
+	drawText( x, y, math::Color3f::kMagenta, "RELOAD: ELEM+CAST" );
+	y++;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -385,6 +453,9 @@ void ProcessInput()
 					case Mode::Rollback:
 						mode::ProcessRollback( command );
 						break;
+					case Mode::Reload:
+						mode::ProcessReload( command );
+						break;
 					case Mode::NumModes:
 					default:
 						RF_DBGFAIL();
@@ -411,6 +482,9 @@ void RenderHud()
 	{
 		case Mode::Rollback:
 			mode::RenderRollback();
+			return;
+		case Mode::Reload:
+			mode::RenderReload();
 			return;
 		case Mode::NumModes:
 		default:

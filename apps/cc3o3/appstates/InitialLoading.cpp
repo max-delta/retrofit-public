@@ -180,20 +180,30 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	}
 
 	// Load element database
-	{
-		gElementDatabase->LoadDescTables(
-			paths::ElementDescTables() );
-		gElementDatabase->LoadTierUnlockTables(
-			paths::ElementTierUnlockTables() );
-	}
+	ReloadElementDatabase();
 
 	// Load casting engine
-	{
-		gCastingEngine->LoadActionDefinitions(
-			paths::CastingActionDefinitions() );
-	}
+	ReloadCastingEngine();
 
 	mInternalState->mLoadsQueued = true;
+}
+
+
+
+void InitialLoading::ReloadElementDatabase()
+{
+	gElementDatabase->LoadDescTables(
+		paths::ElementDescTables() );
+	gElementDatabase->LoadTierUnlockTables(
+		paths::ElementTierUnlockTables() );
+}
+
+
+
+void InitialLoading::ReloadCastingEngine()
+{
+	gCastingEngine->LoadActionDefinitions(
+		paths::CastingActionDefinitions() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
