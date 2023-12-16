@@ -12,7 +12,9 @@ namespace RF::cc::combat {
 
 struct Field
 {
-	rftl::array<element::InnateIdentifier, kFieldSize> mInfluence = {};
+	using Influence = rftl::array<element::InnateIdentifier, kFieldSize>;
+
+	Influence mInfluence = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

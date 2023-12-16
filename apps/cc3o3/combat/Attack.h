@@ -1,10 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "cc3o3/combat/CombatFwd.h"
-#include "cc3o3/elements/ElementFwd.h"
-
-#include "rftl/array"
+#include "cc3o3/combat/Field.h"
 
 
 namespace RF::cc::combat {
@@ -25,7 +22,7 @@ struct AttackProfile
 	SimVal mDefenderPhysicalDefense = 0;
 	element::InnateIdentifier mAttackerInnate = {};
 	element::InnateIdentifier mDefenderInnate = {};
-	rftl::array<element::InnateIdentifier, kFieldSize> mInfluence = {};
+	Field::Influence mInfluence = {};
 };
 
 

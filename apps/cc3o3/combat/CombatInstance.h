@@ -89,7 +89,7 @@ public:
 	void CommitCombatData() const;
 	void ReloadCombatData();
 
-	rftl::array<element::InnateIdentifier, kFieldSize> GetFieldInfluence() const;
+	Field::Influence GetFieldInfluence() const;
 	void AddFieldInfluence( element::InnateIdentifier influence );
 	void AddFieldInfluence( element::InnateIdentifier influence, size_t strength );
 	void GenerateFieldInfluence( uint64_t seedHash );

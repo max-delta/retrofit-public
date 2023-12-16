@@ -263,7 +263,7 @@ void CombatInstance::ReloadCombatData()
 
 
 
-rftl::array<element::InnateIdentifier, kFieldSize> CombatInstance::GetFieldInfluence() const
+Field::Influence CombatInstance::GetFieldInfluence() const
 {
 	return mField.mInfluence;
 }
