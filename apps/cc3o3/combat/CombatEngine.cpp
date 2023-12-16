@@ -31,9 +31,9 @@ SimColor CombatEngine::EvalInnates( element::InnateIdentifier lhs, element::Inna
 	using Pair = rftl::pair<element::InnateString, element::InnateString>;
 	using I = element::InnateString;
 	rftl::array<Pair, 3> const pairs = {
-		Pair{ I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' } },
-		Pair{ I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' } },
-		Pair{ I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' } },
+		Pair{ I( "wht" ), I( "blk" ) },
+		Pair{ I( "red" ), I( "blu" ) },
+		Pair{ I( "yel" ), I( "grn" ) },
 	};
 
 	for( Pair const& pair : pairs )
@@ -58,9 +58,12 @@ element::InnateIdentifier CombatEngine::GenerateRandomInnate( uint32_t& lastGene
 	// TODO: Use data from a file instead
 	using I = element::InnateString;
 	rftl::array<I, 6> const innates = {
-		I{ 'w', 'h', 't' }, I{ 'b', 'l', 'k' },
-		I{ 'r', 'e', 'd' }, I{ 'b', 'l', 'u' },
-		I{ 'y', 'e', 'l' }, I{ 'g', 'r', 'n' },
+		I( "wht" ),
+		I( "blk" ),
+		I( "red" ),
+		I( "blu" ),
+		I( "yel" ),
+		I( "grn" ),
 	};
 	lastGeneratorValue = math::StableRandLCG( lastGeneratorValue );
 	return element::MakeInnateIdentifier( innates.at( lastGeneratorValue % innates.size() ) );
@@ -128,12 +131,12 @@ char CombatEngine::DisplayInnateGlyphAscii( element::InnateIdentifier innate ) c
 	// TODO: Use data from a file instead
 	using I = element::InnateString;
 	rftl::array<I, 6> const innates = {
-		I{ 'w', 'h', 't' },
-		I{ 'b', 'l', 'k' },
-		I{ 'r', 'e', 'd' },
-		I{ 'b', 'l', 'u' },
-		I{ 'y', 'e', 'l' },
-		I{ 'g', 'r', 'n' },
+		I( "wht" ),
+		I( "blk" ),
+		I( "red" ),
+		I( "blu" ),
+		I( "yel" ),
+		I( "grn" ),
 	};
 	rftl::array<char, 6> const glyphs = {
 		'W',
