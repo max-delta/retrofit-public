@@ -15,13 +15,11 @@ namespace RF::act {
 class GAMEACTION_API Step : public RF::reflect::VirtualClass
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
-	RF_DEFAULT_COPY( Step );
 
 	//
 	// Public methods
 public:
 	Step() = default;
-	virtual ~Step() = default;
 
 	// Execute a step on a given context in a given environment
 	// NOTE: Return value is optional, and is used when the step wishes to

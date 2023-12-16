@@ -21,9 +21,7 @@ class GAMEACTION_API Context : public RF::reflect::VirtualClass
 	//
 	// Public methods
 public:
-	Context();
-	Context( Context const& rhs );
-	virtual ~Context();
+	Context() = default;
 
 	// Contexts must be deep-cloneable to allow for proper isolation when
 	//  running actions with multiple complex steps

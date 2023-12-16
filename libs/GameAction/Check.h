@@ -3,6 +3,8 @@
 
 #include "GameAction/ActionFwd.h"
 
+#include "core/macros.h"
+
 
 namespace RF::act {
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,6 +12,8 @@ namespace RF::act {
 // Base class for checking conditions like 'is dead' or 'health >= X'
 class GAMEACTION_API Check
 {
+	RF_DEFAULT_COPY( Check );
+
 	//
 	// Public methods
 public:
