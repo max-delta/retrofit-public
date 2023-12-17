@@ -199,6 +199,69 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	}
 	drawText( x, y, " %4i  %3i  %8i  %7i  %3i  %8i  %s", tech, atk, atkField, balance, def, defField, colorStr );
 
+	// Setup combat instance
+	CombatInstance startInstance( gCombatEngine );
+	FighterID const attackerID = FighterID::MakeFighter( 0, 0, 0 );
+	FighterID const defenderID = FighterID::MakeFighter( 1, 0, 0 );
+	{
+		Fighter attacker = {};
+		Fighter defender = {};
+
+		attacker.mMaxHealth = 1;
+		attacker.mCurHealth = attacker.mMaxHealth;
+		attacker.mMaxStamina = combat::kMaxStamina;
+		attacker.mCurStamina = attacker.mMaxStamina;
+		attacker.mMaxCharge = combat::kMaxCharge;
+		attacker.mCurCharge = attacker.mMaxCharge;
+		attacker.mPhysAtk = atk;
+		attacker.mTechniq = tech;
+		attacker.mInnate = element::MakeInnateIdentifier( "red" );
+		element::InnateIdentifier const same = attacker.mInnate;
+		element::InnateIdentifier const clash = element::MakeInnateIdentifier( "blu" );
+		element::InnateIdentifier const unrel = element::MakeInnateIdentifier( "wht" );
+
+		defender.mMaxHealth = kMaxHealth;
+		defender.mCurHealth = defender.mMaxHealth;
+		defender.mPhysDef = def;
+		defender.mBalance = balance;
+		switch( color )
+		{
+			case SimColor::Unrelated:
+				defender.mInnate = unrel;
+				break;
+			case SimColor::Same:
+				defender.mInnate = same;
+				break;
+			case SimColor::Clash:
+				defender.mInnate = clash;
+				break;
+			default:
+				RF_DBGFAIL();
+		}
+
+		startInstance.AddTeam();
+		startInstance.AddParty( TeamID::MakeTeam( 0 ) );
+		startInstance.AddFighter( PartyID::MakeParty( 0, 0 ) );
+		startInstance.SetCombatant( attackerID, attacker );
+		startInstance.AddTeam();
+		startInstance.AddParty( TeamID::MakeTeam( 1 ) );
+		startInstance.AddFighter( PartyID::MakeParty( 1, 0 ) );
+		startInstance.SetCombatant( defenderID, defender );
+
+		// Field influence
+		startInstance.AddFieldInfluence( unrel, 5 );
+		if( atkField < 0 )
+		{
+			// Unfavorable
+			startInstance.AddFieldInfluence( clash, math::integer_cast<size_t>( -atkField ) );
+		}
+		else
+		{
+			// Favorable
+			startInstance.AddFieldInfluence( same, math::integer_cast<size_t>( atkField ) );
+		}
+	}
+
 	// Baseline accuracy
 	uint8_t const xStart = 1;
 	uint8_t const yStart = 5;
@@ -224,69 +287,6 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		combos.emplace_back( Swings{ 2_u8, 2_u8, 3_u8 } );
 		combos.emplace_back( Swings{ 2_u8, 3_u8, 2_u8 } );
 		combos.emplace_back( Swings{ 3_u8, 3_u8, 1_u8 } );
-
-		// Setup combat instance
-		CombatInstance startInstance( gCombatEngine );
-		FighterID const attackerID = FighterID::MakeFighter( 0, 0, 0 );
-		FighterID const defenderID = FighterID::MakeFighter( 1, 0, 0 );
-		{
-			Fighter attacker = {};
-			Fighter defender = {};
-
-			attacker.mMaxHealth = 1;
-			attacker.mCurHealth = attacker.mMaxHealth;
-			attacker.mMaxStamina = combat::kMaxStamina;
-			attacker.mCurStamina = attacker.mMaxStamina;
-			attacker.mMaxCharge = combat::kMaxCharge;
-			attacker.mCurCharge = attacker.mMaxCharge;
-			attacker.mPhysAtk = atk;
-			attacker.mTechniq = tech;
-			attacker.mInnate = element::MakeInnateIdentifier( "red" );
-			element::InnateIdentifier const same = attacker.mInnate;
-			element::InnateIdentifier const clash = element::MakeInnateIdentifier( "blu" );
-			element::InnateIdentifier const unrel = element::MakeInnateIdentifier( "wht" );
-
-			defender.mMaxHealth = kMaxHealth;
-			defender.mCurHealth = defender.mMaxHealth;
-			defender.mPhysDef = def;
-			defender.mBalance = balance;
-			switch( color )
-			{
-				case SimColor::Unrelated:
-					defender.mInnate = unrel;
-					break;
-				case SimColor::Same:
-					defender.mInnate = same;
-					break;
-				case SimColor::Clash:
-					defender.mInnate = clash;
-					break;
-				default:
-					RF_DBGFAIL();
-			}
-
-			startInstance.AddTeam();
-			startInstance.AddParty( TeamID::MakeTeam( 0 ) );
-			startInstance.AddFighter( PartyID::MakeParty( 0, 0 ) );
-			startInstance.SetCombatant( attackerID, attacker );
-			startInstance.AddTeam();
-			startInstance.AddParty( TeamID::MakeTeam( 1 ) );
-			startInstance.AddFighter( PartyID::MakeParty( 1, 0 ) );
-			startInstance.SetCombatant( defenderID, defender );
-
-			// Field influence
-			startInstance.AddFieldInfluence( unrel, 5 );
-			if( atkField < 0 )
-			{
-				// Unfavorable
-				startInstance.AddFieldInfluence( clash, math::integer_cast<size_t>( -atkField ) );
-			}
-			else
-			{
-				// Favorable
-				startInstance.AddFieldInfluence( same, math::integer_cast<size_t>( atkField ) );
-			}
-		}
 
 		for( Swings const& combo : combos )
 		{
