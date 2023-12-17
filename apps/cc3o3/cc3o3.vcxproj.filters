@@ -307,6 +307,9 @@
 		<ClCompile Include="casting\CombatContext.cpp">
 			<Filter>casting</Filter>
 		</ClCompile>
+		<ClCompile Include="casting\Steps\ElemDamageStep.cpp">
+			<Filter>casting\Steps</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -831,6 +834,15 @@
 		<ClInclude Include="casting\CombatContext.h">
 			<Filter>casting</Filter>
 		</ClInclude>
+		<ClInclude Include="casting\Steps\stdafx.h">
+			<Filter>casting\Steps</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Steps\project.h">
+			<Filter>casting\Steps</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Steps\ElemDamageStep.h">
+			<Filter>casting\Steps</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="appstates">
@@ -904,6 +916,9 @@
 		</Filter>
 		<Filter Include="casting">
 			<UniqueIdentifier>{4ef61b2f-6003-477b-b59b-649998eeeadf}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="casting\Steps">
+			<UniqueIdentifier>{24729859-6b92-4771-af41-8829b64b572e}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

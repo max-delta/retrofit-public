@@ -192,7 +192,14 @@ void InitializeLoader()
 
 		typeRegistry.AddResourceType( Action, "Action" );
 		typeRegistry.AddResourceClass( Action, "ActionRecord" );
-		typeRegistry.AddResourceClass( Action, "NopStep" );
+		{
+			// Generic steps
+			typeRegistry.AddResourceClass( Action, "NopStep" );
+		}
+		{
+			// Casting steps
+			typeRegistry.AddResourceClass( Action, "ElemDamageStep" );
+		}
 	}
 }
 
