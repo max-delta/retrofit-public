@@ -276,6 +276,200 @@ SimVal CombatEngine::LoCalcIdleStaminaGainOpposingTurn() const
 
 
 
+BreakClass CombatEngine::LoCalcAttackBreakClass( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const
+{
+	static constexpr SimVal kAttackBreakPoint = 5;
+	if( attackerPhysAtkStat > defenderPhysDefStat + kAttackBreakPoint * 2 )
+	{
+		// Unreasonably stronger (>2xbreak)
+		return BreakClass::Overwhelming;
+	}
+	else if( attackerPhysAtkStat > defenderPhysDefStat + kAttackBreakPoint )
+	{
+		// Crazy stronger (>break)
+		return BreakClass::Critical;
+	}
+	else if( attackerPhysAtkStat >= defenderPhysDefStat )
+	{
+		// Equal or stronger (>)
+		return BreakClass::Normal;
+	}
+	else if( attackerPhysAtkStat + kAttackBreakPoint >= defenderPhysDefStat )
+	{
+		// Weaker, but not terribly so (<)
+		return BreakClass::Weak;
+	}
+	else
+	{
+		// Heavily outclassed (<break)
+		return BreakClass::Ineffective;
+	}
+}
+
+
+
+BreakClass CombatEngine::LoCalcElementBreakClass( SimVal attackerElemAtkStat, SimVal defenderElemDefStat ) const
+{
+	// For now, use same logic as attacks
+	return LoCalcAttackBreakClass( attackerElemAtkStat, defenderElemDefStat );
+}
+
+
+
+SimVal CombatEngine::LoCalcAttackerBonus( BreakClass breakClass, SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const
+{
+	static_assert( kMaxAttackerBonus == 15, "Check balance" );
+	static constexpr SimVal kAttackBaseBonus = 5;
+
+	SimVal attackerBonus = 0;
+	switch( breakClass )
+	{
+		case BreakClass::Overwhelming:
+			// Max out the damage
+			attackerBonus = kMaxAttackerBonus;
+			break;
+		case BreakClass::Critical:
+			// Same as normal, rely on weapon to perform crit
+			attackerBonus = 0u + kAttackBaseBonus + ( attackerPhysAtkStat - defenderPhysDefStat );
+			break;
+		case BreakClass::Normal:
+			// Base bonus, plus attacker skill
+			RF_ASSERT( attackerPhysAtkStat >= defenderPhysDefStat );
+			attackerBonus = 0u + kAttackBaseBonus + ( attackerPhysAtkStat - defenderPhysDefStat );
+			break;
+		case BreakClass::Weak:
+			// Base bonus, minus defender skill
+			RF_ASSERT( attackerPhysAtkStat <= defenderPhysDefStat );
+			attackerBonus = 0u + ( attackerPhysAtkStat + kAttackBaseBonus ) - defenderPhysDefStat;
+			break;
+		case BreakClass::Ineffective:
+			// No damage, rely on weapon
+			attackerBonus = 0;
+			break;
+		default:
+			RF_DBGFAIL_MSG( "Unexpected codepath" );
+			break;
+	}
+
+	RF_ASSERT( attackerBonus <= kMaxAttackerBonus );
+	attackerBonus = math::Clamp<SimVal>( 0u, attackerBonus, kMaxAttackerBonus );
+	return attackerBonus;
+}
+
+
+
+SimVal CombatEngine::LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStrength ) const
+{
+	static_assert( kMaxWeaponBonus == 20, "Check balance" );
+	static constexpr SimVal kCriticalWeaponModifier = 4;
+	static constexpr SimVal kNormalWeaponModifier = 3;
+	static constexpr SimVal kWeakWeaponModifier = 2;
+	static constexpr SimVal kIneffectiveWeaponModifier = 1;
+
+	SimVal weaponBonus = 0;
+	switch( breakClass )
+	{
+		case BreakClass::Overwhelming:
+			// Same as normal, rely on attacker to push limits
+			weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
+			break;
+		case BreakClass::Critical:
+			weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
+			break;
+		case BreakClass::Normal:
+			weaponBonus = 0u + attackStrength * kNormalWeaponModifier;
+			break;
+		case BreakClass::Weak:
+			weaponBonus = 0u + attackStrength * kWeakWeaponModifier;
+			break;
+		case BreakClass::Ineffective:
+			weaponBonus = 0u + attackStrength * kIneffectiveWeaponModifier;
+			break;
+		default:
+			RF_DBGFAIL_MSG( "Unexpected codepath" );
+			break;
+	}
+
+	RF_ASSERT( weaponBonus <= kMaxWeaponBonus );
+	weaponBonus = math::Clamp<SimVal>( 0u, weaponBonus, kMaxWeaponBonus );
+	return weaponBonus;
+}
+
+
+
+SimDelta CombatEngine::LoCalcAttackFieldModifier( SimColor attackVsTarget, FieldColors const& attackerField ) const
+{
+	static_assert( kMaxFieldModifierOffset == 10, "Check balance" );
+	static_assert( kFieldSize == 5, "Check balance" );
+	static constexpr SimVal kClashBonus = kFieldSize;
+
+	static constexpr SimVal kUnrelatedBonus = 1;
+	SimDelta fieldModifier = 0;
+	for( SimColor const& atk : attackerField )
+	{
+		switch( atk )
+		{
+			case SimColor::Unrelated:
+			{
+				// No effect
+				break;
+			}
+			case SimColor::Same:
+			{
+				// In favor
+				if( attackVsTarget == SimColor::Same )
+				{
+					// Negated by defender
+				}
+				else
+				{
+					// Bonus
+					fieldModifier++;
+				}
+				break;
+			}
+			case SimColor::Clash:
+			{
+				// Penalty
+				fieldModifier--;
+				break;
+			}
+			default:
+				RF_DBGFAIL();
+				break;
+		}
+	}
+	switch( attackVsTarget )
+	{
+		case SimColor::Unrelated:
+		{
+			// Favor attacker
+			fieldModifier += kUnrelatedBonus;
+			break;
+		}
+		case SimColor::Same:
+		{
+			// No effect
+			break;
+		}
+		case SimColor::Clash:
+		{
+			// Heavily favor attacker
+			fieldModifier += kClashBonus;
+			break;
+		}
+		default:
+			RF_DBGFAIL();
+			break;
+	}
+
+	RF_ASSERT( fieldModifier >= -kMaxFieldModifierOffset && fieldModifier <= kMaxFieldModifierOffset );
+	fieldModifier = math::Clamp<SimDelta>( -kMaxFieldModifierOffset, fieldModifier, kMaxFieldModifierOffset );
+	return fieldModifier;
+}
+
+
+
 SimVal CombatEngine::LoCalcAttackStaminaCost( SimVal attackStrength ) const
 {
 	RF_ASSERT( attackStrength > 0 );
@@ -413,117 +607,16 @@ SimVal CombatEngine::LoCalcAttackDamage(
 	attackStrength = math::Clamp<SimVal>( 0u, attackStrength, kMaxAttackStrength );
 
 	// Physical portion
-	static constexpr SimVal kAttackMidPoint = 5;
-	static constexpr SimVal kMaxAttackerBonus = kAttackMidPoint * 3;
-	static constexpr SimVal kMaxWeaponBonus = 20;
-	static constexpr SimVal kCriticalWeaponModifier = 4;
-	static constexpr SimVal kNormalWeaponModifier = 3;
-	static constexpr SimVal kWeakWeaponModifier = 2;
-	static constexpr SimVal kIneffectiveWeaponModifier = 1;
-	SimVal attackerBonus = 0;
-	SimVal weaponBonus = 0;
-	if( attackerPhysAtkStat > defenderPhysDefStat + kAttackMidPoint * 2 )
-	{
-		// Unreasonably stronger (>3xmid)
-		attackerBonus = kMaxAttackerBonus;
-		weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
-	}
-	else if( attackerPhysAtkStat > defenderPhysDefStat + kAttackMidPoint )
-	{
-		// Crazy stronger (>2xmid)
-		attackerBonus = 0u + kAttackMidPoint + ( attackerPhysAtkStat - defenderPhysDefStat );
-		weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
-	}
-	else if( attackerPhysAtkStat >= defenderPhysDefStat )
-	{
-		// Equal or stronger (>mid)
-		attackerBonus = 0u + kAttackMidPoint + ( attackerPhysAtkStat - defenderPhysDefStat );
-		weaponBonus = 0u + attackStrength * kNormalWeaponModifier;
-	}
-	else if( attackerPhysAtkStat + kAttackMidPoint >= defenderPhysDefStat )
-	{
-		// Weaker, but not terribly so (<mid)
-		attackerBonus = 0u + ( attackerPhysAtkStat + kAttackMidPoint ) - defenderPhysDefStat;
-		weaponBonus = 0u + attackStrength * kWeakWeaponModifier;
-	}
-	else
-	{
-		// Heavily outclassed (<2xmid)
-		attackerBonus = 0;
-		weaponBonus = 0u + attackStrength * kIneffectiveWeaponModifier;
-	}
-
+	BreakClass const breakClass = LoCalcAttackBreakClass( attackerPhysAtkStat, defenderPhysDefStat );
+	SimVal const attackerBonus = LoCalcAttackerBonus( breakClass, attackerPhysAtkStat, defenderPhysDefStat );
+	SimVal const weaponBonus = LoCalcWeaponBonus( breakClass, attackStrength );
 
 	// Elemental portion
-	static constexpr SimVal kUnrelatedBonus = 1;
-	static constexpr SimVal kClashBonus = kFieldSize;
-	static constexpr SimVal kMaxFieldModifierOffset = kFieldSize + kClashBonus;
-	SimDelta fieldModifier = 0;
-	for( SimColor const& atk : attackerField )
-	{
-		switch( atk )
-		{
-			case SimColor::Unrelated:
-			{
-				// No effect
-				break;
-			}
-			case SimColor::Same:
-			{
-				// In favor
-				if( attackVsTarget == SimColor::Same )
-				{
-					// Negated by defender
-				}
-				else
-				{
-					// Bonus
-					fieldModifier++;
-				}
-				break;
-			}
-			case SimColor::Clash:
-			{
-				// Penalty
-				fieldModifier--;
-				break;
-			}
-			default:
-				RF_DBGFAIL();
-				break;
-		}
-	}
-	switch( attackVsTarget )
-	{
-		case SimColor::Unrelated:
-		{
-			// Favor attacker
-			fieldModifier += kUnrelatedBonus;
-			break;
-		}
-		case SimColor::Same:
-		{
-			// No effect
-			break;
-		}
-		case SimColor::Clash:
-		{
-			// Heavily favor attacker
-			fieldModifier += kClashBonus;
-			break;
-		}
-		default:
-			RF_DBGFAIL();
-			break;
-	}
-
+	SimDelta const fieldModifier = LoCalcAttackFieldModifier( attackVsTarget, attackerField );
 
 	RF_ASSERT( attackerBonus <= kMaxAttackerBonus );
-	attackerBonus = math::Clamp<SimVal>( 0u, attackerBonus, kMaxAttackerBonus );
 	RF_ASSERT( weaponBonus <= kMaxWeaponBonus );
-	weaponBonus = math::Clamp<SimVal>( 0u, weaponBonus, kMaxWeaponBonus );
 	RF_ASSERT( fieldModifier >= -kMaxFieldModifierOffset && fieldModifier <= kMaxFieldModifierOffset );
-	fieldModifier = math::Clamp<SimDelta>( -kMaxFieldModifierOffset, fieldModifier, kMaxFieldModifierOffset );
 
 	// Formulization
 	{

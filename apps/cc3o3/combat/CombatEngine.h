@@ -21,6 +21,11 @@ class CombatEngine
 public:
 	using FieldColors = rftl::array<SimColor, kFieldSize>;
 
+private:
+	static constexpr SimVal kMaxAttackerBonus = 15;
+	static constexpr SimVal kMaxWeaponBonus = 20;
+	static constexpr SimVal kMaxFieldModifierOffset = 10;
+
 
 	//
 	// Public methods
@@ -61,6 +66,15 @@ public:
 	// Stamina regains over time
 	SimVal LoCalcIdleStaminaGainAlliedTurn() const;
 	SimVal LoCalcIdleStaminaGainOpposingTurn() const;
+
+	// Attacks and elements have thresholds where calculations start changing
+	BreakClass LoCalcAttackBreakClass( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const;
+	BreakClass LoCalcElementBreakClass( SimVal attackerElemAtkStat, SimVal defenderElemDefStat ) const;
+	SimVal LoCalcAttackerBonus( BreakClass breakClass, SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const;
+	SimVal LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStrength ) const;
+
+	// Attacks and elements are affected by colors
+	SimDelta LoCalcAttackFieldModifier( SimColor attackVsTarget, FieldColors const& attackerField ) const;
 
 	// Attacks cost stamina based on strength
 	SimVal LoCalcAttackStaminaCost( SimVal attackStrength ) const;

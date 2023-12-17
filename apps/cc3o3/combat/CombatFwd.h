@@ -22,6 +22,15 @@ enum class SimColor : uint8_t
 	Clash
 };
 
+enum class BreakClass : uint8_t
+{
+	Ineffective = 0,
+	Weak,
+	Normal,
+	Critical,
+	Overwhelming,
+};
+
 using SimVal = uint8_t;
 using SimDelta = int8_t;
 using LargeSimVal = uint16_t;
