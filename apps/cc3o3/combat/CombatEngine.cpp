@@ -319,7 +319,10 @@ SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
 
 
 
-SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
+SimVal CombatEngine::LoCalcNewComboMeter(
+	SimVal attackAccuracy,
+	SimVal attackerTechniqStat,
+	SimVal defenderBalanceStat ) const
 {
 	static constexpr SimVal kMaxTechniq = 10u;
 	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
@@ -341,7 +344,11 @@ SimVal CombatEngine::LoCalcNewComboMeter( SimVal attackAccuracy, SimVal attacker
 
 
 
-SimVal CombatEngine::LoCalcContinueComboMeter( SimVal attackerComboMeter, SimVal attackAccuracy, SimVal attackerTechniqStat, SimVal defenderBalanceStat ) const
+SimVal CombatEngine::LoCalcContinueComboMeter(
+	SimVal attackerComboMeter,
+	SimVal attackAccuracy,
+	SimVal attackerTechniqStat,
+	SimVal defenderBalanceStat ) const
 {
 	static constexpr SimVal kMaxTechniq = 10u;
 	attackerTechniqStat = math::Clamp<SimVal>( 0u, attackerTechniqStat, kMaxTechniq );
@@ -394,7 +401,12 @@ bool CombatEngine::LoCalcWillAttackHit( SimVal attackerComboMeter, SimVal defend
 
 
 
-SimVal CombatEngine::LoCalcAttackDamage( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat, SimVal attackStrength, SimColor attackVsTarget, FieldColors const& attackerField ) const
+SimVal CombatEngine::LoCalcAttackDamage(
+	SimVal attackerPhysAtkStat,
+	SimVal defenderPhysDefStat,
+	SimVal attackStrength,
+	SimColor attackVsTarget,
+	FieldColors const& attackerField ) const
 {
 	static constexpr SimVal kMaxAttackStrength = 5;
 	RF_ASSERT( attackStrength <= kMaxAttackStrength );
