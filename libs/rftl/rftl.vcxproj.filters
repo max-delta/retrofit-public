@@ -88,6 +88,9 @@
 		<ClInclude Include="extension\string_format.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\enum_traits.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">

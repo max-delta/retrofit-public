@@ -51,6 +51,7 @@
 		<ClCompile Include="platform_uuid.cpp" />
 		<ClCompile Include="ptr_transform.cpp" />
 		<ClCompile Include="reflect_type_info_builder.cpp" />
+		<ClCompile Include="rftl_enum_traits.cpp" />
 		<ClCompile Include="rftl_string_traits.cpp" />
 		<ClCompile Include="rftype_class_info_compositor.cpp" />
 		<ClCompile Include="compiler.cpp" />
