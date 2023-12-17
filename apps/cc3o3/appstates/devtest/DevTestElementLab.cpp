@@ -75,8 +75,6 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 	// Setup initial combat instance
 	CombatInstance startInstance( gCombatEngine );
-	FighterID source = {};
-	FighterID target = {};
 	FighterID attackerID = {};
 	FighterID defenderID = {};
 	{
@@ -173,8 +171,8 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 	CombatInstance resultInstance = startInstance;
 	UniquePtr<cast::CastError> const castError = gCastingEngine->ExecuteElementCast(
 		resultInstance,
-		source,
-		target,
+		attackerID,
+		defenderID,
 		elementToCast );
 
 	// TODO: Will want to display error information
