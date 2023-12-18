@@ -22,9 +22,26 @@ public:
 	using FieldColors = rftl::array<SimColor, kFieldSize>;
 
 private:
+	// Inputs to the system need to be capped
+	static constexpr SimVal kMinAttackStrength = 1;
+	static constexpr SimVal kMaxAttackStrength = 5;
+	static constexpr SimVal kMinElementStrength = element::kMinElementLevel;
+	static constexpr SimVal kMaxElementStrength = element::kMaxElementLevel;
+
+	// Stat differences can only be so overpowered before they get capped
+	static constexpr SimVal kMaxBreakDelta = 10;
+	static constexpr SimVal kHalfMaxBreakDelta = 5;
+
+	// Low-level attack calculations have limits
 	static constexpr SimVal kMaxAttackerBonus = 15;
 	static constexpr SimVal kMaxWeaponBonus = 20;
+
+	// Low-level element calculations have limits
+	static constexpr SimVal kMaxCasterBonus = 15;
+	static constexpr SimVal kMaxElementBonus = 80;
+
 	static constexpr SimVal kMaxFieldModifierOffset = 10;
+	static constexpr SimVal kMaxAffinityModifierOffset = 2;
 
 
 	//
@@ -71,10 +88,14 @@ public:
 	BreakClass LoCalcAttackBreakClass( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const;
 	BreakClass LoCalcElementBreakClass( SimVal attackerElemAtkStat, SimVal defenderElemDefStat ) const;
 	SimVal LoCalcAttackerBonus( BreakClass breakClass, SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const;
+	SimVal LoCalcCasterBonus( BreakClass breakClass, SimVal attackerElemAtkStat, SimVal defenderElemDefStat ) const;
 	SimVal LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStrength ) const;
+	SimVal LoCalcElementBonus( BreakClass breakClass, SimVal elementStrength, SimVal castedLevel, bool multiTarget ) const;
 
 	// Attacks and elements are affected by colors
 	SimDelta LoCalcAttackFieldModifier( SimColor attackVsTarget, FieldColors const& attackerField ) const;
+	SimDelta LoCalcElementFieldModifier( SimColor elementVsTarget, FieldColors const& elementField ) const;
+	SimDelta LoCalcCasterAffinityModifier( SimColor elementVsCaster ) const;
 
 	// Attacks cost stamina based on strength
 	SimVal LoCalcAttackStaminaCost( SimVal attackStrength ) const;
@@ -113,6 +134,17 @@ public:
 
 	// Dealing attack damage increases the counter gauge
 	SimVal LoCalcCounterFromAttackDamage( SimVal attackDamage ) const;
+
+	// Elements are elemental against defense, and color affects them
+	SimVal LoCalcElementDamage(
+		SimVal attackerElemAtkStat,
+		SimVal defenderElemDefStat,
+		SimVal elementStrength,
+		SimVal castedLevel,
+		bool multiTarget,
+		SimColor elementVsCaster,
+		SimColor elementVsTarget,
+		FieldColors const& elementField ) const;
 
 
 	//

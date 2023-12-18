@@ -278,13 +278,14 @@ SimVal CombatEngine::LoCalcIdleStaminaGainOpposingTurn() const
 
 BreakClass CombatEngine::LoCalcAttackBreakClass( SimVal attackerPhysAtkStat, SimVal defenderPhysDefStat ) const
 {
-	static constexpr SimVal kAttackBreakPoint = 5;
-	if( attackerPhysAtkStat > defenderPhysDefStat + kAttackBreakPoint * 2 )
+	static constexpr SimVal kBreakPoint = kMaxBreakDelta / 2;
+	static_assert( kBreakPoint * 2 == kMaxBreakDelta, "Break not cleanly divisible" );
+	if( attackerPhysAtkStat > defenderPhysDefStat + kBreakPoint * 2 )
 	{
 		// Unreasonably stronger (>2xbreak)
 		return BreakClass::Overwhelming;
 	}
-	else if( attackerPhysAtkStat > defenderPhysDefStat + kAttackBreakPoint )
+	else if( attackerPhysAtkStat > defenderPhysDefStat + kBreakPoint )
 	{
 		// Crazy stronger (>break)
 		return BreakClass::Critical;
@@ -294,7 +295,7 @@ BreakClass CombatEngine::LoCalcAttackBreakClass( SimVal attackerPhysAtkStat, Sim
 		// Equal or stronger (>)
 		return BreakClass::Normal;
 	}
-	else if( attackerPhysAtkStat + kAttackBreakPoint >= defenderPhysDefStat )
+	else if( attackerPhysAtkStat + kBreakPoint >= defenderPhysDefStat )
 	{
 		// Weaker, but not terribly so (<)
 		return BreakClass::Weak;
@@ -320,6 +321,7 @@ SimVal CombatEngine::LoCalcAttackerBonus( BreakClass breakClass, SimVal attacker
 {
 	static_assert( kMaxAttackerBonus == 15, "Check balance" );
 	static constexpr SimVal kAttackBaseBonus = 5;
+	static_assert( kMaxAttackerBonus == kMaxBreakDelta + kAttackBaseBonus, "Check balance" );
 
 	SimVal attackerBonus = 0;
 	switch( breakClass )
@@ -358,9 +360,53 @@ SimVal CombatEngine::LoCalcAttackerBonus( BreakClass breakClass, SimVal attacker
 
 
 
+SimVal CombatEngine::LoCalcCasterBonus( BreakClass breakClass, SimVal attackerElemAtkStat, SimVal defenderElemDefStat ) const
+{
+	static_assert( kMaxCasterBonus == 15, "Check balance" );
+	static constexpr SimVal kCastBaseBonus = 5;
+	static_assert( kMaxCasterBonus == kMaxBreakDelta + kCastBaseBonus, "Check balance" );
+
+	SimVal casterBonus = 0;
+	switch( breakClass )
+	{
+		case BreakClass::Overwhelming:
+			// Max out the damage
+			casterBonus = kMaxCasterBonus;
+			break;
+		case BreakClass::Critical:
+			// Same as normal, rely on element to perform crit
+			casterBonus = 0u + kCastBaseBonus + ( attackerElemAtkStat - defenderElemDefStat );
+			break;
+		case BreakClass::Normal:
+			// Base bonus, plus attacker skill
+			RF_ASSERT( attackerElemAtkStat >= defenderElemDefStat );
+			casterBonus = 0u + kCastBaseBonus + ( attackerElemAtkStat - defenderElemDefStat );
+			break;
+		case BreakClass::Weak:
+			// Base bonus, minus defender skill
+			RF_ASSERT( attackerElemAtkStat <= defenderElemDefStat );
+			casterBonus = 0u + ( attackerElemAtkStat + kCastBaseBonus ) - defenderElemDefStat;
+			break;
+		case BreakClass::Ineffective:
+			// No damage, rely on element
+			casterBonus = 0;
+			break;
+		default:
+			RF_DBGFAIL_MSG( "Unexpected codepath" );
+			break;
+	}
+
+	RF_ASSERT( casterBonus <= kMaxAttackerBonus );
+	casterBonus = math::Clamp<SimVal>( 0u, casterBonus, kMaxAttackerBonus );
+	return casterBonus;
+}
+
+
+
 SimVal CombatEngine::LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStrength ) const
 {
 	static_assert( kMaxWeaponBonus == 20, "Check balance" );
+	static_assert( kMaxAttackStrength == 5, "Check balance" );
 	static constexpr SimVal kCriticalWeaponModifier = 4;
 	static constexpr SimVal kNormalWeaponModifier = 3;
 	static constexpr SimVal kWeakWeaponModifier = 2;
@@ -370,7 +416,7 @@ SimVal CombatEngine::LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStre
 	switch( breakClass )
 	{
 		case BreakClass::Overwhelming:
-			// Same as normal, rely on attacker to push limits
+			// Same as critical, rely on attacker to push limits
 			weaponBonus = 0u + attackStrength * kCriticalWeaponModifier;
 			break;
 		case BreakClass::Critical:
@@ -393,6 +439,75 @@ SimVal CombatEngine::LoCalcWeaponBonus( BreakClass breakClass, SimVal attackStre
 	RF_ASSERT( weaponBonus <= kMaxWeaponBonus );
 	weaponBonus = math::Clamp<SimVal>( 0u, weaponBonus, kMaxWeaponBonus );
 	return weaponBonus;
+}
+
+
+
+SimVal CombatEngine::LoCalcElementBonus( BreakClass breakClass, SimVal elementStrength, SimVal castedLevel, bool multiTarget ) const
+{
+	static_assert( kMaxElementBonus == 80, "Check balance" );
+	static constexpr SimVal kCriticalElementModifier = 4;
+	static constexpr SimVal kNormalElementModifier = 3;
+	static constexpr SimVal kWeakElementModifier = 2;
+	static constexpr SimVal kIneffectiveElementModifier = 1;
+
+	SimVal elementBonus = 0;
+
+	// Stronger elements are quadratic, so stronger is almost always better
+	static_assert( kMaxElementStrength == 8, "Check balance" );
+	RF_ASSERT( elementStrength > 0 );
+	RF_ASSERT( elementStrength <= kMaxElementStrength );
+	// DMG = (LVL / 2) + (LVL * LVL)
+	static constexpr rftl::array<SimVal, 8> kSingleBaselines =
+		{ 2, 5, 10, 18, 26, 39, 52, 68 };
+	// DMG = -10 + (LVL * 5) + (LVL * LVL / 3)
+	static constexpr rftl::array<SimVal, 8> kMultiBaselines =
+		{ 0, 0, 6, 15, 20, 30, 40, 50 };
+	if( multiTarget )
+	{
+		elementBonus += kMultiBaselines.at( math::integer_cast<size_t>( elementStrength - 1 ) );
+	}
+	else
+	{
+		elementBonus += kSingleBaselines.at( math::integer_cast<size_t>( elementStrength - 1 ) );
+	}
+
+	// Casted level is linear, so upleveling should usually be avoided
+	static_assert( element::kMinElementLevel == 1, "Check balance" );
+	static_assert( element::kMaxElementLevel == 8, "Check balance" );
+	RF_ASSERT( castedLevel >= element::kMinElementLevel );
+	RF_ASSERT( castedLevel <= element::kMaxElementLevel );
+	// DMG = LVL
+	static constexpr rftl::array<SimVal, 8> kCastedLevels =
+		{ 1, 2, 3, 4, 5, 6, 7, 8 };
+	elementBonus += kCastedLevels.at( math::integer_cast<size_t>( castedLevel - 1 ) );
+
+	switch( breakClass )
+	{
+		case BreakClass::Overwhelming:
+			// Same as critical, rely on caster to push limits
+			elementBonus += kCriticalElementModifier;
+			break;
+		case BreakClass::Critical:
+			elementBonus += kCriticalElementModifier;
+			break;
+		case BreakClass::Normal:
+			elementBonus += kNormalElementModifier;
+			break;
+		case BreakClass::Weak:
+			elementBonus += kWeakElementModifier;
+			break;
+		case BreakClass::Ineffective:
+			elementBonus += kIneffectiveElementModifier;
+			break;
+		default:
+			RF_DBGFAIL_MSG( "Unexpected codepath" );
+			break;
+	}
+
+	RF_ASSERT( elementBonus <= kMaxElementBonus );
+	elementBonus = math::Clamp<SimVal>( 0u, elementBonus, kMaxElementBonus );
+	return elementBonus;
 }
 
 
@@ -466,6 +581,43 @@ SimDelta CombatEngine::LoCalcAttackFieldModifier( SimColor attackVsTarget, Field
 	RF_ASSERT( fieldModifier >= -kMaxFieldModifierOffset && fieldModifier <= kMaxFieldModifierOffset );
 	fieldModifier = math::Clamp<SimDelta>( -kMaxFieldModifierOffset, fieldModifier, kMaxFieldModifierOffset );
 	return fieldModifier;
+}
+
+
+
+SimDelta CombatEngine::LoCalcElementFieldModifier( SimColor elementVsTarget, FieldColors const& elementField ) const
+{
+	// Use same logic as for attacks
+	RF_TODO_ANNOTATION( "Invert this so attacks call this instead, since that makes more sense" );
+	return LoCalcAttackFieldModifier( elementVsTarget, elementField );
+}
+
+
+
+SimDelta CombatEngine::LoCalcCasterAffinityModifier( SimColor elementVsCaster ) const
+{
+	static_assert( kMaxAffinityModifierOffset == 2, "Check balance" );
+	switch( elementVsCaster )
+	{
+		case SimColor::Unrelated:
+		{
+			// No effect
+			return 0;
+		}
+		case SimColor::Same:
+		{
+			// Favor caster
+			return math::integer_cast<SimDelta>( kMaxAffinityModifierOffset );
+		}
+		case SimColor::Clash:
+		{
+			// Punish caster
+			return math::integer_cast<SimDelta>( -kMaxAffinityModifierOffset );
+		}
+		default:
+			RF_DBGFAIL();
+			return 0;
+	}
 }
 
 
@@ -602,7 +754,7 @@ SimVal CombatEngine::LoCalcAttackDamage(
 	SimColor attackVsTarget,
 	FieldColors const& attackerField ) const
 {
-	static constexpr SimVal kMaxAttackStrength = 5;
+	RF_ASSERT( attackStrength > 0 );
 	RF_ASSERT( attackStrength <= kMaxAttackStrength );
 	attackStrength = math::Clamp<SimVal>( 0u, attackStrength, kMaxAttackStrength );
 
@@ -632,32 +784,33 @@ SimVal CombatEngine::LoCalcAttackDamage(
 		RF_ASSERT( rawAttack <= kMaxUnscaledDamage );
 
 		static_assert( kMaxFieldModifierOffset == 10, "Check balance" );
-		SimDelta fieldBonus = 0;
-		if( fieldModifier > 0 )
+		SimDelta const totalModifier = fieldModifier;
+		SimDelta modifierBonus = 0;
+		if( totalModifier > 0 )
 		{
 			// Upscale damage
-			fieldBonus = ( rawAttack * fieldModifier ) / 20;
-			RF_ASSERT( fieldBonus >= 0 );
-			RF_ASSERT( fieldBonus <= rawAttack );
+			modifierBonus = ( rawAttack * totalModifier ) / 20;
+			RF_ASSERT( modifierBonus >= 0 );
+			RF_ASSERT( modifierBonus <= rawAttack );
 		}
-		else if( fieldModifier < 0 )
+		else if( totalModifier < 0 )
 		{
 			// Downscale damage
-			fieldBonus = -1 + ( rawAttack * fieldModifier ) / 20;
-			RF_ASSERT( fieldBonus <= 0 );
-			RF_ASSERT( fieldBonus >= -rawAttack );
+			modifierBonus = -1 + ( rawAttack * totalModifier ) / 20;
+			RF_ASSERT( modifierBonus <= 0 );
+			RF_ASSERT( modifierBonus >= -rawAttack );
 		}
 		else
 		{
 			// No bonus
-			RF_ASSERT( fieldModifier == 0 );
-			fieldBonus = 0;
+			RF_ASSERT( totalModifier == 0 );
+			modifierBonus = 0;
 		}
-		SimVal const scaledAttack = math::integer_cast<SimVal>( math::integer_cast<int16_t>( rawAttack ) + fieldBonus );
+		SimVal const scaledAttack = math::integer_cast<SimVal>( math::integer_cast<int16_t>( rawAttack ) + modifierBonus );
 		RF_ASSERT( scaledAttack >= 0 );
 
-		// No matter how bad your situation, the raw damage from the weapon itself
-		//  should be able to make it through
+		// No matter how bad your situation, the raw damage from the weapon
+		//  itself should be able to make it through
 		static constexpr SimVal kMaxScaledDamage = kMaxUnscaledDamage * 2;
 		static_assert( kMaxScaledDamage == 110, "Check balance" );
 		RF_ASSERT( scaledAttack <= kMaxScaledDamage );
@@ -685,6 +838,97 @@ SimVal CombatEngine::LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) c
 SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
 {
 	return attackDamage / 2u;
+}
+
+
+
+SimVal CombatEngine::LoCalcElementDamage(
+	SimVal attackerElemAtkStat,
+	SimVal defenderElemDefStat,
+	SimVal elementStrength,
+	SimVal castedLevel,
+	bool multiTarget,
+	SimColor elementVsCaster,
+	SimColor elementVsTarget,
+	FieldColors const& elementField ) const
+{
+	RF_ASSERT( elementStrength > 0 );
+	RF_ASSERT( elementStrength <= kMaxElementStrength );
+	elementStrength = math::Clamp<SimVal>( 1u, elementStrength, kMaxElementStrength );
+
+	RF_ASSERT( castedLevel >= element::kMinElementLevel );
+	RF_ASSERT( castedLevel <= element::kMaxElementLevel );
+	elementStrength = math::Clamp<SimVal>( 0u, elementStrength, kMaxElementStrength );
+
+	// Penetration portion
+	BreakClass const breakClass = LoCalcElementBreakClass( attackerElemAtkStat, defenderElemDefStat );
+	SimVal const casterBonus = LoCalcCasterBonus( breakClass, attackerElemAtkStat, defenderElemDefStat );
+	SimVal const elementBonus = LoCalcElementBonus( breakClass, elementStrength, castedLevel, multiTarget );
+
+	// Elemental portion
+	SimDelta const fieldModifier = LoCalcElementFieldModifier( elementVsTarget, elementField );
+	SimDelta const affinityModifier = LoCalcCasterAffinityModifier( elementVsCaster );
+
+	RF_ASSERT( casterBonus <= kMaxCasterBonus );
+	RF_ASSERT( elementBonus <= kMaxElementBonus );
+	RF_ASSERT( fieldModifier >= -kMaxFieldModifierOffset && fieldModifier <= kMaxFieldModifierOffset );
+	RF_ASSERT( affinityModifier >= -kMaxAffinityModifierOffset && affinityModifier <= kMaxAffinityModifierOffset );
+
+	// Formulization
+	{
+		// Caster casts with element as baseline
+		static_assert( kMaxCasterBonus == 15, "Check balance" );
+		static_assert( kMaxElementBonus == 80, "Check balance" );
+		SimVal const rawCast =
+			0u +
+			casterBonus +
+			elementBonus;
+		static constexpr SimVal kMaxUnscaledDamage = kMaxCasterBonus + kMaxElementBonus;
+		static_assert( kMaxUnscaledDamage == 95, "Check balance" );
+		RF_ASSERT( rawCast <= kMaxUnscaledDamage );
+
+		static_assert( kMaxFieldModifierOffset == 10, "Check balance" );
+		static_assert( kMaxAffinityModifierOffset == 2, "Check balance" );
+		SimDelta const totalModifier = fieldModifier + affinityModifier;
+		SimDelta modifierBonus = 0;
+		if( totalModifier > 0 )
+		{
+			// Upscale damage
+			modifierBonus = ( rawCast * totalModifier ) / 20;
+			RF_ASSERT( modifierBonus >= 0 );
+			RF_ASSERT( modifierBonus <= rawCast );
+		}
+		else if( totalModifier < 0 )
+		{
+			// Downscale damage
+			modifierBonus = -1 + ( rawCast * totalModifier ) / 20;
+			RF_ASSERT( modifierBonus <= 0 );
+			RF_ASSERT( modifierBonus >= -rawCast );
+		}
+		else
+		{
+			// No bonus
+			RF_ASSERT( totalModifier == 0 );
+			modifierBonus = 0;
+		}
+		SimVal const scaledAttack = math::integer_cast<SimVal>( math::integer_cast<int16_t>( rawCast ) + modifierBonus );
+		RF_ASSERT( scaledAttack >= 0 );
+
+		// No matter how bad your situation, the raw damage from the element
+		//  itself should be able to make it through
+		static constexpr SimVal kMaxScaledDamage = kMaxUnscaledDamage * 2;
+		static_assert( kMaxScaledDamage == 190, "Check balance" );
+		RF_ASSERT( scaledAttack <= kMaxScaledDamage );
+		SimVal const applicableAttack = math::Clamp<SimVal>( elementBonus, scaledAttack, kMaxScaledDamage );
+		RF_ASSERT( applicableAttack > 0 );
+
+		// Final value transform
+		static constexpr LargeSimVal kMaxFinalAttack = ( LargeSimVal( kMaxScaledDamage ) * 2u ) / 3u;
+		static_assert( kMaxFinalAttack == 126, "Check balance" );
+		LargeSimVal const finalAttack = ( math::integer_cast<LargeSimVal>( applicableAttack ) * 2u ) / 3u;
+		RF_ASSERT( finalAttack <= kMaxFinalAttack );
+		return math::integer_cast<SimVal>( math::Clamp<LargeSimVal>( 1, finalAttack, kMaxFinalAttack ) );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
