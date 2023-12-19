@@ -197,6 +197,7 @@
 		<ClInclude Include="char\stdafx.h" />
 		<ClInclude Include="char\Visuals.h" />
 		<ClInclude Include="combat\Attack.h" />
+		<ClInclude Include="combat\Cast.h" />
 		<ClInclude Include="combat\FightController.h" />
 		<ClInclude Include="combat\Fighter.h" />
 		<ClInclude Include="combat\CombatantID.h" />

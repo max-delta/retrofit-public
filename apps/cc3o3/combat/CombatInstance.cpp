@@ -2,6 +2,7 @@
 #include "CombatInstance.h"
 
 #include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/Cast.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/IdentifierUtils.h"
 #include "cc3o3/elements/IdentifierUtils.h"
@@ -571,6 +572,92 @@ bool CombatInstance::CanPerformCast( FighterID attackerID ) const
 	}
 
 	return true;
+}
+
+
+
+bool CombatInstance::StartCast( FighterID attackerID )
+{
+	CombatEngine const& engine = *mCombatEngine;
+
+	Fighter& attacker = GetMutableFighterRef( attackerID ).mFighter;
+
+	// Pay the stamina cost up front, in case the element does something
+	//  special to increase stamina gain
+	DecreaseStamina( attackerID, engine.LoCalcElementStaminaCost() );
+
+	// Break any combos before the cast goes off, since casting should normally
+	//  break any combos, but could do something special to start a new combo
+	attacker.mComboTarget = {};
+	attacker.mComboMeter = 0;
+
+	return true;
+}
+
+
+
+bool CombatInstance::FinishCast( FighterID attackerID )
+{
+	PassTime( attackerID );
+
+	return true;
+}
+
+
+
+CastDamageProfile CombatInstance::PrepareCastDamage(
+	FighterID attackerID,
+	FighterID defenderID,
+	SimVal elementStrength,
+	SimVal castedLevel,
+	bool multiTarget,
+	element::InnateIdentifier elementColor ) const
+{
+	Fighter const& attacker = GetFighterRef( attackerID ).mFighter;
+	Fighter const& defender = GetFighterRef( defenderID ).mFighter;
+
+	CastDamageProfile retVal = {};
+
+	retVal.mElementStrength = elementStrength;
+	retVal.mCastedLevel = castedLevel;
+
+	retVal.mMultiTarget = multiTarget;
+
+	retVal.mAttackerElementalAttack = attacker.mElemAtk;
+	retVal.mDefenderElementalDefense = defender.mElemDef;
+	retVal.mElementInnate = elementColor;
+	retVal.mAttackerInnate = attacker.mInnate;
+	retVal.mDefenderInnate = defender.mInnate;
+	retVal.mInfluence = GetFieldInfluence();
+
+	return retVal;
+}
+
+
+
+CastDamageResult CombatInstance::ApplyCastDamage(
+	FighterID attackerID,
+	FighterID defenderID,
+	SimVal elementStrength,
+	SimVal castedLevel,
+	bool multiTarget,
+	element::InnateIdentifier elementColor )
+{
+	CombatEngine const& engine = *mCombatEngine;
+
+	CastDamageProfile const profile = PrepareCastDamage(
+		attackerID,
+		defenderID,
+		elementStrength,
+		castedLevel,
+		multiTarget,
+		elementColor );
+	CastDamageResult const result = engine.HiCalcCast( profile );
+
+	DecreaseHealth( defenderID, result.mDamage );
+	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
+
+	return result;
 }
 
 

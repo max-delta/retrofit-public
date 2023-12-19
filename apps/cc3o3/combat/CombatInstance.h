@@ -114,6 +114,22 @@ public:
 	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
 
 	bool CanPerformCast( FighterID attackerID ) const;
+	bool StartCast( FighterID attackerID );
+	bool FinishCast( FighterID attackerID );
+	CastDamageProfile PrepareCastDamage(
+		FighterID attackerID,
+		FighterID defenderID,
+		SimVal elementStrength,
+		SimVal castedLevel,
+		bool multiTarget,
+		element::InnateIdentifier elementColor ) const;
+	CastDamageResult ApplyCastDamage(
+		FighterID attackerID,
+		FighterID defenderID,
+		SimVal elementStrength,
+		SimVal castedLevel,
+		bool multiTarget,
+		element::InnateIdentifier elementColor );
 
 	void PassTime( FighterID initiatorID );
 

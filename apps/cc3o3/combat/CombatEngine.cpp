@@ -2,6 +2,7 @@
 #include "CombatEngine.h"
 
 #include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/Cast.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
 #include "core_math/math_casts.h"
@@ -214,6 +215,43 @@ AttackResult CombatEngine::HiCalcAttack( AttackProfile const& profile ) const
 		retVal.mDamage = 0;
 		retVal.mCoungerGuageIncrease = LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
 	}
+
+	return retVal;
+}
+
+
+
+CastDamageResult CombatEngine::HiCalcCast( CastDamageProfile const& profile ) const
+{
+	CastDamageResult retVal = {};
+
+	SimColor const casterClash = EvalInnates(
+		profile.mElementInnate,
+		profile.mAttackerInnate );
+	SimColor const defenderClash = EvalInnates(
+		profile.mElementInnate,
+		profile.mDefenderInnate );
+
+	FieldColors elementInfluenced = {};
+	for( size_t i = 0; i < kFieldSize; i++ )
+	{
+		elementInfluenced.at( i ) = EvalInnates(
+			profile.mElementInnate,
+			profile.mInfluence.at( i ) );
+	}
+
+	retVal.mDamage = LoCalcElementDamage(
+		profile.mAttackerElementalAttack,
+		profile.mDefenderElementalDefense,
+		profile.mElementStrength,
+		profile.mCastedLevel,
+		profile.mMultiTarget,
+		casterClash,
+		defenderClash,
+		elementInfluenced );
+
+	retVal.mCoungerGuageIncrease = 0;
+	retVal.mCoungerGuageIncrease += LoCalcCounterFromElementDamage( retVal.mDamage );
 
 	return retVal;
 }
@@ -630,6 +668,14 @@ SimVal CombatEngine::LoCalcAttackStaminaCost( SimVal attackStrength ) const
 
 
 
+SimVal CombatEngine::LoCalcElementStaminaCost() const
+{
+	static_assert( kMaxStamina == 7, "Check balance" );
+	return kMaxStamina;
+}
+
+
+
 SimVal CombatEngine::LoCalcAttackChargeGain( SimVal attackStrength ) const
 {
 	RF_ASSERT( attackStrength > 0 );
@@ -838,6 +884,13 @@ SimVal CombatEngine::LoCalcCounterFromAttackSwing( SimVal attackerComboMeter ) c
 SimVal CombatEngine::LoCalcCounterFromAttackDamage( SimVal attackDamage ) const
 {
 	return attackDamage / 2u;
+}
+
+
+
+SimVal CombatEngine::LoCalcCounterFromElementDamage( SimVal elementDamage ) const
+{
+	return elementDamage;
 }
 
 

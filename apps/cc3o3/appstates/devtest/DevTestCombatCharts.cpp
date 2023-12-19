@@ -5,6 +5,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/combat/Attack.h"
+#include "cc3o3/combat/Cast.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 
@@ -33,10 +34,11 @@ struct DevTestCombatCharts::InternalState
 	combat::SimVal mTech = 2;
 	combat::SimVal mAtk = 2;
 	combat::SimDelta mAtkField = 0;
+	combat::SimColor mCasterColor = combat::SimColor::Unrelated;
 	combat::SimVal mBalance = 2;
 	combat::SimVal mDef = 2;
 	combat::SimDelta mDefField = 0;
-	combat::SimColor mColor = combat::SimColor::Unrelated;
+	combat::SimColor mEnemyColor = combat::SimColor::Unrelated;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -86,15 +88,16 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	SimVal& tech = internalState.mTech;
 	SimVal& atk = internalState.mAtk;
 	SimDelta& atkField = internalState.mAtkField;
+	SimColor& casterColor = internalState.mCasterColor;
 	SimVal& balance = internalState.mBalance;
 	SimVal& def = internalState.mDef;
 	SimDelta& defField = internalState.mDefField;
-	SimColor& color = internalState.mColor;
+	SimColor& enemyColor = internalState.mEnemyColor;
 
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetMainMenuInputToProcess();
 	for( ui::FocusEventType const& focusEvent : focusEvents )
 	{
-		static constexpr size_t kMaxCursorPos = 6;
+		static constexpr size_t kMaxCursorPos = 7;
 
 		if( focusEvent == ui::focusevent::Command_NavigateLeft )
 		{
@@ -105,6 +108,23 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			cursor++;
 		}
 		cursor = math::Clamp<size_t>( 0, cursor, kMaxCursorPos );
+
+		static constexpr auto rotateColor = []( SimColor& color ) -> void
+		{
+			if( color == SimColor::Unrelated )
+			{
+				color = SimColor::Same;
+			}
+			else if( color == SimColor::Same )
+			{
+				color = SimColor::Clash;
+			}
+			else
+			{
+				RF_ASSERT( color == SimColor::Clash );
+				color = SimColor::Unrelated;
+			}
+		};
 
 		bool increase = focusEvent == ui::focusevent::Command_NavigateUp;
 		bool decrease = focusEvent == ui::focusevent::Command_NavigateDown;
@@ -123,28 +143,19 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 					atkField += increase ? 1 : -1;
 					break;
 				case 3:
-					balance += increase ? 1 : -1;
+					rotateColor( casterColor );
 					break;
 				case 4:
-					def += increase ? 1 : -1;
+					balance += increase ? 1 : -1;
 					break;
 				case 5:
-					defField += increase ? 1 : -1;
+					def += increase ? 1 : -1;
 					break;
 				case 6:
-					if( color == SimColor::Unrelated )
-					{
-						color = SimColor::Same;
-					}
-					else if( color == SimColor::Same )
-					{
-						color = SimColor::Clash;
-					}
-					else
-					{
-						RF_ASSERT( color == SimColor::Clash );
-						color = SimColor::Unrelated;
-					}
+					defField += increase ? 1 : -1;
+					break;
+				case 7:
+					rotateColor( enemyColor );
 					break;
 				default:
 					break;
@@ -157,47 +168,52 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	switch( cursor )
 	{
 		case 0:
-			drawText( x, y, "*tech  atk  atkField  balance  def  defField  color" );
+			drawText( x, y, "*tech  atk  atkField  cast  balance  def  defField  target" );
 			break;
 		case 1:
-			drawText( x, y, " tech *atk  atkField  balance  def  defField  color" );
+			drawText( x, y, " tech *atk  atkField  cast  balance  def  defField  target" );
 			break;
 		case 2:
-			drawText( x, y, " tech  atk *atkField  balance  def  defField  color" );
+			drawText( x, y, " tech  atk *atkField  cast  balance  def  defField  target" );
 			break;
 		case 3:
-			drawText( x, y, " tech  atk  atkField *balance  def  defField  color" );
+			drawText( x, y, " tech  atk  atkField *cast  balance  def  defField  target" );
 			break;
 		case 4:
-			drawText( x, y, " tech  atk  atkField  balance *def  defField  color" );
+			drawText( x, y, " tech  atk  atkField  cast *balance  def  defField  target" );
 			break;
 		case 5:
-			drawText( x, y, " tech  atk  atkField  balance  def *defField  color" );
+			drawText( x, y, " tech  atk  atkField  cast  balance *def  defField  target" );
 			break;
 		case 6:
-			drawText( x, y, " tech  atk  atkField  balance  def  defField *color" );
+			drawText( x, y, " tech  atk  atkField  cast  balance  def *defField  target" );
+			break;
+		case 7:
+			drawText( x, y, " tech  atk  atkField  cast  balance  def  defField *target" );
 			break;
 		default:
 			break;
 	}
 	y++;
-	char const* colorStr = "INVALID";
-	switch( color )
+
+	static constexpr auto colorStr = []( SimColor color ) -> char const*
 	{
-		case SimColor::Unrelated:
-			colorStr = "UNREL";
-			break;
-		case SimColor::Same:
-			colorStr = "SAME";
-			break;
-		case SimColor::Clash:
-			colorStr = "CLASH";
-			break;
-		default:
-			RF_DBGFAIL();
-			break;
-	}
-	drawText( x, y, " %4i  %3i  %8i  %7i  %3i  %8i  %s", tech, atk, atkField, balance, def, defField, colorStr );
+		switch( color )
+		{
+			case SimColor::Unrelated:
+				return "UNREL";
+			case SimColor::Same:
+				return "SAME ";
+			case SimColor::Clash:
+				return "CLASH";
+			default:
+				RF_DBGFAIL();
+				return "INVLD";
+		}
+	};
+	char const* const casterColorStr = colorStr( casterColor );
+	char const* const enemyColorStr = colorStr( enemyColor );
+	drawText( x, y, " %4i  %3i  %8i  %s %7i  %3i  %8i  %s", tech, atk, atkField, casterColorStr, balance, def, defField, enemyColorStr );
 
 	// Setup combat instance
 	CombatInstance startInstance( gCombatEngine );
@@ -214,6 +230,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		attacker.mMaxCharge = combat::kMaxCharge;
 		attacker.mCurCharge = attacker.mMaxCharge;
 		attacker.mPhysAtk = atk;
+		attacker.mElemAtk = atk;
 		attacker.mTechniq = tech;
 		attacker.mInnate = element::MakeInnateIdentifier( "red" );
 		element::InnateIdentifier const same = attacker.mInnate;
@@ -223,8 +240,9 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		defender.mMaxHealth = kMaxHealth;
 		defender.mCurHealth = defender.mMaxHealth;
 		defender.mPhysDef = def;
+		defender.mElemDef = def;
 		defender.mBalance = balance;
-		switch( color )
+		switch( enemyColor )
 		{
 			case SimColor::Unrelated:
 				defender.mInnate = unrel;
@@ -344,6 +362,54 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			x += xstep;
 			y = yStart;
 		}
+	}
+
+	x = 1;
+	y = 20;
+	{
+		rftl::static_vector<SimVal, 8> casts;
+		for( SimVal val = 1; val <= 8; val++ )
+		{
+			casts.emplace_back( val );
+		}
+		rftl::static_vector<SimVal, 8> damages;
+		rftl::static_vector<SimVal, 8> counterGuages;
+		for( SimVal const& cast : casts )
+		{
+			CombatInstance castInstance = startInstance;
+			castInstance.StartCast( attackerID );
+			RF_TODO_ANNOTATION( "Configurable casting colors" );
+			CastDamageResult const result = castInstance.ApplyCastDamage(
+				attackerID,
+				defenderID,
+				cast,
+				cast,
+				false,
+				element::MakeInnateIdentifier( "red" ) );
+			damages.push_back( result.mDamage );
+			counterGuages.push_back( result.mCoungerGuageIncrease );
+			castInstance.FinishCast( attackerID );
+		}
+		drawText( x, y, "ELEM DMG %2i %2i %2i %2i %2i %2i %2i %2i",
+			damages.at( 0 ),
+			damages.at( 1 ),
+			damages.at( 2 ),
+			damages.at( 3 ),
+			damages.at( 4 ),
+			damages.at( 5 ),
+			damages.at( 6 ),
+			damages.at( 7 ) );
+		y++;
+		drawText( x, y, "ELEM CG  %2i %2i %2i %2i %2i %2i %2i %2i",
+			counterGuages.at( 0 ),
+			counterGuages.at( 1 ),
+			counterGuages.at( 2 ),
+			counterGuages.at( 3 ),
+			counterGuages.at( 4 ),
+			counterGuages.at( 5 ),
+			counterGuages.at( 6 ),
+			counterGuages.at( 7 ) );
+		y++;
 	}
 }
 

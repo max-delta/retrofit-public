@@ -843,6 +843,9 @@
 		<ClInclude Include="casting\Steps\ElemDamageStep.h">
 			<Filter>casting\Steps</Filter>
 		</ClInclude>
+		<ClInclude Include="combat\Cast.h">
+			<Filter>combat</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="appstates">

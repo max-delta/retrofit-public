@@ -52,6 +52,12 @@ UniquePtr<CastError> ExecuteCast(
 	}
 	act::ActionRecord const& action = *actionPtr;
 
+	RF_TODO_ANNOTATION( "Make sure the cast can be performed" );
+
+	// Start the cast
+	bool const startSuccess = ctx.mCombatInstance.StartCast( ctx.mSourceFighter );
+	RF_ASSERT( startSuccess );
+
 	// Get root step
 	WeakPtr<act::Step const> rootPtr = action.GetRoot();
 	RF_ASSERT( rootPtr );
@@ -83,6 +89,10 @@ UniquePtr<CastError> ExecuteCast(
 		// New combat context
 		currentCombatCtx = combatCtx.Get();
 	}
+
+	// Finish the cast
+	bool const finishSuccess = ctx.mCombatInstance.FinishCast( ctx.mSourceFighter );
+	RF_ASSERT( finishSuccess );
 
 	// Success!
 	// NOTE: Caller-provided combat instance was left unmodified until this

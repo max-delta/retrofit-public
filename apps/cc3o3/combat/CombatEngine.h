@@ -73,6 +73,9 @@ public:
 	// Physical attack
 	AttackResult HiCalcAttack( AttackProfile const& profile ) const;
 
+	// Elemental cast
+	CastDamageResult HiCalcCast( CastDamageProfile const& profile ) const;
+
 
 	//
 	// Public methods (low-level calculations)
@@ -99,6 +102,9 @@ public:
 
 	// Attacks cost stamina based on strength
 	SimVal LoCalcAttackStaminaCost( SimVal attackStrength ) const;
+
+	// Elements cost stamina
+	SimVal LoCalcElementStaminaCost() const;
 
 	// Attacks grant charge based on strength
 	SimVal LoCalcAttackChargeGain( SimVal attackStrength ) const;
@@ -134,6 +140,9 @@ public:
 
 	// Dealing attack damage increases the counter gauge
 	SimVal LoCalcCounterFromAttackDamage( SimVal attackDamage ) const;
+
+	// Dealing elemental damage increases the counter gauge
+	SimVal LoCalcCounterFromElementDamage( SimVal elementDamage ) const;
 
 	// Elements are elemental against defense, and color affects them
 	SimVal LoCalcElementDamage(

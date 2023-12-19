@@ -73,6 +73,9 @@ struct Field;
 struct AttackProfile;
 struct AttackResult;
 
+struct CastDamageProfile;
+struct CastDamageResult;
+
 class CombatEngine;
 class CombatInstance;
 class FightController;
