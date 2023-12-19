@@ -57,11 +57,13 @@ public:
 public:
 	CombatInstance( WeakPtr<CombatEngine const> const& combatEngine );
 
+	// Encounter composition
 	TeamID AddTeam();
 	PartyID AddParty( TeamID teamID );
 	FighterID AddFighter( PartyID partyID );
 	void RemoveFighter( FighterID fighterID );
 
+	// Encounter structure queries
 	TeamIDs GetTeamIDs() const;
 	PartyIDs GetPartyIDs() const;
 	PartyIDs GetPartyIDs( TeamID teamID ) const;
@@ -69,12 +71,15 @@ public:
 	FighterIDs GetFighterIDs( TeamID teamID ) const;
 	FighterIDs GetFighterIDs( PartyID partyID ) const;
 
+	// Relationship queries
 	TeamIDs GetOpposingTeams( TeamID teamID ) const;
 
+	// Combatant access
 	Team GetTeam( TeamID teamID ) const;
 	Party GetParty( PartyID partyID ) const;
 	Fighter GetFighter( FighterID fighterID ) const;
 
+	// Combatant setup
 	void SetCombatant( FighterID fighterID, Fighter const& combatant );
 	void SetCombatant( FighterID fighterID, state::MutableObjectRef const& character );
 
@@ -86,17 +91,21 @@ public:
 	//  the persistent character
 	state::ObjectRef GetCharacter( FighterID fighterID ) const;
 
+	// Save and load the combat data to and from persistance
 	void CommitCombatData() const;
 	void ReloadCombatData();
 
+	// Field logic
 	Field::Influence GetFieldInfluence() const;
 	void AddFieldInfluence( element::InnateIdentifier influence );
 	void AddFieldInfluence( element::InnateIdentifier influence, size_t strength );
 	void GenerateFieldInfluence( uint64_t seedHash );
 
+	// Countering logic
 	SimVal GetCounterGuage( PartyID party ) const;
 	void IncreaseCounterGuage( PartyID party, SimVal value );
 
+	// Low-level fighter modifictions, generally not meant to be used directly
 	void IncreaseHealth( FighterID fighterID, SimVal value );
 	void DecreaseHealth( FighterID fighterID, SimVal value );
 	void IncreaseStamina( FighterID fighterID, SimVal value );
@@ -104,8 +113,10 @@ public:
 	void IncreaseCharge( FighterID fighterID, SimVal value );
 	void DecreaseCharge( FighterID fighterID, SimVal value );
 
+	// Various conditions might prevent performing actions of any kind
 	bool CanPerformAction( FighterID attackerID ) const;
 
+	// Attacking logic
 	FighterIDs GetValidAttackTargets( FighterID attackerID ) const;
 	bool CanPerformAttack( FighterID attackerID ) const;
 	bool CanPerformAttack( FighterID attackerID, FighterID defenderID ) const;
@@ -113,6 +124,9 @@ public:
 	AttackProfile PrepareAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength ) const;
 	AttackResult ExecuteAttack( FighterID attackerID, FighterID defenderID, SimVal attackStrength );
 
+	// Casting logic
+	// NOTE: These are of limited capability, and are generally expected to be
+	//  run via the casting engine, not directly on the instance
 	bool CanPerformCast( FighterID attackerID ) const;
 	bool StartCast( FighterID attackerID );
 	bool FinishCast( FighterID attackerID );
@@ -131,6 +145,7 @@ public:
 		bool multiTarget,
 		element::InnateIdentifier elementColor );
 
+	// Most actions cause a single unit of time to pass
 	void PassTime( FighterID initiatorID );
 
 
