@@ -11,7 +11,7 @@ struct CastDamageProfile
 {
 	// Elements may not alway be cast at their natural level
 	SimVal mElementStrength = 0;
-	SimVal mCastedLevel = 0;
+	element::ElementLevel mCastedLevel = 0;
 
 	// Elements that are multi-target may have damage calculations adjusted
 	bool mMultiTarget = false;

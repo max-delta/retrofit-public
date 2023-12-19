@@ -47,12 +47,14 @@ public:
 		combat::CombatInstance& combatInstance,
 		combat::FighterID const& source,
 		combat::FighterID const& target,
-		element::ElementIdentifier identifier ) const;
+		element::ElementIdentifier identifier,
+		element::ElementLevel castedLevel ) const;
 	UniquePtr<CastError> ExecuteRawCast(
 		combat::CombatInstance& combatInstance,
 		combat::FighterID const& source,
 		combat::FighterID const& target,
-		rftl::string_view const& key ) const;
+		rftl::string_view const& key,
+		element::ElementLevel castedLevel ) const;
 
 
 	//

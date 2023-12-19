@@ -167,13 +167,17 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 	ElementIdentifier elementToCast =
 		MakeElementIdentifier( "ST_R_1" );
 
+	// TODO: Have a way to choose or configure this
+	element::ElementLevel castedLevel = 3;
+
 	// Cast the element to create a new combat instance
 	CombatInstance resultInstance = startInstance;
 	UniquePtr<cast::CastError> const castError = gCastingEngine->ExecuteElementCast(
 		resultInstance,
 		attackerID,
 		defenderID,
-		elementToCast );
+		elementToCast,
+		castedLevel );
 
 	// TODO: Will want to display error information
 	RF_ASSERT( castError == cast::CastError::kNoError );

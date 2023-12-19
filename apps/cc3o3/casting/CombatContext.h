@@ -36,8 +36,13 @@ public:
 	// Many actions are source->target between combatants
 	// NOTE: May be the same in cases of self-targeting
 	// NOTE: Can be explicitly invalid if not present
-	combat::FighterID mSourceFighter;
-	combat::FighterID mTargetFighter;
+	combat::FighterID mSourceFighter = {};
+	combat::FighterID mTargetFighter = {};
+
+	// When casting an element, the level of the cast can be different than the
+	//  natural level or strength of the element
+	// NOTE: Can be zero when not performing a cast
+	element::ElementLevel mCastedLevel = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

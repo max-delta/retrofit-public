@@ -29,7 +29,8 @@ UniquePtr<CastError> ExecuteCast(
 	combat::CombatInstance& combatInstance,
 	combat::FighterID const& source,
 	combat::FighterID const& target,
-	rftl::string_view const& key )
+	rftl::string_view const& key,
+	element::ElementLevel castedLevel )
 {
 	// Prepare context
 	// NOTE: Combat instance is copied by the context, will need to extract it
@@ -38,6 +39,7 @@ UniquePtr<CastError> ExecuteCast(
 	CombatContext ctx( constCombatInstance );
 	ctx.mSourceFighter = source;
 	ctx.mTargetFighter = target;
+	ctx.mCastedLevel = castedLevel;
 
 	// Fetch action from environment
 	RF_ASSERT( env.mActionDatabase != nullptr );
@@ -52,10 +54,18 @@ UniquePtr<CastError> ExecuteCast(
 	}
 	act::ActionRecord const& action = *actionPtr;
 
-	RF_TODO_ANNOTATION( "Make sure the cast can be performed" );
+	// Make sure the cast can be performed
+	bool const canCast = ctx.mCombatInstance.CanPerformCast( ctx.mSourceFighter, ctx.mCastedLevel );
+	if( canCast == false )
+	{
+		RFLOG_ERROR( key, RFCAT_CC3O3, "Couldn't perform cast (basic checks failed)" );
+		UniquePtr<CastError> err = CastError::Create( env, ctx );
+		err->mPreActionCastInvalidatation = true;
+		return err;
+	}
 
 	// Start the cast
-	bool const startSuccess = ctx.mCombatInstance.StartCast( ctx.mSourceFighter );
+	bool const startSuccess = ctx.mCombatInstance.StartCast( ctx.mSourceFighter, ctx.mCastedLevel );
 	RF_ASSERT( startSuccess );
 
 	// Get root step
@@ -179,7 +189,8 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 	combat::CombatInstance& combatInstance,
 	combat::FighterID const& source,
 	combat::FighterID const& target,
-	element::ElementIdentifier identifier ) const
+	element::ElementIdentifier identifier,
+	element::ElementLevel castedLevel ) const
 {
 	static constexpr char kPrefix[] = "elements/";
 	static constexpr size_t kPrefixSize = rftl::extent<decltype( kPrefix )>::value - sizeof( '\0' );
@@ -194,7 +205,8 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 		combatInstance,
 		source,
 		target,
-		key );
+		key,
+		castedLevel );
 }
 
 
@@ -204,7 +216,8 @@ UniquePtr<CastError> CastingEngine::ExecuteRawCast(
 	combat::CombatInstance& combatInstance,
 	combat::FighterID const& source,
 	combat::FighterID const& target,
-	rftl::string_view const& key ) const
+	rftl::string_view const& key,
+	element::ElementLevel castedLevel ) const
 {
 	act::Environment env = {};
 	env.mActionDatabase = mActionDatabase;
@@ -215,7 +228,8 @@ UniquePtr<CastError> CastingEngine::ExecuteRawCast(
 		combatInstance,
 		source,
 		target,
-		key );
+		key,
+		castedLevel );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

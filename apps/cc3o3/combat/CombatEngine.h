@@ -109,6 +109,9 @@ public:
 	// Attacks grant charge based on strength
 	SimVal LoCalcAttackChargeGain( SimVal attackStrength ) const;
 
+	// Casts cost charge based on level
+	SimVal LoCalcElementChargeCost( SimVal castedLevel ) const;
+
 	// Attack accuracy is affected by the strength of the attack
 	SimVal LoCalcAttackAccuracy( SimVal attackStrength ) const;
 

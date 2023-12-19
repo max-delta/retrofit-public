@@ -377,7 +377,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 		for( SimVal const& cast : casts )
 		{
 			CombatInstance castInstance = startInstance;
-			castInstance.StartCast( attackerID );
+			castInstance.StartCast( attackerID, cast );
 			RF_TODO_ANNOTATION( "Configurable casting colors" );
 			CastDamageResult const result = castInstance.ApplyCastDamage(
 				attackerID,

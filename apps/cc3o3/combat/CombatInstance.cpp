@@ -576,7 +576,29 @@ bool CombatInstance::CanPerformCast( FighterID attackerID ) const
 
 
 
-bool CombatInstance::StartCast( FighterID attackerID )
+bool CombatInstance::CanPerformCast( FighterID attackerID, element::ElementLevel castedLevel ) const
+{
+	if( CanPerformCast( attackerID ) == false )
+	{
+		return false;
+	}
+
+	CombatEngine const& engine = *mCombatEngine;
+
+	Fighter const attacker = GetFighter( attackerID );
+
+	if( attacker.mCurCharge < engine.LoCalcElementChargeCost( castedLevel ) )
+	{
+		// Not enough charge
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool CombatInstance::StartCast( FighterID attackerID, element::ElementLevel castedLevel )
 {
 	CombatEngine const& engine = *mCombatEngine;
 
@@ -585,6 +607,10 @@ bool CombatInstance::StartCast( FighterID attackerID )
 	// Pay the stamina cost up front, in case the element does something
 	//  special to increase stamina gain
 	DecreaseStamina( attackerID, engine.LoCalcElementStaminaCost() );
+
+	// Pay the charge cost up front, in case the element does something
+	//  special to increase charge gain
+	DecreaseCharge( attackerID, engine.LoCalcElementChargeCost( castedLevel ) );
 
 	// Break any combos before the cast goes off, since casting should normally
 	//  break any combos, but could do something special to start a new combo
@@ -609,7 +635,7 @@ CastDamageProfile CombatInstance::PrepareCastDamage(
 	FighterID attackerID,
 	FighterID defenderID,
 	SimVal elementStrength,
-	SimVal castedLevel,
+	element::ElementLevel castedLevel,
 	bool multiTarget,
 	element::InnateIdentifier elementColor ) const
 {
@@ -639,7 +665,7 @@ CastDamageResult CombatInstance::ApplyCastDamage(
 	FighterID attackerID,
 	FighterID defenderID,
 	SimVal elementStrength,
-	SimVal castedLevel,
+	element::ElementLevel castedLevel,
 	bool multiTarget,
 	element::InnateIdentifier elementColor )
 {

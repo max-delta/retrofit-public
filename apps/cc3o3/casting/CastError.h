@@ -49,6 +49,9 @@ public:
 
 	// If set, an action could not be found with this key
 	rftl::string mMissingActionKey;
+
+	// If set, a cast was determined to be ineligible before actions started
+	bool mPreActionCastInvalidatation = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

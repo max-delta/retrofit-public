@@ -684,6 +684,14 @@ SimVal CombatEngine::LoCalcAttackChargeGain( SimVal attackStrength ) const
 
 
 
+SimVal CombatEngine::LoCalcElementChargeCost( SimVal castedLevel ) const
+{
+	RF_ASSERT( castedLevel > 0 );
+	return castedLevel;
+}
+
+
+
 SimVal CombatEngine::LoCalcAttackAccuracy( SimVal attackStrength ) const
 {
 	if( attackStrength >= 3 )

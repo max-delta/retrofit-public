@@ -128,20 +128,21 @@ public:
 	// NOTE: These are of limited capability, and are generally expected to be
 	//  run via the casting engine, not directly on the instance
 	bool CanPerformCast( FighterID attackerID ) const;
-	bool StartCast( FighterID attackerID );
+	bool CanPerformCast( FighterID attackerID, element::ElementLevel castedLevel ) const;
+	bool StartCast( FighterID attackerID, element::ElementLevel castedLevel );
 	bool FinishCast( FighterID attackerID );
 	CastDamageProfile PrepareCastDamage(
 		FighterID attackerID,
 		FighterID defenderID,
 		SimVal elementStrength,
-		SimVal castedLevel,
+		element::ElementLevel castedLevel,
 		bool multiTarget,
 		element::InnateIdentifier elementColor ) const;
 	CastDamageResult ApplyCastDamage(
 		FighterID attackerID,
 		FighterID defenderID,
 		SimVal elementStrength,
-		SimVal castedLevel,
+		element::ElementLevel castedLevel,
 		bool multiTarget,
 		element::InnateIdentifier elementColor );
 
