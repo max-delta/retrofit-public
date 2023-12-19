@@ -11,6 +11,7 @@
 
 #include "core/ptr/weak_ptr.h"
 
+#include "rftl/optional"
 #include "rftl/string"
 #include "rftl/string_view"
 
@@ -54,6 +55,7 @@ public:
 		combat::FighterID const& source,
 		combat::FighterID const& target,
 		rftl::string_view const& key,
+		rftl::optional<element::ElementDesc> elementDesc,
 		element::ElementLevel castedLevel ) const;
 
 

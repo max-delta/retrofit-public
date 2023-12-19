@@ -3,6 +3,7 @@
 
 #include "cc3o3/casting/CastError.h"
 #include "cc3o3/casting/CombatContext.h"
+#include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/resource/ResourceLoad.h"
 
@@ -30,6 +31,7 @@ UniquePtr<CastError> ExecuteCast(
 	combat::FighterID const& source,
 	combat::FighterID const& target,
 	rftl::string_view const& key,
+	rftl::optional<element::ElementDesc> elementDesc,
 	element::ElementLevel castedLevel )
 {
 	// Prepare context
@@ -39,8 +41,12 @@ UniquePtr<CastError> ExecuteCast(
 	CombatContext ctx( constCombatInstance );
 	ctx.mSourceFighter = source;
 	ctx.mTargetFighter = target;
-	RF_TODO_ANNOTATION( "Need a way to specifc element strength" );
-	ctx.mElementStrength = castedLevel;
+	if( elementDesc.has_value() )
+	{
+		element::ElementDesc const& desc = elementDesc.value();
+		ctx.mElementColor = desc.mInnate;
+		ctx.mElementStrength = desc.mBaseLevel;
+	}
 	ctx.mCastedLevel = castedLevel;
 
 	// Fetch action from environment
@@ -194,6 +200,14 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 	element::ElementIdentifier identifier,
 	element::ElementLevel castedLevel ) const
 {
+	element::ElementDesc const desc = mElementDatabase->GetElementDesc( identifier );
+	if( desc.mIdentifier == element::kInvalidElementIdentifier )
+	{
+		// Database lookup failed
+		RF_TODO_BREAK_MSG( "Return an error context" );
+		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
+	}
+
 	static constexpr char kPrefix[] = "elements/";
 	static constexpr size_t kPrefixSize = rftl::extent<decltype( kPrefix )>::value - sizeof( '\0' );
 
@@ -208,6 +222,7 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 		source,
 		target,
 		key,
+		desc,
 		castedLevel );
 }
 
@@ -219,6 +234,7 @@ UniquePtr<CastError> CastingEngine::ExecuteRawCast(
 	combat::FighterID const& source,
 	combat::FighterID const& target,
 	rftl::string_view const& key,
+	rftl::optional<element::ElementDesc> elementDesc,
 	element::ElementLevel castedLevel ) const
 {
 	act::Environment env = {};
@@ -231,6 +247,7 @@ UniquePtr<CastError> CastingEngine::ExecuteRawCast(
 		source,
 		target,
 		key,
+		elementDesc,
 		castedLevel );
 }
 
