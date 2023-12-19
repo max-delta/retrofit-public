@@ -239,6 +239,13 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		rftl::string const& stack = entry.at( 5 );
 		rftl::string const& chain = entry.at( 6 );
 
+		static constexpr auto convertLevel = []( rftl::string const& in ) -> ElementLevel
+		{
+			uint16_t stringstreamIsTerrible = 0;
+			( rftl::stringstream() << in ) >> stringstreamIsTerrible;
+			return math::integer_cast<ElementLevel>( stringstreamIsTerrible );
+		};
+
 		ElementDesc desc = {};
 
 		if( id.empty() || id.size() > sizeof( ElementIdentifier ) )
@@ -261,21 +268,21 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		}
 		desc.mInnate = MakeInnateIdentifier( innate );
 
-		( rftl::stringstream() << baseLevel ) >> desc.mBaseLevel;
+		desc.mBaseLevel = convertLevel( baseLevel );
 		if( desc.mBaseLevel == 0 )
 		{
 			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad base level", math::integer_cast<int>( line ) );
 			return false;
 		}
 
-		( rftl::stringstream() << minLevel ) >> desc.mMinLevel;
+		desc.mMinLevel = convertLevel( minLevel );
 		if( desc.mMinLevel == 0 )
 		{
 			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad min level", math::integer_cast<int>( line ) );
 			return false;
 		}
 
-		( rftl::stringstream() << maxLevel ) >> desc.mMaxLevel;
+		desc.mMaxLevel = convertLevel( maxLevel );
 		if( desc.mMaxLevel == 0 )
 		{
 			RFLOG_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line %i, bad max level", math::integer_cast<int>( line ) );
