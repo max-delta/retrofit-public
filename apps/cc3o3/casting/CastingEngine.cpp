@@ -208,6 +208,13 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
 	}
 
+	if( castedLevel < desc.mMinLevel || castedLevel > desc.mMaxLevel )
+	{
+		// Cast level is out of bounds of element desc
+		RF_TODO_BREAK_MSG( "Return an error context" );
+		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
+	}
+
 	static constexpr char kPrefix[] = "elements/";
 	static constexpr size_t kPrefixSize = rftl::extent<decltype( kPrefix )>::value - sizeof( '\0' );
 
