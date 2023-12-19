@@ -39,6 +39,8 @@ UniquePtr<CastError> ExecuteCast(
 	CombatContext ctx( constCombatInstance );
 	ctx.mSourceFighter = source;
 	ctx.mTargetFighter = target;
+	RF_TODO_ANNOTATION( "Need a way to specifc element strength" );
+	ctx.mElementStrength = castedLevel;
 	ctx.mCastedLevel = castedLevel;
 
 	// Fetch action from environment

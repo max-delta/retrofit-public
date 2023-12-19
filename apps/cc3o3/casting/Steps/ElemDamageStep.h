@@ -26,7 +26,8 @@ public:
 public:
 	// Damage calculation normally uses the strength from the base level and
 	//  any upleveling or downleveling, but it can be further modified here
-	combat::SimDelta mElemStrengthLevelModifier = 0;
+	combat::SimDelta mElemStrengthModifier = 0;
+	combat::SimDelta mCastLevelModifier = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

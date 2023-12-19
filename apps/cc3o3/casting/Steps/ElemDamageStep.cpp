@@ -2,9 +2,11 @@
 #include "ElemDamageStep.h"
 
 #include "cc3o3/casting/CombatContext.h"
+#include "cc3o3/combat/Cast.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core_math/math_casts.h"
 #include "core_rftype/VirtualCast.h"
 
 
@@ -12,7 +14,8 @@ RFTYPE_CREATE_META( RF::cc::cast::step::ElemDamageStep )
 {
 	using RF::cc::cast::step::ElemDamageStep;
 	RFTYPE_META().BaseClass<RF::act::Step>();
-	RFTYPE_META().RawProperty( "mElemStrengthLevelModifier", &ElemDamageStep::mElemStrengthLevelModifier );
+	RFTYPE_META().RawProperty( "mElemStrengthModifier", &ElemDamageStep::mElemStrengthModifier );
+	RFTYPE_META().RawProperty( "mCastLevelModifier", &ElemDamageStep::mCastLevelModifier );
 	RFTYPE_REGISTER_BY_NAME( "ElemDamageStep" );
 	RFTYPE_REGISTER_DEFAULT_CREATOR();
 }
@@ -32,13 +35,18 @@ UniquePtr<act::Context> ElemDamageStep::Execute( act::Environment const& env, ac
 	}
 	CombatContext& combatCtx = *combatCtxPtr;
 
-	// TODO: Actual implementation, done through the combat engine, with more
-	//  information available in the context, like the element level, color,
-	//  up/downlevel, etc
-	combatCtx.mCombatInstance.DecreaseHealth(
+	// Apply the damage
+	combat::CastDamageResult const result = combatCtx.mCombatInstance.ApplyCastDamage(
+		combatCtx.mSourceFighter,
 		combatCtx.mTargetFighter,
-		static_cast<combat::SimVal>( // HACK: Just showing value usage
-			1 + mElemStrengthLevelModifier ) );
+		math::integer_cast<combat::SimVal>(
+			combatCtx.mElementStrength + mElemStrengthModifier ),
+		math::integer_cast<combat::SimVal>(
+			combatCtx.mCastedLevel + mCastLevelModifier ),
+		combatCtx.mMultiTarget,
+		combatCtx.mElementColor );
+	RF_ASSERT_MSG( result.mDamage > 0, "No damage applied, suspicious" );
+	RF_ASSERT_MSG( result.mCoungerGuageIncrease > 0, "No guage increase, suspicious" );
 
 	return nullptr;
 }
