@@ -304,11 +304,11 @@
 		<ClCompile Include="casting\CastError.cpp">
 			<Filter>casting</Filter>
 		</ClCompile>
-		<ClCompile Include="casting\CombatContext.cpp">
-			<Filter>casting</Filter>
-		</ClCompile>
 		<ClCompile Include="casting\Steps\ElemDamageStep.cpp">
 			<Filter>casting\Steps</Filter>
+		</ClCompile>
+		<ClCompile Include="casting\Contexts\CombatContext.cpp">
+			<Filter>casting\Contexts</Filter>
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
@@ -831,9 +831,6 @@
 		<ClInclude Include="casting\CastError.h">
 			<Filter>casting</Filter>
 		</ClInclude>
-		<ClInclude Include="casting\CombatContext.h">
-			<Filter>casting</Filter>
-		</ClInclude>
 		<ClInclude Include="casting\Steps\stdafx.h">
 			<Filter>casting\Steps</Filter>
 		</ClInclude>
@@ -845,6 +842,15 @@
 		</ClInclude>
 		<ClInclude Include="combat\Cast.h">
 			<Filter>combat</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Contexts\CombatContext.h">
+			<Filter>casting\Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Contexts\stdafx.h">
+			<Filter>casting\Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Contexts\project.h">
+			<Filter>casting\Contexts</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
@@ -922,6 +928,9 @@
 		</Filter>
 		<Filter Include="casting\Steps">
 			<UniqueIdentifier>{24729859-6b92-4771-af41-8829b64b572e}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="casting\Contexts">
+			<UniqueIdentifier>{e7952951-6c92-473c-bb16-d945a532e7a4}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

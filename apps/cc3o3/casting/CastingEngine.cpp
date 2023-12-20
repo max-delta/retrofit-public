@@ -2,7 +2,7 @@
 #include "CastingEngine.h"
 
 #include "cc3o3/casting/CastError.h"
-#include "cc3o3/casting/CombatContext.h"
+#include "cc3o3/casting/Contexts/CombatContext.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/resource/ResourceLoad.h"

@@ -52,7 +52,7 @@
 		<ClCompile Include="campaign\RosterMemberDesc.cpp" />
 		<ClCompile Include="casting\CastingEngine.cpp" />
 		<ClCompile Include="casting\CastError.cpp" />
-		<ClCompile Include="casting\CombatContext.cpp" />
+		<ClCompile Include="casting\Contexts\CombatContext.cpp" />
 		<ClCompile Include="casting\Steps\ElemDamageStep.cpp" />
 		<ClCompile Include="cc3o3.cpp" />
 		<ClCompile Include="char\CharData.cpp" />
@@ -176,7 +176,9 @@
 		<ClInclude Include="casting\CastingEngine.h" />
 		<ClInclude Include="casting\CastingFwd.h" />
 		<ClInclude Include="casting\CastError.h" />
-		<ClInclude Include="casting\CombatContext.h" />
+		<ClInclude Include="casting\Contexts\CombatContext.h" />
+		<ClInclude Include="casting\Contexts\project.h" />
+		<ClInclude Include="casting\Contexts\stdafx.h" />
 		<ClInclude Include="casting\project.h" />
 		<ClInclude Include="casting\stdafx.h" />
 		<ClInclude Include="casting\Steps\ElemDamageStep.h" />

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "ElemDamageStep.h"
 
-#include "cc3o3/casting/CombatContext.h"
+#include "cc3o3/casting/Contexts/CombatContext.h"
 #include "cc3o3/combat/Cast.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
