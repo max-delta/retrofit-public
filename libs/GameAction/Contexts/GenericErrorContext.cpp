@@ -17,5 +17,12 @@ bool GenericErrorContext::IsATerminalError() const
 	return true;
 }
 
+
+
+UniquePtr<act::Context> GenericErrorContext::Clone() const
+{
+	return DefaultCreator<GenericErrorContext>::Create( *this );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

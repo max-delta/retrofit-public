@@ -18,6 +18,8 @@ class GAMEACTION_API GenericErrorContext final : public Context
 	// Public methods
 public:
 	virtual bool IsATerminalError() const override;
+
+	virtual UniquePtr<Context> Clone() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
