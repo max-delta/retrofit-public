@@ -37,6 +37,9 @@ public:
 		act::Environment const& env,
 		act::Context const& ctx );
 
+	// Creates a deep clone
+	UniquePtr<CastError> Clone() const;
+
 
 	//
 	// Public data

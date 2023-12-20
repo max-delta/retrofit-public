@@ -310,6 +310,9 @@
 		<ClCompile Include="casting\Contexts\CombatContext.cpp">
 			<Filter>casting\Contexts</Filter>
 		</ClCompile>
+		<ClCompile Include="casting\Contexts\CastErrorContext.cpp">
+			<Filter>casting\Contexts</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -850,6 +853,9 @@
 			<Filter>casting\Contexts</Filter>
 		</ClInclude>
 		<ClInclude Include="casting\Contexts\project.h">
+			<Filter>casting\Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="casting\Contexts\CastErrorContext.h">
 			<Filter>casting\Contexts</Filter>
 		</ClInclude>
 	</ItemGroup>

@@ -34,5 +34,18 @@ UniquePtr<CastError> CastError::Create(
 		ctx );
 }
 
+
+
+UniquePtr<CastError> CastError::Clone() const
+{
+	RF_ASSERT( mEnv != nullptr );
+	RF_ASSERT( mCtx != nullptr );
+	UniquePtr<CastError> retVal = Create( *mEnv, *mCtx );
+	CastError& clone = *retVal;
+	clone.mMissingActionKey = mMissingActionKey;
+	clone.mPreActionCastInvalidatation = mPreActionCastInvalidatation;
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

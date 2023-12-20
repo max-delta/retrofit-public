@@ -9,7 +9,6 @@
 RFTYPE_CREATE_META( RF::cc::cast::CombatContext )
 {
 	RFTYPE_META().BaseClass<RF::act::Context>();
-	RFTYPE_REGISTER_BY_NAME( "CombatContext" );
 }
 
 namespace RF::cc::cast {
