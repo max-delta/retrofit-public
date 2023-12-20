@@ -2,6 +2,7 @@
 #include "CastingEngine.h"
 
 #include "cc3o3/casting/CastError.h"
+#include "cc3o3/casting/Contexts/CastErrorContext.h"
 #include "cc3o3/casting/Contexts/CombatContext.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/elements/IdentifierUtils.h"
@@ -92,10 +93,19 @@ UniquePtr<CastError> ExecuteCast(
 		if( newCtx->IsATerminalError() )
 		{
 			// Error context
-			RF_TODO_BREAK_MSG(
-				"Check if it's an error ctx that we can pull a cast error out"
-				" of, otherwise create a cast error that wraps it" );
-			return CastError::Create( env, *newCtx );
+
+			CastErrorContext* const castErrorCtxPtr = rftype::virtual_cast<CastErrorContext*>( newCtx.Get() );
+			if( castErrorCtxPtr != nullptr )
+			{
+				// Cast error context
+				return rftl::move( castErrorCtxPtr->mCastError );
+			}
+			else
+			{
+				// Non-cast error context
+				UniquePtr<CastError> err = CastError::Create( env, *newCtx );
+				return err;
+			}
 		}
 
 		WeakPtr<CombatContext> const combatCtx = rftype::virtual_ptr_cast<CombatContext>( WeakPtr<act::Context>( newCtx ) );
