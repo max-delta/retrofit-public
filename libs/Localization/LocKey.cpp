@@ -3,10 +3,11 @@
 
 #include "core/macros.h"
 
+
 namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
-LocKey::LocKey( rftl::string const& id )
+LocKey::LocKey( rftl::string_view const& id )
 	: mID( id )
 {
 	//
