@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "ElemDamageStep.h"
 
+#include "cc3o3/casting/Contexts/CastErrorContext.h"
 #include "cc3o3/casting/Contexts/CombatContext.h"
+#include "cc3o3/casting/CastError.h"
 #include "cc3o3/combat/Cast.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
@@ -29,9 +31,9 @@ UniquePtr<act::Context> ElemDamageStep::Execute( act::Environment const& env, ac
 	if( combatCtxPtr == nullptr )
 	{
 		// Non-combat context
-		RF_TODO_BREAK_MSG( "Return an error context" );
-		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
-		//return CastErrorContext;
+		UniquePtr<CastErrorContext> err = CastErrorContext::Create( env, ctx );
+		err->mCastError->mMissingCombatContext = true;
+		return err;
 	}
 	CombatContext& combatCtx = *combatCtxPtr;
 

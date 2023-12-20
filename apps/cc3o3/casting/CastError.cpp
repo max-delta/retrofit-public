@@ -42,8 +42,11 @@ UniquePtr<CastError> CastError::Clone() const
 	RF_ASSERT( mCtx != nullptr );
 	UniquePtr<CastError> retVal = Create( *mEnv, *mCtx );
 	CastError& clone = *retVal;
+	clone.mFailedElementDescLookup = mFailedElementDescLookup;
+	clone.mCastLevelOutOfBounds = mCastLevelOutOfBounds;
 	clone.mMissingActionKey = mMissingActionKey;
 	clone.mPreActionCastInvalidatation = mPreActionCastInvalidatation;
+	clone.mMissingCombatContext = mMissingCombatContext;
 	return retVal;
 }
 

@@ -26,6 +26,11 @@ public:
 
 	virtual UniquePtr<Context> Clone() const override;
 
+	// Helper for error creation, passes through to error creation helper
+	static UniquePtr<CastErrorContext> Create(
+		act::Environment const& env,
+		act::Context const& ctx );
+
 
 	//
 	// Public data

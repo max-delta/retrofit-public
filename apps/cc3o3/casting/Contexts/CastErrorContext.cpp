@@ -38,5 +38,17 @@ UniquePtr<act::Context> CastErrorContext::Clone() const
 	return DefaultCreator<CastErrorContext>::Create( *mCastError );
 }
 
+
+
+UniquePtr<CastErrorContext> CastErrorContext::Create(
+	act::Environment const& env,
+	act::Context const& ctx )
+{
+	return DefaultCreator<CastErrorContext>::Create(
+		CastError::Create(
+			env,
+			ctx ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

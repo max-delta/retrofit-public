@@ -13,6 +13,7 @@
 #include "GameAction/Context.h"
 #include "GameAction/Environment.h"
 #include "GameAction/Step.h"
+#include "GameAction/Contexts/GenericErrorContext.h"
 
 #include "PlatformFilesystem/VFS.h"
 
@@ -204,15 +205,17 @@ UniquePtr<CastError> CastingEngine::ExecuteElementCast(
 	if( desc.mIdentifier == element::kInvalidElementIdentifier )
 	{
 		// Database lookup failed
-		RF_TODO_BREAK_MSG( "Return an error context" );
-		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
+		UniquePtr<CastError> err = CastError::Create( act::Environment{}, act::GenericErrorContext{} );
+		err->mFailedElementDescLookup = identifier;
+		return err;
 	}
 
 	if( castedLevel < desc.mMinLevel || castedLevel > desc.mMaxLevel )
 	{
 		// Cast level is out of bounds of element desc
-		RF_TODO_BREAK_MSG( "Return an error context" );
-		RF_RETAIL_FATAL_MSG( "TODO", "TODO" );
+		UniquePtr<CastError> err = CastError::Create( act::Environment{}, act::GenericErrorContext{} );
+		err->mCastLevelOutOfBounds = castedLevel;
+		return err;
 	}
 
 	static constexpr char kPrefix[] = "elements/";
