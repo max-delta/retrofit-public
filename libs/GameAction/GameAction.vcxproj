@@ -37,6 +37,7 @@
 		<ClCompile Include="ConditionDatabase.cpp" />
 		<ClCompile Include="ConditionRecord.cpp" />
 		<ClCompile Include="Context.cpp" />
+		<ClCompile Include="Contexts\GenericErrorContext.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="Environment.cpp" />
 		<ClCompile Include="stdafx.cpp">
@@ -53,6 +54,9 @@
 		<ClInclude Include="ConditionDatabase.h" />
 		<ClInclude Include="ConditionRecord.h" />
 		<ClInclude Include="Context.h" />
+		<ClInclude Include="Contexts\GenericErrorContext.h" />
+		<ClInclude Include="Contexts\project.h" />
+		<ClInclude Include="Contexts\stdafx.h" />
 		<ClInclude Include="Environment.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />

@@ -14,6 +14,9 @@
 		<ClCompile Include="Steps\NopStep.cpp">
 			<Filter>Steps</Filter>
 		</ClCompile>
+		<ClCompile Include="Contexts\GenericErrorContext.cpp">
+			<Filter>Contexts</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -36,10 +39,22 @@
 		<ClInclude Include="Steps\project.h">
 			<Filter>Steps</Filter>
 		</ClInclude>
+		<ClInclude Include="Contexts\stdafx.h">
+			<Filter>Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="Contexts\GenericErrorContext.h">
+			<Filter>Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="Contexts\project.h">
+			<Filter>Contexts</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="Steps">
 			<UniqueIdentifier>{ebd7cbea-dc76-4966-86e6-7cd60d289650}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Contexts">
+			<UniqueIdentifier>{c868f1de-3cb2-482b-9bfd-af4111bb8138}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 </Project>
