@@ -24,18 +24,10 @@ bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPa
 
 	// Enumerate keymaps
 	rftl::vector<file::VFSPath> keymapFiles;
-	{
-		rftl::vector<file::VFSPath> unexpectedDirectories;
-		vfs.EnumerateDirectory(
-			path,
-			file::VFSMount::Permissions::ReadOnly,
-			keymapFiles,
-			unexpectedDirectories );
-		for( file::VFSPath const& unexpectedDirectory : unexpectedDirectories )
-		{
-			RFLOG_WARNING( unexpectedDirectory, RFCAT_LOCALIZATION, "Unexpected directory found alongside keymap files" );
-		}
-	}
+	vfs.EnumerateDirectoryRecursive(
+		path,
+		file::VFSMount::Permissions::ReadOnly,
+		keymapFiles );
 
 	if( keymapFiles.empty() )
 	{
