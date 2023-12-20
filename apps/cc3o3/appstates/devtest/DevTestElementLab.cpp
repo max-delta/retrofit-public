@@ -60,12 +60,24 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	auto const drawVaColorText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, va_list args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		return ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, color, fmt, args );
+	};
+	auto const drawColorText = [&drawVaColorText]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool //
+	{
 		va_list args;
 		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
+		bool const retVal = drawVaColorText( x, y, color, fmt, args );
+		va_end( args );
+		return retVal;
+	};
+	auto const drawText = [&drawVaColorText]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	{
+		va_list args;
+		va_start( args, fmt );
+		bool const retVal = drawVaColorText( x, y, math::Color3f::kWhite, fmt, args );
 		va_end( args );
 		return retVal;
 	};
@@ -179,9 +191,6 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		elementToCast,
 		castedLevel );
 
-	// TODO: Will want to display error information
-	RF_ASSERT( castError == cast::CastError::kNoError );
-
 	// TODO
 	( (void)internalState );
 
@@ -273,6 +282,10 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		}
 	};
 
+	static constexpr uint8_t kInstance_y = 5;
+	static constexpr uint8_t kInstanceA_x = 25;
+	static constexpr uint8_t kInstanceB_x = 55;
+
 	x = 2;
 	y = 2;
 	drawText( x, y, "TODO" );
@@ -280,12 +293,25 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 	drawText( x, y, "TODO" );
 	y++;
 
-	static constexpr uint8_t kInst_y = 5;
-	x = 25;
-	y = kInst_y;
+	// Cast error, if present
+	x = kInstanceA_x;
+	drawColorText( x, y, math::Color3f::kCyan, "CAST PREP" );
+	x = kInstanceB_x;
+	if( castError == cast::CastError::kNoError )
+	{
+		drawColorText( x, y, math::Color3f::kGreen, "CAST SUCCESS" );
+	}
+	else
+	{
+		drawColorText( x, y, math::Color3f::kRed, "CAST ERROR" );
+	}
+	y++;
+
+	x = kInstanceA_x;
+	y = kInstance_y;
 	drawInstance( startInstance );
-	x = 55;
-	y = kInst_y;
+	x = kInstanceB_x;
+	y = kInstance_y;
 	drawInstance( resultInstance );
 }
 
