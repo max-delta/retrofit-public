@@ -923,6 +923,8 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			{
 				// Waiting
 
+				RF_TODO_BREAK_MSG( "Implement wait logic" );
+
 				// TODO: (If enemy turn) Check for time counter input? Or
 				//  should that be on a different input layer than the menus?
 
@@ -972,6 +974,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					{
 						// TODO: Cast element, ascend to action menu, navigate
 						//  to next character
+						RF_TODO_BREAK_MSG( "Cast element" );
 						internalState.SwitchControlState( uiContext, ControlState::kAction );
 						internalState.ShiftControlChar( 1 );
 					}
@@ -1041,6 +1044,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canDefend )
 						{
 							// TODO: Execute defense, navigate to next character
+							RF_TODO_BREAK_MSG( "Implement defense logic" );
 							internalState.ShiftControlChar( 1 );
 						}
 						else
@@ -1054,6 +1058,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canEndTurn )
 						{
 							// TODO: End turn
+							RF_TODO_BREAK_MSG( "Implement end turn logic" );
 						}
 						else
 						{
@@ -1175,7 +1180,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				}
 				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
 				{
-					RF_DBGFAIL_MSG( "Expecteded the grid selector to swallow these inputs" );
+					RF_DBGFAIL_MSG( "Expected the grid selector to swallow these inputs" );
 				}
 			}
 			else
@@ -1213,7 +1218,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			{
 				// Uh...
 				// TODO: End-turn logic to guard this before-hand?
-				RF_DBGFAIL();
+				RF_DBGFAIL_MSG( "Entered a state where no character can act?" );
 			}
 
 			if( wasChanged )

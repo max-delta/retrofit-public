@@ -82,6 +82,7 @@ void FightController::StartCombatFrame()
 
 	mCombatInstance->ReloadCombatData();
 	// TODO: Load attack buffer
+	RF_TODO_ANNOTATION( "Rollback support for attack buffer" );
 
 	mFrameActive = true;
 }
@@ -94,6 +95,7 @@ void FightController::EndCombatFrame()
 
 	mCombatInstance->CommitCombatData();
 	// TODO: Save attack buffer
+	RF_TODO_ANNOTATION( "Rollback support for attack buffer" );
 
 	mFrameActive = false;
 }
@@ -117,6 +119,7 @@ void FightController::TickPendingActions()
 	// NOTE: Probably want a seperate system to handle that aspect, since it
 	//  needs to work for other parties as well. Ownership of the main combat
 	//  instance will probably need to be moved into that new system.
+	RF_TODO_ANNOTATION( "Integration with a display / animation system" );
 
 	CombatInstance& combatInstance = *mCombatInstance;
 
@@ -135,6 +138,7 @@ void FightController::TickPendingActions()
 			// NOTE: Will likely be the responsibility of whatever system is
 			//  monitoring and executing the delays and animations, since we
 			//  need to display this for other parties as well
+			RF_TODO_ANNOTATION( "Mechanism to hand over attacks to a display / animation system" );
 			( (void)result );
 		}
 		else
@@ -272,6 +276,7 @@ void FightController::BufferAttack( uint8_t attackerIndex, uint8_t defenderIndex
 	//  * buffered:Attack:0
 	//  * buffered:Attack:1
 	//  * buffered:Attack:2 (Or whatever limit is reasonable)
+	RF_TODO_ANNOTATION( "Rollback support for attack buffer" );
 
 	RF_ASSERT( CanCharacterPerformAttack( attackerIndex, defenderIndex, attackStrength ) );
 	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
@@ -297,6 +302,7 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex ) const
 bool FightController::CanCharacterActivateDefense( uint8_t attackerIndex ) const
 {
 	// TODO
+	RF_TODO_ANNOTATION( "Implement defense logic" );
 	return false;
 }
 
@@ -305,6 +311,7 @@ bool FightController::CanCharacterActivateDefense( uint8_t attackerIndex ) const
 bool FightController::CanPartyEndTurn() const
 {
 	// TODO
+	RF_TODO_ANNOTATION( "Implement end turn logic" );
 	return false;
 }
 
