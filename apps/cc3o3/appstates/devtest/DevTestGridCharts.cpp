@@ -3,7 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
-#include "cc3o3/char/GridMask.h"
+#include "cc3o3/char/GridSizeMask.h"
 #include "cc3o3/ui/UIFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -169,9 +169,9 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 	x = xStart;
 	y = yStart;
 	{
-		using character::GridMask;
-		GridMask const minSlots = GridMask::CalcMinimumSlots( storyTier );
-		GridMask const curSlots = GridMask::CalcSlots( elemPower, gridShape, storyTier );
+		using character::GridSizeMask;
+		GridSizeMask const minSlots = GridSizeMask::CalcMinimumSlots( storyTier );
+		GridSizeMask const curSlots = GridSizeMask::CalcSlots( elemPower, gridShape, storyTier );
 
 		for( element::ElementLevel const& level : element::kElementLevels )
 		{

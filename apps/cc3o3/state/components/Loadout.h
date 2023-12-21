@@ -4,7 +4,7 @@
 #include "cc3o3/state/Component.h"
 #include "cc3o3/char/Equipment.h"
 #include "cc3o3/char/ElementSlots.h"
-#include "cc3o3/char/GridMask.h"
+#include "cc3o3/char/GridSizeMask.h"
 
 #include "core/macros.h"
 
@@ -32,7 +32,7 @@ public:
 public:
 	character::Equipment mEquipment = {};
 
-	character::GridMask mGridMask = {};
+	character::GridSizeMask mGridSizeMask = {};
 
 	// TODO: Re-design how innate elements are stored
 	character::ElementSlots mInnateElements = {};

@@ -34,7 +34,7 @@ struct Visuals;
 struct Stats;
 struct Equipment;
 struct ElementSlots;
-struct GridMask;
+struct GridSizeMask;
 
 class CharacterDatabase;
 class CharacterValidator;

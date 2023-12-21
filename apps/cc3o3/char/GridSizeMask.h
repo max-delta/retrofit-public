@@ -11,7 +11,7 @@
 namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct GridMask
+struct GridSizeMask
 {
 	//
 	// Types and constants
@@ -22,15 +22,15 @@ public:
 	//
 	// Public methods
 public:
-	GridMask() = default;
+	GridSizeMask() = default;
 
 	size_t const& GetNumSlotsAtLevel( element::ElementLevel level ) const;
 
 	static size_t CalcMinimumTotalSlots( company::StoryTier storyTier );
-	static GridMask CalcMinimumSlots( company::StoryTier storyTier );
+	static GridSizeMask CalcMinimumSlots( company::StoryTier storyTier );
 
 	static size_t CalcTotalSlots( StatValue elemPower, company::StoryTier storyTier );
-	static GridMask CalcSlots( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier );
+	static GridSizeMask CalcSlots( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier );
 
 
 	//

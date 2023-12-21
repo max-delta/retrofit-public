@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "GridMask.h"
+#include "GridSizeMask.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
 
@@ -12,13 +12,13 @@
 #include "rftl/numeric"
 #include "rftl/extension/static_vector.h"
 
-RFTYPE_CREATE_META( RF::cc::character::GridMask )
+RFTYPE_CREATE_META( RF::cc::character::GridSizeMask )
 {
 	using namespace RF::cc::character;
 	// TODO: Add an extension for this (rftl::array<...>)
-	//RFTYPE_META().ExtensionProperty( "mSlotsPerElemLevel", &GridMask::mSlotsPerElemLevel );
-	RFTYPE_REGISTER_BY_NAME( "GridMask" );
-	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::cc::character::GridMask );
+	//RFTYPE_META().ExtensionProperty( "mSlotsPerElemLevel", &GridSizeMask::mSlotsPerElemLevel );
+	RFTYPE_REGISTER_BY_NAME( "GridSizeMask" );
+	RFTYPE_REGISTER_BY_QUALIFIED_NAME( RF::cc::character::GridSizeMask );
 }
 
 
@@ -26,7 +26,7 @@ namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-GridMask::SlotsPerElemLevel CalcMinimumSlotsPerLevel( company::StoryTier storyTier )
+GridSizeMask::SlotsPerElemLevel CalcMinimumSlotsPerLevel( company::StoryTier storyTier )
 {
 	switch( storyTier )
 	{
@@ -66,7 +66,7 @@ GridMask::SlotsPerElemLevel CalcMinimumSlotsPerLevel( company::StoryTier storyTi
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t const& GridMask::GetNumSlotsAtLevel( element::ElementLevel level ) const
+size_t const& GridSizeMask::GetNumSlotsAtLevel( element::ElementLevel level ) const
 {
 	size_t const levelOffset = element::AsLevelOffset( level );
 	return mSlotsPerElemLevel.at( levelOffset );
@@ -74,7 +74,7 @@ size_t const& GridMask::GetNumSlotsAtLevel( element::ElementLevel level ) const
 
 
 
-size_t GridMask::CalcMinimumTotalSlots( company::StoryTier storyTier )
+size_t GridSizeMask::CalcMinimumTotalSlots( company::StoryTier storyTier )
 {
 	SlotsPerElemLevel const minSlots = CalcMinimumSlots( storyTier ).mSlotsPerElemLevel;
 	return rftl::accumulate( minSlots.begin(), minSlots.end(), SlotsPerElemLevel::value_type{} );
@@ -82,16 +82,16 @@ size_t GridMask::CalcMinimumTotalSlots( company::StoryTier storyTier )
 
 
 
-GridMask GridMask::CalcMinimumSlots( company::StoryTier storyTier )
+GridSizeMask GridSizeMask::CalcMinimumSlots( company::StoryTier storyTier )
 {
-	GridMask retVal = {};
+	GridSizeMask retVal = {};
 	retVal.mSlotsPerElemLevel = details::CalcMinimumSlotsPerLevel( storyTier );
 	return retVal;
 }
 
 
 
-size_t GridMask::CalcTotalSlots( StatValue elemPower, company::StoryTier storyTier )
+size_t GridSizeMask::CalcTotalSlots( StatValue elemPower, company::StoryTier storyTier )
 {
 	size_t const min = CalcMinimumTotalSlots( storyTier );
 	size_t const power = math::integer_cast<size_t>( elemPower );
@@ -132,7 +132,7 @@ size_t GridMask::CalcTotalSlots( StatValue elemPower, company::StoryTier storyTi
 
 
 
-GridMask GridMask::CalcSlots( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier )
+GridSizeMask GridSizeMask::CalcSlots( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier )
 {
 	// NOTE: Non-optimal, but not expected to be called frequently
 
@@ -288,7 +288,7 @@ GridMask GridMask::CalcSlots( StatValue elemPower, GridShape gridShape, company:
 	}
 
 	// Apply the expenditures
-	GridMask retVal = CalcMinimumSlots( storyTier );
+	GridSizeMask retVal = CalcMinimumSlots( storyTier );
 	for( element::ElementLevel const& level : element::kElementLevels )
 	{
 		size_t const levelOffset = element::AsLevelOffset( level );

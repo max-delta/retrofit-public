@@ -19,7 +19,7 @@ void ElementGridDisplayCache::UpdateFromCharacter( state::ObjectRef const& chara
 	WeakPtr<state::comp::Loadout const> const loadout = character.GetComponentInstanceT<state::comp::Loadout>();
 	RF_ASSERT( loadout != nullptr );
 
-	mGridMask = loadout->mGridMask;
+	mGridSizeMask = loadout->mGridSizeMask;
 
 	character::ElementSlots::Grid const sourceGrid = loadout->CalcElements().mGrid;
 	static_assert( rftl::tuple_size<character::ElementSlots::Grid>::value == rftl::tuple_size<Grid>::value );
@@ -34,7 +34,7 @@ void ElementGridDisplayCache::UpdateFromCharacter( state::ObjectRef const& chara
 		character::ElementSlots::Column const& sourceColumn = sourceGrid.at( i_col );
 
 		element::ElementLevel const elementLevel = element::FromLevelOffset( i_col );
-		size_t const numUnmaskedSlots = mGridMask.GetNumSlotsAtLevel( elementLevel );
+		size_t const numUnmaskedSlots = mGridSizeMask.GetNumSlotsAtLevel( elementLevel );
 
 		// For each slot...
 		for( size_t i_slot = 0; i_slot < destColumn.size(); i_slot++ )

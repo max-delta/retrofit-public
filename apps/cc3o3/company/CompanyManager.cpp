@@ -288,8 +288,8 @@ void CompanyManager::UpdateRosterGridMasks( input::PlayerID const& playerID )
 		RF_ASSERT( chara != nullptr );
 		character::Stats const& stats = chara->mCharData.mStats;
 
-		// Calculate and set the grid mask
-		loadout->mGridMask = character::GridMask::CalcSlots( stats.mElemPwr, stats.mGridShp, prog->mStoryTier );
+		// Calculate and set the grid size mask
+		loadout->mGridSizeMask = character::GridSizeMask::CalcSlots( stats.mElemPwr, stats.mGridShp, prog->mStoryTier );
 	}
 }
 
