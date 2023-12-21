@@ -11,6 +11,7 @@
 namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Mask out elements in a grid broadly using size values
 struct GridSizeMask
 {
 	//
