@@ -174,7 +174,11 @@ void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer )
 	static_assert( FailTemplate<Context>(),
 		"No declaration was found for this context. The linker may still be"
 		" able to locate and resolve it, but this is currently flagged to"
-		" cause a compilation error instead." );
+		" cause a compilation error instead. This usually means you're trying"
+		" to use a variable as a context in logging, but that variable type"
+		" doesn't have a specialization (which will error on link), or that"
+		" specialization isn't visible from the current compilation unit"
+		" (it would successfully link later if not blocked by this assert)" );
 }
 #endif
 
