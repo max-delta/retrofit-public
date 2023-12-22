@@ -14,6 +14,7 @@ namespace RF::cc::ui {
 loc::TextDirection GetTextDirection();
 rftl::unordered_set<char> GetBreakableChars();
 
+rftl::string LocalizeKey( char const* key );
 rftl::string LocalizeKey( rftl::string_view const& key );
 rftl::string LocalizeKey( rftl::string&& key );
 

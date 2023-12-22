@@ -148,7 +148,8 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 			{
 				case 0:
 					// Inverted
-					index += increase ? -1 : 1;
+					index = math::integer_cast<size_t>(
+						math::integer_cast<int64_t>( index ) + ( increase ? -1 : 1 ) );
 					break;
 				case 1:
 					levelOffset += increase ? 1 : -1;

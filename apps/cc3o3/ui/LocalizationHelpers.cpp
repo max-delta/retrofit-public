@@ -29,6 +29,13 @@ rftl::unordered_set<char> GetBreakableChars()
 
 
 
+rftl::string LocalizeKey( char const* key )
+{
+	return LocalizeKey( rftl::string_view( key ) );
+}
+
+
+
 rftl::string LocalizeKey( rftl::string_view const& key )
 {
 	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( key ) ) ).GetCodePoints() );
