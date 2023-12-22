@@ -113,6 +113,10 @@ public:
 	void IncreaseCharge( FighterID fighterID, SimVal value );
 	void DecreaseCharge( FighterID fighterID, SimVal value );
 
+	// Grid logic
+	bool IsSlotLocked( FighterID fighterID, character::ElementSlotIndex slotIndex ) const;
+	void ModifySlotLockout( FighterID fighterID, character::ElementSlotIndex slotIndex, bool locked );
+
 	// Various conditions might prevent performing actions of any kind
 	bool CanPerformAction( FighterID attackerID ) const;
 

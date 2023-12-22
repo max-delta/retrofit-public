@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/char/GridBitMask.h"
 #include "cc3o3/combat/CombatantID.h"
 #include "cc3o3/elements/ElementFwd.h"
 
@@ -34,6 +35,9 @@ struct Fighter
 
 	SimVal mComboMeter = 0;
 	FighterID mComboTarget = {}; // Changing targets drops combo meter
+
+	character::GridBitMask mGridLockout = {}; // Casting slots often locks them
+	static_assert( sizeof( character::GridBitMask ) <= 8, "Larger size than expected" );
 };
 
 ///////////////////////////////////////////////////////////////////////////////

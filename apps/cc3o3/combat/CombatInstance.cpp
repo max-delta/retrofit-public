@@ -403,6 +403,22 @@ void CombatInstance::DecreaseCharge( FighterID fighterID, SimVal value )
 
 
 
+bool CombatInstance::IsSlotLocked( FighterID fighterID, character::ElementSlotIndex slotIndex ) const
+{
+	Fighter const fighter = GetFighter( fighterID );
+	return fighter.mGridLockout.FetchBit( slotIndex );
+}
+
+
+
+void CombatInstance::ModifySlotLockout( FighterID fighterID, character::ElementSlotIndex slotIndex, bool locked )
+{
+	Fighter fighter = GetFighter( fighterID );
+	fighter.mGridLockout.AssignBit( slotIndex, locked );
+}
+
+
+
 bool CombatInstance::CanPerformAction( FighterID attackerID ) const
 {
 	Fighter const attacker = GetFighter( attackerID );

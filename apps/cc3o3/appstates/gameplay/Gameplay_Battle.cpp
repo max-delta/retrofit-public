@@ -478,9 +478,22 @@ bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction, bool
 		// This target is invalid
 
 		// Shift target
-		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
-			mControlCharIndex, mTargetingIndex, direction );
-		wasChanged = true;
+		if( mTargetingReason == TargetingReason::kAttack )
+		{
+			mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
+				mControlCharIndex, mTargetingIndex, direction );
+			wasChanged = true;
+		}
+		else if( mTargetingReason == TargetingReason::kElement )
+		{
+			RF_TODO_BREAK_MSG( "Targeting logic for elements" );
+			return false;
+		}
+		else
+		{
+			RF_DBGFAIL_MSG( "Target shift done while not targeting" );
+			return false;
+		}
 
 		if( mTargetingIndex == startingTargetIndex )
 		{
@@ -897,6 +910,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 	ui::UIContext uiContext( uiManager );
 	combat::FightController& fightController = *internalState.mFightController;
+	ui::controller::ElementGridSelector const& elementSelector = *internalState.mElementGridSelector;
 
 	ppu.DebugDrawText( gfx::ppu::Coord( 32, 32 ), "TODO: Battle" );
 
@@ -1172,11 +1186,47 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				}
 				else if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 				{
-					// TODO: Probably all elements have a targeting concept, so we
-					//  should always be able to go into targeting mode to have
-					//  the player confirm the cast, which is probably where the
-					//  result previews will happen
-					RF_TODO_BREAK_MSG( "Handle the logic for trying to cast an element" );
+					// All elements have a targeting concept, even if that
+					//  target is 'universal', so there will always be a
+					//  consistent UI flow for how to cast a chosen element,
+					//  which also creates a space for displaying result
+					//  previews
+
+					character::ElementSlotIndex const elementSlotIndex =
+						elementSelector.GetSelectedIndex( uiContext );
+
+					bool const canCastLevel = fightController.CanCharacterCastElement(
+						internalState.mControlCharIndex,
+						elementSlotIndex.first );
+					if( canCastLevel )
+					{
+						bool const canCastSlot = fightController.CanCharacterCastElement(
+							internalState.mControlCharIndex,
+							elementSlotIndex );
+						if( canCastSlot )
+						{
+							internalState.mTargetingReason = TargetingReason::kElement;
+							bool unusedChange;
+							bool const hasValidTarget = internalState.EnsureTargetIsValid( 1, unusedChange );
+							if( hasValidTarget )
+							{
+								// Descend to targeting
+								internalState.SwitchControlState( uiContext, ControlState::kTargeting );
+							}
+							else
+							{
+								RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character has nothing valid to cast on" );
+							}
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot cast chosen element slot" );
+						}
+					}
+					else
+					{
+						RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character cannot cast chosen element level" );
+					}
 				}
 				else if( focusEvent == ui::focusevent::Command_NavigateLeft || focusEvent == ui::focusevent::Command_NavigateRight )
 				{

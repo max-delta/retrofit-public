@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/char/CharFwd.h"
 #include "cc3o3/combat/CombatantID.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -59,6 +60,8 @@ public:
 	void BufferAttack( uint8_t attackerIndex, uint8_t defenderIndex, uint8_t attackStrength );
 
 	bool CanCharacterCastElement( uint8_t attackerIndex ) const;
+	bool CanCharacterCastElement( uint8_t attackerIndex, element::ElementLevel castedLevel ) const;
+	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex ) const;
 
 	bool CanCharacterActivateDefense( uint8_t attackerIndex ) const;
 

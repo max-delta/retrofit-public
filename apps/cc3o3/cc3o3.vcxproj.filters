@@ -313,6 +313,9 @@
 		<ClCompile Include="casting\Contexts\CastErrorContext.cpp">
 			<Filter>casting\Contexts</Filter>
 		</ClCompile>
+		<ClCompile Include="char\GridBitMask.cpp">
+			<Filter>char</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -857,6 +860,9 @@
 		</ClInclude>
 		<ClInclude Include="casting\Contexts\CastErrorContext.h">
 			<Filter>casting\Contexts</Filter>
+		</ClInclude>
+		<ClInclude Include="char\GridBitMask.h">
+			<Filter>char</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>

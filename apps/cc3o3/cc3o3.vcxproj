@@ -63,6 +63,7 @@
 		<ClCompile Include="char\ElementSlots.cpp" />
 		<ClCompile Include="char\Equipment.cpp" />
 		<ClCompile Include="char\Genetics.cpp" />
+		<ClCompile Include="char\GridBitMask.cpp" />
 		<ClCompile Include="char\GridSizeMask.cpp" />
 		<ClCompile Include="char\Stats.cpp" />
 		<ClCompile Include="char\Visuals.cpp" />
@@ -195,6 +196,7 @@
 		<ClInclude Include="char\ElementSlots.h" />
 		<ClInclude Include="char\Equipment.h" />
 		<ClInclude Include="char\Genetics.h" />
+		<ClInclude Include="char\GridBitMask.h" />
 		<ClInclude Include="char\GridSizeMask.h" />
 		<ClInclude Include="char\project.h" />
 		<ClInclude Include="char\Stats.h" />

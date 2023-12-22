@@ -299,6 +299,32 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex ) const
 
 
 
+bool FightController::CanCharacterCastElement( uint8_t attackerIndex, element::ElementLevel castedLevel ) const
+{
+	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
+	return mCombatInstance->CanPerformCast( attackerID, castedLevel );
+}
+
+
+
+bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex ) const
+{
+	if( CanCharacterCastElement( attackerIndex, elementSlotIndex.first ) == false )
+	{
+		return false;
+	}
+
+	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
+	if( mCombatInstance->IsSlotLocked( attackerID, elementSlotIndex ) )
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
 bool FightController::CanCharacterActivateDefense( uint8_t attackerIndex ) const
 {
 	// TODO
