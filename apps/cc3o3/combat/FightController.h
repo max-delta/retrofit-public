@@ -52,6 +52,7 @@ public:
 	PartyID GetLocalPartyID() const;
 	FighterID GetCharacterByIndex( uint8_t attackerIndex ) const;
 	FighterID GetAttackTargetByIndex( uint8_t attackerIndex, uint8_t defenderIndex ) const;
+	FighterID GetCastTargetByIndex( uint8_t attackerIndex, element::ElementIdentifier elementIdentifier, uint8_t defenderIndex ) const;
 
 	bool CanCharacterPerformAttack( uint8_t attackerIndex ) const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex, uint8_t defenderIndex ) const;
@@ -62,6 +63,7 @@ public:
 	bool CanCharacterCastElement( uint8_t attackerIndex ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, element::ElementLevel castedLevel ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex ) const;
+	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
 
 	bool CanCharacterActivateDefense( uint8_t attackerIndex ) const;
 
@@ -73,6 +75,8 @@ public:
 private:
 	bool SimulateAttackBuffer( CombatInstance& simulation, FighterID attackerID, FighterID defenderID ) const;
 	bool SimulateAttackBuffer( CombatInstance& simulation, FighterID attackerID, FighterID defenderID, uint8_t additionalAttackStrength ) const;
+
+	element::ElementIdentifier GetElementIdentifierBySlotIndex( FighterID fighterID, character::ElementSlotIndex elementSlotIndex ) const;
 
 
 	//

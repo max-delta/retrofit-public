@@ -3,6 +3,9 @@
 
 #include "cc3o3/combat/Attack.h"
 #include "cc3o3/combat/CombatInstance.h"
+#include "cc3o3/state/ComponentResolver.h"
+#include "cc3o3/state/components/Loadout.h"
+#include "cc3o3/state/StateLogging.h"
 
 #include "Logging/Logging.h"
 
@@ -44,6 +47,18 @@ uint8_t SanitizeFighterIndex( CombatInstance::FighterIDs const& ids, uint8_t ind
 		math::integer_cast<uint8_t>( indices.size() ),
 		applyOffset );
 	return indices.at( targetOffset );
+}
+
+
+
+element::ElementIdentifier GetElementIdentiferFromSlotIndex( state::ObjectRef const& character, character::ElementSlotIndex elementSlotIndex )
+{
+	state::ComponentInstanceRefT<state::comp::Loadout> const loadout =
+		character.GetComponentInstanceT<state::comp::Loadout>();
+	RFLOG_TEST_AND_FATAL( loadout != nullptr, character, RFCAT_CC3O3, "Missing loadout component" );
+	element::ElementIdentifier const elementIdentifier =
+		loadout->mEquippedElements.At( elementSlotIndex );
+	return elementIdentifier;
 }
 
 }
@@ -193,6 +208,22 @@ FighterID FightController::GetAttackTargetByIndex( uint8_t attackerIndex, uint8_
 
 
 
+FighterID FightController::GetCastTargetByIndex( uint8_t attackerIndex, element::ElementIdentifier elementIdentifier, uint8_t defenderIndex ) const
+{
+	// HACK: Use attack targets for now
+	// TODO: This needs to involve the element database or the casting engine
+	//  to help figure out what's targetable and what isn't, based on the
+	//  selected element
+	// TODO: This probably requires passing the combat instance and the element
+	//  into a helper that figures out what all the valid potential targets are
+	( (void)elementIdentifier );
+	( (void)mCombatInstance );
+	RF_TODO_ANNOTATION( "Handle more complex cast targets like self, allies, or dead targets" );
+	return GetAttackTargetByIndex( attackerIndex, defenderIndex );
+}
+
+
+
 bool FightController::CanCharacterPerformAttack( uint8_t attackerIndex ) const
 {
 	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
@@ -317,6 +348,47 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character:
 	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
 	if( mCombatInstance->IsSlotLocked( attackerID, elementSlotIndex ) )
 	{
+		// Slot is locked out (likely it was a one-time cast that's been used)
+		return false;
+	}
+
+	// What are we actually casting?
+	element::ElementIdentifier const elementIdentifier =
+		GetElementIdentifierBySlotIndex( attackerID, elementSlotIndex );
+	if( elementIdentifier == element::kInvalidElementIdentifier )
+	{
+		// Slot element isn't valid
+		return false;
+	}
+
+	return true;
+}
+
+
+
+bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const
+{
+	if( CanCharacterCastElement( attackerIndex, elementSlotIndex ) == false )
+	{
+		return false;
+	}
+
+	// What are we actually casting?
+	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
+	element::ElementIdentifier const elementIdentifier =
+		GetElementIdentifierBySlotIndex( attackerID, elementSlotIndex );
+	if( elementIdentifier == element::kInvalidElementIdentifier )
+	{
+		// Slot element isn't valid
+		return false;
+	}
+
+	FighterID const defenderID = GetCastTargetByIndex( attackerIndex, elementIdentifier, defenderIndex );
+	if( defenderID.IsValid() == false )
+	{
+		// Target isn't valid
+		// NOTE: It is possible that there are no valid targets for the chosen
+		//  element at this time
 		return false;
 	}
 
@@ -380,6 +452,16 @@ bool FightController::SimulateAttackBuffer( CombatInstance& simulation, FighterI
 	}
 	simulation.ExecuteAttack( attackerID, defenderID, additionalAttackStrength );
 	return true;
+}
+
+
+
+element::ElementIdentifier FightController::GetElementIdentifierBySlotIndex( FighterID fighterID, character::ElementSlotIndex elementSlotIndex ) const
+{
+	state::ObjectRef const character = mCombatInstance->GetCharacter( fighterID );
+	element::ElementIdentifier const elementIdentifier =
+		details::GetElementIdentiferFromSlotIndex( character, elementSlotIndex );
+	return elementIdentifier;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

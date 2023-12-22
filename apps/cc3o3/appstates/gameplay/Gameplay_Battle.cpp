@@ -148,7 +148,9 @@ public:
 
 	uint8_t mControlCharIndex = 0;
 	TargetingReason mTargetingReason = TargetingReason::kInvalid;
+	character::ElementSlotIndex mTargetingSlot = {};
 	uint8_t mTargetingIndex = 0;
+
 	WeakPtr<ui::controller::ListBox> mActionMenu;
 	WeakPtr<ui::controller::ListBox> mAttackMenu;
 	WeakPtr<ui::controller::ElementGridSelector> mElementGridSelector;
@@ -448,8 +450,11 @@ bool Gameplay_Battle::InternalState::IsTargetValid() const
 
 	if( mTargetingReason == TargetingReason::kElement )
 	{
-		RF_TODO_BREAK();
-		return false;
+		bool const canCast = fightController.CanCharacterCastElement(
+			mControlCharIndex,
+			mTargetingSlot,
+			mTargetingIndex );
+		return canCast;
 	}
 
 	RF_DBGFAIL_MSG( "Target check done while not targeting" );
@@ -1206,6 +1211,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 						if( canCastSlot )
 						{
 							internalState.mTargetingReason = TargetingReason::kElement;
+							internalState.mTargetingSlot = elementSlotIndex;
 							bool unusedChange;
 							bool const hasValidTarget = internalState.EnsureTargetIsValid( 1, unusedChange );
 							if( hasValidTarget )
