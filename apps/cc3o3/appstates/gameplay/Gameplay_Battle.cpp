@@ -492,8 +492,9 @@ bool Gameplay_Battle::InternalState::EnsureTargetIsValid( int8_t direction, bool
 		}
 		else if( mTargetingReason == TargetingReason::kElement )
 		{
-			RF_TODO_BREAK_MSG( "Targeting logic for elements" );
-			return false;
+			mTargetingIndex = mFightController->SanitizeCastTargetIndex(
+				mControlCharIndex, mTargetingSlot, mTargetingIndex, direction );
+			wasChanged = true;
 		}
 		else
 		{
@@ -531,7 +532,8 @@ void Gameplay_Battle::InternalState::ShiftTarget( int8_t applyOffset )
 	}
 	else if( mTargetingReason == TargetingReason::kElement )
 	{
-		RF_TODO_BREAK_MSG( "Targeting logic for elements" );
+		mTargetingIndex = mFightController->SanitizeCastTargetIndex(
+			mControlCharIndex, mTargetingSlot, mTargetingIndex, applyOffset );
 	}
 	else
 	{
@@ -564,7 +566,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 
 	// Setup combat instance
 	{
-		internalState.mFightController = DefaultCreator<combat::FightController>::Create();
+		internalState.mFightController = DefaultCreator<combat::FightController>::Create( gCastingEngine );
 		campaign.HardcodedCombatSetup( *internalState.mFightController );
 	}
 

@@ -64,7 +64,11 @@ element::ElementIdentifier GetElementIdentiferFromSlotIndex( state::ObjectRef co
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-FightController::FightController() = default;
+FightController::FightController( WeakPtr<cast::CastingEngine const> castingEngine )
+	: mCastingEngine( castingEngine )
+{
+	//
+}
 
 
 
@@ -184,6 +188,20 @@ uint8_t FightController::SanitizeAttackTargetIndex( uint8_t attackerIndex, uint8
 
 
 
+uint8_t FightController::SanitizeCastTargetIndex( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex, int8_t applyOffset ) const
+{
+	FighterID const attacker = GetCharacterByIndex( attackerIndex );
+	element::ElementIdentifier const elementIdentifier = GetElementIdentifierBySlotIndex( attacker, elementSlotIndex );
+	cast::CastingEngine::FighterIDs const castTargets =
+		mCastingEngine->GetValidCastTargets(
+			*mCombatInstance,
+			attacker,
+			elementIdentifier );
+	return details::SanitizeFighterIndex( castTargets, defenderIndex, applyOffset );
+}
+
+
+
 PartyID FightController::GetLocalPartyID() const
 {
 	return mLocalPartyID;
@@ -208,18 +226,17 @@ FighterID FightController::GetAttackTargetByIndex( uint8_t attackerIndex, uint8_
 
 
 
-FighterID FightController::GetCastTargetByIndex( uint8_t attackerIndex, element::ElementIdentifier elementIdentifier, uint8_t defenderIndex ) const
+FighterID FightController::GetCastTargetByIndex( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const
 {
-	// HACK: Use attack targets for now
-	// TODO: This needs to involve the element database or the casting engine
-	//  to help figure out what's targetable and what isn't, based on the
-	//  selected element
-	// TODO: This probably requires passing the combat instance and the element
-	//  into a helper that figures out what all the valid potential targets are
-	( (void)elementIdentifier );
-	( (void)mCombatInstance );
-	RF_TODO_ANNOTATION( "Handle more complex cast targets like self, allies, or dead targets" );
-	return GetAttackTargetByIndex( attackerIndex, defenderIndex );
+	FighterID const attacker = GetCharacterByIndex( attackerIndex );
+	element::ElementIdentifier const elementIdentifier = GetElementIdentifierBySlotIndex( attacker, elementSlotIndex );
+	cast::CastingEngine::FighterIDs const castTargets =
+		mCastingEngine->GetValidCastTargets(
+			*mCombatInstance,
+			attacker,
+			elementIdentifier );
+	RF_ASSERT( defenderIndex < castTargets.size() );
+	return castTargets.at( defenderIndex );
 }
 
 
@@ -373,17 +390,7 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character:
 		return false;
 	}
 
-	// What are we actually casting?
-	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
-	element::ElementIdentifier const elementIdentifier =
-		GetElementIdentifierBySlotIndex( attackerID, elementSlotIndex );
-	if( elementIdentifier == element::kInvalidElementIdentifier )
-	{
-		// Slot element isn't valid
-		return false;
-	}
-
-	FighterID const defenderID = GetCastTargetByIndex( attackerIndex, elementIdentifier, defenderIndex );
+	FighterID const defenderID = GetCastTargetByIndex( attackerIndex, elementSlotIndex, defenderIndex );
 	if( defenderID.IsValid() == false )
 	{
 		// Target isn't valid

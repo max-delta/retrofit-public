@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "cc3o3/casting/CastingEngine.h"
 #include "cc3o3/char/CharFwd.h"
 #include "cc3o3/combat/CombatantID.h"
 
@@ -34,7 +35,7 @@ private:
 	//
 	// Public methods
 public:
-	FightController();
+	explicit FightController( WeakPtr<cast::CastingEngine const> castingEngine );
 
 	WeakPtr<CombatInstance const> GetCombatInstance() const;
 
@@ -48,11 +49,12 @@ public:
 
 	uint8_t SanitizeCharacterIndex( uint8_t attackerIndex, int8_t applyOffset ) const;
 	uint8_t SanitizeAttackTargetIndex( uint8_t attackerIndex, uint8_t defenderIndex, int8_t applyOffset ) const;
+	uint8_t SanitizeCastTargetIndex( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex, int8_t applyOffset ) const;
 
 	PartyID GetLocalPartyID() const;
 	FighterID GetCharacterByIndex( uint8_t attackerIndex ) const;
 	FighterID GetAttackTargetByIndex( uint8_t attackerIndex, uint8_t defenderIndex ) const;
-	FighterID GetCastTargetByIndex( uint8_t attackerIndex, element::ElementIdentifier elementIdentifier, uint8_t defenderIndex ) const;
+	FighterID GetCastTargetByIndex( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
 
 	bool CanCharacterPerformAttack( uint8_t attackerIndex ) const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex, uint8_t defenderIndex ) const;
@@ -82,6 +84,8 @@ private:
 	//
 	// Private data
 private:
+	WeakPtr<cast::CastingEngine const> mCastingEngine;
+
 	UniquePtr<combat::CombatInstance> mCombatInstance;
 
 	bool mFrameActive = false;

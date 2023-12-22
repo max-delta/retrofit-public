@@ -2,7 +2,7 @@
 #include "project.h"
 
 #include "cc3o3/casting/CastingFwd.h"
-#include "cc3o3/combat/CombatFwd.h"
+#include "cc3o3/combat/CombatantID.h"
 #include "cc3o3/elements/ElementFwd.h"
 
 #include "GameAction/ActionFwd.h"
@@ -11,6 +11,7 @@
 
 #include "core/ptr/weak_ptr.h"
 
+#include "rftl/extension/static_vector.h"
 #include "rftl/optional"
 #include "rftl/string"
 #include "rftl/string_view"
@@ -22,6 +23,12 @@ namespace RF::cc::cast {
 class CastingEngine
 {
 	RF_NO_COPY( CastingEngine );
+
+	//
+	// Types and constants
+public:
+	using FighterIDs = rftl::static_vector<combat::FighterID, combat::kMaxTotalFighters>;
+
 
 	//
 	// Public methods
@@ -57,6 +64,12 @@ public:
 		rftl::string_view const& key,
 		rftl::optional<element::ElementDesc> elementDesc,
 		element::ElementLevel castedLevel ) const;
+
+	// What combatants a caster could choose to target with an element
+	FighterIDs GetValidCastTargets(
+		combat::CombatInstance const& combatInstance,
+		combat::FighterID sourceID,
+		element::ElementIdentifier elementIdentifier ) const;
 
 
 	//

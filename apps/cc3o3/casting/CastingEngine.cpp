@@ -271,6 +271,22 @@ UniquePtr<CastError> CastingEngine::ExecuteRawCast(
 		castedLevel );
 }
 
+
+
+CastingEngine::FighterIDs CastingEngine::GetValidCastTargets(
+	combat::CombatInstance const& combatInstance,
+	combat::FighterID sourceID,
+	element::ElementIdentifier elementIdentifier ) const
+{
+	// HACK: Use attack targets for now
+	// TODO: This needs to involve the element database and casting engine
+	//  knowledge to help figure out what's targetable and what isn't, based on
+	//  the selected element
+	( (void)elementIdentifier );
+	RF_TODO_ANNOTATION( "Handle more complex cast targets like self, allies, or dead targets" );
+	return combatInstance.GetValidAttackTargets( sourceID );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 bool CastingEngine::LoadActionDefinition(
