@@ -276,6 +276,7 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
 {
 	// TODO: Sanitize control state
+	RF_TODO_ANNOTATION( "Sanitize control state" );
 	ControlStates::State const currentState = GetControlState( context );
 
 	mControlCharIndex = mFightController->SanitizeCharacterIndex(
@@ -523,8 +524,19 @@ void Gameplay_Battle::InternalState::ShiftTarget( int8_t applyOffset )
 	RF_ASSERT( applyOffset != 0 );
 
 	// Shift target
-	mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
-		mControlCharIndex, mTargetingIndex, applyOffset );
+	if( mTargetingReason == TargetingReason::kAttack )
+	{
+		mTargetingIndex = mFightController->SanitizeAttackTargetIndex(
+			mControlCharIndex, mTargetingIndex, applyOffset );
+	}
+	else if( mTargetingReason == TargetingReason::kElement )
+	{
+		RF_TODO_BREAK_MSG( "Targeting logic for elements" );
+	}
+	else
+	{
+		RF_DBGFAIL_MSG( "Target shift done while not targeting" );
+	}
 
 	// NOTE: If the offset was zero, we go forward
 	int8_t const direction = applyOffset < 0 ? -1 : 1;
@@ -867,6 +879,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			// TODO: Come up with a better achoring source than the control
 			//  passthrough, but keep the focus child to the control passthrough,
 			//  and manage the visibility logic for the selector some other way
+			RF_TODO_ANNOTATION( "Review battle UI scaffolding" );
 			WeakPtr<ui::controller::Floater> const floater =
 				uiManager.AssignStrongController(
 					elementPassthrough->GetChildContainerID(),
@@ -889,6 +902,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		}
 
 		// TODO: Sanitize UI state against battle state on tick start instead
+		RF_TODO_ANNOTATION( "Review battle UI sanitization" );
 		internalState.SwitchControlState( uiContext, ControlStates::kAction );
 		internalState.SaveUIState( uiContext );
 	}
