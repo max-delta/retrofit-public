@@ -101,6 +101,28 @@ TEST( UniquePtr, WeakLifecycle )
 		}
 		ASSERT_TRUE( uptr != nullptr );
 	}
+
+	// Moves to an already assigned pointer should be destructive
+	{
+		UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 83 );
+		ASSERT_TRUE( uptr1 != nullptr );
+		UniquePtr<int> uptr2 = DefaultCreator<int>::Create( 47 );
+		ASSERT_TRUE( uptr2 != nullptr );
+		{
+			WeakPtr<int> wptr1 = uptr1;
+			ASSERT_TRUE( wptr1 != nullptr );
+			ASSERT_TRUE( *wptr1 == 83 );
+			WeakPtr<int> wptr2 = uptr2;
+			ASSERT_TRUE( wptr2 != nullptr );
+			ASSERT_TRUE( *wptr2 == 47 );
+			wptr1 = rftl::move( wptr2 );
+			ASSERT_TRUE( wptr1 != nullptr );
+			ASSERT_TRUE( *wptr1 == 47 );
+			ASSERT_TRUE( wptr2 == nullptr );
+		}
+		ASSERT_TRUE( uptr1 != nullptr );
+		ASSERT_TRUE( uptr2 != nullptr );
+	}
 }
 
 
@@ -111,6 +133,24 @@ TEST( UniquePtr, Move )
 	{
 		UniquePtr<int> uptr2;
 		ASSERT_TRUE( uptr2 == nullptr );
+		{
+			UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
+			ASSERT_TRUE( uptr1 != nullptr );
+			ASSERT_TRUE( *uptr1 == 47 );
+			uptr2 = rftl::move( uptr1 );
+			ASSERT_TRUE( uptr1 == nullptr );
+			ASSERT_TRUE( uptr2 != nullptr );
+			ASSERT_TRUE( *uptr2 == 47 );
+		}
+		ASSERT_TRUE( uptr2 != nullptr );
+		ASSERT_TRUE( *uptr2 == 47 );
+	}
+
+	// Moves to an already assigned pointer should be destructive
+	{
+		UniquePtr<int> uptr2 = DefaultCreator<int>::Create( 83 );
+		ASSERT_TRUE( uptr2 != nullptr );
+		ASSERT_TRUE( *uptr2 == 83 );
 		{
 			UniquePtr<int> uptr1 = DefaultCreator<int>::Create( 47 );
 			ASSERT_TRUE( uptr1 != nullptr );

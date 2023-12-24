@@ -101,6 +101,28 @@ TEST( SharedPtr, WeakLifecycle )
 		}
 		ASSERT_TRUE( sptr != nullptr );
 	}
+
+	// Moves to an already assigned pointer should be destructive
+	{
+		SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 83 );
+		ASSERT_TRUE( sptr1 != nullptr );
+		SharedPtr<int> sptr2 = DefaultCreator<int>::Create( 47 );
+		ASSERT_TRUE( sptr2 != nullptr );
+		{
+			WeakPtr<int> wptr1 = sptr1;
+			ASSERT_TRUE( wptr1 != nullptr );
+			ASSERT_TRUE( *wptr1 == 83 );
+			WeakPtr<int> wptr2 = sptr2;
+			ASSERT_TRUE( wptr2 != nullptr );
+			ASSERT_TRUE( *wptr2 == 47 );
+			wptr1 = rftl::move( wptr2 );
+			ASSERT_TRUE( wptr1 != nullptr );
+			ASSERT_TRUE( *wptr1 == 47 );
+			ASSERT_TRUE( wptr2 == nullptr );
+		}
+		ASSERT_TRUE( sptr1 != nullptr );
+		ASSERT_TRUE( sptr2 != nullptr );
+	}
 }
 
 
@@ -111,6 +133,24 @@ TEST( SharedPtr, Move )
 	{
 		SharedPtr<int> sptr2;
 		ASSERT_TRUE( sptr2 == nullptr );
+		{
+			SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 47 );
+			ASSERT_TRUE( sptr1 != nullptr );
+			ASSERT_TRUE( *sptr1 == 47 );
+			sptr2 = rftl::move( sptr1 );
+			ASSERT_TRUE( sptr1 == nullptr );
+			ASSERT_TRUE( sptr2 != nullptr );
+			ASSERT_TRUE( *sptr2 == 47 );
+		}
+		ASSERT_TRUE( sptr2 != nullptr );
+		ASSERT_TRUE( *sptr2 == 47 );
+	}
+
+	// Moves to an already assigned pointer should be destructive
+	{
+		SharedPtr<int> sptr2 = DefaultCreator<int>::Create( 83 );
+		ASSERT_TRUE( sptr2 != nullptr );
+		ASSERT_TRUE( *sptr2 == 83 );
 		{
 			SharedPtr<int> sptr1 = DefaultCreator<int>::Create( 47 );
 			ASSERT_TRUE( sptr1 != nullptr );

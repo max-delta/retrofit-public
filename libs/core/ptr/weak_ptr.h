@@ -100,6 +100,8 @@ public:
 	WeakPtr& operator=( WeakPtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
+		WeakPtr discard = {};
+		discard.Swap( rftl::move( rhs ) );
 		return *this;
 	}
 

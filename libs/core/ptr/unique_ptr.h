@@ -108,6 +108,8 @@ public:
 	UniquePtr& operator=( UniquePtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
+		UniquePtr discard = {};
+		discard.Swap( rftl::move( rhs ) );
 		return *this;
 	}
 

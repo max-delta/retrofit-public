@@ -142,6 +142,28 @@ TEST( WeakSharedPtr, Move )
 			ASSERT_TRUE( *wsptr2.Weaken() == 47 );
 		}
 	}
+
+	// Moves to an already assigned pointer should be destructive
+	{
+		SharedPtr<int> source = DefaultCreator<int>::Create( 47 );
+		{
+			SharedPtr<int> temp = DefaultCreator<int>::Create( 83 );
+			WeakSharedPtr<int> wsptr2 = temp;
+			ASSERT_TRUE( wsptr2.Weaken() != nullptr );
+			ASSERT_TRUE( *wsptr2.Weaken() == 83 );
+			{
+				WeakSharedPtr<int> wsptr1 = source;
+				ASSERT_TRUE( wsptr1.Weaken() != nullptr );
+				ASSERT_TRUE( *wsptr1.Weaken() == 47 );
+				wsptr2 = rftl::move( wsptr1 );
+				ASSERT_TRUE( wsptr1.Weaken() == nullptr );
+				ASSERT_TRUE( wsptr2.Weaken() != nullptr );
+				ASSERT_TRUE( *wsptr2.Weaken() == 47 );
+			}
+			ASSERT_TRUE( wsptr2.Weaken() != nullptr );
+			ASSERT_TRUE( *wsptr2.Weaken() == 47 );
+		}
+	}
 }
 
 

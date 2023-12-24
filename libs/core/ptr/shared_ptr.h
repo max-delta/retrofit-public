@@ -133,6 +133,8 @@ public:
 	SharedPtr& operator=( SharedPtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
+		SharedPtr discard = {};
+		discard.Swap( rftl::move( rhs ) );
 		return *this;
 	}
 

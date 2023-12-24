@@ -69,6 +69,8 @@ public:
 	WeakSharedPtr& operator=( WeakSharedPtr&& rhs )
 	{
 		PtrBase::Swap( rftl::move( rhs ) );
+		WeakSharedPtr discard = {};
+		discard.Swap( rftl::move( rhs ) );
 		return *this;
 	}
 
