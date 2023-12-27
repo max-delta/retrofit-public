@@ -180,6 +180,14 @@ void FightController::TickPendingActions()
 		}
 	}
 
+	// HACK: Make casts take a while
+	RF_TODO_ANNOTATION( "Implement animation system" );
+	if( mHACK_ArtificalCastDelay > 0 )
+	{
+		mHACK_ArtificalCastDelay--;
+		return;
+	}
+
 	// Only do casts after attacks have finished
 	if( mAttackBuffer.empty() && mCastBuffer != nullptr )
 	{
@@ -485,6 +493,10 @@ bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotI
 		// TODO: Maybe this should be done via a predict call first
 		return false;
 	}
+
+	// HACK: Make casts take a while
+	RF_TODO_ANNOTATION( "Implement animation system" );
+	mHACK_ArtificalCastDelay = 15;
 
 	// Buffer the temp instance
 	RF_ASSERT( mCastBuffer == nullptr );

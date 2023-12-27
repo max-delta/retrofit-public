@@ -98,6 +98,10 @@ private:
 	//  but nothing else can buffer up while a cast is pending
 	AttackBuffer mAttackBuffer = {};
 	UniquePtr<combat::CombatInstance> mCastBuffer = nullptr;
+
+	// HACK: Make casts take a while
+	RF_TODO_ANNOTATION( "Implement animation system" );
+	uint16_t mHACK_ArtificalCastDelay = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
