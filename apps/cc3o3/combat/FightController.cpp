@@ -104,6 +104,8 @@ void FightController::StartCombatFrame()
 	mCombatInstance->ReloadCombatData();
 	// TODO: Load attack buffer
 	RF_TODO_ANNOTATION( "Rollback support for attack buffer" );
+	// TODO: Load cast buffer
+	RF_TODO_ANNOTATION( "Rollback support for cast buffer" );
 
 	mFrameActive = true;
 }
@@ -117,6 +119,8 @@ void FightController::EndCombatFrame()
 	mCombatInstance->CommitCombatData();
 	// TODO: Save attack buffer
 	RF_TODO_ANNOTATION( "Rollback support for attack buffer" );
+	// TODO: Save cast buffer
+	RF_TODO_ANNOTATION( "Rollback support for cast buffer" );
 
 	mFrameActive = false;
 }
