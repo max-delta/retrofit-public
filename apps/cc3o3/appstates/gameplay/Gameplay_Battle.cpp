@@ -58,6 +58,7 @@ public:
 		enum State : size_t
 		{
 			kWaiting = 0,
+			kCasting,
 			kTargeting,
 			kAction,
 			kAttack,
@@ -102,6 +103,7 @@ public:
 	};
 
 	static constexpr char const kLabelStateWaiting[] = "$battle_state_waiting";
+	static constexpr char const kLabelStateCasting[] = "$battle_state_casting";
 	static constexpr char const kLabelAttackElement[] = "$battle_attack_element";
 
 	enum class TargetingReason : uint8_t
@@ -205,6 +207,10 @@ void Gameplay_Battle::InternalState::RestoreUIState( ui::UIContext& context )
 	{
 		// No cursor
 	}
+	else if( currentState == ControlStates::kCasting )
+	{
+		// No cursor
+	}
 	else if( currentState == ControlStates::kTargeting )
 	{
 		mTargetingReason = math::enum_bitcast<TargetingReason>( navigation.mCursorIndex.at( 0 ) );
@@ -243,6 +249,10 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 	ControlStates::State const currentState = GetControlState( context );
 	navigation.mControlState = math::integer_cast<uint8_t>( math::enum_bitcast( currentState ) );
 	if( currentState == ControlStates::kWaiting )
+	{
+		// No cursor
+	}
+	else if( currentState == ControlStates::kCasting )
 	{
 		// No cursor
 	}
@@ -700,6 +710,10 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				controlPassthroughs->GetChildContainerID( ControlStates::kWaiting ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const castingPassthrough =
+			uiManager.AssignStrongController(
+				controlPassthroughs->GetChildContainerID( ControlStates::kCasting ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		WeakPtr<ui::controller::Passthrough> const targetingPassthrough =
 			uiManager.AssignStrongController(
 				controlPassthroughs->GetChildContainerID( ControlStates::kTargeting ),
@@ -717,11 +731,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				controlPassthroughs->GetChildContainerID( ControlStates::kElement ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mStateControllers.at( ControlStates::kWaiting ) = waitingPassthrough;
+		internalState.mStateControllers.at( ControlStates::kCasting ) = castingPassthrough;
 		internalState.mStateControllers.at( ControlStates::kTargeting ) = targetingPassthrough;
 		internalState.mStateControllers.at( ControlStates::kAction ) = actionPassthrough;
 		internalState.mStateControllers.at( ControlStates::kAttack ) = attackPassthrough;
 		internalState.mStateControllers.at( ControlStates::kElement ) = elementPassthrough;
 		waitingPassthrough->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		castingPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		targetingPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		actionPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 		attackPassthrough->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
@@ -753,6 +769,36 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			label->SetJustification( ui::Justification::MiddleCenter );
 			label->SetFont( ui::font::SmallMenuText );
 			label->SetText( ui::LocalizeKey( InternalState::kLabelStateWaiting ) );
+			label->SetColor( math::Color3f::kGray50 );
+			label->SetBorder( true );
+		}
+
+		// Casting state
+		{
+			// Floater
+			WeakPtr<ui::controller::Floater> const floater =
+				uiManager.AssignStrongController(
+					castingPassthrough->GetChildContainerID(),
+					DefaultCreator<ui::controller::Floater>::Create(
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+						math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 3 / 2 ),
+						ui::Justification::MiddleCenter ) );
+
+			// Frame
+			WeakPtr<ui::controller::BorderFrame> const frame =
+				uiManager.AssignStrongController(
+					floater->GetChildContainerID(),
+					DefaultCreator<ui::controller::BorderFrame>::Create() );
+			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+
+			// Display
+			WeakPtr<ui::controller::TextLabel> const label =
+				uiManager.AssignStrongController(
+					frame->GetChildContainerID(),
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			label->SetJustification( ui::Justification::MiddleCenter );
+			label->SetFont( ui::font::SmallMenuText );
+			label->SetText( ui::LocalizeKey( InternalState::kLabelStateCasting ) );
 			label->SetColor( math::Color3f::kGray50 );
 			label->SetBorder( true );
 		}
@@ -965,6 +1011,19 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 
 				// TODO: (If own turn) How can this happen?
 			}
+			else if( controlState == ControlState::kCasting )
+			{
+				// Casting
+
+				RF_TODO_ANNOTATION( "Assert that it is still our turn" );
+
+				// TODO: Should only happen on own turn
+
+				// TODO: Maybe no control can ever happen here? It's just
+				//  waiting for animations and whatnot to finish, and the tick
+				//  of the UI will eventually see the cast is done and allow to
+				//  progress?
+			}
 			else if( controlState == ControlState::kTargeting )
 			{
 				// Targeting
@@ -1007,11 +1066,20 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					}
 					else if( internalState.mTargetingReason == TargetingReason::kElement )
 					{
-						// TODO: Cast element, ascend to action menu, navigate
-						//  to next character
-						RF_TODO_BREAK_MSG( "Cast element" );
-						internalState.SwitchControlState( uiContext, ControlState::kAction );
-						internalState.ShiftControlChar( 1 );
+						// Buffer cast
+						fightController.BufferCast(
+							internalState.mControlCharIndex,
+							internalState.mTargetingSlot,
+							internalState.mTargetingIndex );
+
+						// Switch to casting state
+						internalState.SwitchControlState( uiContext, ControlState::kCasting );
+
+						// NOTE: Staying on current character while casting,
+						//  expect per-frame polling fixup logic to detect when
+						//  casting is complete and handle character shifting
+						//  as needed
+						//internalState.ShiftControlChar( 1 );
 					}
 					else
 					{
@@ -1298,6 +1366,28 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				// Ascend to action menu
 				internalState.SwitchControlState( uiContext, ControlState::kAction );
 			}
+			else
+			{
+				// Current character can act
+				RF_ASSERT( success );
+
+				bool const wasCasting = controlState == ControlState::kCasting;
+				if( wasCasting )
+				{
+					// Casting finished, ascend to action menu
+					RF_ASSERT( fightController.HasPendingActions() == false );
+					internalState.SwitchControlState( uiContext, ControlState::kAction );
+
+					// NOTE: This codepath is currently possible if the cast
+					//  failed for some reason, as the combat state would not
+					//  have progressed as a result of the cast
+					RF_DBGFAIL_MSG(
+						"This is dubious under the current design, as it is"
+						" expected that a cast will consume all the stamina"
+						" of the casting character - make sure this situation"
+						" is correct and not a sign of error" );
+				}
+			}
 		}
 
 		// Do we need to switch targets?
@@ -1334,7 +1424,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		bool selectionIsMeaningful = false;
 		{
 			ControlState const controlState = internalState.GetControlState( uiContext );
-			if( controlState != ControlState::kWaiting )
+			if( controlState != ControlState::kWaiting && controlState != ControlState::kCasting )
 			{
 				selectionIsMeaningful = true;
 			}

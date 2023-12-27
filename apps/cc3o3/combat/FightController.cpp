@@ -12,6 +12,8 @@
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
+#include "core/ptr/default_creator.h"
+
 #include "rftl/algorithm"
 
 
@@ -125,7 +127,17 @@ bool FightController::HasPendingActions() const
 {
 	RF_ASSERT( mFrameActive );
 
-	return mAttackBuffer.empty() == false;
+	if( mAttackBuffer.empty() == false )
+	{
+		return true;
+	}
+
+	if( mCastBuffer != nullptr )
+	{
+		return true;
+	}
+
+	return false;
 }
 
 
@@ -166,6 +178,22 @@ void FightController::TickPendingActions()
 			RF_DBGFAIL_MSG( "Bad attack. How did this happen? Fix, or flag as benign and document behavior." );
 			mAttackBuffer.clear();
 		}
+	}
+
+	// Only do casts after attacks have finished
+	if( mAttackBuffer.empty() && mCastBuffer != nullptr )
+	{
+		// Pop cast from buffer and apply it
+		// NOTE: Likely pointless optimization consideration - Is it better to
+		//  transfer pointer or stomp instance via copy?
+		mCombatInstance = rftl::move( mCastBuffer );
+		RF_ASSERT( mCastBuffer == nullptr );
+
+		// TODO: Record to some 'recent casts' buffer for displaying
+		// NOTE: Will likely be the responsibility of whatever system is
+		//  monitoring and executing the delays and animations, since we
+		//  need to display this for other parties as well
+		RF_TODO_ANNOTATION( "Mechanism to hand over casts to a display / animation system" );
 	}
 }
 
@@ -241,8 +269,31 @@ FighterID FightController::GetCastTargetByIndex( uint8_t attackerIndex, characte
 
 
 
+bool FightController::CanCharacterPerformAttack() const
+{
+	if( mCastBuffer != nullptr )
+	{
+		// Don't allow attacks to buffer behind casts
+		// NOTE: This is a bit quirky, since a character could still
+		//  theoretically attack directly after a cast, and we could buffer
+		//  those attacks, but it would require interleaving buffers, and the
+		//  current combat design is such that a character should always be at
+		//  zero or negative stamina after a cast, and thus be unable to act
+		return false;
+	}
+
+	return true;
+}
+
+
+
 bool FightController::CanCharacterPerformAttack( uint8_t attackerIndex ) const
 {
+	if( CanCharacterPerformAttack() == false )
+	{
+		return false;
+	}
+
 	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
 	return mCombatInstance->CanPerformAttack( attackerID );
 }
@@ -399,6 +450,45 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character:
 		return false;
 	}
 
+	return true;
+}
+
+
+
+bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex )
+{
+	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
+	FighterID const defenderID = GetCastTargetByIndex( attackerIndex, elementSlotIndex, defenderIndex );
+	element::ElementLevel const& castedLevel = elementSlotIndex.first;
+	element::ElementIdentifier const elementIdentifier =
+		GetElementIdentifierBySlotIndex( attackerID, elementSlotIndex );
+
+	if( HasPendingActions() )
+	{
+		RF_TODO_BREAK_MSG(
+			"Simulate pending actions (attacks?) into temp instance before cast" );
+		return false;
+	}
+
+	// Create a temp clone instance and cast onto that
+	UniquePtr<CombatInstance> tempInstance = DefaultCreator<CombatInstance>::Create( *mCombatInstance );
+	UniquePtr<cast::CastError> const castError =
+		mCastingEngine->ExecuteElementCast(
+			*tempInstance,
+			attackerID,
+			defenderID,
+			elementIdentifier,
+			castedLevel );
+	if( castError != nullptr )
+	{
+		RF_TODO_BREAK_MSG( "Cast failed, some mechanism to raise reason to UI?" );
+		// TODO: Maybe this should be done via a predict call first
+		return false;
+	}
+
+	// Buffer the temp instance
+	RF_ASSERT( mCastBuffer == nullptr );
+	mCastBuffer = rftl::move( tempInstance );
 	return true;
 }
 

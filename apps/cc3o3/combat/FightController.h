@@ -56,6 +56,7 @@ public:
 	FighterID GetAttackTargetByIndex( uint8_t attackerIndex, uint8_t defenderIndex ) const;
 	FighterID GetCastTargetByIndex( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
 
+	bool CanCharacterPerformAttack() const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex ) const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex, uint8_t defenderIndex ) const;
 	bool CanCharacterPerformAttack( uint8_t attackerIndex, uint8_t defenderIndex, uint8_t attackStrength ) const;
@@ -66,6 +67,7 @@ public:
 	bool CanCharacterCastElement( uint8_t attackerIndex, element::ElementLevel castedLevel ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
+	bool BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex );
 
 	bool CanCharacterActivateDefense( uint8_t attackerIndex ) const;
 
@@ -91,7 +93,11 @@ private:
 	bool mFrameActive = false;
 
 	PartyID mLocalPartyID = {};
+
+	// NOTE: Design choice is that attacks can buffer up, as well as one cast,
+	//  but nothing else can buffer up while a cast is pending
 	AttackBuffer mAttackBuffer = {};
+	UniquePtr<combat::CombatInstance> mCastBuffer = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
