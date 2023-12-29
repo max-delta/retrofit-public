@@ -67,7 +67,8 @@ public:
 	bool CanCharacterCastElement( uint8_t attackerIndex, element::ElementLevel castedLevel ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex ) const;
 	bool CanCharacterCastElement( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
-	bool BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex );
+	UniquePtr<cast::CastError> PredictCast( UniquePtr<CombatInstance>& result, uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const;
+	UniquePtr<cast::CastError> BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex );
 
 	bool CanCharacterActivateDefense( uint8_t attackerIndex ) const;
 

@@ -4,6 +4,7 @@
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
+#include "cc3o3/casting/CastError.h"
 #include "cc3o3/combat/Attack.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/CombatInstance.h"
@@ -1067,19 +1068,26 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 					else if( internalState.mTargetingReason == TargetingReason::kElement )
 					{
 						// Buffer cast
-						fightController.BufferCast(
-							internalState.mControlCharIndex,
-							internalState.mTargetingSlot,
-							internalState.mTargetingIndex );
+						UniquePtr<cast::CastError> const castError =
+							fightController.BufferCast(
+								internalState.mControlCharIndex,
+								internalState.mTargetingSlot,
+								internalState.mTargetingIndex );
+						if( castError == cast::CastError::kNoError )
+						{
+							// Switch to casting state
+							internalState.SwitchControlState( uiContext, ControlState::kCasting );
 
-						// Switch to casting state
-						internalState.SwitchControlState( uiContext, ControlState::kCasting );
-
-						// NOTE: Staying on current character while casting,
-						//  expect per-frame polling fixup logic to detect when
-						//  casting is complete and handle character shifting
-						//  as needed
-						//internalState.ShiftControlChar( 1 );
+							// NOTE: Staying on current character while casting,
+							//  expect per-frame polling fixup logic to detect when
+							//  casting is complete and handle character shifting
+							//  as needed
+							//internalState.ShiftControlChar( 1 );
+						}
+						else
+						{
+							RFLOG_WARNING( nullptr, RFCAT_CC3O3, "Character failed to cast" );
+						}
 					}
 					else
 					{

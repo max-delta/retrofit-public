@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FightController.h"
 
+#include "cc3o3/casting/CastError.h"
 #include "cc3o3/combat/Attack.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/state/ComponentResolver.h"
@@ -467,8 +468,10 @@ bool FightController::CanCharacterCastElement( uint8_t attackerIndex, character:
 
 
 
-bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex )
+UniquePtr<cast::CastError> FightController::PredictCast( UniquePtr<CombatInstance>& result, uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex ) const
 {
+	result = nullptr;
+
 	FighterID const attackerID = GetCharacterByIndex( attackerIndex );
 	FighterID const defenderID = GetCastTargetByIndex( attackerIndex, elementSlotIndex, defenderIndex );
 	element::ElementLevel const& castedLevel = elementSlotIndex.first;
@@ -479,12 +482,13 @@ bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotI
 	{
 		RF_TODO_BREAK_MSG(
 			"Simulate pending actions (attacks?) into temp instance before cast" );
-		return false;
+		RF_RETAIL_FATAL_MSG( "HasPendingActions()",
+			"Unimplemented TODO with buffered attacks, cast will desync" );
 	}
 
 	// Create a temp clone instance and cast onto that
 	UniquePtr<CombatInstance> tempInstance = DefaultCreator<CombatInstance>::Create( *mCombatInstance );
-	UniquePtr<cast::CastError> const castError =
+	UniquePtr<cast::CastError> castError =
 		mCastingEngine->ExecuteElementCast(
 			*tempInstance,
 			attackerID,
@@ -493,9 +497,30 @@ bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotI
 			castedLevel );
 	if( castError != nullptr )
 	{
-		RF_TODO_BREAK_MSG( "Cast failed, some mechanism to raise reason to UI?" );
-		// TODO: Maybe this should be done via a predict call first
-		return false;
+		return castError;
+	}
+
+	// Success!
+	result = rftl::move( tempInstance );
+	return cast::CastError::kNoError;
+}
+
+
+
+UniquePtr<cast::CastError> FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotIndex elementSlotIndex, uint8_t defenderIndex )
+{
+	// Run the cast via the prediction code
+	UniquePtr<CombatInstance> tempInstance = nullptr;
+	UniquePtr<cast::CastError> castError =
+		PredictCast(
+			tempInstance,
+			attackerIndex,
+			elementSlotIndex,
+			defenderIndex );
+	if( castError != nullptr )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_CC3O3, "Cast error occurred on a buffer attempt" );
+		return castError;
 	}
 
 	// HACK: Make casts take a while
@@ -505,7 +530,7 @@ bool FightController::BufferCast( uint8_t attackerIndex, character::ElementSlotI
 	// Buffer the temp instance
 	RF_ASSERT( mCastBuffer == nullptr );
 	mCastBuffer = rftl::move( tempInstance );
-	return true;
+	return cast::CastError::kNoError;
 }
 
 
