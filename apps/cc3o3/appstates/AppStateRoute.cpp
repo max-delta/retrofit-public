@@ -26,6 +26,7 @@ enum class Mode : uint8_t
 
 	// Directly to gameplay
 	GameplayOverworld,
+	GameplaySite,
 	GameplayMenus,
 	GameplayBattle
 };
@@ -79,6 +80,10 @@ AppStateID GetStateAfterInitialLoad()
 	{
 		return id::Gameplay;
 	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplaySite )
+	{
+		return id::Gameplay;
+	}
 	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
 	{
 		return id::Gameplay;
@@ -115,6 +120,10 @@ AppStateID GetFirstGameplayState()
 	if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
 	{
 		return id::Gameplay_Overworld;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplaySite )
+	{
+		return id::Gameplay_Site;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
 	{
