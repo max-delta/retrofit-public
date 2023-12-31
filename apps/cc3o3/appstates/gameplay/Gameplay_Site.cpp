@@ -59,10 +59,11 @@ public:
 public:
 	InternalState() = default;
 
+	void HideAllTopLevelSections();
 	void SwitchTopLevelSection( TopLevelSections::Section section );
 	bool IsActiveSection( TopLevelSections::Section section ) const;
-	void ShowSelector( ui::UIContext& context );
-	void HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection );
+	void SwitchToSelector( ui::UIContext& context );
+	void LeaveSelector( ui::UIContext& context, TopLevelSections::Section chosenSection );
 
 
 public:
@@ -77,13 +78,20 @@ public:
 
 
 
-void Gameplay_Site::InternalState::SwitchTopLevelSection( TopLevelSections::Section section )
+void Gameplay_Site::InternalState::HideAllTopLevelSections()
 {
-	// Only show current section
 	for( WeakPtr<ui::controller::InstancedController> const& controller : mTopLevelControllers )
 	{
 		controller->SetChildRenderingBlocked( true );
 	}
+}
+
+
+
+void Gameplay_Site::InternalState::SwitchTopLevelSection( TopLevelSections::Section section )
+{
+	// Only show current section
+	HideAllTopLevelSections();
 	mTopLevelControllers.at( section )->SetChildRenderingBlocked( false );
 }
 
@@ -96,8 +104,10 @@ bool Gameplay_Site::InternalState::IsActiveSection( TopLevelSections::Section se
 
 
 
-void Gameplay_Site::InternalState::ShowSelector( ui::UIContext& context )
+void Gameplay_Site::InternalState::SwitchToSelector( ui::UIContext& context )
 {
+	HideAllTopLevelSections();
+
 	mSectionSelectorFloater->SetChildRenderingBlocked( false );
 	context.GetMutableFocusManager().GetMutableFocusTree().SetRootFocusToSpecificChild(
 		mSectionSelectorFloater->GetMutableFocusTreeNode( context ) );
@@ -105,7 +115,7 @@ void Gameplay_Site::InternalState::ShowSelector( ui::UIContext& context )
 
 
 
-void Gameplay_Site::InternalState::HideSelector( ui::UIContext& context, TopLevelSections::Section chosenSection )
+void Gameplay_Site::InternalState::LeaveSelector( ui::UIContext& context, TopLevelSections::Section chosenSection )
 {
 	SwitchTopLevelSection( chosenSection );
 
@@ -190,21 +200,23 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 		mainFooter->SetBorder( true );
 
 		// Main sections are in the center
+		// NOTE: Using one of the passthroughs for the section selector
 		using TopLevelSections = InternalState::TopLevelSections;
+		static constexpr size_t kPassthroughCount = TopLevelSections::kNumSections + 1;
 		WeakPtr<ui::controller::MultiPassthrough> const sectionPassthroughs =
 			uiManager.AssignStrongController(
 				middleRowSlicer->GetChildContainerID( 1 ),
-				DefaultCreator<ui::controller::MultiPassthrough>::Create( TopLevelSections::kNumSections + 1 ) );
+				DefaultCreator<ui::controller::MultiPassthrough>::Create( kPassthroughCount ) );
 
-		// Section selector floats above the screen
+		// Section selector sits below everything else
 		WeakPtr<ui::controller::Floater> const sectionSelectorFloater =
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kNumSections ),
 				DefaultCreator<ui::controller::Floater>::Create(
 					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
-					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize ),
-					ui::Justification::MiddleCenter ) );
-		uiManager.AdjustRecommendedRenderDepth( sectionSelectorFloater->GetContainerID(), -20 );
+					math::integer_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 5 ),
+					ui::Justification::TopLeft ) );
+		uiManager.AdjustRecommendedRenderDepth( sectionSelectorFloater->GetContainerID(), +1 );
 		sectionSelectorFloater->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		internalState.mSectionSelectorFloater = sectionSelectorFloater;
 
@@ -234,20 +246,18 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
-			// Implement selector as horizontal list
-			// TODO: Image support in list boxes
+			// Implement selector as vertical list
 			WeakPtr<ui::controller::ListBox> const selector =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
 					DefaultCreator<ui::controller::ListBox>::Create(
-						ui::Orientation::Horizontal,
+						ui::Orientation::Vertical,
 						TopLevelSections::kNumSections,
 						ui::font::NarrowHalfTileMono ) );
 			for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
 			{
 				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetMutableSlotController( i );
 				{
-					// TODO: Image support
 					rftl::string temp = "0";
 					temp.at( 0 ) += math::integer_cast<char>( i );
 					slotController->SetText( rftl::move( temp ) );
@@ -261,11 +271,15 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 		// Vista section
 		{
 			// Placeholder
-			WeakPtr<ui::controller::BorderFrame> const frame =
+			WeakPtr<ui::controller::TextLabel> const placeholder =
 				uiManager.AssignStrongController(
 					vistaPassthrough->GetChildContainerID(),
-					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+					DefaultCreator<ui::controller::TextLabel>::Create() );
+			placeholder->SetJustification( ui::Justification::MiddleRight );
+			placeholder->SetFont( ui::font::SmallMenuSelection );
+			placeholder->SetText( "UNSET_VISTA" );
+			placeholder->SetColor( math::Color3f::kWhite );
+			placeholder->SetBorder( true );
 		}
 
 		// HACK battle section
@@ -277,6 +291,9 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 		}
+
+		// Start off on the selector
+		internalState.SwitchToSelector( uiContext );
 	}
 }
 
@@ -317,27 +334,7 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 			RF_TODO_ANNOTATION(
 				"Check for certain selection changes and update some ancillary"
 				" displays, similar to how the section selector works in the"
-				" save/loadout menus" );
-
-			// HACK: This is taken from the pause menu logic, but that's not
-			//  how this is intended to work long-term
-			// Normally we would ignore this, but we want to check to see if
-			//  this was the section selector moving, in which case we want to
-			//  change which section is displayed behind it
-			if( internalState.mSectionSelector->SlotHasCurrentFocus( uiContext ) )
-			{
-				bool foundSection = false;
-				for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
-				{
-					if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
-					{
-						internalState.SwitchTopLevelSection( static_cast<TopLevelSections::Section>( i ) );
-						foundSection = true;
-						break;
-					}
-				}
-				RF_ASSERT( foundSection );
-			}
+				" save/loadout menus by side-glancing at the current focus" );
 		}
 		else
 		{
@@ -358,12 +355,9 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 							{
 								TopLevelSections::Section const chosenSection = static_cast<TopLevelSections::Section>( i );
 
-								// This should've already been made active
-								RF_ASSERT( internalState.IsActiveSection( chosenSection ) );
-
 								// Hide the selector, moving focus to the
 								//  chosen section instead
-								internalState.HideSelector( uiContext, chosenSection );
+								internalState.LeaveSelector( uiContext, chosenSection );
 
 								foundSection = true;
 								break;
@@ -404,9 +398,8 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 						}
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 						{
-							// HACK: Always pop back up to section selector
-							// TODO: Proper logic
-							internalState.ShowSelector( uiContext );
+							// Return to section selector
+							internalState.SwitchToSelector( uiContext );
 						}
 					}
 					else if( currentSection == TopLevelSections::kHACKBattle )
@@ -420,9 +413,8 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 						}
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 						{
-							// HACK: Always pop back up to section selector
-							// TODO: Proper logic
-							internalState.ShowSelector( uiContext );
+							// Return to section selector
+							internalState.SwitchToSelector( uiContext );
 						}
 					}
 					else
@@ -436,7 +428,7 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 		focusMan.UpdateHardFocus( uiContext );
 	}
 
-	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 32, 32 ), "TODO: Site" );
+	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 128, 32 ), "TODO: Site" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
