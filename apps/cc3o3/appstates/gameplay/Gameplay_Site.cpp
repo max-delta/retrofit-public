@@ -276,6 +276,7 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 						ui::Orientation::Vertical,
 						TopLevelSections::kNumSections,
 						ui::font::NarrowHalfTileMono ) );
+			selector->SetWrapping( true );
 			for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
 			{
 				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetMutableSlotController( i );
