@@ -6,6 +6,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/site/Site.h"
+#include "cc3o3/ui/LocalizationHelpers.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -45,6 +46,8 @@ public:
 		{
 			kVista = 0,
 			kHACKBattle,
+			kMenus,
+			kLeave,
 
 			kNumSections
 		};
@@ -52,6 +55,15 @@ public:
 		static constexpr char const* kLabels[kNumSections] = {
 			"H_vista",
 			"H_hackbattle",
+			"H_menus",
+			"H_leave",
+		};
+
+		static constexpr char const* kText[kNumSections] = {
+			"$sitemenu_toplevel_vista",
+			"$sitemenu_toplevel_hackbattle",
+			"$sitemenu_toplevel_menus",
+			"$sitemenu_toplevel_leave",
 		};
 	};
 
@@ -230,8 +242,18 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kHACKBattle ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const menusPassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kMenus ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const leavePassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kLeave ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mTopLevelControllers.at( TopLevelSections::kVista ) = vistaPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kHACKBattle ) = HACKBattlePassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kMenus ) = menusPassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kLeave ) = leavePassthrough;
 		for( WeakPtr<ui::controller::InstancedController> const& controller : internalState.mTopLevelControllers )
 		{
 			controller->AddAsSiblingAfterFocusTreeNode( uiContext, sectionSelectorFloater->GetMutableFocusTreeNode( uiContext ) );
@@ -257,11 +279,7 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 			for( size_t i = 0; i < TopLevelSections::kNumSections; i++ )
 			{
 				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetMutableSlotController( i );
-				{
-					rftl::string temp = "0";
-					temp.at( 0 ) += math::integer_cast<char>( i );
-					slotController->SetText( rftl::move( temp ) );
-				}
+				slotController->SetText( ui::LocalizeKey( TopLevelSections::kText[i] ) );
 				uiManager.AssignLabel( slotController->GetContainerID(), TopLevelSections::kLabels[i] );
 			}
 			selector->AddAsChildToFocusTreeNode( uiContext, *sectionSelectorFloater->GetMutableFocusTreeNode( uiContext ) );
@@ -290,6 +308,16 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 					HACKBattlePassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		}
+
+		// Menus section
+		{
+			// No entry, currently just an instant effect
+		}
+
+		// Leave section
+		{
+			// No entry, currently just an instant effect
 		}
 
 		// Start off on the selector
@@ -355,9 +383,36 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 							{
 								TopLevelSections::Section const chosenSection = static_cast<TopLevelSections::Section>( i );
 
-								// Hide the selector, moving focus to the
-								//  chosen section instead
-								internalState.LeaveSelector( uiContext, chosenSection );
+								if( chosenSection == TopLevelSections::kMenus )
+								{
+									// Special case - Menus
+
+									// HACK: Just pop into menus
+									RF_TODO_ANNOTATION( "Validation? Setup?" );
+									context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Menus );
+								}
+								else if( chosenSection == TopLevelSections::kLeave )
+								{
+									// Special case - Leave
+
+									// HACK: Just travel to the overworld
+									RF_TODO_ANNOTATION(
+										"Ask campaign what to return to, which"
+										" there might not be anything allowed"
+										" to return to at certain plot points,"
+										" which would need to block leaving"
+										" and notify the player why they can't"
+										" leave yet" );
+									campaign.TravelToOverworld( context );
+								}
+								else
+								{
+									// Standard case - Enter subsection
+
+									// Hide the selector, moving focus to the
+									//  chosen section instead
+									internalState.LeaveSelector( uiContext, chosenSection );
+								}
 
 								foundSection = true;
 								break;
@@ -367,12 +422,9 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 					}
 					else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 					{
-						// HACK: Just return to the overworld
-						// TODO: Only allow this through an explicit 'Exit'
-						//  choice, that might not always be allowed if story
-						//  progression blocks it
-						// Exit site
-						campaign.TravelToOverworld( context );
+						// Intentionally ignoring trying to back out of the
+						//  site mode, requiring the player to intentionally
+						//  try to 'Leave' the site instead
 					}
 				}
 				else
