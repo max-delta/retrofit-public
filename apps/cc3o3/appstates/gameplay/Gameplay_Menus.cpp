@@ -223,11 +223,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		mainFooter->SetBorder( true );
 
 		// Main sections are in the center
+		// NOTE: Using one of the passthroughs for the section selector
 		using TopLevelSections = InternalState::TopLevelSections;
+		static constexpr size_t kPassthroughCount = TopLevelSections::kNumSections + 1;
 		WeakPtr<ui::controller::MultiPassthrough> const sectionPassthroughs =
 			uiManager.AssignStrongController(
 				middleRowSlicer->GetChildContainerID( 1 ),
-				DefaultCreator<ui::controller::MultiPassthrough>::Create( TopLevelSections::kNumSections + 1 ) );
+				DefaultCreator<ui::controller::MultiPassthrough>::Create( kPassthroughCount ) );
 
 		// Section selector floats above the screen
 		WeakPtr<ui::controller::Floater> const sectionSelectorFloater =
