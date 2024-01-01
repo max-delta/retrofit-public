@@ -34,7 +34,7 @@ ControllerManager::LayerIDs ControllerManager::GetRegisteredLayers() const
 
 
 
-WeakPtr<GameController> ControllerManager::GetGameController( PlayerID player, LayerID layer ) const
+WeakPtr<GameController const> ControllerManager::GetGameController( PlayerID player, LayerID layer ) const
 {
 	PlayerMapping::const_iterator const playerIter = mRegisteredGameControllers.find( player );
 	if( playerIter == mRegisteredGameControllers.end() )
@@ -50,19 +50,6 @@ WeakPtr<GameController> ControllerManager::GetGameController( PlayerID player, L
 	}
 
 	return layerIter->second;
-}
-
-
-
-WeakPtr<RawController> ControllerManager::GetTextProvider( PlayerID player ) const
-{
-	TextMapping::const_iterator const playerIter = mRegisteredTextProviders.find( player );
-	if( playerIter == mRegisteredTextProviders.end() )
-	{
-		return nullptr;
-	}
-
-	return playerIter->second;
 }
 
 
@@ -99,6 +86,26 @@ WeakPtr<GameController> ControllerManager::UnregisterGameController( PlayerID pl
 		mRegisteredGameControllers.erase( playerIter );
 	}
 	return retVal;
+}
+
+
+
+WeakPtr<RawController const> ControllerManager::GetTextProvider( PlayerID player ) const
+{
+	return GetMutableTextProvider( player );
+}
+
+
+
+WeakPtr<RawController> ControllerManager::GetMutableTextProvider( PlayerID player ) const
+{
+	TextMapping::const_iterator const playerIter = mRegisteredTextProviders.find( player );
+	if( playerIter == mRegisteredTextProviders.end() )
+	{
+		return nullptr;
+	}
+
+	return playerIter->second;
 }
 
 

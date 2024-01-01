@@ -165,7 +165,7 @@ rftl::u16string InputHelpers::GetMainMenuUnicodeTextBuffer( size_t maxLen )
 void InputHelpers::ClearMainMenuTextBuffer()
 {
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	input::RawController& controller = *controllerManager.GetTextProvider( input::player::Global );
+	input::RawController& controller = *controllerManager.GetMutableTextProvider( input::player::Global );
 	controller.ClearTextStream();
 }
 
