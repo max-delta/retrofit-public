@@ -176,5 +176,44 @@ void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock:
 	}
 }
 
+
+
+ControllerManager::DebugPeekRawControllerHandles ControllerManager::DebugPeekRawControllers() const
+{
+	DebugPeekRawControllerHandles retVal;
+	retVal.reserve( mRawControllerStorage.size() );
+	for( UniquePtr<RawController> const& controller : mRawControllerStorage )
+	{
+		retVal.emplace_back( controller );
+	}
+	return retVal;
+}
+
+
+
+ControllerManager::DebugPeekGameControllerHandles ControllerManager::DebugPeekGameControllers() const
+{
+	DebugPeekGameControllerHandles retVal;
+	retVal.reserve( mGameControllerStorage.size() );
+	for( UniquePtr<GameController> const& controller : mGameControllerStorage )
+	{
+		retVal.emplace_back( controller );
+	}
+	return retVal;
+}
+
+
+
+ControllerManager::DebugPeekInputDeviceHandles ControllerManager::DebugPeekInputDevices() const
+{
+	DebugPeekInputDeviceHandles retVal;
+	retVal.reserve( mInputDeviceStorage.size() );
+	for( UniquePtr<InputDevice> const& device : mInputDeviceStorage )
+	{
+		retVal.emplace_back( device );
+	}
+	return retVal;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -12,14 +12,18 @@
 
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
+#include "GameInput/RawController.h"
 #include "GameUI/FontRegistry.h"
 
 #include "PPU/PPUController.h"
 
+#include "Localization/PageMapper.h"
 #include "Rollback/RollbackManager.h"
 #include "Timing/FrameClock.h"
 
+#include "core_input/InputDevice.h"
 #include "core_math/Lerp.h"
+#include "core_unicode/StringConvert.h"
 
 
 namespace RF::cc::developer {
@@ -29,6 +33,7 @@ enum class Mode : uint8_t
 {
 	Rollback = 0,
 	Reload,
+	InputDevice,
 
 	NumModes
 };
@@ -37,6 +42,7 @@ static constexpr size_t kNumModes = static_cast<size_t>( Mode::NumModes );
 static bool sDisplayHud = false;
 static Mode sCurrentMode = Mode::Rollback;
 static constexpr char kSnapshotName[] = "DEV1";
+static size_t sInputDeviceIndex = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace mode {
@@ -402,6 +408,418 @@ void RenderReload()
 	y++;
 }
 
+
+
+void ProcessInputDevice( RF::input::GameCommand const& command )
+{
+	switch( command.mType )
+	{
+		case input::command::game::DeveloperAction1:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction2:
+		{
+			sInputDeviceIndex++;
+			break;
+		}
+		case input::command::game::DeveloperAction3:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction4:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction5:
+		{
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+
+
+void RenderInputDevice()
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
+	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
+	{
+		// No font (not even a backup), so we may still be booting
+		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
+		return;
+	}
+	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	{
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		va_list args;
+		va_start( args, fmt );
+		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
+		va_end( args );
+		return retVal;
+	};
+
+	static constexpr uint8_t kStartX = 4;
+	static constexpr uint8_t kStartY = 1;
+	uint8_t x = kStartX;
+	uint8_t y = kStartY;
+
+	drawText( x, y, math::Color3f::kMagenta, "INPUTDEVICE" );
+	y++;
+
+	// Helper for device drawing
+	auto const drawDevice = [&drawText, &x, &y]( WeakPtr<input::InputDevice const> const deviceHandle ) -> void
+	{
+		if( deviceHandle == nullptr )
+		{
+			drawText( x, y, math::Color3f::kRed, "NULL DEVICE" );
+			y++;
+			return;
+		}
+
+		input::InputDevice const& device = *deviceHandle;
+		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", device.mIdentifier.c_str() );
+		y++;
+
+		// Raw input controllers are usually going to eat all the data out of
+		//  buffers when they consume the data on a tick, so the buffers will
+		//  usually be empty unless special steps are taken to prevent them from
+		//  being consumed
+		// TODO: There could be some debug mechanism to get at this, but it might
+		//  be a one-way operation for something like the WndProc input device, as
+		//  there would then be no way to re-enable it (unless it was something
+		//  like a temporary time-delayed disable)
+		RF_TODO_ANNOTATION( "Some mechanism to block the consumption of input buffers" );
+		drawText( x, y, math::Color3f::kYellow, "REMINDER: Buffers usually get consumed" );
+		y++;
+
+		{
+			// Digital
+			if( device.mDigitalComponent != nullptr )
+			{
+				input::DigitalInputComponent const& digital = *device.mDigitalComponent;
+
+				// Logical events
+				{
+					using LogicalEvent = input::DigitalInputComponent::LogicalEvent;
+					using LogicEvents = rftl::static_vector<LogicalEvent, 8>;
+					using LogicEventParser = rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents>;
+					LogicEvents logicEvents;
+					LogicEventParser logicEventParser( logicEvents );
+					rftl::stringstream logicStream;
+
+					logicEvents.clear();
+					digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
+					logicStream.str( "" );
+					for( LogicEvents::value_type const& event : logicEvents )
+					{
+						logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+					}
+					drawText( x, y, math::Color3f::kWhite, "  lev: %s", logicStream.str().c_str() );
+					y++;
+				}
+
+				// Physical events
+				{
+					using PhysicalEvent = input::DigitalInputComponent::PhysicalEvent;
+					using PhysicEvents = rftl::static_vector<PhysicalEvent, 8>;
+					using PhysicEventParser = rftl::virtual_back_inserter_iterator<PhysicalEvent, PhysicEvents>;
+					PhysicEvents physicEvents;
+					PhysicEventParser physicEventParser( physicEvents );
+					rftl::stringstream physStream;
+
+					physicEvents.clear();
+					device.mDigitalComponent->GetPhysicalEventStream( physicEventParser, physicEvents.max_size() );
+					physStream.str( "" );
+					for( PhysicEvents::value_type const& event : physicEvents )
+					{
+						physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+					}
+					drawText( x, y, math::Color3f::kWhite, "  pev: %s", physStream.str().c_str() );
+					y++;
+				}
+			}
+			else
+			{
+				drawText( x, y, math::Color3f::kYellow, "NO DIGITAL" );
+				y++;
+			}
+
+			// Analog
+			if( device.mAnalogComponent != nullptr )
+			{
+				input::AnalogInputComponent const& analog = *device.mAnalogComponent;
+
+				input::AnalogSignalIndex const maxIndex = analog.GetMaxSignalIndex();
+				for( input::AnalogSignalIndex index = 0; index <= maxIndex; index++ )
+				{
+					rftl::u16string const name16 = analog.GetSignalName( index );
+					rftl::string const name = app::gPageMapper->MapTo8Bit(
+						unicode::ConvertToUtf32(
+							name16 ) );
+
+					input::AnalogSignalValue const value = analog.GetCurrentSignalValue( index );
+
+					drawText( x, y, math::Color3f::kWhite, "  %s: %f", name.c_str(), value );
+					y++;
+				}
+			}
+			else
+			{
+				drawText( x, y, math::Color3f::kYellow, "NO ANALOG" );
+				y++;
+			}
+
+			// Text
+			if( device.mTextComponent != nullptr )
+			{
+				input::TextInputComponent const& text = *device.mTextComponent;
+
+				rftl::u16string textStream16;
+				text.GetTextStream( textStream16, 100 );
+				rftl::string const textStream = app::gPageMapper->MapTo8Bit(
+					unicode::ConvertToUtf32(
+						textStream16 ) );
+
+				drawText( x, y, math::Color3f::kWhite, "  txt: %s", textStream.c_str() );
+				y++;
+			}
+			else
+			{
+				drawText( x, y, math::Color3f::kYellow, "NO TEXT" );
+				y++;
+			}
+		}
+	};
+
+	// Helper for raw controller drawing
+	auto const drawRawController = [&drawText, &x, &y]( WeakPtr<input::RawController const> const controllerHandle ) -> void
+	{
+		if( controllerHandle == nullptr )
+		{
+			drawText( x, y, math::Color3f::kRed, "NULL RAW CONTROLLER" );
+			y++;
+			return;
+		}
+
+		input::RawController const& controller = *controllerHandle;
+		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", "???TODO_ID???" );
+		y++;
+
+		{
+			{
+				// Raw commands
+				{
+					using RawCommand = input::RawCommand;
+					using RawCommands = rftl::static_vector<RawCommand, 8>;
+					using RawCommandParser = rftl::virtual_back_inserter_iterator<RawCommand, RawCommands>;
+					RawCommands rawCommands;
+					RawCommandParser rawCommandParser( rawCommands );
+					rftl::stringstream rawCommandStream;
+
+					rawCommands.clear();
+					controller.GetRawCommandStream( rawCommandParser, rawCommands.max_size() );
+					rawCommandStream.str( "" );
+					for( RawCommands::value_type const& command : rawCommands )
+					{
+						rawCommandStream << " " << static_cast<int>( command.mType );
+					}
+					drawText( x, y, math::Color3f::kWhite, "  rcmd: %s", rawCommandStream.str().c_str() );
+					y++;
+				}
+
+				// Raw signals
+				{
+					using KnownSignal = input::RawSignalType;
+					using KnownSignals = rftl::static_vector<KnownSignal, 8>;
+					using KnownSignalSampler = rftl::virtual_back_inserter_iterator<KnownSignal, KnownSignals>;
+					KnownSignals knownSignals;
+					KnownSignalSampler knownSignalSampler( knownSignals );
+
+					knownSignals.clear();
+					controller.GetKnownSignals( knownSignalSampler, knownSignals.max_size() );
+					for( size_t index = 0; index < knownSignals.size(); index++ )
+					{
+						using RawSignal = input::RawSignal;
+						using RawSignals = rftl::static_vector<RawSignal, 8>;
+						using RawSignalSampler = rftl::virtual_back_inserter_iterator<RawSignal, RawSignals>;
+						RawSignals rawSignals;
+						RawSignalSampler rawSignalSampler( rawSignals );
+						rftl::stringstream rawSignalStream;
+
+						rawSignals.clear();
+						controller.GetRawSignalStream( rawSignalSampler, rawSignals.max_size(), 0 );
+						rawSignalStream.str( "" );
+						for( RawSignals::value_type const& signal : rawSignals )
+						{
+							rawSignalStream << " " << static_cast<int>( signal.mValue );
+						}
+						drawText( x, y, math::Color3f::kWhite, "  %z: %s", index, rawSignalStream.str().c_str() );
+						y++;
+					}
+				}
+
+				// Text
+				{
+					rftl::u16string textStream16;
+					controller.GetTextStream( textStream16, 100 );
+					rftl::string const textStream = app::gPageMapper->MapTo8Bit(
+						unicode::ConvertToUtf32(
+							textStream16 ) );
+
+					drawText( x, y, math::Color3f::kWhite, "  txt: %s", textStream.c_str() );
+					y++;
+				}
+			}
+		}
+	};
+
+	// Helper for game controller drawing
+	auto const drawGameController = [&drawText, &x, &y]( WeakPtr<input::GameController const> const controllerHandle ) -> void
+	{
+		if( controllerHandle == nullptr )
+		{
+			drawText( x, y, math::Color3f::kRed, "NULL GAME CONTROLLER" );
+			y++;
+			return;
+		}
+
+		input::GameController const& controller = *controllerHandle;
+		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", "???TODO_ID???" );
+		y++;
+
+		{
+			{
+				// Game commands
+				{
+					using GameCommand = input::GameCommand;
+					using GameCommands = rftl::static_vector<GameCommand, 8>;
+					using GameCommandParser = rftl::virtual_back_inserter_iterator<GameCommand, GameCommands>;
+					GameCommands gameCommands;
+					GameCommandParser gameCommandParser( gameCommands );
+					rftl::stringstream gameCommandStream;
+
+					gameCommands.clear();
+					controller.GetGameCommandStream( gameCommandParser, gameCommands.max_size() );
+					gameCommandStream.str( "" );
+					for( GameCommands::value_type const& command : gameCommands )
+					{
+						gameCommandStream << " " << static_cast<int>( command.mType );
+					}
+					drawText( x, y, math::Color3f::kWhite, "  gcmd: %s", gameCommandStream.str().c_str() );
+					y++;
+				}
+
+				// Game signals
+				{
+					using KnownSignal = input::GameSignalType;
+					using KnownSignals = rftl::static_vector<KnownSignal, 8>;
+					using KnownSignalSampler = rftl::virtual_back_inserter_iterator<KnownSignal, KnownSignals>;
+					KnownSignals knownSignals;
+					KnownSignalSampler knownSignalSampler( knownSignals );
+
+					knownSignals.clear();
+					controller.GetKnownSignals( knownSignalSampler, knownSignals.max_size() );
+					for( size_t index = 0; index < knownSignals.size(); index++ )
+					{
+						using GameSignal = input::GameSignal;
+						using GameSignals = rftl::static_vector<GameSignal, 8>;
+						using GameSignalSampler = rftl::virtual_back_inserter_iterator<GameSignal, GameSignals>;
+						GameSignals gameSignals;
+						GameSignalSampler gameSignalSampler( gameSignals );
+						rftl::stringstream gameSignalStream;
+
+						gameSignals.clear();
+						controller.GetGameSignalStream( gameSignalSampler, gameSignals.max_size(), 0 );
+						gameSignalStream.str( "" );
+						for( GameSignals::value_type const& signal : gameSignals )
+						{
+							gameSignalStream << " " << static_cast<int>( signal.mValue );
+						}
+						drawText( x, y, math::Color3f::kWhite, "  %z: %s", index, gameSignalStream.str().c_str() );
+						y++;
+					}
+				}
+			}
+		}
+	};
+
+	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
+
+	input::ControllerManager::DebugPeekInputDeviceHandles const devices =
+		controllerManager.DebugPeekInputDevices();
+	input::ControllerManager::DebugPeekRawControllerHandles const rawControllers =
+		controllerManager.DebugPeekRawControllers();
+	input::ControllerManager::DebugPeekGameControllerHandles const gameControllers =
+		controllerManager.DebugPeekGameControllers();
+	if( devices.empty() )
+	{
+		drawText( x, y, math::Color3f::kYellow, "NO DEVICES STORED" );
+		y++;
+	}
+	if( rawControllers.empty() )
+	{
+		drawText( x, y, math::Color3f::kYellow, "NO RAW CONTROLLERS STORED" );
+		y++;
+	}
+	if( gameControllers.empty() )
+	{
+		drawText( x, y, math::Color3f::kYellow, "NO GAME CONTROLLERS STORED" );
+		y++;
+	}
+
+	// Figure out total choices and sanitize current choice
+	size_t const numChoices = devices.size() + rawControllers.size() + gameControllers.size();
+	if( numChoices == 0 )
+	{
+		drawText( x, y, math::Color3f::kRed, "NO STORAGE CHOICES" );
+		y++;
+		return;
+	}
+	sInputDeviceIndex = sInputDeviceIndex % numChoices;
+	RF_ASSERT( sInputDeviceIndex < numChoices );
+
+	// Display list and current selection
+	{
+		rftl::string choices;
+		choices.reserve( numChoices );
+		choices.append( devices.size(), 'd' );
+		choices.append( rawControllers.size(), 'r' );
+		choices.append( gameControllers.size(), 'g' );
+		static constexpr char kUpperOffset = 'A' - 'a';
+		RF_ASSERT( sInputDeviceIndex < choices.size() );
+		choices.at( sInputDeviceIndex ) += kUpperOffset;
+		drawText( x, y, math::Color3f::kGreen, "LIST [%s]", choices.c_str() );
+		y++;
+	}
+
+	// Use the choice to find the right data to display
+	size_t rollingChoice = sInputDeviceIndex;
+	RF_ASSERT( rollingChoice < numChoices );
+	if( rollingChoice < devices.size() )
+	{
+		drawDevice( devices.at( rollingChoice ) );
+		return;
+	}
+	rollingChoice -= devices.size();
+	if( rollingChoice < rawControllers.size() )
+	{
+		drawRawController( rawControllers.at( rollingChoice ) );
+		return;
+	}
+	rollingChoice -= rawControllers.size();
+	if( rollingChoice < gameControllers.size() )
+	{
+		drawGameController( gameControllers.at( rollingChoice ) );
+		return;
+	}
+	RF_DBGFAIL_MSG( "Bad math / logic" );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -416,7 +834,7 @@ void Startup()
 void ProcessInput()
 {
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
-	WeakPtr<input::GameController> const controller = controllerManager.GetGameController( input::player::Global, input::layer::Developer );
+	WeakPtr<input::GameController const> const controller = controllerManager.GetGameController( input::player::Global, input::layer::Developer );
 	if( controller == nullptr )
 	{
 		// No controller, so we may still be booting
@@ -456,6 +874,9 @@ void ProcessInput()
 					case Mode::Reload:
 						mode::ProcessReload( command );
 						break;
+					case Mode::InputDevice:
+						mode::ProcessInputDevice( command );
+						break;
 					case Mode::NumModes:
 					default:
 						RF_DBGFAIL();
@@ -485,6 +906,9 @@ void RenderHud()
 			return;
 		case Mode::Reload:
 			mode::RenderReload();
+			return;
+		case Mode::InputDevice:
+			mode::RenderInputDevice();
 			return;
 		case Mode::NumModes:
 		default:
