@@ -447,8 +447,17 @@ AnalogSignalIndex WndProcAnalogInputComponent::GetMaxSignalIndex() const
 
 rftl::u16string WndProcAnalogInputComponent::GetSignalName( AnalogSignalIndex signalIndex ) const
 {
-	RF_TODO_BREAK();
-	return rftl::u16string();
+	RF_ASSERT_MSG( signalIndex <= GetMaxSignalIndex(), "Invalid parameter" );
+	switch( signalIndex )
+	{
+		case k_CursorAbsoluteX:
+			return u"CUR_ABS_X";
+		case k_CursorAbsoluteY:
+			return u"CUR_ABS_Y";
+		default:
+			RF_DBGFAIL();
+			return rftl::u16string();
+	}
 }
 
 
