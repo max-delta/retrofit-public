@@ -11,6 +11,9 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A complex game controller implementation that allows the rollback system to
+//  intercept and inject commands into the normal controller stack
+// NOTE: Complicated, it is deeply intertwined with the rollback system
 class GAMESYNC_API RollbackController final : public GameController
 {
 	RF_NO_COPY( RollbackController );

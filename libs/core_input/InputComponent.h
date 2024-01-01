@@ -7,6 +7,8 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Base class for input components so that they can be enumerated and ticked
+// NOTE: See derived interfaces for more specific uses
 class InputComponent
 {
 	RF_NO_COPY( InputComponent );

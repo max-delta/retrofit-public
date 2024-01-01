@@ -7,6 +7,7 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// For analog input that has an 'intensity' representation
 class AnalogInputComponent : public InputComponent
 {
 	RF_NO_COPY( AnalogInputComponent );

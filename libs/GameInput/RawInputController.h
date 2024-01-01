@@ -10,6 +10,7 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A raw controller implementation for directly consuming from an input device
 class GAMEINPUT_API RawInputController final : public RawController
 {
 	RF_NO_COPY( RawInputController );
@@ -44,10 +45,13 @@ public:
 	void ConsumeInput( InputDevice& inputDevice );
 
 	virtual void GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, size_t maxCommands ) const override;
+
 	virtual void GetKnownSignals( rftl::virtual_iterator<RawSignalType>& iter, size_t maxTypes ) const override;
 	virtual void GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, size_t maxSamples, RawSignalType type ) const override;
+
 	virtual void GetTextStream( rftl::u16string& text, size_t maxLen ) const override;
 	virtual void ClearTextStream() override;
+
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) override;
 
 

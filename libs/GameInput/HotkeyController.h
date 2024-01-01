@@ -9,6 +9,8 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A game controller implementation for directly consuming command input from a
+//  raw controller with a simple command mapping
 class GAMEINPUT_API HotkeyController final : public GameController
 {
 	RF_NO_COPY( HotkeyController );

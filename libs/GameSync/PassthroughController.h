@@ -9,6 +9,8 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A game controller implementation for wrapping another game controller and
+//  conditionally suppressing its output
 class GAMESYNC_API PassthroughController final : public GameController
 {
 	RF_NO_COPY( PassthroughController );

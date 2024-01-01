@@ -7,6 +7,7 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// For text input that has a Unicode representation
 class TextInputComponent : public InputComponent
 {
 	RF_NO_COPY( TextInputComponent );

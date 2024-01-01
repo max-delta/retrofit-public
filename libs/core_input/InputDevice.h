@@ -9,6 +9,7 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Represents a device that has one or more types of input it can produce
 class InputDevice
 {
 	RF_NO_COPY( InputDevice );

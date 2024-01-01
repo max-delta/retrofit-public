@@ -10,6 +10,7 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+// For digital input that has an 'on' and 'off' representation
 class DigitalInputComponent : public InputComponent
 {
 	RF_NO_COPY( DigitalInputComponent );
