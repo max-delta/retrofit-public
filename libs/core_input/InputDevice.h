@@ -17,13 +17,16 @@ public:
 	void OnTick();
 	virtual ~InputDevice() = default;
 
+	rftl::string const mIdentifier;
 	UniquePtr<DigitalInputComponent> const mDigitalComponent;
 	UniquePtr<AnalogInputComponent> const mAnalogComponent;
 	UniquePtr<TextInputComponent> const mTextComponent;
 
 protected:
 	InputDevice() = delete;
+	// NOTE: Identifier does not need to be unique (it is mostly for debug)
 	InputDevice(
+		rftl::string&& identifier,
 		UniquePtr<DigitalInputComponent>&& digital,
 		UniquePtr<AnalogInputComponent>&& analog,
 		UniquePtr<TextInputComponent>&& text );

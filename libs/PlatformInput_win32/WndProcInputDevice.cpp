@@ -12,6 +12,7 @@ namespace RF::input {
 
 WndProcInputDevice::WndProcInputDevice()
 	: InputDevice(
+		"Global WndProc",
 		DefaultCreator<WndProcDigitalInputComponent>::Create(),
 		DefaultCreator<WndProcAnalogInputComponent>::Create(),
 		DefaultCreator<WndProcTextInputComponent>::Create() )
