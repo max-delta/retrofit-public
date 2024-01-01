@@ -1,6 +1,7 @@
 #pragma once
 #include "GameInput/InputFwd.h"
 
+#include "core_input/InputFwd.h"
 #include "core_time/CommonClock.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -28,6 +29,7 @@ public:
 private:
 	using RawControllerStorage = rftl::vector<UniquePtr<RawController>>;
 	using GameControllerStorage = rftl::vector<UniquePtr<GameController>>;
+	using InputDeviceStorage = rftl::vector<UniquePtr<InputDevice>>;
 	using LayerMapping = rftl::unordered_map<LayerID, WeakPtr<GameController>>;
 	using PlayerMapping = rftl::unordered_map<PlayerID, LayerMapping>;
 	using TextMapping = rftl::unordered_map<PlayerID, WeakPtr<RawController>>;
@@ -61,6 +63,7 @@ public:
 	// It is useful to be able to store underlying input data centrally
 	WeakPtr<RawController> StoreRawController( UniquePtr<RawController>&& controller );
 	WeakPtr<GameController> StoreGameController( UniquePtr<GameController>&& controller );
+	WeakPtr<InputDevice> StoreInputDevice( UniquePtr<InputDevice>&& device );
 
 	// Some complex cases may need to fiddle with time-sensitive buffers
 	// NOTE: Networked input rollback and replay is a good example of this
@@ -72,6 +75,7 @@ public:
 private:
 	RawControllerStorage mRawControllerStorage;
 	GameControllerStorage mGameControllerStorage;
+	InputDeviceStorage mInputDeviceStorage;
 	PlayerMapping mRegisteredGameControllers;
 	TextMapping mRegisteredTextProviders;
 };

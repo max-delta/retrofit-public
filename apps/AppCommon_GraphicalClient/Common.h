@@ -10,8 +10,8 @@ namespace cli {
 	class ArgParse;
 }
 namespace input {
-	class WndProcInputDevice;
 	class ControllerManager;
+	class WndProcInputDevice;
 }
 namespace gfx::ppu {
 	class PPUController;
@@ -39,8 +39,8 @@ APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
 
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<cli::ArgParse const> gCommandLineArgs;
-APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;
+APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<gfx::ppu::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<ui::ContainerManager> gUiManager;

@@ -154,6 +154,16 @@ WeakPtr<GameController> ControllerManager::StoreGameController( UniquePtr<GameCo
 
 
 
+WeakPtr<InputDevice> ControllerManager::StoreInputDevice( UniquePtr<InputDevice>&& device )
+{
+	RF_ASSERT( device != nullptr );
+	WeakPtr<InputDevice> const retVal = device;
+	mInputDeviceStorage.emplace_back( rftl::move( device ) );
+	return retVal;
+}
+
+
+
 void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime )
 {
 	for( PlayerMapping::value_type& player : mRegisteredGameControllers )

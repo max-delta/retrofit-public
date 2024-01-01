@@ -40,8 +40,8 @@ APPCOMMONGRAPHICALCLIENT_API bool gShouldExit = false;
 
 // Global systems
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<cli::ArgParse const> gCommandLineArgs;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
+APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::ppu::PPUController> gGraphics;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
@@ -50,8 +50,8 @@ APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 static UniquePtr<cli::ArgParse const> sCommandLineArgs;
-static UniquePtr<input::WndProcInputDevice> sWndProcInput;
 static UniquePtr<input::ControllerManager> sInputControllerManager;
+//static UniquePtr<input::WndProcInputDevice> sWndProcInput; // Stored in controller manager
 static UniquePtr<gfx::ppu::PPUController> sGraphics;
 static UniquePtr<ui::FontRegistry> sFontRegistry;
 static UniquePtr<ui::ContainerManager> sUiManager;
@@ -143,10 +143,14 @@ void Startup( cli::ArgView const& args )
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
-	sWndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
-	gWndProcInput = sWndProcInput;
-	sInputControllerManager = DefaultCreator<input::ControllerManager>::Create();
-	gInputControllerManager = sInputControllerManager;
+	{
+		sInputControllerManager = DefaultCreator<input::ControllerManager>::Create();
+		gInputControllerManager = sInputControllerManager;
+
+		UniquePtr<input::WndProcInputDevice> wndProcInput = DefaultCreator<input::WndProcInputDevice>::Create();
+		gWndProcInput = wndProcInput;
+		gInputControllerManager->StoreInputDevice( rftl::move( wndProcInput ) );
+	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing font registry..." );
 	sFontRegistry = DefaultCreator<ui::FontRegistry>::Create();
@@ -178,8 +182,9 @@ void Shutdown()
 	sFontRegistry = nullptr;
 	sGraphics = nullptr;
 	sVfs = nullptr;
-	sWndProcInput = nullptr;
 	sTaskScheduler = nullptr;
+	//sWndProcInput = nullptr; // Stored in controller manager
+	sInputControllerManager = nullptr;
 	sCommandLineArgs = nullptr;
 }
 
