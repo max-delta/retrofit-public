@@ -26,9 +26,11 @@ public:
 	using PlayerIDs = rftl::unordered_set<PlayerID>;
 	using LayerIDs = rftl::unordered_set<LayerID>;
 
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 	using DebugPeekRawControllerHandles = rftl::vector<WeakPtr<RawController const>>;
 	using DebugPeekGameControllerHandles = rftl::vector<WeakPtr<GameController const>>;
 	using DebugPeekInputDeviceHandles = rftl::vector<WeakPtr<InputDevice const>>;
+#endif
 
 private:
 	using RawControllerStorage = rftl::vector<UniquePtr<RawController>>;
@@ -74,10 +76,11 @@ public:
 	void TruncateAllRegisteredGameControllers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime );
 
 	// Intended for debug purposes only
-	RF_TODO_ANNOTATION( "Gate this behind some input debug config ifdefs" );
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 	DebugPeekRawControllerHandles DebugPeekRawControllers() const;
 	DebugPeekGameControllerHandles DebugPeekGameControllers() const;
 	DebugPeekInputDeviceHandles DebugPeekInputDevices() const;
+#endif
 
 
 	//

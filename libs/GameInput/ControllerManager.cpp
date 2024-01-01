@@ -178,6 +178,7 @@ void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock:
 
 
 
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 ControllerManager::DebugPeekRawControllerHandles ControllerManager::DebugPeekRawControllers() const
 {
 	DebugPeekRawControllerHandles retVal;
@@ -188,9 +189,11 @@ ControllerManager::DebugPeekRawControllerHandles ControllerManager::DebugPeekRaw
 	}
 	return retVal;
 }
+#endif
 
 
 
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 ControllerManager::DebugPeekGameControllerHandles ControllerManager::DebugPeekGameControllers() const
 {
 	DebugPeekGameControllerHandles retVal;
@@ -201,9 +204,11 @@ ControllerManager::DebugPeekGameControllerHandles ControllerManager::DebugPeekGa
 	}
 	return retVal;
 }
+#endif
 
 
 
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 ControllerManager::DebugPeekInputDeviceHandles ControllerManager::DebugPeekInputDevices() const
 {
 	DebugPeekInputDeviceHandles retVal;
@@ -214,6 +219,7 @@ ControllerManager::DebugPeekInputDeviceHandles ControllerManager::DebugPeekInput
 	}
 	return retVal;
 }
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 }

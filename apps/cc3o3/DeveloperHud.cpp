@@ -748,6 +748,8 @@ void RenderInputDevice()
 		}
 	};
 
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
+
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
 
 	input::ControllerManager::DebugPeekInputDeviceHandles const devices =
@@ -818,6 +820,11 @@ void RenderInputDevice()
 		return;
 	}
 	RF_DBGFAIL_MSG( "Bad math / logic" );
+
+#else
+	drawText( x, y, math::Color3f::kRed, "DEBUG INTERFACE DISABLED" );
+	y++;
+#endif
 }
 
 }
