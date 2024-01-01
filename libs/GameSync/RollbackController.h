@@ -47,8 +47,8 @@ public:
 private:
 	WeakPtr<GameController> mSource;
 	WeakPtr<rollback::RollbackManager> mManager;
-	rollback::InputStreamIdentifier mIdentifier;
-	time::CommonClock::duration mArtificalDelay;
+	rollback::InputStreamIdentifier mIdentifier = 0;
+	time::CommonClock::duration mArtificalDelay = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
