@@ -440,7 +440,7 @@ void WndProcAnalogInputComponent::OnTick()
 
 AnalogSignalIndex WndProcAnalogInputComponent::GetMaxSignalIndex() const
 {
-	return k_NumSignals;
+	return k_NumSignals - 1;
 }
 
 
@@ -455,7 +455,7 @@ rftl::u16string WndProcAnalogInputComponent::GetSignalName( AnalogSignalIndex si
 
 AnalogSignalValue WndProcAnalogInputComponent::GetCurrentSignalValue( AnalogSignalIndex signalIndex ) const
 {
-	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
+	RF_ASSERT_MSG( signalIndex <= GetMaxSignalIndex(), "Invalid parameter" );
 	return mCurrentSignalValues[signalIndex];
 }
 
@@ -463,7 +463,7 @@ AnalogSignalValue WndProcAnalogInputComponent::GetCurrentSignalValue( AnalogSign
 
 AnalogSignalValue WndProcAnalogInputComponent::GetPreviousSignalValue( AnalogSignalIndex signalIndex ) const
 {
-	RF_ASSERT_MSG( signalIndex < GetMaxSignalIndex(), "Invalid parameter" );
+	RF_ASSERT_MSG( signalIndex <= GetMaxSignalIndex(), "Invalid parameter" );
 	return mPreviousSignalValues[signalIndex];
 }
 
