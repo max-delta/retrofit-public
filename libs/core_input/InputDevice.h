@@ -14,8 +14,9 @@ class InputDevice
 	RF_NO_COPY( InputDevice );
 
 public:
-	void OnTick();
 	virtual ~InputDevice() = default;
+
+	void OnTick();
 
 	rftl::string const mIdentifier;
 	UniquePtr<DigitalInputComponent> const mDigitalComponent;
