@@ -179,6 +179,21 @@ void ControllerManager::TruncateAllRegisteredGameControllers( time::CommonClock:
 
 
 #if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
+ControllerManager::DebugPeekInputDeviceHandles ControllerManager::DebugPeekInputDevices() const
+{
+	DebugPeekInputDeviceHandles retVal;
+	retVal.reserve( mInputDeviceStorage.size() );
+	for( UniquePtr<InputDevice> const& device : mInputDeviceStorage )
+	{
+		retVal.emplace_back( device );
+	}
+	return retVal;
+}
+#endif
+
+
+
+#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
 ControllerManager::DebugPeekRawControllerHandles ControllerManager::DebugPeekRawControllers() const
 {
 	DebugPeekRawControllerHandles retVal;
@@ -201,21 +216,6 @@ ControllerManager::DebugPeekGameControllerHandles ControllerManager::DebugPeekGa
 	for( UniquePtr<GameController> const& controller : mGameControllerStorage )
 	{
 		retVal.emplace_back( controller );
-	}
-	return retVal;
-}
-#endif
-
-
-
-#if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
-ControllerManager::DebugPeekInputDeviceHandles ControllerManager::DebugPeekInputDevices() const
-{
-	DebugPeekInputDeviceHandles retVal;
-	retVal.reserve( mInputDeviceStorage.size() );
-	for( UniquePtr<InputDevice> const& device : mInputDeviceStorage )
-	{
-		retVal.emplace_back( device );
 	}
 	return retVal;
 }

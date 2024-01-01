@@ -27,15 +27,15 @@ public:
 	using LayerIDs = rftl::unordered_set<LayerID>;
 
 #if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
+	using DebugPeekInputDeviceHandles = rftl::vector<WeakPtr<InputDevice const>>;
 	using DebugPeekRawControllerHandles = rftl::vector<WeakPtr<RawController const>>;
 	using DebugPeekGameControllerHandles = rftl::vector<WeakPtr<GameController const>>;
-	using DebugPeekInputDeviceHandles = rftl::vector<WeakPtr<InputDevice const>>;
 #endif
 
 private:
+	using InputDeviceStorage = rftl::vector<UniquePtr<InputDevice>>;
 	using RawControllerStorage = rftl::vector<UniquePtr<RawController>>;
 	using GameControllerStorage = rftl::vector<UniquePtr<GameController>>;
-	using InputDeviceStorage = rftl::vector<UniquePtr<InputDevice>>;
 	using LayerMapping = rftl::unordered_map<LayerID, WeakPtr<GameController>>;
 	using PlayerMapping = rftl::unordered_map<PlayerID, LayerMapping>;
 	using TextMapping = rftl::unordered_map<PlayerID, WeakPtr<RawController>>;
@@ -67,9 +67,9 @@ public:
 	WeakPtr<RawController> UnregisterTextProvider( PlayerID player );
 
 	// It is useful to be able to store underlying input data centrally
+	WeakPtr<InputDevice> StoreInputDevice( UniquePtr<InputDevice>&& device );
 	WeakPtr<RawController> StoreRawController( UniquePtr<RawController>&& controller );
 	WeakPtr<GameController> StoreGameController( UniquePtr<GameController>&& controller );
-	WeakPtr<InputDevice> StoreInputDevice( UniquePtr<InputDevice>&& device );
 
 	// Some complex cases may need to fiddle with time-sensitive buffers
 	// NOTE: Networked input rollback and replay is a good example of this
@@ -77,18 +77,19 @@ public:
 
 	// Intended for debug purposes only
 #if RF_IS_ALLOWED( RF_CONFIG_INPUT_DEBUG_ACCESS )
+	DebugPeekInputDeviceHandles DebugPeekInputDevices() const;
 	DebugPeekRawControllerHandles DebugPeekRawControllers() const;
 	DebugPeekGameControllerHandles DebugPeekGameControllers() const;
-	DebugPeekInputDeviceHandles DebugPeekInputDevices() const;
 #endif
 
 
 	//
 	// Private data
 private:
+	InputDeviceStorage mInputDeviceStorage;
 	RawControllerStorage mRawControllerStorage;
 	GameControllerStorage mGameControllerStorage;
-	InputDeviceStorage mInputDeviceStorage;
+
 	PlayerMapping mRegisteredGameControllers;
 	TextMapping mRegisteredTextProviders;
 };
