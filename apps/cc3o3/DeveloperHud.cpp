@@ -608,7 +608,7 @@ void RenderInputDevice()
 		}
 
 		input::RawController const& controller = *controllerHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", "???TODO_ID???" );
+		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", controller.mIdentifier.c_str() );
 		y++;
 
 		{
@@ -690,7 +690,7 @@ void RenderInputDevice()
 		}
 
 		input::GameController const& controller = *controllerHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", "???TODO_ID???" );
+		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", controller.mIdentifier.c_str() );
 		y++;
 
 		{

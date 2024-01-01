@@ -12,6 +12,14 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+RollbackController::RollbackController()
+	: GameController( "Rollback" )
+{
+	//
+}
+
+
+
 WeakPtr<GameController> RollbackController::GetSource() const
 {
 	return mSource;

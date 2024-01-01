@@ -5,6 +5,14 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+PassthroughController::PassthroughController()
+	: GameController( "Passthrough" )
+{
+	//
+}
+
+
+
 WeakPtr<GameController> PassthroughController::GetSource() const
 {
 	return mSource;

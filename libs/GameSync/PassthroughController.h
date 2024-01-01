@@ -18,7 +18,7 @@ class GAMESYNC_API PassthroughController final : public GameController
 	//
 	// Public methods
 public:
-	PassthroughController() = default;
+	PassthroughController();
 
 	WeakPtr<GameController> GetSource() const;
 	void SetSource( WeakPtr<GameController> const& source );

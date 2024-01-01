@@ -21,7 +21,7 @@ class GAMESYNC_API RollbackController final : public GameController
 	//
 	// Public methods
 public:
-	RollbackController() = default;
+	RollbackController();
 
 	WeakPtr<GameController> GetSource() const;
 	void SetSource( WeakPtr<GameController> const& source );

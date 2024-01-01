@@ -41,7 +41,6 @@ class GAMEINPUT_API RawController
 	//
 	// Public methods
 public:
-	RawController() = default;
 	virtual ~RawController() = default;
 
 	void GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser ) const;
@@ -59,6 +58,20 @@ public:
 	virtual void ClearTextStream() = 0;
 
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) = 0;
+
+
+	//
+	// Protected methods
+protected:
+	RawController() = delete;
+	// NOTE: Identifier does not need to be unique (it is mostly for debug)
+	explicit RawController( rftl::string&& identifier );
+
+
+	//
+	// Public data
+public:
+	rftl::string const mIdentifier;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

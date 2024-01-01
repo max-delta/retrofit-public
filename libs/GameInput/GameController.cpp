@@ -76,4 +76,12 @@ void GameController::GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sa
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+GameController::GameController( rftl::string&& identifier )
+	: mIdentifier( identifier )
+{
+	RF_ASSERT( mIdentifier.empty() == false );
+}
+
+///////////////////////////////////////////////////////////////////////////////
 }

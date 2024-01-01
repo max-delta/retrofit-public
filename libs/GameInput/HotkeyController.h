@@ -24,7 +24,7 @@ public:
 	//
 	// Public methods
 public:
-	HotkeyController() = default;
+	HotkeyController();
 
 	WeakPtr<RawController> GetSource() const;
 	void SetSource( WeakPtr<RawController> const& source );

@@ -9,6 +9,14 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+HotkeyController::HotkeyController()
+	: GameController( "Hotkey" )
+{
+	//
+}
+
+
+
 WeakPtr<RawController> HotkeyController::GetSource() const
 {
 	return mSource;

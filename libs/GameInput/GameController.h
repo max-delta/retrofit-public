@@ -42,7 +42,6 @@ class GAMEINPUT_API GameController
 	//
 	// Public methods
 public:
-	GameController() = default;
 	virtual ~GameController() = default;
 
 	void GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser ) const;
@@ -56,6 +55,20 @@ public:
 	void GetGameSignalStream( rftl::virtual_iterator<GameSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, GameSignalType type ) const;
 
 	virtual void TruncateBuffers( time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) = 0;
+
+
+	//
+	// Protected methods
+protected:
+	GameController() = delete;
+	// NOTE: Identifier does not need to be unique (it is mostly for debug)
+	explicit GameController( rftl::string&& identifier );
+
+
+	//
+	// Public data
+public:
+	rftl::string const mIdentifier;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

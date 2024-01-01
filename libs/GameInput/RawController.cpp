@@ -62,4 +62,12 @@ void RawController::GetTextStream( rftl::u16string& text ) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+RawController::RawController( rftl::string&& identifier )
+	: mIdentifier( identifier )
+{
+	RF_ASSERT( mIdentifier.empty() == false );
+}
+
+///////////////////////////////////////////////////////////////////////////////
 }

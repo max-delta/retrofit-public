@@ -35,7 +35,7 @@ private:
 	//
 	// Public methods
 public:
-	RawInputController() = default;
+	RawInputController();
 	virtual ~RawInputController() override = default;
 
 	void SetPhysicalMapping( PhysicalMapping const& mapping );

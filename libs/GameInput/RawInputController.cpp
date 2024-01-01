@@ -10,6 +10,14 @@
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
 
+RawInputController::RawInputController()
+	: RawController( "RawInput" )
+{
+	//
+}
+
+
+
 void RawInputController::SetPhysicalMapping( PhysicalMapping const& mapping )
 {
 	mPhysicalMapping = mapping;
