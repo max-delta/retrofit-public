@@ -25,6 +25,8 @@ namespace details {
 
 static WeakPtr<input::RawInputController> sRawInputController;
 
+static bool sTickSevered = false;
+
 
 
 UniquePtr<input::RollbackController> WrapWithRollback(
@@ -291,10 +293,24 @@ void HardcodedHackSetup( PlayerID playerID )
 
 void HardcodedRawTick()
 {
+	if( details::sTickSevered )
+	{
+		// This is mostly for debugging, so that the input devices can have
+		//  their buffers inspected instead of being consumed
+		return;
+	}
+
 	if( details::sRawInputController != nullptr )
 	{
 		details::sRawInputController->ConsumeInput( *app::gWndProcInput );
 	}
+}
+
+
+
+void HardcodedSeverTick()
+{
+	details::sTickSevered = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

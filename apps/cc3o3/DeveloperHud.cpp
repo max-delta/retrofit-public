@@ -4,7 +4,7 @@
 #include "cc3o3.h"
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InitialLoading.h"
-#include "cc3o3/input/InputFwd.h"
+#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/time/TimeFwd.h"
 #include "cc3o3/ui/UIFwd.h"
 
@@ -433,6 +433,7 @@ void ProcessInputDevice( RF::input::GameCommand const& command )
 		}
 		case input::command::game::DeveloperAction5:
 		{
+			input::HardcodedSeverTick();
 			break;
 		}
 		default:
