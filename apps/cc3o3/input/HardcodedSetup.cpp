@@ -29,7 +29,7 @@ namespace details {
 static constexpr size_t kNumXInputDevices = input::XInputDevice::kMaxUserIndex + 1;
 static rftl::array<WeakPtr<input::InputDevice>, kNumXInputDevices> sXInputDevices = {};
 
-static WeakPtr<input::RawInputController> sRawInputController;
+static WeakPtr<input::RawInputController> sWndProcRawInputController;
 
 static bool sTickSevered = false;
 
@@ -221,10 +221,14 @@ void HardcodedRawSetup()
 {
 	ControllerManager& manager = *app::gInputControllerManager;
 
-	UniquePtr<input::RawInputController> rawController = DefaultCreator<input::RawInputController>::Create();
-	rawController->SetLogicalMapping( details::HardcodedRawMapping() );
-	details::sRawInputController = rawController;
-	manager.StoreRawController( rftl::move( rawController ) );
+	// WndProc
+	{
+		UniquePtr<input::RawInputController> wndProcRawController =
+			DefaultCreator<input::RawInputController>::Create();
+		wndProcRawController->SetLogicalMapping( details::HardcodedRawMapping() );
+		details::sWndProcRawInputController = wndProcRawController;
+		manager.StoreRawController( rftl::move( wndProcRawController ) );
+	}
 }
 
 
@@ -235,7 +239,7 @@ void HardcodedMainSetup()
 
 	// Menus
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	menuHotkeyController->SetSource( details::sRawInputController );
+	menuHotkeyController->SetSource( details::sWndProcRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
 	UniquePtr<input::PassthroughController> menuPassthroughController = details::WrapWithPassthrough( menuHotkeyController );
 	manager.RegisterGameController( menuPassthroughController, player::Global, layer::MainMenu );
@@ -243,11 +247,11 @@ void HardcodedMainSetup()
 	manager.StoreGameController( rftl::move( menuPassthroughController ) );
 
 	// Text
-	manager.RegisterTextProvider( details::sRawInputController, player::Global );
+	manager.RegisterTextProvider( details::sWndProcRawInputController, player::Global );
 
 	// Developer
 	UniquePtr<input::HotkeyController> developerHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	developerHotkeyController->SetSource( details::sRawInputController );
+	developerHotkeyController->SetSource( details::sWndProcRawInputController );
 	developerHotkeyController->SetCommandMapping( details::HardcodedDevMapping() );
 	manager.RegisterGameController( developerHotkeyController, player::Global, layer::Developer );
 	manager.StoreGameController( rftl::move( developerHotkeyController ) );
@@ -265,7 +269,7 @@ void HardcodedPlayerSetup( PlayerID playerID )
 
 	// Game menus
 	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	menuHotkeyController->SetSource( details::sRawInputController );
+	menuHotkeyController->SetSource( details::sWndProcRawInputController );
 	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
 	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback(
 		menuHotkeyController, identifiers.mRollbackGameMenusID );
@@ -275,9 +279,9 @@ void HardcodedPlayerSetup( PlayerID playerID )
 
 	// Gameplay
 	UniquePtr<input::HotkeyController> gameplayHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	gameplayHotkeyController->SetSource( details::sRawInputController );
+	gameplayHotkeyController->SetSource( details::sWndProcRawInputController );
 	gameplayHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
-	gameplayHotkeyController->SetSource( details::sRawInputController );
+	gameplayHotkeyController->SetSource( details::sWndProcRawInputController );
 	UniquePtr<input::RollbackController> gameplayRollbackController = details::WrapWithRollback(
 		gameplayHotkeyController, identifiers.mRollbackGamplayID );
 	manager.RegisterGameController( gameplayRollbackController, playerID, layer::CharacterControl );
@@ -295,7 +299,7 @@ void HardcodedHackSetup( PlayerID playerID )
 
 	// Testing
 	UniquePtr<input::HotkeyController> hotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	hotkeyController->SetSource( details::sRawInputController );
+	hotkeyController->SetSource( details::sWndProcRawInputController );
 	{
 		input::HotkeyController::CommandMapping commandMapping;
 		commandMapping[command::raw::HatUp] = command::game::WalkNorth;
@@ -328,9 +332,9 @@ void HardcodedRawTick()
 		return;
 	}
 
-	if( details::sRawInputController != nullptr )
+	if( details::sWndProcRawInputController != nullptr )
 	{
-		details::sRawInputController->ConsumeInput( *app::gWndProcInput );
+		details::sWndProcRawInputController->ConsumeInput( *app::gWndProcInput );
 	}
 }
 
