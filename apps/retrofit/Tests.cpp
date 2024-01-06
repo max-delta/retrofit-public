@@ -354,7 +354,8 @@ static UniquePtr<input::RawInputController> sRawController;
 static UniquePtr<input::HotkeyController> sHotkeyController;
 void InitInputDebug()
 {
-	sRawController = DefaultCreator<input::RawInputController>::Create();
+	sRawController = DefaultCreator<input::RawInputController>::Create(
+		app::gWndProcInput->mIdentifier );
 
 	input::RawInputController::LogicalMapping logicalMapping;
 	logicalMapping[shim::VK_SPACE][input::DigitalPinState::Active] = 0;

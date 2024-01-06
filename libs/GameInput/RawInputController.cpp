@@ -9,9 +9,20 @@
 
 namespace RF::input {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
 
-RawInputController::RawInputController()
-	: RawController( "RawInput" )
+static rftl::string CreateIdentifier( rftl::string_view subIdentifier )
+{
+	RF_ASSERT( subIdentifier.empty() == false );
+	return rftl::string( "RawInput<" ).append( subIdentifier ).append( ">" );
+}
+
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+RawInputController::RawInputController( rftl::string_view subIdentifier )
+	: RawController( details::CreateIdentifier( subIdentifier ) )
 {
 	//
 }

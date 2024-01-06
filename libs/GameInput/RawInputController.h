@@ -3,8 +3,9 @@
 
 #include "core_input/InputFwd.h"
 
-#include "rftl/unordered_map"
 #include "rftl/deque"
+#include "rftl/string_view"
+#include "rftl/unordered_map"
 
 
 namespace RF::input {
@@ -35,7 +36,7 @@ private:
 	//
 	// Public methods
 public:
-	RawInputController();
+	explicit RawInputController( rftl::string_view subIdentifier );
 	virtual ~RawInputController() override = default;
 
 	void SetPhysicalMapping( PhysicalMapping const& mapping );

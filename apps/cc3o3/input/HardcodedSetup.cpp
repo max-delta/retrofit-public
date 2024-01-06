@@ -224,7 +224,8 @@ void HardcodedRawSetup()
 	// WndProc
 	{
 		UniquePtr<input::RawInputController> wndProcRawController =
-			DefaultCreator<input::RawInputController>::Create();
+			DefaultCreator<input::RawInputController>::Create(
+				app::gWndProcInput->mIdentifier );
 		wndProcRawController->SetLogicalMapping( details::HardcodedRawMapping() );
 		details::sWndProcRawInputController = wndProcRawController;
 		manager.StoreRawController( rftl::move( wndProcRawController ) );
