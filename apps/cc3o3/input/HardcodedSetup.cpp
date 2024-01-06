@@ -14,14 +14,20 @@
 #include "GameSync/RollbackInputManager.h"
 
 #include "PlatformInput_win32/WndProcInputDevice.h"
+#include "PlatformInput_win32/XInputDevice.h"
 
 #include "core_platform/shim/winuser_shim.h"
 #include "core/ptr/default_creator.h"
+
+#include "rftl/array"
 
 
 namespace RF::cc::input {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
+
+static constexpr size_t kNumXInputDevices = input::XInputDevice::kMaxUserIndex + 1;
+static rftl::array<WeakPtr<input::InputDevice>, kNumXInputDevices> sXInputDevices = {};
 
 static WeakPtr<input::RawInputController> sRawInputController;
 
@@ -188,6 +194,28 @@ input::HotkeyController::CommandMapping HardcodedGameMapping()
 
 }
 ///////////////////////////////////////////////////////////////////////////////
+
+void HardcodedDeviceSetup()
+{
+	// WndProc is so important, that it's always spun up by the common
+	//  application framework well before this code should ever run
+	RF_ASSERT( app::gWndProcInput );
+
+	// There are a set number of XInput devices, since the API is limited by
+	//  console assumptions, so we can just blindly spin them all up
+	{
+		using input::XInputDevice;
+		for( XInputDevice::UserIndex userIndex = 0; userIndex <= XInputDevice::kMaxUserIndex; userIndex++ )
+		{
+			UniquePtr<input::XInputDevice> device = DefaultCreator<input::XInputDevice>::Create( userIndex );
+			WeakPtr<input::InputDevice> ptr = app::gInputControllerManager->StoreInputDevice( rftl::move( device ) );
+			RF_ASSERT( ptr != nullptr );
+			details::sXInputDevices.at( userIndex ) = rftl::move( ptr );
+		}
+	}
+}
+
+
 
 void HardcodedRawSetup()
 {

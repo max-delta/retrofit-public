@@ -48,6 +48,7 @@ void Boot::OnTick( AppStateTickContext& context )
 
 	// HACK: Spin up hard-coded input
 	// TODO: Get this from a file
+	input::HardcodedDeviceSetup();
 	input::HardcodedRawSetup();
 	input::HardcodedMainSetup();
 

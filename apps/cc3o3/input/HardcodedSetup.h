@@ -12,6 +12,7 @@ namespace RF::cc::input {
 ///////////////////////////////////////////////////////////////////////////////
 
 // TODO: This is obviously gross, replace it
+void HardcodedDeviceSetup();
 void HardcodedRawSetup();
 void HardcodedMainSetup();
 void HardcodedPlayerSetup( PlayerID playerID );
