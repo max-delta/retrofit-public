@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "cc3o3/cc3o3.h"
+#include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/sync/Session.h"
 #include "cc3o3/time/TimeFwd.h"
 
@@ -8,8 +9,8 @@
 
 #include "PPU/PPUController.h"
 #include "PlatformUtils_win32/windowing.h"
-#include "PlatformInput_win32/WndProcInputDevice.h"
 #include "CommandLine/ArgView.h"
+#include "Timing/FrameClock.h"
 #include "Timing/Limiter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -50,8 +51,8 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 		stall();
 		time::FrameClock::add_time( cc::time::kSimulationFrameDuration );
 
-		// WndProc
-		app::gWndProcInput->OnTick();
+		// Input
+		cc::input::HardcodedDeviceTick();
 
 		// Windows
 		if( platform::windowing::ProcessAllMessages() < 0 )

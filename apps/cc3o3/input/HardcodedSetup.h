@@ -17,6 +17,7 @@ void HardcodedRawSetup();
 void HardcodedMainSetup();
 void HardcodedPlayerSetup( PlayerID playerID );
 void HardcodedHackSetup( PlayerID playerID );
+void HardcodedDeviceTick();
 void HardcodedRawTick();
 void HardcodedSeverTick();
 

@@ -324,6 +324,26 @@ void HardcodedHackSetup( PlayerID playerID )
 
 
 
+void HardcodedDeviceTick()
+{
+	// WndProc
+	app::gWndProcInput->OnTick();
+
+	// XInput
+	for( WeakPtr<InputDevice> const& device : details::sXInputDevices )
+	{
+		if( device == nullptr )
+		{
+			// Might be too early in boot, might not have set up devices yet
+			continue;
+		}
+
+		device->OnTick();
+	}
+}
+
+
+
 void HardcodedRawTick()
 {
 	if( details::sTickSevered )
