@@ -43,6 +43,7 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="XInputDevice.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\core\core.vcxproj">

@@ -11,5 +11,6 @@
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="WndProcInputDevice.cpp" />
+		<ClCompile Include="XInputDevice.cpp" />
 	</ItemGroup>
 </Project>
