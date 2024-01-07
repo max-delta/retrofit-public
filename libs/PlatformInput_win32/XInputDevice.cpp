@@ -172,42 +172,42 @@ LogicalCode XInputDigitalInputComponent::GetMaxLogicalCode() const
 
 rftl::u16string XInputDigitalInputComponent::GetLogicalName( LogicalCode code ) const
 {
-	RF_ASSERT( code < math::enum_bitcast( XInputDigitalInputComponent::Pin::NumPins ) );
-	switch( math::enum_bitcast<XInputDigitalInputComponent::Pin>( code ) )
+	RF_ASSERT( code < math::enum_bitcast( Pin::NumPins ) );
+	switch( math::enum_bitcast<Pin>( code ) )
 	{
-		case XInputDigitalInputComponent::Pin::DPadUp:
+		case Pin::DPadUp:
 			return u"Up";
-		case XInputDigitalInputComponent::Pin::DPadDown:
+		case Pin::DPadDown:
 			return u"Down";
-		case XInputDigitalInputComponent::Pin::DPadLeft:
+		case Pin::DPadLeft:
 			return u"Left";
-		case XInputDigitalInputComponent::Pin::DPadRight:
+		case Pin::DPadRight:
 			return u"Right";
-		case XInputDigitalInputComponent::Pin::Start:
+		case Pin::Start:
 			return u"Start";
-		case XInputDigitalInputComponent::Pin::Back:
+		case Pin::Back:
 			return u"Back";
-		case XInputDigitalInputComponent::Pin::LeftThumb:
+		case Pin::LeftThumb:
 			return u"LS";
-		case XInputDigitalInputComponent::Pin::RightThumb:
+		case Pin::RightThumb:
 			return u"RS";
-		case XInputDigitalInputComponent::Pin::LeftShoulder:
+		case Pin::LeftShoulder:
 			return u"LB";
-		case XInputDigitalInputComponent::Pin::RightShoulder:
+		case Pin::RightShoulder:
 			return u"RB";
-		case XInputDigitalInputComponent::Pin::Reserved10:
+		case Pin::Reserved10:
 			return u"RESERVED_10";
-		case XInputDigitalInputComponent::Pin::Reserved11:
+		case Pin::Reserved11:
 			return u"RESERVED_11";
-		case XInputDigitalInputComponent::Pin::A:
+		case Pin::A:
 			return u"A";
-		case XInputDigitalInputComponent::Pin::B:
+		case Pin::B:
 			return u"B";
-		case XInputDigitalInputComponent::Pin::X:
+		case Pin::X:
 			return u"X";
-		case XInputDigitalInputComponent::Pin::Y:
+		case Pin::Y:
 			return u"Y";
-		case XInputDigitalInputComponent::Pin::NumPins:
+		case Pin::NumPins:
 		default:
 			RF_DBGFAIL();
 			return u"INVALID";
