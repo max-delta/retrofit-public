@@ -36,6 +36,9 @@
 		</ClInclude>
 		<ClInclude Include="IPAddressFwd.h" />
 		<ClInclude Include="ThreadSettings.h" />
+		<ClInclude Include="inc\xinput_inc.h">
+			<Filter>inc</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
