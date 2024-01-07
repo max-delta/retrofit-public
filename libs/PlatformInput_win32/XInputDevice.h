@@ -116,6 +116,20 @@ class PLATFORMINPUT_API XInputAnalogInputComponent final : public AnalogInputCom
 public:
 	friend class XInputDevice;
 public:
+	enum class Signal : uint8_t
+	{
+		LT = 0,
+		RT,
+
+		LX,
+		LY,
+
+		RX,
+		RY,
+
+		NumSignals,
+	};
+public:
 	XInputAnalogInputComponent();
 	virtual void OnTick() override;
 	virtual AnalogSignalIndex GetMaxSignalIndex() const override;

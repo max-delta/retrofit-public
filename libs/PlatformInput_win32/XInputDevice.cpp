@@ -290,39 +290,100 @@ XInputAnalogInputComponent::XInputAnalogInputComponent() = default;
 
 void XInputAnalogInputComponent::OnTick()
 {
-	RF_TODO_ANNOTATION( "Implement" );
+	// Updates are done in the common tick
 }
 
 
 
 AnalogSignalIndex XInputAnalogInputComponent::GetMaxSignalIndex() const
 {
-	RF_TODO_ANNOTATION( "Implement" );
-	return 0;
+	return math::integer_cast<PhysicalCode>( math::enum_bitcast( Signal::NumSignals ) - 1 );
 }
 
 
 
 rftl::u16string XInputAnalogInputComponent::GetSignalName( AnalogSignalIndex signalIndex ) const
 {
-	RF_TODO_ANNOTATION( "Implement" );
-	return u"INVALID";
+	RF_ASSERT( signalIndex < math::enum_bitcast( Signal::NumSignals ) );
+	switch( math::enum_bitcast<Signal>( signalIndex ) )
+	{
+		case Signal::LT:
+			return u"LT";
+		case Signal::RT:
+			return u"RT";
+		case Signal::LX:
+			return u"LX";
+		case Signal::LY:
+			return u"LY";
+		case Signal::RX:
+			return u"RX";
+		case Signal::RY:
+			return u"RY";
+		case Signal::NumSignals:
+		default:
+			RF_DBGFAIL();
+			return u"INVALID";
+	}
 }
 
 
 
 AnalogSignalValue XInputAnalogInputComponent::GetCurrentSignalValue( AnalogSignalIndex signalIndex ) const
 {
-	RF_TODO_ANNOTATION( "Implement" );
-	return 0;
+	RF_ASSERT( signalIndex < math::enum_bitcast( Signal::NumSignals ) );
+
+	RF_ASSERT( mDevice != nullptr );
+	win32::XINPUT_GAMEPAD const& currentState = *reinterpret_cast<win32::XINPUT_GAMEPAD const*>( mDevice->mCurrentStateBuffer.data() );
+
+	switch( math::enum_bitcast<Signal>( signalIndex ) )
+	{
+		case Signal::LT:
+			return currentState.bLeftTrigger;
+		case Signal::RT:
+			return currentState.bRightTrigger;
+		case Signal::LX:
+			return currentState.sThumbLX;
+		case Signal::LY:
+			return currentState.sThumbLY;
+		case Signal::RX:
+			return currentState.sThumbRX;
+		case Signal::RY:
+			return currentState.sThumbRY;
+		case Signal::NumSignals:
+		default:
+			RF_DBGFAIL();
+			return 0;
+	}
 }
 
 
 
 AnalogSignalValue XInputAnalogInputComponent::GetPreviousSignalValue( AnalogSignalIndex signalIndex ) const
 {
-	RF_TODO_ANNOTATION( "Implement" );
-	return 0;
+	RF_ASSERT( signalIndex < math::enum_bitcast( Signal::NumSignals ) );
+
+	RF_ASSERT( mDevice != nullptr );
+	win32::XINPUT_GAMEPAD const& previousState = *reinterpret_cast<win32::XINPUT_GAMEPAD const*>( mDevice->mPreviousStateBuffer.data() );
+
+	switch( math::enum_bitcast<Signal>( signalIndex ) )
+	{
+		case Signal::LT:
+			return previousState.bLeftTrigger;
+		case Signal::RT:
+			return previousState.bRightTrigger;
+		case Signal::LX:
+			return previousState.sThumbLX;
+		case Signal::LY:
+			return previousState.sThumbLY;
+		case Signal::RX:
+			return previousState.sThumbRX;
+		case Signal::RY:
+			return previousState.sThumbRY;
+		case Signal::NumSignals:
+		default:
+			RF_DBGFAIL();
+			return 0;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
