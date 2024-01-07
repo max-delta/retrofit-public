@@ -49,10 +49,16 @@ private:
 	//
 	// Public methods
 public:
-	StandardTaskScheduler( size_t workerThreadCount );
+	StandardTaskScheduler( bool createMainThreadWorker, size_t workerThreadCount );
 	~StandardTaskScheduler();
 
 	WeakPtr<scheduling::TaskScheduler> GetTaskScheduler() const;
+
+	// If the main thread worker is created, then it will need to be run
+	//  atleast periodically so that tasks don't clog up on it
+	bool HasMainThreadWorkerRequirements() const;
+	bool TryExecuteOnMainThreadOnce();
+	size_t ExecuteOnMainThreadUntilStarved();
 
 
 	//

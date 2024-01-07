@@ -15,8 +15,10 @@
 namespace RF::app {
 ///////////////////////////////////////////////////////////////////////////////
 
-StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
+StandardTaskScheduler::StandardTaskScheduler( bool createMainThreadWorker, size_t workerThreadCount )
 {
+	RF_ASSERT( createMainThreadWorker || ( workerThreadCount > 0 ) );
+
 	mTaskScheduler = DefaultCreator<scheduling::TaskScheduler>::Create();
 
 	// For each worker thread...
@@ -87,6 +89,7 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 	}
 
 	// For the main thread...
+	if( createMainThreadWorker )
 	{
 		// Allocate
 		mMainThreadWorker = DefaultCreator<ThreadedWorker>::Create();
@@ -138,6 +141,7 @@ StandardTaskScheduler::~StandardTaskScheduler()
 	}
 
 	// Unregister main thread
+	if( mMainThreadWorker != nullptr )
 	{
 		mTaskScheduler->UnregisterWorker( mMainThreadWorker->mWorkerHandle );
 	}
@@ -162,6 +166,37 @@ StandardTaskScheduler::~StandardTaskScheduler()
 WeakPtr<scheduling::TaskScheduler> StandardTaskScheduler::GetTaskScheduler() const
 {
 	return mTaskScheduler;
+}
+
+
+
+bool StandardTaskScheduler::HasMainThreadWorkerRequirements() const
+{
+	if( mMainThreadWorker != nullptr )
+	{
+		return true;
+	}
+	return false;
+}
+
+
+
+bool StandardTaskScheduler::TryExecuteOnMainThreadOnce()
+{
+	RF_ASSERT( mMainThreadWorker != nullptr );
+	WeakPtr<scheduling::ThreadableTaskWorker> const worker = mMainThreadWorker->mWorkerInterface;
+	RF_ASSERT( worker != nullptr );
+	return worker->TryExecuteOneTask();
+}
+
+
+
+size_t StandardTaskScheduler::ExecuteOnMainThreadUntilStarved()
+{
+	RF_ASSERT( mMainThreadWorker != nullptr );
+	WeakPtr<scheduling::ThreadableTaskWorker> const worker = mMainThreadWorker->mWorkerInterface;
+	RF_ASSERT( worker != nullptr );
+	return worker->ExecuteUntilStarved();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

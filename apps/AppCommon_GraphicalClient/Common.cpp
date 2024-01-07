@@ -168,7 +168,7 @@ void Startup( cli::ArgView const& args )
 	gPageMapper = sPageMapper;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing task manager..." );
-	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( rftl::thread::hardware_concurrency() - 1 );
+	sTaskScheduler = DefaultCreator<app::StandardTaskScheduler>::Create( false, rftl::thread::hardware_concurrency() - 1 );
 	gTaskScheduler = sTaskScheduler;
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup complete" );

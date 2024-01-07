@@ -35,6 +35,32 @@ void ThreadableTaskWorker::AddTask( Task* task, TaskScheduler* scheduler )
 
 
 
+bool ThreadableTaskWorker::TryExecuteOneTask()
+{
+	rftl::unique_lock<rftl::mutex> execLock( mExecutionMutex );
+
+	// Pull work
+	WorkItem workItem;
+	{
+		rftl::unique_lock<rftl::mutex> workLock( mPendingWorkMutex );
+		if( mPendingWork.empty() )
+		{
+			return false;
+		}
+		workItem = mPendingWork.back();
+		mPendingWork.pop_back();
+	}
+
+	// Execute
+	{
+		TaskState const newTaskState = workItem.mTask->Step();
+		OnWorkComplete( workItem.mTask, newTaskState, workItem.mScheduler );
+		return true;
+	}
+}
+
+
+
 size_t ThreadableTaskWorker::ExecuteUntilStarved()
 {
 	rftl::unique_lock<rftl::mutex> execLock( mExecutionMutex );

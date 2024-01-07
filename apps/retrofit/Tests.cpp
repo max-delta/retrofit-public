@@ -835,6 +835,12 @@ void FrameBuilderTest()
 	gTestFrameBuilder->StartPlan();
 	while( gTestFrameBuilder->IsPlanComplete() == false )
 	{
+		if( app::gTaskScheduler->HasMainThreadWorkerRequirements() )
+		{
+			// If main thread worker exists, it'll need to be run
+			app::gTaskScheduler->ExecuteOnMainThreadUntilStarved();
+		}
+
 		// Spin
 		rftl::this_thread::yield();
 	}
