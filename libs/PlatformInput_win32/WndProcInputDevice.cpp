@@ -63,6 +63,13 @@ shim::LRESULT WndProcInputDevice::ExamineTranslatedMessage( shim::HWND hWnd, shi
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void WndProcInputDevice::CommonTick()
+{
+	// No operation, relies on messages to be explicitly passed from WndProc
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void WndProcDigitalInputComponent::OnTick()
 {
 	mPreviousLogicalState = mCurrentLogicalState;

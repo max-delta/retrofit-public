@@ -6,17 +6,21 @@ namespace RF::input {
 
 void InputDevice::OnTick()
 {
+	CommonTick();
+
 	DigitalInputComponent* const digComp = mDigitalComponent;
-	AnalogInputComponent* const anaComp = mAnalogComponent;
-	TextInputComponent* const texComp = mTextComponent;
 	if( digComp != nullptr )
 	{
 		digComp->OnTick();
 	}
+
+	AnalogInputComponent* const anaComp = mAnalogComponent;
 	if( anaComp != nullptr )
 	{
 		anaComp->OnTick();
 	}
+
+	TextInputComponent* const texComp = mTextComponent;
 	if( texComp != nullptr )
 	{
 		texComp->OnTick();

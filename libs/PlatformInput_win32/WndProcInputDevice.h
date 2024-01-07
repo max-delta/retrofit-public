@@ -42,6 +42,10 @@ public:
 	shim::LRESULT ExamineTranslatedMessage( shim::HWND hWnd, shim::UINT message, shim::WPARAM wParam, shim::LPARAM lParam, bool& intercepted );
 
 
+protected:
+	virtual void CommonTick() override;
+
+
 public:
 	WndProcDigitalInputComponent& mDigital;
 	WndProcAnalogInputComponent& mAnalog;

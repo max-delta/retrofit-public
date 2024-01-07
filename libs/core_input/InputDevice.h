@@ -32,6 +32,8 @@ protected:
 		UniquePtr<DigitalInputComponent>&& digital,
 		UniquePtr<AnalogInputComponent>&& analog,
 		UniquePtr<TextInputComponent>&& text );
+
+	virtual void CommonTick() = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
