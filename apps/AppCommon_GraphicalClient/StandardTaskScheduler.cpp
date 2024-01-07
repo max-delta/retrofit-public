@@ -35,10 +35,11 @@ StandardTaskScheduler::StandardTaskScheduler( size_t workerThreadCount )
 
 		// Run worker asyncronously
 		RF_ASSERT( newThreadedWorker->mTerminateWorker.load( rftl::memory_order::memory_order_acquire ) == false );
-		auto threadedWorker = [](
-			scheduling::ThreadableTaskWorker* worker,
-			rftl::atomic_bool const* shouldTerminate )->
-			void
+		auto threadedWorker =
+			[](
+				scheduling::ThreadableTaskWorker* worker,
+				rftl::atomic_bool const* shouldTerminate )
+			-> void
 		{
 			time::PerfClock::time_point sleepAccumulator = time::PerfClock::now();
 			constexpr rftl::chrono::milliseconds kSleepTrigger = rftl::chrono::milliseconds( 1 );
