@@ -1,37 +1,34 @@
 #include "stdafx.h"
 
-#include "Logging/Logging.h"
-#include "Logging/AssertLogger.h"
+#include "bindump/BinDump.h"
 
-#include "PlatformUtils_win32/loggers/DebuggerLogger.h"
-
-#include "core_math/math_bits.h"
+#include "core_math/math_casts.h"
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int main()
+int main( int argc, char* argv[] )
 {
 	using namespace RF;
+	using namespace RF::bindump;
 
-	// Need to set up a minimum logger before logging anything, so that it
-	//  doesn't use the fallback logger and pollute the standard output pipes
+	// Init
 	{
-		logging::HandlerDefinition def;
-		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
-		def.mUtf8HandlerFunc = platform::debugging::DebuggerLogger;
-		logging::RegisterHandler( def );
+		ErrorReturnCode const initResult = Init( { argc, argv } );
+		if( initResult != ErrorReturnCode::Success )
+		{
+			return math::enum_bitcast( initResult );
+		}
 	}
 
-	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing assert logging..." );
+	// Process
 	{
-		logging::HandlerDefinition def;
-		def.mSupportedSeverities = logging::Severity::RF_SEV_USER_ATTENTION_REQUESTED;
-		def.mUtf8HandlerFunc = logging::AssertLogger;
-		logging::RegisterHandler( def );
+		ErrorReturnCode const processResult = Process();
+		if( processResult != ErrorReturnCode::Success )
+		{
+			return math::enum_bitcast( processResult );
+		}
 	}
 
-	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing bin dump..." );
-
-	return 0;
+	return math::enum_bitcast( ErrorReturnCode::Success );
 }

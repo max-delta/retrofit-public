@@ -3,9 +3,11 @@
 	<ItemGroup>
 		<ClCompile Include="main.cpp" />
 		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="BinDump.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="project.h" />
+		<ClInclude Include="BinDump.h" />
 	</ItemGroup>
 </Project>

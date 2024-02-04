@@ -1,0 +1,20 @@
+#pragma once
+
+#include "CommandLine/ArgView.h"
+
+
+namespace RF::bindump {
+///////////////////////////////////////////////////////////////////////////////
+
+enum class ErrorReturnCode : int
+{
+	Success = 0,
+
+	UnknownError = 1,
+};
+
+ErrorReturnCode Init( cli::ArgView const& args );
+ErrorReturnCode Process();
+
+///////////////////////////////////////////////////////////////////////////////
+}
