@@ -37,6 +37,14 @@
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\PlatformUtils_win32\PlatformUtils_win32.vcxproj">
+			<Project>{76ac6911-6a5a-44d3-8d87-807b3720d68a}</Project>
+		</ProjectReference>
+	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">
 	</ImportGroup>
