@@ -39,6 +39,9 @@
 		<ClInclude Include="Console.h" />
 		<ClInclude Include="Debugging.h" />
 		<ClInclude Include="dialogs.h" />
+		<ClInclude Include="loggers\DebuggerLogger.h" />
+		<ClInclude Include="loggers\project.h" />
+		<ClInclude Include="loggers\stdafx.h" />
 		<ClInclude Include="ProcessLaunch.h" />
 		<ClInclude Include="windowing.h" />
 		<ClInclude Include="project.h" />
@@ -49,6 +52,7 @@
 		<ClCompile Include="Debugging.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="dialogs.cpp" />
+		<ClCompile Include="loggers\DebuggerLogger.cpp" />
 		<ClCompile Include="MemoryRegion.cpp" />
 		<ClCompile Include="ProcessLaunch.cpp" />
 		<ClCompile Include="stdafx.cpp">

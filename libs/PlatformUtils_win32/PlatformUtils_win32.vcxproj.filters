@@ -8,6 +8,15 @@
 		<ClInclude Include="Debugging.h" />
 		<ClInclude Include="Console.h" />
 		<ClInclude Include="ProcessLaunch.h" />
+		<ClInclude Include="loggers\stdafx.h">
+			<Filter>loggers</Filter>
+		</ClInclude>
+		<ClInclude Include="loggers\DebuggerLogger.h">
+			<Filter>loggers</Filter>
+		</ClInclude>
+		<ClInclude Include="loggers\project.h">
+			<Filter>loggers</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -20,9 +29,17 @@
 		<ClCompile Include="MemoryRegion.cpp" />
 		<ClCompile Include="ThreadSettings.cpp" />
 		<ClCompile Include="ProcessLaunch.cpp" />
+		<ClCompile Include="loggers\DebuggerLogger.cpp">
+			<Filter>loggers</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="project.32.def" />
 		<None Include="project.64.def" />
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="loggers">
+			<UniqueIdentifier>{35b2e371-3a0f-4859-8a48-0f76add6a3f3}</UniqueIdentifier>
+		</Filter>
 	</ItemGroup>
 </Project>
