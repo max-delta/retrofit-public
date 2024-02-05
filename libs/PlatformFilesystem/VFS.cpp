@@ -883,7 +883,8 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 	// Take the lowest numbered priority
 	rftl::stable_sort( potentialMappings.begin(), potentialMappings.end(),
-		[]( PotentialMapping const& lhs, PotentialMapping const& rhs ) -> bool {
+		[]( PotentialMapping const& lhs, PotentialMapping const& rhs ) -> bool
+		{
 			return lhs.second->mPriority < rhs.second->mPriority;
 		} );
 	if( potentialMappings.size() > 1 )
