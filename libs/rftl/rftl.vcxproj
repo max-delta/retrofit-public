@@ -85,14 +85,20 @@
 		<None Include="extension\byte_view.inl" />
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
+		<None Include="fstream" />
+		<None Include="ios" />
+		<None Include="iosfwd" />
+		<None Include="istream" />
 		<None Include="map" />
 		<None Include="new" />
 		<None Include="numeric" />
 		<None Include="optional" />
+		<None Include="ostream" />
 		<None Include="patch\normallocations.inl" />
 		<None Include="patch\postinclude.inl" />
 		<None Include="patch\preinclude.inl" />
 		<None Include="set" />
+		<None Include="streambuf" />
 		<None Include="string_view" />
 		<None Include="system_error" />
 	</ItemGroup>

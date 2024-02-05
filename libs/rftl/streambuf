@@ -1,0 +1,14 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_STREAMBUF
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::basic_streambuf;
+
+using std::streambuf;
+using std::wstreambuf;
+}

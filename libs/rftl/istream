@@ -1,0 +1,21 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/iosfwd"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_ISTREAM
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::basic_istream;
+using std::basic_iostream;
+
+using std::istream;
+using std::ostream;
+
+using std::wistream;
+using std::wostream;
+
+using std::swap;
+}

@@ -1,0 +1,66 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_IOSFWD
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::char_traits;
+using std::allocator;
+
+using std::basic_ios;
+using std::fpos;
+
+using std::basic_streambuf;
+using std::basic_ostream;
+using std::basic_istream;
+using std::basic_iostream;
+
+using std::streambuf;
+using std::ostream;
+using std::istream;
+using std::iostream;
+
+using std::wstreambuf;
+using std::wostream;
+using std::wistream;
+using std::wiostream;
+
+using std::basic_filebuf;
+using std::basic_ifstream;
+using std::basic_ofstream;
+using std::basic_fstream;
+
+using std::filebuf;
+using std::ifstream;
+using std::ofstream;
+using std::fstream;
+
+using std::wfilebuf;
+using std::wifstream;
+using std::wofstream;
+using std::wfstream;
+
+using std::basic_stringbuf;
+using std::basic_istringstream;
+using std::basic_ostringstream;
+using std::basic_stringstream;
+
+using std::stringbuf;
+using std::istringstream;
+using std::ostringstream;
+using std::stringstream;
+
+using std::wstringbuf;
+using std::wistringstream;
+using std::wostringstream;
+using std::wstringstream;
+
+using std::streampos;
+using std::wstreampos;
+//using std::u8streampos;
+using std::u16streampos;
+using std::u32streampos;
+}

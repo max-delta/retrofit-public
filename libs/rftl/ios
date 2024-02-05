@@ -1,0 +1,17 @@
+#pragma once
+#include "rftl/utility"
+#include "rftl/iosfwd"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_IOS
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::ios_base;
+using std::basic_ios;
+using std::fpos;
+using std::io_errc;
+using std::streamoff;
+using std::streamsize;
+}

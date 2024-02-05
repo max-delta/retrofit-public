@@ -17,9 +17,13 @@
 #define RFTL_CSTRING <cstring>
 #define RFTL_DEQUE <deque>
 #define RFTL_FILESYSTEM <filesystem>
+#define RFTL_FSTREAM <fstream>
 #define RFTL_FUNCTIONAL <functional>
 #define RFTL_FUTURE <future>
 #define RFTL_INITIALIZER_LIST <initializer_list>
+#define RFTL_IOS <ios>
+#define RFTL_IOSFWD <iosfwd>
+#define RFTL_ISTREAM <istream>
 #define RFTL_ITERATOR <iterator>
 #define RFTL_LIMITS <limits>
 #define RFTL_MAP <map>
@@ -28,10 +32,12 @@
 #define RFTL_NEW <new>
 #define RFTL_NUMERIC <numeric>
 #define RFTL_OPTIONAL <optional>
+#define RFTL_OSTREAM <ostream>
 #define RFTL_RATIO <ratio>
 #define RFTL_SET <set>
 #define RFTL_SHARED_MUTEX <shared_mutex>
 #define RFTL_SSTREAM <sstream>
+#define RFTL_STREAMBUF <streambuf>
 #define RFTL_STRING <string>
 #define RFTL_STRING_VIEW <string_view>
 #define RFTL_SYSTEM_ERROR <system_error>

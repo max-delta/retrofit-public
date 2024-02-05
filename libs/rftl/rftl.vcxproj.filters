@@ -126,5 +126,11 @@
 		<None Include="condition_variable" />
 		<None Include="cmath" />
 		<None Include="charconv" />
+		<None Include="streambuf" />
+		<None Include="ios" />
+		<None Include="iosfwd" />
+		<None Include="fstream" />
+		<None Include="istream" />
+		<None Include="ostream" />
 	</ItemGroup>
 </Project>
