@@ -755,7 +755,7 @@ void FPackSerializationTest()
 		}
 
 		// Write file
-		size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), sizeof( decltype( buffer )::value_type ) * buffer.size() );
+		size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), buffer.size() );
 		RF_ASSERT( bytesWritten == buffer.size() );
 	}
 

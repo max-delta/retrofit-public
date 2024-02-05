@@ -199,7 +199,7 @@ bool ResourceSaver::SaveClassToFile(
 
 
 	// Write to file
-	size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), sizeof( decltype( buffer )::value_type ) * buffer.size() );
+	size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), buffer.size() );
 	if( bytesWritten != buffer.size() )
 	{
 		RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to write resource" );

@@ -35,7 +35,7 @@ FileBuffer::FileBuffer( FileHandle& file, bool addTerminatingNull )
 	size_t amountRead = 0;
 	if( fileSize > 0 )
 	{
-		amountRead = file.ReadBytes( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ) * fileSize );
+		amountRead = file.ReadBytes( mBuffer.data(), fileSize );
 	}
 
 	if( addTerminatingNull )
@@ -68,7 +68,7 @@ FileBuffer::FileBuffer( FileHandle& file, size_t maxBytes )
 	size_t const bytesToRead = math::Min( fileSize, maxBytes );
 	mBuffer.resize( bytesToRead );
 
-	size_t const amountRead = file.ReadBytes( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ) * bytesToRead );
+	size_t const amountRead = file.ReadBytes( mBuffer.data(), bytesToRead );
 	mBuffer.resize( amountRead );
 
 	if( mBuffer.capacity() > mBuffer.size() )
