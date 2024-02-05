@@ -58,11 +58,11 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 	int bytesParsed;
 	if( event.mTransientContextString == nullptr )
 	{
-		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
+		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  %s\n", severity, event.mCategoryKey, &messageBuffer[0] );
 	}
 	else
 	{
-		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  <%s> %s", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
+		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
 	}
 	*outputBuffer.rbegin() = '\0';
 
@@ -70,7 +70,7 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
-		platform::debugging::OutputToDebugger( "<TRUNCATED MESSAGE!>" );
+		platform::debugging::OutputToDebugger( "<TRUNCATED MESSAGE!>\n" );
 	}
 }
 
