@@ -528,9 +528,7 @@ void CompanyManager::WriteLegacyLoadoutsToSave( file::VFSPath const& saveRoot, i
 		RF_ASSERT( buffer.capacity() == kFileSize );
 		RF_ASSERT( buffer.size() == kFileSize );
 
-		FILE* const file = fileHandle->GetFile();
-		RF_ASSERT( file != nullptr );
-		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), sizeof( decltype( buffer )::value_type ) * buffer.size() );
 		if( bytesWritten != buffer.size() )
 		{
 			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to write loadout" );

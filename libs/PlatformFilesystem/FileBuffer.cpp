@@ -16,9 +16,9 @@ FileBuffer::FileBuffer( ExplicitDefaultConstruct )
 
 
 
-FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
+FileBuffer::FileBuffer( FileHandle& file, bool addTerminatingNull )
 {
-	rewind( file.GetFile() );
+	file.Rewind();
 
 	size_t const fileSize = file.GetFileSize();
 	if( addTerminatingNull )
@@ -30,7 +30,14 @@ FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
 		mBuffer.resize( fileSize );
 	}
 
-	size_t const amountRead = fread( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ), fileSize, file.GetFile() );
+	// NOTE: Filesize could be zero, which could make the buffer not actually
+	//  get allocated, so we only try to read for non-zero buffers
+	size_t amountRead = 0;
+	if( fileSize > 0 )
+	{
+		amountRead = file.ReadBytes( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ) * fileSize );
+	}
+
 	if( addTerminatingNull )
 	{
 		mBuffer.resize( amountRead + 1 );
@@ -51,17 +58,17 @@ FileBuffer::FileBuffer( FileHandle const& file, bool addTerminatingNull )
 
 
 
-FileBuffer::FileBuffer( FileHandle const& file, size_t maxBytes )
+FileBuffer::FileBuffer( FileHandle& file, size_t maxBytes )
 {
 	RF_ASSERT( maxBytes > 0 );
 
-	rewind( file.GetFile() );
+	file.Rewind();
 
 	size_t const fileSize = file.GetFileSize();
 	size_t const bytesToRead = math::Min( fileSize, maxBytes );
 	mBuffer.resize( bytesToRead );
 
-	size_t const amountRead = fread( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ), bytesToRead, file.GetFile() );
+	size_t const amountRead = file.ReadBytes( mBuffer.data(), sizeof( decltype( mBuffer )::value_type ) * bytesToRead );
 	mBuffer.resize( amountRead );
 
 	if( mBuffer.capacity() > mBuffer.size() )

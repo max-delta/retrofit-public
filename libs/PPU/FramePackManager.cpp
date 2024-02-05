@@ -5,6 +5,7 @@
 #include "PPU/FramePack.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformFilesystem/FileHandle.h"
+#include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_math/math_casts.h"
 
@@ -44,24 +45,10 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	// Read into buffer
 	rftl::vector<uint8_t> buffer;
 	{
-		FILE* const file = fileHandle->GetFile();
-		RF_ASSERT( file != nullptr );
-
-		// Get size
-		int const seekSuccess = fseek( file, 0, SEEK_END );
-		RF_ASSERT( seekSuccess == 0 );
-		size_t numBytesInFile;
-		{
-			long const numBytesInFileLong = ftell( file );
-			RF_ASSERT( numBytesInFileLong >= 0 );
-			numBytesInFile = math::integer_cast<size_t>( numBytesInFileLong );
-		}
-		rewind( file );
-
-		// Read
-		buffer.resize( numBytesInFile );
-		size_t const bytesRead = fread( buffer.data(), sizeof( uint8_t ), numBytesInFile, file );
-		RF_ASSERT( bytesRead == numBytesInFile );
+		// HACK: Double-buffer, read as chars
+		RF_TODO_ANNOTATION( "Fix consuming logic to use byte_view, etc" );
+		file::FileBuffer tempBuffer( *fileHandle, false );
+		buffer.assign( tempBuffer.GetChars().begin(), tempBuffer.GetChars().end() );
 	}
 
 	// Close

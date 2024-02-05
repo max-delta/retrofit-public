@@ -23,5 +23,15 @@ static constexpr char kPathDelimiter = '/';
 static constexpr char kPathAscensionElement[] = "..";
 static constexpr char kPathCurrentElement[] = ".";
 
+enum class OpenFlags : uint8_t
+{
+	Invalid = 0,
+	Read, //rb
+	Write, //wb+
+	Modify, //rb+
+	Append, //ab+
+	Execute, //rb
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 }

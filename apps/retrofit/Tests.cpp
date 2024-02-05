@@ -645,7 +645,27 @@ void XMLTest()
 	// Write
 	{
 		file::FileHandlePtr const testFile = vfs->GetFileForWrite( testFilePath );
-		pugi::xml_writer_file writer{ testFile->GetFile() };
+
+		class xml_writer_shim : public pugi::xml_writer
+		{
+			RF_NO_COPY( xml_writer_shim );
+
+		public:
+			xml_writer_shim( file::FileHandle& file )
+				: mFile( file )
+			{
+				//
+			}
+
+			virtual void write( void const* data, size_t size ) override
+			{
+				mFile.WriteBytes( data, size );
+			}
+
+			file::FileHandle& mFile;
+		};
+
+		xml_writer_shim writer{ *testFile };
 
 		pugi::xml_document doc;
 		doc.append_child( "Header" ).append_attribute( "Version" ) = 0;
@@ -659,7 +679,7 @@ void XMLTest()
 		file::FileHandlePtr const testFile = vfs->GetFileForRead( testFilePath );
 		rftl::vector<uint8_t> initialFileContents;
 		initialFileContents.resize( compiler::kMinPageSize, '\0' );
-		size_t const elementsRead = fread( initialFileContents.data(), sizeof( uint8_t ), initialFileContents.size(), testFile->GetFile() );
+		size_t const elementsRead = testFile->ReadBytes( initialFileContents.data(), initialFileContents.size() );
 		if( elementsRead > initialFileContents.size() )
 		{
 			RFLOG_FATAL( nullptr, RFCAT_STARTUPTEST, "File read overwrote buffer somehow" );
@@ -735,9 +755,7 @@ void FPackSerializationTest()
 		}
 
 		// Write file
-		FILE* const file = fileHandle->GetFile();
-		RF_ASSERT( file != nullptr );
-		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), sizeof( decltype( buffer )::value_type ) * buffer.size() );
 		RF_ASSERT( bytesWritten == buffer.size() );
 	}
 
@@ -1348,8 +1366,7 @@ void SkinColorTest()
 	sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPallete( 4 );
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( skinColorTest.GetData(), skinColorTest.GetWidth(), skinColorTest.GetHeight() );
 	file::FileHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
-	FILE* const file = fileHandle->GetFile();
-	fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
+	fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 }
 
 

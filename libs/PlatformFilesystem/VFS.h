@@ -105,11 +105,11 @@ public:
 private:
 	static VFSPath CollapsePath( VFSPath const& path );
 	static VFSPath ChrootCollapse( VFSPath const& path );
-	bool ProcessMountFile( MountPriority priority, FILE* file );
+	bool ProcessMountFile( MountPriority priority, FileHandle& file );
 	VFSMount ProcessMountRule( MountPriority priority, rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint );
 	VFSPath GetRealMountPoint( VFSMount const& mount ) const;
 	rftl::string AttemptMountMapping( VFSMount const& mount, VFSPath const& collapsedPath, VFSMount::Permissions const& permissions ) const;
-	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const;
+	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const;
 
 
 	//

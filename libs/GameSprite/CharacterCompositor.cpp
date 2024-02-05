@@ -222,8 +222,7 @@ void CharacterCompositor::WriteFrameToDisk( sprite::Bitmap const& frame, file::V
 {
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( frame.GetData(), frame.GetWidth(), frame.GetHeight() );
 	file::FileHandlePtr fileHandle = mVfs->GetFileForWrite( path );
-	FILE* const file = fileHandle->GetFile();
-	fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
+	fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 }
 
 
@@ -398,8 +397,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 		bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
 		RF_ASSERT( writeSuccess );
 		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( framepackPath );
-		FILE* const file = fileHandle->GetFile();
-		fwrite( toWrite.data(), sizeof( uint8_t ), toWrite.size(), file );
+		fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 	}
 
 	// Release textures

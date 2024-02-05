@@ -887,9 +887,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 		}
 
 		// Write file
-		FILE* const file = fileHandle->GetFile();
-		RF_ASSERT( file != nullptr );
-		size_t const bytesWritten = fwrite( buffer.data(), sizeof( decltype( buffer )::value_type ), buffer.size(), file );
+		size_t const bytesWritten = fileHandle->WriteBytes( buffer.data(), sizeof( decltype( buffer )::value_type ) * buffer.size() );
 		RF_ASSERT( bytesWritten == buffer.size() );
 	}
 }

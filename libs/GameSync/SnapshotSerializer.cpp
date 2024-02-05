@@ -65,13 +65,6 @@ bool SnapshotSerializer::SerializeToDiagnosticFile( rollback::Snapshot const& sn
 		return false;
 	}
 
-	FILE* const file = fileHandle->GetFile();
-	if( file == nullptr )
-	{
-		RFLOG_ERROR( filename, RFCAT_GAMESYNC, "Diagnostic file handle is invalid" );
-		return false;
-	}
-
 	rftl::deque<rftl::string> output;
 
 	static_assert( rollback::Snapshot::second_type::ContainedTypes::kNumTypes == 9, "Unexpected size" );
@@ -91,8 +84,8 @@ bool SnapshotSerializer::SerializeToDiagnosticFile( rollback::Snapshot const& sn
 	// Write to disk
 	for( rftl::string const& line : output )
 	{
-		int const resultCode = fputs( line.c_str(), file );
-		if( resultCode < 0 )
+		size_t const bytesWritten = fileHandle->WriteBytes( line.data(), line.size() );
+		if( bytesWritten < line.size() )
 		{
 			RFLOG_ERROR( filename, RFCAT_GAMESYNC, "Unknown error when writing to file" );
 			return false;

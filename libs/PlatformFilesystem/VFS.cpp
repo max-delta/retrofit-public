@@ -9,9 +9,10 @@
 #include "core_math/math_casts.h"
 #include "core_math/math_clamps.h"
 
-#include "rftl/cstdio"
 #include "rftl/algorithm"
+#include "rftl/ios"
 #include "rftl/filesystem"
+#include "rftl/fstream"
 #include "rftl/system_error"
 #include "rftl/unordered_set"
 
@@ -23,6 +24,31 @@ VFSPath const VFS::kRoot = VFSPath( "RF:" );
 VFSPath const VFS::kInvalid = VFSPath( "INVALID:" );
 VFSPath const VFS::kEmpty = VFSPath();
 
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static rftl::ios_base::openmode GetOpenModeBitFromEnumValue( OpenFlags openFlags )
+{
+	switch( openFlags )
+	{
+		case OpenFlags::Read:
+			return rftl::ios_base::binary | rftl::ios_base::in;
+		case OpenFlags::Write:
+			return rftl::ios_base::binary | rftl::ios_base::in | rftl::ios_base::out | rftl::ios_base::trunc;
+		case OpenFlags::Modify:
+			return rftl::ios_base::binary | rftl::ios_base::in | rftl::ios_base::out;
+		case OpenFlags::Append:
+			return rftl::ios_base::binary | rftl::ios_base::in | rftl::ios_base::out | rftl::ios_base::app;
+		case OpenFlags::Execute:
+			return rftl::ios_base::binary | rftl::ios_base::in;
+		case OpenFlags::Invalid:
+		default:
+			RF_DBGFAIL();
+			return 0;
+	}
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 VFS::VFS()
@@ -39,7 +65,7 @@ VFS::~VFS() = default;
 FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );
-	return OpenFile( path, VFSMount::Permissions::ReadOnly, "rb", true );
+	return OpenFile( path, VFSMount::Permissions::ReadOnly, OpenFlags::Read, true );
 }
 
 
@@ -47,7 +73,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 FileHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File write request" );
-	return OpenFile( path, VFSMount::Permissions::ReadWrite, "wb+", false );
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Write, false );
 }
 
 
@@ -55,7 +81,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
 FileHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File modify request" );
-	return OpenFile( path, VFSMount::Permissions::ReadWrite, "rb+", true );
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Modify, true );
 }
 
 
@@ -63,7 +89,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
 FileHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File append request" );
-	return OpenFile( path, VFSMount::Permissions::ReadWrite, "ab+", false );
+	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Append, false );
 }
 
 
@@ -71,7 +97,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
 FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File execute request" );
-	return OpenFile( path, VFSMount::Permissions::ReadExecute, "rb", true );
+	return OpenFile( path, VFSMount::Permissions::ReadExecute, OpenFlags::Execute, true );
 }
 
 
@@ -79,15 +105,17 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 FileHandlePtr VFS::GetRawFileForWrite( char const* rawPath ) const
 {
 	RFLOG_INFO( rawPath, RFCAT_VFS, "File write request" );
-	FILE* file = nullptr;
-	errno_t const openResult = fopen_s( &file, rawPath, "wb+" );
-	if( file == nullptr )
+	rftl::filebuf rawFile = {};
+	rftl::filebuf const* const errCheck = rawFile.open( rawPath,
+		details::GetOpenModeBitFromEnumValue( OpenFlags::Write ) );
+	if( errCheck == nullptr || rawFile.is_open() == false )
 	{
-		RFLOG_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, error code %i", openResult );
+		int32_t const assumedErr = math::integer_cast<int32_t>( errno );
+		RFLOG_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, last error code was %i", assumedErr );
 		return nullptr;
 	}
 
-	return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+	return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
 }
 
 
@@ -261,19 +289,19 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 		return false;
 	}
 
-	FILE* rawFile;
+	rftl::filebuf rawFile = {};
 	rftl::string collapsedMountFilename = mMountTableFile.CreateString();
-	errno_t const openErr = fopen_s( &rawFile, collapsedMountFilename.c_str(), "r" );
-	FileHandle fileHandle( rftl::move( rawFile ) );
-	rawFile = nullptr;
-
-	if( openErr != 0 || fileHandle.GetFile() == nullptr )
+	rftl::filebuf const* const errCheck = rawFile.open( collapsedMountFilename,
+		details::GetOpenModeBitFromEnumValue( OpenFlags::Read ) );
+	if( errCheck == nullptr || rawFile.is_open() == false )
 	{
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
+	FileHandle fileHandle( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
+	RF_ASSERT( rawFile.is_open() == false );
 
-	return ProcessMountFile( priority, fileHandle.GetFile() );
+	return ProcessMountFile( priority, fileHandle );
 }
 
 
@@ -287,13 +315,7 @@ bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTa
 		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
-	FILE* const file = filePtr->GetFile();
-	if( file == nullptr )
-	{
-		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
-		return false;
-	}
-	return ProcessMountFile( priority, file );
+	return ProcessMountFile( priority, *filePtr );
 }
 
 
@@ -474,7 +496,7 @@ VFSPath VFS::ChrootCollapse( VFSPath const& path )
 
 
 
-bool VFS::ProcessMountFile( MountPriority priority, FILE* file )
+bool VFS::ProcessMountFile( MountPriority priority, FileHandle& file )
 {
 	rftl::string tokenBuilder;
 	rftl::vector<rftl::string> tokenStream;
@@ -485,7 +507,7 @@ bool VFS::ProcessMountFile( MountPriority priority, FILE* file )
 		k_ReadingToken,
 	} curReadMode = ReadMode::k_HuntingForToken;
 	int readCode = 0;
-	while( ( readCode = fgetc( file ) ) != EOF )
+	while( ( readCode = file.GetChar() ) != EOF )
 	{
 		// Reading chars
 		char const ch = math::integer_cast<char>( readCode );
@@ -858,7 +880,7 @@ rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& col
 
 
 
-FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, char const* openFlags, bool mustExist ) const
+FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const
 {
 	// Chroot for basic safety and sanitization
 	VFSPath const path = ChrootCollapse( uncollapsedPath );
@@ -918,14 +940,17 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 	bool parentsCreated = false;
 	while( true )
 	{
-		FILE* file = nullptr;
-		errno_t const openResult = fopen_s( &file, finalFilename.c_str(), openFlags );
-		if( file == nullptr )
+		rftl::filebuf rawFile = {};
+		rftl::filebuf const* const errCheck = rawFile.open( finalFilename,
+			details::GetOpenModeBitFromEnumValue( openFlags ) );
+		if( errCheck == nullptr || rawFile.is_open() == false )
 		{
+			int32_t const assumedErr = math::integer_cast<int32_t>( errno );
+
 			// Tough luck, no easy way to tell what went wrong
 			if( mustExist )
 			{
-				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, error code %i", openResult );
+				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, last error code was %i", assumedErr );
 				return nullptr;
 			}
 			else
@@ -992,8 +1017,8 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 		}
 
 		// Sweet! Got it
-		RF_ASSERT( file != nullptr );
-		return DefaultCreator<FileHandle>::Create( rftl::move( file ) );
+		RF_ASSERT( rawFile.is_open() );
+		return DefaultCreator<FileHandle>::Create( rftl::move( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) ) );
 	}
 }
 
