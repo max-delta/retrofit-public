@@ -48,7 +48,7 @@ void FramePackEditor::Init()
 
 	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x.fnt.txt" ) );
+	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
 }
 
 
