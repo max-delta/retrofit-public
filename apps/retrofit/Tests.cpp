@@ -736,7 +736,7 @@ void FPackSerializationTest()
 	// Deserialize
 	rftl::vector<file::VFSPath> textures;
 	UniquePtr<gfx::ppu::FramePackBase> framePack;
-	bool const readSuccess = gfx::ppu::FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
+	bool const readSuccess = gfx::ppu::FramePackSerDes::DeserializeFromBuffer( textures, rftl::byte_view( buffer.data(), buffer.size() ), framePack );
 	if( readSuccess == false )
 	{
 		RFLOG_ERROR( digitFPackPath, RFCAT_STARTUPTEST, "Failed to deserialize FPack" );

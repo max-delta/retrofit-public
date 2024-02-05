@@ -33,38 +33,34 @@ FramePackManager::~FramePackManager()
 
 UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const& filename )
 {
-	// Open
-	file::VFS const& vfs = *mVfs;
-	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
-	if( fileHandle == nullptr )
-	{
-		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to open framepack file" );
-		return nullptr;
-	}
-
-	// Read into buffer
-	rftl::vector<uint8_t> buffer;
-	{
-		// HACK: Double-buffer, read as chars
-		RF_TODO_ANNOTATION( "Fix consuming logic to use byte_view, etc" );
-		file::FileBuffer tempBuffer( *fileHandle, false );
-		buffer.assign( tempBuffer.GetChars().begin(), tempBuffer.GetChars().end() );
-	}
-
-	// Close
-	fileHandle = nullptr;
-
-	// Deserialize
 	rftl::vector<file::VFSPath> textures;
 	UniquePtr<FramePackBase> framePack;
-	bool const readSuccess = FramePackSerDes::DeserializeFromBuffer( textures, buffer, framePack );
-	if( readSuccess == false )
+
+	// Read in from file
 	{
-		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize FPack" );
-		return nullptr;
+		// Open
+		file::VFS const& vfs = *mVfs;
+		file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
+		if( fileHandle == nullptr )
+		{
+			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to open framepack file" );
+			return nullptr;
+		}
+
+		// Read into buffer
+		file::FileBuffer buffer( *fileHandle, false );
+
+		// Close
+		fileHandle = nullptr;
+
+		// Deserialize
+		bool const readSuccess = FramePackSerDes::DeserializeFromBuffer( textures, buffer.GetBytes(), framePack );
+		if( readSuccess == false )
+		{
+			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize FPack" );
+			return nullptr;
+		}
 	}
-	buffer.clear();
-	buffer.shrink_to_fit();
 
 	FramePackBase::TimeSlot* const timeSlots = framePack->GetMutableTimeSlots();
 	size_t const numSlots = framePack->mNumTimeSlots;

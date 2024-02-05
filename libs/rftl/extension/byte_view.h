@@ -79,6 +79,7 @@ public:
 	byte_view substr( size_type pos, size_type size );
 
 	void* mem_copy_to( void* dest, size_t size ) const;
+	void* mem_copy_prefix_to( void* dest, size_t size ) const;
 
 
 	//

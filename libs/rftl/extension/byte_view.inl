@@ -269,6 +269,14 @@ inline byte_view byte_view::substr( size_type pos, size_type size )
 inline void* byte_view::mem_copy_to( void* dest, size_t size ) const
 {
 	RF_ASSERT( size == this->size() );
+	return mem_copy_prefix_to( dest, size );
+}
+
+
+
+inline void* byte_view::mem_copy_prefix_to( void* dest, size_t size ) const
+{
+	RF_ASSERT( size <= this->size() );
 	RF_ASSERT( dest != nullptr );
 	void const* const src = data();
 	RF_ASSERT( src != nullptr );

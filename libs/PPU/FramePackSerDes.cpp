@@ -217,7 +217,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 
 
 
-bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textures, rftl::vector<uint8_t> const& buffer, UniquePtr<FramePackBase>& framePack )
+bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textures, rftl::byte_view const& buffer, UniquePtr<FramePackBase>& framePack )
 {
 	using namespace fpackserdes_details;
 
@@ -225,14 +225,13 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 
 	using CurrentHeaderVersion = Header_v0_1;
 	nullptr_t const context = nullptr;
-	uint8_t const* readHead = buffer.data();
-	uint8_t const* const maxReadHead = readHead + buffer.size();
+	rftl::byte_view readHead = buffer;
 	framePack = nullptr;
 	textures.clear();
 
 	// Magic
 	{
-		if( readHead + kSizeOfMagic > maxReadHead )
+		if( readHead.size() < kSizeOfMagic )
 		{
 			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read magic" );
 			return false;
@@ -240,8 +239,8 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 
 		char magic[kSizeOfMagic];
 		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &magic[0] );
-		rftl::memcpy( writeHead, readHead, kSizeOfMagic );
-		readHead += kSizeOfMagic;
+		readHead.mem_copy_prefix_to( writeHead, kSizeOfMagic );
+		readHead.remove_prefix( kSizeOfMagic );
 
 		if( rftl::memcmp( &magic[0], kMagic, kSizeOfMagic ) != 0 )
 		{
@@ -252,17 +251,17 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 
 	// Header
 	CurrentHeaderVersion header;
-	size_t const sizeOfHeader = sizeof( CurrentHeaderVersion );
+	static constexpr size_t kSizeOfHeader = sizeof( CurrentHeaderVersion );
 	{
-		if( readHead + kSizeOfMagic > maxReadHead )
+		if( readHead.size() < kSizeOfHeader )
 		{
 			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read header, probably corrupt" );
 			return false;
 		}
 
 		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &header );
-		rftl::memcpy( writeHead, readHead, sizeOfHeader );
-		readHead += sizeOfHeader;
+		readHead.mem_copy_prefix_to( writeHead, kSizeOfHeader );
+		readHead.remove_prefix( kSizeOfHeader );
 
 		if( header.IsValid() == false )
 		{
@@ -274,13 +273,13 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	// Num slots
 	size_t numSlots;
 	{
-		if( readHead + kSizeOfBase > maxReadHead )
+		if( readHead.size() < kSizeOfBase )
 		{
 			RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read framepack base, probably corrupt" );
 			return false;
 		}
 
-		FramePackBase const& theoreticalBase = *reinterpret_cast<FramePackBase const*>( readHead );
+		FramePackBase const& theoreticalBase = *reinterpret_cast<FramePackBase const*>( readHead.data() );
 		size_t const theoreticalSizeOfData_sustains = SizeOfData_Sustains( theoreticalBase );
 		size_t const theoreticalSizeOfData_slots = SizeOfData_Slots( theoreticalBase );
 		size_t const theoreticalSizeOfData = theoreticalSizeOfData_sustains + theoreticalSizeOfData_slots;
@@ -346,11 +345,11 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	FramePackBase& retBase = *retValFPack.Get();
 	{
 		// This should've been checked in slot calculations
-		RF_ASSERT( readHead + kSizeOfBase <= maxReadHead );
+		RF_ASSERT( readHead.size() >= kSizeOfBase );
 
-		FramePackBase const& theoreticalBase = *reinterpret_cast<FramePackBase const*>( readHead );
+		FramePackBase const& theoreticalBase = *reinterpret_cast<FramePackBase const*>( readHead.data() );
 		retBase.CopyBaseValuesFrom( theoreticalBase );
-		readHead += kSizeOfBase;
+		readHead.remove_prefix( kSizeOfBase );
 	}
 
 	// Data
@@ -359,22 +358,22 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 		size_t const sizeOfData_sustains = SizeOfData_Sustains( retBase );
 		{
 			// This should've been checked in slot calculations
-			RF_ASSERT( readHead + sizeOfData_sustains <= maxReadHead );
+			RF_ASSERT( readHead.size() >= sizeOfData_sustains );
 
 			uint8_t* const writeHead = reinterpret_cast<uint8_t*>( retBase.GetMutableTimeSlotSustains() );
-			rftl::memcpy( writeHead, readHead, sizeOfData_sustains );
-			readHead += sizeOfData_sustains;
+			readHead.mem_copy_prefix_to( writeHead, sizeOfData_sustains );
+			readHead.remove_prefix( sizeOfData_sustains );
 		}
 
 		// Slots
 		size_t const sizeOfData_slots = SizeOfData_Slots( retBase );
 		{
 			// This should've been checked in slot calculations
-			RF_ASSERT( readHead + sizeOfData_sustains <= maxReadHead );
+			RF_ASSERT( readHead.size() >= sizeOfData_sustains );
 
 			uint8_t* const writeHead = reinterpret_cast<uint8_t*>( retBase.GetMutableTimeSlots() );
-			rftl::memcpy( writeHead, readHead, sizeOfData_slots );
-			readHead += sizeOfData_slots;
+			readHead.mem_copy_prefix_to( writeHead, sizeOfData_slots );
+			readHead.remove_prefix( sizeOfData_slots );
 		}
 	}
 
@@ -394,7 +393,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	{
 		for( size_t i = 0; i < retBase.mNumTimeSlots; i++ )
 		{
-			if( readHead + sizeof( StrLenType ) > maxReadHead )
+			if( readHead.size() < sizeof( StrLenType ) )
 			{
 				RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read length of file string, probably corrupt" );
 				return false;
@@ -404,8 +403,8 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 			StrLenType fileStrLen;
 			{
 				uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &fileStrLen );
-				rftl::memcpy( writeHead, readHead, sizeof( StrLenType ) );
-				readHead += sizeof( StrLenType );
+				readHead.mem_copy_prefix_to( writeHead, sizeof( StrLenType ) );
+				readHead.remove_prefix( sizeof( StrLenType ) );
 			}
 
 			if( fileStrLen == 0 )
@@ -414,7 +413,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 				return false;
 			}
 
-			if( readHead + fileStrLen > maxReadHead )
+			if( readHead.size() < fileStrLen )
 			{
 				RFLOG_ERROR( context, RFCAT_PPU, "Not enough bytes to read file string, probably corrupt" );
 				return false;
@@ -425,8 +424,8 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 			{
 				fileStr.resize( fileStrLen );
 				uint8_t* const writeHead = reinterpret_cast<uint8_t*>( fileStr.data() );
-				rftl::memcpy( writeHead, readHead, fileStrLen );
-				readHead += fileStrLen;
+				readHead.mem_copy_prefix_to( writeHead, fileStrLen );
+				readHead.remove_prefix( fileStrLen );
 			}
 
 			file::VFSPath const path = file::VFSPath::CreatePathFromString( fileStr );
