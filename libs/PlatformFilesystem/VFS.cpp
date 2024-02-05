@@ -298,6 +298,24 @@ bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTa
 
 
 
+bool VFS::AttemptPassthroughMount()
+{
+	RF_ASSERT( mMountTable.empty() );
+
+	VFSMount mountRule = {};
+	mountRule.mPriority = kMountPriorityHighest;
+	mountRule.mType = VFSMount::Type::Absolute;
+	mountRule.mPermissions = VFSMount::Permissions::ReadOnly;
+	mountRule.mVirtualPath = kRoot;
+	mountRule.mRealMount = {};
+	mMountTable.emplace_back( rftl::move( mountRule ) );
+
+	DebugDumpMountTable();
+	return true;
+}
+
+
+
 VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const
 {
 	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );

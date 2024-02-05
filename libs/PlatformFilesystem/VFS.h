@@ -87,6 +87,10 @@ public:
 	bool AttemptInitialMount( MountPriority priority, rftl::string const& mountTableFile, rftl::string const& userDirectory );
 	bool AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTableFile );
 
+	// As an alternative to a proper mounting setup, VFS can be used as just an
+	//  abstraction layer on top of the underlying filesystem
+	bool AttemptPassthroughMount();
+
 	// File paths may come from outside VFS, such as from OS dialogs, and they
 	//  need to be mapped onto VFS layers
 	// NOTE: Paths from outside any VFS layers will cause mapping to fail with

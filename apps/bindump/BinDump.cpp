@@ -5,6 +5,7 @@
 #include "Logging/Logging.h"
 #include "Logging/AssertLogger.h"
 
+#include "PlatformFilesystem/VFS.h"
 #include "PlatformUtils_win32/loggers/DebuggerLogger.h"
 
 #include "core_math/math_bits.h"
@@ -18,6 +19,7 @@ namespace RF::bindump {
 namespace details {
 
 static UniquePtr<cli::ArgParse const> sCommandLineArgs;
+static UniquePtr<file::VFS> sVfs;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,6 +47,14 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		logging::RegisterHandler( def );
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing VFS..." );
+	details::sVfs = DefaultCreator<file::VFS>::Create();
+	bool vfsInitialized = details::sVfs->AttemptPassthroughMount();
+	if( vfsInitialized == false )
+	{
+		RFLOG_FATAL( nullptr, RFCAT_BINDUMP, "Failed to startup VFS" );
+	}
+
 	return ErrorReturnCode::Success;
 }
 
@@ -53,6 +63,16 @@ ErrorReturnCode Init( cli::ArgView const& args )
 ErrorReturnCode Process()
 {
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Processing bin dump..." );
+
+	// HACK: Try to open a file, just to show we can do so via the passthrough
+	file::VFSPath const path =
+		file::VFS::kRoot.GetChild(
+			file::VFSPath::CreatePathFromString(
+				"main.cpp" ) );
+	file::FileHandlePtr const filePtr =
+		details::sVfs->GetFileForRead(
+			path );
+	RF_ASSERT( filePtr != nullptr );
 
 	// TODO
 	return ErrorReturnCode::Success;
