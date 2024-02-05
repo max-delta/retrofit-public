@@ -565,7 +565,7 @@ void RenderInputDevice()
 
 					input::AnalogSignalValue const value = analog.GetCurrentSignalValue( index );
 
-					drawText( x, y, math::Color3f::kWhite, "  %s: %f", name.c_str(), value );
+					drawText( x, y, math::Color3f::kWhite, "  %s: %f", name.c_str(), static_cast<double>( value ) );
 					y++;
 				}
 			}

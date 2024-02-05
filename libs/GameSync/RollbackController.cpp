@@ -50,14 +50,14 @@ void RollbackController::SetRollbackManager( WeakPtr<rollback::RollbackManager> 
 
 rollback::InputStreamIdentifier RollbackController::GetRollbackIdentifier() const
 {
-	return mIdentifier;
+	return mStreamIdentifier;
 }
 
 
 
 void RollbackController::SetRollbackIdentifier( rollback::InputStreamIdentifier const& identifier )
 {
-	mIdentifier = identifier;
+	mStreamIdentifier = identifier;
 }
 
 
@@ -82,7 +82,7 @@ void RollbackController::ProcessInput( time::CommonClock::time_point earliestTim
 	RF_ASSERT( mManager != nullptr );
 	time::CommonClock::duration const artificalDelay = mArtificalDelay;
 
-	rollback::InputStream& inputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	rollback::InputStream& inputStream = mManager->GetMutableUncommittedStreams().at( mStreamIdentifier );
 	RFLOG_TEST_AND_FATAL( inputStream.back().mTime <= earliestTime + artificalDelay, nullptr, RFCAT_GAMESYNC, "Input processing request can result in stale data" );
 
 	auto const onElement = [&inputStream, &artificalDelay]( GameCommand const& element ) -> void {
@@ -99,7 +99,7 @@ void RollbackController::ProcessInput( time::CommonClock::time_point earliestTim
 void RollbackController::AdvanceInputStream( time::CommonClock::time_point lockedFrame, time::CommonClock::time_point newWriteHead )
 {
 	RF_ASSERT( mManager != nullptr );
-	rollback::InputStream& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	rollback::InputStream& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mStreamIdentifier );
 	uncommittedInputStream.increase_write_head( newWriteHead + mArtificalDelay );
 	uncommittedInputStream.increase_read_head( lockedFrame );
 }
@@ -109,8 +109,8 @@ void RollbackController::AdvanceInputStream( time::CommonClock::time_point locke
 void RollbackController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const
 {
 	RF_ASSERT( mManager != nullptr );
-	rollback::InputStream const& committedInputStream = mManager->GetCommittedStreams().at( mIdentifier );
-	rollback::InputStream const& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mIdentifier );
+	rollback::InputStream const& committedInputStream = mManager->GetCommittedStreams().at( mStreamIdentifier );
+	rollback::InputStream const& uncommittedInputStream = mManager->GetMutableUncommittedStreams().at( mStreamIdentifier );
 
 	size_t const numCommitted = committedInputStream.size();
 	size_t const numUncommitted = uncommittedInputStream.size();

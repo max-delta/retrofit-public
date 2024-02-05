@@ -1018,7 +1018,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 		// Sweet! Got it
 		RF_ASSERT( rawFile.is_open() );
-		return DefaultCreator<FileHandle>::Create( rftl::move( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) ) );
+		return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
 	}
 }
 
