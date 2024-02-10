@@ -63,6 +63,25 @@ inline size_t erase_duplicates( Container& container )
 
 
 template<typename Container>
+inline auto replace( Container& container, typename Container::value_type const& oldVal, typename Container::value_type const& newVal ) -> Container&
+{
+	rftl::replace( container.begin(), container.end(), oldVal, newVal );
+	return container;
+}
+
+
+
+template<typename Container>
+inline auto replace_copy( Container const& container, typename Container::value_type const& oldVal, typename Container::value_type const& newVal ) -> Container
+{
+	Container retVal( container );
+	replace( retVal, oldVal, newVal );
+	return retVal;
+}
+
+
+
+template<typename Container>
 auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container
 {
 	Container retVal = container;
