@@ -13,6 +13,8 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/algorithms.h"
+
 
 namespace RF::bindump {
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,6 +22,44 @@ namespace details {
 
 static UniquePtr<cli::ArgParse const> sCommandLineArgs;
 static UniquePtr<file::VFS> sVfs;
+
+
+
+void EmitError( char const* str )
+{
+	fputs( "ERROR: ", stderr );
+	fputs( str, stderr );
+	fputc( '\n', stderr );
+}
+void EmitError( rftl::string const& str )
+{
+	EmitError( str.c_str() );
+}
+
+
+
+void EmitUsage()
+{
+	static constexpr auto emit = []( char const* str ) -> void
+	{
+		if( str[0] != '\0' )
+		{
+			fputs( str, stderr );
+		}
+		fputc( '\n', stderr );
+	};
+
+	emit( "Usage: bindump [OPTION]... FILE" );
+	emit( "Interpret various binary files." );
+	emit( "Example: bindump coff.obj" );
+	emit( "Only one file can be provided." );
+	emit( "" );
+	emit( "Miscellaneous:" );
+	emit( "  -h, --help   Display this help text and exit" );
+	emit( "" );
+	emit( "Output control:" );
+	emit( "  TODO" );
+}
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -64,15 +104,47 @@ ErrorReturnCode Process()
 {
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Processing bin dump..." );
 
-	// HACK: Try to open a file, just to show we can do so via the passthrough
+	cli::ArgParse const& argParse = *details::sCommandLineArgs;
+
+	// --help
+	if( argParse.HasAnyOption( { "-h", "--help" } ) )
+	{
+		details::EmitUsage();
+		return ErrorReturnCode::NonActionableArg;
+	}
+
+	// File arg
+	cli::ArgParse::Arguments const args = argParse.GetArguments();
+	if( args.empty() )
+	{
+		details::EmitError( "No arguments provided" );
+		details::EmitUsage();
+		return ErrorReturnCode::BadArgUsage;
+	}
+	if( args.size() > 1 )
+	{
+		details::EmitError( "Too many arguments provided" );
+		details::EmitUsage();
+		return ErrorReturnCode::BadArgUsage;
+	}
 	file::VFSPath const path =
 		file::VFS::kRoot.GetChild(
 			file::VFSPath::CreatePathFromString(
-				"main.cpp" ) );
+				rftl::replace_copy(
+					args.at( 0 ),
+					'\\',
+					file::kPathDelimiter ) ) );
+
+	// Open the file for read
 	file::FileHandlePtr const filePtr =
 		details::sVfs->GetFileForRead(
 			path );
-	RF_ASSERT( filePtr != nullptr );
+	if( filePtr == nullptr )
+	{
+		details::EmitError( "Failed to open file" );
+		details::EmitError( path.CreateString() );
+		return ErrorReturnCode::FileAccessError;
+	}
 
 	// TODO
 	return ErrorReturnCode::Success;
