@@ -36,6 +36,20 @@ bool ArgParse::HasOption( OptionName const& name ) const
 
 
 
+bool ArgParse::HasAnyOption( rftl::initializer_list<OptionName> const& names ) const
+{
+	for( OptionName const& name : names )
+	{
+		if( mOptions.count( name ) > 0 )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+
 ArgParse::OptionVals ArgParse::GetOptionVals( OptionName const& name ) const
 {
 	Options::const_iterator const iter = mOptions.find( name );

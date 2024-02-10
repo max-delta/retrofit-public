@@ -43,6 +43,7 @@ public:
 
 	OptionNames GetOptionNames() const;
 	bool HasOption( OptionName const& name ) const;
+	bool HasAnyOption( rftl::initializer_list<OptionName> const& names ) const;
 	OptionVals GetOptionVals( OptionName const& name ) const;
 	Arguments GetArguments() const;
 
