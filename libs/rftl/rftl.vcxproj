@@ -45,6 +45,7 @@
 		<ClInclude Include="extension\integer_literals.h" />
 		<ClInclude Include="extension\static_string.h" />
 		<ClInclude Include="extension\static_vector.h" />
+		<ClInclude Include="extension\stream_operations.h" />
 		<ClInclude Include="extension\string_compare.h" />
 		<ClInclude Include="extension\string_copy.h" />
 		<ClInclude Include="extension\string_format.h" />
@@ -85,6 +86,7 @@
 		<None Include="extension\byte_view.inl" />
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
+		<None Include="extension\stream_operations.inl" />
 		<None Include="fstream" />
 		<None Include="ios" />
 		<None Include="iosfwd" />

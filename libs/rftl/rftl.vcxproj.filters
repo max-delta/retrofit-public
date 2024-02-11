@@ -91,6 +91,9 @@
 		<ClInclude Include="extension\enum_traits.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\stream_operations.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -132,5 +135,8 @@
 		<None Include="fstream" />
 		<None Include="istream" />
 		<None Include="ostream" />
+		<None Include="extension\stream_operations.inl">
+			<Filter>extension</Filter>
+		</None>
 	</ItemGroup>
 </Project>
