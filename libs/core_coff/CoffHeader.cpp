@@ -36,7 +36,7 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	rftl::byte_view const bufferView( buffer.begin(), buffer.end() );
 	rftl::byte_view readHead = bufferView;
 
-	mMachineType = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mMachineType = math::enum_bitcast<MachineType>( math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() ) );
 	mNumSections = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mTimeSinceUnixEpoch = rftl::chrono::seconds( math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() ) );
 	mAbsoluteOffsetToSymbolTable = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );

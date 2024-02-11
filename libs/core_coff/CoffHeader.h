@@ -14,7 +14,7 @@ public:
 	bool TryRead( rftl::streambuf& seekable, size_t seekBase );
 
 public:
-	uint16_t mMachineType = 0;
+	MachineType mMachineType = MachineType::Unknown;
 	size_t mNumSections = 0;
 	size_t mAbsoluteOffsetToSymbolTable = 0;
 	rftl::chrono::seconds mTimeSinceUnixEpoch = {};
