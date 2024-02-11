@@ -41,7 +41,7 @@ bool DosHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 		return false;
 	}
 
-	// Offest to PE header
+	// Offset to PE header
 	mAbsoluteOffsetToPEHeader = math::FromLittleEndianToPlatform( bufferView.at<uint32_t>( 60 ) );
 
 	return true;
