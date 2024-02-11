@@ -78,8 +78,18 @@ public:
 	byte_view substr( size_type pos ) const;
 	byte_view substr( size_type pos, size_type size ) const;
 
+	template<typename Type>
+	Type extract_front();
+	template<typename Type>
+	Type extract_back();
+
 	void* mem_copy_to( void* dest, size_t size ) const;
 	void* mem_copy_prefix_to( void* dest, size_t size ) const;
+
+	template<typename Container>
+	void* mem_copy_to( Container& container ) const;
+	template<typename Container>
+	void* mem_copy_prefix_to( Container& container ) const;
 
 
 	//

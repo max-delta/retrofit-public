@@ -98,7 +98,7 @@ inline Type const& byte_view::operator[]( size_type pos ) const
 template<typename Type>
 inline Type const& byte_view::front() const
 {
-	return at( 0 );
+	return at<Type>( 0 );
 }
 
 
@@ -106,7 +106,7 @@ inline Type const& byte_view::front() const
 template<typename Type>
 inline Type const& byte_view::back() const
 {
-	return at( size() - sizeof( Type ) );
+	return at<Type>( size() - sizeof( Type ) );
 }
 
 
@@ -266,6 +266,26 @@ inline byte_view byte_view::substr( size_type pos, size_type size ) const
 
 
 
+template<typename Type>
+inline Type byte_view::extract_front()
+{
+	Type retVal = front<Type>();
+	remove_prefix( sizeof( Type ) );
+	return retVal;
+}
+
+
+
+template<typename Type>
+inline Type byte_view::extract_back()
+{
+	Type retVal = back<Type>();
+	remove_suffix( sizeof( Type ) );
+	return retVal;
+}
+
+
+
 inline void* byte_view::mem_copy_to( void* dest, size_t size ) const
 {
 	RF_ASSERT( size == this->size() );
@@ -283,6 +303,28 @@ inline void* byte_view::mem_copy_prefix_to( void* dest, size_t size ) const
 	RF_ASSERT( src != dest );
 	rftl::memcpy( dest, src, size );
 	return dest;
+}
+
+
+
+template<typename Container>
+inline void* byte_view::mem_copy_to( Container& container ) const
+{
+	static_assert( sizeof( Container::value_type ) == 1 );
+	typename Container::value_type* const data = container.data();
+	size_t const size = container.size();
+	return mem_copy_to( data, size );
+}
+
+
+
+template<typename Container>
+inline void* byte_view::mem_copy_prefix_to( Container& container ) const
+{
+	static_assert( sizeof( Container::value_type ) == 1 );
+	typename Container::value_type* const data = container.data();
+	size_t const size = container.size();
+	return mem_copy_prefix_to( data, size );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
