@@ -24,6 +24,7 @@ enum class ErrorReturnCode : int
 
 ErrorReturnCode Init( cli::ArgView const& args );
 ErrorReturnCode Process();
+int Shutdown( ErrorReturnCode code);
 
 ///////////////////////////////////////////////////////////////////////////////
 }

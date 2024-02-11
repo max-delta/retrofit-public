@@ -17,7 +17,7 @@ int main( int argc, char* argv[] )
 		ErrorReturnCode const initResult = Init( { argc, argv } );
 		if( initResult != ErrorReturnCode::Success )
 		{
-			return math::enum_bitcast( initResult );
+			return Shutdown( initResult );
 		}
 	}
 
@@ -26,9 +26,9 @@ int main( int argc, char* argv[] )
 		ErrorReturnCode const processResult = Process();
 		if( processResult != ErrorReturnCode::Success )
 		{
-			return math::enum_bitcast( processResult );
+			return Shutdown( processResult );
 		}
 	}
 
-	return math::enum_bitcast( ErrorReturnCode::Success );
+	return Shutdown( ErrorReturnCode::Success );
 }

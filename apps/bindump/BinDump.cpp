@@ -2,12 +2,14 @@
 #include "BinDump.h"
 
 #include "CommandLine/ArgParse.h"
-#include "Logging/Logging.h"
+#include "Logging/ANSIConsoleLogger.h"
 #include "Logging/AssertLogger.h"
+#include "Logging/Logging.h"
 
 #include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformUtils_win32/loggers/DebuggerLogger.h"
+#include "PlatformUtils_win32/Console.h"
 
 #include "core_math/math_bits.h"
 #include "core_pe/DosHeader.h"
@@ -56,12 +58,13 @@ void EmitUsage()
 	emit( "Interpret various binary files." );
 	emit( "Example: bindump coff.obj" );
 	emit( "Only one file can be provided." );
+	emit( "Use -- to end option parsing before arguments." );
 	emit( "" );
 	emit( "Miscellaneous:" );
 	emit( "  -h, --help   Display this help text and exit" );
 	emit( "" );
 	emit( "Output control:" );
-	emit( "  TODO" );
+	emit( "  -l, --log    Log to standard output" );
 }
 
 }
@@ -81,6 +84,25 @@ ErrorReturnCode Init( cli::ArgView const& args )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Tokenizing command line args..." );
 	details::sCommandLineArgs = DefaultCreator<cli::ArgParse>::Create( args );
+
+	if( details::sCommandLineArgs->HasAnyOption( { "-l", "--log" } ) )
+	{
+		RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing console logging..." );
+		bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
+		if( consoleInitialized )
+		{
+			puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
+			logging::HandlerDefinition def;
+			def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
+			def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
+			logging::RegisterHandler( def );
+		}
+		else
+		{
+			puts( " == NO ANSI CONSOLE SUPPORT ==" );
+			RF_TODO_BREAK_MSG( "Non-ANSI console logger" );
+		}
+	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing assert logging..." );
 	{
@@ -174,6 +196,22 @@ ErrorReturnCode Process()
 
 	// TODO
 	return ErrorReturnCode::Success;
+}
+
+
+
+int Shutdown( ErrorReturnCode code )
+{
+	int const retVal = math::enum_bitcast( code );
+	if( retVal == 0 )
+	{
+		RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Shutting down with return code %i", retVal );
+	}
+	else
+	{
+		RFLOG_ERROR( nullptr, RFCAT_BINDUMP, "Shutting down with return code %i", retVal );
+	}
+	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
