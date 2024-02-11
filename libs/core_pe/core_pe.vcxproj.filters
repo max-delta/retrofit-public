@@ -3,10 +3,12 @@
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="DosHeader.cpp" />
+		<ClCompile Include="PeHeader.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="PeFwd.h" />
 		<ClInclude Include="DosHeader.h" />
+		<ClInclude Include="PeHeader.h" />
 	</ItemGroup>
 </Project>

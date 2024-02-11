@@ -11,6 +11,7 @@
 
 #include "core_math/math_bits.h"
 #include "core_pe/DosHeader.h"
+#include "core_pe/PeHeader.h"
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
@@ -161,6 +162,13 @@ ErrorReturnCode Process()
 		if( isDos )
 		{
 			RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a DOS file" );
+
+			bin::pe::PeHeader pe = {};
+			bool const isPE = pe.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader );
+			if( isPE )
+			{
+				RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a PE file" );
+			}
 		}
 	}
 
