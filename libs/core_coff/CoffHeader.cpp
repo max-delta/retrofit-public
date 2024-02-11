@@ -38,12 +38,11 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 
 	mMachineType = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mNumSections = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
-	mAbsoluteOffsetToSymbolTable = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mTimeSinceUnixEpoch = rftl::chrono::seconds( math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() ) );
+	mAbsoluteOffsetToSymbolTable = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mNumSymbols = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mOptionalHeaderBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
-	mTargetID = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	RF_ASSERT( readHead.empty() );
 
 	return true;

@@ -21,7 +21,6 @@ public:
 	size_t mNumSymbols = 0;
 	size_t mOptionalHeaderBytes = 0;
 	uint16_t mFlags = 0;
-	uint16_t mTargetID = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
