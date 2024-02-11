@@ -46,6 +46,9 @@
 		<ProjectReference Include="..\..\libs\core\core.vcxproj">
 			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_coff\core_coff.vcxproj">
+			<Project>{cd6e2748-1993-4267-8add-23652cf7307c}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
 			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
 		</ProjectReference>

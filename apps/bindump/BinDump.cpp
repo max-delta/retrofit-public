@@ -11,6 +11,7 @@
 #include "PlatformUtils_win32/loggers/DebuggerLogger.h"
 #include "PlatformUtils_win32/Console.h"
 
+#include "core_coff/CoffHeader.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
@@ -190,6 +191,13 @@ ErrorReturnCode Process()
 			if( isPE )
 			{
 				RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a PE file" );
+
+				bin::coff::CoffHeader coff = {};
+				bool const isCoff = coff.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader );
+				if( isCoff )
+				{
+					RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a COFF file" );
+				}
 			}
 		}
 	}

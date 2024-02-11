@@ -42,10 +42,7 @@ bool PeHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	}
 
 	// Offset to COFF header
-	// NOTE: COFF header is missing magic, which is normally 2 bytes, and the
-	//  PE magic is 4 bytes, so we're offsetting by the difference and will
-	//  need to bypass the magic check on the COFF header
-	mRelativeOffsetToCOFFHeader = 2;
+	mRelativeOffsetToCOFFHeader = 4;
 
 	return true;
 }
