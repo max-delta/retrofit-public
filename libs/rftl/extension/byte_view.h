@@ -75,8 +75,8 @@ public:
 
 	void remove_prefix( size_type size );
 	void remove_suffix( size_type size );
-	byte_view substr( size_type pos );
-	byte_view substr( size_type pos, size_type size );
+	byte_view substr( size_type pos ) const;
+	byte_view substr( size_type pos, size_type size ) const;
 
 	void* mem_copy_to( void* dest, size_t size ) const;
 	void* mem_copy_prefix_to( void* dest, size_t size ) const;

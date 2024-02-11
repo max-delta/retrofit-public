@@ -247,7 +247,7 @@ inline void byte_view::remove_suffix( size_type size )
 
 
 
-inline byte_view byte_view::substr( size_type pos )
+inline byte_view byte_view::substr( size_type pos ) const
 {
 	RF_ASSERT( pos <= size() );
 	return byte_view( reinterpret_cast<uint8_t const*>( begin() ) + pos, end() );
@@ -255,7 +255,7 @@ inline byte_view byte_view::substr( size_type pos )
 
 
 
-inline byte_view byte_view::substr( size_type pos, size_type size )
+inline byte_view byte_view::substr( size_type pos, size_type size ) const
 {
 	RF_ASSERT( pos <= this->size() );
 	RF_ASSERT( pos + size <= this->size() );
