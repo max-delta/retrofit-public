@@ -49,6 +49,9 @@
 		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
 			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_pe\core_pe.vcxproj">
+			<Project>{e290fac9-f28e-45fa-8fc1-99abc518d9a0}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
 			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>

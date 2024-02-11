@@ -5,10 +5,12 @@
 #include "Logging/Logging.h"
 #include "Logging/AssertLogger.h"
 
+#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformUtils_win32/loggers/DebuggerLogger.h"
 
 #include "core_math/math_bits.h"
+#include "core_pe/DosHeader.h"
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
@@ -134,6 +136,7 @@ ErrorReturnCode Process()
 					args.at( 0 ),
 					'\\',
 					file::kPathDelimiter ) ) );
+	RFLOG_MILESTONE( path, RFCAT_BINDUMP, "Artifact determined from command line" );
 
 	// Open the file for read
 	file::FileHandlePtr const filePtr =
@@ -144,6 +147,21 @@ ErrorReturnCode Process()
 		details::EmitError( "Failed to open file" );
 		details::EmitError( path.CreateString() );
 		return ErrorReturnCode::FileAccessError;
+	}
+
+	// Get a seekable for the file
+	WeakPtr<rftl::streambuf> const seekableHandle = filePtr->GetUnsafeTransientStreamBuffer();
+	RF_ASSERT( seekableHandle != nullptr );
+	rftl::streambuf& seekable = *seekableHandle;
+
+	// Is it a PE file?
+	{
+		bin::pe::DosHeader dos = {};
+		bool const isDos = dos.TryRead( seekable, 0 );
+		if( isDos )
+		{
+			RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a DOS file" );
+		}
 	}
 
 	// TODO
