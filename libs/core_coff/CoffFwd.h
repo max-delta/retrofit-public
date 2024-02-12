@@ -52,8 +52,17 @@ enum class MachineType : uint16_t
 	MIPSWCE2 = 0x169,
 };
 
+enum class OptionalHeaderType : uint16_t
+{
+	Invalid = 0x0,
+
+	PE32 = 0x10b,
+	PE32Plus = 0x20b,
+};
+
 struct CoffHeader;
 struct OptionalHeaderCommon;
+struct OptionalHeaderWindows;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

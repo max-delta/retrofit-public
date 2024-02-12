@@ -36,7 +36,7 @@ bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	rftl::byte_view const bufferView( buffer.begin(), buffer.end() );
 	rftl::byte_view readHead = bufferView;
 
-	mMagic = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mHeaderType = math::enum_bitcast<OptionalHeaderType>( math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() ) );
 	mVersion = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mCodeBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mInitializedBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
@@ -44,6 +44,7 @@ bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	mAbsoluteOffsetToEntryPoint = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mAbsoluteOffsetToCode = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	RF_ASSERT( readHead.empty() );
+	mRelativeOffsetToPlatformHeader = 24;
 
 	return true;
 }

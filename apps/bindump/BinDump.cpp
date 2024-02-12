@@ -13,6 +13,7 @@
 
 #include "core_coff/CoffHeader.h"
 #include "core_coff/OptionalHeaderCommon.h"
+#include "core_coff/OptionalHeaderWindows.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
@@ -112,6 +113,15 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a common optional COFF header" );
+
+	bin::coff::OptionalHeaderWindows optWin = {};
+	bool const hasOptWin = optWin.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader + optCom.mRelativeOffsetToPlatformHeader, optCom.mHeaderType );
+	if( hasOptWin == false )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a Windows optional header" );
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a Windows optional COFF header" );
 
 	return true;
 }
