@@ -11,7 +11,7 @@ namespace RF::bin::coff {
 struct OptionalHeaderWindows
 {
 public:
-	bool TryRead( rftl::streambuf& seekable, size_t seekBase, OptionalHeaderType headerType );
+	bool TryRead( rftl::streambuf& seekable, size_t seekBase, OptionalHeaderType headerType, size_t remainingHeaderSize );
 
 public:
 	rftl::optional<size_t> mAbsoluteOffsetToData = rftl::nullopt;
@@ -36,6 +36,7 @@ public:
 	size_t mHeapCommitBytes = 0;
 	uint64_t mLoaderFlags = 0;
 	size_t mNumDataDirectoryEntries = 0;
+	size_t mRelativeOffsetToDataDirectory = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

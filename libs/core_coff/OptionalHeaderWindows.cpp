@@ -14,7 +14,7 @@
 namespace RF::bin::coff {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase, OptionalHeaderType headerType )
+bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase, OptionalHeaderType headerType, size_t remainingHeaderSize )
 {
 	*this = {};
 
@@ -36,8 +36,15 @@ bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase,
 	}
 
 	// 44 for PE32, 88 for PE32+
-	rftl::array<uint8_t, 88> buffer;
-	size_t const bytesToRead = isPlusHeader ? 88ull : 44ull;
+	static constexpr size_t kMaxBytesToRead = 88ull;
+	size_t const bytesToRead = isPlusHeader ? kMaxBytesToRead : 44ull;
+	if( remainingHeaderSize < bytesToRead )
+	{
+		// Not enough bytes
+		return false;
+	}
+
+	rftl::array<uint8_t, kMaxBytesToRead> buffer;
 	size_t const numRead = rftl::stream_read( buffer.data(), bytesToRead, stream );
 	if( numRead != bytesToRead )
 	{
@@ -79,6 +86,8 @@ bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase,
 	mLoaderFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mNumDataDirectoryEntries = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	RF_ASSERT( readHead.empty() );
+	mRelativeOffsetToDataDirectory = bytesToRead;
+	RF_ASSERT( mRelativeOffsetToDataDirectory <= remainingHeaderSize );
 
 	return true;
 }

@@ -74,24 +74,34 @@ void EmitUsage()
 
 bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 {
+	// DOS
 	bin::pe::DosHeader dos = {};
-	bool const isDos = dos.TryRead( seekable, 0 );
+	bool const isDos = dos.TryRead(
+		seekable,
+		0 );
 	if( isDos == false )
 	{
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a DOS file" );
 
+	// PE
 	bin::pe::PeHeader pe = {};
-	bool const isPE = pe.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader );
+	bool const isPE = pe.TryRead(
+		seekable,
+		dos.mAbsoluteOffsetToPEHeader );
 	if( isPE == false )
 	{
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a PE file" );
 
+	// COFF
 	bin::coff::CoffHeader coff = {};
-	bool const isCoff = coff.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader );
+	bool const isCoff = coff.TryRead(
+		seekable,
+		dos.mAbsoluteOffsetToPEHeader +
+			pe.mRelativeOffsetToCOFFHeader );
 	if( isCoff == false )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a COFF header" );
@@ -99,14 +109,21 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a COFF header" );
 
+	// Optional
 	if( coff.mOptionalHeaderBytes <= 0 )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected an optional header" );
 		return false;
 	}
 
+	// Optional (common)
 	bin::coff::OptionalHeaderCommon optCom = {};
-	bool const hasOptCom = optCom.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader );
+	bool const hasOptCom = optCom.TryRead(
+		seekable,
+		dos.mAbsoluteOffsetToPEHeader +
+			pe.mRelativeOffsetToCOFFHeader +
+			coff.mRelativeOffsetToOptionalHeader,
+		coff.mOptionalHeaderBytes );
 	if( hasOptCom == false )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a common optional header" );
@@ -114,8 +131,17 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a common optional COFF header" );
 
+	// Optional (Windows)
 	bin::coff::OptionalHeaderWindows optWin = {};
-	bool const hasOptWin = optWin.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader + optCom.mRelativeOffsetToPlatformHeader, optCom.mHeaderType );
+	bool const hasOptWin = optWin.TryRead(
+		seekable,
+		dos.mAbsoluteOffsetToPEHeader +
+			pe.mRelativeOffsetToCOFFHeader +
+			coff.mRelativeOffsetToOptionalHeader +
+			optCom.mRelativeOffsetToPlatformHeader,
+		optCom.mHeaderType,
+		coff.mOptionalHeaderBytes -
+			optCom.mRelativeOffsetToPlatformHeader );
 	if( hasOptWin == false )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a Windows optional header" );

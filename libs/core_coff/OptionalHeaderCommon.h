@@ -10,7 +10,7 @@ namespace RF::bin::coff {
 struct OptionalHeaderCommon
 {
 public:
-	bool TryRead( rftl::streambuf& seekable, size_t seekBase );
+	bool TryRead( rftl::streambuf& seekable, size_t seekBase, size_t remainingHeaderSize );
 
 public:
 	OptionalHeaderType mHeaderType = OptionalHeaderType::Invalid;

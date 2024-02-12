@@ -14,7 +14,7 @@
 namespace RF::bin::coff {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
+bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase, size_t remainingHeaderSize )
 {
 	*this = {};
 
@@ -26,7 +26,14 @@ bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
 		return false;
 	}
 
-	rftl::array<uint8_t, 24> buffer;
+	static constexpr size_t kBytesToRead = 24;
+	if( remainingHeaderSize < kBytesToRead )
+	{
+		// Not enough bytes
+		return false;
+	}
+
+	rftl::array<uint8_t, kBytesToRead> buffer;
 	size_t const numRead = rftl::stream_read( buffer.data(), buffer.size(), stream );
 	if( numRead != buffer.size() )
 	{
@@ -44,7 +51,8 @@ bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	mAbsoluteOffsetToEntryPoint = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mAbsoluteOffsetToCode = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	RF_ASSERT( readHead.empty() );
-	mRelativeOffsetToPlatformHeader = 24;
+	mRelativeOffsetToPlatformHeader = kBytesToRead;
+	RF_ASSERT( mRelativeOffsetToPlatformHeader <= remainingHeaderSize );
 
 	return true;
 }

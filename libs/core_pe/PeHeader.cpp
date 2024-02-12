@@ -26,7 +26,8 @@ bool PeHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 		return false;
 	}
 
-	rftl::array<uint8_t, 4> buffer;
+	static constexpr size_t kBytesToRead = 4;
+	rftl::array<uint8_t, kBytesToRead> buffer;
 	size_t const numRead = rftl::stream_read( buffer.data(), buffer.size(), stream );
 	if( numRead != buffer.size() )
 	{

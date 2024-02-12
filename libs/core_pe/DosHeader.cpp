@@ -26,7 +26,8 @@ bool DosHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 		return false;
 	}
 
-	rftl::array<uint8_t, 64> buffer;
+	static constexpr size_t kBytesToRead = 64;
+	rftl::array<uint8_t, kBytesToRead> buffer;
 	size_t const numRead = rftl::stream_read( buffer.data(), buffer.size(), stream );
 	if( numRead != buffer.size() )
 	{
