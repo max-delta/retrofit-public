@@ -27,12 +27,14 @@
 	<PropertyGroup />
 	<ItemDefinitionGroup />
 	<ItemGroup>
+		<ClInclude Include="DataDirectoryHeader.h" />
 		<ClInclude Include="DosHeader.h" />
 		<ClInclude Include="PeFwd.h" />
 		<ClInclude Include="PeHeader.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="DataDirectoryHeader.cpp" />
 		<ClCompile Include="DosHeader.cpp" />
 		<ClCompile Include="PeHeader.cpp" />
 		<ClCompile Include="stdafx.cpp">

@@ -15,6 +15,7 @@
 #include "core_coff/OptionalHeaderCommon.h"
 #include "core_coff/OptionalHeaderWindows.h"
 #include "core_math/math_bits.h"
+#include "core_pe/DataDirectoryHeader.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
 
@@ -148,6 +149,25 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a Windows optional COFF header" );
+
+	// Data directory
+	bin::pe::DataDirectoryHeader dataDir = {};
+	bool const hasDataDir = dataDir.TryRead(
+		seekable,
+		dos.mAbsoluteOffsetToPEHeader +
+			pe.mRelativeOffsetToCOFFHeader +
+			coff.mRelativeOffsetToOptionalHeader +
+			optCom.mRelativeOffsetToPlatformHeader +
+			optWin.mRelativeOffsetToDataDirectory,
+		optWin.mNumDataDirectoryEntries,
+		coff.mOptionalHeaderBytes -
+			optWin.mRelativeOffsetToDataDirectory );
+	if( hasDataDir == false )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a data directory header" );
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a data directory header" );
 
 	return true;
 }

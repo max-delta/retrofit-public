@@ -4,11 +4,13 @@
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="DosHeader.cpp" />
 		<ClCompile Include="PeHeader.cpp" />
+		<ClCompile Include="DataDirectoryHeader.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="PeFwd.h" />
 		<ClInclude Include="DosHeader.h" />
 		<ClInclude Include="PeHeader.h" />
+		<ClInclude Include="DataDirectoryHeader.h" />
 	</ItemGroup>
 </Project>
