@@ -73,7 +73,7 @@ bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase,
 	mImageMemoryBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mHeadersFileBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mChecksum = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
-	mSubsystem = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mSubsystem = math::enum_bitcast<WindowsSubsystemType>( math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() ) );
 	mDLLFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mStackReserveBytes = math::FromLittleEndianToPlatform(
 		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );

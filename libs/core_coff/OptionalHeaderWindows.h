@@ -28,7 +28,7 @@ public:
 	uint64_t mImageMemoryBytes = 0;
 	uint64_t mHeadersFileBytes = 0;
 	uint64_t mChecksum = 0;
-	uint16_t mSubsystem = 0;
+	WindowsSubsystemType mSubsystem = WindowsSubsystemType::Unknown;
 	uint16_t mDLLFlags = 0;
 	size_t mStackReserveBytes = 0;
 	size_t mStackCommitBytes = 0;

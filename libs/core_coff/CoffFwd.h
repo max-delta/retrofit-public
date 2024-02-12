@@ -60,6 +60,25 @@ enum class OptionalHeaderType : uint16_t
 	PE32Plus = 0x20b,
 };
 
+enum class WindowsSubsystemType : uint16_t
+{
+	Unknown = 0,
+
+	NativeNT = 1,
+	WindowsNTGUI = 2,
+	WindowsNTCUI = 3,
+	OS2CUI = 5,
+	POSIXCUI = 7,
+	NativeWin = 8,
+	WindowsCEGUI = 9,
+	EFIApplication = 10,
+	EFIBootDriver = 11,
+	EFIRuntimeDriver = 12,
+	EFIROM = 13,
+	XBox = 14,
+	WindowsBoot = 15,
+};
+
 struct CoffHeader;
 struct OptionalHeaderCommon;
 struct OptionalHeaderWindows;
