@@ -3,10 +3,12 @@
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="CoffHeader.cpp" />
+		<ClCompile Include="OptionalHeaderCommon.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="CoffHeader.h" />
 		<ClInclude Include="CoffFwd.h" />
+		<ClInclude Include="OptionalHeaderCommon.h" />
 	</ItemGroup>
 </Project>

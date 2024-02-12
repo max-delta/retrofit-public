@@ -29,10 +29,12 @@
 	<ItemGroup>
 		<ClInclude Include="CoffFwd.h" />
 		<ClInclude Include="CoffHeader.h" />
+		<ClInclude Include="OptionalHeaderCommon.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="CoffHeader.cpp" />
+		<ClCompile Include="OptionalHeaderCommon.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>

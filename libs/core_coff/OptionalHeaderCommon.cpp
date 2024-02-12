@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "CoffHeader.h"
+#include "OptionalHeaderCommon.h"
 
 #include "core_math/math_bytes.h"
 #include "core_math/math_casts.h"
@@ -14,7 +14,7 @@
 namespace RF::bin::coff {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
+bool OptionalHeaderCommon::TryRead( rftl::streambuf& seekable, size_t seekBase )
 {
 	*this = {};
 
@@ -26,7 +26,7 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 		return false;
 	}
 
-	rftl::array<uint8_t, 20> buffer;
+	rftl::array<uint8_t, 24> buffer;
 	size_t const numRead = rftl::stream_read( buffer.data(), buffer.size(), stream );
 	if( numRead != buffer.size() )
 	{
@@ -36,15 +36,14 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	rftl::byte_view const bufferView( buffer.begin(), buffer.end() );
 	rftl::byte_view readHead = bufferView;
 
-	mMachineType = math::enum_bitcast<MachineType>( math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() ) );
-	mNumSections = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
-	mTimeSinceUnixEpoch = rftl::chrono::seconds( math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() ) );
-	mAbsoluteOffsetToSymbolTable = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
-	mNumSymbols = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
-	mOptionalHeaderBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
-	mFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mMagic = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mVersion = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
+	mCodeBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
+	mInitializedBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
+	mUninitializedBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
+	mAbsoluteOffsetToEntryPoint = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
+	mAbsoluteOffsetToCode = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	RF_ASSERT( readHead.empty() );
-	mRelativeOffsetToOptionalHeader = 20;
 
 	return true;
 }

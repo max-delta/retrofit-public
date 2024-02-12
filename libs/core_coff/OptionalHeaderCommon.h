@@ -1,27 +1,25 @@
 #pragma once
 #include "core_coff/CoffFwd.h"
 
-#include "rftl/chrono"
 #include "rftl/iosfwd"
 
 
 namespace RF::bin::coff {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct CoffHeader
+struct OptionalHeaderCommon
 {
 public:
 	bool TryRead( rftl::streambuf& seekable, size_t seekBase );
 
 public:
-	MachineType mMachineType = MachineType::Unknown;
-	size_t mNumSections = 0;
-	size_t mAbsoluteOffsetToSymbolTable = 0;
-	rftl::chrono::seconds mTimeSinceUnixEpoch = {};
-	size_t mNumSymbols = 0;
-	size_t mOptionalHeaderBytes = 0;
-	uint16_t mFlags = 0;
-	size_t mRelativeOffsetToOptionalHeader = 0;
+	uint16_t mMagic = 0;
+	uint16_t mVersion = 0;
+	size_t mCodeBytes = 0;
+	size_t mInitializedBytes = 0;
+	size_t mUninitializedBytes = 0;
+	size_t mAbsoluteOffsetToEntryPoint = 0;
+	size_t mAbsoluteOffsetToCode = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

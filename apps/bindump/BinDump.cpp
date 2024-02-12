@@ -12,6 +12,7 @@
 #include "PlatformUtils_win32/Console.h"
 
 #include "core_coff/CoffHeader.h"
+#include "core_coff/OptionalHeaderCommon.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
@@ -197,6 +198,16 @@ ErrorReturnCode Process()
 				if( isCoff )
 				{
 					RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a COFF file" );
+
+					if( coff.mOptionalHeaderBytes > 0 )
+					{
+						bin::coff::OptionalHeaderCommon optCom = {};
+						bool const hasOptCom = optCom.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader );
+						if( hasOptCom )
+						{
+							RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like common optional COFF header" );
+						}
+					}
 				}
 			}
 		}
