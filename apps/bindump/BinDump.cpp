@@ -69,6 +69,53 @@ void EmitUsage()
 	emit( "  -l, --log    Log to standard output" );
 }
 
+
+
+bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
+{
+	bin::pe::DosHeader dos = {};
+	bool const isDos = dos.TryRead( seekable, 0 );
+	if( isDos == false )
+	{
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a DOS file" );
+
+	bin::pe::PeHeader pe = {};
+	bool const isPE = pe.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader );
+	if( isPE == false )
+	{
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a PE file" );
+
+	bin::coff::CoffHeader coff = {};
+	bool const isCoff = coff.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader );
+	if( isCoff == false )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a COFF header" );
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a COFF header" );
+
+	if( coff.mOptionalHeaderBytes <= 0 )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected an optional header" );
+		return false;
+	}
+
+	bin::coff::OptionalHeaderCommon optCom = {};
+	bool const hasOptCom = optCom.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader );
+	if( hasOptCom == false )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a common optional header" );
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a common optional COFF header" );
+
+	return true;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -180,41 +227,14 @@ ErrorReturnCode Process()
 	rftl::streambuf& seekable = *seekableHandle;
 
 	// Is it a PE file?
+	bool const isPE = details::TryAsPE( path, seekable );
+	if( isPE )
 	{
-		bin::pe::DosHeader dos = {};
-		bool const isDos = dos.TryRead( seekable, 0 );
-		if( isDos )
-		{
-			RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a DOS file" );
-
-			bin::pe::PeHeader pe = {};
-			bool const isPE = pe.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader );
-			if( isPE )
-			{
-				RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a PE file" );
-
-				bin::coff::CoffHeader coff = {};
-				bool const isCoff = coff.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader );
-				if( isCoff )
-				{
-					RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like a COFF file" );
-
-					if( coff.mOptionalHeaderBytes > 0 )
-					{
-						bin::coff::OptionalHeaderCommon optCom = {};
-						bool const hasOptCom = optCom.TryRead( seekable, dos.mAbsoluteOffsetToPEHeader + pe.mRelativeOffsetToCOFFHeader + coff.mRelativeOffsetToOptionalHeader );
-						if( hasOptCom )
-						{
-							RFLOG_INFO( path, RFCAT_BINDUMP, "Looks like common optional COFF header" );
-						}
-					}
-				}
-			}
-		}
+		return ErrorReturnCode::Success;
 	}
 
 	// TODO
-	return ErrorReturnCode::Success;
+	return ErrorReturnCode::UnknownError;
 }
 
 
