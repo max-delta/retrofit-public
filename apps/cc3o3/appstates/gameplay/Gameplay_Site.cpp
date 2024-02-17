@@ -388,23 +388,19 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 								{
 									// Special case - Menus
 
-									// HACK: Just pop into menus
-									RF_TODO_ANNOTATION( "Validation? Setup?" );
-									context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Menus );
+									// Bring up menus
+									campaign.EnterMenus( context );
 								}
 								else if( chosenSection == TopLevelSections::kLeave )
 								{
 									// Special case - Leave
 
-									// HACK: Just travel to the overworld
+									// HACK: Assume site can always be left
 									RF_TODO_ANNOTATION(
-										"Ask campaign what to return to, which"
-										" there might not be anything allowed"
-										" to return to at certain plot points,"
-										" which would need to block leaving"
-										" and notify the player why they can't"
-										" leave yet" );
-									campaign.TravelToOverworld( context );
+										"Check if a site is leavable, and why"
+										" not if it can't be left" );
+									RF_ASSERT( campaign.CanLeaveSite() );
+									campaign.LeaveSite( context );
 								}
 								else
 								{

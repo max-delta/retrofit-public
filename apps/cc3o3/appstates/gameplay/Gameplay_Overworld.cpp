@@ -429,7 +429,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		if( menuCommand.mType == input::command::game::UIMenuAction )
 		{
 			// Bring up menus
-			context.mManager.RequestDeferredStateChange( id::Gameplay_Menus );
+			campaign.EnterMenus( context );
 		}
 	}
 

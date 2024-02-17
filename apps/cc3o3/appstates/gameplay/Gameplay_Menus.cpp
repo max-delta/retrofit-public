@@ -3,6 +3,7 @@
 
 #include "cc3o3/Common.h"
 #include "cc3o3/appstates/InputHelpers.h"
+#include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/company/CompanyManager.h"
 #include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/StateLogging.h"
@@ -452,6 +453,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 	InternalState& internalState = *mInternalState;
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
+	campaign::CampaignManager& campaign = *gCampaignManager;
 
 	ui::UIContext uiContext( uiManager );
 	focusMan.UpdateHardFocus( uiContext );
@@ -518,9 +520,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 					}
 					else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 					{
-						// HACK: Always assume returning to overworld
-						// TODO: Proper logic
-						context.mManager.RequestDeferredStateChange( id::Gameplay_Overworld );
+						campaign.LeaveMenus( context );
 					}
 				}
 				else

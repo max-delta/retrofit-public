@@ -173,6 +173,43 @@ bool CampaignManager::SaveCampaignProgress( save::SaveBlob& saveBlob )
 
 
 
+void CampaignManager::PrepareFastTrackOverworld()
+{
+	RF_TODO_ANNOTATION( "More FastTrack control knobs" );
+}
+
+
+
+void CampaignManager::PrepareFastTrackSite()
+{
+	RF_TODO_ANNOTATION( "More FastTrack control knobs" );
+}
+
+
+
+void CampaignManager::PrepareFastTrackMenus()
+{
+	RF_TODO_ANNOTATION( "More FastTrack control knobs" );
+}
+
+
+
+void CampaignManager::PrepareFastTrackBattle()
+{
+	RF_TODO_ANNOTATION( "More FastTrack control knobs" );
+}
+
+
+
+appstate::AppStateID CampaignManager::PrepareInitialGameplayState()
+{
+	// HACK: Always overworld
+	RF_TODO_ANNOTATION( "Set initial game state based on save file" );
+	return appstate::id::Gameplay_Overworld;
+}
+
+
+
 void CampaignManager::HardcodedSinglePlayerCharacterLoad()
 {
 	VerifyCampaignLoaded();
@@ -395,6 +432,27 @@ void CampaignManager::HardcodedSinglePlayerApplyProgression()
 
 
 
+void CampaignManager::EnterMenus( appstate::AppStateTickContext& context )
+{
+	// HACK: Always enter, never check anything
+	// TODO: Restrict this?
+	RF_TODO_ANNOTATION( "Validation? Setup?" );
+
+	// Bring up menus
+	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Menus );
+}
+
+
+
+void CampaignManager::LeaveMenus( appstate::AppStateTickContext& context )
+{
+	// HACK: Always assume returning to overworld
+	// TODO: Proper logic
+	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Overworld );
+}
+
+
+
 void CampaignManager::TODO_ChangeOverworldLocation( int todo )
 {
 	// TODO: Setup which overworld to be in, and where in it to be
@@ -459,6 +517,31 @@ site::Site CampaignManager::LoadDataForSite()
 	// Load site
 	file::VFSPath const siteDescPath = paths::TablesRoot().GetChild( "world", "sites", rftl::string( mLastSiteTransition ) + ".oo" );
 	return site::Site::LoadFromDesc( siteDescPath );
+}
+
+
+
+bool CampaignManager::CanLeaveSite()
+{
+	// HACK: Always allow
+	RF_TODO_ANNOTATION(
+		"Check if player can leave site, notify why not if restricted" );
+	return true;
+}
+
+
+
+void CampaignManager::LeaveSite( appstate::AppStateTickContext& context )
+{
+	// HACK: Just travel to the overworld
+	RF_TODO_ANNOTATION(
+		"Ask campaign what to return to, which"
+		" there might not be anything allowed"
+		" to return to at certain plot points,"
+		" which would need to block leaving"
+		" and notify the player why they can't"
+		" leave yet" );
+	TravelToOverworld( context );
 }
 
 

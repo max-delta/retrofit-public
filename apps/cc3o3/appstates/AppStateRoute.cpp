@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "AppStateRoute.h"
 
+#include "cc3o3/Common.h"
+#include "cc3o3/campaign/CampaignManager.h"
+
 
 namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
@@ -119,23 +122,26 @@ AppStateID GetFirstGameplayState()
 {
 	if( fasttrack::sMode == fasttrack::Mode::GameplayOverworld )
 	{
+		gCampaignManager->PrepareFastTrackOverworld();
 		return id::Gameplay_Overworld;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::GameplaySite )
 	{
+		gCampaignManager->PrepareFastTrackSite();
 		return id::Gameplay_Site;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::GameplayMenus )
 	{
+		gCampaignManager->PrepareFastTrackMenus();
 		return id::Gameplay_Menus;
 	}
 	if( fasttrack::sMode == fasttrack::Mode::GameplayBattle )
 	{
+		gCampaignManager->PrepareFastTrackBattle();
 		return id::Gameplay_Battle;
 	}
 
-	// TODO: This should be based on the save file
-	return id::Gameplay_Overworld;
+	return gCampaignManager->PrepareInitialGameplayState();
 }
 
 

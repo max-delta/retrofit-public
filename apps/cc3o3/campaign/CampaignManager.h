@@ -35,9 +35,18 @@ public:
 	bool LoadCampaignProgress( save::SaveBlob const& saveBlob );
 	bool SaveCampaignProgress( save::SaveBlob& saveBlob );
 
+	void PrepareFastTrackOverworld();
+	void PrepareFastTrackSite();
+	void PrepareFastTrackMenus();
+	void PrepareFastTrackBattle();
+	appstate::AppStateID PrepareInitialGameplayState();
+
 	void HardcodedSinglePlayerCharacterLoad();
 	void HardcodedSinglePlayerObjectSetup();
 	void HardcodedSinglePlayerApplyProgression();
+
+	void EnterMenus( appstate::AppStateTickContext& context );
+	void LeaveMenus( appstate::AppStateTickContext& context );
 
 	void TODO_ChangeOverworldLocation( int todo );
 	void TravelToOverworld(
@@ -51,6 +60,9 @@ public:
 		rftl::string identifier );
 
 	site::Site LoadDataForSite();
+	bool CanLeaveSite();
+	void LeaveSite( appstate::AppStateTickContext& context );
+
 	void StartEncounter(
 		appstate::AppStateTickContext& context,
 		rftl::string identifier );
