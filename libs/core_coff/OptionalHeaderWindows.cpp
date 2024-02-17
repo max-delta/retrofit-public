@@ -59,8 +59,8 @@ bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase,
 		mAbsoluteOffsetToData = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	}
 
-	mPreferredImageBase = math::FromLittleEndianToPlatform(
-		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );
+	mPreferredImageBase = math::integer_cast<size_t>( math::FromLittleEndianToPlatform(
+		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() ) );
 	mSectionMemoryAlignment = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mSectionFileAlignment = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mOSMajorVersion = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
@@ -75,14 +75,14 @@ bool OptionalHeaderWindows::TryRead( rftl::streambuf& seekable, size_t seekBase,
 	mChecksum = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mSubsystem = math::enum_bitcast<WindowsSubsystemType>( math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() ) );
 	mDLLFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
-	mStackReserveBytes = math::FromLittleEndianToPlatform(
-		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );
-	mStackCommitBytes = math::FromLittleEndianToPlatform(
-		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );
-	mHeapReserveBytes = math::FromLittleEndianToPlatform(
-		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );
-	mHeapCommitBytes = math::FromLittleEndianToPlatform(
-		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() );
+	mStackReserveBytes = math::integer_cast<size_t>( math::FromLittleEndianToPlatform(
+		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() ) );
+	mStackCommitBytes = math::integer_cast<size_t>( math::FromLittleEndianToPlatform(
+		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() ) );
+	mHeapReserveBytes = math::integer_cast<size_t>( math::FromLittleEndianToPlatform(
+		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() ) );
+	mHeapCommitBytes = math::integer_cast<size_t>( math::FromLittleEndianToPlatform(
+		isPlusHeader ? readHead.extract_front<uint64_t>() : readHead.extract_front<uint32_t>() ) );
 	mLoaderFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	mNumDataDirectoryEntries = math::FromLittleEndianToPlatform( readHead.extract_front<uint32_t>() );
 	RF_ASSERT( readHead.empty() );
