@@ -321,7 +321,7 @@ inline void* byte_view::mem_copy_to( Container& container ) const
 template<typename Container>
 inline void* byte_view::mem_copy_prefix_to( Container& container ) const
 {
-	static_assert( sizeof( Container::value_type ) == 1 );
+	static_assert( sizeof( typename Container::value_type ) == 1 );
 	typename Container::value_type* const data = container.data();
 	size_t const size = container.size();
 	return mem_copy_prefix_to( data, size );
