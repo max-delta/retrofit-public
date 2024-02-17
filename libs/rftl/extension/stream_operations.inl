@@ -7,11 +7,28 @@
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+// This obnoxious shim is to workaround the issue where clang complains about
+//  comparisons that will always return the same result, and complains even if
+//  you guard that path with constexpr branches to prevent it
+// NOTE: The core math library has better tools to deal with this, and the core
+//  library has pragma helpers for suppressing warnings, but neither of those
+//  are currently supposed to be depended on by RFTL
+template<typename LHS, typename RHS>
+inline bool less_than_32bit_clang_workaround( LHS const& lhs, RHS const& rhs )
+{
+	return lhs < rhs;
+}
+}
+///////////////////////////////////////////////////////////////////////////////
 
 template<typename Stream>
 bool stream_seek_abs( Stream& source, size_t position )
 {
-	if( position > static_cast<size_t>( rftl::numeric_limits<rftl::streamoff>::max() ) )
+	if(
+		details::less_than_32bit_clang_workaround(
+			static_cast<size_t>( rftl::numeric_limits<rftl::streamoff>::max() ),
+			position ) )
 	{
 		return false;
 	}
@@ -31,7 +48,10 @@ bool stream_seek_abs( Stream& source, size_t position )
 template<typename Stream>
 inline size_t stream_read( void* dest, size_t count, Stream& source )
 {
-	if( count > static_cast<size_t>( rftl::numeric_limits<rftl::streamsize>::max() ) )
+	if(
+		details::less_than_32bit_clang_workaround(
+			static_cast<size_t>( rftl::numeric_limits<rftl::streamsize>::max() ),
+			count ) )
 	{
 		return 0;
 	}
