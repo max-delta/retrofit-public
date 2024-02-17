@@ -5,6 +5,7 @@
 		<ClCompile Include="CoffHeader.cpp" />
 		<ClCompile Include="OptionalHeaderCommon.cpp" />
 		<ClCompile Include="OptionalHeaderWindows.cpp" />
+		<ClCompile Include="SectionHeader.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
@@ -12,5 +13,6 @@
 		<ClInclude Include="CoffFwd.h" />
 		<ClInclude Include="OptionalHeaderCommon.h" />
 		<ClInclude Include="OptionalHeaderWindows.h" />
+		<ClInclude Include="SectionHeader.h" />
 	</ItemGroup>
 </Project>

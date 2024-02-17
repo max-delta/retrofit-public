@@ -22,6 +22,7 @@ public:
 	size_t mOptionalHeaderBytes = 0;
 	uint16_t mFlags = 0;
 	size_t mRelativeOffsetToOptionalHeader = 0;
+	size_t mRelativeOffsetToFirstSectionHeader = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

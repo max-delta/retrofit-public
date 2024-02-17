@@ -82,6 +82,7 @@ enum class WindowsSubsystemType : uint16_t
 struct CoffHeader;
 struct OptionalHeaderCommon;
 struct OptionalHeaderWindows;
+struct SectionHeader;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

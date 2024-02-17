@@ -14,6 +14,7 @@
 #include "core_coff/CoffHeader.h"
 #include "core_coff/OptionalHeaderCommon.h"
 #include "core_coff/OptionalHeaderWindows.h"
+#include "core_coff/SectionHeader.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DataDirectoryHeader.h"
 #include "core_pe/DosHeader.h"
@@ -168,6 +169,32 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a data directory header" );
+
+	// Sections
+	rftl::vector<bin::coff::SectionHeader> sections = {};
+	if( coff.mNumSections > 100 )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of sections" );
+		return false;
+	}
+	sections.resize( coff.mNumSections );
+	{
+		size_t sectionSeekBase =
+			dos.mAbsoluteOffsetToPEHeader +
+			pe.mRelativeOffsetToCOFFHeader +
+			coff.mRelativeOffsetToFirstSectionHeader;
+		for( bin::coff::SectionHeader& section : sections )
+		{
+			bool const hasSection = section.TryRead( seekable, sectionSeekBase );
+			if( hasSection == false )
+			{
+				RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a section header" );
+				return false;
+			}
+			sectionSeekBase += section.mRelativeOffsetToNextSection;
+			RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a section header" );
+		}
+	}
 
 	return true;
 }

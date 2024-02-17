@@ -45,7 +45,8 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	mOptionalHeaderBytes = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	mFlags = math::FromLittleEndianToPlatform( readHead.extract_front<uint16_t>() );
 	RF_ASSERT( readHead.empty() );
-	mRelativeOffsetToOptionalHeader = 20;
+	mRelativeOffsetToOptionalHeader = kBytesToRead;
+	mRelativeOffsetToFirstSectionHeader = mRelativeOffsetToOptionalHeader + mOptionalHeaderBytes;
 
 	return true;
 }
