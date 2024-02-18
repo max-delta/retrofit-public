@@ -201,6 +201,13 @@ void CampaignManager::PrepareFastTrackBattle()
 
 
 
+void CampaignManager::PrepareFastTrackCutscene()
+{
+	RF_TODO_ANNOTATION( "More FastTrack control knobs" );
+}
+
+
+
 appstate::AppStateID CampaignManager::PrepareInitialGameplayState()
 {
 	// HACK: Always overworld

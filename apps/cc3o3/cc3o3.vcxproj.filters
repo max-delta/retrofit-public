@@ -316,6 +316,9 @@
 		<ClCompile Include="char\GridBitMask.cpp">
 			<Filter>char</Filter>
 		</ClCompile>
+		<ClCompile Include="appstates\gameplay\Gameplay_Cutscene.cpp">
+			<Filter>appstates\gameplay</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -863,6 +866,9 @@
 		</ClInclude>
 		<ClInclude Include="char\GridBitMask.h">
 			<Filter>char</Filter>
+		</ClInclude>
+		<ClInclude Include="appstates\gameplay\Gameplay_Cutscene.h">
+			<Filter>appstates\gameplay</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>

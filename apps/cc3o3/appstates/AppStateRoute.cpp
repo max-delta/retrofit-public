@@ -31,7 +31,8 @@ enum class Mode : uint8_t
 	GameplayOverworld,
 	GameplaySite,
 	GameplayMenus,
-	GameplayBattle
+	GameplayBattle,
+	GameplayCutscene,
 };
 
 static Mode sMode = Mode::Invalid;
@@ -95,6 +96,10 @@ AppStateID GetStateAfterInitialLoad()
 	{
 		return id::Gameplay;
 	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayCutscene )
+	{
+		return id::Gameplay;
+	}
 
 
 	return id::TitleScreen;
@@ -139,6 +144,11 @@ AppStateID GetFirstGameplayState()
 	{
 		gCampaignManager->PrepareFastTrackBattle();
 		return id::Gameplay_Battle;
+	}
+	if( fasttrack::sMode == fasttrack::Mode::GameplayCutscene )
+	{
+		gCampaignManager->PrepareFastTrackCutscene();
+		return id::Gameplay_Cutscene;
 	}
 
 	return gCampaignManager->PrepareInitialGameplayState();

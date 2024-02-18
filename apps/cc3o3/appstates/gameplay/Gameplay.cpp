@@ -4,6 +4,7 @@
 #include "cc3o3/appstates/gameplay/Gameplay_Overworld.h"
 #include "cc3o3/appstates/gameplay/Gameplay_Site.h"
 #include "cc3o3/appstates/gameplay/Gameplay_Battle.h"
+#include "cc3o3/appstates/gameplay/Gameplay_Cutscene.h"
 #include "cc3o3/appstates/gameplay/Gameplay_Menus.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/appstates/InputHelpers.h"
@@ -112,6 +113,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	appStateMan.AddState( appstate::id::Gameplay_Overworld, DefaultCreator<appstate::Gameplay_Overworld>::Create() );
 	appStateMan.AddState( appstate::id::Gameplay_Site, DefaultCreator<appstate::Gameplay_Site>::Create() );
 	appStateMan.AddState( appstate::id::Gameplay_Battle, DefaultCreator<appstate::Gameplay_Battle>::Create() );
+	appStateMan.AddState( appstate::id::Gameplay_Cutscene, DefaultCreator<appstate::Gameplay_Cutscene>::Create() );
 	appStateMan.AddState( appstate::id::Gameplay_Menus, DefaultCreator<appstate::Gameplay_Menus>::Create() );
 	appStateMan.Start( appstate::GetFirstGameplayState() );
 }

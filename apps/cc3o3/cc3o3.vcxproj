@@ -37,6 +37,7 @@
 		<ClCompile Include="appstates\devtest\DevTestRollback.cpp" />
 		<ClCompile Include="appstates\gameplay\Gameplay.cpp" />
 		<ClCompile Include="appstates\gameplay\Gameplay_Battle.cpp" />
+		<ClCompile Include="appstates\gameplay\Gameplay_Cutscene.cpp" />
 		<ClCompile Include="appstates\gameplay\Gameplay_Menus.cpp" />
 		<ClCompile Include="appstates\gameplay\Gameplay_Overworld.cpp" />
 		<ClCompile Include="appstates\gameplay\Gameplay_Site.cpp" />
@@ -153,6 +154,7 @@
 		<ClInclude Include="appstates\devtest\stdafx.h" />
 		<ClInclude Include="appstates\gameplay\Gameplay.h" />
 		<ClInclude Include="appstates\gameplay\Gameplay_Battle.h" />
+		<ClInclude Include="appstates\gameplay\Gameplay_Cutscene.h" />
 		<ClInclude Include="appstates\gameplay\Gameplay_Menus.h" />
 		<ClInclude Include="appstates\gameplay\Gameplay_Overworld.h" />
 		<ClInclude Include="appstates\gameplay\Gameplay_Site.h" />

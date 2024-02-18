@@ -30,7 +30,8 @@ enum : AppStateID
 	Gameplay_Overworld,
 	Gameplay_Site,
 	Gameplay_Battle,
-	Gameplay_Menus
+	Gameplay_Cutscene,
+	Gameplay_Menus,
 };
 }
 

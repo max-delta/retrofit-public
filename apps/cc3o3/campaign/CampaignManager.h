@@ -39,6 +39,7 @@ public:
 	void PrepareFastTrackSite();
 	void PrepareFastTrackMenus();
 	void PrepareFastTrackBattle();
+	void PrepareFastTrackCutscene();
 	appstate::AppStateID PrepareInitialGameplayState();
 
 	void HardcodedSinglePlayerCharacterLoad();
