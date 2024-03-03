@@ -283,6 +283,7 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 	}
 	symbols.shrink_to_fit();
 
+	// String table
 	rftl::vector<uint8_t> stringTableData;
 	if( coff.mAbsoluteOffsetToStringTable != 0 )
 	{
@@ -312,6 +313,19 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 			return false;
 		}
 		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a string table data" );
+	}
+
+	// Symbol names
+	for( bin::coff::SymbolRecord const& symbol : symbols )
+	{
+		rftl::string_view const name =
+			symbol.TryReadName( rftl::byte_view( stringTableData.begin(), stringTableData.end() ) );
+		if( name.empty() )
+		{
+			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Doesn't look like a valid symbol name" );
+			return false;
+		}
+		RFLOG_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a valid symbol name: '%s'", rftl::string( name ).c_str() );
 	}
 
 	return true;

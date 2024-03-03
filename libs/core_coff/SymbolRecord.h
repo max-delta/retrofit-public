@@ -1,9 +1,11 @@
 #pragma once
 #include "core_coff/CoffFwd.h"
 
+#include "rftl/extension/byte_view.h"
 #include "rftl/extension/static_string.h"
 #include "rftl/iosfwd"
 #include "rftl/optional"
+#include "rftl/string_view"
 
 
 namespace RF::bin::coff {
@@ -13,6 +15,7 @@ struct SymbolRecord
 {
 public:
 	bool TryRead( rftl::streambuf& seekable, size_t seekBase );
+	rftl::string_view TryReadName( rftl::byte_view stringTable ) const;
 
 public:
 	rftl::static_string<8> mName = {};

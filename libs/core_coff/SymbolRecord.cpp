@@ -5,7 +5,6 @@
 #include "core_math/math_bytes.h"
 #include "core_math/math_casts.h"
 
-#include "rftl/extension/byte_view.h"
 #include "rftl/extension/stream_operations.h"
 #include "rftl/array"
 #include "rftl/istream"
@@ -67,6 +66,36 @@ bool SymbolRecord::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	}
 
 	return true;
+}
+
+
+
+rftl::string_view SymbolRecord::TryReadName( rftl::byte_view stringTable ) const
+{
+	if( mName.empty() == false )
+	{
+		RF_ASSERT( mNameOffsetIntoStringTable.has_value() == false );
+		return mName;
+	}
+
+	RF_ASSERT( mNameOffsetIntoStringTable.has_value() );
+	size_t const offset = mNameOffsetIntoStringTable.value();
+	if( offset > stringTable.size() )
+	{
+		return {};
+	}
+
+	rftl::byte_view const maxBytes = stringTable.substr( offset );
+	rftl::string_view const maxString( reinterpret_cast<char const*>( maxBytes.data() ), maxBytes.size() );
+	size_t const firstNull = maxString.find( '\0', 0 );
+	if( firstNull == rftl::string_view::npos )
+	{
+		// Even the last string should be null-terminated
+		RF_DBGFAIL();
+		return {};
+	}
+	rftl::string_view const singleString = maxString.substr( 0, firstNull );
+	return singleString;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
