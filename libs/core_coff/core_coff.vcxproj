@@ -33,6 +33,7 @@
 		<ClInclude Include="OptionalHeaderWindows.h" />
 		<ClInclude Include="SectionHeader.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="SymbolRecord.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="CoffHeader.cpp" />
@@ -42,6 +43,7 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="SymbolRecord.cpp" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">

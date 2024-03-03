@@ -79,6 +79,63 @@ enum class WindowsSubsystemType : uint16_t
 	WindowsBoot = 15,
 };
 
+enum class SymbolTypeUpper : uint8_t
+{
+	Scalar = 0,
+	Pointer = 1,
+	Function = 2,
+	Array = 3,
+};
+
+enum class SymbolTypeLower : uint8_t
+{
+	Unknown = 0,
+	Void = 1,
+	Char = 2,
+	Short = 3,
+	Int = 4,
+	Long = 5,
+	Float = 6,
+	Double = 7,
+	Struct = 8,
+	Union = 9,
+	Enum = 10,
+	EnumMember = 11,
+	UChar = 12,
+	UShort = 13,
+	UInt = 14,
+	ULong = 15,
+};
+
+enum class SymbolStorageClass : uint8_t
+{
+	Null = 0,
+	Stack = 1, // Value = stack offset
+	External = 2, // Value = section == 0 ? size : offset into section
+	Static = 3,
+	Register = 4, // Value = register number
+	ExternalDefinition = 5,
+	Label = 6, // Value = offset into section
+	UndefinedLabel = 7,
+	MemberOfStruct = 8, // Value = index into members
+	FunctionArgument = 9, // Value = indext into params
+	StructTag = 10,
+	MemberOfUnion = 11, // Value = index into members
+	UnionTag = 12,
+	TypeDef = 13,
+	UndefinedStatic = 14,
+	EnumTag = 15,
+	MemberOfEnum = 16, // Value = index into members
+	RegisterParam = 17,
+	BitField = 18, // Value = index into bits
+	Block = 100, // Value = relocatable address
+	Function = 101, // Value = (lf ? number of sourc lines, rf ? size of code)
+	EndOfStruct = 102,
+	File = 103, // Expect an aux record with name of file
+	WeakExternal = 105,
+	CLRToken = 107,
+};
+
 struct CoffHeader;
 struct OptionalHeaderCommon;
 struct OptionalHeaderWindows;

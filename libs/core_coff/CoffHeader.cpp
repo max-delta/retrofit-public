@@ -47,6 +47,8 @@ bool CoffHeader::TryRead( rftl::streambuf& seekable, size_t seekBase )
 	RF_ASSERT( readHead.empty() );
 	mRelativeOffsetToOptionalHeader = kBytesToRead;
 	mRelativeOffsetToFirstSectionHeader = mRelativeOffsetToOptionalHeader + mOptionalHeaderBytes;
+	static constexpr size_t kSymbolSize = 18;
+	mAbsoluteOffsetToStringTable = mAbsoluteOffsetToSymbolTable + mNumSymbols * kSymbolSize;
 
 	return true;
 }

@@ -23,6 +23,7 @@ public:
 	uint16_t mFlags = 0;
 	size_t mRelativeOffsetToOptionalHeader = 0;
 	size_t mRelativeOffsetToFirstSectionHeader = 0;
+	size_t mAbsoluteOffsetToStringTable = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

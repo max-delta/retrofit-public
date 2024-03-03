@@ -15,6 +15,7 @@
 #include "core_coff/OptionalHeaderCommon.h"
 #include "core_coff/OptionalHeaderWindows.h"
 #include "core_coff/SectionHeader.h"
+#include "core_coff/SymbolRecord.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DataDirectoryHeader.h"
 #include "core_pe/DosHeader.h"
@@ -249,6 +250,37 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 			RFLOG_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a section header" );
 		}
 	}
+
+	// Symbols
+	rftl::vector<bin::coff::SymbolRecord> symbols = {};
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu symbols", coff.mNumSymbols );
+	if( coff.mNumSymbols > 10'000 )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of symbols" );
+		return false;
+	}
+	symbols.reserve( coff.mNumSymbols );
+	{
+		size_t symbolSeekBase =
+			coff.mAbsoluteOffsetToSymbolTable;
+		size_t symbolsRead = 0;
+		for( symbolsRead = 0; symbolsRead < coff.mNumSymbols; symbolsRead++ )
+		{
+			bin::coff::SymbolRecord symbol = {};
+			bool const hasSymbol = symbol.TryRead( seekable, symbolSeekBase );
+			if( hasSymbol == false )
+			{
+				RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a symbol record" );
+				return false;
+			}
+			symbols.push_back( symbol );
+			// NOTE: Skipping aux symbols
+			symbolsRead += symbol.mNumAuxSymbols;
+			symbolSeekBase += symbol.mRelativeOffsetToNextSymbol;
+			RFLOG_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a symbol record" );
+		}
+	}
+	symbols.shrink_to_fit();
 
 	return true;
 }
