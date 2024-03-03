@@ -174,6 +174,7 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 
 	// Sections
 	rftl::vector<bin::coff::SectionHeader> sections = {};
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu sections", coff.mNumSections );
 	if( coff.mNumSections > 100 )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of sections" );
@@ -194,7 +195,58 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 				return false;
 			}
 			sectionSeekBase += section.mRelativeOffsetToNextSection;
-			RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a section header" );
+			RFLOG_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a section header" );
+		}
+	}
+
+	return true;
+}
+
+
+
+bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
+{
+	// COFF
+	bin::coff::CoffHeader coff = {};
+	bool const isCoff = coff.TryRead(
+		seekable,
+		0 );
+	if( isCoff == false )
+	{
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Doesn't look like a COFF header" );
+		return false;
+	}
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a COFF header" );
+
+	// Optional
+	if( coff.mOptionalHeaderBytes != 0 )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unexpected optional header" );
+		return false;
+	}
+
+	// Sections
+	rftl::vector<bin::coff::SectionHeader> sections = {};
+	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu sections", coff.mNumSections );
+	if( coff.mNumSections > 10'000 )
+	{
+		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of sections" );
+		return false;
+	}
+	sections.resize( coff.mNumSections );
+	{
+		size_t sectionSeekBase =
+			coff.mRelativeOffsetToFirstSectionHeader;
+		for( bin::coff::SectionHeader& section : sections )
+		{
+			bool const hasSection = section.TryRead( seekable, sectionSeekBase );
+			if( hasSection == false )
+			{
+				RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Expected a section header" );
+				return false;
+			}
+			sectionSeekBase += section.mRelativeOffsetToNextSection;
+			RFLOG_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a section header" );
 		}
 	}
 
@@ -318,7 +370,15 @@ ErrorReturnCode Process()
 		return ErrorReturnCode::Success;
 	}
 
+	// Is it a COFF file?
+	bool const isCOFF = details::TryAsCOFF( path, seekable );
+	if( isCOFF )
+	{
+		return ErrorReturnCode::Success;
+	}
+
 	// TODO
+	RFLOG_ERROR( path, RFCAT_BINDUMP, "Unable to determine file type" );
 	return ErrorReturnCode::UnknownError;
 }
 
