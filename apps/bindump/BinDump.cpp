@@ -83,6 +83,7 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		0 );
 	if( isDos == false )
 	{
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Doesn't look like a DOS file" );
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a DOS file" );
@@ -94,6 +95,7 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		dos.mAbsoluteOffsetToPEHeader );
 	if( isPE == false )
 	{
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Doesn't look like a PE file" );
 		return false;
 	}
 	RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a PE file" );
