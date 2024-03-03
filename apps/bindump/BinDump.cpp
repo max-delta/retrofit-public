@@ -15,6 +15,7 @@
 #include "core_coff/OptionalHeaderCommon.h"
 #include "core_coff/OptionalHeaderWindows.h"
 #include "core_coff/SectionHeader.h"
+#include "core_coff/StringTableHeader.h"
 #include "core_coff/SymbolRecord.h"
 #include "core_math/math_bits.h"
 #include "core_pe/DataDirectoryHeader.h"
@@ -281,6 +282,37 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		}
 	}
 	symbols.shrink_to_fit();
+
+	rftl::vector<uint8_t> stringTableData;
+	if( coff.mAbsoluteOffsetToStringTable != 0 )
+	{
+		bin::coff::StringTableHeader stringTable = {};
+		bool const isStringTable = stringTable.TryRead(
+			seekable,
+			coff.mAbsoluteOffsetToStringTable );
+		if( isStringTable == false )
+		{
+			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Doesn't look like a string table header" );
+			return false;
+		}
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a string table header" );
+
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu bytes in string table", stringTable.mSize );
+		if( stringTable.mSize > 10'000'000 )
+		{
+			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of bytes in string table" );
+			return false;
+		}
+		stringTableData = stringTable.TryCopyBytes(
+			seekable,
+			coff.mAbsoluteOffsetToStringTable );
+		if( stringTableData.empty() )
+		{
+			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Doesn't look like string table data" );
+			return false;
+		}
+		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a string table data" );
+	}
 
 	return true;
 }

@@ -7,6 +7,7 @@
 		<ClCompile Include="OptionalHeaderWindows.cpp" />
 		<ClCompile Include="SectionHeader.cpp" />
 		<ClCompile Include="SymbolRecord.cpp" />
+		<ClCompile Include="StringTableHeader.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
@@ -16,5 +17,6 @@
 		<ClInclude Include="OptionalHeaderWindows.h" />
 		<ClInclude Include="SectionHeader.h" />
 		<ClInclude Include="SymbolRecord.h" />
+		<ClInclude Include="StringTableHeader.h" />
 	</ItemGroup>
 </Project>
