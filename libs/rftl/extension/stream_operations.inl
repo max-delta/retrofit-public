@@ -46,6 +46,43 @@ bool stream_seek_abs( Stream& source, size_t position )
 
 
 template<typename Stream>
+size_t stream_seek_tell_end( Stream& source )
+{
+	rftl::streampos const curPos = source.tellg();
+	source.seekg( 0, rftl::ios_base::beg );
+	rftl::streampos const beginPos = source.tellg();
+	source.seekg( 0, rftl::ios_base::end );
+	rftl::streampos const endPos = source.tellg();
+	source.seekg( curPos, rftl::ios_base::beg );
+
+	rftl::streamoff const delta = endPos - beginPos;
+	if( delta < 0 )
+	{
+		return 0;
+	}
+
+	static_assert( rftl::is_integral<rftl::streamoff>::value );
+	static_assert( rftl::is_integral<size_t>::value );
+	static_assert( rftl::is_signed<rftl::streamoff>::value );
+	static_assert( rftl::is_signed<size_t>::value == false );
+	if constexpr( sizeof( size_t ) < sizeof( rftl::streamoff ) )
+	{
+		// Size might not fit offset
+		if(
+			details::less_than_32bit_clang_workaround(
+				static_cast<rftl::streamoff>( rftl::numeric_limits<size_t>::max() ),
+				delta ) )
+		{
+			return 0;
+		}
+	}
+
+	return static_cast<size_t>( delta );
+}
+
+
+
+template<typename Stream>
 inline size_t stream_read( void* dest, size_t count, Stream& source )
 {
 	if(
