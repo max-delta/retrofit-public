@@ -170,6 +170,7 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 	{
 		static constexpr sprite::Bitmap::ElementType::ElementType kMinAlpha = 1;
 
+		RF_ACK_AGGREGATE_NOCOPY();
 		struct Input
 		{
 			size_t const row;
@@ -177,8 +178,6 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 			size_t const offsetX;
 			size_t const offsetY;
 			sprite::Bitmap const* const tex;
-
-			RF_ACK_AGGREGATE_NOCOPY();
 		};
 		Input const input[] = {
 			{ params.mSpeciesFarRow, params.mSpeciesCol, params.mSpeciesOffsetX, params.mSpeciesOffsetY, params.mSpeciesTex },

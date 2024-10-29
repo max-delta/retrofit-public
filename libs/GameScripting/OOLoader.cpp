@@ -24,13 +24,13 @@ namespace RF::script {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+
+RF_ACK_AGGREGATE_NOCOPY();
 struct ScratchLookup
 {
 	OOLoader::InjectedClasses const& mInjectedClasses;
 
 	OOLoader::TypeConstructor const& mTypeConstructor;
-
-	RF_ACK_AGGREGATE_NOCOPY();
 };
 
 

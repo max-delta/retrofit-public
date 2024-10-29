@@ -104,21 +104,19 @@ protected:
 		protocol::EncryptionState mEncryption = {};
 	};
 
+	RF_ACK_AGGREGATE_NOCOPY();
 	struct MessageParams
 	{
 		ConnectionIdentifier connectionID;
 		protocol::MessageID const& messageID;
 		rftl::byte_view& bytes;
-
-		RF_ACK_AGGREGATE_NOCOPY();
 	};
 
+	RF_ACK_AGGREGATE_NOCOPY();
 	struct MessageWorkParams
 	{
 		ConnectionIDs const& validConnectionIDs;
 		MessagesByRecipient& messagesByRecipient;
-
-		RF_ACK_AGGREGATE_NOCOPY();
 	};
 
 

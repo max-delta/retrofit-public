@@ -17,7 +17,7 @@ using std::wstring_view;
 using std::hash;
 using std::swap;
 
-namespace string_literals {
-using namespace std::string_literals;
+namespace literals::string_view_literals {
+using namespace std::literals::string_view_literals;
 }
 }
