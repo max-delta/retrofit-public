@@ -151,6 +151,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{13C7E520-F
 	ProjectSection(SolutionItems) = preProject
 		.clang-format = .clang-format
 		.hgignore = .hgignore
+		.vsconfig = .vsconfig
 		azure-pipelines.yml = azure-pipelines.yml
 		cpp.hint = cpp.hint
 		retrofit.natvis = retrofit.natvis
