@@ -147,9 +147,14 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 			switch( cursor )
 			{
 				case 0:
-					// Inverted
-					index = math::integer_cast<size_t>(
-						math::integer_cast<int64_t>( index ) + ( increase ? -1 : 1 ) );
+					// NOTE: Inverted list, down increases
+					{
+						int64_t const tentative = math::integer_cast<int64_t>( index ) + ( increase ? -1 : 1 );
+						index = math::integer_cast<size_t>(
+							tentative >= 0 ?
+								tentative :
+								rftl::numeric_limits<size_t>::max() );
+					}
 					break;
 				case 1:
 					levelOffset += increase ? 1 : -1;
@@ -163,7 +168,13 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 	// Select the element to cast from the list of all available
 	if( index == identifiers.size() )
 	{
+		// At end of list, rollover by only one (assume forward past end)
 		index = 0;
+	}
+	else if( index > identifiers.size() )
+	{
+		// Rollover by a lot (assume backwards past front)
+		index = identifiers.size() - 1;
 	}
 	index = math::Clamp<size_t>( 0, index, identifiers.size() - 1 );
 	ElementIdentifier const elementToCast = identifiers.at( index );
