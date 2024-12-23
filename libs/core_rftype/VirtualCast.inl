@@ -65,7 +65,7 @@ template<typename T>
 bool IsSameOrDerivedFrom( reflect::ClassInfo const& descendent )
 {
 	static_assert( rftl::is_base_of<reflect::VirtualClassWithoutDestructor, T>::value, "This function only works with virtual lookups" );
-	reflect::ClassInfo const& ancestor = GetClassInfo( T );
+	reflect::ClassInfo const& ancestor = GetClassInfo<T>();
 	return descendent.IsSameOrDerivedFrom( ancestor );
 }
 

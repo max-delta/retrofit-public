@@ -67,7 +67,7 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 	*outputBuffer.rbegin() = '\0';
 
 	platform::debugging::OutputToDebugger( &outputBuffer[0] );
-	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
+	static_assert( kBufSize <= static_cast<size_t>( rftl::numeric_limits<int>::max() ), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
 		platform::debugging::OutputToDebugger( "<TRUNCATED MESSAGE!>\n" );

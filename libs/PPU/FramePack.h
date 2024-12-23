@@ -136,6 +136,8 @@ static_assert( sizeof( FramePack_256 ) >= 240, "Double-check FramePack storage" 
 //  offset from the base class
 // NOTE: See code in offset getters on base class for clearer explanation of
 //  offset math, aided by variable names (which can't be used in these asserts)
+RF_CLANG_PUSH();
+RF_CLANG_IGNORE( "-Winvalid-offsetof" ); // Technically incorrect, fine in practice
 static_assert( offsetof( FramePackBase, mMaxTimeSlots ) == 87, "Double-check FramePack storage" );
 static_assert( offsetof( FramePack_4096, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
 static_assert( offsetof( FramePack_1024, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
@@ -181,6 +183,7 @@ static_assert(
 	sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) +
 	( ( 8 - sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
+RF_CLANG_POP();
 
 ///////////////////////////////////////////////////////////////////////////////
 }

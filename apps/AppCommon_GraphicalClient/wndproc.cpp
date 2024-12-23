@@ -104,6 +104,8 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 				case VK_ESCAPE:
 					win32::PostQuitMessage( 0 );
 					return 0;
+				default:
+					break;
 			}
 			return 0;
 

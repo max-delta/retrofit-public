@@ -70,7 +70,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event
 	//  this puts(...) call is correctly implemented.
 	// SEE: https://stackoverflow.com/questions/66244924/windows-console-conhost-discards-newline-when-output-matches-witdth-of-the-win
 	puts( &outputBuffer[0] );
-	static_assert( kBufSize <= rftl::numeric_limits<int>::max(), "Unexpected truncation" );
+	static_assert( kBufSize <= static_cast<size_t>( rftl::numeric_limits<int>::max() ), "Unexpected truncation" );
 	if( bytesParsed >= static_cast<int>( kBufSize ) )
 	{
 		puts( "<TRUNCATED MESSAGE!>" );

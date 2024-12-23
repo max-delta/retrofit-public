@@ -30,7 +30,7 @@ private:
 	using Storage = rftl::atomic<ID>;
 	static constexpr bool kRolloverUnrealistic =
 		kInitial >= 0 &&
-		kInitial <= rftl::numeric_limits<int8_t>::max() &&
+		kInitial <= static_cast<uint8_t>( rftl::numeric_limits<int8_t>::max() ) &&
 		kFinal >= rftl::numeric_limits<int64_t>::max();
 
 

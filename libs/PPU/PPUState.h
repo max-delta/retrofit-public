@@ -70,6 +70,8 @@ public:
 };
 // NOTE: If you've modified the PPU to have higher limits, you'll want to
 //  re-tune these as well, or disable them entirely if you don't care.
+RF_CLANG_PUSH();
+RF_CLANG_IGNORE( "-Winvalid-offsetof" ); // Technically incorrect, fine in practice
 static_assert( offsetof( PPUState, mObjects ) <= 32, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mObjects ) == 1024, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mTileLayers ) <= 2048, "Double-check PPUState storage" );
@@ -77,6 +79,7 @@ static_assert( offsetof( PPUState, mStrings ) <= 4096, "Double-check PPUState st
 static_assert( sizeof( PPUState::mStrings ) <= 4096, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState ) <= 8192, "Double-check PPUState storage" );
 static_assert( alignof( PPUState ) == RF::compiler::kPointerBytes, "Double-check PPUState alignment" );
+RF_CLANG_POP();
 
 ///////////////////////////////////////////////////////////////////////////////
 }

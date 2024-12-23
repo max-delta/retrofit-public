@@ -854,6 +854,11 @@ void PPUController::Render() const
 		bool terminate = false;
 		switch( element.mType )
 		{
+			default:
+				RF_DBGFAIL();
+				terminate = true;
+				break;
+
 			case ElementType::Invalid:
 				// End of list
 				terminate = true;
@@ -1758,6 +1763,7 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 				case AssetType::Font:
 					return load( mFontManager );
 				case AssetType::Invalid:
+				default:
 					RF_DBGFAIL();
 					return false;
 			}
@@ -1786,6 +1792,7 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 				case AssetType::Font:
 					return load( mFontManager );
 				case AssetType::Invalid:
+				default:
 					RF_DBGFAIL();
 					return false;
 			}
@@ -1814,6 +1821,7 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 				case AssetType::Font:
 					return load( mFontManager );
 				case AssetType::Invalid:
+				default:
 					RF_DBGFAIL();
 					return false;
 			}
@@ -1842,6 +1850,7 @@ bool PPUController::FullfillLoadRequest( LoadRequest const& request )
 				case AssetType::Font:
 					return load( mFontManager );
 				case AssetType::Invalid:
+				default:
 					RF_DBGFAIL();
 					return false;
 			}

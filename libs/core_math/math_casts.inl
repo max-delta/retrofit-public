@@ -34,8 +34,11 @@ constexpr typename rftl::enable_if<rftl::is_integral<DST>::value && rftl::is_flo
 template<typename DST, typename SRC>
 constexpr typename rftl::enable_if<rftl::is_integral<DST>::value && rftl::is_integral<SRC>::value, bool>::type could_overflow_v()
 {
+	constexpr SRC maxSrc = rftl::numeric_limits<SRC>::max();
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
-	return rftl::numeric_limits<SRC>::max() > maxDest;
+	return //
+		static_cast<DST>( maxSrc ) > maxDest ||
+		maxSrc > static_cast<SRC>( maxDest );
 }
 
 template<typename DST, typename SRC>
