@@ -8,6 +8,7 @@
 		<ClCompile Include="GameController.cpp" />
 		<ClCompile Include="RawController.cpp" />
 		<ClCompile Include="ControllerManager.cpp" />
+		<ClCompile Include="MergeController.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -18,5 +19,6 @@
 		<ClInclude Include="RawInputController.h" />
 		<ClInclude Include="HotkeyController.h" />
 		<ClInclude Include="ControllerManager.h" />
+		<ClInclude Include="MergeController.h" />
 	</ItemGroup>
 </Project>
