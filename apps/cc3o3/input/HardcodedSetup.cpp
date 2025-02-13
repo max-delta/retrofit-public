@@ -9,6 +9,7 @@
 #include "GameInput/ControllerManager.h"
 #include "GameInput/RawInputController.h"
 #include "GameInput/HotkeyController.h"
+#include "GameInput/MergeController.h"
 #include "GameSync/RollbackController.h"
 #include "GameSync/PassthroughController.h"
 #include "GameSync/RollbackInputManager.h"
@@ -187,8 +188,8 @@ input::RawInputController::LogicalMapping HardcodedRawXInputMapping()
 	}
 	{
 		// Developer
-		retVal[pin( Pin::LeftThumb )][input::DigitalPinState::Active] = command::raw::DeveloperToggle;
-		retVal[pin( Pin::RightThumb )][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperToggle;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
 		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
 		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
 		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
@@ -315,13 +316,37 @@ void HardcodedMainSetup()
 	ControllerManager& manager = *app::gInputControllerManager;
 
 	// Menus
-	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	menuHotkeyController->SetSource( details::sWndProcRawInputController );
-	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	UniquePtr<input::PassthroughController> menuPassthroughController = details::WrapWithPassthrough( menuHotkeyController );
-	manager.RegisterGameController( menuPassthroughController, player::Global, layer::MainMenu );
-	manager.StoreGameController( rftl::move( menuHotkeyController ) );
-	manager.StoreGameController( rftl::move( menuPassthroughController ) );
+	{
+		// WndProc
+		UniquePtr<input::HotkeyController> wndProcHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		wndProcHotkeyController->SetSource( details::sWndProcRawInputController );
+		wndProcHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+
+		// XInput
+		UniquePtr<input::HotkeyController> xInputHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		RF_ASSERT( details::sXInputRawInputControllers.size() >= 1 );
+		xInputHotkeyController->SetSource( details::sXInputRawInputControllers.at( 0 ) );
+		xInputHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+
+		// Merge
+		UniquePtr<input::MergeController> mergeController = DefaultCreator<input::MergeController>::Create();
+		mergeController->AddSource( wndProcHotkeyController );
+		mergeController->AddSource( xInputHotkeyController );
+
+		// Passthrough
+		// NOTE: This allows this input to be suppressed when doing rollback
+		//  operations, since it isn't directly managed by a rollback
+		//  controller like the player-level inputs are
+		// SEE: RollbackInputManager::AddPassthrough(...)
+		// SEE: RollbackInputManager::SuppressAllPassthroughs(...)
+		UniquePtr<input::PassthroughController> passthroughController = details::WrapWithPassthrough( mergeController );
+		manager.RegisterGameController( passthroughController, player::Global, layer::MainMenu );
+
+		manager.StoreGameController( rftl::move( wndProcHotkeyController ) );
+		manager.StoreGameController( rftl::move( xInputHotkeyController ) );
+		manager.StoreGameController( rftl::move( mergeController ) );
+		manager.StoreGameController( rftl::move( passthroughController ) );
+	}
 
 	// Text
 	manager.RegisterTextProvider( details::sWndProcRawInputController, player::Global );
@@ -345,25 +370,63 @@ void HardcodedPlayerSetup( PlayerID playerID )
 	HardcodedRollbackIdentifiers const identifiers( playerID );
 
 	// Game menus
-	UniquePtr<input::HotkeyController> menuHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	menuHotkeyController->SetSource( details::sWndProcRawInputController );
-	menuHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
-	UniquePtr<input::RollbackController> menuRollbackController = details::WrapWithRollback(
-		menuHotkeyController, identifiers.mRollbackGameMenusID );
-	manager.RegisterGameController( menuRollbackController, playerID, layer::GameMenu );
-	manager.StoreGameController( rftl::move( menuHotkeyController ) );
-	manager.StoreGameController( rftl::move( menuRollbackController ) );
+	{
+		// WndProc
+		UniquePtr<input::HotkeyController> wndProcHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		wndProcHotkeyController->SetSource( details::sWndProcRawInputController );
+		wndProcHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+
+		// XInput
+		UniquePtr<input::HotkeyController> xInputHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		RF_ASSERT( details::sXInputRawInputControllers.size() >= 1 );
+		xInputHotkeyController->SetSource( details::sXInputRawInputControllers.at( 0 ) );
+		xInputHotkeyController->SetCommandMapping( details::HardcodedMenuMapping() );
+
+		// Merge
+		UniquePtr<input::MergeController> mergeController = DefaultCreator<input::MergeController>::Create();
+		mergeController->AddSource( wndProcHotkeyController );
+		mergeController->AddSource( xInputHotkeyController );
+
+		// Rollback
+		UniquePtr<input::RollbackController> rollbackController = details::WrapWithRollback(
+			mergeController, identifiers.mRollbackGameMenusID );
+		manager.RegisterGameController( rollbackController, playerID, layer::GameMenu );
+
+		// Storage
+		manager.StoreGameController( rftl::move( wndProcHotkeyController ) );
+		manager.StoreGameController( rftl::move( xInputHotkeyController ) );
+		manager.StoreGameController( rftl::move( mergeController ) );
+		manager.StoreGameController( rftl::move( rollbackController ) );
+	}
 
 	// Gameplay
-	UniquePtr<input::HotkeyController> gameplayHotkeyController = DefaultCreator<input::HotkeyController>::Create();
-	gameplayHotkeyController->SetSource( details::sWndProcRawInputController );
-	gameplayHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
-	gameplayHotkeyController->SetSource( details::sWndProcRawInputController );
-	UniquePtr<input::RollbackController> gameplayRollbackController = details::WrapWithRollback(
-		gameplayHotkeyController, identifiers.mRollbackGamplayID );
-	manager.RegisterGameController( gameplayRollbackController, playerID, layer::CharacterControl );
-	manager.StoreGameController( rftl::move( gameplayHotkeyController ) );
-	manager.StoreGameController( rftl::move( gameplayRollbackController ) );
+	{
+		// WndProc
+		UniquePtr<input::HotkeyController> wndProcHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		wndProcHotkeyController->SetSource( details::sWndProcRawInputController );
+		wndProcHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
+
+		// XInput
+		UniquePtr<input::HotkeyController> xInputHotkeyController = DefaultCreator<input::HotkeyController>::Create();
+		RF_ASSERT( details::sXInputRawInputControllers.size() >= 1 );
+		xInputHotkeyController->SetSource( details::sXInputRawInputControllers.at( 0 ) );
+		xInputHotkeyController->SetCommandMapping( details::HardcodedGameMapping() );
+
+		// Merge
+		UniquePtr<input::MergeController> mergeController = DefaultCreator<input::MergeController>::Create();
+		mergeController->AddSource( wndProcHotkeyController );
+		mergeController->AddSource( xInputHotkeyController );
+
+		// Rollback
+		UniquePtr<input::RollbackController> rollbackController = details::WrapWithRollback(
+			mergeController, identifiers.mRollbackGamplayID );
+		manager.RegisterGameController( rollbackController, playerID, layer::CharacterControl );
+
+		manager.StoreGameController( rftl::move( wndProcHotkeyController ) );
+		manager.StoreGameController( rftl::move( xInputHotkeyController ) );
+		manager.StoreGameController( rftl::move( mergeController ) );
+		manager.StoreGameController( rftl::move( rollbackController ) );
+	}
 }
 
 
