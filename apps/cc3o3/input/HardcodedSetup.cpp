@@ -16,6 +16,7 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformInput_win32/XInputDevice.h"
 
+#include "core_math/math_casts.h"
 #include "core_platform/shim/winuser_shim.h"
 #include "core/ptr/default_creator.h"
 
@@ -30,6 +31,7 @@ static constexpr size_t kNumXInputDevices = input::XInputDevice::kMaxUserIndex +
 static rftl::array<WeakPtr<input::InputDevice>, kNumXInputDevices> sXInputDevices = {};
 
 static WeakPtr<input::RawInputController> sWndProcRawInputController;
+static rftl::array<WeakPtr<input::RawInputController>, kNumXInputDevices> sXInputRawInputControllers = {};
 
 static bool sTickSevered = false;
 
@@ -58,7 +60,7 @@ UniquePtr<input::PassthroughController> WrapWithPassthrough(
 
 
 
-input::RawInputController::LogicalMapping HardcodedRawMapping()
+input::RawInputController::LogicalMapping HardcodedRawWndProcMapping()
 {
 	input::RawInputController::LogicalMapping retVal;
 	{
@@ -134,6 +136,64 @@ input::RawInputController::LogicalMapping HardcodedRawMapping()
 		retVal[shim::VK_F4][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
 		retVal[shim::VK_F5][input::DigitalPinState::Active] = command::raw::DeveloperAction4;
 		retVal[shim::VK_F6][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
+	}
+	return retVal;
+}
+
+
+
+input::RawInputController::LogicalMapping HardcodedRawXInputMapping()
+{
+	using Pin = XInputDigitalInputComponent::Pin;
+	static constexpr auto pin = []( XInputDigitalInputComponent::Pin const& in ) -> LogicalCode
+	{
+		return math::enum_bitcast( in );
+	};
+
+	input::RawInputController::LogicalMapping retVal;
+	{
+		// WASD
+		retVal[pin( Pin::DPadUp )][input::DigitalPinState::Active] = command::raw::Up;
+		retVal[pin( Pin::DPadUp )][input::DigitalPinState::Inactive] = command::raw::UpStop;
+		retVal[pin( Pin::DPadLeft )][input::DigitalPinState::Active] = command::raw::Left;
+		retVal[pin( Pin::DPadLeft )][input::DigitalPinState::Inactive] = command::raw::LeftStop;
+		retVal[pin( Pin::DPadDown )][input::DigitalPinState::Active] = command::raw::Down;
+		retVal[pin( Pin::DPadDown )][input::DigitalPinState::Inactive] = command::raw::DownStop;
+		retVal[pin( Pin::DPadRight )][input::DigitalPinState::Active] = command::raw::Right;
+		retVal[pin( Pin::DPadRight )][input::DigitalPinState::Inactive] = command::raw::RightStop;
+
+		retVal[pin( Pin::LeftShoulder )][input::DigitalPinState::Active] = command::raw::PgUp;
+		retVal[pin( Pin::RightShoulder )][input::DigitalPinState::Active] = command::raw::PgDn;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::Home;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::End;
+
+		retVal[pin( Pin::A )][input::DigitalPinState::Active] = command::raw::Affirmative;
+		retVal[pin( Pin::B )][input::DigitalPinState::Active] = command::raw::Negative;
+		retVal[pin( Pin::X )][input::DigitalPinState::Active] = command::raw::Auxiliary1;
+		retVal[pin( Pin::Y )][input::DigitalPinState::Active] = command::raw::Auxiliary2;
+		retVal[pin( Pin::Back )][input::DigitalPinState::Active] = command::raw::GameSelect;
+		retVal[pin( Pin::Start )][input::DigitalPinState::Active] = command::raw::GameStart;
+	}
+	{
+		// Hat
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::HatUp;
+		//retVal[NONE][input::DigitalPinState::Inactive] = command::raw::HatUpStop;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::HatLeft;
+		//retVal[NONE][input::DigitalPinState::Inactive] = command::raw::HatLeftStop;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::HatDown;
+		//retVal[NONE][input::DigitalPinState::Inactive] = command::raw::HatDownStop;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::HatRight;
+		//retVal[NONE][input::DigitalPinState::Inactive] = command::raw::HatRightStop;
+	}
+	{
+		// Developer
+		retVal[pin( Pin::LeftThumb )][input::DigitalPinState::Active] = command::raw::DeveloperToggle;
+		retVal[pin( Pin::RightThumb )][input::DigitalPinState::Active] = command::raw::DeveloperCycle;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction1;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction2;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction3;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction4;
+		//retVal[NONE][input::DigitalPinState::Active] = command::raw::DeveloperAction5;
 	}
 	return retVal;
 }
@@ -226,9 +286,25 @@ void HardcodedRawSetup()
 		UniquePtr<input::RawInputController> wndProcRawController =
 			DefaultCreator<input::RawInputController>::Create(
 				app::gWndProcInput->mIdentifier );
-		wndProcRawController->SetLogicalMapping( details::HardcodedRawMapping() );
+		wndProcRawController->SetLogicalMapping( details::HardcodedRawWndProcMapping() );
 		details::sWndProcRawInputController = wndProcRawController;
 		manager.StoreRawController( rftl::move( wndProcRawController ) );
+	}
+
+	// XInput
+	static_assert( details::sXInputDevices.size() == details::kNumXInputDevices );
+	static_assert( details::sXInputRawInputControllers.size() == details::kNumXInputDevices );
+	for( size_t i = 0; i < details::kNumXInputDevices; i++ )
+	{
+		WeakPtr<input::InputDevice const> const& device = details::sXInputDevices.at( i );
+		WeakPtr<input::RawInputController>& controllerSlot = details::sXInputRawInputControllers.at( i );
+
+		UniquePtr<input::RawInputController> xInputRawController =
+			DefaultCreator<input::RawInputController>::Create(
+				device->mIdentifier );
+		xInputRawController->SetLogicalMapping( details::HardcodedRawXInputMapping() );
+		controllerSlot = xInputRawController;
+		manager.StoreRawController( rftl::move( xInputRawController ) );
 	}
 }
 
@@ -353,9 +429,30 @@ void HardcodedRawTick()
 		return;
 	}
 
+	// WndProc
 	if( details::sWndProcRawInputController != nullptr )
 	{
 		details::sWndProcRawInputController->ConsumeInput( *app::gWndProcInput );
+	}
+
+	// XInput
+	static_assert( details::sXInputDevices.size() == details::kNumXInputDevices );
+	static_assert( details::sXInputRawInputControllers.size() == details::kNumXInputDevices );
+	for( size_t i = 0; i < details::kNumXInputDevices; i++ )
+	{
+		WeakPtr<input::InputDevice>& device = details::sXInputDevices.at( i );
+		if( device == nullptr )
+		{
+			continue;
+		}
+
+		WeakPtr<input::RawInputController>& controllerSlot = details::sXInputRawInputControllers.at( i );
+		if( controllerSlot == nullptr )
+		{
+			continue;
+		}
+
+		controllerSlot->ConsumeInput( *device );
 	}
 }
 
