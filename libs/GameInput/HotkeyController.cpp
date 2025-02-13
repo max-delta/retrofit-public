@@ -3,6 +3,8 @@
 
 #include "GameInput/RawController.h"
 
+#include "Logging/Logging.h"
+
 #include "rftl/deque"
 
 
@@ -49,7 +51,7 @@ void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>
 			{
 				if( tempBuffer.size() == maxCommands )
 				{
-					// TODO: Warn on buffer overflow
+					RFLOG_WARNING( nullptr, RFCAT_GAMEINPUT, "Buffer overflow, discarding some commands" );
 					tempBuffer.pop_front();
 				}
 				RF_ASSERT( tempBuffer.size() < maxCommands );
