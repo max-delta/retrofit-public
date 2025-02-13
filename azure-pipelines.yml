@@ -42,15 +42,17 @@ stages:
           buildPlatform: 'x86_64'
           buildConfiguration: 'MSVC_Retail'
 
-        msvc-arm-debug:
-          buildPlatform: 'ARM32'
-          buildConfiguration: 'MSVC_Debug'
-        msvc-arm-release:
-          buildPlatform: 'ARM32'
-          buildConfiguration: 'MSVC_Release'
-        msvc-arm-retail:
-          buildPlatform: 'ARM32'
-          buildConfiguration: 'MSVC_Retail'
+        # 32-bit ARM MSVC builds stopped working on Azure between 10/30/2024 and 2/12/2025
+        #   [error]C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VC\v170\Microsoft.Cpp.WindowsSDK.targets(49,5): Error MSB8037: The Windows SDK version 10.0.26100.0 for Desktop C++ ARM Apps was not found. Install the required version of Windows SDK or change the SDK version in the project property pages or by right-clicking the solution and selecting "Retarget solution". 
+        #msvc-arm-debug:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Debug'
+        #msvc-arm-release:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Release'
+        #msvc-arm-retail:
+        #  buildPlatform: 'ARM32'
+        #  buildConfiguration: 'MSVC_Retail'
 
         msvc-arm64-debug:
           buildPlatform: 'ARM64'
