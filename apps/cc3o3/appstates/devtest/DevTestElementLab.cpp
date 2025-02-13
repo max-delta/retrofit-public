@@ -150,10 +150,10 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 					// NOTE: Inverted list, down increases
 					{
 						int64_t const tentative = math::integer_cast<int64_t>( index ) + ( increase ? -1 : 1 );
-						index = math::integer_cast<size_t>(
+						index =
 							tentative >= 0 ?
-								tentative :
-								rftl::numeric_limits<size_t>::max() );
+							math::integer_cast<size_t>( tentative ) :
+							rftl::numeric_limits<size_t>::max();
 					}
 					break;
 				case 1:
