@@ -309,10 +309,9 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 		// wParam [bit 16-31] : Modifiers
 		// lParam [bit 0-15] : Absolute x-coord in client area
 		// lParam [bit 16-31] : Absolute y-coord in client area
-		case WM_MOUSEHWHEEL:
+		case WM_MOUSEWHEEL:
 		{
-			// TODO: This doesn't seem to actually work, or ever even get
-			//  fired, which seems like perhaps the window has to steal input
+			// NOTE: This seems like perhaps the window has to steal input
 			//  focus in order to receive the message
 
 			int16_t const distance = static_cast<int32_t>( wParam ) >> 16;
