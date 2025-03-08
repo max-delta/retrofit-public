@@ -104,6 +104,13 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 
 LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFSPath const& path )
 {
+	// TODO: Support PSV (pipe-seperated values)
+	rftl::string extension = path.GetTrailingExtensions();
+	if( extension != ".keymap.csv" )
+	{
+		RFLOG_WARNING( path, RFCAT_LOCALIZATION, "Keymap file has unexpected extension, will assume csv" );
+	}
+
 	file::FileHandlePtr const keymapHandle = vfs.GetFileForRead( path );
 	if( keymapHandle == nullptr )
 	{
