@@ -104,9 +104,23 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 
 LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFSPath const& path )
 {
-	// TODO: Support PSV (pipe-seperated values)
+	char separator = serialization::CsvReader::kDefaultSeparator;
 	rftl::string extension = path.GetTrailingExtensions();
-	if( extension != ".keymap.csv" )
+	if( extension == ".keymap.psv" )
+	{
+		// PSV (pipe-separated values)
+		// NOTE: This is supported because a lot of text, like dialogues, will
+		//  want to use commas
+		separator = '|';
+	}
+	else if( extension == ".keymap.csv" )
+	{
+		// CSV (comma-separated values)
+		// NOTE: This is supported because it's an easy format to open in any
+		//  one of a variety of fancy editors, but has the limitation that
+		//  commas can't be used in any of the entries
+	}
+	else
 	{
 		RFLOG_WARNING( path, RFCAT_LOCALIZATION, "Keymap file has unexpected extension, will assume csv" );
 	}
@@ -125,7 +139,7 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 		return {};
 	}
 
-	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( keymapBuffer.GetChars() );
+	rftl::deque<rftl::deque<rftl::string>> const csv = serialization::CsvReader::TokenizeToDeques( keymapBuffer.GetChars(), separator );
 	if( csv.empty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to read keymap file as csv" );
