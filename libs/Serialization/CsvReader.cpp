@@ -7,7 +7,7 @@ namespace RF::serialization {
 namespace details {
 
 template<typename CharT>
-rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( rftl::basic_string_view<CharT> const& buffer )
+rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( rftl::basic_string_view<CharT> const& buffer, CharT separator )
 {
 	rftl::deque<rftl::deque<rftl::basic_string<CharT>>> retVal;
 	retVal.emplace_back();
@@ -19,7 +19,7 @@ rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( rftl::basi
 			// Ignore \r\n's \r
 			continue;
 		}
-		else if( ch == ',' )
+		else if( ch == separator )
 		{
 			retVal.back().emplace_back( rftl::move( curField ) );
 			curField.clear();
@@ -58,21 +58,42 @@ rftl::deque<rftl::deque<rftl::basic_string<CharT>>> TokenizeToDeques( rftl::basi
 
 rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( rftl::string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer );
+	return TokenizeToDeques( buffer, kDefaultSeparator );
 }
 
 
 
 rftl::deque<rftl::deque<rftl::basic_string<char16_t>>> CsvReader::TokenizeToDeques( rftl::u16string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer );
+	return TokenizeToDeques( buffer, kDefaultSeparator );
 }
 
 
 
 rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDeques( rftl::u32string_view const& buffer )
 {
-	return details::TokenizeToDeques( buffer );
+	return TokenizeToDeques( buffer, kDefaultSeparator );
+}
+
+
+
+rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( rftl::string_view const& buffer, char separator )
+{
+	return details::TokenizeToDeques( buffer, separator );
+}
+
+
+
+rftl::deque<rftl::deque<rftl::basic_string<char16_t>>> CsvReader::TokenizeToDeques( rftl::u16string_view const& buffer, char16_t separator )
+{
+	return details::TokenizeToDeques( buffer, separator );
+}
+
+
+
+rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDeques( rftl::u32string_view const& buffer, char32_t separator )
+{
+	return details::TokenizeToDeques( buffer, separator );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
