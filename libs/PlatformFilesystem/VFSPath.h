@@ -26,6 +26,10 @@ public:
 	template<typename... Nodes>
 	explicit VFSPath( Element element, Nodes... elements );
 
+	// Gets the extensions after and including the first dot in the final
+	//  element (if present)
+	PLATFORMFILESYSTEM_API rftl::string GetTrailingExtensions() const;
+
 	// Removes everything after the first dot in the final element (if present)
 	PLATFORMFILESYSTEM_API VFSPath& RemoveTrailingExtensions();
 
