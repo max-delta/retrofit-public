@@ -206,6 +206,14 @@ Default parameters relinquish control to the caller, for what is often conceptua
 
 (The underlying machinery behind this and all the problems they create make for a great interview question, as most programmers will have to figure it out on the spot. Those that already know will still have to be pretty technically competent to be able to explain the machinery)
 
+### Use robust static asserts
+
+When making assumptions about code that is not directly adjacent, assume that code might be changed, and use static asserts to guard against changes. This helps prevent others from accidentally breaking code they didn't know about, or forgot to update.
+
+Where practical, consider decltype(var) over a primitive type, to clarify the intent and handle cases where the variable type may be changed later.
+
+In general, view static asserts as a way to protect code from maintenance work that would introduce accidental bugs, and also double as codifying assumptions and intents.
+
 
 # Autoformat
 
