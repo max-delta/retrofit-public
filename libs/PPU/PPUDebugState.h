@@ -65,6 +65,7 @@ public:
 	uint8_t mNumStrings;
 	uint8_t mNumAuxStrings;
 	uint8_t mNumLines;
+
 	DebugString mStrings[kMaxDebugStrings];
 	DebugAuxString mAuxStrings[kMaxDebugAuxStrings];
 	DebugLine mLines[kMaxDebugLines];

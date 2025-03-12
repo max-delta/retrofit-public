@@ -16,6 +16,7 @@ class PPU_API PPUState
 	RF_NO_COPY( PPUState );
 	RF_NO_MOVE( PPUState );
 
+	//
 	// Constants
 public:
 	static constexpr size_t kMaxObjects = ppu::kMaxObjects;
