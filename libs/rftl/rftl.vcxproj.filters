@@ -97,6 +97,9 @@
 		<ClInclude Include="extension\byte_span.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\variadic_print.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -142,6 +145,9 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="extension\byte_span.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="extension\variadic_print.inl">
 			<Filter>extension</Filter>
 		</None>
 	</ItemGroup>

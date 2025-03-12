@@ -52,6 +52,7 @@
 		<ClInclude Include="extension\string_format.h" />
 		<ClInclude Include="extension\string_parse.h" />
 		<ClInclude Include="extension\string_traits.h" />
+		<ClInclude Include="extension\variadic_print.h" />
 		<ClInclude Include="extension\virtual_iterator.h" />
 		<ClInclude Include="extension\void_alias.h" />
 		<ClInclude Include="extension\void_traits.h" />
@@ -89,6 +90,7 @@
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />
+		<None Include="extension\variadic_print.inl" />
 		<None Include="fstream" />
 		<None Include="ios" />
 		<None Include="iosfwd" />
