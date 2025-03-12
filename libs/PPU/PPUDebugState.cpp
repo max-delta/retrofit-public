@@ -10,6 +10,7 @@ void PPUDebugState::Clear()
 	mNumStrings = 0;
 	mNumAuxStrings = 0;
 	mNumLines = 0;
+	mTextStorage.Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

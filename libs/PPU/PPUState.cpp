@@ -10,6 +10,7 @@ void PPUState::Clear()
 	mNumObjects = 0;
 	mNumTileLayers = 0;
 	mNumStrings = 0;
+	mTextStorage.Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

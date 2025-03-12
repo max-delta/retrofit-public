@@ -21,12 +21,14 @@ constexpr TileElem kDesiredDiagonalTiles = static_cast<TileElem>( math::Min( kDe
 static constexpr size_t kMaxObjects = 32;
 static constexpr size_t kMaxTileLayers = 16;
 static constexpr size_t kMaxStrings = 48;
-static constexpr size_t kMaxStringLen = 71;
+static constexpr size_t kMaxStringLen = 128;
+static constexpr size_t kMaxTextStorage = 1238;
 
 static constexpr size_t kMaxDebugStrings = 32;
 static constexpr size_t kMaxDebugAuxStrings = 128;
 static constexpr size_t kMaxDebugLines = 255;
 static constexpr size_t kMaxDebugStringLen = 127;
+static constexpr size_t kMaxDebugTextStorage = 2048;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

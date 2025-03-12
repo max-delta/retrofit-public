@@ -69,6 +69,7 @@ public:
 	DebugString mStrings[kMaxDebugStrings];
 	DebugAuxString mAuxStrings[kMaxDebugAuxStrings];
 	DebugLine mLines[kMaxDebugLines];
+	TextStorage<kMaxDebugTextStorage> mTextStorage;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

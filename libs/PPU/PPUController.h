@@ -11,6 +11,7 @@
 #include "core_math/Color3f.h"
 
 #include "rftl/string"
+#include "rftl/string_view"
 
 
 namespace RF::gfx::ppu {
@@ -134,7 +135,7 @@ public:
 	void HideZoomFactor( bool hide );
 	ZoomFactor GetCurrentZoomFactor() const;
 	CoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... ) const;
-	CoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text ) const;
+	CoordElem CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, rftl::string_view text ) const;
 
 	Coord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 
@@ -193,7 +194,7 @@ private:
 
 	void RenderObject( Object const& object ) const;
 	void RenderTileLayer( TileLayer const& tileLayer ) const;
-	void RenderString( PPUState::String const& string ) const;
+	void RenderString( PPUState::String const& string, rftl::string_view const& text ) const;
 	void RenderDebugLine( PPUDebugState::DebugLine const& line ) const;
 	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
 	void RenderDebugGrid() const;

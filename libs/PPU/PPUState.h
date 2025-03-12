@@ -4,6 +4,7 @@
 #include "PPU/PPUConfig.h"
 #include "PPU/Object.h"
 #include "PPU/TileLayer.h"
+#include "PPU/TextStorage.h"
 
 #include "core_math/Color3f.h"
 
@@ -26,6 +27,7 @@ public:
 		kMaxObjects +
 		kMaxTileLayers +
 		kMaxStrings;
+	static constexpr size_t kMaxTextStorage = ppu::kMaxTextStorage;
 
 
 	//
@@ -33,8 +35,6 @@ public:
 public:
 	struct String
 	{
-		static constexpr size_t k_MaxLen = kMaxStringLen;
-
 		CoordElem mXCoord;
 		CoordElem mYCoord;
 		DepthLayer mZLayer;
@@ -43,9 +43,9 @@ public:
 		bool mBorder : 1;
 		bool mReserved10 : 7;
 		ManagedFontID mFontReference;
-		char mText[k_MaxLen + sizeof( '\0' )];
+		uint16_t mTextOffset;
 	};
-	static_assert( sizeof( String ) == 84, "Double-check String storage" );
+	static_assert( sizeof( String ) == 14, "Double-check String storage" );
 	static_assert( alignof( String ) == 2, "Double-check String alignment" );
 
 
@@ -68,6 +68,7 @@ public:
 	Object mObjects[kMaxObjects];
 	TileLayer mTileLayers[kMaxTileLayers];
 	String mStrings[kMaxStrings];
+	TextStorage<kMaxTextStorage> mTextStorage;
 };
 // NOTE: If you've modified the PPU to have higher limits, you'll want to
 //  re-tune these as well, or disable them entirely if you don't care.
@@ -76,9 +77,11 @@ RF_CLANG_IGNORE( "-Winvalid-offsetof" ); // Technically incorrect, fine in pract
 static_assert( offsetof( PPUState, mObjects ) <= 32, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mObjects ) == 1024, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mTileLayers ) <= 2048, "Double-check PPUState storage" );
-static_assert( offsetof( PPUState, mStrings ) <= 4096, "Double-check PPUState storage" );
-static_assert( sizeof( PPUState::mStrings ) <= 4096, "Double-check PPUState storage" );
-static_assert( sizeof( PPUState ) <= 8192, "Double-check PPUState storage" );
+static_assert( offsetof( PPUState, mStrings ) <= 2184, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mStrings ) <= 672, "Double-check PPUState storage" );
+static_assert( offsetof( PPUState, mTextStorage ) <= 2856, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mTextStorage ) <= 1240, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState ) <= 4096, "Double-check PPUState storage" );
 static_assert( alignof( PPUState ) == RF::compiler::kPointerBytes, "Double-check PPUState alignment" );
 RF_CLANG_POP();
 

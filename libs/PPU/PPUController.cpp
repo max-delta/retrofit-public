@@ -24,6 +24,7 @@
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
+#include "rftl/extension/variadic_print.h"
 #include "rftl/cstdarg"
 
 
@@ -393,6 +394,15 @@ bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeigh
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUState& targetState = mPPUState[mWriteState];
 
+	// Make sure we have room for some text before we try to claim a string
+	TextStorage<kMaxTextStorage>& textStorage = targetState.mTextStorage;
+	rftl::byte_span const targetText = textStorage.GetMutableRemainingTextBuffer();
+	if( targetText.empty() )
+	{
+		RF_DBGFAIL_MSG( "Text storage overflow" );
+		return false;
+	}
+
 	PPUState::String& targetString =
 		RenderStateListItemSelect<DrawOverflowBehavior::FlickerAssert>(
 			targetState.mStrings, targetState.mNumStrings, "String" );
@@ -404,9 +414,12 @@ bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeigh
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
-	targetString.mText[0] = '\0';
-	vsnprintf( &targetString.mText[0], PPUState::String::k_MaxLen, fmt, args );
-	targetString.mText[PPUState::String::k_MaxLen] = '\0';
+	targetString.mTextOffset = textStorage.mTextStorageUsed;
+	rftl::string_view const charsWritten = rftl::var_snprintf( &targetText.front<char>(), targetText.size(), fmt, args );
+	RF_ASSERT( charsWritten.size() > 0 );
+	RF_ASSERT( charsWritten.size() <= kMaxStringLen );
+	RF_ASSERT( charsWritten.back() == '\0' );
+	textStorage.ConsumeTextBuffer( charsWritten.size() );
 
 	return true;
 }
@@ -430,25 +443,24 @@ ZoomFactor PPUController::GetCurrentZoomFactor() const
 
 CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... ) const
 {
-	decltype( PPUState::String::mText ) string = {};
-	static_assert( rftl::is_same<rftl::remove_all_extents<decltype( string )>::type, char>::value, "Unexpected storage" );
+	rftl::array<char, kMaxStringLen> string = {};
 	{
-		string[0] = '\0';
+		string.front() = '\0';
 		va_list args;
 		va_start( args, fmt );
-		vsnprintf( &string[0], PPUState::String::k_MaxLen, fmt, args );
+		vsnprintf( string.data(), string.size(), fmt, args );
 		va_end( args );
-		string[PPUState::String::k_MaxLen] = '\0';
+		string.back() = '\0';
 	}
 
-	char const* text = string;
+	char const* const text = string.data();
 
 	return CalculateStringLength( desiredHeight, fontID, text );
 }
 
 
 
-CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, char const* text ) const
+CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFontID fontID, rftl::string_view text ) const
 {
 	// !!!WARNING!!! This must be kept logically equivalent to RenderString(...)
 
@@ -471,9 +483,8 @@ CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFo
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 
-	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
+	for( char const& character : text )
 	{
-		char const character = text[i_char];
 		if( character == '\0' )
 		{
 			break;
@@ -663,6 +674,15 @@ bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desi
 	RF_ASSERT( mWriteState != kInvalidStateBufferID );
 	PPUDebugState& targetState = mPPUDebugState[mWriteState];
 
+	// Make sure we have room for some text before we try to claim a string
+	TextStorage<kMaxDebugTextStorage>& textStorage = targetState.mTextStorage;
+	rftl::byte_span const targetText = textStorage.GetMutableRemainingTextBuffer();
+	if( targetText.empty() )
+	{
+		RF_DBGFAIL_MSG( "Text storage overflow" );
+		return false;
+	}
+
 	PPUDebugState::DebugAuxString& targetString =
 		RenderStateListItemSelect<DrawOverflowBehavior::FlickerSilent>(
 			targetState.mAuxStrings, targetState.mNumAuxStrings, "DebugAuxString" );
@@ -674,9 +694,12 @@ bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desi
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
-	targetString.mText[0] = '\0';
-	vsnprintf( &targetString.mText[0], PPUDebugState::DebugAuxString::k_MaxLen, fmt, args );
-	targetString.mText[PPUDebugState::DebugAuxString::k_MaxLen] = '\0';
+	targetString.mTextOffset = textStorage.mTextStorageUsed;
+	rftl::string_view const charsWritten = rftl::var_snprintf( &targetText.front<char>(), targetText.size(), fmt, args );
+	RF_ASSERT( charsWritten.size() > 0 );
+	RF_ASSERT( charsWritten.size() <= kMaxStringLen );
+	RF_ASSERT( charsWritten.back() == '\0' );
+	textStorage.ConsumeTextBuffer( charsWritten.size() );
 
 	return true;
 }
@@ -825,6 +848,8 @@ void PPUController::Render() const
 	RF_ASSERT( mRenderState != kInvalidStateBufferID );
 	PPUDebugState const& targetDebugState = mPPUDebugState[mRenderState];
 	PPUState const& targetState = mPPUState[mRenderState];
+	TextStorage<kMaxDebugTextStorage> const& textDebugStorage = targetDebugState.mTextStorage;
+	TextStorage<kMaxTextStorage> const& textStorage = targetState.mTextStorage;
 
 	// Transparency and whatnot
 	DepthOrder depthOrder = {};
@@ -871,7 +896,8 @@ void PPUController::Render() const
 				RenderTileLayer( targetState.mTileLayers[i] );
 				break;
 			case ElementType::String:
-				RenderString( targetState.mStrings[i] );
+				RenderString( targetState.mStrings[i],
+					textStorage.GetTextBufferForStringOffset( targetState.mStrings[i].mTextOffset ) );
 				break;
 			case ElementType::DebugLine:
 				RenderDebugLine( targetDebugState.mLines[i] );
@@ -880,7 +906,8 @@ void PPUController::Render() const
 				RenderDebugString( targetDebugState.mStrings[i] );
 				break;
 			case ElementType::DebugAuxString:
-				RenderString( targetDebugState.mAuxStrings[i] );
+				RenderString( targetDebugState.mAuxStrings[i],
+					textDebugStorage.GetTextBufferForStringOffset( targetDebugState.mAuxStrings[i].mTextOffset ) );
 				break;
 		}
 		if( terminate )
@@ -1391,7 +1418,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 
 
-void PPUController::RenderString( PPUState::String const& string ) const
+void PPUController::RenderString( PPUState::String const& string, rftl::string_view const& text ) const
 {
 	// !!!WARNING!!! This must be kept logically equivalent to CalculateStringLength(...)
 
@@ -1413,11 +1440,9 @@ void PPUController::RenderString( PPUState::String const& string ) const
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 
-	char const* text = string.mText;
 	CoordElem lastCharX = string.mXCoord;
-	for( size_t i_char = 0; i_char < PPUState::String::k_MaxLen; i_char++ )
+	for( char const& character : text )
 	{
-		char const character = text[i_char];
 		if( character == '\0' )
 		{
 			// End of string
