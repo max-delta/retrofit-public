@@ -35,6 +35,7 @@
 		<ClInclude Include="FontManager.h" />
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="PPUConfig.h" />
+		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="TileLayer.h" />
 		<ClInclude Include="DeviceInterface.h" />
 		<ClInclude Include="FramePack.h" />
@@ -60,6 +61,7 @@
 		<ClCompile Include="Font.cpp" />
 		<ClCompile Include="FontManager.cpp" />
 		<ClCompile Include="project.cpp" />
+		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="TileLayer.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="FramePack.cpp" />

@@ -25,6 +25,7 @@
 		<ClInclude Include="Viewport.h" />
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="PPUConfig.h" />
+		<ClInclude Include="TextStorage.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -47,6 +48,7 @@
 		<ClCompile Include="TileLayerCSVLoader.cpp" />
 		<ClCompile Include="project.cpp" />
 		<ClCompile Include="Viewport.cpp" />
+		<ClCompile Include="TextStorage.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />

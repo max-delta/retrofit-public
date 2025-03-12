@@ -48,6 +48,9 @@ class Object;
 class TileLayer;
 class Viewport;
 
+template<size_t>
+class TextStorage;
+
 class FramePackBase;
 template<size_t>
 class FramePack;
