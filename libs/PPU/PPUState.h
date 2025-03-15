@@ -38,7 +38,7 @@ public:
 		CoordElem mXCoord;
 		CoordElem mYCoord;
 		DepthLayer mZLayer;
-		uint8_t mColor[3];
+		rftl::array<uint8_t, 3> mColor;
 		uint8_t mDesiredHeight;
 		bool mBorder : 1;
 		bool mReserved10 : 7;

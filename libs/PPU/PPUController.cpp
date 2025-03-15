@@ -1187,7 +1187,7 @@ void PPUController::CalculateTileSize( TileLayer const& tileLayer, Tileset const
 
 
 
-void PPUController::ConvertColor( uint8_t ( &dest )[3], math::Color3f const& src )
+void PPUController::ConvertColor( rftl::array<uint8_t, 3>& dest, math::Color3f const& src )
 {
 	dest[0] = math::integer_cast<uint8_t>( src.r * math::float_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
 	dest[1] = math::integer_cast<uint8_t>( src.g * math::float_cast<float>( rftl::numeric_limits<uint8_t>::max() ) );
@@ -1196,7 +1196,7 @@ void PPUController::ConvertColor( uint8_t ( &dest )[3], math::Color3f const& src
 
 
 
-math::Color3f PPUController::ConvertColor( uint8_t const ( &src )[3] )
+math::Color3f PPUController::ConvertColor( rftl::array<uint8_t, 3> const& src )
 {
 	return //
 		math::Color3f{
