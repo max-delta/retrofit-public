@@ -1684,7 +1684,7 @@ math::Vector2f PPUController::TileToDevice( TileElem xTile, TileElem yTile ) con
 
 
 template<PPUController::DrawOverflowBehavior BehaviorT, typename TypeT, size_t MaxCountT, typename SizeT>
-auto PPUController::RenderStateListItemSelect( TypeT ( &list )[MaxCountT], SizeT& count, char const* name ) -> TypeT&
+auto PPUController::RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& list, SizeT& count, char const* name ) -> TypeT&
 {
 	static_assert(
 		0 < MaxCountT,

@@ -66,9 +66,9 @@ public:
 	uint8_t mNumAuxStrings;
 	uint8_t mNumLines;
 
-	DebugString mStrings[kMaxDebugStrings];
-	DebugAuxString mAuxStrings[kMaxDebugAuxStrings];
-	DebugLine mLines[kMaxDebugLines];
+	rftl::array<DebugString, kMaxDebugStrings> mStrings;
+	rftl::array<DebugAuxString, kMaxDebugAuxStrings> mAuxStrings;
+	rftl::array<DebugLine, kMaxDebugLines> mLines;
 	TextStorage<kMaxDebugTextStorage> mTextStorage;
 };
 

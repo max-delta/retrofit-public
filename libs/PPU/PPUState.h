@@ -65,13 +65,14 @@ public:
 	uint8_t mNumTileLayers;
 	uint8_t mNumStrings;
 
-	Object mObjects[kMaxObjects];
-	TileLayer mTileLayers[kMaxTileLayers];
-	String mStrings[kMaxStrings];
+	rftl::array<Object, kMaxObjects> mObjects;
+	rftl::array<TileLayer, kMaxTileLayers> mTileLayers;
+	rftl::array<String, kMaxStrings> mStrings;
 	TextStorage<kMaxTextStorage> mTextStorage;
 };
 // NOTE: If you've modified the PPU to have higher limits, you'll want to
 //  re-tune these as well, or disable them entirely if you don't care.
+static_assert( sizeof( rftl::array<int, 3> ) == sizeof( int[3] ), "Expected arrays to have no overhead" );
 RF_CLANG_PUSH();
 RF_CLANG_IGNORE( "-Winvalid-offsetof" ); // Technically incorrect, fine in practice
 static_assert( offsetof( PPUState, mObjects ) <= 32, "Double-check PPUState storage" );
