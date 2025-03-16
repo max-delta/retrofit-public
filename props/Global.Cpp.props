@@ -15,8 +15,8 @@
 			<!--MS STL implementation gets pissy if this define isn't set-->
 			<PreprocessorDefinitions>_HAS_EXCEPTIONS=0; %(PreprocessorDefinitions)</PreprocessorDefinitions>
 
-			<!--C++17 for now, C++20 isn't ready yet-->
-			<LanguageStandard>stdcpp17</LanguageStandard>
+			<!--C++20 for now, C++23 isn't ready yet-->
+			<LanguageStandard>stdcpp20</LanguageStandard>
 
 			<!--This is sometimes futzy and can cause corruption, but corruption
 				seems to be mostly limited to batch builds (batch_build.bat avoids

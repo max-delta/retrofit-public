@@ -10,7 +10,7 @@
 // Forbid: Don't need to see this while iterating, just clogs up output
 #define RF_CONFIG_TODO_MESSAGES RF_FORBID
 
-#define RF_CONFIG_LANG_TODO_CHECKS RF_ALLOW
+#define RF_CONFIG_LANG_TODO_CHECKS RF_FORBID
 
 #define RF_CONFIG_INTERNAL_BUILD_NOTICE RF_ALLOW
 #define RF_CONFIG_CLASSINFO_DEBUG_NAMES RF_ALLOW
