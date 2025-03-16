@@ -18,6 +18,11 @@
 #include "rftl/cstring"
 #include "rftl/cctype"
 
+// Fix for __uuidof(...) not finding _GUID
+#if defined( __clang__ ) && ( __cplusplus >= 202002L )
+#include <guiddef.h>
+#endif
+
 namespace win32 {
 struct IUnknown; // Fix for Windows 8.1 SDK and "/permissive-" flag
 #define NOMINMAX

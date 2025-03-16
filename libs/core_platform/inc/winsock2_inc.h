@@ -17,6 +17,11 @@
 #include "rftl/cstring"
 #include "rftl/cctype"
 
+// Fix for __uuidof(...) not finding _GUID
+#if defined( __clang__ ) && ( __cplusplus >= 202002L )
+#include <guiddef.h>
+#endif
+
 namespace win32 {
 #define NOMINMAX
 #define STRICT
