@@ -11,7 +11,7 @@ namespace RF::reflect {
 // NOTE: Primarily intended to be used as generated helper functions that can
 //  store pointers to the functions to be called later, in cases where the
 //  calling code only has access to untyped pointers
-static_assert( __cplusplus < 202002L, "Evaluate is_pointer_interconvertible_base_of" );
+RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline void const* GetBasePointerFromDerivedUntyped( void const* ptr )
 {
@@ -24,7 +24,7 @@ inline void const* GetBasePointerFromDerivedUntyped( void const* ptr )
 // The compiler knows whether it will need to generate code to do pointer
 //  tranformation to handle poorly-written code with multiple inheritance, or
 //  if it's normal types that don't require any change in the pointer address
-static_assert( __cplusplus < 202002L, "Evaluate is_pointer_interconvertible_base_of" );
+RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline constexpr bool IsBasePointerAlwaysSameAsDerivedPointer()
 {
@@ -44,7 +44,7 @@ inline constexpr bool IsBasePointerAlwaysSameAsDerivedPointer()
 // NOTE: In some inheritance implementations, the act of casting an invalid
 //  pointer creates run-time code that will crash, so you will need to have a
 //  mechanism to avoid invoking this in those situations
-static_assert( __cplusplus < 202002L, "Evaluate is_pointer_interconvertible_base_of" );
+RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline bool UnsafeTryDetermineIfNonTrivialPointerTransformNeeded()
 {

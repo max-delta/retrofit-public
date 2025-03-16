@@ -10,6 +10,8 @@
 // Forbid: If it's not done by the retail build, it's probably not getting done
 #define RF_CONFIG_TODO_MESSAGES RF_FORBID
 
+#define RF_CONFIG_LANG_TODO_CHECKS RF_ALLOW
+
 #define RF_CONFIG_INTERNAL_BUILD_NOTICE RF_FORBID
 #define RF_CONFIG_CLASSINFO_DEBUG_NAMES RF_FORBID
 

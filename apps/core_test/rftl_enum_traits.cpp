@@ -19,7 +19,7 @@ TEST( EnumTraits, ConditionalUnderlyingUnscopedType )
 			"Unexpected value" );
 	}
 	{
-		static_assert( __cplusplus < 202002L, "This should fail to coerce to an int due to being a scoped type, and is_scoped_enum should be used to fix that" );
+		RF_CPP20_TODO( "This should fail to coerce to an int due to being a scoped type, and is_scoped_enum should be used to fix that" );
 		enum class EnumScoped : uint8_t
 		{
 			Invalid = 0

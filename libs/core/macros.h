@@ -84,3 +84,11 @@ public: \
 	} while( false )
 #define RF_TODO_BREAK() \
 	RF_TODO_BREAK_MSG( "Implement" )
+
+// To-do macros about language features
+#if RF_IS_ALLOWED( RF_CONFIG_LANG_TODO_CHECKS )
+	#define RF_CPP20_TODO( MESSAGE ) \
+		static_assert( __cplusplus < 202002L, "TODO: " MESSAGE "" );
+#else
+	#define RF_CPP20_TODO( MESSAGE )
+#endif

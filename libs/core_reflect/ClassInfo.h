@@ -278,7 +278,7 @@ struct ClassInfo
 		, mHasVirtualDestructor{}
 	{
 		// In C++20, you can theoretically do 'bool field : 1 = false'
-		static_assert( __cplusplus < 202002L, "Replace bitfield initializers" );
+		RF_CPP20_TODO( "Replace bitfield initializers" );
 	}
 
 	// Walk inheritance chain, optionally resolving a pointer upwards to the
