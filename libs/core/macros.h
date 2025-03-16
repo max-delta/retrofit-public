@@ -88,7 +88,10 @@ public: \
 // To-do macros about language features
 #if RF_IS_ALLOWED( RF_CONFIG_LANG_TODO_CHECKS )
 	#define RF_CPP20_TODO( MESSAGE ) \
-		static_assert( __cplusplus < 202002L, "TODO: " MESSAGE "" );
+		static_assert( __cplusplus < 202002L, "TODO: " MESSAGE "" )
+	#define RF_CPP23_TODO( MESSAGE ) \
+		static_assert( __cplusplus < 202302L, "TODO: " MESSAGE "" )
 #else
 	#define RF_CPP20_TODO( MESSAGE )
+	#define RF_CPP23_TODO( MESSAGE )
 #endif

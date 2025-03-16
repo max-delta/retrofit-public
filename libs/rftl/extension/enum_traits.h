@@ -15,7 +15,7 @@ struct conditional_underlying_unscoped_type
 template<typename EnumT>
 struct conditional_underlying_unscoped_type<EnumT, typename rftl::enable_if<rftl::is_enum<EnumT>::value, EnumT>::type> : public rftl::underlying_type<EnumT>
 {
-	static_assert( __cplusplus < 202002L, "Make this check only work when is_scoped_enum is false" );
+	static_assert( __cplusplus < 202302L, "Make this check only work when is_scoped_enum is false" );
 };
 
 // Use type for non-enums
