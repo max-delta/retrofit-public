@@ -1,6 +1,8 @@
 #pragma once
 #include "TypedObjectManager.h"
 
+#include "core_component/ObjectRef.h"
+
 #include "core/ptr/ptr_transform.h"
 
 
