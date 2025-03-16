@@ -92,5 +92,12 @@ bool MutableComponentRef::operator==( ComponentRef const& rhs ) const
 	return operator ComponentRef().operator==( rhs );
 }
 
+
+
+bool MutableComponentRef::operator==( MutableComponentRef const& rhs ) const
+{
+	return operator ComponentRef().operator==( rhs );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

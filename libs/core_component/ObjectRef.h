@@ -68,6 +68,7 @@ public:
 	// Implicit decay to const ref
 	operator ObjectRef() const;
 	bool operator==( ObjectRef const& rhs ) const;
+	bool operator==( MutableObjectRef const& rhs ) const;
 
 
 	//

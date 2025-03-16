@@ -99,5 +99,12 @@ bool MutableObjectRef::operator==( ObjectRef const& rhs ) const
 	return operator ObjectRef().operator==( rhs );
 }
 
+
+
+bool MutableObjectRef::operator==( MutableObjectRef const& rhs ) const
+{
+	return operator ObjectRef().operator==( rhs );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

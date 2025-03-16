@@ -62,6 +62,7 @@ public:
 	// Implicit decay to const ref
 	operator ComponentRef() const;
 	bool operator==( ComponentRef const& rhs ) const;
+	bool operator==( MutableComponentRef const& rhs ) const;
 
 
 	//
