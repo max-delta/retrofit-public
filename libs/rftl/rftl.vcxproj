@@ -50,6 +50,7 @@
 		<ClInclude Include="extension\string_compare.h" />
 		<ClInclude Include="extension\string_copy.h" />
 		<ClInclude Include="extension\string_format.h" />
+		<ClInclude Include="extension\string_hash.h" />
 		<ClInclude Include="extension\string_parse.h" />
 		<ClInclude Include="extension\string_traits.h" />
 		<ClInclude Include="extension\variadic_print.h" />

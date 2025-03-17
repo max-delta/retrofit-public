@@ -37,8 +37,7 @@ bool ActionDatabase::AddAction( rftl::string&& key, UniquePtr<ActionRecord>&& ac
 
 UniquePtr<ActionRecord> ActionDatabase::RemoveAction( rftl::string_view const& key )
 {
-	RF_CPP20_TODO( "Replace string copy with templated find using string_view" );
-	ActionsByID::iterator const iter = mActionsByID.find( rftl::string( key ) );
+	ActionsByID::iterator const iter = mActionsByID.find( RFTL_STR_V_HASH( key ) );
 	if( iter == mActionsByID.end() )
 	{
 		// Not found
@@ -59,8 +58,7 @@ UniquePtr<ActionRecord> ActionDatabase::RemoveAction( rftl::string_view const& k
 
 WeakPtr<ActionRecord const> ActionDatabase::GetAction( rftl::string_view const& key ) const
 {
-	RF_CPP20_TODO( "Replace string copy with templated find using string_view" );
-	ActionsByID::const_iterator const iter = mActionsByID.find( rftl::string( key ) );
+	ActionsByID::const_iterator const iter = mActionsByID.find( RFTL_STR_V_HASH( key ) );
 	if( iter == mActionsByID.end() )
 	{
 		// Not found

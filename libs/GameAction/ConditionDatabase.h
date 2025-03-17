@@ -8,6 +8,7 @@
 #include "rftl/string"
 #include "rftl/string_view"
 #include "rftl/unordered_map"
+#include "rftl/extension/string_hash.h"
 
 
 namespace RF::act {
@@ -23,7 +24,7 @@ class GAMEACTION_API ConditionDatabase final
 	//
 	// Types and constants
 private:
-	using ConditionsByID = rftl::unordered_map<rftl::string, UniquePtr<ConditionRecord>>;
+	using ConditionsByID = rftl::unordered_map<rftl::string, UniquePtr<ConditionRecord>, rftl::string_hash, rftl::equal_to<>>;
 
 
 	//

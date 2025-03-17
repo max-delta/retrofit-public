@@ -28,8 +28,7 @@ bool ConditionDatabase::AddCondition( rftl::string&& key, UniquePtr<ConditionRec
 
 UniquePtr<ConditionRecord> ConditionDatabase::RemoveCondition( rftl::string_view const& key )
 {
-	RF_CPP20_TODO( "Replace string copy with templated find using string_view" );
-	ConditionsByID::iterator const iter = mConditionsByID.find( rftl::string( key ) );
+	ConditionsByID::iterator const iter = mConditionsByID.find( RFTL_STR_V_HASH( key ) );
 	if( iter == mConditionsByID.end() )
 	{
 		// Not found
@@ -50,8 +49,7 @@ UniquePtr<ConditionRecord> ConditionDatabase::RemoveCondition( rftl::string_view
 
 WeakPtr<ConditionRecord> ConditionDatabase::GetCondition( rftl::string_view const& key ) const
 {
-	RF_CPP20_TODO( "Replace string copy with templated find using string_view" );
-	ConditionsByID::const_iterator const iter = mConditionsByID.find( rftl::string( key ) );
+	ConditionsByID::const_iterator const iter = mConditionsByID.find( RFTL_STR_V_HASH( key ) );
 	if( iter == mConditionsByID.end() )
 	{
 		// Not found
