@@ -1,4 +1,5 @@
 #pragma once
+#include "core/macros.h"
 
 #include "rftl/type_traits"
 
