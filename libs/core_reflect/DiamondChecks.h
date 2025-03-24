@@ -12,11 +12,13 @@ namespace RF::reflect {
 // NOTE: Primarily intended to be used as generated helper functions that can
 //  store pointers to the functions to be called later, in cases where the
 //  calling code only has access to untyped pointers
-RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline void const* GetBasePointerFromDerivedUntyped( void const* ptr )
 {
 	static_assert( rftl::is_base_of<BASE, DERIVED>::value, "Unrelated pointer types" );
+	// NOTE: rftl::is_pointer_interconvertible_base_of may or may not be true,
+	//  so this might result in a simple no-op, or it might generate code to
+	//  meander about in virtual tables
 	return static_cast<BASE const*>( reinterpret_cast<DERIVED const*>( ptr ) );
 }
 
@@ -25,11 +27,16 @@ inline void const* GetBasePointerFromDerivedUntyped( void const* ptr )
 // The compiler knows whether it will need to generate code to do pointer
 //  tranformation to handle poorly-written code with multiple inheritance, or
 //  if it's normal types that don't require any change in the pointer address
-RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline constexpr bool IsBasePointerAlwaysSameAsDerivedPointer()
 {
-	RF_TODO_ANNOTATION("Implement with C++20 trait");
+	RF_CPP20_TODO( "Implement with C++20 trait is_pointer_interconvertible_base_of" );
+#if defined( RF_PLATFORM_CLANG )
+	static_assert( __has_cpp_attribute( __cpp_lib_is_pointer_interconvertible ) == false, "Check if Clang supports C++20 now" );
+#else
+	static_assert( __cpp_lib_is_pointer_interconvertible == 201907 );
+#endif
+	//return rftl::is_pointer_interconvertible_base_of<BASE, DERIVED>::value;
 	return false;
 }
 
@@ -45,11 +52,15 @@ inline constexpr bool IsBasePointerAlwaysSameAsDerivedPointer()
 // NOTE: In some inheritance implementations, the act of casting an invalid
 //  pointer creates run-time code that will crash, so you will need to have a
 //  mechanism to avoid invoking this in those situations
-RF_CPP20_TODO( "Evaluate is_pointer_interconvertible_base_of" );
 template<typename BASE, typename DERIVED>
 inline bool UnsafeTryDetermineIfNonTrivialPointerTransformNeeded()
 {
 	static_assert( rftl::is_base_of<BASE, DERIVED>::value, "Unrelated pointer types" );
+	// Dereferencing invalid memory isn't strictly impossible (though a clear
+	//  standards violation), as it could just do some pointer math and never
+	//  attempt to touch the memory, but in complex multiple inheritance cases,
+	//  it can require a lookup into a virtual table, which would cause a crash
+	//  when it tries to touch the memory
 	DERIVED const* const invalidClass = reinterpret_cast<DERIVED const*>( compiler::kInvalidNonNullPointer );
 	// If you crash on this line, check the caller, it should provide a
 	//  mechanism for you to avoid this codepath for your specific types
