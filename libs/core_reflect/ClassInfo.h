@@ -269,16 +269,8 @@ struct ClassInfo
 	//  you will need to use static local variables in block scope to be safe.
 	ClassInfo() = delete;
 	explicit ClassInfo( ExplicitDefaultConstruct )
-		: mIsPolymorphic{}
-		, mIsAbstract{}
-		, mIsDefaultConstructible{}
-		, mIsCopyConstructible{}
-		, mIsMoveConstructible{}
-		, mIsDestructible{}
-		, mHasVirtualDestructor{}
 	{
-		// In C++20, you can theoretically do 'bool field : 1 = false'
-		RF_CPP20_TODO( "Replace bitfield initializers" );
+		//
 	}
 
 	// Walk inheritance chain, optionally resolving a pointer upwards to the
@@ -292,19 +284,19 @@ struct ClassInfo
 #endif
 
 	// Has or inherits virtual functions
-	bool mIsPolymorphic : 1;
+	bool mIsPolymorphic : 1 = false;
 
 	// Has or inherits pure virtual functions
-	bool mIsAbstract : 1;
+	bool mIsAbstract : 1 = false;
 
 	// Construction capabilities
-	bool mIsDefaultConstructible : 1;
-	bool mIsCopyConstructible : 1;
-	bool mIsMoveConstructible : 1;
+	bool mIsDefaultConstructible : 1 = false;
+	bool mIsCopyConstructible : 1 = false;
+	bool mIsMoveConstructible : 1 = false;
 
 	// Destruction capabilities
-	bool mIsDestructible : 1;
-	bool mHasVirtualDestructor : 1;
+	bool mIsDestructible : 1 = false;
+	bool mHasVirtualDestructor : 1 = false;
 
 	// The minimum alignment required
 	size_t mMinimumAlignment = 0;
