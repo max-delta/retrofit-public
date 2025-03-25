@@ -81,6 +81,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="algorithm" />
+		<None Include="bit" />
 		<None Include="cctype" />
 		<None Include="charconv" />
 		<None Include="cmath" />

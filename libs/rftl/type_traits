@@ -144,6 +144,4 @@ using std::negation_v;
 
 //using std::is_pointer_interconvertible_with_class; // Clang doesn't support yet
 //using std::is_corresponding_member; // Clang doesn't support yet
-
-//using std::endian; // Too new in C++20 (Also, moved to <bit>)
 }

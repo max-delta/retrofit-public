@@ -3,6 +3,7 @@
 #define RFTL_ALGORITHM <algorithm>
 #define RFTL_ARRAY <array>
 #define RFTL_ATOMIC <atomic>
+#define RFTL_BIT <bit>
 #define RFTL_BITSET <bitset>
 #define RFTL_CCTYPE <cctype>
 #define RFTL_CHARCONV <charconv>
