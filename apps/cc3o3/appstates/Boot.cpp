@@ -47,7 +47,7 @@ void Boot::OnTick( AppStateTickContext& context )
 	resource::InitializeLoader();
 
 	// HACK: Spin up hard-coded input
-	// TODO: Get this from a file
+	RF_TODO_ANNOTATION( "Get input setup from a file or other config mechanism" );
 	input::HardcodedDeviceSetup();
 	input::HardcodedRawSetup();
 	input::HardcodedMainSetup();

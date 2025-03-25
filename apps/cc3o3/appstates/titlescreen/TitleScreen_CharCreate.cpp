@@ -179,7 +179,7 @@ TitleScreen_CharCreate::InternalState::InternalState()
 		rftl::sort( sortedGenetics.begin(), sortedGenetics.end() );
 
 		// HACK: Reverse
-		// TODO: Data-driven control of ordering
+		RF_TODO_ANNOTATION( "Data-driven control of ordering, instead of by alphabetical" );
 		// NOTE: Reverse causes 'portal' to be before 'awoken...', so humans
 		//  are first in the list
 		rftl::reverse( sortedGenetics.begin(), sortedGenetics.end() );
@@ -394,7 +394,7 @@ void TitleScreen_CharCreate::InternalState::HandleModification( ui::ContainerMan
 	charValidate.SanitizeForCharacterCreation( mChar );
 
 	// HACK: Always recomposite
-	// TODO: Only on changes that affect visuals
+	RF_TODO_ANNOTATION( "Only recomposite on changes that affect visuals" );
 	Recomposite();
 }
 
@@ -441,7 +441,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 
 void TitleScreen_CharCreate::InternalState::Load()
 {
-	// TODO: Actual load
+	RF_TODO_ANNOTATION( "Do actual loading" );
 
 	mChar = {};
 
@@ -586,7 +586,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 
 			// Create status in the left frame
 			// HACK: Text as a mock-up for controls
-			// TODO: This shouldn't be text
+			RF_TODO_ANNOTATION( "This shouldn't be text" );
 			WeakPtr<ui::controller::TextRows> const leftStatus =
 				uiManager.AssignStrongController(
 					leftColumnSlicer->GetChildContainerID( 1 ),
@@ -664,7 +664,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 
 			// Create status in the right frame
 			// HACK: Text as a mock-up for controls
-			// TODO: This shouldn't be text
+			RF_TODO_ANNOTATION( "This shouldn't be text" );
 			WeakPtr<ui::controller::TextRows> const rightStatus =
 				uiManager.AssignStrongController(
 					rightColumnSlicer->GetChildContainerID( 1 ),

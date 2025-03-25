@@ -46,7 +46,7 @@ void InitialLoading::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 
-	// TODO: Setup UI
+	RF_TODO_ANNOTATION( "Setup a UI of some kind for loading" );
 	app::gUiManager->RecreateRootContainer();
 }
 
@@ -141,7 +141,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_16_128", paths::UITilesets().GetChild( "elemgrid_16_128.tset.txt" ) );
 
-		// TODO: Some kind of machinery for automating frames
+		RF_TODO_ANNOTATION( "Some kind of machinery for automating frames" );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat1_8_48", paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat2_8_48", paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
@@ -158,7 +158,7 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 
 	// Load localization
 	{
-		// TODO: Configurable language
+		RF_TODO_ANNOTATION( "Make language configurable" );
 		app::gLocEngine->InitializeFromKeymapDirectory( vfs, paths::Localizations().GetChild( "en_us" ), loc::TextDirection::LeftToRight );
 		app::gPageMapper->InitializeFromCharmapFile( vfs, paths::Localizations().GetChild( "en_us.charmap.csv" ) );
 	}

@@ -48,7 +48,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	InternalState& internalState = *mInternalState;
 
 	// Setup for single-player
-	// TODO: Multiplayer considerations and logic
+	RF_TODO_ANNOTATION( "Multiplayer considerations and logic, instead of single-player assumptions" );
 	InputHelpers::SetSinglePlayer( input::player::P1 );
 	input::HardcodedPlayerSetup( InputHelpers::GetSinglePlayer() );
 	InputHelpers::MakeLocal( InputHelpers::GetSinglePlayer() );
@@ -72,7 +72,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	}
 
 	// HACK: Choose arbitrary save
-	// TODO: Actual save management logic should've happened before this
+	RF_TODO_ANNOTATION( "Actual save management logic should've happened before this" );
 	save::SaveManager::SaveName saveName;
 	{
 		save::SaveManager const& saveMan = *gSaveManager;
@@ -88,7 +88,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 	}
 
 	// HACK: Save out the state for diagnostics
-	// TODO: More formal snapshotting
+	RF_TODO_ANNOTATION( "More formal snapshotting" );
 	{
 		rollback::RollbackManager& rollMan = *gRollbackManager;
 		rollback::Domain& sharedDomain = rollMan.GetMutableSharedDomain();
@@ -129,7 +129,7 @@ void Gameplay::OnExit( AppStateChangeContext& context )
 
 	mInternalState = nullptr;
 
-	// TODO: Multiplayer considerations and logic
+	RF_TODO_ANNOTATION( "Multiplayer considerations and logic, instead of single-player assumptions" );
 	InputHelpers::ClearSinglePlayer();
 }
 

@@ -104,7 +104,7 @@ void DevTestLobby::OnEnter( AppStateChangeContext& context )
 	}
 
 	// HACK: Time reset to get all clients into same frame
-	// TODO: Use save/load snapshot machinery instead on host-triggered sync
+	RF_TODO_ANNOTATION( "Use save/load snapshot machinery instead on host-triggered sync" );
 	DebugHardTimeReset();
 }
 
@@ -195,14 +195,14 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 	else if( selected[kStartHosting] )
 	{
-		// TODO: Host
+		// Host
 		SessionHostManager::HostSpec const spec{ true, true, 8271, { input::player::P1, input::player::P2 } };
 		sync::SetSessionHostManager( DefaultCreator<SessionHostManager>::Create( spec ) );
 		sync::gSessionHostManager->StartHostingASession();
 	}
 	else if( selected[kConnectToHost] )
 	{
-		// TODO: Connect
+		// Connect
 		SessionClientManager::ClientSpec const kSpec{ "localhost", 8271 };
 		sync::SetSessionClientManager( DefaultCreator<SessionClientManager>::Create( kSpec ) );
 		sync::gSessionClientManager->StartReceivingASession();

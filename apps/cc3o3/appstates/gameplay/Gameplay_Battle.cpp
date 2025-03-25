@@ -286,7 +286,6 @@ void Gameplay_Battle::InternalState::SaveUIState( ui::UIContext& context ) const
 
 void Gameplay_Battle::InternalState::SanitizeUIState( ui::UIContext& context )
 {
-	// TODO: Sanitize control state
 	RF_TODO_ANNOTATION( "Sanitize control state" );
 	ControlStates::State const currentState = GetControlState( context );
 

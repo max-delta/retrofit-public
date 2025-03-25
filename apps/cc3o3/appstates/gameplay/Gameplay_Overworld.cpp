@@ -254,7 +254,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 	campaign::CampaignManager& campaign = *gCampaignManager;
 
-	// TODO: Configurable debug rendering
+	RF_TODO_ANNOTATION( "Allow debug rendering to be configurable" );
 	static constexpr bool kDebugRendering = true;
 
 	// Show/hide UI based on idle/activity
@@ -615,7 +615,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				object.mYCoord = movement.mCurPos.mY;
 
 				// HACK: Sort by reverse team order
-				// TODO: Something clever with the Y-axis as input
+				RF_TODO_ANNOTATION( "Do something clever with the Y-axis as input consideration for graphical layering order" );
 				object.mZLayer = InternalState::kLayerCharStart - math::integer_cast<gfx::ppu::DepthLayer>( i_teamIndex );
 
 				bool const idle = movement.mCurPos.mMoving == false;

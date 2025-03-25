@@ -203,7 +203,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 			CombatEngine const& combatEngine = *gCombatEngine;
 
-			// TODO: Configuration of innate?
+			RF_TODO_ANNOTATION( "Configuration of innate?" );
 			base.mEntityClass = EntityClass::Hero;
 			base.mInnate = MakeInnateIdentifier( "red" );
 			base.mMaxHealth = combatEngine.LoCalcMaxHealth( kBaselineStat, base.mEntityClass );
@@ -228,7 +228,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		InnateIdentifier const same = attacker.mInnate;
 		InnateIdentifier const clash = MakeInnateIdentifier( "blu" );
 		InnateIdentifier const unrel = MakeInnateIdentifier( "wht" );
-		// TODO: Configuration of innate?
+		RF_TODO_ANNOTATION( "Configuration of innate?" );
 		SimColor const color = SimColor::Unrelated;
 		switch( color )
 		{

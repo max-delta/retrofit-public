@@ -281,7 +281,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 
 			// Implement selector as horizontal list
-			// TODO: Image support in list boxes
+			RF_TODO_ANNOTATION( "Image support in list boxes" );
 			WeakPtr<ui::controller::ListBox> const selector =
 				uiManager.AssignStrongController(
 					frame->GetChildContainerID(),
@@ -293,7 +293,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 			{
 				WeakPtr<ui::controller::TextLabel> const slotController = selector->GetMutableSlotController( i );
 				{
-					// TODO: Image support
+					RF_TODO_ANNOTATION( "Image support in list boxes" );
 					rftl::string temp = "0";
 					temp.at( 0 ) += math::integer_cast<char>( i );
 					slotController->SetText( rftl::move( temp ) );
@@ -348,6 +348,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 						elementManagerRowRatios ) );
 
 			// TODO: Description display on top
+			RF_TODO_ANNOTATION( "Display description on top" );
 
 			// 2 subsections for selectors on bottom
 			WeakPtr<ui::controller::MultiPassthrough> const selectorPassthroughs =
@@ -641,7 +642,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 						if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
 						{
 							// HACK: Save to an arbitrary slot
-							// TODO: Proper logic
+							RF_TODO_ANNOTATION( "Do proper save logic instead of using arbitrary slot" );
 							save::SaveManager& saveMan = *gSaveManager;
 							save::SaveManager::SaveNames const saveNames = saveMan.FindSaveNames();
 							RF_ASSERT( saveNames.size() == 1 );
@@ -654,7 +655,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 						{
 							// HACK: Always pop back up to section selector
-							// TODO: Proper logic
+							RF_TODO_ANNOTATION( "Do proper logic, review UI flow" );
 							internalState.ShowSelector( uiContext );
 						}
 					}
@@ -669,7 +670,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 						{
 							// HACK: Always pop back up to section selector
-							// TODO: Proper logic
+							RF_TODO_ANNOTATION( "Do proper logic, review UI flow" );
 							internalState.ShowSelector( uiContext );
 						}
 					}
