@@ -20,6 +20,20 @@ TEST( MathBits, GetAllBitsSet )
 
 
 
+TEST( MathBits, GetBitWidth )
+{
+	static_assert( GetBitWidth<uint8_t>() == 8 );
+	static_assert( GetBitWidth<int8_t>() == 8 );
+	static_assert( GetBitWidth<uint16_t>() == 16 );
+	static_assert( GetBitWidth<int16_t>() == 16 );
+	static_assert( GetBitWidth<uint32_t>() == 32 );
+	static_assert( GetBitWidth<int32_t>() == 32 );
+	static_assert( GetBitWidth<uint64_t>() == 64 );
+	static_assert( GetBitWidth<int64_t>() == 64 );
+}
+
+
+
 TEST( MathBits, HasOnly1BitSet )
 {
 	static_assert( HasOnly1BitSet( static_cast<uint8_t>( 0x0 ) ) == false, "" );
