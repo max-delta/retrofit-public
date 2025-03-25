@@ -7,6 +7,9 @@ template<typename T>
 constexpr T GetAllBitsSet();
 
 template<typename T>
+constexpr size_t GetBitWidth();
+
+template<typename T>
 constexpr bool HasOnly1BitSet( T const value );
 
 template<typename T>
