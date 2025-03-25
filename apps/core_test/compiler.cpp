@@ -2,6 +2,8 @@
 
 #include "core/compiler.h"
 
+#include "rftl/bit"
+
 
 namespace RF::compiler {
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,17 @@ TEST( Compiler, Endian )
 	{
 		ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x01020304 );
 	}
+
+	// Should match standard
+	// NOTE: The standard doesn't allow for mixed-endianness, and frankly I
+	//  don't know that anyone uses that capability on ARM, or even how that
+	//  would work in practice, as changing endianness mid-execution just
+	//  sounds like an absolute nightmare
+	static constexpr rftl::endian kExpectedEndian =
+		compiler::kEndianness == compiler::Endianness::Little ?
+		rftl::endian::little :
+		rftl::endian::big;
+	static_assert( rftl::endian::native == kExpectedEndian );
 }
 
 
