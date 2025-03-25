@@ -117,11 +117,14 @@ template<> constexpr int64_t ReverseByteOrder( int64_t const value )
 template<typename T>
 constexpr T FromPlatformToBigEndian( T const value )
 {
-	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+	if constexpr( compiler::kEndianness == compiler::Endianness::Little )
+	{
 		return math::ReverseByteOrder( value );
-	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+	}
+	else if constexpr( compiler::kEndianness == compiler::Endianness::Big )
+	{
 		return value;
-	#endif
+	}
 }
 
 
@@ -129,11 +132,14 @@ constexpr T FromPlatformToBigEndian( T const value )
 template<typename T>
 constexpr T FromBigEndianToPlatform( T const value )
 {
-	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+	if constexpr( compiler::kEndianness == compiler::Endianness::Little )
+	{
 		return math::ReverseByteOrder( value );
-	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+	}
+	else if constexpr( compiler::kEndianness == compiler::Endianness::Big )
+	{
 		return value;
-	#endif
+	}
 }
 
 
@@ -141,11 +147,14 @@ constexpr T FromBigEndianToPlatform( T const value )
 template<typename T>
 constexpr T FromPlatformToLittleEndian( T const value )
 {
-	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+	if constexpr( compiler::kEndianness == compiler::Endianness::Little )
+	{
 		return value;
-	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+	}
+	else if constexpr( compiler::kEndianness == compiler::Endianness::Big )
+	{
 		return math::ReverseByteOrder( value );
-	#endif
+	}
 }
 
 
@@ -153,11 +162,14 @@ constexpr T FromPlatformToLittleEndian( T const value )
 template<typename T>
 constexpr T FromLittleEndianToPlatform( T const value )
 {
-	#if defined( RF_PLATFORM_LITTLE_ENDIAN )
+	if constexpr( compiler::kEndianness == compiler::Endianness::Little )
+	{
 		return value;
-	#elif defined( RF_PLATFORM_BIG_ENDIAN )
+	}
+	else if constexpr( compiler::kEndianness == compiler::Endianness::Big )
+	{
 		return math::ReverseByteOrder( value );
-	#endif
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

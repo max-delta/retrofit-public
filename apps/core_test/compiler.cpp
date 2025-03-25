@@ -23,11 +23,14 @@ TEST( Compiler, Constants )
 TEST( Compiler, Endian )
 {
 	char const bytes[4] = { 1, 2, 3, 4 };
-#ifdef RF_PLATFORM_LITTLE_ENDIAN
-	ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x04030201 );
-#else
-	ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x01020304 );
-#endif
+	if constexpr( compiler::kEndianness == compiler::Endianness::Little )
+	{
+		ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x04030201 );
+	}
+	else
+	{
+		ASSERT_EQ( *reinterpret_cast<uint32_t const*>( &bytes[0] ), 0x01020304 );
+	}
 }
 
 
