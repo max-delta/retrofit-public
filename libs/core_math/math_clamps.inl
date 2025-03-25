@@ -70,17 +70,17 @@ constexpr TYPE SnapNearest( TYPE const& value, TYPE const& step )
 	}
 
 	TYPE const mod = static_cast<TYPE>( value % step );
-	static_assert( ( -3 % 4 ) == -3, "" );
+	static_assert( ( -3 % 4 ) == -3 );
 	if( mod == 0 )
 		return value;
 
 	int64_t const baseMultiplier = static_cast<int64_t>( value / step );
-	static_assert( ( -3 / 4 ) == 0, "" );
+	static_assert( ( -3 / 4 ) == 0 );
 	TYPE const halfStep = static_cast<TYPE>( step / 2 );
-	static_assert( ( 4 / 2 ) == 2, "" );
+	static_assert( ( 4 / 2 ) == 2 );
 
 	TYPE const modPositive = static_cast<TYPE>( mod >= 0 ? mod : -mod );
-	static_assert( -( -3 % 4 ) == 3, "" );
+	static_assert( -( -3 % 4 ) == 3 );
 	bool const snapHigh = modPositive > halfStep;
 	if( snapHigh )
 	{

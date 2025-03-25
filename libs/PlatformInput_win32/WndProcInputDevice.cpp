@@ -189,8 +189,8 @@ shim::LRESULT WndProcDigitalInputComponent::ExamineTranslatedMessage( shim::HWND
 			//shim::LPARAM Padding : 32; // Only on 64-bit
 		} m_Fields;
 	};
-	static_assert( sizeof( KeyUpDown::Fields ) == sizeof( shim::LPARAM ), "" );
-	static_assert( sizeof( KeyUpDown ) == sizeof( shim::LPARAM ), "" );
+	static_assert( sizeof( KeyUpDown::Fields ) == sizeof( shim::LPARAM ) );
+	static_assert( sizeof( KeyUpDown ) == sizeof( shim::LPARAM ) );
 
 	switch( message )
 	{
@@ -503,8 +503,8 @@ shim::LRESULT WndProcAnalogInputComponent::ExamineTranslatedMessage( shim::HWND 
 			//shim::LPARAM Padding : 32; // Only on 64-bit
 		} m_Fields;
 	};
-	static_assert( sizeof( MouseCoord::Fields ) == sizeof( shim::LPARAM ), "" );
-	static_assert( sizeof( MouseCoord ) == sizeof( shim::LPARAM ), "" );
+	static_assert( sizeof( MouseCoord::Fields ) == sizeof( shim::LPARAM ) );
+	static_assert( sizeof( MouseCoord ) == sizeof( shim::LPARAM ) );
 
 	switch( message )
 	{

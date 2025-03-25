@@ -69,7 +69,7 @@ TEST( StaticVector, Alignment )
 TEST( StaticVector, BasicEmpty )
 {
 	rftl::static_vector<Proxy, 5> empty;
-	static_assert( rftl::static_vector<Proxy, 5>::fixed_capacity == 5, "" );
+	static_assert( rftl::static_vector<Proxy, 5>::fixed_capacity == 5 );
 	ASSERT_TRUE( empty.capacity() == 5 );
 	ASSERT_TRUE( empty.max_size() == 5 );
 	ASSERT_TRUE( empty.empty() );

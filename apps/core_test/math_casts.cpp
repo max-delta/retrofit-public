@@ -23,7 +23,7 @@ TEST( MathCasts, IntegerTruncast_Unsigned )
 
 TEST( MathCasts, IntegerTruncast_Signed )
 {
-	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0, "" );
+	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0 );
 
 	constexpr int64_t huge = rftl::numeric_limits<int64_t>::lowest();
 	int64_t const s64 = integer_truncast<int64_t>( huge );
@@ -40,8 +40,8 @@ TEST( MathCasts, IntegerTruncast_Signed )
 
 TEST( MathCasts, IntegerTruncast_CrossSigned )
 {
-	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0, "" );
-	static_assert( rftl::numeric_limits<uint64_t>::lowest() == 0, "" );
+	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0 );
+	static_assert( rftl::numeric_limits<uint64_t>::lowest() == 0 );
 
 	constexpr int64_t huge = rftl::numeric_limits<int64_t>::lowest();
 	uint64_t const u64 = integer_truncast<uint64_t>( huge );
@@ -58,8 +58,8 @@ TEST( MathCasts, IntegerTruncast_CrossSigned )
 
 TEST( MathCasts, IntegerTruncast_CrossUnsigned )
 {
-	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0, "" );
-	static_assert( rftl::numeric_limits<uint64_t>::lowest() == 0, "" );
+	static_assert( rftl::numeric_limits<int64_t>::lowest() < 0 );
+	static_assert( rftl::numeric_limits<uint64_t>::lowest() == 0 );
 
 	constexpr uint64_t zeroed = rftl::numeric_limits<uint64_t>::lowest();
 	int64_t const s64 = integer_truncast<int64_t>( zeroed );
@@ -113,16 +113,16 @@ TEST( MathCasts, IntegerTruncast_Float )
 	}
 	{
 		// Hmm...
-		static_assert( rftl::numeric_limits<uint8_t>::has_quiet_NaN == false, "" );
-		static_assert( rftl::numeric_limits<uint8_t>::quiet_NaN() == 0, "" );
+		static_assert( rftl::numeric_limits<uint8_t>::has_quiet_NaN == false );
+		static_assert( rftl::numeric_limits<uint8_t>::quiet_NaN() == 0 );
 		constexpr float source = rftl::numeric_limits<float>::quiet_NaN();
 		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::quiet_NaN() );
 	}
 	{
 		// Uh... sure, I guess?
-		static_assert( rftl::numeric_limits<uint8_t>::has_signaling_NaN == false, "" );
-		static_assert( rftl::numeric_limits<uint8_t>::signaling_NaN() == 0, "" );
+		static_assert( rftl::numeric_limits<uint8_t>::has_signaling_NaN == false );
+		static_assert( rftl::numeric_limits<uint8_t>::signaling_NaN() == 0 );
 		constexpr float source = rftl::numeric_limits<float>::signaling_NaN();
 		uint8_t const val = integer_truncast<uint8_t>( source );
 		ASSERT_EQ( val, rftl::numeric_limits<uint8_t>::signaling_NaN() );
@@ -133,14 +133,14 @@ TEST( MathCasts, IntegerTruncast_Float )
 
 TEST( MathCasts, IntegerUnsignedBitCast )
 {
-	static_assert( integer_unsigned_bitcast( static_cast<int8_t>( -1ll ) ) == rftl::numeric_limits<uint8_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<int16_t>( -1ll ) ) == rftl::numeric_limits<uint16_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<int32_t>( -1ll ) ) == rftl::numeric_limits<uint32_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<int64_t>( -1ll ) ) == rftl::numeric_limits<uint64_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<uint8_t>( -1ll ) ) == rftl::numeric_limits<uint8_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<uint16_t>( -1ll ) ) == rftl::numeric_limits<uint16_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<uint32_t>( -1ll ) ) == rftl::numeric_limits<uint32_t>::max(), "" );
-	static_assert( integer_unsigned_bitcast( static_cast<uint64_t>( -1ll ) ) == rftl::numeric_limits<uint64_t>::max(), "" );
+	static_assert( integer_unsigned_bitcast( static_cast<int8_t>( -1ll ) ) == rftl::numeric_limits<uint8_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<int16_t>( -1ll ) ) == rftl::numeric_limits<uint16_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<int32_t>( -1ll ) ) == rftl::numeric_limits<uint32_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<int64_t>( -1ll ) ) == rftl::numeric_limits<uint64_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<uint8_t>( -1ll ) ) == rftl::numeric_limits<uint8_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<uint16_t>( -1ll ) ) == rftl::numeric_limits<uint16_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<uint32_t>( -1ll ) ) == rftl::numeric_limits<uint32_t>::max() );
+	static_assert( integer_unsigned_bitcast( static_cast<uint64_t>( -1ll ) ) == rftl::numeric_limits<uint64_t>::max() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
