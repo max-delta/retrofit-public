@@ -76,6 +76,8 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 	uint64_t const extendedValue = integer_unsigned_bitcast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
+
+	// clang-format off
 	#define RF_GETINDEXOFHIGHESBIT_TEST( X ) \
 		if( ( extendedValue >> X ) == 0 ) return X;
 	RF_GETINDEXOFHIGHESBIT_TEST( 0 ); RF_GETINDEXOFHIGHESBIT_TEST( 1 ); RF_GETINDEXOFHIGHESBIT_TEST( 2 );
@@ -101,6 +103,7 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 	RF_GETINDEXOFHIGHESBIT_TEST( 60 ); RF_GETINDEXOFHIGHESBIT_TEST( 61 ); RF_GETINDEXOFHIGHESBIT_TEST( 62 );
 	RF_GETINDEXOFHIGHESBIT_TEST( 63 );
 	#undef RF_GETINDEXOFHIGHESBIT_TEST
+	// clang-format on
 
 	return 64;
 }
@@ -115,6 +118,8 @@ constexpr size_t GetZerosIndexOfHighestBit( T const value )
 	uint64_t const extendedValue = integer_unsigned_bitcast( value );
 
 	// TODO: Something fancier, that still survives constexpr rules
+
+	// clang-format off
 	#define RF_GETINDEXOFHIGHESBIT_TEST( X ) \
 		if( ( extendedValue >> X ) == 0 ) return static_cast<size_t>(X - 1);
 	RF_GETINDEXOFHIGHESBIT_TEST( 0 ); RF_GETINDEXOFHIGHESBIT_TEST( 1 ); RF_GETINDEXOFHIGHESBIT_TEST( 2 );
@@ -140,6 +145,7 @@ constexpr size_t GetZerosIndexOfHighestBit( T const value )
 	RF_GETINDEXOFHIGHESBIT_TEST( 60 ); RF_GETINDEXOFHIGHESBIT_TEST( 61 ); RF_GETINDEXOFHIGHESBIT_TEST( 62 );
 	RF_GETINDEXOFHIGHESBIT_TEST( 63 );
 	#undef RF_GETINDEXOFHIGHESBIT_TEST
+	// clang-format on
 
 	return 63;
 }
