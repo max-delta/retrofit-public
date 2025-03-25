@@ -10,6 +10,7 @@ namespace RF::math {
 // Intentionally unimplemented
 template<typename T>
 constexpr T ReverseByteOrder( T const value );
+RF_CPP23_TODO( "Evaluate rftl::byteswap, though it might be less performant" );
 
 template<> constexpr uint8_t ReverseByteOrder( uint8_t const value )
 {
