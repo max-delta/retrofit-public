@@ -352,6 +352,9 @@
 		<ProjectReference Include="..\..\libs\core_math\core_math.vcxproj">
 			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_platform\core_platform.vcxproj">
+			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\core_reflect\core_reflect.vcxproj">
 			<Project>{4f04f815-8125-46a6-afa1-ae4d7c9fef90}</Project>
 		</ProjectReference>

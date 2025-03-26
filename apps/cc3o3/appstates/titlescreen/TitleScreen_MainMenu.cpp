@@ -30,6 +30,10 @@
 #include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 
+#include "PlatformUtils_win32/Debugging.h" // For debug text
+
+#include "core_platform/ProcessorInfo.h" // For debug text
+
 #include "core/ptr/default_creator.h"
 
 
@@ -42,6 +46,29 @@ static constexpr char kMultiplayerTag[] = "MPLAY";
 static constexpr char kCharacterCreatorTag[] = "CHAR";
 static constexpr char kOptionsTag[] = "OPT";
 static constexpr char kExitToDesktopTag[] = "EXIT";
+
+
+static rftl::vector<rftl::string> GenerateDebugText()
+{
+	rftl::vector<rftl::string> retVal;
+
+	platform::ProcessorInfo const processorInfo = platform::ProcessorInfo::Generate();
+	retVal.emplace_back(
+		rftl::string() +
+		processorInfo.mVendorID.c_str() +
+		" " +
+		processorInfo.mModelID.c_str() );
+
+	retVal.emplace_back(
+		rftl::string( "UD:" ) +
+		( platform::debugging::IsUserModeDebuggerObviouslyAttached() ? '+' : '-' ) +
+		" " +
+		rftl::string( "KD:" ) +
+		( platform::debugging::IsKernelModeDebuggerObviouslyAttached() ? '+' : '-' ) );
+
+	return retVal;
+}
+
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -164,15 +191,31 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		uiManager.AssignLabel( menuEntries->GetSlotController( 3 )->GetContainerID(), details::kOptionsTag );
 		uiManager.AssignLabel( menuEntries->GetSlotController( 4 )->GetContainerID(), details::kExitToDesktopTag );
 
-		// TODO: Basic debug in top left
-		WeakPtr<ui::controller::TextLabel> const TODODebug =
+		// Basic debug in top left
+		rftl::vector<rftl::string> debugText = details::GenerateDebugText();
+		uint8_t const debugFontHeight = fontReg.SelectBestFont( ui::font::MinSize, 1 ).mFontHeight;
+		constexpr gfx::ppu::CoordElem kDebugEntryHitboxWidth = 80;
+		constexpr gfx::ppu::CoordElem kDebugEntryPadding = 1;
+		gfx::ppu::Coord const debugDimensions = {
+			kDebugEntryHitboxWidth,
+			math::integer_cast<gfx::ppu::CoordElem>( ( debugFontHeight + kDebugEntryPadding ) * debugText.size() ),
+		};
+		WeakPtr<ui::controller::Floater> const debugPane =
 			uiManager.AssignStrongController(
 				leftRowSlicer->GetChildContainerID( 0 ),
-				DefaultCreator<ui::controller::TextLabel>::Create() );
-		TODODebug->SetJustification( ui::Justification::TopLeft );
-		TODODebug->SetFont( ui::font::MinSize );
-		TODODebug->SetText( "DEBUG GOES HERE" );
-		TODODebug->SetColor( math::Color3f::kBlack );
+				DefaultCreator<ui::controller::Floater>::Create(
+					debugDimensions.x,
+					debugDimensions.y,
+					ui::Justification::TopLeft ) );
+		WeakPtr<ui::controller::TextRows> const debugLabels =
+			uiManager.AssignStrongController(
+				debugPane->GetChildContainerID(),
+				DefaultCreator<ui::controller::TextRows>::Create(
+					debugText.size(),
+					ui::font::MinSize,
+					ui::Justification::MiddleLeft,
+					math::Color3f::kBlack ) );
+		debugLabels->SetText( debugText );
 
 		// Build stamp floater in top right
 		rftl::vector<rftl::string> buildText;
