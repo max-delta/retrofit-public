@@ -7,6 +7,28 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
+TEST( StringFormat, FormatNibble )
+{
+	for( uint8_t i = 0x0; i <= 0x9; i++ )
+	{
+		char const ch = rftl::format_nibble( i );
+		ASSERT_EQ( ch, '0' + i );
+	}
+	for( uint8_t i = 0xA; i <= 0xF; i++ )
+	{
+		char const ch = rftl::format_nibble( i );
+		ASSERT_EQ( ch, 'A' + i - 0xA );
+	}
+	for( uint8_t i = 0x10; i < 0xFF; i++ )
+	{
+		char const ch = rftl::format_nibble( i );
+		ASSERT_EQ( ch, '#' );
+	}
+	ASSERT_EQ( rftl::format_nibble( 0xFF ), '#' );
+}
+
+
+
 TEST( StringFormat, ToString )
 {
 	rftl::array<uint8_t, 18> const data =
