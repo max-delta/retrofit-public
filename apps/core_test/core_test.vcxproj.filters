@@ -60,6 +60,7 @@
 		<ClCompile Include="thread_sequential_work_pump.cpp" />
 		<ClCompile Include="math_softfloat.cpp" />
 		<ClCompile Include="rftl_enum_traits.cpp" />
+		<ClCompile Include="rftl_string_format.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />

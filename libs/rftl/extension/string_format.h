@@ -7,14 +7,16 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-string to_string( byte_view const& view, size_t maxLen )
+// NOTE: Max bytes specifies how many bytes to read from the view, not the size
+//  of the outputted string, which will be atleast twice the size of the data
+string to_string( byte_view const& view, size_t maxBytes )
 {
 	size_t numBytes = view.size();
 	bool truncated = false;
-	if( maxLen < numBytes )
+	if( maxBytes < numBytes )
 	{
 		truncated = true;
-		numBytes = maxLen;
+		numBytes = maxBytes;
 	}
 
 	size_t const numChars = numBytes * 2 + ( truncated ? 3 : 0 );
