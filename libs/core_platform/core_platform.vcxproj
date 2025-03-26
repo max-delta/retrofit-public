@@ -38,6 +38,7 @@
 		<ClInclude Include="inc\xinput_inc.h" />
 		<ClInclude Include="IPAddressFwd.h" />
 		<ClInclude Include="MemoryRegion.h" />
+		<ClInclude Include="ProcessorInfo.h" />
 		<ClInclude Include="shim\gdi_shim.h" />
 		<ClInclude Include="shim\stdafx.h" />
 		<ClInclude Include="shim\winuser_shim.h" />
@@ -48,6 +49,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="IncomingBufferStitcher.cpp" />
+		<ClCompile Include="ProcessorInfo.cpp" />
 		<ClCompile Include="shim\gdi_shim.cpp" />
 		<ClCompile Include="shim\win_shim.cpp" />
 		<ClCompile Include="stdafx.cpp">

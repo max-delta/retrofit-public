@@ -369,4 +369,11 @@ extern "C" void __nop();
 __pragma( intrinsic( __nop ) );
 extern "C" __declspec( noreturn ) void __fastfail( unsigned int );
 __pragma( intrinsic( __fastfail ) );
+extern "C" void __cpuidex( int[4], int, int );
+__pragma( intrinsic( __cpuidex ) );
+#endif
+
+// Clang needs some intrinsics declared before they can be invoked
+#if defined( RF_PLATFORM_CLANG )
+extern "C" void __cpuidex( int[4], int, int );
 #endif
