@@ -22,6 +22,14 @@ char format_nibble( uint8_t nibble )
 
 
 
+void format_byte( char& upper, char& lower, uint8_t byte )
+{
+	upper = format_nibble( ( byte & 0xf0u ) >> 4 );
+	lower = format_nibble( byte & 0x0fu );
+}
+
+
+
 // NOTE: Max bytes specifies how many bytes to read from the view, not the size
 //  of the outputted string, which will be atleast twice the size of the data
 string to_string( byte_view const& view, size_t maxBytes )
@@ -42,8 +50,8 @@ string to_string( byte_view const& view, size_t maxBytes )
 	for( size_t i = 0; i < numBytes; i++ )
 	{
 		uint8_t const byte = view.at<uint8_t>( i );
-		char const ch1 = format_nibble( ( byte & 0xf0u ) >> 4u );
-		char const ch2 = format_nibble( byte & 0x0fu );
+		char ch1, ch2 = 0;
+		format_byte( ch1, ch2, byte );
 		retVal.push_back( ch1 );
 		retVal.push_back( ch2 );
 	}

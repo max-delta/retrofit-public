@@ -29,6 +29,33 @@ TEST( StringFormat, FormatNibble )
 
 
 
+TEST( StringFormat, FormatByte )
+{
+	char ch1, ch2 = 0;
+
+	rftl::format_byte( ch1, ch2, 0x00 );
+	ASSERT_EQ( ch1, '0' );
+	ASSERT_EQ( ch2, '0' );
+
+	rftl::format_byte( ch1, ch2, 0x12 );
+	ASSERT_EQ( ch1, '1' );
+	ASSERT_EQ( ch2, '2' );
+
+	rftl::format_byte( ch1, ch2, 0x3C );
+	ASSERT_EQ( ch1, '3' );
+	ASSERT_EQ( ch2, 'C' );
+
+	rftl::format_byte( ch1, ch2, 0xDE );
+	ASSERT_EQ( ch1, 'D' );
+	ASSERT_EQ( ch2, 'E' );
+
+	rftl::format_byte( ch1, ch2, 0xFF );
+	ASSERT_EQ( ch1, 'F' );
+	ASSERT_EQ( ch2, 'F' );
+}
+
+
+
 TEST( StringFormat, ToString )
 {
 	rftl::array<uint8_t, 18> const data =
