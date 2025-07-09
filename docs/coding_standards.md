@@ -172,6 +172,10 @@ Fifth: standard headers, in brackets
 
 This generally results in 'heavy' files up top, and 'light' files on bottom, w.r.t. the amount of dependencies they add to includer
 
+The nuance of the quotes versus brackets is to take advantage of a configuration option during compilationa and static analysis to treat angle bracket includes as 'external' code with less strict warnings
+
+Note that you may need to adjust your Intellisense settings in 'Options -> Text Editor -> C/C++ -> Intellisense -> General -> Include style for suggestions' to 'Quotes' to make includes show up properly
+
 Rationale: Maintainability
 
 ### No one-line flow-control directives
