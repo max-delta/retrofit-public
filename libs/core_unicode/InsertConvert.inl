@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "InsertConvert.h"
-#include "CharConvert.h"
+
+#include "core_unicode/CharConvert.h"
+#include "core/rf_assert.h"
 
 #include "rftl/utility"
 
@@ -16,7 +18,7 @@ void CollapseToAscii( CharT const* source, size_t numElements, InserterT& insert
 	{
 		CharT const& in = source[i];
 
-		if( in >= 0 && in <= 127 )
+		if( IsValidAscii( in ) )
 		{
 			insertIterator = static_cast<char>( in );
 		}
@@ -32,7 +34,7 @@ void CollapseToAscii( CharT const* source, size_t numElements, InserterT& insert
 
 template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT& insertIterator )
 {
-	char temp[4] = {};
+	char8_t temp[4] = {};
 	size_t const numBytes = ConvertSingleUtf32ToUtf8( codePoint, temp );
 	switch( numBytes )
 	{
@@ -55,7 +57,7 @@ template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, 
 			insertIterator = temp[3];
 			break;
 		default:
-			insertIterator = '?';
+			insertIterator = u8'?';
 			break;
 	}
 }
@@ -90,6 +92,13 @@ template<typename InserterT> void ConvertToASCII( char const* source, size_t num
 
 
 
+template<typename InserterT> void ConvertToASCII( char8_t const* source, size_t numBytes, InserterT& insertIterator )
+{
+	details::CollapseToAscii( source, numBytes, insertIterator );
+}
+
+
+
 template<typename InserterT> void ConvertToASCII( char16_t const* source, size_t numPairs, InserterT& insertIterator )
 {
 	details::CollapseToAscii( source, numPairs, insertIterator );
@@ -105,6 +114,26 @@ template<typename InserterT> void ConvertToASCII( char32_t const* source, size_t
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename InserterT> void ConvertToUtf8( char const* source, size_t numBytes, InserterT& insertIterator )
+{
+	// Same if top bit isn't set
+	for( size_t i = 0; i < numBytes; i++ )
+	{
+		char const& ch = source[i];
+		if( IsValidAscii( ch ) )
+		{
+			insertIterator = static_cast<char8_t>( source[i] );
+		}
+		else
+		{
+			insertIterator = u8'?';
+		}
+	}
+}
+
+
+
+template<typename InserterT>
+void ConvertToUtf8( char8_t const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Same
 	for( size_t i = 0; i < numBytes; i++ )
@@ -166,10 +195,33 @@ template<typename InserterT> void ConvertToUtf8( char32_t const* source, size_t 
 template<typename InserterT> void ConvertToUtf16( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Transition through UTF-32
+	for( size_t i = 0; i < numBytes; i++ )
+	{
+		if( IsValidAscii( source[i] ) == false )
+		{
+			insertIterator = u'?';
+			continue;
+		}
+		char8_t const asUtf8 = static_cast<char8_t const>( source[i] );
+
+		// Expand
+		char32_t const codePoint = ConvertSingleUtf8ToUtf32( &asUtf8, 1 );
+
+		// Shrink
+		ConvertSingleUtf32ToUtf16( codePoint, insertIterator );
+	}
+}
+
+
+
+template<typename InserterT>
+void ConvertToUtf16( char8_t const* source, size_t numBytes, InserterT& insertIterator )
+{
+	// Transition through UTF-32
 	size_t i = 0;
 	while( i < numBytes )
 	{
-		char const* const buffer = &( source[i] );
+		char8_t const* const buffer = &( source[i] );
 		size_t const remainingBytes = numBytes - i;
 		size_t const neededBytes = NumBytesExpectedInUtf8( *buffer );
 
@@ -225,10 +277,30 @@ template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t
 template<typename InserterT> void ConvertToUtf32( char const* source, size_t numBytes, InserterT& insertIterator )
 {
 	// Expand
+	for( size_t i = 0; i < numBytes; i++ )
+	{
+		if( IsValidAscii( source[i] ) == false )
+		{
+			insertIterator = U'?';
+			continue;
+		}
+		char8_t const asUtf8 = static_cast<char8_t const>( source[i] );
+
+		char32_t const codePoint = ConvertSingleUtf8ToUtf32( &asUtf8, 1 );
+		insertIterator = codePoint;
+	}
+}
+
+
+
+template<typename InserterT>
+void ConvertToUtf32( char8_t const* source, size_t numBytes, InserterT& insertIterator )
+{
+	// Expand
 	size_t i = 0;
 	while( i < numBytes )
 	{
-		char const* const buffer = &( source[i] );
+		char8_t const* const buffer = &( source[i] );
 		size_t const remainingBytes = numBytes - i;
 		size_t const neededBytes = NumBytesExpectedInUtf8( *buffer );
 
@@ -323,6 +395,15 @@ template<typename InserterT> void ConvertToASCII( char const* source, size_t num
 
 
 
+template<typename InserterT>
+void ConvertToASCII( char8_t const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToASCII( source, numBytes, discard );
+}
+
+
+
 template<typename InserterT> void ConvertToASCII( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
 {
 	InserterT discard = rftl::move( insertIterator );
@@ -340,6 +421,15 @@ template<typename InserterT> void ConvertToASCII( char32_t const* source, size_t
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename InserterT> void ConvertToUtf8( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf8( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT>
+void ConvertToUtf8( char8_t const* source, size_t numBytes, InserterT&& insertIterator )
 {
 	InserterT discard = rftl::move( insertIterator );
 	ConvertToUtf8( source, numBytes, discard );
@@ -371,6 +461,15 @@ template<typename InserterT> void ConvertToUtf16( char const* source, size_t num
 
 
 
+template<typename InserterT>
+void ConvertToUtf16( char8_t const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf16( source, numBytes, discard );
+}
+
+
+
 template<typename InserterT> void ConvertToUtf16( char16_t const* source, size_t numPairs, InserterT&& insertIterator )
 {
 	InserterT discard = rftl::move( insertIterator );
@@ -388,6 +487,15 @@ template<typename InserterT> void ConvertToUtf16( char32_t const* source, size_t
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename InserterT> void ConvertToUtf32( char const* source, size_t numBytes, InserterT&& insertIterator )
+{
+	InserterT discard = rftl::move( insertIterator );
+	ConvertToUtf32( source, numBytes, discard );
+}
+
+
+
+template<typename InserterT>
+void ConvertToUtf32( char8_t const* source, size_t numBytes, InserterT&& insertIterator )
 {
 	InserterT discard = rftl::move( insertIterator );
 	ConvertToUtf32( source, numBytes, discard );

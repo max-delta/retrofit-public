@@ -3,8 +3,10 @@
 
 #include "Logging/Logging.h"
 
-#include "core/macros.h"
 #include "core_math/math_casts.h"
+#include "core_unicode/StringConvert.h"
+
+#include "core/macros.h"
 
 #include "squirrel3/include/squirrel.h"
 
@@ -633,14 +635,14 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 template<>
 void RF::logging::WriteContextString( RF::script::SquirrelVM::NestedTraversalPath const& context, Utf8LogContextBuffer& buffer )
 {
-	rftl::string out;
+	rftl::u8string out;
 	for( RF::script::SquirrelVM::NestedTraversalNode const& node : context )
 	{
 		if( out.empty() == false )
 		{
-			out += "::";
+			out += u8"::";
 		}
-		out += node.mIdentifier;
+		out += unicode::ConvertToUtf8( node.mIdentifier );
 	}
 	rftl::string_copy( buffer, out );
 }

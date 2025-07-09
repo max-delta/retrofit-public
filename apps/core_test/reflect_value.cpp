@@ -37,6 +37,7 @@ TEST( Reflect, ValueBasics )
 	Value const vVirtualClassConstPtr( static_cast<VirtualClass const*>( nullptr ) );
 	Value const vChar( static_cast<char>( '\0' ) );
 	Value const vWChar( static_cast<wchar_t>( L'\0' ) );
+	Value const vChar8( static_cast<char8_t>( u8'\0' ) );
 	Value const vChar16( static_cast<char16_t>( u'\0' ) );
 	Value const vChar32( static_cast<char32_t>( U'\0' ) );
 	Value const vFloat( static_cast<float>( 0.f ) );
@@ -58,6 +59,7 @@ TEST( Reflect, ValueBasics )
 	static_assert( Value::DetermineType<VirtualClass const*>() == Value::Type::VirtualClassConstPtr );
 	static_assert( Value::DetermineType<char>() == Value::Type::Char );
 	static_assert( Value::DetermineType<wchar_t>() == Value::Type::WChar );
+	static_assert( Value::DetermineType<char8_t>() == Value::Type::Char8 );
 	static_assert( Value::DetermineType<char16_t>() == Value::Type::Char16 );
 	static_assert( Value::DetermineType<char32_t>() == Value::Type::Char32 );
 	static_assert( Value::DetermineType<float>() == Value::Type::Float );
@@ -79,6 +81,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetStoredType() == Value::Type::VirtualClassConstPtr );
 	ASSERT_TRUE( vChar.GetStoredType() == Value::Type::Char );
 	ASSERT_TRUE( vWChar.GetStoredType() == Value::Type::WChar );
+	ASSERT_TRUE( vChar8.GetStoredType() == Value::Type::Char8 );
 	ASSERT_TRUE( vChar16.GetStoredType() == Value::Type::Char16 );
 	ASSERT_TRUE( vChar32.GetStoredType() == Value::Type::Char32 );
 	ASSERT_TRUE( vFloat.GetStoredType() == Value::Type::Float );
@@ -100,6 +103,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() != nullptr );
 	ASSERT_TRUE( vChar.GetAs<char>() != nullptr );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t>() != nullptr );
+	ASSERT_TRUE( vChar8.GetAs<char8_t>() != nullptr );
 	ASSERT_TRUE( vChar16.GetAs<char16_t>() != nullptr );
 	ASSERT_TRUE( vChar32.GetAs<char32_t>() != nullptr );
 	ASSERT_TRUE( vFloat.GetAs<float>() != nullptr );
@@ -121,6 +125,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const* const>() != nullptr );
 	ASSERT_TRUE( vChar.GetAs<char const>() != nullptr );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t const>() != nullptr );
+	ASSERT_TRUE( vChar8.GetAs<char8_t const>() != nullptr );
 	ASSERT_TRUE( vChar16.GetAs<char16_t const>() != nullptr );
 	ASSERT_TRUE( vChar32.GetAs<char32_t const>() != nullptr );
 	ASSERT_TRUE( vFloat.GetAs<float const>() != nullptr );
@@ -142,6 +147,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetBytes().data() );
 	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetBytes().data() );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetBytes().data() );
+	ASSERT_TRUE( vChar8.GetAs<char8_t>() == vChar8.GetBytes().data() );
 	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetBytes().data() );
 	ASSERT_TRUE( vChar32.GetAs<char32_t>() == vChar32.GetBytes().data() );
 	ASSERT_TRUE( vFloat.GetAs<float>() == vFloat.GetBytes().data() );
@@ -163,6 +169,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetAs<VirtualClass const*>() == vVirtualClassConstPtr.GetRawBytes() );
 	ASSERT_TRUE( vChar.GetAs<char>() == vChar.GetRawBytes() );
 	ASSERT_TRUE( vWChar.GetAs<wchar_t>() == vWChar.GetRawBytes() );
+	ASSERT_TRUE( vChar8.GetAs<char8_t>() == vChar8.GetRawBytes() );
 	ASSERT_TRUE( vChar16.GetAs<char16_t>() == vChar16.GetRawBytes() );
 	ASSERT_TRUE( vChar32.GetAs<char32_t>() == vChar32.GetRawBytes() );
 	ASSERT_TRUE( vFloat.GetAs<float>() == vFloat.GetRawBytes() );
@@ -184,6 +191,7 @@ TEST( Reflect, ValueBasics )
 	ASSERT_TRUE( vVirtualClassConstPtr.GetNumBytes() == sizeof( VirtualClass const* ) );
 	ASSERT_TRUE( vChar.GetNumBytes() == sizeof( char ) );
 	ASSERT_TRUE( vWChar.GetNumBytes() == sizeof( wchar_t ) );
+	ASSERT_TRUE( vChar8.GetNumBytes() == sizeof( char8_t ) );
 	ASSERT_TRUE( vChar16.GetNumBytes() == sizeof( char16_t ) );
 	ASSERT_TRUE( vChar32.GetNumBytes() == sizeof( char32_t ) );
 	ASSERT_TRUE( vFloat.GetNumBytes() == sizeof( float ) );
@@ -256,6 +264,7 @@ TEST( Reflect, ValueConstructFromBytes )
 	VirtualClass const* const VirtualClassConstPtr{ nullptr };
 	char const Char{ '\0' };
 	wchar_t const WChar{ L'\0' };
+	char8_t const Char8{ u8'\0' };
 	char16_t const Char16{ u'\0' };
 	char32_t const Char32{ U'\0' };
 	float const Float{ 0.f };
@@ -277,6 +286,7 @@ TEST( Reflect, ValueConstructFromBytes )
 	Value const vVirtualClassConstPtr( Value::Type::VirtualClassConstPtr, &VirtualClassConstPtr );
 	Value const vChar( Value::Type::Char, &Char );
 	Value const vWChar( Value::Type::WChar, &WChar );
+	Value const vChar8( Value::Type::Char8, &Char8 );
 	Value const vChar16( Value::Type::Char16, &Char16 );
 	Value const vChar32( Value::Type::Char32, &Char32 );
 	Value const vFloat( Value::Type::Float, &Float );
@@ -298,6 +308,7 @@ TEST( Reflect, ValueConstructFromBytes )
 	ASSERT_TRUE( *vVirtualClassConstPtr.GetAs<VirtualClass const*>() == VirtualClassConstPtr );
 	ASSERT_TRUE( *vChar.GetAs<char>() == Char );
 	ASSERT_TRUE( *vWChar.GetAs<wchar_t>() == WChar );
+	ASSERT_TRUE( *vChar8.GetAs<char8_t>() == Char8 );
 	ASSERT_TRUE( *vChar16.GetAs<char16_t>() == Char16 );
 	ASSERT_TRUE( *vChar32.GetAs<char32_t>() == Char32 );
 	ASSERT_TRUE( math::UncheckedEquals( *vFloat.GetAs<float>(), Float ) );
@@ -326,6 +337,7 @@ TEST( Reflect, StandardValueConvert )
 	// Chars can cast around
 	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char>().GetAs<char>(), 'a' );
 	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'a' );
 	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
 	ASSERT_CHAR( *Value( static_cast<char>( 'a' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'a' );
 
@@ -354,21 +366,25 @@ TEST( Reflect, WhitespaceConvert )
 
 	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char>().GetAs<char>(), ' ' );
 	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L' ' );
+	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8' ' );
 	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u' ' );
 	ASSERT_CHAR( *Value( static_cast<char>( ' ' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U' ' );
 
 	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char>().GetAs<char>(), '\t' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\t' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'\t' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\t' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\t' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\t' );
 
 	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char>().GetAs<char>(), '\r' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\r' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'\r' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\r' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\r' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\r' );
 
 	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char>().GetAs<char>(), '\n' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'\n' );
+	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'\n' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'\n' );
 	ASSERT_CHAR( *Value( static_cast<char>( '\n' ) ).ConvertTo<char32_t>().GetAs<char32_t>(), U'\n' );
 }
@@ -387,6 +403,10 @@ TEST( Reflect, SketchyValueConvert )
 	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
 	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
 	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<wchar_t>().GetAs<wchar_t>(), L'a' );
+	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'a' );
+	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'a' );
+	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'a' );
+	ASSERT_CHAR( *Value( static_cast<uint64_t>( 'a' ) ).ConvertTo<char8_t>().GetAs<char8_t>(), u8'a' );
 	ASSERT_CHAR( *Value( static_cast<uint8_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
 	ASSERT_CHAR( *Value( static_cast<uint16_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );
 	ASSERT_CHAR( *Value( static_cast<uint32_t>( 'a' ) ).ConvertTo<char16_t>().GetAs<char16_t>(), u'a' );

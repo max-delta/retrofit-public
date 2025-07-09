@@ -147,6 +147,7 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 	RF_TEST_S( reflect::Value::Type::VirtualClassConstPtr, reflect::VirtualClass const*, nullptr );
 	RF_TEST_I( reflect::Value::Type::Char, int8_t, char );
 	RF_TEST_I( reflect::Value::Type::WChar, uint16_t, wchar_t );
+	RF_TEST_I( reflect::Value::Type::Char8, uint8_t, char8_t );
 	RF_TEST_I( reflect::Value::Type::Char16, uint16_t, char16_t );
 	RF_TEST_I( reflect::Value::Type::Char32, uint32_t, char32_t );
 	RF_TEST( reflect::Value::Type::Float, float );

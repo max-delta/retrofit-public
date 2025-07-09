@@ -63,6 +63,13 @@ rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( 
 
 
 
+rftl::deque<rftl::deque<rftl::basic_string<char8_t>>> CsvReader::TokenizeToDeques( rftl::u8string_view const& buffer )
+{
+	return TokenizeToDeques( buffer, kDefaultSeparator );
+}
+
+
+
 rftl::deque<rftl::deque<rftl::basic_string<char16_t>>> CsvReader::TokenizeToDeques( rftl::u16string_view const& buffer )
 {
 	return TokenizeToDeques( buffer, kDefaultSeparator );
@@ -78,6 +85,13 @@ rftl::deque<rftl::deque<rftl::basic_string<char32_t>>> CsvReader::TokenizeToDequ
 
 
 rftl::deque<rftl::deque<rftl::basic_string<char>>> CsvReader::TokenizeToDeques( rftl::string_view const& buffer, char separator )
+{
+	return details::TokenizeToDeques( buffer, separator );
+}
+
+
+
+rftl::deque<rftl::deque<rftl::basic_string<char8_t>>> CsvReader::TokenizeToDeques( rftl::u8string_view const& buffer, char8_t separator )
 {
 	return details::TokenizeToDeques( buffer, separator );
 }

@@ -165,6 +165,7 @@ bool operator!=( static_basic_string<Element, LHSCapacity> const& lhs, static_ba
 
 template<size_t ElementCapacity> using static_string = static_basic_string<char, ElementCapacity>;
 template<size_t ElementCapacity> using static_wstring = static_basic_string<wchar_t, ElementCapacity>;
+template<size_t ElementCapacity> using static_u8string = static_basic_string<char8_t, ElementCapacity>;
 template<size_t ElementCapacity> using static_u16string = static_basic_string<char16_t, ElementCapacity>;
 template<size_t ElementCapacity> using static_u32string = static_basic_string<char32_t, ElementCapacity>;
 

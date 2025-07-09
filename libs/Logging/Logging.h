@@ -22,6 +22,12 @@
 //  is incorrect but difficult to find
 #define RF_STATIC_ASSERT_ON_UNDECLARED_CONTEXT_SPECIALIZATIONS
 
+// Rather than require all the string literals to have a 'u8' prefix, allow
+//  normal string literals to be reinterpreted as UTF-8, then though it's a bit
+//  dubious, since the practicality outweighs the correctness
+#define RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
+#define RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
+
 // Forwards
 namespace RF::logging {
 class LoggingRouter;
@@ -134,7 +140,7 @@ namespace details {
 // When specializing contexts, there is a limit to how large you can make the
 //  string representation
 static constexpr size_t kMaxContextLen = 512;
-using Utf8LogContextBuffer = rftl::array<char, kMaxContextLen / sizeof( char )>;
+using Utf8LogContextBuffer = rftl::array<char8_t, kMaxContextLen / sizeof( char8_t )>;
 using Utf16LogContextBuffer = rftl::array<char16_t, kMaxContextLen / sizeof( char16_t )>;
 using Utf32LogContextBuffer = rftl::array<char32_t, kMaxContextLen / sizeof( char32_t )>;
 
@@ -185,20 +191,32 @@ void WriteContextString( Context const& context, Utf8LogContextBuffer& buffer )
 //////////////////////////////////////////////////////////////////////////////
 
 // Some stock generic contexts
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void LOGGING_API WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer );
+#endif
+template<>
+void LOGGING_API WriteContextString( char8_t const* const& context, Utf8LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( char16_t const* const& context, Utf16LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& buffer );
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void LOGGING_API WriteContextString( rftl::basic_string_view<char> const& context, Utf8LogContextBuffer& buffer );
+#endif
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string_view<char8_t> const& context, Utf8LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( rftl::basic_string_view<char16_t> const& context, Utf8LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( rftl::basic_string_view<char32_t> const& context, Utf8LogContextBuffer& buffer );
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void LOGGING_API WriteContextString( rftl::basic_string<char> const& context, Utf8LogContextBuffer& buffer );
+#endif
+template<>
+void LOGGING_API WriteContextString( rftl::basic_string<char8_t> const& context, Utf8LogContextBuffer& buffer );
 template<>
 void LOGGING_API WriteContextString( rftl::basic_string<char16_t> const& context, Utf8LogContextBuffer& buffer );
 template<>
@@ -213,6 +231,7 @@ LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 //////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 template<typename Context>
 void Log(
 	Context const& context,
@@ -221,6 +240,15 @@ void Log(
 	char const* filename,
 	size_t lineNumber,
 	char const* format, ... );
+#endif
+template<typename Context>
+void Log(
+	Context const& context,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char8_t const* format, ... );
 template<typename Context>
 void Log(
 	Context const& context,
@@ -237,6 +265,7 @@ void Log(
 	char const* filename,
 	size_t lineNumber,
 	char32_t const* format, ... );
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 LOGGING_API void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
@@ -244,6 +273,14 @@ LOGGING_API void Log(
 	char const* filename,
 	size_t lineNumber,
 	char const* format, ... );
+#endif
+LOGGING_API void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char8_t const* format, ... );
 LOGGING_API void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
@@ -259,12 +296,12 @@ LOGGING_API void Log(
 	size_t lineNumber,
 	char32_t const* format, ... );
 LOGGING_API void LogVA(
-	char const* context,
+	char8_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format,
+	char8_t const* format,
 	va_list args );
 LOGGING_API void LogVA(
 	char16_t const* context,

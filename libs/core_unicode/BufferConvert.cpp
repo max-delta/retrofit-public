@@ -82,10 +82,10 @@ size_t ConvertToASCII( char* dest, size_t destLen, SourceT const* source, size_t
 }
 
 template<typename SourceT>
-size_t ConvertToUtf8( char* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, SourceT const* source, size_t numElements )
 {
-	ConvertToInsertSig<char, SourceT>* const call = unicode::ConvertToUtf8;
-	return ConvertTo<char>( call, dest, destLen, source, numElements );
+	ConvertToInsertSig<char8_t, SourceT>* const call = unicode::ConvertToUtf8;
+	return ConvertTo<char8_t>( call, dest, destLen, source, numElements );
 }
 
 template<typename SourceT>
@@ -110,6 +110,11 @@ size_t ConvertToASCII( char* dest, size_t destLen, char const* source, size_t nu
 	return details::ConvertToASCII( dest, destLen, source, numBytes );
 }
 
+size_t ConvertToASCII( char* dest, size_t destLen, char8_t const* source, size_t numPairs )
+{
+	return details::ConvertToASCII( dest, destLen, source, numPairs );
+}
+
 size_t ConvertToASCII( char* dest, size_t destLen, char16_t const* source, size_t numPairs )
 {
 	return details::ConvertToASCII( dest, destLen, source, numPairs );
@@ -122,17 +127,22 @@ size_t ConvertToASCII( char* dest, size_t destLen, char32_t const* source, size_
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf8( char* dest, size_t destLen, char const* source, size_t numBytes )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	return details::ConvertToUtf8( dest, destLen, source, numBytes );
 }
 
-size_t ConvertToUtf8( char* dest, size_t destLen, char16_t const* source, size_t numPairs )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
 {
 	return details::ConvertToUtf8( dest, destLen, source, numPairs );
 }
 
-size_t ConvertToUtf8( char* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
+{
+	return details::ConvertToUtf8( dest, destLen, source, numPairs );
+}
+
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
 {
 	return details::ConvertToUtf8( dest, destLen, source, numCodePoints );
 }
@@ -142,6 +152,11 @@ size_t ConvertToUtf8( char* dest, size_t destLen, char32_t const* source, size_t
 size_t ConvertToUtf16( char16_t* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	return details::ConvertToUtf16( dest, destLen, source, numBytes );
+}
+
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
+{
+	return details::ConvertToUtf16( dest, destLen, source, numPairs );
 }
 
 size_t ConvertToUtf16( char16_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
@@ -159,6 +174,11 @@ size_t ConvertToUtf16( char16_t* dest, size_t destLen, char32_t const* source, s
 size_t ConvertToUtf32( char32_t* dest, size_t destLen, char const* source, size_t numBytes )
 {
 	return details::ConvertToUtf32( dest, destLen, source, numBytes );
+}
+
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
+{
+	return details::ConvertToUtf32( dest, destLen, source, numPairs );
 }
 
 size_t ConvertToUtf32( char32_t* dest, size_t destLen, char16_t const* source, size_t numPairs )

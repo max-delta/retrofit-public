@@ -54,7 +54,7 @@ SessionMembers SessionManager::GetSessionMembers() const
 
 
 
-bool SessionManager::QueueOutgoingChatMessage( std::string&& text )
+bool SessionManager::QueueOutgoingChatMessage( rftl::u8string&& text )
 {
 	RF_ASSERT( text.empty() == false );
 

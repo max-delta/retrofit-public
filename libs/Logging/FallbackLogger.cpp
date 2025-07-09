@@ -16,12 +16,14 @@ static rftl::atomic<HandlerID> sFallbackHandlerID = kInvalidHandlerID;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void FallbackLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
+void FallbackLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, va_list args )
 {
-	constexpr size_t kBufSize = 512;
+	// C APIs won't take Unicode, hope that ASCII is good enough
+	char const* const legacyFormatString = reinterpret_cast<char const*>( event.mTransientMessageFormatString );
 
+	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
+	vsnprintf( &messageBuffer[0], kBufSize, legacyFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
 	rftl::array<char, kBufSize> outputBuffer;

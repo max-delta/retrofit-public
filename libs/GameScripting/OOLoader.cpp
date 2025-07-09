@@ -6,6 +6,7 @@
 #include "core_rftype/ConstructedType.h"
 #include "core_rftype/TypeTraverser.h"
 #include "core_rftype/VirtualCast.h"
+#include "core_unicode/StringConvert.h"
 
 #include "core/meta/ScopedCleanup.h"
 #include "core/ptr/default_creator.h"
@@ -17,7 +18,7 @@
 template<>
 void RF::logging::WriteContextString( rftype::TypeTraverser::MemberVariableInstance const& context, Utf8LogContextBuffer& buffer )
 {
-	rftl::string_copy( buffer, rftl::string_view( context.mMemberVariableInfo.mIdentifier ) );
+	rftl::string_copy( buffer, RF::unicode::ConvertToUtf8( rftl::string_view( context.mMemberVariableInfo.mIdentifier ) ) );
 }
 
 namespace RF::script {

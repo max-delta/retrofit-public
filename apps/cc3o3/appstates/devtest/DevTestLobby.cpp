@@ -253,7 +253,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	}
 	else if( selected[kSendText] )
 	{
-		rftl::string text = unicode::ConvertToUtf8( InputHelpers::GetMainMenuUnicodeTextBuffer( 32 ) );
+		rftl::u8string text = unicode::ConvertToUtf8( InputHelpers::GetMainMenuUnicodeTextBuffer( 32 ) );
 		if( sync::gSessionManager != nullptr )
 		{
 			sync::gSessionManager->QueueOutgoingChatMessage( rftl::move( text ) );

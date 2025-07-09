@@ -4,18 +4,22 @@
 #include "PlatformUtils_win32/Console.h"
 #include "Logging/Logging.h"
 
+#include "core_unicode/StringConvert.h"
+
 #include "rftl/limits"
 
 
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event, va_list args )
+void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, va_list args )
 {
-	constexpr size_t kBufSize = 512;
+	// C APIs won't take Unicode, hope that ASCII is good enough
+	char const* const legacyFormatString = reinterpret_cast<char const*>( event.mTransientMessageFormatString );
 
+	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
+	vsnprintf( &messageBuffer[0], kBufSize, legacyFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
 	char const* severity;
@@ -60,7 +64,8 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char> const& event
 	}
 	else
 	{
-		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
+		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
+		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
 	}
 	*outputBuffer.rbegin() = '\0';
 

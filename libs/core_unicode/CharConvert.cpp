@@ -1,13 +1,42 @@
 #include "stdafx.h"
 #include "CharConvert.h"
 
+#include "rftl/type_traits"
+
 #include "core/macros.h"
 
 
 namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t NumBytesExpectedInUtf8( char firstByte )
+bool IsValidAscii( char ch )
+{
+	// Top bit can't be set, that would make it 'extended ASCII', which is not
+	//  compatible with unicode conversions
+	return ( ch & 0x80 ) == 0;
+}
+
+bool IsValidAscii( char8_t ch )
+{
+	// Same as 'char' check
+	return ( ch & 0x80 ) == 0;
+}
+
+bool IsValidAscii( char16_t ch )
+{
+	static_assert( rftl::is_unsigned<decltype( ch )>::value );
+	return ch <= 127;
+}
+
+bool IsValidAscii( char32_t ch )
+{
+	static_assert( rftl::is_unsigned<decltype( ch )>::value );
+	return ch <= 127;
+}
+
+
+
+size_t NumBytesExpectedInUtf8( char8_t firstByte )
 {
 	if( ( firstByte & 0x80 ) == 0 )
 	{
@@ -59,7 +88,7 @@ size_t NumPairsExpectedInUtf8( char16_t firstPair )
 
 
 
-char32_t ConvertSingleUtf8ToUtf32( char const* buffer, size_t numBytes )
+char32_t ConvertSingleUtf8ToUtf32( char8_t const* buffer, size_t numBytes )
 {
 	switch( numBytes )
 	{
@@ -140,12 +169,12 @@ char32_t ConvertSingleUtf16ToUtf32( char16_t const* buffer, size_t numPairs )
 
 
 
-size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char ( &destination )[4] )
+size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char8_t ( &destination )[4] )
 {
 	if( codePoint <= 0x7f )
 	{
 		// 0xxxxxxx
-		destination[0] = static_cast<char>( codePoint );
+		destination[0] = static_cast<char8_t>( codePoint );
 		destination[1] = 0;
 		destination[2] = 0;
 		destination[3] = 0;
@@ -154,8 +183,8 @@ size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char ( &destination )[4] )
 	else if( codePoint <= 0x07ff )
 	{
 		// 110xxxxx 10xxxxxx
-		destination[0] = static_cast<char>( 0xc0 | ( codePoint >> 6 ) );
-		destination[1] = static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
+		destination[0] = static_cast<char8_t>( 0xc0 | ( codePoint >> 6 ) );
+		destination[1] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
 		destination[2] = 0;
 		destination[3] = 0;
 		return 2;
@@ -163,19 +192,19 @@ size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char ( &destination )[4] )
 	else if( codePoint <= 0xffff )
 	{
 		// 1110xxxx 10xxxxxx 10xxxxxx
-		destination[0] = static_cast<char>( 0xe0 | ( codePoint >> 12 ) );
-		destination[1] = static_cast<char>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) );
-		destination[2] = static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
+		destination[0] = static_cast<char8_t>( 0xe0 | ( codePoint >> 12 ) );
+		destination[1] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) );
+		destination[2] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
 		destination[3] = 0;
 		return 3;
 	}
 	else if( codePoint <= 0x10ffff )
 	{
 		// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
-		destination[0] = static_cast<char>( 0xf0 | ( codePoint >> 18 ) );
-		destination[1] = static_cast<char>( 0x80 | ( ( codePoint >> 12 ) & 0x3f ) );
-		destination[2] = static_cast<char>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) );
-		destination[3] = static_cast<char>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
+		destination[0] = static_cast<char8_t>( 0xf0 | ( codePoint >> 18 ) );
+		destination[1] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 12 ) & 0x3f ) );
+		destination[2] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 6 ) & 0x3f ) );
+		destination[3] = static_cast<char8_t>( 0x80 | ( ( codePoint >> 0 ) & 0x3f ) );
 		return 4;
 	}
 	else

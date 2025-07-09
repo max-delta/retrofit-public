@@ -71,6 +71,7 @@ private:
 
 using immutable_string = immutable_basic_string<char>;
 using immutable_wstring = immutable_basic_string<wchar_t>;
+using immutable_u8string = immutable_basic_string<char8_t>;
 using immutable_u16string = immutable_basic_string<char16_t>;
 using immutable_u32string = immutable_basic_string<char32_t>;
 

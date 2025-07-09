@@ -104,6 +104,7 @@ struct SQReflectTestClass
 	RF::reflect::VirtualClass* mClassPtr;
 	char mChar;
 	wchar_t mWChar;
+	char8_t mChar8;
 	char16_t mChar16;
 	char32_t mChar32;
 	float mFloat;
@@ -157,6 +158,7 @@ RFTYPE_CREATE_META( SQReflectTestClass )
 	RFTYPE_META().RawProperty( "mClassPtr", &SQReflectTestClass::mClassPtr );
 	RFTYPE_META().RawProperty( "mChar", &SQReflectTestClass::mChar );
 	RFTYPE_META().RawProperty( "mWChar", &SQReflectTestClass::mWChar );
+	RFTYPE_META().RawProperty( "mChar8", &SQReflectTestClass::mChar8 );
 	RFTYPE_META().RawProperty( "mChar16", &SQReflectTestClass::mChar16 );
 	RFTYPE_META().RawProperty( "mChar32", &SQReflectTestClass::mChar32 );
 	RFTYPE_META().RawProperty( "mFloat", &SQReflectTestClass::mFloat );
@@ -921,6 +923,7 @@ void SQReflectTest()
 			"x.mClassPtr = null;\n"
 			"x.mChar = 'a';\n"
 			"x.mWChar = 'a';\n"
+			"x.mChar8 = 'a';\n"
 			"x.mChar16 = 'a';\n"
 			"x.mChar32 = 'a';\n"
 			"x.mFloat = 0.5;\n"
@@ -970,6 +973,7 @@ void SQReflectTest()
 		RF_ASSERT( instance.mClassPtr == nullptr );
 		RF_ASSERT( instance.mChar == 'a' );
 		RF_ASSERT( instance.mWChar == L'a' );
+		RF_ASSERT( instance.mChar8 == u8'a' );
 		RF_ASSERT( instance.mChar16 == u'a' );
 		RF_ASSERT( instance.mChar32 == U'a' );
 		RF_ASSERT( instance.mFloat == 0.5f );

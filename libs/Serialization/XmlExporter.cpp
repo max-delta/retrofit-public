@@ -403,6 +403,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 		RF_CASE_UNSUPPORTED( reflect::Value::Type::VirtualClassConstPtr, "<PTR>" );
 		RF_CASE( reflect::Value::Type::Char, *value.GetAs<char>() );
 		RF_CASE( reflect::Value::Type::WChar, *value.GetAs<wchar_t>() );
+		RF_CASE( reflect::Value::Type::Char8, *value.GetAs<char8_t>() );
 		RF_CASE( reflect::Value::Type::Char16, *value.GetAs<char16_t>() );
 		RF_CASE( reflect::Value::Type::Char32, *value.GetAs<char32_t>() );
 		RF_CASE( reflect::Value::Type::Float, *value.GetAs<float>() );

@@ -92,6 +92,11 @@ template<> wchar_t ConvertSSToTemp<wchar_t>( rftl::stringstream&& ss )
 	// HACK: Treat as char
 	return static_cast<wchar_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
 }
+template<> char8_t ConvertSSToTemp<char8_t>( rftl::stringstream&& ss )
+{
+	// HACK: Treat as char
+	return static_cast<char8_t>( ConvertSSToTemp<char>( rftl::move( ss ) ) );
+}
 template<> char16_t ConvertSSToTemp<char16_t>( rftl::stringstream&& ss )
 {
 	// HACK: Treat as char
@@ -187,6 +192,9 @@ Value::Value( Type type )
 		case Type::WChar:
 			mInternalStorage = static_cast<wchar_t>( 0 );
 			break;
+		case Type::Char8:
+			mInternalStorage = static_cast<char8_t>( 0 );
+			break;
 		case Type::Char16:
 			mInternalStorage = static_cast<char16_t>( 0 );
 			break;
@@ -265,6 +273,9 @@ Value::Value( Type type, void const* bytes )
 			break;
 		case Type::WChar:
 			mInternalStorage = *reinterpret_cast<wchar_t const*>( bytes );
+			break;
+		case Type::Char8:
+			mInternalStorage = *reinterpret_cast<char8_t const*>( bytes );
 			break;
 		case Type::Char16:
 			mInternalStorage = *reinterpret_cast<char16_t const*>( bytes );
@@ -395,6 +406,8 @@ void const* Value::GetRawBytes() const
 			return reinterpret_cast<void const*>( GetAs<char>() );
 		case Type::WChar:
 			return reinterpret_cast<void const*>( GetAs<wchar_t>() );
+		case Type::Char8:
+			return reinterpret_cast<void const*>( GetAs<char8_t>() );
 		case Type::Char16:
 			return reinterpret_cast<void const*>( GetAs<char16_t>() );
 		case Type::Char32:
@@ -460,6 +473,8 @@ size_t Value::GetNumBytesNeeded( Type type )
 			return sizeof( char );
 		case Type::WChar:
 			return sizeof( wchar_t );
+		case Type::Char8:
+			return sizeof( char8_t );
 		case Type::Char16:
 			return sizeof( char16_t );
 		case Type::Char32:
@@ -524,7 +539,8 @@ Value Value::ConvertTo( Type target ) const
 		Q( I, 16 ), \
 		Q( I, 17 ), \
 		Q( I, 18 ), \
-		Q( I, 19 )
+		Q( I, 19 ), \
+		Q( I, 20 )
 	static constexpr convertFunc convertTable[ValueTypes::kNumTypes][ValueTypes::kNumTypes] =
 		{
 			{ QL( 0 ) },
@@ -546,7 +562,8 @@ Value Value::ConvertTo( Type target ) const
 			{ QL( 16 ) },
 			{ QL( 17 ) },
 			{ QL( 18 ) },
-			{ QL( 19 ) } };
+			{ QL( 19 ) },
+			{ QL( 20 ) } };
 #undef QL
 #undef Q
 

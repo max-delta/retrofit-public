@@ -35,6 +35,10 @@ struct is_char<wchar_t> : public rftl::true_type
 {
 };
 template<>
+struct is_char<char8_t> : public rftl::true_type
+{
+};
+template<>
 struct is_char<char16_t> : public rftl::true_type
 {
 };
@@ -94,6 +98,10 @@ struct is_char_array<wchar_t[Len], wchar_t[Len]> : public rftl::true_type
 {
 };
 template<size_t Len>
+struct is_char_array<char8_t[Len], char8_t[Len]> : public rftl::true_type
+{
+};
+template<size_t Len>
 struct is_char_array<char16_t[Len], char16_t[Len]> : public rftl::true_type
 {
 };
@@ -139,6 +147,10 @@ struct is_sized_char_array<char[Len], char[Len]> : public rftl::true_type
 };
 template<size_t Len>
 struct is_sized_char_array<wchar_t[Len], wchar_t[Len]> : public rftl::true_type
+{
+};
+template<size_t Len>
+struct is_sized_char_array<char8_t[Len], char8_t[Len]> : public rftl::true_type
 {
 };
 template<size_t Len>

@@ -24,7 +24,7 @@ namespace RF::reflect {
 	bool, \
 		void*, void const*, \
 		::RF::reflect::VirtualClass*, ::RF::reflect::VirtualClass const*, \
-		char, wchar_t, char16_t, char32_t, \
+		char, wchar_t, char8_t, char16_t, char32_t, \
 		float, double, long double, \
 		uint8_t, int8_t, \
 		uint16_t, int16_t, \
@@ -35,7 +35,7 @@ namespace RF::reflect {
 	Bool, \
 		VoidPtr, VoidConstPtr, \
 		VirtualClassPtr, VirtualClassConstPtr, \
-		Char, WChar, Char16, Char32, \
+		Char, WChar, Char8, Char16, Char32, \
 		Float, Double, LongDouble, \
 		UInt8, Int8, \
 		UInt16, Int16, \
@@ -46,7 +46,7 @@ namespace RF::reflect {
 	"Bool", \
 		"VoidPtr", "VoidConstPtr", \
 		"VirtualClassPtr", "VirtualClassConstPtr", \
-		"Char", "WChar", "Char16", "Char32", \
+		"Char", "WChar", "Char8", "Char16", "Char32", \
 		"Float", "Double", "LongDouble", \
 		"UInt8", "Int8", \
 		"UInt16", "Int16", \
@@ -77,7 +77,7 @@ public:
 	// Types
 public:
 	using ValueTypes = TypeList<RF_REFLECT_VALUE_TYPELIST>;
-	using CharacterTypes = TypeList<char, wchar_t, char16_t, char32_t>;
+	using CharacterTypes = TypeList<char, wchar_t, char8_t, char16_t, char32_t>;
 	using IntegralTypes = TypeList<uint8_t, uint16_t, uint32_t, uint64_t, int8_t, int16_t, int32_t, int64_t>;
 
 	// Someone on the C++ standards committee fucked up! You can't make an

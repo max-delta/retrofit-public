@@ -82,8 +82,7 @@ public:
 	{
 		ConnectionIdentifier mSourceConnectionID = kInvalidConnectionIdentifier;
 		Clock::time_point mReceiveTime = {};
-		RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
-		rftl::string mText;
+		rftl::u8string mText;
 	};
 
 	struct RollbackSourcedPack
@@ -130,8 +129,7 @@ public:
 	SessionMembers GetSessionMembers() const;
 
 	// Thread-safe
-	RF_TODO_ANNOTATION( "Convert to u8string in C++20" );
-	bool QueueOutgoingChatMessage( std::string&& text );
+	bool QueueOutgoingChatMessage( rftl::u8string&& text );
 	ChatMessages GetRecentChatMessages( size_t maxHistory ) const;
 
 	// Thread-safe

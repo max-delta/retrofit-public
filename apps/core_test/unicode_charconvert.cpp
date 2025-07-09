@@ -14,9 +14,24 @@ namespace RF::unicode {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+TEST( CharConvert, Ascii )
+{
+	ASSERT_TRUE( IsValidAscii( 'a' ) );
+	ASSERT_TRUE( IsValidAscii( u8'a' ) );
+	ASSERT_TRUE( IsValidAscii( u'a' ) );
+	ASSERT_TRUE( IsValidAscii( U'a' ) );
+
+	ASSERT_FALSE( IsValidAscii( static_cast<char>( 128 ) ) );
+	ASSERT_FALSE( IsValidAscii( static_cast<char8_t>( 128 ) ) );
+	ASSERT_FALSE( IsValidAscii( static_cast<char16_t>( 128 ) ) );
+	ASSERT_FALSE( IsValidAscii( static_cast<char32_t>( 128 ) ) );
+}
+
+
+
 TEST( CharConvert, Empty )
 {
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( "", 0 ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"", 0 ), U'\0' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"", 0 ), U'\0' );
 }
 
@@ -24,7 +39,7 @@ TEST( CharConvert, Empty )
 
 TEST( CharConvert, Null )
 {
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( "\0", 1 ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"\0", 1 ), U'\0' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\0", 1 ), U'\0' );
 }
 
@@ -32,23 +47,23 @@ TEST( CharConvert, Null )
 
 TEST( CharConvert, ToUtf8 )
 {
-	char temp[4] = {};
+	char8_t temp[4] = {};
 	size_t numBytes = 0;
 	{
 		numBytes = ConvertSingleUtf32ToUtf8( U'\x10000', temp );
 		ASSERT_EQ( numBytes, 4 );
-		ASSERT_CHAR( temp[0], '\xf0' );
-		ASSERT_CHAR( temp[1], '\x90' );
-		ASSERT_CHAR( temp[2], '\x80' );
-		ASSERT_CHAR( temp[3], '\x80' );
+		ASSERT_CHAR( temp[0], u8'\xf0' );
+		ASSERT_CHAR( temp[1], u8'\x90' );
+		ASSERT_CHAR( temp[2], u8'\x80' );
+		ASSERT_CHAR( temp[3], u8'\x80' );
 	}
 	{
 		numBytes = ConvertSingleUtf32ToUtf8( U'\x10ffff', temp );
 		ASSERT_EQ( numBytes, 4 );
-		ASSERT_CHAR( temp[0], '\xf4' );
-		ASSERT_CHAR( temp[1], '\x8f' );
-		ASSERT_CHAR( temp[2], '\xbf' );
-		ASSERT_CHAR( temp[3], '\xbf' );
+		ASSERT_CHAR( temp[0], u8'\xf4' );
+		ASSERT_CHAR( temp[1], u8'\x8f' );
+		ASSERT_CHAR( temp[2], u8'\xbf' );
+		ASSERT_CHAR( temp[3], u8'\xbf' );
 	}
 }
 
@@ -77,11 +92,12 @@ TEST( CharConvert, ToUtf16 )
 TEST( CharConvert, ToUtf32 )
 {
 	ASSERT_EQ( NumBytesExpectedInUtf8( 'a' ), 1 );
+	ASSERT_EQ( NumBytesExpectedInUtf8( u8'a' ), 1 );
 	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xffff' ), 1 );
 	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xd800' ), 2 );
 	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xdbff' ), 2 );
 
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( "a", 1 ), U'a' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"a", 1 ), U'a' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xffff", 1 ), U'\xffff' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xd800\xdc00", 2 ), U'\x10000' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xdbff\xdfff", 2 ), U'\x10ffff' );
@@ -91,7 +107,10 @@ TEST( CharConvert, ToUtf32 )
 
 TEST( CharConvert, InvalidUTF8 )
 {
-	ASSERT_EQ( NumBytesExpectedInUtf8( '\xff' ), 0 );
+	// Trying to cram raw encodings into a UTF-8 literal triggers warning C5321
+	char8_t asUtf8 = static_cast<char8_t>( '\xff' );
+
+	ASSERT_EQ( NumBytesExpectedInUtf8( asUtf8 ), 0 );
 }
 
 

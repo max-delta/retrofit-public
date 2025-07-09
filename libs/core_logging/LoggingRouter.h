@@ -38,12 +38,12 @@ public:
 	LoggingRouter();
 
 	void Log(
-		char const* context,
+		char8_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char const* format, ... ) const;
+		char8_t const* format, ... ) const;
 	void Log(
 		char16_t const* context,
 		CategoryKey categoryKey,
@@ -59,12 +59,12 @@ public:
 		size_t lineNumber,
 		char32_t const* format, ... ) const;
 	void LogVA(
-		char const* context,
+		char8_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char const* format,
+		char8_t const* format,
 		va_list args ) const;
 	void LogVA(
 		char16_t const* context,
@@ -115,7 +115,7 @@ private:
 		size_t lineNumber,
 		CharT const* format,
 		va_list args ) const;
-	void LogInternal( LogEvent<char> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
+	void LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
 	void LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
 	void LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
 	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;

@@ -76,10 +76,18 @@ void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const
 
 ///////////////////////////////////////////////////////////////////////////////
 
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromPointer( context, buffer, '\0' );
+	details::WriteContextStringFromPointer( reinterpret_cast<char8_t const*>( context ), buffer, u8'\0' );
+}
+#endif
+
+template<>
+void WriteContextString( char8_t const* const& context, Utf8LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromPointer( context, buffer, u8'\0' );
 }
 
 template<>
@@ -96,10 +104,18 @@ void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& 
 
 
 
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void WriteContextString( rftl::basic_string_view<char> const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromView( context, buffer, '\0' );
+	details::WriteContextStringFromView( rftl::basic_string_view<char8_t>( reinterpret_cast<char8_t const*>( context.data() ), context.size() ), buffer, u8'\0' );
+}
+#endif
+
+template<>
+void WriteContextString( rftl::basic_string_view<char8_t> const& context, Utf8LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromView( context, buffer, u8'\0' );
 }
 
 template<>
@@ -116,10 +132,18 @@ void WriteContextString( rftl::basic_string_view<char32_t> const& context, Utf32
 
 
 
+#ifdef RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 template<>
 void WriteContextString( rftl::basic_string<char> const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromString( context, buffer, '\0' );
+	details::WriteContextStringFromView( rftl::basic_string_view<char8_t>( reinterpret_cast<char8_t const*>( context.data() ), context.size() ), buffer, u8'\0' );
+}
+#endif
+
+template<>
+void WriteContextString( rftl::basic_string<char8_t> const& context, Utf8LogContextBuffer& buffer )
+{
+	details::WriteContextStringFromString( context, buffer, u8'\0' );
 }
 
 template<>
@@ -162,6 +186,7 @@ bool UnregisterHandler( HandlerID handlerID )
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
@@ -169,6 +194,25 @@ void Log(
 	char const* filename,
 	size_t lineNumber,
 	char const* format, ... )
+{
+	char8_t const* const formatAsUtf8 = reinterpret_cast<char8_t const*>( format );
+
+	va_list args;
+	va_start( args, format );
+	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, args );
+	va_end( args );
+}
+#endif
+
+
+
+void Log(
+	nullptr_t /*context*/,
+	CategoryKey categoryKey,
+	uint64_t severityMask,
+	char const* filename,
+	size_t lineNumber,
+	char8_t const* format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -211,12 +255,12 @@ void Log(
 
 
 void LogVA(
-	char const* context,
+	char8_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format,
+	char8_t const* format,
 	va_list args )
 {
 	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );

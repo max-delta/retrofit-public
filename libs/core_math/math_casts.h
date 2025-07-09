@@ -36,9 +36,11 @@ DST real_cast( SRC const src );
 
 // Reinterpret character bits as their integer equivalent
 constexpr int8_t char_integer_bitcast( char const src );
-constexpr int16_t char_integer_bitcast( wchar_t const src );
-constexpr int16_t char_integer_bitcast( char16_t const src );
-constexpr int32_t char_integer_bitcast( char32_t const src );
+constexpr uint8_t char_integer_bitcast( unsigned char const src );
+constexpr uint16_t char_integer_bitcast( wchar_t const src );
+constexpr uint8_t char_integer_bitcast( char8_t const src );
+constexpr uint16_t char_integer_bitcast( char16_t const src );
+constexpr uint32_t char_integer_bitcast( char32_t const src );
 
 // Reintepret to/from an enum and its underlying type
 template<typename SRC,

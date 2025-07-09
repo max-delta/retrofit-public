@@ -7,7 +7,7 @@
 namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
-PLATFORMUTILS_API void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char> const& event, va_list args );
+PLATFORMUTILS_API void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, va_list args );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

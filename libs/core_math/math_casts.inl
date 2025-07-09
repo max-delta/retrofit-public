@@ -278,19 +278,34 @@ DST real_cast( SRC const src )
 
 constexpr int8_t char_integer_bitcast( char const src )
 {
+	static_assert( rftl::is_signed<decltype( src )>::value );
 	return static_cast<int8_t>( src );
 }
-constexpr int16_t char_integer_bitcast( wchar_t const src )
+constexpr uint8_t char_integer_bitcast( unsigned char const src )
 {
-	return static_cast<int16_t>( src );
+	static_assert( rftl::is_unsigned<decltype( src )>::value );
+	return static_cast<uint8_t>( src );
 }
-constexpr int16_t char_integer_bitcast( char16_t const src )
+constexpr uint16_t char_integer_bitcast( wchar_t const src )
 {
-	return static_cast<int16_t>( src );
+	static_assert( rftl::is_unsigned<decltype( src )>::value );
+	static_assert( sizeof( decltype( src ) ) == 2 );
+	return static_cast<uint16_t>( src );
 }
-constexpr int32_t char_integer_bitcast( char32_t const src )
+constexpr uint8_t char_integer_bitcast( char8_t const src )
 {
-	return static_cast<int32_t>( src );
+	static_assert( rftl::is_unsigned<decltype( src )>::value );
+	return static_cast<uint8_t>( src );
+}
+constexpr uint16_t char_integer_bitcast( char16_t const src )
+{
+	static_assert( rftl::is_unsigned<decltype( src )>::value );
+	return static_cast<uint16_t>( src );
+}
+constexpr uint32_t char_integer_bitcast( char32_t const src )
+{
+	static_assert( rftl::is_unsigned<decltype( src )>::value );
+	return static_cast<uint32_t>( src );
 }
 
 

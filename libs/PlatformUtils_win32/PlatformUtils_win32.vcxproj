@@ -71,6 +71,9 @@
 		<ProjectReference Include="..\core_platform\core_platform.vcxproj">
 			<Project>{293c2cb7-ec6b-4002-a815-cdb480a2752f}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\core_unicode\core_unicode.vcxproj">
+			<Project>{0255354e-1f19-4572-8a43-5b41b1b026fc}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\Logging\Logging.vcxproj">
 			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>

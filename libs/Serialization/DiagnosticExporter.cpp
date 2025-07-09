@@ -251,6 +251,9 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value
 			case reflect::Value::Type::WChar:
 				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<wchar_t>() ) );
 				break;
+			case reflect::Value::Type::Char8:
+				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<char8_t>() ) );
+				break;
 			case reflect::Value::Type::Char16:
 				valueStr = rftl::to_string( math::integer_cast<int>( *value.GetAs<char16_t>() ) );
 				break;

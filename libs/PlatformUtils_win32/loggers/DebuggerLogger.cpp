@@ -4,20 +4,24 @@
 #include "PlatformUtils_win32/Debugging.h"
 #include "Logging/Logging.h"
 
+#include "core_unicode/StringConvert.h"
+
 #include "rftl/limits"
 
 
 namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char> const& event, va_list args )
+void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, va_list args )
 {
 	using namespace RF::logging;
 
-	constexpr size_t kBufSize = 512;
+	// C APIs won't take Unicode, hope that ASCII is good enough
+	char const* const legacyFormatString = reinterpret_cast<char const*>( event.mTransientMessageFormatString );
 
+	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	vsnprintf( &messageBuffer[0], kBufSize, event.mTransientMessageFormatString, args );
+	vsnprintf( &messageBuffer[0], kBufSize, legacyFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
 	char const* severity;
@@ -62,7 +66,8 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 	}
 	else
 	{
-		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, event.mTransientContextString, &messageBuffer[0] );
+		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
+		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
 	}
 	*outputBuffer.rbegin() = '\0';
 
