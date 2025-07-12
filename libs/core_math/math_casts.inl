@@ -43,7 +43,7 @@ constexpr typename rftl::enable_if<rftl::is_integral<DST>::value && rftl::is_int
 
 template<typename DST, typename SRC>
 struct could_overflow : public rftl::bool_constant<could_overflow_v<DST, SRC>()>
-{ };
+{};
 
 
 
@@ -55,7 +55,7 @@ constexpr bool could_drop_sign_v()
 
 template<typename DST, typename SRC>
 struct could_drop_sign : public rftl::bool_constant<could_drop_sign_v<DST, SRC>()>
-{ };
+{};
 
 
 
@@ -81,7 +81,7 @@ constexpr typename rftl::enable_if<rftl::is_signed<SRC>::value && rftl::is_signe
 
 template<typename DST, typename SRC>
 struct could_underflow : public rftl::bool_constant<could_underflow_v<DST, SRC>()>
-{ };
+{};
 
 
 
@@ -89,7 +89,8 @@ template<typename DST, typename SRC>
 constexpr typename rftl::enable_if<could_overflow<DST, SRC>::value, bool>::type will_overflow( SRC const src )
 {
 	constexpr DST maxDest = rftl::numeric_limits<DST>::max();
-	constexpr auto lessThan = []( auto lhs, auto rhs ) -> bool {
+	constexpr auto lessThan = []( auto lhs, auto rhs ) -> bool
+	{
 		RF_CLANG_PUSH();
 		// This can raise warnings when using high value integers and
 		//  low-precision floating point (rightfully so), or different signedness
