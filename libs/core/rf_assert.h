@@ -94,6 +94,7 @@ AssertResponse AssertNotification( char const* file, size_t line, char const* fa
 			} \
 			else \
 			{ \
+				[[unlikely]] \
 				if( \
 					::RF::assert::AssertNotification( RF_FILENAME(), static_cast<size_t>( __LINE__ ), #TEST, MESSAGEEXPRESSION ) == ::RF::assert::AssertResponse::Interrupt ) \
 				{ \
