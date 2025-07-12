@@ -1,5 +1,6 @@
 #pragma once
 
+#include "rftl/span"
 #include "rftl/string_view"
 
 
@@ -16,6 +17,9 @@ size_t NumPairsExpectedInUtf8( char16_t firstPair );
 
 char32_t ConvertSingleUtf8ToUtf32( rftl::u8string_view source );
 char32_t ConvertSingleUtf16ToUtf32( rftl::u16string_view source );
+
+size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, rftl::span<char8_t, 4> destination );
+size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, rftl::span<char16_t, 2> destination );
 
 size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char8_t ( &destination )[4] );
 size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[2] );

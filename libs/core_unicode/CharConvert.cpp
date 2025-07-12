@@ -169,7 +169,7 @@ char32_t ConvertSingleUtf16ToUtf32( rftl::u16string_view source )
 
 
 
-size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char8_t ( &destination )[4] )
+size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, rftl::span<char8_t, 4> destination )
 {
 	if( codePoint <= 0x7f )
 	{
@@ -220,7 +220,7 @@ size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char8_t ( &destination )[4]
 
 
 
-size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[2] )
+size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, rftl::span<char16_t, 2> destination )
 {
 	if( codePoint <= 0xd7ff )
 	{
@@ -269,6 +269,20 @@ size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[
 		destination[1] = 0;
 		return 0;
 	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+size_t ConvertSingleUtf32ToUtf8( char32_t codePoint, char8_t ( &destination )[4] )
+{
+	return ConvertSingleUtf32ToUtf8( codePoint, rftl::span<char8_t, 4>( destination ) );
+}
+
+
+
+size_t ConvertSingleUtf32ToUtf16( char32_t codePoint, char16_t ( &destination )[2] )
+{
+	return ConvertSingleUtf32ToUtf16( codePoint, rftl::span<char16_t, 2>( destination ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
