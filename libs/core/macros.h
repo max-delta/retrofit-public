@@ -92,6 +92,6 @@ public: \
 	#define RF_CPP23_TODO( MESSAGE ) \
 		static_assert( __cplusplus < 202302L, "TODO: " MESSAGE "" )
 #else
-	#define RF_CPP20_TODO( MESSAGE )
-	#define RF_CPP23_TODO( MESSAGE )
+	#define RF_CPP20_TODO( MESSAGE ) RF_TODO_ANNOTATION( MESSAGE )
+	#define RF_CPP23_TODO( MESSAGE ) RF_TODO_ANNOTATION( MESSAGE )
 #endif
