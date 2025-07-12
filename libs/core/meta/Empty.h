@@ -1,5 +1,7 @@
 #pragma once
-#include <rftl/type_traits>
+#include "core/macros.h"
+
+#include "rftl/type_traits"
 
 
 namespace RF {
@@ -24,6 +26,7 @@ struct ContainingClass
 };
 static_assert( sizeof( ContainingClass ) == sizeof( ContainingClass::unused ), "Unexpected size" );
 #endif
+RF_CPP20_TODO( "MSVC doesn't respect no_unique_address, and Clang STILL doesn't support C++20 yet..." );
 
 struct DerivedClass : public EmptyStruct
 {
