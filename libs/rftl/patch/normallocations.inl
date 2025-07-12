@@ -37,6 +37,7 @@
 #define RFTL_RATIO <ratio>
 #define RFTL_SET <set>
 #define RFTL_SHARED_MUTEX <shared_mutex>
+#define RFTL_SPAN <span>
 #define RFTL_SSTREAM <sstream>
 #define RFTL_STREAMBUF <streambuf>
 #define RFTL_STRING <string>

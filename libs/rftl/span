@@ -1,0 +1,16 @@
+#pragma once
+#include "rftl/utility"
+
+#include "rftl/patch/preinclude.inl"
+#include RFTL_SPAN
+#include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::span;
+
+using std::dynamic_extent;
+
+using std::as_bytes;
+using std::as_writable_bytes;
+}

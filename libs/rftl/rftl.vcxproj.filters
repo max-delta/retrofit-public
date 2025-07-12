@@ -154,5 +154,6 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="bit" />
+		<None Include="span" />
 	</ItemGroup>
 </Project>
