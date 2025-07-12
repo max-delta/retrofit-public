@@ -6,26 +6,6 @@
 namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
-rftl::string ConvertToASCII( char const* source, size_t numBytes );
-rftl::string ConvertToASCII( char8_t const* source, size_t numPairs );
-rftl::string ConvertToASCII( char16_t const* source, size_t numPairs );
-rftl::string ConvertToASCII( char32_t const* source, size_t numCodePoints );
-
-rftl::u8string ConvertToUtf8( char const* source, size_t numBytes );
-rftl::u8string ConvertToUtf8( char8_t const* source, size_t numPairs );
-rftl::u8string ConvertToUtf8( char16_t const* source, size_t numPairs );
-rftl::u8string ConvertToUtf8( char32_t const* source, size_t numCodePoints );
-
-rftl::u16string ConvertToUtf16( char const* source, size_t numBytes );
-rftl::u16string ConvertToUtf16( char8_t const* source, size_t numPairs );
-rftl::u16string ConvertToUtf16( char16_t const* source, size_t numPairs );
-rftl::u16string ConvertToUtf16( char32_t const* source, size_t numCodePoints );
-
-rftl::u32string ConvertToUtf32( char const* source, size_t numBytes );
-rftl::u32string ConvertToUtf32( char8_t const* source, size_t numPairs );
-rftl::u32string ConvertToUtf32( char16_t const* source, size_t numPairs );
-rftl::u32string ConvertToUtf32( char32_t const* source, size_t numCodePoints );
-
 rftl::string ConvertToASCII( rftl::string_view source );
 rftl::string ConvertToASCII( rftl::u8string_view source );
 rftl::string ConvertToASCII( rftl::u16string_view source );

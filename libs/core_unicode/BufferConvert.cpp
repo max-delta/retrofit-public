@@ -61,134 +61,134 @@ struct BufferInsertIterator
 
 
 template<typename DestT, typename SourceT>
-using ConvertToInsertSig = void( SourceT const*, size_t, BufferInsertIterator<DestT>&& );
+using ConvertToInsertSig = void( rftl::basic_string_view<SourceT>, BufferInsertIterator<DestT>&& );
 
 template<typename DestT, typename CallableT, typename SourceT>
-size_t ConvertTo( CallableT const& callable, DestT* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertTo( CallableT const& callable, DestT* dest, size_t destLen, rftl::basic_string_view<SourceT> source )
 {
 	size_t writeAttempts = 0;
 	BufferInsertIterator<DestT> iter( dest, destLen, &writeAttempts );
-	callable( source, numElements, rftl::move( iter ) );
+	callable( source, rftl::move( iter ) );
 	return writeAttempts;
 }
 
 
 
 template<typename SourceT>
-size_t ConvertToASCII( char* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertToASCII( char* dest, size_t destLen, rftl::basic_string_view<SourceT> source )
 {
 	ConvertToInsertSig<char, SourceT>* const call = unicode::ConvertToASCII;
-	return ConvertTo<char>( call, dest, destLen, source, numElements );
+	return ConvertTo<char>( call, dest, destLen, source );
 }
 
 template<typename SourceT>
-size_t ConvertToUtf8( char8_t* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, rftl::basic_string_view<SourceT> source )
 {
 	ConvertToInsertSig<char8_t, SourceT>* const call = unicode::ConvertToUtf8;
-	return ConvertTo<char8_t>( call, dest, destLen, source, numElements );
+	return ConvertTo<char8_t>( call, dest, destLen, source );
 }
 
 template<typename SourceT>
-size_t ConvertToUtf16( char16_t* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, rftl::basic_string_view<SourceT> source )
 {
 	ConvertToInsertSig<char16_t, SourceT>* const call = unicode::ConvertToUtf16;
-	return ConvertTo<char16_t>( call, dest, destLen, source, numElements );
+	return ConvertTo<char16_t>( call, dest, destLen, source );
 }
 
 template<typename SourceT>
-size_t ConvertToUtf32( char32_t* dest, size_t destLen, SourceT const* source, size_t numElements )
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, rftl::basic_string_view<SourceT> source )
 {
 	ConvertToInsertSig<char32_t, SourceT>* const call = unicode::ConvertToUtf32;
-	return ConvertTo<char32_t>( call, dest, destLen, source, numElements );
+	return ConvertTo<char32_t>( call, dest, destLen, source );
 }
 
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToASCII( char* dest, size_t destLen, char const* source, size_t numBytes )
+size_t ConvertToASCII( char* dest, size_t destLen, rftl::string_view source )
 {
-	return details::ConvertToASCII( dest, destLen, source, numBytes );
+	return details::ConvertToASCII( dest, destLen, source );
 }
 
-size_t ConvertToASCII( char* dest, size_t destLen, char8_t const* source, size_t numPairs )
+size_t ConvertToASCII( char* dest, size_t destLen, rftl::u8string_view source )
 {
-	return details::ConvertToASCII( dest, destLen, source, numPairs );
+	return details::ConvertToASCII( dest, destLen, source );
 }
 
-size_t ConvertToASCII( char* dest, size_t destLen, char16_t const* source, size_t numPairs )
+size_t ConvertToASCII( char* dest, size_t destLen, rftl::u16string_view source )
 {
-	return details::ConvertToASCII( dest, destLen, source, numPairs );
+	return details::ConvertToASCII( dest, destLen, source );
 }
 
-size_t ConvertToASCII( char* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
+size_t ConvertToASCII( char* dest, size_t destLen, rftl::u32string_view source )
 {
-	return details::ConvertToASCII( dest, destLen, source, numCodePoints );
-}
-
-///////////////////////////////////////////////////////////////////////////////
-
-size_t ConvertToUtf8( char8_t* dest, size_t destLen, char const* source, size_t numBytes )
-{
-	return details::ConvertToUtf8( dest, destLen, source, numBytes );
-}
-
-size_t ConvertToUtf8( char8_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
-{
-	return details::ConvertToUtf8( dest, destLen, source, numPairs );
-}
-
-size_t ConvertToUtf8( char8_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
-{
-	return details::ConvertToUtf8( dest, destLen, source, numPairs );
-}
-
-size_t ConvertToUtf8( char8_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
-{
-	return details::ConvertToUtf8( dest, destLen, source, numCodePoints );
+	return details::ConvertToASCII( dest, destLen, source );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf16( char16_t* dest, size_t destLen, char const* source, size_t numBytes )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, rftl::string_view source )
 {
-	return details::ConvertToUtf16( dest, destLen, source, numBytes );
+	return details::ConvertToUtf8( dest, destLen, source );
 }
 
-size_t ConvertToUtf16( char16_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, rftl::u8string_view source )
 {
-	return details::ConvertToUtf16( dest, destLen, source, numPairs );
+	return details::ConvertToUtf8( dest, destLen, source );
 }
 
-size_t ConvertToUtf16( char16_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, rftl::u16string_view source )
 {
-	return details::ConvertToUtf16( dest, destLen, source, numPairs );
+	return details::ConvertToUtf8( dest, destLen, source );
 }
 
-size_t ConvertToUtf16( char16_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
+size_t ConvertToUtf8( char8_t* dest, size_t destLen, rftl::u32string_view source )
 {
-	return details::ConvertToUtf16( dest, destLen, source, numCodePoints );
+	return details::ConvertToUtf8( dest, destLen, source );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-size_t ConvertToUtf32( char32_t* dest, size_t destLen, char const* source, size_t numBytes )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, rftl::string_view source )
 {
-	return details::ConvertToUtf32( dest, destLen, source, numBytes );
+	return details::ConvertToUtf16( dest, destLen, source );
 }
 
-size_t ConvertToUtf32( char32_t* dest, size_t destLen, char8_t const* source, size_t numPairs )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, rftl::u8string_view source )
 {
-	return details::ConvertToUtf32( dest, destLen, source, numPairs );
+	return details::ConvertToUtf16( dest, destLen, source );
 }
 
-size_t ConvertToUtf32( char32_t* dest, size_t destLen, char16_t const* source, size_t numPairs )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, rftl::u16string_view source )
 {
-	return details::ConvertToUtf32( dest, destLen, source, numPairs );
+	return details::ConvertToUtf16( dest, destLen, source );
 }
 
-size_t ConvertToUtf32( char32_t* dest, size_t destLen, char32_t const* source, size_t numCodePoints )
+size_t ConvertToUtf16( char16_t* dest, size_t destLen, rftl::u32string_view source )
 {
-	return details::ConvertToUtf32( dest, destLen, source, numCodePoints );
+	return details::ConvertToUtf16( dest, destLen, source );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, rftl::string_view source )
+{
+	return details::ConvertToUtf32( dest, destLen, source );
+}
+
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, rftl::u8string_view source )
+{
+	return details::ConvertToUtf32( dest, destLen, source );
+}
+
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, rftl::u16string_view source )
+{
+	return details::ConvertToUtf32( dest, destLen, source );
+}
+
+size_t ConvertToUtf32( char32_t* dest, size_t destLen, rftl::u32string_view source )
+{
+	return details::ConvertToUtf32( dest, destLen, source );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -31,16 +31,16 @@ TEST( CharConvert, Ascii )
 
 TEST( CharConvert, Empty )
 {
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"", 0 ), U'\0' );
-	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"", 0 ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"" ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"" ), U'\0' );
 }
 
 
 
 TEST( CharConvert, Null )
 {
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"\0", 1 ), U'\0' );
-	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\0", 1 ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( rftl::u8string_view( u8"\0", 1 ) ), U'\0' );
+	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( rftl::u16string_view( u"\0", 1 ) ), U'\0' );
 }
 
 
@@ -97,10 +97,10 @@ TEST( CharConvert, ToUtf32 )
 	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xd800' ), 2 );
 	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xdbff' ), 2 );
 
-	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"a", 1 ), U'a' );
-	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xffff", 1 ), U'\xffff' );
-	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xd800\xdc00", 2 ), U'\x10000' );
-	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xdbff\xdfff", 2 ), U'\x10ffff' );
+	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"a" ), U'a' );
+	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xffff" ), U'\xffff' );
+	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xd800\xdc00" ), U'\x10000' );
+	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xdbff\xdfff" ), U'\x10ffff' );
 }
 
 

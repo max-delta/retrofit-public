@@ -88,64 +88,64 @@ size_t NumPairsExpectedInUtf8( char16_t firstPair )
 
 
 
-char32_t ConvertSingleUtf8ToUtf32( char8_t const* buffer, size_t numBytes )
+char32_t ConvertSingleUtf8ToUtf32( rftl::u8string_view source )
 {
-	switch( numBytes )
+	switch( source.size() )
 	{
 		case 1:
 		{
 			// 0xxxxxxx
 			return static_cast<char32_t>(
-				( ( buffer[0] & 0x7f ) << 0 ) );
+				( ( source[0] & 0x7f ) << 0 ) );
 		}
 		case 2:
 		{
 			// 110xxxxx 10xxxxxx
 			return static_cast<char32_t>(
-				( ( buffer[0] & 0x1f ) << 6 ) |
-				( ( buffer[1] & 0x3f ) << 0 ) );
+				( ( source[0] & 0x1f ) << 6 ) |
+				( ( source[1] & 0x3f ) << 0 ) );
 		}
 		case 3:
 		{
 			// 1110xxxx 10xxxxxx 10xxxxxx
 			return static_cast<char32_t>(
-				( ( buffer[0] & 0x0f ) << 12 ) |
-				( ( buffer[1] & 0x3f ) << 6 ) |
-				( ( buffer[2] & 0x3f ) << 0 ) );
+				( ( source[0] & 0x0f ) << 12 ) |
+				( ( source[1] & 0x3f ) << 6 ) |
+				( ( source[2] & 0x3f ) << 0 ) );
 		}
 		case 4:
 		{
 			// 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
 			return static_cast<char32_t>(
-				( ( buffer[0] & 0x07 ) << 18 ) |
-				( ( buffer[1] & 0x3f ) << 12 ) |
-				( ( buffer[2] & 0x3f ) << 6 ) |
-				( ( buffer[3] & 0x3f ) << 0 ) );
+				( ( source[0] & 0x07 ) << 18 ) |
+				( ( source[1] & 0x3f ) << 12 ) |
+				( ( source[2] & 0x3f ) << 6 ) |
+				( ( source[3] & 0x3f ) << 0 ) );
 		}
 		default:
 		{
 			// Invalid
-			return 0;
+			return U'\0';
 		}
 	}
 }
 
 
 
-char32_t ConvertSingleUtf16ToUtf32( char16_t const* buffer, size_t numPairs )
+char32_t ConvertSingleUtf16ToUtf32( rftl::u16string_view source )
 {
-	switch( numPairs )
+	switch( source.size() )
 	{
 		case 1:
 		{
 			// Standalone
-			return buffer[0];
+			return source[0];
 		}
 		case 2:
 		{
 			// Pairs
-			char16_t const highSurrogate = buffer[0];
-			char16_t const lowSurrogate = buffer[1];
+			char16_t const highSurrogate = source[0];
+			char16_t const lowSurrogate = source[1];
 			RF_ASSERT( highSurrogate >= 0xd800 );
 			RF_ASSERT( highSurrogate <= 0xdbff );
 			RF_ASSERT( lowSurrogate >= 0xdc00 );
@@ -162,7 +162,7 @@ char32_t ConvertSingleUtf16ToUtf32( char16_t const* buffer, size_t numPairs )
 		default:
 		{
 			// Invalid
-			return 0;
+			return U'\0';
 		}
 	}
 }

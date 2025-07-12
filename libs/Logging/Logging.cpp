@@ -64,14 +64,14 @@ void WriteContextStringFromString( rftl::basic_string<CharT> const& context, Buf
 
 void FallbackConversion( Utf16LogContextBuffer& dest, Utf8LogContextBuffer const& source )
 {
-	unicode::ConvertToUtf16( dest.data(), dest.size(), source.data(), source.size() );
+	unicode::ConvertToUtf16( dest.data(), dest.size(), { source.data(), source.size() } );
 }
 
 
 
 void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const& source )
 {
-	unicode::ConvertToUtf32( dest.data(), dest.size(), source.data(), source.size() );
+	unicode::ConvertToUtf32( dest.data(), dest.size(), { source.data(), source.size() } );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
