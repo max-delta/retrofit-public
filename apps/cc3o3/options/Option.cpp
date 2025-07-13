@@ -38,7 +38,7 @@ Option Option::MakeList(
 		OptionDesc::List::Item item = {};
 		item.mIdentifier = entry.mIdentifier;
 		item.mDisplayName = entry.mDisplayName;
-		items.emplace_back( std::move( item ) );
+		items.emplace_back( rftl::move( item ) );
 	}
 
 	return retVal;

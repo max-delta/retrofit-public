@@ -54,7 +54,7 @@ public:
 		appstate::AppStateTickContext& context );
 	overworld::Overworld LoadDataForOverworld();
 
-	std::string DetermineOverworldAreaLocKey(
+	rftl::string DetermineOverworldAreaLocKey(
 		rftl::string identifier );
 	bool TryInteractWithOverworldArea(
 		appstate::AppStateTickContext& context,

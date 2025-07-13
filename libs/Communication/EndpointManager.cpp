@@ -177,7 +177,7 @@ void EndpointManager::RemoveOrphanedStreams( InStreams& incoming, OutStreams& ou
 			}
 			if( hasStream == false )
 			{
-				incoming.emplace_back( std::move( storedStream ) );
+				incoming.emplace_back( rftl::move( storedStream ) );
 				RF_ASSERT( storedStream == nullptr );
 			}
 		}
@@ -198,7 +198,7 @@ void EndpointManager::RemoveOrphanedStreams( InStreams& incoming, OutStreams& ou
 			}
 			if( hasStream == false )
 			{
-				outgoing.emplace_back( std::move( storedStream ) );
+				outgoing.emplace_back( rftl::move( storedStream ) );
 				RF_ASSERT( storedStream == nullptr );
 			}
 		}

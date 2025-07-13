@@ -318,7 +318,7 @@ void SessionHostManager::AcceptNewConnection()
 	}
 
 	// Create channels
-	CreateClientChannels( newID, DefaultCreator<TCPSocket>::Create( std::move( newConnection ) ) );
+	CreateClientChannels( newID, DefaultCreator<TCPSocket>::Create( rftl::move( newConnection ) ) );
 
 	// Wake the validator to check out the new connection
 	mValidatorThread.Wake();
@@ -342,9 +342,9 @@ void SessionHostManager::CreateClientChannels( comm::EndpointIdentifier clientId
 		PtrTransformer<TCPSocket>::PerformTransformation( rftl::move( newConnection ), sharedSocket );
 		UniquePtr<TCPIncomingBufferStream> incomingTCPStream = DefaultCreator<TCPIncomingBufferStream>::Create( sharedSocket );
 		SharedPtr<TCPOutgoingBufferStream> outgoingTCPStream = DefaultCreator<TCPOutgoingBufferStream>::Create( sharedSocket );
-		SharedPtr<IncomingBufferStitcher> incomingStitcher = DefaultCreator<IncomingBufferStitcher>::Create( std::move( incomingTCPStream ) );
-		incomingStream = endpointManager.AddIncomingStream( std::move( incomingStitcher ) );
-		outgoingStream = endpointManager.AddOutgoingStream( std::move( outgoingTCPStream ) );
+		SharedPtr<IncomingBufferStitcher> incomingStitcher = DefaultCreator<IncomingBufferStitcher>::Create( rftl::move( incomingTCPStream ) );
+		incomingStream = endpointManager.AddIncomingStream( rftl::move( incomingStitcher ) );
+		outgoingStream = endpointManager.AddOutgoingStream( rftl::move( outgoingTCPStream ) );
 	}
 
 	// Add new channels to endpoint

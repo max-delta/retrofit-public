@@ -71,7 +71,7 @@ combat::PartyID BuildPlayerParty( combat::CombatInstance& setup, combat::TeamID 
 
 
 
-combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerID hostPlayerID, std::string identifier )
+combat::TeamID BuildHackEnemyTeam( combat::CombatInstance& setup, input::PlayerID hostPlayerID, rftl::string identifier )
 {
 	using namespace combat;
 
@@ -490,7 +490,7 @@ overworld::Overworld CampaignManager::LoadDataForOverworld()
 
 
 
-std::string CampaignManager::DetermineOverworldAreaLocKey( rftl::string identifier )
+rftl::string CampaignManager::DetermineOverworldAreaLocKey( rftl::string identifier )
 {
 	VerifyCampaignLoaded();
 

@@ -78,7 +78,7 @@ struct GAMESYNC_API MsgChat final
 	static constexpr MessageID kID = { 'C', 'H', 'A', 'T' };
 	static constexpr char const kDesc[] = "Chat message text";
 
-	static constexpr size_t kMaxChars = std::numeric_limits<uint8_t>::max();
+	static constexpr size_t kMaxChars = rftl::numeric_limits<uint8_t>::max();
 	using Text = rftl::static_u8string<kMaxChars>;
 	Text mText;
 

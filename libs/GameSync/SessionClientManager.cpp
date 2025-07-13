@@ -386,7 +386,7 @@ void SessionClientManager::FormHostConnection( comm::EndpointIdentifier hostIden
 	}
 
 	// Create channels
-	CreateHostChannels( hostIdentifier, DefaultCreator<TCPSocket>::Create( std::move( newConnection ) ) );
+	CreateHostChannels( hostIdentifier, DefaultCreator<TCPSocket>::Create( rftl::move( newConnection ) ) );
 
 	// Wake the handshaker to check out the new connection
 	mHandshakeThread.Wake();
@@ -408,9 +408,9 @@ void SessionClientManager::CreateHostChannels( comm::EndpointIdentifier hostIden
 		PtrTransformer<TCPSocket>::PerformTransformation( rftl::move( newConnection ), sharedSocket );
 		UniquePtr<TCPIncomingBufferStream> incomingTCPStream = DefaultCreator<TCPIncomingBufferStream>::Create( sharedSocket );
 		SharedPtr<TCPOutgoingBufferStream> outgoingTCPStream = DefaultCreator<TCPOutgoingBufferStream>::Create( sharedSocket );
-		SharedPtr<IncomingBufferStitcher> incomingStitcher = DefaultCreator<IncomingBufferStitcher>::Create( std::move( incomingTCPStream ) );
-		incomingStream = endpointManager.AddIncomingStream( std::move( incomingStitcher ) );
-		outgoingStream = endpointManager.AddOutgoingStream( std::move( outgoingTCPStream ) );
+		SharedPtr<IncomingBufferStitcher> incomingStitcher = DefaultCreator<IncomingBufferStitcher>::Create( rftl::move( incomingTCPStream ) );
+		incomingStream = endpointManager.AddIncomingStream( rftl::move( incomingStitcher ) );
+		outgoingStream = endpointManager.AddOutgoingStream( rftl::move( outgoingTCPStream ) );
 	}
 
 	// Add new channels to endpoint

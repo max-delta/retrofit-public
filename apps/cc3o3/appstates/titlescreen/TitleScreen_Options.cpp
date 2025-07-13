@@ -71,7 +71,7 @@ void TitleScreen_Options::InternalState::GenerateOptions()
 	};
 
 	static constexpr auto makeDevHop =
-		[]( rftl::string_view identifier, std::string_view displayName, AppStateID id ) -> Option
+		[]( rftl::string_view identifier, rftl::string_view displayName, AppStateID id ) -> Option
 	{
 		return Option::MakeAction( identifier, displayName,
 			[id]() -> void
