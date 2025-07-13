@@ -65,6 +65,7 @@
 		<ClInclude Include="limits" />
 		<ClInclude Include="memory" />
 		<ClInclude Include="mutex" />
+		<ClInclude Include="patch\stdmodule.h" />
 		<ClInclude Include="ratio" />
 		<ClInclude Include="shared_mutex" />
 		<ClInclude Include="sstream" />

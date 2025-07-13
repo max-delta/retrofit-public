@@ -103,6 +103,9 @@
 		<ClInclude Include="extension\string_hash.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="patch\stdmodule.h">
+			<Filter>patch</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">

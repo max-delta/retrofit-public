@@ -11,6 +11,7 @@ static constexpr bool kOncePer = RF_CONFIG_FLAG( RF_CONFIG_ONCEPER );
 static constexpr bool kFilenameMacro = RF_CONFIG_FLAG( RF_CONFIG_FILENAME_MACRO );
 static constexpr bool kTodoMessages = RF_CONFIG_FLAG( RF_CONFIG_TODO_MESSAGES );
 static constexpr bool kLangTodoChecks = RF_CONFIG_FLAG( RF_CONFIG_LANG_TODO_CHECKS );
+static constexpr bool kUseStdModule = RF_CONFIG_FLAG( RF_CONFIG_USE_STD_MODULE );
 static constexpr bool kLegacyBitMath = RF_CONFIG_FLAG( RF_CONFIG_LEGACY_BIT_MATH );
 static constexpr bool kInternalBuildNotice = RF_CONFIG_FLAG( RF_CONFIG_INTERNAL_BUILD_NOTICE );
 static constexpr bool kClassInfoDebugNames = RF_CONFIG_FLAG( RF_CONFIG_CLASSINFO_DEBUG_NAMES );

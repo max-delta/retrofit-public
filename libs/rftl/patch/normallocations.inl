@@ -1,53 +1,62 @@
 #pragma once
 
-#define RFTL_ALGORITHM <algorithm>
-#define RFTL_ARRAY <array>
-#define RFTL_ATOMIC <atomic>
-#define RFTL_BIT <bit>
-#define RFTL_BITSET <bitset>
-#define RFTL_CCTYPE <cctype>
-#define RFTL_CHARCONV <charconv>
-#define RFTL_CHRONO <chrono>
-#define RFTL_CMATH <cmath>
-#define RFTL_CONDITION_VARIABLE <condition_variable>
-#define RFTL_CSTDARG <cstdarg>
-#define RFTL_CSTDDEF <cstddef>
-#define RFTL_CSTDINT <cstdint>
-#define RFTL_CSTDIO <cstdio>
-#define RFTL_CSTDLIB <cstdlib>
-#define RFTL_CSTRING <cstring>
-#define RFTL_DEQUE <deque>
-#define RFTL_FILESYSTEM <filesystem>
-#define RFTL_FSTREAM <fstream>
-#define RFTL_FUNCTIONAL <functional>
-#define RFTL_FUTURE <future>
-#define RFTL_INITIALIZER_LIST <initializer_list>
-#define RFTL_IOS <ios>
-#define RFTL_IOSFWD <iosfwd>
-#define RFTL_ISTREAM <istream>
-#define RFTL_ITERATOR <iterator>
-#define RFTL_LIMITS <limits>
-#define RFTL_MAP <map>
-#define RFTL_MEMORY <memory>
-#define RFTL_MUTEX <mutex>
-#define RFTL_NEW <new>
-#define RFTL_NUMERIC <numeric>
-#define RFTL_OPTIONAL <optional>
-#define RFTL_OSTREAM <ostream>
-#define RFTL_RATIO <ratio>
-#define RFTL_SET <set>
-#define RFTL_SHARED_MUTEX <shared_mutex>
-#define RFTL_SPAN <span>
-#define RFTL_SSTREAM <sstream>
-#define RFTL_STREAMBUF <streambuf>
-#define RFTL_STRING <string>
-#define RFTL_STRING_VIEW <string_view>
-#define RFTL_SYSTEM_ERROR <system_error>
-#define RFTL_THREAD <thread>
-#define RFTL_TUPLE <tuple>
-#define RFTL_TYPE_TRAITS <type_traits>
-#define RFTL_UNORDERED_MAP <unordered_map>
-#define RFTL_UNORDERED_SET <unordered_set>
-#define RFTL_UTILITY <utility>
-#define RFTL_VARIANT <variant>
-#define RFTL_VECTOR <vector>
+// A single include can be used to import the entire standard library as a
+//  module, which should theoretically have faster compilation speeds due to
+//  having already been pre-parsed, similar to a pre-compiled header
+#if RF_IS_ALLOWED( RF_CONFIG_USE_STD_MODULE )
+	#define RF_STL_LOC( HEADER ) "rftl/patch/stdmodule.h"
+#else
+	#define RF_STL_LOC( HEADER ) HEADER
+#endif
+
+#define RFTL_ALGORITHM RF_STL_LOC( <algorithm> )
+#define RFTL_ARRAY RF_STL_LOC( <array> )
+#define RFTL_ATOMIC RF_STL_LOC( <atomic> )
+#define RFTL_BIT RF_STL_LOC( <bit> )
+#define RFTL_BITSET RF_STL_LOC( <bitset> )
+#define RFTL_CCTYPE RF_STL_LOC( <cctype> )
+#define RFTL_CHARCONV RF_STL_LOC( <charconv> )
+#define RFTL_CHRONO RF_STL_LOC( <chrono> )
+#define RFTL_CMATH RF_STL_LOC( <cmath> )
+#define RFTL_CONDITION_VARIABLE RF_STL_LOC( <condition_variable> )
+#define RFTL_CSTDARG RF_STL_LOC( <cstdarg> )
+#define RFTL_CSTDDEF RF_STL_LOC( <cstddef> )
+#define RFTL_CSTDINT RF_STL_LOC( <cstdint> )
+#define RFTL_CSTDIO RF_STL_LOC( <cstdio> )
+#define RFTL_CSTDLIB RF_STL_LOC( <cstdlib> )
+#define RFTL_CSTRING RF_STL_LOC( <cstring> )
+#define RFTL_DEQUE RF_STL_LOC( <deque> )
+#define RFTL_FILESYSTEM RF_STL_LOC( <filesystem> )
+#define RFTL_FSTREAM RF_STL_LOC( <fstream> )
+#define RFTL_FUNCTIONAL RF_STL_LOC( <functional> )
+#define RFTL_FUTURE RF_STL_LOC( <future> )
+#define RFTL_INITIALIZER_LIST RF_STL_LOC( <initializer_list> )
+#define RFTL_IOS RF_STL_LOC( <ios> )
+#define RFTL_IOSFWD RF_STL_LOC( <iosfwd> )
+#define RFTL_ISTREAM RF_STL_LOC( <istream> )
+#define RFTL_ITERATOR RF_STL_LOC( <iterator> )
+#define RFTL_LIMITS RF_STL_LOC( <limits> )
+#define RFTL_MAP RF_STL_LOC( <map> )
+#define RFTL_MEMORY RF_STL_LOC( <memory> )
+#define RFTL_MUTEX RF_STL_LOC( <mutex> )
+#define RFTL_NEW RF_STL_LOC( <new> )
+#define RFTL_NUMERIC RF_STL_LOC( <numeric> )
+#define RFTL_OPTIONAL RF_STL_LOC( <optional> )
+#define RFTL_OSTREAM RF_STL_LOC( <ostream> )
+#define RFTL_RATIO RF_STL_LOC( <ratio> )
+#define RFTL_SET RF_STL_LOC( <set> )
+#define RFTL_SHARED_MUTEX RF_STL_LOC( <shared_mutex> )
+#define RFTL_SPAN RF_STL_LOC( <span> )
+#define RFTL_SSTREAM RF_STL_LOC( <sstream> )
+#define RFTL_STREAMBUF RF_STL_LOC( <streambuf> )
+#define RFTL_STRING RF_STL_LOC( <string> )
+#define RFTL_STRING_VIEW RF_STL_LOC( <string_view> )
+#define RFTL_SYSTEM_ERROR RF_STL_LOC( <system_error> )
+#define RFTL_THREAD RF_STL_LOC( <thread> )
+#define RFTL_TUPLE RF_STL_LOC( <tuple> )
+#define RFTL_TYPE_TRAITS RF_STL_LOC( <type_traits> )
+#define RFTL_UNORDERED_MAP RF_STL_LOC( <unordered_map> )
+#define RFTL_UNORDERED_SET RF_STL_LOC( <unordered_set> )
+#define RFTL_UTILITY RF_STL_LOC( <utility> )
+#define RFTL_VARIANT RF_STL_LOC( <variant> )
+#define RFTL_VECTOR RF_STL_LOC( <vector> )

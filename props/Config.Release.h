@@ -12,6 +12,9 @@
 
 #define RF_CONFIG_LANG_TODO_CHECKS RF_FORBID
 
+// C++20 adds modules, but only C++23 adds the standard library to modules...
+#define RF_CONFIG_USE_STD_MODULE RF_FORBID
+
 // Old math code from before C++20 <bit>
 #define RF_CONFIG_LEGACY_BIT_MATH RF_FORBID
 
