@@ -75,7 +75,7 @@ void RollbackManager::TakeManualSnapshot( ManualSnapshotIdentifier const& identi
 {
 	GetMutableSharedDomain().TakeManualSnapshot( identifier, time );
 	GetMutablePrivateDomain().TakeManualSnapshot( identifier, time );
-	RFLOG_INFO( nullptr, RFCAT_ROLLBACK, "Saved manual snapshot \"%s\"", identifier.c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_ROLLBACK, "Saved manual snapshot \"%s\"", identifier.c_str() );
 }
 
 
@@ -94,7 +94,7 @@ time::CommonClock::time_point RollbackManager::LoadManualSnapshot( ManualSnapsho
 	time::CommonClock::time_point const privateTime = priv.LoadSnapshot( *privateSnap );
 	RFLOG_TEST_AND_FATAL( sharedTime == privateTime, nullptr, RFCAT_ROLLBACK, "Failed to load consistent manual snapshot" );
 
-	RFLOG_INFO( nullptr, RFCAT_ROLLBACK, "Loaded manual snapshot \"%s\"", identifier.c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_ROLLBACK, "Loaded manual snapshot \"%s\"", identifier.c_str() );
 	return sharedTime;
 }
 

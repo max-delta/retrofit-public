@@ -31,15 +31,15 @@ void ResourceTypeRecord::RegisterClass( char const* className )
 
 	// Make sure it exists
 	reflect::ClassInfo const* const classInfo = typeDatabase.GetClassInfoByName( className );
-	RFLOG_TEST_AND_FATAL( classInfo != nullptr, mDisplayName, RFCAT_GAMERESOURCE,
+	RFLOGF_TEST_AND_FATAL( classInfo != nullptr, mDisplayName, RFCAT_GAMERESOURCE,
 		"Could not find class name '%s' when trying to register it with a resource type", className );
 
 	// Register it, making sure there's only one such entry
 	bool const newEntry = mEntries.emplace( Entries::value_type{ className, Entry{ classInfo } } ).second;
-	RFLOG_TEST_AND_FATAL( newEntry, mDisplayName, RFCAT_GAMERESOURCE,
+	RFLOGF_TEST_AND_FATAL( newEntry, mDisplayName, RFCAT_GAMERESOURCE,
 		"Duplicate class registration for class name '%s'", className );
 
-	RFLOG_TRACE( mDisplayName, RFCAT_GAMERESOURCE, "Registered class name '%s'", className );
+	RFLOGF_TRACE( mDisplayName, RFCAT_GAMERESOURCE, "Registered class name '%s'", className );
 }
 
 

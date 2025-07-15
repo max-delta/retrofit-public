@@ -32,7 +32,7 @@ win32::HANDLE EnsureJobObject()
 		GetJobUUID().GetDebugString().c_str() );
 	if( job == nullptr )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to create job object: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to create job object: ERR %i", win32::GetLastError() );
 		return nullptr;
 	}
 
@@ -40,7 +40,7 @@ win32::HANDLE EnsureJobObject()
 	if( lastSuccessErr != ERROR_SUCCESS )
 	{
 		RF_ASSERT( lastSuccessErr == ERROR_ALREADY_EXISTS );
-		RFLOG_WARNING( nullptr, RFCAT_PLATFORMUTILS, "Partial error on job object, assumed to be a re-use", lastSuccessErr );
+		RFLOGF_WARNING( nullptr, RFCAT_PLATFORMUTILS, "Partial error on job object, assumed to be a re-use: ERR %i", lastSuccessErr );
 	}
 
 	return job;
@@ -63,7 +63,7 @@ bool MakeJobAutoClose( win32::HANDLE job )
 	// NOTE: Documentation only guarantees FALSE, not TRUE
 	if( jobQuerySuccess == win32::FALSE )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to query job object: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to query job object: ERR %i", win32::GetLastError() );
 		return false;
 	}
 
@@ -85,7 +85,7 @@ bool MakeJobAutoClose( win32::HANDLE job )
 	// NOTE: Documentation only guarantees FALSE, not TRUE
 	if( jobSetSuccess == win32::FALSE )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to update job object: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to update job object: ERR %i", win32::GetLastError() );
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool AddRemoteProcessToJob( win32::HANDLE job, win32::HANDLE process )
 	// NOTE: Documentation only guarantees FALSE, not TRUE
 	if( assignSuccess == win32::FALSE )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to assign job object: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to assign job object: ERR %i", win32::GetLastError() );
 		return false;
 	}
 
@@ -156,7 +156,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 	win32::PROCESS_INFORMATION processInfo = {};
 
 	// Launch process
-	RFLOG_MILESTONE( nullptr, RFCAT_PLATFORMUTILS, u"Launching process: %ls", mutableCommandLine.c_str() );
+	RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMUTILS, u"Launching process: %ls", mutableCommandLine.c_str() );
 	win32::BOOL const createSuccess = win32::CreateProcessW(
 		nullptr, // Use command line to derive application name
 		mutableCommandLine.data(), // Must actually be mutable, see docs
@@ -175,7 +175,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 	// NOTE: Documentation only guarantees FALSE, not TRUE
 	if( createSuccess == win32::FALSE )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to launch process: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to launch process: ERR %i", win32::GetLastError() );
 		return false;
 	}
 
@@ -193,7 +193,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 	win32::DWORD const suspendCount = win32::ResumeThread( processInfo.hThread );
 	if( suspendCount == static_cast<win32::DWORD>( -1 ) )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to resume suspended process: ERR %i", win32::GetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMUTILS, "Failed to resume suspended process: ERR %i", win32::GetLastError() );
 
 		// Unclear how to recover, just kill it
 		win32::BOOL const terminateSuccess = win32::TerminateProcess( processInfo.hProcess, 1 );
@@ -206,7 +206,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 			//  into such a broken state
 			// TODO: Test to see if outside intervention by an external tool
 			//  killing our child process can cause this behavior
-			RFLOG_NOTIFY( nullptr, RFCAT_PLATFORMUTILS, "Failed to terminate failed process: ERR %i", win32::GetLastError() );
+			RFLOGF_NOTIFY( nullptr, RFCAT_PLATFORMUTILS, "Failed to terminate failed process: ERR %i", win32::GetLastError() );
 		}
 	}
 	win32::CloseHandle( processInfo.hProcess );

@@ -652,7 +652,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptValueToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to write script value '%s' to variable",
 				diagnosticName );
 			return false;
@@ -664,7 +664,7 @@ bool ProcessScriptVariable(
 		bool const writeSuccess = WriteScriptStringToVariable( elemValue, target );
 		if( writeSuccess == false )
 		{
-			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to write script string '%s' to variable",
 				diagnosticName );
 			return false;
@@ -676,7 +676,7 @@ bool ProcessScriptVariable(
 		bool const processSuccess = ProcessScriptArrayPopulationWork( vm, scratchLookup, workItems, currentPath, target );
 		if( processSuccess == false )
 		{
-			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to process script array '%s' to variable",
 				diagnosticName );
 			return false;
@@ -688,7 +688,7 @@ bool ProcessScriptVariable(
 		bool const queueSuccess = QueueScriptInstancePopulationWork( workItems, currentPath, target );
 		if( queueSuccess == false )
 		{
-			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Failed to prepare processing for script instance '%s' to be written into variable",
 				diagnosticName );
 			return false;
@@ -696,7 +696,7 @@ bool ProcessScriptVariable(
 	}
 	else
 	{
-		RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+		RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 			"Unknown element type on '%s', probably an error in script-handling code",
 			diagnosticName );
 		return false;
@@ -757,7 +757,7 @@ bool ProcessClassWorkItem(
 			reflect::ClassInfo const* const foundClassInfo = FindClassInfoForName( scratchLookup, className );
 			if( foundClassInfo == nullptr )
 			{
-				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+				RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 					"Class claims to be '%s', but could not find corresponding injected type",
 					className.c_str() );
 				continue;
@@ -765,7 +765,7 @@ bool ProcessClassWorkItem(
 
 			if( foundClassInfo != &classInfo )
 			{
-				RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
+				RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 					"Class claims to be '%s', injected type class info doesn't match",
 					className.c_str() );
 				continue;

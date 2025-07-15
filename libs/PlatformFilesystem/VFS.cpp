@@ -111,7 +111,7 @@ FileHandlePtr VFS::GetRawFileForWrite( char const* rawPath ) const
 	if( errCheck == nullptr || rawFile.is_open() == false )
 	{
 		int32_t const assumedErr = math::integer_cast<int32_t>( errno );
-		RFLOG_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, last error code was %i", assumedErr );
+		RFLOGF_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, last error code was %i", assumedErr );
 		return nullptr;
 	}
 
@@ -164,7 +164,7 @@ void VFS::EnumerateDirectory(
 		if( isDir == false )
 		{
 			// Not a directory in this mount point
-			RFLOG_WARNING( path, RFCAT_VFS, "Looking for directory, found file: %s", finalFilename.c_str() );
+			RFLOGF_WARNING( path, RFCAT_VFS, "Looking for directory, found file: %s", finalFilename.c_str() );
 			continue;
 		}
 
@@ -184,7 +184,7 @@ void VFS::EnumerateDirectory(
 			}
 			else
 			{
-				RFLOG_WARNING( path, RFCAT_VFS, "Enumerating directory, found unknown object: %s", entryPath.c_str() );
+				RFLOGF_WARNING( path, RFCAT_VFS, "Enumerating directory, found unknown object: %s", entryPath.c_str() );
 			}
 		}
 	}
@@ -262,20 +262,20 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 	RF_ASSERT( userDirectory.empty() == false );
 
 	rftl::string absoluteSearchDirectory = rftl::filesystem::absolute( "." ).generic_string();
-	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file search directory: %s", absoluteSearchDirectory.c_str() );
-	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mount table file param: %s", mountTableFile.c_str() );
-	RFLOG_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
+	RFLOGF_DEBUG( nullptr, RFCAT_VFS, "Mount table file search directory: %s", absoluteSearchDirectory.c_str() );
+	RFLOGF_DEBUG( nullptr, RFCAT_VFS, "Mount table file param: %s", mountTableFile.c_str() );
+	RFLOGF_DEBUG( nullptr, RFCAT_VFS, "User directory param: %s", userDirectory.c_str() );
 
 	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
 	mMountTableFile = CollapsePath( VFSPath::CreatePathFromString( absoluteMountTableFilename ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", mMountTableFile.CreateString().c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Mount table file: %s", mMountTableFile.CreateString().c_str() );
 
 	mConfigDirectory = mMountTableFile.GetParent();
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Config directory: %s", mConfigDirectory.CreateString().c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Config directory: %s", mConfigDirectory.CreateString().c_str() );
 
 	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
 	mUserDirectory = CollapsePath( VFSPath::CreatePathFromString( absoluteUserDirectory ) );
-	RFLOG_INFO( nullptr, RFCAT_VFS, "User directory: %s", mUserDirectory.CreateString().c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "User directory: %s", mUserDirectory.CreateString().c_str() );
 
 	if( rftl::filesystem::exists( absoluteMountTableFilename ) == false )
 	{
@@ -308,7 +308,7 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 
 bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTableFile )
 {
-	RFLOG_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", mountTableFile.CreateString().c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: %s", mountTableFile.CreateString().c_str() );
 	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
 	if( filePtr == nullptr )
 	{
@@ -340,7 +340,7 @@ bool VFS::AttemptPassthroughMount()
 
 VFSPath VFS::AttemptMapToVFS( rftl::string const& physicalPath, VFSMount::Permissions desiredPermissions ) const
 {
-	RFLOG_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
+	RFLOGF_DEBUG( nullptr, RFCAT_VFS, "Mapping request: <%i> %s", desiredPermissions, physicalPath.c_str() );
 
 	VFSPath const physicalAsVFS = VFSPath::CreatePathFromString( physicalPath );
 
@@ -431,7 +431,7 @@ void VFS::DebugDumpMountTable() const
 				permissions = "INVALID";
 				break;
 		}
-		RFLOG_INFO(
+		RFLOGF_INFO(
 			nullptr,
 			RFCAT_VFS,
 			"  % 3u %s %s \"%s\" \"%s\"",
@@ -936,7 +936,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 	VFSMount const& finalMount = *finalMapping.second;
 
 	// Locked to this mount layer, let's see what happens!
-	RFLOG_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
+	RFLOGF_TRACE( path, RFCAT_VFS, "Open resolved to: %s", finalFilename.c_str() );
 	bool parentsCreated = false;
 	while( true )
 	{
@@ -950,7 +950,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 			// Tough luck, no easy way to tell what went wrong
 			if( mustExist )
 			{
-				RFLOG_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, last error code was %i", assumedErr );
+				RFLOGF_ERROR( path, RFCAT_VFS, "Failed to open file that was reported to exist, last error code was %i", assumedErr );
 				return nullptr;
 			}
 			else
@@ -993,7 +993,7 @@ FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 										rftl::filesystem::create_directory( traverse.CreateString(), err );
 										if( err )
 										{
-											RFLOG_ERROR( traverse, RFCAT_VFS, "Filesystem reported an error of '%i' when creating directory", err.value() );
+											RFLOGF_ERROR( traverse, RFCAT_VFS, "Filesystem reported an error of '%i' when creating directory", err.value() );
 										}
 									}
 								}

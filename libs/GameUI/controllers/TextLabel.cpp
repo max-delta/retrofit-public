@@ -119,11 +119,11 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		{
 			if( container.mAABB.Height() < mDesiredHeight )
 			{
-				RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB height: '%s'", mText.c_str() ) );
+				RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB height: '%s'", mText.c_str() ) );
 			}
 			if( container.mAABB.Width() < renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() ) )
 			{
-				RF_ONCEPER_SECOND( RFLOG_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '%s'", mText.c_str() ) );
+				RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '%s'", mText.c_str() ) );
 			}
 		}
 	}

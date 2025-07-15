@@ -233,7 +233,7 @@ void ResourceLoader::InjectTypes(
 		{
 			if( allowedClasses.count( &classInfo ) <= 0 )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_GAMERESOURCE, "Class info not in allowed list for type %llu", typeID );
+				RFLOGF_ERROR( nullptr, RFCAT_GAMERESOURCE, "Class info not in allowed list for type %llu", typeID );
 				RF_DBGFAIL_MSG( "Class not in allow list" );
 				return {};
 			}
@@ -251,7 +251,7 @@ void ResourceLoader::InjectTypes(
 		RF_ASSERT( classInfo != nullptr );
 
 		bool const injected = loader.InjectReflectedClassByClassInfo( *classInfo, typeName.c_str() );
-		RFLOG_TEST_AND_FATAL( injected, nullptr, RFCAT_GAMERESOURCE, "Could not inject type '%s'", typeName.c_str() );
+		RFLOGF_TEST_AND_FATAL( injected, nullptr, RFCAT_GAMERESOURCE, "Could not inject type '%s'", typeName.c_str() );
 	}
 }
 

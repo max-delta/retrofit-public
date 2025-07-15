@@ -349,21 +349,21 @@ void FrameBuilder::ScheduleNextTasks()
 
 void FrameBuilder::LogFlight( PartialPlanner::PartialPlan::PlannedActionID id )
 {
-	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame flight: %llu", id );
+	RFLOGF_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame flight: %llu", id );
 }
 
 
 
 void FrameBuilder::LogReturn( PartialPlanner::PartialPlan::PlannedActionID id )
 {
-	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame return: %llu", id );
+	RFLOGF_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame return: %llu", id );
 }
 
 
 
 void FrameBuilder::LogTrivial( PartialPlanner::PartialPlan::PlannedActionID id )
 {
-	RFLOG_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame trivial: %llu", id );
+	RFLOGF_TRACE( nullptr, RFCAT_FRAMEBUILDER, "Frame trivial: %llu", id );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

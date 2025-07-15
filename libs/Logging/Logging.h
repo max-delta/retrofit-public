@@ -137,6 +137,25 @@ namespace details {
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// HACK: Temporary markup shims for noting format args that will need attention
+//  when switching to C++20 format style logging
+// NOTE: These were found by more complex temp macro changes that would fail on
+//  any type that passed in an arg past the format string
+#define RFLOGF_TRACE RFLOG_TRACE
+#define RFLOGF_DEBUG RFLOG_DEBUG
+#define RFLOGF_INFO RFLOG_INFO
+#define RFLOGF_WARNING RFLOG_WARNING
+#define RFLOGF_ERROR RFLOG_ERROR
+#define RFLOGF_CRITICAL RFLOG_CRITICAL
+#define RFLOGF_FATAL RFLOG_FATAL
+#define RFLOGF_TEST_AND_FATAL RFLOG_TEST_AND_FATAL
+#define RFLOGF_MILESTONE RFLOG_MILESTONE
+#define RFLOGF_NOTIFY RFLOG_NOTIFY
+#define RFLOGF_TEST_AND_NOTIFY RFLOG_TEST_AND_NOTIFY
+#define RFLOGF_CUSTOM RFLOG_CUSTOM
+
+///////////////////////////////////////////////////////////////////////////////
+
 // When specializing contexts, there is a limit to how large you can make the
 //  string representation
 static constexpr size_t kMaxContextLen = 512;

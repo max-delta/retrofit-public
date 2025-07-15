@@ -173,7 +173,7 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 
 	if( frameTime < streamRef.mUncommitted.back().mTime )
 	{
-		RFLOG_WARNING(
+		RFLOGF_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
 			"Failed to prepare a remote frame for input stream '%u' because it"
@@ -184,7 +184,7 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 
 	if( frameTime < streamRef.mCommitted.back().mTime )
 	{
-		RFLOG_WARNING(
+		RFLOGF_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
 			"Failed to prepare a remote frame for input stream '%u' because it"

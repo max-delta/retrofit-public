@@ -91,7 +91,7 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 	}
 	else
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_LOCALIZATION, "Failed to map the key '%s'", query.mKey.GetAsString().c_str() );
+		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION, "Failed to map the key '%s'", query.mKey.GetAsString().c_str() );
 
 		// Return key as result
 		rftl::string const id = query.mKey.GetAsString();
@@ -156,46 +156,46 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 		size_t const numCols = row.size();
 		if( numCols != 2 )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has %llu columns, expected 2", i_row, numCols );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has %llu columns, expected 2", i_row, numCols );
 			return {};
 		}
 
 		rftl::string const& fromField = row.at( 0 );
 		if( fromField.empty() )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'from' column", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'from' column", i_row );
 			return {};
 		}
 
 		rftl::string const& toField = row.at( 1 );
 		if( toField.empty() )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'to' column", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has an empty 'to' column", i_row );
 			return {};
 		}
 
 		rftl::string const& fromVal = fromField;
 		if( fromVal.empty() )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column", i_row );
 			return {};
 		}
 		if( fromVal.at( 0 ) != '$' )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column, expected to begin with '$'", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'from' column, expected to begin with '$'", i_row );
 			return {};
 		}
 
 		rftl::u32string toVal = unicode::ConvertToUtf32( toField );
 		if( toVal.empty() )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'to' column", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a malformed 'to' column", i_row );
 			return {};
 		}
 
 		if( newKeymap.count( fromVal ) != 0 )
 		{
-			RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a duplicate 'from' value, already seen previously", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line %llu has a duplicate 'from' value, already seen previously", i_row );
 			return {};
 		}
 

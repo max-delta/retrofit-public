@@ -136,7 +136,7 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 	if( type == reflect::Value::GetTypeName( ENUM ) ) \
 	{ \
 		VARTYPE temp = VALUE; \
-		RFLOG_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '%s' will be forced to a predetermined value", RFTLE_CSTR( type ) ); \
+		RFLOGF_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '%s' will be forced to a predetermined value", RFTLE_CSTR( type ) ); \
 		return reflect::Value( temp ); \
 	}
 
@@ -166,7 +166,7 @@ static reflect::Value TryConvertValue( rftl::string_view const& type, rftl::stri
 #undef RF_TEST_I
 #undef RF_TEST_S
 
-	RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected type '%s'", RFTLE_CSTR( type ) );
+	RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected type '%s'", RFTLE_CSTR( type ) );
 	RF_DBGFAIL();
 
 	return reflect::Value{};
@@ -185,13 +185,13 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 
 		if( type != pugi::xml_node_type::node_element )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 			return false;
 		}
 
 		if( name != "Property" )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-property node '%s'", RFTLE_CSTR( name ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-property node '%s'", RFTLE_CSTR( name ) );
 			return false;
 		}
 	}
@@ -250,7 +250,7 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 			continue;
 		}
 
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML property attribute name '%s'", RFTLE_CSTR( attributeName ) );
+		RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML property attribute name '%s'", RFTLE_CSTR( attributeName ) );
 		return false;
 	}
 
@@ -269,14 +269,14 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 	{
 		if( type.empty() )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "No type specified for value '%s'", RFTLE_CSTR( value ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "No type specified for value '%s'", RFTLE_CSTR( value ) );
 			return false;
 		}
 
 		reflect::Value const asVal = TryConvertValue( type, value );
 		if( asVal.GetStoredType() == reflect::Value::Type::Invalid )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to '%s' value", RFTLE_CSTR( name ), RFTLE_CSTR( value ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to '%s' value", RFTLE_CSTR( name ), RFTLE_CSTR( value ) );
 			return false;
 		}
 
@@ -297,13 +297,13 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 		reflect::Value const asVal = TryConvertValue( "UInt64", indirection );
 		if( asVal.GetStoredType() == reflect::Value::Type::Invalid )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to Indirection value", RFTLE_CSTR( name ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to Indirection value", RFTLE_CSTR( name ) );
 			return false;
 		}
 		uint64_t const* asID = asVal.GetAs<uint64_t>();
 		if( asID == nullptr )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to integer Indirection value", RFTLE_CSTR( name ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Could not convert '%s' to integer Indirection value", RFTLE_CSTR( name ) );
 			return false;
 		}
 
@@ -358,7 +358,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 			continue;
 		}
 
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML instance attribute name '%s'", RFTLE_CSTR( attributeName ) );
+		RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML instance attribute name '%s'", RFTLE_CSTR( attributeName ) );
 		return false;
 	}
 
@@ -368,7 +368,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		exporter::InstanceID val;
 		if( rftl::parse_int( val, instanceID ) == false )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( instanceID ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( instanceID ) );
 			return false;
 		}
 
@@ -386,7 +386,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		exporter::TypeID val;
 		if( rftl::parse_int( val, typeID ) == false )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( typeID ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( typeID ) );
 			return false;
 		}
 
@@ -427,7 +427,7 @@ static bool ProcessInstance( Importer::Callbacks const& callbacks, pugi::xml_nod
 		if( iterationCheckVal >= kExcessiveIterationLimit )
 		{
 			// Excessive iterations, bail
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Property iteration limit %llu exceeded", kExcessiveIterationLimit );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Property iteration limit %llu exceeded", kExcessiveIterationLimit );
 			RF_DBGFAIL();
 			return false;
 		}
@@ -539,7 +539,7 @@ bool XmlImporter::ReadFromString( rftl::string_view const& string )
 
 	if( result == false )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "XML parse error: '%s'", result.description() );
+		RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "XML parse error: '%s'", result.description() );
 		return false;
 	}
 
@@ -578,7 +578,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 				return false;
 			}
 
@@ -618,7 +618,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				continue;
 			}
 
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node name '%s'", RFTLE_CSTR( name ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node name '%s'", RFTLE_CSTR( name ) );
 			return false;
 		}
 
@@ -695,31 +695,31 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				continue;
 			}
 
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header attribute name '%s'", RFTLE_CSTR( name ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header attribute name '%s'", RFTLE_CSTR( name ) );
 			return false;
 		}
 
 		if( magic != "RetroFit Resource" )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header magic value '%s'", RFTLE_CSTR( magic ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header magic value '%s'", RFTLE_CSTR( magic ) );
 			return false;
 		}
 
 		if( majorVersion != "0" )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header major value '%s'", RFTLE_CSTR( majorVersion ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header major value '%s'", RFTLE_CSTR( majorVersion ) );
 			return false;
 		}
 
 		if( minorVersion != "1" )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header minor value '%s'", RFTLE_CSTR( minorVersion ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header minor value '%s'", RFTLE_CSTR( minorVersion ) );
 			return false;
 		}
 
 		if( subminorVersion != "0" )
 		{
-			RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header subminor value '%s'", RFTLE_CSTR( subminorVersion ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML header subminor value '%s'", RFTLE_CSTR( subminorVersion ) );
 			return false;
 		}
 	}
@@ -735,13 +735,13 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 				return false;
 			}
 
 			if( name != "Instance" )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
 				return false;
 			}
 
@@ -764,14 +764,14 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 					continue;
 				}
 
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
 				return false;
 			}
 
 			exporter::InstanceID instanceIDVal = exporter::kInvalidInstanceID;
 			if( rftl::parse_int( instanceIDVal, id ) == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( id ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( id ) );
 				return false;
 			}
 
@@ -781,7 +781,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 				exporter::TypeID temp;
 				if( rftl::parse_int( temp, typeID.value() ) == false )
 				{
-					RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( typeID.value() ) );
+					RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( typeID.value() ) );
 					return false;
 				}
 				typeIDVal = temp;
@@ -790,7 +790,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 			bool const newEntry = mTocEntries.emplace( instanceIDVal, typeIDVal ).second;
 			if( newEntry == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate TOC instance ID %llu", RFTLE_CSTR( id ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate TOC instance ID %llu", RFTLE_CSTR( id ) );
 				return false;
 			}
 		}
@@ -817,13 +817,13 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 				return false;
 			}
 
 			if( name != "Dependency" )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
 				return false;
 			}
 
@@ -846,28 +846,28 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 					continue;
 				}
 
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
 				return false;
 			}
 
 			exporter::IndirectionID indirectionIDVal;
 			if( rftl::parse_int( indirectionIDVal, indirectionID ) == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid indirection ID '%s'", RFTLE_CSTR( indirectionID ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid indirection ID '%s'", RFTLE_CSTR( indirectionID ) );
 				return false;
 			}
 
 			exporter::InstanceID instanceIDVal;
 			if( rftl::parse_int( instanceIDVal, instanceID ) == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( instanceID ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid instance ID '%s'", RFTLE_CSTR( instanceID ) );
 				return false;
 			}
 
 			bool const newEntry = mLocalIndirections.emplace( indirectionIDVal, instanceIDVal ).second;
 			if( newEntry == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate internal dependency for indirection ID %llu", indirectionIDVal );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate internal dependency for indirection ID %llu", indirectionIDVal );
 				return false;
 			}
 		}
@@ -886,13 +886,13 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 				return false;
 			}
 
 			if( name != "Instance" )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-instance node '%s'", RFTLE_CSTR( name ) );
 				return false;
 			}
 
@@ -917,13 +917,13 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type %i", math::integer_cast<int>( math::enum_bitcast( type ) ) );
 				return false;
 			}
 
 			if( name != "TypeID" )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-type node '%s'", RFTLE_CSTR( name ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML non-type node '%s'", RFTLE_CSTR( name ) );
 				return false;
 			}
 
@@ -946,27 +946,27 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 					continue;
 				}
 
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML debug attribute name '%s'", RFTLE_CSTR( attributeName ) );
 				return false;
 			}
 
 			exporter::TypeID id;
 			if( rftl::parse_int( id, value ) == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( value ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Invalid type ID '%s'", RFTLE_CSTR( value ) );
 				return false;
 			}
 
 			if( debugName.empty() )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Empty debug name for type ID %llu", id );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Empty debug name for type ID %llu", id );
 				return false;
 			}
 
 			bool const newEntry = mDebugNames.emplace( id, debugName ).second;
 			if( newEntry == false )
 			{
-				RFLOG_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate debug name for type ID %llu", id );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Duplicate debug name for type ID %llu", id );
 				return false;
 			}
 		}

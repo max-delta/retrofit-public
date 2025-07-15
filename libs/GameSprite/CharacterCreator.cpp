@@ -78,7 +78,7 @@ bool CharacterCreator::LoadCompositionTable( file::VFSPath const& compositionTab
 		rftl::deque<rftl::string> const entry = compositionTable.front();
 		if( entry.size() != kIdentifierFields + numTags )
 		{
-			RFLOG_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, expected number of columns to match header", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, expected number of columns to match header", math::integer_cast<int>( line ) );
 			return false;
 		}
 		rftl::string const& typeString = entry.at( 0 );
@@ -107,13 +107,13 @@ bool CharacterCreator::LoadCompositionTable( file::VFSPath const& compositionTab
 		}
 		else
 		{
-			RFLOG_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, not a valid piece type", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, not a valid piece type", math::integer_cast<int>( line ) );
 			return false;
 		}
 
 		if( id.empty() )
 		{
-			RFLOG_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, bad id", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, bad id", math::integer_cast<int>( line ) );
 			return false;
 		}
 
@@ -134,7 +134,7 @@ bool CharacterCreator::LoadCompositionTable( file::VFSPath const& compositionTab
 			}
 			else
 			{
-				RFLOG_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, expected a '0' or a '1'", math::integer_cast<int>( line ) );
+				RFLOGF_NOTIFY( compositionTablePath, RFCAT_GAMESPRITE, "Malformed composition rule entry at line %i, expected a '0' or a '1'", math::integer_cast<int>( line ) );
 				return false;
 			}
 		}

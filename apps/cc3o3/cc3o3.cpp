@@ -646,7 +646,7 @@ void DebugInstantReplay( size_t numFrames )
 	sInstantReplayEndTime = time::FrameClock::now();
 	rollMan.SetHeadClock( time::FrameClock::now() - time::kSimulationFrameDuration * numFrames );
 	sInstantReplayTriggered = true;
-	RFLOG_INFO( nullptr, RFCAT_CC3O3, "Instant replay triggered for frames %llu -> %llu",
+	RFLOGF_INFO( nullptr, RFCAT_CC3O3, "Instant replay triggered for frames %llu -> %llu",
 		rollMan.GetHeadClock().time_since_epoch().count(),
 		sInstantReplayEndTime.time_since_epoch().count() );
 }
