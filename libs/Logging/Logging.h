@@ -40,7 +40,7 @@ namespace details {
 #define ___RFLOG_WHITELIST_IMPL( CATEGORY, SEVERITY ) \
 	constexpr uint64_t ___kCategorySeverityWhitelist = RF_CONCAT( CATEGORY, _SEV_WHITELIST ); \
 	constexpr uint64_t ___kRestrictedWhitelist = ___kCategorySeverityWhitelist & ___RFLOG_GLOBAL_SEV_WHITELIST_MASK; \
-	constexpr uint64_t ___kSeverity = (SEVERITY)&___kRestrictedWhitelist;
+	constexpr uint64_t ___kSeverity = ( SEVERITY ) & ___kRestrictedWhitelist;
 
 #define ___RFLOG_IMPL( CONTEXT, CATEGORY, SEVERITY, ... ) \
 	do \
