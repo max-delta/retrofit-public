@@ -22,7 +22,6 @@
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/static_vector.h"
-#include "rftl/extension/string_compare.h"
 
 
 namespace RF {
@@ -709,7 +708,7 @@ void FramePackEditor::Command_Meta_SaveFramePack()
 		return;
 	}
 
-	if( rftl::ends_with( rawPath, ".fpack" ) == false )
+	if( rawPath.ends_with( ".fpack" ) == false )
 	{
 		rawPath.append( ".fpack" );
 	}

@@ -7,8 +7,6 @@
 
 #include "core/ptr/default_creator.h"
 
-#include "rftl/extension/string_compare.h"
-
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,7 +26,7 @@ bool AutoImporter::LooksLikeSupportedType( rftl::string_view const& string )
 		RF_DBGFAIL_MSG( "Not enough bytes to check all possible types" );
 	}
 
-	if( rftl::bagins_with( string, "<?xml" ) )
+	if( string.starts_with( "<?xml" ) )
 	{
 		return true;
 	}
@@ -47,7 +45,7 @@ bool AutoImporter::ReadFromString( rftl::string_view const& string )
 		return false;
 	}
 
-	if( rftl::bagins_with( string, "<?xml" ) )
+	if( string.starts_with( "<?xml" ) )
 	{
 		UniquePtr<XmlImporter> xml = DefaultCreator<XmlImporter>::Create();
 		XmlImporter& ref = *xml;

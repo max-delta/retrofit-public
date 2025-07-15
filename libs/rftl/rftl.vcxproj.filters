@@ -49,9 +49,6 @@
 		<ClInclude Include="extension\string_traits.h">
 			<Filter>extension</Filter>
 		</ClInclude>
-		<ClInclude Include="extension\string_compare.h">
-			<Filter>extension</Filter>
-		</ClInclude>
 		<ClInclude Include="extension\virtual_iterator.h">
 			<Filter>extension</Filter>
 		</ClInclude>
