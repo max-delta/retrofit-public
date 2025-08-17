@@ -44,6 +44,7 @@
 		<ClInclude Include="loggers\project.h" />
 		<ClInclude Include="loggers\stdafx.h" />
 		<ClInclude Include="ProcessLaunch.h" />
+		<ClInclude Include="WChar.h" />
 		<ClInclude Include="windowing.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
@@ -62,6 +63,7 @@
 		</ClCompile>
 		<ClCompile Include="ThreadSettings.cpp" />
 		<ClCompile Include="uuid.cpp" />
+		<ClCompile Include="WChar.cpp" />
 		<ClCompile Include="windowing.cpp" />
 	</ItemGroup>
 	<ItemGroup>

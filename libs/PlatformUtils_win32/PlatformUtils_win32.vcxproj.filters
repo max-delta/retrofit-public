@@ -18,6 +18,7 @@
 			<Filter>loggers</Filter>
 		</ClInclude>
 		<ClInclude Include="Errors.h" />
+		<ClInclude Include="WChar.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -34,6 +35,7 @@
 			<Filter>loggers</Filter>
 		</ClCompile>
 		<ClCompile Include="Errors.cpp" />
+		<ClCompile Include="WChar.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="project.32.def" />
