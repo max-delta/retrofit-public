@@ -13,7 +13,7 @@
 namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, rftl::format_args&& args )
+void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, rftl::format_args const& args )
 {
 	using namespace RF::logging;
 

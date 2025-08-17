@@ -14,9 +14,9 @@ namespace RF::logging {
 
 using HandlerID = uint64_t;
 static constexpr HandlerID kInvalidHandlerID = 0;
-using UTF8HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& args );
-using UTF16HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char16_t> const&, rftl::format_args&& args );
-using UTF32HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char32_t> const&, rftl::format_args&& args );
+using UTF8HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& args );
+using UTF16HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char16_t> const&, rftl::format_args const& args );
+using UTF32HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char32_t> const&, rftl::format_args const& args );
 
 struct HandlerDefinition
 {

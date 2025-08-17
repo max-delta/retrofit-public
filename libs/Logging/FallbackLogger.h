@@ -7,7 +7,7 @@
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void FallbackLogger( LoggingRouter const& router, LogEvent<char> const& event, rftl::format_args&& args );
+void FallbackLogger( LoggingRouter const& router, LogEvent<char> const& event, rftl::format_args const& args );
 
 void InsertFallbackLogger();
 void RemoveFallbackLoggerIfPresent();

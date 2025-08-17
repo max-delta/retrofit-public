@@ -250,28 +250,28 @@ void LoggingRouter::LogInternal(
 		HandlerDefinition const& handlerDef = handlerDefPair.second;
 		if( ( handlerDef.mSupportedSeverities & severityMask ) != 0 )
 		{
-			LogInternal( logEvent, handlerDef, rftl::move( args ) );
+			Dispatch( logEvent, handlerDef, args );
 		}
 	}
 }
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
+void LoggingRouter::Dispatch( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf8HandlerFunc( *this, logEvent, rftl::move( args ) );
+		handlerDef.mUtf8HandlerFunc( *this, logEvent, args );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char8_t, char16_t> converter{ logEvent };
-		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char8_t, char32_t> converter{ logEvent };
-		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
 	}
 	else
 	{
@@ -281,21 +281,21 @@ void LoggingRouter::LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefin
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
+void LoggingRouter::Dispatch( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char16_t, char8_t> converter{ logEvent };
-		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf16HandlerFunc( *this, logEvent, rftl::move( args ) );
+		handlerDef.mUtf16HandlerFunc( *this, logEvent, args );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char16_t, char32_t> converter{ logEvent };
-		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
 	}
 	else
 	{
@@ -305,21 +305,21 @@ void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefi
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
+void LoggingRouter::Dispatch( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char32_t, char8_t> converter{ logEvent };
-		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char32_t, char16_t> converter{ logEvent };
-		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf32HandlerFunc( *this, logEvent, rftl::move( args ) );
+		handlerDef.mUtf32HandlerFunc( *this, logEvent, args );
 	}
 	else
 	{

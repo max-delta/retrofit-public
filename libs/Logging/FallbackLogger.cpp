@@ -17,7 +17,7 @@ static rftl::atomic<HandlerID> sFallbackHandlerID = kInvalidHandlerID;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void FallbackLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args&& args )
+void FallbackLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args const& args )
 {
 	// C++20 APIs won't take Unicode, hope that ASCII is good enough
 	rftl::string_view const legacyFormatString = rftl::string_view( reinterpret_cast<char const*>( event.mTransientMessageFormatString.data() ), event.mTransientMessageFormatString.size() );

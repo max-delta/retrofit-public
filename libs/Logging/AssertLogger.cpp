@@ -14,7 +14,7 @@
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args&& args )
+void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args const& args )
 {
 	// Multiple threads could assert simultaneously, but we don't really care
 	//  about the performance impact in that case, so we'll just lock the

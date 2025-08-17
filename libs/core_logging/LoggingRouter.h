@@ -130,9 +130,9 @@ private:
 		size_t lineNumber,
 		rftl::basic_string_view<CharT> format,
 		rftl::format_args&& args ) const;
-	void LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
-	void LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
-	void LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
+	void Dispatch( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const;
+	void Dispatch( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const;
+	void Dispatch( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args const& args ) const;
 	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;
 
 

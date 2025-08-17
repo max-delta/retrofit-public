@@ -25,19 +25,19 @@ TEST( Logging, Details_ClearGlobalCounts )
 	ASSERT_EQ( details::gCountAll, 0 );
 }
 
-void Handler1( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
+void Handler1( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& )
 {
 	gCount1++;
 }
-void Handler2( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
+void Handler2( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& )
 {
 	gCount2++;
 }
-void Handler3( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
+void Handler3( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& )
 {
 	gCount3++;
 }
-void HandlerAll( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
+void HandlerAll( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& )
 {
 	gCountAll++;
 }
@@ -95,7 +95,7 @@ TEST( Logging, Registration )
 
 	struct Invalid
 	{
-		static void InvalidFunc( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
+		static void InvalidFunc( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args const& )
 		{
 			GTEST_FAIL();
 		}
