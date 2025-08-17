@@ -41,6 +41,7 @@
 		<ClInclude Include="extension\bounded_overwrite_iterator.h" />
 		<ClInclude Include="extension\byte_span.h" />
 		<ClInclude Include="extension\byte_view.h" />
+		<ClInclude Include="extension\cstring_view.h" />
 		<ClInclude Include="extension\c_str.h" />
 		<ClInclude Include="extension\enum_traits.h" />
 		<ClInclude Include="extension\immutable_string.h" />
@@ -91,6 +92,7 @@
 		<None Include="extension\algorithms.inl" />
 		<None Include="extension\byte_span.inl" />
 		<None Include="extension\byte_view.inl" />
+		<None Include="extension\cstring_view.inl" />
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />
