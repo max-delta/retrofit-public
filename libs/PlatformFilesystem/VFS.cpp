@@ -17,40 +17,6 @@
 #include "rftl/unordered_set"
 
 
-RF_TODO_ANNOTATION( "Move to somewhere better, add unit tests" );
-template<>
-struct rftl::formatter<RF::file::VFSMount::Permissions, char>
-{
-	template<class ParseContext>
-	constexpr typename ParseContext::iterator parse( ParseContext& ctx )
-	{
-		auto const it = ctx.begin();
-		if( it != ctx.end() && *it != '}' )
-		{
-			rftl::abort();
-		}
-
-		return it;
-	}
-
-	template<class FmtContext>
-	typename FmtContext::iterator format( RF::file::VFSMount::Permissions const& arg, FmtContext& ctx ) const
-	{
-		uint8_t const asBits = RF::math::enum_bitcast( arg );
-
-		auto iter = ctx.out();
-		auto const emit = [&iter, asBits]( uint8_t const& test, char ch ) -> void
-		{
-			*iter = asBits & test ? ch : '-';
-			iter++;
-		};
-		emit( RF::file::VFSMount::kReadBit, 'r' );
-		emit( RF::file::VFSMount::kWriteBit, 'w' );
-		emit( RF::file::VFSMount::kExecuteBit, 'x' );
-		return iter;
-	}
-};
-
 namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 

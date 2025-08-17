@@ -20,5 +20,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="VFSPath.inl" />
+		<None Include="VFSMount.inl" />
 	</ItemGroup>
 </Project>

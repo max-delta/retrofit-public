@@ -51,6 +51,7 @@
 		<ClCompile Include="VFSPath.cpp" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="VFSMount.inl" />
 		<None Include="VFSPath.inl" />
 	</ItemGroup>
 	<ItemGroup>

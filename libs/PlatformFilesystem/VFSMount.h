@@ -54,3 +54,8 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+template<>
+struct rftl::formatter<RF::file::VFSMount::Permissions, char>;
+
+#include "VFSMount.inl"
