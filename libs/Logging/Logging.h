@@ -8,6 +8,7 @@
 #include "core/meta/FailTemplate.h"
 #include "core/macros.h"
 
+#include "rftl/extension/cstring_view.h"
 #include "rftl/array"
 #include "rftl/string"
 #include "rftl/string_view"
@@ -256,7 +257,7 @@ void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::string_view format,
 	ArgsT&&... args );
@@ -266,7 +267,7 @@ void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u8string_view format,
 	ArgsT&&... args );
@@ -275,7 +276,7 @@ void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u16string_view format,
 	ArgsT&&... args );
@@ -284,7 +285,7 @@ void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u32string_view format,
 	ArgsT&&... args );
@@ -294,7 +295,7 @@ void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::string_view format, 
 	ArgsT&&... args );
@@ -304,7 +305,7 @@ void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u8string_view format, 
 	ArgsT&&... args );
@@ -313,7 +314,7 @@ void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u16string_view format, 
 	ArgsT&&... args );
@@ -322,7 +323,7 @@ void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u32string_view format, 
 	ArgsT&&... args );
@@ -330,7 +331,7 @@ LOGGING_API void LogVA(
 	rftl::u8string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u8string_view format,
 	rftl::format_args&& args );
@@ -338,7 +339,7 @@ LOGGING_API void LogVA(
 	rftl::u16string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u16string_view format,
 	rftl::format_args&& args );
@@ -346,7 +347,7 @@ LOGGING_API void LogVA(
 	rftl::u32string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u32string_view format,
 	rftl::format_args&& args );

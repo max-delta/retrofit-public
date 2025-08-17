@@ -46,7 +46,7 @@ void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, 
 			*messageBuffer.rbegin() = '\0';
 		}
 
-		assert::AssertResponse const response = assert::AssertNotification( event.mTransientFileString, event.mLineNumber, "N/A", messageBuffer.data() );
+		assert::AssertResponse const response = assert::AssertNotification( event.mTransientFileString.c_str(), event.mLineNumber, "N/A", messageBuffer.data() );
 		if( response == assert::AssertResponse::Interrupt )
 		{
 			RF_SOFTWARE_INTERRUPT();

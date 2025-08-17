@@ -1,4 +1,5 @@
 #pragma once
+#include "rftl/extension/cstring_view.h"
 #include "rftl/cstdint"
 #include "rftl/string_view"
 
@@ -22,7 +23,7 @@ struct LogEvent
 	size_t mLineNumber;
 
 	// Must be consumed immediately, pointers are not permanent
-	char const* mTransientFileString;
+	rftl::cstring_view mTransientFileString;
 	rftl::basic_string_view<CharT> mTransientContextString;
 	rftl::basic_string_view<CharT> mTransientMessageFormatString;
 };

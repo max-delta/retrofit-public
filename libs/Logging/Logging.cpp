@@ -190,7 +190,7 @@ void LogVA(
 	rftl::u8string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u8string_view format,
 	rftl::format_args&& args )
@@ -204,7 +204,7 @@ void LogVA(
 	rftl::u16string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u16string_view format,
 	rftl::format_args&& args )
@@ -218,7 +218,7 @@ void LogVA(
 	rftl::u32string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
-	char const* filename,
+	rftl::cstring_view filename,
 	size_t lineNumber,
 	rftl::u32string_view format,
 	rftl::format_args&& args )

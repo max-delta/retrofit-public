@@ -42,7 +42,7 @@ public:
 		rftl::u8string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u8string_view format,
 		ArgsT&&... args ) const
@@ -54,7 +54,7 @@ public:
 		rftl::u16string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u16string_view format,
 		ArgsT&&... args ) const
@@ -66,7 +66,7 @@ public:
 		rftl::u32string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u32string_view format,
 		ArgsT&&... args ) const
@@ -77,7 +77,7 @@ public:
 		rftl::u8string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u8string_view format,
 		rftl::format_args&& args ) const;
@@ -85,7 +85,7 @@ public:
 		rftl::u16string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u16string_view format,
 		rftl::format_args&& args ) const;
@@ -93,7 +93,7 @@ public:
 		rftl::u32string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::u32string_view format,
 		rftl::format_args&& args ) const;
@@ -126,7 +126,7 @@ private:
 		rftl::basic_string_view<CharT> context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
-		char const* filename,
+		rftl::cstring_view filename,
 		size_t lineNumber,
 		rftl::basic_string_view<CharT> format,
 		rftl::format_args&& args ) const;
