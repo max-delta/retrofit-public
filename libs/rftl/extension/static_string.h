@@ -175,7 +175,7 @@ template<size_t ElementCapacity> using static_u32string = static_basic_string<ch
 
 // Formats as a basic_string_view
 template<typename CharT, size_t ElementCapacity>
-struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, char> : rftl::formatter<std::basic_string_view<CharT>, char>
+struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, char> : rftl::formatter<rftl::basic_string_view<CharT>, char>
 {
 	using Input = rftl::static_basic_string<CharT, ElementCapacity>;
 	using Shim = rftl::basic_string_view<CharT>;
