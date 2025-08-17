@@ -93,6 +93,7 @@
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />
 		<None Include="extension\variadic_print.inl" />
+		<None Include="format" />
 		<None Include="fstream" />
 		<None Include="ios" />
 		<None Include="iosfwd" />

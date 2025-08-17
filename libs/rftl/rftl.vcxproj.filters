@@ -155,5 +155,6 @@
 		</None>
 		<None Include="bit" />
 		<None Include="span" />
+		<None Include="format" />
 	</ItemGroup>
 </Project>

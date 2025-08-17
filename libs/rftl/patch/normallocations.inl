@@ -27,6 +27,7 @@
 #define RFTL_CSTRING RF_STL_LOC( <cstring> )
 #define RFTL_DEQUE RF_STL_LOC( <deque> )
 #define RFTL_FILESYSTEM RF_STL_LOC( <filesystem> )
+#define RFTL_FORMAT RF_STL_LOC( <format> )
 #define RFTL_FSTREAM RF_STL_LOC( <fstream> )
 #define RFTL_FUNCTIONAL RF_STL_LOC( <functional> )
 #define RFTL_FUTURE RF_STL_LOC( <future> )
