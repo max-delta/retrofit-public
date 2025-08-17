@@ -65,7 +65,7 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 
 	rftl::array<char, kBufSize> outputBuffer;
 	int bytesParsed;
-	if( event.mTransientContextString == nullptr )
+	if( event.mTransientContextString.empty() )
 	{
 		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s][%s]  %s\n", severity, event.mCategoryKey, &messageBuffer[0] );
 	}

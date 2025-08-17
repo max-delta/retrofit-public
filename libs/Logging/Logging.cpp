@@ -187,7 +187,7 @@ bool UnregisterHandler( HandlerID handlerID )
 namespace details {
 
 void LogVA(
-	char8_t const* context,
+	rftl::u8string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
@@ -201,7 +201,7 @@ void LogVA(
 
 
 void LogVA(
-	char16_t const* context,
+	rftl::u16string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
@@ -215,7 +215,7 @@ void LogVA(
 
 
 void LogVA(
-	char32_t const* context,
+	rftl::u32string_view context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,

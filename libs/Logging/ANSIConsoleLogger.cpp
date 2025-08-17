@@ -63,7 +63,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char8_t> const& ev
 
 	rftl::array<char, kBufSize> outputBuffer;
 	int bytesParsed;
-	if( event.mTransientContextString == nullptr )
+	if( event.mTransientContextString.empty() )
 	{
 		bytesParsed = snprintf( &outputBuffer[0], kBufSize, "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
 	}

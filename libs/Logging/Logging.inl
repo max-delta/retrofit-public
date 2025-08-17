@@ -22,7 +22,7 @@ void Log(
 
 	rftl::u8string_view const formatAsUtf8 = rftl::u8string_view( reinterpret_cast<char8_t const*>( format.data() ), format.size() );
 
-	details::LogVA( &contextBuffer[0], categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
+	details::LogVA( contextBuffer.data(), categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
 }
 #endif
 
@@ -42,7 +42,7 @@ void Log(
 	WriteContextString( context, contextBuffer );
 	*contextBuffer.rbegin() = u8'\0';
 
-	details::LogVA( &contextBuffer[0], categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( contextBuffer.data(), categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 
@@ -61,7 +61,7 @@ void Log(
 	WriteContextString( context, contextBuffer );
 	*contextBuffer.rbegin() = '\0';
 
-	details::LogVA( &contextBuffer[0], categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( contextBuffer.data(), categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 
@@ -80,7 +80,7 @@ void Log(
 	WriteContextString( context, contextBuffer );
 	*contextBuffer.rbegin() = '\0';
 
-	details::LogVA( &contextBuffer[0], categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( contextBuffer.data(), categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 
@@ -97,7 +97,7 @@ void Log(
 {
 	rftl::u8string_view const formatAsUtf8 = rftl::u8string_view( reinterpret_cast<char8_t const*>( format.data() ), format.size() );
 
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
+	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
 }
 
 
@@ -112,7 +112,7 @@ void Log(
 	rftl::u8string_view format,
 	ArgsT&&... args )
 {
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 template<typename... ArgsT>
@@ -125,7 +125,7 @@ void Log(
 	rftl::u16string_view format,
 	ArgsT&&... args )
 {
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 template<typename... ArgsT>
@@ -138,7 +138,7 @@ void Log(
 	rftl::u32string_view format,
 	ArgsT&&... args )
 {
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

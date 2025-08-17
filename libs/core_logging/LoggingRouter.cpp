@@ -37,10 +37,10 @@ LogEventConverter<FromT, ToT>::LogEventConverter( LogEvent<FromT> const& logEven
 	mConverted.mSeverityMask = logEvent.mSeverityMask;
 	mConverted.mLineNumber = logEvent.mLineNumber;
 	mConverted.mTransientFileString = logEvent.mTransientFileString;
-	if( logEvent.mTransientContextString != nullptr )
+	if( logEvent.mTransientContextString.empty() == false )
 	{
 		mContext = unicode::ConvertToUtf<ToT>( logEvent.mTransientContextString );
-		mConverted.mTransientContextString = mContext.c_str();
+		mConverted.mTransientContextString = mContext;
 	}
 	if( logEvent.mTransientMessageFormatString.empty() == false )
 	{
@@ -62,7 +62,7 @@ LoggingRouter::LoggingRouter()
 
 
 void LoggingRouter::LogVA(
-	char8_t const* context,
+	rftl::u8string_view context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,
@@ -76,7 +76,7 @@ void LoggingRouter::LogVA(
 
 
 void LoggingRouter::LogVA(
-	char16_t const* context,
+	rftl::u16string_view context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,
@@ -90,7 +90,7 @@ void LoggingRouter::LogVA(
 
 
 void LoggingRouter::LogVA(
-	char32_t const* context,
+	rftl::u32string_view context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,
@@ -209,7 +209,7 @@ void LoggingRouter::ClearCategoryWhitelist( CategoryKey categoryKey )
 
 template<typename CharT>
 void LoggingRouter::LogInternal(
-	CharT const* context,
+	rftl::basic_string_view<CharT> context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,

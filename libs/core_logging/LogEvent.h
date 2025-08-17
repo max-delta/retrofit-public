@@ -23,7 +23,7 @@ struct LogEvent
 
 	// Must be consumed immediately, pointers are not permanent
 	char const* mTransientFileString;
-	CharT const* mTransientContextString;
+	rftl::basic_string_view<CharT> mTransientContextString;
 	rftl::basic_string_view<CharT> mTransientMessageFormatString;
 };
 

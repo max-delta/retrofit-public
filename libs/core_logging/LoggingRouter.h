@@ -39,7 +39,7 @@ public:
 
 	template<typename... ArgsT>
 	void Log(
-		char8_t const* context,
+		rftl::u8string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -51,7 +51,7 @@ public:
 	}
 	template<typename... ArgsT>
 	void Log(
-		char16_t const* context,
+		rftl::u16string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -63,7 +63,7 @@ public:
 	}
 	template<typename... ArgsT>
 	void Log(
-		char32_t const* context,
+		rftl::u32string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -74,7 +74,7 @@ public:
 		LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
 	}
 	void LogVA(
-		char8_t const* context,
+		rftl::u8string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -82,7 +82,7 @@ public:
 		rftl::u8string_view format,
 		rftl::format_args&& args ) const;
 	void LogVA(
-		char16_t const* context,
+		rftl::u16string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -90,7 +90,7 @@ public:
 		rftl::u16string_view format,
 		rftl::format_args&& args ) const;
 	void LogVA(
-		char32_t const* context,
+		rftl::u32string_view context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
@@ -123,7 +123,7 @@ public:
 private:
 	template<typename CharT>
 	void LogInternal(
-		CharT const* context,
+		rftl::basic_string_view<CharT> context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
