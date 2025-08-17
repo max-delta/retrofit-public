@@ -7,7 +7,7 @@
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-LOGGING_API void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, va_list args );
+LOGGING_API void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args&& args );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -97,7 +97,7 @@ bool CharacterValidator::LoadGeneticsTable( file::VFSPath const& geneticsTablePa
 		rftl::deque<rftl::string> const entry = geneticsTable.front();
 		if( entry.size() != 5 )
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, expected 5 columns", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, expected 5 columns", math::integer_cast<int>( line ) );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -108,19 +108,19 @@ bool CharacterValidator::LoadGeneticsTable( file::VFSPath const& geneticsTablePa
 
 		if( id.empty() )
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, not a valid id", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, not a valid id", math::integer_cast<int>( line ) );
 			return false;
 		}
 
 		if( species.empty() )
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, not a valid species", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, not a valid species", math::integer_cast<int>( line ) );
 			return false;
 		}
 
 		if( gender.empty() )
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, not a valid gender", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, not a valid gender", math::integer_cast<int>( line ) );
 			return false;
 		}
 
@@ -135,13 +135,13 @@ bool CharacterValidator::LoadGeneticsTable( file::VFSPath const& geneticsTablePa
 		}
 		else
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, not a valid playability", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, not a valid playability", math::integer_cast<int>( line ) );
 			return false;
 		}
 
 		if( nineChar.empty() )
 		{
-			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line %i, not a valid 9-char", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( geneticsTablePath, RFCAT_CHAR, "Malformed genetics entry at line {}, not a valid 9-char", math::integer_cast<int>( line ) );
 			return false;
 		}
 
@@ -230,7 +230,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 		rftl::deque<rftl::string> const entry = statBonusesTable.front();
 		if( entry.size() != 9 )
 		{
-			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line %i, expected 9 columns", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line {}, expected 9 columns", math::integer_cast<int>( line ) );
 			return false;
 		}
 		rftl::string const& species = entry.at( 0 );
@@ -245,7 +245,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 
 		if( species.empty() )
 		{
-			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line %i, not a valid species", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line {}, not a valid species", math::integer_cast<int>( line ) );
 			return false;
 		}
 
@@ -280,7 +280,7 @@ bool CharacterValidator::LoadStatBonusesTable( file::VFSPath const& statBonusesT
 			load( ss, elempwrString, stats.mElemPwr );
 		if( validStats == false )
 		{
-			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line %i, not a valid modifier", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( statBonusesTablePath, RFCAT_CHAR, "Malformed stat bonuses entry at line {}, not a valid modifier", math::integer_cast<int>( line ) );
 			return false;
 		}
 

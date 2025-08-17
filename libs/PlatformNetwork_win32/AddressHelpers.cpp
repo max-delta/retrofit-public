@@ -52,7 +52,7 @@ AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* 
 		&retVal.mHead );
 	if( suggestionResult != 0 )
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to get suggested addresses: ret %i", suggestionResult );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to get suggested addresses: ret {}", suggestionResult );
 		return {};
 	}
 

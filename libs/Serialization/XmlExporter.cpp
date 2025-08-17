@@ -392,7 +392,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 
 #define RF_CASE_UNSUPPORTED( TYPE, VAL ) \
 	case TYPE: \
-		RFLOGF_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '%s' will be forced to a predetermined value", value.GetStoredTypeName() ); \
+		RFLOGF_WARNING( nullptr, RFCAT_SERIALIZATION, "Unsupported type '{}' will be forced to a predetermined value", value.GetStoredTypeName() ); \
 		valueAttr = VAL; \
 		break
 

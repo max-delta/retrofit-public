@@ -25,19 +25,19 @@ TEST( Logging, Details_ClearGlobalCounts )
 	ASSERT_EQ( details::gCountAll, 0 );
 }
 
-void Handler1( LoggingRouter const&, LogEvent<char8_t> const&, va_list )
+void Handler1( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
 {
 	gCount1++;
 }
-void Handler2( LoggingRouter const&, LogEvent<char8_t> const&, va_list )
+void Handler2( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
 {
 	gCount2++;
 }
-void Handler3( LoggingRouter const&, LogEvent<char8_t> const&, va_list )
+void Handler3( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
 {
 	gCount3++;
 }
-void HandlerAll( LoggingRouter const&, LogEvent<char8_t> const&, va_list )
+void HandlerAll( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
 {
 	gCountAll++;
 }
@@ -82,9 +82,9 @@ TEST( Logging, UnsetTrashVarArgsToNowhere )
 	// Handlers will probably fall over, but router shouldn't, since it
 	//  shouldn't be unpacking messages
 	LoggingRouter router;
-	router.Log( nullptr, "", 1, nullptr, 0, u8"%s%s%s", 0x1 );
-	router.Log( nullptr, "", 1, nullptr, 0, u8"%s%s%s", 0x1 );
-	router.Log( nullptr, "", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "", 1, nullptr, 0, u8"{}{}{}", 0x1 );
+	router.Log( nullptr, "", 1, nullptr, 0, u8"{}{}{}", 0x1 );
+	router.Log( nullptr, "", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 }
 
 
@@ -95,7 +95,7 @@ TEST( Logging, Registration )
 
 	struct Invalid
 	{
-		static void InvalidFunc( LoggingRouter const&, LogEvent<char8_t> const&, va_list )
+		static void InvalidFunc( LoggingRouter const&, LogEvent<char8_t> const&, rftl::format_args&& )
 		{
 			GTEST_FAIL();
 		}
@@ -115,7 +115,7 @@ TEST( Logging, Registration )
 	router.UnregisterHandler( id2 );
 
 	// This should have no effect since the handlers should be unregistered
-	router.Log( nullptr, "", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 }
 
 
@@ -126,21 +126,21 @@ TEST( Logging, Basics )
 	details::SetupStandardRouter( router );
 
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
 	ASSERT_EQ( details::gCountAll, 1 );
 
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "", 2, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "", 2, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
 	ASSERT_EQ( details::gCount2, 1 );
 	ASSERT_EQ( details::gCount3, 0 );
 	ASSERT_EQ( details::gCountAll, 1 );
 
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "", 4, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "", 4, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 1 );
@@ -184,7 +184,7 @@ TEST( Logging, Whitelists )
 
 	// No filter
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -193,7 +193,7 @@ TEST( Logging, Whitelists )
 	// Global filter ACTIVE
 	router.SetOrModifyGlobalWhitelist( ~1ull );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -202,7 +202,7 @@ TEST( Logging, Whitelists )
 	// Global filter inactive
 	router.SetOrModifyGlobalWhitelist( ~2ull );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -211,7 +211,7 @@ TEST( Logging, Whitelists )
 	// Global filter inactive, category filer ACTIVE
 	router.SetOrModifyCategoryWhitelist( "TEST", ~1ull );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -220,7 +220,7 @@ TEST( Logging, Whitelists )
 	// Global filter inactive, category filer inactive
 	router.SetOrModifyCategoryWhitelist( "TEST", ~2ull );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -230,7 +230,7 @@ TEST( Logging, Whitelists )
 	router.SetOrModifyGlobalWhitelist( ~1ull );
 	router.SetOrModifyCategoryWhitelist( "TEST", ~1ull );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 0 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );
@@ -240,7 +240,7 @@ TEST( Logging, Whitelists )
 	router.ClearGlobalWhitelist();
 	router.ClearCategoryWhitelist( "TEST" );
 	details::ClearGlobalCounts();
-	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"%s%s%s", 0x1 );
+	router.Log( nullptr, "TEST", 1, nullptr, 0, u8"{}{}{}", 0x1 );
 	ASSERT_EQ( details::gCount1, 1 );
 	ASSERT_EQ( details::gCount2, 0 );
 	ASSERT_EQ( details::gCount3, 0 );

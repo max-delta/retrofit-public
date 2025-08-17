@@ -176,7 +176,7 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 		RFLOGF_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
-			"Failed to prepare a remote frame for input stream '%u' because it"
+			"Failed to prepare a remote frame for input stream '{}' because it"
 			" was too far in the past",
 			streamRef.mIdentifier );
 		return false;
@@ -187,7 +187,7 @@ bool RollbackFilters::TryPrepareRemoteFrame(
 		RFLOGF_WARNING(
 			nullptr,
 			RFCAT_GAMESYNC,
-			"Failed to prepare a remote frame for input stream '%u' because it"
+			"Failed to prepare a remote frame for input stream '{}' because it"
 			" would conflict with already committed data",
 			streamRef.mIdentifier );
 		return false;

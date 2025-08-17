@@ -6,23 +6,28 @@
 
 #include "core_unicode/StringConvert.h"
 
+#include "rftl/extension/bounded_overwrite_iterator.h"
 #include "rftl/limits"
 
 
 namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, va_list args )
+void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t> const& event, rftl::format_args&& args )
 {
 	using namespace RF::logging;
 
-	// C APIs won't take Unicode, hope that ASCII is good enough
-	char const* const legacyFormatString = reinterpret_cast<char const*>( event.mTransientMessageFormatString );
+	// C++20 APIs won't take Unicode, hope that ASCII is good enough
+	rftl::string_view const legacyFormatString = rftl::string_view( reinterpret_cast<char const*>( event.mTransientMessageFormatString.data() ), event.mTransientMessageFormatString.size() );
 
 	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	vsnprintf( &messageBuffer[0], kBufSize, legacyFormatString, args );
-	*messageBuffer.rbegin() = '\0';
+	{
+		rftl::bounded_forward_overwrite_iterator out( messageBuffer );
+		out = rftl::vformat_to( out, legacyFormatString, args );
+		*out = '\0';
+		*messageBuffer.rbegin() = '\0';
+	}
 
 	char const* severity;
 	if( event.mSeverityMask & RF_SEV_MILESTONE )

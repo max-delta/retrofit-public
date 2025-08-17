@@ -186,84 +186,16 @@ bool UnregisterHandler( HandlerID handlerID )
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
-void Log(
-	nullptr_t /*context*/,
-	CategoryKey categoryKey,
-	uint64_t severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char const* format, ... )
-{
-	char8_t const* const formatAsUtf8 = reinterpret_cast<char8_t const*>( format );
-
-	va_list args;
-	va_start( args, format );
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, args );
-	va_end( args );
-}
-#endif
-
-
-
-void Log(
-	nullptr_t /*context*/,
-	CategoryKey categoryKey,
-	uint64_t severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char8_t const* format, ... )
-{
-	va_list args;
-	va_start( args, format );
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
-void Log(
-	nullptr_t /*context*/,
-	CategoryKey categoryKey,
-	uint64_t severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char16_t const* format, ... )
-{
-	va_list args;
-	va_start( args, format );
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
-void Log(
-	nullptr_t /*context*/,
-	CategoryKey categoryKey,
-	uint64_t severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char32_t const* format, ... )
-{
-	va_list args;
-	va_start( args, format );
-	details::LogVA( nullptr, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
 void LogVA(
 	char8_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char8_t const* format,
-	va_list args )
+	rftl::u8string_view format,
+	rftl::format_args&& args )
 {
-	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 
@@ -274,10 +206,10 @@ void LogVA(
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const* format,
-	va_list args )
+	rftl::u16string_view format,
+	rftl::format_args&& args )
 {
-	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 
@@ -288,10 +220,10 @@ void LogVA(
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const* format,
-	va_list args )
+	rftl::u32string_view format,
+	rftl::format_args&& args )
 {
-	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	GetOrCreateGlobalLoggingInstance().LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "rftl/cstdint"
+#include "rftl/string_view"
 
 
 namespace RF::logging {
@@ -23,7 +24,7 @@ struct LogEvent
 	// Must be consumed immediately, pointers are not permanent
 	char const* mTransientFileString;
 	CharT const* mTransientContextString;
-	CharT const* mTransientMessageFormatString;
+	rftl::basic_string_view<CharT> mTransientMessageFormatString;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

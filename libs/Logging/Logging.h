@@ -251,93 +251,105 @@ LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 namespace details {
 
 #ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
-template<typename Context>
+template<typename Context, typename... ArgsT>
 void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format, ... );
+	rftl::string_view format,
+	ArgsT&&... args );
 #endif
-template<typename Context>
+template<typename Context, typename... ArgsT>
 void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char8_t const* format, ... );
-template<typename Context>
+	rftl::u8string_view format,
+	ArgsT&&... args );
+template<typename Context, typename... ArgsT>
 void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const* format, ... );
-template<typename Context>
+	rftl::u16string_view format,
+	ArgsT&&... args );
+template<typename Context, typename... ArgsT>
 void Log(
 	Context const& context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const* format, ... );
+	rftl::u32string_view format,
+	ArgsT&&... args );
 #ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
-LOGGING_API void Log(
+template<typename... ArgsT>
+void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char const* format, ... );
+	rftl::string_view format, 
+	ArgsT&&... args );
 #endif
-LOGGING_API void Log(
+template<typename... ArgsT>
+void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char8_t const* format, ... );
-LOGGING_API void Log(
+	rftl::u8string_view format, 
+	ArgsT&&... args );
+template<typename... ArgsT>
+void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const* format, ... );
-LOGGING_API void Log(
+	rftl::u16string_view format, 
+	ArgsT&&... args );
+template<typename... ArgsT>
+void Log(
 	nullptr_t /*context*/,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const* format, ... );
+	rftl::u32string_view format, 
+	ArgsT&&... args );
 LOGGING_API void LogVA(
 	char8_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char8_t const* format,
-	va_list args );
+	rftl::u8string_view format,
+	rftl::format_args&& args );
 LOGGING_API void LogVA(
 	char16_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const* format,
-	va_list args );
+	rftl::u16string_view format,
+	rftl::format_args&& args );
 LOGGING_API void LogVA(
 	char32_t const* context,
 	CategoryKey categoryKey,
 	uint64_t severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const* format,
-	va_list args );
+	rftl::u32string_view format,
+	rftl::format_args&& args );
 
 }
 ///////////////////////////////////////////////////////////////////////////////

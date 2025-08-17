@@ -13,9 +13,6 @@
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
 
-RF_TODO_ANNOTATION( "Remove c_str usages, update logging to C++20 format" );
-#include "rftl/extension/c_str.h"
-
 #include "rftl/extension/string_format.h"
 #include "rftl/optional"
 #include "rftl/unordered_map"
@@ -367,7 +364,7 @@ bool PopFromChain( WalkChain& fullChain )
 			return true;
 		}
 
-		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '{}'", nodeIdentifier );
 		RF_DBGFAIL();
 		return false;
 	}
@@ -563,7 +560,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain, ScratchObjectStorage& sc
 			return true;
 		}
 
-		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Could not find member '%s'", memberNameToFind.c_str() );
+		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Could not find member '{}'", memberNameToFind );
 		return false;
 	}
 
@@ -887,7 +884,7 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain, ScratchObjectStorage& sc
 			return true;
 		}
 
-		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '%s'", nodeIdentifier.c_str() );
+		RFLOGF_ERROR( fullChain, RFCAT_SERIALIZATION, "Unknown extension node identifier '{}'", nodeIdentifier );
 		RF_DBGFAIL();
 		return false;
 	}
@@ -1526,7 +1523,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID %llu", instanceID );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply instance ID {}", instanceID );
 
 		// Note the instance ID for deferred instance creation to refer to
 		RF_ASSERT( scratch.mDeferredInstance.has_value() );
@@ -1542,7 +1539,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID %llu ('%s')", typeID, debugName );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply type ID {} ('{}')", typeID, debugName );
 
 		// Note the type ID for deferred instance creation to refer to
 		RF_ASSERT( scratch.mDeferredInstance.has_value() );
@@ -1600,7 +1597,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply name '%s'", RFTLE_CSTR( name ) );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply name '{}'", name );
 
 		RF_ASSERT( scratch.mWalkChain.size() >= 1 );
 		scratch.mWalkChain.back()->mIdentifier = name;
@@ -1621,7 +1618,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '%s' [%s]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ).c_str() );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '{}' [{}]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ) );
 
 		// At time of writing, it is expected resolving the current property
 		//  has been deferred, so that it could build up any name or type
@@ -1657,7 +1654,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply indirection %llu", indirectionID );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply indirection {}", indirectionID );
 
 		bool const someIndirectionsSupported =
 			scratch.mParams.mAllowLocalIndirections ||

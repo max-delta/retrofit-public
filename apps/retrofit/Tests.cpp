@@ -695,7 +695,7 @@ void XMLTest()
 		}
 		else
 		{
-			RFLOGF_ERROR( nullptr, RFCAT_STARTUPTEST, "Failed to parse file that XML writer just wrote. Error: \"%s\"", parseResult.description() );
+			RFLOGF_ERROR( nullptr, RFCAT_STARTUPTEST, "Failed to parse file that XML writer just wrote. Error: \"{}\"", parseResult.description() );
 		}
 	}
 }
@@ -784,7 +784,7 @@ void PlatformTest()
 	for( size_t i = 0; i < uuids.max_size(); i++ )
 	{
 		Uuid const newUuid = Uuid::GenerateNewUuid();
-		RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "Generated new UUID: %s", newUuid.GetDebugString().c_str() );
+		RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "Generated new UUID: {}", newUuid.GetDebugString() );
 		uuids.emplace_back( newUuid );
 	}
 	uuids.clear();
@@ -801,7 +801,7 @@ void InitFrameBuilderTest()
 	{
 		auto func = []() -> void
 		{
-			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "START running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "START running on thread hash {}", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );
@@ -814,7 +814,7 @@ void InitFrameBuilderTest()
 	{
 		auto func = []() -> void
 		{
-			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR1 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR1 running on thread hash {}", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );
@@ -828,7 +828,7 @@ void InitFrameBuilderTest()
 	{
 		auto func = []() -> void
 		{
-			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR2 running on thread hash %llu", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
+			RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "PAIR2 running on thread hash {}", rftl::hash<rftl::thread::id>()( rftl::this_thread::get_id() ) );
 		};
 		auto myFunctor = scheduling::CreateCloneableFunctorTask( rftl::move( func ) );
 		using TaskType = decltype( myFunctor );

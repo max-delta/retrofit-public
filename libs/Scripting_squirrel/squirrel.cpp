@@ -34,14 +34,14 @@ static rftl::string GetLastError( HSQUIRRELVM vm )
 static void NotifyLastError( HSQUIRRELVM vm )
 {
 	rftl::string const error = GetLastError( vm );
-	RFLOGF_NOTIFY( nullptr, RFCAT_SQUIRREL, "Squirrel error: %s", error.c_str() );
+	RFLOGF_NOTIFY( nullptr, RFCAT_SQUIRREL, "Squirrel error: {}", error );
 }
 
 
 
 static void LogCompileError( HSQUIRRELVM vm, SQChar const* desc, SQChar const* source, SQInteger line, SQInteger column )
 {
-	RFLOGF_ERROR( nullptr, RFCAT_SQUIRREL, "Compile error: \"%s\" at \"%s\", %lli, %lli", desc, source, line, column );
+	RFLOGF_ERROR( nullptr, RFCAT_SQUIRREL, "Compile error: \"{}\" at \"{}\", {}, {}", desc, source, line, column );
 }
 
 
@@ -384,8 +384,8 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 			if( memberName == rftl::string_view( kReservedClassNameMemberName ) )
 			{
 				RFLOGF_NOTIFY( nullptr, RFCAT_SQUIRREL,
-					"Failed to inject member name on class '%s' because it"
-					" uses a reserved name '%s'",
+					"Failed to inject member name on class '{}' because it"
+					" uses a reserved name '{}'",
 					name,
 					memberName );
 				return false;
@@ -584,7 +584,7 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			SQRESULT const foundResult = sq_get( mVm, -2 );
 			if( SQ_FAILED( foundResult ) )
 			{
-				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '{}'", identifier );
 				return false;
 			}
 		}
@@ -596,7 +596,7 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			SQRESULT const foundResult = sq_get( mVm, -2 );
 			if( SQ_FAILED( foundResult ) )
 			{
-				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '{}'", identifier );
 				return false;
 			}
 		}
@@ -612,7 +612,7 @@ bool SquirrelVM::NoCleanup_GetNestedVariable( VMStackGuard const&, NestedTravers
 			SQRESULT const foundResult = sq_get( mVm, -2 );
 			if( SQ_FAILED( foundResult ) )
 			{
-				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '%s'", identifier.c_str() );
+				RFLOGF_NOTIFY( path, RFCAT_SQUIRREL, "Failed to find identifier '{}'", identifier );
 				return false;
 			}
 		}

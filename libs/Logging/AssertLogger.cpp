@@ -5,6 +5,7 @@
 
 #include "core_math/Hash.h"
 
+#include "rftl/extension/bounded_overwrite_iterator.h"
 #include "rftl/unordered_set"
 #include "rftl/string"
 #include "rftl/mutex"
@@ -13,7 +14,7 @@
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 
-void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, va_list args )
+void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, rftl::format_args&& args )
 {
 	// Multiple threads could assert simultaneously, but we don't really care
 	//  about the performance impact in that case, so we'll just lock the
@@ -33,13 +34,17 @@ void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, 
 	AssertLocation const thisLocation{ event.mTransientFileString, event.mLineNumber };
 	if( skippedAssertLocations.count( thisLocation ) == 0 )
 	{
-		// C APIs won't take Unicode, hope that ASCII is good enough
-		char const* const legacyFormatString = reinterpret_cast<char const*>( event.mTransientMessageFormatString );
+		// C++20 APIs won't take Unicode, hope that ASCII is good enough
+		rftl::string_view const legacyFormatString = rftl::string_view( reinterpret_cast<char const*>( event.mTransientMessageFormatString.data() ), event.mTransientMessageFormatString.size() );
 
 		constexpr size_t kBufSize = 512;
 		rftl::array<char, kBufSize> messageBuffer;
-		vsnprintf( &messageBuffer[0], kBufSize, legacyFormatString, args );
-		*messageBuffer.rbegin() = '\0';
+		{
+			rftl::bounded_forward_overwrite_iterator out( messageBuffer );
+			out = rftl::vformat_to( out, legacyFormatString, args );
+			*out = '\0';
+			*messageBuffer.rbegin() = '\0';
+		}
 
 		assert::AssertResponse const response = assert::AssertNotification( event.mTransientFileString, event.mLineNumber, "N/A", messageBuffer.data() );
 		if( response == assert::AssertResponse::Interrupt )

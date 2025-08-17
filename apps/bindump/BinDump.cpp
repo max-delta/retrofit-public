@@ -176,7 +176,7 @@ bool TryAsPE( file::VFSPath const& logContext, rftl::streambuf& seekable )
 
 	// Sections
 	rftl::vector<bin::coff::SectionHeader> sections = {};
-	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu sections", coff.mNumSections );
+	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting {} sections", coff.mNumSections );
 	if( coff.mNumSections > 100 )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of sections" );
@@ -229,7 +229,7 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 
 	// Sections
 	rftl::vector<bin::coff::SectionHeader> sections = {};
-	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu sections", coff.mNumSections );
+	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting {} sections", coff.mNumSections );
 	if( coff.mNumSections > 10'000 )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of sections" );
@@ -254,7 +254,7 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 
 	// Symbols
 	rftl::vector<bin::coff::SymbolRecord> symbols = {};
-	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu symbols", coff.mNumSymbols );
+	RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting {} symbols", coff.mNumSymbols );
 	if( coff.mNumSymbols > 10'000 )
 	{
 		RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of symbols" );
@@ -298,7 +298,7 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 		}
 		RFLOG_INFO( logContext, RFCAT_BINDUMP, "Looks like a string table header" );
 
-		RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting %zu bytes in string table", stringTable.mSize );
+		RFLOGF_INFO( logContext, RFCAT_BINDUMP, "Expecting {} bytes in string table", stringTable.mSize );
 		if( stringTable.mSize > 10'000'000 )
 		{
 			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Unreasonable number of bytes in string table" );
@@ -325,7 +325,7 @@ bool TryAsCOFF( file::VFSPath const& logContext, rftl::streambuf& seekable )
 			RFLOG_ERROR( logContext, RFCAT_BINDUMP, "Doesn't look like a valid symbol name" );
 			return false;
 		}
-		RFLOGF_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a valid symbol name: '%s'", rftl::string( name ).c_str() );
+		RFLOGF_DEBUG( logContext, RFCAT_BINDUMP, "Looks like a valid symbol name: '{}'", name );
 	}
 
 	return true;
@@ -467,11 +467,11 @@ int Shutdown( ErrorReturnCode code )
 	int const retVal = math::enum_bitcast( code );
 	if( retVal == 0 )
 	{
-		RFLOGF_MILESTONE( nullptr, RFCAT_BINDUMP, "Shutting down with return code %i", retVal );
+		RFLOGF_MILESTONE( nullptr, RFCAT_BINDUMP, "Shutting down with return code {}", retVal );
 	}
 	else
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_BINDUMP, "Shutting down with return code %i", retVal );
+		RFLOGF_ERROR( nullptr, RFCAT_BINDUMP, "Shutting down with return code {}", retVal );
 	}
 	return retVal;
 }

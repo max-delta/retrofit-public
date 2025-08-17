@@ -131,7 +131,7 @@ void Startup( cli::ArgView const& args )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to attach a renderer to window" );
 	}
-	RFLOGF_INFO( nullptr, RFCAT_STARTUP, "Renderer: %s", renderDevice->GetAttachedDeviceDescription().c_str() );
+	RFLOGF_INFO( nullptr, RFCAT_STARTUP, "Renderer: {}", renderDevice->GetAttachedDeviceDescription() );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
 	sGraphics = DefaultCreator<gfx::ppu::PPUController>::Create( rftl::move( renderDevice ), gVfs );

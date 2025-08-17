@@ -1711,7 +1711,7 @@ auto PPUController::RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& li
 			// Some types are important enough we want to complain louder
 			RF_DBGFAIL_MSG( "Draw command overflow" );
 		}
-		RF_ONCEPER_MINUTE( RFLOGF_WARNING( nullptr, RFCAT_PPU, "Draw command overflow of type '%s', some will be ignored", name ) );
+		RF_ONCEPER_MINUTE( RFLOGF_WARNING( nullptr, RFCAT_PPU, "Draw command overflow of type '{}', some will be ignored", name ) );
 
 		if constexpr( kFlicker )
 		{

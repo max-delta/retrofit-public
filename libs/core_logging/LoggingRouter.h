@@ -3,10 +3,10 @@
 #include "core_math/Hash.h"
 #include "core/macros.h"
 
-#include "rftl/vector"
-#include "rftl/unordered_map"
-#include "rftl/shared_mutex"
 #include "rftl/array"
+#include "rftl/shared_mutex"
+#include "rftl/unordered_map"
+#include "rftl/vector"
 
 
 namespace RF::logging {
@@ -37,51 +37,66 @@ private:
 public:
 	LoggingRouter();
 
+	template<typename... ArgsT>
 	void Log(
 		char8_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char8_t const* format, ... ) const;
+		rftl::u8string_view format,
+		ArgsT&&... args ) const
+	{
+		LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	}
+	template<typename... ArgsT>
 	void Log(
 		char16_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char16_t const* format, ... ) const;
+		rftl::u16string_view format,
+		ArgsT&&... args ) const
+	{
+		LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	}
+	template<typename... ArgsT>
 	void Log(
 		char32_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char32_t const* format, ... ) const;
+		rftl::u32string_view format,
+		ArgsT&&... args ) const
+	{
+		LogVA( context, categoryKey, severityMask, filename, lineNumber, format, rftl::make_format_args( args... ) );
+	}
 	void LogVA(
 		char8_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char8_t const* format,
-		va_list args ) const;
+		rftl::u8string_view format,
+		rftl::format_args&& args ) const;
 	void LogVA(
 		char16_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char16_t const* format,
-		va_list args ) const;
+		rftl::u16string_view format,
+		rftl::format_args&& args ) const;
 	void LogVA(
 		char32_t const* context,
 		CategoryKey categoryKey,
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		char32_t const* format,
-		va_list args ) const;
+		rftl::u32string_view format,
+		rftl::format_args&& args ) const;
 
 	// Control which handlers are able to handle log events
 	// NOTE: Handlers are run in the order they are registered
@@ -113,11 +128,11 @@ private:
 		SeverityMask severityMask,
 		char const* filename,
 		size_t lineNumber,
-		CharT const* format,
-		va_list args ) const;
-	void LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
-	void LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
-	void LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const;
+		rftl::basic_string_view<CharT> format,
+		rftl::format_args&& args ) const;
+	void LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
+	void LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
+	void LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const;
 	bool IsDynamicallyFilteredOut( CategoryKey categoryKey, SeverityMask severityMask ) const;
 
 

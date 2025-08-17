@@ -70,7 +70,7 @@ UDPSocket UDPSocket::BindSocket( bool preferIPv6, bool loopback, uint16_t port )
 		win32::addrinfo const& suggestion = *suggestionPtr;
 
 		rftl::string const name = details::GetAddress( *suggestion.ai_addr, suggestion.ai_addrlen );
-		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server UDP socket at \"%s\"", name.c_str() );
+		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server UDP socket at \"{}\"", name );
 
 		// Create
 		retVal.InitSocketHandle( win32::WSASocketW(
@@ -82,7 +82,7 @@ UDPSocket UDPSocket::BindSocket( bool preferIPv6, bool loopback, uint16_t port )
 			WSA_FLAG_OVERLAPPED ) ); // Allow async usage
 		if( retVal.IsValidSocketHandle() == false )
 		{
-			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unbound UDP socket: WSA %i", win32::WSAGetLastError() );
+			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unbound UDP socket: WSA {}", win32::WSAGetLastError() );
 		}
 		else
 		{
@@ -94,13 +94,13 @@ UDPSocket UDPSocket::BindSocket( bool preferIPv6, bool loopback, uint16_t port )
 			if( bindResult != 0 )
 			{
 				RF_ASSERT( bindResult == SOCKET_ERROR );
-				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to bind UDP socket: WSA %i", win32::WSAGetLastError() );
+				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to bind UDP socket: WSA {}", win32::WSAGetLastError() );
 			}
 			else
 			{
 				// Success!
 				RF_ASSERT( retVal.IsValid() );
-				RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Bound a UDP socket at \"%s\"", name.c_str() );
+				RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Bound a UDP socket at \"{}\"", name );
 				return retVal;
 			}
 		}
@@ -109,7 +109,7 @@ UDPSocket UDPSocket::BindSocket( bool preferIPv6, bool loopback, uint16_t port )
 		retVal = {};
 	}
 
-	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and bind UDP socket: WSA %i", win32::WSAGetLastError() );
+	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and bind UDP socket: WSA {}", win32::WSAGetLastError() );
 	return retVal;
 }
 
@@ -186,7 +186,7 @@ bool UDPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
 		nullptr ); // No overlapped
 	if( receiveResult != 0 )
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive UDP socket data: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive UDP socket data: WSA {}", win32::WSAGetLastError() );
 		buffer.clear();
 		return false;
 	}
@@ -198,7 +198,7 @@ bool UDPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
 		return false;
 	}
 
-	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Received UDP data (%lu bytes)", bytesReceived );
+	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Received UDP data ({} bytes)", bytesReceived );
 	RF_ASSERT( bytesReceived <= buffer.size() );
 	buffer.resize( bytesReceived );
 	return true;
@@ -240,7 +240,7 @@ bool UDPSocket::MakeNonBlocking()
 	if( nonblockingResult != 0 )
 	{
 		RF_ASSERT( nonblockingResult == SOCKET_ERROR );
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to make UDP socket non-blocking: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to make UDP socket non-blocking: WSA {}", win32::WSAGetLastError() );
 		return false;
 	}
 	return true;
@@ -339,7 +339,7 @@ bool UDPSocket::SendBuffer( Buffer const& buffer, win32::sockaddr const& destina
 		nullptr ); // No overlapped
 	if( sendResult != 0 )
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send UDP socket data: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send UDP socket data: WSA {}", win32::WSAGetLastError() );
 		return false;
 	}
 	else if( bytesSent != buffer.size() )
@@ -349,7 +349,7 @@ bool UDPSocket::SendBuffer( Buffer const& buffer, win32::sockaddr const& destina
 		return false;
 	}
 
-	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Sent UDP data (%lu bytes)", bytesSent );
+	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Sent UDP data ({} bytes)", bytesSent );
 	return true;
 }
 
@@ -378,7 +378,7 @@ void UDPSocket::ShutdownSocketIfValid()
 	{
 		RF_ASSERT( shutdownResult == SOCKET_ERROR );
 		int const lastError = win32::WSAGetLastError();
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown UDP socket: WSA %i", lastError );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown UDP socket: WSA {}", lastError );
 	}
 	else
 	{
@@ -401,7 +401,7 @@ void UDPSocket::CloseSocketIfValid()
 	if( result != 0 )
 	{
 		RF_ASSERT( result == SOCKET_ERROR );
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close UDP socket: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close UDP socket: WSA {}", win32::WSAGetLastError() );
 	}
 	ClearSocketHandle();
 }

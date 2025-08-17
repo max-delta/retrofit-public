@@ -78,7 +78,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 		win32::addrinfo const& suggestion = *suggestionPtr;
 
 		rftl::string const name = details::GetAddress( *suggestion.ai_addr, suggestion.ai_addrlen );
-		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create client TCP socket at \"%s\"", name.c_str() );
+		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create client TCP socket at \"{}\"", name );
 
 		// Create
 		retVal.InitSocketHandle( win32::WSASocketW(
@@ -90,7 +90,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 			WSA_FLAG_OVERLAPPED ) ); // Allow async usage
 		if( retVal.IsValidSocketHandle() == false )
 		{
-			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unconnected TCP socket: WSA %i", win32::WSAGetLastError() );
+			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unconnected TCP socket: WSA {}", win32::WSAGetLastError() );
 		}
 		else
 		{
@@ -106,13 +106,13 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 			if( connectResult != 0 )
 			{
 				RF_ASSERT( connectResult == SOCKET_ERROR );
-				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to connect TCP socket: WSA %i", win32::WSAGetLastError() );
+				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to connect TCP socket: WSA {}", win32::WSAGetLastError() );
 			}
 			else
 			{
 				// Success!
 				RF_ASSERT( retVal.IsValid() );
-				RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Connected a TCP client socket at \"%s\"", name.c_str() );
+				RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Connected a TCP client socket at \"{}\"", name );
 				return retVal;
 			}
 		}
@@ -121,7 +121,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 		retVal = {};
 	}
 
-	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and connect TCP socket after trying %llu interfaces", suggestions.mList.size() );
+	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and connect TCP socket after trying {} interfaces", suggestions.mList.size() );
 	return retVal;
 }
 
@@ -147,7 +147,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 		win32::addrinfo const& suggestion = *suggestionPtr;
 
 		rftl::string const name = details::GetAddress( *suggestion.ai_addr, suggestion.ai_addrlen );
-		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server TCP socket at \"%s\"", name.c_str() );
+		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Attempting to create server TCP socket at \"{}\"", name );
 
 		// Create
 		retVal.InitSocketHandle( win32::WSASocketW(
@@ -159,7 +159,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 			WSA_FLAG_OVERLAPPED ) ); // Allow async usage
 		if( retVal.IsValidSocketHandle() == false )
 		{
-			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unbound TCP socket: WSA %i", win32::WSAGetLastError() );
+			RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create unbound TCP socket: WSA {}", win32::WSAGetLastError() );
 		}
 		else
 		{
@@ -171,7 +171,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 			if( bindResult != 0 )
 			{
 				RF_ASSERT( bindResult == SOCKET_ERROR );
-				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to bind TCP socket: WSA %i", win32::WSAGetLastError() );
+				RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to bind TCP socket: WSA {}", win32::WSAGetLastError() );
 			}
 			else
 			{
@@ -182,14 +182,14 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 				if( listenResult != 0 )
 				{
 					RF_ASSERT( listenResult == SOCKET_ERROR );
-					RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to listen on TCP socket: WSA %i", win32::WSAGetLastError() );
+					RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to listen on TCP socket: WSA {}", win32::WSAGetLastError() );
 				}
 				else
 				{
 					// Success!
 					RF_ASSERT( retVal.IsValid() );
 					retVal.mListener = true;
-					RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Bound a listening TCP server socket at \"%s\"", name.c_str() );
+					RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMNETWORK, "Bound a listening TCP server socket at \"{}\"", name );
 					return retVal;
 				}
 			}
@@ -199,7 +199,7 @@ TCPSocket TCPSocket::BindServerSocket( bool preferIPv6, bool loopback, uint16_t 
 		retVal = {};
 	}
 
-	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and bind TCP socket: WSA %i", win32::WSAGetLastError() );
+	RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to create and bind TCP socket: WSA {}", win32::WSAGetLastError() );
 	return retVal;
 }
 
@@ -222,12 +222,12 @@ TCPSocket TCPSocket::WaitForNewClientConnection( TCPSocket& listeningServerSocke
 		0 ) ); // No conditional check
 	if( retVal.IsValidSocketHandle() == false )
 	{
-		RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to accept a TCP socket: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_WARNING( nullptr, RFCAT_PLATFORMNETWORK, "Failed to accept a TCP socket: WSA {}", win32::WSAGetLastError() );
 	}
 	else
 	{
 		rftl::string const name = details::GetAddress( *reinterpret_cast<win32::sockaddr*>( &newAddress ), math::integer_cast<size_t>( newAddressLen ) );
-		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Accepted a TCP connection from \"%s\"", name.c_str() );
+		RFLOGF_INFO( nullptr, RFCAT_PLATFORMNETWORK, "Accepted a TCP connection from \"{}\"", name );
 	}
 
 	return retVal;
@@ -283,7 +283,7 @@ bool TCPSocket::SendBuffer( Buffer const& buffer )
 		nullptr ); // No overlapped
 	if( sendResult != 0 )
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send TCP socket data: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to send TCP socket data: WSA {}", win32::WSAGetLastError() );
 		return false;
 	}
 	else if( bytesSent != buffer.size() )
@@ -293,7 +293,7 @@ bool TCPSocket::SendBuffer( Buffer const& buffer )
 		return false;
 	}
 
-	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Sent TCP data (%lu bytes)", bytesSent );
+	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Sent TCP data ({} bytes)", bytesSent );
 	return true;
 }
 
@@ -320,7 +320,7 @@ bool TCPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
 		nullptr ); // No overlapped
 	if( receiveResult != 0 )
 	{
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive TCP socket data: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to receive TCP socket data: WSA {}", win32::WSAGetLastError() );
 		buffer.clear();
 		return false;
 	}
@@ -332,7 +332,7 @@ bool TCPSocket::ReceiveBuffer( Buffer& buffer, size_t maxLen )
 		return false;
 	}
 
-	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Received TCP data (%lu bytes)", bytesReceived );
+	RFLOGF_TRACE( nullptr, RFCAT_PLATFORMNETWORK, "Received TCP data ({} bytes)", bytesReceived );
 	RF_ASSERT( bytesReceived <= buffer.size() );
 	buffer.resize( bytesReceived );
 	return true;
@@ -374,7 +374,7 @@ bool TCPSocket::MakeNonBlocking()
 	if( nonblockingResult != 0 )
 	{
 		RF_ASSERT( nonblockingResult == SOCKET_ERROR );
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to make TCP socket non-blocking: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to make TCP socket non-blocking: WSA {}", win32::WSAGetLastError() );
 		return false;
 	}
 	return true;
@@ -488,7 +488,7 @@ void TCPSocket::ShutdownSocketIfValid()
 			}
 			else
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket: WSA %i", lastError );
+				RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to shutdown TCP socket: WSA {}", lastError );
 			}
 		}
 		else
@@ -513,7 +513,7 @@ void TCPSocket::CloseSocketIfValid()
 	if( result != 0 )
 	{
 		RF_ASSERT( result == SOCKET_ERROR );
-		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close TCP socket: WSA %i", win32::WSAGetLastError() );
+		RFLOGF_ERROR( nullptr, RFCAT_PLATFORMNETWORK, "Failed to close TCP socket: WSA {}", win32::WSAGetLastError() );
 	}
 	ClearSocketHandle();
 }

@@ -653,7 +653,7 @@ bool ProcessScriptVariable(
 		if( writeSuccess == false )
 		{
 			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-				"Failed to write script value '%s' to variable",
+				"Failed to write script value '{}' to variable",
 				diagnosticName );
 			return false;
 		}
@@ -665,7 +665,7 @@ bool ProcessScriptVariable(
 		if( writeSuccess == false )
 		{
 			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-				"Failed to write script string '%s' to variable",
+				"Failed to write script string '{}' to variable",
 				diagnosticName );
 			return false;
 		}
@@ -677,7 +677,7 @@ bool ProcessScriptVariable(
 		if( processSuccess == false )
 		{
 			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-				"Failed to process script array '%s' to variable",
+				"Failed to process script array '{}' to variable",
 				diagnosticName );
 			return false;
 		}
@@ -689,7 +689,7 @@ bool ProcessScriptVariable(
 		if( queueSuccess == false )
 		{
 			RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-				"Failed to prepare processing for script instance '%s' to be written into variable",
+				"Failed to prepare processing for script instance '{}' to be written into variable",
 				diagnosticName );
 			return false;
 		}
@@ -697,7 +697,7 @@ bool ProcessScriptVariable(
 	else
 	{
 		RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-			"Unknown element type on '%s', probably an error in script-handling code",
+			"Unknown element type on '{}', probably an error in script-handling code",
 			diagnosticName );
 		return false;
 	}
@@ -758,16 +758,16 @@ bool ProcessClassWorkItem(
 			if( foundClassInfo == nullptr )
 			{
 				RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-					"Class claims to be '%s', but could not find corresponding injected type",
-					className.c_str() );
+					"Class claims to be '{}', but could not find corresponding injected type",
+					className );
 				continue;
 			}
 
 			if( foundClassInfo != &classInfo )
 			{
 				RFLOGF_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
-					"Class claims to be '%s', injected type class info doesn't match",
-					className.c_str() );
+					"Class claims to be '{}', injected type class info doesn't match",
+					className );
 				continue;
 			}
 

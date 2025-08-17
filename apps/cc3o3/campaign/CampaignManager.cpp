@@ -230,7 +230,7 @@ void CampaignManager::HardcodedSinglePlayerCharacterLoad()
 		// Load base characters
 		file::VFSPath const base = paths::BaseCharacters();
 		size_t const charsLoaded = charDB.LoadFromPersistentStorage( base );
-		RFLOGF_INFO( base, RFCAT_CC3O3, "Loaded %llu chars", charsLoaded );
+		RFLOGF_INFO( base, RFCAT_CC3O3, "Loaded {} chars", charsLoaded );
 		RFLOG_TEST_AND_FATAL( charsLoaded > 0, base, RFCAT_CC3O3, "Failed to load any base characters" );
 
 		// TODO: Load custom characters

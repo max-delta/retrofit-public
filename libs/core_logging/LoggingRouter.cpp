@@ -42,10 +42,10 @@ LogEventConverter<FromT, ToT>::LogEventConverter( LogEvent<FromT> const& logEven
 		mContext = unicode::ConvertToUtf<ToT>( logEvent.mTransientContextString );
 		mConverted.mTransientContextString = mContext.c_str();
 	}
-	if( logEvent.mTransientMessageFormatString != nullptr )
+	if( logEvent.mTransientMessageFormatString.empty() == false )
 	{
 		mFormat = unicode::ConvertToUtf<ToT>( logEvent.mTransientMessageFormatString );
-		mConverted.mTransientMessageFormatString = mFormat.c_str();
+		mConverted.mTransientMessageFormatString = mFormat;
 	}
 }
 
@@ -61,64 +61,16 @@ LoggingRouter::LoggingRouter()
 
 
 
-void LoggingRouter::Log(
-	char8_t const* context,
-	CategoryKey categoryKey,
-	SeverityMask severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char8_t const* format, ... ) const
-{
-	va_list args;
-	va_start( args, format );
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
-void LoggingRouter::Log(
-	char16_t const* context,
-	CategoryKey categoryKey,
-	SeverityMask severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char16_t const* format, ... ) const
-{
-	va_list args;
-	va_start( args, format );
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
-void LoggingRouter::Log(
-	char32_t const* context,
-	CategoryKey categoryKey,
-	SeverityMask severityMask,
-	char const* filename,
-	size_t lineNumber,
-	char32_t const* format, ... ) const
-{
-	va_list args;
-	va_start( args, format );
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
-	va_end( args );
-}
-
-
-
 void LoggingRouter::LogVA(
 	char8_t const* context,
 	CategoryKey categoryKey,
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char8_t const* format,
-	va_list args ) const
+	rftl::u8string_view format,
+	rftl::format_args&& args ) const
 {
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 
@@ -129,10 +81,10 @@ void LoggingRouter::LogVA(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char16_t const* format,
-	va_list args ) const
+	rftl::u16string_view format,
+	rftl::format_args&& args ) const
 {
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 
@@ -143,10 +95,10 @@ void LoggingRouter::LogVA(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	char32_t const* format,
-	va_list args ) const
+	rftl::u32string_view format,
+	rftl::format_args&& args ) const
 {
-	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, args );
+	LogInternal( context, categoryKey, severityMask, filename, lineNumber, format, rftl::move( args ) );
 }
 
 
@@ -157,9 +109,10 @@ HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const& handlerDefini
 
 	RF_ASSERT_MSG( handlerDefinition.mSupportedSeverities != 0, "Bad param" );
 	RF_ASSERT_MSG(
-		handlerDefinition.mUtf8HandlerFunc != nullptr ||
-		handlerDefinition.mUtf16HandlerFunc != nullptr ||
-		handlerDefinition.mUtf32HandlerFunc != nullptr,
+		false || // Clang-format is trash garbage
+			handlerDefinition.mUtf8HandlerFunc != nullptr ||
+			handlerDefinition.mUtf16HandlerFunc != nullptr ||
+			handlerDefinition.mUtf32HandlerFunc != nullptr,
 		"Bad param" );
 
 	HandlerID const newID = mHandlerIDGenerator;
@@ -261,8 +214,8 @@ void LoggingRouter::LogInternal(
 	SeverityMask severityMask,
 	char const* filename,
 	size_t lineNumber,
-	CharT const* format,
-	va_list args ) const
+	rftl::basic_string_view<CharT> format,
+	rftl::format_args&& args ) const
 {
 	// NOTE: Keeping the lock the whole time, since we also want to not only
 	//  protect against our internal variables, but prevent a handler
@@ -297,28 +250,28 @@ void LoggingRouter::LogInternal(
 		HandlerDefinition const& handlerDef = handlerDefPair.second;
 		if( ( handlerDef.mSupportedSeverities & severityMask ) != 0 )
 		{
-			LogInternal( logEvent, handlerDef, args );
+			LogInternal( logEvent, handlerDef, rftl::move( args ) );
 		}
 	}
 }
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf8HandlerFunc( *this, logEvent, args );
+		handlerDef.mUtf8HandlerFunc( *this, logEvent, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char8_t, char16_t> converter{ logEvent };
-		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char8_t, char32_t> converter{ logEvent };
-		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else
 	{
@@ -328,21 +281,21 @@ void LoggingRouter::LogInternal( LogEvent<char8_t> const& logEvent, HandlerDefin
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char16_t, char8_t> converter{ logEvent };
-		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf16HandlerFunc( *this, logEvent, args );
+		handlerDef.mUtf16HandlerFunc( *this, logEvent, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char16_t, char32_t> converter{ logEvent };
-		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf32HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else
 	{
@@ -352,21 +305,21 @@ void LoggingRouter::LogInternal( LogEvent<char16_t> const& logEvent, HandlerDefi
 
 
 
-void LoggingRouter::LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, va_list args ) const
+void LoggingRouter::LogInternal( LogEvent<char32_t> const& logEvent, HandlerDefinition const& handlerDef, rftl::format_args&& args ) const
 {
 	if( handlerDef.mUtf8HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char32_t, char8_t> converter{ logEvent };
-		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf8HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf16HandlerFunc != nullptr )
 	{
 		details::LogEventConverter<char32_t, char16_t> converter{ logEvent };
-		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, args );
+		handlerDef.mUtf16HandlerFunc( *this, converter.mConverted, rftl::move( args ) );
 	}
 	else if( handlerDef.mUtf32HandlerFunc != nullptr )
 	{
-		handlerDef.mUtf32HandlerFunc( *this, logEvent, args );
+		handlerDef.mUtf32HandlerFunc( *this, logEvent, rftl::move( args ) );
 	}
 	else
 	{

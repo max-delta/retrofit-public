@@ -140,7 +140,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 		if( fits && line.length() > gfx::ppu::kMaxStringLen )
 		{
 			// Hard limit on render draw request
-			RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '%s'", line.c_str() ) );
+			RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '{}'", line ) );
 			fits = false;
 		}
 		if( fits && renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line.c_str() ) > maxLineLen )
