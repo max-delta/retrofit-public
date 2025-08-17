@@ -26,7 +26,6 @@ struct rftl::formatter<rftl::wstring, char> : rftl::formatter<rftl::string_view,
 	template<class FmtContext>
 	typename FmtContext::iterator format( rftl::wstring const& arg, FmtContext& ctx ) const
 	{
-		auto iter = ctx.out();
 		rftl::u8string const asUTF8 = RF::platform::widechar::ConvertWideChars( arg );
 		rftl::string HACK_ASCII = {};
 		HACK_ASCII.reserve( asUTF8.size() );
