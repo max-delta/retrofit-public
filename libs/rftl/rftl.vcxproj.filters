@@ -106,6 +106,9 @@
 		<ClInclude Include="extension\bounded_overwrite_iterator.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\parseless_format.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">

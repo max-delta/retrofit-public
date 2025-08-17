@@ -45,6 +45,7 @@
 		<ClInclude Include="extension\enum_traits.h" />
 		<ClInclude Include="extension\immutable_string.h" />
 		<ClInclude Include="extension\integer_literals.h" />
+		<ClInclude Include="extension\parseless_format.h" />
 		<ClInclude Include="extension\static_string.h" />
 		<ClInclude Include="extension\static_vector.h" />
 		<ClInclude Include="extension\stream_operations.h" />
