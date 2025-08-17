@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "ProcessLaunch.h"
 
+#include "PlatformUtils_win32/WChar.h"
+
 #include "Logging/Logging.h"
 
 #include "core_platform/inc/windows_inc.h"
@@ -8,39 +10,36 @@
 
 #include "rftl/string"
 
-RF_TODO_ANNOTATION( "Move this hack to somewhere better, and make it do Unicode properly" );
+RF_TODO_ANNOTATION( "Move this hack to somewhere better" );
 template<>
-struct rftl::formatter<wchar_t const*, char>
+struct rftl::formatter<rftl::wstring, char> : rftl::formatter<rftl::string_view, char>
 {
+	using Shim = rftl::string_view;
+	using Base = rftl::formatter<Shim, char>;
+
 	template<class ParseContext>
 	constexpr typename ParseContext::iterator parse( ParseContext& ctx )
 	{
-		auto const it = ctx.begin();
-		if( it != ctx.end() && *it != '}' )
-		{
-			rftl::abort();
-		}
-
-		return it;
+		return Base::parse( ctx );
 	}
 
 	template<class FmtContext>
-	typename FmtContext::iterator format( wchar_t const* const& arg, FmtContext& ctx ) const
+	typename FmtContext::iterator format( rftl::wstring const& arg, FmtContext& ctx ) const
 	{
 		auto iter = ctx.out();
-		wchar_t const* str = arg;
-		while( true )
+		rftl::u8string const asUTF8 = RF::platform::widechar::ConvertWideChars( arg );
+		rftl::string HACK_ASCII = {};
+		HACK_ASCII.reserve( asUTF8.size() );
+		for( char8_t const& ch : asUTF8 )
 		{
-			wchar_t ch = *str;
-			str++;
-			if( ch == L'\0' )
-			{
-				break;
-			}
-			*iter = static_cast<char>( ch < 127 ? ch : L'?' );
-			iter++;
+			// HACK: Drop the Unicode on the floor, since C++20 still doesn't
+			//  support Unicode
+			RF_CPP23_TODO( "Check to see if C++ supports Unicode yet..." )
+			// SEE: https://stackoverflow.com/questions/77250832/using-stdformat-for-formatting-char8-t-char16-t-and-char32-t-texts-in-c-20
+			// SEE: https://github.com/sg16-unicode/sg16/issues/68
+			HACK_ASCII.push_back( static_cast<char>( ch < 127 ? ch : '?' ) );
 		}
-		return iter;
+		return Base::format( static_cast<Shim>( HACK_ASCII ), ctx );
 	}
 };
 
@@ -191,7 +190,7 @@ PLATFORMUTILS_API bool LaunchSelfClone( bool autoClose )
 	win32::PROCESS_INFORMATION processInfo = {};
 
 	// Launch process
-	RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMUTILS, u"Launching process: {}", mutableCommandLine.c_str() );
+	RFLOGF_MILESTONE( nullptr, RFCAT_PLATFORMUTILS, u8"Launching process: {}", mutableCommandLine );
 	win32::BOOL const createSuccess = win32::CreateProcessW(
 		nullptr, // Use command line to derive application name
 		mutableCommandLine.data(), // Must actually be mutable, see docs
