@@ -505,8 +505,8 @@ void ProcessFrame()
 		//  send along any input
 		time::CommonClock::time_point const localInputFrameReadyToCommit =
 			simulationMode == SimulationMode::StallSimulation ?
-				previousTrueFrame :
-				currentTrueFrame;
+			previousTrueFrame :
+			currentTrueFrame;
 
 		// NOTE: Regardless of the frame declared, uncommitted input from the
 		//  future can still be sent, such as when a local input is delayed to
