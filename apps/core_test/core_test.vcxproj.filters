@@ -61,6 +61,7 @@
 		<ClCompile Include="math_softfloat.cpp" />
 		<ClCompile Include="rftl_enum_traits.cpp" />
 		<ClCompile Include="rftl_string_format.cpp" />
+		<ClCompile Include="rftl_bounded_overwrite_iterator.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />

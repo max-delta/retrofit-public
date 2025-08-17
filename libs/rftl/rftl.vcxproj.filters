@@ -103,6 +103,9 @@
 		<ClInclude Include="patch\stdmodule.h">
 			<Filter>patch</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\bounded_overwrite_iterator.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">

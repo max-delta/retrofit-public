@@ -51,6 +51,7 @@
 		<ClCompile Include="platform_uuid.cpp" />
 		<ClCompile Include="ptr_transform.cpp" />
 		<ClCompile Include="reflect_type_info_builder.cpp" />
+		<ClCompile Include="rftl_bounded_overwrite_iterator.cpp" />
 		<ClCompile Include="rftl_enum_traits.cpp" />
 		<ClCompile Include="rftl_string_format.cpp" />
 		<ClCompile Include="rftl_string_traits.cpp" />

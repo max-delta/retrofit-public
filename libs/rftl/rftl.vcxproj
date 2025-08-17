@@ -38,6 +38,7 @@
 		<ClInclude Include="cstring" />
 		<ClInclude Include="deque" />
 		<ClInclude Include="extension\algorithms.h" />
+		<ClInclude Include="extension\bounded_overwrite_iterator.h" />
 		<ClInclude Include="extension\byte_span.h" />
 		<ClInclude Include="extension\byte_view.h" />
 		<ClInclude Include="extension\c_str.h" />
