@@ -268,14 +268,14 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 
 	rftl::string absoluteMountTableFilename = rftl::filesystem::absolute( mountTableFile ).generic_string();
 	mMountTableFile = CollapsePath( VFSPath::CreatePathFromString( absoluteMountTableFilename ) );
-	RFLOGF_INFO( nullptr, RFCAT_VFS, "Mount table file: {}", mMountTableFile.CreateString() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Mount table file: {}", mMountTableFile );
 
 	mConfigDirectory = mMountTableFile.GetParent();
-	RFLOGF_INFO( nullptr, RFCAT_VFS, "Config directory: {}", mConfigDirectory.CreateString() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Config directory: {}", mConfigDirectory );
 
 	rftl::string absoluteUserDirectory = rftl::filesystem::absolute( userDirectory ).generic_string();
 	mUserDirectory = CollapsePath( VFSPath::CreatePathFromString( absoluteUserDirectory ) );
-	RFLOGF_INFO( nullptr, RFCAT_VFS, "User directory: {}", mUserDirectory.CreateString() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "User directory: {}", mUserDirectory );
 
 	if( rftl::filesystem::exists( absoluteMountTableFilename ) == false )
 	{
@@ -308,7 +308,7 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 
 bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTableFile )
 {
-	RFLOGF_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: {}", mountTableFile.CreateString() );
+	RFLOGF_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: {}", mountTableFile );
 	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
 	if( filePtr == nullptr )
 	{
@@ -438,8 +438,8 @@ void VFS::DebugDumpMountTable() const
 			mountRule.mPriority,
 			type,
 			permissions,
-			mountRule.mVirtualPath.CreateString(),
-			mountRule.mRealMount.CreateString() );
+			mountRule.mVirtualPath,
+			mountRule.mRealMount );
 	}
 }
 

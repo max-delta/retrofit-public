@@ -52,4 +52,7 @@ struct PLATFORMFILESYSTEM_API rftl::hash<RF::file::VFSPath> : public rftl::hash<
 	//
 };
 
+template<>
+struct rftl::formatter<RF::file::VFSPath, char>;
+
 #include "VFSPath.inl"
