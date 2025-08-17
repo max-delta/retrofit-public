@@ -400,8 +400,8 @@ TEST( Squirrel, InjectSimpleStruct )
 	SquirrelVM vm;
 
 	static constexpr char const kClassName[] = "C";
-	static constexpr char const* kMemberNames[] = { "a", "b" };
-	bool const inject = vm.InjectSimpleStruct( kClassName, kMemberNames, rftl::extent<decltype( kMemberNames )>::value );
+	static constexpr rftl::string_view kMemberNames[] = { "a", "b" };
+	bool const inject = vm.InjectSimpleStruct( kClassName, kMemberNames );
 	ASSERT_TRUE( inject );
 
 	constexpr char source[] =

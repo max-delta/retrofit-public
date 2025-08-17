@@ -52,25 +52,23 @@ public:
 	// Only explicitly injected types can be loaded, other types will cause
 	//  load errors when referenced
 	template<typename ReflectedClass>
-	bool InjectReflectedClassByCompileType( char const* name );
-	bool InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, char const* name );
+	bool InjectReflectedClassByCompileType( rftl::string_view name );
+	bool InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, rftl::string_view name );
 
 	// Source must be added before the loader can populate data
-	bool AddSourceFromBuffer( rftl::string const& buffer );
-	bool AddSourceFromBuffer( char const* buffer, size_t len );
 	bool AddSourceFromBuffer( rftl::string_view buffer );
 
 	// Reflected classes can be populated
 	template<typename ReflectedClass>
 	bool PopulateClass(
-		char const* rootVariableName,
+		rftl::string_view rootVariableName,
 		ReflectedClass& classInstance );
 	template<typename ReflectedClass>
 	bool PopulateClass(
 		SquirrelVM::NestedTraversalPath scriptPath,
 		ReflectedClass& classInstance );
 	bool PopulateClass(
-		char const* rootVariableName,
+		rftl::string_view rootVariableName,
 		reflect::ClassInfo const& classInfo,
 		void* classInstance );
 	bool PopulateClass(

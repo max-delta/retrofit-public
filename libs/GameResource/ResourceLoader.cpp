@@ -250,7 +250,7 @@ void ResourceLoader::InjectTypes(
 		reflect::ClassInfo const* const& classInfo = entry.second;
 		RF_ASSERT( classInfo != nullptr );
 
-		bool const injected = loader.InjectReflectedClassByClassInfo( *classInfo, typeName.c_str() );
+		bool const injected = loader.InjectReflectedClassByClassInfo( *classInfo, typeName );
 		RFLOGF_TEST_AND_FATAL( injected, nullptr, RFCAT_GAMERESOURCE, "Could not inject type '{}'", typeName );
 	}
 }

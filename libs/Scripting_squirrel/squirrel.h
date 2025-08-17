@@ -11,6 +11,7 @@ RF_TODO_ANNOTATION( "Provide a narrower include for just specializing contexts" 
 #include "rftl/variant"
 #include "rftl/vector"
 #include "rftl/unordered_map"
+#include "rftl/span"
 #include "rftl/string"
 #include "rftl/string_view"
 
@@ -81,7 +82,7 @@ public:
 	struct SCRIPTINGSQUIRREL_API NestedTraversalNode
 	{
 		NestedTraversalNode() = default;
-		NestedTraversalNode( rftl::string_view const& identifier );
+		NestedTraversalNode( rftl::string_view identifier );
 		NestedTraversalNode( rftl::string const& identifier );
 		NestedTraversalNode( char const* identifier );
 
@@ -113,15 +114,14 @@ public:
 	SquirrelVM();
 	~SquirrelVM();
 
-	bool AddSourceFromBuffer( rftl::string const& buffer );
-	bool AddSourceFromBuffer( char const* buffer, size_t len );
+	bool AddSourceFromBuffer( rftl::string_view buffer );
 
-	bool InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers );
+	bool InjectSimpleStruct( rftl::string_view name, rftl::span<rftl::string_view const> memberNames );
 
-	Element GetGlobalVariable( rftl::string_view const& name );
-	ElementArray GetGlobalVariableAsArray( rftl::string_view const& name );
-	ElementMap GetGlobalVariableAsInstance( rftl::string_view const& name );
-	rftl::string GetGlobalInstanceClassName( rftl::string_view const& name );
+	Element GetGlobalVariable( rftl::string_view name );
+	ElementArray GetGlobalVariableAsArray( rftl::string_view name );
+	ElementMap GetGlobalVariableAsInstance( rftl::string_view name );
+	rftl::string GetGlobalInstanceClassName( rftl::string_view name );
 
 	Element GetNestedVariable( NestedTraversalPath const& path );
 	ElementArray GetNestedVariableAsArray( NestedTraversalPath const& path );

@@ -954,7 +954,7 @@ void SQReflectTest()
 			"x.mUniqueVirtualAbstract = [SQReflectTestVirtualClass()];\n"
 			"x.mUniqueVirtualAbstract[0].mBool = true;\n"
 			"\n";
-		bool const sourceAdd = loader.AddSourceFromBuffer( source, sizeof( source ) );
+		bool const sourceAdd = loader.AddSourceFromBuffer( source );
 		RF_ASSERT( sourceAdd );
 	}
 

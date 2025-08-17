@@ -12,6 +12,7 @@
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/string_copy.h"
+#include "rftl/extension/c_str.h"
 #include "rftl/sstream"
 
 
@@ -152,10 +153,10 @@ rftl::vector<rftype::TypeTraverser::MemberVariableInstance> GetAllMembers(
 
 
 
-rftl::vector<char const*> GetAllMemberNames(
+rftl::vector<rftl::string_view> GetAllMemberNames(
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const& members )
 {
-	rftl::vector<char const*> memberNames;
+	rftl::vector<rftl::string_view> memberNames;
 	for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
 	{
 		memberNames.emplace_back( member.mMemberVariableInfo.mIdentifier );
@@ -958,14 +959,14 @@ bool OOLoader::AllowTypeConstruction( TypeConstructor&& typeConstructor )
 
 
 
-bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, char const* name )
+bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classInfo, rftl::string_view name )
 {
 	rftl::vector<rftype::TypeTraverser::MemberVariableInstance> const members = details::GetAllMembers( classInfo, nullptr );
-	rftl::vector<char const*> const memberNames = details::GetAllMemberNames( members );
-	bool const success = mVm.InjectSimpleStruct( name, memberNames.data(), memberNames.size() );
+	rftl::vector<rftl::string_view> const memberNames = details::GetAllMemberNames( members );
+	bool const success = mVm.InjectSimpleStruct( name, memberNames );
 	if( success )
 	{
-		mInjectedClasses.emplace_back( InjectedClass{ &classInfo, name } );
+		mInjectedClasses.emplace_back( InjectedClass{ &classInfo, RFTLE_CSTR( name ) } );
 		RF_ASSERT( mInjectedClasses.back().mName.empty() == false );
 	}
 	return success;
@@ -973,28 +974,14 @@ bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classI
 
 
 
-bool OOLoader::AddSourceFromBuffer( rftl::string const& buffer )
+bool OOLoader::AddSourceFromBuffer( rftl::string_view buffer )
 {
 	return mVm.AddSourceFromBuffer( buffer );
 }
 
 
 
-bool OOLoader::AddSourceFromBuffer( char const* buffer, size_t len )
-{
-	return mVm.AddSourceFromBuffer( buffer, len );
-}
-
-
-
-bool OOLoader::AddSourceFromBuffer( rftl::string_view buffer )
-{
-	return mVm.AddSourceFromBuffer( buffer.data(), buffer.size() );
-}
-
-
-
-bool OOLoader::PopulateClass( char const* rootVariableName, reflect::ClassInfo const& classInfo, void* classInstance )
+bool OOLoader::PopulateClass( rftl::string_view rootVariableName, reflect::ClassInfo const& classInfo, void* classInstance )
 {
 	return PopulateClass( SquirrelVM::NestedTraversalPath{ rootVariableName }, classInfo, classInstance );
 }

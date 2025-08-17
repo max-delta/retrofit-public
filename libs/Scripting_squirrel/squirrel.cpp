@@ -233,7 +233,7 @@ SquirrelVM::ElementMap GetElementMapFromStack( HSQUIRRELVM vm )
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string_view const& identifier )
+SquirrelVM::NestedTraversalNode::NestedTraversalNode( rftl::string_view identifier )
 	: mIdentifier( identifier )
 {
 	//
@@ -294,21 +294,14 @@ SquirrelVM::~SquirrelVM()
 
 
 
-bool SquirrelVM::AddSourceFromBuffer( rftl::string const& buffer )
-{
-	return AddSourceFromBuffer( buffer.c_str(), buffer.length() );
-}
-
-
-
-bool SquirrelVM::AddSourceFromBuffer( char const* buffer, size_t len )
+bool SquirrelVM::AddSourceFromBuffer( rftl::string_view buffer )
 {
 	VMRootStackGuard const stackGuard( mVm );
 
 	SQRESULT result;
 
 	sq_setcompilererrorhandler( mVm, LogCompileError );
-	result = sq_compilebuffer( mVm, buffer, math::integer_cast<SQInteger>( len ), "SOURCE", true );
+	result = sq_compilebuffer( mVm, buffer.data(), math::integer_cast<SQInteger>( buffer.size() ), "SOURCE", true );
 	if( SQ_FAILED( result ) )
 	{
 		NotifyLastError( mVm );
@@ -329,7 +322,7 @@ bool SquirrelVM::AddSourceFromBuffer( char const* buffer, size_t len )
 
 
 
-bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* memberNames, size_t numMembers )
+bool SquirrelVM::InjectSimpleStruct( rftl::string_view name, rftl::span<rftl::string_view const> memberNames )
 {
 	VMRootStackGuard const stackGuard( mVm );
 
@@ -340,7 +333,7 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 
 	// WARNING: Documentation is incorrect for sq_newslot(...), the stack is
 	//  not read in the documented order
-	sq_pushstring( mVm, name, math::integer_cast<SQInteger>( strlen( name ) ) );
+	sq_pushstring( mVm, name.data(), math::integer_cast<SQInteger>( name.size() ) );
 	AssertStackTypes( mVm, -1, OT_STRING, OT_TABLE );
 
 	// Create class
@@ -355,16 +348,16 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 		// HACK: Will use a special member variable that defaults to the class
 		//  name on all new instances of the class, and hope that people don't
 		//  mess with it
-		ElementNameCharType const* const& specialMemberName = kReservedClassNameMemberName;
-		ElementNameCharType const* const& className = name;
+		rftl::basic_string_view<ElementNameCharType> const specialMemberName = kReservedClassNameMemberName;
+		rftl::basic_string_view<ElementNameCharType> const className = name;
 
 		// Add member with string as the default value, and no attribute
 		// NOTE: Using sq_rawnemmember(...) to prevent callbacks firing
 		// WARNING: Documentation is incorrect for sq_rawnemmember(...),
 		//  the stack behavior is not popped, and not read in the
 		//  documented order
-		sq_pushstring( mVm, specialMemberName, math::integer_cast<SQInteger>( strlen( specialMemberName ) ) );
-		sq_pushstring( mVm, className, math::integer_cast<SQInteger>( strlen( className ) ) );
+		sq_pushstring( mVm, specialMemberName.data(), math::integer_cast<SQInteger>( specialMemberName.size() ) );
+		sq_pushstring( mVm, className.data(), math::integer_cast<SQInteger>( className.size() ) );
 		sq_pushnull( mVm );
 		AssertStackTypes( mVm, -1, OT_NULL, OT_STRING, OT_STRING, OT_CLASS );
 		result = sq_rawnewmember( mVm, -4, false );
@@ -374,13 +367,10 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 	}
 
 	// Add members
-	if( numMembers > 0 )
+	if( memberNames.size() > 0 )
 	{
-		RF_ASSERT( memberNames != nullptr );
-		for( size_t i = 0; i < numMembers; i++ )
+		for( rftl::basic_string_view<ElementNameCharType> const& memberName : memberNames )
 		{
-			ElementNameCharType const* const memberName = memberNames[i];
-
 			if( memberName == rftl::string_view( kReservedClassNameMemberName ) )
 			{
 				RFLOGF_NOTIFY( nullptr, RFCAT_SQUIRREL,
@@ -396,7 +386,7 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 			// WARNING: Documentation is incorrect for sq_rawnemmember(...),
 			//  the stack behavior is not popped, and not read in the
 			//  documented order
-			sq_pushstring( mVm, memberName, math::integer_cast<SQInteger>( strlen( memberName ) ) );
+			sq_pushstring( mVm, memberName.data(), math::integer_cast<SQInteger>( memberName.size() ) );
 			sq_pushnull( mVm );
 			sq_pushnull( mVm );
 			AssertStackTypes( mVm, -1, OT_NULL, OT_NULL, OT_STRING, OT_CLASS );
@@ -418,7 +408,7 @@ bool SquirrelVM::InjectSimpleStruct( char const* name, char const* const* member
 
 
 
-SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string_view const& name )
+SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string_view name )
 {
 	VMRootStackGuard const stackGuard( mVm );
 
@@ -437,7 +427,7 @@ SquirrelVM::Element SquirrelVM::GetGlobalVariable( rftl::string_view const& name
 
 
 
-SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string_view const& name )
+SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string_view name )
 {
 	VMRootStackGuard const stackGuard( mVm );
 
@@ -456,7 +446,7 @@ SquirrelVM::ElementArray SquirrelVM::GetGlobalVariableAsArray( rftl::string_view
 
 
 
-SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string_view const& name )
+SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string_view name )
 {
 	VMRootStackGuard const stackGuard( mVm );
 
@@ -475,7 +465,7 @@ SquirrelVM::ElementMap SquirrelVM::GetGlobalVariableAsInstance( rftl::string_vie
 
 
 
-rftl::string SquirrelVM::GetGlobalInstanceClassName( rftl::string_view const& name )
+rftl::string SquirrelVM::GetGlobalInstanceClassName( rftl::string_view name )
 {
 	return GetNestedInstanceClassName( { name } );
 }
