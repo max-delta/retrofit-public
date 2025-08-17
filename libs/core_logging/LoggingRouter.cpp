@@ -4,7 +4,6 @@
 
 #include "core_math/math_bits.h"
 #include "core_unicode/StringConvert.h"
-#include "rftl/cstdarg"
 
 
 namespace RF::logging {
