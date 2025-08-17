@@ -174,12 +174,12 @@ template<size_t ElementCapacity> using static_u32string = static_basic_string<ch
 }
 
 // Formats as a basic_string_view
-template<typename CharT, size_t ElementCapacity>
-struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, char> : rftl::formatter<rftl::basic_string_view<CharT>, char>
+template<typename CharT, size_t ElementCapacity, typename CtxCharT>
+struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, CtxCharT> : rftl::formatter<rftl::basic_string_view<CharT>, CtxCharT>
 {
 	using Input = rftl::static_basic_string<CharT, ElementCapacity>;
 	using Shim = rftl::basic_string_view<CharT>;
-	using Base = rftl::formatter<Shim, char>;
+	using Base = rftl::formatter<Shim, CtxCharT>;
 
 	template<class ParseContext>
 	constexpr typename ParseContext::iterator parse( ParseContext& ctx )

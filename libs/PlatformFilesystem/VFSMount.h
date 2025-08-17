@@ -55,7 +55,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 }
 
-template<>
-struct rftl::formatter<RF::file::VFSMount::Permissions, char>;
+template<typename CtxCharT>
+struct rftl::formatter<RF::file::VFSMount::Permissions, CtxCharT>;
 
 #include "VFSMount.inl"

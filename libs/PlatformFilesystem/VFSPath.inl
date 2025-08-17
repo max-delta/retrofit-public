@@ -15,12 +15,12 @@ inline RF::file::VFSPath::VFSPath( Element element, Nodes... elements )
 }
 
 // Formats as a basic_string_view
-template<>
-struct rftl::formatter<RF::file::VFSPath, char> : rftl::formatter<rftl::string_view, char>
+template<typename CtxCharT>
+struct rftl::formatter<RF::file::VFSPath, CtxCharT> : rftl::formatter<rftl::basic_string_view<CtxCharT>, CtxCharT>
 {
 	using Input = RF::file::VFSPath;
-	using Shim = rftl::string_view;
-	using Base = rftl::formatter<Shim, char>;
+	using Shim = rftl::basic_string_view<CtxCharT>;
+	using Base = rftl::formatter<Shim, CtxCharT>;
 
 	template<class ParseContext>
 	constexpr typename ParseContext::iterator parse( ParseContext& ctx )

@@ -11,11 +11,11 @@
 #include "rftl/string"
 
 RF_TODO_ANNOTATION( "Move this hack to somewhere better" );
-template<>
-struct rftl::formatter<rftl::wstring, char> : rftl::formatter<rftl::string_view, char>
+template<typename CtxCharT>
+struct rftl::formatter<rftl::wstring, CtxCharT> : rftl::formatter<rftl::basic_string_view<CtxCharT>, CtxCharT>
 {
-	using Shim = rftl::string_view;
-	using Base = rftl::formatter<Shim, char>;
+	using Shim = rftl::basic_string_view<CtxCharT>;
+	using Base = rftl::formatter<Shim, CtxCharT>;
 
 	template<class ParseContext>
 	constexpr typename ParseContext::iterator parse( ParseContext& ctx )
@@ -27,7 +27,7 @@ struct rftl::formatter<rftl::wstring, char> : rftl::formatter<rftl::string_view,
 	typename FmtContext::iterator format( rftl::wstring const& arg, FmtContext& ctx ) const
 	{
 		rftl::u8string const asUTF8 = RF::platform::widechar::ConvertWideChars( arg );
-		rftl::string HACK_ASCII = {};
+		rftl::basic_string<CtxCharT> HACK_ASCII = {};
 		HACK_ASCII.reserve( asUTF8.size() );
 		for( char8_t const& ch : asUTF8 )
 		{
@@ -36,7 +36,7 @@ struct rftl::formatter<rftl::wstring, char> : rftl::formatter<rftl::string_view,
 			RF_CPP23_TODO( "Check to see if C++ supports Unicode yet..." )
 			// SEE: https://stackoverflow.com/questions/77250832/using-stdformat-for-formatting-char8-t-char16-t-and-char32-t-texts-in-c-20
 			// SEE: https://github.com/sg16-unicode/sg16/issues/68
-			HACK_ASCII.push_back( static_cast<char>( ch < 127 ? ch : '?' ) );
+			HACK_ASCII.push_back( static_cast<CtxCharT>( ch < 127 ? ch : '?' ) );
 		}
 		return Base::format( static_cast<Shim>( HACK_ASCII ), ctx );
 	}

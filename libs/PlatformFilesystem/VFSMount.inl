@@ -12,8 +12,8 @@ namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 }
 
-template<>
-struct rftl::formatter<RF::file::VFSMount::Permissions, char> : public rftl::parseless_format
+template<typename CtxCharT>
+struct rftl::formatter<RF::file::VFSMount::Permissions, CtxCharT> : public rftl::parseless_format
 {
 	template<class FmtContext>
 	typename FmtContext::iterator format( RF::file::VFSMount::Permissions const& arg, FmtContext& ctx ) const
@@ -21,7 +21,7 @@ struct rftl::formatter<RF::file::VFSMount::Permissions, char> : public rftl::par
 		uint8_t const asBits = RF::math::enum_bitcast( arg );
 
 		auto iter = ctx.out();
-		auto const emit = [&iter, asBits]( uint8_t const& test, char ch ) -> void
+		auto const emit = [&iter, asBits]( uint8_t const& test, CtxCharT ch ) -> void
 		{
 			*iter = asBits & test ? ch : '-';
 			iter++;
