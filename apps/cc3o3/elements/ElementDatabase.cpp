@@ -228,7 +228,7 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		rftl::deque<rftl::string> const entry = descTable.front();
 		if( entry.size() != 8 )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, expected 8 columns", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, expected 8 columns", line );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -250,7 +250,7 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 
 		if( id.empty() || id.size() > sizeof( ElementIdentifier ) )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad id", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad id", line );
 			return false;
 		}
 		desc.mIdentifier = MakeElementIdentifier( id );
@@ -263,7 +263,7 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 
 		if( innate.empty() || innate.size() > sizeof( InnateIdentifier ) )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad innate", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad innate", line );
 			return false;
 		}
 		desc.mInnate = MakeInnateIdentifier( innate );
@@ -271,34 +271,34 @@ bool ElementDatabase::LoadDescTable( file::VFSPath const& descTablePath )
 		desc.mBaseLevel = convertLevel( baseLevel );
 		if( desc.mBaseLevel == 0 )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad base level", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad base level", line );
 			return false;
 		}
 
 		desc.mMinLevel = convertLevel( minLevel );
 		if( desc.mMinLevel == 0 )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad min level", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad min level", line );
 			return false;
 		}
 
 		desc.mMaxLevel = convertLevel( maxLevel );
 		if( desc.mMaxLevel == 0 )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad max level", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad max level", line );
 			return false;
 		}
 
 		( rftl::stringstream() << stack ) >> desc.mStackSize;
 		if( desc.mStackSize > 99 )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad stack size", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad stack size", line );
 			return false;
 		}
 
 		if( chain != "Y" && chain != "N" )
 		{
-			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad chain", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( descTablePath, RFCAT_CC3O3, "Malformed element desc entry at line {}, bad chain", line );
 			return false;
 		}
 		desc.mChain = chain == "Y" ? true : false;
@@ -349,7 +349,7 @@ bool ElementDatabase::LoadTierUnlockTable( file::VFSPath const& tierUnlockTableP
 		rftl::deque<rftl::string> const entry = csv.front();
 		if( entry.size() != 9 )
 		{
-			RFLOGF_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line {}, expected 9 columns", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line {}, expected 9 columns", line );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -361,7 +361,7 @@ bool ElementDatabase::LoadTierUnlockTable( file::VFSPath const& tierUnlockTableP
 
 		if( id.empty() || id.size() > sizeof( ElementIdentifier ) )
 		{
-			RFLOGF_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line {}, bad id", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( tierUnlockTablePath, RFCAT_CC3O3, "Malformed tier unlock entry at line {}, bad id", line );
 			return false;
 		}
 		identifier = MakeElementIdentifier( id );

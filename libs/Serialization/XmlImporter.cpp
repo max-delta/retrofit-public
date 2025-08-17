@@ -182,7 +182,7 @@ static bool ProcessProperty( Importer::Callbacks const& callbacks, pugi::xml_nod
 
 		if( type != pugi::xml_node_type::node_element )
 		{
-			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+			RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 			return false;
 		}
 
@@ -575,7 +575,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 				return false;
 			}
 
@@ -732,7 +732,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 				return false;
 			}
 
@@ -814,7 +814,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 				return false;
 			}
 
@@ -883,7 +883,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 				return false;
 			}
 
@@ -914,7 +914,7 @@ bool XmlImporter::ImportAndFinalize( Callbacks const& callbacks )
 
 			if( type != pugi::xml_node_type::node_element )
 			{
-				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::integer_cast<int>( math::enum_bitcast( type ) ) );
+				RFLOGF_ERROR( nullptr, RFCAT_SERIALIZATION, "Unexpected XML node type {}", math::enum_bitcast( type ) );
 				return false;
 			}
 

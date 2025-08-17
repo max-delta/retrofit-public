@@ -473,7 +473,7 @@ bool CharacterCompositor::LoadPieceTable( rftl::string mode, CharacterPieceType 
 		rftl::deque<rftl::string> const entry = pieceTable.front();
 		if( entry.size() != 2 )
 		{
-			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line {}, expected 2 columns", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed master piece entry at line {}, expected 2 columns", line );
 			return false;
 		}
 		rftl::string const& id = entry.at( 0 );
@@ -481,7 +481,7 @@ bool CharacterCompositor::LoadPieceTable( rftl::string mode, CharacterPieceType 
 
 		if( id.empty() )
 		{
-			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line {}, bad id", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line {}, bad id", line );
 			return false;
 		}
 
@@ -490,7 +490,7 @@ bool CharacterCompositor::LoadPieceTable( rftl::string mode, CharacterPieceType 
 		piece.mResources = resources;
 		if( piece.mResources.empty() )
 		{
-			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line {}, bad resources", math::integer_cast<int>( line ) );
+			RFLOGF_NOTIFY( pieceTablePath, RFCAT_GAMESPRITE, "Malformed piece entry at line {}, bad resources", line );
 			return false;
 		}
 
