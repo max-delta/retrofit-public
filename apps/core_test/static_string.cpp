@@ -495,5 +495,17 @@ TEST( StaticString, StringConversion )
 	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "" );
 }
 
+
+
+TEST( StaticString, FormatAsStringView )
+{
+	rftl::static_string<5> sa( "27ABC" );
+	ASSERT_TRUE( rftl::format( "{}", sa ) == rftl::string_view( "27ABC" ) );
+	ASSERT_TRUE( rftl::format( "{0}", sa ) == rftl::string_view( "27ABC" ) );
+	ASSERT_TRUE( rftl::format( "{:$>8}", sa ) == rftl::string_view( "$$$27ABC" ) );
+	ASSERT_TRUE( rftl::format( "{:$<8}", sa ) == rftl::string_view( "27ABC$$$" ) );
+	ASSERT_TRUE( rftl::format( "{:$^8}", sa ) == rftl::string_view( "$27ABC$$" ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -3,6 +3,7 @@
 
 #include "rftl/initializer_list"
 #include "rftl/iterator"
+#include "rftl/format"
 #include "rftl/string_view"
 
 
@@ -171,5 +172,26 @@ template<size_t ElementCapacity> using static_u32string = static_basic_string<ch
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+// Formats as a basic_string_view
+template<typename CharT, size_t ElementCapacity>
+struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, char> : rftl::formatter<std::basic_string_view<CharT>, char>
+{
+	using Input = rftl::static_basic_string<CharT, ElementCapacity>;
+	using Shim = rftl::basic_string_view<CharT>;
+	using Base = rftl::formatter<Shim, char>;
+
+	template<class ParseContext>
+	constexpr typename ParseContext::iterator parse( ParseContext& ctx )
+	{
+		return Base::parse( ctx );
+	}
+
+	template<class FmtContext>
+	typename FmtContext::iterator format( Input const& arg, FmtContext& ctx ) const
+	{
+		return Base::format( static_cast<Shim>( arg ), ctx );
+	}
+};
 
 #include "static_string.inl"
