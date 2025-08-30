@@ -82,6 +82,9 @@
 		<ClInclude Include="meta\FailTemplate.h">
 			<Filter>meta</Filter>
 		</ClInclude>
+		<ClInclude Include="meta\FillPatterns.h">
+			<Filter>meta</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />

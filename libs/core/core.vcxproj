@@ -33,6 +33,7 @@
 		<ClInclude Include="meta\DefaultConstruct.h" />
 		<ClInclude Include="meta\Empty.h" />
 		<ClInclude Include="meta\FailTemplate.h" />
+		<ClInclude Include="meta\FillPatterns.h" />
 		<ClInclude Include="meta\LazyInitSingleton.h" />
 		<ClInclude Include="meta\Literal.h" />
 		<ClInclude Include="meta\MemberTest.h" />

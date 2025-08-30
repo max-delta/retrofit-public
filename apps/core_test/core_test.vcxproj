@@ -48,6 +48,7 @@
 		<ClCompile Include="math_listoperations.cpp" />
 		<ClCompile Include="math_numerictraits.cpp" />
 		<ClCompile Include="math_softfloat.cpp" />
+		<ClCompile Include="meta_fillpatterns.cpp" />
 		<ClCompile Include="platform_uuid.cpp" />
 		<ClCompile Include="ptr_transform.cpp" />
 		<ClCompile Include="reflect_type_info_builder.cpp" />
