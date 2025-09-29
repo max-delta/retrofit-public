@@ -31,7 +31,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="commandline_argparse.cpp" />
-		<ClCompile Include="logging.cpp" />
+		<ClCompile Include="logging_logging.cpp" />
 		<ClCompile Include="main.cpp" />
 		<ClCompile Include="platform_memoryregion.cpp" />
 		<ClCompile Include="rftype_typedatabase.cpp" />

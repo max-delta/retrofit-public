@@ -34,13 +34,13 @@
 		<ClCompile Include="allocate_linearallocator.cpp" />
 		<ClCompile Include="allocate_rftlallocator.cpp" />
 		<ClCompile Include="allocate_singleallocator.cpp" />
-		<ClCompile Include="byte_view.cpp" />
+		<ClCompile Include="rftl_byteview.cpp" />
 		<ClCompile Include="component_objectmanager.cpp" />
 		<ClCompile Include="component_typedobjectmanager.cpp" />
 		<ClCompile Include="event_eventdispatcher.cpp" />
 		<ClCompile Include="event_eventqueue.cpp" />
-		<ClCompile Include="idgen.cpp" />
-		<ClCompile Include="literal.cpp" />
+		<ClCompile Include="core_idgen.cpp" />
+		<ClCompile Include="meta_literal.cpp" />
 		<ClCompile Include="logic_directededgegraph.cpp" />
 		<ClCompile Include="logic_partialplanner.cpp" />
 		<ClCompile Include="math_bitfield.cpp" />
@@ -57,7 +57,7 @@
 		<ClCompile Include="rftl_string_format.cpp" />
 		<ClCompile Include="rftl_string_traits.cpp" />
 		<ClCompile Include="rftype_class_info_compositor.cpp" />
-		<ClCompile Include="compiler.cpp" />
+		<ClCompile Include="core_compiler.cpp" />
 		<ClCompile Include="ptr_entwinedcreator.cpp" />
 		<ClCompile Include="logging_router.cpp" />
 		<ClCompile Include="math_bits.cpp" />
@@ -66,10 +66,10 @@
 		<ClCompile Include="math_casts.cpp" />
 		<ClCompile Include="math_clamps.cpp" />
 		<ClCompile Include="math_compare.cpp" />
-		<ClCompile Include="membertest.cpp" />
-		<ClCompile Include="minclude_shared.cpp" />
-		<ClCompile Include="minclude_unique.cpp" />
-		<ClCompile Include="minclude_weak.cpp" />
+		<ClCompile Include="meta_membertest.cpp" />
+		<ClCompile Include="ptr_minclude_shared.cpp" />
+		<ClCompile Include="ptr_minclude_unique.cpp" />
+		<ClCompile Include="ptr_minclude_weak.cpp" />
 		<ClCompile Include="reflect_inspect_function.cpp" />
 		<ClCompile Include="reflect_inspect_variable.cpp" />
 		<ClCompile Include="reflect_value.cpp" />
@@ -77,8 +77,8 @@
 		<ClCompile Include="rftype_virtual_cast.cpp" />
 		<ClCompile Include="state_stream.cpp" />
 		<ClCompile Include="state_tree.cpp" />
-		<ClCompile Include="static_string.cpp" />
-		<ClCompile Include="static_vector.cpp" />
+		<ClCompile Include="rftl_staticstring.cpp" />
+		<ClCompile Include="rftl_staticvector.cpp" />
 		<ClCompile Include="ptr_sharedptr.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
@@ -86,13 +86,13 @@
 		<ClCompile Include="thread_async.cpp" />
 		<ClCompile Include="thread_sequential_work_pump.cpp" />
 		<ClCompile Include="thread_signal.cpp" />
-		<ClCompile Include="typelist.cpp" />
+		<ClCompile Include="meta_typelist.cpp" />
 		<ClCompile Include="ptr_uniqueptr.cpp" />
 		<ClCompile Include="unicode_bufferconvert.cpp" />
 		<ClCompile Include="unicode_charconvert.cpp" />
 		<ClCompile Include="unicode_stringconvert.cpp" />
-		<ClCompile Include="valuelist.cpp" />
-		<ClCompile Include="vector2.cpp" />
+		<ClCompile Include="meta_valuelist.cpp" />
+		<ClCompile Include="math_vector2.cpp" />
 		<ClCompile Include="ptr_weaksharedptr.cpp" />
 	</ItemGroup>
 	<ItemGroup>
