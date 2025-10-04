@@ -62,7 +62,7 @@ bool DiagnosticExporter::Root_BeginNewInstance()
 		return false;
 	}
 
-	RF_DIAG_EXP_TR( "{" );
+	RF_DIAG_EXP_TR( "{{" );
 	mHasOpenInstance = true;
 	mHasOpenProperty = false;
 	return true;
@@ -78,7 +78,7 @@ bool DiagnosticExporter::Root_RegisterLocalIndirection( IndirectionID const& ind
 		return false;
 	}
 
-	RF_DIAG_EXP_TR( "(%llu := %lli)", indirectionID, instanceID );
+	RF_DIAG_EXP_TR( "({} := {})", indirectionID, instanceID );
 
 	return true;
 }
@@ -93,7 +93,7 @@ bool DiagnosticExporter::Root_RegisterExternalIndirection( IndirectionID const& 
 		return false;
 	}
 
-	RF_DIAG_EXP_TR( "(%llu := \"%s\")", indirectionID, referenceID );
+	RF_DIAG_EXP_TR( "({} := \"{}\")", indirectionID, referenceID );
 
 	return true;
 }
@@ -114,7 +114,7 @@ bool DiagnosticExporter::Instance_AddInstanceIDAttribute( InstanceID const& inst
 		return false;
 	}
 
-	RF_DIAG_EXP_TR( " InstId := %llu", instanceID );
+	RF_DIAG_EXP_TR( " InstId := {}", instanceID );
 
 	return true;
 }
@@ -143,11 +143,11 @@ bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char
 
 	if( debugName != nullptr )
 	{
-		RF_DIAG_EXP_TR( " TypeId := %llu (\"%s\")", typeID, debugName );
+		RF_DIAG_EXP_TR( " TypeId := {} (\"{}\")", typeID, debugName );
 	}
 	else
 	{
-		RF_DIAG_EXP_TR( " TypeId := %llu", typeID );
+		RF_DIAG_EXP_TR( " TypeId := {}", typeID );
 	}
 
 	return true;
@@ -170,7 +170,7 @@ bool DiagnosticExporter::Instance_BeginNewProperty()
 	}
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %sL", indents.c_str() );
+	RF_DIAG_EXP_TR( " {}L", indents );
 
 	mHasOpenProperty = true;
 	return true;
@@ -193,7 +193,7 @@ bool DiagnosticExporter::Property_AddNameAttribute( char const* name )
 	}
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s name := %s", indents.c_str(), name );
+	RF_DIAG_EXP_TR( " {} name := {}", indents, name );
 
 	return true;
 }
@@ -301,7 +301,7 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value
 	}
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s value := [%s] %s", indents.c_str(), typeName, valueStr.c_str() );
+	RF_DIAG_EXP_TR( " {} value := [{}] {}", indents, typeName, valueStr );
 
 	return true;
 }
@@ -325,11 +325,11 @@ bool DiagnosticExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTy
 	rftl::string indents( mPropertyDepth * 2, ' ' );
 	if( debugName != nullptr )
 	{
-		RF_DIAG_EXP_TR( " %s Debug TypeId := %llu (\"%s\")", indents.c_str(), debugTypeID, debugName );
+		RF_DIAG_EXP_TR( " {} Debug TypeId := {} (\"{}\")", indents, debugTypeID, debugName );
 	}
 	else
 	{
-		RF_DIAG_EXP_TR( " %s Debug TypeId := %llu", indents.c_str(), debugTypeID );
+		RF_DIAG_EXP_TR( " {} Debug TypeId := {}", indents, debugTypeID );
 	}
 
 	return true;
@@ -352,7 +352,7 @@ bool DiagnosticExporter::Property_AddIndirectionAttribute( IndirectionID const& 
 	}
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s indirection := %llu", indents.c_str(), indirectionID );
+	RF_DIAG_EXP_TR( " {} indirection := {}", indents, indirectionID );
 
 	return true;
 }
@@ -374,7 +374,7 @@ bool DiagnosticExporter::Property_IndentFromCurrentProperty()
 	}
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s {", indents.c_str() );
+	RF_DIAG_EXP_TR( " {} {{", indents );
 	mPropertyDepth++;
 
 	mHasOpenProperty = false;
@@ -399,7 +399,7 @@ bool DiagnosticExporter::Property_OutdentFromLastIndent()
 	mPropertyDepth--;
 
 	rftl::string indents( mPropertyDepth * 2, ' ' );
-	RF_DIAG_EXP_TR( " %s }", indents.c_str() );
+	RF_DIAG_EXP_TR( " {} }}", indents );
 
 	mHasOpenProperty = false;
 	return true;
