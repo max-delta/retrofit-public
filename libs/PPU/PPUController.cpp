@@ -1543,7 +1543,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 void PPUController::RenderDebugString( PPUDebugState::DebugString const& string ) const
 {
 	math::Vector2f const pos = CoordToDevice( string.mXCoord, string.mYCoord );
-	mDeviceInterface->DebugRenderText( pos, LayerToDevice( details::kDebugStringLayer ), "%s", string.mText );
+	mDeviceInterface->DebugRenderText( pos, LayerToDevice( details::kDebugStringLayer ), "%s", string.mText.data() );
 }
 
 
