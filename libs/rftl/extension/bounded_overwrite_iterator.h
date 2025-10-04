@@ -35,6 +35,11 @@ struct bounded_forward_overwrite_iterator
 		return *this;
 	}
 
+	IterT tell() const
+	{
+		return mIter;
+	}
+
 	// No-ops, needed to satisfy interator contraints
 	bounded_forward_overwrite_iterator& operator*()
 	{
