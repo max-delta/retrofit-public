@@ -5,6 +5,8 @@
 #include "core_math/SoftFloat.h"
 #include "core_unicode/CharConvert.h"
 
+RF_CLANG_PUSH();
+RF_CLANG_IGNORE( "-Wundefined-reinterpret-cast" ); // Dubious casts
 
 namespace RF::meta::fill {
 ///////////////////////////////////////////////////////////////////////////////
@@ -53,3 +55,5 @@ TEST( FillPatterns, Bad4Bytes )
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+RF_CLANG_POP();
