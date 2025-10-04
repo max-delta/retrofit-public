@@ -110,6 +110,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />
+		<None Include="PPUController.inl" />
 		<None Include="ResourceManager.inl" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -16,12 +16,6 @@
 
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
-namespace details {
-
-static constexpr DepthLayer kDefaultTextLayer = 0;
-
-}
-///////////////////////////////////////////////////////////////////////////////
 
 class PPU_API PPUController
 {
@@ -134,25 +128,13 @@ public:
 	bool DrawTileLayer( TileLayer const& tileLayer );
 
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, uint8_t desiredHeight, ManagedFontID font, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DrawTextVA( pos, details::kDefaultTextLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DrawText( Coord pos, uint8_t desiredHeight, ManagedFontID font, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DrawTextVA( pos, zLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DrawTextVA( pos, zLayer, desiredHeight, font, false, color, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DrawTextVA( pos, zLayer, desiredHeight, font, border, color, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	bool DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args );
 
 	void HideZoomFactor( bool hide );
@@ -179,17 +161,11 @@ public:
 	void DebugSetBackgroundColor( math::Color3f color );
 
 	template<typename... ArgsT>
-	bool DebugDrawText( Coord pos, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DebugDrawTextVA( pos, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DebugDrawText( Coord pos, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	bool DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::format_args&& args );
 
 	template<typename... ArgsT>
-	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
-	{
-		return DebugDrawAuxTextVA( pos, zLayer, desiredHeight, font, border, color, fmt.get(), rftl::make_format_args( args... ) );
-	}
+	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	bool DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args );
 
 	bool DebugDrawLine( Coord p0, Coord p1 );
@@ -280,3 +256,5 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+#include "PPUController.inl"
