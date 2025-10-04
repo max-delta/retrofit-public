@@ -97,13 +97,10 @@ void RenderRollback()
 		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
 		return;
 	}
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -118,11 +115,11 @@ void RenderRollback()
 	};
 
 	time::CommonClock::time_point const currentTime = time::FrameClock::now();
-	drawText( x, y, math::Color3f::kMagenta, "FRM: %llu", timeAsIndex( currentTime ) );
+	drawText( x, y, math::Color3f::kMagenta, "FRM: {}", timeAsIndex( currentTime ) );
 	y++;
 
 	time::CommonClock::time_point const snapshotTime = rollMan.GetSharedDomain().GetManualSnapshot( kSnapshotName )->first;
-	drawText( x, y, math::Color3f::kMagenta, "SNP: %llu", timeAsIndex( snapshotTime ) );
+	drawText( x, y, math::Color3f::kMagenta, "SNP: {}", timeAsIndex( snapshotTime ) );
 	y++;
 
 	SimulationMode const simMode = DebugGetPreviousFrameSimulationMode();
@@ -389,13 +386,10 @@ void RenderReload()
 		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
 		return;
 	}
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -454,13 +448,10 @@ void RenderInputDevice()
 		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
 		return;
 	}
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -483,7 +474,7 @@ void RenderInputDevice()
 		}
 
 		input::InputDevice const& device = *deviceHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", device.mIdentifier.c_str() );
+		drawText( x, y, math::Color3f::kCyan, "ID: <{}>", device.mIdentifier.c_str() );
 		y++;
 
 		// Raw input controllers are usually going to eat all the data out of
@@ -520,7 +511,7 @@ void RenderInputDevice()
 					{
 						logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  lev: %s", logicStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  lev: {}", logicStream.str().c_str() );
 					y++;
 				}
 
@@ -540,7 +531,7 @@ void RenderInputDevice()
 					{
 						physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  pev: %s", physStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  pev: {}", physStream.str().c_str() );
 					y++;
 				}
 			}
@@ -565,7 +556,7 @@ void RenderInputDevice()
 
 					input::AnalogSignalValue const value = analog.GetCurrentSignalValue( index );
 
-					drawText( x, y, math::Color3f::kWhite, "  %s: %f", name.c_str(), static_cast<double>( value ) );
+					drawText( x, y, math::Color3f::kWhite, "  {}: {}", name, static_cast<double>( value ) );
 					y++;
 				}
 			}
@@ -586,7 +577,7 @@ void RenderInputDevice()
 					unicode::ConvertToUtf32(
 						textStream16 ) );
 
-				drawText( x, y, math::Color3f::kWhite, "  txt: %s", textStream.c_str() );
+				drawText( x, y, math::Color3f::kWhite, "  txt: {}", textStream );
 				y++;
 			}
 			else
@@ -608,7 +599,7 @@ void RenderInputDevice()
 		}
 
 		input::RawController const& controller = *controllerHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", controller.mIdentifier.c_str() );
+		drawText( x, y, math::Color3f::kCyan, "ID: <{}>", controller.mIdentifier );
 		y++;
 
 		{
@@ -629,7 +620,7 @@ void RenderInputDevice()
 					{
 						rawCommandStream << " " << static_cast<int>( command.mType );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  rcmd: %s", rawCommandStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  rcmd: {}", rawCommandStream.str() );
 					y++;
 				}
 
@@ -659,7 +650,7 @@ void RenderInputDevice()
 						{
 							rawSignalStream << " " << static_cast<int>( signal.mValue );
 						}
-						drawText( x, y, math::Color3f::kWhite, "  %z: %s", index, rawSignalStream.str().c_str() );
+						drawText( x, y, math::Color3f::kWhite, "  {}: {}", index, rawSignalStream.str() );
 						y++;
 					}
 				}
@@ -672,7 +663,7 @@ void RenderInputDevice()
 						unicode::ConvertToUtf32(
 							textStream16 ) );
 
-					drawText( x, y, math::Color3f::kWhite, "  txt: %s", textStream.c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  txt: {}", textStream );
 					y++;
 				}
 			}
@@ -690,7 +681,7 @@ void RenderInputDevice()
 		}
 
 		input::GameController const& controller = *controllerHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <%s>", controller.mIdentifier.c_str() );
+		drawText( x, y, math::Color3f::kCyan, "ID: <{}>", controller.mIdentifier );
 		y++;
 
 		{
@@ -711,7 +702,7 @@ void RenderInputDevice()
 					{
 						gameCommandStream << " " << static_cast<int>( command.mType );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  gcmd: %s", gameCommandStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  gcmd: {}", gameCommandStream.str() );
 					y++;
 				}
 
@@ -741,7 +732,7 @@ void RenderInputDevice()
 						{
 							gameSignalStream << " " << static_cast<int>( signal.mValue );
 						}
-						drawText( x, y, math::Color3f::kWhite, "  %z: %s", index, gameSignalStream.str().c_str() );
+						drawText( x, y, math::Color3f::kWhite, "  {}: {}", index, gameSignalStream.str() );
 						y++;
 					}
 				}
@@ -796,7 +787,7 @@ void RenderInputDevice()
 		static constexpr char kUpperOffset = 'A' - 'a';
 		RF_ASSERT( sInputDeviceIndex < choices.size() );
 		choices.at( sInputDeviceIndex ) += kUpperOffset;
-		drawText( x, y, math::Color3f::kGreen, "LIST [%s]", choices.c_str() );
+		drawText( x, y, math::Color3f::kGreen, "LIST [{}]", choices );
 		y++;
 	}
 

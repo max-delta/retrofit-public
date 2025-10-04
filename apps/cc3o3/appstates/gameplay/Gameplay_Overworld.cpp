@@ -468,7 +468,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			ppu.DebugDrawAuxText(
 				{ 0, 0 }, InternalState::kLayerDebugOverlay,
 				font.mFontHeight, font.mManagedFontID, true, math::Color3f::kCyan,
-				"X:%03i Y:%03i", curPos.x, curPos.y );
+				"X:{:03} Y:{:03}", curPos.x, curPos.y );
 		}
 
 		RF_TODO_ANNOTATION( "Move followers" );

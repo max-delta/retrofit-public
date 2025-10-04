@@ -63,13 +63,10 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -159,7 +156,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 			RF_DBGFAIL();
 			break;
 	}
-	drawText( x, y, " %5i  %5i  %s", storyTier, elemPower, shapeStr );
+	drawText( x, y, " {:5}  {:5}  {}", storyTier, elemPower, shapeStr );
 
 	// Grid
 	uint8_t const xStart = 5;
@@ -175,7 +172,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 
 		for( element::ElementLevel const& level : element::kElementLevels )
 		{
-			drawText( x, y, " %i", level );
+			drawText( x, y, " {}", level );
 			y += ystep;
 			y += ystep;
 

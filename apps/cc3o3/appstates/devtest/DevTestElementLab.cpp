@@ -68,25 +68,19 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawVaColorText = [&ppu, &font]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, va_list args ) -> bool //
+	auto const drawVaColorText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		return ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, color, fmt, args );
+		return ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, color, fmt.get(), rftl::make_format_args( args... ) );
 	};
-	auto const drawColorText = [&drawVaColorText]( uint8_t x, uint8_t y, math::Color3f const& color, char const* fmt, ... ) -> bool //
+	auto const drawColorText = [&drawVaColorText]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = drawVaColorText( x, y, color, fmt, args );
-		va_end( args );
+		bool const retVal = drawVaColorText( x, y, color, fmt, args... );
 		return retVal;
 	};
-	auto const drawText = [&drawVaColorText]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	auto const drawText = [&drawVaColorText]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = drawVaColorText( x, y, math::Color3f::kWhite, fmt, args );
-		va_end( args );
+		bool const retVal = drawVaColorText( x, y, math::Color3f::kWhite, fmt, args... );
 		return retVal;
 	};
 
@@ -330,9 +324,9 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 				color = result.value() ? math::Color3f::kGreen : math::Color3f::kRed;
 			}
 
-			drawColorText( x, y, color, "%c%s",
+			drawColorText( x, y, color, "{}{}",
 				i == index ? '*' : ' ',
-				GetElementString( identifier ).c_str() );
+				GetElementString( identifier ) );
 			y++;
 		}
 		for( size_t i = 0; i < lowerPad; i++ )
@@ -354,7 +348,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 			{
 				fieldGlyphs.push_back( combatEngine.DisplayInnateGlyphAscii( innate ) );
 			}
-			drawText( x, y, "Field %s", fieldGlyphs.c_str() );
+			drawText( x, y, "Field {}", fieldGlyphs );
 			y++;
 		}
 
@@ -364,7 +358,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		{
 			combat::Party const party = instance.GetParty( partyID );
 			drawText( x, y,
-				"t%i:p%i  Guage %03i/%03i",
+				"t{}:p{}  Guage {:3}/{:3}",
 				partyID.GetTeamIndex(),
 				partyID.GetPartyIndex(),
 				party.mCounterGuage,
@@ -386,14 +380,14 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 				marker = 'X';
 			}
 			drawText( x, y,
-				"%c%i:%i:%i",
+				"{}{}:{}:{}",
 				marker,
 				fighterID.GetTeamIndex(),
 				fighterID.GetPartyIndex(),
 				fighterID.GetFighterIndex() );
 			y++;
 			drawText( x, y,
-				"    H%03i/%03i S%1i/%1i C%01i/%01i",
+				"    H{:3}/{:3} S{:1}/{:1} C{:01}/{:01}",
 				fighter.mCurHealth,
 				fighter.mMaxHealth,
 				fighter.mCurStamina,
@@ -402,7 +396,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 				fighter.mMaxCharge );
 			y++;
 			drawText( x, y,
-				"    Pa%id%i Ea%id%i B%iT%i",
+				"    Pa{}d{} Ea{}d{} B{}T{}",
 				fighter.mPhysAtk,
 				fighter.mPhysDef,
 				fighter.mElemAtk,
@@ -411,7 +405,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 				fighter.mTechniq );
 			y++;
 			drawText( x, y,
-				"    Combo %2i -> %i:%i:%i",
+				"    Combo {:2} -> {}:{}:{}",
 				fighter.mComboMeter,
 				fighter.mComboTarget.GetTeamIndex(),
 				fighter.mComboTarget.GetPartyIndex(),
@@ -441,7 +435,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 			break;
 	}
 	y++;
-	drawText( x, y, " %5i  %3i", index, levelOffset );
+	drawText( x, y, " {:5}  {:3}", index, levelOffset );
 	y++;
 
 	// Cast error, if present
@@ -471,16 +465,16 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 	x = kDesc_x;
 	y = kDesc_y;
-	drawColorText( x, y, math::Color3f::kCyan, "%s  @lvl %u  [%u-%u-%u]  '%s'",
-		GetInnateString( desc.mInnate ).c_str(),
+	drawColorText( x, y, math::Color3f::kCyan, "{}  @lvl {}  [{}-{}-{}]  '{}'",
+		GetInnateString( desc.mInnate ),
 		castedLevel,
 		desc.mMinLevel,
 		desc.mBaseLevel,
 		desc.mMaxLevel,
-		ui::LocalizeKey( GetElementName( elementToCast ) ).c_str() );
+		ui::LocalizeKey( GetElementName( elementToCast ) ) );
 	y++;
-	drawColorText( x, y, math::Color3f::kCyan, "'%s'",
-		ui::LocalizeKey( GetElementSynopsis( elementToCast ) ).c_str() );
+	drawColorText( x, y, math::Color3f::kCyan, "'{}'",
+		ui::LocalizeKey( GetElementSynopsis( elementToCast ) ) );
 	y++;
 }
 

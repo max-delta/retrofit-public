@@ -654,18 +654,7 @@ bool PPUController::DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::for
 
 
 
-bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = DebugDrawAuxText( pos, zLayer, desiredHeight, font, border, color, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
+bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -696,7 +685,14 @@ bool PPUController::DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desi
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
 	targetString.mTextOffset = textStorage.mTextStorageUsed;
-	rftl::string_view const charsWritten = rftl::var_snprintf( &targetText.front<char>(), targetText.size(), fmt, args );
+	rftl::string_view charsWritten;
+	{
+		rftl::span<char> const asChars = targetText.to_typed_span<char>();
+		rftl::bounded_forward_overwrite_iterator writer( asChars );
+		writer = rftl::vformat_to( writer, fmt, args );
+		writer = '\0';
+		charsWritten = rftl::string_view( asChars.begin(), writer.tell() );
+	}
 	RF_ASSERT( charsWritten.size() > 0 );
 	RF_ASSERT( charsWritten.size() <= kMaxStringLen );
 	RF_ASSERT( charsWritten.back() == '\0' );

@@ -71,13 +71,10 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -213,7 +210,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	};
 	char const* const casterColorStr = colorStr( casterColor );
 	char const* const enemyColorStr = colorStr( enemyColor );
-	drawText( x, y, " %4i  %3i  %8i  %s %7i  %3i  %8i  %s", tech, atk, atkField, casterColorStr, balance, def, defField, enemyColorStr );
+	drawText( x, y, " {:4}  {:3}  {:8}  {} {:7}  {:3}  {:8}  {}", tech, atk, atkField, casterColorStr, balance, def, defField, enemyColorStr );
 
 	// Setup combat instance
 	CombatInstance startInstance( gCombatEngine );
@@ -336,27 +333,27 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				if( hit )
 				{
 					damageTotal += damage;
-					drawText( x, y, " %i:%2i", swing, damage );
+					drawText( x, y, " {}:{:2}", swing, damage );
 					y += ystep;
 				}
 				else
 				{
 					damageTotal += 0;
-					drawText( x, y, " %i:--", swing );
+					drawText( x, y, " {}:--", swing );
 					y += ystep;
 				}
 			}
 			drawText( x, y, "======" );
 			y += ystep;
-			drawText( x, y, "ME:%3i", comboMeter );
+			drawText( x, y, "ME:{:3}", comboMeter );
 			y += ystep;
 			drawText( x, y, "======" );
 			y += ystep;
-			drawText( x, y, "CG:%3i", counterGuage );
+			drawText( x, y, "CG:{:3}", counterGuage );
 			y += ystep;
-			drawText( x, y, "TO:%3i", damageTotal );
+			drawText( x, y, "TO:{:3}", damageTotal );
 			y += ystep;
-			drawText( x, y, "DS:%3i", damageTotal / numSwings );
+			drawText( x, y, "DS:{:3}", damageTotal / numSwings );
 			y += ystep;
 
 			x += xstep;
@@ -390,7 +387,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			counterGuages.push_back( result.mCoungerGuageIncrease );
 			castInstance.FinishCast( attackerID );
 		}
-		drawText( x, y, "ELEM DMG %2i %2i %2i %2i %2i %2i %2i %2i",
+		drawText( x, y, "ELEM DMG {:2} {:2} {:2} {:2} {:2} {:2} {:2} {:2}",
 			damages.at( 0 ),
 			damages.at( 1 ),
 			damages.at( 2 ),
@@ -400,7 +397,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			damages.at( 6 ),
 			damages.at( 7 ) );
 		y++;
-		drawText( x, y, "ELEM CG  %2i %2i %2i %2i %2i %2i %2i %2i",
+		drawText( x, y, "ELEM CG  {:2} {:2} {:2} {:2} {:2} {:2} {:2} {:2}",
 			counterGuages.at( 0 ),
 			counterGuages.at( 1 ),
 			counterGuages.at( 2 ),

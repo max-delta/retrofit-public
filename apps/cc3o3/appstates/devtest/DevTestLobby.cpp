@@ -130,13 +130,10 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool //
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -350,11 +347,11 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	{
 		if( cursor == i )
 		{
-			drawText( x, y++, "*%s", kOptionText[i] );
+			drawText( x, y++, "*{}", kOptionText[i] );
 		}
 		else
 		{
-			drawText( x, y++, " %s", kOptionText[i] );
+			drawText( x, y++, " {}", kOptionText[i] );
 		}
 	}
 
@@ -384,15 +381,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			}
 			if( conn == sync::kInvalidConnectionIdentifier )
 			{
-				drawText( x + 4u, y++, "??? p[%s]", ss.str().c_str() );
+				drawText( x + 4u, y++, "??? p[{}]", ss.str().c_str() );
 			}
 			else if( conn == self )
 			{
-				drawText( x + 4u, y++, "*%-2llu p[%s]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "*{:-2} p[{}]", conn, ss.str().c_str() );
 			}
 			else
 			{
-				drawText( x + 4u, y++, "-%-2llu p[%s]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "-{:-2} p[{}]", conn, ss.str().c_str() );
 			}
 		};
 		SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
@@ -412,7 +409,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		SessionHostManager& host = *sync::gSessionHostManager;
 
 		SessionHostManager::Diagnostics const diag = host.ReportDiagnostics();
-		drawText( x, y++, "CONN: %llu (+%llu) / %llu",
+		drawText( x, y++, "CONN: {} (+{}) / {}",
 			diag.mValidConnections,
 			diag.mInvalidConnections,
 			SessionHostManager::kMaxConnectionCount );
@@ -423,7 +420,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		SessionClientManager& client = *sync::gSessionClientManager;
 
 		SessionClientManager::Diagnostics const diag = client.ReportDiagnostics();
-		drawText( x, y++, "CONN: %llu (+%llu)",
+		drawText( x, y++, "CONN: {} (+{})",
 			diag.mValidConnections,
 			diag.mInvalidConnections );
 	}
@@ -442,7 +439,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 		{
 			rftl::string const textBuffer = app::gPageMapper->MapTo8Bit(
 				unicode::ConvertToUtf32( message.mText ) );
-			drawText( x + 4u, y++, "%-2llu: \"%s\"",
+			drawText( x + 4u, y++, "{:-2}: \"{}\"",
 				message.mSourceConnectionID,
 				textBuffer.c_str() );
 		}
@@ -457,7 +454,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	y = 21;
 	{
 		rftl::string const textBuffer = InputHelpers::GetMainMenuPageMappedTextBuffer( 32 );
-		drawText( x, y++, "TEXT BUFFER: [%s]", textBuffer.c_str() );
+		drawText( x, y++, "TEXT BUFFER: [{}]", textBuffer.c_str() );
 	}
 }
 

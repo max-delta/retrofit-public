@@ -127,26 +127,23 @@ void DevTestRollback::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawText = [&ppu, &font]( uint8_t x, uint8_t y, char const* fmt, ... ) -> bool
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		va_list args;
-		va_start( args, fmt );
-		bool const retVal = ppu.DebugDrawAuxText( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt, args );
-		va_end( args );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
 
 	drawText( 1, 1, "DEV TEST - ROLLBACK" );
-	drawText( 2, 3, "P1x: %u", internalState.mP1.mX.As() );
-	drawText( 2, 4, "P1y: %u", internalState.mP1.mY.As() );
-	drawText( 2, 5, "P2x: %u", internalState.mP2.mX.As() );
-	drawText( 2, 6, "P2y: %u", internalState.mP2.mY.As() );
-	drawText( 2, 7, "P3x: %u", internalState.mP3.mX.As() );
-	drawText( 2, 8, "P3y: %u", internalState.mP3.mY.As() );
-	drawText( 2, 9, "P4x: %u", internalState.mP4.mX.As() );
-	drawText( 2, 10, "P4y: %u", internalState.mP4.mY.As() );
+	drawText( 2, 3, "P1x: {}", internalState.mP1.mX.As() );
+	drawText( 2, 4, "P1y: {}", internalState.mP1.mY.As() );
+	drawText( 2, 5, "P2x: {}", internalState.mP2.mX.As() );
+	drawText( 2, 6, "P2y: {}", internalState.mP2.mY.As() );
+	drawText( 2, 7, "P3x: {}", internalState.mP3.mX.As() );
+	drawText( 2, 8, "P3y: {}", internalState.mP3.mY.As() );
+	drawText( 2, 9, "P4x: {}", internalState.mP4.mX.As() );
+	drawText( 2, 10, "P4y: {}", internalState.mP4.mY.As() );
 
 	input::ControllerManager const& controllerManager = *app::gInputControllerManager;
 
