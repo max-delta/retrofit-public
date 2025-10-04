@@ -1,6 +1,7 @@
 #pragma once
 #include "rftl/extension/void_alias.h"
 #include "rftl/extension/void_traits.h"
+#include "rftl/span"
 
 
 namespace rftl {
@@ -38,6 +39,9 @@ public:
 	byte_span( byte_span const& ) = default;
 	byte_span( byte_span&& ) = default;
 	~byte_span() = default;
+
+	template<typename T>
+	span<T, dynamic_extent> to_typed_span() const;
 
 	byte_span& operator=( byte_span const& ) = default;
 	byte_span& operator=( byte_span&& ) = default;

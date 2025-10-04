@@ -64,6 +64,17 @@ inline byte_span::byte_span( Type* data )
 
 
 
+template<typename T>
+inline span<T, dynamic_extent> byte_span::to_typed_span() const
+{
+	static constexpr size_t ElemSize = sizeof( T );
+	size_t const numElements = mSize / ElemSize;
+	RF_ASSERT_MSG( mSize % ElemSize == 0, "Conversion to typed span is losing data" );
+	return span<T, dynamic_extent>( reinterpret_cast<T*>( mData ), numElements );
+}
+
+
+
 template<typename Type>
 inline Type& byte_span::at( size_type pos ) const
 {
