@@ -24,8 +24,10 @@
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
+#include "rftl/extension/bounded_overwrite_iterator.h"
 #include "rftl/extension/variadic_print.h"
 #include "rftl/cstdarg"
+#include "rftl/format"
 
 
 namespace RF::gfx::ppu {
@@ -623,7 +625,7 @@ void PPUController::DebugSetBackgroundColor( math::Color3f color )
 
 
 
-bool PPUController::DebugDrawText( Coord pos, const char* fmt, ... )
+bool PPUController::DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::format_args&& args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -641,10 +643,9 @@ bool PPUController::DebugDrawText( Coord pos, const char* fmt, ... )
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mText[0] = '\0';
 	{
-		va_list args;
-		va_start( args, fmt );
-		vsnprintf( &targetString.mText[0], PPUDebugState::DebugString::k_MaxLen, fmt, args );
-		va_end( args );
+		rftl::bounded_forward_overwrite_iterator writer( targetString.mText.begin(), targetString.mText.end() );
+		writer = rftl::vformat_to( writer, fmt, args );
+		writer = '\0';
 	}
 	targetString.mText[PPUDebugState::DebugString::k_MaxLen] = '\0';
 

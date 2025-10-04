@@ -32,7 +32,7 @@ public:
 
 		CoordElem mXCoord;
 		CoordElem mYCoord;
-		char mText[k_MaxLen + sizeof( '\0' )];
+		rftl::array<char, k_MaxLen + sizeof( '\0' )> mText;
 	};
 	struct DebugAuxString : PPUState::String
 	{

@@ -541,7 +541,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 			if( kDebugRendering )
 			{
 				ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerAreaDebug, math::Color3f::kCyan );
-				ppu.DebugDrawText( area.mAABB.mBottomRight, "%s", area.mIdentifier.c_str() );
+				ppu.DebugDrawText( area.mAABB.mBottomRight, "{}", area.mIdentifier );
 			}
 
 			if( area.mType == overworld::AreaType::Campaign )

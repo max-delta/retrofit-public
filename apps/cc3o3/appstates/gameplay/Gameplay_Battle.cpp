@@ -1489,7 +1489,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		{
 			combat::Party const party = mainInstance.GetParty( partyID );
 			ppu.DebugDrawText( { x, y },
-				"%i:%i  Guage %03i/%03i",
+				"{}:{}  Guage {:03}/{:03}",
 				partyID.GetTeamIndex(),
 				partyID.GetPartyIndex(),
 				party.mCounterGuage,
@@ -1511,7 +1511,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 				marker = 'X';
 			}
 			ppu.DebugDrawText( { x, y },
-				"%c%i:%i:%i  HP %03i/%03i  Sta %1i/%1i  Chr %01i/%01i  Combo %2i -> %i:%i:%i",
+				"{}{}:{}:{}  HP {:03}/{:03}  Sta {:01}/{:01}  Chr {:01}/{:01}  Combo {:2} -> {}:{}:{}",
 				marker,
 				fighterID.GetTeamIndex(),
 				fighterID.GetPartyIndex(),

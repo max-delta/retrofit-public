@@ -154,9 +154,17 @@ public:
 
 	void DebugSetGridEnabled( bool enabled );
 	void DebugSetBackgroundColor( math::Color3f color );
-	bool DebugDrawText( Coord pos, const char* fmt, ... );
+
+	template<typename... ArgsT>
+	bool DebugDrawText( Coord pos, rftl::format_string<ArgsT...> fmt, ArgsT&&... args )
+	{
+		return DebugDrawTextVA( pos, fmt.get(), rftl::make_format_args( args... ) );
+	}
+	bool DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::format_args&& args );
+
 	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... );
 	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args );
+
 	bool DebugDrawLine( Coord p0, Coord p1 );
 	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width );
 	bool DebugDrawLine( Coord p0, Coord p1, math::Color3f color );

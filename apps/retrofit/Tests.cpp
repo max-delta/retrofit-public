@@ -422,7 +422,7 @@ void DrawInputDebug()
 		{
 			logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 		}
-		app::gGraphics->DebugDrawText( coord, "  lev: %s", logicStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  lev: {}", logicStream.str() );
 		coord.y += offset;
 
 		physicEvents.clear();
@@ -432,14 +432,14 @@ void DrawInputDebug()
 		{
 			physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 		}
-		app::gGraphics->DebugDrawText( coord, "  pev: %s", physStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  pev: {}", physStream.str() );
 		coord.y += offset;
 
 		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteX );
-		app::gGraphics->DebugDrawText( coord, "  cax: %f", math::float_cast<double>( signalValue ) );
+		app::gGraphics->DebugDrawText( coord, "  cax: {}", math::float_cast<double>( signalValue ) );
 		coord.y += offset;
 		signalValue = app::gWndProcInput->mAnalog.GetCurrentSignalValue( input::WndProcAnalogInputComponent::k_CursorAbsoluteY );
-		app::gGraphics->DebugDrawText( coord, "  cay: %f", math::float_cast<double>( signalValue ) );
+		app::gGraphics->DebugDrawText( coord, "  cay: {}", math::float_cast<double>( signalValue ) );
 		coord.y += offset;
 
 		app::gWndProcInput->mText.GetTextStream( textStream, 100 );
@@ -455,7 +455,7 @@ void DrawInputDebug()
 				halfAsciid.push_back( '#' );
 			}
 		}
-		app::gGraphics->DebugDrawText( coord, "  txt: %s", halfAsciid.c_str() );
+		app::gGraphics->DebugDrawText( coord, "  txt: {}", halfAsciid );
 		coord.y += offset;
 
 		if( app::gWndProcInput->mDigital.WasActivatedLogical( shim::VK_F1 ) )
@@ -495,7 +495,7 @@ void DrawInputDebug()
 		{
 			rawCommandStream << " " << static_cast<int>( command.mType );
 		}
-		app::gGraphics->DebugDrawText( coord, "  rcmd: %s", rawCommandStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  rcmd: {}", rawCommandStream.str() );
 		coord.y += offset;
 
 		rawSignals.clear();
@@ -505,7 +505,7 @@ void DrawInputDebug()
 		{
 			rawSignalStream << " " << static_cast<int>( signal.mValue );
 		}
-		app::gGraphics->DebugDrawText( coord, "  x: %s", rawSignalStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  x: {}", rawSignalStream.str() );
 		coord.y += offset;
 
 		rawSignals.clear();
@@ -515,7 +515,7 @@ void DrawInputDebug()
 		{
 			rawSignalStream << " " << static_cast<int>( signal.mValue );
 		}
-		app::gGraphics->DebugDrawText( coord, "  y: %s", rawSignalStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  y: {}", rawSignalStream.str() );
 		coord.y += offset;
 
 		sRawController->GetTextStream( rawTextStream, 40 );
@@ -531,7 +531,7 @@ void DrawInputDebug()
 				rawHalfAsciid.push_back( '#' );
 			}
 		}
-		app::gGraphics->DebugDrawText( coord, "  txt: %s", rawHalfAsciid.c_str() );
+		app::gGraphics->DebugDrawText( coord, "  txt: {}", rawHalfAsciid );
 		coord.y += offset;
 
 		gameCommands.clear();
@@ -541,7 +541,7 @@ void DrawInputDebug()
 		{
 			gameCommandStream << " " << static_cast<int>( command.mType );
 		}
-		app::gGraphics->DebugDrawText( coord, "  gcmd: %s", gameCommandStream.str().c_str() );
+		app::gGraphics->DebugDrawText( coord, "  gcmd: {}", gameCommandStream.str() );
 		coord.y += offset;
 
 		if( app::gWndProcInput->mDigital.WasActivatedLogical( shim::VK_F1 ) )
