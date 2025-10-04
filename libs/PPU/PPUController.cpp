@@ -37,7 +37,6 @@ namespace details {
 static constexpr DepthLayer kDebugStringLayer = kNearestLayer;
 static constexpr DepthLayer kDebugGridLayer = 0;
 
-static constexpr DepthLayer kDefaultTextLayer = 0;
 static constexpr DepthLayer kDefaultDebugLineLayer = 0;
 
 }
@@ -342,51 +341,7 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 
 
 
-bool PPUController::DrawText( Coord pos, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = DrawText( pos, details::kDefaultTextLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, const char* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, false, math::Color3f::kBlack, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, const char* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, false, color, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	bool const retVal = DrawText( pos, zLayer, desiredHeight, font, border, color, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
-
-
-bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, const char* fmt, va_list args )
+bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -417,7 +372,14 @@ bool PPUController::DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeigh
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
 	targetString.mTextOffset = textStorage.mTextStorageUsed;
-	rftl::string_view const charsWritten = rftl::var_snprintf( &targetText.front<char>(), targetText.size(), fmt, args );
+	rftl::string_view charsWritten;
+	{
+		rftl::span<char> const asChars = targetText.to_typed_span<char>();
+		rftl::bounded_forward_overwrite_iterator writer( asChars );
+		writer = rftl::vformat_to( writer, fmt, args );
+		writer = '\0';
+		charsWritten = rftl::string_view( asChars.begin(), writer.tell() );
+	}
 	RF_ASSERT( charsWritten.size() > 0 );
 	RF_ASSERT( charsWritten.size() <= kMaxStringLen );
 	RF_ASSERT( charsWritten.back() == '\0' );

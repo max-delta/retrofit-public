@@ -331,11 +331,11 @@ void DrawTest()
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 0 ), testFont1.mFontHeight, testFont1.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 1 ), testFont1.mFontHeight, testFont1.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 2 ), testFont1.mFontHeight, testFont1.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 3 ), testFont1.mFontHeight, testFont1.mManagedFontID, "`'\"~-=[]{{}}\\|,.<>/?" );
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 4 ), testFont2.mFontHeight, testFont2.mManagedFontID, "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 5 ), testFont2.mFontHeight, testFont2.mManagedFontID, "abcdefghijklmnopqrstuvwxyz" );
 	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 6 ), testFont2.mFontHeight, testFont2.mManagedFontID, "0123456789 !@#$%^&*()" );
-	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{}\\|,.<>/?" );
+	app::gGraphics->DrawText( gfx::ppu::Coord( 192, 64 + 8 * 7 ), testFont2.mFontHeight, testFont2.mManagedFontID, "`'\"~-=[]{{}}\\|,.<>/?" );
 
 	ui::Font const uncheckedTestFont1 = app::gFontRegistry->SelectBestFont( k1xFont, 50 );
 	ui::Font const uncheckedTestFont2 = app::gFontRegistry->SelectBestFont( k2xFont, 50 );

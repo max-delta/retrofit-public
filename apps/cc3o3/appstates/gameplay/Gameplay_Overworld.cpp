@@ -564,7 +564,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 					ppu.DrawText(
 						pos, InternalState::kLayerAreaLabel,
 						font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
-						"%s", label.c_str() );
+						"{}", label );
 				}
 
 				// Interacting?

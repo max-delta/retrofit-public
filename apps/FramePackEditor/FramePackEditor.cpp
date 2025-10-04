@@ -369,20 +369,20 @@ void FramePackEditor::Render()
 	{
 		ppu->DrawText( previewHeaderStart, fontSize, mDefaultFontID, "Preview" );
 		gfx::TimeSlowdownRate const previewFPS = 60u / mPreviewSlowdownRate;
-		ppu->DrawText( previewHeaderStart + textOffset, fontSize, mDefaultFontID, "Preview FPS: %i <-/+> to change", previewFPS );
+		ppu->DrawText( previewHeaderStart + textOffset, fontSize, mDefaultFontID, "Preview FPS: {} <-/+> to change", previewFPS );
 		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
 		if( mMasterMode == MasterMode::Meta )
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: %i <Up/Dn> to change", dataFPS );
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: {} <Up/Dn> to change", dataFPS );
 		}
 		else
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: %i", dataFPS );
+			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: {}", dataFPS );
 		}
 		uint16_t const effectivePreviewFrames = math::integer_cast<uint16_t>( animationLength * mPreviewSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: %i", effectivePreviewFrames );
+		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: {}", effectivePreviewFrames );
 		uint16_t const effectiveDataFrames = math::integer_cast<uint16_t>( animationLength * preferredSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Data frames: %i", effectiveDataFrames );
+		ppu->DrawText( previewHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Data frames: {}", effectiveDataFrames );
 	}
 
 	//
@@ -390,14 +390,14 @@ void FramePackEditor::Render()
 	{
 		gfx::ppu::Coord const editingHeaderStart = gfx::ppu::Coord( verticalPlaneX, 0 ) + headerOffset;
 		ppu->DrawText( editingHeaderStart, fontSize, mDefaultFontID, "Editing" );
-		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: %i / [0-%i] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
+		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: {} / [0-{}] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: %i <Ctrl+/,*> to batch", slotSustain );
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: {} <Ctrl+/,*> to batch", slotSustain );
 		}
 		else
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: %i </,*> to change", slotSustain );
+			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: {} </,*> to change", slotSustain );
 		}
 		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
 		if( texPath.Empty() )
@@ -407,26 +407,26 @@ void FramePackEditor::Render()
 		else
 		{
 			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: %s", lastElement.c_str() );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: {}", lastElement );
 		}
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i", texOrigin.x, texOrigin.y );
+				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {}", texOrigin.x, texOrigin.y );
 				break;
 			}
 			case MasterMode::Texture:
 			{
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {} <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
 				}
 				else
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: %i, %i <Arrows> to change", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {} <Arrows> to change", texOrigin.x, texOrigin.y );
 				}
-				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, mDefaultFontID, "Size: %lli, %lli", texSize.x, texSize.y );
+				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, mDefaultFontID, "Size: {}, {}", texSize.x, texSize.y );
 				break;
 			}
 			case MasterMode::Colliders:
@@ -453,12 +453,12 @@ void FramePackEditor::Render()
 		{
 			case MasterMode::Meta:
 			{
-				constexpr char k_Footer3Meta[] =
+				constexpr rftl::string_view k_Footer3Meta =
 					"[META]  "
 					"<U>:New FPack  "
 					"<O>:Open FPack "
 					"<Ctrl+S>:Save FPack ";
-				constexpr char k_Footer4Meta[] =
+				constexpr rftl::string_view k_Footer4Meta =
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
 					"<DEL>:Delete frame";
@@ -468,15 +468,15 @@ void FramePackEditor::Render()
 			}
 			case MasterMode::Texture:
 			{
-				constexpr char k_Footer3Texture[] =
+				constexpr rftl::string_view k_Footer3Texture =
 					"[TEXTURE]  "
 					"<B>:Insert before  "
 					"<M>:Insert after";
-				constexpr char k_Footer4Texture[] =
+				constexpr rftl::string_view k_Footer4Texture =
 					"[TEXTURE]  "
 					"<Arrows>:Change offset  "
 					"<DEL>:Delete frame  ";
-				constexpr char k_FooterAlt4Texture[] =
+				constexpr rftl::string_view k_FooterAlt4Texture =
 					"[TEXTURE]  "
 					"<Ctrl+Arrows>:Batch offset  "
 					"<DEL>:Delete frame  ";
@@ -493,22 +493,22 @@ void FramePackEditor::Render()
 			}
 			case MasterMode::Colliders:
 			{
-				constexpr char k_Footer1Colliders[] =
+				constexpr rftl::string_view k_Footer1Colliders =
 					"[BOX]  "
 					"<Arrows>:Move box  "
 					"<CTRL+Arrows>:Resize box  "
 					"<1-8>:Change layer";
-				constexpr char k_Footer2Colliders[] =
+				constexpr rftl::string_view k_Footer2Colliders =
 					"[SET]  "
 					"<U>:New set  "
 					"<O>:Ref old set  "
 					"<K>:Clone current set  "
 					"<L>:Ref latest clone";
-				constexpr char k_Footer3Colliders[] =
+				constexpr rftl::string_view k_Footer3Colliders =
 					"[COLLIDERS]  "
 					"<SHIFT+Arrows>:Change offset  "
 					"<PGUP/PGDN>:Select box";
-				constexpr char k_Footer4Colliders[] =
+				constexpr rftl::string_view k_Footer4Colliders =
 					"[COLLIDERS]  "
 					"<N>:New box  "
 					"<BACK>:Delete box  "
@@ -523,11 +523,11 @@ void FramePackEditor::Render()
 				RF_DBGFAIL();
 				break;
 		}
-		constexpr char k_Footer5[] =
+		constexpr rftl::string_view k_Footer5 =
 			"<R>:Reload fpack  "
 			"<A/D>:Change frame  "
 			"<SPACE>:Snap to preview";
-		constexpr char k_Footer6[] =
+		constexpr rftl::string_view k_Footer6 =
 			"<Z>:Meta mode  "
 			"<X>:Texture mode  "
 			"<C>:Collider mode";

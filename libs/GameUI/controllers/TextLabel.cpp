@@ -128,7 +128,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 		}
 	}
 
-	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "%s", mText.c_str() );
+	renderer.DrawText( pos, context.GetContainerManager().GetRecommendedRenderDepth( container ), mDesiredHeight, mFontID, mBorder, mColor, "{}", mText );
 }
 
 
