@@ -474,7 +474,7 @@ void RenderInputDevice()
 		}
 
 		input::InputDevice const& device = *deviceHandle;
-		drawText( x, y, math::Color3f::kCyan, "ID: <{}>", device.mIdentifier.c_str() );
+		drawText( x, y, math::Color3f::kCyan, "ID: <{}>", device.mIdentifier );
 		y++;
 
 		// Raw input controllers are usually going to eat all the data out of
@@ -511,7 +511,7 @@ void RenderInputDevice()
 					{
 						logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  lev: {}", logicStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  lev: {}", logicStream.str() );
 					y++;
 				}
 
@@ -531,7 +531,7 @@ void RenderInputDevice()
 					{
 						physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
-					drawText( x, y, math::Color3f::kWhite, "  pev: {}", physStream.str().c_str() );
+					drawText( x, y, math::Color3f::kWhite, "  pev: {}", physStream.str() );
 					y++;
 				}
 			}

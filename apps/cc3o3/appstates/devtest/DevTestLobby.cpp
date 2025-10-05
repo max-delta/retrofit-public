@@ -381,15 +381,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			}
 			if( conn == sync::kInvalidConnectionIdentifier )
 			{
-				drawText( x + 4u, y++, "??? p[{}]", ss.str().c_str() );
+				drawText( x + 4u, y++, "??? p[{}]", ss.str() );
 			}
 			else if( conn == self )
 			{
-				drawText( x + 4u, y++, "*{:-2} p[{}]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "*{:-2} p[{}]", conn, ss.str() );
 			}
 			else
 			{
-				drawText( x + 4u, y++, "-{:-2} p[{}]", conn, ss.str().c_str() );
+				drawText( x + 4u, y++, "-{:-2} p[{}]", conn, ss.str() );
 			}
 		};
 		SessionMembers::ConnectionPlayerIDs const connEntries = members.GetConnectionPlayerIDs();
@@ -441,7 +441,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 				unicode::ConvertToUtf32( message.mText ) );
 			drawText( x + 4u, y++, "{:-2}: \"{}\"",
 				message.mSourceConnectionID,
-				textBuffer.c_str() );
+				textBuffer );
 		}
 	};
 	if( sync::gSessionManager != nullptr )
@@ -454,7 +454,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	y = 21;
 	{
 		rftl::string const textBuffer = InputHelpers::GetMainMenuPageMappedTextBuffer( 32 );
-		drawText( x, y++, "TEXT BUFFER: [{}]", textBuffer.c_str() );
+		drawText( x, y++, "TEXT BUFFER: [{}]", textBuffer );
 	}
 }
 

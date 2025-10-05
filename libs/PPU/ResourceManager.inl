@@ -265,14 +265,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource ID not found" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource not found" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource not found" );
 		return false;
 	}
 
@@ -286,7 +286,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	mResourceIDs.erase( IDIter );
 	mResources.erase( resourceIter );
 
-	RFLOG_INFO( resourceName.c_str(), RFCAT_PPU, "Resource destroyed" );
+	RFLOG_INFO( resourceName, RFCAT_PPU, "Resource destroyed" );
 	return true;
 }
 
@@ -569,14 +569,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource ID not found" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
 
 	typename ResourcesByManagedID::iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( resourceName.c_str(), RFCAT_PPU, "Resource not found" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource not found" );
 		return false;
 	}
 
@@ -606,11 +606,11 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 		{
 			if( fileIter->second == filename )
 			{
-				RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating file-backed resource to same filename, assuming a reload" );
+				RFLOG_TRACE( resourceName, RFCAT_PPU, "Updating file-backed resource to same filename, assuming a reload" );
 			}
 			else
 			{
-				RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating file-backed resource to different filename, assuming a modify" );
+				RFLOG_TRACE( resourceName, RFCAT_PPU, "Updating file-backed resource to different filename, assuming a modify" );
 			}
 
 			// Clear out file reference
@@ -618,7 +618,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 		}
 		else
 		{
-			RFLOG_TRACE( resourceName.c_str(), RFCAT_PPU, "Updating a non-file-backed resource to be file-backed" );
+			RFLOG_TRACE( resourceName, RFCAT_PPU, "Updating a non-file-backed resource to be file-backed" );
 		}
 	}
 	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );

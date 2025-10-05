@@ -645,7 +645,7 @@ bool ProcessScriptVariable(
 	TargetItem const& target )
 {
 	// TODO: Better diagnostic logic
-	char const* const diagnosticName = currentPath.back().mIdentifier.c_str();
+	rftl::string_view const diagnosticName = currentPath.back().mIdentifier;
 
 	if( rftl::holds_alternative<reflect::Value>( elemValue ) )
 	{
