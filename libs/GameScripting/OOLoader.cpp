@@ -966,7 +966,7 @@ bool OOLoader::InjectReflectedClassByClassInfo( reflect::ClassInfo const& classI
 	bool const success = mVm.InjectSimpleStruct( name, memberNames );
 	if( success )
 	{
-		mInjectedClasses.emplace_back( InjectedClass{ &classInfo, RFTLE_CSTR( name ) } );
+		mInjectedClasses.emplace_back( InjectedClass{ &classInfo, RFTLE_VSTR( name ) } );
 		RF_ASSERT( mInjectedClasses.back().mName.empty() == false );
 	}
 	return success;

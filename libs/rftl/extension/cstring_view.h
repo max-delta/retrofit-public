@@ -1,5 +1,6 @@
 #pragma once
 #include "rftl/format"
+#include "rftl/string"
 #include "rftl/string_view"
 
 
@@ -24,6 +25,7 @@ public:
 public:
 	basic_cstring_view() = default;
 	basic_cstring_view( value_type const* ptr );
+	basic_cstring_view( rftl::string str );
 
 	// WARNING: Will fatal if the underlying pointer is null, since it is not
 	//  null-terminated
@@ -31,6 +33,9 @@ public:
 
 	// WARNING: May expose a null pointer
 	value_type const* c_str() const;
+
+	bool operator==( nullptr_t ) const;
+	bool operator!=( nullptr_t ) const;
 
 
 	//

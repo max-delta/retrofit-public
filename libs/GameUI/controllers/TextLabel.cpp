@@ -34,7 +34,7 @@ void TextLabel::SetFont( FontPurposeID purpose )
 
 
 
-void TextLabel::SetText( rftl::string const& text )
+void TextLabel::SetText( rftl::string_view text )
 {
 	mText = text;
 }
@@ -110,7 +110,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	RF_ASSERT( mFontID != gfx::kInvalidManagedFontID );
 	RF_ASSERT( mDesiredHeight > mBaselineOffset );
 
-	gfx::ppu::Vec2 const expectedDimensions = CalculatePrimaryFontExtents( renderer, mFontID, mDesiredHeight, mBaselineOffset, mText.c_str() );
+	gfx::ppu::Vec2 const expectedDimensions = CalculatePrimaryFontExtents( renderer, mFontID, mDesiredHeight, mBaselineOffset, mText );
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
 	if constexpr( config::kOncePer )
@@ -121,7 +121,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 			{
 				RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB height: '{}'", mText ) );
 			}
-			if( container.mAABB.Width() < renderer.CalculateStringLength( mDesiredHeight, mFontID, mText.c_str() ) )
+			if( container.mAABB.Width() < renderer.CalculateStringLength( mDesiredHeight, mFontID, mText ) )
 			{
 				RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A label cannot fit into its AABB width: '{}'", mText ) );
 			}

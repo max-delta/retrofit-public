@@ -66,7 +66,7 @@ bool DiagnosticProcessImport( Importer& importer, bool silent )
 	callbacks.mProperty_AddNameAttributeFunc =
 		[&diagExporter]( rftl::string_view const& name ) -> bool
 	{
-		return diagExporter.Property_AddNameAttribute( RFTLE_CSTR( name ) );
+		return diagExporter.Property_AddNameAttribute( RFTLE_VSTR( name ) );
 	};
 
 	callbacks.mProperty_AddValueAttributeFunc =

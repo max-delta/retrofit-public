@@ -51,7 +51,7 @@ bool Instance_TryAddTypeIDAttribute(
 	// Attempt add
 	return exporter.Instance_AddTypeIDAttribute(
 		classKey.GetHash(),
-		classKey.mName.c_str() );
+		classKey.mName );
 }
 
 
@@ -92,7 +92,7 @@ bool Property_TryAddDebugTypeIDAttribute(
 	// Attempt add
 	return exporter.Property_AddDebugTypeIDAttribute(
 		classKey.GetHash(),
-		classKey.mName.c_str() );
+		classKey.mName );
 }
 
 

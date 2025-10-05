@@ -5,6 +5,7 @@
 
 #include "core_math/Color3f.h"
 
+#include "rftl/extension/cstring_view.h"
 #include "rftl/string"
 
 
@@ -22,7 +23,7 @@ public:
 	TextLabel() = default;
 
 	void SetFont( FontPurposeID purpose );
-	void SetText( rftl::string const& text );
+	void SetText( rftl::string_view text );
 	void SetText( rftl::string&& text );
 	void SetText( char const* text );
 	void SetJustification( Justification::Value justification );

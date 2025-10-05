@@ -878,7 +878,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 
 	// Create file
 	{
-		file::FileHandlePtr const fileHandle = vfs.GetRawFileForWrite( rawPath.c_str() );
+		file::FileHandlePtr const fileHandle = vfs.GetRawFileForWrite( rawPath );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_NOTIFY( rawPath, RFCAT_FRAMEPACKEDITOR, "Failed to create FPack file" );

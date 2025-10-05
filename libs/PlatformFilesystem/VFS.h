@@ -4,6 +4,8 @@
 #include "PlatformFilesystem/VFSFwd.h"
 #include "PlatformFilesystem/VFSMount.h"
 
+#include "rftl/extension/cstring_view.h"
+
 
 namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
@@ -68,7 +70,7 @@ public:
 	FileHandlePtr GetFileForAppend( VFSPath const& path ) const; // Will create, seek end
 	FileHandlePtr GetFileForExecute( VFSPath const& path ) const; // Must exist, seek start
 
-	FileHandlePtr GetRawFileForWrite( char const* rawPath ) const; // Will create, seek start
+	FileHandlePtr GetRawFileForWrite( rftl::cstring_view rawPath ) const; // Will create, seek start
 
 	void EnumerateDirectory(
 		VFSPath const& directory,

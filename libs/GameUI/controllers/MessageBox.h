@@ -5,6 +5,9 @@
 
 #include "core_math/Color3f.h"
 
+#include "rftl/extension/cstring_view.h"
+
+
 // Forwards
 namespace RF::ui::controller {
 	class TextBox;
@@ -46,7 +49,7 @@ public:
 
 	// NOTE: Right-to-left text is parsed right-to-left, so the leftmost text
 	//  is the text that will get truncated first from the string argument
-	void SetText( rftl::string const& text, bool rightToLeft );
+	void SetText( rftl::string_view text, bool rightToLeft );
 
 	size_t GetNumCharactersDispatchedLastRender() const;
 	size_t GetNumCharactersRenderedLastRender() const;

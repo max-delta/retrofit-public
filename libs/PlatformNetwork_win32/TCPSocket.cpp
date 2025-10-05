@@ -69,7 +69,7 @@ TCPSocket TCPSocket::ConnectClientSocket( rftl::string hostname, uint16_t port )
 	hints.ai_family = AF_UNSPEC; // Whatever works
 	hints.ai_socktype = SOCK_STREAM; // Stream
 	hints.ai_protocol = win32::IPPROTO_TCP; // TCP
-	details::AddressList const suggestions = details::LookupSuggestedAddresses( hints, hostname.c_str(), port );
+	details::AddressList const suggestions = details::LookupSuggestedAddresses( hints, hostname, port );
 
 	// Try suggestions in order
 	for( win32::addrinfo const* const& suggestionPtr : suggestions.mList )

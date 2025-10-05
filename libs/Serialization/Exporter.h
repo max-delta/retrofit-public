@@ -7,6 +7,8 @@
 
 #include "core/macros.h"
 
+#include "rftl/extension/cstring_view.h"
+
 
 namespace RF::serialization {
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +54,7 @@ public:
 	// NOTE: Debug name not required to be stored by exporter, and not required
 	//  to be provided by caller
 	// NOTE: Invalid if a property has begun on the current instance
-	virtual bool Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName ) = 0;
+	virtual bool Instance_AddTypeIDAttribute( TypeID const& typeID, rftl::cstring_view debugName ) = 0;
 
 	// A new property in the current instance at the current level, such as a
 	//  member variable
@@ -63,7 +65,7 @@ public:
 	// Add an attribute to the current property to indicate its name
 	// NOTE: Invalid if no property has begun at the current level
 	// NOTE: Invalid if the current property has performed an indentation
-	virtual bool Property_AddNameAttribute( char const* name ) = 0;
+	virtual bool Property_AddNameAttribute( rftl::cstring_view name ) = 0;
 
 	// Add an attribute to the current property to indicate its value
 	// NOTE: Invalid if no property has begun at the current level
@@ -74,7 +76,7 @@ public:
 	//  purposes only, not required to be honored by importer implementations,
 	//  and not intended to affect logic of downstream importers
 	// NOTE: Debug name not required to be provided by caller
-	virtual bool Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName );
+	virtual bool Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, rftl::cstring_view debugName );
 
 	// Add an attribute to the current property to indicate it requires
 	//  indirection in order to resolve

@@ -4,6 +4,7 @@
 #include "core_platform/shim/win_shim.h"
 #include "core_platform/IPAddressFwd.h"
 
+#include "rftl/extension/cstring_view.h"
 #include "rftl/string"
 #include "rftl/vector"
 
@@ -32,14 +33,14 @@ public:
 	rftl::vector<win32::addrinfo const*> mList;
 
 private:
-	friend AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* hostnameHint, uint16_t portHint );
+	friend AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, rftl::cstring_view hostnameHint, uint16_t portHint );
 	win32::addrinfo* mHead = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void SortSuggestions( AddressList& suggestions );
-AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* hostnameHint, uint16_t portHint );
+AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, rftl::cstring_view hostnameHint, uint16_t portHint );
 rftl::string GetAddress( win32::sockaddr const& sockAddr, size_t sockAddrLen );
 
 ///////////////////////////////////////////////////////////////////////////////

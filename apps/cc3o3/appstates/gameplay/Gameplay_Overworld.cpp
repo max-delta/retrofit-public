@@ -559,7 +559,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 					RF_ASSERT( labelKey.empty() == false );
 					rftl::string const label = ui::LocalizeKey( labelKey );
 
-					gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label.c_str() );
+					gfx::ppu::Vec2 const extents = ui::CalculatePrimaryFontExtents( ppu, font, label );
 					gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
 					ppu.DrawText(
 						pos, InternalState::kLayerAreaLabel,

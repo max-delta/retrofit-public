@@ -10,7 +10,7 @@ Exporter::~Exporter() = default;
 
 
 
-bool Exporter::Property_AddDebugTypeIDAttribute( TypeID const& typeID, char const* debugName )
+bool Exporter::Property_AddDebugTypeIDAttribute( TypeID const& typeID, rftl::cstring_view debugName )
 {
 	return true;
 }

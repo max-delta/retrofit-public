@@ -39,14 +39,14 @@ void SortSuggestions( AddressList& suggestions )
 
 
 
-AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, char const* hostnameHint, uint16_t portHint )
+AddressList LookupSuggestedAddresses( win32::addrinfo const& hints, rftl::cstring_view hostnameHint, uint16_t portHint )
 {
 	AddressList retVal = {};
 
 	// Lookup
 	rftl::string const portHintAsString = rftl::to_string( portHint );
 	int const suggestionResult = win32::getaddrinfo(
-		hostnameHint,
+		hostnameHint.c_str(),
 		portHintAsString.c_str(),
 		&hints,
 		&retVal.mHead );

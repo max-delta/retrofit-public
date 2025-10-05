@@ -13,9 +13,9 @@
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TypeDatabase::RegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo )
+bool TypeDatabase::RegisterNewClassByName( rftl::string_view name, reflect::ClassInfo const& classInfo )
 {
-	RF_ASSERT( name != nullptr );
+	RF_ASSERT( name.empty() == false );
 
 	if( IsValidClassName( name ) == false )
 	{
@@ -23,18 +23,16 @@ bool TypeDatabase::RegisterNewClassByName( char const* name, reflect::ClassInfo 
 		return false;
 	}
 
-	size_t nameLen = strnlen( name, 1024 );
-	math::HashVal64 const hash = math::StableHashBytes( name, nameLen );
+	math::HashVal64 const hash = math::StableHashBytes( name.data(), name.size() );
 	bool const registerSuccess = RegisterNewClassByHash( hash, name, classInfo );
 	return registerSuccess;
 }
 
 
 
-reflect::ClassInfo const* TypeDatabase::GetClassInfoByName( char const* name ) const
+reflect::ClassInfo const* TypeDatabase::GetClassInfoByName( rftl::string_view name ) const
 {
-	size_t nameLen = strnlen( name, 1024 );
-	math::HashVal64 const hash = math::StableHashBytes( name, nameLen );
+	math::HashVal64 const hash = math::StableHashBytes( name.data(), name.size() );
 	return GetClassInfoByHash( hash );
 }
 
@@ -122,7 +120,7 @@ ConstructedType TypeDatabase::ConstructClass( reflect::ClassInfo const& classInf
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool TypeDatabase::RegisterNewClassByHash( math::HashVal64 const& hash, char const* name, reflect::ClassInfo const& classInfo )
+bool TypeDatabase::RegisterNewClassByHash( math::HashVal64 const& hash, rftl::string_view name, reflect::ClassInfo const& classInfo )
 {
 	if( mClassInfoByHash.count( hash ) != 0 )
 	{
@@ -137,7 +135,7 @@ bool TypeDatabase::RegisterNewClassByHash( math::HashVal64 const& hash, char con
 
 
 
-bool TypeDatabase::IsValidClassName( char const* name )
+bool TypeDatabase::IsValidClassName( rftl::string_view name )
 {
 	return IsValidIdentifier( name );
 }

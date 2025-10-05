@@ -102,16 +102,16 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetRawFileForWrite( char const* rawPath ) const
+FileHandlePtr VFS::GetRawFileForWrite( rftl::cstring_view rawPath ) const
 {
-	RFLOG_INFO( rawPath, RFCAT_VFS, "File write request" );
+	RFLOG_INFO( rawPath.c_str(), RFCAT_VFS, "File write request" );
 	rftl::filebuf rawFile = {};
-	rftl::filebuf const* const errCheck = rawFile.open( rawPath,
+	rftl::filebuf const* const errCheck = rawFile.open( rawPath.c_str(),
 		details::GetOpenModeBitFromEnumValue( OpenFlags::Write ) );
 	if( errCheck == nullptr || rawFile.is_open() == false )
 	{
 		int32_t const assumedErr = math::integer_cast<int32_t>( errno );
-		RFLOGF_ERROR( rawPath, RFCAT_VFS, "Failed to open file for raw access, last error code was {}", assumedErr );
+		RFLOGF_ERROR( rawPath.c_str(), RFCAT_VFS, "Failed to open file for raw access, last error code was {}", assumedErr );
 		return nullptr;
 	}
 

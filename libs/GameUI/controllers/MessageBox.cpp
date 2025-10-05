@@ -85,7 +85,7 @@ ContainerID MessageBox::GetChildContainerID() const
 
 
 
-void MessageBox::SetText( rftl::string const& text, bool rightToLeft )
+void MessageBox::SetText( rftl::string_view text, bool rightToLeft )
 {
 	mRightToLeft = rightToLeft;
 	mText = text;
@@ -142,7 +142,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 {
 	if( mText.empty() )
 	{
-		mTextController->SetText( rftl::string(), mRightToLeft );
+		mTextController->SetText( rftl::string_view(), mRightToLeft );
 		return;
 	}
 

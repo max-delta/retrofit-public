@@ -28,7 +28,7 @@ void GlobalRegisterNewClassByQualifiedName( char const* name, reflect::ClassInfo
 {
 	rftl::string buf = name;
 	SanitizeIdentifier( name, buf.data() );
-	bool const success = GetGlobalMutableTypeDatabase().RegisterNewClassByName( buf.c_str(), classInfo );
+	bool const success = GetGlobalMutableTypeDatabase().RegisterNewClassByName( buf, classInfo );
 	RF_ASSERT( success );
 	if( success == false )
 	{

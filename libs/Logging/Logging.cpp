@@ -56,7 +56,8 @@ void WriteContextStringFromView( rftl::basic_string_view<CharT> const& context, 
 template<typename CharT, typename BufferT>
 void WriteContextStringFromString( rftl::basic_string<CharT> const& context, BufferT& buffer, CharT const terminator )
 {
-	WriteContextStringFromPointer( context.c_str(), buffer, terminator );
+	rftl::basic_string_view<CharT> const view = context;
+	WriteContextStringFromView( view, buffer, terminator );
 }
 
 }

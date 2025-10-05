@@ -14,11 +14,11 @@ namespace RF::serialization {
 namespace details {
 
 #if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
-static bool hasAttribute( pugi::xml_node const& node, char const* attributeName )
+static bool hasAttribute( pugi::xml_node const& node, rftl::cstring_view attributeName )
 {
 	for( pugi::xml_attribute const& attribute : node.attributes() )
 	{
-		if( rftl::string_view( attribute.name() ) == rftl::string_view( attributeName ) )
+		if( rftl::string_view( attribute.name() ) == attributeName )
 		{
 			return true;
 		}
@@ -248,7 +248,7 @@ bool XmlExporter::Instance_AddInstanceIDAttribute( InstanceID const& instanceID 
 
 
 
-bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName )
+bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, rftl::cstring_view debugName )
 {
 	if( mFinalized )
 	{
@@ -261,7 +261,7 @@ bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const*
 	if( mConfig.mIncludeInlineDebugNames )
 	{
 		RF_ASSERT( details::hasAttribute( mCurrentInstance, "DebugName" ) == false );
-		mCurrentInstance.append_attribute( "DebugName" ) = debugName;
+		mCurrentInstance.append_attribute( "DebugName" ) = debugName.c_str();
 	}
 
 	RF_ASSERT( details::hasAttribute( mCurrentInstance, "TypeID" ) == false );
@@ -269,7 +269,7 @@ bool XmlExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const*
 
 	if( mConfig.mStripDebugDataSection == false )
 	{
-		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, typeID, debugName );
+		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, typeID, debugName.c_str() );
 	}
 
 	// Want to update the table of contents with this type info
@@ -338,7 +338,7 @@ bool XmlExporter::Instance_BeginNewProperty()
 
 
 
-bool XmlExporter::Property_AddNameAttribute( char const* name )
+bool XmlExporter::Property_AddNameAttribute( rftl::cstring_view name )
 {
 	if( mFinalized )
 	{
@@ -348,7 +348,7 @@ bool XmlExporter::Property_AddNameAttribute( char const* name )
 
 	pugi::xml_node& currentProperty = mPropertyStack.back();
 	RF_ASSERT( details::hasAttribute( currentProperty, "Name" ) == false );
-	currentProperty.append_attribute( "Name" ) = name;
+	currentProperty.append_attribute( "Name" ) = name.c_str();
 	return true;
 }
 
@@ -431,7 +431,7 @@ bool XmlExporter::Property_AddValueAttribute( reflect::Value const& value )
 
 
 
-bool XmlExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName )
+bool XmlExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, rftl::cstring_view debugName )
 {
 	if( mFinalized )
 	{
@@ -452,7 +452,7 @@ bool XmlExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, c
 	if( mConfig.mIncludeInlineDebugNames )
 	{
 		RF_ASSERT( details::hasAttribute( currentProperty, "DebugName" ) == false );
-		currentProperty.append_attribute( "DebugName" ) = debugName;
+		currentProperty.append_attribute( "DebugName" ) = debugName.c_str();
 	}
 
 	RF_ASSERT( details::hasAttribute( currentProperty, "DebugTypeID" ) == false );
@@ -460,7 +460,7 @@ bool XmlExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, c
 
 	if( mConfig.mStripDebugDataSection == false )
 	{
-		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, debugTypeID, debugName );
+		details::AppendDebugTypeDataIfNotADuplicate( mDebugData, debugTypeID, debugName.c_str() );
 	}
 
 	return true;

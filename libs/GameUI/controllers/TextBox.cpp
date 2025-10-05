@@ -66,7 +66,7 @@ ContainerID TextBox::GetChildContainerID() const
 
 
 
-void TextBox::SetText( rftl::string const& text, bool rightToLeft )
+void TextBox::SetText( rftl::string_view text, bool rightToLeft )
 {
 	mRightToLeft = rightToLeft;
 	mText = text;
@@ -143,7 +143,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 			RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '{}'", line ) );
 			fits = false;
 		}
-		if( fits && renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line.c_str() ) > maxLineLen )
+		if( fits && renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line ) > maxLineLen )
 		{
 			fits = false;
 		}

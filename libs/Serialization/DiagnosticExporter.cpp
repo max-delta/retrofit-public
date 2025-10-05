@@ -121,7 +121,7 @@ bool DiagnosticExporter::Instance_AddInstanceIDAttribute( InstanceID const& inst
 
 
 
-bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, char const* debugName )
+bool DiagnosticExporter::Instance_AddTypeIDAttribute( TypeID const& typeID, rftl::cstring_view debugName )
 {
 	if( mFinalized )
 	{
@@ -178,7 +178,7 @@ bool DiagnosticExporter::Instance_BeginNewProperty()
 
 
 
-bool DiagnosticExporter::Property_AddNameAttribute( char const* name )
+bool DiagnosticExporter::Property_AddNameAttribute( rftl::cstring_view name )
 {
 	if( mFinalized )
 	{
@@ -308,7 +308,7 @@ bool DiagnosticExporter::Property_AddValueAttribute( reflect::Value const& value
 
 
 
-bool DiagnosticExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, char const* debugName )
+bool DiagnosticExporter::Property_AddDebugTypeIDAttribute( TypeID const& debugTypeID, rftl::cstring_view debugName )
 {
 	if( mFinalized )
 	{

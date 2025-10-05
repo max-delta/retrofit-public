@@ -74,7 +74,7 @@ void TextRows::SetText( rftl::vector<rftl::string> const& text )
 	RF_ASSERT( text.size() == mNumSlots );
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
-		GetMutableSlotController( i )->SetText( text.at( i ).c_str() );
+		GetMutableSlotController( i )->SetText( text.at( i ) );
 	}
 }
 

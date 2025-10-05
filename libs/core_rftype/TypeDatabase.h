@@ -7,6 +7,7 @@
 #include "rftl/functional"
 #include "rftl/unordered_map"
 #include "rftl/string"
+#include "rftl/string_view"
 
 
 namespace RF::rftype {
@@ -46,8 +47,8 @@ public:
 	// NOTE: A class can be registered under multiple names, though it is
 	//  discouraged to do this intentionally, since a 1:1 mapping is generally
 	//  more intuitive and less error-prone
-	bool RegisterNewClassByName( char const* name, reflect::ClassInfo const& classInfo );
-	reflect::ClassInfo const* GetClassInfoByName( char const* name ) const;
+	bool RegisterNewClassByName( rftl::string_view name, reflect::ClassInfo const& classInfo );
+	reflect::ClassInfo const* GetClassInfoByName( rftl::string_view name ) const;
 	reflect::ClassInfo const* GetClassInfoByHash( math::HashVal64 const& hash ) const;
 
 	// Lookup a previously registered class
@@ -67,9 +68,9 @@ public:
 	//
 	// Private methods
 private:
-	bool RegisterNewClassByHash( math::HashVal64 const& hash, char const* name, reflect::ClassInfo const& classInfo );
+	bool RegisterNewClassByHash( math::HashVal64 const& hash, rftl::string_view name, reflect::ClassInfo const& classInfo );
 
-	static bool IsValidClassName( char const* name );
+	static bool IsValidClassName( rftl::string_view name );
 
 
 	//

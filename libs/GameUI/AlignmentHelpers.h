@@ -5,6 +5,8 @@
 
 #include "PPU/PPUFwd.h"
 
+#include "rftl/string_view"
+
 
 namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
@@ -27,13 +29,13 @@ gfx::ppu::Coord GAMEUI_API AlignToJustifyAroundPoint(
 gfx::ppu::Vec2 GAMEUI_API CalculatePrimaryFontExtents(
 	gfx::ppu::PPUController const& renderer,
 	Font const& font,
-	char const* text );
+	rftl::string_view text );
 gfx::ppu::Vec2 GAMEUI_API CalculatePrimaryFontExtents(
 	gfx::ppu::PPUController const& renderer,
 	gfx::ManagedFontID managedFontID,
 	uint8_t fontHeight,
 	uint8_t baselineOffset,
-	char const* text );
+	rftl::string_view text );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

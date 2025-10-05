@@ -7,26 +7,30 @@
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool IsValidIdentifier( char const* name )
+bool IsValidIdentifier( rftl::string_view name )
 {
-	RF_ASSERT( name != nullptr );
+	if( name.empty() )
+	{
+		return false;
+	}
+
 	size_t const index = GetInvalidIdentifierCharacterIndex( name );
-	char const ch = name[index];
-	return ch == '\0' && index != 0;
+	return index >= name.size();
 }
 
 
 
-size_t GetInvalidIdentifierCharacterIndex( char const* name )
+size_t GetInvalidIdentifierCharacterIndex( rftl::string_view name )
 {
-	RF_ASSERT( name != nullptr );
-	char ch = '\255';
-	size_t previousIndex = 0;
-	while( ch != '\0' )
+	if( name.empty() )
 	{
-		previousIndex++;
-		size_t const currentIndex = previousIndex - 1;
-		ch = name[currentIndex];
+		return 0;
+	}
+
+	size_t testIndex = 0;
+	for( testIndex = 0; testIndex < name.size(); testIndex++ )
+	{
+		char const& ch = name[testIndex];
 
 		if( ch >= 'a' && ch <= 'z' )
 		{
@@ -40,7 +44,7 @@ size_t GetInvalidIdentifierCharacterIndex( char const* name )
 
 		if( ch >= '0' && ch <= '9' )
 		{
-			if( currentIndex == 0 )
+			if( testIndex == 0 )
 			{
 				break;
 			}
@@ -54,15 +58,14 @@ size_t GetInvalidIdentifierCharacterIndex( char const* name )
 
 		break;
 	}
-	return previousIndex - 1;
+	return testIndex;
 }
 
 
 
-void SanitizeIdentifier( char const* in, char* out )
+void SanitizeIdentifier( rftl::string_view in, char* out )
 {
-	size_t offset = 0;
-	while( in[offset] != '\0' )
+	for( size_t offset = 0; offset < in.size(); offset++ )
 	{
 		char const& inC = in[offset];
 		char& outC = out[offset];
@@ -74,7 +77,6 @@ void SanitizeIdentifier( char const* in, char* out )
 		{
 			outC = inC;
 		}
-		offset++;
 	}
 }
 

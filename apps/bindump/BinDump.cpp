@@ -26,6 +26,7 @@
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/algorithms.h"
+#include "rftl/extension/cstring_view.h"
 
 
 namespace RF::bindump {
@@ -37,15 +38,11 @@ static UniquePtr<file::VFS> sVfs;
 
 
 
-void EmitError( char const* str )
+void EmitError( rftl::cstring_view str )
 {
 	fputs( "ERROR: ", stderr );
-	fputs( str, stderr );
+	fputs( str.c_str(), stderr );
 	fputc( '\n', stderr );
-}
-void EmitError( rftl::string const& str )
-{
-	EmitError( str.c_str() );
 }
 
 

@@ -1,13 +1,15 @@
 #pragma once
 
+#include "rftl/string_view"
+
 
 namespace RF::rftype {
 ///////////////////////////////////////////////////////////////////////////////
 
-bool IsValidIdentifier( char const* name );
-size_t GetInvalidIdentifierCharacterIndex( char const* name );
+bool IsValidIdentifier( rftl::string_view name );
+size_t GetInvalidIdentifierCharacterIndex( rftl::string_view name );
 
-void SanitizeIdentifier( char const* in, char* out );
+void SanitizeIdentifier( rftl::string_view in, char* out );
 
 ///////////////////////////////////////////////////////////////////////////////
 }
