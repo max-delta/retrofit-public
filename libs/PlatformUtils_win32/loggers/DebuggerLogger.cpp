@@ -6,7 +6,7 @@
 
 #include "core_unicode/StringConvert.h"
 
-#include "rftl/extension/bounded_overwrite_iterator.h"
+#include "rftl/extension/variadic_print.h"
 #include "rftl/limits"
 
 
@@ -22,12 +22,8 @@ void DebuggerLogger( logging::LoggingRouter const& router, logging::LogEvent<cha
 
 	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	{
-		rftl::bounded_forward_overwrite_iterator out( messageBuffer );
-		out = rftl::vformat_to( out, legacyFormatString, args );
-		*out = '\0';
-		*messageBuffer.rbegin() = '\0';
-	}
+	rftl::var_vformat_to( messageBuffer, legacyFormatString, args );
+	*messageBuffer.rbegin() = '\0';
 
 	char const* severity;
 	if( event.mSeverityMask & RF_SEV_MILESTONE )

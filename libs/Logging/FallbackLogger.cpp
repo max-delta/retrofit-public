@@ -5,7 +5,7 @@
 
 #include "core_logging/LoggingRouter.h"
 
-#include "rftl/extension/bounded_overwrite_iterator.h"
+#include "rftl/extension/variadic_print.h"
 #include "rftl/atomic"
 #include "rftl/limits"
 
@@ -24,12 +24,8 @@ void FallbackLogger( LoggingRouter const& router, LogEvent<char8_t> const& event
 
 	constexpr size_t kBufSize = 512;
 	rftl::array<char, kBufSize> messageBuffer;
-	{
-		rftl::bounded_forward_overwrite_iterator out( messageBuffer );
-		out = rftl::vformat_to( out, legacyFormatString, args );
-		*out = '\0';
-		*messageBuffer.rbegin() = '\0';
-	}
+	rftl::var_vformat_to( messageBuffer, legacyFormatString, args );
+	*messageBuffer.rbegin() = '\0';
 
 	rftl::array<char, kBufSize> outputBuffer;
 	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "FALLBACK_LOGGER>>[%s] %s", event.mCategoryKey, &messageBuffer[0] );

@@ -24,7 +24,6 @@
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
-#include "rftl/extension/bounded_overwrite_iterator.h"
 #include "rftl/extension/variadic_print.h"
 #include "rftl/cstdarg"
 #include "rftl/format"
@@ -375,10 +374,7 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 	rftl::string_view charsWritten;
 	{
 		rftl::span<char> const asChars = targetText.to_typed_span<char>();
-		rftl::bounded_forward_overwrite_iterator writer( asChars );
-		writer = rftl::vformat_to( writer, fmt, args );
-		writer = '\0';
-		charsWritten = rftl::string_view( asChars.begin(), writer.tell() );
+		charsWritten = rftl::var_vformat_to( asChars, fmt, args );
 	}
 	RF_ASSERT( charsWritten.size() > 0 );
 	RF_ASSERT( charsWritten.size() <= kMaxStringLen );
@@ -604,11 +600,7 @@ bool PPUController::DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::for
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mText[0] = '\0';
-	{
-		rftl::bounded_forward_overwrite_iterator writer( targetString.mText.begin(), targetString.mText.end() );
-		writer = rftl::vformat_to( writer, fmt, args );
-		writer = '\0';
-	}
+	rftl::var_vformat_to( targetString.mText, fmt, args );
 	targetString.mText[PPUDebugState::DebugString::k_MaxLen] = '\0';
 
 	return true;
@@ -650,10 +642,7 @@ bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t de
 	rftl::string_view charsWritten;
 	{
 		rftl::span<char> const asChars = targetText.to_typed_span<char>();
-		rftl::bounded_forward_overwrite_iterator writer( asChars );
-		writer = rftl::vformat_to( writer, fmt, args );
-		writer = '\0';
-		charsWritten = rftl::string_view( asChars.begin(), writer.tell() );
+		charsWritten = rftl::var_vformat_to( asChars, fmt, args );
 	}
 	RF_ASSERT( charsWritten.size() > 0 );
 	RF_ASSERT( charsWritten.size() <= kMaxStringLen );

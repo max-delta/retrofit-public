@@ -5,7 +5,7 @@
 
 #include "core_math/Hash.h"
 
-#include "rftl/extension/bounded_overwrite_iterator.h"
+#include "rftl/extension/variadic_print.h"
 #include "rftl/unordered_set"
 #include "rftl/string"
 #include "rftl/mutex"
@@ -39,12 +39,8 @@ void AssertLogger( LoggingRouter const& router, LogEvent<char8_t> const& event, 
 
 		constexpr size_t kBufSize = 512;
 		rftl::array<char, kBufSize> messageBuffer;
-		{
-			rftl::bounded_forward_overwrite_iterator out( messageBuffer );
-			out = rftl::vformat_to( out, legacyFormatString, args );
-			*out = '\0';
-			*messageBuffer.rbegin() = '\0';
-		}
+		rftl::var_vformat_to( messageBuffer, legacyFormatString, args );
+		*messageBuffer.rbegin() = '\0';
 
 		assert::AssertResponse const response = assert::AssertNotification( event.mTransientFileString.c_str(), event.mLineNumber, "N/A", messageBuffer.data() );
 		if( response == assert::AssertResponse::Interrupt )
