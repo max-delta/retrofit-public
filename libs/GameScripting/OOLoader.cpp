@@ -735,16 +735,17 @@ bool ProcessClassWorkItem(
 
 		// Get the name
 		SquirrelVM::String const* elemString = rftl::get_if<SquirrelVM::String>( &( elemPair.first ) );
-		char const* const elemName = elemString != nullptr ? elemString->c_str() : nullptr;
-		if( elemName == nullptr )
+		rftl::string_view const elemName = elemString != nullptr ? *elemString : rftl::string_view{};
+		if( elemName.empty() )
 		{
+			RF_ASSERT( elemString == nullptr );
 			RFLOG_NOTIFY( currentPath, RFCAT_GAMESCRIPTING,
 				"Unable to determine identifier for variable" );
 			continue;
 		}
 
 		// Check if it's the reserved class name member
-		if( strcmp( elemName, SquirrelVM::kReservedClassNameMemberName ) == 0 )
+		if( elemName == SquirrelVM::kReservedClassNameMemberName )
 		{
 			if( rftl::holds_alternative<SquirrelVM::String>( elemValue ) == false )
 			{
@@ -780,7 +781,7 @@ bool ProcessClassWorkItem(
 		for( rftype::TypeTraverser::MemberVariableInstance const& member : members )
 		{
 			char const* const memberName = member.mMemberVariableInfo.mIdentifier;
-			if( strcmp( elemName, memberName ) == 0 )
+			if( elemName == memberName )
 			{
 				RF_ASSERT( foundMember == nullptr );
 				foundMember = &member;

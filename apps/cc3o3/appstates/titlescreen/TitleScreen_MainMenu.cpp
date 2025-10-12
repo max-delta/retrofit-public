@@ -54,17 +54,14 @@ static rftl::vector<rftl::string> GenerateDebugText()
 
 	platform::ProcessorInfo const processorInfo = platform::ProcessorInfo::Generate();
 	retVal.emplace_back(
-		rftl::string() +
-		processorInfo.mVendorID.c_str() +
-		" " +
-		processorInfo.mModelID.c_str() );
+		rftl::format( "{} {}",
+			processorInfo.mVendorID,
+			processorInfo.mModelID ) );
 
 	retVal.emplace_back(
-		rftl::string( "UD:" ) +
-		( platform::debugging::IsUserModeDebuggerObviouslyAttached() ? '+' : '-' ) +
-		" " +
-		rftl::string( "KD:" ) +
-		( platform::debugging::IsKernelModeDebuggerObviouslyAttached() ? '+' : '-' ) );
+		rftl::format( "UD:{} KD:{}",
+			( platform::debugging::IsUserModeDebuggerObviouslyAttached() ? '+' : '-' ),
+			( platform::debugging::IsKernelModeDebuggerObviouslyAttached() ? '+' : '-' ) ) );
 
 	return retVal;
 }
