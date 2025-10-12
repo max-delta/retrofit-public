@@ -8,7 +8,7 @@ namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename CharT>
-inline basic_cstring_view<CharT>::basic_cstring_view( rftl::string str )
+inline basic_cstring_view<CharT>::basic_cstring_view( rftl::string const& str )
 	: mPtr( str.c_str() )
 {
 	//

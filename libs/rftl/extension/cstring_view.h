@@ -25,7 +25,7 @@ public:
 public:
 	basic_cstring_view() = default;
 	basic_cstring_view( value_type const* ptr );
-	basic_cstring_view( rftl::string str );
+	basic_cstring_view( rftl::string const& str );
 
 	// WARNING: Will fatal if the underlying pointer is null, since it is not
 	//  null-terminated
