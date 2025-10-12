@@ -47,6 +47,7 @@
 		<ClInclude Include="extension\immutable_string.h" />
 		<ClInclude Include="extension\integer_literals.h" />
 		<ClInclude Include="extension\parseless_format.h" />
+		<ClInclude Include="extension\ss_concat.h" />
 		<ClInclude Include="extension\static_string.h" />
 		<ClInclude Include="extension\static_vector.h" />
 		<ClInclude Include="extension\stream_operations.h" />
@@ -93,6 +94,7 @@
 		<None Include="extension\byte_span.inl" />
 		<None Include="extension\byte_view.inl" />
 		<None Include="extension\cstring_view.inl" />
+		<None Include="extension\ss_concat.inl" />
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />

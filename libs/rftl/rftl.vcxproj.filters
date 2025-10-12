@@ -112,6 +112,9 @@
 		<ClInclude Include="extension\cstring_view.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\ss_concat.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -166,6 +169,9 @@
 		<None Include="span" />
 		<None Include="format" />
 		<None Include="extension\cstring_view.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="extension\ss_concat.inl">
 			<Filter>extension</Filter>
 		</None>
 	</ItemGroup>
