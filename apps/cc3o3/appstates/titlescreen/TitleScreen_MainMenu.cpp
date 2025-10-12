@@ -36,6 +36,8 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/ss_concat.h"
+
 
 namespace RF::cc::appstate {
 ///////////////////////////////////////////////////////////////////////////////
@@ -54,13 +56,16 @@ static rftl::vector<rftl::string> GenerateDebugText()
 
 	platform::ProcessorInfo const processorInfo = platform::ProcessorInfo::Generate();
 	retVal.emplace_back(
-		rftl::format( "{} {}",
-			processorInfo.mVendorID,
-			processorInfo.mModelID ) );
+		rftl::ss_concat(
+			static_cast<rftl::string_view>( processorInfo.mVendorID ),
+			' ',
+			static_cast<rftl::string_view>( processorInfo.mModelID ) ) );
 
 	retVal.emplace_back(
-		rftl::format( "UD:{} KD:{}",
+		rftl::ss_concat(
+			"UD:",
 			( platform::debugging::IsUserModeDebuggerObviouslyAttached() ? '+' : '-' ),
+			" KD:",
 			( platform::debugging::IsKernelModeDebuggerObviouslyAttached() ? '+' : '-' ) ) );
 
 	return retVal;
