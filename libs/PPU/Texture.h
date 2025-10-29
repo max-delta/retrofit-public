@@ -14,6 +14,7 @@ namespace RF::gfx {
 class PPU_API Texture
 {
 	RF_NO_COPY( Texture );
+	RF_DEFAULT_MOVE( Texture );
 
 private:
 	friend class ppu::PPUController;
@@ -22,9 +23,7 @@ private:
 
 public:
 	Texture();
-	Texture( Texture&& ) = default;
 	~Texture();
-	Texture& operator=( Texture&& ) = default;
 	DeviceTextureID GetDeviceRepresentation() const;
 
 	uint32_t DebugGetWidth() const;

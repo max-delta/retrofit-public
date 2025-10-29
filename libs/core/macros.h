@@ -15,6 +15,10 @@
 public: \
 	CLASS( CLASS const& ) = default; \
 	CLASS& operator=( CLASS const& ) = default;
+#define RF_DEFAULT_MOVE( CLASS ) \
+public: \
+	CLASS( CLASS&& ) = default; \
+	CLASS& operator=( CLASS&& ) = default;
 #define RF_NO_MOVE( CLASS ) \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;

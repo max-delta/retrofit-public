@@ -15,6 +15,7 @@ namespace RF::gfx {
 class PPU_API Font
 {
 	RF_NO_COPY( Font );
+	RF_DEFAULT_MOVE( Font );
 
 private:
 	friend class ppu::PPUController;
@@ -38,9 +39,7 @@ private:
 
 public:
 	Font();
-	Font( Font&& ) = default;
 	~Font();
-	Font& operator=( Font&& ) = default;
 	DeviceFontID GetDeviceRepresentation() const;
 
 	uint32_t DebugGetWidth() const;

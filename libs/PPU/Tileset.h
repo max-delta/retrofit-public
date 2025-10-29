@@ -12,6 +12,7 @@ namespace RF::gfx {
 class PPU_API Tileset
 {
 	RF_NO_COPY( Tileset );
+	RF_DEFAULT_MOVE( Tileset );
 
 private:
 	friend class ppu::PPUController;
@@ -25,9 +26,7 @@ private:
 
 public:
 	Tileset();
-	Tileset( Tileset&& ) = default;
 	~Tileset();
-	Tileset& operator=( Tileset&& ) = default;
 
 	uint32_t DebugGetWidth() const;
 	uint32_t DebugGetHeight() const;
