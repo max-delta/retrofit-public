@@ -32,12 +32,15 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="RawDialogueEntry.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="DialogueFwd.h" />
 		<ClInclude Include="project.h" />
+		<ClInclude Include="RawDialogueEntry.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
