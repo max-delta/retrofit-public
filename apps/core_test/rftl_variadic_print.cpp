@@ -29,7 +29,7 @@ TEST( VariadicPrint, FormatToN )
 
 	view = rftl::var_format_to_n( span, "{}", 23456 );
 	ASSERT_TRUE( view.data() == arr.data() );
-	ASSERT_TRUE( view.size() == 3 );
+	ASSERT_TRUE( view.size() == 5 );
 	ASSERT_TRUE( arr.at( 0 ) == '2' );
 	ASSERT_TRUE( arr.at( 1 ) == '3' );
 	ASSERT_TRUE( arr.at( 2 ) == '4' );
@@ -65,7 +65,7 @@ TEST( VariadicPrint, VFormatTo )
 	in = 23456;
 	view = rftl::var_vformat_to( span, "{}", rftl::make_format_args( in ) );
 	ASSERT_TRUE( view.data() == arr.data() );
-	ASSERT_TRUE( view.size() == 3 );
+	ASSERT_TRUE( view.size() == 5 );
 	ASSERT_TRUE( arr.at( 0 ) == '2' );
 	ASSERT_TRUE( arr.at( 1 ) == '3' );
 	ASSERT_TRUE( arr.at( 2 ) == '4' );
