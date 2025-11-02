@@ -56,6 +56,7 @@
 		<ClCompile Include="rftl_cstringview.cpp" />
 		<ClCompile Include="rftl_enum_traits.cpp" />
 		<ClCompile Include="rftl_string_format.cpp" />
+		<ClCompile Include="rftl_string_parse.cpp" />
 		<ClCompile Include="rftl_string_traits.cpp" />
 		<ClCompile Include="rftl_variadic_print.cpp" />
 		<ClCompile Include="rftype_class_info_compositor.cpp" />
