@@ -14,6 +14,8 @@
 #include "GameAction/Environment.h"
 #include "GameAction/Step.h"
 
+#include "GameDialogue/RawDialogueEntry.h"
+
 #include "GameResource/ResourceLoader.h"
 #include "GameResource/ResourceSaver.h"
 
@@ -66,6 +68,7 @@
 
 #include <pugixml/pugixml.h>
 
+#include "rftl/extension/string_parse.h"
 #include "rftl/extension/static_vector.h"
 #include "rftl/sstream"
 #include "rftl/thread"
@@ -1469,6 +1472,105 @@ void ActionSystemTest()
 	env.mActionDatabase->GetAction( "test" )->GetRoot()->Execute( env, ctx );
 	RF_ASSERT( ctx.mVal == 2 );
 	RF_ASSERT( env.mConditionDatabase->GetCondition( "test" )->GetRoot()->Evaluate( env, ctx ) == false );
+}
+
+
+
+void DialogueTest()
+{
+	RF_TODO_ANNOTATION( "Get this hard-coded file out of here and into a proper file read" );
+	static constexpr char kTestFileContents[] = R"(
+# Comment test
+ # Comment test
+#Comment test
+
+# 'define' := alias
+# define TYPE KEY = VALUE
+define char n = "narrator"
+define char c = "claire"
+define char l = "laura"
+
+# layout VALUE
+# Different layouts have their own rules about what sub-commands can be used,
+#  but mostly this is just going to be the invoking system making sure the
+#  dialogue is compatible with where it was invoked from
+layout "bottom_portrait_box"
+
+# command COMMAND KEY:VALUE ...
+command "debug" echo:"true"
+
+# scene ID KEY:VALUE ...
+scene "meadow" pos:"bg"
+
+# LOC_ID [CHAR] [EXPR] TEXT
+# Characters are tracked, and expressions are tracked
+# NOTE: LOC_IDs are forced to be unique and increasing
+# NOTE: TEXT is used when localization is not present, expectation is that the
+#  primary localization is automatically generated from the dialogue files
+10 n xpr:"na" "Dialogue test"
+
+# Re-uses character and character's last expression
+20 "Narrator segment" 
+
+30 c xpr:"neutral" "Talking test"
+40 "Continuation test"
+
+50 l xpr:"neutral" "Char switch test"
+
+60 c "Expression after switch test"
+70 "Multi/nline/ntest"
+
+
+### POS JUMP
+
+# jumpif TARGET KEY:VALUE
+# NOTE: Can only jump forwards, not backwards
+jumpif "pos_jump_target" test:"true"
+
+80 "unused pos text"
+
+# label LABEL
+label "pos_jump_target"
+
+90 "Positive Jump test"
+
+
+### NEG JUMP
+
+# jumpunless TARGET KEY:VALUE
+# NOTE: Can only jump forwards, not backwards
+jumpunless "pos_jump_target" test:"false"
+
+100 "unused neg text"
+
+label "neg_jump_target"
+
+110 "Negative Jump test"
+
+
+### ALWAYS JUMP
+
+# jump TARGET
+# NOTE: Can only jump forwards, not backwards
+jump "always_jump_target"
+
+120 "unused jump text"
+
+label "always_jump_target"
+
+130 "Always Jump test"
+)";
+
+	size_t lineNumber = 0;
+	rftl::string_view parser = kTestFileContents;
+	while( parser.empty() == false )
+	{
+		lineNumber++;
+		rftl::string_view const line = rftl::strtok_view( parser, '\n' );
+		dialogue::RawDialogueEntry const entry = dialogue::RawDialogueEntry::FromLine( lineNumber, line );
+		RF_ASSERT( entry.mEntryType != dialogue::RawEntryType::Invalid );
+		RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "Raw-parsed dialogue line: {}", line );
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////

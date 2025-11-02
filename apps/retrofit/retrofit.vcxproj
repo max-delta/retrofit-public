@@ -71,6 +71,9 @@
 		<ProjectReference Include="..\..\libs\GameAction\GameAction.vcxproj">
 			<Project>{3926ea9e-1077-4341-bd2b-bc8d3516fe27}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameDialogue\GameDialogue.vcxproj">
+			<Project>{eb20d026-3c19-4642-9e61-6e2e3f7e5aed}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\GameInput\GameInput.vcxproj">
 			<Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
 		</ProjectReference>

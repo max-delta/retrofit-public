@@ -33,6 +33,7 @@ constexpr bool kUDPTest = true;
 constexpr bool kSkinColorTest = true;
 constexpr bool kCharacterCreatorTest = true;
 constexpr bool kActionSystemTest = true;
+constexpr bool kDialogueTest = true;
 
 constexpr bool kAllowScratch = true;
 
@@ -123,6 +124,11 @@ void TestStart()
 	if( kActionSystemTest )
 	{
 		test::ActionSystemTest();
+	}
+
+	if( kDialogueTest )
+	{
+		test::DialogueTest();
 	}
 }
 
