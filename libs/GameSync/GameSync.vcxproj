@@ -94,6 +94,9 @@
 		<ProjectReference Include="..\core_thread\core_thread.vcxproj">
 			<Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\core_vfs\core_vfs.vcxproj">
+			<Project>{0aca5d55-1386-4f3f-910a-e4d408af154a}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\GameInput\GameInput.vcxproj">
 			<Project>{a3967a78-eb2d-46fe-95f4-95c19e121f93}</Project>
 		</ProjectReference>

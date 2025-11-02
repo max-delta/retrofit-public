@@ -61,6 +61,9 @@
 		<ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
 			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\core_vfs\core_vfs.vcxproj">
+			<Project>{0aca5d55-1386-4f3f-910a-e4d408af154a}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\Logging\Logging.vcxproj">
 			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>

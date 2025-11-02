@@ -62,6 +62,9 @@
 		<ProjectReference Include="..\core_rftype\core_rftype.vcxproj">
 			<Project>{d9d746e1-0556-4b17-91e8-615a974edac3}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\core_vfs\core_vfs.vcxproj">
+			<Project>{0aca5d55-1386-4f3f-910a-e4d408af154a}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\GameScripting\GameScripting.vcxproj">
 			<Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
 		</ProjectReference>

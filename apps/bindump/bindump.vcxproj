@@ -55,6 +55,9 @@
 		<ProjectReference Include="..\..\libs\core_pe\core_pe.vcxproj">
 			<Project>{e290fac9-f28e-45fa-8fc1-99abc518d9a0}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_vfs\core_vfs.vcxproj">
+			<Project>{0aca5d55-1386-4f3f-910a-e4d408af154a}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\Logging\Logging.vcxproj">
 			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>
