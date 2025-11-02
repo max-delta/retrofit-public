@@ -59,7 +59,7 @@ bool ResourceLoader::PopulateClassFromFile(
 				return false;
 			}
 
-			size_t const fileSize = fileHandle->GetFileSize();
+			size_t const fileSize = fileHandle->GetSeekableSize();
 			RFLOG_TEST_AND_FATAL( fileSize > serialization::AutoImporter::kLongestPeekMagicBytes, nullptr, RFCAT_SERIALIZATION, "Unreasonably small file" );
 			RFLOG_TEST_AND_FATAL( fileSize < 10'000, nullptr, RFCAT_SERIALIZATION, "Unreasonably large file" );
 

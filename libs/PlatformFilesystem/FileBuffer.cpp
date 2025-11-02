@@ -20,7 +20,7 @@ FileBuffer::FileBuffer( FileHandle& file, bool addTerminatingNull )
 {
 	file.Rewind();
 
-	size_t const fileSize = file.GetFileSize();
+	size_t const fileSize = file.GetSeekableSize();
 	if( addTerminatingNull )
 	{
 		mBuffer.resize( fileSize + 1 );
@@ -64,7 +64,7 @@ FileBuffer::FileBuffer( FileHandle& file, size_t maxBytes )
 
 	file.Rewind();
 
-	size_t const fileSize = file.GetFileSize();
+	size_t const fileSize = file.GetSeekableSize();
 	size_t const bytesToRead = math::Min( fileSize, maxBytes );
 	mBuffer.resize( bytesToRead );
 

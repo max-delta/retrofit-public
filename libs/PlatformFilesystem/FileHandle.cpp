@@ -29,12 +29,5 @@ FileHandle::~FileHandle()
 	RF_TODO_ANNOTATION( "Come up with a way to check for errors on close" );
 }
 
-
-
-size_t FileHandle::GetFileSize() const
-{
-	return GetSeekableSize();
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 }

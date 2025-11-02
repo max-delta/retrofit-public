@@ -17,8 +17,6 @@ class PLATFORMFILESYSTEM_API FileHandle : public SeekHandle
 public:
 	explicit FileHandle( UniquePtr<rftl::streambuf>&& streamBuf );
 	~FileHandle();
-
-	size_t GetFileSize() const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
