@@ -209,7 +209,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_pe", "libs\core_pe\cor
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core_coff", "libs\core_coff\core_coff.vcxproj", "{CD6E2748-1993-4267-8ADD-23652CF7307C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameDialogui", "libs\GameDialogue\GameDialogue.vcxproj", "{EB20D026-3C19-4642-9E61-6E2E3F7E5AED}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameDialogue", "libs\GameDialogue\GameDialogue.vcxproj", "{EB20D026-3C19-4642-9E61-6E2E3F7E5AED}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
