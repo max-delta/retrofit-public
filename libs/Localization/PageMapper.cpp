@@ -16,7 +16,7 @@ bool PageMapper::InitializeFromCharmapFile( file::VFS const& vfs, file::VFSPath 
 {
 	mCharmap = {};
 
-	file::FileHandlePtr const charmapHandle = vfs.GetFileForRead( path );
+	file::SeekHandlePtr const charmapHandle = vfs.GetFileForRead( path );
 	if( charmapHandle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get charmap file for read" );

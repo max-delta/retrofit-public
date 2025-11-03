@@ -2,9 +2,9 @@
 #include "SnapshotSerializer.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 
 #include "core_state/StateBag.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "Logging/Logging.h"
 
@@ -58,7 +58,7 @@ void AppendDiagnosticsFromTree( rftl::deque<rftl::string>& output, StateTree<Val
 
 bool SnapshotSerializer::SerializeToDiagnosticFile( rollback::Snapshot const& snapshot, file::VFS const& vfs, file::VFSPath const& filename )
 {
-	file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( filename );
+	file::SeekHandlePtr const fileHandle = vfs.GetFileForWrite( filename );
 	if( fileHandle == nullptr )
 	{
 		RFLOG_ERROR( filename, RFCAT_GAMESYNC, "Failed to open diagnostic file for write" );

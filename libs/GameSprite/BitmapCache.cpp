@@ -34,7 +34,7 @@ WeakPtr<sprite::Bitmap const> BitmapCache::Fetch( file::VFSPath const& path )
 	UniquePtr<sprite::Bitmap> bitmap = DefaultCreator<sprite::Bitmap>::Create( ExplicitDefaultConstruct{} );
 	WeakPtr<sprite::Bitmap const> retVal = bitmap;
 	{
-		file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+		file::SeekHandlePtr const handle = mVfs->GetFileForRead( path );
 		RF_ASSERT( handle != nullptr );
 		file::FileBuffer const buffer( *handle, false );
 		*bitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetBytes() );

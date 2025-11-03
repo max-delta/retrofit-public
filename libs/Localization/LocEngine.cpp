@@ -125,7 +125,7 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 		RFLOG_WARNING( path, RFCAT_LOCALIZATION, "Keymap file has unexpected extension, will assume csv" );
 	}
 
-	file::FileHandlePtr const keymapHandle = vfs.GetFileForRead( path );
+	file::SeekHandlePtr const keymapHandle = vfs.GetFileForRead( path );
 	if( keymapHandle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_LOCALIZATION, "Failed to get keymap file for read" );

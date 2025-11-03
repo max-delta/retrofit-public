@@ -30,7 +30,7 @@ Overworld Overworld::LoadFromDesc( file::VFSPath const& descPath )
 		sprite::Bitmap colorBitmap( ExplicitDefaultConstruct{} );
 		{
 			file::VFSPath const collisionPath = file::VFSPath::CreatePathFromString( desc.mCollisionMapPath );
-			file::FileHandlePtr const handle = app::gVfs->GetFileForRead( collisionPath );
+			file::SeekHandlePtr const handle = app::gVfs->GetFileForRead( collisionPath );
 			RF_ASSERT( handle != nullptr );
 			file::FileBuffer const buffer( *handle, false );
 			colorBitmap = sprite::BitmapReader::ReadRGBABitmap( buffer.GetBytes() );

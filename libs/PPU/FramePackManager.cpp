@@ -4,10 +4,10 @@
 #include "PPU/FramePackSerDes.h"
 #include "PPU/FramePack.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_math/math_casts.h"
+#include "core_vfs/SeekHandle.h"
 
 
 namespace RF::gfx::ppu {
@@ -40,7 +40,7 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	{
 		// Open
 		file::VFS const& vfs = *mVfs;
-		file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
+		file::SeekHandlePtr fileHandle = vfs.GetFileForRead( filename );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to open framepack file" );

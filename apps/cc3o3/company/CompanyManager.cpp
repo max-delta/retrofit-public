@@ -19,10 +19,10 @@
 #include "RFType/CreateClassInfoDeclaration.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_component/TypedObjectRef.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "rftl/extension/static_vector.h"
 
@@ -423,7 +423,7 @@ void CompanyManager::ReadLegacyLoadoutsFromSave( file::VFSPath const& saveRoot, 
 		RF_ASSERT( loadout != nullptr );
 
 		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) );
-		file::FileHandlePtr const fileHandle = mVfs->GetFileForRead( loadoutFilePath );
+		file::SeekHandlePtr const fileHandle = mVfs->GetFileForRead( loadoutFilePath );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_WARNING( loadoutFilePath, RFCAT_CC3O3, "Failed to open loadout for warning, may be a new save?" );
@@ -498,7 +498,7 @@ void CompanyManager::WriteLegacyLoadoutsToSave( file::VFSPath const& saveRoot, i
 		RF_ASSERT( loadout != nullptr );
 
 		file::VFSPath const loadoutFilePath = loadoutRoot.GetChild( rftl::to_string( i_rosterIndex ) );
-		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( loadoutFilePath );
+		file::SeekHandlePtr const fileHandle = mVfs->GetFileForWrite( loadoutFilePath );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_ERROR( loadoutFilePath, RFCAT_CC3O3, "Failed to open loadout for write" );

@@ -18,7 +18,7 @@ namespace RF::gfx::ppu {
 
 bool TileLayerCSVLoader::LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path )
 {
-	file::FileHandlePtr const tilemapHandle = vfs.GetFileForRead( path );
+	file::SeekHandlePtr const tilemapHandle = vfs.GetFileForRead( path );
 	if( tilemapHandle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_PPU, "Failed to open tilemap" );

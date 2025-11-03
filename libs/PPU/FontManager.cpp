@@ -6,11 +6,11 @@
 #include "PPU/TextureManager.h"
 #include "PPU/DeviceInterface.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "rftl/sstream"
 
@@ -53,7 +53,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 {
 	// Open
 	file::VFS const& vfs = *mVfs;
-	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
+	file::SeekHandlePtr fileHandle = vfs.GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to open font file" );
@@ -96,7 +96,7 @@ UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( File
 		return nullptr;
 	}
 
-	file::FileHandlePtr const fontHandle = vfs.GetFileForRead( texPath );
+	file::SeekHandlePtr const fontHandle = vfs.GetFileForRead( texPath );
 	file::FileBuffer fontBuffer{ *fontHandle.Get(), false };
 	if( fontBuffer.IsEmpty() )
 	{

@@ -11,7 +11,7 @@
 
 // Forwards
 namespace RF::file {
-class FileHandle;
+class SeekHandle;
 }
 
 namespace RF::file {
@@ -26,8 +26,8 @@ class PLATFORMFILESYSTEM_API FileBuffer
 public:
 	FileBuffer() = delete;
 	explicit FileBuffer( ExplicitDefaultConstruct );
-	explicit FileBuffer( FileHandle& file, bool addTerminatingNull );
-	explicit FileBuffer( FileHandle& file, size_t maxBytes );
+	explicit FileBuffer( SeekHandle& file, bool addTerminatingNull );
+	explicit FileBuffer( SeekHandle& file, size_t maxBytes );
 	FileBuffer( FileBuffer&& rhs );
 	~FileBuffer() = default;
 	FileBuffer& operator=( FileBuffer&& rhs );

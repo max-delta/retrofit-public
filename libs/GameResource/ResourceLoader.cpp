@@ -11,10 +11,10 @@
 #include "Serialization/ObjectDeserializer.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_rftype/ConstructedType.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -52,7 +52,7 @@ bool ResourceLoader::PopulateClassFromFile(
 		// Open file
 		file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
 		{
-			file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
+			file::SeekHandlePtr const fileHandle = vfs.GetFileForRead( path );
 			if( fileHandle == nullptr )
 			{
 				RFLOG_NOTIFY( path, RFCAT_GAMERESOURCE, "Failed to open resource for read" );
@@ -146,7 +146,7 @@ bool ResourceLoader::ProbablyAnImporter(
 	// Open file
 	file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
 	{
-		file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
+		file::SeekHandlePtr const fileHandle = vfs.GetFileForRead( path );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_NOTIFY( path, RFCAT_GAMERESOURCE, "Failed to open resource for read" );
@@ -266,7 +266,7 @@ bool ResourceLoader::AddSource(
 	// Open file
 	file::FileBuffer fileBuffer( ExplicitDefaultConstruct{} );
 	{
-		file::FileHandlePtr const fileHandle = vfs.GetFileForRead( path );
+		file::SeekHandlePtr const fileHandle = vfs.GetFileForRead( path );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_NOTIFY( path, RFCAT_GAMERESOURCE, "Failed to open resource for read" );

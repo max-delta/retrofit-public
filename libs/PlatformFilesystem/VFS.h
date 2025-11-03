@@ -64,13 +64,13 @@ public:
 	VFS();
 	~VFS();
 
-	FileHandlePtr GetFileForRead( VFSPath const& path ) const; // Must exist, seek start
-	FileHandlePtr GetFileForWrite( VFSPath const& path ) const; // Will create, seek start
-	FileHandlePtr GetFileForModify( VFSPath const& path ) const; // Must exist, seek start
-	FileHandlePtr GetFileForAppend( VFSPath const& path ) const; // Will create, seek end
-	FileHandlePtr GetFileForExecute( VFSPath const& path ) const; // Must exist, seek start
+	SeekHandlePtr GetFileForRead( VFSPath const& path ) const; // Must exist, seek start
+	SeekHandlePtr GetFileForWrite( VFSPath const& path ) const; // Will create, seek start
+	SeekHandlePtr GetFileForModify( VFSPath const& path ) const; // Must exist, seek start
+	SeekHandlePtr GetFileForAppend( VFSPath const& path ) const; // Will create, seek end
+	SeekHandlePtr GetFileForExecute( VFSPath const& path ) const; // Must exist, seek start
 
-	FileHandlePtr GetRawFileForWrite( rftl::cstring_view rawPath ) const; // Will create, seek start
+	SeekHandlePtr GetRawFileForWrite( rftl::cstring_view rawPath ) const; // Will create, seek start
 
 	void EnumerateDirectory(
 		VFSPath const& directory,
@@ -107,11 +107,11 @@ public:
 private:
 	static VFSPath CollapsePath( VFSPath const& path );
 	static VFSPath ChrootCollapse( VFSPath const& path );
-	bool ProcessMountFile( MountPriority priority, FileHandle& file );
+	bool ProcessMountFile( MountPriority priority, SeekHandle& file );
 	VFSMount ProcessMountRule( MountPriority priority, rftl::string const& type, rftl::string const& permissions, rftl::string const& virtualPoint, rftl::string const& realPoint );
 	VFSPath GetRealMountPoint( VFSMount const& mount ) const;
 	rftl::string AttemptMountMapping( VFSMount const& mount, VFSPath const& collapsedPath, VFSMount::Permissions const& permissions ) const;
-	FileHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const;
+	SeekHandlePtr OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const;
 
 
 	//

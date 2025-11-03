@@ -2,8 +2,6 @@
 
 #include "core_vfs/VFSFwd.h"
 
-#include "core/ptr/unique_ptr.h"
-
 #include "rftl/limits"
 
 

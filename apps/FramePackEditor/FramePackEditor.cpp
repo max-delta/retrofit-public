@@ -14,11 +14,12 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 
 #include "core_platform/shim/winuser_shim.h"
+#include "core_vfs/SeekHandle.h"
+
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/static_vector.h"
@@ -878,7 +879,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 
 	// Create file
 	{
-		file::FileHandlePtr const fileHandle = vfs.GetRawFileForWrite( rawPath );
+		file::SeekHandlePtr const fileHandle = vfs.GetRawFileForWrite( rawPath );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_NOTIFY( rawPath, RFCAT_FRAMEPACKEDITOR, "Failed to create FPack file" );

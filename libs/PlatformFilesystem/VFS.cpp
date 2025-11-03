@@ -62,7 +62,7 @@ VFS::~VFS() = default;
 
 
 
-FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
+SeekHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File read request" );
 	return OpenFile( path, VFSMount::Permissions::ReadOnly, OpenFlags::Read, true );
@@ -70,7 +70,7 @@ FileHandlePtr VFS::GetFileForRead( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
+SeekHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File write request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Write, false );
@@ -78,7 +78,7 @@ FileHandlePtr VFS::GetFileForWrite( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
+SeekHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File modify request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Modify, true );
@@ -86,7 +86,7 @@ FileHandlePtr VFS::GetFileForModify( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
+SeekHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File append request" );
 	return OpenFile( path, VFSMount::Permissions::ReadWrite, OpenFlags::Append, false );
@@ -94,7 +94,7 @@ FileHandlePtr VFS::GetFileForAppend( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
+SeekHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 {
 	RFLOG_DEBUG( path, RFCAT_VFS, "File execute request" );
 	return OpenFile( path, VFSMount::Permissions::ReadExecute, OpenFlags::Execute, true );
@@ -102,7 +102,7 @@ FileHandlePtr VFS::GetFileForExecute( VFSPath const& path ) const
 
 
 
-FileHandlePtr VFS::GetRawFileForWrite( rftl::cstring_view rawPath ) const
+SeekHandlePtr VFS::GetRawFileForWrite( rftl::cstring_view rawPath ) const
 {
 	rftl::string_view const context = rawPath;
 	char const* const rawPathCStr = rawPath.c_str();
@@ -311,7 +311,7 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 bool VFS::AttemptSubsequentMount( MountPriority priority, VFSPath const& mountTableFile )
 {
 	RFLOGF_INFO( nullptr, RFCAT_VFS, "Subsequent mount table file: {}", mountTableFile );
-	FileHandlePtr const filePtr = GetFileForRead( mountTableFile );
+	SeekHandlePtr const filePtr = GetFileForRead( mountTableFile );
 	if( filePtr == nullptr )
 	{
 		RFLOG_ERROR( mountTableFile, RFCAT_VFS, "Failed to open mount table file" );
@@ -498,7 +498,7 @@ VFSPath VFS::ChrootCollapse( VFSPath const& path )
 
 
 
-bool VFS::ProcessMountFile( MountPriority priority, FileHandle& file )
+bool VFS::ProcessMountFile( MountPriority priority, SeekHandle& file )
 {
 	rftl::string tokenBuilder;
 	rftl::vector<rftl::string> tokenStream;
@@ -882,7 +882,7 @@ rftl::string VFS::AttemptMountMapping( VFSMount const& mount, VFSPath const& col
 
 
 
-FileHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const
+SeekHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissions const& permissions, OpenFlags openFlags, bool mustExist ) const
 {
 	// Chroot for basic safety and sanitization
 	VFSPath const path = ChrootCollapse( uncollapsedPath );

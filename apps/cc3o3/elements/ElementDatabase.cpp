@@ -5,12 +5,12 @@
 #include "cc3o3/elements/IdentifierUtils.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
 #include "Serialization/CsvReader.h"
 
 #include "core_math/math_casts.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "rftl/sstream"
 #include "rftl/algorithm"
@@ -168,7 +168,7 @@ ElementDatabase::ElementCounts ElementDatabase::GetElementsBasedOnTier( company:
 
 rftl::deque<rftl::deque<rftl::string>> ElementDatabase::LoadCSV( file::VFSPath const& path )
 {
-	file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+	file::SeekHandlePtr const handle = mVfs->GetFileForRead( path );
 	if( handle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_CC3O3, "Failed to get file for read" );

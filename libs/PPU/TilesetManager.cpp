@@ -3,12 +3,12 @@
 
 #include "PPU/Tileset.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
 #include "core_math/math_casts.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -40,7 +40,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 {
 	// Open
 	file::VFS const& vfs = *mVfs;
-	file::FileHandlePtr fileHandle = vfs.GetFileForRead( filename );
+	file::SeekHandlePtr fileHandle = vfs.GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to open tileset file" );

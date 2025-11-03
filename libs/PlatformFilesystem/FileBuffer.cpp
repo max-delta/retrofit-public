@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "FileBuffer.h"
 
-#include "PlatformFilesystem/FileHandle.h"
-
 #include "core_math/math_clamps.h"
+#include "core_vfs/SeekHandle.h"
 
 
 namespace RF::file {
@@ -16,7 +15,7 @@ FileBuffer::FileBuffer( ExplicitDefaultConstruct )
 
 
 
-FileBuffer::FileBuffer( FileHandle& file, bool addTerminatingNull )
+FileBuffer::FileBuffer( SeekHandle& file, bool addTerminatingNull )
 {
 	file.Rewind();
 
@@ -58,7 +57,7 @@ FileBuffer::FileBuffer( FileHandle& file, bool addTerminatingNull )
 
 
 
-FileBuffer::FileBuffer( FileHandle& file, size_t maxBytes )
+FileBuffer::FileBuffer( SeekHandle& file, size_t maxBytes )
 {
 	RF_ASSERT( maxBytes > 0 );
 

@@ -53,7 +53,6 @@
 #include "RFType/GlobalTypeDatabase.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformNetwork_win32/TCPSocket.h"
 #include "PlatformNetwork_win32/UDPSocket.h"
@@ -64,6 +63,8 @@
 #include "core_rftype/stl_extensions/array.h"
 #include "core_rftype/stl_extensions/vector.h"
 #include "core_rftype/stl_extensions/string.h"
+#include "core_vfs/SeekHandle.h"
+
 #include "core/ptr/default_creator.h"
 
 #include <pugixml/pugixml.h>
@@ -649,14 +650,14 @@ void XMLTest()
 
 	// Write
 	{
-		file::FileHandlePtr const testFile = vfs->GetFileForWrite( testFilePath );
+		file::SeekHandlePtr const testFile = vfs->GetFileForWrite( testFilePath );
 
 		class xml_writer_shim : public pugi::xml_writer
 		{
 			RF_NO_COPY( xml_writer_shim );
 
 		public:
-			xml_writer_shim( file::FileHandle& file )
+			xml_writer_shim( file::SeekHandle& file )
 				: mFile( file )
 			{
 				//
@@ -667,7 +668,7 @@ void XMLTest()
 				mFile.WriteBytes( data, size );
 			}
 
-			file::FileHandle& mFile;
+			file::SeekHandle& mFile;
 		};
 
 		xml_writer_shim writer{ *testFile };
@@ -681,7 +682,7 @@ void XMLTest()
 
 	// Read
 	{
-		file::FileHandlePtr const testFile = vfs->GetFileForRead( testFilePath );
+		file::SeekHandlePtr const testFile = vfs->GetFileForRead( testFilePath );
 		rftl::vector<uint8_t> initialFileContents;
 		initialFileContents.resize( compiler::kMinPageSize, '\0' );
 		size_t const elementsRead = testFile->ReadBytes( initialFileContents.data(), initialFileContents.size() );
@@ -752,7 +753,7 @@ void FPackSerializationTest()
 	file::VFS const& vfs = *app::gVfs;
 	file::VFSPath const newFilePath = file::VFS::kRoot.GetChild( "scratch", "sertest.fpack" );
 	{
-		file::FileHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );
+		file::SeekHandlePtr const fileHandle = vfs.GetFileForWrite( newFilePath );
 		if( fileHandle == nullptr )
 		{
 			RFLOG_ERROR( newFilePath, RFCAT_STARTUPTEST, "Failed to create FPack file" );
@@ -1372,7 +1373,7 @@ void SkinColorTest()
 	file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "skin_color_test.bmp" );
 	sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPallete( 4 );
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( skinColorTest.GetData(), skinColorTest.GetWidth(), skinColorTest.GetHeight() );
-	file::FileHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
+	file::SeekHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
 	fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 }
 

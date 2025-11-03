@@ -547,7 +547,7 @@ void CharacterValidator::SanitizeForGameplay( CharData& character ) const
 
 rftl::deque<rftl::deque<rftl::string>> CharacterValidator::LoadCSV( file::VFSPath const& path )
 {
-	file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+	file::SeekHandlePtr const handle = mVfs->GetFileForRead( path );
 	if( handle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_CHAR, "Failed to get file for read" );

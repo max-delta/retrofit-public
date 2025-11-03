@@ -17,10 +17,10 @@
 #include "Logging/Logging.h"
 
 #include "PlatformFilesystem/FileBuffer.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_rftype/StoredClassKey.h"
+#include "core_vfs/SeekHandle.h"
 
 
 namespace RF::resource {
@@ -176,7 +176,7 @@ bool ResourceSaver::SaveClassToFile(
 	file::VFSPath const& path )
 {
 	// Acquire file handle
-	file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( path );
+	file::SeekHandlePtr const fileHandle = mVfs->GetFileForWrite( path );
 	if( fileHandle == nullptr )
 	{
 		RFLOG_ERROR( path, RFCAT_GAMERESOURCE, "Failed to open resource for write" );

@@ -6,7 +6,6 @@
 #include "Logging/AssertLogger.h"
 #include "Logging/Logging.h"
 
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/VFS.h"
 #include "PlatformUtils_win32/loggers/DebuggerLogger.h"
 #include "PlatformUtils_win32/Console.h"
@@ -21,6 +20,7 @@
 #include "core_pe/DataDirectoryHeader.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/unique_ptr.h"
 #include "core/ptr/default_creator.h"
@@ -423,7 +423,7 @@ ErrorReturnCode Process()
 	RFLOG_MILESTONE( path, RFCAT_BINDUMP, "Artifact determined from command line" );
 
 	// Open the file for read
-	file::FileHandlePtr const filePtr =
+	file::SeekHandlePtr const filePtr =
 		details::sVfs->GetFileForRead(
 			path );
 	if( filePtr == nullptr )

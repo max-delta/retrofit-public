@@ -5,7 +5,6 @@
 #include "GameSprite/BitmapWriter.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 
 #include "PPU/PPUController.h"
@@ -14,6 +13,8 @@
 #include "PPU/TextureManager.h"
 
 #include "Serialization/CsvReader.h"
+
+#include "core_vfs/SeekHandle.h"
 
 #include "rftl/sstream"
 #include "rftl/unordered_set"
@@ -220,7 +221,7 @@ sprite::Bitmap CharacterCompositor::CreateCompositeFrame( CompositeFrameParams c
 void CharacterCompositor::WriteFrameToDisk( sprite::Bitmap const& frame, file::VFSPath const& path )
 {
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( frame.GetData(), frame.GetWidth(), frame.GetHeight() );
-	file::FileHandlePtr fileHandle = mVfs->GetFileForWrite( path );
+	file::SeekHandlePtr fileHandle = mVfs->GetFileForWrite( path );
 	fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 }
 
@@ -395,7 +396,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 		rftl::vector<uint8_t> toWrite;
 		bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, toWrite, newFPack );
 		RF_ASSERT( writeSuccess );
-		file::FileHandlePtr const fileHandle = mVfs->GetFileForWrite( framepackPath );
+		file::SeekHandlePtr const fileHandle = mVfs->GetFileForWrite( framepackPath );
 		fileHandle->WriteBytes( toWrite.data(), toWrite.size() );
 	}
 
@@ -416,7 +417,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 
 rftl::deque<rftl::deque<rftl::string>> CharacterCompositor::LoadCSV( file::VFSPath const& path )
 {
-	file::FileHandlePtr const handle = mVfs->GetFileForRead( path );
+	file::SeekHandlePtr const handle = mVfs->GetFileForRead( path );
 	if( handle == nullptr )
 	{
 		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get file for read" );

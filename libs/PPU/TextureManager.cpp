@@ -5,12 +5,12 @@
 #include "PPU/DeviceInterface.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileHandle.h"
 #include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
+#include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"
 
@@ -106,7 +106,7 @@ bool TextureManager::LoadToDevice( ResourceType& resource, Filename const& filen
 	RF_ASSERT( mDeviceInterface != nullptr );
 	RF_ASSERT( resource.mDeviceRepresentation == kInvalidDeviceTextureID );
 	file::VFS* const vfs = mVfs;
-	file::FileHandlePtr fileHandle = vfs->GetFileForRead( filename );
+	file::SeekHandlePtr fileHandle = vfs->GetFileForRead( filename );
 	if( fileHandle == nullptr )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load file" );
