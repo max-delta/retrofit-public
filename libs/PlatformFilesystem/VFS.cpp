@@ -27,6 +27,10 @@ VFSPath const VFS::kEmpty = VFSPath();
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+static VFSPath const kRaw = VFSPath( "RAW:" );
+
+
+
 static rftl::ios_base::openmode GetOpenModeBitFromEnumValue( OpenFlags openFlags )
 {
 	switch( openFlags )
@@ -117,7 +121,7 @@ SeekHandlePtr VFS::GetRawFileForWrite( rftl::cstring_view rawPath ) const
 		return nullptr;
 	}
 
-	return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
+	return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ), details::kRaw.GetChild( rawPathCStr ) );
 }
 
 
@@ -300,7 +304,7 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
-	FileHandle fileHandle( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
+	FileHandle fileHandle( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ), details::kRaw.GetChild( collapsedMountFilename ) );
 	RF_ASSERT( rawFile.is_open() == false );
 
 	return ProcessMountFile( priority, fileHandle );
@@ -1020,7 +1024,7 @@ SeekHandlePtr VFS::OpenFile( VFSPath const& uncollapsedPath, VFSMount::Permissio
 
 		// Sweet! Got it
 		RF_ASSERT( rawFile.is_open() );
-		return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ) );
+		return DefaultCreator<FileHandle>::Create( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ), path );
 	}
 }
 

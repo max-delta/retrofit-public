@@ -3,16 +3,14 @@
 
 #include "core_math/math_casts.h"
 
-#include "rftl/ios"
-#include "rftl/istream"
-#include "rftl/ostream"
+#include "rftl/fstream"
 
 
 namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
-FileHandle::FileHandle( UniquePtr<rftl::streambuf>&& streamBuf )
-	: SeekHandle( rftl::move( streamBuf ) )
+FileHandle::FileHandle( UniquePtr<rftl::filebuf>&& fileBuf, VFSPath const& path )
+	: FileHandle( fileBuf, rftl::move( fileBuf ), path )
 {
 	//
 }
@@ -22,11 +20,37 @@ FileHandle::FileHandle( UniquePtr<rftl::streambuf>&& streamBuf )
 FileHandle::~FileHandle()
 {
 	RF_ASSERT( mStreamBuf != nullptr );
-	// NOTE: Would like to check for errors when closing a file, but there is
-	//  no exposed way to do that unless we know the concrete type
-	// NOTE: Maybe have an optional WeakPtr option for the concrete type, that
-	//  we could use here if available?
-	RF_TODO_ANNOTATION( "Come up with a way to check for errors on close" );
+	RF_ASSERT( mConcreteType != nullptr );
+
+	if( mConcreteType->is_open() == false )
+	{
+		RFLOGF_ERROR( mPath, RFCAT_VFS, "File was already closed prior to destruction" );
+		RF_DBGFAIL();
+	}
+	else
+	{
+		rftl::filebuf const* const errCheck = mConcreteType->close();
+		if( errCheck == nullptr || mConcreteType->is_open() )
+		{
+			int32_t const assumedErr = math::integer_cast<int32_t>( errno );
+
+			// Tough luck, no easy way to tell what went wrong
+			RFLOGF_ERROR( mPath, RFCAT_VFS, "Failed to close file, last error code was {}", assumedErr );
+			RF_DBGFAIL();
+		}
+	}
+
+	mConcreteType = nullptr;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+FileHandle::FileHandle( WeakPtr<rftl::filebuf> fileBuf, UniquePtr<rftl::filebuf>&& streamBuf, VFSPath const& path )
+	: SeekHandle( rftl::move( streamBuf ) )
+	, mConcreteType( fileBuf )
+	, mPath( path )
+{
+	RF_ASSERT( mConcreteType != nullptr );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

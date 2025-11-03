@@ -1,6 +1,8 @@
 #pragma once
 #include "project.h"
 
+#include "PlatformFilesystem/VFSPath.h"
+
 #include "core_vfs/SeekHandle.h"
 
 
@@ -15,8 +17,21 @@ class PLATFORMFILESYSTEM_API FileHandle : public SeekHandle
 	//
 	// Public methods
 public:
-	explicit FileHandle( UniquePtr<rftl::streambuf>&& streamBuf );
+	FileHandle( UniquePtr<rftl::filebuf>&& fileBuf, VFSPath const& path );
 	~FileHandle();
+
+
+	//
+	// Private methods
+private:
+	FileHandle( WeakPtr<rftl::filebuf> fileBuf, UniquePtr<rftl::filebuf>&& streamBuf, VFSPath const& path );
+
+
+	//
+	// Private data
+private:
+	WeakPtr<rftl::filebuf> mConcreteType;
+	VFSPath const mPath;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
