@@ -4,6 +4,7 @@
 #include "core/meta/ConstructorOverload.h"
 
 #include "rftl/extension/byte_view.h"
+#include "rftl/cstddef"
 #include "rftl/string_view"
 #include "rftl/vector"
 
@@ -41,7 +42,7 @@ public:
 	//
 	// Private data
 private:
-	rftl::vector<uint8_t> mBuffer;
+	rftl::vector<rftl::byte> mBuffer;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -40,7 +40,7 @@ FileBuffer::FileBuffer( SeekHandle& file, bool addTerminatingNull )
 	if( addTerminatingNull )
 	{
 		mBuffer.resize( amountRead + 1 );
-		mBuffer.back() = '\0';
+		reinterpret_cast<char&>( mBuffer.back() ) = '\0';
 	}
 	else
 	{
