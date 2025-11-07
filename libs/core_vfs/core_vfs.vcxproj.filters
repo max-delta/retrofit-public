@@ -3,10 +3,12 @@
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="SeekHandle.cpp" />
+		<ClCompile Include="FileBuffer.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="VFSFwd.h" />
 		<ClInclude Include="SeekHandle.h" />
+		<ClInclude Include="FileBuffer.h" />
 	</ItemGroup>
 </Project>

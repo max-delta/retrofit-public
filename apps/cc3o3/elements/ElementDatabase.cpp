@@ -5,11 +5,11 @@
 #include "cc3o3/elements/IdentifierUtils.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "Serialization/CsvReader.h"
 
 #include "core_math/math_casts.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "rftl/sstream"

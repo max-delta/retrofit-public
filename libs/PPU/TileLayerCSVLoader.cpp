@@ -5,9 +5,9 @@
 #include "Serialization/CsvReader.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_math/math_clamps.h"
+#include "core_vfs/FileBuffer.h"
 
 #include "rftl/deque"
 #include "rftl/sstream"

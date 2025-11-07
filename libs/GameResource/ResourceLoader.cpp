@@ -10,10 +10,10 @@
 #include "Serialization/AutoImporter.h"
 #include "Serialization/ObjectDeserializer.h"
 
-#include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_rftype/ConstructedType.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"

@@ -6,10 +6,10 @@
 #include "PPU/TextureManager.h"
 #include "PPU/DeviceInterface.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "rftl/sstream"

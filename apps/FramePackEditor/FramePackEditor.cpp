@@ -14,10 +14,10 @@
 #include "PlatformInput_win32/WndProcInputDevice.h"
 #include "PlatformUtils_win32/dialogs.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 #include "Logging/Logging.h"
 
 #include "core_platform/shim/winuser_shim.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"

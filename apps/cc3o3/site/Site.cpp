@@ -5,7 +5,8 @@
 #include "cc3o3/resource/ResourceLoad.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
+
+#include "core_vfs/FileBuffer.h"
 
 
 namespace RF::cc::site {

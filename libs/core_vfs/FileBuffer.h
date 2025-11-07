@@ -1,5 +1,4 @@
 #pragma once
-#include "project.h"
 
 #include "core/macros.h"
 #include "core/meta/ConstructorOverload.h"
@@ -17,7 +16,7 @@ class SeekHandle;
 namespace RF::file {
 ///////////////////////////////////////////////////////////////////////////////
 
-class PLATFORMFILESYSTEM_API FileBuffer
+class FileBuffer
 {
 	RF_NO_COPY( FileBuffer );
 

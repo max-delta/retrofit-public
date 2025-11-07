@@ -4,9 +4,9 @@
 #include "PPU/FramePackSerDes.h"
 #include "PPU/FramePack.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_math/math_casts.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 

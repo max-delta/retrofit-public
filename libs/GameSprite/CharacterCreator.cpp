@@ -4,9 +4,9 @@
 #include "Serialization/CsvReader.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_math/math_casts.h"
+#include "core_vfs/FileBuffer.h"
 
 
 namespace RF::sprite {

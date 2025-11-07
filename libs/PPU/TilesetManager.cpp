@@ -3,11 +3,11 @@
 
 #include "PPU/Tileset.h"
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 #include "Allocation/AccessorDeclaration.h"
 
 #include "core_allocate/DefaultAllocCreator.h"
 #include "core_math/math_casts.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"

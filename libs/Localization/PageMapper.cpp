@@ -2,9 +2,10 @@
 #include "PageMapper.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "Serialization/CsvReader.h"
+
+#include "core_vfs/FileBuffer.h"
 
 #include "rftl/sstream"
 

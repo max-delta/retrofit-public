@@ -19,9 +19,9 @@
 #include "RFType/CreateClassInfoDeclaration.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
 
 #include "core_component/TypedObjectRef.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "rftl/extension/static_vector.h"

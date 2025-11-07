@@ -5,7 +5,8 @@
 #include "GameSprite/BitmapReader.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
+
+#include "core_vfs/FileBuffer.h"
 
 #include "core/ptr/default_creator.h"
 

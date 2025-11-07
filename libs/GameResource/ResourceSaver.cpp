@@ -16,10 +16,10 @@
 
 #include "Logging/Logging.h"
 
-#include "PlatformFilesystem/FileBuffer.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_rftype/StoredClassKey.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 

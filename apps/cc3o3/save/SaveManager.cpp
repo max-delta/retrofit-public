@@ -12,7 +12,8 @@
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "PlatformFilesystem/VFS.h"
-#include "PlatformFilesystem/FileBuffer.h"
+
+#include "core_vfs/FileBuffer.h"
 
 
 namespace RF::cc::save {

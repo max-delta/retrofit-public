@@ -2,7 +2,8 @@
 #include "project.h"
 
 #include "PPU/PPUFwd.h"
-#include "PlatformFilesystem/FileBuffer.h"
+
+#include "core_vfs/FileBuffer.h"
 
 #include "core/macros.h"
 

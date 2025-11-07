@@ -31,7 +31,6 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
-		<ClInclude Include="FileBuffer.h" />
 		<ClInclude Include="FileHandle.h" />
 		<ClInclude Include="VFSFwd.h" />
 		<ClInclude Include="VFSMount.h" />
@@ -42,7 +41,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
-		<ClCompile Include="FileBuffer.cpp" />
 		<ClCompile Include="FileHandle.cpp" />
 		<ClCompile Include="VFS.cpp" />
 		<ClCompile Include="stdafx.cpp">
