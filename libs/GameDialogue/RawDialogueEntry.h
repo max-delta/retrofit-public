@@ -15,8 +15,8 @@ namespace RF::dialogue {
 
 // The raw tokenized data from a line in a dialogue file
 // IMPORTANT: This doesn't store the actual characters, only the pointer data
-//  that resulted from tokenization, so th backing character buffer must remain
-//  present past the lifetime of this structure
+//  that resulted from tokenization, so the backing character buffer must
+//  remain present past the lifetime of this structure
 class GAMEDIALOGUE_API RawDialogueEntry final
 {
 	RF_NO_COPY( RawDialogueEntry );
