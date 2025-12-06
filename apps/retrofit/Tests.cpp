@@ -64,6 +64,7 @@
 #include "core_rftype/stl_extensions/array.h"
 #include "core_rftype/stl_extensions/vector.h"
 #include "core_rftype/stl_extensions/string.h"
+#include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/default_creator.h"
@@ -1479,90 +1480,14 @@ void ActionSystemTest()
 
 void DialogueTest()
 {
-	RF_TODO_ANNOTATION( "Get this hard-coded file out of here and into a proper file read" );
-	static constexpr char kTestFileContents[] = R"(
-# Comment test
- # Comment test
-#Comment test
+	file::VFS& vfs = *app::gVfs;
 
-# 'define' := alias
-# define TYPE KEY = VALUE
-define char n = "narrator"
-define char c = "claire"
-define char l = "laura"
+	file::VFSPath const testFilePath = file::VFS::kRoot.GetChild( "assets", "tables", "dialogues", "test.dlg" );
+	file::SeekHandlePtr const handle = vfs.GetFileForRead( testFilePath );
+	RF_ASSERT( handle != nullptr );
+	file::FileBuffer const buffer{ *handle, false };
 
-# layout VALUE
-# Different layouts have their own rules about what sub-commands can be used,
-#  but mostly this is just going to be the invoking system making sure the
-#  dialogue is compatible with where it was invoked from
-layout "bottom_portrait_box"
-
-# command COMMAND KEY:VALUE ...
-command "debug" echo:"true"
-
-# scene ID KEY:VALUE ...
-scene "meadow" pos:"bg"
-
-# LOC_ID [CHAR] [EXPR] TEXT
-# Characters are tracked, and expressions are tracked
-# NOTE: LOC_IDs are forced to be unique and increasing
-# NOTE: TEXT is used when localization is not present, expectation is that the
-#  primary localization is automatically generated from the dialogue files
-10 n xpr:"na" "Dialogue test"
-
-# Re-uses character and character's last expression
-20 "Narrator segment" 
-
-30 c xpr:"neutral" "Talking test"
-40 "Continuation test"
-
-50 l xpr:"neutral" "Char switch test"
-
-60 c "Expression after switch test"
-70 "Multi/nline/ntest"
-
-
-### POS COND
-
-# cond_if TARGET KEY:VALUE
-cond_if "pos_cond_target" test:"true"
-
-80 "unused pos text"
-
-# label LABEL
-label "pos_cond_target"
-
-90 "Positive condition test"
-
-
-### NEG COND
-
-# cond_unless TARGET KEY:VALUE
-cond_unless "neg_cond_target" test:"false"
-
-100 "unused neg text"
-
-label "neg_cond_target"
-
-110 "Negative condition test"
-
-
-### ELSE COND
-
-# cond_else TARGET
-cond_if "else_cond_target" test:"false"
-
-120 "unused else text"
-
-cond_else "else_cond_target"
-
-130 "Else condition test"
-
-label "else_cond_target"
-
-)";
-
-	dialogue::DialogueLoader::Parse( kTestFileContents );
+	dialogue::DialogueLoader::Parse( buffer.GetChars() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
