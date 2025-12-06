@@ -76,6 +76,18 @@ void Startup( cli::ArgView const& args )
 		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
+		if constexpr( config::kInformativeLogging == false )
+		{
+			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_INFO;
+		}
+		if constexpr( config::kVerboseLogging == false )
+		{
+			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_DEBUG;
+		}
+		if constexpr( config::kTraceLogging == false )
+		{
+			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
+		}
 		def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
 		logging::RegisterHandler( def );
 	}
