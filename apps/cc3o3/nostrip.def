@@ -6,3 +6,4 @@ LIBRARY
 ;  the dllexport specifiers from static libs
 EXPORTS
 	?sWSALifetime@network@platform@RF@@3UWSALifetime@123@A
+	??$GetClassInfoWithinModule@VNopStep@act@RF@@@rftype@RF@@YAAEBUClassInfo@reflect@1@XZ
