@@ -14,7 +14,8 @@
 #include "GameAction/Environment.h"
 #include "GameAction/Step.h"
 
-#include "GameDialogue/RawDialogueEntry.h"
+#include "GameDialogue/DialogueLoader.h"
+#include "GameDialogue/DialogueSequence.h"
 
 #include "GameResource/ResourceLoader.h"
 #include "GameResource/ResourceSaver.h"
@@ -69,7 +70,6 @@
 
 #include <pugixml/pugixml.h>
 
-#include "rftl/extension/string_parse.h"
 #include "rftl/extension/static_vector.h"
 #include "rftl/sstream"
 #include "rftl/thread"
@@ -1522,56 +1522,47 @@ scene "meadow" pos:"bg"
 70 "Multi/nline/ntest"
 
 
-### POS JUMP
+### POS COND
 
-# jumpif TARGET KEY:VALUE
-# NOTE: Can only jump forwards, not backwards
-jumpif "pos_jump_target" test:"true"
+# cond_if TARGET KEY:VALUE
+cond_if "pos_cond_target" test:"true"
 
 80 "unused pos text"
 
 # label LABEL
-label "pos_jump_target"
+label "pos_cond_target"
 
-90 "Positive Jump test"
+90 "Positive condition test"
 
 
-### NEG JUMP
+### NEG COND
 
-# jumpunless TARGET KEY:VALUE
-# NOTE: Can only jump forwards, not backwards
-jumpunless "pos_jump_target" test:"false"
+# cond_unless TARGET KEY:VALUE
+cond_unless "neg_cond_target" test:"false"
 
 100 "unused neg text"
 
-label "neg_jump_target"
+label "neg_cond_target"
 
-110 "Negative Jump test"
+110 "Negative condition test"
 
 
-### ALWAYS JUMP
+### ELSE COND
 
-# jump TARGET
-# NOTE: Can only jump forwards, not backwards
-jump "always_jump_target"
+# cond_else TARGET
+cond_if "else_cond_target" test:"false"
 
-120 "unused jump text"
+120 "unused else text"
 
-label "always_jump_target"
+cond_else "else_cond_target"
 
-130 "Always Jump test"
+130 "Else condition test"
+
+label "else_cond_target"
+
 )";
 
-	size_t lineNumber = 0;
-	rftl::string_view parser = kTestFileContents;
-	while( parser.empty() == false )
-	{
-		lineNumber++;
-		rftl::string_view const line = rftl::strtok_view( parser, '\n' );
-		dialogue::RawDialogueEntry const entry = dialogue::RawDialogueEntry::FromLine( lineNumber, line );
-		RF_ASSERT( entry.mEntryType != dialogue::RawEntryType::Invalid );
-		RFLOGF_TRACE( nullptr, RFCAT_STARTUPTEST, "Raw-parsed dialogue line: {}", line );
-	}
+	dialogue::DialogueLoader::Parse( kTestFileContents );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

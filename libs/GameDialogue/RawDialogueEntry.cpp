@@ -386,29 +386,7 @@ static void InterpretAsLabel( RawDialogueEntry& entry, Line line )
 
 
 
-static void InterpretAsJump( RawDialogueEntry& entry, Line line )
-{
-	// Target
-	entry.mPrimary = ReadQuotedString( line );
-	if( entry.mPrimary.empty() )
-	{
-		return;
-	}
-
-	// Cruft?
-	if( HasUnparsedCruft( line ) )
-	{
-		return;
-	}
-
-	// Success!
-	entry.mEntryType = RawEntryType::Jump;
-	return;
-}
-
-
-
-static void InterpretAsJumpIf( RawDialogueEntry& entry, Line line )
+static void InterpretAsCondIf( RawDialogueEntry& entry, Line line )
 {
 	// Target
 	entry.mPrimary = ReadQuotedString( line );
@@ -440,20 +418,42 @@ static void InterpretAsJumpIf( RawDialogueEntry& entry, Line line )
 	}
 
 	// Success!
-	entry.mEntryType = RawEntryType::JumpIf;
+	entry.mEntryType = RawEntryType::CondIf;
 	return;
 }
 
 
 
-static void InterpretAsJumpUnless( RawDialogueEntry& entry, Line line )
+static void InterpretAsCondUnless( RawDialogueEntry& entry, Line line )
 {
-	// Identical to jumpif, just negated
-	InterpretAsJumpIf( entry, line );
-	if( entry.mEntryType == RawEntryType::JumpIf )
+	// Identical to condif, just negated
+	InterpretAsCondIf( entry, line );
+	if( entry.mEntryType == RawEntryType::CondIf )
 	{
-		entry.mEntryType = RawEntryType::JumpUnless;
+		entry.mEntryType = RawEntryType::CondUnless;
 	}
+}
+
+
+
+static void InterpretAsCondElse( RawDialogueEntry& entry, Line line )
+{
+	// Target
+	entry.mPrimary = ReadQuotedString( line );
+	if( entry.mPrimary.empty() )
+	{
+		return;
+	}
+
+	// Cruft?
+	if( HasUnparsedCruft( line ) )
+	{
+		return;
+	}
+
+	// Success!
+	entry.mEntryType = RawEntryType::CondElse;
+	return;
 }
 
 }
@@ -513,9 +513,9 @@ RawDialogueEntry RawDialogueEntry::FromLine( size_t lineNumber, rftl::string_vie
 	RF_FIRST_TOKEN_BRANCH( "command", details::InterpretAsCommand );
 	RF_FIRST_TOKEN_BRANCH( "scene", details::InterpretAsScene );
 	RF_FIRST_TOKEN_BRANCH( "label", details::InterpretAsLabel );
-	RF_FIRST_TOKEN_BRANCH( "jump", details::InterpretAsJump );
-	RF_FIRST_TOKEN_BRANCH( "jumpif", details::InterpretAsJumpIf );
-	RF_FIRST_TOKEN_BRANCH( "jumpunless", details::InterpretAsJumpUnless );
+	RF_FIRST_TOKEN_BRANCH( "cond_if", details::InterpretAsCondIf );
+	RF_FIRST_TOKEN_BRANCH( "cond_unless", details::InterpretAsCondUnless );
+	RF_FIRST_TOKEN_BRANCH( "cond_else", details::InterpretAsCondElse );
 
 #undef RF_FIRST_TOKEN_BRANCH
 

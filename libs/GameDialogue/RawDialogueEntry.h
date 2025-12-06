@@ -5,7 +5,6 @@
 
 #include "core/macros.h"
 
-#include "rftl/string"
 #include "rftl/string_view"
 #include "rftl/unordered_map"
 
@@ -58,16 +57,16 @@ public:
 	// Scene - SceneID
 	// Speech - CharacterID
 	// Label - Label
-	// Jump - Target
+	// Condition - Target
 	rftl::string_view mPrimary;
 
 	// Alias - Replacement value
 	// Speech - ExpresionID
-	// Jump - Condition key
+	// Condition - Condition key
 	rftl::string_view mSecondary;
 
 	// Speech - Dialogue text
-	// Jump - Condition value
+	// Condition - Condition value
 	rftl::string_view mTertiary;
 
 	// Command - Params

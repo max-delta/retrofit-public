@@ -7,6 +7,7 @@
 namespace RF::dialogue {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Raw entries are pretty close to the plain text data
 enum class RawEntryType : uint8_t
 {
 	Invalid = 0,
@@ -35,20 +36,20 @@ enum class RawEntryType : uint8_t
 	Speech,
 
 	// FORMAT: label LABEL
-	// EXAMPLE: label "pos_jump_target"
+	// EXAMPLE: label "pos_cond_target"
 	Label,
 
-	// FORMAT: jump TARGET
-	// EXAMPLE: jump "always_jump_target"
-	Jump,
+	// FORMAT: cond_if TARGET KEY:VALUE
+	// EXAMPLE: cond_if "pos_cond_target" test:"true"
+	CondIf,
 
-	// FORMAT: jumpif TARGET KEY:VALUE
-	// EXAMPLE: jumpif "pos_jump_target" test:"true"
-	JumpIf,
+	// FORMAT: cond_unless TARGET KEY:VALUE
+	// EXAMPLE: cond_unless "pos_cond_target" test:"false"
+	CondUnless,
 
-	// FORMAT: jumpunless TARGET KEY:VALUE
-	// EXAMPLE: jumpunless "pos_jump_target" test:"false"
-	JumpUnless,
+	// FORMAT: cond_else TARGET
+	// EXAMPLE: cond_else "else_cond_target"
+	CondElse,
 };
 
 // Aliases are strongly-typed, they are not generic text replacement
@@ -64,7 +65,24 @@ enum class AliasType : uint8_t
 using LocIDLineNum = uint16_t;
 static constexpr LocIDLineNum kInvalidLocIDLineNum = 0;
 
+// Processed entries contain much less intermediate data
+enum class EntryType : uint8_t
+{
+	Invalid = 0,
+
+	// Execute a command
+	Command,
+
+	// Switch the scene
+	Scene,
+
+	// Make a character speak
+	Speech,
+};
+
 class RawDialogueEntry;
+class DialogueLoader;
+class DialogueSequence;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

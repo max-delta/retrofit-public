@@ -31,6 +31,8 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
+		<ClCompile Include="DialogueLoader.cpp" />
+		<ClCompile Include="DialogueSequence.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="RawDialogueEntry.cpp" />
 		<ClCompile Include="stdafx.cpp">
@@ -39,6 +41,8 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="DialogueFwd.h" />
+		<ClInclude Include="DialogueLoader.h" />
+		<ClInclude Include="DialogueSequence.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="RawDialogueEntry.h" />
 		<ClInclude Include="stdafx.h" />
@@ -46,6 +50,9 @@
 	<ItemGroup>
 		<ProjectReference Include="..\core\core.vcxproj">
 			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
