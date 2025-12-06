@@ -554,7 +554,7 @@ rftl::deque<rftl::deque<rftl::string>> CharacterValidator::LoadCSV( file::VFSPat
 		return {};
 	}
 
-	file::FileBuffer const buffer{ *handle.Get(), false };
+	file::FileBuffer const buffer{ *handle, false };
 	if( buffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_CHAR, "Failed to get data from file buffer" );

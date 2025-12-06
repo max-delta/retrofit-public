@@ -175,7 +175,7 @@ rftl::deque<rftl::deque<rftl::string>> ElementDatabase::LoadCSV( file::VFSPath c
 		return {};
 	}
 
-	file::FileBuffer const buffer{ *handle.Get(), false };
+	file::FileBuffer const buffer{ *handle, false };
 	if( buffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_CC3O3, "Failed to get data from file buffer" );

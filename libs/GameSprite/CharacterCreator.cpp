@@ -231,7 +231,7 @@ rftl::deque<rftl::deque<rftl::string>> CharacterCreator::LoadCSV( file::VFSPath 
 		return {};
 	}
 
-	file::FileBuffer const buffer{ *handle.Get(), false };
+	file::FileBuffer const buffer{ *handle, false };
 	if( buffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get data from file buffer" );

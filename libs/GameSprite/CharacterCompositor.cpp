@@ -424,7 +424,7 @@ rftl::deque<rftl::deque<rftl::string>> CharacterCompositor::LoadCSV( file::VFSPa
 		return {};
 	}
 
-	file::FileBuffer const buffer{ *handle.Get(), false };
+	file::FileBuffer const buffer{ *handle, false };
 	if( buffer.IsEmpty() )
 	{
 		RFLOG_NOTIFY( path, RFCAT_GAMESPRITE, "Failed to get data from file buffer" );
