@@ -1,7 +1,9 @@
 #pragma once
 #include "project.h"
 
-#include "core_logging/LoggingHandler.h"
+#include "core_logging/LoggingFwd.h"
+
+#include "rftl/format"
 
 
 namespace RF::logging {

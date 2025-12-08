@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "AssertLogger.h"
 
-#include "Logging/Logging.h"
-
+#include "core_logging/LogEvent.h"
 #include "core_math/Hash.h"
 
+#include "core/compiler.h"
+
 #include "rftl/extension/variadic_print.h"
+#include "rftl/array"
 #include "rftl/unordered_set"
 #include "rftl/string"
 #include "rftl/mutex"

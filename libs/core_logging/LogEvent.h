@@ -1,14 +1,12 @@
 #pragma once
+#include "core_logging/LoggingFwd.h"
+
 #include "rftl/extension/cstring_view.h"
-#include "rftl/cstdint"
 #include "rftl/string_view"
 
 
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
-
-using CategoryKey = char const*;
-using SeverityMask = uint64_t;
 
 template<typename CharT>
 struct LogEvent

@@ -5,6 +5,7 @@
 		<ClInclude Include="LoggingRouter.h" />
 		<ClInclude Include="LogEvent.h" />
 		<ClInclude Include="LoggingHandler.h" />
+		<ClInclude Include="LoggingFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
