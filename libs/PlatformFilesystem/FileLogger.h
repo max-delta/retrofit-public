@@ -3,7 +3,9 @@
 
 #include "PlatformFilesystem/VFSFwd.h"
 
-#include "core_logging/LoggingHandler.h"
+#include "core_logging/LoggingFwd.h"
+
+#include "rftl/format"
 
 
 namespace RF::file {

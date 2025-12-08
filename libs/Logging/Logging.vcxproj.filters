@@ -8,6 +8,7 @@
 		<ClInclude Include="FallbackLogger.h" />
 		<ClInclude Include="ANSIConsoleLogger.h" />
 		<ClInclude Include="AssertLogger.h" />
+		<ClInclude Include="StandardLoggingHelpers.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -16,6 +17,7 @@
 		<ClCompile Include="FallbackLogger.cpp" />
 		<ClCompile Include="ANSIConsoleLogger.cpp" />
 		<ClCompile Include="AssertLogger.cpp" />
+		<ClCompile Include="StandardLoggingHelpers.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Logging.inl" />
