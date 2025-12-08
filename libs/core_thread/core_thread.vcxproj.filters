@@ -5,10 +5,12 @@
 		<ClInclude Include="ThreadSignal.h" />
 		<ClInclude Include="AsyncThread.h" />
 		<ClInclude Include="SequentialWorkPump.h" />
+		<ClInclude Include="LockedData.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="AsyncThread.cpp" />
+		<ClCompile Include="LockedData.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="SequentialWorkPump.inl" />

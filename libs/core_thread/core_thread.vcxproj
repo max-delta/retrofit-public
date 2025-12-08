@@ -28,12 +28,14 @@
 	<ItemDefinitionGroup />
 	<ItemGroup>
 		<ClInclude Include="AsyncThread.h" />
+		<ClInclude Include="LockedData.h" />
 		<ClInclude Include="SequentialWorkPump.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="ThreadSignal.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="AsyncThread.cpp" />
+		<ClCompile Include="LockedData.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
