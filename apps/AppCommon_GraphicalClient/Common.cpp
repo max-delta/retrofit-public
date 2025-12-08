@@ -22,6 +22,7 @@
 #include "PlatformUtils_win32/Console.h"
 #include "PlatformUtils_win32/windowing.h"
 #include "PlatformInput_win32/WndProcInputDevice.h"
+#include "PlatformFilesystem/FileLogger.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_math/math_bits.h"
@@ -128,6 +129,29 @@ void Startup( cli::ArgView const& args )
 	if( vfsInitialized == false )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to startup VFS" );
+	}
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing file logging..." );
+	{
+		file::SetLogFileDirectory( *gVfs, file::VFS::kRoot.GetChild( "user", "logs" ) );
+
+		logging::HandlerDefinition def;
+		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
+
+		// Intentionally always logging informative data
+		( (void)config::kInformativeLogging );
+
+		if constexpr( config::kVerboseLogging == false )
+		{
+			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_DEBUG;
+		}
+
+		// Intentionally never logging trace data
+		( (void)config::kTraceLogging );
+		def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
+
+		def.mUtf8HandlerFunc = file::FileLogger;
+		logging::RegisterHandler( def );
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
