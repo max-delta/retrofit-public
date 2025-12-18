@@ -13,6 +13,7 @@
 		<ClInclude Include="Scratch.h" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="nostrip.def" />
+		<None Include="nostrip64.def" />
+		<None Include="nostrip32.def" />
 	</ItemGroup>
 </Project>

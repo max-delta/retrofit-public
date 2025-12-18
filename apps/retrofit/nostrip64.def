@@ -1,0 +1,8 @@
+LIBRARY
+
+; TODO: Need to come up with a way to procedurally generate this list for
+;  Retail builds, likely with a custom build step using some trickery with
+;  annotations from PDBs. The issue is specifically in relation to pulling out
+;  the dllexport specifiers from static libs
+EXPORTS
+	?sWSALifetime@network@platform@RF@@3UWSALifetime@123@A

@@ -41,7 +41,8 @@
 		<ClInclude Include="Tests.h" />
 	</ItemGroup>
 	<ItemGroup>
-		<None Include="nostrip.def" />
+		<None Include="nostrip32.def" />
+		<None Include="nostrip64.def" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\..\libs\CommandLine\CommandLine.vcxproj">
