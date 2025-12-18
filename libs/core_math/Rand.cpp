@@ -50,8 +50,8 @@ bool StableRandLCGPercentBelow( uint8_t percentThreshold, uint32_t& lastGenerato
 
 uint32_t GetSeedFromHash( uint64_t hash )
 {
-	uint32_t const upper = static_cast<uint32_t>( (hash & 0xffffffff00000000ull ) >> 32 );
-	uint32_t const lower = static_cast<uint32_t>( hash  & 0xffffffffull );
+	uint32_t const upper = static_cast<uint32_t>( hash >> 32 );
+	uint32_t const lower = static_cast<uint32_t>( hash );
 	return upper + lower;
 }
 

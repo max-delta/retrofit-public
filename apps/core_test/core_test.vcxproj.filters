@@ -66,6 +66,7 @@
 		<ClCompile Include="rftl_cstringview.cpp" />
 		<ClCompile Include="rftl_variadic_print.cpp" />
 		<ClCompile Include="rftl_string_parse.cpp" />
+		<ClCompile Include="math_rand.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
