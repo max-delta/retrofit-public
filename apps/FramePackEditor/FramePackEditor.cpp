@@ -921,7 +921,7 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 		timeSlots[slotIndex] = timeSlots[slotIndex - 1];
 		timeSlots[slotIndex].mTextureReference = gfx::kInvalidManagedTextureID;
 		// TODO: Typedef
-		timeSlots[slotIndex].mColliderReference = static_cast<uint64_t>( 0 );
+		timeSlots[slotIndex].mColliderReference = 0;
 		timeSlotSustains[slotIndex] = timeSlotSustains[slotIndex - 1];
 	}
 	else

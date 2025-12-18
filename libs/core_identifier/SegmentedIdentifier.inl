@@ -363,7 +363,7 @@ rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<C
 template<typename ElementT>
 inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const
 {
-	return static_cast<size_t>( RF::math::SequenceHash<
+	return RF::math::SequenceHash<
 		RF::id::SegmentedIdentifier<ElementT>,
-		rftl::hash<typename RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier ) );
+		rftl::hash<typename RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier );
 }

@@ -67,6 +67,7 @@
 #include "core_vfs/FileBuffer.h"
 #include "core_vfs/SeekHandle.h"
 
+#include "core/meta/IoStreamWorkarounds.h"
 #include "core/ptr/default_creator.h"
 
 #include <pugixml/pugixml.h>
@@ -425,7 +426,7 @@ void DrawInputDebug()
 		logicStream.str( "" );
 		for( LogicEvents::value_type const& event : logicEvents )
 		{
-			logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+			logicStream << " " << iostream_cast( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 		}
 		app::gGraphics->DebugDrawText( coord, "  lev: {}", logicStream.str() );
 		coord.y += offset;
@@ -435,7 +436,7 @@ void DrawInputDebug()
 		physStream.str( "" );
 		for( PhysicEvents::value_type const& event : physicEvents )
 		{
-			physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+			physStream << " " << iostream_cast( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 		}
 		app::gGraphics->DebugDrawText( coord, "  pev: {}", physStream.str() );
 		coord.y += offset;
@@ -498,7 +499,7 @@ void DrawInputDebug()
 		rawCommandStream.str( "" );
 		for( RawCommands::value_type const& command : rawCommands )
 		{
-			rawCommandStream << " " << static_cast<int>( command.mType );
+			rawCommandStream << " " << iostream_safecast( command.mType );
 		}
 		app::gGraphics->DebugDrawText( coord, "  rcmd: {}", rawCommandStream.str() );
 		coord.y += offset;
@@ -508,7 +509,7 @@ void DrawInputDebug()
 		rawSignalStream.str( "" );
 		for( RawSignals::value_type const& signal : rawSignals )
 		{
-			rawSignalStream << " " << static_cast<int>( signal.mValue );
+			rawSignalStream << " " << signal.mValue;
 		}
 		app::gGraphics->DebugDrawText( coord, "  x: {}", rawSignalStream.str() );
 		coord.y += offset;
@@ -518,7 +519,7 @@ void DrawInputDebug()
 		rawSignalStream.str( "" );
 		for( RawSignals::value_type const& signal : rawSignals )
 		{
-			rawSignalStream << " " << static_cast<int>( signal.mValue );
+			rawSignalStream << " " << signal.mValue;
 		}
 		app::gGraphics->DebugDrawText( coord, "  y: {}", rawSignalStream.str() );
 		coord.y += offset;
@@ -544,7 +545,7 @@ void DrawInputDebug()
 		gameCommandStream.str( "" );
 		for( GameCommands::value_type const& command : gameCommands )
 		{
-			gameCommandStream << " " << static_cast<int>( command.mType );
+			gameCommandStream << " " << iostream_safecast( command.mType );
 		}
 		app::gGraphics->DebugDrawText( coord, "  gcmd: {}", gameCommandStream.str() );
 		coord.y += offset;

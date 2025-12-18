@@ -487,7 +487,7 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 			}
 		}
 
-		sanitizedStats.mGridShp = static_cast<GridShape>( math::Clamp<uint8_t>( 0, static_cast<uint8_t>( stats.mGridShp ), kMaxGridShapeValue ) );
+		sanitizedStats.mGridShp = math::enum_bitcast<GridShape>( math::Clamp<uint8_t>( 0, math::enum_bitcast( stats.mGridShp ), kMaxGridShapeValue ) );
 		stats = sanitizedStats;
 	}
 }

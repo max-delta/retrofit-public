@@ -7,6 +7,7 @@
 
 #include "core_math/math_bits.h"
 
+#include "core/meta/SafeCasts.h"
 #include "core/ptr/unique_ptr.h"
 
 
@@ -45,7 +46,7 @@ ManagerIdentifier ObjectManager::GetManagerIdentifierFromObjectIdentifier( Objec
 	static_assert( kBytesToShift == 6, "Bad math" );
 	static constexpr size_t kBitsToShift = kBytesToShift * 8;
 	static_assert( kBitsToShift == 48, "Bad math" );
-	return static_cast<ManagerIdentifier>( identifier >> kBitsToShift );
+	return math::integer_cast<ManagerIdentifier>( identifier >> kBitsToShift );
 }
 
 
@@ -68,8 +69,8 @@ ScopeIdentifier ObjectManager::GetGenerationScopeFromObjectIdentifier( ObjectIde
 	static constexpr size_t kBitsToShiftScope = kBytesToShiftScope * 8;
 	static_assert( kBitsToShiftScope == 32, "Bad math" );
 
-	ObjectIdentifier const mask = static_cast<ObjectIdentifier>( math::GetAllBitsSet<ScopeIdentifier>() ) << kBitsToShiftScope;
-	return static_cast<ScopeIdentifier>( ( identifier & mask ) >> kBitsToShiftScope );
+	static constexpr ObjectIdentifier kMask = math::integer_constcast<ObjectIdentifier>( math::GetAllBitsSet<ScopeIdentifier>() ) << kBitsToShiftScope;
+	return math::integer_cast<ScopeIdentifier>( ( identifier & kMask ) >> kBitsToShiftScope );
 }
 
 
@@ -342,8 +343,8 @@ ObjectIdentifier ObjectManager::CompositeObjectIdentifier(
 	static constexpr size_t kBitsToShiftScope = kBytesToShiftScope * 8;
 	static_assert( kBitsToShiftScope == 32, "Bad math" );
 
-	return ( static_cast<ObjectIdentifier>( managerIdentifier ) << kBitsToShiftManager ) |
-		( static_cast<ObjectIdentifier>( scopeIdentifier ) << kBitsToShiftScope ) |
+	return ( broaden_cast<ObjectIdentifier>( managerIdentifier ) << kBitsToShiftManager ) |
+		( broaden_cast<ObjectIdentifier>( scopeIdentifier ) << kBitsToShiftScope ) |
 		scopedIdentifier;
 }
 

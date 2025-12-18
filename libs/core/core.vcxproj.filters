@@ -85,6 +85,15 @@
 		<ClInclude Include="meta\FillPatterns.h">
 			<Filter>meta</Filter>
 		</ClInclude>
+		<ClInclude Include="meta\IntegerPromotion.h">
+			<Filter>meta</Filter>
+		</ClInclude>
+		<ClInclude Include="meta\IoStreamWorkarounds.h">
+			<Filter>meta</Filter>
+		</ClInclude>
+		<ClInclude Include="meta\SafeCasts.h">
+			<Filter>meta</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />

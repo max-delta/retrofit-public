@@ -382,7 +382,7 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 						{
 							if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
 							{
-								TopLevelSections::Section const chosenSection = static_cast<TopLevelSections::Section>( i );
+								TopLevelSections::Section const chosenSection = math::enum_bitcast<TopLevelSections::Section>( i );
 
 								if( chosenSection == TopLevelSections::kMenus )
 								{

@@ -34,6 +34,7 @@
 
 #include "core_platform/ProcessorInfo.h" // For debug text
 
+#include "core/meta/SafeCasts.h"
 #include "core/ptr/default_creator.h"
 
 #include "rftl/extension/ss_concat.h"
@@ -57,9 +58,9 @@ static rftl::vector<rftl::string> GenerateDebugText()
 	platform::ProcessorInfo const processorInfo = platform::ProcessorInfo::Generate();
 	retVal.emplace_back(
 		rftl::ss_concat(
-			static_cast<rftl::string_view>( processorInfo.mVendorID ),
+			explicit_cast<rftl::string_view>( processorInfo.mVendorID ),
 			' ',
-			static_cast<rftl::string_view>( processorInfo.mModelID ) ) );
+			explicit_cast<rftl::string_view>( processorInfo.mModelID ) ) );
 
 	retVal.emplace_back(
 		rftl::ss_concat(

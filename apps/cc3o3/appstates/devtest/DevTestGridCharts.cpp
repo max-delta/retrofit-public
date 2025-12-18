@@ -102,18 +102,30 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 			{
 				case 0:
 					storyTier += increase ? 1 : -1;
+					if( storyTier == company::kInvalidStoryTier )
+					{
+						storyTier = company::kMaxStoryTier;
+					}
+					else if( storyTier > company::kMaxStoryTier )
+					{
+						storyTier = 1;
+					}
 					break;
 				case 1:
 					elemPower += increase ? 1 : -1;
 					break;
 				case 2:
 				{
-					uint8_t temp = static_cast<uint8_t>( static_cast<int8_t>( gridShape ) + ( increase ? 1 : -1 ) );
+					uint8_t temp =
+						math::integer_cast<uint8_t>(
+							math::integer_cast<int8_t>(
+								math::enum_bitcast( gridShape ) ) +
+							( increase ? 1 : -1 ) );
 					if( temp > character::kMaxGridShapeValue )
 					{
 						temp = 0;
 					}
-					gridShape = static_cast<GridShape>( temp );
+					gridShape = math::enum_bitcast<GridShape>( temp );
 					break;
 				}
 				default:

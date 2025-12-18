@@ -5,6 +5,7 @@
 #include "Logging/Constants.h"
 
 #include "core_logging/LogEvent.h"
+#include "core_math/math_casts.h"
 #include "core_unicode/StringConvert.h"
 
 #include "rftl/array"
@@ -117,7 +118,7 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 	}
 
 	// Buffer wasn't fully used
-	retVal.mNullTerminatedOutput = destination.subspan( 0, bytesParsed + sizeof( '\0' ) );
+	retVal.mNullTerminatedOutput = destination.subspan( 0, math::integer_cast<size_t>( bytesParsed ) + sizeof( '\0' ) );
 	return retVal;
 }
 

@@ -45,12 +45,12 @@ gfx::ppu::Coord ElementGridSelector::CalcContainerDimensions( ElementTileSize si
 			return {
 				kElementTilesetFull.mTileWidth,
 				kElementTilesetFull.mTileHeight *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+					math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Medium:
 			return {
 				kElementTilesetMedium.mTileWidth,
 				kElementTilesetMedium.mTileHeight *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+					math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Micro:
 		case ElementTileSize::Mini:
 		case ElementTileSize::Invalid:
@@ -140,7 +140,7 @@ void ElementGridSelector::OnRender( UIConstContext const& context, Container con
 	static constexpr gfx::ppu::Coord kWingDimensions = {
 		kWingTileset.mTileWidth,
 		kWingTileset.mTileHeight *
-			static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+			math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 
 	// Left wing elements
 	{

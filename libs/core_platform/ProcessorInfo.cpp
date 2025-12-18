@@ -3,6 +3,7 @@
 
 #include "core_math/BitField.h"
 
+#include "core/meta/IntegerPromotion.h"
 #include "core/compiler.h"
 #include "core/rf_assert.h"
 
@@ -101,10 +102,10 @@ static ProcessorInfo GenerateX86()
 		Identifier const* const asIdentifier = reinterpret_cast<Identifier const*>( &eax );
 		uint8_t const extFamily = asIdentifier->ReadAt<1, uint8_t>();
 		uint8_t const baseFamily = asIdentifier->ReadAt<4, uint8_t>();
-		uint8_t const family = static_cast<uint8_t>( extFamily + baseFamily );
+		uint8_t const family = angry_cast<uint8_t>( extFamily + baseFamily );
 		uint8_t const extModel = asIdentifier->ReadAt<2, uint8_t>();
 		uint8_t const baseModel = asIdentifier->ReadAt<5, uint8_t>();
-		uint8_t const model = static_cast<uint8_t>( ( extModel << 4 ) + baseModel );
+		uint8_t const model = angry_cast<uint8_t>( ( extModel << 4 ) + baseModel );
 		uint8_t const stepping = asIdentifier->ReadAt<6, uint8_t>();
 		retVal.mModelID.clear();
 		retVal.mModelID.reserve( 2 + 2 + 1 + ( 1 * 2 ) ); // "AA:BB:C"

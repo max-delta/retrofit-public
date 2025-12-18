@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/meta/SafeCasts.h"
+
 #include "rftl/cstdint"
 
 
@@ -67,11 +69,11 @@ static constexpr uint32_t kBadPattern4_B = details::kBadPattern4_B;
 static constexpr uint32_t kBadPattern4_8 = details::kBadPattern4_8;
 static constexpr uint32_t kBadPattern4_9 = details::kBadPattern4_9;
 
-static constexpr uint64_t kBadPattern8_0 = static_cast<uint64_t>( details::kBadPattern4_0 ) << 32 | details::kBadPattern4_0;
-static constexpr uint64_t kBadPattern8_A = static_cast<uint64_t>( details::kBadPattern4_A ) << 32 | details::kBadPattern4_A;
-static constexpr uint64_t kBadPattern8_B = static_cast<uint64_t>( details::kBadPattern4_B ) << 32 | details::kBadPattern4_B;
-static constexpr uint64_t kBadPattern8_8 = static_cast<uint64_t>( details::kBadPattern4_8 ) << 32 | details::kBadPattern4_8;
-static constexpr uint64_t kBadPattern8_9 = static_cast<uint64_t>( details::kBadPattern4_9 ) << 32 | details::kBadPattern4_9;
+static constexpr uint64_t kBadPattern8_0 = broaden_cast<uint64_t>( details::kBadPattern4_0 ) << 32 | details::kBadPattern4_0;
+static constexpr uint64_t kBadPattern8_A = broaden_cast<uint64_t>( details::kBadPattern4_A ) << 32 | details::kBadPattern4_A;
+static constexpr uint64_t kBadPattern8_B = broaden_cast<uint64_t>( details::kBadPattern4_B ) << 32 | details::kBadPattern4_B;
+static constexpr uint64_t kBadPattern8_8 = broaden_cast<uint64_t>( details::kBadPattern4_8 ) << 32 | details::kBadPattern4_8;
+static constexpr uint64_t kBadPattern8_9 = broaden_cast<uint64_t>( details::kBadPattern4_9 ) << 32 | details::kBadPattern4_9;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

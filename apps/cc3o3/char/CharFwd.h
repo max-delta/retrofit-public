@@ -3,6 +3,8 @@
 
 #include "cc3o3/elements/ElementFwd.h"
 
+#include "core_math/math_casts.h"
+
 #include "rftl/array"
 
 namespace RF::cc::character {
@@ -25,7 +27,7 @@ enum class GridShape : uint8_t
 
 	NumShapeTypes
 };
-static constexpr uint8_t kMaxGridShapeValue = static_cast<uint8_t>( GridShape::NumShapeTypes ) - 1;
+static constexpr uint8_t kMaxGridShapeValue = math::enum_bitcast( GridShape::NumShapeTypes ) - 1u;
 
 struct CharData;
 struct Description;

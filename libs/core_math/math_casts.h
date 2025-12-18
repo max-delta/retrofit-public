@@ -13,6 +13,10 @@ DST integer_cast( SRC const src );
 template<typename DST, typename SRC>
 DST integer_truncast( SRC const src );
 
+// Convert to an integer in constexpr contexts
+template<typename DST, typename SRC>
+consteval DST integer_constcast( SRC const src );
+
 // Reinterpret integer bits as their unsigned equivalent
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_integral<SRC>::value && rftl::is_unsigned<SRC>::value, int>::type = 0>
@@ -41,6 +45,9 @@ constexpr uint16_t char_integer_bitcast( wchar_t const src );
 constexpr uint8_t char_integer_bitcast( char8_t const src );
 constexpr uint16_t char_integer_bitcast( char16_t const src );
 constexpr uint32_t char_integer_bitcast( char32_t const src );
+
+// Just '0' + (1-9) with a check
+char char_digitcast( uint8_t oneThroughNine );
 
 // Reintepret to/from an enum and its underlying type
 template<typename SRC,

@@ -44,7 +44,7 @@ gfx::ppu::Coord ElementStockpileSelector::CalcContainerDimensions( ElementTileSi
 			return {
 				kElementTilesetFull.mTileWidth,
 				kElementTilesetFull.mTileHeight *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+					math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Medium:
 		case ElementTileSize::Micro:
 		case ElementTileSize::Mini:

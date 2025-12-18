@@ -1,6 +1,10 @@
 #pragma once
 #include "project.h"
 
+#include "core_math/math_casts.h"
+
+#include "core/meta/IntegerPromotion.h"
+
 
 namespace RF::cc::element {
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,7 +35,7 @@ static_assert( sizeof( kElementLevels ) == sizeof( ElementLevel ) * kNumElementL
 // Convenience for zero-based container logic
 static constexpr size_t AsLevelOffset( ElementLevel level )
 {
-	return static_cast<size_t>( level - kMinElementLevel );
+	return angry_cast<ElementLevel>( level - kMinElementLevel );
 }
 static constexpr ElementLevel FromLevelOffset( size_t offset )
 {
@@ -39,7 +43,7 @@ static constexpr ElementLevel FromLevelOffset( size_t offset )
 	{
 		return kInvalidElementLevel;
 	}
-	return static_cast<ElementLevel>( kMinElementLevel + offset );
+	return math::integer_cast<ElementLevel>( kMinElementLevel + offset );
 }
 
 struct ElementDesc;

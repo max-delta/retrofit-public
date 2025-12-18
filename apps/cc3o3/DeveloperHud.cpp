@@ -25,6 +25,8 @@
 #include "core_math/Lerp.h"
 #include "core_unicode/StringConvert.h"
 
+#include "core/meta/IoStreamWorkarounds.h"
+
 
 namespace RF::cc::developer {
 ///////////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,7 @@ enum class Mode : uint8_t
 
 	NumModes
 };
-static constexpr size_t kNumModes = static_cast<size_t>( Mode::NumModes );
+static constexpr size_t kNumModes = math::enum_bitcast( Mode::NumModes );
 
 static bool sDisplayHud = false;
 static Mode sCurrentMode = Mode::Rollback;
@@ -509,7 +511,7 @@ void RenderInputDevice()
 					logicStream.str( "" );
 					for( LogicEvents::value_type const& event : logicEvents )
 					{
-						logicStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+						logicStream << " " << iostream_cast( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
 					drawText( x, y, math::Color3f::kWhite, "  lev: {}", logicStream.str() );
 					y++;
@@ -529,7 +531,7 @@ void RenderInputDevice()
 					physStream.str( "" );
 					for( PhysicEvents::value_type const& event : physicEvents )
 					{
-						physStream << " " << static_cast<int>( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
+						physStream << " " << iostream_cast( event.mCode ) << ( event.mNewState == input::DigitalPinState::Active ? '#' : '-' );
 					}
 					drawText( x, y, math::Color3f::kWhite, "  pev: {}", physStream.str() );
 					y++;
@@ -556,7 +558,7 @@ void RenderInputDevice()
 
 					input::AnalogSignalValue const value = analog.GetCurrentSignalValue( index );
 
-					drawText( x, y, math::Color3f::kWhite, "  {}: {}", name, static_cast<double>( value ) );
+					drawText( x, y, math::Color3f::kWhite, "  {}: {}", name, value );
 					y++;
 				}
 			}
@@ -618,7 +620,7 @@ void RenderInputDevice()
 					rawCommandStream.str( "" );
 					for( RawCommands::value_type const& command : rawCommands )
 					{
-						rawCommandStream << " " << static_cast<int>( command.mType );
+						rawCommandStream << " " << iostream_safecast( command.mType );
 					}
 					drawText( x, y, math::Color3f::kWhite, "  rcmd: {}", rawCommandStream.str() );
 					y++;
@@ -648,7 +650,7 @@ void RenderInputDevice()
 						rawSignalStream.str( "" );
 						for( RawSignals::value_type const& signal : rawSignals )
 						{
-							rawSignalStream << " " << static_cast<int>( signal.mValue );
+							rawSignalStream << " " << signal.mValue;
 						}
 						drawText( x, y, math::Color3f::kWhite, "  {}: {}", index, rawSignalStream.str() );
 						y++;
@@ -700,7 +702,7 @@ void RenderInputDevice()
 					gameCommandStream.str( "" );
 					for( GameCommands::value_type const& command : gameCommands )
 					{
-						gameCommandStream << " " << static_cast<int>( command.mType );
+						gameCommandStream << " " << iostream_safecast( command.mType );
 					}
 					drawText( x, y, math::Color3f::kWhite, "  gcmd: {}", gameCommandStream.str() );
 					y++;
@@ -730,7 +732,7 @@ void RenderInputDevice()
 						gameSignalStream.str( "" );
 						for( GameSignals::value_type const& signal : gameSignals )
 						{
-							gameSignalStream << " " << static_cast<int>( signal.mValue );
+							gameSignalStream << " " << signal.mValue;
 						}
 						drawText( x, y, math::Color3f::kWhite, "  {}: {}", index, gameSignalStream.str() );
 						y++;
@@ -856,7 +858,7 @@ void ProcessInput()
 			}
 			case input::command::game::DeveloperCycle:
 			{
-				sCurrentMode = static_cast<Mode>( ( static_cast<uint8_t>( sCurrentMode ) + 1 ) % kNumModes );
+				sCurrentMode = math::enum_bitcast<Mode>( ( math::enum_bitcast( sCurrentMode ) + 1 ) % kNumModes );
 				break;
 			}
 			case input::command::game::DeveloperAction1:

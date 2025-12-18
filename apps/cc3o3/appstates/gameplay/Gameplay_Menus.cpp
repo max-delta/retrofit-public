@@ -435,7 +435,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 	}
 
 	// Start on the first section
-	internalState.SwitchTopLevelSection( static_cast<InternalState::TopLevelSections::Section>( 0 ) );
+	internalState.SwitchTopLevelSection( math::enum_bitcast<InternalState::TopLevelSections::Section>( 0 ) );
 }
 
 
@@ -479,7 +479,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 				{
 					if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
 					{
-						internalState.SwitchTopLevelSection( static_cast<TopLevelSections::Section>( i ) );
+						internalState.SwitchTopLevelSection( math::enum_bitcast<TopLevelSections::Section>( i ) );
 						foundSection = true;
 						break;
 					}
@@ -504,7 +504,7 @@ void Gameplay_Menus::OnTick( AppStateTickContext& context )
 						{
 							if( currentFocusContainerID == uiManager.GetContainerID( TopLevelSections::kLabels[i] ) )
 							{
-								TopLevelSections::Section const chosenSection = static_cast<TopLevelSections::Section>( i );
+								TopLevelSections::Section const chosenSection = math::enum_bitcast<TopLevelSections::Section>( i );
 
 								// This should've already been made active
 								RF_ASSERT( internalState.IsActiveSection( chosenSection ) );

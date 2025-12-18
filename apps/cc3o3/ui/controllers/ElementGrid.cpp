@@ -40,15 +40,15 @@ gfx::ppu::Coord ElementGrid::CalcContainerDimensions( ElementTileSize size )
 		case ElementTileSize::Mini:
 			return {
 				kElementTilesetMini.mTileWidth *
-					static_cast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
+					math::integer_constcast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
 				kElementTilesetMini.mTileHeight *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+					math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Micro:
 			return {
 				kElementTilesetMicro.mTileWidth *
-					static_cast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
+					math::integer_constcast<gfx::ppu::CoordElem>( element::kNumElementLevels ),
 				kElementTilesetMicro.mTileHeight *
-					static_cast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
+					math::integer_constcast<gfx::ppu::CoordElem>( character::kMaxSlotsPerElementLevel ) };
 		case ElementTileSize::Full:
 		case ElementTileSize::Medium:
 		case ElementTileSize::Invalid:

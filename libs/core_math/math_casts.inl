@@ -3,6 +3,7 @@
 
 #include "core_math/Limits.h"
 
+#include "core/meta/FailConsteval.h"
 #include "core/macros.h"
 
 #include "rftl/cmath"
@@ -226,6 +227,116 @@ DST integer_truncast( SRC const src )
 }
 
 
+RF_TODO_ANNOTATION( "Be more clever about how to do this metaprogramming" );
+#define RF_ICC_SAME( DST, SRC ) \
+	template<> \
+	consteval DST integer_constcast<DST, SRC>( SRC const src ) \
+	{ \
+		static_assert( rftl::is_same<DST, SRC>::value ); \
+		return src; \
+	}
+#define RF_ICC_UPSAFE( DST, SRC ) \
+	template<> \
+	consteval DST integer_constcast<DST, SRC>( SRC const src ) \
+	{ \
+		constexpr bool kBothSigned = rftl::is_signed<DST>::value && rftl::is_signed<SRC>::value; \
+		constexpr bool kBothUnsigned = rftl::is_unsigned<DST>::value && rftl::is_unsigned<SRC>::value; \
+		static_assert( kBothSigned || kBothUnsigned ); \
+		static_assert( sizeof( DST ) >= sizeof( SRC ) ); \
+		return src; \
+	}
+#define RF_ICC_UPCROSSSAFE( DST, SRC ) \
+	template<> \
+	consteval DST integer_constcast<DST, SRC>( SRC const src ) \
+	{ \
+		constexpr bool kAddsSign = rftl::is_signed<DST>::value && rftl::is_signed<SRC>::value == false; \
+		static_assert( kAddsSign ); \
+		static_assert( sizeof( DST ) > sizeof( SRC ) ); \
+		return src; \
+	}
+#define RF_ICC_MUSTBEPOS( DST, SRC ) \
+	template<> \
+	consteval DST integer_constcast<DST, SRC>( SRC const src ) \
+	{ \
+		constexpr bool kDropsSign = rftl::is_signed<DST>::value == false && rftl::is_signed<SRC>::value; \
+		static_assert( kDropsSign ); \
+		static_assert( sizeof( DST ) >= sizeof( SRC ) ); \
+		if( src < 0 ) \
+		{ \
+			FailConsteval( "Not positive" ); \
+		} \
+		return static_cast<DST>( src ); \
+	}
+#define RF_ICC_DOWNCROSSCHECK( DST, SRC, TEMP ) \
+	template<> \
+	consteval DST integer_constcast<DST, SRC>( SRC const src ) \
+	{ \
+		constexpr bool kAddsSign = rftl::is_signed<DST>::value && rftl::is_signed<SRC>::value == false; \
+		static_assert( kAddsSign ); \
+		static_assert( sizeof( DST ) <= sizeof( SRC ) ); \
+		TEMP const asSigned = static_cast<TEMP>( src ); \
+		if( asSigned < 0 ) \
+		{ \
+			/* Causes sign overflow */ \
+			FailConsteval( "Sign overflow" ); \
+		} \
+		if( asSigned > rftl::numeric_limits<DST>::max() ) \
+		{ \
+			/* Causes overflow */ \
+			FailConsteval( "Overflow" ); \
+		} \
+		return static_cast<DST>( src ); \
+	}
+RF_ICC_SAME( uint8_t, uint8_t );
+RF_ICC_SAME( uint16_t, uint16_t );
+RF_ICC_SAME( uint32_t, uint32_t );
+RF_ICC_SAME( uint64_t, uint64_t );
+RF_ICC_SAME( int8_t, int8_t );
+RF_ICC_SAME( int16_t, int16_t );
+RF_ICC_SAME( int32_t, int32_t );
+RF_ICC_SAME( int64_t, int64_t );
+RF_ICC_UPSAFE( uint16_t, uint8_t );
+RF_ICC_UPSAFE( uint32_t, uint8_t );
+RF_ICC_UPSAFE( uint64_t, uint8_t );
+RF_ICC_UPSAFE( uint32_t, uint16_t );
+RF_ICC_UPSAFE( uint64_t, uint16_t );
+RF_ICC_UPSAFE( uint64_t, uint32_t );
+RF_ICC_UPSAFE( int16_t, int8_t );
+RF_ICC_UPSAFE( int32_t, int8_t );
+RF_ICC_UPSAFE( int64_t, int8_t );
+RF_ICC_UPSAFE( int32_t, int16_t );
+RF_ICC_UPSAFE( int64_t, int16_t );
+RF_ICC_UPSAFE( int64_t, int32_t );
+RF_ICC_UPCROSSSAFE( int16_t, uint8_t );
+RF_ICC_UPCROSSSAFE( int32_t, uint8_t );
+RF_ICC_UPCROSSSAFE( int64_t, uint8_t );
+RF_ICC_UPCROSSSAFE( int32_t, uint16_t );
+RF_ICC_UPCROSSSAFE( int64_t, uint32_t );
+RF_ICC_MUSTBEPOS( uint8_t, int8_t );
+RF_ICC_MUSTBEPOS( uint16_t, int8_t );
+RF_ICC_MUSTBEPOS( uint32_t, int8_t );
+RF_ICC_MUSTBEPOS( uint64_t, int8_t );
+RF_ICC_MUSTBEPOS( uint16_t, int16_t );
+RF_ICC_MUSTBEPOS( uint32_t, int16_t );
+RF_ICC_MUSTBEPOS( uint64_t, int16_t );
+RF_ICC_MUSTBEPOS( uint32_t, int32_t );
+RF_ICC_MUSTBEPOS( uint64_t, int32_t );
+RF_ICC_MUSTBEPOS( uint64_t, int64_t );
+RF_ICC_DOWNCROSSCHECK( int8_t, uint16_t, int16_t );
+RF_ICC_DOWNCROSSCHECK( int8_t, uint32_t, int32_t );
+RF_ICC_DOWNCROSSCHECK( int16_t, uint32_t, int32_t );
+RF_ICC_DOWNCROSSCHECK( int8_t, uint64_t, int64_t );
+RF_ICC_DOWNCROSSCHECK( int16_t, uint64_t, int64_t );
+RF_ICC_DOWNCROSSCHECK( int32_t, uint64_t, int64_t );
+
+template<typename DST, typename SRC>
+consteval DST integer_constcast( SRC const src )
+{
+	FailConsteval( "Failed to match a supported pattern, is one missing?" );
+	return static_cast<DST>( src );
+}
+
+
 
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_integral<SRC>::value && rftl::is_unsigned<SRC>::value, int>::type>
@@ -307,6 +418,14 @@ constexpr uint32_t char_integer_bitcast( char32_t const src )
 {
 	static_assert( rftl::is_unsigned<decltype( src )>::value );
 	return static_cast<uint32_t>( src );
+}
+
+
+
+inline char char_digitcast( uint8_t oneThroughNine )
+{
+	RF_ASSERT( oneThroughNine <= 9 );
+	return '0' + oneThroughNine;
 }
 
 

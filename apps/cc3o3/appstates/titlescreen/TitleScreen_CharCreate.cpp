@@ -217,8 +217,8 @@ void TitleScreen_CharCreate::InternalState::UpdateDisplay( ui::ContainerManager&
 		RF_ASSERT( val <= 99 );
 		rftl::string retVal;
 		retVal += "< ";
-		retVal += '0' + ( val / 10 );
-		retVal += '0' + ( val % 10 );
+		retVal += math::char_digitcast( val / 10u );
+		retVal += math::char_digitcast( val % 10u );
 		retVal += " >";
 		return retVal;
 	};

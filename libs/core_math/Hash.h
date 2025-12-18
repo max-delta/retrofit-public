@@ -2,6 +2,8 @@
 
 #include "core_math/MathFwd.h"
 
+#include "core/meta/SafeCasts.h"
+
 #include "rftl/cstddef"
 
 
@@ -81,7 +83,9 @@ inline constexpr HashVal64 ConstStableHashString( char const* nullTerminatedStri
 		rollingValue :
 		ConstStableHashString(
 			&nullTerminatedString[1],
-			( rollingValue ^ static_cast<HashVal64>( nullTerminatedString[0] ) ) * 0x100000001b3 );
+			( rollingValue ^
+				broaden_cast<HashVal64>( static_cast<unsigned char const>( nullTerminatedString[0] ) ) ) *
+				0x100000001b3 );
 }
 
 }

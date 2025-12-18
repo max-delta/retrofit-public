@@ -32,11 +32,15 @@
 		<ClInclude Include="meta\ConstructorOverload.h" />
 		<ClInclude Include="meta\DefaultConstruct.h" />
 		<ClInclude Include="meta\Empty.h" />
+		<ClInclude Include="meta\FailConsteval.h" />
 		<ClInclude Include="meta\FailTemplate.h" />
 		<ClInclude Include="meta\FillPatterns.h" />
+		<ClInclude Include="meta\IntegerPromotion.h" />
+		<ClInclude Include="meta\IoStreamWorkarounds.h" />
 		<ClInclude Include="meta\LazyInitSingleton.h" />
 		<ClInclude Include="meta\Literal.h" />
 		<ClInclude Include="meta\MemberTest.h" />
+		<ClInclude Include="meta\SafeCasts.h" />
 		<ClInclude Include="meta\ScopedCleanup.h" />
 		<ClInclude Include="meta\TypeList.h" />
 		<ClInclude Include="compiler.h" />

@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "uuid.h"
 
+#include "core_math/math_casts.h"
+
 #include "rftl/cstring"
 
 
@@ -173,7 +175,7 @@ rftl::string Uuid::GetDebugString() const
 	retVal.push_back( '(' );
 	retVal.push_back( 'v' );
 	{
-		char const versionChar = '0' + static_cast<char>( GetVersion() );
+		char const versionChar = math::char_digitcast( GetVersion() );
 		retVal.push_back( versionChar );
 		if( ExposesComputerInformation() )
 		{
@@ -186,7 +188,7 @@ rftl::string Uuid::GetDebugString() const
 	}
 	retVal.push_back( ',' );
 	{
-		char const variantChar = '0' + static_cast<char>( GetVariant() );
+		char const variantChar = math::char_digitcast( GetVariant() );
 		retVal.push_back( variantChar );
 	}
 	retVal.push_back( ')' );
