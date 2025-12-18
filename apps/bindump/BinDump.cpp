@@ -348,7 +348,19 @@ ErrorReturnCode Init( cli::ArgView const& args )
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Tokenizing command line args..." );
 	details::sCommandLineArgs = DefaultCreator<cli::ArgParse>::Create( args );
 
-	if( details::sCommandLineArgs->HasAnyOption( { "-l", "--log" } ) )
+	// If we were launched standalone, then our window dies with us, so add a
+	//  pause on exit
+	bool HACK_AlwaysLog = false;
+	if( platform::console::IsAFullyOwnedConsoleWindow() )
+	{
+		platform::console::TriggerPressAnyKeyOnProcessExit();
+
+		// HACK: At time of writing, log is the only output for this
+		RF_TODO_ANNOTATION( "Remove this once there's actually decent stdout output" );
+		HACK_AlwaysLog = true;
+	}
+
+	if( details::sCommandLineArgs->HasAnyOption( { "-l", "--log" } ) || HACK_AlwaysLog )
 	{
 		RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing console logging..." );
 		bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();

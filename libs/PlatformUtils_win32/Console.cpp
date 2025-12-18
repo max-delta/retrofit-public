@@ -3,11 +3,13 @@
 
 #include "core_platform/inc/windows_inc.h"
 
+#include "rftl/cstdio"
+
 
 namespace RF::platform::console {
 ///////////////////////////////////////////////////////////////////////////////
 
-PLATFORMUTILS_API bool EnableANSIEscapeSequences()
+bool EnableANSIEscapeSequences()
 {
 	win32::HANDLE const stdOutputHandle = win32::GetStdHandle( static_cast<win32::DWORD>( -11 ) /*STD_OUTPUT_HANDLE*/ );
 	if( stdOutputHandle == reinterpret_cast<win32::HANDLE>( -1 ) /* INVALID_HANDLE_VALUE*/ )
@@ -45,6 +47,53 @@ PLATFORMUTILS_API bool EnableANSIEscapeSequences()
 	}
 
 	return true;
+}
+
+
+
+bool IsAFullyOwnedConsoleWindow()
+{
+	// Get our window
+	win32::HWND const consoleWindow = win32::GetConsoleWindow();
+	if( consoleWindow == nullptr )
+	{
+		// No console window present
+		return false;
+	}
+
+	// Who made it?
+	win32::DWORD consoleProcessID = {};
+	win32::DWORD const consoleCreatorThreadID =
+		win32::GetWindowThreadProcessId( consoleWindow, &consoleProcessID );
+	if( consoleCreatorThreadID == 0 )
+	{
+		RF_DBGFAIL_MSG( "According to documentation, this should not fail if the handle was valid" );
+		return false;
+	}
+
+	// Was it us?
+	win32::DWORD const currentProcessID = win32::GetCurrentProcessId();
+	if( currentProcessID == consoleProcessID )
+	{
+		// We made it
+		return true;
+	}
+
+	// Don't know who made it
+	return false;
+}
+
+
+
+void TriggerPressAnyKeyOnProcessExit()
+{
+	static constexpr auto onExit = []() -> void
+	{
+		rftl::puts( "" );
+		rftl::puts( "This seems to be a standalone console window, pausing on exit." );
+		rftl::system( "pause" );
+	};
+	rftl::atexit( onExit );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
