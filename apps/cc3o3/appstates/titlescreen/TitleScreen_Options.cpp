@@ -184,7 +184,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 					rootColumnRatios ) );
 
 		// Cut the center in 4
-		ui::controller::ColumnSlicer::Ratios const centerRowRatios = {
+		ui::controller::RowSlicer::Ratios const centerRowRatios = {
 			{ 1.f / 14.f, false },
 			{ 1.f / 14.f, true },
 			{ 11.f / 14.f, true },
