@@ -5,6 +5,7 @@
 #include "Scheduling/taskpools/FIFOTaskPool.h"
 #include "Scheduling/TaskScheduler.h"
 
+#include "core/meta/SafeCasts.h"
 #include "core/ptr/default_creator.h"
 #include "core_time/PerfClock.h"
 
@@ -82,7 +83,7 @@ StandardTaskScheduler::StandardTaskScheduler( bool createMainThreadWorker, size_
 				}
 			}
 		};
-		newThreadedWorker->mThreadHandle = rftl::async( rftl::launch::async, threadedWorker, static_cast<scheduling::ThreadableTaskWorker*>( newThreadedWorker->mWorkerInterface ), &( newThreadedWorker->mTerminateWorker ) );
+		newThreadedWorker->mThreadHandle = rftl::async( rftl::launch::async, threadedWorker, explicit_cast<scheduling::ThreadableTaskWorker*>( newThreadedWorker->mWorkerInterface ), &( newThreadedWorker->mTerminateWorker ) );
 
 		// Store
 		mThreadedWorkers.emplace_back( rftl::move( newThreadedWorker ) );
