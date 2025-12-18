@@ -8,6 +8,8 @@
 #include "core_math/math_casts.h"
 #include "core_math/math_bytes.h"
 
+#include "rftl/cstdio"
+
 
 namespace RF::platform::network::details {
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,7 +84,7 @@ rftl::string GetAddress( win32::sockaddr const& sockAddr, size_t sockAddrLen )
 		auto const& bytes = ipv4.sin_addr.S_un.S_un_b;
 		static constexpr char kExample[] = "255.255.255.255:65535";
 		rftl::array<char, sizeof( kExample )> buf;
-		snprintf( buf.data(), buf.size(), "%u.%u.%u.%u:%u", bytes.s_b1, bytes.s_b2, bytes.s_b3, bytes.s_b4, port );
+		rftl::snprintf( buf.data(), buf.size(), "%u.%u.%u.%u:%u", bytes.s_b1, bytes.s_b2, bytes.s_b3, bytes.s_b4, port );
 		buf.back() = '\0';
 		return buf.data();
 	}
@@ -102,7 +104,7 @@ rftl::string GetAddress( win32::sockaddr const& sockAddr, size_t sockAddrLen )
 			}
 		}
 		rftl::array<char, sizeof( kExample )> buf;
-		snprintf( buf.data(), buf.size(), "[%x:%x:%x:%x:%x:%x:%x:%x]:%u",
+		rftl::snprintf( buf.data(), buf.size(), "[%x:%x:%x:%x:%x:%x:%x:%x]:%u",
 			hextets[0], hextets[1], hextets[2], hextets[3],
 			hextets[4], hextets[5], hextets[6], hextets[7], port );
 		buf.back() = '\0';

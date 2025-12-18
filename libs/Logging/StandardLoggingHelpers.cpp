@@ -82,11 +82,11 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 	{
 		if( doAnsi )
 		{
-			bytesParsed = snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
+			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
 		}
 		else
 		{
-			bytesParsed = snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  %s\n", severity, event.mCategoryKey, &messageBuffer[0] );
+			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  %s\n", severity, event.mCategoryKey, &messageBuffer[0] );
 		}
 	}
 	else
@@ -94,11 +94,11 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
 		if( doAnsi )
 		{
-			bytesParsed = snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
+			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
 		}
 		else
 		{
-			bytesParsed = snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
+			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
 		}
 	}
 	*outputBuffer.rbegin() = '\0';

@@ -82,7 +82,7 @@ RF_NO_INLINE AssertResponse AssertNotification( char const* file, size_t line, c
 {
 	static constexpr size_t kBufSize = 512;
 	char buf[kBufSize] = {};
-	snprintf(
+	rftl::snprintf(
 		buf,
 		kBufSize,
 		"Fatal error!\n"
@@ -103,7 +103,7 @@ RF_NO_INLINE AssertResponse AssertNotification( char const* file, size_t line, c
 		static_cast<unsigned int>( line ) );
 	buf[kBufSize - 1] = '\0';
 
-	fputs( buf, stderr );
+	rftl::fputs( buf, stderr );
 
 	#if defined( RF_PLATFORM_MSVC )
 	{

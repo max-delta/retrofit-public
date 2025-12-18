@@ -3,3 +3,63 @@
 #include "rftl/patch/preinclude.inl"
 #include RFTL_CSTDIO
 #include "rftl/patch/postinclude.inl"
+
+// Namespace wrapping
+namespace rftl {
+using std::FILE;
+using std::fpos_t;
+using std::size_t;
+
+using std::fopen;
+using std::freopen;
+using std::fclose;
+using std::fflush;
+using std::setbuf;
+
+using std::fread;
+using std::fwrite;
+
+using std::fgetc;
+using std::getc;
+using std::fgets;
+using std::fputc;
+using std::putc;
+using std::fputs;
+using std::getchar;
+using std::putchar;
+using std::puts;
+using std::ungetc;
+
+using std::scanf;
+using std::fscanf;
+using std::sscanf;
+using std::vscanf;
+using std::vfscanf;
+using std::vsscanf;
+using std::printf;
+using std::fprintf;
+//using std::sprintf; // Don't use! Unsafe!
+using std::snprintf;
+using std::vprintf;
+using std::vfprintf;
+//using std::vsprintf; // Don't use! Unsafe!
+using std::vsnprintf;
+
+using ::vsprintf_s; // Technically C, not C++, but often available anyways
+
+using std::ftell;
+using std::fgetpos;
+using std::fseek;
+using std::fsetpos;
+using std::rewind;
+
+using std::clearerr;
+using std::feof;
+using std::ferror;
+using std::perror;
+
+using std::remove;
+using std::rename;
+using std::tmpfile;
+using std::tmpnam;
+}

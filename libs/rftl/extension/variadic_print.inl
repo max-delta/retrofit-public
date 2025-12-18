@@ -20,7 +20,7 @@ inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, v
 	string_view view = { buffer, bufsz };
 	char& bufferBack = buffer[bufsz - 1];
 
-	int const signedNonNullCharsDesired = vsnprintf( buffer, bufsz, fmt, args );
+	int const signedNonNullCharsDesired = rftl::vsnprintf( buffer, bufsz, fmt, args );
 	if( signedNonNullCharsDesired <= 0 )
 	{
 		// Error case?

@@ -408,7 +408,7 @@ CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, 
 		string.front() = '\0';
 		va_list args;
 		va_start( args, fmt );
-		vsnprintf( string.data(), string.size(), fmt, args );
+		rftl::vsnprintf( string.data(), string.size(), fmt, args );
 		va_end( args );
 		string.back() = '\0';
 	}

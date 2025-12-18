@@ -26,6 +26,8 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/cstdio"
+
 
 RFTYPE_CREATE_META( RF::cc::ui::controller::CombatCharacter )
 {
@@ -98,11 +100,11 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 			lineBuf.back() = '\0';
 			mInfoRows.at( 1 )->SetText( lineBuf.data() );
 
-			snprintf( lineBuf.data(), lineBuf.size(), "%3u/%-3u", curHP, maxHP );
+			rftl::snprintf( lineBuf.data(), lineBuf.size(), "%3u/%-3u", curHP, maxHP );
 			lineBuf.back() = '\0';
 			mInfoRows.at( 2 )->SetText( lineBuf.data() );
 
-			snprintf( lineBuf.data(), lineBuf.size(), "Sta.%01i.0", curStamina );
+			rftl::snprintf( lineBuf.data(), lineBuf.size(), "Sta.%01i.0", curStamina );
 			lineBuf.back() = '\0';
 			mInfoRows.at( 3 )->SetText( lineBuf.data() );
 		}

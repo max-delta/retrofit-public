@@ -150,20 +150,20 @@ bool SimpleGL::Initialize2DGraphics()
 		CONSUME_ERRORS();
 		if( versionStringBytes == nullptr )
 		{
-			fprintf( stderr, "Invalid OpenGL version string\n" );
+			rftl::fprintf( stderr, "Invalid OpenGL version string\n" );
 			return false;
 		}
 		rftl::string_view const versionString( reinterpret_cast<char const*>( versionStringBytes ) );
 		if( versionString.size() < 2 )
 		{
-			fprintf( stderr, "Unsupported OpenGL version string\n" );
+			rftl::fprintf( stderr, "Unsupported OpenGL version string\n" );
 			return false;
 		}
 		if( versionString.at( 0 ) == '1' && versionString.at( 1 ) == '.' )
 		{
 			// Specifically want to avoid anything before OpenGL 2.0, since we
 			//  want to make use of non-power-of-two (NPOT) textures
-			fprintf( stderr, "Unsupported OpenGL version: %s\n", versionStringBytes );
+			rftl::fprintf( stderr, "Unsupported OpenGL version: %s\n", versionStringBytes );
 			return false;
 		}
 	}
@@ -770,7 +770,7 @@ bool SimpleGL::DrawTextInternal( char const* fmt, va_list args )
 	}
 
 	char text[256];
-	vsprintf_s( text, fmt, args );
+	rftl::vsprintf_s( text, fmt, args );
 	text[255] = '\0';
 
 	// Pushes the display list bits

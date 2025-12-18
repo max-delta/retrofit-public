@@ -28,7 +28,7 @@ void FallbackLogger( LoggingRouter const& router, LogEvent<char8_t> const& event
 	*messageBuffer.rbegin() = '\0';
 
 	rftl::array<char, kBufSize> outputBuffer;
-	int const bytesParsed = snprintf( &outputBuffer[0], kBufSize, "FALLBACK_LOGGER>>[%s] %s", event.mCategoryKey, &messageBuffer[0] );
+	int const bytesParsed = rftl::snprintf( &outputBuffer[0], kBufSize, "FALLBACK_LOGGER>>[%s] %s", event.mCategoryKey, &messageBuffer[0] );
 	*outputBuffer.rbegin() = '\0';
 
 	puts( &outputBuffer[0] );

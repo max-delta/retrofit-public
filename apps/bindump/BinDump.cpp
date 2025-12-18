@@ -28,6 +28,8 @@
 #include "rftl/extension/algorithms.h"
 #include "rftl/extension/cstring_view.h"
 
+#include "rftl/cstdio"
+
 
 namespace RF::bindump {
 ///////////////////////////////////////////////////////////////////////////////
@@ -40,9 +42,9 @@ static UniquePtr<file::VFS> sVfs;
 
 void EmitError( rftl::cstring_view str )
 {
-	fputs( "ERROR: ", stderr );
-	fputs( str.c_str(), stderr );
-	fputc( '\n', stderr );
+	rftl::fputs( "ERROR: ", stderr );
+	rftl::fputs( str.c_str(), stderr );
+	rftl::fputc( '\n', stderr );
 }
 
 
@@ -53,9 +55,9 @@ void EmitUsage()
 	{
 		if( str[0] != '\0' )
 		{
-			fputs( str, stderr );
+			rftl::fputs( str, stderr );
 		}
-		fputc( '\n', stderr );
+		rftl::fputc( '\n', stderr );
 	};
 
 	emit( "Usage: bindump [OPTION]... FILE" );
@@ -352,7 +354,7 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
 		if( consoleInitialized )
 		{
-			puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
+			rftl::puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
 			logging::HandlerDefinition def;
 			def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 			def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
@@ -360,7 +362,7 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		}
 		else
 		{
-			puts( " == NO ANSI CONSOLE SUPPORT ==" );
+			rftl::puts( " == NO ANSI CONSOLE SUPPORT ==" );
 			RF_TODO_BREAK_MSG( "Non-ANSI console logger" );
 		}
 	}

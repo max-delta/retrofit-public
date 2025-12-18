@@ -2,6 +2,8 @@
 #include "core/macros.h"
 
 #include "rftl/string"
+#include "rftl/cstdio"
+#include "rftl/cstdlib"
 
 
 namespace RF {
@@ -24,11 +26,11 @@ int main( int argc, char** argv )
 	{
 		if( argc >= 2 && rftl::string( argv[1] ) == "--nopause" )
 		{
-			fputs( "One or more tests failed", stderr );
+			rftl::fputs( "One or more tests failed", stderr );
 		}
 		else
 		{
-			system( "pause" );
+			rftl::system( "pause" );
 		}
 	}
 	return retVal;
