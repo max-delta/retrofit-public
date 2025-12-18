@@ -2,6 +2,7 @@
 #include "SegmentedIdentifier.h"
 
 #include "core_math/Hash.h"
+#include "core_math/math_casts.h"
 
 #include "rftl/sstream"
 
@@ -363,7 +364,9 @@ rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<C
 template<typename ElementT>
 inline size_t rftl::hash<RF::id::SegmentedIdentifier<ElementT>>::operator()( RF::id::SegmentedIdentifier<ElementT> const& identifier ) const
 {
-	return RF::math::SequenceHash<
+	RF::math::HashVal64 const hashed = RF::math::SequenceHash<
 		RF::id::SegmentedIdentifier<ElementT>,
 		rftl::hash<typename RF::id::SegmentedIdentifier<ElementT>::Element>>()( identifier );
+	RF_TODO_ANNOTATION( "Hash gets clobbered on 32-bit builds, maybe make a 32-bit sequence hasher?" );
+	return RF::math::integer_truncast<size_t>( hashed );
 }
