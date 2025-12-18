@@ -134,6 +134,9 @@ size_t GridSizeMask::CalcTotalSlots( StatValue elemPower, company::StoryTier sto
 
 GridSizeMask GridSizeMask::CalcSlots( StatValue elemPower, GridShape gridShape, company::StoryTier storyTier )
 {
+	RF_ASSERT( storyTier != company::kInvalidStoryTier );
+	RF_ASSERT( storyTier <= company::kMaxStoryTier );
+
 	// NOTE: Non-optimal, but not expected to be called frequently
 
 	// Will level up from the start of the game, and assign slots
