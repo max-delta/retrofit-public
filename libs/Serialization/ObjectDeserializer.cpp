@@ -702,13 +702,24 @@ bool ResolveWalkChainLeadingEdge( WalkChain& fullChain, ScratchObjectStorage& sc
 						}
 
 						// Copy the key into a UniquePtr to transfer it
-						// HACK: Assume it's a UInt64
+						// HACK: Assume it's a size_t and thus a UInt64 or UInt32
 						RF_TODO_ANNOTATION( "Proper cloning of value types" );
 						reflect::Value const keyValue( keyInfo.mValueType, key );
-						RF_ASSERT( keyInfo.mValueType == reflect::Value::Type::UInt64 );
-						uint64_t const* const keyValuePtr = keyValue.GetAs<uint64_t>();
-						RF_ASSERT( keyValuePtr != nullptr );
-						UniquePtr<uint64_t> keyCopy = DefaultCreator<uint64_t>::Create( *keyValuePtr );
+						UniquePtr<void> keyCopy;
+						if constexpr( sizeof( size_t ) == sizeof( uint64_t ) )
+						{
+							RF_ASSERT( keyInfo.mValueType == reflect::Value::Type::UInt64 );
+							uint64_t const* const keyValuePtr = keyValue.GetAs<uint64_t>();
+							RF_ASSERT( keyValuePtr != nullptr );
+							keyCopy = DefaultCreator<uint64_t>::Create( *keyValuePtr );
+						}
+						else
+						{
+							RF_ASSERT( keyInfo.mValueType == reflect::Value::Type::UInt32 );
+							uint32_t const* const keyValuePtr = keyValue.GetAs<uint32_t>();
+							RF_ASSERT( keyValuePtr != nullptr );
+							keyCopy = DefaultCreator<uint32_t>::Create( *keyValuePtr );
+						}
 
 						// Prep the type info
 						reflect::VariableTypeInfo transferTypeInfo = {};
