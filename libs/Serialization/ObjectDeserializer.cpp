@@ -1618,7 +1618,7 @@ bool ObjectDeserializer::DeserializeMultipleObjects(
 	{
 		RF_ASSERT( scratch.mInstanceCount > 0 );
 
-		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '{}' [{}]", value.GetStoredTypeName(), rftl::to_string( value.GetBytes(), 16 ) );
+		RFLOGF_DEBUG( scratch.mWalkChain, RFCAT_SERIALIZATION, "Apply value '{}' [{}]", value.GetStoredTypeName(), value.GetBytesAsDebugDisplay() );
 
 		// At time of writing, it is expected resolving the current property
 		//  has been deferred, so that it could build up any name or type

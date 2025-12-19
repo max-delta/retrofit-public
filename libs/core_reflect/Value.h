@@ -6,6 +6,7 @@
 #include "core/macros.h"
 
 #include "rftl/extension/byte_view.h"
+#include "rftl/string"
 #include "rftl/variant"
 #include "rftl/cstdint"
 
@@ -122,6 +123,8 @@ public:
 	template<typename T>
 	Value ConvertTo() const;
 	Value ConvertTo( Type target ) const;
+
+	rftl::string GetBytesAsDebugDisplay() const;
 
 
 	//

@@ -5,9 +5,10 @@
 #include "core_math/math_casts.h"
 #include "core/macros.h"
 
+#include "rftl/extension/string_format.h"
+#include "rftl/extension/string_traits.h"
 #include "rftl/sstream"
 #include "rftl/string"
-#include "rftl/extension/string_traits.h"
 
 
 namespace RF::reflect {
@@ -568,6 +569,13 @@ Value Value::ConvertTo( Type target ) const
 #undef Q
 
 	return convertTable[static_cast<int>( source )][static_cast<int>( target )]( *this );
+}
+
+
+
+rftl::string Value::GetBytesAsDebugDisplay() const
+{
+	return rftl::to_string( GetBytes(), 16 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
