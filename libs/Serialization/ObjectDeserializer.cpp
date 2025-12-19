@@ -442,12 +442,40 @@ bool SetValueToChain( WalkChain& fullChain, reflect::Value const& incomingValue 
 		void* const& destBytes = current.mVariableLocation;
 		size_t const numBytesToWrite = reflect::Value::GetNumBytesNeeded( destType );
 
+		// Will this require transformation?
 		if( srcType != destType )
 		{
-			RF_TODO_BREAK_MSG( "Support for converting incoming values" );
-			return false;
+			reflect::Value const transformedValue = incomingValue.ConvertTo( destType );
+
+			RFLOG_WARNING( fullChain, RFCAT_SERIALIZATION,
+				"Trying to write a {} [{}] to a {} [{}], requires transformation",
+				reflect::Value::GetTypeName( srcType ),
+				incomingValue.GetBytesAsDebugDisplay(),
+				reflect::Value::GetTypeName( destType ),
+				transformedValue.GetBytesAsDebugDisplay() );
+
+			reflect::Value const reverseValue = transformedValue.ConvertTo( srcType );
+			if( reverseValue.GetBytes() != incomingValue.GetBytes() )
+			{
+				RFLOG_ERROR( fullChain, RFCAT_SERIALIZATION,
+					"Trying to write a {} [{}] to a {} [{}] is a lossy transformation, reverse check failed as {} [{}]",
+					reflect::Value::GetTypeName( srcType ),
+					incomingValue.GetBytesAsDebugDisplay(),
+					reflect::Value::GetTypeName( destType ),
+					transformedValue.GetBytesAsDebugDisplay(),
+					reflect::Value::GetTypeName( srcType ),
+					reverseValue.GetBytesAsDebugDisplay() );
+				RF_DBGFAIL_MSG( "Serialization required lossy conversion" );
+				return false;
+			}
+
+			RF_ASSERT( transformedValue.GetStoredType() == destType );
+			rftl::byte_view const tempBytes = transformedValue.GetBytes();
+			tempBytes.mem_copy_to( destBytes, numBytesToWrite );
+			return true;
 		}
 
+		// No tranformation required, just copy it over
 		RF_ASSERT( srcType == destType );
 		rftl::byte_view const srcBytes = incomingValue.GetBytes();
 		srcBytes.mem_copy_to( destBytes, numBytesToWrite );
