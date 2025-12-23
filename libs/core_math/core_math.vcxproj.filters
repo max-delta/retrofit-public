@@ -23,6 +23,7 @@
 		<ClInclude Include="Limits.h" />
 		<ClInclude Include="SoftFloat.h" />
 		<ClInclude Include="MathFwd.h" />
+		<ClInclude Include="Ratio.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -37,6 +38,7 @@
 		<ClCompile Include="Bitmap.cpp" />
 		<ClCompile Include="BitwiseEnums.cpp" />
 		<ClCompile Include="SoftFloat.cpp" />
+		<ClCompile Include="Ratio.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Vector2.inl" />
