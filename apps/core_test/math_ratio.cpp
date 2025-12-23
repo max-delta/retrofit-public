@@ -187,5 +187,38 @@ TEST( Ratio, CompareRatio )
 	ASSERT_TRUE( Ratio8( 8, 7 ) > Ratio8( 15, 15 ) );
 }
 
+
+
+TEST( Ratio, MathOps )
+{
+	using namespace rftl::literals;
+
+	// Invalid
+	ASSERT_EQ( ( Ratio8( 0, 0 ) + Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( ( Ratio8( 0, 0 ) - Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( ( Ratio8( 0, 0 ) * Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+
+	// Plus
+	ASSERT_EQ( ( Ratio8( 1, 3 ) + Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 2_u8, 3_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 3 ) + Ratio8( 1, 4 ) ).GetAsPair(), Ratio8::Pair( 11_u8, 12_u8 ) );
+	ASSERT_EQ( ( Ratio8( 1, 15 ) + Ratio8( 1, 15 ) ).GetAsPair(), Ratio8::Pair( 2_u8, 15_u8 ) );
+
+	// Minus
+	ASSERT_EQ( ( Ratio8( 1, 3 ) - Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 1_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 3 ) - Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 1_u8, 3_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 3 ) - Ratio8( 1, 4 ) ).GetAsPair(), Ratio8::Pair( 5_u8, 12_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 15 ) - Ratio8( 1, 15 ) ).GetAsPair(), Ratio8::Pair( 1_u8, 15_u8 ) );
+
+	// Multiply
+	ASSERT_EQ( ( Ratio8( 1, 3 ) * Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 1_u8, 9_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 3 ) * Ratio8( 5, 6 ) ).GetAsPair(), Ratio8::Pair( 5_u8, 9_u8 ) );
+	ASSERT_EQ( ( Ratio8( 15, 1 ) * Ratio8( 1, 1 ) ).GetAsPair(), Ratio8::Pair( 15_u8, 1_u8 ) );
+
+	// Divide
+	ASSERT_EQ( ( Ratio8( 1, 3 ) / Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 1_u8, 1_u8 ) );
+	ASSERT_EQ( ( Ratio8( 2, 3 ) / Ratio8( 5, 6 ) ).GetAsPair(), Ratio8::Pair( 4_u8, 5_u8 ) );
+	ASSERT_EQ( ( Ratio8( 15, 1 ) / Ratio8( 1, 1 ) ).GetAsPair(), Ratio8::Pair( 15_u8, 1_u8 ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

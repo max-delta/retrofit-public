@@ -16,6 +16,35 @@ namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+// These should be larger than the largest supported storage components, to
+//  ensure that multiplication math done with them doesn't need to check for
+//  overflows
+using SafeComponent = uint32_t;
+using SafePair = rftl::pair<SafeComponent, SafeComponent>;
+
+struct SafeCommon
+{
+	SafeComponent mLeft = 0;
+	SafeComponent mRight = 0;
+	SafeComponent mDenominator = 0;
+};
+
+
+
+template<typename StorageT, typename InterfaceT>
+static constexpr InterfaceT MaxRepresentable()
+{
+	static_assert( sizeof( StorageT ) == sizeof( InterfaceT ) * 2 );
+	return rftl::numeric_limits<InterfaceT>::max();
+}
+template<>
+constexpr uint8_t MaxRepresentable<uint8_t, uint8_t>()
+{
+	return 0b00001111u;
+}
+
+
+
 template<typename StorageT, typename InterfaceT>
 static StorageT Reduce( InterfaceT in )
 {
@@ -64,12 +93,12 @@ static InterfaceT LoadHalf( StorageT storage )
 
 
 template<typename RatioT>
-static rftl::pair<uint32_t, uint32_t> UpSizeComponents( RatioT in )
+static SafePair UpSizeComponents( RatioT in )
 {
 	// This code assumes we can just up-size the input, to drastically simplify
 	//  the logic of things that could potentially have performed an overflow,
 	//  at almost zero extra cost (just sign-extend the registers)
-	static_assert( sizeof( uint32_t ) > sizeof( typename RatioT::InterfaceType ) );
+	static_assert( sizeof( SafeComponent ) > sizeof( typename RatioT::InterfaceType ) );
 	typename RatioT::Pair const pair = in.GetAsPair();
 	return { pair.first, pair.second };
 }
@@ -77,7 +106,7 @@ static rftl::pair<uint32_t, uint32_t> UpSizeComponents( RatioT in )
 
 
 template<typename RatioT>
-static rftl::pair<uint32_t, uint32_t> GetComparables( RatioT lhs, RatioT rhs )
+static SafePair GetComparables( RatioT lhs, RatioT rhs )
 {
 	// Transformation / shuffling:
 	//  a/b <=> c/d
@@ -85,14 +114,59 @@ static rftl::pair<uint32_t, uint32_t> GetComparables( RatioT lhs, RatioT rhs )
 	//  a*d <=> c*b
 	// NOTE: The act of multiplying could overflow, which is why we're jumping
 	//  up to the next integer size
-	using Pair = rftl::pair<uint32_t, uint32_t>;
-	Pair const l = UpSizeComponents( lhs );
-	Pair const r = UpSizeComponents( rhs );
+	SafePair const l = UpSizeComponents( lhs );
+	SafePair const r = UpSizeComponents( rhs );
 	return {
 		l.first * r.second,
 		r.first * l.second };
 }
 
+
+
+template<typename RatioT>
+static SafeCommon MakeCommonDenominator( RatioT lhs, RatioT rhs )
+{
+	SafePair const l = UpSizeComponents( lhs );
+	SafePair const r = UpSizeComponents( rhs );
+	return SafeCommon{
+		.mLeft = l.first * r.second,
+		.mRight = r.first * l.second,
+		.mDenominator = l.second * r.second };
+}
+
+
+
+static SafePair SafeSimplify( SafeComponent numerator, SafeComponent denominator )
+{
+	if( denominator == 0 )
+	{
+		return {};
+	}
+
+	SafeComponent const gcd = rftl::gcd( numerator, denominator );
+	return {
+		numerator / gcd,
+		denominator / gcd };
+}
+
+
+
+template<typename RatioT>
+static RatioT CreateFromSafe( SafeComponent numerator, SafeComponent denominator )
+{
+	static constexpr typename RatioT::InterfaceType kMax =
+		MaxRepresentable<typename RatioT::StorageType, typename RatioT::InterfaceType>();
+	if( numerator > kMax || denominator > kMax )
+	{
+		RF_DBGFAIL_MSG( "Ratio overflow" );
+		return RatioT();
+	}
+
+	// NOTE: Integer casts in this case are theoretically overly paranoid
+	return RatioT(
+		math::integer_cast<typename RatioT::InterfaceType>( numerator ),
+		math::integer_cast<typename RatioT::InterfaceType>( denominator ) );
+}
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -246,7 +320,7 @@ bool Ratio<StorageT, InterfaceT>::operator>( InterfaceT rhs ) const
 template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator<( Ratio rhs ) const
 {
-	rftl::pair<uint32_t, uint32_t> const comparables = details::GetComparables( *this, rhs );
+	details::SafePair const comparables = details::GetComparables( *this, rhs );
 	return comparables.first < comparables.second;
 }
 
@@ -255,7 +329,7 @@ bool Ratio<StorageT, InterfaceT>::operator<( Ratio rhs ) const
 template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator<=( Ratio rhs ) const
 {
-	rftl::pair<uint32_t, uint32_t> const comparables = details::GetComparables( *this, rhs );
+	details::SafePair const comparables = details::GetComparables( *this, rhs );
 	return comparables.first <= comparables.second;
 }
 
@@ -264,7 +338,7 @@ bool Ratio<StorageT, InterfaceT>::operator<=( Ratio rhs ) const
 template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator==( Ratio rhs ) const
 {
-	rftl::pair<uint32_t, uint32_t> const comparables = details::GetComparables( *this, rhs );
+	details::SafePair const comparables = details::GetComparables( *this, rhs );
 	return comparables.first == comparables.second;
 }
 
@@ -273,7 +347,7 @@ bool Ratio<StorageT, InterfaceT>::operator==( Ratio rhs ) const
 template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator>=( Ratio rhs ) const
 {
-	rftl::pair<uint32_t, uint32_t> const comparables = details::GetComparables( *this, rhs );
+	details::SafePair const comparables = details::GetComparables( *this, rhs );
 	return comparables.first >= comparables.second;
 }
 
@@ -282,8 +356,101 @@ bool Ratio<StorageT, InterfaceT>::operator>=( Ratio rhs ) const
 template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator>( Ratio rhs ) const
 {
-	rftl::pair<uint32_t, uint32_t> const comparables = details::GetComparables( *this, rhs );
+	details::SafePair const comparables = details::GetComparables( *this, rhs );
 	return comparables.first > comparables.second;
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator+( Ratio rhs ) const
+{
+	details::SafeCommon const common = details::MakeCommonDenominator( *this, rhs );
+	details::SafePair const result =
+		details::SafeSimplify(
+			common.mLeft + common.mRight,
+			common.mDenominator );
+	return details::CreateFromSafe<Ratio>( result.first, result.second );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator-( Ratio rhs ) const
+{
+	details::SafeCommon const common = details::MakeCommonDenominator( *this, rhs );
+	if( common.mLeft < common.mRight )
+	{
+		RF_DBGFAIL_MSG( "Ratio overflow from subtraction" );
+		return Ratio();
+	}
+
+	details::SafePair const result =
+		details::SafeSimplify(
+			common.mLeft - common.mRight,
+			common.mDenominator );
+	return details::CreateFromSafe<Ratio>( result.first, result.second );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator*( Ratio rhs ) const
+{
+	details::SafePair const l = details::UpSizeComponents( *this );
+	details::SafePair const r = details::UpSizeComponents( rhs );
+	details::SafePair const result =
+		details::SafeSimplify(
+			l.first * r.first,
+			l.second * r.second );
+	return details::CreateFromSafe<Ratio>( result.first, result.second );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator/( Ratio rhs ) const
+{
+	details::SafePair const l = details::UpSizeComponents( *this );
+	details::SafePair const r = details::UpSizeComponents( rhs );
+	details::SafePair const result =
+		details::SafeSimplify(
+			l.first * r.second,
+			l.second * r.first );
+	return details::CreateFromSafe<Ratio>( result.first, result.second );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator+=( Ratio rhs )
+{
+	*this = *this + rhs;
+	return *this;
+}
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator-=( Ratio rhs )
+{
+	*this = *this - rhs;
+	return *this;
+}
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator*=( Ratio rhs )
+{
+	*this = *this * rhs;
+	return *this;
+}
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator/=( Ratio rhs )
+{
+	*this = *this / rhs;
+	return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

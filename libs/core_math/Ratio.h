@@ -72,6 +72,20 @@ public:
 	bool operator>=( Ratio rhs ) const;
 	bool operator>( Ratio rhs ) const;
 
+	// Standard math
+	// NOTE: Overflows will result in the ratio being set to invalid
+	Ratio operator+( Ratio rhs ) const;
+	Ratio operator-( Ratio rhs ) const;
+	Ratio operator*( Ratio rhs ) const;
+	Ratio operator/( Ratio rhs ) const;
+
+	// In-place math
+	// NOTE: Overflows will result in the ratio being set to invalid
+	Ratio& operator+=( Ratio rhs );
+	Ratio& operator-=( Ratio rhs );
+	Ratio& operator*=( Ratio rhs );
+	Ratio& operator/=( Ratio rhs );
+
 
 	//
 	// Private data
