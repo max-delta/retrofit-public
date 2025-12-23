@@ -70,6 +70,27 @@ TEST( Ratio, Floats )
 
 
 
+TEST( Ratio, Simplify )
+{
+	using namespace rftl::literals;
+
+	// Invalid
+	ASSERT_EQ( Ratio8( 0, 0 ).Simplify().GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( Ratio8( 1, 0 ).Simplify().GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+
+	// Can't simplify
+	ASSERT_EQ( Ratio8( 1, 15 ).Simplify().GetAsPair(), Ratio8::Pair( 1_u8, 15_u8 ) );
+	ASSERT_EQ( Ratio8( 2, 3 ).Simplify().GetAsPair(), Ratio8::Pair( 2_u8, 3_u8 ) );
+	ASSERT_EQ( Ratio8( 15, 1 ).Simplify().GetAsPair(), Ratio8::Pair( 15_u8, 1_u8 ) );
+
+	// Can simplify
+	ASSERT_EQ( Ratio8( 7, 14 ).Simplify().GetAsPair(), Ratio8::Pair( 1_u8, 2_u8 ) );
+	ASSERT_EQ( Ratio8( 8, 12 ).Simplify().GetAsPair(), Ratio8::Pair( 2_u8, 3_u8 ) );
+	ASSERT_EQ( Ratio8( 14, 2 ).Simplify().GetAsPair(), Ratio8::Pair( 7_u8, 1_u8 ) );
+}
+
+
+
 TEST( Ratio, Upsize )
 {
 	using namespace rftl::literals;

@@ -50,6 +50,10 @@ public:
 	// If true, it can be cleanly expressed as a non-fractional number
 	bool IsIntegral() const;
 
+	// Simplifies a fraction, such as 4/6 -> 2/3
+	// NOTE: Useful for helping keep the components within their storage range
+	Ratio Simplify() const;
+
 	// Compare with integer
 	// NOTE: For simplicity, invalid numbers (zero as denominator) are treated
 	//  as though they are zero

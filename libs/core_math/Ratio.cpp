@@ -9,6 +9,8 @@
 
 #include "core/meta/IntegerPromotion.h"
 
+#include "rftl/numeric"
+
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,6 +168,23 @@ bool Ratio<StorageT, InterfaceT>::IsIntegral() const
 	}
 
 	return false;
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::Simplify() const
+{
+	Pair const pair = GetAsPair();
+	if( pair.second == 0 )
+	{
+		return Ratio();
+	}
+
+	InterfaceType const gcd = rftl::gcd( pair.first, pair.second );
+	return Ratio(
+		angry_cast<InterfaceType>( pair.first / gcd ),
+		angry_cast<InterfaceType>( pair.second / gcd ) );
 }
 
 
