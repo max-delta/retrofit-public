@@ -17,7 +17,7 @@ namespace RF::math {
 namespace details {
 
 template<typename StorageT, typename InterfaceT>
-StorageT Reduce( InterfaceT in )
+static StorageT Reduce( InterfaceT in )
 {
 	static_assert( sizeof( StorageT ) == sizeof( InterfaceT ) * 2 );
 	return in;
@@ -32,7 +32,7 @@ uint8_t Reduce<uint8_t, uint8_t>( uint8_t in )
 
 
 template<typename StorageT, typename InterfaceT>
-StorageT Store( InterfaceT numer, InterfaceT denom )
+static StorageT Store( InterfaceT numer, InterfaceT denom )
 {
 	StorageT const upper = Reduce<StorageT>( numer );
 	StorageT const lower = Reduce<StorageT>( denom );
@@ -44,7 +44,7 @@ StorageT Store( InterfaceT numer, InterfaceT denom )
 
 
 template<typename StorageT, typename InterfaceT, bool UpperT>
-InterfaceT LoadHalf( StorageT storage )
+static InterfaceT LoadHalf( StorageT storage )
 {
 	static constexpr size_t kAvailableBits = sizeof( StorageT ) * 8;
 	static constexpr size_t kShiftBits = kAvailableBits / 2;
@@ -64,24 +64,33 @@ InterfaceT LoadHalf( StorageT storage )
 
 
 template<typename RatioT>
-rftl::pair<uint32_t, uint32_t> GetComparables( RatioT lhs, RatioT rhs )
+static rftl::pair<uint32_t, uint32_t> UpSizeComponents( RatioT in )
 {
 	// This code assumes we can just up-size the input, to drastically simplify
-	//  the logic at almost zero extra cost (just sign-extend the registers)
+	//  the logic of things that could potentially have performed an overflow,
+	//  at almost zero extra cost (just sign-extend the registers)
 	static_assert( sizeof( uint32_t ) > sizeof( typename RatioT::InterfaceType ) );
+	typename RatioT::Pair const pair = in.GetAsPair();
+	return { pair.first, pair.second };
+}
 
+
+
+template<typename RatioT>
+static rftl::pair<uint32_t, uint32_t> GetComparables( RatioT lhs, RatioT rhs )
+{
 	// Transformation / shuffling:
 	//  a/b <=> c/d
 	//  a*d/b <=> c
 	//  a*d <=> c*b
 	// NOTE: The act of multiplying could overflow, which is why we're jumping
 	//  up to the next integer size
-	typename RatioT::Pair const l = lhs.GetAsPair();
-	typename RatioT::Pair const r = rhs.GetAsPair();
-	rftl::pair<uint32_t, uint32_t> retVal = { l.first, r.first };
-	retVal.first *= r.second;
-	retVal.second *= l.second;
-	return retVal;
+	using Pair = rftl::pair<uint32_t, uint32_t>;
+	Pair const l = UpSizeComponents( lhs );
+	Pair const r = UpSizeComponents( rhs );
+	return {
+		l.first * r.second,
+		r.first * l.second };
 }
 
 
