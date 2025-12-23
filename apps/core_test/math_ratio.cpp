@@ -91,6 +91,57 @@ TEST( Ratio, Simplify )
 
 
 
+TEST( Ratio, Compress )
+{
+	using namespace rftl::literals;
+
+	using BitCounts = Ratio8::BitCounts;
+
+	// Invalid
+	ASSERT_EQ( Ratio8( 0, 0 ).GetBitsRequiredToRepresent(), BitCounts( 0u, 0u ) );
+	ASSERT_EQ( Ratio8( 0, 0 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( Ratio8( 15, 0 ).GetBitsRequiredToRepresent(), BitCounts( 4u, 0u ) );
+	ASSERT_EQ( Ratio8( 15, 0 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+
+	// Zero
+	ASSERT_EQ( Ratio8( 0, 1 ).GetBitsRequiredToRepresent(), BitCounts( 0u, 1u ) );
+	ASSERT_EQ( Ratio8( 0, 1 ).TryLossyCompress( 3 ).GetAsPair(), Ratio8::Pair( 0_u8, 1_u8 ) );
+	ASSERT_EQ( Ratio8( 0, 15 ).GetBitsRequiredToRepresent(), BitCounts( 0u, 4u ) );
+	ASSERT_EQ( Ratio8( 0, 15 ).TryLossyCompress( 3 ).GetAsPair(), Ratio8::Pair( 0_u8, 1_u8 ) );
+
+	// Integer, can't compress
+	ASSERT_EQ( Ratio8( 1, 1 ).GetBitsRequiredToRepresent(), BitCounts( 1u, 1u ) );
+	ASSERT_EQ( Ratio8( 1, 1 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 1_u8, 1_u8 ) );
+	ASSERT_EQ( Ratio8( 15, 1 ).GetBitsRequiredToRepresent(), BitCounts( 4u, 1u ) );
+	ASSERT_EQ( Ratio8( 15, 1 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 15_u8, 1_u8 ) );
+
+	// Min fraction, can't compress
+	ASSERT_EQ( Ratio8( 1, 2 ).GetBitsRequiredToRepresent(), BitCounts( 1u, 2u ) );
+	ASSERT_EQ( Ratio8( 1, 2 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 1_u8, 2_u8 ) );
+	ASSERT_EQ( Ratio8( 1, 15 ).GetBitsRequiredToRepresent(), BitCounts( 1u, 4u ) );
+	ASSERT_EQ( Ratio8( 1, 15 ).TryLossyCompress( 1 ).GetAsPair(), Ratio8::Pair( 1_u8, 15_u8 ) );
+
+	// Trivial simplify better than requested
+	ASSERT_EQ( Ratio8( 2, 4 ).GetBitsRequiredToRepresent(), BitCounts( 2u, 3u ) );
+	ASSERT_EQ( Ratio8( 2, 4 ).TryLossyCompress( 3 ).GetAsPair(), Ratio8::Pair( 1_u8, 2_u8 ) );
+
+	// Can't simplify to requested, but COULD compress
+	ASSERT_EQ( Ratio8( 5, 6 ).GetBitsRequiredToRepresent(), BitCounts( 3u, 3u ) );
+	ASSERT_EQ( Ratio8( 5, 6 ).TryLossyCompress( 3 ).GetAsPair(), Ratio8::Pair( 5_u8, 6_u8 ) );
+	ASSERT_EQ( Ratio8( 6, 7 ).GetBitsRequiredToRepresent(), BitCounts( 3u, 3u ) );
+	ASSERT_EQ( Ratio8( 6, 7 ).TryLossyCompress( 3 ).GetAsPair(), Ratio8::Pair( 6_u8, 7_u8 ) );
+
+	// Can compress, but not simplify further
+	ASSERT_EQ( Ratio8( 5, 6 ).GetBitsRequiredToRepresent(), BitCounts( 3u, 3u ) );
+	ASSERT_EQ( Ratio8( 5, 6 ).TryLossyCompress( 2 ).GetAsPair(), Ratio8::Pair( 2_u8, 3_u8 ) );
+
+	// Can compress, and simplify further
+	ASSERT_EQ( Ratio8( 6, 7 ).GetBitsRequiredToRepresent(), BitCounts( 3u, 3u ) );
+	ASSERT_EQ( Ratio8( 6, 7 ).TryLossyCompress( 2 ).GetAsPair(), Ratio8::Pair( 1_u8, 1_u8 ) );
+}
+
+
+
 TEST( Ratio, Upsize )
 {
 	using namespace rftl::literals;
@@ -193,10 +244,18 @@ TEST( Ratio, MathOps )
 {
 	using namespace rftl::literals;
 
+	// Because GTest loses its shit when it sees a shift operator
+	static auto constexpr shift = []( auto lhs, auto rhs ) -> auto
+	{
+		return lhs >> rhs;
+	};
+
 	// Invalid
 	ASSERT_EQ( ( Ratio8( 0, 0 ) + Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
 	ASSERT_EQ( ( Ratio8( 0, 0 ) - Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
 	ASSERT_EQ( ( Ratio8( 0, 0 ) * Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( ( Ratio8( 0, 0 ) / Ratio8( 0, 0 ) ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
+	ASSERT_EQ( shift( Ratio8( 0, 0 ), 0u ).GetAsPair(), Ratio8::Pair( 0_u8, 0_u8 ) );
 
 	// Plus
 	ASSERT_EQ( ( Ratio8( 1, 3 ) + Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 2_u8, 3_u8 ) );
@@ -218,6 +277,11 @@ TEST( Ratio, MathOps )
 	ASSERT_EQ( ( Ratio8( 1, 3 ) / Ratio8( 1, 3 ) ).GetAsPair(), Ratio8::Pair( 1_u8, 1_u8 ) );
 	ASSERT_EQ( ( Ratio8( 2, 3 ) / Ratio8( 5, 6 ) ).GetAsPair(), Ratio8::Pair( 4_u8, 5_u8 ) );
 	ASSERT_EQ( ( Ratio8( 15, 1 ) / Ratio8( 1, 1 ) ).GetAsPair(), Ratio8::Pair( 15_u8, 1_u8 ) );
+
+	// Shift
+	ASSERT_EQ( shift( Ratio8( 4, 8 ), 1u ).GetAsPair(), Ratio8::Pair( 2_u8, 4_u8 ) );
+	ASSERT_EQ( shift( Ratio8( 2, 3 ), 1u ).GetAsPair(), Ratio8::Pair( 1_u8, 1_u8 ) );
+	ASSERT_EQ( shift( Ratio8( 1, 15 ), 1u ).GetAsPair(), Ratio8::Pair( 0_u8, 7_u8 ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

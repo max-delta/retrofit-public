@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Ratio.h"
 
+#include "core_math/math_bits.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_casts.h"
@@ -9,6 +10,7 @@
 
 #include "core/meta/IntegerPromotion.h"
 
+#include "rftl/extension/integer_literals.h"
 #include "rftl/numeric"
 
 
@@ -273,6 +275,87 @@ Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::Simplify() const
 
 
 template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>::BitCounts Ratio<StorageT, InterfaceT>::GetBitsRequiredToRepresent() const
+{
+	return {
+		math::GetOnesIndexOfHighestBit( Numerator() ),
+		math::GetOnesIndexOfHighestBit( Denominator() ) };
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::TryLossyCompress( size_t mostDesiredBitsInEitherComponent ) const
+{
+	RF_ASSERT( mostDesiredBitsInEitherComponent > 0 );
+	static constexpr size_t kBitsAvailable = GetOnesIndexOfHighestBit( details::MaxRepresentable<StorageType, InterfaceType>() );
+	RF_ASSERT( mostDesiredBitsInEitherComponent < kBitsAvailable );
+
+	if( IsValid() == false )
+	{
+		// If it's invalid, atleast make sure it's the invalid with the least
+		//  number of bits in it
+		return Ratio();
+	}
+
+	using Bits = rftl::pair<size_t, size_t>;
+	static constexpr auto most = []( Bits const& in ) -> size_t
+	{
+		return Max( in.first, in.second );
+	};
+	static constexpr auto least = []( Bits const& in ) -> size_t
+	{
+		return Min( in.first, in.second );
+	};
+
+	// Simplify before anything else
+	Ratio retVal = Simplify();
+	Bits const bitsAtStart = retVal.GetBitsRequiredToRepresent();
+	size_t const mostBitsAtStart = most( bitsAtStart );
+	if( mostBitsAtStart <= mostDesiredBitsInEitherComponent )
+	{
+		// Simplifying was enough!
+		return retVal;
+	}
+
+	size_t const leastBitsAtStart = least( bitsAtStart );
+	if( leastBitsAtStart == 0 )
+	{
+		// This should only occur for the simplified ratio 0/1, which is the
+		//  most compressible form of zero
+		RF_ASSERT( bitsAtStart.first == 0 );
+		RF_ASSERT( bitsAtStart.second == 1 );
+		return retVal;
+	}
+
+	// How many bits CAN we lop off?
+	size_t const maxCompression = leastBitsAtStart - 1;
+	if( maxCompression == 0 )
+	{
+		// Can't compress via shift
+		RF_ASSERT( bitsAtStart.first == 1 || bitsAtStart.second == 1 );
+		return retVal;
+	}
+
+	// How many bits do we WANT to lop off?
+	size_t const desideredCompression = mostBitsAtStart - mostDesiredBitsInEitherComponent;
+
+	// How many bits WILL we lop off?
+	size_t const chosenCompression = Min( desideredCompression, maxCompression );
+	RF_ASSERT( chosenCompression > 0 );
+
+	// Lop off bits
+	retVal >>= chosenCompression;
+
+	// And then simplify AGAIN in case that unlocked more compression
+	retVal = retVal.Simplify();
+
+	return retVal;
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
 bool Ratio<StorageT, InterfaceT>::operator<( InterfaceT rhs ) const
 {
 	Ratio const rhsAsRatio( rhs, 1u );
@@ -423,6 +506,16 @@ Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator/( Ratio rhs ) 
 
 
 template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT> Ratio<StorageT, InterfaceT>::operator>>( size_t numBits ) const
+{
+	return Ratio(
+		angry_cast<InterfaceT>( Numerator() >> numBits ),
+		angry_cast<InterfaceT>( Denominator() >> numBits ) );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
 Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator+=( Ratio rhs )
 {
 	*this = *this + rhs;
@@ -450,6 +543,15 @@ template<typename StorageT, typename InterfaceT>
 Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator/=( Ratio rhs )
 {
 	*this = *this / rhs;
+	return *this;
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>& Ratio<StorageT, InterfaceT>::operator>>=( size_t numBits )
+{
+	*this = *this >> numBits;
 	return *this;
 }
 

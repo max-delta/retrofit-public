@@ -16,6 +16,7 @@ public:
 	using StorageType = StorageT;
 	using InterfaceType = InterfaceT;
 	using Pair = rftl::pair<InterfaceType, InterfaceType>;
+	using BitCounts = rftl::pair<size_t, size_t>;
 
 	// NOTE: This also means we can just copy around instead of taking
 	//  references, for minor speed gains
@@ -54,6 +55,13 @@ public:
 	// NOTE: Useful for helping keep the components within their storage range
 	Ratio Simplify() const;
 
+	// How many bits are used in each component
+	BitCounts GetBitsRequiredToRepresent() const;
+
+	// Try to reduce the number of bits used without dropping so many that the
+	//  ratio becomes invalid (meaning the denominator must still be atleast 1)
+	Ratio TryLossyCompress( size_t mostDesiredBitsInEitherComponent ) const;
+
 	// Compare with integer
 	// NOTE: For simplicity, invalid numbers (zero as denominator) are treated
 	//  as though they are zero
@@ -79,12 +87,17 @@ public:
 	Ratio operator*( Ratio rhs ) const;
 	Ratio operator/( Ratio rhs ) const;
 
+	// Dubious math
+	// NOTE: Shifting can result in making the denominator zero, thus invalid
+	Ratio operator>>( size_t numBits ) const;
+
 	// In-place math
 	// NOTE: Overflows will result in the ratio being set to invalid
 	Ratio& operator+=( Ratio rhs );
 	Ratio& operator-=( Ratio rhs );
 	Ratio& operator*=( Ratio rhs );
 	Ratio& operator/=( Ratio rhs );
+	Ratio& operator>>=( size_t numBits );
 
 
 	//
