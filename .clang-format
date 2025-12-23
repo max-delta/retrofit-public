@@ -154,7 +154,7 @@ SpacesInLineCommentPrefix:
 SpacesInParentheses : true
 SpacesInSquareBrackets : false
 StatementAttributeLikeMacros : [] # TODO: Add any special macros here
-Standard : c++17
+Standard : c++20
 StatementMacros : [] # TODO: Add any special macros here
 TabWidth : 4 # ClangFormat seems to corrupt everything if this isn't 4???
 TypenameMacros : [] # TODO: Add any special macros here
