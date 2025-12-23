@@ -208,7 +208,11 @@ template<typename StorageT, typename InterfaceT>
 float Ratio<StorageT, InterfaceT>::GetAsFloat() const
 {
 	InterfaceType const denom = Denominator();
-	RF_ASSERT( denom != 0 );
+	if( denom == 0 )
+	{
+		[[unlikely]];
+		return rftl::numeric_limits<float>::signaling_NaN();
+	}
 	return ( 1.f * Numerator() ) / denom;
 }
 
