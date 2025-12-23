@@ -207,7 +207,9 @@ typename Ratio<StorageT, InterfaceT>::Pair Ratio<StorageT, InterfaceT>::GetAsPai
 template<typename StorageT, typename InterfaceT>
 float Ratio<StorageT, InterfaceT>::GetAsFloat() const
 {
-	return ( 1.f * Numerator() ) / Denominator();
+	InterfaceType const denom = Denominator();
+	RF_ASSERT( denom != 0 );
+	return ( 1.f * Numerator() ) / denom;
 }
 
 
