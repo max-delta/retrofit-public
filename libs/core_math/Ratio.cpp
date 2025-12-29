@@ -219,6 +219,22 @@ float Ratio<StorageT, InterfaceT>::GetAsFloat() const
 
 
 template<typename StorageT, typename InterfaceT>
+Ratio<StorageT, InterfaceT>::InterfaceType Ratio<StorageT, InterfaceT>::GetAsIntegerViaTruncation() const
+{
+	InterfaceType const denom = Denominator();
+
+	if( denom == 0 )
+	{
+		RF_DBGFAIL_MSG( "Divide by zero" );
+		return 0;
+	}
+
+	return angry_cast<InterfaceType>( Numerator() / denom );
+}
+
+
+
+template<typename StorageT, typename InterfaceT>
 Ratio<StorageT, InterfaceT>::InterfaceType Ratio<StorageT, InterfaceT>::Numerator() const
 {
 	return details::LoadHalf<StorageT, InterfaceType, true>( mStorage );

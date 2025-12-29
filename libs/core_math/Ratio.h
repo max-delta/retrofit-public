@@ -41,6 +41,7 @@ public:
 	// Accessors for underlying data
 	Pair GetAsPair() const;
 	float GetAsFloat() const;
+	InterfaceType GetAsIntegerViaTruncation() const;
 	InterfaceType Numerator() const;
 	InterfaceType Denominator() const;
 
