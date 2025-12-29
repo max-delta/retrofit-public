@@ -57,9 +57,9 @@ ContainerID ColumnSlicer::GetChildContainerID( size_t sliceIndex ) const
 
 
 
-void ColumnSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
+ContainerID ColumnSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
 {
-	CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
+	return CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
 }
 
 
@@ -132,13 +132,13 @@ void ColumnSlicer::OnAABBRecalc( UIContext& context, Container& container )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
+ContainerID ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
 {
 	ContainerID& id = mContainers.at( sliceIndex );
 	if( id != kInvalidContainerID )
 	{
 		RF_DBGFAIL_MSG( "Container already exists" );
-		return;
+		return kInvalidContainerID;
 	}
 
 	AnchorID top = mAnchors.front();
@@ -148,6 +148,7 @@ void ColumnSlicer::CreateChildContainerInternal( ContainerManager& manager, Cont
 	AnchorID right = mAnchors.at( sliceIndex + 1 );
 
 	id = Controller::CreateChildContainer( manager, container, left, right, top, bottom );
+	return id;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

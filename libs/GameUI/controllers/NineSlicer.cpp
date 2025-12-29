@@ -46,9 +46,9 @@ ContainerID NineSlicer::GetChildContainerID( size_t sliceIndex ) const
 
 
 
-void NineSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
+ContainerID NineSlicer::CreateChildContainer( ContainerManager& manager, size_t sliceIndex )
 {
-	CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
+	return CreateChildContainerInternal( manager, GetMutableContainer( manager, mParentContainerID ), sliceIndex );
 }
 
 
@@ -112,13 +112,13 @@ void NineSlicer::OnAABBRecalc( UIContext& context, Container& container )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void NineSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
+ContainerID NineSlicer::CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex )
 {
 	ContainerID& id = mContainers.at( sliceIndex );
 	if( id != kInvalidContainerID )
 	{
 		RF_DBGFAIL_MSG( "Container already exists" );
-		return;
+		return kInvalidContainerID;
 	}
 
 	AnchorID top;
@@ -159,6 +159,7 @@ void NineSlicer::CreateChildContainerInternal( ContainerManager& manager, Contai
 	}
 
 	id = Controller::CreateChildContainer( manager, container, left, right, top, bottom );
+	return id;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

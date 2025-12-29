@@ -26,7 +26,7 @@ public:
 	ColumnSlicer( size_t numSlices );
 
 	ContainerID GetChildContainerID( size_t sliceIndex ) const;
-	void CreateChildContainer( ContainerManager& manager, size_t sliceIndex );
+	ContainerID CreateChildContainer( ContainerManager& manager, size_t sliceIndex );
 	void DestroyChildContainer( ContainerManager& manager, size_t sliceIndex );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
@@ -36,7 +36,7 @@ public:
 	//
 	// Private methods
 private:
-	void CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex );
+	ContainerID CreateChildContainerInternal( ContainerManager& manager, Container& container, size_t sliceIndex );
 
 
 	//
