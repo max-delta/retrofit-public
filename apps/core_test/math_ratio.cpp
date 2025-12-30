@@ -75,8 +75,6 @@ TEST( Ratio, Truncate )
 	using namespace rftl::literals;
 
 	// Smallest storable non-zero sizes
-	// NOTE: Not cleanly representable by floats
-	static constexpr float kPrecision = 0.0000001f;
 	ASSERT_EQ( Ratio8( 1, 15 ).GetAsIntegerViaTruncation(), 0u );
 	ASSERT_EQ( Ratio16( 1, 255 ).GetAsIntegerViaTruncation(), 0u );
 	ASSERT_EQ( Ratio32( 1, 65535 ).GetAsIntegerViaTruncation(), 0u );
