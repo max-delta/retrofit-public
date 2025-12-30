@@ -47,6 +47,46 @@
 
 
 	<!--
+		Math types
+	-->
+
+	<Type Name = "RF::math::Ratio&lt;unsigned char,unsigned char&gt;">
+		<DisplayString>
+			{(int)(InterfaceType)(mStorage >> 4)} / {(int)(InterfaceType)(mStorage &amp; 0xF)}
+		</DisplayString>
+		<Expand>
+			<ExpandedItem>
+				mStorage
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
+
+	<Type Name = "RF::math::Ratio&lt;unsigned short,unsigned char&gt;">
+		<DisplayString>
+			{(int)(InterfaceType)(mStorage >> 8)} / {(int)(InterfaceType)(mStorage &amp; 0xFF)}
+		</DisplayString>
+		<Expand>
+			<ExpandedItem>
+				mStorage
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
+
+	<Type Name = "RF::math::Ratio&lt;unsigned int,unsigned short&gt;">
+		<DisplayString>
+			{(InterfaceType)(mStorage >> 16)} / {(InterfaceType)(mStorage &amp; 0xFFFF)}
+		</DisplayString>
+		<Expand>
+			<ExpandedItem>
+				mStorage
+			</ExpandedItem>
+		</Expand>
+	</Type>
+
+
+	<!--
 		Rollback
 	-->
 
