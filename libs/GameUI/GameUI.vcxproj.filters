@@ -67,6 +67,9 @@
 		</ClCompile>
 		<ClCompile Include="AlignmentHelpers.cpp" />
 		<ClCompile Include="Font.cpp" />
+		<ClCompile Include="controllers\AspectColumnSlicer.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -142,6 +145,9 @@
 		</ClInclude>
 		<ClInclude Include="AlignmentHelpers.h" />
 		<ClInclude Include="Font.h" />
+		<ClInclude Include="controllers\AspectColumnSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="controllers">
