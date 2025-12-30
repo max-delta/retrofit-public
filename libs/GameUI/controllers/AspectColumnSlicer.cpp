@@ -132,8 +132,8 @@ void AspectColumnSlicer::OnAABBRecalc( UIContext& context, Container& container 
 	RF_ASSERT( widthOfEachSide >= 0 );
 
 	// Move the anchors
-	gfx::ppu::CoordElem const xMiddleLeft = x0 + widthOfEachSide;
-	gfx::ppu::CoordElem const xMiddleRight = x100 - widthOfEachSide;
+	gfx::ppu::CoordElem const xMiddleLeft = math::integer_cast<gfx::ppu::CoordElem>( x0 + widthOfEachSide );
+	gfx::ppu::CoordElem const xMiddleRight = math::integer_cast<gfx::ppu::CoordElem>( x100 - widthOfEachSide );
 	RF_ASSERT( xMiddleLeft < xMiddleRight );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 1 ), { xMiddleLeft, y0 } );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 2 ), { xMiddleRight, y0 } );
