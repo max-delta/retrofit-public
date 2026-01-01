@@ -2,6 +2,7 @@
 #include "Common.h"
 
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
+#include "AppCommon_GraphicalClient/StartupConfig.h"
 
 #include "GameInput/ControllerManager.h"
 
@@ -63,7 +64,7 @@ static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Startup( cli::ArgView const& args )
+void Startup( cli::ArgView const& args, StartupConfig const& config )
 {
 	sCommandLineArgs = DefaultCreator<cli::ArgParse>::Create( args );
 	gCommandLineArgs = sCommandLineArgs;
@@ -77,15 +78,15 @@ void Startup( cli::ArgView const& args )
 		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
-		if constexpr( config::kInformativeLogging == false )
+		if( config.mInformativeLogging == false )
 		{
 			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_INFO;
 		}
-		if constexpr( config::kVerboseLogging == false )
+		if( config.mVerboseLogging == false )
 		{
 			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_DEBUG;
 		}
-		if constexpr( config::kTraceLogging == false )
+		if( config.mTraceLogging == false )
 		{
 			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
 		}
@@ -139,15 +140,15 @@ void Startup( cli::ArgView const& args )
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 
 		// Intentionally always logging informative data
-		( (void)config::kInformativeLogging );
+		( (void)config.mInformativeLogging );
 
-		if constexpr( config::kVerboseLogging == false )
+		if( config.mVerboseLogging == false )
 		{
 			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_DEBUG;
 		}
 
 		// Intentionally never logging trace data
-		( (void)config::kTraceLogging );
+		( (void)config.mTraceLogging );
 		def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
 
 		def.mUtf8HandlerFunc = file::FileLogger;

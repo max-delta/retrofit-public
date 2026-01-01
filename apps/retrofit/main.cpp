@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
+#include "AppCommon_GraphicalClient/StartupConfig.h"
 #include "Tests.h"
 #include "Scratch.h"
 
@@ -172,7 +173,7 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 {
 	using namespace RF;
 
-	app::Startup( { argc, argv } );
+	app::Startup( { argc, argv }, app::StartupConfig{} );
 
 	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, testDataMountFile );

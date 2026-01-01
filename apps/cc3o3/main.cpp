@@ -6,6 +6,7 @@
 #include "cc3o3/time/TimeFwd.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
+#include "AppCommon_GraphicalClient/StartupConfig.h"
 
 #include "PPU/PPUController.h"
 #include "PlatformUtils_win32/windowing.h"
@@ -20,7 +21,7 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 	using namespace RF;
 
 	// Startup
-	app::Startup( { argc, argv } );
+	app::Startup( { argc, argv }, app::StartupConfig{} );
 	cc::Startup();
 
 	using Limiter = cc::time::FrameLimiter;

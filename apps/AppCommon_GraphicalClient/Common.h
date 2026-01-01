@@ -5,6 +5,9 @@
 
 // Forwards
 namespace RF {
+namespace app {
+	struct StartupConfig;
+}
 namespace cli {
 	class ArgView;
 	class ArgParse;
@@ -49,7 +52,8 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
-APPCOMMONGRAPHICALCLIENT_API void Startup( cli::ArgView const& args );
+// Lifetime
+APPCOMMONGRAPHICALCLIENT_API void Startup( cli::ArgView const& args, StartupConfig const& config );
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();
 
 ///////////////////////////////////////////////////////////////////////////////

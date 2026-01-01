@@ -6,6 +6,7 @@
 		<ClInclude Include="Common.h" />
 		<ClInclude Include="StandardTaskScheduler.h" />
 		<ClInclude Include="FrameBuilder.h" />
+		<ClInclude Include="StartupConfig.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -14,5 +15,6 @@
 		<ClCompile Include="wndproc.cpp" />
 		<ClCompile Include="StandardTaskScheduler.cpp" />
 		<ClCompile Include="FrameBuilder.cpp" />
+		<ClCompile Include="StartupConfig.cpp" />
 	</ItemGroup>
 </Project>
