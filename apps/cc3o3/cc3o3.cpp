@@ -75,9 +75,9 @@ RF_NO_INLINE void RollbackTickWrapper( FuncT const& func )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Startup()
+void Startup( init::StartupConfig const& config )
 {
-	SystemStartup();
+	SystemStartup( config );
 
 	sAppStateManager.AddState( appstate::id::Boot, DefaultCreator<appstate::Boot>::Create() );
 	sAppStateManager.AddState( appstate::id::InitialLoading, DefaultCreator<appstate::InitialLoading>::Create() );

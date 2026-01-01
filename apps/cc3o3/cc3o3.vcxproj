@@ -76,6 +76,7 @@
 		<ClCompile Include="Common.cpp" />
 		<ClCompile Include="CommonPaths.cpp" />
 		<ClCompile Include="company\CompanyManager.cpp" />
+		<ClCompile Include="StartupConfig.cpp" />
 		<ClCompile Include="DeveloperHud.cpp" />
 		<ClCompile Include="elements\ElementDatabase.cpp" />
 		<ClCompile Include="elements\ElementDesc.cpp" />
@@ -224,6 +225,7 @@
 		<ClInclude Include="company\CompanyManager.h" />
 		<ClInclude Include="company\project.h" />
 		<ClInclude Include="company\stdafx.h" />
+		<ClInclude Include="StartupConfig.h" />
 		<ClInclude Include="DeveloperHud.h" />
 		<ClInclude Include="elements\ElementDatabase.h" />
 		<ClInclude Include="elements\ElementDesc.h" />

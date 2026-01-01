@@ -4,6 +4,9 @@
 #include "core/ptr/ptr_fwd.h"
 
 // Forwards
+namespace RF::cc::init {
+struct StartupConfig;
+}
 namespace RF::rollback {
 class RollbackManager;
 }
@@ -73,7 +76,7 @@ extern WeakPtr<state::ObjectManager> gObjectManager;
 extern WeakPtr<save::SaveManager> gSaveManager;
 extern WeakPtr<campaign::CampaignManager> gCampaignManager;
 
-void SystemStartup();
+void SystemStartup( init::StartupConfig const& config );
 void SystemShutdown();
 
 ///////////////////////////////////////////////////////////////////////////////

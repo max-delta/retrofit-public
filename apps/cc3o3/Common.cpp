@@ -71,7 +71,7 @@ static UniquePtr<campaign::CampaignManager> sCampaignManager;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void SystemStartup()
+void SystemStartup( init::StartupConfig const& config )
 {
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "System startup" );
 

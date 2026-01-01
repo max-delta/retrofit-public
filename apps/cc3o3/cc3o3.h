@@ -5,6 +5,10 @@
 
 #include "rftl/string"
 
+// Forwards
+namespace RF::cc::init {
+struct StartupConfig;
+}
 
 namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,7 +24,7 @@ enum class SimulationMode : uint8_t
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Startup();
+void Startup( init::StartupConfig const& config );
 void ProcessFrame();
 void Shutdown();
 

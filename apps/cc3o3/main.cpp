@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "cc3o3/cc3o3.h"
+#include "cc3o3/StartupConfig.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/sync/Session.h"
 #include "cc3o3/time/TimeFwd.h"
@@ -21,8 +22,11 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 	using namespace RF;
 
 	// Startup
-	app::Startup( { argc, argv }, app::StartupConfig{} );
-	cc::Startup();
+	{
+		cc::init::StartupConfig const config = cc::init::StartupConfig::FetchFromBinary();
+		app::Startup( { argc, argv }, config );
+		cc::Startup( config );
+	}
 
 	using Limiter = cc::time::FrameLimiter;
 	Limiter frameLimiter;

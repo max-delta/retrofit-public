@@ -319,6 +319,7 @@
 		<ClCompile Include="appstates\gameplay\Gameplay_Cutscene.cpp">
 			<Filter>appstates\gameplay</Filter>
 		</ClCompile>
+		<ClCompile Include="StartupConfig.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -870,6 +871,7 @@
 		<ClInclude Include="appstates\gameplay\Gameplay_Cutscene.h">
 			<Filter>appstates\gameplay</Filter>
 		</ClInclude>
+		<ClInclude Include="StartupConfig.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="appstates">
