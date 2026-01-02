@@ -268,7 +268,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::TextLabel>::Create() );
 		url->SetJustification( ui::Justification::BottomRight );
 		url->SetFont( ui::font::MinSize );
-		if constexpr( config::kInternalBuildNotice )
+		if constexpr( config::flag::kInternalBuildNotice )
 		{
 			url->SetText( "INTERNAL USE ONLY" );
 			url->SetColor( math::Color3f::kRed );

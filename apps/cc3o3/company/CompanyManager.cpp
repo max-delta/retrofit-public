@@ -238,7 +238,7 @@ CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::ObjectRe
 
 CompanyManager::ElementCounts CompanyManager::CalcTotalElements( state::comp::Progression const& progression ) const
 {
-	if constexpr( config::kDevCheats )
+	if constexpr( config::flag::kDevCheats )
 	{
 		static bool sDevCheatAllElements = false;
 		if( sDevCheatAllElements )

@@ -408,7 +408,7 @@ void ProcessFrame()
 		{
 			rewindPoint = preFrameCommitRange.first - time::CommonClock::duration( 1 );
 		}
-		if constexpr( config::kAsserts )
+		if constexpr( config::flag::kAsserts )
 		{
 			static constexpr auto assertSafeRewind = []( rollback::Domain const& domain, time::CommonClock::time_point const rewindAttempt ) -> void //
 			{

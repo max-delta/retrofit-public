@@ -2,7 +2,7 @@
 	#include "PreConfig.h"
 #endif
 
-namespace RF::config {
+namespace RF::config::flag {
 ///////////////////////////////////////////////////////////////////////////////
 #define RF_CONFIG_FLAG( MACRO ) ( RF_IS_ALLOWED( MACRO ) ? true : false )
 

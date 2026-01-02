@@ -23,7 +23,7 @@ RowSlicer::RowSlicer( Ratios const& ratios )
 	, mRatios( ratios )
 {
 	RF_ASSERT( mRatios.size() >= 2 );
-	if constexpr( config::kAsserts )
+	if constexpr( config::flag::kAsserts )
 	{
 		float total = 0.f;
 		for( Ratios::value_type const& ratio : mRatios )

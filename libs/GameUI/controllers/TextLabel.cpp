@@ -113,7 +113,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 	gfx::ppu::Vec2 const expectedDimensions = CalculatePrimaryFontExtents( renderer, mFontID, mDesiredHeight, mBaselineOffset, mText );
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
 
-	if constexpr( config::kOncePer )
+	if constexpr( config::flag::kOncePer )
 	{
 		if( mIgnoreOverflow == false )
 		{

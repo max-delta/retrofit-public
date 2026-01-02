@@ -25,7 +25,7 @@ inline void StateStream<ValueT, MaxChangesT>::Write( time::CommonClock::time_poi
 	{
 		// Need to add to end
 
-		if constexpr( config::kRollbackPerfOptimizations )
+		if constexpr( config::flag::kRollbackPerfOptimizations )
 		{
 			if( mValues.empty() == false && mValues.back() == value )
 			{

@@ -7,9 +7,9 @@ namespace RF::app {
 
 struct StartupConfig
 {
-	bool mInformativeLogging = config::kInformativeLogging;
-	bool mVerboseLogging = config::kVerboseLogging;
-	bool mTraceLogging = config::kTraceLogging;
+	bool mInformativeLogging = config::flag::kInformativeLogging;
+	bool mVerboseLogging = config::flag::kVerboseLogging;
+	bool mTraceLogging = config::flag::kTraceLogging;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

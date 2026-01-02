@@ -58,7 +58,7 @@ void SessionHostManager::StartHostingASession()
 	// NOTE: Taking lock entire time to lock start/stop logic
 	WriterLock const startStopLock( mStartStopMutex );
 
-	if constexpr( config::kAsserts )
+	if constexpr( config::flag::kAsserts )
 	{
 		// Ensure there are no client connections
 		{
