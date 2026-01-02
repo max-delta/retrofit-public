@@ -8,13 +8,13 @@ namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename Container>
-bool contains( Container const& container, typename Container::value_type const& value )
+inline bool contains( Container const& container, typename Container::value_type const& value )
 {
 	return find( container.begin(), container.end(), value ) != container.end();
 }
 
 template<typename T, size_t N>
-bool contains( T const ( &container )[N], T const& value )
+inline bool contains( T const ( &container )[N], T const& value )
 {
 	for( T const& entry : container )
 	{
@@ -29,7 +29,7 @@ bool contains( T const ( &container )[N], T const& value )
 
 
 template<typename Container>
-auto erase_all( Container& container, typename Container::value_type const& value ) -> typename Container::iterator
+inline auto erase_all( Container& container, typename Container::value_type const& value ) -> typename Container::iterator
 {
 	return erase_if(
 		container,
@@ -82,7 +82,7 @@ inline auto replace_copy( Container const& container, typename Container::value_
 
 
 template<typename Container>
-auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container
+inline auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container
 {
 	Container retVal = container;
 	retVal.emplace_back( value );
@@ -92,7 +92,7 @@ auto concatenate( Container const& container, typename Container::value_type con
 
 
 template<typename DestContainer, typename SourceContainer>
-auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator
+inline constexpr auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator
 {
 	typename DestContainer::iterator destIter = dest.begin();
 	typename SourceContainer::const_iterator sourceIter = source.begin();

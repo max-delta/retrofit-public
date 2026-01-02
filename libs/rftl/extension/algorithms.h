@@ -28,7 +28,7 @@ template<typename Container>
 auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container;
 
 template<typename DestContainer, typename SourceContainer>
-auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator;
+constexpr auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator;
 
 ///////////////////////////////////////////////////////////////////////////////
 }
