@@ -5,6 +5,7 @@
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="ArgView.h" />
 		<ClInclude Include="ArgParse.h" />
+		<ClInclude Include="CommandLineFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />

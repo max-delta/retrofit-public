@@ -1,5 +1,7 @@
 #include "project.h"
 
+#include "CommandLine/CommandLineFwd.h"
+
 #include "core/macros.h"
 
 

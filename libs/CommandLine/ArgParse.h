@@ -1,15 +1,12 @@
 #include "project.h"
 
+#include "CommandLine/CommandLineFwd.h"
+
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
 #include "rftl/vector"
 #include "rftl/string"
 
-
-// Forwards
-namespace RF::cli {
-class ArgView;
-}
 
 namespace RF::cli {
 ///////////////////////////////////////////////////////////////////////////////

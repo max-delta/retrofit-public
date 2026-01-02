@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<ClInclude Include="ArgParse.h" />
 		<ClInclude Include="ArgView.h" />
+		<ClInclude Include="CommandLineFwd.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
