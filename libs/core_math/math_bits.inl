@@ -11,14 +11,6 @@
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
-namespace details {
-#if RF_IS_ALLOWED( RF_CONFIG_LEGACY_BIT_MATH )
-static constexpr bool kUseLegacyBitMath = true;
-#else
-static constexpr bool kUseLegacyBitMath = false;
-#endif
-}
-///////////////////////////////////////////////////////////////////////////////
 
 template<> constexpr uint8_t GetAllBitsSet()
 {
@@ -95,7 +87,7 @@ constexpr bool HasOnly1BitSet( T const value )
 {
 	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	if constexpr( details::kUseLegacyBitMath == false )
+	if constexpr( config::flag::kLegacyBitMath == false )
 	{
 		return rftl::has_single_bit( value );
 	}
@@ -124,7 +116,7 @@ constexpr size_t GetOnesIndexOfHighestBit( T const value )
 {
 	static_assert( rftl::is_integral<T>::value, "bit operations only valid on integral types" );
 
-	if constexpr( details::kUseLegacyBitMath == false )
+	if constexpr( config::flag::kLegacyBitMath == false )
 	{
 		// For whatever reason, this function returns signed, even though it
 		//  should only be able to return unsigned values

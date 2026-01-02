@@ -32,12 +32,13 @@ void RollbackInputManager::AddController(
 
 	WriterLock const lock( mControllersMutex );
 
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
-	for( WeakPtr<Controller> const& curController : mControllers )
+	if constexpr( config::flag::kAsserts )
 	{
-		RF_ASSERT( curController != controller );
+		for( WeakPtr<Controller> const& curController : mControllers )
+		{
+			RF_ASSERT( curController != controller );
+		}
 	}
-#endif
 
 	controller->SetRollbackManager( mRollMan );
 	controller->SetRollbackIdentifier( identifier );
@@ -62,12 +63,13 @@ void RollbackInputManager::AddPassthrough( WeakPtr<Passthrough> passthrough )
 
 	WriterLock const lock( mPassthroughsMutex );
 
-#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
-	for( WeakPtr<Passthrough> const& curPassthrough : mPassthroughs )
+	if constexpr( config::flag::kAsserts )
 	{
-		RF_ASSERT( curPassthrough != passthrough );
+		for( WeakPtr<Passthrough> const& curPassthrough : mPassthroughs )
+		{
+			RF_ASSERT( curPassthrough != passthrough );
+		}
 	}
-#endif
 
 	mPassthroughs.emplace_back( passthrough );
 }
