@@ -95,6 +95,9 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 	#define RF_BUILD_MESSAGE( MESSAGE ) __pragma( message( "" MESSAGE "" ) )
 
+	#define RF_DECLARE_SECTION_RW( NAME ) __pragma( section( NAME, read, write ) )
+	#define RF_ASSIGN_TO_SECTION( NAME ) __declspec( allocate( NAME ) )
+
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
 		#define RF_ACK_64BIT_PADDING RF_MSVC_INLINE_SUPPRESS( 4324 )
@@ -151,6 +154,9 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 	#define RF_ACK_CONSTEXPR_SIGN_MISMATCH RF_MSVC_INLINE_SUPPRESS( 4287 )
 
 	#define RF_BUILD_MESSAGE( MESSAGE )
+
+	#define RF_DECLARE_SECTION_RW( NAME ) __pragma( section( NAME, read, write ) )
+	#define RF_ASSIGN_TO_SECTION( NAME ) __declspec( allocate( NAME ) )
 
 	#ifdef _M_AMD64
 		#define RF_PLATFORM_X86_64
