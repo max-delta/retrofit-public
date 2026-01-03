@@ -1582,15 +1582,25 @@ math::Vector2f PPUController::CoordToDevice( Coord const& coord ) const
 	x *= coordToTiles;
 	y *= coordToTiles;
 
-	// NDC, mHeight only
+	// NDC, for square aspect ratios only
 	// [0-2/15.3f]
 	float const tilesToPartialNDC = 1.f / diagonalTiles;
 	x *= tilesToPartialNDC;
 	y *= tilesToPartialNDC;
 
-	// NDC, correcting mWidth
-	float const heightToWidthNDC = math::float_cast<float>( mHeight ) / math::float_cast<float>( mWidth );
-	x *= heightToWidthNDC;
+	// NDC, correcting for portrait or landscape
+	if( mHeight < mWidth )
+	{
+		// Landscape
+		float const heightToWidthNDC = math::float_cast<float>( mHeight ) / math::float_cast<float>( mWidth );
+		x *= heightToWidthNDC;
+	}
+	else if( mWidth < mHeight )
+	{
+		// Portrait
+		float const widthToHeightNDC = math::float_cast<float>( mWidth ) / math::float_cast<float>( mHeight );
+		y *= widthToHeightNDC;
+	}
 
 	return math::Vector2f( x, y );
 }
