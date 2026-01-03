@@ -1589,6 +1589,8 @@ math::Vector2f PPUController::CoordToDevice( Coord const& coord ) const
 	y *= tilesToPartialNDC;
 
 	// NDC, correcting for portrait or landscape
+	// NOTE: Without this step it would simply stretch, but we want it to
+	//  instead extend in the direction that the aspect ratio is non-square
 	if( mHeight < mWidth )
 	{
 		// Landscape
