@@ -40,6 +40,7 @@ struct alignas( 16 ) CoffSectionEntry
 	static constexpr CoffSectionEntry FindEntry( rftl::span<CoffSectionEntry const> entries, rftl::string_view name );
 	static bool OverwriteEntry( rftl::span<CoffSectionEntry> entries, CoffSectionEntry const& overwrite );
 
+	static CoffSectionEntry* FindMutableEntryRef( rftl::span<CoffSectionEntry> entries, rftl::string_view name );
 
 private:
 	// Will always be null-terminated

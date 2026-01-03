@@ -28,5 +28,19 @@ bool CoffSectionEntry::OverwriteEntry( rftl::span<CoffSectionEntry> entries, Cof
 	return hasWritten;
 }
 
+
+
+CoffSectionEntry* CoffSectionEntry::FindMutableEntryRef( rftl::span<CoffSectionEntry> entries, rftl::string_view name )
+{
+	for( CoffSectionEntry& entry : entries )
+	{
+		if( entry.GetName() == name )
+		{
+			return &entry;
+		}
+	}
+	return nullptr;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
