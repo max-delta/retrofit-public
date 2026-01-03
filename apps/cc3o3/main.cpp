@@ -2,6 +2,7 @@
 
 #include "cc3o3/cc3o3.h"
 #include "cc3o3/StartupConfig.h"
+#include "cc3o3/exfil/Exfiltrate.h"
 #include "cc3o3/input/HardcodedSetup.h"
 #include "cc3o3/sync/Session.h"
 #include "cc3o3/time/TimeFwd.h"
@@ -80,6 +81,9 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 			app::gGraphics->WaitForRender();
 		}
 		app::gGraphics->EndFrame();
+
+		// Exfiltration
+		cc::exfil::ExfiltrateFrameData();
 	}
 
 	// Shutdown

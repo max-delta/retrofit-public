@@ -320,6 +320,9 @@
 			<Filter>appstates\gameplay</Filter>
 		</ClCompile>
 		<ClCompile Include="StartupConfig.cpp" />
+		<ClCompile Include="exfil\Exfiltrate.cpp">
+			<Filter>exfil</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -872,6 +875,15 @@
 			<Filter>appstates\gameplay</Filter>
 		</ClInclude>
 		<ClInclude Include="StartupConfig.h" />
+		<ClInclude Include="exfil\stdafx.h">
+			<Filter>exfil</Filter>
+		</ClInclude>
+		<ClInclude Include="exfil\Exfiltrate.h">
+			<Filter>exfil</Filter>
+		</ClInclude>
+		<ClInclude Include="exfil\project.h">
+			<Filter>exfil</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="appstates">
@@ -951,6 +963,9 @@
 		</Filter>
 		<Filter Include="casting\Contexts">
 			<UniqueIdentifier>{e7952951-6c92-473c-bb16-d945a532e7a4}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="exfil">
+			<UniqueIdentifier>{8c067b5e-8fd3-4d02-9f23-734a71975df3}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>
