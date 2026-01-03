@@ -29,16 +29,16 @@ ArgParse::OptionNames ArgParse::GetOptionNames() const
 
 
 
-bool ArgParse::HasOption( OptionName const& name ) const
+bool ArgParse::HasOption( rftl::string_view name ) const
 {
 	return mOptions.count( name ) > 0;
 }
 
 
 
-bool ArgParse::HasAnyOption( rftl::initializer_list<OptionName> const& names ) const
+bool ArgParse::HasAnyOption( rftl::initializer_list<rftl::string_view> const& names ) const
 {
-	for( OptionName const& name : names )
+	for( rftl::string_view const& name : names )
 	{
 		if( mOptions.count( name ) > 0 )
 		{
@@ -50,7 +50,7 @@ bool ArgParse::HasAnyOption( rftl::initializer_list<OptionName> const& names ) c
 
 
 
-ArgParse::OptionVals ArgParse::GetOptionVals( OptionName const& name ) const
+ArgParse::OptionVals ArgParse::GetOptionVals( rftl::string_view name ) const
 {
 	Options::const_iterator const iter = mOptions.find( name );
 	if( iter != mOptions.end() )

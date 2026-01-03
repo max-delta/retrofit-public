@@ -2,10 +2,12 @@
 
 #include "CommandLine/CommandLineFwd.h"
 
+#include "rftl/extension/string_hash.h"
 #include "rftl/unordered_map"
 #include "rftl/unordered_set"
 #include "rftl/vector"
 #include "rftl/string"
+#include "rftl/string_view"
 
 
 namespace RF::cli {
@@ -23,10 +25,10 @@ public:
 	using Arguments = rftl::vector<Argument>;
 
 	using OptionName = rftl::string;
-	using OptionNames = rftl::unordered_set<OptionName>;
+	using OptionNames = rftl::unordered_set<OptionName, rftl::string_hash, rftl::equal_to<>>;
 	using OptionVal = rftl::string;
 	using OptionVals = rftl::vector<OptionVal>;
-	using Options = rftl::unordered_map<OptionName, OptionVals>;
+	using Options = rftl::unordered_map<OptionName, OptionVals, rftl::string_hash, rftl::equal_to<>>;
 
 	static constexpr char kOptionPrefix = '-';
 	static constexpr char kOptionTerminator[] = "--";
@@ -39,9 +41,9 @@ public:
 	ArgParse( ArgView const& args );
 
 	OptionNames GetOptionNames() const;
-	bool HasOption( OptionName const& name ) const;
-	bool HasAnyOption( rftl::initializer_list<OptionName> const& names ) const;
-	OptionVals GetOptionVals( OptionName const& name ) const;
+	bool HasOption( rftl::string_view name ) const;
+	bool HasAnyOption( rftl::initializer_list<rftl::string_view> const& names ) const;
+	OptionVals GetOptionVals( rftl::string_view name ) const;
 	Arguments GetArguments() const;
 
 
