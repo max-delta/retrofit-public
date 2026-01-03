@@ -53,7 +53,8 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
 
 // Lifetime
-APPCOMMONGRAPHICALCLIENT_API void Startup( cli::ArgView const& args, StartupConfig const& config );
+APPCOMMONGRAPHICALCLIENT_API void StartupWithoutConfig( cli::ArgView const& args );
+APPCOMMONGRAPHICALCLIENT_API void Startup( cli::ArgView const& args, StartupConfig& config );
 APPCOMMONGRAPHICALCLIENT_API void Shutdown();
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 
 	// Startup
 	{
-		cc::init::StartupConfig const config = cc::init::StartupConfig::FetchFromBinary();
+		cc::init::StartupConfig config = cc::init::StartupConfig::FetchFromBinary();
 		app::Startup( { argc, argv }, config );
 		cc::Startup( config );
 	}

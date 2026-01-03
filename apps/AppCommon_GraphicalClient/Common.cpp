@@ -64,10 +64,20 @@ static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-void Startup( cli::ArgView const& args, StartupConfig const& config )
+void StartupWithoutConfig( cli::ArgView const& args )
+{
+	StartupConfig defaults{};
+	Startup( args, defaults );
+}
+
+
+
+void Startup( cli::ArgView const& args, StartupConfig& config )
 {
 	sCommandLineArgs = DefaultCreator<cli::ArgParse>::Create( args );
 	gCommandLineArgs = sCommandLineArgs;
+
+	config.AdjustFromArgs( *gCommandLineArgs );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup" );
 

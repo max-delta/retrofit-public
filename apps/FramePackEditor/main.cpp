@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
-#include "AppCommon_GraphicalClient/StartupConfig.h"
 #include "FramePackEditor.h"
 
 #include "PPU/PPUController.h"
@@ -28,7 +27,7 @@ int main( int argc, char* argv[] )
 {
 	using namespace RF;
 
-	app::Startup( { argc, argv }, app::StartupConfig{} );
+	app::StartupWithoutConfig( { argc, argv } );
 
 	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, testDataMountFile );
