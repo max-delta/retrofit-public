@@ -11,6 +11,13 @@ namespace RF::platform::windowing {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+static math::AABB4i32 AABBFromRect( win32::RECT const& rect )
+{
+	return math::AABB4i32( rect.left, rect.top, rect.right, rect.bottom );
+}
+
+
+
 static win32::DWORD ComputeWindowStyle( WindowStyle style )
 {
 	static constexpr win32::DWORD kAddTitleBar =
@@ -57,8 +64,19 @@ static win32::DWORD ComputeWindowStyle( WindowStyle style )
 
 
 
-static math::Vector2i32 ComputeWindowPosition( WindowStyle style )
+static math::Vector2i32 ComputeWindowPosition( win32::RECT const& shape, WindowStyle style )
 {
+	static constexpr auto centered = []( win32::RECT const& rect ) -> math::Vector2i32
+	{
+		math::AABB4i32 const window = AABBFromRect( rect );
+		math::AABB4i32 const desktop = GetDesktopShape();
+		int32_t const x = ( desktop.Width() - window.Width() ) / 2;
+		int32_t const y = ( desktop.Height() - window.Height() ) / 2;
+		RF_ASSERT( x >= 0 );
+		RF_ASSERT( y >= 0 );
+		return { x, y };
+	};
+
 	switch( style )
 	{
 		case WindowStyle::Legacy:
@@ -67,7 +85,7 @@ static math::Vector2i32 ComputeWindowPosition( WindowStyle style )
 		case WindowStyle::Standard:
 			// The default ends up in a random location that is often partially
 			//  off-screen, Windows can't be trusted for this
-			return { 0, 0 };
+			return centered( shape );
 		case WindowStyle::Borderless:
 			// The default ends up in the upper left corner
 			return { CW_USEDEFAULT, CW_USEDEFAULT };
@@ -163,7 +181,8 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow(
 		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR;
 	static_assert( kExtendedStyle == 0, "Expected this to be the default" );
 
-	math::Vector2i32 const windowPos = details::ComputeWindowPosition( windowStyle );
+	// Window position
+	math::Vector2i32 const windowPos = details::ComputeWindowPosition( windRect, windowStyle );
 
 	// Create the actual window
 	win32::HWND const hWnd = win32::CreateWindowExW(
@@ -185,13 +204,24 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow(
 
 
 
+PLATFORMUTILS_API math::AABB4i32 GetDesktopShape()
+{
+	win32::RECT rect = {};
+	win32::BOOL success = win32::SystemParametersInfoA( SPI_GETWORKAREA, 0, &rect, 0 );
+	RF_ASSERT( success == win32::TRUE );
+
+	return details::AABBFromRect( rect );
+}
+
+
+
 PLATFORMUTILS_API math::AABB4i32 GetWindowShape( shim::HWND hWnd )
 {
 	win32::RECT rect;
 	win32::BOOL const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
 	RF_ASSERT( success == win32::TRUE );
 
-	return math::AABB4i32( rect.left, rect.top, rect.right, rect.bottom );
+	return details::AABBFromRect( rect );
 }
 
 

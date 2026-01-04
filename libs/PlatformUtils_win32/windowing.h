@@ -33,6 +33,7 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow(
 	uint32_t height,
 	shim::WNDPROC wndProc );
 
+PLATFORMUTILS_API math::AABB4i32 GetDesktopShape();
 PLATFORMUTILS_API math::AABB4i32 GetWindowShape( shim::HWND hWnd );
 
 // Positive: Number of messages processed
