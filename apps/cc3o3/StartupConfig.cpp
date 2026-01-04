@@ -49,6 +49,11 @@ StartupConfig StartupConfig::FetchFromBinary()
 		return entry.AsBool();
 	};
 
+	// Hard-coded
+	{
+		retVal.mWindowTitle = "CC3O3 Pre-Alpha";
+	}
+
 	// Entries
 	{
 		using namespace details::entries;

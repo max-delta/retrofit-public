@@ -159,6 +159,9 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 
 bool PPUController::ResizeSurface( uint16_t width, uint16_t height )
 {
+	RF_ASSERT( width > 0 );
+	RF_ASSERT( height > 0 );
+
 	mWidth = width;
 	mHeight = height;
 	bool const surfaceSuccess = mDeviceInterface->SetSurfaceSize( width, height );

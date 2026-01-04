@@ -166,14 +166,21 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
-	constexpr uint8_t k_WindowScaleFactor = 4;
-	constexpr uint16_t k_Width = gfx::ppu::kDesiredWidth * k_WindowScaleFactor;
-	constexpr uint16_t k_Height = gfx::ppu::kDesiredHeight * k_WindowScaleFactor;
-	shim::HWND hwnd = platform::windowing::CreateNewWindow( k_Width, k_Height, WndProc );
+	static constexpr platform::windowing::WindowStyle kWindowStyle =
+		platform::windowing::WindowStyle::Legacy;
+	static constexpr uint8_t kWindowScaleFactor = 4;
+	static constexpr uint16_t kWidth = gfx::ppu::kDesiredWidth * kWindowScaleFactor;
+	static constexpr uint16_t kHeight = gfx::ppu::kDesiredHeight * kWindowScaleFactor;
+	shim::HWND const hWnd = platform::windowing::CreateNewWindow(
+		kWindowStyle, config.mWindowTitle, kWidth, kHeight, WndProc );
+	// NOTE: Fetching window shape regardless of what we asked for, since it
+	//  may be different (such as if we asked for borderless fullscreen and it
+	//  resulted in it being maximized for us automatically)
+	math::AABB4i32 const windowShape = platform::windowing::GetWindowShape( hWnd );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Attaching renderer..." );
 	UniquePtr<gfx::DeviceInterface> renderDevice = DefaultCreator<gfx::SimpleGL>::Create();
-	bool const rendererAttached = renderDevice->AttachToWindow( hwnd );
+	bool const rendererAttached = renderDevice->AttachToWindow( hWnd );
 	if( rendererAttached == false )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to attach a renderer to window" );
@@ -183,7 +190,9 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing graphics..." );
 	sGraphics = DefaultCreator<gfx::ppu::PPUController>::Create( rftl::move( renderDevice ), gVfs );
 	gGraphics = sGraphics;
-	bool const graphicsInitialized = gGraphics->Initialize( k_Width, k_Height );
+	bool const graphicsInitialized = gGraphics->Initialize(
+		RF::math::integer_cast<uint16_t>( windowShape.Width() ),
+		RF::math::integer_cast<uint16_t>( windowShape.Height() ) );
 	if( graphicsInitialized == false )
 	{
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to initialize graphics" );

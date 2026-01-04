@@ -80,12 +80,28 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 			// The size of the window has changed, let graphics know
 			if( gGraphics != nullptr )
 			{
-				win32::RECT rect;
-				win32::BOOL const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
-				RF_ASSERT( success == win32::TRUE );
-				gGraphics->ResizeSurface(
-					RF::math::integer_cast<uint16_t>( rect.right ),
-					RF::math::integer_cast<uint16_t>( rect.bottom ) );
+				// NOTE: In theory this should be the same as params, but we're
+				//  not going to trust that, just in case something weird
+				//  happens like multiple size event messages getting stacked
+				//  up in sequence, so we're just going to use the event as a
+				//  signal that we should check the current shape
+				math::AABB4i32 const shape = platform::windowing::GetWindowShape( hWnd );
+
+				uint16_t const width = RF::math::integer_cast<uint16_t>( shape.Width() );
+				uint16_t const height = RF::math::integer_cast<uint16_t>( shape.Height() );
+
+				if( width == 0 || height == 0 )
+				{
+					// This implies we've likely been minimized, so we'll
+					//  ignore this message to avoid freaking out the graphics
+					//  engine and downstream consumers of it
+					RF_ASSERT( width == 0 );
+					RF_ASSERT( height == 0 );
+				}
+				else
+				{
+					gGraphics->ResizeSurface( width, height );
+				}
 			}
 		}
 			return 0;

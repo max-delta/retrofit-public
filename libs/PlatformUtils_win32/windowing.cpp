@@ -2,26 +2,141 @@
 #include "windowing.h"
 
 #include "core_platform/inc/windows_inc.h"
+#include "core_unicode/CharConvert.h"
+
+#include "rftl/string"
 
 
 namespace RF::platform::windowing {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
 
-PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPROC WndProc )
+static win32::DWORD ComputeWindowStyle( WindowStyle style )
 {
+	static constexpr win32::DWORD kAddTitleBar =
+		WS_CAPTION | WS_SYSMENU;
+	static constexpr win32::DWORD kAllowResizing =
+		WS_SIZEBOX;
+
+	static constexpr win32::DWORD kLegacyStyle =
+		WS_VISIBLE | kAddTitleBar | kAllowResizing | WS_POPUP | WS_BORDER;
+	static constexpr win32::DWORD kStandardStyle =
+		WS_VISIBLE | kAddTitleBar | kAllowResizing | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+	static constexpr win32::DWORD kBorderlessStyle =
+		WS_VISIBLE | WS_POPUP | WS_MAXIMIZE;
+
+	// NOTE: Even though it shouldn't be able to accept minimize or restore
+	//  commands, it's still possible to force them (such as with Win+Down),
+	//  which breaks the window in a way that can't be recovered, since the
+	//  maximize IS correctly blocked, so we have to explicitly enable the
+	//  maximize command so that a user can potentially recover their window
+	//  without just restarting the whole application if they manage to get
+	//  themselves into such a state
+	// NOTE: The commands could theoretically be intercepted at the message
+	//  pump before they can execute, but there's cases (like Win+D) where we
+	//  probably still want to respect a forced window operation, even though
+	//  it's against the intended flow
+	static_assert( ( kBorderlessStyle & WS_SYSMENU ) == 0 );
+	static_assert( ( kBorderlessStyle & WS_MINIMIZEBOX ) == 0 );
+	static constexpr win32::DWORD kHACKRecoverBorderlessFullScreen = WS_MAXIMIZEBOX;
+
+	switch( style )
+	{
+		case WindowStyle::Legacy:
+			return kLegacyStyle;
+		case WindowStyle::Standard:
+			return kStandardStyle;
+		case WindowStyle::Borderless:
+			return kBorderlessStyle | kHACKRecoverBorderlessFullScreen;
+		case WindowStyle::Invalid:
+		default:
+			RF_DBGFAIL();
+			return kLegacyStyle;
+	}
+}
+
+
+
+static math::Vector2i32 ComputeWindowPosition( WindowStyle style )
+{
+	switch( style )
+	{
+		case WindowStyle::Legacy:
+			// The default ends up in the upper left corner
+			return { CW_USEDEFAULT, CW_USEDEFAULT };
+		case WindowStyle::Standard:
+			// The default ends up in a random location that is often partially
+			//  off-screen, Windows can't be trusted for this
+			return { 0, 0 };
+		case WindowStyle::Borderless:
+			// The default ends up in the upper left corner
+			return { CW_USEDEFAULT, CW_USEDEFAULT };
+		case WindowStyle::Invalid:
+		default:
+			RF_DBGFAIL();
+			return { CW_USEDEFAULT, CW_USEDEFAULT };
+	}
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+PLATFORMUTILS_API shim::HWND CreateNewWindow(
+	WindowStyle windowStyle,
+	rftl::string_view windowTitle,
+	uint32_t width,
+	uint32_t height,
+	shim::WNDPROC wndProc )
+{
+	RF_ASSERT( windowStyle != WindowStyle::Invalid );
+	RF_ASSERT( windowTitle.empty() == false );
+	RF_ASSERT( width > 0 );
+	RF_ASSERT( height > 0 );
+
+	// Window title can't be unicode
+	rftl::wstring ucs2WindowTitle;
+	ucs2WindowTitle.reserve( windowTitle.size() );
+	for( char const& ch : windowTitle )
+	{
+		if( unicode::IsValidAscii( ch ) )
+		{
+			ucs2WindowTitle.push_back( math::integer_cast<wchar_t>( ch ) );
+		}
+		else
+		{
+			RF_DBGFAIL_MSG( "Unsafe window title is not ASCII" );
+			ucs2WindowTitle.push_back( L'?' );
+		}
+	}
+
+	// Use default wndProc if none provided
+	if( wndProc == nullptr )
+	{
+		wndProc = shim::DefWindowProcW;
+	}
+
+	// HWND pointer target is void in shim and stub struct in win32
+	win32::WNDPROC adjustedWndProc = nullptr;
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wcast-function-type-strict" );
+	adjustedWndProc = reinterpret_cast<win32::WNDPROC>( wndProc );
+	RF_CLANG_POP();
+
 	// Paradoxically, we must tell Windows we want to do all the new DPI
 	//  scaling stuff, and that will make it NOT do any DPI scaling...
 	win32::SetProcessDPIAware();
 
 	// IDC_ARROW
-	win32::LPWSTR const idc_arrow = reinterpret_cast<win32::LPWSTR>( static_cast<win32::ULONG_PTR>( static_cast<win32::WORD>( 32512 ) ) );
+	win32::LPWSTR const idc_arrow =
+		reinterpret_cast<win32::LPWSTR>(
+			static_cast<win32::ULONG_PTR>(
+				static_cast<win32::WORD>( 32512u ) ) );
 
+	// Create the window class
+	static constexpr wchar_t kWindowClass[] = L"RetroFitPrimary";
 	win32::WNDCLASSW wc = {};
 	wc.style = CS_OWNDC; // Individual instances of this window will not share device contexts.
-	RF_CLANG_PUSH();
-	RF_CLANG_IGNORE( "-Wcast-function-type-strict" ); // HWND pointer target is void in shim and stub struct in win32
-	wc.lpfnWndProc = reinterpret_cast<win32::WNDPROC>( WndProc ); // The function that will be called for events.
-	RF_CLANG_POP();
+	wc.lpfnWndProc = adjustedWndProc; // The function that will be called for events.
 	wc.cbClsExtra = 0; // The class has no extra memory.
 	wc.cbWndExtra = 0; // The window has no extra memory.
 	//wc.hInstance = hInstance; // The application that is managing the window.
@@ -29,26 +144,35 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 	wc.hCursor = win32::LoadCursorW( nullptr, idc_arrow ); // We want to use the standard arrow cursor.
 	wc.hbrBackground = static_cast<win32::HBRUSH>( win32::GetStockObject( BLACK_BRUSH ) ); // The default background color.
 	wc.lpszMenuName = nullptr; // The class has no menu.
-	wc.lpszClassName = L"SimpleGL"; // The name of this class.
+	wc.lpszClassName = kWindowClass; // The name of this class.
 	RegisterClassW( &wc ); // Register the attributes for the next call to CreateWindow.
 
-	win32::DWORD const windowStyles = WS_CAPTION | WS_POPUPWINDOW | WS_VISIBLE | WS_SIZEBOX;
+	// Window style
+	win32::DWORD const computedWindowStyle = details::ComputeWindowStyle( windowStyle );
 
 	// Padding, for stuff like SM_CXFRAME, SM_CYFRAME, SM_CYCAPTION, etc.
 	win32::RECT windRect = {};
-	windRect.right = width;
-	windRect.bottom = height;
-	win32::AdjustWindowRect( &windRect, windowStyles, false );
-	int const windowWidth = windRect.right - windRect.left;
-	int const windowHeight = windRect.bottom - windRect.top;
+	windRect.right = math::integer_cast<win32::LONG>( width );
+	windRect.bottom = math::integer_cast<win32::LONG>( height );
+	win32::AdjustWindowRect( &windRect, computedWindowStyle, false );
+	win32::LONG const windowWidth = windRect.right - windRect.left;
+	win32::LONG const windowHeight = windRect.bottom - windRect.top;
 
-	win32::HWND hWnd;
-	hWnd = win32::CreateWindowExW( 0,
-		L"SimpleGL", // The window class to use.
-		L"SimpleGl Window", // The name to appear on the window.
-		windowStyles, // Window styles.
-		CW_USEDEFAULT,
-		CW_USEDEFAULT, // Initial window position.
+	// Extended style flags
+	static constexpr win32::DWORD kExtendedStyle =
+		WS_EX_LEFT | WS_EX_LTRREADING | WS_EX_RIGHTSCROLLBAR;
+	static_assert( kExtendedStyle == 0, "Expected this to be the default" );
+
+	math::Vector2i32 const windowPos = details::ComputeWindowPosition( windowStyle );
+
+	// Create the actual window
+	win32::HWND const hWnd = win32::CreateWindowExW(
+		kExtendedStyle,
+		kWindowClass, // The window class to use.
+		ucs2WindowTitle.data(), // The name to appear on the window.
+		computedWindowStyle, // Window style.
+		windowPos.x, // Initial window position.
+		windowPos.y, // Initial window position.
 		windowWidth, // Default window mWidth.
 		windowHeight, // Default window mHeight.
 		nullptr, // The window has no parent.
@@ -57,6 +181,17 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow( int width, int height, shim::WNDPR
 		nullptr ); // Pointer to a value passed through WM_CREATE.
 
 	return hWnd;
+}
+
+
+
+PLATFORMUTILS_API math::AABB4i32 GetWindowShape( shim::HWND hWnd )
+{
+	win32::RECT rect;
+	win32::BOOL const success = win32::GetClientRect( static_cast<win32::HWND>( hWnd ), &rect );
+	RF_ASSERT( success == win32::TRUE );
+
+	return math::AABB4i32( rect.left, rect.top, rect.right, rect.bottom );
 }
 
 
@@ -89,8 +224,8 @@ PLATFORMUTILS_API int32_t ProcessSingleMessage()
 	bool processedMessage = false;
 
 	// Check for any new messages
-	win32::MSG msg;
-	if( PeekMessage( &msg, nullptr, 0, 0, PM_REMOVE ) )
+	win32::MSG msg = {};
+	if( PeekMessageA( &msg, nullptr, 0, 0, PM_REMOVE ) )
 	{
 		processedMessage = true;
 
@@ -102,7 +237,7 @@ PLATFORMUTILS_API int32_t ProcessSingleMessage()
 		else
 		{
 			TranslateMessage( &msg );
-			DispatchMessage( &msg );
+			DispatchMessageA( &msg );
 		}
 	}
 
