@@ -167,7 +167,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
 	static constexpr platform::windowing::WindowStyle kWindowStyle =
-		platform::windowing::WindowStyle::Legacy;
+		platform::windowing::WindowStyle::Standard;
 	static constexpr uint8_t kWindowScaleFactor = 4;
 	static constexpr uint16_t kWidth = gfx::ppu::kDesiredWidth * kWindowScaleFactor;
 	static constexpr uint16_t kHeight = gfx::ppu::kDesiredHeight * kWindowScaleFactor;
