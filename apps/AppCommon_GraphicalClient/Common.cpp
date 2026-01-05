@@ -171,8 +171,14 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	static constexpr uint8_t kWindowScaleFactor = 4;
 	static constexpr uint16_t kWidth = gfx::ppu::kDesiredWidth * kWindowScaleFactor;
 	static constexpr uint16_t kHeight = gfx::ppu::kDesiredHeight * kWindowScaleFactor;
+	rftl::string_view windowTitle = config.mWindowTitle;
+	if( windowTitle.empty() )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_STARTUP, "Window title was not set" );
+		windowTitle = "RetroFit Engine (Application title not set)";
+	}
 	shim::HWND const hWnd = platform::windowing::CreateNewWindow(
-		kWindowStyle, config.mWindowTitle, kWidth, kHeight, WndProc );
+		kWindowStyle, windowTitle, kWidth, kHeight, WndProc );
 	// NOTE: Fetching window shape regardless of what we asked for, since it
 	//  may be different (such as if we asked for borderless fullscreen and it
 	//  resulted in it being maximized for us automatically)
