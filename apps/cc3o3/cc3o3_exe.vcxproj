@@ -37,6 +37,9 @@
 			<Project>{252e935a-d4cf-4d6e-8d92-b6a7b7c9534c}</Project>
 		</ProjectReference>
 	</ItemGroup>
+	<ItemGroup>
+		<ResourceCompile Include="cc3o3.rc" />
+	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">
 	</ImportGroup>

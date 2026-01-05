@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "windowing.h"
 
+#include "Logging/Logging.h"
+
 #include "core_platform/inc/windows_inc.h"
 #include "core_unicode/CharConvert.h"
 
@@ -150,6 +152,16 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow(
 			static_cast<win32::ULONG_PTR>(
 				static_cast<win32::WORD>( 32512u ) ) );
 
+	// Check the EXE (not the DLLs) for a specially-named icon
+	static constexpr char kReservedIconName[] = "retrofit_application_icon";
+	win32::HINSTANCE const topLevelModule = win32::GetModuleHandleA( nullptr );
+	win32::HICON const icon = win32::LoadIconA( topLevelModule, kReservedIconName );
+	if( icon == nullptr )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_PLATFORMUTILS,
+			"Failed to find a properly-named icon resource in the EXE" );
+	}
+
 	// Create the window class
 	static constexpr wchar_t kWindowClass[] = L"RetroFitPrimary";
 	win32::WNDCLASSW wc = {};
@@ -158,7 +170,7 @@ PLATFORMUTILS_API shim::HWND CreateNewWindow(
 	wc.cbClsExtra = 0; // The class has no extra memory.
 	wc.cbWndExtra = 0; // The window has no extra memory.
 	//wc.hInstance = hInstance; // The application that is managing the window.
-	//wc.hIcon = LoadIcon( hInstance, 0 ); // We want to use resource 0 in this executable for our icon.
+	wc.hIcon = icon; // The icon used for the window.
 	wc.hCursor = win32::LoadCursorW( nullptr, idc_arrow ); // We want to use the standard arrow cursor.
 	wc.hbrBackground = static_cast<win32::HBRUSH>( win32::GetStockObject( BLACK_BRUSH ) ); // The default background color.
 	wc.lpszMenuName = nullptr; // The class has no menu.
