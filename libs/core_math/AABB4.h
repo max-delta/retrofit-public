@@ -43,6 +43,7 @@ public:
 
 	T Width() const;
 	T Height() const;
+	Vector2<T> Dimensions() const;
 
 
 public:

@@ -176,5 +176,13 @@ inline T AABB4<T>::Height() const
 	return Abs<T>( Bottom() - Top() );
 }
 
+
+
+template<typename T>
+inline Vector2<T> AABB4<T>::Dimensions() const
+{
+	return Vector2<T>( Width(), Height() );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
