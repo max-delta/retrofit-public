@@ -9,6 +9,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Displays a tile layer
 class GAMEUI_API TileLayerDisplay final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

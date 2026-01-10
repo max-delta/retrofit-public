@@ -11,6 +11,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Displays a frame-pack
 class GAMEUI_API FramePackDisplay final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

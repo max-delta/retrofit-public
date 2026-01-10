@@ -8,6 +8,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A horizontal / vertical list
 class GAMEUI_API GenericListBox : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

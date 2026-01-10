@@ -10,13 +10,16 @@
 
 // Forwards
 namespace RF::ui::controller {
-	class TextBox;
-	class BorderFrame;
+class TextBox;
+class BorderFrame;
 }
 
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Text box with features such as animated blitting of text over multiple
+//  frames, common in dialogue boxes to convey a sense of a character talking
+RF_TODO_ANNOTATION( "Consider pushing the animating portion to a sub-controller for re-use" );
 class GAMEUI_API MessageBox final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

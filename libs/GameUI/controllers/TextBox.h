@@ -16,6 +16,7 @@ namespace RF::ui::controller {
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Text box that performs line-wrapping and truncation
 class GAMEUI_API TextBox final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

@@ -13,6 +13,7 @@ class TextLabel;
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A horizontal / vertical list of text entries
 class GAMEUI_API ListBox final : public GenericListBox
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

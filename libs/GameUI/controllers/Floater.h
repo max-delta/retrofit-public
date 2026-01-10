@@ -9,6 +9,8 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Creates a 'floating' container that is not strictly bound by its parent
+//  container's AABB, desirable for things like pop-ups
 class GAMEUI_API Floater final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

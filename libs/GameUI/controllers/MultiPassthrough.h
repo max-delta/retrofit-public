@@ -7,6 +7,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Allows multiple containers to occupy the same space
 class GAMEUI_API MultiPassthrough final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

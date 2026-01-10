@@ -11,6 +11,8 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Creates a backgraound and border using specialized 'frame tilesets' that
+//  have special rules, see internal code for details on their requirements
 class GAMEUI_API BorderFrame final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

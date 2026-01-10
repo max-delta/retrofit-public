@@ -9,6 +9,8 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Performs simple padding
+RF_TODO_ANNOTATION( "Obsolete this in favor of the Clamper?" );
 class GAMEUI_API PaddedPassthrough final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

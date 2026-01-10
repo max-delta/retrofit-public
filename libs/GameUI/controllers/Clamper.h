@@ -9,6 +9,8 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Reduces down the size of a container, generally to add padding or to enforce
+//  certain restrictions on sub-containers such as max size or tile alignment
 class GAMEUI_API Clamper final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

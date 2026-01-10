@@ -12,6 +12,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A single line of text
 class GAMEUI_API TextLabel final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

@@ -7,6 +7,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Slices into multiple rows
 class GAMEUI_API RowSlicer final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

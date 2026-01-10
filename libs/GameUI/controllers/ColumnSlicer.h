@@ -7,6 +7,7 @@
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Slices into multiple columns
 class GAMEUI_API ColumnSlicer final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();

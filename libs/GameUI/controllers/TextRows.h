@@ -13,6 +13,7 @@ class TextLabel;
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Multiple lines of text
 class GAMEUI_API TextRows final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
