@@ -70,6 +70,9 @@
 		<ClCompile Include="controllers\AspectColumnSlicer.cpp">
 			<Filter>controllers</Filter>
 		</ClCompile>
+		<ClCompile Include="controllers\Clamper.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -146,6 +149,9 @@
 		<ClInclude Include="AlignmentHelpers.h" />
 		<ClInclude Include="Font.h" />
 		<ClInclude Include="controllers\AspectColumnSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="controllers\Clamper.h">
 			<Filter>controllers</Filter>
 		</ClInclude>
 	</ItemGroup>
