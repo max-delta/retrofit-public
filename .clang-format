@@ -1,7 +1,7 @@
 #https://clang.llvm.org/docs/ClangFormatStyleOptions.html
 
 #############################
-# Known issues as of v13.0
+# Known issues as of v19.0
 #############################
 #
 # Lambdas are a disaster

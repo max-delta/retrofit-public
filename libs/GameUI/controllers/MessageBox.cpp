@@ -30,7 +30,8 @@ MessageBox::MessageBox(
 	size_t numRows,
 	FontPurposeID purpose,
 	rftl::unordered_set<char> const& breakableChars )
-	: MessageBox(
+	: // Clang-format is trash garbage
+	MessageBox(
 		numRows,
 		purpose,
 		Justification::MiddleCenter,

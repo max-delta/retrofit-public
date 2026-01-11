@@ -30,7 +30,8 @@ TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
 	rftl::unordered_set<char> const& breakableChars )
-	: TextBox(
+	: // Clang-format is trash garbage
+	TextBox(
 		numRows,
 		purpose,
 		Justification::MiddleCenter,
