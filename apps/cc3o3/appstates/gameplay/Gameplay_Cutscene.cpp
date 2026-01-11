@@ -16,11 +16,16 @@
 #include "GameUI/FocusEvent.h"
 #include "GameUI/FocusManager.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/controllers/AspectColumnSlicer.h"
+#include "GameUI/controllers/Clamper.h"
+#include "GameUI/controllers/RowSlicer.h"
+#include "GameUI/controllers/TextBox.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
 
 #include "core/ptr/default_creator.h"
+#include "core/meta/IntegerPromotion.h"
 
 
 namespace RF::cc::appstate {
@@ -59,17 +64,83 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
+		// Constrain the aspect ratio
+		ui::controller::AspectColumnSlicer::Ratio const aspectRatio( 12, 7 );
+		ui::controller::AspectColumnSlicer::Enableds const aspectEnableds = {
+			false,
+			true,
+			false,
+		};
+		WeakPtr<ui::controller::AspectColumnSlicer> const aspectSlicer =
+			uiManager.AssignStrongController(
+				ui::kRootContainerID,
+				DefaultCreator<ui::controller::AspectColumnSlicer>::Create(
+					aspectRatio,
+					aspectEnableds ) );
+
+		// Cut the center in 5
+		ui::controller::RowSlicer::Ratios const centerRowRatios = {
+			{ 1.f / 28.f, false },
+			{ 8.f / 28.f, true },
+			{ 10.f / 28.f, false },
+			{ 8.f / 28.f, true },
+			{ 1.f / 28.f, false },
+		};
+		WeakPtr<ui::controller::RowSlicer> const centerRowSlicer =
+			uiManager.AssignStrongController(
+				aspectSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::RowSlicer>::Create(
+					centerRowRatios ) );
+
+		// Put clampers on the top and bottom
+		static constexpr ui::controller::Clamper::Params kClamperParams = {
+			.subtractWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 2 ),
+			.maxHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+			.divisibleByWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ),
+			.divisibleByHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ) };
+		WeakPtr<ui::controller::Clamper> const topClamper =
+			uiManager.AssignStrongController(
+				centerRowSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::Clamper>::Create(
+					kClamperParams,
+					ui::Justification::TopCenter ) );
+		WeakPtr<ui::controller::Clamper> const bottomClamper =
+			uiManager.AssignStrongController(
+				centerRowSlicer->GetChildContainerID( 3 ),
+				DefaultCreator<ui::controller::Clamper>::Create(
+					kClamperParams,
+					ui::Justification::BottomCenter ) );
+
 		// TODO
 		WeakPtr<ui::controller::TextLabel> const TODO =
 			uiManager.AssignStrongController(
-				ui::kRootContainerID,
+				topClamper->GetChildContainerID(),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
-		TODO->SetJustification( ui::Justification::BottomCenter );
+		TODO->SetJustification( ui::Justification::MiddleCenter );
 		TODO->SetFont( ui::font::LargeMenuHeader );
 		TODO->SetText( "TODO" );
 		TODO->SetColor( math::Color3f::kWhite );
 		TODO->SetBorder( true );
 		internalState.mTODO = TODO;
+		( (void)focusMan );
+
+		// TODO
+		WeakPtr<ui::controller::TextBox> const TODO2 =
+			uiManager.AssignStrongController(
+				bottomClamper->GetChildContainerID(),
+				DefaultCreator<ui::controller::TextBox>::Create(
+					4u,
+					ui::font::MessageBox,
+					ui::Justification::MiddleLeft,
+					math::Color3f::kWhite,
+					ui::GetBreakableChars() ) );
+		static constexpr char kTODOText[] =
+			"This is some really long text that isn't going to fit on one line."
+			" In fact, it probably won't even fit in one text box."
+			" This is likely going to be truncated multiple ways, and require"
+			" pagination support so a user can work their way through the full"
+			" lenghty text.";
+		TODO2->SetText( kTODOText, false );
 		( (void)focusMan );
 	}
 }
