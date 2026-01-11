@@ -127,6 +127,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 	{
 		rftl::string& line = textLines.at( curLine );
 
+		// Tentatively add the next character
 		if( mRightToLeft )
 		{
 			line += unwrittenText.back();
@@ -136,6 +137,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 			line += unwrittenText.front();
 		}
 
+		// See if it fits
 		bool fits = true;
 		if( fits && line.length() > gfx::ppu::kMaxStringLen )
 		{
@@ -148,6 +150,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 			fits = false;
 		}
 
+		// Did it fit?
 		if( fits == false )
 		{
 			// Not enough room, undo and move to next line
@@ -191,6 +194,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 		}
 	}
 
+	// Handle right-to-left output
 	if( mRightToLeft )
 	{
 		for( rftl::string& line : textLines )
