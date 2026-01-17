@@ -75,6 +75,13 @@ void TextBox::SetText( rftl::string_view text, bool rightToLeft )
 
 
 
+bool TextBox::IsRightToLeft() const
+{
+	return mRightToLeft;
+}
+
+
+
 size_t TextBox::GetNumCharactersUnwrittenLastRender() const
 {
 	return mNumCharactersUnwrittenLastRender;

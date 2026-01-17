@@ -5,8 +5,6 @@
 #include "GameUI/FontRegistry.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
-#include "GameUI/controllers/BorderFrame.h"
-#include "GameUI/controllers/TextBox.h"
 
 #include "PPU/PPUController.h"
 
@@ -31,11 +29,9 @@ MessageBox::MessageBox(
 	FontPurposeID purpose,
 	rftl::unordered_set<char> const& breakableChars )
 	: // Clang-format is trash garbage
-	MessageBox(
+	TextBox(
 		numRows,
 		purpose,
-		Justification::MiddleCenter,
-		math::Color3f::kWhite,
 		breakableChars )
 {
 	//
@@ -49,25 +45,15 @@ MessageBox::MessageBox(
 	Justification::Value justification,
 	math::Color3f color,
 	rftl::unordered_set<char> const& breakableChars )
-	: mNumRows( numRows )
-	, mFontPurpose( purpose )
-	, mJustification( justification )
-	, mColor( color )
-	, mBreakableChars( breakableChars )
+	: // Clang-format is trash garbage
+	TextBox(
+		numRows,
+		purpose,
+		justification,
+		color,
+		breakableChars )
 {
-	RF_ASSERT( mNumRows >= 2 );
-}
-
-
-
-void MessageBox::SetFrameTileset(
-	ui::UIContext& context,
-	gfx::ManagedTilesetID tileset,
-	gfx::ppu::Coord expectedTileDimensions,
-	gfx::ppu::Coord expectedPatternDimensions,
-	gfx::ppu::Coord paddingDimensions )
-{
-	mFrameController->SetTileset( context, tileset, expectedTileDimensions, expectedPatternDimensions, paddingDimensions );
+	//
 }
 
 
@@ -79,17 +65,11 @@ void MessageBox::SetAnimationSpeed( uint8_t charsPerFrame )
 
 
 
-ContainerID MessageBox::GetChildContainerID() const
-{
-	return mChildContainerID;
-}
-
-
-
 void MessageBox::SetText( rftl::string_view text, bool rightToLeft )
 {
-	mRightToLeft = rightToLeft;
-	mText = text;
+	mFullText = text;
+
+	TextBox::SetText( {}, rightToLeft );
 }
 
 
@@ -108,42 +88,13 @@ size_t MessageBox::GetNumCharactersRenderedLastRender() const
 
 
 
-void MessageBox::OnInstanceAssign( UIContext& context, Container& container )
-{
-	mChildContainerID = CreateChildContainer(
-		context.GetMutableContainerManager(),
-		container,
-		container.mLeftConstraint,
-		container.mRightConstraint,
-		container.mTopConstraint,
-		container.mBottomConstraint );
-
-	WeakPtr<ui::controller::BorderFrame> const frame =
-		context.GetMutableContainerManager().AssignStrongController(
-			mChildContainerID,
-			DefaultCreator<ui::controller::BorderFrame>::Create() );
-	frame->SetJustification( ui::Justification::MiddleCenter );
-	mFrameController = frame;
-
-	WeakPtr<ui::controller::TextBox> const text =
-		context.GetMutableContainerManager().AssignStrongController(
-			frame->GetChildContainerID(),
-			DefaultCreator<ui::controller::TextBox>::Create(
-				mNumRows,
-				mFontPurpose,
-				mJustification,
-				mColor,
-				mBreakableChars ) );
-	mTextController = text;
-}
-
-
-
 void MessageBox::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
-	if( mText.empty() )
+	bool const rightToLeft = IsRightToLeft();
+
+	if( mFullText.empty() )
 	{
-		mTextController->SetText( rftl::string_view(), mRightToLeft );
+		TextBox::SetText( rftl::string_view(), rightToLeft );
 		return;
 	}
 
@@ -154,7 +105,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	//  during render logic.
 
 	size_t const previousNumDispatched = mNumCharsDispatched;
-	size_t const previousNumUnrendered = mTextController->GetNumCharactersUnwrittenLastRender();
+	size_t const previousNumUnrendered = GetNumCharactersUnwrittenLastRender();
 	RF_ASSERT( previousNumDispatched >= previousNumUnrendered );
 	size_t const previousNumRendered = previousNumDispatched - previousNumUnrendered;
 
@@ -184,23 +135,25 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 
 	size_t const animateLength = mAnimSpeed > 0u ? mAnimSpeed : 255u;
 
-	size_t const numToDispatch = math::Min( mText.length(), previousNumRendered + animateLength );
+	size_t const numToDispatch = math::Min( mFullText.length(), previousNumRendered + animateLength );
 	if( numToDispatch == mNumCharsDispatched )
 	{
 		// No change
 	}
 	else
 	{
-		if( numToDispatch == mText.length() )
+		if( numToDispatch == mFullText.length() )
 		{
-			mTextController->SetText( mText, mRightToLeft );
+			TextBox::SetText( mFullText, rightToLeft );
 		}
 		else
 		{
-			mTextController->SetText( mText.substr( 0, numToDispatch ), mRightToLeft );
+			TextBox::SetText( mFullText.substr( 0, numToDispatch ), rightToLeft );
 		}
 		mNumCharsDispatched = numToDispatch;
 	}
+
+	TextBox::OnRender( context, container, blockChildRendering );
 }
 
 
@@ -208,6 +161,8 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 void MessageBox::OnAABBRecalc( UIContext& context, Container& container )
 {
 	mAABBChanged = true;
+
+	TextBox::OnAABBRecalc( context, container );
 }
 
 
@@ -215,6 +170,8 @@ void MessageBox::OnAABBRecalc( UIContext& context, Container& container )
 void MessageBox::OnZoomFactorChange( UIContext& context, Container& container )
 {
 	mAABBChanged = true;
+
+	TextBox::OnZoomFactorChange( context, container );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

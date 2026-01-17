@@ -25,7 +25,7 @@
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
-#include "GameUI/controllers/MessageBox.h"
+#include "GameUI/controllers/BorderedMessageBox.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/TextLabel.h"
@@ -490,10 +490,10 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					rootRowRatios ) );
 
 		// Put a message box at the bottom
-		WeakPtr<ui::controller::MessageBox> const messageBox =
+		WeakPtr<ui::controller::BorderedMessageBox> const messageBox =
 			uiManager.AssignStrongController(
 				rootRowSlicer->GetChildContainerID( 1 ),
-				DefaultCreator<ui::controller::MessageBox>::Create(
+				DefaultCreator<ui::controller::BorderedMessageBox>::Create(
 					3u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
