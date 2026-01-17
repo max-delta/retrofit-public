@@ -25,7 +25,7 @@
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/ColumnSlicer.h"
 #include "GameUI/controllers/RowSlicer.h"
-#include "GameUI/controllers/BorderedMessageBox.h"
+#include "GameUI/controllers/MessageBox.h"
 #include "GameUI/controllers/Floater.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/TextLabel.h"
@@ -490,16 +490,20 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					rootRowRatios ) );
 
 		// Put a message box at the bottom
-		WeakPtr<ui::controller::BorderedMessageBox> const messageBox =
+		WeakPtr<ui::controller::BorderFrame> const messageBorder =
 			uiManager.AssignStrongController(
 				rootRowSlicer->GetChildContainerID( 1 ),
-				DefaultCreator<ui::controller::BorderedMessageBox>::Create(
+				DefaultCreator<ui::controller::BorderFrame>::Create() );
+		messageBorder->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		WeakPtr<ui::controller::MessageBox> const messageBox =
+			uiManager.AssignStrongController(
+				messageBorder->GetChildContainerID(),
+				DefaultCreator<ui::controller::MessageBox>::Create(
 					3u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
 					math::Color3f::kWhite,
 					ui::GetBreakableChars() ) );
-		messageBox->SetFrameTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
 		messageBox->SetAnimationSpeed( ui::kTextSpeed );
 		messageBox->SetText(
 			"This is some text. It may take up a fair amount of space, so it"

@@ -73,9 +73,6 @@
 		<ClCompile Include="controllers\Clamper.cpp">
 			<Filter>controllers</Filter>
 		</ClCompile>
-		<ClCompile Include="controllers\BorderedMessageBox.cpp">
-			<Filter>controllers</Filter>
-		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -155,9 +152,6 @@
 			<Filter>controllers</Filter>
 		</ClInclude>
 		<ClInclude Include="controllers\Clamper.h">
-			<Filter>controllers</Filter>
-		</ClInclude>
-		<ClInclude Include="controllers\BorderedMessageBox.h">
 			<Filter>controllers</Filter>
 		</ClInclude>
 	</ItemGroup>

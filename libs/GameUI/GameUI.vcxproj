@@ -36,7 +36,6 @@
 		<ClInclude Include="Container.h" />
 		<ClInclude Include="ContainerManager.h" />
 		<ClInclude Include="controllers\AspectColumnSlicer.h" />
-		<ClInclude Include="controllers\BorderedMessageBox.h" />
 		<ClInclude Include="controllers\BorderFrame.h" />
 		<ClInclude Include="controllers\Clamper.h" />
 		<ClInclude Include="controllers\ColumnSlicer.h" />
@@ -76,7 +75,6 @@
 		<ClCompile Include="Container.cpp" />
 		<ClCompile Include="ContainerManager.cpp" />
 		<ClCompile Include="controllers\AspectColumnSlicer.cpp" />
-		<ClCompile Include="controllers\BorderedMessageBox.cpp" />
 		<ClCompile Include="controllers\BorderFrame.cpp" />
 		<ClCompile Include="controllers\Clamper.cpp" />
 		<ClCompile Include="controllers\ColumnSlicer.cpp" />
