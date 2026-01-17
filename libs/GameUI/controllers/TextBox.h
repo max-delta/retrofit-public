@@ -10,7 +10,7 @@
 
 // Forwards
 namespace RF::ui::controller {
-	class TextRows;
+class TextRows;
 }
 
 namespace RF::ui::controller {
