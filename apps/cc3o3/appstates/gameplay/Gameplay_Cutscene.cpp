@@ -19,7 +19,7 @@
 #include "GameUI/controllers/AspectColumnSlicer.h"
 #include "GameUI/controllers/Clamper.h"
 #include "GameUI/controllers/RowSlicer.h"
-#include "GameUI/controllers/TextBox.h"
+#include "GameUI/controllers/MessageBox.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
@@ -125,10 +125,10 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		( (void)focusMan );
 
 		// TODO
-		WeakPtr<ui::controller::TextBox> const TODO2 =
+		WeakPtr<ui::controller::MessageBox> const TODO2 =
 			uiManager.AssignStrongController(
 				bottomClamper->GetChildContainerID(),
-				DefaultCreator<ui::controller::TextBox>::Create(
+				DefaultCreator<ui::controller::MessageBox>::Create(
 					4u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
@@ -141,6 +141,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			" pagination support so a user can work their way through the full"
 			" lenghty text.";
 		TODO2->SetText( kTODOText, false );
+		TODO2->SetAnimationSpeed( 1 );
 		( (void)focusMan );
 	}
 }
