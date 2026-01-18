@@ -4,6 +4,7 @@
 #include "GameUI/Container.h"
 #include "GameUI/ContainerManager.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/FocusEvent.h"
 #include "GameUI/FocusTarget.h"
 #include "GameUI/FocusManager.h"
 
@@ -165,6 +166,7 @@ void InstancedController::RequestHardRecalc( UIContext& context )
 bool InstancedController::HandleFocusEvent( UIContext& context, void* userData, FocusEvent const& focusEvent )
 {
 	RF_ASSERT( userData != nullptr );
+	RF_ASSERT( focusEvent.mEventType != focusevent::Invalid );
 	return reinterpret_cast<InstancedController*>( userData )->OnFocusEvent( context, focusEvent );
 }
 
