@@ -357,6 +357,7 @@ void FramePackEditor::Render()
 		ppu->DrawObject( editingObject );
 
 		editingTextureID = timeSlot.mTextureReference;
+		ppu->ForceImmediateLoadAllRequests();
 		gfx::Texture const* const tex = texMan.GetResourceFromManagedResourceID( editingTextureID );
 		if( tex != nullptr )
 		{
@@ -400,15 +401,22 @@ void FramePackEditor::Render()
 		{
 			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: {} </,*> to change", slotSustain );
 		}
-		file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
-		if( texPath.Empty() )
+		if( editingTextureID == gfx::kInvalidDeviceTextureID )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: INVALID" );
+			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: UNSET" );
 		}
 		else
 		{
-			file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: {}", lastElement );
+			file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
+			if( texPath.Empty() )
+			{
+				ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: INVALID" );
+			}
+			else
+			{
+				file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
+				ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: {}", lastElement );
+			}
 		}
 		switch( mMasterMode )
 		{
