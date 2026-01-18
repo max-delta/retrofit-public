@@ -142,7 +142,8 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			" lenghty text.";
 		TODO2->SetText( kTODOText, false );
 		TODO2->SetAnimationSpeed( 1 );
-		( (void)focusMan );
+		TODO2->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		TODO2->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 	}
 }
 
