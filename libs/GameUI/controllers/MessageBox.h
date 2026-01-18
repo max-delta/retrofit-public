@@ -30,6 +30,7 @@ public:
 		rftl::unordered_set<char> const& breakableChars );
 
 	void SetAnimationSpeed( uint8_t charsPerFrame );
+	void SetFastForwardEvent( FocusEventType event );
 
 	ContainerID GetChildContainerID() const;
 
@@ -43,6 +44,7 @@ public:
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 	virtual void OnZoomFactorChange( UIContext& context, Container& container ) override;
+	virtual bool OnFocusEvent( UIContext& context, FocusEvent const& focusEvent ) override final;
 
 
 	//
@@ -50,11 +52,13 @@ public:
 private:
 	uint8_t mAnimSpeed = 0;
 	rftl::string mFullText;
+	FocusEventType mFastForwardEvent = focusevent::Invalid;
 
 	size_t mNumCharsDispatched = 0;
 	size_t mNumCharsRendered = 0;
 	bool mBlockAnimUntilAABBChange = false;
 	bool mAABBChanged = false;
+	bool mFastForwardOnNextFrame = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

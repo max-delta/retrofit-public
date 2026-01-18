@@ -2,6 +2,7 @@
 #include "MessageBox.h"
 
 #include "GameUI/ContainerManager.h"
+#include "GameUI/FocusEvent.h"
 #include "GameUI/FontRegistry.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
@@ -61,6 +62,13 @@ MessageBox::MessageBox(
 void MessageBox::SetAnimationSpeed( uint8_t charsPerFrame )
 {
 	mAnimSpeed = charsPerFrame;
+}
+
+
+
+void MessageBox::SetFastForwardEvent( FocusEventType event )
+{
+	mFastForwardEvent = event;
 }
 
 
@@ -133,9 +141,16 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		// Try to animate
 	}
 
-	size_t const animateLength = mAnimSpeed > 0u ? mAnimSpeed : 255u;
+	// Figure out how much to dispatch
+	size_t const fullTextLength = mFullText.length();
+	size_t numToDispatch = math::Min( fullTextLength, previousNumRendered + mAnimSpeed );
+	bool const fastForward = mFastForwardOnNextFrame || mAnimSpeed == 0u;
+	if( fastForward )
+	{
+		numToDispatch = fullTextLength;
+	}
+	mFastForwardOnNextFrame = false;
 
-	size_t const numToDispatch = math::Min( mFullText.length(), previousNumRendered + animateLength );
 	if( numToDispatch == mNumCharsDispatched )
 	{
 		// No change
@@ -172,6 +187,27 @@ void MessageBox::OnZoomFactorChange( UIContext& context, Container& container )
 	mAABBChanged = true;
 
 	TextBox::OnZoomFactorChange( context, container );
+}
+
+
+
+bool MessageBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent )
+{
+	bool handled = false;
+
+	if( focusEvent.mEventType == mFastForwardEvent )
+	{
+		bool const canFastForward = GetNumCharactersDispatchedLastRender() < mFullText.size();
+		if( canFastForward )
+		{
+			mFastForwardOnNextFrame = true;
+			handled = true;
+			// NOTE: Not returning, since we're not sure what the event is or
+			//  if it will conflict with other events we're looking for
+		}
+	}
+
+	return handled;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
