@@ -44,6 +44,7 @@
 		<ClInclude Include="extension\cstring_view.h" />
 		<ClInclude Include="extension\c_str.h" />
 		<ClInclude Include="extension\enum_traits.h" />
+		<ClInclude Include="extension\fatal_exception.h" />
 		<ClInclude Include="extension\immutable_string.h" />
 		<ClInclude Include="extension\integer_literals.h" />
 		<ClInclude Include="extension\parseless_format.h" />
@@ -56,6 +57,7 @@
 		<ClInclude Include="extension\string_hash.h" />
 		<ClInclude Include="extension\string_parse.h" />
 		<ClInclude Include="extension\string_traits.h" />
+		<ClInclude Include="extension\transparent_lookup.h" />
 		<ClInclude Include="extension\variadic_print.h" />
 		<ClInclude Include="extension\virtual_iterator.h" />
 		<ClInclude Include="extension\void_alias.h" />

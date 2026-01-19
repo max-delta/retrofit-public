@@ -8,6 +8,7 @@
 #include "core/ptr/weak_ptr.h"
 #include "core/ptr/unique_ptr.h"
 
+#include "rftl/extension/string_hash.h"
 #include "rftl/unordered_map"
 #include "rftl/string"
 
@@ -30,7 +31,7 @@ private:
 private:
 	using ContainerStorage = rftl::unordered_map<ContainerID, Container>;
 	using AnchorStorage = rftl::unordered_map<AnchorID, Anchor>;
-	using LabelToContainerID = rftl::unordered_map<rftl::string, ContainerID>;
+	using LabelToContainerID = rftl::unordered_map<rftl::string, ContainerID, rftl::string_hash, rftl::equal_to<>>;
 
 
 	//
@@ -50,25 +51,20 @@ public:
 	// Destroys the entire UI, use with caution
 	void RecreateRootContainer();
 
-	ContainerID GetContainerID( char const* label ) const;
-	ContainerID GetContainerID( rftl::string const& label ) const;
+	ContainerID GetContainerID( rftl::string_view label ) const;
 
 	Container const& GetContainer( ContainerID containerID ) const;
-	Container const& GetContainer( char const* label ) const;
-	Container const& GetContainer( rftl::string const& label ) const;
+	Container const& GetContainer( rftl::string_view label ) const;
 
 	WeakPtr<Controller> GetMutableController( ContainerID containerID );
-	WeakPtr<Controller> GetMutableController( char const* label );
-	WeakPtr<Controller> GetMutableController( rftl::string const& label );
+	WeakPtr<Controller> GetMutableController( rftl::string_view label );
 
 	template<typename T>
 	WeakPtr<T> GetMutableControllerAs( ContainerID containerID );
 	template<typename T>
-	WeakPtr<T> GetMutableControllerAs( char const* label );
-	template<typename T>
-	WeakPtr<T> GetMutableControllerAs( rftl::string const& label );
+	WeakPtr<T> GetMutableControllerAs( rftl::string_view label );
 
-	void AssignLabel( ContainerID containerID, char const* label );
+	void AssignLabel( ContainerID containerID, rftl::string_view label );
 
 	template<typename T>
 	WeakPtr<T> AssignStrongController( ContainerID containerID, CreationPayload<T>&& controller );

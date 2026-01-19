@@ -18,17 +18,7 @@ inline WeakPtr<T> ContainerManager::GetMutableControllerAs( ContainerID containe
 
 
 template<typename T>
-inline WeakPtr<T> ContainerManager::GetMutableControllerAs( char const* label )
-{
-	WeakPtr<Controller> controller = GetMutableController( label );
-	WeakPtr<T> const retVal = rftype::virtual_ptr_cast<T>( rftl::move( controller ) );
-	return retVal;
-}
-
-
-
-template<typename T>
-inline WeakPtr<T> ContainerManager::GetMutableControllerAs( rftl::string const& label )
+inline WeakPtr<T> ContainerManager::GetMutableControllerAs( rftl::string_view label )
 {
 	WeakPtr<Controller> controller = GetMutableController( label );
 	WeakPtr<T> const retVal = rftype::virtual_ptr_cast<T>( rftl::move( controller ) );

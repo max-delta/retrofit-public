@@ -13,6 +13,8 @@
 #include "core/meta/ScopedCleanup.h"
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/transparent_lookup.h"
+
 
 namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
@@ -93,17 +95,10 @@ void ContainerManager::RecreateRootContainer()
 
 
 
-ContainerID ContainerManager::GetContainerID( char const* label ) const
+ContainerID ContainerManager::GetContainerID( rftl::string_view label ) const
 {
 	RF_ASSERT_MSG( mLabelsToContainerIDs.count( label ) != 0, "Cannot find container by label" );
-	return mLabelsToContainerIDs.at( label );
-}
-
-
-
-ContainerID ContainerManager::GetContainerID( rftl::string const& label ) const
-{
-	return mLabelsToContainerIDs.at( label );
+	return rftl::transparent_at( mLabelsToContainerIDs, label );
 }
 
 
@@ -115,14 +110,7 @@ Container const& ContainerManager::GetContainer( ContainerID containerID ) const
 
 
 
-Container const& ContainerManager::GetContainer( char const* label ) const
-{
-	return GetContainer( GetContainerID( label ) );
-}
-
-
-
-Container const& ContainerManager::GetContainer( rftl::string const& label ) const
+Container const& ContainerManager::GetContainer( rftl::string_view label ) const
 {
 	return GetContainer( GetContainerID( label ) );
 }
@@ -136,24 +124,18 @@ WeakPtr<Controller> ContainerManager::GetMutableController( ContainerID containe
 
 
 
-WeakPtr<Controller> ContainerManager::GetMutableController( char const* label )
+WeakPtr<Controller> ContainerManager::GetMutableController( rftl::string_view label )
 {
 	return GetContainer( label ).mWeakUIController;
 }
 
 
 
-WeakPtr<Controller> ContainerManager::GetMutableController( rftl::string const& label )
+void ContainerManager::AssignLabel( ContainerID containerID, rftl::string_view label )
 {
-	return GetContainer( label ).mWeakUIController;
-}
-
-
-
-void ContainerManager::AssignLabel( ContainerID containerID, char const* label )
-{
-	RF_ASSERT( mLabelsToContainerIDs.count( label ) == 0 );
-	mLabelsToContainerIDs[label] = containerID;
+	RF_ASSERT( mLabelsToContainerIDs.count( RFTL_STR_V_HASH( label ) ) == 0 );
+	bool const isNew = mLabelsToContainerIDs.emplace( label, containerID ).second;
+	RF_ASSERT( isNew );
 }
 
 
