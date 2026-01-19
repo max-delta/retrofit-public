@@ -40,6 +40,9 @@ public:
 
 public:
 	WeakPtr<ui::controller::TextLabel> mTODO;
+	WeakPtr<ui::controller::MessageBox> mLowerMessageBox;
+
+	WeakPtr<ui::controller::MessageBox> mCurrentMessageBox;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -125,7 +128,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		( (void)focusMan );
 
 		// TODO
-		WeakPtr<ui::controller::MessageBox> const TODO2 =
+		WeakPtr<ui::controller::MessageBox> const lowerMsg =
 			uiManager.AssignStrongController(
 				bottomClamper->GetChildContainerID(),
 				DefaultCreator<ui::controller::MessageBox>::Create(
@@ -140,10 +143,14 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			" This is likely going to be truncated multiple ways, and require"
 			" pagination support so a user can work their way through the full"
 			" lenghty text.";
-		TODO2->SetText( kTODOText, false );
-		TODO2->SetAnimationSpeed( 1 );
-		TODO2->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
-		TODO2->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		lowerMsg->SetText( kTODOText, false );
+		lowerMsg->SetAnimationSpeed( 1 );
+		lowerMsg->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		lowerMsg->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		internalState.mLowerMessageBox = lowerMsg;
+
+		// TODO: Delay determining this?
+		internalState.mCurrentMessageBox = lowerMsg;
 	}
 }
 
@@ -187,6 +194,19 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 			// TODO: What isn't going to be handled by the normal UI already?
 			if( currentFocusContainerID != ui::kInvalidContainerID )
 			{
+				// HACK: Helper for testing while building out message box tech
+				// TODO: Get rid of this in favor of something that resets the
+				//  dialogue being fed to it, once the dialogue machinery is
+				//  further along
+				RF_ASSERT( internalState.mCurrentMessageBox != nullptr );
+				if( currentFocusContainerID == internalState.mCurrentMessageBox->GetContainerID() )
+				{
+					if( focusEvent == ui::focusevent::Command_NavigateToPreviousGroup )
+					{
+						internalState.mCurrentMessageBox->ReflowAllText();
+					}
+				}
+
 				// TODO: ???
 			}
 		}
