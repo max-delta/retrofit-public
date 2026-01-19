@@ -389,6 +389,13 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 
 
 
+bool PPUController::IsZoomFactorHidden() const
+{
+	return mHideZoomFactor;
+}
+
+
+
 void PPUController::HideZoomFactor( bool hide )
 {
 	mHideZoomFactor = hide;
@@ -568,6 +575,13 @@ WeakPtr<TilesetManager const> PPUController::GetTilesetManager() const
 WeakPtr<FontManager const> PPUController::GetFontManager() const
 {
 	return mFontManager;
+}
+
+
+
+bool PPUController::DebugIsGridEnabled() const
+{
+	return mDebugDrawGrid;
 }
 
 

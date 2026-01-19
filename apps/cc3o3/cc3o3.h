@@ -28,6 +28,9 @@ void Startup( init::StartupConfig const& config );
 void ProcessFrame();
 void Shutdown();
 
+bool DebugIsShowingContainerLayout();
+void DebugSetContainerLayoutDisplay( bool enabled );
+
 SimulationMode DebugGetPreviousFrameSimulationMode();
 void DebugTakeSnapshot( rftl::string const& name );
 void DebugLoadSnapshot( rftl::string const& name );

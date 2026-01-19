@@ -137,6 +137,7 @@ public:
 	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	bool DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args );
 
+	bool IsZoomFactorHidden() const;
 	void HideZoomFactor( bool hide );
 	ZoomFactor GetCurrentZoomFactor() const;
 	CoordElem CalculateStringLengthFormatted( uint8_t desiredHeight, ManagedFontID fontID, char const* fmt, ... ) const;
@@ -157,6 +158,7 @@ public:
 	WeakPtr<TilesetManager const> GetTilesetManager() const;
 	WeakPtr<FontManager const> GetFontManager() const;
 
+	bool DebugIsGridEnabled() const;
 	void DebugSetGridEnabled( bool enabled );
 	void DebugSetBackgroundColor( math::Color3f color );
 

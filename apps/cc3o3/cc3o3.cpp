@@ -48,6 +48,7 @@ constexpr bool kDebugSuppressRender = kAllowDebug && false;
 constexpr bool kDebugUILayering = kAllowDebug && true;
 constexpr bool kDebugUIAnchors = kAllowDebug && false;
 constexpr bool kDebugUIHidden = kAllowDebug && false;
+static bool sShowingDebugUI = kDebugUI;
 
 constexpr bool kAllowDevTests = true;
 constexpr bool kAllowDeveloperHud = true;
@@ -545,7 +546,7 @@ void ProcessFrame()
 	ui::ContainerManager& uiMan = *app::gUiManager;
 	uiMan.RecalcRootContainer();
 	uiMan.ProcessRecalcs();
-	if( kDebugUI )
+	if( kDebugUI && sShowingDebugUI )
 	{
 		uiMan.DebugRender( kDebugSuppressRender || kDebugUILayering, kDebugUIAnchors, kDebugUIHidden );
 	}
@@ -605,6 +606,20 @@ void Shutdown()
 	sAppStateManager.Stop();
 
 	SystemShutdown();
+}
+
+
+
+bool DebugIsShowingContainerLayout()
+{
+	return sShowingDebugUI;
+}
+
+
+
+void DebugSetContainerLayoutDisplay( bool enabled )
+{
+	sShowingDebugUI = enabled;
 }
 
 
