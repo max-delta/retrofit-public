@@ -34,6 +34,7 @@ namespace RF::cc::developer {
 enum class Mode : uint8_t
 {
 	Rollback = 0,
+	UIAssess,
 	Reload,
 	InputDevice,
 
@@ -339,6 +340,81 @@ void RenderRollback()
 			i_lane++;
 		}
 	}
+}
+
+
+
+void ProcessUIAssess( RF::input::GameCommand const& command )
+{
+	switch( command.mType )
+	{
+		case input::command::game::DeveloperAction1:
+		{
+			bool const currentlyHidden = app::gGraphics->IsZoomFactorHidden();
+			app::gGraphics->HideZoomFactor( !currentlyHidden );
+			break;
+		}
+		case input::command::game::DeveloperAction2:
+		{
+			bool const currentlyShowing = app::gGraphics->DebugIsGridEnabled();
+			app::gGraphics->DebugSetGridEnabled( !currentlyShowing );
+			break;
+		}
+		case input::command::game::DeveloperAction3:
+		{
+			bool const currentlyShowing = DebugIsShowingContainerLayout();
+			DebugSetContainerLayoutDisplay( !currentlyShowing );
+			break;
+		}
+		case input::command::game::DeveloperAction4:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction5:
+		{
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+
+
+void RenderUIAssess()
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
+	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
+	{
+		// No font (not even a backup), so we may still be booting
+		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
+		return;
+	}
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
+	{
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt.get(), rftl::make_format_args( args... ) );
+		return retVal;
+	};
+
+	static constexpr uint8_t kStartX = 4;
+	static constexpr uint8_t kStartY = 1;
+	uint8_t x = kStartX;
+	uint8_t y = kStartY;
+
+	drawText( x, y, math::Color3f::kMagenta, "UI ASSESS" );
+	y++;
+	drawText( x, y, math::Color3f::kCyan,
+		"  F2:Zoom({})"
+		"  F3:Grid({})"
+		"  F4:Cont({})"
+		"",
+		app::gGraphics->IsZoomFactorHidden() ? 1 : 0,
+		app::gGraphics->DebugIsGridEnabled() ? 1 : 0,
+		DebugIsShowingContainerLayout() ? 1 : 0 );
+	y++;
 }
 
 
@@ -872,6 +948,9 @@ void ProcessInput()
 					case Mode::Rollback:
 						mode::ProcessRollback( command );
 						break;
+					case Mode::UIAssess:
+						mode::ProcessUIAssess( command );
+						break;
 					case Mode::Reload:
 						mode::ProcessReload( command );
 						break;
@@ -904,6 +983,9 @@ void RenderHud()
 	{
 		case Mode::Rollback:
 			mode::RenderRollback();
+			return;
+		case Mode::UIAssess:
+			mode::RenderUIAssess();
 			return;
 		case Mode::Reload:
 			mode::RenderReload();
