@@ -4,6 +4,8 @@
 #include "GameUI/UIFwd.h"
 #include "GameUI/Font.h"
 
+#include "PPU/PPUFwd.h"
+
 #include "rftl/unordered_map"
 
 
@@ -25,7 +27,7 @@ public:
 	void RegisterFallbackFont( Font const& font );
 	void RegisterFont( FontPurposeID purpose, Font const& font );
 
-	Font SelectBestFont( FontPurposeID purpose, uint8_t zoomFactor ) const;
+	Font SelectBestFont( FontPurposeID purpose, gfx::ppu::ZoomFactor zoomFactor ) const;
 
 
 	//
