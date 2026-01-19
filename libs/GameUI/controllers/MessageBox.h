@@ -41,6 +41,8 @@ public:
 	size_t GetNumCharactersDispatchedLastRender() const;
 	size_t GetNumCharactersRenderedLastRender() const;
 
+	void ReflowAllText();
+
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 	virtual void OnZoomFactorChange( UIContext& context, Container& container ) override;
@@ -59,6 +61,7 @@ private:
 	bool mBlockAnimUntilAABBChange = false;
 	bool mAABBChanged = false;
 	bool mFastForwardOnNextFrame = false;
+	bool mReflowOnNextFrame = false;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

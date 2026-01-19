@@ -11,6 +11,7 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core/meta/ScopedCleanup.h"
 #include "core/ptr/default_creator.h"
 
 #include "rftl/algorithm"
@@ -96,13 +97,38 @@ size_t MessageBox::GetNumCharactersRenderedLastRender() const
 
 
 
+void MessageBox::ReflowAllText()
+{
+	mReflowOnNextFrame = true;
+	mBlockAnimUntilAABBChange = false;
+}
+
+
+
 void MessageBox::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
+	// Make sure to render text at the end of it all
+	auto const onScopeEnd = RF::OnScopeEnd( [this, &context, &container, &blockChildRendering]() -> void
+		{
+			TextBox::OnRender( context, container, blockChildRendering );
+		} );
+
 	bool const rightToLeft = IsRightToLeft();
 
 	if( mFullText.empty() )
 	{
+		mNumCharsDispatched = 0;
+		mNumCharsRendered = 0;
 		TextBox::SetText( rftl::string_view(), rightToLeft );
+		return;
+	}
+
+	if( mReflowOnNextFrame )
+	{
+		mNumCharsDispatched = 0;
+		mNumCharsRendered = 0;
+		TextBox::SetText( rftl::string_view(), rightToLeft );
+		mReflowOnNextFrame = false;
 		return;
 	}
 
@@ -167,8 +193,6 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		}
 		mNumCharsDispatched = numToDispatch;
 	}
-
-	TextBox::OnRender( context, container, blockChildRendering );
 }
 
 
