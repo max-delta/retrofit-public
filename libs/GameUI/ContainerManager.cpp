@@ -723,9 +723,10 @@ void ContainerManager::ProcessDestruction( ContainerIDSet&& seedContainers, Anch
 	// Re-entrant destruction not allowed
 	RF_ASSERT_MSG( mIsDestroyingContainers == false, "Re-entrant destruction" );
 	mIsDestroyingContainers = true;
-	auto const onScopeEnd = OnScopeEnd( [this]() {
-		mIsDestroyingContainers = false;
-	} );
+	auto const onScopeEnd = OnScopeEnd( [this]()
+		{
+			mIsDestroyingContainers = false;
+		} );
 
 	ContainerIDSet containersToDestroy = rftl::move( seedContainers );
 	AnchorIDSet anchorsToDestroy = rftl::move( seedAnchors );
