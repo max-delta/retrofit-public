@@ -15,6 +15,18 @@ class GAMEUI_API MessageBox final : public TextBox
 	RF_NO_COPY( MessageBox );
 
 	//
+	// Types and constants
+public:
+	enum class State : uint8_t
+	{
+		Invalid = 0,
+		Animating,
+		Truncated,
+		Completed,
+	};
+
+
+	//
 	// Public methods
 public:
 	MessageBox() = delete;
@@ -31,6 +43,7 @@ public:
 
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 	void SetFastForwardEvent( FocusEventType event );
+	void SetContinuationEvent( FocusEventType event );
 
 	ContainerID GetChildContainerID() const;
 
@@ -52,15 +65,19 @@ public:
 	//
 	// Private data
 private:
-	uint8_t mAnimSpeed = 0;
 	rftl::string mFullText;
 	FocusEventType mFastForwardEvent = focusevent::Invalid;
+	FocusEventType mContinuationEvent = focusevent::Invalid;
 
+	size_t mNumCharsSkipped = 0;
 	size_t mNumCharsDispatched = 0;
 	size_t mNumCharsRendered = 0;
-	bool mBlockAnimUntilAABBChange = false;
+
+	State mState = State::Invalid;
+	uint8_t mAnimSpeed = 0;
 	bool mAABBChanged = false;
 	bool mFastForwardOnNextFrame = false;
+	bool mContinueOnNextFrame = false;
 	bool mReflowOnNextFrame = false;
 };
 

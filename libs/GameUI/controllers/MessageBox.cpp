@@ -74,9 +74,17 @@ void MessageBox::SetFastForwardEvent( FocusEventType event )
 
 
 
+void MessageBox::SetContinuationEvent( FocusEventType event )
+{
+	mContinuationEvent = event;
+}
+
+
+
 void MessageBox::SetText( rftl::string_view text, bool rightToLeft )
 {
 	mFullText = text;
+	mNumCharsSkipped = 0;
 
 	TextBox::SetText( {}, rightToLeft );
 }
@@ -100,7 +108,7 @@ size_t MessageBox::GetNumCharactersRenderedLastRender() const
 void MessageBox::ReflowAllText()
 {
 	mReflowOnNextFrame = true;
-	mBlockAnimUntilAABBChange = false;
+	mState = State::Animating;
 }
 
 
@@ -125,6 +133,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 
 	if( mReflowOnNextFrame )
 	{
+		mNumCharsSkipped = 0;
 		mNumCharsDispatched = 0;
 		mNumCharsRendered = 0;
 		TextBox::SetText( rftl::string_view(), rightToLeft );
@@ -138,14 +147,30 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	//  that are non-rendering, which it uses during truncation logic, but not
 	//  during render logic.
 
-	size_t const previousNumDispatched = mNumCharsDispatched;
-	size_t const previousNumUnrendered = GetNumCharactersUnwrittenLastRender();
+	size_t previousNumDispatched = mNumCharsDispatched;
+	size_t previousNumUnrendered = GetNumCharactersUnwrittenLastRender();
 	RF_ASSERT( previousNumDispatched >= previousNumUnrendered );
-	size_t const previousNumRendered = previousNumDispatched - previousNumUnrendered;
+	size_t previousNumRendered = previousNumDispatched - previousNumUnrendered;
 
 	mNumCharsRendered = previousNumRendered;
 
-	if( mBlockAnimUntilAABBChange && mAABBChanged == false )
+	// Are we truncated and trying to advance?
+	if( mState == State::Truncated && mContinueOnNextFrame )
+	{
+		RF_ASSERT( mNumCharsSkipped + previousNumRendered < mFullText.size() );
+		mNumCharsSkipped += previousNumRendered;
+		previousNumDispatched = 0;
+		previousNumUnrendered = 0;
+		previousNumRendered = 0;
+		mState = State::Animating;
+	}
+	mContinueOnNextFrame = false;
+
+	// May be skipping some characters
+	rftl::string_view const currentFlowAttempt =
+		rftl::string_view( mFullText ).substr( mNumCharsSkipped );
+
+	if( mState == State::Truncated && mAABBChanged == false )
 	{
 		// Don't try to animate
 		return;
@@ -154,42 +179,58 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	{
 		// Lift block and try to animate
 		mAABBChanged = false;
-		mBlockAnimUntilAABBChange = false;
+		mState = State::Animating;
 	}
 	else if( previousNumUnrendered > 0 )
 	{
-		// Stop animating
-		mBlockAnimUntilAABBChange = true;
+		// Stop animating, no more room
+		mState = State::Truncated;
+		return;
+	}
+	else if( previousNumRendered < currentFlowAttempt.size() )
+	{
+		// Try to animate
+		RF_ASSERT( mState == State::Animating );
+	}
+	else if( mState == State::Completed )
+	{
+		// Don't animate, already completed
+		RF_ASSERT( mAABBChanged == false );
 		return;
 	}
 	else
 	{
-		// Try to animate
+		// Stop animating, completed
+		RF_ASSERT( mState == State::Animating );
+		RF_ASSERT( previousNumUnrendered == 0 );
+		RF_ASSERT( mNumCharsSkipped + previousNumRendered == mFullText.size() );
+		mState = State::Completed;
+		return;
 	}
 
 	// Figure out how much to dispatch
-	size_t const fullTextLength = mFullText.length();
-	size_t numToDispatch = math::Min( fullTextLength, previousNumRendered + mAnimSpeed );
+	size_t const attempLength = currentFlowAttempt.length();
+	size_t numToDispatch = math::Min( attempLength, previousNumRendered + mAnimSpeed );
 	bool const fastForward = mFastForwardOnNextFrame || mAnimSpeed == 0u;
 	if( fastForward )
 	{
-		numToDispatch = fullTextLength;
+		numToDispatch = attempLength;
 	}
 	mFastForwardOnNextFrame = false;
 
-	if( numToDispatch == mNumCharsDispatched )
+	if( numToDispatch == previousNumDispatched )
 	{
 		// No change
 	}
 	else
 	{
-		if( numToDispatch == mFullText.length() )
+		if( numToDispatch == currentFlowAttempt.length() )
 		{
-			TextBox::SetText( mFullText, rightToLeft );
+			TextBox::SetText( currentFlowAttempt, rightToLeft );
 		}
 		else
 		{
-			TextBox::SetText( mFullText.substr( 0, numToDispatch ), rightToLeft );
+			TextBox::SetText( currentFlowAttempt.substr( 0, numToDispatch ), rightToLeft );
 		}
 		mNumCharsDispatched = numToDispatch;
 	}
@@ -221,10 +262,24 @@ bool MessageBox::OnFocusEvent( UIContext& context, FocusEvent const& focusEvent 
 
 	if( focusEvent.mEventType == mFastForwardEvent )
 	{
-		bool const canFastForward = GetNumCharactersDispatchedLastRender() < mFullText.size();
+		bool const stillHasUndispatchedText = GetNumCharactersDispatchedLastRender() < mFullText.size();
+		bool const canFastForward = stillHasUndispatchedText && mState == State::Animating;
 		if( canFastForward )
 		{
 			mFastForwardOnNextFrame = true;
+			handled = true;
+			// NOTE: Not returning, since we're not sure what the event is or
+			//  if it will conflict with other events we're looking for
+		}
+	}
+
+	if( focusEvent.mEventType == mContinuationEvent )
+	{
+		bool const stillHasUnseenText = mNumCharsSkipped + GetNumCharactersRenderedLastRender() < mFullText.size();
+		bool const canContinue = stillHasUnseenText && mState == State::Truncated;
+		if( canContinue )
+		{
+			mContinueOnNextFrame = true;
 			handled = true;
 			// NOTE: Not returning, since we're not sure what the event is or
 			//  if it will conflict with other events we're looking for
