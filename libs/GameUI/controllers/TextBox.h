@@ -56,9 +56,9 @@ private:
 	size_t const mNumRows;
 	FontPurposeID const mFontPurpose;
 	Justification::Value const mJustification;
+	bool mRightToLeft = false;
 	math::Color3f const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
-	bool mRightToLeft = false;
 	rftl::string mText;
 	rftl::unordered_set<char> mBreakableChars;
 	WeakPtr<TextRows> mSlotController;
