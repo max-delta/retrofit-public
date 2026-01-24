@@ -146,6 +146,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		lowerMsg->SetText( kTODOText, false );
 		lowerMsg->SetAnimationSpeed( 1 );
 		lowerMsg->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		lowerMsg->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerMsg->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		internalState.mLowerMessageBox = lowerMsg;
 
