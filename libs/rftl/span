@@ -5,6 +5,9 @@
 #include RFTL_SPAN
 #include "rftl/patch/postinclude.inl"
 
+// For C++26 span shim
+#include "cstdlib"
+
 // Namespace wrapping
 namespace rftl {
 using std::span;
@@ -13,4 +16,17 @@ using std::dynamic_extent;
 
 using std::as_bytes;
 using std::as_writable_bytes;
+}
+
+namespace rftl {
+// Span doesn't get at(...) until C++26
+template<typename T, size_t ExtentT>
+auto span_at( span<T, ExtentT> const& span, size_t index )
+{
+	if( index >= span.size() )
+	{
+		rftl::abort();
+	}
+	return span[index];
+}
 }
