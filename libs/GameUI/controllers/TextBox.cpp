@@ -248,10 +248,6 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 		return;
 	}
 
-	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
-
-	Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurpose, renderer.GetCurrentZoomFactor() );
-
 	rftl::vector<rftl::string_view> textLines;
 	rftl::string_view truncated;
 	SpeculativelySplitAcrossLines( context, container, textLines, truncated, mText );
