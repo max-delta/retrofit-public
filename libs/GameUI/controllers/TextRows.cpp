@@ -69,13 +69,16 @@ WeakPtr<TextLabel> TextRows::GetMutableSlotController( size_t slotIndex )
 
 
 
-void TextRows::SetText( rftl::vector<rftl::string> const& text )
+void TextRows::SetText( rftl::span<rftl::string const> text )
 {
-	RF_ASSERT( text.size() == mNumSlots );
-	for( size_t i = 0; i < mNumSlots; i++ )
-	{
-		GetMutableSlotController( i )->SetText( text.at( i ) );
-	}
+	SetTextInternal( text );
+}
+
+
+
+void TextRows::SetText( rftl::span<rftl::string_view const> text )
+{
+	SetTextInternal( text );
 }
 
 
@@ -119,6 +122,18 @@ void TextRows::OnRender( UIConstContext const& context, Container const& contain
 	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
 	{
 		slotController->SetColor( mColor );
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+template<typename T>
+void TextRows::SetTextInternal( rftl::span<T const> text )
+{
+	RF_ASSERT( text.size() == mNumSlots );
+	for( size_t i = 0; i < mNumSlots; i++ )
+	{
+		GetMutableSlotController( i )->SetText( rftl::span_at( text, i ) );
 	}
 }
 

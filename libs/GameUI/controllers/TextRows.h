@@ -5,6 +5,9 @@
 
 #include "core_math/Color3f.h"
 
+#include "rftl/span"
+#include "rftl/string_view"
+
 // Forwards
 namespace RF::ui::controller {
 class TextLabel;
@@ -33,10 +36,18 @@ public:
 	ContainerID GetChildContainerID() const;
 	WeakPtr<TextLabel const> GetSlotController( size_t slotIndex ) const;
 	WeakPtr<TextLabel> GetMutableSlotController( size_t slotIndex );
-	void SetText( rftl::vector<rftl::string> const& text );
+	void SetText( rftl::span<rftl::string const> text );
+	void SetText( rftl::span<rftl::string_view const> text );
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
+
+
+	//
+	// Private methods
+private:
+	template<typename T>
+	void SetTextInternal( rftl::span<T const> text );
 
 
 	//
