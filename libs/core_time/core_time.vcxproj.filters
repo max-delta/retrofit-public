@@ -5,8 +5,10 @@
 		<ClInclude Include="CommonClock.h" />
 		<ClInclude Include="PerfClock.h" />
 		<ClInclude Include="SteadyClock.h" />
+		<ClInclude Include="ChronoFormat.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="ChronoFormat.cpp" />
 	</ItemGroup>
 </Project>

@@ -94,6 +94,7 @@
 		<ClCompile Include="thread_signal.cpp" />
 		<ClCompile Include="meta_typelist.cpp" />
 		<ClCompile Include="ptr_uniqueptr.cpp" />
+		<ClCompile Include="time_chrono_format.cpp" />
 		<ClCompile Include="unicode_bufferconvert.cpp" />
 		<ClCompile Include="unicode_charconvert.cpp" />
 		<ClCompile Include="unicode_stringconvert.cpp" />
@@ -110,6 +111,9 @@
 		</ProjectReference>
 		<ProjectReference Include="..\..\libs\core_thread\core_thread.vcxproj">
 			<Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_time\core_time.vcxproj">
+			<Project>{ba26e0ab-0257-4ee7-9528-bca3f135a91d}</Project>
 		</ProjectReference>
 		<ProjectReference Include="..\..\third_party\googletest\msvc\gtest.vcxproj">
 			<Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
