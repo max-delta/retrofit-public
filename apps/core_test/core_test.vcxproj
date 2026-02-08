@@ -36,6 +36,7 @@
 		<ClCompile Include="allocate_singleallocator.cpp" />
 		<ClCompile Include="math_rand.cpp" />
 		<ClCompile Include="math_ratio.cpp" />
+		<ClCompile Include="rftl_algorithms.cpp" />
 		<ClCompile Include="rftl_byteview.cpp" />
 		<ClCompile Include="component_objectmanager.cpp" />
 		<ClCompile Include="component_typedobjectmanager.cpp" />

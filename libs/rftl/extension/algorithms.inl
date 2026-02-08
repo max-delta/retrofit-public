@@ -106,5 +106,29 @@ inline constexpr auto copy_overwrite_clamped( DestContainer& dest, SourceContain
 	return destIter;
 }
 
+
+
+template<class Iter, class Unary>
+constexpr Iter partition_point_iter( Iter first, Iter last, Unary predicate )
+{
+	ptrdiff_t length = last - first;
+	while( 0 < length )
+	{
+		ptrdiff_t const half = length / 2;
+		Iter const middle = first + half;
+		if( predicate( middle ) )
+		{
+			first = middle + 1;
+			length -= ( half + 1 );
+		}
+		else
+		{
+			length = half;
+		}
+	}
+
+	return first;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

@@ -68,6 +68,7 @@
 		<ClCompile Include="rftl_string_parse.cpp" />
 		<ClCompile Include="math_rand.cpp" />
 		<ClCompile Include="math_ratio.cpp" />
+		<ClCompile Include="rftl_algorithms.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />

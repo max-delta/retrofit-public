@@ -30,6 +30,9 @@ auto concatenate( Container const& container, typename Container::value_type con
 template<typename DestContainer, typename SourceContainer>
 constexpr auto copy_overwrite_clamped( DestContainer& dest, SourceContainer const& source ) -> typename DestContainer::iterator;
 
+template<class Iter, class Unary>
+constexpr auto partition_point_iter( Iter first, Iter last, Unary predicate ) -> Iter;
+
 ///////////////////////////////////////////////////////////////////////////////
 }
 
