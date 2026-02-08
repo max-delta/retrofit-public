@@ -14,6 +14,8 @@
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
+#include "rftl/extension/algorithms.h"
+#include "rftl/extension/string_parse.h"
 #include "rftl/algorithm"
 
 
@@ -53,7 +55,7 @@ TextBox::TextBox(
 	, mFontPurpose( purpose )
 	, mJustification( justification )
 	, mColor( color )
-	, mBreakableChars( breakableChars )
+	, mBreakableChars( breakableChars.begin(), breakableChars.end() )
 {
 	RF_ASSERT( mNumRows >= 2 );
 }
@@ -78,6 +80,131 @@ void TextBox::SetText( rftl::string_view text, bool rightToLeft )
 bool TextBox::IsRightToLeft() const
 {
 	return mRightToLeft;
+}
+
+
+
+void TextBox::SpeculativelySplitAcrossLines(
+	UIConstContext const& context,
+	Container const& container,
+	rftl::vector<rftl::string_view>& textLines,
+	rftl::string_view& truncated,
+	rftl::string_view str ) const
+{
+	textLines.clear();
+	truncated = {};
+
+	if( str.empty() )
+	{
+		return;
+	}
+
+	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+
+	Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurpose, renderer.GetCurrentZoomFactor() );
+
+	gfx::ppu::CoordElem const maxLineLen = container.mAABB.Width();
+	textLines.reserve( mNumRows );
+
+	rftl::string_view const breakableChars = mBreakableChars;
+	auto const rewindPastNonBreakableCharacters = [&breakableChars]( rftl::string_view full ) -> rftl::string_view
+	{
+		RF_ASSERT( full.empty() == false );
+		if( breakableChars.empty() )
+		{
+			return full;
+		}
+
+		rftl::string_view partial = full;
+		while( partial.empty() == false && breakableChars.find( partial.back() ) == rftl::string_view::npos )
+		{
+			partial.remove_suffix( 1 );
+		}
+		return partial;
+	};
+
+	auto const rewindPastBreakableCharacters = [&breakableChars]( rftl::string_view full ) -> rftl::string_view
+	{
+		RF_ASSERT( full.empty() == false );
+		if( breakableChars.empty() )
+		{
+			return full;
+		}
+
+		return rftl::trim_suffix_chars( full, breakableChars );
+	};
+
+	auto const determineLengthThatFits = [&renderer, &font]( rftl::string_view full, gfx::ppu::CoordElem width ) -> size_t
+	{
+		RF_ASSERT( full.empty() == false );
+		RF_ASSERT( width > 0 );
+
+		rftl::string_view::const_iterator const begin = full.begin();
+		rftl::string_view::const_iterator const end = full.end();
+		auto const doesFit = [&renderer, &font, &width, &begin]( rftl::string_view::const_iterator iter ) -> bool
+		{
+			rftl::string_view const partial( begin, iter + 1 );
+			return renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, partial ) <= width;
+		};
+		rftl::string_view::const_iterator const onePastTheMaxLen = rftl::partition_point_iter( begin, end, doesFit );
+		RF_ASSERT( onePastTheMaxLen > begin );
+		RF_ASSERT( onePastTheMaxLen <= end );
+		size_t const lenThatFits = math::integer_cast<size_t>( rftl::distance( begin, onePastTheMaxLen ) );
+		RF_ASSERT( renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, rftl::string_view( begin, onePastTheMaxLen ) ) <= width );
+		if( onePastTheMaxLen < end )
+		{
+			RF_ASSERT( renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, rftl::string_view( begin, onePastTheMaxLen + 1 ) ) > width );
+		}
+		return lenThatFits;
+	};
+
+	rftl::string_view unwrittenText = str;
+	while( true )
+	{
+		if( unwrittenText.empty() )
+		{
+			// Complete
+			return;
+		}
+
+		if( textLines.size() >= mNumRows )
+		{
+			// No more lines left
+			truncated = unwrittenText;
+			return;
+		}
+
+		// How much fits in the width?
+		rftl::string_view strThatFits;
+		{
+			size_t const lenThatFits = determineLengthThatFits( unwrittenText, maxLineLen );
+			RF_ASSERT( lenThatFits <= unwrittenText.size() );
+			strThatFits = unwrittenText.substr( 0, lenThatFits );
+		}
+
+		if( strThatFits.size() > gfx::ppu::kMaxStringLen )
+		{
+			// Hard limit on render draw request
+			RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '{}'", strThatFits ) );
+			strThatFits = strThatFits.substr( 0, gfx::ppu::kMaxStringLen );
+		}
+
+		if( strThatFits.size() == unwrittenText.size() )
+		{
+			// Everything fits! Store and bail
+			textLines.emplace_back( strThatFits );
+			return;
+		}
+
+		// Not everything fits, rewind past last breakable sequence
+		strThatFits = rewindPastNonBreakableCharacters( strThatFits );
+		strThatFits = rewindPastBreakableCharacters( strThatFits );
+
+		// Store and keep going
+		textLines.emplace_back( strThatFits );
+		unwrittenText.remove_prefix( strThatFits.size() );
+		continue;
+	}
 }
 
 
@@ -116,7 +243,7 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 {
 	if( mText.empty() )
 	{
-		mSlotController->SetText( rftl::vector<rftl::string>( mNumRows ) );
+		mSlotController->SetText( rftl::vector<rftl::string_view>( mNumRows ) );
 		mNumCharactersUnwrittenLastRender = 0;
 		return;
 	}
@@ -125,94 +252,31 @@ void TextBox::OnRender( UIConstContext const& context, Container const& containe
 
 	Font const font = GetFontRegistry( context.GetContainerManager() ).SelectBestFont( mFontPurpose, renderer.GetCurrentZoomFactor() );
 
-	// TODO: Optimize
-	gfx::ppu::CoordElem const maxLineLen = container.mAABB.Width();
-	rftl::vector<rftl::string> textLines;
+	rftl::vector<rftl::string_view> textLines;
+	rftl::string_view truncated;
+	SpeculativelySplitAcrossLines( context, container, textLines, truncated, mText );
+	RF_ASSERT( textLines.size() <= mNumRows );
 	textLines.resize( mNumRows );
-	rftl::deque<char> unwrittenText( mText.begin(), mText.end() );
-	size_t curLine = 0;
-	while( unwrittenText.empty() == false && curLine < textLines.size() )
-	{
-		rftl::string& line = textLines.at( curLine );
-
-		// Tentatively add the next character
-		if( mRightToLeft )
-		{
-			line += unwrittenText.back();
-		}
-		else
-		{
-			line += unwrittenText.front();
-		}
-
-		// See if it fits
-		bool fits = true;
-		if( fits && line.length() > gfx::ppu::kMaxStringLen )
-		{
-			// Hard limit on render draw request
-			RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI, "A text box has to truncate a line due to a hard limit from the renderer: '{}'", line ) );
-			fits = false;
-		}
-		if( fits && renderer.CalculateStringLength( font.mFontHeight, font.mManagedFontID, line ) > maxLineLen )
-		{
-			fits = false;
-		}
-
-		// Did it fit?
-		if( fits == false )
-		{
-			// Not enough room, undo and move to next line
-			line.pop_back();
-			curLine++;
-
-			// Recoup any broken sequences back into buffer
-			while( line.empty() == false )
-			{
-				char const ch = line.back();
-				bool const isBreakableChar = mBreakableChars.count( ch ) > 0;
-				if( isBreakableChar )
-				{
-					break;
-				}
-				else
-				{
-					line.pop_back();
-					if( mRightToLeft )
-					{
-						unwrittenText.push_back( ch );
-					}
-					else
-					{
-						unwrittenText.push_front( ch );
-					}
-				}
-			}
-		}
-		else
-		{
-			// Fits, consume char from buffer
-			if( mRightToLeft )
-			{
-				unwrittenText.pop_back();
-			}
-			else
-			{
-				unwrittenText.pop_front();
-			}
-		}
-	}
 
 	// Handle right-to-left output
+	rftl::vector<rftl::string> tempRTL;
 	if( mRightToLeft )
 	{
-		for( rftl::string& line : textLines )
+		tempRTL.assign( textLines.begin(), textLines.end() );
+		for( rftl::string& line : tempRTL )
 		{
 			rftl::reverse( line.begin(), line.end() );
+		}
+
+		textLines.clear();
+		for( rftl::string const& line : tempRTL )
+		{
+			textLines.emplace_back( line );
 		}
 	}
 
 	mSlotController->SetText( textLines );
-	mNumCharactersUnwrittenLastRender = unwrittenText.size();
+	mNumCharactersUnwrittenLastRender = truncated.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

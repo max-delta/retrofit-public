@@ -44,6 +44,14 @@ public:
 	void SetText( rftl::string_view text, bool rightToLeft );
 	bool IsRightToLeft() const;
 
+	// Intended for use in evaluating whether text will fit or not, in advance
+	void SpeculativelySplitAcrossLines(
+		UIConstContext const& context,
+		Container const& container,
+		rftl::vector<rftl::string_view>& textLines,
+		rftl::string_view& truncated,
+		rftl::string_view str ) const;
+
 	size_t GetNumCharactersUnwrittenLastRender() const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
@@ -60,7 +68,7 @@ private:
 	math::Color3f const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::string mText;
-	rftl::unordered_set<char> mBreakableChars;
+	rftl::string mBreakableChars;
 	WeakPtr<TextRows> mSlotController;
 
 	size_t mNumCharactersUnwrittenLastRender = 0;
