@@ -1,43 +1,38 @@
 #include "stdafx.h"
 #include "Color3f.h"
 
+#include "core_math/Color3u8.h"
+#include "core_math/Color4u8.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_casts.h"
 #include "core_math/Lerp.h"
-#include "core_math/Rand.h"
 
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Color3f const Color3f::kBlack{ 0.f, 0.f, 0.f };
-Color3f const Color3f::kGray25{ 0.25f, 0.25f, 0.25f };
-Color3f const Color3f::kGray50{ 0.50f, 0.50f, 0.50f };
-Color3f const Color3f::kGray75{ 0.75f, 0.75f, 0.75f };
-Color3f const Color3f::kWhite{ 1.f, 1.f, 1.f };
+Color3f const Color3f::kBlack{ Color3u8::kBlack };
+Color3f const Color3f::kGray25{ Color3u8::kGray25 };
+Color3f const Color3f::kGray50{ Color3u8::kGray50 };
+Color3f const Color3f::kGray75{ Color3u8::kGray75 };
+Color3f const Color3f::kWhite{ Color3u8::kWhite };
 
-Color3f const Color3f::kRed{ 1.f, 0.f, 0.f };
-Color3f const Color3f::kGreen{ 0.f, 1.f, 0.f };
-Color3f const Color3f::kBlue{ 0.f, 0.f, 1.f };
+Color3f const Color3f::kRed{ Color3u8::kRed };
+Color3f const Color3f::kGreen{ Color3u8::kGreen };
+Color3f const Color3f::kBlue{ Color3u8::kBlue };
 
-Color3f const Color3f::kCyan{ 0.f, 1.f, 1.f };
-Color3f const Color3f::kMagenta{ 1.f, 0.f, 1.f };
-Color3f const Color3f::kYellow{ 1.f, 1.f, 0.f };
+Color3f const Color3f::kCyan{ Color3u8::kCyan };
+Color3f const Color3f::kMagenta{ Color3u8::kMagenta };
+Color3f const Color3f::kYellow{ Color3u8::kYellow };
 
-Color3f const Color3f::kTeal{ 0.f, 1.f, .5f };
-Color3f const Color3f::kPurple{ .5f, 0.f, 1.f };
-Color3f const Color3f::kOrange{ 1.f, .5f, 0.f };
+Color3f const Color3f::kTeal{ Color3u8::kTeal };
+Color3f const Color3f::kPurple{ Color3u8::kPurple };
+Color3f const Color3f::kOrange{ Color3u8::kOrange };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Color3f::Color3f()
-	: r( 0.f )
-	, g( 0.f )
-	, b( 0.f )
-{
-	//
-}
+Color3f::Color3f() = default;
 
 
 
@@ -51,13 +46,28 @@ Color3f::Color3f( ElementType r, ElementType g, ElementType b )
 
 
 
+Color3f::Color3f( Color3u8 rgb )
+	: Color3f(
+		  float_cast<ElementType>( rgb.r ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ),
+		  float_cast<ElementType>( rgb.g ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ),
+		  float_cast<ElementType>( rgb.b ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ) )
+{
+	//
+}
+
+
+
+Color3f::Color3f( Color4u8 rgba )
+	: Color3f( Color3u8( rgba ) )
+{
+	//
+}
+
+
+
 Color3f Color3f::RandomFromHash( uint64_t hashVal )
 {
-	uint32_t seed = GetSeedFromHash( hashVal );
-	return Color3f(
-		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
-		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f,
-		float_cast<float>( StableRandLCGPercent( seed ) ) / 100.f );
+	return Color3f( Color3u8::RandomFromHash( hashVal ) );
 }
 
 

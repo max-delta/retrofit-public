@@ -1,4 +1,6 @@
 #pragma once
+#include "core_math/MathFwd.h"
+
 #include "rftl/cstdint"
 #include "rftl/type_traits"
 
@@ -40,6 +42,8 @@ public:
 public:
 	Color3f();
 	Color3f( ElementType r, ElementType g, ElementType b );
+	explicit Color3f( Color3u8 rgb );
+	explicit Color3f( Color4u8 rgba );
 
 	static Color3f RandomFromHash( uint64_t hashVal );
 	static Color3f FromHSL( float hueDegrees, float saturationRatio, ElementType luminanceValue );
@@ -72,9 +76,9 @@ public:
 	//
 	// Public data
 public:
-	ElementType r;
-	ElementType g;
-	ElementType b;
+	ElementType r = 0.f;
+	ElementType g = 0.f;
+	ElementType b = 0.f;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

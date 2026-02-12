@@ -1,4 +1,6 @@
 #pragma once
+#include "core_math/MathFwd.h"
+
 #include "rftl/cstdint"
 #include "rftl/type_traits"
 
@@ -30,6 +32,10 @@ public:
 	static Color4u8 const kMagenta;
 	static Color4u8 const kYellow;
 
+	static Color4u8 const kTeal;
+	static Color4u8 const kPurple;
+	static Color4u8 const kOrange;
+
 
 	//
 	// Public methods
@@ -38,6 +44,9 @@ public:
 	Color4u8( ElementType r, ElementType g, ElementType b );
 	Color4u8( ElementType r, ElementType g, ElementType b, ElementType a );
 	explicit Color4u8( ElementType const ( &rgba )[4] );
+	explicit Color4u8( Color3u8 rgb );
+	Color4u8( Color3u8 rgb, ElementType a );
+	explicit Color4u8( Color3f rgb );
 
 	static Color4u8 RandomFromHash( uint64_t hashVal, ElementType a );
 
@@ -59,10 +68,10 @@ public:
 	//
 	// Public data
 public:
-	ElementType r;
-	ElementType g;
-	ElementType b;
-	ElementType a;
+	ElementType r = 0;
+	ElementType g = 0;
+	ElementType b = 0;
+	ElementType a = 0;
 };
 
 static_assert( sizeof( Color4u8 ) == 4, "Unexpected size" );

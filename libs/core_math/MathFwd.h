@@ -8,5 +8,9 @@ namespace RF::math {
 
 using HashVal64 = uint64_t;
 
+class Color3f;
+class Color3u8;
+class Color4u8;
+
 ///////////////////////////////////////////////////////////////////////////////
 }

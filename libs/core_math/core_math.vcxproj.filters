@@ -24,6 +24,7 @@
 		<ClInclude Include="SoftFloat.h" />
 		<ClInclude Include="MathFwd.h" />
 		<ClInclude Include="Ratio.h" />
+		<ClInclude Include="Color3u8.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -39,6 +40,7 @@
 		<ClCompile Include="BitwiseEnums.cpp" />
 		<ClCompile Include="SoftFloat.cpp" />
 		<ClCompile Include="Ratio.cpp" />
+		<ClCompile Include="Color3u8.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Vector2.inl" />
