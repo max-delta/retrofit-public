@@ -7,7 +7,7 @@
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
-uint32_t StableRandLCG( uint32_t previousValue )
+uint32_t StableRandLCGPeek( uint32_t previousValue )
 {
 	// Don't change the algorithm! Code may take dependencies on this behavior
 
@@ -24,10 +24,17 @@ uint32_t StableRandLCG( uint32_t previousValue )
 
 
 
+uint32_t StableRandLCGRaw( uint32_t& lastGeneratorValue )
+{
+	lastGeneratorValue = StableRandLCGPeek( lastGeneratorValue );
+	return lastGeneratorValue;
+}
+
+
+
 uint8_t StableRandLCGPercent( uint32_t& lastGeneratorValue )
 {
-	lastGeneratorValue = StableRandLCG( lastGeneratorValue );
-	uint8_t const retVal = lastGeneratorValue % 101;
+	uint8_t const retVal = StableRandLCGRaw( lastGeneratorValue ) % 101;
 	RF_ASSERT( retVal <= 100 );
 	return retVal;
 }

@@ -10,8 +10,8 @@ TEST( Rand, StableLCG )
 {
 	// This random function better not change! Random behavior needs to be able
 	//  to be relied on across platforms and over time
-	ASSERT_EQ( StableRandLCG( 0 ), 12345 );
-	ASSERT_EQ( StableRandLCG( 1 ), 60616 );
+	ASSERT_EQ( StableRandLCGPeek( 0 ), 12345 );
+	ASSERT_EQ( StableRandLCGPeek( 1 ), 60616 );
 }
 
 

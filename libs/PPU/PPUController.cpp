@@ -1696,9 +1696,8 @@ auto PPUController::RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& li
 			//  visible, even if they look terrible
 
 			static uint32_t randVal = 0;
-			randVal = math::StableRandLCG( randVal );
 
-			size_t const randomIndex = randVal % MaxCountT;
+			size_t const randomIndex = math::StableRandLCGRaw( randVal ) % MaxCountT;
 			TypeT& target = list[randomIndex];
 			return target;
 		}

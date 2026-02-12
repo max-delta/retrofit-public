@@ -66,8 +66,10 @@ element::InnateIdentifier CombatEngine::GenerateRandomInnate( uint32_t& lastGene
 		I( "yel" ),
 		I( "grn" ),
 	};
-	lastGeneratorValue = math::StableRandLCG( lastGeneratorValue );
-	return element::MakeInnateIdentifier( innates.at( lastGeneratorValue % innates.size() ) );
+	return element::MakeInnateIdentifier(
+		innates.at(
+			math::StableRandLCGRaw( lastGeneratorValue ) %
+			innates.size() ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

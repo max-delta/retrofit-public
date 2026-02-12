@@ -74,14 +74,11 @@ Color3u8::Color3u8( Color3f rgb )
 
 Color3u8 Color3u8::RandomFromHash( uint64_t hashVal )
 {
-	uint32_t const seed = GetSeedFromHash( hashVal );
-	uint32_t const r = StableRandLCG( seed );
-	uint32_t const g = StableRandLCG( r );
-	uint32_t const b = StableRandLCG( g );
+	uint32_t seed = GetSeedFromHash( hashVal );
 	return Color3u8(
-		r & 0xff,
-		g & 0xff,
-		b & 0xff );
+		StableRandLCGRaw( seed ) & 0xff,
+		StableRandLCGRaw( seed ) & 0xff,
+		StableRandLCGRaw( seed ) & 0xff );
 }
 
 
