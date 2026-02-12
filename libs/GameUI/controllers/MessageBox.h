@@ -66,12 +66,13 @@ public:
 	// Private data
 private:
 	rftl::string mFullText;
-	FocusEventType mFastForwardEvent = focusevent::Invalid;
-	FocusEventType mContinuationEvent = focusevent::Invalid;
 
 	size_t mNumCharsSkipped = 0;
 	size_t mNumCharsDispatched = 0;
 	size_t mNumCharsRendered = 0;
+
+	FocusEventType mFastForwardEvent = focusevent::Invalid;
+	FocusEventType mContinuationEvent = focusevent::Invalid;
 
 	State mState = State::Invalid;
 	uint8_t mAnimSpeed = 0;

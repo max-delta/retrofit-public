@@ -41,7 +41,7 @@ enum Value : uint8_t
 };
 }
 
-using FocusEventType = uint64_t;
+using FocusEventType = uint8_t;
 namespace focusevent {
 enum : FocusEventType
 {
