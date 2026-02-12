@@ -126,18 +126,26 @@ Color3f Color3f::FromHSL( float hueDegrees, float saturationRatio, ElementType l
 	{
 		if( 6.f * component < 1.f )
 		{
-			component = confusingTemp2 + ( nonObviousTemp1 - confusingTemp2 ) * 6.f * component;
+			const float newComponent = confusingTemp2 + ( nonObviousTemp1 - confusingTemp2 ) * 6.f * component;
+			RF_ASSERT( newComponent >= 0.f );
+			component = newComponent;
 		}
 		else if( 2.f * component < 1.f )
 		{
+			RF_ASSERT( nonObviousTemp1 >= 0.f );
+			RF_ASSERT( nonObviousTemp1 <= 1.f );
 			component = nonObviousTemp1;
 		}
 		else if( 3.f * component < 2.f )
 		{
-			component = confusingTemp2 + ( nonObviousTemp1 - confusingTemp2 ) * ( ( 2.f / 3.f ) - component );
+			const float newComponent = confusingTemp2 + ( nonObviousTemp1 - confusingTemp2 ) * ( ( 2.f / 3.f ) - component );
+			RF_ASSERT( newComponent >= 0.f );
+			component = newComponent;
 		}
 		else
 		{
+			RF_ASSERT( confusingTemp2 >= 0.f );
+			RF_ASSERT( confusingTemp2 <= 1.f );
 			component = confusingTemp2;
 		}
 		RF_ASSERT( component >= 0.f );
@@ -311,7 +319,8 @@ void Color3f::GetHSL( float& hueDegrees, float& saturationRatio, ElementType& lu
 		hueDegrees = ( 4.f + ( ( r - g ) / ( max - min ) ) ) * 60.f;
 	}
 	RF_ASSERT( min <= max );
-	if( Equals( min, max ) )
+	bool const isGray = Equals( min, max );
+	if( isGray )
 	{
 		// Is some kind of gray, and thus hue is undefined, probably divided by
 		//  zero during the calculations
@@ -336,7 +345,12 @@ void Color3f::GetHSL( float& hueDegrees, float& saturationRatio, ElementType& lu
 
 	// There's some odd futzing of saturation to make sure it doesn't fall out
 	//  of the color-space. I don't know either, I'm not a color technician :/
-	if( luminanceValue < .5f )
+	if( isGray )
+	{
+		// Is some kind of gray, and thus saturation is zero
+		saturationRatio = 0.f;
+	}
+	else if( luminanceValue < .5f )
 	{
 		saturationRatio = ( max - min ) / ( max + min );
 	}
