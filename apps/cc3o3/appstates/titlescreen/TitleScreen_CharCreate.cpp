@@ -502,7 +502,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					3u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
-					math::Color3f::kWhite,
+					math::Color3u8::kWhite,
 					ui::GetBreakableChars() ) );
 		messageBox->SetAnimationSpeed( ui::kTextSpeed );
 		messageBox->SetText(
@@ -578,9 +578,9 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						rftl::extent<decltype( details::kLeftText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kGray50,
-						math::Color3f::kWhite,
-						math::Color3f::kYellow ) );
+						math::Color3u8::kGray50,
+						math::Color3u8::kWhite,
+						math::Color3u8::kYellow ) );
 			leftOptions->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
@@ -598,7 +598,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						rftl::extent<decltype( details::kLeftText )>::value,
 						ui::font::NarrowQuarterTileMono,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kWhite ) );
+						math::Color3u8::kWhite ) );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kLeftText )>::value; i++ )
 			{
 				// This will be controlled dynamically by update logic
@@ -656,9 +656,9 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						rftl::extent<decltype( details::kRightText )>::value,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kGray50,
-						math::Color3f::kWhite,
-						math::Color3f::kYellow ) );
+						math::Color3u8::kGray50,
+						math::Color3u8::kWhite,
+						math::Color3u8::kYellow ) );
 			rightOptions->AddAsSiblingAfterFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode().GetMutableFavoredChild() );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
@@ -676,7 +676,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 						rftl::extent<decltype( details::kRightText )>::value,
 						ui::font::NarrowQuarterTileMono,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kWhite ) );
+						math::Color3u8::kWhite ) );
 			for( size_t i = 0; i < rftl::extent<decltype( details::kRightText )>::value; i++ )
 			{
 				// This will be controlled dynamically by update logic

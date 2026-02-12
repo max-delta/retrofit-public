@@ -8,7 +8,6 @@
 
 #include "core/ptr/unique_ptr.h"
 #include "core_math/AABB4.h"
-#include "core_math/Color3f.h"
 
 #include "rftl/string"
 #include "rftl/string_view"
@@ -132,10 +131,10 @@ public:
 	template<typename... ArgsT>
 	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, math::Color3u8 color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	template<typename... ArgsT>
-	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
-	bool DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args );
+	bool DrawText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
+	bool DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::string_view fmt, rftl::format_args&& args );
 
 	bool IsZoomFactorHidden() const;
 	void HideZoomFactor( bool hide );
@@ -160,24 +159,24 @@ public:
 
 	bool DebugIsGridEnabled() const;
 	void DebugSetGridEnabled( bool enabled );
-	void DebugSetBackgroundColor( math::Color3f color );
+	void DebugSetBackgroundColor( math::Color3u8 color );
 
 	template<typename... ArgsT>
 	bool DebugDrawText( Coord pos, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
 	bool DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::format_args&& args );
 
 	template<typename... ArgsT>
-	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
-	bool DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args );
+	bool DebugDrawAuxText( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::format_string<ArgsT...> fmt, ArgsT&&... args );
+	bool DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::string_view fmt, rftl::format_args&& args );
 
 	bool DebugDrawLine( Coord p0, Coord p1 );
 	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width );
-	bool DebugDrawLine( Coord p0, Coord p1, math::Color3f color );
-	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3f color );
+	bool DebugDrawLine( Coord p0, Coord p1, math::Color3u8 color );
+	bool DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3u8 color );
 	bool DebugDrawAABB( AABB aabb );
 	bool DebugDrawAABB( AABB aabb, CoordElem width );
-	bool DebugDrawAABB( AABB aabb, math::Color3f color );
-	bool DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3f color );
+	bool DebugDrawAABB( AABB aabb, math::Color3u8 color );
+	bool DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3u8 color );
 	WeakPtr<DeviceInterface> DebugGetDeviceInterface() const;
 	WeakPtr<TextureManager> DebugGetTextureManager() const;
 	WeakPtr<FramePackManager> DebugGetFramePackManager() const;

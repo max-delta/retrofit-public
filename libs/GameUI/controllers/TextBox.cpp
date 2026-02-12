@@ -37,7 +37,7 @@ TextBox::TextBox(
 		numRows,
 		purpose,
 		Justification::MiddleCenter,
-		math::Color3f::kWhite,
+		math::Color3u8::kWhite,
 		breakableChars )
 {
 	//
@@ -49,7 +49,7 @@ TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
 	Justification::Value justification,
-	math::Color3f color,
+	math::Color3u8 color,
 	rftl::unordered_set<char> const& breakableChars )
 	: mNumRows( numRows )
 	, mFontPurpose( purpose )

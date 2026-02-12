@@ -181,7 +181,7 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 			info->SetFont( ui::font::NarrowQuarterTileMono );
 		}
 		info->SetText( "UNSET" );
-		info->SetColor( math::Color3f::kWhite );
+		info->SetColor( math::Color3u8::kWhite );
 		info->SetBorder( true );
 	}
 

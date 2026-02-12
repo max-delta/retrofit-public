@@ -45,7 +45,7 @@ void DevTestElementLab::OnEnter( AppStateChangeContext& context )
 	//InternalState& internalState = *mInternalState;
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
+	ppu.DebugSetBackgroundColor( math::Color3u8::kBlue );
 }
 
 
@@ -68,19 +68,19 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 
 	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
-	auto const drawVaColorText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
+	auto const drawVaColorText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3u8 const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
 		return ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, color, fmt.get(), rftl::make_format_args( args... ) );
 	};
-	auto const drawColorText = [&drawVaColorText]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3f const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
+	auto const drawColorText = [&drawVaColorText]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3u8 const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		bool const retVal = drawVaColorText( x, y, color, fmt, args... );
 		return retVal;
 	};
 	auto const drawText = [&drawVaColorText]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
-		bool const retVal = drawVaColorText( x, y, math::Color3f::kWhite, fmt, args... );
+		bool const retVal = drawVaColorText( x, y, math::Color3u8::kWhite, fmt, args... );
 		return retVal;
 	};
 
@@ -309,7 +309,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		size_t const lowerPad = LowerFit ? 0 : kSpread - ( lower - index );
 		for( size_t i = 0; i < upperPad; i++ )
 		{
-			drawColorText( x, y, math::Color3f::kGray75, " . . ." );
+			drawColorText( x, y, math::Color3u8::kGray75, " . . ." );
 			y++;
 		}
 		for( size_t i = upper; i <= lower; i++ )
@@ -318,10 +318,10 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 			// Color based on cached result
 			rftl::optional<bool> const& result = elemResultCache[identifier];
-			math::Color3f color = math::Color3f::kWhite;
+			math::Color3u8 color = math::Color3u8::kWhite;
 			if( result.has_value() )
 			{
-				color = result.value() ? math::Color3f::kGreen : math::Color3f::kRed;
+				color = result.value() ? math::Color3u8::kGreen : math::Color3u8::kRed;
 			}
 
 			drawColorText( x, y, color, "{}{}",
@@ -331,7 +331,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		}
 		for( size_t i = 0; i < lowerPad; i++ )
 		{
-			drawColorText( x, y, math::Color3f::kGray75, " . . ." );
+			drawColorText( x, y, math::Color3u8::kGray75, " . . ." );
 			y++;
 		}
 	};
@@ -440,15 +440,15 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 	// Cast error, if present
 	x = kInstanceA_x;
-	drawColorText( x, y, math::Color3f::kCyan, "CAST PREP" );
+	drawColorText( x, y, math::Color3u8::kCyan, "CAST PREP" );
 	x = kInstanceB_x;
 	if( castError == cast::CastError::kNoError )
 	{
-		drawColorText( x, y, math::Color3f::kGreen, "CAST SUCCESS" );
+		drawColorText( x, y, math::Color3u8::kGreen, "CAST SUCCESS" );
 	}
 	else
 	{
-		drawColorText( x, y, math::Color3f::kRed, "CAST ERROR" );
+		drawColorText( x, y, math::Color3u8::kRed, "CAST ERROR" );
 	}
 	y++;
 
@@ -465,7 +465,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 
 	x = kDesc_x;
 	y = kDesc_y;
-	drawColorText( x, y, math::Color3f::kCyan, "{}  @lvl {}  [{}-{}-{}]  '{}'",
+	drawColorText( x, y, math::Color3u8::kCyan, "{}  @lvl {}  [{}-{}-{}]  '{}'",
 		GetInnateString( desc.mInnate ),
 		castedLevel,
 		desc.mMinLevel,
@@ -473,7 +473,7 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 		desc.mMaxLevel,
 		ui::LocalizeKey( GetElementName( elementToCast ) ) );
 	y++;
-	drawColorText( x, y, math::Color3f::kCyan, "'{}'",
+	drawColorText( x, y, math::Color3u8::kCyan, "'{}'",
 		ui::LocalizeKey( GetElementSynopsis( elementToCast ) ) );
 	y++;
 }

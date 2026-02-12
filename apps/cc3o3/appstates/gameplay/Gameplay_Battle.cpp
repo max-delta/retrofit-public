@@ -614,7 +614,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		environmentTODO->SetJustification( ui::Justification::MiddleCenter );
 		environmentTODO->SetFont( ui::font::LargeMenuText );
 		environmentTODO->SetText( "UNSET" );
-		environmentTODO->SetColor( math::Color3f::kWhite );
+		environmentTODO->SetColor( math::Color3u8::kWhite );
 		environmentTODO->SetBorder( true );
 
 		// Team display in upper right
@@ -633,7 +633,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		teamTODO->SetJustification( ui::Justification::MiddleCenter );
 		teamTODO->SetFont( ui::font::LargeMenuText );
 		teamTODO->SetText( "UNSET" );
-		teamTODO->SetColor( math::Color3f::kWhite );
+		teamTODO->SetColor( math::Color3u8::kWhite );
 		teamTODO->SetBorder( true );
 
 		// Notification display in center
@@ -651,7 +651,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		notificationTODO->SetJustification( ui::Justification::MiddleCenter );
 		notificationTODO->SetFont( ui::font::LargeMenuText );
 		notificationTODO->SetText( "UNSET" );
-		notificationTODO->SetColor( math::Color3f::kWhite );
+		notificationTODO->SetColor( math::Color3u8::kWhite );
 		notificationTODO->SetBorder( true );
 
 		// Main display in bottom
@@ -769,7 +769,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			label->SetJustification( ui::Justification::MiddleCenter );
 			label->SetFont( ui::font::SmallMenuText );
 			label->SetText( ui::LocalizeKey( InternalState::kLabelStateWaiting ) );
-			label->SetColor( math::Color3f::kGray50 );
+			label->SetColor( math::Color3u8::kGray50 );
 			label->SetBorder( true );
 		}
 
@@ -799,7 +799,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			label->SetJustification( ui::Justification::MiddleCenter );
 			label->SetFont( ui::font::SmallMenuText );
 			label->SetText( ui::LocalizeKey( InternalState::kLabelStateCasting ) );
-			label->SetColor( math::Color3f::kGray50 );
+			label->SetColor( math::Color3u8::kGray50 );
 			label->SetBorder( true );
 		}
 
@@ -829,7 +829,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 			label->SetJustification( ui::Justification::MiddleCenter );
 			label->SetFont( ui::font::SmallMenuText );
 			label->SetText( "TODO: TARGET" );
-			label->SetColor( math::Color3f::kGray50 );
+			label->SetColor( math::Color3u8::kGray50 );
 			label->SetBorder( true );
 		}
 
@@ -861,9 +861,9 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 						math::enum_bitcast( SelectorActions::kNumActions ),
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kGray50,
-						math::Color3f::kWhite,
-						math::Color3f::kYellow ) );
+						math::Color3u8::kGray50,
+						math::Color3u8::kWhite,
+						math::Color3u8::kYellow ) );
 			rftl::vector<rftl::string> text;
 			for( char const* const& label : SelectorActions::kLabels )
 			{
@@ -902,9 +902,9 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 						SelectorAttacks::kNumActions,
 						ui::font::SmallMenuSelection,
 						ui::Justification::MiddleLeft,
-						math::Color3f::kGray50,
-						math::Color3f::kWhite,
-						math::Color3f::kYellow ) );
+						math::Color3u8::kGray50,
+						math::Color3u8::kWhite,
+						math::Color3u8::kYellow ) );
 			rftl::vector<rftl::string> text = {
 				"1",
 				"2",

@@ -122,7 +122,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		TODO->SetJustification( ui::Justification::MiddleCenter );
 		TODO->SetFont( ui::font::LargeMenuHeader );
 		TODO->SetText( "TODO" );
-		TODO->SetColor( math::Color3f::kWhite );
+		TODO->SetColor( math::Color3u8::kWhite );
 		TODO->SetBorder( true );
 		internalState.mTODO = TODO;
 		( (void)focusMan );
@@ -135,7 +135,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					4u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
-					math::Color3f::kWhite,
+					math::Color3u8::kWhite,
 					ui::GetBreakableChars() ) );
 		static constexpr char kTODOText[] =
 			"This is some really long text that isn't going to fit on one line."

@@ -217,7 +217,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					debugText.size(),
 					ui::font::MinSize,
 					ui::Justification::MiddleLeft,
-					math::Color3f::kBlack ) );
+					math::Color3u8::kBlack ) );
 		debugLabels->SetText( debugText );
 
 		// Build stamp floater in top right
@@ -248,7 +248,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 					buildText.size(),
 					ui::font::MinSize,
 					ui::Justification::MiddleRight,
-					math::Color3f::kBlack ) );
+					math::Color3u8::kBlack ) );
 		buildLabels->SetText( buildText );
 
 		// Copyright in bottom left
@@ -259,7 +259,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		copyright->SetJustification( ui::Justification::BottomLeft );
 		copyright->SetFont( ui::font::MinSize );
 		copyright->SetText( "(C) Max Delta" );
-		copyright->SetColor( math::Color3f::kBlack );
+		copyright->SetColor( math::Color3u8::kBlack );
 
 		// Url in bottom right
 		WeakPtr<ui::controller::TextLabel> const url =
@@ -271,13 +271,13 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		if constexpr( config::flag::kInternalBuildNotice )
 		{
 			url->SetText( "INTERNAL USE ONLY" );
-			url->SetColor( math::Color3f::kRed );
+			url->SetColor( math::Color3u8::kRed );
 			url->SetBorder( true );
 		}
 		else
 		{
 			url->SetText( "http://TODO" );
-			url->SetColor( math::Color3f::kBlack );
+			url->SetColor( math::Color3u8::kBlack );
 		}
 	}
 }

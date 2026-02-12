@@ -49,9 +49,9 @@ ListBox::ListBox(
 		  numSlots,
 		  purpose,
 		  Justification::MiddleCenter,
-		  math::Color3f::kGray50,
-		  math::Color3f::kWhite,
-		  math::Color3f::kYellow )
+		  math::Color3u8::kGray50,
+		  math::Color3u8::kWhite,
+		  math::Color3u8::kYellow )
 {
 	//
 }
@@ -63,9 +63,9 @@ ListBox::ListBox(
 	size_t numSlots,
 	FontPurposeID purpose,
 	Justification::Value justification,
-	math::Color3f unfocusedColor,
-	math::Color3f unselectedColor,
-	math::Color3f selectedColor )
+	math::Color3u8 unfocusedColor,
+	math::Color3u8 unselectedColor,
+	math::Color3u8 selectedColor )
 	: GenericListBox( orientation, numSlots )
 	, mFontPurpose( purpose )
 	, mJustification( justification )

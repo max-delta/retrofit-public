@@ -211,7 +211,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		header->SetJustification( ui::Justification::MiddleCenter );
 		header->SetFont( ui::font::LargeMenuText );
 		header->SetText( "UNSET" );
-		header->SetColor( math::Color3f::kWhite );
+		header->SetColor( math::Color3u8::kWhite );
 		header->SetBorder( true );
 
 		// Footer on bottom
@@ -230,7 +230,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		footer->SetJustification( ui::Justification::MiddleCenter );
 		footer->SetFont( ui::font::SmallMenuText );
 		footer->SetText( "UNSET" );
-		footer->SetColor( math::Color3f::kWhite );
+		footer->SetColor( math::Color3u8::kWhite );
 		footer->SetBorder( true );
 
 		// UI hidden unless idle for a while
@@ -467,7 +467,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
 			ppu.DebugDrawAuxText(
 				{ 0, 0 }, InternalState::kLayerDebugOverlay,
-				font.mFontHeight, font.mManagedFontID, true, math::Color3f::kCyan,
+				font.mFontHeight, font.mManagedFontID, true, math::Color3u8::kCyan,
 				"X:{:03} Y:{:03}", curPos.x, curPos.y );
 		}
 
@@ -540,7 +540,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 
 			if( kDebugRendering )
 			{
-				ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerAreaDebug, math::Color3f::kCyan );
+				ppu.DebugDrawAABB( area.mAABB, inArea ? 2 : 1, InternalState::kLayerAreaDebug, math::Color3u8::kCyan );
 				ppu.DebugDrawText( area.mAABB.mBottomRight, "{}", area.mIdentifier );
 			}
 
@@ -563,7 +563,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 					gfx::ppu::Coord const pos = ui::AlignToJustifyAroundPoint( extents, area.mFocus, ui::Justification::TopCenter );
 					ppu.DrawText(
 						pos, InternalState::kLayerAreaLabel,
-						font.mFontHeight, font.mManagedFontID, true, math::Color3f::kGray75,
+						font.mFontHeight, font.mManagedFontID, true, math::Color3u8::kGray75,
 						"{}", label );
 				}
 

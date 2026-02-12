@@ -41,7 +41,7 @@ void DevTestGridCharts::OnEnter( AppStateChangeContext& context )
 	//InternalState& internalState = *mInternalState;
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
+	ppu.DebugSetBackgroundColor( math::Color3u8::kBlue );
 }
 
 
@@ -66,7 +66,7 @@ void DevTestGridCharts::OnTick( AppStateTickContext& context )
 	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3u8::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 

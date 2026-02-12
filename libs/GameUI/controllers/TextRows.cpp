@@ -26,7 +26,7 @@ TextRows::TextRows( size_t numSlots, FontPurposeID purpose )
 		  numSlots,
 		  purpose,
 		  Justification::MiddleCenter,
-		  math::Color3f::kWhite )
+		  math::Color3u8::kWhite )
 {
 	//
 }
@@ -37,7 +37,7 @@ TextRows::TextRows(
 	size_t numSlots,
 	FontPurposeID purpose,
 	Justification::Value justification,
-	math::Color3f color )
+	math::Color3u8 color )
 	: mNumSlots( numSlots )
 	, mFontPurpose( purpose )
 	, mJustification( justification )

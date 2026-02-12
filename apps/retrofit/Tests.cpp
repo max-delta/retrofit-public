@@ -606,7 +606,7 @@ void InitUITest()
 			DefaultCreator<ui::controller::TextLabel>::Create() );
 	textLabel8->SetFont( k2xFont );
 	textLabel8->SetText( "TextLabel8 test" );
-	textLabel8->SetColor( math::Color3f::kWhite );
+	textLabel8->SetColor( math::Color3u8::kWhite );
 	textLabel8->SetBorder( true );
 
 	// Assign a label to confirm it's accessible
@@ -639,7 +639,7 @@ void InitUITest()
 				frame6Text.size(),
 				k2xFont,
 				ui::Justification::MiddleLeft,
-				math::Color3f::kWhite ) );
+				math::Color3u8::kWhite ) );
 	frame6TextRows->SetText( frame6Text );
 }
 

@@ -3,7 +3,7 @@
 
 #include "GameUI/controllers/InstancedController.h"
 
-#include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
 
 #include "rftl/extension/cstring_view.h"
 
@@ -34,7 +34,7 @@ public:
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
-		math::Color3f color,
+		math::Color3u8 color,
 		rftl::unordered_set<char> const& breakableChars );
 
 	ContainerID GetChildContainerID() const;
@@ -65,7 +65,7 @@ private:
 	FontPurposeID const mFontPurpose;
 	Justification::Value const mJustification;
 	bool mRightToLeft = false;
-	math::Color3f const mColor;
+	math::Color3u8 const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::string mText;
 	rftl::string mBreakableChars;

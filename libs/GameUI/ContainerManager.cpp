@@ -10,6 +10,8 @@
 
 #include "PPU/PPUController.h"
 
+#include "core_math/Color3f.h"
+
 #include "core/meta/ScopedCleanup.h"
 #include "core/ptr/default_creator.h"
 
@@ -345,7 +347,7 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 		gfx::ppu::DepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( container ) : 0;
 		if( focusedContainers.count( id ) > 0 )
 		{
-			mGraphics->DebugDrawAABB( container.mAABB, kFocusWidth, zLayer + kFocusOffset, math::Color3f::kYellow );
+			mGraphics->DebugDrawAABB( container.mAABB, kFocusWidth, zLayer + kFocusOffset, math::Color3u8::kYellow );
 		}
 		else
 		{
@@ -358,7 +360,7 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 			if( shouldRender )
 			{
 				math::Color3f const color = math::Color3f::RandomFromHash( id ).ClampLuminance( minLum, maxLum );
-				mGraphics->DebugDrawAABB( container.mAABB, kLineWidth, zLayer, color );
+				mGraphics->DebugDrawAABB( container.mAABB, kLineWidth, zLayer, math::Color3u8( color ) );
 			}
 		}
 	}
@@ -372,8 +374,8 @@ void ContainerManager::DebugRender( bool uzeZlayers, bool includeAnchors, bool i
 			gfx::ppu::Coord const& pos = anchor.mPos;
 			gfx::ppu::DepthLayer const zLayer = uzeZlayers ? GetRecommendedRenderDepth( parentID ) : 0;
 			math::Color3f const color = math::Color3f::RandomFromHash( parentID ).ClampLuminance( minLum, maxLum );
-			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, color );
-			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, color );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, -kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, kAnchorRadius }, kLineWidth, zLayer, math::Color3u8( color ) );
+			mGraphics->DebugDrawLine( pos + gfx::ppu::Coord{ -kAnchorRadius, kAnchorRadius }, pos + gfx::ppu::Coord{ kAnchorRadius, -kAnchorRadius }, kLineWidth, zLayer, math::Color3u8( color ) );
 		}
 	}
 }

@@ -343,7 +343,7 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 
 
 
-bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args )
+bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::string_view fmt, rftl::format_args&& args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -369,7 +369,7 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
-	ConvertColor( targetString.mColor, color );
+	targetString.mColor = color;
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
@@ -593,9 +593,9 @@ void PPUController::DebugSetGridEnabled( bool enabled )
 
 
 
-void PPUController::DebugSetBackgroundColor( math::Color3f color )
+void PPUController::DebugSetBackgroundColor( math::Color3u8 color )
 {
-	mDeviceInterface->SetBackgroundColor( color );
+	mDeviceInterface->SetBackgroundColor( math::Color3f( color ) );
 }
 
 
@@ -625,7 +625,7 @@ bool PPUController::DebugDrawTextVA( Coord pos, rftl::string_view fmt, rftl::for
 
 
 
-bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3f color, rftl::string_view fmt, rftl::format_args&& args )
+bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::string_view fmt, rftl::format_args&& args )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -651,7 +651,7 @@ bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t de
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
-	ConvertColor( targetString.mColor, color );
+	targetString.mColor = color;
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
@@ -673,26 +673,26 @@ bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t de
 
 bool PPUController::DebugDrawLine( Coord p0, Coord p1 )
 {
-	return DebugDrawLine( p0, p1, math::Color3f::kBlack );
+	return DebugDrawLine( p0, p1, math::Color3u8::kBlack );
 }
 
 
 
 bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width )
 {
-	return DebugDrawLine( p0, p1, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
+	return DebugDrawLine( p0, p1, width, details::kDefaultDebugLineLayer, math::Color3u8::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawLine( Coord p0, Coord p1, math::Color3f color )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1, math::Color3u8 color )
 {
 	return DebugDrawLine( p0, p1, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3f color )
+bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLayer zLayer, math::Color3u8 color )
 {
 	if( mDrawRequestsSuppressed )
 	{
@@ -721,26 +721,26 @@ bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLay
 
 bool PPUController::DebugDrawAABB( AABB aabb )
 {
-	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
+	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, math::Color3u8::kBlack );
 }
 
 
 
 bool PPUController::DebugDrawAABB( AABB aabb, CoordElem width )
 {
-	return DebugDrawAABB( aabb, width, details::kDefaultDebugLineLayer, math::Color3f::kBlack );
+	return DebugDrawAABB( aabb, width, details::kDefaultDebugLineLayer, math::Color3u8::kBlack );
 }
 
 
 
-bool PPUController::DebugDrawAABB( AABB aabb, math::Color3f color )
+bool PPUController::DebugDrawAABB( AABB aabb, math::Color3u8 color )
 {
 	return DebugDrawAABB( aabb, 0, details::kDefaultDebugLineLayer, color );
 }
 
 
 
-bool PPUController::DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3f color )
+bool PPUController::DebugDrawAABB( AABB aabb, CoordElem width, DepthLayer zLayer, math::Color3u8 color )
 {
 	DebugDrawLine( aabb.mTopLeft, Coord( aabb.mTopLeft.x, aabb.mBottomRight.y ), width, zLayer, color );
 	DebugDrawLine( aabb.mTopLeft, Coord( aabb.mBottomRight.x, aabb.mTopLeft.y ), width, zLayer, color );
@@ -1459,7 +1459,7 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
 		float const deviceWidth = bottomRight.x - topLeft.x;
 		float const deviceHeight = bottomRight.y - topLeft.y;
-		math::Color3f const color = ConvertColor( string.mColor );
+		math::Color3f const color = math::Color3f( string.mColor );
 		float const uvWidth = deviceWidth / ( ( deviceWidth * math::float_cast<float>( tileWidth ) ) / math::float_cast<float>( charWidth ) );
 		float const uvHeight = deviceHeight / ( ( deviceHeight * math::float_cast<float>( tileHeight ) ) / math::float_cast<float>( charHeight ) );
 		math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
@@ -1499,7 +1499,7 @@ void PPUController::RenderDebugLine( PPUDebugState::DebugLine const& line ) cons
 	math::Vector2f const p0 = CoordToDevice( line.mXCoord0, line.mYCoord0 );
 	math::Vector2f const p1 = CoordToDevice( line.mXCoord1, line.mYCoord1 );
 	float const lineWidth = math::float_cast<float>( math::Max( 1, line.mWidth * GetZoomFactor() ) );
-	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), lineWidth, line.mColor );
+	mDeviceInterface->DebugDrawLine( p0, p1, LayerToDevice( line.mZLayer ), lineWidth, math::Color3f( line.mColor ) );
 }
 
 

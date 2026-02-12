@@ -208,7 +208,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		mainHeader->SetJustification( ui::Justification::BottomCenter );
 		mainHeader->SetFont( ui::font::LargeMenuHeader );
 		mainHeader->SetText( "UNSET" );
-		mainHeader->SetColor( math::Color3f::kWhite );
+		mainHeader->SetColor( math::Color3u8::kWhite );
 		mainHeader->SetBorder( true );
 		internalState.mMainHeader = mainHeader;
 
@@ -220,7 +220,7 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 		mainFooter->SetJustification( ui::Justification::TopRight );
 		mainFooter->SetFont( ui::font::SmallMenuSelection );
 		mainFooter->SetText( "UNSET" );
-		mainFooter->SetColor( math::Color3f::kWhite );
+		mainFooter->SetColor( math::Color3u8::kWhite );
 		mainFooter->SetBorder( true );
 
 		// Main sections are in the center

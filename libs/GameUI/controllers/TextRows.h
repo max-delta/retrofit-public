@@ -3,7 +3,7 @@
 
 #include "GameUI/controllers/InstancedController.h"
 
-#include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
 
 #include "rftl/span"
 #include "rftl/string_view"
@@ -31,7 +31,7 @@ public:
 		size_t numSlots,
 		FontPurposeID purpose,
 		Justification::Value justification,
-		math::Color3f color );
+		math::Color3u8 color );
 
 	ContainerID GetChildContainerID() const;
 	WeakPtr<TextLabel const> GetSlotController( size_t slotIndex ) const;
@@ -56,7 +56,7 @@ private:
 	size_t const mNumSlots;
 	FontPurposeID const mFontPurpose;
 	Justification::Value const mJustification;
-	math::Color3f const mColor;
+	math::Color3u8 const mColor;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	rftl::vector<WeakPtr<TextLabel>> mSlotControllers;
 };

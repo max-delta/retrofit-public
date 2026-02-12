@@ -89,7 +89,7 @@ void DevTestLobby::OnEnter( AppStateChangeContext& context )
 	InternalState& internalState = *mInternalState;
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	ppu.DebugSetBackgroundColor( { 0.f, 0.f, 1.f } );
+	ppu.DebugSetBackgroundColor( math::Color3u8::kBlue );
 
 	input::HardcodedPlayerSetup( input::player::P1 );
 	input::HardcodedPlayerSetup( input::player::P2 );
@@ -133,7 +133,7 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool //
 	{
 		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
-		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3f::kWhite, fmt.get(), rftl::make_format_args( args... ) );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, -1, font.mFontHeight, font.mManagedFontID, false, math::Color3u8::kWhite, fmt.get(), rftl::make_format_args( args... ) );
 		return retVal;
 	};
 
@@ -322,15 +322,15 @@ void DevTestLobby::OnTick( AppStateTickContext& context )
 			&internalState.mP2,
 		};
 
-		math::Color3f const colors[] = {
-			math::Color3f::kYellow,
-			math::Color3f::kWhite,
+		math::Color3u8 const colors[] = {
+			math::Color3u8::kYellow,
+			math::Color3u8::kWhite,
 		};
 
 		for( size_t i = 0; i < 2; i++ )
 		{
 			InternalState::Pos const& pos = *positions[i];
-			math::Color3f const& color = colors[i];
+			math::Color3u8 const& color = colors[i];
 
 			gfx::ppu::Coord const renderPos = gfx::ppu::Coord( pos.mX, pos.mY );
 			ppu.DebugDrawAuxText( renderPos, -1, font.mFontHeight, font.mManagedFontID, false, color, "#" );

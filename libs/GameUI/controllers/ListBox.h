@@ -3,7 +3,7 @@
 
 #include "GameUI/controllers/GenericListBox.h"
 
-#include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
 
 // Forwards
 namespace RF::ui::controller {
@@ -35,9 +35,9 @@ public:
 		size_t numSlots,
 		FontPurposeID purpose,
 		Justification::Value justification,
-		math::Color3f unfocusedColor,
-		math::Color3f unselectedColor,
-		math::Color3f selectedColor );
+		math::Color3u8 unfocusedColor,
+		math::Color3u8 unselectedColor,
+		math::Color3u8 selectedColor );
 
 	WeakPtr<TextLabel> GetMutableSlotController( size_t slotIndex );
 	void SetText( rftl::vector<rftl::string> const& text );
@@ -57,9 +57,9 @@ private:
 private:
 	FontPurposeID const mFontPurpose;
 	Justification::Value const mJustification;
-	math::Color3f const mUnfocusedColor;
-	math::Color3f const mUnselectedColor;
-	math::Color3f const mSelectedColor;
+	math::Color3u8 const mUnfocusedColor;
+	math::Color3u8 const mUnselectedColor;
+	math::Color3u8 const mSelectedColor;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

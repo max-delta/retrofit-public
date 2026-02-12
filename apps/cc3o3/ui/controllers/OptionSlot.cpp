@@ -96,20 +96,20 @@ void OptionSlot::UpdateState( bool active, bool selected )
 	if( active == false )
 	{
 		// Inactive
-		mNameLabel->SetColor( math::Color3f::kGray50 );
-		mValueLabel->SetColor( math::Color3f::kGray50 );
+		mNameLabel->SetColor( math::Color3u8::kGray50 );
+		mValueLabel->SetColor( math::Color3u8::kGray50 );
 	}
 	else if( selected )
 	{
 		// Selected
-		mNameLabel->SetColor( math::Color3f::kYellow );
-		mValueLabel->SetColor( math::Color3f::kYellow );
+		mNameLabel->SetColor( math::Color3u8::kYellow );
+		mValueLabel->SetColor( math::Color3u8::kYellow );
 	}
 	else
 	{
 		// Unselected
-		mNameLabel->SetColor( math::Color3f::kWhite );
-		mValueLabel->SetColor( math::Color3f::kWhite );
+		mNameLabel->SetColor( math::Color3u8::kWhite );
+		mValueLabel->SetColor( math::Color3u8::kWhite );
 	}
 }
 
@@ -147,7 +147,7 @@ void OptionSlot::OnInstanceAssign( UIContext& context, Container& container )
 	mNameLabel->SetJustification( ui::Justification::MiddleLeft );
 	mNameLabel->SetFont( ui::font::SmallMenuSelection );
 	mNameLabel->SetText( "UNSET" );
-	mNameLabel->SetColor( math::Color3f::kWhite );
+	mNameLabel->SetColor( math::Color3u8::kWhite );
 	mNameLabel->SetBorder( true );
 
 	// Value
@@ -158,7 +158,7 @@ void OptionSlot::OnInstanceAssign( UIContext& context, Container& container )
 	mValueLabel->SetJustification( ui::Justification::MiddleCenter );
 	mValueLabel->SetFont( ui::font::SmallMenuSelection );
 	mValueLabel->SetText( "UNSET" );
-	mValueLabel->SetColor( math::Color3f::kWhite );
+	mValueLabel->SetColor( math::Color3u8::kWhite );
 	mValueLabel->SetBorder( true );
 }
 

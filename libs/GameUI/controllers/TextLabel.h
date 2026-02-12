@@ -3,7 +3,7 @@
 
 #include "GameUI/controllers/InstancedController.h"
 
-#include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
 
 #include "rftl/extension/cstring_view.h"
 #include "rftl/string"
@@ -28,7 +28,7 @@ public:
 	void SetText( rftl::string&& text );
 	void SetText( char const* text );
 	void SetJustification( Justification::Value justification );
-	void SetColor( math::Color3f color );
+	void SetColor( math::Color3u8 color );
 	void SetBorder( bool border );
 	void SetIgnoreOverflow( bool ignoreOverflow );
 
@@ -54,7 +54,7 @@ private:
 	uint8_t mBaselineOffset = 0;
 	Justification::Value mJustification = Justification::TopLeft;
 	rftl::string mText;
-	math::Color3f mColor = math::Color3f::kBlack;
+	math::Color3u8 mColor = math::Color3u8::kBlack;
 	bool mBorder = false;
 	bool mIgnoreOverflow = false;
 };

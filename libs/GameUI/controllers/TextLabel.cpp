@@ -62,7 +62,7 @@ void TextLabel::SetJustification( Justification::Value justification )
 
 
 
-void TextLabel::SetColor( math::Color3f color )
+void TextLabel::SetColor( math::Color3u8 color )
 {
 	mColor = color;
 }

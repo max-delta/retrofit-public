@@ -204,7 +204,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 		header->SetJustification( ui::Justification::BottomCenter );
 		header->SetFont( ui::font::LargeMenuHeader );
 		header->SetText( "Options" );
-		header->SetColor( math::Color3f::kWhite );
+		header->SetColor( math::Color3u8::kWhite );
 		header->SetBorder( true );
 
 		// Frame in middle center

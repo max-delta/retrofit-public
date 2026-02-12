@@ -70,17 +70,17 @@ void ElementSlotOverlay::UpdateState( bool active, bool selected )
 	if( active == false )
 	{
 		// Inactive
-		mNameLabel->SetColor( math::Color3f::kGray50 );
+		mNameLabel->SetColor( math::Color3u8::kGray50 );
 	}
 	else if( selected )
 	{
 		// Selected
-		mNameLabel->SetColor( math::Color3f::kYellow );
+		mNameLabel->SetColor( math::Color3u8::kYellow );
 	}
 	else
 	{
 		// Unselected
-		mNameLabel->SetColor( math::Color3f::kWhite );
+		mNameLabel->SetColor( math::Color3u8::kWhite );
 	}
 }
 
@@ -123,7 +123,7 @@ void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& contai
 	mNameLabel->SetJustification( ui::Justification::MiddleCenter );
 	mNameLabel->SetFont( tilesetDef.mFont );
 	mNameLabel->SetText( "UNSET" );
-	mNameLabel->SetColor( math::Color3f::kWhite );
+	mNameLabel->SetColor( math::Color3u8::kWhite );
 	mNameLabel->SetBorder( true );
 }
 

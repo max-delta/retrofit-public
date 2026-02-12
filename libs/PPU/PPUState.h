@@ -6,7 +6,7 @@
 #include "PPU/TileLayer.h"
 #include "PPU/TextStorage.h"
 
-#include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
 
 
 namespace RF::gfx::ppu {
@@ -38,7 +38,7 @@ public:
 		CoordElem mXCoord;
 		CoordElem mYCoord;
 		DepthLayer mZLayer;
-		rftl::array<uint8_t, 3> mColor;
+		math::Color3u8 mColor;
 		uint8_t mDesiredHeight;
 		bool mBorder : 1;
 		bool mReserved10 : 7;
