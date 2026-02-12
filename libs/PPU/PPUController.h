@@ -199,9 +199,6 @@ private:
 
 	void CalculateTileSize( TileLayer const& tileLayer, Tileset const& tileset, CoordElem& tileWidth, CoordElem& tileHeight ) const;
 
-	static void ConvertColor( rftl::array<uint8_t, 3>& dest, math::Color3f const& src );
-	static math::Color3f ConvertColor( rftl::array<uint8_t, 3> const& src );
-
 	static math::Color3f CalculateBorderColor( math::Color3f contentsColor );
 
 	void RenderObject( Object const& object ) const;
