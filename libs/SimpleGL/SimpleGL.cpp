@@ -80,11 +80,13 @@ bool SimpleGL::AttachToWindow( shim::HWND hWnd )
 	}
 
 	// All calls to OpenGL will use this context
+	RF_ASSERT( mActiveThread == rftl::thread::id{} );
 	bool const makeCurrentSuccess = shim::wglMakeCurrent( mHDC, mHRC );
 	if( makeCurrentSuccess == false )
 	{
 		return false;
 	}
+	mActiveThread = rftl::this_thread::get_id();
 
 	return true;
 }
@@ -105,6 +107,7 @@ bool SimpleGL::DetachFromWindow()
 	{
 		totalSuccess = false;
 	}
+	mActiveThread = {};
 
 	// Discard the old render context
 	bool const deleteContextSuccess = shim::wglDeleteContext( mHRC );
@@ -142,6 +145,8 @@ rftl::string SimpleGL::GetAttachedDeviceDescription() const
 
 bool SimpleGL::Initialize2DGraphics()
 {
+	AssertContextIsCurrent();
+
 	{
 		// Oldest version check support, gets a UTF-8 string that begins with
 		//  the major number followed by a dot, and then quickly degenerates
@@ -186,6 +191,8 @@ bool SimpleGL::SetProjectionMode( ProjectionMode mode )
 
 bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 {
+	AssertContextIsCurrent();
+
 	this->mWidth = width;
 	this->mHeight = height;
 	float const widthf = math::float_cast<float>( width );
@@ -330,6 +337,8 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 
 bool SimpleGL::SetBackgroundColor( math::Color3f color )
 {
+	AssertContextIsCurrent();
+
 	// When we call Clear, it will clear to this color
 	glClearColor( color.r, color.g, color.b, 1.f );
 	CONSUME_ERRORS();
@@ -348,6 +357,8 @@ bool SimpleGL::SetFontScale( float scale )
 
 DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& width, uint32_t& height )
 {
+	AssertContextIsCurrent();
+
 	int x, y, n;
 	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &x, &y, &n, 4 );
 	RF_ASSERT( data != nullptr );
@@ -378,6 +389,8 @@ DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& 
 
 bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 {
+	AssertContextIsCurrent();
+
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glDeleteTextures( 1, &texID );
 	CONSUME_ERRORS();
@@ -388,6 +401,8 @@ bool SimpleGL::UnloadTexture( DeviceTextureID textureID )
 
 DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t& characterWidth, uint32_t& characterHeight, rftl::array<uint32_t, 256>* variableWidth, rftl::array<uint32_t, 256>* variableHeight )
 {
+	AssertContextIsCurrent();
+
 	int tx, ty, tn;
 	size_t const kRGBAElements = 3;
 	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &tx, &ty, &tn, kRGBAElements );
@@ -564,6 +579,8 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 
 bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f pos, float z, math::Color3f color, math::AABB4f texUV )
 {
+	AssertContextIsCurrent();
+
 	DeviceTextureID const texID = mBitmapFonts.at( fontID ).at( static_cast<unsigned char>( character ) );
 	glColor3f( color.r, color.g, color.b );
 	CANT_ERROR();
@@ -574,6 +591,8 @@ bool SimpleGL::DrawBitmapFont( DeviceFontID fontID, char character, math::AABB4f
 
 bool SimpleGL::DebugRenderText( math::Vector2f pos, float z, const char* fmt, ... )
 {
+	AssertContextIsCurrent();
+
 	glColor3f( 0, 0, 0 );
 	CANT_ERROR();
 	glRasterPos3f( pos.x, pos.y, z );
@@ -589,6 +608,8 @@ bool SimpleGL::DebugRenderText( math::Vector2f pos, float z, const char* fmt, ..
 
 bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, float width, math::Color3f color )
 {
+	AssertContextIsCurrent();
+
 	glBindTexture( GL_TEXTURE_2D, 0 );
 	CONSUME_ERRORS();
 	glColor3f( color.r, color.g, color.b );
@@ -626,6 +647,8 @@ bool SimpleGL::DebugDrawLine( math::Vector2f p0, math::Vector2f p1, float z, flo
 
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z )
 {
+	AssertContextIsCurrent();
+
 	glColor3f( 1, 1, 1 );
 	CANT_ERROR();
 	DrawBillboardInternal( textureID, pos, z, math::AABB4f{ 0.f, 0.f, 1.f, 1.f } );
@@ -636,6 +659,8 @@ bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float
 
 bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
+	AssertContextIsCurrent();
+
 	glColor3f( 1, 1, 1 );
 	CANT_ERROR();
 	DrawBillboardInternal( textureID, pos, z, texUV );
@@ -646,7 +671,13 @@ bool SimpleGL::DrawBillboard( DeviceTextureID textureID, math::AABB4f pos, float
 
 bool SimpleGL::BeginFrame()
 {
-	shim::wglMakeCurrent( mHDC, mHRC );
+	// Check if we need to change what thread we're rendering on
+	if( mActiveThread != rftl::this_thread::get_id() )
+	{
+		shim::wglMakeCurrent( mHDC, mHRC );
+		mActiveThread = rftl::this_thread::get_id();
+	}
+
 	// Clear the buffer
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	CONSUME_ERRORS();
@@ -659,6 +690,8 @@ bool SimpleGL::BeginFrame()
 
 bool SimpleGL::RenderFrame()
 {
+	AssertContextIsCurrent();
+
 	glColor3f( 1, 1, 1 );
 	CANT_ERROR();
 #ifdef SIMPLEGL_DBG_GRID
@@ -699,6 +732,14 @@ bool SimpleGL::RenderFrame()
 
 bool SimpleGL::EndFrame()
 {
+	RF_ASSERT_MSG(
+		mActiveThread == rftl::this_thread::get_id(),
+		"Ending the frame on a different thread than where the frame started" );
+	// NOTE: Not clearing the active thread, since we don't want to pay the
+	//  cost of re-establishing the WGL context at the start of the next frame
+	//  unless we hop threads, since establishing the new context at time of
+	//  writing incurs multiple context switches
+
 	glPopMatrix();
 	CONSUME_ERRORS();
 	shim::SwapBuffers( mHDC );
@@ -707,8 +748,17 @@ bool SimpleGL::EndFrame()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void SimpleGL::AssertContextIsCurrent() const
+{
+	RF_ASSERT( mActiveThread == rftl::this_thread::get_id() );
+}
+
+
+
 void SimpleGL::BuildFont( int8_t height )
 {
+	AssertContextIsCurrent();
+
 	// Windows font ID
 	shim::HFONT font{};
 
@@ -764,6 +814,8 @@ bool SimpleGL::DrawTextInternal( char const* fmt, ... )
 
 bool SimpleGL::DrawTextInternal( char const* fmt, va_list args )
 {
+	AssertContextIsCurrent();
+
 	if( fmt == nullptr )
 	{
 		return false;
@@ -796,6 +848,8 @@ bool SimpleGL::DrawTextInternal( char const* fmt, va_list args )
 
 bool SimpleGL::DrawBillboardInternal( DeviceTextureID textureID, math::AABB4f pos, float z, math::AABB4f texUV )
 {
+	AssertContextIsCurrent();
+
 	GLuint const texID = static_cast<GLuint>( textureID );
 	glBindTexture( GL_TEXTURE_2D, texID );
 	CONSUME_ERRORS();

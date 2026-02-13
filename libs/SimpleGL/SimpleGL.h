@@ -3,8 +3,9 @@
 
 #include "PPU/DeviceInterface.h"
 
-#include "rftl/unordered_map"
 #include "rftl/array"
+#include "rftl/thread"
+#include "rftl/unordered_map"
 
 // Forwards
 namespace RF::gfx {
@@ -68,6 +69,8 @@ public:
 	//
 	// Private methods
 private:
+	void AssertContextIsCurrent() const;
+
 	void BuildFont( int8_t height );
 	bool DrawTextInternal( char const* fmt, ... );
 	bool DrawTextInternal( char const* fmt, va_list args );
@@ -80,6 +83,7 @@ private:
 	shim::HWND mHWnd;
 	shim::HDC mHDC;
 	shim::HGLRC mHRC;
+	rftl::thread::id mActiveThread = {};
 	ProjectionMode mProjectionMode;
 	int mWidth;
 	int mHeight;
