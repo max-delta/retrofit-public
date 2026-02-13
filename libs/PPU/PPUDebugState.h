@@ -62,14 +62,14 @@ public:
 	//
 	// Public data
 public:
-	uint8_t mNumStrings;
-	uint8_t mNumAuxStrings;
-	uint8_t mNumLines;
-
 	rftl::array<DebugString, kMaxDebugStrings> mStrings;
 	rftl::array<DebugAuxString, kMaxDebugAuxStrings> mAuxStrings;
 	rftl::array<DebugLine, kMaxDebugLines> mLines;
 	TextStorage<kMaxDebugTextStorage> mTextStorage;
+
+	uint8_t mNumStrings = 0;
+	uint8_t mNumAuxStrings = 0;
+	uint8_t mNumLines = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

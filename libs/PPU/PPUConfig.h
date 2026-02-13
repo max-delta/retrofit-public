@@ -22,7 +22,7 @@ static constexpr size_t kMaxObjects = 32;
 static constexpr size_t kMaxTileLayers = 16;
 static constexpr size_t kMaxStrings = 48;
 static constexpr size_t kMaxStringLen = 128;
-static constexpr size_t kMaxTextStorage = 1238;
+static constexpr size_t kMaxTextStorage = 1366;
 
 static constexpr size_t kMaxDebugStrings = 32;
 static constexpr size_t kMaxDebugAuxStrings = 128;

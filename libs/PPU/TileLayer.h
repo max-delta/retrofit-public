@@ -83,12 +83,10 @@ public:
 	bool mUseTransform : 1;
 	bool mWrapping : 1;
 	uint8_t reserved1 : 2;
-	uint8_t reserved2 : 8;
-	uint8_t reserved3 : 8;
-
 	TileZoomFactor mTileZoomFactor;
 
 	float mTransform[2][2];
+
 
 
 	//
@@ -96,7 +94,7 @@ public:
 private:
 	rftl::vector<Tile> mTiles;
 };
-static_assert( sizeof( TileLayer ) <= 96, "Double-check TileLayer storage" );
+static_assert( sizeof( TileLayer ) <= 64, "Double-check TileLayer storage" );
 static_assert( alignof( TileLayer ) == RF::compiler::kPointerBytes, "Double-check TileLayer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////
