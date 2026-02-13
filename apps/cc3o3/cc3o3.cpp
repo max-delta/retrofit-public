@@ -55,6 +55,8 @@ constexpr bool kAllowDeveloperHud = true;
 
 static appstate::AppStateManager sAppStateManager;
 
+static time::CommonClock::duration sLastFrameTime;
+
 static SimulationMode sDebugPreviousFrameSimulationMode = SimulationMode::Invalid;
 
 static rftl::optional<rftl::string> sSnapshotTakeQueued = {};
@@ -620,6 +622,20 @@ bool DebugIsShowingContainerLayout()
 void DebugSetContainerLayoutDisplay( bool enabled )
 {
 	sShowingDebugUI = enabled;
+}
+
+
+
+void DebugSetLastFrameTime( time::CommonClock::duration dur )
+{
+	sLastFrameTime = dur;
+}
+
+
+
+time::CommonClock::duration DebugGetLastFrameTime()
+{
+	return sLastFrameTime;
 }
 
 

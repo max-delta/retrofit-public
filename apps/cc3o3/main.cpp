@@ -32,7 +32,7 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 	using Limiter = cc::time::FrameLimiter;
 	Limiter frameLimiter;
 	frameLimiter.Reset();
-	auto const stall = [&frameLimiter]() -> void //
+	auto const stall = [&frameLimiter]() -> time::CommonClock::duration //
 	{
 		using Speed = cc::sync::RecommendedFrameSpeed;
 		Speed const frameSpeed = cc::sync::CalcRecommendedFrameSpeed();
@@ -49,13 +49,18 @@ RF_MODULE_POINT int module_main( int argc, char* argv[] )
 		}
 
 		frameLimiter.AdjustedStall( adjustment );
+
+		return frameLimiter.GetLastNonStallDuration();
 	};
 
 	while( true )
 	{
 		// Timing
-		stall();
-		time::FrameClock::add_time( cc::time::kSimulationFrameDuration );
+		{
+			time::CommonClock::duration const lastFrameTime = stall();
+			cc::DebugSetLastFrameTime( lastFrameTime );
+			time::FrameClock::add_time( cc::time::kSimulationFrameDuration );
+		}
 
 		// Input
 		cc::input::HardcodedDeviceTick();

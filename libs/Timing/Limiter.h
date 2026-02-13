@@ -14,13 +14,15 @@ struct TIMING_API Limiter
 {
 public:
 	void Reset();
+	CommonClock::duration GetLastNonStallDuration() const;
 
 protected:
-	CommonClock::duration StallFor( CommonClock::duration desiredSpanTime );
+	CommonClock::duration StallToMatch( CommonClock::duration desiredSpanTime );
 
 private:
 	PerfClock::time_point mSpanStart;
 	PerfClock::time_point mSpanEnd;
+	PerfClock::duration mLastNonStallDuration;
 };
 
 }
@@ -33,12 +35,12 @@ struct StaticLimiter : public details::Limiter
 
 	CommonClock::duration Stall()
 	{
-		return StallFor( kSpanDuration );
+		return StallToMatch( kSpanDuration );
 	}
 
 	CommonClock::duration AdjustedStall( CommonClock::duration adjust )
 	{
-		return StallFor( kSpanDuration + adjust );
+		return StallToMatch( kSpanDuration + adjust );
 	}
 };
 

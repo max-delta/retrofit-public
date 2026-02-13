@@ -3,6 +3,8 @@
 
 #include "cc3o3/appstates/AppStatesFwd.h"
 
+#include "core_time/CommonClock.h"
+
 #include "rftl/string"
 
 // Forwards
@@ -30,6 +32,9 @@ void Shutdown();
 
 bool DebugIsShowingContainerLayout();
 void DebugSetContainerLayoutDisplay( bool enabled );
+
+void DebugSetLastFrameTime( time::CommonClock::duration dur );
+time::CommonClock::duration DebugGetLastFrameTime();
 
 SimulationMode DebugGetPreviousFrameSimulationMode();
 void DebugTakeSnapshot( rftl::string const& name );

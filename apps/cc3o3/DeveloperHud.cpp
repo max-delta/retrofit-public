@@ -36,6 +36,7 @@ enum class Mode : uint8_t
 	Rollback = 0,
 	UIAssess,
 	Reload,
+	Perf,
 	InputDevice,
 
 	NumModes
@@ -482,6 +483,37 @@ void RenderReload()
 
 
 
+void ProcessPerf( RF::input::GameCommand const& command )
+{
+	switch( command.mType )
+	{
+		case input::command::game::DeveloperAction1:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction2:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction3:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction4:
+		{
+			break;
+		}
+		case input::command::game::DeveloperAction5:
+		{
+			break;
+		}
+		default:
+			break;
+	}
+}
+
+
+
 void ProcessInputDevice( RF::input::GameCommand const& command )
 {
 	switch( command.mType )
@@ -511,6 +543,38 @@ void ProcessInputDevice( RF::input::GameCommand const& command )
 		default:
 			break;
 	}
+}
+
+
+
+void RenderPerf()
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	ui::Font const font = app::gFontRegistry->SelectBestFont( ui::font::NarrowQuarterTileMono, app::gGraphics->GetCurrentZoomFactor() );
+	if( font.mManagedFontID == gfx::kInvalidManagedFontID )
+	{
+		// No font (not even a backup), so we may still be booting
+		ppu.DebugDrawText( gfx::ppu::Coord( 16, 16 ), "No font loaded for developer hud" );
+		return;
+	}
+	auto const drawText = [&ppu, &font]<typename... TArgs>( uint8_t x, uint8_t y, math::Color3u8 const& color, rftl::format_string<TArgs...> fmt, TArgs... args ) -> bool
+	{
+		gfx::ppu::Coord const pos = gfx::ppu::Coord( x * font.mFontHeight / 2, y * ( font.mBaselineOffset + font.mFontHeight ) );
+		bool const retVal = ppu.DebugDrawAuxTextVA( pos, gfx::ppu::kNearestLayer, font.mFontHeight, font.mManagedFontID, true, color, fmt.get(), rftl::make_format_args( args... ) );
+		return retVal;
+	};
+
+	static constexpr uint8_t kStartX = 4;
+	static constexpr uint8_t kStartY = 1;
+	uint8_t x = kStartX;
+	uint8_t y = kStartY;
+
+	drawText( x, y, math::Color3u8::kMagenta, "PERF" );
+	y++;
+
+	drawText( x, y, math::Color3u8::kCyan, "FRAME: {}", rftl::chrono::duration_cast<rftl::chrono::microseconds>( DebugGetLastFrameTime() ) );
+	y++;
 }
 
 
@@ -954,6 +1018,9 @@ void ProcessInput()
 					case Mode::Reload:
 						mode::ProcessReload( command );
 						break;
+					case Mode::Perf:
+						mode::ProcessPerf( command );
+						break;
 					case Mode::InputDevice:
 						mode::ProcessInputDevice( command );
 						break;
@@ -989,6 +1056,9 @@ void RenderHud()
 			return;
 		case Mode::Reload:
 			mode::RenderReload();
+			return;
+		case Mode::Perf:
+			mode::RenderPerf();
 			return;
 		case Mode::InputDevice:
 			mode::RenderInputDevice();

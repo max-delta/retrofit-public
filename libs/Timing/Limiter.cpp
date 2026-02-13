@@ -14,16 +14,25 @@ void Limiter::Reset()
 {
 	mSpanStart = PerfClock::now();
 	mSpanEnd = PerfClock::now();
+	mLastNonStallDuration = {};
 }
 
 
 
-CommonClock::duration Limiter::StallFor( CommonClock::duration desiredSpanTime )
+CommonClock::duration Limiter::GetLastNonStallDuration() const
+{
+	return mLastNonStallDuration;
+}
+
+
+
+CommonClock::duration Limiter::StallToMatch( CommonClock::duration desiredSpanTime )
 {
 	RF_ASSERT( desiredSpanTime.count() > 0 );
 
 	PerfClock::time_point const naturalSpanEnd = PerfClock::now();
-	CommonClock::duration const naturalSpanTime = naturalSpanEnd - mSpanStart;
+	PerfClock::duration const naturalSpanTime = naturalSpanEnd - mSpanStart;
+	mLastNonStallDuration = naturalSpanTime;
 	CommonClock::duration const timeRemaining = desiredSpanTime - naturalSpanTime;
 	if( timeRemaining.count() > 0 )
 	{
