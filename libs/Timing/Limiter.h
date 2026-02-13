@@ -19,8 +19,8 @@ protected:
 	CommonClock::duration StallFor( CommonClock::duration desiredSpanTime );
 
 private:
-	PerfClock::time_point m_SpanStart;
-	PerfClock::time_point m_SpanEnd;
+	PerfClock::time_point mSpanStart;
+	PerfClock::time_point mSpanEnd;
 };
 
 }
