@@ -39,6 +39,7 @@ public:
 	size_t GetCurrentSize() const;
 	size_t GetCurrentCount() const;
 
+	bool IsPointerWithinAllocationRange( void const* ptr ) const;
 	void RelinquishAllAllocations();
 
 

@@ -14,12 +14,15 @@ TEST( LinearAllocator, Standalone )
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 0 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
+	ASSERT_FALSE( alloc.IsPointerWithinAllocationRange( nullptr ) );
+	ASSERT_FALSE( alloc.IsPointerWithinAllocationRange( reinterpret_cast<void const*>( -1 ) ) );
 
 	void* const byteAllocation = alloc.Allocate( 1 );
 	ASSERT_NE( byteAllocation, nullptr );
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 2 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+	ASSERT_TRUE( alloc.IsPointerWithinAllocationRange( byteAllocation ) );
 
 	void* const quadAllocation = alloc.Allocate( 4 );
 	ASSERT_NE( quadAllocation, nullptr );
@@ -27,22 +30,26 @@ TEST( LinearAllocator, Standalone )
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 6 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 2 );
+	ASSERT_TRUE( alloc.IsPointerWithinAllocationRange( quadAllocation ) );
 
 	alloc.Delete( byteAllocation );
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 6 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 1 );
+	ASSERT_TRUE( alloc.IsPointerWithinAllocationRange( byteAllocation ) );
 
 	alloc.Delete( quadAllocation );
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 6 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
+	ASSERT_TRUE( alloc.IsPointerWithinAllocationRange( quadAllocation ) );
 
 	void* const overAllocation = alloc.Allocate( 4 );
 	ASSERT_EQ( overAllocation, nullptr );
 	ASSERT_EQ( alloc.GetMaxSize(), kSize );
 	ASSERT_EQ( alloc.GetCurrentSize(), 6 );
 	ASSERT_EQ( alloc.GetCurrentCount(), 0 );
+	ASSERT_FALSE( alloc.IsPointerWithinAllocationRange( overAllocation ) );
 }
 
 
