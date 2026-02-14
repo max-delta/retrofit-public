@@ -82,8 +82,7 @@ inline void* LinearAllocator<MaxTotalSize, Align>::Allocate( size_t size, size_t
 template<size_t MaxTotalSize, size_t Align>
 inline void LinearAllocator<MaxTotalSize, Align>::Delete( void* ptr )
 {
-	RF_ASSERT( ptr >= &mStorageBytes[0] );
-	RF_ASSERT( ptr <= &mStorageBytes[kMaxTotalSize - 1] );
+	RF_ASSERT( IsPointerWithinAllocationRange( ptr ) );
 
 	// NOTE: No deletion actually happens
 	mCurrentAllocations.fetch_sub( 1, rftl::memory_order::memory_order_acq_rel );

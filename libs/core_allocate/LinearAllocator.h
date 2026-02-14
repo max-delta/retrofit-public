@@ -18,7 +18,7 @@ class LinearAllocator
 	//
 	// Types and constants
 public:
-	using ThisType = LinearAllocator<MaxTotalSize>;
+	using ThisType = LinearAllocator<MaxTotalSize, Align>;
 	static constexpr size_t kMaxTotalSize = MaxTotalSize;
 	static constexpr size_t kAlignment = Align;
 	static_assert( IsValidAlignment( kAlignment ), "Invalid alignment" );
