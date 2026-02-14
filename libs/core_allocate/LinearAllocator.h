@@ -38,9 +38,9 @@ public:
 	size_t GetMaxSize() const;
 	size_t GetCurrentSize() const;
 	size_t GetCurrentCount() const;
+	void RelinquishAllAllocations();
 
 	bool IsPointerWithinAllocationRange( void const* ptr ) const;
-	void RelinquishAllAllocations();
 
 
 	//

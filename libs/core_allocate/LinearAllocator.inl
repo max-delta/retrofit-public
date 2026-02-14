@@ -115,6 +115,14 @@ inline size_t LinearAllocator<MaxTotalSize, Align>::GetCurrentCount() const
 
 
 template<size_t MaxTotalSize, size_t Align>
+inline void LinearAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
+{
+	mHasRelinquishedAllAllocations.store( true, rftl::memory_order::memory_order_release );
+}
+
+
+
+template<size_t MaxTotalSize, size_t Align>
 inline bool LinearAllocator<MaxTotalSize, Align>::IsPointerWithinAllocationRange( void const* ptr ) const
 {
 	if( ptr < &mStorageBytes )
@@ -128,14 +136,6 @@ inline bool LinearAllocator<MaxTotalSize, Align>::IsPointerWithinAllocationRange
 	}
 
 	return true;
-}
-
-
-
-template<size_t MaxTotalSize, size_t Align>
-inline void LinearAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
-{
-	mHasRelinquishedAllAllocations.store( true, rftl::memory_order::memory_order_release );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
