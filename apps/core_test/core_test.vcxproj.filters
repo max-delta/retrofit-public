@@ -70,6 +70,7 @@
 		<ClCompile Include="math_ratio.cpp" />
 		<ClCompile Include="rftl_algorithms.cpp" />
 		<ClCompile Include="time_chrono_format.cpp" />
+		<ClCompile Include="allocate_linearstretchallocator.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />

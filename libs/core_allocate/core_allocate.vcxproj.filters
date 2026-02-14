@@ -12,6 +12,7 @@
 		<ClInclude Include="DefaultAllocCreator.h" />
 		<ClInclude Include="SplitAllocCreator.h" />
 		<ClInclude Include="AllocatorFwd.h" />
+		<ClInclude Include="LinearStretchAllocator.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -21,5 +22,6 @@
 		<None Include="SingleAllocator.inl" />
 		<None Include="RftlAllocator.inl" />
 		<None Include="LinearAllocator.inl" />
+		<None Include="LinearStretchAllocator.inl" />
 	</ItemGroup>
 </Project>

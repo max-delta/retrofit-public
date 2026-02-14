@@ -38,6 +38,7 @@
 		<ClInclude Include="SingleAllocator.h" />
 		<ClInclude Include="SplitAllocCreator.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="LinearStretchAllocator.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="HeapAllocator.cpp" />
@@ -49,6 +50,7 @@
 		<None Include="LinearAllocator.inl" />
 		<None Include="RftlAllocator.inl" />
 		<None Include="SingleAllocator.inl" />
+		<None Include="LinearStretchAllocator.inl" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">

@@ -32,6 +32,7 @@
 	<ItemGroup>
 		<ClCompile Include="allocate_creators.cpp" />
 		<ClCompile Include="allocate_linearallocator.cpp" />
+		<ClCompile Include="allocate_linearstretchallocator.cpp" />
 		<ClCompile Include="allocate_rftlallocator.cpp" />
 		<ClCompile Include="allocate_singleallocator.cpp" />
 		<ClCompile Include="math_rand.cpp" />
