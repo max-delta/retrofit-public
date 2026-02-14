@@ -1,4 +1,6 @@
 #pragma once
+#include "project.h"
+
 #include "core/meta/ConstructorOverload.h"
 #include "core/macros.h"
 
@@ -8,7 +10,7 @@
 namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
 
-class HeapAllocator
+class ALLOCATION_API HeapAllocator
 {
 	RF_NO_COPY( HeapAllocator );
 	RF_NO_MOVE( HeapAllocator );

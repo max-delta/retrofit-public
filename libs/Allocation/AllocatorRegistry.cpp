@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "AllocatorRegistry.h"
 
-#include "core_allocate/HeapAllocator.h"
+#include "Allocation/HeapAllocator.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/meta/LazyInitSingleton.h"

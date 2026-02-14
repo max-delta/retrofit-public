@@ -6,7 +6,6 @@
 		<ClInclude Include="Allocator.h" />
 		<ClInclude Include="RftlAllocator.h" />
 		<ClInclude Include="AlignmentHelpers.h" />
-		<ClInclude Include="HeapAllocator.h" />
 		<ClInclude Include="LinearAllocator.h" />
 		<ClInclude Include="EntwinedAllocCreator.h" />
 		<ClInclude Include="DefaultAllocCreator.h" />
@@ -16,7 +15,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
-		<ClCompile Include="HeapAllocator.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="SingleAllocator.inl" />

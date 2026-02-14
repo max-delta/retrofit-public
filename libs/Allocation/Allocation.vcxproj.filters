@@ -4,6 +4,7 @@
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="AllocatorRegistry.cpp" />
+		<ClCompile Include="HeapAllocator.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -11,5 +12,6 @@
 		<ClInclude Include="AccessorDefinition.h" />
 		<ClInclude Include="AccessorDeclaration.h" />
 		<ClInclude Include="AllocatorRegistry.h" />
+		<ClInclude Include="HeapAllocator.h" />
 	</ItemGroup>
 </Project>

@@ -34,12 +34,14 @@
 		<ClInclude Include="AccessorDeclaration.h" />
 		<ClInclude Include="AccessorDefinition.h" />
 		<ClInclude Include="AllocatorRegistry.h" />
+		<ClInclude Include="HeapAllocator.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="AllocatorRegistry.cpp" />
 		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="HeapAllocator.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
