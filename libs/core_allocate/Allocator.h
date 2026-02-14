@@ -1,6 +1,8 @@
 #pragma once
 #include "core/macros.h"
 
+#include "rftl/utility"
+
 
 namespace RF::alloc {
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,8 +46,8 @@ class AllocatorT final : public Allocator
 	// Public methods
 public:
 	template<typename... Args>
-	AllocatorT( Args... args )
-		: mAllocator( args... )
+	AllocatorT( Args&&... args )
+		: mAllocator( rftl::forward<Args>( args )... )
 	{
 		//
 	}
