@@ -52,6 +52,7 @@
 		<ClInclude Include="extension\static_string.h" />
 		<ClInclude Include="extension\static_vector.h" />
 		<ClInclude Include="extension\stream_operations.h" />
+		<ClInclude Include="extension\stretch_vector.h" />
 		<ClInclude Include="extension\string_copy.h" />
 		<ClInclude Include="extension\string_format.h" />
 		<ClInclude Include="extension\string_hash.h" />
@@ -100,6 +101,7 @@
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />
+		<None Include="extension\stretch_vector.inl" />
 		<None Include="extension\variadic_print.inl" />
 		<None Include="format" />
 		<None Include="fstream" />

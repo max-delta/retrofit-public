@@ -121,6 +121,9 @@
 		<ClInclude Include="extension\fatal_exception.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\stretch_vector.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -178,6 +181,9 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="extension\ss_concat.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="extension\stretch_vector.inl">
 			<Filter>extension</Filter>
 		</None>
 	</ItemGroup>
