@@ -121,6 +121,9 @@
 		<ClInclude Include="extension\fatal_exception.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\versioned_iterator.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 		<ClInclude Include="extension\stretch_vector.h">
 			<Filter>extension</Filter>
 		</ClInclude>

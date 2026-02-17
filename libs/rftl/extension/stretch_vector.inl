@@ -299,9 +299,9 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator st
 {
 	if( mStretch.has_value() )
 	{
-		return &( *mStretch->begin() );
+		return make_iter( *mStretch->begin() );
 	}
-	return &( *mFixed.begin() );
+	return make_iter( *mFixed.begin() );
 }
 
 
@@ -311,9 +311,9 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::const_itera
 {
 	if( mStretch.has_value() )
 	{
-		return &( *mStretch->begin() );
+		return make_const_iter( *mStretch->begin() );
 	}
-	return &( *mFixed.begin() );
+	return make_const_iter( *mFixed.begin() );
 }
 
 
@@ -331,9 +331,13 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator st
 {
 	if( mStretch.has_value() )
 	{
-		return &( *mStretch->end() );
+		// Would do '*mStretch->end()', but that would cause checked iterator
+		//  debugging in MSVC to call us out on the bad dereference, even
+		//  though the generated assembly wouldn't ACTUALLY perform the
+		//  dereference from that
+		return make_iter( *( mStretch->data() + mStretch->size() ) );
 	}
-	return &( *mFixed.end() );
+	return make_iter( *mFixed.end() );
 }
 
 
@@ -343,9 +347,11 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::const_itera
 {
 	if( mStretch.has_value() )
 	{
-		return &( *mStretch->end() );
+		// Would do '*mStretch->end()', see comment on non-const end() version
+		//  in this class for details
+		return make_const_iter( *( mStretch->data() + mStretch->size() ) );
 	}
-	return &( *mFixed.end() );
+	return make_const_iter( *mFixed.end() );
 }
 
 
@@ -554,20 +560,20 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator st
 template<typename Element, size_t ElementCapacity, size_t Alignment>
 inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator stretch_vector<Element, ElementCapacity, Alignment>::insert( const_iterator pos, value_type&& value )
 {
-	ptrdiff_t const distance = pos - begin();
+	ptrdiff_t const distance = pos - cbegin();
 
 	if( mStretch.has_value() )
 	{
-		return &*mStretch->insert( mStretch->begin() + distance, rftl::move( value ) );
+		return make_iter( *mStretch->insert( mStretch->begin() + distance, rftl::move( value ) ) );
 	}
 
 	if( mFixed.size() + 1 > mFixed.max_size() )
 	{
 		stretch();
-		return &*mStretch->insert( mStretch->begin() + distance, rftl::move( value ) );
+		return make_iter( *mStretch->insert( mStretch->begin() + distance, rftl::move( value ) ) );
 	}
 
-	return mFixed.insert( pos, rftl::move( value ) );
+	return make_iter( *mFixed.insert( mFixed.begin() + distance, rftl::move( value ) ) );
 }
 
 
@@ -579,10 +585,10 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator st
 
 	if( mStretch.has_value() )
 	{
-		return &*mStretch->erase( mStretch->begin() + distance );
+		return make_iter( *mStretch->erase( mStretch->begin() + distance ) );
 	}
 
-	return mFixed.erase( pos );
+	return make_iter( *mFixed.erase( mFixed.begin() + distance ) );
 }
 
 
@@ -593,12 +599,13 @@ inline typename stretch_vector<Element, ElementCapacity, Alignment>::iterator st
 	RF_ASSERT( first >= begin() );
 	RF_ASSERT( last <= end() );
 	RF_ASSERT( first <= last );
+	ptrdiff_t const distance = first - cbegin();
 	difference_type const numToErase = last - first;
 	for( difference_type i = 0; i < numToErase; i++ )
 	{
 		erase( first );
 	}
-	return const_cast<iterator>( first );
+	return begin() + distance;
 }
 
 
@@ -735,6 +742,42 @@ inline void stretch_vector<Element, ElementCapacity, Alignment>::stretch()
 		mStretch->emplace_back( rftl::move( val ) );
 	}
 	mFixed.clear();
+
+	invalidate();
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+inline stretch_vector<Element, ElementCapacity, Alignment>::iterator stretch_vector<Element, ElementCapacity, Alignment>::make_iter( value_type& value ) const
+{
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	return iterator( &value, mVersion );
+#else
+	return &value;
+#endif
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+inline stretch_vector<Element, ElementCapacity, Alignment>::const_iterator stretch_vector<Element, ElementCapacity, Alignment>::make_const_iter( value_type const& value ) const
+{
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	return const_iterator( &value, mVersion );
+#else
+	return &value;
+#endif
+}
+
+
+
+template<typename Element, size_t ElementCapacity, size_t Alignment>
+inline void stretch_vector<Element, ElementCapacity, Alignment>::invalidate()
+{
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	mVersion.invalidate();
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////

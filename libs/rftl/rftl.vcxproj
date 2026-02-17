@@ -60,6 +60,7 @@
 		<ClInclude Include="extension\string_traits.h" />
 		<ClInclude Include="extension\transparent_lookup.h" />
 		<ClInclude Include="extension\variadic_print.h" />
+		<ClInclude Include="extension\versioned_iterator.h" />
 		<ClInclude Include="extension\virtual_iterator.h" />
 		<ClInclude Include="extension\void_alias.h" />
 		<ClInclude Include="extension\void_traits.h" />

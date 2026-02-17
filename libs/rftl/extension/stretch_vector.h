@@ -1,5 +1,6 @@
 #pragma once
 #include "rftl/extension/static_vector.h"
+#include "rftl/extension/versioned_iterator.h"
 #include "rftl/optional"
 #include "rftl/vector"
 
@@ -24,8 +25,13 @@ public:
 	typedef value_type const& const_reference;
 	typedef value_type* pointer;
 	typedef value_type const* const_pointer;
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	typedef versioned_iterator<value_type> iterator;
+	typedef versioned_iterator<value_type const> const_iterator;
+#else
 	typedef value_type* iterator;
 	typedef value_type const* const_iterator;
+#endif
 	typedef rftl::reverse_iterator<iterator> reverse_iterator;
 	typedef rftl::reverse_iterator<const_iterator> const_reverse_iterator;
 
@@ -138,11 +144,18 @@ private:
 	void grow( size_type growthAmount, value_type const& value );
 	void stretch();
 
+	iterator make_iter( value_type& value ) const;
+	const_iterator make_const_iter( value_type const& value ) const;
+	void invalidate();
+
 	//
 	// Private data
 private:
 	underlying_fixed mFixed = {};
 	optional<underlying_stretch> mStretch = nullopt;
+#if RF_IS_ALLOWED( RF_CONFIG_ASSERTS )
+	container_version mVersion = {};
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////////
