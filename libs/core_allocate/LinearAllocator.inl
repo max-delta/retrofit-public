@@ -125,12 +125,14 @@ inline void LinearAllocator<MaxTotalSize, Align>::RelinquishAllAllocations()
 template<size_t MaxTotalSize, size_t Align>
 inline bool LinearAllocator<MaxTotalSize, Align>::IsPointerWithinAllocationRange( void const* ptr ) const
 {
-	if( ptr < &mStorageBytes )
+	uint8_t const* const begin = mStorageBytes;
+	if( ptr < begin )
 	{
 		return false;
 	}
 
-	if( ptr >= &mStorageBytes + kMaxTotalSize )
+	uint8_t const* const end = begin + kAlignment * kMaxTotalSize;
+	if( ptr >= end )
 	{
 		return false;
 	}
