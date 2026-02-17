@@ -5,6 +5,8 @@
 
 #include "Logging/Logging.h"
 
+#include "rftl/extension/algorithms.h"
+#include "rftl/extension/stretch_vector.h"
 #include "rftl/deque"
 
 
@@ -36,8 +38,8 @@ void MergeController::AddSource( Source const& source )
 
 void MergeController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const
 {
-	using Buffer = rftl::deque<GameCommand>;
-	using Buffers = rftl::vector<Buffer>;
+	using Buffer = rftl::stretch_vector<GameCommand, 4>;
+	using Buffers = rftl::stretch_vector<Buffer, 6>;
 	Buffers tempBuffers;
 	tempBuffers.reserve( mSources.size() );
 
@@ -58,7 +60,7 @@ void MergeController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>&
 
 	// Will move read heads along parallel buffers
 	using ReadHead = Buffer::const_iterator;
-	using ReadHeads = rftl::vector<ReadHead>;
+	using ReadHeads = rftl::stretch_vector<ReadHead, 16>;
 	ReadHeads readHeads = {};
 	readHeads.resize( tempBuffers.size() );
 	for( size_t i = 0; i < tempBuffers.size(); i++ )
@@ -120,7 +122,7 @@ void MergeController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>&
 		if( outgoing.size() == maxCommands )
 		{
 			RFLOG_WARNING( nullptr, RFCAT_GAMEINPUT, "Buffer overflow, discarding some commands" );
-			outgoing.pop_front();
+			rftl::pop_front_via_erase( outgoing );
 		}
 		RF_ASSERT( outgoing.size() < maxCommands );
 		outgoing.emplace_back( chosenCommand );

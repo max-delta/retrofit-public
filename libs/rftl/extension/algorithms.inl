@@ -29,6 +29,14 @@ inline bool contains( T const ( &container )[N], T const& value )
 
 
 template<typename Container>
+void pop_front_via_erase( Container& container )
+{
+	container.erase( container.begin() );
+}
+
+
+
+template<typename Container>
 inline auto erase_all( Container& container, typename Container::value_type const& value ) -> typename Container::iterator
 {
 	return erase_if(

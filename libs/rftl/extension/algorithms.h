@@ -10,6 +10,9 @@ template<typename T, size_t N>
 bool contains( T const ( &container )[N], T const& value );
 
 template<typename Container>
+void pop_front_via_erase( Container& container );
+
+template<typename Container>
 auto erase_all( Container& container, typename Container::value_type const& value ) -> typename Container::iterator;
 
 template<typename Container, typename UnaryPredicate>

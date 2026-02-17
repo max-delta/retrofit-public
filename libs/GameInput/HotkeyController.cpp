@@ -5,7 +5,10 @@
 
 #include "Logging/Logging.h"
 
-#include "rftl/deque"
+#include "core_allocate/LinearStretchAllocator.h"
+
+#include "rftl/extension/algorithms.h"
+#include "rftl/extension/stretch_vector.h"
 
 
 namespace RF::input {
@@ -42,7 +45,7 @@ void HotkeyController::SetCommandMapping( CommandMapping const& mapping )
 
 void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>& parser, size_t maxCommands ) const
 {
-	rftl::deque<GameCommand> tempBuffer;
+	rftl::stretch_vector<GameCommand, 32> tempBuffer;
 
 	auto const onElement = [this, &tempBuffer, maxCommands]( RawCommand const& element ) -> void
 	{
@@ -53,7 +56,7 @@ void HotkeyController::GetGameCommandStream( rftl::virtual_iterator<GameCommand>
 				if( tempBuffer.size() == maxCommands )
 				{
 					RFLOG_WARNING( nullptr, RFCAT_GAMEINPUT, "Buffer overflow, discarding some commands" );
-					tempBuffer.pop_front();
+					rftl::pop_front_via_erase( tempBuffer );
 				}
 				RF_ASSERT( tempBuffer.size() < maxCommands );
 				tempBuffer.emplace_back( GameCommand{ mapping->second, element.mTime } );
