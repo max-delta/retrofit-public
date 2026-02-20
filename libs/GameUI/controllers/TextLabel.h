@@ -50,11 +50,11 @@ private:
 private:
 	FontPurposeID mFontPurposeID = kInvalidFontPurposeID;
 	gfx::ManagedFontID mFontID = gfx::kInvalidManagedFontID;
+	Justification::Value mJustification = Justification::TopLeft;
+	math::Color3u8 mColor = math::Color3u8::kBlack;
+	rftl::string mText;
 	uint8_t mDesiredHeight = 0;
 	uint8_t mBaselineOffset = 0;
-	Justification::Value mJustification = Justification::TopLeft;
-	rftl::string mText;
-	math::Color3u8 mColor = math::Color3u8::kBlack;
 	bool mBorder = false;
 	bool mIgnoreOverflow = false;
 };
