@@ -32,9 +32,9 @@ public:
 	//
 	// Private data
 private:
-	Justification::Value mJustification = Justification::TopLeft;
-	gfx::ppu::Coord mExpectedDimensions = {};
 	gfx::ppu::Object mObject = {};
+	gfx::ppu::Coord mExpectedDimensions = {};
+	Justification::Value mJustification = Justification::TopLeft;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
