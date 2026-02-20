@@ -4,7 +4,6 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
-#include "GameUI/AlignmentHelpers.h"
 
 #include "PPU/PPUController.h"
 
@@ -22,23 +21,21 @@ namespace RF::ui::controller {
 
 void FramePackDisplay::SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight )
 {
-	mObject.mFramePackID = framePack;
-	mObject.mTimer.mMaxTimeIndex = maxTimeIndex;
-	mExpectedDimensions = { expectedWidth, expectedHeight };
+	mFramePack.SetFramePack( framePack, maxTimeIndex, expectedWidth, expectedHeight );
 }
 
 
 
 void FramePackDisplay::SetSlowdown( gfx::TimeSlowdownRate rate )
 {
-	mObject.mTimer.mTimeSlowdown = rate;
+	mFramePack.SetSlowdown( rate );
 }
 
 
 
 void FramePackDisplay::SetJustification( Justification::Value justification )
 {
-	mJustification = justification;
+	mFramePack.SetJustification( justification );
 }
 
 
@@ -47,15 +44,8 @@ void FramePackDisplay::OnRender( UIConstContext const& context, Container const&
 {
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::Coord const pos = AlignToJustify( mExpectedDimensions, container.mAABB, mJustification );
-
-	mObject.mXCoord = pos.x;
-	mObject.mYCoord = pos.y;
-	mObject.mZLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
-	mObject.mLooping = true;
-	mObject.Animate();
-
-	renderer.DrawObject( mObject );
+	gfx::ppu::DepthLayer const zLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+	mFramePack.Render( renderer, container.mAABB, zLayer );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

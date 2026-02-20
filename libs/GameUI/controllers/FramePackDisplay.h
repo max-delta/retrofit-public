@@ -2,10 +2,7 @@
 #include "project.h"
 
 #include "GameUI/controllers/InstancedController.h"
-
-#include "PPU/Object.h"
-
-#include "core_math/Vector2.h"
+#include "GameUI/FramePackHelper.h"
 
 
 namespace RF::ui::controller {
@@ -32,9 +29,7 @@ public:
 	//
 	// Private data
 private:
-	gfx::ppu::Object mObject = {};
-	gfx::ppu::Coord mExpectedDimensions = {};
-	Justification::Value mJustification = Justification::TopLeft;
+	FramePackHelper mFramePack = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

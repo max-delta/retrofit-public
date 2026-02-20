@@ -63,6 +63,7 @@
 		<ClInclude Include="FocusTree.h" />
 		<ClInclude Include="Font.h" />
 		<ClInclude Include="FontRegistry.h" />
+		<ClInclude Include="FramePackHelper.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="Controller.h" />
@@ -101,6 +102,7 @@
 		<ClCompile Include="FocusTree.cpp" />
 		<ClCompile Include="Font.cpp" />
 		<ClCompile Include="FontRegistry.cpp" />
+		<ClCompile Include="FramePackHelper.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>

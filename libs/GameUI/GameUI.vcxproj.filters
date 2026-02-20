@@ -73,6 +73,7 @@
 		<ClCompile Include="controllers\Clamper.cpp">
 			<Filter>controllers</Filter>
 		</ClCompile>
+		<ClCompile Include="FramePackHelper.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -154,6 +155,7 @@
 		<ClInclude Include="controllers\Clamper.h">
 			<Filter>controllers</Filter>
 		</ClInclude>
+		<ClInclude Include="FramePackHelper.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="controllers">
