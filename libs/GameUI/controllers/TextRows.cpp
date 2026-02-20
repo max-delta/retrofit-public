@@ -83,6 +83,22 @@ void TextRows::SetText( rftl::span<rftl::string_view const> text )
 
 
 
+rftl::vector<gfx::ppu::AABB> TextRows::GetTextAABBsUsedLastRender() const
+{
+	rftl::vector<gfx::ppu::AABB> retVal;
+	for( WeakPtr<TextLabel> const& slotController : mSlotControllers )
+	{
+		if( slotController == nullptr )
+		{
+			continue;
+		}
+		retVal.emplace_back( slotController->GetTextAABBUsedLastRender() );
+	}
+	return retVal;
+}
+
+
+
 void TextRows::OnInstanceAssign( UIContext& context, Container& container )
 {
 	mChildContainerID = CreateChildContainer(

@@ -209,6 +209,18 @@ void TextBox::SpeculativelySplitAcrossLines(
 
 
 
+rftl::vector<gfx::ppu::AABB> TextBox::GetTextAABBsUsedLastRender() const
+{
+	if( mSlotController == nullptr )
+	{
+		return {};
+	}
+
+	return mSlotController->GetTextAABBsUsedLastRender();
+}
+
+
+
 size_t TextBox::GetNumCharactersUnwrittenLastRender() const
 {
 	return mNumCharactersUnwrittenLastRender;

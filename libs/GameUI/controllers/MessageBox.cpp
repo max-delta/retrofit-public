@@ -25,6 +25,12 @@ RFTYPE_CREATE_META( RF::ui::controller::MessageBox )
 
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static constexpr bool kShowMessageBoxDebug = true;
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 MessageBox::MessageBox(
 	size_t numRows,
@@ -116,10 +122,110 @@ void MessageBox::ReflowAllText()
 void MessageBox::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	// Make sure to render text at the end of it all
-	auto const onScopeEnd = RF::OnScopeEnd( [this, &context, &container, &blockChildRendering]() -> void
+	auto const onScopeEndParentRender = RF::OnScopeEnd(
+		[this, &context, &container, &blockChildRendering]() -> void
 		{
 			TextBox::OnRender( context, container, blockChildRendering );
 		} );
+
+	// For displaying things at end of message
+	static constexpr auto findEndOfMessage = []( TextBox const& self ) -> rftl::optional<gfx::ppu::Coord>
+	{
+		rftl::vector<gfx::ppu::AABB> const lastAABBs = self.GetTextAABBsUsedLastRender();
+
+		// Ignore empty AABBs
+		rftl::optional<gfx::ppu::AABB> lastNonEmptyAABB;
+		RF_ASSERT_MSG( lastAABBs.empty() == false, "No text?" );
+		for( gfx::ppu::AABB const& aabb : lastAABBs )
+		{
+			if( aabb.Width() <= 0 )
+			{
+				continue;
+			}
+			lastNonEmptyAABB = aabb;
+		}
+		if( lastNonEmptyAABB.has_value() == false )
+		{
+			return rftl::nullopt;
+		}
+		gfx::ppu::AABB const& lastAABB = lastNonEmptyAABB.value();
+
+		// Where is the end point?
+		gfx::ppu::Coord const lastCoord = {
+			self.IsRightToLeft() ? lastAABB.Left() : lastAABB.Right(),
+			lastAABB.Bottom() };
+		return lastCoord;
+	};
+
+	// For diagnostic use only
+	auto const drawEndOfMessageDebug = [this, &context, &container]() -> void
+	{
+		if constexpr( details::kShowMessageBoxDebug == false )
+		{
+			return;
+		}
+
+		gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+
+		rftl::optional<gfx::ppu::Coord> lastCoord = findEndOfMessage( *this );
+		if( lastCoord.has_value() == false )
+		{
+			renderer.DebugDrawText( container.mAABB.mBottomRight, "X" );
+			return;
+		}
+
+		RF_ASSERT( mState != State::Invalid );
+		switch( mState )
+		{
+			case State::Animating:
+				renderer.DebugDrawText( lastCoord.value(), ">" );
+				break;
+			case State::Truncated:
+				renderer.DebugDrawText( lastCoord.value(), "+" );
+				break;
+			case State::Completed:
+				renderer.DebugDrawText( lastCoord.value(), "#" );
+				break;
+			case State::Invalid:
+			default:
+				renderer.DebugDrawText( lastCoord.value(), "X" );
+				break;
+		}
+	};
+
+	// If waiting for user input, we can display an indicator of such
+	auto const drawEndOfMessageIndicator = [this, &context]( int TODO ) -> void
+	{
+		rftl::optional<gfx::ppu::Coord> lastCoord = findEndOfMessage( *this );
+		if( lastCoord.has_value() == false )
+		{
+			RF_DBGFAIL_MSG( "Empty text?" );
+			return;
+		}
+
+		RF_TODO_ANNOTATION( "Actual sprite, configurable" );
+		( (void)TODO );
+		gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
+		renderer.DebugDrawText( lastCoord.value(), "_!" );
+	};
+
+	// Conditionally display the continuation indicators after the main logic
+	auto const onScopeEndMessageIndicator = RF::OnScopeEnd(
+		[this, &drawEndOfMessageIndicator]() -> void
+		{
+			RF_ASSERT( mState != State::Invalid );
+			if( mState == State::Truncated )
+			{
+				drawEndOfMessageIndicator( 0 );
+			}
+			else if( mState == State::Completed )
+			{
+				drawEndOfMessageIndicator( 1 );
+			}
+		} );
+
+	// Draw debug position logic
+	drawEndOfMessageDebug();
 
 	bool const rightToLeft = IsRightToLeft();
 
@@ -128,6 +234,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		mNumCharsDispatched = 0;
 		mNumCharsRendered = 0;
 		TextBox::SetText( rftl::string_view(), rightToLeft );
+		mState = State::Completed;
 		return;
 	}
 
@@ -138,6 +245,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		mNumCharsRendered = 0;
 		TextBox::SetText( rftl::string_view(), rightToLeft );
 		mReflowOnNextFrame = false;
+		mState = State::Animating;
 		return;
 	}
 

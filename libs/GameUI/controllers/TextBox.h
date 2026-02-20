@@ -52,6 +52,7 @@ public:
 		rftl::string_view& truncated,
 		rftl::string_view str ) const;
 
+	rftl::vector<gfx::ppu::AABB> GetTextAABBsUsedLastRender() const;
 	size_t GetNumCharactersUnwrittenLastRender() const;
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;

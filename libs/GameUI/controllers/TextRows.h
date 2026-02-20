@@ -39,6 +39,8 @@ public:
 	void SetText( rftl::span<rftl::string const> text );
 	void SetText( rftl::span<rftl::string_view const> text );
 
+	rftl::vector<gfx::ppu::AABB> GetTextAABBsUsedLastRender() const;
+
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 

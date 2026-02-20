@@ -3,6 +3,7 @@
 
 #include "GameUI/controllers/InstancedController.h"
 
+#include "core_math/AABB4.h"
 #include "core_math/Color3u8.h"
 
 #include "rftl/extension/cstring_view.h"
@@ -34,6 +35,8 @@ public:
 
 	bool HasText() const;
 
+	gfx::ppu::AABB GetTextAABBUsedLastRender() const;
+
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 	virtual void OnAABBRecalc( UIContext& context, Container& container ) override;
 	virtual void OnZoomFactorChange( UIContext& context, Container& container ) override;
@@ -57,6 +60,7 @@ private:
 	uint8_t mBaselineOffset = 0;
 	bool mBorder = false;
 	bool mIgnoreOverflow = false;
+	gfx::ppu::AABB mLastRenderedTextAABB = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

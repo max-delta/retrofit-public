@@ -90,10 +90,18 @@ bool TextLabel::HasText() const
 
 
 
+gfx::ppu::AABB TextLabel::GetTextAABBUsedLastRender() const
+{
+	return mLastRenderedTextAABB;
+}
+
+
+
 void TextLabel::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	if( HasText() == false )
 	{
+		mLastRenderedTextAABB = { container.mAABB.mTopLeft, container.mAABB.mTopLeft };
 		return;
 	}
 
@@ -112,6 +120,7 @@ void TextLabel::OnRender( UIConstContext const& context, Container const& contai
 
 	gfx::ppu::Vec2 const expectedDimensions = CalculatePrimaryFontExtents( renderer, mFontID, mDesiredHeight, mBaselineOffset, mText );
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, container.mAABB, mJustification );
+	mLastRenderedTextAABB = { pos, pos + expectedDimensions };
 
 	if constexpr( config::flag::kOncePer )
 	{
