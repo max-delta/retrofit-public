@@ -11,6 +11,7 @@
 
 #include "RFType/CreateClassInfoDefinition.h"
 
+#include "core/meta/IntegerPromotion.h"
 #include "core/meta/ScopedCleanup.h"
 #include "core/ptr/default_creator.h"
 
@@ -87,10 +88,57 @@ void MessageBox::SetContinuationEvent( FocusEventType event )
 
 
 
+void MessageBox::SetTruncationContinuationIndicator(
+	gfx::ppu::ManagedFramePackID framePack,
+	uint8_t maxTimeIndex,
+	gfx::TimeSlowdownRate rate,
+	gfx::ppu::CoordElem expectedWidth,
+	gfx::ppu::CoordElem expectedHeight )
+{
+	RF_ASSERT( framePack != gfx::ppu::kInvalidManagedFramePackID );
+	RF_ASSERT( expectedWidth > 0 );
+	RF_ASSERT( expectedHeight > 0 );
+	mTruncationFramePack = {
+		.mFramePack = framePack,
+		.mExpectedDimensions = {
+			expectedWidth,
+			expectedHeight },
+		.mMaxTimeIndex = maxTimeIndex,
+		.mSlowdownRate = rate };
+}
+
+
+
+void MessageBox::SetCompletionContinuationIndicator(
+	gfx::ppu::ManagedFramePackID framePack,
+	uint8_t maxTimeIndex,
+	gfx::TimeSlowdownRate rate,
+	gfx::ppu::CoordElem expectedWidth,
+	gfx::ppu::CoordElem expectedHeight )
+{
+	RF_ASSERT( framePack != gfx::ppu::kInvalidManagedFramePackID );
+	RF_ASSERT( expectedWidth > 0 );
+	RF_ASSERT( expectedHeight > 0 );
+	mCompletionFramePack = {
+		.mFramePack = framePack,
+		.mExpectedDimensions = {
+			expectedWidth,
+			expectedHeight },
+		.mMaxTimeIndex = maxTimeIndex,
+		.mSlowdownRate = rate };
+}
+
+
+
 void MessageBox::SetText( rftl::string_view text, bool rightToLeft )
 {
 	mFullText = text;
 	mNumCharsSkipped = 0;
+
+	mFramePackHelper.SetJustification(
+		rightToLeft ?
+			Justification::MiddleRight :
+			Justification::MiddleLeft );
 
 	TextBox::SetText( {}, rightToLeft );
 }
@@ -129,7 +177,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		} );
 
 	// For displaying things at end of message
-	static constexpr auto findEndOfMessage = []( TextBox const& self ) -> rftl::optional<gfx::ppu::Coord>
+	static constexpr auto findEndOfMessage = []( TextBox const& self ) -> rftl::optional<gfx::ppu::AABB>
 	{
 		rftl::vector<gfx::ppu::AABB> const lastAABBs = self.GetTextAABBsUsedLastRender();
 
@@ -151,10 +199,17 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		gfx::ppu::AABB const& lastAABB = lastNonEmptyAABB.value();
 
 		// Where is the end point?
-		gfx::ppu::Coord const lastCoord = {
-			self.IsRightToLeft() ? lastAABB.Left() : lastAABB.Right(),
+		static constexpr gfx::ppu::CoordElem kCursorWidth = 1;
+		gfx::ppu::AABB const lastCursor = {
+			self.IsRightToLeft() ?
+				angry_cast<gfx::ppu::CoordElem>( lastAABB.Left() - kCursorWidth ) :
+				lastAABB.Right(),
+			lastAABB.Top(),
+			self.IsRightToLeft() ?
+				lastAABB.Left() :
+				angry_cast<gfx::ppu::CoordElem>( lastAABB.Right() + kCursorWidth ),
 			lastAABB.Bottom() };
-		return lastCoord;
+		return lastCursor;
 	};
 
 	// For diagnostic use only
@@ -167,46 +222,63 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 
 		gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-		rftl::optional<gfx::ppu::Coord> lastCoord = findEndOfMessage( *this );
-		if( lastCoord.has_value() == false )
+		rftl::optional<gfx::ppu::AABB> lastCursor = findEndOfMessage( *this );
+		if( lastCursor.has_value() == false )
 		{
 			renderer.DebugDrawText( container.mAABB.mBottomRight, "X" );
 			return;
 		}
+		gfx::ppu::Coord const coord = lastCursor->mBottomRight;
 
 		RF_ASSERT( mState != State::Invalid );
 		switch( mState )
 		{
 			case State::Animating:
-				renderer.DebugDrawText( lastCoord.value(), ">" );
+				renderer.DebugDrawText( coord, ">" );
 				break;
 			case State::Truncated:
-				renderer.DebugDrawText( lastCoord.value(), "+" );
+				renderer.DebugDrawText( coord, "+" );
 				break;
 			case State::Completed:
-				renderer.DebugDrawText( lastCoord.value(), "#" );
+				renderer.DebugDrawText( coord, "#" );
 				break;
 			case State::Invalid:
 			default:
-				renderer.DebugDrawText( lastCoord.value(), "X" );
+				renderer.DebugDrawText( coord, "X" );
 				break;
 		}
 	};
 
 	// If waiting for user input, we can display an indicator of such
-	auto const drawEndOfMessageIndicator = [this, &context]( int TODO ) -> void
+	auto const drawEndOfMessageIndicator = [this, &context, &container]( FramePackParams const& framePack ) -> void
 	{
-		rftl::optional<gfx::ppu::Coord> lastCoord = findEndOfMessage( *this );
-		if( lastCoord.has_value() == false )
+		if( framePack.mFramePack == gfx::ppu::kInvalidManagedFramePackID )
+		{
+			// Indicator not enabled
+			return;
+		}
+
+		rftl::optional<gfx::ppu::AABB> lastCursor = findEndOfMessage( *this );
+		if( lastCursor.has_value() == false )
 		{
 			RF_DBGFAIL_MSG( "Empty text?" );
 			return;
 		}
+		gfx::ppu::AABB const& cursor = lastCursor.value();
 
-		RF_TODO_ANNOTATION( "Actual sprite, configurable" );
-		( (void)TODO );
+		mFramePackHelper.SetFramePack(
+			framePack.mFramePack,
+			framePack.mMaxTimeIndex,
+			framePack.mExpectedDimensions.x,
+			framePack.mExpectedDimensions.y );
+		mFramePackHelper.SetSlowdown(
+			framePack.mSlowdownRate );
+
 		gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
-		renderer.DebugDrawText( lastCoord.value(), "_!" );
+		gfx::ppu::DepthLayer const zLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+
+		static constexpr gfx::ppu::CoordElem kCursorPadding = 1;
+		mFramePackHelper.Render( renderer, cursor + gfx::ppu::Coord( kCursorPadding, 0 ), zLayer );
 	};
 
 	// Conditionally display the continuation indicators after the main logic
@@ -216,11 +288,11 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 			RF_ASSERT( mState != State::Invalid );
 			if( mState == State::Truncated )
 			{
-				drawEndOfMessageIndicator( 0 );
+				drawEndOfMessageIndicator( mTruncationFramePack );
 			}
 			else if( mState == State::Completed )
 			{
-				drawEndOfMessageIndicator( 1 );
+				drawEndOfMessageIndicator( mCompletionFramePack );
 			}
 		} );
 

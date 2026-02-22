@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "GameUI/controllers/TextBox.h"
+#include "GameUI/FramePackHelper.h"
 
 
 namespace RF::ui::controller {
@@ -45,6 +46,19 @@ public:
 	void SetFastForwardEvent( FocusEventType event );
 	void SetContinuationEvent( FocusEventType event );
 
+	void SetTruncationContinuationIndicator(
+		gfx::ppu::ManagedFramePackID framePack,
+		uint8_t maxTimeIndex,
+		gfx::TimeSlowdownRate rate,
+		gfx::ppu::CoordElem expectedWidth,
+		gfx::ppu::CoordElem expectedHeight );
+	void SetCompletionContinuationIndicator(
+		gfx::ppu::ManagedFramePackID framePack,
+		uint8_t maxTimeIndex,
+		gfx::TimeSlowdownRate rate,
+		gfx::ppu::CoordElem expectedWidth,
+		gfx::ppu::CoordElem expectedHeight );
+
 	ContainerID GetChildContainerID() const;
 
 	// NOTE: Right-to-left text is parsed right-to-left, so the leftmost text
@@ -80,6 +94,18 @@ private:
 	bool mFastForwardOnNextFrame = false;
 	bool mContinueOnNextFrame = false;
 	bool mReflowOnNextFrame = false;
+
+	struct FramePackParams
+	{
+		gfx::ppu::ManagedFramePackID mFramePack = {};
+		gfx::ppu::Vec2 mExpectedDimensions = {};
+		uint8_t mMaxTimeIndex = 0;
+		gfx::TimeSlowdownRate mSlowdownRate = {};
+	};
+	FramePackParams mTruncationFramePack;
+	FramePackParams mCompletionFramePack;
+
+	FramePackHelper mFramePackHelper = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
