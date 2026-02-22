@@ -154,6 +154,11 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// NOTE: Will cause associated textures to load
 	{
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "cc303_composite_192", paths::LogoFramepacks().GetChild( "cc303_composite_192.fpack" ) );
+
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test64_wiggle", paths::CommonFramepacks().GetChild( "test64_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test32_wiggle", paths::CommonFramepacks().GetChild( "test32_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test16_wiggle", paths::CommonFramepacks().GetChild( "test16_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test8_wiggle", paths::CommonFramepacks().GetChild( "test8_wiggle.fpack" ) );
 	}
 
 	// Load localization
