@@ -793,8 +793,8 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::CoordElem x, gfx::
 	gfx::ppu::FramePackBase::TimeSlot* const timeSlots = fpack->GetMutableTimeSlots();
 	gfx::ppu::FramePackBase::TimeSlot& timeSlot = timeSlots[mEditingFrame];
 
-	timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
-	timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
+	timeSlot.mTextureOriginX = math::integer_truncast<int8_t>( timeSlot.mTextureOriginX - x );
+	timeSlot.mTextureOriginY = math::integer_truncast<int8_t>( timeSlot.mTextureOriginY - y );
 }
 
 
@@ -816,8 +816,8 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::CoordElem x, 
 	{
 		gfx::ppu::FramePackBase::TimeSlot& timeSlot = timeSlots[i];
 
-		timeSlot.mTextureOriginX = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginX - x );
-		timeSlot.mTextureOriginY = math::integer_truncast<uint8_t>( timeSlot.mTextureOriginY - y );
+		timeSlot.mTextureOriginX = math::integer_truncast<int8_t>( timeSlot.mTextureOriginX - x );
+		timeSlot.mTextureOriginY = math::integer_truncast<int8_t>( timeSlot.mTextureOriginY - y );
 	}
 }
 
