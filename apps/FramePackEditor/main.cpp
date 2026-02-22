@@ -29,7 +29,7 @@ int main( int argc, char* argv[] )
 
 	app::StartupWithoutConfig( { argc, argv } );
 
-	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_test.ini" );
+	file::VFSPath const testDataMountFile = file::VFS::kRoot.GetChild( "config", "vfs_editor.ini" );
 	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, testDataMountFile );
 	if( vfsTestDataLoad == false )
 	{
