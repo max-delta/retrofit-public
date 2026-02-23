@@ -6,7 +6,7 @@
 
 #include "core/ptr/unique_ptr.h"
 
-#include "rftl/string"
+#include "rftl/extension/string_hash.h"
 #include "rftl/unordered_map"
 #include "rftl/shared_mutex"
 
@@ -23,6 +23,7 @@ class ResourceManagerBase
 public:
 	using Filename = file::VFSPath;
 	using ResourceName = rftl::string;
+	using ResourceNameView = rftl::string_view;
 
 protected:
 	using ResourcesByFilename = rftl::unordered_map<ResourceName, Filename>;
@@ -55,7 +56,7 @@ protected:
 	using ManagedResourceIDType = ManagedResourceID;
 	using ResourceManagerType = ResourceManager<Resource, ManagedResourceID, InvalidResourceID>;
 	using ResourcesByManagedID = rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>>;
-	using ResourceIDsByName = rftl::unordered_map<ResourceName, ManagedResourceID>;
+	using ResourceIDsByName = rftl::unordered_map<ResourceName, ManagedResourceID, rftl::string_hash, rftl::equal_to<>>;
 
 
 	//
@@ -66,9 +67,9 @@ public:
 
 	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	WeakPtr<Resource> GetResourceFromResourceName( Filename const& filename ) const;
-	WeakPtr<Resource> GetResourceFromResourceName( ResourceName const& resourceName ) const;
+	WeakPtr<Resource> GetResourceFromResourceName( ResourceNameView resourceName ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
-	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const;
+	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceNameView resourceName ) const;
 
 	bool ReserveNullResource( Filename const& filename );
 	bool ReserveNullResource( ResourceName const& resourceName );

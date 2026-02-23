@@ -66,6 +66,7 @@ private:
 	using DepthOrder = DepthElement[kMaxTotalElements];
 	using LoadRequests = rftl::vector<LoadRequest>;
 	using ResourceName = rftl::string;
+	using ResourceNameView = rftl::string_view;
 	using Filename = file::VFSPath;
 	enum class ElementType : uint8_t
 	{
@@ -146,10 +147,10 @@ public:
 
 	bool HasOutstandingLoadRequests() const;
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
-	bool QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
-	bool QueueDeferredReloadRequest( AssetType type, ResourceName const& resourceName );
+	bool QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
+	bool QueueDeferredReloadRequest( AssetType type, ResourceNameView resourceName );
 	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
-	bool ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename );
+	bool ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool ForceImmediateLoadAllRequests();
 
 	WeakPtr<TextureManager const> GetTextureManager() const;

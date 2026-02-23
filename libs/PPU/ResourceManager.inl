@@ -65,7 +65,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceName const& resourceName ) const
+WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceNameView resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
 
@@ -99,7 +99,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetManagedResourceIDFromResourceName( ResourceName const& resourceName ) const
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetManagedResourceIDFromResourceName( ResourceNameView resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
 

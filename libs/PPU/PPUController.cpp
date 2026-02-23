@@ -511,18 +511,18 @@ bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& fi
 
 
 
-bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename )
+bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename )
 {
-	FullfillLoadRequest( LoadRequest{ LoadType::Reserve, type, resourceName, filename } );
-	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, type, resourceName, filename } );
+	FullfillLoadRequest( LoadRequest{ LoadType::Reserve, type, ResourceName( resourceName ), filename } );
+	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, type, ResourceName( resourceName ), filename } );
 	return true;
 }
 
 
 
-bool PPUController::QueueDeferredReloadRequest( AssetType type, ResourceName const& resourceName )
+bool PPUController::QueueDeferredReloadRequest( AssetType type, ResourceNameView resourceName )
 {
-	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Reload, type, resourceName, Filename{} } );
+	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Reload, type, ResourceName( resourceName ), Filename{} } );
 	return true;
 }
 
@@ -535,9 +535,9 @@ bool PPUController::ForceImmediateLoadRequest( AssetType type, Filename const& f
 
 
 
-bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceName const& resourceName, Filename const& filename )
+bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename )
 {
-	return FullfillLoadRequest( LoadRequest{ LoadType::New, type, resourceName, filename } );
+	return FullfillLoadRequest( LoadRequest{ LoadType::New, type, ResourceName( resourceName ), filename } );
 }
 
 
