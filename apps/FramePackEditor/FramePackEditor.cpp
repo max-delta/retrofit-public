@@ -662,7 +662,7 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->DebugLockResourceForDirectModification( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 
-	uint8_t& slowdownRate = fpack->mPreferredSlowdownRate;
+	gfx::TimeSlowdownRate& slowdownRate = fpack->mPreferredSlowdownRate;
 	if( faster )
 	{
 		slowdownRate--;

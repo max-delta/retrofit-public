@@ -73,7 +73,7 @@ protected:
 public:
 	GFXModifierHandlerID mGFXModifierHandlers[kNumGFXModifiers] = {};
 	GameColliderLayerMapping mGameColliderLayerMappings[kNumGameLayers] = {};
-	uint8_t mPreferredSlowdownRate = 1; // 1=60, 2=30, 3=20, 4=15...
+	TimeSlowdownRate mPreferredSlowdownRate = 1; // 1=60, 2=30, 3=20, 4=15...
 	uint8_t mNumTimeSlots = 0;
 	uint8_t reserved3;
 	uint8_t reserved4;
