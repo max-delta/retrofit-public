@@ -98,6 +98,10 @@ file::VFSPath LogoFramepacks()
 {
 	return FramepacksRoot().GetChild( "logos" );
 }
+file::VFSPath UIFramepacks()
+{
+	return FramepacksRoot().GetChild( "ui" );
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -35,6 +35,7 @@ file::VFSPath BackgroundTilemaps();
 // Framepacks
 file::VFSPath CommonFramepacks();
 file::VFSPath LogoFramepacks();
+file::VFSPath UIFramepacks();
 
 // Textures
 file::VFSPath CharacterPieces();

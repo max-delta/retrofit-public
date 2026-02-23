@@ -1,11 +1,12 @@
 #include "stdafx.h"
 #include "InitialLoading.h"
 
-#include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/appstates/AppStateRoute.h"
 #include "cc3o3/casting/CastingEngine.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/elements/ElementDatabase.h"
+#include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/StandardUIElements.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
@@ -154,6 +155,8 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// NOTE: Will cause associated textures to load
 	{
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "cc303_composite_192", paths::LogoFramepacks().GetChild( "cc303_composite_192.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::standard::kTextTruncation.mResourceName, paths::UIFramepacks().GetChild( "quill_write.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::standard::kTextCompletion.mResourceName, paths::UIFramepacks().GetChild( "quill_tap.fpack" ) );
 
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test64_wiggle", paths::CommonFramepacks().GetChild( "test64_wiggle.fpack" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test32_wiggle", paths::CommonFramepacks().GetChild( "test32_wiggle.fpack" ) );

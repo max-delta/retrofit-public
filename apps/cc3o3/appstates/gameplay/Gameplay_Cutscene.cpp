@@ -6,6 +6,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
+#include "cc3o3/ui/StandardUIElements.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -147,6 +148,11 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		lowerMsg->SetAnimationSpeed( 1 );
 		lowerMsg->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerMsg->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		gfx::ppu::PPUController const& ppu = *app::gGraphics;
+		ui::FramePackDef const truncationFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextTruncation );
+		ui::FramePackDef const completionFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextCompletion );
+		lowerMsg->SetTruncationContinuationIndicator( truncationFPack.mManagedID, truncationFPack.mMaxTimeIndex, truncationFPack.mPreferredSlowdownRate, truncationFPack.mExpectedWidth, truncationFPack.mExpectedHeight );
+		lowerMsg->SetCompletionContinuationIndicator( completionFPack.mManagedID, completionFPack.mMaxTimeIndex, completionFPack.mPreferredSlowdownRate, completionFPack.mExpectedWidth, completionFPack.mExpectedHeight );
 		lowerMsg->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		internalState.mLowerMessageBox = lowerMsg;
 

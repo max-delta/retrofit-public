@@ -323,6 +323,9 @@
 		<ClCompile Include="exfil\Exfiltrate.cpp">
 			<Filter>exfil</Filter>
 		</ClCompile>
+		<ClCompile Include="ui\StandardUIElements.cpp">
+			<Filter>ui</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -883,6 +886,9 @@
 		</ClInclude>
 		<ClInclude Include="exfil\project.h">
 			<Filter>exfil</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\StandardUIElements.h">
+			<Filter>ui</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>

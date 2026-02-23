@@ -142,6 +142,7 @@
 		<ClCompile Include="ui\ElementSlotDisplayCache.cpp" />
 		<ClCompile Include="ui\ElementStockpileDisplayCache.cpp" />
 		<ClCompile Include="ui\LocalizationHelpers.cpp" />
+		<ClCompile Include="ui\StandardUIElements.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="appstates\AppStateRoute.h" />
@@ -333,6 +334,7 @@
 		<ClInclude Include="ui\ElementTilesetValues.h" />
 		<ClInclude Include="ui\LocalizationHelpers.h" />
 		<ClInclude Include="ui\project.h" />
+		<ClInclude Include="ui\StandardUIElements.h" />
 		<ClInclude Include="ui\stdafx.h" />
 		<ClInclude Include="ui\UIFwd.h" />
 	</ItemGroup>
