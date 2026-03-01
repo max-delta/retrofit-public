@@ -294,6 +294,12 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 			{
 				drawEndOfMessageIndicator( mCompletionFramePack );
 			}
+			else
+			{
+				// If not being shown, reset the timer so that when it IS shown
+				//  it'll start from the first frame of animation
+				mFramePackHelper.ResetAnimationTimer();
+			}
 		} );
 
 	// Draw debug position logic

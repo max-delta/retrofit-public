@@ -48,6 +48,14 @@ void PPUTimer::Animate( bool looping, bool paused )
 
 
 
+void PPUTimer::ResetAnimation()
+{
+	mTimeIndex = 0;
+	mSubTimeIndex = 0;
+}
+
+
+
 bool PPUTimer::IsFullZero() const
 {
 	return mTimeIndex == 0 && mSubTimeIndex == 0;

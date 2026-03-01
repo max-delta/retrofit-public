@@ -10,5 +10,12 @@ void Object::Animate()
 	mTimer.Animate( mLooping, mPaused );
 }
 
+
+
+void Object::ResetAnimation()
+{
+	mTimer.ResetAnimation();
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

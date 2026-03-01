@@ -32,6 +32,13 @@ void FramePackHelper::SetJustification( Justification::Value justification )
 
 
 
+void FramePackHelper::ResetAnimationTimer()
+{
+	mObject.ResetAnimation();
+}
+
+
+
 void FramePackHelper::Render( gfx::ppu::PPUController& renderer, gfx::ppu::AABB const& bounds, gfx::ppu::DepthLayer zLayer )
 {
 	gfx::ppu::Coord const pos = AlignToJustify( mExpectedDimensions, bounds, mJustification );

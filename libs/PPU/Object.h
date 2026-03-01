@@ -17,6 +17,7 @@ public:
 	Object() = default;
 
 	void Animate();
+	void ResetAnimation();
 
 
 	//

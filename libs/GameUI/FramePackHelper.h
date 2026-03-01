@@ -26,6 +26,8 @@ public:
 	void SetSlowdown( gfx::TimeSlowdownRate rate );
 	void SetJustification( Justification::Value justification );
 
+	void ResetAnimationTimer();
+
 	void Render( gfx::ppu::PPUController& renderer, gfx::ppu::AABB const& bounds, gfx::ppu::DepthLayer zLayer );
 
 	//
