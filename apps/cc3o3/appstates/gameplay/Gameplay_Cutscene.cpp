@@ -145,7 +145,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			" pagination support so a user can work their way through the full"
 			" lenghty text.";
 		lowerMsg->SetText( kTODOText, false );
-		lowerMsg->SetAnimationSpeed( 1 );
+		lowerMsg->SetAnimationSpeed( ui::kTextSpeed );
 		lowerMsg->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerMsg->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		gfx::ppu::PPUController const& ppu = *app::gGraphics;
