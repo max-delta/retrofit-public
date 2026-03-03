@@ -274,8 +274,13 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 		mFramePackHelper.SetSlowdown(
 			framePack.mSlowdownRate );
 
+		// Want to bump forward to get above the text labels
+		static constexpr gfx::ppu::DepthLayer kFudgeLayers = 4;
+
 		gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
-		gfx::ppu::DepthLayer const zLayer = context.GetContainerManager().GetRecommendedRenderDepth( container );
+		gfx::ppu::DepthLayer const zLayer =
+			context.GetContainerManager().GetRecommendedRenderDepth( container ) -
+			kFudgeLayers;
 
 		static constexpr gfx::ppu::CoordElem kCursorPadding = 1;
 		mFramePackHelper.Render( renderer, cursor + gfx::ppu::Coord( kCursorPadding, 0 ), zLayer );
