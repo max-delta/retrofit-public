@@ -74,6 +74,9 @@
 			<Filter>controllers</Filter>
 		</ClCompile>
 		<ClCompile Include="FramePackHelper.cpp" />
+		<ClCompile Include="controllers\ClampSlicer.cpp">
+			<Filter>controllers</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -156,6 +159,9 @@
 			<Filter>controllers</Filter>
 		</ClInclude>
 		<ClInclude Include="FramePackHelper.h" />
+		<ClInclude Include="controllers\ClampSlicer.h">
+			<Filter>controllers</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="controllers">
