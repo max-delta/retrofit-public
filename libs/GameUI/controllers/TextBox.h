@@ -67,10 +67,12 @@ private:
 	Justification::Value const mJustification;
 	bool mRightToLeft = false;
 	math::Color3u8 const mColor;
+	rftl::string const mBreakableChars;
+
 	ContainerID mChildContainerID = kInvalidContainerID;
-	rftl::string mText;
-	rftl::string mBreakableChars;
 	WeakPtr<TextRows> mSlotController;
+
+	rftl::string mText;
 
 	size_t mNumCharactersUnwrittenLastRender = 0;
 };
