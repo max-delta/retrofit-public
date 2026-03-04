@@ -149,8 +149,10 @@ bool GenericListBox::SetSlotIndexWithSoftFocus( UIContext& context, size_t index
 
 void GenericListBox::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mChildContainerID = CreateChildContainer(
-		context.GetMutableContainerManager(),
+		uiManager,
 		container,
 		container.mLeftConstraint,
 		container.mRightConstraint,
@@ -161,7 +163,7 @@ void GenericListBox::OnInstanceAssign( UIContext& context, Container& container 
 	if( mOrientation == Orientation::Vertical )
 	{
 		WeakPtr<RowSlicer> const slicer =
-			context.GetMutableContainerManager().AssignStrongController(
+			uiManager.AssignStrongController(
 				mChildContainerID,
 				DefaultCreator<RowSlicer>::Create(
 					mNumSlots ) );
@@ -175,7 +177,7 @@ void GenericListBox::OnInstanceAssign( UIContext& context, Container& container 
 	else
 	{
 		WeakPtr<ColumnSlicer> const slicer =
-			context.GetMutableContainerManager().AssignStrongController(
+			uiManager.AssignStrongController(
 				mChildContainerID,
 				DefaultCreator<ColumnSlicer>::Create(
 					mNumSlots ) );

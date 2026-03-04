@@ -83,12 +83,14 @@ void ColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_t slic
 
 void ColumnSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mParentContainerID = container.mContainerID;
 
 	RF_ASSERT( mAnchors.size() == mRatios.size() + 1 );
 	for( AnchorID& anchor : mAnchors )
 	{
-		anchor = CreateAnchor( context.GetMutableContainerManager(), container );
+		anchor = CreateAnchor( uiManager, container );
 	}
 
 	RF_ASSERT( mContainers.size() == mRatios.size() );
@@ -101,7 +103,7 @@ void ColumnSlicer::OnInstanceAssign( UIContext& context, Container& container )
 			continue;
 		}
 
-		CreateChildContainerInternal( context.GetMutableContainerManager(), container, i );
+		CreateChildContainerInternal( uiManager, container, i );
 	}
 }
 

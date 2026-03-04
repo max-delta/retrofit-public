@@ -34,10 +34,12 @@ ContainerID MultiPassthrough::GetChildContainerID( size_t index ) const
 
 void MultiPassthrough::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	for( ContainerID& childContainerID : mChildContainerIDs )
 	{
 		childContainerID = CreateChildContainer(
-			context.GetMutableContainerManager(),
+			uiManager,
 			container,
 			container.mLeftConstraint,
 			container.mRightConstraint,

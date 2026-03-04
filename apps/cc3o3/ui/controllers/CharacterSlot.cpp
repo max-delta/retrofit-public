@@ -119,7 +119,7 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 
 void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 {
-	ui::ContainerManager& uiManager = context.GetMutableContainerManager();
+	ContainerManager& uiManager = context.GetMutableContainerManager();
 	gfx::ppu::PPUController const& renderer = GetRenderer( uiManager );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 

@@ -61,12 +61,14 @@ void AspectColumnSlicer::DestroyChildContainer( ContainerManager& manager, size_
 
 void AspectColumnSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mParentContainerID = container.mContainerID;
 
 	RF_ASSERT( mAnchors.size() == mEnabledSlices.size() + 1 );
 	for( AnchorID& anchor : mAnchors )
 	{
-		anchor = CreateAnchor( context.GetMutableContainerManager(), container );
+		anchor = CreateAnchor( uiManager, container );
 	}
 
 	RF_ASSERT( mContainers.size() == mEnabledSlices.size() );
@@ -79,7 +81,7 @@ void AspectColumnSlicer::OnInstanceAssign( UIContext& context, Container& contai
 			continue;
 		}
 
-		CreateChildContainerInternal( context.GetMutableContainerManager(), container, i );
+		CreateChildContainerInternal( uiManager, container, i );
 	}
 }
 

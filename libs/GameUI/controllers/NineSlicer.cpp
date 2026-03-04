@@ -72,11 +72,13 @@ void NineSlicer::DestroyChildContainer( ContainerManager& manager, size_t sliceI
 
 void NineSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mParentContainerID = container.mContainerID;
-	m0 = CreateAnchor( context.GetMutableContainerManager(), container );
-	m33 = CreateAnchor( context.GetMutableContainerManager(), container );
-	m66 = CreateAnchor( context.GetMutableContainerManager(), container );
-	m100 = CreateAnchor( context.GetMutableContainerManager(), container );
+	m0 = CreateAnchor( uiManager, container );
+	m33 = CreateAnchor( uiManager, container );
+	m66 = CreateAnchor( uiManager, container );
+	m100 = CreateAnchor( uiManager, container );
 
 	for( size_t i = 0; i < 9; i++ )
 	{
@@ -86,7 +88,7 @@ void NineSlicer::OnInstanceAssign( UIContext& context, Container& container )
 			continue;
 		}
 
-		CreateChildContainerInternal( context.GetMutableContainerManager(), container, i );
+		CreateChildContainerInternal( uiManager, container, i );
 	}
 }
 

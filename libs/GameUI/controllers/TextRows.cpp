@@ -101,8 +101,10 @@ rftl::vector<gfx::ppu::AABB> TextRows::GetTextAABBsUsedLastRender() const
 
 void TextRows::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mChildContainerID = CreateChildContainer(
-		context.GetMutableContainerManager(),
+		uiManager,
 		container,
 		container.mLeftConstraint,
 		container.mRightConstraint,
@@ -110,7 +112,7 @@ void TextRows::OnInstanceAssign( UIContext& context, Container& container )
 		container.mBottomConstraint );
 
 	WeakPtr<ui::controller::RowSlicer> const rowSlicer =
-		context.GetMutableContainerManager().AssignStrongController(
+		uiManager.AssignStrongController(
 			mChildContainerID,
 			DefaultCreator<ui::controller::RowSlicer>::Create(
 				mNumSlots ) );
@@ -118,7 +120,7 @@ void TextRows::OnInstanceAssign( UIContext& context, Container& container )
 	for( size_t i = 0; i < mNumSlots; i++ )
 	{
 		WeakPtr<ui::controller::TextLabel> const slotController =
-			context.GetMutableContainerManager().AssignStrongController(
+			uiManager.AssignStrongController(
 				rowSlicer->GetChildContainerID( i ),
 				DefaultCreator<ui::controller::TextLabel>::Create() );
 		slotController->SetJustification( mJustification );

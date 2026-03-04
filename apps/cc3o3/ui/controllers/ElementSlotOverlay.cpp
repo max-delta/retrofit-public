@@ -88,7 +88,7 @@ void ElementSlotOverlay::UpdateState( bool active, bool selected )
 
 void ElementSlotOverlay::OnInstanceAssign( UIContext& context, Container& container )
 {
-	ui::ContainerManager& uiManager = context.GetMutableContainerManager();
+	ContainerManager& uiManager = context.GetMutableContainerManager();
 
 	ContainerID const nameContainerID = CreateChildContainer(
 		uiManager,

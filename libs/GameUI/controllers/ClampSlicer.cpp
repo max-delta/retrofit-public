@@ -58,10 +58,12 @@ ContainerID ClampSlicer::GetOverflowContainerID() const
 
 void ClampSlicer::OnInstanceAssign( UIContext& context, Container& container )
 {
-	mClampedTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
-	mClampedBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
-	mOverflowTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
-	mOverflowBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
+	mClampedTopLeftAnchor = CreateAnchor( uiManager, container );
+	mClampedBottomRightAnchor = CreateAnchor( uiManager, container );
+	mOverflowTopLeftAnchor = CreateAnchor( uiManager, container );
+	mOverflowBottomRightAnchor = CreateAnchor( uiManager, container );
 
 	// Clamped
 	{
@@ -69,7 +71,7 @@ void ClampSlicer::OnInstanceAssign( UIContext& context, Container& container )
 		AnchorID const bottom = mClampedBottomRightAnchor;
 		AnchorID const left = mClampedTopLeftAnchor;
 		AnchorID const right = mClampedBottomRightAnchor;
-		mClampedContainer = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
+		mClampedContainer = Controller::CreateChildContainer( uiManager, container, left, right, top, bottom );
 	}
 
 	// Overflow
@@ -78,7 +80,7 @@ void ClampSlicer::OnInstanceAssign( UIContext& context, Container& container )
 		AnchorID const bottom = mOverflowBottomRightAnchor;
 		AnchorID const left = mOverflowTopLeftAnchor;
 		AnchorID const right = mOverflowBottomRightAnchor;
-		mOverflowContainer = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
+		mOverflowContainer = Controller::CreateChildContainer( uiManager, container, left, right, top, bottom );
 	}
 }
 

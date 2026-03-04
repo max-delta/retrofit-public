@@ -117,7 +117,7 @@ void OptionSlot::UpdateState( bool active, bool selected )
 
 void OptionSlot::OnInstanceAssign( UIContext& context, Container& container )
 {
-	ui::ContainerManager& uiManager = context.GetMutableContainerManager();
+	ContainerManager& uiManager = context.GetMutableContainerManager();
 
 	mChildContainerID = CreateChildContainer(
 		uiManager,

@@ -51,14 +51,16 @@ void Floater::SetOffset( UIContext& context, gfx::ppu::Coord offset )
 
 void Floater::OnInstanceAssign( UIContext& context, Container& container )
 {
-	mTopLeftAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
-	mBottomRightAnchor = CreateAnchor( context.GetMutableContainerManager(), container );
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
+	mTopLeftAnchor = CreateAnchor( uiManager, container );
+	mBottomRightAnchor = CreateAnchor( uiManager, container );
 
 	AnchorID const top = mTopLeftAnchor;
 	AnchorID const bottom = mBottomRightAnchor;
 	AnchorID const left = mTopLeftAnchor;
 	AnchorID const right = mBottomRightAnchor;
-	mContainer = Controller::CreateChildContainer( context.GetMutableContainerManager(), container, left, right, top, bottom );
+	mContainer = Controller::CreateChildContainer( uiManager, container, left, right, top, bottom );
 }
 
 

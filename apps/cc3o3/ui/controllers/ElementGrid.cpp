@@ -85,7 +85,8 @@ void ElementGrid::UpdateFromCache( ElementGridDisplayCache const& cache )
 
 void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 {
-	gfx::ppu::PPUController const& renderer = GetRenderer( context.GetContainerManager() );
+	ContainerManager const& uiManager = context.GetContainerManager();
+	gfx::ppu::PPUController const& renderer = GetRenderer( uiManager );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	ElementTilesetDef tilesetDef = {};

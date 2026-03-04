@@ -230,8 +230,10 @@ size_t TextBox::GetNumCharactersUnwrittenLastRender() const
 
 void TextBox::OnInstanceAssign( UIContext& context, Container& container )
 {
+	ContainerManager& uiManager = context.GetMutableContainerManager();
+
 	mChildContainerID = CreateChildContainer(
-		context.GetMutableContainerManager(),
+		uiManager,
 		container,
 		container.mLeftConstraint,
 		container.mRightConstraint,
@@ -239,7 +241,7 @@ void TextBox::OnInstanceAssign( UIContext& context, Container& container )
 		container.mBottomConstraint );
 
 	WeakPtr<ui::controller::TextRows> const lines =
-		context.GetMutableContainerManager().AssignStrongController(
+		uiManager.AssignStrongController(
 			mChildContainerID,
 			DefaultCreator<ui::controller::TextRows>::Create(
 				mNumRows,
