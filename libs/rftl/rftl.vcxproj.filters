@@ -127,6 +127,9 @@
 		<ClInclude Include="extension\stretch_vector.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\unique_char_set.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -187,6 +190,9 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="extension\stretch_vector.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="extension\unique_char_set.inl">
 			<Filter>extension</Filter>
 		</None>
 	</ItemGroup>

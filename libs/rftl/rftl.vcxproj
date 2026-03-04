@@ -59,6 +59,7 @@
 		<ClInclude Include="extension\string_parse.h" />
 		<ClInclude Include="extension\string_traits.h" />
 		<ClInclude Include="extension\transparent_lookup.h" />
+		<ClInclude Include="extension\unique_char_set.h" />
 		<ClInclude Include="extension\variadic_print.h" />
 		<ClInclude Include="extension\versioned_iterator.h" />
 		<ClInclude Include="extension\virtual_iterator.h" />
@@ -103,6 +104,7 @@
 		<None Include="extension\static_vector.inl" />
 		<None Include="extension\stream_operations.inl" />
 		<None Include="extension\stretch_vector.inl" />
+		<None Include="extension\unique_char_set.inl" />
 		<None Include="extension\variadic_print.inl" />
 		<None Include="format" />
 		<None Include="fstream" />

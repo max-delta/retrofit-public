@@ -72,6 +72,7 @@
 		<ClCompile Include="time_chrono_format.cpp" />
 		<ClCompile Include="allocate_linearstretchallocator.cpp" />
 		<ClCompile Include="rftl_stretchvector.cpp" />
+		<ClCompile Include="rftl_uniquecharset.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
