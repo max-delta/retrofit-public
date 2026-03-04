@@ -34,13 +34,13 @@ public:
 	MessageBox(
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unordered_set<char> const& breakableChars );
+		rftl::unique_char_set const& breakableChars );
 	MessageBox(
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unordered_set<char> const& breakableChars );
+		rftl::unique_char_set const& breakableChars );
 
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 	void SetFastForwardEvent( FocusEventType event );

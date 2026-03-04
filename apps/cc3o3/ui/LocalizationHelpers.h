@@ -3,16 +3,16 @@
 
 #include "Localization/LocFwd.h"
 
+#include "rftl/extension/unique_char_set.h"
 #include "rftl/string"
 #include "rftl/string_view"
-#include "rftl/unordered_set"
 
 
 namespace RF::cc::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
 loc::TextDirection GetTextDirection();
-rftl::unordered_set<char> GetBreakableChars();
+rftl::unique_char_set GetBreakableChars();
 
 rftl::string LocalizeKey( char const* key );
 rftl::string LocalizeKey( rftl::string_view const& key );

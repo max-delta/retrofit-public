@@ -31,7 +31,7 @@ namespace RF::ui::controller {
 TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
-	rftl::unordered_set<char> const& breakableChars )
+	rftl::unique_char_set const& breakableChars )
 	: // Clang-format is trash garbage
 	TextBox(
 		numRows,
@@ -50,7 +50,7 @@ TextBox::TextBox(
 	FontPurposeID purpose,
 	Justification::Value justification,
 	math::Color3u8 color,
-	rftl::unordered_set<char> const& breakableChars )
+	rftl::unique_char_set const& breakableChars )
 	: mNumRows( numRows )
 	, mFontPurpose( purpose )
 	, mJustification( justification )

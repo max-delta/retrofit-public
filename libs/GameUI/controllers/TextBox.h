@@ -6,6 +6,7 @@
 #include "core_math/Color3u8.h"
 
 #include "rftl/extension/cstring_view.h"
+#include "rftl/extension/unique_char_set.h"
 
 
 // Forwards
@@ -29,13 +30,13 @@ public:
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unordered_set<char> const& breakableChars );
+		rftl::unique_char_set const& breakableChars );
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unordered_set<char> const& breakableChars );
+		rftl::unique_char_set const& breakableChars );
 
 	ContainerID GetChildContainerID() const;
 

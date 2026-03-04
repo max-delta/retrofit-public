@@ -21,7 +21,7 @@ loc::TextDirection GetTextDirection()
 
 
 
-rftl::unordered_set<char> GetBreakableChars()
+rftl::unique_char_set GetBreakableChars()
 {
 	// TODO: Get from LocEngine
 	return { ' ', '-' };
