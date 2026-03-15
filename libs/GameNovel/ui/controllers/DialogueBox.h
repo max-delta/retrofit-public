@@ -14,13 +14,14 @@
 // Forwards
 namespace RF::ui::controller {
 class ClampSlicer;
+class FramePackDisplay;
 class MessageBox;
 }
 
 namespace RF::novel::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-// aksjhdksajhdkajhk
+// Dialogue box that extends a message box with an optional portrait
 class GAMENOVEL_API DialogueBox final : public InstancedController
 {
 	RFTYPE_ENABLE_VIRTUAL_LOOKUP();
@@ -64,6 +65,11 @@ public:
 	//  is the text that will get truncated first from the string argument
 	void SetText( rftl::string_view text, bool rightToLeft );
 
+	// NOTE: Portrait is hidden and unset by default
+	void SetPortrait( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::TimeSlowdownRate rate );
+	void ShowPortrait( UIContext& context, Justification::Value portraitSide, bool flipHorizontal );
+	void HidePortrait( UIContext& context );
+
 	void ReflowAllText();
 
 	virtual void OnInstanceAssign( UIContext& context, Container& container ) override;
@@ -82,6 +88,7 @@ private:
 
 	ContainerID mSliceContainerID = kInvalidContainerID;
 	WeakPtr<ClampSlicer> mSliceController;
+	WeakPtr<FramePackDisplay> mPortraitController;
 	WeakPtr<MessageBox> mMessageController;
 
 	rftl::string mText;

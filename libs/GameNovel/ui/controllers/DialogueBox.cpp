@@ -6,6 +6,7 @@
 #include "GameUI/UIContext.h"
 #include "GameUI/FocusTree.h"
 #include "GameUI/controllers/ClampSlicer.h"
+#include "GameUI/controllers/FramePackDisplay.h"
 #include "GameUI/controllers/MessageBox.h"
 
 #include "RFType/CreateClassInfoDefinition.h"
@@ -18,12 +19,6 @@ RFTYPE_CREATE_META( RF::novel::ui::controller::DialogueBox )
 }
 
 namespace RF::novel::ui::controller {
-///////////////////////////////////////////////////////////////////////////////
-namespace details {
-
-//
-
-}
 ///////////////////////////////////////////////////////////////////////////////
 
 DialogueBox::DialogueBox(
@@ -132,6 +127,39 @@ void DialogueBox::SetText( rftl::string_view text, bool rightToLeft )
 
 
 
+void DialogueBox::SetPortrait( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::TimeSlowdownRate rate )
+{
+	mPortraitController->SetFramePack( framePack, maxTimeIndex, mPortraitWidth, mPortraitWidth );
+	mPortraitController->SetSlowdown( rate );
+}
+
+
+
+void DialogueBox::ShowPortrait( UIContext& context, Justification::Value portraitSide, bool flipHorizontal )
+{
+	mPortraitController->SetRenderingBlocked( false );
+	mPortraitController->SetHorizontalFlip( flipHorizontal );
+
+	RF_ASSERT(
+		portraitSide == Justification::Value::Left ||
+		portraitSide == Justification::Value::Right );
+	ClampSlicer::Mode const mode =
+		portraitSide == Justification::Value::Left ?
+		ClampSlicer::Mode::ClampLeft_OverflowRight :
+		ClampSlicer::Mode::ClampRight_OverflowLeft;
+	mSliceController->SetMode( context, mode );
+}
+
+
+
+void DialogueBox::HidePortrait( UIContext& context )
+{
+	mPortraitController->SetRenderingBlocked( true );
+	mSliceController->SetMode( context, ClampSlicer::Mode::TotalOverlap );
+}
+
+
+
 void DialogueBox::ReflowAllText()
 {
 	RF_ASSERT( mMessageController != nullptr );
@@ -160,6 +188,12 @@ void DialogueBox::OnInstanceAssign( UIContext& context, Container& container )
 				ClampSlicer::Mode::ClampLeft_OverflowRight ) );
 	mSliceController = slicer;
 
+	WeakPtr<FramePackDisplay> const portrait =
+		uiManager.AssignStrongController(
+			slicer->GetClampedContainerID(),
+			DefaultCreator<FramePackDisplay>::Create() );
+	mPortraitController = portrait;
+
 	WeakPtr<MessageBox> const message =
 		uiManager.AssignStrongController(
 			slicer->GetOverflowContainerID(),
@@ -170,6 +204,10 @@ void DialogueBox::OnInstanceAssign( UIContext& context, Container& container )
 				mColor,
 				mBreakableChars ) );
 	mMessageController = message;
+
+	// Start hidden by default, since we also need a valid framepack before we
+	//  can flip it on
+	HidePortrait( context );
 }
 
 
