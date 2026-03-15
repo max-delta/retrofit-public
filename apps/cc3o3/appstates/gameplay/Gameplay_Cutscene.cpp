@@ -13,6 +13,8 @@
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
 
+#include "GameNovel/ui/controllers/DialogueBox.h"
+
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusEvent.h"
 #include "GameUI/FocusManager.h"
@@ -20,7 +22,6 @@
 #include "GameUI/controllers/AspectColumnSlicer.h"
 #include "GameUI/controllers/Clamper.h"
 #include "GameUI/controllers/RowSlicer.h"
-#include "GameUI/controllers/MessageBox.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
@@ -41,9 +42,9 @@ public:
 
 public:
 	WeakPtr<ui::controller::TextLabel> mTODO;
-	WeakPtr<ui::controller::MessageBox> mLowerMessageBox;
+	WeakPtr<novel::ui::controller::DialogueBox> mLowerDialogueBox;
 
-	WeakPtr<ui::controller::MessageBox> mCurrentMessageBox;
+	WeakPtr<novel::ui::controller::DialogueBox> mCurrentDialogueBox;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,10 +130,12 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		( (void)focusMan );
 
 		// TODO
-		WeakPtr<ui::controller::MessageBox> const lowerMsg =
+		static constexpr gfx::ppu::CoordElem kPortraitSize = 64;
+		WeakPtr<novel::ui::controller::DialogueBox> const lowerDialogue =
 			uiManager.AssignStrongController(
 				bottomClamper->GetChildContainerID(),
-				DefaultCreator<ui::controller::MessageBox>::Create(
+				DefaultCreator<novel::ui::controller::DialogueBox>::Create(
+					kPortraitSize,
 					4u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
@@ -144,20 +147,20 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			" This is likely going to be truncated multiple ways, and require"
 			" pagination support so a user can work their way through the full"
 			" lenghty text.";
-		lowerMsg->SetText( kTODOText, false );
-		lowerMsg->SetAnimationSpeed( ui::kTextSpeed );
-		lowerMsg->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
-		lowerMsg->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		lowerDialogue->SetText( kTODOText, false );
+		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
+		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
+		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		gfx::ppu::PPUController const& ppu = *app::gGraphics;
 		ui::FramePackDef const truncationFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextTruncation );
 		ui::FramePackDef const completionFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextCompletion );
-		lowerMsg->SetTruncationContinuationIndicator( truncationFPack.mManagedID, truncationFPack.mMaxTimeIndex, truncationFPack.mPreferredSlowdownRate, truncationFPack.mExpectedWidth, truncationFPack.mExpectedHeight );
-		lowerMsg->SetCompletionContinuationIndicator( completionFPack.mManagedID, completionFPack.mMaxTimeIndex, completionFPack.mPreferredSlowdownRate, completionFPack.mExpectedWidth, completionFPack.mExpectedHeight );
-		lowerMsg->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
-		internalState.mLowerMessageBox = lowerMsg;
+		lowerDialogue->SetTruncationContinuationIndicator( truncationFPack.mManagedID, truncationFPack.mMaxTimeIndex, truncationFPack.mPreferredSlowdownRate, truncationFPack.mExpectedWidth, truncationFPack.mExpectedHeight );
+		lowerDialogue->SetCompletionContinuationIndicator( completionFPack.mManagedID, completionFPack.mMaxTimeIndex, completionFPack.mPreferredSlowdownRate, completionFPack.mExpectedWidth, completionFPack.mExpectedHeight );
+		lowerDialogue->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
+		internalState.mLowerDialogueBox = lowerDialogue;
 
 		// TODO: Delay determining this?
-		internalState.mCurrentMessageBox = lowerMsg;
+		internalState.mCurrentDialogueBox = lowerDialogue;
 	}
 }
 
@@ -188,7 +191,8 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 		focusMan.UpdateHardFocus( uiContext );
 
 		// Figure out the useful focus information
-		ui::ContainerID const currentFocusContainerID = focusMan.GetFocusTree().GetCurrentFocusContainerID();
+		ui::FocusTree const& focusTree = focusMan.GetFocusTree();
+		ui::ContainerID const currentFocusContainerID = focusTree.GetCurrentFocusContainerID();
 
 		if( handled )
 		{
@@ -205,12 +209,12 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 				// TODO: Get rid of this in favor of something that resets the
 				//  dialogue being fed to it, once the dialogue machinery is
 				//  further along
-				RF_ASSERT( internalState.mCurrentMessageBox != nullptr );
-				if( currentFocusContainerID == internalState.mCurrentMessageBox->GetContainerID() )
+				RF_ASSERT( internalState.mCurrentDialogueBox != nullptr );
+				if( focusTree.IsInCurrentFocusStack( internalState.mCurrentDialogueBox->GetContainerID() ) )
 				{
 					if( focusEvent == ui::focusevent::Command_NavigateToPreviousGroup )
 					{
-						internalState.mCurrentMessageBox->ReflowAllText();
+						internalState.mCurrentDialogueBox->ReflowAllText();
 					}
 				}
 
