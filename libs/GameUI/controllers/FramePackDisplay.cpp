@@ -22,6 +22,7 @@ namespace RF::ui::controller {
 void FramePackDisplay::SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight )
 {
 	mFramePack.SetFramePack( framePack, maxTimeIndex, expectedWidth, expectedHeight );
+	mFramePack.ResetAnimationTimer();
 }
 
 
