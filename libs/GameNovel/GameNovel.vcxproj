@@ -34,10 +34,31 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="ui\controllers\DialogueBox.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="ui\controllers\DialogueBox.h" />
+		<ClInclude Include="ui\controllers\project.h" />
+		<ClInclude Include="ui\controllers\stdafx.h" />
+		<ClInclude Include="ui\project.h" />
+		<ClInclude Include="ui\stdafx.h" />
+		<ClInclude Include="ui\UIFwd.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\core\core.vcxproj">
+			<Project>{85e6a570-bce9-4837-8513-8a5bba06634c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_math\core_math.vcxproj">
+			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\GameUI\GameUI.vcxproj">
+			<Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\RFType\RFType.vcxproj">
+			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
+		</ProjectReference>
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">

@@ -1,2 +1,40 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="ui\controllers\DialogueBox.cpp">
+			<Filter>ui\controllers</Filter>
+		</ClCompile>
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="project.h" />
+		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="ui\UIFwd.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\project.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\stdafx.h">
+			<Filter>ui</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\DialogueBox.h">
+			<Filter>ui\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\project.h">
+			<Filter>ui\controllers</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\controllers\stdafx.h">
+			<Filter>ui\controllers</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="ui">
+			<UniqueIdentifier>{aeae47f4-e59e-4bb1-a3d7-6e3c2b124ae0}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui\controllers">
+			<UniqueIdentifier>{17b4da39-7fdc-491a-8c51-3ac290433090}</UniqueIdentifier>
+		</Filter>
+	</ItemGroup>
+</Project>
