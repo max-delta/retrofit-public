@@ -28,7 +28,7 @@ namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr bool kShowMessageBoxDebug = true;
+static constexpr bool kShowMessageBoxDebug = false;
 
 }
 ///////////////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	// For diagnostic use only
 	auto const drawEndOfMessageDebug = [this, &context, &container]() -> void
 	{
-		if constexpr( details::kShowMessageBoxDebug == false )
+		if RF_CONSTEXPR_COND( details::kShowMessageBoxDebug == false )
 		{
 			return;
 		}

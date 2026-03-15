@@ -369,6 +369,25 @@ static_assert( alignof( void* ) == sizeof( void* ), "Unexpected pointer alignmen
 ///////////////////////////////////////////////////////////////////////////////
 }
 
+// Obnoxious compiler nuisances mean that 'if constexpr(...)' is often
+//  unusable, since it causes a warning-as-error about 'unreachable code',
+//  which is dumb because THAT'S THE WHOLE POINT!!!
+// Example usage:
+//  if RF_CONSTEXPR_COND(condition) { ... }
+namespace RF::compiler::details {
+#if defined( RF_PLATFORM_MSVC )
+inline consteval bool constevalPassthrough( bool val )
+{
+	return val;
+}
+	#define RF_CONSTEXPR_COND( CONDITION ) \
+		/*constexpr*/ ( ::RF::compiler::details::constevalPassthrough( CONDITION ) )
+#else
+	#define RF_CONSTEXPR_COND( CONDITION ) \
+		constexpr( CONDITION )
+#endif
+}
+
 // MSVC needs some intrinsics declared before they can be invoked
 #if defined( RF_PLATFORM_MSVC )
 extern "C" void __nop();
