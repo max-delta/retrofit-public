@@ -158,10 +158,10 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::standard::kTextTruncation.mResourceName, paths::UIFramepacks().GetChild( "quill_write.fpack" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::standard::kTextCompletion.mResourceName, paths::UIFramepacks().GetChild( "quill_tap.fpack" ) );
 
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test64_wiggle", paths::CommonFramepacks().GetChild( "test64_wiggle.fpack" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test32_wiggle", paths::CommonFramepacks().GetChild( "test32_wiggle.fpack" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test16_wiggle", paths::CommonFramepacks().GetChild( "test16_wiggle.fpack" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, "test8_wiggle", paths::CommonFramepacks().GetChild( "test8_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::mockup::kWiggle64.mResourceName, paths::CommonFramepacks().GetChild( "test64_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::mockup::kWiggle32.mResourceName, paths::CommonFramepacks().GetChild( "test32_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::mockup::kWiggle16.mResourceName, paths::CommonFramepacks().GetChild( "test16_wiggle.fpack" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, ui::mockup::kWiggle8.mResourceName, paths::CommonFramepacks().GetChild( "test8_wiggle.fpack" ) );
 	}
 
 	// Load localization

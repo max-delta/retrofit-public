@@ -47,4 +47,13 @@ static constexpr FramePackProto kTextCompletion = { "text_completion", 16, 16 };
 
 }
 ///////////////////////////////////////////////////////////////////////////////
+namespace mockup {
+
+static constexpr FramePackProto kWiggle64 = { "mock_wiggle_64", 64, 64 };
+static constexpr FramePackProto kWiggle32 = { "mock_wiggle_32", 32, 32 };
+static constexpr FramePackProto kWiggle16 = { "mock_wiggle_16", 16, 16 };
+static constexpr FramePackProto kWiggle8 = { "mock_wiggle_8", 8, 8 };
+
+}
+///////////////////////////////////////////////////////////////////////////////
 }
