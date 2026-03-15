@@ -53,7 +53,7 @@
 				-Wno-c++98-compat-pedantic
 				%(AdditionalOptions)
 			</AdditionalOptions>
-			
+
 			<!-- Disable compat with pre-C++20 code that is increasingly limiting -->
 			<AdditionalOptions>
 				-Wno-c++20-compat
