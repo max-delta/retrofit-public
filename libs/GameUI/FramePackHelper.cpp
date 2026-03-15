@@ -32,6 +32,20 @@ void FramePackHelper::SetJustification( Justification::Value justification )
 
 
 
+void FramePackHelper::SetHorizontalFlip( bool flipped )
+{
+	mObject.mHorizontalFlip = flipped;
+}
+
+
+
+void FramePackHelper::SetVerticalFlip( bool flipped )
+{
+	mObject.mVerticalFlip = flipped;
+}
+
+
+
 void FramePackHelper::ResetAnimationTimer()
 {
 	mObject.ResetAnimation();

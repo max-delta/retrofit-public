@@ -41,6 +41,20 @@ void FramePackDisplay::SetJustification( Justification::Value justification )
 
 
 
+void FramePackDisplay::SetHorizontalFlip( bool flipped )
+{
+	mFramePack.SetHorizontalFlip( flipped );
+}
+
+
+
+void FramePackDisplay::SetVerticalFlip( bool flipped )
+{
+	mFramePack.SetVerticalFlip( flipped );
+}
+
+
+
 void FramePackDisplay::OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering )
 {
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );

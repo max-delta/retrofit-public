@@ -22,6 +22,8 @@ public:
 	void SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight );
 	void SetSlowdown( gfx::TimeSlowdownRate rate );
 	void SetJustification( Justification::Value justification );
+	void SetHorizontalFlip( bool flipped );
+	void SetVerticalFlip( bool flipped );
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
