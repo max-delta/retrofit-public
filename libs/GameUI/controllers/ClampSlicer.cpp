@@ -10,6 +10,8 @@
 
 #include "Logging/Logging.h"
 
+#include "core/rf_onceper.h"
+
 
 RFTYPE_CREATE_META( RF::ui::controller::ClampSlicer )
 {
@@ -38,6 +40,24 @@ ClampSlicer::ClampSlicer(
 		params.divisibleBy > 0 );
 
 	RF_ASSERT( mode != Mode::Invalid );
+}
+
+
+
+void ClampSlicer::SetMode( ui::UIContext& context, Mode mode )
+{
+	RF_ASSERT( mode != Mode::Invalid );
+
+	if( mMode == mode )
+	{
+		RF_ONCEPER_SECOND( RFLOGF_WARNING( nullptr, RFCAT_GAMEUI,
+			"A clamp slicer is trying to change modes to the same value it already has" ) );
+		return;
+	}
+
+	// Changing mode necessitates a recalc
+	mMode = mode;
+	RequestHardRecalc( context );
 }
 
 

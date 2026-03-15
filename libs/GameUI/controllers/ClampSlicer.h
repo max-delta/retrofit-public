@@ -59,6 +59,8 @@ public:
 		Params params,
 		Mode mode );
 
+	void SetMode( ui::UIContext& context, Mode mode );
+
 	ContainerID GetClampedContainerID() const;
 	ContainerID GetOverflowContainerID() const;
 
@@ -75,7 +77,7 @@ private:
 	AnchorID mOverflowBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mClampedContainer = kInvalidContainerID;
 	ContainerID mOverflowContainer = kInvalidContainerID;
-	Mode const mMode = Mode::Invalid;
+	Mode mMode = Mode::Invalid;
 	gfx::ppu::CoordElem const mSubtract = {};
 	gfx::ppu::CoordElem const mMax = {};
 	gfx::ppu::CoordElem const mStep = {};
