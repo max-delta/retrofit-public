@@ -46,6 +46,7 @@ public:
 		{
 			kVista = 0,
 			kHACKBattle,
+			kHACKCutscene,
 			kMenus,
 			kLeave,
 
@@ -55,6 +56,7 @@ public:
 		static constexpr char const* kLabels[kNumSections] = {
 			"H_vista",
 			"H_hackbattle",
+			"H_hackcutscene",
 			"H_menus",
 			"H_leave",
 		};
@@ -62,6 +64,7 @@ public:
 		static constexpr char const* kText[kNumSections] = {
 			"$sitemenu_toplevel_vista",
 			"$sitemenu_toplevel_hackbattle",
+			"$sitemenu_toplevel_hackcutscene",
 			"$sitemenu_toplevel_menus",
 			"$sitemenu_toplevel_leave",
 		};
@@ -242,6 +245,10 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kHACKBattle ),
 				DefaultCreator<ui::controller::Passthrough>::Create() );
+		WeakPtr<ui::controller::Passthrough> const HACKCutscenePassthrough =
+			uiManager.AssignStrongController(
+				sectionPassthroughs->GetChildContainerID( TopLevelSections::kHACKCutscene ),
+				DefaultCreator<ui::controller::Passthrough>::Create() );
 		WeakPtr<ui::controller::Passthrough> const menusPassthrough =
 			uiManager.AssignStrongController(
 				sectionPassthroughs->GetChildContainerID( TopLevelSections::kMenus ),
@@ -252,6 +259,7 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::Passthrough>::Create() );
 		internalState.mTopLevelControllers.at( TopLevelSections::kVista ) = vistaPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kHACKBattle ) = HACKBattlePassthrough;
+		internalState.mTopLevelControllers.at( TopLevelSections::kHACKCutscene ) = HACKCutscenePassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kMenus ) = menusPassthrough;
 		internalState.mTopLevelControllers.at( TopLevelSections::kLeave ) = leavePassthrough;
 		for( WeakPtr<ui::controller::InstancedController> const& controller : internalState.mTopLevelControllers )
@@ -459,6 +467,21 @@ void Gameplay_Site::OnTick( AppStateTickContext& context )
 						{
 							// Start encounter
 							campaign.StartEncounter( context, "TODO" );
+						}
+						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
+						{
+							// Return to section selector
+							internalState.SwitchToSelector( uiContext );
+						}
+					}
+					else if( currentSection == TopLevelSections::kHACKCutscene )
+					{
+						// HACK cutscene
+
+						if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+						{
+							// Start cutscene
+							campaign.StartCutscene( context, "TODO" );
 						}
 						else if( focusEvent == ui::focusevent::Command_CancelCurrentFocus )
 						{

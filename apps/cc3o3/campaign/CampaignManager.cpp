@@ -553,6 +553,17 @@ void CampaignManager::LeaveSite( appstate::AppStateTickContext& context )
 
 
 
+void CampaignManager::StartCutscene( appstate::AppStateTickContext& context, rftl::string identifier )
+{
+	VerifyCampaignLoaded();
+
+	// HACK: Just pop into cutscene
+	// TODO: Actually set it up
+	context.mManager.RequestDeferredStateChange( appstate::id::Gameplay_Cutscene );
+}
+
+
+
 void CampaignManager::StartEncounter( appstate::AppStateTickContext& context, rftl::string identifier )
 {
 	VerifyCampaignLoaded();

@@ -64,6 +64,10 @@ public:
 	bool CanLeaveSite();
 	void LeaveSite( appstate::AppStateTickContext& context );
 
+	void StartCutscene(
+		appstate::AppStateTickContext& context,
+		rftl::string identifier );
+
 	void StartEncounter(
 		appstate::AppStateTickContext& context,
 		rftl::string identifier );
