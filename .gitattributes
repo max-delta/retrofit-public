@@ -1,2 +1,3 @@
 # Try to prevent Git from secretly corrupting files
+# SEE: git ls-files --eol
 * -text
