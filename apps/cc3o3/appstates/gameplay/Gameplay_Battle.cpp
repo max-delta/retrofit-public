@@ -9,9 +9,9 @@
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/combat/FightController.h"
-#include "cc3o3/state/StateHelpers.h"
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/UINavigation.h"
+#include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CombatCharacter.h"
 #include "cc3o3/ui/controllers/ElementGridSelector.h"
@@ -568,10 +568,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 	campaign::CampaignManager& campaign = *gCampaignManager;
 
 	// Find navigation component
-	state::VariableIdentifier const localUIRoot( "localUI" );
-	state::MutableObjectRef const localUI = state::FindMutableObjectByIdentifier( localUIRoot );
-	RFLOG_TEST_AND_FATAL( localUI.IsSet(), nullptr, RFCAT_CC3O3, "Failed to find UI object" );
-	internalState.mNavigation = localUI.GetMutableComponentInstanceT<state::comp::UINavigation>();
+	internalState.mNavigation = state::obj::FetchMutableLocalUINavigation();
 	RFLOG_TEST_AND_FATAL( internalState.mNavigation != nullptr, nullptr, RFCAT_CC3O3, "Failed to find navigation component" );
 
 	// Setup combat instance

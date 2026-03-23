@@ -65,10 +65,7 @@ void Gameplay::OnEnter( AppStateChangeContext& context )
 		rollback::Window& privateWindow = privateDomain.GetMutableWindow();
 
 		// Set up the UI
-		{
-			VariableIdentifier const localUIRoot( "localUI" );
-			CreateLocalUI( sharedWindow, privateWindow, localUIRoot );
-		}
+		CreateLocalUI( sharedWindow, privateWindow );
 	}
 
 	// HACK: Choose arbitrary save

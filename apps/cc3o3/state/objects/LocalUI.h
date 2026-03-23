@@ -6,15 +6,20 @@
 #include "Rollback/RollbackFwd.h"
 
 
+// Forwards
+namespace RF::cc::state::comp {
+class UINavigation;
+}
+
 namespace RF::cc::state::obj {
 ///////////////////////////////////////////////////////////////////////////////
 
 MutableObjectRef CreateLocalUI(
-	rollback::Window& sharedWindow, rollback::Window& privateWindow,
-	state::VariableIdentifier const& objIdentifier );
+	rollback::Window& sharedWindow, rollback::Window& privateWindow );
 void MakeLocalUI(
 	rollback::Window& sharedWindow, rollback::Window& privateWindow,
 	MutableObjectRef const& ref );
+WeakPtr<comp::UINavigation> FetchMutableLocalUINavigation();
 
 ///////////////////////////////////////////////////////////////////////////////
 }
