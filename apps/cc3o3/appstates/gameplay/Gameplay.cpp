@@ -11,7 +11,6 @@
 #include "cc3o3/save/SaveManager.h"
 #include "cc3o3/state/objects/LocalUI.h"
 #include "cc3o3/input/HardcodedSetup.h"
-#include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
