@@ -20,11 +20,13 @@
 #include "GameUI/FocusManager.h"
 #include "GameUI/UIContext.h"
 #include "GameUI/controllers/AspectColumnSlicer.h"
+#include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/Clamper.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
+#include "PPU/TilesetManager.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/meta/IntegerPromotion.h"
@@ -53,6 +55,9 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 {
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
+
+	gfx::ppu::PPUController const& ppu = *app::gGraphics;
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// Setup cutscene
 	{
@@ -85,35 +90,43 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					kAspectEnableds,
 					kAspectDivisility ) );
 
-		// Cut the center in 5
+		// Bring in the size a bit
+		static constexpr ui::controller::Clamper::Params kMarginClamperParams = {
+			.subtractWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ),
+			.subtractHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ) };
+		WeakPtr<ui::controller::Clamper> const marginClamper =
+			uiManager.AssignStrongController(
+				aspectSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::Clamper>::Create(
+					kMarginClamperParams,
+					ui::Justification::MiddleCenter ) );
+
+		// Cut the center in 3
 		ui::controller::RowSlicer::Ratios const centerRowRatios = {
-			{ 1.f / 28.f, false },
-			{ 8.f / 28.f, true },
-			{ 10.f / 28.f, false },
-			{ 8.f / 28.f, true },
-			{ 1.f / 28.f, false },
+			{ 3.f / 8.f, true },
+			{ 2.f / 8.f, false },
+			{ 3.f / 8.f, true },
 		};
 		WeakPtr<ui::controller::RowSlicer> const centerRowSlicer =
 			uiManager.AssignStrongController(
-				aspectSlicer->GetChildContainerID( 1 ),
+				marginClamper->GetChildContainerID(),
 				DefaultCreator<ui::controller::RowSlicer>::Create(
 					centerRowRatios ) );
 
 		// Put clampers on the top and bottom
 		static constexpr ui::controller::Clamper::Params kClamperParams = {
-			.subtractWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 2 ),
-			.maxHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 2 ),
+			.maxHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize * 9 / 4 ),
 			.divisibleByWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ),
 			.divisibleByHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ) };
 		WeakPtr<ui::controller::Clamper> const topClamper =
 			uiManager.AssignStrongController(
-				centerRowSlicer->GetChildContainerID( 1 ),
+				centerRowSlicer->GetChildContainerID( 0 ),
 				DefaultCreator<ui::controller::Clamper>::Create(
 					kClamperParams,
 					ui::Justification::TopCenter ) );
 		WeakPtr<ui::controller::Clamper> const bottomClamper =
 			uiManager.AssignStrongController(
-				centerRowSlicer->GetChildContainerID( 3 ),
+				centerRowSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::Clamper>::Create(
 					kClamperParams,
 					ui::Justification::BottomCenter ) );
@@ -132,13 +145,21 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		( (void)focusMan );
 
 		// TODO
+		// Frame
+		WeakPtr<ui::controller::BorderFrame> const frame =
+			uiManager.AssignStrongController(
+				bottomClamper->GetChildContainerID(),
+				DefaultCreator<ui::controller::BorderFrame>::Create() );
+		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+
+		// TODO
 		static constexpr gfx::ppu::CoordElem kPortraitSize = 64;
 		WeakPtr<novel::ui::controller::DialogueBox> const lowerDialogue =
 			uiManager.AssignStrongController(
-				bottomClamper->GetChildContainerID(),
+				frame->GetChildContainerID(),
 				DefaultCreator<novel::ui::controller::DialogueBox>::Create(
 					kPortraitSize,
-					4u,
+					3u,
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
@@ -153,7 +174,6 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
 		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
-		gfx::ppu::PPUController const& ppu = *app::gGraphics;
 		ui::FramePackDef const truncationFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextTruncation );
 		ui::FramePackDef const completionFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextCompletion );
 		ui::FramePackDef const portraitFPack = ui::QueryFramePackDef( ppu, ui::mockup::kWiggle64 );
