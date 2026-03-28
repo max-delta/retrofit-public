@@ -1,5 +1,5 @@
 #pragma once
-#include "rftl/cstdint"
+#include "core_localization/LocFwd.h"
 
 
 namespace RF::loc {

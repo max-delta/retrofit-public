@@ -27,9 +27,12 @@
 	<PropertyGroup />
 	<ItemDefinitionGroup />
 	<ItemGroup>
+		<ClInclude Include="LocFwd.h" />
+		<ClInclude Include="LineBreakRules.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="LineBreakRules.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>

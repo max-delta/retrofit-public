@@ -503,8 +503,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
-					ui::GetBreakableChars(),
-					ui::GetConsumableChars() ) );
+					ui::GetLineBreakRules() ) );
 		messageBox->SetAnimationSpeed( ui::kTextSpeed );
 		messageBox->SetText(
 			"This is some text. It may take up a fair amount of space, so it"

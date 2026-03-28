@@ -8,6 +8,8 @@
 #include "Localization/LocQuery.h"
 #include "Localization/LocResult.h"
 
+#include "core_localization/LineBreakRules.h"
+
 #include "core/ptr/weak_ptr.h"
 
 
@@ -21,18 +23,13 @@ loc::TextDirection GetTextDirection()
 
 
 
-rftl::unique_char_set GetBreakableChars()
+loc::LineBreakRules GetLineBreakRules()
 {
-	// TODO: Get from LocEngine
-	return { ' ', '-' };
-}
-
-
-
-rftl::unique_char_set GetConsumableChars()
-{
-	// TODO: Get from LocEngine
-	return { ' ' };
+	RF_TODO_ANNOTATION( "Get from LocEngine" );
+	return loc::LineBreakRules{
+		.mBreakableChars = { ' ', '-' },
+		.mConsumableChars = { ' ' },
+	};
 }
 
 

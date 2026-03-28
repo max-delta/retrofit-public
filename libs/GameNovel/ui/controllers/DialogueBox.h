@@ -6,8 +6,8 @@
 #include "GameUI/controllers/InstancedController.h"
 
 #include "core_math/Color3u8.h"
+#include "core_localization/LineBreakRules.h"
 
-#include "rftl/extension/unique_char_set.h"
 #include "rftl/string_view"
 
 
@@ -35,16 +35,14 @@ public:
 		gfx::ppu::CoordElem portraitWidth,
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unique_char_set const& breakableChars,
-		rftl::unique_char_set const& consumableChars );
+		loc::LineBreakRules const& lineBreakRules );
 	DialogueBox(
 		gfx::ppu::CoordElem portraitWidth,
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unique_char_set const& breakableChars,
-		rftl::unique_char_set const& consumableChars );
+		loc::LineBreakRules const& lineBreakRules );
 
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 	void SetFastForwardEvent( FocusEventType event );
@@ -86,8 +84,7 @@ private:
 	Justification::Value const mJustification;
 	math::Color3u8 const mColor;
 	gfx::ppu::CoordElem const mPortraitWidth;
-	rftl::unique_char_set const mBreakableChars;
-	rftl::unique_char_set const mConsumableChars;
+	loc::LineBreakRules const mLineBreakRules;
 
 	ContainerID mSliceContainerID = kInvalidContainerID;
 	WeakPtr<ClampSlicer> mSliceController;

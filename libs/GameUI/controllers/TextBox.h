@@ -4,9 +4,9 @@
 #include "GameUI/controllers/InstancedController.h"
 
 #include "core_math/Color3u8.h"
+#include "core_localization/LineBreakRules.h"
 
 #include "rftl/extension/cstring_view.h"
-#include "rftl/extension/unique_char_set.h"
 
 
 // Forwards
@@ -30,15 +30,13 @@ public:
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unique_char_set const& breakableChars,
-		rftl::unique_char_set const& consumableChars );
+		loc::LineBreakRules const& lineBreakRules );
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unique_char_set const& breakableChars,
-		rftl::unique_char_set const& consumableChars );
+		loc::LineBreakRules const& lineBreakRules );
 
 	ContainerID GetChildContainerID() const;
 
@@ -70,8 +68,7 @@ private:
 	Justification::Value const mJustification;
 	bool mRightToLeft = false;
 	math::Color3u8 const mColor;
-	rftl::unique_char_set const mBreakableChars;
-	rftl::unique_char_set const mConsumableChars;
+	loc::LineBreakRules const mLineBreakRules;
 
 	ContainerID mChildContainerID = kInvalidContainerID;
 	WeakPtr<TextRows> mSlotController;

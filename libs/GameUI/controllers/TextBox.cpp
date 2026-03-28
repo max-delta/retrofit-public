@@ -31,16 +31,14 @@ namespace RF::ui::controller {
 TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
-	rftl::unique_char_set const& breakableChars,
-	rftl::unique_char_set const& consumableChars )
+	loc::LineBreakRules const& lineBreakRules )
 	: // Clang-format is trash garbage
 	TextBox(
 		numRows,
 		purpose,
 		Justification::MiddleCenter,
 		math::Color3u8::kWhite,
-		breakableChars,
-		consumableChars )
+		lineBreakRules )
 {
 	//
 }
@@ -52,14 +50,12 @@ TextBox::TextBox(
 	FontPurposeID purpose,
 	Justification::Value justification,
 	math::Color3u8 color,
-	rftl::unique_char_set const& breakableChars,
-	rftl::unique_char_set const& consumableChars )
+	loc::LineBreakRules const& lineBreakRules )
 	: mNumRows( numRows )
 	, mFontPurpose( purpose )
 	, mJustification( justification )
 	, mColor( color )
-	, mBreakableChars( breakableChars )
-	, mConsumableChars( consumableChars )
+	, mLineBreakRules( lineBreakRules )
 {
 	RF_ASSERT( mNumRows >= 2 );
 }
@@ -110,8 +106,8 @@ void TextBox::SpeculativelySplitAcrossLines(
 	gfx::ppu::CoordElem const maxLineLen = container.mAABB.Width();
 	textLines.reserve( mNumRows );
 
-	rftl::string_view const breakableChars = mBreakableChars;
-	rftl::string_view const consumableChars = mConsumableChars;
+	rftl::string_view const breakableChars = mLineBreakRules.mBreakableChars;
+	rftl::string_view const consumableChars = mLineBreakRules.mConsumableChars;
 	auto const rewindPastNonBreakableCharacters = [&breakableChars]( rftl::string_view full ) -> rftl::string_view
 	{
 		RF_ASSERT( full.empty() == false );

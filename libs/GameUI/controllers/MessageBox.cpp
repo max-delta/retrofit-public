@@ -36,14 +36,12 @@ static constexpr bool kShowMessageBoxDebug = false;
 MessageBox::MessageBox(
 	size_t numRows,
 	FontPurposeID purpose,
-	rftl::unique_char_set const& breakableChars,
-	rftl::unique_char_set const& consumableChars )
+	loc::LineBreakRules const& lineBreakRules )
 	: // Clang-format is trash garbage
 	TextBox(
 		numRows,
 		purpose,
-		breakableChars,
-		consumableChars )
+		lineBreakRules )
 {
 	//
 }
@@ -55,16 +53,14 @@ MessageBox::MessageBox(
 	FontPurposeID purpose,
 	Justification::Value justification,
 	math::Color3u8 color,
-	rftl::unique_char_set const& breakableChars,
-	rftl::unique_char_set const& consumableChars )
+	loc::LineBreakRules const& lineBreakRules )
 	: // Clang-format is trash garbage
 	TextBox(
 		numRows,
 		purpose,
 		justification,
 		color,
-		breakableChars,
-		consumableChars )
+		lineBreakRules )
 {
 	//
 }
