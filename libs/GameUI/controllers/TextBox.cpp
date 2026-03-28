@@ -113,7 +113,7 @@ void TextBox::SpeculativelySplitAcrossLines(
 		RF_ASSERT( full.empty() == false );
 		if( breakableChars.empty() )
 		{
-			return full;
+			return {};
 		}
 
 		rftl::string_view partial = full;
@@ -124,15 +124,15 @@ void TextBox::SpeculativelySplitAcrossLines(
 		return partial;
 	};
 
-	auto const rewindPastBreakableCharacters = [&breakableChars]( rftl::string_view full ) -> rftl::string_view
+	auto const rewindPastConsumableCharacters = [&consumableChars]( rftl::string_view full ) -> rftl::string_view
 	{
 		RF_ASSERT( full.empty() == false );
-		if( breakableChars.empty() )
+		if( consumableChars.empty() )
 		{
 			return full;
 		}
 
-		return rftl::trim_suffix_chars( full, breakableChars );
+		return rftl::trim_suffix_chars( full, consumableChars );
 	};
 
 	auto const fastForwardPastConsumableCharacters = [&consumableChars]( rftl::string_view full ) -> rftl::string_view
@@ -208,9 +208,10 @@ void TextBox::SpeculativelySplitAcrossLines(
 			return;
 		}
 
-		// Not everything fits, rewind past last breakable sequence
+		// Not everything fits, rewind to last breakable sequence, and consume
+		//  anything consumable at the end of it
 		strThatFits = rewindPastNonBreakableCharacters( strThatFits );
-		strThatFits = rewindPastBreakableCharacters( strThatFits );
+		strThatFits = rewindPastConsumableCharacters( strThatFits );
 
 		// Store and extract
 		textLines.emplace_back( strThatFits );
