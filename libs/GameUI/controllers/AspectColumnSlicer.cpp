@@ -19,11 +19,13 @@ RFTYPE_CREATE_META( RF::ui::controller::AspectColumnSlicer )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-AspectColumnSlicer::AspectColumnSlicer( Ratio maxWideness, Enableds enabledSlices )
+AspectColumnSlicer::AspectColumnSlicer( Ratio maxWideness, Enableds enabledSlices, gfx::ppu::CoordElem ensureDivisibleByWidth )
 	: mEnabledSlices( enabledSlices )
 	, mMaxWideness( maxWideness )
+	, mEnsureDivisibleByWidth( ensureDivisibleByWidth )
 {
 	RF_ASSERT( mMaxWideness.IsValid() );
+	RF_ASSERT( mEnsureDivisibleByWidth >= 0 );
 }
 
 
@@ -110,13 +112,41 @@ void AspectColumnSlicer::OnAABBRecalc( UIContext& context, Container& container 
 	Ratio const parentRatio = Ratio( xDelta, yDelta );
 	RF_ASSERT( parentRatio.IsValid() );
 
+	// Helper for ensuring divisibility
+	static constexpr auto shaveSidesForDivisility =
+		[]( gfx::ppu::CoordElem& low, gfx::ppu::CoordElem& high, gfx::ppu::CoordElem divisibility )
+		-> void
+	{
+		RF_ASSERT( divisibility >= 0 );
+		if( divisibility == 0 )
+		{
+			return;
+		}
+
+		RF_ASSERT( low < high );
+		gfx::ppu::CoordElem const delta = high - low;
+		RF_ASSERT( delta > 0 );
+		gfx::ppu::CoordElem const amountToShave = delta % divisibility;
+		gfx::ppu::CoordElem const amountToShaveLow = amountToShave / 2;
+		gfx::ppu::CoordElem const amountToShaveHigh = amountToShave - amountToShaveLow;
+		RF_ASSERT( amountToShaveLow >= 0 );
+		RF_ASSERT( amountToShaveHigh >= 0 );
+		low += amountToShaveLow;
+		high -= amountToShaveHigh;
+		RF_ASSERT( low < high );
+	};
+
 	// Can we just fill it up?
 	RF_ASSERT( mMaxWideness.IsValid() );
 	if( parentRatio <= mMaxWideness )
 	{
-		// Still under or equal max wideness, take up entirety of space
-		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 1 ), { x0, y0 } );
-		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 2 ), { x100, y0 } );
+		// Still under or equal max wideness, take up entirety of space,
+		//  adjusted to ensure divisibility
+		gfx::ppu::CoordElem x1 = x0;
+		gfx::ppu::CoordElem x99 = x100;
+		shaveSidesForDivisility( x1, x99, mEnsureDivisibleByWidth );
+		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 1 ), { x1, y0 } );
+		MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 2 ), { x99, y0 } );
 		return;
 	}
 
@@ -133,10 +163,11 @@ void AspectColumnSlicer::OnAABBRecalc( UIContext& context, Container& container 
 	InterfaceType const widthOfEachSide = angry_cast<InterfaceType>( slackToTakeUp / 2 );
 	RF_ASSERT( widthOfEachSide >= 0 );
 
-	// Move the anchors
-	gfx::ppu::CoordElem const xMiddleLeft = math::integer_cast<gfx::ppu::CoordElem>( x0 + widthOfEachSide );
-	gfx::ppu::CoordElem const xMiddleRight = math::integer_cast<gfx::ppu::CoordElem>( x100 - widthOfEachSide );
+	// Move the anchors, adjusting for divisibility as needed
+	gfx::ppu::CoordElem xMiddleLeft = math::integer_cast<gfx::ppu::CoordElem>( x0 + widthOfEachSide );
+	gfx::ppu::CoordElem xMiddleRight = math::integer_cast<gfx::ppu::CoordElem>( x100 - widthOfEachSide );
 	RF_ASSERT( xMiddleLeft < xMiddleRight );
+	shaveSidesForDivisility( xMiddleLeft, xMiddleRight, mEnsureDivisibleByWidth );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 1 ), { xMiddleLeft, y0 } );
 	MoveAnchor( context.GetMutableContainerManager(), mAnchors.at( 2 ), { xMiddleRight, y0 } );
 }

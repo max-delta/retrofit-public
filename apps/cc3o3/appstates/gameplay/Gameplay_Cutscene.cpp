@@ -71,17 +71,19 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 
 		// Constrain the aspect ratio
 		ui::controller::AspectColumnSlicer::Ratio const aspectRatio( 12, 7 );
-		ui::controller::AspectColumnSlicer::Enableds const aspectEnableds = {
+		static constexpr ui::controller::AspectColumnSlicer::Enableds kAspectEnableds = {
 			false,
 			true,
 			false,
 		};
+		static constexpr gfx::ppu::CoordElem kAspectDivisility = gfx::ppu::kTileSize / 4;
 		WeakPtr<ui::controller::AspectColumnSlicer> const aspectSlicer =
 			uiManager.AssignStrongController(
 				ui::kRootContainerID,
 				DefaultCreator<ui::controller::AspectColumnSlicer>::Create(
 					aspectRatio,
-					aspectEnableds ) );
+					kAspectEnableds,
+					kAspectDivisility ) );
 
 		// Cut the center in 5
 		ui::controller::RowSlicer::Ratios const centerRowRatios = {

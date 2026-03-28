@@ -53,7 +53,7 @@ private:
 	// Public methods
 public:
 	AspectColumnSlicer() = delete;
-	AspectColumnSlicer( Ratio maxWideness, Enableds enabledSlices );
+	AspectColumnSlicer( Ratio maxWideness, Enableds enabledSlices, gfx::ppu::CoordElem ensureDivisibleByWidth );
 
 	ContainerID GetChildContainerID( size_t sliceIndex ) const;
 	ContainerID CreateChildContainer( ContainerManager& manager, size_t sliceIndex );
@@ -77,6 +77,7 @@ private:
 	rftl::array<ContainerID, 3> mContainers = { kInvalidContainerID, kInvalidContainerID, kInvalidContainerID };
 	Enableds mEnabledSlices;
 	Ratio mMaxWideness;
+	gfx::ppu::CoordElem mEnsureDivisibleByWidth = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
