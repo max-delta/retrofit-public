@@ -25,6 +25,7 @@ class GAMEUI_API AspectColumnSlicer final : public InstancedController
 	//
 	// Types
 public:
+	RF_TODO_ANNOTATION( "Make a bit_array class to handle arrays of bools" );
 	using Enableds = rftl::array<bool, 3>;
 
 	// Expressed in width / height
