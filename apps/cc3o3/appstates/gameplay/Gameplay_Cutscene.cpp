@@ -163,7 +163,8 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					ui::font::MessageBox,
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
-					ui::GetBreakableChars() ) );
+					ui::GetBreakableChars(),
+					ui::GetConsumableChars() ) );
 		static constexpr char kTODOText[] =
 			"This is some really long text that isn't going to fit on one line."
 			" In fact, it probably won't even fit in one text box."

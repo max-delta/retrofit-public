@@ -31,14 +31,16 @@ namespace RF::ui::controller {
 TextBox::TextBox(
 	size_t numRows,
 	FontPurposeID purpose,
-	rftl::unique_char_set const& breakableChars )
+	rftl::unique_char_set const& breakableChars,
+	rftl::unique_char_set const& consumableChars )
 	: // Clang-format is trash garbage
 	TextBox(
 		numRows,
 		purpose,
 		Justification::MiddleCenter,
 		math::Color3u8::kWhite,
-		breakableChars )
+		breakableChars,
+		consumableChars )
 {
 	//
 }
@@ -50,12 +52,14 @@ TextBox::TextBox(
 	FontPurposeID purpose,
 	Justification::Value justification,
 	math::Color3u8 color,
-	rftl::unique_char_set const& breakableChars )
+	rftl::unique_char_set const& breakableChars,
+	rftl::unique_char_set const& consumableChars )
 	: mNumRows( numRows )
 	, mFontPurpose( purpose )
 	, mJustification( justification )
 	, mColor( color )
-	, mBreakableChars( breakableChars.begin(), breakableChars.end() )
+	, mBreakableChars( breakableChars )
+	, mConsumableChars( consumableChars )
 {
 	RF_ASSERT( mNumRows >= 2 );
 }
@@ -107,6 +111,7 @@ void TextBox::SpeculativelySplitAcrossLines(
 	textLines.reserve( mNumRows );
 
 	rftl::string_view const breakableChars = mBreakableChars;
+	rftl::string_view const consumableChars = mConsumableChars;
 	auto const rewindPastNonBreakableCharacters = [&breakableChars]( rftl::string_view full ) -> rftl::string_view
 	{
 		RF_ASSERT( full.empty() == false );
@@ -132,6 +137,17 @@ void TextBox::SpeculativelySplitAcrossLines(
 		}
 
 		return rftl::trim_suffix_chars( full, breakableChars );
+	};
+
+	auto const fastForwardPastConsumableCharacters = [&consumableChars]( rftl::string_view full ) -> rftl::string_view
+	{
+		RF_ASSERT( full.empty() == false );
+		if( consumableChars.empty() )
+		{
+			return full;
+		}
+
+		return rftl::trim_prefix_chars( full, consumableChars );
 	};
 
 	auto const determineLengthThatFits = [&renderer, &font]( rftl::string_view full, gfx::ppu::CoordElem width ) -> size_t
@@ -200,9 +216,12 @@ void TextBox::SpeculativelySplitAcrossLines(
 		strThatFits = rewindPastNonBreakableCharacters( strThatFits );
 		strThatFits = rewindPastBreakableCharacters( strThatFits );
 
-		// Store and keep going
+		// Store and extract
 		textLines.emplace_back( strThatFits );
 		unwrittenText.remove_prefix( strThatFits.size() );
+
+		// Consume any cruft and keep going
+		unwrittenText = fastForwardPastConsumableCharacters( unwrittenText );
 		continue;
 	}
 }

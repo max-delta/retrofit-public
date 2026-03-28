@@ -35,14 +35,16 @@ public:
 		gfx::ppu::CoordElem portraitWidth,
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unique_char_set const& breakableChars );
+		rftl::unique_char_set const& breakableChars,
+		rftl::unique_char_set const& consumableChars );
 	DialogueBox(
 		gfx::ppu::CoordElem portraitWidth,
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unique_char_set const& breakableChars );
+		rftl::unique_char_set const& breakableChars,
+		rftl::unique_char_set const& consumableChars );
 
 	void SetAnimationSpeed( uint8_t charsPerFrame );
 	void SetFastForwardEvent( FocusEventType event );
@@ -85,6 +87,7 @@ private:
 	math::Color3u8 const mColor;
 	gfx::ppu::CoordElem const mPortraitWidth;
 	rftl::unique_char_set const mBreakableChars;
+	rftl::unique_char_set const mConsumableChars;
 
 	ContainerID mSliceContainerID = kInvalidContainerID;
 	WeakPtr<ClampSlicer> mSliceController;

@@ -25,7 +25,8 @@ DialogueBox::DialogueBox(
 	gfx::ppu::CoordElem portraitWidth,
 	size_t numRows,
 	FontPurposeID purpose,
-	rftl::unique_char_set const& breakableChars )
+	rftl::unique_char_set const& breakableChars,
+	rftl::unique_char_set const& consumableChars )
 	: // Clang-format is trash garbage
 	DialogueBox(
 		portraitWidth,
@@ -33,7 +34,8 @@ DialogueBox::DialogueBox(
 		purpose,
 		Justification::MiddleCenter,
 		math::Color3u8::kWhite,
-		breakableChars )
+		breakableChars,
+		consumableChars )
 {
 	//
 }
@@ -46,13 +48,15 @@ DialogueBox::DialogueBox(
 	FontPurposeID purpose,
 	Justification::Value justification,
 	math::Color3u8 color,
-	rftl::unique_char_set const& breakableChars )
+	rftl::unique_char_set const& breakableChars,
+	rftl::unique_char_set const& consumableChars )
 	: mNumRows( numRows )
 	, mFontPurpose( purpose )
 	, mJustification( justification )
 	, mColor( color )
 	, mPortraitWidth( portraitWidth )
 	, mBreakableChars( breakableChars )
+	, mConsumableChars( consumableChars )
 {
 	//
 }
@@ -202,7 +206,8 @@ void DialogueBox::OnInstanceAssign( UIContext& context, Container& container )
 				mFontPurpose,
 				ui::Justification::MiddleLeft,
 				mColor,
-				mBreakableChars ) );
+				mBreakableChars,
+				mConsumableChars ) );
 	mMessageController = message;
 
 	// Start hidden by default, since we also need a valid framepack before we

@@ -29,6 +29,14 @@ rftl::unique_char_set GetBreakableChars()
 
 
 
+rftl::unique_char_set GetConsumableChars()
+{
+	// TODO: Get from LocEngine
+	return { ' ' };
+}
+
+
+
 rftl::string LocalizeKey( char const* key )
 {
 	return LocalizeKey( rftl::string_view( key ) );

@@ -30,13 +30,15 @@ public:
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
-		rftl::unique_char_set const& breakableChars );
+		rftl::unique_char_set const& breakableChars,
+		rftl::unique_char_set const& consumableChars );
 	TextBox(
 		size_t numRows,
 		FontPurposeID purpose,
 		Justification::Value justification,
 		math::Color3u8 color,
-		rftl::unique_char_set const& breakableChars );
+		rftl::unique_char_set const& breakableChars,
+		rftl::unique_char_set const& consumableChars );
 
 	ContainerID GetChildContainerID() const;
 
@@ -68,7 +70,8 @@ private:
 	Justification::Value const mJustification;
 	bool mRightToLeft = false;
 	math::Color3u8 const mColor;
-	rftl::string const mBreakableChars;
+	rftl::unique_char_set const mBreakableChars;
+	rftl::unique_char_set const mConsumableChars;
 
 	ContainerID mChildContainerID = kInvalidContainerID;
 	WeakPtr<TextRows> mSlotController;
