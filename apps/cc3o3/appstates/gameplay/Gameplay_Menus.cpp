@@ -278,7 +278,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					sectionSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 
 			// Implement selector as horizontal list
 			RF_TODO_ANNOTATION( "Image support in list boxes" );
@@ -311,7 +317,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					statusPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 		}
 
 		// Loadout section
@@ -420,7 +432,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					savesPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 		}
 
 		// Options section
@@ -430,7 +448,13 @@ void Gameplay_Menus::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					optionsPassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 		}
 	}
 

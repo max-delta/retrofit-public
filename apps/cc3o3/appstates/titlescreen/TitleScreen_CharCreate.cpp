@@ -494,7 +494,13 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rootRowSlicer->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		messageBorder->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		messageBorder->SetTileset(
+			uiContext,
+			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
+			ui::BorderFrameShape{
+				.mExpectedTileDimensions{ 8, 8 },
+				.mExpectedPatternDimensions{ 48, 48 },
+				.mPaddingDimensions{ 0, 0 } } );
 		WeakPtr<ui::controller::MessageBox> const messageBox =
 			uiManager.AssignStrongController(
 				messageBorder->GetChildContainerID(),
@@ -539,7 +545,13 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				leftFrameFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		leftFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		leftFrame->SetTileset(
+			uiContext,
+			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
+			ui::BorderFrameShape{
+				.mExpectedTileDimensions{ 8, 8 },
+				.mExpectedPatternDimensions{ 48, 48 },
+				.mPaddingDimensions{ 0, 0 } } );
 
 		// Floating frame in middle right
 		gfx::ppu::Coord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
@@ -554,7 +566,13 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				rightFrameFloater->GetChildContainerID(),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		rightFrame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		rightFrame->SetTileset(
+			uiContext,
+			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
+			ui::BorderFrameShape{
+				.mExpectedTileDimensions{ 8, 8 },
+				.mExpectedPatternDimensions{ 48, 48 },
+				.mPaddingDimensions{ 0, 0 } } );
 
 		// Left frame
 		{

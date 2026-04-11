@@ -756,7 +756,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ -4, -4 } } );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -786,7 +792,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ -4, -4 } } );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -816,7 +828,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ -4, -4 } } );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -846,7 +864,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ -4, -4 } } );
 
 			// List
 			using SelectorActions = InternalState::SelectorActions;
@@ -887,7 +911,13 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ), { 8, 8 }, { 48, 48 }, { -4, -4 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ -4, -4 } } );
 
 			// List
 			using SelectorAttacks = InternalState::SelectorAttacks;

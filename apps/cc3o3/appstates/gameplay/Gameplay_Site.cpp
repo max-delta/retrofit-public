@@ -274,7 +274,13 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					sectionSelectorFloater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 
 			// Implement selector as vertical list
 			WeakPtr<ui::controller::ListBox> const selector =
@@ -316,7 +322,13 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					HACKBattlePassthrough->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+			frame->SetTileset(
+				uiContext,
+				tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+				ui::BorderFrameShape{
+					.mExpectedTileDimensions{ 8, 8 },
+					.mExpectedPatternDimensions{ 48, 48 },
+					.mPaddingDimensions{ 0, 0 } } );
 		}
 
 		// Menus section

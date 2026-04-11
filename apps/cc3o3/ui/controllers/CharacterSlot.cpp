@@ -136,7 +136,13 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 		uiManager.AssignStrongController(
 			mChildContainerID,
 			DefaultCreator<BorderFrame>::Create() );
-	mBorderFrame->SetTileset( context, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+	mBorderFrame->SetTileset(
+		context,
+		tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+		BorderFrameShape{
+			.mExpectedTileDimensions{ 8, 8 },
+			.mExpectedPatternDimensions{ 48, 48 },
+			.mPaddingDimensions{ 0, 0 } } );
 	mBorderFrame->SetChildRenderingBlocked( true );
 
 	// 2 subsections for info and display

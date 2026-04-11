@@ -23,14 +23,10 @@ namespace RF::ui::controller {
 void BorderFrame::SetTileset(
 	ui::UIContext& context,
 	gfx::ManagedTilesetID tileset,
-	gfx::ppu::Coord expectedTileDimensions,
-	gfx::ppu::Coord expectedPatternDimensions,
-	gfx::ppu::Coord paddingDimensions )
+	BorderFrameShape const& shape )
 {
 	mTileLayer.mTilesetReference = tileset;
-	mExpectedTileDimensions = expectedTileDimensions;
-	mExpectedPatternDimensions = expectedPatternDimensions;
-	mPaddingDimensions = paddingDimensions;
+	mShape = shape;
 
 	// Invalidate tilemap and wait for recalc
 	mTileLayer.Clear();
@@ -99,8 +95,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 {
 	RecalcTilemap( container );
 
-	gfx::ppu::Coord const topLeft = container.mAABB.mTopLeft + ( mExpectedTileDimensions + mPaddingDimensions );
-	gfx::ppu::Coord const bottomRight = container.mAABB.mBottomRight - ( mExpectedTileDimensions + mPaddingDimensions );
+	gfx::ppu::Coord const topLeft = container.mAABB.mTopLeft + ( mShape.mExpectedTileDimensions + mShape.mPaddingDimensions );
+	gfx::ppu::Coord const bottomRight = container.mAABB.mBottomRight - ( mShape.mExpectedTileDimensions + mShape.mPaddingDimensions );
 	MoveAnchor( context.GetMutableContainerManager(), mTopLeftAnchor, topLeft );
 	MoveAnchor( context.GetMutableContainerManager(), mBottomRightAnchor, bottomRight );
 }
@@ -110,8 +106,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 void BorderFrame::RecalcTilemap( Container const& container )
 {
 	if(
-		mExpectedTileDimensions.x == 0 ||
-		mExpectedTileDimensions.y == 0 )
+		mShape.mExpectedTileDimensions.x == 0 ||
+		mShape.mExpectedTileDimensions.y == 0 )
 	{
 		// No tileset
 		mTileLayer.Clear();
@@ -120,18 +116,18 @@ void BorderFrame::RecalcTilemap( Container const& container )
 
 	gfx::ppu::CoordElem const availableWidth = container.mAABB.Width();
 	gfx::ppu::CoordElem const availableHeight = container.mAABB.Height();
-	size_t const numAvailableColumns = math::integer_cast<size_t>( availableWidth / mExpectedTileDimensions.x );
-	size_t const numAvailableRows = math::integer_cast<size_t>( availableHeight / mExpectedTileDimensions.y );
+	size_t const numAvailableColumns = math::integer_cast<size_t>( availableWidth / mShape.mExpectedTileDimensions.x );
+	size_t const numAvailableRows = math::integer_cast<size_t>( availableHeight / mShape.mExpectedTileDimensions.y );
 
-	gfx::ppu::TileLayer::TileIndex const numInputColumns = mExpectedPatternDimensions.x / mExpectedTileDimensions.x;
-	gfx::ppu::TileLayer::TileIndex const numInputRows = mExpectedPatternDimensions.y / mExpectedTileDimensions.y;
+	gfx::ppu::TileLayer::TileIndex const numInputColumns = mShape.mExpectedPatternDimensions.x / mShape.mExpectedTileDimensions.x;
+	gfx::ppu::TileLayer::TileIndex const numInputRows = mShape.mExpectedPatternDimensions.y / mShape.mExpectedTileDimensions.y;
 
 	// Needs to be atleast 2x2, even if the AABB isn't big enough to fit it
 	size_t const numOutputColumns = math::Max<size_t>( numAvailableColumns, 2 );
 	size_t const numOutputRows = math::Max<size_t>( numAvailableRows, 2 );
 
-	mExpectedDimensions.x = mExpectedTileDimensions.x * math::integer_cast<gfx::ppu::CoordElem>( numOutputColumns );
-	mExpectedDimensions.y = mExpectedTileDimensions.y * math::integer_cast<gfx::ppu::CoordElem>( numOutputRows );
+	mExpectedDimensions.x = mShape.mExpectedTileDimensions.x * math::integer_cast<gfx::ppu::CoordElem>( numOutputColumns );
+	mExpectedDimensions.y = mShape.mExpectedTileDimensions.y * math::integer_cast<gfx::ppu::CoordElem>( numOutputRows );
 
 	mTileLayer.ClearAndResize( numOutputColumns, numOutputRows );
 

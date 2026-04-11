@@ -74,6 +74,7 @@
 		<ClCompile Include="controllers\ClampSlicer.cpp">
 			<Filter>controllers</Filter>
 		</ClCompile>
+		<ClCompile Include="BorderFrameShape.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -156,6 +157,7 @@
 		<ClInclude Include="controllers\ClampSlicer.h">
 			<Filter>controllers</Filter>
 		</ClInclude>
+		<ClInclude Include="BorderFrameShape.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="controllers">

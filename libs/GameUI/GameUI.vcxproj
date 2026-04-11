@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<ClInclude Include="AlignmentHelpers.h" />
 		<ClInclude Include="Anchor.h" />
+		<ClInclude Include="BorderFrameShape.h" />
 		<ClInclude Include="Container.h" />
 		<ClInclude Include="ContainerManager.h" />
 		<ClInclude Include="controllers\AspectColumnSlicer.h" />
@@ -73,6 +74,7 @@
 	<ItemGroup>
 		<ClCompile Include="AlignmentHelpers.cpp" />
 		<ClCompile Include="Anchor.cpp" />
+		<ClCompile Include="BorderFrameShape.cpp" />
 		<ClCompile Include="Container.cpp" />
 		<ClCompile Include="ContainerManager.cpp" />
 		<ClCompile Include="controllers\AspectColumnSlicer.cpp" />

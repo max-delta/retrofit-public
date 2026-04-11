@@ -146,7 +146,13 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 		uiManager.AssignStrongController(
 			mFrameContainerID,
 			DefaultCreator<BorderFrame>::Create() );
-	mBorderFrame->SetTileset( context, mInactiveTileset, { 8, 8 }, { 48, 48 }, { -4, -4 } );
+	mBorderFrame->SetTileset(
+		context,
+		mInactiveTileset,
+		BorderFrameShape{
+			.mExpectedTileDimensions{ 8, 8 },
+			.mExpectedPatternDimensions{ 48, 48 },
+			.mPaddingDimensions{ -4, -4 } } );
 	mBorderFrame->SetChildRenderingBlocked( true );
 
 	// 4 info rows

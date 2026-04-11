@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "GameUI/controllers/InstancedController.h"
+#include "GameUI/BorderFrameShape.h"
 
 #include "PPU/TileLayer.h"
 
@@ -26,9 +27,7 @@ public:
 	void SetTileset(
 		ui::UIContext& context,
 		gfx::ManagedTilesetID tileset,
-		gfx::ppu::Coord expectedTileDimensions,
-		gfx::ppu::Coord expectedPatternDimensions,
-		gfx::ppu::Coord paddingDimensions );
+		BorderFrameShape const& shape );
 	void SetJustification( Justification::Value justification );
 
 	// NOTE: Must have the same dimensions, will not perform a recalc
@@ -53,9 +52,7 @@ private:
 	AnchorID mBottomRightAnchor = kInvalidAnchorID;
 	ContainerID mChildContainerID = kInvalidContainerID;
 	Justification::Value mJustification = Justification::MiddleCenter;
-	gfx::ppu::Coord mExpectedTileDimensions = {};
-	gfx::ppu::Coord mExpectedPatternDimensions = {};
-	gfx::ppu::Coord mPaddingDimensions = {};
+	BorderFrameShape mShape = {};
 	gfx::ppu::Coord mExpectedDimensions = {};
 	gfx::ppu::TileLayer mTileLayer = {};
 };

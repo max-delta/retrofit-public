@@ -212,7 +212,13 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				centerRowSlicer->GetChildContainerID( 2 ),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		frame->SetTileset( uiContext, tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ), { 8, 8 }, { 48, 48 }, { 0, 0 } );
+		frame->SetTileset(
+			uiContext,
+			tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
+			ui::BorderFrameShape{
+				.mExpectedTileDimensions{ 8, 8 },
+				.mExpectedPatternDimensions{ 48, 48 },
+				.mPaddingDimensions{ 0, 0 } } );
 
 		// Create menu selections in the left columns
 		WeakPtr<ui::controller::OptionSlotList> const listBox =

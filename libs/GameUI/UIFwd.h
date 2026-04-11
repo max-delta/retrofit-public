@@ -95,6 +95,8 @@ struct Font;
 struct UIContext;
 struct UIConstContext;
 
+struct BorderFrameShape;
+
 // NOTE: Need to declare namespace before aliasing or wrapping
 namespace controller {
 };
