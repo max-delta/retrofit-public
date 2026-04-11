@@ -323,8 +323,8 @@
 		<ClCompile Include="exfil\Exfiltrate.cpp">
 			<Filter>exfil</Filter>
 		</ClCompile>
-		<ClCompile Include="ui\StandardUIElements.cpp">
-			<Filter>ui</Filter>
+		<ClCompile Include="ui\standard\StandardUIElements.cpp">
+			<Filter>ui\standard</Filter>
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
@@ -887,8 +887,14 @@
 		<ClInclude Include="exfil\project.h">
 			<Filter>exfil</Filter>
 		</ClInclude>
-		<ClInclude Include="ui\StandardUIElements.h">
-			<Filter>ui</Filter>
+		<ClInclude Include="ui\standard\StandardUIElements.h">
+			<Filter>ui\standard</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\standard\stdafx.h">
+			<Filter>ui\standard</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\standard\project.h">
+			<Filter>ui\standard</Filter>
 		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
@@ -972,6 +978,9 @@
 		</Filter>
 		<Filter Include="exfil">
 			<UniqueIdentifier>{8c067b5e-8fd3-4d02-9f23-734a71975df3}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="ui\standard">
+			<UniqueIdentifier>{14ad358b-3336-486a-9f6b-61bae39f4201}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

@@ -6,7 +6,7 @@
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/ui/UIFwd.h"
-#include "cc3o3/ui/StandardUIElements.h"
+#include "cc3o3/ui/standard/StandardUIElements.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
 
