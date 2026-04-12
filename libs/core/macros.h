@@ -19,6 +19,9 @@ public: \
 public: \
 	CLASS( CLASS&& ) = default; \
 	CLASS& operator=( CLASS&& ) = default;
+#define RF_DEFAULT_EQUALS( CLASS ) \
+public: \
+	bool operator==( CLASS const& ) const = default;
 #define RF_NO_MOVE( CLASS ) \
 	CLASS( CLASS&& ) = delete; \
 	CLASS& operator=( CLASS&& ) = delete;
