@@ -7,6 +7,7 @@
 #include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/site/Site.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -167,6 +168,10 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
+		// Border frames
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
+		ui::BorderFrameDef const subBorderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
+
 		// Cut the whole screen into columns
 		ui::controller::ColumnSlicer::Ratios const rootColumnRatios = {
 			{ 1.f / 20.f, false },
@@ -276,11 +281,8 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset(
 				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ 0, 0 } } );
+				subBorderFrame.mManagedID,
+				subBorderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 
 			// Implement selector as vertical list
 			WeakPtr<ui::controller::ListBox> const selector =
@@ -324,11 +326,8 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
 			frame->SetTileset(
 				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ 0, 0 } } );
+				borderFrame.mManagedID,
+				borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 		}
 
 		// Menus section

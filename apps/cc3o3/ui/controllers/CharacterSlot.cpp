@@ -7,6 +7,7 @@
 #include "cc3o3/state/components/Character.h"
 #include "cc3o3/combat/CombatEngine.h"
 #include "cc3o3/combat/IdentifierUtils.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -132,17 +133,15 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 		container.mBottomConstraint );
 
 	// Frame
+	BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
 	mBorderFrame =
 		uiManager.AssignStrongController(
 			mChildContainerID,
 			DefaultCreator<BorderFrame>::Create() );
 	mBorderFrame->SetTileset(
 		context,
-		tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
-		BorderFrameShape{
-			.mExpectedTileDimensions{ 8, 8 },
-			.mExpectedPatternDimensions{ 48, 48 },
-			.mPaddingDimensions{ 0, 0 } } );
+		borderFrame.mManagedID,
+		borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 	mBorderFrame->SetChildRenderingBlocked( true );
 
 	// 2 subsections for info and display

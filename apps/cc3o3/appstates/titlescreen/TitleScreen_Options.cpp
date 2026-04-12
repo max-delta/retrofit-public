@@ -9,6 +9,7 @@
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
 #include "cc3o3/ui/controllers/OptionSlotList.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -171,6 +172,9 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
+		// Border frames
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
+
 		// Cut the whole screen into columns
 		ui::controller::ColumnSlicer::Ratios const rootColumnRatios = {
 			{ 1.f / 20.f, false },
@@ -214,11 +218,8 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
 		frame->SetTileset(
 			uiContext,
-			tsetMan.GetManagedResourceIDFromResourceName( "wood_8_48" ),
-			ui::BorderFrameShape{
-				.mExpectedTileDimensions{ 8, 8 },
-				.mExpectedPatternDimensions{ 48, 48 },
-				.mPaddingDimensions{ 0, 0 } } );
+			borderFrame.mManagedID,
+			borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 
 		// Create menu selections in the left columns
 		WeakPtr<ui::controller::OptionSlotList> const listBox =

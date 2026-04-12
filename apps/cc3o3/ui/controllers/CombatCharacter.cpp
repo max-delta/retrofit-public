@@ -8,6 +8,7 @@
 #include "cc3o3/state/ComponentResolver.h"
 #include "cc3o3/state/components/Character.h"
 #include "cc3o3/ui/controllers/ElementGrid.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
@@ -122,8 +123,15 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	gfx::ppu::PPUController const& renderer = GetRenderer( uiManager );
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
-	mActiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" );
-	mInactiveTileset = tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" );
+	// Border frames
+	BorderFrameDef const inactiveBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat1 );
+	BorderFrameDef const activeBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat2 );
+	static constexpr BorderFrameShape kBorderFrameShape = standard::frame::shape::k4px;
+	static_assert( standard::frame::k4pxFlat1.mBorderShape == kBorderFrameShape );
+	static_assert( standard::frame::k4pxFlat2.mBorderShape == kBorderFrameShape );
+
+	mActiveTileset = activeBorder.mManagedID;
+	mInactiveTileset = inactiveBorder.mManagedID;
 
 	mFrameContainerID = CreateChildContainer(
 		uiManager,
@@ -149,10 +157,7 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	mBorderFrame->SetTileset(
 		context,
 		mInactiveTileset,
-		BorderFrameShape{
-			.mExpectedTileDimensions{ 8, 8 },
-			.mExpectedPatternDimensions{ 48, 48 },
-			.mPaddingDimensions{ -4, -4 } } );
+		kBorderFrameShape );
 	mBorderFrame->SetChildRenderingBlocked( true );
 
 	// 4 info rows

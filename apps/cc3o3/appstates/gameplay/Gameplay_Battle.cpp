@@ -15,6 +15,7 @@
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/controllers/CombatCharacter.h"
 #include "cc3o3/ui/controllers/ElementGridSelector.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -584,6 +585,10 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
+		// Border frames
+		ui::BorderFrameDef const inactiveBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat1 );
+		ui::BorderFrameDef const activeBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat2 );
+
 		// Nine-slice the whole screen
 		constexpr bool kSlicesEnabled[9] = {
 			true, false, true,
@@ -756,13 +761,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset(
-				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ -4, -4 } } );
+			frame->SetTileset( uiContext, inactiveBorder.mManagedID, inactiveBorder.mBorderShape );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -792,13 +791,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset(
-				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ -4, -4 } } );
+			frame->SetTileset( uiContext, inactiveBorder.mManagedID, inactiveBorder.mBorderShape );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -828,13 +821,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset(
-				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "flat1_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ -4, -4 } } );
+			frame->SetTileset( uiContext, inactiveBorder.mManagedID, inactiveBorder.mBorderShape );
 
 			// Display
 			WeakPtr<ui::controller::TextLabel> const label =
@@ -864,13 +851,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset(
-				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ -4, -4 } } );
+			frame->SetTileset( uiContext, activeBorder.mManagedID, activeBorder.mBorderShape );
 
 			// List
 			using SelectorActions = InternalState::SelectorActions;
@@ -911,13 +892,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 				uiManager.AssignStrongController(
 					floater->GetChildContainerID(),
 					DefaultCreator<ui::controller::BorderFrame>::Create() );
-			frame->SetTileset(
-				uiContext,
-				tsetMan.GetManagedResourceIDFromResourceName( "flat2_8_48" ),
-				ui::BorderFrameShape{
-					.mExpectedTileDimensions{ 8, 8 },
-					.mExpectedPatternDimensions{ 48, 48 },
-					.mPaddingDimensions{ -4, -4 } } );
+			frame->SetTileset( uiContext, activeBorder.mManagedID, activeBorder.mBorderShape );
 
 			// List
 			using SelectorAttacks = InternalState::SelectorAttacks;

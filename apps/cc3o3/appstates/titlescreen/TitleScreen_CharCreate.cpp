@@ -5,6 +5,7 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 #include "cc3o3/char/CharData.h"
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/CommonPaths.h"
@@ -478,6 +479,9 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
 
+		// Border frames
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
+
 		// Cut the whole screen into rows
 		ui::controller::RowSlicer::Ratios const rootRowRatios = {
 			{ 5.f / 7.f, true },
@@ -496,11 +500,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
 		messageBorder->SetTileset(
 			uiContext,
-			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
-			ui::BorderFrameShape{
-				.mExpectedTileDimensions{ 8, 8 },
-				.mExpectedPatternDimensions{ 48, 48 },
-				.mPaddingDimensions{ 0, 0 } } );
+			borderFrame.mManagedID,
+			borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 		WeakPtr<ui::controller::MessageBox> const messageBox =
 			uiManager.AssignStrongController(
 				messageBorder->GetChildContainerID(),
@@ -547,11 +548,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
 		leftFrame->SetTileset(
 			uiContext,
-			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
-			ui::BorderFrameShape{
-				.mExpectedTileDimensions{ 8, 8 },
-				.mExpectedPatternDimensions{ 48, 48 },
-				.mPaddingDimensions{ 0, 0 } } );
+			borderFrame.mManagedID,
+			borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 
 		// Floating frame in middle right
 		gfx::ppu::Coord const rightFrameDimensions = { 64 + 8, 128 + ( 16 - 4 ) };
@@ -568,11 +566,8 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
 		rightFrame->SetTileset(
 			uiContext,
-			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
-			ui::BorderFrameShape{
-				.mExpectedTileDimensions{ 8, 8 },
-				.mExpectedPatternDimensions{ 48, 48 },
-				.mPaddingDimensions{ 0, 0 } } );
+			borderFrame.mManagedID,
+			borderFrame.mBorderShape.AddPadding( { 4, 4 } ) );
 
 		// Left frame
 		{

@@ -6,7 +6,8 @@
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
-#include "cc3o3/ui/StandardUIElements.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
+#include "cc3o3/ui/standard/StandardUIElements.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
@@ -73,6 +74,9 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		ui::FocusManager& focusMan = uiManager.GetMutableFocusManager();
 		ui::UIContext uiContext( uiManager );
 		uiManager.RecreateRootContainer();
+
+		// Border frames
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
 
 		// Constrain the aspect ratio
 		ui::controller::AspectColumnSlicer::Ratio const aspectRatio( 12, 7 );
@@ -150,13 +154,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			uiManager.AssignStrongController(
 				bottomClamper->GetChildContainerID(),
 				DefaultCreator<ui::controller::BorderFrame>::Create() );
-		frame->SetTileset(
-			uiContext,
-			tsetMan.GetManagedResourceIDFromResourceName( "retro1_8_48" ),
-			ui::BorderFrameShape{
-				.mExpectedTileDimensions{ 8, 8 },
-				.mExpectedPatternDimensions{ 48, 48 },
-				.mPaddingDimensions{ -4, -4 } } );
+		frame->SetTileset( uiContext, borderFrame.mManagedID, borderFrame.mBorderShape );
 
 		// TODO
 		static constexpr gfx::ppu::CoordElem kPortraitSize = 64;
