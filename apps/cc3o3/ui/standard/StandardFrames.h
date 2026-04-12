@@ -16,7 +16,7 @@ struct BorderFrameProto
 	// NOTE: Text not stored, expected to be used with string literals
 	rftl::string_view mResourceName = {};
 
-	ui::BorderFrameShape mBorderShape = {};
+	BorderFrameShape mBorderShape = {};
 };
 
 struct BorderFrameDef
@@ -25,7 +25,7 @@ struct BorderFrameDef
 	rftl::string_view mResourceName = {};
 
 	gfx::ManagedTilesetID mManagedID = gfx::kInvalidManagedTilesetID;
-	ui::BorderFrameShape mBorderShape = {};
+	BorderFrameShape mBorderShape = {};
 };
 
 // These require that the tileset is already loaded, and are expected to be
@@ -45,7 +45,7 @@ namespace shape {
 //  with a granularity of 8 pixels, meaning the frame can't be any smaller than
 //  a 16x16 square, since the corners won't be allowed to shrink smaller than
 //  8 pixels
-static constexpr ui::BorderFrameShape k4px = {
+static constexpr BorderFrameShape k4px = {
 	.mExpectedTileDimensions{ 8, 8 },
 	.mExpectedPatternDimensions{ 48, 48 },
 	.mPaddingDimensions{ -4, -4 } };
