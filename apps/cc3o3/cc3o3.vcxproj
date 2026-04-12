@@ -142,6 +142,7 @@
 		<ClCompile Include="ui\ElementSlotDisplayCache.cpp" />
 		<ClCompile Include="ui\ElementStockpileDisplayCache.cpp" />
 		<ClCompile Include="ui\LocalizationHelpers.cpp" />
+		<ClCompile Include="ui\standard\StandardFrames.cpp" />
 		<ClCompile Include="ui\standard\StandardUIElements.cpp" />
 	</ItemGroup>
 	<ItemGroup>
@@ -335,6 +336,7 @@
 		<ClInclude Include="ui\LocalizationHelpers.h" />
 		<ClInclude Include="ui\project.h" />
 		<ClInclude Include="ui\standard\project.h" />
+		<ClInclude Include="ui\standard\StandardFrames.h" />
 		<ClInclude Include="ui\standard\StandardUIElements.h" />
 		<ClInclude Include="ui\standard\stdafx.h" />
 		<ClInclude Include="ui\stdafx.h" />

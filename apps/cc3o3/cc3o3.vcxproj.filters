@@ -326,6 +326,9 @@
 		<ClCompile Include="ui\standard\StandardUIElements.cpp">
 			<Filter>ui\standard</Filter>
 		</ClCompile>
+		<ClCompile Include="ui\standard\StandardFrames.cpp">
+			<Filter>ui\standard</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -894,6 +897,9 @@
 			<Filter>ui\standard</Filter>
 		</ClInclude>
 		<ClInclude Include="ui\standard\project.h">
+			<Filter>ui\standard</Filter>
+		</ClInclude>
+		<ClInclude Include="ui\standard\StandardFrames.h">
 			<Filter>ui\standard</Filter>
 		</ClInclude>
 	</ItemGroup>

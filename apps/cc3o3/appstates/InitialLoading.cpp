@@ -6,6 +6,7 @@
 #include "cc3o3/char/CharacterValidator.h"
 #include "cc3o3/elements/ElementDatabase.h"
 #include "cc3o3/ui/UIFwd.h"
+#include "cc3o3/ui/standard/StandardFrames.h"
 #include "cc3o3/ui/standard/StandardUIElements.h"
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/Common.h"
@@ -142,13 +143,13 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_16_128", paths::UITilesets().GetChild( "elemgrid_16_128.tset.txt" ) );
 
-		RF_TODO_ANNOTATION( "Some kind of machinery for automating frames" );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat1_8_48", paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "flat2_8_48", paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro1_8_48", paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "retro2_8_48", paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "template_8_48", paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "wood_8_48", paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
+		RF_TODO_ANNOTATION( "Some kind of machinery for data-driven frames" );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat1.mResourceName, paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat2.mResourceName, paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxRetro1.mResourceName, paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxRetro2.mResourceName, paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxWood1.mResourceName, paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::mockup::frame::k4pxTemplate.mResourceName, paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
 	}
 
 	// Load framepacks
