@@ -48,8 +48,8 @@ public:
 private:
 	friend class FontManager;
 	file::FileBuffer mFileBuffer;
-	SpacingMode mSpacingMode = SpacingMode::Invalid;
 	DeviceFontID mDeviceRepresentation = kInvalidDeviceFontID;
+	SpacingMode mSpacingMode = SpacingMode::Invalid;
 	TileSize mTileWidth = kInvalidTileSize;
 	TileSize mTileHeight = kInvalidTileSize;
 	rftl::array<TileSize, 256> mVariableWidth;
