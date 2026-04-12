@@ -32,6 +32,9 @@ using FrameID = uint64_t;
 constexpr FrameID kInvalidFrameID = 0;
 constexpr FrameID kFirstFrameID = 0;
 
+using TileSize = uint8_t;
+constexpr TileSize kInvalidTileSize = 0;
+
 class Texture;
 class Tileset;
 class Font;

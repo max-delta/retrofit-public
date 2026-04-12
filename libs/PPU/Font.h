@@ -30,8 +30,6 @@ private:
 		Fixed,
 		Variable
 	};
-	using TileSize = uint8_t;
-	static constexpr TileSize kInvalidTileSize = 0;
 	// NOTE: Expect 16x16 grid of 256 characters
 	static constexpr size_t kCharactersPerRow = 16;
 	static constexpr size_t kCharactersPerColumn = 16;

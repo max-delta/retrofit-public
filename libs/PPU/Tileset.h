@@ -20,8 +20,7 @@ private:
 
 
 private:
-	using TileSize = uint8_t;
-	static constexpr TileSize kDefaultTileSize = 32;
+	static constexpr TileSize kDefaultTileSize = ppu::kTileSize;
 
 
 public:

@@ -17,8 +17,7 @@ class PPU_API TileLayer
 	//
 	// Types and constants
 public:
-	using TileSize = uint8_t;
-	static constexpr TileSize kDefaultTileSize = 32;
+	static constexpr TileSize kDefaultTileSize = kTileSize;
 	using TileIndex = int16_t;
 	static constexpr TileIndex kEmptyTileIndex = -1;
 	using TileZoomFactor = uint8_t;

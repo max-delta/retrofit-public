@@ -26,8 +26,10 @@ using DepthLayer = int8_t;
 constexpr DepthLayer kFarthestLayer = 100;
 constexpr DepthLayer kNearestLayer = -100;
 
+// Tiles are a larger-scale XY coordinate system
+// NOTE: Under normal convention, tiles are assumed to be square
 using TileElem = int8_t;
-constexpr CoordElem kTileSize = 32;
+constexpr TileSize kTileSize = 32;
 
 using ZoomFactor = uint8_t;
 constexpr ZoomFactor kInvalidZoomFactor = 0;

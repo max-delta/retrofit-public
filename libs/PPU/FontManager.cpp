@@ -163,11 +163,11 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 	resource.mTileHeight = math::integer_cast<uint8_t>( tileHeight );
 	for( size_t i = 0; i < 256; i++ )
 	{
-		resource.mVariableWidth.at( i ) = math::integer_cast<Font::TileSize>( variableWidth.at( i ) );
+		resource.mVariableWidth.at( i ) = math::integer_cast<TileSize>( variableWidth.at( i ) );
 	}
 	for( size_t i = 0; i < 256; i++ )
 	{
-		resource.mVariableHeight.at( i ) = math::integer_cast<Font::TileSize>( variableHeight.at( i ) );
+		resource.mVariableHeight.at( i ) = math::integer_cast<TileSize>( variableHeight.at( i ) );
 	}
 	return true;
 }

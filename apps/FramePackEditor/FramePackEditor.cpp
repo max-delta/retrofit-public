@@ -283,7 +283,7 @@ void FramePackEditor::Render()
 	constexpr size_t k_NumFooterLines = 6;
 	gfx::ppu::Coord const footerStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::ppu::CoordElem>( k_NumFooterLines ) );
 
-	gfx::ppu::CoordElem const horizontalPlaneY = math::SnapNearest( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
+	gfx::ppu::CoordElem const horizontalPlaneY = math::SnapNearest<gfx::ppu::CoordElem>( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
 	gfx::ppu::CoordElem const verticalPlaneX = math::SnapNearest<gfx::ppu::CoordElem>( ppu->GetWidth() / 2, gfx::ppu::kTileSize );
 	gfx::ppu::CoordElem const previewOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
 	gfx::ppu::CoordElem const editingOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
