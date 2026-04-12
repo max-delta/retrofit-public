@@ -1,6 +1,7 @@
 #define RF_ASSERT(...)
 #define RF_DEFAULT_COPY(...)
 #define RF_DEFAULT_MOVE(...)
+#define RF_DEFAULT_EQUALS(...)
 #define RF_NO_COPY(...)
 #define RF_NO_MOVE(...)
 #define RF_NO_ASSIGN(...)
