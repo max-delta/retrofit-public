@@ -20,6 +20,10 @@ namespace RF::ui {
 // NOTE: The interior space '#' and edges '|' or '-' may be multiple tiles
 struct BorderFrameShape
 {
+	RF_DEFAULT_EQUALS( BorderFrameShape );
+
+public:
+
 	// How big a tile is, in texels
 	gfx::ppu::Coord mExpectedTileDimensions;
 
@@ -33,6 +37,14 @@ struct BorderFrameShape
 	//  frames a negative padding makes sense, to reclaim space taken by the
 	//  outer tiles
 	gfx::ppu::Coord mPaddingDimensions;
+
+	// Adds additional padding as desired
+	constexpr BorderFrameShape AddPadding( gfx::ppu::Coord const& padding ) const
+	{
+		BorderFrameShape retVal = *this;
+		retVal.mPaddingDimensions += padding;
+		return retVal;
+	}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
