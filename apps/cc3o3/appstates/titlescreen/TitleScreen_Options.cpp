@@ -173,7 +173,7 @@ void TitleScreen_Options::OnEnter( AppStateChangeContext& context )
 		uiManager.RecreateRootContainer();
 
 		// Border frames
-		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxNormal );
 
 		// Cut the whole screen into columns
 		ui::controller::ColumnSlicer::Ratios const rootColumnRatios = {

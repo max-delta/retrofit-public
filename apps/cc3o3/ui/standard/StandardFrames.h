@@ -51,17 +51,17 @@ static constexpr BorderFrameShape k4px = {
 	.mPaddingDimensions{ -4, -4 } };
 }
 
-static constexpr BorderFrameProto k4pxFlat1 = { "flat1_8_48", shape::k4px };
-static constexpr BorderFrameProto k4pxFlat2 = { "flat2_8_48", shape::k4px };
-static constexpr BorderFrameProto k4pxRetro1 = { "retro1_8_48", shape::k4px };
-static constexpr BorderFrameProto k4pxRetro2 = { "retro2_8_48", shape::k4px };
-static constexpr BorderFrameProto k4pxWood1 = { "wood_8_48", shape::k4px };
+static constexpr BorderFrameProto k4pxFlat_Inactive = { "border4_flat_inactive", shape::k4px };
+static constexpr BorderFrameProto k4pxFlat_Active = { "border4_flat_active", shape::k4px };
+static constexpr BorderFrameProto k4pxDebug = { "border4_debug", shape::k4px };
+static constexpr BorderFrameProto k4pxPopup = { "border4_popup", shape::k4px };
+static constexpr BorderFrameProto k4pxNormal = { "border4_standard", shape::k4px };
 
 }
 ///////////////////////////////////////////////////////////////////////////////
 namespace mockup::frame {
 
-static constexpr BorderFrameProto k4pxTemplate = { "template_8_48", standard::frame::shape::k4px };
+static constexpr BorderFrameProto k4pxTemplate = { "border4_template", standard::frame::shape::k4px };
 
 }
 ///////////////////////////////////////////////////////////////////////////////

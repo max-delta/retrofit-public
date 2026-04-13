@@ -480,7 +480,7 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 		uiManager.RecreateRootContainer();
 
 		// Border frames
-		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxDebug );
 
 		// Cut the whole screen into rows
 		ui::controller::RowSlicer::Ratios const rootRowRatios = {

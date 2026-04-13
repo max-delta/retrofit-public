@@ -133,7 +133,7 @@ void CharacterSlot::OnInstanceAssign( UIContext& context, Container& container )
 		container.mBottomConstraint );
 
 	// Frame
-	BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
+	BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxNormal );
 	mBorderFrame =
 		uiManager.AssignStrongController(
 			mChildContainerID,

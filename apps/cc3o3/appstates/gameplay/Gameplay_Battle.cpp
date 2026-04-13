@@ -586,8 +586,8 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 		uiManager.RecreateRootContainer();
 
 		// Border frames
-		ui::BorderFrameDef const inactiveBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat1 );
-		ui::BorderFrameDef const activeBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat2 );
+		ui::BorderFrameDef const inactiveBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat_Inactive );
+		ui::BorderFrameDef const activeBorder = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxFlat_Active );
 
 		// Nine-slice the whole screen
 		constexpr bool kSlicesEnabled[9] = {

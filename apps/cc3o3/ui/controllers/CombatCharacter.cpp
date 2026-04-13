@@ -124,11 +124,11 @@ void CombatCharacter::OnInstanceAssign( UIContext& context, Container& container
 	gfx::TilesetManager const& tsetMan = *renderer.GetTilesetManager();
 
 	// Border frames
-	BorderFrameDef const inactiveBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat1 );
-	BorderFrameDef const activeBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat2 );
+	BorderFrameDef const inactiveBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat_Inactive );
+	BorderFrameDef const activeBorder = QueryBorderFrameDef( tsetMan, standard::frame::k4pxFlat_Active );
 	static constexpr BorderFrameShape kBorderFrameShape = standard::frame::shape::k4px;
-	static_assert( standard::frame::k4pxFlat1.mBorderShape == kBorderFrameShape );
-	static_assert( standard::frame::k4pxFlat2.mBorderShape == kBorderFrameShape );
+	static_assert( standard::frame::k4pxFlat_Inactive.mBorderShape == kBorderFrameShape );
+	static_assert( standard::frame::k4pxFlat_Active.mBorderShape == kBorderFrameShape );
 
 	mActiveTileset = activeBorder.mManagedID;
 	mInactiveTileset = inactiveBorder.mManagedID;

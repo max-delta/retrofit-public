@@ -169,8 +169,8 @@ void Gameplay_Site::OnEnter( AppStateChangeContext& context )
 		uiManager.RecreateRootContainer();
 
 		// Border frames
-		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxWood1 );
-		ui::BorderFrameDef const subBorderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxNormal );
+		ui::BorderFrameDef const subBorderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxDebug );
 
 		// Cut the whole screen into columns
 		ui::controller::ColumnSlicer::Ratios const rootColumnRatios = {

@@ -144,11 +144,11 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, "elemgrid_16_128", paths::UITilesets().GetChild( "elemgrid_16_128.tset.txt" ) );
 
 		RF_TODO_ANNOTATION( "Some kind of machinery for data-driven frames" );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat1.mResourceName, paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat2.mResourceName, paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxRetro1.mResourceName, paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxRetro2.mResourceName, paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxWood1.mResourceName, paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat_Inactive.mResourceName, paths::DialogFrameTilesets().GetChild( "flat1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxFlat_Active.mResourceName, paths::DialogFrameTilesets().GetChild( "flat2_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxDebug.mResourceName, paths::DialogFrameTilesets().GetChild( "retro1_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxPopup.mResourceName, paths::DialogFrameTilesets().GetChild( "retro2_8_48.tset.txt" ) );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::standard::frame::k4pxNormal.mResourceName, paths::DialogFrameTilesets().GetChild( "wood_8_48.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, ui::mockup::frame::k4pxTemplate.mResourceName, paths::DialogFrameTilesets().GetChild( "template_8_48.tset.txt" ) );
 	}
 

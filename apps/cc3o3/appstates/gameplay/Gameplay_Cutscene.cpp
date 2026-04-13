@@ -76,7 +76,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		uiManager.RecreateRootContainer();
 
 		// Border frames
-		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxRetro1 );
+		ui::BorderFrameDef const borderFrame = ui::QueryBorderFrameDef( tsetMan, ui::standard::frame::k4pxDebug );
 
 		// Constrain the aspect ratio
 		ui::controller::AspectColumnSlicer::Ratio const aspectRatio( 12, 7 );
