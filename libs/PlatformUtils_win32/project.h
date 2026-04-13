@@ -11,5 +11,5 @@
 #define PLATFORMUTILS_API
 #endif
 
-constexpr char const* RFCAT_PLATFORMUTILS = "PlatformUtils";
-constexpr uint64_t RFCAT_PLATFORMUTILS_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_PLATFORMUTILS[] = "PlatformUtils";
+inline constexpr uint64_t RFCAT_PLATFORMUTILS_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

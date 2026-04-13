@@ -11,5 +11,5 @@
 #define GAMEAPPSTATE_API
 #endif
 
-constexpr char const* RFCAT_GAMEAPPSTATE = "AppState";
-constexpr uint64_t RFCAT_GAMEAPPSTATE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEAPPSTATE[] = "AppState";
+inline constexpr uint64_t RFCAT_GAMEAPPSTATE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

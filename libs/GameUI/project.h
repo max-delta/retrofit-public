@@ -11,5 +11,5 @@
 #define GAMEUI_API
 #endif
 
-constexpr char const* RFCAT_GAMEUI = "UI";
-constexpr uint64_t RFCAT_GAMEUI_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEUI[] = "UI";
+inline constexpr uint64_t RFCAT_GAMEUI_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

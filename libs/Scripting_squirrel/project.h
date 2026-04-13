@@ -11,5 +11,5 @@
 #define SCRIPTINGSQUIRREL_API
 #endif
 
-constexpr char const* RFCAT_SQUIRREL = "Squirrel";
-constexpr uint64_t RFCAT_SQUIRREL_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_SQUIRREL[] = "Squirrel";
+inline constexpr uint64_t RFCAT_SQUIRREL_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

@@ -11,5 +11,5 @@
 #define GAMESPRITE_API
 #endif
 
-constexpr char const* RFCAT_GAMESPRITE = "Sprite";
-constexpr uint64_t RFCAT_GAMESPRITE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMESPRITE[] = "Sprite";
+inline constexpr uint64_t RFCAT_GAMESPRITE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

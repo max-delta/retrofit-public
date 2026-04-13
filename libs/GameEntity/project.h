@@ -11,5 +11,5 @@
 #define GAMEENTITY_API
 #endif
 
-constexpr char const* RFCAT_GAMEENTITY = "Entity";
-constexpr uint64_t RFCAT_GAMEENTITY_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEENTITY[] = "Entity";
+inline constexpr uint64_t RFCAT_GAMEENTITY_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

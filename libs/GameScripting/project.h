@@ -11,5 +11,5 @@
 #define GAMESCRIPTING_API
 #endif
 
-constexpr char const* RFCAT_GAMESCRIPTING = "Scripting";
-constexpr uint64_t RFCAT_GAMESCRIPTING_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMESCRIPTING[] = "Scripting";
+inline constexpr uint64_t RFCAT_GAMESCRIPTING_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

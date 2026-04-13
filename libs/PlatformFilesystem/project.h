@@ -11,7 +11,7 @@
 #define PLATFORMFILESYSTEM_API
 #endif
 
-constexpr char const* RFCAT_VFS = "VFS";
-constexpr uint64_t RFCAT_VFS_SEV_WHITELIST =
+inline constexpr char const RFCAT_VFS[] = "VFS";
+inline constexpr uint64_t RFCAT_VFS_SEV_WHITELIST =
 	RF::logging::kDefaultSeverityMask &
 	~( RF::logging::RF_SEV_TRACE );

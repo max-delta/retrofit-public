@@ -2,20 +2,20 @@
 #include "Logging/Constants.h"
 
 #ifndef RF_NO_SHARED_EXPORTS
-#ifdef APPCOMMONGRAPHICALCLIENT_EXPORTS
-#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllexport )
+	#ifdef APPCOMMONGRAPHICALCLIENT_EXPORTS
+		#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllexport )
+	#else
+		#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllimport )
+	#endif
 #else
-#define APPCOMMONGRAPHICALCLIENT_API __declspec( dllimport )
-#endif
-#else
-#define APPCOMMONGRAPHICALCLIENT_API
+	#define APPCOMMONGRAPHICALCLIENT_API
 #endif
 
-constexpr char const* RFCAT_STARTUP = "Startup";
-constexpr uint64_t RFCAT_STARTUP_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_STARTUP[] = "Startup";
+inline constexpr uint64_t RFCAT_STARTUP_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
 
-constexpr char const* RFCAT_APPCOMMON = "AppCommon";
-constexpr uint64_t RFCAT_APPCOMMON_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_APPCOMMON[] = "AppCommon";
+inline constexpr uint64_t RFCAT_APPCOMMON_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
 
-constexpr char const* RFCAT_FRAMEBUILDER = "FrameBuilder";
-constexpr uint64_t RFCAT_FRAMEBUILDER_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::Severity::RF_SEV_TRACE;
+inline constexpr char const RFCAT_FRAMEBUILDER[] = "FrameBuilder";
+inline constexpr uint64_t RFCAT_FRAMEBUILDER_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::Severity::RF_SEV_TRACE;

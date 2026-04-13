@@ -11,5 +11,5 @@
 #define SCHEDULING_API
 #endif
 
-constexpr char const* RFCAT_SCHEDULING = "Scheduling";
-constexpr uint64_t RFCAT_SCHEDULING_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_SCHEDULING[] = "Scheduling";
+inline constexpr uint64_t RFCAT_SCHEDULING_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

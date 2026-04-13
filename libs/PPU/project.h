@@ -11,8 +11,8 @@
 #define PPU_API
 #endif
 
-constexpr char const* RFCAT_PPU = "PPU";
-constexpr uint64_t RFCAT_PPU_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_PPU[] = "PPU";
+inline constexpr uint64_t RFCAT_PPU_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
 
 struct RFTAG_PPU
 {

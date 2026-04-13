@@ -11,5 +11,5 @@
 #define GAMESYNC_API
 #endif
 
-constexpr char const* RFCAT_GAMESYNC = "Sync";
-constexpr uint64_t RFCAT_GAMESYNC_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::RF_SEV_TRACE;
+inline constexpr char const RFCAT_GAMESYNC[] = "Sync";
+inline constexpr uint64_t RFCAT_GAMESYNC_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::RF_SEV_TRACE;

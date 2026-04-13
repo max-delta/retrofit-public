@@ -11,5 +11,5 @@
 	#define PLATFORMNETWORK_API
 #endif
 
-constexpr char const* RFCAT_PLATFORMNETWORK = "PlatformNetwork";
-constexpr uint64_t RFCAT_PLATFORMNETWORK_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::RF_SEV_TRACE;
+inline constexpr char const RFCAT_PLATFORMNETWORK[] = "PlatformNetwork";
+inline constexpr uint64_t RFCAT_PLATFORMNETWORK_SEV_WHITELIST = RF::logging::kDefaultSeverityMask & ~RF::logging::RF_SEV_TRACE;

@@ -11,5 +11,5 @@
 	#define GAMEPIXELPHYSICS_API
 #endif
 
-constexpr char const* RFCAT_GAMEPIXELPHYSICS = "PixelPhys";
-constexpr uint64_t RFCAT_GAMEPIXELPHYSICS_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEPIXELPHYSICS[] = "PixelPhys";
+inline constexpr uint64_t RFCAT_GAMEPIXELPHYSICS_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

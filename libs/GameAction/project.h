@@ -11,5 +11,5 @@
 	#define GAMEACTION_API
 #endif
 
-constexpr char const* RFCAT_GAMEACTION = "Action";
-constexpr uint64_t RFCAT_GAMEACTION_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEACTION[] = "Action";
+inline constexpr uint64_t RFCAT_GAMEACTION_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

@@ -11,5 +11,5 @@
 #define LOCALIZATION_API
 #endif
 
-constexpr char const* RFCAT_LOCALIZATION = "Loc";
-constexpr uint64_t RFCAT_LOCALIZATION_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_LOCALIZATION[] = "Loc";
+inline constexpr uint64_t RFCAT_LOCALIZATION_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

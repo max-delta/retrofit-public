@@ -11,5 +11,5 @@
 #define GAMEWORLDSTATE_API
 #endif
 
-constexpr char const* RFCAT_GAMEWORLDSTATE = "WorldState";
-constexpr uint64_t RFCAT_GAMEWORLDSTATE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEWORLDSTATE[] = "WorldState";
+inline constexpr uint64_t RFCAT_GAMEWORLDSTATE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

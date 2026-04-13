@@ -11,5 +11,5 @@
 #define GAMEINPUT_API
 #endif
 
-constexpr char const* RFCAT_GAMEINPUT = "Input";
-constexpr uint64_t RFCAT_GAMEINPUT_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMEINPUT[] = "Input";
+inline constexpr uint64_t RFCAT_GAMEINPUT_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;

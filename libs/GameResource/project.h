@@ -11,5 +11,5 @@
 	#define GAMERESOURCE_API
 #endif
 
-constexpr char const* RFCAT_GAMERESOURCE = "Resource";
-constexpr uint64_t RFCAT_GAMERESOURCE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
+inline constexpr char const RFCAT_GAMERESOURCE[] = "Resource";
+inline constexpr uint64_t RFCAT_GAMERESOURCE_SEV_WHITELIST = RF::logging::kDefaultSeverityMask;
