@@ -59,7 +59,7 @@ enum : FocusEventType
 
 
 // TODO: Configurable
-static constexpr uint8_t kTextSpeed = 4;
+inline constexpr uint8_t kTextSpeed = 4;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

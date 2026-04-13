@@ -15,20 +15,20 @@ namespace RF::sync::protocol {
 //  -60 IP header
 //  -8 UDP header
 //  -8 Reliability header
-static constexpr size_t kMaxRecommendedTransmissionSize = 500;
+inline constexpr size_t kMaxRecommendedTransmissionSize = 500;
 #else // NORMAL
 // The logic here is that in practice, the majority of internet routes can
 //  survive packets that approach 1,500 bytes. Staying well clear of that
 //  should still give plenty of flexibility.
-static constexpr size_t kMaxRecommendedTransmissionSize = 1200;
+inline constexpr size_t kMaxRecommendedTransmissionSize = 1200;
 #endif
 
 
 
 #if RF_IS_ALLOWED( RF_CONFIG_LONG_TIMEOUTS )
-static constexpr rftl::chrono::hours kRecommendedHandshakeTimeout{ 24 };
+inline constexpr rftl::chrono::hours kRecommendedHandshakeTimeout{ 24 };
 #else
-static constexpr rftl::chrono::seconds kRecommendedHandshakeTimeout{ 5 };
+inline constexpr rftl::chrono::seconds kRecommendedHandshakeTimeout{ 5 };
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////

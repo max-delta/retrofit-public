@@ -34,8 +34,8 @@ enum class TaskPriority : uint8_t
 	MaxVal = 0x1fu // NOTE: Usable as mask
 };
 
-static constexpr uint8_t kTaskStateMask = static_cast<uint8_t>( TaskState::MaxVal );
-static constexpr uint8_t kTaskPriorityMask = static_cast<uint8_t>( TaskPriority::MaxVal );
+inline constexpr uint8_t kTaskStateMask = static_cast<uint8_t>( TaskState::MaxVal );
+inline constexpr uint8_t kTaskPriorityMask = static_cast<uint8_t>( TaskPriority::MaxVal );
 
 using TaskID = uint64_t;
 using TaskIDGenerator = NonloopingIDGenerator<TaskID>;

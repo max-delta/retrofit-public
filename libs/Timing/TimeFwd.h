@@ -7,12 +7,12 @@ namespace RF::time {
 
 class FrameClock;
 
-static constexpr rftl::chrono::nanoseconds k60FpsFrame{ 16'666'666 }; // Monitor
-static constexpr rftl::chrono::nanoseconds k30FpsFrame{ 33'333'333 }; // NTSC
-static constexpr rftl::chrono::nanoseconds k24FpsFrame{ 41'666'666 }; // Film
-static constexpr rftl::chrono::nanoseconds k12FpsFrame{ 83'333'333 }; // Anime
-static constexpr rftl::chrono::milliseconds k2FpsFrame{ 500 }; // Debug
-static constexpr rftl::chrono::seconds k1FpsFrame{ 1 }; // Debug
+inline constexpr rftl::chrono::nanoseconds k60FpsFrame{ 16'666'666 }; // Monitor
+inline constexpr rftl::chrono::nanoseconds k30FpsFrame{ 33'333'333 }; // NTSC
+inline constexpr rftl::chrono::nanoseconds k24FpsFrame{ 41'666'666 }; // Film
+inline constexpr rftl::chrono::nanoseconds k12FpsFrame{ 83'333'333 }; // Anime
+inline constexpr rftl::chrono::milliseconds k2FpsFrame{ 500 }; // Debug
+inline constexpr rftl::chrono::seconds k1FpsFrame{ 1 }; // Debug
 
 template<typename ChronoDurationType, long long DesiredTimeSpan>
 struct StaticLimiter;

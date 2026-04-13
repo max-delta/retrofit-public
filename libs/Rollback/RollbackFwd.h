@@ -19,7 +19,7 @@ class Domain;
 using InputStreamIdentifier = uint8_t;
 
 using InputValue = uint64_t;
-static constexpr InputValue kInvalidInputValue = 0;
+inline constexpr InputValue kInvalidInputValue = 0;
 
 struct InputEvent;
 class InputStream;
@@ -27,7 +27,7 @@ class InputStream;
 struct InputStreamRef;
 struct InputStreamConstRef;
 
-static constexpr size_t kMaxChangesInWindow = 10;
+inline constexpr size_t kMaxChangesInWindow = 10;
 using Window = state::StateBag<kMaxChangesInWindow>;
 template<typename T>
 using Stream = state::StateStream<T, kMaxChangesInWindow>;

@@ -24,8 +24,8 @@ using LogicalCode = uint8_t;
 
 using AnalogSignalIndex = uint8_t;
 using AnalogSignalValue = float;
-static constexpr AnalogSignalValue kMaxAnalogSignalValue = 1.0f;
-static constexpr AnalogSignalValue kMinAnalogSignalValue = 0.0f;
+inline constexpr AnalogSignalValue kMaxAnalogSignalValue = 1.0f;
+inline constexpr AnalogSignalValue kMinAnalogSignalValue = 0.0f;
 
 class InputDevice;
 class InputComponent;

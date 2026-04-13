@@ -8,7 +8,7 @@ namespace RF::sync {
 ///////////////////////////////////////////////////////////////////////////////
 
 using ConnectionIdentifier = comm::EndpointIdentifier;
-static constexpr ConnectionIdentifier kInvalidConnectionIdentifier = {};
+inline constexpr ConnectionIdentifier kInvalidConnectionIdentifier = {};
 
 struct RollbackInputPack;
 

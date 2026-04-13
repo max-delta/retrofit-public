@@ -12,7 +12,7 @@ namespace RF::cc::element {
 // Element identifiers are intended to be valid ASCII strings
 using ElementBytes = rftl::array<uint8_t, sizeof( ElementIdentifier )>;
 using ElementString = rftl::static_string<sizeof( ElementIdentifier )>;
-static constexpr char const kElementLocalizationPrefix[] = { '$', 'e', 'l', 'e', 'm', 'e', 'n', 't', '_' };
+inline constexpr char const kElementLocalizationPrefix[] = { '$', 'e', 'l', 'e', 'm', 'e', 'n', 't', '_' };
 using ElementName = rftl::static_string<sizeof( kElementLocalizationPrefix ) + sizeof( ElementIdentifier ) + sizeof( 'N' )>;
 using ElementSynopsis = rftl::static_string<sizeof( kElementLocalizationPrefix ) + sizeof( ElementIdentifier ) + sizeof( 'S' )>;
 

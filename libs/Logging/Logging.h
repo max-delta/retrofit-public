@@ -159,7 +159,7 @@ namespace details {
 
 // When specializing contexts, there is a limit to how large you can make the
 //  string representation
-static constexpr size_t kMaxContextLen = 512;
+inline constexpr size_t kMaxContextLen = 512;
 using Utf8LogContextBuffer = rftl::array<char8_t, kMaxContextLen / sizeof( char8_t )>;
 using Utf16LogContextBuffer = rftl::array<char16_t, kMaxContextLen / sizeof( char16_t )>;
 using Utf32LogContextBuffer = rftl::array<char32_t, kMaxContextLen / sizeof( char32_t )>;

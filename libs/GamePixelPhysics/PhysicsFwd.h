@@ -32,9 +32,9 @@ enum Value : uint8_t
 	SW = South | West,
 };
 
-static constexpr Value kCardinals[4] = { North, East, South, West };
-static constexpr Value kInterCardinals[4] = { NE, SE, NW, SW };
-static constexpr Value kConflicts[2] = { North | South, East | West };
+inline constexpr Value kCardinals[4] = { North, East, South, West };
+inline constexpr Value kInterCardinals[4] = { NE, SE, NW, SW };
+inline constexpr Value kConflicts[2] = { North | South, East | West };
 }
 
 

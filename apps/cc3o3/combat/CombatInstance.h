@@ -182,7 +182,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
-static constexpr size_t kCombatInstanceSize = sizeof( CombatInstance );
+inline constexpr size_t kCombatInstanceSize = sizeof( CombatInstance );
 static_assert( kCombatInstanceSize < 2048, "Combat instance is growing large, re-evaluate" );
 
 }

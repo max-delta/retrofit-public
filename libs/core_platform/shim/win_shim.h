@@ -12,8 +12,8 @@ typedef void* HGLRC;
 typedef void* HFONT;
 typedef unsigned long DWORD;
 typedef int BOOL;
-static constexpr BOOL kTRUE = 1;
-static constexpr BOOL kFALSE = 0;
+inline constexpr BOOL kTRUE = 1;
+inline constexpr BOOL kFALSE = 0;
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef float FLOAT;
@@ -70,5 +70,5 @@ LRESULT __stdcall DefWindowProcW(
 
 //WinSock
 using SOCKET = UINT_PTR;
-static constexpr SOCKET kINVALID_SOCKET = static_cast<SOCKET>( ~0 );
+inline constexpr SOCKET kINVALID_SOCKET = static_cast<SOCKET>( ~0 );
 }

@@ -7,7 +7,7 @@ namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////
 
 using ResourceTypeIdentifier = uint64_t;
-static constexpr ResourceTypeIdentifier kInvalidResourceTypeIdentifier = 0;
+inline constexpr ResourceTypeIdentifier kInvalidResourceTypeIdentifier = 0;
 
 class ResourceTypeRecord;
 class ResourceTypeRegistry;

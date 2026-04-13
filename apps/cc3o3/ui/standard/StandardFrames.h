@@ -45,23 +45,23 @@ namespace shape {
 //  with a granularity of 8 pixels, meaning the frame can't be any smaller than
 //  a 16x16 square, since the corners won't be allowed to shrink smaller than
 //  8 pixels
-static constexpr BorderFrameShape k4px = {
+inline constexpr BorderFrameShape k4px = {
 	.mExpectedTileDimensions{ 8, 8 },
 	.mExpectedPatternDimensions{ 48, 48 },
 	.mPaddingDimensions{ -4, -4 } };
 }
 
-static constexpr BorderFrameProto k4pxFlat_Inactive = { "border4_flat_inactive", shape::k4px };
-static constexpr BorderFrameProto k4pxFlat_Active = { "border4_flat_active", shape::k4px };
-static constexpr BorderFrameProto k4pxDebug = { "border4_debug", shape::k4px };
-static constexpr BorderFrameProto k4pxPopup = { "border4_popup", shape::k4px };
-static constexpr BorderFrameProto k4pxNormal = { "border4_standard", shape::k4px };
+inline constexpr BorderFrameProto k4pxFlat_Inactive = { "border4_flat_inactive", shape::k4px };
+inline constexpr BorderFrameProto k4pxFlat_Active = { "border4_flat_active", shape::k4px };
+inline constexpr BorderFrameProto k4pxDebug = { "border4_debug", shape::k4px };
+inline constexpr BorderFrameProto k4pxPopup = { "border4_popup", shape::k4px };
+inline constexpr BorderFrameProto k4pxNormal = { "border4_standard", shape::k4px };
 
 }
 ///////////////////////////////////////////////////////////////////////////////
 namespace mockup::frame {
 
-static constexpr BorderFrameProto k4pxTemplate = { "border4_template", standard::frame::shape::k4px };
+inline constexpr BorderFrameProto k4pxTemplate = { "border4_template", standard::frame::shape::k4px };
 
 }
 ///////////////////////////////////////////////////////////////////////////////

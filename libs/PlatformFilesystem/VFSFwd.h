@@ -17,12 +17,12 @@ using FileHandlePtr = UniquePtr<FileHandle>;
 
 // Lower numbers are more important
 using MountPriority = uint8_t;
-static constexpr MountPriority kMountPriorityHighest = 0;
-static constexpr MountPriority kMountPriorityLowest = rftl::numeric_limits<MountPriority>::max();
+inline constexpr MountPriority kMountPriorityHighest = 0;
+inline constexpr MountPriority kMountPriorityLowest = rftl::numeric_limits<MountPriority>::max();
 
-static constexpr char kPathDelimiter = '/';
-static constexpr char kPathAscensionElement[] = "..";
-static constexpr char kPathCurrentElement[] = ".";
+inline constexpr char kPathDelimiter = '/';
+inline constexpr char kPathAscensionElement[] = "..";
+inline constexpr char kPathCurrentElement[] = ".";
 
 enum class OpenFlags : uint8_t
 {

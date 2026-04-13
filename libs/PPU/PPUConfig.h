@@ -18,17 +18,17 @@ constexpr CoordElem kDesiredWidth = kTileSize * 10;
 constexpr CoordElem kDesiredHeight = kTileSize * 7;
 constexpr TileElem kDesiredDiagonalTiles = static_cast<TileElem>( math::Min( kDesiredWidth, kDesiredHeight ) / kTileSize );
 
-static constexpr size_t kMaxObjects = 32;
-static constexpr size_t kMaxTileLayers = 16;
-static constexpr size_t kMaxStrings = 48;
-static constexpr size_t kMaxStringLen = 128;
-static constexpr size_t kMaxTextStorage = 1366;
+inline constexpr size_t kMaxObjects = 32;
+inline constexpr size_t kMaxTileLayers = 16;
+inline constexpr size_t kMaxStrings = 48;
+inline constexpr size_t kMaxStringLen = 128;
+inline constexpr size_t kMaxTextStorage = 1366;
 
-static constexpr size_t kMaxDebugStrings = 32;
-static constexpr size_t kMaxDebugAuxStrings = 128;
-static constexpr size_t kMaxDebugLines = 255;
-static constexpr size_t kMaxDebugStringLen = 127;
-static constexpr size_t kMaxDebugTextStorage = 2048;
+inline constexpr size_t kMaxDebugStrings = 32;
+inline constexpr size_t kMaxDebugAuxStrings = 128;
+inline constexpr size_t kMaxDebugLines = 255;
+inline constexpr size_t kMaxDebugStringLen = 127;
+inline constexpr size_t kMaxDebugTextStorage = 2048;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

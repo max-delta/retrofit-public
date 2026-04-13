@@ -9,12 +9,12 @@ namespace RF::serialization {
 
 namespace exporter {
 using InstanceID = uint64_t;
-static constexpr InstanceID kInvalidInstanceID = 0;
+inline constexpr InstanceID kInvalidInstanceID = 0;
 
 using TypeID = math::HashVal64;
 
 using IndirectionID = uint64_t;
-static constexpr IndirectionID kInvalidIndirectionID = 0;
+inline constexpr IndirectionID kInvalidIndirectionID = 0;
 
 using ExternalReferenceID = char const*;
 }

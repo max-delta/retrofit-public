@@ -28,33 +28,33 @@ struct ElementTilesetDef
 	bool mUsesBorderSlots = false;
 };
 
-static constexpr ElementTilesetDef kElementTilesetFull = {
+inline constexpr ElementTilesetDef kElementTilesetFull = {
 	ElementTileSize::Full,
 	"elemgrid_16_128",
 	128, 16,
 	cc::ui::font::ElementLabelFull,
 	false };
-static constexpr ElementTilesetDef kElementTilesetMedium = {
+inline constexpr ElementTilesetDef kElementTilesetMedium = {
 	ElementTileSize::Medium,
 	"elemgrid_10_80",
 	80, 10,
 	cc::ui::font::ElementLabelMedium,
 	false };
-static constexpr ElementTilesetDef kElementTilesetMini = {
+inline constexpr ElementTilesetDef kElementTilesetMini = {
 	ElementTileSize::Mini,
 	"elemgrid_8_16",
 	16, 8,
 	ui::kInvalidFontPurposeID,
 	false };
-static constexpr ElementTilesetDef kElementTilesetMicro = {
+inline constexpr ElementTilesetDef kElementTilesetMicro = {
 	ElementTileSize::Micro,
 	"elemgrid_2_4",
 	4, 2,
 	ui::kInvalidFontPurposeID,
 	true };
 
-static constexpr int8_t kElementTilesetOffsetDark = 1;
-static constexpr int8_t kElementTilesetOffsetReserved = 2;
+inline constexpr int8_t kElementTilesetOffsetDark = 1;
+inline constexpr int8_t kElementTilesetOffsetReserved = 2;
 
 enum class ElementTilesetIndex : int8_t
 {

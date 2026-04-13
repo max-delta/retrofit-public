@@ -63,7 +63,7 @@ enum class AliasType : uint8_t
 //  provide them, they must be unique within the translation unit, and they
 //  must be ascending
 using LocIDLineNum = uint16_t;
-static constexpr LocIDLineNum kInvalidLocIDLineNum = 0;
+inline constexpr LocIDLineNum kInvalidLocIDLineNum = 0;
 
 // Processed entries contain much less intermediate data
 enum class EntryType : uint8_t

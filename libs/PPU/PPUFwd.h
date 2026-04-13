@@ -23,28 +23,28 @@ using AABB = math::AABB4<CoordElem>;
 
 // Coordinates are +Z=behind (right-handed)
 using DepthLayer = int8_t;
-constexpr DepthLayer kFarthestLayer = 100;
-constexpr DepthLayer kNearestLayer = -100;
+inline constexpr DepthLayer kFarthestLayer = 100;
+inline constexpr DepthLayer kNearestLayer = -100;
 
 // Tiles are a larger-scale XY coordinate system
 // NOTE: Under normal convention, tiles are assumed to be square
 using TileElem = int8_t;
-constexpr TileSize kTileSize = 32;
+inline constexpr TileSize kTileSize = 32;
 
 using ZoomFactor = uint8_t;
-constexpr ZoomFactor kInvalidZoomFactor = 0;
+inline constexpr ZoomFactor kInvalidZoomFactor = 0;
 
 using GameLayerID = uint8_t;
-static constexpr size_t kNumGameLayers = 8;
+inline constexpr size_t kNumGameLayers = 8;
 
 using GFXModifierHandlerID = uint64_t;
-constexpr size_t kNumGFXModifiers = 8;
+inline constexpr size_t kNumGFXModifiers = 8;
 
 using ManagedColliderID = uint64_t;
-constexpr ManagedColliderID kInvalidManagedColliderID = 0;
+inline constexpr ManagedColliderID kInvalidManagedColliderID = 0;
 
 using ManagedFramePackID = uint16_t;
-constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
+inline constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
 
 class Object;
 class TileLayer;

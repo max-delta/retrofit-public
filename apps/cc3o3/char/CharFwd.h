@@ -11,11 +11,11 @@ namespace RF::cc::character {
 ///////////////////////////////////////////////////////////////////////////////
 
 using StatValue = uint8_t;
-static constexpr StatValue kMinStatValue = 0;
-static constexpr StatValue kDefaultStatValue = 0;
-static constexpr StatValue kMaxStatValue = 10;
+inline constexpr StatValue kMinStatValue = 0;
+inline constexpr StatValue kDefaultStatValue = 0;
+inline constexpr StatValue kMaxStatValue = 10;
 
-static constexpr size_t kMaxSlotsPerElementLevel = 8;
+inline constexpr size_t kMaxSlotsPerElementLevel = 8;
 
 using ElementSlotIndex = rftl::pair<element::ElementLevel, size_t>;
 
@@ -27,7 +27,7 @@ enum class GridShape : uint8_t
 
 	NumShapeTypes
 };
-static constexpr uint8_t kMaxGridShapeValue = math::enum_bitcast( GridShape::NumShapeTypes ) - 1u;
+inline constexpr uint8_t kMaxGridShapeValue = math::enum_bitcast( GridShape::NumShapeTypes ) - 1u;
 
 struct CharData;
 struct Description;

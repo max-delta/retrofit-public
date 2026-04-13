@@ -8,9 +8,9 @@ namespace RF::cc::encounter {
 ///////////////////////////////////////////////////////////////////////////////
 
 using SpawnIndex = uint8_t;
-static constexpr SpawnIndex kInvalidSpawnIndex = rftl::numeric_limits<SpawnIndex>::max();
-static constexpr SpawnIndex kInititialSpawnIndex = 0;
-static constexpr size_t kMaxSpawns = 8;
+inline constexpr SpawnIndex kInvalidSpawnIndex = rftl::numeric_limits<SpawnIndex>::max();
+inline constexpr SpawnIndex kInititialSpawnIndex = 0;
+inline constexpr size_t kMaxSpawns = 8;
 
 class EncounterManager;
 

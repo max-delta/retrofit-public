@@ -7,7 +7,7 @@ namespace RF {
 //  on instantiation, but should require an instantiation attempt instead of
 //  blindly assuming it will always fail
 template<typename T>
-static constexpr bool FailTemplate()
+inline constexpr bool FailTemplate()
 {
 	return sizeof( T ) == 0 && sizeof( T ) == 1;
 }

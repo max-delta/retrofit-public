@@ -61,7 +61,7 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 #if defined(_WIN32)
 	#define RF_PLATFORM_WINDOWS
-	static constexpr OperatingSystem kOperatingSystem = OperatingSystem::Windows;
+	inline constexpr OperatingSystem kOperatingSystem = OperatingSystem::Windows;
 #else
 	#error Undefined platform
 #endif
@@ -69,10 +69,10 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 #if defined( _MSC_VER ) && !defined( __clang__ ) // NOTE: clang-cl pretends to be MSVC
 	#define RF_PLATFORM_MSVC
-	static constexpr Compiler kCompiler = Compiler::MSVC;
+	inline constexpr Compiler kCompiler = Compiler::MSVC;
 
 	#define RF_TOOL_DESC "MSVC_" RF_STRINGIFY( _MSC_FULL_VER )
-	static constexpr char const kToolDesc[] = RF_TOOL_DESC;
+	inline constexpr char const kToolDesc[] = RF_TOOL_DESC;
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
@@ -125,14 +125,14 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 #elif defined( __clang__ )
 	#define RF_PLATFORM_CLANG
-	static constexpr Compiler kCompiler = Compiler::Clang;
+	inline constexpr Compiler kCompiler = Compiler::Clang;
 
 	#ifndef _MSC_VER
 		#error Normal clang not supported yet
 	#endif
 
 	#define RF_TOOL_DESC "ClangCL_" __clang_version__ RF_STRINGIFY( _MSC_FULL_VER )
-	static constexpr char const kToolDesc[] = RF_TOOL_DESC;
+	inline constexpr char const kToolDesc[] = RF_TOOL_DESC;
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
@@ -192,69 +192,69 @@ static void const* const kInvalidNonNullPointer = reinterpret_cast<void const*>(
 
 
 #if defined( RF_PLATFORM_X86_64 )
-	static constexpr Architecture kArchitecture = Architecture::x86_64;
+	inline constexpr Architecture kArchitecture = Architecture::x86_64;
 	#define RF_PLATFORM_STRONG_MEMORY_MODEL
-	static constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+	inline constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
 	#define RF_PLATFORM_LITTLE_ENDIAN
-	static constexpr Endianness kEndianness = Endianness::Little;
+	inline constexpr Endianness kEndianness = Endianness::Little;
 	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
-	static constexpr bool kAlignedModificationsAreAtomic = true;
+	inline constexpr bool kAlignedModificationsAreAtomic = true;
 	#define RF_PLATFORM_POINTER_BYTES 8u
-	static constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
+	inline constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u
-	static constexpr unsigned long kMinPageSize = 4096u;
+	inline constexpr unsigned long kMinPageSize = 4096u;
 #elif defined( RF_PLATFORM_X86_32 )
-	static constexpr Architecture kArchitecture = Architecture::x86_32;
+	inline constexpr Architecture kArchitecture = Architecture::x86_32;
 	#define RF_PLATFORM_STRONG_MEMORY_MODEL
-	static constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
+	inline constexpr MemoryModel kMemoryModel = MemoryModel::Strong;
 	#define RF_PLATFORM_LITTLE_ENDIAN
-	static constexpr Endianness kEndianness = Endianness::Little;
+	inline constexpr Endianness kEndianness = Endianness::Little;
 	#define RF_PLATFORM_ALIGNED_MODIFICATIONS_ARE_ATOMIC
-	static constexpr bool kAlignedModificationsAreAtomic = true;
+	inline constexpr bool kAlignedModificationsAreAtomic = true;
 	#define RF_PLATFORM_POINTER_BYTES 4u
-	static constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
+	inline constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u
-	static constexpr unsigned long kMinPageSize = 4096u;
+	inline constexpr unsigned long kMinPageSize = 4096u;
 #elif defined( RF_PLATFORM_ARM_64 )
 	// TODO: Verify all of this
 	// NOTE: May be toolchain-specific depending on target OS
-	static constexpr Architecture kArchitecture = Architecture::ARM_64;
-	static constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
+	inline constexpr Architecture kArchitecture = Architecture::ARM_64;
+	inline constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
 	#if defined( RF_PLATFORM_WINDOWS )
 		// Microsoft formally declares Windows on ARM64 to use little-endian
 		//  mode only
 		// SEE: Microsoft ARM64 ABI Conventions
 		#define RF_PLATFORM_LITTLE_ENDIAN
-		static constexpr Endianness kEndianness = Endianness::Little;
+		inline constexpr Endianness kEndianness = Endianness::Little;
 	#else
 		#define RF_PLATFORM_VARIABLE_ENDIAN
-		static constexpr Endianness kEndianness = Endianness::Variable;
+		inline constexpr Endianness kEndianness = Endianness::Variable;
 	#endif
-	static constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+	inline constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#define RF_PLATFORM_POINTER_BYTES 8u
-	static constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
+	inline constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
-	static constexpr unsigned long kMinPageSize = 4096u; // Verify?
+	inline constexpr unsigned long kMinPageSize = 4096u; // Verify?
 #elif defined( RF_PLATFORM_ARM_32 )
 	// TODO: Verify all of this
 	// NOTE: May be toolchain-specific depending on target OS
-	static constexpr Architecture kArchitecture = Architecture::ARM_32;
-	static constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
+	inline constexpr Architecture kArchitecture = Architecture::ARM_32;
+	inline constexpr MemoryModel kMemoryModel = MemoryModel::Weak; // Verify?
 	#if defined( RF_PLATFORM_WINDOWS )
 		// Microsoft formally declares Windows on ARM32 to use little-endian
 		//  mode only
 		// SEE: Microsoft ARM32 ABI Conventions
 		#define RF_PLATFORM_LITTLE_ENDIAN
-		static constexpr Endianness kEndianness = Endianness::Little;
+		inline constexpr Endianness kEndianness = Endianness::Little;
 	#else
 		#define RF_PLATFORM_VARIABLE_ENDIAN
-		static constexpr Endianness kEndianness = Endianness::Variable;
+		inline constexpr Endianness kEndianness = Endianness::Variable;
 	#endif
-	static constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
+	inline constexpr bool kAlignedModificationsAreAtomic = false; // Verify?
 	#define RF_PLATFORM_POINTER_BYTES 4u
-	static constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
+	inline constexpr size_t kPointerBytes = RF_PLATFORM_POINTER_BYTES;
 	#define RF_MIN_PAGE_SIZE 4096u /* Verify? */
-	static constexpr unsigned long kMinPageSize = 4096u; // Verify?
+	inline constexpr unsigned long kMinPageSize = 4096u; // Verify?
 #else
 	#error Undefined platform
 #endif
