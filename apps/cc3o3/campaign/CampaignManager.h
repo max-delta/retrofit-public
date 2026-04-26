@@ -72,6 +72,7 @@ public:
 		appstate::AppStateTickContext& context,
 		rftl::string identifier );
 
+	void HardcodedDialogueSetup( rftl::string& TODO );
 	void HardcodedCombatSetup( combat::FightController& fight );
 
 

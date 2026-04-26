@@ -59,13 +59,12 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 
 	gfx::ppu::PPUController const& ppu = *app::gGraphics;
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+	campaign::CampaignManager& campaign = *gCampaignManager;
 
 	// Setup cutscene
+	rftl::string TODOText;
 	{
-		campaign::CampaignManager& campaign = *gCampaignManager;
-
-		// TODO: Load cutscene
-		( (void)campaign );
+		campaign.HardcodedDialogueSetup( TODOText );
 	}
 
 	// Setup UI
@@ -168,13 +167,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
 					ui::GetLineBreakRules() ) );
-		static constexpr char kTODOText[] =
-			"This is some really long text that isn't going to fit on one line."
-			" In fact, it probably won't even fit in one text box."
-			" This is likely going to be truncated multiple ways, and require"
-			" pagination support so a user can work their way through the full"
-			" lenghty text.";
-		lowerDialogue->SetText( kTODOText, false );
+		lowerDialogue->SetText( TODOText, false );
 		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
 		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
