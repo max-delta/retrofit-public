@@ -1,14 +1,12 @@
 #pragma once
 #include "project.h"
 
-#include "GameDialogue/DialogueFwd.h"
+#include "GameDialogue/DialogueEntry.h"
 
 #include "core/macros.h"
 
 #include "rftl/deque"
 #include "rftl/string"
-#include "rftl/string_view"
-#include "rftl/unordered_map"
 
 
 namespace RF::dialogue {
@@ -24,50 +22,14 @@ class GAMEDIALOGUE_API DialogueSequence final
 	RF_DEFAULT_MOVE( DialogueSequence );
 
 	//
-	// Forwards
-public:
-	struct Entry;
-
-
-	//
 	// Types and constants
 public:
+	using Entry = DialogueEntry;
 	using Entries = rftl::deque<Entry>;
-	using KVPairs = rftl::unordered_map<rftl::string_view, rftl::string_view>;
 
 	// Because many strings are re-used across multiple entries, we keep the
 	//  actual text data in shared storage
 	using Strings = rftl::deque<rftl::string>;
-
-
-	//
-	// Structs
-public:
-	struct Entry
-	{
-		// The type, which determines how fields are interpreted
-		EntryType mEntryType = EntryType::Invalid;
-
-		// Speech, if localization available
-		LocIDLineNum mLocIDLineNumber = kInvalidLocIDLineNum;
-
-		// CommandID \ SceneID \ CharacterID
-		rftl::string_view mPrimary;
-
-		// ExpressionID
-		rftl::string_view mExpression;
-
-		// Speech, if a localization replacement was not found
-		rftl::string_view mFallbackText;
-
-		// Command params \ scene params
-		KVPairs mParams;
-
-		// Conditions that must be true / false, otherwise skip this entry
-		// NOTE: This is what conditional jumps turn into
-		KVPairs mNecessaryConditions;
-		KVPairs mForbiddenConditions;
-	};
 
 
 	//

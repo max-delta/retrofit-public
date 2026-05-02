@@ -31,6 +31,7 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
+		<ClCompile Include="DialogueEntry.cpp" />
 		<ClCompile Include="DialogueLoader.cpp" />
 		<ClCompile Include="DialogueSequence.cpp" />
 		<ClCompile Include="dllmain.cpp" />
@@ -40,6 +41,7 @@
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="DialogueEntry.h" />
 		<ClInclude Include="DialogueFwd.h" />
 		<ClInclude Include="DialogueLoader.h" />
 		<ClInclude Include="DialogueSequence.h" />

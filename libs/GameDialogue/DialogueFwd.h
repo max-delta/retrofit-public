@@ -81,6 +81,7 @@ enum class EntryType : uint8_t
 };
 
 class RawDialogueEntry;
+class DialogueEntry;
 class DialogueLoader;
 class DialogueSequence;
 

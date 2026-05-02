@@ -6,6 +6,7 @@
 		<ClCompile Include="RawDialogueEntry.cpp" />
 		<ClCompile Include="DialogueLoader.cpp" />
 		<ClCompile Include="DialogueSequence.cpp" />
+		<ClCompile Include="DialogueEntry.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -14,5 +15,6 @@
 		<ClInclude Include="RawDialogueEntry.h" />
 		<ClInclude Include="DialogueLoader.h" />
 		<ClInclude Include="DialogueSequence.h" />
+		<ClInclude Include="DialogueEntry.h" />
 	</ItemGroup>
 </Project>
