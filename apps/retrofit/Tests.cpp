@@ -1494,7 +1494,8 @@ void DialogueTest()
 	RF_ASSERT( handle != nullptr );
 	file::FileBuffer const buffer{ *handle, false };
 
-	dialogue::DialogueLoader::Parse( buffer.GetChars() );
+	dialogue::DialogueSequence const sequence = dialogue::DialogueLoader::Parse( buffer.GetChars() );
+	RF_ASSERT( sequence.mEntries.empty() == false );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
