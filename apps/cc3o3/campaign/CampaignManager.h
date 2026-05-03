@@ -2,6 +2,7 @@
 #include "cc3o3/campaign/CampaignFwd.h"
 
 #include "cc3o3/combat/CombatFwd.h"
+#include "cc3o3/cutscene/CutsceneFwd.h"
 #include "cc3o3/overworld/OverworldFwd.h"
 #include "cc3o3/save/SaveFwd.h"
 #include "cc3o3/site/SiteFwd.h"
@@ -72,7 +73,7 @@ public:
 		appstate::AppStateTickContext& context,
 		rftl::string identifier );
 
-	void HardcodedDialogueSetup( rftl::string& TODO );
+	void HardcodedCutsceneSetup( cutscene::CinematicController& cinematic );
 	void HardcodedCombatSetup( combat::FightController& fight );
 
 

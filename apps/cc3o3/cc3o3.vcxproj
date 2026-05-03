@@ -76,6 +76,7 @@
 		<ClCompile Include="Common.cpp" />
 		<ClCompile Include="CommonPaths.cpp" />
 		<ClCompile Include="company\CompanyManager.cpp" />
+		<ClCompile Include="cutscene\CinematicController.cpp" />
 		<ClCompile Include="exfil\Exfiltrate.cpp" />
 		<ClCompile Include="StartupConfig.cpp" />
 		<ClCompile Include="DeveloperHud.cpp" />
@@ -228,6 +229,10 @@
 		<ClInclude Include="company\CompanyManager.h" />
 		<ClInclude Include="company\project.h" />
 		<ClInclude Include="company\stdafx.h" />
+		<ClInclude Include="cutscene\CinematicController.h" />
+		<ClInclude Include="cutscene\CutsceneFwd.h" />
+		<ClInclude Include="cutscene\project.h" />
+		<ClInclude Include="cutscene\stdafx.h" />
 		<ClInclude Include="exfil\Exfiltrate.h" />
 		<ClInclude Include="exfil\project.h" />
 		<ClInclude Include="exfil\stdafx.h" />

@@ -11,6 +11,7 @@
 #include "cc3o3/combat/CombatInstance.h"
 #include "cc3o3/combat/FightController.h"
 #include "cc3o3/company/CompanyManager.h"
+#include "cc3o3/cutscene/CinematicController.h"
 #include "cc3o3/elements/IdentifierUtils.h"
 #include "cc3o3/encounter/EncounterManager.h"
 #include "cc3o3/overworld/Overworld.h"
@@ -575,15 +576,17 @@ void CampaignManager::StartEncounter( appstate::AppStateTickContext& context, rf
 
 
 
-void CampaignManager::HardcodedDialogueSetup( rftl::string& TODO )
+void CampaignManager::HardcodedCutsceneSetup( cutscene::CinematicController& cinematic )
 {
+	VerifyCampaignLoaded();
+
 	static constexpr char kTODOText[] =
 		"This is some really long text that isn't going to fit on one line."
 		" In fact, it probably won't even fit in one text box."
 		" This is likely going to be truncated multiple ways, and require"
 		" pagination support so a user can work their way through the full"
 		" lenghty text.";
-	TODO = kTODOText;
+	cinematic.mTODO = kTODOText;
 }
 
 

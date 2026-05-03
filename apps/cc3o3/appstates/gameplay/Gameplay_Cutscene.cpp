@@ -5,6 +5,7 @@
 #include "cc3o3/CommonPaths.h"
 #include "cc3o3/appstates/InputHelpers.h"
 #include "cc3o3/campaign/CampaignManager.h"
+#include "cc3o3/cutscene/CinematicController.h"
 #include "cc3o3/ui/LocalizationHelpers.h"
 #include "cc3o3/ui/standard/StandardFrames.h"
 #include "cc3o3/ui/standard/StandardUIElements.h"
@@ -44,6 +45,8 @@ public:
 	InternalState() = default;
 
 public:
+	UniquePtr<cutscene::CinematicController> mCinematicController;
+
 	WeakPtr<ui::controller::TextLabel> mTODO;
 	WeakPtr<novel::ui::controller::DialogueBox> mLowerDialogueBox;
 
@@ -61,10 +64,10 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	campaign::CampaignManager& campaign = *gCampaignManager;
 
-	// Setup cutscene
-	rftl::string TODOText;
+	// Setup cinematic
 	{
-		campaign.HardcodedDialogueSetup( TODOText );
+		internalState.mCinematicController = DefaultCreator<cutscene::CinematicController>::Create();
+		campaign.HardcodedCutsceneSetup( *internalState.mCinematicController );
 	}
 
 	// Setup UI
@@ -167,7 +170,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
 					ui::GetLineBreakRules() ) );
-		lowerDialogue->SetText( TODOText, false );
+		lowerDialogue->SetText( internalState.mCinematicController->mTODO, false );
 		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
 		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
