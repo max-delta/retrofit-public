@@ -338,7 +338,7 @@ void CharacterValidator::SanitizeForCharacterCreation( CharData& character ) con
 	}
 
 	// TODO: Check for valid titles from a list
-	if( description.mTitle.empty() == false )
+	if( description.mTitle.empty() )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_CHAR, "Invalid title" );
 		description.mTitle = "";
