@@ -67,7 +67,7 @@ label "neg_cond_target"
 ### ELSE COND
 
 # cond_else TARGET
-cond_if "else_cond_target" test:"false"
+cond_if "else_cond_target" test:"true"
 
 120 "unused else text"
 

@@ -16,6 +16,7 @@
 
 #include "GameDialogue/DialogueLoader.h"
 #include "GameDialogue/DialogueSequence.h"
+#include "GameDialogue/executors/ConditionSkipper.h"
 
 #include "GameResource/ResourceLoader.h"
 #include "GameResource/ResourceSaver.h"
@@ -1494,8 +1495,53 @@ void DialogueTest()
 	RF_ASSERT( handle != nullptr );
 	file::FileBuffer const buffer{ *handle, false };
 
+	// Load
 	dialogue::DialogueSequence const sequence = dialogue::DialogueLoader::Parse( buffer.GetChars() );
 	RF_ASSERT( sequence.mEntries.empty() == false );
+
+	// Execute
+	size_t currentIndex = 0;
+	size_t const numEntries = sequence.mEntries.size();
+	while( currentIndex < numEntries )
+	{
+		static constexpr auto condCheck =
+			[]( rftl::string_view key ) -> rftl::optional<rftl::string_view>
+		{
+			if( key == "test" )
+			{
+				return "false";
+			}
+			return rftl::nullopt;
+		};
+
+		// Skip
+		dialogue::ConditionSkipper::SkipUnmetConditions( currentIndex, sequence, condCheck );
+		if( currentIndex >= numEntries )
+		{
+			break;
+		}
+
+		dialogue::DialogueEntry const& entry = sequence.mEntries.at( currentIndex );
+		switch( entry.mEntryType )
+		{
+			case dialogue::EntryType::Command:
+				RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Dialogue - Command '{}'",
+					entry.mPrimary );
+				break;
+			case dialogue::EntryType::Scene:
+				RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Dialogue - Scene '{}'",
+					entry.mPrimary );
+				break;
+			case dialogue::EntryType::Speech:
+				RFLOG_TRACE( nullptr, RFCAT_STARTUPTEST, "Dialogue - Speech [{}]'{}': ('{}')'{}'",
+					entry.mLocIDLineNumber, entry.mPrimary, entry.mExpression, entry.mFallbackText );
+				break;
+			case dialogue::EntryType::Invalid:
+			default:
+				RF_DBGFAIL();
+		}
+		currentIndex++;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
