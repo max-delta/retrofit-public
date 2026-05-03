@@ -285,13 +285,13 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 
 	if( rftl::filesystem::exists( absoluteMountTableFilename ) == false )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to find mount table file" );
+		RFLOG_ERROR( absoluteMountTableFilename, RFCAT_VFS, "Failed to find mount table file" );
 		return false;
 	}
 
 	if( rftl::filesystem::exists( absoluteUserDirectory ) == false )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to find user directory" );
+		RFLOG_ERROR( absoluteUserDirectory, RFCAT_VFS, "Failed to find user directory" );
 		return false;
 	}
 
@@ -301,7 +301,7 @@ bool VFS::AttemptInitialMount( MountPriority priority, rftl::string const& mount
 		details::GetOpenModeBitFromEnumValue( OpenFlags::Read ) );
 	if( errCheck == nullptr || rawFile.is_open() == false )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_VFS, "Failed to open mount table file" );
+		RFLOG_ERROR( collapsedMountFilename, RFCAT_VFS, "Failed to open mount table file" );
 		return false;
 	}
 	FileHandle fileHandle( DefaultCreator<rftl::filebuf>::Create( rftl::move( rawFile ) ), details::kRaw.GetChild( collapsedMountFilename ) );
