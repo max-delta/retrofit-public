@@ -170,7 +170,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
 					ui::GetLineBreakRules() ) );
-		lowerDialogue->SetText( internalState.mCinematicController->mTODO, false );
+		lowerDialogue->SetText( internalState.mCinematicController->GetDialogueRef().mEntries.at( 2 ).mFallbackText, false );
 		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
 		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );

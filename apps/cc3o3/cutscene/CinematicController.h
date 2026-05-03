@@ -3,9 +3,9 @@
 
 #include "cc3o3/cutscene/CutsceneFwd.h"
 
-#include "core/macros.h"
+#include "GameDialogue/DialogueSequence.h"
 
-#include "rftl/string"
+#include "PlatformFilesystem/VFSFwd.h"
 
 
 namespace RF::cc::cutscene {
@@ -21,10 +21,15 @@ class CinematicController
 public:
 	CinematicController();
 
+	bool LoadDialogueSequence( file::VFSPath const& filePath );
+
+	dialogue::DialogueSequence const& GetDialogueRef() const;
+
+
 	//
-	// Public data
-public:
-	rftl::string mTODO;
+	// Private data
+private:
+	dialogue::DialogueSequence mDialog = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////

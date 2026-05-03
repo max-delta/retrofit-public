@@ -116,6 +116,10 @@ file::VFSPath Campaigns()
 {
 	return TablesRoot().GetChild( "campaigns" );
 }
+file::VFSPath Dialogues()
+{
+	return TablesRoot().GetChild( "dialogues" );
+}
 file::VFSPath CharacterTables()
 {
 	return TablesRoot().GetChild( "char" );

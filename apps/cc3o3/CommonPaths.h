@@ -42,6 +42,7 @@ file::VFSPath CharacterPieces();
 
 // Tables
 file::VFSPath Campaigns();
+file::VFSPath Dialogues();
 file::VFSPath CharacterTables();
 file::VFSPath BaseCharacters();
 file::VFSPath ElementDescTables();
