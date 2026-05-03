@@ -21,6 +21,7 @@ class GAMEDIALOGUE_API DialogueEntry final
 	// Types and constants
 public:
 	using KVPairs = rftl::unordered_map<rftl::string_view, rftl::string_view>;
+	using KVPair = KVPairs::value_type;
 
 	//
 	// Public data

@@ -219,7 +219,7 @@ static bool IngestCommand( State& state, RawDialogueEntry const& rawEntry )
 	DialogueSequence::Entry& newEntry = state.mSequence.mEntries.emplace_back();
 	newEntry.mEntryType = EntryType::Command;
 	newEntry.mPrimary = MakeStorage( state.mSequence.mRequiredCommands, command );
-	for( RawDialogueEntry::KVPairs::value_type const& pair : rawEntry.mKVPairs )
+	for( RawDialogueEntry::KVPair const& pair : rawEntry.mKVPairs )
 	{
 		RF_MUST_BE_VALID( pair.first );
 		RF_MUST_BE_VALID( pair.second );
@@ -248,7 +248,7 @@ static bool IngestScene( State& state, RawDialogueEntry const& rawEntry )
 	DialogueSequence::Entry& newEntry = state.mSequence.mEntries.emplace_back();
 	newEntry.mEntryType = EntryType::Scene;
 	newEntry.mPrimary = MakeStorage( state.mSequence.mRequiredScenes, scene );
-	for( RawDialogueEntry::KVPairs::value_type const& pair : rawEntry.mKVPairs )
+	for( RawDialogueEntry::KVPair const& pair : rawEntry.mKVPairs )
 	{
 		RF_MUST_BE_VALID( pair.first );
 		RF_MUST_BE_VALID( pair.second );
