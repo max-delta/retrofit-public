@@ -35,6 +35,7 @@
 		<ClCompile Include="DialogueLoader.cpp" />
 		<ClCompile Include="DialogueSequence.cpp" />
 		<ClCompile Include="dllmain.cpp" />
+		<ClCompile Include="executors\ConditionSkipper.cpp" />
 		<ClCompile Include="RawDialogueEntry.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
@@ -45,6 +46,9 @@
 		<ClInclude Include="DialogueFwd.h" />
 		<ClInclude Include="DialogueLoader.h" />
 		<ClInclude Include="DialogueSequence.h" />
+		<ClInclude Include="executors\ConditionSkipper.h" />
+		<ClInclude Include="executors\project.h" />
+		<ClInclude Include="executors\stdafx.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="RawDialogueEntry.h" />
 		<ClInclude Include="stdafx.h" />

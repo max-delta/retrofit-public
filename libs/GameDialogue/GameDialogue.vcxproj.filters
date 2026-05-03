@@ -7,6 +7,9 @@
 		<ClCompile Include="DialogueLoader.cpp" />
 		<ClCompile Include="DialogueSequence.cpp" />
 		<ClCompile Include="DialogueEntry.cpp" />
+		<ClCompile Include="executors\ConditionSkipper.cpp">
+			<Filter>executors</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -15,6 +18,20 @@
 		<ClInclude Include="RawDialogueEntry.h" />
 		<ClInclude Include="DialogueLoader.h" />
 		<ClInclude Include="DialogueSequence.h" />
+		<ClInclude Include="executors\project.h">
+			<Filter>executors</Filter>
+		</ClInclude>
+		<ClInclude Include="executors\stdafx.h">
+			<Filter>executors</Filter>
+		</ClInclude>
 		<ClInclude Include="DialogueEntry.h" />
+		<ClInclude Include="executors\ConditionSkipper.h">
+			<Filter>executors</Filter>
+		</ClInclude>
+	</ItemGroup>
+	<ItemGroup>
+		<Filter Include="executors">
+			<UniqueIdentifier>{c8b42e66-a598-4ea6-bd10-851175df5b3e}</UniqueIdentifier>
+		</Filter>
 	</ItemGroup>
 </Project>
