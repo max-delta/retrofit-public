@@ -23,13 +23,13 @@ public:
 
 	bool LoadDialogueSequence( file::VFSPath const& filePath );
 
-	dialogue::DialogueSequence const& GetDialogueRef() const;
+	WeakPtr<dialogue::DialogueSequence const> GetDialogue() const;
 
 
 	//
 	// Private data
 private:
-	dialogue::DialogueSequence mDialog = {};
+	UniquePtr<dialogue::DialogueSequence const> mDialog = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
