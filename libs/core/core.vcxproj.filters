@@ -97,6 +97,9 @@
 		<ClInclude Include="meta\BitwiseEnums.h">
 			<Filter>meta</Filter>
 		</ClInclude>
+		<ClInclude Include="meta\FailConsteval.h">
+			<Filter>meta</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
