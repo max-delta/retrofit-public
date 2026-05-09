@@ -29,6 +29,7 @@
 	<ItemGroup>
 		<ClInclude Include="idgen.h" />
 		<ClInclude Include="macros.h" />
+		<ClInclude Include="meta\BitwiseEnums.h" />
 		<ClInclude Include="meta\ConstructorOverload.h" />
 		<ClInclude Include="meta\DefaultConstruct.h" />
 		<ClInclude Include="meta\Empty.h" />

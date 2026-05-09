@@ -94,6 +94,9 @@
 		<ClInclude Include="meta\SafeCasts.h">
 			<Filter>meta</Filter>
 		</ClInclude>
+		<ClInclude Include="meta\BitwiseEnums.h">
+			<Filter>meta</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />

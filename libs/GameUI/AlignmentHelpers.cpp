@@ -7,7 +7,7 @@
 
 #include "core_math/AABB4.h"
 #include "core_math/Lerp.h"
-#include "core_math/BitwiseEnums.h"
+#include "core/meta/BitwiseEnums.h"
 
 
 namespace RF::ui {
