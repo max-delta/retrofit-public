@@ -15,6 +15,7 @@
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
 
+#include "GameNovel/CinematicDriver.h"
 #include "GameNovel/ui/controllers/DialogueBox.h"
 
 #include "GameUI/ContainerManager.h"
@@ -170,7 +171,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					ui::Justification::MiddleLeft,
 					math::Color3u8::kWhite,
 					ui::GetLineBreakRules() ) );
-		lowerDialogue->SetText( internalState.mCinematicController->GetDialogue()->mEntries.at( 2 ).mFallbackText, false );
+		lowerDialogue->SetText( "UNSET", false );
 		lowerDialogue->SetAnimationSpeed( ui::kTextSpeed );
 		lowerDialogue->SetFastForwardEvent( ui::focusevent::Command_ActivateCurrentFocus );
 		lowerDialogue->SetContinuationEvent( ui::focusevent::Command_ActivateCurrentFocus );
@@ -186,6 +187,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 
 		// TODO: Delay determining this?
 		internalState.mCurrentDialogueBox = lowerDialogue;
+		internalState.mCinematicController->GetMutableDriver().SetDialogueBox( internalState.mCurrentDialogueBox );
 	}
 }
 
@@ -207,6 +209,8 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 
 	ui::UIContext uiContext( uiManager );
 	focusMan.UpdateHardFocus( uiContext );
+
+	novel::CinematicDriver& cinematic = internalState.mCinematicController->GetMutableDriver();
 
 	// Process menu actions
 	rftl::vector<ui::FocusEventType> const focusEvents = InputHelpers::GetGameMenuInputToProcess( InputHelpers::GetSinglePlayer() );
@@ -230,15 +234,24 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 			// TODO: What isn't going to be handled by the normal UI already?
 			if( currentFocusContainerID != ui::kInvalidContainerID )
 			{
-				// HACK: Helper for testing while building out message box tech
-				// TODO: Get rid of this in favor of something that resets the
-				//  dialogue being fed to it, once the dialogue machinery is
-				//  further along
 				RF_ASSERT( internalState.mCurrentDialogueBox != nullptr );
 				if( focusTree.IsInCurrentFocusStack( internalState.mCurrentDialogueBox->GetContainerID() ) )
 				{
+					if( focusEvent == ui::focusevent::Command_ActivateCurrentFocus )
+					{
+						// Try to advance the cinematic
+						cinematic.QueueActions( novel::CinematicActions::Advance );
+					}
+
+					// HACK: Helpers for testing while building out message box tech
+					if( focusEvent == ui::focusevent::Command_NavigateToFirst )
+					{
+						// Reset the entire cinematic
+						cinematic.ResetProgression();
+					}
 					if( focusEvent == ui::focusevent::Command_NavigateToPreviousGroup )
 					{
+						// Reflow just the text
 						internalState.mCurrentDialogueBox->ReflowAllText();
 					}
 				}
@@ -250,8 +263,8 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 	}
 
 	// TODO
-	( (void)internalState );
 	( (void)campaign );
+	cinematic.TickCinematic();
 	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 128, 32 ), "TODO: Cutscene" );
 }
 

@@ -4,6 +4,8 @@
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameDialogue/DialogueLoader.h"
+#include "GameDialogue/DialogueSequence.h"
+#include "GameNovel/CinematicDriver.h"
 
 #include "PlatformFilesystem/VFS.h"
 
@@ -14,15 +16,35 @@
 
 namespace RF::cc::cutscene {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
 
-CinematicController::CinematicController() = default;
+static dialogue::DialogueSequence CreateFallbackSequence()
+{
+	dialogue::DialogueSequence retVal = {};
+	return retVal;
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
+
+CinematicController::CinematicController()
+	: mFallbackDialogue(
+		  DefaultCreator<dialogue::DialogueSequence const>::Create(
+			  details::CreateFallbackSequence() ) )
+	, mDriver(
+		  DefaultCreator<novel::CinematicDriver>::Create(
+			  mFallbackDialogue ) )
+{
+	//
+}
 
 
 
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
 	// Reset
-	mDialog = {};
+	mDialogue = {};
+	mDriver->ChangeSequence( mFallbackDialogue );
 
 	file::VFS& vfs = *app::gVfs;
 
@@ -44,7 +66,8 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 	}
 
 	// Assign
-	mDialog = DefaultCreator<dialogue::DialogueSequence>::Create( rftl::move( tempSeq ) );
+	mDialogue = DefaultCreator<dialogue::DialogueSequence>::Create( rftl::move( tempSeq ) );
+	mDriver->ChangeSequence( mDialogue );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );
 	return true;
@@ -52,9 +75,27 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 
 
 
-WeakPtr<dialogue::DialogueSequence const> CinematicController::GetDialogue() const
+dialogue::DialogueSequence const& CinematicController::GetDialogue() const
 {
-	return mDialog;
+	if( mDialogue != nullptr )
+	{
+		return *mDialogue;
+	}
+	return *mFallbackDialogue;
+}
+
+
+
+novel::CinematicDriver const& CinematicController::GetDriver() const
+{
+	return *mDriver;
+}
+
+
+
+novel::CinematicDriver& CinematicController::GetMutableDriver()
+{
+	return *mDriver;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

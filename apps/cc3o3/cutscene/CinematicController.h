@@ -3,7 +3,8 @@
 
 #include "cc3o3/cutscene/CutsceneFwd.h"
 
-#include "GameDialogue/DialogueSequence.h"
+#include "GameDialogue/DialogueFwd.h"
+#include "GameNovel/NovelFwd.h"
 
 #include "PlatformFilesystem/VFSFwd.h"
 
@@ -23,13 +24,18 @@ public:
 
 	bool LoadDialogueSequence( file::VFSPath const& filePath );
 
-	WeakPtr<dialogue::DialogueSequence const> GetDialogue() const;
+	dialogue::DialogueSequence const& GetDialogue() const;
+
+	novel::CinematicDriver const& GetDriver() const;
+	novel::CinematicDriver& GetMutableDriver();
 
 
 	//
 	// Private data
 private:
-	UniquePtr<dialogue::DialogueSequence const> mDialog = {};
+	UniquePtr<dialogue::DialogueSequence const> const mFallbackDialogue = {};
+	UniquePtr<dialogue::DialogueSequence const> mDialogue = {};
+	UniquePtr<novel::CinematicDriver> const mDriver = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
