@@ -30,6 +30,7 @@
 		</ClCompile>
 	</ItemDefinitionGroup>
 	<ItemGroup>
+		<ClCompile Include="CinematicDriver.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
@@ -37,6 +38,8 @@
 		<ClCompile Include="ui\controllers\DialogueBox.cpp" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="CinematicDriver.h" />
+		<ClInclude Include="NovelFwd.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="ui\controllers\DialogueBox.h" />
@@ -55,6 +58,9 @@
 		</ProjectReference>
 		<ProjectReference Include="..\GameUI\GameUI.vcxproj">
 			<Project>{f5eed9e1-b289-43d5-b0ab-da54f7a88c0c}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Logging\Logging.vcxproj">
+			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>
 		<ProjectReference Include="..\RFType\RFType.vcxproj">
 			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>

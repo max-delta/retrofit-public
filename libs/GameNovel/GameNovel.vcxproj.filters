@@ -6,6 +6,7 @@
 		<ClCompile Include="ui\controllers\DialogueBox.cpp">
 			<Filter>ui\controllers</Filter>
 		</ClCompile>
+		<ClCompile Include="CinematicDriver.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -28,6 +29,8 @@
 		<ClInclude Include="ui\controllers\stdafx.h">
 			<Filter>ui\controllers</Filter>
 		</ClInclude>
+		<ClInclude Include="CinematicDriver.h" />
+		<ClInclude Include="NovelFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="ui">
