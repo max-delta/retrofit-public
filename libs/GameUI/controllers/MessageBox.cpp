@@ -141,6 +141,8 @@ void MessageBox::SetText( rftl::string_view text, bool rightToLeft )
 			Justification::MiddleLeft );
 
 	TextBox::SetText( {}, rightToLeft );
+
+	ReflowAllText();
 }
 
 
