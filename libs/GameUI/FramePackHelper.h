@@ -22,7 +22,7 @@ class GAMEUI_API FramePackHelper final
 public:
 	FramePackHelper() = default;
 
-	void SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight );
+	void SetFramePack( const gfx::ppu::FramePackRef& framePack, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight );
 	void SetSlowdown( gfx::TimeSlowdownRate rate );
 	void SetJustification( Justification::Value justification );
 	void SetHorizontalFlip( bool flipped );

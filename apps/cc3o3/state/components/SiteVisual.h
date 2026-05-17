@@ -3,6 +3,7 @@
 
 #include "cc3o3/state/Component.h"
 
+#include "PPU/FramePackRef.h"
 #include "PPU/PPUTimer.h"
 
 #include "core/macros.h"
@@ -21,9 +22,7 @@ class SiteVisual final : public state::NonBindingComponent
 public:
 	struct Anim
 	{
-		gfx::ppu::ManagedFramePackID mFramePackID = gfx::ppu::kInvalidManagedFramePackID;
-		gfx::TimeSlowdownRate mSlowdownRate = gfx::kTimeSlowdownRate_Normal;
-		uint8_t mMaxTimeIndex = 0;
+		gfx::ppu::FramePackRef mFramePack = {};
 	};
 
 

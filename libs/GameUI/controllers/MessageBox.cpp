@@ -89,13 +89,11 @@ void MessageBox::SetContinuationEvent( FocusEventType event )
 
 
 void MessageBox::SetTruncationContinuationIndicator(
-	gfx::ppu::ManagedFramePackID framePack,
-	uint8_t maxTimeIndex,
-	gfx::TimeSlowdownRate rate,
+	const gfx::ppu::FramePackRef& framePack,
 	gfx::ppu::CoordElem expectedWidth,
 	gfx::ppu::CoordElem expectedHeight )
 {
-	RF_ASSERT( framePack != gfx::ppu::kInvalidManagedFramePackID );
+	RF_ASSERT( framePack.mManagedID != gfx::ppu::kInvalidManagedFramePackID );
 	RF_ASSERT( expectedWidth > 0 );
 	RF_ASSERT( expectedHeight > 0 );
 	mTruncationFramePack = {
@@ -103,20 +101,17 @@ void MessageBox::SetTruncationContinuationIndicator(
 		.mExpectedDimensions = {
 			expectedWidth,
 			expectedHeight },
-		.mMaxTimeIndex = maxTimeIndex,
-		.mSlowdownRate = rate };
+	};
 }
 
 
 
 void MessageBox::SetCompletionContinuationIndicator(
-	gfx::ppu::ManagedFramePackID framePack,
-	uint8_t maxTimeIndex,
-	gfx::TimeSlowdownRate rate,
+	const gfx::ppu::FramePackRef& framePack,
 	gfx::ppu::CoordElem expectedWidth,
 	gfx::ppu::CoordElem expectedHeight )
 {
-	RF_ASSERT( framePack != gfx::ppu::kInvalidManagedFramePackID );
+	RF_ASSERT( framePack.mManagedID != gfx::ppu::kInvalidManagedFramePackID );
 	RF_ASSERT( expectedWidth > 0 );
 	RF_ASSERT( expectedHeight > 0 );
 	mCompletionFramePack = {
@@ -124,8 +119,7 @@ void MessageBox::SetCompletionContinuationIndicator(
 		.mExpectedDimensions = {
 			expectedWidth,
 			expectedHeight },
-		.mMaxTimeIndex = maxTimeIndex,
-		.mSlowdownRate = rate };
+	};
 }
 
 
@@ -254,7 +248,7 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	// If waiting for user input, we can display an indicator of such
 	auto const drawEndOfMessageIndicator = [this, &context, &container]( FramePackParams const& framePack ) -> void
 	{
-		if( framePack.mFramePack == gfx::ppu::kInvalidManagedFramePackID )
+		if( framePack.mFramePack.mManagedID == gfx::ppu::kInvalidManagedFramePackID )
 		{
 			// Indicator not enabled
 			return;
@@ -270,11 +264,8 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 
 		mFramePackHelper.SetFramePack(
 			framePack.mFramePack,
-			framePack.mMaxTimeIndex,
 			framePack.mExpectedDimensions.x,
 			framePack.mExpectedDimensions.y );
-		mFramePackHelper.SetSlowdown(
-			framePack.mSlowdownRate );
 
 		// Want to bump forward to get above the text labels
 		static constexpr gfx::ppu::DepthLayer kFudgeLayers = 4;

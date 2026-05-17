@@ -9,10 +9,9 @@
 namespace RF::ui {
 ///////////////////////////////////////////////////////////////////////////////
 
-void FramePackHelper::SetFramePack( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight )
+void FramePackHelper::SetFramePack( const gfx::ppu::FramePackRef& framePack, gfx::ppu::CoordElem expectedWidth, gfx::ppu::CoordElem expectedHeight )
 {
-	mObject.mFramePackID = framePack;
-	mObject.mTimer.mMaxTimeIndex = maxTimeIndex;
+	mObject.SetFromFramePackRef( framePack );
 	mExpectedDimensions = { expectedWidth, expectedHeight };
 }
 

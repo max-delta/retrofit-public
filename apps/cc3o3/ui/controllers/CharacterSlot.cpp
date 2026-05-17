@@ -62,8 +62,7 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 	state::comp::SiteVisual const& visual = *character.GetComponentInstanceT<state::comp::SiteVisual>();
 	state::comp::SiteVisual::Anim const& anim = visual.mIdleSouth;
 	mCharacterDisplay->SetFramePack(
-		anim.mFramePackID,
-		anim.mMaxTimeIndex,
+		anim.mFramePack,
 		0,
 		gfx::ppu::kTileSize / 2 );
 

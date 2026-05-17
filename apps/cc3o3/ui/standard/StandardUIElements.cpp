@@ -29,12 +29,16 @@ FramePackDef QueryFramePackDef(
 	gfx::ppu::FramePackBase const& fPack = *fPackPtr;
 
 	FramePackDef const retVal = {
-		.mResourceName = proto.mResourceName,
-		.mManagedID = fPackID,
-		.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary(),
-		.mPreferredSlowdownRate = fPack.mPreferredSlowdownRate,
-		.mExpectedWidth = proto.mExpectedWidth,
-		.mExpectedHeight = proto.mExpectedHeight,
+		{
+			.mResourceName = proto.mResourceName,
+			.mExpectedWidth = proto.mExpectedWidth,
+			.mExpectedHeight = proto.mExpectedHeight,
+		},
+		{
+			.mManagedID = fPackID,
+			.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary(),
+			.mPreferredSlowdownRate = fPack.mPreferredSlowdownRate,
+		},
 	};
 
 	return retVal;

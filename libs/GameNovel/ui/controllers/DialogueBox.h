@@ -49,15 +49,11 @@ public:
 	void SetContinuationEvent( FocusEventType event );
 
 	void SetTruncationContinuationIndicator(
-		gfx::ppu::ManagedFramePackID framePack,
-		uint8_t maxTimeIndex,
-		gfx::TimeSlowdownRate rate,
+		const gfx::ppu::FramePackRef& framePack,
 		gfx::ppu::CoordElem expectedWidth,
 		gfx::ppu::CoordElem expectedHeight );
 	void SetCompletionContinuationIndicator(
-		gfx::ppu::ManagedFramePackID framePack,
-		uint8_t maxTimeIndex,
-		gfx::TimeSlowdownRate rate,
+		const gfx::ppu::FramePackRef& framePack,
 		gfx::ppu::CoordElem expectedWidth,
 		gfx::ppu::CoordElem expectedHeight );
 
@@ -66,7 +62,7 @@ public:
 	void SetText( rftl::string_view text, bool rightToLeft );
 
 	// NOTE: Portrait is hidden and unset by default
-	void SetPortrait( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::TimeSlowdownRate rate );
+	void SetPortrait( const gfx::ppu::FramePackRef& framePack );
 	void ShowPortrait( UIContext& context, Justification::Value portraitSide, bool flipHorizontal );
 	void HidePortrait( UIContext& context );
 

@@ -84,17 +84,13 @@ void DialogueBox::SetContinuationEvent( FocusEventType event )
 
 
 void DialogueBox::SetTruncationContinuationIndicator(
-	gfx::ppu::ManagedFramePackID framePack,
-	uint8_t maxTimeIndex,
-	gfx::TimeSlowdownRate rate,
+	const gfx::ppu::FramePackRef& framePack,
 	gfx::ppu::CoordElem expectedWidth,
 	gfx::ppu::CoordElem expectedHeight )
 {
 	RF_ASSERT( mMessageController != nullptr );
 	mMessageController->SetTruncationContinuationIndicator(
 		framePack,
-		maxTimeIndex,
-		rate,
 		expectedWidth,
 		expectedHeight );
 }
@@ -102,17 +98,13 @@ void DialogueBox::SetTruncationContinuationIndicator(
 
 
 void DialogueBox::SetCompletionContinuationIndicator(
-	gfx::ppu::ManagedFramePackID framePack,
-	uint8_t maxTimeIndex,
-	gfx::TimeSlowdownRate rate,
+	const gfx::ppu::FramePackRef& framePack,
 	gfx::ppu::CoordElem expectedWidth,
 	gfx::ppu::CoordElem expectedHeight )
 {
 	RF_ASSERT( mMessageController != nullptr );
 	mMessageController->SetCompletionContinuationIndicator(
 		framePack,
-		maxTimeIndex,
-		rate,
 		expectedWidth,
 		expectedHeight );
 }
@@ -127,10 +119,9 @@ void DialogueBox::SetText( rftl::string_view text, bool rightToLeft )
 
 
 
-void DialogueBox::SetPortrait( gfx::ppu::ManagedFramePackID framePack, uint8_t maxTimeIndex, gfx::TimeSlowdownRate rate )
+void DialogueBox::SetPortrait( const gfx::ppu::FramePackRef& framePack )
 {
-	mPortraitController->SetFramePack( framePack, maxTimeIndex, mPortraitWidth, mPortraitWidth );
-	mPortraitController->SetSlowdown( rate );
+	mPortraitController->SetFramePack( framePack, mPortraitWidth, mPortraitWidth );
 }
 
 

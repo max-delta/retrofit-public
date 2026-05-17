@@ -4,6 +4,8 @@
 #include "GameUI/controllers/TextBox.h"
 #include "GameUI/FramePackHelper.h"
 
+#include "PPU/FramePackRef.h"
+
 
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
@@ -47,15 +49,11 @@ public:
 	void SetContinuationEvent( FocusEventType event );
 
 	void SetTruncationContinuationIndicator(
-		gfx::ppu::ManagedFramePackID framePack,
-		uint8_t maxTimeIndex,
-		gfx::TimeSlowdownRate rate,
+		const gfx::ppu::FramePackRef& framePack,
 		gfx::ppu::CoordElem expectedWidth,
 		gfx::ppu::CoordElem expectedHeight );
 	void SetCompletionContinuationIndicator(
-		gfx::ppu::ManagedFramePackID framePack,
-		uint8_t maxTimeIndex,
-		gfx::TimeSlowdownRate rate,
+		const gfx::ppu::FramePackRef& framePack,
 		gfx::ppu::CoordElem expectedWidth,
 		gfx::ppu::CoordElem expectedHeight );
 
@@ -97,10 +95,8 @@ private:
 
 	struct FramePackParams
 	{
-		gfx::ppu::ManagedFramePackID mFramePack = {};
+		gfx::ppu::FramePackRef mFramePack = {};
 		gfx::ppu::Vec2 mExpectedDimensions = {};
-		uint8_t mMaxTimeIndex = 0;
-		gfx::TimeSlowdownRate mSlowdownRate = {};
 	};
 	FramePackParams mTruncationFramePack;
 	FramePackParams mCompletionFramePack;

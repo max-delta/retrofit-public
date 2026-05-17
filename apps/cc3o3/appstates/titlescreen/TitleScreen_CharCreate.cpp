@@ -37,6 +37,7 @@
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
 #include "PPU/FramePackManager.h"
+#include "PPU/FramePackRef.h"
 #include "PPU/FramePack.h"
 
 #include "core/ptr/default_creator.h"
@@ -643,11 +644,9 @@ void TitleScreen_CharCreate::OnEnter( AppStateChangeContext& context )
 			gfx::ppu::ManagedFramePackID const previewFpackID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
 			gfx::ppu::FramePackBase const& fPack = *framePackMan.GetResourceFromManagedResourceID( previewFpackID );
 			preview->SetFramePack(
-				previewFpackID,
-				fPack.CalculateTimeIndexBoundary(),
+				gfx::ppu::FramePackRef::FromFramePack( previewFpackID, fPack ),
 				36,
 				40 );
-			preview->SetSlowdown( fPack.mPreferredSlowdownRate );
 
 			// Cut bottom in 2
 			ui::controller::ColumnSlicer::Ratios const rightColumnRatios = {

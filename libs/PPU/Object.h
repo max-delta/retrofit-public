@@ -16,6 +16,8 @@ class PPU_API Object
 public:
 	Object() = default;
 
+	void SetFromFramePackRef( const gfx::ppu::FramePackRef& framePack );
+
 	void Animate();
 	void ResetAnimation();
 

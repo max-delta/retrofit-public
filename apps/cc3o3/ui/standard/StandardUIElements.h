@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "PPU/PPUFwd.h"
+#include "PPU/FramePackRef.h"
 
 #include "rftl/string_view"
 
@@ -18,16 +18,9 @@ struct FramePackProto
 	gfx::ppu::CoordElem mExpectedHeight = 0;
 };
 
-struct FramePackDef
+struct FramePackDef : public FramePackProto
 {
-	// NOTE: Text not stored, expected to be used with string literals
-	rftl::string_view mResourceName = {};
-
-	gfx::ppu::ManagedFramePackID mManagedID = gfx::ppu::kInvalidManagedFramePackID;
-	uint8_t mMaxTimeIndex = 0;
-	gfx::TimeSlowdownRate mPreferredSlowdownRate = 0;
-	gfx::ppu::CoordElem mExpectedWidth = 0;
-	gfx::ppu::CoordElem mExpectedHeight = 0;
+	gfx::ppu::FramePackRef mRef = {};
 };
 
 // These require that the frame pack is already loaded, and are expected to be

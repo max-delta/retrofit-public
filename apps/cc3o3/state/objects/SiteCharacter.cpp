@@ -76,11 +76,12 @@ void MakeSiteCharacterFromDB(
 		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, wWalk );
 		auto setAnim = [&fPackMan]( comp::SiteVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
-			anim.mFramePackID = fPackMan.GetManagedResourceIDFromResourceName( source );
+			gfx::ppu::ManagedFramePackID const fPackID = fPackMan.GetManagedResourceIDFromResourceName( source );
 			gfx::ppu::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
-			anim.mSlowdownRate = fPack.mPreferredSlowdownRate;
-			anim.mMaxTimeIndex = fPack.CalculateTimeIndexBoundary();
-			RF_ASSERT_MSG( anim.mMaxTimeIndex == 1 || anim.mMaxTimeIndex == 4, "Unexpected format" );
+			anim.mFramePack = gfx::ppu::FramePackRef::FromFramePack( fPackID, fPack );
+			RF_ASSERT_MSG(
+				anim.mFramePack.mMaxTimeIndex == 1 || anim.mFramePack.mMaxTimeIndex == 4,
+				"Unexpected format" );
 		};
 		setAnim( visual->mIdleNorth, nIdle );
 		setAnim( visual->mIdleEast, eIdle );

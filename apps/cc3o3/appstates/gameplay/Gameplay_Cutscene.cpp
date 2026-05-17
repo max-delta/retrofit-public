@@ -178,9 +178,9 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		ui::FramePackDef const truncationFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextTruncation );
 		ui::FramePackDef const completionFPack = ui::QueryFramePackDef( ppu, ui::standard::kTextCompletion );
 		ui::FramePackDef const portraitFPack = ui::QueryFramePackDef( ppu, ui::mockup::kWiggle64 );
-		lowerDialogue->SetTruncationContinuationIndicator( truncationFPack.mManagedID, truncationFPack.mMaxTimeIndex, truncationFPack.mPreferredSlowdownRate, truncationFPack.mExpectedWidth, truncationFPack.mExpectedHeight );
-		lowerDialogue->SetCompletionContinuationIndicator( completionFPack.mManagedID, completionFPack.mMaxTimeIndex, completionFPack.mPreferredSlowdownRate, completionFPack.mExpectedWidth, completionFPack.mExpectedHeight );
-		lowerDialogue->SetPortrait( portraitFPack.mManagedID, portraitFPack.mMaxTimeIndex, portraitFPack.mPreferredSlowdownRate );
+		lowerDialogue->SetTruncationContinuationIndicator( truncationFPack.mRef, truncationFPack.mExpectedWidth, truncationFPack.mExpectedHeight );
+		lowerDialogue->SetCompletionContinuationIndicator( completionFPack.mRef, completionFPack.mExpectedWidth, completionFPack.mExpectedHeight );
+		lowerDialogue->SetPortrait( portraitFPack.mRef );
 		lowerDialogue->ShowPortrait( uiContext, ui::Justification::Left, false );
 		lowerDialogue->AddAsChildToFocusTreeNode( uiContext, focusMan.GetMutableFocusTree().GetMutableRootNode() );
 		internalState.mLowerDialogueBox = lowerDialogue;

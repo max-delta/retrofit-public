@@ -28,6 +28,7 @@
 
 #include "PPU/PPUController.h"
 #include "PPU/FramePackManager.h"
+#include "PPU/FramePackRef.h"
 #include "PPU/FramePack.h"
 
 #include "PlatformUtils_win32/Debugging.h" // For debug text
@@ -153,8 +154,7 @@ void TitleScreen_MainMenu::OnEnter( AppStateChangeContext& context )
 		gfx::ppu::ManagedFramePackID const logoFpackID = framePackMan.GetManagedResourceIDFromResourceName( "cc303_composite_192" );
 		gfx::ppu::FramePackBase const& logoFpack = *framePackMan.GetResourceFromManagedResourceID( logoFpackID );
 		logo->SetFramePack(
-			logoFpackID,
-			logoFpack.CalculateTimeIndexBoundary(),
+			gfx::ppu::FramePackRef::FromFramePack( logoFpackID, logoFpack ),
 			192,
 			96 );
 
