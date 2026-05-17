@@ -26,6 +26,7 @@
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="PPUConfig.h" />
 		<ClInclude Include="TextStorage.h" />
+		<ClInclude Include="FramePackRef.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -49,6 +50,7 @@
 		<ClCompile Include="project.cpp" />
 		<ClCompile Include="Viewport.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
+		<ClCompile Include="FramePackRef.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />

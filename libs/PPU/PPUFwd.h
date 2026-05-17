@@ -61,6 +61,7 @@ using FramePack_1024 = FramePack<37>;
 using FramePack_512 = FramePack<16>;
 using FramePack_256 = FramePack<6>;
 
+class FramePackRef;
 class FramePackManager;
 
 class PPUController;

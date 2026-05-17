@@ -33,6 +33,7 @@
 	<ItemGroup>
 		<ClInclude Include="Font.h" />
 		<ClInclude Include="FontManager.h" />
+		<ClInclude Include="FramePackRef.h" />
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="PPUConfig.h" />
 		<ClInclude Include="TextStorage.h" />
@@ -60,6 +61,7 @@
 	<ItemGroup>
 		<ClCompile Include="Font.cpp" />
 		<ClCompile Include="FontManager.cpp" />
+		<ClCompile Include="FramePackRef.cpp" />
 		<ClCompile Include="project.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="TileLayer.cpp" />
