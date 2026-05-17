@@ -10,6 +10,9 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A frame pack is essentially an animation, the extension of the concept of a
+//  sprite, under the idea that dynamic animations are common enough over
+//  static sprites to warrant making them a first-class concept
 class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor
 {
 	RF_NO_COPY( FramePackBase );
