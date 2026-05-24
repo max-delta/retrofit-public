@@ -298,6 +298,7 @@ static bool IngestSpeech( State& state, RawDialogueEntry const& rawEntry )
 	newEntry.mPrimary = MakeStorage( state.mSequence.mRequiredCharacters, character );
 	newEntry.mExpression = MakeStorage( state.mSequence.mRequiredExpressions, expression );
 	newEntry.mFallbackText = MakeStorage( state.mSequence.mSpeechStorage, text );
+	state.mSequence.mRequiredExpressionsPerCharacter[newEntry.mPrimary].emplace( newEntry.mExpression );
 	PushConditionsOntoEntry( state, state.mSequence, newEntry );
 
 	return true;

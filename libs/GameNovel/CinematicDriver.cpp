@@ -11,6 +11,8 @@
 
 #include "core/meta/BitwiseEnums.h"
 
+#include "rftl/extension/algorithms.h"
+
 
 namespace RF::novel {
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,13 +27,70 @@ void InvokeIfSet( CallableT& callable, ArgsT&&... args )
 	}
 }
 
+
+
+bool ValidateCritialSequenceParams( CinematicDriver::SequenceParams const& params )
+{
+	if( params.mSequence == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+	dialogue::DialogueSequence const& sequence = *params.mSequence;
+
+	// String views are required to be backed by the sequence, so that we can
+	//  be more confident that they probably aren't going to suddenly get
+	//  ripped out from underneath us
+	{
+		using FramePackByExpression = CinematicDriver::FramePackByExpression;
+		using FramePacksByCharacter = CinematicDriver::FramePacksByCharacter;
+		using Strings = dialogue::DialogueSequence::Strings;
+		Strings const& characterStorage = sequence.mRequiredCharacters;
+		Strings const& expressionStorage = sequence.mRequiredExpressions;
+
+		// For each character...
+		for( FramePacksByCharacter::value_type const& charEntry : params.mFramePacksByCharacter )
+		{
+			rftl::string_view const& character = charEntry.first;
+			FramePackByExpression const& expressions = charEntry.second;
+
+			if( rftl::contains( characterStorage, character ) == false )
+			{
+				RF_DBGFAIL_MSG( "Character reference not backed by sequence memory" );
+				return false;
+			}
+
+			// For each expresion...
+			for( FramePackByExpression::value_type const& exprEntry : expressions )
+			{
+				rftl::string_view const& expression = exprEntry.first;
+
+				if( rftl::contains( expressionStorage, expression ) == false )
+				{
+					RF_DBGFAIL_MSG( "Expression reference not backed by sequence memory" );
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-CinematicDriver::CinematicDriver( WeakPtr<dialogue::DialogueSequence const> sequence )
-	: mSequence( rftl::move( sequence ) )
+CinematicDriver::CinematicDriver( SequenceParams&& sequenceParams )
+	: mSequenceParams( rftl::move( sequenceParams ) )
 {
-	RF_ASSERT( mSequence != nullptr );
+	RF_ASSERT( mSequenceParams.mSequence != nullptr );
+
+	if( details::ValidateCritialSequenceParams( mSequenceParams ) == false )
+	{
+		RF_DBGFAIL();
+		mSequenceParams = {};
+	}
+
 	ResetProgression();
 }
 
@@ -39,9 +98,10 @@ CinematicDriver::CinematicDriver( WeakPtr<dialogue::DialogueSequence const> sequ
 
 CinematicState CinematicDriver::EvaluateCurrentState() const
 {
-	RF_ASSERT( mSequence != nullptr );
+	RF_ASSERT( mSequenceParams.mSequence != nullptr );
+	dialogue::DialogueSequence const& sequence = *mSequenceParams.mSequence;
 
-	size_t const numEntries = mSequence->mEntries.size();
+	size_t const numEntries = sequence.mEntries.size();
 	RF_ASSERT( mNextEntryToProcess <= numEntries );
 
 	// At end of sequence?
@@ -88,10 +148,17 @@ void CinematicDriver::TickCinematic()
 
 
 
-void CinematicDriver::ChangeSequence( WeakPtr<dialogue::DialogueSequence const> sequence )
+void CinematicDriver::ChangeSequence( SequenceParams&& sequenceParams )
 {
-	RF_ASSERT( sequence != nullptr );
-	mSequence = rftl::move( sequence );
+	RF_ASSERT( sequenceParams.mSequence != nullptr );
+	mSequenceParams = rftl::move( sequenceParams );
+
+	if( details::ValidateCritialSequenceParams( mSequenceParams ) == false )
+	{
+		RF_DBGFAIL();
+		mSequenceParams = {};
+	}
+
 	ResetProgression();
 }
 
@@ -235,8 +302,10 @@ bool CinematicDriver::SubTickCinematic_Advance_Speech( TickParams& params, dialo
 
 dialogue::DialogueEntry const& CinematicDriver::ConsumeNextEntry()
 {
-	RF_ASSERT( mSequence != nullptr );
-	dialogue::DialogueEntry const& retVal = mSequence->mEntries.at( mNextEntryToProcess );
+	RF_ASSERT( mSequenceParams.mSequence != nullptr );
+	dialogue::DialogueSequence const& sequence = *mSequenceParams.mSequence;
+
+	dialogue::DialogueEntry const& retVal = sequence.mEntries.at( mNextEntryToProcess );
 	mNextEntryToProcess++;
 	return retVal;
 }

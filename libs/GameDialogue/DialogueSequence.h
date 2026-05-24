@@ -6,6 +6,8 @@
 #include "core/macros.h"
 
 #include "rftl/deque"
+#include "rftl/unordered_map"
+#include "rftl/unordered_set"
 #include "rftl/string"
 
 
@@ -31,6 +33,11 @@ public:
 	//  actual text data in shared storage
 	using Strings = rftl::deque<rftl::string>;
 
+	// For quick checks of more complex relationships, that would otherwise
+	//  require a crawl across all the entries
+	using StringViewSet = rftl::unordered_set<rftl::string_view>;
+	using StringViewMultiMap = rftl::unordered_map<rftl::string_view, StringViewSet>;
+
 
 	//
 	// Public methods
@@ -42,6 +49,7 @@ public:
 	//
 	// Public data
 public:
+	// The layout this sequence applies to, used for compatability checks
 	rftl::string mLayout;
 
 	// All the data that will be needed to process the sequence fully, which
@@ -66,6 +74,10 @@ public:
 	Strings mRequiredExpressions;
 	Strings mSpeechStorage;
 
+	// Second-order requirements, with memory backed by the string storage
+	StringViewMultiMap mRequiredExpressionsPerCharacter;
+
+	// The actual entries
 	Entries mEntries;
 };
 

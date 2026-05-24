@@ -5,10 +5,14 @@
 
 #include "GameDialogue/DialogueFwd.h"
 
+#include "PPU/FramePackRef.h"
+
 #include "core/ptr/weak_ptr.h"
 #include "core/macros.h"
 
 #include "rftl/functional"
+#include "rftl/unordered_map"
+#include "rftl/string_view"
 
 
 namespace RF::novel::ui::controller {
@@ -30,6 +34,17 @@ public:
 	using OnEntrySig = void( dialogue::DialogueEntry const& entry );
 	using OnEntryFunc = rftl::function<OnEntrySig>;
 
+	// NOTE: These are string views, because they are expected to be backed by
+	//  the strings in the sequence, and thus do not need an extra allocation
+	using FramePackByExpression = rftl::unordered_map<rftl::string_view, gfx::ppu::FramePackRef>;
+	using FramePacksByCharacter = rftl::unordered_map<rftl::string_view, FramePackByExpression>;
+
+	struct SequenceParams
+	{
+		WeakPtr<dialogue::DialogueSequence const> mSequence;
+		FramePacksByCharacter mFramePacksByCharacter;
+	};
+
 	struct TickParams
 	{
 		OnEntryFunc mOnCommand = nullptr;
@@ -41,8 +56,7 @@ public:
 	// Public methods
 public:
 	CinematicDriver() = delete;
-	explicit CinematicDriver(
-		WeakPtr<dialogue::DialogueSequence const> sequence );
+	explicit CinematicDriver( SequenceParams&& sequenceParams );
 
 	// Examines the current state of the cinematic
 	CinematicState EvaluateCurrentState() const;
@@ -58,7 +72,7 @@ public:
 	// Change the sequence and cause a harsh reset, as it is impractical to try
 	//  and collision-resolve an incoming sequence with the state and
 	//  progression of the current sequence
-	void ChangeSequence( WeakPtr<dialogue::DialogueSequence const> sequence );
+	void ChangeSequence( SequenceParams&& sequenceParams );
 
 	// Essentially performs a complete rewind back to the head of the sequence
 	void ResetProgression();
@@ -87,7 +101,7 @@ private:
 	//
 	// Private data
 private:
-	WeakPtr<dialogue::DialogueSequence const> mSequence;
+	SequenceParams mSequenceParams;
 	size_t mNextEntryToProcess = 0;
 
 	WeakPtr<ui::controller::DialogueBox> mDialogueBox;

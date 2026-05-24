@@ -33,7 +33,8 @@ CinematicController::CinematicController()
 			  details::CreateFallbackSequence() ) )
 	, mDriver(
 		  DefaultCreator<novel::CinematicDriver>::Create(
-			  mFallbackDialogue ) )
+			  novel::CinematicDriver::SequenceParams{
+				  .mSequence = mFallbackDialogue } ) )
 {
 	//
 }
@@ -42,9 +43,11 @@ CinematicController::CinematicController()
 
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
+	using SequenceParams = novel::CinematicDriver::SequenceParams;
+
 	// Reset
 	mDialogue = {};
-	mDriver->ChangeSequence( mFallbackDialogue );
+	mDriver->ChangeSequence( SequenceParams{ .mSequence = mFallbackDialogue } );
 
 	file::VFS& vfs = *app::gVfs;
 
@@ -67,7 +70,7 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 
 	// Assign
 	mDialogue = DefaultCreator<dialogue::DialogueSequence>::Create( rftl::move( tempSeq ) );
-	mDriver->ChangeSequence( mDialogue );
+	mDriver->ChangeSequence( SequenceParams{ .mSequence = mDialogue } );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );
 	return true;
