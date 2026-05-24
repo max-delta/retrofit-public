@@ -2,14 +2,20 @@
 #include "algorithms.h"
 
 #include "rftl/algorithm"
-
+#include "rftl/concepts"
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Container>
-inline bool contains( Container const& container, typename Container::value_type const& value )
+template<typename Container, typename Comparable>
+bool contains( Container const& container, Comparable const& value )
 {
+	static_assert(
+		rftl::equality_comparable_with<
+			typename Container::value_type,
+			Comparable>,
+		"Types are not comparable" );
+
 	return find( container.begin(), container.end(), value ) != container.end();
 }
 

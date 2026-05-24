@@ -4,8 +4,8 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Container>
-bool contains( Container const& container, typename Container::value_type const& value );
+template<typename Container, typename Comparable>
+bool contains( Container const& container, Comparable const& value );
 template<typename T, size_t N>
 bool contains( T const ( &container )[N], T const& value );
 
