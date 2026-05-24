@@ -94,6 +94,7 @@
 		<None Include="cctype" />
 		<None Include="charconv" />
 		<None Include="cmath" />
+		<None Include="concepts" />
 		<None Include="condition_variable" />
 		<None Include="extension\algorithms.inl" />
 		<None Include="extension\byte_span.inl" />

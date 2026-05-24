@@ -195,5 +195,6 @@
 		<None Include="extension\unique_char_set.inl">
 			<Filter>extension</Filter>
 		</None>
+		<None Include="concepts" />
 	</ItemGroup>
 </Project>

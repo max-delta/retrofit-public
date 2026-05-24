@@ -18,6 +18,7 @@
 #define RFTL_CHARCONV RF_STL_LOC( <charconv> )
 #define RFTL_CHRONO RF_STL_LOC( <chrono> )
 #define RFTL_CMATH RF_STL_LOC( <cmath> )
+#define RFTL_CONCEPTS RF_STL_LOC( <concepts> )
 #define RFTL_CONDITION_VARIABLE RF_STL_LOC( <condition_variable> )
 #define RFTL_CSTDARG RF_STL_LOC( <cstdarg> )
 #define RFTL_CSTDDEF RF_STL_LOC( <cstddef> )
