@@ -76,7 +76,7 @@ TEST( ObjectManager, BasicAddRemoveComponent )
 	ObjectIdentifier const objID = newObj.GetIdentifier();
 	ObjectManager::InternalStateIteration latestState = manager.GetInternalStateIteration();
 
-	ComponentInstance newInstance = VoidCreator::Create( const_cast<void*>( compiler::kInvalidNonNullPointer ) );
+	ComponentInstance newInstance = VoidCreator::Create();
 	ComponentInstanceRef const newInstRef = newInstance;
 
 	MutableComponentRef const newComp = manager.AddComponent( objID, kCompType, rftl::move( newInstance ) );

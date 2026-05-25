@@ -6,8 +6,8 @@
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 
-// Esoteric creator, that only allocates/deletes the ref machinery, and
-//  preserves the pointer value
+// Esoteric creator, that only allocates/deletes the ref machinery, and holds
+//  an invalid but non-null void pointer value
 // NOTE: The valid uses for this should be limited beyond just test code
 class VoidCreator
 {
@@ -16,7 +16,7 @@ class VoidCreator
 	//
 	// Public methods
 public:
-	static CreationPayload<void> Create( void* ptr );
+	static CreationPayload<void> Create();
 
 
 	//

@@ -39,7 +39,7 @@ private:
 	{
 		RF_PTR_ASSERT_DELETABLE( T );
 
-		(void)userData;
+		RF_ASSERT( userData == nullptr );
 		if( target != nullptr )
 		{
 			// NOTE: Clang suppression here is for the check that is already
