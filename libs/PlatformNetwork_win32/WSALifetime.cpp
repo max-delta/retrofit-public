@@ -3,6 +3,8 @@
 #include "core_platform/inc/winsock2_inc.h"
 #pragma comment( lib, "Ws2_32.lib" )
 
+#include "core/rf_assert.h"
+
 
 namespace RF::platform::network {
 ///////////////////////////////////////////////////////////////////////////////

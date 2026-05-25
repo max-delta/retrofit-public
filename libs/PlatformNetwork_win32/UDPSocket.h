@@ -4,6 +4,8 @@
 #include "core_platform/shim/win_shim.h"
 #include "core_platform/IPAddressFwd.h"
 
+#include "core/macros.h"
+
 #include "rftl/atomic"
 #include "rftl/string"
 #include "rftl/vector"

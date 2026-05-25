@@ -3,6 +3,8 @@
 
 #include "core_platform/inc/windows_inc.h"
 
+#include "core/rf_assert.h"
+
 
 namespace RF::platform::debugging {
 ///////////////////////////////////////////////////////////////////////////////

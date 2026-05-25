@@ -1,6 +1,8 @@
 #pragma once
 #include "math_bytes.h"
 
+#include "core/macros.h"
+
 #include "rftl/cstdint"
 
 

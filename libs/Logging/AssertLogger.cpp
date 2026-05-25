@@ -4,7 +4,7 @@
 #include "core_logging/LogEvent.h"
 #include "core_math/Hash.h"
 
-#include "core/compiler.h"
+#include "core/rf_assert.h"
 
 #include "rftl/extension/variadic_print.h"
 #include "rftl/array"

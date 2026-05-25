@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/macros.h"
+#include "core/preprocessor.h"
 
 
 namespace RF::compiler {
