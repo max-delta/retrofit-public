@@ -77,6 +77,100 @@ bool ValidateCritialSequenceParams( CinematicDriver::SequenceParams const& param
 	return true;
 }
 
+
+
+bool ValidateMajorSequenceParams( CinematicDriver::SequenceParams const& params )
+{
+	if( params.mSequence == nullptr )
+	{
+		RF_DBGFAIL();
+		return false;
+	}
+	dialogue::DialogueSequence const& sequence = *params.mSequence;
+
+	bool hasOneOrMoreFailures = false;
+
+	// String views are required to be backed by the sequence, so that we can
+	//  be more confident that they probably aren't going to suddenly get
+	//  ripped out from underneath us
+	{
+		using FramePackByExpression = CinematicDriver::FramePackByExpression;
+		using FramePacksByCharacter = CinematicDriver::FramePacksByCharacter;
+		using ExpressionsByCharacter = dialogue::DialogueSequence::StringViewMultiMap;
+		using ExpressionSet = dialogue::DialogueSequence::StringViewSet;
+		FramePacksByCharacter const& providedCharacters = params.mFramePacksByCharacter;
+		ExpressionsByCharacter const& characterExpressions = sequence.mRequiredExpressionsPerCharacter;
+
+		// For each character needed...
+		for( ExpressionsByCharacter::value_type const& charEntry : characterExpressions )
+		{
+			rftl::string_view const& character = charEntry.first;
+			ExpressionSet const& expressions = charEntry.second;
+
+			FramePacksByCharacter::const_iterator const charIter = providedCharacters.find( character );
+			if( charIter == providedCharacters.end() )
+			{
+				RFLOG_WARNING( nullptr, RFCAT_GAMENOVEL,
+					"Could not find any framepacks for character '{}', expect failure",
+					character );
+				hasOneOrMoreFailures = true;
+				continue;
+			}
+			FramePackByExpression const& providedExpressions = charIter->second;
+
+			// For each expresion needed...
+			for( rftl::string_view const& expression : expressions )
+			{
+				FramePackByExpression::const_iterator const exprIter = providedExpressions.find( expression );
+				if( exprIter == providedExpressions.end() )
+				{
+					RFLOG_WARNING( nullptr, RFCAT_GAMENOVEL,
+						"Could not find a framepack for character '{}' with expression '{}', expect failure",
+						character,
+						expression );
+					hasOneOrMoreFailures = true;
+					continue;
+				}
+				gfx::ppu::FramePackRef const& providedFramePack = exprIter->second;
+
+				if( providedFramePack.mManagedID == gfx::ppu::kInvalidManagedFramePackID )
+				{
+					RFLOG_NOTIFY( nullptr, RFCAT_GAMENOVEL,
+						"Invalid framepack for character '{}' with expression '{}'",
+						character,
+						expression );
+					RF_DBGFAIL();
+					return false;
+				}
+			}
+		}
+	}
+
+	return hasOneOrMoreFailures == false;
+}
+
+
+
+void SanitizeSequenceParams( CinematicDriver::SequenceParams& params )
+{
+	// These are not allowed to fail
+	bool const passesCritical = details::ValidateCritialSequenceParams( params );
+	if( passesCritical == false )
+	{
+		RFLOG_NOTIFY( nullptr, RFCAT_GAMENOVEL,
+			"Cinematic has one or more critical faults that prevent any kind of sequencing" );
+
+		// Clear and run no further checks
+		params = {};
+		return;
+	}
+
+	// These are important but not blocking
+	bool const passesMajor = details::ValidateMajorSequenceParams( params );
+	RFLOG_TEST_AND_NOTIFY( passesMajor, nullptr, RFCAT_GAMENOVEL,
+		"Cinematic has one or more faults that may lead to failures during sequencing" );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -85,11 +179,7 @@ CinematicDriver::CinematicDriver( SequenceParams&& sequenceParams )
 {
 	RF_ASSERT( mSequenceParams.mSequence != nullptr );
 
-	if( details::ValidateCritialSequenceParams( mSequenceParams ) == false )
-	{
-		RF_DBGFAIL();
-		mSequenceParams = {};
-	}
+	details::SanitizeSequenceParams( mSequenceParams );
 
 	ResetProgression();
 }
@@ -153,11 +243,7 @@ void CinematicDriver::ChangeSequence( SequenceParams&& sequenceParams )
 	RF_ASSERT( sequenceParams.mSequence != nullptr );
 	mSequenceParams = rftl::move( sequenceParams );
 
-	if( details::ValidateCritialSequenceParams( mSequenceParams ) == false )
-	{
-		RF_DBGFAIL();
-		mSequenceParams = {};
-	}
+	details::SanitizeSequenceParams( mSequenceParams );
 
 	ResetProgression();
 }

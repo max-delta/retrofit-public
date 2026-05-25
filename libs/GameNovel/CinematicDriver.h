@@ -10,6 +10,7 @@
 #include "core/ptr/weak_ptr.h"
 #include "core/macros.h"
 
+#include "rftl/extension/string_hash.h"
 #include "rftl/functional"
 #include "rftl/unordered_map"
 #include "rftl/string_view"
@@ -34,10 +35,21 @@ public:
 	using OnEntrySig = void( dialogue::DialogueEntry const& entry );
 	using OnEntryFunc = rftl::function<OnEntrySig>;
 
-	// NOTE: These are string views, because they are expected to be backed by
-	//  the strings in the sequence, and thus do not need an extra allocation
-	using FramePackByExpression = rftl::unordered_map<rftl::string_view, gfx::ppu::FramePackRef>;
-	using FramePacksByCharacter = rftl::unordered_map<rftl::string_view, FramePackByExpression>;
+	// NOTE: These are pointer-hashed string views, because they are expected
+	//  to be backed by the strings in the sequence, and thus do not need an
+	//  extra allocation
+	using FramePackByExpression =
+		rftl::unordered_map<
+			rftl::string_view,
+			gfx::ppu::FramePackRef,
+			rftl::string_ptr_only_hash_equals,
+			rftl::string_ptr_only_hash_equals>;
+	using FramePacksByCharacter =
+		rftl::unordered_map<
+			rftl::string_view,
+			FramePackByExpression,
+			rftl::string_ptr_only_hash_equals,
+			rftl::string_ptr_only_hash_equals>;
 
 	struct SequenceParams
 	{
