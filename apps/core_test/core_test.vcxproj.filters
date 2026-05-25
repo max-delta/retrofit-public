@@ -73,6 +73,7 @@
 		<ClCompile Include="allocate_linearstretchallocator.cpp" />
 		<ClCompile Include="rftl_stretchvector.cpp" />
 		<ClCompile Include="rftl_uniquecharset.cpp" />
+		<ClCompile Include="rftl_string_hash.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
