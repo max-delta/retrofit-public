@@ -63,15 +63,19 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 	file::FileBuffer const buffer{ *handle, false };
 
 	// Load
-	dialogue::DialogueSequence tempSeq = dialogue::DialogueLoader::Parse( buffer.GetChars() );
-	if( tempSeq.mEntries.empty() )
+	UniquePtr<dialogue::DialogueSequence const> loadedSeq;
 	{
-		RFLOG_NOTIFY( filePath, RFCAT_CC3O3, "Failed to load dialogue file, or it has no valid entries" );
-		return false;
+		dialogue::DialogueSequence tempSeq = dialogue::DialogueLoader::Parse( buffer.GetChars() );
+		if( tempSeq.mEntries.empty() )
+		{
+			RFLOG_NOTIFY( filePath, RFCAT_CC3O3, "Failed to load dialogue file, or it has no valid entries" );
+			return false;
+		}
+		loadedSeq = DefaultCreator<dialogue::DialogueSequence>::Create( rftl::move( tempSeq ) );
 	}
 
 	// Assign
-	mDialogue = DefaultCreator<dialogue::DialogueSequence>::Create( rftl::move( tempSeq ) );
+	mDialogue = rftl::move( loadedSeq );
 	mDriver->ChangeSequence(
 		novel::CinematicDriver::SequenceParams{
 			.mSequence = mDialogue,
