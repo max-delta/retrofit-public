@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "CinematicController.h"
 
+// HACK: Used just for temp fallback frame packs
+RF_TODO_ANNOTATION( "Remove this fallback" );
+#include "cc3o3/ui/standard/StandardUIElements.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameDialogue/DialogueLoader.h"
@@ -24,6 +28,39 @@ static dialogue::DialogueSequence CreateFallbackSequence()
 	return retVal;
 }
 
+
+
+static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequiredCharacters(
+	dialogue::DialogueSequence::StringViewMultiMap const& requiredExpressionsPerCharacter,
+	int TODO )
+{
+	using ExpressionsPerCharacter = dialogue::DialogueSequence::StringViewMultiMap;
+	using Expressions = dialogue::DialogueSequence::StringViewSet;
+
+	novel::CinematicDriver::FramePacksByCharacter retVal = {};
+
+	RF_TODO_ANNOTATION( "Use actual characters" );
+	( (void)TODO );
+
+	// For each required character...
+	for( ExpressionsPerCharacter::value_type const& requiredExpressionsEntry : requiredExpressionsPerCharacter )
+	{
+		rftl::string_view const& character = requiredExpressionsEntry.first;
+		Expressions const& expressions = requiredExpressionsEntry.second;
+
+		// For each required expression...
+		for( rftl::string_view const& expression : expressions )
+		{
+			// HACK: Set a fake entry
+			gfx::ppu::PPUController const& ppu = *app::gGraphics;
+			ui::FramePackDef const portraitFPack = ui::QueryFramePackDef( ppu, ui::mockup::kWiggle64 );
+			retVal[character][expression] = portraitFPack.mRef;
+		}
+	}
+
+	return retVal;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +75,26 @@ CinematicController::CinematicController()
 				  .mFramePacksByCharacter = {} } ) )
 {
 	//
+}
+
+
+
+bool CinematicController::SetCharacterData( file::VFSPath const& characterRoot )
+{
+	RF_TODO_ANNOTATION( "Load characters from folder" );
+	( (void)characterRoot );
+
+	return true;
+}
+
+
+
+bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
+{
+	RF_TODO_ANNOTATION( "Load scenes from folder" );
+	( (void)sceneRoot );
+
+	return true;
 }
 
 
@@ -79,7 +136,10 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 	mDriver->ChangeSequence(
 		novel::CinematicDriver::SequenceParams{
 			.mSequence = mDialogue,
-			.mFramePacksByCharacter = {} } );
+			.mFramePacksByCharacter =
+				details::AssignFramePacksForRequiredCharacters(
+					mDialogue->mRequiredExpressionsPerCharacter,
+					-5 ) } );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );
 	return true;

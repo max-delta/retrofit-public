@@ -22,6 +22,9 @@ class CinematicController
 public:
 	CinematicController();
 
+	bool SetCharacterData( file::VFSPath const& characterRoot );
+	bool SetSceneData( file::VFSPath const& sceneRoot );
+
 	bool LoadDialogueSequence( file::VFSPath const& filePath );
 
 	dialogue::DialogueSequence const& GetDialogue() const;
