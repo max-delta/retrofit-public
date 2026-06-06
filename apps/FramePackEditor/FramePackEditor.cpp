@@ -297,6 +297,9 @@ void FramePackEditor::Render()
 	gfx::ppu::CoordElem const previewOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
 	gfx::ppu::CoordElem const editingOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
 
+	gfx::ppu::Coord const warningStart( previewOriginX - gfx::ppu::kTileSize / 2, horizontalPlaneY - gfx::ppu::kTileSize / 2 );
+	rftl::string warningText;
+
 	uint8_t animationLength = 0;
 	gfx::TimeSlowdownRate preferredSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	uint8_t numTimeSlots = 0;
@@ -322,7 +325,11 @@ void FramePackEditor::Render()
 	//
 	// FramePacks
 	gfx::ManagedTextureID editingTextureID = gfx::kInvalidDeviceTextureID;
-	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
+	{
+		warningText = "No valid frame pack";
+	}
+	else
 	{
 		gfx::ppu::FramePackBase const* const fpack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 		RF_ASSERT( fpack != nullptr );
@@ -551,6 +558,21 @@ void FramePackEditor::Render()
 			"<C>:Collider mode";
 		ppu->DrawText( footerLine5Start, fontSize, mDefaultFontID, k_Footer5 );
 		ppu->DrawText( footerLine6Start, fontSize, mDefaultFontID, k_Footer6 );
+	}
+
+	//
+	// Warnings
+	if( warningText.empty() == false )
+	{
+		ppu->DrawText(
+			warningStart,
+			gfx::ppu::kNearestLayer,
+			fontSize,
+			mDefaultFontID,
+			true,
+			math::Color3u8::kYellow,
+			"{}",
+			warningText );
 	}
 }
 
