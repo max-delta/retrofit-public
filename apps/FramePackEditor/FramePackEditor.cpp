@@ -27,6 +27,15 @@
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+static void OnFramePackOperationToInvalidFramePack()
+{
+	RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "No framepack set" );
+}
+
+}
+///////////////////////////////////////////////////////////////////////////////
 
 FramePackEditor::FramePackEditor( WeakPtr<file::VFS> const& vfs )
 	: mVfs( vfs )
@@ -568,6 +577,7 @@ void FramePackEditor::Command_ChangeSustainCount( bool increase )
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -596,6 +606,7 @@ void FramePackEditor::Command_BatchChangeSustainCount( bool increase )
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -640,6 +651,7 @@ void FramePackEditor::Command_ReloadFramePack()
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -656,6 +668,7 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -733,6 +746,7 @@ void FramePackEditor::Command_Meta_DeleteFrame()
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -753,6 +767,7 @@ void FramePackEditor::Command_Texture_InsertBefore()
 {
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -772,6 +787,7 @@ void FramePackEditor::Command_Texture_InsertAfter()
 {
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -796,6 +812,7 @@ void FramePackEditor::Command_Texture_ChangeOffset( gfx::ppu::CoordElem x, gfx::
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
@@ -819,6 +836,7 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::CoordElem x, 
 
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
+		details::OnFramePackOperationToInvalidFramePack();
 		return;
 	}
 
