@@ -757,7 +757,13 @@ void FramePackEditor::Command_Texture_InsertBefore()
 	}
 
 	InsertTimeSlotBefore( mEditingFrame );
-	ChangeTexture( mEditingFrame );
+	bool const success = ChangeTexture( mEditingFrame );
+	if( success == false )
+	{
+		// Something failed, undo the insert
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "Failed to insert texture, undoing insert" );
+		RemoveTimeSlotAt( mEditingFrame );
+	}
 }
 
 
@@ -771,7 +777,15 @@ void FramePackEditor::Command_Texture_InsertAfter()
 
 	InsertTimeSlotBefore( mEditingFrame + 1u );
 	mEditingFrame = mEditingFrame + 1u;
-	ChangeTexture( mEditingFrame );
+	bool const success = ChangeTexture( mEditingFrame );
+	if( success == false )
+	{
+		// Something failed, undo the insert
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "Failed to insert texture, undoing insert" );
+		RemoveTimeSlotAt( mEditingFrame );
+		RF_ASSERT( mEditingFrame > 0u );
+		mEditingFrame = mEditingFrame - 1u;
+	}
 }
 
 
@@ -972,7 +986,7 @@ void FramePackEditor::RemoveTimeSlotAt( size_t slotIndex )
 
 
 
-void FramePackEditor::ChangeTexture( size_t slotIndex )
+bool FramePackEditor::ChangeTexture( size_t slotIndex )
 {
 	gfx::ppu::PPUController* const ppu = app::gGraphics;
 
@@ -989,7 +1003,8 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	if( filepath.empty() )
 	{
 		// User probably cancelled
-		return;
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "No file selected for texture" );
+		return false;
 	}
 
 	// Need to map user choice into VFS
@@ -998,11 +1013,13 @@ void FramePackEditor::ChangeTexture( size_t slotIndex )
 	if( mappedPath.Empty() )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEPACKEDITOR, "Unable to map to VFS" );
-		return;
+		return false;
 	}
 
 	gfx::TextureManager* const texMan = ppu->DebugGetTextureManager();
 	textureID = texMan->LoadNewResourceGetID( mappedPath );
+
+	return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

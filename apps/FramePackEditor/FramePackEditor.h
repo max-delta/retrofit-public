@@ -67,7 +67,7 @@ private:
 	void SaveFramePack( rftl::string const& rawPath );
 	void InsertTimeSlotBefore( size_t slotIndex );
 	void RemoveTimeSlotAt( size_t slotIndex );
-	void ChangeTexture( size_t slotIndex );
+	[[nodiscard]] bool ChangeTexture( size_t slotIndex );
 
 
 	//
