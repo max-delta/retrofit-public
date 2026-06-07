@@ -66,9 +66,9 @@ void FramePackEditor::Process()
 {
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
-	typedef input::DigitalInputComponent::LogicalEvent LogicalEvent;
-	typedef rftl::static_vector<LogicalEvent, 1> LogicEvents;
-	typedef rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents> LogicEventParser;
+	using LogicalEvent = input::DigitalInputComponent::LogicalEvent;
+	using LogicEvents = rftl::static_vector<LogicalEvent, 1>;
+	using LogicEventParser = rftl::virtual_back_inserter_iterator<LogicalEvent, LogicEvents>;
 	LogicEvents logicEvents;
 	LogicEventParser logicEventParser( logicEvents );
 	digital.GetLogicalEventStream( logicEventParser, logicEvents.max_size() );
@@ -250,22 +250,22 @@ void FramePackEditor::Process()
 		case MasterMode::Colliders:
 		{
 			// TODO
-			//constexpr char k_Footer1Colliders[] =
+			//footerText.at( 0 ) =
 			//	"[BOX]  "
 			//	"<Arrows>:Move box  "
 			//	"<CTRL+Arrows>:Resize box  "
 			//	"<1-8>:Change layer";
-			//constexpr char k_Footer2Colliders[] =
+			//footerText.at( 1 ) =
 			//	"[SET]  "
 			//	"<U>:New set  "
 			//	"<O>:Ref old set  "
 			//	"<K>:Clone current set  "
 			//	"<L>:Ref latest clone";
-			//constexpr char k_Footer3Colliders[] =
+			//footerText.at( 2 ) =
 			//	"[COLLIDERS]  "
 			//	"<SHIFT+Arrows>:Change offset  "
 			//	"<PGUP/PGDN>:Select box";
-			//constexpr char k_Footer4Colliders[] =
+			//footerText.at( 3 ) =
 			//	"[COLLIDERS]  "
 			//	"<N>:New box  "
 			//	"<BACK>:Delete box  "
@@ -287,22 +287,22 @@ void FramePackEditor::Render()
 	gfx::TextureManager const& texMan = *ppu->GetTextureManager();
 	input::WndProcDigitalInputComponent const& digital = app::gWndProcInput->mDigital;
 
-	constexpr uint8_t fontSize = 8;
-	gfx::ppu::Coord const textOffset( 0, fontSize );
+	static constexpr uint8_t kFontSize = 8;
+	static constexpr gfx::ppu::Coord const kTextOffset( 0, kFontSize );
 
-	gfx::ppu::Coord const headerOffset( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize / 16 );
-	gfx::ppu::Coord const previewHeaderStart = gfx::ppu::Coord( 0, 0 ) + headerOffset;
+	static constexpr gfx::ppu::Coord const kHeaderOffset( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize / 16 );
+	static constexpr gfx::ppu::Coord const kPreviewHeaderStart = gfx::ppu::Coord( 0, 0 ) + kHeaderOffset;
 
-	constexpr size_t k_NumFooterLines = 6;
-	gfx::ppu::Coord const footerStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - textOffset.y * math::integer_cast<gfx::ppu::CoordElem>( k_NumFooterLines ) );
+	static constexpr size_t kNumFooterLines = 6;
+	static constexpr gfx::ppu::Coord const kFooterStart( gfx::ppu::kTileSize / 16, gfx::ppu::kTileSize * gfx::ppu::kDesiredDiagonalTiles - kTextOffset.y * static_cast<gfx::ppu::CoordElem>( kNumFooterLines ) );
 
-	gfx::ppu::CoordElem const horizontalPlaneY = math::SnapNearest<gfx::ppu::CoordElem>( footerStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
+	gfx::ppu::CoordElem const horizontalPlaneY = math::SnapNearest<gfx::ppu::CoordElem>( kFooterStart.y, gfx::ppu::kTileSize ) - gfx::ppu::kTileSize;
 	gfx::ppu::CoordElem const verticalPlaneX = math::SnapNearest<gfx::ppu::CoordElem>( ppu->GetWidth() / 2, gfx::ppu::kTileSize );
 	gfx::ppu::CoordElem const previewOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX / 2, gfx::ppu::kTileSize );
 	gfx::ppu::CoordElem const editingOriginX = math::SnapNearest<gfx::ppu::CoordElem>( verticalPlaneX + verticalPlaneX / 2, gfx::ppu::kTileSize );
 
 	gfx::ppu::Coord const warningStart( previewOriginX - gfx::ppu::kTileSize / 2, horizontalPlaneY - gfx::ppu::kTileSize / 2 );
-	rftl::string warningText;
+	rftl::string_view warningText;
 
 	uint8_t animationLength = 0;
 	gfx::TimeSlowdownRate preferredSlowdownRate = gfx::kTimeSlowdownRate_Normal;
@@ -322,8 +322,8 @@ void FramePackEditor::Render()
 	// Origin point
 	{
 		gfx::ppu::Coord const editingOriginPoint( editingOriginX, horizontalPlaneY );
-		constexpr gfx::ppu::CoordElem pointSize = gfx::ppu::kTileSize / 8;
-		ppu->DebugDrawLine( editingOriginPoint - pointSize, editingOriginPoint + pointSize, 1 );
+		static constexpr gfx::ppu::CoordElem kPointSize = gfx::ppu::kTileSize / 8;
+		ppu->DebugDrawLine( editingOriginPoint - kPointSize, editingOriginPoint + kPointSize, 1 );
 	}
 
 	//
@@ -389,78 +389,78 @@ void FramePackEditor::Render()
 	//
 	// Preview header
 	{
-		ppu->DrawText( previewHeaderStart, fontSize, mDefaultFontID, "Preview" );
+		ppu->DrawText( kPreviewHeaderStart, kFontSize, mDefaultFontID, "Preview" );
 		gfx::TimeSlowdownRate const previewFPS = 60u / mPreviewSlowdownRate;
-		ppu->DrawText( previewHeaderStart + textOffset, fontSize, mDefaultFontID, "Preview FPS: {} <-/+> to change", previewFPS );
+		ppu->DrawText( kPreviewHeaderStart + kTextOffset, kFontSize, mDefaultFontID, "Preview FPS: {} <-/+> to change", previewFPS );
 		gfx::TimeSlowdownRate const dataFPS = 60u / preferredSlowdownRate;
 		if( mMasterMode == MasterMode::Meta )
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: {} <Up/Dn> to change", dataFPS );
+			ppu->DrawText( kPreviewHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Data FPS: {} <Up/Dn> to change", dataFPS );
 		}
 		else
 		{
-			ppu->DrawText( previewHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Data FPS: {}", dataFPS );
+			ppu->DrawText( kPreviewHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Data FPS: {}", dataFPS );
 		}
 		uint16_t const effectivePreviewFrames = math::integer_cast<uint16_t>( animationLength * mPreviewSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Preview frames: {}", effectivePreviewFrames );
+		ppu->DrawText( kPreviewHeaderStart + kTextOffset * 3, kFontSize, mDefaultFontID, "Preview frames: {}", effectivePreviewFrames );
 		uint16_t const effectiveDataFrames = math::integer_cast<uint16_t>( animationLength * preferredSlowdownRate );
-		ppu->DrawText( previewHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Data frames: {}", effectiveDataFrames );
+		ppu->DrawText( kPreviewHeaderStart + kTextOffset * 4, kFontSize, mDefaultFontID, "Data frames: {}", effectiveDataFrames );
 	}
 
 	//
 	// Editing header
 	{
-		gfx::ppu::Coord const editingHeaderStart = gfx::ppu::Coord( verticalPlaneX, 0 ) + headerOffset;
-		ppu->DrawText( editingHeaderStart, fontSize, mDefaultFontID, "Editing" );
-		ppu->DrawText( editingHeaderStart + textOffset, fontSize, mDefaultFontID, "Frame: {} / [0-{}] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
+		gfx::ppu::Coord const editingHeaderStart = gfx::ppu::Coord( verticalPlaneX, 0 ) + kHeaderOffset;
+		ppu->DrawText( editingHeaderStart, kFontSize, mDefaultFontID, "Editing" );
+		ppu->DrawText( editingHeaderStart + kTextOffset, kFontSize, mDefaultFontID, "Frame: {} / [0-{}] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: {} <Ctrl+/,*> to batch", slotSustain );
+			ppu->DrawText( editingHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Sustain: {} <Ctrl+/,*> to batch", slotSustain );
 		}
 		else
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 2, fontSize, mDefaultFontID, "Sustain: {} </,*> to change", slotSustain );
+			ppu->DrawText( editingHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Sustain: {} </,*> to change", slotSustain );
 		}
 		if( editingTextureID == gfx::kInvalidDeviceTextureID )
 		{
-			ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: UNSET" );
+			ppu->DrawText( editingHeaderStart + kTextOffset * 3, kFontSize, mDefaultFontID, "Texture: UNSET" );
 		}
 		else
 		{
 			file::VFSPath const texPath = texMan.SearchForFilenameByResourceID( editingTextureID );
 			if( texPath.Empty() )
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: INVALID" );
+				ppu->DrawText( editingHeaderStart + kTextOffset * 3, kFontSize, mDefaultFontID, "Texture: INVALID" );
 			}
 			else
 			{
 				file::VFSPath::Element const lastElement = texPath.GetElement( texPath.NumElements() - 1 );
-				ppu->DrawText( editingHeaderStart + textOffset * 3, fontSize, mDefaultFontID, "Texture: {}", lastElement );
+				ppu->DrawText( editingHeaderStart + kTextOffset * 3, kFontSize, mDefaultFontID, "Texture: {}", lastElement );
 			}
 		}
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {}", texOrigin.x, texOrigin.y );
+				ppu->DrawText( editingHeaderStart + kTextOffset * 4, kFontSize, mDefaultFontID, "Origin: {}, {}", texOrigin.x, texOrigin.y );
 				break;
 			}
 			case MasterMode::Texture:
 			{
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {} <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + kTextOffset * 4, kFontSize, mDefaultFontID, "Origin: {}, {} <Ctrl+Arrows> to batch", texOrigin.x, texOrigin.y );
 				}
 				else
 				{
-					ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "Origin: {}, {} <Arrows> to change", texOrigin.x, texOrigin.y );
+					ppu->DrawText( editingHeaderStart + kTextOffset * 4, kFontSize, mDefaultFontID, "Origin: {}, {} <Arrows> to change", texOrigin.x, texOrigin.y );
 				}
-				ppu->DrawText( editingHeaderStart + textOffset * 5, fontSize, mDefaultFontID, "Size: {}, {}", texSize.x, texSize.y );
+				ppu->DrawText( editingHeaderStart + kTextOffset * 5, kFontSize, mDefaultFontID, "Size: {}, {}", texSize.x, texSize.y );
 				break;
 			}
 			case MasterMode::Colliders:
 			{
-				ppu->DrawText( editingHeaderStart + textOffset * 4, fontSize, mDefaultFontID, "TODO" );
+				ppu->DrawText( editingHeaderStart + kTextOffset * 4, kFontSize, mDefaultFontID, "TODO" );
 				break;
 			}
 			default:
@@ -472,97 +472,91 @@ void FramePackEditor::Render()
 	//
 	// Footer
 	{
-		gfx::ppu::Coord const footerLine1Start( footerStart );
-		gfx::ppu::Coord const footerLine2Start( footerLine1Start + textOffset );
-		gfx::ppu::Coord const footerLine3Start( footerLine2Start + textOffset );
-		gfx::ppu::Coord const footerLine4Start( footerLine3Start + textOffset );
-		gfx::ppu::Coord const footerLine5Start( footerLine4Start + textOffset );
-		gfx::ppu::Coord const footerLine6Start( footerLine5Start + textOffset );
+		rftl::array<rftl::string_view, kNumFooterLines> footerText = {};
 		switch( mMasterMode )
 		{
 			case MasterMode::Meta:
 			{
-				constexpr rftl::string_view k_Footer3Meta =
+				footerText.at( 2 ) =
 					"[META]  "
 					"<U>:New FPack  "
 					"<O>:Open FPack "
 					"<Ctrl+S>:Save FPack ";
-				constexpr rftl::string_view k_Footer4Meta =
+				footerText.at( 3 ) =
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
 					"<DEL>:Delete frame";
-				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Meta );
-				ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Meta );
 				break;
 			}
 			case MasterMode::Texture:
 			{
-				constexpr rftl::string_view k_Footer3Texture =
+				footerText.at( 2 ) =
 					"[TEXTURE]  "
 					"<B>:Insert before  "
 					"<J>:Change current  "
 					"<M>:Insert after";
-				constexpr rftl::string_view k_Footer4Texture =
-					"[TEXTURE]  "
-					"<Arrows>:Change offset  "
-					"<DEL>:Delete frame  ";
-				constexpr rftl::string_view k_FooterAlt4Texture =
-					"[TEXTURE]  "
-					"<Ctrl+Arrows>:Batch offset  "
-					"<DEL>:Delete frame  ";
-				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Texture );
 				if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 				{
-					ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_FooterAlt4Texture );
+					footerText.at( 3 ) =
+						"[TEXTURE]  "
+						"<Arrows>:Change offset  "
+						"<DEL>:Delete frame  ";
 				}
 				else
 				{
-					ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Texture );
+					footerText.at( 3 ) =
+						"[TEXTURE]  "
+						"<Ctrl+Arrows>:Batch offset  "
+						"<DEL>:Delete frame  ";
 				}
 				break;
 			}
 			case MasterMode::Colliders:
 			{
-				constexpr rftl::string_view k_Footer1Colliders =
+				footerText.at( 0 ) =
 					"[BOX]  "
 					"<Arrows>:Move box  "
 					"<CTRL+Arrows>:Resize box  "
 					"<1-8>:Change layer";
-				constexpr rftl::string_view k_Footer2Colliders =
+				footerText.at( 1 ) =
 					"[SET]  "
 					"<U>:New set  "
 					"<O>:Ref old set  "
 					"<K>:Clone current set  "
 					"<L>:Ref latest clone";
-				constexpr rftl::string_view k_Footer3Colliders =
+				footerText.at( 2 ) =
 					"[COLLIDERS]  "
 					"<SHIFT+Arrows>:Change offset  "
 					"<PGUP/PGDN>:Select box";
-				constexpr rftl::string_view k_Footer4Colliders =
+				footerText.at( 3 ) =
 					"[COLLIDERS]  "
 					"<N>:New box  "
 					"<BACK>:Delete box  "
 					"<DEL>:Delete frame";
-				ppu->DrawText( footerLine1Start, fontSize, mDefaultFontID, k_Footer1Colliders );
-				ppu->DrawText( footerLine2Start, fontSize, mDefaultFontID, k_Footer2Colliders );
-				ppu->DrawText( footerLine3Start, fontSize, mDefaultFontID, k_Footer3Colliders );
-				ppu->DrawText( footerLine4Start, fontSize, mDefaultFontID, k_Footer4Colliders );
 				break;
 			}
 			default:
 				RF_DBGFAIL();
 				break;
 		}
-		constexpr rftl::string_view k_Footer5 =
+		footerText.at( 4 ) =
 			"<R>:Reload fpack  "
 			"<A/D>:Change frame  "
 			"<SPACE>:Snap to preview";
-		constexpr rftl::string_view k_Footer6 =
+		footerText.at( 5 ) =
 			"<Z>:Meta mode  "
 			"<X>:Texture mode  "
 			"<C>:Collider mode";
-		ppu->DrawText( footerLine5Start, fontSize, mDefaultFontID, k_Footer5 );
-		ppu->DrawText( footerLine6Start, fontSize, mDefaultFontID, k_Footer6 );
+		for( size_t i = 0; i < kNumFooterLines; i++ )
+		{
+			gfx::ppu::Coord const pos =
+				kFooterStart + kTextOffset * math::integer_cast<gfx::ppu::CoordElem>( i );
+			rftl::string_view const text = footerText.at( i );
+			if( text.empty() == false )
+			{
+				ppu->DrawText( pos, kFontSize, mDefaultFontID, "{}", text );
+			}
+		}
 	}
 
 	//
@@ -572,7 +566,7 @@ void FramePackEditor::Render()
 		ppu->DrawText(
 			warningStart,
 			gfx::ppu::kNearestLayer,
-			fontSize,
+			kFontSize,
 			mDefaultFontID,
 			true,
 			math::Color3u8::kYellow,
