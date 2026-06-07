@@ -189,6 +189,10 @@ void FramePackEditor::Process()
 			{
 				Command_Texture_InsertBefore();
 			}
+			if( digital.WasActivatedLogical( 'J' ) )
+			{
+				Command_Texture_ChangeTexture();
+			}
 			if( digital.WasActivatedLogical( 'M' ) )
 			{
 				Command_Texture_InsertAfter();
@@ -496,6 +500,7 @@ void FramePackEditor::Render()
 				constexpr rftl::string_view k_Footer3Texture =
 					"[TEXTURE]  "
 					"<B>:Insert before  "
+					"<J>:Change current  "
 					"<M>:Insert after";
 				constexpr rftl::string_view k_Footer4Texture =
 					"[TEXTURE]  "
@@ -823,6 +828,24 @@ void FramePackEditor::Command_Texture_InsertAfter()
 		RemoveTimeSlotAt( mEditingFrame );
 		RF_ASSERT( mEditingFrame > 0u );
 		mEditingFrame = mEditingFrame - 1u;
+	}
+}
+
+
+
+void FramePackEditor::Command_Texture_ChangeTexture()
+{
+	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
+	{
+		details::OnFramePackOperationToInvalidFramePack();
+		return;
+	}
+
+	bool const success = ChangeTexture( mEditingFrame );
+	if( success == false )
+	{
+		// Something failed, hopefully it's left unchanged
+		RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "Failed to insert texture" );
 	}
 }
 
