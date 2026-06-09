@@ -148,7 +148,7 @@ template<typename InserterT> void ConvertToUtf8( rftl::u16string_view source, In
 	while( view.empty() == false )
 	{
 		size_t const remainingPairs = view.size();
-		size_t const neededPairs = NumPairsExpectedInUtf8( view.front() );
+		size_t const neededPairs = NumPairsExpectedInUtf16( view.front() );
 
 		if( remainingPairs < neededPairs )
 		{
@@ -326,7 +326,7 @@ template<typename InserterT> void ConvertToUtf32( rftl::u16string_view source, I
 	while( view.empty() == false )
 	{
 		size_t const remainingPairs = view.size();
-		size_t const neededPairs = NumPairsExpectedInUtf8( view.front() );
+		size_t const neededPairs = NumPairsExpectedInUtf16( view.front() );
 
 		if( remainingPairs < neededPairs )
 		{

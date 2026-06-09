@@ -93,9 +93,9 @@ TEST( CharConvert, ToUtf32 )
 {
 	ASSERT_EQ( NumBytesExpectedInUtf8( 'a' ), 1 );
 	ASSERT_EQ( NumBytesExpectedInUtf8( u8'a' ), 1 );
-	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xffff' ), 1 );
-	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xd800' ), 2 );
-	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xdbff' ), 2 );
+	ASSERT_EQ( NumPairsExpectedInUtf16( u'\xffff' ), 1 );
+	ASSERT_EQ( NumPairsExpectedInUtf16( u'\xd800' ), 2 );
+	ASSERT_EQ( NumPairsExpectedInUtf16( u'\xdbff' ), 2 );
 
 	ASSERT_CHAR( ConvertSingleUtf8ToUtf32( u8"a" ), U'a' );
 	ASSERT_CHAR( ConvertSingleUtf16ToUtf32( u"\xffff" ), U'\xffff' );
@@ -117,8 +117,8 @@ TEST( CharConvert, InvalidUTF8 )
 
 TEST( CharConvert, InvalidUTF16 )
 {
-	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xdc00' ), 0 );
-	ASSERT_EQ( NumPairsExpectedInUtf8( u'\xdfff' ), 0 );
+	ASSERT_EQ( NumPairsExpectedInUtf16( u'\xdc00' ), 0 );
+	ASSERT_EQ( NumPairsExpectedInUtf16( u'\xdfff' ), 0 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

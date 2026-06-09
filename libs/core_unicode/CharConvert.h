@@ -13,7 +13,7 @@ bool IsValidAscii( char16_t ch );
 bool IsValidAscii( char32_t ch );
 
 size_t NumBytesExpectedInUtf8( char8_t firstByte );
-size_t NumPairsExpectedInUtf8( char16_t firstPair );
+size_t NumPairsExpectedInUtf16( char16_t firstPair );
 
 char32_t ConvertSingleUtf8ToUtf32( rftl::u8string_view source );
 char32_t ConvertSingleUtf16ToUtf32( rftl::u16string_view source );

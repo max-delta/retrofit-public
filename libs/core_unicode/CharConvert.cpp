@@ -67,7 +67,7 @@ size_t NumBytesExpectedInUtf8( char8_t firstByte )
 
 
 
-size_t NumPairsExpectedInUtf8( char16_t firstPair )
+size_t NumPairsExpectedInUtf16( char16_t firstPair )
 {
 	if( firstPair >= 0xd800 && firstPair <= 0xdbff )
 	{
