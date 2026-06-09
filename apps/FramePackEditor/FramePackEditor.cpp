@@ -412,7 +412,14 @@ void FramePackEditor::Render()
 	{
 		gfx::ppu::Coord const editingHeaderStart = gfx::ppu::Coord( verticalPlaneX, 0 ) + kHeaderOffset;
 		ppu->DrawText( editingHeaderStart, kFontSize, mDefaultFontID, "Editing" );
-		ppu->DrawText( editingHeaderStart + kTextOffset, kFontSize, mDefaultFontID, "Frame: {} / [0-{}] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
+		if( numTimeSlots == 0 )
+		{
+			ppu->DrawText( editingHeaderStart + kTextOffset, kFontSize, mDefaultFontID, "Frame: {} / [INVALID] <A/D> to change", mEditingFrame );
+		}
+		else
+		{
+			ppu->DrawText( editingHeaderStart + kTextOffset, kFontSize, mDefaultFontID, "Frame: {} / [0-{}] <A/D> to change", mEditingFrame, numTimeSlots - 1 );
+		}
 		if( digital.GetCurrentLogicalState( shim::VK_CONTROL ) )
 		{
 			ppu->DrawText( editingHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Sustain: {} <Ctrl+/,*> to batch", slotSustain );
@@ -480,8 +487,8 @@ void FramePackEditor::Render()
 				footerText.at( 2 ) =
 					"[META]  "
 					"<U>:New FPack  "
-					"<O>:Open FPack "
-					"<Ctrl+S>:Save FPack ";
+					"<O>:Open FPack  "
+					"<Ctrl+S>:Save FPack";
 				footerText.at( 3 ) =
 					"[META]  "
 					"<Up/Dwn>:Change preferred framerate  "
