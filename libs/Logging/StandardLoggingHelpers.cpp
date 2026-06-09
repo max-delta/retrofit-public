@@ -6,6 +6,7 @@
 
 #include "core_logging/LogEvent.h"
 #include "core_math/math_casts.h"
+#include "core_terminal/CommonAnsiEscapes.h"
 #include "core_unicode/StringConvert.h"
 
 #include "rftl/array"
@@ -42,64 +43,77 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 
 	bool const doAnsi = options.mUseAnsiiEscapeSequences;
 
+	char const* preSeverity;
 	char const* severity;
+	char const* const postSeverity = doAnsi ? term::ansi::csi::sgr::kReset : "";
 	if( event.mSeverityMask & RF_SEV_MILESTONE )
 	{
-		severity = doAnsi ? "\x1b[1;36mMILESTONE" : "MILESTONE";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kBrightCyan : "";
+		severity = "MILESTONE";
 	}
 	else if( event.mSeverityMask & RF_SEV_CRITICAL )
 	{
-		severity = doAnsi ? "\x1b[1;31mCRITICAL" : "CRITICAL";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kRed : "";
+		severity = "CRITICAL";
 	}
 	else if( event.mSeverityMask & RF_SEV_ERROR )
 	{
-		severity = doAnsi ? "\x1b[1;31mERROR" : "ERROR";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kBrightRed : "";
+		severity = "ERROR";
 	}
 	else if( event.mSeverityMask & RF_SEV_WARNING )
 	{
-		severity = doAnsi ? "\x1b[1;33mWARNING" : "WARNING";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kBrightYellow : "";
+		severity = "WARNING";
 	}
 	else if( event.mSeverityMask & RF_SEV_INFO )
 	{
-		severity = doAnsi ? "\x1b[0mINFO" : "INFO";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kReset : "";
+		severity = "INFO";
 	}
 	else if( event.mSeverityMask & RF_SEV_DEBUG )
 	{
-		severity = doAnsi ? "\x1b[1;30mDEBUG" : "DEBUG";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kBrightBlack : "";
+		severity = "DEBUG";
 	}
 	else if( event.mSeverityMask & RF_SEV_TRACE )
 	{
-		severity = doAnsi ? "\x1b[1;30mTRACE" : "TRACE";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kBrightBlack : "";
+		severity = "TRACE";
 	}
 	else
 	{
-		severity = doAnsi ? "\x1b[0mUNKNOWN" : "UNKNOWN";
+		preSeverity = doAnsi ? term::ansi::csi::sgr::kReset : "";
+		severity = "UNKNOWN";
 	}
 
 	rftl::span<char> const outputBuffer = destination.to_typed_span<char>();
 	int bytesParsed;
 	if( event.mTransientContextString.empty() )
 	{
-		if( doAnsi )
-		{
-			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  %s", severity, event.mCategoryKey, &messageBuffer[0] );
-		}
-		else
-		{
-			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  %s\n", severity, event.mCategoryKey, &messageBuffer[0] );
-		}
+		bytesParsed = rftl::snprintf(
+			outputBuffer.data(),
+			outputBuffer.size(),
+			"[%s%s%s][%s]  %s",
+			preSeverity,
+			severity,
+			postSeverity,
+			event.mCategoryKey,
+			&messageBuffer[0] );
 	}
 	else
 	{
 		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
-		if( doAnsi )
-		{
-			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s\x1b[0m][%s]  <%s> %s", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
-		}
-		else
-		{
-			bytesParsed = rftl::snprintf( outputBuffer.data(), outputBuffer.size(), "[%s][%s]  <%s> %s\n", severity, event.mCategoryKey, asciiContext.c_str(), &messageBuffer[0] );
-		}
+		bytesParsed = rftl::snprintf(
+			outputBuffer.data(),
+			outputBuffer.size(),
+			"[%s%s%s][%s]  <%s> %s",
+			preSeverity,
+			severity,
+			postSeverity,
+			event.mCategoryKey,
+			asciiContext.c_str(),
+			&messageBuffer[0] );
 	}
 	*outputBuffer.rbegin() = '\0';
 

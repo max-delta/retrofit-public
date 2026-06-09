@@ -27,8 +27,10 @@
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_math/math_bits.h"
+#include "core_terminal/CommonAnsiEscapes.h"
 #include "core/ptr/default_creator.h"
 
+#include "rftl/cstdio"
 #include "rftl/thread"
 
 
@@ -85,7 +87,10 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
 	if( consoleInitialized )
 	{
-		puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
+		rftl::printf(
+			" == %sANSI CONSOLE SUPPORT%s ==\n",
+			term::ansi::csi::sgr::kBrightGreen,
+			term::ansi::csi::sgr::kReset );
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 		if( config.mInformativeLogging == false )

@@ -20,6 +20,7 @@
 #include "core_pe/DataDirectoryHeader.h"
 #include "core_pe/DosHeader.h"
 #include "core_pe/PeHeader.h"
+#include "core_terminal/CommonAnsiEscapes.h"
 #include "core_vfs/SeekHandle.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -366,7 +367,10 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		bool const consoleInitialized = platform::console::EnableANSIEscapeSequences();
 		if( consoleInitialized )
 		{
-			rftl::puts( " == \x1b[1;32mANSI CONSOLE SUPPORT\x1b[0m ==" );
+			rftl::printf(
+				" == %sANSI CONSOLE SUPPORT%s ==\n",
+				term::ansi::csi::sgr::kBrightGreen,
+				term::ansi::csi::sgr::kReset );
 			logging::HandlerDefinition def;
 			def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 			def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;

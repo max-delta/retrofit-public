@@ -27,6 +27,7 @@
 	<PropertyGroup />
 	<ItemDefinitionGroup />
 	<ItemGroup>
+		<ClInclude Include="CommonAnsiEscapes.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
