@@ -20,8 +20,11 @@ namespace RF::logging {
 
 LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions options, logging::LogEvent<char8_t> const& event, rftl::format_args const& args )
 {
-	static constexpr rftl::u8string_view kTruncated = u8"<TRUNCATED MESSAGE!>\n";
-	static constexpr rftl::span kTruncatedWithNull( kTruncated.begin(), kTruncated.size() );
+	// NOTE: Subtle, we're trying to make sure the truncation includes both the
+	//  newline and the null terminator
+	static constexpr char8_t kTruncatedLiteral[] = u8"<TRUNCATED MESSAGE!>\n";
+	static constexpr rftl::u8string_view kTruncatedViewWithNull( kTruncatedLiteral, rftl::extent<decltype( kTruncatedLiteral )>::value );
+	static constexpr rftl::span kTruncatedWithNull( kTruncatedViewWithNull.begin(), kTruncatedViewWithNull.size() );
 	static constexpr size_t kMinBufferSizeForTruncation = kTruncatedWithNull.size();
 
 	if( destination.size() < kMinBufferSizeForTruncation )
@@ -94,7 +97,7 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		bytesParsed = rftl::snprintf(
 			outputBuffer.data(),
 			outputBuffer.size(),
-			"[%s%s%s][%s]  %s",
+			"[%s%s%s][%s]  %s\n",
 			preSeverity,
 			severity,
 			postSeverity,
@@ -107,7 +110,7 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		bytesParsed = rftl::snprintf(
 			outputBuffer.data(),
 			outputBuffer.size(),
-			"[%s%s%s][%s]  <%s> %s",
+			"[%s%s%s][%s]  <%s> %s\n",
 			preSeverity,
 			severity,
 			postSeverity,

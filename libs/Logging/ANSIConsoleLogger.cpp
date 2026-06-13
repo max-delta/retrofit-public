@@ -30,7 +30,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char8_t> const& ev
 	//  this puts(...) call is correctly implemented.
 	// SEE: https://stackoverflow.com/questions/66244924/windows-console-conhost-discards-newline-when-output-matches-witdth-of-the-win
 	// HACK: Treat UTF-8 as ASCII and hope for the best
-	puts( &result.mNullTerminatedOutput.front<char>() );
+	fputs( &result.mNullTerminatedOutput.front<char>(), stdout );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
