@@ -95,6 +95,7 @@
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
+		<ClCompile Include="terminal_ppu_control_sequence.cpp" />
 		<ClCompile Include="thread_async.cpp" />
 		<ClCompile Include="thread_sequential_work_pump.cpp" />
 		<ClCompile Include="thread_signal.cpp" />
@@ -114,6 +115,9 @@
 		</ProjectReference>
 		<ProjectReference Include="..\..\libs\core_identifier\core_identifier.vcxproj">
 			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\..\libs\core_terminal\core_terminal.vcxproj">
+			<Project>{39911449-cc20-4535-baab-5a6aa2fbd071}</Project>
 		</ProjectReference>
 		<ProjectReference Include="..\..\libs\core_thread\core_thread.vcxproj">
 			<Project>{c4be5bb1-6a7b-451f-86e3-64f6a77b37e7}</Project>

@@ -2,9 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
+		<ClCompile Include="PPUControlSequence.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="CommonAnsiEscapes.h" />
+		<ClInclude Include="PPUControlSequence.h" />
 	</ItemGroup>
 </Project>

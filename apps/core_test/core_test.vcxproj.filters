@@ -74,6 +74,7 @@
 		<ClCompile Include="rftl_stretchvector.cpp" />
 		<ClCompile Include="rftl_uniquecharset.cpp" />
 		<ClCompile Include="rftl_string_hash.cpp" />
+		<ClCompile Include="terminal_ppu_control_sequence.cpp" />
 		<ClCompile Include="rftl_array_concat.cpp" />
 		<ClCompile Include="rftl_array_string.cpp" />
 	</ItemGroup>
