@@ -2,10 +2,23 @@
 #include "core/macros.h"
 
 
+// Forwards
+namespace RF {
+template<typename T, size_t LenT>
+struct ConcatLiterals;
+}
+
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
+namespace literal::details {
+// Workaround for finicky language lawyer issues in the C++ standard
+struct WeakTag
+{
+};
+}
+///////////////////////////////////////////////////////////////////////////////
 
-// Constexpr reference to null-terminated string literal
+// Consteval reference to null-terminated string literal
 template<typename T, size_t LenT>
 struct LiteralRef
 {
@@ -16,10 +29,18 @@ public:
 	static constexpr size_t kLen = LenT;
 	using ArrayType = CharType const[kLen];
 
+private:
+	template<typename U, size_t LenU>
+	friend struct ConcatLiterals;
+	template<typename U, size_t LLenU, size_t RLenU>
+	friend constexpr ConcatLiterals<U, LLenU + RLenU - 1> operator+( LiteralRef<U, LLenU> const& lhs, U const ( &rhs )[RLenU] );
+	template<typename U, size_t LLenU, size_t RLenU>
+	friend constexpr ConcatLiterals<U, LLenU + RLenU - 1> operator+( ConcatLiterals<U, LLenU> const& lhs, U const ( &rhs )[RLenU] );
+
 
 public:
-	constexpr LiteralRef( ArrayType& value )
-		: kRef( value )
+	consteval LiteralRef( ArrayType& value )
+		: LiteralRef( value, literal::details::WeakTag{} )
 	{
 		//
 	}
@@ -31,6 +52,17 @@ public:
 	}
 
 
+private:
+	// NOTE: As constexpr as opposed to consteval, this has weak guarantees,
+	//  but avoids finicky language lawyer issues in the C++ standard that
+	//  apply when trying to use it for constexpr logic
+	constexpr LiteralRef( ArrayType& value, literal::details::WeakTag )
+		: kRef( value )
+	{
+		//
+	}
+
+
 public:
 	ArrayType& kRef;
 };
@@ -39,7 +71,7 @@ public:
 
 // Empty literal
 template<typename T>
-constexpr LiteralRef<T, 1> Literal()
+consteval LiteralRef<T, 1> Literal()
 {
 	return LiteralRef<T, 1>{ "" };
 }
@@ -48,7 +80,7 @@ constexpr LiteralRef<T, 1> Literal()
 
 // Literal from null-terminated array
 template<typename T, size_t LenT>
-constexpr LiteralRef<T, LenT> Literal( T const ( &value )[LenT] )
+consteval LiteralRef<T, LenT> Literal( T const ( &value )[LenT] )
 {
 	return LiteralRef<T, LenT>{ value };
 }
@@ -72,7 +104,7 @@ public:
 	template<size_t LenU>
 	constexpr ConcatLiterals( LiteralRef<CharType, LenU> const& lhs, LiteralRef<CharType, kLen - LenU + 1> const& rhs )
 		: kResultBuf{} // MSVC requires this to be initialized
-		, kResult( kResultBuf )
+		, kResult( kResultBuf, literal::details::WeakTag{} )
 	{
 		constexpr size_t kFirstBytes = LenU;
 		constexpr size_t kSecondBytes = kLen - LenU + 1;
@@ -90,12 +122,6 @@ public:
 		}
 
 		kResultBuf[kLen - 1] = '\0';
-	}
-
-	// Decay to literal
-	constexpr operator LiteralType&() const
-	{
-		return kResult;
 	}
 
 	// Decay to array
@@ -124,14 +150,14 @@ constexpr ConcatLiterals<T, LLenT + RLenT - 1> operator+( LiteralRef<T, LLenT> c
 template<typename T, size_t LLenT, size_t RLenT>
 constexpr ConcatLiterals<T, LLenT + RLenT - 1> operator+( LiteralRef<T, LLenT> const& lhs, T const ( &rhs )[RLenT] )
 {
-	return ConcatLiterals<T, LLenT + RLenT - 1>{ lhs, rhs };
+	return ConcatLiterals<T, LLenT + RLenT - 1>{ lhs, { rhs, literal::details::WeakTag{} } };
 }
 
 // Literal() + "" + ""
 template<typename T, size_t LLenT, size_t RLenT>
 constexpr ConcatLiterals<T, LLenT + RLenT - 1> operator+( ConcatLiterals<T, LLenT> const& lhs, T const ( &rhs )[RLenT] )
 {
-	return ConcatLiterals<T, LLenT + RLenT - 1>{ lhs.kResult, rhs };
+	return ConcatLiterals<T, LLenT + RLenT - 1>{ lhs.kResult, { rhs, literal::details::WeakTag{} } };
 }
 
 ///////////////////////////////////////////////////////////////////////////////
