@@ -130,6 +130,9 @@
 		<ClInclude Include="extension\unique_char_set.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\array_concat.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 		<ClInclude Include="extension\array_string.h">
 			<Filter>extension</Filter>
 		</ClInclude>
@@ -199,6 +202,9 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="concepts" />
+		<None Include="extension\array_concat.inl">
+			<Filter>extension</Filter>
+		</None>
 		<None Include="extension\array_string.inl">
 			<Filter>extension</Filter>
 		</None>
