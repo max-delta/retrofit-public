@@ -5,6 +5,7 @@
 
 #include "Serialization/CsvReader.h"
 
+#include "core_unicode/CodeAreas.h"
 #include "core_vfs/FileBuffer.h"
 
 #include "rftl/sstream"
@@ -105,19 +106,43 @@ rftl::string PageMapper::MapTo8Bit( rftl::u32string const& codePoints ) const
 {
 	rftl::string retVal;
 	retVal.reserve( codePoints.size() );
+
 	for( char32_t const& codePoint : codePoints )
 	{
+		// Handle special bypass case, intended for use with terminal control
+		//  sequences that are non-printing, and need to circumvent the normal
+		//  mapping operation so they can make it to their terminal parser
+		//  while still intact
+		{
+			using namespace unicode;
+			static_assert(
+				DeterminePrivateUseArea( kPageMapperCollapseArea << 8 ) == kPageMapperCollapseArea,
+				"Page mapper collapse area is not a private use area" );
+			PrivateUseArea::Value const privateUseArea = DeterminePrivateUseArea( codePoint );
+			if( privateUseArea == kPageMapperCollapseArea )
+			{
+				char const collapsed = static_cast<char>( codePoint & 0xFFu );
+				retVal.push_back( collapsed );
+				continue;
+			}
+		}
+
 		Charmap::const_iterator const iter = mCharmap.find( codePoint );
 		if( iter != mCharmap.end() )
 		{
-			retVal.push_back( iter->second );
+			char const& mapped = iter->second;
+			retVal.push_back( mapped );
+			continue;
 		}
 		else
 		{
 			RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION, "Failed to map the character {} to an 8bit character", static_cast<uint32_t>( codePoint ) );
-			retVal.push_back( static_cast<char>( static_cast<unsigned char>( 255 ) ) );
+			static constexpr char kFallback = static_cast<char>( static_cast<unsigned char>( 255 ) );
+			retVal.push_back( kFallback );
+			continue;
 		}
 	}
+
 	return retVal;
 }
 
