@@ -6,14 +6,18 @@
 		<ClInclude Include="CharConvert.h" />
 		<ClInclude Include="InsertConvert.h" />
 		<ClInclude Include="BufferConvert.h" />
+		<ClInclude Include="CodeAreas.h" />
+		<ClInclude Include="UnicodeFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="StringConvert.cpp" />
 		<ClCompile Include="CharConvert.cpp" />
 		<ClCompile Include="BufferConvert.cpp" />
+		<ClCompile Include="CodeAreas.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="InsertConvert.inl" />
+		<None Include="CodeAreas.inl" />
 	</ItemGroup>
 </Project>

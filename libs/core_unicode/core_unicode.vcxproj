@@ -29,19 +29,23 @@
 	<ItemGroup>
 		<ClInclude Include="BufferConvert.h" />
 		<ClInclude Include="CharConvert.h" />
+		<ClInclude Include="CodeAreas.h" />
 		<ClInclude Include="InsertConvert.h" />
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="StringConvert.h" />
+		<ClInclude Include="UnicodeFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="BufferConvert.cpp" />
 		<ClCompile Include="CharConvert.cpp" />
+		<ClCompile Include="CodeAreas.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 		<ClCompile Include="StringConvert.cpp" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="CodeAreas.inl" />
 		<None Include="InsertConvert.inl" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
