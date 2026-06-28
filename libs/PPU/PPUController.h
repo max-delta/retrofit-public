@@ -119,6 +119,7 @@ public:
 	bool EndFrame();
 
 	void SuppressDrawRequests( bool suppress );
+	void UseEscapeSequences( bool use );
 
 	void UpdateViewportExtents( Viewport& viewport ) const;
 	void ApplyViewport( Viewport const& viewport );
@@ -243,6 +244,7 @@ private:
 	Vec2 mDrawOffset = {};
 
 	bool mDrawRequestsSuppressed = false;
+	bool mUseEscapeSequences = true;
 	bool mHideZoomFactor = false;
 	bool mDebugDrawGrid = true;
 

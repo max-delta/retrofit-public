@@ -41,7 +41,8 @@ public:
 		math::Color3u8 mColor;
 		uint8_t mDesiredHeight;
 		bool mBorder : 1;
-		bool mReserved10 : 7;
+		bool mUseEscapeSequences : 1;
+		bool mReserved10 : 6;
 		ManagedFontID mFontReference;
 		uint16_t mTextOffset;
 	};

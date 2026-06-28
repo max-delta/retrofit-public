@@ -20,6 +20,7 @@
 #include "core_math/math_bits.h"
 #include "core_math/Lerp.h"
 #include "core_math/Rand.h"
+#include "core_terminal/PPUControlSequence.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
@@ -274,6 +275,13 @@ void PPUController::SuppressDrawRequests( bool suppress )
 
 
 
+void PPUController::UseEscapeSequences( bool use )
+{
+	mUseEscapeSequences = use;
+}
+
+
+
 void PPUController::UpdateViewportExtents( Viewport& viewport ) const
 {
 	viewport.mSurfaceExtents = {
@@ -372,6 +380,7 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 	targetString.mColor = color;
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
+	targetString.mUseEscapeSequences = mUseEscapeSequences;
 	targetString.mFontReference = font;
 	targetString.mTextOffset = textStorage.mTextStorageUsed;
 	rftl::string_view charsWritten;
@@ -453,11 +462,33 @@ CoordElem PPUController::CalculateStringLength( uint8_t desiredHeight, ManagedFo
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 
-	for( char const& character : text )
+	// SUBTLE: Use from PPU controller's member, not from a parameter
+	bool const& useEscapeSequences = mUseEscapeSequences;
+
+	rftl::string_view readHead = text;
+	while( readHead.empty() == false )
 	{
+		rftl::string_view const peek = readHead;
+		readHead.remove_prefix( 1 );
+
+		char const& character = peek.front();
+
 		if( character == '\0' )
 		{
 			break;
+		}
+
+		// Check for escape sequence, discard if eligible
+		if( character == term::ppu::kEscapeCharacter )
+		{
+			if( useEscapeSequences )
+			{
+				// SUBTLE: Rewind the read-head to the peek, to satisfy the
+				//  validation that the terminal code does on the escape char
+				readHead = term::ppu::DiscardControlSequence( peek );
+				RF_ASSERT( readHead.size() < peek.size() );
+				continue;
+			}
 		}
 
 		uint8_t charWidth = tileWidth;
@@ -1384,13 +1415,38 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 
+	// SUBTLE: Use from string's member, not from PPU controller's member
+	bool const& useEscapeSequences = string.mUseEscapeSequences;
+
+	term::ppu::PPUParseState parseState = {};
+
 	CoordElem lastCharX = string.mXCoord;
-	for( char const& character : text )
+	rftl::string_view readHead = text;
+	while( readHead.empty() == false )
 	{
+		// Pop front
+		rftl::string_view const peek = readHead;
+		readHead.remove_prefix( 1 );
+
+		char const& character = peek.front();
+
 		if( character == '\0' )
 		{
 			// End of string
 			break;
+		}
+
+		// Check for escape sequence, consume if eligible
+		if( character == term::ppu::kEscapeCharacter )
+		{
+			if( useEscapeSequences )
+			{
+				// SUBTLE: Rewind the read-head to the peek, to satisfy the
+				//  validation that the terminal code does on the escape char
+				readHead = term::ppu::ConsumeControlSequence( parseState, peek );
+				RF_ASSERT( readHead.size() < peek.size() );
+				continue;
+			}
 		}
 
 		uint8_t charWidth = tileWidth;
@@ -1438,12 +1494,24 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::Vector2f const bottomRight = CoordToDevice( x2, y2 );
 		float const deviceWidth = bottomRight.x - topLeft.x;
 		float const deviceHeight = bottomRight.y - topLeft.y;
-		math::Color3f const color = math::Color3f( string.mColor );
 		float const uvWidth = deviceWidth / ( ( deviceWidth * math::float_cast<float>( tileWidth ) ) / math::float_cast<float>( charWidth ) );
 		float const uvHeight = deviceHeight / ( ( deviceHeight * math::float_cast<float>( tileHeight ) ) / math::float_cast<float>( charHeight ) );
 		math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
 		float const z = LayerToDevice( string.mZLayer );
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
+
+		// Calculate character color
+		auto const determineColor = [&string, &parseState]() -> math::Color3u8
+		{
+			if( parseState.mPalleteIndex.has_value() )
+			{
+				// HACK: Red
+				// TODO: Pallete lookup
+				return math::Color3u8::kRed;
+			}
+			return string.mColor;
+		};
+		math::Color3f const color = math::Color3f( determineColor() );
 
 		// Render
 		if( string.mBorder )
