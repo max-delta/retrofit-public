@@ -209,6 +209,9 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 		RFLOG_FATAL( nullptr, RFCAT_STARTUP, "Failed to initialize graphics" );
 	}
 
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Configuring graphics..." );
+	app::gGraphics->UseEscapeSequences( true );
+
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	{
 		sInputControllerManager = DefaultCreator<input::ControllerManager>::Create();

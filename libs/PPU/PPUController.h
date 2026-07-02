@@ -244,7 +244,7 @@ private:
 	Vec2 mDrawOffset = {};
 
 	bool mDrawRequestsSuppressed = false;
-	bool mUseEscapeSequences = true;
+	bool mUseEscapeSequences = false;
 	bool mHideZoomFactor = false;
 	bool mDebugDrawGrid = true;
 
