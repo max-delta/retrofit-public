@@ -37,6 +37,7 @@ constexpr bool kDialogueTest = true;
 
 constexpr bool kAllowScratch = true;
 
+constexpr bool kDebugGrid = true;
 constexpr bool kDebugUI = true;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,8 @@ constexpr bool kDebugUI = true;
 void TestStart()
 {
 	using namespace RF;
+
+	app::gGraphics->DebugSetGridEnabled( kDebugGrid );
 
 	if( kConsoleTest )
 	{

@@ -29,6 +29,10 @@ namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+constexpr bool kDebugGrid = true;
+
+
+
 static void OnFramePackOperationToInvalidFramePack()
 {
 	RFLOG_WARNING( nullptr, RFCAT_FRAMEPACKEDITOR, "No framepack set" );
@@ -58,6 +62,8 @@ void FramePackEditor::Init()
 	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+
+	ppu->DebugSetGridEnabled( details::kDebugGrid );
 }
 
 

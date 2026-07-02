@@ -246,7 +246,7 @@ private:
 	bool mDrawRequestsSuppressed = false;
 	bool mUseEscapeSequences = false;
 	bool mHideZoomFactor = false;
-	bool mDebugDrawGrid = true;
+	bool mDebugDrawGrid = false;
 
 	StateBufferID mWriteState;
 	StateBufferID mQueueToRenderState;
