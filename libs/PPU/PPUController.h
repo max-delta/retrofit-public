@@ -248,9 +248,9 @@ private:
 	bool mHideZoomFactor = false;
 	bool mDebugDrawGrid = false;
 
-	StateBufferID mWriteState;
-	StateBufferID mQueueToRenderState;
-	StateBufferID mRenderState;
+	StateBufferID mWriteState = kInvalidStateBufferID;
+	StateBufferID mQueueToRenderState = kInvalidStateBufferID;
+	StateBufferID mRenderState = kInvalidStateBufferID;
 	PPUState mPPUState[kNumStateBuffers];
 	PPUDebugState mPPUDebugState[kNumStateBuffers];
 };
