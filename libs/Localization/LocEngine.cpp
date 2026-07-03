@@ -9,12 +9,83 @@
 #include "Serialization/CsvReader.h"
 
 #include "core_unicode/StringConvert.h"
+#include "core_unicode/BufferConvert.h"
 #include "core_vfs/FileBuffer.h"
 
 #include "rftl/sstream"
 
 
 namespace RF::loc {
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+struct StringSplit
+{
+	rftl::u32string_view mPreceding;
+	rftl::u32string_view mToken;
+	rftl::u32string_view mFollowing;
+};
+
+
+
+static StringSplit FindFirstReplacementToken( rftl::string_view key, rftl::u32string_view str )
+{
+	RF_ASSERT( str.empty() == false );
+
+	static constexpr rftl::u32string_view kOpen = kReplacementTokenOpen;
+	static constexpr rftl::u32string_view kClose = kReplacementTokenClose;
+
+	// Start?
+	size_t const startPos = str.find( kOpen );
+	if( startPos == rftl::u32string_view::npos )
+	{
+		return {};
+	}
+	rftl::u32string_view const preceding = str.substr( 0, startPos );
+	rftl::u32string_view const startWindow = str.substr( startPos );
+
+	// End?
+	size_t const closingPos = startWindow.find( kClose );
+	if( closingPos == rftl::u32string_view::npos )
+	{
+		RFLOG_NOTIFY( key, RFCAT_LOCALIZATION,
+			U"Found an unfinished replacement token in '{}'",
+			logging::CppUnicodeFormatWorkaround( str ) );
+		return {};
+	}
+	size_t const lastPos = closingPos + kClose.size();
+	rftl::u32string_view const token = startWindow.substr( 0, lastPos );
+	rftl::u32string_view const following = startWindow.substr( lastPos );
+
+	// Sanity check
+	{
+		static constexpr auto beginPtr = []( rftl::u32string_view view ) -> char32_t const*
+		{
+			return view.data();
+		};
+		static constexpr auto endPtr = []( rftl::u32string_view view ) -> char32_t const*
+		{
+			return view.data() + view.size();
+		};
+		RF_ASSERT( beginPtr( str ) == beginPtr( preceding ) );
+		RF_ASSERT( endPtr( preceding ) == beginPtr( token ) );
+		RF_ASSERT( endPtr( token ) == beginPtr( following ) );
+		RF_ASSERT( endPtr( following ) == endPtr( str ) );
+	}
+
+	// Remove the outer syntax
+	rftl::u32string_view strippedToken = token;
+	strippedToken.remove_prefix( kOpen.size() );
+	strippedToken.remove_suffix( kClose.size() );
+
+	// Return
+	return StringSplit{
+		.mPreceding = preceding,
+		.mToken = strippedToken,
+		.mFollowing = following };
+}
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 
 bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPath const& path, TextDirection textDirection )
@@ -23,6 +94,7 @@ bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPa
 	mTextDirection = TextDirection::kInvalid;
 
 	// Enumerate keymaps
+	RFLOG_INFO( path, RFCAT_LOCALIZATION, "Initializing LocEngine from keymap directory" );
 	rftl::vector<file::VFSPath> keymapFiles;
 	vfs.EnumerateDirectoryRecursive(
 		path,
@@ -52,6 +124,13 @@ bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPa
 		newKeymap.insert( loadedKeymap.begin(), loadedKeymap.end() );
 	}
 
+	// Expand keys, performing replacement
+	{
+		size_t const numReplacements = ExpandNestedKeys( newKeymap, 10, true );
+		RFLOG_INFO( path, RFCAT_LOCALIZATION, "Expanded {} nested keys", numReplacements );
+	}
+
+	// Store
 	mKeymap = rftl::move( newKeymap );
 	mTextDirection = textDirection;
 	return true;
@@ -104,6 +183,8 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 
 LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFSPath const& path )
 {
+	RFLOG_DEBUG( path, RFCAT_LOCALIZATION, "Loading keymap from file" );
+
 	char separator = serialization::CsvReader::kDefaultSeparator;
 	rftl::string extension = path.GetTrailingExtensions();
 	if( extension == ".keymap.psv" )
@@ -203,6 +284,147 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 	}
 
 	return newKeymap;
+}
+
+
+
+size_t LocEngine::ExpandNestedKeys( Keymap& keymap, size_t maxDepthPerKey, bool errorOnMaxDepth )
+{
+	// Will operate off of an increasingly narrowing subset of entries
+	using IterList = rftl::deque<Keymap::iterator>;
+	IterList entriesToProcess;
+
+	// First, scan for entries that are relevant, before doing the actual
+	//  processing, just to simplify the logic
+	for( Keymap::iterator iter = keymap.begin(); iter != keymap.end(); iter++ )
+	{
+		rftl::u32string_view const token =
+			details::FindFirstReplacementToken( iter->first, iter->second ).mToken;
+		if( token.empty() )
+		{
+			continue;
+		}
+
+		// NOTE: Non-optimal to have wasted time scanning the string without
+		//  processing it yet, but it keeps the logic easier to understand
+		entriesToProcess.emplace_back( iter );
+	}
+	RFLOG_DEBUG( nullptr, RFCAT_LOCALIZATION,
+		"Found {} entries that contained atleast one replacement token",
+		entriesToProcess.size() );
+
+	// Track number of replacements
+	size_t numReplacements = 0;
+
+	// Process in a series of passes, so that we can bail if the space is
+	//  becoming too complex and looks like it might be infinitely recursive
+	size_t numPasses = 0;
+	while( entriesToProcess.empty() == false )
+	{
+		// Check if we should bail
+		if( numPasses >= maxDepthPerKey )
+		{
+			if( errorOnMaxDepth )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_LOCALIZATION,
+					"Found {} keys that exceeded the max nesting depth for"
+					" replacement tokens, first erroneous key '{}'",
+					entriesToProcess.size(),
+					( *entriesToProcess.begin() )->first );
+			}
+			break;
+		}
+
+		// For each entry to process...
+		size_t indexToProcess = 0;
+		while( indexToProcess < entriesToProcess.size() )
+		{
+			Keymap::iterator& entryToProcess = entriesToProcess.at( indexToProcess );
+			rftl::string const& key = entryToProcess->first;
+			rftl::u32string& targetString = entryToProcess->second;
+
+			// Attempt a single replacement
+			// NOTE: This replacement may just be replacing the token with yet
+			//  ANOTHER replacement token, and we are electing not to recurse
+			//  here under the hope that a breadth-first approach may reduce
+			//  the total number replacements performed, and reduce the total
+			//  work, since this approach can collapse a long chain of leaf
+			//  nodes that may be used heavily across the whole dataset
+			rftl::u32string replaced = ReplaceOneToken( keymap, key, targetString );
+
+			if( replaced.empty() )
+			{
+				// If replacement failed, assume there's no further
+				//  replacements to perform on the entry, and remove it
+				// NOTE: Removal via swap-and-pop
+				rftl::swap( entryToProcess, entriesToProcess.back() );
+				entriesToProcess.pop_back();
+				continue;
+			}
+			else
+			{
+				// If replacement succeeded, keep it around for another pass in
+				//  case there are a chain of further replacements to be made
+				//  on it, or more tokens that we didn't handle at this time
+				targetString = rftl::move( replaced );
+				numReplacements++;
+				indexToProcess++;
+				continue;
+			}
+		}
+	}
+
+	return numReplacements;
+}
+
+
+
+rftl::u32string LocEngine::ReplaceOneToken( Keymap const& keyMap, rftl::string_view key, rftl::u32string str )
+{
+	RF_ASSERT( keyMap.empty() == false );
+	RF_ASSERT( str.empty() == false );
+	RF_ASSERT( str.empty() == false );
+
+	// Try to find a token to replace
+	details::StringSplit const stringSplit = details::FindFirstReplacementToken( key, str );
+	if( stringSplit.mToken.empty() )
+	{
+		return {};
+	}
+
+	// Convert token to an ASCII key
+	rftl::u32string_view const& u32Token = stringSplit.mToken;
+	rftl::array<char, 256> keyBuffer;
+	rftl::string_view const bufferView( keyBuffer.begin(), keyBuffer.end() );
+	size_t const charsDecoded = unicode::ConvertToASCII( keyBuffer, u32Token );
+	if( charsDecoded > keyBuffer.size() )
+	{
+		RFLOG_NOTIFY( key, RFCAT_LOCALIZATION,
+			U"Found a replacement token that is too large to parse (exceeds {} chars): '{}'",
+			keyBuffer.size(),
+			logging::CppUnicodeFormatWorkaround( u32Token ) );
+		return {};
+	}
+	rftl::string_view const lookupKey = bufferView.substr( 0, charsDecoded );
+
+	// Lookup replacement
+	Keymap::const_iterator const lookupIter = keyMap.find( RFTL_STR_V_HASH( lookupKey ) );
+	if( lookupIter == keyMap.end() )
+	{
+		RFLOG_NOTIFY( key, RFCAT_LOCALIZATION,
+			U"Could not find a matching key for the replacement token: '{}'",
+			lookupKey );
+		return {};
+	}
+	rftl::u32string_view const replacement = lookupIter->second;
+
+	// Form and return the newly-spliced string
+	rftl::u32string retVal = {};
+	retVal.reserve( stringSplit.mPreceding.size() + replacement.size() + stringSplit.mFollowing.size() );
+	retVal.append( stringSplit.mPreceding );
+	retVal.append( replacement );
+	retVal.append( stringSplit.mFollowing );
+	return retVal;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

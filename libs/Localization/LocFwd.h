@@ -19,6 +19,10 @@ enum class TextDirection : uint8_t
 //  control codes for terminals have a mechanism to pass through unmodified
 inline constexpr unicode::PrivateUseArea::Value kPageMapperCollapseArea{ 0xE0u };
 
+// Replacement tokens are in the form "{$key}"
+inline constexpr char32_t const kReplacementTokenOpen[] = U"{$";
+inline constexpr char32_t const kReplacementTokenClose[] = U"}";
+
 class LocKey;
 class LocQuery;
 class LocResult;
