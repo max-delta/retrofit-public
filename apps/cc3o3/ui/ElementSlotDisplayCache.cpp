@@ -29,7 +29,7 @@ void ElementSlotDisplayCache::UpdateFromDesc( element::ElementDesc const& desc, 
 	if( includeStrings )
 	{
 		element::ElementName const name = element::GetElementName( desc.mIdentifier );
-		mName = ui::LocalizeKey( rftl::string( name.begin(), name.end() ) );
+		mName = ui::LocalizeKey( rftl::string_view( name.begin(), name.end() ) );
 	}
 	else
 	{

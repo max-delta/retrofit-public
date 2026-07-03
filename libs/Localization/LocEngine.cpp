@@ -157,23 +157,25 @@ LocResult LocEngine::Query( LocQuery const& query ) const
 	if( mKeyDebug )
 	{
 		// Return key as result
-		rftl::string const id = query.mKey.GetAsString();
+		rftl::string const id = query.mKey.GetAsDiagnosticString();
 		rftl::u32string codePoints( id.begin(), id.end() );
 		return LocResult( rftl::move( codePoints ) );
 	}
 
 	// Lookup
-	Keymap::const_iterator const iter = mKeymap.find( query.mKey.GetAsString() );
+	Keymap::const_iterator const iter = mKeymap.find( RFTL_STR_V_HASH( query.mKey.mID ) );
 	if( iter != mKeymap.end() )
 	{
 		return LocResult( iter->second );
 	}
 	else
 	{
-		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION, "Failed to map the key '{}'", query.mKey.GetAsString() );
+		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION,
+			"Failed to map the key '{}'",
+			query.mKey.GetAsDiagnosticString() );
 
 		// Return key as result
-		rftl::string const id = query.mKey.GetAsString();
+		rftl::string_view const& id = query.mKey.mID;
 		rftl::u32string codePoints( id.begin(), id.end() );
 		return LocResult( rftl::move( codePoints ) );
 	}

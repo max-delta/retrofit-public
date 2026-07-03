@@ -7,7 +7,7 @@
 namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
-LocKey::LocKey( rftl::string_view const& id )
+LocKey::LocKey( rftl::string_view id )
 	: mID( id )
 {
 	//
@@ -15,17 +15,9 @@ LocKey::LocKey( rftl::string_view const& id )
 
 
 
-LocKey::LocKey( rftl::string&& id )
-	: mID( rftl::move( id ) )
+rftl::string LocKey::GetAsDiagnosticString() const
 {
-	//
-}
-
-
-
-rftl::string const& LocKey::GetAsString() const
-{
-	return mID;
+	return rftl::string( mID );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -10,21 +10,29 @@
 namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Used for key-based localization lookups
 class LOCALIZATION_API LocKey
 {
 	//
+	// Friends
+private:
+	friend class LocEngine;
+
+
+	//
 	// Public methods
 public:
-	explicit LocKey( rftl::string_view const& id );
-	explicit LocKey( rftl::string&& id );
+	// NOTE: The string is not stored, so the caller must ensure the memory
+	//  remains valid until all associated queries complete
+	explicit LocKey( rftl::string_view id );
 
-	rftl::string const& GetAsString() const;
+	rftl::string GetAsDiagnosticString() const;
 
 
 	//
 	// Private data
 private:
-	rftl::string mID;
+	rftl::string_view mID;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

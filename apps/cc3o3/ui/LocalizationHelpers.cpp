@@ -41,16 +41,9 @@ rftl::string LocalizeKey( char const* key )
 
 
 
-rftl::string LocalizeKey( rftl::string_view const& key )
+rftl::string LocalizeKey( rftl::string_view key )
 {
 	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( key ) ) ).GetCodePoints() );
-}
-
-
-
-rftl::string LocalizeKey( rftl::string&& key )
-{
-	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( rftl::move( key ) ) ) ).GetCodePoints() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
