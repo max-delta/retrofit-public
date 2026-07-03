@@ -6,6 +6,12 @@
 namespace RF::unicode {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Writes to an STL-style input iterator, by continously calling the assignment
+//  operator until there are no more characters left in the source string
+// NOTE: Nulls are handled like any other character, and are given no special
+//  meaning during process, so will not act like terminators
+// NOTE: No additional null terminator is added after the final insert
+
 template<typename InserterT> void ConvertSingleUtf32ToUtf8( char32_t codePoint, InserterT& insertIterator );
 template<typename InserterT> void ConvertSingleUtf32ToUtf16( char32_t codePoint, InserterT& insertIterator );
 
