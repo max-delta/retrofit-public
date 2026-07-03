@@ -34,13 +34,6 @@ loc::LineBreakRules GetLineBreakRules()
 
 
 
-rftl::string LocalizeKey( char const* key )
-{
-	return LocalizeKey( rftl::string_view( key ) );
-}
-
-
-
 rftl::string LocalizeKey( rftl::string_view key )
 {
 	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( key ) ) ).GetCodePoints() );

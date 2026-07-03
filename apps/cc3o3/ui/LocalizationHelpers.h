@@ -13,7 +13,6 @@ namespace RF::cc::ui {
 loc::TextDirection GetTextDirection();
 loc::LineBreakRules GetLineBreakRules();
 
-rftl::string LocalizeKey( char const* key );
 rftl::string LocalizeKey( rftl::string_view key );
 
 ///////////////////////////////////////////////////////////////////////////////
