@@ -29,6 +29,12 @@
 #define RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 #define RF_TREAT_LOG_ASCII_CONTEXT_STRINGS_AS_UTF8
 
+// Due to either gross incompetence or egregious oversight, C++20 added a
+//  broken knock-off of the Fmt library that doesn't support Unicode, which is
+//  frankly just embarrassing
+// SEE: https://github.com/sg16-unicode/sg16/issues/68
+#define RF_ALLOW_WORKAROUND_FOR_CPP_NOT_SUPPORTING_UNICODE
+
 // Forwards
 namespace RF::logging {
 class LoggingRouter;
@@ -247,6 +253,14 @@ void LOGGING_API WriteContextString( rftl::basic_string<char32_t> const& context
 LOGGING_API LoggingRouter& GetOrCreateGlobalLoggingInstance();
 LOGGING_API HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition );
 LOGGING_API bool UnregisterHandler( HandlerID handlerID );
+
+//////////////////////////////////////////////////////////////////////////////
+
+#ifdef RF_ALLOW_WORKAROUND_FOR_CPP_NOT_SUPPORTING_UNICODE
+LOGGING_API rftl::string CppUnicodeFormatWorkaround( rftl::u8string_view str );
+LOGGING_API rftl::string CppUnicodeFormatWorkaround( rftl::u16string_view str );
+LOGGING_API rftl::string CppUnicodeFormatWorkaround( rftl::u32string_view str );
+#endif
 
 //////////////////////////////////////////////////////////////////////////////
 namespace details {

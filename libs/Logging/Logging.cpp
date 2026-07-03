@@ -6,6 +6,7 @@
 #include "core/meta/LazyInitSingleton.h"
 #include "core_logging/LoggingRouter.h"
 #include "core_unicode/BufferConvert.h"
+#include "core_unicode/StringConvert.h"
 #include "core_math/math_clamps.h"
 
 
@@ -183,6 +184,23 @@ bool UnregisterHandler( HandlerID handlerID )
 	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
 	return router.UnregisterHandler( handlerID );
 }
+
+///////////////////////////////////////////////////////////////////////////////
+
+#ifdef RF_ALLOW_WORKAROUND_FOR_CPP_NOT_SUPPORTING_UNICODE
+rftl::string CppUnicodeFormatWorkaround( rftl::u8string_view str )
+{
+	return unicode::ConvertToASCII( str );
+}
+rftl::string CppUnicodeFormatWorkaround( rftl::u16string_view str )
+{
+	return unicode::ConvertToASCII( str );
+}
+rftl::string CppUnicodeFormatWorkaround( rftl::u32string_view str )
+{
+	return unicode::ConvertToASCII( str );
+}
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
