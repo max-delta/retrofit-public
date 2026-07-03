@@ -297,7 +297,7 @@ void Log(
 	uint64_t severityMask,
 	rftl::cstring_view filename,
 	size_t lineNumber,
-	rftl::string_view format, 
+	rftl::string_view format,
 	ArgsT&&... args );
 #endif
 template<typename... ArgsT>
@@ -307,7 +307,7 @@ void Log(
 	uint64_t severityMask,
 	rftl::cstring_view filename,
 	size_t lineNumber,
-	rftl::u8string_view format, 
+	rftl::u8string_view format,
 	ArgsT&&... args );
 template<typename... ArgsT>
 void Log(
@@ -316,7 +316,7 @@ void Log(
 	uint64_t severityMask,
 	rftl::cstring_view filename,
 	size_t lineNumber,
-	rftl::u16string_view format, 
+	rftl::u16string_view format,
 	ArgsT&&... args );
 template<typename... ArgsT>
 void Log(
@@ -325,7 +325,7 @@ void Log(
 	uint64_t severityMask,
 	rftl::cstring_view filename,
 	size_t lineNumber,
-	rftl::u32string_view format, 
+	rftl::u32string_view format,
 	ArgsT&&... args );
 LOGGING_API void LogVA(
 	rftl::u8string_view context,
