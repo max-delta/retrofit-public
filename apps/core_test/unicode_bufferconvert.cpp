@@ -78,67 +78,96 @@ TEST( BufferConvert, EmptyDest )
 
 TEST( BufferConvert, Null )
 {
-	char c;
-	char8_t u8;
-	char16_t u;
-	char32_t U;
+	char c_arr[2];
+	char8_t u8_arr[2];
+	char16_t u_arr[2];
+	char32_t U_arr[2];
+
+	char& c = c_arr[0];
+	char8_t& u8 = u8_arr[0];
+	char16_t& u = u_arr[0];
+	char32_t& U = U_arr[0];
+
+	char& Zc = c_arr[1];
+	char8_t& Zu8 = u8_arr[1];
+	char16_t& Zu = u_arr[1];
+	char32_t& ZU = U_arr[1];
 
 	// NOTE: Passing in strings with two null terminators, so the call will
 	//  report that two writes were attempted, but only one will actually
 	//  get applied
-	RF_TODO_ANNOTATION( "Add tests to make sure that the second null isn't actually written" );
+	Zc = '\1';
+	Zu8 = u8'\1';
+	Zu = u'\1';
+	ZU = U'\1';
 
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( details::SingleSpan( &c ), rftl::string_view( "\0", 2 ) ), 2 );
 	ASSERT_CHAR( c, '\0' );
+	ASSERT_CHAR( Zc, '\1' );
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( details::SingleSpan( &c ), rftl::u8string_view( u8"\0", 2 ) ), 2 );
 	ASSERT_CHAR( c, '\0' );
+	ASSERT_CHAR( Zc, '\1' );
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( details::SingleSpan( &c ), rftl::u16string_view( u"\0", 2 ) ), 2 );
 	ASSERT_CHAR( c, '\0' );
+	ASSERT_CHAR( Zc, '\1' );
 	c = 'a';
 	ASSERT_EQ( ConvertToASCII( details::SingleSpan( &c ), rftl::u32string_view( U"\0", 2 ) ), 2 );
 	ASSERT_CHAR( c, '\0' );
+	ASSERT_CHAR( Zc, '\1' );
 
 	u8 = 'a';
 	ASSERT_EQ( ConvertToUtf8( details::SingleSpan( &u8 ), rftl::string_view( "\0", 2 ) ), 2 );
 	ASSERT_CHAR( u8, u8'\0' );
+	ASSERT_CHAR( Zu8, u8'\1' );
 	u8 = 'a';
 	ASSERT_EQ( ConvertToUtf8( details::SingleSpan( &u8 ), rftl::u8string_view( u8"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u8, u8'\0' );
+	ASSERT_CHAR( Zu8, u8'\1' );
 	u8 = 'a';
 	ASSERT_EQ( ConvertToUtf8( details::SingleSpan( &u8 ), rftl::u16string_view( u"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u8, u8'\0' );
+	ASSERT_CHAR( Zu8, u8'\1' );
 	u8 = 'a';
 	ASSERT_EQ( ConvertToUtf8( details::SingleSpan( &u8 ), rftl::u32string_view( U"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u8, u8'\0' );
+	ASSERT_CHAR( Zu8, u8'\1' );
 
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( details::SingleSpan( &u ), rftl::string_view( "\0", 2 ) ), 2 );
 	ASSERT_CHAR( u, u'\0' );
+	ASSERT_CHAR( Zu, u'\1' );
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( details::SingleSpan( &u ), rftl::u8string_view( u8"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u, u'\0' );
+	ASSERT_CHAR( Zu, u'\1' );
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( details::SingleSpan( &u ), rftl::u16string_view( u"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u, u'\0' );
+	ASSERT_CHAR( Zu, u'\1' );
 	u = 'a';
 	ASSERT_EQ( ConvertToUtf16( details::SingleSpan( &u ), rftl::u32string_view( U"\0", 2 ) ), 2 );
 	ASSERT_CHAR( u, u'\0' );
+	ASSERT_CHAR( Zu, u'\1' );
 
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( details::SingleSpan( &U ), rftl::string_view( "\0", 2 ) ), 2 );
 	ASSERT_CHAR( U, U'\0' );
+	ASSERT_CHAR( ZU, U'\1' );
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( details::SingleSpan( &U ), rftl::u8string_view( u8"\0", 2 ) ), 2 );
 	ASSERT_CHAR( U, U'\0' );
+	ASSERT_CHAR( ZU, U'\1' );
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( details::SingleSpan( &U ), rftl::u16string_view( u"\0", 2 ) ), 2 );
 	ASSERT_CHAR( U, U'\0' );
+	ASSERT_CHAR( ZU, U'\1' );
 	U = 'a';
 	ASSERT_EQ( ConvertToUtf32( details::SingleSpan( &U ), rftl::u32string_view( U"\0", 2 ) ), 2 );
 	ASSERT_CHAR( U, U'\0' );
+	ASSERT_CHAR( ZU, U'\1' );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
