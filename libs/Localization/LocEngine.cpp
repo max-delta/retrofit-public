@@ -269,7 +269,9 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 			return {};
 		}
 
-		rftl::u32string toVal = unicode::ConvertToUtf32( toField );
+		// Interpret the field as UTF-8
+		rftl::u8string_view toFieldAsUtf8( reinterpret_cast<char8_t const*>( toField.data() ), toField.size() );
+		rftl::u32string toVal = unicode::ConvertToUtf32( toFieldAsUtf8 );
 		if( toVal.empty() )
 		{
 			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line {} has a malformed 'to' column", i_row );
