@@ -75,9 +75,10 @@ static StringSplit FindFirstReplacementToken( rftl::string_view key, rftl::u32st
 		RF_ASSERT( endPtr( following ) == endPtr( str ) );
 	}
 
-	// Remove the outer syntax
+	// Remove the outer syntax, but leave the key prefix
 	rftl::u32string_view strippedToken = token;
-	strippedToken.remove_prefix( kOpen.size() );
+	static_assert( kOpen.back() == kKeyPrefix );
+	strippedToken.remove_prefix( kOpen.size() - 1 );
 	strippedToken.remove_suffix( kClose.size() );
 
 	// Return
