@@ -14,6 +14,7 @@ loc::TextDirection GetTextDirection();
 loc::LineBreakRules GetLineBreakRules();
 
 rftl::string LocalizeKey( rftl::string_view key );
+rftl::string LocalizeDynamicTarget( rftl::u32string_view target );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

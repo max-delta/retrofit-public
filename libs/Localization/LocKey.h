@@ -17,6 +17,7 @@ class LOCALIZATION_API LocKey
 	// Friends
 private:
 	friend class LocEngine;
+	friend class LocQuery;
 
 
 	//
@@ -27,6 +28,12 @@ public:
 	explicit LocKey( rftl::string_view id );
 
 	rftl::string GetAsDiagnosticString() const;
+
+
+	//
+	// Private methods
+private:
+	LocKey() = default;
 
 
 	//

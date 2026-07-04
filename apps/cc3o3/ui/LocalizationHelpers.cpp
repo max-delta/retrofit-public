@@ -39,5 +39,12 @@ rftl::string LocalizeKey( rftl::string_view key )
 	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( loc::LocKey( key ) ) ).GetCodePoints() );
 }
 
+
+
+rftl::string LocalizeDynamicTarget( rftl::u32string_view target )
+{
+	return app::gPageMapper->MapTo8Bit( app::gLocEngine->Query( loc::LocQuery( target ) ).GetCodePoints() );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

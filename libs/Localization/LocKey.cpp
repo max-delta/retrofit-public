@@ -10,7 +10,7 @@ namespace RF::loc {
 LocKey::LocKey( rftl::string_view id )
 	: mID( id )
 {
-	//
+	RF_ASSERT( mID.empty() == false );
 }
 
 

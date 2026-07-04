@@ -8,16 +8,23 @@ namespace RF::loc {
 class LOCALIZATION_API LocQuery
 {
 	//
-	// Public methods
-public:
-	explicit LocQuery( LocKey const& key );
-	explicit LocQuery( LocKey && key );
+	// Friends
+private:
+	friend class LocEngine;
 
 
 	//
-	// Public data
+	// Public methods
 public:
+	explicit LocQuery( LocKey const& key );
+	explicit LocQuery( rftl::u32string_view dynamicTarget );
+
+
+	//
+	// Private data
+private:
 	LocKey mKey;
+	rftl::u32string_view mDynamicTarget;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

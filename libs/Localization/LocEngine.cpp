@@ -19,6 +19,8 @@ namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+static constexpr size_t kMaxReplaceDepth = 10;
+
 struct StringSplit
 {
 	rftl::u32string_view mPreceding;
@@ -126,7 +128,7 @@ bool LocEngine::InitializeFromKeymapDirectory( file::VFS const& vfs, file::VFSPa
 
 	// Expand keys, performing replacement
 	{
-		size_t const numReplacements = ExpandNestedKeys( newKeymap, 10, true );
+		size_t const numReplacements = ExpandAndReplaceNestedKeys( newKeymap, details::kMaxReplaceDepth, true );
 		RFLOG_INFO( path, RFCAT_LOCALIZATION, "Expanded {} nested keys", numReplacements );
 	}
 
@@ -154,31 +156,20 @@ TextDirection LocEngine::GetTextDirection() const
 
 LocResult LocEngine::Query( LocQuery const& query ) const
 {
-	if( mKeyDebug )
+	if( query.mKey.mID.empty() == false )
 	{
-		// Return key as result
-		rftl::string const id = query.mKey.GetAsDiagnosticString();
-		rftl::u32string codePoints( id.begin(), id.end() );
-		return LocResult( rftl::move( codePoints ) );
+		RF_ASSERT( query.mDynamicTarget.empty() );
+		return ProcessDirectKeyQuery( query );
 	}
 
-	// Lookup
-	Keymap::const_iterator const iter = mKeymap.find( RFTL_STR_V_HASH( query.mKey.mID ) );
-	if( iter != mKeymap.end() )
+	if( query.mDynamicTarget.empty() == false )
 	{
-		return LocResult( iter->second );
+		RF_ASSERT( query.mKey.mID.empty() );
+		return ProcessDymamicTargetQuery( query );
 	}
-	else
-	{
-		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION,
-			"Failed to map the key '{}'",
-			query.mKey.GetAsDiagnosticString() );
 
-		// Return key as result
-		rftl::string_view const& id = query.mKey.mID;
-		rftl::u32string codePoints( id.begin(), id.end() );
-		return LocResult( rftl::move( codePoints ) );
-	}
+	RFLOGF_ERROR( nullptr, RFCAT_LOCALIZATION, "Failed to determine what a localization query intended" );
+	return LocResult( U"INVALID_QUERY" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -292,7 +283,7 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 
 
 
-size_t LocEngine::ExpandNestedKeys( Keymap& keymap, size_t maxDepthPerKey, bool errorOnMaxDepth )
+size_t LocEngine::ExpandAndReplaceNestedKeys( Keymap& keymap, size_t maxDepth, bool errorOnMaxDepth )
 {
 	// Will operate off of an increasingly narrowing subset of entries
 	using IterList = rftl::deque<Keymap::iterator>;
@@ -326,7 +317,7 @@ size_t LocEngine::ExpandNestedKeys( Keymap& keymap, size_t maxDepthPerKey, bool 
 	while( entriesToProcess.empty() == false )
 	{
 		// Check if we should bail
-		if( numPasses >= maxDepthPerKey )
+		if( numPasses >= maxDepth )
 		{
 			if( errorOnMaxDepth )
 			{
@@ -383,6 +374,60 @@ size_t LocEngine::ExpandNestedKeys( Keymap& keymap, size_t maxDepthPerKey, bool 
 
 
 
+size_t LocEngine::ExpandNestedKeys( Keymap const& keymap, rftl::u32string& str, size_t maxDepth, bool errorOnMaxDepth )
+{
+	// There is no key associated with this operation
+	static constexpr rftl::string_view kDeferred = "DEFERRED_EXPANSION";
+
+	// Will modify in-place
+	rftl::u32string& targetString = str;
+
+	// Track number of replacements
+	size_t numReplacements = 0;
+
+	// Process in a series of passes, so that we can bail if the space is
+	//  becoming too complex and looks like it might be infinitely recursive
+	size_t numPasses = 0;
+	while( true )
+	{
+		// Check if we should bail
+		if( numPasses >= maxDepth )
+		{
+			if( errorOnMaxDepth )
+			{
+				RFLOG_NOTIFY( nullptr, RFCAT_LOCALIZATION,
+					"Asked to expand a string that exceeded the max nesting"
+					" depth for replacement tokens, stopped partway at '{}'",
+					logging::CppUnicodeFormatWorkaround( targetString ) );
+			}
+			break;
+		}
+
+		// Attempt a single replacement
+		rftl::u32string replaced = ReplaceOneToken( keymap, kDeferred, targetString );
+
+		if( replaced.empty() )
+		{
+			// If replacement failed, assume there's no further
+			//  replacements to perform on the entry, and bail
+			break;
+		}
+		else
+		{
+			// If replacement succeeded, perform another pass in case there
+			//  are a chain of further replacements to be made on it, or
+			//  more tokens that we didn't handle at this time
+			targetString = rftl::move( replaced );
+			numReplacements++;
+			continue;
+		}
+	}
+
+	return numReplacements;
+}
+
+
+
 rftl::u32string LocEngine::ReplaceOneToken( Keymap const& keyMap, rftl::string_view key, rftl::u32string str )
 {
 	RF_ASSERT( keyMap.empty() == false );
@@ -429,6 +474,65 @@ rftl::u32string LocEngine::ReplaceOneToken( Keymap const& keyMap, rftl::string_v
 	retVal.append( replacement );
 	retVal.append( stringSplit.mFollowing );
 	return retVal;
+}
+
+
+
+LocResult LocEngine::ProcessDirectKeyQuery( LocQuery const& query ) const
+{
+	if( mKeyDebug )
+	{
+		// Return key as result
+		rftl::string const id = query.mKey.GetAsDiagnosticString();
+		rftl::u32string codePoints( id.begin(), id.end() );
+		return LocResult( rftl::move( codePoints ) );
+	}
+
+	// Lookup
+	Keymap::const_iterator const iter = mKeymap.find( RFTL_STR_V_HASH( query.mKey.mID ) );
+	if( iter != mKeymap.end() )
+	{
+		return LocResult( iter->second );
+	}
+	else
+	{
+		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION,
+			"Failed to map the key '{}'",
+			query.mKey.GetAsDiagnosticString() );
+
+		// Return key as result
+		rftl::string_view const& id = query.mKey.mID;
+		rftl::u32string codePoints( id.begin(), id.end() );
+		return LocResult( rftl::move( codePoints ) );
+	}
+}
+
+
+
+LocResult LocEngine::ProcessDymamicTargetQuery( LocQuery const& query ) const
+{
+	rftl::u32string target( query.mDynamicTarget );
+	RF_ASSERT( target.empty() == false );
+
+	if( mKeyDebug )
+	{
+		// Return target as result
+		return LocResult( rftl::move( target ) );
+	}
+
+	// Expand
+	size_t const numReplacements = ExpandNestedKeys( mKeymap, target, details::kMaxReplaceDepth, true );
+	RFLOG_TRACE( nullptr, RFCAT_LOCALIZATION, "Expanded {} nested keys in dynamic target", numReplacements );
+	if( target.empty() )
+	{
+		RFLOGF_NOTIFY( nullptr, RFCAT_LOCALIZATION,
+			"Failed to exapand the target '{}'",
+			logging::CppUnicodeFormatWorkaround( query.mDynamicTarget ) );
+		return LocResult( U"INVALID_TARGET" );
+	}
+
+	// Success!
+	return LocResult( rftl::move( target ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

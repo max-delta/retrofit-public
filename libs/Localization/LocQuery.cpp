@@ -13,8 +13,8 @@ LocQuery::LocQuery( LocKey const& key )
 
 
 
-LocQuery::LocQuery( LocKey&& key )
-	: mKey( rftl::move( key ) )
+LocQuery::LocQuery( rftl::u32string_view dynamicTarget )
+	: mDynamicTarget( dynamicTarget )
 {
 	//
 }
