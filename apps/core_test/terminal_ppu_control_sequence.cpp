@@ -38,7 +38,7 @@ TEST( ControlSequence, ClearAll )
 
 	ASSERT_EQ( DiscardControlSequence( str ), "ab" );
 
-	PPUParseState state = { .mPalleteIndex = 1_u8, .mReserved = true };
+	PPUParseState state = { .mPaletteIndex = 1_u8, .mReserved = true };
 	ASSERT_EQ( ConsumeControlSequence( state, str ), "ab" );
 	PPUParseState const expected{};
 	ASSERT_EQ( state, expected );
@@ -46,32 +46,32 @@ TEST( ControlSequence, ClearAll )
 
 
 
-TEST( ControlSequence, SetPallete )
+TEST( ControlSequence, SetPalette )
 {
 	using namespace rftl::literals;
 
-	static constexpr rftl::array const seq = rftl::array_concat( sequence ::SetPallete( 2 ), "ab\0"_array );
+	static constexpr rftl::array const seq = rftl::array_concat( sequence ::SetPalette( 2 ), "ab\0"_array );
 	static constexpr rftl::string_view const str( seq.data() );
 
 	ASSERT_EQ( DiscardControlSequence( str ), "ab" );
 
-	PPUParseState state = { .mPalleteIndex = 1_u8, .mReserved = true };
+	PPUParseState state = { .mPaletteIndex = 1_u8, .mReserved = true };
 	ASSERT_EQ( ConsumeControlSequence( state, str ), "ab" );
-	PPUParseState const expected{ .mPalleteIndex = 2_u8, .mReserved = true };
+	PPUParseState const expected{ .mPaletteIndex = 2_u8, .mReserved = true };
 	ASSERT_EQ( state, expected );
 }
 
 
-TEST( ControlSequence, ClearPallete )
+TEST( ControlSequence, ClearPalette )
 {
 	using namespace rftl::literals;
 
-	static constexpr rftl::array const seq = rftl::array_concat( sequence ::ClearPallete(), "ab\0"_array );
+	static constexpr rftl::array const seq = rftl::array_concat( sequence ::ClearPalette(), "ab\0"_array );
 	static constexpr rftl::string_view const str( seq.data() );
 
 	ASSERT_EQ( DiscardControlSequence( str ), "ab" );
 
-	PPUParseState state = { .mPalleteIndex = 1_u8, .mReserved = true };
+	PPUParseState state = { .mPaletteIndex = 1_u8, .mReserved = true };
 	ASSERT_EQ( ConsumeControlSequence( state, str ), "ab" );
 	PPUParseState const expected{ .mReserved = true };
 	ASSERT_EQ( state, expected );

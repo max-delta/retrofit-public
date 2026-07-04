@@ -45,14 +45,14 @@ void Process1ByteDirective( PPUParseState& state, rftl::string_view directive )
 
 	// 01xxxxxx
 	//   ^^     Signifier (0/1/2/3)
-	//     ^^^^ Pallete index (when signifier == 0)
+	//     ^^^^ Palette index (when signifier == 0)
 	//     ^^^^ Reserved (when signifier == 1)
 	//     ^^^^ Reserved (when signifier == 2)
 	//     0000 Clear all state (when signifier == 3)
 	//     1    Clear [reserved] (when signifier == 3)
 	//      1   Clear [reserved sig 2] (when signifier == 3)
 	//       1  Clear [reserved sig 1] (when signifier == 3)
-	//        1 Clear pallete index (when signifier == 3)
+	//        1 Clear palette index (when signifier == 3)
 
 	uint8_t const signifier = ( firstByte & 0b00110000u ) >> 4u;
 	uint8_t const payload = firstByte & 0b00001111u;
@@ -60,8 +60,8 @@ void Process1ByteDirective( PPUParseState& state, rftl::string_view directive )
 	switch( signifier )
 	{
 		case 0:
-			// Pallete index
-			state.mPalleteIndex = payload;
+			// Palette index
+			state.mPaletteIndex = payload;
 			return;
 		case 1:
 			// Reserved
@@ -79,8 +79,8 @@ void Process1ByteDirective( PPUParseState& state, rftl::string_view directive )
 			}
 			if( payload & 0b0001 )
 			{
-				// Pallete index
-				state.mPalleteIndex.reset();
+				// Palette index
+				state.mPaletteIndex.reset();
 			}
 			if( payload & 0b0010 )
 			{

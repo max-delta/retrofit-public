@@ -96,14 +96,14 @@ math::Color4u8 MelaninColorGenerator::GenerateColor( float baseRatio, float pheo
 
 
 
-sprite::Bitmap MelaninColorGenerator::GeneratePallete( size_t toneCount ) const
+sprite::Bitmap MelaninColorGenerator::GeneratePalette( size_t toneCount ) const
 {
-	return GeneratePallete( .5f, -1.f, 1.f, -1.f, 1.f, toneCount );
+	return GeneratePalette( .5f, -1.f, 1.f, -1.f, 1.f, toneCount );
 }
 
 
 
-sprite::Bitmap MelaninColorGenerator::GeneratePallete( float baseRatio, float minPheo, float maxPheo, float minEu, float maxEu, size_t toneCount ) const
+sprite::Bitmap MelaninColorGenerator::GeneratePalette( float baseRatio, float minPheo, float maxPheo, float minEu, float maxEu, size_t toneCount ) const
 {
 	RF_ASSERT( toneCount > 0 );
 
@@ -136,30 +136,29 @@ sprite::Bitmap MelaninColorGenerator::GeneratePallete( float baseRatio, float mi
 
 
 
-sprite::Bitmap MelaninColorGenerator::GenerateComplexPallete( size_t toneCountScaler ) const
+sprite::Bitmap MelaninColorGenerator::GenerateComplexPalette( size_t toneCountScaler ) const
 {
 	RF_ASSERT( toneCountScaler > 2 );
 
 	sprite::Bitmap retVal = sprite::Bitmap( 4 * toneCountScaler, 3 * toneCountScaler );
 
-	sprite::Bitmap const mainPallete = GeneratePallete( toneCountScaler * 3 );
-	retVal.ApplyStencilOverwrite( mainPallete, 0, 0, 1 );
-	size_t const subPalleteStartX = mainPallete.GetWidth();
+	sprite::Bitmap const mainPalette = GeneratePalette( toneCountScaler * 3 );
+	retVal.ApplyStencilOverwrite( mainPalette, 0, 0, 1 );
+	size_t const subPaletteStartX = mainPalette.GetWidth();
 
 	// Any melanin will quickly overcome the base color, so focus on the
 	//  differences in bases while supressing melanin
 	static constexpr float kMinAlbMel = -1.f;
 	static constexpr float kMaxAlbMel = -.75f;
-	rftl::array<sprite::Bitmap, 4> const albinoAlternatePalletes = {
-		GeneratePallete( 0.0f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
-		GeneratePallete( .25f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
-		GeneratePallete( .75f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
-		GeneratePallete( 1.0f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 )
-	};
-	retVal.ApplyStencilOverwrite( albinoAlternatePalletes.at( 0 ), subPalleteStartX, 0, 1 );
-	retVal.ApplyStencilOverwrite( albinoAlternatePalletes.at( 1 ), subPalleteStartX + toneCountScaler / 2, 0, 1 );
-	retVal.ApplyStencilOverwrite( albinoAlternatePalletes.at( 2 ), subPalleteStartX, toneCountScaler / 2, 1 );
-	retVal.ApplyStencilOverwrite( albinoAlternatePalletes.at( 3 ), subPalleteStartX + toneCountScaler / 2, toneCountScaler / 2, 1 );
+	rftl::array<sprite::Bitmap, 4> const albinoAlternatePalettes = {
+		GeneratePalette( 0.0f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
+		GeneratePalette( .25f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
+		GeneratePalette( .75f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ),
+		GeneratePalette( 1.0f, kMinAlbMel, kMaxAlbMel, kMinAlbMel, kMaxAlbMel, toneCountScaler / 2 ) };
+	retVal.ApplyStencilOverwrite( albinoAlternatePalettes.at( 0 ), subPaletteStartX, 0, 1 );
+	retVal.ApplyStencilOverwrite( albinoAlternatePalettes.at( 1 ), subPaletteStartX + toneCountScaler / 2, 0, 1 );
+	retVal.ApplyStencilOverwrite( albinoAlternatePalettes.at( 2 ), subPaletteStartX, toneCountScaler / 2, 1 );
+	retVal.ApplyStencilOverwrite( albinoAlternatePalettes.at( 3 ), subPaletteStartX + toneCountScaler / 2, toneCountScaler / 2, 1 );
 
 	// Melanin extremes get mixed out quickly, so focus closer on the edges
 	static constexpr float kMinFocusMel = .5f;
@@ -167,13 +166,13 @@ sprite::Bitmap MelaninColorGenerator::GenerateComplexPallete( size_t toneCountSc
 	static constexpr float kMinSuppressMel = -1.f;
 	static constexpr float kMaxSuppressMel = -.5f;
 
-	sprite::Bitmap const pheomelaninHeavyPallete =
-		GeneratePallete( .5f, kMinFocusMel, kMaxFocusMel, kMinSuppressMel, kMaxSuppressMel, toneCountScaler );
-	retVal.ApplyStencilOverwrite( pheomelaninHeavyPallete, subPalleteStartX, toneCountScaler, 1 );
+	sprite::Bitmap const pheomelaninHeavyPalette =
+		GeneratePalette( .5f, kMinFocusMel, kMaxFocusMel, kMinSuppressMel, kMaxSuppressMel, toneCountScaler );
+	retVal.ApplyStencilOverwrite( pheomelaninHeavyPalette, subPaletteStartX, toneCountScaler, 1 );
 
-	sprite::Bitmap const eumelaninHeavyPallete =
-		GeneratePallete( .5f, kMinSuppressMel, kMaxSuppressMel, kMinFocusMel, kMaxFocusMel, toneCountScaler );
-	retVal.ApplyStencilOverwrite( eumelaninHeavyPallete, subPalleteStartX, toneCountScaler * 2, 1 );
+	sprite::Bitmap const eumelaninHeavyPalette =
+		GeneratePalette( .5f, kMinSuppressMel, kMaxSuppressMel, kMinFocusMel, kMaxFocusMel, toneCountScaler );
+	retVal.ApplyStencilOverwrite( eumelaninHeavyPalette, subPaletteStartX, toneCountScaler * 2, 1 );
 
 	return retVal;
 }

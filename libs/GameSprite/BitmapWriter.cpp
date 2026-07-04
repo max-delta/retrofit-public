@@ -15,7 +15,7 @@ rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 
 	static_assert( sizeof( uint8_t ) * 4 == sizeof( uint32_t ), "Unexpected size" );
 
 	// NOTE: Using the lowest version that officialy supported 32-bit pixels to
-	//  be directly written into the bitmap data without palletes
+	//  be directly written into the bitmap data without palettes
 	constexpr size_t kFileHeaderSize = 14;
 	constexpr size_t kBitmapHeaderSize = 40;
 	constexpr size_t kBytesPerPixel = 4;
@@ -78,7 +78,7 @@ rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 
 		constexpr uint32_t kBitmapSizeInHeader = 0; // Uncompressed
 		constexpr uint32_t kHoriResolutionPixelsPerMeter = 1000; // Millimeter
 		constexpr uint32_t kVertResolutionPixelsPerMeter = 1000; // Millimeter
-		constexpr uint32_t kNumColorsInPallete = 0; // No pallete
+		constexpr uint32_t kNumColorsInPalette = 0; // No palette
 		constexpr uint32_t kNumImportantColors = 0; // All colors meaningful
 
 		write32( writeHead, headerSize );
@@ -90,7 +90,7 @@ rftl::vector<uint8_t> RF::sprite::BitmapWriter::WriteRGBABitmap( math::Color4u8 
 		write32( writeHead, kBitmapSizeInHeader );
 		write32( writeHead, kHoriResolutionPixelsPerMeter );
 		write32( writeHead, kVertResolutionPixelsPerMeter );
-		write32( writeHead, kNumColorsInPallete );
+		write32( writeHead, kNumColorsInPalette );
 		write32( writeHead, kNumImportantColors );
 		RF_ASSERT( writeHead == retVal.data() + kFileHeaderSize + kBitmapHeaderSize );
 	}

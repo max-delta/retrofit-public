@@ -295,8 +295,8 @@ void InitDrawTest()
 	testObjWiggle.mZLayer = 0;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
-	testTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "pallete16_4.tset.txt" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	testTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
 	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
@@ -1380,7 +1380,7 @@ void UDPTest()
 void SkinColorTest()
 {
 	file::VFSPath const testPath = file::VFS::kRoot.GetChild( "scratch", "skin_color_test.bmp" );
-	sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPallete( 4 );
+	sprite::Bitmap const skinColorTest = sprite::MelaninColorGenerator().GenerateComplexPalette( 4 );
 	rftl::vector<uint8_t> const toWrite = sprite::BitmapWriter::WriteRGBABitmap( skinColorTest.GetData(), skinColorTest.GetWidth(), skinColorTest.GetHeight() );
 	file::SeekHandlePtr fileHandle = app::gVfs->GetFileForWrite( testPath );
 	fileHandle->WriteBytes( toWrite.data(), toWrite.size() );

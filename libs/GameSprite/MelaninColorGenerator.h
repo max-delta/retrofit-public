@@ -21,9 +21,9 @@ public:
 		float pheomelaninRatio,
 		float eumelaninRatio ) const;
 
-	sprite::Bitmap GeneratePallete( size_t toneCount ) const;
-	sprite::Bitmap GeneratePallete( float baseRatio, float minPheo, float maxPheo, float minEu, float maxEu, size_t toneCount ) const;
-	sprite::Bitmap GenerateComplexPallete( size_t toneCountScaler ) const;
+	sprite::Bitmap GeneratePalette( size_t toneCount ) const;
+	sprite::Bitmap GeneratePalette( float baseRatio, float minPheo, float maxPheo, float minEu, float maxEu, size_t toneCount ) const;
+	sprite::Bitmap GenerateComplexPalette( size_t toneCountScaler ) const;
 
 
 	//

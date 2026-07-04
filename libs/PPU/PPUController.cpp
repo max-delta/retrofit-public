@@ -1503,10 +1503,10 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		// Calculate character color
 		auto const determineColor = [&string, &parseState]() -> math::Color3u8
 		{
-			if( parseState.mPalleteIndex.has_value() )
+			if( parseState.mPaletteIndex.has_value() )
 			{
 				// HACK: Red
-				// TODO: Pallete lookup
+				// TODO: Palette lookup
 				return math::Color3u8::kRed;
 			}
 			return string.mColor;

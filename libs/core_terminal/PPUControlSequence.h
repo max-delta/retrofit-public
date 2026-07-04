@@ -15,11 +15,11 @@ struct PPUParseState
 {
 	bool operator==( PPUParseState const& ) const = default;
 
-	// If set, the color of the text switches to a pallete-based color lookup,
+	// If set, the color of the text switches to a palette-based color lookup,
 	//  and if not set, it reverts back to the color that text would normally
 	//  have (presumably the color of the string's command)
-	using PalleteIndex = uint8_t;
-	rftl::optional<PalleteIndex> mPalleteIndex = rftl::nullopt;
+	using PaletteIndex = uint8_t;
+	rftl::optional<PaletteIndex> mPaletteIndex = rftl::nullopt;
 
 	// Reserved for more state, currently only used for unit tests until more
 	//  state is available
@@ -68,14 +68,14 @@ inline constexpr rftl::array<char, 2> ClearAllState()
 
 
 
-inline constexpr rftl::array<char, 2> SetPallete( PPUParseState::PalleteIndex index )
+inline constexpr rftl::array<char, 2> SetPalette( PPUParseState::PaletteIndex index )
 {
 	return {
 		kEscapeCharacter,
 		static_cast<char>( 0b0100'0000u | ( index & 0b1111u ) ) };
 }
 
-inline constexpr rftl::array<char, 2> ClearPallete()
+inline constexpr rftl::array<char, 2> ClearPalette()
 {
 	return {
 		kEscapeCharacter,
