@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BufferConvert.h"
-#include "InsertConvert.h"
+
+#include "core_unicode/InsertConvert.h"
 
 #include "rftl/utility"
 
