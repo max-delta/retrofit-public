@@ -85,6 +85,7 @@ void Log(
 
 
 
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 template<typename... ArgsT>
 void Log(
 	nullptr_t /*context*/,
@@ -99,6 +100,7 @@ void Log(
 
 	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
 }
+#endif
 
 
 
