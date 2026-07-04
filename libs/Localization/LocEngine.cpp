@@ -263,9 +263,9 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line {} has a malformed 'from' column", i_row );
 			return {};
 		}
-		if( fromVal.at( 0 ) != '$' )
+		if( fromVal.at( 0 ) != kKeyPrefix )
 		{
-			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line {} has a malformed 'from' column, expected to begin with '$'", i_row );
+			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line {} has a malformed 'from' column, expected to begin with '{}'", i_row, kKeyPrefix );
 			return {};
 		}
 

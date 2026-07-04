@@ -1,6 +1,8 @@
 #pragma once
 #include "cc3o3/elements/ElementFwd.h"
 
+#include "Localization/LocFwd.h"
+
 #include "rftl/extension/static_string.h"
 #include "rftl/string_view"
 #include "rftl/array"
@@ -12,7 +14,7 @@ namespace RF::cc::element {
 // Element identifiers are intended to be valid ASCII strings
 using ElementBytes = rftl::array<uint8_t, sizeof( ElementIdentifier )>;
 using ElementString = rftl::static_string<sizeof( ElementIdentifier )>;
-inline constexpr char const kElementLocalizationPrefix[] = { '$', 'e', 'l', 'e', 'm', 'e', 'n', 't', '_' };
+inline constexpr char const kElementLocalizationPrefix[] = { loc::kKeyPrefix, 'e', 'l', 'e', 'm', 'e', 'n', 't', '_' };
 using ElementName = rftl::static_string<sizeof( kElementLocalizationPrefix ) + sizeof( ElementIdentifier ) + sizeof( 'N' )>;
 using ElementSynopsis = rftl::static_string<sizeof( kElementLocalizationPrefix ) + sizeof( ElementIdentifier ) + sizeof( 'S' )>;
 
