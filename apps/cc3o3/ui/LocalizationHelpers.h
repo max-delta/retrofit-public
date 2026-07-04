@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "Localization/LocFwd.h"
+#include "core_localization/LocFwd.h"
 
 #include "rftl/string"
 #include "rftl/string_view"

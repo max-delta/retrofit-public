@@ -6,13 +6,6 @@
 namespace RF::loc {
 ///////////////////////////////////////////////////////////////////////////////
 
-enum class TextDirection : uint8_t
-{
-	kInvalid = 0,
-	LeftToRight,
-	RightToLeft
-};
-
 // Code points in this private use area are treated specially by the
 //  page mapper, where the lowest byte of the codepoint is extracted and output
 //  directly during page mapping, effectively bypassing the mapping so that
