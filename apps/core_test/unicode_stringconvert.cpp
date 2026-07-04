@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "core_unicode/StringConvert.h"
+#include "core_unicode/BlindConvert.h"
 
 #include "rftl/string_view"
 
@@ -14,9 +15,9 @@ namespace RF::unicode {
 
 namespace details {
 // Trying to cram raw encodings into a UTF-8 literal triggers warning C5321
-static rftl::u8string FromBytes( rftl::string_view bytes )
+static rftl::u8string_view FromBytes( rftl::string_view bytes )
 {
-	return rftl::u8string( reinterpret_cast<char8_t const*>( bytes.data() ), bytes.size() );
+	return BlindInterpretAsUtf8( bytes );
 }
 }
 

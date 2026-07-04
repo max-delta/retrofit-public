@@ -5,6 +5,7 @@
 
 #include "core/meta/LazyInitSingleton.h"
 #include "core_logging/LoggingRouter.h"
+#include "core_unicode/BlindConvert.h"
 #include "core_unicode/BufferConvert.h"
 #include "core_unicode/StringConvert.h"
 #include "core_math/math_clamps.h"
@@ -82,7 +83,7 @@ void FallbackConversion( Utf32LogContextBuffer& dest, Utf8LogContextBuffer const
 template<>
 void WriteContextString( char const* const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromPointer( reinterpret_cast<char8_t const*>( context ), buffer, u8'\0' );
+	details::WriteContextStringFromPointer( unicode::BlindInterpretAsUtf8( context ), buffer, u8'\0' );
 }
 #endif
 
@@ -110,7 +111,7 @@ void WriteContextString( char32_t const* const& context, Utf32LogContextBuffer& 
 template<>
 void WriteContextString( rftl::basic_string_view<char> const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromView( rftl::basic_string_view<char8_t>( reinterpret_cast<char8_t const*>( context.data() ), context.size() ), buffer, u8'\0' );
+	details::WriteContextStringFromView( unicode::BlindInterpretAsUtf8( context ), buffer, u8'\0' );
 }
 #endif
 
@@ -138,7 +139,7 @@ void WriteContextString( rftl::basic_string_view<char32_t> const& context, Utf32
 template<>
 void WriteContextString( rftl::basic_string<char> const& context, Utf8LogContextBuffer& buffer )
 {
-	details::WriteContextStringFromView( rftl::basic_string_view<char8_t>( reinterpret_cast<char8_t const*>( context.data() ), context.size() ), buffer, u8'\0' );
+	details::WriteContextStringFromView( unicode::BlindInterpretAsUtf8( context ), buffer, u8'\0' );
 }
 #endif
 
@@ -202,6 +203,21 @@ rftl::string CppUnicodeFormatWorkaround( rftl::u32string_view str )
 }
 #endif
 
+///////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
+rftl::u8string_view CoerceAsciiFormatStringToUtf8( rftl::string_view source )
+{
+	return unicode::BlindInterpretAsUtf8( source );
+}
+char8_t const* CoerceAsciiFormatStringToUtf8( char const* source )
+{
+	return unicode::BlindInterpretAsUtf8( source );
+}
+#endif
+
+}
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 

@@ -266,6 +266,15 @@ LOGGING_API rftl::string CppUnicodeFormatWorkaround( rftl::u32string_view str );
 namespace details {
 
 #ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
+LOGGING_API rftl::u8string_view CoerceAsciiFormatStringToUtf8( rftl::string_view source );
+LOGGING_API char8_t const* CoerceAsciiFormatStringToUtf8( char const* source );
+#endif
+
+}
+//////////////////////////////////////////////////////////////////////////////
+namespace details {
+
+#ifdef RF_TREAT_LOG_ASCII_FORMAT_STRINGS_AS_UTF8
 template<typename Context, typename... ArgsT>
 void Log(
 	Context const& context,

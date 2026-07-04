@@ -27,6 +27,7 @@
 	<PropertyGroup />
 	<ItemDefinitionGroup />
 	<ItemGroup>
+		<ClInclude Include="BlindConvert.h" />
 		<ClInclude Include="BufferConvert.h" />
 		<ClInclude Include="CharConvert.h" />
 		<ClInclude Include="CodeAreas.h" />
@@ -36,6 +37,7 @@
 		<ClInclude Include="UnicodeFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="BlindConvert.cpp" />
 		<ClCompile Include="BufferConvert.cpp" />
 		<ClCompile Include="CharConvert.cpp" />
 		<ClCompile Include="CodeAreas.cpp" />

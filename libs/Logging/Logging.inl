@@ -20,7 +20,7 @@ void Log(
 	WriteContextString( context, contextBuffer );
 	*contextBuffer.rbegin() = u8'\0';
 
-	rftl::u8string_view const formatAsUtf8 = rftl::u8string_view( reinterpret_cast<char8_t const*>( format.data() ), format.size() );
+	rftl::u8string_view const formatAsUtf8 = CoerceAsciiFormatStringToUtf8( format );
 
 	details::LogVA( contextBuffer.data(), categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
 }
@@ -95,7 +95,7 @@ void Log(
 	rftl::string_view format,
 	ArgsT&&... args )
 {
-	rftl::u8string_view const formatAsUtf8 = rftl::u8string_view( reinterpret_cast<char8_t const*>( format.data() ), format.size() );
+	rftl::u8string_view const formatAsUtf8 = CoerceAsciiFormatStringToUtf8( format );
 
 	details::LogVA( {}, categoryKey, severityMask, filename, lineNumber, formatAsUtf8, rftl::make_format_args( args... ) );
 }

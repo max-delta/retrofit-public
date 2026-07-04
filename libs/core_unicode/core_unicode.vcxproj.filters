@@ -8,6 +8,7 @@
 		<ClInclude Include="BufferConvert.h" />
 		<ClInclude Include="CodeAreas.h" />
 		<ClInclude Include="UnicodeFwd.h" />
+		<ClInclude Include="BlindConvert.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
@@ -15,6 +16,7 @@
 		<ClCompile Include="CharConvert.cpp" />
 		<ClCompile Include="BufferConvert.cpp" />
 		<ClCompile Include="CodeAreas.cpp" />
+		<ClCompile Include="BlindConvert.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="InsertConvert.inl" />

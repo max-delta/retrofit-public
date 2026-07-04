@@ -8,8 +8,9 @@
 
 #include "Serialization/CsvReader.h"
 
-#include "core_unicode/StringConvert.h"
+#include "core_unicode/BlindConvert.h"
 #include "core_unicode/BufferConvert.h"
+#include "core_unicode/StringConvert.h"
 #include "core_vfs/FileBuffer.h"
 
 #include "rftl/sstream"
@@ -262,8 +263,7 @@ LocEngine::Keymap LocEngine::LoadKeymapFromFile( file::VFS const& vfs, file::VFS
 		}
 
 		// Interpret the field as UTF-8
-		rftl::u8string_view toFieldAsUtf8( reinterpret_cast<char8_t const*>( toField.data() ), toField.size() );
-		rftl::u32string toVal = unicode::ConvertToUtf32( toFieldAsUtf8 );
+		rftl::u32string toVal = unicode::ConvertToUtf32( unicode::BlindInterpretAsUtf8( toField ) );
 		if( toVal.empty() )
 		{
 			RFLOGF_NOTIFY( path, RFCAT_LOCALIZATION, "Line {} has a malformed 'to' column", i_row );
