@@ -18,6 +18,10 @@ namespace RF::novel {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+static constexpr bool kIsRightToLeftWhenUnlocalized = false;
+
+
+
 template<typename CallableT, typename... ArgsT>
 void InvokeIfSet( CallableT& callable, ArgsT&&... args )
 {
@@ -377,8 +381,17 @@ bool CinematicDriver::SubTickCinematic_Advance_Speech( TickParams& params, dialo
 	ui::controller::DialogueBox& dialogueBox = *mDialogueBox;
 
 	RF_TODO_ANNOTATION( "Change the dialogue box's portrait" );
-	RF_TODO_ANNOTATION( "Lookup localization key" );
-	dialogueBox.SetText( entry.mFallbackText, mIsRightToLeft );
+
+	// Set text, performing localization if available
+	if( params.mLocalizeSpeech )
+	{
+		LocalizedText const localized = params.mLocalizeSpeech( entry );
+		dialogueBox.SetText( localized.mText, localized.mIsRightToLeft );
+	}
+	else
+	{
+		dialogueBox.SetText( entry.mFallbackText, details::kIsRightToLeftWhenUnlocalized );
+	}
 
 	// Stop sub-ticking
 	return false;

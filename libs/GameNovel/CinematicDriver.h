@@ -32,8 +32,16 @@ class GAMENOVEL_API CinematicDriver
 	//
 	// Types and constants
 public:
+	struct LocalizedText
+	{
+		rftl::string mText;
+		bool mIsRightToLeft = false;
+	};
+
 	using OnEntrySig = void( dialogue::DialogueEntry const& entry );
 	using OnEntryFunc = rftl::function<OnEntrySig>;
+	using LocalizeSig = LocalizedText( dialogue::DialogueEntry const& entry );
+	using LocalizeFunc = rftl::function<LocalizeSig>;
 
 	// NOTE: These are pointer-hashed string views, because they are expected
 	//  to be backed by the strings in the sequence, and thus do not need an
@@ -62,6 +70,8 @@ public:
 		OnEntryFunc mOnCommand = nullptr;
 		OnEntryFunc mOnScene = nullptr;
 		OnEntryFunc mOnSpeech = nullptr;
+
+		LocalizeFunc mLocalizeSpeech = nullptr;
 	};
 
 	//
@@ -118,7 +128,6 @@ private:
 
 	WeakPtr<ui::controller::DialogueBox> mDialogueBox;
 
-	bool mIsRightToLeft = false;
 	CinematicActions::Value mQueuedActions = CinematicActions::Invalid;
 };
 
