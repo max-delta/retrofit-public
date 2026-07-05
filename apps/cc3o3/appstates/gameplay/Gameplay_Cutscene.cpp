@@ -15,6 +15,8 @@
 #include "GameAppState/AppStateTickContext.h"
 #include "GameAppState/AppStateManager.h"
 
+#include "GameDialogue/DialogueEntry.h"
+
 #include "GameNovel/CinematicDriver.h"
 #include "GameNovel/ui/controllers/DialogueBox.h"
 
@@ -30,6 +32,9 @@
 
 #include "PPU/PPUController.h"
 #include "PPU/TilesetManager.h"
+
+#include "core_unicode/BlindConvert.h"
+#include "core_unicode/StringConvert.h"
 
 #include "core/ptr/default_creator.h"
 #include "core/meta/IntegerPromotion.h"
@@ -47,6 +52,7 @@ public:
 
 public:
 	UniquePtr<cutscene::CinematicController> mCinematicController;
+	novel::CinematicDriver::TickParams mTickParams;
 
 	WeakPtr<ui::controller::TextLabel> mTODO;
 	WeakPtr<novel::ui::controller::DialogueBox> mLowerDialogueBox;
@@ -69,6 +75,24 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 	{
 		internalState.mCinematicController = DefaultCreator<cutscene::CinematicController>::Create();
 		campaign.HardcodedCutsceneSetup( *internalState.mCinematicController );
+
+		internalState.mTickParams.mLocalizeSpeech =
+			[]( dialogue::DialogueEntry const& entry ) -> novel::CinematicDriver::LocalizedText
+		{
+			RF_TODO_ANNOTATION(
+				"Check to see if there's a localization replacement for this"
+				" dialogue line first, and use that instead" );
+			( (void)entry.mLocIDLineNumber );
+
+			// Treat fallback dialogue as unicode
+			rftl::string_view const source = entry.mFallbackText;
+			rftl::u8string_view const asUnicode = unicode::BlindInterpretAsUtf8( source );
+
+			novel::CinematicDriver::LocalizedText retVal;
+			retVal.mText = ui::LocalizeDynamicTarget( unicode::ConvertToUtf32( asUnicode ) );
+			retVal.mIsRightToLeft = ui::GetTextDirection() == loc::TextDirection::RightToLeft;
+			return retVal;
+		};
 	}
 
 	// Setup UI
@@ -264,7 +288,8 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 
 	// TODO
 	( (void)campaign );
-	cinematic.TickCinematic();
+	novel::CinematicDriver::TickParams tickParams;
+	cinematic.TickCinematic( internalState.mTickParams );
 	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 128, 32 ), "TODO: Cutscene" );
 }
 
