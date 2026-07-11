@@ -71,6 +71,10 @@ public:
 	uint8_t mNumTileLayers = 0;
 	uint8_t mNumStrings = 0;
 	uint8_t mReserved1 : 8;
+	uint8_t mReserved2 : 8;
+	uint8_t mReserved3 : 8;
+	uint8_t mReserved4 : 8;
+	uint8_t mReserved5 : 8;
 };
 // NOTE: If you've modified the PPU to have higher limits, you'll want to
 //  re-tune these as well, or disable them entirely if you don't care.
