@@ -33,6 +33,7 @@
 		<ClInclude Include="Color3f.h" />
 		<ClInclude Include="Color3u8.h" />
 		<ClInclude Include="Color4u8.h" />
+		<ClInclude Include="ColorFwd.h" />
 		<ClInclude Include="Hash.h" />
 		<ClInclude Include="Limits.h" />
 		<ClInclude Include="ListOperations.h" />

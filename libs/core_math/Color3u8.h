@@ -1,8 +1,6 @@
 #pragma once
 #include "core_math/MathFwd.h"
 
-#include "rftl/cstdint"
-#include "rftl/type_traits"
 
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////

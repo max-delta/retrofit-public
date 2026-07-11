@@ -24,6 +24,7 @@
 		<ClInclude Include="MathFwd.h" />
 		<ClInclude Include="Ratio.h" />
 		<ClInclude Include="Color3u8.h" />
+		<ClInclude Include="ColorFwd.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
