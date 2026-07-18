@@ -20,16 +20,6 @@ TEST( Color, BasicConversions )
 	rftl::array const kArr4u8 = RF_ARR( Color4u8 );
 #undef RF_ARR
 
-	static constexpr auto convert =
-		[] //
-		<typename ToT, typename FromT, size_t CountT> //
-		( rftl::array<FromT, CountT> const& arr ) -> //
-		rftl::array<ToT, CountT>
-	{
-		rftl::array<ToT, CountT> retVal = arr;
-		return retVal;
-	};
-
 	{
 		ASSERT_EQ( kArr3u8, rftl::array_convert<Color3u8>( kArr3u8 ) );
 		ASSERT_EQ( kArr3u8, rftl::array_convert<Color3u8>( kArr3f ) );
