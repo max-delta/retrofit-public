@@ -6,12 +6,6 @@
 #include "core_math/Vector2.h"
 
 
-// Forwards
-namespace RF::math {
-template<typename T>
-class AABB4;
-}
-
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 

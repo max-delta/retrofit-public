@@ -3,14 +3,8 @@
 
 #include "PPU/GfxFwd.h"
 
+#include "core_math/MathFwd.h"
 
-// Forwards
-namespace RF::math {
-template<typename T>
-class Vector2;
-template<typename T>
-class AABB4;
-}
 
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
