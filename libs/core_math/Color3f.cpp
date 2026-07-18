@@ -385,9 +385,7 @@ Color3f Color3f::operator-( Color3f const& rhs ) const
 
 Color3f& Color3f::operator+=( Color3f const& rhs )
 {
-	r += rhs.r;
-	g += rhs.g;
-	b += rhs.b;
+	*this = *this + rhs;
 	return *this;
 }
 
@@ -395,9 +393,7 @@ Color3f& Color3f::operator+=( Color3f const& rhs )
 
 Color3f& Color3f::operator-=( Color3f const& rhs )
 {
-	r -= rhs.r;
-	g -= rhs.g;
-	b -= rhs.b;
+	*this = *this - rhs;
 	return *this;
 }
 
@@ -426,9 +422,7 @@ Color3f Color3f::operator*( ElementType const& rhs ) const
 
 Color3f& Color3f::operator+=( ElementType const& rhs )
 {
-	r += rhs;
-	g += rhs;
-	b += rhs;
+	*this = *this + rhs;
 	return *this;
 }
 
@@ -436,9 +430,7 @@ Color3f& Color3f::operator+=( ElementType const& rhs )
 
 Color3f& Color3f::operator-=( ElementType const& rhs )
 {
-	r -= rhs;
-	g -= rhs;
-	b -= rhs;
+	*this = *this - rhs;
 	return *this;
 }
 
@@ -446,9 +438,7 @@ Color3f& Color3f::operator-=( ElementType const& rhs )
 
 Color3f& Color3f::operator*=( ElementType const& rhs )
 {
-	r *= rhs;
-	g *= rhs;
-	b *= rhs;
+	*this = *this * rhs;
 	return *this;
 }
 

@@ -114,9 +114,7 @@ Color3u8 Color3u8::operator-( Color3u8 const& rhs ) const
 
 Color3u8& Color3u8::operator+=( Color3u8 const& rhs )
 {
-	r += rhs.r;
-	g += rhs.g;
-	b += rhs.b;
+	*this = *this + rhs;
 	return *this;
 }
 
@@ -124,9 +122,7 @@ Color3u8& Color3u8::operator+=( Color3u8 const& rhs )
 
 Color3u8& Color3u8::operator-=( Color3u8 const& rhs )
 {
-	r -= rhs.r;
-	g -= rhs.g;
-	b -= rhs.b;
+	*this = *this - rhs;
 	return *this;
 }
 
@@ -164,9 +160,7 @@ Color3u8 Color3u8::operator*( ElementType const& rhs ) const
 
 Color3u8& Color3u8::operator+=( ElementType const& rhs )
 {
-	r = integer_cast<ElementType>( r + rhs );
-	g = integer_cast<ElementType>( g + rhs );
-	b = integer_cast<ElementType>( b + rhs );
+	*this = *this + rhs;
 	return *this;
 }
 
@@ -174,9 +168,7 @@ Color3u8& Color3u8::operator+=( ElementType const& rhs )
 
 Color3u8& Color3u8::operator-=( ElementType const& rhs )
 {
-	r = integer_cast<ElementType>( r - rhs );
-	g = integer_cast<ElementType>( g - rhs );
-	b = integer_cast<ElementType>( b - rhs );
+	*this = *this - rhs;
 	return *this;
 }
 
@@ -184,9 +176,7 @@ Color3u8& Color3u8::operator-=( ElementType const& rhs )
 
 Color3u8& Color3u8::operator*=( ElementType const& rhs )
 {
-	r = integer_cast<ElementType>( r * rhs );
-	g = integer_cast<ElementType>( g * rhs );
-	b = integer_cast<ElementType>( b * rhs );
+	*this = *this * rhs;
 	return *this;
 }
 
