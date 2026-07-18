@@ -53,19 +53,19 @@ Color3u8::Color3u8( ElementType const ( &rgb )[3] )
 
 
 
-Color3u8::Color3u8( Color4u8 rgba )
-	: Color3u8( rgba.r, rgba.g, rgba.b )
+Color3u8::Color3u8( Color3f rgb )
+	: Color3u8(
+		  integer_cast<ElementType>( rgb.r * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
+		  integer_cast<ElementType>( rgb.g * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
+		  integer_cast<ElementType>( rgb.b * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ) )
 {
 	//
 }
 
 
 
-Color3u8::Color3u8( Color3f rgb )
-	: Color3u8(
-		  integer_cast<ElementType>( rgb.r * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
-		  integer_cast<ElementType>( rgb.g * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
-		  integer_cast<ElementType>( rgb.b * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ) )
+Color3u8::Color3u8( Color4u8 rgba )
+	: Color3u8( rgba.r, rgba.g, rgba.b )
 {
 	//
 }

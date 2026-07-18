@@ -64,6 +64,14 @@ Color4u8::Color4u8( ElementType const ( &rgba )[4] )
 
 
 
+Color4u8::Color4u8( Color3f rgb )
+	: Color4u8( Color3u8( rgb ) )
+{
+	//
+}
+
+
+
 Color4u8::Color4u8( Color3u8 rgb )
 	: Color4u8( rgb, 255 )
 {
@@ -74,14 +82,6 @@ Color4u8::Color4u8( Color3u8 rgb )
 
 Color4u8::Color4u8( Color3u8 rgb, ElementType a )
 	: Color4u8( rgb.r, rgb.g, rgb.b, a )
-{
-	//
-}
-
-
-
-Color4u8::Color4u8( Color3f rgb )
-	: Color4u8( Color3u8( rgb ) )
 {
 	//
 }
