@@ -39,6 +39,7 @@
 		<ClCompile Include="math_ratio.cpp" />
 		<ClCompile Include="rftl_algorithms.cpp" />
 		<ClCompile Include="rftl_array_concat.cpp" />
+		<ClCompile Include="rftl_array_convert.cpp" />
 		<ClCompile Include="rftl_array_string.cpp" />
 		<ClCompile Include="rftl_byteview.cpp" />
 		<ClCompile Include="component_objectmanager.cpp" />

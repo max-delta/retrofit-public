@@ -39,6 +39,7 @@
 		<ClInclude Include="deque" />
 		<ClInclude Include="extension\algorithms.h" />
 		<ClInclude Include="extension\array_concat.h" />
+		<ClInclude Include="extension\array_convert.h" />
 		<ClInclude Include="extension\array_string.h" />
 		<ClInclude Include="extension\bounded_overwrite_iterator.h" />
 		<ClInclude Include="extension\byte_span.h" />
@@ -100,6 +101,7 @@
 		<None Include="condition_variable" />
 		<None Include="extension\algorithms.inl" />
 		<None Include="extension\array_concat.inl" />
+		<None Include="extension\array_convert.inl" />
 		<None Include="extension\array_string.inl" />
 		<None Include="extension\byte_span.inl" />
 		<None Include="extension\byte_view.inl" />

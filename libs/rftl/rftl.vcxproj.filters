@@ -136,6 +136,9 @@
 		<ClInclude Include="extension\array_string.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\array_convert.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
@@ -206,6 +209,9 @@
 			<Filter>extension</Filter>
 		</None>
 		<None Include="extension\array_string.inl">
+			<Filter>extension</Filter>
+		</None>
+		<None Include="extension\array_convert.inl">
 			<Filter>extension</Filter>
 		</None>
 	</ItemGroup>

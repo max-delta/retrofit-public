@@ -77,6 +77,7 @@
 		<ClCompile Include="terminal_ppu_control_sequence.cpp" />
 		<ClCompile Include="rftl_array_concat.cpp" />
 		<ClCompile Include="rftl_array_string.cpp" />
+		<ClCompile Include="rftl_array_convert.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
