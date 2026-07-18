@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "Color4u8.h"
 
-#include "core_math/Color3u8.h"
 #include "core_math/Color3f.h"
+#include "core_math/Color3u8.h"
+#include "core_math/Color4a5.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
 
@@ -82,6 +83,14 @@ Color4u8::Color4u8( Color3u8 rgb )
 
 Color4u8::Color4u8( Color3u8 rgb, ElementType a )
 	: Color4u8( rgb.r, rgb.g, rgb.b, a )
+{
+	//
+}
+
+
+
+Color4u8::Color4u8( Color4a5 rgba )
+	: Color4u8( rgba.r(), rgba.g(), rgba.b(), rgba.a() )
 {
 	//
 }

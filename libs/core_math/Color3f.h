@@ -41,6 +41,7 @@ public:
 	Color3f();
 	Color3f( ElementType r, ElementType g, ElementType b );
 	explicit Color3f( Color3u8 rgb );
+	explicit Color3f( Color4a5 rgba );
 	explicit Color3f( Color4u8 rgba );
 
 	static Color3f RandomFromHash( uint64_t hashVal );

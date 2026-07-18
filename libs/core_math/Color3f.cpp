@@ -2,11 +2,11 @@
 #include "Color3f.h"
 
 #include "core_math/Color3u8.h"
+#include "core_math/Color4a5.h"
 #include "core_math/Color4u8.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_casts.h"
-#include "core_math/Lerp.h"
 
 
 namespace RF::math {
@@ -51,6 +51,14 @@ Color3f::Color3f( Color3u8 rgb )
 		  float_cast<ElementType>( rgb.r ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ),
 		  float_cast<ElementType>( rgb.g ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ),
 		  float_cast<ElementType>( rgb.b ) / float_cast<float>( rftl::numeric_limits<Color3u8::ElementType>::max() ) )
+{
+	//
+}
+
+
+
+Color3f::Color3f( Color4a5 rgba )
+	: Color3f( Color3u8( rgba ) )
 {
 	//
 }

@@ -2,6 +2,7 @@
 #include "Color3u8.h"
 
 #include "core_math/Color3f.h"
+#include "core_math/Color4a5.h"
 #include "core_math/Color4u8.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
@@ -58,6 +59,14 @@ Color3u8::Color3u8( Color3f rgb )
 		  integer_cast<ElementType>( rgb.r * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
 		  integer_cast<ElementType>( rgb.g * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ),
 		  integer_cast<ElementType>( rgb.b * float_cast<float>( rftl::numeric_limits<ElementType>::max() ) ) )
+{
+	//
+}
+
+
+
+Color3u8::Color3u8( Color4a5 rgba )
+	: Color3u8( rgba.r(), rgba.g(), rgba.b() )
 {
 	//
 }

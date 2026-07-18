@@ -45,6 +45,7 @@ public:
 	explicit Color4u8( Color3f rgb );
 	explicit Color4u8( Color3u8 rgb );
 	Color4u8( Color3u8 rgb, ElementType a );
+	explicit Color4u8( Color4a5 rgba );
 
 	static Color4u8 RandomFromHash( uint64_t hashVal, ElementType a );
 
