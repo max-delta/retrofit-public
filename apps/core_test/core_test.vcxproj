@@ -35,6 +35,7 @@
 		<ClCompile Include="allocate_linearstretchallocator.cpp" />
 		<ClCompile Include="allocate_rftlallocator.cpp" />
 		<ClCompile Include="allocate_singleallocator.cpp" />
+		<ClCompile Include="math_color.cpp" />
 		<ClCompile Include="math_rand.cpp" />
 		<ClCompile Include="math_ratio.cpp" />
 		<ClCompile Include="rftl_algorithms.cpp" />
