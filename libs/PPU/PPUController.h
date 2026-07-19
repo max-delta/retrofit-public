@@ -8,6 +8,7 @@
 
 #include "core/ptr/unique_ptr.h"
 #include "core_math/AABB4.h"
+#include "core_math/Color3u8.h"
 
 #include "rftl/string"
 #include "rftl/string_view"

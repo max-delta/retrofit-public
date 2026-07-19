@@ -6,7 +6,7 @@
 #include "PPU/TileLayer.h"
 #include "PPU/TextStorage.h"
 
-#include "core_math/Color3u8.h"
+#include "core_math/Color4a5.h"
 
 
 namespace RF::gfx::ppu {
@@ -38,11 +38,12 @@ public:
 		CoordElem mXCoord;
 		CoordElem mYCoord;
 		DepthLayer mZLayer;
-		math::Color3u8 mColor;
+		math::Color4a5 mColor;
 		uint8_t mDesiredHeight;
 		bool mBorder : 1;
 		bool mUseEscapeSequences : 1;
-		bool mReserved10 : 6;
+		bool mReserved8 : 6;
+		bool mReserved9 : 8;
 		ManagedFontID mFontReference;
 		uint16_t mTextOffset;
 	};

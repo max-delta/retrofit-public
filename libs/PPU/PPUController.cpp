@@ -377,7 +377,7 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
-	targetString.mColor = color;
+	targetString.mColor = math::Color4a5( color );
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mUseEscapeSequences = mUseEscapeSequences;
@@ -682,7 +682,7 @@ bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t de
 	targetString.mXCoord = pos.x + mDrawOffset.x;
 	targetString.mYCoord = pos.y + mDrawOffset.y;
 	targetString.mZLayer = zLayer;
-	targetString.mColor = color;
+	targetString.mColor = math::Color4a5( color );
 	targetString.mDesiredHeight = desiredHeight;
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
@@ -743,7 +743,7 @@ bool PPUController::DebugDrawLine( Coord p0, Coord p1, CoordElem width, DepthLay
 	targetLine.mYCoord1 = p1.y + mDrawOffset.y;
 	targetLine.mWidth = width;
 	targetLine.mZLayer = zLayer;
-	targetLine.mColor = color;
+	targetLine.mColor = math::Color4a5( color );
 
 	return true;
 }
@@ -1501,13 +1501,13 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
 
 		// Calculate character color
-		auto const determineColor = [&string, &parseState]() -> math::Color3u8
+		auto const determineColor = [&string, &parseState]() -> math::Color4a5
 		{
 			if( parseState.mPaletteIndex.has_value() )
 			{
 				// HACK: Red
 				// TODO: Palette lookup
-				return math::Color3u8::kRed;
+				return math::Color4a5::kRed;
 			}
 			return string.mColor;
 		};

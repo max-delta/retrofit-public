@@ -46,7 +46,8 @@ public:
 		CoordElem mYCoord1;
 		CoordElem mWidth;
 		DepthLayer mZLayer;
-		math::Color3u8 mColor;
+		bool mReserved11 : 8;
+		math::Color4a5 mColor;
 	};
 
 
