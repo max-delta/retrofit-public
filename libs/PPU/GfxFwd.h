@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "rftl/cstdint"
+#include "core_math/ColorFwd.h"
 
 
 namespace RF::gfx {
@@ -34,6 +34,12 @@ inline constexpr FrameID kFirstFrameID = 0;
 
 using TileSize = uint8_t;
 inline constexpr TileSize kInvalidTileSize = 0;
+
+template<typename ColorT, size_t CountT>
+class Palette;
+template<size_t CountT>
+using Palette4a5 = Palette<math::Color4a5, CountT>;
+using Palette4a5_16 = Palette4a5<16>;
 
 class Texture;
 class Tileset;

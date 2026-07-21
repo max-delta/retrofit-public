@@ -3,6 +3,7 @@
 
 #include "PPU/PPUState.h"
 #include "PPU/PPUDebugState.h"
+#include "PPU/Palette.h"
 
 #include "PlatformFilesystem/VFSPath.h"
 
@@ -126,6 +127,10 @@ public:
 	void ApplyViewport( Viewport const& viewport );
 	void ResetViewport();
 
+	// NOTE: If called multiple times in a frame, only the most recent
+	//  replacement will be used
+	Palette4a5_16 ReplaceGlobalPalette( Palette4a5_16 const& newPalette );
+
 	bool DrawObject( Object const& object );
 	bool DrawTileLayer( TileLayer const& tileLayer );
 
@@ -190,6 +195,7 @@ public:
 	//
 	// Private methods
 private:
+	void FinalizeRenderState();
 	void SignalRender( StateBufferID readyBuffer );
 	void Render() const;
 
@@ -206,7 +212,7 @@ private:
 
 	void RenderObject( Object const& object ) const;
 	void RenderTileLayer( TileLayer const& tileLayer ) const;
-	void RenderString( PPUState::String const& string, rftl::string_view const& text ) const;
+	void RenderString( PPUState::String const& string, rftl::string_view const& text, Palette4a5_16 const& palette ) const;
 	void RenderDebugLine( PPUDebugState::DebugLine const& line ) const;
 	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
 	void RenderDebugGrid() const;
@@ -238,6 +244,8 @@ private:
 	WeakPtr<file::VFS> const mVfs;
 
 	LoadRequests mDeferredLoadRequests;
+
+	Palette4a5_16 mGlobalPalette = {};
 
 	uint16_t mWidth = 0;
 	uint16_t mHeight = 0;

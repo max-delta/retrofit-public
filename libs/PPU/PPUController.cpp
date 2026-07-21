@@ -239,6 +239,8 @@ bool PPUController::SubmitToRender()
 {
 	RF_ASSERT_MSG( mWriteState != kInvalidStateBufferID, "Write buffer wasn't opened" );
 
+	FinalizeRenderState();
+
 	// Close write buffer, and queue it
 	StateBufferID const bufferToQueue = mWriteState;
 	mWriteState = kInvalidStateBufferID;
@@ -301,6 +303,15 @@ void PPUController::ApplyViewport( Viewport const& viewport )
 void PPUController::ResetViewport()
 {
 	mDrawOffset = {};
+}
+
+
+
+Palette4a5_16 PPUController::ReplaceGlobalPalette( Palette4a5_16 const& newPalette )
+{
+	Palette4a5_16 const retVal = mGlobalPalette;
+	mGlobalPalette = newPalette;
+	return retVal;
 }
 
 
@@ -818,6 +829,22 @@ WeakPtr<FontManager> PPUController::DebugGetFontManager() const
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void PPUController::FinalizeRenderState()
+{
+	if( mDrawRequestsSuppressed )
+	{
+		return;
+	}
+
+	RF_ASSERT( mWriteState != kInvalidStateBufferID );
+	PPUState& targetState = mPPUState[mWriteState];
+
+	// Apply the global palette at the last moment
+	targetState.mPalette = mGlobalPalette;
+}
+
+
+
 void PPUController::SignalRender( StateBufferID readyBuffer )
 {
 	// TODO: If renderer open - push work, if closed - queue work
@@ -893,7 +920,8 @@ void PPUController::Render() const
 				break;
 			case ElementType::String:
 				RenderString( targetState.mStrings[i],
-					textStorage.GetTextBufferForStringOffset( targetState.mStrings[i].mTextOffset ) );
+					textStorage.GetTextBufferForStringOffset( targetState.mStrings[i].mTextOffset ),
+					targetState.mPalette );
 				break;
 			case ElementType::DebugLine:
 				RenderDebugLine( targetDebugState.mLines[i] );
@@ -902,8 +930,10 @@ void PPUController::Render() const
 				RenderDebugString( targetDebugState.mStrings[i] );
 				break;
 			case ElementType::DebugAuxString:
+				// NOTE: Uses the palette from the non-debug state
 				RenderString( targetDebugState.mAuxStrings[i],
-					textDebugStorage.GetTextBufferForStringOffset( targetDebugState.mAuxStrings[i].mTextOffset ) );
+					textDebugStorage.GetTextBufferForStringOffset( targetDebugState.mAuxStrings[i].mTextOffset ),
+					targetState.mPalette );
 				break;
 		}
 		if( terminate )
@@ -1393,7 +1423,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 
 
-void PPUController::RenderString( PPUState::String const& string, rftl::string_view const& text ) const
+void PPUController::RenderString( PPUState::String const& string, rftl::string_view const& text, Palette4a5_16 const& palette ) const
 {
 	// !!!WARNING!!! This must be kept logically equivalent to CalculateStringLength(...)
 
@@ -1501,13 +1531,12 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
 
 		// Calculate character color
-		auto const determineColor = [&string, &parseState]() -> math::Color4a5
+		auto const determineColor = [&string, &palette, &parseState]() -> math::Color4a5
 		{
 			if( parseState.mPaletteIndex.has_value() )
 			{
-				// HACK: Red
-				// TODO: Palette lookup
-				return math::Color4a5::kRed;
+				math::Color4a5 const& color = palette.at( parseState.mPaletteIndex.value() );
+				return color;
 			}
 			return string.mColor;
 		};

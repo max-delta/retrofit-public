@@ -22,7 +22,7 @@ inline constexpr size_t kMaxObjects = 32;
 inline constexpr size_t kMaxTileLayers = 16;
 inline constexpr size_t kMaxStrings = 48;
 inline constexpr size_t kMaxStringLen = 128;
-inline constexpr size_t kMaxTextStorage = 1366;
+inline constexpr size_t kMaxTextStorage = 1334;
 
 inline constexpr size_t kMaxDebugStrings = 32;
 inline constexpr size_t kMaxDebugAuxStrings = 128;

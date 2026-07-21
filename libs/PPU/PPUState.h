@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "PPU/PPUConfig.h"
+#include "PPU/Palette.h"
 #include "PPU/Object.h"
 #include "PPU/TileLayer.h"
 #include "PPU/TextStorage.h"
@@ -67,6 +68,7 @@ public:
 	rftl::array<TileLayer, kMaxTileLayers> mTileLayers;
 	rftl::array<String, kMaxStrings> mStrings;
 	TextStorage<kMaxTextStorage> mTextStorage;
+	Palette4a5_16 mPalette;
 
 	uint8_t mNumObjects = 0;
 	uint8_t mNumTileLayers = 0;
@@ -89,7 +91,9 @@ static_assert( sizeof( PPUState::mTileLayers ) <= 1024, "Double-check PPUState s
 static_assert( offsetof( PPUState, mStrings ) <= 2048, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mStrings ) == 672, "Double-check PPUState storage" );
 static_assert( offsetof( PPUState, mTextStorage ) <= 2856, "Double-check PPUState storage" );
-static_assert( sizeof( PPUState::mTextStorage ) == 1368, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mTextStorage ) == 1336, "Double-check PPUState storage" );
+static_assert( offsetof( PPUState, mPalette ) <= 4056, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mPalette ) == 32, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState ) <= 4096, "Double-check PPUState storage" );
 static_assert( alignof( PPUState ) == RF::compiler::kPointerBytes, "Double-check PPUState alignment" );
 RF_CLANG_POP();
