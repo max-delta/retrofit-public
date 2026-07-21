@@ -27,6 +27,7 @@
 		<ClInclude Include="PPUConfig.h" />
 		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="FramePackRef.h" />
+		<ClInclude Include="Palette.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -51,6 +52,7 @@
 		<ClCompile Include="Viewport.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="FramePackRef.cpp" />
+		<ClCompile Include="Palette.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />
