@@ -4,6 +4,7 @@
 #include "core_math/Color3f.h"
 #include "core_math/Color3u8.h"
 #include "core_math/Color4u8.h"
+#include "core_math/ColorSource.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
 #include "core_math/Rand.h"
@@ -22,23 +23,24 @@ static constexpr uint16_t kMaxValIn5 = 31;
 }
 ///////////////////////////////////////////////////////////////////////////////
 
-Color4a5 const Color4a5::kBlack{ 0, 0, 0 };
-Color4a5 const Color4a5::kGray25{ 64, 64, 64 };
-Color4a5 const Color4a5::kGray50{ 127, 127, 127 };
-Color4a5 const Color4a5::kGray75{ 192, 192, 192 };
-Color4a5 const Color4a5::kWhite{ 255, 255, 255 };
+Color4a5 const Color4a5::kBlack{ details::color_source::kBlack };
+Color4a5 const Color4a5::kGray25{ details::color_source::kGray25 };
+Color4a5 const Color4a5::kGray50{ details::color_source::kGray50 };
+Color4a5 const Color4a5::kGray75{ details::color_source::kGray75 };
+Color4a5 const Color4a5::kWhite{ details::color_source::kWhite };
 
-Color4a5 const Color4a5::kRed{ 255, 0, 0 };
-Color4a5 const Color4a5::kGreen{ 0, 255, 0 };
-Color4a5 const Color4a5::kBlue{ 0, 0, 255 };
+Color4a5 const Color4a5::kRed{ details::color_source::kRed };
+Color4a5 const Color4a5::kGreen{ details::color_source::kGreen };
+Color4a5 const Color4a5::kBlue{ details::color_source::kBlue };
 
-Color4a5 const Color4a5::kCyan{ 0, 255, 255 };
-Color4a5 const Color4a5::kMagenta{ 255, 0, 255 };
-Color4a5 const Color4a5::kYellow{ 255, 255, 0 };
+Color4a5 const Color4a5::kCyan{ details::color_source::kCyan };
+Color4a5 const Color4a5::kMagenta{ details::color_source::kMagenta };
+Color4a5 const Color4a5::kYellow{ details::color_source::kYellow };
 
-Color4a5 const Color4a5::kTeal{ 0, 255, 127 };
-Color4a5 const Color4a5::kPurple{ 127, 0, 255 };
-Color4a5 const Color4a5::kOrange{ 255, 127, 0 };
+Color4a5 const Color4a5::kTeal{ details::color_source::kTeal };
+Color4a5 const Color4a5::kPurple{ details::color_source::kPurple };
+Color4a5 const Color4a5::kOrange{ details::color_source::kOrange };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 

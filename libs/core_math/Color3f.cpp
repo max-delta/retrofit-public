@@ -4,6 +4,7 @@
 #include "core_math/Color3u8.h"
 #include "core_math/Color4a5.h"
 #include "core_math/Color4u8.h"
+#include "core_math/ColorSource.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_clamps.h"
 #include "core_math/math_casts.h"
@@ -12,23 +13,23 @@
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Color3f const Color3f::kBlack{ Color3u8::kBlack };
-Color3f const Color3f::kGray25{ Color3u8::kGray25 };
-Color3f const Color3f::kGray50{ Color3u8::kGray50 };
-Color3f const Color3f::kGray75{ Color3u8::kGray75 };
-Color3f const Color3f::kWhite{ Color3u8::kWhite };
+Color3f const Color3f::kBlack{ details::color_source::kBlack };
+Color3f const Color3f::kGray25{ details::color_source::kGray25 };
+Color3f const Color3f::kGray50{ details::color_source::kGray50 };
+Color3f const Color3f::kGray75{ details::color_source::kGray75 };
+Color3f const Color3f::kWhite{ details::color_source::kWhite };
 
-Color3f const Color3f::kRed{ Color3u8::kRed };
-Color3f const Color3f::kGreen{ Color3u8::kGreen };
-Color3f const Color3f::kBlue{ Color3u8::kBlue };
+Color3f const Color3f::kRed{ details::color_source::kRed };
+Color3f const Color3f::kGreen{ details::color_source::kGreen };
+Color3f const Color3f::kBlue{ details::color_source::kBlue };
 
-Color3f const Color3f::kCyan{ Color3u8::kCyan };
-Color3f const Color3f::kMagenta{ Color3u8::kMagenta };
-Color3f const Color3f::kYellow{ Color3u8::kYellow };
+Color3f const Color3f::kCyan{ details::color_source::kCyan };
+Color3f const Color3f::kMagenta{ details::color_source::kMagenta };
+Color3f const Color3f::kYellow{ details::color_source::kYellow };
 
-Color3f const Color3f::kTeal{ Color3u8::kTeal };
-Color3f const Color3f::kPurple{ Color3u8::kPurple };
-Color3f const Color3f::kOrange{ Color3u8::kOrange };
+Color3f const Color3f::kTeal{ details::color_source::kTeal };
+Color3f const Color3f::kPurple{ details::color_source::kPurple };
+Color3f const Color3f::kOrange{ details::color_source::kOrange };
 
 ///////////////////////////////////////////////////////////////////////////////
 

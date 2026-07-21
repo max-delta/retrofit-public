@@ -35,6 +35,7 @@
 		<ClInclude Include="Color4a5.h" />
 		<ClInclude Include="Color4u8.h" />
 		<ClInclude Include="ColorFwd.h" />
+		<ClInclude Include="ColorSource.h" />
 		<ClInclude Include="Hash.h" />
 		<ClInclude Include="Limits.h" />
 		<ClInclude Include="ListOperations.h" />
@@ -60,6 +61,7 @@
 		<ClCompile Include="Color3u8.cpp" />
 		<ClCompile Include="Color4a5.cpp" />
 		<ClCompile Include="Color4u8.cpp" />
+		<ClCompile Include="ColorSource.cpp" />
 		<ClCompile Include="Hash.cpp" />
 		<ClCompile Include="math_bits.cpp" />
 		<ClCompile Include="Rand.cpp" />

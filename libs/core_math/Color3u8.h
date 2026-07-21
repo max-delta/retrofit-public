@@ -39,7 +39,7 @@ public:
 	// Public methods
 public:
 	Color3u8();
-	Color3u8( ElementType r, ElementType g, ElementType b );
+	constexpr Color3u8( ElementType r, ElementType g, ElementType b );
 	explicit Color3u8( ElementType const ( &rgb )[3] );
 	explicit Color3u8( Color3f rgb );
 	explicit Color3u8( Color4a5 rgba );
@@ -72,6 +72,18 @@ public:
 
 static_assert( sizeof( Color3u8 ) == 3, "Unexpected size" );
 static_assert( alignof( Color3u8 ) == 1, "Unexpected size" );
+
+///////////////////////////////////////////////////////////////////////////////
+
+// Constexpr, so that it can be used to define the core colors
+// SEE: RF::math::details::color_source{...}
+constexpr Color3u8::Color3u8( ElementType r, ElementType g, ElementType b )
+	: r( r )
+	, g( g )
+	, b( b )
+{
+	//
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 }

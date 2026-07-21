@@ -4,6 +4,7 @@
 #include "core_math/Color3f.h"
 #include "core_math/Color4a5.h"
 #include "core_math/Color4u8.h"
+#include "core_math/ColorSource.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
 #include "core_math/Rand.h"
@@ -12,37 +13,27 @@
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Color3u8 const Color3u8::kBlack{ 0, 0, 0 };
-Color3u8 const Color3u8::kGray25{ 64, 64, 64 };
-Color3u8 const Color3u8::kGray50{ 127, 127, 127 };
-Color3u8 const Color3u8::kGray75{ 192, 192, 192 };
-Color3u8 const Color3u8::kWhite{ 255, 255, 255 };
+Color3u8 const Color3u8::kBlack{ details::color_source::kBlack };
+Color3u8 const Color3u8::kGray25{ details::color_source::kGray25 };
+Color3u8 const Color3u8::kGray50{ details::color_source::kGray50 };
+Color3u8 const Color3u8::kGray75{ details::color_source::kGray75 };
+Color3u8 const Color3u8::kWhite{ details::color_source::kWhite };
 
-Color3u8 const Color3u8::kRed{ 255, 0, 0 };
-Color3u8 const Color3u8::kGreen{ 0, 255, 0 };
-Color3u8 const Color3u8::kBlue{ 0, 0, 255 };
+Color3u8 const Color3u8::kRed{ details::color_source::kRed };
+Color3u8 const Color3u8::kGreen{ details::color_source::kGreen };
+Color3u8 const Color3u8::kBlue{ details::color_source::kBlue };
 
-Color3u8 const Color3u8::kCyan{ 0, 255, 255 };
-Color3u8 const Color3u8::kMagenta{ 255, 0, 255 };
-Color3u8 const Color3u8::kYellow{ 255, 255, 0 };
+Color3u8 const Color3u8::kCyan{ details::color_source::kCyan };
+Color3u8 const Color3u8::kMagenta{ details::color_source::kMagenta };
+Color3u8 const Color3u8::kYellow{ details::color_source::kYellow };
 
-Color3u8 const Color3u8::kTeal{ 0, 255, 127 };
-Color3u8 const Color3u8::kPurple{ 127, 0, 255 };
-Color3u8 const Color3u8::kOrange{ 255, 127, 0 };
+Color3u8 const Color3u8::kTeal{ details::color_source::kTeal };
+Color3u8 const Color3u8::kPurple{ details::color_source::kPurple };
+Color3u8 const Color3u8::kOrange{ details::color_source::kOrange };
 
 ///////////////////////////////////////////////////////////////////////////////
 
 Color3u8::Color3u8() = default;
-
-
-
-Color3u8::Color3u8( ElementType r, ElementType g, ElementType b )
-	: r( r )
-	, g( g )
-	, b( b )
-{
-	//
-}
 
 
 

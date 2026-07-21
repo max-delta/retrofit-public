@@ -4,6 +4,7 @@
 #include "core_math/Color3f.h"
 #include "core_math/Color3u8.h"
 #include "core_math/Color4a5.h"
+#include "core_math/ColorSource.h"
 #include "core_math/math_compare.h"
 #include "core_math/math_casts.h"
 
@@ -11,23 +12,24 @@
 namespace RF::math {
 ///////////////////////////////////////////////////////////////////////////////
 
-Color4u8 const Color4u8::kBlack( Color3u8::kBlack );
-Color4u8 const Color4u8::kGray25( Color3u8::kGray25 );
-Color4u8 const Color4u8::kGray50( Color3u8::kGray50 );
-Color4u8 const Color4u8::kGray75( Color3u8::kGray75 );
-Color4u8 const Color4u8::kWhite( Color3u8::kWhite );
+Color4u8 const Color4u8::kBlack{ details::color_source::kBlack };
+Color4u8 const Color4u8::kGray25{ details::color_source::kGray25 };
+Color4u8 const Color4u8::kGray50{ details::color_source::kGray50 };
+Color4u8 const Color4u8::kGray75{ details::color_source::kGray75 };
+Color4u8 const Color4u8::kWhite{ details::color_source::kWhite };
 
-Color4u8 const Color4u8::kRed( Color3u8::kRed );
-Color4u8 const Color4u8::kGreen( Color3u8::kGreen );
-Color4u8 const Color4u8::kBlue( Color3u8::kBlue );
+Color4u8 const Color4u8::kRed{ details::color_source::kRed };
+Color4u8 const Color4u8::kGreen{ details::color_source::kGreen };
+Color4u8 const Color4u8::kBlue{ details::color_source::kBlue };
 
-Color4u8 const Color4u8::kCyan( Color3u8::kCyan );
-Color4u8 const Color4u8::kMagenta( Color3u8::kMagenta );
-Color4u8 const Color4u8::kYellow( Color3u8::kYellow );
+Color4u8 const Color4u8::kCyan{ details::color_source::kCyan };
+Color4u8 const Color4u8::kMagenta{ details::color_source::kMagenta };
+Color4u8 const Color4u8::kYellow{ details::color_source::kYellow };
 
-Color4u8 const Color4u8::kTeal{ Color3u8::kTeal };
-Color4u8 const Color4u8::kPurple{ Color3u8::kPurple };
-Color4u8 const Color4u8::kOrange{ Color3u8::kOrange };
+Color4u8 const Color4u8::kTeal{ details::color_source::kTeal };
+Color4u8 const Color4u8::kPurple{ details::color_source::kPurple };
+Color4u8 const Color4u8::kOrange{ details::color_source::kOrange };
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
