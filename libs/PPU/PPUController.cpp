@@ -1448,6 +1448,11 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 	// SUBTLE: Use from string's member, not from PPU controller's member
 	bool const& useEscapeSequences = string.mUseEscapeSequences;
 
+	// Convert the string's default color to our preferred rendering type once,
+	//  so we don't need to do it for each character we evaluate
+	math::Color3f const defaultColor{ string.mColor };
+	static_assert( sizeof( defaultColor ) != sizeof( string.mColor ) );
+
 	term::ppu::PPUParseState parseState = {};
 
 	CoordElem lastCharX = string.mXCoord;
@@ -1531,16 +1536,16 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
 
 		// Calculate character color
-		auto const determineColor = [&string, &palette, &parseState]() -> math::Color4a5
+		auto const determineColor = [&defaultColor, &palette, &parseState]() -> math::Color3f
 		{
 			if( parseState.mPaletteIndex.has_value() )
 			{
 				math::Color4a5 const& color = palette.at( parseState.mPaletteIndex.value() );
-				return color;
+				return math::Color3f( color );
 			}
-			return string.mColor;
+			return defaultColor;
 		};
-		math::Color3f const color = math::Color3f( determineColor() );
+		math::Color3f const color = determineColor();
 
 		// Render
 		if( string.mBorder )
