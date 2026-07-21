@@ -80,6 +80,7 @@ private:
 		DebugString,
 		DebugAuxString
 	};
+	using DevicePalette = Palette<math::Color3f, 16>;
 
 
 	//
@@ -212,7 +213,7 @@ private:
 
 	void RenderObject( Object const& object ) const;
 	void RenderTileLayer( TileLayer const& tileLayer ) const;
-	void RenderString( PPUState::String const& string, rftl::string_view const& text, Palette4a5_16 const& palette ) const;
+	void RenderString( PPUState::String const& string, rftl::string_view const& text, DevicePalette const& palette ) const;
 	void RenderDebugLine( PPUDebugState::DebugLine const& line ) const;
 	void RenderDebugString( PPUDebugState::DebugString const& string ) const;
 	void RenderDebugGrid() const;

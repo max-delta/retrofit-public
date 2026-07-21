@@ -874,6 +874,20 @@ void PPUController::Render() const
 	TextStorage<kMaxDebugTextStorage> const& textDebugStorage = targetDebugState.mTextStorage;
 	TextStorage<kMaxTextStorage> const& textStorage = targetState.mTextStorage;
 
+	// Convert palette to device type
+	// NOTE: This is done to speed up extensive palette-based rendering, at the
+	//  expense of potentially wasting processing time when palette's aren't
+	//  used, as teh expected cost of doing this here is low relative to the
+	//  rest of the rendering logic
+	// NOTE: Uses the palette from the non-debug state
+	DevicePalette devicePalette = {};
+	for( size_t i = 0; i < devicePalette.size(); i++ )
+	{
+		math::Color3f& dest = devicePalette.at( i );
+		math::Color4a5 const& src = targetState.mPalette.at( i );
+		dest = math::Color3f( src );
+	}
+
 	// Transparency and whatnot
 	DepthOrder depthOrder = {};
 	CalculateDepthOrder( depthOrder );
@@ -921,7 +935,7 @@ void PPUController::Render() const
 			case ElementType::String:
 				RenderString( targetState.mStrings[i],
 					textStorage.GetTextBufferForStringOffset( targetState.mStrings[i].mTextOffset ),
-					targetState.mPalette );
+					devicePalette );
 				break;
 			case ElementType::DebugLine:
 				RenderDebugLine( targetDebugState.mLines[i] );
@@ -933,7 +947,7 @@ void PPUController::Render() const
 				// NOTE: Uses the palette from the non-debug state
 				RenderString( targetDebugState.mAuxStrings[i],
 					textDebugStorage.GetTextBufferForStringOffset( targetDebugState.mAuxStrings[i].mTextOffset ),
-					targetState.mPalette );
+					devicePalette );
 				break;
 		}
 		if( terminate )
@@ -1423,7 +1437,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 
 
 
-void PPUController::RenderString( PPUState::String const& string, rftl::string_view const& text, Palette4a5_16 const& palette ) const
+void PPUController::RenderString( PPUState::String const& string, rftl::string_view const& text, DevicePalette const& palette ) const
 {
 	// !!!WARNING!!! This must be kept logically equivalent to CalculateStringLength(...)
 
@@ -1536,16 +1550,16 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		math::AABB4f const uv = math::AABB4f{ 0.f, 0.f, uvWidth, uvHeight };
 
 		// Calculate character color
-		auto const determineColor = [&defaultColor, &palette, &parseState]() -> math::Color3f
+		auto const determineColor = [&defaultColor, &palette, &parseState]() -> math::Color3f const&
 		{
 			if( parseState.mPaletteIndex.has_value() )
 			{
-				math::Color4a5 const& color = palette.at( parseState.mPaletteIndex.value() );
-				return math::Color3f( color );
+				math::Color3f const& color = palette.at( parseState.mPaletteIndex.value() );
+				return color;
 			}
 			return defaultColor;
 		};
-		math::Color3f const color = determineColor();
+		math::Color3f const& color = determineColor();
 
 		// Render
 		if( string.mBorder )
