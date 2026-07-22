@@ -65,8 +65,8 @@ inline byte_view::byte_view( nullptr_t first, nullptr_t term )
 
 
 template<class Type>
-inline byte_view::byte_view( Type const* data )
-	: byte_view( data, sizeof( Type ) )
+inline byte_view::byte_view( Type const& data )
+	: byte_view( &data, sizeof( Type ) )
 {
 	//
 }

@@ -33,7 +33,7 @@ public:
 	template<class InputIterator>
 	byte_view( InputIterator first, InputIterator term );
 	template<class Type>
-	explicit byte_view( Type const* data );
+	explicit byte_view( Type const& data );
 	byte_view( byte_view const& ) = default;
 	byte_view( byte_view&& ) = default;
 	~byte_view() = default;
