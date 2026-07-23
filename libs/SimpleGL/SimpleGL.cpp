@@ -1,17 +1,18 @@
 #include "stdafx.h"
 #include "SimpleGL.h"
 
-#include "core/macros.h"
+#include "core_image/TempImageDecoder.h"
 #include "core_math/math_casts.h"
 
 #include "core_platform/shim/gdi_shim.h"
 #include "core_platform/inc/gl_inc.h"
 #pragma comment( lib, "opengl32.lib" )
 
-#include "stb_image/stb_image.h"
+#include "core/macros.h"
 
 #include "rftl/cstdio"
 #include "rftl/cstdarg"
+#include "rftl/optional"
 #include "rftl/string"
 #include "rftl/string_view"
 #include "rftl/vector"
@@ -359,29 +360,30 @@ DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& 
 {
 	AssertContextIsCurrent();
 
-	int x, y, n;
-	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &x, &y, &n, 4 );
-	RF_ASSERT( data != nullptr );
-	if( data == nullptr )
+	image::TempImageDecoder const decoded( buffer, 4 );
+	rftl::byte_view const bytes = decoded.GetDecodedBytes();
+	if( bytes.size() == 0 )
 	{
 		return 0;
 	}
 
-	width = math::integer_cast<uint32_t>( x );
-	height = math::integer_cast<uint32_t>( y );
+	width = decoded.GetWidth();
+	height = decoded.GetHeight();
+	int const glWidth = math::integer_cast<int>( width );
+	int const glHeight = math::integer_cast<int>( height );
 
 	unsigned int retVal = 0;
 	glGenTextures( 1, &retVal );
 	CONSUME_ERRORS();
 	glBindTexture( GL_TEXTURE_2D, retVal );
 	CONSUME_ERRORS();
-	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data );
+	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, glWidth, glHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes.data() );
 	CONSUME_ERRORS();
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
 	CONSUME_ERRORS();
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	CONSUME_ERRORS();
-	stbi_image_free( data );
+
 	return retVal;
 }
 
@@ -403,20 +405,17 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 {
 	AssertContextIsCurrent();
 
-	int tx, ty, tn;
-	size_t const kRGBAElements = 3;
-	unsigned char* data = stbi_load_from_memory( reinterpret_cast<stbi_uc const*>( buffer.data() ), math::integer_cast<int>( buffer.size() ), &tx, &ty, &tn, kRGBAElements );
-	RF_ASSERT( data != nullptr );
-	if( data == nullptr )
+	static constexpr uint8_t kRGBAElements = 3;
+	rftl::optional<image::TempImageDecoder const> decoded( rftl::in_place, buffer, kRGBAElements );
+	rftl::byte_view const bytes = decoded->GetDecodedBytes();
+	if( bytes.size() == 0 )
 	{
 		return false;
 	}
-	RF_ASSERT( tx > 0 );
-	RF_ASSERT( ty > 0 );
-	RF_ASSERT( tn == kRGBAElements );
-	size_t x = static_cast<size_t>( tx );
-	size_t y = static_cast<size_t>( ty );
-	size_t n = static_cast<size_t>( tn );
+	size_t const x = decoded->GetWidth();
+	size_t const y = decoded->GetHeight();
+	size_t const n = decoded->GetNumChannels();
+	RF_ASSERT( n == kRGBAElements );
 
 	// Check font type
 	{
@@ -440,7 +439,6 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 		else
 		{
 			// Unsupported ratio
-			stbi_image_free( data );
 			return false;
 		}
 		( (void)fontType );
@@ -454,7 +452,6 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	if( divisibleAlongWidth == false || divisibleAlongHeight == false )
 	{
 		// Not divisible
-		stbi_image_free( data );
 		return false;
 	}
 
@@ -482,8 +479,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	CharacterListStorage listStorage;
 	listStorage.clear();
 	listStorage.resize( 256, CharacterStorage{} );
-	uint8_t const* readHead = data;
-	uint8_t const* const maxReadHead = &data[x * y * n];
+	rftl::byte_view readHead = bytes;
 	for( size_t row = 0; row < kCharactersPerColumn; row++ )
 	{
 		for( uint32_t scanline = 0; scanline < charHeight; scanline++ )
@@ -510,23 +506,26 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 				for( uint32_t pixel = 0; pixel < charWidth; pixel++ )
 				{
 					static_assert( kRGBAElements == 3, "Unexpected pixel size" );
-					RF_ASSERT( readHead < maxReadHead );
-					(void)maxReadHead;
 					//uint8_t const redElement = readHead[0]; // Unused
-					uint8_t const greenElement = readHead[1];
+					readHead.remove_prefix( 1 );
+					uint8_t const greenElement = readHead.front<uint8_t>();
+					readHead.remove_prefix( 1 );
 					//uint8_t const blueElement = readHead[2]; // Unused
+					readHead.remove_prefix( 1 );
+
 					if( greenElement > 128 )
 					{
 						variableCharWidth = math::Max( variableCharWidth, pixel + 1 );
 						variableCharHeight = math::Max( variableCharHeight, scanline + 1 );
 					}
 					characterStorage.emplace_back( greenElement );
-					readHead += n;
 				}
 			}
 		}
 	}
-	stbi_image_free( data );
+
+	// Drop the resource now that we've got the character data created
+	decoded.reset();
 
 	mLastCreatedFontId++;
 	DeviceFontID const retVal = mLastCreatedFontId;
