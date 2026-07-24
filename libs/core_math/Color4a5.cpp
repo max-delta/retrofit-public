@@ -66,11 +66,10 @@ Color4a5::Color4a5( ElementType r, ElementType g, ElementType b, ElementType a )
 	// ^^^^^12345678901 (<< 11)
 	//      ^^^^^123456 (<< 6)
 	//           ^^^^^1 (<< 1)
-	static constexpr uint8_t az = 0;
 	uint16_t const data =
-		( ( rC & 0b0001'1111u ) << 11u ) |
-		( ( gC & 0b0001'1111u ) << 6u ) |
-		( ( bC & 0b0001'1111u ) << 1u ) |
+		angry_cast<uint16_t>( ( rC & 0b0001'1111u ) << 11u ) |
+		angry_cast<uint16_t>( ( gC & 0b0001'1111u ) << 6u ) |
+		angry_cast<uint16_t>( ( bC & 0b0001'1111u ) << 1u ) |
 		( aC ? 0b1u : 0b0u );
 	mHigh = ( data >> 8u ) & 0b1111'1111u;
 	mLow = data & 0b1111'1111u;

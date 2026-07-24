@@ -40,5 +40,17 @@ inline constexpr int16_t angry_cast<int16_t, int>( int in )
 	return static_cast<int16_t>( in );
 }
 
+template<>
+inline constexpr uint8_t angry_cast<uint8_t, unsigned int>( unsigned int in )
+{
+	return static_cast<uint8_t>( in );
+}
+
+template<>
+inline constexpr uint16_t angry_cast<uint16_t, unsigned int>( unsigned int in )
+{
+	return static_cast<uint16_t>( in );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
