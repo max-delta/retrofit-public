@@ -77,7 +77,7 @@ void SystemStartup( init::StartupConfig const& config )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Mounting cc3o3 VFS layers..." );
 	file::VFSPath const mountFile = paths::VfsConfig();
-	bool vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, mountFile );
+	bool const vfsTestDataLoad = app::gVfs->AttemptSubsequentMount( file::kMountPriorityLowest, mountFile );
 	if( vfsTestDataLoad == false )
 	{
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
