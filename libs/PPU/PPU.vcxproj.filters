@@ -58,5 +58,6 @@
 		<None Include="FramePack.inl" />
 		<None Include="ResourceManager.inl" />
 		<None Include="PPUController.inl" />
+		<None Include="Palette.inl" />
 	</ItemGroup>
 </Project>

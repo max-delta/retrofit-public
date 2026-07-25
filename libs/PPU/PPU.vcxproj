@@ -120,6 +120,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />
+		<None Include="Palette.inl" />
 		<None Include="PPUController.inl" />
 		<None Include="ResourceManager.inl" />
 	</ItemGroup>
