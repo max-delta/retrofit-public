@@ -23,6 +23,8 @@
 
 #include "Logging/Logging.h"
 #include "PlatformFilesystem/VFS.h"
+#include "PPU/PaletteLoader.h"
+#include "PPU/PPUController.h"
 #include "Rollback/RollbackManager.h"
 
 #include "core_component/TypedObjectManager.h"
@@ -82,6 +84,15 @@ void SystemStartup( init::StartupConfig const& config )
 	{
 		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load cc3o3 mount file" );
 	}
+
+	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Configuring cc3o3 graphics..." );
+	gfx::Palette4a5_16 globalPalette = {};
+	bool const paletteLoaded = gfx::PaletteLoader::LoadPalette( globalPalette, *app::gVfs, paths::GlobalPalette() );
+	if( paletteLoaded == false )
+	{
+		RFLOG_FATAL( mountFile, RFCAT_STARTUP, "Can't load global palette" );
+	}
+	app::gGraphics->ReplaceGlobalPalette( globalPalette );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing rollback manager..." );
 	sRollbackManager = DefaultCreator<rollback::RollbackManager>::Create();

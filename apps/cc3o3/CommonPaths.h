@@ -38,6 +38,8 @@ file::VFSPath LogoFramepacks();
 file::VFSPath UIFramepacks();
 
 // Textures
+file::VFSPath CommonTextures();
+file::VFSPath GlobalPalette();
 file::VFSPath CharacterPieces();
 
 // Tables

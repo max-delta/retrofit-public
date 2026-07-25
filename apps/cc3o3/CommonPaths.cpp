@@ -105,6 +105,14 @@ file::VFSPath UIFramepacks()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+file::VFSPath CommonTextures()
+{
+	return TexturesRoot().GetChild( "common" );
+}
+file::VFSPath GlobalPalette()
+{
+	return CommonTextures().GetChild( "palette16_4.png" );
+}
 file::VFSPath CharacterPieces()
 {
 	return TexturesRoot().GetChild( "char" );
