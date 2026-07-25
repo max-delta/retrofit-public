@@ -112,8 +112,9 @@ TEST( ByteView, Constructors )
 	ASSERT_TRUE( rftl::byte_view( data, sizeof( data ) ) == rftl::byte_view( data, data + 3 ) );
 
 	// Single object
-	ASSERT_TRUE( rftl::byte_view( data, sizeof( data[0] ) ) == rftl::byte_view( data ) );
-	ASSERT_TRUE( rftl::byte_view( data, sizeof( data[0] ) ) == rftl::byte_view( &data[0] ) );
+	ASSERT_TRUE( rftl::byte_view( data + 0, sizeof( data[0] ) ) == rftl::byte_view( data[0] ) );
+	ASSERT_TRUE( rftl::byte_view( data + 1, sizeof( data[1] ) ) == rftl::byte_view( data[1] ) );
+	ASSERT_TRUE( rftl::byte_view( data + 2, sizeof( data[2] ) ) == rftl::byte_view( data[2] ) );
 
 	// Constexpr
 	static constexpr uint16_t kData[3] = { 3, 5, 7 };
@@ -123,7 +124,7 @@ TEST( ByteView, Constructors )
 	rftl::array<uint16_t, 3> arr = { 3, 5, 7 };
 	ASSERT_TRUE( rftl::byte_view( data, sizeof( data ) ) == rftl::byte_view( arr.data(), arr.size() * sizeof( arr[0] ) ) );
 	ASSERT_TRUE( rftl::byte_view( data, sizeof( data ) ) == rftl::byte_view( arr.begin(), arr.end() ) );
-	ASSERT_TRUE( rftl::byte_view( arr.data(), sizeof( arr[0] ) ) == rftl::byte_view( &arr[0] ) );
+	ASSERT_TRUE( rftl::byte_view( arr.data(), sizeof( arr[0] ) ) == rftl::byte_view( arr[0] ) );
 
 	// Copy
 	rftl::byte_view const ref( data, sizeof( data ) );
