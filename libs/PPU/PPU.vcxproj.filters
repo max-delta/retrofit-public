@@ -28,6 +28,7 @@
 		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="FramePackRef.h" />
 		<ClInclude Include="Palette.h" />
+		<ClInclude Include="PaletteLoader.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -53,6 +54,7 @@
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="FramePackRef.cpp" />
 		<ClCompile Include="Palette.cpp" />
+		<ClCompile Include="PaletteLoader.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />

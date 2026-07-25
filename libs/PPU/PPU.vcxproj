@@ -36,6 +36,7 @@
 		<ClInclude Include="FramePackRef.h" />
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="Palette.h" />
+		<ClInclude Include="PaletteLoader.h" />
 		<ClInclude Include="PPUConfig.h" />
 		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="TileLayer.h" />
@@ -64,6 +65,7 @@
 		<ClCompile Include="FontManager.cpp" />
 		<ClCompile Include="FramePackRef.cpp" />
 		<ClCompile Include="Palette.cpp" />
+		<ClCompile Include="PaletteLoader.cpp" />
 		<ClCompile Include="project.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="TileLayer.cpp" />
@@ -87,6 +89,9 @@
 		<ClCompile Include="Viewport.cpp" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\third_party\stb_image\stb_image.vcxproj">
+			<Project>{c2adeee6-0ab0-4b7c-833f-7b96832f1a01}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\Allocation\Allocation.vcxproj">
 			<Project>{ce763dbd-9ca5-4952-970c-fdcb60f9d9a8}</Project>
 		</ProjectReference>
@@ -95,6 +100,9 @@
 		</ProjectReference>
 		<ProjectReference Include="..\core_identifier\core_identifier.vcxproj">
 			<Project>{28a88109-d5bf-43b7-b2f3-ecb499fc3291}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\core_image\core_image.vcxproj">
+			<Project>{2cffd74e-f97f-4616-98db-1aa6503eab5e}</Project>
 		</ProjectReference>
 		<ProjectReference Include="..\core_math\core_math.vcxproj">
 			<Project>{d445a586-71a5-4228-8cc9-7e77ebd059d8}</Project>
