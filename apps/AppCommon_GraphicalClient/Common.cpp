@@ -212,6 +212,9 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Configuring graphics..." );
 	app::gGraphics->UseEscapeSequences( true );
+	app::gGraphics->ReplaceGlobalPalette(
+		gfx::Palette4a5_16::CreateFromFill(
+			math::Color4a5::kBlack ) );
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing input..." );
 	{
