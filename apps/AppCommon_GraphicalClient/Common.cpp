@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Common.h"
 
+#include "AppCommon_GraphicalClient/CommonPaths.h"
 #include "AppCommon_GraphicalClient/StandardTaskScheduler.h"
 #include "AppCommon_GraphicalClient/StartupConfig.h"
 
@@ -149,7 +150,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing file logging..." );
 	{
-		file::SetLogFileDirectory( *gVfs, file::VFS::kRoot.GetChild( "user", "logs" ) );
+		file::SetLogFileDirectory( *gVfs, app::paths::LogsRoot() );
 
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();

@@ -1,0 +1,16 @@
+#include "stdafx.h"
+#include "CommonPaths.h"
+
+#include "PlatformFilesystem/VFS.h"
+
+
+namespace RF::app::paths {
+///////////////////////////////////////////////////////////////////////////////
+
+APPCOMMONGRAPHICALCLIENT_API file::VFSPath LogsRoot()
+{
+	return file::VFS::kRoot.GetChild( "user", "logs" );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+}

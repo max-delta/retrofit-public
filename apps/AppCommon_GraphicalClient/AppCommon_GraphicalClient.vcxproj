@@ -33,6 +33,7 @@
 	</ItemDefinitionGroup>
 	<ItemGroup>
 		<ClInclude Include="Common.h" />
+		<ClInclude Include="CommonPaths.h" />
 		<ClInclude Include="FrameBuilder.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="StandardTaskScheduler.h" />
@@ -41,6 +42,7 @@
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="Common.cpp" />
+		<ClCompile Include="CommonPaths.cpp" />
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="FrameBuilder.cpp" />
 		<ClCompile Include="StandardTaskScheduler.cpp" />
