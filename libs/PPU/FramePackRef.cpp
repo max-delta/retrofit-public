@@ -7,7 +7,7 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackRef FramePackRef::FromFramePack( ManagedFramePackID id, const FramePackBase& contents )
+FramePackRef FramePackRef::FromFramePack( ManagedFramePackID id, FramePackBase const& contents )
 {
 	return FramePackRef{
 		.mManagedID = id,

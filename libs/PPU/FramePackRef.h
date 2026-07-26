@@ -15,7 +15,7 @@ class PPU_API FramePackRef
 	//
 	// Public methods
 public:
-	static FramePackRef FromFramePack( ManagedFramePackID id, const FramePackBase& contents );
+	static FramePackRef FromFramePack( ManagedFramePackID id, FramePackBase const& contents );
 
 
 	//
