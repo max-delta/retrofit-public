@@ -261,7 +261,7 @@ void InitDrawTest()
 
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	gfx::ppu::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	WeakPtr<gfx::ppu::FramePackBase> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
 	testObjDigit.mTimer.mMaxTimeIndex = digitAnimationLength;
@@ -285,7 +285,7 @@ void InitDrawTest()
 
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	gfx::ppu::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	WeakPtr<gfx::ppu::FramePackBase> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	testObjWiggle.mFramePackID = wiggleFPackID;
 	testObjWiggle.mTimer.mMaxTimeIndex = 4;
 	testObjWiggle.mTimer.mTimeSlowdown = 33 / 4;
@@ -725,7 +725,7 @@ void FPackSerializationTest()
 	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
 	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack" );
 	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
-	WeakPtr<gfx::ppu::FramePackBase> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
+	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Force loads to finish so serializer can resolve the textures, since
 	//  they're not yet considered "file-backed"

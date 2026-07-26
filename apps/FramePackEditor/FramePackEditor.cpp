@@ -786,7 +786,7 @@ void FramePackEditor::Command_Meta_DeleteFrame()
 		return;
 	}
 
-	gfx::ppu::FramePackBase* const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( mFramePackID );
+	WeakPtr<gfx::ppu::FramePackBase const> const fpack = ppu->DebugGetFramePackManager()->GetResourceFromManagedResourceID( mFramePackID );
 	RF_ASSERT( fpack != nullptr );
 	size_t const& numSlots = fpack->mNumTimeSlots;
 	if( numSlots <= 1 )
@@ -977,7 +977,7 @@ void FramePackEditor::SaveFramePack( rftl::string const& rawPath )
 	gfx::ppu::FramePackManager const& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager const& texMan = *ppu.DebugGetTextureManager();
 
-	WeakPtr<gfx::ppu::FramePackBase> const currentFPack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
+	WeakPtr<gfx::ppu::FramePackBase const> const currentFPack = fpackMan.GetResourceFromManagedResourceID( mFramePackID );
 	if( currentFPack == nullptr )
 	{
 		RFLOG_NOTIFY( nullptr, RFCAT_FRAMEPACKEDITOR, "Unable to fetch current framepack" );

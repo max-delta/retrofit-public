@@ -65,9 +65,9 @@ public:
 	ResourceManager();
 	virtual ~ResourceManager();
 
-	WeakPtr<Resource> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
-	WeakPtr<Resource> GetResourceFromResourceName( Filename const& filename ) const;
-	WeakPtr<Resource> GetResourceFromResourceName( ResourceNameView resourceName ) const;
+	WeakPtr<Resource const> GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
+	WeakPtr<Resource const> GetResourceFromResourceName( Filename const& filename ) const;
+	WeakPtr<Resource const> GetResourceFromResourceName( ResourceNameView resourceName ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceNameView resourceName ) const;
 
@@ -117,6 +117,7 @@ private:
 	FileBackedResourceRange SearchForResourcesByFilenameInternal( Filename const& filename ) const;
 	ManagedResourceID GenerateNewManagedID();
 
+	WeakPtr<Resource> GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	bool ReserveNullResourceInternal( ResourceName const& resourceName );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );

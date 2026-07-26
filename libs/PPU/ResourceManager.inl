@@ -28,36 +28,15 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::~ResourceManage
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
+inline WeakPtr<Resource const> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
 {
-	ReaderLock const lock( mMultiReaderSingleWriterLock );
-
-	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
-	if( resourceIter == mResources.end() )
-	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
-		return nullptr;
-	}
-
-	WeakPtr<Resource> const& retVal = resourceIter->second;
-	if( retVal == nullptr )
-	{
-		RFLOG_WARNING( nullptr, RFCAT_PPU,
-			"Found resource, but it is null, which should indicate a"
-			" reservation" );
-		RF_DBGFAIL_MSG(
-			"Seem to be trying to fetch a reserved resource that isn't loaded"
-			" yet. Should this have been force-fetched? Is there data in it"
-			" that is needed outside the render passes? Render passes should"
-			" be able to survive missing resources while they're loading." );
-	}
-	return retVal;
+	return GetMutableResourceFromManagedResourceID( managedResourceID );
 }
 
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( Filename const& filename ) const
+WeakPtr<Resource const> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( Filename const& filename ) const
 {
 	return GetResourceFromResourceName( filename.CreateString() );
 }
@@ -65,7 +44,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceNameView resourceName ) const
+WeakPtr<Resource const> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetResourceFromResourceName( ResourceNameView resourceName ) const
 {
 	ReaderLock const lock( mMultiReaderSingleWriterLock );
 
@@ -355,7 +334,7 @@ template<typename Resource, typename ManagedResourceID, ManagedResourceID Invali
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugLockResourceForDirectModification( ManagedResourceID managedResourceID )
 {
 	// TODO: Resource lock, and return a lock object, block normal access
-	return GetResourceFromManagedResourceID( managedResourceID );
+	return GetMutableResourceFromManagedResourceID( managedResourceID );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -436,6 +415,35 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	if( mNextResourceID == kInvalidResourceID )
 	{
 		RF_TODO_BREAK_MSG( "Safe generation" );
+	}
+	return retVal;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const
+{
+	ReaderLock const lock( mMultiReaderSingleWriterLock );
+
+	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
+	if( resourceIter == mResources.end() )
+	{
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
+		return nullptr;
+	}
+
+	WeakPtr<Resource> const& retVal = resourceIter->second;
+	if( retVal == nullptr )
+	{
+		RFLOG_WARNING( nullptr, RFCAT_PPU,
+			"Found resource, but it is null, which should indicate a"
+			" reservation" );
+		RF_DBGFAIL_MSG(
+			"Seem to be trying to fetch a reserved resource that isn't loaded"
+			" yet. Should this have been force-fetched? Is there data in it"
+			" that is needed outside the render passes? Render passes should"
+			" be able to survive missing resources while they're loading." );
 	}
 	return retVal;
 }
