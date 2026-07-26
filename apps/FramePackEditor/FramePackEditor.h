@@ -49,6 +49,7 @@ public:
 
 	void Command_Meta_ChangeDataSpeed( bool faster );
 	void Command_Meta_CreateFramePack();
+	void Command_Meta_CreateFromImage();
 	void Command_Meta_OpenFramePack();
 	void Command_Meta_SaveFramePack();
 	void Command_Meta_DeleteFrame();
@@ -63,6 +64,7 @@ public:
 	//
 	// Private methods
 private:
+	void CreateFramePack( file::VFSPath const& defaultFrame );
 	void OpenFramePack( rftl::string const& rawPath );
 	void OpenFramePack( file::VFSPath const& path );
 	void SaveFramePack( rftl::string const& rawPath );

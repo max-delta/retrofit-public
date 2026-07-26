@@ -164,6 +164,10 @@ void FramePackEditor::Process()
 			{
 				Command_Meta_CreateFramePack();
 			}
+			if( digital.WasActivatedLogical( 'I' ) )
+			{
+				Command_Meta_CreateFromImage();
+			}
 			if( digital.WasActivatedLogical( 'O' ) )
 			{
 				Command_Meta_OpenFramePack();
@@ -493,6 +497,7 @@ void FramePackEditor::Render()
 				footerText.at( 2 ) =
 					"[META]  "
 					"<U>:New FPack  "
+					"<I>:From Image  "
 					"<O>:Open FPack  "
 					"<Ctrl+S>:Save FPack";
 				footerText.at( 3 ) =
@@ -725,19 +730,16 @@ void FramePackEditor::Command_Meta_ChangeDataSpeed( bool faster )
 
 void FramePackEditor::Command_Meta_CreateFramePack()
 {
-	gfx::ppu::PPUController* const ppu = app::gGraphics;
-
-	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
-	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
-	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
-	{
-		fpackMan.DestroyResource( kFramePackName );
-	}
-	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
 	file::VFSPath const defaultFrame = file::VFS::kRoot.GetChild( "assets", "textures", "common", "max_delta_32.png" );
-	newFPack->mNumTimeSlots = 1;
-	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
-	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, rftl::move( newFPack ) );
+	CreateFramePack( defaultFrame );
+}
+
+
+
+void FramePackEditor::Command_Meta_CreateFromImage()
+{
+	Command_Meta_CreateFramePack();
+	Command_Texture_ChangeTexture();
 }
 
 
@@ -906,6 +908,24 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::CoordElem x, 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+void FramePackEditor::CreateFramePack( file::VFSPath const& defaultFrame )
+{
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
+
+	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
+	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
+	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
+	{
+		fpackMan.DestroyResource( kFramePackName );
+	}
+	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
+	newFPack->mNumTimeSlots = 1;
+	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
+	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, rftl::move( newFPack ) );
+}
+
+
 
 void FramePackEditor::OpenFramePack( rftl::string const& rawPath )
 {
