@@ -333,7 +333,7 @@ rftl::vector<typename ResourceManager<Resource, ManagedResourceID, InvalidResour
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DebugLockResourceForDirectModification( ManagedResourceID managedResourceID )
 {
-	// TODO: Resource lock, and return a lock object, block normal access
+	RF_TODO_ANNOTATION( "Resource lock, and return a lock object, block normal access" );
 	return GetMutableResourceFromManagedResourceID( managedResourceID );
 }
 
