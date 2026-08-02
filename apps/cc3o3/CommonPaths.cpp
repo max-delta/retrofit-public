@@ -103,6 +103,11 @@ file::VFSPath UIFramepacks()
 	return FramepacksRoot().GetChild( "ui" );
 }
 
+file::VFSPath ExpressionFramepacks()
+{
+	return FramepacksRoot().GetChild( "expressions", "64" );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 file::VFSPath CommonTextures()

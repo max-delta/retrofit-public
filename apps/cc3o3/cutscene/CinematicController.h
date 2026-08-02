@@ -8,11 +8,15 @@
 
 #include "PlatformFilesystem/VFSFwd.h"
 
+#include "rftl/deque"
+#include "rftl/string"
+
 
 namespace RF::cc::cutscene {
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO
+// Operates the cinematic driver, supplying the necessary data and the relevant
+//  hookpoints for the game to run the novel engine
 class CinematicController
 {
 	RF_NO_COPY( CinematicController );
@@ -39,6 +43,8 @@ private:
 	UniquePtr<dialogue::DialogueSequence const> const mFallbackDialogue = {};
 	UniquePtr<dialogue::DialogueSequence const> mDialogue = {};
 	UniquePtr<novel::CinematicDriver> const mDriver = {};
+
+	rftl::deque<rftl::string> mLoadedExpressionFramePackResourceNames;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

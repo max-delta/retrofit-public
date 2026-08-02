@@ -25,6 +25,9 @@ enum class CinematicState : uint8_t
 	EndOfSequence,
 };
 
+// Special expression, this will result in hiding the portrait
+inline constexpr char kNullExpression[] = "null";
+
 class CinematicDriver;
 
 ///////////////////////////////////////////////////////////////////////////////

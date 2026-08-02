@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "GameNovel/NovelFwd.h"
+#include "GameNovel/ui/UIFwd.h"
 
 #include "GameDialogue/DialogueFwd.h"
 
@@ -74,6 +75,14 @@ public:
 		LocalizeFunc mLocalizeSpeech = nullptr;
 	};
 
+	struct Context
+	{
+		RF_NO_COPY( Context );
+		explicit Context( ui::UIContext& uiContext );
+
+		ui::UIContext& mUIContext;
+	};
+
 	//
 	// Public methods
 public:
@@ -88,8 +97,9 @@ public:
 
 	// Ticks the cinematic, performing any operations that are queued up or
 	//  take multiple frames to progress through
-	void TickCinematic( TickParams& params );
-	void TickCinematic();
+	void TickCinematic( Context const& context, TickParams& params );
+	void TickCinematic( ui::UIContext& uiContext, TickParams& params );
+	void TickCinematic( ui::UIContext& uiContext );
 
 	// Change the sequence and cause a harsh reset, as it is impractical to try
 	//  and collision-resolve an incoming sequence with the state and
@@ -111,11 +121,11 @@ public:
 	// Private methods
 private:
 	// Returns true if can be sub-ticked again
-	bool SubTickCinematic( TickParams& params );
-	bool SubTickCinematic_Advance( TickParams& params );
-	bool SubTickCinematic_Advance_Command( TickParams& params, dialogue::DialogueEntry const& entry );
-	bool SubTickCinematic_Advance_Scene( TickParams& params, dialogue::DialogueEntry const& entry );
-	bool SubTickCinematic_Advance_Speech( TickParams& params, dialogue::DialogueEntry const& entry );
+	bool SubTickCinematic( Context const& context, TickParams& params );
+	bool SubTickCinematic_Advance( Context const& context, TickParams& params );
+	bool SubTickCinematic_Advance_Command( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry );
+	bool SubTickCinematic_Advance_Scene( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry );
+	bool SubTickCinematic_Advance_Speech( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry );
 
 	dialogue::DialogueEntry const& ConsumeNextEntry();
 

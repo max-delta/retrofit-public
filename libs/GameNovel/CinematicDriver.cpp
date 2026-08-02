@@ -20,6 +20,9 @@ namespace details {
 
 static constexpr bool kIsRightToLeftWhenUnlocalized = false;
 
+RF_TODO_ANNOTATION( "Make portrait side configurable" );
+static constexpr ui::Justification::Value kPortraitSide = ui::Justification::Left;
+static constexpr bool kFlipHorizontal = false;
 
 
 template<typename CallableT, typename... ArgsT>
@@ -122,14 +125,36 @@ bool ValidateMajorSequenceParams( CinematicDriver::SequenceParams const& params 
 			}
 			FramePackByExpression const& providedExpressions = charIter->second;
 
-			// For each expresion needed...
+			// For each expression needed...
 			for( rftl::string_view const& expression : expressions )
 			{
+				// See if it was provided
 				FramePackByExpression::const_iterator const exprIter = providedExpressions.find( expression );
-				if( exprIter == providedExpressions.end() )
+				bool const wasProvided = exprIter != providedExpressions.end();
+
+
+				if( expression == kNullExpression )
+				{
+					// The null expression should NOT be provided
+					if( wasProvided )
+					{
+						RFLOG_WARNING( nullptr, RFCAT_GAMENOVEL,
+							"Found an unexpected framepack for character '{}'"
+							" for the null expression '{}', this implies an"
+							" upstream error",
+							character,
+							expression );
+						hasOneOrMoreFailures = true;
+					}
+
+					continue;
+				}
+
+				if( wasProvided == false )
 				{
 					RFLOG_WARNING( nullptr, RFCAT_GAMENOVEL,
-						"Could not find a framepack for character '{}' with expression '{}', expect failure",
+						"Could not find a framepack for character '{}'"
+						" with expression '{}', expect failure",
 						character,
 						expression );
 					hasOneOrMoreFailures = true;
@@ -176,6 +201,13 @@ void SanitizeSequenceParams( CinematicDriver::SequenceParams& params )
 }
 
 }
+///////////////////////////////////////////////////////////////////////////////
+CinematicDriver::Context::Context( ui::UIContext& uiContext )
+	: mUIContext( uiContext )
+{
+	//
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 
 CinematicDriver::CinematicDriver( SequenceParams&& sequenceParams )
@@ -224,9 +256,9 @@ void CinematicDriver::QueueActions( CinematicActions::Value actions )
 
 
 
-void CinematicDriver::TickCinematic( TickParams& params )
+void CinematicDriver::TickCinematic( Context const& context, TickParams& params )
 {
-	while( SubTickCinematic( params ) )
+	while( SubTickCinematic( context, params ) )
 	{
 		// Sub-tick until complete
 	}
@@ -234,10 +266,18 @@ void CinematicDriver::TickCinematic( TickParams& params )
 
 
 
-void CinematicDriver::TickCinematic()
+void CinematicDriver::TickCinematic( ui::UIContext& uiContext, TickParams& params )
+{
+	Context const context( uiContext );
+	TickCinematic( context, params );
+}
+
+
+
+void CinematicDriver::TickCinematic( ui::UIContext& uiContext )
 {
 	TickParams unused = {};
-	TickCinematic( unused );
+	TickCinematic( uiContext, unused );
 }
 
 
@@ -288,14 +328,14 @@ void CinematicDriver::UnsetDialogueBox()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool CinematicDriver::SubTickCinematic( TickParams& params )
+bool CinematicDriver::SubTickCinematic( Context const& context, TickParams& params )
 {
 	CinematicState const currentState = EvaluateCurrentState();
 
 	switch( currentState )
 	{
 		case CinematicState::WaitingForAdvance:
-			return SubTickCinematic_Advance( params );
+			return SubTickCinematic_Advance( context, params );
 		case CinematicState::EndOfSequence:
 			return false;
 		case CinematicState::Invalid:
@@ -307,7 +347,7 @@ bool CinematicDriver::SubTickCinematic( TickParams& params )
 
 
 
-bool CinematicDriver::SubTickCinematic_Advance( TickParams& params )
+bool CinematicDriver::SubTickCinematic_Advance( Context const& context, TickParams& params )
 {
 	if( ( mQueuedActions & CinematicActions::Advance ) == 0 )
 	{
@@ -316,17 +356,17 @@ bool CinematicDriver::SubTickCinematic_Advance( TickParams& params )
 	}
 
 	// Consume the entry and advance
-	auto const consume = [this, &params]() -> bool
+	auto const consume = [this, &context, &params]() -> bool
 	{
 		dialogue::DialogueEntry const& entry = ConsumeNextEntry();
 		switch( entry.mEntryType )
 		{
 			case dialogue::EntryType::Command:
-				return SubTickCinematic_Advance_Command( params, entry );
+				return SubTickCinematic_Advance_Command( context, params, entry );
 			case dialogue::EntryType::Scene:
-				return SubTickCinematic_Advance_Scene( params, entry );
+				return SubTickCinematic_Advance_Scene( context, params, entry );
 			case dialogue::EntryType::Speech:
-				return SubTickCinematic_Advance_Speech( params, entry );
+				return SubTickCinematic_Advance_Speech( context, params, entry );
 			case dialogue::EntryType::Invalid:
 			default:
 				RF_DBGFAIL();
@@ -345,7 +385,7 @@ bool CinematicDriver::SubTickCinematic_Advance( TickParams& params )
 	return allowsMoreSubticking;
 }
 
-bool CinematicDriver::SubTickCinematic_Advance_Command( TickParams& params, dialogue::DialogueEntry const& entry )
+bool CinematicDriver::SubTickCinematic_Advance_Command( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry )
 {
 	// Optional caller hook
 	details::InvokeIfSet( params.mOnCommand, entry );
@@ -356,7 +396,7 @@ bool CinematicDriver::SubTickCinematic_Advance_Command( TickParams& params, dial
 	return true;
 }
 
-bool CinematicDriver::SubTickCinematic_Advance_Scene( TickParams& params, dialogue::DialogueEntry const& entry )
+bool CinematicDriver::SubTickCinematic_Advance_Scene( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry )
 {
 	// Optional caller hook
 	details::InvokeIfSet( params.mOnScene, entry );
@@ -367,7 +407,7 @@ bool CinematicDriver::SubTickCinematic_Advance_Scene( TickParams& params, dialog
 	return true;
 }
 
-bool CinematicDriver::SubTickCinematic_Advance_Speech( TickParams& params, dialogue::DialogueEntry const& entry )
+bool CinematicDriver::SubTickCinematic_Advance_Speech( Context const& context, TickParams& params, dialogue::DialogueEntry const& entry )
 {
 	// Optional caller hook
 	details::InvokeIfSet( params.mOnSpeech, entry );
@@ -380,7 +420,24 @@ bool CinematicDriver::SubTickCinematic_Advance_Speech( TickParams& params, dialo
 	}
 	ui::controller::DialogueBox& dialogueBox = *mDialogueBox;
 
-	RF_TODO_ANNOTATION( "Change the dialogue box's portrait" );
+	// Change the dialogue box's portrait
+	rftl::string_view const& expression = entry.mExpression;
+	if( expression == kNullExpression )
+	{
+		// Null expression hides te portrait
+		dialogueBox.HidePortrait( context.mUIContext );
+	}
+	else
+	{
+		rftl::string_view const& character = entry.mPrimary;
+		gfx::ppu::FramePackRef const& framePack = mSequenceParams.mFramePacksByCharacter.at( character ).at( expression );
+		RF_TODO_ANNOTATION(
+			"Should this always reset the portrait? What if it's the same"
+			" expression? That will result in an animation reset, is that"
+			" actually desirable in all cases?" );
+		dialogueBox.SetPortrait( framePack );
+		dialogueBox.ShowPortrait( context.mUIContext, ui::Justification::Left, false );
+	}
 
 	// Set text, performing localization if available
 	if( params.mLocalizeSpeech )

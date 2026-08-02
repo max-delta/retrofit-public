@@ -5,12 +5,16 @@
 RF_TODO_ANNOTATION( "Remove this fallback" );
 #include "cc3o3/ui/standard/StandardUIElements.h"
 
+#include "cc3o3/CommonPaths.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameDialogue/DialogueLoader.h"
 #include "GameDialogue/DialogueSequence.h"
 #include "GameNovel/CinematicDriver.h"
 
+#include "PPU/FramePackManager.h"
+#include "PPU/PPUController.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_vfs/FileBuffer.h"
@@ -30,17 +34,37 @@ static dialogue::DialogueSequence CreateFallbackSequence()
 
 
 
+static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	// HACK: Direct access to frame pack manager
+	// TODO: Re-visit API surface
+	gfx::ppu::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
+
+	for( rftl::string const& resourceName : resourceNames )
+	{
+		fpackMan.DestroyResource( resourceName );
+	}
+
+	resourceNames.clear();
+}
+
+
+
 static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequiredCharacters(
 	dialogue::DialogueSequence::StringViewMultiMap const& requiredExpressionsPerCharacter,
-	int TODO )
+	rftl::deque<rftl::string>& resourceNames )
 {
+	RF_ASSERT( resourceNames.empty() );
+
 	using ExpressionsPerCharacter = dialogue::DialogueSequence::StringViewMultiMap;
 	using Expressions = dialogue::DialogueSequence::StringViewSet;
 
 	novel::CinematicDriver::FramePacksByCharacter retVal = {};
 
-	RF_TODO_ANNOTATION( "Use actual characters" );
-	( (void)TODO );
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 
 	// For each required character...
 	for( ExpressionsPerCharacter::value_type const& requiredExpressionsEntry : requiredExpressionsPerCharacter )
@@ -51,10 +75,30 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 		// For each required expression...
 		for( rftl::string_view const& expression : expressions )
 		{
-			// HACK: Set a fake entry
-			gfx::ppu::PPUController const& ppu = *app::gGraphics;
-			ui::FramePackDef const portraitFPack = ui::QueryFramePackDef( ppu, ui::mockup::kWiggle64 );
-			retVal[character][expression] = portraitFPack.mRef;
+			if( expression == novel::kNullExpression )
+			{
+				// Expression unused
+				// NOTE: Will still cause the character to be present, to
+				//  indicate that they were atleast considered
+				retVal[character];
+				continue;
+			}
+
+			resourceNames.emplace_back( rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression ) );
+			rftl::string_view const resourceName = resourceNames.back();
+			file::VFSPath const filename = paths::ExpressionFramepacks().GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
+			bool const success = ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, resourceName, filename );
+			if( success == false )
+			{
+				RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load an expression '{}' for character '{}'", expression, character );
+				continue;
+			}
+
+			gfx::ppu::ManagedFramePackID const framePackID = framePackMan.GetManagedResourceIDFromResourceName( resourceName );
+			WeakPtr<gfx::ppu::FramePackBase const> const framePack = framePackMan.GetResourceFromManagedResourceID( framePackID );
+			RF_ASSERT( framePack != nullptr );
+
+			retVal[character][expression] = gfx::ppu::FramePackRef::FromFramePack( framePackID, *framePack );
 		}
 	}
 
@@ -101,6 +145,9 @@ bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
 
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
+	// Unload resources
+	details::UnloadAllFramePacks( mLoadedExpressionFramePackResourceNames );
+
 	// Reset
 	mDialogue = {};
 	mDriver->ChangeSequence(
@@ -139,7 +186,7 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 			.mFramePacksByCharacter =
 				details::AssignFramePacksForRequiredCharacters(
 					mDialogue->mRequiredExpressionsPerCharacter,
-					-5 ) } );
+					mLoadedExpressionFramePackResourceNames ) } );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );
 	return true;
