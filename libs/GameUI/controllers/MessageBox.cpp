@@ -248,6 +248,11 @@ void MessageBox::OnRender( UIConstContext const& context, Container const& conta
 	// If waiting for user input, we can display an indicator of such
 	auto const drawEndOfMessageIndicator = [this, &context, &container]( FramePackParams const& framePack ) -> void
 	{
+		RF_TODO_ANNOTATION(
+			"If an end of message indicator is in use, should also add some"
+			" non-breaking spaces to the end of the message text, so when it"
+			" flows it makes sure the indicator doesn't run TOO far outside of"
+			" the display bounds of the message box" );
 		if( framePack.mFramePack.mManagedID == gfx::ppu::kInvalidManagedFramePackID )
 		{
 			// Indicator not enabled

@@ -76,6 +76,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		internalState.mCinematicController = DefaultCreator<cutscene::CinematicController>::Create();
 		campaign.HardcodedCutsceneSetup( *internalState.mCinematicController );
 
+		RF_TODO_ANNOTATION( "Move this localization logic to the cinematic controller" );
 		internalState.mTickParams.mLocalizeSpeech =
 			[]( dialogue::DialogueEntry const& entry ) -> novel::CinematicDriver::LocalizedText
 		{
@@ -288,8 +289,7 @@ void Gameplay_Cutscene::OnTick( AppStateTickContext& context )
 
 	// TODO
 	( (void)campaign );
-	novel::CinematicDriver::TickParams tickParams;
-	cinematic.TickCinematic( internalState.mTickParams );
+	cinematic.TickCinematic( uiContext, internalState.mTickParams );
 	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 128, 32 ), "TODO: Cutscene" );
 }
 
