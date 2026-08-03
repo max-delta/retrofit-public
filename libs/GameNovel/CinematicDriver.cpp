@@ -436,7 +436,7 @@ bool CinematicDriver::SubTickCinematic_Advance_Speech( Context const& context, T
 			" expression? That will result in an animation reset, is that"
 			" actually desirable in all cases?" );
 		dialogueBox.SetPortrait( framePack );
-		dialogueBox.ShowPortrait( context.mUIContext, ui::Justification::Left, false );
+		dialogueBox.ShowPortrait( context.mUIContext, details::kPortraitSide, details::kFlipHorizontal );
 	}
 
 	// Set text, performing localization if available
