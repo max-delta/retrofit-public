@@ -25,6 +25,9 @@ public:
 	static constexpr TileZoomFactor kTileZoomFactor_Normal = 3; // 2^(N-3)=1
 	static constexpr TileZoomFactor kTileZoomFactor_Double = 4; // 2^(N-3)=2
 	static constexpr TileZoomFactor kTileZoomFactor_Quadruple = 5; // 2^(N-3)=4
+	static constexpr TileZoomFactor kTileZoomFactor_8x = 6; // 2^(N-3)=8
+	static constexpr TileZoomFactor kTileZoomFactor_16x = 7; // 2^(N-3)=16
+	static constexpr TileZoomFactor kMaxTileZoomFactor = 0b111;
 
 
 	//
@@ -81,7 +84,8 @@ public:
 	bool mUseTransform : 1;
 	bool mWrapping : 1;
 	uint8_t reserved1 : 2;
-	TileZoomFactor mTileZoomFactor;
+	uint8_t reserved2 : 5;
+	TileZoomFactor mTileZoomFactor : 3;
 
 	float mTransform[2][2];
 
