@@ -5,6 +5,8 @@
 
 #include "PPU/TileLayer.h"
 
+#include "core_math/Vector2.h"
+
 
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,7 +22,9 @@ class GAMEUI_API TileLayerDisplay final : public InstancedController
 public:
 	TileLayerDisplay() = default;
 
-	void SetTileset( gfx::ManagedTilesetID tileset );
+	void SetTileset( gfx::ManagedTilesetID tileset, gfx::ppu::CoordElem expectedTileWidth, gfx::ppu::CoordElem expectedTileHeight );
+	void SetJustification( Justification::Value justification );
+
 	gfx::ppu::TileLayer& GetMutableTileLayer();
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
@@ -30,6 +34,8 @@ public:
 	// Private data
 private:
 	gfx::ppu::TileLayer mTileLayer = {};
+	gfx::ppu::Coord mExpectedTileDimensions = {};
+	Justification::Value mJustification = Justification::TopLeft;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

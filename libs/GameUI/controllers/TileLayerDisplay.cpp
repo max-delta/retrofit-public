@@ -4,6 +4,7 @@
 #include "GameUI/ContainerManager.h"
 #include "GameUI/Container.h"
 #include "GameUI/UIContext.h"
+#include "GameUI/AlignmentHelpers.h"
 
 #include "PPU/PPUController.h"
 
@@ -21,9 +22,17 @@ RFTYPE_CREATE_META( RF::ui::controller::TileLayerDisplay )
 namespace RF::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
 
-void TileLayerDisplay::SetTileset( gfx::ManagedTilesetID tileset )
+void TileLayerDisplay::SetTileset( gfx::ManagedTilesetID tileset, gfx::ppu::CoordElem expectedTileWidth, gfx::ppu::CoordElem expectedTileHeight )
 {
 	mTileLayer.mTilesetReference = tileset;
+	mExpectedTileDimensions = { expectedTileWidth, expectedTileHeight };
+}
+
+
+
+void TileLayerDisplay::SetJustification( Justification::Value justification )
+{
+	mJustification = justification;
 }
 
 
@@ -39,7 +48,11 @@ void TileLayerDisplay::OnRender( UIConstContext const& context, Container const&
 {
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
-	gfx::ppu::Coord const pos = container.mAABB.mTopLeft;
+	gfx::ppu::Coord const expectedDimensions = {
+		math::integer_cast<gfx::ppu::CoordElem>( mExpectedTileDimensions.x * mTileLayer.NumColumns() ),
+		math::integer_cast<gfx::ppu::CoordElem>( mExpectedTileDimensions.y * mTileLayer.NumRows() ) };
+	gfx::ppu::AABB const& bounds = container.mAABB;
+	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, bounds, mJustification );
 
 	mTileLayer.mXCoord = pos.x;
 	mTileLayer.mYCoord = pos.y;
