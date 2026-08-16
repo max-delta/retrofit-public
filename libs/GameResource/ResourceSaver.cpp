@@ -219,6 +219,8 @@ bool ResourceSaver::SaveClassToBuffer(
 	rftl::string& buffer )
 {
 	file::VFSPath const logContextPath( "BUFFER" );
+	char const* const className = classInfo.GetDebugName();
+	RF_ASSERT( className != nullptr );
 
 	bool const bufferResult = details::SaveClassToBufferInternal(
 		classInfo,
@@ -228,11 +230,11 @@ bool ResourceSaver::SaveClassToBuffer(
 		logContextPath );
 	if( bufferResult == false )
 	{
-		RFLOG_ERROR( logContextPath, RFCAT_GAMERESOURCE, "Failed to write resource to buffer" );
+		RFLOG_ERROR( className, RFCAT_GAMERESOURCE, "Failed to write resource to buffer" );
 		return false;
 	}
 
-	RFLOG_INFO( logContextPath, RFCAT_GAMERESOURCE, "Resource written" );
+	RFLOG_INFO( className, RFCAT_GAMERESOURCE, "Resource written to buffer" );
 	return true;
 }
 

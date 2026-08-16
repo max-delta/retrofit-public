@@ -469,7 +469,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Res
 	mResources.emplace( managedResourceID, nullptr );
 	mResourceIDs.emplace( resourceName, managedResourceID );
 
-	RFLOG_INFO( nullptr, RFCAT_PPU, "Null resource reserved" );
+	RFLOG_INFO( resourceName, RFCAT_PPU, "Null resource reserved" );
 	return true;
 }
 

@@ -278,6 +278,11 @@ struct ClassInfo
 	bool IsSameOrDerivedFrom( ClassInfo const& ancestor ) const;
 	void const* AttemptUpcastWalk( ClassInfo const& ancestor, void const* source ) const;
 
+	// Gets a debug name, if available
+	// NOTE: Will be non-null, but my not be particularly useful in non-debug
+	//  builds that strip the info
+	char const* GetDebugName() const;
+
 #if RF_IS_ALLOWED( RF_CONFIG_CLASSINFO_DEBUG_NAMES )
 	// Intended for debugging purposes only
 	char const* mDebugName = nullptr;

@@ -87,6 +87,7 @@ UniquePtr<T> LoadFromFile(
 	}
 #endif
 
+	RFLOG_INFO( path, RFCAT_CC3O3, "Loaded class from file" );
 	return retVal;
 }
 

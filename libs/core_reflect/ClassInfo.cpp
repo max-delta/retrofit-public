@@ -67,6 +67,24 @@ void const* ClassInfo::AttemptUpcastWalk( ClassInfo const& ancestor, void const*
 
 
 
+char const* ClassInfo::GetDebugName() const
+{
+#if RF_IS_ALLOWED( RF_CONFIG_CLASSINFO_DEBUG_NAMES )
+	if( mDebugName != nullptr )
+	{
+		return mDebugName;
+	}
+	else
+	{
+		return "DEBUGNAME_UNSET";
+	}
+#else
+	return "DEBUGNAME_STRIPPED";
+#endif
+}
+
+
+
 char const* ClassInfo::StoreString( char const* string )
 {
 	rftl::string const& storedString = mIdentifierStorage.emplace_back( string );
