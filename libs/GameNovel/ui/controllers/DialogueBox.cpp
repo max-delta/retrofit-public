@@ -138,7 +138,14 @@ void DialogueBox::ShowPortrait( UIContext& context, Justification::Value portrai
 		portraitSide == Justification::Value::Left ?
 		ClampSlicer::Mode::ClampLeft_OverflowRight :
 		ClampSlicer::Mode::ClampRight_OverflowLeft;
-	mSliceController->SetMode( context, mode );
+	if( mSliceController->GetMode() != mode )
+	{
+		// Avoid double-setting mode, since it can potentially be costly to
+		//  re-layout
+		// NOTE: At time of writing, the controller will internally block any
+		//  attempts to double-set it, but it will warn about the attempt
+		mSliceController->SetMode( context, mode );
+	}
 }
 
 
@@ -146,7 +153,16 @@ void DialogueBox::ShowPortrait( UIContext& context, Justification::Value portrai
 void DialogueBox::HidePortrait( UIContext& context )
 {
 	mPortraitController->SetRenderingBlocked( true );
-	mSliceController->SetMode( context, ClampSlicer::Mode::TotalOverlap );
+
+	static constexpr ClampSlicer::Mode const kMode = ClampSlicer::Mode::TotalOverlap;
+	if( mSliceController->GetMode() != kMode )
+	{
+		// Avoid double-setting mode, since it can potentially be costly to
+		//  re-layout
+		// NOTE: At time of writing, the controller will internally block any
+		//  attempts to double-set it, but it will warn about the attempt
+		mSliceController->SetMode( context, kMode );
+	}
 }
 
 

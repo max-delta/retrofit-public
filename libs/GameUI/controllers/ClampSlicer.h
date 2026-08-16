@@ -59,6 +59,7 @@ public:
 		Params params,
 		Mode mode );
 
+	Mode GetMode() const;
 	void SetMode( ui::UIContext& context, Mode mode );
 
 	ContainerID GetClampedContainerID() const;

@@ -44,6 +44,13 @@ ClampSlicer::ClampSlicer(
 
 
 
+ClampSlicer::Mode ClampSlicer::GetMode() const
+{
+	return mMode;
+}
+
+
+
 void ClampSlicer::SetMode( ui::UIContext& context, Mode mode )
 {
 	RF_ASSERT( mode != Mode::Invalid );
