@@ -1,12 +1,6 @@
 #include "stdafx.h"
 #include "CinematicController.h"
 
-// HACK: Used just for temp fallback frame packs
-RF_TODO_ANNOTATION( "Remove this fallback" );
-#include "cc3o3/ui/standard/StandardUIElements.h"
-
-#include "cc3o3/CommonPaths.h"
-
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameDialogue/DialogueLoader.h"
@@ -54,6 +48,7 @@ static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 
 static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequiredCharacters(
 	dialogue::DialogueSequence::StringViewMultiMap const& requiredExpressionsPerCharacter,
+	file::VFSPath const& characterRoot,
 	rftl::deque<rftl::string>& resourceNames )
 {
 	RF_ASSERT( resourceNames.empty() );
@@ -86,7 +81,7 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 
 			resourceNames.emplace_back( rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression ) );
 			rftl::string_view const resourceName = resourceNames.back();
-			file::VFSPath const filename = paths::ExpressionFramepacks().GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
+			file::VFSPath const filename = characterRoot.GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
 			bool const success = ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, resourceName, filename );
 			if( success == false )
 			{
@@ -125,9 +120,7 @@ CinematicController::CinematicController()
 
 bool CinematicController::SetCharacterData( file::VFSPath const& characterRoot )
 {
-	RF_TODO_ANNOTATION( "Load characters from folder" );
-	( (void)characterRoot );
-
+	mCharacterRoot = characterRoot;
 	return true;
 }
 
@@ -135,9 +128,7 @@ bool CinematicController::SetCharacterData( file::VFSPath const& characterRoot )
 
 bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
 {
-	RF_TODO_ANNOTATION( "Load scenes from folder" );
-	( (void)sceneRoot );
-
+	mSceneRoot = sceneRoot;
 	return true;
 }
 
@@ -186,6 +177,7 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 			.mFramePacksByCharacter =
 				details::AssignFramePacksForRequiredCharacters(
 					mDialogue->mRequiredExpressionsPerCharacter,
+					mCharacterRoot,
 					mLoadedExpressionFramePackResourceNames ) } );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );

@@ -6,7 +6,7 @@
 #include "GameDialogue/DialogueFwd.h"
 #include "GameNovel/NovelFwd.h"
 
-#include "PlatformFilesystem/VFSFwd.h"
+#include "PlatformFilesystem/VFSPath.h"
 
 #include "rftl/deque"
 #include "rftl/string"
@@ -43,6 +43,9 @@ private:
 	UniquePtr<dialogue::DialogueSequence const> const mFallbackDialogue = {};
 	UniquePtr<dialogue::DialogueSequence const> mDialogue = {};
 	UniquePtr<novel::CinematicDriver> const mDriver = {};
+
+	file::VFSPath mCharacterRoot = {};
+	file::VFSPath mSceneRoot = {};
 
 	rftl::deque<rftl::string> mLoadedExpressionFramePackResourceNames;
 };

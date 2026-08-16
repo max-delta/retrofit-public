@@ -580,8 +580,7 @@ void CampaignManager::HardcodedCutsceneSetup( cutscene::CinematicController& cin
 {
 	VerifyCampaignLoaded();
 
-	file::VFSPath const characterRoot = file::VFSPath{ "TODO" };
-	bool const characters = cinematic.SetCharacterData( characterRoot );
+	bool const characters = cinematic.SetCharacterData( paths::ExpressionFramepacks() );
 	RF_ASSERT( characters );
 
 	file::VFSPath const sceneRoot = file::VFSPath{ "TODO" };
