@@ -242,6 +242,7 @@ static gfx::ppu::Object testObjDigit = {};
 static gfx::ppu::Object testObjDigitFlips[3] = {};
 static gfx::ppu::Object testObjWiggle = {};
 static gfx::ppu::TileLayer testTileLayer = {};
+static gfx::ppu::TileLayer testSingleTileLayer = {};
 static constexpr ui::FontPurposeID k1xFont = 1;
 static constexpr ui::FontPurposeID k2xFont = 2;
 void InitDrawTest()
@@ -296,12 +297,21 @@ void InitDrawTest()
 
 
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "palette16_4.tset.txt" ) );
-	testTileLayer.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	gfx::ManagedTilesetID const paletteTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	testTileLayer.mTilesetReference = paletteTileset;
 	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
+
+	testSingleTileLayer.mTilesetReference = paletteTileset;
+	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
+	testSingleTileLayer.mXCoord = 170;
+	testSingleTileLayer.mYCoord = 90;
+	testSingleTileLayer.mZLayer = 1;
+	testSingleTileLayer.ClearAndResize( 1, 1 );
+	testSingleTileLayer.GetMutableTile( 0 ).mIndex = 3;
 
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
@@ -332,6 +342,8 @@ void DrawTest()
 	app::gGraphics->DrawObject( testObjWiggle );
 	testTileLayer.Animate();
 	app::gGraphics->DrawTileLayer( testTileLayer );
+	testSingleTileLayer.Animate();
+	app::gGraphics->DrawTileLayer( testSingleTileLayer );
 	app::gGraphics->DebugDrawText( gfx::ppu::Coord( 32, 32 ), "Test" );
 	ui::Font const testFont1 = app::gFontRegistry->SelectBestFont( k1xFont, app::gGraphics->GetCurrentZoomFactor() );
 	ui::Font const testFont2 = app::gFontRegistry->SelectBestFont( k2xFont, app::gGraphics->GetCurrentZoomFactor() );
