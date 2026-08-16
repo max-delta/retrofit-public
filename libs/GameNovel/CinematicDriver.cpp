@@ -424,7 +424,7 @@ bool CinematicDriver::SubTickCinematic_Advance_Speech( Context const& context, T
 	rftl::string_view const& expression = entry.mExpression;
 	if( expression == kNullExpression )
 	{
-		// Null expression hides te portrait
+		// Null expression hides the portrait
 		dialogueBox.HidePortrait( context.mUIContext );
 	}
 	else
