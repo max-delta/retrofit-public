@@ -28,7 +28,8 @@ public:
 	static constexpr TileZoomFactor kTileZoomFactor_Quadruple = 5; // 2^(N-3)=4
 	static constexpr TileZoomFactor kTileZoomFactor_8x = 6; // 2^(N-3)=8
 	static constexpr TileZoomFactor kTileZoomFactor_16x = 7; // 2^(N-3)=16
-	static constexpr TileZoomFactor kMaxTileZoomFactor = 0b111;
+	static constexpr TileZoomFactor kMaxTileZoomFactor = kTileZoomFactor_16x;
+	static_assert( kMaxTileZoomFactor == 0b111 );
 
 
 	//
