@@ -277,7 +277,17 @@ void ElementStockpileSelector::UpdateDisplay()
 	for( size_t i_slot = 0; i_slot < mNumSlots; i_slot++ )
 	{
 		ElementStockpileDisplayCache::Slot const& slot = stockpile.at( mListOffset + i_slot );
-		mTileLayer.GetMutableTile( 0, i_slot ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+		gfx::ppu::TileLayer::Tile& tile = mTileLayer.GetMutableTile( 0, i_slot );
+		if( slot.mTilesetIndex == ElementTilesetIndex::Empty )
+		{
+			tile.SetIndex( gfx::ppu::TileLayer::kEmptyTileIndex );
+		}
+		else
+		{
+			tile.SetIndex(
+				math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+					math::enum_bitcast( slot.mTilesetIndex ) ) );
+		}
 		GetMutableSlotController( i_slot )->UpdateFromCache( slot );
 	}
 }

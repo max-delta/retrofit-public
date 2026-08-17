@@ -17,8 +17,9 @@ class PPU_API TileLayer
 	//
 	// Types and constants
 public:
-	using TileIndex = int16_t;
-	static constexpr TileIndex kEmptyTileIndex = -1;
+	using TileIndex = uint16_t;
+	static constexpr TileIndex kEmptyTileIndex = 0xFFFFu;
+	static constexpr TileIndex kMaxTileIndex = 0xFFFFu;
 	using TileZoomFactor = uint8_t;
 	static constexpr TileZoomFactor kTileZoomFactor_Quarter = 1; // 2^(N-3)=1/4
 	static constexpr TileZoomFactor kTileZoomFactor_Half = 2; // 2^(N-3)=1/2
@@ -33,8 +34,13 @@ public:
 	//
 	// Structs
 public:
-	struct Tile
+	struct PPU_API Tile
 	{
+	public:
+		TileIndex GetIndex() const;
+		void SetIndex( TileIndex index );
+
+	private:
 		TileIndex mIndex = kEmptyTileIndex;
 	};
 

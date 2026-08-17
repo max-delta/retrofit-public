@@ -311,7 +311,7 @@ void InitDrawTest()
 	testSingleTileLayer.mYCoord = 90;
 	testSingleTileLayer.mZLayer = 1;
 	testSingleTileLayer.ClearAndResize( 1, 1 );
-	testSingleTileLayer.GetMutableTile( 0 ).mIndex = 3;
+	testSingleTileLayer.GetMutableTile( 0 ).SetIndex( 3 );
 
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
 	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );

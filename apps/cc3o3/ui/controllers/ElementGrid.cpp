@@ -118,16 +118,19 @@ void ElementGrid::OnInstanceAssign( UIContext& context, Container& container )
 		mTileLayer.ClearAndResize( element::kNumElementLevels + 1, character::kMaxSlotsPerElementLevel + 1 );
 		for( size_t i_col = 0; i_col < element::kNumElementLevels; i_col++ )
 		{
-			mTileLayer.GetMutableTile( i_col, character::kMaxSlotsPerElementLevel ).mIndex =
-				math::enum_bitcast( ElementTilesetIndex::TopBorder );
+			mTileLayer.GetMutableTile( i_col, character::kMaxSlotsPerElementLevel ).SetIndex( // Clang-format is trash garbage
+				math::integer_constcast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+					math::enum_bitcast( ElementTilesetIndex::TopBorder ) ) );
 		}
 		for( size_t i_row = 0; i_row < character::kMaxSlotsPerElementLevel; i_row++ )
 		{
-			mTileLayer.GetMutableTile( element::kNumElementLevels, i_row ).mIndex =
-				math::enum_bitcast( ElementTilesetIndex::LeftBorder );
+			mTileLayer.GetMutableTile( element::kNumElementLevels, i_row ).SetIndex( // Clang-format is trash garbage
+				math::integer_constcast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+					math::enum_bitcast( ElementTilesetIndex::LeftBorder ) ) );
 		}
-		mTileLayer.GetMutableTile( element::kNumElementLevels, character::kMaxSlotsPerElementLevel ).mIndex =
-			math::enum_bitcast( ElementTilesetIndex::TopLeftBorder );
+		mTileLayer.GetMutableTile( element::kNumElementLevels, character::kMaxSlotsPerElementLevel ).SetIndex( // Clang-format is trash garbage
+			math::integer_constcast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+				math::enum_bitcast( ElementTilesetIndex::TopLeftBorder ) ) );
 	}
 
 	RF_ASSERT( tilesetDef.mFont == kInvalidFontPurposeID );
@@ -168,7 +171,17 @@ void ElementGrid::UpdateDisplay()
 		for( size_t i_row = 0; i_row < column.size(); i_row++ )
 		{
 			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
-			mTileLayer.GetMutableTile( levelOffset, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+			gfx::ppu::TileLayer::Tile& tile = mTileLayer.GetMutableTile( levelOffset, i_row );
+			if( slot.mTilesetIndex == ElementTilesetIndex::Empty )
+			{
+				tile.SetIndex( gfx::ppu::TileLayer::kEmptyTileIndex );
+			}
+			else
+			{
+				tile.SetIndex(
+					math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+						math::enum_bitcast( slot.mTilesetIndex ) ) );
+			}
 		}
 	}
 }

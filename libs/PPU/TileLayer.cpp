@@ -7,6 +7,21 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
+TileLayer::TileIndex TileLayer::Tile::GetIndex() const
+{
+	return mIndex;
+}
+
+
+
+void TileLayer::Tile::SetIndex( TileIndex index )
+{
+	RF_ASSERT( index <= kMaxTileIndex );
+	mIndex = index;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void TileLayer::Animate()
 {
 	mTimer.Animate( mLooping, mPaused );

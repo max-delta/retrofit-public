@@ -15,6 +15,20 @@ class PPU_API TileLayerCSVLoader
 {
 	RF_NO_INSTANCE( TileLayerCSVLoader );
 
+	//
+	// Types and constants
+public:
+	using IndexType = int64_t;
+
+	// This value indicates an empty tile
+	// NOTE: At time of writing, this differs from the in-memory storage of
+	//  tile layets, and is mostly for compatability with common tile-mapping
+	//  editor software
+	static constexpr IndexType kEmptyTileIndex = -1;
+
+
+	//
+	// Public methods
 public:
 	static bool LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, file::VFSPath const& path );
 };

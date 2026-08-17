@@ -48,17 +48,33 @@ bool TileLayerCSVLoader::LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, 
 
 	tileLayer.ClearAndResize( longestRow, numRows );
 
+	// For each row...
 	for( size_t i_row = 0; i_row < numRows; i_row++ )
 	{
 		rftl::deque<rftl::string> const& row = csv.at( i_row );
 		size_t const numCols = row.size();
 
+		// For each column...
 		for( size_t i_col = 0; i_col < numCols; i_col++ )
 		{
+			// Read
 			rftl::string const& field = row.at( i_col );
-			TileLayer::TileIndex val = TileLayer::kEmptyTileIndex;
+			IndexType val = kEmptyTileIndex;
 			( rftl::stringstream() << field ) >> val;
-			tileLayer.GetMutableTile( i_col, i_row ).mIndex = val;
+
+			// Convert
+			TileLayer::TileIndex convertedVal = TileLayer::kEmptyTileIndex;
+			if( val == kEmptyTileIndex )
+			{
+				// Empty
+			}
+			else
+			{
+				convertedVal = math::integer_cast<TileLayer::TileIndex>( val );
+			}
+
+			// Store
+			tileLayer.GetMutableTile( i_col, i_row ).SetIndex( convertedVal );
 		}
 	}
 

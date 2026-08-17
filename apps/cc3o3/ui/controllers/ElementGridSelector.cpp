@@ -318,7 +318,17 @@ void ElementGridSelector::UpdateDisplay()
 		for( size_t i_row = 0; i_row < column.size(); i_row++ )
 		{
 			ElementGridDisplayCache::Slot const& slot = column.at( i_row );
-			tileLayer.GetMutableTile( 0, i_row ).mIndex = math::enum_bitcast( slot.mTilesetIndex );
+			gfx::ppu::TileLayer::Tile& tile = tileLayer.GetMutableTile( 0, i_row );
+			if( slot.mTilesetIndex == ElementTilesetIndex::Empty )
+			{
+				tile.SetIndex( gfx::ppu::TileLayer::kEmptyTileIndex );
+			}
+			else
+			{
+				tile.SetIndex(
+					math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+						math::enum_bitcast( slot.mTilesetIndex ) ) );
+			}
 		}
 	};
 

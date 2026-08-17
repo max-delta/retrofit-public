@@ -1393,11 +1393,12 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			math::AABB4f pos,
 			float z ) -> void //
 	{
-		RF_ASSERT( tile.mIndex != TileLayer::kEmptyTileIndex );
+		TileLayer::TileIndex const index = tile.GetIndex();
+		RF_ASSERT( index != TileLayer::kEmptyTileIndex );
 
 		math::Vector2i16 const texTile = math::Vector2i16(
-			math::integer_cast<int16_t>( tile.mIndex % texTilesPerRow ),
-			math::integer_cast<int16_t>( tile.mIndex / texTilesPerRow ) );
+			math::integer_cast<int16_t>( index % texTilesPerRow ),
+			math::integer_cast<int16_t>( index / texTilesPerRow ) );
 		math::Vector2f const texTopLeft = math::Vector2f(
 			math::float_cast<float>( texTile.x ) * texXStep,
 			math::float_cast<float>( texTile.y ) * texYStep );
@@ -1413,7 +1414,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			size_t const tileCol = math::integer_cast<size_t>( i_col + tileColOffset ) % tileLayer.NumColumns();
 			size_t const tileRow = math::integer_cast<size_t>( i_row + tileRowOffset ) % tileLayer.NumRows();
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
-			if( tile.mIndex == TileLayer::kEmptyTileIndex )
+			TileLayer::TileIndex const tileIndex = tile.GetIndex();
+			if( tileIndex == TileLayer::kEmptyTileIndex )
 			{
 				// Empty
 				continue;
