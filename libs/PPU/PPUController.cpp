@@ -1331,59 +1331,53 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	int16_t tileRowOffset = 0;
 
 	// Wrapping
-	if( tileLayer.mWrapping )
+	static constexpr auto doWrap =
+		[](
+			CoordElem const root,
+			CoordElem const layerStep,
+			CoordElem& drawRoot,
+			CoordElem const step,
+			int16_t& tileOffset,
+			CoordElem const screenBound,
+			int16_t& posEnd ) -> void
 	{
 		// How far off screen do we need to start rendering?
-		CoordElem wrapRootX;
-		CoordElem wrapRootY;
+		CoordElem wrapRoot;
 		{
-			CoordElem const xStepDifferenceFromZero = rootX % xLayerStep;
-			CoordElem const yStepDifferenceFromZero = rootY % yLayerStep;
-			wrapRootX = xStepDifferenceFromZero;
-			wrapRootY = yStepDifferenceFromZero;
-			if( wrapRootX > 0 )
+			CoordElem const stepDifferenceFromZero = root % layerStep;
+			wrapRoot = stepDifferenceFromZero;
+			if( wrapRoot > 0 )
 			{
-				wrapRootX -= xLayerStep;
-			}
-			if( wrapRootY > 0 )
-			{
-				wrapRootY -= yLayerStep;
+				wrapRoot -= layerStep;
 			}
 		}
-		RF_ASSERT( wrapRootX <= 0 );
-		RF_ASSERT( wrapRootY <= 0 );
-		drawRootX = wrapRootX;
-		drawRootY = wrapRootY;
+		RF_ASSERT( wrapRoot <= 0 );
+		drawRoot = wrapRoot;
 
 		// How many cycles of wrapping before we reach the root of the layer?
-		int16_t xCyclesBeforeRoot;
-		int16_t yCyclesBeforeRoot;
+		int16_t cyclesBeforeRoot;
 		{
-			CoordElem const xWrapDifferenceFromRoot = rootX - wrapRootX;
-			CoordElem const yWrapDifferenceFromRoot = rootY - wrapRootY;
-			RF_ASSERT( xWrapDifferenceFromRoot % xStep == 0 );
-			RF_ASSERT( yWrapDifferenceFromRoot % yStep == 0 );
-			xCyclesBeforeRoot = xWrapDifferenceFromRoot / xStep;
-			yCyclesBeforeRoot = yWrapDifferenceFromRoot / yStep;
+			CoordElem const wrapDifferenceFromRoot = root - wrapRoot;
+			RF_ASSERT( wrapDifferenceFromRoot % step == 0 );
+			cyclesBeforeRoot = wrapDifferenceFromRoot / step;
 		}
-		RF_ASSERT( xCyclesBeforeRoot >= 0 );
-		RF_ASSERT( yCyclesBeforeRoot >= 0 );
-		tileColOffset = xCyclesBeforeRoot;
-		tileRowOffset = yCyclesBeforeRoot;
+		RF_ASSERT( cyclesBeforeRoot >= 0 );
+		tileOffset = cyclesBeforeRoot;
 
 		// How many cycles of wrapping before we reach the end of the screen?
-		int16_t xCyclesBeforeScreenEscape;
-		int16_t yCyclesBeforeScreenEscape;
+		int16_t cyclesBeforeScreenEscape;
 		{
-			CoordElem const xWrapDifferenceFromEscape = GetWidth() - wrapRootX;
-			CoordElem const yWrapDifferenceFromEscape = GetHeight() - wrapRootY;
-			xCyclesBeforeScreenEscape = xWrapDifferenceFromEscape / xStep;
-			yCyclesBeforeScreenEscape = yWrapDifferenceFromEscape / yStep;
+			CoordElem const wrapDifferenceFromEscape = screenBound - wrapRoot;
+			cyclesBeforeScreenEscape = wrapDifferenceFromEscape / step;
 		}
-		RF_ASSERT( xCyclesBeforeScreenEscape >= 0 );
-		RF_ASSERT( yCyclesBeforeScreenEscape >= 0 );
-		posColEnd = xCyclesBeforeScreenEscape + 1;
-		posRowEnd = yCyclesBeforeScreenEscape + 1;
+		RF_ASSERT( cyclesBeforeScreenEscape >= 0 );
+		posEnd = cyclesBeforeScreenEscape + 1;
+	};
+
+	if( tileLayer.mWrapping )
+	{
+		doWrap( rootX, xLayerStep, drawRootX, xStep, tileColOffset, GetWidth(), posColEnd );
+		doWrap( rootY, yLayerStep, drawRootY, yStep, tileRowOffset, GetHeight(), posRowEnd );
 	}
 
 	constexpr auto renderTile =
