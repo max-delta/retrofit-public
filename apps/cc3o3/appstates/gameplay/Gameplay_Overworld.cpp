@@ -113,7 +113,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		land.mXCoord = 0;
 		land.mYCoord = 0;
 		land.mZLayer = InternalState::kLayerTerrain;
-		land.mWrapping = false;
+		land.mHorizontalWrapping = false;
+		land.mVerticalWrapping = false;
 		land.mLooping = true;
 		land.mTimer.mMaxTimeIndex = 50;
 		{
@@ -127,7 +128,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudA.mXCoord = 0;
 		cloudA.mYCoord = 0;
 		cloudA.mZLayer = InternalState::kLayerCloudStart - 0;
-		cloudA.mWrapping = true;
+		cloudA.mHorizontalWrapping = true;
+		cloudA.mVerticalWrapping = true;
 		cloudA.mLooping = true;
 		cloudA.mTimer.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 		{
@@ -141,7 +143,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudB.mXCoord = 0;
 		cloudB.mYCoord = 0;
 		cloudB.mZLayer = InternalState::kLayerCloudStart - 1;
-		cloudB.mWrapping = true;
+		cloudB.mHorizontalWrapping = true;
+		cloudB.mVerticalWrapping = true;
 		cloudB.mLooping = true;
 		cloudB.mTimer.mMaxTimeIndex = map.mCloud2ParallaxDelay;
 		{

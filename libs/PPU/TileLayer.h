@@ -82,8 +82,9 @@ public:
 	bool mHorizontalFlip : 1;
 	bool mVerticalFlip : 1;
 	bool mUseTransform : 1;
-	bool mWrapping : 1;
-	uint8_t reserved1 : 2;
+	bool mHorizontalWrapping : 1;
+	bool mVerticalWrapping : 1;
+	uint8_t reserved1 : 1;
 	uint8_t reserved2 : 5;
 	TileZoomFactor mTileZoomFactor : 3;
 

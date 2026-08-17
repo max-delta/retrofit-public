@@ -1374,9 +1374,12 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		posEnd = cyclesBeforeScreenEscape + 1;
 	};
 
-	if( tileLayer.mWrapping )
+	if( tileLayer.mHorizontalWrapping )
 	{
 		doWrap( rootX, xLayerStep, drawRootX, xStep, tileColOffset, GetWidth(), posColEnd );
+	}
+	if( tileLayer.mVerticalWrapping )
+	{
 		doWrap( rootY, yLayerStep, drawRootY, yStep, tileRowOffset, GetHeight(), posRowEnd );
 	}
 

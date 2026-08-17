@@ -64,7 +64,8 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		back.mXCoord = 0;
 		back.mYCoord = 0;
 		back.mZLayer = 100;
-		back.mWrapping = true;
+		back.mHorizontalWrapping = true;
+		back.mVerticalWrapping = false;
 		back.mLooping = true;
 		back.mTimer.mMaxTimeIndex = 50;
 		{
@@ -78,7 +79,8 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		mid.mXCoord = 0;
 		mid.mYCoord = 0;
 		mid.mZLayer = 99;
-		mid.mWrapping = true;
+		mid.mHorizontalWrapping = true;
+		mid.mVerticalWrapping = false;
 		mid.mLooping = true;
 		mid.mTimer.mMaxTimeIndex = 10;
 		{
