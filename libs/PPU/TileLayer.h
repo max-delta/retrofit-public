@@ -104,6 +104,13 @@ public:
 	//
 	// Private data
 private:
+	// HACK: Using a vector for now, which is gross since it is off in the heap
+	//  somewhere that is difficult to track or constrain
+	// TODO: Maybe a TileLayerBase that forks into two different storage forms,
+	//  with one heap-backed one for gameplay code, and a buffer-backed one for
+	//  the PPU to use when the TileLayer is added to a render request, which
+	//  would essentially be the form of a DMA transfer to the PPU at that time
+	RF_TODO_ANNOTATION( "Get rid of the vector in favor of some more fixed memory" );
 	rftl::vector<Tile> mTiles;
 };
 static_assert( sizeof( TileLayer::Tile ) == 2, "Double-check Tile storage" );
