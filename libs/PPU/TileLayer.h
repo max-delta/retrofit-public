@@ -18,8 +18,8 @@ class PPU_API TileLayer
 	// Types and constants
 public:
 	using TileIndex = uint16_t;
-	static constexpr TileIndex kEmptyTileIndex = 0xFFFFu;
-	static constexpr TileIndex kMaxTileIndex = 0xFFFFu;
+	static constexpr TileIndex kEmptyTileIndex = 1023;
+	static constexpr TileIndex kMaxTileIndex = kEmptyTileIndex;
 	using TileZoomFactor = uint8_t;
 	static constexpr TileZoomFactor kTileZoomFactor_Quarter = 1; // 2^(N-3)=1/4
 	static constexpr TileZoomFactor kTileZoomFactor_Half = 2; // 2^(N-3)=1/2
@@ -42,7 +42,9 @@ public:
 		void SetIndex( TileIndex index );
 
 	private:
-		TileIndex mIndex = kEmptyTileIndex;
+		uint16_t mReserved : 6;
+		TileIndex mIndex : 10 = kEmptyTileIndex;
+		static_assert( kMaxTileIndex == 0b11'1111'1111 );
 	};
 
 
@@ -104,6 +106,7 @@ public:
 private:
 	rftl::vector<Tile> mTiles;
 };
+static_assert( sizeof( TileLayer::Tile ) == 2, "Double-check Tile storage" );
 static_assert( sizeof( TileLayer ) <= 64, "Double-check TileLayer storage" );
 static_assert( alignof( TileLayer ) == RF::compiler::kPointerBytes, "Double-check TileLayer alignment" );
 
