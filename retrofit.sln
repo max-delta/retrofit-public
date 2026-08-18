@@ -151,10 +151,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{13C7E520-F56E-40A1-B81B-D8518CF69614}"
 	ProjectSection(SolutionItems) = preProject
 		.clang-format = .clang-format
+		.editorconfig = .editorconfig
 		.hgignore = .hgignore
 		.vsconfig = .vsconfig
 		azure-pipelines.yml = azure-pipelines.yml
 		cpp.hint = cpp.hint
+		exclusion.dic = exclusion.dic
 		retrofit.ico = retrofit.ico
 		retrofit.natvis = retrofit.natvis
 	EndProjectSection

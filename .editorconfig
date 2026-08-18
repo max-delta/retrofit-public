@@ -1,0 +1,22 @@
+# Declare this to be the root file so random files higher up in the disk don't
+#  cause surprise effects to occur
+root = true
+
+# Tabs are for indentation, do not try to enforce your visual indentation
+#  length preferences onto others
+[*]
+indent_style = tab
+
+# Avoid problems with tools that try to treat files specially as 'text'
+[*]
+end_of_line = lf
+
+# Avoid putting raw Unicode into source files as it leads to landmines
+[*]
+charset = latin1
+
+# This codebase is primarily in US English, and has a list of custom exclusions
+# NOTE: Use 'Edit -> Advanced -> Toggle spell checker' to enable
+[*]
+spelling_language = en-us
+spelling_exclusion_path = .\exclusion.dic
