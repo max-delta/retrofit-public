@@ -1294,19 +1294,21 @@ void PPUController::RenderObject( Object const& object ) const
 
 void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 {
-	Tileset const* tileset = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
-	RF_ASSERT_MSG( tileset != nullptr, "Failed to fetch tileset" );
-	Texture const* texture = mTextureManager->GetResourceFromManagedResourceID( tileset->mTextureReference );
-	RF_ASSERT_MSG( texture != nullptr, "Failed to fetch texture" );
-	DeviceTextureID const deviceTextureID = texture->GetDeviceRepresentation();
+	Tileset const* const tilesetPtr = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
+	RF_ASSERT_MSG( tilesetPtr != nullptr, "Failed to fetch tileset" );
+	Tileset const& tileset = *tilesetPtr;
+	Texture const* const texturePtr = mTextureManager->GetResourceFromManagedResourceID( tileset.mTextureReference );
+	RF_ASSERT_MSG( texturePtr != nullptr, "Failed to fetch texture" );
+	Texture const& texture = *texturePtr;
+	DeviceTextureID const deviceTextureID = texture.GetDeviceRepresentation();
 
-	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture->mWidthPostLoad / tileset->mTileWidth );
-	float const texXStep = math::float_cast<float>( tileset->mTileWidth ) / math::float_cast<float>( texture->mWidthPostLoad );
-	float const texYStep = math::float_cast<float>( tileset->mTileHeight ) / math::float_cast<float>( texture->mHeightPostLoad );
+	uint16_t const texTilesPerRow = math::integer_cast<uint16_t>( texture.mWidthPostLoad / tileset.mTileWidth );
+	float const texXStep = math::float_cast<float>( tileset.mTileWidth ) / math::float_cast<float>( texture.mWidthPostLoad );
+	float const texYStep = math::float_cast<float>( tileset.mTileHeight ) / math::float_cast<float>( texture.mHeightPostLoad );
 
 	CoordElem xStep;
 	CoordElem yStep;
-	CalculateTileSize( tileLayer, *tileset, xStep, yStep );
+	CalculateTileSize( tileLayer, tileset, xStep, yStep );
 	CoordElem const xLayerStep = xStep * math::integer_cast<CoordElem>( tileLayer.NumColumns() );
 	CoordElem const yLayerStep = yStep * math::integer_cast<CoordElem>( tileLayer.NumRows() );
 
@@ -1429,7 +1431,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
 
 			// Determine the index to use
-			TileLayer::TileIndex const tileIndex = determineTileIndex( tile, *tileset );
+			TileLayer::TileIndex const tileIndex = determineTileIndex( tile, tileset );
 			if( tileIndex == TileLayer::kEmptyTileIndex )
 			{
 				// Empty
