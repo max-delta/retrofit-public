@@ -53,7 +53,7 @@ WeakPtr<Resource const> ResourceManager<Resource, ManagedResourceID, InvalidReso
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find recource by name" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find resource by name" );
 		return nullptr;
 	}
 
@@ -87,7 +87,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find recource by name" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find resource by name" );
 		return kInvalidResourceID;
 	}
 

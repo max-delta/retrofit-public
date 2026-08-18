@@ -594,7 +594,7 @@ void InitUITest()
 			DefaultCreator<ui::controller::NineSlicer>::Create(
 				kSlicesEnabled ) );
 
-	// Create some passthoughs, and then blow them up from the head
+	// Create some passthroughs, and then blow them up from the head
 	WeakPtr<ui::controller::Passthrough> const passthrough8 =
 		uiManager.AssignStrongController(
 			nineSlicer->GetChildContainerID( 8 ),

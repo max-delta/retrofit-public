@@ -113,14 +113,14 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 			true,
 			false,
 		};
-		static constexpr gfx::ppu::CoordElem kAspectDivisility = gfx::ppu::kTileSize / 4;
+		static constexpr gfx::ppu::CoordElem kAspectDivisibility = gfx::ppu::kTileSize / 4;
 		WeakPtr<ui::controller::AspectColumnSlicer> const aspectSlicer =
 			uiManager.AssignStrongController(
 				ui::kRootContainerID,
 				DefaultCreator<ui::controller::AspectColumnSlicer>::Create(
 					aspectRatio,
 					kAspectEnableds,
-					kAspectDivisility ) );
+					kAspectDivisibility ) );
 
 		// Bring in the size a bit
 		static constexpr ui::controller::Clamper::Params kMarginClamperParams = {
