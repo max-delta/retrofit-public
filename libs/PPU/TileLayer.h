@@ -42,7 +42,7 @@ public:
 		void SetIndex( TileIndex index );
 
 	private:
-		uint16_t mReserved : 6;
+		[[maybe_unused]] uint16_t mReserved : 6;
 		TileIndex mIndex : 10 = kEmptyTileIndex;
 		static_assert( kMaxTileIndex == 0b11'1111'1111 );
 	};
