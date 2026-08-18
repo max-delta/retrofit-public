@@ -189,7 +189,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 		for( size_t i = 0; i < framePack.mNumTimeSlots; i++ )
 		{
 			// NOTE: Pascal-style strings, since file paths can theoretically
-			//  store some really wierd shit on some platforms, such as nulls
+			//  store some really weird shit on some platforms, such as nulls
 			rftl::string const& fileStr = texturePaths.at( i );
 			StrLenType const fileStrLen = math::integer_cast<StrLenType>( fileStr.size() );
 
