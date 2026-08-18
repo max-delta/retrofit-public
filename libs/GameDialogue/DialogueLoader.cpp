@@ -113,7 +113,7 @@ struct State
 
 static rftl::string_view MakeStorage( DialogueSequence::Strings& cache, rftl::string_view fromBuffer )
 {
-	// Check for exising
+	// Check for existing
 	for( rftl::string const& str : cache )
 	{
 		if( str == fromBuffer )
