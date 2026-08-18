@@ -1383,9 +1383,18 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		doWrap( rootY, yLayerStep, drawRootY, yStep, tileRowOffset, GetHeight(), posRowEnd );
 	}
 
-	constexpr auto renderTile =
-		[]( DeviceInterface* deviceInterface,
+	constexpr auto determineTileIndex =
+		[](
 			TileLayer::Tile const& tile,
+			Tileset const& tileset ) -> TileLayer::TileIndex
+	{
+		return tile.GetIndex();
+	};
+
+	constexpr auto renderTile =
+		[](
+			DeviceInterface* deviceInterface,
+			TileLayer::TileIndex tileIndex,
 			DeviceTextureID deviceTextureID,
 			uint16_t texTilesPerRow,
 			float texXStep,
@@ -1393,12 +1402,11 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			math::AABB4f pos,
 			float z ) -> void //
 	{
-		TileLayer::TileIndex const index = tile.GetIndex();
-		RF_ASSERT( index != TileLayer::kEmptyTileIndex );
+		RF_ASSERT( tileIndex != TileLayer::kEmptyTileIndex );
 
 		math::Vector2i16 const texTile = math::Vector2i16(
-			math::integer_cast<int16_t>( index % texTilesPerRow ),
-			math::integer_cast<int16_t>( index / texTilesPerRow ) );
+			math::integer_cast<int16_t>( tileIndex % texTilesPerRow ),
+			math::integer_cast<int16_t>( tileIndex / texTilesPerRow ) );
 		math::Vector2f const texTopLeft = math::Vector2f(
 			math::float_cast<float>( texTile.x ) * texXStep,
 			math::float_cast<float>( texTile.y ) * texYStep );
@@ -1407,20 +1415,28 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 		deviceInterface->DrawBillboard( deviceTextureID, pos, z, math::AABB4f{ texTopLeft, texBottomRight } );
 	};
 
+	// For each positional column...
 	for( int16_t i_col = posColStart; i_col < posColEnd; i_col++ )
 	{
+		// For each positional row...
 		for( int16_t i_row = posRowStart; i_row < posRowEnd; i_row++ )
 		{
+			// Determine the tile row and column
+			// NOTE: This differs from the position because of things like
+			//  wrapping logic
 			size_t const tileCol = math::integer_cast<size_t>( i_col + tileColOffset ) % tileLayer.NumColumns();
 			size_t const tileRow = math::integer_cast<size_t>( i_row + tileRowOffset ) % tileLayer.NumRows();
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
-			TileLayer::TileIndex const tileIndex = tile.GetIndex();
+
+			// Determine the index to use
+			TileLayer::TileIndex const tileIndex = determineTileIndex( tile, *tileset );
 			if( tileIndex == TileLayer::kEmptyTileIndex )
 			{
 				// Empty
 				continue;
 			}
 
+			// Determine where to actually draw
 			CoordElem const x = drawRootX + xStep * math::integer_cast<CoordElem>( i_col );
 			CoordElem const y = drawRootY + yStep * math::integer_cast<CoordElem>( i_row );
 			math::Vector2f const topLeft = CoordToDevice( x, y );
@@ -1429,7 +1445,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 				math::integer_cast<CoordElem>( y + yStep ) );
 			math::AABB4f const pos = math::AABB4f{ topLeft, bottomRight };
 
-			renderTile( mDeviceInterface, tile, deviceTextureID, texTilesPerRow, texXStep, texYStep, pos, z );
+			// Render
+			renderTile( mDeviceInterface, tileIndex, deviceTextureID, texTilesPerRow, texXStep, texYStep, pos, z );
 		}
 	}
 }
