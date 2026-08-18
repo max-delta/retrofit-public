@@ -310,7 +310,7 @@ inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnrol
 ///////////////////////////////////////////////////////////////////////////////
 
 template<typename CharT, CharT DelimiterT>
-SegmentedIdentifier<rftl::basic_string<CharT>> CreateIdentifierFromString( rftl::string const& identifier )
+SegmentedIdentifier<rftl::basic_string<CharT>> CreateIdentifierFromString( rftl::basic_string_view<CharT> identifier )
 {
 	SegmentedIdentifier<rftl::basic_string<CharT>> retVal;
 

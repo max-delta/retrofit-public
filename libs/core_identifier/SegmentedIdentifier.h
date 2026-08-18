@@ -4,6 +4,7 @@
 
 #include "rftl/vector"
 #include "rftl/string"
+#include "rftl/string_view"
 #include "rftl/type_traits"
 
 
@@ -83,7 +84,7 @@ protected:
 
 // To/from string
 template<typename CharT, CharT DelimiterT>
-SegmentedIdentifier<rftl::basic_string<CharT>> CreateIdentifierFromString( rftl::string const& path );
+SegmentedIdentifier<rftl::basic_string<CharT>> CreateIdentifierFromString( rftl::basic_string_view<CharT> path );
 template<typename CharT, CharT DelimiterT>
 rftl::string CreateStringFromIdentifer( SegmentedIdentifier<rftl::basic_string<CharT>> const& identifier );
 

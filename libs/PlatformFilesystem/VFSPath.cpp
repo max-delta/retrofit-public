@@ -70,7 +70,7 @@ VFSPath& VFSPath::RemoveTrailingExtensions()
 
 
 
-VFSPath VFSPath::CreatePathFromString( rftl::string const& path )
+VFSPath VFSPath::CreatePathFromString( rftl::string_view path )
 {
 	return id::CreateIdentifierFromString<char, kPathDelimiter>( path );
 }

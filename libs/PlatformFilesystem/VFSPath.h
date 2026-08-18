@@ -34,7 +34,7 @@ public:
 	PLATFORMFILESYSTEM_API VFSPath& RemoveTrailingExtensions();
 
 	// To/from string
-	PLATFORMFILESYSTEM_API static VFSPath CreatePathFromString( rftl::string const& path );
+	PLATFORMFILESYSTEM_API static VFSPath CreatePathFromString( rftl::string_view path );
 	PLATFORMFILESYSTEM_API rftl::string CreateString() const;
 };
 
