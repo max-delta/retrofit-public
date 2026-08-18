@@ -555,7 +555,7 @@ bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& fi
 
 bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename )
 {
-	FullfillLoadRequest( LoadRequest{ LoadType::Reserve, type, ResourceName( resourceName ), filename } );
+	FulfillLoadRequest( LoadRequest{ LoadType::Reserve, type, ResourceName( resourceName ), filename } );
 	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, type, ResourceName( resourceName ), filename } );
 	return true;
 }
@@ -579,14 +579,14 @@ bool PPUController::ForceImmediateLoadRequest( AssetType type, Filename const& f
 
 bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename )
 {
-	return FullfillLoadRequest( LoadRequest{ LoadType::New, type, ResourceName( resourceName ), filename } );
+	return FulfillLoadRequest( LoadRequest{ LoadType::New, type, ResourceName( resourceName ), filename } );
 }
 
 
 
 bool PPUController::ForceImmediateLoadAllRequests()
 {
-	FullfillAllDeferredLoadRequests();
+	FulfillAllDeferredLoadRequests();
 	return true;
 }
 
@@ -855,7 +855,7 @@ void PPUController::SignalRender( StateBufferID readyBuffer )
 	mRenderState = readyBuffer;
 
 	// HACK: Block on all deferred loads
-	FullfillAllDeferredLoadRequests();
+	FulfillAllDeferredLoadRequests();
 
 	// HACK: Render now
 	Render();
@@ -1836,18 +1836,18 @@ auto PPUController::RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& li
 
 
 
-void PPUController::FullfillAllDeferredLoadRequests()
+void PPUController::FulfillAllDeferredLoadRequests()
 {
 	LoadRequests const inFlight = rftl::move( mDeferredLoadRequests );
 	for( LoadRequest const& loadRequest : inFlight )
 	{
-		FullfillLoadRequest( loadRequest );
+		FulfillLoadRequest( loadRequest );
 	}
 }
 
 
 
-bool PPUController::FullfillLoadRequest( LoadRequest const& request )
+bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 {
 	ResourceName const& resourceName = request.mResourceName;
 	Filename const& filename = request.mFilename;
