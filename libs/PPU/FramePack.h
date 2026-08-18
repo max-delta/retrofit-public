@@ -19,6 +19,7 @@ class PPU_API FramePackBase : public PtrTrait::NoVirtualDestructor
 	RF_NO_MOVE( FramePackBase );
 
 
+	//
 	// Structs
 public:
 	struct GameColliderLayerMapping
@@ -96,7 +97,8 @@ class FramePack final : public FramePackBase
 	RF_NO_COPY( FramePack );
 	RF_NO_MOVE( FramePack );
 
-	// Constants
+	//
+	// Types and constants
 public:
 	// VS2015 bug: Intellisense can't read static array members sized with
 	//  constexpr from a template argument. Workaround: Use the template
@@ -148,43 +150,43 @@ static_assert( offsetof( FramePack_512, mTimeSlotSustains ) == 88, "Double-check
 static_assert( offsetof( FramePack_256, mTimeSlotSustains ) == 88, "Double-check FramePack storage" );
 static_assert(
 	offsetof( FramePack_4096, mTimeSlotSustains ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_1024, mTimeSlotSustains ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_512, mTimeSlotSustains ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_256, mTimeSlotSustains ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1,
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1,
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_4096, mTimeSlots ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) % 8 ) % 8 ),
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+			sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) +
+			( ( 8 - sizeof( uint8_t[FramePack_4096::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_1024, mTimeSlots ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) % 8 ) % 8 ),
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+			sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) +
+			( ( 8 - sizeof( uint8_t[FramePack_1024::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_512, mTimeSlots ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) % 8 ) % 8 ),
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+			sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) +
+			( ( 8 - sizeof( uint8_t[FramePack_512::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 static_assert(
 	offsetof( FramePack_256, mTimeSlots ) ==
-	offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
-	sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) +
-	( ( 8 - sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) % 8 ) % 8 ),
+		offsetof( FramePackBase, mMaxTimeSlots ) + 1 +
+			sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) +
+			( ( 8 - sizeof( uint8_t[FramePack_256::kMaxTimeSlots] ) % 8 ) % 8 ),
 	"Double-check FramePack offset math" );
 RF_CLANG_POP();
 
