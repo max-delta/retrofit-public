@@ -12,7 +12,7 @@
 
 #include "core/ptr/default_creator.h"
 
-#include "rftl/sstream"
+#include "rftl/extension/string_parse.h"
 
 
 namespace RF::gfx {
@@ -53,11 +53,122 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	// Close
 	fileHandle = nullptr;
 
-	// Deserialize
+	// Values that need to be deserialized
 	uint64_t tileWidth = 0;
 	uint64_t tileHeight = 0;
-	rftl::string pathString;
-	( rftl::stringstream() << buffer.GetChars().data() ) >> tileWidth >> tileHeight >> pathString;
+	rftl::string_view pathString;
+
+	// Deserialize
+	size_t lineNumber = 0;
+	rftl::string_view const rawText = buffer.GetChars();
+	rftl::string_view parser = rawText;
+	while( parser.empty() == false )
+	{
+		// NOTE: One-indexed
+		lineNumber++;
+		RF_ASSERT_MSG( lineNumber > 0, "Rollover" );
+
+		// Extract next line
+		rftl::string_view const line = rftl::strtok_view( parser, '\n' );
+
+		// Expect everything to be of the form '? ...'
+		if( line.size() < 3 )
+		{
+			RFLOG_ERROR(
+				filename, RFCAT_PPU,
+				"Entry too short at line #{}: {}",
+				lineNumber, line );
+			return nullptr;
+		}
+		char const command = line.front();
+		if( line.at( 1 ) != ' ' )
+		{
+			RFLOG_ERROR(
+				filename, RFCAT_PPU,
+				"Missing space after command at line #{}: {}",
+				lineNumber, line );
+			return nullptr;
+		}
+		rftl::string_view const params = line.substr( 2 );
+
+		// Handle the command
+		switch( command )
+		{
+			case 'w':
+			{
+				// Width
+				if( lineNumber != 1 )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Command '{}' must be first line, found at line #{}: {}",
+						command, lineNumber, line );
+					return nullptr;
+				}
+
+				bool const parsed = rftl::parse_int( tileWidth, params );
+				if( parsed == false )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Could not parse integer, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+
+				break;
+			}
+			case 'h':
+			{
+				// Height
+				if( lineNumber != 2 )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Command '{}' must be second line, found at line #{}: {}",
+						command, lineNumber, line );
+					return nullptr;
+				}
+
+				bool const parsed = rftl::parse_int( tileHeight, params );
+				if( parsed == false )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Could not parse integer, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+
+				break;
+			}
+			case 'f':
+			{
+				// File
+				if( lineNumber != 3 )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Command '{}' must be third line, found at line #{}: {}",
+						command, lineNumber, line );
+					return nullptr;
+				}
+
+				pathString = params;
+
+				break;
+			}
+			default:
+			{
+				RFLOG_ERROR(
+					filename, RFCAT_PPU,
+					"Unsupported command '{}' at line #{}: {}",
+					command, lineNumber, line );
+				return nullptr;
+			}
+		}
+	}
+
 	if( tileWidth == 0 )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to deserialize tile width" );
