@@ -33,6 +33,7 @@ file::VFSPath DialogFrameTilesets();
 file::VFSPath BackgroundTilemaps();
 
 // Framepacks
+file::VFSPath TestFramepacks();
 file::VFSPath CommonFramepacks();
 file::VFSPath LogoFramepacks();
 file::VFSPath UIFramepacks();

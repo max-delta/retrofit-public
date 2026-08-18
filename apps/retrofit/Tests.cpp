@@ -255,13 +255,13 @@ void InitDrawTest()
 	gfx::FontManager const& fontMan = *ppu.GetFontManager();
 	file::VFS& vfs = *app::gVfs;
 
-	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
+	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
-	file::VFSPath const commonTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "common" );
+	file::VFSPath const testTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "test" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	gfx::ppu::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, testFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ppu::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
@@ -284,8 +284,8 @@ void InitDrawTest()
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	gfx::ppu::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( commonFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, testFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ppu::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
 	testObjWiggle.mFramePackID = wiggleFPackID;
 	testObjWiggle.mTimer.mMaxTimeIndex = 4;
@@ -303,7 +303,7 @@ void InitDrawTest()
 	testTileLayer.mXCoord = 170;
 	testTileLayer.mYCoord = 40;
 	testTileLayer.mZLayer = 1;
-	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, commonTilemaps.GetChild( "testhouse_10.csv" ) );
+	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, testTilemaps.GetChild( "testhouse_10.csv" ) );
 
 	testSingleTileLayer.mTilesetReference = paletteTileset;
 	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
@@ -734,8 +734,8 @@ void FPackSerializationTest()
 	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
 	// Load a common test asset
-	file::VFSPath const commonFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "common" );
-	file::VFSPath const digitFPackPath = commonFramepacks.GetChild( "testdigit_loop.fpack" );
+	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
+	file::VFSPath const digitFPackPath = testFramepacks.GetChild( "testdigit_loop.fpack" );
 	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
 	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 

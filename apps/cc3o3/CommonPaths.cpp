@@ -90,6 +90,10 @@ file::VFSPath BackgroundTilemaps()
 
 ///////////////////////////////////////////////////////////////////////////////
 
+file::VFSPath TestFramepacks()
+{
+	return FramepacksRoot().GetChild( "test" );
+}
 file::VFSPath CommonFramepacks()
 {
 	return FramepacksRoot().GetChild( "common" );
