@@ -11,6 +11,10 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Reads a tile layer from CSV
+// NOTE: At time of writing, the read values differ from the in-memory
+//  storage of tile layets, and is mostly for compatability with common
+//  tile-mapping editor software
 class PPU_API TileLayerCSVLoader
 {
 	RF_NO_INSTANCE( TileLayerCSVLoader );
@@ -18,12 +22,9 @@ class PPU_API TileLayerCSVLoader
 	//
 	// Types and constants
 public:
-	using IndexType = int64_t;
+	using IndexType = int32_t;
 
 	// This value indicates an empty tile
-	// NOTE: At time of writing, this differs from the in-memory storage of
-	//  tile layets, and is mostly for compatability with common tile-mapping
-	//  editor software
 	static constexpr IndexType kEmptyTileIndex = -1;
 
 
