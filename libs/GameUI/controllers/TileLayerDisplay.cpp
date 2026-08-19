@@ -49,8 +49,14 @@ void TileLayerDisplay::OnRender( UIConstContext const& context, Container const&
 	gfx::ppu::PPUController& renderer = GetRenderer( context.GetContainerManager() );
 
 	gfx::ppu::Coord const expectedDimensions = {
-		math::integer_cast<gfx::ppu::CoordElem>( mExpectedTileDimensions.x * mTileLayer.NumColumns() ),
-		math::integer_cast<gfx::ppu::CoordElem>( mExpectedTileDimensions.y * mTileLayer.NumRows() ) };
+		math::integer_cast<gfx::ppu::CoordElem>(
+			mExpectedTileDimensions.x *
+			math::integer_cast<gfx::ppu::CoordElem>(
+				mTileLayer.NumColumns() ) ),
+		math::integer_cast<gfx::ppu::CoordElem>(
+			mExpectedTileDimensions.y *
+			math::integer_cast<gfx::ppu::CoordElem>(
+				mTileLayer.NumRows() ) ) };
 	gfx::ppu::AABB const& bounds = container.mAABB;
 	gfx::ppu::Coord const pos = AlignToJustify( expectedDimensions, bounds, mJustification );
 
