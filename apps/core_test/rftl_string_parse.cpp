@@ -129,5 +129,51 @@ TEST( StringParse, StrtokView )
 	}
 }
 
+
+
+TEST( StringParse, ParseInt )
+{
+#define RF_ASSERT__TRUE( STR, VAL ) \
+	ASSERT_TRUE( rftl::parse_int( val, "" STR "" ) ); \
+	ASSERT_EQ( val, VAL );
+#define RF_ASSERT_FALSE( STR ) \
+	ASSERT_FALSE( rftl::parse_int( val, "" STR "" ) ); \
+	ASSERT_EQ( val, 0 );
+
+	{
+		uint8_t val = 0;
+		RF_ASSERT_FALSE( "" );
+		RF_ASSERT__TRUE( "0", 0 );
+		RF_ASSERT__TRUE( "00000000", 0 );
+		RF_ASSERT_FALSE( "0x0" );
+		RF_ASSERT_FALSE( "0 " );
+		RF_ASSERT_FALSE( " 0" );
+		RF_ASSERT_FALSE( "-0" );
+		RF_ASSERT_FALSE( "-1" );
+		RF_ASSERT_FALSE( "-255" );
+		RF_ASSERT_FALSE( "-256" );
+		RF_ASSERT__TRUE( "255", 255 );
+		RF_ASSERT_FALSE( "256" );
+	}
+	{
+		int8_t val = 0;
+		RF_ASSERT_FALSE( "" );
+		RF_ASSERT__TRUE( "0", 0 );
+		RF_ASSERT__TRUE( "00000000", 0 );
+		RF_ASSERT_FALSE( "0x0" );
+		RF_ASSERT_FALSE( "0 " );
+		RF_ASSERT_FALSE( " 0" );
+		RF_ASSERT__TRUE( "-0", 0 );
+		RF_ASSERT__TRUE( "-1", -1 );
+		RF_ASSERT__TRUE( "-128", -128 );
+		RF_ASSERT_FALSE( "-129" );
+		RF_ASSERT__TRUE( "127", 127 );
+		RF_ASSERT_FALSE( "128" );
+	}
+
+#undef RF_ASSERT__TRUE
+#undef RF_ASSERT_FALSE
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

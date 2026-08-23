@@ -3,6 +3,7 @@
 #include "rftl/charconv"
 #include "rftl/string_view"
 #include "rftl/span"
+#include "rftl/system_error"
 
 
 namespace rftl {
@@ -160,6 +161,9 @@ inline auto strtok_view( rftl::basic_string_view<CharT>& remaining, const CharT 
 
 
 
+// Parse a decimal integer, and ONLY a decimal integer, with no preceding or
+//  trailing characters, with the intention of simplifying the code for
+//  enforcing strict integer parsing
 template<typename IntegerT>
 inline bool parse_int( IntegerT& dest, rftl::string_view const& src )
 {
@@ -167,7 +171,9 @@ inline bool parse_int( IntegerT& dest, rftl::string_view const& src )
 	char const* const begin = src.data();
 	char const* const end = begin + src.length();
 	rftl::from_chars_result const result = rftl::from_chars( begin, end, temp, 10 );
-	bool const success = result.ptr == end;
+	bool const success =
+		result.ec == rftl::errc{} &&
+		result.ptr == end;
 	dest = success ? temp : IntegerT{};
 	return success;
 }
