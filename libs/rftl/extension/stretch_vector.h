@@ -8,7 +8,7 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-// Continguous dynamic array that will attempt to use a fixed block of non-heap
+// Contiguous dynamic array that will attempt to use a fixed block of non-heap
 //  memory until it can no longer fit, and will then 'stretch' to using heap
 //  memory instead
 template<typename Element, size_t ElementCapacity, size_t Alignment = alignof( Element )>
