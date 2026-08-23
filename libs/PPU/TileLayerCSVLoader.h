@@ -13,7 +13,7 @@ namespace RF::gfx::ppu {
 
 // Reads a tile layer from CSV
 // NOTE: At time of writing, the read values differ from the in-memory
-//  storage of tile layets, and is mostly for compatability with common
+//  storage of tile layers, and is mostly for compatibility with common
 //  tile-mapping editor software
 class PPU_API TileLayerCSVLoader
 {
