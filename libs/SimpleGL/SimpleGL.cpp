@@ -151,7 +151,7 @@ bool SimpleGL::Initialize2DGraphics()
 	{
 		// Oldest version check support, gets a UTF-8 string that begins with
 		//  the major number followed by a dot, and then quickly degenerates
-		//  into a bunhc of vendor-specific stuff past that
+		//  into a bunch of vendor-specific stuff past that
 		GLubyte const* const versionStringBytes = glGetString( GL_VERSION );
 		CONSUME_ERRORS();
 		if( versionStringBytes == nullptr )
@@ -264,7 +264,7 @@ bool SimpleGL::SetSurfaceSize( uint16_t width, uint16_t height )
 			break;
 	}
 
-	// Select and reset the modelview matrix
+	// Select and reset the model-view matrix
 	glMatrixMode( GL_MODELVIEW );
 	CONSUME_ERRORS();
 	glLoadIdentity();
