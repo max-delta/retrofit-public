@@ -5,8 +5,6 @@
 
 #include "Logging/Logging.h"
 
-#include "core_allocate/LinearStretchAllocator.h"
-
 #include "rftl/extension/algorithms.h"
 #include "rftl/extension/stretch_vector.h"
 
