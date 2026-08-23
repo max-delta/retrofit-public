@@ -19,14 +19,14 @@ Tileset::~Tileset()
 
 
 
-uint32_t Tileset::DebugGetWidth() const
+uint32_t Tileset::DebugGetTileWidth() const
 {
 	return mTileWidth;
 }
 
 
 
-uint32_t Tileset::DebugGetHeight() const
+uint32_t Tileset::DebugGetTileHeight() const
 {
 	return mTileHeight;
 }

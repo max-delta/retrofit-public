@@ -30,8 +30,8 @@ BorderFrameDef QueryBorderFrameDef(
 
 	gfx::ppu::Coord const& expectedSize = proto.mBorderShape.mExpectedTileDimensions;
 	gfx::ppu::Coord const actualSize{
-		math::integer_cast<gfx::ppu::CoordElem>( tset.DebugGetWidth() ),
-		math::integer_cast<gfx::ppu::CoordElem>( tset.DebugGetHeight() ) };
+		math::integer_cast<gfx::ppu::CoordElem>( tset.DebugGetTileWidth() ),
+		math::integer_cast<gfx::ppu::CoordElem>( tset.DebugGetTileHeight() ) };
 	RFLOG_TEST_AND_NOTIFY(
 		actualSize == expectedSize,
 		proto.mResourceName,
