@@ -1388,7 +1388,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	constexpr auto determineTileIndex =
 		[](
 			TileLayer::Tile const& tile,
-			Tileset const& tileset ) -> TileLayer::TileIndex
+			Tileset const& tileset ) -> TileIndex
 	{
 		return tile.GetIndex();
 	};
@@ -1396,7 +1396,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	constexpr auto renderTile =
 		[](
 			DeviceInterface* deviceInterface,
-			TileLayer::TileIndex tileIndex,
+			TileIndex tileIndex,
 			DeviceTextureID deviceTextureID,
 			uint16_t texTilesPerRow,
 			float texXStep,
@@ -1404,7 +1404,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			math::AABB4f pos,
 			float z ) -> void //
 	{
-		RF_ASSERT( tileIndex != TileLayer::kEmptyTileIndex );
+		RF_ASSERT( tileIndex != kEmptyTileIndex );
 
 		math::Vector2i16 const texTile = math::Vector2i16(
 			math::integer_cast<int16_t>( tileIndex % texTilesPerRow ),
@@ -1431,8 +1431,8 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
 
 			// Determine the index to use
-			TileLayer::TileIndex const tileIndex = determineTileIndex( tile, tileset );
-			if( tileIndex == TileLayer::kEmptyTileIndex )
+			TileIndex const tileIndex = determineTileIndex( tile, tileset );
+			if( tileIndex == kEmptyTileIndex )
 			{
 				// Empty
 				continue;

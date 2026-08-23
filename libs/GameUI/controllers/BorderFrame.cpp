@@ -107,6 +107,8 @@ void BorderFrame::OnAABBRecalc( UIContext& context, Container& container )
 
 void BorderFrame::RecalcTilemap( Container const& container )
 {
+	using gfx::TileIndex;
+
 	if(
 		mShape.mExpectedTileDimensions.x == 0 ||
 		mShape.mExpectedTileDimensions.y == 0 )
@@ -121,11 +123,11 @@ void BorderFrame::RecalcTilemap( Container const& container )
 	size_t const numAvailableColumns = math::integer_cast<size_t>( availableWidth / mShape.mExpectedTileDimensions.x );
 	size_t const numAvailableRows = math::integer_cast<size_t>( availableHeight / mShape.mExpectedTileDimensions.y );
 
-	gfx::ppu::TileLayer::TileIndex const numInputColumns =
-		math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+	TileIndex const numInputColumns =
+		math::integer_cast<TileIndex>(
 			mShape.mExpectedPatternDimensions.x / mShape.mExpectedTileDimensions.x );
-	gfx::ppu::TileLayer::TileIndex const numInputRows =
-		math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+	TileIndex const numInputRows =
+		math::integer_cast<TileIndex>(
 			mShape.mExpectedPatternDimensions.y / mShape.mExpectedTileDimensions.y );
 
 	// Needs to be atleast 2x2, even if the AABB isn't big enough to fit it
@@ -144,25 +146,25 @@ void BorderFrame::RecalcTilemap( Container const& container )
 	// The interior space '#' and edges '|' or '-' may be multiple tiles
 	RF_ASSERT( numInputColumns >= 2 );
 	RF_ASSERT( numInputRows >= 2 );
-	const gfx::ppu::TileLayer::TileIndex patternCountX = numInputColumns - 2u;
-	const gfx::ppu::TileLayer::TileIndex patternCountY = numInputRows - 2u;
-	gfx::ppu::TileLayer::TileIndex patternX;
-	gfx::ppu::TileLayer::TileIndex patternY;
+	const TileIndex patternCountX = numInputColumns - 2u;
+	const TileIndex patternCountY = numInputRows - 2u;
+	TileIndex patternX;
+	TileIndex patternY;
 
 	// Fill in corners
 	// NOTE: In 2x2 case, this is the only thing that will actually get run
-	const gfx::ppu::TileLayer::TileIndex corner0 = 0;
-	const gfx::ppu::TileLayer::TileIndex corner1 = numInputColumns - 1u;
-	const gfx::ppu::TileLayer::TileIndex corner2 = numInputColumns * ( numInputRows - 1u );
-	const gfx::ppu::TileLayer::TileIndex corner3 = ( numInputColumns * numInputRows ) - 1u;
+	const TileIndex corner0 = 0;
+	const TileIndex corner1 = numInputColumns - 1u;
+	const TileIndex corner2 = numInputColumns * ( numInputRows - 1u );
+	const TileIndex corner3 = ( numInputColumns * numInputRows ) - 1u;
 	mTileLayer.GetMutableTile( 0, 0 ).SetIndex( corner0 );
 	mTileLayer.GetMutableTile( numOutputColumns - 1, 0 ).SetIndex( corner1 );
 	mTileLayer.GetMutableTile( 0, numOutputRows - 1 ).SetIndex( corner2 );
 	mTileLayer.GetMutableTile( numOutputColumns - 1, numOutputRows - 1 ).SetIndex( corner3 );
 
 	// Fill in horizontal sides
-	const gfx::ppu::TileLayer::TileIndex topStart = corner0 + 1u;
-	const gfx::ppu::TileLayer::TileIndex bottomStart = corner2 + 1u;
+	const TileIndex topStart = corner0 + 1u;
+	const TileIndex bottomStart = corner2 + 1u;
 	patternX = 0;
 	for( size_t x = 1; x < numOutputColumns - 1; x++ )
 	{
@@ -172,21 +174,21 @@ void BorderFrame::RecalcTilemap( Container const& container )
 		}
 
 		mTileLayer.GetMutableTile( x, 0 ).SetIndex( // Clang-format is trash garbage
-			angry_cast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+			angry_cast<TileIndex>( // Clang-format is trash garbage
 				topStart + patternX ) );
 		mTileLayer.GetMutableTile( x, numOutputRows - 1 ).SetIndex( // Clang-format is trash garbage
-			angry_cast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+			angry_cast<TileIndex>( // Clang-format is trash garbage
 				bottomStart + patternX ) );
 
 		patternX++;
 	}
 
 	// Fill in vertical sides
-	const gfx::ppu::TileLayer::TileIndex leftStart =
-		angry_cast<gfx::ppu::TileLayer::TileIndex>(
+	const TileIndex leftStart =
+		angry_cast<TileIndex>(
 			corner0 + numInputColumns );
-	const gfx::ppu::TileLayer::TileIndex rightStart =
-		angry_cast<gfx::ppu::TileLayer::TileIndex>(
+	const TileIndex rightStart =
+		angry_cast<TileIndex>(
 			corner1 + numInputColumns );
 	patternY = 0;
 	for( size_t y = 1; y < numOutputRows - 1; y++ )
@@ -197,17 +199,17 @@ void BorderFrame::RecalcTilemap( Container const& container )
 		}
 
 		mTileLayer.GetMutableTile( 0, y ).SetIndex( // Clang-format is trash garbage
-			angry_cast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+			angry_cast<TileIndex>( // Clang-format is trash garbage
 				leftStart + patternY * numInputColumns ) );
 		mTileLayer.GetMutableTile( numOutputColumns - 1, y ).SetIndex( // Clang-format is trash garbage
-			angry_cast<gfx::ppu::TileLayer::TileIndex>( // Clang-format is trash garbage
+			angry_cast<TileIndex>( // Clang-format is trash garbage
 				rightStart + patternY * numInputColumns ) );
 
 		patternY++;
 	}
 
 	// Fill in center
-	const gfx::ppu::TileLayer::TileIndex centerStart = leftStart + 1u;
+	const TileIndex centerStart = leftStart + 1u;
 	patternX = 0;
 	for( size_t x = 1; x < numOutputColumns - 1; x++ )
 	{
@@ -225,7 +227,7 @@ void BorderFrame::RecalcTilemap( Container const& container )
 			}
 
 			mTileLayer.GetMutableTile( x, y ).SetIndex(
-				angry_cast<gfx::ppu::TileLayer::TileIndex>(
+				angry_cast<TileIndex>(
 					centerStart + patternX + patternY * numInputColumns ) );
 
 			patternY++;

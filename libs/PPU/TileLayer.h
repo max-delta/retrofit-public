@@ -17,9 +17,6 @@ class PPU_API TileLayer
 	//
 	// Types and constants
 public:
-	using TileIndex = uint16_t;
-	static constexpr TileIndex kEmptyTileIndex = 1023;
-	static constexpr TileIndex kMaxTileIndex = kEmptyTileIndex;
 	using TileZoomFactor = uint8_t;
 	static constexpr TileZoomFactor kTileZoomFactor_Quarter = 1; // 2^(N-3)=1/4
 	static constexpr TileZoomFactor kTileZoomFactor_Half = 2; // 2^(N-3)=1/2
@@ -35,6 +32,13 @@ public:
 	//
 	// Structs
 public:
+	// For reference, the SNES layout is as follows:
+	//  VHOP PPCC CCCC CCCC
+	//  ^                   Vertical flip
+	//   ^                  Horizontal flip
+	//    ^                 Priority
+	//       ^^             Palette
+	//         ^^ ^^^^ ^^^^ Tile index
 	struct PPU_API Tile
 	{
 	public:

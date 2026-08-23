@@ -35,6 +35,14 @@ inline constexpr FrameID kFirstFrameID = 0;
 using TileSize = uint8_t;
 inline constexpr TileSize kInvalidTileSize = 0;
 
+// Tiles are 10-bit indexed, with the upper limit denoted as the 'empty' tile,
+//  under the expectation that most tilesets are only several hundred tiles in
+//  the common cases
+using TileIndex = uint16_t;
+static constexpr TileIndex kEmptyTileIndex = 1023;
+static constexpr TileIndex kMaxTileIndex = kEmptyTileIndex;
+static_assert( kMaxTileIndex == 0b11'1111'1111 );
+
 template<typename ColorT, size_t CountT>
 class Palette;
 template<size_t CountT>

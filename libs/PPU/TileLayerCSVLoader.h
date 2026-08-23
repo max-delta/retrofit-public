@@ -25,7 +25,7 @@ public:
 	using IndexType = int32_t;
 
 	// This value indicates an empty tile
-	static constexpr IndexType kEmptyTileIndex = -1;
+	static constexpr IndexType kEmptyCSVTileIndex = -1;
 
 
 	//

@@ -7,7 +7,7 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-TileLayer::TileIndex TileLayer::Tile::GetIndex() const
+TileIndex TileLayer::Tile::GetIndex() const
 {
 	return mIndex;
 }

@@ -59,18 +59,18 @@ bool TileLayerCSVLoader::LoadTiles( TileLayer& tileLayer, file::VFS const& vfs, 
 		{
 			// Read
 			rftl::string const& field = row.at( i_col );
-			IndexType val = kEmptyTileIndex;
+			IndexType val = kEmptyCSVTileIndex;
 			( rftl::stringstream() << field ) >> val;
 
 			// Convert
-			TileLayer::TileIndex convertedVal = TileLayer::kEmptyTileIndex;
-			if( val == kEmptyTileIndex )
+			TileIndex convertedVal = kEmptyTileIndex;
+			if( val == kEmptyCSVTileIndex )
 			{
 				// Empty
 			}
 			else
 			{
-				convertedVal = math::integer_cast<TileLayer::TileIndex>( val );
+				convertedVal = math::integer_cast<TileIndex>( val );
 			}
 
 			// Store

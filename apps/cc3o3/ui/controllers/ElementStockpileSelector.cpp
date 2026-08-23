@@ -280,12 +280,12 @@ void ElementStockpileSelector::UpdateDisplay()
 		gfx::ppu::TileLayer::Tile& tile = mTileLayer.GetMutableTile( 0, i_slot );
 		if( slot.mTilesetIndex == ElementTilesetIndex::Empty )
 		{
-			tile.SetIndex( gfx::ppu::TileLayer::kEmptyTileIndex );
+			tile.SetIndex( gfx::kEmptyTileIndex );
 		}
 		else
 		{
 			tile.SetIndex(
-				math::integer_cast<gfx::ppu::TileLayer::TileIndex>(
+				math::integer_cast<gfx::TileIndex>(
 					math::enum_bitcast( slot.mTilesetIndex ) ) );
 		}
 		GetMutableSlotController( i_slot )->UpdateFromCache( slot );
