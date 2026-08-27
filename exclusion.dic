@@ -1,6 +1,7 @@
 anim
 anims
 calc
+codepath
 const
 deserialize
 deserialized
@@ -15,6 +16,7 @@ tilemaps
 tileset
 tilesets
 params
+recalc
 Scaleform
 serializer
 shaders

@@ -128,7 +128,7 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 		gfx::PPUTimer& timerBack = internalState.mTimerBack;
 		gfx::PPUTimer& timerMid = internalState.mTimerMid;
 
-		constexpr auto parralax =
+		constexpr auto parallax =
 			[](
 				gfx::ppu::PPUController const& ppu,
 				gfx::ppu::TileLayer& tileLayer,
@@ -144,8 +144,8 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 				}
 			}
 		};
-		parralax( ppu, back, timerBack );
-		parralax( ppu, mid, timerMid );
+		parallax( ppu, back, timerBack );
+		parallax( ppu, mid, timerMid );
 
 		back.Animate();
 		mid.Animate();

@@ -14,7 +14,7 @@ struct LineBreakRules
 	//  being whitespace and hyphens
 	rftl::unique_char_set mBreakableChars;
 
-	// These characters can be ommitted / consumed across a break, the common
+	// These characters can be omitted / consumed across a break, the common
 	//  case being whitespace
 	rftl::unique_char_set mConsumableChars;
 };

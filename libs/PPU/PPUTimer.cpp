@@ -32,7 +32,7 @@ void PPUTimer::Animate( bool looping, bool paused )
 	// If sub-time overcomes the slow-down, then increment real time
 	// NOTE: There's potential for tiny short-term timing bugs when slowdown
 	//  rate is changed, which can be addressed on user-side by adjusting the
-	//  sub-time after change for whatever effect they want to acheive
+	//  sub-time after change for whatever effect they want to achieve
 	mSubTimeIndex = math::integer_cast<uint8_t>( ( mSubTimeIndex + 1 ) % timeSlowdown );
 	if( mSubTimeIndex == 0 )
 	{

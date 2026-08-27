@@ -503,7 +503,7 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		gfx::PPUTimer& timerA = internalState.mTimerCloudA;
 		gfx::PPUTimer& timerB = internalState.mTimerCloudB;
 
-		constexpr auto parralax =
+		constexpr auto parallax =
 			[](
 				gfx::ppu::PPUController const& ppu,
 				gfx::ppu::TileLayer& tileLayer,
@@ -527,8 +527,8 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				}
 			}
 		};
-		parralax( ppu, cloudA, timerA );
-		parralax( ppu, cloudB, timerB );
+		parallax( ppu, cloudA, timerA );
+		parallax( ppu, cloudB, timerB );
 
 		land.Animate();
 		cloudA.Animate();
