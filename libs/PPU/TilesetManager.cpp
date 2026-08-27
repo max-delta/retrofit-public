@@ -57,6 +57,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	uint64_t tileWidth = 0;
 	uint64_t tileHeight = 0;
 	rftl::string_view pathString;
+	Tileset::TileAnims tileAnims = {};
 
 	// Deserialize
 	size_t lineNumber = 0;
@@ -158,6 +159,149 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 
 				break;
 			}
+			case 'a':
+			{
+				// Anim
+
+				// Expect the forms:
+				// * "a ### ###"
+				// * "a ### ### -###"
+				rftl::string_view animString = params;
+				rftl::string_view const tileIndex = rftl::strtok_view( animString, ' ' );
+				rftl::string_view const numFrames = rftl::strtok_view( animString, ' ' );
+				rftl::string_view const offsetFrames = rftl::strtok_view( animString, ' ' );
+
+				if( tileIndex.empty() )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation missing tile index, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				TileIndex tileIndexVal = 0;
+				if( rftl::parse_int( tileIndexVal, tileIndex ) == false )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation has invalid tile index, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				if( tileIndexVal == kEmptyTileIndex )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation is using the empty tile index, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				if( tileIndexVal > kMaxTileIndex )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation has too large of tile index, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+
+				if( numFrames.empty() )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation missing num frames, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+
+				uint8_t numFramesVal = 0;
+				if( rftl::parse_int( numFramesVal, numFrames ) == false )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation has invalid num frames, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				if( numFramesVal > Tileset::TileAnim::kMaxAnimFrames )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation has too large of num frames, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				if( numFramesVal == 0 )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation has zero num frames, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+
+				uint8_t offsetFramesVal = 0;
+				if( offsetFrames.empty() == false )
+				{
+					if( offsetFrames.front() != '-' )
+					{
+						RFLOG_ERROR(
+							filename, RFCAT_PPU,
+							"Animation has invalid offset prefix, found at line #{}: {}",
+							lineNumber, line );
+						return nullptr;
+					}
+					rftl::string_view const innerOffset = offsetFrames.substr( 1 );
+
+					if( rftl::parse_int( offsetFramesVal, innerOffset ) == false )
+					{
+						RFLOG_ERROR(
+							filename, RFCAT_PPU,
+							"Animation has invalid offset frames, found at line #{}: {}",
+							lineNumber, line );
+						return nullptr;
+					}
+					if( offsetFramesVal > Tileset::TileAnim::kMaxOffsetFrames )
+					{
+						RFLOG_ERROR(
+							filename, RFCAT_PPU,
+							"Animation has too large of offset frames, found at line #{}: {}",
+							lineNumber, line );
+						return nullptr;
+					}
+					if( tileIndexVal < offsetFramesVal )
+					{
+						RFLOG_ERROR(
+							filename, RFCAT_PPU,
+							"Animation has offset frames that would wrap negative, found at line #{}: {}",
+							lineNumber, line );
+						return nullptr;
+					}
+					if( numFramesVal <= offsetFramesVal )
+					{
+						RFLOG_ERROR(
+							filename, RFCAT_PPU,
+							"Animation has offset frames that would go under the starting frame, found at line #{}: {}",
+							lineNumber, line );
+						return nullptr;
+					}
+				}
+
+				Tileset::TileAnim& tileAnim = Tileset::GetMutableTileAnim( tileAnims, tileIndexVal );
+				if( tileAnim.mNumAnimFrames != 0 )
+				{
+					RFLOG_ERROR(
+						filename, RFCAT_PPU,
+						"Animation already has anim frames, seems like duplicate, found at line #{}: {}",
+						lineNumber, line );
+					return nullptr;
+				}
+				tileAnim = {
+					.mOffsetFrames = offsetFramesVal,
+					.mNumAnimFrames = numFramesVal };
+
+				break;
+			}
 			default:
 			{
 				RFLOG_ERROR(
@@ -212,6 +356,8 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	tileset->mTileWidth = math::integer_cast<uint8_t>( tileWidth );
 	tileset->mTileHeight = math::integer_cast<uint8_t>( tileHeight );
 	tileset->mTextureReference = texID;
+	tileset->mTileAnims = rftl::move( tileAnims );
+	tileset->mTileAnims.shrink_to_fit();
 	return tileset;
 }
 

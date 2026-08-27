@@ -22,6 +22,7 @@
 #include "core_math/Rand.h"
 #include "core_terminal/PPUControlSequence.h"
 
+#include "core/meta/IntegerPromotion.h"
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
@@ -1388,9 +1389,43 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	constexpr auto determineTileIndex =
 		[](
 			TileLayer::Tile const& tile,
-			Tileset const& tileset ) -> TileIndex
+			Tileset const& tileset,
+			PPUTimer const& timer ) -> TileIndex
 	{
-		return tile.GetIndex();
+		TileIndex const baseIndex = tile.GetIndex();
+		Tileset::TileAnim const anim = tileset.GetTileAnim( baseIndex );
+		if( anim.mNumAnimFrames == 0 )
+		{
+			// Not animated
+			return baseIndex;
+		}
+
+		TileIndex const startFrame = angry_cast<TileIndex>( baseIndex - anim.mOffsetFrames );
+		RF_ASSERT_MSG( startFrame <= baseIndex, "Rollover" );
+		TileIndex const endFrame = angry_cast<TileIndex>( startFrame + anim.mNumAnimFrames );
+		RF_ASSERT_MSG( baseIndex <= endFrame, "Rollover" );
+
+		// Upsize the math types, calculate how far in the animation it is, and
+		//  then squash it back down
+		// NOTE: The start of the animation sequence is at one time, but the
+		//  actual first displayed frame always starts on the base index, which
+		//  allows for a sequence to be reused with different staggered
+		//  instances
+		// EXAMPLE: A four-frame animation of a wall torch wants to reuse the
+		//  four frames, but have the map animate them at offset times
+		uint8_t const& time = timer.mTimeIndex;
+		uint16_t const& init = startFrame;
+		uint32_t const upsized =
+			broaden_cast<uint32_t>( init ) +
+			broaden_cast<uint32_t>( anim.mOffsetFrames ) +
+			broaden_cast<uint32_t>( time );
+		TileIndex const squashed =
+			math::integer_cast<TileIndex>(
+				upsized % broaden_cast<uint32_t>( anim.mNumAnimFrames ) );
+		RF_ASSERT( startFrame <= squashed );
+		RF_ASSERT( squashed <= endFrame );
+
+		return squashed;
 	};
 
 	constexpr auto renderTile =
@@ -1431,7 +1466,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 			TileLayer::Tile const& tile = tileLayer.GetTile( tileCol, tileRow );
 
 			// Determine the index to use
-			TileIndex const tileIndex = determineTileIndex( tile, tileset );
+			TileIndex const tileIndex = determineTileIndex( tile, tileset, tileLayer.mTimer );
 			if( tileIndex == kEmptyTileIndex )
 			{
 				// Empty

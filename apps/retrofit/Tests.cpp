@@ -257,6 +257,7 @@ void InitDrawTest()
 
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const commonTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "common" );
+	file::VFSPath const testTilesets = file::VFS::kRoot.GetChild( "assets", "tilesets", "test" );
 	file::VFSPath const testTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "test" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
@@ -305,11 +306,16 @@ void InitDrawTest()
 	testTileLayer.mZLayer = 1;
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, testTilemaps.GetChild( "testhouse_10.csv" ) );
 
-	testSingleTileLayer.mTilesetReference = paletteTileset;
+	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+	gfx::ManagedTilesetID const animatedTileset = tsetMan.GetManagedResourceIDFromResourceName( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+	testSingleTileLayer.mTilesetReference = animatedTileset;
 	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
 	testSingleTileLayer.mXCoord = 170;
 	testSingleTileLayer.mYCoord = 90;
 	testSingleTileLayer.mZLayer = 1;
+	testSingleTileLayer.mTimer.mMaxTimeIndex = gfx::kUniversalTileTimerMax;
+	testSingleTileLayer.mTimer.mTimeSlowdown = 8;
+	testSingleTileLayer.mLooping = true;
 	testSingleTileLayer.ClearAndResize( 1, 1 );
 	testSingleTileLayer.GetMutableTile( 0 ).SetIndex( 3 );
 

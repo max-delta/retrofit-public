@@ -1,0 +1,4 @@
+w 1
+h 1
+f RF:/assets/textures/common/palette16_4.png
+a 3 4 -3
