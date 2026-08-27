@@ -10,6 +10,14 @@ namespace RF::gfx {
 
 void PPUTimer::Animate( bool looping, bool paused )
 {
+	if( mMaxTimeIndex == 0 )
+	{
+		// Uninitialized, don't animate
+		RF_ASSERT( mTimeIndex == 0 );
+		RF_ASSERT( mSubTimeIndex == 0 );
+		return;
+	}
+
 	if( paused )
 	{
 		// Paused, don't animate
