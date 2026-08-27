@@ -64,6 +64,8 @@ struct Gameplay_Overworld::InternalState
 	gfx::ppu::TileLayer mTerrainLand = {};
 	gfx::ppu::TileLayer mTerrainCloudA = {};
 	gfx::ppu::TileLayer mTerrainCloudB = {};
+	gfx::PPUTimer mTimerCloudA = {};
+	gfx::PPUTimer mTimerCloudB = {};
 	overworld::Overworld::Areas mAreas;
 
 	gfx::ppu::Viewport mViewport = {};
@@ -106,6 +108,8 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
 		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;
 		gfx::ppu::TileLayer& cloudB = internalState.mTerrainCloudB;
+		gfx::PPUTimer& timerA = internalState.mTimerCloudA;
+		gfx::PPUTimer& timerB = internalState.mTimerCloudB;
 
 		land = {};
 		land.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mTerrainTilesetPath );
@@ -116,7 +120,6 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		land.mHorizontalWrapping = false;
 		land.mVerticalWrapping = false;
 		land.mLooping = true;
-		land.mTimer.mMaxTimeIndex = 50;
 		{
 			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( land, vfs, map.mTerrainTilemapPath );
 			RF_ASSERT( loadSuccess );
@@ -131,11 +134,11 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudA.mHorizontalWrapping = true;
 		cloudA.mVerticalWrapping = true;
 		cloudA.mLooping = true;
-		cloudA.mTimer.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 		{
 			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( cloudA, vfs, map.mCloud1TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
+		timerA.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 
 		cloudB = {};
 		cloudB.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud2TilesetPath );
@@ -146,11 +149,11 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		cloudB.mHorizontalWrapping = true;
 		cloudB.mVerticalWrapping = true;
 		cloudB.mLooping = true;
-		cloudB.mTimer.mMaxTimeIndex = map.mCloud2ParallaxDelay;
 		{
 			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( cloudB, vfs, map.mCloud2TilemapPath );
 			RF_ASSERT( loadSuccess );
 		}
+		timerB.mMaxTimeIndex = map.mCloud2ParallaxDelay;
 	}
 
 	// Setup overworld characters
@@ -497,14 +500,17 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
 		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;
 		gfx::ppu::TileLayer& cloudB = internalState.mTerrainCloudB;
+		gfx::PPUTimer& timerA = internalState.mTimerCloudA;
+		gfx::PPUTimer& timerB = internalState.mTimerCloudB;
 
 		constexpr auto parralax =
 			[](
 				gfx::ppu::PPUController const& ppu,
-				gfx::ppu::TileLayer& tileLayer ) -> void //
+				gfx::ppu::TileLayer& tileLayer,
+				gfx::PPUTimer& timer ) -> void //
 		{
-			tileLayer.Animate();
-			if( tileLayer.mTimer.IsFullZero() )
+			timer.Animate( true, false );
+			if( timer.IsFullZero() )
 			{
 				tileLayer.mXCoord++;
 				if( tileLayer.mXCoord >= ppu.CalculateTileLayerSize( tileLayer ).x )
@@ -521,8 +527,12 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 				}
 			}
 		};
-		parralax( ppu, cloudA );
-		parralax( ppu, cloudB );
+		parralax( ppu, cloudA, timerA );
+		parralax( ppu, cloudB, timerB );
+
+		land.Animate();
+		cloudA.Animate();
+		cloudB.Animate();
 
 		ppu.DrawTileLayer( land );
 		ppu.DrawTileLayer( cloudA );

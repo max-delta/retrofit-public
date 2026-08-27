@@ -38,6 +38,8 @@ struct TitleScreen::InternalState
 
 	gfx::ppu::TileLayer mBackgroundBack = {};
 	gfx::ppu::TileLayer mBackgroundMid = {};
+	gfx::PPUTimer mTimerBack = {};
+	gfx::PPUTimer mTimerMid = {};
 
 	AppStateManager mAppStateManager;
 };
@@ -57,6 +59,8 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 	{
 		gfx::ppu::TileLayer& back = internalState.mBackgroundBack;
 		gfx::ppu::TileLayer& mid = internalState.mBackgroundMid;
+		gfx::PPUTimer& timerBack = internalState.mTimerBack;
+		gfx::PPUTimer& timerMid = internalState.mTimerMid;
 
 		back = {};
 		back.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
@@ -67,11 +71,11 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		back.mHorizontalWrapping = true;
 		back.mVerticalWrapping = false;
 		back.mLooping = true;
-		back.mTimer.mMaxTimeIndex = 50;
 		{
 			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( back, vfs, paths::BackgroundTilemaps().GetChild( "country_hills_back.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
+		timerBack.mMaxTimeIndex = 50;
 
 		mid = {};
 		mid.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
@@ -82,11 +86,11 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 		mid.mHorizontalWrapping = true;
 		mid.mVerticalWrapping = false;
 		mid.mLooping = true;
-		mid.mTimer.mMaxTimeIndex = 10;
 		{
 			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( mid, vfs, paths::BackgroundTilemaps().GetChild( "country_hills_mid.csv" ) );
 			RF_ASSERT( loadSuccess );
 		}
+		timerMid.mMaxTimeIndex = 10;
 	}
 
 
@@ -121,13 +125,17 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 	{
 		gfx::ppu::TileLayer& back = internalState.mBackgroundBack;
 		gfx::ppu::TileLayer& mid = internalState.mBackgroundMid;
+		gfx::PPUTimer& timerBack = internalState.mTimerBack;
+		gfx::PPUTimer& timerMid = internalState.mTimerMid;
 
-		constexpr auto parralax = [](
-			gfx::ppu::PPUController const& ppu,
-			gfx::ppu::TileLayer& tileLayer ) -> void
+		constexpr auto parralax =
+			[](
+				gfx::ppu::PPUController const& ppu,
+				gfx::ppu::TileLayer& tileLayer,
+				gfx::PPUTimer& timer ) -> void //
 		{
-			tileLayer.Animate();
-			if( tileLayer.mTimer.IsFullZero() )
+			timer.Animate( true, false );
+			if( timer.IsFullZero() )
 			{
 				tileLayer.mXCoord--;
 				if( tileLayer.mXCoord <= 0 )
@@ -136,8 +144,11 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 				}
 			}
 		};
-		parralax( ppu, back );
-		parralax( ppu, mid );
+		parralax( ppu, back, timerBack );
+		parralax( ppu, mid, timerMid );
+
+		back.Animate();
+		mid.Animate();
 
 		ppu.DrawTileLayer( back );
 		ppu.DrawTileLayer( mid );
