@@ -22,6 +22,13 @@ void TileLayer::Tile::SetIndex( TileIndex index )
 
 ///////////////////////////////////////////////////////////////////////////////
 
+TileLayer TileLayer::Clone() const
+{
+	return *this;
+}
+
+
+
 void TileLayer::Animate()
 {
 	mTimer.Animate( mLooping, mPaused );

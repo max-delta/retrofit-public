@@ -13,6 +13,9 @@ namespace RF::gfx::ppu {
 
 class PPU_API TileLayer
 {
+	RF_PRIVATE_COPY( TileLayer );
+	RF_DEFAULT_MOVE( TileLayer );
+
 	//
 	// Types and constants
 public:
@@ -55,6 +58,8 @@ public:
 	// Public methods
 public:
 	TileLayer() = default;
+
+	TileLayer Clone() const;
 
 	void Animate();
 

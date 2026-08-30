@@ -354,7 +354,7 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 		RenderStateListItemSelect<DrawOverflowBehavior::FlickerAssert>(
 			targetState.mTileLayers, targetState.mNumTileLayers, "TileLayer" );
 
-	targetTileLayer = tileLayer;
+	targetTileLayer = tileLayer.Clone();
 	targetTileLayer.mXCoord += mDrawOffset.x;
 	targetTileLayer.mYCoord += mDrawOffset.y;
 
