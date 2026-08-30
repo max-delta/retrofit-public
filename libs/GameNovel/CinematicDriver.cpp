@@ -67,7 +67,7 @@ bool ValidateCritialSequenceParams( CinematicDriver::SequenceParams const& param
 				return false;
 			}
 
-			// For each expresion...
+			// For each expression...
 			for( FramePackByExpression::value_type const& exprEntry : expressions )
 			{
 				rftl::string_view const& expression = exprEntry.first;

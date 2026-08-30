@@ -105,7 +105,7 @@ protected:
 	virtual bool PostLoadFromMemory( ResourceType& resource );
 	virtual bool PreDestroy( ResourceType& resource );
 
-	// IMPORTANT: Derived classes must call this during deconstructor
+	// IMPORTANT: Derived classes must call this during destructor
 	void InternalShutdown();
 
 	size_t GetNumResources() const;

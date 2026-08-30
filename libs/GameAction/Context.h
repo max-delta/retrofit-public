@@ -29,7 +29,7 @@ public:
 
 	// Contexts can enter into an error state (or some contexts could ALWAYS
 	//  represent an error state), and this error state can inform calling code
-	//  that it should terminate any running logic and propogate the context up
+	//  that it should terminate any running logic and propagate the context up
 	//  as an error
 	virtual bool IsATerminalError() const;
 };

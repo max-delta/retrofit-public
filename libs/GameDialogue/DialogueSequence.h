@@ -49,7 +49,7 @@ public:
 	//
 	// Public data
 public:
-	// The layout this sequence applies to, used for compatability checks
+	// The layout this sequence applies to, used for compatibility checks
 	rftl::string mLayout;
 
 	// All the data that will be needed to process the sequence fully, which
