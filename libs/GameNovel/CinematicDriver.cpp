@@ -311,6 +311,26 @@ void CinematicDriver::ResetProgression()
 
 
 
+void CinematicDriver::SetBackgroundLayer( WeakPtr<gfx::ppu::TileLayer> tileLayer )
+{
+	RF_ASSERT( tileLayer != nullptr );
+	//mTileLayer = tileLayer;
+
+	RF_TODO_BREAK_MSG(
+		"Is a tile layer even the right thing to do here?"
+		" Should this be a UI element instead?" );
+}
+
+
+
+void CinematicDriver::UnsetBackgroundLayer()
+{
+	RF_TODO_BREAK();
+	//mTileLayer = nullptr;
+}
+
+
+
 void CinematicDriver::SetDialogueBox( WeakPtr<ui::controller::DialogueBox> dialogueBox )
 {
 	RF_ASSERT( dialogueBox != nullptr );
@@ -402,6 +422,7 @@ bool CinematicDriver::SubTickCinematic_Advance_Scene( Context const& context, Ti
 	details::InvokeIfSet( params.mOnScene, entry );
 
 	RF_TODO_ANNOTATION( "Change the scene" );
+	RF_TODO_BREAK();
 
 	// Allow further sub-ticking
 	return true;

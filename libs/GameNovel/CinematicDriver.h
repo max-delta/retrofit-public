@@ -7,6 +7,7 @@
 #include "GameDialogue/DialogueFwd.h"
 
 #include "PPU/FramePackRef.h"
+#include "PPU/TileLayer.h"
 
 #include "core/ptr/weak_ptr.h"
 #include "core/macros.h"
@@ -47,6 +48,12 @@ public:
 	// NOTE: These are pointer-hashed string views, because they are expected
 	//  to be backed by the strings in the sequence, and thus do not need an
 	//  extra allocation
+	using TileLayersByScene =
+		rftl::unordered_map<
+			rftl::string_view,
+			gfx::ppu::TileLayer,
+			rftl::string_ptr_only_hash_equals,
+			rftl::string_ptr_only_hash_equals>;
 	using FramePackByExpression =
 		rftl::unordered_map<
 			rftl::string_view,
@@ -62,8 +69,9 @@ public:
 
 	struct SequenceParams
 	{
-		WeakPtr<dialogue::DialogueSequence const> mSequence;
-		FramePacksByCharacter mFramePacksByCharacter;
+		WeakPtr<dialogue::DialogueSequence const> mSequence = nullptr;
+		TileLayersByScene mTileLayersByScene = {};
+		FramePacksByCharacter mFramePacksByCharacter = {};
 	};
 
 	struct TickParams
@@ -108,6 +116,13 @@ public:
 
 	// Essentially performs a complete rewind back to the head of the sequence
 	void ResetProgression();
+
+	// This tile layer will be driven to show the various backgrounds
+	// NOTE: After setting, the tile layer will not automatically update to the
+	//  most recent background, that will require an advance, so it is expected
+	//  that this is set before the cinematic really begins
+	void SetBackgroundLayer( WeakPtr<gfx::ppu::TileLayer> tileLayer );
+	void UnsetBackgroundLayer();
 
 	// This dialogue box will be driven to emit the text and portraiture
 	// NOTE: After setting, the dialogue box will not automatically update

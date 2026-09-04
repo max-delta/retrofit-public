@@ -28,6 +28,9 @@ enum class CinematicState : uint8_t
 // Special expression, this will result in hiding the portrait
 inline constexpr char kNullExpression[] = "null";
 
+// Special scene, this will result in not drawing the layer
+inline constexpr char kNullScene[] = "null";
+
 class CinematicDriver;
 
 ///////////////////////////////////////////////////////////////////////////////

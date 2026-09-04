@@ -62,6 +62,9 @@
 		<ProjectReference Include="..\Logging\Logging.vcxproj">
 			<Project>{4a264b07-ade9-4b0c-beea-7e159e011bea}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\PPU\PPU.vcxproj">
+			<Project>{cd506c73-100b-4e08-acd1-8ad079ee9363}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\RFType\RFType.vcxproj">
 			<Project>{881f9b4f-81bc-4f1c-963a-da05cd8229e3}</Project>
 		</ProjectReference>

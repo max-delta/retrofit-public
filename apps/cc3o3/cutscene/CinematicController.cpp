@@ -8,6 +8,7 @@
 #include "GameNovel/CinematicDriver.h"
 
 #include "PPU/FramePackManager.h"
+#include "PPU/TilesetManager.h"
 #include "PPU/PPUController.h"
 #include "PlatformFilesystem/VFS.h"
 
@@ -28,6 +29,24 @@ static dialogue::DialogueSequence CreateFallbackSequence()
 
 
 
+static void UnloadAllTilesets( rftl::deque<rftl::string>& resourceNames )
+{
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+
+	// HACK: Direct access to tileset manager
+	// TODO: Re-visit API surface
+	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
+
+	for( rftl::string const& resourceName : resourceNames )
+	{
+		tsetMan.DestroyResource( resourceName );
+	}
+
+	resourceNames.clear();
+}
+
+
+
 static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
@@ -42,6 +61,63 @@ static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 	}
 
 	resourceNames.clear();
+}
+
+
+
+static novel::CinematicDriver::TileLayersByScene AssignTileLayersForRequiredScenes(
+	dialogue::DialogueSequence::Strings const& requiredScenes,
+	file::VFSPath const& sceneRoot,
+	rftl::deque<rftl::string>& tilesetResourceNames )
+{
+	RF_ASSERT( tilesetResourceNames.empty() );
+
+	using Scenes = dialogue::DialogueSequence::Strings;
+
+	novel::CinematicDriver::TileLayersByScene retVal = {};
+
+	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+
+	// For each required scene...
+	for( rftl::string_view const& scene : requiredScenes )
+	{
+		if( scene == novel::kNullScene )
+		{
+			// Scene unused
+			// NOTE: Will still cause the scene to be present, to indicate that
+			//  it was atleast considered
+			retVal[scene];
+			continue;
+		}
+
+		tilesetResourceNames.emplace_back( rftl::format( "CINEMATIC_SCENE/{}", scene ) );
+		rftl::string_view const resourceName = tilesetResourceNames.back();
+		file::VFSPath const filename = sceneRoot.GetChild( rftl::string( scene ) + ".tset.txt" );
+		bool const success = ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, resourceName, filename );
+		if( success == false )
+		{
+			RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load a tileset for scene '{}'", scene );
+			continue;
+		}
+
+		gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( resourceName );
+		WeakPtr<gfx::Tileset const> const tileset = tsetMan.GetResourceFromManagedResourceID( tilesetID );
+		RF_ASSERT( tileset != nullptr );
+
+		// TODO: Load from file
+		gfx::ppu::TileLayer tileLayer = {};
+		tileLayer.mTilesetReference = tilesetID;
+		tileLayer.mXCoord = 0;
+		tileLayer.mYCoord = 0;
+		tileLayer.mZLayer = gfx::ppu::kFarthestLayer;
+		tileLayer.ClearAndResize( 1, 1 );
+		tileLayer.GetMutableTile( 0, 0 ).SetIndex( 0 );
+
+		retVal[scene] = rftl::move( tileLayer );
+	}
+
+	return retVal;
 }
 
 
@@ -110,8 +186,7 @@ CinematicController::CinematicController()
 	, mDriver(
 		  DefaultCreator<novel::CinematicDriver>::Create(
 			  novel::CinematicDriver::SequenceParams{
-				  .mSequence = mFallbackDialogue,
-				  .mFramePacksByCharacter = {} } ) )
+				  .mSequence = mFallbackDialogue } ) )
 {
 	//
 }
@@ -137,14 +212,14 @@ bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
 	// Unload resources
+	details::UnloadAllTilesets( mLoadedSceneTilesetResourceNames );
 	details::UnloadAllFramePacks( mLoadedExpressionFramePackResourceNames );
 
 	// Reset
 	mDialogue = {};
 	mDriver->ChangeSequence(
 		novel::CinematicDriver::SequenceParams{
-			.mSequence = mFallbackDialogue,
-			.mFramePacksByCharacter = {} } );
+			.mSequence = mFallbackDialogue } );
 
 	file::VFS& vfs = *app::gVfs;
 
@@ -174,11 +249,17 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 	mDriver->ChangeSequence(
 		novel::CinematicDriver::SequenceParams{
 			.mSequence = mDialogue,
+			.mTileLayersByScene =
+				details::AssignTileLayersForRequiredScenes(
+					mDialogue->mRequiredScenes,
+					mSceneRoot,
+					mLoadedSceneTilesetResourceNames ),
 			.mFramePacksByCharacter =
 				details::AssignFramePacksForRequiredCharacters(
 					mDialogue->mRequiredExpressionsPerCharacter,
 					mCharacterRoot,
-					mLoadedExpressionFramePackResourceNames ) } );
+					mLoadedExpressionFramePackResourceNames ),
+		} );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );
 	return true;

@@ -583,8 +583,7 @@ void CampaignManager::HardcodedCutsceneSetup( cutscene::CinematicController& cin
 	bool const characters = cinematic.SetCharacterData( paths::ExpressionFramepacks() );
 	RF_ASSERT( characters );
 
-	file::VFSPath const sceneRoot = file::VFSPath{ "TODO" };
-	bool const scenes = cinematic.SetSceneData( sceneRoot );
+	bool const scenes = cinematic.SetSceneData( paths::BackgroundTilesets() );
 	RF_ASSERT( scenes );
 
 	file::VFSPath const testFilePath = paths::Dialogues().GetChild( "mock.dlg" );

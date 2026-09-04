@@ -47,6 +47,7 @@ private:
 	file::VFSPath mCharacterRoot = {};
 	file::VFSPath mSceneRoot = {};
 
+	rftl::deque<rftl::string> mLoadedSceneTilesetResourceNames;
 	rftl::deque<rftl::string> mLoadedExpressionFramePackResourceNames;
 };
 
