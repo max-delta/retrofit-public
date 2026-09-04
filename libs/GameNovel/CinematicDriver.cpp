@@ -311,22 +311,22 @@ void CinematicDriver::ResetProgression()
 
 
 
-void CinematicDriver::SetBackgroundLayer( WeakPtr<gfx::ppu::TileLayer> tileLayer )
+void CinematicDriver::SetSceneCanvas( WeakPtr<ui::controller::SceneCanvas> sceneCanvas )
 {
-	RF_ASSERT( tileLayer != nullptr );
-	//mTileLayer = tileLayer;
+	RF_ASSERT( sceneCanvas != nullptr );
+	mSceneCanvas = sceneCanvas;
 
-	RF_TODO_BREAK_MSG(
-		"Is a tile layer even the right thing to do here?"
-		" Should this be a UI element instead?" );
+	RF_TODO_BREAK_MSG( "Reset state" );
 }
 
 
 
-void CinematicDriver::UnsetBackgroundLayer()
+void CinematicDriver::UnsetSceneCanvas()
 {
-	RF_TODO_BREAK();
-	//mTileLayer = nullptr;
+	RF_ASSERT( mSceneCanvas != nullptr );
+	RF_TODO_BREAK_MSG( "Reset state" );
+
+	mSceneCanvas = nullptr;
 }
 
 
@@ -343,6 +343,9 @@ void CinematicDriver::SetDialogueBox( WeakPtr<ui::controller::DialogueBox> dialo
 
 void CinematicDriver::UnsetDialogueBox()
 {
+	RF_ASSERT( mDialogueBox != nullptr );
+	mDialogueBox->SetText( "UNHOOKED", false );
+
 	mDialogueBox = nullptr;
 }
 

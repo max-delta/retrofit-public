@@ -7,6 +7,9 @@
 			<Filter>ui\controllers</Filter>
 		</ClCompile>
 		<ClCompile Include="CinematicDriver.cpp" />
+		<ClCompile Include="ui\controllers\SceneCanvas.cpp">
+			<Filter>ui\controllers</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -31,6 +34,9 @@
 		</ClInclude>
 		<ClInclude Include="CinematicDriver.h" />
 		<ClInclude Include="NovelFwd.h" />
+		<ClInclude Include="ui\controllers\SceneCanvas.h">
+			<Filter>ui\controllers</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="ui">

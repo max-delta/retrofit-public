@@ -19,6 +19,7 @@
 
 #include "GameNovel/CinematicDriver.h"
 #include "GameNovel/ui/controllers/DialogueBox.h"
+#include "GameNovel/ui/controllers/SceneCanvas.h"
 
 #include "GameUI/ContainerManager.h"
 #include "GameUI/FocusEvent.h"
@@ -27,6 +28,7 @@
 #include "GameUI/controllers/AspectColumnSlicer.h"
 #include "GameUI/controllers/BorderFrame.h"
 #include "GameUI/controllers/Clamper.h"
+#include "GameUI/controllers/MultiPassthrough.h"
 #include "GameUI/controllers/RowSlicer.h"
 #include "GameUI/controllers/TextLabel.h"
 
@@ -55,6 +57,7 @@ public:
 	novel::CinematicDriver::TickParams mTickParams;
 
 	WeakPtr<ui::controller::TextLabel> mTODO;
+	WeakPtr<novel::ui::controller::SceneCanvas> mSceneCanvas;
 	WeakPtr<novel::ui::controller::DialogueBox> mLowerDialogueBox;
 
 	WeakPtr<novel::ui::controller::DialogueBox> mCurrentDialogueBox;
@@ -122,13 +125,27 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 					kAspectEnableds,
 					kAspectDivisibility ) );
 
+		// Create a split for the scene canvas
+		WeakPtr<ui::controller::MultiPassthrough> const topLevelPassthroughs =
+			uiManager.AssignStrongController(
+				aspectSlicer->GetChildContainerID( 1 ),
+				DefaultCreator<ui::controller::MultiPassthrough>::Create( 2u ) );
+
+		// Scene canvas sits below everything else
+		WeakPtr<novel::ui::controller::SceneCanvas> const sceneCanvas =
+			uiManager.AssignStrongController(
+				topLevelPassthroughs->GetChildContainerID( 0 ),
+				DefaultCreator<novel::ui::controller::SceneCanvas>::Create() );
+		uiManager.AdjustRecommendedRenderDepth( sceneCanvas->GetContainerID(), 20 );
+		internalState.mSceneCanvas = sceneCanvas;
+
 		// Bring in the size a bit
 		static constexpr ui::controller::Clamper::Params kMarginClamperParams = {
 			.subtractWidth = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ),
 			.subtractHeight = angry_cast<gfx::ppu::CoordElem>( gfx::ppu::kTileSize / 4 ) };
 		WeakPtr<ui::controller::Clamper> const marginClamper =
 			uiManager.AssignStrongController(
-				aspectSlicer->GetChildContainerID( 1 ),
+				topLevelPassthroughs->GetChildContainerID( 1 ),
 				DefaultCreator<ui::controller::Clamper>::Create(
 					kMarginClamperParams,
 					ui::Justification::MiddleCenter ) );
@@ -213,6 +230,7 @@ void Gameplay_Cutscene::OnEnter( AppStateChangeContext& context )
 		// TODO: Delay determining this?
 		internalState.mCurrentDialogueBox = lowerDialogue;
 		internalState.mCinematicController->GetMutableDriver().SetDialogueBox( internalState.mCurrentDialogueBox );
+		internalState.mCinematicController->GetMutableDriver().SetSceneCanvas( internalState.mSceneCanvas );
 	}
 }
 

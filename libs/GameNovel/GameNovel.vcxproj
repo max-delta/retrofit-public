@@ -36,6 +36,7 @@
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 		<ClCompile Include="ui\controllers\DialogueBox.cpp" />
+		<ClCompile Include="ui\controllers\SceneCanvas.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="CinematicDriver.h" />
@@ -44,6 +45,7 @@
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="ui\controllers\DialogueBox.h" />
 		<ClInclude Include="ui\controllers\project.h" />
+		<ClInclude Include="ui\controllers\SceneCanvas.h" />
 		<ClInclude Include="ui\controllers\stdafx.h" />
 		<ClInclude Include="ui\project.h" />
 		<ClInclude Include="ui\stdafx.h" />

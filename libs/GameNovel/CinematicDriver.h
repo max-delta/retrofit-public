@@ -20,6 +20,7 @@
 
 namespace RF::novel::ui::controller {
 class DialogueBox;
+class SceneCanvas;
 }
 
 namespace RF::novel {
@@ -117,12 +118,12 @@ public:
 	// Essentially performs a complete rewind back to the head of the sequence
 	void ResetProgression();
 
-	// This tile layer will be driven to show the various backgrounds
-	// NOTE: After setting, the tile layer will not automatically update to the
-	//  most recent background, that will require an advance, so it is expected
+	// This scene canvas will be driven to show the various backgrounds
+	// NOTE: After setting, the scene will not automatically update to the
+	//  most recent data, that will require an advance, so it is expected
 	//  that this is set before the cinematic really begins
-	void SetBackgroundLayer( WeakPtr<gfx::ppu::TileLayer> tileLayer );
-	void UnsetBackgroundLayer();
+	void SetSceneCanvas( WeakPtr<ui::controller::SceneCanvas> sceneCanvas );
+	void UnsetSceneCanvas();
 
 	// This dialogue box will be driven to emit the text and portraiture
 	// NOTE: After setting, the dialogue box will not automatically update
@@ -152,6 +153,7 @@ private:
 	size_t mNextEntryToProcess = 0;
 
 	WeakPtr<ui::controller::DialogueBox> mDialogueBox;
+	WeakPtr<ui::controller::SceneCanvas> mSceneCanvas;
 
 	CinematicActions::Value mQueuedActions = CinematicActions::Invalid;
 };
