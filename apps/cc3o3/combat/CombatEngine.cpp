@@ -208,14 +208,14 @@ AttackResult CombatEngine::HiCalcAttack( AttackProfile const& profile ) const
 			combatantClash,
 			attackerInfluenced );
 
-		retVal.mCoungerGuageIncrease = 0;
-		retVal.mCoungerGuageIncrease += LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
-		retVal.mCoungerGuageIncrease += LoCalcCounterFromAttackDamage( retVal.mDamage );
+		retVal.mCounterGaugeIncrease = 0;
+		retVal.mCounterGaugeIncrease += LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
+		retVal.mCounterGaugeIncrease += LoCalcCounterFromAttackDamage( retVal.mDamage );
 	}
 	else
 	{
 		retVal.mDamage = 0;
-		retVal.mCoungerGuageIncrease = LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
+		retVal.mCounterGaugeIncrease = LoCalcCounterFromAttackSwing( retVal.mNewComboMeter );
 	}
 
 	return retVal;
@@ -252,8 +252,8 @@ CastDamageResult CombatEngine::HiCalcCast( CastDamageProfile const& profile ) co
 		defenderClash,
 		elementInfluenced );
 
-	retVal.mCoungerGuageIncrease = 0;
-	retVal.mCoungerGuageIncrease += LoCalcCounterFromElementDamage( retVal.mDamage );
+	retVal.mCounterGaugeIncrease = 0;
+	retVal.mCounterGaugeIncrease += LoCalcCounterFromElementDamage( retVal.mDamage );
 
 	return retVal;
 }

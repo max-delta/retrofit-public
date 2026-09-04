@@ -352,16 +352,16 @@ void DevTestElementLab::OnTick( AppStateTickContext& context )
 			y++;
 		}
 
-		// Party guages
+		// Party gauges
 		combat::CombatInstance::PartyIDs const partyIDs = instance.GetPartyIDs();
 		for( combat::PartyID const& partyID : partyIDs )
 		{
 			combat::Party const party = instance.GetParty( partyID );
 			drawText( x, y,
-				"t{}:p{}  Guage {:3}/{:3}",
+				"t{}:p{}  Gauge {:3}/{:3}",
 				partyID.GetTeamIndex(),
 				partyID.GetPartyIndex(),
-				party.mCounterGuage,
+				party.mCounterGauge,
 				combat::kCounterGaugeFull );
 			y++;
 		}

@@ -9,7 +9,7 @@ namespace RF::cc::combat {
 
 struct Party
 {
-	SimVal mCounterGuage = 0; // When full, can force a turn change
+	SimVal mCounterGauge = 0; // When full, can force a turn change
 };
 
 ///////////////////////////////////////////////////////////////////////////////

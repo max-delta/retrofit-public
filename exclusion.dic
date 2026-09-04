@@ -3,6 +3,8 @@ anims
 calc
 codepath
 const
+consteval
+desc
 deserialize
 deserialized
 fpack
@@ -17,6 +19,8 @@ tileset
 tilesets
 params
 recalc
+savestate
+savestates
 Scaleform
 serializer
 shaders

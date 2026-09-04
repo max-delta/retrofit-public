@@ -32,7 +32,7 @@ struct AttackResult
 	SimVal mNewComboMeter = 0;
 	bool mHit = false;
 	SimVal mDamage = 0;
-	SimVal mCoungerGuageIncrease = 0;
+	SimVal mCounterGaugeIncrease = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

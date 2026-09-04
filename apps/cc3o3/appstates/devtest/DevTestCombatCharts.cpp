@@ -280,8 +280,8 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 	// Baseline accuracy
 	uint8_t const xStart = 1;
 	uint8_t const yStart = 5;
-	uint8_t const xstep = 7;
-	uint8_t const ystep = 1;
+	uint8_t const xStep = 7;
+	uint8_t const yStep = 1;
 	x = xStart;
 	y = yStart;
 	{
@@ -312,7 +312,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			Damages damages;
 
 			SimVal comboMeter = 0;
-			SimVal counterGuage = 0;
+			SimVal counterGauge = 0;
 
 			size_t const numSwings = swings.size();
 			hits.resize( numSwings );
@@ -327,36 +327,36 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				AttackResult const result = comboInstance.ExecuteAttack( attackerID, defenderID, swing );
 				comboMeter = result.mNewComboMeter;
 				hit = result.mHit;
-				counterGuage = comboInstance.GetCounterGuage( defenderID.GetParty() );
+				counterGauge = comboInstance.GetCounterGauge( defenderID.GetParty() );
 				damage = result.mDamage;
 
 				if( hit )
 				{
 					damageTotal += damage;
 					drawText( x, y, " {}:{:2}", swing, damage );
-					y += ystep;
+					y += yStep;
 				}
 				else
 				{
 					damageTotal += 0;
 					drawText( x, y, " {}:--", swing );
-					y += ystep;
+					y += yStep;
 				}
 			}
 			drawText( x, y, "======" );
-			y += ystep;
+			y += yStep;
 			drawText( x, y, "ME:{:3}", comboMeter );
-			y += ystep;
+			y += yStep;
 			drawText( x, y, "======" );
-			y += ystep;
-			drawText( x, y, "CG:{:3}", counterGuage );
-			y += ystep;
+			y += yStep;
+			drawText( x, y, "CG:{:3}", counterGauge );
+			y += yStep;
 			drawText( x, y, "TO:{:3}", damageTotal );
-			y += ystep;
+			y += yStep;
 			drawText( x, y, "DS:{:3}", damageTotal / numSwings );
-			y += ystep;
+			y += yStep;
 
-			x += xstep;
+			x += xStep;
 			y = yStart;
 		}
 	}
@@ -370,7 +370,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			casts.emplace_back( val );
 		}
 		rftl::static_vector<SimVal, 8> damages;
-		rftl::static_vector<SimVal, 8> counterGuages;
+		rftl::static_vector<SimVal, 8> counterGauges;
 		for( SimVal const& cast : casts )
 		{
 			CombatInstance castInstance = startInstance;
@@ -384,7 +384,7 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 				false,
 				element::MakeInnateIdentifier( "red" ) );
 			damages.push_back( result.mDamage );
-			counterGuages.push_back( result.mCoungerGuageIncrease );
+			counterGauges.push_back( result.mCounterGaugeIncrease );
 			castInstance.FinishCast( attackerID );
 		}
 		drawText( x, y, "ELEM DMG {:2} {:2} {:2} {:2} {:2} {:2} {:2} {:2}",
@@ -398,14 +398,14 @@ void DevTestCombatCharts::OnTick( AppStateTickContext& context )
 			damages.at( 7 ) );
 		y++;
 		drawText( x, y, "ELEM CG  {:2} {:2} {:2} {:2} {:2} {:2} {:2} {:2}",
-			counterGuages.at( 0 ),
-			counterGuages.at( 1 ),
-			counterGuages.at( 2 ),
-			counterGuages.at( 3 ),
-			counterGuages.at( 4 ),
-			counterGuages.at( 5 ),
-			counterGuages.at( 6 ),
-			counterGuages.at( 7 ) );
+			counterGauges.at( 0 ),
+			counterGauges.at( 1 ),
+			counterGauges.at( 2 ),
+			counterGauges.at( 3 ),
+			counterGauges.at( 4 ),
+			counterGauges.at( 5 ),
+			counterGauges.at( 6 ),
+			counterGauges.at( 7 ) );
 		y++;
 	}
 }

@@ -305,18 +305,18 @@ void CombatInstance::GenerateFieldInfluence( uint64_t seedHash )
 
 
 
-SimVal CombatInstance::GetCounterGuage( PartyID party ) const
+SimVal CombatInstance::GetCounterGauge( PartyID party ) const
 {
-	return GetPartyRef( party ).mParty.mCounterGuage;
+	return GetPartyRef( party ).mParty.mCounterGauge;
 }
 
 
 
-void CombatInstance::IncreaseCounterGuage( PartyID party, SimVal value )
+void CombatInstance::IncreaseCounterGauge( PartyID party, SimVal value )
 {
-	SimVal& counterGuage = GetMutablePartyRef( party ).mParty.mCounterGuage;
-	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGuage );
-	counterGuage += math::Min( maxIncrease, value );
+	SimVal& counterGauge = GetMutablePartyRef( party ).mParty.mCounterGauge;
+	SimVal const maxIncrease = math::integer_cast<SimVal>( kCounterGaugeMax - counterGauge );
+	counterGauge += math::Min( maxIncrease, value );
 }
 
 
@@ -558,7 +558,7 @@ AttackResult CombatInstance::ExecuteAttack( FighterID attackerID, FighterID defe
 	{
 		IncreaseCharge( attackerID, engine.LoCalcAttackChargeGain( profile.mAttackStrength ) );
 	}
-	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
+	IncreaseCounterGauge( defenderID.GetParty(), result.mCounterGaugeIncrease );
 	PassTime( attackerID );
 
 	return result;
@@ -697,7 +697,7 @@ CastDamageResult CombatInstance::ApplyCastDamage(
 	CastDamageResult const result = engine.HiCalcCast( profile );
 
 	DecreaseHealth( defenderID, result.mDamage );
-	IncreaseCounterGuage( defenderID.GetParty(), result.mCoungerGuageIncrease );
+	IncreaseCounterGauge( defenderID.GetParty(), result.mCounterGaugeIncrease );
 
 	return result;
 }
@@ -708,7 +708,7 @@ void CombatInstance::PassTime( FighterID initiatorID )
 {
 	CombatEngine const& engine = *mCombatEngine;
 
-	// Increase stamina pasively
+	// Increase stamina passively
 	SimVal const allyStaminaGain = engine.LoCalcIdleStaminaGainAlliedTurn();
 	SimVal const opposeStaminaGain = engine.LoCalcIdleStaminaGainOpposingTurn();
 	TeamIDs const opposingTeams = GetOpposingTeams( initiatorID.GetTeam() );

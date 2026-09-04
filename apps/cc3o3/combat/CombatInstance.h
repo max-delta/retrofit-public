@@ -91,7 +91,7 @@ public:
 	//  the persistent character
 	state::ObjectRef GetCharacter( FighterID fighterID ) const;
 
-	// Save and load the combat data to and from persistance
+	// Save and load the combat data to and from persistence
 	void CommitCombatData() const;
 	void ReloadCombatData();
 
@@ -102,10 +102,10 @@ public:
 	void GenerateFieldInfluence( uint64_t seedHash );
 
 	// Countering logic
-	SimVal GetCounterGuage( PartyID party ) const;
-	void IncreaseCounterGuage( PartyID party, SimVal value );
+	SimVal GetCounterGauge( PartyID party ) const;
+	void IncreaseCounterGauge( PartyID party, SimVal value );
 
-	// Low-level fighter modifictions, generally not meant to be used directly
+	// Low-level fighter modifications, generally not meant to be used directly
 	void IncreaseHealth( FighterID fighterID, SimVal value );
 	void DecreaseHealth( FighterID fighterID, SimVal value );
 	void IncreaseStamina( FighterID fighterID, SimVal value );

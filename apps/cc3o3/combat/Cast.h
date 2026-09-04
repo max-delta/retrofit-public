@@ -9,7 +9,7 @@ namespace RF::cc::combat {
 
 struct CastDamageProfile
 {
-	// Elements may not alway be cast at their natural level
+	// Elements may not always be cast at their natural level
 	SimVal mElementStrength = 0;
 	element::ElementLevel mCastedLevel = 0;
 
@@ -30,7 +30,7 @@ struct CastDamageProfile
 struct CastDamageResult
 {
 	SimVal mDamage = 0;
-	SimVal mCoungerGuageIncrease = 0;
+	SimVal mCounterGaugeIncrease = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

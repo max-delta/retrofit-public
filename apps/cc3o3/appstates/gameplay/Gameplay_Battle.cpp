@@ -926,7 +926,7 @@ void Gameplay_Battle::OnEnter( AppStateChangeContext& context )
 					kGridSize );
 
 			// Floater
-			// TODO: Come up with a better achoring source than the control
+			// TODO: Come up with a better anchoring source than the control
 			//  passthrough, but keep the focus child to the control passthrough,
 			//  and manage the visibility logic for the selector some other way
 			RF_TODO_ANNOTATION( "Review battle UI scaffolding" );
@@ -1471,7 +1471,7 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 			slot->UpdateCharacter( fighter, character, selected );
 		}
 
-		// Clear any unsued slots
+		// Clear any unused slots
 		for( size_t i = nextSlotIndex; i < InternalState::kMaxControllablePartyCharacters; i++ )
 		{
 			WeakPtr<ui::controller::CombatCharacter> const slot = internalState.mCharacterSlots.at( i );
@@ -1491,10 +1491,10 @@ void Gameplay_Battle::OnTick( AppStateTickContext& context )
 		{
 			combat::Party const party = mainInstance.GetParty( partyID );
 			ppu.DebugDrawText( { x, y },
-				"{}:{}  Guage {:03}/{:03}",
+				"{}:{}  Gauge {:03}/{:03}",
 				partyID.GetTeamIndex(),
 				partyID.GetPartyIndex(),
-				party.mCounterGuage,
+				party.mCounterGauge,
 				combat::kCounterGaugeFull );
 			y += yStep;
 		}

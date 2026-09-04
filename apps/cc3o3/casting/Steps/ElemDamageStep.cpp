@@ -48,7 +48,7 @@ UniquePtr<act::Context> ElemDamageStep::Execute( act::Environment const& env, ac
 		combatCtx.mMultiTarget,
 		combatCtx.mElementColor );
 	RF_ASSERT_MSG( result.mDamage > 0, "No damage applied, suspicious" );
-	RF_ASSERT_MSG( result.mCoungerGuageIncrease > 0, "No guage increase, suspicious" );
+	RF_ASSERT_MSG( result.mCounterGaugeIncrease > 0, "No gauge increase, suspicious" );
 
 	return nullptr;
 }
