@@ -26,7 +26,11 @@ public:
 	using ResourceNameView = rftl::string_view;
 
 protected:
-	using ResourcesByFilename = rftl::unordered_map<ResourceName, Filename>;
+	using ResourcesByFilename = rftl::unordered_map<
+		ResourceName,
+		Filename,
+		rftl::string_hash,
+		rftl::equal_to<>>;
 	using FileBackedResourceRange = rftl::pair<ResourcesByFilename::const_iterator, ResourcesByFilename::const_iterator>;
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
@@ -72,26 +76,26 @@ public:
 	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceNameView resourceName ) const;
 
 	bool ReserveNullResource( Filename const& filename );
-	bool ReserveNullResource( ResourceName const& resourceName );
+	bool ReserveNullResource( ResourceNameView resourceName );
 
 	bool LoadNewResource( Filename const& filename );
-	bool LoadNewResource( ResourceName const& resourceName, Filename const& filename );
-	bool LoadNewResource( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
+	bool LoadNewResource( ResourceNameView resourceName, Filename const& filename );
+	bool LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 	ManagedResourceID LoadNewResourceGetID( Filename const& filename );
-	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, Filename const& filename );
-	ManagedResourceID LoadNewResourceGetID( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
+	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename );
+	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 	WeakPtr<Resource> LoadNewResourceGetHandle( Filename const& filename );
-	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, Filename const& filename );
-	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceName const& resourceName, UniquePtr<Resource>&& resource );
+	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceNameView resourceName, Filename const& filename );
+	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 
 	bool UpdateExistingResource( Filename const& filename );
-	bool UpdateExistingResource( ResourceName const& resourceName, Filename const& filename );
+	bool UpdateExistingResource( ResourceNameView resourceName, Filename const& filename );
 	bool ReloadExistingResource( Filename const& filename );
-	bool ReloadExistingResource( ResourceName const& resourceName );
-	bool DestroyResource( ResourceName const& resourceName );
+	bool ReloadExistingResource( ResourceNameView resourceName );
+	bool DestroyResource( ResourceNameView resourceName );
 
 	ResourceName SearchForResourceNameByResourceID( ManagedResourceID managedResourceID ) const;
-	Filename SearchForFilenameByResourceName( ResourceName const& resourceName ) const;
+	Filename SearchForFilenameByResourceName( ResourceNameView resourceName ) const;
 	Filename SearchForFilenameByResourceID( ManagedResourceID managedResourceID ) const;
 	rftl::vector<ResourceName> DebugSearchForResourcesByFilename( Filename const& filename ) const;
 	WeakPtr<Resource> DebugLockResourceForDirectModification( ManagedResourceID managedResourceID );
@@ -118,10 +122,10 @@ private:
 	ManagedResourceID GenerateNewManagedID();
 
 	WeakPtr<Resource> GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
-	bool ReserveNullResourceInternal( ResourceName const& resourceName );
-	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
-	WeakPtr<Resource> LoadNewResourceInternal( ResourceName const& resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
-	bool UpdateExistingResourceWithoutLock( ResourceName const& resourceName, Filename const& filename );
+	bool ReserveNullResourceInternal( ResourceNameView resourceName );
+	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
+	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
+	bool UpdateExistingResourceWithoutLock( ResourceNameView resourceName, Filename const& filename );
 
 
 	//

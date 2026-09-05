@@ -18,5 +18,16 @@ auto transparent_at( ContainerT& container, LookupT& lookup )
 	return iter->second;
 }
 
+
+
+template<typename ContainerT, typename LookupT>
+auto transparent_erase( ContainerT& container, LookupT& lookup )
+{
+	static_assert( __cplusplus < 202602L, "Review this" );
+	//return container.erase( lookup );
+	auto const iter = container.find( lookup );
+	return container.erase( iter );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }
