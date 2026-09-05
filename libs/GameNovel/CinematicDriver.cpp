@@ -2,6 +2,7 @@
 #include "CinematicDriver.h"
 
 #include "GameNovel/ui/controllers/DialogueBox.h"
+#include "GameNovel/ui/controllers/SceneCanvas.h"
 
 #include "GameDialogue/DialogueSequence.h"
 
@@ -316,7 +317,7 @@ void CinematicDriver::SetSceneCanvas( WeakPtr<ui::controller::SceneCanvas> scene
 	RF_ASSERT( sceneCanvas != nullptr );
 	mSceneCanvas = sceneCanvas;
 
-	RF_TODO_BREAK_MSG( "Reset state" );
+	mSceneCanvas->ClearAll();
 }
 
 
@@ -324,7 +325,7 @@ void CinematicDriver::SetSceneCanvas( WeakPtr<ui::controller::SceneCanvas> scene
 void CinematicDriver::UnsetSceneCanvas()
 {
 	RF_ASSERT( mSceneCanvas != nullptr );
-	RF_TODO_BREAK_MSG( "Reset state" );
+	mSceneCanvas->ClearAll();
 
 	mSceneCanvas = nullptr;
 }
@@ -424,8 +425,30 @@ bool CinematicDriver::SubTickCinematic_Advance_Scene( Context const& context, Ti
 	// Optional caller hook
 	details::InvokeIfSet( params.mOnScene, entry );
 
-	RF_TODO_ANNOTATION( "Change the scene" );
-	RF_TODO_BREAK();
+	if( mSceneCanvas == nullptr )
+	{
+		// Dubious, but will keep sub-ticking
+		RFLOG_WARNING( nullptr, RFCAT_GAMENOVEL, "No scene canvas is set, skipping scene: '{}'", entry.mPrimary );
+		return true;
+	}
+	ui::controller::SceneCanvas& sceneCanvas = *mSceneCanvas;
+
+	// Change the scene's background
+	rftl::string_view const& sceneID = entry.mPrimary;
+	if( sceneID == kNullScene )
+	{
+		// Null scene hides the background
+		sceneCanvas.ClearAll();
+	}
+	else
+	{
+		gfx::ppu::TileLayer const& tileLayer = mSequenceParams.mTileLayersByScene.at( sceneID );
+		RF_TODO_ANNOTATION(
+			"Should this always reset the scene? What if it's the same scene?"
+			" That will result in an animation reset, is that actually"
+			" desirable in all cases?" );
+		sceneCanvas.mTODOTileLayer = tileLayer.Clone();
+	}
 
 	// Allow further sub-ticking
 	return true;

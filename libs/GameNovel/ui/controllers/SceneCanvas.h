@@ -5,6 +5,13 @@
 
 #include "GameUI/controllers/InstancedController.h"
 
+#include "PPU/TileLayer.h"
+
+
+// Forwards
+namespace RF::novel {
+class CinematicDriver;
+}
 
 namespace RF::novel::ui::controller {
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,17 +23,25 @@ class GAMENOVEL_API SceneCanvas final : public InstancedController
 	RF_NO_COPY( SceneCanvas );
 
 	//
+	// Friends
+public:
+	friend class CinematicDriver;
+
+
+	//
 	// Public methods
 public:
 	SceneCanvas();
 
 	virtual void OnRender( UIConstContext const& context, Container const& container, bool& blockChildRendering ) override;
 
+	void ClearAll();
+
 
 	//
 	// Private data
 private:
-	// TODO
+	gfx::ppu::TileLayer mTODOTileLayer = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
