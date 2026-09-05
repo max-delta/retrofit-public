@@ -127,6 +127,10 @@ private:
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
 	bool UpdateExistingResourceWithoutLock( ResourceNameView resourceName, Filename const& filename );
 
+	void RegisterResource( ManagedResourceID managedResourceID, UniquePtr<Resource>&& resource );
+	void RegisterResourceID( ResourceNameView resourceName, ManagedResourceID managedResourceID );
+	void RegisterFileBackedResource( ResourceNameView resourceName, Filename const& filename );
+
 
 	//
 	// Private data

@@ -467,9 +467,8 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Res
 
 	ManagedResourceID managedResourceID = GenerateNewManagedID();
 
-	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
-	mResources.emplace( managedResourceID, nullptr );
-	mResourceIDs.emplace( resourceName, managedResourceID );
+	RegisterResource( managedResourceID, nullptr );
+	RegisterResourceID( resourceName, managedResourceID );
 
 	RFLOG_INFO( resourceName, RFCAT_PPU, "Null resource reserved" );
 	return true;
@@ -528,9 +527,9 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 		retVal = newResource;
 		res = newResource;
 		managedResourceID = tempID;
-		mResources.emplace( managedResourceID, rftl::move( newResource ) );
-		mResourceIDs.emplace( resourceName, managedResourceID );
-		mFileBackedResources.emplace( resourceName, filename );
+		RegisterResource( managedResourceID, rftl::move( newResource ) );
+		RegisterResourceID( resourceName, managedResourceID );
+		RegisterFileBackedResource( resourceName, filename );
 	}
 	RF_ASSERT( retVal != nullptr );
 
@@ -551,15 +550,13 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	RF_ASSERT( resource != nullptr );
 	managedResourceID = GenerateNewManagedID();
 
-	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
-	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
 	Resource* res;
 	WeakPtr<Resource> retVal;
 	{
 		retVal = resource;
 		res = resource;
-		mResources.emplace( managedResourceID, rftl::move( resource ) );
-		mResourceIDs.emplace( resourceName, managedResourceID );
+		RegisterResource( managedResourceID, rftl::move( resource ) );
+		RegisterResourceID( resourceName, managedResourceID );
 	}
 	RF_ASSERT( retVal != nullptr );
 
@@ -636,12 +633,45 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	// Swap in new
 	Resource* const res = newResource;
 	resourceRef = rftl::move( newResource );
-	mFileBackedResources.emplace( resourceName, filename );
+	RegisterFileBackedResource( resourceName, filename );
 	bool const postLoadSuccess = PostLoadFromFile( *res, filename );
 	RF_ASSERT( postLoadSuccess );
 	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
 
 	return true;
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::RegisterResource( ManagedResourceID managedResourceID, UniquePtr<Resource>&& resource )
+{
+	RF_ASSERT( managedResourceID != kInvalidResourceID );
+	// NOTE: Resource is allowed to be null, used when reserving null resources
+	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
+	mResources.emplace( managedResourceID, rftl::move( resource ) );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::RegisterResourceID( ResourceNameView resourceName, ManagedResourceID managedResourceID )
+{
+	RF_ASSERT( resourceName.empty() == false );
+	RF_ASSERT( managedResourceID != kInvalidResourceID );
+	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
+	mResourceIDs.emplace( resourceName, managedResourceID );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::RegisterFileBackedResource( ResourceNameView resourceName, Filename const& filename )
+{
+	RF_ASSERT( resourceName.empty() == false );
+	RF_ASSERT( filename.Empty() == false );
+	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
+	mFileBackedResources.emplace( resourceName, filename );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
