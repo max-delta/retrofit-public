@@ -25,7 +25,7 @@ class GAMENOVEL_API SceneCanvas final : public InstancedController
 	//
 	// Friends
 public:
-	friend class CinematicDriver;
+	friend class RF::novel::CinematicDriver;
 
 
 	//
