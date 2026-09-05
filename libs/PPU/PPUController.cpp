@@ -319,6 +319,8 @@ Palette4a5_16 PPUController::ReplaceGlobalPalette( Palette4a5_16 const& newPalet
 
 bool PPUController::DrawObject( Object const& object )
 {
+	RF_ASSERT_MSG( object.mFramePackID != kInvalidManagedFramePackID, "Invalid frame pack ID" );
+
 	if( mDrawRequestsSuppressed )
 	{
 		return true;
@@ -342,6 +344,9 @@ bool PPUController::DrawObject( Object const& object )
 
 bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 {
+	RF_ASSERT_MSG( tileLayer.mTilesetReference != kInvalidManagedTilesetID, "Invalid tileset ID" );
+	RF_ASSERT_MSG( tileLayer.NumTiles() != 0, "No tiles in tile layer" );
+
 	if( mDrawRequestsSuppressed )
 	{
 		return true;
@@ -365,6 +370,8 @@ bool PPUController::DrawTileLayer( TileLayer const& tileLayer )
 
 bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHeight, ManagedFontID font, bool border, math::Color3u8 color, rftl::string_view fmt, rftl::format_args&& args )
 {
+	RF_ASSERT_MSG( font != kInvalidManagedFontID, "Invalid font ID" );
+
 	if( mDrawRequestsSuppressed )
 	{
 		return true;
@@ -1253,10 +1260,12 @@ math::Color3f PPUController::CalculateBorderColor( math::Color3f contentsColor )
 
 void PPUController::RenderObject( Object const& object ) const
 {
-	FramePackBase const* const framePack = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
-	RF_ASSERT_MSG( framePack != nullptr, "Invalid frame pack ID" );
-	uint8_t const slotIndex = framePack->CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
-	FramePackBase::TimeSlot const& timeSlot = framePack->GetTimeSlots()[slotIndex];
+	RF_ASSERT_MSG( object.mFramePackID != kInvalidManagedFramePackID, "Invalid frame pack ID" );
+	FramePackBase const* const framePackPtr = mFramePackManager->GetResourceFromManagedResourceID( object.mFramePackID );
+	RF_ASSERT_MSG( framePackPtr != nullptr, "Failed to fetch frame pack" );
+	FramePackBase const& framePack = *framePackPtr;
+	uint8_t const slotIndex = framePack.CalculateTimeSlotFromTimeIndex( object.mTimer.mTimeIndex );
+	FramePackBase::TimeSlot const& timeSlot = framePack.GetTimeSlots()[slotIndex];
 
 	if( timeSlot.mTextureReference == kInvalidManagedTextureID )
 	{
@@ -1295,6 +1304,7 @@ void PPUController::RenderObject( Object const& object ) const
 
 void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 {
+	RF_ASSERT_MSG( tileLayer.mTilesetReference != kInvalidManagedTilesetID, "Invalid tileset ID" );
 	Tileset const* const tilesetPtr = mTilesetManager->GetResourceFromManagedResourceID( tileLayer.mTilesetReference );
 	RF_ASSERT_MSG( tilesetPtr != nullptr, "Failed to fetch tileset" );
 	Tileset const& tileset = *tilesetPtr;
@@ -1310,6 +1320,7 @@ void PPUController::RenderTileLayer( TileLayer const& tileLayer ) const
 	CoordElem xStep;
 	CoordElem yStep;
 	CalculateTileSize( tileLayer, tileset, xStep, yStep );
+	RF_ASSERT_MSG( tileLayer.NumTiles() != 0, "No tiles in tile layer" );
 	CoordElem const xLayerStep = xStep * math::integer_cast<CoordElem>( tileLayer.NumColumns() );
 	CoordElem const yLayerStep = yStep * math::integer_cast<CoordElem>( tileLayer.NumRows() );
 
@@ -1494,15 +1505,17 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 {
 	// !!!WARNING!!! This must be kept logically equivalent to CalculateStringLength(...)
 
-	Font const* font = mFontManager->GetResourceFromManagedResourceID( string.mFontReference );
-	RF_ASSERT_MSG( font != nullptr, "Failed to fetch font" );
-	DeviceFontID const deviceFontID = font->GetDeviceRepresentation();
+	RF_ASSERT_MSG( string.mFontReference != kInvalidManagedFontID, "Invalid font ID" );
+	Font const* const fontPtr = mFontManager->GetResourceFromManagedResourceID( string.mFontReference );
+	RF_ASSERT_MSG( fontPtr != nullptr, "Failed to fetch font" );
+	Font const& font = *fontPtr;
+	DeviceFontID const deviceFontID = font.GetDeviceRepresentation();
 
-	uint8_t tileWidth = font->mTileWidth;
-	uint8_t tileHeight = font->mTileHeight;
+	uint8_t tileWidth = font.mTileWidth;
+	uint8_t tileHeight = font.mTileHeight;
 	uint8_t zoomDesired = 0;
 	uint8_t shrinkDesired = 0;
-	CalculateDesiredFontZoomShrink( *font, string.mDesiredHeight, zoomDesired, shrinkDesired );
+	CalculateDesiredFontZoomShrink( font, string.mDesiredHeight, zoomDesired, shrinkDesired );
 	RF_ASSERT( zoomDesired >= 1 );
 	RF_ASSERT( shrinkDesired >= 1 );
 	tileWidth *= zoomDesired;
@@ -1556,11 +1569,11 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		uint8_t charMargin = 0;
 
 		// Variable fonts use variable width
-		if( font->mSpacingMode == Font::SpacingMode::Variable )
+		if( font.mSpacingMode == Font::SpacingMode::Variable )
 		{
 			uint8_t whitespaceWidth = 0;
-			CalculateFontVariableWhitespaceWidth( *font, whitespaceWidth );
-			CalculateFontVariableCharWidth( *font, character, whitespaceWidth, zoomDesired, shrinkDesired, charWidth );
+			CalculateFontVariableWhitespaceWidth( font, whitespaceWidth );
+			CalculateFontVariableCharWidth( font, character, whitespaceWidth, zoomDesired, shrinkDesired, charWidth );
 			charMargin = 1;
 		}
 
@@ -1569,7 +1582,7 @@ void PPUController::RenderString( PPUState::String const& string, rftl::string_v
 		static constexpr bool kTrimHeight = true;
 		if constexpr( kTrimHeight )
 		{
-			CalculateFontVariableCharHeight( *font, character, zoomDesired, shrinkDesired, charHeight );
+			CalculateFontVariableCharHeight( font, character, zoomDesired, shrinkDesired, charHeight );
 		}
 
 		RF_ASSERT( charWidth > 0 );
