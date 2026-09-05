@@ -671,6 +671,20 @@ inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Reg
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
 	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
+	for( ResourcesByFilename::value_type const& entry : mFileBackedResources )
+	{
+		if( entry.second == filename )
+		{
+			// At time of writing, the resource manager permits duplicate
+			//  resources that are both backed by the same file, but this is
+			//  still potentially undesirable or wasteful, so it's called out
+			//  as a warning here to make sure it's intentional
+			RFLOG_WARNING( filename, RFCAT_PPU,
+				"Resource '{}' is registering file already registered by resource '{}'",
+				resourceName,
+				entry.first );
+		}
+	}
 	mFileBackedResources.emplace( resourceName, filename );
 }
 
