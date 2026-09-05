@@ -379,8 +379,8 @@ inline void ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Int
 	{
 		// NOTE: Subtle, copy resource name so we don't pass by reference and
 		//  have it deleted mid-function
-		ResourceName const resourceName = mResourceIDs.begin()->first;
-		DestroyResource( resourceName );
+		ResourceName const resourceNameCopy = mResourceIDs.begin()->first;
+		DestroyResource( resourceNameCopy );
 	}
 	RF_ASSERT( mResources.empty() );
 	RF_ASSERT( mFileBackedResources.empty() );
