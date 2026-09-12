@@ -3,13 +3,16 @@
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
 		<ClCompile Include="SegmentedIdentifier.cpp" />
+		<ClCompile Include="HashString.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
 		<ClInclude Include="SegmentedIdentifier.h" />
 		<ClInclude Include="IdentifierFwd.h" />
+		<ClInclude Include="HashString.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="SegmentedIdentifier.inl" />
+		<None Include="HashString.inl" />
 	</ItemGroup>
 </Project>

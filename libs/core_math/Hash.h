@@ -82,6 +82,9 @@ static_assert( kFNV_offset_basis == 0xcbf29ce484222325ull, "Numbers de-synchroni
 inline constexpr HashVal64 kFNV_prime = 1099511628211ull;
 static_assert( kFNV_prime == 0x100000001b3ull, "Numbers de-synchronized" );
 
+// Empty is the same as the starting seed
+inline constexpr HashVal64 kFNV_empty_hash = kFNV_offset_basis;
+
 // SEE: StableHashBytes(...) internals
 inline consteval HashVal64 ConstStableHashString( char const* nullTerminatedString, HashVal64 rollingValue = kFNV_offset_basis )
 {

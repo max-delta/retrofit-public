@@ -9,7 +9,7 @@ namespace RF::math {
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t )
 {
 	// Reduced from non-null case
-	return details::kFNV_offset_basis;
+	return details::kFNV_empty_hash;
 }
 
 

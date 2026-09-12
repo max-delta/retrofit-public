@@ -27,17 +27,20 @@
 	<PropertyGroup />
 	<ItemDefinitionGroup />
 	<ItemGroup>
+		<ClInclude Include="HashString.h" />
 		<ClInclude Include="IdentifierFwd.h" />
 		<ClInclude Include="SegmentedIdentifier.h" />
 		<ClInclude Include="stdafx.h" />
 	</ItemGroup>
 	<ItemGroup>
+		<ClCompile Include="HashString.cpp" />
 		<ClCompile Include="SegmentedIdentifier.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>
 		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="HashString.inl" />
 		<None Include="SegmentedIdentifier.inl" />
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
