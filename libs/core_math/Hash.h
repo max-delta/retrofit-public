@@ -14,7 +14,7 @@ namespace RF::math {
 HashVal64 StableHashBytes( rftl::nullptr_t, size_t );
 HashVal64 StableHashBytes( void const* buffer, size_t length );
 
-// For constexpr string hashing, avoid using in non-constexpr scenarios
+// For consteval string hashing, avoid using in non-consteval scenarios
 #define RF_HASH_FROM_STRING_LITERAL( LITERAL ) \
 	RF_MSVC_INLINE_SUPPRESS( 4307 ) \
 	::RF::math::details::ConstStableHashString( "" LITERAL "" )
@@ -76,8 +76,14 @@ struct SequenceHash
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+// Fowler/Noll/Vo FNV-1a 64-bit hash
+inline constexpr HashVal64 kFNV_offset_basis = 14695981039346656037ull;
+static_assert( kFNV_offset_basis == 0xcbf29ce484222325ull, "Numbers de-synchronized" );
+inline constexpr HashVal64 kFNV_prime = 1099511628211ull;
+static_assert( kFNV_prime == 0x100000001b3ull, "Numbers de-synchronized" );
+
 // SEE: StableHashBytes(...) internals
-inline constexpr HashVal64 ConstStableHashString( char const* nullTerminatedString, HashVal64 rollingValue = 0xcbf29ce484222325ull )
+inline consteval HashVal64 ConstStableHashString( char const* nullTerminatedString, HashVal64 rollingValue = kFNV_offset_basis )
 {
 	return ( nullTerminatedString[0] == '\0' ) ?
 		rollingValue :
@@ -85,7 +91,7 @@ inline constexpr HashVal64 ConstStableHashString( char const* nullTerminatedStri
 			&nullTerminatedString[1],
 			( rollingValue ^
 				broaden_cast<HashVal64>( static_cast<unsigned char const>( nullTerminatedString[0] ) ) ) *
-				0x100000001b3 );
+				kFNV_prime );
 }
 
 }
