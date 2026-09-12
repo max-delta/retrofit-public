@@ -80,7 +80,7 @@ static novel::CinematicDriver::TileLayersByScene AssignTileLayersForRequiredScen
 	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 
 	// For each required scene...
-	for( rftl::string_view const& scene : requiredScenes )
+	for( Scenes::value_type const& scene : requiredScenes )
 	{
 		if( scene == novel::kNullScene )
 		{
