@@ -2,8 +2,6 @@
 
 #include "rftl/extension/inline_optional.h"
 
-#include "rftl/type_traits"
-
 
 namespace RF {
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,11 +9,6 @@ namespace RF {
 TEST( InlineOptional, Basics )
 {
 	using Opt = rftl::inline_optional<uint8_t, 255>;
-
-	if( rftl::is_constant_evaluated() == false )
-	{
-		RF_DBGFAIL();
-	}
 
 	static_assert( Opt().has_value() == false );
 	static_assert( Opt( 0 ).has_value() );
