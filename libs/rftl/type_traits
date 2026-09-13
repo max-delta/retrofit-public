@@ -37,7 +37,7 @@ using std::is_member_pointer;
 
 using std::is_const;
 using std::is_volatile;
-using std::is_trivial;
+//using std::is_trivial; // Deprecated in C++26
 using std::is_trivially_copyable;
 using std::is_standard_layout;
 //using std::is_pod; // Deprecated in C++20
@@ -144,4 +144,6 @@ using std::negation_v;
 
 //using std::is_pointer_interconvertible_with_class; // Clang doesn't support yet
 //using std::is_corresponding_member; // Clang doesn't support yet
+
+using std::is_constant_evaluated;
 }
