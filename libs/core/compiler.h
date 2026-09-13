@@ -51,7 +51,7 @@ enum class Endianness
 //  impossible or impractical to acquire a real pointer to an actual object.
 //  This value can act as a stand-in that is obviously invalid, so memory
 //  access should cause an obvious segmentation fault.
-// NOTE: Not garaunteed to be invalid, very compiler and platform specific, but
+// NOTE: Not guaranteed to be invalid, very compiler and platform specific, but
 //  conventionally invalid in modern memory management systems
 // NOTE: This is a fundamental standards violation and rife with undefined
 //  behavior, so be very cautious when using it

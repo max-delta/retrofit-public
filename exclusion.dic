@@ -1,5 +1,7 @@
 anim
 anims
+cacheline
+cachelines
 calc
 codepath
 const
@@ -7,6 +9,7 @@ consteval
 desc
 deserialize
 deserialized
+fastfail
 fpack
 framepack
 framepacks
