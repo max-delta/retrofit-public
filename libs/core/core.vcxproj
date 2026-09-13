@@ -65,6 +65,7 @@
 		<ClInclude Include="rf_assert.h" />
 		<ClInclude Include="rf_onceper.h" />
 		<ClInclude Include="stdafx.h" />
+		<ClInclude Include="todo.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="ptr\void_creator.cpp" />

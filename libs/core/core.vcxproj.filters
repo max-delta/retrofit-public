@@ -101,6 +101,7 @@
 			<Filter>meta</Filter>
 		</ClInclude>
 		<ClInclude Include="preprocessor.h" />
+		<ClInclude Include="todo.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />
