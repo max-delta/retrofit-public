@@ -26,11 +26,11 @@ static constexpr char kMagic[8] = {
 using StrLenType = uint16_t;
 constexpr size_t const kSizeOfMagic = sizeof( kMagic );
 constexpr size_t kSizeOfBase = sizeof( FramePackBase );
-constexpr size_t SizeOfData_Sustains( FramePackBase const& framePack )
+static constexpr size_t SizeOfData_Sustains( FramePackBase const& framePack )
 {
 	return sizeof( uint8_t ) * framePack.mNumTimeSlots;
 }
-constexpr size_t SizeOfData_Slots( FramePackBase const& framePack )
+static constexpr size_t SizeOfData_Slots( FramePackBase const& framePack )
 {
 	return sizeof( FramePackBase::TimeSlot ) * framePack.mNumTimeSlots;
 }
@@ -45,7 +45,7 @@ struct Header_v0_1
 	uint16_t mOffsetToTexturePaths;
 	uint16_t mOffsetToEof;
 
-	bool IsValid()
+	bool IsValid() const
 	{
 		nullptr_t const context = nullptr;
 		if( mOffsetToMagic != 0 )
@@ -237,7 +237,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 			return false;
 		}
 
-		char magic[kSizeOfMagic];
+		char magic[kSizeOfMagic] = {};
 		uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &magic[0] );
 		readHead.mem_copy_prefix_to( writeHead, kSizeOfMagic );
 		readHead.remove_prefix( kSizeOfMagic );
@@ -250,7 +250,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 	}
 
 	// Header
-	CurrentHeaderVersion header;
+	CurrentHeaderVersion header = {};
 	static constexpr size_t kSizeOfHeader = sizeof( CurrentHeaderVersion );
 	{
 		if( readHead.size() < kSizeOfHeader )
@@ -400,7 +400,7 @@ bool FramePackSerDes::DeserializeFromBuffer( rftl::vector<file::VFSPath>& textur
 			}
 
 			// String length
-			StrLenType fileStrLen;
+			StrLenType fileStrLen = {};
 			{
 				uint8_t* const writeHead = reinterpret_cast<uint8_t*>( &fileStrLen );
 				readHead.mem_copy_prefix_to( writeHead, sizeof( StrLenType ) );
