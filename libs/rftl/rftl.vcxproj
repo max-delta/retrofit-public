@@ -49,6 +49,7 @@
 		<ClInclude Include="extension\enum_traits.h" />
 		<ClInclude Include="extension\fatal_exception.h" />
 		<ClInclude Include="extension\immutable_string.h" />
+		<ClInclude Include="extension\inline_optional.h" />
 		<ClInclude Include="extension\integer_literals.h" />
 		<ClInclude Include="extension\parseless_format.h" />
 		<ClInclude Include="extension\ss_concat.h" />
@@ -106,6 +107,7 @@
 		<None Include="extension\byte_span.inl" />
 		<None Include="extension\byte_view.inl" />
 		<None Include="extension\cstring_view.inl" />
+		<None Include="extension\inline_optional.inl" />
 		<None Include="extension\ss_concat.inl" />
 		<None Include="extension\static_string.inl" />
 		<None Include="extension\static_vector.inl" />

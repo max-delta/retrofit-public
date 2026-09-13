@@ -80,6 +80,7 @@
 		<ClCompile Include="math_color.cpp" />
 		<ClCompile Include="rftl_array_convert.cpp" />
 		<ClCompile Include="identifier_hashstring.cpp" />
+		<ClCompile Include="rftl_inlineoptional.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="stdafx.h" />
