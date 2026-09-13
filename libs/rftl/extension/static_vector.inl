@@ -1,7 +1,7 @@
 #pragma once
 #include "static_vector.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////

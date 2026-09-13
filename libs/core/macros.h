@@ -73,12 +73,3 @@ public: \
 //  match against to provide double-click and F8 functionality for
 #define RF_CREATE_SOURCED_BUILD_MESSAGE( MESSAGE ) \
 	"" RF_FILENAME() "(" RF_STRINGIFY( __LINE__ ) "): " MESSAGE ""
-
-// For compiler and platform macros
-#include "core/compiler.h"
-
-// For assert macros
-#include "core/rf_assert.h"
-
-// For TODO macros
-#include "core/todo.h"

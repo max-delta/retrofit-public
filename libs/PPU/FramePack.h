@@ -3,6 +3,7 @@
 
 #include "PPU/PPUFwd.h"
 
+#include "core/compiler.h"
 #include "core/macros.h"
 #include "core/ptr/ptr_traits.h"
 

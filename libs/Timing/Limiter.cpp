@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Limiter.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 #include "rftl/thread"
 

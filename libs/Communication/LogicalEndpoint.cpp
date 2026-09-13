@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "LogicalEndpoint.h"
 
+#include "core/todo.h"
+
 
 namespace RF::comm {
 ///////////////////////////////////////////////////////////////////////////////

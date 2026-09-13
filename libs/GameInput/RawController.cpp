@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "RawController.h"
 
+#include "core/rf_assert.h"
+
 #include "rftl/limits"
 
 
@@ -16,7 +18,8 @@ void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& par
 
 void RawController::GetRawCommandStream( rftl::virtual_iterator<RawCommand>& parser, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime ) const
 {
-	auto const onElement = [&parser, &earliestTime, &latestTime]( RawCommand const& element ) -> void {
+	auto const onElement = [&parser, &earliestTime, &latestTime]( RawCommand const& element ) -> void
+	{
 		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			parser( element );
@@ -44,7 +47,8 @@ void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampl
 
 void RawController::GetRawSignalStream( rftl::virtual_iterator<RawSignal>& sampler, time::CommonClock::time_point earliestTime, time::CommonClock::time_point latestTime, RawSignalType type ) const
 {
-	auto const onElement = [&sampler, &earliestTime, &latestTime]( RawSignal const& element ) -> void {
+	auto const onElement = [&sampler, &earliestTime, &latestTime]( RawSignal const& element ) -> void
+	{
 		if( element.mTime >= earliestTime && element.mTime <= latestTime )
 		{
 			sampler( element );

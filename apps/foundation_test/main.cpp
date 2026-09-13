@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 #include "rftl/string"
 #include "rftl/cstdio"

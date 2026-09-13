@@ -3,7 +3,7 @@
 
 #include "CommandLine/ArgParse.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 
 namespace RF::app {

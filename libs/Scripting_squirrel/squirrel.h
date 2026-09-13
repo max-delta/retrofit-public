@@ -2,6 +2,7 @@
 #include "project.h"
 
 #include "Logging/Logging.h"
+#include "core/todo.h" // Used for below TODO, but refers to include above
 RF_TODO_ANNOTATION( "Provide a narrower include for just specializing contexts" );
 
 #include "core_reflect/Value.h"
@@ -39,11 +40,11 @@ public:
 	//
 	// Types and constants
 public:
-	#if( RF_PLATFORM_POINTER_BYTES >= 8 )
-		using Integer = int64_t;
-	#else
-		using Integer = int32_t;
-	#endif
+#if ( RF_PLATFORM_POINTER_BYTES >= 8 )
+	using Integer = int64_t;
+#else
+	using Integer = int32_t;
+#endif
 	using FloatingPoint = float;
 	using Boolean = bool;
 	using Pointer = void*;

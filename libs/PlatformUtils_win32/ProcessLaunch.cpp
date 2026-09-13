@@ -8,6 +8,8 @@
 #include "core_platform/inc/windows_inc.h"
 #include "core_platform/uuid.h"
 
+#include "core/todo.h"
+
 #include "rftl/string"
 
 RF_TODO_ANNOTATION( "Move this hack to somewhere better" );

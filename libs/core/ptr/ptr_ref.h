@@ -1,5 +1,5 @@
 #pragma once
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 #include "rftl/cstdint"
 #include "rftl/atomic"

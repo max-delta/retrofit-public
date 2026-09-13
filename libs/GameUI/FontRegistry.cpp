@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "FontRegistry.h"
 
+#include "core/rf_assert.h"
+
 #include "rftl/algorithm"
 #include "rftl/functional"
 

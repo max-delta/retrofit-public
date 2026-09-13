@@ -4,7 +4,8 @@
 #include "core_math/Limits.h"
 
 #include "core/meta/FailConsteval.h"
-#include "core/macros.h"
+#include "core/compiler.h"
+#include "core/todo.h"
 
 #include "rftl/cmath"
 #include "rftl/limits"

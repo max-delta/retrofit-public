@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 #include "rftl/type_traits"
 #include "rftl/limits"

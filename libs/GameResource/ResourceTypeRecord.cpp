@@ -4,6 +4,8 @@
 #include "RFType/GlobalTypeDatabase.h"
 #include "Logging/Logging.h"
 
+#include "core/todo.h"
+
 
 namespace RF::resource {
 ///////////////////////////////////////////////////////////////////////////////

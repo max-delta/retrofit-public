@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SequentialWorkPump.h"
 
+#include "core/rf_assert.h"
+
 
 namespace RF::thread {
 ///////////////////////////////////////////////////////////////////////////////

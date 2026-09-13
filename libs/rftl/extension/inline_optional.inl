@@ -1,7 +1,7 @@
 #pragma once
 #include "inline_optional.h"
 
-#include "core/rf_assert.h"
+#include "core/todo.h"
 
 RF_CPP23_TODO( "Make asserts work using if-consteval" );
 #include "core/meta/FailConsteval.h"

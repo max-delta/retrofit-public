@@ -2,6 +2,7 @@
 
 #include "core_reflect/ReflectFwd.h"
 
+#include "core/compiler.h"
 #include "core/macros.h"
 
 

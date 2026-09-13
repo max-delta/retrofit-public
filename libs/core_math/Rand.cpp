@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Rand.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 
 namespace RF::math {

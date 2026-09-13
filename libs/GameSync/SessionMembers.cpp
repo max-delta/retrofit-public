@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SessionMembers.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 
 namespace RF::sync {

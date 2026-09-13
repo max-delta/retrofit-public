@@ -1,7 +1,7 @@
 #pragma once
 #include "byte_view.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 #include "rftl/cstdlib"
 #include "rftl/cstdint"

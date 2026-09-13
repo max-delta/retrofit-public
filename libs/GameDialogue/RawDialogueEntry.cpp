@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "RawDialogueEntry.h"
 
+#include "core/rf_assert.h"
+
 #include "rftl/extension/string_parse.h"
 #include "rftl/optional"
 

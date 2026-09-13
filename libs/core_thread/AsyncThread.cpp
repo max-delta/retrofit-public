@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "AsyncThread.h"
 
+#include "core/rf_assert.h"
+
 
 namespace RF::thread {
 ///////////////////////////////////////////////////////////////////////////////

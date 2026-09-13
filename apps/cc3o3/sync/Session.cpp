@@ -9,6 +9,8 @@
 #include "GameSync/SessionHostManager.h"
 #include "GameSync/RollbackInputManager.h"
 
+#include "core/todo.h"
+
 
 namespace RF::cc::sync {
 ///////////////////////////////////////////////////////////////////////////////

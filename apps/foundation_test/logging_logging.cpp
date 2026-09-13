@@ -2,15 +2,17 @@
 
 #include "Logging/Logging.h"
 
+#include "core/compiler.h"
+
 
 RF_CLANG_IGNORE( "-Wunreachable-code" );
 
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
-	struct TestLoggingContext
-	{
-	};
+struct TestLoggingContext
+{
+};
 }
 
 template<> void WriteContextString( details::TestLoggingContext const& context, Utf8LogContextBuffer& buffer )

@@ -3,7 +3,7 @@
 
 #include "core_aside/CoffSectionEntry.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 
 namespace RF::cc::init {

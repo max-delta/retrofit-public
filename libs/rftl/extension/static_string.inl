@@ -1,7 +1,7 @@
 #pragma once
 #include "static_string.h"
 
-#include "core/macros.h"
+#include "core/rf_assert.h"
 
 
 namespace rftl {

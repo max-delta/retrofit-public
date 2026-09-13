@@ -5,6 +5,8 @@
 
 #include "core_logging/LoggingRouter.h"
 
+#include "core/rf_assert.h"
+
 #include "rftl/extension/variadic_print.h"
 #include "rftl/atomic"
 #include "rftl/limits"
