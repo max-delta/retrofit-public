@@ -7,16 +7,16 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string()
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string()
 {
 	//
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( size_type count, value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( size_type count, value_type const& value )
 	: static_basic_string()
 {
 	grow( count, value );
@@ -24,9 +24,9 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( size_
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<class InputIterator>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( InputIterator first, InputIterator term )
+inline static_basic_string<CharT, CapacityT>::static_basic_string( InputIterator first, InputIterator term )
 	: static_basic_string()
 {
 	append( first, term );
@@ -34,8 +34,8 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( Input
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( static_basic_string const& other )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( static_basic_string const& other )
 	: static_basic_string( other.begin(), other.end() )
 {
 	//
@@ -43,9 +43,9 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( stati
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<size_t OtherCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( static_basic_string<value_type, OtherCapacity> const& other )
+inline static_basic_string<CharT, CapacityT>::static_basic_string( static_basic_string<value_type, OtherCapacity> const& other )
 	: static_basic_string( other.begin(), other.end() )
 {
 	//
@@ -54,8 +54,8 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( stati
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( static_basic_string&& other )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( static_basic_string&& other )
 	: static_basic_string()
 {
 	extract( other.begin(), other.end() );
@@ -64,9 +64,9 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( stati
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<size_t OtherCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( static_basic_string<value_type, OtherCapacity>&& other )
+inline static_basic_string<CharT, CapacityT>::static_basic_string( static_basic_string<value_type, OtherCapacity>&& other )
 	: static_basic_string()
 {
 	extract( other.begin(), other.end() );
@@ -75,8 +75,8 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( stati
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl::initializer_list<value_type> init )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( rftl::initializer_list<value_type> init )
 	: static_basic_string()
 {
 	append( init );
@@ -84,10 +84,10 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl:
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename ViewT>
-	requires static_string_details::StringViewLike<Element, ViewT>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( ViewT const& other )
+	requires static_string_details::StringViewLike<CharT, ViewT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( ViewT const& other )
 	: static_basic_string()
 {
 	append( other );
@@ -95,9 +95,9 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( ViewT
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename Convertible>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl::initializer_list<Convertible> init )
+inline static_basic_string<CharT, CapacityT>::static_basic_string( rftl::initializer_list<Convertible> init )
 	: static_basic_string()
 {
 	append( init );
@@ -105,26 +105,26 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl:
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename IntegralT>
-	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( IntegralT const& mem )
+	requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
+inline static_basic_string<CharT, CapacityT>::static_basic_string( IntegralT const& mem )
 {
 	assign( mem );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::~static_basic_string()
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::~static_basic_string()
 {
 	clear();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string const& other )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator=( static_basic_string const& other )
 {
 	if( &other != this )
 	{
@@ -135,35 +135,8 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string const&& other )
-{
-	if( &other != this )
-	{
-		assign( other.begin(), other.end() );
-		other.clear();
-	}
-	return *this;
-}
-
-
-
-template<typename Element, size_t ElementCapacity>
-template<size_t OtherCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string<value_type, OtherCapacity> const& other )
-{
-	if( &other != this )
-	{
-		assign( other.begin(), other.end() );
-	}
-	return *this;
-}
-
-
-
-template<typename Element, size_t ElementCapacity>
-template<size_t OtherCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( static_basic_string<value_type, OtherCapacity>&& other )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator=( static_basic_string const&& other )
 {
 	if( &other != this )
 	{
@@ -175,8 +148,35 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<Element, ElementCapacity>::operator=( rftl::initializer_list<value_type> init )
+template<typename CharT, size_t CapacityT>
+template<size_t OtherCapacity>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator=( static_basic_string<value_type, OtherCapacity> const& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+	}
+	return *this;
+}
+
+
+
+template<typename CharT, size_t CapacityT>
+template<size_t OtherCapacity>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator=( static_basic_string<value_type, OtherCapacity>&& other )
+{
+	if( &other != this )
+	{
+		assign( other.begin(), other.end() );
+		other.clear();
+	}
+	return *this;
+}
+
+
+
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& rftl::static_basic_string<CharT, CapacityT>::operator=( rftl::initializer_list<value_type> init )
 {
 	assign( init );
 	return *this;
@@ -184,9 +184,9 @@ inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename StringViewLike>
-inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<Element, ElementCapacity>::operator=( StringViewLike const& other )
+inline static_basic_string<CharT, CapacityT>& rftl::static_basic_string<CharT, CapacityT>::operator=( StringViewLike const& other )
 {
 	assign( other );
 	return *this;
@@ -194,10 +194,10 @@ inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename IntegralT>
-	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( IntegralT const& mem )
+	requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator=( IntegralT const& mem )
 {
 	assign( mem );
 	return *this;
@@ -205,8 +205,8 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::assign( size_type count, value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::assign( size_type count, value_type const& value )
 {
 	clear();
 	grow( count, value );
@@ -214,9 +214,9 @@ inline void static_basic_string<Element, ElementCapacity>::assign( size_type cou
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<class InputIterator>
-inline void static_basic_string<Element, ElementCapacity>::assign( InputIterator first, InputIterator term )
+inline void static_basic_string<CharT, CapacityT>::assign( InputIterator first, InputIterator term )
 {
 	clear();
 	append( first, term );
@@ -224,8 +224,8 @@ inline void static_basic_string<Element, ElementCapacity>::assign( InputIterator
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::assign( rftl::initializer_list<value_type> init )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::assign( rftl::initializer_list<value_type> init )
 {
 	clear();
 	append( init );
@@ -233,10 +233,10 @@ inline void static_basic_string<Element, ElementCapacity>::assign( rftl::initial
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename ViewT>
-	requires static_string_details::StringViewLike<Element, ViewT>
-inline void static_basic_string<Element, ElementCapacity>::assign( ViewT const& other )
+	requires static_string_details::StringViewLike<CharT, ViewT>
+inline void static_basic_string<CharT, CapacityT>::assign( ViewT const& other )
 {
 	clear();
 	append( other );
@@ -244,19 +244,19 @@ inline void static_basic_string<Element, ElementCapacity>::assign( ViewT const& 
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename IntegralT>
-	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
-inline void static_basic_string<Element, ElementCapacity>::assign( IntegralT const& mem )
+	requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
+inline void static_basic_string<CharT, CapacityT>::assign( IntegralT const& mem )
 {
-	static_assert( sizeof( m_Storage ) == sizeof( mem ) );
+	static_assert( sizeof( mStorage ) == sizeof( mem ) );
 	memcpy( data(), &mem, sizeof( mem ) );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reference static_basic_string<Element, ElementCapacity>::at( size_type pos )
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reference static_basic_string<CharT, CapacityT>::at( size_type pos )
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return ( *this )[pos];
@@ -264,8 +264,8 @@ inline typename static_basic_string<Element, ElementCapacity>::reference static_
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reference static_basic_string<Element, ElementCapacity>::at( size_type pos ) const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reference static_basic_string<CharT, CapacityT>::at( size_type pos ) const
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
 	return ( *this )[pos];
@@ -273,26 +273,26 @@ inline typename static_basic_string<Element, ElementCapacity>::const_reference s
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reference static_basic_string<Element, ElementCapacity>::operator[]( size_type pos )
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reference static_basic_string<CharT, CapacityT>::operator[]( size_type pos )
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
-	return m_Storage[pos];
+	return mStorage[pos];
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reference static_basic_string<Element, ElementCapacity>::operator[]( size_type pos ) const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reference static_basic_string<CharT, CapacityT>::operator[]( size_type pos ) const
 {
 	RF_ASSERT_MSG( pos < size(), "Invalid pos accesses past end" );
-	return m_Storage[pos];
+	return mStorage[pos];
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reference static_basic_string<Element, ElementCapacity>::front()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reference static_basic_string<CharT, CapacityT>::front()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[0];
@@ -300,8 +300,8 @@ inline typename static_basic_string<Element, ElementCapacity>::reference static_
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reference static_basic_string<Element, ElementCapacity>::front() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reference static_basic_string<CharT, CapacityT>::front() const
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[0];
@@ -309,8 +309,8 @@ inline typename static_basic_string<Element, ElementCapacity>::const_reference s
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reference static_basic_string<Element, ElementCapacity>::back()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reference static_basic_string<CharT, CapacityT>::back()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[size() - 1];
@@ -318,8 +318,8 @@ inline typename static_basic_string<Element, ElementCapacity>::reference static_
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reference static_basic_string<Element, ElementCapacity>::back() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reference static_basic_string<CharT, CapacityT>::back() const
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting access on empty container" );
 	return ( *this )[size() - 1];
@@ -327,148 +327,148 @@ inline typename static_basic_string<Element, ElementCapacity>::const_reference s
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::value_type* static_basic_string<Element, ElementCapacity>::data()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::value_type* static_basic_string<CharT, CapacityT>::data()
 {
-	return &( m_Storage[0] );
+	return &( mStorage[0] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::value_type const* static_basic_string<Element, ElementCapacity>::data() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::value_type const* static_basic_string<CharT, CapacityT>::data() const
 {
-	return &( m_Storage[0] );
+	return &( mStorage[0] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::value_type const* static_basic_string<Element, ElementCapacity>::c_str() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::value_type const* static_basic_string<CharT, CapacityT>::c_str() const
 {
 	return data();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>::operator basic_string_view<Element>() const
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>::operator basic_string_view<CharT>() const
 {
-	return basic_string_view<Element>( data(), size() );
+	return basic_string_view<CharT>( data(), size() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::begin()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::iterator static_basic_string<CharT, CapacityT>::begin()
 {
-	return &( m_Storage[0] );
+	return &( mStorage[0] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_iterator static_basic_string<Element, ElementCapacity>::begin() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_iterator static_basic_string<CharT, CapacityT>::begin() const
 {
-	return &( m_Storage[0] );
+	return &( mStorage[0] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_iterator static_basic_string<Element, ElementCapacity>::cbegin() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_iterator static_basic_string<CharT, CapacityT>::cbegin() const
 {
 	return begin();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::end()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::iterator static_basic_string<CharT, CapacityT>::end()
 {
-	return &( m_Storage[size()] );
+	return &( mStorage[size()] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_iterator static_basic_string<Element, ElementCapacity>::end() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_iterator static_basic_string<CharT, CapacityT>::end() const
 {
-	return &( m_Storage[size()] );
+	return &( mStorage[size()] );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_iterator static_basic_string<Element, ElementCapacity>::cend() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_iterator static_basic_string<CharT, CapacityT>::cend() const
 {
 	return end();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reverse_iterator static_basic_string<Element, ElementCapacity>::rbegin()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reverse_iterator static_basic_string<CharT, CapacityT>::rbegin()
 {
 	return reverse_iterator( end() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reverse_iterator static_basic_string<Element, ElementCapacity>::rbegin() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reverse_iterator static_basic_string<CharT, CapacityT>::rbegin() const
 {
 	return const_reverse_iterator( end() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reverse_iterator static_basic_string<Element, ElementCapacity>::crbegin() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reverse_iterator static_basic_string<CharT, CapacityT>::crbegin() const
 {
 	return const_reverse_iterator( cend() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::reverse_iterator static_basic_string<Element, ElementCapacity>::rend()
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::reverse_iterator static_basic_string<CharT, CapacityT>::rend()
 {
 	return reverse_iterator( begin() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reverse_iterator static_basic_string<Element, ElementCapacity>::rend() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reverse_iterator static_basic_string<CharT, CapacityT>::rend() const
 {
 	return const_reverse_iterator( begin() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::const_reverse_iterator static_basic_string<Element, ElementCapacity>::crend() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::const_reverse_iterator static_basic_string<CharT, CapacityT>::crend() const
 {
 	return const_reverse_iterator( cbegin() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline bool static_basic_string<Element, ElementCapacity>::empty() const
+template<typename CharT, size_t CapacityT>
+inline bool static_basic_string<CharT, CapacityT>::empty() const
 {
 	return size() == 0;
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::size_type static_basic_string<Element, ElementCapacity>::size() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::size_type static_basic_string<CharT, CapacityT>::size() const
 {
 	for( size_t i = 0; i < capacity(); i++ )
 	{
-		if( m_Storage[i] == Element{} )
+		if( mStorage[i] == CharT{} )
 		{
 			return i;
 		}
@@ -478,24 +478,24 @@ inline typename static_basic_string<Element, ElementCapacity>::size_type static_
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::size_type static_basic_string<Element, ElementCapacity>::length() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::size_type static_basic_string<CharT, CapacityT>::length() const
 {
 	return size();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::size_type static_basic_string<Element, ElementCapacity>::max_size() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::size_type static_basic_string<CharT, CapacityT>::max_size() const
 {
 	return fixed_capacity;
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::reserve( size_type newCap ) const
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::reserve( size_type newCap ) const
 {
 	RF_ASSERT_MSG( newCap <= max_size(), "Cannot grow beyond max size" );
 	return;
@@ -503,24 +503,24 @@ inline void static_basic_string<Element, ElementCapacity>::reserve( size_type ne
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::size_type static_basic_string<Element, ElementCapacity>::capacity() const
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::size_type static_basic_string<CharT, CapacityT>::capacity() const
 {
 	return max_size();
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::shrink_to_fit()
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::shrink_to_fit()
 {
 	// No...
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::clear()
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::clear()
 {
 	while( empty() == false )
 	{
@@ -530,8 +530,8 @@ inline void static_basic_string<Element, ElementCapacity>::clear()
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::push_back( value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::push_back( value_type const& value )
 {
 	value_type copy = value;
 	push_back( rftl::move( copy ) );
@@ -539,28 +539,28 @@ inline void static_basic_string<Element, ElementCapacity>::push_back( value_type
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::push_back( value_type&& value )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::push_back( value_type&& value )
 {
-	RF_ASSERT_MSG( value != Element{}, "Null characters not supported" );
+	RF_ASSERT_MSG( value != CharT{}, "Null characters not supported" );
 	RF_ASSERT_MSG( size() < capacity(), "Attempting grow on full container" );
-	m_Storage[size()] = rftl::move( value );
+	mStorage[size()] = rftl::move( value );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::pop_back()
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::pop_back()
 {
 	RF_ASSERT_MSG( empty() == false, "Attempting pop_back on empty container" );
 	RF_ASSERT( size() > 0 );
-	m_Storage[size() - 1] = {};
+	mStorage[size() - 1] = {};
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::insert( const_iterator pos, const value_type& value )
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::iterator static_basic_string<CharT, CapacityT>::insert( const_iterator pos, const value_type& value )
 {
 	value_type copy = value;
 	return insert( rftl::move( copy ) );
@@ -568,8 +568,8 @@ inline typename static_basic_string<Element, ElementCapacity>::iterator static_b
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::insert( const_iterator pos, value_type&& value )
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::iterator static_basic_string<CharT, CapacityT>::insert( const_iterator pos, value_type&& value )
 {
 	RF_ASSERT( pos >= begin() );
 	RF_ASSERT( pos <= end() );
@@ -579,7 +579,7 @@ inline typename static_basic_string<Element, ElementCapacity>::iterator static_b
 		iterator const dest = iter;
 		iterator const source = iter - 1;
 		*dest = rftl::move( *source );
-		*source = Element{};
+		*source = CharT{};
 	}
 	iterator const mutablePos = const_cast<iterator>( pos );
 	*mutablePos = rftl::move( value );
@@ -588,8 +588,8 @@ inline typename static_basic_string<Element, ElementCapacity>::iterator static_b
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline typename static_basic_string<Element, ElementCapacity>::iterator static_basic_string<Element, ElementCapacity>::erase( const_iterator pos )
+template<typename CharT, size_t CapacityT>
+inline typename static_basic_string<CharT, CapacityT>::iterator static_basic_string<CharT, CapacityT>::erase( const_iterator pos )
 {
 	RF_ASSERT( pos >= begin() );
 	RF_ASSERT( pos <= end() );
@@ -600,15 +600,15 @@ inline typename static_basic_string<Element, ElementCapacity>::iterator static_b
 		iterator dest = iter;
 		iterator source = iter + 1;
 		*dest = rftl::move( *source );
-		*source = Element{};
+		*source = CharT{};
 	}
 	return mutablePos;
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( static_basic_string const& other )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator+=( static_basic_string const& other )
 {
 	append( other.begin(), other.end() );
 	return *this;
@@ -616,9 +616,9 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<size_t OtherCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( static_basic_string<value_type, OtherCapacity> const& other )
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator+=( static_basic_string<value_type, OtherCapacity> const& other )
 {
 	append( other.begin(), other.end() );
 	return *this;
@@ -626,8 +626,8 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator+=( value_type const& value )
 {
 	push_back( value );
 	return *this;
@@ -635,8 +635,8 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( rftl::initializer_list<value_type> init )
+template<typename CharT, size_t CapacityT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator+=( rftl::initializer_list<value_type> init )
 {
 	append( init );
 	return *this;
@@ -644,10 +644,10 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename ViewT>
-	requires static_string_details::StringViewLike<Element, ViewT>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( ViewT const& other )
+	requires static_string_details::StringViewLike<CharT, ViewT>
+inline static_basic_string<CharT, CapacityT>& static_basic_string<CharT, CapacityT>::operator+=( ViewT const& other )
 {
 	append( other );
 	return *this;
@@ -655,12 +655,12 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename IntegralT>
-	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
-inline IntegralT static_basic_string<Element, ElementCapacity>::as_integer() const
+	requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
+inline IntegralT static_basic_string<CharT, CapacityT>::as_integer() const
 {
-	static_assert( sizeof( m_Storage ) == sizeof( IntegralT ) );
+	static_assert( sizeof( mStorage ) == sizeof( IntegralT ) );
 	IntegralT retVal = {};
 	memcpy( &retVal, data(), sizeof( retVal ) );
 	return retVal;
@@ -668,8 +668,8 @@ inline IntegralT static_basic_string<Element, ElementCapacity>::as_integer() con
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::resize( size_type count, value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::resize( size_type count, value_type const& value )
 {
 	while( size() > count )
 	{
@@ -683,9 +683,9 @@ inline void static_basic_string<Element, ElementCapacity>::resize( size_type cou
 
 ///////////////////////////////////////////////////////////////////////////////
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<class InputIterator>
-inline void static_basic_string<Element, ElementCapacity>::append( InputIterator first, InputIterator term )
+inline void static_basic_string<CharT, CapacityT>::append( InputIterator first, InputIterator term )
 {
 	RF_ASSERT( first <= term );
 	InputIterator iter = first;
@@ -698,37 +698,37 @@ inline void static_basic_string<Element, ElementCapacity>::append( InputIterator
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::append( rftl::initializer_list<value_type> init )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::append( rftl::initializer_list<value_type> init )
 {
 	append( init.begin(), init.end() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename ViewT>
-	requires static_string_details::StringViewLike<Element, ViewT>
-inline void static_basic_string<Element, ElementCapacity>::append( ViewT const& other )
+	requires static_string_details::StringViewLike<CharT, ViewT>
+inline void static_basic_string<CharT, CapacityT>::append( ViewT const& other )
 {
-	rftl::basic_string_view<Element> const view( other );
+	rftl::basic_string_view<CharT> const view( other );
 	append( view.begin(), view.end() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<typename Convertible>
-inline void static_basic_string<Element, ElementCapacity>::append( rftl::initializer_list<Convertible> init )
+inline void static_basic_string<CharT, CapacityT>::append( rftl::initializer_list<Convertible> init )
 {
 	append( init.begin(), init.end() );
 }
 
 
 
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 template<class InputIterator>
-inline void static_basic_string<Element, ElementCapacity>::extract( InputIterator first, InputIterator term )
+inline void static_basic_string<CharT, CapacityT>::extract( InputIterator first, InputIterator term )
 {
 	RF_ASSERT( first <= term );
 	InputIterator iter = first;
@@ -741,8 +741,8 @@ inline void static_basic_string<Element, ElementCapacity>::extract( InputIterato
 
 
 
-template<typename Element, size_t ElementCapacity>
-inline void static_basic_string<Element, ElementCapacity>::grow( size_type growthAmount, value_type const& value )
+template<typename CharT, size_t CapacityT>
+inline void static_basic_string<CharT, CapacityT>::grow( size_type growthAmount, value_type const& value )
 {
 	RF_ASSERT( size() + growthAmount < max_size() );
 	for( size_type i = 0; i < growthAmount; i++ )

@@ -29,13 +29,13 @@ concept IntegerEquivalent =
 //  character larger, to enforce that a null character is present, which makes
 //  the string poorly suited to storage needs since it slightly more wasteful
 //  than storing the integer type
-template<typename Element, size_t ElementCapacity>
+template<typename CharT, size_t CapacityT>
 class static_basic_string
 {
 	//
 	// Types
 public:
-	typedef Element value_type;
+	typedef CharT value_type;
 	typedef void allocator_type;
 	typedef size_t size_type;
 	typedef ptrdiff_t difference_type;
@@ -52,7 +52,7 @@ public:
 	//
 	// Constants
 public:
-	static constexpr size_type fixed_capacity = ElementCapacity;
+	static constexpr size_type fixed_capacity = CapacityT;
 
 
 	//
@@ -70,12 +70,12 @@ public:
 	static_basic_string( static_basic_string<value_type, OtherCapacity>&& other );
 	static_basic_string( rftl::initializer_list<value_type> init );
 	template<typename ViewT>
-		requires static_string_details::StringViewLike<Element, ViewT>
+		requires static_string_details::StringViewLike<CharT, ViewT>
 	explicit static_basic_string( ViewT const& other );
 	template<typename Convertible>
 	static_basic_string( rftl::initializer_list<Convertible> init );
 	template<typename IntegralT>
-		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+		requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
 	explicit static_basic_string( IntegralT const& mem );
 	~static_basic_string();
 
@@ -89,7 +89,7 @@ public:
 	template<typename StringViewLike>
 	static_basic_string& operator=( StringViewLike const& other );
 	template<typename IntegralT>
-		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+		requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
 	static_basic_string& operator=( IntegralT const& mem );
 
 	void assign( size_type count, value_type const& value );
@@ -97,10 +97,10 @@ public:
 	void assign( InputIterator first, InputIterator term );
 	void assign( rftl::initializer_list<value_type> init );
 	template<typename ViewT>
-		requires static_string_details::StringViewLike<Element, ViewT>
+		requires static_string_details::StringViewLike<CharT, ViewT>
 	void assign( ViewT const& other );
 	template<typename IntegralT>
-		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+		requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
 	void assign( IntegralT const& mem );
 
 	reference at( size_type pos );
@@ -119,7 +119,7 @@ public:
 	value_type const* data() const;
 
 	value_type const* c_str() const;
-	operator basic_string_view<Element>() const;
+	operator basic_string_view<CharT>() const;
 
 	iterator begin();
 	const_iterator begin() const;
@@ -161,13 +161,13 @@ public:
 	static_basic_string& operator+=( value_type const& value );
 	static_basic_string& operator+=( rftl::initializer_list<value_type> init );
 	template<typename ViewT>
-		requires static_string_details::StringViewLike<Element, ViewT>
+		requires static_string_details::StringViewLike<CharT, ViewT>
 	static_basic_string& operator+=( ViewT const& other );
 
 	void resize( size_type count, value_type const& value );
 
 	template<typename IntegralT>
-		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+		requires static_string_details::IntegerEquivalent<CharT[CapacityT], IntegralT>
 	IntegralT as_integer() const;
 
 
@@ -178,7 +178,7 @@ private:
 	void append( InputIterator first, InputIterator term );
 	void append( rftl::initializer_list<value_type> init );
 	template<typename ViewT>
-		requires static_string_details::StringViewLike<Element, ViewT>
+		requires static_string_details::StringViewLike<CharT, ViewT>
 	void append( ViewT const& other );
 	template<typename Convertible>
 	void append( rftl::initializer_list<Convertible> init );
@@ -189,30 +189,30 @@ private:
 	//
 	// Private data
 private:
-	Element m_Storage[ElementCapacity] = {};
-	Element const mNullTerminator = {};
+	CharT mStorage[CapacityT] = {};
+	CharT const mNullTerminator = {};
 };
 
 
-template<typename Element, size_t LHSCapacity, size_t RHSCapacity>
-bool operator==( static_basic_string<Element, LHSCapacity> const& lhs, static_basic_string<Element, LHSCapacity> const& rhs );
-template<typename Element, size_t LHSCapacity, size_t RHSCapacity>
-bool operator!=( static_basic_string<Element, LHSCapacity> const& lhs, static_basic_string<Element, LHSCapacity> const& rhs );
+template<typename CharT, size_t LHSCapacity, size_t RHSCapacity>
+bool operator==( static_basic_string<CharT, LHSCapacity> const& lhs, static_basic_string<CharT, LHSCapacity> const& rhs );
+template<typename CharT, size_t LHSCapacity, size_t RHSCapacity>
+bool operator!=( static_basic_string<CharT, LHSCapacity> const& lhs, static_basic_string<CharT, LHSCapacity> const& rhs );
 
-template<size_t ElementCapacity> using static_string = static_basic_string<char, ElementCapacity>;
-template<size_t ElementCapacity> using static_wstring = static_basic_string<wchar_t, ElementCapacity>;
-template<size_t ElementCapacity> using static_u8string = static_basic_string<char8_t, ElementCapacity>;
-template<size_t ElementCapacity> using static_u16string = static_basic_string<char16_t, ElementCapacity>;
-template<size_t ElementCapacity> using static_u32string = static_basic_string<char32_t, ElementCapacity>;
+template<size_t CapacityT> using static_string = static_basic_string<char, CapacityT>;
+template<size_t CapacityT> using static_wstring = static_basic_string<wchar_t, CapacityT>;
+template<size_t CapacityT> using static_u8string = static_basic_string<char8_t, CapacityT>;
+template<size_t CapacityT> using static_u16string = static_basic_string<char16_t, CapacityT>;
+template<size_t CapacityT> using static_u32string = static_basic_string<char32_t, CapacityT>;
 
 ///////////////////////////////////////////////////////////////////////////////
 }
 
 // Formats as a basic_string_view
-template<typename CharT, size_t ElementCapacity, typename CtxCharT>
-struct rftl::formatter<rftl::static_basic_string<CharT, ElementCapacity>, CtxCharT> : rftl::formatter<rftl::basic_string_view<CharT>, CtxCharT>
+template<typename CharT, size_t CapacityT, typename CtxCharT>
+struct rftl::formatter<rftl::static_basic_string<CharT, CapacityT>, CtxCharT> : rftl::formatter<rftl::basic_string_view<CharT>, CtxCharT>
 {
-	using Input = rftl::static_basic_string<CharT, ElementCapacity>;
+	using Input = rftl::static_basic_string<CharT, CapacityT>;
 	using Shim = rftl::basic_string_view<CharT>;
 	using Base = rftl::formatter<Shim, CtxCharT>;
 
