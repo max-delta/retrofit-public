@@ -107,7 +107,7 @@ IndentCaseLabels : true
 IndentExternBlock : NoIndent
 IndentGotoLabels : true
 IndentPPDirectives : BeforeHash
-IndentRequires : false
+IndentRequiresClause : true
 IndentWidth : 4
 IndentWrappedFunctionNames : false
 #InsertTrailingCommas
@@ -127,6 +127,10 @@ PPIndentWidth : -1
 #RawStringFormats
 ReferenceAlignment : Pointer
 ReflowComments : false
+RemoveParentheses : Leave
+RequiresClausePosition: OwnLine
+RequiresExpressionIndentation : OuterScope
+SeparateDefinitionBlocks : Leave
 ShortNamespaceLines : 1
 SortIncludes : Never # But prefer CaseInsensitive
 SortUsingDeclarations : false
