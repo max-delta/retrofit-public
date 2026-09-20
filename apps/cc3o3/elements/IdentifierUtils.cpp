@@ -20,9 +20,7 @@ ElementIdentifier MakeElementIdentifier( ElementBytes const& identifier )
 ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 {
 	static_assert( ElementString::fixed_capacity == sizeof( ElementIdentifier ) );
-	ElementIdentifier retVal = {};
-	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
-	return retVal;
+	return identifier.as_integer<ElementIdentifier>();
 }
 
 
@@ -30,9 +28,7 @@ ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 ElementIdentifier MakeElementIdentifier( rftl::string_view const& identifier )
 {
 	RF_ASSERT( identifier.size() <= ElementString::fixed_capacity );
-	ElementIdentifier retVal = {};
-	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
-	return retVal;
+	return ElementString( identifier ).as_integer<ElementIdentifier>();
 }
 
 
@@ -50,9 +46,7 @@ ElementBytes GetElementBytes( ElementIdentifier identifier )
 ElementString GetElementString( ElementIdentifier identifier )
 {
 	static_assert( ElementString::fixed_capacity == sizeof( ElementIdentifier ) );
-	ElementString retVal = {};
-	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
-	return retVal;
+	return ElementString( identifier );
 }
 
 
@@ -98,9 +92,7 @@ InnateIdentifier MakeInnateIdentifier( InnateBytes const& identifier )
 InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 {
 	static_assert( InnateString::fixed_capacity == sizeof( InnateIdentifier ) );
-	InnateIdentifier retVal = {};
-	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
-	return retVal;
+	return identifier.as_integer<InnateIdentifier>();
 }
 
 
@@ -108,9 +100,7 @@ InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 InnateIdentifier MakeInnateIdentifier( rftl::string_view const& identifier )
 {
 	RF_ASSERT( identifier.size() <= InnateString::fixed_capacity );
-	InnateIdentifier retVal = {};
-	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
-	return retVal;
+	return InnateString( identifier ).as_integer<InnateIdentifier>();
 }
 
 
@@ -128,9 +118,7 @@ InnateBytes GetInnateBytes( InnateIdentifier identifier )
 InnateString GetInnateString( InnateIdentifier identifier )
 {
 	static_assert( InnateString::fixed_capacity == sizeof( InnateIdentifier ) );
-	InnateString retVal = {};
-	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
-	return retVal;
+	return InnateString( identifier );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
