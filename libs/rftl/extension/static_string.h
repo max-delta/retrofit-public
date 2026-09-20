@@ -5,12 +5,30 @@
 #include "rftl/iterator"
 #include "rftl/format"
 #include "rftl/string_view"
+#include "rftl/type_traits"
 
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
+namespace static_string_details {
+template<typename CharT, typename ViewT>
+concept StringViewLike = requires( ViewT const& t ) { basic_string_view<CharT>( t ); };
 
+template<typename ArrayT, typename IntegralT>
+concept IntegerEquivalent =
+	is_integral<IntegralT>::value &&
+	is_unsigned<IntegralT>::value &&
+	sizeof( IntegralT ) == sizeof( ArrayT );
+}
+///////////////////////////////////////////////////////////////////////////////
+
+// Statically-size storage for strings
 // NOTE: Cannot store null characters
+// NOTE: If sized to match an integral type, allows easy conversion for storage
+// NOTE: When trying to match to an integer, note that the string is one
+//  character larger, to enforce that a null character is present, which makes
+//  the string poorly suited to storage needs since it slightly more wasteful
+//  than storing the integer type
 template<typename Element, size_t ElementCapacity>
 class static_basic_string
 {
@@ -51,10 +69,14 @@ public:
 	template<size_t OtherCapacity>
 	static_basic_string( static_basic_string<value_type, OtherCapacity>&& other );
 	static_basic_string( rftl::initializer_list<value_type> init );
-	template<typename StringViewLike>
-	explicit static_basic_string( StringViewLike const& other );
+	template<typename ViewT>
+		requires static_string_details::StringViewLike<Element, ViewT>
+	explicit static_basic_string( ViewT const& other );
 	template<typename Convertible>
 	static_basic_string( rftl::initializer_list<Convertible> init );
+	template<typename IntegralT>
+		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+	explicit static_basic_string( IntegralT const& mem );
 	~static_basic_string();
 
 	static_basic_string& operator=( static_basic_string const& other );
@@ -66,13 +88,20 @@ public:
 	static_basic_string& operator=( rftl::initializer_list<value_type> init );
 	template<typename StringViewLike>
 	static_basic_string& operator=( StringViewLike const& other );
+	template<typename IntegralT>
+		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+	static_basic_string& operator=( IntegralT const& mem );
 
 	void assign( size_type count, value_type const& value );
 	template<class InputIterator>
 	void assign( InputIterator first, InputIterator term );
 	void assign( rftl::initializer_list<value_type> init );
-	template<typename StringViewLike>
-	void assign( StringViewLike const& other );
+	template<typename ViewT>
+		requires static_string_details::StringViewLike<Element, ViewT>
+	void assign( ViewT const& other );
+	template<typename IntegralT>
+		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+	void assign( IntegralT const& mem );
 
 	reference at( size_type pos );
 	const_reference at( size_type pos ) const;
@@ -131,10 +160,15 @@ public:
 	static_basic_string& operator+=( static_basic_string<value_type, OtherCapacity> const& other );
 	static_basic_string& operator+=( value_type const& value );
 	static_basic_string& operator+=( rftl::initializer_list<value_type> init );
-	template<typename StringViewLike>
-	static_basic_string& operator+=( StringViewLike const& other );
+	template<typename ViewT>
+		requires static_string_details::StringViewLike<Element, ViewT>
+	static_basic_string& operator+=( ViewT const& other );
 
 	void resize( size_type count, value_type const& value );
+
+	template<typename IntegralT>
+		requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+	IntegralT as_integer() const;
 
 
 	//
@@ -143,8 +177,9 @@ private:
 	template<class InputIterator>
 	void append( InputIterator first, InputIterator term );
 	void append( rftl::initializer_list<value_type> init );
-	template<typename StringViewLike>
-	void append( StringViewLike const& other );
+	template<typename ViewT>
+		requires static_string_details::StringViewLike<Element, ViewT>
+	void append( ViewT const& other );
 	template<typename Convertible>
 	void append( rftl::initializer_list<Convertible> init );
 	template<class InputIterator>

@@ -85,8 +85,9 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl:
 
 
 template<typename Element, size_t ElementCapacity>
-template<typename StringViewLike>
-inline static_basic_string<Element, ElementCapacity>::static_basic_string( StringViewLike const& other )
+template<typename ViewT>
+	requires static_string_details::StringViewLike<Element, ViewT>
+inline static_basic_string<Element, ElementCapacity>::static_basic_string( ViewT const& other )
 	: static_basic_string()
 {
 	append( other );
@@ -100,6 +101,16 @@ inline static_basic_string<Element, ElementCapacity>::static_basic_string( rftl:
 	: static_basic_string()
 {
 	append( init );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename IntegralT>
+	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+inline static_basic_string<Element, ElementCapacity>::static_basic_string( IntegralT const& mem )
+{
+	assign( mem );
 }
 
 
@@ -184,6 +195,17 @@ inline static_basic_string<Element, ElementCapacity>& rftl::static_basic_string<
 
 
 template<typename Element, size_t ElementCapacity>
+template<typename IntegralT>
+	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator=( IntegralT const& mem )
+{
+	assign( mem );
+	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
 inline void static_basic_string<Element, ElementCapacity>::assign( size_type count, value_type const& value )
 {
 	clear();
@@ -212,11 +234,23 @@ inline void static_basic_string<Element, ElementCapacity>::assign( rftl::initial
 
 
 template<typename Element, size_t ElementCapacity>
-template<typename StringViewLike>
-inline void static_basic_string<Element, ElementCapacity>::assign( StringViewLike const& other )
+template<typename ViewT>
+	requires static_string_details::StringViewLike<Element, ViewT>
+inline void static_basic_string<Element, ElementCapacity>::assign( ViewT const& other )
 {
 	clear();
 	append( other );
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename IntegralT>
+	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+inline void static_basic_string<Element, ElementCapacity>::assign( IntegralT const& mem )
+{
+	static_assert( sizeof( m_Storage ) == sizeof( mem ) );
+	memcpy( data(), &mem, sizeof( mem ) );
 }
 
 
@@ -611,11 +645,25 @@ inline static_basic_string<Element, ElementCapacity>& static_basic_string<Elemen
 
 
 template<typename Element, size_t ElementCapacity>
-template<typename StringViewLike>
-inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( StringViewLike const& other )
+template<typename ViewT>
+	requires static_string_details::StringViewLike<Element, ViewT>
+inline static_basic_string<Element, ElementCapacity>& static_basic_string<Element, ElementCapacity>::operator+=( ViewT const& other )
 {
 	append( other );
 	return *this;
+}
+
+
+
+template<typename Element, size_t ElementCapacity>
+template<typename IntegralT>
+	requires static_string_details::IntegerEquivalent<Element[ElementCapacity], IntegralT>
+inline IntegralT static_basic_string<Element, ElementCapacity>::as_integer() const
+{
+	static_assert( sizeof( m_Storage ) == sizeof( IntegralT ) );
+	IntegralT retVal = {};
+	memcpy( &retVal, data(), sizeof( retVal ) );
+	return retVal;
 }
 
 
@@ -659,8 +707,9 @@ inline void static_basic_string<Element, ElementCapacity>::append( rftl::initial
 
 
 template<typename Element, size_t ElementCapacity>
-template<typename StringViewLike>
-inline void static_basic_string<Element, ElementCapacity>::append( StringViewLike const& other )
+template<typename ViewT>
+	requires static_string_details::StringViewLike<Element, ViewT>
+inline void static_basic_string<Element, ElementCapacity>::append( ViewT const& other )
 {
 	rftl::basic_string_view<Element> const view( other );
 	append( view.begin(), view.end() );

@@ -12,6 +12,7 @@ TEST( StaticString, BasicEmpty )
 {
 	rftl::static_string<5> empty;
 	static_assert( rftl::static_string<5>::fixed_capacity == 5 );
+	static_assert( sizeof( rftl::static_string<5> ) == 6 );
 	ASSERT_TRUE( empty.capacity() == 5 );
 	ASSERT_TRUE( empty.max_size() == 5 );
 	ASSERT_TRUE( empty.empty() );
@@ -493,6 +494,20 @@ TEST( StaticString, StringConversion )
 	sa.clear();
 	ASSERT_TRUE( sa.c_str() == rftl::string_view( "" ) );
 	ASSERT_TRUE( static_cast<rftl::string_view>( sa ) == "" );
+}
+
+
+
+TEST( StaticString, IntegerConversion )
+{
+	static constexpr uint8_t u8 = 0x12;
+	static constexpr uint16_t u16 = 0x1234;
+	static constexpr uint32_t u32 = 0x1234'5678;
+	static constexpr uint64_t u64 = 0x1234'5678'9ABC'DEF0;
+	ASSERT_TRUE( rftl::static_string<1>( u8 ).as_integer<uint8_t>() == u8 );
+	ASSERT_TRUE( rftl::static_string<2>( u16 ).as_integer<uint16_t>() == u16 );
+	ASSERT_TRUE( rftl::static_string<4>( u32 ).as_integer<uint32_t>() == u32 );
+	ASSERT_TRUE( rftl::static_string<8>( u64 ).as_integer<uint64_t>() == u64 );
 }
 
 
