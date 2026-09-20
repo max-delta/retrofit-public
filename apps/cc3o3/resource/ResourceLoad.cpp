@@ -124,7 +124,7 @@ rftl::vector<UniquePtr<T>> LoadFromDirectory(
 		if( resource == nullptr )
 		{
 			// NOTE: Will still store the nullptr as an indicator of the issue,
-			//  since a load failure could be prett catastrophic to downstream
+			//  since a load failure could be pretty catastrophic to downstream
 			//  code that expected it
 			partialFailure = true;
 		}

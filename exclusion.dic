@@ -9,6 +9,8 @@ consteval
 desc
 deserialize
 deserialized
+deserializer
+deserializing
 fastfail
 fpack
 framepack

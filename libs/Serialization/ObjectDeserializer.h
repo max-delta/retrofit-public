@@ -46,7 +46,7 @@ public:
 		ClassConstructFunc mClassConstructFunc = nullptr;
 
 		// When a table of contents (TOC) entry is encountered, preload will
-		//  try to construct the objects, but this behavior can be overriden
+		//  try to construct the objects, but this behavior can be overridden
 		// NOTE: An empty return will result in the normal TOC logic
 		//  progressing as usual
 		using TocInstanceOverrideSig = rftl::optional<ObjectInstance>(
