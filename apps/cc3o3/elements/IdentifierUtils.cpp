@@ -9,6 +9,7 @@ namespace RF::cc::element {
 
 ElementIdentifier MakeElementIdentifier( ElementBytes const& identifier )
 {
+	static_assert( sizeof( ElementBytes ) == sizeof( ElementIdentifier ) );
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
 	return retVal;
@@ -18,6 +19,7 @@ ElementIdentifier MakeElementIdentifier( ElementBytes const& identifier )
 
 ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 {
+	static_assert( ElementString::fixed_capacity == sizeof( ElementIdentifier ) );
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
 	return retVal;
@@ -27,7 +29,7 @@ ElementIdentifier MakeElementIdentifier( ElementString const& identifier )
 
 ElementIdentifier MakeElementIdentifier( rftl::string_view const& identifier )
 {
-	RF_ASSERT( identifier.size() <= sizeof( ElementIdentifier ) );
+	RF_ASSERT( identifier.size() <= ElementString::fixed_capacity );
 	ElementIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
 	return retVal;
@@ -37,6 +39,7 @@ ElementIdentifier MakeElementIdentifier( rftl::string_view const& identifier )
 
 ElementBytes GetElementBytes( ElementIdentifier identifier )
 {
+	static_assert( sizeof( ElementBytes ) == sizeof( ElementIdentifier ) );
 	ElementBytes retVal = {};
 	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
@@ -46,6 +49,7 @@ ElementBytes GetElementBytes( ElementIdentifier identifier )
 
 ElementString GetElementString( ElementIdentifier identifier )
 {
+	static_assert( ElementString::fixed_capacity == sizeof( ElementIdentifier ) );
 	ElementString retVal = {};
 	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
@@ -83,6 +87,7 @@ ElementSynopsis GetElementSynopsis( ElementIdentifier identifier )
 
 InnateIdentifier MakeInnateIdentifier( InnateBytes const& identifier )
 {
+	static_assert( sizeof( InnateBytes ) == sizeof( InnateIdentifier ) );
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
 	return retVal;
@@ -92,6 +97,7 @@ InnateIdentifier MakeInnateIdentifier( InnateBytes const& identifier )
 
 InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 {
+	static_assert( InnateString::fixed_capacity == sizeof( InnateIdentifier ) );
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), sizeof( retVal ) );
 	return retVal;
@@ -101,7 +107,7 @@ InnateIdentifier MakeInnateIdentifier( InnateString const& identifier )
 
 InnateIdentifier MakeInnateIdentifier( rftl::string_view const& identifier )
 {
-	RF_ASSERT( identifier.size() <= sizeof( InnateIdentifier ) );
+	RF_ASSERT( identifier.size() <= InnateString::fixed_capacity );
 	InnateIdentifier retVal = {};
 	memcpy( &retVal, identifier.data(), math::Min( identifier.size(), sizeof( retVal ) ) );
 	return retVal;
@@ -111,6 +117,7 @@ InnateIdentifier MakeInnateIdentifier( rftl::string_view const& identifier )
 
 InnateBytes GetInnateBytes( InnateIdentifier identifier )
 {
+	static_assert( sizeof( InnateBytes ) == sizeof( InnateIdentifier ) );
 	InnateBytes retVal = {};
 	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
@@ -120,6 +127,7 @@ InnateBytes GetInnateBytes( InnateIdentifier identifier )
 
 InnateString GetInnateString( InnateIdentifier identifier )
 {
+	static_assert( InnateString::fixed_capacity == sizeof( InnateIdentifier ) );
 	InnateString retVal = {};
 	memcpy( retVal.data(), &identifier, sizeof( identifier ) );
 	return retVal;
