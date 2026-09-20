@@ -1,0 +1,28 @@
+#pragma once
+#include "cc3o3/scene/SceneFwd.h"
+
+#include "rftl/string"
+#include "rftl/vector"
+
+
+namespace RF::cc::scene {
+///////////////////////////////////////////////////////////////////////////////
+
+struct LayerDesc
+{
+	rftl::string mTileset;
+	rftl::string mTileLayer;
+	rftl::string mMode;
+	int8_t mDepth = 0;
+	uint8_t mParallax = 0;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+struct SceneDesc
+{
+	rftl::vector<LayerDesc> mLayers;
+};
+
+///////////////////////////////////////////////////////////////////////////////
+}

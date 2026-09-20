@@ -332,6 +332,12 @@
 		<ClCompile Include="cutscene\CinematicController.cpp">
 			<Filter>cutscene</Filter>
 		</ClCompile>
+		<ClCompile Include="scene\SceneDesc.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
+		<ClCompile Include="scene\Scene.cpp">
+			<Filter>scene</Filter>
+		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -917,6 +923,21 @@
 		<ClInclude Include="cutscene\project.h">
 			<Filter>cutscene</Filter>
 		</ClInclude>
+		<ClInclude Include="scene\SceneDesc.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="scene\SceneFwd.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="scene\stdafx.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="scene\project.h">
+			<Filter>scene</Filter>
+		</ClInclude>
+		<ClInclude Include="scene\Scene.h">
+			<Filter>scene</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="appstates">
@@ -1005,6 +1026,9 @@
 		</Filter>
 		<Filter Include="cutscene">
 			<UniqueIdentifier>{45bd1cbc-ac04-48d8-b7f9-95b0ce670392}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="scene">
+			<UniqueIdentifier>{1b4e3d7d-4509-4c3b-9e22-50dd64e14bd6}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

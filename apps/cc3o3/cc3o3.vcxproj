@@ -78,6 +78,8 @@
 		<ClCompile Include="company\CompanyManager.cpp" />
 		<ClCompile Include="cutscene\CinematicController.cpp" />
 		<ClCompile Include="exfil\Exfiltrate.cpp" />
+		<ClCompile Include="scene\Scene.cpp" />
+		<ClCompile Include="scene\SceneDesc.cpp" />
 		<ClCompile Include="StartupConfig.cpp" />
 		<ClCompile Include="DeveloperHud.cpp" />
 		<ClCompile Include="elements\ElementDatabase.cpp" />
@@ -236,6 +238,11 @@
 		<ClInclude Include="exfil\Exfiltrate.h" />
 		<ClInclude Include="exfil\project.h" />
 		<ClInclude Include="exfil\stdafx.h" />
+		<ClInclude Include="scene\project.h" />
+		<ClInclude Include="scene\Scene.h" />
+		<ClInclude Include="scene\SceneDesc.h" />
+		<ClInclude Include="scene\SceneFwd.h" />
+		<ClInclude Include="scene\stdafx.h" />
 		<ClInclude Include="StartupConfig.h" />
 		<ClInclude Include="DeveloperHud.h" />
 		<ClInclude Include="elements\ElementDatabase.h" />

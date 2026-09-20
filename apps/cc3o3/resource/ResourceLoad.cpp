@@ -8,6 +8,7 @@
 #include "cc3o3/char/ElementSlots.h"
 #include "cc3o3/encounter/EncounterDesc.h"
 #include "cc3o3/overworld/OverworldDesc.h"
+#include "cc3o3/scene/SceneDesc.h"
 #include "cc3o3/site/SiteDesc.h"
 #include "cc3o3/save/SaveBlob.h"
 
@@ -40,6 +41,7 @@ enum : ResourceTypeIdentifier
 	CharData,
 	EncounterDesc,
 	OverworldDesc,
+	SceneDesc,
 	SaveBlob,
 	Loadout,
 	SiteDesc,
@@ -181,6 +183,10 @@ void InitializeLoader()
 		typeRegistry.AddResourceClass( OverworldDesc, "OverworldDesc" );
 		typeRegistry.AddResourceClass( OverworldDesc, "AreaDesc" );
 
+		typeRegistry.AddResourceType( SceneDesc, "Scene" );
+		typeRegistry.AddResourceClass( SceneDesc, "SceneDesc" );
+		typeRegistry.AddResourceClass( SceneDesc, "SceneLayerDesc" );
+
 		typeRegistry.AddResourceType( SaveBlob, "Save" );
 		typeRegistry.AddResourceClass( SaveBlob, "SaveBlob" );
 		typeRegistry.AddResourceClass( SaveBlob, "SaveFileBlob" );
@@ -228,6 +234,7 @@ RF_LOADER( details::type::RosterMemberDesc, campaign::RosterMemberDesc );
 RF_LOADER( details::type::CharData, character::CharData );
 RF_LOADER( details::type::EncounterDesc, encounter::EncounterDesc );
 RF_LOADER( details::type::OverworldDesc, overworld::OverworldDesc );
+RF_LOADER( details::type::SceneDesc, scene::SceneDesc );
 RF_LOADER( details::type::SaveBlob, save::SaveBlob );
 RF_LOADER( details::type::Loadout, character::ElementSlots );
 RF_LOADER( details::type::SiteDesc, site::SiteDesc );
