@@ -18,6 +18,7 @@ static constexpr bool kClassInfoDebugNames = RF_CONFIG_FLAG( RF_CONFIG_CLASSINFO
 static constexpr bool kInformativeLogging = RF_CONFIG_FLAG( RF_CONFIG_INFORMATIVE_LOGGING );
 static constexpr bool kVerboseLogging = RF_CONFIG_FLAG( RF_CONFIG_VERBOSE_LOGGING );
 static constexpr bool kTraceLogging = RF_CONFIG_FLAG( RF_CONFIG_TRACE_LOGGING );
+static constexpr bool kFileLogFlushing = RF_CONFIG_FLAG( RF_CONFIG_FILE_LOG_FLUSHING );
 static constexpr bool kDevCheats = RF_CONFIG_FLAG( RF_CONFIG_DEV_CHEATS );
 static constexpr bool kLongTimeouts = RF_CONFIG_FLAG( RF_CONFIG_LONG_TIMEOUTS );
 static constexpr bool kRollbackPerfOptimizations = RF_CONFIG_FLAG( RF_CONFIG_ROLLBACK_PERF_OPTIMIZATIONS );

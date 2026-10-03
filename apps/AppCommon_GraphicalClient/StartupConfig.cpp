@@ -33,6 +33,7 @@ void StartupConfig::AdjustFromArgs( cli::ArgParse const& args )
 	logControl( mInformativeLogging, "--loginfo", "--lognoinfo" );
 	logControl( mVerboseLogging, "--logdebug", "--lognodebug" );
 	logControl( mTraceLogging, "--logtrace", "--lognotrace" );
+	logControl( mFileLogFlushing, "--logflush", "--lognoflush" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

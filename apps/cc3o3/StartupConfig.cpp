@@ -14,6 +14,7 @@ namespace entries {
 static constexpr aside::CoffSectionEntry kLOGINFO( "LOGINFO", config::flag::kInformativeLogging );
 static constexpr aside::CoffSectionEntry kLOGVERB( "LOGVERB", config::flag::kVerboseLogging );
 static constexpr aside::CoffSectionEntry kLOGTRCE( "LOGTRCE", config::flag::kTraceLogging );
+static constexpr aside::CoffSectionEntry kLOGFLSH( "LOGFLSH", config::flag::kFileLogFlushing );
 }
 
 namespace data {
@@ -24,11 +25,12 @@ static aside::CoffSectionEntry sRFCFG[] = {
 	entries::kLOGINFO,
 	entries::kLOGVERB,
 	entries::kLOGTRCE,
+	entries::kLOGFLSH,
 	aside::CoffSectionEntry( "RFCFG^^", 0xFFFFFFFFFFFFFFFFull ),
 };
 }
 static constexpr rftl::span<aside::CoffSectionEntry> kRFCFG( data::sRFCFG );
-static_assert( kRFCFG.size() == 5 );
+static_assert( kRFCFG.size() == 6 );
 static_assert( sizeof( decltype( data::sRFCFG ) ) == 16 * kRFCFG.size() );
 static_assert( alignof( decltype( data::sRFCFG ) ) == 16 );
 
@@ -60,6 +62,7 @@ StartupConfig StartupConfig::FetchFromBinary()
 		retVal.mInformativeLogging = getOrAssert( kLOGINFO.GetName() );
 		retVal.mVerboseLogging = getOrAssert( kLOGVERB.GetName() );
 		retVal.mTraceLogging = getOrAssert( kLOGTRCE.GetName() );
+		retVal.mFileLogFlushing = getOrAssert( kLOGFLSH.GetName() );
 	}
 
 	return retVal;

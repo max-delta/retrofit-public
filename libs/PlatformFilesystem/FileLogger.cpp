@@ -24,6 +24,8 @@ struct FileLogState
 	VFSPath mDirectory;
 
 	SeekHandlePtr mLogFile;
+
+	bool mFlushing = false;
 };
 static thread::LockedData<FileLogState> mFileLogState = {};
 
@@ -90,8 +92,14 @@ void FileLogger( logging::LoggingRouter const& router, logging::LogEvent<char8_t
 			{
 				return;
 			}
+			SeekHandle& logFile = *state.mLogFile;
 
-			details::LogToSeekable( *state.mLogFile, router, event, args );
+			details::LogToSeekable( logFile, router, event, args );
+
+			if( state.mFlushing )
+			{
+				logFile.Flush();
+			}
 		} );
 }
 
@@ -112,6 +120,16 @@ void UnsetLogFileDirectory()
 	details::mFileLogState.Write( []( details::FileLogState& state ) -> void
 		{
 			return details::UnsetLogFileDirectory( state );
+		} );
+}
+
+
+
+void SetLogFileFlushing( bool flushing )
+{
+	details::mFileLogState.Write( [flushing]( details::FileLogState& state ) -> void
+		{
+			state.mFlushing = flushing;
 		} );
 }
 

@@ -151,6 +151,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing file logging..." );
 	{
 		file::SetLogFileDirectory( *gVfs, app::paths::LogsRoot() );
+		file::SetLogFileFlushing( config.mFileLogFlushing );
 
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();

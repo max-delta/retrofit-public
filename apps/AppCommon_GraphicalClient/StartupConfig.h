@@ -17,6 +17,7 @@ struct StartupConfig
 	bool mInformativeLogging = config::flag::kInformativeLogging;
 	bool mVerboseLogging = config::flag::kVerboseLogging;
 	bool mTraceLogging = config::flag::kTraceLogging;
+	bool mFileLogFlushing = config::flag::kFileLogFlushing;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

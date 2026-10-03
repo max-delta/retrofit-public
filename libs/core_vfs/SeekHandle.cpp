@@ -157,6 +157,16 @@ size_t SeekHandle::WriteBytes( void const* buffer, size_t numBytes )
 
 
 
+void SeekHandle::Flush()
+{
+	RF_ASSERT( mStreamBuf != nullptr );
+	rftl::ostream stream( mStreamBuf.Get() );
+
+	stream.flush();
+}
+
+
+
 WeakPtr<rftl::streambuf> SeekHandle::GetUnsafeTransientStreamBuffer()
 {
 	RF_ASSERT( mStreamBuf != nullptr );

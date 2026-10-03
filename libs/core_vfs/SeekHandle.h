@@ -33,6 +33,9 @@ public:
 	// NOTE: Similar to fwrite(...),
 	size_t WriteBytes( void const* buffer, size_t numBytes );
 
+	// NOTE: Similar to fflush(...),
+	void Flush();
+
 	// WARNING: This is unsafe to make streams around, as the stream will hold
 	//  a pointer to the underlying buffer control object, but not have a
 	//  mechanism to handle it being destroyed out from underneath the stream,

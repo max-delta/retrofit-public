@@ -16,5 +16,7 @@ PLATFORMFILESYSTEM_API void FileLogger( logging::LoggingRouter const& router, lo
 PLATFORMFILESYSTEM_API void SetLogFileDirectory( VFS& vfs, VFSPath const& directory );
 PLATFORMFILESYSTEM_API void UnsetLogFileDirectory();
 
+PLATFORMFILESYSTEM_API void SetLogFileFlushing( bool flushing );
+
 ///////////////////////////////////////////////////////////////////////////////
 }
