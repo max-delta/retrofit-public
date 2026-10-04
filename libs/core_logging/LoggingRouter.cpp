@@ -238,10 +238,10 @@ void LoggingRouter::LogInternal(
 {
 	// NOTE: Keeping the lock the whole time, since we also want to not only
 	//  protect against our internal variables, but prevent a handler
-	//  de-registration to go through, and have the unregisterer think that
+	//  de-registration to go through, and have the unregistration think that
 	//  it's safe to destroy the handler, since we still need to give it the
 	//  log message safely
-	// NOTE: If you have a case where your handler MUST be unregisterd
+	// NOTE: If you have a case where your handler MUST be unregistered
 	//  mid-write, then you will need to have a shim mechanism for your handler
 	//  to short-circuit the shim, abort, early out safely, and handle this
 	//  across all threads. So, not really advisable to get yourself stuck in

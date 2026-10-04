@@ -7,6 +7,7 @@ codepath
 const
 consteval
 desc
+descs
 deserialize
 deserialized
 deserializer

@@ -13,7 +13,7 @@ using UTF32HandlerFunc = void ( * )( LoggingRouter const&, LogEvent<char32_t> co
 
 struct HandlerDefinition
 {
-	// May recieve additional severities on multi-severity events
+	// May receive additional severities on multi-severity events
 	SeverityMask mSupportedSeverities = 0;
 
 	// Must support multi-threading
