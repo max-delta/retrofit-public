@@ -10,6 +10,11 @@ template<typename T, size_t N>
 bool contains( T const ( &container )[N], T const& value );
 
 template<typename Container>
+void sort( Container& container );
+template<typename Container, typename Compare>
+void sort( Container& container, Compare const& compare );
+
+template<typename Container>
 void pop_front_via_erase( Container& container );
 
 template<typename Container>

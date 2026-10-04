@@ -35,6 +35,20 @@ inline bool contains( T const ( &container )[N], T const& value )
 
 
 template<typename Container>
+void sort( Container& container )
+{
+	sort( container.begin(), container.end() );
+}
+
+template<typename Container, typename Compare>
+void sort( Container& container, Compare const& compare )
+{
+	sort( container.begin(), container.end(), compare );
+}
+
+
+
+template<typename Container>
 void pop_front_via_erase( Container& container )
 {
 	container.erase( container.begin() );
