@@ -56,7 +56,7 @@ void InsertFallbackLogger()
 
 	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
 	RF_ASSERT( sFallbackHandlerID == kInvalidHandlerID );
-	sFallbackHandlerID = router.RegisterHandler( fallbackDef );
+	sFallbackHandlerID = router.RegisterHandler( fallbackDef, kLatestHandlerPriority );
 	RF_ASSERT( sFallbackHandlerID != kInvalidHandlerID );
 }
 

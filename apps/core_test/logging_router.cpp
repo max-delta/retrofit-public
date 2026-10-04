@@ -51,16 +51,16 @@ void SetupStandardRouter( LoggingRouter& router )
 	HandlerDefinition handlerDef;
 	handlerDef.mSupportedSeverities = 0x1;
 	handlerDef.mUtf8HandlerFunc = Handler1;
-	router.RegisterHandler( handlerDef );
+	router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 	handlerDef.mSupportedSeverities = 0x2;
 	handlerDef.mUtf8HandlerFunc = Handler2;
-	router.RegisterHandler( handlerDef );
+	router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 	handlerDef.mSupportedSeverities = 0x4;
 	handlerDef.mUtf8HandlerFunc = Handler3;
-	router.RegisterHandler( handlerDef );
+	router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 	handlerDef.mSupportedSeverities = 0x7;
 	handlerDef.mUtf8HandlerFunc = HandlerAll;
-	router.RegisterHandler( handlerDef );
+	router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 }
 
 }
@@ -105,9 +105,9 @@ TEST( Logging, Registration )
 	handlerDef.mSupportedSeverities = 0x1;
 	handlerDef.mUtf8HandlerFunc = Invalid::InvalidFunc;
 
-	HandlerID const id1 = router.RegisterHandler( handlerDef );
+	HandlerID const id1 = router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 	ASSERT_NE( id1, kInvalidHandlerID );
-	HandlerID const id2 = router.RegisterHandler( handlerDef );
+	HandlerID const id2 = router.RegisterHandler( handlerDef, kEarliestHandlerPriority );
 	ASSERT_NE( id2, kInvalidHandlerID );
 	ASSERT_NE( id1, id2 );
 

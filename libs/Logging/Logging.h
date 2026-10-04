@@ -251,7 +251,7 @@ void LOGGING_API WriteContextString( rftl::basic_string<char32_t> const& context
 //////////////////////////////////////////////////////////////////////////////
 
 LOGGING_API LoggingRouter& GetOrCreateGlobalLoggingInstance();
-LOGGING_API HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition );
+LOGGING_API HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition, HandlerPriority priority );
 LOGGING_API bool UnregisterHandler( HandlerID handlerID );
 
 //////////////////////////////////////////////////////////////////////////////

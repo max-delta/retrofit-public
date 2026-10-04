@@ -22,13 +22,18 @@ class LoggingRouter
 public:
 	using SeverityStrings = rftl::array<char const*, 64>;
 private:
+	struct HandlerEntry
+	{
+		HandlerPriority mPriority = kInvalidHandlerPriority;
+		HandlerID mID = kInvalidHandlerID;
+		HandlerDefinition mDefinition = {};
+	};
 	static constexpr HandlerID kInitialHandlerID = kInvalidHandlerID + 1;
 	static constexpr SeverityMask kDefaultGlobalWhitelist = ~SeverityMask( 0 );
 	using ReaderWriterMutex = rftl::shared_mutex;
 	using ReaderLock = rftl::shared_lock<rftl::shared_mutex>;
 	using WriterLock = rftl::unique_lock<rftl::shared_mutex>;
-	using HandlerDefinitionByID = rftl::pair<HandlerID, HandlerDefinition>;
-	using HandlerDefinitionsByPriority = rftl::vector<HandlerDefinitionByID>;
+	using HandlerDefinitionsByPriority = rftl::vector<HandlerEntry>;
 	using SeverityMasksByCategoryKey = rftl::unordered_map<CategoryKey, SeverityMask, math::NullTerminatedStringHash>;
 
 
@@ -99,8 +104,9 @@ public:
 		rftl::format_args&& args ) const;
 
 	// Control which handlers are able to handle log events
-	// NOTE: Handlers are run in the order they are registered
-	HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition );
+	// NOTE: Handlers are run in priority order, and on conflict they use the
+	//  order they are registered in
+	HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition, HandlerPriority priority );
 	bool UnregisterHandler( HandlerID handlerID );
 
 	char const* GetStringFromCategoryKey( CategoryKey categoryKey ) const;

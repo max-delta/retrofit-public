@@ -5,6 +5,8 @@
 #include "core_math/math_bits.h"
 #include "core_unicode/StringConvert.h"
 
+#include "rftl/extension/algorithms.h"
+
 
 namespace RF::logging {
 ///////////////////////////////////////////////////////////////////////////////
@@ -102,7 +104,7 @@ void LoggingRouter::LogVA(
 
 
 
-HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const& handlerDefinition )
+HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const& handlerDefinition, HandlerPriority priority )
 {
 	WriterLock lock( mMultiReaderSingleWriterLock );
 
@@ -113,10 +115,28 @@ HandlerID LoggingRouter::RegisterHandler( HandlerDefinition const& handlerDefini
 			handlerDefinition.mUtf16HandlerFunc != nullptr ||
 			handlerDefinition.mUtf32HandlerFunc != nullptr,
 		"Bad param" );
+	RF_ASSERT_MSG( priority != kInvalidHandlerPriority, "Bad param" );
 
+	// Store
 	HandlerID const newID = mHandlerIDGenerator;
 	mHandlerIDGenerator++;
-	mHandlerDefinitionsByPriority.emplace_back( newID, handlerDefinition );
+	mHandlerDefinitionsByPriority.emplace_back(
+		HandlerEntry{
+			.mPriority = priority,
+			.mID = newID,
+			.mDefinition = handlerDefinition } );
+
+	// Sort by priority, then ID
+	rftl::sort(
+		mHandlerDefinitionsByPriority,
+		[]( HandlerEntry const& lhs, HandlerEntry const& rhs ) -> bool
+		{
+			if( lhs.mPriority != rhs.mPriority )
+			{
+				return lhs.mPriority < rhs.mPriority;
+			}
+			return lhs.mID < rhs.mID;
+		} );
 	return newID;
 }
 
@@ -130,7 +150,7 @@ bool LoggingRouter::UnregisterHandler( HandlerID handlerID )
 	HandlerDefinitionsByPriority::const_iterator iter = mHandlerDefinitionsByPriority.begin();
 	while( iter != mHandlerDefinitionsByPriority.end() )
 	{
-		if( iter->first == handlerID )
+		if( iter->mID == handlerID )
 		{
 			RF_ASSERT_MSG( removed == false, "Multiple handlers with the same ID found" );
 			iter = mHandlerDefinitionsByPriority.erase( iter );
@@ -244,9 +264,9 @@ void LoggingRouter::LogInternal(
 	logEvent.mTransientContextString = context;
 	logEvent.mTransientMessageFormatString = format;
 
-	for( HandlerDefinitionByID const& handlerDefPair : mHandlerDefinitionsByPriority )
+	for( HandlerEntry const& entry : mHandlerDefinitionsByPriority )
 	{
-		HandlerDefinition const& handlerDef = handlerDefPair.second;
+		HandlerDefinition const& handlerDef = entry.mDefinition;
 		if( ( handlerDef.mSupportedSeverities & severityMask ) != 0 )
 		{
 			Dispatch( logEvent, handlerDef, args );

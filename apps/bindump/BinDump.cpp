@@ -342,7 +342,7 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 		def.mUtf8HandlerFunc = platform::debugging::DebuggerLogger;
-		logging::RegisterHandler( def );
+		logging::RegisterHandler( def, 50 );
 	}
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing bin dump..." );
 
@@ -374,7 +374,7 @@ ErrorReturnCode Init( cli::ArgView const& args )
 			logging::HandlerDefinition def;
 			def.mSupportedSeverities = math::GetAllBitsSet<logging::SeverityMask>();
 			def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
-			logging::RegisterHandler( def );
+			logging::RegisterHandler( def, 100 );
 		}
 		else
 		{
@@ -388,7 +388,7 @@ ErrorReturnCode Init( cli::ArgView const& args )
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = logging::Severity::RF_SEV_USER_ATTENTION_REQUESTED;
 		def.mUtf8HandlerFunc = logging::AssertLogger;
-		logging::RegisterHandler( def );
+		logging::RegisterHandler( def, 150 );
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_BINDUMP, "Initializing VFS..." );

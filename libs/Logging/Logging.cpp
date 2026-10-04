@@ -170,12 +170,12 @@ LoggingRouter& GetOrCreateGlobalLoggingInstance()
 
 
 
-HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition )
+HandlerID RegisterHandler( HandlerDefinition const& handlerDefinition, HandlerPriority priority )
 {
 	RemoveFallbackLoggerIfPresent();
 
 	LoggingRouter& router = GetOrCreateGlobalLoggingInstance();
-	return router.RegisterHandler( handlerDefinition );
+	return router.RegisterHandler( handlerDefinition, priority );
 }
 
 

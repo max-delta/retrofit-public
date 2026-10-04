@@ -107,7 +107,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 			def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
 		}
 		def.mUtf8HandlerFunc = logging::ANSIConsoleLogger;
-		logging::RegisterHandler( def );
+		logging::RegisterHandler( def, 50 );
 	}
 	else
 	{
@@ -120,7 +120,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 		logging::HandlerDefinition def;
 		def.mSupportedSeverities = logging::Severity::RF_SEV_USER_ATTENTION_REQUESTED;
 		def.mUtf8HandlerFunc = logging::AssertLogger;
-		logging::RegisterHandler( def );
+		logging::RegisterHandler( def, 150 );
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Initializing VFS..." );
@@ -169,7 +169,7 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 		def.mSupportedSeverities &= ~logging::Severity::RF_SEV_TRACE;
 
 		def.mUtf8HandlerFunc = file::FileLogger;
-		logging::RegisterHandler( def );
+		logging::RegisterHandler( def, 100 );
 	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Creating window..." );
