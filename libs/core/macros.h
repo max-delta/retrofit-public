@@ -29,9 +29,13 @@ public: \
 #define RF_DEFAULT_EQUALS( CLASS ) \
 public: \
 	bool operator==( CLASS const& ) const = default;
-#define RF_NO_ASSIGN( CLASS ) \
-	CLASS& operator=( CLASS const& ) = delete; \
+#define RF_NO_ASSIGN_VIA_COPY( CLASS ) \
+	CLASS& operator=( CLASS const& ) = delete;
+#define RF_NO_ASSIGN_VIA_MOVE( CLASS ) \
 	CLASS& operator=( CLASS&& ) = delete;
+#define RF_NO_ASSIGN( CLASS ) \
+	RF_NO_ASSIGN_VIA_COPY( CLASS ); \
+	RF_NO_ASSIGN_VIA_MOVE( CLASS );
 #define RF_NO_INSTANCE( CLASS ) \
 	RF_NO_COPY( CLASS ); \
 	RF_NO_MOVE( CLASS ); \

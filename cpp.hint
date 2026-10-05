@@ -4,6 +4,8 @@
 #define RF_DEFAULT_EQUALS(...)
 #define RF_NO_COPY(...)
 #define RF_NO_MOVE(...)
+#define RF_NO_ASSIGN_VIA_COPY(...)
+#define RF_NO_ASSIGN_VIA_MOVE(...)
 #define RF_NO_ASSIGN(...)
 #define RF_NO_INSTANCE(...)
 #define RFTYPE_STATIC_CLASSINFO(...) static ::RF::reflect::ClassInfo ___RFType_Static_ClassInfo
