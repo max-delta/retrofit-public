@@ -229,7 +229,9 @@ bool WriteScriptValueToVariable(
 				"Cannot convert script element to an invalid member variable type"
 				" (An accessor is available, script probably is improperly"
 				" using a simpler value type, which might also happen"
-				" implicitly if the variable was never set in script)" );
+				" implicitly if the variable was never set in script, so"
+				" first make sure you've explicitly set this variable to a"
+				" value in your script)" );
 		}
 		else
 		{
