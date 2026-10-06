@@ -138,6 +138,8 @@ private:
 	mutable ReaderWriterMutex mMultiReaderSingleWriterLock;
 
 	ManagedResourceID mNextResourceID;
+	bool mResourceIDsHaveRolledOver = false;
+
 	ResourcesByManagedID mResources;
 	ResourceIDsByName mResourceIDs;
 	ResourcesByFilename mFileBackedResources;

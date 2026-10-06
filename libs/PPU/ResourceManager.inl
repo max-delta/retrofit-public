@@ -413,11 +413,49 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	// A write lock should have already been taken
 	RF_ASSERT( mMultiReaderSingleWriterLock.try_lock() == false );
 
-	ManagedResourceID retVal = mNextResourceID++;
-	if( mNextResourceID == kInvalidResourceID )
+	// Make naive increment attempt
+	ManagedResourceID retVal = mNextResourceID;
+	mNextResourceID++;
+
+	// Check that it hasn't rolled over
+	if( retVal == kInvalidResourceID )
 	{
-		RF_TODO_BREAK_MSG( "Safe generation" );
+		RFLOG_NOTIFY( nullptr, RFCAT_PPU,
+			"Resource IDs have rolled over, and will now be more expensive and"
+			" more likely to expose ID collision bugs" );
+		mResourceIDsHaveRolledOver = true;
 	}
+
+	if( mResourceIDsHaveRolledOver == false )
+	{
+		// Have yet to rollover, can assume generation is safe
+		RF_ASSERT( retVal != kInvalidResourceID );
+		RF_ASSERT( mResources.contains( retVal ) == false );
+		return retVal;
+	}
+
+	// Spin and try to find something that is valid and also not currently in
+	//  use already
+	ManagedResourceIDType const originalAttempt = retVal;
+	while( mResources.contains( retVal ) || retVal == kInvalidResourceID )
+	{
+		// Collision, try again
+		retVal = mNextResourceID;
+		mNextResourceID++;
+
+		if( retVal == originalAttempt )
+		{
+			// Total exhaustion
+			RFLOG_FATAL( nullptr, RFCAT_PPU,
+				"Resource IDs have not only rolled over, but have also been"
+				" completely exhausted, and even the fallback logic has fallen"
+				" into an infinite loop!" );
+		}
+	}
+
+	// Have found something valid
+	RF_ASSERT( retVal != kInvalidResourceID );
+	RF_ASSERT( mResources.contains( retVal ) == false );
 	return retVal;
 }
 
