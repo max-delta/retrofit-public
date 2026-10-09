@@ -75,8 +75,8 @@ public:
 	ManagedResourceID GetManagedResourceIDFromResourceName( Filename const& filename ) const;
 	ManagedResourceID GetManagedResourceIDFromResourceName( ResourceNameView resourceName ) const;
 
-	bool ReserveNullResource( Filename const& filename );
-	bool ReserveNullResource( ResourceNameView resourceName );
+	ManagedResourceID ReserveNullResource( Filename const& filename );
+	ManagedResourceID ReserveNullResource( ResourceNameView resourceName );
 
 	bool LoadNewResource( Filename const& filename );
 	bool LoadNewResource( ResourceNameView resourceName, Filename const& filename );
@@ -122,7 +122,7 @@ private:
 	ManagedResourceID GenerateNewManagedID();
 
 	WeakPtr<Resource> GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
-	bool ReserveNullResourceInternal( ResourceNameView resourceName );
+	ManagedResourceID ReserveNullResourceInternal( ResourceNameView resourceName );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
 	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
 	bool UpdateExistingResourceWithoutLock( ResourceNameView resourceName, Filename const& filename );

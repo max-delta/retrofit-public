@@ -37,6 +37,7 @@
 		<ClInclude Include="GfxFwd.h" />
 		<ClInclude Include="Palette.h" />
 		<ClInclude Include="PaletteLoader.h" />
+		<ClInclude Include="AssetTypes.h" />
 		<ClInclude Include="PPUConfig.h" />
 		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="TileLayer.h" />
@@ -66,6 +67,7 @@
 		<ClCompile Include="FramePackRef.cpp" />
 		<ClCompile Include="Palette.cpp" />
 		<ClCompile Include="PaletteLoader.cpp" />
+		<ClCompile Include="AssetTypes.cpp" />
 		<ClCompile Include="project.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="TileLayer.cpp" />

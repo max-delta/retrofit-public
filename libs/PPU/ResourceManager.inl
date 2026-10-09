@@ -99,7 +99,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( Filename const& filename )
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( Filename const& filename )
 {
 	return ReserveNullResource( filename.CreateString() );
 }
@@ -107,7 +107,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Res
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( ResourceNameView resourceName )
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResource( ResourceNameView resourceName )
 {
 	return ReserveNullResourceInternal( resourceName );
 }
@@ -491,25 +491,29 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResourceInternal( ResourceNameView resourceName )
+inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ReserveNullResourceInternal( ResourceNameView resourceName )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
 
 	RF_ASSERT( resourceName.empty() == false );
 
+	typename ResourceIDsByName::const_iterator const existing = mResourceIDs.find( resourceName );
 	if( mResourceIDs.count( resourceName ) != 0 )
 	{
 		// Already exists
-		return true;
+		ManagedResourceID const existingID = existing->second;
+		RF_ASSERT( existingID != kInvalidResourceID );
+		return existingID;
 	}
 
-	ManagedResourceID managedResourceID = GenerateNewManagedID();
+	ManagedResourceID const managedResourceID = GenerateNewManagedID();
+	RF_ASSERT( managedResourceID != kInvalidResourceID );
 
 	RegisterResource( managedResourceID, nullptr );
 	RegisterResourceID( resourceName, managedResourceID );
 
 	RFLOG_INFO( resourceName, RFCAT_PPU, "Null resource reserved" );
-	return true;
+	return managedResourceID;
 }
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "project.h"
 
+#include "PPU/AssetTypes.h"
 #include "PPU/PPUState.h"
 #include "PPU/PPUDebugState.h"
 #include "PPU/Palette.h"
@@ -33,14 +34,8 @@ private:
 	//
 	// Types and constants
 public:
-	enum class AssetType : uint8_t
-	{
-		Invalid = 0,
-		Texture,
-		FramePack,
-		Tileset,
-		Font
-	};
+	RF_TODO_ANNOTATION( "Remove this alias" );
+	using AssetType = AssetType;
 
 private:
 	enum class LoadType : uint8_t
@@ -154,6 +149,8 @@ public:
 	Coord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 
 	bool HasOutstandingLoadRequests() const;
+	template<AssetType T> AssetTypeInfo<T>::ManagedTypeID QueueDeferredLoadRequest( Filename const& filename );
+	template<AssetType T> AssetTypeInfo<T>::ManagedTypeID QueueDeferredLoadRequest( ResourceNameView resourceName, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool QueueDeferredReloadRequest( AssetType type, ResourceNameView resourceName );

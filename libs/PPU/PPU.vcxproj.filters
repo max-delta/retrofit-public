@@ -29,6 +29,7 @@
 		<ClInclude Include="FramePackRef.h" />
 		<ClInclude Include="Palette.h" />
 		<ClInclude Include="PaletteLoader.h" />
+		<ClInclude Include="AssetTypes.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -55,6 +56,7 @@
 		<ClCompile Include="FramePackRef.cpp" />
 		<ClCompile Include="Palette.cpp" />
 		<ClCompile Include="PaletteLoader.cpp" />
+		<ClCompile Include="AssetTypes.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />

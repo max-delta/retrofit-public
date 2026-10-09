@@ -40,6 +40,35 @@ static constexpr DepthLayer kDebugGridLayer = 0;
 
 static constexpr DepthLayer kDefaultDebugLineLayer = 0;
 
+
+
+template<AssetType T>
+AssetTypeInfo<T>::ManagedTypeID FulfillReserveRequest(
+	typename AssetTypeInfo<T>::Manager& manager,
+	ResourceManagerBase::ResourceName const& resourceName,
+	ResourceManagerBase::Filename const& filename )
+{
+	if( resourceName.empty() )
+	{
+		return manager.ReserveNullResource( filename );
+	}
+	else
+	{
+		return manager.ReserveNullResource( resourceName );
+	}
+}
+
+
+
+template<AssetType T>
+bool FulfillReserveRequestDiscardID(
+	typename AssetTypeInfo<T>::Manager& manager,
+	ResourceManagerBase::ResourceName const& resourceName,
+	ResourceManagerBase::Filename const& filename )
+{
+	return FulfillReserveRequest<T>( manager, resourceName, filename ) != AssetTypeInfo<T>::kInvalidTypeID;
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -554,6 +583,25 @@ bool PPUController::HasOutstandingLoadRequests() const
 
 
 
+template<AssetType T>
+AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( Filename const& filename )
+{
+	return QueueDeferredLoadRequest<T>( ResourceName{}, filename );
+}
+
+
+
+template<AssetType T>
+AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( ResourceNameView resourceName, Filename const& filename )
+{
+	typename AssetTypeInfo<T>::ManagedTypeID const retVal = FulfillLoadRequest( LoadRequest{ LoadType::Reserve, T, ResourceName( resourceName ), filename } );
+	RF_ASSERT( retVal != AssetTypeInfo<T>::kInvalidTypeID );
+	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, T, ResourceName( resourceName ), filename } );
+	return retVal;
+}
+
+
+
 bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& filename )
 {
 	return QueueDeferredLoadRequest( type, ResourceName{}, filename );
@@ -563,9 +611,10 @@ bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& fi
 
 bool PPUController::QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename )
 {
-	FulfillLoadRequest( LoadRequest{ LoadType::Reserve, type, ResourceName( resourceName ), filename } );
+	bool const success = FulfillLoadRequest( LoadRequest{ LoadType::Reserve, type, ResourceName( resourceName ), filename } );
+	RF_ASSERT( success );
 	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, type, ResourceName( resourceName ), filename } );
-	return true;
+	return success;
 }
 
 
@@ -1903,27 +1952,20 @@ bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 	{
 		case LoadType::Reserve:
 		{
-			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
-			{
-				if( resourceName.empty() )
-				{
-					return manager->ReserveNullResource( filename );
-				}
-				else
-				{
-					return manager->ReserveNullResource( resourceName );
-				}
-			};
 			switch( request.mAssetType )
 			{
 				case AssetType::Texture:
-					return load( mTextureManager );
+					return details::FulfillReserveRequestDiscardID<AssetType::Texture>(
+						*mTextureManager, resourceName, filename );
 				case AssetType::FramePack:
-					return load( mFramePackManager );
+					return details::FulfillReserveRequestDiscardID<AssetType::FramePack>(
+						*mFramePackManager, resourceName, filename );
 				case AssetType::Tileset:
-					return load( mTilesetManager );
+					return details::FulfillReserveRequestDiscardID<AssetType::Tileset>(
+						*mTilesetManager, resourceName, filename );
 				case AssetType::Font:
-					return load( mFontManager );
+					return details::FulfillReserveRequestDiscardID<AssetType::Font>(
+						*mFontManager, resourceName, filename );
 				case AssetType::Invalid:
 				default:
 					RF_DBGFAIL();
@@ -2026,3 +2068,12 @@ bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 
 ///////////////////////////////////////////////////////////////////////////////
 }
+
+#define RF_PPU_ASSET_TYPE_EXPORT( ASSET_TYPE ) \
+	template PPU_API RF::gfx::ppu::AssetTypeInfo<ASSET_TYPE>::ManagedTypeID RF::gfx::ppu::PPUController::QueueDeferredLoadRequest<ASSET_TYPE>( Filename const& ); \
+	template PPU_API RF::gfx::ppu::AssetTypeInfo<ASSET_TYPE>::ManagedTypeID RF::gfx::ppu::PPUController::QueueDeferredLoadRequest<ASSET_TYPE>( ResourceNameView, Filename const& );
+RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::Texture );
+RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::FramePack );
+RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::Tileset );
+RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::Font );
+#undef RF_PPU_ASSET_TYPE_EXPORT
