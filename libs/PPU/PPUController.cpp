@@ -45,7 +45,7 @@ static constexpr DepthLayer kDefaultDebugLineLayer = 0;
 template<AssetType T>
 AssetTypeInfo<T>::ManagedTypeID FulfillReserveRequest(
 	typename AssetTypeInfo<T>::Manager& manager,
-	ResourceManagerBase::ResourceName const& resourceName,
+	ResourceManagerBase::ResourceNameView resourceName,
 	ResourceManagerBase::Filename const& filename )
 {
 	if( resourceName.empty() )
@@ -594,7 +594,7 @@ AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( Filenam
 template<AssetType T>
 AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( ResourceNameView resourceName, Filename const& filename )
 {
-	typename AssetTypeInfo<T>::ManagedTypeID const retVal = FulfillLoadRequest( LoadRequest{ LoadType::Reserve, T, ResourceName( resourceName ), filename } );
+	typename AssetTypeInfo<T>::ManagedTypeID const retVal = details::FulfillReserveRequest<T>( GetMutableManager<T>(), resourceName, filename );
 	RF_ASSERT( retVal != AssetTypeInfo<T>::kInvalidTypeID );
 	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, T, ResourceName( resourceName ), filename } );
 	return retVal;
@@ -1937,6 +1937,29 @@ auto PPUController::RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& li
 		count++;
 		return target;
 	}
+}
+
+
+
+template<>
+typename AssetTypeInfo<AssetType::Texture>::Manager& PPUController::GetMutableManager<AssetType::Texture>()
+{
+	return *mTextureManager;
+}
+template<>
+typename AssetTypeInfo<AssetType::FramePack>::Manager& PPUController::GetMutableManager<AssetType::FramePack>()
+{
+	return *mFramePackManager;
+}
+template<>
+typename AssetTypeInfo<AssetType::Tileset>::Manager& PPUController::GetMutableManager<AssetType::Tileset>()
+{
+	return *mTilesetManager;
+}
+template<>
+typename AssetTypeInfo<AssetType::Font>::Manager& PPUController::GetMutableManager<AssetType::Font>()
+{
+	return *mFontManager;
 }
 
 

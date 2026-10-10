@@ -229,6 +229,9 @@ private:
 	template<DrawOverflowBehavior BehaviorT, typename TypeT, size_t MaxCountT, typename SizeT>
 	auto RenderStateListItemSelect( rftl::array<TypeT, MaxCountT>& list, SizeT& count, char const* name ) -> TypeT&;
 
+	template<AssetType T>
+	typename AssetTypeInfo<T>::Manager& GetMutableManager();
+
 	void FulfillAllDeferredLoadRequests();
 	bool FulfillLoadRequest( LoadRequest const& request );
 
