@@ -48,7 +48,8 @@ private:
 class Layer
 {
 	RF_NO_COPY( Layer );
-	RF_DEFAULT_MOVE( Layer );
+	RF_NO_ASSIGN_VIA_MOVE( Layer );
+	RF_DEFAULT_CONSTRUCT_VIA_MOVE( Layer );
 
 	//
 	// Public methods

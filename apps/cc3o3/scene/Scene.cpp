@@ -47,9 +47,8 @@ bool LayerResources::Unload()
 	RF_ASSERT_MSG( mTileLayer.mTilesetReference == mLoadedTileset, "Layer reference is divergent" );
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
 
-	bool const destroySuccess = tsetMan.DestroyResource( mTilesetResourceName );
+	bool const destroySuccess = ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::Tileset, mTilesetResourceName );
 	RF_ASSERT( destroySuccess );
 
 	mTileLayer = {};
@@ -69,16 +68,11 @@ bool Layer::LoadResources( rftl::string&& resourceName )
 	RF_ASSERT_MSG( mResources.mTileLayer.mTilesetReference == mResources.mLoadedTileset, "Layer reference is divergent" );
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
 
 	mResources.mTilesetResourceName = rftl::move( resourceName );
 
-	bool const tilesetLoaded =
-		ppu.ForceImmediateLoadRequest(
-			gfx::ppu::PPUController::AssetType::Tileset, mResources.mTilesetResourceName, mTilesetPath );
-	RF_ASSERT( tilesetLoaded );
-	mResources.mLoadedTileset = tsetMan.GetManagedResourceIDFromResourceName( mResources.mTilesetResourceName );
+	mResources.mLoadedTileset = ppu.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( mResources.mTilesetResourceName, mTilesetPath );
 	RF_ASSERT( mResources.mLoadedTileset != gfx::kInvalidManagedTilesetID );
 
 	gfx::ppu::TileLayer& tileLayer = mResources.mTileLayer;
