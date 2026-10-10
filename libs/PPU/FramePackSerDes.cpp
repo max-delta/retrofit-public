@@ -99,7 +99,7 @@ bool FramePackSerDes::SerializeToBuffer( gfx::TextureManager const& texMan, rftl
 			TextureManager::ResourceName const resName = texMan.SearchForResourceNameByResourceID( texID );
 			if( resName.empty() )
 			{
-				RFLOGF_ERROR( context, RFCAT_PPU, "Failed to find a resource name for resourced ID {}", texID );
+				RFLOGF_ERROR( context, RFCAT_PPU, "Failed to find a resource name for resource ID {}", texID );
 				return false;
 			}
 			TextureManager::Filename const resFile = texMan.SearchForFilenameByResourceName( resName );
