@@ -4,35 +4,59 @@
 #include "core/preprocessor.h"
 
 // In-class decorators to automate common declaration patterns
-#define RF_NO_COPY( CLASS ) \
-	CLASS( CLASS const& ) = delete; \
-	CLASS& operator=( CLASS const& ) = delete;
-#define RF_DEFAULT_COPY( CLASS ) \
+#define RF_NO_CONSTRUCT_VIA_COPY( CLASS ) \
+	CLASS( CLASS const& ) = delete;
+#define RF_NO_CONSTRUCT_VIA_MOVE( CLASS ) \
+	CLASS( CLASS&& ) = delete;
+#define RF_DEFAULT_CONSTRUCT_VIA_COPY( CLASS ) \
 public: \
-	CLASS( CLASS const& ) = default; \
-	CLASS& operator=( CLASS const& ) = default;
-#define RF_PRIVATE_COPY( CLASS ) \
+	CLASS( CLASS const& ) = default;
+#define RF_DEFAULT_CONSTRUCT_VIA_MOVE( CLASS ) \
+public: \
+	CLASS( CLASS&& ) = default;
+#define RF_PRIVATE_CONSTRUCT_VIA_COPY( CLASS ) \
 private: \
-	CLASS( CLASS const& ) = default; \
-	CLASS& operator=( CLASS const& ) = default;
-#define RF_NO_MOVE( CLASS ) \
-	CLASS( CLASS&& ) = delete; \
-	CLASS& operator=( CLASS&& ) = delete;
-#define RF_PRIVATE_MOVE( CLASS ) \
+	CLASS( CLASS const& ) = default;
+#define RF_PRIVATE_CONSTRUCT_VIA_MOVE( CLASS ) \
 private: \
-	CLASS( CLASS&& ) = default; \
-	CLASS& operator=( CLASS&& ) = default;
-#define RF_DEFAULT_MOVE( CLASS ) \
-public: \
-	CLASS( CLASS&& ) = default; \
-	CLASS& operator=( CLASS&& ) = default;
-#define RF_DEFAULT_EQUALS( CLASS ) \
-public: \
-	bool operator==( CLASS const& ) const = default;
+	CLASS( CLASS&& ) = default;
 #define RF_NO_ASSIGN_VIA_COPY( CLASS ) \
 	CLASS& operator=( CLASS const& ) = delete;
 #define RF_NO_ASSIGN_VIA_MOVE( CLASS ) \
 	CLASS& operator=( CLASS&& ) = delete;
+#define RF_DEFAULT_ASSIGN_VIA_COPY( CLASS ) \
+public: \
+	CLASS& operator=( CLASS const& ) = default;
+#define RF_DEFAULT_ASSIGN_VIA_MOVE( CLASS ) \
+public: \
+	CLASS& operator=( CLASS&& ) = default;
+#define RF_PRIVATE_ASSIGN_VIA_COPY( CLASS ) \
+private: \
+	CLASS& operator=( CLASS const& ) = default;
+#define RF_PRIVATE_ASSIGN_VIA_MOVE( CLASS ) \
+private: \
+	CLASS& operator=( CLASS&& ) = default;
+#define RF_NO_COPY( CLASS ) \
+	RF_NO_CONSTRUCT_VIA_COPY( CLASS ); \
+	RF_NO_ASSIGN_VIA_COPY( CLASS );
+#define RF_DEFAULT_COPY( CLASS ) \
+	RF_DEFAULT_CONSTRUCT_VIA_COPY( CLASS ); \
+	RF_DEFAULT_ASSIGN_VIA_COPY( CLASS );
+#define RF_PRIVATE_COPY( CLASS ) \
+	RF_PRIVATE_CONSTRUCT_VIA_COPY( CLASS ); \
+	RF_PRIVATE_ASSIGN_VIA_COPY( CLASS );
+#define RF_NO_MOVE( CLASS ) \
+	RF_NO_CONSTRUCT_VIA_MOVE( CLASS ); \
+	RF_NO_ASSIGN_VIA_MOVE( CLASS );
+#define RF_PRIVATE_MOVE( CLASS ) \
+	RF_PRIVATE_CONSTRUCT_VIA_MOVE( CLASS ); \
+	RF_PRIVATE_ASSIGN_VIA_MOVE( CLASS );
+#define RF_DEFAULT_MOVE( CLASS ) \
+	RF_DEFAULT_CONSTRUCT_VIA_MOVE( CLASS ); \
+	RF_DEFAULT_ASSIGN_VIA_MOVE( CLASS );
+#define RF_DEFAULT_EQUALS( CLASS ) \
+public: \
+	bool operator==( CLASS const& ) const = default;
 #define RF_NO_ASSIGN( CLASS ) \
 	RF_NO_ASSIGN_VIA_COPY( CLASS ); \
 	RF_NO_ASSIGN_VIA_MOVE( CLASS );
