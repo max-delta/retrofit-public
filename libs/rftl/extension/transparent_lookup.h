@@ -28,10 +28,10 @@ auto transparent_erase( ContainerT& container, LookupT& lookup )
 	auto const iter = container.find( lookup );
 	if( iter == container.end() )
 	{
-		return ContainerT::size_type( 0 );
+		return typename ContainerT::size_type( 0 );
 	}
 	container.erase( iter );
-	return ContainerT::size_type( 1 );
+	return typename ContainerT::size_type( 1 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
