@@ -10,6 +10,7 @@
 namespace RF::cc::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Resources for a layer, the saturated form of a layer that is actually usable
 class LayerResources
 {
 	RF_NO_COPY( LayerResources );
@@ -45,6 +46,7 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// Layer within a scene, used for separating tile layers by purpose or depth
 class Layer
 {
 	RF_NO_COPY( Layer );
@@ -76,6 +78,8 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 
+// A collection of tile layers, with no further assumptions beyond that,
+//  relying on consuming code to understand the intent of the layers and mores
 class Scene
 {
 	RF_NO_COPY( Scene );
