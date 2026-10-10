@@ -246,14 +246,14 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found" );
+		RFLOG_NOTIFY( resourceName, RFCAT_PPU, "Resource ID not found to destroy" );
 		return false;
 	}
 
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource not found" );
+		RFLOG_NOTIFY( resourceName, RFCAT_PPU, "Resource not found to destroy" );
 		return false;
 	}
 
@@ -262,6 +262,10 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 
 	bool const success = PreDestroy( *resource );
 	RF_ASSERT( success );
+
+	RF_TODO_ANNOTATION(
+		"Record information to know how many frames a resource was active for,"
+		" to be able to spot unnecessary churn in unexpected cases" );
 
 	rftl::transparent_erase( mFileBackedResources, resourceName );
 	mResourceIDs.erase( IDIter );

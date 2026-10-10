@@ -627,6 +627,14 @@ bool PPUController::QueueDeferredReloadRequest( AssetType type, ResourceNameView
 
 
 
+bool PPUController::QueueDeferredDestroyRequest( AssetType type, ResourceNameView resourceName )
+{
+	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Destroy, type, ResourceName( resourceName ), Filename{} } );
+	return true;
+}
+
+
+
 bool PPUController::ForceImmediateLoadRequest( AssetType type, Filename const& filename )
 {
 	return ForceImmediateLoadRequest( type, ResourceName{}, filename );
@@ -2042,6 +2050,29 @@ bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 				{
 					return manager->ReloadExistingResource( resourceName );
 				}
+			};
+			switch( request.mAssetType )
+			{
+				case AssetType::Texture:
+					return load( mTextureManager );
+				case AssetType::FramePack:
+					return load( mFramePackManager );
+				case AssetType::Tileset:
+					return load( mTilesetManager );
+				case AssetType::Font:
+					return load( mFontManager );
+				case AssetType::Invalid:
+				default:
+					RF_DBGFAIL();
+					return false;
+			}
+		}
+		case LoadType::Destroy:
+		{
+			RF_ASSERT( resourceName.empty() == false );
+			auto const load = [&resourceName]( auto& manager ) -> bool //
+			{
+				return manager->DestroyResource( resourceName );
 			};
 			switch( request.mAssetType )
 			{

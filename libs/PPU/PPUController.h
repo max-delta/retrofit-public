@@ -44,7 +44,8 @@ private:
 		Reserve,
 		New,
 		Modify,
-		Reload
+		Reload,
+		Destroy
 	};
 	enum class DrawOverflowBehavior : uint8_t
 	{
@@ -154,6 +155,7 @@ public:
 	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool QueueDeferredReloadRequest( AssetType type, ResourceNameView resourceName );
+	bool QueueDeferredDestroyRequest( AssetType type, ResourceNameView resourceName );
 	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool ForceImmediateLoadAllRequests();
