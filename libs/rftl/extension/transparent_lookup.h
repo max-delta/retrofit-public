@@ -26,7 +26,12 @@ auto transparent_erase( ContainerT& container, LookupT& lookup )
 	static_assert( __cplusplus < 202602L, "Review this" );
 	//return container.erase( lookup );
 	auto const iter = container.find( lookup );
-	return container.erase( iter );
+	if( iter == container.end() )
+	{
+		return ContainerT::size_type( 0 );
+	}
+	container.erase( iter );
+	return ContainerT::size_type( 1 );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
