@@ -917,7 +917,8 @@ void FramePackEditor::CreateFramePack( file::VFSPath const& defaultFrame )
 	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
 	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		fpackMan.DestroyResource( kFramePackName );
+		ppu->QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, kFramePackName );
+		ppu->ForceImmediateLoadAllRequests();
 	}
 	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
 	newFPack->mNumTimeSlots = 1;
@@ -943,7 +944,8 @@ void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
 	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		fpackMan.DestroyResource( kFramePackName );
+		ppu->QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, kFramePackName );
+		ppu->ForceImmediateLoadAllRequests();
 	}
 	if( path.Empty() )
 	{

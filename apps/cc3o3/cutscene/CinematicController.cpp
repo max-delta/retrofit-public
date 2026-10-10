@@ -33,13 +33,9 @@ static void UnloadAllTilesets( rftl::deque<rftl::string>& resourceNames )
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	// HACK: Direct access to tileset manager
-	// TODO: Re-visit API surface
-	gfx::TilesetManager& tsetMan = *ppu.DebugGetTilesetManager();
-
 	for( rftl::string const& resourceName : resourceNames )
 	{
-		tsetMan.DestroyResource( resourceName );
+		ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::Tileset, resourceName );
 	}
 
 	resourceNames.clear();
@@ -51,13 +47,9 @@ static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
 
-	// HACK: Direct access to frame pack manager
-	// TODO: Re-visit API surface
-	gfx::ppu::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
-
 	for( rftl::string const& resourceName : resourceNames )
 	{
-		fpackMan.DestroyResource( resourceName );
+		ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, resourceName );
 	}
 
 	resourceNames.clear();

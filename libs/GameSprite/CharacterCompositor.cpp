@@ -409,8 +409,9 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	}
 	for( rftl::string const& resourceName : frameResourceNames )
 	{
-		texMan.DestroyResource( resourceName );
+		mPpu->QueueDeferredDestroyRequest( gfx::ppu::AssetType::Texture, resourceName );
 	}
+	mPpu->ForceImmediateLoadAllRequests();
 }
 
 

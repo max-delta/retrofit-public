@@ -739,10 +739,12 @@ void FPackSerializationTest()
 	gfx::ppu::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
+	static constexpr char kTestPackName[] = "sertestpack";
+
 	// Load a common test asset
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const digitFPackPath = testFramepacks.GetChild( "testdigit_loop.fpack" );
-	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( "sertestpack", digitFPackPath );
+	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( kTestPackName, digitFPackPath );
 	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Force loads to finish so serializer can resolve the textures, since
@@ -758,7 +760,8 @@ void FPackSerializationTest()
 	bool const writeSuccess = gfx::ppu::FramePackSerDes::SerializeToBuffer( texMan, buffer, *digitFPack );
 
 	// Cleanup
-	fpackMan.DestroyResource( "sertestpack" );
+	ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, kTestPackName );
+	ppu.ForceImmediateLoadAllRequests();
 
 	if( writeSuccess == false )
 	{
@@ -802,7 +805,8 @@ void FPackSerializationTest()
 	}
 
 	// Cleanup
-	fpackMan.DestroyResource( newFilename );
+	ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, newFilename );
+	ppu.ForceImmediateLoadAllRequests();
 }
 
 
