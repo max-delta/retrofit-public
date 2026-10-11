@@ -152,7 +152,7 @@ constexpr typename rftl::enable_if<could_underflow<DST, SRC>::value == false, bo
 template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_integral<SRC>::value, int>::type = 0>
 void integer_cast_assert( DST const dst, SRC const src )
 {
-	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integral types" );
 	RF_ASSERT( dst == static_cast<DST>( src ) );
 }
 
@@ -161,7 +161,7 @@ void integer_cast_assert( DST const dst, SRC const src )
 template<typename DST, typename SRC, typename rftl::enable_if<rftl::is_floating_point<SRC>::value, int>::type = 0>
 void integer_cast_assert( DST const dst, SRC const src )
 {
-	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integral types" );
 	RF_ASSERT( static_cast<SRC>( dst ) >= src - 1 );
 	RF_ASSERT( static_cast<SRC>( dst ) <= src + 1 );
 }
@@ -172,7 +172,7 @@ void integer_cast_assert( DST const dst, SRC const src )
 template<typename DST, typename SRC>
 DST integer_cast( SRC const src )
 {
-	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_cast only valid on integral types" );
 	DST retVal = integer_truncast<DST>( src );
 	details::integer_cast_assert( retVal, src );
 	return retVal;
@@ -183,7 +183,7 @@ DST integer_cast( SRC const src )
 template<typename DST, typename SRC>
 DST integer_truncast( SRC const src )
 {
-	static_assert( rftl::is_integral<DST>::value, "integral_truncast only valid on integeral types" );
+	static_assert( rftl::is_integral<DST>::value, "integral_truncast only valid on integral types" );
 
 	if( details::will_overflow<DST, SRC>( src ) )
 	{
@@ -367,7 +367,7 @@ constexpr uint64_t integer_unsigned_bitcast( int64_t const src )
 template<typename DST, typename SRC>
 constexpr DST float_cast( SRC const src )
 {
-	static_assert( rftl::is_floating_point<DST>::value, "float_cast only valid on integeral types" );
+	static_assert( rftl::is_floating_point<DST>::value, "float_cast only valid on integral types" );
 	return static_cast<DST>( src );
 }
 
