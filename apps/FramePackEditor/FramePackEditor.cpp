@@ -61,7 +61,7 @@ void FramePackEditor::Init()
 
 	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	mDefaultFontID = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
 
 	ppu->DebugSetGridEnabled( details::kDebugGrid );
 }
@@ -338,7 +338,7 @@ void FramePackEditor::Render()
 
 	//
 	// FramePacks
-	gfx::ManagedTextureID editingTextureID = gfx::kInvalidDeviceTextureID;
+	gfx::ManagedTextureID editingTextureID = gfx::kInvalidManagedTextureID;
 	if( mFramePackID == gfx::ppu::kInvalidManagedFramePackID )
 	{
 		warningText = "No valid frame pack";
@@ -438,7 +438,7 @@ void FramePackEditor::Render()
 		{
 			ppu->DrawText( editingHeaderStart + kTextOffset * 2, kFontSize, mDefaultFontID, "Sustain: {} </,*> to change", slotSustain );
 		}
-		if( editingTextureID == gfx::kInvalidDeviceTextureID )
+		if( editingTextureID == gfx::kInvalidManagedTextureID )
 		{
 			ppu->DrawText( editingHeaderStart + kTextOffset * 3, kFontSize, mDefaultFontID, "Texture: UNSET" );
 		}
@@ -1034,8 +1034,7 @@ void FramePackEditor::InsertTimeSlotBefore( size_t slotIndex )
 	{
 		timeSlots[slotIndex] = timeSlots[slotIndex - 1];
 		timeSlots[slotIndex].mTextureReference = gfx::kInvalidManagedTextureID;
-		// TODO: Typedef
-		timeSlots[slotIndex].mColliderReference = 0;
+		timeSlots[slotIndex].mColliderReference = gfx::ppu::kInvalidManagedColliderID;
 		timeSlotSustains[slotIndex] = timeSlotSustains[slotIndex - 1];
 	}
 	else

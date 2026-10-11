@@ -33,7 +33,7 @@ public:
 	struct TimeSlot
 	{
 		ManagedTextureID mTextureReference = kInvalidManagedTextureID;
-		ManagedColliderID mColliderReference = kInvalidManagedTextureID;
+		ManagedColliderID mColliderReference = kInvalidManagedColliderID;
 		int8_t mTextureOriginX = 0x0u;
 		int8_t mTextureOriginY = 0x0u;
 		int8_t mColliderOriginX = 0x0u;

@@ -23,6 +23,12 @@ namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 namespace details {
 
+static DeviceTextureID ConvertToTextureID( GLuint id )
+{
+	static_assert( sizeof( DeviceTextureID ) >= sizeof( id ) );
+	return static_cast<DeviceTextureID>( id );
+}
+
 void ConsumeErrors()
 {
 	GLenum const error = glGetError();
@@ -364,15 +370,15 @@ DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& 
 	rftl::byte_view const bytes = decoded.GetDecodedBytes();
 	if( bytes.size() == 0 )
 	{
-		return 0;
+		return kInvalidDeviceTextureID;
 	}
 
 	width = decoded.GetWidth();
 	height = decoded.GetHeight();
-	int const glWidth = math::integer_cast<int>( width );
-	int const glHeight = math::integer_cast<int>( height );
+	GLint const glWidth = math::integer_cast<GLint>( width );
+	GLint const glHeight = math::integer_cast<GLint>( height );
 
-	unsigned int retVal = 0;
+	GLuint retVal = 0;
 	glGenTextures( 1, &retVal );
 	CONSUME_ERRORS();
 	glBindTexture( GL_TEXTURE_2D, retVal );
@@ -384,7 +390,7 @@ DeviceTextureID SimpleGL::LoadTexture( rftl::byte_view const& buffer, uint32_t& 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
 	CONSUME_ERRORS();
 
-	return retVal;
+	return details::ConvertToTextureID( retVal );
 }
 
 
@@ -537,7 +543,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 		CONSUME_ERRORS();
 		for( size_t i = 0; i < tempStore.size(); i++ )
 		{
-			fontStorage[i] = tempStore[i];
+			fontStorage[i] = details::ConvertToTextureID( tempStore[i] );
 		}
 	}
 	RF_ASSERT( fontStorage.size() == listStorage.size() );

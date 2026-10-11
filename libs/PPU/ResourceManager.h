@@ -58,7 +58,7 @@ public:
 protected:
 	using ResourceType = Resource;
 	using ManagedResourceIDType = ManagedResourceID;
-	using ResourceManagerType = ResourceManager<Resource, ManagedResourceID, InvalidResourceID>;
+	using ResourceManagerType = ResourceManager<Resource, ManagedResourceID, kInvalidResourceID>;
 	using ResourcesByManagedID = rftl::unordered_map<ManagedResourceID, UniquePtr<Resource>>;
 	using ResourceIDsByName = rftl::unordered_map<ResourceName, ManagedResourceID, rftl::string_hash, rftl::equal_to<>>;
 
