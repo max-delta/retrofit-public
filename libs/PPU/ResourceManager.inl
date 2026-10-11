@@ -414,7 +414,11 @@ typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::IncrementID( ManagedResourceID id )
 {
-	return static_cast<ManagedResourceID>( id + 1u );
+	static_assert(
+		rftl::is_enum<ManagedResourceID>::value,
+		"ID types are assumed to be enums to prevent accidentally mixing ID"
+		" types between each other by accident" );
+	return math::enum_bitcast<ManagedResourceID>( math::enum_bitcast( id ) + 1u );
 }
 
 

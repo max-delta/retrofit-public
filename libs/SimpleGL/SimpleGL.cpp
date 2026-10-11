@@ -533,7 +533,9 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	// Drop the resource now that we've got the character data created
 	decoded.reset();
 
-	mLastCreatedFontId = math::enum_bitcast<DeviceFontID>( mLastCreatedFontId + 1u );
+	mLastCreatedFontId =
+		math::enum_bitcast<DeviceFontID>(
+			math::enum_bitcast( mLastCreatedFontId ) + 1u );
 	DeviceFontID const retVal = mLastCreatedFontId;
 	RF_ASSERT( mBitmapFonts.count( mLastCreatedFontId ) == 0 );
 	BitmapCharacterListStorage& fontStorage = mBitmapFonts[mLastCreatedFontId];

@@ -7,10 +7,10 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-enum DeviceTextureID : uint64_t;
+enum class DeviceTextureID : uint64_t;
 inline constexpr DeviceTextureID kInvalidDeviceTextureID = {};
 
-enum DeviceFontID : uint64_t;
+enum class DeviceFontID : uint64_t;
 inline constexpr DeviceFontID kInvalidDeviceFontID = {};
 
 using TimeSlowdownRate = uint8_t;
@@ -19,13 +19,13 @@ inline constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
 inline constexpr TimeSlowdownRate kTimeSlowdownRate_Third = 3;
 inline constexpr TimeSlowdownRate kTimeSlowdownRate_Quarter = 4;
 
-enum ManagedTextureID : uint64_t;
+enum class ManagedTextureID : uint64_t;
 inline constexpr ManagedTextureID kInvalidManagedTextureID = {};
 
-enum ManagedTilesetID : uint16_t;
+enum class ManagedTilesetID : uint16_t;
 inline constexpr ManagedTilesetID kInvalidManagedTilesetID = {};
 
-enum ManagedFontID : uint16_t;
+enum class ManagedFontID : uint16_t;
 inline constexpr ManagedFontID kInvalidManagedFontID = {};
 
 using FrameID = uint64_t;

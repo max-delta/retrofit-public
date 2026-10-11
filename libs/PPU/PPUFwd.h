@@ -31,13 +31,13 @@ inline constexpr ZoomFactor kInvalidZoomFactor = 0;
 using GameLayerID = uint8_t;
 inline constexpr size_t kNumGameLayers = 8;
 
-enum GFXModifierHandlerID : uint64_t;
+enum class GFXModifierHandlerID : uint64_t;
 inline constexpr size_t kNumGFXModifiers = 8;
 
-enum ManagedColliderID : uint64_t;
+enum class ManagedColliderID : uint64_t;
 inline constexpr ManagedColliderID kInvalidManagedColliderID = {};
 
-enum ManagedFramePackID : uint16_t;
+enum class ManagedFramePackID : uint16_t;
 inline constexpr ManagedFramePackID kInvalidManagedFramePackID = {};
 
 class Object;
