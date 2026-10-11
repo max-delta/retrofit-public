@@ -144,7 +144,7 @@ bool FontManager::PostLoadFromMemory( ResourceType& resource )
 bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename )
 {
 	RF_ASSERT( mDeviceInterface != nullptr );
-	RF_ASSERT( resource.mDeviceRepresentation == kInvalidDeviceTextureID );
+	RF_ASSERT( resource.mDeviceRepresentation == kInvalidDeviceFontID );
 
 	uint32_t tileWidth = 0;
 	uint32_t tileHeight = 0;
@@ -156,7 +156,7 @@ bool FontManager::LoadToDevice( ResourceType& resource, Filename const& filename
 		tileHeight,
 		&variableWidth,
 		&variableHeight );
-	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceTextureID );
+	RF_ASSERT( resource.mDeviceRepresentation != kInvalidDeviceFontID );
 	RF_ASSERT( tileWidth > 0 );
 	RF_ASSERT( tileHeight > 0 );
 	resource.mTileWidth = math::integer_cast<uint8_t>( tileWidth );

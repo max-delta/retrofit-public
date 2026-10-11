@@ -416,7 +416,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	rftl::byte_view const bytes = decoded->GetDecodedBytes();
 	if( bytes.size() == 0 )
 	{
-		return false;
+		return kInvalidDeviceFontID;
 	}
 	size_t const x = decoded->GetWidth();
 	size_t const y = decoded->GetHeight();
@@ -445,7 +445,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 		else
 		{
 			// Unsupported ratio
-			return false;
+			return kInvalidDeviceFontID;
 		}
 		( (void)fontType );
 	}
@@ -458,7 +458,7 @@ DeviceFontID SimpleGL::CreateBitmapFont( rftl::byte_view const& buffer, uint32_t
 	if( divisibleAlongWidth == false || divisibleAlongHeight == false )
 	{
 		// Not divisible
-		return false;
+		return kInvalidDeviceFontID;
 	}
 
 	uint32_t const charWidth = math::integer_cast<uint32_t>( x / kCharactersPerRow );
