@@ -11,7 +11,7 @@ namespace RF::gfx {
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::ResourceManager()
-	: mNextResourceID( kInvalidResourceID + 1 )
+	: mNextResourceID( IncrementID( kInvalidResourceID ) )
 {
 	//
 }
@@ -412,6 +412,14 @@ typename ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::FileBa
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::IncrementID( ManagedResourceID id )
+{
+	return static_cast<ManagedResourceID>( id + 1u );
+}
+
+
+
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::GenerateNewManagedID()
 {
 	// A write lock should have already been taken
@@ -419,7 +427,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 
 	// Make naive increment attempt
 	ManagedResourceID retVal = mNextResourceID;
-	mNextResourceID++;
+	mNextResourceID = IncrementID( mNextResourceID );
 
 	// Check that it hasn't rolled over
 	if( retVal == kInvalidResourceID )
@@ -445,7 +453,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	{
 		// Collision, try again
 		retVal = mNextResourceID;
-		mNextResourceID++;
+		mNextResourceID = IncrementID( mNextResourceID );
 
 		if( retVal == originalAttempt )
 		{

@@ -119,6 +119,8 @@ protected:
 	// Private methods
 private:
 	FileBackedResourceRange SearchForResourcesByFilenameInternal( Filename const& filename ) const;
+
+	static ManagedResourceID IncrementID( ManagedResourceID id );
 	ManagedResourceID GenerateNewManagedID();
 
 	WeakPtr<Resource> GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
