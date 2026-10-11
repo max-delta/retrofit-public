@@ -8,10 +8,16 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
+// Clang compiler weakness requires the formatter specialization to be in the
+//  global namespace instead of the enclosed namespace
+
+///////////////////////////////////////////////////////////////////////////////
+}
+
 // Formats as an integer
 template<typename EnumT, typename CtxCharT>
 	requires rftl::is_enum<EnumT>::value
-struct formatter<EnumT, CtxCharT> : formatter<typename underlying_type<EnumT>::type, CtxCharT>
+struct rftl::formatter<EnumT, CtxCharT> : rftl::formatter<typename underlying_type<EnumT>::type, CtxCharT>
 {
 	using Input = EnumT;
 	using Shim = underlying_type<EnumT>::type;
@@ -31,6 +37,3 @@ struct formatter<EnumT, CtxCharT> : formatter<typename underlying_type<EnumT>::t
 		return Base::format( underlying, ctx );
 	}
 };
-
-///////////////////////////////////////////////////////////////////////////////
-}
