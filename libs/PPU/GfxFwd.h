@@ -7,11 +7,11 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-using DeviceTextureID = uint64_t;
-inline constexpr DeviceTextureID kInvalidDeviceTextureID = 0;
+enum DeviceTextureID : uint64_t;
+inline constexpr DeviceTextureID kInvalidDeviceTextureID = {};
 
-using DeviceFontID = uint64_t;
-inline constexpr DeviceFontID kInvalidDeviceFontID = 0;
+enum DeviceFontID : uint64_t;
+inline constexpr DeviceFontID kInvalidDeviceFontID = {};
 
 using TimeSlowdownRate = uint8_t;
 inline constexpr TimeSlowdownRate kTimeSlowdownRate_Normal = 1;
@@ -19,14 +19,14 @@ inline constexpr TimeSlowdownRate kTimeSlowdownRate_Half = 2;
 inline constexpr TimeSlowdownRate kTimeSlowdownRate_Third = 3;
 inline constexpr TimeSlowdownRate kTimeSlowdownRate_Quarter = 4;
 
-using ManagedTextureID = uint64_t;
-inline constexpr ManagedTextureID kInvalidManagedTextureID = 0;
+enum ManagedTextureID : uint64_t;
+inline constexpr ManagedTextureID kInvalidManagedTextureID = {};
 
-using ManagedTilesetID = uint16_t;
-inline constexpr ManagedTilesetID kInvalidManagedTilesetID = 0;
+enum ManagedTilesetID : uint16_t;
+inline constexpr ManagedTilesetID kInvalidManagedTilesetID = {};
 
-using ManagedFontID = uint16_t;
-inline constexpr ManagedFontID kInvalidManagedFontID = 0;
+enum ManagedFontID : uint16_t;
+inline constexpr ManagedFontID kInvalidManagedFontID = {};
 
 using FrameID = uint64_t;
 inline constexpr FrameID kInvalidFrameID = 0;

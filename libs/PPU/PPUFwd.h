@@ -31,14 +31,14 @@ inline constexpr ZoomFactor kInvalidZoomFactor = 0;
 using GameLayerID = uint8_t;
 inline constexpr size_t kNumGameLayers = 8;
 
-using GFXModifierHandlerID = uint64_t;
+enum GFXModifierHandlerID : uint64_t;
 inline constexpr size_t kNumGFXModifiers = 8;
 
-using ManagedColliderID = uint64_t;
-inline constexpr ManagedColliderID kInvalidManagedColliderID = 0;
+enum ManagedColliderID : uint64_t;
+inline constexpr ManagedColliderID kInvalidManagedColliderID = {};
 
-using ManagedFramePackID = uint16_t;
-inline constexpr ManagedFramePackID kInvalidManagedFramePackID = 0;
+enum ManagedFramePackID : uint16_t;
+inline constexpr ManagedFramePackID kInvalidManagedFramePackID = {};
 
 class Object;
 class TileLayer;

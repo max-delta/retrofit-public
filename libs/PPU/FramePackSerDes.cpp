@@ -11,6 +11,7 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/enum_format.h"
 #include "rftl/cstring"
 
 
