@@ -66,16 +66,9 @@ void MakeSiteCharacterFromDB(
 
 		gfx::ppu::PPUController& ppu = *app::gGraphics;
 		gfx::ppu::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, nIdle );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, eIdle );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, sIdle );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, wIdle );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, nWalk );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, eWalk );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, sWalk );
-		ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, wWalk );
-		auto setAnim = [&fPackMan]( comp::SiteVisual::Anim& anim, file::VFSPath const& source ) -> void //
+		auto setAnim = [&ppu, &fPackMan]( comp::SiteVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
+			ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, source );
 			gfx::ppu::ManagedFramePackID const fPackID = fPackMan.GetManagedResourceIDFromResourceName( source );
 			gfx::ppu::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
 			anim.mFramePack = gfx::ppu::FramePackRef::FromFramePack( fPackID, fPack );
