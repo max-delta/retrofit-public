@@ -117,7 +117,9 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( Filename const& filename )
 {
-	return LoadNewResource( filename.CreateString(), filename );
+	ManagedResourceID unused;
+	WeakPtr<Resource> const handle = LoadNewResourceInternal( filename.CreateString(), filename, unused );
+	return handle != nullptr;
 }
 
 
@@ -125,7 +127,8 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Loa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, Filename const& filename )
 {
-	WeakPtr<Resource> handle = LoadNewResourceGetHandle( resourceName, filename );
+	ManagedResourceID unused;
+	WeakPtr<Resource> const handle = LoadNewResourceInternal( resourceName, filename, unused );
 	return handle != nullptr;
 }
 
@@ -134,7 +137,8 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
-	WeakPtr<Resource> handle = LoadNewResourceGetHandle( resourceName, rftl::move( resource ) );
+	ManagedResourceID unused;
+	WeakPtr<Resource> const handle = LoadNewResourceInternal( resourceName, rftl::move( resource ), unused );
 	return handle != nullptr;
 }
 
@@ -143,7 +147,9 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Loa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( Filename const& filename )
 {
-	return LoadNewResourceGetID( filename.CreateString(), filename );
+	ManagedResourceID managedID;
+	LoadNewResourceInternal( filename.CreateString(), filename, managedID );
+	return managedID;
 }
 
 
@@ -151,9 +157,9 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename )
 {
-	ManagedResourceID retVal;
-	LoadNewResourceInternal( resourceName, filename, retVal );
-	return retVal;
+	ManagedResourceID managedID;
+	LoadNewResourceInternal( resourceName, filename, managedID );
+	return managedID;
 }
 
 
@@ -161,9 +167,9 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
-	ManagedResourceID retVal;
-	LoadNewResourceInternal( resourceName, rftl::move( resource ), retVal );
-	return retVal;
+	ManagedResourceID managedID;
+	LoadNewResourceInternal( resourceName, rftl::move( resource ), managedID );
+	return managedID;
 }
 
 
@@ -171,7 +177,8 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( Filename const& filename )
 {
-	return LoadNewResourceGetHandle( filename.CreateString(), filename );
+	ManagedResourceID unused;
+	return LoadNewResourceInternal( filename.CreateString(), filename, unused );
 }
 
 
