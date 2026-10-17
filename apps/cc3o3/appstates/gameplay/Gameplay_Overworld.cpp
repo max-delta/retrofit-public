@@ -657,12 +657,12 @@ void Gameplay_Overworld::OnTick( AppStateTickContext& context )
 					default:
 						RFLOG_FATAL( character, RFCAT_CC3O3, "Unexpected codepath" );
 				}
-				object.mFramePackID = anim->mFramePackID;
+				object.mFramePackID = anim->mFramePack.mManagedID;
 
 				// Use timer from component, and update it
 				object.mTimer = visual.mTimer;
-				object.mTimer.mMaxTimeIndex = anim->mMaxTimeIndex;
-				object.mTimer.mTimeSlowdown = anim->mSlowdownRate;
+				object.mTimer.mMaxTimeIndex = anim->mFramePack.mMaxTimeIndex;
+				object.mTimer.mTimeSlowdown = anim->mFramePack.mPreferredSlowdownRate;
 				object.mLooping = true;
 				object.Animate();
 				visual.mTimer = object.mTimer;
