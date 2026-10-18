@@ -31,7 +31,7 @@ FramePackManager::~FramePackManager()
 
 
 
-UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( Filename const& filename )
+UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
 {
 	rftl::vector<file::VFSPath> textures;
 	UniquePtr<FramePackBase> framePack;
@@ -68,8 +68,13 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	for( size_t i = 0; i < numSlots; i++ )
 	{
 		FramePackBase::TimeSlot& timeSlot = timeSlots[i];
+		RF_TODO_ANNOTATION(
+			"Framepacks should support texture aliasing so they don't re-load the same"
+			" texture multiple times if its used in multiple frames" );
+		//ResourceName const texName = rftl::format( "fpack_{}_{}", resourceName, i );
+		ResourceName const texName = rftl::format( "fpack_{}", textures[i].CreateString() );
 		file::VFSPath const& texPath = textures[i];
-		ManagedTextureID const texID = mTexLoadFunc( texPath );
+		ManagedTextureID const texID = mTexLoadFunc( texName, texPath );
 		if( texID == kInvalidManagedTextureID )
 		{
 			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );

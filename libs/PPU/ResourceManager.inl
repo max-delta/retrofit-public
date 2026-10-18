@@ -521,7 +521,7 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 	Resource* res;
 	WeakPtr<Resource> handle;
 	{
-		UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
+		UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, filename );
 		if( newResource == nullptr )
 		{
 			RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
@@ -597,7 +597,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	}
 
 	// Attempt to load new
-	UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
+	UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, filename );
 	if( newResource == nullptr )
 	{
 		RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );

@@ -49,7 +49,7 @@ bool FontManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInterfac
 
 
 
-UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( Filename const& filename )
+UniquePtr<FontManager::ResourceType> FontManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
 {
 	// Open
 	file::VFS const& vfs = *mVfs;

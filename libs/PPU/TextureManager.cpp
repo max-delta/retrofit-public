@@ -49,7 +49,7 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInter
 
 ///////////////////////////////////////////////////////////////////////////////
 
-UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( Filename const& filename )
+UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
 {
 	UniquePtr<Texture> newTexture = alloc::DefaultAllocCreator<Texture>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 

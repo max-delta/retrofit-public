@@ -150,10 +150,9 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	{
 		RF_ASSERT( mFramePackManager == nullptr );
 		FramePackManager::TextureLoadRefFunc texLoad = //
-			[this]( file::VFSPath const& path ) -> ManagedTextureID //
+			[this]( ResourceManagerBase::ResourceNameView resourceName, file::VFSPath const& path ) -> ManagedTextureID //
 		{
-			RF_TODO_ANNOTATION( "These should be named resources" );
-			return QueueDeferredLoadRequest<AssetType::Texture>( {}, path );
+			return QueueDeferredLoadRequest<AssetType::Texture>( resourceName, path );
 		};
 		mFramePackManager = alloc::DefaultAllocCreator<FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}
@@ -162,10 +161,9 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 	{
 		RF_ASSERT( mTilesetManager == nullptr );
 		TilesetManager::TextureLoadRefFunc texLoad = //
-			[this]( file::VFSPath const& path ) -> ManagedTextureID //
+			[this]( ResourceManagerBase::ResourceNameView resourceName, file::VFSPath const& path ) -> ManagedTextureID //
 		{
-			RF_TODO_ANNOTATION( "These should be named resources" );
-			return QueueDeferredLoadRequest<AssetType::Texture>( {}, path );
+			return QueueDeferredLoadRequest<AssetType::Texture>( resourceName, path );
 		};
 		mTilesetManager = alloc::DefaultAllocCreator<TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}

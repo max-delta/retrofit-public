@@ -36,7 +36,7 @@ TilesetManager::~TilesetManager()
 
 
 
-UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile( Filename const& filename )
+UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
 {
 	// Open
 	file::VFS const& vfs = *mVfs;
@@ -345,7 +345,8 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 		return nullptr;
 	}
 
-	ManagedTextureID const texID = mTexLoadFunc( texPath );
+	ResourceName const texName = rftl::format( "tset_{}", resourceName );
+	ManagedTextureID const texID = mTexLoadFunc( texName, texPath );
 	if( texID == kInvalidManagedTextureID )
 	{
 		RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for tileset" );

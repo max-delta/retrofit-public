@@ -100,7 +100,7 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<Resource> AllocateResourceFromFile( Filename const& filename ) = 0;
+	virtual UniquePtr<Resource> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) = 0;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
 	virtual bool PostLoadFromMemory( ResourceType& resource );
 	virtual bool PreDestroy( ResourceType& resource );

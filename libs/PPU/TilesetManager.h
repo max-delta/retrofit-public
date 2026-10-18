@@ -19,7 +19,7 @@ class PPU_API TilesetManager final : public ResourceManager<Tileset, ManagedTile
 	//
 	// Types and constants
 public:
-	using TextureLoadRefSig = ManagedTextureID( file::VFSPath const& path );
+	using TextureLoadRefSig = ManagedTextureID( ResourceNameView resourceName, file::VFSPath const& path );
 	using TextureLoadRefFunc = rftl::function<TextureLoadRefSig>;
 
 
@@ -34,7 +34,7 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<ResourceType> AllocateResourceFromFile( Filename const& filename ) override;
+	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) override;
 
 
 	// Private data
