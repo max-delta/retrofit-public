@@ -30,6 +30,7 @@
 		<ClInclude Include="Palette.h" />
 		<ClInclude Include="PaletteLoader.h" />
 		<ClInclude Include="AssetTypes.h" />
+		<ClInclude Include="ResourceLoadResults.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -57,6 +58,7 @@
 		<ClCompile Include="Palette.cpp" />
 		<ClCompile Include="PaletteLoader.cpp" />
 		<ClCompile Include="AssetTypes.cpp" />
+		<ClCompile Include="ResourceLoadResults.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="FramePack.inl" />

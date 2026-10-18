@@ -1,7 +1,8 @@
 #pragma once
 #include "project.h"
 
-#include "PPU/PPUFwd.h"
+#include "PPU/ResourceLoadResults.h"
+
 #include "PlatformFilesystem/VFSPath.h"
 
 #include "core/ptr/unique_ptr.h"
@@ -54,23 +55,7 @@ class ResourceManager : public ResourceManagerBase
 	// Types and constants
 public:
 	static constexpr ManagedResourceID kInvalidResourceID = InvalidResourceID;
-
-	struct LoadResult
-	{
-		operator bool() const
-		{
-			if( mHandle == nullptr )
-			{
-				RF_ASSERT( mID == kInvalidResourceID );
-				return false;
-			}
-			RF_ASSERT( mID != kInvalidResourceID );
-			return true;
-		}
-
-		ManagedResourceID mID = kInvalidResourceID;
-		WeakPtr<Resource> mHandle = nullptr;
-	};
+	using LoadResult = ResourceLoadResult<Resource, ManagedResourceID, kInvalidResourceID>;
 
 protected:
 	using ResourceType = Resource;

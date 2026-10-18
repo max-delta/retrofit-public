@@ -74,5 +74,8 @@ class FontManager;
 
 class DeviceInterface;
 
+template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
+struct ResourceLoadResult;
+
 ///////////////////////////////////////////////////////////////////////////////
 }
