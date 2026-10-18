@@ -115,31 +115,28 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( Filename const& filename )
+inline ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadResult
+ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( Filename const& filename )
 {
-	ManagedResourceID unused;
-	WeakPtr<Resource> const handle = LoadNewResourceInternal( filename.CreateString(), filename, unused );
-	return handle != nullptr;
+	return LoadNewResourceInternal( filename.CreateString(), filename );
 }
 
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, Filename const& filename )
+inline ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadResult
+ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, Filename const& filename )
 {
-	ManagedResourceID unused;
-	WeakPtr<Resource> const handle = LoadNewResourceInternal( resourceName, filename, unused );
-	return handle != nullptr;
+	return LoadNewResourceInternal( resourceName, filename );
 }
 
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
+inline ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadResult
+ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
-	ManagedResourceID unused;
-	WeakPtr<Resource> const handle = LoadNewResourceInternal( resourceName, rftl::move( resource ), unused );
-	return handle != nullptr;
+	return LoadNewResourceInternal( resourceName, rftl::move( resource ) );
 }
 
 
@@ -147,9 +144,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Loa
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( Filename const& filename )
 {
-	ManagedResourceID managedID;
-	LoadNewResourceInternal( filename.CreateString(), filename, managedID );
-	return managedID;
+	return LoadNewResourceInternal( filename.CreateString(), filename ).mID;
 }
 
 
@@ -157,9 +152,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename )
 {
-	ManagedResourceID managedID;
-	LoadNewResourceInternal( resourceName, filename, managedID );
-	return managedID;
+	return LoadNewResourceInternal( resourceName, filename ).mID;
 }
 
 
@@ -167,9 +160,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
-	ManagedResourceID managedID;
-	LoadNewResourceInternal( resourceName, rftl::move( resource ), managedID );
-	return managedID;
+	return LoadNewResourceInternal( resourceName, rftl::move( resource ) ).mID;
 }
 
 
@@ -177,8 +168,7 @@ ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( Filename const& filename )
 {
-	ManagedResourceID unused;
-	return LoadNewResourceInternal( filename.CreateString(), filename, unused );
+	return LoadNewResourceInternal( filename.CreateString(), filename ).mHandle;
 }
 
 
@@ -186,8 +176,7 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceNameView resourceName, Filename const& filename )
 {
-	ManagedResourceID unused;
-	return LoadNewResourceInternal( resourceName, filename, unused );
+	return LoadNewResourceInternal( resourceName, filename ).mHandle;
 }
 
 
@@ -195,8 +184,7 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
-	ManagedResourceID unused;
-	return LoadNewResourceInternal( resourceName, rftl::move( resource ), unused );
+	return LoadNewResourceInternal( resourceName, rftl::move( resource ) ).mHandle;
 }
 
 
@@ -542,13 +530,13 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename, ManagedResourceID& managedResourceID )
+inline ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadResult
+ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
 
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( filename.Empty() == false );
-	managedResourceID = InvalidResourceID;
 
 	// Check if it is already loaded
 	{
@@ -563,14 +551,12 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 				RF_ASSERT( mResourceIDs.count( resourceName ) == 1 );
 				ManagedResourceID const id = rftl::transparent_at( mResourceIDs, resourceName );
 				RF_ASSERT( mResources.count( id ) == 1 );
-				managedResourceID = id;
-				return mResources.at( id );
+				return LoadResult{ .mID = id, .mHandle = mResources.at( id ) };
 			}
 			else
 			{
 				RF_DBGFAIL_MSG( "Resource already loaded with different file" );
-				managedResourceID = kInvalidResourceID;
-				return nullptr;
+				return LoadResult{};
 			}
 		}
 	}
@@ -578,57 +564,57 @@ WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID
 	ManagedResourceID tempID = GenerateNewManagedID();
 
 	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
-	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
+	RF_ASSERT( mResources.count( tempID ) == 0 );
 	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
 	Resource* res;
-	WeakPtr<Resource> retVal;
+	WeakPtr<Resource> handle;
 	{
 		UniquePtr<Resource> newResource = AllocateResourceFromFile( filename );
 		if( newResource == nullptr )
 		{
 			RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
-			return nullptr;
+			return LoadResult{};
 		}
-		retVal = newResource;
+		handle = newResource;
 		res = newResource;
-		managedResourceID = tempID;
-		RegisterResource( managedResourceID, rftl::move( newResource ) );
-		RegisterResourceID( resourceName, managedResourceID );
+		RegisterResource( tempID, rftl::move( newResource ) );
+		RegisterResourceID( resourceName, tempID );
 		RegisterFileBackedResource( resourceName, filename );
 	}
-	RF_ASSERT( retVal != nullptr );
+	RF_ASSERT( handle != nullptr );
 
 	bool const success = PostLoadFromFile( *res, filename );
 	RF_ASSERT( success );
 	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
-	return retVal;
+	return LoadResult{ .mID = tempID, .mHandle = handle };
 }
 
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID )
+inline ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadResult
+ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
 {
 	WriterLock const lock( mMultiReaderSingleWriterLock );
 
 	RF_ASSERT( resourceName.empty() == false );
 	RF_ASSERT( resource != nullptr );
-	managedResourceID = GenerateNewManagedID();
+	ManagedResourceID const managedResourceID = GenerateNewManagedID();
 
 	Resource* res;
-	WeakPtr<Resource> retVal;
+	WeakPtr<Resource> handle;
 	{
-		retVal = resource;
+		handle = resource;
 		res = resource;
 		RegisterResource( managedResourceID, rftl::move( resource ) );
 		RegisterResourceID( resourceName, managedResourceID );
 	}
-	RF_ASSERT( retVal != nullptr );
+	RF_ASSERT( handle != nullptr );
 
 	bool const success = PostLoadFromMemory( *res );
 	RF_ASSERT( success );
 	RFLOG_INFO( nullptr, RFCAT_PPU, "Resource loaded from memory" );
-	return retVal;
+	return LoadResult{ .mID = managedResourceID, .mHandle = handle };
 }
 
 

@@ -55,6 +55,23 @@ class ResourceManager : public ResourceManagerBase
 public:
 	static constexpr ManagedResourceID kInvalidResourceID = InvalidResourceID;
 
+	struct LoadResult
+	{
+		operator bool() const
+		{
+			if( mHandle == nullptr )
+			{
+				RF_ASSERT( mID == kInvalidResourceID );
+				return false;
+			}
+			RF_ASSERT( mID != kInvalidResourceID );
+			return true;
+		}
+
+		ManagedResourceID mID = kInvalidResourceID;
+		WeakPtr<Resource> mHandle = nullptr;
+	};
+
 protected:
 	using ResourceType = Resource;
 	using ManagedResourceIDType = ManagedResourceID;
@@ -78,9 +95,9 @@ public:
 	ManagedResourceID ReserveNullResource( Filename const& filename );
 	ManagedResourceID ReserveNullResource( ResourceNameView resourceName );
 
-	bool LoadNewResource( Filename const& filename );
-	bool LoadNewResource( ResourceNameView resourceName, Filename const& filename );
-	bool LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
+	LoadResult LoadNewResource( Filename const& filename );
+	LoadResult LoadNewResource( ResourceNameView resourceName, Filename const& filename );
+	LoadResult LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 	ManagedResourceID LoadNewResourceGetID( Filename const& filename );
 	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename );
 	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
@@ -125,8 +142,8 @@ private:
 
 	WeakPtr<Resource> GetMutableResourceFromManagedResourceID( ManagedResourceID managedResourceID ) const;
 	ManagedResourceID ReserveNullResourceInternal( ResourceNameView resourceName );
-	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename, ManagedResourceID& managedResourceID );
-	WeakPtr<Resource> LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource, ManagedResourceID& managedResourceID );
+	LoadResult LoadNewResourceInternal( ResourceNameView resourceName, Filename const& filename );
+	LoadResult LoadNewResourceInternal( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 	bool UpdateExistingResourceWithoutLock( ResourceNameView resourceName, Filename const& filename );
 
 	void RegisterResource( ManagedResourceID managedResourceID, UniquePtr<Resource>&& resource );
