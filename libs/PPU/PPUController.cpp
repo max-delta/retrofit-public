@@ -675,9 +675,6 @@ AssetLoadResultType<T> PPUController::ForceImmediateLoadRequest( Filename const&
 template<AssetType T>
 AssetLoadResultType<T> PPUController::ForceImmediateLoadRequest( ResourceNameView resourceName, Filename const& filename )
 {
-	// Force all requests made before this, to ensure ordering is maintained
-	ForceImmediateLoadAllRequests();
-
 	AssetLoadResultType<T> const retVal = details::FulfillNewLoadRequest<T>( GetMutableManager<T>(), resourceName, filename );
 	RF_ASSERT( retVal.operator bool() );
 	return retVal;
