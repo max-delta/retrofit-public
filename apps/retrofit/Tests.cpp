@@ -744,7 +744,7 @@ void FPackSerializationTest()
 	// Load a common test asset
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const digitFPackPath = testFramepacks.GetChild( "testdigit_loop.fpack" );
-	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResourceGetID( kTestPackName, digitFPackPath );
+	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResource( kTestPackName, digitFPackPath ).mID;
 	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
 
 	// Force loads to finish so serializer can resolve the textures, since

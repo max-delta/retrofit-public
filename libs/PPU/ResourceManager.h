@@ -98,12 +98,6 @@ public:
 	LoadResult LoadNewResource( Filename const& filename );
 	LoadResult LoadNewResource( ResourceNameView resourceName, Filename const& filename );
 	LoadResult LoadNewResource( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
-	ManagedResourceID LoadNewResourceGetID( Filename const& filename );
-	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename );
-	ManagedResourceID LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
-	WeakPtr<Resource> LoadNewResourceGetHandle( Filename const& filename );
-	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceNameView resourceName, Filename const& filename );
-	WeakPtr<Resource> LoadNewResourceGetHandle( ResourceNameView resourceName, UniquePtr<Resource>&& resource );
 
 	bool UpdateExistingResource( Filename const& filename );
 	bool UpdateExistingResource( ResourceNameView resourceName, Filename const& filename );

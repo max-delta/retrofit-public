@@ -61,7 +61,7 @@ void FramePackEditor::Init()
 
 	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-	mDefaultFontID = fontMan.LoadNewResourceGetID( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) ).mID;
 
 	ppu->DebugSetGridEnabled( details::kDebugGrid );
 }
@@ -922,8 +922,8 @@ void FramePackEditor::CreateFramePack( file::VFSPath const& defaultFrame )
 	}
 	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
 	newFPack->mNumTimeSlots = 1;
-	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResourceGetID( kInitialTextureName, defaultFrame );
-	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, rftl::move( newFPack ) );
+	newFPack->GetMutableTimeSlots()[0].mTextureReference = texMan.LoadNewResource( kInitialTextureName, defaultFrame ).mID;
+	mFramePackID = fpackMan.LoadNewResource( kFramePackName, rftl::move( newFPack ) ).mID;
 }
 
 
@@ -953,7 +953,7 @@ void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 		mFramePackID = gfx::ppu::kInvalidManagedFramePackID;
 		return;
 	}
-	mFramePackID = fpackMan.LoadNewResourceGetID( kFramePackName, path );
+	mFramePackID = fpackMan.LoadNewResource( kFramePackName, path ).mID;
 
 	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
@@ -1108,7 +1108,7 @@ bool FramePackEditor::ChangeTexture( size_t slotIndex )
 	}
 
 	gfx::TextureManager* const texMan = ppu->DebugGetTextureManager();
-	textureID = texMan->LoadNewResourceGetID( mappedPath );
+	textureID = texMan->LoadNewResource( mappedPath ).mID;
 
 	return true;
 }

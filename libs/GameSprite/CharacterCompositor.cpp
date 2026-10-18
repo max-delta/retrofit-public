@@ -385,7 +385,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 		rftl::string const frameName = calcFrameName( i );
 		file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( calcFrameName( sourceFrames.at( i ) ) );
 		gfx::ppu::FramePackBase::TimeSlot& slot = newFPack.GetMutableTimeSlots()[i];
-		slot.mTextureReference = texMan.LoadNewResourceGetID( frameTexture );
+		slot.mTextureReference = texMan.LoadNewResource( frameTexture ).mID;
 		slot.mTextureOriginX = originX;
 		slot.mTextureOriginY = originY;
 		newFPack.GetMutableTimeSlotSustains()[i] = 1;

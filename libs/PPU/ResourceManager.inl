@@ -142,54 +142,6 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( Filename const& filename )
-{
-	return LoadNewResourceInternal( filename.CreateString(), filename ).mID;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, Filename const& filename )
-{
-	return LoadNewResourceInternal( resourceName, filename ).mID;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetID( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
-{
-	return LoadNewResourceInternal( resourceName, rftl::move( resource ) ).mID;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( Filename const& filename )
-{
-	return LoadNewResourceInternal( filename.CreateString(), filename ).mHandle;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceNameView resourceName, Filename const& filename )
-{
-	return LoadNewResourceInternal( resourceName, filename ).mHandle;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResourceGetHandle( ResourceNameView resourceName, UniquePtr<Resource>&& resource )
-{
-	return LoadNewResourceInternal( resourceName, rftl::move( resource ) ).mHandle;
-}
-
-
-
-template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
 inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExistingResource( Filename const& filename )
 {
 	return UpdateExistingResource( filename.CreateString(), filename );
