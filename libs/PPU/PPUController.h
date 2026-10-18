@@ -33,10 +33,6 @@ private:
 
 	//
 	// Types and constants
-public:
-	RF_TODO_ANNOTATION( "Remove this alias" );
-	using AssetType = AssetType;
-
 private:
 	enum class LoadType : uint8_t
 	{

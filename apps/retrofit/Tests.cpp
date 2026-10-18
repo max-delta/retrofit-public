@@ -255,8 +255,8 @@ void InitDrawTest()
 	file::VFSPath const testTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "test" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const digitResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const digitResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	gfx::ppu::ManagedFramePackID const& digitFPackID = digitResult.mID;
 	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = digitResult.mHandle;
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
@@ -280,8 +280,8 @@ void InitDrawTest()
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const wiggleResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const wiggleResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	gfx::ppu::ManagedFramePackID const& wiggleFPackID = wiggleResult.mID;
 	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = wiggleResult.mHandle;
 	testObjWiggle.mFramePackID = wiggleFPackID;
@@ -293,8 +293,8 @@ void InitDrawTest()
 	testObjWiggle.mZLayer = 0;
 
 
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const paletteResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const paletteResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
 	gfx::ManagedTilesetID const& paletteTileset = paletteResult.mID;
 	testTileLayer.mTilesetReference = paletteTileset;
 	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
@@ -303,8 +303,8 @@ void InitDrawTest()
 	testTileLayer.mZLayer = 1;
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, testTilemaps.GetChild( "testhouse_10.csv" ) );
 
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const animatedResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const animatedResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
 	gfx::ManagedTilesetID const& animatedTileset = animatedResult.mID;
 	testSingleTileLayer.mTilesetReference = animatedTileset;
 	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
@@ -317,10 +317,10 @@ void InitDrawTest()
 	testSingleTileLayer.ClearAndResize( 1, 1 );
 	testSingleTileLayer.GetMutableTile( 0 ).SetIndex( 3 );
 
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Font> const font1Result =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Font>( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Font> const font2Result =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Font>( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Font> const font1Result =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Font> const font2Result =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 	gfx::ManagedFontID const& testFont1 = font1Result.mID;
 	gfx::ManagedFontID const& testFont2 = font2Result.mID;
 
@@ -639,8 +639,8 @@ void InitUITest()
 		uiManager.AssignStrongController(
 			nineSlicer->GetChildContainerID( 6 ),
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const frameResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const frameResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const& frameTileset = frameResult.mID;
 	frame6->SetTileset(
 		uiContext,
@@ -743,8 +743,8 @@ void FPackSerializationTest()
 	// Load a common test asset
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const digitFPackPath = testFramepacks.GetChild( "testdigit_loop.fpack" );
-	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const digitResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( kTestPackName, digitFPackPath );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const digitResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( kTestPackName, digitFPackPath );
 	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = digitResult.mHandle;
 
 	// Force loads to finish so serializer can resolve the textures, since
@@ -798,7 +798,7 @@ void FPackSerializationTest()
 	// Load file
 	rftl::string const newFilename = newFilePath.CreateString();
 	bool const fpackLoadSuccess =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( newFilename, newFilePath );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( newFilename, newFilePath );
 	if( fpackLoadSuccess == false )
 	{
 		RFLOG_ERROR( newFilePath, RFCAT_STARTUPTEST, "Failed to load FPack file" );

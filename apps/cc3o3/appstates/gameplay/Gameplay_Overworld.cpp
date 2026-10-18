@@ -101,9 +101,9 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 
 	// Setup terrain
 	{
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mTerrainTilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mCloud1TilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, map.mCloud2TilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mTerrainTilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mCloud1TilesetPath );
+		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mCloud2TilesetPath );
 
 		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
 		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;

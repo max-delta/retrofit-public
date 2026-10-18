@@ -74,8 +74,8 @@ void MakeOverworldCharacterFromDB(
 		gfx::ppu::PPUController& ppu = *app::gGraphics;
 		auto setAnim = [&ppu]( comp::OverworldVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
-			gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const result =
-				ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( source );
+			gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const result =
+				ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( source );
 			gfx::ppu::ManagedFramePackID const& fPackID = result.mID;
 			gfx::ppu::FramePackBase const& fPack = *result.mHandle;
 			anim.mFramePack = gfx::ppu::FramePackRef::FromFramePack( fPackID, fPack );
