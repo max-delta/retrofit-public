@@ -426,8 +426,7 @@ void TitleScreen_CharCreate::InternalState::Recomposite()
 	gfx::ppu::ManagedFramePackID const previewID = framePackMan.GetManagedResourceIDFromResourceName( details::kPreviewFpackName );
 	if( previewID == gfx::ppu::kInvalidManagedFramePackID )
 	{
-		ppu.ForceImmediateLoadRequest(
-			gfx::ppu::PPUController::AssetType::FramePack,
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>(
 			details::kPreviewFpackName,
 			character.mFramepacksByAnim.at( "idle_n" ) );
 	}

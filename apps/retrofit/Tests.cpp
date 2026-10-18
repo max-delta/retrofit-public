@@ -41,13 +41,10 @@
 #include "GameInput/HotkeyController.h"
 
 #include "PPU/PPUController.h"
-#include "PPU/FramePackManager.h"
 #include "PPU/FramePack.h"
 #include "PPU/FramePackSerDes.h"
 #include "PPU/TileLayerCSVLoader.h"
-#include "PPU/TilesetManager.h"
 #include "PPU/Tileset.h"
-#include "PPU/FontManager.h"
 #include "PPU/TextureManager.h"
 
 #include "Scheduling/tasks/FunctorTask.h"
@@ -250,9 +247,6 @@ void InitDrawTest()
 	using namespace RF;
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
-	gfx::FontManager const& fontMan = *ppu.GetFontManager();
 	file::VFS& vfs = *app::gVfs;
 
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
@@ -261,9 +255,10 @@ void InitDrawTest()
 	file::VFSPath const testTilemaps = file::VFS::kRoot.GetChild( "assets", "tilemaps", "test" );
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, testFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	gfx::ppu::ManagedFramePackID const digitFPackID = framePackMan.GetManagedResourceIDFromResourceName( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
-	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const digitResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
+	gfx::ppu::ManagedFramePackID const& digitFPackID = digitResult.mID;
+	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = digitResult.mHandle;
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
 	testObjDigit.mFramePackID = digitFPackID;
 	testObjDigit.mTimer.mMaxTimeIndex = digitAnimationLength;
@@ -285,9 +280,10 @@ void InitDrawTest()
 	testObjDigitFlips[2].mVerticalFlip = true;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, testFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	gfx::ppu::ManagedFramePackID const wiggleFPackID = framePackMan.GetManagedResourceIDFromResourceName( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
-	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = framePackMan.GetResourceFromManagedResourceID( digitFPackID );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const wiggleResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
+	gfx::ppu::ManagedFramePackID const& wiggleFPackID = wiggleResult.mID;
+	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = wiggleResult.mHandle;
 	testObjWiggle.mFramePackID = wiggleFPackID;
 	testObjWiggle.mTimer.mMaxTimeIndex = 4;
 	testObjWiggle.mTimer.mTimeSlowdown = 33 / 4;
@@ -297,8 +293,9 @@ void InitDrawTest()
 	testObjWiggle.mZLayer = 0;
 
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "palette16_4.tset.txt" ) );
-	gfx::ManagedTilesetID const paletteTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const paletteResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+	gfx::ManagedTilesetID const& paletteTileset = paletteResult.mID;
 	testTileLayer.mTilesetReference = paletteTileset;
 	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
 	testTileLayer.mXCoord = 170;
@@ -306,8 +303,9 @@ void InitDrawTest()
 	testTileLayer.mZLayer = 1;
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, testTilemaps.GetChild( "testhouse_10.csv" ) );
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
-	gfx::ManagedTilesetID const animatedTileset = tsetMan.GetManagedResourceIDFromResourceName( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const animatedResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+	gfx::ManagedTilesetID const& animatedTileset = animatedResult.mID;
 	testSingleTileLayer.mTilesetReference = animatedTileset;
 	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
 	testSingleTileLayer.mXCoord = 170;
@@ -319,10 +317,12 @@ void InitDrawTest()
 	testSingleTileLayer.ClearAndResize( 1, 1 );
 	testSingleTileLayer.GetMutableTile( 0 ).SetIndex( 3 );
 
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Font, fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
-	gfx::ManagedFontID const testFont1 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
-	gfx::ManagedFontID const testFont2 = fontMan.GetManagedResourceIDFromResourceName( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Font> const font1Result =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Font>( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Font> const font2Result =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Font>( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
+	gfx::ManagedFontID const& testFont1 = font1Result.mID;
+	gfx::ManagedFontID const& testFont2 = font2Result.mID;
 
 	app::gFontRegistry->RegisterFont( k1xFont, { testFont1, 8, 0, 1 } );
 	app::gFontRegistry->RegisterFont( k2xFont, { testFont2, 8, 0, 2 } );
@@ -581,7 +581,6 @@ void DrawInputDebug()
 void InitUITest()
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	ui::ContainerManager& uiManager = *app::gUiManager;
 	ui::UIContext uiContext( uiManager );
 	uiManager.SetRootRenderDepth( gfx::ppu::kNearestLayer + 50 );
@@ -640,8 +639,9 @@ void InitUITest()
 		uiManager.AssignStrongController(
 			nineSlicer->GetChildContainerID( 6 ),
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
-	ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, commonTilesets.GetChild( "frame9_24.tset.txt" ) );
-	gfx::ManagedTilesetID const frameTileset = tsetMan.GetManagedResourceIDFromResourceName( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::Tileset> const frameResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+	gfx::ManagedTilesetID const& frameTileset = frameResult.mID;
 	frame6->SetTileset(
 		uiContext,
 		frameTileset,
@@ -736,7 +736,6 @@ void XMLTest()
 void FPackSerializationTest()
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::ppu::FramePackManager& fpackMan = *ppu.DebugGetFramePackManager();
 	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
 
 	static constexpr char kTestPackName[] = "sertestpack";
@@ -744,8 +743,9 @@ void FPackSerializationTest()
 	// Load a common test asset
 	file::VFSPath const testFramepacks = file::VFS::kRoot.GetChild( "assets", "framepacks", "test" );
 	file::VFSPath const digitFPackPath = testFramepacks.GetChild( "testdigit_loop.fpack" );
-	gfx::ppu::ManagedFramePackID const digitFPackID = fpackMan.LoadNewResource( kTestPackName, digitFPackPath ).mID;
-	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = fpackMan.GetResourceFromManagedResourceID( digitFPackID );
+	gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const digitResult =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( kTestPackName, digitFPackPath );
+	WeakPtr<gfx::ppu::FramePackBase const> const digitFPack = digitResult.mHandle;
 
 	// Force loads to finish so serializer can resolve the textures, since
 	//  they're not yet considered "file-backed"
@@ -797,7 +797,8 @@ void FPackSerializationTest()
 
 	// Load file
 	rftl::string const newFilename = newFilePath.CreateString();
-	bool const fpackLoadSuccess = fpackMan.LoadNewResource( newFilename, newFilePath );
+	bool const fpackLoadSuccess =
+		ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( newFilename, newFilePath );
 	if( fpackLoadSuccess == false )
 	{
 		RFLOG_ERROR( newFilePath, RFCAT_STARTUPTEST, "Failed to load FPack file" );

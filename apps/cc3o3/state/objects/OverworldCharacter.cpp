@@ -12,7 +12,7 @@
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "PPU/PPUController.h"
-#include "PPU/FramePackManager.h"
+#include "PPU/ResourceLoadResults.h"
 #include "PPU/FramePack.h"
 
 #include "core_component/TypedObjectRef.h"
@@ -72,12 +72,12 @@ void MakeOverworldCharacterFromDB(
 		file::VFSPath const wWalk = composite.mFramepacksByAnim.at( "walk_w" );
 
 		gfx::ppu::PPUController& ppu = *app::gGraphics;
-		gfx::ppu::FramePackManager const& fPackMan = *ppu.GetFramePackManager();
-		auto setAnim = [&ppu, &fPackMan]( comp::OverworldVisual::Anim& anim, file::VFSPath const& source ) -> void //
+		auto setAnim = [&ppu]( comp::OverworldVisual::Anim& anim, file::VFSPath const& source ) -> void //
 		{
-			ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, source );
-			gfx::ppu::ManagedFramePackID const fPackID = fPackMan.GetManagedResourceIDFromResourceName( source );
-			gfx::ppu::FramePackBase const& fPack = *fPackMan.GetResourceFromResourceName( source );
+			gfx::ppu::AssetLoadResultType<gfx::ppu::PPUController::AssetType::FramePack> const result =
+				ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( source );
+			gfx::ppu::ManagedFramePackID const& fPackID = result.mID;
+			gfx::ppu::FramePackBase const& fPack = *result.mHandle;
 			anim.mFramePack = gfx::ppu::FramePackRef::FromFramePack( fPackID, fPack );
 			RF_ASSERT_MSG(
 				anim.mFramePack.mMaxTimeIndex == 1 || anim.mFramePack.mMaxTimeIndex == 4,

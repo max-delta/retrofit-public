@@ -86,7 +86,7 @@ static novel::CinematicDriver::TileLayersByScene AssignTileLayersForRequiredScen
 		tilesetResourceNames.emplace_back( rftl::format( "CINEMATIC_SCENE/{}", scene ) );
 		rftl::string_view const resourceName = tilesetResourceNames.back();
 		file::VFSPath const filename = sceneRoot.GetChild( rftl::string( scene ) + ".tset.txt" );
-		bool const success = ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::Tileset, resourceName, filename );
+		bool const success = ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::Tileset>( resourceName, filename );
 		if( success == false )
 		{
 			RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load a tileset for scene '{}'", scene );
@@ -150,7 +150,7 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 			resourceNames.emplace_back( rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression ) );
 			rftl::string_view const resourceName = resourceNames.back();
 			file::VFSPath const filename = characterRoot.GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
-			bool const success = ppu.ForceImmediateLoadRequest( gfx::ppu::PPUController::AssetType::FramePack, resourceName, filename );
+			bool const success = ppu.ForceImmediateLoadRequest<gfx::ppu::PPUController::AssetType::FramePack>( resourceName, filename );
 			if( success == false )
 			{
 				RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load an expression '{}' for character '{}'", expression, character );
