@@ -256,7 +256,7 @@ void InitDrawTest()
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
 
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const digitResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( testFramepacks.GetChild( "testdigit_loop.fpack" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( "testdigit_loop", testFramepacks.GetChild( "testdigit_loop.fpack" ) );
 	gfx::ppu::ManagedFramePackID const& digitFPackID = digitResult.mID;
 	WeakPtr<gfx::ppu::FramePackBase const> digitFPack = digitResult.mHandle;
 	uint8_t const digitAnimationLength = digitFPack->CalculateTimeIndexBoundary();
@@ -281,7 +281,7 @@ void InitDrawTest()
 
 
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const wiggleResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( testFramepacks.GetChild( "test64_wiggle.fpack" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( "test64_wiggle", testFramepacks.GetChild( "test64_wiggle.fpack" ) );
 	gfx::ppu::ManagedFramePackID const& wiggleFPackID = wiggleResult.mID;
 	WeakPtr<gfx::ppu::FramePackBase const> wiggleFPack = wiggleResult.mHandle;
 	testObjWiggle.mFramePackID = wiggleFPackID;
@@ -294,7 +294,7 @@ void InitDrawTest()
 
 
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const paletteResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( commonTilesets.GetChild( "palette16_4.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( "palette16_4", commonTilesets.GetChild( "palette16_4.tset.txt" ) );
 	gfx::ManagedTilesetID const& paletteTileset = paletteResult.mID;
 	testTileLayer.mTilesetReference = paletteTileset;
 	testTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Quadruple;
@@ -304,7 +304,7 @@ void InitDrawTest()
 	gfx::ppu::TileLayerCSVLoader::LoadTiles( testTileLayer, vfs, testTilemaps.GetChild( "testhouse_10.csv" ) );
 
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const animatedResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( "palette16_4_anim", testTilesets.GetChild( "palette16_4_anim.tset.txt" ) );
 	gfx::ManagedTilesetID const& animatedTileset = animatedResult.mID;
 	testSingleTileLayer.mTilesetReference = animatedTileset;
 	testSingleTileLayer.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_16x;
@@ -318,9 +318,9 @@ void InitDrawTest()
 	testSingleTileLayer.GetMutableTile( 0 ).SetIndex( 3 );
 
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Font> const font1Result =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( "font_narrow_1x_mono", fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) );
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Font> const font2Result =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( "font_narrow_2x_vari", fonts.GetChild( "font_narrow_2x_vari.fnt.txt" ) );
 	gfx::ManagedFontID const& testFont1 = font1Result.mID;
 	gfx::ManagedFontID const& testFont2 = font2Result.mID;
 
@@ -640,7 +640,7 @@ void InitUITest()
 			nineSlicer->GetChildContainerID( 6 ),
 			DefaultCreator<ui ::controller::BorderFrame>::Create() );
 	gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::Tileset> const frameResult =
-		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( commonTilesets.GetChild( "frame9_24.tset.txt" ) );
+		ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( "frame9_24", commonTilesets.GetChild( "frame9_24.tset.txt" ) );
 	gfx::ManagedTilesetID const& frameTileset = frameResult.mID;
 	frame6->SetTileset(
 		uiContext,

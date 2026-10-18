@@ -31,7 +31,6 @@
 #include "GameUI/controllers/TextLabel.h"
 
 #include "PPU/PPUController.h"
-#include "PPU/TilesetManager.h"
 #include "PPU/TileLayerCSVLoader.h"
 #include "PPU/Viewport.h"
 
@@ -82,7 +81,6 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 	InternalState& internalState = *mInternalState;
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
 	file::VFS& vfs = *app::gVfs;
 	campaign::CampaignManager& campaign = *gCampaignManager;
 
@@ -101,9 +99,9 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 
 	// Setup terrain
 	{
-		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mTerrainTilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mCloud1TilesetPath );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, map.mCloud2TilesetPath );
+		gfx::ManagedTilesetID const terrainID = ppu.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( "terrain", map.mTerrainTilesetPath );
+		gfx::ManagedTilesetID const cloud1ID = ppu.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( "cloud1", map.mCloud1TilesetPath );
+		gfx::ManagedTilesetID const cloud2ID = ppu.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( "cloud2", map.mCloud2TilesetPath );
 
 		gfx::ppu::TileLayer& land = internalState.mTerrainLand;
 		gfx::ppu::TileLayer& cloudA = internalState.mTerrainCloudA;
@@ -112,7 +110,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		gfx::PPUTimer& timerB = internalState.mTimerCloudB;
 
 		land = {};
-		land.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mTerrainTilesetPath );
+		land.mTilesetReference = terrainID;
 		land.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		land.mXCoord = 0;
 		land.mYCoord = 0;
@@ -126,7 +124,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		}
 
 		cloudA = {};
-		cloudA.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud1TilesetPath );
+		cloudA.mTilesetReference = cloud1ID;
 		cloudA.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudA.mXCoord = 0;
 		cloudA.mYCoord = 0;
@@ -141,7 +139,7 @@ void Gameplay_Overworld::OnEnter( AppStateChangeContext& context )
 		timerA.mMaxTimeIndex = map.mCloud1ParallaxDelay;
 
 		cloudB = {};
-		cloudB.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( map.mCloud2TilesetPath );
+		cloudB.mTilesetReference = cloud2ID;
 		cloudB.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		cloudB.mXCoord = 0;
 		cloudB.mYCoord = 0;

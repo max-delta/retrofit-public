@@ -146,15 +146,11 @@ public:
 	Coord CalculateTileLayerSize( TileLayer const& tileLayer ) const;
 
 	bool HasOutstandingLoadRequests() const;
-	template<AssetType T> AssetTypeInfo<T>::ManagedTypeID QueueDeferredLoadRequest( Filename const& filename );
 	template<AssetType T> AssetTypeInfo<T>::ManagedTypeID QueueDeferredLoadRequest( ResourceNameView resourceName, Filename const& filename );
-	bool QueueDeferredLoadRequest( AssetType type, Filename const& filename );
 	bool QueueDeferredLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool QueueDeferredReloadRequest( AssetType type, ResourceNameView resourceName );
 	bool QueueDeferredDestroyRequest( AssetType type, ResourceNameView resourceName );
-	template<AssetType T> AssetLoadResultType<T> ForceImmediateLoadRequest( Filename const& filename );
 	template<AssetType T> AssetLoadResultType<T> ForceImmediateLoadRequest( ResourceNameView resourceName, Filename const& filename );
-	bool ForceImmediateLoadRequest( AssetType type, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
 	bool ForceImmediateLoadAllRequests();
 

@@ -152,8 +152,8 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 		FramePackManager::TextureLoadRefFunc texLoad = //
 			[this]( file::VFSPath const& path ) -> ManagedTextureID //
 		{
-			QueueDeferredLoadRequest( AssetType::Texture, path );
-			return mTextureManager->GetManagedResourceIDFromResourceName( path );
+			RF_TODO_ANNOTATION( "These should be named resources" );
+			return QueueDeferredLoadRequest<AssetType::Texture>( {}, path );
 		};
 		mFramePackManager = alloc::DefaultAllocCreator<FramePackManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}
@@ -164,8 +164,8 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 		TilesetManager::TextureLoadRefFunc texLoad = //
 			[this]( file::VFSPath const& path ) -> ManagedTextureID //
 		{
-			QueueDeferredLoadRequest( AssetType::Texture, path );
-			return mTextureManager->GetManagedResourceIDFromResourceName( path );
+			RF_TODO_ANNOTATION( "These should be named resources" );
+			return QueueDeferredLoadRequest<AssetType::Texture>( {}, path );
 		};
 		mTilesetManager = alloc::DefaultAllocCreator<TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
 	}
@@ -613,27 +613,12 @@ bool PPUController::HasOutstandingLoadRequests() const
 
 
 template<AssetType T>
-AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( Filename const& filename )
-{
-	return QueueDeferredLoadRequest<T>( ResourceName{}, filename );
-}
-
-
-
-template<AssetType T>
 AssetTypeInfo<T>::ManagedTypeID PPUController::QueueDeferredLoadRequest( ResourceNameView resourceName, Filename const& filename )
 {
 	typename AssetTypeInfo<T>::ManagedTypeID const retVal = details::FulfillReserveRequest<T>( GetMutableManager<T>(), resourceName, filename );
 	RF_ASSERT( retVal != AssetTypeInfo<T>::kInvalidTypeID );
 	mDeferredLoadRequests.emplace_back( LoadRequest{ LoadType::Modify, T, ResourceName( resourceName ), filename } );
 	return retVal;
-}
-
-
-
-bool PPUController::QueueDeferredLoadRequest( AssetType type, Filename const& filename )
-{
-	return QueueDeferredLoadRequest( type, ResourceName{}, filename );
 }
 
 
@@ -665,26 +650,11 @@ bool PPUController::QueueDeferredDestroyRequest( AssetType type, ResourceNameVie
 
 
 template<AssetType T>
-AssetLoadResultType<T> PPUController::ForceImmediateLoadRequest( Filename const& filename )
-{
-	return ForceImmediateLoadRequest<T>( ResourceName{}, filename );
-}
-
-
-
-template<AssetType T>
 AssetLoadResultType<T> PPUController::ForceImmediateLoadRequest( ResourceNameView resourceName, Filename const& filename )
 {
 	AssetLoadResultType<T> const retVal = details::FulfillNewLoadRequest<T>( GetMutableManager<T>(), resourceName, filename );
 	RF_ASSERT( retVal.operator bool() );
 	return retVal;
-}
-
-
-
-bool PPUController::ForceImmediateLoadRequest( AssetType type, Filename const& filename )
-{
-	return ForceImmediateLoadRequest( type, ResourceName{}, filename );
 }
 
 
@@ -2164,9 +2134,7 @@ bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 }
 
 #define RF_PPU_ASSET_TYPE_EXPORT( ASSET_TYPE ) \
-	template PPU_API RF::gfx::ppu::AssetTypeInfo<ASSET_TYPE>::ManagedTypeID RF::gfx::ppu::PPUController::QueueDeferredLoadRequest<ASSET_TYPE>( Filename const& ); \
 	template PPU_API RF::gfx::ppu::AssetTypeInfo<ASSET_TYPE>::ManagedTypeID RF::gfx::ppu::PPUController::QueueDeferredLoadRequest<ASSET_TYPE>( ResourceNameView, Filename const& ); \
-	template PPU_API RF::gfx::ppu::AssetLoadResultType<ASSET_TYPE> RF::gfx::ppu::PPUController::ForceImmediateLoadRequest<ASSET_TYPE>( Filename const& ); \
 	template PPU_API RF::gfx::ppu::AssetLoadResultType<ASSET_TYPE> RF::gfx::ppu::PPUController::ForceImmediateLoadRequest<ASSET_TYPE>( ResourceNameView, Filename const& );
 RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::Texture );
 RF_PPU_ASSET_TYPE_EXPORT( RF::gfx::ppu::AssetType::FramePack );
