@@ -69,6 +69,35 @@ bool FulfillReserveRequestDiscardID(
 	return FulfillReserveRequest<T>( manager, resourceName, filename ) != AssetTypeInfo<T>::kInvalidTypeID;
 }
 
+
+
+template<AssetType T>
+AssetLoadResultType<T> FulfillNewLoadRequest(
+	typename AssetTypeInfo<T>::Manager& manager,
+	ResourceManagerBase::ResourceNameView resourceName,
+	ResourceManagerBase::Filename const& filename )
+{
+	if( resourceName.empty() )
+	{
+		return manager.LoadNewResource( filename );
+	}
+	else
+	{
+		return manager.LoadNewResource( resourceName, filename );
+	}
+}
+
+
+
+template<AssetType T>
+bool FulfillNewLoadRequestDiscardID(
+	typename AssetTypeInfo<T>::Manager& manager,
+	ResourceManagerBase::ResourceName const& resourceName,
+	ResourceManagerBase::Filename const& filename )
+{
+	return FulfillNewLoadRequest<T>( manager, resourceName, filename );
+}
+
 }
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2005,27 +2034,20 @@ bool PPUController::FulfillLoadRequest( LoadRequest const& request )
 		}
 		case LoadType::New:
 		{
-			auto const load = [&resourceName, &filename]( auto& manager ) -> bool //
-			{
-				if( resourceName.empty() )
-				{
-					return manager->LoadNewResource( filename );
-				}
-				else
-				{
-					return manager->LoadNewResource( resourceName, filename );
-				}
-			};
 			switch( request.mAssetType )
 			{
 				case AssetType::Texture:
-					return load( mTextureManager );
+					return details::FulfillNewLoadRequestDiscardID<AssetType::Texture>(
+						*mTextureManager, resourceName, filename );
 				case AssetType::FramePack:
-					return load( mFramePackManager );
+					return details::FulfillNewLoadRequestDiscardID<AssetType::FramePack>(
+						*mFramePackManager, resourceName, filename );
 				case AssetType::Tileset:
-					return load( mTilesetManager );
+					return details::FulfillNewLoadRequestDiscardID<AssetType::Tileset>(
+						*mTilesetManager, resourceName, filename );
 				case AssetType::Font:
-					return load( mFontManager );
+					return details::FulfillNewLoadRequestDiscardID<AssetType::Font>(
+						*mFontManager, resourceName, filename );
 				case AssetType::Invalid:
 				default:
 					RF_DBGFAIL();
