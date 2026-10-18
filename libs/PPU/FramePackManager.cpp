@@ -62,25 +62,41 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 		}
 	}
 
+	// Track texture reuse so we don't load duplicate textures multiple times
+	RF_TODO_ANNOTATION(
+		"Don't allow framepacks to serialize duplicate textures, rely on some"
+		" aliasing capabilities in the format instead" );
+	using ExistingTextures = rftl::unordered_map<file::VFSPath, ManagedTextureID>;
+	ExistingTextures existingTextures;
+
 	FramePackBase::TimeSlot* const timeSlots = framePack->GetMutableTimeSlots();
 	size_t const numSlots = framePack->mNumTimeSlots;
 	RF_ASSERT( textures.size() == numSlots );
 	for( size_t i = 0; i < numSlots; i++ )
 	{
 		FramePackBase::TimeSlot& timeSlot = timeSlots[i];
-		RF_TODO_ANNOTATION(
-			"Framepacks should support texture aliasing so they don't re-load the same"
-			" texture multiple times if its used in multiple frames" );
-		//ResourceName const texName = rftl::format( "fpack_{}_{}", resourceName, i );
-		ResourceName const texName = rftl::format( "fpack_{}", textures[i].CreateString() );
 		file::VFSPath const& texPath = textures[i];
-		ManagedTextureID const texID = mTexLoadFunc( texName, texPath );
-		if( texID == kInvalidManagedTextureID )
+
+		// Check for texture reuse
+		ManagedTextureID texID;
+		ExistingTextures::const_iterator const existingTexture = existingTextures.find( texPath );
+		if( existingTexture != existingTextures.end() )
 		{
-			RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );
-			timeSlot.mTextureReference = kInvalidManagedTextureID;
-			continue;
+			texID = existingTexture->second;
+			RFLOG_INFO( filename, RFCAT_PPU, "Reusing a texture {} for framepack {}", texPath, resourceName );
 		}
+		else
+		{
+			ResourceName const texName = rftl::format( "fpack_{}_{}", resourceName, i );
+			texID = mTexLoadFunc( texName, texPath );
+			if( texID == kInvalidManagedTextureID )
+			{
+				RFLOG_ERROR( filename, RFCAT_PPU, "Failed to load texture for framepack" );
+			}
+			bool const newEntry = existingTextures.emplace( texPath, texID ).second;
+			RF_ASSERT( newEntry );
+		}
+
 		timeSlot.mTextureReference = texID;
 	}
 
