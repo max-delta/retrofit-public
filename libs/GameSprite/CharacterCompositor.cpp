@@ -372,9 +372,7 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	int8_t const originX = math::integer_cast<int8_t>( tileWidth / 2 );
 	int8_t const originY = math::integer_cast<int8_t>( tileHeight * 5 / 6 );
 
-	// HACK: Direct access to texture manager
-	// TODO: Re-visit API surface
-	gfx::TextureManager& texMan = *mPpu->DebugGetTextureManager();
+	gfx::TextureManager const& texMan = *mPpu->GetTextureManager();
 
 	// Create framepack
 	gfx::ppu::FramePack_256 newFPack = {};
@@ -385,7 +383,8 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 		rftl::string const frameName = calcFrameName( i );
 		file::VFSPath const frameTexture = params.mTextureOutputDirectory.GetChild( calcFrameName( sourceFrames.at( i ) ) );
 		gfx::ppu::FramePackBase::TimeSlot& slot = newFPack.GetMutableTimeSlots()[i];
-		slot.mTextureReference = texMan.LoadNewResource( frameTexture ).mID;
+		RF_TODO_ANNOTATION( "These should be named resources" );
+		slot.mTextureReference = mPpu->ForceImmediateLoadRequest<gfx::ppu::AssetType::Texture>( {}, frameTexture ).mID;
 		slot.mTextureOriginX = originX;
 		slot.mTextureOriginY = originY;
 		newFPack.GetMutableTimeSlotSustains()[i] = 1;

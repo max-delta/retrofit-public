@@ -736,7 +736,7 @@ void XMLTest()
 void FPackSerializationTest()
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TextureManager& texMan = *ppu.DebugGetTextureManager();
+	gfx::TextureManager const& texMan = *ppu.GetTextureManager();
 
 	static constexpr char kTestPackName[] = "sertestpack";
 

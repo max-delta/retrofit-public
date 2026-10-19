@@ -59,9 +59,9 @@ void FramePackEditor::Init()
 	mPreviewSlowdownRate = gfx::kTimeSlowdownRate_Normal;
 	mPreviewObject = {};
 
-	gfx::FontManager& fontMan = *ppu->DebugGetFontManager();
 	file::VFSPath const fonts = file::VFS::kRoot.GetChild( "assets", "fonts", "common" );
-	mDefaultFontID = fontMan.LoadNewResource( fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) ).mID;
+	RF_TODO_ANNOTATION( "This should be a named resource" );
+	mDefaultFontID = ppu->ForceImmediateLoadRequest<gfx::ppu::AssetType::Font>( {}, fonts.GetChild( "font_narrow_1x_mono.fnt.txt" ) ).mID;
 
 	ppu->DebugSetGridEnabled( details::kDebugGrid );
 }
