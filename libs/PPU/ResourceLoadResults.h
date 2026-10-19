@@ -40,7 +40,7 @@ public:
 	// Public data
 public:
 	ManagedResourceID mID = kInvalidResourceID;
-	WeakPtr<Resource> mHandle = nullptr;
+	WeakPtr<Resource const> mHandle = nullptr;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
