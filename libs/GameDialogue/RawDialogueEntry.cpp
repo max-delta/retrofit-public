@@ -30,6 +30,11 @@ static rftl::string_view TrimBackWhitespace( rftl::string_view str )
 	return rftl::trim_suffix_chars( str, kInlineWhitespaceCharset );
 }
 
+static rftl::string_view TrimSurroundingWhitespace( rftl::string_view str )
+{
+	return rftl::trim_affix_chars( str, kInlineWhitespaceCharset );
+}
+
 
 
 static Token ReadToken( Line& line )
@@ -83,8 +88,7 @@ static KVPair ReadKVPair( Line& line )
 
 	// Key
 	Token key = rftl::strtok_view( temp, ':' );
-	key = TrimFrontWhitespace( key );
-	key = TrimBackWhitespace( key );
+	key = TrimSurroundingWhitespace( key );
 	if( key.empty() )
 	{
 		// No key
