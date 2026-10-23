@@ -40,7 +40,7 @@ inline constexpr auto trim_prefix_chars( rftl::basic_string_view<CharT> src, rft
 	size_t const pos = src.find_first_not_of( charSet );
 	if( pos == src.npos )
 	{
-		return src;
+		return {};
 	}
 
 	return substr_noexcept( src, pos );
@@ -62,7 +62,7 @@ inline constexpr auto trim_suffix_chars( rftl::basic_string_view<CharT> src, rft
 	size_t const pos = src.find_last_not_of( charSet );
 	if( pos == src.npos )
 	{
-		return src;
+		return {};
 	}
 
 	return substr_noexcept( src, 0, pos + 1 );

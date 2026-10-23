@@ -11,6 +11,7 @@ TEST( StringParse, TrimPrefix )
 {
 	static_assert( rftl::trim_prefix_chars( rftl::string_view( "" ), {} ) == "" );
 	static_assert( rftl::trim_prefix_chars( rftl::string_view( "" ), { 'a', 'z' } ) == "" );
+	static_assert( rftl::trim_prefix_chars( rftl::string_view( "az" ), { 'a', 'z' } ) == "" );
 	static_assert( rftl::trim_prefix_chars( rftl::string_view( "##" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_prefix_chars( rftl::string_view( "a##" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_prefix_chars( rftl::string_view( "z##" ), { 'a', 'z' } ) == "##" );
@@ -30,6 +31,7 @@ TEST( StringParse, TrimSuffix )
 {
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "" ), {} ) == "" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "" ), { 'a', 'z' } ) == "" );
+	static_assert( rftl::trim_suffix_chars( rftl::string_view( "az" ), { 'a', 'z' } ) == "" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "##" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "a##" ), { 'a', 'z' } ) == "a##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "z##" ), { 'a', 'z' } ) == "z##" );
