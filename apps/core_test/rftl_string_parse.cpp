@@ -47,6 +47,26 @@ TEST( StringParse, TrimSuffix )
 
 
 
+TEST( StringParse, TrimAffix )
+{
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "" ), {} ) == "" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "" ), { 'a', 'z' } ) == "" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "az" ), { 'a', 'z' } ) == "" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "##" ), { 'a', 'z' } ) == "##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "a##" ), { 'a', 'z' } ) == "##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "z##" ), { 'a', 'z' } ) == "##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "#az##" ), { 'a', 'z' } ) == "#az##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "##a" ), { 'a', 'z' } ) == "##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "##z" ), { 'a', 'z' } ) == "##" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "#\0#" ), { 'a', 'z' } ) == "#\0#" );
+
+	// Alternate form
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "#\0#" ), "" ) == "#\0#" );
+	static_assert( rftl::trim_affix_chars( rftl::string_view( "#\0#" ), "az" ) == "#\0#" );
+}
+
+
+
 TEST( StringParse, TryTrimSurrounds )
 {
 	static_assert( rftl::try_trim_surrounds( rftl::string_view( "" ), '{', '}' ) == "" );

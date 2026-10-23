@@ -77,6 +77,22 @@ inline constexpr auto trim_suffix_chars( rftl::basic_string_view<CharT> src, con
 
 
 
+// Removes surrounding characters
+template<typename CharT>
+inline constexpr auto trim_affix_chars( rftl::basic_string_view<CharT> src, rftl::basic_string_view<CharT> charSet ) -> rftl::basic_string_view<CharT>
+{
+	return trim_prefix_chars( trim_suffix_chars( src, charSet ), charSet );
+}
+
+template<typename CharT, size_t SizeT>
+inline constexpr auto trim_affix_chars( rftl::basic_string_view<CharT> src, const CharT ( &charSet )[SizeT] ) -> rftl::basic_string_view<CharT>
+{
+	static_assert( SizeT > 0 );
+	return trim_affix_chars<CharT>( src, rftl::basic_string_view<CharT>( charSet, SizeT ) );
+}
+
+
+
 // Try to remove surrounds, like "...", (...), [...], etc
 // NOTE: Returning the same string as the one given is a signal of failure
 template<typename CharT>
