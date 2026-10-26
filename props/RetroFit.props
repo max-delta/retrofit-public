@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<ImportGroup Label="PropertySheets">
@@ -111,6 +111,7 @@
 				-Wno-pedantic
 				-Wno-shadow-field-in-constructor
 				-Wno-shadow-uncaptured-local
+				-Wno-unqualified-std-cast-call
 				-Wno-unused-macros
 				-Wno-unused-parameter
 				%(AdditionalOptions)
