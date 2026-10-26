@@ -151,5 +151,26 @@ bool Scene::UnloadResources()
 	return retVal;
 }
 
+
+
+Layer const* Scene::FindFirstOf( rftl::string_view mode ) const
+{
+	for( Layer const& layer : mLayers )
+	{
+		if( layer.mMode == mode )
+		{
+			return &layer;
+		}
+	}
+	return nullptr;
+}
+
+
+
+Layer* Scene::FindFirstOfMutable( rftl::string_view mode )
+{
+	return const_cast<Layer*>( FindFirstOf( mode ) );
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 }

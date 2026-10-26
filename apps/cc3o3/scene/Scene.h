@@ -107,6 +107,11 @@ public:
 	bool LoadResources( rftl::string_view resourcePrefix );
 	bool UnloadResources();
 
+	// Runs a filter on the mode, meant to be used for a common case of looking
+	//  for a specific layer when there should only be one of them
+	Layer const* FindFirstOf( rftl::string_view mode ) const;
+	Layer* FindFirstOfMutable( rftl::string_view mode );
+
 
 	//
 	// Public data
