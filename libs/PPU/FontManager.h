@@ -38,6 +38,7 @@ private:
 	bool LoadToDevice( ResourceType& resource, Filename const& filename );
 
 
+	//
 	// Private data
 private:
 	WeakPtr<file::VFS> const mVfs;
