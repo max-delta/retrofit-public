@@ -1,10 +1,13 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
 	<ItemDefinitionGroup>
 		<ClCompile>
 			<!--Disable exception handling, prefer to just crash instead-->
 			<ExceptionHandling>false</ExceptionHandling>
+
+			<!-- Disable RTTI, prefer RFType when needed -->
+			<RuntimeTypeInfo>false</RuntimeTypeInfo>
 
 			<!--Complains that exceptions aren't enabled, don't care-->
 			<DisableSpecificWarnings>4577; %(DisableSpecificWarnings)</DisableSpecificWarnings>
