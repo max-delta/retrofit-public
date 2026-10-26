@@ -32,7 +32,7 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) override;
+	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename ) override;
 
 
 	// Private data

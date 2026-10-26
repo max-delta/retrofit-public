@@ -41,7 +41,7 @@ TilesetManager::~TilesetManager()
 
 
 
-UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
+UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename )
 {
 	// Open
 	file::VFS const& vfs = *mVfs;
@@ -369,7 +369,7 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 
 
 
-bool TilesetManager::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
+bool TilesetManager::PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource )
 {
 	ResourceName const texName = rftl::format( "tset_{}", resourceName );
 	return mTexDestroyFunc( texName );

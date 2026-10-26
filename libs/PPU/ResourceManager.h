@@ -100,10 +100,10 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<Resource> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) = 0;
+	virtual UniquePtr<Resource> AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename ) = 0;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
 	virtual bool PostLoadFromMemory( ResourceType& resource );
-	virtual bool PreDestroy( ResourceNameView resourceName, ResourceType& resource );
+	virtual bool PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource );
 
 	// IMPORTANT: Derived classes must call this during destructor
 	void InternalShutdown();

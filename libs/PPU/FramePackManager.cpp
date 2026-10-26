@@ -31,7 +31,7 @@ FramePackManager::~FramePackManager()
 
 
 
-UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
+UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename )
 {
 	rftl::vector<file::VFSPath> textures;
 	UniquePtr<FramePackBase> framePack;

@@ -39,8 +39,8 @@ public:
 	//
 	// Protected methods
 protected:
-	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) override;
-	virtual bool PreDestroy( ResourceNameView resourceName, ResourceType& resource ) override;
+	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename ) override;
+	virtual bool PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource ) override;
 
 
 	//

@@ -209,7 +209,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	UniquePtr<Resource> const& resource = resourceIter->second;
 	RF_ASSERT( resource != nullptr );
 
-	bool const success = PreDestroy( resourceName, *resource );
+	bool const success = PreDestroy( resourceName, managedResourceID, *resource );
 	RF_ASSERT( success );
 
 	RF_TODO_ANNOTATION(
@@ -314,9 +314,8 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFr
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource )
 {
-	(void)resource;
 	return true;
 }
 
@@ -524,7 +523,7 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 	Resource* res;
 	WeakPtr<Resource> handle;
 	{
-		UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, filename );
+		UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, managedResourceID, filename );
 		if( newResource == nullptr )
 		{
 			RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
@@ -585,8 +584,9 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found" );
 		return false;
 	}
+	ManagedResourceID const managedResourceID = IDIter->second;
 
-	typename ResourcesByManagedID::iterator resourceIter = mResources.find( IDIter->second );
+	typename ResourcesByManagedID::iterator resourceIter = mResources.find( managedResourceID );
 	if( resourceIter == mResources.end() )
 	{
 		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource not found" );
@@ -600,7 +600,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	}
 
 	// Attempt to load new
-	UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, filename );
+	UniquePtr<Resource> newResource = AllocateResourceFromFile( resourceName, managedResourceID, filename );
 	if( newResource == nullptr )
 	{
 		RFLOG_NOTIFY( filename, RFCAT_PPU, "Failed to allocate resource from file" );
@@ -610,7 +610,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	// Swap out old
 	if( resourceRef != nullptr )
 	{
-		bool const preDestroySuccess = PreDestroy( resourceName, *resourceRef );
+		bool const preDestroySuccess = PreDestroy( resourceName, managedResourceID, *resourceRef );
 		RF_ASSERT( preDestroySuccess );
 		resourceRef = nullptr;
 

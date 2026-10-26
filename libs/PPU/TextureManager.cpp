@@ -49,7 +49,7 @@ bool TextureManager::AttachToDevice( WeakPtr<DeviceInterface> const& deviceInter
 
 ///////////////////////////////////////////////////////////////////////////////
 
-UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename )
+UniquePtr<TextureManager::ResourceType> TextureManager::AllocateResourceFromFile( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, Filename const& filename )
 {
 	UniquePtr<Texture> newTexture = alloc::DefaultAllocCreator<Texture>::Create( *alloc::GetAllocator<RFTAG_PPU>() );
 
@@ -84,7 +84,7 @@ bool TextureManager::PostLoadFromMemory( ResourceType& resource )
 
 
 
-bool TextureManager::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
+bool TextureManager::PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource )
 {
 	if( resource.mDeviceRepresentation == kInvalidDeviceTextureID )
 	{
