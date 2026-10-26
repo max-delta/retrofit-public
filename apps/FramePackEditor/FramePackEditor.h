@@ -64,6 +64,7 @@ public:
 	//
 	// Private methods
 private:
+	void DestroyExistingFramePack();
 	void CreateFramePack( file::VFSPath const& defaultFrame );
 	void OpenFramePack( rftl::string const& rawPath );
 	void OpenFramePack( file::VFSPath const& path );

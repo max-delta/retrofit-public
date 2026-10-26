@@ -909,6 +909,21 @@ void FramePackEditor::Command_Texture_BatchChangeOffset( gfx::ppu::CoordElem x, 
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void FramePackEditor::DestroyExistingFramePack()
+{
+	gfx::ppu::PPUController* const ppu = app::gGraphics;
+
+	RF_ASSERT( ppu->HasOutstandingLoadRequests() == false );
+
+	ppu->ForceImmediateDestroyRequest( gfx::ppu::AssetType::FramePack, kFramePackName );
+
+	// Flush texture destroys that likely got triggered, so that they're
+	//  gone before we try to perform any loads
+	ppu->ForceImmediateLoadAllRequests();
+}
+
+
+
 void FramePackEditor::CreateFramePack( file::VFSPath const& defaultFrame )
 {
 	gfx::ppu::PPUController* const ppu = app::gGraphics;
@@ -917,7 +932,7 @@ void FramePackEditor::CreateFramePack( file::VFSPath const& defaultFrame )
 	gfx::TextureManager& texMan = *ppu->DebugGetTextureManager();
 	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		ppu->ForceImmediateDestroyRequest( gfx::ppu::AssetType::FramePack, kFramePackName );
+		DestroyExistingFramePack();
 	}
 	UniquePtr<gfx::ppu::FramePackBase> newFPack = DefaultCreator<gfx::ppu::FramePack_256>::Create();
 	newFPack->mNumTimeSlots = 1;
@@ -943,7 +958,7 @@ void FramePackEditor::OpenFramePack( file::VFSPath const& path )
 	gfx::ppu::FramePackManager& fpackMan = *ppu->DebugGetFramePackManager();
 	if( mFramePackID != gfx::ppu::kInvalidManagedFramePackID )
 	{
-		ppu->ForceImmediateDestroyRequest( gfx::ppu::AssetType::FramePack, kFramePackName );
+		DestroyExistingFramePack();
 	}
 	if( path.Empty() )
 	{
