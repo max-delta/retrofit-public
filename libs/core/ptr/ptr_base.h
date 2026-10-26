@@ -4,6 +4,8 @@
 #include "core/ptr/creation_payload.h"
 #include "core/ptr/ptr_traits.h"
 
+#include "core/meta/ConstructorOverload.h"
+
 #include "rftl/utility"
 
 
@@ -76,6 +78,13 @@ public:
 	//
 	// Protected methods
 protected:
+	constexpr explicit PtrBase( ExplicitDefaultConstruct )
+		: mTarget( nullptr )
+		, mRef( nullptr )
+	{
+		//
+	}
+
 	explicit PtrBase( T* target, PtrRef* ref )
 		: mTarget( target )
 		, mRef( ref )

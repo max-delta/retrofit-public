@@ -32,8 +32,8 @@ public:
 	//
 	// Public methods
 public:
-	UniquePtr()
-		: PtrBase( nullptr, nullptr )
+	constexpr UniquePtr()
+		: PtrBase( ExplicitDefaultConstruct() )
 	{
 		//
 	}

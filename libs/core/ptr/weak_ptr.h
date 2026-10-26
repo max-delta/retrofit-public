@@ -25,8 +25,8 @@ public:
 	//
 	// Public methods
 public:
-	WeakPtr()
-		: PtrBase( nullptr, nullptr )
+	constexpr WeakPtr()
+		: PtrBase( ExplicitDefaultConstruct() )
 	{
 		//
 	}

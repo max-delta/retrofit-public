@@ -18,8 +18,8 @@ public:
 	//
 	// Public methods
 public:
-	WeakSharedPtr()
-		: PtrBase( nullptr, nullptr )
+	constexpr WeakSharedPtr()
+		: PtrBase( ExplicitDefaultConstruct() )
 	{
 		//
 	}

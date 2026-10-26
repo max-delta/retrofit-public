@@ -29,8 +29,8 @@ public:
 	//
 	// Public methods
 public:
-	SharedPtr()
-		: PtrBase( nullptr, nullptr )
+	constexpr SharedPtr()
+		: PtrBase( ExplicitDefaultConstruct() )
 	{
 		//
 	}
