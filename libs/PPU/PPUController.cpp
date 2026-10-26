@@ -679,7 +679,6 @@ bool PPUController::ForceImmediateLoadAllRequests()
 
 
 
-
 WeakPtr<TextureManager const> PPUController::GetTextureManager() const
 {
 	return mTextureManager;
