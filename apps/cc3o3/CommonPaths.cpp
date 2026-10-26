@@ -49,6 +49,10 @@ file::VFSPath TexturesRoot()
 {
 	return AssetsRoot().GetChild( "textures" );
 }
+file::VFSPath ScenesRoot()
+{
+	return AssetsRoot().GetChild( "scenes" );
+}
 file::VFSPath TablesRoot()
 {
 	return AssetsRoot().GetChild( "tables" );
@@ -125,6 +129,13 @@ file::VFSPath GlobalPalette()
 file::VFSPath CharacterPieces()
 {
 	return TexturesRoot().GetChild( "char" );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+file::VFSPath UIScenes()
+{
+	return ScenesRoot().GetChild( "ui" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

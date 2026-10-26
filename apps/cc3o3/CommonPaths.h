@@ -18,6 +18,7 @@ file::VFSPath TilesetsRoot();
 file::VFSPath TilemapsRoot();
 file::VFSPath FramepacksRoot();
 file::VFSPath TexturesRoot();
+file::VFSPath ScenesRoot();
 file::VFSPath TablesRoot();
 
 // Fonts
@@ -43,6 +44,9 @@ file::VFSPath ExpressionFramepacks();
 file::VFSPath CommonTextures();
 file::VFSPath GlobalPalette();
 file::VFSPath CharacterPieces();
+
+// Scenes
+file::VFSPath UIScenes();
 
 // Tables
 file::VFSPath Campaigns();

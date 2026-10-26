@@ -7,6 +7,7 @@
 #include "cc3o3/appstates/titlescreen/TitleScreen_CharCreate.h"
 #include "cc3o3/appstates/titlescreen/TitleScreen_Options.h"
 #include "cc3o3/appstates/AppStateRoute.h"
+#include "cc3o3/scene/Scene.h"
 #include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -36,8 +37,10 @@ struct TitleScreen::InternalState
 	RF_NO_COPY( InternalState );
 	InternalState() = default;
 
-	gfx::ppu::TileLayer mBackgroundBack = {};
-	gfx::ppu::TileLayer mBackgroundMid = {};
+	scene::Scene mScene = {};
+
+	gfx::ppu::TileLayer* mBackgroundBack = nullptr;
+	gfx::ppu::TileLayer* mBackgroundMid = nullptr;
 	gfx::PPUTimer mTimerBack = {};
 	gfx::PPUTimer mTimerMid = {};
 
@@ -51,46 +54,44 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 	mInternalState = DefaultCreator<InternalState>::Create();
 	InternalState& internalState = *mInternalState;
 
-	gfx::ppu::PPUController const& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
-	file::VFS& vfs = *app::gVfs;
+	// Load scene desc
+	scene::Layer* backPtr = nullptr;
+	scene::Layer* midPtr = nullptr;
+	{
+		scene::Scene& scene = internalState.mScene;
+
+		file::VFSPath const& scenePath = paths::UIScenes().GetChild( "title_screen.oo" );
+
+		scene = scene::Scene::LoadFromDesc( scenePath );
+		scene.LoadResources( "main_menu" );
+
+		backPtr = scene.FindFirstOfMutable( "back" );
+		midPtr = scene.FindFirstOfMutable( "mid" );
+		RFLOG_TEST_AND_FATAL( backPtr != nullptr, scenePath, RFCAT_CC3O3, "Expected 'back' layer" );
+		RFLOG_TEST_AND_FATAL( midPtr != nullptr, scenePath, RFCAT_CC3O3, "Expected 'mid' layer" );
+	}
 
 	// Setup background
 	{
-		gfx::ppu::TileLayer& back = internalState.mBackgroundBack;
-		gfx::ppu::TileLayer& mid = internalState.mBackgroundMid;
+		internalState.mBackgroundBack = &backPtr->mResources.mTileLayer;
+		internalState.mBackgroundMid = &midPtr->mResources.mTileLayer;
+
+		gfx::ppu::TileLayer& back = *internalState.mBackgroundBack;
+		gfx::ppu::TileLayer& mid = *internalState.mBackgroundMid;
 		gfx::PPUTimer& timerBack = internalState.mTimerBack;
 		gfx::PPUTimer& timerMid = internalState.mTimerMid;
 
-		back = {};
-		back.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_back_96" );
-		back.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		back.mXCoord = 0;
 		back.mYCoord = 0;
-		back.mZLayer = 100;
 		back.mHorizontalWrapping = true;
 		back.mVerticalWrapping = false;
-		back.mLooping = true;
-		{
-			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( back, vfs, paths::BackgroundTilemaps().GetChild( "country_hills_back.csv" ) );
-			RF_ASSERT( loadSuccess );
-		}
-		timerBack.mMaxTimeIndex = 50;
+		timerBack.mMaxTimeIndex = backPtr->mParallax;
 
-		mid = {};
-		mid.mTilesetReference = tsetMan.GetManagedResourceIDFromResourceName( "country_hills_mid_32" );
-		mid.mTileZoomFactor = gfx::ppu::TileLayer::kTileZoomFactor_Normal;
 		mid.mXCoord = 0;
 		mid.mYCoord = 0;
-		mid.mZLayer = 99;
 		mid.mHorizontalWrapping = true;
 		mid.mVerticalWrapping = false;
-		mid.mLooping = true;
-		{
-			bool const loadSuccess = gfx::ppu::TileLayerCSVLoader::LoadTiles( mid, vfs, paths::BackgroundTilemaps().GetChild( "country_hills_mid.csv" ) );
-			RF_ASSERT( loadSuccess );
-		}
-		timerMid.mMaxTimeIndex = 10;
+		timerMid.mMaxTimeIndex = midPtr->mParallax;
 	}
 
 
@@ -123,8 +124,8 @@ void TitleScreen::OnTick( AppStateTickContext& context )
 
 	// Draw background
 	{
-		gfx::ppu::TileLayer& back = internalState.mBackgroundBack;
-		gfx::ppu::TileLayer& mid = internalState.mBackgroundMid;
+		gfx::ppu::TileLayer& back = *internalState.mBackgroundBack;
+		gfx::ppu::TileLayer& mid = *internalState.mBackgroundMid;
 		gfx::PPUTimer& timerBack = internalState.mTimerBack;
 		gfx::PPUTimer& timerMid = internalState.mTimerMid;
 

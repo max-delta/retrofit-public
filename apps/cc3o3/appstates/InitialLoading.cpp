@@ -132,8 +132,6 @@ void InitialLoading::OnTick( AppStateTickContext& context )
 	// Load tilesets
 	// NOTE: Will cause associated textures to load
 	{
-		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, "country_hills_back_96", paths::BackgroundTilesets().GetChild( "country_hills_back_96.tset.txt" ) );
-		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, "country_hills_mid_32", paths::BackgroundTilesets().GetChild( "country_hills_mid_32.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, "elemgrid_2_4", paths::UITilesets().GetChild( "elemgrid_2_4.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, "elemgrid_8_16", paths::UITilesets().GetChild( "elemgrid_8_16.tset.txt" ) );
 		ppu.QueueDeferredLoadRequest( gfx::ppu::AssetType::Tileset, "elemgrid_10_80", paths::UITilesets().GetChild( "elemgrid_10_80.tset.txt" ) );
