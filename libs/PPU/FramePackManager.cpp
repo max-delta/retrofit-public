@@ -13,13 +13,18 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-FramePackManager::FramePackManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc )
+FramePackManager::FramePackManager(
+	WeakPtr<file::VFS> const& vfs,
+	TextureLoadRefFunc&& texLoadFunc,
+	TextureDestroyRefFunc&& texDestroyFunc )
 	: ResourceManagerType()
 	, mVfs( vfs )
 	, mTexLoadFunc( rftl::move( texLoadFunc ) )
+	, mTexDestroyFunc( rftl::move( texDestroyFunc ) )
 {
 	RF_ASSERT( mVfs != nullptr );
 	RF_ASSERT( mTexLoadFunc != nullptr );
+	RF_ASSERT( mTexDestroyFunc != nullptr );
 }
 
 
@@ -69,6 +74,14 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 	using ExistingTextures = rftl::unordered_map<file::VFSPath, ManagedTextureID>;
 	ExistingTextures existingTextures;
 
+	// Track texture backings so we can clean them up on destroy
+	rftl::pair<TextureBackedFramePacks::iterator, bool> const trackingEmplacement =
+		mTextureBackedFramePacks.emplace( managedResourceID, TextureBackedFrames{} );
+	bool const& newTextureBackingEntry = trackingEmplacement.second;
+	RF_ASSERT_MSG( newTextureBackingEntry, "Duplicate texture backing entry" );
+	TextureBackedFrames& textureBackedFrames = trackingEmplacement.first->second;
+
+	// Walk the slots
 	FramePackBase::TimeSlot* const timeSlots = framePack->GetMutableTimeSlots();
 	size_t const numSlots = framePack->mNumTimeSlots;
 	RF_ASSERT( textures.size() == numSlots );
@@ -95,12 +108,42 @@ UniquePtr<FramePackManager::ResourceType> FramePackManager::AllocateResourceFrom
 			}
 			bool const newEntry = existingTextures.emplace( texPath, texID ).second;
 			RF_ASSERT( newEntry );
+			textureBackedFrames.emplace_back( i );
 		}
 
 		timeSlot.mTextureReference = texID;
 	}
 
 	return framePack;
+}
+
+
+
+bool FramePackManager::PreDestroy( ResourceNameView resourceName, ManagedResourceIDType managedResourceID, ResourceType& resource )
+{
+	TextureBackedFramePacks::const_iterator const iter = mTextureBackedFramePacks.find( managedResourceID );
+	if( iter == mTextureBackedFramePacks.end() )
+	{
+		// Not backed by textures
+		return true;
+	}
+	TextureBackedFrames const& frames = iter->second;
+
+	// Destroy all backing textures
+	bool totalSuccess = true;
+	for( size_t const& frame : frames )
+	{
+		ResourceName const texName = rftl::format( "fpack_{}_{}", resourceName, frame );
+		bool const partialSuccess = mTexDestroyFunc( texName );
+		RF_ASSERT( partialSuccess );
+		if( partialSuccess == false )
+		{
+			totalSuccess = false;
+		}
+	}
+
+	mTextureBackedFramePacks.erase( iter );
+	return totalSuccess;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
