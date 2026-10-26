@@ -66,9 +66,17 @@
 
 			<!--TODO: Document all these-->
 			<DisableSpecificWarnings>
-				4100;	4127; 4251; 4514; 4710; 4711; 4738; 4820; 4946;
+				4100; <!-- Unreferenced formal parameter -->
+				4127; <!-- Conditional expression is constant -->
+				4251; <!-- X needs to have dll-interface to be used by clients of Y -->
+				4514; <!-- Unreferenced inline function has been removed -->
+				4710; <!-- Function not inlined -->
+				4711; <!-- Function selected for inline expansion -->
+				4738; <!-- Storing 32-bit float result in memory, possible loss of performance -->
+				4820; <!-- Byte padding added after construct -->
+				4946; <!-- Reinterpret_cast used between related classes -->
 				5026; 5027; 5045;
-				6326;
+				6326; <!-- Potential comparison of a constant with another constant -->
 				%(DisableSpecificWarnings)
 			</DisableSpecificWarnings>
 
