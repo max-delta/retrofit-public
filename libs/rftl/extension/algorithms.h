@@ -1,5 +1,7 @@
 #pragma once
 
+#include "core/todo.h"
+
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,6 +33,10 @@ auto replace( Container& container, typename Container::value_type const& oldVal
 
 template<typename Container>
 auto replace_copy( Container const& container, typename Container::value_type const& oldVal, typename Container::value_type const& newVal ) -> Container;
+
+RF_CPP23_TODO( "Replace with append_range" );
+template<typename DestContainer, typename SourceContainer>
+constexpr auto append_back( DestContainer& dest, SourceContainer&& source ) -> typename DestContainer::iterator;
 
 template<typename Container>
 auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container;

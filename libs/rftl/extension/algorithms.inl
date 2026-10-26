@@ -109,6 +109,19 @@ inline auto replace_copy( Container const& container, typename Container::value_
 
 
 
+template<typename DestContainer, typename SourceContainer>
+inline constexpr auto append_back( DestContainer& dest, SourceContainer&& source ) -> typename DestContainer::iterator
+{
+	dest.reserve( source.size() );
+	for( auto& item : source )
+	{
+		dest.emplace_back( move( item ) );
+	}
+	return dest.end();
+}
+
+
+
 template<typename Container>
 inline auto concatenate( Container const& container, typename Container::value_type const& value ) -> Container
 {
