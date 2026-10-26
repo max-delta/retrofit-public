@@ -18,13 +18,18 @@
 namespace RF::gfx {
 ///////////////////////////////////////////////////////////////////////////////
 
-TilesetManager::TilesetManager( WeakPtr<file::VFS> const& vfs, TextureLoadRefFunc&& texLoadFunc )
+TilesetManager::TilesetManager(
+	WeakPtr<file::VFS> const& vfs,
+	TextureLoadRefFunc&& texLoadFunc,
+	TextureDestroyRefFunc&& texDestroyFunc )
 	: ResourceManagerType()
 	, mVfs( vfs )
 	, mTexLoadFunc( rftl::move( texLoadFunc ) )
+	, mTexDestroyFunc( rftl::move( texDestroyFunc ) )
 {
 	RF_ASSERT( mVfs != nullptr );
 	RF_ASSERT( mTexLoadFunc != nullptr );
+	RF_ASSERT( mTexDestroyFunc != nullptr );
 }
 
 
@@ -360,6 +365,14 @@ UniquePtr<TilesetManager::ResourceType> TilesetManager::AllocateResourceFromFile
 	tileset->mTileAnims = rftl::move( tileAnims );
 	tileset->mTileAnims.shrink_to_fit();
 	return tileset;
+}
+
+
+
+bool TilesetManager::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
+{
+	ResourceName const texName = rftl::format( "tset_{}", resourceName );
+	return mTexDestroyFunc( texName );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

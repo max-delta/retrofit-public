@@ -166,7 +166,16 @@ bool PPUController::Initialize( uint16_t width, uint16_t height )
 		{
 			return QueueDeferredLoadRequest<AssetType::Texture>( resourceName, path );
 		};
-		mTilesetManager = alloc::DefaultAllocCreator<TilesetManager>::Create( *alloc::GetAllocator<RFTAG_PPU>(), mVfs, rftl::move( texLoad ) );
+		TilesetManager::TextureDestroyRefFunc texDestroy = //
+			[this]( ResourceManagerBase::ResourceNameView resourceName ) -> bool //
+		{
+			return QueueDeferredDestroyRequest( AssetType::Texture, resourceName );
+		};
+		mTilesetManager = alloc::DefaultAllocCreator<TilesetManager>::Create(
+			*alloc::GetAllocator<RFTAG_PPU>(),
+			mVfs,
+			rftl::move( texLoad ),
+			rftl::move( texDestroy ) );
 	}
 
 	// Create font manager
