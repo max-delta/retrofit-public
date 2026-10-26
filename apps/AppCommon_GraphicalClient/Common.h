@@ -6,32 +6,32 @@
 // Forwards
 namespace RF {
 namespace app {
-	struct StartupConfig;
+struct StartupConfig;
 }
 namespace cli {
-	class ArgView;
-	class ArgParse;
+class ArgView;
+class ArgParse;
 }
 namespace input {
-	class ControllerManager;
-	class WndProcInputDevice;
+class ControllerManager;
+class WndProcInputDevice;
 }
 namespace gfx::ppu {
-	class PPUController;
+class PPUController;
 }
 namespace ui {
-	class ContainerManager;
-	class FontRegistry;
+class ContainerManager;
+class FontRegistry;
 }
 namespace loc {
-	class LocEngine;
-	class PageMapper;
+class LocEngine;
+class PageMapper;
 }
 namespace file {
-	class VFS;
+class VFS;
 }
 namespace app {
-	class StandardTaskScheduler;
+class StandardTaskScheduler;
 }
 }
 
@@ -41,6 +41,7 @@ namespace RF::app {
 APPCOMMONGRAPHICALCLIENT_API extern bool gShouldExit;
 
 // Global systems
+inline namespace globals {
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<cli::ArgParse const> gCommandLineArgs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::ControllerManager> gInputControllerManager;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<input::WndProcInputDevice> gWndProcInput;
@@ -51,6 +52,7 @@ APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::LocEngine> gLocEngine;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<loc::PageMapper> gPageMapper;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<file::VFS> gVfs;
 APPCOMMONGRAPHICALCLIENT_API extern WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
+}
 
 // Lifetime
 APPCOMMONGRAPHICALCLIENT_API void StartupWithoutConfig( cli::ArgView const& args );

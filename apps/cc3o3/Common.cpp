@@ -38,38 +38,40 @@ namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
-WeakPtr<rollback::RollbackManager> gRollbackManager;
-WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
-WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
-WeakPtr<resource::ResourceLoader> gResourceLoader;
-WeakPtr<resource::ResourceSaver> gResourceSaver;
-WeakPtr<sprite::CharacterCreator> gCharacterCreator;
-WeakPtr<character::CharacterValidator> gCharacterValidator;
-WeakPtr<character::CharacterDatabase> gCharacterDatabase;
-WeakPtr<combat::CombatEngine> gCombatEngine;
-WeakPtr<element::ElementDatabase> gElementDatabase;
-WeakPtr<cast::CastingEngine> gCastingEngine;
-WeakPtr<company::CompanyManager> gCompanyManager;
-WeakPtr<encounter::EncounterManager> gEncounterManager;
-WeakPtr<state::ObjectManager> gObjectManager;
-WeakPtr<save::SaveManager> gSaveManager;
-WeakPtr<campaign::CampaignManager> gCampaignManager;
-static UniquePtr<rollback::RollbackManager> sRollbackManager;
-static UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
-static UniquePtr<resource::ResourceTypeRegistry> sResourceTypeRegistry;
-static UniquePtr<resource::ResourceLoader> sResourceLoader;
-static UniquePtr<resource::ResourceSaver> sResourceSaver;
-static UniquePtr<sprite::CharacterCreator> sCharacterCreator;
-static UniquePtr<character::CharacterValidator> sCharacterValidator;
-static UniquePtr<character::CharacterDatabase> sCharacterDatabase;
-static UniquePtr<combat::CombatEngine> sCombatEngine;
-static UniquePtr<element::ElementDatabase> sElementDatabase;
-static UniquePtr<cast::CastingEngine> sCastingEngine;
-static UniquePtr<company::CompanyManager> sCompanyManager;
-static UniquePtr<encounter::EncounterManager> sEncounterManager;
-static UniquePtr<state::ObjectManager> sObjectManager;
-static UniquePtr<save::SaveManager> sSaveManager;
-static UniquePtr<campaign::CampaignManager> sCampaignManager;
+inline namespace globals {
+constinit WeakPtr<rollback::RollbackManager> gRollbackManager;
+constinit WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
+constinit WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
+constinit WeakPtr<resource::ResourceLoader> gResourceLoader;
+constinit WeakPtr<resource::ResourceSaver> gResourceSaver;
+constinit WeakPtr<sprite::CharacterCreator> gCharacterCreator;
+constinit WeakPtr<character::CharacterValidator> gCharacterValidator;
+constinit WeakPtr<character::CharacterDatabase> gCharacterDatabase;
+constinit WeakPtr<combat::CombatEngine> gCombatEngine;
+constinit WeakPtr<element::ElementDatabase> gElementDatabase;
+constinit WeakPtr<cast::CastingEngine> gCastingEngine;
+constinit WeakPtr<company::CompanyManager> gCompanyManager;
+constinit WeakPtr<encounter::EncounterManager> gEncounterManager;
+constinit WeakPtr<state::ObjectManager> gObjectManager;
+constinit WeakPtr<save::SaveManager> gSaveManager;
+constinit WeakPtr<campaign::CampaignManager> gCampaignManager;
+static constinit UniquePtr<rollback::RollbackManager> sRollbackManager;
+static constinit UniquePtr<sync::RollbackInputManager> sRollbackInputManager;
+static constinit UniquePtr<resource::ResourceTypeRegistry> sResourceTypeRegistry;
+static constinit UniquePtr<resource::ResourceLoader> sResourceLoader;
+static constinit UniquePtr<resource::ResourceSaver> sResourceSaver;
+static constinit UniquePtr<sprite::CharacterCreator> sCharacterCreator;
+static constinit UniquePtr<character::CharacterValidator> sCharacterValidator;
+static constinit UniquePtr<character::CharacterDatabase> sCharacterDatabase;
+static constinit UniquePtr<combat::CombatEngine> sCombatEngine;
+static constinit UniquePtr<element::ElementDatabase> sElementDatabase;
+static constinit UniquePtr<cast::CastingEngine> sCastingEngine;
+static constinit UniquePtr<company::CompanyManager> sCompanyManager;
+static constinit UniquePtr<encounter::EncounterManager> sEncounterManager;
+static constinit UniquePtr<state::ObjectManager> sObjectManager;
+static constinit UniquePtr<save::SaveManager> sSaveManager;
+static constinit UniquePtr<campaign::CampaignManager> sCampaignManager;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

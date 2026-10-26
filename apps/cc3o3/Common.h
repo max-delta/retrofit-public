@@ -59,6 +59,7 @@ namespace RF::cc {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Global systems
+inline namespace globals {
 extern WeakPtr<rollback::RollbackManager> gRollbackManager;
 extern WeakPtr<sync::RollbackInputManager> gRollbackInputManager;
 extern WeakPtr<resource::ResourceTypeRegistry> gResourceTypeRegistry;
@@ -75,6 +76,7 @@ extern WeakPtr<encounter::EncounterManager> gEncounterManager;
 extern WeakPtr<state::ObjectManager> gObjectManager;
 extern WeakPtr<save::SaveManager> gSaveManager;
 extern WeakPtr<campaign::CampaignManager> gCampaignManager;
+}
 
 void SystemStartup( init::StartupConfig const& config );
 void SystemShutdown();

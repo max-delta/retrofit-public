@@ -44,26 +44,28 @@ shim::LRESULT WIN32_CALLBACK WndProc( shim::HWND hWnd, shim::UINT message, shim:
 APPCOMMONGRAPHICALCLIENT_API bool gShouldExit = false;
 
 // Global systems
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<cli::ArgParse const> gCommandLineArgs;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::ControllerManager> gInputControllerManager;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<input::WndProcInputDevice> gWndProcInput;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<gfx::ppu::PPUController> gGraphics;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::FontRegistry> gFontRegistry;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<ui::ContainerManager> gUiManager;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::LocEngine> gLocEngine;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<loc::PageMapper> gPageMapper;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<file::VFS> gVfs;
-APPCOMMONGRAPHICALCLIENT_API WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
-static UniquePtr<cli::ArgParse const> sCommandLineArgs;
-static UniquePtr<input::ControllerManager> sInputControllerManager;
-//static UniquePtr<input::WndProcInputDevice> sWndProcInput; // Stored in controller manager
-static UniquePtr<gfx::ppu::PPUController> sGraphics;
-static UniquePtr<ui::FontRegistry> sFontRegistry;
-static UniquePtr<ui::ContainerManager> sUiManager;
-static UniquePtr<loc::LocEngine> sLocEngine;
-static UniquePtr<loc::PageMapper> sPageMapper;
-static UniquePtr<file::VFS> sVfs;
-static UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
+inline namespace globals {
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<cli::ArgParse const> gCommandLineArgs;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<input::ControllerManager> gInputControllerManager;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<input::WndProcInputDevice> gWndProcInput;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<gfx::ppu::PPUController> gGraphics;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<ui::FontRegistry> gFontRegistry;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<ui::ContainerManager> gUiManager;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<loc::LocEngine> gLocEngine;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<loc::PageMapper> gPageMapper;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<file::VFS> gVfs;
+APPCOMMONGRAPHICALCLIENT_API constinit WeakPtr<app::StandardTaskScheduler> gTaskScheduler;
+static constinit UniquePtr<cli::ArgParse const> sCommandLineArgs;
+static constinit UniquePtr<input::ControllerManager> sInputControllerManager;
+//static constinit UniquePtr<input::WndProcInputDevice> sWndProcInput; // Stored in controller manager
+static constinit UniquePtr<gfx::ppu::PPUController> sGraphics;
+static constinit UniquePtr<ui::FontRegistry> sFontRegistry;
+static constinit UniquePtr<ui::ContainerManager> sUiManager;
+static constinit UniquePtr<loc::LocEngine> sLocEngine;
+static constinit UniquePtr<loc::PageMapper> sPageMapper;
+static constinit UniquePtr<file::VFS> sVfs;
+static constinit UniquePtr<app::StandardTaskScheduler> sTaskScheduler;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

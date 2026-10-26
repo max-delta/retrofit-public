@@ -6,6 +6,7 @@ calc
 codepath
 const
 consteval
+constinit
 desc
 descs
 deserialize
