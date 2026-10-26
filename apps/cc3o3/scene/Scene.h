@@ -37,6 +37,7 @@ public:
 public:
 	gfx::ppu::TileLayer mTileLayer = {};
 
+
 	//
 	// Private data
 private:
