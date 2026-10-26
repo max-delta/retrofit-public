@@ -152,6 +152,7 @@ public:
 	bool QueueDeferredDestroyRequest( AssetType type, ResourceNameView resourceName );
 	template<AssetType T> AssetLoadResultType<T> ForceImmediateLoadRequest( ResourceNameView resourceName, Filename const& filename );
 	bool ForceImmediateLoadRequest( AssetType type, ResourceNameView resourceName, Filename const& filename );
+	bool ForceImmediateDestroyRequest( AssetType type, ResourceNameView resourceName );
 	bool ForceImmediateLoadAllRequests();
 
 	WeakPtr<TextureManager const> GetTextureManager() const;

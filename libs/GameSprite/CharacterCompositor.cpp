@@ -408,9 +408,8 @@ void CharacterCompositor::CreateCompositeAnim( CompositeAnimParams const& params
 	}
 	for( rftl::string const& resourceName : frameResourceNames )
 	{
-		mPpu->QueueDeferredDestroyRequest( gfx::ppu::AssetType::Texture, resourceName );
+		mPpu->ForceImmediateDestroyRequest( gfx::ppu::AssetType::Texture, resourceName );
 	}
-	mPpu->ForceImmediateLoadAllRequests();
 }
 
 

@@ -664,6 +664,13 @@ bool PPUController::ForceImmediateLoadRequest( AssetType type, ResourceNameView 
 
 
 
+bool PPUController::ForceImmediateDestroyRequest( AssetType type, ResourceNameView resourceName )
+{
+	return FulfillLoadRequest( LoadRequest{ LoadType::Destroy, type, ResourceName( resourceName ) } );
+}
+
+
+
 bool PPUController::ForceImmediateLoadAllRequests()
 {
 	FulfillAllDeferredLoadRequests();
