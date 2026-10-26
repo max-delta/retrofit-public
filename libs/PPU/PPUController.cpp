@@ -26,6 +26,7 @@
 #include "core/ptr/default_creator.h"
 #include "core/rf_onceper.h"
 
+#include "rftl/extension/algorithms.h"
 #include "rftl/extension/variadic_print.h"
 #include "rftl/cstdarg"
 #include "rftl/format"
@@ -673,7 +674,10 @@ bool PPUController::ForceImmediateDestroyRequest( AssetType type, ResourceNameVi
 
 bool PPUController::ForceImmediateLoadAllRequests()
 {
-	FulfillAllDeferredLoadRequests();
+	while( FulfillAllDeferredLoadRequests() > 0 )
+	{
+		// Fully flush
+	}
 	return true;
 }
 
@@ -941,11 +945,28 @@ void PPUController::SignalRender( StateBufferID readyBuffer )
 	mRenderState = readyBuffer;
 
 	// HACK: Block on all deferred loads
-	FulfillAllDeferredLoadRequests();
+	// NOTE: Destroys are delayed until after the render, so that if someone
+	//  queues a render request and a destroy request in the same frame, it
+	//  will still have the resources needed for the rendered frame, though
+	//  this means a load->destroy->load->destroy of the same resource will
+	//  cause an assertion of a double-load, but that's a sign of a bad usage
+	//  pattern anyways
+	static constexpr LoadTypeMask kDestroys = math::enum_bitcast( LoadType::Destroy );
+	static constexpr LoadTypeMask kEverythingExceptDestroys = angry_cast<LoadTypeMask>( ~kDestroys );
+	while( FulfillSomeDeferredLoadRequests( kEverythingExceptDestroys ) > 0 )
+	{
+		// Fully flush
+	}
 
 	// HACK: Render now
 	Render();
 	mRenderState = kInvalidStateBufferID;
+
+	// HACK: Handle the destroys late
+	while( FulfillSomeDeferredLoadRequests( kDestroys ) > 0 )
+	{
+		// Fully flush
+	}
 
 	return;
 }
@@ -1985,13 +2006,40 @@ typename AssetTypeInfo<AssetType::Font>::Manager& PPUController::GetMutableManag
 
 
 
-void PPUController::FulfillAllDeferredLoadRequests()
+size_t PPUController::FulfillAllDeferredLoadRequests()
 {
-	LoadRequests const inFlight = rftl::move( mDeferredLoadRequests );
-	for( LoadRequest const& loadRequest : inFlight )
+	return FulfillSomeDeferredLoadRequests( angry_cast<LoadTypeMask>( ~LoadTypeMask{ 0 } ) );
+}
+
+
+
+size_t PPUController::FulfillSomeDeferredLoadRequests( LoadTypeMask mask )
+{
+	size_t numLoads = 0;
+
+	LoadRequests inFlight = rftl::move( mDeferredLoadRequests );
+	LoadRequests skippedRequests = {};
+	for( LoadRequest& loadRequest : inFlight )
 	{
+		if( ( math::enum_bitcast( loadRequest.mLoadType ) & mask ) == 0 )
+		{
+			// Not part of the mask, re-defer it, in order
+			skippedRequests.emplace_back( rftl::move( loadRequest ) );
+			continue;
+		}
+
+		// NOTE: This could potentially add new requests to the deferred list
 		FulfillLoadRequest( loadRequest );
+		numLoads++;
 	}
+
+	// SUBTLE: Try to order the skipped requests before the emergent requests,
+	//  to maintain sequential ordering, but while minimizing allocations
+	LoadRequests emergentRequests = rftl::move( mDeferredLoadRequests );
+	mDeferredLoadRequests = rftl::move( skippedRequests );
+	rftl::append_back( mDeferredLoadRequests, rftl::move( emergentRequests ) );
+
+	return numLoads;
 }
 
 

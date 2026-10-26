@@ -34,14 +34,15 @@ private:
 	//
 	// Types and constants
 private:
-	enum class LoadType : uint8_t
+	using LoadTypeMask = uint8_t;
+	enum class LoadType : LoadTypeMask
 	{
 		Invalid = 0,
-		Reserve,
-		New,
-		Modify,
-		Reload,
-		Destroy
+		Reserve = 1 << 0,
+		New = 1 << 1,
+		Modify = 1 << 2,
+		Reload = 1 << 3,
+		Destroy = 1 << 4
 	};
 	enum class DrawOverflowBehavior : uint8_t
 	{
@@ -227,7 +228,8 @@ private:
 	template<AssetType T>
 	typename AssetTypeInfo<T>::Manager& GetMutableManager();
 
-	void FulfillAllDeferredLoadRequests();
+	size_t FulfillAllDeferredLoadRequests();
+	size_t FulfillSomeDeferredLoadRequests( LoadTypeMask mask );
 	bool FulfillLoadRequest( LoadRequest const& request );
 
 
