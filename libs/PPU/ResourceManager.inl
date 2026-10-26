@@ -3,6 +3,7 @@
 
 #include "Logging/Logging.h"
 
+#include "rftl/extension/enum_format.h"
 #include "rftl/extension/transparent_lookup.h"
 
 
@@ -55,14 +56,14 @@ WeakPtr<Resource const> ResourceManager<Resource, ManagedResourceID, InvalidReso
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find resource by name" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Could not find resource by name" );
 		return nullptr;
 	}
 
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_NOTIFY( nullptr, RFCAT_PPU, "Lookups desynced?" );
+		RFLOG_NOTIFY( resourceName, RFCAT_PPU, "Lookups desynced?" );
 		return nullptr;
 	}
 
@@ -89,7 +90,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find resource by name" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Could not find resource by name" );
 		return kInvalidResourceID;
 	}
 
@@ -176,7 +177,7 @@ inline bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::Rel
 	typename ResourcesByFilename::const_iterator fileIter = mFileBackedResources.find( resourceName );
 	if( fileIter == mFileBackedResources.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Resource not found, or not file backed" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource not found, or not file backed" );
 		return false;
 	}
 
@@ -196,8 +197,9 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 		RFLOG_NOTIFY( resourceName, RFCAT_PPU, "Resource ID not found to destroy" );
 		return false;
 	}
+	ManagedResourceID const managedResourceID = IDIter->second;
 
-	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( IDIter->second );
+	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
 	if( resourceIter == mResources.end() )
 	{
 		RFLOG_NOTIFY( resourceName, RFCAT_PPU, "Resource not found to destroy" );
@@ -218,7 +220,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	mResourceIDs.erase( IDIter );
 	mResources.erase( resourceIter );
 
-	RFLOG_INFO( resourceName, RFCAT_PPU, "Resource destroyed" );
+	RFLOG_INFO( resourceName, RFCAT_PPU, "Resource destroyed at {}", managedResourceID );
 	return true;
 }
 
@@ -432,7 +434,7 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 	typename ResourcesByManagedID::const_iterator resourceIter = mResources.find( managedResourceID );
 	if( resourceIter == mResources.end() )
 	{
-		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find ID" );
+		RFLOG_ERROR( nullptr, RFCAT_PPU, "Could not find resource by ID {}", managedResourceID );
 		return nullptr;
 	}
 
@@ -440,8 +442,9 @@ inline WeakPtr<Resource> ResourceManager<Resource, ManagedResourceID, InvalidRes
 	if( retVal == nullptr )
 	{
 		RFLOG_WARNING( nullptr, RFCAT_PPU,
-			"Found resource, but it is null, which should indicate a"
-			" reservation" );
+			"Found resource {}, but it is null, which should indicate a"
+			" reservation",
+			managedResourceID );
 		RF_DBGFAIL_MSG(
 			"Seem to be trying to fetch a reserved resource that isn't loaded"
 			" yet. Should this have been force-fetched? Is there data in it"
@@ -475,7 +478,7 @@ inline ManagedResourceID ResourceManager<Resource, ManagedResourceID, InvalidRes
 	RegisterResource( managedResourceID, nullptr );
 	RegisterResourceID( resourceName, managedResourceID );
 
-	RFLOG_INFO( resourceName, RFCAT_PPU, "Null resource reserved" );
+	RFLOG_INFO( resourceName, RFCAT_PPU, "Null resource reserved at {}", managedResourceID );
 	return managedResourceID;
 }
 
@@ -513,10 +516,10 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 		}
 	}
 
-	ManagedResourceID tempID = GenerateNewManagedID();
+	ManagedResourceID const managedResourceID = GenerateNewManagedID();
 
 	RF_ASSERT( mResourceIDs.count( resourceName ) == 0 );
-	RF_ASSERT( mResources.count( tempID ) == 0 );
+	RF_ASSERT( mResources.count( managedResourceID ) == 0 );
 	RF_ASSERT( mFileBackedResources.count( resourceName ) == 0 );
 	Resource* res;
 	WeakPtr<Resource> handle;
@@ -529,16 +532,16 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 		}
 		handle = newResource;
 		res = newResource;
-		RegisterResource( tempID, rftl::move( newResource ) );
-		RegisterResourceID( resourceName, tempID );
+		RegisterResource( managedResourceID, rftl::move( newResource ) );
+		RegisterResourceID( resourceName, managedResourceID );
 		RegisterFileBackedResource( resourceName, filename );
 	}
 	RF_ASSERT( handle != nullptr );
 
 	bool const success = PostLoadFromFile( *res, filename );
 	RF_ASSERT( success );
-	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
-	return LoadResult{ .mID = tempID, .mHandle = handle };
+	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file at {}", managedResourceID );
+	return LoadResult{ .mID = managedResourceID, .mHandle = handle };
 }
 
 
@@ -565,7 +568,7 @@ ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::LoadNewResource
 
 	bool const success = PostLoadFromMemory( *res );
 	RF_ASSERT( success );
-	RFLOG_INFO( nullptr, RFCAT_PPU, "Resource loaded from memory" );
+	RFLOG_INFO( resourceName, RFCAT_PPU, "Resource loaded from memory at {}", managedResourceID );
 	return LoadResult{ .mID = managedResourceID, .mHandle = handle };
 }
 
@@ -593,7 +596,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	UniquePtr<Resource>& resourceRef = resourceIter->second;
 	if( resourceRef )
 	{
-		RFLOG_TRACE( nullptr, RFCAT_PPU, "Updating null resource, assumed to have been a reserve" );
+		RFLOG_TRACE( resourceName, RFCAT_PPU, "Updating null resource, assumed to have been a reserve" );
 	}
 
 	// Attempt to load new
