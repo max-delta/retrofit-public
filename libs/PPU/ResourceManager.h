@@ -103,7 +103,7 @@ protected:
 	virtual UniquePtr<Resource> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) = 0;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename );
 	virtual bool PostLoadFromMemory( ResourceType& resource );
-	virtual bool PreDestroy( ResourceType& resource );
+	virtual bool PreDestroy( ResourceNameView resourceName, ResourceType& resource );
 
 	// IMPORTANT: Derived classes must call this during destructor
 	void InternalShutdown();

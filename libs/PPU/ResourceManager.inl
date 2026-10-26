@@ -209,7 +209,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::DestroyRes
 	UniquePtr<Resource> const& resource = resourceIter->second;
 	RF_ASSERT( resource != nullptr );
 
-	bool const success = PreDestroy( *resource );
+	bool const success = PreDestroy( resourceName, *resource );
 	RF_ASSERT( success );
 
 	RF_TODO_ANNOTATION(
@@ -314,7 +314,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PostLoadFr
 
 
 template<typename Resource, typename ManagedResourceID, ManagedResourceID InvalidResourceID>
-bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceType& resource )
+bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
 {
 	(void)resource;
 	return true;
@@ -610,7 +610,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	// Swap out old
 	if( resourceRef != nullptr )
 	{
-		bool const preDestroySuccess = PreDestroy( *resourceRef );
+		bool const preDestroySuccess = PreDestroy( resourceName, *resourceRef );
 		RF_ASSERT( preDestroySuccess );
 		resourceRef = nullptr;
 

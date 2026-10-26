@@ -34,7 +34,7 @@ protected:
 	virtual UniquePtr<ResourceType> AllocateResourceFromFile( ResourceNameView resourceName, Filename const& filename ) override;
 	virtual bool PostLoadFromFile( ResourceType& resource, Filename filename ) override;
 	virtual bool PostLoadFromMemory( ResourceType& resource ) override;
-	virtual bool PreDestroy( ResourceType& resource ) override;
+	virtual bool PreDestroy( ResourceNameView resourceName, ResourceType& resource ) override;
 
 
 	//

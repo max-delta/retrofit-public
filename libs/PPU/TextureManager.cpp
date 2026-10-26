@@ -84,7 +84,7 @@ bool TextureManager::PostLoadFromMemory( ResourceType& resource )
 
 
 
-bool TextureManager::PreDestroy( ResourceType& resource )
+bool TextureManager::PreDestroy( ResourceNameView resourceName, ResourceType& resource )
 {
 	if( resource.mDeviceRepresentation == kInvalidDeviceTextureID )
 	{
