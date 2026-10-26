@@ -581,7 +581,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	typename ResourceIDsByName::const_iterator IDIter = mResourceIDs.find( resourceName );
 	if( IDIter == mResourceIDs.end() )
 	{
-		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found" );
+		RFLOG_ERROR( resourceName, RFCAT_PPU, "Resource ID not found to update" );
 		return false;
 	}
 	ManagedResourceID const managedResourceID = IDIter->second;
