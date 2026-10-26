@@ -49,8 +49,8 @@ private:
 		uint8_t mData[sizeof( Element )];
 		RF_ACK_ANY_PADDING;
 	};
-	static_assert( alignof( Storage ) == alignment, "Unxepected alignment change" );
-	static_assert( sizeof( Storage ) >= sizeof( Element ), "Unxepected size change" );
+	static_assert( alignof( Storage ) == alignment, "Unexpected alignment change" );
+	static_assert( sizeof( Storage ) >= sizeof( Element ), "Unexpected size change" );
 
 
 	//

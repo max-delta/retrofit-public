@@ -31,7 +31,7 @@ struct VariableTypeInfo
 
 struct VirtualRootInfo
 {
-	// Inheritance is implementation-specifc, so must use compiler-generated
+	// Inheritance is implementation-specific, so must use compiler-generated
 	//  functions to perform the hop, even though all major compilers are
 	//  reasonably predictable at time of writing
 	// NOTE: If null, then it should be assumed that no adjustment is needed
@@ -48,7 +48,7 @@ struct VirtualRootInfo
 
 struct BaseClassInfo
 {
-	// Inheritance is implementation-specifc, so must use compiler-generated
+	// Inheritance is implementation-specific, so must use compiler-generated
 	//  functions to perform the hop, even though all major compilers are
 	//  reasonably predictable at time of writing
 	// NOTE: If null, then it should be assumed that no adjustment is needed
@@ -151,7 +151,7 @@ struct ExtensionAccessor
 
 	// One or more users may be trying to mutate the contents, it is the
 	//  responsibility of the accessor to negotiate with the accessed structure
-	//  if this could lead to errors, or violated the stability gaurantees from
+	//  if this could lead to errors, or violated the stability guarantees from
 	//  the begin/end access calls
 	// NOTE: Null is permitted, indicates the accessor doesn't care
 	using FuncPtrBeginMutation = void ( * )( RootInst root );
@@ -162,7 +162,7 @@ struct ExtensionAccessor
 	// Some extensions have a simplified key system such that the index is
 	//  itself the key (ex: array, vector, deque, list)
 	// NOTE: Normal index->key->value pattern is still always supported, but
-	//  this direct index characteristic has value to serializers since thay
+	//  this direct index characteristic has value to serializers since they
 	//  may have a keyless storage option that is more efficient or practical
 	// NOTE: Null indicates a lack of this characteristic
 	using FuncPtrGetDirectKeyInfo = VariableTypeInfo ( * )( RootConstInst root );
@@ -171,7 +171,7 @@ struct ExtensionAccessor
 	// Some extensions have a simplified key system such that all keys share
 	//  the same type information (ex: all non-variant STL containers)
 	// NOTE: Normal index->key->value pattern is still always supported, but
-	//  this shared type characteristic has value to serializers since thay
+	//  this shared type characteristic has value to serializers since they
 	//  may have a simpler storage option that is more efficient or practical
 	// NOTE: Null indicates a lack of this characteristic
 	using FuncPtrGetSharedKeyInfo = VariableTypeInfo ( * )( RootConstInst root );
@@ -180,7 +180,7 @@ struct ExtensionAccessor
 	// Some extensions have a simplified value system such that all values
 	//  share the same type information (ex: all non-variant STL containers)
 	// NOTE: Normal index->key->value pattern is still always supported, but
-	//  this shared type characteristic has value to serializers since thay
+	//  this shared type characteristic has value to serializers since they
 	//  may have a simpler storage option that is more efficient or practical
 	// NOTE: Null indicates a lack of this characteristic
 	using FuncPtrGetSharedTargetInfo = VariableTypeInfo ( * )( RootConstInst root );
