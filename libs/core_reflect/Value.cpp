@@ -17,7 +17,7 @@ namespace details {
 
 template<typename InT,
 	typename rftl::enable_if<rftl::is_char<InT>::value == false, int>::type = 0>
-rftl::stringstream ConvertTempToSS( InT const& source )
+static rftl::stringstream ConvertTempToSS( InT const& source )
 {
 	rftl::stringstream ss;
 	ss << source;
@@ -26,7 +26,7 @@ rftl::stringstream ConvertTempToSS( InT const& source )
 
 template<typename InT,
 	typename rftl::enable_if<rftl::is_char<InT>::value, int>::type = 0>
-rftl::stringstream ConvertTempToSS( InT const& source )
+static rftl::stringstream ConvertTempToSS( InT const& source )
 {
 	rftl::stringstream ss;
 	ss << math::char_integer_bitcast( source );
@@ -37,7 +37,7 @@ rftl::stringstream ConvertTempToSS( InT const& source )
 
 template<typename OutT,
 	typename rftl::enable_if<rftl::is_char<OutT>::value == false, int>::type = 0>
-OutT ConvertSSToTemp( rftl::stringstream&& ss )
+static OutT ConvertSSToTemp( rftl::stringstream&& ss )
 {
 	OutT temp = OutT();
 	ss >> temp;
@@ -46,7 +46,7 @@ OutT ConvertSSToTemp( rftl::stringstream&& ss )
 
 template<typename OutT,
 	typename rftl::enable_if<rftl::is_char<OutT>::value, int>::type = 0>
-OutT ConvertSSToTemp( rftl::stringstream&& ss )
+static OutT ConvertSSToTemp( rftl::stringstream&& ss )
 {
 	using Temp = decltype( math::char_integer_bitcast( OutT() ) );
 	Temp temp = 0;
@@ -117,7 +117,7 @@ template<typename InT, typename OutT,
 			Value::IntegralTypes::Contains<InT>,
 			Value::IntegralTypes::Contains<OutT>>::value == false,
 		int>::type = 0>
-OutT ConvertTemps( InT const& source )
+static OutT ConvertTemps( InT const& source )
 {
 	rftl::stringstream ss = ConvertTempToSS<InT>( source );
 	OutT const outVal = ConvertSSToTemp<OutT>( rftl::move( ss ) );
@@ -132,7 +132,7 @@ template<typename InT, typename OutT,
 			Value::IntegralTypes::Contains<InT>,
 			Value::IntegralTypes::Contains<OutT>>::value,
 		int>::type = 0>
-OutT ConvertTemps( InT const& source )
+static OutT ConvertTemps( InT const& source )
 {
 	return math::integer_cast<OutT, InT>( source );
 }
@@ -140,7 +140,7 @@ OutT ConvertTemps( InT const& source )
 
 
 template<Value::Type inID, Value::Type outID>
-Value ConvertValue( Value const& source )
+static Value ConvertValue( Value const& source )
 {
 	using InT = typename Value::ValueTypes::ByIndex<static_cast<size_t>( inID )>::type;
 	using OutT = typename Value::ValueTypes::ByIndex<static_cast<size_t>( outID )>::type;
