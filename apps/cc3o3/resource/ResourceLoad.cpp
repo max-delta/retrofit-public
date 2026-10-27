@@ -15,7 +15,7 @@
 
 #include "GameAction/ActionRecord.h"
 
-#include "GameNovel/scene/SceneDesc.h"
+#include "GameScene/SceneDesc.h"
 
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "project.h"
 
-#include "GameNovel/scene/SceneFwd.h"
+#include "GameScene/SceneFwd.h"
 
 
 namespace RF::cc::scene {

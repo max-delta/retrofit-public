@@ -414,6 +414,9 @@
 		<ProjectReference Include="..\..\libs\GameResource\GameResource.vcxproj">
 			<Project>{955cfce2-f31e-4915-b045-da51b5c8036c}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\GameScene\GameScene.vcxproj">
+			<Project>{c9b48fb5-c5ab-4580-9b6e-07ff9cd38f70}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\..\libs\GameScripting\GameScripting.vcxproj">
 			<Project>{783fa3e2-a3b7-4d4e-a7b1-82b625d1b94a}</Project>
 		</ProjectReference>

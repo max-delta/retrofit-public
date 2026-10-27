@@ -3,7 +3,7 @@
 
 #include "cc3o3/resource/ResourceLoad.h"
 
-#include "GameNovel/scene/Scene.h"
+#include "GameScene/Scene.h"
 
 
 namespace RF::cc::scene {

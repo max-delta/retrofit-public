@@ -18,7 +18,7 @@
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
 
-#include "GameNovel/scene/Scene.h"
+#include "GameScene/Scene.h"
 
 #include "GameUI/FontRegistry.h"
 

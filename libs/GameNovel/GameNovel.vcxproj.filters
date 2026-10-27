@@ -10,12 +10,6 @@
 		<ClCompile Include="ui\controllers\SceneCanvas.cpp">
 			<Filter>ui\controllers</Filter>
 		</ClCompile>
-		<ClCompile Include="scene\Scene.cpp">
-			<Filter>scene</Filter>
-		</ClCompile>
-		<ClCompile Include="scene\SceneDesc.cpp">
-			<Filter>scene</Filter>
-		</ClCompile>
 	</ItemGroup>
 	<ItemGroup>
 		<ClInclude Include="project.h" />
@@ -43,21 +37,6 @@
 		<ClInclude Include="ui\controllers\SceneCanvas.h">
 			<Filter>ui\controllers</Filter>
 		</ClInclude>
-		<ClInclude Include="scene\Scene.h">
-			<Filter>scene</Filter>
-		</ClInclude>
-		<ClInclude Include="scene\SceneFwd.h">
-			<Filter>scene</Filter>
-		</ClInclude>
-		<ClInclude Include="scene\stdafx.h">
-			<Filter>scene</Filter>
-		</ClInclude>
-		<ClInclude Include="scene\project.h">
-			<Filter>scene</Filter>
-		</ClInclude>
-		<ClInclude Include="scene\SceneDesc.h">
-			<Filter>scene</Filter>
-		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<Filter Include="ui">
@@ -65,9 +44,6 @@
 		</Filter>
 		<Filter Include="ui\controllers">
 			<UniqueIdentifier>{17b4da39-7fdc-491a-8c51-3ac290433090}</UniqueIdentifier>
-		</Filter>
-		<Filter Include="scene">
-			<UniqueIdentifier>{6d93b014-3fea-41ef-8bd2-da2bfd4d015d}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 </Project>

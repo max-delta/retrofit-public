@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Scene.h"
 
-#include "GameNovel/scene/SceneDesc.h"
+#include "GameScene/SceneDesc.h"
 
 #include "PPU/PPUController.h"
 #include "PPU/TileLayerCSVLoader.h"

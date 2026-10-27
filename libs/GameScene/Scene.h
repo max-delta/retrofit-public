@@ -1,5 +1,5 @@
 #pragma once
-#include "GameNovel/scene/SceneFwd.h"
+#include "GameScene/SceneFwd.h"
 
 #include "PlatformFilesystem/VFSPath.h"
 #include "PPU/TileLayer.h"
@@ -11,7 +11,7 @@ namespace RF::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Resources for a layer, the saturated form of a layer that is actually usable
-class GAMENOVEL_API LayerResources
+class GAMESCENE_API LayerResources
 {
 	RF_NO_COPY( LayerResources );
 	RF_NO_ASSIGN_VIA_MOVE( LayerResources );
@@ -49,7 +49,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 // Layer within a scene, used for separating tile layers by purpose or depth
-class GAMENOVEL_API Layer
+class GAMESCENE_API Layer
 {
 	RF_NO_COPY( Layer );
 	RF_NO_ASSIGN_VIA_MOVE( Layer );
@@ -85,7 +85,7 @@ public:
 
 // A collection of tile layers, with no further assumptions beyond that,
 //  relying on consuming code to understand the intent of the layers and mores
-class GAMENOVEL_API Scene
+class GAMESCENE_API Scene
 {
 	RF_NO_COPY( Scene );
 	RF_DEFAULT_MOVE( Scene );

@@ -1,5 +1,5 @@
 #pragma once
-#include "GameNovel/scene/SceneFwd.h"
+#include "GameScene/SceneFwd.h"
 
 #include "rftl/string"
 #include "rftl/vector"
@@ -8,7 +8,7 @@
 namespace RF::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct GAMENOVEL_API LayerDesc
+struct GAMESCENE_API LayerDesc
 {
 	rftl::string mTileset;
 	rftl::string mTileLayer;
@@ -19,7 +19,7 @@ struct GAMENOVEL_API LayerDesc
 
 ///////////////////////////////////////////////////////////////////////////////
 
-struct GAMENOVEL_API SceneDesc
+struct GAMESCENE_API SceneDesc
 {
 	rftl::vector<LayerDesc> mLayers;
 };
