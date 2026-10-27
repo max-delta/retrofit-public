@@ -8,13 +8,14 @@
 #include "cc3o3/char/ElementSlots.h"
 #include "cc3o3/encounter/EncounterDesc.h"
 #include "cc3o3/overworld/OverworldDesc.h"
-#include "cc3o3/scene/SceneDesc.h"
 #include "cc3o3/site/SiteDesc.h"
 #include "cc3o3/save/SaveBlob.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameAction/ActionRecord.h"
+
+#include "GameNovel/scene/SceneDesc.h"
 
 #include "GameResource/ResourceTypeRegistry.h"
 #include "GameResource/ResourceLoader.h"

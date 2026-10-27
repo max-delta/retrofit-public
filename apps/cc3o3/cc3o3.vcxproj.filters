@@ -332,10 +332,7 @@
 		<ClCompile Include="cutscene\CinematicController.cpp">
 			<Filter>cutscene</Filter>
 		</ClCompile>
-		<ClCompile Include="scene\SceneDesc.cpp">
-			<Filter>scene</Filter>
-		</ClCompile>
-		<ClCompile Include="scene\Scene.cpp">
+		<ClCompile Include="scene\SceneLoader.cpp">
 			<Filter>scene</Filter>
 		</ClCompile>
 	</ItemGroup>
@@ -923,19 +920,16 @@
 		<ClInclude Include="cutscene\project.h">
 			<Filter>cutscene</Filter>
 		</ClInclude>
-		<ClInclude Include="scene\SceneDesc.h">
-			<Filter>scene</Filter>
-		</ClInclude>
-		<ClInclude Include="scene\SceneFwd.h">
+		<ClInclude Include="scene\project.h">
 			<Filter>scene</Filter>
 		</ClInclude>
 		<ClInclude Include="scene\stdafx.h">
 			<Filter>scene</Filter>
 		</ClInclude>
-		<ClInclude Include="scene\project.h">
+		<ClInclude Include="scene\SceneLoader.h">
 			<Filter>scene</Filter>
 		</ClInclude>
-		<ClInclude Include="scene\Scene.h">
+		<ClInclude Include="scene\SceneFwd.h">
 			<Filter>scene</Filter>
 		</ClInclude>
 	</ItemGroup>
@@ -1028,7 +1022,7 @@
 			<UniqueIdentifier>{45bd1cbc-ac04-48d8-b7f9-95b0ce670392}</UniqueIdentifier>
 		</Filter>
 		<Filter Include="scene">
-			<UniqueIdentifier>{1b4e3d7d-4509-4c3b-9e22-50dd64e14bd6}</UniqueIdentifier>
+			<UniqueIdentifier>{299cb941-89f3-48a9-b0cb-7f69c5589fa2}</UniqueIdentifier>
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>

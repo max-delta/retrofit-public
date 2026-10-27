@@ -1,15 +1,15 @@
 #pragma once
 #include "project.h"
 
-#include "rftl/limits"
+#include "GameNovel/scene/SceneFwd.h"
 
 
 namespace RF::cc::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
-class LayerResources;
-class Layer;
-class Scene;
+using namespace RF::scene;
+
+class SceneLoader;
 
 ///////////////////////////////////////////////////////////////////////////////
 }

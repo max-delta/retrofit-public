@@ -1,5 +1,5 @@
 #pragma once
-#include "cc3o3/scene/SceneFwd.h"
+#include "GameNovel/scene/SceneFwd.h"
 
 #include "PlatformFilesystem/VFSPath.h"
 #include "PPU/TileLayer.h"
@@ -7,11 +7,11 @@
 #include "rftl/vector"
 
 
-namespace RF::cc::scene {
+namespace RF::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
 // Resources for a layer, the saturated form of a layer that is actually usable
-class LayerResources
+class GAMENOVEL_API LayerResources
 {
 	RF_NO_COPY( LayerResources );
 	RF_NO_ASSIGN_VIA_MOVE( LayerResources );
@@ -41,6 +41,7 @@ public:
 	//
 	// Private data
 private:
+	WeakPtr<gfx::ppu::PPUController> mPpu;
 	gfx::ManagedTilesetID mLoadedTileset = gfx::kInvalidManagedTilesetID;
 	rftl::string mTilesetResourceName = {};
 };
@@ -48,7 +49,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 
 // Layer within a scene, used for separating tile layers by purpose or depth
-class Layer
+class GAMENOVEL_API Layer
 {
 	RF_NO_COPY( Layer );
 	RF_NO_ASSIGN_VIA_MOVE( Layer );
@@ -62,7 +63,10 @@ public:
 
 	// Loading is deferred until actually requested, and can be ejected upon
 	//  request as well
-	bool LoadResources( rftl::string&& resourceName );
+	bool LoadResources(
+		WeakPtr<gfx::ppu::PPUController> ppu,
+		file::VFS& vfs,
+		rftl::string&& resourceName );
 
 
 	//
@@ -81,7 +85,7 @@ public:
 
 // A collection of tile layers, with no further assumptions beyond that,
 //  relying on consuming code to understand the intent of the layers and mores
-class Scene
+class GAMENOVEL_API Scene
 {
 	RF_NO_COPY( Scene );
 	RF_DEFAULT_MOVE( Scene );
@@ -98,13 +102,16 @@ public:
 	Scene() = default;
 
 	// Loads the metadata, not the resources
-	static Scene LoadFromDesc( file::VFSPath const& descPath );
+	static Scene CreateFromDesc( SceneDesc const& desc );
 
 	// Load / unload the actual resources
 	// NOTE: Returns true only on total success, a partial failure returns
 	//  false, though attempts to perform the operation for all layers
 	//  regardless
-	bool LoadResources( rftl::string_view resourcePrefix );
+	bool LoadResources(
+		WeakPtr<gfx::ppu::PPUController> ppu,
+		file::VFS& vfs,
+		rftl::string_view resourcePrefix );
 	bool UnloadResources();
 
 	// Runs a filter on the mode, meant to be used for a common case of looking

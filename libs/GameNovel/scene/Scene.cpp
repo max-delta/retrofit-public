@@ -1,17 +1,13 @@
 #include "stdafx.h"
 #include "Scene.h"
 
-#include "cc3o3/scene/SceneDesc.h"
-#include "cc3o3/resource/ResourceLoad.h"
-
-#include "AppCommon_GraphicalClient/Common.h"
+#include "GameNovel/scene/SceneDesc.h"
 
 #include "PPU/PPUController.h"
-#include "PPU/TilesetManager.h"
 #include "PPU/TileLayerCSVLoader.h"
 
 
-namespace RF::cc::scene {
+namespace RF::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
 LayerResources::LayerResources( LayerResources&& rhs )
@@ -42,16 +38,18 @@ LayerResources::~LayerResources()
 
 bool LayerResources::Unload()
 {
+	RF_ASSERT_MSG( mPpu != nullptr, "Already unbound" );
 	RF_ASSERT_MSG( mTilesetResourceName.empty() == false, "Already unnamed" );
 	RF_ASSERT_MSG( mLoadedTileset != gfx::kInvalidManagedTilesetID, "Already unloaded" );
 	RF_ASSERT_MSG( mTileLayer.mTilesetReference == mLoadedTileset, "Layer reference is divergent" );
 
-	gfx::ppu::PPUController& ppu = *app::gGraphics;
+	gfx::ppu::PPUController& ppu = *mPpu;
 
 	bool const destroySuccess = ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::Tileset, mTilesetResourceName );
 	RF_ASSERT( destroySuccess );
 
 	mTileLayer = {};
+	mPpu = nullptr;
 	mLoadedTileset = gfx::kInvalidManagedTilesetID;
 	mTilesetResourceName.clear();
 
@@ -60,19 +58,21 @@ bool LayerResources::Unload()
 
 ///////////////////////////////////////////////////////////////////////////////
 
-bool Layer::LoadResources( rftl::string&& resourceName )
+bool Layer::LoadResources( WeakPtr<gfx::ppu::PPUController> ppu, file::VFS& vfs, rftl::string&& resourceName )
 {
+	RF_ASSERT( ppu != nullptr );
 	RF_ASSERT( resourceName.empty() == false );
+	RF_ASSERT_MSG( mResources.mPpu == nullptr, "Already bound to ppu" );
 	RF_ASSERT_MSG( mResources.mTilesetResourceName.empty(), "Already named" );
 	RF_ASSERT_MSG( mResources.mLoadedTileset == gfx::kInvalidManagedTilesetID, "Already loaded" );
 	RF_ASSERT_MSG( mResources.mTileLayer.mTilesetReference == mResources.mLoadedTileset, "Layer reference is divergent" );
 
-	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	file::VFS& vfs = *app::gVfs;
+	mResources.mPpu = ppu;
+	gfx::ppu::PPUController& ppuRef = *mResources.mPpu;
 
 	mResources.mTilesetResourceName = rftl::move( resourceName );
 
-	mResources.mLoadedTileset = ppu.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( mResources.mTilesetResourceName, mTilesetPath );
+	mResources.mLoadedTileset = ppuRef.QueueDeferredLoadRequest<gfx::ppu::AssetType::Tileset>( mResources.mTilesetResourceName, mTilesetPath );
 	RF_ASSERT( mResources.mLoadedTileset != gfx::kInvalidManagedTilesetID );
 
 	gfx::ppu::TileLayer& tileLayer = mResources.mTileLayer;
@@ -96,13 +96,9 @@ bool Layer::LoadResources( rftl::string&& resourceName )
 
 ///////////////////////////////////////////////////////////////////////////////
 
-Scene Scene::LoadFromDesc( file::VFSPath const& descPath )
+Scene Scene::CreateFromDesc( SceneDesc const& desc )
 {
 	Scene retVal = {};
-
-	UniquePtr<SceneDesc const> descPtr = resource::LoadFromFile<SceneDesc const>( descPath );
-	RFLOG_TEST_AND_FATAL( descPtr != nullptr, descPath, RFCAT_CC3O3, "Failed to load scene desc" );
-	SceneDesc const& desc = *descPtr;
 
 	// Layers
 	retVal.mLayers.reserve( desc.mLayers.size() );
@@ -122,7 +118,10 @@ Scene Scene::LoadFromDesc( file::VFSPath const& descPath )
 
 
 
-bool Scene::LoadResources( rftl::string_view resourcePrefix )
+bool Scene::LoadResources(
+	WeakPtr<gfx::ppu::PPUController> ppu,
+	file::VFS& vfs,
+	rftl::string_view resourcePrefix )
 {
 	RF_ASSERT( resourcePrefix.empty() == false );
 
@@ -132,7 +131,7 @@ bool Scene::LoadResources( rftl::string_view resourcePrefix )
 	{
 		rftl::string resourceName = rftl::format( "{}_layer{}", resourcePrefix, layerIndex );
 		layerIndex++;
-		bool const success = layer.LoadResources( rftl::move( resourceName ) );
+		bool const success = layer.LoadResources( ppu, vfs, rftl::move( resourceName ) );
 		retVal = retVal && success;
 	}
 	return retVal;

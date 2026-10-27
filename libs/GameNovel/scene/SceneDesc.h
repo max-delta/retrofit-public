@@ -1,14 +1,14 @@
 #pragma once
-#include "cc3o3/scene/SceneFwd.h"
+#include "GameNovel/scene/SceneFwd.h"
 
 #include "rftl/string"
 #include "rftl/vector"
 
 
-namespace RF::cc::scene {
+namespace RF::scene {
 ///////////////////////////////////////////////////////////////////////////////
 
-struct LayerDesc
+struct GAMENOVEL_API LayerDesc
 {
 	rftl::string mTileset;
 	rftl::string mTileLayer;
@@ -19,7 +19,7 @@ struct LayerDesc
 
 ///////////////////////////////////////////////////////////////////////////////
 
-struct SceneDesc
+struct GAMENOVEL_API SceneDesc
 {
 	rftl::vector<LayerDesc> mLayers;
 };

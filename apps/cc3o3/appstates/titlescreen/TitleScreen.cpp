@@ -7,7 +7,7 @@
 #include "cc3o3/appstates/titlescreen/TitleScreen_CharCreate.h"
 #include "cc3o3/appstates/titlescreen/TitleScreen_Options.h"
 #include "cc3o3/appstates/AppStateRoute.h"
-#include "cc3o3/scene/Scene.h"
+#include "cc3o3/scene/SceneLoader.h"
 #include "cc3o3/CommonPaths.h"
 
 #include "AppCommon_GraphicalClient/Common.h"
@@ -17,6 +17,8 @@
 
 #include "GameInput/ControllerManager.h"
 #include "GameInput/GameController.h"
+
+#include "GameNovel/scene/Scene.h"
 
 #include "GameUI/FontRegistry.h"
 
@@ -62,8 +64,8 @@ void TitleScreen::OnEnter( AppStateChangeContext& context )
 
 		file::VFSPath const& scenePath = paths::UIScenes().GetChild( "title_screen.oo" );
 
-		scene = scene::Scene::LoadFromDesc( scenePath );
-		scene.LoadResources( "main_menu" );
+		scene = scene::SceneLoader::LoadFromDesc( scenePath );
+		scene.LoadResources( app::gGraphics, *app::gVfs, "main_menu" );
 
 		backPtr = scene.FindFirstOfMutable( "back" );
 		midPtr = scene.FindFirstOfMutable( "mid" );
