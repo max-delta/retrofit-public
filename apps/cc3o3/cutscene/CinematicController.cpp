@@ -9,8 +9,8 @@
 #include "GameDialogue/DialogueSequence.h"
 #include "GameNovel/CinematicDriver.h"
 
-#include "PPU/FramePackManager.h"
 #include "PPU/PPUController.h"
+#include "PPU/ResourceLoadResults.h"
 #include "PlatformFilesystem/VFS.h"
 
 #include "core_vfs/FileBuffer.h"
@@ -83,7 +83,6 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 	novel::CinematicDriver::FramePacksByCharacter retVal = {};
 
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::ppu::FramePackManager const& framePackMan = *ppu.GetFramePackManager();
 
 	// For each required character...
 	for( ExpressionsPerCharacter::value_type const& requiredExpressionsEntry : requiredExpressionsPerCharacter )
@@ -105,8 +104,9 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 
 			rftl::string const resourceName = rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression );
 			file::VFSPath const filename = characterRoot.GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
-			bool const success = ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( resourceName, filename );
-			if( success == false )
+			gfx::ppu::AssetLoadResultType<gfx::ppu::AssetType::FramePack> const result =
+				ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( resourceName, filename );
+			if( result == false )
 			{
 				RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load an expression '{}' for character '{}'", expression, character );
 				continue;
@@ -117,8 +117,8 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 				gfx::ppu::AssetType::FramePack,
 				resourceName );
 
-			gfx::ppu::ManagedFramePackID const framePackID = framePackMan.GetManagedResourceIDFromResourceName( resourceName );
-			WeakPtr<gfx::ppu::FramePackBase const> const framePack = framePackMan.GetResourceFromManagedResourceID( framePackID );
+			gfx::ppu::ManagedFramePackID const& framePackID = result.mID;
+			WeakPtr<gfx::ppu::FramePackBase const> const& framePack = result.mHandle;
 			RF_ASSERT( framePack != nullptr );
 
 			retVal[character][expression] = gfx::ppu::FramePackRef::FromFramePack( framePackID, *framePack );
