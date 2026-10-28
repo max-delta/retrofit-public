@@ -30,20 +30,6 @@ static dialogue::DialogueSequence CreateFallbackSequence()
 
 
 
-static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
-{
-	gfx::ppu::PPUController& ppu = *app::gGraphics;
-
-	for( rftl::string const& resourceName : resourceNames )
-	{
-		ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::FramePack, resourceName );
-	}
-
-	resourceNames.clear();
-}
-
-
-
 static novel::CinematicDriver::SceneData AssignSceneDataForRequiredScenes(
 	dialogue::DialogueSequence::Strings const& requiredScenes,
 	file::VFSPath const& sceneRoot )
@@ -87,9 +73,9 @@ static novel::CinematicDriver::SceneData AssignSceneDataForRequiredScenes(
 static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequiredCharacters(
 	dialogue::DialogueSequence::StringViewMultiMap const& requiredExpressionsPerCharacter,
 	file::VFSPath const& characterRoot,
-	rftl::deque<rftl::string>& resourceNames )
+	rftl::deque<gfx::ppu::AssetLifetime>& assetLifetimes )
 {
-	RF_ASSERT( resourceNames.empty() );
+	RF_ASSERT( assetLifetimes.empty() );
 
 	using ExpressionsPerCharacter = dialogue::DialogueSequence::StringViewMultiMap;
 	using Expressions = dialogue::DialogueSequence::StringViewSet;
@@ -117,8 +103,7 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 				continue;
 			}
 
-			resourceNames.emplace_back( rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression ) );
-			rftl::string_view const resourceName = resourceNames.back();
+			rftl::string const resourceName = rftl::format( "CINEMATIC_EXPRESSION/{}/{}", character, expression );
 			file::VFSPath const filename = characterRoot.GetChild( rftl::string( character ), rftl::string( expression ) + ".fpack" );
 			bool const success = ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::FramePack>( resourceName, filename );
 			if( success == false )
@@ -126,6 +111,11 @@ static novel::CinematicDriver::FramePacksByCharacter AssignFramePacksForRequired
 				RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load an expression '{}' for character '{}'", expression, character );
 				continue;
 			}
+			assetLifetimes.emplace_back(
+				app::gGraphics,
+				gfx::ppu::AssetLifetime::DestroyMode::Deferred,
+				gfx::ppu::AssetType::FramePack,
+				resourceName );
 
 			gfx::ppu::ManagedFramePackID const framePackID = framePackMan.GetManagedResourceIDFromResourceName( resourceName );
 			WeakPtr<gfx::ppu::FramePackBase const> const framePack = framePackMan.GetResourceFromManagedResourceID( framePackID );
@@ -174,7 +164,7 @@ bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
 	// Unload resources
-	details::UnloadAllFramePacks( mLoadedExpressionFramePackResourceNames );
+	mLoadedExpressionFramePacks.clear();
 
 	// Reset
 	mDialogue = {};
@@ -218,7 +208,7 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 				details::AssignFramePacksForRequiredCharacters(
 					mDialogue->mRequiredExpressionsPerCharacter,
 					mCharacterRoot,
-					mLoadedExpressionFramePackResourceNames ),
+					mLoadedExpressionFramePacks ),
 		} );
 
 	RFLOG_INFO( filePath, RFCAT_CC3O3, "Loaded dialogue file for cinematic" );

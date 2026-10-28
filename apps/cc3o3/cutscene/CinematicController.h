@@ -6,6 +6,8 @@
 #include "GameDialogue/DialogueFwd.h"
 #include "GameNovel/NovelFwd.h"
 
+#include "PPU/AssetLifetime.h"
+
 #include "PlatformFilesystem/VFSPath.h"
 
 #include "rftl/deque"
@@ -47,7 +49,7 @@ private:
 	file::VFSPath mCharacterRoot = {};
 	file::VFSPath mSceneRoot = {};
 
-	rftl::deque<rftl::string> mLoadedExpressionFramePackResourceNames;
+	rftl::deque<gfx::ppu::AssetLifetime> mLoadedExpressionFramePacks;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
