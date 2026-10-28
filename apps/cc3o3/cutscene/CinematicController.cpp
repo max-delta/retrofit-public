@@ -72,7 +72,7 @@ static novel::CinematicDriver::SceneData AssignSceneDataForRequiredScenes(
 		// NOTE: This makes sure we can run the whole cutscene, and also
 		//  prevents a hitch or blocking load in the middle of a scene
 		//  transition while the cutscene is running
-		rftl::string_view const resourceName = rftl::format( "CINEMATIC_SCENE/{}", scene );
+		rftl::string const resourceName = rftl::format( "CINEMATIC_SCENE/{}", scene );
 		data.LoadResources( app::gGraphics, *app::gVfs, resourceName );
 
 		// Store
