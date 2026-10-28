@@ -39,6 +39,7 @@
 		<ClInclude Include="PaletteLoader.h" />
 		<ClInclude Include="AssetTypes.h" />
 		<ClInclude Include="PPUConfig.h" />
+		<ClInclude Include="AssetLifetime.h" />
 		<ClInclude Include="ResourceLoadResults.h" />
 		<ClInclude Include="TextStorage.h" />
 		<ClInclude Include="TileLayer.h" />
@@ -70,6 +71,7 @@
 		<ClCompile Include="PaletteLoader.cpp" />
 		<ClCompile Include="AssetTypes.cpp" />
 		<ClCompile Include="project.cpp" />
+		<ClCompile Include="AssetLifetime.cpp" />
 		<ClCompile Include="ResourceLoadResults.cpp" />
 		<ClCompile Include="TextStorage.cpp" />
 		<ClCompile Include="TileLayer.cpp" />
