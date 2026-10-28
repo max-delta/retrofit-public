@@ -9,6 +9,15 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
+enum class AssetType : uint8_t
+{
+	Invalid = 0,
+	Texture,
+	FramePack,
+	Tileset,
+	Font
+};
+
 // Coordinates are +X=right, +Y=down (scanlines)
 using CoordElem = int16_t;
 using Coord = math::Vector2<CoordElem>;

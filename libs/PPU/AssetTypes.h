@@ -9,17 +9,6 @@
 namespace RF::gfx::ppu {
 ///////////////////////////////////////////////////////////////////////////////
 
-enum class AssetType : uint8_t
-{
-	Invalid = 0,
-	Texture,
-	FramePack,
-	Tileset,
-	Font
-};
-
-
-
 template<AssetType T>
 struct AssetTypeInfo
 {
