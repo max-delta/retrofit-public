@@ -81,7 +81,7 @@ FileBuffer::FileBuffer( SeekHandle& file, size_t maxBytes )
 
 
 FileBuffer::FileBuffer( FileBuffer&& rhs )
-	: mBuffer( rftl::move( rhs.mBuffer ) )
+	: RF_MOVE_CONSTRUCT( mBuffer )
 {
 	//
 }
@@ -92,7 +92,7 @@ FileBuffer& FileBuffer::operator=( FileBuffer&& rhs )
 {
 	if( this != &rhs )
 	{
-		this->mBuffer = rftl::move( rhs.mBuffer );
+		RF_MOVE_ASSIGN( mBuffer );
 	}
 	return *this;
 }

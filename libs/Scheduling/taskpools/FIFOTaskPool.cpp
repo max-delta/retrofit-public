@@ -21,8 +21,8 @@ FIFOTaskPool::TaskRecord& FIFOTaskPool::TaskRecord::operator=( TaskRecord&& rhs 
 {
 	if( this != &rhs )
 	{
-		this->mID = rftl::move( rhs.mID );
-		this->mTask = rftl::move( rhs.mTask );
+		RF_MOVE_ASSIGN( mID );
+		RF_MOVE_ASSIGN( mTask );
 		this->mBlocked.store( rhs.mBlocked.load( rftl::memory_order::memory_order_acquire ), rftl::memory_order::memory_order_release );
 		this->mAbortPending.store( rhs.mAbortPending.load( rftl::memory_order::memory_order_acquire ), rftl::memory_order::memory_order_release );
 	}

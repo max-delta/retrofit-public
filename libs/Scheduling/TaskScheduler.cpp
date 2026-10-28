@@ -22,10 +22,10 @@ TaskScheduler::RegisteredWorker::RegisteredWorker( SharedPtr<TaskWorker> const& 
 
 
 TaskScheduler::RegisteredWorker::RegisteredWorker( RegisteredWorker&& rhs )
-	: mWorker( rftl::move( rhs.mWorker ) )
-	, mActiveTaskID( rftl::move( rhs.mActiveTaskID ) )
-	, mActiveTask( rftl::move( rhs.mActiveTask ) )
-	, mActivePool( rftl::move( rhs.mActivePool ) )
+	: RF_MOVE_CONSTRUCT( mWorker )
+	, RF_MOVE_CONSTRUCT( mActiveTaskID )
+	, RF_MOVE_CONSTRUCT( mActiveTask )
+	, RF_MOVE_CONSTRUCT( mActivePool )
 	, mFlaggedAsActive( rhs.mFlaggedAsActive.load( rftl::memory_order::memory_order_acquire ) )
 	, mFlaggedForUnregistration( rhs.mFlaggedForUnregistration.load( rftl::memory_order::memory_order_acquire ) )
 {
@@ -38,10 +38,10 @@ TaskScheduler::RegisteredWorker& TaskScheduler::RegisteredWorker::operator=( Reg
 {
 	if( this != &rhs )
 	{
-		this->mWorker = rftl::move( rhs.mWorker );
-		this->mActiveTaskID = rftl::move( rhs.mActiveTaskID );
-		this->mActiveTask = rftl::move( rhs.mActiveTask );
-		this->mActivePool = rftl::move( rhs.mActivePool );
+		RF_MOVE_ASSIGN( mWorker );
+		RF_MOVE_ASSIGN( mActiveTaskID );
+		RF_MOVE_ASSIGN( mActiveTask );
+		RF_MOVE_ASSIGN( mActivePool );
 		this->mFlaggedAsActive.store( rhs.mFlaggedAsActive.load( rftl::memory_order::memory_order_acquire ), rftl::memory_order::memory_order_release );
 		this->mFlaggedForUnregistration.store( rhs.mFlaggedForUnregistration.load( rftl::memory_order::memory_order_acquire ), rftl::memory_order::memory_order_release );
 	}
@@ -59,7 +59,7 @@ TaskScheduler::RegisteredPool::RegisteredPool( UniquePtr<TaskPool>&& pool )
 
 
 TaskScheduler::RegisteredPool::RegisteredPool( RegisteredPool&& rhs )
-	: mPool( rftl::move( rhs.mPool ) )
+	: RF_MOVE_CONSTRUCT( mPool )
 {
 	//
 }
@@ -70,7 +70,7 @@ TaskScheduler::RegisteredPool& TaskScheduler::RegisteredPool::operator=( Registe
 {
 	if( this != &rhs )
 	{
-		this->mPool = rftl::move( rhs.mPool );
+		RF_MOVE_ASSIGN( mPool );
 	}
 	return *this;
 }
