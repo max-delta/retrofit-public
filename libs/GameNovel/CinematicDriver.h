@@ -4,6 +4,8 @@
 #include "GameNovel/NovelFwd.h"
 #include "GameNovel/ui/UIFwd.h"
 
+#include "GameScene/Scene.h"
+
 #include "GameDialogue/DialogueFwd.h"
 
 #include "PPU/FramePackRef.h"
@@ -49,10 +51,10 @@ public:
 	// NOTE: These are pointer-hashed string views, because they are expected
 	//  to be backed by the strings in the sequence, and thus do not need an
 	//  extra allocation
-	using TileLayersByScene =
+	using SceneData =
 		rftl::unordered_map<
 			rftl::string_view,
-			gfx::ppu::TileLayer,
+			scene::Scene,
 			rftl::string_ptr_only_hash_equals,
 			rftl::string_ptr_only_hash_equals>;
 	using FramePackByExpression =
@@ -71,7 +73,7 @@ public:
 	struct SequenceParams
 	{
 		WeakPtr<dialogue::DialogueSequence const> mSequence = nullptr;
-		TileLayersByScene mTileLayersByScene = {};
+		SceneData mSceneData = {};
 		FramePacksByCharacter mFramePacksByCharacter = {};
 	};
 

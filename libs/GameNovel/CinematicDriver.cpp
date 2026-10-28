@@ -442,12 +442,14 @@ bool CinematicDriver::SubTickCinematic_Advance_Scene( Context const& context, Ti
 	}
 	else
 	{
-		gfx::ppu::TileLayer const& tileLayer = mSequenceParams.mTileLayersByScene.at( sceneID );
+		scene::Scene const& scene = mSequenceParams.mSceneData.at( sceneID );
 		RF_TODO_ANNOTATION(
 			"Should this always reset the scene? What if it's the same scene?"
 			" That will result in an animation reset, is that actually"
 			" desirable in all cases?" );
-		sceneCanvas.mTODOTileLayer = tileLayer.Clone();
+		// HACK: Grab first layer and stomp it in
+		RF_TODO_ANNOTATION( "Implement" )
+		sceneCanvas.mTODOTileLayer = scene.mLayers.at( 0 ).mResources.mTileLayer.Clone();
 	}
 
 	// Allow further sub-ticking

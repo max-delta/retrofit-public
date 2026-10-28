@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "CinematicController.h"
 
+#include "cc3o3/scene/SceneLoader.h"
+
 #include "AppCommon_GraphicalClient/Common.h"
 
 #include "GameDialogue/DialogueLoader.h"
@@ -8,7 +10,6 @@
 #include "GameNovel/CinematicDriver.h"
 
 #include "PPU/FramePackManager.h"
-#include "PPU/TilesetManager.h"
 #include "PPU/PPUController.h"
 #include "PlatformFilesystem/VFS.h"
 
@@ -29,20 +30,6 @@ static dialogue::DialogueSequence CreateFallbackSequence()
 
 
 
-static void UnloadAllTilesets( rftl::deque<rftl::string>& resourceNames )
-{
-	gfx::ppu::PPUController& ppu = *app::gGraphics;
-
-	for( rftl::string const& resourceName : resourceNames )
-	{
-		ppu.QueueDeferredDestroyRequest( gfx::ppu::AssetType::Tileset, resourceName );
-	}
-
-	resourceNames.clear();
-}
-
-
-
 static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 {
 	gfx::ppu::PPUController& ppu = *app::gGraphics;
@@ -57,19 +44,13 @@ static void UnloadAllFramePacks( rftl::deque<rftl::string>& resourceNames )
 
 
 
-static novel::CinematicDriver::TileLayersByScene AssignTileLayersForRequiredScenes(
+static novel::CinematicDriver::SceneData AssignSceneDataForRequiredScenes(
 	dialogue::DialogueSequence::Strings const& requiredScenes,
-	file::VFSPath const& sceneRoot,
-	rftl::deque<rftl::string>& tilesetResourceNames )
+	file::VFSPath const& sceneRoot )
 {
-	RF_ASSERT( tilesetResourceNames.empty() );
-
 	using Scenes = dialogue::DialogueSequence::Strings;
 
-	novel::CinematicDriver::TileLayersByScene retVal = {};
-
-	gfx::ppu::PPUController& ppu = *app::gGraphics;
-	gfx::TilesetManager const& tsetMan = *ppu.GetTilesetManager();
+	novel::CinematicDriver::SceneData retVal = {};
 
 	// For each required scene...
 	for( Scenes::value_type const& scene : requiredScenes )
@@ -83,30 +64,19 @@ static novel::CinematicDriver::TileLayersByScene AssignTileLayersForRequiredScen
 			continue;
 		}
 
-		tilesetResourceNames.emplace_back( rftl::format( "CINEMATIC_SCENE/{}", scene ) );
-		rftl::string_view const resourceName = tilesetResourceNames.back();
-		file::VFSPath const filename = sceneRoot.GetChild( rftl::string( scene ) + ".tset.txt" );
-		bool const success = ppu.ForceImmediateLoadRequest<gfx::ppu::AssetType::Tileset>( resourceName, filename );
-		if( success == false )
-		{
-			RFLOG_NOTIFY( filename, RFCAT_CC3O3, "Failed to load a tileset for scene '{}'", scene );
-			continue;
-		}
+		// Load the metadata
+		file::VFSPath const filename = sceneRoot.GetChild( rftl::string( scene ) + ".oo" );
+		scene::Scene data = scene::SceneLoader::LoadFromDesc( filename );
 
-		gfx::ManagedTilesetID const tilesetID = tsetMan.GetManagedResourceIDFromResourceName( resourceName );
-		WeakPtr<gfx::Tileset const> const tileset = tsetMan.GetResourceFromManagedResourceID( tilesetID );
-		RF_ASSERT( tileset != nullptr );
+		// Load the resources
+		// NOTE: This makes sure we can run the whole cutscene, and also
+		//  prevents a hitch or blocking load in the middle of a scene
+		//  transition while the cutscene is running
+		rftl::string_view const resourceName = rftl::format( "CINEMATIC_SCENE/{}", scene );
+		data.LoadResources( app::gGraphics, *app::gVfs, resourceName );
 
-		// TODO: Load from file
-		gfx::ppu::TileLayer tileLayer = {};
-		tileLayer.mTilesetReference = tilesetID;
-		tileLayer.mXCoord = 0;
-		tileLayer.mYCoord = 0;
-		tileLayer.mZLayer = gfx::ppu::kFarthestLayer;
-		tileLayer.ClearAndResize( 1, 1 );
-		tileLayer.GetMutableTile( 0, 0 ).SetIndex( 0 );
-
-		retVal[scene] = rftl::move( tileLayer );
+		// Store
+		retVal[scene] = rftl::move( data );
 	}
 
 	return retVal;
@@ -204,7 +174,6 @@ bool CinematicController::SetSceneData( file::VFSPath const& sceneRoot )
 bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 {
 	// Unload resources
-	details::UnloadAllTilesets( mLoadedSceneTilesetResourceNames );
 	details::UnloadAllFramePacks( mLoadedExpressionFramePackResourceNames );
 
 	// Reset
@@ -241,11 +210,10 @@ bool CinematicController::LoadDialogueSequence( file::VFSPath const& filePath )
 	mDriver->ChangeSequence(
 		novel::CinematicDriver::SequenceParams{
 			.mSequence = mDialogue,
-			.mTileLayersByScene =
-				details::AssignTileLayersForRequiredScenes(
+			.mSceneData =
+				details::AssignSceneDataForRequiredScenes(
 					mDialogue->mRequiredScenes,
-					mSceneRoot,
-					mLoadedSceneTilesetResourceNames ),
+					mSceneRoot ),
 			.mFramePacksByCharacter =
 				details::AssignFramePacksForRequiredCharacters(
 					mDialogue->mRequiredExpressionsPerCharacter,

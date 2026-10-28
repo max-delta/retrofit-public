@@ -583,7 +583,9 @@ void CampaignManager::HardcodedCutsceneSetup( cutscene::CinematicController& cin
 	bool const characters = cinematic.SetCharacterData( paths::ExpressionFramepacks() );
 	RF_ASSERT( characters );
 
-	bool const scenes = cinematic.SetSceneData( paths::BackgroundTilesets() );
+	// HACK: Use UI scenes for now
+	RF_TODO_ANNOTATION( "Cutscene folder and asserts" );
+	bool const scenes = cinematic.SetSceneData( paths::UIScenes() );
 	RF_ASSERT( scenes );
 
 	file::VFSPath const testFilePath = paths::Dialogues().GetChild( "mock.dlg" );
