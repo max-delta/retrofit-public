@@ -87,7 +87,7 @@ char const* ClassInfo::GetDebugName() const
 
 char const* ClassInfo::StoreString( char const* string )
 {
-	rftl::string const& storedString = mIdentifierStorage.emplace_back( string );
+	rftl::immutable_string const& storedString = mIdentifierStorage.emplace_back( string );
 	return storedString.data();
 }
 
