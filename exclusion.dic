@@ -27,6 +27,7 @@ tileset
 tilesets
 params
 recalc
+recurse
 rftl
 savestate
 savestates
