@@ -11,4 +11,9 @@ namespace rftl {
 //  common programming patterns that aren't a good fit for game development
 using std::allocator_traits;
 using std::allocator;
+
+// Don't want people using unique_ptr, they should generally be using something
+//  like RF::UniquePtr instead, and we want to use a new name to help with that
+template<typename T>
+using scoped_ptr = std::unique_ptr<T, std::default_delete<T>>;
 }
