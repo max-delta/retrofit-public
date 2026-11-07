@@ -35,7 +35,7 @@ TEST( StringParse, TrimSuffix )
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "##" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "a##" ), { 'a', 'z' } ) == "a##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "z##" ), { 'a', 'z' } ) == "z##" );
-	static_assert( rftl::trim_prefix_chars( rftl::string_view( "#az##" ), { 'a', 'z' } ) == "#az##" );
+	static_assert( rftl::trim_suffix_chars( rftl::string_view( "#az##" ), { 'a', 'z' } ) == "#az##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "##a" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "##z" ), { 'a', 'z' } ) == "##" );
 	static_assert( rftl::trim_suffix_chars( rftl::string_view( "#\0#" ), { 'a', 'z' } ) == "#\0#" );
