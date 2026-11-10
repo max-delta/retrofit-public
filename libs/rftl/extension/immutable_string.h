@@ -1,98 +1,32 @@
 #pragma once
-#include "core/compiler.h"
-#include "core/macros.h"
-
-#include "rftl/string_view"
-#include "rftl/memory"
+#include "rftl/extension/simple_string.h"
 
 
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
+// A stricter version of simple string, that doesn't allow even the structure
+//  itself to be modified once constructed
 template<typename CharT, typename Traits = rftl::char_traits<CharT>>
-class immutable_basic_string
+class immutable_basic_string : private basic_simple_string<CharT, Traits>
 {
 	RF_NO_ASSIGN_VIA_COPY( immutable_basic_string );
 
 	//
 	// Types
 public:
-	using view_type = basic_string_view<CharT, Traits>;
-private:
-	using backing_type = scoped_ptr<CharT const>;
+	using basic_simple_string = basic_simple_string<CharT, Traits>;
+	using basic_simple_string::view_type;
 
 
 	//
-	// Public methods (conversion)
+	// Public methods
 public:
-	immutable_basic_string() = default;
-	immutable_basic_string( view_type value )
-		: mStorage( create( value ) )
-		, mSize( value.size() )
-	{
-		//
-	}
-	immutable_basic_string( CharT const* value )
-		: immutable_basic_string( view_type( value ) )
-	{
-		//
-	}
-	template<typename Allocator>
-	immutable_basic_string( basic_string<CharT, Traits, Allocator> const& value )
-		: immutable_basic_string( view_type( value ) )
-	{
-		//
-	}
-	immutable_basic_string( immutable_basic_string const& value )
-		: immutable_basic_string( view_type( value ) )
-	{
-		//
-	}
-
-	operator view_type() const
-	{
-		return view();
-	}
-
-	view_type view() const
-	{
-		return view_type( mStorage.get(), mSize );
-	}
-
-	char const* c_str() const
-	{
-		return mStorage.get();
-	}
-
-
-	//
-	// Public methods (passthrough)
-public:
-	bool empty() const
-	{
-		return mSize == 0;
-	}
-
-
-	//
-	// Private methods
-private:
-	static backing_type create( view_type value )
-	{
-		size_t const size = value.size();
-		size_t const sizeWithNull = size + 1;
-		CharT* ptr = new CharT[sizeWithNull]();
-		memcpy( ptr, value.data(), size );
-		ptr[size] = {};
-		return backing_type( ptr );
-	}
-
-
-	//
-	// Private data
-private:
-	backing_type const mStorage = {};
-	size_t const mSize = 0;
+	using basic_simple_string::basic_simple_string;
+	using basic_simple_string::operator view_type;
+	using basic_simple_string::view;
+	using basic_simple_string::c_str;
+	using basic_simple_string::empty;
 };
 
 using immutable_string = immutable_basic_string<char>;
