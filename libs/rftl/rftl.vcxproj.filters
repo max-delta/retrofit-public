@@ -145,6 +145,9 @@
 		<ClInclude Include="extension\enum_format.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\simple_string.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
