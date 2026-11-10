@@ -291,7 +291,7 @@ void CampaignManager::HardcodedSinglePlayerCharacterLoad()
 				params.mBottomId = input.mVisuals.mBottom;
 				params.mHairId = input.mVisuals.mHair;
 				params.mSpeciesId = input.mVisuals.mSpecies;
-				params.mOutputDir = paths::CompositeCharacters().GetChild( characterID.clone() ).GetChild( params.mMode );
+				params.mOutputDir = paths::CompositeCharacters().GetChild( characterID.view(), params.mMode );
 
 				sprite::CompositeCharacter output = charCreate.CreateCompositeCharacter( params );
 				charDB.SubmitOrOverwriteComposite( characterID, params.mMode, rftl::move( output ) );

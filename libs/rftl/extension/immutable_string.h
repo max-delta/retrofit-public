@@ -51,24 +51,18 @@ public:
 
 	operator view_type() const
 	{
-		return str();
+		return view();
 	}
 
-	view_type str() const
+	view_type view() const
 	{
 		return view_type( mStorage.get(), mSize );
 	}
 
-	char const* data() const
+	char const* c_str() const
 	{
 		return mStorage.get();
 	}
-
-	basic_string<CharT, Traits> clone() const
-	{
-		return basic_string<CharT, Traits>( mStorage.get(), mSize );
-	}
-
 
 
 	//
