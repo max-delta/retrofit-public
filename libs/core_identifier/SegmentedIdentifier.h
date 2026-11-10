@@ -2,10 +2,11 @@
 
 #include "core/macros.h"
 
-#include "rftl/vector"
+#include "rftl/concepts"
 #include "rftl/string"
 #include "rftl/string_view"
 #include "rftl/type_traits"
+#include "rftl/vector"
 
 
 namespace RF::id {
@@ -73,6 +74,9 @@ protected:
 	SegmentedIdentifier& AppendUnroll( SegmentedIdentifier const& identifier );
 	SegmentedIdentifier& AppendUnroll( Element const& element );
 	SegmentedIdentifier& AppendUnroll( Element&& element );
+	template<typename ConvertibleT>
+		requires rftl::constructible_from<ElementT, ConvertibleT>
+	SegmentedIdentifier& AppendUnroll( ConvertibleT convertible );
 	template<typename IdentifierOrElement1, typename IdentifierOrElement2, typename... IdentifiersOrElements>
 	SegmentedIdentifier& AppendUnroll( IdentifierOrElement1 identifierOrElement1, IdentifierOrElement2 identifierOrElement2, IdentifiersOrElements... identifiersOrElements );
 

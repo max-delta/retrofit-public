@@ -326,6 +326,17 @@ inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnrol
 
 
 template<typename ElementT>
+template<typename ConvertibleT>
+	requires rftl::constructible_from<ElementT, ConvertibleT>
+inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnroll( ConvertibleT convertible )
+{
+	m_ElementList.emplace_back( rftl::move( convertible ) );
+	return *this;
+}
+
+
+
+template<typename ElementT>
 template<typename IdentifierOrElement1, typename IdentifierOrElement2, typename... IdentifiersOrElements>
 inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnroll( IdentifierOrElement1 identifierOrElement1, IdentifierOrElement2 identifierOrElement2, IdentifiersOrElements... identifiersOrElements )
 {
