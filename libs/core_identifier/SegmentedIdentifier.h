@@ -38,6 +38,7 @@ public:
 	SegmentedIdentifier GetParent() const;
 	SegmentedIdentifier GetChild( SegmentedIdentifier const& identifier ) const;
 	SegmentedIdentifier GetChild( Element const& element ) const;
+	SegmentedIdentifier GetChild( Element&& element ) const;
 	template<typename... IdentifiersOrElements>
 	SegmentedIdentifier GetChild( IdentifiersOrElements... identifiersOrElements ) const;
 	SegmentedIdentifier GetAsBranchOf( SegmentedIdentifier const& parent, bool& isBranch ) const;
@@ -47,6 +48,7 @@ public:
 	SegmentedIdentifier& GoUp( size_t count );
 	SegmentedIdentifier& Append( SegmentedIdentifier const& identifier );
 	SegmentedIdentifier& Append( Element const& element );
+	SegmentedIdentifier& Append( Element&& element );
 	template<typename... IdentifiersOrElements>
 	SegmentedIdentifier& Append( IdentifiersOrElements... identifiersOrElements );
 	void clear();
@@ -70,6 +72,7 @@ protected:
 	SegmentedIdentifier& AppendUnroll();
 	SegmentedIdentifier& AppendUnroll( SegmentedIdentifier const& identifier );
 	SegmentedIdentifier& AppendUnroll( Element const& element );
+	SegmentedIdentifier& AppendUnroll( Element&& element );
 	template<typename IdentifierOrElement1, typename IdentifierOrElement2, typename... IdentifiersOrElements>
 	SegmentedIdentifier& AppendUnroll( IdentifierOrElement1 identifierOrElement1, IdentifierOrElement2 identifierOrElement2, IdentifiersOrElements... identifiersOrElements );
 

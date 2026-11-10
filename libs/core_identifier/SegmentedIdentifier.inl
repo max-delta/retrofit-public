@@ -80,6 +80,16 @@ inline SegmentedIdentifier<ElementT> SegmentedIdentifier<ElementT>::GetChild( El
 
 
 template<typename ElementT>
+inline SegmentedIdentifier<ElementT> SegmentedIdentifier<ElementT>::GetChild( Element&& element ) const
+{
+	// Copy
+	SegmentedIdentifier retVal = *this;
+	return retVal.AppendUnroll( element );
+}
+
+
+
+template<typename ElementT>
 template<typename... IdentifiersOrElements>
 inline SegmentedIdentifier<ElementT> SegmentedIdentifier<ElementT>::GetChild( IdentifiersOrElements... identifiersOrElements ) const
 {
@@ -147,6 +157,14 @@ template<typename ElementT>
 inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::Append( Element const& element )
 {
 	return AppendUnroll( element );
+}
+
+
+
+template<typename ElementT>
+inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::Append( Element&& element )
+{
+	return AppendUnroll( rftl::move( element ) );
 }
 
 
@@ -293,6 +311,15 @@ template<typename ElementT>
 inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnroll( Element const& element )
 {
 	m_ElementList.emplace_back( element );
+	return *this;
+}
+
+
+
+template<typename ElementT>
+inline SegmentedIdentifier<ElementT>& SegmentedIdentifier<ElementT>::AppendUnroll( Element&& element )
+{
+	m_ElementList.emplace_back( rftl::move( element ) );
 	return *this;
 }
 
