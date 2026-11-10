@@ -1,5 +1,6 @@
 #pragma once
 #include "core/compiler.h"
+#include "core/macros.h"
 
 #include "rftl/string_view"
 #include "rftl/memory"
@@ -11,19 +12,14 @@ namespace rftl {
 template<typename CharT, typename Traits = rftl::char_traits<CharT>>
 class immutable_basic_string
 {
+	RF_NO_ASSIGN_VIA_COPY( immutable_basic_string );
+
 	//
 	// Types
 public:
-	using backing_type = scoped_ptr<CharT const>;
 	using view_type = basic_string_view<CharT, Traits>;
-	using traits_type = typename view_type::traits_type;
-	using value_type = typename view_type::value_type;
-	using size_type = typename view_type::size_type;
-	using difference_type = typename view_type::difference_type;
-	using const_reference = typename view_type::const_reference;
-	using const_pointer = typename view_type::const_pointer;
-	using const_iterator = typename view_type::const_iterator;
-	using const_reverse_iterator = typename view_type::const_reverse_iterator;
+private:
+	using backing_type = scoped_ptr<CharT const>;
 
 
 	//
@@ -52,7 +48,6 @@ public:
 	{
 		//
 	}
-	immutable_basic_string& operator=( immutable_basic_string const& ) = delete;
 
 	operator view_type() const
 	{
@@ -90,19 +85,20 @@ public:
 private:
 	static backing_type create( view_type value )
 	{
-		size_type const size = value.size();
-		size_type const sizeWithNull = size + 1;
-		value_type* ptr = new value_type[sizeWithNull]();
+		size_t const size = value.size();
+		size_t const sizeWithNull = size + 1;
+		CharT* ptr = new CharT[sizeWithNull]();
 		memcpy( ptr, value.data(), size );
 		ptr[size] = {};
 		return backing_type( ptr );
 	}
 
+
 	//
 	// Private data
 private:
 	backing_type const mStorage = {};
-	size_type const mSize = 0;
+	size_t const mSize = 0;
 };
 
 using immutable_string = immutable_basic_string<char>;
