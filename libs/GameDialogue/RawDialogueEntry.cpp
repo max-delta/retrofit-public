@@ -94,7 +94,9 @@ static KVPair ReadKVPair( Line& line )
 		// No key
 		return {};
 	}
-	if( key.find_first_of( kInlineWhitespaceCharset ) != key.npos )
+	// SUBTLE: Built-in find_first_of(...) needs a view, otherwise it will
+	//  decay the array to a pointer and walk off into random memory
+	if( key.find_first_of( rftl::make_string_view( kInlineWhitespaceCharset ) ) != key.npos )
 	{
 		// Whitespace inside the key
 		return {};
