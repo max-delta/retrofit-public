@@ -33,6 +33,15 @@ inline constexpr auto substr_noexcept( rftl::basic_string_view<CharT> src, size_
 
 
 
+template<typename CharT, size_t SizeT>
+inline constexpr auto make_string_view( const CharT ( &delimCharSet )[SizeT] ) -> rftl::basic_string_view<CharT>
+{
+	static_assert( SizeT > 0 );
+	return rftl::basic_string_view<CharT>( delimCharSet, SizeT );
+}
+
+
+
 // Removes leading characters
 template<typename CharT>
 inline constexpr auto trim_prefix_chars( rftl::basic_string_view<CharT> src, rftl::basic_string_view<CharT> charSet ) -> rftl::basic_string_view<CharT>
@@ -50,7 +59,7 @@ template<typename CharT, size_t SizeT>
 inline constexpr auto trim_prefix_chars( rftl::basic_string_view<CharT> src, const CharT ( &charSet )[SizeT] ) -> rftl::basic_string_view<CharT>
 {
 	static_assert( SizeT > 0 );
-	return trim_prefix_chars<CharT>( src, rftl::basic_string_view<CharT>( charSet, SizeT ) );
+	return trim_prefix_chars<CharT>( src, make_string_view( charSet ) );
 }
 
 
@@ -72,7 +81,7 @@ template<typename CharT, size_t SizeT>
 inline constexpr auto trim_suffix_chars( rftl::basic_string_view<CharT> src, const CharT ( &charSet )[SizeT] ) -> rftl::basic_string_view<CharT>
 {
 	static_assert( SizeT > 0 );
-	return trim_suffix_chars<CharT>( src, rftl::basic_string_view<CharT>( charSet, SizeT ) );
+	return trim_suffix_chars<CharT>( src, make_string_view( charSet ) );
 }
 
 
@@ -88,7 +97,7 @@ template<typename CharT, size_t SizeT>
 inline constexpr auto trim_affix_chars( rftl::basic_string_view<CharT> src, const CharT ( &charSet )[SizeT] ) -> rftl::basic_string_view<CharT>
 {
 	static_assert( SizeT > 0 );
-	return trim_affix_chars<CharT>( src, rftl::basic_string_view<CharT>( charSet, SizeT ) );
+	return trim_affix_chars<CharT>( src, make_string_view( charSet ) );
 }
 
 
@@ -172,7 +181,7 @@ template<typename CharT, size_t SizeT>
 inline auto strtok_view( rftl::basic_string_view<CharT>& remaining, const CharT ( &delimCharSet )[SizeT] ) -> rftl::basic_string_view<CharT>
 {
 	static_assert( SizeT > 0 );
-	return strtok_view( remaining, rftl::basic_string_view<CharT>( delimCharSet, SizeT ) );
+	return strtok_view( remaining, make_string_view( delimCharSet ) );
 }
 
 
