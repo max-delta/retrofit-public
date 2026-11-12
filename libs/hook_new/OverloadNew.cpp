@@ -22,7 +22,7 @@ namespace RF::hook::details {
 
 void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 {
-	// Sometimes people try to do wierd non-standard things like aligning to
+	// Sometimes people try to do weird non-standard things like aligning to
 	//  OS page boundaries and relying on platform-specific implementations for
 	//  sketchy performance characteristic, rather than just ask the platform
 	//  to perform the allocation they want directly. Here, we try to detect
