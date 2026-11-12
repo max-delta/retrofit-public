@@ -16,4 +16,14 @@ using std::allocator;
 //  like RF::UniquePtr instead, and we want to use a new name to help with that
 template<typename T>
 using scoped_ptr = std::unique_ptr<T, std::default_delete<T>>;
+template<typename T, typename... Types, std::enable_if_t<!std::is_array_v<T>, int> = 0>
+[[nodiscard]] scoped_ptr<T> make_scoped( Types&&... args )
+{
+	return std::make_unique( std::forward<Types>( args )... );
+}
+template<class T, std::enable_if_t<std::is_array_v<T> && std::extent_v<T> == 0, int> = 0>
+[[nodiscard]] scoped_ptr<T> make_scoped( const size_t size )
+{
+	return std::make_unique<T>( size );
+}
 }
