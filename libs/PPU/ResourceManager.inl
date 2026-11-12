@@ -642,7 +642,7 @@ bool ResourceManager<Resource, ManagedResourceID, InvalidResourceID>::UpdateExis
 	RegisterFileBackedResource( resourceName, filename );
 	bool const postLoadSuccess = PostLoadFromFile( *res, filename );
 	RF_ASSERT( postLoadSuccess );
-	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file" );
+	RFLOG_INFO( filename, RFCAT_PPU, "Resource loaded from file at {}", managedResourceID );
 
 	return true;
 }
