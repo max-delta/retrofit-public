@@ -4,6 +4,7 @@
 #include "PlatformFilesystem/VFSPath.h"
 #include "PPU/TileLayer.h"
 
+#include "rftl/extension/simple_string.h"
 #include "rftl/vector"
 
 
@@ -43,7 +44,7 @@ public:
 private:
 	WeakPtr<gfx::ppu::PPUController> mPpu;
 	gfx::ManagedTilesetID mLoadedTileset = gfx::kInvalidManagedTilesetID;
-	rftl::string mTilesetResourceName = {};
+	rftl::simple_string mTilesetResourceName = {};
 };
 
 ///////////////////////////////////////////////////////////////////////////////
