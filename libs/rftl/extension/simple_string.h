@@ -22,7 +22,7 @@ class basic_simple_string
 public:
 	using view_type = basic_string_view<CharT, Traits>;
 private:
-	using backing_type = scoped_ptr<CharT const>;
+	using backing_type = scoped_ptr<CharT const[]>;
 
 
 	//
