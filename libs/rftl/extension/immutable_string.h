@@ -1,4 +1,7 @@
 #pragma once
+#include "core/compiler.h"
+#include "core/todo.h"
+
 #include "rftl/extension/simple_string.h"
 
 
@@ -10,13 +13,25 @@ namespace rftl {
 template<typename CharT, typename Traits = rftl::char_traits<CharT>>
 class basic_immutable_string : private basic_simple_string<CharT, Traits>
 {
+#ifdef RF_PLATFORM_CLANG
+	// Clang seems to have a deeply broken compiler bug where it exposes the
+	//  assignment operator of the private base class publicly to callers, so
+	//  it errors out when the macro to explicitly delete said operator is used
+	RF_TODO_ANNOTATION( "Come back and re-evaluate this in later versions, it's super broken" );
+	RF_CLANG_PUSH();
+	RF_CLANG_IGNORE( "-Wdeprecated-copy-with-user-provided-copy" );
+	RF_CLANG_IGNORE( "-Wdeprecated-copy" );
 	RF_NO_ASSIGN_VIA_COPY( basic_immutable_string );
+	RF_CLANG_POP();
+#else
+	RF_NO_ASSIGN_VIA_COPY( basic_immutable_string );
+#endif
 
 	//
 	// Types
 public:
 	using basic_simple_string = basic_simple_string<CharT, Traits>;
-	using basic_simple_string::view_type;
+	using view_type = basic_simple_string::view_type;
 
 
 	//
