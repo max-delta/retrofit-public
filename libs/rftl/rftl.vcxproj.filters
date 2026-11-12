@@ -148,6 +148,9 @@
 		<ClInclude Include="extension\simple_string.h">
 			<Filter>extension</Filter>
 		</ClInclude>
+		<ClInclude Include="extension\simple_vector.h">
+			<Filter>extension</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="patch\preinclude.inl">
