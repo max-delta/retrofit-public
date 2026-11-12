@@ -5,7 +5,7 @@
 
 #include "core/todo.h"
 
-#include "rftl/vector"
+#include "rftl/extension/simple_vector.h"
 
 
 namespace RF::gfx::ppu {
@@ -13,7 +13,8 @@ namespace RF::gfx::ppu {
 
 class PPU_API TileLayer
 {
-	RF_PRIVATE_COPY( TileLayer );
+	RF_PRIVATE_CONSTRUCT_VIA_COPY( TileLayer );
+	RF_NO_ASSIGN_VIA_COPY( TileLayer );
 	RF_DEFAULT_MOVE( TileLayer );
 
 	//
@@ -119,10 +120,10 @@ private:
 	//  the PPU to use when the TileLayer is added to a render request, which
 	//  would essentially be the form of a DMA transfer to the PPU at that time
 	RF_TODO_ANNOTATION( "Get rid of the vector in favor of some more fixed memory" );
-	rftl::vector<Tile> mTiles;
+	rftl::simple_vector<Tile> mTiles;
 };
 static_assert( sizeof( TileLayer::Tile ) == 2, "Double-check Tile storage" );
-static_assert( sizeof( TileLayer ) <= 64, "Double-check TileLayer storage" );
+static_assert( sizeof( TileLayer ) <= 48, "Double-check TileLayer storage" );
 static_assert( alignof( TileLayer ) == RF::compiler::kPointerBytes, "Double-check TileLayer alignment" );
 
 ///////////////////////////////////////////////////////////////////////////////

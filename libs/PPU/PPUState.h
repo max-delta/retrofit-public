@@ -87,11 +87,11 @@ RF_CLANG_IGNORE( "-Winvalid-offsetof" ); // Technically incorrect, fine in pract
 static_assert( offsetof( PPUState, mObjects ) == 0, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mObjects ) == 1024, "Double-check PPUState storage" );
 static_assert( offsetof( PPUState, mTileLayers ) == 1024, "Double-check PPUState storage" );
-static_assert( sizeof( PPUState::mTileLayers ) <= 1024, "Double-check PPUState storage" );
-static_assert( offsetof( PPUState, mStrings ) <= 2048, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mTileLayers ) <= 768, "Double-check PPUState storage" );
+static_assert( offsetof( PPUState, mStrings ) <= 1792, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mStrings ) == 672, "Double-check PPUState storage" );
-static_assert( offsetof( PPUState, mTextStorage ) <= 2856, "Double-check PPUState storage" );
-static_assert( sizeof( PPUState::mTextStorage ) == 1336, "Double-check PPUState storage" );
+static_assert( offsetof( PPUState, mTextStorage ) <= 2464, "Double-check PPUState storage" );
+static_assert( sizeof( PPUState::mTextStorage ) == 1592, "Double-check PPUState storage" );
 static_assert( offsetof( PPUState, mPalette ) <= 4056, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState::mPalette ) == 32, "Double-check PPUState storage" );
 static_assert( sizeof( PPUState ) <= 4096, "Double-check PPUState storage" );
