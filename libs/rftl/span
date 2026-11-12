@@ -21,7 +21,7 @@ using std::as_writable_bytes;
 namespace rftl {
 // Span doesn't get at(...) until C++26
 template<typename T, size_t ExtentT>
-auto span_at( span<T, ExtentT> const& span, size_t index )
+auto span_at( span<T, ExtentT> const& span, size_t index ) -> T&
 {
 	if( index >= span.size() )
 	{
