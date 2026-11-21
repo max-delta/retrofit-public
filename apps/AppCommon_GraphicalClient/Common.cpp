@@ -19,6 +19,7 @@
 #include "Localization/PageMapper.h"
 #include "Logging/ANSIConsoleLogger.h"
 #include "Logging/AssertLogger.h"
+#include "Logging/LoggerTime.h"
 #include "Rollback/RollbackManager.h"
 
 #include "PlatformUtils_win32/Console.h"
@@ -83,6 +84,16 @@ void Startup( cli::ArgView const& args, StartupConfig& config )
 	gCommandLineArgs = sCommandLineArgs;
 
 	config.AdjustFromArgs( *gCommandLineArgs );
+
+	if( config.mUseFrameClockForLogTime )
+	{
+		// Frame-based logging
+		static constexpr logging::TimingSourceSig* frameClockSource = []() -> rftl::chrono::nanoseconds
+		{
+			return time::FrameClock::now().time_since_epoch();
+		};
+		logging::ReplaceTimingSource( frameClockSource );
+	}
 
 	RFLOG_MILESTONE( nullptr, RFCAT_STARTUP, "Main startup" );
 

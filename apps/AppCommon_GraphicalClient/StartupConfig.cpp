@@ -11,7 +11,7 @@ namespace RF::app {
 
 void StartupConfig::AdjustFromArgs( cli::ArgParse const& args )
 {
-	auto const logControl =
+	auto const boolFlag =
 		[&args](
 			bool& target,
 			rftl::string_view on,
@@ -30,10 +30,13 @@ void StartupConfig::AdjustFromArgs( cli::ArgParse const& args )
 			target = false;
 		}
 	};
-	logControl( mInformativeLogging, "--loginfo", "--lognoinfo" );
-	logControl( mVerboseLogging, "--logdebug", "--lognodebug" );
-	logControl( mTraceLogging, "--logtrace", "--lognotrace" );
-	logControl( mFileLogFlushing, "--logflush", "--lognoflush" );
+
+	boolFlag( mUseFrameClockForLogTime, "--logframe", "--logclock" );
+
+	boolFlag( mInformativeLogging, "--loginfo", "--lognoinfo" );
+	boolFlag( mVerboseLogging, "--logdebug", "--lognodebug" );
+	boolFlag( mTraceLogging, "--logtrace", "--lognotrace" );
+	boolFlag( mFileLogFlushing, "--logflush", "--lognoflush" );
 }
 
 ///////////////////////////////////////////////////////////////////////////////

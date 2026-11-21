@@ -14,6 +14,9 @@ struct StartupConfig
 	void AdjustFromArgs( cli::ArgParse const& args );
 
 	rftl::string mWindowTitle;
+
+	bool mUseFrameClockForLogTime = config::flag::kUseFrameClockForLogTime;
+
 	bool mInformativeLogging = config::flag::kInformativeLogging;
 	bool mVerboseLogging = config::flag::kVerboseLogging;
 	bool mTraceLogging = config::flag::kTraceLogging;

@@ -15,6 +15,7 @@ static constexpr bool kUseStdModule = RF_CONFIG_FLAG( RF_CONFIG_USE_STD_MODULE )
 static constexpr bool kLegacyBitMath = RF_CONFIG_FLAG( RF_CONFIG_LEGACY_BIT_MATH );
 static constexpr bool kInternalBuildNotice = RF_CONFIG_FLAG( RF_CONFIG_INTERNAL_BUILD_NOTICE );
 static constexpr bool kClassInfoDebugNames = RF_CONFIG_FLAG( RF_CONFIG_CLASSINFO_DEBUG_NAMES );
+static constexpr bool kUseFrameClockForLogTime = RF_CONFIG_FLAG( RF_CONFIG_USE_FRAME_CLOCK_FOR_LOG_TIME );
 static constexpr bool kInformativeLogging = RF_CONFIG_FLAG( RF_CONFIG_INFORMATIVE_LOGGING );
 static constexpr bool kVerboseLogging = RF_CONFIG_FLAG( RF_CONFIG_VERBOSE_LOGGING );
 static constexpr bool kTraceLogging = RF_CONFIG_FLAG( RF_CONFIG_TRACE_LOGGING );

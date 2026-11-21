@@ -98,6 +98,9 @@
 		<ProjectReference Include="..\..\libs\SimpleGL\SimpleGL.vcxproj">
 			<Project>{231205e8-eac1-40d6-b0a4-913803cfc243}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\..\libs\Timing\Timing.vcxproj">
+			<Project>{c984e914-e9ca-47c7-b804-fd68c511f57a}</Project>
+		</ProjectReference>
 	</ItemGroup>
 	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 	<ImportGroup Label="ExtensionTargets">
