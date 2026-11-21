@@ -22,6 +22,7 @@ struct LogBufferResult
 struct LogBufferOptions
 {
 	bool mUseAnsiEscapeSequences : 1 = false;
+	bool mIncludeTimestamp : 1 = false;
 };
 
 // Write to buffer, using a standard format

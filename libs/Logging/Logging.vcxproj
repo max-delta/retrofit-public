@@ -36,6 +36,7 @@
 		<ClInclude Include="Constants.h" />
 		<ClInclude Include="FallbackLogger.h" />
 		<ClInclude Include="Logging.h" />
+		<ClInclude Include="LoggerTime.h" />
 		<ClInclude Include="project.h" />
 		<ClInclude Include="StandardLoggingHelpers.h" />
 		<ClInclude Include="stdafx.h" />
@@ -46,6 +47,7 @@
 		<ClCompile Include="dllmain.cpp" />
 		<ClCompile Include="FallbackLogger.cpp" />
 		<ClCompile Include="Logging.cpp" />
+		<ClCompile Include="LoggerTime.cpp" />
 		<ClCompile Include="StandardLoggingHelpers.cpp" />
 		<ClCompile Include="stdafx.cpp">
 			<PrecompiledHeader>Create</PrecompiledHeader>

@@ -9,6 +9,7 @@
 		<ClInclude Include="ANSIConsoleLogger.h" />
 		<ClInclude Include="AssertLogger.h" />
 		<ClInclude Include="StandardLoggingHelpers.h" />
+		<ClInclude Include="LoggerTime.h" />
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="dllmain.cpp" />
@@ -18,6 +19,7 @@
 		<ClCompile Include="ANSIConsoleLogger.cpp" />
 		<ClCompile Include="AssertLogger.cpp" />
 		<ClCompile Include="StandardLoggingHelpers.cpp" />
+		<ClCompile Include="LoggerTime.cpp" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="Logging.inl" />

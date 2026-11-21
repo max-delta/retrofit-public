@@ -3,6 +3,7 @@
 #include "StandardLoggingHelpers.h"
 
 #include "Logging/Constants.h"
+#include "Logging/LoggerTime.h"
 
 #include "core_logging/LogEvent.h"
 #include "core_math/math_casts.h"
@@ -46,6 +47,41 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 
 	bool const doAnsi = options.mUseAnsiEscapeSequences;
 
+	// Max theoretical timestamp is 20 digits:
+	// 9'223'372'036'854'775'807
+	// 1'234'567'890'123'456'789
+	static_assert( rftl::numeric_limits<int64_t>::max() == 9'223'372'036'854'775'807 );
+	static constexpr char kMaxTimestampExample[] = "1234567890123456789";
+
+	// Timestamp
+	char const* const preTimestamp = "";
+	rftl::array<char, rftl::extent<decltype( kMaxTimestampExample )>::value> timestamp = {};
+	char const* postTimestamp = "";
+	if( options.mIncludeTimestamp )
+	{
+		using namespace rftl::chrono;
+
+		// For practicality's sake, 8 digits of milliseconds should be plenty
+		//  of space to default the padding for, and it won't roll over to 9
+		//  digits until a day has passed
+		static_assert( hours( 2 ) < milliseconds( 99'999'999 ) );
+		static_assert( hours( 27 ) < milliseconds( 100'000'000 ) );
+
+		nanoseconds const rawTime = details::GetLoggerTime();
+		milliseconds const displayTime = duration_cast<milliseconds>( rawTime );
+		static_assert(
+			rftl::numeric_limits<decltype( displayTime )::rep>::max() <=
+			rftl::numeric_limits<int64_t>::max() );
+		rftl::var_snprintf(
+			timestamp,
+			"% 8lli",
+			displayTime.count() );
+
+		// Give some padding for the timestamp portion afterwards
+		postTimestamp = " ";
+	}
+
+	// Severity
 	char const* preSeverity;
 	char const* severity;
 	char const* const postSeverity = doAnsi ? term::ansi::csi::sgr::kReset : "";
@@ -97,7 +133,10 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		bytesParsed = rftl::snprintf(
 			outputBuffer.data(),
 			outputBuffer.size(),
-			"[%s%s%s][%s]  %s\n",
+			"%s%s%s[%s%s%s][%s]  %s\n",
+			preTimestamp,
+			timestamp.data(),
+			postTimestamp,
 			preSeverity,
 			severity,
 			postSeverity,
@@ -110,7 +149,10 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		bytesParsed = rftl::snprintf(
 			outputBuffer.data(),
 			outputBuffer.size(),
-			"[%s%s%s][%s]  <%s> %s\n",
+			"%s%s%s[%s%s%s][%s]  <%s> %s\n",
+			preTimestamp,
+			timestamp.data(),
+			postTimestamp,
 			preSeverity,
 			severity,
 			postSeverity,
