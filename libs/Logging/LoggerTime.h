@@ -16,7 +16,7 @@ LOGGING_API TimingSourceSig* ReplaceTimingSource( TimingSourceSig* callback );
 namespace details {
 
 // NOTE: Thread-safe, but relaxed timing
-LOGGING_API rftl::chrono::nanoseconds GetLoggerTime();
+rftl::chrono::nanoseconds GetLoggerTime();
 
 }
 ///////////////////////////////////////////////////////////////////////////////
