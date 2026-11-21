@@ -68,9 +68,9 @@ inline string_view var_format_to_n( span<char> buffer, format_string<ArgsT...> f
 	}
 
 	bounded_forward_overwrite_iterator out( buffer );
-	using ObnoxiousSize = decltype(out)::difference_type;
+	using ObnoxiousSize = decltype( out )::difference_type;
 	ObnoxiousSize const size = static_cast<ObnoxiousSize>( buffer.size() );
-	out = format_to_n( out, size, fmt, rftl::move(args...) ).out;
+	out = format_to_n( out, size, fmt, rftl::move( args... ) ).out;
 	*out = '\0';
 	*buffer.rbegin() = '\0';
 
