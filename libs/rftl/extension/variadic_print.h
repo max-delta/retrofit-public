@@ -1,4 +1,5 @@
 #pragma once
+#include "rftl/cstdarg"
 #include "rftl/format"
 #include "rftl/span"
 #include "rftl/string_view"
@@ -14,6 +15,9 @@ namespace rftl {
 // NOTE: Because C++20 format is absolutely terrible, the C++20 forms aren't
 //  actually able to support anything beyond ASCII, since Unicode support isn't
 //  even planned yet in the standard, which is frankly a shameful embarrasment
+
+string_view var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... );
+string_view var_snprintf( span<char> buffer, char const* fmt, ... );
 
 string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args );
 string_view var_vsnprintf( span<char> buffer, char const* fmt, va_list args );

@@ -9,6 +9,26 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
+inline string_view var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	string_view const retVal = var_vsnprintf( buffer, bufsz, fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+inline string_view var_snprintf( span<char> buffer, char const* fmt, ... )
+{
+	va_list args;
+	va_start( args, fmt );
+	string_view const retVal = var_vsnprintf( buffer, fmt, args );
+	va_end( args );
+	return retVal;
+}
+
+
+
 inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args )
 {
 	if( bufsz <= 0 )
