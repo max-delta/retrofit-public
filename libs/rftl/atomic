@@ -8,6 +8,7 @@
 // Namespace wrapping
 namespace rftl {
 using std::atomic;
+using std::atomic_ref;
 using std::atomic_flag;
 using std::memory_order;
 
@@ -58,6 +59,9 @@ using std::atomic_ptrdiff_t;
 using std::atomic_intmax_t;
 using std::atomic_uintmax_t;
 
+using std::atomic_signed_lock_free;
+using std::atomic_unsigned_lock_free;
+
 using std::atomic_is_lock_free;
 using std::atomic_store;
 using std::atomic_store_explicit;
@@ -79,12 +83,22 @@ using std::atomic_fetch_or;
 using std::atomic_fetch_or_explicit;
 using std::atomic_fetch_xor;
 using std::atomic_fetch_xor_explicit;
+using std::atomic_wait;
+using std::atomic_wait_explicit;
+using std::atomic_notify_one;
+using std::atomic_notify_all;
+using std::atomic_flag_test;
+using std::atomic_flag_test_explicit;
 using std::atomic_flag_test_and_set;
 using std::atomic_flag_test_and_set_explicit;
 using std::atomic_flag_clear;
 using std::atomic_flag_clear_explicit;
-using std::atomic_init;
-using std::kill_dependency;
+using std::atomic_flag_wait;
+using std::atomic_flag_wait_explicit;
+using std::atomic_flag_notify_one;
+using std::atomic_flag_notify_all;
+//using std::atomic_init; // Deprecated in C++20
+//using std::kill_dependency; // Deprecated in C++26
 using std::atomic_thread_fence;
 using std::atomic_signal_fence;
 }
