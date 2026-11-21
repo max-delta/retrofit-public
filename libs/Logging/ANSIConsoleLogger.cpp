@@ -16,7 +16,7 @@ void ANSIConsoleLogger( LoggingRouter const& router, LogEvent<char8_t> const& ev
 
 	LogBufferResult const result = LogToBuffer(
 		rftl::byte_span( buffer.begin(), buffer.end() ),
-		LogBufferOptions{ .mUseAnsiiEscapeSequences = true },
+		LogBufferOptions{ .mUseAnsiEscapeSequences = true },
 		event,
 		args );
 	if( result.mNullTerminatedOutput.empty() )

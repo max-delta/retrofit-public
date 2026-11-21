@@ -21,7 +21,7 @@ struct LogBufferResult
 
 struct LogBufferOptions
 {
-	bool mUseAnsiiEscapeSequences : 1 = false;
+	bool mUseAnsiEscapeSequences : 1 = false;
 };
 
 // Write to buffer, using a standard format

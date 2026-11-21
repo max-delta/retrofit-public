@@ -44,7 +44,7 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 	rftl::var_vformat_to( messageBuffer, legacyFormatString, args );
 	*messageBuffer.rbegin() = '\0';
 
-	bool const doAnsi = options.mUseAnsiiEscapeSequences;
+	bool const doAnsi = options.mUseAnsiEscapeSequences;
 
 	char const* preSeverity;
 	char const* severity;
