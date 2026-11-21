@@ -65,7 +65,7 @@ static void LogToSeekable(
 
 	LogBufferResult const result = LogToBuffer(
 		rftl::byte_span( buffer.begin(), buffer.end() ),
-		LogBufferOptions{},
+		LogBufferOptions{ .mIncludeTimestamp = true },
 		event,
 		args );
 	if( result.mNullTerminatedOutput.empty() )
