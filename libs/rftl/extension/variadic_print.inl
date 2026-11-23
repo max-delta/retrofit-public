@@ -9,15 +9,6 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-inline span<char> var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... )
-{
-	va_list args;
-	va_start( args, fmt );
-	span<char> const retVal = var_vsnprintf( buffer, bufsz, fmt, args );
-	va_end( args );
-	return retVal;
-}
-
 inline span<char> var_snprintf( span<char> buffer, char const* fmt, ... )
 {
 	va_list args;
@@ -29,54 +20,40 @@ inline span<char> var_snprintf( span<char> buffer, char const* fmt, ... )
 
 
 
-inline span<char> var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args )
+inline span<char> var_vsnprintf( span<char> buffer, char const* fmt, va_list args )
 {
-	if( bufsz <= 0 )
+	if( buffer.size() <= 0 )
 	{
 		// Dumb input?
 		return {};
 	}
 
-	span<char> view = { buffer, bufsz };
-	char& bufferBack = buffer[bufsz - 1];
-
-	int const signedNonNullCharsDesired = rftl::vsnprintf( buffer, bufsz, fmt, args );
+	int const signedNonNullCharsDesired = rftl::vsnprintf( buffer.data(), buffer.size(), fmt, args );
 	if( signedNonNullCharsDesired <= 0 )
 	{
 		// Error case?
-		buffer[0] = '\0';
-		return view.subspan( 0, 1 );
+		buffer.front() = '\0';
+		return buffer.subspan( 0, 1 );
 	}
 	static_assert( numeric_limits<unsigned int>::max() <= numeric_limits<size_t>::max() );
 	size_t const nonNullCharsDesired = static_cast<size_t>( signedNonNullCharsDesired );
 
-	if( nonNullCharsDesired >= view.size() )
+	if( nonNullCharsDesired >= buffer.size() )
 	{
 		// Truncation case
 		// NOTE: Don't trust vsnprintf, make sure it's null-terminated
-		bufferBack = '\0';
-		return view;
+		buffer.back() = '\0';
+		return buffer;
 	}
 	size_t const nonNullCharsWritten = nonNullCharsDesired;
 
 	// NOTE: Don't trust vsnprintf, make sure it's null-terminated
 	buffer[nonNullCharsWritten] = '\0';
 	size_t const charsWritten = nonNullCharsWritten + sizeof( '\0' );
-	return view.subspan( 0, charsWritten );
-}
-
-inline span<char> var_vsnprintf( span<char> buffer, char const* fmt, va_list args )
-{
-	return var_vsnprintf( buffer.data(), buffer.size(), fmt, args );
+	return buffer.subspan( 0, charsWritten );
 }
 
 
-
-template<typename... ArgsT>
-inline span<char> var_format_to_n( char* buffer, size_t bufsz, format_string<ArgsT...> fmt, ArgsT&&... args )
-{
-	return var_format_to( span<char>( buffer, bufsz ), fmt, args... );
-}
 
 template<typename... ArgsT>
 inline span<char> var_format_to_n( span<char> buffer, format_string<ArgsT...> fmt, ArgsT&&... args )
@@ -98,11 +75,6 @@ inline span<char> var_format_to_n( span<char> buffer, format_string<ArgsT...> fm
 }
 
 
-
-inline span<char> var_vformat_to( char* buffer, size_t bufsz, string_view fmt, format_args args )
-{
-	return var_vformat_to( span<char>( buffer, bufsz ), fmt, args );
-}
 
 inline span<char> var_vformat_to( span<char> buffer, string_view fmt, format_args args )
 {
