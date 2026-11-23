@@ -3,6 +3,7 @@
 
 #include "core_math/math_casts.h"
 
+#include "rftl/extension/variadic_print.h"
 #include "rftl/cstdio"
 #include "rftl/cstring"
 
@@ -159,7 +160,8 @@ rftl::string Uuid::GetDebugString() const
 	for( size_t i = 0; i < kNumOctets; i++ )
 	{
 		Octet const& octet = mOctetSequence[i];
-		int numParsed = rftl::snprintf( &octetBuf[0], 3, "%02x", octet );
+		size_t numParsed = 0;
+		rftl::var_snprintf_details( numParsed, octetBuf, "%02x", octet );
 		if( numParsed != 2 )
 		{
 			octetBuf[0] = '?';

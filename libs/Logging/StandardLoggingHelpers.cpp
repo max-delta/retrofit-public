@@ -127,12 +127,12 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 	}
 
 	rftl::span<char> const outputBuffer = destination.to_typed_span<char>();
-	int bytesParsed;
+	size_t bytesParsed = 0;
 	if( event.mTransientContextString.empty() )
 	{
-		bytesParsed = rftl::snprintf(
-			outputBuffer.data(),
-			outputBuffer.size(),
+		rftl::var_snprintf_details(
+			bytesParsed,
+			outputBuffer,
 			"%s%s%s[%s%s%s][%s]  %s\n",
 			preTimestamp,
 			timestamp.data(),
@@ -146,9 +146,9 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 	else
 	{
 		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
-		bytesParsed = rftl::snprintf(
-			outputBuffer.data(),
-			outputBuffer.size(),
+		rftl::var_snprintf_details(
+			bytesParsed,
+			outputBuffer,
 			"%s%s%s[%s%s%s][%s]  <%s> %s\n",
 			preTimestamp,
 			timestamp.data(),
@@ -160,7 +160,6 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 			asciiContext.c_str(),
 			&messageBuffer[0] );
 	}
-	*outputBuffer.rbegin() = '\0';
 
 	RF_ASSERT_MSG( outputBuffer.size() <= static_cast<size_t>( rftl::numeric_limits<int>::max() ), "Int is a terrible type, and can't handle this buffer size" );
 	if( bytesParsed >= static_cast<int>( outputBuffer.size() ) )
