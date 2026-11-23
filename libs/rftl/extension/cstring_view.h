@@ -1,5 +1,6 @@
 #pragma once
 #include "rftl/format"
+#include "rftl/span"
 #include "rftl/string"
 #include "rftl/string_view"
 
@@ -15,9 +16,21 @@ template<typename CharT>
 class basic_cstring_view
 {
 	//
-	// Types
+	// Types and constants
 public:
-	typedef CharT value_type;
+	using value_type = CharT;
+	using span_type = span<CharT>;
+	using view_type = basic_string_view<CharT>;
+	struct assure_terminated_type
+	{
+		// Must have a null after the view
+	};
+	struct includes_terminator_type
+	{
+		// Must have a null at the end of the view
+	};
+	static constexpr assure_terminated_type assure_terminated = {};
+	static constexpr includes_terminator_type includes_terminator = {};
 
 
 	//
@@ -26,17 +39,25 @@ public:
 	basic_cstring_view() = default;
 	basic_cstring_view( value_type const* ptr );
 	basic_cstring_view( rftl::string const& str );
+	basic_cstring_view( span_type str, assure_terminated_type );
+	basic_cstring_view( span_type str, includes_terminator_type );
 
 	// WARNING: Will fatal if the underlying pointer is null, since it is not
 	//  null-terminated
-	operator basic_string_view<value_type>() const;
+	operator view_type() const;
+
+	// NOTE: Will include the terminating null, unless the pointer is null
+	operator span_type() const;
 
 	// This will force a view operation to run, even if the pointer is null
 	// NOTE: This requires this extra step since 'nullptr' is indistinguishable
 	//  from a {'\0'} string once this conversion happens, which is a lossy
 	//  operation when working with C-strings, since nullptr often carries
 	//  meaning as a special 'unset' value that we don't want dropped trivially
-	basic_string_view<value_type> force_view() const;
+	view_type force_view() const;
+
+	// NOTE: Will include the terminating null, unless the pointer is null
+	span_type force_span() const;
 
 	// WARNING: May expose a null pointer
 	value_type const* c_str() const;
@@ -55,7 +76,7 @@ private:
 	//  at the cost of potentially wasting time iterating a string that is only
 	//  used as a pointer before passing it along to a non-view-aware API that
 	//  will just repeat the iteration
-	size_t mSize = 0;
+	size_t mSizeWithoutTerminator = 0;
 };
 
 

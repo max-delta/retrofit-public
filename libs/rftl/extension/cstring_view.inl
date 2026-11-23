@@ -1,6 +1,8 @@
 #pragma once
 #include "cstring_view.h"
 
+#include "core/rf_assert.h"
+
 #include "rftl/cstdlib"
 
 
@@ -10,9 +12,30 @@ namespace rftl {
 template<typename CharT>
 inline basic_cstring_view<CharT>::basic_cstring_view( rftl::string const& str )
 	: mPtr( str.c_str() )
-	, mSize( basic_string_view<CharT>( mPtr ).size() )
+	, mSizeWithoutTerminator( basic_string_view<CharT>( mPtr ).size() )
 {
 	//
+}
+
+
+
+template<typename CharT>
+inline basic_cstring_view<CharT>::basic_cstring_view( span_type str, assure_terminated_type )
+	: mPtr( str.data() )
+	, mSizeWithoutTerminator( str.size() )
+{
+	// Trust but verify
+	RF_ASSERT( mPtr[mSizeWithoutTerminator] == CharT( '\0' ) );
+}
+
+
+template<typename CharT>
+inline basic_cstring_view<CharT>::basic_cstring_view( span_type str, includes_terminator_type )
+	: mPtr( str.data() )
+	, mSizeWithoutTerminator( str.size() - 1 )
+{
+	// Trust but verify
+	RF_ASSERT( mPtr[mSizeWithoutTerminator] == CharT( '\0' ) );
 }
 
 
@@ -20,7 +43,7 @@ inline basic_cstring_view<CharT>::basic_cstring_view( rftl::string const& str )
 template<typename CharT>
 inline basic_cstring_view<CharT>::basic_cstring_view( value_type const* ptr )
 	: mPtr( ptr )
-	, mSize( mPtr == nullptr ? 0 : basic_string_view<CharT>( mPtr ).size() )
+	, mSizeWithoutTerminator( mPtr == nullptr ? 0 : basic_string_view<CharT>( mPtr ).size() )
 {
 	//
 }
@@ -28,7 +51,7 @@ inline basic_cstring_view<CharT>::basic_cstring_view( value_type const* ptr )
 
 
 template<typename CharT>
-inline basic_cstring_view<CharT>::operator basic_string_view<typename basic_cstring_view<CharT>::value_type>() const
+inline basic_cstring_view<CharT>::operator view_type() const
 {
 	if( mPtr == nullptr )
 	{
@@ -41,9 +64,32 @@ inline basic_cstring_view<CharT>::operator basic_string_view<typename basic_cstr
 
 
 template<typename CharT>
-inline basic_string_view<CharT> basic_cstring_view<CharT>::force_view() const
+inline basic_cstring_view<CharT>::operator span_type() const
 {
-	return basic_string_view<value_type>( mPtr, mSize );
+	return force_span();
+}
+
+
+
+template<typename CharT>
+inline basic_cstring_view<CharT>::view_type basic_cstring_view<CharT>::force_view() const
+{
+	return view_type( mPtr, mSizeWithoutTerminator );
+}
+
+
+
+template<typename CharT>
+inline basic_cstring_view<CharT>::span_type basic_cstring_view<CharT>::force_span() const
+{
+	if( mPtr == nullptr )
+	{
+		return span_type( nullptr, 0 );
+	}
+	else
+	{
+		return span_type( mPtr, mSizeWithoutTerminator + 1 );
+	}
 }
 
 
