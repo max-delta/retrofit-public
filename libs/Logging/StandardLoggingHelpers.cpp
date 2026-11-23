@@ -126,40 +126,35 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		severity = "UNKNOWN";
 	}
 
+	// Context
+	char const* preContext = "";
+	rftl::string context;
+	char const* postContext = "";
+	if( event.mTransientContextString.empty() == false )
+	{
+		preContext = "<";
+		context = unicode::ConvertToASCII( event.mTransientContextString );
+		postContext = "> ";
+	}
+
+	// Combine
 	rftl::span<char> const outputBuffer = destination.to_typed_span<char>();
 	size_t bytesParsed = 0;
-	if( event.mTransientContextString.empty() )
-	{
-		rftl::var_snprintf_details(
-			bytesParsed,
-			outputBuffer,
-			"%s%s%s[%s%s%s][%s]  %s\n",
-			preTimestamp,
-			timestamp.data(),
-			postTimestamp,
-			preSeverity,
-			severity,
-			postSeverity,
-			event.mCategoryKey,
-			&messageBuffer[0] );
-	}
-	else
-	{
-		rftl::string const asciiContext = unicode::ConvertToASCII( event.mTransientContextString );
-		rftl::var_snprintf_details(
-			bytesParsed,
-			outputBuffer,
-			"%s%s%s[%s%s%s][%s]  <%s> %s\n",
-			preTimestamp,
-			timestamp.data(),
-			postTimestamp,
-			preSeverity,
-			severity,
-			postSeverity,
-			event.mCategoryKey,
-			asciiContext.c_str(),
-			&messageBuffer[0] );
-	}
+	rftl::var_snprintf_details(
+		bytesParsed,
+		outputBuffer,
+		"%s%s%s[%s%s%s][%s]  %s%s%s%s\n",
+		preTimestamp,
+		timestamp.data(),
+		postTimestamp,
+		preSeverity,
+		severity,
+		postSeverity,
+		event.mCategoryKey,
+		preContext,
+		context.c_str(),
+		postContext,
+		messageBuffer.data() );
 
 	RF_ASSERT_MSG( outputBuffer.size() <= static_cast<size_t>( rftl::numeric_limits<int>::max() ), "Int is a terrible type, and can't handle this buffer size" );
 	if( bytesParsed >= static_cast<int>( outputBuffer.size() ) )
