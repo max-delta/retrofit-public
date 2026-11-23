@@ -20,7 +20,8 @@ Uuid::Uuid()
 
 
 Uuid::Uuid( OctetSequence const& sequence )
-	: mOctetSequence{
+	: // Clang-format is trash garbage
+	mOctetSequence{
 		sequence[0], sequence[1], sequence[2], sequence[3],
 		sequence[4], sequence[5], sequence[6], sequence[7],
 		sequence[8], sequence[9], sequence[10], sequence[11],
@@ -89,7 +90,7 @@ bool Uuid::IsValid() const
 bool Uuid::HasClearlyDefinedCollisionAvoidance() const
 {
 	uint8_t const version = GetVersion();
-	// Hey man, you either get reliablility or security, you can't have it both
+	// Hey man, you either get reliability or security, you can't have it both
 	//  ways, sorry...
 	// NOTE: Version 2 may be well-defined too, but I don't have anything lying
 	//  around that emits version 2 to dig through the internals of, and I
@@ -105,7 +106,7 @@ bool Uuid::ExposesComputerInformation() const
 	// 3 and 5 MAY expose computer information, but it's not knowable. Version
 	//  5 is much less likely to expose information than version 3 though.
 	constexpr bool kParanoid = true;
-	return
+	return //
 		version == 1 ||
 		version == 2 ||
 		( kParanoid && version == 3 ) ||
