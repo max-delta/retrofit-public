@@ -477,7 +477,7 @@ bool PPUController::DrawTextVA( Coord pos, DepthLayer zLayer, uint8_t desiredHei
 	targetString.mUseEscapeSequences = mUseEscapeSequences;
 	targetString.mFontReference = font;
 	targetString.mTextOffset = textStorage.mTextStorageUsed;
-	rftl::string_view charsWritten;
+	rftl::span<char> charsWritten;
 	{
 		rftl::span<char> const asChars = targetText.to_typed_span<char>();
 		charsWritten = rftl::var_vformat_to( asChars, fmt, args );
@@ -806,7 +806,7 @@ bool PPUController::DebugDrawAuxTextVA( Coord pos, DepthLayer zLayer, uint8_t de
 	targetString.mBorder = border;
 	targetString.mFontReference = font;
 	targetString.mTextOffset = textStorage.mTextStorageUsed;
-	rftl::string_view charsWritten;
+	rftl::span<char> charsWritten;
 	{
 		rftl::span<char> const asChars = targetText.to_typed_span<char>();
 		charsWritten = rftl::var_vformat_to( asChars, fmt, args );

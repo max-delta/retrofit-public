@@ -16,19 +16,19 @@ namespace rftl {
 //  actually able to support anything beyond ASCII, since Unicode support isn't
 //  even planned yet in the standard, which is frankly a shameful embarrassment
 
-string_view var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... );
-string_view var_snprintf( span<char> buffer, char const* fmt, ... );
+span<char> var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... );
+span<char> var_snprintf( span<char> buffer, char const* fmt, ... );
 
-string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args );
-string_view var_vsnprintf( span<char> buffer, char const* fmt, va_list args );
+span<char> var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args );
+span<char> var_vsnprintf( span<char> buffer, char const* fmt, va_list args );
 
 template<typename... ArgsT>
-string_view var_format_to_n( char* buffer, size_t bufsz, format_string<ArgsT...> fmt, ArgsT&&... args );
+span<char> var_format_to_n( char* buffer, size_t bufsz, format_string<ArgsT...> fmt, ArgsT&&... args );
 template<typename... ArgsT>
-string_view var_format_to_n( span<char> buffer, format_string<ArgsT...> fmt, ArgsT&&... args );
+span<char> var_format_to_n( span<char> buffer, format_string<ArgsT...> fmt, ArgsT&&... args );
 
-string_view var_vformat_to( char* buffer, size_t bufsz, string_view fmt, format_args args );
-string_view var_vformat_to( span<char> buffer, string_view fmt, format_args args );
+span<char> var_vformat_to( char* buffer, size_t bufsz, string_view fmt, format_args args );
+span<char> var_vformat_to( span<char> buffer, string_view fmt, format_args args );
 
 ///////////////////////////////////////////////////////////////////////////////
 }

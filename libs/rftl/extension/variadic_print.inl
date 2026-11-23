@@ -9,27 +9,27 @@
 namespace rftl {
 ///////////////////////////////////////////////////////////////////////////////
 
-inline string_view var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... )
+inline span<char> var_snprintf( char* buffer, size_t bufsz, char const* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
-	string_view const retVal = var_vsnprintf( buffer, bufsz, fmt, args );
+	span<char> const retVal = var_vsnprintf( buffer, bufsz, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
-inline string_view var_snprintf( span<char> buffer, char const* fmt, ... )
+inline span<char> var_snprintf( span<char> buffer, char const* fmt, ... )
 {
 	va_list args;
 	va_start( args, fmt );
-	string_view const retVal = var_vsnprintf( buffer, fmt, args );
+	span<char> const retVal = var_vsnprintf( buffer, fmt, args );
 	va_end( args );
 	return retVal;
 }
 
 
 
-inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args )
+inline span<char> var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, va_list args )
 {
 	if( bufsz <= 0 )
 	{
@@ -37,7 +37,7 @@ inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, v
 		return {};
 	}
 
-	string_view view = { buffer, bufsz };
+	span<char> view = { buffer, bufsz };
 	char& bufferBack = buffer[bufsz - 1];
 
 	int const signedNonNullCharsDesired = rftl::vsnprintf( buffer, bufsz, fmt, args );
@@ -45,7 +45,7 @@ inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, v
 	{
 		// Error case?
 		buffer[0] = '\0';
-		return view.substr( 0, 1 );
+		return view.subspan( 0, 1 );
 	}
 	static_assert( numeric_limits<unsigned int>::max() <= numeric_limits<size_t>::max() );
 	size_t const nonNullCharsDesired = static_cast<size_t>( signedNonNullCharsDesired );
@@ -62,10 +62,10 @@ inline string_view var_vsnprintf( char* buffer, size_t bufsz, char const* fmt, v
 	// NOTE: Don't trust vsnprintf, make sure it's null-terminated
 	buffer[nonNullCharsWritten] = '\0';
 	size_t const charsWritten = nonNullCharsWritten + sizeof( '\0' );
-	return view.substr( 0, charsWritten );
+	return view.subspan( 0, charsWritten );
 }
 
-inline string_view var_vsnprintf( span<char> buffer, char const* fmt, va_list args )
+inline span<char> var_vsnprintf( span<char> buffer, char const* fmt, va_list args )
 {
 	return var_vsnprintf( buffer.data(), buffer.size(), fmt, args );
 }
@@ -73,13 +73,13 @@ inline string_view var_vsnprintf( span<char> buffer, char const* fmt, va_list ar
 
 
 template<typename... ArgsT>
-inline string_view var_format_to_n( char* buffer, size_t bufsz, format_string<ArgsT...> fmt, ArgsT&&... args )
+inline span<char> var_format_to_n( char* buffer, size_t bufsz, format_string<ArgsT...> fmt, ArgsT&&... args )
 {
 	return var_format_to( span<char>( buffer, bufsz ), fmt, args... );
 }
 
 template<typename... ArgsT>
-inline string_view var_format_to_n( span<char> buffer, format_string<ArgsT...> fmt, ArgsT&&... args )
+inline span<char> var_format_to_n( span<char> buffer, format_string<ArgsT...> fmt, ArgsT&&... args )
 {
 	if( buffer.empty() )
 	{
@@ -94,17 +94,17 @@ inline string_view var_format_to_n( span<char> buffer, format_string<ArgsT...> f
 	*out = '\0';
 	*buffer.rbegin() = '\0';
 
-	return string_view( buffer.begin(), out.tell() );
+	return span<char>( buffer.begin(), out.tell() );
 }
 
 
 
-inline string_view var_vformat_to( char* buffer, size_t bufsz, string_view fmt, format_args args )
+inline span<char> var_vformat_to( char* buffer, size_t bufsz, string_view fmt, format_args args )
 {
 	return var_vformat_to( span<char>( buffer, bufsz ), fmt, args );
 }
 
-inline string_view var_vformat_to( span<char> buffer, string_view fmt, format_args args )
+inline span<char> var_vformat_to( span<char> buffer, string_view fmt, format_args args )
 {
 	if( buffer.empty() )
 	{
@@ -117,7 +117,7 @@ inline string_view var_vformat_to( span<char> buffer, string_view fmt, format_ar
 	*out = '\0';
 	*buffer.rbegin() = '\0';
 
-	return string_view( buffer.begin(), out.tell() );
+	return span<char>( buffer.begin(), out.tell() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
