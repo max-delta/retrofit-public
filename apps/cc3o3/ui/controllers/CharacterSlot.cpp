@@ -27,6 +27,7 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/variadic_print.h"
 #include "rftl/cstdio"
 
 
@@ -99,17 +100,14 @@ void CharacterSlot::UpdateCharacter( state::ObjectRef const& character )
 		{
 			mInfoRows.at( 0 )->SetText( charData.mDescription.mName );
 
-			//rftl::snprintf( lineBuf.data(), lineBuf.size(), "HP % 3u INN %s", hp, charData.mInnate.c_str() );
-			rftl::snprintf( lineBuf.data(), lineBuf.size(), "PAt %2u EAt %2u", physAtk, elemAtk );
-			lineBuf.back() = '\0';
+			//rftl::var_snprintf( lineBuf, "HP % 3u INN %s", hp, charData.mInnate.c_str() );
+			rftl::var_snprintf( lineBuf, "PAt %2u EAt %2u", physAtk, elemAtk );
 			mInfoRows.at( 1 )->SetText( lineBuf.data() );
 
-			rftl::snprintf( lineBuf.data(), lineBuf.size(), "PDf %2u EDf %2u", physDef, elemDef );
-			lineBuf.back() = '\0';
+			rftl::var_snprintf( lineBuf, "PDf %2u EDf %2u", physDef, elemDef );
 			mInfoRows.at( 2 )->SetText( lineBuf.data() );
 
-			rftl::snprintf( lineBuf.data(), lineBuf.size(), "Bal %2u Tec %2u", balance, techniq );
-			lineBuf.back() = '\0';
+			rftl::var_snprintf( lineBuf, "Bal %2u Tec %2u", balance, techniq );
 			mInfoRows.at( 3 )->SetText( lineBuf.data() );
 		}
 	}

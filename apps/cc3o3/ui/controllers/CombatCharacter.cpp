@@ -27,6 +27,7 @@
 
 #include "core/ptr/default_creator.h"
 
+#include "rftl/extension/variadic_print.h"
 #include "rftl/cstdio"
 
 
@@ -101,12 +102,10 @@ void CombatCharacter::UpdateCharacter( combat::Fighter const& fighter, state::Ob
 			lineBuf.back() = '\0';
 			mInfoRows.at( 1 )->SetText( lineBuf.data() );
 
-			rftl::snprintf( lineBuf.data(), lineBuf.size(), "%3u/%-3u", curHP, maxHP );
-			lineBuf.back() = '\0';
+			rftl::var_snprintf( lineBuf, "%3u/%-3u", curHP, maxHP );
 			mInfoRows.at( 2 )->SetText( lineBuf.data() );
 
-			rftl::snprintf( lineBuf.data(), lineBuf.size(), "Sta.%01i.0", curStamina );
-			lineBuf.back() = '\0';
+			rftl::var_snprintf( lineBuf, "Sta.%01i.0", curStamina );
 			mInfoRows.at( 3 )->SetText( lineBuf.data() );
 		}
 	}

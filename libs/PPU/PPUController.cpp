@@ -518,12 +518,10 @@ CoordElem PPUController::CalculateStringLengthFormatted( uint8_t desiredHeight, 
 {
 	rftl::array<char, kMaxStringLen> string = {};
 	{
-		string.front() = '\0';
 		va_list args;
 		va_start( args, fmt );
-		rftl::vsnprintf( string.data(), string.size(), fmt, args );
+		rftl::var_vsnprintf( string, fmt, args );
 		va_end( args );
-		string.back() = '\0';
 	}
 
 	char const* const text = string.data();
