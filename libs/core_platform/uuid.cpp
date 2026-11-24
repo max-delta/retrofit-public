@@ -136,7 +136,7 @@ uint8_t Uuid::GetVariant() const
 	// 4 - 5 = Standard
 	// 6 = MS compat
 	// 7 = Reserved
-	Octet const& variantOctet = mOctetSequence[6];
+	Octet const& variantOctet = mOctetSequence[8];
 	uint8_t const variant = ( variantOctet & 0xe0u ) >> 5;
 	return variant;
 }
