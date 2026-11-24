@@ -49,7 +49,7 @@ constexpr uint32_t char_integer_bitcast( char32_t const src );
 // Just '0' + (1-9) with a check
 char char_digitcast( uint8_t oneThroughNine );
 
-// Reintepret to/from an enum and its underlying type
+// Reinterpret to/from an enum and its underlying type
 template<typename SRC,
 	typename rftl::enable_if<rftl::is_enum<SRC>::value, int>::type = 0>
 constexpr auto enum_bitcast( SRC const src ) -> typename rftl::underlying_type<SRC>::type;

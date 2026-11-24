@@ -86,9 +86,9 @@ Uuid Uuid::GenerateNewUuid()
 	Data2* const seqData2 = reinterpret_cast<Data2*>( seqData1 + 1 );
 	Data3* const seqData3 = reinterpret_cast<Data3*>( seqData2 + 1 );
 	Data4* const seqData4 = reinterpret_cast<Data4*>( seqData3 + 1 );
-	static_assert( sizeof( Data1 ) == sizeof( uint32_t ), "Unepxected size" );
-	static_assert( sizeof( Data2 ) == sizeof( uint16_t ), "Unepxected size" );
-	static_assert( sizeof( Data3 ) == sizeof( uint16_t ), "Unepxected size" );
+	static_assert( sizeof( Data1 ) == sizeof( uint32_t ), "Unexpected size" );
+	static_assert( sizeof( Data2 ) == sizeof( uint16_t ), "Unexpected size" );
+	static_assert( sizeof( Data3 ) == sizeof( uint16_t ), "Unexpected size" );
 	*seqData1 = math::ReverseByteOrder( static_cast<uint32_t>( winUuid.Data1 ) );
 	*seqData2 = math::ReverseByteOrder( static_cast<uint16_t>( winUuid.Data2 ) );
 	*seqData3 = math::ReverseByteOrder( static_cast<uint16_t>( winUuid.Data3 ) );
