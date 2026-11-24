@@ -102,15 +102,22 @@ bool Uuid::HasClearlyDefinedCollisionAvoidance() const
 
 bool Uuid::ExposesComputerInformation() const
 {
+	if( IsValid() == false )
+	{
+		return false;
+	}
+
 	uint8_t const version = GetVersion();
-	// 3 and 5 MAY expose computer information, but it's not knowable. Version
-	//  5 is much less likely to expose information than version 3 though.
+	// Version 1 and 2 DEFINITELY expose computer information.
+	// Version 3 and 5 MAY expose computer information, but it's not knowable.
+	// Version 5 is much less likely to expose information than version 3.
 	constexpr bool kParanoid = true;
-	return //
-		version == 1 ||
-		version == 2 ||
-		( kParanoid && version == 3 ) ||
-		( kParanoid && version == 5 );
+	bool const knownSafe = //
+		version == 4 ||
+		( kParanoid == false && version == 3 ) ||
+		( kParanoid == false && version == 5 );
+	// Anything not known as safe is considered unsafe by default
+	return knownSafe == false;
 }
 
 
