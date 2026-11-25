@@ -156,8 +156,7 @@ LogBufferResult LogToBuffer( rftl::byte_span destination, LogBufferOptions optio
 		postContext,
 		messageBuffer.data() );
 
-	RF_ASSERT_MSG( outputBuffer.size() <= static_cast<size_t>( rftl::numeric_limits<int>::max() ), "Int is a terrible type, and can't handle this buffer size" );
-	if( bytesParsed >= static_cast<int>( outputBuffer.size() ) )
+	if( bytesParsed >= outputBuffer.size() )
 	{
 		RF_ASSERT( outputBuffer.size() - kMinBufferSizeForTruncation < outputBuffer.size() );
 		rftl::span<char> const reservedForTruncation = outputBuffer.subspan( outputBuffer.size() - kMinBufferSizeForTruncation );
