@@ -118,8 +118,8 @@ using std::make_unsigned;
 using std::remove_extent;
 using std::remove_all_extents;
 
-using std::aligned_storage;
-using std::aligned_union;
+//using std::aligned_storage; // Deprecated in C++23
+//using std::aligned_union; // Deprecated in C++23
 using std::decay;
 using std::remove_cvref;
 using std::enable_if;
