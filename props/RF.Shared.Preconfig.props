@@ -7,8 +7,8 @@
 		<UseDebugLibraries Condition="'$(RFConfig)'=='Release'">false</UseDebugLibraries>
 		<UseDebugLibraries Condition="'$(RFConfig)'=='Retail'">false</UseDebugLibraries>
 
-		<!--This controls the compiler versions and whatnot (v143 is early VS2022)-->
-		<PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v143</PlatformToolset>
+		<!--This controls the compiler versions and whatnot (v145 is early VS2026)-->
+		<PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v145</PlatformToolset>
 		<PlatformToolset Condition="'$(RFCompiler)'=='LLVM'">ClangCL</PlatformToolset>
 
 		<!--Whole-program-optimization/link-time-code-generation is amazing, but
