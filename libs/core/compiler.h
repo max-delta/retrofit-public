@@ -122,7 +122,16 @@ inline constexpr Compiler kCompiler = Compiler::Clang;
 		#error Normal clang not supported yet
 	#endif
 
-	#define RF_TOOL_DESC "ClangCL_" __clang_version__ RF_STRINGIFY( _MSC_FULL_VER )
+// clang-format off
+	// NOTE: Cannot use __clang_version__ since after some unknown version change
+	//  they changed it to be a giant advertisement with a massive URL string in
+	//  it, instead of just the version
+	#define RF_TOOL_DESC "ClangCL_" \
+		RF_STRINGIFY( __clang_major__ ) "." \
+		RF_STRINGIFY( __clang_minor__ ) "." \
+		RF_STRINGIFY( __clang_patchlevel__ ) "_" \
+		RF_STRINGIFY( _MSC_FULL_VER )
+// clang-format on
 
 	#pragma intrinsic( __debugbreak )
 	#define RF_SOFTWARE_INTERRUPT() __debugbreak()
