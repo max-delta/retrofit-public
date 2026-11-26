@@ -9,8 +9,37 @@
 namespace rftl {
 // NOTE: Very few wrappings, this is a dangerous file in general, and uses more
 //  common programming patterns that aren't a good fit for game development
-using std::allocator_traits;
+
+using std::pointer_traits;
 using std::allocator;
+using std::allocator_traits;
+using std::allocation_result;
+using std::uses_allocator;
+
+using std::uses_allocator_construction_args;
+using std::make_obj_using_allocator;
+using std::uninitialized_construct_using_allocator;
+
+using std::to_address;
+using std::addressof;
+using std::align;
+using std::assume_aligned;
+//using std::start_lifetime_as; // C++23, but too new for even MSVC
+//using std::start_lifetime_as_array; // C++23, but too new for even MSVC
+
+using std::uninitialized_copy;
+using std::uninitialized_copy_n;
+using std::uninitialized_fill;
+using std::uninitialized_fill_n;
+using std::uninitialized_move;
+using std::uninitialized_move_n;
+using std::uninitialized_default_construct;
+using std::uninitialized_default_construct_n;
+using std::uninitialized_value_construct;
+using std::uninitialized_value_construct_n;
+using std::construct_at;
+using std::destroy_at;
+using std::destroy;
 
 // Don't want people using unique_ptr, they should generally be using something
 //  like RF::UniquePtr instead, and we want to use a new name to help with that

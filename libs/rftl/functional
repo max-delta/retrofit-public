@@ -8,16 +8,16 @@
 // Namespace wrapping
 namespace rftl {
 using std::function;
+//using std::move_only_function; // Clang doesn't support C++23 yet
 using std::mem_fn;
+using std::reference_wrapper;
+using std::unwrap_reference;
+using std::unwrap_ref_decay;
+
 using std::bad_function_call;
 using std::is_bind_expression;
 using std::is_placeholder;
-using std::reference_wrapper;
 
-using std::bind;
-using std::ref;
-using std::cref;
-using std::invoke;
 using std::plus;
 using std::minus;
 using std::multiplies;
@@ -43,9 +43,19 @@ using std::bit_not;
 
 using std::not_fn;
 
+using std::identity;
+
 using std::default_searcher;
 using std::boyer_moore_searcher;
 using std::boyer_moore_horspool_searcher;
 
 using std::hash;
+
+using std::bind_front;
+using std::bind_back;
+using std::bind;
+using std::ref;
+using std::cref;
+using std::invoke;
+using std::invoke_r;
 }

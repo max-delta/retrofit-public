@@ -10,7 +10,7 @@ namespace rftl {
 using std::endian;
 
 using std::bit_cast;
-//using std::byteswap; // Too new, in C++23
+using std::byteswap;
 using std::has_single_bit;
 using std::bit_ceil;
 using std::bit_floor;
