@@ -7,6 +7,10 @@ root = true
 [*]
 indent_style = tab
 
+# Prefer to end comments before column 80, and code before column 120
+[*]
+rulers = 79, 119
+
 # Avoid problems with tools that try to treat files specially as 'text'
 [*]
 end_of_line = lf
