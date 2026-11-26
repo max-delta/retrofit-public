@@ -123,6 +123,11 @@
 		<RFCompiler Condition="'$(Configuration)'=='LLVM_Retail'">LLVM</RFCompiler>
 	</PropertyGroup>
 
+	<!--For Windows, stick to 10 as the target version-->
+	<PropertyGroup Label="Globals">
+		<WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+	</PropertyGroup>
+
 	<ItemDefinitionGroup />
 
 	<ItemGroup />

@@ -18,6 +18,10 @@
 			<!--MS STL implementation gets pissy if this define isn't set-->
 			<PreprocessorDefinitions>_HAS_EXCEPTIONS=0; %(PreprocessorDefinitions)</PreprocessorDefinitions>
 
+			<!--Try to limit Windows headers to Win10 using the value of the
+				macro '_WIN32_WINNT_WIN10' for the NT version gate-->
+			<PreprocessorDefinitions>_WIN32_WINNT=0x0A00; %(PreprocessorDefinitions)</PreprocessorDefinitions>
+
 			<!--C++23 is only really ready for MSVC, and Clang STILL doesn't
 				even support C++20 fully yet, but we want to atleast start
 				inching in towards some of the useful STL additions and fixes
