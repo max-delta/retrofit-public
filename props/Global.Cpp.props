@@ -72,6 +72,11 @@
 
 		<Lib/>
 
+		<Manifest>
+			<!--Use the modern heap implementation-->
+			<EnableSegmentHeap>true</EnableSegmentHeap>
+		</Manifest>
+
 		<Link>
 			<!--Want full PDBs so third-party tools work better-->
 			<GenerateDebugInformation>DebugFull</GenerateDebugInformation>
