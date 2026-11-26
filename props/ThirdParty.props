@@ -13,6 +13,7 @@
 				-Wno-format
 				-Wno-deprecated-declarations
 				-Wno-return-std-move
+				-Wno-nontrivial-memcall
 				%(AdditionalOptions)
 			</AdditionalOptions>
 		</ClCompile>

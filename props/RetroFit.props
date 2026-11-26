@@ -111,6 +111,16 @@
 				%(AdditionalOptions)
 			</AdditionalOptions>
 
+			<!--TODO: Review these-->
+			<AdditionalOptions>
+				-Wno-implicit-int-conversion
+				-Wno-implicit-int-conversion-on-negation
+				-Wno-implicit-int-enum-cast
+				-Wno-unused-private-field
+				-Wno-nrvo
+				%(AdditionalOptions)
+			</AdditionalOptions>
+
 			<!-- Misc overly pedantic style warnings -->
 			<AdditionalOptions>
 				-Wno-format-nonliteral
@@ -138,6 +148,9 @@
 			<AdditionalOptions>
 				-Wno-ignored-attributes
 				-Wno-unsafe-buffer-usage
+				-Wno-unique-object-duplication
+				-Wno-padded
+				-Wno-shadow-header
 				%(AdditionalOptions)
 			</AdditionalOptions>
 

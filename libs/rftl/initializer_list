@@ -8,6 +8,4 @@
 // Namespace wrapping
 namespace rftl {
 using std::initializer_list;
-using std::begin;
-using std::end;
 }
