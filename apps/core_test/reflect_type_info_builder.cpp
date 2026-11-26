@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include "core_reflect/TypeInfoBuilder.h"
+
+#include "core/meta/FunctionPointerDecay.h"
 #include "core/macros.h"
 
 
@@ -248,14 +250,14 @@ TEST( ReflectBuilder, FreeStandingFunctionInfos )
 	{
 		FreeStandingFunctionInfo funcInfo;
 		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::v_call_v );
-		ASSERT_TRUE( funcInfo.mAddress == Test::v_call_v );
+		ASSERT_TRUE( funcInfo.mAddress == DecayFunction( Test::v_call_v ) );
 		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Invalid );
 		ASSERT_TRUE( funcInfo.Parameters.size() == 0 );
 	}
 	{
 		FreeStandingFunctionInfo funcInfo;
 		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::f_call_f );
-		ASSERT_TRUE( funcInfo.mAddress == Test::f_call_f );
+		ASSERT_TRUE( funcInfo.mAddress == DecayFunction( Test::f_call_f ) );
 		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Float );
 		ASSERT_TRUE( funcInfo.Parameters.size() == 1 );
 		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Float );
@@ -263,7 +265,7 @@ TEST( ReflectBuilder, FreeStandingFunctionInfos )
 	{
 		FreeStandingFunctionInfo funcInfo;
 		builder::CreateFreeStandingFunctionInfo( funcInfo, Test::d_call_ifc );
-		ASSERT_TRUE( funcInfo.mAddress == Test::d_call_ifc );
+		ASSERT_TRUE( funcInfo.mAddress == DecayFunction( Test::d_call_ifc ) );
 		ASSERT_TRUE( funcInfo.mReturn.mValueType == Value::Type::Double );
 		ASSERT_TRUE( funcInfo.Parameters.size() == 3 );
 		ASSERT_TRUE( funcInfo.Parameters[0].mValueType == Value::Type::Int32 );

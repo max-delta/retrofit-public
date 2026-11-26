@@ -3,6 +3,8 @@
 #include "core_rftype/CreateClassInfoDefinition.h"
 #include "core_reflect/VirtualClass.h"
 
+#include "core/meta/FunctionPointerDecay.h"
+
 
 RF_CLANG_IGNORE( "-Winvalid-offsetof" );
 
@@ -304,7 +306,7 @@ TEST( RFType, Basics )
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == DecayFunction( &TargetClass::static_v_call_v ) );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
@@ -316,7 +318,7 @@ TEST( RFType, Basics )
 
 		reflect::ClassInfo const& classInfo = rftype::GetClassInfo<TargetClass>();
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == DecayFunction( &TargetClass::static_v_call_v ) );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
@@ -338,7 +340,7 @@ TEST( RFType, NonVirtualChainInheritance )
 		ASSERT_EQ( classInfo.mVirtualRootInfo.mDerivesFromVirtualClass, false );
 
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == DecayFunction( &TargetClass::static_v_call_v ) );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
@@ -363,7 +365,7 @@ TEST( RFType, NonVirtualChainInheritance )
 		ASSERT_EQ( baseClassInfo.mVirtualRootInfo.mDerivesFromVirtualClass, false );
 
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == DecayFunction( &BaseClass::static_v_call_v ) );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		ASSERT_EQ( classInfo.mNonStaticVariables.size(), 1 );
@@ -392,7 +394,7 @@ TEST( RFType, VirtualChainInheritance )
 		ASSERT_NE( classInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
 
 		ASSERT_TRUE( classInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_TRUE( classInfo.mStaticFunctions[0].mAddress == DecayFunction( &TargetClass::static_v_call_v ) );
 		ASSERT_STREQ( classInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;
@@ -430,7 +432,7 @@ TEST( RFType, VirtualChainInheritance )
 		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
 
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &BaseClass::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == DecayFunction( &BaseClass::static_v_call_v ) );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;
@@ -471,7 +473,7 @@ TEST( RFType, VirtualChainInheritance )
 		ASSERT_NE( baseClassInfo.mVirtualRootInfo.mGetRootPointerFromCurrent, nullptr );
 
 		ASSERT_TRUE( baseClassInfo.mStaticFunctions.size() == 1 );
-		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == &TargetClass::static_v_call_v );
+		ASSERT_TRUE( baseClassInfo.mStaticFunctions[0].mAddress == DecayFunction( &TargetClass::static_v_call_v ) );
 		ASSERT_STREQ( baseClassInfo.mStaticFunctions[0].mIdentifier, "static_v_call_v" );
 
 		TargetClass targetClass;

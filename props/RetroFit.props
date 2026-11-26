@@ -101,6 +101,13 @@
 			<DisableSpecificWarnings Condition="'$(RFBuildMachine)'=='Azure'">
 				4619; %(DisableSpecificWarnings)
 			</DisableSpecificWarnings>
+
+			<!--Disable implicit conversion of function pointers to void
+				pointers, even if that's technically standard right now-->
+			<AdditionalOptions>
+				/Zc:functionToObjectPtr
+				%(AdditionalOptions)
+			</AdditionalOptions>
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">

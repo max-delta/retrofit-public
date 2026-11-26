@@ -102,6 +102,9 @@
 		</ClInclude>
 		<ClInclude Include="preprocessor.h" />
 		<ClInclude Include="todo.h" />
+		<ClInclude Include="meta\FunctionPointerDecay.h">
+			<Filter>meta</Filter>
+		</ClInclude>
 	</ItemGroup>
 	<ItemGroup>
 		<ClCompile Include="stdafx.cpp" />

@@ -36,6 +36,7 @@
 		<ClInclude Include="meta\FailConsteval.h" />
 		<ClInclude Include="meta\FailTemplate.h" />
 		<ClInclude Include="meta\FillPatterns.h" />
+		<ClInclude Include="meta\FunctionPointerDecay.h" />
 		<ClInclude Include="meta\IntegerPromotion.h" />
 		<ClInclude Include="meta\IoStreamWorkarounds.h" />
 		<ClInclude Include="meta\LazyInitSingleton.h" />
