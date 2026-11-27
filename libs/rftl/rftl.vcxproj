@@ -118,6 +118,8 @@
 		<None Include="extension\stretch_vector.inl" />
 		<None Include="extension\unique_char_set.inl" />
 		<None Include="extension\variadic_print.inl" />
+		<None Include="flat_map" />
+		<None Include="flat_set" />
 		<None Include="format" />
 		<None Include="fstream" />
 		<None Include="ios" />

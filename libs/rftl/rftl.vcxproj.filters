@@ -229,5 +229,7 @@
 		<None Include="extension\inline_optional.inl">
 			<Filter>extension</Filter>
 		</None>
+		<None Include="flat_set" />
+		<None Include="flat_map" />
 	</ItemGroup>
 </Project>
