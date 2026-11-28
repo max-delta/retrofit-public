@@ -3,6 +3,15 @@
 
 	<ItemDefinitionGroup>
 		<ClCompile>
+			<!--WARNING: MSBuild uses 'CL.command.1.tlog' as part of dirty
+				checks, and it seems to fail if newlines end up in the compiler
+				arguments. This is normally fine, except for when using the
+				'AdditionalOptions' field, as that goes directly into the
+				compiler args and doesn't get proper sanitizing like the rest
+				of the fields often do (which are usually semicolon-delimited).
+				'TrackedVCToolTask' may be where this is going wrong.-->
+			<AdditionalOptions>%(AdditionalOptions)</AdditionalOptions>
+
 			<!--Disable exception handling, prefer to just crash instead-->
 			<ExceptionHandling>false</ExceptionHandling>
 

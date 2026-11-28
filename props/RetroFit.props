@@ -104,10 +104,7 @@
 
 			<!--Disable implicit conversion of function pointers to void
 				pointers, even if that's technically standard right now-->
-			<AdditionalOptions>
-				/Zc:functionToObjectPtr
-				%(AdditionalOptions)
-			</AdditionalOptions>
+			<AdditionalOptions>/Zc:functionToObjectPtr %(AdditionalOptions)</AdditionalOptions>
 		</ClCompile>
 
 		<ClCompile Condition="'$(RFCompiler)'=='LLVM'">
