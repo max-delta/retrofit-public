@@ -10,13 +10,6 @@
 		<!--This controls the compiler versions and whatnot (v145 is early VS2026)-->
 		<PlatformToolset Condition="'$(RFCompiler)'=='MSVC'">v145</PlatformToolset>
 		<PlatformToolset Condition="'$(RFCompiler)'=='LLVM'">ClangCL</PlatformToolset>
-
-		<!--Whole-program-optimization/link-time-code-generation is amazing, but
-			takes forever and a day, so don't do it for debug builds (Also, LLVM
-			doesn't support it)-->
-		<WholeProgramOptimization Condition="'$(RFConfig)'=='Release'">true</WholeProgramOptimization>
-		<WholeProgramOptimization Condition="'$(RFConfig)'=='Retail'">true</WholeProgramOptimization>
-		<WholeProgramOptimization Condition="'$(RFCompiler)'=='LLVM'">false</WholeProgramOptimization>
 	</PropertyGroup>
 
 	<!--Keep things as DLLs for iteration speed, but then slam everything

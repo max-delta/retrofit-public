@@ -41,6 +41,12 @@
 			<!--Specifically, don't require the redistributable for retail-->
 			<RuntimeLibrary Condition="'$(RFConfig)'=='Retail'">MultiThreaded</RuntimeLibrary>
 
+			<!--LTCG is only used for retail builds-->
+			<!--NOTE: Needs to match linker 'LinkTimeCodeGeneration'-->
+			<WholeProgramOptimization Condition="'$(RFConfig)'=='Debug'">false</WholeProgramOptimization>
+			<WholeProgramOptimization Condition="'$(RFConfig)'=='Release'">false</WholeProgramOptimization>
+			<WholeProgramOptimization Condition="'$(RFConfig)'=='Retail'">true</WholeProgramOptimization>
+
 			<!--Per-configuration config files set a bunch of giant switches-->
 			<ForcedIncludeFiles>$(RFRootDir)props\Config.$(RFConfig).h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
 
@@ -62,6 +68,13 @@
 			<!--Don't store personably-identifiable-information in the binaries for
 				retail builds that will actually go out into the wild-->
 			<AdditionalOptions Condition="'$(RFConfig)'=='Retail'">/PDBALTPATH:STRIPPED_PDB_PATH/$(TargetName).pdb %(AdditionalOptions)</AdditionalOptions>
+
+			<!--LTCG is only used for retail builds-->
+			<!--NOTE: Needs to match compiler 'WholeProgramOptimization'-->
+			<!--NOTE: There is an option for 'UseFastLinkTimeCodeGeneration'-->
+			<LinkTimeCodeGeneration Condition="'$(RFConfig)'=='Debug'">Default</LinkTimeCodeGeneration>
+			<LinkTimeCodeGeneration Condition="'$(RFConfig)'=='Release'">Default</LinkTimeCodeGeneration>
+			<LinkTimeCodeGeneration Condition="'$(RFConfig)'=='Retail'">UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
 
 			<!--LLVM doesn't support link-time-code-generation-->
 			<LinkTimeCodeGeneration Condition="'$(RFCompiler)'=='LLVM'">Default</LinkTimeCodeGeneration>
