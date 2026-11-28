@@ -45,6 +45,9 @@
 				the associated problems)-->
 			<MultiProcessorCompilation>true</MultiProcessorCompilation>
 
+			<!--Use PDB file format-->
+			<DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+
 			<!--Eh... the additional runtime cost is trivial and the checks are nice-->
 			<SDLCheck>true</SDLCheck>
 
