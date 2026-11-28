@@ -9,7 +9,8 @@
 
 	<PropertyGroup>
 		<!--Incremental linking is great for iteration speed, but leaves a bunch
-			of crap in the binaries for padding and patching-->
+			of crap in the binaries for padding and patching, and is also
+			incompatible with COMDAT folding-->
 		<LinkIncremental Condition="'$(RFConfig)'=='Debug'">true</LinkIncremental>
 		<LinkIncremental Condition="'$(RFConfig)'=='Release'">false</LinkIncremental>
 		<LinkIncremental Condition="'$(RFConfig)'=='Retail'">false</LinkIncremental>
