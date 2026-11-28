@@ -12,6 +12,10 @@ inline constexpr char const kType[] = RF_BUILDSTAMP_TYPE;
 inline constexpr char const kVersion[] = RF_BUILDSTAMP_VERSION;
 
 #ifndef RF_BUILDSTAMP_TIME
+	// SUBTLE: This doesn't actually dirty compilation each time, since it
+	//  isn't re-evaluated as an input for the build system, which is good
+	//  because it won't cause constant rebuilds, but bad because it'll go
+	//  stale, so real builds should provide this via proper build machinery
 	#define RF_BUILDSTAMP_TIME "" __DATE__ " " __TIME__ ""
 #endif
 inline constexpr char const kTime[] = RF_BUILDSTAMP_TIME;
