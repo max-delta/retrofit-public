@@ -11,16 +11,16 @@
 
 // MSVC has malformed signatures for 'new' operators
 #if defined( RF_PLATFORM_MSVC ) && ( _MSC_VER >= 1916 || _MSC_VER <= 1921 )
-#	define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES __pragma( warning( suppress : 28251 ) )
+	#define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES __pragma( warning( suppress : 28251 ) )
 #else
-#	define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES
+	#define RF_HACK_SUPPRESS_BAD_MSVC_NEW_SIGNATURES
 #endif
 
 #if RF_IS_ALLOWED( RF_CONFIG_HOOK_NEW )
 ///////////////////////////////////////////////////////////////////////////////
 namespace RF::hook::details {
 
-void* HookedObjectAllocate( size_t size, size_t align ) noexcept
+static void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 {
 	// Sometimes people try to do weird non-standard things like aligning to
 	//  OS page boundaries and relying on platform-specific implementations for
@@ -42,7 +42,7 @@ void* HookedObjectAllocate( size_t size, size_t align ) noexcept
 
 
 
-void HookedObjectDeallocate( void* ptr ) noexcept
+static void HookedObjectDeallocate( void* ptr ) noexcept
 {
 	GlobalObjectDeallocate( ptr );
 }
